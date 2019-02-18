@@ -2,132 +2,241 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E9AC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2135C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 927D921736
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:42:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ahd4lZy0"
+	by mail.kernel.org (Postfix) with ESMTP id 969B121736
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550500985;
+	bh=U2NV0twGQyM9+U1Uu2z4A3R1Vj/wQiCP+skfPMw30p8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=lkNzP2ZQEXN/W8P1VLu8GIruvVykSobtHZUlJLESpCTscb8gKOIi5y7DIB18VXXpb
+	 Jupw0UTaFLq4ctrMcp7YbJ9FHpNNeKYg19MdK3c5cgnJv06kHfiboP3d+INx7mPbif
+	 Vanyu7y4sUyPyCwNzukBHIW4Ikih7Jx4UNe5N6yE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389342AbfBROmz (ORCPT
+        id S1731764AbfBRNtn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:42:55 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:51480 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732105AbfBROmy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:42:54 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1IEcqk2069955;
-        Mon, 18 Feb 2019 14:41:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=Sdh5gxVK+gZ9BiZKjcXGLF0oqJBlvYU82+RTEeFhQbI=;
- b=Ahd4lZy0q/FcjwDQtFqoSSVlNNGS/a1hDOXzgBFA5/NEDg83SrqpF9Cub+QkPv/7O6tC
- czVAiNRzBugQq3h+3ddHSwjtz5fpZRrLnovg7UOVVCMrZcSYxVLZWOJbUZcWfYh6feuB
- Y0ecjO/SuJ5mEjo5cCVBHbWb1IPfRaxSxz4g7ZVGDrF1gMGN7UxDa0/EKKgJl5Z+//fC
- 70oTA51om3o6/DOO6zp753sfryqWfUaZeRgWceVHLIM5+4aEFcl+rNnpjEtyVVtlXDXz
- MOENaE635GF8GSjxkIUd00pfcgiiYdChGsahXtzn+AE4mSpBJ1AyZ5ggZkJ9rzjPR9fl rg== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2qpb5r6fj0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 18 Feb 2019 14:41:45 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1IEfi6e030462
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 18 Feb 2019 14:41:44 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1IEfiY0022006;
-        Mon, 18 Feb 2019 14:41:44 GMT
-Received: from kadam (/197.157.0.22)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 18 Feb 2019 06:41:43 -0800
-Date:   Mon, 18 Feb 2019 17:41:33 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Olivier Moysan <olivier.moysan@st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        alsa-devel@alsa-project.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] ASoC: stm32: sai: remove set but not used
- variables 'mask, cr1'
-Message-ID: <20190218144133.GF17104@kadam>
-References: <20190218134836.107220-1-yuehaibing@huawei.com>
+        Mon, 18 Feb 2019 08:49:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56934 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731332AbfBRNtg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:49:36 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4C2821904;
+        Mon, 18 Feb 2019 13:49:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550497776;
+        bh=U2NV0twGQyM9+U1Uu2z4A3R1Vj/wQiCP+skfPMw30p8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=JE7dBmwE0Mg0u6CTtgBkxnuPawMDpMfrLeU+T8we9VY7Z82VoNXhOlkHYCyfFnVsz
+         0V4CPSJGg3r76LI3GUzRfQxgsxLaSgUhZ28wS0eAJGhrVWzYuJmlgLkP69o/oNMoga
+         ceapmCdTyNn0QKEfGkyV8YR+oGKsJeJE5ruACq8E=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Todd Previte <tprevite@gmail.com>,
+        Dave Airlie <airlied@redhat.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Imre Deak <imre.deak@intel.com>,
+        intel-gfx@lists.freedesktop.org,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Jani Nikula <jani.nikula@intel.com>
+Subject: [PATCH 4.20 91/92] drm/i915: Block fbdev HPD processing during suspend
+Date:   Mon, 18 Feb 2019 14:43:34 +0100
+Message-Id: <20190218133503.825582374@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
+References: <20190218133454.668268457@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190218134836.107220-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9170 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902180110
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 01:48:36PM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> sound/soc/stm/stm32_sai_sub.c: In function 'stm32_sai_configure_clock':
-> sound/soc/stm/stm32_sai_sub.c:902:11: warning:
->  variable 'mask' set but not used [-Wunused-but-set-variable]
-> sound/soc/stm/stm32_sai_sub.c:902:6: warning:
->  variable 'cr1' set but not used [-Wunused-but-set-variable]
-> 
-> It's not used any more after 8307b2afd386 ("ASoC: stm32: sai: set sai as
-> mclk clock provider")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  sound/soc/stm/stm32_sai_sub.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
-> index d4825700b63f..a00640f1df06 100644
-> --- a/sound/soc/stm/stm32_sai_sub.c
-> +++ b/sound/soc/stm/stm32_sai_sub.c
-> @@ -898,7 +898,7 @@ static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
->  				     struct snd_pcm_hw_params *params)
->  {
->  	struct stm32_sai_sub_data *sai = snd_soc_dai_get_drvdata(cpu_dai);
-> -	int cr1, mask, div = 0;
-> +	int div = 0;
->  	int sai_clk_rate, mclk_ratio, den;
->  	unsigned int rate = params_rate(params);
->  
-> @@ -944,8 +944,7 @@ static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
->  			if (sai->mclk_rate) {
->  				mclk_ratio = sai->mclk_rate / rate;
->  				if (mclk_ratio == 512) {
-> -					mask = SAI_XCR1_OSR;
-> -					cr1 = SAI_XCR1_OSR;
-> +					;
->  				} else if (mclk_ratio != 256) {
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
+------------------
 
-Please, no...
+From: Lyude Paul <lyude@redhat.com>
 
-				if (mclk_ratio != 512 && mclk_ratio != 256) {
-					dev_err(...
+commit e8a8fedd57fdcebf0e4f24ef0fc7e29323df8e66 upstream.
 
-regards,
-dan carpenter
+When resuming, we check whether or not any previously connected
+MST topologies are still present and if so, attempt to resume them. If
+this fails, we disable said MST topologies and fire off a hotplug event
+so that userspace knows to reprobe.
+
+However, sending a hotplug event involves calling
+drm_fb_helper_hotplug_event(), which in turn results in fbcon doing a
+connector reprobe in the caller's thread - something we can't do at the
+point in which i915 calls drm_dp_mst_topology_mgr_resume() since
+hotplugging hasn't been fully initialized yet.
+
+This currently causes some rather subtle but fatal issues. For example,
+on my T480s the laptop dock connected to it usually disappears during a
+suspend cycle, and comes back up a short while after the system has been
+resumed. This guarantees pretty much every suspend and resume cycle,
+drm_dp_mst_topology_mgr_set_mst(mgr, false); will be caused and in turn,
+a connector hotplug will occur. Now it's Rute Goldberg time: when the
+connector hotplug occurs, i915 reprobes /all/ of the connectors,
+including eDP. However, eDP probing requires that we power on the panel
+VDD which in turn, grabs a wakeref to the appropriate power domain on
+the GPU (on my T480s, this is the PORT_DDI_A_IO domain). This is where
+things start breaking, since this all happens before
+intel_power_domains_enable() is called we end up leaking the wakeref
+that was acquired and never releasing it later. Come next suspend/resume
+cycle, this causes us to fail to shut down the GPU properly, which
+causes it not to resume properly and die a horrible complicated death.
+
+(as a note: this only happens when there's both an eDP panel and MST
+topology connected which is removed mid-suspend. One or the other seems
+to always be OK).
+
+We could try to fix the VDD wakeref leak, but this doesn't seem like
+it's worth it at all since we aren't able to handle hotplug detection
+while resuming anyway. So, let's go with a more robust solution inspired
+by nouveau: block fbdev from handling hotplug events until we resume
+fbdev. This allows us to still send sysfs hotplug events to be handled
+later by user space while we're resuming, while also preventing us from
+actually processing any hotplug events we receive until it's safe.
+
+This fixes the wakeref leak observed on the T480s and as such, also
+fixes suspend/resume with MST topologies connected on this machine.
+
+Changes since v2:
+* Don't call drm_fb_helper_hotplug_event() under lock, do it after lock
+  (Chris Wilson)
+* Don't call drm_fb_helper_hotplug_event() in
+  intel_fbdev_output_poll_changed() under lock (Chris Wilson)
+* Always set ifbdev->hpd_waiting (Chris Wilson)
+
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Fixes: 0e32b39ceed6 ("drm/i915: add DP 1.2 MST support (v0.7)")
+Cc: Todd Previte <tprevite@gmail.com>
+Cc: Dave Airlie <airlied@redhat.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Imre Deak <imre.deak@intel.com>
+Cc: intel-gfx@lists.freedesktop.org
+Cc: <stable@vger.kernel.org> # v3.17+
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190129191001.442-2-lyude@redhat.com
+(cherry picked from commit fe5ec65668cdaa4348631d8ce1766eed43b33c10)
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/gpu/drm/i915/intel_drv.h   |   10 ++++++++++
+ drivers/gpu/drm/i915/intel_fbdev.c |   33 ++++++++++++++++++++++++++++++++-
+ 2 files changed, 42 insertions(+), 1 deletion(-)
+
+--- a/drivers/gpu/drm/i915/intel_drv.h
++++ b/drivers/gpu/drm/i915/intel_drv.h
+@@ -209,6 +209,16 @@ struct intel_fbdev {
+ 	unsigned long vma_flags;
+ 	async_cookie_t cookie;
+ 	int preferred_bpp;
++
++	/* Whether or not fbdev hpd processing is temporarily suspended */
++	bool hpd_suspended : 1;
++	/* Set when a hotplug was received while HPD processing was
++	 * suspended
++	 */
++	bool hpd_waiting : 1;
++
++	/* Protects hpd_suspended */
++	struct mutex hpd_lock;
+ };
+ 
+ struct intel_encoder {
+--- a/drivers/gpu/drm/i915/intel_fbdev.c
++++ b/drivers/gpu/drm/i915/intel_fbdev.c
+@@ -679,6 +679,7 @@ int intel_fbdev_init(struct drm_device *
+ 	if (ifbdev == NULL)
+ 		return -ENOMEM;
+ 
++	mutex_init(&ifbdev->hpd_lock);
+ 	drm_fb_helper_prepare(dev, &ifbdev->helper, &intel_fb_helper_funcs);
+ 
+ 	if (!intel_fbdev_init_bios(dev, ifbdev))
+@@ -752,6 +753,26 @@ void intel_fbdev_fini(struct drm_i915_pr
+ 	intel_fbdev_destroy(ifbdev);
+ }
+ 
++/* Suspends/resumes fbdev processing of incoming HPD events. When resuming HPD
++ * processing, fbdev will perform a full connector reprobe if a hotplug event
++ * was received while HPD was suspended.
++ */
++static void intel_fbdev_hpd_set_suspend(struct intel_fbdev *ifbdev, int state)
++{
++	bool send_hpd = false;
++
++	mutex_lock(&ifbdev->hpd_lock);
++	ifbdev->hpd_suspended = state == FBINFO_STATE_SUSPENDED;
++	send_hpd = !ifbdev->hpd_suspended && ifbdev->hpd_waiting;
++	ifbdev->hpd_waiting = false;
++	mutex_unlock(&ifbdev->hpd_lock);
++
++	if (send_hpd) {
++		DRM_DEBUG_KMS("Handling delayed fbcon HPD event\n");
++		drm_fb_helper_hotplug_event(&ifbdev->helper);
++	}
++}
++
+ void intel_fbdev_set_suspend(struct drm_device *dev, int state, bool synchronous)
+ {
+ 	struct drm_i915_private *dev_priv = to_i915(dev);
+@@ -773,6 +794,7 @@ void intel_fbdev_set_suspend(struct drm_
+ 		 */
+ 		if (state != FBINFO_STATE_RUNNING)
+ 			flush_work(&dev_priv->fbdev_suspend_work);
++
+ 		console_lock();
+ 	} else {
+ 		/*
+@@ -800,17 +822,26 @@ void intel_fbdev_set_suspend(struct drm_
+ 
+ 	drm_fb_helper_set_suspend(&ifbdev->helper, state);
+ 	console_unlock();
++
++	intel_fbdev_hpd_set_suspend(ifbdev, state);
+ }
+ 
+ void intel_fbdev_output_poll_changed(struct drm_device *dev)
+ {
+ 	struct intel_fbdev *ifbdev = to_i915(dev)->fbdev;
++	bool send_hpd;
+ 
+ 	if (!ifbdev)
+ 		return;
+ 
+ 	intel_fbdev_sync(ifbdev);
+-	if (ifbdev->vma || ifbdev->helper.deferred_setup)
++
++	mutex_lock(&ifbdev->hpd_lock);
++	send_hpd = !ifbdev->hpd_suspended;
++	ifbdev->hpd_waiting = true;
++	mutex_unlock(&ifbdev->hpd_lock);
++
++	if (send_hpd && (ifbdev->vma || ifbdev->helper.deferred_setup))
+ 		drm_fb_helper_hotplug_event(&ifbdev->helper);
+ }
+ 
+
 
