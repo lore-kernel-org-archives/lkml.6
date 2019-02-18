@@ -2,98 +2,135 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF99FC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5128C4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:11:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B887D2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:11:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C42C214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:11:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729867AbfBRKLE (ORCPT
+        id S1728542AbfBRKLi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 05:11:04 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:39257 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727004AbfBRKLD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 05:11:03 -0500
-Received: from fsav105.sakura.ne.jp (fsav105.sakura.ne.jp [27.133.134.232])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1IAAnvL050085;
-        Mon, 18 Feb 2019 19:10:49 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav105.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp);
- Mon, 18 Feb 2019 19:10:49 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp)
-Received: from ccsecurity.localdomain (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x1IAAeUM049878
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 18 Feb 2019 19:10:49 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To:     dmitry.torokhov@gmail.com, rydberg@bitmath.org
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Kay Sievers <kay@vrfy.org>,
-        syzbot <syzbot+f648cfb7e0b52bf7ae32@syzkaller.appspotmail.com>
-Subject: [PATCH] input : avoid too late kobject_uevent(KOBJ_REMOVE) call
-Date:   Mon, 18 Feb 2019 19:09:23 +0900
-Message-Id: <1550484563-13217-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-X-Mailer: git-send-email 1.8.3.1
+        Mon, 18 Feb 2019 05:11:38 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37640 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727004AbfBRKLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 05:11:37 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 18626315D3E;
+        Mon, 18 Feb 2019 10:11:37 +0000 (UTC)
+Received: from localhost (ovpn-12-45.pek2.redhat.com [10.72.12.45])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3434F27C43;
+        Mon, 18 Feb 2019 10:11:35 +0000 (UTC)
+Date:   Mon, 18 Feb 2019 18:11:33 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
+        Mike Travis <travis@sgi.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>
+Subject: Re: [PATCH v3 5/6] x86/mm/KASLR: Calculate the actual size of
+ vmemmap region
+Message-ID: <20190218101133.GL14858@MiWiFi-R3L-srv>
+References: <20190216140008.28671-1-bhe@redhat.com>
+ <20190216140008.28671-6-bhe@redhat.com>
+ <CAGXu5jJjed2yS1OZ2+rKuMiPr7HTXLx5qMSV+xWHJs-DJGT4-A@mail.gmail.com>
+ <20190218095010.GJ14858@MiWiFi-R3L-srv>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190218095010.GJ14858@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 18 Feb 2019 10:11:37 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot is hitting use-after-free bug in uinput module [1]. This is because
-kobject_uevent(KOBJ_REMOVE) is called again due to commit 0f4dafc0563c6c49
-("Kobject: auto-cleanup on final unref") after memory allocation fault
-injection made kobject_uevent(KOBJ_REMOVE) from device_del() from
-input_unregister_device() fail, while uinput_destroy_device() is expecting
-that kobject_uevent(KOBJ_REMOVE) is not called after device_del() from
-input_unregister_device() completed.
+On 02/18/19 at 05:50pm, Baoquan He wrote:
+> On 02/17/19 at 09:25am, Kees Cook wrote:
+> > On Sat, Feb 16, 2019 at 6:04 AM Baoquan He <bhe@redhat.com> wrote:
+> > >
+> > > Vmemmap region has different maximum size depending on paging mode.
+> > > Now its size is hardcoded as 1TB in memory KASLR, this is not
+> > > right for 5-level paging mode. It will cause overflow if vmemmap
+> > > region is randomized to be adjacent to cpu_entry_area region and
+> > > its actual size is bigger than 1TB.
+> > >
+> > > So here calculate how many TB by the actual size of vmemmap region
+> > > and align up to 1TB boundary.
+> > >
+> > > Signed-off-by: Baoquan He <bhe@redhat.com>
+> > > ---
+> > >  arch/x86/mm/kaslr.c | 11 ++++++++++-
+> > >  1 file changed, 10 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+> > > index 97768df923e3..ca12ed4e5239 100644
+> > > --- a/arch/x86/mm/kaslr.c
+> > > +++ b/arch/x86/mm/kaslr.c
+> > > @@ -101,7 +101,7 @@ static __initdata struct kaslr_memory_region {
+> > >  } kaslr_regions[] = {
+> > >         { &page_offset_base, 0 },
+> > >         { &vmalloc_base, 0 },
+> > > -       { &vmemmap_base, 1 },
+> > > +       { &vmemmap_base, 0 },
+> > >  };
+> > >
+> > >  /*
+> > > @@ -121,6 +121,7 @@ void __init kernel_randomize_memory(void)
+> > >         unsigned long rand, memory_tb;
+> > >         struct rnd_state rand_state;
+> > >         unsigned long remain_entropy;
+> > > +       unsigned long vmemmap_size;
+> > >
+> > >         vaddr_start = pgtable_l5_enabled() ? __PAGE_OFFSET_BASE_L5 : __PAGE_OFFSET_BASE_L4;
+> > >         vaddr = vaddr_start;
+> > > @@ -152,6 +153,14 @@ void __init kernel_randomize_memory(void)
+> > >         if (memory_tb < kaslr_regions[0].size_tb)
+> > >                 kaslr_regions[0].size_tb = memory_tb;
+> > >
+> > > +       /*
+> > > +        * Calculate how many TB vmemmap region needs, and align to
+> > > +        * 1TB boundary.
+> > 
+> > Can you describe why this is the right calculation? (This will help
+> > explain why 4-level is different from 5-level here.)
+> 
+> In the old code, the size of vmemmap is hardcoded as 1 TB. This is true
+> in 4-level paging mode, 64 TB RAM supported at most, and usually
+> sizeof(struct page) is 64 Bytes, it happens to be 1 TB.
+> 
+> However, in 5-level paging mode, 4 PB is the biggest RAM size we can
+> support, it's (4 PB)/64 == 1<<48, namely 256 TB area needed for vmemmap,
 
-Fix this problem by pretending as if kobject_uevent(KOBJ_REMOVE) from
-device_del() from input_unregister_device() did not fail.
+Sorry, this should be (4 PB)/64 == 1<<46, 64 TB is the maximum size for
+vmemmap.
 
-[1] https://syzkaller.appspot.com/bug?id=8b17c134fe938bbddd75a45afaa9e68af43a362d
-
-Reported-by: syzbot <syzbot+f648cfb7e0b52bf7ae32@syzkaller.appspotmail.com>
-Analyzed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Kay Sievers <kay@vrfy.org>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- drivers/input/input.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/input/input.c b/drivers/input/input.c
-index 3304aaaffe87..6df3c33ef3aa 100644
---- a/drivers/input/input.c
-+++ b/drivers/input/input.c
-@@ -2032,6 +2032,19 @@ static void __input_unregister_device(struct input_dev *dev)
- 	mutex_unlock(&input_mutex);
- 
- 	device_del(&dev->dev);
-+	/*
-+	 * Regarding input subsystem, we always take care of sending uevent at
-+	 * "unregister" time, and we do not expect to have uevent sent out at
-+	 * the final "put" time. Therefore, if we failed to send uevent at
-+	 * "unregister" time (due to e.g. fault injection), complain it and
-+	 * do not allow the final "put" time to send the remove uevent again.
-+	 */
-+	if (dev->dev.kobj.state_add_uevent_sent &&
-+	    !dev->dev.kobj.state_remove_uevent_sent) {
-+		dev->dev.kobj.state_remove_uevent_sent = 1;
-+		pr_warn("Failed to send remove uevent for %s\n",
-+			dev_name(&dev->dev));
-+	}
- }
- 
- static void devm_input_device_unregister(struct device *dev, void *res)
--- 
-2.17.1
+> assuming sizeof(struct page) is 64 Bytes here.
+> 
+> So, the hardcoding of 1 TB is not correct for 5-level paging mode. 
+> 
+> Thanks
+> Baoquan
+> 
+> > 
+> > > +        */
+> > > +       vmemmap_size = (kaslr_regions[0].size_tb << (TB_SHIFT - PAGE_SHIFT)) *
+> > > +               sizeof(struct page);
+> > > +       kaslr_regions[2].size_tb = DIV_ROUND_UP(vmemmap_size, 1UL << TB_SHIFT);
+> > > +
