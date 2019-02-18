@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDFCFC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E4D4C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE1EC2173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:01:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B4E42173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:01:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498510;
-	bh=LM2wCxlf4UpIdBw2ar0TYyrL5VSYNRHG+HFoNOeRpvw=;
+	s=default; t=1550498514;
+	bh=1a9yR9nru/4IjSxwrdKqcIs/aUMcezZp+C/3WdXtYqA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PlzUPBAmGvrTufeVJUsSwvmqEFPw8rGlqfecWDoCz2toIRDiVrtsfDDa6pXRFkVFq
-	 DESLLOK0jIf1b1OMIP71lgYQbnh255A2WOxEgLJqp5Mb+jqNFRRi4Am4K3UtnieYDg
-	 kCmnYqLy2WXlegPp8fyR6JskyDTbzM3OQbWTO46A=
+	b=IDN1/AQ1ayk3FDgH3Tn0h09pI+bkiJvLWIEDabbkAzRaxqOu1fZngmkYVv6wu1/TL
+	 Jwi4gaOuVxd4N8DrbEaeAtkjFZu1gZoj8v/TN/I5sNN53taV0OwGxIvHijfkE19kDM
+	 8hhfDsKaQBWSieHKDHJttJtVlLtsYOc2VHwd0HVU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389181AbfBROBt (ORCPT
+        id S2389199AbfBROBw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:01:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43320 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:01:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389163AbfBROBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:01:47 -0500
+        id S2389184AbfBROBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:01:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C1902070D;
-        Mon, 18 Feb 2019 14:01:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1422720842;
+        Mon, 18 Feb 2019 14:01:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498506;
-        bh=LM2wCxlf4UpIdBw2ar0TYyrL5VSYNRHG+HFoNOeRpvw=;
+        s=default; t=1550498509;
+        bh=1a9yR9nru/4IjSxwrdKqcIs/aUMcezZp+C/3WdXtYqA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v7MuOqUxbquPXSahCm7pvdA2Mc8dmnkRACEmNNT7QV+dBRYizHSaUx3jWrhoNxDLW
-         O9DNKoiOzY9HpSqRxEPh+dw8kA6hvc/bbVhLegEPfEe+XAlbqMlayo0FAyp0WSPQ+O
-         R5nIXFcTxf7YLebpobi+hDcp67uYaxJiOPAYXhJo=
+        b=PcTWaVr6V2GFtJ80gkq4ZRJR+z0xojTAu7WYkuwBt6BkOfGD36BqsWwekntVyAqqV
+         zDpdGooDmUCmbCDqSSmx2Rx3AZB9Q06X8dGMUA11lH/iGJNAyZZ/6vTDwFtGyHdtoX
+         QA84bJZ1pye0W3sjMdX80AFMWU6FWPGU4KX7EU+4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 031/143] sata_rcar: fix deferred probing
-Date:   Mon, 18 Feb 2019 14:42:39 +0100
-Message-Id: <20190218133530.279071045@linuxfoundation.org>
+        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 032/143] clk: imx6sl: ensure MMDC CH0 handshake is bypassed
+Date:   Mon, 18 Feb 2019 14:42:40 +0100
+Message-Id: <20190218133530.313117596@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -67,39 +66,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9f83cfdb1ace3ef268ecc6fda50058d2ec37d603 ]
+[ Upstream commit 0efcc2c0fd2001a83240a8c3d71f67770484917e ]
 
-The driver overrides the error codes returned by platform_get_irq() to
--EINVAL, so if it returns -EPROBE_DEFER, the driver would fail the probe
-permanently instead of the deferred probing. Switch to propagating the
-error code upstream, still checking/overriding IRQ0 as libata regards it
-as "no IRQ" (thus polling) anyway...
+Same as other i.MX6 SoCs, ensure unused MMDC channel's
+handshake is bypassed, this is to make sure no request
+signal will be generated when periphe_clk_sel is changed
+or SRC warm reset is triggered.
 
-Fixes: 9ec36cafe43b ("of/irq: do irq resolution in platform_get_irq")
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ata/sata_rcar.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/clk/imx/clk-imx6sl.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
-index 8804127b108c..21b80f5ee092 100644
---- a/drivers/ata/sata_rcar.c
-+++ b/drivers/ata/sata_rcar.c
-@@ -875,7 +875,9 @@ static int sata_rcar_probe(struct platform_device *pdev)
- 	int ret = 0;
+diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
+index 1be6230a07af..8b6306dc5fc6 100644
+--- a/drivers/clk/imx/clk-imx6sl.c
++++ b/drivers/clk/imx/clk-imx6sl.c
+@@ -17,6 +17,8 @@
  
- 	irq = platform_get_irq(pdev, 0);
--	if (irq <= 0)
-+	if (irq < 0)
-+		return irq;
-+	if (!irq)
- 		return -EINVAL;
+ #include "clk.h"
  
- 	priv = devm_kzalloc(&pdev->dev, sizeof(struct sata_rcar_priv),
++#define CCDR				0x4
++#define BM_CCM_CCDR_MMDC_CH0_MASK	(1 << 17)
+ #define CCSR			0xc
+ #define BM_CCSR_PLL1_SW_CLK_SEL	(1 << 2)
+ #define CACRR			0x10
+@@ -414,6 +416,10 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SL_CLK_USDHC3]       = imx_clk_gate2("usdhc3",       "usdhc3_podf",       base + 0x80, 6);
+ 	clks[IMX6SL_CLK_USDHC4]       = imx_clk_gate2("usdhc4",       "usdhc4_podf",       base + 0x80, 8);
+ 
++	/* Ensure the MMDC CH0 handshake is bypassed */
++	writel_relaxed(readl_relaxed(base + CCDR) |
++		BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
++
+ 	imx_check_clocks(clks, ARRAY_SIZE(clks));
+ 
+ 	clk_data.clks = clks;
 -- 
 2.19.1
 
