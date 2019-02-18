@@ -2,459 +2,116 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 676C6C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F78C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:24:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34742217D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:24:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07AB2217D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:24:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Mbiv0ln1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392261AbfBRSWO (ORCPT
+        id S2390263AbfBRSYI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:22:14 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46230 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2403915AbfBRSWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:22:06 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 155ADAEA9;
-        Mon, 18 Feb 2019 18:22:05 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id B79C5E0122; Mon, 18 Feb 2019 19:22:04 +0100 (CET)
-Message-Id: <99e5e578d2a554bb2bfd9ee04984ff54f8320b43.1550513384.git.mkubecek@suse.cz>
-In-Reply-To: <cover.1550513384.git.mkubecek@suse.cz>
-References: <cover.1550513384.git.mkubecek@suse.cz>
-From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [RFC PATCH net-next v3 08/21] ethtool: generic handlers for GET
- requests
-To:     netdev@vger.kernel.org
-Cc:     David Miller <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jiri Pirko <jiri@resnulli.us>, linux-kernel@vger.kernel.org
-Date:   Mon, 18 Feb 2019 19:22:04 +0100 (CET)
+        Mon, 18 Feb 2019 13:24:08 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41602 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730330AbfBRSYE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 13:24:04 -0500
+Received: by mail-lj1-f193.google.com with SMTP id z25so7363857ljk.8
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 10:24:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8ugg6qjw/VPgwUqG388rggtOkIKyyqj1TQcTRKc3q+c=;
+        b=Mbiv0ln1dESwZkzD7g8+TCVykO3x4+wsMUje/nhgwunqYD8w0aw38yEjnveb3eHAdl
+         5tZdmluBU3IXV1lCEW+/pZoA87eErWgrovKc9FqgCtn/QmeyFQYtEQO6G8d8hnYappun
+         6YtiRUbs9jXSELgu3gi01SfVzsRTLSiS0VC9c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8ugg6qjw/VPgwUqG388rggtOkIKyyqj1TQcTRKc3q+c=;
+        b=Canz3pA0Nx6lmHhCLzMPqQDlAtIqs4oCVC/XLrs2jlJffnOSpiJmmYa0Fg+hNxGONP
+         IXE05HOzHoSo15bejN/SFoZ5u8w7KGqLRR0EAD+IRdcGvjlHQvDOvebRm1pFpEe7mfpZ
+         jrRd1kRZ99/+qwabsd0DCYWk7ZZDMIRs86+SdvhM8Ud3jK5b1pzPq/NBejtjn5QzaL92
+         kNU6o+Dy+/F0qeVbZZXn6fT8ybcxf0Z+1mr/IiXNE1lelr62aLQpxDLguay0NTO13HBe
+         KKqFfEG/C+Jd1GHfLW2F3LLFQWyUOuRv/4ieQMCUa5IENTHvBXNdjKTkGmkN1Bf+NmdS
+         YNTA==
+X-Gm-Message-State: AHQUAuZtX5XIhwmuXSWj1nxlXiGwVUk+rz+4QHvhdp5t/0oR7DmM083L
+        VvWxz5Ap8C9u0BA1EwxjSS2gqfi9hGE=
+X-Google-Smtp-Source: AHgI3IaW81W2U/Ieg26iDmW+umeVGk7JlAxFoh2TmgAyen0xLH+2fXTHUFyNTiM56v4oPz0Qs9r0xA==
+X-Received: by 2002:a2e:8847:: with SMTP id z7mr13522281ljj.99.1550514241791;
+        Mon, 18 Feb 2019 10:24:01 -0800 (PST)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id f18sm4167734lfk.18.2019.02.18.10.24.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Feb 2019 10:24:01 -0800 (PST)
+Received: by mail-lf1-f52.google.com with SMTP id q12so13046453lfm.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 10:24:00 -0800 (PST)
+X-Received: by 2002:a19:7410:: with SMTP id v16mr15075194lfe.166.1550514240331;
+ Mon, 18 Feb 2019 10:24:00 -0800 (PST)
+MIME-Version: 1.0
+References: <20190215174712.372898450@goodmis.org> <20190215174945.557218316@goodmis.org>
+ <CAHk-=wjP4bEYCFaKZVG4kLWmYBctyfsW9jjhC91tiTk9WwB8Rg@mail.gmail.com>
+ <20190215171539.4682f0b4@gandalf.local.home> <300C4516-A093-43AE-8707-1C42486807A4@amacapital.net>
+ <20190215191949.04604191@gandalf.local.home> <CAHk-=wgJzNp0R3cVhjBPHTR4X9sOvHdqK4UVFfbsOKQ6L=A_eQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wgJzNp0R3cVhjBPHTR4X9sOvHdqK4UVFfbsOKQ6L=A_eQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 18 Feb 2019 10:23:44 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh9XrOykA5J9RQ7zaBio-S_D+1AE+rGnBYWSd==pCXh+w@mail.gmail.com>
+Message-ID: <CAHk-=wh9XrOykA5J9RQ7zaBio-S_D+1AE+rGnBYWSd==pCXh+w@mail.gmail.com>
+Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
+ kernel memory that can fault
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable <stable@vger.kernel.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some parts of processing GET type requests and related notifications are
-independent of a command. Provide universal functions so that only four
-callbacks need to be defined for each command type:
+On Mon, Feb 18, 2019 at 9:58 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> So I've pulled the existing pull request, because it papers over one
+> particular issue, but the real fix would require:
+>
+>  - knowing whether it's kernel or user space you access
 
-  parse_request() - parse incoming message
-  prepare_data()  - retrieve data from driver or NIC
-  reply_size()    - estimate reply message size
-  fill_reply()    - compose reply message
+Actually, it would be good to split the "kernel space" access into
+finer granularities, because it would be good to limit those addresses
+by what you expect to happen.
 
-These callback are defined in an instance of struct get_request_ops.
+For example, on x86-64, we have a separate virtual mapping for kernel
+text. If you're following a data pointer, you probably shouldn't even
+look at that area, and just disallow it up-front.
 
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
----
- net/ethtool/netlink.c | 286 ++++++++++++++++++++++++++++++++++++++++++
- net/ethtool/netlink.h |  84 +++++++++++++
- 2 files changed, 370 insertions(+)
+And the vmalloc space, we should probably look up the vmalloc
+descriptor for the address, to make sure we don't go into ioremap'ed
+areas (but we'd generally *do* want to follow pages for module data,
+or for vmap'ed stacks).
 
-diff --git a/net/ethtool/netlink.c b/net/ethtool/netlink.c
-index ee3424cd1f90..8cdb6f52cb4a 100644
---- a/net/ethtool/netlink.c
-+++ b/net/ethtool/netlink.c
-@@ -84,6 +84,41 @@ int ethnl_fill_dev(struct sk_buff *msg, struct net_device *dev, u16 attrtype)
- 	return ret;
- }
- 
-+/* GET request helpers */
-+
-+const struct get_request_ops *get_requests[__ETHNL_CMD_CNT] = {
-+};
-+
-+static struct common_req_info *alloc_get_data(const struct get_request_ops *ops)
-+{
-+	struct common_req_info *req_info = kmalloc(ops->data_size, GFP_KERNEL);
-+
-+	if (!req_info)
-+		return NULL;
-+	memset(req_info, '\0', ops->repdata_offset);
-+	req_info->reply_data =
-+		(struct common_reply_data *)((char *)req_info +
-+					     ops->repdata_offset);
-+	return req_info;
-+}
-+
-+static void free_get_data(const struct get_request_ops *ops,
-+			  struct common_req_info *req_info)
-+{
-+	if (ops->cleanup)
-+		ops->cleanup(req_info);
-+	kfree(req_info);
-+}
-+
-+static void init_reply_data(const struct common_req_info *req_info,
-+			    const struct get_request_ops *ops,
-+			    struct net_device *dev)
-+{
-+	memset(req_info->reply_data, '\0',
-+	       ops->data_size - ops->repdata_offset);
-+	req_info->reply_data->dev = dev;
-+}
-+
- /* create skb for a reply and fill device identification
-  * payload: payload length (without netlink and genetlink header)
-  * dev:     device the reply is about (may be null)
-@@ -124,6 +159,257 @@ struct sk_buff *ethnl_reply_init(size_t payload, struct net_device *dev, u8 cmd,
- 	return NULL;
- }
- 
-+int ethnl_get_doit(struct sk_buff *skb, struct genl_info *info)
-+{
-+	const u8 cmd = info->genlhdr->cmd;
-+	struct common_req_info *req_info;
-+	const struct get_request_ops *ops;
-+	struct sk_buff *rskb;
-+	void *reply_payload;
-+	int reply_len;
-+	int ret;
-+
-+	ops = get_requests[cmd];
-+	if (WARN_ONCE(!ops, "cmd %u has no get_request_ops\n", cmd))
-+		return -EOPNOTSUPP;
-+	req_info = alloc_get_data(ops);
-+	if (!req_info)
-+		return -ENOMEM;
-+	ret = ops->parse_request(req_info, skb, info, info->nlhdr);
-+	if (!ops->allow_nodev_do && !req_info->dev) {
-+		ETHNL_SET_ERRMSG(info, "device not specified in do request");
-+		ret = -EINVAL;
-+	}
-+	if (ret < 0)
-+		goto err_dev;
-+	init_reply_data(req_info, ops, req_info->dev);
-+
-+	rtnl_lock();
-+	ret = ops->prepare_data(req_info, info);
-+	if (ret < 0)
-+		goto err_rtnl;
-+	reply_len = ops->reply_size(req_info);
-+	if (ret < 0)
-+		goto err_rtnl;
-+	ret = -ENOMEM;
-+	rskb = ethnl_reply_init(reply_len, req_info->dev, ops->reply_cmd,
-+				ops->dev_attrtype, info, &reply_payload);
-+	if (!rskb)
-+		goto err_rtnl;
-+	ret = ops->fill_reply(rskb, req_info);
-+	if (ret < 0)
-+		goto err;
-+	rtnl_unlock();
-+
-+	genlmsg_end(rskb, reply_payload);
-+	if (req_info->dev)
-+		dev_put(req_info->dev);
-+	free_get_data(ops, req_info);
-+	return genlmsg_reply(rskb, info);
-+
-+err:
-+	WARN_ONCE(ret == -EMSGSIZE,
-+		  "calculated message payload length (%d) not sufficient\n",
-+		  reply_len);
-+	nlmsg_free(rskb);
-+	free_get_data(ops, req_info);
-+err_rtnl:
-+	rtnl_unlock();
-+err_dev:
-+	if (req_info->dev)
-+		dev_put(req_info->dev);
-+	return ret;
-+}
-+
-+static int ethnl_get_dump_one(struct sk_buff *skb,
-+			      struct net_device *dev,
-+			      const struct get_request_ops *ops,
-+			      struct common_req_info *req_info)
-+{
-+	int ret;
-+
-+	init_reply_data(req_info, ops, dev);
-+	rtnl_lock();
-+	ret = ops->prepare_data(req_info, NULL);
-+	if (ret < 0)
-+		return ret;
-+	ret = ethnl_fill_dev(skb, dev, ops->dev_attrtype);
-+	if (ret < 0)
-+		return ret;
-+	ret = ops->fill_reply(skb, req_info);
-+	rtnl_unlock();
-+
-+	req_info->reply_data->dev = NULL;
-+	return ret;
-+}
-+
-+/* generic ->dumpit() handler; device iteration copied from rtnl_dump_ifinfo()
-+ * cb->args[0]: pointer to struct get_request_ops
-+ * cb->args[1]: pointer to request data
-+ * cb->args[2]: iteration position - hashbucket
-+ * cb->args[3]: iteration position - ifindex
-+ */
-+int ethnl_get_dumpit(struct sk_buff *skb, struct netlink_callback *cb)
-+{
-+	struct net *net = sock_net(skb->sk);
-+	struct common_req_info *req_info;
-+	const struct get_request_ops *ops;
-+	int h, s_h, idx = 0, s_idx;
-+	struct hlist_head *head;
-+	struct net_device *dev;
-+	int ret = 0;
-+	void *ehdr;
-+
-+	ops = (const struct get_request_ops *)cb->args[0];
-+	req_info = (struct common_req_info *)cb->args[1];
-+	s_h = cb->args[2];
-+	s_idx = cb->args[3];
-+
-+	for (h = s_h; h < NETDEV_HASHENTRIES; h++, s_idx = 0) {
-+		idx = 0;
-+		head = &net->dev_index_head[h];
-+		hlist_for_each_entry(dev, head, index_hlist) {
-+			if (idx < s_idx)
-+				goto cont;
-+			ehdr = genlmsg_put(skb, NETLINK_CB(cb->skb).portid,
-+					   cb->nlh->nlmsg_seq,
-+					   &ethtool_genl_family, 0,
-+					   ops->reply_cmd);
-+			ret = ethnl_get_dump_one(skb, dev, ops, req_info);
-+			if (ret < 0) {
-+				genlmsg_cancel(skb, ehdr);
-+				if (ret == -EOPNOTSUPP)
-+					goto cont;
-+				if (likely(skb->len))
-+					goto out;
-+				goto out_err;
-+			}
-+			genlmsg_end(skb, ehdr);
-+cont:
-+			idx++;
-+		}
-+	}
-+out:
-+	ret = skb->len;
-+out_err:
-+	cb->args[2] = h;
-+	cb->args[3] = idx;
-+	cb->seq = net->dev_base_seq;
-+	nl_dump_check_consistent(cb, nlmsg_hdr(skb));
-+
-+	return ret;
-+}
-+
-+/* generic ->start() handler for GET requests */
-+static int ethnl_get_start(struct netlink_callback *cb)
-+{
-+	struct common_req_info *req_info;
-+	const struct get_request_ops *ops;
-+	struct genlmsghdr *ghdr;
-+	int ret;
-+
-+	ghdr = nlmsg_data(cb->nlh);
-+	ops = get_requests[ghdr->cmd];
-+	if (WARN_ONCE(!ops, "cmd %u has no get_request_ops\n", ghdr->cmd))
-+		return -EOPNOTSUPP;
-+	req_info = alloc_get_data(ops);
-+	if (!req_info)
-+		return -ENOMEM;
-+
-+	ret = ops->parse_request(req_info, cb->skb, NULL, cb->nlh);
-+	if (req_info->dev) {
-+		/* We ignore device specification in dump requests but as the
-+		 * same parser as for non-dump (doit) requests is used, it
-+		 * would take reference to the device if it finds one
-+		 */
-+		dev_put(req_info->dev);
-+		req_info->dev = NULL;
-+	}
-+	if (ret < 0)
-+		return ret;
-+
-+	cb->args[0] = (long)ops;
-+	cb->args[1] = (long)req_info;
-+	cb->args[2] = 0;
-+	cb->args[3] = 0;
-+
-+	return 0;
-+}
-+
-+/* generic ->done() handler for GET requests */
-+static int ethnl_get_done(struct netlink_callback *cb)
-+{
-+	free_get_data((const struct get_request_ops *)cb->args[0],
-+		      (struct common_req_info *)cb->args[1]);
-+
-+	return 0;
-+}
-+
-+/* generic notification handler */
-+static void ethnl_std_notify(struct net_device *dev,
-+			     struct netlink_ext_ack *extack, unsigned int cmd,
-+			     u32 req_mask, const void *data)
-+{
-+	struct common_req_info *req_info;
-+	const struct get_request_ops *ops;
-+	struct sk_buff *skb;
-+	void *reply_payload;
-+	int reply_len;
-+	int ret;
-+
-+	ops = get_requests[cmd - 1];
-+	if (WARN_ONCE(!ops, "cmd %u has no get_request_ops\n", cmd - 1))
-+		return;
-+	/* when ethnl_std_notify() is used as notify handler, command id of
-+	 * corresponding GET request must be one less than cmd argument passed
-+	 * to ethnl_std_notify()
-+	 */
-+	if (WARN_ONCE(ops->reply_cmd != cmd,
-+		      "reply_cmd for %u is %u, expected %u\n", cmd - 1,
-+		      ops->reply_cmd, cmd))
-+		return;
-+
-+	req_info = alloc_get_data(ops);
-+	if (!req_info)
-+		return;
-+	req_info->dev = dev;
-+	req_info->req_mask = req_mask;
-+	req_info->compact = true;
-+
-+	init_reply_data(req_info, ops, dev);
-+	ret = ops->prepare_data(req_info, NULL);
-+	if (ret < 0)
-+		goto err_data;
-+	reply_len = ops->reply_size(req_info);
-+	if (reply_len < 0)
-+		goto err_data;
-+	skb = genlmsg_new(reply_len, GFP_KERNEL);
-+	if (!skb)
-+		goto err_data;
-+	reply_payload = genlmsg_put(skb, 0, ++ethnl_bcast_seq,
-+				    &ethtool_genl_family, 0, ops->reply_cmd);
-+	if (!reply_payload)
-+		goto err_skb;
-+
-+	ret = ethnl_fill_dev(skb, dev, ops->dev_attrtype);
-+	if (ret < 0)
-+		goto err_skb;
-+	ret = ops->fill_reply(skb, req_info);
-+	if (ret < 0)
-+		goto err_skb;
-+	free_get_data(ops, req_info);
-+	genlmsg_end(skb, reply_payload);
-+
-+	genlmsg_multicast(&ethtool_genl_family, skb, 0, ETHNL_MCGRP_MONITOR,
-+			  GFP_KERNEL);
-+	return;
-+
-+err_skb:
-+	nlmsg_free(skb);
-+err_data:
-+	free_get_data(ops, req_info);
-+}
-+
- /* notifications */
- 
- typedef void (*ethnl_notify_handler_t)(struct net_device *dev,
-diff --git a/net/ethtool/netlink.h b/net/ethtool/netlink.h
-index 78385baeaec0..7141ec71a6d3 100644
---- a/net/ethtool/netlink.h
-+++ b/net/ethtool/netlink.h
-@@ -155,4 +155,88 @@ static inline unsigned int dev_ident_size(void)
- 			      nla_total_size(IFNAMSIZ));
- }
- 
-+/* GET request handling */
-+
-+struct common_reply_data;
-+
-+/* Structure holding data for unified processing a GET request consists of two
-+ * parts: request info and reply data. Request info starts at offset 0 with
-+ * embedded struct common_req_info, is usually filled by ->parse_request()
-+ * and is common for all reply messages to one request. Reply data start with
-+ * embedded struct common_reply_data and contain data specific to a reply
-+ * message (usually one per device for dump requests); this part is filled by
-+ * ->prepare_data()
-+ *
-+ * @reply_data: pointer to corresponding struct common_reply_data
-+ * @dev: requested device; may be null (dumps), if not, reference is held
-+ * @req_mask: bit mask of parts of information requested
-+ * @compact: use compact format for bitsets
-+ */
-+struct common_req_info {
-+	struct common_reply_data	*reply_data;
-+	struct net_device		*dev;
-+	u32				req_mask;
-+	bool				compact;
-+};
-+
-+/* @dev: device for current reply message
-+ * @info_mask: subset of req_mask (without information which is not available)
-+ */
-+struct common_reply_data {
-+	struct net_device		*dev;
-+	u32				info_mask;
-+};
-+
-+static inline int ethnl_before_ops(struct net_device *dev)
-+{
-+	if (dev && dev->ethtool_ops->begin)
-+		return dev->ethtool_ops->begin(dev);
-+	else
-+		return 0;
-+}
-+
-+static inline void ethnl_after_ops(struct net_device *dev)
-+{
-+	if (dev && dev->ethtool_ops->complete)
-+		dev->ethtool_ops->complete(dev);
-+}
-+
-+/* parameters and callbacks for unified handling of GET requests
-+ * @request_cmd: command id for request (GET)
-+ * @reply_cmd: command id for reply (SET)
-+ * @dev_attr: attr type for device specification
-+ * @data_size: total length of data structure
-+ * @repdata_offset: offset of "reply data" part (struct common_reply_data)
-+ * @allow_nodev_do: do not fail if device is not specified for non-dump request
-+ * @parse_request: parse request message and fill request info; request info
-+ *     is zero initialized on entry except reply_data pointer (which is set)
-+ * @prepare_data: retrieve data needed to compose a reply message; reply data
-+ *     is zero initialized on entry except @dev
-+ * @reply_size: return size of reply message payload without device
-+ *     specification; reported size may be slightly bigger than actual reply
-+ *     but must not be smaller
-+ * @fill_reply: fill reply message payload
-+ * @cleanup: (optional) called when data are no longer needed; use e.g. to free
-+ *           any additional data allocated in prepare_data() which are not part
-+ *           of the main structure
-+ */
-+struct get_request_ops {
-+	u8			request_cmd;
-+	u8			reply_cmd;
-+	u16			dev_attrtype;
-+	unsigned int		data_size;
-+	unsigned int		repdata_offset;
-+	bool			allow_nodev_do;
-+
-+	int (*parse_request)(struct common_req_info *req_info,
-+			     struct sk_buff *skb, struct genl_info *info,
-+			     const struct nlmsghdr *nlhdr);
-+	int (*prepare_data)(struct common_req_info *req_info,
-+			    struct genl_info *info);
-+	int (*reply_size)(const struct common_req_info *req_info);
-+	int (*fill_reply)(struct sk_buff *skb,
-+			  const struct common_req_info *req_info);
-+	void (*cleanup)(struct common_req_info *req_info);
-+};
-+
- #endif /* _NET_ETHTOOL_NETLINK_H */
--- 
-2.20.1
+And fixmap and/or percpu pointers may or may not be something that
+we'd want to follow.
 
+Etc.
+
+So it would be good to not just say "user or kernel", but actually say
+what *kind* of kernel access it expects.
+
+               Linus
