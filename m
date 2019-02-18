@@ -2,134 +2,86 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F05A5C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C9C2C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE9DD2177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:33:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550511235;
-	bh=lK+JHr7EO0NyLhpmUHMOKSsymoC78ioH0CGzMJHmkDs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AUKDdBI+8PVpV31YMm2zL1u2a3gnqOdg3ER2jE/BtL5A4aH0+bvHfl9GtHI173oeV
-	 AxhgTvPhNRHCpqP3jyV111Kbin5TiqgqSga07yvPvQxxopiSdhp0WnErtRS3AAamQ7
-	 HSGKMVapDw+kw1VU072IPRw87EezWn3rSqACpjvI=
+	by mail.kernel.org (Postfix) with ESMTP id C8D2E20838
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:37:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388621AbfBRRdy (ORCPT
+        id S2388688AbfBRRhg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 12:33:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37370 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 12:37:36 -0500
+Received: from foss.arm.com ([217.140.101.70]:34952 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388519AbfBRRdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 12:33:49 -0500
-Received: from localhost.localdomain (unknown [194.230.155.153])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F24F42177E;
-        Mon, 18 Feb 2019 17:33:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550511229;
-        bh=lK+JHr7EO0NyLhpmUHMOKSsymoC78ioH0CGzMJHmkDs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xAq2P3DPn+Y2Fbda6cAhas0pnMDZmtoqu+WL503tCX3dz8s9VnDtZSqXlTkNjzOgM
-         8i15G6qEunRwuTsI4TfScK0YJkJyHIE5kpYEbawYVJLRQwqiCwSgggVx0Utx1sul5m
-         cUVy5e8Sd2/1LNVlh160gfM6EMBdYL3MwH2E7eME=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Markus Reichl <reichl@t-online.de>
-Subject: [PATCH 3/3] ARM: dts: exynos: Raise maximum buck regulator voltages on Arndale Octa
-Date:   Mon, 18 Feb 2019 18:32:58 +0100
-Message-Id: <20190218173258.7071-3-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190218173258.7071-1-krzk@kernel.org>
-References: <20190218173258.7071-1-krzk@kernel.org>
+        id S1729728AbfBRRhg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 12:37:36 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E565D80D;
+        Mon, 18 Feb 2019 09:02:22 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 87C683F675;
+        Mon, 18 Feb 2019 09:02:01 -0800 (PST)
+Subject: Re: MT76x2U crashes XHCI driver on AMD Ryzen system
+To:     Stanislaw Gruszka <sgruszka@redhat.com>,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Cc:     Samuel Sieb <samuel@sieb.net>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Rosen Penev <rosenp@gmail.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>
+References: <CAKxU2N9o5WeUwFMUwwXKHaPj7R+oiSKV1c2n8RtXwGNZRtw5Sw@mail.gmail.com>
+ <CAJ0CqmVNF83bWgc+LSQ3_i=zfp-sXC5Nf=nKfqB3SWa8r7sKdQ@mail.gmail.com>
+ <83A1D243-9073-48D1-9F26-5A2581DCB829@gmail.com>
+ <CAJ0CqmUgPWNJtCW4Q__sOtB8w-YtwW+uZy7crxMNrmSgQ6OFyA@mail.gmail.com>
+ <1547404075.1582.0@smtp.gmail.com>
+ <CAJ0CqmU7k5i26g7dGPxNdts7Gm67W6qNsr4vYuW05ugsEF1ohw@mail.gmail.com>
+ <CAKxU2N-+CTaRdJMFVRdozJ5TTpN+_4thiDRBJBFq8gGtuRVYvA@mail.gmail.com>
+ <20190114091841.GA23045@localhost.localdomain>
+ <CAKxU2N8ioMszBCyQcH7CVhgBdW4aj7yZ+kYQe14DCV5OSAnxrg@mail.gmail.com>
+ <20190115090400.GA2267@localhost.localdomain>
+ <20190218143742.GA11872@redhat.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <2cc5674a-a3a0-d8fe-65f5-4357da9b85d3@arm.com>
+Date:   Mon, 18 Feb 2019 17:01:59 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190218143742.GA11872@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Raise the buck 1-7 regulators voltages to allow cpufreq choosing them
-and to fix warnings during boot:
+On 18/02/2019 14:37, Stanislaw Gruszka wrote:
+[...]
+> Another issue is that dma_map_sg() & dma_map_page() may require some
+> constraints. I'm not sure about that and I want to clarify that with
+> CCed mm maintainers. I think DMA drivers may expect sg->offset < PAGE_SIZE
+> for both dma_map_sg() and dma_map_page(). Additionally dma_map_page()
+> maight expect that offset & length specify buffer within one page.
 
-    core: _opp_supported_by_regulators: OPP minuV: 1250000 maxuV: 1250000, not supported by regulator
-    cpu cpu0: _opp_add: OPP not supported by regulators (1800000000)
+Luckily, this came up a while back[1] and we seemed to reach a consensus 
+that sg->offset >= PAGE_SIZE for dma_map_sg() was weird but valid. IIRC 
+it was only the Intel IOMMU code which failed to handle that case 
+appropriately (and which I fixed) - the AMD IOMMU code always looked 
+like it should be OK, but I'm not sure I've ever seen definitive test 
+results (and I don't have hardware to do so myself).
 
-The maximum value is now in sync with other Exynos5420 boards with
-S2MPS11 PMIC (SMDK5420, Odroid XU3 family).  This also matches the
-values used in old patches done by Linaro Samsung team.
+For dma_map_page(), length >= PAGE_SIZE should be perfectly valid and 
+handled correctly. The offset >= PAGE_SIZE case is a bit harder to 
+justify, but at the same time has less scope for the DMA API backend to 
+get it wrong, so either way is likely to be OK in practice (in 
+particular the AMD IOMMU code looks like it won't have a problem, since 
+its map_page() implementation converts page and offset to a plain 
+physical address before doing anything else).
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/exynos5420-arndale-octa.dts | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Robin.
 
-diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-index 308c74ebeacd..c7d9604a119e 100644
---- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-+++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-@@ -342,48 +342,48 @@
- 			buck1_reg: BUCK1 {
- 				regulator-name = "PVDD_MIF_1V1";
- 				regulator-min-microvolt = <800000>;
--				regulator-max-microvolt = <1100000>;
-+				regulator-max-microvolt = <1300000>;
- 				regulator-always-on;
- 			};
- 
- 			buck2_reg: BUCK2 {
- 				regulator-name = "vdd_arm";
- 				regulator-min-microvolt = <800000>;
--				regulator-max-microvolt = <1000000>;
-+				regulator-max-microvolt = <1500000>;
- 				regulator-always-on;
- 			};
- 
- 			buck3_reg: BUCK3 {
- 				regulator-name = "PVDD_INT_1V0";
- 				regulator-min-microvolt = <800000>;
--				regulator-max-microvolt = <1000000>;
-+				regulator-max-microvolt = <1400000>;
- 				regulator-always-on;
- 			};
- 
- 			buck4_reg: BUCK4 {
- 				regulator-name = "PVDD_G3D_1V0";
- 				regulator-min-microvolt = <800000>;
--				regulator-max-microvolt = <1000000>;
-+				regulator-max-microvolt = <1400000>;
- 			};
- 
- 			buck5_reg: BUCK5 {
- 				regulator-name = "PVDD_LPDDR3_1V2";
- 				regulator-min-microvolt = <800000>;
--				regulator-max-microvolt = <1200000>;
-+				regulator-max-microvolt = <1400000>;
- 				regulator-always-on;
- 			};
- 
- 			buck6_reg: BUCK6 {
- 				regulator-name = "PVDD_KFC_1V0";
- 				regulator-min-microvolt = <800000>;
--				regulator-max-microvolt = <1000000>;
-+				regulator-max-microvolt = <1500000>;
- 				regulator-always-on;
- 			};
- 
- 			buck7_reg: BUCK7 {
- 				regulator-name = "VIN_LLDO_1V4";
- 				regulator-min-microvolt = <800000>;
--				regulator-max-microvolt = <1400000>;
-+				regulator-max-microvolt = <1500000>;
- 				regulator-always-on;
- 			};
- 
--- 
-2.17.1
-
+[1] 
+https://lists.linuxfoundation.org/pipermail/iommu/2017-September/024148.html
