@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8AA9C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E55C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89B7B20842
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C7BC21901
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498132;
-	bh=O+0odnefRpdwelyxl34YRXKO0UZFLK0Xh68rIN2Gqyk=;
+	s=default; t=1550498139;
+	bh=pVewWanVI7OuuxzKROSW08BVe+1zn3+Vl7unEX0NHi8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KPeXro+VS3vBUA9DL/upFn7HkyLL8g87NXq1J3W+/wiOrDyZhsjv0EBbpFJ60D8p0
-	 sOK8mYb9zv8MG5nWTB6et8zDzZHMVpviur5xLcj7pU94xdwX9bkHywlVxZ6ZaGw6nm
-	 gtD5ZM5PcNHK/c7zIRD8UqNk8AmkhM6dZGbwl9Y0=
+	b=Q/B8N+3rPilJafY7/7V2t/5B3ntNLDCl12Jua7oqPdF2RC9py/wiQmW0WHwp6iJlX
+	 R2eJVPnTlE7/thk3kyTRl6yh3pOzB07qdTEnhUv4y6eUGkGFy7q+TpmFs3U8qiYrDn
+	 lqpOwj0Jb9fsmi3EMtnTy+1YoJhfAvzxX1bEAmY0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731696AbfBRNzb (ORCPT
+        id S2387553AbfBRNzh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:55:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35514 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:55:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387528AbfBRNz1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:55:27 -0500
+        id S1732045AbfBRNzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:55:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91D942077B;
-        Mon, 18 Feb 2019 13:55:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE30721900;
+        Mon, 18 Feb 2019 13:55:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498127;
-        bh=O+0odnefRpdwelyxl34YRXKO0UZFLK0Xh68rIN2Gqyk=;
+        s=default; t=1550498133;
+        bh=pVewWanVI7OuuxzKROSW08BVe+1zn3+Vl7unEX0NHi8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bJ+2699XlGfdonx9hGn09HQJWH3qs/VJOnhy2YjuoqyvrAweGa6Zi7lyD1hSz1z5R
-         KI72CLSvXBWI1gzEIe/los5PnhquM6MxlNMxlYs97VJh6UZfPCMoyByQu5prE2q8xb
-         rinGEivuC17/vXs0wNFWXoA9v+PjzDG/AZEBcz2g=
+        b=Kkpth2qslGUX2jKoF233xhsnqqfSyFwTmCuU5feLwiz8FISOWW0n8uwFzIc5c1Zvy
+         zC03Uz3dmd6M3PU5N68NxIQJ9i7copbYMt30UVcZWdOyq6VA1qLrfYD8pr3ltWv8rp
+         aAQhXCIvORsHGjgNUkOuEGiaz4NkbUKQjV84IRP0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liviu Dudau <liviu@dudau.co.uk>,
-        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 32/62] nvme-pci: use the same attributes when freeing host_mem_desc_bufs.
-Date:   Mon, 18 Feb 2019 14:43:38 +0100
-Message-Id: <20190218133508.709483503@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 34/62] ARM: dts: da850-lcdk: Correct the sound card name
+Date:   Mon, 18 Feb 2019 14:43:40 +0100
+Message-Id: <20190218133508.861125812@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
 References: <20190218133505.801423074@linuxfoundation.org>
@@ -65,47 +65,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit cc667f6d5de023ee131e96bb88e5cddca23272bd ]
+[ Upstream commit c25748acc5c20786ecb7518bfeae8fcef93472d6 ]
 
-When using HMB the PCIe host driver allocates host_mem_desc_bufs using
-dma_alloc_attrs() but frees them using dma_free_coherent(). Use the
-correct dma_free_attrs() function to free the buffers.
+To avoid  the following error:
+asoc-simple-card sound: ASoC: Failed to create card debugfs directory
 
-Signed-off-by: Liviu Dudau <liviu@dudau.co.uk>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Which is because the card name contains '/' character, which can not be
+used in file or directory names.
+
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/pci.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/da850-lcdk.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index afb99876fa9e..06355ca832db 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -1624,8 +1624,9 @@ static void nvme_free_host_mem(struct nvme_dev *dev)
- 		struct nvme_host_mem_buf_desc *desc = &dev->host_mem_descs[i];
- 		size_t size = le32_to_cpu(desc->size) * dev->ctrl.page_size;
+diff --git a/arch/arm/boot/dts/da850-lcdk.dts b/arch/arm/boot/dts/da850-lcdk.dts
+index a0f0916156e6..c9d4cb212b72 100644
+--- a/arch/arm/boot/dts/da850-lcdk.dts
++++ b/arch/arm/boot/dts/da850-lcdk.dts
+@@ -28,7 +28,7 @@
  
--		dma_free_coherent(dev->dev, size, dev->host_mem_desc_bufs[i],
--				le64_to_cpu(desc->addr));
-+		dma_free_attrs(dev->dev, size, dev->host_mem_desc_bufs[i],
-+			       le64_to_cpu(desc->addr),
-+			       DMA_ATTR_NO_KERNEL_MAPPING | DMA_ATTR_NO_WARN);
- 	}
- 
- 	kfree(dev->host_mem_desc_bufs);
-@@ -1691,8 +1692,9 @@ static int __nvme_alloc_host_mem(struct nvme_dev *dev, u64 preferred,
- 	while (--i >= 0) {
- 		size_t size = le32_to_cpu(descs[i].size) * dev->ctrl.page_size;
- 
--		dma_free_coherent(dev->dev, size, bufs[i],
--				le64_to_cpu(descs[i].addr));
-+		dma_free_attrs(dev->dev, size, bufs[i],
-+			       le64_to_cpu(descs[i].addr),
-+			       DMA_ATTR_NO_KERNEL_MAPPING | DMA_ATTR_NO_WARN);
- 	}
- 
- 	kfree(bufs);
+ 	sound {
+ 		compatible = "simple-audio-card";
+-		simple-audio-card,name = "DA850/OMAP-L138 LCDK";
++		simple-audio-card,name = "DA850-OMAPL138 LCDK";
+ 		simple-audio-card,widgets =
+ 			"Line", "Line In",
+ 			"Line", "Line Out";
 -- 
 2.19.1
 
