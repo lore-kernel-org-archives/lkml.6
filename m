@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBA51C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:04:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F782C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:04:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2EE221902
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:04:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0081B204FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:04:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498691;
-	bh=B+04Y23t5MFVW5zZo5oOV4LFx0q/EJtJgjhcqXz5opU=;
+	s=default; t=1550498693;
+	bh=f2fdH5ehsZ0A9l2BluGcts9s4Bp2gfTz43PVkdcGBN0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OnUiHJfRuz5krbmu1KPiek1kYjZVsUx93TavhzArLXQTHmuUPo1ySlYJKb6jpavXl
-	 hr9aSnqdf/ilDaKt/VwZT6Bt7p0v54obUPIylHhS8bOUejM0DglQzgUDTDFLVN27+X
-	 KsoMZORmLg1/nSzEnUkclAbwoF9a0Hxk/nYVv5Ts=
+	b=OS8PTfimDRZ7SjlX3jRLn1G/dfrtSZwRoD6bfvaGFUaB5+bjdK3saoEfQhTnBOBVJ
+	 2m0ZBLVeTv0SJC0FSMP+lCfWx2MVfMmGwl1XUUlXUi2rPbNxI1LMxsDEhvIWtVhSy6
+	 6Bz3++OU1yXgDdOS+nzl9adfKNoyFSFym+nlT1+4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390007AbfBROEu (ORCPT
+        id S2390022AbfBROEv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:04:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47272 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:04:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389987AbfBROEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:04:44 -0500
+        id S2389973AbfBROEs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:04:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7B15204FD;
-        Mon, 18 Feb 2019 14:04:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A23221908;
+        Mon, 18 Feb 2019 14:04:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498684;
-        bh=B+04Y23t5MFVW5zZo5oOV4LFx0q/EJtJgjhcqXz5opU=;
+        s=default; t=1550498688;
+        bh=f2fdH5ehsZ0A9l2BluGcts9s4Bp2gfTz43PVkdcGBN0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=no8fidgFGSBXNcuWDgaBUT9BWJZKVkQw6cEOzEmi2H8HgRYb3I2+QeMblA+dpG4c7
-         EiuT3SZ1OBWpXkaYiS/GGNNctxavPms9WDXwu7yY6U/W+udWE71Q+k4h2nhuloaumN
-         OCpgsB7STZrI6YRtpQpOYAxJ47+5MdDALMfwf4LE=
+        b=0fW1g2Xa6sflkzJVnIxn1m66w/uACRS3hOQheN9buOzoYE3xM4Uf6keFz4AwF/fQm
+         GOgjvupLMokEsOgNGI8r03ovv2LDmFotpZzoFfzDa5MxZPMAjSA6SAmb8foYOSa8el
+         H3UEVcLXOMSaTML0w5aTB2syxJGcToVMPWC47wC0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+c1e36d30ee3416289cc0@syzkaller.appspotmail.com,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.4 087/143] fuse: handle zero sized retrieve correctly
-Date:   Mon, 18 Feb 2019 14:43:35 +0100
-Message-Id: <20190218133532.243447050@linuxfoundation.org>
+        Leonid Iziumtsev <leonid.iziumtsev@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 4.4 088/143] dmaengine: imx-dma: fix wrong callback invoke
+Date:   Mon, 18 Feb 2019 14:43:36 +0100
+Message-Id: <20190218133532.278858029@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -65,40 +65,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Leonid Iziumtsev <leonid.iziumtsev@gmail.com>
 
-commit 97e1532ef81acb31c30f9e75bf00306c33a77812 upstream.
+commit 341198eda723c8c1cddbb006a89ad9e362502ea2 upstream.
 
-Dereferencing req->page_descs[0] will Oops if req->max_pages is zero.
+Once the "ld_queue" list is not empty, next descriptor will migrate
+into "ld_active" list. The "desc" variable will be overwritten
+during that transition. And later the dmaengine_desc_get_callback_invoke()
+will use it as an argument. As result we invoke wrong callback.
 
-Reported-by: syzbot+c1e36d30ee3416289cc0@syzkaller.appspotmail.com
-Tested-by: syzbot+c1e36d30ee3416289cc0@syzkaller.appspotmail.com
-Fixes: b2430d7567a3 ("fuse: add per-page descriptor <offset, length> to fuse_req")
-Cc: <stable@vger.kernel.org> # v3.9
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+That behaviour was in place since:
+commit fcaaba6c7136 ("dmaengine: imx-dma: fix callback path in tasklet").
+But after commit 4cd13c21b207 ("softirq: Let ksoftirqd do its job")
+things got worse, since possible delay between tasklet_schedule()
+from DMA irq handler and actual tasklet function execution got bigger.
+And that gave more time for new DMA request to be submitted and
+to be put into "ld_queue" list.
+
+It has been noticed that DMA issue is causing problems for "mxc-mmc"
+driver. While stressing the system with heavy network traffic and
+writing/reading to/from sd card simultaneously the timeout may happen:
+
+10013000.sdhci: mxcmci_watchdog: read time out (status = 0x30004900)
+
+That often lead to file system corruption.
+
+Signed-off-by: Leonid Iziumtsev <leonid.iziumtsev@gmail.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/imx-dma.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1741,7 +1741,6 @@ static int fuse_retrieve(struct fuse_con
- 	req->in.h.nodeid = outarg->nodeid;
- 	req->in.numargs = 2;
- 	req->in.argpages = 1;
--	req->page_descs[0].offset = offset;
- 	req->end = fuse_retrieve_end;
+--- a/drivers/dma/imx-dma.c
++++ b/drivers/dma/imx-dma.c
+@@ -619,7 +619,7 @@ static void imxdma_tasklet(unsigned long
+ {
+ 	struct imxdma_channel *imxdmac = (void *)data;
+ 	struct imxdma_engine *imxdma = imxdmac->imxdma;
+-	struct imxdma_desc *desc;
++	struct imxdma_desc *desc, *next_desc;
+ 	unsigned long flags;
  
- 	index = outarg->offset >> PAGE_CACHE_SHIFT;
-@@ -1756,6 +1755,7 @@ static int fuse_retrieve(struct fuse_con
+ 	spin_lock_irqsave(&imxdma->lock, flags);
+@@ -649,10 +649,10 @@ static void imxdma_tasklet(unsigned long
+ 	list_move_tail(imxdmac->ld_active.next, &imxdmac->ld_free);
  
- 		this_num = min_t(unsigned, num, PAGE_CACHE_SIZE - offset);
- 		req->pages[req->num_pages] = page;
-+		req->page_descs[req->num_pages].offset = offset;
- 		req->page_descs[req->num_pages].length = this_num;
- 		req->num_pages++;
- 
+ 	if (!list_empty(&imxdmac->ld_queue)) {
+-		desc = list_first_entry(&imxdmac->ld_queue, struct imxdma_desc,
+-					node);
++		next_desc = list_first_entry(&imxdmac->ld_queue,
++					     struct imxdma_desc, node);
+ 		list_move_tail(imxdmac->ld_queue.next, &imxdmac->ld_active);
+-		if (imxdma_xfer_desc(desc) < 0)
++		if (imxdma_xfer_desc(next_desc) < 0)
+ 			dev_warn(imxdma->dev, "%s: channel: %d couldn't xfer desc\n",
+ 				 __func__, imxdmac->channel);
+ 	}
 
 
