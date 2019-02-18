@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 399A9C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66771C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:46:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0528E218FC
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3788B218FC
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:46:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497581;
-	bh=0H7uUrrRubL9hx1Kfc78n6GVhjDFR1pTSbDT+jNmRD8=;
+	s=default; t=1550497586;
+	bh=fb/MxoQqOX4pG6YBN+TVbmOuZBaEwiFDKmjoO2XEZzg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OJFtczqxuTBOdu2s4TW6nAZT1JurO3f9u7ctfMa2T71ZaR3WGtPHC4/WLoQkCtIgY
-	 YuG0XSak5qZLmknwEpb6lJHau/prOHplM+dbDfT09N9RvSwh5vye3BGqbpo5vzthgj
-	 nD0CW4inAKs4DoXK4gDKnygKh4NyjZy4b83rgiV4=
+	b=F0w/dzmSnjRMmyEgDUkW+Q2qzQRU0g6rNj7R5jRjKw/3QEi9bOacTgGS2iqyU1TZy
+	 J458wjsAnvE/Zt+Uq5mOh8UplvPvABhf61EBAiIZBarIsDnycHN4KdrKIbkZCOLeqf
+	 d28a426va9RK/6yPGAFskCyhFcoHVsVN/5S58NdQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731589AbfBRNqS (ORCPT
+        id S1731604AbfBRNqY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:46:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52622 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:46:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731559AbfBRNqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:46:14 -0500
+        id S1730618AbfBRNqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:46:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2627D217F5;
-        Mon, 18 Feb 2019 13:46:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B8E5217F5;
+        Mon, 18 Feb 2019 13:46:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497573;
-        bh=0H7uUrrRubL9hx1Kfc78n6GVhjDFR1pTSbDT+jNmRD8=;
+        s=default; t=1550497579;
+        bh=fb/MxoQqOX4pG6YBN+TVbmOuZBaEwiFDKmjoO2XEZzg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G35GjN+3U14qwPXuXNKAyng87dwEVDc8tp1re4HfVNq7/l3CSm72S+Ohr8UYC7Ax5
-         2GiwyWN65hfBRwxwU8X9Oy3AnbOWBV8uvnm8WAoGcfplg2C1KFOJhGKwpced1rjwiL
-         W1HHISitHZ86Fjsa782fBQgHEcJ/G1ZHeiRHvXo8=
+        b=RuWSdXcRpm48kFdue6CFNGJH5ZAagzcEjKUd469aa1dchnCctGUdW0IJZ+JpXyNgI
+         t6CNsOshxi2JtgBljZ79ZtnjcRDBgVAwKZg7yTr5PP6v2++QumwtNHxJUkI3xWh3F8
+         6SReUdtdmcDExvupTR0dwoE0yctBKPgSIbGOdUrA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Likun Gao <Likun.Gao@amd.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 17/92] drm/amd/powerplay: avoid possible buffer overflow
-Date:   Mon, 18 Feb 2019 14:42:20 +0100
-Message-Id: <20190218133456.295495891@linuxfoundation.org>
+        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 19/92] drm/bridge: tc358767: add defines for DP1_SRCCTRL & PHY_2LANE
+Date:   Mon, 18 Feb 2019 14:42:22 +0100
+Message-Id: <20190218133456.487556428@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
 References: <20190218133454.668268457@linuxfoundation.org>
@@ -66,52 +66,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit fff0d3f7686942bd544b53a48d1b76bd62c46946 ]
+[ Upstream commit adf4109896bbee27fd2ac3b48d22d6a0062fe517 ]
 
-Make sure the clock level enforced is within the allowed
-ranges.
+DP1_SRCCTRL register and PHY_2LANE field did not have matching defines.
+Add these.
 
-Signed-off-by: Evan Quan <evan.quan@amd.com>
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Reviewed-by: Likun Gao <Likun.Gao@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-3-tomi.valkeinen@ti.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/powerplay/hwmgr/vega20_hwmgr.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/gpu/drm/bridge/tc358767.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/vega20_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/vega20_hwmgr.c
-index 3b7fce5d7258..b9e19b0eb905 100644
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega20_hwmgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega20_hwmgr.c
-@@ -2244,6 +2244,13 @@ static int vega20_force_clock_level(struct pp_hwmgr *hwmgr,
- 		soft_min_level = mask ? (ffs(mask) - 1) : 0;
- 		soft_max_level = mask ? (fls(mask) - 1) : 0;
+diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
+index 29a7e33e8ae0..5f0a666db2fd 100644
+--- a/drivers/gpu/drm/bridge/tc358767.c
++++ b/drivers/gpu/drm/bridge/tc358767.c
+@@ -142,6 +142,8 @@
+ #define DP0_LTLOOPCTRL		0x06d8
+ #define DP0_SNKLTCTRL		0x06e4
  
-+		if (soft_max_level >= data->dpm_table.gfx_table.count) {
-+			pr_err("Clock level specified %d is over max allowed %d\n",
-+					soft_max_level,
-+					data->dpm_table.gfx_table.count - 1);
-+			return -EINVAL;
-+		}
++#define DP1_SRCCTRL		0x07a0
 +
- 		data->dpm_table.gfx_table.dpm_state.soft_min_level =
- 			data->dpm_table.gfx_table.dpm_levels[soft_min_level].value;
- 		data->dpm_table.gfx_table.dpm_state.soft_max_level =
-@@ -2264,6 +2271,13 @@ static int vega20_force_clock_level(struct pp_hwmgr *hwmgr,
- 		soft_min_level = mask ? (ffs(mask) - 1) : 0;
- 		soft_max_level = mask ? (fls(mask) - 1) : 0;
+ /* PHY */
+ #define DP_PHY_CTRL		0x0800
+ #define DP_PHY_RST			BIT(28)  /* DP PHY Global Soft Reset */
+@@ -150,6 +152,7 @@
+ #define PHY_M1_RST			BIT(12)  /* Reset PHY1 Main Channel */
+ #define PHY_RDY				BIT(16)  /* PHY Main Channels Ready */
+ #define PHY_M0_RST			BIT(8)   /* Reset PHY0 Main Channel */
++#define PHY_2LANE			BIT(2)   /* PHY Enable 2 lanes */
+ #define PHY_A0_EN			BIT(1)   /* PHY Aux Channel0 Enable */
+ #define PHY_M0_EN			BIT(0)   /* PHY Main Channel0 Enable */
  
-+		if (soft_max_level >= data->dpm_table.mem_table.count) {
-+			pr_err("Clock level specified %d is over max allowed %d\n",
-+					soft_max_level,
-+					data->dpm_table.mem_table.count - 1);
-+			return -EINVAL;
-+		}
+@@ -564,7 +567,7 @@ static int tc_aux_link_setup(struct tc_data *tc)
+ 	value |= SYSCLK_SEL_LSCLK | LSCLK_DIV_2;
+ 	tc_write(SYS_PLLPARAM, value);
+ 
+-	tc_write(DP_PHY_CTRL, BGREN | PWR_SW_EN | BIT(2) | PHY_A0_EN);
++	tc_write(DP_PHY_CTRL, BGREN | PWR_SW_EN | PHY_2LANE | PHY_A0_EN);
+ 
+ 	/*
+ 	 * Initially PLLs are in bypass. Force PLL parameter update,
+@@ -834,7 +837,7 @@ static int tc_main_link_setup(struct tc_data *tc)
+ 		 DP0_SRCCTRL_LANESKEW | DP0_SRCCTRL_LANES_2 |
+ 		 DP0_SRCCTRL_BW27 | DP0_SRCCTRL_AUTOCORRECT);
+ 	/* from excel file - DP1_SrcCtrl */
+-	tc_write(0x07a0, 0x00003083);
++	tc_write(DP1_SRCCTRL, 0x00003083);
+ 
+ 	rate = clk_get_rate(tc->refclk);
+ 	switch (rate) {
+@@ -855,8 +858,9 @@ static int tc_main_link_setup(struct tc_data *tc)
+ 	}
+ 	value |= SYSCLK_SEL_LSCLK | LSCLK_DIV_2;
+ 	tc_write(SYS_PLLPARAM, value);
 +
- 		data->dpm_table.mem_table.dpm_state.soft_min_level =
- 			data->dpm_table.mem_table.dpm_levels[soft_min_level].value;
- 		data->dpm_table.mem_table.dpm_state.soft_max_level =
+ 	/* Setup Main Link */
+-	dp_phy_ctrl = BGREN | PWR_SW_EN | BIT(2) | PHY_A0_EN |  PHY_M0_EN;
++	dp_phy_ctrl = BGREN | PWR_SW_EN | PHY_2LANE | PHY_A0_EN |  PHY_M0_EN;
+ 	tc_write(DP_PHY_CTRL, dp_phy_ctrl);
+ 	msleep(100);
+ 
 -- 
 2.19.1
 
