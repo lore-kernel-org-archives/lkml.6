@@ -4,48 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 390E7C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B22E8C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:13:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06FE521901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:13:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 781D321905
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:13:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499202;
-	bh=LBgUVW5AKjLr3dxBytzab2qTRa3SmpyIrhzxv3z1kjs=;
+	s=default; t=1550499208;
+	bh=ZilC/oIwwkqgRzjO+LcbQ7/Bqqp3CBxP5s/lEfQRpZo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Vx68W5hJ0CXlckGavKuRtR+9j+EBFhL1ee49vYtd03YxX7IDPW05g4NoO2NJYFdzs
-	 LGiZe8S5mxRf7v6KrCwfJRSuqBU4hkf35KX9mXcDcY9hyP8TmcbzX9+EQes2gIsbRn
-	 0/vWYNS1/qk2lhebEBu8SAcfLeAgLjc2jn1cw4d0=
+	b=wMVuDHnsOrsO05erT2vaiXjAdUipKnbxT7ppfM3YaMZqDtIaw/ixpKun/zMKtXAHm
+	 MOFhWEhKMXF06dG+Y5B/jqvvxVeGCeUeKdnovNyhyX52dg5JEBbeYk/+JHWvOfQcv6
+	 zISDuacLHm+HQwg856dcL5qbrf9xWxGDrg7GDgQw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392318AbfBRONU (ORCPT
+        id S2392348AbfBRON1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:13:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57966 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:13:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392301AbfBRONS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:13:18 -0500
+        id S2392301AbfBRONV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:13:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A1AE218AD;
-        Mon, 18 Feb 2019 14:13:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A820D217D7;
+        Mon, 18 Feb 2019 14:13:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550499197;
-        bh=LBgUVW5AKjLr3dxBytzab2qTRa3SmpyIrhzxv3z1kjs=;
+        s=default; t=1550499201;
+        bh=ZilC/oIwwkqgRzjO+LcbQ7/Bqqp3CBxP5s/lEfQRpZo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZU2AWC8bMzL68aMSlyOFlSvEdbrc9LdNW+oYudwynbLQibxWU4KTe4qQ9fqqjrCyg
-         5OfDwdtxbH1M1+lWLlPKVJ6KviWbpf9bBPN3otm5EOLv2uuYQ6pMdloHbR+O47LibY
-         A2tJl3VyWOd9DQcpZerT6k4uC12pzqu3f73bDaus=
+        b=fH39K5AkES9jejqaruCgXMhLwEmgsOVvsy02YOJdw7/Z7sDNfnu0n5K4gftk6eH+H
+         H2WEUk4mTeFEMIhr6k3g3Edp4aZ74RAYIRkYVpesexB2z9ejKTbH5qqFj8pUXw07Br
+         +1+ytxY+oVDRzFmhKkEGI4tKWUIrSLV2d//Ax9ls=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Hellstrom <thellstrom@vmware.com>,
-        Deepak Rawat <drawat@vmware.com>
-Subject: [PATCH 3.18 083/108] drm/vmwgfx: Fix setting of dma masks
-Date:   Mon, 18 Feb 2019 14:44:19 +0100
-Message-Id: <20190218133523.384399282@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 3.18 074/108] perf tests evsel-tp-sched: Fix bitwise operator
+Date:   Mon, 18 Feb 2019 14:44:10 +0100
+Message-Id: <20190218133522.957087090@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -64,44 +70,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Hellstrom <thellstrom@vmware.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 4cbfa1e6c09e98450aab3240e5119b0ab2c9795b upstream.
+commit 489338a717a0dfbbd5a3fabccf172b78f0ac9015 upstream.
 
-Previously we set only the dma mask and not the coherent mask. Fix that.
-Also, for clarity, make sure both are initially set to 64 bits.
+Notice that the use of the bitwise OR operator '|' always leads to true
+in this particular case, which seems a bit suspicious due to the context
+in which this expression is being used.
 
-Cc: <stable@vger.kernel.org>
-Fixes: 0d00c488f3de: ("drm/vmwgfx: Fix the driver for large dma addresses")
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
-Reviewed-by: Deepak Rawat <drawat@vmware.com>
+Fix this by using bitwise AND operator '&' instead.
+
+This bug was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: stable@vger.kernel.org
+Fixes: 6a6cd11d4e57 ("perf test: Add test for the sched tracepoint format fields")
+Link: http://lkml.kernel.org/r/20190122233439.GA5868@embeddedor
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ tools/perf/tests/evsel-tp-sched.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-@@ -562,13 +562,16 @@ out_fixup:
- static int vmw_dma_masks(struct vmw_private *dev_priv)
- {
- 	struct drm_device *dev = dev_priv->dev;
-+	int ret = 0;
- 
--	if (intel_iommu_enabled &&
-+	ret = dma_set_mask_and_coherent(dev->dev, DMA_BIT_MASK(64));
-+	if (dev_priv->map_mode != vmw_dma_phys &&
- 	    (sizeof(unsigned long) == 4 || vmw_restrict_dma_mask)) {
- 		DRM_INFO("Restricting DMA addresses to 44 bits.\n");
--		return dma_set_mask(dev->dev, DMA_BIT_MASK(44));
-+		return dma_set_mask_and_coherent(dev->dev, DMA_BIT_MASK(44));
+--- a/tools/perf/tests/evsel-tp-sched.c
++++ b/tools/perf/tests/evsel-tp-sched.c
+@@ -15,7 +15,7 @@ static int perf_evsel__test_field(struct
+ 		return -1;
  	}
--	return 0;
-+
-+	return ret;
- }
- #else
- static int vmw_dma_masks(struct vmw_private *dev_priv)
+ 
+-	is_signed = !!(field->flags | FIELD_IS_SIGNED);
++	is_signed = !!(field->flags & FIELD_IS_SIGNED);
+ 	if (should_be_signed && !is_signed) {
+ 		pr_debug("%s: \"%s\" signedness(%d) is wrong, should be %d\n",
+ 			 evsel->name, name, is_signed, should_be_signed);
 
 
