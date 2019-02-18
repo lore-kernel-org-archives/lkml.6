@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0605CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:56:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43314C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:56:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3B7A21901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:56:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1436C217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:56:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498203;
-	bh=6+8eCPrMMsgOWUPSZkyKBmxhdsQ2I/LU4UQPABVGEYA=;
+	s=default; t=1550498209;
+	bh=jv8w+m1JI7iogxehGCTRVuqOJcBuyy9mNNkCfhUcjVg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QbSrwdmqa1BHH/GHWD4X84r7/Vua2MiYqAcPW9f4MFTBoj1MAZF79ZRRHgB/EyIls
-	 qBHbWj2aoolDqKOwyFC+gNbRi8B4R4Vy8xEMRSwdIG+L9T3wGFLcXWXpa4uZyP3SXd
-	 ++UC1Ia71BytdOIS17BFmzaaPcamR66mKINTQIN8=
+	b=MHapMnai7P6LaLvyai4SIFZCyOkqWualUSjVlRovDdNtjXGPI1oi6udhYamDVTfFF
+	 XvfiQ4CKqg95Tml4o9tYFXj/RpJ7KUdnoZvankzj0f98v6hjwKExpEDAsW2VjT2sMS
+	 CbfqkvGP0eLOK8gtjBIAdCaQeGhapCRVHGqtphY4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387872AbfBRN4m (ORCPT
+        id S2387904AbfBRN4r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:56:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36902 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:56:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733245AbfBRN4j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:56:39 -0500
+        id S2387870AbfBRN4m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:56:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBE06217D9;
-        Mon, 18 Feb 2019 13:56:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77D2221900;
+        Mon, 18 Feb 2019 13:56:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498198;
-        bh=6+8eCPrMMsgOWUPSZkyKBmxhdsQ2I/LU4UQPABVGEYA=;
+        s=default; t=1550498202;
+        bh=jv8w+m1JI7iogxehGCTRVuqOJcBuyy9mNNkCfhUcjVg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pnmbb9/a7wAIfj20s2J2nNzfAdK01qCACu6fJJ1QJ8tyAK0VJiiAi3Gra4pM0f/Vp
-         CX3a+hpUkX9j7X0XQuI4fJfuBNAPd8HvX3t8jzIzf1JE2xVeAFfULul2TQ7sN29IZB
-         KzYLmO8Q4nD9WrHwJJt2zXoKHceNpClKlZs65T/U=
+        b=Qr2JjCCPTSzsGQkRQW4TDzVhNnVWHCYQA/Xorc3z0AFojnBRjr+jAZR6OEAbcjac8
+         jVWMsbPQLKbP7iD9hwDDDE9Qd2wFjIdEcmSQOwTXrTXCzoH4q2KMHsglnoX+F44vrH
+         5dZINBdgBQ9bi3/8Yf/dIX+y3ya6scL0QcvS87Gw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jack Wang <jinpu.wang@cloud.ionos.com>,
-        Nate Dailey <nate.dailey@stratus.com>,
-        Song Liu <songliubraving@fb.com>
-Subject: [PATCH 4.14 55/62] md/raid1: dont clear bitmap bits on interrupted recovery.
-Date:   Mon, 18 Feb 2019 14:44:01 +0100
-Message-Id: <20190218133510.482165160@linuxfoundation.org>
+        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Derek Robson <robsonde@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Matz <matz@suse.de>, x86@kernel.org
+Subject: [PATCH 4.14 56/62] x86/a.out: Clear the dump structure initially
+Date:   Mon, 18 Feb 2019 14:44:02 +0100
+Message-Id: <20190218133510.564676766@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
 References: <20190218133505.801423074@linuxfoundation.org>
@@ -66,84 +67,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nate Dailey <nate.dailey@stratus.com>
+From: Borislav Petkov <bp@suse.de>
 
-commit dfcc34c99f3ebc16b787b118763bf9cb6b1efc7a upstream.
+commit 10970e1b4be9c74fce8ab6e3c34a7d718f063f2c upstream.
 
-sync_request_write no longer submits writes to a Faulty device. This has
-the unfortunate side effect that bitmap bits can be incorrectly cleared
-if a recovery is interrupted (previously, end_sync_write would have
-prevented this). This means the next recovery may not copy everything
-it should, potentially corrupting data.
+dump_thread32() in aout_core_dump() does not clear the user32 structure
+allocated on the stack as the first thing on function entry.
 
-Add a function for doing the proper md_bitmap_end_sync, called from
-end_sync_write and the Faulty case in sync_request_write.
+As a result, the dump.u_comm, dump.u_ar0 and dump.signal which get
+assigned before the clearing, get overwritten.
 
-backport note to 4.14: s/md_bitmap_end_sync/bitmap_end_sync
-Cc: stable@vger.kernel.org 4.14+
-Fixes: 0c9d5b127f69 ("md/raid1: avoid reusing a resync bio after error handling.")
-Reviewed-by: Jack Wang <jinpu.wang@cloud.ionos.com>
-Tested-by: Jack Wang <jinpu.wang@cloud.ionos.com>
-Signed-off-by: Nate Dailey <nate.dailey@stratus.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
+Rename that function to fill_dump() to make it clear what it does and
+call it first thing.
+
+This was caught while staring at a patch by Derek Robson
+<robsonde@gmail.com>.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Derek Robson <robsonde@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Matz <matz@suse.de>
+Cc: x86@kernel.org
+Cc: <stable@vger.kernel.org>
+Link: https://lkml.kernel.org/r/20190202005512.3144-1-robsonde@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/raid1.c |   29 ++++++++++++++++++-----------
- 1 file changed, 18 insertions(+), 11 deletions(-)
+ arch/x86/ia32/ia32_aout.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -1854,6 +1854,20 @@ static void end_sync_read(struct bio *bi
- 		reschedule_retry(r1_bio);
- }
- 
-+static void abort_sync_write(struct mddev *mddev, struct r1bio *r1_bio)
-+{
-+	sector_t sync_blocks = 0;
-+	sector_t s = r1_bio->sector;
-+	long sectors_to_go = r1_bio->sectors;
-+
-+	/* make sure these bits don't get cleared. */
-+	do {
-+		bitmap_end_sync(mddev->bitmap, s, &sync_blocks, 1);
-+		s += sync_blocks;
-+		sectors_to_go -= sync_blocks;
-+	} while (sectors_to_go > 0);
-+}
-+
- static void end_sync_write(struct bio *bio)
+--- a/arch/x86/ia32/ia32_aout.c
++++ b/arch/x86/ia32/ia32_aout.c
+@@ -51,7 +51,7 @@ static unsigned long get_dr(int n)
+ /*
+  * fill in the user structure for a core dump..
+  */
+-static void dump_thread32(struct pt_regs *regs, struct user32 *dump)
++static void fill_dump(struct pt_regs *regs, struct user32 *dump)
  {
- 	int uptodate = !bio->bi_status;
-@@ -1865,16 +1879,7 @@ static void end_sync_write(struct bio *b
- 	struct md_rdev *rdev = conf->mirrors[find_bio_disk(r1_bio, bio)].rdev;
+ 	u32 fs, gs;
+ 	memset(dump, 0, sizeof(*dump));
+@@ -157,10 +157,12 @@ static int aout_core_dump(struct coredum
+ 	fs = get_fs();
+ 	set_fs(KERNEL_DS);
+ 	has_dumped = 1;
++
++	fill_dump(cprm->regs, &dump);
++
+ 	strncpy(dump.u_comm, current->comm, sizeof(current->comm));
+ 	dump.u_ar0 = offsetof(struct user32, regs);
+ 	dump.signal = cprm->siginfo->si_signo;
+-	dump_thread32(cprm->regs, &dump);
  
- 	if (!uptodate) {
--		sector_t sync_blocks = 0;
--		sector_t s = r1_bio->sector;
--		long sectors_to_go = r1_bio->sectors;
--		/* make sure these bits doesn't get cleared. */
--		do {
--			bitmap_end_sync(mddev->bitmap, s,
--					&sync_blocks, 1);
--			s += sync_blocks;
--			sectors_to_go -= sync_blocks;
--		} while (sectors_to_go > 0);
-+		abort_sync_write(mddev, r1_bio);
- 		set_bit(WriteErrorSeen, &rdev->flags);
- 		if (!test_and_set_bit(WantReplacement, &rdev->flags))
- 			set_bit(MD_RECOVERY_NEEDED, &
-@@ -2164,8 +2169,10 @@ static void sync_request_write(struct md
- 		     (i == r1_bio->read_disk ||
- 		      !test_bit(MD_RECOVERY_SYNC, &mddev->recovery))))
- 			continue;
--		if (test_bit(Faulty, &conf->mirrors[i].rdev->flags))
-+		if (test_bit(Faulty, &conf->mirrors[i].rdev->flags)) {
-+			abort_sync_write(mddev, r1_bio);
- 			continue;
-+		}
- 
- 		bio_set_op_attrs(wbio, REQ_OP_WRITE, 0);
- 		if (test_bit(FailFast, &conf->mirrors[i].rdev->flags))
+ 	/*
+ 	 * If the size of the dump file exceeds the rlimit, then see
 
 
