@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F60EC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 454EFC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 036532177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 158BA217F9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550515795;
-	bh=nREbvS+I1//rWUfniaR+F7OPeGp44/lj9cwAJmKVWJw=;
+	s=default; t=1550515798;
+	bh=mLJzmFmJ/aVgW2RQhTVQsGuqaZl9P5ut9SnH72GagTY=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=soLVt/1hxTZQKEAs6KQKOCgITq0GSug/QKnQIxqBfSMZefJskZmK5BF71uA+hmN4D
-	 +Te0XJBNN8Cv+vEPOeuc5f/y37H9s5ShYbok6TjE2ajln3kpVZpXmNcGEs+WgD4voq
-	 b98TU+fSS/NpjuV2ysBunFFls5JsbRU151dZ1jic=
+	b=Tl2dOW+TJ7DxQ4B0lAgf6UwjkTW3OPcGq2zg3ODyF68HEd+CEGvyv9eV70SmU2+vq
+	 r4OC5gCguLRDUsMV7UX9M4gbNwfA71mNUzuVIMGRst34E2/2rPlQwboGN/B/h3yF9/
+	 rhKi07rGlM7aEvKE/Oh7v/2KYyP9ZwUO5X8xYIDY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbfBRStx (ORCPT
+        id S1727039AbfBRSt4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:49:53 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42436 "EHLO
+        Mon, 18 Feb 2019 13:49:56 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42502 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726685AbfBRStw (ORCPT
+        with ESMTP id S1726940AbfBRSty (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:49:52 -0500
+        Mon, 18 Feb 2019 13:49:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=1353i1blkWlPboNW7W34bHqFXcZ7Xb4PWkOI03EVOcs=; b=TSt96JOWaIKa
-        oiLTn+4cKuLZJkBVfDLMZ+fKgFoo7Flm9xYZSBMiUlm2901QUxO8WJaqesjh9TDpgZUV4CaET7mpv
-        hD2fO6t8rUMYiDGL4XMBuYhV/HMOkajD85ceNJ/kvxYkslEJ26cXpcGeBZA0yg9Vjwjxc5bzf0Saa
-        fU/PY=;
+        List-Archive; bh=rkwHCN0C+itYbacENpj9r9+r0CKDNRL4OLkQ9ej7ROU=; b=Hr3PoUk2eqmf
+        dx6yHT34bLNUTP1xN/swwheWESPAel56sa8z1LZbX7EA1PywsHP78KSi+LBay0axthphV+KZQl79W
+        k6vkYirl7tbJTbNd7jGPtvXsZNQJBXliW4uIu3MrlfRd3FHa0dNE6b6wN6ExBCsVJ2ntMdFmpdjqm
+        Av9s4=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gvnzC-0001fl-9n; Mon, 18 Feb 2019 18:49:50 +0000
+        id 1gvnzE-0001fs-0r; Mon, 18 Feb 2019 18:49:52 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id D8BAD1128008; Mon, 18 Feb 2019 18:49:49 +0000 (GMT)
+        id 90E6D1128008; Mon, 18 Feb 2019 18:49:51 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Axel Lin <axel.lin@ingics.com>
 Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: stpmic1: Remove regul_id and *regmap from struct stpmic1_regulator" to the regulator tree
+Subject: Applied "regulator: pv88060: Fix .ops for PV88060_SW" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190218184949.D8BAD1128008@debutante.sirena.org.uk>
-Date:   Mon, 18 Feb 2019 18:49:49 +0000 (GMT)
+Message-Id: <20190218184951.90E6D1128008@debutante.sirena.org.uk>
+Date:   Mon, 18 Feb 2019 18:49:51 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: stpmic1: Remove regul_id and *regmap from struct stpmic1_regulator
+   regulator: pv88060: Fix .ops for PV88060_SW
 
 has been applied to the regulator tree at
 
@@ -84,84 +84,51 @@ to this mail.
 Thanks,
 Mark
 
-From ef541f73d1a87723a9f5bcc76669c98d20292cfa Mon Sep 17 00:00:00 2001
+From 55e72728cd2dd9f9cd1cec92c4171aa63d000c30 Mon Sep 17 00:00:00 2001
 From: Axel Lin <axel.lin@ingics.com>
-Date: Thu, 14 Feb 2019 09:59:56 +0800
-Subject: [PATCH] regulator: stpmic1: Remove regul_id and *regmap from struct
- stpmic1_regulator
+Date: Fri, 15 Feb 2019 09:42:49 +0800
+Subject: [PATCH] regulator: pv88060: Fix .ops for PV88060_SW
 
-At the context with *rdev available, regulator core provides
-rdev_get_id()/rdev_get_regmap() APIs to get regulator id and *regmap.
-So no need to store them in struct stpmic1_regulator.
+There is no vsel_reg/vsel_mask settings for PV88060_ID_SWx, so don't use
+pv88060_ldo_ops for PV88060_SW. The PV88060_ID_SWx is fixed voltage,
+set .fixed_uV instead of .min_uV then regulator core will automatically
+support get_voltage and list_voltage.
 
 Signed-off-by: Axel Lin <axel.lin@ingics.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/stpmic1_regulator.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ drivers/regulator/pv88060-regulator.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/regulator/stpmic1_regulator.c b/drivers/regulator/stpmic1_regulator.c
-index 963e67fa9ca6..d456fb5d4044 100644
---- a/drivers/regulator/stpmic1_regulator.c
-+++ b/drivers/regulator/stpmic1_regulator.c
-@@ -30,20 +30,16 @@ struct stpmic1_regulator_cfg {
- 
- /**
-  * stpmic1 regulator data: this structure is used as driver data
-- * @regul_id: regulator id
-  * @reg_node: DT node of regulator (unused on non-DT platforms)
-  * @cfg: stpmic specific regulator description
-  * @mask_reset: mask_reset bit value
-  * @irq_curlim: current limit interrupt number
-- * @regmap: point to parent regmap structure
-  */
- struct stpmic1_regulator {
--	unsigned int regul_id;
- 	struct device_node *reg_node;
- 	const struct stpmic1_regulator_cfg *cfg;
- 	u8 mask_reset;
- 	int irq_curlim;
--	struct regmap *regmap;
+diff --git a/drivers/regulator/pv88060-regulator.c b/drivers/regulator/pv88060-regulator.c
+index a9446056435f..d5dab9bef378 100644
+--- a/drivers/regulator/pv88060-regulator.c
++++ b/drivers/regulator/pv88060-regulator.c
+@@ -184,6 +184,12 @@ static const struct regulator_ops pv88060_ldo_ops = {
+ 	.list_voltage = regulator_list_voltage_linear,
  };
  
- static int stpmic1_set_mode(struct regulator_dev *rdev, unsigned int mode);
-@@ -475,9 +471,10 @@ static int stpmic1_set_mode(struct regulator_dev *rdev, unsigned int mode)
- static int stpmic1_set_icc(struct regulator_dev *rdev)
- {
- 	struct stpmic1_regulator *regul = rdev_get_drvdata(rdev);
-+	struct regmap *regmap = rdev_get_regmap(rdev);
- 
- 	/* enable switch off in case of over current */
--	return regmap_update_bits(regul->regmap, regul->cfg->icc_reg,
-+	return regmap_update_bits(regmap, regul->cfg->icc_reg,
- 				  regul->cfg->icc_mask, regul->cfg->icc_mask);
- }
- 
-@@ -501,11 +498,12 @@ static int stpmic1_regulator_init(struct platform_device *pdev,
- 				  struct regulator_dev *rdev)
- {
- 	struct stpmic1_regulator *regul = rdev_get_drvdata(rdev);
-+	struct regmap *regmap = rdev_get_regmap(rdev);
- 	int ret = 0;
- 
- 	/* set mask reset */
- 	if (regul->mask_reset && regul->cfg->mask_reset_reg != 0) {
--		ret = regmap_update_bits(regul->regmap,
-+		ret = regmap_update_bits(regmap,
- 					 regul->cfg->mask_reset_reg,
- 					 regul->cfg->mask_reset_mask,
- 					 regul->cfg->mask_reset_mask);
-@@ -584,10 +582,8 @@ regulator_dev *stpmic1_regulator_register(struct platform_device *pdev, int id,
- 	config.regmap = pmic_dev->regmap;
- 	config.driver_data = regul;
- 
--	regul->regul_id = id;
- 	regul->reg_node = config.of_node;
- 	regul->cfg = &stpmic1_regulator_cfgs[id];
--	regul->regmap = pmic_dev->regmap;
- 
- 	rdev = devm_regulator_register(&pdev->dev, &regul->cfg->desc, &config);
- 	if (IS_ERR(rdev)) {
++static const struct regulator_ops pv88060_sw_ops = {
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++};
++
+ #define PV88060_BUCK(chip, regl_name, min, step, max, limits_array) \
+ {\
+ 	.desc	=	{\
+@@ -237,9 +243,8 @@ static const struct regulator_ops pv88060_ldo_ops = {
+ 		.regulators_node = of_match_ptr("regulators"),\
+ 		.type = REGULATOR_VOLTAGE,\
+ 		.owner = THIS_MODULE,\
+-		.ops = &pv88060_ldo_ops,\
+-		.min_uV = max,\
+-		.uV_step = 0,\
++		.ops = &pv88060_sw_ops,\
++		.fixed_uV = max,\
+ 		.n_voltages = 1,\
+ 		.enable_reg = PV88060_REG_##regl_name##_CONF,\
+ 		.enable_mask = PV88060_SW_EN,\
 -- 
 2.20.1
 
