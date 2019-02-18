@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91CA2C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F04C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 607A420842
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45C20217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498070;
-	bh=cZEjMsv0a9fBzHaLUek698UUgzFvP3U3VV3rbi7ffH0=;
+	s=default; t=1550498076;
+	bh=o+h7qqofNB76a9t7REEqLT1viC+nboCMqYImP8GTobs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jA2bSebtppIs5zJ3Ry2Trqc2nS2PelKna1VO0tiRYLFJbt+CcnfOqM/ngs6s1jFP6
-	 wnnjizChBG3O3xLwsBmxfKWbB/Zm5BSmV3c6l3xvz/h/NQ5DkKcoek+rnLSdL1mZok
-	 k1J6gKeMMI0clxUxlAfWfXXhKBRQ93WLuuCQXgK4=
+	b=t9In8V2vOTnpc9JLd39hMaW03WFuwQ71bJP4tMuYV/MtORI+kI6Gh047wrs/TAok9
+	 hJIJsZY7H3WaiTZq5Lk6xBrXbtSnQa+QRU47zRKIcuo2If2rADiSozlCo9jDrK9XK1
+	 WtIHk4iIGAUnsFJsStpAmGEAQGswGtClW3/a5akI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733203AbfBRNy3 (ORCPT
+        id S1733233AbfBRNye (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:54:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34330 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:54:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733176AbfBRNyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:54:25 -0500
+        id S1733191AbfBRNy2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:54:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B7D920842;
-        Mon, 18 Feb 2019 13:54:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8C62217D9;
+        Mon, 18 Feb 2019 13:54:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498064;
-        bh=cZEjMsv0a9fBzHaLUek698UUgzFvP3U3VV3rbi7ffH0=;
+        s=default; t=1550498067;
+        bh=o+h7qqofNB76a9t7REEqLT1viC+nboCMqYImP8GTobs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CVO9oBzp5Ic6T88GU+KnS7VYji4gmMPTYWtH6QS0IheEFUZ9/5/ehlpMGAVFVJ1J2
-         VGgcpIqvIRBkJfdAHgFd5fxk5BgoC+4nwrWpRiiKorOWm3mpNrTcHtN9GO/WMMlmJS
-         3VqZbCZvnIE1iaVtEfqkbmFQqMI2LbgwX0Iegb+s=
+        b=HXED6Iks6rRLoGYc1RTp7pTQhXNgqeDVMNkZoGMgl5RV3ovjlMriA5zUTk1QGxyur
+         P8O7aji2iw1nJmHzS5UAJpI+p+kDPjzP8v6CeO/ica+o9WFMJiuYgwqpD5N8anE/Jh
+         unzGmcW5H4AeQYyab9zUwQBMi/F5em79lwPFPz1A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -46,9 +46,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Russell King <rmk+kernel@armlinux.org.uk>,
         "David A. Long" <dave.long@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 12/62] ARM: 8796/1: spectre-v1,v1.1: provide helpers for address sanitization
-Date:   Mon, 18 Feb 2019 14:43:18 +0100
-Message-Id: <20190218133506.884592404@linuxfoundation.org>
+Subject: [PATCH 4.14 13/62] ARM: 8797/1: spectre-v1.1: harden __copy_to_user
+Date:   Mon, 18 Feb 2019 14:43:19 +0100
+Message-Id: <20190218133506.964600367@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
 References: <20190218133505.801423074@linuxfoundation.org>
@@ -67,12 +67,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-Commit afaf6838f4bc896a711180b702b388b8cfa638fc upstream.
+Commit a1d09e074250fad24f1b993f327b18cc6812eb7a upstream.
 
-Introduce C and asm helpers to sanitize user address, taking the
-address range they target into account.
-
-Use asm helper for existing sanitization in __copy_from_user().
+Sanitize user pointer given to __copy_to_user, both for standard version
+and memcopy version of the user accessor.
 
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
@@ -80,87 +78,45 @@ Signed-off-by: David A. Long <dave.long@linaro.org>
 Reviewed-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/include/asm/assembler.h | 11 +++++++++++
- arch/arm/include/asm/uaccess.h   | 26 ++++++++++++++++++++++++++
- arch/arm/lib/copy_from_user.S    |  6 +-----
- 3 files changed, 38 insertions(+), 5 deletions(-)
+ arch/arm/lib/copy_to_user.S        | 6 +++++-
+ arch/arm/lib/uaccess_with_memcpy.c | 3 ++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/include/asm/assembler.h b/arch/arm/include/asm/assembler.h
-index b17ee03d280b..88286dd483ff 100644
---- a/arch/arm/include/asm/assembler.h
-+++ b/arch/arm/include/asm/assembler.h
-@@ -467,6 +467,17 @@ THUMB(	orr	\reg , \reg , #PSR_T_BIT	)
- #endif
- 	.endm
+diff --git a/arch/arm/lib/copy_to_user.S b/arch/arm/lib/copy_to_user.S
+index caf5019d8161..970abe521197 100644
+--- a/arch/arm/lib/copy_to_user.S
++++ b/arch/arm/lib/copy_to_user.S
+@@ -94,6 +94,11 @@
  
-+	.macro uaccess_mask_range_ptr, addr:req, size:req, limit:req, tmp:req
+ ENTRY(__copy_to_user_std)
+ WEAK(arm_copy_to_user)
 +#ifdef CONFIG_CPU_SPECTRE
-+	sub	\tmp, \limit, #1
-+	subs	\tmp, \tmp, \addr	@ tmp = limit - 1 - addr
-+	addhs	\tmp, \tmp, #1		@ if (tmp >= 0) {
-+	subhss	\tmp, \tmp, \size	@ tmp = limit - (addr + size) }
-+	movlo	\addr, #0		@ if (tmp < 0) addr = NULL
-+	csdb
++	get_thread_info r3
++	ldr	r3, [r3, #TI_ADDR_LIMIT]
++	uaccess_mask_range_ptr r0, r2, r3, ip
 +#endif
-+	.endm
-+
- 	.macro	uaccess_disable, tmp, isb=1
- #ifdef CONFIG_CPU_SW_DOMAIN_PAN
- 	/*
-diff --git a/arch/arm/include/asm/uaccess.h b/arch/arm/include/asm/uaccess.h
-index cf50b030c62c..a5807b67ca8a 100644
---- a/arch/arm/include/asm/uaccess.h
-+++ b/arch/arm/include/asm/uaccess.h
-@@ -99,6 +99,32 @@ static inline void set_fs(mm_segment_t fs)
- #define __inttype(x) \
- 	__typeof__(__builtin_choose_expr(sizeof(x) > sizeof(0UL), 0ULL, 0UL))
- 
-+/*
-+ * Sanitise a uaccess pointer such that it becomes NULL if addr+size
-+ * is above the current addr_limit.
-+ */
-+#define uaccess_mask_range_ptr(ptr, size)			\
-+	((__typeof__(ptr))__uaccess_mask_range_ptr(ptr, size))
-+static inline void __user *__uaccess_mask_range_ptr(const void __user *ptr,
-+						    size_t size)
-+{
-+	void __user *safe_ptr = (void __user *)ptr;
-+	unsigned long tmp;
-+
-+	asm volatile(
-+	"	sub	%1, %3, #1\n"
-+	"	subs	%1, %1, %0\n"
-+	"	addhs	%1, %1, #1\n"
-+	"	subhss	%1, %1, %2\n"
-+	"	movlo	%0, #0\n"
-+	: "+r" (safe_ptr), "=&r" (tmp)
-+	: "r" (size), "r" (current_thread_info()->addr_limit)
-+	: "cc");
-+
-+	csdb();
-+	return safe_ptr;
-+}
-+
- /*
-  * Single-value transfer routines.  They automatically use the right
-  * size if we just have the right pointer type.  Note that the functions
-diff --git a/arch/arm/lib/copy_from_user.S b/arch/arm/lib/copy_from_user.S
-index a826df3d3814..6709a8d33963 100644
---- a/arch/arm/lib/copy_from_user.S
-+++ b/arch/arm/lib/copy_from_user.S
-@@ -93,11 +93,7 @@ ENTRY(arm_copy_from_user)
- #ifdef CONFIG_CPU_SPECTRE
- 	get_thread_info r3
- 	ldr	r3, [r3, #TI_ADDR_LIMIT]
--	adds	ip, r1, r2	@ ip=addr+size
--	sub	r3, r3, #1	@ addr_limit - 1
--	cmpcc	ip, r3		@ if (addr+size > addr_limit - 1)
--	movcs	r1, #0		@ addr = NULL
--	csdb
-+	uaccess_mask_range_ptr r1, r2, r3, ip
- #endif
  
  #include "copy_template.S"
+ 
+@@ -108,4 +113,3 @@ ENDPROC(__copy_to_user_std)
+ 	rsb	r0, r0, r2
+ 	copy_abort_end
+ 	.popsection
+-
+diff --git a/arch/arm/lib/uaccess_with_memcpy.c b/arch/arm/lib/uaccess_with_memcpy.c
+index 9b4ed1728616..73dc7360cbdd 100644
+--- a/arch/arm/lib/uaccess_with_memcpy.c
++++ b/arch/arm/lib/uaccess_with_memcpy.c
+@@ -152,7 +152,8 @@ arm_copy_to_user(void __user *to, const void *from, unsigned long n)
+ 		n = __copy_to_user_std(to, from, n);
+ 		uaccess_restore(ua_flags);
+ 	} else {
+-		n = __copy_to_user_memcpy(to, from, n);
++		n = __copy_to_user_memcpy(uaccess_mask_range_ptr(to, n),
++					  from, n);
+ 	}
+ 	return n;
+ }
 -- 
 2.19.1
 
