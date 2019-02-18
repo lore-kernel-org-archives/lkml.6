@@ -4,49 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4320CC4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:06:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95302C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:07:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 097A021916
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:06:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65CEA21916
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:07:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498819;
-	bh=6hmZwesDXpNTijRoV6F/KX/PaIU4BqqmN9ToaF8G5cU=;
+	s=default; t=1550498822;
+	bh=eONId+cB3d7OOLcmNexeZR7J1UayqO1gPtZgg6edo4I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=llkl1DNLqlwNYG0R2xpUE0iPpFJHUSlJZDISKz8e8qxsdpf5cned/+YTrAPMqsdKo
-	 vgZ9eVEHC/qhkAOMMM36emmyLx4k+cxYPIcYCNQ8zyHe5dqcmBr35Y4gO6k6wefWAF
-	 GhvAQ5xYSEJ9X/ClncTSTw0qICwy2q0Z0UUOJ+Ko=
+	b=jljSAGB8ugCtx2GH/RNGZ06CDbRA3l7Ndg8kvKtABRLaOj8AnVVRDgyq0zcB6N1Bb
+	 dFzQA+xNQwFnWOvC31XAOQfG6yIZTap4SXzVzzrZYc7LrYfdobwmuxzywjPcrZ7rkQ
+	 HEePG16y6xnsnRNfkPIHDuhT2gN2EbBDWhKtlzYM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389317AbfBROG6 (ORCPT
+        id S2390526AbfBROHB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:06:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49976 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:07:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389943AbfBROGz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:06:55 -0500
+        id S2390516AbfBROG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:06:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB78421901;
-        Mon, 18 Feb 2019 14:06:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C48821902;
+        Mon, 18 Feb 2019 14:06:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498814;
-        bh=6hmZwesDXpNTijRoV6F/KX/PaIU4BqqmN9ToaF8G5cU=;
+        s=default; t=1550498817;
+        bh=eONId+cB3d7OOLcmNexeZR7J1UayqO1gPtZgg6edo4I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tb/38sRwJeX3PnFXij9Bs37IYK4+oOmU97Mvs2UkVPo1rhBOwX+bEN2IHBItlw2Nj
-         BIpym3YrrYroo0ljBnZ9BHqFDL4TXBuXjhcNau2gh27jqzOxXhIBpuS90ZddeB6U/R
-         LMmK1hq3YzquR0kHr/WIQlenZsEkiaExoYftpsBY=
+        b=ybcs/Dj1x+pkemzDVG7bDOlnsL6Zjxvpo+NJ8Y9CnX/czY1duZDV2kQctkQ8FLlim
+         bnAWnitxgRjgDMtqXEOrRBSvy2wuGOyD9AyPDGDPWW1pcMU0cSJxR8Zoiv/4SUhaRW
+         FWkn3j5qTFRwsou8gIvWlWzrAZZQhgGN2nzvMu5E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org
-Subject: [PATCH 4.4 104/143] MIPS: OCTEON: dont set octeon_dma_bar_type if PCI is disabled
-Date:   Mon, 18 Feb 2019 14:43:52 +0100
-Message-Id: <20190218133532.835048316@linuxfoundation.org>
+        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        x86-ml <x86@kernel.org>
+Subject: [PATCH 4.4 095/143] x86/MCE: Initialize mce.bank in the case of a fatal error in mce_no_way_out()
+Date:   Mon, 18 Feb 2019 14:43:43 +0100
+Message-Id: <20190218133532.525053781@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -65,49 +69,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
+From: Tony Luck <tony.luck@intel.com>
 
-commit dcf300a69ac307053dfb35c2e33972e754a98bce upstream.
+commit d28af26faa0b1daf3c692603d46bc4687c16f19e upstream.
 
-Don't set octeon_dma_bar_type if PCI is disabled. This avoids creation
-of the MSI irqchip later on, and saves a bit of memory.
+Internal injection testing crashed with a console log that said:
 
-Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Fixes: a214720cbf50 ("Disable MSI also when pcie-octeon.pcie_disable on")
-Cc: stable@vger.kernel.org # v3.3+
-Cc: linux-mips@vger.kernel.org
+  mce: [Hardware Error]: CPU 7: Machine Check Exception: f Bank 0: bd80000000100134
+
+This caused a lot of head scratching because the MCACOD (bits 15:0) of
+that status is a signature from an L1 data cache error. But Linux says
+that it found it in "Bank 0", which on this model CPU only reports L1
+instruction cache errors.
+
+The answer was that Linux doesn't initialize "m->bank" in the case that
+it finds a fatal error in the mce_no_way_out() pre-scan of banks. If
+this was a local machine check, then this partially initialized struct
+mce is being passed to mce_panic().
+
+Fix is simple: just initialize m->bank in the case of a fatal error.
+
+Fixes: 40c36e2741d7 ("x86/mce: Fix incorrect "Machine check from unknown source" message")
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Cc: x86-ml <x86@kernel.org>
+Cc: stable@vger.kernel.org # v4.18 Note pre-v5.0 arch/x86/kernel/cpu/mce/core.c was called arch/x86/kernel/cpu/mcheck/mce.c
+Link: https://lkml.kernel.org/r/20190201003341.10638-1-tony.luck@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/pci/pci-octeon.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/x86/kernel/cpu/mcheck/mce.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/mips/pci/pci-octeon.c
-+++ b/arch/mips/pci/pci-octeon.c
-@@ -571,6 +571,11 @@ static int __init octeon_pci_setup(void)
- 	if (octeon_has_feature(OCTEON_FEATURE_PCIE))
- 		return 0;
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -670,6 +670,7 @@ static int mce_no_way_out(struct mce *m,
+ 		}
  
-+	if (!octeon_is_pci_host()) {
-+		pr_notice("Not in host mode, PCI Controller not initialized\n");
-+		return 0;
-+	}
-+
- 	/* Point pcibios_map_irq() to the PCI version of it */
- 	octeon_pcibios_map_irq = octeon_pci_pcibios_map_irq;
- 
-@@ -582,11 +587,6 @@ static int __init octeon_pci_setup(void)
- 	else
- 		octeon_dma_bar_type = OCTEON_DMA_BAR_TYPE_BIG;
- 
--	if (!octeon_is_pci_host()) {
--		pr_notice("Not in host mode, PCI Controller not initialized\n");
--		return 0;
--	}
--
- 	/* PCI I/O and PCI MEM values */
- 	set_io_port_base(OCTEON_PCI_IOSPACE_BASE);
- 	ioport_resource.start = 0;
+ 		if (mce_severity(m, mca_cfg.tolerant, &tmp, true) >= MCE_PANIC_SEVERITY) {
++			m->bank = i;
+ 			*msg = tmp;
+ 			ret = 1;
+ 		}
 
 
