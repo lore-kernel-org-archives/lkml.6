@@ -6,46 +6,48 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF01EC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:45:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B432CC10F01
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:45:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 811172070B
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:45:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CA032070B
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:45:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550501110;
-	bh=UWJpD+Oyh6bJ59rPXyzNqLW4Sj/FuoifDrNC8lvwP3w=;
+	s=default; t=1550501121;
+	bh=SIFg7p5YGgJXg/yDWCUqo0HorGhFYAp8GaFvUWWlxLU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=x2NZDFSiCN32yZu/wteat0XCmCxtbdOYB6fSmXC0havLJdHfsTMFTnQ394Lz95nP5
-	 1ebjhlYtl+XCQhh5ZW17DeoTBp9wo7A9308eLM9GBJmn6WF1qOU+qHQyfZqLHILIcy
-	 Bs6ZYar8JZHkCgRyRYa+wrKi8pu6Xv8WtzEOpLpI=
+	b=zoyKJ6Km5VhPN2TzVzzL7nPyBH+6pI8QN9971FwYrCcMTvlLRFBW4BrOAn7AWY4gf
+	 A1Wq0LJ58HjEB3lWrZLxIgUjLJiQabHhxdq2QE64OWzs4TJW30oZMvhovwQAOO88XR
+	 aR6kYlsqiHxnxTHvrGXExXFNSdLHQ+3ZWdaJpzJE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732353AbfBROpJ (ORCPT
+        id S1731085AbfBRNrp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:45:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54592 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:47:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731831AbfBRNry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:47:54 -0500
+        id S1731300AbfBRNrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:47:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E38A0217F5;
-        Mon, 18 Feb 2019 13:47:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BB6A218FC;
+        Mon, 18 Feb 2019 13:47:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497673;
-        bh=UWJpD+Oyh6bJ59rPXyzNqLW4Sj/FuoifDrNC8lvwP3w=;
+        s=default; t=1550497660;
+        bh=SIFg7p5YGgJXg/yDWCUqo0HorGhFYAp8GaFvUWWlxLU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R8BNbBOGXiimu7hDN4A9oyly9N4YkscJl0a4TyxgRedkrZQXh++Lt4lVIfs2znlY6
-         kum2w72B4zhVLYBkQgt54uwmgAW4FKeVgkgTqqLoCFz+cWYN5HXlMPiKA/OLGvCni8
-         KzGkNqvs2YI6XTVsHdQFFEduLA6hTNpgUEbq0M/o=
+        b=IWiTEKmd2HogMcLY4cF6k+tXe35RBAIu8LViDuUNosB7DP6QGBqZtxZLBD2Jf06Ox
+         mZi6EoGs4KLh4HJfZLVbQQjyn+RsVUQseDBFsjfQls65KT65pk9drOBCcgD/S+RI15
+         r6llJsgorOKqDSn+//NMizTGVLCjrkP2FkaNsa2U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zachary Hays <zhays@lexmark.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.20 66/92] mmc: block: handle complete_work on separate workqueue
-Date:   Mon, 18 Feb 2019 14:43:09 +0100
-Message-Id: <20190218133501.078263427@linuxfoundation.org>
+        stable@vger.kernel.org, Zdenek Kaspar <zkaspar82@gmail.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.20 62/92] x86/kvm/nVMX: read from MSR_IA32_VMX_PROCBASED_CTLS2 only when it is available
+Date:   Mon, 18 Feb 2019 14:43:05 +0100
+Message-Id: <20190218133500.684093015@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
 References: <20190218133454.668268457@linuxfoundation.org>
@@ -64,90 +66,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zachary Hays <zhays@lexmark.com>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-commit dcf6e2e38a1c7ccbc535de5e1d9b14998847499d upstream.
+commit 6b1971c694975e49af302229202c0043568b1791 upstream.
 
-The kblockd workqueue is created with the WQ_MEM_RECLAIM flag set.
-This generates a rescuer thread for that queue that will trigger when
-the CPU is under heavy load and collect the uncompleted work.
+SDM says MSR_IA32_VMX_PROCBASED_CTLS2 is only available "If
+(CPUID.01H:ECX.[5] && IA32_VMX_PROCBASED_CTLS[63])". It was found that
+some old cpus (namely "Intel(R) Core(TM)2 CPU 6600 @ 2.40GHz (family: 0x6,
+model: 0xf, stepping: 0x6") don't have it. Add the missing check.
 
-In the case of mmc, this creates the possibility of a deadlock when
-there are multiple partitions on the device as other blk-mq work is
-also run on the same queue. For example:
-
-- worker 0 claims the mmc host to work on partition 1
-- worker 1 attempts to claim the host for partition 2 but has to wait
-  for worker 0 to finish
-- worker 0 schedules complete_work to release the host
-- rescuer thread is triggered after time-out and collects the dangling
-  work
-- rescuer thread attempts to complete the work in order starting with
-  claim host
-- the task to release host is now blocked by a task to claim it and
-  will never be called
-
-The above results in multiple hung tasks that lead to failures to
-mount partitions.
-
-Handling complete_work on a separate workqueue avoids this by keeping
-the work completion tasks separate from the other blk-mq work. This
-allows the host to be released without getting blocked by other tasks
-attempting to claim the host.
-
-Signed-off-by: Zachary Hays <zhays@lexmark.com>
-Fixes: 81196976ed94 ("mmc: block: Add blk-mq support")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reported-by: Zdenek Kaspar <zkaspar82@gmail.com>
+Tested-by: Zdenek Kaspar <zkaspar82@gmail.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/core/block.c |   10 +++++++++-
- include/linux/mmc/card.h |    1 +
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ arch/x86/kvm/vmx.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/mmc/core/block.c
-+++ b/drivers/mmc/core/block.c
-@@ -2114,7 +2114,7 @@ static void mmc_blk_mq_req_done(struct m
- 		if (waiting)
- 			wake_up(&mq->wait);
- 		else
--			kblockd_schedule_work(&mq->complete_work);
-+			queue_work(mq->card->complete_wq, &mq->complete_work);
- 
- 		return;
- 	}
-@@ -2928,6 +2928,13 @@ static int mmc_blk_probe(struct mmc_card
- 
- 	mmc_fixup_device(card, mmc_blk_fixups);
- 
-+	card->complete_wq = alloc_workqueue("mmc_complete",
-+					WQ_MEM_RECLAIM | WQ_HIGHPRI, 0);
-+	if (unlikely(!card->complete_wq)) {
-+		pr_err("Failed to create mmc completion workqueue");
-+		return -ENOMEM;
-+	}
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -3620,9 +3620,11 @@ static void nested_vmx_setup_ctls_msrs(s
+ 	 * secondary cpu-based controls.  Do not include those that
+ 	 * depend on CPUID bits, they are added later by vmx_cpuid_update.
+ 	 */
+-	rdmsr(MSR_IA32_VMX_PROCBASED_CTLS2,
+-		msrs->secondary_ctls_low,
+-		msrs->secondary_ctls_high);
++	if (msrs->procbased_ctls_high & CPU_BASED_ACTIVATE_SECONDARY_CONTROLS)
++		rdmsr(MSR_IA32_VMX_PROCBASED_CTLS2,
++		      msrs->secondary_ctls_low,
++		      msrs->secondary_ctls_high);
 +
- 	md = mmc_blk_alloc(card);
- 	if (IS_ERR(md))
- 		return PTR_ERR(md);
-@@ -2991,6 +2998,7 @@ static void mmc_blk_remove(struct mmc_ca
- 	pm_runtime_put_noidle(&card->dev);
- 	mmc_blk_remove_req(md);
- 	dev_set_drvdata(&card->dev, NULL);
-+	destroy_workqueue(card->complete_wq);
- }
- 
- static int _mmc_blk_suspend(struct mmc_card *card)
---- a/include/linux/mmc/card.h
-+++ b/include/linux/mmc/card.h
-@@ -308,6 +308,7 @@ struct mmc_card {
- 	unsigned int    nr_parts;
- 
- 	unsigned int		bouncesz;	/* Bounce buffer size */
-+	struct workqueue_struct *complete_wq;	/* Private workqueue */
- };
- 
- static inline bool mmc_large_sector(struct mmc_card *card)
+ 	msrs->secondary_ctls_low = 0;
+ 	msrs->secondary_ctls_high &=
+ 		SECONDARY_EXEC_DESC |
 
 
