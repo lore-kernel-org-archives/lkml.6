@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B58C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E91DFC4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89CF0218B0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:53:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3539217F9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:53:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729716AbfBRJxE (ORCPT
+        id S1730135AbfBRJxI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 04:53:04 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:55622 "EHLO inva020.nxp.com"
+        Mon, 18 Feb 2019 04:53:08 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:44412 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729608AbfBRJw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 04:52:57 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8A14D1A035A;
-        Mon, 18 Feb 2019 10:52:54 +0100 (CET)
+        id S1728118AbfBRJxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 04:53:00 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id AF6F6200008;
+        Mon, 18 Feb 2019 10:52:57 +0100 (CET)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F08881A0051;
-        Mon, 18 Feb 2019 10:52:46 +0100 (CET)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 185BA20008A;
+        Mon, 18 Feb 2019 10:52:50 +0100 (CET)
 Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C1581402F1;
-        Mon, 18 Feb 2019 17:52:37 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id D9455402F8;
+        Mon, 18 Feb 2019 17:52:40 +0800 (SGT)
 From:   Xiaowei Bao <xiaowei.bao@nxp.com>
 To:     bhelgaas@google.com, Zhiqiang.Hou@nxp.com, robh+dt@kernel.org,
         mark.rutland@arm.com, shawnguo@kernel.org, leoyang.li@nxp.com,
@@ -37,9 +37,9 @@ To:     bhelgaas@google.com, Zhiqiang.Hou@nxp.com, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: [PATCH 3/6] PCI: mobiveil: Add PCIe Gen4 EP driver for NXP Layerscape SoCs
-Date:   Mon, 18 Feb 2019 17:46:40 +0800
-Message-Id: <20190218094643.2692-3-xiaowei.bao@nxp.com>
+Subject: [PATCH 5/6] arm64: dts: freescale: lx2160a: add pcie EP mode DT nodes
+Date:   Mon, 18 Feb 2019 17:46:42 +0800
+Message-Id: <20190218094643.2692-5-xiaowei.bao@nxp.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20190218094643.2692-1-xiaowei.bao@nxp.com>
 References: <20190218094643.2692-1-xiaowei.bao@nxp.com>
@@ -49,232 +49,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This PCIe controller is based on the Mobiveil GPEX IP, it work in EP
-mode if select this config opteration.
+The LX2160A PCIe EP mode node.
 
 Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
 ---
 depends on: http://patchwork.ozlabs.org/project/linux-pci/list/?series=88754
 
- drivers/pci/controller/mobiveil/Kconfig            |   17 ++-
- drivers/pci/controller/mobiveil/Makefile           |    1 +
- .../controller/mobiveil/pci-layerscape-gen4-ep.c   |  166 ++++++++++++++++++++
- 3 files changed, 181 insertions(+), 3 deletions(-)
- create mode 100644 drivers/pci/controller/mobiveil/pci-layerscape-gen4-ep.c
+ arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi |   56 ++++++++++++++++++++++++
+ 1 files changed, 56 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/pci/controller/mobiveil/Kconfig b/drivers/pci/controller/mobiveil/Kconfig
-index c037db6..16ee617 100644
---- a/drivers/pci/controller/mobiveil/Kconfig
-+++ b/drivers/pci/controller/mobiveil/Kconfig
-@@ -27,13 +27,24 @@ config PCIE_MOBIVEIL_PLAT
- 	  for address translation and it is a PCIe Gen4 IP.
+diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+index 3a64f6e..5fee592 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+@@ -923,6 +923,15 @@
+ 			status = "disabled";
+ 		};
  
- config PCI_LAYERSCAPE_GEN4
--	bool "Freescale Layerscpe PCIe Gen4 controller"
-+	bool "Freescale Layerscpe PCIe Gen4 controller in RC mode"
- 	depends on PCI
- 	depends on OF && (ARM64 || ARCH_LAYERSCAPE)
- 	depends on PCI_MSI_IRQ_DOMAIN
- 	select PCIE_MOBIVEIL_HOST
- 	help
- 	  Say Y here if you want PCIe Gen4 controller support on
--	  Layerscape SoCs. The PCIe controller can work in RC or
--	  EP mode according to RCW[HOST_AGT_PEX] setting.
-+	  Layerscape SoCs. And the PCIe controller work in RC mode
-+	  by setting the RCW[HOST_AGT_PEX] to 0.
++		pcie_ep@3400000 {
++			compatible = "fsl,lx2160a-pcie-ep";
++			reg = <0x00 0x03400000 0x0 0x00100000
++			       0x80 0x00000000 0x8 0x00000000>;
++			reg-names = "regs", "addr_space";
++			num-ob-windows = <256>;
++			status = "disabled";
++		};
 +
-+config PCI_LAYERSCAPE_GEN4_EP
-+	bool "Freescale Layerscpe PCIe Gen4 controller in EP mode"
-+	depends on PCI
-+	depends on OF && (ARM64 || ARCH_LAYERSCAPE)
-+	depends on PCI_ENDPOINT
-+	select PCIE_MOBIVEIL_EP
-+	help
-+	  Say Y here if you want PCIe Gen4 controller support on
-+	  Layerscape SoCs. And the PCIe controller work in EP mode
-+	  by setting the RCW[HOST_AGT_PEX] to 1.
- endmenu
-diff --git a/drivers/pci/controller/mobiveil/Makefile b/drivers/pci/controller/mobiveil/Makefile
-index 4f520b7..cd907a7 100644
---- a/drivers/pci/controller/mobiveil/Makefile
-+++ b/drivers/pci/controller/mobiveil/Makefile
-@@ -4,3 +4,4 @@ obj-$(CONFIG_PCIE_MOBIVEIL_HOST) += pcie-mobiveil-host.o
- obj-$(CONFIG_PCIE_MOBIVEIL_EP) += pcie-mobiveil-ep.o
- obj-$(CONFIG_PCIE_MOBIVEIL_PLAT) += pcie-mobiveil-plat.o
- obj-$(CONFIG_PCI_LAYERSCAPE_GEN4) += pci-layerscape-gen4.o
-+obj-$(CONFIG_PCI_LAYERSCAPE_GEN4_EP) += pci-layerscape-gen4-ep.o
-diff --git a/drivers/pci/controller/mobiveil/pci-layerscape-gen4-ep.c b/drivers/pci/controller/mobiveil/pci-layerscape-gen4-ep.c
-new file mode 100644
-index 0000000..dc3589d
---- /dev/null
-+++ b/drivers/pci/controller/mobiveil/pci-layerscape-gen4-ep.c
-@@ -0,0 +1,166 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PCIe controller EP driver for Freescale Layerscape SoCs
-+ *
-+ * Copyright (C) 2018 NXP Semiconductor.
-+ *
-+ * Author: Xiaowei Bao <xiaowei.bao@nxp.com>
-+ */
+ 		pcie@3500000 {
+ 			compatible = "fsl,lx2160a-pcie";
+ 			reg = <0x00 0x03500000 0x0 0x00100000   /* controller registers */
+@@ -950,6 +959,15 @@
+ 			status = "disabled";
+ 		};
+ 
++		pcie_ep@3500000 {
++			compatible = "fsl,lx2160a-pcie-ep";
++			reg = <0x00 0x03500000 0x0 0x00100000
++			       0x88 0x00000000 0x8 0x00000000>;
++			reg-names = "regs", "addr_space";
++			num-ob-windows = <256>;
++			status = "disabled";
++		};
 +
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/of_pci.h>
-+#include <linux/of_platform.h>
-+#include <linux/of_address.h>
-+#include <linux/pci.h>
-+#include <linux/platform_device.h>
-+#include <linux/resource.h>
+ 		pcie@3600000 {
+ 			compatible = "fsl,lx2160a-pcie";
+ 			reg = <0x00 0x03600000 0x0 0x00100000   /* controller registers */
+@@ -977,6 +995,16 @@
+ 			status = "disabled";
+ 		};
+ 
++		pcie_ep@3600000 {
++			compatible = "fsl,lx2160a-pcie-ep";
++			reg = <0x00 0x03600000 0x0 0x00100000
++			       0x90 0x00000000 0x8 0x00000000>;
++			reg-names = "regs", "addr_space";
++			num-ob-windows = <256>;
++			max-functions = <2>;
++			status = "disabled";
++		};
 +
-+#include "pcie-mobiveil.h"
+ 		pcie@3700000 {
+ 			compatible = "fsl,lx2160a-pcie";
+ 			reg = <0x00 0x03700000 0x0 0x00100000   /* controller registers */
+@@ -1004,6 +1032,15 @@
+ 			status = "disabled";
+ 		};
+ 
++		pcie_ep@3700000 {
++			compatible = "fsl,lx2160a-pcie-ep";
++			reg = <0x00 0x03700000 0x0 0x00100000
++			       0x98 0x00000000 0x8 0x00000000>;
++			reg-names = "regs", "addr_space";
++			num-ob-windows = <256>;
++			status = "disabled";
++		};
 +
-+struct ls_pcie_g4_ep {
-+	struct mobiveil_pcie		*mv_pci;
-+};
+ 		pcie@3800000 {
+ 			compatible = "fsl,lx2160a-pcie";
+ 			reg = <0x00 0x03800000 0x0 0x00100000   /* controller registers */
+@@ -1031,6 +1068,16 @@
+ 			status = "disabled";
+ 		};
+ 
++		pcie_ep@3800000 {
++			compatible = "fsl,lx2160a-pcie-ep";
++			reg = <0x00 0x03800000 0x0 0x00100000
++			       0xa0 0x00000000 0x8 0x00000000>;
++			reg-names = "regs", "addr_space";
++			num-ob-windows = <256>;
++			max-functions = <2>;
++			status = "disabled";
++		};
 +
-+#define to_ls_pcie_g4_ep(x)	dev_get_drvdata((x)->dev)
+ 		pcie@3900000 {
+ 			compatible = "fsl,lx2160a-pcie";
+ 			reg = <0x00 0x03900000 0x0 0x00100000   /* controller registers */
+@@ -1058,5 +1105,14 @@
+ 			status = "disabled";
+ 		};
+ 
++		pcie_ep@3900000 {
++			compatible = "fsl,lx2160a-pcie-ep";
++			reg = <0x00 0x03900000 0x0 0x00100000
++			       0xa8 0x00000000 0x8 0x00000000>;
++			reg-names = "regs", "addr_space";
++			num-ob-windows = <256>;
++			status = "disabled";
++		};
 +
-+static const struct of_device_id ls_pcie_g4_ep_of_match[] = {
-+	{ .compatible = "fsl,lx2160a-pcie-ep",},
-+	{ },
-+};
-+
-+static void ls_pcie_g4_get_bar_num(struct mobiveil_pcie_ep *ep)
-+{
-+	struct mobiveil_pcie *mv_pci = to_mobiveil_pcie_from_ep(ep);
-+	u32 type, reg;
-+	u8 bar;
-+
-+	ep->bar_num = BAR_5 + 1;
-+
-+	for (bar = BAR_0; bar <= BAR_5; bar++) {
-+		reg = PCI_BASE_ADDRESS_0 + (4 * bar);
-+		type = csr_readl(mv_pci, reg) &
-+		       PCI_BASE_ADDRESS_MEM_TYPE_MASK;
-+		if (type & PCI_BASE_ADDRESS_MEM_TYPE_64)
-+			ep->bar_num--;
-+	}
-+}
-+
-+static void ls_pcie_g4_ep_init(struct mobiveil_pcie_ep *ep)
-+{
-+	struct mobiveil_pcie *mv_pci = to_mobiveil_pcie_from_ep(ep);
-+	struct pci_epc *epc = ep->epc;
-+	enum pci_barno bar;
-+	int win_idx;
-+
-+	ls_pcie_g4_get_bar_num(ep);
-+
-+	for (bar = BAR_0; bar < (ep->bar_num * ep->pf_num); bar++)
-+		mobiveil_pcie_ep_reset_bar(mv_pci, bar);
-+
-+	for (win_idx = 0; win_idx < MAX_IATU_OUT; win_idx++)
-+		mobiveil_pcie_disable_ob_win(mv_pci, win_idx);
-+
-+	epc->features |= EPC_FEATURE_NO_LINKUP_NOTIFIER;
-+	epc->features |= EPC_FEATURE_MSIX_AVAILABLE;
-+}
-+
-+static int ls_pcie_g4_ep_raise_irq(struct mobiveil_pcie_ep *ep, u8 func_no,
-+				   enum pci_epc_irq_type type,
-+				   u16 interrupt_num)
-+{
-+	struct mobiveil_pcie *mv_pci = to_mobiveil_pcie_from_ep(ep);
-+
-+	switch (type) {
-+	case PCI_EPC_IRQ_LEGACY:
-+		return mobiveil_pcie_ep_raise_legacy_irq(ep, func_no);
-+	case PCI_EPC_IRQ_MSI:
-+		return mobiveil_pcie_ep_raise_msi_irq(ep, func_no,
-+						      interrupt_num);
-+	case PCI_EPC_IRQ_MSIX:
-+		return mobiveil_pcie_ep_raise_msix_irq(ep, func_no,
-+						       interrupt_num);
-+	default:
-+		dev_err(&mv_pci->pdev->dev, "UNKNOWN IRQ type\n");
-+	}
-+
-+	return 0;
-+}
-+
-+static struct mobiveil_pcie_ep_ops pcie_ep_ops = {
-+	.ep_init = ls_pcie_g4_ep_init,
-+	.raise_irq = ls_pcie_g4_ep_raise_irq,
-+};
-+
-+static int __init ls_pcie_gen4_add_pcie_ep(struct ls_pcie_g4_ep *ls_pcie_g4_ep,
-+					   struct platform_device *pdev)
-+{
-+	struct mobiveil_pcie *mv_pci = ls_pcie_g4_ep->mv_pci;
-+	struct device *dev = &pdev->dev;
-+	struct mobiveil_pcie_ep *ep;
-+	struct resource *res;
-+	int ret;
-+	struct device_node *np = dev->of_node;
-+
-+	ep = &mv_pci->ep;
-+	ep->ops = &pcie_ep_ops;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "addr_space");
-+	if (!res)
-+		return -EINVAL;
-+
-+	ep->phys_base = res->start;
-+	ep->addr_size = resource_size(res);
-+
-+	ret = of_property_read_u32(np, "max-functions", &ep->pf_num);
-+	if (ret < 0)
-+		ep->pf_num = 1;
-+
-+	ret = mobiveil_pcie_ep_init(ep);
-+	if (ret) {
-+		dev_err(dev, "failed to initialize endpoint\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int __init ls_pcie_g4_ep_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct mobiveil_pcie *mv_pci;
-+	struct ls_pcie_g4_ep *ls_pcie_g4_ep;
-+	struct resource *res;
-+	int ret;
-+
-+	ls_pcie_g4_ep = devm_kzalloc(dev, sizeof(*ls_pcie_g4_ep), GFP_KERNEL);
-+	if (!ls_pcie_g4_ep)
-+		return -ENOMEM;
-+
-+	mv_pci = devm_kzalloc(dev, sizeof(*mv_pci), GFP_KERNEL);
-+	if (!mv_pci)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "regs");
-+	mv_pci->csr_axi_slave_base = devm_pci_remap_cfg_resource(dev, res);
-+	if (IS_ERR(mv_pci->csr_axi_slave_base))
-+		return PTR_ERR(mv_pci->csr_axi_slave_base);
-+
-+	mv_pci->pdev = pdev;
-+	ls_pcie_g4_ep->mv_pci = mv_pci;
-+
-+	platform_set_drvdata(pdev, ls_pcie_g4_ep);
-+
-+	ret = ls_pcie_gen4_add_pcie_ep(ls_pcie_g4_ep, pdev);
-+
-+	return ret;
-+}
-+
-+static struct platform_driver ls_pcie_g4_ep_driver = {
-+	.driver = {
-+		.name = "layerscape-pcie-gen4-ep",
-+		.of_match_table = ls_pcie_g4_ep_of_match,
-+		.suppress_bind_attrs = true,
-+	},
-+};
-+builtin_platform_driver_probe(ls_pcie_g4_ep_driver, ls_pcie_g4_ep_probe);
+ 	};
+ };
 -- 
 1.7.1
 
