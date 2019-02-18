@@ -4,58 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A39C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:05:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A55C5C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:05:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4DE32190C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:05:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 753C0204FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:05:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498713;
-	bh=m0xPj6jvTZcAKAV/6fKyEBSAgdw+WVmBWOi2eEFi+QY=;
+	s=default; t=1550498717;
+	bh=YSy6Ozp/Aows76J7qmqx69HKxqLMIo3AtG2BL0BQINY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wiwzZg6vRleiinJHUbTuBGhB5yJeUsuaokrMfphtdnxrlubrurBxWTfOzbJ4N/lrQ
-	 yvyabeu2Y4aCQK0lzbJ4nxJAypVXDQuI6w2sxd7p5aqLA55VtudIlX0O0RZXAgaBRI
-	 lte7POpP39E3eQ1O6Q4vrqyYRUbLkEC4sBJRVx/M=
+	b=Hi5VLv647Z13q6KgFTSPMzfAENSyLwPwAdSmeUeVcLHNijmLawv6U4i8T1WcQ4Zrx
+	 UF6OXDKhcO+wyT01XzVh10be597zGSrAUJQothwBefHL+nF4Q94+UlDmcuUqugm0/q
+	 CTHwonKJTaTSwH+4GtLsS46ZdyNEjk6IiAatZjb4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390100AbfBROFM (ORCPT
+        id S2390115AbfBROFP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:05:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47876 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:05:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389556AbfBROFK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:05:10 -0500
+        id S2390101AbfBROFM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:05:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B4B821901;
-        Mon, 18 Feb 2019 14:05:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF0FA21902;
+        Mon, 18 Feb 2019 14:05:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498708;
-        bh=m0xPj6jvTZcAKAV/6fKyEBSAgdw+WVmBWOi2eEFi+QY=;
+        s=default; t=1550498712;
+        bh=YSy6Ozp/Aows76J7qmqx69HKxqLMIo3AtG2BL0BQINY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mfGExCJqgBjMr05sRccBMf91rmw9x1Ygdf35keYtSWACOlR1R8lRG7TShzG6nKJLS
-         5Qsg+bIOx6JR9yTzNxhQU0E6/8y9NkE25s4n3AZFHp7QmevROACAQhb4/PKuZjRedX
-         URI9+ISxr+TePZ2y8I/0D0nYDXmLkHTHoYYulAM4=
+        b=E7pTllkLIgFP7/mfuLN6uLRDkVmY6TX41fVk4kyX9R3swKTjx7cfXsSC2cU7XnMkI
+         WclPOcEfgtw6ENXnvTQL1PY33Rk85WAmepB3ShNG0R5NmnWrsU+M1QWxzXEu0CqE1r
+         XRePqOXqPEw8YOyDWpJVjpQR5dsEacsS6ZQ3nDaM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
         Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jason Baron <jbaron@akamai.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 070/143] kernel/hung_task.c: break RCU locks based on jiffies
-Date:   Mon, 18 Feb 2019 14:43:18 +0100
-Message-Id: <20190218133531.653139117@linuxfoundation.org>
+Subject: [PATCH 4.4 071/143] fs/epoll: drop ovflist branch prediction
+Date:   Mon, 18 Feb 2019 14:43:19 +0100
+Message-Id: <20190218133531.694235876@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -74,67 +69,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 304ae42739b108305f8d7b3eb3c1aec7c2b643a9 ]
+[ Upstream commit 76699a67f3041ff4c7af6d6ee9be2bfbf1ffb671 ]
 
-check_hung_uninterruptible_tasks() is currently calling rcu_lock_break()
-for every 1024 threads.  But check_hung_task() is very slow if printk()
-was called, and is very fast otherwise.
+The ep->ovflist is a secondary ready-list to temporarily store events
+that might occur when doing sproc without holding the ep->wq.lock.  This
+accounts for every time we check for ready events and also send events
+back to userspace; both callbacks, particularly the latter because of
+copy_to_user, can account for a non-trivial time.
 
-If many threads within some 1024 threads called printk(), the RCU grace
-period might be extended enough to trigger RCU stall warnings.
-Therefore, calling rcu_lock_break() for every some fixed jiffies will be
-safer.
+As such, the unlikely() check to see if the pointer is being used, seems
+both misleading and sub-optimal.  In fact, we go to an awful lot of
+trouble to sync both lists, and populating the ovflist is far from an
+uncommon scenario.
 
-Link: http://lkml.kernel.org/r/1544800658-11423-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Acked-by: Paul E. McKenney <paulmck@linux.ibm.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+For example, profiling a concurrent epoll_wait(2) benchmark, with
+CONFIG_PROFILE_ANNOTATED_BRANCHES shows that for a two threads a 33%
+incorrect rate was seen; and when incrementally increasing the number of
+epoll instances (which is used, for example for multiple queuing load
+balancing models), up to a 90% incorrect rate was seen.
+
+Similarly, by deleting the prediction, 3% throughput boost was seen
+across incremental threads.
+
+Link: http://lkml.kernel.org/r/20181108051006.18751-4-dave@stgolabs.net
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jason Baron <jbaron@akamai.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/hung_task.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/eventpoll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-index e0f90c2b57aa..cc05b97ba569 100644
---- a/kernel/hung_task.c
-+++ b/kernel/hung_task.c
-@@ -30,7 +30,7 @@ int __read_mostly sysctl_hung_task_check_count = PID_MAX_LIMIT;
-  * is disabled during the critical section. It also controls the size of
-  * the RCU grace period. So it needs to be upper-bound.
-  */
--#define HUNG_TASK_BATCHING 1024
-+#define HUNG_TASK_LOCK_BREAK (HZ / 10)
- 
- /*
-  * Zero means infinite timeout - no checking done:
-@@ -158,7 +158,7 @@ static bool rcu_lock_break(struct task_struct *g, struct task_struct *t)
- static void check_hung_uninterruptible_tasks(unsigned long timeout)
- {
- 	int max_count = sysctl_hung_task_check_count;
--	int batch_count = HUNG_TASK_BATCHING;
-+	unsigned long last_break = jiffies;
- 	struct task_struct *g, *t;
- 
- 	/*
-@@ -172,10 +172,10 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
- 	for_each_process_thread(g, t) {
- 		if (!max_count--)
- 			goto unlock;
--		if (!--batch_count) {
--			batch_count = HUNG_TASK_BATCHING;
-+		if (time_after(jiffies, last_break + HUNG_TASK_LOCK_BREAK)) {
- 			if (!rcu_lock_break(g, t))
- 				goto unlock;
-+			last_break = jiffies;
- 		}
- 		/* use "==" to skip the TASK_KILLABLE tasks waiting on NFS */
- 		if (t->state == TASK_UNINTERRUPTIBLE)
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 1b08556776ce..240d9ceb8d0c 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -1034,7 +1034,7 @@ static int ep_poll_callback(wait_queue_t *wait, unsigned mode, int sync, void *k
+ 	 * semantics). All the events that happen during that period of time are
+ 	 * chained in ep->ovflist and requeued later on.
+ 	 */
+-	if (unlikely(ep->ovflist != EP_UNACTIVE_PTR)) {
++	if (ep->ovflist != EP_UNACTIVE_PTR) {
+ 		if (epi->next == EP_UNACTIVE_PTR) {
+ 			epi->next = ep->ovflist;
+ 			ep->ovflist = epi;
 -- 
 2.19.1
 
