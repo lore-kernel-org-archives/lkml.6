@@ -2,115 +2,177 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05E32C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C324C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:34:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C918F21736
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:34:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550500478;
-	bh=8ZCyAgxXYxtDXgKgmgUQk0E66R8+TTI+hXTjFPP7WNY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CTqEl+xTSaorc1xMXnENUxW1rkwdqCxjlotWKCn7bIAO4e5Us211HIAhg5jpeyaLK
-	 T+1rVknN0gu65mXtv96TRdJfdJFNu/e0ac0fTcrgzr1s3KP7Cty7u4zcPrFM7vCs6K
-	 sUjIg9Ofv41jnOrHYZVnduvE1wXiXJ3gNXUhqqQ0=
+	by mail.kernel.org (Postfix) with ESMTP id 3827B21736
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:34:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387823AbfBRN4e (ORCPT
+        id S2389037AbfBROel (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:56:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36688 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:34:41 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38264 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387802AbfBRN4a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:56:30 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2387818AbfBRN4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:56:34 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0598D2077B;
-        Mon, 18 Feb 2019 13:56:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498189;
-        bh=8ZCyAgxXYxtDXgKgmgUQk0E66R8+TTI+hXTjFPP7WNY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KC8gDAHDncm64eWXEm4Ly929FjnHUeFt/yFUT8MWPL00gtB67uC9aaZf48l4pYIpf
-         /RS4BTW/rNpPds5bEBaUnTB0+NYadUocE4jKiW97+oInDeet+nf+5S4TZXcEYZG/NC
-         nLYoABjQcGRQVBYFYcK9VLmmqjJy0SZ+L61T+EJY=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        "David A. Long" <dave.long@linaro.org>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 21/62] ARM: fix the cockup in the previous patch
-Date:   Mon, 18 Feb 2019 14:43:27 +0100
-Message-Id: <20190218133507.741384971@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
-References: <20190218133505.801423074@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        by mx1.redhat.com (Postfix) with ESMTPS id DE0BF356D5;
+        Mon, 18 Feb 2019 13:56:33 +0000 (UTC)
+Received: from laptop.redhat.com (ovpn-116-102.ams2.redhat.com [10.36.116.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B508C5D70A;
+        Mon, 18 Feb 2019 13:56:27 +0000 (UTC)
+From:   Eric Auger <eric.auger@redhat.com>
+To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
+        will.deacon@arm.com, robin.murphy@arm.com
+Cc:     kevin.tian@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org
+Subject: [PATCH v4 08/22] vfio: VFIO_IOMMU_CACHE_INVALIDATE
+Date:   Mon, 18 Feb 2019 14:54:49 +0100
+Message-Id: <20190218135504.25048-9-eric.auger@redhat.com>
+In-Reply-To: <20190218135504.25048-1-eric.auger@redhat.com>
+References: <20190218135504.25048-1-eric.auger@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 18 Feb 2019 13:56:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+From: "Liu, Yi L" <yi.l.liu@linux.intel.com>
 
-------------------
+When the guest "owns" the stage 1 translation structures,  the host
+IOMMU driver has no knowledge of caching structure updates unless
+the guest invalidation requests are trapped and passed down to the
+host.
 
-Commit d6951f582cc50ba0ad22ef46b599740966599b14 upstream.
+This patch adds the VFIO_IOMMU_CACHE_INVALIDATE ioctl with aims
+at propagating guest stage1 IOMMU cache invalidations to the host.
 
-The intention in the previous patch was to only place the processor
-tables in the .rodata section if big.Little was being built and we
-wanted the branch target hardening, but instead (due to the way it
-was tested) it ended up always placing the tables into the .rodata
-section.
+Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
 
-Although harmless, let's correct this anyway.
-
-Fixes: 3a4d0c2172bc ("ARM: ensure that processor vtables is not lost after boot")
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: David A. Long <dave.long@linaro.org>
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-Tested-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mm/proc-macros.S | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mm/proc-macros.S b/arch/arm/mm/proc-macros.S
-index 19516fbc2c55..5461d589a1e2 100644
---- a/arch/arm/mm/proc-macros.S
-+++ b/arch/arm/mm/proc-macros.S
-@@ -278,7 +278,7 @@
-  * If we are building for big.Little with branch predictor hardening,
-  * we need the processor function tables to remain available after boot.
-  */
--#if 1 // defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
-+#if defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
- 	.section ".rodata"
- #endif
- 	.type	\name\()_processor_functions, #object
-@@ -316,7 +316,7 @@ ENTRY(\name\()_processor_functions)
- 	.endif
+v2 -> v3:
+- introduce vfio_iommu_for_each_dev back in this patch
+
+v1 -> v2:
+- s/TLB/CACHE
+- remove vfio_iommu_task usage
+- commit message rewording
+---
+ drivers/vfio/vfio_iommu_type1.c | 47 +++++++++++++++++++++++++++++++++
+ include/uapi/linux/vfio.h       | 13 +++++++++
+ 2 files changed, 60 insertions(+)
+
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 222e9199edbf..12a40b9db6aa 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -113,6 +113,26 @@ struct vfio_regions {
+ #define IS_IOMMU_CAP_DOMAIN_IN_CONTAINER(iommu)	\
+ 					(!list_empty(&iommu->domain_list))
  
- 	.size	\name\()_processor_functions, . - \name\()_processor_functions
--#if 1 // defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
-+#if defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
- 	.previous
- #endif
- .endm
++/* iommu->lock must be held */
++static int
++vfio_iommu_for_each_dev(struct vfio_iommu *iommu, void *data,
++			int (*fn)(struct device *, void *))
++{
++	struct vfio_domain *d;
++	struct vfio_group *g;
++	int ret = 0;
++
++	list_for_each_entry(d, &iommu->domain_list, next) {
++		list_for_each_entry(g, &d->group_list, next) {
++			ret = iommu_group_for_each_dev(g->iommu_group,
++						       data, fn);
++			if (ret)
++				break;
++		}
++	}
++	return ret;
++}
++
+ static int put_pfn(unsigned long pfn, int prot);
+ 
+ /*
+@@ -1681,6 +1701,15 @@ vfio_attach_pasid_table(struct vfio_iommu *iommu,
+ 	return ret;
+ }
+ 
++static int vfio_cache_inv_fn(struct device *dev, void *data)
++{
++	struct vfio_iommu_type1_cache_invalidate *ustruct =
++		(struct vfio_iommu_type1_cache_invalidate *)data;
++	struct iommu_domain *d = iommu_get_domain_for_dev(dev);
++
++	return iommu_cache_invalidate(d, dev, &ustruct->info);
++}
++
+ static long vfio_iommu_type1_ioctl(void *iommu_data,
+ 				   unsigned int cmd, unsigned long arg)
+ {
+@@ -1767,6 +1796,24 @@ static long vfio_iommu_type1_ioctl(void *iommu_data,
+ 	} else if (cmd == VFIO_IOMMU_DETACH_PASID_TABLE) {
+ 		vfio_detach_pasid_table(iommu);
+ 		return 0;
++	} else if (cmd == VFIO_IOMMU_CACHE_INVALIDATE) {
++		struct vfio_iommu_type1_cache_invalidate ustruct;
++		int ret;
++
++		minsz = offsetofend(struct vfio_iommu_type1_cache_invalidate,
++				    info);
++
++		if (copy_from_user(&ustruct, (void __user *)arg, minsz))
++			return -EFAULT;
++
++		if (ustruct.argsz < minsz || ustruct.flags)
++			return -EINVAL;
++
++		mutex_lock(&iommu->lock);
++		ret = vfio_iommu_for_each_dev(iommu, &ustruct,
++					      vfio_cache_inv_fn);
++		mutex_unlock(&iommu->lock);
++		return ret;
+ 	}
+ 
+ 	return -ENOTTY;
+diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+index 329d378565d9..29f0ef2d805d 100644
+--- a/include/uapi/linux/vfio.h
++++ b/include/uapi/linux/vfio.h
+@@ -776,6 +776,19 @@ struct vfio_iommu_type1_attach_pasid_table {
+ #define VFIO_IOMMU_ATTACH_PASID_TABLE	_IO(VFIO_TYPE, VFIO_BASE + 22)
+ #define VFIO_IOMMU_DETACH_PASID_TABLE	_IO(VFIO_TYPE, VFIO_BASE + 23)
+ 
++/**
++ * VFIO_IOMMU_CACHE_INVALIDATE - _IOWR(VFIO_TYPE, VFIO_BASE + 24,
++ *			struct vfio_iommu_type1_cache_invalidate)
++ *
++ * Propagate guest IOMMU cache invalidation to the host.
++ */
++struct vfio_iommu_type1_cache_invalidate {
++	__u32   argsz;
++	__u32   flags;
++	struct iommu_cache_invalidate_info info;
++};
++#define VFIO_IOMMU_CACHE_INVALIDATE      _IO(VFIO_TYPE, VFIO_BASE + 24)
++
+ /* -------- Additional API for SPAPR TCE (Server POWERPC) IOMMU -------- */
+ 
+ /*
 -- 
-2.19.1
-
-
+2.20.1
 
