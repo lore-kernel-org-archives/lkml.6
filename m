@@ -4,49 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C851C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:48:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C859BC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:48:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C21A21906
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:48:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9972B21904
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:48:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497707;
-	bh=PuPGrBJzCNvJnrrNSzHWR2kp2tQqAFa4XMoqjEu+Z5U=;
+	s=default; t=1550497715;
+	bh=vuvWRDl0I68gISq54wooq2UtzO3HGEvjvSMfTcBVv9U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0TI6HnqG5i+/MfZ9Wf4hvuW7QVjSEhLB2KKo8IHrXvZ4pR00IxVLYV+PfBwEtgHCg
-	 9i+X8e54AAO8p6QpRqIcyWyCHUzoUmTNcvPrXM9PgcRQzjvbbcwA4WhY2AS7skuHWx
-	 3CaYZTOM3vqHHQyxtyntvE+5IGh3Heo/EaA8sKHU=
+	b=AyLULgeJeIz01thWjjR50IBt/PoE8MkiDc91pnO+c/J8p2Fu7HrhI3Lp30IsvC6TB
+	 JuBkUkzIM1y9aixMyXIovJ56pXJ1aF68x1NNUZrMEa3lWzQbvqTTImTEpKxs3vIrJm
+	 WKAxFlFLgP2JHvWktQweCoodJLNL5G0oh0dVKDgE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731056AbfBRNsZ (ORCPT
+        id S1731878AbfBRNsd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:48:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55190 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:48:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730301AbfBRNsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:48:22 -0500
+        id S1731369AbfBRNsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:48:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C93D21901;
-        Mon, 18 Feb 2019 13:48:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0959221901;
+        Mon, 18 Feb 2019 13:48:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497701;
-        bh=PuPGrBJzCNvJnrrNSzHWR2kp2tQqAFa4XMoqjEu+Z5U=;
+        s=default; t=1550497710;
+        bh=vuvWRDl0I68gISq54wooq2UtzO3HGEvjvSMfTcBVv9U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lxRSTRsnj76Vu+AXs9e5Dj+bGr6bLa+k41u4x99yAzbpjUJVcscwisxDE2PCJ43xH
-         7arp3vYyJCJTD4obWUaIEOZMl+6SR5ZRplSb415W9wu9P3AQILoly5wlerr4Iz7fkw
-         kiJK3PPnqQ60/BnbBWWTXeeKL8zPZGtJ8Iwwegqw=
+        b=P+bl775j5h4RHdfcIWL3UbRDBBKGmvhUA4I1rPepvJST2l1WM6G7EGqdJQWJFAWwr
+         +Qbc8ysfrOglJnFYo/pfxQR78XIrAf82tqop/8zfrgQDabIOYRP19yZNocEjQsmKJR
+         VUCET2KDrkY9ApFUqDoQ0HHixf4h8swnLskTB4CQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.20 59/92] ASoC: hdmi-codec: fix oops on re-probe
-Date:   Mon, 18 Feb 2019 14:43:02 +0100
-Message-Id: <20190218133500.377401228@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
+        Wolfgang Walter <linux@stwm.de>, Roman Gushchin <guro@fb.com>,
+        Spock <dairinin@gmail.com>, Rik van Riel <riel@surriel.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.20 70/92] Revert "mm: dont reclaim inodes with many attached pages"
+Date:   Mon, 18 Feb 2019 14:43:13 +0100
+Message-Id: <20190218133501.437460479@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
 References: <20190218133454.668268457@linuxfoundation.org>
@@ -65,72 +69,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Dave Chinner <dchinner@redhat.com>
 
-commit 0ce23d6d42147a692768e6baaaa3db75c44f4235 upstream.
+commit 69056ee6a8a3d576ed31e38b3b14c70d6c74edcc upstream.
 
-hdmi-codec oopses the kernel when it is unbound from a successfully
-bound audio subsystem, and is then rebound:
+This reverts commit a76cf1a474d7d ("mm: don't reclaim inodes with many
+attached pages").
 
-Unable to handle kernel NULL pointer dereference at virtual address 0000001c
-pgd = ee3f0000
-[0000001c] *pgd=3cc59831
-Internal error: Oops: 817 [#1] PREEMPT ARM
-Modules linked in: ext2 snd_soc_spdif_tx vmeta dove_thermal snd_soc_kirkwood ofpart marvell_cesa m25p80 orion_wdt mtd spi_nor des_generic gpio_ir_recv snd_soc_kirkwood_spdif bmm_dmabuf auth_rpcgss nfsd autofs4 etnaviv thermal_sys hwmon gpu_sched tda9950
-CPU: 0 PID: 1005 Comm: bash Not tainted 4.20.0+ #1762
-Hardware name: Marvell Dove (Cubox)
-PC is at hdmi_dai_probe+0x68/0x80
-LR is at find_held_lock+0x20/0x94
-pc : [<c04c7de0>]    lr : [<c0063bf4>]    psr: 600f0013
-sp : ee15bd28  ip : eebd8b1c  fp : c093b488
-r10: ee048000  r9 : eebdab18  r8 : ee048600
-r7 : 00000001  r6 : 00000000  r5 : 00000000  r4 : ee82c100
-r3 : 00000006  r2 : 00000001  r1 : c067e38c  r0 : ee82c100
-Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none[  297.318599] Control: 10c5387d  Table: 2e3f0019  DAC: 00000051
-Process bash (pid: 1005, stack limit = 0xee15a248)
-...
-[<c04c7de0>] (hdmi_dai_probe) from [<c04b7060>] (soc_probe_dai.part.9+0x34/0x70)
-[<c04b7060>] (soc_probe_dai.part.9) from [<c04b81a8>] (snd_soc_instantiate_card+0x734/0xc9c)
-[<c04b81a8>] (snd_soc_instantiate_card) from [<c04b8b6c>] (snd_soc_add_component+0x29c/0x378)
-[<c04b8b6c>] (snd_soc_add_component) from [<c04b8c8c>] (snd_soc_register_component+0x44/0x54)
-[<c04b8c8c>] (snd_soc_register_component) from [<c04c64b4>] (devm_snd_soc_register_component+0x48/0x84)
-[<c04c64b4>] (devm_snd_soc_register_component) from [<c04c7be8>] (hdmi_codec_probe+0x150/0x260)
-[<c04c7be8>] (hdmi_codec_probe) from [<c0373124>] (platform_drv_probe+0x48/0x98)
+This change causes serious changes to page cache and inode cache
+behaviour and balance, resulting in major performance regressions when
+combining worklaods such as large file copies and kernel compiles.
 
-This happens because hdmi_dai_probe() attempts to access the HDMI
-codec private data, but this has not been assigned by hdmi_dai_probe()
-before it calls devm_snd_soc_register_component().  Move the call to
-dev_set_drvdata() before devm_snd_soc_register_component() to avoid
-this oops.
+  https://bugzilla.kernel.org/show_bug.cgi?id=202441
 
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+This change is a hack to work around the problems introduced by changing
+how agressive shrinkers are on small caches in commit 172b06c32b94 ("mm:
+slowly shrink slabs with a relatively small number of objects").  It
+creates more problems than it solves, wasn't adequately reviewed or
+tested, so it needs to be reverted.
+
+Link: http://lkml.kernel.org/r/20190130041707.27750-2-david@fromorbit.com
+Fixes: a76cf1a474d7d ("mm: don't reclaim inodes with many attached pages")
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+Cc: Wolfgang Walter <linux@stwm.de>
+Cc: Roman Gushchin <guro@fb.com>
+Cc: Spock <dairinin@gmail.com>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/codecs/hdmi-codec.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/inode.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
---- a/sound/soc/codecs/hdmi-codec.c
-+++ b/sound/soc/codecs/hdmi-codec.c
-@@ -795,6 +795,8 @@ static int hdmi_codec_probe(struct platf
- 	if (hcd->spdif)
- 		hcp->daidrv[i] = hdmi_spdif_dai;
- 
-+	dev_set_drvdata(dev, hcp);
-+
- 	ret = devm_snd_soc_register_component(dev, &hdmi_driver, hcp->daidrv,
- 				     dai_count);
- 	if (ret) {
-@@ -802,8 +804,6 @@ static int hdmi_codec_probe(struct platf
- 			__func__, ret);
- 		return ret;
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -730,11 +730,8 @@ static enum lru_status inode_lru_isolate
+ 		return LRU_REMOVED;
  	}
--
--	dev_set_drvdata(dev, hcp);
- 	return 0;
- }
  
+-	/*
+-	 * Recently referenced inodes and inodes with many attached pages
+-	 * get one more pass.
+-	 */
+-	if (inode->i_state & I_REFERENCED || inode->i_data.nrpages > 1) {
++	/* recently referenced inodes get one more pass */
++	if (inode->i_state & I_REFERENCED) {
+ 		inode->i_state &= ~I_REFERENCED;
+ 		spin_unlock(&inode->i_lock);
+ 		return LRU_ROTATE;
 
 
