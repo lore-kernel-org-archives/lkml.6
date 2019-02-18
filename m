@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0BB6C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 637E0C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:59:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A39A8217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:59:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32E71217F9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:59:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498354;
-	bh=mz1ItenpRPXbr+x2rWcYsVy5gR/Uesmv48f5npF1TH8=;
+	s=default; t=1550498358;
+	bh=mp2Gv7GiAdsyTbS9Gfag8SEUIbthTuHy0dU/ztQl1Wo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zfA0qykOX3qykDILhK1sPGjUsj/pP0azdIqb7wdy2GFerY/K6CymQ/w0noVKKsGR+
-	 i5N6IF9ivW9vWpHj3H8o4mX3tyWsrkaEYXCflbHtpjV9srvPKt+PhPFgVzl3xbC7MQ
-	 tc2QzMy3lbkwwYIoeur07Z1MTYe7S4bnaq4osys8=
+	b=s9Ru0wr1P1Z/ZlTAjj/fN/uIyuPvmpXVyqkmYiL1lYQwnG8GsdHPogeNNa52zt1SG
+	 gYFNr9HQAXpI5wnSE9K2Q+YrZw9Sb0e5jVDoiyM8P5THrd+vKJAOOjCIY+V6AgKH0X
+	 bQxX//7ohY4S+VJgkSz5KMHiYVh3OAeIBqTR3OcU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388508AbfBRN7N (ORCPT
+        id S2388523AbfBRN7Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:59:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40134 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:59:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387427AbfBRN7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:59:11 -0500
+        id S2387427AbfBRN7O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:59:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A46A22070D;
-        Mon, 18 Feb 2019 13:59:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74EC72070D;
+        Mon, 18 Feb 2019 13:59:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498351;
-        bh=mz1ItenpRPXbr+x2rWcYsVy5gR/Uesmv48f5npF1TH8=;
+        s=default; t=1550498354;
+        bh=mp2Gv7GiAdsyTbS9Gfag8SEUIbthTuHy0dU/ztQl1Wo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PT3whOksCWH8xLRsKr3i6YLLLGWBonZ+eyHtayRf6rUXtY7KdvUlU2FyQbRp+xhHf
-         1n0lQDZH5qcY1IiNskvHeyh9gEeR5DVKVn8zKS1MH/SQnup0BXluzNxb50+o+nuieM
-         Rl/is+4sM2yIrXmYf5W+bKt8SwRvfanws8XYCQC8=
+        b=f3FYaCHmlZbpOo4+ednZCSCOEg5unCMo3TK5ZZsuotpnhMbYrholGN0cm6JCHfMCx
+         f9wqtj0JtZHdjk9IZMxYp6XA6mpoPIV/Al/xdN01amHTdmRuXUSwaq7MYOpNLHMBQ3
+         L3vTYdDfad9AGWwOQjzTE0D/WeeUN6H62RFbAdLU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Manuel Reinhardt <manuel.rhdt@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 40/58] ALSA: usb-audio: Fix implicit fb endpoint setup by quirk
-Date:   Mon, 18 Feb 2019 14:44:01 +0100
-Message-Id: <20190218133511.710974206@linuxfoundation.org>
+        stable@vger.kernel.org, Xiaoyao Li <xiaoyao.li@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.9 41/58] kvm: vmx: Fix entry number check for add_atomic_switch_msr()
+Date:   Mon, 18 Feb 2019 14:44:02 +0100
+Message-Id: <20190218133511.783677933@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133508.567416115@linuxfoundation.org>
 References: <20190218133508.567416115@linuxfoundation.org>
@@ -64,58 +65,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Manuel Reinhardt <manuel.rhdt@gmail.com>
+From: Xiaoyao Li <xiaoyao.li@linux.intel.com>
 
-commit 2bc16b9f3223d049b57202ee702fcb5b9b507019 upstream.
+commit 98ae70cc476e833332a2c6bb72f941a25f0de226 upstream.
 
-The commit a60945fd08e4 ("ALSA: usb-audio: move implicit fb quirks to
-separate function") introduced an error in the handling of quirks for
-implicit feedback endpoints. This commit fixes this.
+Commit ca83b4a7f2d068da79a0 ("x86/KVM/VMX: Add find_msr() helper function")
+introduces the helper function find_msr(), which returns -ENOENT when
+not find the msr in vmx->msr_autoload.guest/host. Correct checking contion
+of no more available entry in vmx->msr_autoload.
 
-If a quirk successfully sets up an implicit feedback endpoint, usb-audio
-no longer tries to find the implicit fb endpoint itself.
-
-Fixes: a60945fd08e4 ("ALSA: usb-audio: move implicit fb quirks to separate function")
-Signed-off-by: Manuel Reinhardt <manuel.rhdt@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: ca83b4a7f2d0 ("x86/KVM/VMX: Add find_msr() helper function")
+Cc: stable@vger.kernel.org
+Signed-off-by: Xiaoyao Li <xiaoyao.li@linux.intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/pcm.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ arch/x86/kvm/vmx.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/sound/usb/pcm.c
-+++ b/sound/usb/pcm.c
-@@ -313,6 +313,9 @@ static int search_roland_implicit_fb(str
- 	return 0;
- }
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -2178,7 +2178,8 @@ static void add_atomic_switch_msr(struct
+ 	if (!entry_only)
+ 		j = find_msr(&m->host, msr);
  
-+/* Setup an implicit feedback endpoint from a quirk. Returns 0 if no quirk
-+ * applies. Returns 1 if a quirk was found.
-+ */
- static int set_sync_ep_implicit_fb_quirk(struct snd_usb_substream *subs,
- 					 struct usb_device *dev,
- 					 struct usb_interface_descriptor *altsd,
-@@ -391,7 +394,7 @@ add_sync_ep:
- 
- 	subs->data_endpoint->sync_master = subs->sync_endpoint;
- 
--	return 0;
-+	return 1;
- }
- 
- static int set_sync_endpoint(struct snd_usb_substream *subs,
-@@ -430,6 +433,10 @@ static int set_sync_endpoint(struct snd_
- 	if (err < 0)
- 		return err;
- 
-+	/* endpoint set by quirk */
-+	if (err > 0)
-+		return 0;
-+
- 	if (altsd->bNumEndpoints < 2)
- 		return 0;
- 
+-	if (i == NR_AUTOLOAD_MSRS || j == NR_AUTOLOAD_MSRS) {
++	if ((i < 0 && m->guest.nr == NR_AUTOLOAD_MSRS) ||
++		(j < 0 &&  m->host.nr == NR_AUTOLOAD_MSRS)) {
+ 		printk_once(KERN_WARNING "Not enough msr switch entries. "
+ 				"Can't add msr %x\n", msr);
+ 		return;
 
 
