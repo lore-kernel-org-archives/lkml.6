@@ -7,54 +7,51 @@ X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03409C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F60EC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CADE02177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 036532177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550515790;
-	bh=qqoSZvYO+TWeTp9y1l84fc7jsm/LE2/BveAX7v8GhWw=;
+	s=default; t=1550515795;
+	bh=nREbvS+I1//rWUfniaR+F7OPeGp44/lj9cwAJmKVWJw=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=okih1VW7XTS4E8R84WM+Wlg5ejMOf9gWeodRTk4awF1sgY50NnYPbKvtFd8wFfLam
-	 Fg/AyyCwH2/JmRIhjpQ80sS5xjAe2XoKK2DtBZTbQ9TiCzivFhzeRrh5xe2pavay4Q
-	 e8weZyV3mGf2dCHIEwrAj0WJoaRYRCLIajpqLzDs=
+	b=soLVt/1hxTZQKEAs6KQKOCgITq0GSug/QKnQIxqBfSMZefJskZmK5BF71uA+hmN4D
+	 +Te0XJBNN8Cv+vEPOeuc5f/y37H9s5ShYbok6TjE2ajln3kpVZpXmNcGEs+WgD4voq
+	 b98TU+fSS/NpjuV2ysBunFFls5JsbRU151dZ1jic=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726904AbfBRStt (ORCPT
+        id S1726989AbfBRStx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:49:49 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42252 "EHLO
+        Mon, 18 Feb 2019 13:49:53 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42436 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726685AbfBRStq (ORCPT
+        with ESMTP id S1726685AbfBRStw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:49:46 -0500
+        Mon, 18 Feb 2019 13:49:52 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=gh9CirCd86fYr37lcRNJseSj/vabTYOQxaEKl4c4nnY=; b=hIfmenDMYjrS
-        AseQrT+iGCYiGMSg2ESn+ACcqsQn7R8R5aPHewz5VURwvj1i6kPOSgCR29TBbzmxQgQ2ttVxAuIFD
-        bQq+i/HW2/k6TgE9UyrUN3gGGHAxZsNARmDbfhVa2op+VNEzCsOBsOjwg+LzZF8XlVG6baKMdFokb
-        8eZ8M=;
+        List-Archive; bh=1353i1blkWlPboNW7W34bHqFXcZ7Xb4PWkOI03EVOcs=; b=TSt96JOWaIKa
+        oiLTn+4cKuLZJkBVfDLMZ+fKgFoo7Flm9xYZSBMiUlm2901QUxO8WJaqesjh9TDpgZUV4CaET7mpv
+        hD2fO6t8rUMYiDGL4XMBuYhV/HMOkajD85ceNJ/kvxYkslEJ26cXpcGeBZA0yg9Vjwjxc5bzf0Saa
+        fU/PY=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gvnz2-0001fH-CT; Mon, 18 Feb 2019 18:49:40 +0000
+        id 1gvnzC-0001fl-9n; Mon, 18 Feb 2019 18:49:50 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id C1A051128008; Mon, 18 Feb 2019 18:49:39 +0000 (GMT)
+        id D8BAD1128008; Mon, 18 Feb 2019 18:49:49 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Cc:     Mark Brown <broonie@kernel.org>, lars@metafoo.de,
-        lgirdwood@gmail.com, broonie@kernel.org,
-        alsa-devel@alsa-project.org, Codrin.Ciubotariu@microchip.com,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: codecs: ad193x: Remove capture support for codecs without ADC" to the asoc tree
-In-Reply-To:  <20190218160954.13929-2-codrin.ciubotariu@microchip.com>
+To:     Axel Lin <axel.lin@ingics.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: stpmic1: Remove regul_id and *regmap from struct stpmic1_regulator" to the regulator tree
+In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190218184939.C1A051128008@debutante.sirena.org.uk>
-Date:   Mon, 18 Feb 2019 18:49:39 +0000 (GMT)
+Message-Id: <20190218184949.D8BAD1128008@debutante.sirena.org.uk>
+Date:   Mon, 18 Feb 2019 18:49:49 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,11 +59,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: codecs: ad193x: Remove capture support for codecs without ADC
+   regulator: stpmic1: Remove regul_id and *regmap from struct stpmic1_regulator
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -87,59 +84,84 @@ to this mail.
 Thanks,
 Mark
 
-From 7aac8d13fc60db3ec2422f26c4dc2425a7fef20c Mon Sep 17 00:00:00 2001
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Date: Mon, 18 Feb 2019 16:10:28 +0000
-Subject: [PATCH] ASoC: codecs: ad193x: Remove capture support for codecs
- without ADC
+From ef541f73d1a87723a9f5bcc76669c98d20292cfa Mon Sep 17 00:00:00 2001
+From: Axel Lin <axel.lin@ingics.com>
+Date: Thu, 14 Feb 2019 09:59:56 +0800
+Subject: [PATCH] regulator: stpmic1: Remove regul_id and *regmap from struct
+ stpmic1_regulator
 
-Some ad193x codecs don't have ADCs, so they have no capture capabilities.
-This way, we can use this driver in multicodec cards.
+At the context with *rdev available, regulator core provides
+rdev_get_id()/rdev_get_regmap() APIs to get regulator id and *regmap.
+So no need to store them in struct stpmic1_regulator.
 
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/ad193x.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+ drivers/regulator/stpmic1_regulator.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/sound/soc/codecs/ad193x.c b/sound/soc/codecs/ad193x.c
-index 4b60ebee491d..21a38cc9e3da 100644
---- a/sound/soc/codecs/ad193x.c
-+++ b/sound/soc/codecs/ad193x.c
-@@ -351,6 +351,20 @@ static struct snd_soc_dai_driver ad193x_dai = {
- 	.ops = &ad193x_dai_ops,
+diff --git a/drivers/regulator/stpmic1_regulator.c b/drivers/regulator/stpmic1_regulator.c
+index 963e67fa9ca6..d456fb5d4044 100644
+--- a/drivers/regulator/stpmic1_regulator.c
++++ b/drivers/regulator/stpmic1_regulator.c
+@@ -30,20 +30,16 @@ struct stpmic1_regulator_cfg {
+ 
+ /**
+  * stpmic1 regulator data: this structure is used as driver data
+- * @regul_id: regulator id
+  * @reg_node: DT node of regulator (unused on non-DT platforms)
+  * @cfg: stpmic specific regulator description
+  * @mask_reset: mask_reset bit value
+  * @irq_curlim: current limit interrupt number
+- * @regmap: point to parent regmap structure
+  */
+ struct stpmic1_regulator {
+-	unsigned int regul_id;
+ 	struct device_node *reg_node;
+ 	const struct stpmic1_regulator_cfg *cfg;
+ 	u8 mask_reset;
+ 	int irq_curlim;
+-	struct regmap *regmap;
  };
  
-+/* codec DAI instance for DAC only */
-+static struct snd_soc_dai_driver ad193x_no_adc_dai = {
-+	.name = "ad193x-hifi",
-+	.playback = {
-+		.stream_name = "Playback",
-+		.channels_min = 2,
-+		.channels_max = 8,
-+		.rates = SNDRV_PCM_RATE_48000,
-+		.formats = SNDRV_PCM_FMTBIT_S32_LE | SNDRV_PCM_FMTBIT_S16_LE |
-+			SNDRV_PCM_FMTBIT_S20_3LE | SNDRV_PCM_FMTBIT_S24_LE,
-+	},
-+	.ops = &ad193x_dai_ops,
-+};
-+
- static int ad193x_component_probe(struct snd_soc_component *component)
+ static int stpmic1_set_mode(struct regulator_dev *rdev, unsigned int mode);
+@@ -475,9 +471,10 @@ static int stpmic1_set_mode(struct regulator_dev *rdev, unsigned int mode)
+ static int stpmic1_set_icc(struct regulator_dev *rdev)
  {
- 	struct ad193x_priv *ad193x = snd_soc_component_get_drvdata(component);
-@@ -444,8 +458,11 @@ int ad193x_probe(struct device *dev, struct regmap *regmap,
+ 	struct stpmic1_regulator *regul = rdev_get_drvdata(rdev);
++	struct regmap *regmap = rdev_get_regmap(rdev);
  
- 	dev_set_drvdata(dev, ad193x);
- 
-+	if (ad193x_has_adc(ad193x))
-+		return devm_snd_soc_register_component(dev, &soc_component_dev_ad193x,
-+						       &ad193x_dai, 1);
- 	return devm_snd_soc_register_component(dev, &soc_component_dev_ad193x,
--		&ad193x_dai, 1);
-+		&ad193x_no_adc_dai, 1);
+ 	/* enable switch off in case of over current */
+-	return regmap_update_bits(regul->regmap, regul->cfg->icc_reg,
++	return regmap_update_bits(regmap, regul->cfg->icc_reg,
+ 				  regul->cfg->icc_mask, regul->cfg->icc_mask);
  }
- EXPORT_SYMBOL_GPL(ad193x_probe);
  
+@@ -501,11 +498,12 @@ static int stpmic1_regulator_init(struct platform_device *pdev,
+ 				  struct regulator_dev *rdev)
+ {
+ 	struct stpmic1_regulator *regul = rdev_get_drvdata(rdev);
++	struct regmap *regmap = rdev_get_regmap(rdev);
+ 	int ret = 0;
+ 
+ 	/* set mask reset */
+ 	if (regul->mask_reset && regul->cfg->mask_reset_reg != 0) {
+-		ret = regmap_update_bits(regul->regmap,
++		ret = regmap_update_bits(regmap,
+ 					 regul->cfg->mask_reset_reg,
+ 					 regul->cfg->mask_reset_mask,
+ 					 regul->cfg->mask_reset_mask);
+@@ -584,10 +582,8 @@ regulator_dev *stpmic1_regulator_register(struct platform_device *pdev, int id,
+ 	config.regmap = pmic_dev->regmap;
+ 	config.driver_data = regul;
+ 
+-	regul->regul_id = id;
+ 	regul->reg_node = config.of_node;
+ 	regul->cfg = &stpmic1_regulator_cfgs[id];
+-	regul->regmap = pmic_dev->regmap;
+ 
+ 	rdev = devm_regulator_register(&pdev->dev, &regul->cfg->desc, &config);
+ 	if (IS_ERR(rdev)) {
 -- 
 2.20.1
 
