@@ -2,258 +2,155 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A7BC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:27:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEAB4C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:27:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E0BC2173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:27:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CB7F2173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:27:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rtWgQcBB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730039AbfBRK1N (ORCPT
+        id S1730095AbfBRK1i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 05:27:13 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:51253 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727307AbfBRK1N (ORCPT
+        Mon, 18 Feb 2019 05:27:38 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35585 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727307AbfBRK1i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 05:27:13 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1IAQTFA2530732
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 18 Feb 2019 02:26:29 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1IAQSgs2530729;
-        Mon, 18 Feb 2019 02:26:28 -0800
-Date:   Mon, 18 Feb 2019 02:26:28 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Ming Lei <tipbot@zytor.com>
-Message-ID: <tip-9cfef55bb57e7620c63087be18a76351628f8d0f@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
-        tglx@linutronix.de, shivasharan.srikanteshwara@broadcom.com,
-        sumit.saxena@broadcom.com, keith.busch@intel.com, hch@lst.de,
-        ming.lei@redhat.com, hpa@zytor.com, axboe@kernel.dk,
-        kashyap.desai@broadcom.com, mingo@kernel.org, sagi@grimberg.me,
-        helgaas@kernel.org
-Reply-To: hpa@zytor.com, mingo@kernel.org, sagi@grimberg.me,
-          helgaas@kernel.org, axboe@kernel.dk, kashyap.desai@broadcom.com,
-          tglx@linutronix.de, marc.zyngier@arm.com,
-          linux-kernel@vger.kernel.org, keith.busch@intel.com, hch@lst.de,
-          ming.lei@redhat.com, shivasharan.srikanteshwara@broadcom.com,
-          sumit.saxena@broadcom.com
-In-Reply-To: <20190216172228.423723127@linutronix.de>
-References: <20190216172228.423723127@linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] genirq/affinity: Store interrupt sets size in struct
- irq_affinity
-Git-Commit-ID: 9cfef55bb57e7620c63087be18a76351628f8d0f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 18 Feb 2019 05:27:38 -0500
+Received: by mail-wm1-f67.google.com with SMTP id y15so1851474wma.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 02:27:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Zvn6TRWnEuHKetW1HPxyV61Bg80kMse2R1Evw8AuvEA=;
+        b=rtWgQcBBYYy86HyhjOBcvpUMVi3WUPW0gGwjCW8LCHf3t9RxtuzmQ3wc5cg+/4Qu3s
+         BfvTfLbbeplIeIiNbEjB0NYKljyq/hVvMTip7PEo7QvDbTKFPGVk/3YxrjnCK3F0ONRz
+         FlyPjYdk7Ekr0KeMEgtFHrif9b33f0iq3f5z3z7qgN4pyEUi8oxo3k4jXwRZ3yN35ow1
+         /UcQOvfs0yFrGyuFFt59lPmIWh1+v4UDi67wrcw+HLgN2ZfU66MX3Bqr86IR7z1Vaxkh
+         vEwHcQQtVnaknO9L+3zjG2Sl2nQ9N/WtLV2xgfVEX+geXZYUN764evhGUpHZvt800dzI
+         Rafg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Zvn6TRWnEuHKetW1HPxyV61Bg80kMse2R1Evw8AuvEA=;
+        b=YcJ2zNiBMrz3yGjaDHWgmb6lrhGCp1EkjeVMQO1VSqFE698EF5rj9jEwKEWYGbAvz/
+         PgGh0tohWZqPNBXTTcoJ5dVdIic9kB9d2/i7NMAz6Og+Kj+oMirX8o3huzA7VWUYYvt0
+         QrVaqaN2hydWkPWhMLAJUBs3rGECb/10EVI8jDGidlfowi1ay5+yCmb62cUAlaO09FHl
+         b0FbQsXrAi9Ms1llz7EY3IPX/1JvjPyywgOEfUf6rCNSZIPxoboNMLNJN4xls/ciL8c+
+         e3fokQWyvX879UkUGVFQos10ySRgyUaVaRbO99c6SA6Qb+SLrkhLT3zPJbMcKKTDnoRv
+         eUKQ==
+X-Gm-Message-State: AHQUAuaW37CrVh69Fzwm2S/E+d1dSfww3TVrH2qw5z+61htlgILlfgj/
+        Z+1ACAFxTxHDCKT9ilBobgJpAQ==
+X-Google-Smtp-Source: AHgI3IaISWfn3ENTyE6VZqdkqwr1gxfjg1QD5sgeSZ0IxX0Dh/JUu166jDou/GF4yhQU1xs2mv2Yug==
+X-Received: by 2002:a1c:9cce:: with SMTP id f197mr15331740wme.135.1550485656075;
+        Mon, 18 Feb 2019 02:27:36 -0800 (PST)
+Received: from [192.168.0.41] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
+        by smtp.googlemail.com with ESMTPSA id y1sm12585779wrh.65.2019.02.18.02.27.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Feb 2019 02:27:35 -0800 (PST)
+Subject: Re: [PATCH v7 3/3] thermal: tegra: add get_trend ops
+To:     Wei Ni <wni@nvidia.com>, edubezval@gmail.com
+Cc:     thierry.reding@gmail.com, linux-tegra@vger.kernel.org,
+        rui.zhang@intel.com, srikars@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+References: <1546510369-28491-1-git-send-email-wni@nvidia.com>
+ <1546510369-28491-4-git-send-email-wni@nvidia.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <bae5b0c3-3d7f-0b60-da96-730c7e8c4e5c@linaro.org>
+Date:   Mon, 18 Feb 2019 11:27:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <1546510369-28491-4-git-send-email-wni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9cfef55bb57e7620c63087be18a76351628f8d0f
-Gitweb:     https://git.kernel.org/tip/9cfef55bb57e7620c63087be18a76351628f8d0f
-Author:     Ming Lei <ming.lei@redhat.com>
-AuthorDate: Sat, 16 Feb 2019 18:13:08 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Mon, 18 Feb 2019 11:21:27 +0100
+On 03/01/2019 11:12, Wei Ni wrote:
+> Add support for get_trend ops that allows soctherm
+> sensors to be used with the step-wise governor.
+> 
+> Signed-off-by: Wei Ni <wni@nvidia.com>
+> ---
+>  drivers/thermal/tegra/soctherm.c | 34 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+> 
+> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+> index fd2703c0cfc5..864205af104b 100644
+> --- a/drivers/thermal/tegra/soctherm.c
+> +++ b/drivers/thermal/tegra/soctherm.c
+> @@ -488,9 +488,43 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
+>  	return 0;
+>  }
+>  
+> +static int tegra_thermctl_get_trend(void *data, int trip,
+> +				    enum thermal_trend *trend)
+> +{
+> +	struct tegra_thermctl_zone *zone = data;
+> +	struct thermal_zone_device *tz = zone->tz;
+> +	int trip_temp, temp, last_temp, ret;
+> +
+> +	if (!tz)
+> +		return -EINVAL;
+> +
+> +	ret = tz->ops->get_trip_temp(zone->tz, trip, &trip_temp);
+> +	if (ret)
+> +		return ret;
+> +
+> +	mutex_lock(&tz->lock);
 
-genirq/affinity: Store interrupt sets size in struct irq_affinity
+No need to use the mutex here.
 
-The interrupt affinity spreading mechanism supports to spread out
-affinities for one or more interrupt sets. A interrupt set contains one
-or more interrupts. Each set is mapped to a specific functionality of a
-device, e.g. general I/O queues and read I/O queus of multiqueue block
-devices.
+Why not ?
 
-The number of interrupts per set is defined by the driver. It depends on
-the total number of available interrupts for the device, which is
-determined by the PCI capabilites and the availability of underlying CPU
-resources, and the number of queues which the device provides and the
-driver wants to instantiate.
+temp = READ_ONCE(tz->temperature);
+last_temp = READ_ONCE(tz->last_temperature);
 
-The driver passes initial configuration for the interrupt allocation via
-a pointer to struct irq_affinity.
-
-Right now the allocation mechanism is complex as it requires to have a
-loop in the driver to determine the maximum number of interrupts which
-are provided by the PCI capabilities and the underlying CPU resources.
-This loop would have to be replicated in every driver which wants to
-utilize this mechanism. That's unwanted code duplication and error
-prone.
-
-In order to move this into generic facilities it is required to have a
-mechanism, which allows the recalculation of the interrupt sets and
-their size, in the core code. As the core code does not have any
-knowledge about the underlying device, a driver specific callback will
-be added to struct affinity_desc, which will be invoked by the core
-code. The callback will get the number of available interupts as an
-argument, so the driver can calculate the corresponding number and size
-of interrupt sets.
-
-To support this, two modifications for the handling of struct irq_affinity
-are required:
-
-1) The (optional) interrupt sets size information is contained in a
-   separate array of integers and struct irq_affinity contains a
-   pointer to it.
-
-   This is cumbersome and as the maximum number of interrupt sets is small,
-   there is no reason to have separate storage. Moving the size array into
-   struct affinity_desc avoids indirections and makes the code simpler.
-
-2) At the moment the struct irq_affinity pointer which is handed in from
-   the driver and passed through to several core functions is marked
-   'const'.
-
-   With the upcoming callback to recalculate the number and size of
-   interrupt sets, it's necessary to remove the 'const'
-   qualifier. Otherwise the callback would not be able to update the data.
-
-Implement #1 and store the interrupt sets size in 'struct irq_affinity'.
-
-No functional change.
-
-[ tglx: Fixed the memcpy() size so it won't copy beyond the size of the
-  	source. Fixed the kernel doc comments for struct irq_affinity and
-  	de-'This patch'-ed the changelog ]
-
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org
-Cc: Sagi Grimberg <sagi@grimberg.me>
-Cc: linux-nvme@lists.infradead.org
-Cc: linux-pci@vger.kernel.org
-Cc: Keith Busch <keith.busch@intel.com>
-Cc: Sumit Saxena <sumit.saxena@broadcom.com>
-Cc: Kashyap Desai <kashyap.desai@broadcom.com>
-Cc: Shivasharan Srikanteshwara <shivasharan.srikanteshwara@broadcom.com>
-Link: https://lkml.kernel.org/r/20190216172228.423723127@linutronix.de
+> +	temp = tz->temperature;
+> +	last_temp = tz->last_temperature;
+> +	mutex_unlock(&tz->lock);
+> +
+> +	if (temp > trip_temp) {
+> +		if (temp >= last_temp)
+> +			*trend = THERMAL_TREND_RAISING;
+> +		else
+> +			*trend = THERMAL_TREND_STABLE;
+> +	} else if (temp < trip_temp) {
+> +		*trend = THERMAL_TREND_DROPPING;
+> +	} else {
+> +		*trend = THERMAL_TREND_STABLE;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct thermal_zone_of_device_ops tegra_of_thermal_ops = {
+>  	.get_temp = tegra_thermctl_get_temp,
+>  	.set_trip_temp = tegra_thermctl_set_trip_temp,
+> +	.get_trend = tegra_thermctl_get_trend,
+>  };
+>  
+>  static int get_hot_temp(struct thermal_zone_device *tz, int *trip, int *temp)
+> 
 
 
----
- drivers/nvme/host/pci.c   |  7 +++----
- include/linux/interrupt.h |  9 ++++++---
- kernel/irq/affinity.c     | 16 ++++++++++++----
- 3 files changed, 21 insertions(+), 11 deletions(-)
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 9bc585415d9b..21ffd671b6ed 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -2081,12 +2081,11 @@ static void nvme_calc_io_queues(struct nvme_dev *dev, unsigned int irq_queues)
- static int nvme_setup_irqs(struct nvme_dev *dev, unsigned int nr_io_queues)
- {
- 	struct pci_dev *pdev = to_pci_dev(dev->dev);
--	int irq_sets[2];
- 	struct irq_affinity affd = {
--		.pre_vectors = 1,
--		.nr_sets = ARRAY_SIZE(irq_sets),
--		.sets = irq_sets,
-+		.pre_vectors	= 1,
-+		.nr_sets	= 2,
- 	};
-+	unsigned int *irq_sets = affd.set_size;
- 	int result = 0;
- 	unsigned int irq_queues, this_p_queues;
- 
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index 35e7389c2011..5afdfd5dc39b 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -241,20 +241,23 @@ struct irq_affinity_notify {
- 	void (*release)(struct kref *ref);
- };
- 
-+#define	IRQ_AFFINITY_MAX_SETS  4
-+
- /**
-  * struct irq_affinity - Description for automatic irq affinity assignements
-  * @pre_vectors:	Don't apply affinity to @pre_vectors at beginning of
-  *			the MSI(-X) vector space
-  * @post_vectors:	Don't apply affinity to @post_vectors at end of
-  *			the MSI(-X) vector space
-- * @nr_sets:		Length of passed in *sets array
-- * @sets:		Number of affinitized sets
-+ * @nr_sets:		The number of interrupt sets for which affinity
-+ *			spreading is required
-+ * @set_size:		Array holding the size of each interrupt set
-  */
- struct irq_affinity {
- 	unsigned int	pre_vectors;
- 	unsigned int	post_vectors;
- 	unsigned int	nr_sets;
--	unsigned int	*sets;
-+	unsigned int	set_size[IRQ_AFFINITY_MAX_SETS];
- };
- 
- /**
-diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-index 82e8799374e9..278289c091bb 100644
---- a/kernel/irq/affinity.c
-+++ b/kernel/irq/affinity.c
-@@ -238,9 +238,10 @@ static int irq_build_affinity_masks(const struct irq_affinity *affd,
-  * Returns the irq_affinity_desc pointer or NULL if allocation failed.
-  */
- struct irq_affinity_desc *
--irq_create_affinity_masks(unsigned int nvecs, const struct irq_affinity *affd)
-+irq_create_affinity_masks(unsigned int nvecs, struct irq_affinity *affd)
- {
- 	unsigned int affvecs, curvec, usedvecs, nr_sets, i;
-+	unsigned int set_size[IRQ_AFFINITY_MAX_SETS];
- 	struct irq_affinity_desc *masks = NULL;
- 
- 	/*
-@@ -250,6 +251,9 @@ irq_create_affinity_masks(unsigned int nvecs, const struct irq_affinity *affd)
- 	if (nvecs == affd->pre_vectors + affd->post_vectors)
- 		return NULL;
- 
-+	if (WARN_ON_ONCE(affd->nr_sets > IRQ_AFFINITY_MAX_SETS))
-+		return NULL;
-+
- 	masks = kcalloc(nvecs, sizeof(*masks), GFP_KERNEL);
- 	if (!masks)
- 		return NULL;
-@@ -263,11 +267,15 @@ irq_create_affinity_masks(unsigned int nvecs, const struct irq_affinity *affd)
- 	 */
- 	affvecs = nvecs - affd->pre_vectors - affd->post_vectors;
- 	nr_sets = affd->nr_sets;
--	if (!nr_sets)
-+	if (!nr_sets) {
- 		nr_sets = 1;
-+		set_size[0] = affvecs;
-+	} else {
-+		memcpy(set_size, affd->set_size, nr_sets * sizeof(unsigned int));
-+	}
- 
- 	for (i = 0, usedvecs = 0; i < nr_sets; i++) {
--		unsigned int this_vecs = affd->sets ? affd->sets[i] : affvecs;
-+		unsigned int this_vecs = set_size[i];
- 		int ret;
- 
- 		ret = irq_build_affinity_masks(affd, curvec, this_vecs,
-@@ -314,7 +322,7 @@ unsigned int irq_calc_affinity_vectors(unsigned int minvec, unsigned int maxvec,
- 		unsigned int i;
- 
- 		for (i = 0, set_vecs = 0;  i < affd->nr_sets; i++)
--			set_vecs += affd->sets[i];
-+			set_vecs += affd->set_size[i];
- 	} else {
- 		get_online_cpus();
- 		set_vecs = cpumask_weight(cpu_possible_mask);
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
