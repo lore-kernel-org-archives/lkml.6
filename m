@@ -2,154 +2,106 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF7D1C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:34:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99082C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA0AE21736
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:34:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C4C121736
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:34:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550500463;
+	bh=MvlxSMLG4IFo1fWp1DFtuhuzHEuCRVOw4iXdIetxS9Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Z4MEXqMQAdDfjegPIGhFJLN5DrCnp5c5dcbneI8o+el4VjNZ5AL7l7BI+jz8UIGF2
+	 gZ+hf6QtuEOEsbOQxuP/91bWtVvdbhxadRIITy+yR7KACDNU6xsAPDIs6eGSgK0c04
+	 Ook8nMWAmPQkUgAs4gIMflh8b7XdGbnPBsR9xGdQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388622AbfBROeU (ORCPT
+        id S2389010AbfBROeV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:34:20 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42096 "EHLO mx1.redhat.com"
+        Mon, 18 Feb 2019 09:34:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387855AbfBRN4p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2387891AbfBRN4p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 18 Feb 2019 08:56:45 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 44FC6C03DFE1;
-        Mon, 18 Feb 2019 13:56:45 +0000 (UTC)
-Received: from laptop.redhat.com (ovpn-116-102.ams2.redhat.com [10.36.116.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3BC545D70A;
-        Mon, 18 Feb 2019 13:56:39 +0000 (UTC)
-From:   Eric Auger <eric.auger@redhat.com>
-To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
-        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
-        will.deacon@arm.com, robin.murphy@arm.com
-Cc:     kevin.tian@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, peter.maydell@linaro.org
-Subject: [PATCH v4 10/22] iommu/arm-smmu-v3: Link domains and devices
-Date:   Mon, 18 Feb 2019 14:54:51 +0100
-Message-Id: <20190218135504.25048-11-eric.auger@redhat.com>
-In-Reply-To: <20190218135504.25048-1-eric.auger@redhat.com>
-References: <20190218135504.25048-1-eric.auger@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FC0621900;
+        Mon, 18 Feb 2019 13:56:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550498204;
+        bh=MvlxSMLG4IFo1fWp1DFtuhuzHEuCRVOw4iXdIetxS9Q=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=dFu3Y/GINL5T7TXwRoR48GTPSqI50tdwBSwgBraOOgHn7R2mlAbkIEUvjAgf5AAtK
+         aTxwHqFhwoMCiZG1sH7pM2LyFRnjG4oTTP4FLi+Lag1W6Q4J6D/pU7GGlPU8W7c8RA
+         UWZ2nP1bFQZt2ZHFCM9rA1T+dIj7W935Y/Axcpbw=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Milan Broz <mbroz@redhat.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.14 57/62] dm crypt: dont overallocate the integrity tag space
+Date:   Mon, 18 Feb 2019 14:44:03 +0100
+Message-Id: <20190218133510.639510923@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
+References: <20190218133505.801423074@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 18 Feb 2019 13:56:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-When removing a mapping from a domain, we need to send an invalidation to
-all devices that might have stored it in their Address Translation Cache
-(ATC). In addition with SVM, we'll need to invalidate context descriptors
-of all devices attached to a live domain.
+------------------
 
-Maintain a list of devices in each domain, protected by a spinlock. It is
-updated every time we attach or detach devices to and from domains.
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-It needs to be a spinlock because we'll invalidate ATC entries from
-within hardirq-safe contexts, but it may be possible to relax the read
-side with RCU later.
+commit ff0c129d3b5ecb3df7c8f5e2236582bf745b6c5f upstream.
 
-Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+bio_sectors() returns the value in the units of 512-byte sectors (no
+matter what the real sector size of the device).  dm-crypt multiplies
+bio_sectors() by on_disk_tag_size to calculate the space allocated for
+integrity tags.  If dm-crypt is running with sector size larger than
+512b, it allocates more data than is needed.
+
+Device Mapper trims the extra space when passing the bio to
+dm-integrity, so this bug didn't result in any visible misbehavior.
+But it must be fixed to avoid wasteful memory allocation for the block
+integrity payload.
+
+Fixes: ef43aa38063a6 ("dm crypt: add cryptographic data integrity protection (authenticated encryption)")
+Cc: stable@vger.kernel.org # 4.12+
+Reported-by: Milan Broz <mbroz@redhat.com>
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/iommu/arm-smmu-v3.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ drivers/md/dm-crypt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 0d284029dc73..ce222705f52b 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -595,6 +595,11 @@ struct arm_smmu_device {
- struct arm_smmu_master_data {
- 	struct arm_smmu_device		*smmu;
- 	struct arm_smmu_strtab_ent	ste;
-+
-+	struct arm_smmu_domain		*domain;
-+	struct list_head		list; /* domain->devices */
-+
-+	struct device			*dev;
- };
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -935,7 +935,7 @@ static int dm_crypt_integrity_io_alloc(s
+ 	if (IS_ERR(bip))
+ 		return PTR_ERR(bip);
  
- /* SMMU private data for an IOMMU domain */
-@@ -619,6 +624,9 @@ struct arm_smmu_domain {
- 	};
+-	tag_len = io->cc->on_disk_tag_size * bio_sectors(bio);
++	tag_len = io->cc->on_disk_tag_size * (bio_sectors(bio) >> io->cc->sector_shift);
  
- 	struct iommu_domain		domain;
-+
-+	struct list_head		devices;
-+	spinlock_t			devices_lock;
- };
- 
- struct arm_smmu_option_prop {
-@@ -1494,6 +1502,9 @@ static struct iommu_domain *arm_smmu_domain_alloc(unsigned type)
- 	}
- 
- 	mutex_init(&smmu_domain->init_mutex);
-+	INIT_LIST_HEAD(&smmu_domain->devices);
-+	spin_lock_init(&smmu_domain->devices_lock);
-+
- 	return &smmu_domain->domain;
- }
- 
-@@ -1714,6 +1725,16 @@ static void arm_smmu_detach_dev(struct device *dev)
- {
- 	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
- 	struct arm_smmu_master_data *master = fwspec->iommu_priv;
-+	unsigned long flags;
-+	struct arm_smmu_domain *smmu_domain = master->domain;
-+
-+	if (smmu_domain) {
-+		spin_lock_irqsave(&smmu_domain->devices_lock, flags);
-+		list_del(&master->list);
-+		spin_unlock_irqrestore(&smmu_domain->devices_lock, flags);
-+
-+		master->domain = NULL;
-+	}
- 
- 	master->ste.assigned = false;
- 	arm_smmu_install_ste_for_dev(fwspec);
-@@ -1723,6 +1744,7 @@ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev)
- {
- 	int ret = 0;
- 	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
-+	unsigned long flags;
- 	struct arm_smmu_device *smmu;
- 	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
- 	struct arm_smmu_master_data *master;
-@@ -1758,6 +1780,11 @@ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev)
- 	}
- 
- 	ste->assigned = true;
-+	master->domain = smmu_domain;
-+
-+	spin_lock_irqsave(&smmu_domain->devices_lock, flags);
-+	list_add(&master->list, &smmu_domain->devices);
-+	spin_unlock_irqrestore(&smmu_domain->devices_lock, flags);
- 
- 	if (smmu_domain->stage == ARM_SMMU_DOMAIN_BYPASS) {
- 		ste->s1_cfg = NULL;
-@@ -1884,6 +1911,7 @@ static int arm_smmu_add_device(struct device *dev)
- 			return -ENOMEM;
- 
- 		master->smmu = smmu;
-+		master->dev = dev;
- 		fwspec->iommu_priv = master;
- 	}
- 
--- 
-2.20.1
+ 	bip->bip_iter.bi_size = tag_len;
+ 	bip->bip_iter.bi_sector = io->cc->start + io->sector;
+
 
