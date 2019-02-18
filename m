@@ -7,47 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81CDFC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DAA4C4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47C3B21905
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D6FA2070D
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498539;
-	bh=JLbJ73SGnxO0EnhKF2/7NK3ppavo3KHOUrtNfmmHnAc=;
+	s=default; t=1550498542;
+	bh=63lu6OHPJYHbiZTufuNVG8mDeyuk8eUtb7a+1FFrdOs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lWI1RVJTx2Feg2UYZCM9jvyiKTN/LIYGljyrSGLeMV33gLt7Gr/TgC1eTuqtQlpLP
-	 /0Re9PJkiNk8RtRkE0C0Zk9UtlveCBbnzZBNehsslEc3WolwGq567BqS7Y5xKlOmow
-	 jQMome6WsAgzIvlGOuePH15HKo0laAQUdq4smgWo=
+	b=S1bxY+2NkdcRxwvRF8Z9l3LgBkyh2/+m4Q6AFzxUkFjKdBencyXp3GIXAoIIx7GRg
+	 g9g8A0pbNvjwW1nEc+ApAHGZbDLhL/NVXxpoSznZ6evHJZ6rsKMVQyKRDRVpxJNmXF
+	 +2GNzrkUA95EfMkuaIMK8lQc8StvFto3y6RIrRbQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388702AbfBROCR (ORCPT
+        id S2387643AbfBROCU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:02:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43820 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:02:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388374AbfBROCO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:02:14 -0500
+        id S2388374AbfBROCS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:02:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6F6E2070D;
-        Mon, 18 Feb 2019 14:02:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90C2A2070D;
+        Mon, 18 Feb 2019 14:02:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498534;
-        bh=JLbJ73SGnxO0EnhKF2/7NK3ppavo3KHOUrtNfmmHnAc=;
+        s=default; t=1550498538;
+        bh=63lu6OHPJYHbiZTufuNVG8mDeyuk8eUtb7a+1FFrdOs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=topoiZX9T1FVPmvHbWkWb2EPFaqjKXFIEl10hQmJ39+jtrjIL6kX0Y3kC5SHTA+3T
-         ChqJwSyobeWj6axTA+AJD/0ooTxUcKPUWz8aAWr8wmsUcs6aAmRKfVQle1Oppjkhbc
-         qfVctrVYqqxsNIYN36Iki78y69I/rHnNEimCIe/4=
+        b=ToTvbtcNPLaADk7NgoRnyb00//4eyuMh3zbao7a/Fp3N19sbYwqGtsq6iXSB3wlpm
+         SdUbH8/0HGKjmexzT3tov2KfJrtsBuX/80FYH6gEmYbUz71YoGh9sPJ8bROLjN0HTf
+         F+fiC9pK5dY7DAVfTGOhbgCqSGZK5CcvZlmL69lg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Beomho Seo <beomho.seo@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+        stable@vger.kernel.org, Peter Maydell <peter.maydell@linaro.org>,
+        =?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 039/143] tty: serial: samsung: Properly set flags in autoCTS mode
-Date:   Mon, 18 Feb 2019 14:42:47 +0100
-Message-Id: <20190218133530.580341061@linuxfoundation.org>
+Subject: [PATCH 4.4 040/143] arm64: KVM: Skip MMIO insn after emulation
+Date:   Mon, 18 Feb 2019 14:42:48 +0100
+Message-Id: <20190218133530.614487420@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -66,43 +69,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 31e933645742ee6719d37573a27cce0761dcf92b ]
+[ Upstream commit 0d640732dbebed0f10f18526de21652931f0b2f2 ]
 
-Commit 391f93f2ec9f ("serial: core: Rework hw-assited flow control support")
-has changed the way the autoCTS mode is handled.
+When we emulate an MMIO instruction, we advance the CPU state within
+decode_hsr(), before emulating the instruction effects.
 
-According to that change, serial drivers which enable H/W autoCTS mode must
-set UPSTAT_AUTOCTS to prevent the serial core from inadvertently disabling
-TX. This patch adds proper handling of UPSTAT_AUTOCTS flag.
+Having this logic in decode_hsr() is opaque, and advancing the state
+before emulation is problematic. It gets in the way of applying
+consistent single-step logic, and it prevents us from being able to fail
+an MMIO instruction with a synchronous exception.
 
-Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
-[mszyprow: rephrased commit message]
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Clean this up by only advancing the CPU state *after* the effects of the
+instruction are emulated.
+
+Cc: Peter Maydell <peter.maydell@linaro.org>
+Reviewed-by: Alex Bennée <alex.bennee@linaro.org>
+Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/samsung.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/kvm/mmio.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index 4d532a085db9..12bac2cbae4b 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -1329,11 +1329,14 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
- 	wr_regl(port, S3C2410_ULCON, ulcon);
- 	wr_regl(port, S3C2410_UBRDIV, quot);
- 
-+	port->status &= ~UPSTAT_AUTOCTS;
-+
- 	umcon = rd_regl(port, S3C2410_UMCON);
- 	if (termios->c_cflag & CRTSCTS) {
- 		umcon |= S3C2410_UMCOM_AFC;
- 		/* Disable RTS when RX FIFO contains 63 bytes */
- 		umcon &= ~S3C2412_UMCON_AFC_8;
-+		port->status = UPSTAT_AUTOCTS;
- 	} else {
- 		umcon &= ~S3C2410_UMCOM_AFC;
+diff --git a/arch/arm/kvm/mmio.c b/arch/arm/kvm/mmio.c
+index 387ee2a11e36..885cd0e0015b 100644
+--- a/arch/arm/kvm/mmio.c
++++ b/arch/arm/kvm/mmio.c
+@@ -118,6 +118,12 @@ int kvm_handle_mmio_return(struct kvm_vcpu *vcpu, struct kvm_run *run)
+ 		vcpu_set_reg(vcpu, vcpu->arch.mmio_decode.rt, data);
  	}
+ 
++	/*
++	 * The MMIO instruction is emulated and should not be re-executed
++	 * in the guest.
++	 */
++	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
++
+ 	return 0;
+ }
+ 
+@@ -151,11 +157,6 @@ static int decode_hsr(struct kvm_vcpu *vcpu, bool *is_write, int *len)
+ 	vcpu->arch.mmio_decode.sign_extend = sign_extend;
+ 	vcpu->arch.mmio_decode.rt = rt;
+ 
+-	/*
+-	 * The MMIO instruction is emulated and should not be re-executed
+-	 * in the guest.
+-	 */
+-	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
+ 	return 0;
+ }
+ 
 -- 
 2.19.1
 
