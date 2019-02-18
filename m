@@ -2,152 +2,100 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 599E3C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:27:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC726C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:27:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F2A621738
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:27:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDCE221738
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:27:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550482076;
+	bh=uJf+d6intHJ/cfNnlgVy5Y+2/XBVKmch7DHaaCo9KVA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=fkjAFUjgvwhXzFn1vczDl/oTosY3rdXa1qWu1PGBUQpJ2fY3vH0a9ZlKFg0MvTmE+
+	 w9ig1GTg/frnX4bbNzlXGsa3LGgWeSQnFeSz4UUbrTyeu2gtr6eXMKSk9S6SQovACT
+	 sdvIRipX/meqtxtzgb2M/McN/Bwdrg5hjBvplZGI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729582AbfBRJ1v (ORCPT
+        id S1729600AbfBRJ1z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 04:27:51 -0500
-Received: from ozlabs.org ([203.11.71.1]:51385 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728447AbfBRJ1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 04:27:51 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 442z6q1sf4z9s7h;
-        Mon, 18 Feb 2019 20:27:47 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Daniel Axtens <dja@axtens.net>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kasan-dev@googlegroups.com, linux-mm@kvack.org
-Subject: Re: [PATCH v5 3/3] powerpc/32: Add KASAN support
-In-Reply-To: <3429fe33b68206ecc2a725a740937bbaef2d1ac8.1549935251.git.christophe.leroy@c-s.fr>
-References: <cover.1549935247.git.christophe.leroy@c-s.fr> <3429fe33b68206ecc2a725a740937bbaef2d1ac8.1549935251.git.christophe.leroy@c-s.fr>
-Date:   Mon, 18 Feb 2019 20:27:47 +1100
-Message-ID: <87a7itqwdo.fsf@concordia.ellerman.id.au>
+        Mon, 18 Feb 2019 04:27:55 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57574 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728447AbfBRJ1x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 04:27:53 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 76101AF56;
+        Mon, 18 Feb 2019 09:27:52 +0000 (UTC)
+Date:   Mon, 18 Feb 2019 10:27:50 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Jingxiangfeng <jingxiangfeng@huawei.com>
+Cc:     akpm@linux-foundation.org, hughd@google.com,
+        mike.kravetz@oracle.com, n-horiguchi@ah.jp.nec.com,
+        aarcange@redhat.com, kirill.shutemov@linux.intel.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/hugetlb: Fix unsigned overflow in
+ __nr_hugepages_store_common()
+Message-ID: <20190218092750.GF4525@dhcp22.suse.cz>
+References: <1550323872-119049-1-git-send-email-jingxiangfeng@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1550323872-119049-1-git-send-email-jingxiangfeng@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
+On Sat 16-02-19 21:31:12, Jingxiangfeng wrote:
+> From: Jing Xiangfeng <jingxiangfeng@huawei.com>
+> 
+> We can use the following command to dynamically allocate huge pages:
+> 	echo NR_HUGEPAGES > /proc/sys/vm/nr_hugepages
+> The count in  __nr_hugepages_store_common() is parsed from /proc/sys/vm/nr_hugepages,
+> The maximum number of count is ULONG_MAX,
+> the operation 'count += h->nr_huge_pages - h->nr_huge_pages_node[nid]' overflow and count will be a wrong number.
 
-> diff --git a/arch/powerpc/include/asm/ppc_asm.h b/arch/powerpc/include/asm/ppc_asm.h
-> index e0637730a8e7..dba2c1038363 100644
-> --- a/arch/powerpc/include/asm/ppc_asm.h
-> +++ b/arch/powerpc/include/asm/ppc_asm.h
-> @@ -251,6 +251,10 @@ GLUE(.,name):
->  
->  #define _GLOBAL_TOC(name) _GLOBAL(name)
->  
-> +#define KASAN_OVERRIDE(x, y) \
-> +	.weak x;	     \
-> +	.set x, y
-> +
+Could you be more specific of what is the runtime effect on the
+overflow? I haven't checked closer but I would assume that we will
+simply shrink the pool size because count will become a small number.
 
-Can you add a comment describing what that does and why?
+Is there any reason to report an error in that case? We do not report
+errors when we cannot allocate the requested number of huge pages so why
+is this case any different?
 
-> diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
-> index 879b36602748..fc4c42262694 100644
-> --- a/arch/powerpc/kernel/Makefile
-> +++ b/arch/powerpc/kernel/Makefile
-> @@ -16,8 +16,9 @@ CFLAGS_prom_init.o      += -fPIC
->  CFLAGS_btext.o		+= -fPIC
->  endif
->  
-> -CFLAGS_cputable.o += $(DISABLE_LATENT_ENTROPY_PLUGIN)
-> -CFLAGS_prom_init.o += $(DISABLE_LATENT_ENTROPY_PLUGIN)
-> +CFLAGS_early_32.o += -DDISABLE_BRANCH_PROFILING
-> +CFLAGS_cputable.o += $(DISABLE_LATENT_ENTROPY_PLUGIN) -DDISABLE_BRANCH_PROFILING
-> +CFLAGS_prom_init.o += $(DISABLE_LATENT_ENTROPY_PLUGIN) -DDISABLE_BRANCH_PROFILING
+> So check the overflow to fix this problem.
+> 
+> Signed-off-by: Jing Xiangfeng <jingxiangfeng@huawei.com>
+> ---
+>  mm/hugetlb.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index afef616..55173c3 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -2423,7 +2423,12 @@ static ssize_t __nr_hugepages_store_common(bool obey_mempolicy,
+>  		 * per node hstate attribute: adjust count to global,
+>  		 * but restrict alloc/free to the specified node.
+>  		 */
+> +		unsigned long old_count = count;
+>  		count += h->nr_huge_pages - h->nr_huge_pages_node[nid];
+> +		if (count < old_count) {
+> +			err = -EINVAL;
+> +			goto out;
+> +		}
+>  		init_nodemask_of_node(nodes_allowed, nid);
+>  	} else
+>  		nodes_allowed = &node_states[N_MEMORY];
+> -- 
+> 2.7.4
 
-Why do we need to disable branch profiling now?
-
-I'd probably be happier if all the CFLAGS changes were done in a leadup
-patch to make them more obvious.
-
-> diff --git a/arch/powerpc/kernel/prom_init_check.sh b/arch/powerpc/kernel/prom_init_check.sh
-> index 667df97d2595..da6bb16e0876 100644
-> --- a/arch/powerpc/kernel/prom_init_check.sh
-> +++ b/arch/powerpc/kernel/prom_init_check.sh
-> @@ -16,8 +16,16 @@
->  # If you really need to reference something from prom_init.o add
->  # it to the list below:
->  
-> +grep CONFIG_KASAN=y .config >/dev/null
-
-Just to be safe "^CONFIG_KASAN=y$" ?
-
-> +if [ $? -eq 0 ]
-> +then
-> +	MEMFCT="__memcpy __memset"
-> +else
-> +	MEMFCT="memcpy memset"
-> +fi
-
-MEM_FUNCS ?
-
-> diff --git a/arch/powerpc/lib/Makefile b/arch/powerpc/lib/Makefile
-> index 3bf9fc6fd36c..ce8d4a9f810a 100644
-> --- a/arch/powerpc/lib/Makefile
-> +++ b/arch/powerpc/lib/Makefile
-> @@ -8,6 +8,14 @@ ccflags-$(CONFIG_PPC64)	:= $(NO_MINIMAL_TOC)
->  CFLAGS_REMOVE_code-patching.o = $(CC_FLAGS_FTRACE)
->  CFLAGS_REMOVE_feature-fixups.o = $(CC_FLAGS_FTRACE)
->  
-> +KASAN_SANITIZE_code-patching.o := n
-> +KASAN_SANITIZE_feature-fixups.o := n
-> +
-> +ifdef CONFIG_KASAN
-> +CFLAGS_code-patching.o += -DDISABLE_BRANCH_PROFILING
-> +CFLAGS_feature-fixups.o += -DDISABLE_BRANCH_PROFILING
-> +endif
-
-There's that branch profiling again, though here it's only if KASAN is enabled.
-
-> diff --git a/arch/powerpc/mm/kasan_init.c b/arch/powerpc/mm/kasan_init.c
-> new file mode 100644
-> index 000000000000..bd8e0a263e12
-> --- /dev/null
-> +++ b/arch/powerpc/mm/kasan_init.c
-> @@ -0,0 +1,114 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#define DISABLE_BRANCH_PROFILING
-> +
-> +#include <linux/kasan.h>
-> +#include <linux/printk.h>
-> +#include <linux/memblock.h>
-> +#include <linux/sched/task.h>
-> +#include <asm/pgalloc.h>
-> +
-> +void __init kasan_early_init(void)
-> +{
-> +	unsigned long addr = KASAN_SHADOW_START;
-> +	unsigned long end = KASAN_SHADOW_END;
-> +	unsigned long next;
-> +	pmd_t *pmd = pmd_offset(pud_offset(pgd_offset_k(addr), addr), addr);
-
-Can none of those fail?
-
-
-cheers
+-- 
+Michal Hocko
+SUSE Labs
