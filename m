@@ -2,60 +2,56 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78502C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:49:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D07C4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4880F21906
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:49:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AF0221906
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:49:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497788;
-	bh=NfaN7F6t25SlYgna6NxJ8RtcJ1RA1pR+gfI7QybJHd4=;
+	s=default; t=1550497791;
+	bh=MfioDp7ea0Bw5rmAFwRpeWGDO3YowNu5XCZzVCnm1yU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1CyRWQElWaHvVKrbSRF6o5jfajOLVQBFzgTuCsuuGdyN8KthZFBZ4SXQdbSXAooGi
-	 RWuKrHyqUi68qQ7G4hjDwjtKUnUZmiNqo8w+adR+ooEIOxr3oh8OsF1RjMXmzNvCDI
-	 i4QnGyzR+HzKAi7d0RRRQ6FLz9nPJ552iE5XnCSU=
+	b=mbJRvh7MvJ5AWWQER8O3Jc4HGWbsn87W8WNKBR2IfyKVH9VwhPGhj2wrVJYJ0XdFg
+	 SLiWbxMR56htpRDD6kBCKlY4yuHf1ksT3eBLuv359qpzV8xRvCMOwsVBkCK5nPMN62
+	 Q4pFsLWizLVcornU7wbtxJxXx8xiwINb2sGztaOo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731740AbfBRNtq (ORCPT
+        id S1732093AbfBRNtt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:49:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57004 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:49:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732056AbfBRNtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:49:39 -0500
+        id S1732079AbfBRNtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:49:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 554FE21908;
-        Mon, 18 Feb 2019 13:49:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6C2E21901;
+        Mon, 18 Feb 2019 13:49:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497778;
-        bh=NfaN7F6t25SlYgna6NxJ8RtcJ1RA1pR+gfI7QybJHd4=;
+        s=default; t=1550497785;
+        bh=MfioDp7ea0Bw5rmAFwRpeWGDO3YowNu5XCZzVCnm1yU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uBICLoJQm4SrIKU88NOtxu9Cn9nDXQx5ySGeaYXHSiEoC+vTaDnDqhApfM9w1jcyA
-         o2oi39SFiV34PAxs9ub0jtmX7PaSQQajvG/+/ZuvmgfRcB4s2ebe2i03aBcmNy6I+6
-         TTJ2d9obNENVzRzXhNtX5QrKsslRqjxbMyGjvCgE=
+        b=BkueuUQOHevueema28lJin8jDzWtLQSnaqUwTynQkSCcSBRTjyd2FbrVILWK5gJIJ
+         qBCxSI/qKugyIC/babIIkkX3xTjTBd0RPbSS+PNHarIA1X0g+HklzWcJRMg/BVsrNJ
+         UDv0YgoUWhX2r7txmrkpxWO1rVKPzycfsMPXEKx4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adam Zabrocki <adamza@microsoft.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Akash Goel <akash.goel@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Subject: [PATCH 4.20 92/92] drm/i915: Prevent a race during I915_GEM_MMAP ioctl with WC set
-Date:   Mon, 18 Feb 2019 14:43:35 +0100
-Message-Id: <20190218133503.923376832@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Bunk <bunk@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 01/85] dt-bindings: eeprom: at24: add "atmel,24c2048" compatible string
+Date:   Mon, 18 Feb 2019 14:42:27 +0100
+Message-Id: <20190218133459.917563861@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
-References: <20190218133454.668268457@linuxfoundation.org>
+In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
+References: <20190218133459.758004711@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -67,71 +63,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+[ Upstream commit 6c0c5dc33ff42af49243e94842d0ebdb153189ea ]
 
-commit 2e7bd10e05afb866b5fb13eda25095c35d7a27cc upstream.
+Add new compatible to the device tree bindings.
 
-Make sure the underlying VMA in the process address space is the
-same as it was during vm_mmap to avoid applying WC to wrong VMA.
-
-A more long-term solution would be to have vm_mmap_locked variant
-in linux/mmap.h for when caller wants to hold mmap_sem for an
-extended duration.
-
-v2:
-- Refactor the compare function
-
-Fixes: 1816f9236303 ("drm/i915: Support creation of unbound wc user mappings for objects")
-Reported-by: Adam Zabrocki <adamza@microsoft.com>
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: <stable@vger.kernel.org> # v4.0+
-Cc: Akash Goel <akash.goel@intel.com>
-Cc: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-Cc: Adam Zabrocki <adamza@microsoft.com>
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
-Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com> #v1
-Link: https://patchwork.freedesktop.org/patch/msgid/20190207085454.10598-1-joonas.lahtinen@linux.intel.com
-(cherry picked from commit 5c4604e757ba9b193b09768d75a7d2105a5b883f)
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Adrian Bunk <bunk@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/i915/i915_gem.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/eeprom/at24.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/i915/i915_gem.c
-+++ b/drivers/gpu/drm/i915/i915_gem.c
-@@ -1826,6 +1826,16 @@ i915_gem_sw_finish_ioctl(struct drm_devi
- 	return 0;
- }
+diff --git a/Documentation/devicetree/bindings/eeprom/at24.txt b/Documentation/devicetree/bindings/eeprom/at24.txt
+index aededdbc262b..f9a7c984274c 100644
+--- a/Documentation/devicetree/bindings/eeprom/at24.txt
++++ b/Documentation/devicetree/bindings/eeprom/at24.txt
+@@ -27,6 +27,7 @@ Required properties:
+                 "atmel,24c256",
+                 "atmel,24c512",
+                 "atmel,24c1024",
++                "atmel,24c2048",
  
-+static inline bool
-+__vma_matches(struct vm_area_struct *vma, struct file *filp,
-+	      unsigned long addr, unsigned long size)
-+{
-+	if (vma->vm_file != filp)
-+		return false;
-+
-+	return vma->vm_start == addr && (vma->vm_end - vma->vm_start) == size;
-+}
-+
- /**
-  * i915_gem_mmap_ioctl - Maps the contents of an object, returning the address
-  *			 it is mapped to.
-@@ -1884,7 +1894,7 @@ i915_gem_mmap_ioctl(struct drm_device *d
- 			return -EINTR;
- 		}
- 		vma = find_vma(mm, addr);
--		if (vma)
-+		if (vma && __vma_matches(vma, obj->base.filp, addr, args->size))
- 			vma->vm_page_prot =
- 				pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
- 		else
+                 If <manufacturer> is not "atmel", then a fallback must be used
+                 with the same <model> and "atmel" as manufacturer.
+-- 
+2.19.1
+
 
 
