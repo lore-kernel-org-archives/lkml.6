@@ -2,103 +2,167 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 788E9C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B6D4C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BD6A218D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:48:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29604206DD
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:48:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fGMARITx"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="u3E9+YOl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728431AbfBRDs0 (ORCPT
+        id S1728482AbfBRDsp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 22:48:26 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40216 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726892AbfBRDs0 (ORCPT
+        Sun, 17 Feb 2019 22:48:45 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:33568 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726892AbfBRDso (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 22:48:26 -0500
-Received: by mail-pg1-f193.google.com with SMTP id u9so4217260pgo.7;
-        Sun, 17 Feb 2019 19:48:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Ry56zsJvQYyPJb5k5ciiC9BPYowLGJa4fdvmLCYeIYw=;
-        b=fGMARITx2nfOjwZl7p8gRfDq5VPV5YgbK9vS9/5FCZNE+4fxvDH2X1OOcHXTx+NHSf
-         IkwIRt+ht4QQz928vvP7j75Xq4O4rpuMqaxUthv3MaCxHVH+QxwoYEcxJuvrD9KWRAO2
-         aw82x5FQs+4T7yKyTkKNi7QKwZTiaIcLoYQvUfON1xHSCn6/DSCclT/mqdflmg5adQA0
-         BsNal23B5RXDSyRSQoF0UugW/d1gQRlxTHIel/HHeXs3zsB+KbTIFsFgkYANIym/S31A
-         L0Az+k1mFaAr1x5IbwC+cpL3yQiJW8TZMLXRczJmMc47fcNHmFMBayf1GkQjdXqXOmV5
-         cV6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Ry56zsJvQYyPJb5k5ciiC9BPYowLGJa4fdvmLCYeIYw=;
-        b=sngY0MTQ5Xs22K0jmFmWwXqUyNrNV3UBIYn1c8cNjYDxBbU4JVQBdPpuN1ik7i3Z/2
-         qAdjCf9AQ24ZT9Wu8Y+yE4ayC6bg/A4t5Fk5KJvJd9s4uNxGX8emyB462H41Rf2mHwMK
-         vwvcgP0yNsJEd0tBM+yIIdRoGJh51PohQ6o2r6tafoVkWOZc4PFr13o9gZzwncf2suKJ
-         y62fWqiFI0S1GZuyJY0fz7XpAL59I7sCU7CRT3G06VJz3GAlulLY6krxCz6s6qEdUn0h
-         r8w1Uuohglum0Zv7MLQ/X/yXiNas1Hr8hVQknJwT7ZKwHic8EYlXg1+KzxJ0hEC8BuOs
-         JTEg==
-X-Gm-Message-State: AHQUAubldQuIBCJBu2rHtZdc+s5ZFf5KKJtcdcXywlmoGPvltbh/0Rqe
-        OXMG+O4mUCD0uVNC+kNOGORB2+DSFGo=
-X-Google-Smtp-Source: AHgI3Ib0yAoekfEMO+6Sp9SkDV3CRLmgmuoiJmUwtAjBrIHFRuYDWbDwH8qQxgaYyaEMeAyvQPJn/A==
-X-Received: by 2002:a63:618d:: with SMTP id v135mr16822164pgb.238.1550461705043;
-        Sun, 17 Feb 2019 19:48:25 -0800 (PST)
-Received: from localhost.localdomain (2001-b011-1004-3ad8-7167-dbfd-33d1-77de.dynamic-ip6.hinet.net. [2001:b011:1004:3ad8:7167:dbfd:33d1:77de])
-        by smtp.gmail.com with ESMTPSA id p2sm13720582pgs.7.2019.02.17.19.48.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Feb 2019 19:48:24 -0800 (PST)
-From:   David Chen <david0813@gmail.com>
-To:     linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     davem@davemloft.net, hayeswang@realtek.com,
-        mario.limonciello@dell.com, bigeasy@linutronix.de,
-        edumazet@google.com, jslaby@suse.cz, f.fainelli@gmail.com,
-        david.chen7@dell.com, kai.heng.feng@canonical.com,
-        zhongjiang@huawei.com
-Subject: [PATCH 2/2] RTL8153-BD is used in Dell DA300 type-C dongle. It should be added to the whitelist of devices to activate MAC address pass through.
-Date:   Mon, 18 Feb 2019 11:48:17 +0800
-Message-Id: <20190218034817.7515-1-david0813@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        Sun, 17 Feb 2019 22:48:44 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1I3i9bj144705;
+        Mon, 18 Feb 2019 03:48:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=reply-to : subject :
+ to : cc : references : from : message-id : date : mime-version :
+ in-reply-to : content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=oVScqPJ3Zij7bvX89910UvrBpF5sFfs79BfFYV+drFk=;
+ b=u3E9+YOl220xa2OWxaIV3oAquxaxH/n6fiD3ToDhgs27BMIFqN7uF98C347VsnuL9Li5
+ mXdPM+qFZFlojWkR7pJdYhqojrnEzFeuhMWX8LOp/PDw3B7O5CZsSHPdxyYBmfRd1wrW
+ R9Xqo0Qoz7RhoKx+ME3dMR6oNoMMBY0cqX1dW41ZgFoogHjvGucd4fxiZLuPtIkGUkfN
+ 3s8ay5ApwhwBLgs5kskbyqQ13UGJ9RqueMaT858xL7Wockfm2q9pFeYMpZAQnhl3GNTY
+ JYki8Ex2uQORq8gkj/S+o5OTTwkCjglmytoThTuoESW9V1SO0O6Zvjk4GQjXugJXYjTg zg== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2qp81dv5ed-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 18 Feb 2019 03:48:30 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1I3mUGP002944
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 18 Feb 2019 03:48:30 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1I3mTbt013623;
+        Mon, 18 Feb 2019 03:48:30 GMT
+Received: from [192.168.1.166] (/60.223.138.56)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 17 Feb 2019 19:48:29 -0800
+Reply-To: zhenzhong.duan@oracle.com
+Subject: Re: [PATCH] acpi_pm: Reduce PMTMR counter read contention
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Waiman Long <longman@redhat.com>,
+        Srinivas Eeda <srinivas.eeda@oracle.com>, kin.cho@oracle.com
+References: <1548141807-25825-1-git-send-email-zhenzhong.duan@oracle.com>
+ <alpine.DEB.2.21.1901300903350.1950@nanos.tec.linutronix.de>
+ <019e583c-7bcb-c234-200c-fcdb6c49fbb0@oracle.com>
+ <alpine.DEB.2.21.1901311525360.8200@nanos.tec.linutronix.de>
+ <853e8cf6-aba9-0200-8e39-e362848399ba@oracle.com>
+ <alpine.DEB.2.21.1902102159070.8784@nanos.tec.linutronix.de>
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Organization: Oracle
+Message-ID: <8ffea578-5eb6-f479-7bd4-668df84d930f@oracle.com>
+Date:   Mon, 18 Feb 2019 11:48:37 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.21.1902102159070.8784@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9170 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902180027
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Chen <david.chen7@dell.com>
+On 2019/2/11 5:08, Thomas Gleixner wrote:
+> On Sat, 2 Feb 2019, Zhenzhong Duan wrote:
+>> On 2019/1/31 22:26, Thomas Gleixner wrote:
+> 
+>>>>> I'm not against the change per se, but I really want to understand
+>>>>> why we need all the complexity for something which should never be
+>>>>> used in a real world deployment.
+>>>>>
+>>>> Hmm, it's a strong word of "never be used". Customers may happen to
+>>>> use nohpet(sanity test?) and report bug to us. Sometimes they does
+>>>> report a bug that reproduce with their customed config. There may
+>>>> also be BIOS setting HPET disabled.
+>>>
+>>> And because the customer MAY do completely nonsensical things (and there
+>>> are a lot more than the HPET) the kernel has to handle all of them?
+>>
+>> Ok, then. I don't have more suggestion to convince you.
+> 
+> You give up too fast :)
 
-Per confirming with Realtek all devices containing RTL8153-BD should
-activate MAC pass through and there won't use pass through bit on efuse
-like in RTL8153-AD.
+Ah, because I thought of a simple fix.
+> 
+> The point is, that we really want proper justifications for changes like
+> this. Some 'may, could and more handwaving' simply does not cut it.
+> 
+> So if you can just describe a realistic scenario, which does not involve
+> thoughtless flipping of BIOS options, then this becomes way more palatable.
 
-Signed-off-by: David Chen <david.chen7@dell.com>
----
- drivers/net/usb/r8152.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I indeed don't see a realistic scenario in a product env needing to use 
+nohpet. My only justification is now that we have nohpet as kernel 
+parameter, we should fix the softlockup in large machines for enterprise 
+use.
+> 
+>> I just think of a simple fix as below. I think it will work for both hpet
+>> and pmtmr. We will test it when the env is available.
+> 
+>> --- a/kernel/time/timekeeping.c
+>> +++ b/kernel/time/timekeeping.c
+>> @@ -1353,6 +1353,7 @@ static int change_clocksource(void *data)
+>>
+>>          write_seqcount_end(&tk_core.seq);
+>>          raw_spin_unlock_irqrestore(&timekeeper_lock, flags);
+>> +       tick_clock_notify();
+>>
+>>          return 0;
+>>   }
+>> @@ -1371,7 +1372,6 @@ int timekeeping_notify(struct clocksource *clock)
+>>          if (tk->tkr_mono.clock == clock)
+>>                  return 0;
+>>          stop_machine(change_clocksource, clock, NULL);
+>> -       tick_clock_notify();
+>>          return tk->tkr_mono.clock == clock ? 0 : -1;
+>>   }
+> 
+> This won't resolve the concurrency issues of HPET or PMTIMER in any
+> way.
 
-diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
-index ada6baf8847a..86c8c64fbb0f 100644
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@ -1179,7 +1179,7 @@ static int vendor_mac_passthru_addr_read(struct r8152 *tp, struct sockaddr *sa)
- 	} else {
- 		/* test for RTL8153-BND and RTL8153-BD */
- 		ocp_data = ocp_read_byte(tp, MCU_TYPE_USB, USB_MISC_1);
--		if ((ocp_data & BND_MASK) == 0 && (ocp_data & BD_MASK)) {
-+		if ((ocp_data & BND_MASK) == 0 && (ocp_data & BD_MASK) == 0) {
- 			netif_dbg(tp, probe, tp->netdev,
- 				  "Invalid variant for MAC pass through\n");
- 			return -ENODEV;
--- 
-2.19.1
+Just got chance to test and Kin confirmed it fix the softlockup of 
+PMTMR(with nohpet) and HPET(without nohpet, revert previous hpet commit) 
+at bootup stage.
 
+My understandig is, at bootup stage tick device is firstly initialized 
+in periodic mode and then switch to one-shot mode. In periodic mode 
+clock event interrupt is triggered every 1ms(HZ=1000), contention in 
+HPET or PMTIMER exceeds 1ms and delayed the clock interrupt. Then CPUs 
+continue to process interrupt one by one without a break, 
+tick_clock_notify() have no chance to be called and we never switch to 
+one-shot mode.
+
+In one-shot mode, the contention is still there but next event is always 
+set with a future value. We may missed some ticks, but the timer code is 
+smart enough to pick up those missed ticks.
+
+By moving tick_clock_notify() in stop_machine, kernel changes to 
+one-shot mode early before the contention accumulate and lockup system.
+
+> Instead it breaks the careful orchestrated mechanism of clocksource
+> change.
+
+Sorry, I didn't get a idea how it breaks, tick_clock_notify() is a 
+simple function setting bitmask in percpu variable. Could you explain a bit?
+
+Thanks
+Zhenzhong
