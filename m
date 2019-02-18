@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76493C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:50:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D87C3C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:50:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48F5120449
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:50:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8B8921905
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:50:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497848;
-	bh=h3WI74dQwhJvOcyTd1+ZvqvP8RinpobEL5JsNJwcwaA=;
+	s=default; t=1550497852;
+	bh=U8t4W6ljN+iyqdko6y70Og7/UFBlWyzZEkIdBEarsI8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fQgTSL4jX2ZvQyK4YFsDq6CXgWhkl4CJy8FG2q568PYNN4rfLf2ctB26wknKkEHiu
-	 ynMbIejaeD1Nj7034xTMbaqRQWsDH8ERzIUAp5dRQlM7J8KfaJOl4PPBvA+NNAnHGZ
-	 KAln+w+VKSR7JPYpNdaWzYp8n8JJCGg309/tXtKA=
+	b=qntGDa8bYsYulILEXn/A/V3jABS+ngs8JK5VveH44fVfmApVr+eG29OVOzGw8sSES
+	 frJn1M+ZiYymkd9KyZBVHji30I4ylj4gY1+p611Q0oXUoPh3h+QGd3CMfMnMJHYtWk
+	 Rlq9wHtp8i6ZhCMHhi3rCnSxAwEuStMZQAArsf0w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732275AbfBRNuq (ORCPT
+        id S1732293AbfBRNuv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:50:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58490 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:50:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731823AbfBRNup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:50:45 -0500
+        id S1731823AbfBRNus (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:50:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C8CA20449;
-        Mon, 18 Feb 2019 13:50:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 111A320842;
+        Mon, 18 Feb 2019 13:50:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497844;
-        bh=h3WI74dQwhJvOcyTd1+ZvqvP8RinpobEL5JsNJwcwaA=;
+        s=default; t=1550497847;
+        bh=U8t4W6ljN+iyqdko6y70Og7/UFBlWyzZEkIdBEarsI8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sc+Ps3oFUG2sBnJiKre/evY8ME3VG9V9Z7+qpMMR9QnHEEqEIO/oPB8EU8q47fNrG
-         U+uDzA8evo/NddCbt8mYvlUxfyxybltCZ6pQQaKBnUgieNuXa1lfqiG6dW4wiaNr1H
-         NAJkw+Y9yPa1ej5N62XVcdYwEdJa88Fu6NRwmQdU=
+        b=r/lzTAgOlUTjS/LIwriJ5RH/KK9jsG/gF0rFAIBgK/HmxOv+dqDDUtXtTLaWPuVMz
+         SKwUM6FPhYjXCzw0k9unIZYC2vB08WUejwefUV5y0Ws1q+mwAJ70LaWHsEwKdDTWFy
+         4+02bqSKmMz/4lKB84AIqIHWpg9uBptOkA6kxyZc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        "David A. Long" <dave.long@linaro.org>,
-        Julien Thierry <julien.thierry@arm.com>,
+        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 20/85] ARM: fix the cockup in the previous patch
-Date:   Mon, 18 Feb 2019 14:42:46 +0100
-Message-Id: <20190218133501.841869863@linuxfoundation.org>
+Subject: [PATCH 4.19 29/85] drm/bridge: tc358767: add defines for DP1_SRCCTRL & PHY_2LANE
+Date:   Mon, 18 Feb 2019 14:42:55 +0100
+Message-Id: <20190218133502.990121835@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -67,48 +66,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-Commit d6951f582cc50ba0ad22ef46b599740966599b14 upstream.
+[ Upstream commit adf4109896bbee27fd2ac3b48d22d6a0062fe517 ]
 
-The intention in the previous patch was to only place the processor
-tables in the .rodata section if big.Little was being built and we
-wanted the branch target hardening, but instead (due to the way it
-was tested) it ended up always placing the tables into the .rodata
-section.
+DP1_SRCCTRL register and PHY_2LANE field did not have matching defines.
+Add these.
 
-Although harmless, let's correct this anyway.
-
-Fixes: 3a4d0c2172bc ("ARM: ensure that processor vtables is not lost after boot")
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: David A. Long <dave.long@linaro.org>
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-Tested-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-3-tomi.valkeinen@ti.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mm/proc-macros.S | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/bridge/tc358767.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mm/proc-macros.S b/arch/arm/mm/proc-macros.S
-index 19516fbc2c55..5461d589a1e2 100644
---- a/arch/arm/mm/proc-macros.S
-+++ b/arch/arm/mm/proc-macros.S
-@@ -278,7 +278,7 @@
-  * If we are building for big.Little with branch predictor hardening,
-  * we need the processor function tables to remain available after boot.
-  */
--#if 1 // defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
-+#if defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
- 	.section ".rodata"
- #endif
- 	.type	\name\()_processor_functions, #object
-@@ -316,7 +316,7 @@ ENTRY(\name\()_processor_functions)
- 	.endif
+diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
+index 29a7e33e8ae0..5f0a666db2fd 100644
+--- a/drivers/gpu/drm/bridge/tc358767.c
++++ b/drivers/gpu/drm/bridge/tc358767.c
+@@ -142,6 +142,8 @@
+ #define DP0_LTLOOPCTRL		0x06d8
+ #define DP0_SNKLTCTRL		0x06e4
  
- 	.size	\name\()_processor_functions, . - \name\()_processor_functions
--#if 1 // defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
-+#if defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
- 	.previous
- #endif
- .endm
++#define DP1_SRCCTRL		0x07a0
++
+ /* PHY */
+ #define DP_PHY_CTRL		0x0800
+ #define DP_PHY_RST			BIT(28)  /* DP PHY Global Soft Reset */
+@@ -150,6 +152,7 @@
+ #define PHY_M1_RST			BIT(12)  /* Reset PHY1 Main Channel */
+ #define PHY_RDY				BIT(16)  /* PHY Main Channels Ready */
+ #define PHY_M0_RST			BIT(8)   /* Reset PHY0 Main Channel */
++#define PHY_2LANE			BIT(2)   /* PHY Enable 2 lanes */
+ #define PHY_A0_EN			BIT(1)   /* PHY Aux Channel0 Enable */
+ #define PHY_M0_EN			BIT(0)   /* PHY Main Channel0 Enable */
+ 
+@@ -564,7 +567,7 @@ static int tc_aux_link_setup(struct tc_data *tc)
+ 	value |= SYSCLK_SEL_LSCLK | LSCLK_DIV_2;
+ 	tc_write(SYS_PLLPARAM, value);
+ 
+-	tc_write(DP_PHY_CTRL, BGREN | PWR_SW_EN | BIT(2) | PHY_A0_EN);
++	tc_write(DP_PHY_CTRL, BGREN | PWR_SW_EN | PHY_2LANE | PHY_A0_EN);
+ 
+ 	/*
+ 	 * Initially PLLs are in bypass. Force PLL parameter update,
+@@ -834,7 +837,7 @@ static int tc_main_link_setup(struct tc_data *tc)
+ 		 DP0_SRCCTRL_LANESKEW | DP0_SRCCTRL_LANES_2 |
+ 		 DP0_SRCCTRL_BW27 | DP0_SRCCTRL_AUTOCORRECT);
+ 	/* from excel file - DP1_SrcCtrl */
+-	tc_write(0x07a0, 0x00003083);
++	tc_write(DP1_SRCCTRL, 0x00003083);
+ 
+ 	rate = clk_get_rate(tc->refclk);
+ 	switch (rate) {
+@@ -855,8 +858,9 @@ static int tc_main_link_setup(struct tc_data *tc)
+ 	}
+ 	value |= SYSCLK_SEL_LSCLK | LSCLK_DIV_2;
+ 	tc_write(SYS_PLLPARAM, value);
++
+ 	/* Setup Main Link */
+-	dp_phy_ctrl = BGREN | PWR_SW_EN | BIT(2) | PHY_A0_EN |  PHY_M0_EN;
++	dp_phy_ctrl = BGREN | PWR_SW_EN | PHY_2LANE | PHY_A0_EN |  PHY_M0_EN;
+ 	tc_write(DP_PHY_CTRL, dp_phy_ctrl);
+ 	msleep(100);
+ 
 -- 
 2.19.1
 
