@@ -2,57 +2,52 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 288EAC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:05:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE803C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:05:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED78521916
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:05:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DEB221916
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:05:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498719;
-	bh=mZmEvOz6L+vQAbBMe1i43OKZWriHHdu70PessNs+E7k=;
+	s=default; t=1550498723;
+	bh=ggl6PVZmfIuVfBvrJVbWDWWwnlnItL2vDtkwcMpaDiQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bxkemBSWAxrVmGHJos8ya0HwHYIEpFDST6KM4/8kz8CNx8WSde4vCi64yfDVnvIMG
-	 zIdpdqAW2vTXw+V6wlL3wlozd8JWFILahpX/dWTb4AidUHIBjKybjaiWvI+iFQUAcI
-	 1GMRPidy0ckAbx/lglRAW5EMwoB/Qry2VGCzcveI=
+	b=HfAbcEs1Xk8iGHVpX/RR1flSXCe4wxvj6VhEAXpFkXdIwT9p3CGzrpNTkqghhZZUZ
+	 n74Z8GFsGuIGn8UUj0RsOzseySrzxLRSr76jZbMfqGy1+mvJ0DsXjKYXVtKWrUKZwn
+	 EF+f/1ykAwF4CwlD2E0hBPZtLQwux+jxUNwWKMXY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389588AbfBROFR (ORCPT
+        id S2389585AbfBROFW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:05:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48026 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:05:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390113AbfBROFP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:05:15 -0500
+        id S2389447AbfBROFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:05:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A06AA21908;
-        Mon, 18 Feb 2019 14:05:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E1432190C;
+        Mon, 18 Feb 2019 14:05:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498715;
-        bh=mZmEvOz6L+vQAbBMe1i43OKZWriHHdu70PessNs+E7k=;
+        s=default; t=1550498718;
+        bh=ggl6PVZmfIuVfBvrJVbWDWWwnlnItL2vDtkwcMpaDiQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZW+DM97eT9F/6McISFRLMQkwOdBcBk1sFT5Ag5QqTgWfAD2ORDprBea41kIGsEpb6
-         kSrsPdn2/UhgVou1/e2f77VF7hk6Q6p8VVvRmIS8r+9MZWliHXS+gbuRbuc1bxyPLZ
-         AXtOCE7RZrSVcUrAtEJOP9726P51niqlJO0wPo+k=
+        b=xafowLYCQ47PR/b1BVt3pjBUqZjOMUI86nNI/dNpqqbQYumLFzzmeS703oxAN4pJy
+         hJm8ZjQ+3SMayRp2WI6FJtsrVgIuCVzwCBLK/w6871m7/XHbrnEzYkRmf72CDskJpf
+         Uf9u82G97rtUe6Y1w1WTf4zTwvEdS6Pb8SAHDLIM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Ben Woodard <woodard@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 072/143] exec: load_script: dont blindly truncate shebang string
-Date:   Mon, 18 Feb 2019 14:43:20 +0100
-Message-Id: <20190218133531.728375778@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Eduardo Valentin <edubezval@gmail.com>
+Subject: [PATCH 4.4 073/143] thermal: hwmon: inline helpers when CONFIG_THERMAL_HWMON is not set
+Date:   Mon, 18 Feb 2019 14:43:21 +0100
+Message-Id: <20190218133531.763047093@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -71,54 +66,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8099b047ecc431518b9bb6bdbba3549bbecdc343 ]
+From: Eduardo Valentin <edubezval@gmail.com>
 
-load_script() simply truncates bprm->buf and this is very wrong if the
-length of shebang string exceeds BINPRM_BUF_SIZE-2.  This can silently
-truncate i_arg or (worse) we can execute the wrong binary if buf[2:126]
-happens to be the valid executable path.
+commit 03334ba8b425b2ad275c8f390cf83c7b081c3095 upstream.
 
-Change load_script() to return ENOEXEC if it can't find '\n' or zero in
-bprm->buf.  Note that '\0' can come from either
-prepare_binprm()->memset() or from kernel_read(), we do not care.
+Avoid warnings like this:
+thermal_hwmon.h:29:1: warning: ‘thermal_remove_hwmon_sysfs’ defined but not used [-Wunused-function]
+ thermal_remove_hwmon_sysfs(struct thermal_zone_device *tz)
 
-Link: http://lkml.kernel.org/r/20181112160931.GA28463@redhat.com
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Ben Woodard <woodard@redhat.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 0dd88793aacd ("thermal: hwmon: move hwmon support to single file")
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- fs/binfmt_script.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/thermal/thermal_hwmon.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
-index afdf4e3cafc2..634bdbb23851 100644
---- a/fs/binfmt_script.c
-+++ b/fs/binfmt_script.c
-@@ -43,10 +43,14 @@ static int load_script(struct linux_binprm *bprm)
- 	fput(bprm->file);
- 	bprm->file = NULL;
+--- a/drivers/thermal/thermal_hwmon.h
++++ b/drivers/thermal/thermal_hwmon.h
+@@ -34,13 +34,13 @@
+ int thermal_add_hwmon_sysfs(struct thermal_zone_device *tz);
+ void thermal_remove_hwmon_sysfs(struct thermal_zone_device *tz);
+ #else
+-static int
++static inline int
+ thermal_add_hwmon_sysfs(struct thermal_zone_device *tz)
+ {
+ 	return 0;
+ }
  
--	bprm->buf[BINPRM_BUF_SIZE - 1] = '\0';
--	if ((cp = strchr(bprm->buf, '\n')) == NULL)
--		cp = bprm->buf+BINPRM_BUF_SIZE-1;
-+	for (cp = bprm->buf+2;; cp++) {
-+		if (cp >= bprm->buf + BINPRM_BUF_SIZE)
-+			return -ENOEXEC;
-+		if (!*cp || (*cp == '\n'))
-+			break;
-+	}
- 	*cp = '\0';
-+
- 	while (cp > bprm->buf) {
- 		cp--;
- 		if ((*cp == ' ') || (*cp == '\t'))
--- 
-2.19.1
-
+-static void
++static inline void
+ thermal_remove_hwmon_sysfs(struct thermal_zone_device *tz)
+ {
+ }
 
 
