@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D87C3C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABD86C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:50:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8B8921905
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:50:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 767FC20449
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:50:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497852;
-	bh=U8t4W6ljN+iyqdko6y70Og7/UFBlWyzZEkIdBEarsI8=;
+	s=default; t=1550497856;
+	bh=pZ4DN7zvHzq/D6bY5xrVvEcbCqhTZw9qQ/NKeTci+T4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qntGDa8bYsYulILEXn/A/V3jABS+ngs8JK5VveH44fVfmApVr+eG29OVOzGw8sSES
-	 frJn1M+ZiYymkd9KyZBVHji30I4ylj4gY1+p611Q0oXUoPh3h+QGd3CMfMnMJHYtWk
-	 Rlq9wHtp8i6ZhCMHhi3rCnSxAwEuStMZQAArsf0w=
+	b=d4Exnx1ZM4LOEp2tAIncdOl8h68VthwRUwgowiUXRatNvlcpVM6qnwxKjQPIZQaKk
+	 QKwJYJ+3X03RzUlHKmLdSiYMbRDGJQ0DO9tCvOWeGVsXOBRnM2fhSQXFXbOb2j3GNO
+	 1BJnzd31vbPLEMelXNQkwCHfsCfNjU/NKB1RNH4I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732293AbfBRNuv (ORCPT
+        id S1732306AbfBRNuy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:50:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58520 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:50:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731823AbfBRNus (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:50:48 -0500
+        id S1732284AbfBRNuv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:50:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 111A320842;
-        Mon, 18 Feb 2019 13:50:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F50720449;
+        Mon, 18 Feb 2019 13:50:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497847;
-        bh=U8t4W6ljN+iyqdko6y70Og7/UFBlWyzZEkIdBEarsI8=;
+        s=default; t=1550497851;
+        bh=pZ4DN7zvHzq/D6bY5xrVvEcbCqhTZw9qQ/NKeTci+T4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r/lzTAgOlUTjS/LIwriJ5RH/KK9jsG/gF0rFAIBgK/HmxOv+dqDDUtXtTLaWPuVMz
-         SKwUM6FPhYjXCzw0k9unIZYC2vB08WUejwefUV5y0Ws1q+mwAJ70LaWHsEwKdDTWFy
-         4+02bqSKmMz/4lKB84AIqIHWpg9uBptOkA6kxyZc=
+        b=2m4IxHSJbIuCjFCshClScNzRkFuCGPLS0af1Yx0IWF3FS4MdDDYvzfTZed91vJlzt
+         GTi+qZ4o+jRCewvXJiHKFMukJNOBk8B5MywDDcpUl3Kia6eF6RiTe47/2XbZVbfjeJ
+         kevyQrtj8s5t7DEx+LDHZkg8zRVRBAPpMHx83nlI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
         Andrzej Hajda <a.hajda@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 29/85] drm/bridge: tc358767: add defines for DP1_SRCCTRL & PHY_2LANE
-Date:   Mon, 18 Feb 2019 14:42:55 +0100
-Message-Id: <20190218133502.990121835@linuxfoundation.org>
+Subject: [PATCH 4.19 30/85] drm/bridge: tc358767: fix single lane configuration
+Date:   Mon, 18 Feb 2019 14:42:56 +0100
+Message-Id: <20190218133503.105448302@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -66,67 +66,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit adf4109896bbee27fd2ac3b48d22d6a0062fe517 ]
+[ Upstream commit 4d9d54a730434cc068dd3515ba6116697196f77b ]
 
-DP1_SRCCTRL register and PHY_2LANE field did not have matching defines.
-Add these.
+PHY_2LANE bit is always set in DP_PHY_CTRL, breaking 1 lane use.
+
+Set PHY_2LANE only when 2 lanes are used.
 
 Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-3-tomi.valkeinen@ti.com
+Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-4-tomi.valkeinen@ti.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/bridge/tc358767.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/bridge/tc358767.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index 29a7e33e8ae0..5f0a666db2fd 100644
+index 5f0a666db2fd..fee53422c31f 100644
 --- a/drivers/gpu/drm/bridge/tc358767.c
 +++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -142,6 +142,8 @@
- #define DP0_LTLOOPCTRL		0x06d8
- #define DP0_SNKLTCTRL		0x06e4
- 
-+#define DP1_SRCCTRL		0x07a0
-+
- /* PHY */
- #define DP_PHY_CTRL		0x0800
- #define DP_PHY_RST			BIT(28)  /* DP PHY Global Soft Reset */
-@@ -150,6 +152,7 @@
- #define PHY_M1_RST			BIT(12)  /* Reset PHY1 Main Channel */
- #define PHY_RDY				BIT(16)  /* PHY Main Channels Ready */
- #define PHY_M0_RST			BIT(8)   /* Reset PHY0 Main Channel */
-+#define PHY_2LANE			BIT(2)   /* PHY Enable 2 lanes */
- #define PHY_A0_EN			BIT(1)   /* PHY Aux Channel0 Enable */
- #define PHY_M0_EN			BIT(0)   /* PHY Main Channel0 Enable */
- 
-@@ -564,7 +567,7 @@ static int tc_aux_link_setup(struct tc_data *tc)
- 	value |= SYSCLK_SEL_LSCLK | LSCLK_DIV_2;
- 	tc_write(SYS_PLLPARAM, value);
- 
--	tc_write(DP_PHY_CTRL, BGREN | PWR_SW_EN | BIT(2) | PHY_A0_EN);
-+	tc_write(DP_PHY_CTRL, BGREN | PWR_SW_EN | PHY_2LANE | PHY_A0_EN);
- 
- 	/*
- 	 * Initially PLLs are in bypass. Force PLL parameter update,
-@@ -834,7 +837,7 @@ static int tc_main_link_setup(struct tc_data *tc)
- 		 DP0_SRCCTRL_LANESKEW | DP0_SRCCTRL_LANES_2 |
- 		 DP0_SRCCTRL_BW27 | DP0_SRCCTRL_AUTOCORRECT);
- 	/* from excel file - DP1_SrcCtrl */
--	tc_write(0x07a0, 0x00003083);
-+	tc_write(DP1_SRCCTRL, 0x00003083);
+@@ -543,6 +543,7 @@ static int tc_aux_link_setup(struct tc_data *tc)
+ 	unsigned long rate;
+ 	u32 value;
+ 	int ret;
++	u32 dp_phy_ctrl;
  
  	rate = clk_get_rate(tc->refclk);
  	switch (rate) {
-@@ -855,8 +858,9 @@ static int tc_main_link_setup(struct tc_data *tc)
- 	}
+@@ -567,7 +568,10 @@ static int tc_aux_link_setup(struct tc_data *tc)
  	value |= SYSCLK_SEL_LSCLK | LSCLK_DIV_2;
  	tc_write(SYS_PLLPARAM, value);
-+
+ 
+-	tc_write(DP_PHY_CTRL, BGREN | PWR_SW_EN | PHY_2LANE | PHY_A0_EN);
++	dp_phy_ctrl = BGREN | PWR_SW_EN | PHY_A0_EN;
++	if (tc->link.base.num_lanes == 2)
++		dp_phy_ctrl |= PHY_2LANE;
++	tc_write(DP_PHY_CTRL, dp_phy_ctrl);
+ 
+ 	/*
+ 	 * Initially PLLs are in bypass. Force PLL parameter update,
+@@ -860,7 +864,9 @@ static int tc_main_link_setup(struct tc_data *tc)
+ 	tc_write(SYS_PLLPARAM, value);
+ 
  	/* Setup Main Link */
--	dp_phy_ctrl = BGREN | PWR_SW_EN | BIT(2) | PHY_A0_EN |  PHY_M0_EN;
-+	dp_phy_ctrl = BGREN | PWR_SW_EN | PHY_2LANE | PHY_A0_EN |  PHY_M0_EN;
+-	dp_phy_ctrl = BGREN | PWR_SW_EN | PHY_2LANE | PHY_A0_EN |  PHY_M0_EN;
++	dp_phy_ctrl = BGREN | PWR_SW_EN | PHY_A0_EN | PHY_M0_EN;
++	if (tc->link.base.num_lanes == 2)
++		dp_phy_ctrl |= PHY_2LANE;
  	tc_write(DP_PHY_CTRL, dp_phy_ctrl);
  	msleep(100);
  
