@@ -2,95 +2,119 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E488BC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 06:43:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4306C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 06:46:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A48042147C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 06:43:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3BC0217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 06:46:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aXYpNmJo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728461AbfBRGna (ORCPT
+        id S1728512AbfBRGqd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 01:43:30 -0500
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:46551
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725836AbfBRGna (ORCPT
+        Mon, 18 Feb 2019 01:46:33 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43372 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725836AbfBRGqc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 01:43:30 -0500
-X-IronPort-AV: E=Sophos;i="5.58,383,1544482800"; 
-   d="scan'208";a="296474504"
-Received: from abo-58-107-68.mrs.modulonet.fr (HELO hadrien) ([85.68.107.58])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2019 07:43:26 +0100
-Date:   Mon, 18 Feb 2019 07:43:26 +0100 (CET)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     wen.yang99@zte.com.cn
-cc:     Markus.Elfring@web.de, yellowriver2010@hotmail.com,
-        Gilles Muller <Gilles.Muller@lip6.fr>, nicolas.palix@imag.fr,
-        michal.lkml@markovi.net, yamada.masahiro@socionext.com,
-        cheng.shengyu@zte.com.cn, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, cocci@systeme.lip6.fr
-Subject: Re: [v6] coccinelle: semantic code search for missing put_device()
-In-Reply-To: <201902181122502228026@zte.com.cn>
-Message-ID: <alpine.DEB.2.21.1902180740550.3111@hadrien>
-References: HK0PR02MB36344E2B29CEB195892F6420B2610@HK0PR02MB3634.apcprd02.prod.outlook.com,52c07e7c-eec7-792b-0b03-b5cb46ddeab3@web.de <201902181122502228026@zte.com.cn>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 18 Feb 2019 01:46:32 -0500
+Received: by mail-pl1-f193.google.com with SMTP id f90so8264473plb.10
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 22:46:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TXB7jt4NvFlkCJ/z1zjL8wfAZckZKg1Q4gS8BvR9WpI=;
+        b=aXYpNmJoDwx4gdhoE55d217A/1hcA1Hg6b+v0JrDuv8Mx0CQBnuHoExHBDJld3TF36
+         AQjBRrtmbMQtHCo2yRRLmMIAwQCC4ip5dY6vpVdCyJCw8iSGaYp3hoYBj6H/VMskWWLU
+         875fHLAHrx4nw6yfmlJdarF63EGgAdtM0Hf4qsSwsGctDaUJ4U6Vwzc3dFy5IR32Jk+t
+         nNsC4Xykw1cBtZ179+gu3ccjzyKYF59+jurDKIL6910atvoM2F0ReX+QT3+GLY78XlTk
+         wm6ChdqUhNtnbmX7lIJmaK8HFaBA9eXfMaU0+VsYiHyzXHaWKYZQikjp5sH3t82BuH/s
+         uerQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TXB7jt4NvFlkCJ/z1zjL8wfAZckZKg1Q4gS8BvR9WpI=;
+        b=W5KMxTDdiQEVyGh6BG+TGpVKH1lq6nUB4rNYbRgC2IKP529F6CjHe96SmhUNOXoLRW
+         yr2/2ZYEPtIrkC6kNWCspp/hYu00RuYbps91T83/pDs05MecM5w3QK2zbrto0hFxiImc
+         85brOOMei6eTKFmsqTmfejHGbtoxwOe73G5QtTDQJPsCDL6LrO5NqcKVBKOv3E/6GkkS
+         91A84NL9oRoywHHiQkHH/IX8TBFABXx1W3HJYf1ANAAqGGqYUwdC9wHCQH9AjnEoSnbu
+         7M+bxBC6QMQEIgE+aCo9r2Hpa4P20TPyd3iG53udQeJtS5ad3kzTPej3XlRfDg7ljrsR
+         HwwQ==
+X-Gm-Message-State: AHQUAuZv10dWtPghgeVLUeQhh8Q1JMLfk2f4euidzVlKbz1ks6f+bNdH
+        iKMqdn5G3rLKYfrytd1m8WE=
+X-Google-Smtp-Source: AHgI3IY0gLKvTiSEHnKHPDT8NxwYn6wIbP838XB03e81ovdoRnO8AVfkA0NaaHLX67ADQoEDMo2iEg==
+X-Received: by 2002:a17:902:a7:: with SMTP id a36mr23675732pla.295.1550472391559;
+        Sun, 17 Feb 2019 22:46:31 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id 64sm28856175pfl.83.2019.02.17.22.46.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 17 Feb 2019 22:46:30 -0800 (PST)
+Date:   Sun, 17 Feb 2019 22:46:29 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: uinput - Allow uinput_request to be interrupted
+Message-ID: <20190218064629.GB242714@dtor-ws>
+References: <20190218004305.339758-1-marcos.souza.org@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-2117660207-1550472207=:3111"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190218004305.339758-1-marcos.souza.org@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi Marcos,
 
---8323329-2117660207-1550472207=:3111
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+On Sun, Feb 17, 2019 at 09:42:52PM -0300, Marcos Paulo de Souza wrote:
+> Commit 8e009118a45a ("Input: uinput - allow FF requests to time out")
+> sets a timeout of 30 seconds to wait for force feedback interaction with
+> userspace, but also made it impossible to interrupt the event handling of
+> uinput code.
 
+No, the original code was using wait_for_completion() and therefore did
+not allow interrupting FF requests either. I'll apply the patch, but
+will drop the "Fixes" reference.
 
+Thanks.
 
-On Mon, 18 Feb 2019, wen.yang99@zte.com.cn wrote:
+> Make it interrutible by changing from
+> wait_for_completion_timeout to wait_for_completion_interruptible_timeout.
+> 
+> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=193741
+> 
+> Fixes: 8e009118a45a ("Input: uinput - allow FF requests to time out")
+> Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+> ---
+>  drivers/input/misc/uinput.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/input/misc/uinput.c b/drivers/input/misc/uinput.c
+> index 26ec603fe220..b7bdf332ef4c 100644
+> --- a/drivers/input/misc/uinput.c
+> +++ b/drivers/input/misc/uinput.c
+> @@ -191,7 +191,8 @@ static int uinput_request_submit(struct uinput_device *udev,
+>  	if (retval)
+>  		goto out;
+>  
+> -	if (!wait_for_completion_timeout(&request->done, 30 * HZ)) {
+> +	if (!wait_for_completion_interruptible_timeout(&request->done,
+> +							30 * HZ)) {
+>  		retval = -ETIMEDOUT;
+>  		goto out;
+>  	}
+> -- 
+> 2.16.4
+> 
 
-> > > when != e = id achieves this behavior.
-> >
-> > I can not agree to this view completely because of the meaning that is connected
-> > with these variable identifiers.
-> >
-> > Both metavariables share the kind “expression”. So I can imagine
-> > that there is an intersection for the source code match possibility.
-> > But one was intentionally restricted to the kind “local idexpression” so far.
-> >
-> > Which data element should not get reassigned here (before a corresponding
-> > null pointer check)?
-> >
->
-> Thank you for your comments.
-> We did some experiments:
-> +id = of_find_device_by_node@p1(x)
-> +... when != e = id
-> ...
-> Or:
-> ...
-> + ... when != id = e
->
-> The number of issuses found by these two methods is the same.
-> When != e = id achieves this behavior.
-
-They are the same because neither issue arises.  I would have a hard time
-saying which one is more reasonable to test, since both are extremely
-unlikely.
-
-julia
-
-
->
-> In addition, we feel that we should probably accept this patch first, use it to find more memory leaks, and solve the actual problems in the kernel code.
-> As for the patch itself, we can continue to pursue perfect in the process of using it to solve practical problems.
->
-> Regards,
-> Wen
---8323329-2117660207-1550472207=:3111--
+-- 
+Dmitry
