@@ -4,55 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B65E0C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD97CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:09:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DD4B2173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:09:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE7DD2173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:09:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498980;
-	bh=lh/rjUa4OvjOA4iFm8L77lWnIGHETLprCbsn53q3oR8=;
+	s=default; t=1550498986;
+	bh=zXqwcncJiOmfC48P+7v3313I1g3iRW40Ep99Dhdn3kc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TXsBk8+t65ooxxe7WuM0ehAbMF3AQd7ifSLkT0WyyxpNZqCOsbmYcnorxgb7X4GbJ
-	 HmVBWKkMGUQCpK8BzTbbPOaJVeI2sAvi1Rn4zeAcfuVuEChnONUw5/sw1outspjABF
-	 dgzyFl2OPuZG8ax8sivSX404N3g6hP5zDlprm6WA=
+	b=QySUX4s0rkcpBGPx/IFQDPcRgHyALOPm7sDQWqBu+tIAEM8H2hCAUytcDhaBKDByc
+	 +JFquUL/kBV4cDhE/2wonfiAGiaLolpqzvI25v5Z13WCzITGcoWrZn2OYmnWthyc6o
+	 UdTAU9P+98P1ZxU+E4EUFqFMh/0ZslKlhWwq1nzQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391262AbfBROJi (ORCPT
+        id S2391277AbfBROJn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:09:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53204 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:09:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391247AbfBROJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:09:35 -0500
+        id S2391257AbfBROJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:09:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CDB1217D7;
-        Mon, 18 Feb 2019 14:09:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28B2821901;
+        Mon, 18 Feb 2019 14:09:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498975;
-        bh=lh/rjUa4OvjOA4iFm8L77lWnIGHETLprCbsn53q3oR8=;
+        s=default; t=1550498977;
+        bh=zXqwcncJiOmfC48P+7v3313I1g3iRW40Ep99Dhdn3kc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WRKVaG/6ut2ukLUR6sLKRoyE4C56+lPBvh1qwBCS+ivkRhyLEIUaf9Bd7N8+UjaYx
-         syeWW+uF+vPst+qFWv4KNwRuQk8RY8+hsAbArlqdOPJZfDJao+1c9ex8gy2LEiuElQ
-         Jfu0xH0Mx02HqX5NBMvJn13ft9o1AZfll9B0h4QQ=
+        b=xZbniszqQ/VujMDngvAICa63wtSHtry4SVS4q0oFXmlT0zXkgWP3K53b9jY7MFhVw
+         cIHqajXwiJRq+KxNeT4cZtWgGM48YfG7VYcb1hEtzK7GMzJRZ20r5Yin2FqUe3ppgw
+         xi1JaTGmQjxuzuP7k151jIm8s70CS0xCiEZ5asC0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Rosin <peda@axentia.se>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Fabian Frederick <ffrederick@users.sourceforge.net>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Geoff Levand <geoff@infradead.org>,
-        James Simmons <jsimmons@users.sf.net>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 037/108] fbdev: fbmem: behave better with small rotated displays and many CPUs
-Date:   Mon, 18 Feb 2019 14:43:33 +0100
-Message-Id: <20190218133521.246228410@linuxfoundation.org>
+Subject: [PATCH 3.18 038/108] igb: Fix an issue that PME is not enabled during runtime suspend
+Date:   Mon, 18 Feb 2019 14:43:34 +0100
+Message-Id: <20190218133521.292263326@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -71,60 +68,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f75df8d4b4fabfad7e3cba2debfad12741c6fde7 ]
+[ Upstream commit 1fb3a7a75e2efcc83ef21f2434069cddd6fae6f5 ]
 
-Blitting an image with "negative" offsets is not working since there
-is no clipping. It hopefully just crashes. For the bootup logo, there
-is protection so that blitting does not happen as the image is drawn
-further and further to the right (ROTATE_UR) or further and further
-down (ROTATE_CW). There is however no protection when drawing in the
-opposite directions (ROTATE_UD and ROTATE_CCW).
+I210 ethernet card doesn't wakeup when a cable gets plugged. It's
+because its PME is not set.
 
-Add back this protection.
+Since commit 42eca2302146 ("PCI: Don't touch card regs after runtime
+suspend D3"), if the PCI state is saved, pci_pm_runtime_suspend() stops
+calling pci_finish_runtime_suspend(), which enables the PCI PME.
 
-The regression is 20-odd years old but the mindless warning-killing
-mentality displayed in commit 34bdb666f4b2 ("fbdev: fbmem: remove
-positive test on unsigned values") is also to blame, methinks.
+To fix the issue, let's not to save PCI states when it's runtime
+suspend, to let the PCI subsystem enables PME.
 
-Fixes: 448d479747b8 ("fbdev: fb_do_show_logo() updates")
-Signed-off-by: Peter Rosin <peda@axentia.se>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Fabian Frederick <ffrederick@users.sourceforge.net>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-cc: Geoff Levand <geoff@infradead.org>
-Cc: James Simmons <jsimmons@users.sf.net>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Fixes: 42eca2302146 ("PCI: Don't touch card regs after runtime suspend D3")
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/fbdev/core/fbmem.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/intel/igb/igb_main.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
-index 8a29ec5992fd..ea2bd6208a2f 100644
---- a/drivers/video/fbdev/core/fbmem.c
-+++ b/drivers/video/fbdev/core/fbmem.c
-@@ -433,7 +433,9 @@ static void fb_do_show_logo(struct fb_info *info, struct fb_image *image,
- 			image->dx += image->width + 8;
- 		}
- 	} else if (rotate == FB_ROTATE_UD) {
--		for (x = 0; x < num; x++) {
-+		u32 dx = image->dx;
-+
-+		for (x = 0; x < num && image->dx <= dx; x++) {
- 			info->fbops->fb_imageblit(info, image);
- 			image->dx -= image->width + 8;
- 		}
-@@ -445,7 +447,9 @@ static void fb_do_show_logo(struct fb_info *info, struct fb_image *image,
- 			image->dy += image->height + 8;
- 		}
- 	} else if (rotate == FB_ROTATE_CCW) {
--		for (x = 0; x < num; x++) {
-+		u32 dy = image->dy;
-+
-+		for (x = 0; x < num && image->dy <= dy; x++) {
- 			info->fbops->fb_imageblit(info, image);
- 			image->dy -= image->height + 8;
- 		}
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+index b73c896ed184..390d96ae4147 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -7351,9 +7351,11 @@ static int __igb_shutdown(struct pci_dev *pdev, bool *enable_wake,
+ 	rtnl_unlock();
+ 
+ #ifdef CONFIG_PM
+-	retval = pci_save_state(pdev);
+-	if (retval)
+-		return retval;
++	if (!runtime) {
++		retval = pci_save_state(pdev);
++		if (retval)
++			return retval;
++	}
+ #endif
+ 
+ 	status = rd32(E1000_STATUS);
 -- 
 2.19.1
 
