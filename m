@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DEB9C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4125C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:10:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53CB62173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:10:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4197217D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:10:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499033;
-	bh=6HzXDMKCCZTHKsaw5BSztJecptuqA3t8WoTuId8/Df4=;
+	s=default; t=1550499036;
+	bh=1bB/fmSSkBOdklc1O7sbIFSgWwQuJNke0eeF5zICOW8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Fo5zGuT1UJXgpoyH8iVONryOEn780Y73xV7BlI58uECfL9Gxf1eFkpDkpazrzCPH5
-	 wdoceBUm/FrBV2tXRE/zNhWxVVzsvZ+hA0gDprdmuoVymZ+6U64NadtksHojeRLQFm
-	 1NKt0SkWFLBhDnRT1qSgvG4ih6DTIjAizYIdvlkk=
+	b=MS7EYmbu+IrF5R+sSzARhKZuuV9fozDLdwjgwtsSb02E7KC1EH7A3NZ4sJVcN6NpD
+	 5wrmbZNDVRCaUqzd8wOCopXu5qt23LcUhMEYgNG7s14XF5ZpHgvnw/25vgJUNJGQLV
+	 8hyrCSnSJob2GOWWV+D+NSBEa7Qg8fYZZupCFZyM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391503AbfBROKb (ORCPT
+        id S2391518AbfBROKf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:10:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54236 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:10:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391480AbfBROK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:10:28 -0500
+        id S2391504AbfBROKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:10:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C84F217D9;
-        Mon, 18 Feb 2019 14:10:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F05DC217D7;
+        Mon, 18 Feb 2019 14:10:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550499028;
-        bh=6HzXDMKCCZTHKsaw5BSztJecptuqA3t8WoTuId8/Df4=;
+        s=default; t=1550499031;
+        bh=1bB/fmSSkBOdklc1O7sbIFSgWwQuJNke0eeF5zICOW8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KqA8S88w6BSKfuJ1f3Cg5EOXVknQeFUTrLjnAKZMOKMMbyiMhknI2PcxvlnsVNu5H
-         vcA3GV2My99V/6fVz750u/3lUuMxGE1JexrosIfgS0kJFQnNbQ8LiS6cw4Jrw36VV2
-         2vQYN5CljXSVEMmJAyoiEvKKDUzQMvJLHGql/CvU=
+        b=U9hJA4MKCtom4w6Zw4PRlfnrMaLj7INr8mOu59reJgPg5xJ/BnKTAjjbAuYRqkeoM
+         gxBhyfTXI4sum3wLeXQW/sMubw5t+N7sqmmqnJl+Dc7tM4iy+SdSMSFXY5VMf3ECbX
+         cHUreOLpLF4YAta2s0bUYZYd1sr1p5oKMg1GrRIw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org, Peter Maydell <peter.maydell@linaro.org>,
+        =?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 028/108] memstick: Prevent memstick host from getting runtime suspended during card detection
-Date:   Mon, 18 Feb 2019 14:43:24 +0100
-Message-Id: <20190218133520.840195424@linuxfoundation.org>
+Subject: [PATCH 3.18 029/108] arm64: KVM: Skip MMIO insn after emulation
+Date:   Mon, 18 Feb 2019 14:43:25 +0100
+Message-Id: <20190218133520.887570098@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -68,52 +69,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e03e303edf1c63e6dd455ccd568c74e93ef3ba8c ]
+[ Upstream commit 0d640732dbebed0f10f18526de21652931f0b2f2 ]
 
-We can use MEMSTICK_POWER_{ON,OFF} along with pm_runtime_{get,put}
-helpers to let memstick host support runtime pm.
+When we emulate an MMIO instruction, we advance the CPU state within
+decode_hsr(), before emulating the instruction effects.
 
-The rpm count may go down to zero before the memstick host powers on, so
-the host can be runtime suspended.
+Having this logic in decode_hsr() is opaque, and advancing the state
+before emulation is problematic. It gets in the way of applying
+consistent single-step logic, and it prevents us from being able to fail
+an MMIO instruction with a synchronous exception.
 
-So before doing card detection, increment the rpm count to avoid the
-host gets runtime suspended. Balance the rpm count after card detection
-is done.
+Clean this up by only advancing the CPU state *after* the effects of the
+instruction are emulated.
 
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Peter Maydell <peter.maydell@linaro.org>
+Reviewed-by: Alex Bennée <alex.bennee@linaro.org>
+Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/memstick/core/memstick.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/kvm/mmio.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/memstick/core/memstick.c b/drivers/memstick/core/memstick.c
-index a0547dbf9806..4d673a626db4 100644
---- a/drivers/memstick/core/memstick.c
-+++ b/drivers/memstick/core/memstick.c
-@@ -18,6 +18,7 @@
- #include <linux/delay.h>
- #include <linux/slab.h>
- #include <linux/module.h>
-+#include <linux/pm_runtime.h>
+diff --git a/arch/arm/kvm/mmio.c b/arch/arm/kvm/mmio.c
+index 4cb5a93182e9..c215bb4423ac 100644
+--- a/arch/arm/kvm/mmio.c
++++ b/arch/arm/kvm/mmio.c
+@@ -118,6 +118,12 @@ int kvm_handle_mmio_return(struct kvm_vcpu *vcpu, struct kvm_run *run)
+ 		*vcpu_reg(vcpu, vcpu->arch.mmio_decode.rt) = data;
+ 	}
  
- #define DRIVER_NAME "memstick"
++	/*
++	 * The MMIO instruction is emulated and should not be re-executed
++	 * in the guest.
++	 */
++	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
++
+ 	return 0;
+ }
  
-@@ -436,6 +437,7 @@ static void memstick_check(struct work_struct *work)
- 	struct memstick_dev *card;
+@@ -154,11 +160,6 @@ static int decode_hsr(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 	vcpu->arch.mmio_decode.sign_extend = sign_extend;
+ 	vcpu->arch.mmio_decode.rt = rt;
  
- 	dev_dbg(&host->dev, "memstick_check started\n");
-+	pm_runtime_get_noresume(host->dev.parent);
- 	mutex_lock(&host->lock);
- 	if (!host->card) {
- 		if (memstick_power_on(host))
-@@ -479,6 +481,7 @@ out_power_off:
- 		host->set_param(host, MEMSTICK_POWER, MEMSTICK_POWER_OFF);
- 
- 	mutex_unlock(&host->lock);
-+	pm_runtime_put(host->dev.parent);
- 	dev_dbg(&host->dev, "memstick_check finished\n");
+-	/*
+-	 * The MMIO instruction is emulated and should not be re-executed
+-	 * in the guest.
+-	 */
+-	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
+ 	return 0;
  }
  
 -- 
