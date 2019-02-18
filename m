@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFC09C10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 670ECC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:19:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9260721901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:19:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3854E21901
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:19:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499556;
-	bh=dZ6rnI2beoKxO5QlaE59j5Jop+3D/OepeEbD44czHqU=;
+	s=default; t=1550499562;
+	bh=TtAjKBJiS73Bi/0uq0KbvnXKmsveY2CmFZ9etCzEk9A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=x+LWYQUiS/7AxLe5auW5u2Hh3PlMcRXuM2ihQZ6CHIzPEB1HNnCPDz1kcNoXeXqKs
-	 LKAT4NloaLSltSaEmaTxTKJwlEGoRQ5FKMZpSAM2cKyxUwu5sqlfnhnMIrBc4yXrWy
-	 LRQEfH6Z/+yY8lAkLWwQCd/oHLxXb2SIa2q5L5T8=
+	b=ICOi8oFDWg1Ju1tZqcCbhgUEQJm268sAo0JxeFEwqxTOm60DoibBJI/9ucfeiLepc
+	 9I+P702dIuIjhYV9TE7rtQy8WEmOcpmfRstue5hF8zapP5jO5ZB59xDqMNJI0oGGs5
+	 koEwsaLPl3cd3SG7ctzn5q4dWyWlnMol9M7cUp+I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390641AbfBROIN (ORCPT
+        id S1733094AbfBROTV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:08:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51318 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:19:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390861AbfBROIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:08:07 -0500
+        id S2390875AbfBROIK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:08:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0911021902;
-        Mon, 18 Feb 2019 14:08:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C7B5321916;
+        Mon, 18 Feb 2019 14:08:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498886;
-        bh=dZ6rnI2beoKxO5QlaE59j5Jop+3D/OepeEbD44czHqU=;
+        s=default; t=1550498889;
+        bh=TtAjKBJiS73Bi/0uq0KbvnXKmsveY2CmFZ9etCzEk9A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K6X/vYuNG9JHjqCuMA9Sl+OJpgSReFmYPTWHoz0DHPROxbUfzaFPMz23+kVXH1ZpL
-         P+d18/1hclzhkR5OIlIYBVeGQk82iaQRR3Tk2uOZqS8hg+eIo3uZbjV+f9S3OEpM/v
-         wYAXqkf6y/SCCrwO9gUoemyC2iP4B35dmvqtPFMI=
+        b=JwwKqMCd+ztie+/whokfz4mQnou1muNOljy0+jDWwkwqQCKszvFQAxSPy6qJhLLwy
+         wax9vAqZQ0jcnkAhLfYpkgWZI3TvG55rPJlinKJZE8RjUoxgZgY7scDC2mEpn57CUz
+         MqNwEOVdD2vGgBUbxqQ5DMP2yTqcpnr3yrwL+odU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Slawomir Stepien <sst@poczta.fm>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        stable@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 001/108] staging: iio: adc: ad7280a: handle error from __ad7280_read32()
-Date:   Mon, 18 Feb 2019 14:42:57 +0100
-Message-Id: <20190218133519.597852483@linuxfoundation.org>
+Subject: [PATCH 3.18 010/108] modpost: validate symbol names also in find_elf_symbol
+Date:   Mon, 18 Feb 2019 14:43:06 +0100
+Message-Id: <20190218133519.986361760@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -66,68 +66,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0559ef7fde67bc6c83c6eb6329dbd6649528263e ]
+[ Upstream commit 5818c683a619c534c113e1f66d24f636defc29bc ]
 
-Inside __ad7280_read32(), the spi_sync_transfer() can fail with negative
-error code. This change will ensure that this error is being passed up
-in the call stack, so it can be handled.
+If an ARM mapping symbol shares an address with a valid symbol,
+find_elf_symbol can currently return the mapping symbol instead, as the
+symbol is not validated. This can result in confusing warnings:
 
-Signed-off-by: Slawomir Stepien <sst@poczta.fm>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+  WARNING: vmlinux.o(.text+0x18f4028): Section mismatch in reference
+  from the function set_reset_devices() to the variable .init.text:$x.0
+
+This change adds a call to is_valid_name to find_elf_symbol, similarly
+to how it's already used in find_elf_symbol2.
+
+Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/iio/adc/ad7280a.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ scripts/mod/modpost.c | 50 ++++++++++++++++++++++---------------------
+ 1 file changed, 26 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/staging/iio/adc/ad7280a.c b/drivers/staging/iio/adc/ad7280a.c
-index d215edf66af2..0ad4af5d0ae4 100644
---- a/drivers/staging/iio/adc/ad7280a.c
-+++ b/drivers/staging/iio/adc/ad7280a.c
-@@ -250,7 +250,9 @@ static int ad7280_read(struct ad7280_state *st, unsigned devaddr,
- 	if (ret)
- 		return ret;
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 9c06b5d62e90..2ff9ed878f9d 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -1134,6 +1134,30 @@ static int secref_whitelist(const struct sectioncheck *mismatch,
+ 	return 1;
+ }
  
--	__ad7280_read32(st, &tmp);
-+	ret = __ad7280_read32(st, &tmp);
-+	if (ret)
-+		return ret;
- 
- 	if (ad7280_check_crc(st, tmp))
- 		return -EIO;
-@@ -288,7 +290,9 @@ static int ad7280_read_channel(struct ad7280_state *st, unsigned devaddr,
- 
- 	ad7280_delay(st);
- 
--	__ad7280_read32(st, &tmp);
-+	ret = __ad7280_read32(st, &tmp);
-+	if (ret)
-+		return ret;
- 
- 	if (ad7280_check_crc(st, tmp))
- 		return -EIO;
-@@ -321,7 +325,9 @@ static int ad7280_read_all_channels(struct ad7280_state *st, unsigned cnt,
- 	ad7280_delay(st);
- 
- 	for (i = 0; i < cnt; i++) {
--		__ad7280_read32(st, &tmp);
-+		ret = __ad7280_read32(st, &tmp);
-+		if (ret)
-+			return ret;
- 
- 		if (ad7280_check_crc(st, tmp))
- 			return -EIO;
-@@ -364,7 +370,10 @@ static int ad7280_chain_setup(struct ad7280_state *st)
- 		return ret;
- 
- 	for (n = 0; n <= AD7280A_MAX_CHAIN; n++) {
--		__ad7280_read32(st, &val);
-+		ret = __ad7280_read32(st, &val);
-+		if (ret)
-+			return ret;
++static inline int is_arm_mapping_symbol(const char *str)
++{
++	return str[0] == '$' && strchr("axtd", str[1])
++	       && (str[2] == '\0' || str[2] == '.');
++}
 +
- 		if (val == 0)
- 			return n - 1;
++/*
++ * If there's no name there, ignore it; likewise, ignore it if it's
++ * one of the magic symbols emitted used by current ARM tools.
++ *
++ * Otherwise if find_symbols_between() returns those symbols, they'll
++ * fail the whitelist tests and cause lots of false alarms ... fixable
++ * only by merging __exit and __init sections into __text, bloating
++ * the kernel (which is especially evil on embedded platforms).
++ */
++static inline int is_valid_name(struct elf_info *elf, Elf_Sym *sym)
++{
++	const char *name = elf->strtab + sym->st_name;
++
++	if (!name || !strlen(name))
++		return 0;
++	return !is_arm_mapping_symbol(name);
++}
++
+ /**
+  * Find symbol based on relocation record info.
+  * In some cases the symbol supplied is a valid symbol so
+@@ -1159,6 +1183,8 @@ static Elf_Sym *find_elf_symbol(struct elf_info *elf, Elf64_Sword addr,
+ 			continue;
+ 		if (ELF_ST_TYPE(sym->st_info) == STT_SECTION)
+ 			continue;
++		if (!is_valid_name(elf, sym))
++			continue;
+ 		if (sym->st_value == addr)
+ 			return sym;
+ 		/* Find a symbol nearby - addr are maybe negative */
+@@ -1177,30 +1203,6 @@ static Elf_Sym *find_elf_symbol(struct elf_info *elf, Elf64_Sword addr,
+ 		return NULL;
+ }
  
+-static inline int is_arm_mapping_symbol(const char *str)
+-{
+-	return str[0] == '$' && strchr("axtd", str[1])
+-	       && (str[2] == '\0' || str[2] == '.');
+-}
+-
+-/*
+- * If there's no name there, ignore it; likewise, ignore it if it's
+- * one of the magic symbols emitted used by current ARM tools.
+- *
+- * Otherwise if find_symbols_between() returns those symbols, they'll
+- * fail the whitelist tests and cause lots of false alarms ... fixable
+- * only by merging __exit and __init sections into __text, bloating
+- * the kernel (which is especially evil on embedded platforms).
+- */
+-static inline int is_valid_name(struct elf_info *elf, Elf_Sym *sym)
+-{
+-	const char *name = elf->strtab + sym->st_name;
+-
+-	if (!name || !strlen(name))
+-		return 0;
+-	return !is_arm_mapping_symbol(name);
+-}
+-
+ /*
+  * Find symbols before or equal addr and after addr - in the section sec.
+  * If we find two symbols with equal offset prefer one with a valid name.
 -- 
 2.19.1
 
