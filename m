@@ -4,48 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DECB2C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A8FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:11:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADB0D217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:11:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64EB321903
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:11:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499088;
-	bh=XRBLBcCnGgYnNeX01CF7ghpMsCwxzUxLvoOZBvkjeCU=;
+	s=default; t=1550499092;
+	bh=XoGqOxgCyIyaqxMEYwdoxaj0buGF3QETnih5ptUyfo0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nGGKSrVnmL/BGYRsopf1Xp042RviU5DDZk9vYMyjTgzxNKvdpqTMJN4RjeCgqdf0s
-	 DTAxMFq43vu9EVhgpI573wvWkx0+5SOQXYe2mS2E8S6rKZpHsbgp29FIpYVPJI0KgB
-	 gJhINsKWWEMsARuMW3G3gB451bRmapNthRSR1uRs=
+	b=Tay6Vrp3qY/TmWiPmIPL+u214q/QwwiKA+wDjDNcPdJ3gxR+MyVmphO43NF5SmKAa
+	 7Ds1C+6Xt17RAPOasFcYNxhuXGji8stOvmsWREIWDQbtL7tKLzX12dAmujiHskpD3N
+	 DRLBVlxLVNIl8f019DPxgF4gB0q8SmfH+to/8fOc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391731AbfBROL1 (ORCPT
+        id S2391752AbfBROLa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:11:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55398 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:11:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391701AbfBROLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:11:22 -0500
+        id S2391701AbfBROL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:11:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B9CB217D9;
-        Mon, 18 Feb 2019 14:11:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BCF87217D7;
+        Mon, 18 Feb 2019 14:11:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550499081;
-        bh=XRBLBcCnGgYnNeX01CF7ghpMsCwxzUxLvoOZBvkjeCU=;
+        s=default; t=1550499088;
+        bh=XoGqOxgCyIyaqxMEYwdoxaj0buGF3QETnih5ptUyfo0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hVIA/APX+jlcuYVzedMcHgNyHIer10+2KO5TCeTpgWrcFExIlsUSlMvGwG62XNHq+
-         uMC0A2wfngCp80V/1WYDsQ9lZkf6F4DPN+VDJE/KxpS6MkmVVwUCtnXcs3alifZeii
-         zQ6AA/BUJPl7dPJ7zKJFPOtscldRDnVyXJJR0eFw=
+        b=k0TUtvb7Jz/5BmOKLpG24qo4fSytji4o03vXI1wrPITlbcaRkEJfqQix5EDEh5rTv
+         3m+miQ3ZQEJQoMHxvskpj6Me2Qyj0Wiy7sxYukq/PUtgGPM/G0DeeTb3gQF6BwBYpd
+         cgy3zWtZqrj8AWK6oXXlibpHg/+beSF9ZLDVDU64=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Wilhelm <fwilhelm@google.com>,
-        stable@kernel.org, Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 3.18 070/108] KVM: x86: work around leak of uninitialized stack contents (CVE-2019-7222)
-Date:   Mon, 18 Feb 2019 14:44:06 +0100
-Message-Id: <20190218133522.768681865@linuxfoundation.org>
+        stable@vger.kernel.org, Song Liu <songliubraving@fb.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 3.18 072/108] perf/x86/intel/uncore: Add Node ID mask
+Date:   Mon, 18 Feb 2019 14:44:08 +0100
+Message-Id: <20190218133522.864137416@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -64,47 +72,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Kan Liang <kan.liang@linux.intel.com>
 
-commit 353c0956a618a07ba4bbe7ad00ff29fe70e8412a upstream.
+commit 9e63a7894fd302082cf3627fe90844421a6cbe7f upstream.
 
-Bugzilla: 1671930
+Some PCI uncore PMUs cannot be registered on an 8-socket system (HPE
+Superdome Flex).
 
-Emulation of certain instructions (VMXON, VMCLEAR, VMPTRLD, VMWRITE with
-memory operand, INVEPT, INVVPID) can incorrectly inject a page fault
-when passed an operand that points to an MMIO address.  The page fault
-will use uninitialized kernel stack memory as the CR2 and error code.
+To understand which Socket the PCI uncore PMUs belongs to, perf retrieves
+the local Node ID of the uncore device from CPUNODEID(0xC0) of the PCI
+configuration space, and the mapping between Socket ID and Node ID from
+GIDNIDMAP(0xD4). The Socket ID can be calculated accordingly.
 
-The right behavior would be to abort the VM with a KVM_EXIT_INTERNAL_ERROR
-exit to userspace; however, it is not an easy fix, so for now just
-ensure that the error code and CR2 are zero.
+The local Node ID is only available at bit 2:0, but current code doesn't
+mask it. If a BIOS doesn't clear the rest of the bits, an incorrect Node ID
+will be fetched.
 
-Embargoed until Feb 7th 2019.
+Filter the Node ID by adding a mask.
 
-Reported-by: Felix Wilhelm <fwilhelm@google.com>
-Cc: stable@kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Reported-by: Song Liu <songliubraving@fb.com>
+Tested-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: <stable@vger.kernel.org> # v3.7+
+Fixes: 7c94ee2e0917 ("perf/x86: Add Intel Nehalem and Sandy Bridge-EP uncore support")
+Link: https://lkml.kernel.org/r/1548600794-33162-1-git-send-email-kan.liang@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- arch/x86/kvm/x86.c |    7 +++++++
- 1 file changed, 7 insertions(+)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -4279,6 +4279,13 @@ int kvm_read_guest_virt(struct x86_emula
- 	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
- 	u32 access = (kvm_x86_ops->get_cpl(vcpu) == 3) ? PFERR_USER_MASK : 0;
+---
+ arch/x86/kernel/cpu/perf_event_intel_uncore_snbep.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/arch/x86/kernel/cpu/perf_event_intel_uncore_snbep.c
++++ b/arch/x86/kernel/cpu/perf_event_intel_uncore_snbep.c
+@@ -1077,6 +1077,8 @@ static struct pci_driver snbep_uncore_pc
+ 	.id_table	= snbep_uncore_pci_ids,
+ };
  
-+	/*
-+	 * FIXME: this should call handle_emulation_failure if X86EMUL_IO_NEEDED
-+	 * is returned, but our callers are not ready for that and they blindly
-+	 * call kvm_inject_page_fault.  Ensure that they at least do not leak
-+	 * uninitialized kernel stack memory into cr2 and error code.
-+	 */
-+	memset(exception, 0, sizeof(*exception));
- 	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, access,
- 					  exception);
- }
++#define NODE_ID_MASK	0x7
++
+ /*
+  * build pci bus to socket mapping
+  */
+@@ -1097,7 +1099,7 @@ static int snbep_pci2phy_map_init(int de
+ 		err = pci_read_config_dword(ubox_dev, 0x40, &config);
+ 		if (err)
+ 			break;
+-		nodeid = config;
++		nodeid = config & NODE_ID_MASK;
+ 		/* get the Node ID mapping */
+ 		err = pci_read_config_dword(ubox_dev, 0x54, &config);
+ 		if (err)
 
 
