@@ -4,49 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF798C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:19:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBAB1C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:20:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A312B21901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:19:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A2A721908
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:20:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499592;
-	bh=WC4utT67xxDaNq7Ve0dGMUF+3iznKeNW/Q1CpYU2+YA=;
+	s=default; t=1550499601;
+	bh=y7PtTaeXyw7aOi/hb5Lbau3D8T1iTw9/vGxPsqZEBXY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=moyQu7rooe3OcKD/4jvArIhQV3tO2BNN4qOINV/X6YviUvBPsMjCRrmU5tYHiyqxB
-	 fZadZsz9bNRjX8hQa2H1ZMIUQ0V9YgnGeRGWMkbSRzl1swg2/MXL9/d6/sMQtvQaQn
-	 lUxD7VYMjJ3MmK7jlBTEM2HcHbJ0+F/CQ3O3B/SA=
+	b=HQhlmiGfchjVIfLmc4T+xMJ7zeFuoGM1us/7Fx0+QPVfXludvJj8J6/I5Thx7Y3Kx
+	 JV6ctu9lTe/IfLL359yWmFYHRhuAnnA/pQrYJCbKNLEdWeLgr/VgaskTbTNkOyDBbb
+	 y97aXDLwCXwbnuZ0stspK/4o7mmKvwr5rhccS0LI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390849AbfBROTv (ORCPT
+        id S2391004AbfBROUA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:19:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51016 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:20:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389931AbfBROHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:07:51 -0500
+        id S2390774AbfBROHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:07:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F9E721917;
-        Mon, 18 Feb 2019 14:07:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D415204FD;
+        Mon, 18 Feb 2019 14:07:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498870;
-        bh=WC4utT67xxDaNq7Ve0dGMUF+3iznKeNW/Q1CpYU2+YA=;
+        s=default; t=1550498865;
+        bh=y7PtTaeXyw7aOi/hb5Lbau3D8T1iTw9/vGxPsqZEBXY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y9Av9UlD+YaBM/vu0Bh91/o3rP30DPpp2+ovgehYwFC8PG8adRwM6/fvs26apC29N
-         +hkvucOoy2FgTwkKuUFGDjdmrSEgI5J7S1PcEZP76T5LB6Hm4loIXJ/Lu54zWUy2EU
-         8Sm52z2x1FdrEnKQX4AQ65ZUe1YOQoGQEiGYXky0=
+        b=nlEsDocZZebmwzdp46LOMx5m8pruf2RwYUv1ni/6AiujYexFcs2YqlvG6/OTa+h/N
+         68KnSkFK8fXEwBx1A1S5Ls2v7b+wbQQBLxHBZ1EbSmj+8YWg2MLkSyamTVhEtueDU+
+         ZjEi91DDJwM2/MLz4wpTa80nmNTa49CbJ8twsuBc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Manuel Reinhardt <manuel.rhdt@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 129/143] ALSA: usb-audio: Fix implicit fb endpoint setup by quirk
-Date:   Mon, 18 Feb 2019 14:44:17 +0100
-Message-Id: <20190218133533.703740169@linuxfoundation.org>
+        stable@vger.kernel.org, "Jin, Yao" <yao.jin@linux.intel.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>
+Subject: [PATCH 4.4 127/143] perf/core: Fix impossible ring-buffer sizes warning
+Date:   Mon, 18 Feb 2019 14:44:15 +0100
+Message-Id: <20190218133533.634690773@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -65,58 +73,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Manuel Reinhardt <manuel.rhdt@gmail.com>
+From: Ingo Molnar <mingo@kernel.org>
 
-commit 2bc16b9f3223d049b57202ee702fcb5b9b507019 upstream.
+commit 528871b456026e6127d95b1b2bd8e3a003dc1614 upstream.
 
-The commit a60945fd08e4 ("ALSA: usb-audio: move implicit fb quirks to
-separate function") introduced an error in the handling of quirks for
-implicit feedback endpoints. This commit fixes this.
+The following commit:
 
-If a quirk successfully sets up an implicit feedback endpoint, usb-audio
-no longer tries to find the implicit fb endpoint itself.
+  9dff0aa95a32 ("perf/core: Don't WARN() for impossible ring-buffer sizes")
 
-Fixes: a60945fd08e4 ("ALSA: usb-audio: move implicit fb quirks to separate function")
-Signed-off-by: Manuel Reinhardt <manuel.rhdt@gmail.com>
+results in perf recording failures with larger mmap areas:
+
+  root@skl:/tmp# perf record -g -a
+  failed to mmap with 12 (Cannot allocate memory)
+
+The root cause is that the following condition is buggy:
+
+	if (order_base_2(size) >= MAX_ORDER)
+		goto fail;
+
+The problem is that @size is in bytes and MAX_ORDER is in pages,
+so the right test is:
+
+	if (order_base_2(size) >= PAGE_SHIFT+MAX_ORDER)
+		goto fail;
+
+Fix it.
+
+Reported-by: "Jin, Yao" <yao.jin@linux.intel.com>
+Bisected-by: Borislav Petkov <bp@alien8.de>
+Analyzed-by: Peter Zijlstra <peterz@infradead.org>
+Cc: Julien Thierry <julien.thierry@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 9dff0aa95a32 ("perf/core: Don't WARN() for impossible ring-buffer sizes")
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/pcm.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ kernel/events/ring_buffer.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/usb/pcm.c
-+++ b/sound/usb/pcm.c
-@@ -313,6 +313,9 @@ static int search_roland_implicit_fb(str
- 	return 0;
- }
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -637,7 +637,7 @@ struct ring_buffer *rb_alloc(int nr_page
+ 	size = sizeof(struct ring_buffer);
+ 	size += nr_pages * sizeof(void *);
  
-+/* Setup an implicit feedback endpoint from a quirk. Returns 0 if no quirk
-+ * applies. Returns 1 if a quirk was found.
-+ */
- static int set_sync_ep_implicit_fb_quirk(struct snd_usb_substream *subs,
- 					 struct usb_device *dev,
- 					 struct usb_interface_descriptor *altsd,
-@@ -381,7 +384,7 @@ add_sync_ep:
+-	if (order_base_2(size) >= MAX_ORDER)
++	if (order_base_2(size) >= PAGE_SHIFT+MAX_ORDER)
+ 		goto fail;
  
- 	subs->data_endpoint->sync_master = subs->sync_endpoint;
- 
--	return 0;
-+	return 1;
- }
- 
- static int set_sync_endpoint(struct snd_usb_substream *subs,
-@@ -420,6 +423,10 @@ static int set_sync_endpoint(struct snd_
- 	if (err < 0)
- 		return err;
- 
-+	/* endpoint set by quirk */
-+	if (err > 0)
-+		return 0;
-+
- 	if (altsd->bNumEndpoints < 2)
- 		return 0;
- 
+ 	rb = kzalloc(size, GFP_KERNEL);
 
 
