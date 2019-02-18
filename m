@@ -4,56 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2135C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A4E9C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 969B121736
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E695121736
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550500985;
-	bh=U2NV0twGQyM9+U1Uu2z4A3R1Vj/wQiCP+skfPMw30p8=;
+	s=default; t=1550500989;
+	bh=IzT99dF4Xdu11I+Q+B3iBBsl+0BVBcuB90YJgOYqZSg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lkNzP2ZQEXN/W8P1VLu8GIruvVykSobtHZUlJLESpCTscb8gKOIi5y7DIB18VXXpb
-	 Jupw0UTaFLq4ctrMcp7YbJ9FHpNNeKYg19MdK3c5cgnJv06kHfiboP3d+INx7mPbif
-	 Vanyu7y4sUyPyCwNzukBHIW4Ikih7Jx4UNe5N6yE=
+	b=Cq1rl5EdZGfIHCfiespZ8nIik0faqE1xuT9wWxBbAh5+Cgfpam8tMcS6/+N8O3Qu5
+	 cpd9DeCMr+y4fvdD1oLXflGegg9GKvA4iYAtsaUbqImJDPV3DkQ2TKM+siUNWttEzl
+	 2dVwRw5bu/N3ad1xyI86OeUdpBeyAqyxIDub0rwE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731764AbfBRNtn (ORCPT
+        id S1732879AbfBROnH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:49:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56934 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:43:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731332AbfBRNtg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:49:36 -0500
+        id S1732071AbfBRNtn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:49:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4C2821904;
-        Mon, 18 Feb 2019 13:49:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18E8321901;
+        Mon, 18 Feb 2019 13:49:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497776;
-        bh=U2NV0twGQyM9+U1Uu2z4A3R1Vj/wQiCP+skfPMw30p8=;
+        s=default; t=1550497782;
+        bh=IzT99dF4Xdu11I+Q+B3iBBsl+0BVBcuB90YJgOYqZSg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JE7dBmwE0Mg0u6CTtgBkxnuPawMDpMfrLeU+T8we9VY7Z82VoNXhOlkHYCyfFnVsz
-         0V4CPSJGg3r76LI3GUzRfQxgsxLaSgUhZ28wS0eAJGhrVWzYuJmlgLkP69o/oNMoga
-         ceapmCdTyNn0QKEfGkyV8YR+oGKsJeJE5ruACq8E=
+        b=v+6UMx63SPTyRlZ9qxGyNv80EDIjTfXb18NFD0X2Pl2XtLa9uXJYQzL/VgPudQOPI
+         bLCGLjtTdIwi/1pQiOpLytmSTvuQJXHHOBBSLzkFX7GjsjVEW04H1CqyulvW2gpVN9
+         dhvomWZeJyQV3LdSWVAtmAP26SP9FJ92Fk8BPH/M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Todd Previte <tprevite@gmail.com>,
-        Dave Airlie <airlied@redhat.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Imre Deak <imre.deak@intel.com>,
-        intel-gfx@lists.freedesktop.org,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Jani Nikula <jani.nikula@intel.com>
-Subject: [PATCH 4.20 91/92] drm/i915: Block fbdev HPD processing during suspend
-Date:   Mon, 18 Feb 2019 14:43:34 +0100
-Message-Id: <20190218133503.825582374@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 4.20 89/92] drm/vkms: Fix license inconsistent
+Date:   Mon, 18 Feb 2019 14:43:32 +0100
+Message-Id: <20190218133503.652568884@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
 References: <20190218133454.668268457@linuxfoundation.org>
@@ -72,171 +65,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lyude Paul <lyude@redhat.com>
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 
-commit e8a8fedd57fdcebf0e4f24ef0fc7e29323df8e66 upstream.
+commit 7fd56e0260a22c0cfaf9adb94a2427b76e239dd0 upstream.
 
-When resuming, we check whether or not any previously connected
-MST topologies are still present and if so, attempt to resume them. If
-this fails, we disable said MST topologies and fire off a hotplug event
-so that userspace knows to reprobe.
+Fixes license inconsistent related to the VKMS driver and remove the
+redundant boilerplate comment.
 
-However, sending a hotplug event involves calling
-drm_fb_helper_hotplug_event(), which in turn results in fbcon doing a
-connector reprobe in the caller's thread - something we can't do at the
-point in which i915 calls drm_dp_mst_topology_mgr_resume() since
-hotplugging hasn't been fully initialized yet.
+Fixes: 854502fa0a38 ("drm/vkms: Add basic CRTC initialization")
 
-This currently causes some rather subtle but fatal issues. For example,
-on my T480s the laptop dock connected to it usually disappears during a
-suspend cycle, and comes back up a short while after the system has been
-resumed. This guarantees pretty much every suspend and resume cycle,
-drm_dp_mst_topology_mgr_set_mst(mgr, false); will be caused and in turn,
-a connector hotplug will occur. Now it's Rute Goldberg time: when the
-connector hotplug occurs, i915 reprobes /all/ of the connectors,
-including eDP. However, eDP probing requires that we power on the panel
-VDD which in turn, grabs a wakeref to the appropriate power domain on
-the GPU (on my T480s, this is the PORT_DDI_A_IO domain). This is where
-things start breaking, since this all happens before
-intel_power_domains_enable() is called we end up leaking the wakeref
-that was acquired and never releasing it later. Come next suspend/resume
-cycle, this causes us to fail to shut down the GPU properly, which
-causes it not to resume properly and die a horrible complicated death.
-
-(as a note: this only happens when there's both an eDP panel and MST
-topology connected which is removed mid-suspend. One or the other seems
-to always be OK).
-
-We could try to fix the VDD wakeref leak, but this doesn't seem like
-it's worth it at all since we aren't able to handle hotplug detection
-while resuming anyway. So, let's go with a more robust solution inspired
-by nouveau: block fbdev from handling hotplug events until we resume
-fbdev. This allows us to still send sysfs hotplug events to be handled
-later by user space while we're resuming, while also preventing us from
-actually processing any hotplug events we receive until it's safe.
-
-This fixes the wakeref leak observed on the T480s and as such, also
-fixes suspend/resume with MST topologies connected on this machine.
-
-Changes since v2:
-* Don't call drm_fb_helper_hotplug_event() under lock, do it after lock
-  (Chris Wilson)
-* Don't call drm_fb_helper_hotplug_event() in
-  intel_fbdev_output_poll_changed() under lock (Chris Wilson)
-* Always set ifbdev->hpd_waiting (Chris Wilson)
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Fixes: 0e32b39ceed6 ("drm/i915: add DP 1.2 MST support (v0.7)")
-Cc: Todd Previte <tprevite@gmail.com>
-Cc: Dave Airlie <airlied@redhat.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Imre Deak <imre.deak@intel.com>
-Cc: intel-gfx@lists.freedesktop.org
-Cc: <stable@vger.kernel.org> # v3.17+
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190129191001.442-2-lyude@redhat.com
-(cherry picked from commit fe5ec65668cdaa4348631d8ce1766eed43b33c10)
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190206140116.7qvy2lpwbcd7wds6@smtp.gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_drv.h   |   10 ++++++++++
- drivers/gpu/drm/i915/intel_fbdev.c |   33 ++++++++++++++++++++++++++++++++-
- 2 files changed, 42 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/vkms/vkms_crc.c    |    3 ++-
+ drivers/gpu/drm/vkms/vkms_crtc.c   |    8 +-------
+ drivers/gpu/drm/vkms/vkms_drv.c    |    7 +------
+ drivers/gpu/drm/vkms/vkms_drv.h    |    2 ++
+ drivers/gpu/drm/vkms/vkms_gem.c    |    8 +-------
+ drivers/gpu/drm/vkms/vkms_output.c |    8 +-------
+ drivers/gpu/drm/vkms/vkms_plane.c  |    8 +-------
+ 7 files changed, 9 insertions(+), 35 deletions(-)
 
---- a/drivers/gpu/drm/i915/intel_drv.h
-+++ b/drivers/gpu/drm/i915/intel_drv.h
-@@ -209,6 +209,16 @@ struct intel_fbdev {
- 	unsigned long vma_flags;
- 	async_cookie_t cookie;
- 	int preferred_bpp;
+--- a/drivers/gpu/drm/vkms/vkms_crc.c
++++ b/drivers/gpu/drm/vkms/vkms_crc.c
+@@ -1,4 +1,5 @@
+-// SPDX-License-Identifier: GPL-2.0
++// SPDX-License-Identifier: GPL-2.0+
 +
-+	/* Whether or not fbdev hpd processing is temporarily suspended */
-+	bool hpd_suspended : 1;
-+	/* Set when a hotplug was received while HPD processing was
-+	 * suspended
-+	 */
-+	bool hpd_waiting : 1;
+ #include "vkms_drv.h"
+ #include <linux/crc32.h>
+ #include <drm/drm_atomic.h>
+--- a/drivers/gpu/drm/vkms/vkms_crtc.c
++++ b/drivers/gpu/drm/vkms/vkms_crtc.c
+@@ -1,10 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
++// SPDX-License-Identifier: GPL-2.0+
+ 
+ #include "vkms_drv.h"
+ #include <drm/drm_atomic_helper.h>
+--- a/drivers/gpu/drm/vkms/vkms_drv.c
++++ b/drivers/gpu/drm/vkms/vkms_drv.c
+@@ -1,9 +1,4 @@
+-/*
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
++// SPDX-License-Identifier: GPL-2.0+
+ 
+ /**
+  * DOC: vkms (Virtual Kernel Modesetting)
+--- a/drivers/gpu/drm/vkms/vkms_drv.h
++++ b/drivers/gpu/drm/vkms/vkms_drv.h
+@@ -1,3 +1,5 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
 +
-+	/* Protects hpd_suspended */
-+	struct mutex hpd_lock;
- };
+ #ifndef _VKMS_DRV_H_
+ #define _VKMS_DRV_H_
  
- struct intel_encoder {
---- a/drivers/gpu/drm/i915/intel_fbdev.c
-+++ b/drivers/gpu/drm/i915/intel_fbdev.c
-@@ -679,6 +679,7 @@ int intel_fbdev_init(struct drm_device *
- 	if (ifbdev == NULL)
- 		return -ENOMEM;
+--- a/drivers/gpu/drm/vkms/vkms_gem.c
++++ b/drivers/gpu/drm/vkms/vkms_gem.c
+@@ -1,10 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
++// SPDX-License-Identifier: GPL-2.0+
  
-+	mutex_init(&ifbdev->hpd_lock);
- 	drm_fb_helper_prepare(dev, &ifbdev->helper, &intel_fb_helper_funcs);
+ #include <linux/shmem_fs.h>
  
- 	if (!intel_fbdev_init_bios(dev, ifbdev))
-@@ -752,6 +753,26 @@ void intel_fbdev_fini(struct drm_i915_pr
- 	intel_fbdev_destroy(ifbdev);
- }
+--- a/drivers/gpu/drm/vkms/vkms_output.c
++++ b/drivers/gpu/drm/vkms/vkms_output.c
+@@ -1,10 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
++// SPDX-License-Identifier: GPL-2.0+
  
-+/* Suspends/resumes fbdev processing of incoming HPD events. When resuming HPD
-+ * processing, fbdev will perform a full connector reprobe if a hotplug event
-+ * was received while HPD was suspended.
-+ */
-+static void intel_fbdev_hpd_set_suspend(struct intel_fbdev *ifbdev, int state)
-+{
-+	bool send_hpd = false;
-+
-+	mutex_lock(&ifbdev->hpd_lock);
-+	ifbdev->hpd_suspended = state == FBINFO_STATE_SUSPENDED;
-+	send_hpd = !ifbdev->hpd_suspended && ifbdev->hpd_waiting;
-+	ifbdev->hpd_waiting = false;
-+	mutex_unlock(&ifbdev->hpd_lock);
-+
-+	if (send_hpd) {
-+		DRM_DEBUG_KMS("Handling delayed fbcon HPD event\n");
-+		drm_fb_helper_hotplug_event(&ifbdev->helper);
-+	}
-+}
-+
- void intel_fbdev_set_suspend(struct drm_device *dev, int state, bool synchronous)
- {
- 	struct drm_i915_private *dev_priv = to_i915(dev);
-@@ -773,6 +794,7 @@ void intel_fbdev_set_suspend(struct drm_
- 		 */
- 		if (state != FBINFO_STATE_RUNNING)
- 			flush_work(&dev_priv->fbdev_suspend_work);
-+
- 		console_lock();
- 	} else {
- 		/*
-@@ -800,17 +822,26 @@ void intel_fbdev_set_suspend(struct drm_
+ #include "vkms_drv.h"
+ #include <drm/drm_crtc_helper.h>
+--- a/drivers/gpu/drm/vkms/vkms_plane.c
++++ b/drivers/gpu/drm/vkms/vkms_plane.c
+@@ -1,10 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
++// SPDX-License-Identifier: GPL-2.0+
  
- 	drm_fb_helper_set_suspend(&ifbdev->helper, state);
- 	console_unlock();
-+
-+	intel_fbdev_hpd_set_suspend(ifbdev, state);
- }
- 
- void intel_fbdev_output_poll_changed(struct drm_device *dev)
- {
- 	struct intel_fbdev *ifbdev = to_i915(dev)->fbdev;
-+	bool send_hpd;
- 
- 	if (!ifbdev)
- 		return;
- 
- 	intel_fbdev_sync(ifbdev);
--	if (ifbdev->vma || ifbdev->helper.deferred_setup)
-+
-+	mutex_lock(&ifbdev->hpd_lock);
-+	send_hpd = !ifbdev->hpd_suspended;
-+	ifbdev->hpd_waiting = true;
-+	mutex_unlock(&ifbdev->hpd_lock);
-+
-+	if (send_hpd && (ifbdev->vma || ifbdev->helper.deferred_setup))
- 		drm_fb_helper_hotplug_event(&ifbdev->helper);
- }
- 
+ #include "vkms_drv.h"
+ #include <drm/drm_plane_helper.h>
 
 
