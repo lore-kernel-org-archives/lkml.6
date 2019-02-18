@@ -6,46 +6,55 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0349AC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:29:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C38C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:30:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9AE92081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:29:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3B372081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:30:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550500195;
-	bh=23sjFt+DVpqarNt9MV30L9RgjKsq20aH4VMaU+dHIvs=;
+	s=default; t=1550500204;
+	bh=tTkwjwq8E1QzwncGkvEvU5JgsPIcxIxyVLAEr2fQ52E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aTbM+WLYCoSC6BiJCtqOyKFTf6S7QjuQkJL+CJYjjYp8g9TwMtN5uaGeL7pI2aKJe
-	 cc5KAEc2Xie91Sfxidq5UQ08A4aUYJx+iEpmRKTMM99AKUi8uX+ct+McN+Bf5rdXFD
-	 97fcAVnAGSrlE09HSJyOiyM4HbE+r+J13BQzmzog=
+	b=xqYfSA7stYmxFlihSh4mDoVlqdeuKVfwDL5Uv6Y/k1SrbjebDEFOl2zqDMz5qn4kf
+	 eW+HSrZ9AJJcEj55/1OGBrdXAnM238GH6PtygqF/Xj66rybW447cmUttDbt5KWQZFg
+	 iwlfTn5EMnCDYLxMBueEb7gFm9JXcBBHjw2rN9fQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388334AbfBRO3y (ORCPT
+        id S2388414AbfBROaD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:29:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40080 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:30:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387957AbfBRN7H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:59:07 -0500
+        id S2388475AbfBRN67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:58:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05CF42173C;
-        Mon, 18 Feb 2019 13:59:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 118182070D;
+        Mon, 18 Feb 2019 13:58:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498347;
-        bh=23sjFt+DVpqarNt9MV30L9RgjKsq20aH4VMaU+dHIvs=;
+        s=default; t=1550498338;
+        bh=tTkwjwq8E1QzwncGkvEvU5JgsPIcxIxyVLAEr2fQ52E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EEiHBTK+VUzt072BK1D1FAb88R9a05/UG+EKdRGOoQpAXRRcXObYL/tYmmPR0QA2T
-         gWFmMfTnnC4eTVPf4Br7eUzseB8M8zN79rwJj1sXrL+3NmYwOUjgSnJzY3/FOdDg8H
-         6OycJN8TG7nLhnEl3MDMIJ61j4xPWEUc2wrqN9AE=
+        b=2XmQMRgWqK7BGNkTE3sTrBJRPehZktmk39hQA/XbJk53IoAP8bnxfNmMTpgvg7wHt
+         lfOaPnIU9ax/vStEtyQiWFeWOmSWTmvMkaXB70ma9vIJjiwMmbKd7l/H5zKMuHNWQ/
+         /AhLT0Px6h2IK8bI16eHiJASHTsrZkY0q2mDfNJE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jurica Vukadin <jurica.vukadin@rt-rk.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 39/58] ALSA: hda - Add quirk for HP EliteBook 840 G5
-Date:   Mon, 18 Feb 2019 14:44:00 +0100
-Message-Id: <20190218133511.642354186@linuxfoundation.org>
+        stable@vger.kernel.org, "Jin, Yao" <yao.jin@linux.intel.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>
+Subject: [PATCH 4.9 37/58] perf/core: Fix impossible ring-buffer sizes warning
+Date:   Mon, 18 Feb 2019 14:43:58 +0100
+Message-Id: <20190218133511.494490954@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133508.567416115@linuxfoundation.org>
 References: <20190218133508.567416115@linuxfoundation.org>
@@ -64,31 +73,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jurica Vukadin <jurica.vukadin@rt-rk.com>
+From: Ingo Molnar <mingo@kernel.org>
 
-commit 4cd3016ce996494f78fdfd87ea35c8ca5d0b413e upstream.
+commit 528871b456026e6127d95b1b2bd8e3a003dc1614 upstream.
 
-This enables mute LED support and fixes switching jacks when the laptop
-is docked.
+The following commit:
 
-Signed-off-by: Jurica Vukadin <jurica.vukadin@rt-rk.com>
+  9dff0aa95a32 ("perf/core: Don't WARN() for impossible ring-buffer sizes")
+
+results in perf recording failures with larger mmap areas:
+
+  root@skl:/tmp# perf record -g -a
+  failed to mmap with 12 (Cannot allocate memory)
+
+The root cause is that the following condition is buggy:
+
+	if (order_base_2(size) >= MAX_ORDER)
+		goto fail;
+
+The problem is that @size is in bytes and MAX_ORDER is in pages,
+so the right test is:
+
+	if (order_base_2(size) >= PAGE_SHIFT+MAX_ORDER)
+		goto fail;
+
+Fix it.
+
+Reported-by: "Jin, Yao" <yao.jin@linux.intel.com>
+Bisected-by: Borislav Petkov <bp@alien8.de>
+Analyzed-by: Peter Zijlstra <peterz@infradead.org>
+Cc: Julien Thierry <julien.thierry@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 9dff0aa95a32 ("perf/core: Don't WARN() for impossible ring-buffer sizes")
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_conexant.c |    1 +
- 1 file changed, 1 insertion(+)
+ kernel/events/ring_buffer.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -854,6 +854,7 @@ static const struct snd_pci_quirk cxt506
- 	SND_PCI_QUIRK(0x103c, 0x807C, "HP EliteBook 820 G3", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x80FD, "HP ProBook 640 G2", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x828c, "HP EliteBook 840 G4", CXT_FIXUP_HP_DOCK),
-+	SND_PCI_QUIRK(0x103c, 0x83b2, "HP EliteBook 840 G5", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x83b3, "HP EliteBook 830 G5", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x83d3, "HP ProBook 640 G4", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x8174, "HP Spectre x360", CXT_FIXUP_HP_SPECTRE),
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -700,7 +700,7 @@ struct ring_buffer *rb_alloc(int nr_page
+ 	size = sizeof(struct ring_buffer);
+ 	size += nr_pages * sizeof(void *);
+ 
+-	if (order_base_2(size) >= MAX_ORDER)
++	if (order_base_2(size) >= PAGE_SHIFT+MAX_ORDER)
+ 		goto fail;
+ 
+ 	rb = kzalloc(size, GFP_KERNEL);
 
 
