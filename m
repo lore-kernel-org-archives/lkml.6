@@ -2,195 +2,144 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EBCCC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 22:17:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75208C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 22:21:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57AE7217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 22:17:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F33D2176F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 22:21:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="exIcXJgk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731600AbfBRWR5 (ORCPT
+        id S1731679AbfBRWVg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 17:17:57 -0500
-Received: from mail-oln040092005016.outbound.protection.outlook.com ([40.92.5.16]:28384
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731463AbfBRWR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 17:17:56 -0500
-Received: from SN1NAM02FT024.eop-nam02.prod.protection.outlook.com
- (10.152.72.58) by SN1NAM02HT084.eop-nam02.prod.protection.outlook.com
- (10.152.72.214) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1580.10; Mon, 18 Feb
- 2019 22:17:52 +0000
-Received: from BYAPR02MB5495.namprd02.prod.outlook.com (10.152.72.55) by
- SN1NAM02FT024.mail.protection.outlook.com (10.152.72.127) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.11 via Frontend Transport; Mon, 18 Feb 2019 22:17:52 +0000
-Received: from BYAPR02MB5495.namprd02.prod.outlook.com
- ([fe80::b889:1a99:77fa:d4fe]) by BYAPR02MB5495.namprd02.prod.outlook.com
- ([fe80::b889:1a99:77fa:d4fe%2]) with mapi id 15.20.1622.018; Mon, 18 Feb 2019
- 22:17:52 +0000
-From:   Jonathan Bakker <xc-racer2@live.ca>
-To:     Rob Herring <robh@kernel.org>,
-        =?utf-8?B?UGF3ZcWCIENobWllbA==?= <pawel.mikolaj.chmiel@gmail.com>
-CC:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/5] dt-bindings: input: Add binding for bma150 sensor
-Thread-Topic: [PATCH v2 1/5] dt-bindings: input: Add binding for bma150 sensor
-Thread-Index: AQHUuwqEs9ddExnmjk2wbubgN7E4HKXmB3kAgAAyAQA=
-Date:   Mon, 18 Feb 2019 22:17:51 +0000
-Message-ID: <BYAPR02MB5495DAE1E28F1EA4578BE3F4A3630@BYAPR02MB5495.namprd02.prod.outlook.com>
-References: <20190202151806.9064-1-pawel.mikolaj.chmiel@gmail.com>
- <20190202151806.9064-2-pawel.mikolaj.chmiel@gmail.com>
- <20190218191850.GA31221@bogus>
-In-Reply-To: <20190218191850.GA31221@bogus>
-Accept-Language: en-CA, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR08CA0024.namprd08.prod.outlook.com
- (2603:10b6:301:5f::37) To BYAPR02MB5495.namprd02.prod.outlook.com
- (2603:10b6:a03:9a::25)
-x-incomingtopheadermarker: OriginalChecksum:661343AB6C1D89E034DB093A4FAEAB439312F058E00D4C6A06AC07FFB39E2BD5;UpperCasedChecksum:C3471983B3CA1664AA16871EEC0B291967C7EB8662BEB66242852C46BD60282C;SizeAsReceived:8853;Count:63
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [x7KR18QPaJJUy//1zmxb1O4ZHD8XqYF6LBuzXRGP1srkMZDLu7qsMc1Qww4v+2Ee]
-x-microsoft-original-message-id: <c8bfdb1d-750b-e19b-256a-3bd9f5c96396@live.ca>
-x-ms-publictraffictype: Email
-x-incomingheadercount: 63
-x-eopattributedmessage: 0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031323274)(2017031324274)(2017031322404)(1601125500)(1603101475)(1701031045);SRVR:SN1NAM02HT084;
-x-ms-traffictypediagnostic: SN1NAM02HT084:
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:SN1NAM02HT084;BCL:0;PCL:0;RULEID:;SRVR:SN1NAM02HT084;
-x-microsoft-antispam-message-info: zdJnLdIcwH+TyRDRyIAxwjTlDkmtwo4DTSbkINzQbSaNPUqGyB5bq6jRraM0FOJE
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <AECFA3B68BA15D48B0D167B4D27EF053@namprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Mon, 18 Feb 2019 17:21:36 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40370 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731463AbfBRWVg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 17:21:36 -0500
+Received: by mail-wm1-f65.google.com with SMTP id t15so581079wmi.5;
+        Mon, 18 Feb 2019 14:21:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XW+Fv8E9Qv33fcIB9T8YY/X+/h5Ev0pCBO2DNfkqUOQ=;
+        b=exIcXJgkrLDilYFNUDciFfAoJO1uugKndGd9mLrVZ0YphaNv7DKrXtNchQk0/znRzn
+         IOiM6UeFG70d0HmEHgg/Te6M+toZZJs6190CMRBDTeqR4tHcWchovL6qvFMDMAAS4mOQ
+         5/xDj1o6Y3ukJ30iJVHtZqdaByJCrKglnyjvsoEE3kAkiCx8eoyyYi+sBX9xjq3ba22g
+         aVy1lR26QzE+SAHQSc5q8wkqBEmxepB1aQ8/DvG73IcTlLEh4ABsfblG4+TxR5IFLtx8
+         q/2HZLgPlt9MjcZ/isk9Nx2ZWJYS8KBh4tJjuCCoTCgmsAxxgNtAW2o/2KaQ6EWBvpc1
+         hX1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XW+Fv8E9Qv33fcIB9T8YY/X+/h5Ev0pCBO2DNfkqUOQ=;
+        b=qpwte6axDzzeuR73s8MLnvFI5Jk3zAXTG8LIb3fzpJES0lgSQ7jDFak28YqIwWVZHz
+         ygGV8nt2Dt13uHhD/yAjteF+S5+RuZD4zXJFKfRHFIh45hOlAU56luEPusJpg3xInktZ
+         n5IU82xmRhs0oK6mA8cGEvQWd99f0n31rRdHMOQWNWJ2JmtZ0iXfwoBzA5oti2UQXauI
+         PaOzVV7rX10Qtc/52UceIKhWszCeZ989OmCsUeHeYcIexNjduWwrd1xIyVBi1WDSXc7y
+         +ReBLODWBMiT6rnW6sh59xHLNAib2jU04LhiduZvvAOsDJsp/LRfr7p3StVikAU6MqeK
+         pQbA==
+X-Gm-Message-State: AHQUAubyi5Jdxs7LN23dMAHI4JBY08Ub8hI10ns+7PM9qbfG6TC0FQEQ
+        i99anvC/bOx3b3W7wECw/7aGsTsFeCCFnR0GWLM=
+X-Google-Smtp-Source: AHgI3IZMWUDNiMwq0nEg6oYEQ2yA3A7ORjiODImfumnSb3tVqS4TSpC7DuB9hfK1CkTN8hLbaadPzh76iWx0YA61M8c=
+X-Received: by 2002:a1c:47:: with SMTP id 68mr552681wma.89.1550528493993; Mon,
+ 18 Feb 2019 14:21:33 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 9bd8b953-1c55-4da7-b616-8bcad099ae8b
-X-MS-Exchange-CrossTenant-Network-Message-Id: 36ea69a1-d0bb-4cf9-b709-08d695eeebdf
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 9bd8b953-1c55-4da7-b616-8bcad099ae8b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2019 22:17:50.6732
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1NAM02HT084
+References: <2281684.8tZHfIXjiu@aspire.rjw.lan> <CADnq5_NmDYzZZPUh5Wp+a8bycRWFDt3Lhzf0AKx9BECJ_U-Kyg@mail.gmail.com>
+ <20190216060058.gsiddsmj3f27e6v7@wunner.de> <CADnq5_OqaQA2HNcy+ZZvsN5MTEWLXoFEuirX4f4nzEOJ6NrdVA@mail.gmail.com>
+ <CAJZ5v0g8-+cqQFspwYytTbzptZrt+GhT2RUX_nQnFD-rDbA7sA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0g8-+cqQFspwYytTbzptZrt+GhT2RUX_nQnFD-rDbA7sA@mail.gmail.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Mon, 18 Feb 2019 17:21:19 -0500
+Message-ID: <CADnq5_O+2i5jC_0DRQvfkMtmfMGLgMzRDo+aSZHXeewhDPVhOg@mail.gmail.com>
+Subject: Re: [PATCH] gpu: drm: radeon: Set DPM_FLAG_NEVER_SKIP when enabling PM-runtime
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Lukas Wunner <lukas@wunner.de>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        David Zhou <David1.Zhou@amd.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        "?????????????? ????????????????" <ukrkyi@gmail.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDIwMTktMDItMTggMTE6MTggYS5tLiwgUm9iIEhlcnJpbmcgd3JvdGU6DQo+IE9uIFNh
-dCwgRmViIDAyLCAyMDE5IGF0IDA0OjE4OjAyUE0gKzAxMDAsIFBhd2XFgiBDaG1pZWwgd3JvdGU6
-DQo+PiBGcm9tOiBKb25hdGhhbiBCYWtrZXIgPHhjLXJhY2VyMkBsaXZlLmNhPg0KPj4NCj4+IEFk
-ZCBkZXZpY2UgdHJlZSBiaW5kaW5ncyBmb3IgQm9zY2ggQk1BMTUwIEFjY2VsZXJvbWV0ZXIgU2Vu
-c29yDQo+Pg0KPj4gQ2hhbmdlcyBmcm9tIHYxOg0KPj4gIC0gQWRkIHByb3BlcnRpZXMgZm9yIGFs
-bCBvZiBibWExNTBfY2ZnDQo+PiAgLSBDb3JyZWN0IElSUSB0eXBlIGluIGV4YW1wbGUNCj4+DQo+
-PiBTaWduZWQtb2ZmLWJ5OiBKb25hdGhhbiBCYWtrZXIgPHhjLXJhY2VyMkBsaXZlLmNhPg0KPj4g
-U2lnbmVkLW9mZi1ieTogUGF3ZcWCIENobWllbCA8cGF3ZWwubWlrb2xhai5jaG1pZWxAZ21haWwu
-Y29tPg0KPj4gLS0tDQo+PiAgLi4uL2JpbmRpbmdzL2lucHV0L2Jvc2NoLGJtYTE1MC50eHQgICAg
-ICAgICAgIHwgMzggKysrKysrKysrKysrKysrKysrKw0KPj4gIGluY2x1ZGUvZHQtYmluZGluZ3Mv
-aW5wdXQvYm1hMTUwLmggICAgICAgICAgICB8IDIyICsrKysrKysrKysrDQo+PiAgaW5jbHVkZS9s
-aW51eC9ibWExNTAuaCAgICAgICAgICAgICAgICAgICAgICAgIHwgMTMgKy0tLS0tLQ0KPj4gIDMg
-ZmlsZXMgY2hhbmdlZCwgNjIgaW5zZXJ0aW9ucygrKSwgMTEgZGVsZXRpb25zKC0pDQo+PiAgY3Jl
-YXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9pbnB1dC9i
-b3NjaCxibWExNTAudHh0DQo+PiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGluY2x1ZGUvZHQtYmluZGlu
-Z3MvaW5wdXQvYm1hMTUwLmgNCj4+DQo+PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZp
-Y2V0cmVlL2JpbmRpbmdzL2lucHV0L2Jvc2NoLGJtYTE1MC50eHQgYi9Eb2N1bWVudGF0aW9uL2Rl
-dmljZXRyZWUvYmluZGluZ3MvaW5wdXQvYm9zY2gsYm1hMTUwLnR4dA0KPj4gbmV3IGZpbGUgbW9k
-ZSAxMDA2NDQNCj4+IGluZGV4IDAwMDAwMDAwMDAwMC4uZjY0NGQxMzJmNzljDQo+PiAtLS0gL2Rl
-di9udWxsDQo+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvaW5wdXQv
-Ym9zY2gsYm1hMTUwLnR4dA0KPj4gQEAgLTAsMCArMSwzOCBAQA0KPj4gKyogQm9zY2ggQk1BMTUw
-IEFjY2VsZXJvbWV0ZXIgU2Vuc29yDQo+PiArDQo+PiArQWxzbyB3b3JrcyBmb3IgdGhlIFNNQjM4
-MCBhbmQgQk1BMDIzIGFjY2VsZXJvbWV0ZXJzDQo+PiArDQo+PiArUmVxdWlyZWQgcHJvcGVydGll
-czoNCj4+ICstIGNvbXBhdGlibGUgOiBTaG91bGQgYmUgImJvc2NoLGJtYTE1MCINCj4+ICstIHJl
-ZyA6IFRoZSBJMkMgYWRkcmVzcyBvZiB0aGUgc2Vuc29yDQo+PiArDQo+PiArT3B0aW9uYWwgcHJv
-cGVydGllczoNCj4+ICstIGludGVycnVwdC1wYXJlbnQgOiBzaG91bGQgYmUgdGhlIHBoYW5kbGUg
-Zm9yIHRoZSBpbnRlcnJ1cHQgY29udHJvbGxlcg0KPiANCj4gVGhpcyBpcyBpbXBsaWVkIGFuZCBj
-YW4gYmUgZHJvcHBlZC4NCj4gDQpPaywgc291bmRzIGdvb2QuDQo+PiArLSBpbnRlcnJ1cHRzIDog
-SW50ZXJydXB0IG1hcHBpbmcgZm9yIElSUS4gIElmIG5vdCBwcmVzZW50IGRldmljZSB3aWxsIGJl
-IHBvbGxlZA0KPiANCj4+ICstIGFueS1tb3Rpb24taW50IDogYm9vbCBmb3IgaWYgdGhlIGFueSBt
-b3Rpb24gaW50ZXJydXB0IHNob3VsZCBiZSBlbmFibGVkDQo+PiArLSBoZy1pbnQgOiBib29sIGZv
-ciBpZiB0aGUgaGlnaC1HIGludGVycnVwdCBzaG91bGQgYmUgZW5hYmxlZA0KPj4gKy0gbGctaW50
-IDogYm9vbCBmb3IgaWYgdGhlIGxvdy1HIGludGVycnVwdCBzaG91bGQgYmUgZW5hYmxlZA0KPj4g
-Ky0gYW55LW1vdGlvbi1jZmcgOiBhcnJheSBvZiBpbnRlZ2VycyBmb3IgYW55IG1vdGlvbiBkdXJh
-dGlvbiBhbmQgdGhyZXNob2xkDQo+PiArLSBoZy1jZmcgOiBhcnJheSBvZiBpbnRlZ2VycyBmb3Ig
-aGlnaC1HIGh5c3RlcmlzaXMsIGR1cmF0aW9uLCBhbmQgdGhyZXNob2xkDQo+PiArLSBsZy1jZmcg
-OiBhcnJheSBvZiBpbnRlZ2VycyBmb3IgbG93LUcgaHlzdGVyaXNpcywgZHVyYXRpb24sIGFuZCB0
-aHJlc2hvbGQNCj4+ICstIHJhbmdlIDogY29uZmlndXJhdGlvbiBvZiByYW5nZSwgb25lIG9mIEJN
-QTE1MF9SQU5HRV8qIGFzIGRlZmluZWQgaW4gWzFdDQo+PiArLSBiYW5kd2lkdGggOiByZWZyZXNo
-IHJhdGUgb2YgZGV2aWNlLCBvbmUgb2YgQk1BMTUwX0JXXyogYXMgZGVmaW5lZCBpbiBbMV0NCj4g
-DQo+IFRoZXNlIGFsbCBuZWVkIHZlbmRvciBwcmVmaXhlcyBpZiB0aGV5IHN0YXkuDQo+IA0KPiBX
-aGF0IGRldGVybWluZXMgYWxsIHRoaXMgY29uZmlndXJhdGlvbj8gSXQgc2VlbXMgbGlrZSBhIHVz
-ZXIgbWF5IHdhbnQgdG8gDQo+IGNoYW5nZSBhdCBydW4tdGltZSBpbiB3aGljaCBjYXNlIHN5c2Zz
-IHdvdWxkIGJlIG1vcmUgYXBwcm9wcmlhdGUuDQo+IA0KPiBJIGRvbid0IHJlY2FsbCBzZWVpbmcg
-b3RoZXIgYWNjZWxlcm9tZXRlcnMgd2l0aCB0aGVzZSwgYnV0IHNlZW1zIHRoZXNlIA0KPiBjb3Vs
-ZCBhcHBseSB0byBvdGhlciBhY2NlbGVyb21ldGVycy4gSW4gd2hpY2ggY2FzZSwgdGhleSBzaG91
-bGQgYmUgDQo+IGNvbW1vbi4NCj4gDQpGcm9tIG15IHVuZGVyc3RhbmRpbmcgb2YgdGhlIHByZS1l
-eGlzdGluZyBub24tRFQgZHJpdmVyIGFuZCB0aGUgZGF0YXNoZWV0IChhdmFpbGFibGUgYXQgaHR0
-cHM6Ly9tZWRpYS5kaWdpa2V5LmNvbS9wZGYvRGF0YSUyMFNoZWV0cy9Cb3NjaC9CTUExNTAucGRm
-KSwgdGhlICotaW50IGFuZCAqLWNmZyBhcmUgZm9yIGNvbmZpZ3VyaW5nIG9mIHdoYXQgd2lsbCBj
-YXVzZSB0aGUgY2hpcCB0byBzZW5kIGFuIGludGVycnVwdC4gIEEgc3lzZnMgcHJvcGVydHkgd291
-bGQgcHJvYmFibHkgd29yayBmb3IgdGhlbSBhcyB3ZWxsIGFsdGhvdWdoIEkgZG9uJ3Qga25vdyBp
-ZiB0aGV5IGNhbiBiZSBhZGp1c3RlZCBvbiB0aGUgZmx5IG9yIG5vdC4gIE15IGRldmljZSBkb2Vz
-bid0IGhhdmUgdGhlIGludGVycnVwdCBsaW5lIGhvb2tlZCB1cCBhbmQgaW5zdGVhZCB1c2VzIHRo
-ZSBwb2xsaW5nIG1ldGhvZCwgc28gdGhlIG9ubHkgdHVuYWJsZXMgSSBjYW4gdGVzdCBhcmUgdGhl
-IHJhbmdlIGFuZCBiYW5kd2l0aCB3aGljaCBhcmUgdXNlZCBhcyBhIHR5cGUgb2YgZGlnaXRhbCBz
-bW9vdGhpbmcuDQoNCkFzIEkgcGVyc29uYWxseSB1c2UgdGhlIGRlZmF1bHRzIGFuZCB0aGVyZSBh
-cmUgbm8gY3VycmVudCBpbi10cmVlIHVzZXJzLCBJIGFtIGZpbmUgd2l0aCBkcm9wcGluZyBhbGwg
-b2YgdGhpcyBjb25maWd1cmF0aW9uIGFuZCBnb2luZyB3aXRoIHRoZSBkZWZhdWx0cyB0aGF0IGFy
-ZSBzYWlkIHRvIHByb3ZpZGUgImdlbmVyaWMgc2Vuc2l0aXZpdHkgcGVyZm9ybWFuY2UiLiAgSWYg
-c29tZW9uZSB3YW50cyB0byBhZGQgaXQgaW4gdGhlIGZ1dHVyZSwgdGhleSBjYW4gYWRkIHRoZSBz
-eXNmcyBhbmQvb3IgRFQgcHJvcGVydGllcy4gIFRoZSBzaW1pbGFyIGJtYTE4MCBJSU8gZHJpdmVy
-IGhhcmRjb2RlcyBldmVyeXRoaW5nLg0KDQpIb3dldmVyLCBsb29raW5nIHRocm91Z2ggYWxsIHRo
-aXMgYWdhaW4sIGluc3RlYWQgb2YgbWFraW5nIHRoaXMgZHJpdmVyIERULWF3YXJlLCBpdCBtaWdo
-dCBtYWtlIG1vcmUgc2Vuc2UgdG8gZXhwYW5kIHRoZSBibWExODAgSUlPIGRyaXZlciB0byBhZGQg
-c3VwcG9ydCBmb3IgYm1hMTUwLiAgTW9zdCBvZiB0aGUgYWNjZWxlcm9tZXRlciBkcml2ZXJzIGFy
-ZSBhbHJlYWR5IGluIGlpbyBwbHVzIGl0IHdvdWxkIGFkZCBzdXBwb3J0IGZvciB0aGUgdGVtcGVy
-YXR1cmUgcGFydCBvZiB0aGUgc2Vuc29yLiAgV291bGQgaXQgdGhlbiBtYWtlIHNlbnNlIHRvIHJl
-bW92ZSB0aGlzIGRyaXZlciBlbnRpcmVseSBvciBjYW4gdGhlIHR3byBjby1leGlzdD8NCj4+ICsN
-Cj4+ICtFeGFtcGxlOg0KPj4gKw0KPj4gK2JtYTE1MEAzOCB7DQo+IA0KPiBhY2NlbGVyb21ldGVy
-QDM4DQpHb3QgaXQuDQo+IA0KPj4gKwljb21wYXRpYmxlID0gImJvc2NoLGJtYTE1MCI7DQo+PiAr
-CXJlZyA9IDwweDM4PjsNCj4+ICsJaW50ZXJydXB0LXBhcmVudCA9IDwmZ3BoMD47DQo+PiArCWlu
-dGVycnVwdHMgPSA8MSBJUlFfVFlQRV9FREdFX1JJU0lORz47DQo+PiArCWFueS1tb3Rpb24taW50
-Ow0KPj4gKwloZy1pbnQ7DQo+PiArCWxnLWludDsNCj4+ICsJYW55LW1vdGlvbi1jZmcgPSA8MCAw
-PjsNCj4+ICsJaGctY2ZnID0gPDAgMTUwIDE2MD47DQo+PiArCWxnLWNmZyA9IDwwIDE1MCAyMD47
-DQo+PiArCXJhbmdlID0gPEJNQTE1MF9SQU5HRV8yRz47DQo+PiArCWJhbmR3aWR0aCA9IDxCTUEx
-NTBfQldfNTBIWj47DQo+PiArfTsNCj4+ICsNCj4+ICtbMV0gaW5jbHVkZS9kdC1iaW5kaW5ncy9p
-bnB1dC9ibWExNTAuaA0KPj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHQtYmluZGluZ3MvaW5wdXQv
-Ym1hMTUwLmggYi9pbmNsdWRlL2R0LWJpbmRpbmdzL2lucHV0L2JtYTE1MC5oDQo+PiBuZXcgZmls
-ZSBtb2RlIDEwMDY0NA0KPj4gaW5kZXggMDAwMDAwMDAwMDAwLi5mYjM4Y2E3ODdmMGYNCj4+IC0t
-LSAvZGV2L251bGwNCj4+ICsrKyBiL2luY2x1ZGUvZHQtYmluZGluZ3MvaW5wdXQvYm1hMTUwLmgN
-Cj4+IEBAIC0wLDAgKzEsMjIgQEANCj4+ICsvKiBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BM
-LTIuMCAqLw0KPj4gKy8qDQo+PiArICogVGhpcyBoZWFkZXIgcHJvdmlkZXMgYmluZGluZ3MgZm9y
-IHRoZSBCTUExNTAgYWNjZWxlcm9tZXRlcg0KPj4gKyAqLw0KPj4gKyNpZm5kZWYgX0RUX0JJTkRJ
-TkdTX0lOUFVUX0JNQTE1MF9IDQo+PiArI2RlZmluZSBfRFRfQklORElOR1NfSU5QVVRfQk1BMTUw
-X0gNCj4+ICsNCj4+ICsvKiBSYW5nZSAqLw0KPj4gKyNkZWZpbmUgQk1BMTUwX1JBTkdFXzJHCQkw
-DQo+PiArI2RlZmluZSBCTUExNTBfUkFOR0VfNEcJCTENCj4+ICsjZGVmaW5lIEJNQTE1MF9SQU5H
-RV84RwkJMg0KPj4gKw0KPj4gKy8qIFJlZnJlc2ggcmF0ZSAqLw0KPj4gKyNkZWZpbmUgQk1BMTUw
-X0JXXzI1SFoJCTANCj4+ICsjZGVmaW5lIEJNQTE1MF9CV181MEhaCQkxDQo+PiArI2RlZmluZSBC
-TUExNTBfQldfMTAwSFoJCTINCj4+ICsjZGVmaW5lIEJNQTE1MF9CV18xOTBIWgkJMw0KPj4gKyNk
-ZWZpbmUgQk1BMTUwX0JXXzM3NUhaCQk0DQo+PiArI2RlZmluZSBCTUExNTBfQldfNzUwSFoJCTUN
-Cj4+ICsjZGVmaW5lIEJNQTE1MF9CV18xNTAwSFoJNg0KPj4gKw0KPj4gKyNlbmRpZiAvKiBfRFRf
-QklORElOR1NfSU5QVVRfQk1BMTUwX0ggKi8NCj4+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4
-L2JtYTE1MC5oIGIvaW5jbHVkZS9saW51eC9ibWExNTAuaA0KPj4gaW5kZXggOTdhZGU3Y2RjODcw
-Li5iODUyNjZhOWMzNWMgMTAwNjQ0DQo+PiAtLS0gYS9pbmNsdWRlL2xpbnV4L2JtYTE1MC5oDQo+
-PiArKysgYi9pbmNsdWRlL2xpbnV4L2JtYTE1MC5oDQo+PiBAQCAtMjAsMTkgKzIwLDEwIEBADQo+
-PiAgI2lmbmRlZiBfQk1BMTUwX0hfDQo+PiAgI2RlZmluZSBfQk1BMTUwX0hfDQo+PiAgDQo+PiAt
-I2RlZmluZSBCTUExNTBfRFJJVkVSCQkiYm1hMTUwIg0KPj4gKyNpbmNsdWRlIDxkdC1iaW5kaW5n
-cy9pbnB1dC9ibWExNTAuaD4NCj4+ICANCj4+IC0jZGVmaW5lIEJNQTE1MF9SQU5HRV8yRwkJMA0K
-Pj4gLSNkZWZpbmUgQk1BMTUwX1JBTkdFXzRHCQkxDQo+PiAtI2RlZmluZSBCTUExNTBfUkFOR0Vf
-OEcJCTINCj4+ICsjZGVmaW5lIEJNQTE1MF9EUklWRVIJCSJibWExNTAiDQo+PiAgDQo+PiAtI2Rl
-ZmluZSBCTUExNTBfQldfMjVIWgkJMA0KPj4gLSNkZWZpbmUgQk1BMTUwX0JXXzUwSFoJCTENCj4+
-IC0jZGVmaW5lIEJNQTE1MF9CV18xMDBIWgkJMg0KPj4gLSNkZWZpbmUgQk1BMTUwX0JXXzE5MEha
-CQkzDQo+PiAtI2RlZmluZSBCTUExNTBfQldfMzc1SFoJCTQNCj4+IC0jZGVmaW5lIEJNQTE1MF9C
-V183NTBIWgkJNQ0KPj4gLSNkZWZpbmUgQk1BMTUwX0JXXzE1MDBIWgk2DQo+PiAgDQo+PiAgc3Ry
-dWN0IGJtYTE1MF9jZmcgew0KPj4gIAlib29sIGFueV9tb3Rpb25faW50OwkJLyogU2V0IHRvIGVu
-YWJsZSBhbnktbW90aW9uIGludGVycnVwdCAqLw0KPj4gLS0gDQo+PiAyLjE3LjENCj4+DQpUaGFu
-a3MsDQpKb25hdGhhbg0K
+On Sun, Feb 17, 2019 at 4:26 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Sun, Feb 17, 2019 at 12:37 AM Alex Deucher <alexdeucher@gmail.com> wrote:
+> >
+> > On Sat, Feb 16, 2019 at 1:01 AM Lukas Wunner <lukas@wunner.de> wrote:
+> > >
+> > > On Fri, Feb 15, 2019 at 11:01:04AM -0500, Alex Deucher wrote:
+> > > > On Fri, Feb 15, 2019 at 10:39 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > > > > On HP ProBook 4540s, if PM-runtime is enabled in the radeon driver
+> > > > > and the direct-complete optimization is used for the radeon device
+> > > > > during system-wide suspend, the system doesn't resume.
+> > > > >
+> > > > > Preventing direct-complete from being used with the radeon device by
+> > > > > setting the DPM_FLAG_NEVER_SKIP driver flag for it makes the problem
+> > > > > go away, which indicates that direct-complete is not safe for the
+> > > > > radeon driver in general and should not be used with it (at least
+> > > > > for now).
+> > > > >
+> > > > > This fixes a regression introduced by commit c62ec4610c40
+> > > > > ("PM / core: Fix direct_complete handling for devices with no
+> > > > > callbacks") which allowed direct-complete to be applied to
+> > > > > devices without PM callbacks (again) which in turn unlocked
+> > > > > direct-complete for radeon on HP ProBook 4540s.
+> > > >
+> > > > Do other similar drivers like amdgpu and nouveau need the same fix?
+> > > > I'm not too familiar with the direct_complete feature in general.
+> > >
+> > > direct_complete means that a discrete GPU which is in D3cold upon
+> > > entering system sleep is left as is, i.e. it is not woken.  It is
+> > > also expected to still be in D3cold when resuming from system sleep
+> > > from the PM core's point of view.  (If it is in D0uninitialized, the
+> > > GPU's driver needs to ensure it is transitioned to D3cold again.)
+> > >
+> > > I know for a fact that resuming the discrete GPU is not necessary
+> > > on my MacBook Pro with Nvidia GPU.  I'd expect those with AMD GPUs
+> > > to behave the same.  The apple-gmux driver takes care of putting
+> > > the GPU into D3cold on resume from system sleep if it was in D3cold
+> > > when entering system sleep (see drivers/platform/x86/apple-gmux.c,
+> > > gmux_resume()).
+> > >
+> > > I think it is desirable to use direct_complete because it saves power
+> > > (no need to gratuitously wake the GPU upon entering system sleep,
+> > > only to immediately cut its power) and it also speeds up the suspend
+> > > process by about half a second.
+> >
+> > Thanks for the info.  It sounds like we need a similar patch for
+> > amdgpu.  With dGPUs controlled by the ACPI ATPX method, I believe the
+> > dGPU is powered by automatically on resume from S3/S4.  I think there
+> > may be a way to change that behavior in some revisions of ATPX (i.e.,
+> > to keep the state across suspend cycles), but it's not the default.
+> > I'm not sure about the newer _PR3 stuff in Hybrid Graphics laptops.  I
+> > think it retains state.  In both radeon and amdgpu we probably need to
+> > check if the system is using ATPX or _PR3 and disable direct complete
+> > for ATPX at least.
+>
+> I would disable direct-complete entirely for them then and possibly
+> consider using DPM_FLAG_SMART_SUSPEND in the cases when that would be
+> safe.
+>
+> Anyway, I posted this patch for radeon, because it addresses a
+> specific regression and I'm not super-familiar with GPU drivers in
+> general.
+
+Thanks.  I've applied this patch and sent out a patch for amdgpu.
+
+Alex
