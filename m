@@ -2,131 +2,91 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB4FCC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:32:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 232ACC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:33:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 914A12184E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:32:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F16822184E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:33:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729292AbfBRIca (ORCPT
+        id S1729227AbfBRIdf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 03:32:30 -0500
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:43249 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728342AbfBRIc3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 03:32:29 -0500
-X-Originating-IP: 90.88.30.68
-Received: from aptenodytes (aaubervilliers-681-1-89-68.w90-88.abo.wanadoo.fr [90.88.30.68])
-        (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 1DE9340005;
-        Mon, 18 Feb 2019 08:32:23 +0000 (UTC)
-Message-ID: <c80ee02db4a22d15a24281384ae561462593684f.camel@bootlin.com>
-Subject: Re: [PATCH v3] usb: chipidea: Grab the (legacy) USB PHY by phandle
- first
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Peter Chen <peter.chen@nxp.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Date:   Mon, 18 Feb 2019 09:32:23 +0100
-In-Reply-To: <VI1PR04MB53274C03CD18C3D3ADB767408B630@VI1PR04MB5327.eurprd04.prod.outlook.com>
-References: <20190215162225.19284-1-paul.kocialkowski@bootlin.com>
-         <VI1PR04MB53274C03CD18C3D3ADB767408B630@VI1PR04MB5327.eurprd04.prod.outlook.com>
-Organization: Bootlin
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 
+        Mon, 18 Feb 2019 03:33:35 -0500
+Received: from nat.nue.novell.com ([195.135.221.2]:24772 "EHLO suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728342AbfBRIdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 03:33:35 -0500
+Received: by suse.de (Postfix, from userid 1000)
+        id 46E2C42F1; Mon, 18 Feb 2019 09:33:32 +0100 (CET)
+Date:   Mon, 18 Feb 2019 09:33:31 +0100
+From:   Oscar Salvador <osalvador@suse.de>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Cc:     hughd@google.com, viro@zeniv.linux.org.uk,
+        torvalds@linux-foundation.org
+Subject: mremap vs sysctl_max_map_count
+Message-ID: <20190218083326.xsnx7cx2lxurbmux@d104.suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Mon, 2019-02-18 at 03:04 +0000, Peter Chen wrote:
-> > According to the chipidea driver bindings, the USB PHY is specified via the "phys"
-> > phandle node. However, this only takes effect for USB PHYs that use the common
-> > PHY framework. For legacy USB PHYs, a simple lookup based on the USB PHY
-> > type is done instead.
-> > 
-> > This does not play out well when more than one USB PHY is registered, since the
-> > first registered PHY matching the type will always be returned regardless of what
-> > the driver was bound to.
-> > 
-> > Fix this by looking up the PHY based on the "phys" phandle node.
-> > Although generic PHYs are rather matched by their "phys-name" and not the "phys"
-> > phandle directly, there is no helper for similar lookup on legacy PHYs and it's
-> > probably not worth the effort to add it.
-> > 
-> > When no legacy USB PHY is found by phandle, fallback to grabbing any registered
-> > USB2 PHY. This ensures backward compatibility if some users were actually relying
-> > on this mechanism.
-> > 
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > ---
-> > Changes since v2:
-> > * Fixed typos in commit message.
-> > 
-> > Changes since v1:
-> > * Only consider legacy USB PHY error for fallback as suggested;
-> > * Checked against EPROBE_DEFER before entering fallback.
-> > 
-> >  drivers/usb/chipidea/core.c | 9 ++++++++-
-> >  1 file changed, 8 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/usb/chipidea/core.c b/drivers/usb/chipidea/core.c index
-> > 7bfcbb23c2a4..016e4004fe9d 100644
-> > --- a/drivers/usb/chipidea/core.c
-> > +++ b/drivers/usb/chipidea/core.c
-> > @@ -954,8 +954,15 @@ static int ci_hdrc_probe(struct platform_device *pdev)
-> >  	} else if (ci->platdata->usb_phy) {
-> >  		ci->usb_phy = ci->platdata->usb_phy;
-> >  	} else {
-> > +		ci->usb_phy = devm_usb_get_phy_by_phandle(dev->parent, "phys",
-> > +							  0);
-> >  		ci->phy = devm_phy_get(dev->parent, "usb-phy");
-> > -		ci->usb_phy = devm_usb_get_phy(dev->parent,
-> > USB_PHY_TYPE_USB2);
-> > +
-> > +		/* Fallback to grabbing any registered USB2 PHY */
-> > +		if (IS_ERR(ci->usb_phy) &&
-> > +		    PTR_ERR(ci->usb_phy) != -EPROBE_DEFER)
-> > +			ci->usb_phy = devm_usb_get_phy(dev->parent,
-> > +						       USB_PHY_TYPE_USB2);
-> > 
-> 
-> I think you may need to do above if ci->phy is error, and not the error is -EPROBE_DEFER.
+Hi all,
 
-As Thomas pointed out during the review of v1, the initial flow is to
-try and get both ci->usb_phy and ci->phy and let the code use ci->phy
-in priority later.
+I would like to bring up a topic that comes from an issue a customer of ours
+is facing with the mremap syscall + hitting the max_map_count threshold:
 
-This change attempts to keep this flow intact. The EPROBE_DEFER check
-is in case the initial ci->usb_phy is valid but deferred: we don't want
-to overwrite it by calling devm_usb_get_phy which might return an
-actual error and result in losing the EPROBE_DEFER information.
+When passing the MREMAP_FIXED flag, mremap() calls mremap_to() which does the
+following:
 
-Does that make sense to you?
+1) it unmaps the region where we want to put the new map:
+   (new_addr, new_addr + new_len] [1]
+2) IFF old_len > new_len, it unmaps the region:
+   (old_addr + new_len, (old_addr + new_len) + (old_len - new_len)] [2]
 
-Cheers,
+Now, having gone through steps 1) and 2), we eventually call move_vma() to do
+the actual move.
 
-Paul
+move_vma() checks if we are at least 4 maps below max_map_count, otherwise
+it bails out with -ENOMEM [3].
+The problem is that we might have already unmapped the vma's in steps 1) and 2),
+so it is not possible for userspace to figure out the state of the vma's after
+it gets -ENOMEM.
 
-> Peter
-> 
-> >  		/* if both generic PHY and USB PHY layers aren't enabled */
-> >  		if (PTR_ERR(ci->phy) == -ENOSYS &&
-> > --
-> > 2.20.1
+- Did new_addr got unmaped?
+- Did part of the old_addr got unmaped?
+
+Because of that, it gets tricky for userspace to clean up properly on error
+path.
+
+While it is true that we can return -ENOMEM for more reasons
+(e.g: see vma_to_resize()->may_expand_vm()), I think that we might be able to
+pre-compute the number of maps that we are going add/release during the first
+two do_munmaps(), and check whether we are 4 maps below the threshold
+(as move_vma() does).
+Should not be the case, we can bail out early before we unmap anything, so we
+make sure the vma's are left untouched in case we are going to be short of maps.
+
+I am not sure if that is realistically doable, or there are limitations
+I overlooked, or we simply do not want to do that.
+
+Before investing more time and giving it a shoot, I just wanted to bring
+this upstream to get feedback on this matter.
+
+Thanks
+
+[1] https://github.com/torvalds/linux/blob/master/mm/mremap.c#L519
+[2] https://github.com/torvalds/linux/blob/master/mm/mremap.c#L523
+[3] https://github.com/torvalds/linux/blob/master/mm/mremap.c#L338
+
 -- 
-Paul Kocialkowski, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
-
+Oscar Salvador
+SUSE L3
