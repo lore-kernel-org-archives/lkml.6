@@ -2,176 +2,210 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB48C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8467CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:58:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4129120842
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:58:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498282;
-	bh=q7ST0jRM+VcF16zwKY0r8fCrCjMPtw4NfFJZQVm9XBY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Qie5xv9RazeAPl/pLMRKTRoWoeKjcy1mFIynDfo5XFq9aGFol0pMIo8MlmvIqjV4e
-	 Kg6FzXsnw1fjDGBwMUhoCOxkBFGXoLcEaAo76AUFuN2tAx1Jiu9MK6dVuf3GOSkgUO
-	 WKsG3NSm8JbOhVnNBvlycwU6OatPU63LUXAxXIZ8=
+	by mail.kernel.org (Postfix) with ESMTP id 552F620842
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:58:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388221AbfBRN6A (ORCPT
+        id S2388240AbfBRN6E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:58:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38444 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:58:04 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34194 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388163AbfBRN5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:57:54 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2387987AbfBRN5E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:57:04 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7EF2F217D9;
-        Mon, 18 Feb 2019 13:57:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498273;
-        bh=q7ST0jRM+VcF16zwKY0r8fCrCjMPtw4NfFJZQVm9XBY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jELYqDfpg20lEmUlwWhjbmqIHC7mrXNf3SSNWzd4VCZnsK3ARVzqj23BmXWeUMuPs
-         OEnAyEFzD4AjicyTqHf4SX4aEKJz8J/YRlBe2Q9pKzVs3H+v5zrCJNmtOyxj0r+3P6
-         LUW1cMIUaa5slEnmp173gXJhLeK25CHdnKDTfsDY=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        "David A. Long" <dave.long@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 16/58] ARM: add PROC_VTABLE and PROC_TABLE macros
-Date:   Mon, 18 Feb 2019 14:43:37 +0100
-Message-Id: <20190218133509.809567593@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190218133508.567416115@linuxfoundation.org>
-References: <20190218133508.567416115@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        by mx1.redhat.com (Postfix) with ESMTPS id 691AA8E685;
+        Mon, 18 Feb 2019 13:57:03 +0000 (UTC)
+Received: from laptop.redhat.com (ovpn-116-102.ams2.redhat.com [10.36.116.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3AF995D70E;
+        Mon, 18 Feb 2019 13:56:57 +0000 (UTC)
+From:   Eric Auger <eric.auger@redhat.com>
+To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
+        will.deacon@arm.com, robin.murphy@arm.com
+Cc:     kevin.tian@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org
+Subject: [PATCH v4 13/22] iommu/smmuv3: Implement attach/detach_pasid_table
+Date:   Mon, 18 Feb 2019 14:54:54 +0100
+Message-Id: <20190218135504.25048-14-eric.auger@redhat.com>
+In-Reply-To: <20190218135504.25048-1-eric.auger@redhat.com>
+References: <20190218135504.25048-1-eric.auger@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 18 Feb 2019 13:57:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On attach_pasid_table() we program STE S1 related info set
+by the guest into the actual physical STEs. At minimum
+we need to program the context descriptor GPA and compute
+whether the stage1 is translated/bypassed or aborted.
 
-------------------
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
 
-Commit e209950fdd065d2cc46e6338e47e52841b830cba upstream.
-
-Allow the way we access members of the processor vtable to be changed
-at compile time.  We will need to move to per-CPU vtables to fix the
-Spectre variant 2 issues on big.Little systems.
-
-However, we have a couple of calls that do not need the vtable
-treatment, and indeed cause a kernel warning due to the (later) use
-of smp_processor_id(), so also introduce the PROC_TABLE macro for
-these which always use CPU 0's function pointers.
-
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: David A. Long <dave.long@linaro.org>
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/include/asm/proc-fns.h | 39 ++++++++++++++++++++++-----------
- arch/arm/kernel/setup.c         |  4 +---
- 2 files changed, 27 insertions(+), 16 deletions(-)
+v3 -> v4:
+- adapt to changes in iommu_pasid_table_config
+- different programming convention at s1_cfg/s2_cfg/ste.abort
 
-diff --git a/arch/arm/include/asm/proc-fns.h b/arch/arm/include/asm/proc-fns.h
-index 19939e88efca..a1a71b068edc 100644
---- a/arch/arm/include/asm/proc-fns.h
-+++ b/arch/arm/include/asm/proc-fns.h
-@@ -23,7 +23,7 @@ struct mm_struct;
- /*
-  * Don't change this structure - ASM code relies on it.
-  */
--extern struct processor {
-+struct processor {
- 	/* MISC
- 	 * get data abort address/flags
- 	 */
-@@ -79,9 +79,13 @@ extern struct processor {
- 	unsigned int suspend_size;
- 	void (*do_suspend)(void *);
- 	void (*do_resume)(void *);
--} processor;
-+};
+v2 -> v3:
+- callback now is named set_pasid_table and struct fields
+  are laid out differently.
+
+v1 -> v2:
+- invalidate the STE before changing them
+- hold init_mutex
+- handle new fields
+---
+ drivers/iommu/arm-smmu-v3.c | 114 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 114 insertions(+)
+
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index 80ab9a77cf80..77e7e2accd99 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -2207,6 +2207,118 @@ static void arm_smmu_put_resv_regions(struct device *dev,
+ 		kfree(entry);
+ }
  
- #ifndef MULTI_CPU
-+static inline void init_proc_vtable(const struct processor *p)
++static int arm_smmu_attach_pasid_table(struct iommu_domain *domain,
++				       struct iommu_pasid_table_config *cfg)
 +{
++	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
++	struct arm_smmu_master_data *entry;
++	struct arm_smmu_s1_cfg *s1_cfg;
++	struct arm_smmu_device *smmu;
++	unsigned long flags;
++	int ret = -EINVAL;
++
++	if (cfg->format != IOMMU_PASID_FORMAT_SMMUV3)
++		return -EINVAL;
++
++	mutex_lock(&smmu_domain->init_mutex);
++
++	smmu = smmu_domain->smmu;
++
++	if (!smmu)
++		goto out;
++
++	if (!((smmu->features & ARM_SMMU_FEAT_TRANS_S1) &&
++	      (smmu->features & ARM_SMMU_FEAT_TRANS_S2))) {
++		dev_info(smmu_domain->smmu->dev,
++			 "does not implement two stages\n");
++		goto out;
++	}
++
++	if (smmu_domain->stage != ARM_SMMU_DOMAIN_NESTED)
++		goto out;
++
++	switch (cfg->config) {
++	case IOMMU_PASID_CONFIG_ABORT:
++		spin_lock_irqsave(&smmu_domain->devices_lock, flags);
++		list_for_each_entry(entry, &smmu_domain->devices, list) {
++			entry->ste.s1_cfg = NULL;
++			entry->ste.abort = true;
++			arm_smmu_install_ste_for_dev(entry->dev->iommu_fwspec);
++		}
++		spin_unlock_irqrestore(&smmu_domain->devices_lock, flags);
++		ret = 0;
++		break;
++	case IOMMU_PASID_CONFIG_BYPASS:
++		spin_lock_irqsave(&smmu_domain->devices_lock, flags);
++		list_for_each_entry(entry, &smmu_domain->devices, list) {
++			entry->ste.s1_cfg = NULL;
++			entry->ste.abort = false;
++			arm_smmu_install_ste_for_dev(entry->dev->iommu_fwspec);
++		}
++		spin_unlock_irqrestore(&smmu_domain->devices_lock, flags);
++		ret = 0;
++		break;
++	case IOMMU_PASID_CONFIG_TRANSLATE:
++		/* we currently support a single CD */
++		if (cfg->pasid_bits)
++			goto out;
++
++		s1_cfg = &smmu_domain->s1_cfg;
++		s1_cfg->cdptr_dma = cfg->base_ptr;
++
++		spin_lock_irqsave(&smmu_domain->devices_lock, flags);
++		list_for_each_entry(entry, &smmu_domain->devices, list) {
++			entry->ste.s1_cfg = &smmu_domain->s1_cfg;
++			entry->ste.abort = false;
++			arm_smmu_install_ste_for_dev(entry->dev->iommu_fwspec);
++		}
++		spin_unlock_irqrestore(&smmu_domain->devices_lock, flags);
++		ret = 0;
++		break;
++	default:
++		break;
++	}
++out:
++	mutex_unlock(&smmu_domain->init_mutex);
++	return ret;
 +}
 +
- extern void cpu_proc_init(void);
- extern void cpu_proc_fin(void);
- extern int cpu_do_idle(void);
-@@ -98,18 +102,27 @@ extern void cpu_reset(unsigned long addr) __attribute__((noreturn));
- extern void cpu_do_suspend(void *);
- extern void cpu_do_resume(void *);
- #else
--#define cpu_proc_init			processor._proc_init
--#define cpu_check_bugs			processor.check_bugs
--#define cpu_proc_fin			processor._proc_fin
--#define cpu_reset			processor.reset
--#define cpu_do_idle			processor._do_idle
--#define cpu_dcache_clean_area		processor.dcache_clean_area
--#define cpu_set_pte_ext			processor.set_pte_ext
--#define cpu_do_switch_mm		processor.switch_mm
- 
--/* These three are private to arch/arm/kernel/suspend.c */
--#define cpu_do_suspend			processor.do_suspend
--#define cpu_do_resume			processor.do_resume
-+extern struct processor processor;
-+#define PROC_VTABLE(f)			processor.f
-+#define PROC_TABLE(f)			processor.f
-+static inline void init_proc_vtable(const struct processor *p)
++static void arm_smmu_detach_pasid_table(struct iommu_domain *domain)
 +{
-+	processor = *p;
++	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
++	struct arm_smmu_master_data *entry;
++	struct arm_smmu_device *smmu;
++	unsigned long flags;
++
++	mutex_lock(&smmu_domain->init_mutex);
++
++	smmu = smmu_domain->smmu;
++
++	if (!smmu)
++		return;
++
++	if (!((smmu->features & ARM_SMMU_FEAT_TRANS_S1) &&
++	      (smmu->features & ARM_SMMU_FEAT_TRANS_S2))) {
++		dev_info(smmu_domain->smmu->dev,
++			 "does not implement two stages\n");
++		return;
++	}
++
++	if (smmu_domain->stage != ARM_SMMU_DOMAIN_NESTED)
++		return;
++
++	spin_lock_irqsave(&smmu_domain->devices_lock, flags);
++	list_for_each_entry(entry, &smmu_domain->devices, list) {
++		entry->ste.s1_cfg = NULL;
++		entry->ste.abort = true;
++		arm_smmu_install_ste_for_dev(entry->dev->iommu_fwspec);
++	}
++	spin_unlock_irqrestore(&smmu_domain->devices_lock, flags);
++
++	memset(&smmu_domain->s1_cfg, 0, sizeof(struct arm_smmu_s1_cfg));
++	mutex_unlock(&smmu_domain->init_mutex);
 +}
 +
-+#define cpu_proc_init			PROC_VTABLE(_proc_init)
-+#define cpu_check_bugs			PROC_VTABLE(check_bugs)
-+#define cpu_proc_fin			PROC_VTABLE(_proc_fin)
-+#define cpu_reset			PROC_VTABLE(reset)
-+#define cpu_do_idle			PROC_VTABLE(_do_idle)
-+#define cpu_dcache_clean_area		PROC_TABLE(dcache_clean_area)
-+#define cpu_set_pte_ext			PROC_TABLE(set_pte_ext)
-+#define cpu_do_switch_mm		PROC_VTABLE(switch_mm)
-+
-+/* These two are private to arch/arm/kernel/suspend.c */
-+#define cpu_do_suspend			PROC_VTABLE(do_suspend)
-+#define cpu_do_resume			PROC_VTABLE(do_resume)
- #endif
+ static struct iommu_ops arm_smmu_ops = {
+ 	.capable		= arm_smmu_capable,
+ 	.domain_alloc		= arm_smmu_domain_alloc,
+@@ -2225,6 +2337,8 @@ static struct iommu_ops arm_smmu_ops = {
+ 	.of_xlate		= arm_smmu_of_xlate,
+ 	.get_resv_regions	= arm_smmu_get_resv_regions,
+ 	.put_resv_regions	= arm_smmu_put_resv_regions,
++	.attach_pasid_table	= arm_smmu_attach_pasid_table,
++	.detach_pasid_table	= arm_smmu_detach_pasid_table,
+ 	.pgsize_bitmap		= -1UL, /* Restricted during device attach */
+ };
  
- extern void cpu_resume(void);
-diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
-index 8d5c3a118abe..2eebb67fa08b 100644
---- a/arch/arm/kernel/setup.c
-+++ b/arch/arm/kernel/setup.c
-@@ -693,9 +693,7 @@ static void __init setup_processor(void)
- 	cpu_name = list->cpu_name;
- 	__cpu_architecture = __get_cpu_architecture();
- 
--#ifdef MULTI_CPU
--	processor = *list->proc;
--#endif
-+	init_proc_vtable(list->proc);
- #ifdef MULTI_TLB
- 	cpu_tlb = *list->tlb;
- #endif
 -- 
-2.19.1
-
-
+2.20.1
 
