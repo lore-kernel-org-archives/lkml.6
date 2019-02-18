@@ -2,122 +2,228 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E04F1C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:07:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C3EC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:08:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFA51206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:07:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD2B0206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:08:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ISdJXlpW";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SGYYU0Q0"
+	dkim=pass (2048-bit key) header.d=innovation.ch header.i=@innovation.ch header.b="kqFDMfRN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729446AbfBRJHp (ORCPT
+        id S1729463AbfBRJIx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 04:07:45 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:37362 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729382AbfBRJHo (ORCPT
+        Mon, 18 Feb 2019 04:08:53 -0500
+Received: from chill.innovation.ch ([216.218.245.220]:37376 "EHLO
+        chill.innovation.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728823AbfBRJIw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 04:07:44 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id F07C760918; Mon, 18 Feb 2019 09:07:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550480864;
-        bh=xy9Kzyrvl55Y25+B1JpxddE1RYYUzSTA0hxNqVaYljI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ISdJXlpWm73ORN+tAj7eliOtAcJ2tdzZ71z93zvurPLG4xire2NHpWfQonKkw4w9F
-         c1vHneNlx1DRk6K9Jl8F9Gv9AhAG4hVETfolYl2K3R/CYDgjEnz9S8l9hlw9kSHTy9
-         29tWY+8n6DSTgdV86Y3Em46+jDBjG8++XfGZCYek=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id EC687601D4;
-        Mon, 18 Feb 2019 09:07:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550480862;
-        bh=xy9Kzyrvl55Y25+B1JpxddE1RYYUzSTA0hxNqVaYljI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=SGYYU0Q0VHEmmAsJnsdaYWy3rRo9q9GWmC+TwrRl6F5rHvkBPvKwjE7UuMBjvmrrR
-         +R0c4Bo1Y1ZMY2gTDwb7Qe/kXJ2x2aY9ObvX00903WDqjqfICdGXxfgx6TeG5ZEznh
-         bBDXtn+lm9jcAolu/v37QSSmea0Yf/aA5r6/Nnf0=
+        Mon, 18 Feb 2019 04:08:52 -0500
+Date:   Mon, 18 Feb 2019 01:08:51 -0800
+DKIM-Filter: OpenDKIM Filter v2.10.3 chill.innovation.ch 96405640144
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=innovation.ch;
+        s=default; t=1550480931;
+        bh=mrP8TRDrz2W7EXbtRP+ONKTyZ3d5ULQTca/nOvAdWVU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kqFDMfRNEADQ1MBKffr4XRV91snFauhAMWuxp1GNlZfGhGxl9CsMeiW/wNm5Ac1rD
+         2JYjU9r0dIzHZeY3gAJ1n703pBRNcsfgKuvZulWU4CnMJnI26dIElAB91nYrI1bxKI
+         H4WqDsG+76t/S8W4FEHfhe4lnZyJq6nuls3vF+Y86I/K50PAV7mXiMfsiuFgXZcfAH
+         xPlaGpc2BEz9s89vE7lrjeCM+2iKJH3ub0jf6Z2MreFxEA1nYcICzkCbqon8e/MgoU
+         H0SEOEMK4+y7taFyfb/k7nX/3OXzcl5ucYOmnek5M5qQETZcyXLFoFEGfRo2NiQzcv
+         kyuLSLEEWk3oA==
+From:   "Life is hard, and then you die" <ronald@innovation.ch>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Henrik Rydberg <rydberg@bitmath.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Federico Lorenzi <federico@travelground.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] Input: add Apple SPI keyboard and trackpad driver.
+Message-ID: <20190218090851.GA24261@innovation.ch>
+References: <20190204081947.25152-1-ronald@innovation.ch>
+ <20190204081947.25152-3-ronald@innovation.ch>
+ <20190206202256.GZ9224@smile.fi.intel.com>
+ <20190210111834.GA27627@innovation.ch>
+ <20190216004426.GE9224@smile.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 18 Feb 2019 14:37:41 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Nicolas Dechesne <nicolas.dechesne@linaro.org>
-Cc:     Kalle Valo <kvalo@codeaurora.org>, Josh Boyer <jwboyer@kernel.org>,
-        Linux Firmware <linux-firmware@kernel.org>,
-        BlueZ development <linux-bluetooth@vger.kernel.org>,
-        Hemantg <hemantg@codeaurora.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        Linux-arm Msm <linux-arm-msm@vger.kernel.org>
-Subject: Re: Firmware files for QCA BT chip WCN3990.
-In-Reply-To: <CAP71WjzHFD0LGjgZxkb_Pix=z3KViNdt_m6CvTdWqSoz_cLFyg@mail.gmail.com>
-References: <795c3942482d96c696b4368e68de1ba0@codeaurora.org>
- <CAP71WjzHFD0LGjgZxkb_Pix=z3KViNdt_m6CvTdWqSoz_cLFyg@mail.gmail.com>
-Message-ID: <5d479f9f60301a5939340e4ba9d23646@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190216004426.GE9224@smile.fi.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Hi Nicolas,
 
-
-On 2019-02-18 14:08, Nicolas Dechesne wrote:
-> hi Balakrishna,
+On Sat, Feb 16, 2019 at 02:44:26AM +0200, Andy Shevchenko wrote:
+> On Sun, Feb 10, 2019 at 03:18:34AM -0800, Life is hard, and then you die wrote:
+> > On Wed, Feb 06, 2019 at 10:22:56PM +0200, Andy Shevchenko wrote:
+> > > On Mon, Feb 04, 2019 at 12:19:47AM -0800, Ronald Tschalär wrote:
 > 
-> On Mon, Feb 18, 2019 at 7:13 AM Balakrishna Godavarthi
-> <bgodavar@codeaurora.org> wrote:
->> 
->> 
->> Hi,
->> 
->> The following changes since commit
->> a9c22d3d8af87bd39a078ec6c846b0674dd2ca38:
->> 
->>    qca: Add firmware files for BT chip wcn3990. (2019-02-15 16:07:56
->> +0530)
->> 
->> are available in the Git repository at:
->> 
->>    https://github.com/bgodavar/qca_bt_wcn3990_fw.git
->> 
->> for you to fetch changes up to 
->> a9c22d3d8af87bd39a078ec6c846b0674dd2ca38:
->> 
->>    qca: Add firmware files for BT chip wcn3990. (2019-02-15 16:07:56
->> +0530)
+> > > > +#define	debug_print(mask, fmt, ...) \
+> > > > +	do { \
+> > > > +		if (debug & mask) \
+> > > > +			printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__); \
+> > > > +	} while (0)
+> > > > +
+> > > > +#define	debug_print_header(mask) \
+> > > > +	debug_print(mask, "--- %s ---------------------------\n", \
+> > > > +		    applespi_debug_facility(mask))
+> > > > +
+> > > > +#define	debug_print_buffer(mask, fmt, ...) \
+> > > > +	do { \
+> > > > +		if (debug & mask) \
+> > > > +			print_hex_dump(KERN_DEBUG, pr_fmt(fmt), \
+> > > > +				       DUMP_PREFIX_NONE, 32, 1, ##__VA_ARGS__, \
+> > > > +				       false); \
+> > > > +	} while (0)
+> > > 
+> > > I'm not sure we need all of these... But okay, the driver is
+> > > reverse-engineered, perhaps we can drop it later on.
+> > 
+> > These have been extremely useful for debugging; but yes, they are for
+> > debugging only. They also explicitly do not use the dynamic-debug
+> > facilities because
+> >   1. those can't be enabled at a function or line level on the kernel
+> >      command line (the docs indicate this should work, but it doesn't,
+> >      or at the very least I've been unable to figure out how, at least
+> >      for those drivers built as modules)
 > 
->  qca/NOTICE.txt   | 334
-> ++++++++++++++++++++++++++++++++++--------------------------------------------------------
+> Hmm... Usually you put either module_name.dyndbg into kernel command line to
+> enable Dynamic Debug on built-in modules, or modprobe module_name dyndbg if
+> it's built as a module.
+
+Right, but while that works with
+
+    applespi.dyndbg=+p
+
+it does not appear to work with
+
+    applespi.dyndbg="func applespi_get_spi_settings +p"
+
+(it is parsed correctly, but it just doesn't get applied when the
+module is later loaded - I've not tried to chase this down any further
+than that)
+
+[snip]
+> > > > +static int touchpad_dimensions[4];
+> > > > +module_param_array(touchpad_dimensions, int, NULL, 0444);
+> > > > +MODULE_PARM_DESC(touchpad_dimensions, "The pixel dimensions of the touchpad, as x_min,x_max,y_min,y_max .");
+> > > 
+> > > We have some parsers for similar data as in format
+> > > 
+> > > %dx%d%+d%+d ?
+> > > 
+> > > For example, 200x100+20+10.
+> > 
+> > Maybe it's just my grep-foo that is lacking, but I couldn't find
+> > anything useful. There is some stuff for framebuffer video modes, but
+> > that is too different and not really amenable for use here. OTOH, a
+> > simple sscanf(buf, "%dx%d+%d+%d", ...) would parse this just fine
+> > without the need for any fancier parser.
+> > 
+> > OTOH, I'm not sure this format is any better: internally we need
+> > x/y min/max, not x/y/w/h (though obviously the two are trivially
+> > convertable); and for the user it doesn't really matter since they would
+> > basically be getting the dimensions from running with debug set to
+> > 0x10000 and using that output to set this param, i.e. I don't see any
+> > inherent advantage of using x/y/w/h.
 > 
-> ^ This looks a rather unexpected change.
-
-[Bala]: yes we want to update the notice file according to the latest 
-legal rules here in QCA.
-
+> I would stick with some more or less standard notation. The XxY+W+H is widely
+> used in X11 world.
 > 
-> You are missing updates in WHENCE file, as such:
+> If you have better examples for input devices, choose them. My point that it
+> would be better to be a standard to some extent.
+
+I couldn't find anything useful (looked in the kernel and libinput),
+so going with XxY+W+H.
+
+[snip]
+> > > > +	message->counter = applespi->cmd_msg_cntr++ & 0xff;
+> > > 
+> > > Usual pattern for this kind of entries is
+> > > 
+> > >       x = ... % 256;
+> > > 
+> > > Btw, isn't 256 is defined somewhere?
+> > 
+> > Many things are defined as have a value of 256 :-) But I didn't find any
+> > with the intended semantics; could use (U8_MAX+1), though.
 > 
-> $ make check
-> E: qca/crbtfw21.tlv not listed in WHENCE
-> E: qca/crnv21.bin not listed in WHENCE
+> What I meant is that I saw in the same driver definition with value of 256.
+> Isn't it about messages?
 
-[Bala]: will update them in WHENCE.
+Ah, right: the packet length is 256 bytes. But the semantics are quite
+different, so IMHO it wouldn't be good to use that here. I.e. I think
+(U8_MAX+1) is still semantically the best.
 
->> 
->> 
->> --
->> Regards
->> Balakrishna.
+[snip]
+> > > > +/* lifted from the BCM5974 driver */
+> > > > +/* convert 16-bit little endian to signed integer */
+> > > > +static inline int raw2int(__le16 x)
+> > > > +{
+> > > > +	return (signed short)le16_to_cpu(x);
+> > > > +}
+> > > 
+> > > Perhaps it's time to introduce it inside include/linux/input.h ?
+> > 
+> > Perhaps as
+> > 
+> >     static inline int le16_to_signed_int(__le16 x)
+> > 
+> > ? (raw2int seems to ambiguous for a global function)
+> 
+> I'm fine. It would need a description though.
 
--- 
-Regards
-Balakrishna.
+After looking at this in more detail I don't think that
+include/linux/input.h is the proper place for this, because input.h
+basically represents the interface to the input core, and as such it
+is devoid of helpers like above or any driver specific definitions.
+Instead I'd like to suggest a new include file specific to the bcm5974
+driver, as follows:
+
+--- /dev/null
++++ b/include/linux/input/bcm5974.h
+@@ -0,0 +1,27 @@
++/*
++ * Copyright (C) 2008     Henrik Rydberg (rydberg@euromail.se)
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#ifndef _BCM5974_H
++#define _BCM5974_H
++
++#include <linux/kernel.h>
++
++/**
++ * raw2int - convert a 16-bit little endian value as received from the device
++ * to a signed integer in cpu endianness.
++ * @x: the received value
++ *
++ * Returns the converted value.
++ */
++static inline int raw2int(__le16 x)
++{
++       return (signed short)le16_to_cpu(x);
++}
++
++#endif
+
+Thoughts?
+
+I'll send out v2 of the patches with all the changes soon.
+
+
+  Cheers,
+
+  Ronald
+
