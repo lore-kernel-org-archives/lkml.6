@@ -2,52 +2,54 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DCE8C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:41:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB2FC10F01
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:41:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04B8F20838
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:41:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3BAD20838
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:41:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550500872;
-	bh=OBx6JNLa1hI9LhRWfyQlJpPEvT3oLoGwM0s0EDpCPXU=;
+	s=default; t=1550500875;
+	bh=9hkLY70F6EMzWYQjcjWRvYLLGOMgfif/Zw8ragBrfCM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RzWgy+K5adYmGr9XzFf00ZsYRQIGF1fpZbPSF4LeRokP5z0+3BoFDun6+YQPUo9GX
-	 DbGIJLxPIQ+1WGmt56U6JpiefRlzZm7SFKjAug9v03GGx/9FCInD3j9zeDY1wvQ0NG
-	 NcMeEA0XS2iIdqq+MPtw1KDTgM4Er0oKq1f6qCps=
+	b=NNYRJBX5n0744U8wRlUPFDu7+D8hAuSGv1ObSTYLMRWwnkOf04nf8j3F6dN6SXipM
+	 0JFTH4Yc8e+x621jv9oMbwnaMMG6/SP1m+0om5+bqQMbRbamnOumbNcvjFnORylW+P
+	 VmKgi7NuQO3xrSmQUkuT3QsVimgl2x1FRaYQiCzY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387771AbfBROlK (ORCPT
+        id S1732416AbfBRNv2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:41:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59342 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:51:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59274 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731491AbfBRNv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:51:29 -0500
+        id S1732153AbfBRNvZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:51:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4F1D20449;
-        Mon, 18 Feb 2019 13:51:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5AB5E20449;
+        Mon, 18 Feb 2019 13:51:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497888;
-        bh=OBx6JNLa1hI9LhRWfyQlJpPEvT3oLoGwM0s0EDpCPXU=;
+        s=default; t=1550497884;
+        bh=9hkLY70F6EMzWYQjcjWRvYLLGOMgfif/Zw8ragBrfCM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zCPo3ROWTTOO6dZcywjnk4uKIRCUEsjYKPxTQWr38gId3tGyQDw2MfZHH/7+iNCDk
-         Dtg9WxrB1wnR/iQRhZaJrLbhS9nymyzcjDMHp6aQFddQsvtpy5B0ExxSGlONV/YQOR
-         BIRb4koGxBf/xWAiyudNiWviA9hK9jjwyhp0Jiso=
+        b=HlRpdCqLGLJ5WU9oCEi4zTlE0GiobIbO0uR4uP70N93wchSryxrrNjkeavIBGocH+
+         1piEGjQFTmb9nrIX5JoEFgx+MHOphuV95v7/XcB0bEEBM7A6MU9M48QLGL9GS7TZR6
+         nW9TCRlx6IhNWWaBoev8B0vnBTvKtoEuAmaqvTSs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aurelien Jarno <aurelien@aurel32.net>,
-        Palmer Dabbelt <palmer@sifive.com>,
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 25/85] tools uapi: fix RISC-V 64-bit support
-Date:   Mon, 18 Feb 2019 14:42:51 +0100
-Message-Id: <20190218133502.381996968@linuxfoundation.org>
+Subject: [PATCH 4.19 24/85] perf test shell: Use a fallback to get the pathname in vfs_getname
+Date:   Mon, 18 Feb 2019 14:42:50 +0100
+Message-Id: <20190218133502.268840877@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -66,80 +68,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d0df00e30e4bf9bc27ddbd092ad683ff6121b360 ]
+[ Upstream commit 03fa483821c0b4db7c2b1453d3332f397d82313f ]
 
-The BPF library is not built on 64-bit RISC-V, as the BPF feature is
-not detected. Looking more in details, feature/test-bpf.c fails to build
-with the following error:
+Some kernels, like 4.19.13-300.fc29.x86_64 in fedora 29, fail with the
+existing probe definition asking for the contents of result->name,
+working when we ask for the 'filename' variable instead, so add a
+fallback to that.
 
-| In file included from /tmp/linux-4.19.12/tools/include/uapi/asm/bitsperlong.h:17,
-|                  from /tmp/linux-4.19.12/tools/include/uapi/asm-generic/unistd.h:2,
-|                  from /usr/include/riscv64-linux-gnu/asm/unistd.h:1,
-|                  from test-bpf.c:2:
-| /tmp/linux-4.19.12/tools/include/asm-generic/bitsperlong.h:14:2: error: #error Inconsistent word size. Check asm/bitsperlong.h
-|  #error Inconsistent word size. Check asm/bitsperlong.h
-|   ^~~~~
+Now those tests are back working on fedora 29 systems with that kernel:
 
-The UAPI from the tools directory is missing RISC-V support, therefore
-bitsperlong.h from asm-generic is used, defaulting to 32 bits.
+  # perf test vfs_getname
+  65: Use vfs_getname probe to get syscall args filenames   : Ok
+  66: Add vfs_getname probe to get syscall args filenames   : Ok
+  67: Check open filename arg using perf trace + vfs_getname: Ok
+  #
 
-Fix that by adding tools/arch/riscv/include/uapi/asm/bitsperlong.h as
-a copy of arch/riscv/include/uapi/asm/bitsperlong.h and by updating
-tools/include/uapi/asm/bitsperlong.h.
-
-Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-klt3n0i58dfqttveti09q3fi@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../arch/riscv/include/uapi/asm/bitsperlong.h | 25 +++++++++++++++++++
- tools/include/uapi/asm/bitsperlong.h          |  2 ++
- 2 files changed, 27 insertions(+)
- create mode 100644 tools/arch/riscv/include/uapi/asm/bitsperlong.h
+ tools/perf/tests/shell/lib/probe_vfs_getname.sh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/arch/riscv/include/uapi/asm/bitsperlong.h b/tools/arch/riscv/include/uapi/asm/bitsperlong.h
-new file mode 100644
-index 000000000000..0b3cb52fd29d
---- /dev/null
-+++ b/tools/arch/riscv/include/uapi/asm/bitsperlong.h
-@@ -0,0 +1,25 @@
-+/*
-+ * Copyright (C) 2012 ARM Ltd.
-+ * Copyright (C) 2015 Regents of the University of California
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#ifndef _UAPI_ASM_RISCV_BITSPERLONG_H
-+#define _UAPI_ASM_RISCV_BITSPERLONG_H
-+
-+#define __BITS_PER_LONG (__SIZEOF_POINTER__ * 8)
-+
-+#include <asm-generic/bitsperlong.h>
-+
-+#endif /* _UAPI_ASM_RISCV_BITSPERLONG_H */
-diff --git a/tools/include/uapi/asm/bitsperlong.h b/tools/include/uapi/asm/bitsperlong.h
-index 8dd6aefdafa4..fd92ce8388fc 100644
---- a/tools/include/uapi/asm/bitsperlong.h
-+++ b/tools/include/uapi/asm/bitsperlong.h
-@@ -13,6 +13,8 @@
- #include "../../arch/mips/include/uapi/asm/bitsperlong.h"
- #elif defined(__ia64__)
- #include "../../arch/ia64/include/uapi/asm/bitsperlong.h"
-+#elif defined(__riscv)
-+#include "../../arch/riscv/include/uapi/asm/bitsperlong.h"
- #else
- #include <asm-generic/bitsperlong.h>
- #endif
+diff --git a/tools/perf/tests/shell/lib/probe_vfs_getname.sh b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
+index 1c16e56cd93e..7cb99b433888 100644
+--- a/tools/perf/tests/shell/lib/probe_vfs_getname.sh
++++ b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
+@@ -13,7 +13,8 @@ add_probe_vfs_getname() {
+ 	local verbose=$1
+ 	if [ $had_vfs_getname -eq 1 ] ; then
+ 		line=$(perf probe -L getname_flags 2>&1 | egrep 'result.*=.*filename;' | sed -r 's/[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*/\1/')
+-		perf probe $verbose "vfs_getname=getname_flags:${line} pathname=result->name:string"
++		perf probe -q       "vfs_getname=getname_flags:${line} pathname=result->name:string" || \
++		perf probe $verbose "vfs_getname=getname_flags:${line} pathname=filename:string"
+ 	fi
+ }
+ 
 -- 
 2.19.1
 
