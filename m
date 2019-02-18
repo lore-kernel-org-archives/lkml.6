@@ -4,56 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E86CCC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB141C10F01
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B754421904
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:52:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A30AD21906
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:52:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497954;
-	bh=FpX0VVZORX55+1IXLHjAGDVFd2snzltecaZs9z2kYUg=;
+	s=default; t=1550497957;
+	bh=+w/O81QXIyXQWL1/EEgUgHSMuicuGYNtcB83+FqsPmU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=izzRHM+blGPRb3AiaOounLwHwfDZjhVqHow+Sr2og9Zn8YPuSNGdqUVl96JrH2d63
-	 v1aSIVJDyCSgJg4cvTv8VMdDSEIacgjUtC/aGT5crmWuXny0DOT1Tuk21+n89bprhB
-	 Yl0eT/LfgUAmkXp11NiszCpXsmAViXbUKWFixFbM=
+	b=NYzN+FZwuD6AsQa0Sqf/0zdb83Pf9JpQfDnl71c6QKz4DUbsJiDmRDxNU+Q0c/U9/
+	 FvnrsqJoke75V48rMT/6WwmrLjaZBdN1j05Ui7VORlR52cDE6QKNbdSoKJ24mW5QKL
+	 QaJGJlpSzUr3o2EnImfsWRUFTcldthhK5fuMJFmM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732729AbfBRNwc (ORCPT
+        id S1732325AbfBRNwa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:52:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60282 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:52:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732650AbfBRNwZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:52:25 -0500
+        id S1731545AbfBRNw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:52:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0924920842;
-        Mon, 18 Feb 2019 13:52:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1BE821904;
+        Mon, 18 Feb 2019 13:52:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497944;
-        bh=FpX0VVZORX55+1IXLHjAGDVFd2snzltecaZs9z2kYUg=;
+        s=default; t=1550497947;
+        bh=+w/O81QXIyXQWL1/EEgUgHSMuicuGYNtcB83+FqsPmU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bh6wQQ2kYCoXE26rG8+QKitMouJ/eB7F7byJupfGlRxHhlJrytAHuikU0Ek7tXZCq
-         Dw1pRfpAlw0EQ1+hvLiRheyyFiAqd0zSBgG1Zc/tehA8udBQ/J/TyvrUq7Rk6JZnKP
-         CFo1wL0upsk3un8tGlYeUcfIHXLRPk6lICiC7sXw=
+        b=T53DiseLbnBNxKj8bTS8qvDP2Gk1mo08dVqc/K9L7bdvbugBb+2NKia6t9GJWrfHX
+         tHxwPmR/Zw2amj+fQibV3uUhxKBRQM2kbV9YBn/Eyk434N1BIeK89qbl5JZOiEv+BI
+         kc60Yojm7kpogsOT8i6/IRBQ7SBDqmHSWQJ0MHiM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jamie Lentin <jm@lentin.co.uk>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Julien DAscenzio <jdascenzio@posteo.net>,
+        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 43/85] ARM: dts: kirkwood: Fix polarity of GPIO fan lines
-Date:   Mon, 18 Feb 2019 14:43:09 +0100
-Message-Id: <20190218133504.347827240@linuxfoundation.org>
+Subject: [PATCH 4.19 44/85] gpio: pl061: handle failed allocations
+Date:   Mon, 18 Feb 2019 14:43:10 +0100
+Message-Id: <20190218133504.424923521@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -72,46 +66,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b5f034845e70916fd33e172fad5ad530a29c10ab ]
+[ Upstream commit df209c43a0e8258e096fb722dfbdae4f0dd13fde ]
 
-These two lines are active high, not active low. The bug was
-found when we changed the kernel to respect the polarity defined
-in the device tree.
+devm_kzalloc(), devm_kstrdup() and devm_kasprintf() all can
+fail internal allocation and return NULL. Using any of the assigned
+objects without checking is not safe. As this is early in the boot
+phase and these allocations really should not fail, any failure here
+is probably an indication of a more serious issue so it makes little
+sense to try and rollback the previous allocated resources or try to
+continue;  but rather the probe function is simply exited with -ENOMEM.
 
-Fixes: 1b90e06b1429 ("ARM: kirkwood: Use devicetree to define DNS-32[05] fan")
-Cc: Jamie Lentin <jm@lentin.co.uk>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Gregory Clement <gregory.clement@bootlin.com>
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Julien D'Ascenzio <jdascenzio@posteo.net>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Tested-by: Jamie Lentin <jm@lentin.co.uk>
-Reported-by: Julien D'Ascenzio <jdascenzio@posteo.net>
-Tested-by: Julien D'Ascenzio <jdascenzio@posteo.net>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: 684284b64aae ("ARM: integrator: add MMCI device to IM-PD1")
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/kirkwood-dnskw.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/mach-integrator/impd1.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/kirkwood-dnskw.dtsi b/arch/arm/boot/dts/kirkwood-dnskw.dtsi
-index cbaf06f2f78e..eb917462b219 100644
---- a/arch/arm/boot/dts/kirkwood-dnskw.dtsi
-+++ b/arch/arm/boot/dts/kirkwood-dnskw.dtsi
-@@ -36,8 +36,8 @@
- 		compatible = "gpio-fan";
- 		pinctrl-0 = <&pmx_fan_high_speed &pmx_fan_low_speed>;
- 		pinctrl-names = "default";
--		gpios = <&gpio1 14 GPIO_ACTIVE_LOW
--			 &gpio1 13 GPIO_ACTIVE_LOW>;
-+		gpios = <&gpio1 14 GPIO_ACTIVE_HIGH
-+			 &gpio1 13 GPIO_ACTIVE_HIGH>;
- 		gpio-fan,speed-map = <0    0
- 				      3000 1
- 				      6000 2>;
+diff --git a/arch/arm/mach-integrator/impd1.c b/arch/arm/mach-integrator/impd1.c
+index a109f6482413..0f916c245a2e 100644
+--- a/arch/arm/mach-integrator/impd1.c
++++ b/arch/arm/mach-integrator/impd1.c
+@@ -393,7 +393,11 @@ static int __ref impd1_probe(struct lm_device *dev)
+ 					      sizeof(*lookup) + 3 * sizeof(struct gpiod_lookup),
+ 					      GFP_KERNEL);
+ 			chipname = devm_kstrdup(&dev->dev, devname, GFP_KERNEL);
+-			mmciname = kasprintf(GFP_KERNEL, "lm%x:00700", dev->id);
++			mmciname = devm_kasprintf(&dev->dev, GFP_KERNEL,
++						  "lm%x:00700", dev->id);
++			if (!lookup || !chipname || !mmciname)
++				return -ENOMEM;
++
+ 			lookup->dev_id = mmciname;
+ 			/*
+ 			 * Offsets on GPIO block 1:
 -- 
 2.19.1
 
