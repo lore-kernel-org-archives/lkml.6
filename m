@@ -2,106 +2,459 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E8E6C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 676C6C4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:24:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 051CB2146E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:23:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550514219;
-	bh=SBO+3L6U1TOUIu9oCOlMX906YZHn3HpRNxDiDv20Qeo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ThdR8d4aNY+ooVQI+P8sgLyZ3LyN+Lf6w6nBt1hYzlPYFYOcKSphWHHXI3YAO9SlX
-	 l4MdvQobXY8iree4aVxNmNS7jJMSuZ6H5DtP2ChwO1SvOvg0u+iBinKVhvyFxEXkc5
-	 aRKrr8xYavGZgAnT+YZ4WpA9cFckZ8glcyCJH1hY=
+	by mail.kernel.org (Postfix) with ESMTP id 34742217D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:24:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392415AbfBRSWv (ORCPT
+        id S2392261AbfBRSWO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:22:51 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53290 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390821AbfBRSWs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:22:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=SBO+3L6U1TOUIu9oCOlMX906YZHn3HpRNxDiDv20Qeo=; b=Tx74LqNcx1UfEARApShGX3/0X
-        qU8NrgsRJ/moKLdghISRZh6RJzG5rQ5bDKBwc7P29+sryTXlwiiLFy2+tQ4NVxQrj9ozlAfowXObO
-        y044f+c3W3Zo1fBj+hB24YZfazGwJZgPsGaKD8eQxIelK6tm01wWfYS1ALXywd09U8zpg=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gvnYv-0001VO-9Y; Mon, 18 Feb 2019 18:22:41 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id CA4F91128008; Mon, 18 Feb 2019 18:22:40 +0000 (GMT)
-Date:   Mon, 18 Feb 2019 18:22:40 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Daniel Baluta <daniel.baluta@gmail.com>
-Cc:     Takashi Iwai <tiwai@suse.de>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "vicencb@gmail.com" <vicencb@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>
-Subject: Re: [alsa-devel] [PATCH] ASoC: simple-card: Fix refcount underflow
-Message-ID: <20190218182240.GG10794@sirena.org.uk>
-References: <20190216100927.10017-1-daniel.baluta@nxp.com>
- <87pnrp52jl.wl-kuninori.morimoto.gx@renesas.com>
- <87lg2d51lv.wl-kuninori.morimoto.gx@renesas.com>
- <b4bee8ff1307004ec9d1122f70ab2cb0d636ea4a.camel@nxp.com>
- <s5hpnrp8ret.wl-tiwai@suse.de>
- <20190218175010.GB10794@sirena.org.uk>
- <CAEnQRZCLE7DHumOCDSXxaKEgpukDgP5EtH=j7xMwTBJcTWQTZw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="kadn00tgSopKmJ1H"
-Content-Disposition: inline
-In-Reply-To: <CAEnQRZCLE7DHumOCDSXxaKEgpukDgP5EtH=j7xMwTBJcTWQTZw@mail.gmail.com>
-X-Cookie: Take an astronaut to launch.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 18 Feb 2019 13:22:14 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46230 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2403915AbfBRSWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 13:22:06 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 155ADAEA9;
+        Mon, 18 Feb 2019 18:22:05 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id B79C5E0122; Mon, 18 Feb 2019 19:22:04 +0100 (CET)
+Message-Id: <99e5e578d2a554bb2bfd9ee04984ff54f8320b43.1550513384.git.mkubecek@suse.cz>
+In-Reply-To: <cover.1550513384.git.mkubecek@suse.cz>
+References: <cover.1550513384.git.mkubecek@suse.cz>
+From:   Michal Kubecek <mkubecek@suse.cz>
+Subject: [RFC PATCH net-next v3 08/21] ethtool: generic handlers for GET
+ requests
+To:     netdev@vger.kernel.org
+Cc:     David Miller <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jiri Pirko <jiri@resnulli.us>, linux-kernel@vger.kernel.org
+Date:   Mon, 18 Feb 2019 19:22:04 +0100 (CET)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Some parts of processing GET type requests and related notifications are
+independent of a command. Provide universal functions so that only four
+callbacks need to be defined for each command type:
 
---kadn00tgSopKmJ1H
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+  parse_request() - parse incoming message
+  prepare_data()  - retrieve data from driver or NIC
+  reply_size()    - estimate reply message size
+  fill_reply()    - compose reply message
 
-On Mon, Feb 18, 2019 at 08:00:48PM +0200, Daniel Baluta wrote:
+These callback are defined in an instance of struct get_request_ops.
 
-> Would you want me to change the patch for 5.0 to have an identical commit
-> message as the one for 5.1?
+Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+---
+ net/ethtool/netlink.c | 286 ++++++++++++++++++++++++++++++++++++++++++
+ net/ethtool/netlink.h |  84 +++++++++++++
+ 2 files changed, 370 insertions(+)
 
-No, that's fine - since Morimoto-san's patch has been tested I'll just use
-that.
+diff --git a/net/ethtool/netlink.c b/net/ethtool/netlink.c
+index ee3424cd1f90..8cdb6f52cb4a 100644
+--- a/net/ethtool/netlink.c
++++ b/net/ethtool/netlink.c
+@@ -84,6 +84,41 @@ int ethnl_fill_dev(struct sk_buff *msg, struct net_device *dev, u16 attrtype)
+ 	return ret;
+ }
+ 
++/* GET request helpers */
++
++const struct get_request_ops *get_requests[__ETHNL_CMD_CNT] = {
++};
++
++static struct common_req_info *alloc_get_data(const struct get_request_ops *ops)
++{
++	struct common_req_info *req_info = kmalloc(ops->data_size, GFP_KERNEL);
++
++	if (!req_info)
++		return NULL;
++	memset(req_info, '\0', ops->repdata_offset);
++	req_info->reply_data =
++		(struct common_reply_data *)((char *)req_info +
++					     ops->repdata_offset);
++	return req_info;
++}
++
++static void free_get_data(const struct get_request_ops *ops,
++			  struct common_req_info *req_info)
++{
++	if (ops->cleanup)
++		ops->cleanup(req_info);
++	kfree(req_info);
++}
++
++static void init_reply_data(const struct common_req_info *req_info,
++			    const struct get_request_ops *ops,
++			    struct net_device *dev)
++{
++	memset(req_info->reply_data, '\0',
++	       ops->data_size - ops->repdata_offset);
++	req_info->reply_data->dev = dev;
++}
++
+ /* create skb for a reply and fill device identification
+  * payload: payload length (without netlink and genetlink header)
+  * dev:     device the reply is about (may be null)
+@@ -124,6 +159,257 @@ struct sk_buff *ethnl_reply_init(size_t payload, struct net_device *dev, u8 cmd,
+ 	return NULL;
+ }
+ 
++int ethnl_get_doit(struct sk_buff *skb, struct genl_info *info)
++{
++	const u8 cmd = info->genlhdr->cmd;
++	struct common_req_info *req_info;
++	const struct get_request_ops *ops;
++	struct sk_buff *rskb;
++	void *reply_payload;
++	int reply_len;
++	int ret;
++
++	ops = get_requests[cmd];
++	if (WARN_ONCE(!ops, "cmd %u has no get_request_ops\n", cmd))
++		return -EOPNOTSUPP;
++	req_info = alloc_get_data(ops);
++	if (!req_info)
++		return -ENOMEM;
++	ret = ops->parse_request(req_info, skb, info, info->nlhdr);
++	if (!ops->allow_nodev_do && !req_info->dev) {
++		ETHNL_SET_ERRMSG(info, "device not specified in do request");
++		ret = -EINVAL;
++	}
++	if (ret < 0)
++		goto err_dev;
++	init_reply_data(req_info, ops, req_info->dev);
++
++	rtnl_lock();
++	ret = ops->prepare_data(req_info, info);
++	if (ret < 0)
++		goto err_rtnl;
++	reply_len = ops->reply_size(req_info);
++	if (ret < 0)
++		goto err_rtnl;
++	ret = -ENOMEM;
++	rskb = ethnl_reply_init(reply_len, req_info->dev, ops->reply_cmd,
++				ops->dev_attrtype, info, &reply_payload);
++	if (!rskb)
++		goto err_rtnl;
++	ret = ops->fill_reply(rskb, req_info);
++	if (ret < 0)
++		goto err;
++	rtnl_unlock();
++
++	genlmsg_end(rskb, reply_payload);
++	if (req_info->dev)
++		dev_put(req_info->dev);
++	free_get_data(ops, req_info);
++	return genlmsg_reply(rskb, info);
++
++err:
++	WARN_ONCE(ret == -EMSGSIZE,
++		  "calculated message payload length (%d) not sufficient\n",
++		  reply_len);
++	nlmsg_free(rskb);
++	free_get_data(ops, req_info);
++err_rtnl:
++	rtnl_unlock();
++err_dev:
++	if (req_info->dev)
++		dev_put(req_info->dev);
++	return ret;
++}
++
++static int ethnl_get_dump_one(struct sk_buff *skb,
++			      struct net_device *dev,
++			      const struct get_request_ops *ops,
++			      struct common_req_info *req_info)
++{
++	int ret;
++
++	init_reply_data(req_info, ops, dev);
++	rtnl_lock();
++	ret = ops->prepare_data(req_info, NULL);
++	if (ret < 0)
++		return ret;
++	ret = ethnl_fill_dev(skb, dev, ops->dev_attrtype);
++	if (ret < 0)
++		return ret;
++	ret = ops->fill_reply(skb, req_info);
++	rtnl_unlock();
++
++	req_info->reply_data->dev = NULL;
++	return ret;
++}
++
++/* generic ->dumpit() handler; device iteration copied from rtnl_dump_ifinfo()
++ * cb->args[0]: pointer to struct get_request_ops
++ * cb->args[1]: pointer to request data
++ * cb->args[2]: iteration position - hashbucket
++ * cb->args[3]: iteration position - ifindex
++ */
++int ethnl_get_dumpit(struct sk_buff *skb, struct netlink_callback *cb)
++{
++	struct net *net = sock_net(skb->sk);
++	struct common_req_info *req_info;
++	const struct get_request_ops *ops;
++	int h, s_h, idx = 0, s_idx;
++	struct hlist_head *head;
++	struct net_device *dev;
++	int ret = 0;
++	void *ehdr;
++
++	ops = (const struct get_request_ops *)cb->args[0];
++	req_info = (struct common_req_info *)cb->args[1];
++	s_h = cb->args[2];
++	s_idx = cb->args[3];
++
++	for (h = s_h; h < NETDEV_HASHENTRIES; h++, s_idx = 0) {
++		idx = 0;
++		head = &net->dev_index_head[h];
++		hlist_for_each_entry(dev, head, index_hlist) {
++			if (idx < s_idx)
++				goto cont;
++			ehdr = genlmsg_put(skb, NETLINK_CB(cb->skb).portid,
++					   cb->nlh->nlmsg_seq,
++					   &ethtool_genl_family, 0,
++					   ops->reply_cmd);
++			ret = ethnl_get_dump_one(skb, dev, ops, req_info);
++			if (ret < 0) {
++				genlmsg_cancel(skb, ehdr);
++				if (ret == -EOPNOTSUPP)
++					goto cont;
++				if (likely(skb->len))
++					goto out;
++				goto out_err;
++			}
++			genlmsg_end(skb, ehdr);
++cont:
++			idx++;
++		}
++	}
++out:
++	ret = skb->len;
++out_err:
++	cb->args[2] = h;
++	cb->args[3] = idx;
++	cb->seq = net->dev_base_seq;
++	nl_dump_check_consistent(cb, nlmsg_hdr(skb));
++
++	return ret;
++}
++
++/* generic ->start() handler for GET requests */
++static int ethnl_get_start(struct netlink_callback *cb)
++{
++	struct common_req_info *req_info;
++	const struct get_request_ops *ops;
++	struct genlmsghdr *ghdr;
++	int ret;
++
++	ghdr = nlmsg_data(cb->nlh);
++	ops = get_requests[ghdr->cmd];
++	if (WARN_ONCE(!ops, "cmd %u has no get_request_ops\n", ghdr->cmd))
++		return -EOPNOTSUPP;
++	req_info = alloc_get_data(ops);
++	if (!req_info)
++		return -ENOMEM;
++
++	ret = ops->parse_request(req_info, cb->skb, NULL, cb->nlh);
++	if (req_info->dev) {
++		/* We ignore device specification in dump requests but as the
++		 * same parser as for non-dump (doit) requests is used, it
++		 * would take reference to the device if it finds one
++		 */
++		dev_put(req_info->dev);
++		req_info->dev = NULL;
++	}
++	if (ret < 0)
++		return ret;
++
++	cb->args[0] = (long)ops;
++	cb->args[1] = (long)req_info;
++	cb->args[2] = 0;
++	cb->args[3] = 0;
++
++	return 0;
++}
++
++/* generic ->done() handler for GET requests */
++static int ethnl_get_done(struct netlink_callback *cb)
++{
++	free_get_data((const struct get_request_ops *)cb->args[0],
++		      (struct common_req_info *)cb->args[1]);
++
++	return 0;
++}
++
++/* generic notification handler */
++static void ethnl_std_notify(struct net_device *dev,
++			     struct netlink_ext_ack *extack, unsigned int cmd,
++			     u32 req_mask, const void *data)
++{
++	struct common_req_info *req_info;
++	const struct get_request_ops *ops;
++	struct sk_buff *skb;
++	void *reply_payload;
++	int reply_len;
++	int ret;
++
++	ops = get_requests[cmd - 1];
++	if (WARN_ONCE(!ops, "cmd %u has no get_request_ops\n", cmd - 1))
++		return;
++	/* when ethnl_std_notify() is used as notify handler, command id of
++	 * corresponding GET request must be one less than cmd argument passed
++	 * to ethnl_std_notify()
++	 */
++	if (WARN_ONCE(ops->reply_cmd != cmd,
++		      "reply_cmd for %u is %u, expected %u\n", cmd - 1,
++		      ops->reply_cmd, cmd))
++		return;
++
++	req_info = alloc_get_data(ops);
++	if (!req_info)
++		return;
++	req_info->dev = dev;
++	req_info->req_mask = req_mask;
++	req_info->compact = true;
++
++	init_reply_data(req_info, ops, dev);
++	ret = ops->prepare_data(req_info, NULL);
++	if (ret < 0)
++		goto err_data;
++	reply_len = ops->reply_size(req_info);
++	if (reply_len < 0)
++		goto err_data;
++	skb = genlmsg_new(reply_len, GFP_KERNEL);
++	if (!skb)
++		goto err_data;
++	reply_payload = genlmsg_put(skb, 0, ++ethnl_bcast_seq,
++				    &ethtool_genl_family, 0, ops->reply_cmd);
++	if (!reply_payload)
++		goto err_skb;
++
++	ret = ethnl_fill_dev(skb, dev, ops->dev_attrtype);
++	if (ret < 0)
++		goto err_skb;
++	ret = ops->fill_reply(skb, req_info);
++	if (ret < 0)
++		goto err_skb;
++	free_get_data(ops, req_info);
++	genlmsg_end(skb, reply_payload);
++
++	genlmsg_multicast(&ethtool_genl_family, skb, 0, ETHNL_MCGRP_MONITOR,
++			  GFP_KERNEL);
++	return;
++
++err_skb:
++	nlmsg_free(skb);
++err_data:
++	free_get_data(ops, req_info);
++}
++
+ /* notifications */
+ 
+ typedef void (*ethnl_notify_handler_t)(struct net_device *dev,
+diff --git a/net/ethtool/netlink.h b/net/ethtool/netlink.h
+index 78385baeaec0..7141ec71a6d3 100644
+--- a/net/ethtool/netlink.h
++++ b/net/ethtool/netlink.h
+@@ -155,4 +155,88 @@ static inline unsigned int dev_ident_size(void)
+ 			      nla_total_size(IFNAMSIZ));
+ }
+ 
++/* GET request handling */
++
++struct common_reply_data;
++
++/* Structure holding data for unified processing a GET request consists of two
++ * parts: request info and reply data. Request info starts at offset 0 with
++ * embedded struct common_req_info, is usually filled by ->parse_request()
++ * and is common for all reply messages to one request. Reply data start with
++ * embedded struct common_reply_data and contain data specific to a reply
++ * message (usually one per device for dump requests); this part is filled by
++ * ->prepare_data()
++ *
++ * @reply_data: pointer to corresponding struct common_reply_data
++ * @dev: requested device; may be null (dumps), if not, reference is held
++ * @req_mask: bit mask of parts of information requested
++ * @compact: use compact format for bitsets
++ */
++struct common_req_info {
++	struct common_reply_data	*reply_data;
++	struct net_device		*dev;
++	u32				req_mask;
++	bool				compact;
++};
++
++/* @dev: device for current reply message
++ * @info_mask: subset of req_mask (without information which is not available)
++ */
++struct common_reply_data {
++	struct net_device		*dev;
++	u32				info_mask;
++};
++
++static inline int ethnl_before_ops(struct net_device *dev)
++{
++	if (dev && dev->ethtool_ops->begin)
++		return dev->ethtool_ops->begin(dev);
++	else
++		return 0;
++}
++
++static inline void ethnl_after_ops(struct net_device *dev)
++{
++	if (dev && dev->ethtool_ops->complete)
++		dev->ethtool_ops->complete(dev);
++}
++
++/* parameters and callbacks for unified handling of GET requests
++ * @request_cmd: command id for request (GET)
++ * @reply_cmd: command id for reply (SET)
++ * @dev_attr: attr type for device specification
++ * @data_size: total length of data structure
++ * @repdata_offset: offset of "reply data" part (struct common_reply_data)
++ * @allow_nodev_do: do not fail if device is not specified for non-dump request
++ * @parse_request: parse request message and fill request info; request info
++ *     is zero initialized on entry except reply_data pointer (which is set)
++ * @prepare_data: retrieve data needed to compose a reply message; reply data
++ *     is zero initialized on entry except @dev
++ * @reply_size: return size of reply message payload without device
++ *     specification; reported size may be slightly bigger than actual reply
++ *     but must not be smaller
++ * @fill_reply: fill reply message payload
++ * @cleanup: (optional) called when data are no longer needed; use e.g. to free
++ *           any additional data allocated in prepare_data() which are not part
++ *           of the main structure
++ */
++struct get_request_ops {
++	u8			request_cmd;
++	u8			reply_cmd;
++	u16			dev_attrtype;
++	unsigned int		data_size;
++	unsigned int		repdata_offset;
++	bool			allow_nodev_do;
++
++	int (*parse_request)(struct common_req_info *req_info,
++			     struct sk_buff *skb, struct genl_info *info,
++			     const struct nlmsghdr *nlhdr);
++	int (*prepare_data)(struct common_req_info *req_info,
++			    struct genl_info *info);
++	int (*reply_size)(const struct common_req_info *req_info);
++	int (*fill_reply)(struct sk_buff *skb,
++			  const struct common_req_info *req_info);
++	void (*cleanup)(struct common_req_info *req_info);
++};
++
+ #endif /* _NET_ETHTOOL_NETLINK_H */
+-- 
+2.20.1
 
---kadn00tgSopKmJ1H
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxq9/AACgkQJNaLcl1U
-h9CKWAf/QhJOOS76j3FBAB7PkiShjc2QFHAP9oqiH9Lww2tp3YOOsGCFdJlb6cBI
-w2zA6yFx1Y4tPYVlsVQIX5U2aGmHzIebVvsxQA4n6GMGj8kmf87AI+x32JXBqV7Z
-T2dKCFkAx67vaFy6ReFW7Ck0SZfRLjEYMWTANBmnmq7wlgApQxuvlySMIPnrN7Md
-5t5qn2xFsBonZACjE7PgQEB1KaLKsWCPj2G8HZexyr0wq68ll4snaHxHHbg7Gna7
-Iv+wCry69RvEPOcq+aUH/PttGwL4BBhKniCsmvVYH25+vFt366BNUzkunMIQ3yk1
-M8+REeKOGuXHuf0wr5zWsnLoaseIAQ==
-=wHox
------END PGP SIGNATURE-----
-
---kadn00tgSopKmJ1H--
