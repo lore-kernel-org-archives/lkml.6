@@ -2,51 +2,53 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3EA9C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B154C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:07:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2CEF21902
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:07:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9DA721916
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:07:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498828;
-	bh=KOS80/Q9DqqL8LYrapIwpBdVp23rYOfkPyxFTboRe34=;
+	s=default; t=1550498833;
+	bh=ISSiR3FGEZqDSFWCx+Jw21MJajDiGkNupoAE8iNnBFI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kBXM2s0pjoLx3Pm8Akxpw6LYm77AXiEHfDkjAqSD7ZE4h6WbEwpHOypiFzBGyCWJd
-	 mhaVda5OVZrhKN37H4+Z69vbOO7FzG9WLHsUaOKK1UmIgv6NpKnmd9aoLR3OqAu/mV
-	 ew894DLcm1PLg2b5psEt3cP/uYVcapbP1Co2xTrU=
+	b=Vkl1g2VQo9hVLFY1u2VdC8YYX0EfK+MtqMwf7tB5kPF7M3/gWEnqj9tnsFvvRIz6V
+	 5WvnLFMuFcoUHiwO66Up9zIXrqjch7sHaOoAA+SbAkkO1kw9YlqV8a5niHAG9/FIcV
+	 vRzjeYbwUWz7Nx94BegwGydwCo05bFxZat6L4zfE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390540AbfBROHD (ORCPT
+        id S2390651AbfBROHL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:07:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50102 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:07:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388970AbfBROHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:07:00 -0500
+        id S2390617AbfBROHI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:07:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16DDC21916;
-        Mon, 18 Feb 2019 14:06:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49FD5204FD;
+        Mon, 18 Feb 2019 14:07:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498820;
-        bh=KOS80/Q9DqqL8LYrapIwpBdVp23rYOfkPyxFTboRe34=;
+        s=default; t=1550498826;
+        bh=ISSiR3FGEZqDSFWCx+Jw21MJajDiGkNupoAE8iNnBFI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HnuGnq6hfxaIipGuSyw2RuQz+QF80kYMYWZqRkUt9tbvYPtYha1AHcL1Hj9qheIRO
-         rpd9IYI58A0clLZGYJdGE03sjFzgsXBLVvlX97HyqFeTqyuzMqRRaMMZglo4f2SZ3T
-         XuCpKE0237QnNFXVzxOeBrborlbuk306hVVW4gd8=
+        b=MJlWscnqkPc43aBvI4V7TXNWq2lomOsjKHwMZiGXJs9AQ+Mu6gZt5I4i1holzWHrP
+         HoxxHZYsO5BIFzOoRzvjTzS0Gm6MPxYICpkV6NgZM9yCAgFK+jYabnsSi7r9CZErM8
+         MfXl8D4RMkopHSgZYYkFLLYDKO2WR1JOTQuNsY/M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rustad <mrustad@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 124/143] Documentation/network: reword kernel version reference
-Date:   Mon, 18 Feb 2019 14:44:12 +0100
-Message-Id: <20190218133533.532381561@linuxfoundation.org>
+        stable@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Andreas Ziegler <andreas.ziegler@fau.de>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.4 134/143] tracing/uprobes: Fix output for multiple string arguments
+Date:   Mon, 18 Feb 2019 14:44:22 +0100
+Message-Id: <20190218133533.878227006@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -65,31 +67,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-It seemed odd to say "since 4.17" in a 4.4 kernel. Consider
-rewording the reference to indicate where in the stable series
-it was introduced as well as where it originated.
+From: Andreas Ziegler <andreas.ziegler@fau.de>
 
-Signed-off-by: Mark Rustad <mrustad@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+commit 0722069a5374b904ec1a67f91249f90e1cfae259 upstream.
+
+When printing multiple uprobe arguments as strings the output for the
+earlier arguments would also include all later string arguments.
+
+This is best explained in an example:
+
+Consider adding a uprobe to a function receiving two strings as
+parameters which is at offset 0xa0 in strlib.so and we want to print
+both parameters when the uprobe is hit (on x86_64):
+
+$ echo 'p:func /lib/strlib.so:0xa0 +0(%di):string +0(%si):string' > \
+    /sys/kernel/debug/tracing/uprobe_events
+
+When the function is called as func("foo", "bar") and we hit the probe,
+the trace file shows a line like the following:
+
+  [...] func: (0x7f7e683706a0) arg1="foobar" arg2="bar"
+
+Note the extra "bar" printed as part of arg1. This behaviour stacks up
+for additional string arguments.
+
+The strings are stored in a dynamically growing part of the uprobe
+buffer by fetch_store_string() after copying them from userspace via
+strncpy_from_user(). The return value of strncpy_from_user() is then
+directly used as the required size for the string. However, this does
+not take the terminating null byte into account as the documentation
+for strncpy_from_user() cleary states that it "[...] returns the
+length of the string (not including the trailing NUL)" even though the
+null byte will be copied to the destination.
+
+Therefore, subsequent calls to fetch_store_string() will overwrite
+the terminating null byte of the most recently fetched string with
+the first character of the current string, leading to the
+"accumulation" of strings in earlier arguments in the output.
+
+Fix this by incrementing the return value of strncpy_from_user() by
+one if we did not hit the maximum buffer size.
+
+Link: http://lkml.kernel.org/r/20190116141629.5752-1-andreas.ziegler@fau.de
+
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: stable@vger.kernel.org
+Fixes: 5baaa59ef09e ("tracing/probes: Implement 'memory' fetch method for uprobes")
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Andreas Ziegler <andreas.ziegler@fau.de>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- Documentation/networking/ip-sysctl.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/trace_uprobe.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/networking/ip-sysctl.txt b/Documentation/networking/ip-sysctl.txt
-index 7c229f59016f..2fb35658d151 100644
---- a/Documentation/networking/ip-sysctl.txt
-+++ b/Documentation/networking/ip-sysctl.txt
-@@ -116,7 +116,7 @@ ipfrag_high_thresh - LONG INTEGER
- 	Maximum memory used to reassemble IP fragments.
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -150,7 +150,14 @@ static void FETCH_FUNC_NAME(memory, stri
  
- ipfrag_low_thresh - LONG INTEGER
--	(Obsolete since linux-4.17)
-+	(Obsolete since linux-4.4.174, backported from linux-4.17)
- 	Maximum memory used to reassemble IP fragments before the kernel
- 	begins to remove incomplete fragment queues to free up resources.
- 	The kernel still accepts new fragments for defragmentation.
--- 
-2.19.1
-
+ 	ret = strncpy_from_user(dst, src, maxlen);
+ 	if (ret == maxlen)
+-		dst[--ret] = '\0';
++		dst[ret - 1] = '\0';
++	else if (ret >= 0)
++		/*
++		 * Include the terminating null byte. In this case it
++		 * was copied by strncpy_from_user but not accounted
++		 * for in ret.
++		 */
++		ret++;
+ 
+ 	if (ret < 0) {	/* Failed to fetch string */
+ 		((u8 *)get_rloc_data(dest))[0] = '\0';
 
 
