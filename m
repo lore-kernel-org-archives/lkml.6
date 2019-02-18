@@ -4,107 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB493C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BCD3C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:35:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C447221738
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:20:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63A502177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:35:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730575AbfBRVUM (ORCPT
+        id S1730691AbfBRVfk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 16:20:12 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:49099 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729382AbfBRVUM (ORCPT
+        Mon, 18 Feb 2019 16:35:40 -0500
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:55651 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726955AbfBRVfk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 16:20:12 -0500
+        Mon, 18 Feb 2019 16:35:40 -0500
 X-Originating-IP: 86.202.231.219
 Received: from localhost (lfbn-lyo-1-149-219.w86-202.abo.wanadoo.fr [86.202.231.219])
         (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id E0EDC240005;
-        Mon, 18 Feb 2019 21:20:07 +0000 (UTC)
-Date:   Mon, 18 Feb 2019 22:20:07 +0100
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 816351C0004;
+        Mon, 18 Feb 2019 21:35:37 +0000 (UTC)
+Date:   Mon, 18 Feb 2019 22:35:37 +0100
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Claudiu.Beznea@microchip.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, Nicolas.Ferre@microchip.com,
-        Ludovic.Desroches@microchip.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] clk: at91: sckc: add support for SAM9X60
-Message-ID: <20190218212007.GW10129@piout.net>
-References: <1550146447-1441-1-git-send-email-claudiu.beznea@microchip.com>
- <1550146447-1441-3-git-send-email-claudiu.beznea@microchip.com>
+To:     Artem Panfilov <panfilov.artyom@gmail.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-rtc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] dt-bindings: rtc: add ABEOZ9 support
+Message-ID: <20190218213537.GZ10129@piout.net>
+References: <20190218202930.28140-1-panfilov.artyom@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1550146447-1441-3-git-send-email-claudiu.beznea@microchip.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190218202930.28140-1-panfilov.artyom@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/02/2019 12:14:32+0000, Claudiu.Beznea@microchip.com wrote:
-> From: Claudiu Beznea <claudiu.beznea@microchip.com>
-> 
-> Add support for SAM9X60.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Hi,
+
+On 18/02/2019 23:29:29+0300, Artem Panfilov wrote:
+> Signed-off-by: Artem Panfilov <panfilov.artyom@gmail.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+
+This was not necessary as the maintainer can collect tags in the same
+thread as the patch.
+
 > ---
->  drivers/clk/at91/sckc.c | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
+
+As Rob explained, you should add a changelog here.
+
+>  Documentation/devicetree/bindings/rtc/rtc.txt | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
-> index b7163d3a2269..b3075c51d260 100644
-> --- a/drivers/clk/at91/sckc.c
-> +++ b/drivers/clk/at91/sckc.c
-> @@ -459,6 +459,36 @@ static void __init of_at91sam9x5_sckc_setup(struct device_node *np)
->  CLK_OF_DECLARE(at91sam9x5_clk_sckc, "atmel,at91sam9x5-sckc",
->  	       of_at91sam9x5_sckc_setup);
->  
-> +static const struct clk_slow_offsets at91sam9x60_offsets = {
-> +	.cr_rcen = AT91_SCKC_OFFSET_INVALID,
-> +	.cr_osc32en = 1,
-> +	.cr_osc32byp = 2,
-> +	.cr_oscsel = 24,
-> +};
-> +
-> +static void __init of_at91sam9x60_sckc_setup(struct device_node *np)
-> +{
-> +	struct device_node *childnp;
-> +	void (*clk_setup)(struct device_node *np, void __iomem *io,
-> +			  const struct clk_slow_offsets *offsets);
-> +	const struct of_device_id *clk_id;
-> +	void __iomem *regbase = of_iomap(np, 0);
-> +
-> +	if (!regbase)
-> +		return;
-> +
-> +	for_each_child_of_node(np, childnp) {
-> +		clk_id = of_match_node(sckc_clk_ids, childnp);
-> +		if (!clk_id)
-> +			continue;
-> +		clk_setup = clk_id->data;
-> +		clk_setup(childnp, regbase, &at91sam9x60_offsets);
-> +	}
-
-You actually need to have new bindings. The sam9x60 registration should
-look more like the sama5d4 registration. I have a rework for the sam9x5
-sckc that I will send this week to have a proper binding (i.e: no
-children).
-
-However, there is a fundamental change in the sam9x60, previously, the
-sckc had only one output clock. the sam9x60 has both td_slck and
-md_slck. Both need to be accessible because they are input to the PMC.
-
-This means you will have to register the sckc with of_clk_hw_onecell_get
-as the get callback.
-
-We could still decide to do the same with sam9x5 even if it has only one
-output clock.
+> diff --git a/Documentation/devicetree/bindings/rtc/rtc.txt b/Documentation/devicetree/bindings/rtc/rtc.txt
+> index 7c8da6926095..0ac93f2dcedc 100644
+> --- a/Documentation/devicetree/bindings/rtc/rtc.txt
+> +++ b/Documentation/devicetree/bindings/rtc/rtc.txt
+> @@ -39,6 +39,7 @@ possibly an interrupt line.
+>  Compatible		Vendor / Chip
+>  ==========		=============
+>  abracon,abb5zes3	AB-RTCMC-32.768kHz-B5ZE-S3: Real Time Clock/Calendar Module with I2C Interface
+> +abracon,abeoz9		AB-RTCMC-32.768kHz-EOZ9: Real Time Clock/Calendar Module with I2C Interface
+>  dallas,ds1374		I2C, 32-Bit Binary Counter Watchdog RTC with Trickle Charger and Reset Input/Output
+>  dallas,ds1672		Dallas DS1672 Real-time Clock
+>  dallas,ds3232		Extremely Accurate I²C RTC with Integrated Crystal and SRAM
+> -- 
+> 2.19.1
+> 
 
 -- 
 Alexandre Belloni, Bootlin
