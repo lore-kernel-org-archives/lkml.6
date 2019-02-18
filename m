@@ -2,153 +2,96 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E59FC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10052C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:56:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D53E52184A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:56:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD5142184A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:56:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r+fShDgq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388043AbfBRP4Q (ORCPT
+        id S2388099AbfBRP45 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 10:56:16 -0500
-Received: from foss.arm.com ([217.140.101.70]:33598 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387848AbfBRP4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 10:56:14 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0FD2180D;
-        Mon, 18 Feb 2019 07:56:14 -0800 (PST)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 80AE93F675;
-        Mon, 18 Feb 2019 07:56:12 -0800 (PST)
-Date:   Mon, 18 Feb 2019 15:56:07 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, andrew.murray@arm.com,
-        catalin.marinas@arm.com, linux-riscv@lists.infradead.org,
-        aou@eecs.berkeley.edu
-Subject: Re: [PATCH 1/2] asm-generic/io: Pass result on inX() accessor to
- __io_par()
-Message-ID: <20190218155607.GA16713@fuggles.cambridge.arm.com>
-References: <CAK8P3a1-CA_d+tRRKh50+7-PU14AV=9S1JUSF4d-VUxZ+DcW4g@mail.gmail.com>
- <mhng-30e76674-df9d-4689-8c77-3a3b4723ee24@palmer-si-x1c4>
+        Mon, 18 Feb 2019 10:56:57 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46902 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730199AbfBRP44 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 10:56:56 -0500
+Received: by mail-pg1-f195.google.com with SMTP id w7so8644989pgp.13
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 07:56:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=15CNhbhWvXOtTCo6jebNIpwW9Qe1MGlcrULyF7u9LqQ=;
+        b=r+fShDgqwp3BRKoIYd1vFXRjXb/bsjS+BtPyxt+qG9KLv3jmc25gVLCV9z2TF2KX1a
+         nSh63p3TFizYDVhfxplA2EMwo19/ZhGILwoBruhStGNB4bxSxYcFcMYMFOxLxNfXPSzO
+         qBRD05FV4TBN1sJcgTPgNV3M14SGWrKuKHWltT3T3GcXBfuQhVjzTaBfMAC9NWW0V/At
+         68RZRJZcZ0UjQR7zFzXBFZHH/O+K3Sg0k0bswJ4tXXjjIcWFG5Dk+1w04JG1YA0fKrel
+         dBmcB/0QF+tKqiG62e8X7wTGSlXzX54jWxoCk7OGLIzteyRNHsDW6VYY7lRheEGctLKJ
+         aJZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=15CNhbhWvXOtTCo6jebNIpwW9Qe1MGlcrULyF7u9LqQ=;
+        b=FASLy5Gm5Am1vXWAzgfE8sv9CO+6icT29CS7RMGyNznQCkgpWx4U2LIAlazE4fhx27
+         DNuUK0RZipZbjI5nVArpoNMBEL7ZFCbU+XJweWZ/KSWhcfpyMZzZKtvF+2GwhP/yN41W
+         Sm/t2w5jowzIcCS+91Rwl0FdEeVA6BI0ywnypeLv8a7hwJfghM2nuuE2MzZEMBIz11/N
+         jmj7jFF7wcpH0KkGfyAD/8JatUyjKIVS20uqzKg/nZnL1QXZrjaSvgQ4p0y8DYbBdCFZ
+         0D7E0NiJP+HJEvodko0FCWNqLDAyh5nM2lHqcoiAT8BTOPMBQl6TQwC1dLSMDtdkiLnH
+         Nx+A==
+X-Gm-Message-State: AHQUAuaD/42YsYQpFxRrJCAjKIrH+GlPYm7PB8X3GZmrSJmlgFgTl2Dc
+        sxnuVjKlT9l2rIVorHEFrZpcOLqY1F3QYtgZdB2aRw==
+X-Google-Smtp-Source: AHgI3IZMGzkFgLdqE+AD7Y3hfwzxkylhvyZESOlZyS8079LBJNa4hh/152UrmuZJtH7Oj/um+B//tVelXBjizv0bfMs=
+X-Received: by 2002:a62:1c86:: with SMTP id c128mr25717905pfc.54.1550505415843;
+ Mon, 18 Feb 2019 07:56:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <mhng-30e76674-df9d-4689-8c77-3a3b4723ee24@palmer-si-x1c4>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+References: <20190217043434.46233-1-cai@lca.pw> <CAAeHK+y8Xd1J2DppUMQLVhoc69wrqgNA=9hV45Jsd7V97CN6yw@mail.gmail.com>
+ <dddc0e6e-af71-c98c-c8db-20c6d9fa87c3@lca.pw>
+In-Reply-To: <dddc0e6e-af71-c98c-c8db-20c6d9fa87c3@lca.pw>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Mon, 18 Feb 2019 16:56:44 +0100
+Message-ID: <CAAeHK+yDa=Ks7TY8unVfFYt7ekDOyqpqW4otyMg1XUxkFt5Q+A@mail.gmail.com>
+Subject: Re: [PATCH] trace: skip hwasan
+To:     Qian Cai <cai@lca.pw>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 01:57:50PM -0800, Palmer Dabbelt wrote:
-> On Wed, 13 Feb 2019 12:59:28 PST (-0800), Arnd Bergmann wrote:
-> > On Wed, Feb 13, 2019 at 6:46 PM Will Deacon <will.deacon@arm.com> wrote:
-> > 
-> > > On Tue, Feb 12, 2019 at 12:55:17PM +0100, Arnd Bergmann wrote:
-> > > 
-> > > > For all I can see, this should not conflict with the usage of the
-> > > > same macros on RISC-V, though it does make add a significant
-> > > > difference, so I'd like to see an Ack from the RISC-V folks as
-> > > > well (added to Cc), or possibly a change to arch/riscv/include/asm/io.h
-> > > > to do a corresponding change.
-> 
-> Thanks, the original patches didn't make it through my filters.
-> 
-> > > There's already a comment in that header which says that the accesses are
-> > > ordered wrt timer reads, so I don't think anything needs to change there.
-> > > For consistency with the macro arguments, I could augment their __io_par to
-> > > take the read value as an unused argument, if that's what you mean?
-> 
-> FWIW, we don't really have a way to mandate this in the ISA yet as there's
-> no formal model for either CSR orderings or the IO memory space.
+On Mon, Feb 18, 2019 at 4:53 PM Qian Cai <cai@lca.pw> wrote:
+>
+>
+>
+> On 2/18/19 10:25 AM, Andrey Konovalov wrote:
+> > On Sun, Feb 17, 2019 at 5:34 AM Qian Cai <cai@lca.pw> wrote:
+> >>
+> >> Enabling function tracer with CONFIG_KASAN_SW_TAGS=y (hwasan) tracer
+> >> causes the whole system frozen on ThunderX2 systems with 256 CPUs,
+> >> because there is a burst of too much pointer access, and then KASAN will
+> >> dereference each byte of the shadow address for the tag checking which
+> >> will kill all the CPUs.
+> >
+> > Hi Qian,
+> >
+> > Could you check if adding "CFLAGS_REMOVE_tags.o = -pg" into
+> > mm/kasan/Makefile helps with that?
+>
+> Yes, you nailed it!
 
-Ah, so you may end up needing the dependency trick too, depending on where
-you land with the ISA.
-
-> > Yes, that's what I meant, I should have been clearer there.
-> 
-> That sounds reasonable to me.  It looks like we can also go ahead and delete
-> a bunch of arch/riscv/include/asm/io.h now that this stuff is in
-> asm-generic, which would cause us to actually start using these things.  I
-> didn't know this had all been moved to asm-generic otherwise I would have
-> cleaned this up earlier.
-> 
-> I think this should do it, but this does bring up a bit of an issue: the
-> RISC-V versions of reads and friends put barriers outside the loop, while
-> the asm-generic version don't.  What are these actually supposed to do?
-
-You're referring to the string accessors (e.g. insb() and readsw()), right?
-arm and arm64 don't provide barriers here either, and I don't think they
-should have to given that these routines are usually used to poll data
-register-based FIFOs and therefore don't need to provide ordering guarantees
-against DMA operations. However, this is woefully undocumented and I shall
-try to address this in the next version of my memory-barriers.txt patch
-relating to this area [1].
-
-> Either way that resolves, feel free to consider something like
-> 
-> diff --git a/arch/riscv/include/asm/io.h b/arch/riscv/include/asm/io.h
-> index b269451e7e85..378975f180a7 100644
-> --- a/arch/riscv/include/asm/io.h
-> +++ b/arch/riscv/include/asm/io.h
-> @@ -198,20 +198,20 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
->  * writes.
->  */
-> #define __io_pbr()	__asm__ __volatile__ ("fence io,i"  : : : "memory");
-> -#define __io_par()	__asm__ __volatile__ ("fence i,ior" : : : "memory");
-> +#define __io_par(v)	__asm__ __volatile__ ("fence i,ior" : : : "memory");
-> #define __io_pbw()	__asm__ __volatile__ ("fence iow,o" : : : "memory");
-> #define __io_paw()	__asm__ __volatile__ ("fence o,io"  : : : "memory");
-> 
-> -#define inb(c)		({ u8  __v; __io_pbr(); __v = readb_cpu((void*)(PCI_IOBASE + (c))); __io_par(); __v; })
-> -#define inw(c)		({ u16 __v; __io_pbr(); __v = readw_cpu((void*)(PCI_IOBASE + (c))); __io_par(); __v; })
-> -#define inl(c)		({ u32 __v; __io_pbr(); __v = readl_cpu((void*)(PCI_IOBASE + (c))); __io_par(); __v; })
-> +#define inb(c)		({ u8  __v; __io_pbr(); __v = readb_cpu((void*)(PCI_IOBASE + (c))); __io_par(__v); __v; })
-> +#define inw(c)		({ u16 __v; __io_pbr(); __v = readw_cpu((void*)(PCI_IOBASE + (c))); __io_par(__v); __v; })
-> +#define inl(c)		({ u32 __v; __io_pbr(); __v = readl_cpu((void*)(PCI_IOBASE + (c))); __io_par(__v); __v; })
-> 
-> #define outb(v,c)	({ __io_pbw(); writeb_cpu((v),(void*)(PCI_IOBASE + (c))); __io_paw(); })
-> #define outw(v,c)	({ __io_pbw(); writew_cpu((v),(void*)(PCI_IOBASE + (c))); __io_paw(); })
-> #define outl(v,c)	({ __io_pbw(); writel_cpu((v),(void*)(PCI_IOBASE + (c))); __io_paw(); })
-> 
-> #ifdef CONFIG_64BIT
-> -#define inq(c)		({ u64 __v; __io_pbr(); __v = readq_cpu((void*)(c)); __io_par(); __v; })
-> +#define inq(c)		({ u64 __v; __io_pbr(); __v = readq_cpu((void*)(c)); __io_par(__v); __v; })
-> #define outq(v,c)	({ __io_pbw(); writeq_cpu((v),(void*)(c)); __io_paw(); })
-> #endif
-> 
-> @@ -261,9 +261,9 @@ __io_reads_ins(reads, u32, l, __io_br(), __io_ar())
-> #define readsw(addr, buffer, count) __readsw(addr, buffer, count)
-> #define readsl(addr, buffer, count) __readsl(addr, buffer, count)
-> 
-> -__io_reads_ins(ins,  u8, b, __io_pbr(), __io_par())
-> -__io_reads_ins(ins, u16, w, __io_pbr(), __io_par())
-> -__io_reads_ins(ins, u32, l, __io_pbr(), __io_par())
-> +__io_reads_ins(ins,  u8, b, __io_pbr(), __io_par(addr))
-> +__io_reads_ins(ins, u16, w, __io_pbr(), __io_par(addr))
-> +__io_reads_ins(ins, u32, l, __io_pbr(), __io_par(addr))
-> #define insb(addr, buffer, count) __insb((void __iomem *)(long)addr, buffer, count)
-> #define insw(addr, buffer, count) __insw((void __iomem *)(long)addr, buffer, count)
-> #define insl(addr, buffer, count) __insl((void __iomem *)(long)addr, buffer, count)
-> 
-> as
-> 
-> Revewied-by: Palmer Dabbelt <palmer@sifive.com>
-> 
-> when included along with the other diff.  That way we can at least keep the
-> macro signatures matching, the cleanup can come later...
-
-Thanks, Palmer! I'll send a v2 of this patch, updated to fix up insq() as
-well as the readX() macros too, since they're likely to suffer the exact
-same issues as inX() in this regard.
-
-Will
-
-[1] https://lkml.org/lkml/2019/2/11/1803
+Great! I'll send the patch.
