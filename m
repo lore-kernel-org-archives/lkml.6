@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FEC2C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C181C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E4BD217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:44:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D3A921900
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497499;
-	bh=eewDB24sR8m/QWDDgNdeZrfP25pjznGywirO2QZScuo=;
+	s=default; t=1550497503;
+	bh=Qx1jQMpo2lgcbwhZZ1BCR/E+e6pz1/DI7HVFxMx9Du0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0fA1o3bQCnbxEgexNEcTztp1PB7olGUU3eZu15xoGEV76TESwKQKmafeYZgNjnz0M
-	 Qcq8w8x4HZR+n1DlDGY+Lc/z0Gf5GfMlRnfat/nu3lwMtTD40DhlJ4O7n5Sc6ZsK+9
-	 I54XFxv9gm9aXtHtam32f3kksqBNMu0xg+EoXx08=
+	b=FZBh1rIV23/46lIVVvzzJ/LU5cbgL0KgxQOyWsfDUAlE6uLLKh04m7DtAwzu5e9dC
+	 ux0Vk8ewtIQWq9cOvKY08RCFohKsF2qtNCT23D4HtunU95X/Ao2VEcUKz52vOOjPFx
+	 MW3GOyWolyIxCyt74XAx7txu4nmGkIcDHL9uR+DY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731193AbfBRNo5 (ORCPT
+        id S1731213AbfBRNpB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:44:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50860 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:45:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729609AbfBRNo5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:44:57 -0500
+        id S1729609AbfBRNpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:45:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 496D5217F5;
-        Mon, 18 Feb 2019 13:44:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F453218FC;
+        Mon, 18 Feb 2019 13:44:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497496;
-        bh=eewDB24sR8m/QWDDgNdeZrfP25pjznGywirO2QZScuo=;
+        s=default; t=1550497499;
+        bh=Qx1jQMpo2lgcbwhZZ1BCR/E+e6pz1/DI7HVFxMx9Du0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UWpYf6tqUsg/yLBjKxwFYK2dZzYhq7oGy2hTVFKPpVxBDpOxvA+UtUvDBYtV+cZDt
-         VrqzsYJWWSfC3CNDaCBT48xrkGzXD81EzK1OZ0rGfpY9yVclHdXQSFsBfzEPY81O/Z
-         UVixLaBvp6f3Z811n3EB/LrKyx1D9eKUvdinKGlI=
+        b=muggqsfEc1pbSISkC5lchttbMV0SusTljLckPbuYglFSNuhLnmWm3IWNx1gksot2s
+         0y7ZqHLBt/veOHMnKB14mgkJcnAhQYYJT3XWeeE4ItcmFcZca6sdpg10ZeJn2xRRfl
+         xbcBMSym/zhQXiJgGLjeWtWLs9qsp0R2Gpg7A5p4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Bunk <bunk@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
+        stable@vger.kernel.org, Aurelien Jarno <aurelien@aurel32.net>,
+        Palmer Dabbelt <palmer@sifive.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 01/92] dt-bindings: eeprom: at24: add "atmel,24c2048" compatible string
-Date:   Mon, 18 Feb 2019 14:42:04 +0100
-Message-Id: <20190218133454.792283446@linuxfoundation.org>
+Subject: [PATCH 4.20 10/92] tools uapi: fix RISC-V 64-bit support
+Date:   Mon, 18 Feb 2019 14:42:13 +0100
+Message-Id: <20190218133455.600529004@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
 References: <20190218133454.668268457@linuxfoundation.org>
@@ -67,30 +66,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6c0c5dc33ff42af49243e94842d0ebdb153189ea ]
+[ Upstream commit d0df00e30e4bf9bc27ddbd092ad683ff6121b360 ]
 
-Add new compatible to the device tree bindings.
+The BPF library is not built on 64-bit RISC-V, as the BPF feature is
+not detected. Looking more in details, feature/test-bpf.c fails to build
+with the following error:
 
-Signed-off-by: Adrian Bunk <bunk@kernel.org>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+| In file included from /tmp/linux-4.19.12/tools/include/uapi/asm/bitsperlong.h:17,
+|                  from /tmp/linux-4.19.12/tools/include/uapi/asm-generic/unistd.h:2,
+|                  from /usr/include/riscv64-linux-gnu/asm/unistd.h:1,
+|                  from test-bpf.c:2:
+| /tmp/linux-4.19.12/tools/include/asm-generic/bitsperlong.h:14:2: error: #error Inconsistent word size. Check asm/bitsperlong.h
+|  #error Inconsistent word size. Check asm/bitsperlong.h
+|   ^~~~~
+
+The UAPI from the tools directory is missing RISC-V support, therefore
+bitsperlong.h from asm-generic is used, defaulting to 32 bits.
+
+Fix that by adding tools/arch/riscv/include/uapi/asm/bitsperlong.h as
+a copy of arch/riscv/include/uapi/asm/bitsperlong.h and by updating
+tools/include/uapi/asm/bitsperlong.h.
+
+Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/devicetree/bindings/eeprom/at24.txt | 1 +
- 1 file changed, 1 insertion(+)
+ .../arch/riscv/include/uapi/asm/bitsperlong.h | 25 +++++++++++++++++++
+ tools/include/uapi/asm/bitsperlong.h          |  2 ++
+ 2 files changed, 27 insertions(+)
+ create mode 100644 tools/arch/riscv/include/uapi/asm/bitsperlong.h
 
-diff --git a/Documentation/devicetree/bindings/eeprom/at24.txt b/Documentation/devicetree/bindings/eeprom/at24.txt
-index aededdbc262b..f9a7c984274c 100644
---- a/Documentation/devicetree/bindings/eeprom/at24.txt
-+++ b/Documentation/devicetree/bindings/eeprom/at24.txt
-@@ -27,6 +27,7 @@ Required properties:
-                 "atmel,24c256",
-                 "atmel,24c512",
-                 "atmel,24c1024",
-+                "atmel,24c2048",
- 
-                 If <manufacturer> is not "atmel", then a fallback must be used
-                 with the same <model> and "atmel" as manufacturer.
+diff --git a/tools/arch/riscv/include/uapi/asm/bitsperlong.h b/tools/arch/riscv/include/uapi/asm/bitsperlong.h
+new file mode 100644
+index 000000000000..0b3cb52fd29d
+--- /dev/null
++++ b/tools/arch/riscv/include/uapi/asm/bitsperlong.h
+@@ -0,0 +1,25 @@
++/*
++ * Copyright (C) 2012 ARM Ltd.
++ * Copyright (C) 2015 Regents of the University of California
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef _UAPI_ASM_RISCV_BITSPERLONG_H
++#define _UAPI_ASM_RISCV_BITSPERLONG_H
++
++#define __BITS_PER_LONG (__SIZEOF_POINTER__ * 8)
++
++#include <asm-generic/bitsperlong.h>
++
++#endif /* _UAPI_ASM_RISCV_BITSPERLONG_H */
+diff --git a/tools/include/uapi/asm/bitsperlong.h b/tools/include/uapi/asm/bitsperlong.h
+index 8dd6aefdafa4..fd92ce8388fc 100644
+--- a/tools/include/uapi/asm/bitsperlong.h
++++ b/tools/include/uapi/asm/bitsperlong.h
+@@ -13,6 +13,8 @@
+ #include "../../arch/mips/include/uapi/asm/bitsperlong.h"
+ #elif defined(__ia64__)
+ #include "../../arch/ia64/include/uapi/asm/bitsperlong.h"
++#elif defined(__riscv)
++#include "../../arch/riscv/include/uapi/asm/bitsperlong.h"
+ #else
+ #include <asm-generic/bitsperlong.h>
+ #endif
 -- 
 2.19.1
 
