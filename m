@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE2F8C10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B40C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:48:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E95621906
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:48:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6894321906
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:48:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497727;
-	bh=etCwJecZJ3Bsx+K3j1PspoLBJAFyQT90ijfNGaDBg3w=;
+	s=default; t=1550497734;
+	bh=klHkoDs9nx7JmuB0cl0mqBqZnr+346qRUHkhlSO39FQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DKHQzSB/elOtk3joWcJEwXrqbe+IkfKvM8nU8b2Tmw9qe95eLfkP56c69epj4QARM
-	 tq/SR2ukwsu6vCXtphrQ12ED8+aXqUVlzhnwmIEGntFIfBlxP5zV+R2esRa1+b90lw
-	 xjSyL3NSdueXiJByYVvvpvY33f+oc+bBKzLYEUjw=
+	b=y4CZUd8lrBUAbHvrHHM9lN0mV0bmm2MLqlsbtBIEWdQ2a3OxykxLfLPx8Mvi7MK7W
+	 XKWYhQ73kfHAp/nkMyNf9CGt7M1xMQ7f2T5qVjOt5FS9XChqV+hwPYFbnKfcVAm4jP
+	 vH0GcAum/nq7t023JAfNswV3OJLSk1aUpIlpdgjk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731906AbfBRNsq (ORCPT
+        id S1731932AbfBRNsx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:48:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55554 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:48:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731446AbfBRNsl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:48:41 -0500
+        id S1731903AbfBRNso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:48:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D08D021904;
-        Mon, 18 Feb 2019 13:48:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C169421905;
+        Mon, 18 Feb 2019 13:48:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497720;
-        bh=etCwJecZJ3Bsx+K3j1PspoLBJAFyQT90ijfNGaDBg3w=;
+        s=default; t=1550497723;
+        bh=klHkoDs9nx7JmuB0cl0mqBqZnr+346qRUHkhlSO39FQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CESDN0sRbAB2cej/bn/YDz6H1nCnhkhQjsl2cIJewT2erB914twXI7h1rRaEFcRhv
-         nq16pk0rekKiojJ/KUwcNVTfS2ES158N013WCfT64cPcC6g+JGJ84XRbPmqjDr8ccn
-         eoC12NOr+nybWa+14MJsxIEIyEuBablZuqcBx/bs=
+        b=zG9YT9DBVaU+5TeO3gglNQsnb+ha19gHvhrHASwN/th9gH2JnZDsUTvJvIUyuUKga
+         IEeSe0XVfWVRcRFtLuPl94IbAnkWjlNKM++kojmL3sHAoprZdrnvDmbO4RSEc/IHrt
+         oEzNdYeJ9G1mTIuEhaDuelXIEiWnlSF9LjacyzVI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
-        Ivan Delalande <colona@arista.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 4.20 81/92] signal: Restore the stop PTRACE_EVENT_EXIT
-Date:   Mon, 18 Feb 2019 14:43:24 +0100
-Message-Id: <20190218133502.698992349@linuxfoundation.org>
+        stable@vger.kernel.org, Gilad Ben-Yossef <gilad@benyossef.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>, stable@kernel.org
+Subject: [PATCH 4.20 82/92] crypto: ccree - fix resume race condition on init
+Date:   Mon, 18 Feb 2019 14:43:25 +0100
+Message-Id: <20190218133502.872282920@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
 References: <20190218133454.668268457@linuxfoundation.org>
@@ -66,58 +65,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric W. Biederman <ebiederm@xmission.com>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
 
-commit cf43a757fd49442bc38f76088b70c2299eed2c2f upstream.
+commit 1358c13a48c43f5e4de0c1835291837a27b9720c upstream.
 
-In the middle of do_exit() there is there is a call
-"ptrace_event(PTRACE_EVENT_EXIT, code);" That call places the process
-in TACKED_TRACED aka "(TASK_WAKEKILL | __TASK_TRACED)" and waits for
-for the debugger to release the task or SIGKILL to be delivered.
+We were enabling autosuspend, which is using data set by the
+hash module, prior to the hash module being inited, casuing
+a crash on resume as part of the startup sequence if the race
+was lost.
 
-Skipping past dequeue_signal when we know a fatal signal has already
-been delivered resulted in SIGKILL remaining pending and
-TIF_SIGPENDING remaining set.  This in turn caused the
-scheduler to not sleep in PTACE_EVENT_EXIT as it figured
-a fatal signal was pending.  This also caused ptrace_freeze_traced
-in ptrace_check_attach to fail because it left a per thread
-SIGKILL pending which is what fatal_signal_pending tests for.
+This was never a real problem because the PM infra was using low
+res timers so we were always winning the race, until commit 8234f6734c5d
+("PM-runtime: Switch autosuspend over to using hrtimers") changed that :-)
 
-This difference in signal state caused strace to report
-strace: Exit of unknown pid NNNNN ignored
+Fix this by seperating the PM setup and enablement and doing the
+latter only at the end of the init sequence.
 
-Therefore update the signal handling state like dequeue_signal
-would when removing a per thread SIGKILL, by removing SIGKILL
-from the per thread signal mask and clearing TIF_SIGPENDING.
-
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-Reported-by: Oleg Nesterov <oleg@redhat.com>
-Reported-by: Ivan Delalande <colona@arista.com>
-Cc: stable@vger.kernel.org
-Fixes: 35634ffa1751 ("signal: Always notice exiting tasks")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: stable@kernel.org # v4.20
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/signal.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/crypto/ccree/cc_driver.c |    7 ++++---
+ drivers/crypto/ccree/cc_pm.c     |   13 ++++++-------
+ drivers/crypto/ccree/cc_pm.h     |    3 +++
+ 3 files changed, 13 insertions(+), 10 deletions(-)
 
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2436,9 +2436,12 @@ relock:
+--- a/drivers/crypto/ccree/cc_driver.c
++++ b/drivers/crypto/ccree/cc_driver.c
+@@ -364,7 +364,7 @@ static int init_cc_resources(struct plat
+ 	rc = cc_ivgen_init(new_drvdata);
+ 	if (rc) {
+ 		dev_err(dev, "cc_ivgen_init failed\n");
+-		goto post_power_mgr_err;
++		goto post_buf_mgr_err;
  	}
  
- 	/* Has this task already been marked for death? */
--	ksig->info.si_signo = signr = SIGKILL;
--	if (signal_group_exit(signal))
-+	if (signal_group_exit(signal)) {
-+		ksig->info.si_signo = signr = SIGKILL;
-+		sigdelset(&current->pending.signal, SIGKILL);
-+		recalc_sigpending();
- 		goto fatal;
-+	}
+ 	/* Allocate crypto algs */
+@@ -387,6 +387,9 @@ static int init_cc_resources(struct plat
+ 		goto post_hash_err;
+ 	}
  
- 	for (;;) {
- 		struct k_sigaction *ka;
++	/* All set, we can allow autosuspend */
++	cc_pm_go(new_drvdata);
++
+ 	/* If we got here and FIPS mode is enabled
+ 	 * it means all FIPS test passed, so let TEE
+ 	 * know we're good.
+@@ -401,8 +404,6 @@ post_cipher_err:
+ 	cc_cipher_free(new_drvdata);
+ post_ivgen_err:
+ 	cc_ivgen_fini(new_drvdata);
+-post_power_mgr_err:
+-	cc_pm_fini(new_drvdata);
+ post_buf_mgr_err:
+ 	 cc_buffer_mgr_fini(new_drvdata);
+ post_req_mgr_err:
+--- a/drivers/crypto/ccree/cc_pm.c
++++ b/drivers/crypto/ccree/cc_pm.c
+@@ -100,20 +100,19 @@ int cc_pm_put_suspend(struct device *dev
+ 
+ int cc_pm_init(struct cc_drvdata *drvdata)
+ {
+-	int rc = 0;
+ 	struct device *dev = drvdata_to_dev(drvdata);
+ 
+ 	/* must be before the enabling to avoid resdundent suspending */
+ 	pm_runtime_set_autosuspend_delay(dev, CC_SUSPEND_TIMEOUT);
+ 	pm_runtime_use_autosuspend(dev);
+ 	/* activate the PM module */
+-	rc = pm_runtime_set_active(dev);
+-	if (rc)
+-		return rc;
+-	/* enable the PM module*/
+-	pm_runtime_enable(dev);
++	return pm_runtime_set_active(dev);
++}
+ 
+-	return rc;
++/* enable the PM module*/
++void cc_pm_go(struct cc_drvdata *drvdata)
++{
++	pm_runtime_enable(drvdata_to_dev(drvdata));
+ }
+ 
+ void cc_pm_fini(struct cc_drvdata *drvdata)
+--- a/drivers/crypto/ccree/cc_pm.h
++++ b/drivers/crypto/ccree/cc_pm.h
+@@ -16,6 +16,7 @@
+ extern const struct dev_pm_ops ccree_pm;
+ 
+ int cc_pm_init(struct cc_drvdata *drvdata);
++void cc_pm_go(struct cc_drvdata *drvdata);
+ void cc_pm_fini(struct cc_drvdata *drvdata);
+ int cc_pm_suspend(struct device *dev);
+ int cc_pm_resume(struct device *dev);
+@@ -29,6 +30,8 @@ static inline int cc_pm_init(struct cc_d
+ 	return 0;
+ }
+ 
++static void cc_pm_go(struct cc_drvdata *drvdata) {}
++
+ static inline void cc_pm_fini(struct cc_drvdata *drvdata) {}
+ 
+ static inline int cc_pm_suspend(struct device *dev)
 
 
