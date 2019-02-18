@@ -2,113 +2,85 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28123C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4E9C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:10:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E67EB218C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:07:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550477257;
-	bh=f1oyHMXR0H2RE4SVj30LyqSdSVFSIGLqTtQiDPrFDLs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=grYV4GxhDiTmv0oNfXRjV+8iY8dc5TpAF7sd0a5yvG/LLI4Sg4erPdJXUNIVmVjdk
-	 wRF9X3KTkd7Fe42VA3zH0ZDH1DuJzyo8wLNKnnv8nkb7fBWVlMMAu9diHm6Lj8sraa
-	 J5kIwgeAXbsdh1/NiMVP1CaZsifUi1hDu6raI7M4=
+	by mail.kernel.org (Postfix) with ESMTP id DC8C9218FF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:10:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="G+CQ1d97"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729114AbfBRIHf (ORCPT
+        id S1728929AbfBRIKI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 03:07:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50340 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 03:10:08 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:40574 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725881AbfBRIHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 03:07:31 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        id S1725881AbfBRIKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 03:10:07 -0500
+Received: from zn.tnic (p200300EC2BC7C70041AEC7F500F46BD2.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:c700:41ae:c7f5:f4:6bd2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2CB92070D;
-        Mon, 18 Feb 2019 08:07:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550477250;
-        bh=f1oyHMXR0H2RE4SVj30LyqSdSVFSIGLqTtQiDPrFDLs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jlZWe5zAe7yCtpAkEKqvZZlS7ER4ao+iIbEbRxliJ+lJsxfOt1EdLY5bhGrZeNsvK
-         c7bphLp6E8uNP5eOBdElop3Q5UZsX0Tvh1vQV0nfHZuk2VrGb3KPCv6uTbF/LxE3Ex
-         5LSabqAT90Q1lWBmwVBiiKsx04e7+GRJ0S/L/+CM=
-Date:   Mon, 18 Feb 2019 09:07:27 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Chen Yu <chenyu56@huawei.com>, Jun Li <jun.li@nxp.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/9] device connection: Add support for device graphs
-Message-ID: <20190218080727.GA21246@kroah.com>
-References: <20190213074557.66028-1-heikki.krogerus@linux.intel.com>
- <20190214101043.GA4316@kroah.com>
- <20190215124715.GA10182@kuha.fi.intel.com>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CBD2F1EC03D8;
+        Mon, 18 Feb 2019 09:10:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1550477406;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=9a6fjGS1nnOT3qGqL3lsM6PvXgQzae+pAQOqUgOc4Yg=;
+        b=G+CQ1d97BYbTIdAX4LHo7po9bHF7pqBMcV8hLvpqh49CelC6zZwa2op8J7ogUROkvABEDk
+        SNNuqCMsjQJWRnFpERqnSYY97UaPYebNXM+wpNuu/0Ar80FtfzMBxRgQS8cpt+Xu3/mi58
+        qclD6qBE9j0ENd1vGU/UJrSkG2tV77c=
+Date:   Mon, 18 Feb 2019 09:09:49 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Kalle Valo <kvalo@codeaurora.org>,
+        linux-wireless@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] x86: disable CONFIG_GENERIC_HWEIGHT and remove
+ __HAVE_ARCH_SW_HWEIGHT
+Message-ID: <20190218080949.GA4265@zn.tnic>
+References: <1550469571-25933-1-git-send-email-yamada.masahiro@socionext.com>
+ <1550469571-25933-3-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190215124715.GA10182@kuha.fi.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <1550469571-25933-3-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 02:47:15PM +0200, Heikki Krogerus wrote:
-> Hi Greg,
+On Mon, Feb 18, 2019 at 02:59:31PM +0900, Masahiro Yamada wrote:
+> arch/x86/include/asm/arch_hweight.h uses __sw_hweight{32,64} as
+> alternatives, but they are implemented in arch/x86/lib/hweight.S
 > 
-> On Thu, Feb 14, 2019 at 11:10:44AM +0100, Greg Kroah-Hartman wrote:
-> > On Wed, Feb 13, 2019 at 10:45:48AM +0300, Heikki Krogerus wrote:
-> > > Hi,
-> > > 
-> > > This is the third version of my proposal to add device graph parsing
-> > > to the device connection API. There was only one problem reported in
-> > > v2 by Jun - kernel-doc entry was missing for the new fwnode member in
-> > > struct usb_role_switch_desc - and it's now fixed.
-> > > 
-> > > The second version of the series:
-> > > https://lkml.org/lkml/2019/1/30/622
-> > > 
-> > > The commit message from v1:
-> > > 
-> > > This series adds support for OF and ACPI device graph parsing to the
-> > > device connection API.
-> > > 
-> > > Handling the graph is straightforward, but because I'm adding that
-> > > fwnode member to struct device_connection, I had to make sure all the
-> > > existing users consider it.
-> > > 
-> > > The plan is to only support matching with fwnode in the future, so no
-> > > more device name matching. The software fwnodes that we now have in
-> > > kernel should make that possible, once we add support for references
-> > > to them.
-> > > 
-> > > The original RFC:
-> > > https://lkml.org/lkml/2018/10/24/619
-> > 
-> > All now merged, thanks.
+> x86 does not rely on the generic C implementation lib/hweight.c
+> at all, so CONFIG_GENERIC_HWEIGHT should be disabled.
 > 
-> It looks like you have not followed the order of the patches in this
-> series.
-> 
-> You applied at least the patch 4/9 ("device connection: Add fwnode
-> member to struct device_connection") as the last patch to your
-> usb-next branch. The rest of the series, patches starting from 5/9,
-> depend on that patch.
+> __HAVE_ARCH_SW_HWEIGHT was unneeded in the first place.
 
-Ugh, did I just apply them out of order?  I can't rewrite my tree now,
-sorry about that, odd that my sorting didn't work.
+Well, it was needed because I didn't think of removing the selection of
+GENERIC_HWEIGHT in arch/x86/ at the time:
 
-I think all of the patches are now in the tree, so I didn't miss
-anything, is there anything I can do now?  Want me to revert them and
-then add them back in the correct order?
+ld: lib/built-in.o:/dev/shm/bpetkov/kernel/linux/lib/hweight.c:27: multiple definition of `__ksymtab___sw_hweight32'; arch/x86/built-in.o:/dev/shm/bpetkov/kernel/linux/arch/x86/kernel/x8664_ksyms_64.c:47: first defined here
+ld: lib/built-in.o:/dev/shm/bpetkov/kernel/linux/lib/hweight.c:67: multiple definition of `__ksymtab___sw_hweight64'; arch/x86/built-in.o:/dev/shm/bpetkov/kernel/linux/arch/x86/kernel/x8664_ksyms_64.c:48: first defined here
+ld: arch/x86/lib/built-in.o: in function `__sw_hweight32':
+/dev/shm/bpetkov/kernel/linux/arch/x86/lib/hweight.S:12: multiple definition of `__sw_hweight32'; lib/built-in.o:/dev/shm/bpetkov/kernel/linux/lib/hweight.c:15: first defined here
+ld: arch/x86/lib/built-in.o: in function `__sw_hweight64':
+/dev/shm/bpetkov/kernel/linux/arch/x86/lib/hweight.S:38: multiple definition of `__sw_hweight64'; lib/built-in.o:/dev/shm/bpetkov/kernel/linux/lib/hweight.c:53: first defined here
+make: *** [vmlinux] Error 1
 
-thanks,
+-- 
+Regards/Gruss,
+    Boris.
 
-greg k-h
+Good mailing practices for 400: avoid top-posting and trim the reply.
