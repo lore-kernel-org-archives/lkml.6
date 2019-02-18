@@ -2,113 +2,241 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F85C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:35:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A821C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:35:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB14E2173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:35:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550500524;
-	bh=kpej3P2pzh/2F3Pfw6fcp56MJFbeAzm/nqRjZUjUneg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uY1rpUq05lAktXqrUBbNrWYMt7THEhgb1pg7an6wH1ShjMGcETsr45IGr+BWlJIlM
-	 rX25qmJCvQjZWUv8ruhqOpX7JQRzn52zjfb6AwGlQuJGfLFmXFpHjqb4x0OSzSvcQN
-	 7puYzAoWKBPIBFI0LLvVdy145o9nyFj+biCrYgp4=
+	by mail.kernel.org (Postfix) with ESMTP id 5BAE021736
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:35:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387732AbfBRN4Q (ORCPT
+        id S2389126AbfBROf1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:56:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36356 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:35:27 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36384 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387662AbfBRN4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:56:11 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2387725AbfBRN4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:56:16 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 426492077B;
+        by mx1.redhat.com (Postfix) with ESMTPS id EC670144025;
+        Mon, 18 Feb 2019 13:56:14 +0000 (UTC)
+Received: from laptop.redhat.com (ovpn-116-102.ams2.redhat.com [10.36.116.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DF3215D70A;
         Mon, 18 Feb 2019 13:56:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498170;
-        bh=kpej3P2pzh/2F3Pfw6fcp56MJFbeAzm/nqRjZUjUneg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yO0Ki8JI+3MT8KfLGwhNEk6cmWB1Ni/PcGOvDPAkqv2xVT2C/AwRDQQDF0QvcH8b4
-         Task2O0QDYlqEzFRns3/GOTKy8KNTSjqYiO+55NUaePIGlz5qcwxS9dGXi+A5R++P8
-         BMkkuGUkZvI9WEf5iK5KcMKvzaXhIBfRKEg6M+tQ=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 25/62] perf test shell: Use a fallback to get the pathname in vfs_getname
-Date:   Mon, 18 Feb 2019 14:43:31 +0100
-Message-Id: <20190218133508.128802259@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
-References: <20190218133505.801423074@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+From:   Eric Auger <eric.auger@redhat.com>
+To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
+        will.deacon@arm.com, robin.murphy@arm.com
+Cc:     kevin.tian@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org
+Subject: [PATCH v4 05/22] iommu: Introduce cache_invalidate API
+Date:   Mon, 18 Feb 2019 14:54:46 +0100
+Message-Id: <20190218135504.25048-6-eric.auger@redhat.com>
+In-Reply-To: <20190218135504.25048-1-eric.auger@redhat.com>
+References: <20190218135504.25048-1-eric.auger@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 18 Feb 2019 13:56:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+From: "Liu, Yi L" <yi.l.liu@linux.intel.com>
 
-------------------
+In any virtualization use case, when the first translation stage
+is "owned" by the guest OS, the host IOMMU driver has no knowledge
+of caching structure updates unless the guest invalidation activities
+are trapped by the virtualizer and passed down to the host.
 
-[ Upstream commit 03fa483821c0b4db7c2b1453d3332f397d82313f ]
+Since the invalidation data are obtained from user space and will be
+written into physical IOMMU, we must allow security check at various
+layers. Therefore, generic invalidation data format are proposed here,
+model specific IOMMU drivers need to convert them into their own format.
 
-Some kernels, like 4.19.13-300.fc29.x86_64 in fedora 29, fail with the
-existing probe definition asking for the contents of result->name,
-working when we ask for the 'filename' variable instead, so add a
-fallback to that.
+Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
 
-Now those tests are back working on fedora 29 systems with that kernel:
-
-  # perf test vfs_getname
-  65: Use vfs_getname probe to get syscall args filenames   : Ok
-  66: Add vfs_getname probe to get syscall args filenames   : Ok
-  67: Check open filename arg using perf trace + vfs_getname: Ok
-  #
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-klt3n0i58dfqttveti09q3fi@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/tests/shell/lib/probe_vfs_getname.sh | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+v3 -> v4:
+- full reshape of the API following Alex' comments
 
-diff --git a/tools/perf/tests/shell/lib/probe_vfs_getname.sh b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-index 30a950c9d407..068d463e5cbf 100644
---- a/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-+++ b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-@@ -13,7 +13,8 @@ add_probe_vfs_getname() {
- 	local verbose=$1
- 	if [ $had_vfs_getname -eq 1 ] ; then
- 		line=$(perf probe -L getname_flags 2>&1 | egrep 'result.*=.*filename;' | sed -r 's/[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*/\1/')
--		perf probe $verbose "vfs_getname=getname_flags:${line} pathname=result->name:string"
-+		perf probe -q       "vfs_getname=getname_flags:${line} pathname=result->name:string" || \
-+		perf probe $verbose "vfs_getname=getname_flags:${line} pathname=filename:string"
- 	fi
+v1 -> v2:
+- add arch_id field
+- renamed tlb_invalidate into cache_invalidate as this API allows
+  to invalidate context caches on top of IOTLBs
+
+v1:
+renamed sva_invalidate into tlb_invalidate and add iommu_ prefix in
+header. Commit message reworded.
+---
+ drivers/iommu/iommu.c      | 14 ++++++++
+ include/linux/iommu.h      | 14 ++++++++
+ include/uapi/linux/iommu.h | 71 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 99 insertions(+)
+
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index b3adb77cb14c..bcb8eb15426c 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -1564,6 +1564,20 @@ void iommu_detach_pasid_table(struct iommu_domain *domain)
  }
+ EXPORT_SYMBOL_GPL(iommu_detach_pasid_table);
  
++int iommu_cache_invalidate(struct iommu_domain *domain, struct device *dev,
++			   struct iommu_cache_invalidate_info *inv_info)
++{
++	int ret = 0;
++
++	if (unlikely(!domain->ops->cache_invalidate))
++		return -ENODEV;
++
++	ret = domain->ops->cache_invalidate(domain, dev, inv_info);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(iommu_cache_invalidate);
++
+ static void __iommu_detach_device(struct iommu_domain *domain,
+ 				  struct device *dev)
+ {
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 7045e26f3a7d..a3b879d0753c 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -189,6 +189,7 @@ struct iommu_resv_region {
+  * @pgsize_bitmap: bitmap of all possible supported page sizes
+  * @attach_pasid_table: attach a pasid table
+  * @detach_pasid_table: detach the pasid table
++ * @cache_invalidate: invalidate translation caches
+  */
+ struct iommu_ops {
+ 	bool (*capable)(enum iommu_cap);
+@@ -235,6 +236,9 @@ struct iommu_ops {
+ 				  struct iommu_pasid_table_config *cfg);
+ 	void (*detach_pasid_table)(struct iommu_domain *domain);
+ 
++	int (*cache_invalidate)(struct iommu_domain *domain, struct device *dev,
++				struct iommu_cache_invalidate_info *inv_info);
++
+ 	unsigned long pgsize_bitmap;
+ };
+ 
+@@ -348,6 +352,9 @@ extern void iommu_detach_device(struct iommu_domain *domain,
+ extern int iommu_attach_pasid_table(struct iommu_domain *domain,
+ 				    struct iommu_pasid_table_config *cfg);
+ extern void iommu_detach_pasid_table(struct iommu_domain *domain);
++extern int iommu_cache_invalidate(struct iommu_domain *domain,
++				  struct device *dev,
++				  struct iommu_cache_invalidate_info *inv_info);
+ extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
+ extern struct iommu_domain *iommu_get_dma_domain(struct device *dev);
+ extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
+@@ -798,6 +805,13 @@ void iommu_detach_pasid_table(struct iommu_domain *domain)
+ {
+ 	return -ENODEV;
+ }
++static inline int
++iommu_cache_invalidate(struct iommu_domain *domain,
++		       struct device *dev,
++		       struct iommu_cache_invalidate_info *inv_info)
++{
++	return -ENODEV;
++}
+ 
+ #endif /* CONFIG_IOMMU_API */
+ 
+diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
+index e9065bfa5b24..ae41385b0a7e 100644
+--- a/include/uapi/linux/iommu.h
++++ b/include/uapi/linux/iommu.h
+@@ -159,4 +159,75 @@ struct iommu_pasid_table_config {
+ 	};
+ };
+ 
++/* defines the granularity of the invalidation */
++enum iommu_inv_granularity {
++	IOMMU_INV_GRANU_DOMAIN,	/* domain-selective invalidation */
++	IOMMU_INV_GRANU_PASID,	/* pasid-selective invalidation */
++	IOMMU_INV_GRANU_ADDR,	/* page-selective invalidation */
++};
++
++/**
++ * Address Selective Invalidation Structure
++ *
++ * @flags indicates the granularity of the address-selective invalidation
++ * - if PASID bit is set, @pasid field is populated and the invalidation
++ *   relates to cache entries tagged with this PASID and matching the
++ *   address range.
++ * - if ARCHID bit is set, @archid is populated and the invalidation relates
++ *   to cache entries tagged with this architecture specific id and matching
++ *   the address range.
++ * - Both PASID and ARCHID can be set as they may tag different caches.
++ * - if neither PASID or ARCHID is set, global addr invalidation applies
++ * - LEAF flag indicates whether only the leaf PTE caching needs to be
++ *   invalidated and other paging structure caches can be preserved.
++ * @pasid: process address space id
++ * @archid: architecture-specific id
++ * @addr: first stage/level input address
++ * @granule_size: page/block size of the mapping in bytes
++ * @nb_granules: number of contiguous granules to be invalidated
++ */
++struct iommu_inv_addr_info {
++#define IOMMU_INV_ADDR_FLAGS_PASID	(1 << 0)
++#define IOMMU_INV_ADDR_FLAGS_ARCHID	(1 << 1)
++#define IOMMU_INV_ADDR_FLAGS_LEAF	(1 << 2)
++	__u32	flags;
++	__u32	archid;
++	__u64	pasid;
++	__u64	addr;
++	__u64	granule_size;
++	__u64	nb_granules;
++};
++
++/**
++ * First level/stage invalidation information
++ * @cache: bitfield that allows to select which caches to invalidate
++ * @granularity: defines the lowest granularity used for the invalidation:
++ *     domain > pasid > addr
++ *
++ * Not all the combinations of cache/granularity make sense:
++ *
++ *         type |   DEV_IOTLB   |     IOTLB     |      PASID    |
++ * granularity	|		|		|      cache	|
++ * -------------+---------------+---------------+---------------+
++ * DOMAIN	|	N/A	|       Y	|	Y	|
++ * PASID	|	Y	|       Y	|	Y	|
++ * ADDR		|       Y	|       Y	|	N/A	|
++ */
++struct iommu_cache_invalidate_info {
++#define IOMMU_CACHE_INVALIDATE_INFO_VERSION_1 1
++	__u32	version;
++/* IOMMU paging structure cache */
++#define IOMMU_CACHE_INV_TYPE_IOTLB	(1 << 0) /* IOMMU IOTLB */
++#define IOMMU_CACHE_INV_TYPE_DEV_IOTLB	(1 << 1) /* Device IOTLB */
++#define IOMMU_CACHE_INV_TYPE_PASID	(1 << 2) /* PASID cache */
++	__u8	cache;
++	__u8	granularity;
++	__u8	padding[2];
++	union {
++		__u64	pasid;
++		struct iommu_inv_addr_info addr_info;
++	};
++};
++
++
+ #endif /* _UAPI_IOMMU_H */
 -- 
-2.19.1
-
-
+2.20.1
 
