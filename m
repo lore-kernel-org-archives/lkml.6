@@ -2,51 +2,51 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD35C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 029E2C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B21B821901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:12:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C645321916
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:12:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499156;
-	bh=IhCC+pA2P+vBSEm2+oZWF6ZQ6K5Z3h7Y2+VdgpYIOkc=;
+	s=default; t=1550499161;
+	bh=PChFWTXHqkJlZED1Fz91KfZZVBssYKks1xPso+qvfZU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HgQpEKdcmAWjz6iWqiqbTFHRPFwe6OoxeD8WR8K3+3qvHkWK5yDPy06+jJZIGKnmk
-	 X1OmpU2jePhxJsYuYCUNCT742pqmre6e77Y6hRzC0Xn5/O/bVZeXWL/9wthwvrPoVi
-	 j0tD/Zabmue1Ds7GhTh0+4uP+N8BTc0m0WD4LpVg=
+	b=IoR7/icUt61l5MWLqXSvFZzjI14lku8HYgkKewSUUwUxWF4qeP3k8FhsQGcxPYiMh
+	 /duHqzeZXvKudITamVo8ItLr16pz0yDRtp/RjSnTGm66shttsXD5mVJJ6YNKkWdCpM
+	 4S6UL+bWsNtQiklcF6Dklgpxuyw3w4Bf1dtIbGOQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391510AbfBROMf (ORCPT
+        id S2391530AbfBROMj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:12:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57058 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:12:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392059AbfBROM1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:12:27 -0500
+        id S2392055AbfBROMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:12:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA74B218AD;
-        Mon, 18 Feb 2019 14:12:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DAD9217D7;
+        Mon, 18 Feb 2019 14:12:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550499147;
-        bh=IhCC+pA2P+vBSEm2+oZWF6ZQ6K5Z3h7Y2+VdgpYIOkc=;
+        s=default; t=1550499153;
+        bh=PChFWTXHqkJlZED1Fz91KfZZVBssYKks1xPso+qvfZU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PGCdEXF2I86gPP9axqjOYup3IiKBw63ZM26040UPu984WOu55fmZwdBab5cgC4SLI
-         V9chD5IDYQLpy9u604+tF3OqPe+3Rc6SeUU1NL1V80jSnMikWz3XPkpewFhVJiybr+
-         V886aNOnFwg4uKcZEGPuZ6pYlZb0mwaTKOFArmlY=
+        b=a5wG+I5zgrjK9YtVngMYISD4trC7n59zflGwZPnqdZA98IS3XxAsFvR4IJPSiAJcW
+         WeaBcWCf3kYs/P67PCu56kNLZOKf7BjlOHopqJC5tWZUtkhWdwCDJ9DZQnjyrjdh3P
+         6KqhvCp7Q/Hvhnm47vsa5trvec9axxPFtirQ94os=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 092/108] ARM: dts: da850-evm: Correct the sound card name
-Date:   Mon, 18 Feb 2019 14:44:28 +0100
-Message-Id: <20190218133523.846253164@linuxfoundation.org>
+        stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH 3.18 076/108] signal: Always notice exiting tasks
+Date:   Mon, 18 Feb 2019 14:44:12 +0100
+Message-Id: <20190218133523.050488337@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -65,36 +65,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7fca69d4e43fa1ae9cb4f652772c132dc5a659c6 ]
+From: Eric W. Biederman <ebiederm@xmission.com>
 
-To avoid  the following error:
-asoc-simple-card sound: ASoC: Failed to create card debugfs directory
+commit 35634ffa1751b6efd8cf75010b509dcb0263e29b upstream.
 
-Which is because the card name contains '/' character, which can not be
-used in file or directory names.
+Recently syzkaller was able to create unkillablle processes by
+creating a timer that is delivered as a thread local signal on SIGHUP,
+and receiving SIGHUP SA_NODEFERER.  Ultimately causing a loop
+failing to deliver SIGHUP but always trying.
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Upon examination it turns out part of the problem is actually most of
+the solution.  Since 2.5 signal delivery has found all fatal signals,
+marked the signal group for death, and queued SIGKILL in every threads
+thread queue relying on signal->group_exit_code to preserve the
+information of which was the actual fatal signal.
+
+The conversion of all fatal signals to SIGKILL results in the
+synchronous signal heuristic in next_signal kicking in and preferring
+SIGHUP to SIGKILL.  Which is especially problematic as all
+fatal signals have already been transformed into SIGKILL.
+
+Instead of dequeueing signals and depending upon SIGKILL to
+be the first signal dequeued, first test if the signal group
+has already been marked for death.  This guarantees that
+nothing in the signal queue can prevent a process that needs
+to exit from exiting.
+
+Cc: stable@vger.kernel.org
+Tested-by: Dmitry Vyukov <dvyukov@google.com>
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Ref: ebf5ebe31d2c ("[PATCH] signal-fixes-2.5.59-A4")
+History Tree: https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm/boot/dts/da850-evm.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/signal.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/da850-evm.dts b/arch/arm/boot/dts/da850-evm.dts
-index 4f935ad9f27b..505ea30c9cb2 100644
---- a/arch/arm/boot/dts/da850-evm.dts
-+++ b/arch/arm/boot/dts/da850-evm.dts
-@@ -146,7 +146,7 @@
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -2241,6 +2241,11 @@ relock:
+ 		goto relock;
+ 	}
  
- 	sound {
- 		compatible = "simple-audio-card";
--		simple-audio-card,name = "DA850/OMAP-L138 EVM";
-+		simple-audio-card,name = "DA850-OMAPL138 EVM";
- 		simple-audio-card,widgets =
- 			"Line", "Line In",
- 			"Line", "Line Out";
--- 
-2.19.1
-
++	/* Has this task already been marked for death? */
++	ksig->info.si_signo = signr = SIGKILL;
++	if (signal_group_exit(signal))
++		goto fatal;
++
+ 	for (;;) {
+ 		struct k_sigaction *ka;
+ 
+@@ -2336,6 +2341,7 @@ relock:
+ 			continue;
+ 		}
+ 
++	fatal:
+ 		spin_unlock_irq(&sighand->siglock);
+ 
+ 		/*
 
 
