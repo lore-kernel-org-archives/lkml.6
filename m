@@ -4,50 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F04DDC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D22BC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B65BC2190C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:05:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F53421902
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:05:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498731;
-	bh=/EGLtWXX8qQ5x3PDE3JkF0S2vtxL6TvE20FUSdxe/ng=;
+	s=default; t=1550498736;
+	bh=R49b2dskifUW+hW2ZzMC1TYKj2HjCIxwv/17qx9rknc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=W2+mai9zmGIXLp355ZgyAIJrvIGvQme2lULqnyzcrDjJ6lEj5GkWLK78FhsPogcFB
-	 C74CE9tIy8ZYhxdqewmcSiJcj32sd7QRYmRSQBpMbERO9M8CfLj0sLxcOZT3Q58GBm
-	 DXBEx4nQG4S8CmHHWgKSM0GuBz2d6rpmDU87QvD8=
+	b=SCxwoo0vjDMeIgQfAFb1hvvHm/IF1L/sHrFQKBmGpqByKNUVzI4Fcp+1cfo8brPns
+	 U9mtglGgO1Yt5KpkkO2jNBSKyYMw+lUxTaQ+gJl7Gw829G/bhIf6+clat64yzFt9jQ
+	 /U3XFXu0vLOFvEDVmrem96gxdo0JAMILQ9HmA/KA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390163AbfBROFa (ORCPT
+        id S2390182AbfBROFe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:05:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48268 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:05:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389643AbfBROFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:05:25 -0500
+        id S2390152AbfBROFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:05:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 534E1204FD;
-        Mon, 18 Feb 2019 14:05:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 359E0204FD;
+        Mon, 18 Feb 2019 14:05:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498724;
-        bh=/EGLtWXX8qQ5x3PDE3JkF0S2vtxL6TvE20FUSdxe/ng=;
+        s=default; t=1550498728;
+        bh=R49b2dskifUW+hW2ZzMC1TYKj2HjCIxwv/17qx9rknc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tJia0uvyCCKaG6Ou9TtPGGuC2b5GPf0a2dzGziqHmeZZVoO6eZPNA85U8KxPnYLyE
-         zNNwPuJQsvmKmR4qK0lu4lHDF/lhr+jGcBZe9x99n6mv2KG+tWnJR9L9iv1NGYvfcO
-         Xh53hJnDE9J+hxHamLIbBjS/Z6xguW8M1elZ1ftA=
+        b=qZecZnwgJWliGqmfpY8MZVlb2L/mNzhl17Na6jeajor7nC+e8vj5seHXseLFeghDS
+         HWJzpN+6CECV2Vs5R+QwDyE0Dzx7mt05KptHD/P4UgF0Y3AxciZMl+8I2stCELr+e7
+         KcEgPn0zUlYpgwrMY73EBIxIHZgbCMZc9FUd92SY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>,
-        Ying Xue <ying.xue@windriver.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 075/143] tipc: use destination length for copy string
-Date:   Mon, 18 Feb 2019 14:43:23 +0100
-Message-Id: <20190218133531.831329997@linuxfoundation.org>
+        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ma Shimiao <mashimiao.fnst@cn.fujitsu.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Chris Metcalf <cmetcalf@ezchip.com>
+Subject: [PATCH 4.4 076/143] string: drop __must_check from strscpy() and restore strscpy() usages in cgroup
+Date:   Mon, 18 Feb 2019 14:43:24 +0100
+Message-Id: <20190218133531.865846132@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -66,40 +68,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guoqing Jiang <gqjiang@suse.com>
+From: Tejun Heo <tj@kernel.org>
 
-commit 29e270fc32192e7729057963ae7120663856c93e upstream.
+commit 08a77676f9c5fc69a681ccd2cd8140e65dcb26c7 upstream.
 
-Got below warning with gcc 8.2 compiler.
+e7fd37ba1217 ("cgroup: avoid copying strings longer than the buffers")
+converted possibly unsafe strncpy() usages in cgroup to strscpy().
+However, although the callsites are completely fine with truncated
+copied, because strscpy() is marked __must_check, it led to the
+following warnings.
 
-net/tipc/topsrv.c: In function ‘tipc_topsrv_start’:
-net/tipc/topsrv.c:660:2: warning: ‘strncpy’ specified bound depends on the length of the source argument [-Wstringop-overflow=]
-  strncpy(srv->name, name, strlen(name) + 1);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-net/tipc/topsrv.c:660:27: note: length computed here
-  strncpy(srv->name, name, strlen(name) + 1);
-                           ^~~~~~~~~~~~
-So change it to correct length and use strscpy.
+  kernel/cgroup/cgroup.c: In function ‘cgroup_file_name’:
+  kernel/cgroup/cgroup.c:1400:10: warning: ignoring return value of ‘strscpy’, declared with attribute warn_unused_result [-Wunused-result]
+     strscpy(buf, cft->name, CGROUP_FILE_NAME_MAX);
+	       ^
 
-Signed-off-by: Guoqing Jiang <gqjiang@suse.com>
-Acked-by: Ying Xue <ying.xue@windriver.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+To avoid the warnings, 50034ed49645 ("cgroup: use strlcpy() instead of
+strscpy() to avoid spurious warning") switched them to strlcpy().
+
+strlcpy() is worse than strlcpy() because it unconditionally runs
+strlen() on the source string, and the only reason we switched to
+strlcpy() here was because it was lacking __must_check, which doesn't
+reflect any material differences between the two function.  It's just
+that someone added __must_check to strscpy() and not to strlcpy().
+
+These basic string copy operations are used in variety of ways, and
+one of not-so-uncommon use cases is safely handling truncated copies,
+where the caller naturally doesn't care about the return value.  The
+__must_check doesn't match the actual use cases and forces users to
+opt for inferior variants which lack __must_check by happenstance or
+spread ugly (void) casts.
+
+Remove __must_check from strscpy() and restore strscpy() usages in
+cgroup.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ma Shimiao <mashimiao.fnst@cn.fujitsu.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Chris Metcalf <cmetcalf@ezchip.com>
+[backport only the string.h portion to remove build warnings starting to show up - gregkh]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/tipc/subscr.c |    2 +-
+ include/linux/string.h |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/tipc/subscr.c
-+++ b/net/tipc/subscr.c
-@@ -337,7 +337,7 @@ int tipc_topsrv_start(struct net *net)
- 	topsrv->tipc_conn_new		= tipc_subscrb_connect_cb;
- 	topsrv->tipc_conn_shutdown	= tipc_subscrb_shutdown_cb;
- 
--	strncpy(topsrv->name, name, strlen(name) + 1);
-+	strscpy(topsrv->name, name, sizeof(topsrv->name));
- 	tn->topsrv = topsrv;
- 	atomic_set(&tn->subscription_count, 0);
- 
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -26,7 +26,7 @@ extern char * strncpy(char *,const char
+ size_t strlcpy(char *, const char *, size_t);
+ #endif
+ #ifndef __HAVE_ARCH_STRSCPY
+-ssize_t __must_check strscpy(char *, const char *, size_t);
++ssize_t strscpy(char *, const char *, size_t);
+ #endif
+ #ifndef __HAVE_ARCH_STRCAT
+ extern char * strcat(char *, const char *);
 
 
