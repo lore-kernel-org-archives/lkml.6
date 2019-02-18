@@ -2,92 +2,114 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD96C10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16B28C4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:23:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C2B6217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:23:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="wnOwwy3M"
+	by mail.kernel.org (Postfix) with ESMTP id E3B2F217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:23:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732065AbfBRPXY (ORCPT
+        id S1732128AbfBRPXx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 10:23:24 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:47256 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730229AbfBRPXX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 10:23:23 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 538F88EE22B;
+        Mon, 18 Feb 2019 10:23:53 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33244 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729977AbfBRPXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 10:23:52 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 14442A78;
+        Mon, 18 Feb 2019 07:23:37 -0800 (PST)
+Received: from [10.1.196.69] (e112269-lin.cambridge.arm.com [10.1.196.69])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F2E1C3F675;
         Mon, 18 Feb 2019 07:23:23 -0800 (PST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ZGqBFOFSp7tp; Mon, 18 Feb 2019 07:23:23 -0800 (PST)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id C21238EE130;
-        Mon, 18 Feb 2019 07:23:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1550503403;
-        bh=G6LDuXetk03iY8UKVD+MdtIkhxvC/jWVnn3QicsYAkA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=wnOwwy3ML6oA7p6voXKAjZgDlEdL0FKx0imumtKz65o5Qv7d95CdOr+lIskc34FQX
-         3PyKi2X6l8k7sqqd6AvRlunuzlYRrhrEWvSHd1t2++G+vuOuaDQjCO1PmMgoiswOxm
-         SG7v7EJDc2v8hkmwI3L/R9mRKwBF55IymmstWhnA=
-Message-ID: <1550503401.2834.1.camel@HansenPartnership.com>
-Subject: Re: [PATCH 4.4 091/143] scsi: aic94xx: fix module loading
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Date:   Mon, 18 Feb 2019 07:23:21 -0800
-In-Reply-To: <20190218133532.383171387@linuxfoundation.org>
-References: <20190218133529.099444112@linuxfoundation.org>
-         <20190218133532.383171387@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+Subject: Re: [PATCH 06/13] mm: pagewalk: Add 'depth' parameter to pte_hole
+To:     Mark Rutland <Mark.Rutland@arm.com>
+Cc:     "x86@kernel.org" <x86@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <Catalin.Marinas@arm.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Will Deacon <Will.Deacon@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        James Morse <James.Morse@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20190215170235.23360-1-steven.price@arm.com>
+ <20190215170235.23360-7-steven.price@arm.com>
+ <20190218112350.GE8036@lakrids.cambridge.arm.com>
+From:   Steven Price <steven.price@arm.com>
+Message-ID: <7b0c6eed-102e-ff79-0f65-16bcec043a09@arm.com>
+Date:   Mon, 18 Feb 2019 15:23:22 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
+MIME-Version: 1.0
+In-Reply-To: <20190218112350.GE8036@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-02-18 at 14:43 +0100, Greg Kroah-Hartman wrote:
-> 4.4-stable review patch.  If anyone has any objections, please let me
-> know.
+On 18/02/2019 11:23, Mark Rutland wrote:
+> On Fri, Feb 15, 2019 at 05:02:27PM +0000, Steven Price wrote:
+>> +/* If the p4ds are actually just pgds then we should report a depth
+>> + * of 0 not 1 (as a missing entry is really a missing pgd
+>> + */
 > 
-> ------------------
+> Nit: comment style violation. This should look like:
+> should be:
 > 
-> From: James Bottomley <James.Bottomley@HansenPartnership.com>
+> /*
+>  * If the p4ds are actually just pgds then we should report a depth
+>  * of 0 not 1 (as a missing entry is really a missing pgd
+>  */
 > 
-> commit 42caa0edabd6a0a392ec36a5f0943924e4954311 upstream.
+>> +int depth = (PTRS_PER_P4D == 1)?0:1;
 > 
-> The aic94xx driver is currently failing to load with errors like
+> Nit: the ternary should have spacing.
 > 
-> sysfs: cannot create duplicate filename
-> '/devices/pci0000:00/0000:00:03.0/0000:02:00.3/0000:07:02.0/revision'
+> We don't seem to do this at any other level that could be folded, so why
+> does p4d need special care?
 > 
-> Because the PCI code had recently added a file named 'revision' to
-> every PCI device.  Fix this by renaming the aic94xx revision file to
-> aic_revision.  This is safe to do for us because as far as I can
-> tell, there's nothing in userspace relying on the current aic94xx
-> revision file so it can be renamed without breaking anything.
+> For example, what happens on arm64 when using 64K pages and 3 level
+> paging, where puds are folded into pgds?
 > 
-> Fixes: 702ed3be1b1b (PCI: Create revision file in sysfs)
+> Thanks,
+> Mark.
 
-jejb@jarvis:~/git/linux> git describe --contains 702ed3be1b1b
-v4.10-rc1~94^2~18^2~1
+Yes, you are entirely correct I've missed the other potential foldings.
+I somehow imagined that p4d was special and was folded the opposite
+direction (I'm not sure why!).
 
-I suppose interface consistency is useful, but under the stable rules,
-shouldn't this only be ported as far back as the bug it fixes?
+The best solution I can come up with is a function which will convert
+from the level the entry is found at, back to the 'real' level the entry
+was missing at. This is needed to produce the correct output in the
+debugfs file. Something like:
 
-James
+static int real_depth(int depth)
+{
+	if (depth == 3 && PTRS_PER_PMD == 1)
+		depth = 2;
+	if (depth == 2 && PTRS_PER_PUD == 1)
+		depth = 1;
+	if (depth == 1 && PTRS_PER_P4D == 1)
+		depth = 0;
+	return depth;
+}
 
+This should of course get folded by the compiler and not actually
+generate any code.
+
+Thanks,
+
+Steve
