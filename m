@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A5CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D291C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:32:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 792732081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:32:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55F312081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:32:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550500348;
-	bh=ujGyIIbntFGT65JqiqRj6B5cA+NDXrjaZJqsHvCkPlQ=;
+	s=default; t=1550500357;
+	bh=uFGi3J/BVKFQekJCNTQ1p/kn8GFvaR/wpYjWs/ElwM4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1Pyn95Fbrq+Z3/cR0VPzY/Jgn2S42TwCLzQRIN88yP3+pOYC53IXJFelk+8iofWsN
-	 zQh5Nvx+kt5kBhgQZYJwBVh95Q1M0nV0JBz8GW/4+/hg+ZRF9QvyAimwCxo76F+J3I
-	 jQf780sci/1uobsMolR2yzuLFo/n8AtpbcnuUzYY=
+	b=i6XrZoU/p7G81bGtRls+lJF7SCb0fsk3yWLgbGKmLtMx2wmYQZTD7MIxD2qc+tVhE
+	 7i/uWFiiu9d9QOms7ESZ1DgEh2c65wFQPvG9A5aAkY6MeebF8sqQgWmyTKbbFN2SFQ
+	 EC4kdmrL9K4M8sgWl2wgoT/H78MWJbqfvZOgO+do=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388171AbfBRN5y (ORCPT
+        id S1733180AbfBROcf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:57:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38384 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:32:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387592AbfBRN5u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:57:50 -0500
+        id S2388127AbfBRN5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:57:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C400620842;
-        Mon, 18 Feb 2019 13:57:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C36821903;
+        Mon, 18 Feb 2019 13:57:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498270;
-        bh=ujGyIIbntFGT65JqiqRj6B5cA+NDXrjaZJqsHvCkPlQ=;
+        s=default; t=1550498257;
+        bh=uFGi3J/BVKFQekJCNTQ1p/kn8GFvaR/wpYjWs/ElwM4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ul1xAj36+itJ8J7HrnerPjN2uVahS8Z20FV7Xl1zVoZwv2tFW5SaC4vLCKY4IIlSo
-         ACahV/koMTW70k5AEaKtQQJ5EIQAHxY3O2KwMsymysYCY5uyzQ17seAJ5iRtbX2j28
-         uoehhDQ3cfQ0/AMKmlWdfj4hdPMfq0QqPJzjOgzE=
+        b=xXA3M/tfIXd/mktbxtNHt2/rj+lP+Z0sOB3nvl+sV5Lfj82cH6IWEvFcme3/x/rd/
+         rrXs7rrnJVEmhZKzUZHL9EhLfZKaxtguKZ+kjBoXOOeDqq06SoQw9S97WpChu/Sdx2
+         T0VL/OPyTvIGO7wvhAKyt1G3mQuv7wxiPCdzt3gw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -46,9 +46,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Russell King <rmk+kernel@armlinux.org.uk>,
         "David A. Long" <dave.long@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 15/58] ARM: clean up per-processor check_bugs method call
-Date:   Mon, 18 Feb 2019 14:43:36 +0100
-Message-Id: <20190218133509.730251254@linuxfoundation.org>
+Subject: [PATCH 4.9 11/58] ARM: 8797/1: spectre-v1.1: harden __copy_to_user
+Date:   Mon, 18 Feb 2019 14:43:32 +0100
+Message-Id: <20190218133509.437499837@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133508.567416115@linuxfoundation.org>
 References: <20190218133508.567416115@linuxfoundation.org>
@@ -67,49 +67,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-Commit 945aceb1db8885d3a35790cf2e810f681db52756 upstream.
+Commit a1d09e074250fad24f1b993f327b18cc6812eb7a upstream.
 
-Call the per-processor type check_bugs() method in the same way as we
-do other per-processor functions - move the "processor." detail into
-proc-fns.h.
+Sanitize user pointer given to __copy_to_user, both for standard version
+and memcopy version of the user accessor.
 
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: David A. Long <dave.long@linaro.org>
 Reviewed-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/include/asm/proc-fns.h | 1 +
- arch/arm/kernel/bugs.c          | 4 ++--
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ arch/arm/lib/copy_to_user.S        | 6 +++++-
+ arch/arm/lib/uaccess_with_memcpy.c | 3 ++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/include/asm/proc-fns.h b/arch/arm/include/asm/proc-fns.h
-index f379f5f849a9..19939e88efca 100644
---- a/arch/arm/include/asm/proc-fns.h
-+++ b/arch/arm/include/asm/proc-fns.h
-@@ -99,6 +99,7 @@ extern void cpu_do_suspend(void *);
- extern void cpu_do_resume(void *);
- #else
- #define cpu_proc_init			processor._proc_init
-+#define cpu_check_bugs			processor.check_bugs
- #define cpu_proc_fin			processor._proc_fin
- #define cpu_reset			processor.reset
- #define cpu_do_idle			processor._do_idle
-diff --git a/arch/arm/kernel/bugs.c b/arch/arm/kernel/bugs.c
-index 7be511310191..d41d3598e5e5 100644
---- a/arch/arm/kernel/bugs.c
-+++ b/arch/arm/kernel/bugs.c
-@@ -6,8 +6,8 @@
- void check_other_bugs(void)
- {
- #ifdef MULTI_CPU
--	if (processor.check_bugs)
--		processor.check_bugs();
-+	if (cpu_check_bugs)
-+		cpu_check_bugs();
- #endif
- }
+diff --git a/arch/arm/lib/copy_to_user.S b/arch/arm/lib/copy_to_user.S
+index caf5019d8161..970abe521197 100644
+--- a/arch/arm/lib/copy_to_user.S
++++ b/arch/arm/lib/copy_to_user.S
+@@ -94,6 +94,11 @@
  
+ ENTRY(__copy_to_user_std)
+ WEAK(arm_copy_to_user)
++#ifdef CONFIG_CPU_SPECTRE
++	get_thread_info r3
++	ldr	r3, [r3, #TI_ADDR_LIMIT]
++	uaccess_mask_range_ptr r0, r2, r3, ip
++#endif
+ 
+ #include "copy_template.S"
+ 
+@@ -108,4 +113,3 @@ ENDPROC(__copy_to_user_std)
+ 	rsb	r0, r0, r2
+ 	copy_abort_end
+ 	.popsection
+-
+diff --git a/arch/arm/lib/uaccess_with_memcpy.c b/arch/arm/lib/uaccess_with_memcpy.c
+index 6bd1089b07e0..f598d792bace 100644
+--- a/arch/arm/lib/uaccess_with_memcpy.c
++++ b/arch/arm/lib/uaccess_with_memcpy.c
+@@ -152,7 +152,8 @@ arm_copy_to_user(void __user *to, const void *from, unsigned long n)
+ 		n = __copy_to_user_std(to, from, n);
+ 		uaccess_restore(ua_flags);
+ 	} else {
+-		n = __copy_to_user_memcpy(to, from, n);
++		n = __copy_to_user_memcpy(uaccess_mask_range_ptr(to, n),
++					  from, n);
+ 	}
+ 	return n;
+ }
 -- 
 2.19.1
 
