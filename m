@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C532CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03409C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94FAF217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CADE02177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550515787;
-	bh=H1RmBgQYjc0QzYPcs3yweTeNye/yiFjgxoyLbGqAx4c=;
+	s=default; t=1550515790;
+	bh=qqoSZvYO+TWeTp9y1l84fc7jsm/LE2/BveAX7v8GhWw=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=YQ1rX3/06lW2fAjmUO8XoAzuhPjw6e3OpWw3trpPWFyq9lLkXifOvrGmyhQCWwxMv
-	 pJcpyMT1IyoUlZyMn7BbtRG5PwZLzap5ocCYZERXhuTyus6B2JX/8Z/fAHkA8Y8bgT
-	 xQ0a2PkHEETLLVsIRgODHh+aoSgg1VFNPm7dbPPw=
+	b=okih1VW7XTS4E8R84WM+Wlg5ejMOf9gWeodRTk4awF1sgY50NnYPbKvtFd8wFfLam
+	 Fg/AyyCwH2/JmRIhjpQ80sS5xjAe2XoKK2DtBZTbQ9TiCzivFhzeRrh5xe2pavay4Q
+	 e8weZyV3mGf2dCHIEwrAj0WJoaRYRCLIajpqLzDs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726790AbfBRStp (ORCPT
+        id S1726904AbfBRStt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:49:45 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42110 "EHLO
+        Mon, 18 Feb 2019 13:49:49 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42252 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726370AbfBRStm (ORCPT
+        with ESMTP id S1726685AbfBRStq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:49:42 -0500
+        Mon, 18 Feb 2019 13:49:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=6xQggqp64e2GEZ5jFy5uGoHxF/xXGAVPwyMYdKfZ1Pk=; b=qWbnhcMQCwlU
-        8rEMiNbstNGqxsEdcf9mtC1oebU19v4V7lu75WhvcI7Vo64l66tb5h5J2EdO5Js52qMwWYmhwQQH9
-        u8p8jE92M0388+2LgO9lvttqxiTXADb1KgXYopGVIU2/NCPgZUvFI+bprsoleJ9ihJKPxE7unBuBp
-        iGQek=;
+        List-Archive; bh=gh9CirCd86fYr37lcRNJseSj/vabTYOQxaEKl4c4nnY=; b=hIfmenDMYjrS
+        AseQrT+iGCYiGMSg2ESn+ACcqsQn7R8R5aPHewz5VURwvj1i6kPOSgCR29TBbzmxQgQ2ttVxAuIFD
+        bQq+i/HW2/k6TgE9UyrUN3gGGHAxZsNARmDbfhVa2op+VNEzCsOBsOjwg+LzZF8XlVG6baKMdFokb
+        8eZ8M=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gvnyy-0001ey-1Y; Mon, 18 Feb 2019 18:49:36 +0000
+        id 1gvnz2-0001fH-CT; Mon, 18 Feb 2019 18:49:40 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 72BB11128008; Mon, 18 Feb 2019 18:49:35 +0000 (GMT)
+        id C1A051128008; Mon, 18 Feb 2019 18:49:39 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 Cc:     Mark Brown <broonie@kernel.org>, lars@metafoo.de,
         lgirdwood@gmail.com, broonie@kernel.org,
         alsa-devel@alsa-project.org, Codrin.Ciubotariu@microchip.com,
         linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: codecs: ad193x: Fix frame polarity for DSP_A format" to the asoc tree
-In-Reply-To:  <20190218160954.13929-4-codrin.ciubotariu@microchip.com>
+Subject: Applied "ASoC: codecs: ad193x: Remove capture support for codecs without ADC" to the asoc tree
+In-Reply-To:  <20190218160954.13929-2-codrin.ciubotariu@microchip.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190218184935.72BB11128008@debutante.sirena.org.uk>
-Date:   Mon, 18 Feb 2019 18:49:35 +0000 (GMT)
+Message-Id: <20190218184939.C1A051128008@debutante.sirena.org.uk>
+Date:   Mon, 18 Feb 2019 18:49:39 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,7 +62,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: codecs: ad193x: Fix frame polarity for DSP_A format
+   ASoC: codecs: ad193x: Remove capture support for codecs without ADC
 
 has been applied to the asoc tree at
 
@@ -87,39 +87,59 @@ to this mail.
 Thanks,
 Mark
 
-From 90f6e68031397fb6212bef5619193cd15707fa0f Mon Sep 17 00:00:00 2001
+From 7aac8d13fc60db3ec2422f26c4dc2425a7fef20c Mon Sep 17 00:00:00 2001
 From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Date: Mon, 18 Feb 2019 16:10:32 +0000
-Subject: [PATCH] ASoC: codecs: ad193x: Fix frame polarity for DSP_A format
+Date: Mon, 18 Feb 2019 16:10:28 +0000
+Subject: [PATCH] ASoC: codecs: ad193x: Remove capture support for codecs
+ without ADC
 
-By default, the codec starts to interpret the left (first) channel on
-the falling edge (low polarity) of LRCLK. However, for DSP_A, the left
-channel needs to start on the rising edge of LRCLK. This patch fixes
-this channel swap by toggling the bit which selects the LRCLK polarity.
+Some ad193x codecs don't have ADCs, so they have no capture capabilities.
+This way, we can use this driver in multicodec cards.
 
 Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/ad193x.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ sound/soc/codecs/ad193x.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
 diff --git a/sound/soc/codecs/ad193x.c b/sound/soc/codecs/ad193x.c
-index c16c9969d1a0..315ec9775118 100644
+index 4b60ebee491d..21a38cc9e3da 100644
 --- a/sound/soc/codecs/ad193x.c
 +++ b/sound/soc/codecs/ad193x.c
-@@ -228,6 +228,12 @@ static int ad193x_set_dai_fmt(struct snd_soc_dai *codec_dai,
- 		return -EINVAL;
- 	}
+@@ -351,6 +351,20 @@ static struct snd_soc_dai_driver ad193x_dai = {
+ 	.ops = &ad193x_dai_ops,
+ };
  
-+	/* For DSP_*, LRCLK's polarity must be inverted */
-+	if (fmt & SND_SOC_DAIFMT_DSP_A) {
-+		change_bit(ffs(AD193X_DAC_LEFT_HIGH) - 1,
-+			   (unsigned long *)&dac_fmt);
-+	}
++/* codec DAI instance for DAC only */
++static struct snd_soc_dai_driver ad193x_no_adc_dai = {
++	.name = "ad193x-hifi",
++	.playback = {
++		.stream_name = "Playback",
++		.channels_min = 2,
++		.channels_max = 8,
++		.rates = SNDRV_PCM_RATE_48000,
++		.formats = SNDRV_PCM_FMTBIT_S32_LE | SNDRV_PCM_FMTBIT_S16_LE |
++			SNDRV_PCM_FMTBIT_S20_3LE | SNDRV_PCM_FMTBIT_S24_LE,
++	},
++	.ops = &ad193x_dai_ops,
++};
 +
- 	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
- 	case SND_SOC_DAIFMT_CBM_CFM: /* codec clk & frm master */
- 		adc_fmt |= AD193X_ADC_LCR_MASTER;
+ static int ad193x_component_probe(struct snd_soc_component *component)
+ {
+ 	struct ad193x_priv *ad193x = snd_soc_component_get_drvdata(component);
+@@ -444,8 +458,11 @@ int ad193x_probe(struct device *dev, struct regmap *regmap,
+ 
+ 	dev_set_drvdata(dev, ad193x);
+ 
++	if (ad193x_has_adc(ad193x))
++		return devm_snd_soc_register_component(dev, &soc_component_dev_ad193x,
++						       &ad193x_dai, 1);
+ 	return devm_snd_soc_register_component(dev, &soc_component_dev_ad193x,
+-		&ad193x_dai, 1);
++		&ad193x_no_adc_dai, 1);
+ }
+ EXPORT_SYMBOL_GPL(ad193x_probe);
+ 
 -- 
 2.20.1
 
