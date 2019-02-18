@@ -2,79 +2,153 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC9D8C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B59A3C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:32:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B64D6217F9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:30:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C269217D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:32:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732462AbfBRPay (ORCPT
+        id S1732591AbfBRPcQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 10:30:54 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33304 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731943AbfBRPax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 10:30:53 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C95D2A78;
-        Mon, 18 Feb 2019 07:30:52 -0800 (PST)
-Received: from [10.1.196.69] (e112269-lin.cambridge.arm.com [10.1.196.69])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F256A3F675;
-        Mon, 18 Feb 2019 07:30:39 -0800 (PST)
-Subject: Re: [PATCH 01/13] arm64: mm: Add p?d_large() definitions
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        James Morse <james.morse@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org
-References: <20190215170235.23360-1-steven.price@arm.com>
- <20190215170235.23360-2-steven.price@arm.com>
- <20190218112922.GT32477@hirez.programming.kicks-ass.net>
- <fe36ed1c-b90d-8062-f7a9-e52d940733c4@arm.com>
- <20190218142951.GA10145@lakrids.cambridge.arm.com>
- <20190218150657.GU32494@hirez.programming.kicks-ass.net>
-From:   Steven Price <steven.price@arm.com>
-Message-ID: <eb7e0203-db08-743b-dbed-a7032b352ded@arm.com>
-Date:   Mon, 18 Feb 2019 15:30:38 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <20190218150657.GU32494@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+        Mon, 18 Feb 2019 10:32:16 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43924 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729975AbfBRPcP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 10:32:15 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1IFTx4S066201
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 10:32:14 -0500
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qqx03dk74-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 10:32:14 -0500
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <jejb@linux.ibm.com>;
+        Mon, 18 Feb 2019 15:32:13 -0000
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 18 Feb 2019 15:32:09 -0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1IFW8iS29818998
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 18 Feb 2019 15:32:08 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7A95578060;
+        Mon, 18 Feb 2019 15:32:08 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B775B7805C;
+        Mon, 18 Feb 2019 15:32:06 +0000 (GMT)
+Received: from jarvis.ext.hansenpartnership.com (unknown [9.80.228.140])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 18 Feb 2019 15:32:06 +0000 (GMT)
+Subject: Re: [PATCH] scsi: mvumi: fix 32 bit shift of a 32 bit unsigned int
+From:   James Bottomley <jejb@linux.ibm.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Walter Harms <wharms@bfs.de>
+Cc:     Colin King <colin.king@canonical.com>,
+        Jianyun Li <jyli@marvell.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 18 Feb 2019 07:32:05 -0800
+In-Reply-To: <20190218093710.GB17104@kadam>
+References: <1596625925.142066.1550334436646@ox-groupware.bfs.de>
+         <20190218093710.GB17104@kadam>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19021815-0012-0000-0000-0000170CAE71
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010620; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000281; SDB=6.01162882; UDB=6.00607140; IPR=6.00943458;
+ MB=3.00025638; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-18 15:32:12
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021815-0013-0000-0000-0000563F77E0
+Message-Id: <1550503925.2834.3.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-18_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902180115
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/02/2019 15:06, Peter Zijlstra wrote:
-> On Mon, Feb 18, 2019 at 02:29:52PM +0000, Mark Rutland wrote:
->> I think that Peter means p?d_huge(x) should imply p?d_large(x), e.g.
->>
->> #define pmd_large(x) \
->> 	(pmd_sect(x) || pmd_huge(x) || pmd_trans_huge(x))
->>
->> ... which should work regardless of CONFIG_HUGETLB_PAGE.
+On Mon, 2019-02-18 at 12:37 +0300, Dan Carpenter wrote:
+> On Sat, Feb 16, 2019 at 05:27:16PM +0100, Walter Harms wrote:
+> > Am 16.02.2019 15:44, schrieb Colin King:
+> > > From: Colin Ian King <colin.king@canonical.com>
+> > > 
+> > > Currently m_sg->baseaddr_h (a 32 bit unsigned int) is being
+> > > shifted by a
+> > > total of 32 bits; this always produces a 0 result.  Fix this by
+> > > casting
+> > > it to a dma_addr_t (a 64 bit unsigned int) before performing the
+> > > shift.
+> > > 
+> > > Detected by CoverityScan, CID#147270 ("Operands don't affect
+> > > result")
+> > > 
+> > > Fixes: f0c568a478f0 ("[SCSI] mvumi: Add Marvell UMI driver")
+> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > > ---
+> > >  drivers/scsi/mvumi.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/scsi/mvumi.c b/drivers/scsi/mvumi.c
+> > > index 36f64205ecfa..d3582accfd09 100644
+> > > --- a/drivers/scsi/mvumi.c
+> > > +++ b/drivers/scsi/mvumi.c
+> > > @@ -313,7 +313,7 @@ static void mvumi_delete_internal_cmd(struct
+> > > mvumi_hba
+> > > *mhba,
+> > >  			sgd_getsz(mhba, m_sg, size);
+> > >  
+> > >  			phy_addr = (dma_addr_t) m_sg->baseaddr_l 
+> > > |
+> > > -				(dma_addr_t) ((m_sg->baseaddr_h
+> > > << 16) << 16);
+> > > +				(((dma_addr_t) m_sg->baseaddr_h
+> > > << 16) << 16);
+> > >  
+> > >  			dma_free_coherent(&mhba->pdev->dev,
+> > > size, cmd->data_buf,
+> > >  								
+> > > phy_addr);
+> > 
+> > i would suggest to try a version with less casts to make it more
+> > readable
+> > like this untested suggestion:
+> > 
+> > phy_addr =(m_sg->baseaddr_h << 16)| m_sg->baseaddr_l;
+> > phy_addr <<= 16;
+> > 
 > 
-> Yep, that.
+> That would be a behavior change but it also might be a bugfix?  Why
+> doesn't the code just do:
+> 
+> 	phy_addr = ((dma_addr_t)m_sg->baseaddr_h << 32) | m_sg-
+> >baseaddr_l;
+> 
+> (Probably they broke it up into two shifts to silence a GCC warning
+> that the shift was wrong because of the missing cast?)
 
-I'm not aware of a situation where pmd_huge(x) is true but pmd_sect(x)
-isn't. Equally for pmd_huge(x) and pmd_trans_huge(x).
+No because dma_addr_t can be 32 bits and the warning would then always
+appear on some builds.  The << 16 << 16 makes sure it doesn't.
 
-What am I missing?
+James
 
-Steve
+
+
