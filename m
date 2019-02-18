@@ -2,131 +2,100 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FCB1C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:33:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 104C1C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:33:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6936B21929
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:33:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2F0920661
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:33:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZapF4onS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729246AbfBRUdt (ORCPT
+        id S1729649AbfBRUdy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 15:33:49 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:45658 "EHLO mx1.redhat.com"
+        Mon, 18 Feb 2019 15:33:54 -0500
+Received: from ozlabs.org ([203.11.71.1]:55485 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726831AbfBRUds (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 15:33:48 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726831AbfBRUdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 15:33:54 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5FB7E85360;
-        Mon, 18 Feb 2019 20:33:48 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4238C19C4F;
-        Mon, 18 Feb 2019 20:33:46 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Tan Xiaojun <tanxiaojun@huawei.com>
-Cc:     <viro@zeniv.linux.org.uk>, <bcrl@kvack.org>, <linux-aio@kvack.org>,
-        <linux-kernel@vger.kernel.org>, <guohanjun@huawei.com>,
-        <wangxiongfeng2@huawei.com>
-Subject: Re: [RFC PATCH] aio: add check for timeout to aviod invalid value
-References: <1550311021-60612-1-git-send-email-tanxiaojun@huawei.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Mon, 18 Feb 2019 15:33:46 -0500
-In-Reply-To: <1550311021-60612-1-git-send-email-tanxiaojun@huawei.com> (Tan
-        Xiaojun's message of "Sat, 16 Feb 2019 17:57:01 +0800")
-Message-ID: <x497edw4z11.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        by ozlabs.org (Postfix) with ESMTPSA id 443FvM13Jrz9s5c;
+        Tue, 19 Feb 2019 07:33:51 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1550522031;
+        bh=pxkqWnXUoUL3f/jLaWgCdHqjuSzACKXSAdnD8x1kKFc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ZapF4onSeXJSBr1iwX172aT989qrqdE9TrqadcHn5+BtuIJTxXWR4BYT1zEnindvD
+         7qj2PAhiAJkIm9KNTT67qA1esMdfwa21AEAm9ecMlUryaHpsjvI7o0C8tdDS1oXL6D
+         ywVZ2YE7CY+kUUz4gCVwNGgUooX6vWO4evfT0t4lDOVgKlUcANs7QKp4bPX6I+sA3/
+         rV9KRYC99v2TdRO9Qv2jImQMOu+m0aKqHllsWXVNnG9X/uOCJs4QjXytGkpGNTxC3f
+         Kf2M+IXbJ6t/UC9TNsTrq1lmEzcYZh/4OpY4US9rdEj5pbuD0J4ivClEeuOdKFMY9H
+         o3F/xcSg5iSkw==
+Date:   Tue, 19 Feb 2019 07:33:45 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: linux-next: Fixes tag needs some work in Linus' tree
+Message-ID: <20190219073345.11c39f70@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 18 Feb 2019 20:33:48 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/GrZ9A5Fh=N39xhpfbTOTBXT"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tan Xiaojun <tanxiaojun@huawei.com> writes:
+--Sig_/GrZ9A5Fh=N39xhpfbTOTBXT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> (When I was testing with syzkaller, I found a lot of ubsan problems. Here 
-> is one of them. I am not sure if it needs to be fixed and how it will be 
-> fixed. So I sent this patch to ask your opinion.)
->
-> Syzkaller reported a UBSAN bug below, which was mainly caused by a large
-> negative number passed to the timeout of the io_getevents system call.
->
-> ================================================================================
-> UBSAN: Undefined behaviour in ./include/linux/ktime.h:42:14
-> signed integer overflow:
-> -8427032702788048137 * 1000000000 cannot be represented in type 'long long int'
-> CPU: 3 PID: 11668 Comm: syz-executor0 Not tainted 4.19.18-514.55.6.9.x86_64+ #1
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0xca/0x13e lib/dump_stack.c:113
->  ubsan_epilogue+0xe/0x81 lib/ubsan.c:159
->  handle_overflow+0x193/0x1e2 lib/ubsan.c:190
->  ktime_set include/linux/ktime.h:42 [inline]
->  timespec64_to_ktime include/linux/ktime.h:78 [inline]
->  do_io_getevents+0x307/0x390 fs/aio.c:2043
->  __do_sys_io_getevents fs/aio.c:2080 [inline]
->  __se_sys_io_getevents fs/aio.c:2068 [inline]
->  __x64_sys_io_getevents+0x163/0x250 fs/aio.c:2068
->  do_syscall_64+0xc8/0x580 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x462589
-> Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fde9b04ec58 EFLAGS: 00000246 ORIG_RAX: 00000000000000d0
-> RAX: ffffffffffffffda RBX: 000000000072bf00 RCX: 0000000000462589
-> RDX: 0000000000000006 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: 0000000000000005 R08: 0000000020000100 R09: 0000000000000000
-> R10: 0000000020000040 R11: 0000000000000246 R12: 00007fde9b04f6bc
-> R13: 00000000004bd1f0 R14: 00000000006f6b60 R15: 00000000ffffffff
-> ================================================================================
-> bond0 (unregistering): Released all slaves
->
-> The timeout described in "man io_getevents" does not say whether it
-> can be negative or not, but as a waiting time, a negative number has
-> no meaning. So I add check to avoid this case.
+Hi all,
 
-It's embarrassing that this bug is still present.  See, for example,
-this discussion, started in 2015:
-  https://lore.kernel.org/lkml/CACT4Y+bBxVYLQ6LtOKrKtnLthqLHcw-BMp3aqP3mjdAvr9FULQ@mail.gmail.com/
+[Just a note for some future improvement]
 
-I could swear it was brought up again since then, but I can't find
-records of that.
+In commit
 
-> Signed-off-by: Tan Xiaojun <tanxiaojun@huawei.com>
-> ---
->  fs/aio.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/aio.c b/fs/aio.c
-> index aaaaf4d..28e0fa6 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -2078,10 +2078,15 @@ static long do_io_getevents(aio_context_t ctx_id,
->  		struct io_event __user *events,
->  		struct timespec64 *ts)
->  {
-> -	ktime_t until = ts ? timespec64_to_ktime(*ts) : KTIME_MAX;
-> +	ktime_t until;
->  	struct kioctx *ioctx = lookup_ioctx(ctx_id);
->  	long ret = -EINVAL;
->  
-> +	if (ts && !timespec64_valid(ts))
-> +		return -EINVAL;
-> +
-> +	until = ts ? timespec64_to_ktime(*ts) : KTIME_MAX;
-> +
->  	if (likely(ioctx)) {
->  		if (likely(min_nr <= nr && min_nr >= 0))
->  			ret = read_events(ioctx, min_nr, nr, events, until);
+  2c4f1fcbef0b ("kprobe: Do not use uaccess functions to access kernel memo=
+ry that can fault")
 
-Looks good to me.  Thanks for fixing this.
+Fixes tag
 
-Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+  Fixes: 9da3f2b7405 ("x86/fault: BUG() when uaccess helpers fault on kerne=
+l addresses")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/GrZ9A5Fh=N39xhpfbTOTBXT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxrFqkACgkQAVBC80lX
+0GytoggAmdtCOewmkX4T/+YLuM3ht7rrRxO8ZXYdA2klMVBHRvFklwcSVlcNsLrz
+wK0o4tlhQqNWNlaAnhWeCiqjW1p0igykRDW9nqwwl/jL85x1TY2hY8ivXaWrBOZ+
+ue9N5gZEE1vmQUXSjkzY+J8OFqnAwEBDRl9vxVRpIYrWRWmg9GaTi+4D7hDvYJQD
+x9rZu45Nb+CL1DU5AaLhq65OipPqP1f6imuzB9gPD54OZCFBXW4KijU42IJemXiV
+Pp1jDkyNvMsXifJkQrla4RmAsuAtM4SE/2WurCKWNMVrJC4Kg2FrqYMfgsLXOYIr
+q0xdHukZqo907nQV8pzqduLL49y7LQ==
+=daug
+-----END PGP SIGNATURE-----
+
+--Sig_/GrZ9A5Fh=N39xhpfbTOTBXT--
