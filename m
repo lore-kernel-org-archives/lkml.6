@@ -2,154 +2,219 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A5BC4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FAAFC4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:51:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 986CE2173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:50:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6E00217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:51:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391494AbfBRRu5 (ORCPT
+        id S2403833AbfBRRvR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 12:50:57 -0500
-Received: from gateway21.websitewelcome.com ([192.185.45.36]:12592 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732914AbfBRRu4 (ORCPT
+        Mon, 18 Feb 2019 12:51:17 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35612 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1733043AbfBRRvQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 12:50:56 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 5A40A400DB5FF
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 11:50:55 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id vn4BgMm6PYTGMvn4BgfLfA; Mon, 18 Feb 2019 11:50:55 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=34694 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gvn4A-004N4W-PM; Mon, 18 Feb 2019 11:50:54 -0600
-Subject: Re: [PATCH][next] Bluetooth: a2mp: Use struct_size() helper
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190208002817.GA15338@embeddedor>
- <F03ABE42-2AB3-4519-9E64-43E4600C6A42@holtmann.org>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <3f777ed6-28c7-a0fd-f1a5-2975deea0e40@embeddedor.com>
-Date:   Mon, 18 Feb 2019 11:50:53 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 18 Feb 2019 12:51:16 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1IHp7fR129095
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 12:51:15 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qqxrf0u3f-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 12:51:12 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 18 Feb 2019 17:48:38 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 18 Feb 2019 17:48:34 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1IHmX9R24838356
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 18 Feb 2019 17:48:33 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9FF9E42042;
+        Mon, 18 Feb 2019 17:48:33 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D0F0C42047;
+        Mon, 18 Feb 2019 17:48:31 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.207.239])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 18 Feb 2019 17:48:31 +0000 (GMT)
+Date:   Mon, 18 Feb 2019 19:48:29 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Rong Chen <rong.a.chen@intel.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        linux-kernel@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>, LKP <lkp@01.org>,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [LKP] efad4e475c [ 40.308255] Oops: 0000 [#1] PREEMPT SMP PTI
+References: <20190218052823.GH29177@shao2-debian>
+ <20190218070844.GC4525@dhcp22.suse.cz>
+ <20190218085510.GC7251@dhcp22.suse.cz>
+ <4c75d424-2c51-0d7d-5c28-78c15600e93c@intel.com>
+ <20190218103013.GK4525@dhcp22.suse.cz>
+ <20190218140515.GF25446@rapoport-lnx>
+ <20190218152050.GS4525@dhcp22.suse.cz>
+ <20190218152213.GT4525@dhcp22.suse.cz>
+ <20190218164813.GG25446@rapoport-lnx>
+ <20190218170558.GV4525@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <F03ABE42-2AB3-4519-9E64-43E4600C6A42@holtmann.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gvn4A-004N4W-PM
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:34694
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 19
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190218170558.GV4525@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19021817-0028-0000-0000-00000349FEEB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021817-0029-0000-0000-0000240837F9
+Message-Id: <20190218174828.GH25446@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-18_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902180132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2/18/19 7:02 AM, Marcel Holtmann wrote:
-> Hi Gustavo,
+On Mon, Feb 18, 2019 at 06:05:58PM +0100, Michal Hocko wrote:
+> On Mon 18-02-19 18:48:14, Mike Rapoport wrote:
+> > On Mon, Feb 18, 2019 at 04:22:13PM +0100, Michal Hocko wrote:
+> [...]
+> > > Thinking about it some more, is it possible that we are overflowing by 1
+> > > here?
+> > 
+> > Looks like that, the end_pfn is actually the first pfn in the next section.
 > 
->> One of the more common cases of allocation size calculations is finding
->> the size of a structure that has a zero-sized array at the end, along
->> with memory for some number of elements for that array. For example:
->>
->> struct foo {
->>    int stuff;
->>    struct boo entry[];
->> };
->>
->> size = sizeof(struct foo) + count * sizeof(struct boo);
->> instance = alloc(size, GFP_KERNEL)
->>
->> Instead of leaving these open-coded and prone to type mistakes, we can
->> now use the new struct_size() helper:
->>
->> size = struct_size(instance, entry, count);
->> instance = alloc(size, GFP_KERNEL)
->>
->> This code was detected with the help of Coccinelle.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->> net/bluetooth/a2mp.c | 2 +-
->> 1 file changed, 1 insertion(+), 1 deletion(-)
+> Thanks for the confirmation. I guess it also exaplains why nobody has
+> noticed this off-by-one. Most people seem to use VMEMMAP SPARSE model
+> and we are safe there.
 > 
-> patch has been applied to bluetooth-next tree.
+> > > diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> > > index 124e794867c5..6618b9d3e53a 100644
+> > > --- a/mm/memory_hotplug.c
+> > > +++ b/mm/memory_hotplug.c
+> > > @@ -1234,10 +1234,10 @@ bool is_mem_section_removable(unsigned long start_pfn, unsigned long nr_pages)
+> > >  {
+> > >  	struct page *page = pfn_to_page(start_pfn);
+> > >  	unsigned long end_pfn = min(start_pfn + nr_pages, zone_end_pfn(page_zone(page)));
+> > > -	struct page *end_page = pfn_to_page(end_pfn);
+> > > +	struct page *end_page = pfn_to_page(end_pfn - 1);
+> > >  
+> > >  	/* Check the starting page of each pageblock within the range */
+> > > -	for (; page < end_page; page = next_active_pageblock(page)) {
+> > > +	for (; page <= end_page; page = next_active_pageblock(page)) {
+> > >  		if (!is_pageblock_removable_nolock(page))
+> > >  			return false;
+> > >  		cond_resched();
+> > 
+> > Works with your fix, but I think mine is more intuitive ;-)
 > 
+> I would rather go and rework this to pfns. What about this instead.
+> Slightly larger but arguably cleared code?
 
-Thanks Marcel.
+Yeah, this is clearer.
+ 
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 124e794867c5..a799a0bdbf34 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1188,11 +1188,13 @@ static inline int pageblock_free(struct page *page)
+>  	return PageBuddy(page) && page_order(page) >= pageblock_order;
+>  }
+>  
+> -/* Return the start of the next active pageblock after a given page */
+> -static struct page *next_active_pageblock(struct page *page)
+> +/* Return the pfn of the start of the next active pageblock after a given pfn */
+> +static unsigned long next_active_pageblock(unsigned long pfn)
+>  {
+> +	struct page *page = pfn_to_page(pfn);
+> +
+>  	/* Ensure the starting page is pageblock-aligned */
+> -	BUG_ON(page_to_pfn(page) & (pageblock_nr_pages - 1));
+> +	BUG_ON(pfn & (pageblock_nr_pages - 1));
+>  
+>  	/* If the entire pageblock is free, move to the end of free page */
+>  	if (pageblock_free(page)) {
+> @@ -1200,16 +1202,16 @@ static struct page *next_active_pageblock(struct page *page)
+>  		/* be careful. we don't have locks, page_order can be changed.*/
+>  		order = page_order(page);
+>  		if ((order < MAX_ORDER) && (order >= pageblock_order))
+> -			return page + (1 << order);
+> +			return pfn + (1 << order);
+>  	}
+>  
+> -	return page + pageblock_nr_pages;
+> +	return pfn + pageblock_nr_pages;
+>  }
+>  
+> -static bool is_pageblock_removable_nolock(struct page *page)
+> +static bool is_pageblock_removable_nolock(unsigned long pfn)
+>  {
+> +	struct page *page = pfn_to_page(pfn);
+>  	struct zone *zone;
+> -	unsigned long pfn;
+>  
+>  	/*
+>  	 * We have to be careful here because we are iterating over memory
+> @@ -1232,13 +1234,14 @@ static bool is_pageblock_removable_nolock(struct page *page)
+>  /* Checks if this range of memory is likely to be hot-removable. */
+>  bool is_mem_section_removable(unsigned long start_pfn, unsigned long nr_pages)
+>  {
+> -	struct page *page = pfn_to_page(start_pfn);
+> -	unsigned long end_pfn = min(start_pfn + nr_pages, zone_end_pfn(page_zone(page)));
+> -	struct page *end_page = pfn_to_page(end_pfn);
+> +	unsigned long end_pfn;
+> +
+> +	end_pfn = min(start_pfn + nr_pages,
+> +			zone_end_pfn(page_zone(pfn_to_page(start_pfn))));
+>  
+>  	/* Check the starting page of each pageblock within the range */
+> -	for (; page < end_page; page = next_active_pageblock(page)) {
+> -		if (!is_pageblock_removable_nolock(page))
+> +	for (; start_pfn < end_pfn; start_pfn = next_active_pageblock(start_pfn)) {
+> +		if (!is_pageblock_removable_nolock(start_pfn))
+>  			return false;
+>  		cond_resched();
+>  	}
 
---
-Gustavo
+With this on top the loop even fits into 80-chars ;-)
+
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 9cc42f3..9981ca7 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1234,13 +1234,13 @@ static bool is_pageblock_removable_nolock(unsigned long pfn)
+ /* Checks if this range of memory is likely to be hot-removable. */
+ bool is_mem_section_removable(unsigned long start_pfn, unsigned long nr_pages)
+ {
+-	unsigned long end_pfn;
++	unsigned long end_pfn, pfn;
+ 
+ 	end_pfn = min(start_pfn + nr_pages,
+ 			zone_end_pfn(page_zone(pfn_to_page(start_pfn))));
+ 
+ 	/* Check the starting page of each pageblock within the range */
+-	for (; start_pfn < end_pfn; start_pfn = next_active_pageblock(start_pfn)) {
++	for (pfn = start_pfn; pfn < end_pfn; pfn = next_active_pageblock(pfn)) {
+ 		if (!is_pageblock_removable_nolock(start_pfn))
+ 			return false;
+ 		cond_resched();
+
+-- 
+Sincerely yours,
+Mike.
+
