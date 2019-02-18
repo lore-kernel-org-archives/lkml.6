@@ -4,165 +4,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B6D4C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CABA2C10F02
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:57:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29604206DD
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:48:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99DC3218DE
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:57:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="u3E9+YOl"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lPFHHgru"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728482AbfBRDsp (ORCPT
+        id S1728330AbfBRD5q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 22:48:45 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:33568 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726892AbfBRDso (ORCPT
+        Sun, 17 Feb 2019 22:57:46 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:46646 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727602AbfBRD5q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 22:48:44 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1I3i9bj144705;
-        Mon, 18 Feb 2019 03:48:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=reply-to : subject :
- to : cc : references : from : message-id : date : mime-version :
- in-reply-to : content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=oVScqPJ3Zij7bvX89910UvrBpF5sFfs79BfFYV+drFk=;
- b=u3E9+YOl220xa2OWxaIV3oAquxaxH/n6fiD3ToDhgs27BMIFqN7uF98C347VsnuL9Li5
- mXdPM+qFZFlojWkR7pJdYhqojrnEzFeuhMWX8LOp/PDw3B7O5CZsSHPdxyYBmfRd1wrW
- R9Xqo0Qoz7RhoKx+ME3dMR6oNoMMBY0cqX1dW41ZgFoogHjvGucd4fxiZLuPtIkGUkfN
- 3s8ay5ApwhwBLgs5kskbyqQ13UGJ9RqueMaT858xL7Wockfm2q9pFeYMpZAQnhl3GNTY
- JYki8Ex2uQORq8gkj/S+o5OTTwkCjglmytoThTuoESW9V1SO0O6Zvjk4GQjXugJXYjTg zg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2qp81dv5ed-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 18 Feb 2019 03:48:30 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1I3mUGP002944
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 18 Feb 2019 03:48:30 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1I3mTbt013623;
-        Mon, 18 Feb 2019 03:48:30 GMT
-Received: from [192.168.1.166] (/60.223.138.56)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 17 Feb 2019 19:48:29 -0800
-Reply-To: zhenzhong.duan@oracle.com
-Subject: Re: [PATCH] acpi_pm: Reduce PMTMR counter read contention
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Waiman Long <longman@redhat.com>,
-        Srinivas Eeda <srinivas.eeda@oracle.com>, kin.cho@oracle.com
-References: <1548141807-25825-1-git-send-email-zhenzhong.duan@oracle.com>
- <alpine.DEB.2.21.1901300903350.1950@nanos.tec.linutronix.de>
- <019e583c-7bcb-c234-200c-fcdb6c49fbb0@oracle.com>
- <alpine.DEB.2.21.1901311525360.8200@nanos.tec.linutronix.de>
- <853e8cf6-aba9-0200-8e39-e362848399ba@oracle.com>
- <alpine.DEB.2.21.1902102159070.8784@nanos.tec.linutronix.de>
-From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Organization: Oracle
-Message-ID: <8ffea578-5eb6-f479-7bd4-668df84d930f@oracle.com>
-Date:   Mon, 18 Feb 2019 11:48:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Sun, 17 Feb 2019 22:57:46 -0500
+Received: by mail-vs1-f66.google.com with SMTP id n10so8826472vso.13
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 19:57:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UOsM3VCVgb9jvwPmcWRSvBagRCh9VlWAv72+Ih2qte0=;
+        b=lPFHHgruNQsGLwdT6TH5+K5HkaAvs54hgg8I+9lpT8zJJT90R+8fGdQhpnSnLdoT/1
+         /zu/zyHI3Oqk8te3MqN0NvqNRNOFQVN8eM0Z03NZ62Uq5DZ7cuCZg6PzAXI2L+6bAd6c
+         +pi/uIn8MrUihRld/jD2bcWL1eBT1XuclwbFA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UOsM3VCVgb9jvwPmcWRSvBagRCh9VlWAv72+Ih2qte0=;
+        b=QwmdKZQR52ZdpmSBruDciy5pzmkMQpD8maj5Fdnpu8i8PwEcShrCvAAlNwuak96LyS
+         2ymqyINDMVTnjOKbcWe46k34hawOmxnfvkxoJ17ATSY2o2S1WZzEeDvOxqN03/soohLp
+         XeOKNk6jIF9479uaL9NBKDJqw3lNbBttGWidj2QNz3SmdnOAqznBzz4kSPOlJLcNqgFS
+         hZttJjmNVlnfDfrR4sdR5EqJ842sb6ilFZQzkDhJgLm+J6cqAcEz6i0bXNgf003ze5Vo
+         2DVZEVJHnrLVEmXyiuMVAa6mv5frc8YwVNXhtmwR3p1HK/u0Qrs7+/qKTdMok9rMIJI4
+         DwAg==
+X-Gm-Message-State: AHQUAuZkkF7Its8d1i18QMQ08jexT3ISTKNyewUv2yjw/ZYKbx0xcXVf
+        s0SlJxqmNseigJT86jeFZuhfqrRRfPo=
+X-Google-Smtp-Source: AHgI3IZNj7Y0l/Fz1Y3f1F9iT908O6BodGgzoLFtSJ69bfU4XT2/+5XxICB9/nOqQaZEpH1L2TFsxA==
+X-Received: by 2002:a67:5e86:: with SMTP id s128mr11211995vsb.90.1550462264726;
+        Sun, 17 Feb 2019 19:57:44 -0800 (PST)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id n206sm10962767vkn.36.2019.02.17.19.57.42
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 17 Feb 2019 19:57:43 -0800 (PST)
+Received: by mail-vs1-f52.google.com with SMTP id z18so8850093vso.7
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 19:57:42 -0800 (PST)
+X-Received: by 2002:a67:6f44:: with SMTP id k65mr10275404vsc.222.1550462262332;
+ Sun, 17 Feb 2019 19:57:42 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1902102159070.8784@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9170 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902180027
+References: <20190212182318.GA16669@beast> <5260689d-9016-bdf4-6070-13d2c88ac8a8@schaufler-ca.com>
+ <4ed50852-abfb-773b-01e4-b4ac83e32ed3@I-love.SAKURA.ne.jp> <CAHC9VhSy8iVUtN1Wt+cy-2RmJQhy34=0zKrUj+RQNEvNuD7y0w@mail.gmail.com>
+In-Reply-To: <CAHC9VhSy8iVUtN1Wt+cy-2RmJQhy34=0zKrUj+RQNEvNuD7y0w@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Sun, 17 Feb 2019 19:57:28 -0800
+X-Gmail-Original-Message-ID: <CAGXu5j+_Xd_On1WsMV18dbjGEg6NGBcSAj4RSp=LX2ALisuXPw@mail.gmail.com>
+Message-ID: <CAGXu5j+_Xd_On1WsMV18dbjGEg6NGBcSAj4RSp=LX2ALisuXPw@mail.gmail.com>
+Subject: Re: [PATCH v2] LSM: Ignore "security=" when "lsm=" is specified
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        SELinux <selinux@vger.kernel.org>,
+        Ubuntu Kernel Team <kernel-team@lists.ubuntu.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/2/11 5:08, Thomas Gleixner wrote:
-> On Sat, 2 Feb 2019, Zhenzhong Duan wrote:
->> On 2019/1/31 22:26, Thomas Gleixner wrote:
-> 
->>>>> I'm not against the change per se, but I really want to understand
->>>>> why we need all the complexity for something which should never be
->>>>> used in a real world deployment.
->>>>>
->>>> Hmm, it's a strong word of "never be used". Customers may happen to
->>>> use nohpet(sanity test?) and report bug to us. Sometimes they does
->>>> report a bug that reproduce with their customed config. There may
->>>> also be BIOS setting HPET disabled.
->>>
->>> And because the customer MAY do completely nonsensical things (and there
->>> are a lot more than the HPET) the kernel has to handle all of them?
->>
->> Ok, then. I don't have more suggestion to convince you.
-> 
-> You give up too fast :)
+On Sun, Feb 17, 2019 at 6:46 PM Paul Moore <paul@paul-moore.com> wrote:
+> My main concern is that "selinux={0|1}" continues to work as it has
+> for years.  It doesn't look like this affects that, but I can't say
+> I've dug into these changes very far.
 
-Ah, because I thought of a simple fix.
-> 
-> The point is, that we really want proper justifications for changes like
-> this. Some 'may, could and more handwaving' simply does not cut it.
-> 
-> So if you can just describe a realistic scenario, which does not involve
-> thoughtless flipping of BIOS options, then this becomes way more palatable.
+Yup, no worries; it does. :)
 
-I indeed don't see a realistic scenario in a product env needing to use 
-nohpet. My only justification is now that we have nohpet as kernel 
-parameter, we should fix the softlockup in large machines for enterprise 
-use.
-> 
->> I just think of a simple fix as below. I think it will work for both hpet
->> and pmtmr. We will test it when the env is available.
-> 
->> --- a/kernel/time/timekeeping.c
->> +++ b/kernel/time/timekeeping.c
->> @@ -1353,6 +1353,7 @@ static int change_clocksource(void *data)
->>
->>          write_seqcount_end(&tk_core.seq);
->>          raw_spin_unlock_irqrestore(&timekeeper_lock, flags);
->> +       tick_clock_notify();
->>
->>          return 0;
->>   }
->> @@ -1371,7 +1372,6 @@ int timekeeping_notify(struct clocksource *clock)
->>          if (tk->tkr_mono.clock == clock)
->>                  return 0;
->>          stop_machine(change_clocksource, clock, NULL);
->> -       tick_clock_notify();
->>          return tk->tkr_mono.clock == clock ? 0 : -1;
->>   }
-> 
-> This won't resolve the concurrency issues of HPET or PMTIMER in any
-> way.
-
-Just got chance to test and Kin confirmed it fix the softlockup of 
-PMTMR(with nohpet) and HPET(without nohpet, revert previous hpet commit) 
-at bootup stage.
-
-My understandig is, at bootup stage tick device is firstly initialized 
-in periodic mode and then switch to one-shot mode. In periodic mode 
-clock event interrupt is triggered every 1ms(HZ=1000), contention in 
-HPET or PMTIMER exceeds 1ms and delayed the clock interrupt. Then CPUs 
-continue to process interrupt one by one without a break, 
-tick_clock_notify() have no chance to be called and we never switch to 
-one-shot mode.
-
-In one-shot mode, the contention is still there but next event is always 
-set with a future value. We may missed some ticks, but the timer code is 
-smart enough to pick up those missed ticks.
-
-By moving tick_clock_notify() in stop_machine, kernel changes to 
-one-shot mode early before the contention accumulate and lockup system.
-
-> Instead it breaks the careful orchestrated mechanism of clocksource
-> change.
-
-Sorry, I didn't get a idea how it breaks, tick_clock_notify() is a 
-simple function setting bitmask in percpu variable. Could you explain a bit?
-
-Thanks
-Zhenzhong
+-- 
+Kees Cook
