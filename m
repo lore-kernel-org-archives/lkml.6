@@ -2,102 +2,190 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C176C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:03:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D3CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:03:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B5892175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:03:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550480596;
-	bh=hI8OJOUsEhFtBEQI8UfTQKYqQ2Nvs6lsAYQd2YliCvo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=19odLooG0ZQbpdpRSiLc9ks++yOpp5Tom16qJGycBA2GBFYJhB0ntt11568ijjkwr
-	 wsn1Hpduw7MVsFzsDfpfSnR6nbmrQnfY8YzIT85izrtHyAWH+wxG/ZHBZOqHVBEQMP
-	 4he91wK2TTuwZ48J1jldqLKkVul82921K2KSYEWM=
+	by mail.kernel.org (Postfix) with ESMTP id 901872175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:03:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gSfTmvcd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729348AbfBRJDN (ORCPT
+        id S1729396AbfBRJDq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 04:03:13 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53966 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727423AbfBRJDN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 04:03:13 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 51037AECF;
-        Mon, 18 Feb 2019 09:03:12 +0000 (UTC)
-Date:   Mon, 18 Feb 2019 10:03:10 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Rong Chen <rong.a.chen@intel.com>
-Cc:     Oscar Salvador <osalvador@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-kernel@vger.kernel.org, LKP <lkp@01.org>
-Subject: Re: [LKP] efad4e475c [ 40.308255] Oops: 0000 [#1] PREEMPT SMP PTI
-Message-ID: <20190218090310.GE4525@dhcp22.suse.cz>
-References: <20190218052823.GH29177@shao2-debian>
- <20190218070844.GC4525@dhcp22.suse.cz>
- <79a3d305-1d96-3938-dc14-617a9e475648@intel.com>
+        Mon, 18 Feb 2019 04:03:46 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:42662 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729139AbfBRJDp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 04:03:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=yZ6N+kGZ5Pw5/vxuhiA+q4QZ4NOtPDkAadQRH2EBWdM=; b=gSfTmvcdIPHlcMqJuqBZHtYx+
+        bnKCX+VO0eDO5k6Nmvg2sv2Ck2H0C3IYv4CTY3KO7b21cZcMMF+oXynMJDN19femm3J6H+C5HIrt+
+        BvyBj3k1hzSDbzFLM6tBw/Ag8Ap6Oxrn/qEKr/shIyqD5cjm7RAVbbIJHvycn/LlbHgAvoBVskasF
+        p0me5yGQ47wmwoP47KNlRuL8B98d6IpMTbv6t8pJQ2RHNPfGSVu5OeUnq2vcwvpzEgu+5QDd1UEJY
+        Cvbtk+SoS8YUnWJGmuIqdpcNsJQPTOYghThgLV5zgjm6o3nEzEBYSxciZiv5x7UKULQQl0ffX4W/I
+        pJrt4Gfmg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gvepi-0004ne-27; Mon, 18 Feb 2019 09:03:26 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id AE2652851C40E; Mon, 18 Feb 2019 10:03:22 +0100 (CET)
+Date:   Mon, 18 Feb 2019 10:03:22 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Julien Thierry <julien.thierry@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, mingo@redhat.com,
+        catalin.marinas@arm.com, james.morse@arm.com, hpa@zytor.com,
+        valentin.schneider@arm.com, brgerst@gmail.com, jpoimboe@redhat.com,
+        luto@kernel.org, bp@alien8.de, dvlasenk@redhat.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de
+Subject: [PATCH v2] sched/x86: Save [ER]FLAGS on context switch
+Message-ID: <20190218090322.GT32534@hirez.programming.kicks-ass.net>
+References: <20190213131720.GU32494@hirez.programming.kicks-ass.net>
+ <20190213140025.GB6346@brain-police>
+ <20190213142524.GW32494@hirez.programming.kicks-ass.net>
+ <dd33cc20-f335-0e4c-e3f4-02497ecc3710@arm.com>
+ <20190213144145.GY32494@hirez.programming.kicks-ass.net>
+ <20190213154532.GQ32534@hirez.programming.kicks-ass.net>
+ <D61C430D-4321-4114-AB85-671A3C7B8EAE@amacapital.net>
+ <20190213222146.GC32494@hirez.programming.kicks-ass.net>
+ <D3E1B64D-3E91-4A82-9C3B-92D9EB7326CE@amacapital.net>
+ <20190214101429.GD32494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <79a3d305-1d96-3938-dc14-617a9e475648@intel.com>
+In-Reply-To: <20190214101429.GD32494@hirez.programming.kicks-ass.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 18-02-19 16:47:26, Rong Chen wrote:
-> 
-> On 2/18/19 3:08 PM, Michal Hocko wrote:
-> > On Mon 18-02-19 13:28:23, kernel test robot wrote:
-[...]
-> > > [   40.305212] PGD 0 P4D 0
-> > > [   40.308255] Oops: 0000 [#1] PREEMPT SMP PTI
-> > > [   40.313055] CPU: 1 PID: 239 Comm: udevd Not tainted 5.0.0-rc4-00149-gefad4e4 #1
-> > > [   40.321348] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> > > [   40.330813] RIP: 0010:page_mapping+0x12/0x80
-> > > [   40.335709] Code: 5d c3 48 89 df e8 0e ad 02 00 85 c0 75 da 89 e8 5b 5d c3 0f 1f 44 00 00 53 48 89 fb 48 8b 43 08 48 8d 50 ff a8 01 48 0f 45 da <48> 8b 53 08 48 8d 42 ff 83 e2 01 48 0f 44 c3 48 83 38 ff 74 2f 48
-> > > [   40.356704] RSP: 0018:ffff88801fa87cd8 EFLAGS: 00010202
-> > > [   40.362714] RAX: ffffffffffffffff RBX: fffffffffffffffe RCX: 000000000000000a
-> > > [   40.370798] RDX: fffffffffffffffe RSI: ffffffff820b9a20 RDI: ffff88801e5c0000
-> > > [   40.378830] RBP: 6db6db6db6db6db7 R08: ffff88801e8bb000 R09: 0000000001b64d13
-> > > [   40.386902] R10: ffff88801fa87cf8 R11: 0000000000000001 R12: ffff88801e640000
-> > > [   40.395033] R13: ffffffff820b9a20 R14: ffff88801f145258 R15: 0000000000000001
-> > > [   40.403138] FS:  00007fb2079817c0(0000) GS:ffff88801dd00000(0000) knlGS:0000000000000000
-> > > [   40.412243] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > [   40.418846] CR2: 0000000000000006 CR3: 000000001fa82000 CR4: 00000000000006a0
-> > > [   40.426951] Call Trace:
-> > > [   40.429843]  __dump_page+0x14/0x2c0
-> > > [   40.433947]  is_mem_section_removable+0x24c/0x2c0
-> > This looks like we are stumbling over an unitialized struct page again.
-> > Something this patch should prevent from. Could you try to apply [1]
-> > which will make __dump_page more robust so that we do not blow up there
-> > and give some more details in return.
-> 
-> 
-> Hi Hocko,
-> 
-> I have applied [1] and attached the dmesg file.
 
-Thanks so the log confirms that this is really an unitialized struct
-page
-[   12.228622] raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff
-[   12.231474] page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
-[   12.232135] ------------[ cut here ]------------
-[   12.232649] kernel BUG at include/linux/mm.h:1020!
 
-So now, we have to find out what has been left behind. Please see my
-other email. Also could you give me faddr2line of the
-is_mem_section_removable offset please? I assume it is 
-is_pageblock_removable_nolock:
-	if (!node_online(page_to_nid(page)))
-		return false;
--- 
-Michal Hocko
-SUSE Labs
+Subject: sched/x86: Save [ER]FLAGS on context switch
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Thu Feb 14 10:30:52 CET 2019
+
+Effectively reverts commit:
+
+  2c7577a75837 ("sched/x86_64: Don't save flags on context switch")
+
+Specifically because SMAP uses FLAGS.AC which invalidates the claim
+that the kernel has clean flags.
+
+In particular; while preemption from interrupt return is fine (the
+IRET frame on the exception stack contains FLAGS) it breaks any code
+that does synchonous scheduling, including preempt_enable().
+
+This has become a significant issue ever since commit:
+
+  5b24a7a2aa20 ("Add 'unsafe' user access functions for batched accesses")
+
+provided for means of having 'normal' C code between STAC / CLAC,
+exposing the FLAGS.AC state. So far this hasn't led to trouble,
+however fix it before it comes apart.
+
+Fixes: 5b24a7a2aa20 ("Add 'unsafe' user access functions for batched accesses")
+Acked-by: Andy Lutomirski <luto@amacapital.net>
+Reported-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ arch/x86/entry/entry_32.S        |    2 ++
+ arch/x86/entry/entry_64.S        |    2 ++
+ arch/x86/include/asm/switch_to.h |    1 +
+ arch/x86/kernel/process_32.c     |    7 +++++++
+ arch/x86/kernel/process_64.c     |    8 ++++++++
+ 5 files changed, 20 insertions(+)
+
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -650,6 +650,7 @@ ENTRY(__switch_to_asm)
+ 	pushl	%ebx
+ 	pushl	%edi
+ 	pushl	%esi
++	pushfl
+ 
+ 	/* switch stack */
+ 	movl	%esp, TASK_threadsp(%eax)
+@@ -672,6 +673,7 @@ ENTRY(__switch_to_asm)
+ #endif
+ 
+ 	/* restore callee-saved registers */
++	popfl
+ 	popl	%esi
+ 	popl	%edi
+ 	popl	%ebx
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -291,6 +291,7 @@ ENTRY(__switch_to_asm)
+ 	pushq	%r13
+ 	pushq	%r14
+ 	pushq	%r15
++	pushfq
+ 
+ 	/* switch stack */
+ 	movq	%rsp, TASK_threadsp(%rdi)
+@@ -313,6 +314,7 @@ ENTRY(__switch_to_asm)
+ #endif
+ 
+ 	/* restore callee-saved registers */
++	popfq
+ 	popq	%r15
+ 	popq	%r14
+ 	popq	%r13
+--- a/arch/x86/include/asm/switch_to.h
++++ b/arch/x86/include/asm/switch_to.h
+@@ -40,6 +40,7 @@ asmlinkage void ret_from_fork(void);
+  * order of the fields must match the code in __switch_to_asm().
+  */
+ struct inactive_task_frame {
++	unsigned long flags;
+ #ifdef CONFIG_X86_64
+ 	unsigned long r15;
+ 	unsigned long r14;
+--- a/arch/x86/kernel/process_32.c
++++ b/arch/x86/kernel/process_32.c
+@@ -127,6 +127,13 @@ int copy_thread_tls(unsigned long clone_
+ 	struct task_struct *tsk;
+ 	int err;
+ 
++	/*
++	 * For a new task use the RESET flags value since there is no before.
++	 * All the status flags are zero; DF and all the system flags must also
++	 * be 0, specifically IF must be 0 because we context switch to the new
++	 * task with interrupts disabled.
++	 */
++	frame->flags = X86_EFLAGS_FIXED;
+ 	frame->bp = 0;
+ 	frame->ret_addr = (unsigned long) ret_from_fork;
+ 	p->thread.sp = (unsigned long) fork_frame;
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -392,6 +392,14 @@ int copy_thread_tls(unsigned long clone_
+ 	childregs = task_pt_regs(p);
+ 	fork_frame = container_of(childregs, struct fork_frame, regs);
+ 	frame = &fork_frame->frame;
++
++	/*
++	 * For a new task use the RESET flags value since there is no before.
++	 * All the status flags are zero; DF and all the system flags must also
++	 * be 0, specifically IF must be 0 because we context switch to the new
++	 * task with interrupts disabled.
++	 */
++	frame->flags = X86_EFLAGS_FIXED;
+ 	frame->bp = 0;
+ 	frame->ret_addr = (unsigned long) ret_from_fork;
+ 	p->thread.sp = (unsigned long) fork_frame;
