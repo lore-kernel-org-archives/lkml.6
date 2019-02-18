@@ -4,49 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44620C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:04:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 947F5C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:04:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1441E21902
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:04:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62D9F21901
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:04:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498645;
-	bh=UZI5IIupBkAGW+JDL690RohgpbngbwUXBdeSwDGG1as=;
+	s=default; t=1550498651;
+	bh=MsTRgiEDzcy8gxQwryWdHSq9Ae6IV94+SXV728KUSCA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SHg1IxC3MfyQl0TsLKZPnF8diSfN5OpbTCfdcKUhP3uASOYnhd4qXIstK9xwltZUg
-	 aZgXOnHGj/yGi3j6F36RKvkMoFS4ZBm3hEzcSUC5/fPeBIeeCV2Z41v81hg0CzR/6P
-	 enTfTaLOUS9NiH6j72PzA8ruqk1WAjtF6LF652A0=
+	b=16mtEOr/9X37dCfCxI2gY+Gf2UZ2H5O5akRexvn7zjW9VlbqjSYmeoNDjzOojwA4X
+	 pEHW8+Bf3LNruwpQ4+HxO1nhNq3UTz0ah7mF/egrsdBFUOV91uLKps1HtRidRVps6q
+	 3RDcmlfT/bF8XFmHoQOrTH9VpsKiW7L6iJOe/HSA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389857AbfBROED (ORCPT
+        id S2389324AbfBROEJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:04:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45946 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:04:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389765AbfBRODw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:03:52 -0500
+        id S2389838AbfBROEB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:04:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3353321902;
-        Mon, 18 Feb 2019 14:03:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77117204FD;
+        Mon, 18 Feb 2019 14:04:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498631;
-        bh=UZI5IIupBkAGW+JDL690RohgpbngbwUXBdeSwDGG1as=;
+        s=default; t=1550498641;
+        bh=MsTRgiEDzcy8gxQwryWdHSq9Ae6IV94+SXV728KUSCA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uun19XBeHD7ftLVSsKf8msAZ3fbq1hb1rCcifw/3WkUnrIkAzOiC5w6iYGOPSzkc3
-         Kwxptp9x7FjuhtCR2KDRzr9KjVWWv3AX+2NmJchA6orjjoVbZ4dAtF72HbAceDFeZd
-         6nvMuicvEutjHscAFaQryoH+1IvyhUjFnLcUxMww=
+        b=iyTZeeKRGHQyvMZ0+8V5FzY9HPsqwOIbbfoaKT0JQ9KCbTQBmMFlk1DeGvftFwoxN
+         /Qo5XPE0IdX5i7fYvAZmsCHynP3FQfeW5Ncv8yTkTMYM54dRRfgKLKrZrXwSSWHuoQ
+         a5vPJy0BohhH6WtttGPrY0QHRohEzqRI3PXmYflo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 048/143] drbd: skip spurious timeout (ping-timeo) when failing promote
-Date:   Mon, 18 Feb 2019 14:42:56 +0100
-Message-Id: <20190218133530.888235816@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Fabian Frederick <ffrederick@users.sourceforge.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Geoff Levand <geoff@infradead.org>,
+        James Simmons <jsimmons@users.sf.net>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 051/143] fbdev: fbmem: behave better with small rotated displays and many CPUs
+Date:   Mon, 18 Feb 2019 14:42:59 +0100
+Message-Id: <20190218133530.991215258@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -65,58 +71,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9848b6ddd8c92305252f94592c5e278574e7a6ac ]
+[ Upstream commit f75df8d4b4fabfad7e3cba2debfad12741c6fde7 ]
 
-If you try to promote a Secondary while connected to a Primary
-and allow-two-primaries is NOT set, we will wait for "ping-timeout"
-to give this node a chance to detect a dead primary,
-in case the cluster manager noticed faster than we did.
+Blitting an image with "negative" offsets is not working since there
+is no clipping. It hopefully just crashes. For the bootup logo, there
+is protection so that blitting does not happen as the image is drawn
+further and further to the right (ROTATE_UR) or further and further
+down (ROTATE_CW). There is however no protection when drawing in the
+opposite directions (ROTATE_UD and ROTATE_CCW).
 
-But if we then are *still* connected to a Primary,
-we fail (after an additional timeout of ping-timout).
+Add back this protection.
 
-This change skips the spurious second timeout.
+The regression is 20-odd years old but the mindless warning-killing
+mentality displayed in commit 34bdb666f4b2 ("fbdev: fbmem: remove
+positive test on unsigned values") is also to blame, methinks.
 
-Most people won't notice really,
-since "ping-timeout" by default is half a second.
-
-But in some installations, ping-timeout may be 10 or 20 seconds or more,
-and spuriously delaying the error return becomes annoying.
-
-Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 448d479747b8 ("fbdev: fb_do_show_logo() updates")
+Signed-off-by: Peter Rosin <peda@axentia.se>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Fabian Frederick <ffrederick@users.sourceforge.net>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+cc: Geoff Levand <geoff@infradead.org>
+Cc: James Simmons <jsimmons@users.sf.net>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/drbd/drbd_nl.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/video/fbdev/core/fbmem.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
-index e80cbefbc2b5..27e1abcf5710 100644
---- a/drivers/block/drbd/drbd_nl.c
-+++ b/drivers/block/drbd/drbd_nl.c
-@@ -632,14 +632,15 @@ drbd_set_role(struct drbd_device *const device, enum drbd_role new_role, int for
- 		if (rv == SS_TWO_PRIMARIES) {
- 			/* Maybe the peer is detected as dead very soon...
- 			   retry at most once more in this case. */
--			int timeo;
--			rcu_read_lock();
--			nc = rcu_dereference(connection->net_conf);
--			timeo = nc ? (nc->ping_timeo + 1) * HZ / 10 : 1;
--			rcu_read_unlock();
--			schedule_timeout_interruptible(timeo);
--			if (try < max_tries)
-+			if (try < max_tries) {
-+				int timeo;
- 				try = max_tries - 1;
-+				rcu_read_lock();
-+				nc = rcu_dereference(connection->net_conf);
-+				timeo = nc ? (nc->ping_timeo + 1) * HZ / 10 : 1;
-+				rcu_read_unlock();
-+				schedule_timeout_interruptible(timeo);
-+			}
- 			continue;
+diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
+index 8a29ec5992fd..ea2bd6208a2f 100644
+--- a/drivers/video/fbdev/core/fbmem.c
++++ b/drivers/video/fbdev/core/fbmem.c
+@@ -433,7 +433,9 @@ static void fb_do_show_logo(struct fb_info *info, struct fb_image *image,
+ 			image->dx += image->width + 8;
  		}
- 		if (rv < SS_SUCCESS) {
+ 	} else if (rotate == FB_ROTATE_UD) {
+-		for (x = 0; x < num; x++) {
++		u32 dx = image->dx;
++
++		for (x = 0; x < num && image->dx <= dx; x++) {
+ 			info->fbops->fb_imageblit(info, image);
+ 			image->dx -= image->width + 8;
+ 		}
+@@ -445,7 +447,9 @@ static void fb_do_show_logo(struct fb_info *info, struct fb_image *image,
+ 			image->dy += image->height + 8;
+ 		}
+ 	} else if (rotate == FB_ROTATE_CCW) {
+-		for (x = 0; x < num; x++) {
++		u32 dy = image->dy;
++
++		for (x = 0; x < num && image->dy <= dy; x++) {
+ 			info->fbops->fb_imageblit(info, image);
+ 			image->dy -= image->height + 8;
+ 		}
 -- 
 2.19.1
 
