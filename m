@@ -2,150 +2,110 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B42C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 12:25:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F10AEC10F01
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 12:26:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8533217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 12:25:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="TZCcIvz/"
+	by mail.kernel.org (Postfix) with ESMTP id B6BD6218AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 12:26:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550492796;
+	bh=lNKKnPuGUSMkXxUwapbfZcJqhufzShpsAeCuxIyiPyQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=adJ8m6LxUOh/O1/YuROVJwhqdm3nr/zNGPFTii02jCamQWATJPUZ075TPh6seaWZY
+	 pKRQwW0o6CZeKIwhW05XTTf09LjQLvOVETSq1/JD3ajmrFaCaMiNEQeNwHPHWDzRSz
+	 FTeBfta8B+QnHxBfvDahutEF60aK30OghiMf+Jyo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730847AbfBRMZX (ORCPT
+        id S1730866AbfBRM0f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 07:25:23 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:39462 "EHLO pegase1.c-s.fr"
+        Mon, 18 Feb 2019 07:26:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729639AbfBRMZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 07:25:22 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 44333c12w1z9v0s0;
-        Mon, 18 Feb 2019 13:25:16 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=TZCcIvz/; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 5kyQMr2VWdiF; Mon, 18 Feb 2019 13:25:16 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 44333b6xLTz9v0ry;
-        Mon, 18 Feb 2019 13:25:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1550492716; bh=1as0ClI9dn5BE3e3EcZOrFyo31L77TqVjn8Dhtw/V+k=;
-        h=From:Subject:To:Cc:Date:From;
-        b=TZCcIvz/VBqlnFS/mHEJT7Kew+xZcQk1n0Sy5ytEdKoz3SF0X0WhODFvfj+P1qSD7
-         RSpkfhA6H7+fjiHxkfWunmu2xW2sFLUodzprI1fWnl/QavUrn3qemzZHN21zEd4x7t
-         YJ8UisBtAwwIMdEpbUAamfbB6lRIbw0QQkH1b3xc=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C56038B7BC;
-        Mon, 18 Feb 2019 13:25:20 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id fk_fz_MQUNcB; Mon, 18 Feb 2019 13:25:20 +0100 (CET)
-Received: from po16846vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id A09408B7B9;
-        Mon, 18 Feb 2019 13:25:20 +0100 (CET)
-Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 7F8BA6A4AD; Mon, 18 Feb 2019 12:25:20 +0000 (UTC)
-Message-Id: <9afb42b9d78abe00fe049e1736a180b1facdfd86.1550490186.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc: dump as a single line areas mapping a single
- physical page.
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Mon, 18 Feb 2019 12:25:20 +0000 (UTC)
+        id S1728874AbfBRM0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 07:26:35 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8113217F5;
+        Mon, 18 Feb 2019 12:26:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550492794;
+        bh=lNKKnPuGUSMkXxUwapbfZcJqhufzShpsAeCuxIyiPyQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VNic33GpUXkwI72zKwF58dPp8DN99wXqX2hiP2+lRbu6FreFoaHweKA12hvJPyhi0
+         kUNAoYu7KUKiPi48F3o54fkUmqXrMq0mGByjRpEJRK68NLzUbtupEUkDiHbWrShnP9
+         bxKfWXyL8XsPi4X64Ktix1IJPtfJMGnmLoowUags=
+Date:   Mon, 18 Feb 2019 13:26:31 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        William Cohen <wcohen@redhat.com>,
+        "# 3.4.x" <stable@vger.kernel.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        lttng@reliableembeddedsystems.com,
+        lttng-dev <lttng-dev@lists.lttng.org>
+Subject: Re: BUG: optimized kprobes illegal instructions in v4.19 stable
+ kernels
+Message-ID: <20190218122631.GE30260@kroah.com>
+References: <342740659.2887.1549307721609.JavaMail.zimbra@efficios.com>
+ <CAGXu5jJYbc0xhQGqS6L43o_1tOdWmL=rhRmu_L8qT4-tOheHPw@mail.gmail.com>
+ <20190206134115.baba291e33022a2f6b6ae5f8@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190206134115.baba291e33022a2f6b6ae5f8@kernel.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When using KASAN, there are parts of the shadow area where all
-pages are mapped to the kasan_early_shadow_page. It is pointless
-to dump one line for each of those pages (in the example below there
-are 7168 entries pointing to the same physical page).
+On Wed, Feb 06, 2019 at 01:41:15PM +0900, Masami Hiramatsu wrote:
+> On Tue, 5 Feb 2019 15:06:10 +0000
+> Kees Cook <keescook@chromium.org> wrote:
+> 
+> > On Mon, Feb 4, 2019 at 7:15 PM Mathieu Desnoyers
+> > <mathieu.desnoyers@efficios.com> wrote:
+> > >
+> > > Hi,
+> > >
+> > > I notice this commit as a possible culprit of the illegal instructions my lttng
+> > > users are noticing on arm32 when using kprobes on a v4.19.13 Linux kernel
+> > > in a Yocto environment [1]. They were able to reproduce the issue with perf
+> > > as well.
+> > >
+> > > commit e46daee53bb50bde38805f1823a182979724c229
+> > > Author: Kees Cook <keescook@chromium.org>
+> > > Date:   Tue Oct 30 22:12:56 2018 +0100
+> > >
+> > >     ARM: 8806/1: kprobes: Fix false positive with FORTIFY_SOURCE
+> > >
+> > > I *think* the intent there was to do
+> > >
+> > > -       memcpy(code, &optprobe_template_entry,
+> > > +       memcpy(code, (unsigned long *)&optprobe_template_entry,
+> > >
+> > > But if you look at the commit, the "&" seems to have been stripped away,
+> > > which happens to change the behavior significantly.
+> > 
+> > Yeah, this was a typo on my part. :(
+> 
+> Ah, I thought it had been fixed as same as x86.
+> On x86, all optprobe_template_* are defined as kprobe_opcode_t [],
+> but on arm, it still be kprobe_opcode_t.
+> 
+> Hmm, but I think we should use kprobe_opcode_t [] or char[] as asm/sections.h does.
+> OK, I'll prepare for the change.
 
-~# cat /sys/kernel/debug/kernel_page_tables
- ...
----[ kasan shadow mem start ]---
-0xf7c00000-0xf8bfffff 0x06fac000       16M        rw       present           dirty  accessed
-0xf8c00000-0xf8c03fff 0x00cd0000       16K        r        present           dirty  accessed
-0xf8c04000-0xf8c07fff 0x00cd0000       16K        r        present           dirty  accessed
-0xf8c08000-0xf8c0bfff 0x00cd0000       16K        r        present           dirty  accessed
-0xf8c0c000-0xf8c0ffff 0x00cd0000       16K        r        present           dirty  accessed
-0xf8c10000-0xf8c13fff 0x00cd0000       16K        r        present           dirty  accessed
- ... 7168 identical lines
-0xffbfc000-0xffbfffff 0x00cd0000       16K        r        present           dirty  accessed
----[ kasan shadow mem end ]---
- ...
+Did this ever get fixed in Linus's tree?  If so, what is the git commit
+id, I can't seem to find anything...
 
-This patch modifies linux table dump to dump as a single line areas
-where all addresses points to the same physical page. That physical
-address is put inside [] to show that all virt pages points to the
-same phys page.
+thanks,
 
-~# cat /sys/kernel/debug/kernel_page_tables
- ...
----[ kasan shadow mem start ]---
-0xf7c00000-0xf8bfffff  0x06fac000        16M        rw       present           dirty  accessed
-0xf8c00000-0xffbfffff [0x00cd0000]       16K        r        present           dirty  accessed
----[ kasan shadow mem end ]---
- ...
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/mm/dump_linuxpagetables.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
-
-diff --git a/arch/powerpc/mm/dump_linuxpagetables.c b/arch/powerpc/mm/dump_linuxpagetables.c
-index 6aa41669ac1a..b0da447197d4 100644
---- a/arch/powerpc/mm/dump_linuxpagetables.c
-+++ b/arch/powerpc/mm/dump_linuxpagetables.c
-@@ -143,14 +143,19 @@ static void dump_addr(struct pg_state *st, unsigned long addr)
- 	unsigned long delta;
- 
- #ifdef CONFIG_PPC64
--	seq_printf(st->seq, "0x%016lx-0x%016lx ", st->start_address, addr-1);
--	seq_printf(st->seq, "0x%016lx ", st->start_pa);
-+#define REG		"0x%016lx"
- #else
--	seq_printf(st->seq, "0x%08lx-0x%08lx ", st->start_address, addr - 1);
--	seq_printf(st->seq, "0x%08lx ", st->start_pa);
-+#define REG		"0x%08lx"
- #endif
- 
--	delta = (addr - st->start_address) >> 10;
-+	seq_printf(st->seq, REG "-" REG " ", st->start_address, addr - 1);
-+	if (st->start_pa == st->last_pa && st->start_address + PAGE_SIZE != addr) {
-+		seq_printf(st->seq, "[" REG "]", st->start_pa);
-+		delta = PAGE_SIZE >> 10;
-+	} else {
-+		seq_printf(st->seq, " " REG " ", st->start_pa);
-+		delta = (addr - st->start_address) >> 10;
-+	}
- 	/* Work out what appropriate unit to use */
- 	while (!(delta & 1023) && unit[1]) {
- 		delta >>= 10;
-@@ -184,7 +189,8 @@ static void note_page(struct pg_state *st, unsigned long addr,
- 	 */
- 	} else if (flag != st->current_flags || level != st->level ||
- 		   addr >= st->marker[1].start_address ||
--		   pa != st->last_pa + PAGE_SIZE) {
-+		   (pa != st->last_pa + PAGE_SIZE &&
-+		    (pa != st->start_pa || st->start_pa != st->last_pa))) {
- 
- 		/* Check the PTE flags */
- 		if (st->current_flags) {
--- 
-2.13.3
-
+greg k-h
