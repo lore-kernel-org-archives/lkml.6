@@ -4,54 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F9EAC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F085FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E400E217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3336217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498097;
-	bh=JBOJIClizgTZVqCoCokb6Urat2Z80g161ju1aROiPzE=;
+	s=default; t=1550498101;
+	bh=y28mxSDhRUEhQeLAu/Xp4d/xE1cJ6D61D2rm7ZHH0QA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=glHEJ/bRBWP/albu+fvCdATk8BfDR8y2NOXpeniZP83E2SHxhgNFBAVi+NFAJYFcq
-	 VnDjn3dgR1cOHeFflt6LskjofJZpJJLZq7Jrqk1eh7dSf/OgMpu67Dp9Tknf2yNE38
-	 UeAHf81yOoScyqSE8qNqWB+tY5QdKjY0PO7No5nw=
+	b=ipvBnC4yLIyBOVHh9GJuFsaU5eJsgsewqfHfBURQ+7T5bKjSr6OMYbYa2B7+syiQS
+	 HCibDG5v/7caqoNQm3uMzAZI7GNGqNUjbDyUH87cVbwH0RFMcmK3lgZwFuavLD036t
+	 Xvx0uCOBB2wqtyPx49yhMIKnatPKHgJ49a3UqTnE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387401AbfBRNyz (ORCPT
+        id S1732684AbfBRNzA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:54:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34862 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:55:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732824AbfBRNyw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:54:52 -0500
+        id S2387414AbfBRNy7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:54:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BCECA2077B;
-        Mon, 18 Feb 2019 13:54:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 007F82077B;
+        Mon, 18 Feb 2019 13:54:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498092;
-        bh=JBOJIClizgTZVqCoCokb6Urat2Z80g161ju1aROiPzE=;
+        s=default; t=1550498098;
+        bh=y28mxSDhRUEhQeLAu/Xp4d/xE1cJ6D61D2rm7ZHH0QA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UjRjyjS7XhYF+fp9w0x1HegAh4wHLEG6fMk0aPTRAKqtMpynZ7OUXh6gfkOdo2Fj0
-         Ux23+NXAC/2K3ip3TiAL8wFcGfTKJcmT8pWfZGrLx1UiHYdpteX8zK5aktVWaI4mpA
-         9GVA5I4PxQ4e9MVbqpD2wiKG3wl66prsZXzAP2/U=
+        b=e0HkOvPeNEaHLiiRgzEEOACTtqoDoDn5TN2y/qUGta8ClfLcdBXVz4TRwwaPIw7qn
+         nTR1LKu9teEcv3wdLqpv65VtKOobeCWHxnMGFazwwxZ3XIXuhZbbILSKl65k9hNel6
+         GSplcorOwVg35oiISLxpm8KlRMd6uc7dkjtSBXjM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        "David A. Long" <dave.long@linaro.org>,
-        Julien Thierry <julien.thierry@arm.com>,
+        stable@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 20/62] ARM: ensure that processor vtables is not lost after boot
-Date:   Mon, 18 Feb 2019 14:43:26 +0100
-Message-Id: <20190218133507.630511226@linuxfoundation.org>
+Subject: [PATCH 4.14 04/62] uapi/if_ether.h: prevent redefinition of struct ethhdr
+Date:   Mon, 18 Feb 2019 14:43:10 +0100
+Message-Id: <20190218133506.144278426@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
 References: <20190218133505.801423074@linuxfoundation.org>
@@ -70,55 +67,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-Commit 3a4d0c2172bcf15b7a3d9d498b2b355f9864286b upstream.
+commit 6926e041a8920c8ec27e4e155efa760aa01551fd upstream.
 
-Marek Szyprowski reported problems with CPU hotplug in current kernels.
-This was tracked down to the processor vtables being located in an
-init section, and therefore discarded after kernel boot, despite being
-required after boot to properly initialise the non-boot CPUs.
+Musl provides its own ethhdr struct definition. Add a guard to prevent
+its definition of the appropriate musl header has already been included.
 
-Arrange for these tables to end up in .rodata when required.
+glibc does not implement this header, but when glibc will implement this
+they can just define __UAPI_DEF_ETHHDR 0 to make it work with the
+kernel.
 
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
-Fixes: 383fb3ee8024 ("ARM: spectre-v2: per-CPU vtables to work around big.Little systems")
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: David A. Long <dave.long@linaro.org>
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-Tested-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mm/proc-macros.S | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ include/uapi/linux/if_ether.h    | 3 +++
+ include/uapi/linux/libc-compat.h | 6 ++++++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/arch/arm/mm/proc-macros.S b/arch/arm/mm/proc-macros.S
-index 81d0efb055c6..19516fbc2c55 100644
---- a/arch/arm/mm/proc-macros.S
-+++ b/arch/arm/mm/proc-macros.S
-@@ -274,6 +274,13 @@
- 	.endm
+diff --git a/include/uapi/linux/if_ether.h b/include/uapi/linux/if_ether.h
+index 244e3213ecb0..60ec9114e28f 100644
+--- a/include/uapi/linux/if_ether.h
++++ b/include/uapi/linux/if_ether.h
+@@ -23,6 +23,7 @@
+ #define _UAPI_LINUX_IF_ETHER_H
  
- .macro define_processor_functions name:req, dabort:req, pabort:req, nommu=0, suspend=0, bugs=0
-+/*
-+ * If we are building for big.Little with branch predictor hardening,
-+ * we need the processor function tables to remain available after boot.
-+ */
-+#if 1 // defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
-+	.section ".rodata"
+ #include <linux/types.h>
++#include <linux/libc-compat.h>
+ 
+ /*
+  *	IEEE 802.3 Ethernet magic constants.  The frame sizes omit the preamble
+@@ -150,11 +151,13 @@
+  *	This is an Ethernet frame header.
+  */
+ 
++#if __UAPI_DEF_ETHHDR
+ struct ethhdr {
+ 	unsigned char	h_dest[ETH_ALEN];	/* destination eth addr	*/
+ 	unsigned char	h_source[ETH_ALEN];	/* source ether addr	*/
+ 	__be16		h_proto;		/* packet type ID field	*/
+ } __attribute__((packed));
 +#endif
- 	.type	\name\()_processor_functions, #object
- 	.align 2
- ENTRY(\name\()_processor_functions)
-@@ -309,6 +316,9 @@ ENTRY(\name\()_processor_functions)
- 	.endif
  
- 	.size	\name\()_processor_functions, . - \name\()_processor_functions
-+#if 1 // defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
-+	.previous
+ 
+ #endif /* _UAPI_LINUX_IF_ETHER_H */
+diff --git a/include/uapi/linux/libc-compat.h b/include/uapi/linux/libc-compat.h
+index 8254c937c9f4..fc29efaa918c 100644
+--- a/include/uapi/linux/libc-compat.h
++++ b/include/uapi/linux/libc-compat.h
+@@ -264,4 +264,10 @@
+ 
+ #endif /* __GLIBC__ */
+ 
++/* Definitions for if_ether.h */
++/* allow libcs like musl to deactivate this, glibc does not implement this. */
++#ifndef __UAPI_DEF_ETHHDR
++#define __UAPI_DEF_ETHHDR		1
 +#endif
- .endm
- 
- .macro define_cache_functions name:req
++
+ #endif /* _UAPI_LIBC_COMPAT_H */
 -- 
 2.19.1
 
