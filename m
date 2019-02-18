@@ -4,51 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 626F6C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2915C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3161121736
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9537D2070B
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550501031;
-	bh=KddCNh8EehFoZsQAxas3bP9N4Ga/I5rT1UKN7Sms0cU=;
+	s=default; t=1550501038;
+	bh=WqayYNOLNQCIKP9/soJuC2XrWrsVJcQCk2fZ4FQIzg8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=euu3CND1z13ut2weXLlHU4taUItMXdPhbKAFrgT5rRL7gCDWE+qu7xoENUOQT55ux
-	 q0nUGUlJOE/wyBXkztXhH/Qpl3bbh5h+A5Q1SGreJ4AJ2QxYgu0dQeQ3FVc01+FaI0
-	 0IymDYZehrbOlc3ILYaXkjj/OiLS+oSR1NegX4k8=
+	b=awiahzFN4zJwcdPrIQKIs1RK/NgCMsdXD+liLyzQ2lM8oxPMwlaZsdTaIphnLZBqQ
+	 VGN5IdWvxLRRRDc8gc1acwtZDVqJPH69C6CzGMuZVrla7qHYDsv9L37lNZXidssJa7
+	 Dkmzdf6VtA67YdwInKlDwLuzza3zSkw9KieVZlTU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732887AbfBROnt (ORCPT
+        id S1731921AbfBRNsu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:43:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56034 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:48:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729707AbfBRNtA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:49:00 -0500
+        id S1731010AbfBRNsr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:48:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78BC220449;
-        Mon, 18 Feb 2019 13:48:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FA2D217F5;
+        Mon, 18 Feb 2019 13:48:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497739;
-        bh=KddCNh8EehFoZsQAxas3bP9N4Ga/I5rT1UKN7Sms0cU=;
+        s=default; t=1550497726;
+        bh=WqayYNOLNQCIKP9/soJuC2XrWrsVJcQCk2fZ4FQIzg8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XMck4q4U3RraxgncucGofBBL7s5XPWpDwxX1Alkucc+G7DfiokfPg/zR5aS9V1/4f
-         JLCr9b3WKDPWFwA09TI+XjyITXUQI47hQJGETRYGfa+2vZhJUP/YaXrZMKWOBXyTJE
-         gArCczH3S0OP3TxH7VTVIhWj9rVypxth//PlFIa4=
+        b=OcZjN+hAbfjOA4O6LUv6PbyY1HsZEViZE9YVUW+kYSLK4EBY9HfVNvvwM244rt+QZ
+         uLQeS7GjtCLY58qK5WT/9ORUw7EkOJX/nMjK7xtJHg0ucrYT5xFU93lJEIpghB/IbB
+         iM6YXdFcC4ehOrlosxKS2fDwTZgaSYcEs2BJeH3s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikos Tsironis <ntsironis@arrikto.com>,
-        Joe Thornber <ejt@redhat.com>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.20 87/92] dm thin: fix bug where bio that overwrites thin block ignores FUA
-Date:   Mon, 18 Feb 2019 14:43:30 +0100
-Message-Id: <20190218133503.442692574@linuxfoundation.org>
+        stable@vger.kernel.org, Jack Wang <jinpu.wang@cloud.ionos.com>,
+        Nate Dailey <nate.dailey@stratus.com>,
+        Song Liu <songliubraving@fb.com>
+Subject: [PATCH 4.20 83/92] md/raid1: dont clear bitmap bits on interrupted recovery.
+Date:   Mon, 18 Feb 2019 14:43:26 +0100
+Message-Id: <20190218133503.002274159@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
 References: <20190218133454.668268457@linuxfoundation.org>
@@ -67,156 +65,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nikos Tsironis <ntsironis@arrikto.com>
+From: Nate Dailey <nate.dailey@stratus.com>
 
-commit 4ae280b4ee3463fa57bbe6eede26b97daff8a0f1 upstream.
+commit dfcc34c99f3ebc16b787b118763bf9cb6b1efc7a upstream.
 
-When provisioning a new data block for a virtual block, either because
-the block was previously unallocated or because we are breaking sharing,
-if the whole block of data is being overwritten the bio that triggered
-the provisioning is issued immediately, skipping copying or zeroing of
-the data block.
+sync_request_write no longer submits writes to a Faulty device. This has
+the unfortunate side effect that bitmap bits can be incorrectly cleared
+if a recovery is interrupted (previously, end_sync_write would have
+prevented this). This means the next recovery may not copy everything
+it should, potentially corrupting data.
 
-When this bio completes the new mapping is inserted in to the pool's
-metadata by process_prepared_mapping(), where the bio completion is
-signaled to the upper layers.
+Add a function for doing the proper md_bitmap_end_sync, called from
+end_sync_write and the Faulty case in sync_request_write.
 
-This completion is signaled without first committing the metadata.  If
-the bio in question has the REQ_FUA flag set and the system crashes
-right after its completion and before the next metadata commit, then the
-write is lost despite the REQ_FUA flag requiring that I/O completion for
-this request must only be signaled after the data has been committed to
-non-volatile storage.
-
-Fix this by deferring the completion of overwrite bios, with the REQ_FUA
-flag set, until after the metadata has been committed.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Nikos Tsironis <ntsironis@arrikto.com>
-Acked-by: Joe Thornber <ejt@redhat.com>
-Acked-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+backport note to 4.14: s/md_bitmap_end_sync/bitmap_end_sync
+Cc: stable@vger.kernel.org 4.14+
+Fixes: 0c9d5b127f69 ("md/raid1: avoid reusing a resync bio after error handling.")
+Reviewed-by: Jack Wang <jinpu.wang@cloud.ionos.com>
+Tested-by: Jack Wang <jinpu.wang@cloud.ionos.com>
+Signed-off-by: Nate Dailey <nate.dailey@stratus.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-thin.c |   55 ++++++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 50 insertions(+), 5 deletions(-)
+ drivers/md/raid1.c |   28 ++++++++++++++++++----------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
 
---- a/drivers/md/dm-thin.c
-+++ b/drivers/md/dm-thin.c
-@@ -257,6 +257,7 @@ struct pool {
- 
- 	spinlock_t lock;
- 	struct bio_list deferred_flush_bios;
-+	struct bio_list deferred_flush_completions;
- 	struct list_head prepared_mappings;
- 	struct list_head prepared_discards;
- 	struct list_head prepared_discards_pt2;
-@@ -956,6 +957,39 @@ static void process_prepared_mapping_fai
- 	mempool_free(m, &m->tc->pool->mapping_pool);
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -1863,6 +1863,20 @@ static void end_sync_read(struct bio *bi
+ 		reschedule_retry(r1_bio);
  }
  
-+static void complete_overwrite_bio(struct thin_c *tc, struct bio *bio)
++static void abort_sync_write(struct mddev *mddev, struct r1bio *r1_bio)
 +{
-+	struct pool *pool = tc->pool;
-+	unsigned long flags;
++	sector_t sync_blocks = 0;
++	sector_t s = r1_bio->sector;
++	long sectors_to_go = r1_bio->sectors;
 +
-+	/*
-+	 * If the bio has the REQ_FUA flag set we must commit the metadata
-+	 * before signaling its completion.
-+	 */
-+	if (!bio_triggers_commit(tc, bio)) {
-+		bio_endio(bio);
-+		return;
-+	}
-+
-+	/*
-+	 * Complete bio with an error if earlier I/O caused changes to the
-+	 * metadata that can't be committed, e.g, due to I/O errors on the
-+	 * metadata device.
-+	 */
-+	if (dm_thin_aborted_changes(tc->td)) {
-+		bio_io_error(bio);
-+		return;
-+	}
-+
-+	/*
-+	 * Batch together any bios that trigger commits and then issue a
-+	 * single commit for them in process_deferred_bios().
-+	 */
-+	spin_lock_irqsave(&pool->lock, flags);
-+	bio_list_add(&pool->deferred_flush_completions, bio);
-+	spin_unlock_irqrestore(&pool->lock, flags);
++	/* make sure these bits don't get cleared. */
++	do {
++		md_bitmap_end_sync(mddev->bitmap, s, &sync_blocks, 1);
++		s += sync_blocks;
++		sectors_to_go -= sync_blocks;
++	} while (sectors_to_go > 0);
 +}
 +
- static void process_prepared_mapping(struct dm_thin_new_mapping *m)
+ static void end_sync_write(struct bio *bio)
  {
- 	struct thin_c *tc = m->tc;
-@@ -988,7 +1022,7 @@ static void process_prepared_mapping(str
- 	 */
- 	if (bio) {
- 		inc_remap_and_issue_cell(tc, m->cell, m->data_block);
--		bio_endio(bio);
-+		complete_overwrite_bio(tc, bio);
- 	} else {
- 		inc_all_io_entry(tc->pool, m->cell->holder);
- 		remap_and_issue(tc, m->cell->holder, m->data_block);
-@@ -2317,7 +2351,7 @@ static void process_deferred_bios(struct
- {
- 	unsigned long flags;
- 	struct bio *bio;
--	struct bio_list bios;
-+	struct bio_list bios, bio_completions;
- 	struct thin_c *tc;
+ 	int uptodate = !bio->bi_status;
+@@ -1874,15 +1888,7 @@ static void end_sync_write(struct bio *b
+ 	struct md_rdev *rdev = conf->mirrors[find_bio_disk(r1_bio, bio)].rdev;
  
- 	tc = get_first_thin(pool);
-@@ -2328,26 +2362,36 @@ static void process_deferred_bios(struct
- 	}
+ 	if (!uptodate) {
+-		sector_t sync_blocks = 0;
+-		sector_t s = r1_bio->sector;
+-		long sectors_to_go = r1_bio->sectors;
+-		/* make sure these bits doesn't get cleared. */
+-		do {
+-			md_bitmap_end_sync(mddev->bitmap, s, &sync_blocks, 1);
+-			s += sync_blocks;
+-			sectors_to_go -= sync_blocks;
+-		} while (sectors_to_go > 0);
++		abort_sync_write(mddev, r1_bio);
+ 		set_bit(WriteErrorSeen, &rdev->flags);
+ 		if (!test_and_set_bit(WantReplacement, &rdev->flags))
+ 			set_bit(MD_RECOVERY_NEEDED, &
+@@ -2172,8 +2178,10 @@ static void sync_request_write(struct md
+ 		     (i == r1_bio->read_disk ||
+ 		      !test_bit(MD_RECOVERY_SYNC, &mddev->recovery))))
+ 			continue;
+-		if (test_bit(Faulty, &conf->mirrors[i].rdev->flags))
++		if (test_bit(Faulty, &conf->mirrors[i].rdev->flags)) {
++			abort_sync_write(mddev, r1_bio);
+ 			continue;
++		}
  
- 	/*
--	 * If there are any deferred flush bios, we must commit
--	 * the metadata before issuing them.
-+	 * If there are any deferred flush bios, we must commit the metadata
-+	 * before issuing them or signaling their completion.
- 	 */
- 	bio_list_init(&bios);
-+	bio_list_init(&bio_completions);
-+
- 	spin_lock_irqsave(&pool->lock, flags);
- 	bio_list_merge(&bios, &pool->deferred_flush_bios);
- 	bio_list_init(&pool->deferred_flush_bios);
-+
-+	bio_list_merge(&bio_completions, &pool->deferred_flush_completions);
-+	bio_list_init(&pool->deferred_flush_completions);
- 	spin_unlock_irqrestore(&pool->lock, flags);
- 
--	if (bio_list_empty(&bios) &&
-+	if (bio_list_empty(&bios) && bio_list_empty(&bio_completions) &&
- 	    !(dm_pool_changed_this_transaction(pool->pmd) && need_commit_due_to_time(pool)))
- 		return;
- 
- 	if (commit(pool)) {
-+		bio_list_merge(&bios, &bio_completions);
-+
- 		while ((bio = bio_list_pop(&bios)))
- 			bio_io_error(bio);
- 		return;
- 	}
- 	pool->last_commit_jiffies = jiffies;
- 
-+	while ((bio = bio_list_pop(&bio_completions)))
-+		bio_endio(bio);
-+
- 	while ((bio = bio_list_pop(&bios)))
- 		generic_make_request(bio);
- }
-@@ -2954,6 +2998,7 @@ static struct pool *pool_create(struct m
- 	INIT_DELAYED_WORK(&pool->no_space_timeout, do_no_space_timeout);
- 	spin_lock_init(&pool->lock);
- 	bio_list_init(&pool->deferred_flush_bios);
-+	bio_list_init(&pool->deferred_flush_completions);
- 	INIT_LIST_HEAD(&pool->prepared_mappings);
- 	INIT_LIST_HEAD(&pool->prepared_discards);
- 	INIT_LIST_HEAD(&pool->prepared_discards_pt2);
+ 		bio_set_op_attrs(wbio, REQ_OP_WRITE, 0);
+ 		if (test_bit(FailFast, &conf->mirrors[i].rdev->flags))
 
 
