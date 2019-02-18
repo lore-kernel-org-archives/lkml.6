@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F04C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4119C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45C20217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABF56217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498076;
-	bh=o+h7qqofNB76a9t7REEqLT1viC+nboCMqYImP8GTobs=;
+	s=default; t=1550498080;
+	bh=RTmaaW17C+z+bw6LXEUQV+tsIqFn44mE/Qa+X6sH4Ds=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=t9In8V2vOTnpc9JLd39hMaW03WFuwQ71bJP4tMuYV/MtORI+kI6Gh047wrs/TAok9
-	 hJIJsZY7H3WaiTZq5Lk6xBrXbtSnQa+QRU47zRKIcuo2If2rADiSozlCo9jDrK9XK1
-	 WtIHk4iIGAUnsFJsStpAmGEAQGswGtClW3/a5akI=
+	b=pWtbRbIjK4XUWzu/0lowBnxJe1L41PgefIW/e4SbAWqjVtlNlaxbVQaYaCHoHynOq
+	 iGF4aI+Z/dvw5sldpDHOgGg6kZsYZRjUOSOXYI/9CYyp7/ZAIHVu9MBWVnachN8Nuk
+	 35r9r65kLbnNT9HdDAplio5J6dV+akqtQBthiarY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733233AbfBRNye (ORCPT
+        id S1733249AbfBRNyj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:54:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34362 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:54:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733191AbfBRNy2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:54:28 -0500
+        id S1733216AbfBRNye (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:54:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8C62217D9;
-        Mon, 18 Feb 2019 13:54:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D8D620842;
+        Mon, 18 Feb 2019 13:54:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498067;
-        bh=o+h7qqofNB76a9t7REEqLT1viC+nboCMqYImP8GTobs=;
+        s=default; t=1550498073;
+        bh=RTmaaW17C+z+bw6LXEUQV+tsIqFn44mE/Qa+X6sH4Ds=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HXED6Iks6rRLoGYc1RTp7pTQhXNgqeDVMNkZoGMgl5RV3ovjlMriA5zUTk1QGxyur
-         P8O7aji2iw1nJmHzS5UAJpI+p+kDPjzP8v6CeO/ica+o9WFMJiuYgwqpD5N8anE/Jh
-         unzGmcW5H4AeQYyab9zUwQBMi/F5em79lwPFPz1A=
+        b=vc/8+WA83LCBzJcN3guvf8uxsm76WjIylK/AOYE5s2uTlhWQ3Tgx8EnwlIpE7c9uL
+         Z0QUugllduypp+v+GBg2Oiy7g0CgKhUDRMzVOY5guipz4iiJleiMX/MIH0Bz97H5j5
+         AnT9qDFlF7aYVzIThh03mxQDLXk7hB3X3CTBmuPY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -46,9 +46,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Russell King <rmk+kernel@armlinux.org.uk>,
         "David A. Long" <dave.long@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 13/62] ARM: 8797/1: spectre-v1.1: harden __copy_to_user
-Date:   Mon, 18 Feb 2019 14:43:19 +0100
-Message-Id: <20190218133506.964600367@linuxfoundation.org>
+Subject: [PATCH 4.14 15/62] ARM: make lookup_processor_type() non-__init
+Date:   Mon, 18 Feb 2019 14:43:21 +0100
+Message-Id: <20190218133507.132127987@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
 References: <20190218133505.801423074@linuxfoundation.org>
@@ -67,56 +67,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-Commit a1d09e074250fad24f1b993f327b18cc6812eb7a upstream.
+Commit 899a42f836678a595f7d2bc36a5a0c2b03d08cbc upstream.
 
-Sanitize user pointer given to __copy_to_user, both for standard version
-and memcopy version of the user accessor.
+Move lookup_processor_type() out of the __init section so it is callable
+from (eg) the secondary startup code during hotplug.
 
-Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: David A. Long <dave.long@linaro.org>
 Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Tested-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/lib/copy_to_user.S        | 6 +++++-
- arch/arm/lib/uaccess_with_memcpy.c | 3 ++-
- 2 files changed, 7 insertions(+), 2 deletions(-)
+ arch/arm/kernel/head-common.S | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/lib/copy_to_user.S b/arch/arm/lib/copy_to_user.S
-index caf5019d8161..970abe521197 100644
---- a/arch/arm/lib/copy_to_user.S
-+++ b/arch/arm/lib/copy_to_user.S
-@@ -94,6 +94,11 @@
+diff --git a/arch/arm/kernel/head-common.S b/arch/arm/kernel/head-common.S
+index 8733012d231f..7e662bdd5cb3 100644
+--- a/arch/arm/kernel/head-common.S
++++ b/arch/arm/kernel/head-common.S
+@@ -122,6 +122,9 @@ __mmap_switched_data:
+ 	.long	init_thread_union + THREAD_START_SP @ sp
+ 	.size	__mmap_switched_data, . - __mmap_switched_data
  
- ENTRY(__copy_to_user_std)
- WEAK(arm_copy_to_user)
-+#ifdef CONFIG_CPU_SPECTRE
-+	get_thread_info r3
-+	ldr	r3, [r3, #TI_ADDR_LIMIT]
-+	uaccess_mask_range_ptr r0, r2, r3, ip
-+#endif
++	__FINIT
++	.text
++
+ /*
+  * This provides a C-API version of __lookup_processor_type
+  */
+@@ -133,9 +136,6 @@ ENTRY(lookup_processor_type)
+ 	ldmfd	sp!, {r4 - r6, r9, pc}
+ ENDPROC(lookup_processor_type)
  
- #include "copy_template.S"
- 
-@@ -108,4 +113,3 @@ ENDPROC(__copy_to_user_std)
- 	rsb	r0, r0, r2
- 	copy_abort_end
- 	.popsection
+-	__FINIT
+-	.text
 -
-diff --git a/arch/arm/lib/uaccess_with_memcpy.c b/arch/arm/lib/uaccess_with_memcpy.c
-index 9b4ed1728616..73dc7360cbdd 100644
---- a/arch/arm/lib/uaccess_with_memcpy.c
-+++ b/arch/arm/lib/uaccess_with_memcpy.c
-@@ -152,7 +152,8 @@ arm_copy_to_user(void __user *to, const void *from, unsigned long n)
- 		n = __copy_to_user_std(to, from, n);
- 		uaccess_restore(ua_flags);
- 	} else {
--		n = __copy_to_user_memcpy(to, from, n);
-+		n = __copy_to_user_memcpy(uaccess_mask_range_ptr(to, n),
-+					  from, n);
- 	}
- 	return n;
- }
+ /*
+  * Read processor ID register (CP#15, CR0), and look up in the linker-built
+  * supported processor list.  Note that we can't use the absolute addresses
 -- 
 2.19.1
 
