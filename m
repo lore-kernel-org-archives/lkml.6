@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C6EC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:03:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C82EFC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:03:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA7EF21901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:03:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 931DF21902
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:03:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498626;
-	bh=EIYsO8mXMJBGQDes7FaU+b1+AgQ/LNzMp32bkUbPBkQ=;
+	s=default; t=1550498633;
+	bh=Ilggh4ZJV3mPHHd42NQSggrExki5Ussb6EiN639KXbs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Tov4N7SzebdvOuZjgu9iwzpFKVvkrXJv1jVuy1ywLWLSDVth0DL/2E9jI1j8YxV3/
-	 2fZBnLsGOtOCQWc9Y6/OGfgnX7iXz5GkGiY528LaGiTiNoNQZHzpJwGCQKGZZe9QEP
-	 8eV5lBEqk1i7XmB6GhpPOmTK2OzJ828J3BKksp24=
+	b=sfBSv8IoNSgZcG7kCRXy6HTUQpBubGLvOIEbizZZ+qFC8KnSmVYLdeiBNmpdN0ndM
+	 /GdsJeu4xPDHd86WsBBJ35BQA6bdFGbXtpIiH4wXpTKy1xnxQkguX7yj0OFTTye89+
+	 ERUVDuZg77b7BSxX2NeDZafeVz/it54n6l5TIanA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389117AbfBRODp (ORCPT
+        id S2389774AbfBRODw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:03:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45700 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:03:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389726AbfBRODm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:03:42 -0500
+        id S2389726AbfBRODq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:03:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AC3621902;
-        Mon, 18 Feb 2019 14:03:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BB2421902;
+        Mon, 18 Feb 2019 14:03:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498622;
-        bh=EIYsO8mXMJBGQDes7FaU+b1+AgQ/LNzMp32bkUbPBkQ=;
+        s=default; t=1550498625;
+        bh=Ilggh4ZJV3mPHHd42NQSggrExki5Ussb6EiN639KXbs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ubLRtyUFectiMoegqMzc4h8FELg1dZ0l2fLkBBb8+W4B17PbPZervOrbiQJpB9rKY
-         3x0cHvviM3az3jkQCbv9gCypWtTPHAhU3MhAWnA9RAz7shJX5JLO/duN5/ta2WFgb0
-         XUFK8SUKgINZIe7VZy0/cv2O4O7mTxPQFFk6lntI=
+        b=hkfDDQqXM+pdLmQHrPRwBSDEOj1MUvLwE3KieI6a0/f/h0BFvpeZQopgcXkG0gfri
+         6ZQxNpMGf63vL2hDqWDJg5HyBl7glx8naNDoH5kH/X7WUqTzKg8b3v2vAFV4VnVLHi
+         E9g6F25R6JCUOXAZqaL5Mz6z71X8lCmGIp2M8L4Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 045/143] cw1200: Fix concurrency use-after-free bugs in cw1200_hw_scan()
-Date:   Mon, 18 Feb 2019 14:42:53 +0100
-Message-Id: <20190218133530.784715432@linuxfoundation.org>
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@163.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Roland Kammerer <roland.kammerer@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 046/143] drbd: narrow rcu_read_lock in drbd_sync_handshake
+Date:   Mon, 18 Feb 2019 14:42:54 +0100
+Message-Id: <20190218133530.819359890@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -66,79 +67,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 4f68ef64cd7feb1220232bd8f501d8aad340a099 ]
+[ Upstream commit d29e89e34952a9ad02c77109c71a80043544296e ]
 
-The function cw1200_bss_info_changed() and cw1200_hw_scan() can be
-concurrently executed.
-The two functions both access a possible shared variable "frame.skb".
+So far there was the possibility that we called
+genlmsg_new(GFP_NOIO)/mutex_lock() while holding an rcu_read_lock().
 
-This shared variable is freed by dev_kfree_skb() in cw1200_upload_beacon(),
-which is called by cw1200_bss_info_changed(). The free operation is
-protected by a mutex lock "priv->conf_mutex" in cw1200_bss_info_changed().
+This included cases like:
 
-In cw1200_hw_scan(), this shared variable is accessed without the
-protection of the mutex lock "priv->conf_mutex".
-Thus, concurrency use-after-free bugs may occur.
+drbd_sync_handshake (acquire the RCU lock)
+  drbd_asb_recover_1p
+    drbd_khelper
+      drbd_bcast_event
+        genlmsg_new(GFP_NOIO) --> may sleep
 
-To fix these bugs, the original calls to mutex_lock(&priv->conf_mutex) and
-mutex_unlock(&priv->conf_mutex) are moved to the places, which can
-protect the accesses to the shared variable.
+drbd_sync_handshake (acquire the RCU lock)
+  drbd_asb_recover_1p
+    drbd_khelper
+      notify_helper
+        genlmsg_new(GFP_NOIO) --> may sleep
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+drbd_sync_handshake (acquire the RCU lock)
+  drbd_asb_recover_1p
+    drbd_khelper
+      notify_helper
+        mutex_lock --> may sleep
+
+While using GFP_ATOMIC whould have been possible in the first two cases,
+the real fix is to narrow the rcu_read_lock.
+
+Reported-by: Jia-Ju Bai <baijiaju1990@163.com>
+Reviewed-by: Lars Ellenberg <lars.ellenberg@linbit.com>
+Signed-off-by: Roland Kammerer <roland.kammerer@linbit.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/cw1200/scan.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/block/drbd/drbd_receiver.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/wireless/cw1200/scan.c b/drivers/net/wireless/cw1200/scan.c
-index bff81b8d4164..9f1037e7e55c 100644
---- a/drivers/net/wireless/cw1200/scan.c
-+++ b/drivers/net/wireless/cw1200/scan.c
-@@ -78,6 +78,10 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
- 	if (req->n_ssids > WSM_SCAN_MAX_NUM_OF_SSIDS)
- 		return -EINVAL;
+diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+index b4b5680ac6ad..2fedab9349f6 100644
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -3126,7 +3126,7 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
+ 	enum drbd_conns rv = C_MASK;
+ 	enum drbd_disk_state mydisk;
+ 	struct net_conf *nc;
+-	int hg, rule_nr, rr_conflict, tentative;
++	int hg, rule_nr, rr_conflict, tentative, always_asbp;
  
-+	/* will be unlocked in cw1200_scan_work() */
-+	down(&priv->scan.lock);
-+	mutex_lock(&priv->conf_mutex);
-+
- 	frame.skb = ieee80211_probereq_get(hw, priv->vif->addr, NULL, 0,
- 		req->ie_len);
- 	if (!frame.skb)
-@@ -86,19 +90,15 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
- 	if (req->ie_len)
- 		memcpy(skb_put(frame.skb, req->ie_len), req->ie, req->ie_len);
+ 	mydisk = device->state.disk;
+ 	if (mydisk == D_NEGOTIATING)
+@@ -3168,8 +3168,12 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
  
--	/* will be unlocked in cw1200_scan_work() */
--	down(&priv->scan.lock);
--	mutex_lock(&priv->conf_mutex);
--
- 	ret = wsm_set_template_frame(priv, &frame);
- 	if (!ret) {
- 		/* Host want to be the probe responder. */
- 		ret = wsm_set_probe_responder(priv, true);
+ 	rcu_read_lock();
+ 	nc = rcu_dereference(peer_device->connection->net_conf);
++	always_asbp = nc->always_asbp;
++	rr_conflict = nc->rr_conflict;
++	tentative = nc->tentative;
++	rcu_read_unlock();
+ 
+-	if (hg == 100 || (hg == -100 && nc->always_asbp)) {
++	if (hg == 100 || (hg == -100 && always_asbp)) {
+ 		int pcount = (device->state.role == R_PRIMARY)
+ 			   + (peer_role == R_PRIMARY);
+ 		int forced = (hg == -100);
+@@ -3208,9 +3212,6 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
+ 			     "Sync from %s node\n",
+ 			     (hg < 0) ? "peer" : "this");
  	}
- 	if (ret) {
-+		dev_kfree_skb(frame.skb);
- 		mutex_unlock(&priv->conf_mutex);
- 		up(&priv->scan.lock);
--		dev_kfree_skb(frame.skb);
- 		return ret;
- 	}
+-	rr_conflict = nc->rr_conflict;
+-	tentative = nc->tentative;
+-	rcu_read_unlock();
  
-@@ -120,10 +120,9 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
- 		++priv->scan.n_ssids;
- 	}
- 
--	mutex_unlock(&priv->conf_mutex);
--
- 	if (frame.skb)
- 		dev_kfree_skb(frame.skb);
-+	mutex_unlock(&priv->conf_mutex);
- 	queue_work(priv->workqueue, &priv->scan.work);
- 	return 0;
- }
+ 	if (hg == -100) {
+ 		/* FIXME this log message is not correct if we end up here
 -- 
 2.19.1
 
