@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0330DC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0709BC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8D4F217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCE4420842
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498061;
-	bh=1fbdaAcrMB9XaXL1Zc9BaJjbWXgey9HIhZnxMHyvNAs=;
+	s=default; t=1550498067;
+	bh=CiJjSjLZ0k2upHtqjVBs6SwsOM1wQho2ho0/6xV+1dc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=08yZD8ABbDEULC/CctOwhzRz0qtv5h+ssQHyf4pa49nPxDd7RSwrsyfpq9ZOjYLvq
-	 dQreW3AqJhUIVjxx+3FMQYdXZrfZ68lxj6+hyQgPgbKDYL/Hb79sBFGL9tsk2IMIkE
-	 8NGYEDihnCWyYgo+9VLGRvnAAbKW/d+kMECMD6TE=
+	b=QTruTS/jPKi8dnDopMoDlA/RYVfarTIjqvvi7IC/yQ2DxE/4AftiErakD4ldN80in
+	 6Pum3WbfeAv4FQToswuKznBQb3pSkGd1HqLDHbEKtdScXjhy+CeXVPWNO4IAI9f2TB
+	 9jSShrcE5KjO9miSBkCuR+AQ7cgcF73QVmfFap8w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733152AbfBRNyT (ORCPT
+        id S1733189AbfBRNy0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:54:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34148 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:54:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731205AbfBRNyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:54:15 -0500
+        id S1733151AbfBRNyT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:54:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECA3720842;
-        Mon, 18 Feb 2019 13:54:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 377CA20842;
+        Mon, 18 Feb 2019 13:54:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498054;
-        bh=1fbdaAcrMB9XaXL1Zc9BaJjbWXgey9HIhZnxMHyvNAs=;
+        s=default; t=1550498058;
+        bh=CiJjSjLZ0k2upHtqjVBs6SwsOM1wQho2ho0/6xV+1dc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ea4h2/iok9583Zqht8jyHkbhDwvxnbKaxHa5DDEwhEIW9eYGmy3LnjJRB6ufb1LgC
-         UyiOeL+1grN66zX3WQSLxtyrkMS1KB+4nkk5cDytCC2pIJJx7ZwzHiPTSoQ9kRLW9v
-         72xynpIWT2PV5xkT0bSQg+aDRKOM3UtDMEAXosbs=
+        b=1+LhP6FK3Wf8pcTHC0S3ozGlC6L63UyTEfQ1FzdlDhyKb95zQmPGa7cpgM88vW93M
+         Z+aVDbkMKfjVAM3+YA7Nl9IzkeT2biFDL1IFym9ZW2O+OO1XQaRHpHWRekw585qEqo
+         hEIRpZn3Oaa030wxAcqjJL9HOYvwjfpxtj1Ujktc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Bunk <bunk@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
+        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        "David A. Long" <dave.long@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 01/62] dt-bindings: eeprom: at24: add "atmel,24c2048" compatible string
-Date:   Mon, 18 Feb 2019 14:43:07 +0100
-Message-Id: <20190218133505.917011424@linuxfoundation.org>
+Subject: [PATCH 4.14 10/62] ARM: 8794/1: uaccess: Prevent speculative use of the current addr_limit
+Date:   Mon, 18 Feb 2019 14:43:16 +0100
+Message-Id: <20190218133506.710093576@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
 References: <20190218133505.801423074@linuxfoundation.org>
@@ -67,40 +67,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 6c0c5dc33ff42af49243e94842d0ebdb153189ea upstream.
+Commit 621afc677465db231662ed126ae1f355bf8eac47 upstream.
 
-Add new compatible to the device tree bindings.
+A mispredicted conditional call to set_fs could result in the wrong
+addr_limit being forwarded under speculation to a subsequent access_ok
+check, potentially forming part of a spectre-v1 attack using uaccess
+routines.
 
-Signed-off-by: Adrian Bunk <bunk@kernel.org>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+This patch prevents this forwarding from taking place, but putting heavy
+barriers in set_fs after writing the addr_limit.
+
+Porting commit c2f0ad4fc089cff8 ("arm64: uaccess: Prevent speculative use
+of the current addr_limit").
+
+Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: David A. Long <dave.long@linaro.org>
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/devicetree/bindings/eeprom/eeprom.txt | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arm/include/asm/uaccess.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/eeprom/eeprom.txt b/Documentation/devicetree/bindings/eeprom/eeprom.txt
-index afc04589eadf..3c9a822d576c 100644
---- a/Documentation/devicetree/bindings/eeprom/eeprom.txt
-+++ b/Documentation/devicetree/bindings/eeprom/eeprom.txt
-@@ -6,7 +6,8 @@ Required properties:
- 
- 	"atmel,24c00", "atmel,24c01", "atmel,24c02", "atmel,24c04",
- 	"atmel,24c08", "atmel,24c16", "atmel,24c32", "atmel,24c64",
--	"atmel,24c128", "atmel,24c256", "atmel,24c512", "atmel,24c1024"
-+	"atmel,24c128", "atmel,24c256", "atmel,24c512", "atmel,24c1024",
-+	"atmel,24c2048"
- 
- 	"catalyst,24c32"
- 
-@@ -23,7 +24,7 @@ Required properties:
- 	 device with <type> and manufacturer "atmel" should be used.
- 	 Possible types are:
- 	 "24c00", "24c01", "24c02", "24c04", "24c08", "24c16", "24c32", "24c64",
--	 "24c128", "24c256", "24c512", "24c1024", "spd"
-+	 "24c128", "24c256", "24c512", "24c1024", "24c2048", "spd"
- 
-   - reg : the I2C address of the EEPROM
+diff --git a/arch/arm/include/asm/uaccess.h b/arch/arm/include/asm/uaccess.h
+index 4140be431087..7d19584f5c39 100644
+--- a/arch/arm/include/asm/uaccess.h
++++ b/arch/arm/include/asm/uaccess.h
+@@ -69,6 +69,14 @@ extern int __put_user_bad(void);
+ static inline void set_fs(mm_segment_t fs)
+ {
+ 	current_thread_info()->addr_limit = fs;
++
++	/*
++	 * Prevent a mispredicted conditional call to set_fs from forwarding
++	 * the wrong address limit to access_ok under speculation.
++	 */
++	dsb(nsh);
++	isb();
++
+ 	modify_domain(DOMAIN_KERNEL, fs ? DOMAIN_CLIENT : DOMAIN_MANAGER);
+ }
  
 -- 
 2.19.1
