@@ -2,134 +2,70 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F35C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:22:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F3BC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:23:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 783ED21902
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:22:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499776;
-	bh=mVYyiD8OaBRmO2F0joei9N9Gzki1VbM4jvmbMIVZaks=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YjWknA+RItBob61ecvS9tDtAYfn+KiXOLcOUNGdbjzkaOoWJ1615pgpAyD9YoAZ//
-	 YBQcvQ3zIHXxNmuIlAnTquYD9XnknXaMj58JPU1gfhBTlTGHEdt1Rxpu9/ZUyFKl+Y
-	 klThc1m4b3SW36W/Gp/UxN0Tfahj/9uBo8xGthpM=
+	by mail.kernel.org (Postfix) with ESMTP id 6F4ED21905
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:23:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731963AbfBROWy (ORCPT
+        id S2391352AbfBROXD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:22:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47810 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389173AbfBROFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:05:06 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70131204FD;
-        Mon, 18 Feb 2019 14:05:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498706;
-        bh=mVYyiD8OaBRmO2F0joei9N9Gzki1VbM4jvmbMIVZaks=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w4Ro4E3XZyo3Zqgmlll4QPhYMqAjp4B3PNKFiAmJz5/p+y1w+ICFF/d9RkSXg1L5i
-         sM0MHiXpLm0KZn3LaupSJpyoNUd3/tVC1rhigzsUDAH2X9bZatYad7yQ387SwmyJfv
-         zt6UxZzkGZcqlmW0RgEha9AvIAsRgLoJWOdWodXg=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Song Liu <songliubraving@fb.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mon, 18 Feb 2019 09:23:03 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59754 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390354AbfBROWr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:22:47 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8F2D41650;
+        Mon, 18 Feb 2019 06:21:31 -0800 (PST)
+Received: from why.wild-wind.fr.eu.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 432EE3F589;
+        Mon, 18 Feb 2019 06:21:14 -0800 (PST)
+Date:   Mon, 18 Feb 2019 14:19:25 +0000
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 094/143] perf/x86/intel/uncore: Add Node ID mask
-Date:   Mon, 18 Feb 2019 14:43:42 +0100
-Message-Id: <20190218133532.488169692@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
-References: <20190218133529.099444112@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Jason Cooper <jason@lakedaemon.net>,
+        David Lechner <david@lechnology.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v4 00/37] ARM: davinci: modernize the irq support
+Message-ID: <20190218141820.78bfaef5@why.wild-wind.fr.eu.org>
+In-Reply-To: <20190214145231.8750-1-brgl@bgdev.pl>
+References: <20190214145231.8750-1-brgl@bgdev.pl>
+Organization: ARM Ltd
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Thu, 14 Feb 2019 15:51:54 +0100
+Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-------------------
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> This series ports the davinci platform to using SPARSE_IRQ, cleans up
+> the irqchip drivers and moves them over to drivers/irqchip.
 
-From: Kan Liang <kan.liang@linux.intel.com>
+[...]
 
-commit 9e63a7894fd302082cf3627fe90844421a6cbe7f upstream.
+For the irqchip parts:
 
-Some PCI uncore PMUs cannot be registered on an 8-socket system (HPE
-Superdome Flex).
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 
-To understand which Socket the PCI uncore PMUs belongs to, perf retrieves
-the local Node ID of the uncore device from CPUNODEID(0xC0) of the PCI
-configuration space, and the mapping between Socket ID and Node ID from
-GIDNIDMAP(0xD4). The Socket ID can be calculated accordingly.
+Please route this via the appropriate tree.
 
-The local Node ID is only available at bit 2:0, but current code doesn't
-mask it. If a BIOS doesn't clear the rest of the bits, an incorrect Node ID
-will be fetched.
-
-Filter the Node ID by adding a mask.
-
-Reported-by: Song Liu <songliubraving@fb.com>
-Tested-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: <stable@vger.kernel.org> # v3.7+
-Fixes: 7c94ee2e0917 ("perf/x86: Add Intel Nehalem and Sandy Bridge-EP uncore support")
-Link: https://lkml.kernel.org/r/1548600794-33162-1-git-send-email-kan.liang@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
----
- arch/x86/kernel/cpu/perf_event_intel_uncore_snbep.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
---- a/arch/x86/kernel/cpu/perf_event_intel_uncore_snbep.c
-+++ b/arch/x86/kernel/cpu/perf_event_intel_uncore_snbep.c
-@@ -1081,6 +1081,8 @@ static struct pci_driver snbep_uncore_pc
- 	.id_table	= snbep_uncore_pci_ids,
- };
- 
-+#define NODE_ID_MASK	0x7
-+
- /*
-  * build pci bus to socket mapping
-  */
-@@ -1102,7 +1104,7 @@ static int snbep_pci2phy_map_init(int de
- 		err = pci_read_config_dword(ubox_dev, 0x40, &config);
- 		if (err)
- 			break;
--		nodeid = config;
-+		nodeid = config & NODE_ID_MASK;
- 		/* get the Node ID mapping */
- 		err = pci_read_config_dword(ubox_dev, 0x54, &config);
- 		if (err)
-
-
+	M.
+-- 
+Without deviation from the norm, progress is not possible.
