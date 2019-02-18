@@ -2,261 +2,223 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF7BC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81CA9C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:38:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3780221773
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:36:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A1A221773
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:38:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pLrRvuOF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725905AbfBRSgc (ORCPT
+        id S1726418AbfBRSim (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:36:32 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38358 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725730AbfBRSgc (ORCPT
+        Mon, 18 Feb 2019 13:38:42 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:43229 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726221AbfBRSil (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:36:32 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1IITGQK033259
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 13:36:30 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qr1ty8vmt-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 13:36:30 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Mon, 18 Feb 2019 18:36:28 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 18 Feb 2019 18:36:25 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1IIaOsh25690364
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 18 Feb 2019 18:36:24 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EA62E11C054;
-        Mon, 18 Feb 2019 18:36:23 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 60BE311C04A;
-        Mon, 18 Feb 2019 18:36:23 +0000 (GMT)
-Received: from [9.145.70.2] (unknown [9.145.70.2])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 18 Feb 2019 18:36:23 +0000 (GMT)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v3 5/9] s390: ap: tools to associate a queue to a matrix
-To:     Tony Krowiak <akrowiak@linux.ibm.com>, borntraeger@de.ibm.com
-Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, frankja@linux.ibm.com, pasic@linux.ibm.com,
-        david@redhat.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
-References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
- <1550152269-6317-6-git-send-email-pmorel@linux.ibm.com>
- <061c4900-03fa-8320-c3a0-c832ccd152aa@linux.ibm.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Mon, 18 Feb 2019 19:36:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 18 Feb 2019 13:38:41 -0500
+Received: by mail-lf1-f66.google.com with SMTP id j1so13026452lfb.10
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 10:38:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=BpVgvZvgC3t8y6FU0MjADBH8OcZFIPMz59TjB6mrUBc=;
+        b=pLrRvuOFI/51ww2Ahsm4hA3T2RS8UTjDujFm9Rz6jlhR56zC4kyKfOqim2+tFusMDV
+         uDIE/C3/47HMcPytmBGCTcjmZqkpTBhxcElfy4DFbAlfpYqbFxBCdWpguaSAw/BApozW
+         ZGIjeQo7MeaFErfJqKl6oGMpS72NqFSSVtfnx60x32E4DkCsygjPLo0ieh7Y+v177Wzc
+         O9GFZzOmzDxHgMOe1CmtlXWgEZqRk9SkpB/1pTyuRQXDmu4LPdH0YlK26REo5xj8/Vvb
+         kbLrGztv9AYjtEIrFfnhRu/gNqcoJbyyvI21iPtrG3wVseUrXhS44qLLswfhqLOfK1je
+         Lrrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=BpVgvZvgC3t8y6FU0MjADBH8OcZFIPMz59TjB6mrUBc=;
+        b=d4LVDKRYfbqVicflrF/DWyHk84KnEyPUTFgsZYuKi8ksRykpaiDxABBwc/oXpKH2OS
+         tDCXsziKwKe+CenyjOC6X9C9I3Hz6X7tRgqfAKBXx/pL5hcDW25ZiUt2lHQphwt+gVi/
+         VPO/ZoirwqjozLOxENb9+rU0RIS5OUTsQMnEmMi/d8JPRMdJtSwZ0T3pI9uc/2YglCk0
+         PizflYzZjOk6zfxGLWGYhP0VEk7toAG0vUFXIckVJqLxkOoCDWs5gjnNr5QC2EzS69cq
+         kdPSVMwp+jX8tYrZn65oQqszVg9qbRckgUpNKupErk9wYuCjIRWtPiSxHNnnNWH7ZiLY
+         p63A==
+X-Gm-Message-State: AHQUAuZdr+nJsQqYhHz6np/31qji/lOI0ZrY9AZaZ23xOCCihpqw3Oc7
+        nTq6M+abhIWKfdB3NQmGLzATjnFxCTxnGMVMW1p5HA==
+X-Google-Smtp-Source: AHgI3Ib3Ke9R+l19PNPKkpRGODTHMfmSssuJveeRNsf//BHXvKd3KOpFFlHx5X+OWv6e7pmZhEEXN66yKtc7tqjOE/Y=
+X-Received: by 2002:a19:7613:: with SMTP id c19mr11273643lff.103.1550515118470;
+ Mon, 18 Feb 2019 10:38:38 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <061c4900-03fa-8320-c3a0-c832ccd152aa@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021818-0016-0000-0000-00000257E672
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021818-0017-0000-0000-000032B22789
-Message-Id: <fde260b9-6a99-5d13-2dcc-a0ef2782f559@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-18_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902180137
+References: <20190218133529.099444112@linuxfoundation.org>
+In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 19 Feb 2019 00:08:27 +0530
+Message-ID: <CA+G9fYtU75eukah1PKvujt0z2i38PyH3qn8SPWfxSM9-yNpRUA@mail.gmail.com>
+Subject: Re: [PATCH 4.4 000/143] 4.4.175-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/02/2019 23:30, Tony Krowiak wrote:
-> On 2/14/19 8:51 AM, Pierre Morel wrote:
->> We need tools to associate a queue and a matrix to be able
->> later to find the matrix associated with the queue for which
->> we got the APQN in the register 1 during a PQAP/AQIC instruction
->> interception.
->>
->> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->> ---
->>   drivers/s390/crypto/vfio_ap_ops.c     | 66 
->> +++++++++++++++++++++++++++++++++--
->>   drivers/s390/crypto/vfio_ap_private.h |  1 +
->>   2 files changed, 64 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/s390/crypto/vfio_ap_ops.c 
->> b/drivers/s390/crypto/vfio_ap_ops.c
->> index 2a52c9b..1851b24 100644
->> --- a/drivers/s390/crypto/vfio_ap_ops.c
->> +++ b/drivers/s390/crypto/vfio_ap_ops.c
->> @@ -50,8 +50,7 @@ static int vfio_ap_check_apqn(struct device *dev, 
->> void *data)
->>    *
->>    * Returns the pointer to the associated vfio_ap_queue
->>    */
->> -static  __attribute__((unused))
->> -    struct vfio_ap_queue *vfio_ap_get_queue(int apqn)
-> 
-> I don't like this, it indicates to me that this and the previous
-> patch should have been squashed together. I realize your intent
-> was to make the patches smaller, but I don't think this makes it
-> any easier to review them. In fact, it makes it harder IMHO, because
-> you have to flip back and forth between patches to fully comprehend
-> the usage.
-> 
->> +static struct vfio_ap_queue *vfio_ap_get_queue(int apqn)
->>   {
->>       struct device *dev;
->>       struct vfio_ap_queue *q;
->> @@ -72,7 +71,7 @@ static  __attribute__((unused))
->>    * put the associated device
->>    *
->>    */
->> -static  __attribute__((unused)) void vfio_ap_put_queue(struct 
->> vfio_ap_queue *q)
-> 
-> Ditto for this.
-> 
->> +static void vfio_ap_put_queue(struct vfio_ap_queue *q)
->>   {
->>       put_device(q->dev);
->>       q->dev = NULL;
->> @@ -867,6 +866,67 @@ static int vfio_ap_mdev_reset_queue(unsigned int 
->> apid, unsigned int apqi,
->>       return -EBUSY;
->>   }
->> +/**
->> + * vfio_ap_dissociate_queues: Dissociate a matrix mediated device to 
->> a queue
->> + *
->> + * Go through all bits in the AQM and APM and dissociate the queue
->> + * from the matrix device.
->> + *
->> + * No return value we are throwing the mediated device anyway.
->> + */
->> +static void vfio_ap_dissociate_queues(struct ap_matrix_mdev 
->> *matrix_mdev)
->> +{
->> +    unsigned long apid, apqi;
-> 
-> The changes I recommend here are based on the comments in my
-> response to patch 4.
-> 
->> +    struct vfio_ap_queue *q;
-> 
-> Add this:
-> 
->      struct device *qdev;
-> 
->> +
->> +    for_each_set_bit_inv(apid, matrix_mdev->matrix.apm,
->> +                 matrix_mdev->matrix.apm_max + 1) {
->> +        for_each_set_bit_inv(apqi, matrix_mdev->matrix.aqm,
->> +                     matrix_mdev->matrix.aqm_max + 1) {
->> +            q = vfio_ap_get_queue(AP_MKQID(apid, apqi));
-> 
-> Replace with:
->      qdev = vfio_ap_get_queue_dev(AP_MKQID(apid, apqi);
-> 
->> +            if (q) {
-> 
-> Replace with:
->      if (qdev) {
-> 
-> Add this:
->      q = dev_get_drvdata(qdev);
-> 
->> +                vfio_ap_mdev_reset_queue(apid, apqi, 1);
->> +                q->matrix = NULL;
->> +                vfio_ap_put_queue(q);
-> 
-> Replace with:
->      put_device(qdev)
-> 
->> +            } else
->> +                pr_err("%s: no queue for %02lx.%04lx\n",
->> +                       __func__, apid, apqi);
->> +        }
->> +    }
->> +}
->> +
->> +/**
->> + * vfio_ap_associate_queues: Associate a matrix mediated device to a 
->> queue
->> + *
->> + * Go through all bits in the AQM and APM and calculate the APQN, and 
->> find
->> + * the matching queue to associate with the matrix device.
->> + *
->> + * In the case a queue could not be found return -ENODEV.
->> + * Otherwise return 0.
->> + */
->> +static __attribute__((unused))
-> 
-> This indicates this patch should be squashed with the patch that
-> introduces this function. Why have a patch that introduces a function
-> that is not used and put and artificially specify an attribute just to
-> keep the compiler from issuing a warning?
-
-Seems to be a majority for this so... will do.
-
-> 
->> +    int vfio_ap_associate_queues(struct ap_matrix_mdev *matrix_mdev)
->> +{
-> 
-> The same as above, the changes I recommend here are based on the
-> comments in my response to patch 4.
-> 
-... will do
-
->> +    pr_err("%s: no queue for %02lx.%04lx\n", __func__, apid, apqi);
->> +    vfio_ap_dissociate_queues(matrix_mdev);
->> +    return -ENODEV;
->> +}
->>   static int vfio_ap_mdev_reset_queues(struct mdev_device *mdev)
->>   {
->>       int ret;
->> diff --git a/drivers/s390/crypto/vfio_ap_private.h 
->> b/drivers/s390/crypto/vfio_ap_private.h
->> index 081f0d7..10bc8b5 100644
->> --- a/drivers/s390/crypto/vfio_ap_private.h
->> +++ b/drivers/s390/crypto/vfio_ap_private.h
->> @@ -89,5 +89,6 @@ extern void vfio_ap_mdev_unregister(void);
->>   struct vfio_ap_queue {
->>       struct device *dev;
->>       int    apqn;
->> +    struct ap_matrix_mdev *matrix;
-> 
-> Can you rename this variable matrix_mdev?
-> * That is how struct ap_matrix_mdev vars are named everywhere else
-> * It prevents confusing it with naming of vars for struct ap_matrix.
-
-Sorry, I did this but it seems to have been forgotten in a rebase.
-Will do.
-
-> 
->>   };
->>   #endif /* _VFIO_AP_PRIVATE_H_ */
->>
-> 
+On Mon, 18 Feb 2019 at 19:31, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.4.175 release.
+> There are 143 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed Feb 20 13:34:55 UTC 2019.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.4.175-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.4.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
 
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.4.175-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.4.y
+git commit: b21488342322bbf876a019f6638b4d5f142acc14
+git describe: v4.4.174-144-gb21488342322
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
+ld/v4.4.174-144-gb21488342322
+
+
+No regressions (compared to build v4.4.174)
+
+
+No fixes (compared to build v4.4.174)
+
+Ran 17569 total tests in the following environments and test suites.
+
+Environments
+--------------
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-open-posix-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* spectre-meltdown-checker-test
+* install-android-platform-tools-r2600
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.4.175-rc1
+git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
+git branch: 4.4.175-rc1-hikey-20190218-378
+git commit: 0a63bf1d84ee6f63228b926c3d7d8457f9b6f437
+git describe: 4.4.175-rc1-hikey-20190218-378
+Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4=
+-oe/build/4.4.175-rc1-hikey-20190218-378
+
+
+No regressions (compared to build 4.4.175-rc1-hikey-20190215-377)
+
+
+No fixes (compared to build 4.4.175-rc1-hikey-20190215-377)
+
+Ran 2849 total tests in the following environments and test suites.
+
+Environments
+--------------
+- hi6220-hikey - arm64
+- qemu_arm64
+
+Test Suites
+-----------
+* boot
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* spectre-meltdown-checker-test
+* ltp-fs-tests
+
+
+--
+Linaro LKFT
+https://lkft.linaro.org
