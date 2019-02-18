@@ -4,47 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D7EC10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDFD0C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:56:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2CFC21901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8396A217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:56:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498157;
-	bh=pGE8gN6K+cqOta0lK2v0h96bUceA5tD3RkqUyXwDGqQ=;
+	s=default; t=1550498163;
+	bh=BDUp3h9X9QnP/JdpTz5lamfYoibm3yiEYPsJRDhRs5Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Agv3l5TIEzQA0CKJ4hrTcBVA8isLNItqRDF8x2CGQVkwWhWIx3PzLa6RszQDvXcFG
-	 KauqdRdqDI+xIXXaViZTTjYUEanYZGagbckksIRlU5NQ7Z9yzfipJNH88Qs/dp8KZT
-	 XodzVdhQUwPB52v7pTpd9yYZBtn7G8CmBgXEJMDY=
+	b=bqhhUJdjRgVP1LM+dceA6tFdkFplRj+AscMYAHldacbRCWJHV52qfAHX2Bp/XISuK
+	 Z8WQJco8wKk2sOAqxTF7c5l7OLwRAcA8FoCfXJAd4sv/iSblojPDoFvq9dgSBc00O8
+	 CYrp2F7G9L+gBz18j9X43Uh4ZY6Fx7CF2L+mxjmI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387632AbfBRNzz (ORCPT
+        id S2387658AbfBRN4C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:55:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35986 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:56:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387612AbfBRNzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:55:52 -0500
+        id S1733074AbfBRNz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:55:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79BE8217D9;
-        Mon, 18 Feb 2019 13:55:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3F4921902;
+        Mon, 18 Feb 2019 13:55:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498152;
-        bh=pGE8gN6K+cqOta0lK2v0h96bUceA5tD3RkqUyXwDGqQ=;
+        s=default; t=1550498158;
+        bh=BDUp3h9X9QnP/JdpTz5lamfYoibm3yiEYPsJRDhRs5Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YVoAEN59UTsNi1Z1ECaStcC8k0KITSEaAjUuAQ4Pc0teCZQFoQo1FUPr7FZ+Z42X3
-         eFmjVL8ktAc8qsOCm4AUGomRDYbzLdx1LpwxQR51LAjF+VkSP5ChpEDTQAh/UuoyzY
-         mPn2rshe4YRdGkNjcMXccur/QXOqcJx3+3NmCdiU=
+        b=tmVCLN/5OOiRkTfT6YvuQCpRmZj795Q4/Lov2a33SfSrLJz39b9DtSpZQX5Dyo+na
+         N7cLwW5xwPAqUz3DW5TU8p1WgEv20lvNBTjRvoaGdnpnn0VWyIhrl/OKFLANNAJ1JU
+         QvFM7vrE6VFpTRgwIJqyku9j/xyDy1LOCXQlgiW0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.14 40/62] Revert "Input: elan_i2c - add ACPI ID for touchpad in ASUS Aspire F5-573G"
-Date:   Mon, 18 Feb 2019 14:43:46 +0100
-Message-Id: <20190218133509.333870989@linuxfoundation.org>
+        stable@vger.kernel.org, Mauro Ciancio <mauro@acadeu.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.14 41/62] Input: elan_i2c - add ACPI ID for touchpad in Lenovo V330-15ISK
+Date:   Mon, 18 Feb 2019 14:43:47 +0100
+Message-Id: <20190218133509.406946694@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
 References: <20190218133505.801423074@linuxfoundation.org>
@@ -63,34 +64,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Mauro Ciancio <mauro@acadeu.com>
 
-commit f420c54e4b12c1361c6ed313002ee7bd7ac58362 upstream.
+commit 7ad222b3aed350adfc27ee7eec4587ffe55dfdce upstream.
 
-This reverts commit 7db54c89f0b30a101584e09d3729144e6170059d as it
-breaks Acer Aspire V-371 and other devices. According to Elan:
+This adds ELAN0617 to the ACPI table to support Elan touchpad found in
+Lenovo V330-15ISK.
 
-"Acer Aspire F5-573G is MS Precision touchpad which should use hid
- multitouch driver. ELAN0501 should not be added in elan_i2c."
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=202503
+Signed-off-by: Mauro Ciancio <mauro@acadeu.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/elan_i2c_core.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/input/mouse/elan_i2c_core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
 --- a/drivers/input/mouse/elan_i2c_core.c
 +++ b/drivers/input/mouse/elan_i2c_core.c
-@@ -1251,7 +1251,6 @@ MODULE_DEVICE_TABLE(i2c, elan_id);
- static const struct acpi_device_id elan_acpi_id[] = {
- 	{ "ELAN0000", 0 },
- 	{ "ELAN0100", 0 },
--	{ "ELAN0501", 0 },
- 	{ "ELAN0600", 0 },
- 	{ "ELAN0602", 0 },
- 	{ "ELAN0605", 0 },
+@@ -1261,6 +1261,7 @@ static const struct acpi_device_id elan_
+ 	{ "ELAN060C", 0 },
+ 	{ "ELAN0611", 0 },
+ 	{ "ELAN0612", 0 },
++	{ "ELAN0617", 0 },
+ 	{ "ELAN0618", 0 },
+ 	{ "ELAN061C", 0 },
+ 	{ "ELAN061D", 0 },
 
 
