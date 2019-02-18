@@ -2,121 +2,214 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0805CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:44:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08DB8C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEC952177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:44:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC3CE2177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550515764;
+	bh=BCayeuDWCo9SEK7k7iVM6a96RvrOgdfifnlCZeS/3HA=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=zEHfPmhpw+KDHUlIkg8HKw57B43anXMgDtRX2nfCj0tEGsDIO9HhaCkZzojn2dvYn
+	 CZRUhpvk3lEwT9aSg4V7G8b2LFe4eir9dNFV/AuZFJWwKCs811ratYmCe2dSP6EtPF
+	 cMef01gNYuEw4+SJYq+ScKlsRAcH5EdKTCHe+Acs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725804AbfBRSoD (ORCPT
+        id S1726012AbfBRStW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:44:03 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49958 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725939AbfBRSmC (ORCPT
+        Mon, 18 Feb 2019 13:49:22 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41392 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725308AbfBRStW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:42:02 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1IIcoui092052
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 13:42:01 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qr225rdqa-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 13:42:01 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Mon, 18 Feb 2019 18:41:59 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 18 Feb 2019 18:41:54 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1IIfrJJ55181540
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 18 Feb 2019 18:41:53 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 459D2AE051;
-        Mon, 18 Feb 2019 18:41:53 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 344B7AE04D;
-        Mon, 18 Feb 2019 18:41:48 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.207.239])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 18 Feb 2019 18:41:48 +0000 (GMT)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 18 Feb 2019 20:41:46 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>, Palmer Dabbelt <palmer@sifive.com>,
-        Richard Kuo <rkuo@codeaurora.org>, linux-arch@vger.kernel.org,
-        linux-hexagon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-riscv@lists.infradead.org,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: [PATCH v2 3/4] init: free_initmem: poison freed init memory
-Date:   Mon, 18 Feb 2019 20:41:24 +0200
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1550515285-17446-1-git-send-email-rppt@linux.ibm.com>
-References: <1550515285-17446-1-git-send-email-rppt@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19021818-0008-0000-0000-000002C1EA74
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021818-0009-0000-0000-0000222E1A1E
-Message-Id: <1550515285-17446-4-git-send-email-rppt@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-18_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=827 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902180138
+        Mon, 18 Feb 2019 13:49:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=9je/8gluzR/OK6MxRiuz19zq5Cvy4bhUiUoGTFoYAbk=; b=AbXOfPScMbB+
+        EFCnaOJxRgUrbyg0kL14hqJCHVMA7twkMdL0L3IuS2mT/Xr2ugk2MOpAMaVHjuKmXe5l/EHjotOte
+        Sd/nAW8PfN6E/9GoQVwB8lahI1WYJSOl+sFjoG/y4Hq3hPYPGOkkI3gdOthZOUf4WMWsHk5LrvKcr
+        Rssfc=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gvnye-0001dQ-5O; Mon, 18 Feb 2019 18:49:16 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id A479C1128008; Mon, 18 Feb 2019 18:49:15 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
+        alsa-devel@alsa-project.org, sbkim73@samsung.com,
+        lgirdwood@gmail.com, krzk@kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: samsung: odroid: Ensure proper sample rate on pri/sec PCM" to the asoc tree
+In-Reply-To:  <20190214160011.3940-1-s.nawrocki@samsung.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190218184915.A479C1128008@debutante.sirena.org.uk>
+Date:   Mon, 18 Feb 2019 18:49:15 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Various architectures including x86 poison the freed init memory.
-Do the same in the generic free_initmem implementation and switch sparc32
-architecture that is identical to the generic code over to it now.
+The patch
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+   ASoC: samsung: odroid: Ensure proper sample rate on pri/sec PCM
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From b5c16a24efc809554c4c651df6bd9b48b084a5a3 Mon Sep 17 00:00:00 2001
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Thu, 14 Feb 2019 17:00:11 +0100
+Subject: [PATCH] ASoC: samsung: odroid: Ensure proper sample rate on pri/sec
+ PCM
+
+Currently when playing sound with different sample rates actual
+sample rate will be determined by audio stream which starts first
+on either primary or secondary PCM. The audio root clock will be
+configured appropriately only for the first stream. As the hardware
+is limited to same sample rate on both interfaces we need to disallow
+streams with different sample rates. It is done by this patch by
+returning error in FE hw_params if there is already active stream
+running with different sample rate.
+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/sparc/mm/init_32.c | 5 -----
- init/main.c             | 2 +-
- 2 files changed, 1 insertion(+), 6 deletions(-)
+ sound/soc/samsung/odroid.c | 56 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
-diff --git a/arch/sparc/mm/init_32.c b/arch/sparc/mm/init_32.c
-index f0dbc0b..d02a9ae 100644
---- a/arch/sparc/mm/init_32.c
-+++ b/arch/sparc/mm/init_32.c
-@@ -294,11 +294,6 @@ void __init mem_init(void)
- 	mem_init_print_info(NULL);
+diff --git a/sound/soc/samsung/odroid.c b/sound/soc/samsung/odroid.c
+index 18bb3bfe0300..941e8c3f67a4 100644
+--- a/sound/soc/samsung/odroid.c
++++ b/sound/soc/samsung/odroid.c
+@@ -20,6 +20,11 @@ struct odroid_priv {
+ 	struct snd_soc_card card;
+ 	struct clk *clk_i2s_bus;
+ 	struct clk *sclk_i2s;
++
++	/* Spinlock protecting fields below */
++	spinlock_t lock;
++	unsigned int be_sample_rate;
++	bool be_active;
+ };
+ 
+ static int odroid_card_fe_startup(struct snd_pcm_substream *substream)
+@@ -31,8 +36,25 @@ static int odroid_card_fe_startup(struct snd_pcm_substream *substream)
+ 	return 0;
  }
  
--void free_initmem (void)
--{
--	free_initmem_default(POISON_FREE_INITMEM);
--}
--
- void sparc_flush_page_to_ram(struct page *page)
- {
- 	unsigned long vaddr = (unsigned long)page_address(page);
-diff --git a/init/main.c b/init/main.c
-index 38d69e0..9a61e9c 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -1049,7 +1049,7 @@ static inline void mark_readonly(void)
++static int odroid_card_fe_hw_params(struct snd_pcm_substream *substream,
++				      struct snd_pcm_hw_params *params)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct odroid_priv *priv = snd_soc_card_get_drvdata(rtd->card);
++	unsigned long flags;
++	int ret = 0;
++
++	spin_lock_irqsave(&priv->lock, flags);
++	if (priv->be_active && priv->be_sample_rate != params_rate(params))
++		ret = -EINVAL;
++	spin_unlock_irqrestore(&priv->lock, flags);
++
++	return ret;
++}
++
+ static const struct snd_soc_ops odroid_card_fe_ops = {
+ 	.startup = odroid_card_fe_startup,
++	.hw_params = odroid_card_fe_hw_params,
+ };
  
- void __weak free_initmem(void)
- {
--	free_initmem_default(-1);
-+	free_initmem_default(POISON_FREE_INITMEM);
+ static int odroid_card_be_hw_params(struct snd_pcm_substream *substream,
+@@ -41,6 +63,7 @@ static int odroid_card_be_hw_params(struct snd_pcm_substream *substream,
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+ 	struct odroid_priv *priv = snd_soc_card_get_drvdata(rtd->card);
+ 	unsigned int pll_freq, rclk_freq, rfs;
++	unsigned long flags;
+ 	int ret;
+ 
+ 	switch (params_rate(params)) {
+@@ -87,11 +110,43 @@ static int odroid_card_be_hw_params(struct snd_pcm_substream *substream,
+ 			return ret;
+ 	}
+ 
++	spin_lock_irqsave(&priv->lock, flags);
++	priv->be_sample_rate = params_rate(params);
++	spin_unlock_irqrestore(&priv->lock, flags);
++
++	return 0;
++}
++
++static int odroid_card_be_trigger(struct snd_pcm_substream *substream, int cmd)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct odroid_priv *priv = snd_soc_card_get_drvdata(rtd->card);
++	unsigned long flags;
++
++	spin_lock_irqsave(&priv->lock, flags);
++
++	switch (cmd) {
++	case SNDRV_PCM_TRIGGER_START:
++	case SNDRV_PCM_TRIGGER_RESUME:
++	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
++		priv->be_active = true;
++		break;
++
++	case SNDRV_PCM_TRIGGER_STOP:
++	case SNDRV_PCM_TRIGGER_SUSPEND:
++	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
++		priv->be_active = false;
++		break;
++	}
++
++	spin_unlock_irqrestore(&priv->lock, flags);
++
+ 	return 0;
  }
  
- static int __ref kernel_init(void *unused)
+ static const struct snd_soc_ops odroid_card_be_ops = {
+ 	.hw_params = odroid_card_be_hw_params,
++	.trigger = odroid_card_be_trigger,
+ };
+ 
+ static struct snd_soc_dai_link odroid_card_dais[] = {
+@@ -150,6 +205,7 @@ static int odroid_audio_probe(struct platform_device *pdev)
+ 	card->owner = THIS_MODULE;
+ 	card->fully_routed = true;
+ 
++	spin_lock_init(&priv->lock);
+ 	snd_soc_card_set_drvdata(card, priv);
+ 
+ 	ret = snd_soc_of_parse_card_name(card, "model");
 -- 
-2.7.4
+2.20.1
 
