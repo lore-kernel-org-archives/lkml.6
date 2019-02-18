@@ -2,161 +2,70 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BED35C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:52:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27315C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:53:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 884E12176F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:52:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aQ0FVTAg"
+	by mail.kernel.org (Postfix) with ESMTP id 00CEB2176F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:53:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730373AbfBRKw5 (ORCPT
+        id S1730383AbfBRKxS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 05:52:57 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36714 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728258AbfBRKw4 (ORCPT
+        Mon, 18 Feb 2019 05:53:18 -0500
+Received: from relay10.mail.gandi.net ([217.70.178.230]:50899 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730224AbfBRKxS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 05:52:56 -0500
-Received: by mail-lj1-f196.google.com with SMTP id g11-v6so13973967ljk.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 02:52:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CC6KdorLKJMkicgELgpTwOMSFBb61BLug+n8sMHlNNE=;
-        b=aQ0FVTAgAh1AmDGYYGeP5HNVOgDbZIQteYFysIV8WjWXEkf1yp+T7u04DWjDBhBOeo
-         14Ldk8cyUD6YCbdrD+Np+wqszjJuxDSsLR2piGuurRL2X2MDsqJCY8Yg5bhDRMvnf/ek
-         IQ3PAP/UcBLPGe0d+Ldgq0M2H1kWdAuTnAzRU/GBEdBRV6JAR91lol1oisE5AFj5Oq8h
-         1M/9FHtT4DgRDJYVHERn7BGIWyY+CHDJ0kW6xa4eiHuKrgr0lTJHbwiGR84G1VzeTtim
-         6Fc1Bx/zf8ohHxVTFHY6bdBgXmhm3bsmb0pEcwQOLAt3ck0x0SOrPqphy9XJv7mhFwvO
-         lj4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CC6KdorLKJMkicgELgpTwOMSFBb61BLug+n8sMHlNNE=;
-        b=RHRLPilhfkkLzNkLq5iXFbYr1Iuf5BRrJxFpCK5WH5ciosyma3LJ/4sYaQywtQ8ZBD
-         vYQsByUema+W8YkdOH3V1yjNgV0l57lXI/hoFJ42OYcCVWA1va0KiddPuzGZRH5YNoqZ
-         yNdrACatT76mn10/ibvrc9VDWAj5lAygFEA5kSbGNL5NnspVPPSgZhtPNoSZWD3Hs07n
-         tdOPkvLfr2pK5Gn3T4NSbxbAngcnYGxv47lwQmMQUC3gHsy1TeLDe2KuEDkRHb5iSQGZ
-         Hki3fXPzIfzhMSkoRk4iq6lIX5WS8VvpbyEe1lRKqvhq/TLIgL1VHOUDtPgjRXpsCQ9x
-         8YAw==
-X-Gm-Message-State: AHQUAua4O7Z8YJvwRZiDBU+wwUjhzwNF7jAobOirun31aUrGdqOeCNs6
-        s3Ea5joHteXG9WT6YpJvYDY6xqGMrMbC7Q0QKUUg4Q==
-X-Google-Smtp-Source: AHgI3Ian99yzYlQaqTBpe48UhUpXkh7SKZMzNP8m7UWC+tojep5CMiISRwWf0mHl2AoC0RY96Ps/vRq/UiAyHfwNaY4=
-X-Received: by 2002:a2e:6a18:: with SMTP id f24mr14330316ljc.97.1550487174177;
- Mon, 18 Feb 2019 02:52:54 -0800 (PST)
-MIME-Version: 1.0
-References: <a9718ae1e97a5911f47874fe23c00ef297d7fed8.1548158832.git.baolin.wang@linaro.org>
- <CAK8P3a2zkhrZLMi5KZ5=fGJCt85dad3_pZC0o7GqcwJkk4es9w@mail.gmail.com>
- <CAMz4ku+PR4bHtcPu2uT2f974+FWJVi8Tp3WzmuqE1TS-M-QawQ@mail.gmail.com>
- <CAMz4kuLEut0LqZ4bSAGJDufE8xHr6DgZ3Z1RCLQ10q_k6MUesw@mail.gmail.com> <CAK8P3a1Zq6XjymG3sAaHGeNRxU5UXPfJPbi0A9s47cTVK7vC3g@mail.gmail.com>
-In-Reply-To: <CAK8P3a1Zq6XjymG3sAaHGeNRxU5UXPfJPbi0A9s47cTVK7vC3g@mail.gmail.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Mon, 18 Feb 2019 18:52:40 +0800
-Message-ID: <CAMz4kuL=B53xLk4SFbrwWeUhp4P9zbUfOmXgftQCEjVSwOnD5A@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: dmaengine: Add one new cell to present
- hardware slave id
+        Mon, 18 Feb 2019 05:53:18 -0500
+Received: from localhost (hadi-gate-vlan-851.hadiko.whka.de [141.70.45.131])
+        (Authenticated sender: hle@owl.eu.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id E2D1024000D;
+        Mon, 18 Feb 2019 10:53:15 +0000 (UTC)
+Date:   Mon, 18 Feb 2019 11:53:15 +0100
+From:   Hugo Lefeuvre <hle@owl.eu.com>
 To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Olof Johansson <olof@lixom.net>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Lyra Zhang <zhang.lyra@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        DTML <devicetree@vger.kernel.org>, arm-soc <arm@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dmaengine@vger.kernel.org, eric.long@unisoc.com,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] iomap: fix multiple consistency issues, interface cleanup
+Message-ID: <cover.1550485787.git.hle@owl.eu.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+Hi,
 
-On Mon, 18 Feb 2019 at 18:31, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Tue, Feb 12, 2019 at 9:25 AM Baolin Wang <baolin.wang@linaro.org> wrote:
-> > On Fri, 1 Feb 2019 at 19:53, Baolin Wang <baolin.wang@linaro.org> wrote:
-> > > On Thu, 31 Jan 2019 at 00:52, Arnd Bergmann <arnd@arndb.de> wrote:
-> > > > On Tue, Jan 22, 2019 at 2:21 PM Baolin Wang <baolin.wang@linaro.org> wrote:
-> > > > >
-> > > > >  Client:
-> > > > >  DMA clients connected to the Spreadtrum DMA controller must use the format
-> > > > > -described in the dma.txt file, using a two-cell specifier for each channel.
-> > > > > -The two cells in order are:
-> > > > > +described in the dma.txt file, using a three-cell specifier for each channel.
-> > > > > +The three cells in order are:
-> > > > >  1. A phandle pointing to the DMA controller.
-> > > > >  2. The channel id.
-> > > > > +3. The hardware slave id which is used for clients to trigger DMA engine
-> > > > > +automatically.
-> > > >
-> > > > I notice that this is an incompatible binding change. Is that necessary?
-> > > > If the current code works, I'd suggest allowing both #dma-cells=<2>
-> > > > and <3>, and then implementing both in the driver.
-> > >
-> > > Yes, this is necessary.
-> > >
-> > > Yes, current code can work, but the problem is that the DMA clients
-> > > must add one property (something like "sprd,slave-id") to specify the
-> > > slave id. So considering this, we want to change the dma-cells to 2,
-> > > including dma channel and dma slave id, which can avoid introducing
-> > > some similar properties for DMA clients.
-> > >
-> > > Now there are no DMA clients in mainline for Spreadtrum platform, and
-> > > we want to upstream our first DMA clients: SPI controller. So no other
-> > > drivers need to change when we changing dma cells. Thanks.
-> >
-> > Do you have any other concerns about this patch set? If not, I think
-> > Vinod can apply this patch set. Thanks.
->
-> Sorry for the late reply. Yes, this makes sense since there are no
-> existing users then. For the DT changes going through the dmaengine
-> tree
->
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
+This patch cleans up the iomap interface.
 
-Thanks for your reviewing.
+The first patch makes the include/asm-generic/iomap.h header compliant
+with the kernel style guidelines by adding missing function args
+identifier names.
 
->
-> One more question, to make sure we don't need to edit it again:
-> Why do you need both a 'channel id' and a 'slave id' here? Is this
-> a strict hardware requirement for your DMA engine? In many
-> other designs, only a DMA request line number needs to
-> be described, and I think this would correspond to what you
-> call the 'hardware slave id' in your documentation.
+The second and fourth patches address multiple compilation warnings due
+to missing const qualifiers in mmio_ins* and ioread*/iowrite
+definitions in include/asm-generic/iomap.h and lib/iomap.c.
 
-I try to explain why we need the slave id.
+The third patch modifies io*_rep definitions from asm-generic/io.h to
+take unsigned long count parameter instead of unsigned int which is
+inconsistent with other definitions in the kernel.
 
-For our DMA engine driver, we have software request mode and hardware
-request mode. For software request mode, the DMA engine driver need
-trigger DMA to start transfer manually. But for hardware request mode,
-we just set one unique slave id corresponding to the slave hardware to
-the DMA engine, then the slave hardware can trigger DMA automatically.
-And the slave id is not always same with the channel id according to
-the SoC design, so we add one cell to specify the slave id.
+Hugo Lefeuvre (4):
+  iomap: add missing function args identifier names
+  iomap: add missing const to ioread*/iowrite addr arg
+  io: change io*_rep definitions to take ulong count
+  lib/iomap: add missing const to mmio_ins* addr arg
 
->
-> Does each request line here correspond to a fixed channel
-> id as well, or can a channel be shared between multiple
-
-Yes, each request line corresponds to a fixed channel id.
-
-> slave devices?
->
->       Arnd
-
-
+ include/asm-generic/io.h    | 16 ++++++++--------
+ include/asm-generic/iomap.h | 38 ++++++++++++++++++-------------------
+ lib/iomap.c                 | 22 ++++++++++-----------
+ 3 files changed, 38 insertions(+), 38 deletions(-)
 
 -- 
-Baolin Wang
-Best Regards
+2.20.1
