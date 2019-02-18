@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E03CC10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:10:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3447EC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:10:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CDCD21901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:10:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05719217D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:10:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499052;
-	bh=X3Q4GcR5RAGJH8nYuRH7uS/HRoHALo/DO1kToO0kgmY=;
+	s=default; t=1550499055;
+	bh=cWkvYAIYSuuxTWFENCUoA4MC6iEiqsfnTdUI59HMRtQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LF5o/ADkMiqs51S4SBF9PKM0UFJPwdIBC4EqncYcdrO4LyqKsCAg8G8EmVNUuR7yq
-	 Vi8Gh/pX/PSep+wk58j2tnGHixFNjvteWV1O6sbNsqX+6bJ9v/2p4+rfQUUpRLAYHJ
-	 NtkQ9+3ss016yrW1YxW8qJE3AGt1Un020TqfI88E=
+	b=eudW7+6irYfUU+T2Kql39+CqxbnZPI1wG7HQfK0Rt/hgdl99e5deCFA+kaYR877wW
+	 mRNPQM7a1W01UUauiECeCq1FljROd5mRcyOdMVVV/Bpz0Oy18YtXoZ4P6w5eFU+AlE
+	 puokfxPOW5VDlaJMZvIFBk5fcRTlQQMcBL7p822w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391587AbfBROKv (ORCPT
+        id S2390268AbfBROKx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:10:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54592 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:10:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391524AbfBROKp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:10:45 -0500
+        id S2391578AbfBROKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:10:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7EAEF217D7;
-        Mon, 18 Feb 2019 14:10:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2DD1217D7;
+        Mon, 18 Feb 2019 14:10:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550499044;
-        bh=X3Q4GcR5RAGJH8nYuRH7uS/HRoHALo/DO1kToO0kgmY=;
+        s=default; t=1550499050;
+        bh=cWkvYAIYSuuxTWFENCUoA4MC6iEiqsfnTdUI59HMRtQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K5l1zFH8fUTfrjciZYgfwJAKUz6/0FyUgX17dyn6MmPmT92PMFe/V0Wc94VdEuLN7
-         yydVa9lwVOXZKbvBxdtYL4k90UtFU5MykxB/YxNcBPsuIv8KlTzB+rWVqAObvz9wo8
-         0G3JRvSgaAPVet0McPFapdckCL6hATqCmUcrdIjA=
+        b=DvQrt7HJJ+60bvbEgN1oiYhZRQq9zFcmCY+kO3/HBbcNUa04BB9THGe3jiSte02UD
+         w4kWqj69ySxcFShGGzUF4WQwfEJvj4tJ0f3f1g4qZsxS9RKwjdVi0B66O5HzWBkUNc
+         h+Y4y0OT1JZTFIq15lRQ311c7pumWZPMs+u8v66s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org,
+        Govindarajulu Varadarajan <gvaradar@cisco.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 059/108] net: systemport: Fix WoL with password after deep sleep
-Date:   Mon, 18 Feb 2019 14:43:55 +0100
-Message-Id: <20190218133522.249953356@linuxfoundation.org>
+Subject: [PATCH 3.18 061/108] enic: fix checksum validation for IPv6
+Date:   Mon, 18 Feb 2019 14:43:57 +0100
+Message-Id: <20190218133522.350361632@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -64,104 +66,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Govindarajulu Varadarajan <gvaradar@cisco.com>
 
-[ Upstream commit 8dfb8d2cceb76b74ad5b58cc65c75994329b4d5e ]
+[ Upstream commit 7596175e99b3d4bce28022193efd954c201a782a ]
 
-Broadcom STB chips support a deep sleep mode where all register
-contents are lost. Because we were stashing the MagicPacket password
-into some of these registers a suspend into that deep sleep then a
-resumption would not lead to being able to wake-up from MagicPacket with
-password again.
+In case of IPv6 pkts, ipv4_csum_ok is 0. Because of this, driver does
+not set skb->ip_summed. So IPv6 rx checksum is not offloaded.
 
-Fix this by keeping a software copy of the password and program it
-during suspend.
-
-Fixes: 83e82f4c706b ("net: systemport: add Wake-on-LAN support")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Govindarajulu Varadarajan <gvaradar@cisco.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bcmsysport.c |   25 ++++++++++---------------
- drivers/net/ethernet/broadcom/bcmsysport.h |    2 ++
- 2 files changed, 12 insertions(+), 15 deletions(-)
+ drivers/net/ethernet/cisco/enic/enic_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/broadcom/bcmsysport.c
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-@@ -397,7 +397,6 @@ static void bcm_sysport_get_wol(struct n
- 				struct ethtool_wolinfo *wol)
- {
- 	struct bcm_sysport_priv *priv = netdev_priv(dev);
--	u32 reg;
+--- a/drivers/net/ethernet/cisco/enic/enic_main.c
++++ b/drivers/net/ethernet/cisco/enic/enic_main.c
+@@ -1065,7 +1065,7 @@ static void enic_rq_indicate_buf(struct
+ 		 * CHECSUM_UNNECESSARY.
+ 		 */
+ 		if ((netdev->features & NETIF_F_RXCSUM) && tcp_udp_csum_ok &&
+-		    ipv4_csum_ok)
++		    (ipv4_csum_ok || ipv6))
+ 			skb->ip_summed = CHECKSUM_UNNECESSARY;
  
- 	wol->supported = WAKE_MAGIC | WAKE_MAGICSECURE;
- 	wol->wolopts = priv->wolopts;
-@@ -405,11 +404,7 @@ static void bcm_sysport_get_wol(struct n
- 	if (!(priv->wolopts & WAKE_MAGICSECURE))
- 		return;
- 
--	/* Return the programmed SecureOn password */
--	reg = umac_readl(priv, UMAC_PSW_MS);
--	put_unaligned_be16(reg, &wol->sopass[0]);
--	reg = umac_readl(priv, UMAC_PSW_LS);
--	put_unaligned_be32(reg, &wol->sopass[2]);
-+	memcpy(wol->sopass, priv->sopass, sizeof(priv->sopass));
- }
- 
- static int bcm_sysport_set_wol(struct net_device *dev,
-@@ -425,13 +420,8 @@ static int bcm_sysport_set_wol(struct ne
- 	if (wol->wolopts & ~supported)
- 		return -EINVAL;
- 
--	/* Program the SecureOn password */
--	if (wol->wolopts & WAKE_MAGICSECURE) {
--		umac_writel(priv, get_unaligned_be16(&wol->sopass[0]),
--			    UMAC_PSW_MS);
--		umac_writel(priv, get_unaligned_be32(&wol->sopass[2]),
--			    UMAC_PSW_LS);
--	}
-+	if (wol->wolopts & WAKE_MAGICSECURE)
-+		memcpy(priv->sopass, wol->sopass, sizeof(priv->sopass));
- 
- 	/* Flag the device and relevant IRQ as wakeup capable */
- 	if (wol->wolopts) {
-@@ -1760,12 +1750,17 @@ static int bcm_sysport_suspend_to_wol(st
- 	unsigned int timeout = 1000;
- 	u32 reg;
- 
--	/* Password has already been programmed */
- 	reg = umac_readl(priv, UMAC_MPD_CTRL);
- 	reg |= MPD_EN;
- 	reg &= ~PSW_EN;
--	if (priv->wolopts & WAKE_MAGICSECURE)
-+	if (priv->wolopts & WAKE_MAGICSECURE) {
-+		/* Program the SecureOn password */
-+		umac_writel(priv, get_unaligned_be16(&priv->sopass[0]),
-+			    UMAC_PSW_MS);
-+		umac_writel(priv, get_unaligned_be32(&priv->sopass[2]),
-+			    UMAC_PSW_LS);
- 		reg |= PSW_EN;
-+	}
- 	umac_writel(priv, reg, UMAC_MPD_CTRL);
- 
- 	/* Make sure RBUF entered WoL mode as result */
---- a/drivers/net/ethernet/broadcom/bcmsysport.h
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.h
-@@ -11,6 +11,7 @@
- #ifndef __BCM_SYSPORT_H
- #define __BCM_SYSPORT_H
- 
-+#include <linux/ethtool.h>
- #include <linux/if_vlan.h>
- 
- /* Receive/transmit descriptor format */
-@@ -679,6 +680,7 @@ struct bcm_sysport_priv {
- 	unsigned int		crc_fwd:1;
- 	u16			rev;
- 	u32			wolopts;
-+	u8			sopass[SOPASS_MAX];
- 	unsigned int		wol_irq_disabled:1;
- 
- 	/* MIB related fields */
+ 		if (vlan_stripped)
 
 
