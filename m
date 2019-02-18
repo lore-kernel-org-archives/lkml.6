@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B2C6C10F03
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ADB1C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:22:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BAFD2190C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:22:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDA5621901
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:22:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499761;
-	bh=jib8bmIXkWRx1NsypPldlOo7IE2y3bPjt1ewRQ8RsW0=;
+	s=default; t=1550499766;
+	bh=zV6720gJNh9ErtpoWwvkYqJEz7Ay8euTnn/a+WL+ZyI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=v+EpcL5LJpzKwzT72F4wqxBD17e3VdbHz23qHKnF1fILhnSsXTaeqJZwhAV/WVfVy
-	 t7oYQFFJh/LH5f3uvXQLHKgZKbWT3O/uif/vztdTZC6eNcy/xkhj+LDe5ri/RDBLBB
-	 wTy8M4e3WFKeKmTseX1kjQUpwRUJYXPlti7gSUCs=
+	b=s7TxxznRaMAy6khDk3d8C3Nm4GdN7m93VXo/jggDIuanYVesQJhxf0cROcSyDyPsM
+	 0kUZ1WmCPCrOx4FUJsUpXXA6nAPheRf8CercHIQ9V8qMTmrPAkCjPSsP79mNNK9duy
+	 o3KUyx3wZfHPsgLy0Ate0aeiOv4a9VL3eIjDH72k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390038AbfBROEz (ORCPT
+        id S2390979AbfBROWo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:04:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47432 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:22:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390011AbfBROEv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:04:51 -0500
+        id S2390207AbfBROFk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:05:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C24421901;
-        Mon, 18 Feb 2019 14:04:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88C1A21902;
+        Mon, 18 Feb 2019 14:05:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498690;
-        bh=jib8bmIXkWRx1NsypPldlOo7IE2y3bPjt1ewRQ8RsW0=;
+        s=default; t=1550498740;
+        bh=zV6720gJNh9ErtpoWwvkYqJEz7Ay8euTnn/a+WL+ZyI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fh6N12xDTP3Hs8QCMjqlDcb5MlAkItHPa/3CSNXKgGcRauqm1F4J6YPCy2Ws2SXSI
-         h2Gm15yOnLCuLlCcaLMND6Ne1dnN4LGlHf2/ER5KNkWlnMU91fcBGUi6HP4VYTfCvV
-         FVZDWwwwufCrtlsfx3xZoEaMjqRTBqFm0i4+yBfc=
+        b=1CrvNRz/DMMzC8QztqyQuyKeJwpnW22g8ykQ9aTReUGAYtfUDi/3F0j5un+vbRKSS
+         kgyQhJ9Dl+u5Gv2Th3+cSn77PxVEipKls+A+tw1aX46/C4IehReIxNBGNpf2v89+4V
+         4dcPAuMW7rVEVMwHYst2B3GNDI7Le8bxSt4tNpYY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bin Liu <b-liu@ti.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.4 089/143] usb: phy: am335x: fix race condition in _probe
-Date:   Mon, 18 Feb 2019 14:43:37 +0100
-Message-Id: <20190218133532.312953660@linuxfoundation.org>
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.4 106/143] ARM: iop32x/n2100: fix PCI IRQ mapping
+Date:   Mon, 18 Feb 2019 14:43:54 +0100
+Message-Id: <20190218133532.905167593@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -65,45 +65,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bin Liu <b-liu@ti.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-commit a53469a68eb886e84dd8b69a1458a623d3591793 upstream.
+commit db4090920ba2d61a5827a23e441447926a02ffee upstream.
 
-power off the phy should be done before populate the phy. Otherwise,
-am335x_init() could be called by the phy owner to power on the phy first,
-then am335x_phy_probe() turns off the phy again without the caller knowing
-it.
+Booting 4.20 on a TheCUS N2100 results in a kernel oops while probing
+PCI, due to n2100_pci_map_irq() having been discarded during boot.
 
-Fixes: 2fc711d76352 ("usb: phy: am335x: Enable USB remote wakeup using PHY wakeup")
-Cc: stable@vger.kernel.org # v3.18+
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Cc: stable@vger.kernel.org # 2.6.18+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/phy/phy-am335x.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ arch/arm/mach-iop32x/n2100.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/usb/phy/phy-am335x.c
-+++ b/drivers/usb/phy/phy-am335x.c
-@@ -56,9 +56,6 @@ static int am335x_phy_probe(struct platf
- 	if (ret)
- 		return ret;
+--- a/arch/arm/mach-iop32x/n2100.c
++++ b/arch/arm/mach-iop32x/n2100.c
+@@ -75,8 +75,7 @@ void __init n2100_map_io(void)
+ /*
+  * N2100 PCI.
+  */
+-static int __init
+-n2100_pci_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
++static int n2100_pci_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+ {
+ 	int irq;
  
--	ret = usb_add_phy_dev(&am_phy->usb_phy_gen.phy);
--	if (ret)
--		return ret;
- 	am_phy->usb_phy_gen.phy.init = am335x_init;
- 	am_phy->usb_phy_gen.phy.shutdown = am335x_shutdown;
- 
-@@ -77,7 +74,7 @@ static int am335x_phy_probe(struct platf
- 	device_set_wakeup_enable(dev, false);
- 	phy_ctrl_power(am_phy->phy_ctrl, am_phy->id, false);
- 
--	return 0;
-+	return usb_add_phy_dev(&am_phy->usb_phy_gen.phy);
- }
- 
- static int am335x_phy_remove(struct platform_device *pdev)
 
 
