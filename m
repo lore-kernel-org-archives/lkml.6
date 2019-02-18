@@ -2,105 +2,178 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5DA8C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 12:04:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98ECEC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 12:06:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ECB52176F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 12:04:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70F5E21900
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 12:06:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730495AbfBRMEu convert rfc822-to-8bit (ORCPT
+        id S1730595AbfBRMGl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 07:04:50 -0500
-Received: from skedge04.snt-world.com ([91.208.41.69]:49906 "EHLO
-        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727084AbfBRMEr (ORCPT
+        Mon, 18 Feb 2019 07:06:41 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:45154 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730538AbfBRMGk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 07:04:47 -0500
-Received: from sntmail14r.snt-is.com (unknown [10.203.32.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge04.snt-world.com (Postfix) with ESMTPS id 628AC80593A;
-        Mon, 18 Feb 2019 13:04:44 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail14r.snt-is.com
- (10.203.32.184) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Mon, 18 Feb
- 2019 13:04:43 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
- 15.01.1713.004; Mon, 18 Feb 2019 13:04:43 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>,
-        Marek Vasut <marek.vasut@gmail.com>
-CC:     Schrempf Frieder <frieder.schrempf@kontron.de>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        "Boris Brezillon" <bbrezillon@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 2/2] mtd: spi-nor: Add support for MX25V8035F
-Thread-Topic: [PATCH v2 2/2] mtd: spi-nor: Add support for MX25V8035F
-Thread-Index: AQHUx4IiegtJBdviy0iiZku6FgUYug==
-Date:   Mon, 18 Feb 2019 12:04:43 +0000
-Message-ID: <20190218120421.5034-2-frieder.schrempf@kontron.de>
-References: <20190218120421.5034-1-frieder.schrempf@kontron.de>
-In-Reply-To: <20190218120421.5034-1-frieder.schrempf@kontron.de>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.43]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Mon, 18 Feb 2019 07:06:40 -0500
+Received: by mail-qk1-f194.google.com with SMTP id y195so9757948qka.12
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 04:06:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AWJkRh6siUdGaDmneKWnVivvtFst5oz85CoGO/1XMWE=;
+        b=IZ4PdNiTjl8McXr81SUC5Eq0CHfJXxcSYwVoaLbMG4aXWyEGlFdM3zpADx/a33Fud4
+         bk0Q7L+H+8cL1g+TLdXu0r38F/JRr2pYhd6yE3fblzxUcatSKA0gWum5rv9gp0igMxbn
+         s/CKCpuKp8jzadSH8iPMaSaBxCAQ4aIE4PWVnREW0DymneNhra5YRqcvUOKf3BH6FbLA
+         Ga5Y0JCkAbpzlV1hXUtNHSHEpg9TkaB/Ij8RksZ1jZ/gTT2ADfXcg2u9njkvgt7qnIFa
+         FzYk/UsDNZA8bR5qZyn2VCFc9HnTMuyAobS5W0oaWRkM+yQyzo3Fb9XJ7caklYHfFQd0
+         WaAA==
+X-Gm-Message-State: AHQUAub8zTKM+vR2uKbPGJxPgSDspn4VQj1CCRiBHwtHrZ932u6LmJ7a
+        Kg5TchOYIJUk7Httg+y5Dp7U8GB//gYsY+8rQr0=
+X-Google-Smtp-Source: AHgI3IZ3yzAzSfG2LJnG0Gb52oIjA4zipv/djAobQ/3q1IVEMYVZ6oA+iYxfS/OPByfH6OrZrMtKO8hVXx7u4Bp8IAI=
+X-Received: by 2002:a37:bdc6:: with SMTP id n189mr15950708qkf.330.1550491599524;
+ Mon, 18 Feb 2019 04:06:39 -0800 (PST)
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 628AC80593A.ACE15
-X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: bbrezillon@kernel.org, computersforpeace@gmail.com,
-        dwmw2@infradead.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, marek.vasut@gmail.com, richard@nod.at,
-        tudor.ambarus@microchip.com
+References: <1549628937-363-1-git-send-email-sugaya.taichi@socionext.com>
+In-Reply-To: <1549628937-363-1-git-send-email-sugaya.taichi@socionext.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 18 Feb 2019 13:06:21 +0100
+Message-ID: <CAK8P3a1+w=VWkFWBRnzBEVb389Od25pwGANtZR0DLTF0NfV-NQ@mail.gmail.com>
+Subject: Re: [PATCH v2 14/15] ARM: configs: Add Milbeaut M10V defconfig
+To:     Sugaya Taichi <sugaya.taichi@socionext.com>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Takao Orito <orito.takao@socionext.com>,
+        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
+        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
+On Fri, Feb 8, 2019 at 1:30 PM Sugaya Taichi
+<sugaya.taichi@socionext.com> wrote:
+>
+> This patch adds the minimal defconfig for the Milbeaut M10V.
+>
+> Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
+> ---
+>  arch/arm/configs/milbeaut_m10v_defconfig | 366 +++++++++++++++++++++++++++++++
+>  1 file changed, 366 insertions(+)
 
-This adds support for the Macronix MX25V8035F, a 8Mb SPI NOR chip.
-It is used on i.MX6UL/ULL SoMs by Kontron Electronics GmbH (N631x).
-It was only tested with a single data line connected, by writing and
-reading random data with dd.
 
-Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
----
-Changes in v2:
-==============
-* Add information about boards using the chip and testing to the commit
-  message
----
- drivers/mtd/spi-nor/spi-nor.c | 2 ++
- 1 file changed, 2 insertions(+)
+I think it would be good to reduce this a little bit. Please also add any
+options you need for booting to multi_v7_defconfig. Device drivers you
+don't need for booting but for additional features should be loadable
+modules there.
 
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index 7d7436facc57..44be34c1d2c3 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -1849,6 +1849,8 @@ static const struct flash_info spi_nor_ids[] = {
- 			 SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ)
- 			 .fixups = &mx25l25635_fixups },
- 	{ "mx25u25635f", INFO(0xc22539, 0, 64 * 1024, 512, SECT_4K | SPI_NOR_4B_OPCODES) },
-+	{ "mx25v8035f",  INFO(0xc22314, 0, 64 * 1024,  16,
-+			 SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
- 	{ "mx25l25655e", INFO(0xc22619, 0, 64 * 1024, 512, 0) },
- 	{ "mx66l51235l", INFO(0xc2201a, 0, 64 * 1024, 1024, SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ | SPI_NOR_4B_OPCODES) },
- 	{ "mx66u51235f", INFO(0xc2253a, 0, 64 * 1024, 1024, SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ | SPI_NOR_4B_OPCODES) },
--- 
-2.17.1
+> +CONFIG_KALLSYMS_ALL=y
+> +CONFIG_EMBEDDED=y
+
+CONFIG_EMBEDDED should not normally be set on device
+configurations. Despite the name it's not something for general
+embedded computing, but it's rather an option that lets you
+turn other option that one should normally not have to change.
+
+> +CONFIG_PROFILING=y
+> +CONFIG_OPROFILE=m
+
+Oprofile is rarely used these days, maybe change the default to
+PERF_EVENTS=y?
+
+> +CONFIG_HAVE_ARM_ARCH_TIMER=y
+> +CONFIG_VMSPLIT_2G=y
+> +CONFIG_PREEMPT=y
+> +CONFIG_THUMB2_KERNEL=y
+
+I think this will be the first armv8-a platform with thumb2 by default,
+and it's probably a good thing to start testing that more.
+
+> +CONFIG_HIGHMEM=y
+
+It's unusual to have both VMSPLIT_2G and HIGHMEM.
+
+> +CONFIG_ARM_APPENDED_DTB=y
+
+If you are able to fix the boot loaders, this should be turned off
+
+> +CONFIG_NL80211_TESTMODE=y
+> +CONFIG_CFG80211_DEVELOPER_WARNINGS=y
+> +CONFIG_CFG80211_REG_DEBUG=y
+
+That seems like more debugging that you should need.
+
+> +# CONFIG_I2C is not set
+> +# CONFIG_I2C_BOARDINFO is not set
+> +# CONFIG_I2C_COMPAT is not set
+> +# CONFIG_I2C_CHARDEV is not set
+> +# CONFIG_I2C_MUX is not set
+> +# CONFIG_I2C_HELPER_AUTO is not set
+> +# CONFIG_I2C_ALGOBIT is not set
+> +# CONFIG_I2C_SNI_M10V is not set
+
+If I2C is disabled, you shoulnd't need any of the later
+options here.
+
+> +CONFIG_FB=y
+> +# CONFIG_VGA_ARB is not set
+
+Since you don't have a framebuffer driver, and likely won't
+add one (new drivers should use drivers/gpu/drm), I'd drop
+this.
+
+> +# CONFIG_USB is not set
+> +# CONFIG_USB_ANNOUNCE_NEW_DEVICES is not set
+> +# CONFIG_USB_MON is not set
+> +# CONFIG_USB_XHCI_HCD is not set
+> +# CONFIG_USB_EHCI_HCD is not set
+> +# CONFIG_USB_EHCI_ROOT_HUB_TT is not set
+...
+> +# CONFIG_MMC is not set
+> +# CONFIG_MMC_SDHCI is not set
+> +# CONFIG_MMC_SDHCI_PLTFM is not set
+> +# CONFIG_MMC_SDHCI_F_SDH30 is not set
+> +# CONFIG_MMC_SDHCI_F_EMMC50 is not set
+
+Also for USB and MMC: if you don't have the subsystem, you
+should not need to list the other options.
+
+> +CONFIG_NEW_LEDS=y
+> +CONFIG_LEDS_CLASS=y
+> +CONFIG_LEDS_GPIO=y
+> +CONFIG_LEDS_TRIGGER_TIMER=y
+> +CONFIG_LEDS_TRIGGER_HEARTBEAT=y
+> +CONFIG_RTC_CLASS=y
+> +# CONFIG_RTC_HCTOSYS is not set
+> +# CONFIG_RTC_SYSTOHC is not set
+> +CONFIG_RTC_DEBUG=y
+> +CONFIG_RTC_DRV_RX8025=y
+> +CONFIG_DMADEVICES=y
+> +CONFIG_MB86S7X_HDMAC=y
+> +CONFIG_MB8AC0300_XDMAC=y
+> +CONFIG_UIO=y
+> +CONFIG_UIO_SNI=y
+> +# CONFIG_IOMMU_SUPPORT is not set
+> +#CONFIG_PWM=y is not set
+> +# CONFIG_PWM_SYSFS is not set
+> +#CONFIG_PWM_M10V=y is not set
+> +CONFIG_RESET_CONTROLLER=y
+> +CONFIG_EXFAT=y
+
+CONFIG_EXFAT does not exist in mainline kernels.
+
+> +CONFIG_IPCU_FS=y
+> +# CONFIG_TEST_IPCU_FS is not set
+
+same for IPCU_FS, and probably a lot of other options.
+
+        Arnd
