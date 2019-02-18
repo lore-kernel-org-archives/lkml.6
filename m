@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC8DBC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0E16C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:00:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD91121903
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:00:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A16E721904
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:00:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498456;
-	bh=ld0qj6AaQB6V1sCMJ4xV5/YIXuvxrgkFGokr13Oj2wY=;
+	s=default; t=1550498459;
+	bh=bwrrcPDEmxJZOchFuQ0+qIACCQFlzeNkLLMbTP8TLOI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DzIKKt3ldVwBRwY02N31ZTdT0Rs+oLYlMMqwhUq3YzMlFxXnv4bx3NCDL5r36TWf9
-	 y/9FiFvkI4FdcasA/uZ+XSSdbVVNrnYu/Gbh9ze4hJBzUE4T0WXkA8nwIvc9/qQ4zl
-	 D6h4DiKfcrErvU5OjXX+dd6MDCUrOwhr/R/SRQDU=
+	b=MoLgd3yHC4TYMRimKq1pk9TS1eVaap+wWl0Iv2uxMxjOgw5gytlC/7LaHmycEzPe0
+	 0n+/PaRQOHgKcI8euvgstfmP5BNnIWmk0QcJgcmOLguiyaOOtfaq4HVFUNkn8HijF6
+	 Nk3bI3paEQ58FEfI9+6n8rZ02wOqufAlmGGj1Bl4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388955AbfBROAz (ORCPT
+        id S2388965AbfBROA6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:00:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42168 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:00:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388925AbfBROAv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:00:51 -0500
+        id S2388907AbfBROAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:00:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4489A20842;
-        Mon, 18 Feb 2019 14:00:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 006FB20842;
+        Mon, 18 Feb 2019 14:00:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498450;
-        bh=ld0qj6AaQB6V1sCMJ4xV5/YIXuvxrgkFGokr13Oj2wY=;
+        s=default; t=1550498453;
+        bh=bwrrcPDEmxJZOchFuQ0+qIACCQFlzeNkLLMbTP8TLOI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KZVLB7LIO7pzguwm1l0PIZKs3fOqlG34eaL7klgV2inzCuXOaeA0kdV1ivqSkt29E
-         VYe6xDwOJ6+432tdHFpS7TiKVHFiwEEyWTbDB9z/PJ5+YoI5JAzfXq7KU/6J/X3pBX
-         ydrPgsXCGBRKUKQA0EYlexvYkFYuQIAT3rysBV34=
+        b=vk7Z84DE8p0q2/y3PRNN91o3J65EtpiakC/bKUBapSK9JtRBz1quzcyKvwsQpDajA
+         rsmTbvUlYNPF6Uts+bzJtpfwyyuazxDdZL/TJEAdccRc9aD7xpfxXPe1K0Iow7hCCz
+         3uyFsKaS16nWmSQybIEUkuXfluWup05/BPI5UKqc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 013/143] ARM: OMAP2+: hwmod: Fix some section annotations
-Date:   Mon, 18 Feb 2019 14:42:21 +0100
-Message-Id: <20190218133529.647700507@linuxfoundation.org>
+Subject: [PATCH 4.4 014/143] modpost: validate symbol names also in find_elf_symbol
+Date:   Mon, 18 Feb 2019 14:42:22 +0100
+Message-Id: <20190218133529.682738220@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -67,74 +66,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c10b26abeb53cabc1e6271a167d3f3d396ce0218 ]
+[ Upstream commit 5818c683a619c534c113e1f66d24f636defc29bc ]
 
-When building the kernel with Clang, the following section mismatch
-warnings appears:
+If an ARM mapping symbol shares an address with a valid symbol,
+find_elf_symbol can currently return the mapping symbol instead, as the
+symbol is not validated. This can result in confusing warnings:
 
-WARNING: vmlinux.o(.text+0x2d398): Section mismatch in reference from
-the function _setup() to the function .init.text:_setup_iclk_autoidle()
-The function _setup() references
-the function __init _setup_iclk_autoidle().
-This is often because _setup lacks a __init
-annotation or the annotation of _setup_iclk_autoidle is wrong.
+  WARNING: vmlinux.o(.text+0x18f4028): Section mismatch in reference
+  from the function set_reset_devices() to the variable .init.text:$x.0
 
-WARNING: vmlinux.o(.text+0x2d3a0): Section mismatch in reference from
-the function _setup() to the function .init.text:_setup_reset()
-The function _setup() references
-the function __init _setup_reset().
-This is often because _setup lacks a __init
-annotation or the annotation of _setup_reset is wrong.
+This change adds a call to is_valid_name to find_elf_symbol, similarly
+to how it's already used in find_elf_symbol2.
 
-WARNING: vmlinux.o(.text+0x2d408): Section mismatch in reference from
-the function _setup() to the function .init.text:_setup_postsetup()
-The function _setup() references
-the function __init _setup_postsetup().
-This is often because _setup lacks a __init
-annotation or the annotation of _setup_postsetup is wrong.
-
-_setup is used in omap_hwmod_allocate_module, which isn't marked __init
-and looks like it shouldn't be, meaning to fix these warnings, those
-functions must be moved out of the init section, which this patch does.
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-omap2/omap_hwmod.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ scripts/mod/modpost.c | 50 ++++++++++++++++++++++---------------------
+ 1 file changed, 26 insertions(+), 24 deletions(-)
 
-diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
-index 147c90e70b2e..36706d32d656 100644
---- a/arch/arm/mach-omap2/omap_hwmod.c
-+++ b/arch/arm/mach-omap2/omap_hwmod.c
-@@ -2526,7 +2526,7 @@ static int __init _init(struct omap_hwmod *oh, void *data)
-  * a stub; implementing this properly requires iclk autoidle usecounting in
-  * the clock code.   No return value.
-  */
--static void __init _setup_iclk_autoidle(struct omap_hwmod *oh)
-+static void _setup_iclk_autoidle(struct omap_hwmod *oh)
- {
- 	struct omap_hwmod_ocp_if *os;
- 	struct list_head *p;
-@@ -2561,7 +2561,7 @@ static void __init _setup_iclk_autoidle(struct omap_hwmod *oh)
-  * reset.  Returns 0 upon success or a negative error code upon
-  * failure.
-  */
--static int __init _setup_reset(struct omap_hwmod *oh)
-+static int _setup_reset(struct omap_hwmod *oh)
- {
- 	int r;
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 064fbfbbb22c..81b1c02a76fa 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -1197,6 +1197,30 @@ static int secref_whitelist(const struct sectioncheck *mismatch,
+ 	return 1;
+ }
  
-@@ -2622,7 +2622,7 @@ static int __init _setup_reset(struct omap_hwmod *oh)
-  *
-  * No return value.
-  */
--static void __init _setup_postsetup(struct omap_hwmod *oh)
-+static void _setup_postsetup(struct omap_hwmod *oh)
- {
- 	u8 postsetup_state;
++static inline int is_arm_mapping_symbol(const char *str)
++{
++	return str[0] == '$' && strchr("axtd", str[1])
++	       && (str[2] == '\0' || str[2] == '.');
++}
++
++/*
++ * If there's no name there, ignore it; likewise, ignore it if it's
++ * one of the magic symbols emitted used by current ARM tools.
++ *
++ * Otherwise if find_symbols_between() returns those symbols, they'll
++ * fail the whitelist tests and cause lots of false alarms ... fixable
++ * only by merging __exit and __init sections into __text, bloating
++ * the kernel (which is especially evil on embedded platforms).
++ */
++static inline int is_valid_name(struct elf_info *elf, Elf_Sym *sym)
++{
++	const char *name = elf->strtab + sym->st_name;
++
++	if (!name || !strlen(name))
++		return 0;
++	return !is_arm_mapping_symbol(name);
++}
++
+ /**
+  * Find symbol based on relocation record info.
+  * In some cases the symbol supplied is a valid symbol so
+@@ -1222,6 +1246,8 @@ static Elf_Sym *find_elf_symbol(struct elf_info *elf, Elf64_Sword addr,
+ 			continue;
+ 		if (ELF_ST_TYPE(sym->st_info) == STT_SECTION)
+ 			continue;
++		if (!is_valid_name(elf, sym))
++			continue;
+ 		if (sym->st_value == addr)
+ 			return sym;
+ 		/* Find a symbol nearby - addr are maybe negative */
+@@ -1240,30 +1266,6 @@ static Elf_Sym *find_elf_symbol(struct elf_info *elf, Elf64_Sword addr,
+ 		return NULL;
+ }
  
+-static inline int is_arm_mapping_symbol(const char *str)
+-{
+-	return str[0] == '$' && strchr("axtd", str[1])
+-	       && (str[2] == '\0' || str[2] == '.');
+-}
+-
+-/*
+- * If there's no name there, ignore it; likewise, ignore it if it's
+- * one of the magic symbols emitted used by current ARM tools.
+- *
+- * Otherwise if find_symbols_between() returns those symbols, they'll
+- * fail the whitelist tests and cause lots of false alarms ... fixable
+- * only by merging __exit and __init sections into __text, bloating
+- * the kernel (which is especially evil on embedded platforms).
+- */
+-static inline int is_valid_name(struct elf_info *elf, Elf_Sym *sym)
+-{
+-	const char *name = elf->strtab + sym->st_name;
+-
+-	if (!name || !strlen(name))
+-		return 0;
+-	return !is_arm_mapping_symbol(name);
+-}
+-
+ /*
+  * Find symbols before or equal addr and after addr - in the section sec.
+  * If we find two symbols with equal offset prefer one with a valid name.
 -- 
 2.19.1
 
