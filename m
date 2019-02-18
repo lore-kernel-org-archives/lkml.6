@@ -7,52 +7,54 @@ X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5781BC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DDFEC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:50:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BC452177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:50:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D17BC2177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:50:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550515819;
-	bh=VAShbwJ7YG1dQHqHK7DiKGBZi0w4TU9SxNi4IwgABcQ=;
+	s=default; t=1550515832;
+	bh=osMQM4LRc6uAlORfGNIq0IQ12Epj6H/f5wZUSxRb7+g=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=FrNz3XSsk3CkdBvcu2Hm0hvxGlpVVSkYTu6cN85zj9a+FaQmUVI/DlKWLUwMxXnjR
-	 uDkVtpbKWY2aWjSZObDo8Mqofq5tG1anyTglo1r9PtOwi9sPxLNbKoJS1dDVwJYJFF
-	 xH4ZRkayRe9LvWNwgll+TAtWuZLLfdJU7T6pHF94=
+	b=IpZtk4SyGVHaAUykWymgijqcvQohLJmaz9WLbiF3LQINkNNtHnVrbsF5EHYNlYWqg
+	 tZycwWcVr9v/9mll0S/m+FLCxwfGlgbVjH5DJQJ3RjugQe38azIFN4xsl72qJWVb7r
+	 tpRJQrtFvZWWPuT7/ZVH7l+OSU7Dh1x+IVJPUcSg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbfBRSuR (ORCPT
+        id S1727311AbfBRSua (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:50:17 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42684 "EHLO
+        Mon, 18 Feb 2019 13:50:30 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42466 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727083AbfBRSuA (ORCPT
+        with ESMTP id S1726924AbfBRStx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:50:00 -0500
+        Mon, 18 Feb 2019 13:49:53 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=lZkbFvGb/pgW7owTXDgQRsSj/A1Ijxw97od1uWeofmU=; b=qKIpTkZlXsOz
-        hDzSzD0fexTPHxf5Dyy1E8Q1OQtW9D88SBuWpZJUjQ7rATgRy+hiUWD8Z6H8ETn8vDN8DNN0WkHmO
-        ojIO+JyUn8Z1ZGx/ForAm8bk/2TCeyfyT6YUSzblHN9B9TFuTkbHYy+RveNeLMfA8cbf5ahUW/Nys
-        yACB4=;
+        List-Archive; bh=W1gsUMiLEbeWMTVS3jKPejmRZbMzUdLeBmtMgFrJaPM=; b=RSotHbzHjtvY
+        hNClOq/yopfqROj0UbTBc2ZeBz0bt2MAUMtW45zXXJSsJajHWt0cDSh3CVr9XdiHJdRSUhiSVJyIH
+        ESPb/+dYlE3r6Fx4r1L56BS2ulwWOv7Xtsw/x7Psv7m6Quue1MHv126OY+w2BfmoQQpkfQOQ2UkGx
+        0Qzw4=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gvnzH-0001g8-Br; Mon, 18 Feb 2019 18:49:55 +0000
+        id 1gvnyt-0001eV-HT; Mon, 18 Feb 2019 18:49:31 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id DFF7C1128008; Mon, 18 Feb 2019 18:49:54 +0000 (GMT)
+        id F3E631128008; Mon, 18 Feb 2019 18:49:30 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Ondrej Jirman <megous@megous.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Applied "regulator: axp20x: fix DCDCB and BLDO2 definitions for AXP806" to the regulator tree
-In-Reply-To: 
+To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Cc:     Mark Brown <broonie@kernel.org>, lars@metafoo.de,
+        lgirdwood@gmail.com, broonie@kernel.org,
+        alsa-devel@alsa-project.org, Codrin.Ciubotariu@microchip.com,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: codecs: ad193x: Add support to disable on-chip PLL" to the asoc tree
+In-Reply-To:  <20190218160954.13929-6-codrin.ciubotariu@microchip.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190218184954.DFF7C1128008@debutante.sirena.org.uk>
-Date:   Mon, 18 Feb 2019 18:49:54 +0000 (GMT)
+Message-Id: <20190218184930.F3E631128008@debutante.sirena.org.uk>
+Date:   Mon, 18 Feb 2019 18:49:30 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -60,11 +62,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: axp20x: fix DCDCB and BLDO2 definitions for AXP806
+   ASoC: codecs: ad193x: Add support to disable on-chip PLL
 
-has been applied to the regulator tree at
+has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -85,46 +87,100 @@ to this mail.
 Thanks,
 Mark
 
-From 4afa60d3a88aae3d052e0e8e1e62d6fc15a2be82 Mon Sep 17 00:00:00 2001
-From: Ondrej Jirman <megous@megous.com>
-Date: Mon, 18 Feb 2019 02:01:20 +0100
-Subject: [PATCH] regulator: axp20x: fix DCDCB and BLDO2 definitions for AXP806
+From 59529473751e987e28c926838f70aaef588b83b0 Mon Sep 17 00:00:00 2001
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Date: Mon, 18 Feb 2019 16:10:36 +0000
+Subject: [PATCH] ASoC: codecs: ad193x: Add support to disable on-chip PLL
 
-This fixes another set of errors from the refactoring of literals
-to mask preproccesor definitions.
+The on-chip PLL can be disabled if on the MCLKI pin we have an external
+clock at 512 x fs. This clock can be used as direct internal clock for
+ADCs or DACs.
+To support this, we add an extra clock id that can be configured
+using the set_sysclk() callback.
 
-Found by debugging a broken voltage setup on Orange Pi One Plus.
-
-Fixes: db4a555f7c4cf ("regulator: axp20x: use defines for masks")
-Signed-off-by: Ondrej Jirman <megous@megous.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/axp20x-regulator.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/ad193x.c | 26 +++++++++++++++++++++++++-
+ sound/soc/codecs/ad193x.h |  8 ++++++++
+ 2 files changed, 33 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
-index 1b51d557ab55..62243957bd19 100644
---- a/drivers/regulator/axp20x-regulator.c
-+++ b/drivers/regulator/axp20x-regulator.c
-@@ -791,7 +791,7 @@ static const struct regulator_desc axp806_regulators[] = {
- 			AXP806_DCDCA_V_CTRL, AXP806_DCDCA_V_CTRL_MASK,
- 			AXP806_PWR_OUT_CTRL1, AXP806_PWR_OUT_DCDCA_MASK),
- 	AXP_DESC(AXP806, DCDCB, "dcdcb", "vinb", 1000, 2550, 50,
--		 AXP806_DCDCB_V_CTRL, AXP806_DCDCB_V_CTRL,
-+		 AXP806_DCDCB_V_CTRL, AXP806_DCDCB_V_CTRL_MASK,
- 		 AXP806_PWR_OUT_CTRL1, AXP806_PWR_OUT_DCDCB_MASK),
- 	AXP_DESC_RANGES(AXP806, DCDCC, "dcdcc", "vinc",
- 			axp806_dcdca_ranges, AXP806_DCDCA_NUM_VOLTAGES,
-@@ -817,7 +817,7 @@ static const struct regulator_desc axp806_regulators[] = {
- 		 AXP806_BLDO1_V_CTRL, AXP806_BLDO1_V_CTRL_MASK,
- 		 AXP806_PWR_OUT_CTRL2, AXP806_PWR_OUT_BLDO1_MASK),
- 	AXP_DESC(AXP806, BLDO2, "bldo2", "bldoin", 700, 1900, 100,
--		 AXP806_BLDO2_V_CTRL, AXP806_BLDO2_V_CTRL,
-+		 AXP806_BLDO2_V_CTRL, AXP806_BLDO2_V_CTRL_MASK,
- 		 AXP806_PWR_OUT_CTRL2, AXP806_PWR_OUT_BLDO2_MASK),
- 	AXP_DESC(AXP806, BLDO3, "bldo3", "bldoin", 700, 1900, 100,
- 		 AXP806_BLDO3_V_CTRL, AXP806_BLDO3_V_CTRL_MASK,
+diff --git a/sound/soc/codecs/ad193x.c b/sound/soc/codecs/ad193x.c
+index f8cf182518a3..96d7cb2e4a56 100644
+--- a/sound/soc/codecs/ad193x.c
++++ b/sound/soc/codecs/ad193x.c
+@@ -100,6 +100,15 @@ static const struct snd_soc_dapm_widget ad193x_adc_widgets[] = {
+ 	SND_SOC_DAPM_INPUT("ADC2IN"),
+ };
+ 
++static int ad193x_check_pll(struct snd_soc_dapm_widget *source,
++			    struct snd_soc_dapm_widget *sink)
++{
++	struct snd_soc_component *component = snd_soc_dapm_to_component(source->dapm);
++	struct ad193x_priv *ad193x = snd_soc_component_get_drvdata(component);
++
++	return !!ad193x->sysclk;
++}
++
+ static const struct snd_soc_dapm_route audio_paths[] = {
+ 	{ "DAC", NULL, "SYSCLK" },
+ 	{ "DAC Output", NULL, "DAC" },
+@@ -108,7 +117,7 @@ static const struct snd_soc_dapm_route audio_paths[] = {
+ 	{ "DAC2OUT", NULL, "DAC Output" },
+ 	{ "DAC3OUT", NULL, "DAC Output" },
+ 	{ "DAC4OUT", NULL, "DAC Output" },
+-	{ "SYSCLK", NULL, "PLL_PWR" },
++	{ "SYSCLK", NULL, "PLL_PWR", &ad193x_check_pll },
+ };
+ 
+ static const struct snd_soc_dapm_route ad193x_adc_audio_paths[] = {
+@@ -276,7 +285,22 @@ static int ad193x_set_dai_sysclk(struct snd_soc_dai *codec_dai,
+ 		int clk_id, unsigned int freq, int dir)
+ {
+ 	struct snd_soc_component *component = codec_dai->component;
++	struct snd_soc_dapm_context *dapm = snd_soc_component_get_dapm(component);
+ 	struct ad193x_priv *ad193x = snd_soc_component_get_drvdata(component);
++
++	if (clk_id == AD193X_SYSCLK_MCLK) {
++		/* MCLK must be 512 x fs */
++		if (dir == SND_SOC_CLOCK_OUT || freq != 24576000)
++			return -EINVAL;
++
++		regmap_update_bits(ad193x->regmap, AD193X_PLL_CLK_CTRL1,
++				   AD193X_PLL_SRC_MASK,
++				   AD193X_PLL_DAC_SRC_MCLK |
++				   AD193X_PLL_CLK_SRC_MCLK);
++
++		snd_soc_dapm_sync(dapm);
++		return 0;
++	}
+ 	switch (freq) {
+ 	case 12288000:
+ 	case 18432000:
+diff --git a/sound/soc/codecs/ad193x.h b/sound/soc/codecs/ad193x.h
+index 8b1e65f928d2..27d6afbd7dfb 100644
+--- a/sound/soc/codecs/ad193x.h
++++ b/sound/soc/codecs/ad193x.h
+@@ -31,6 +31,11 @@ int ad193x_probe(struct device *dev, struct regmap *regmap,
+ #define AD193X_PLL_INPUT_512    (2 << 1)
+ #define AD193X_PLL_INPUT_768    (3 << 1)
+ #define AD193X_PLL_CLK_CTRL1    0x01
++#define AD193X_PLL_SRC_MASK	0x03
++#define AD193X_PLL_DAC_SRC_PLL  0
++#define AD193X_PLL_DAC_SRC_MCLK 1
++#define AD193X_PLL_CLK_SRC_PLL  (0 << 1)
++#define AD193X_PLL_CLK_SRC_MCLK	(1 << 1)
+ #define AD193X_DAC_CTRL0        0x02
+ #define AD193X_DAC_POWERDOWN           0x01
+ #define AD193X_DAC_SERFMT_MASK		0xC0
+@@ -96,4 +101,7 @@ int ad193x_probe(struct device *dev, struct regmap *regmap,
+ 
+ #define AD193X_NUM_REGS          17
+ 
++#define AD193X_SYSCLK_PLL	0
++#define AD193X_SYSCLK_MCLK	1
++
+ #endif
 -- 
 2.20.1
 
