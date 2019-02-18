@@ -2,161 +2,91 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A42C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEB9C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:06:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF166217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:06:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550509564;
-	bh=jkjMWOOKX58tCXXccyGbW+1i57yN5F4kf0V2C6P2cVc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=tpsVxGfLahcnvACUlL+2RD/t6z6Fy7Zg9QdgQpmIM9KqV/qoHV/HDSaAA29Nwde+W
-	 v33Cz0D7Klbdxl/GtLfW/THMjHroj4Q8t9EUkdy8pNA8nSbFI+kggNuNjT5kfEu5T2
-	 uza0RA5FcztpahRmvspZ8gwgkcPCsrplGbWljFZo=
+	by mail.kernel.org (Postfix) with ESMTP id 9AA2C20C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:06:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390977AbfBRRGC (ORCPT
+        id S2391039AbfBRRGN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 12:06:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56424 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387990AbfBRRGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 12:06:02 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7AA8EADD3;
-        Mon, 18 Feb 2019 17:06:00 +0000 (UTC)
-Date:   Mon, 18 Feb 2019 18:05:58 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Rong Chen <rong.a.chen@intel.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        linux-kernel@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>, LKP <lkp@01.org>,
-        Oscar Salvador <osalvador@suse.de>
-Subject: Re: [LKP] efad4e475c [ 40.308255] Oops: 0000 [#1] PREEMPT SMP PTI
-Message-ID: <20190218170558.GV4525@dhcp22.suse.cz>
-References: <20190218052823.GH29177@shao2-debian>
- <20190218070844.GC4525@dhcp22.suse.cz>
- <20190218085510.GC7251@dhcp22.suse.cz>
- <4c75d424-2c51-0d7d-5c28-78c15600e93c@intel.com>
- <20190218103013.GK4525@dhcp22.suse.cz>
- <20190218140515.GF25446@rapoport-lnx>
- <20190218152050.GS4525@dhcp22.suse.cz>
- <20190218152213.GT4525@dhcp22.suse.cz>
- <20190218164813.GG25446@rapoport-lnx>
+        Mon, 18 Feb 2019 12:06:13 -0500
+Received: from sauhun.de ([88.99.104.3]:37886 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390984AbfBRRGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 12:06:12 -0500
+Received: from localhost (p54B3327C.dip0.t-ipconnect.de [84.179.50.124])
+        by pokefinder.org (Postfix) with ESMTPSA id A98BD2C7BF4;
+        Mon, 18 Feb 2019 18:06:09 +0100 (CET)
+Date:   Mon, 18 Feb 2019 18:06:06 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Shikai Wang <sxauwsk@163.com>
+Cc:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: cadence: try reset when master receive arbitration
+ lost
+Message-ID: <20190218170606.qt35ciis4zpqo7d2@katana>
+References: <20190218094132.5226-1-sxauwsk@163.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="55tyi4ztso44igmw"
 Content-Disposition: inline
-In-Reply-To: <20190218164813.GG25446@rapoport-lnx>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190218094132.5226-1-sxauwsk@163.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 18-02-19 18:48:14, Mike Rapoport wrote:
-> On Mon, Feb 18, 2019 at 04:22:13PM +0100, Michal Hocko wrote:
-[...]
-> > Thinking about it some more, is it possible that we are overflowing by 1
-> > here?
-> 
-> Looks like that, the end_pfn is actually the first pfn in the next section.
 
-Thanks for the confirmation. I guess it also exaplains why nobody has
-noticed this off-by-one. Most people seem to use VMEMMAP SPARSE model
-and we are safe there.
+--55tyi4ztso44igmw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> > index 124e794867c5..6618b9d3e53a 100644
-> > --- a/mm/memory_hotplug.c
-> > +++ b/mm/memory_hotplug.c
-> > @@ -1234,10 +1234,10 @@ bool is_mem_section_removable(unsigned long start_pfn, unsigned long nr_pages)
-> >  {
-> >  	struct page *page = pfn_to_page(start_pfn);
-> >  	unsigned long end_pfn = min(start_pfn + nr_pages, zone_end_pfn(page_zone(page)));
-> > -	struct page *end_page = pfn_to_page(end_pfn);
-> > +	struct page *end_page = pfn_to_page(end_pfn - 1);
-> >  
-> >  	/* Check the starting page of each pageblock within the range */
-> > -	for (; page < end_page; page = next_active_pageblock(page)) {
-> > +	for (; page <= end_page; page = next_active_pageblock(page)) {
-> >  		if (!is_pageblock_removable_nolock(page))
-> >  			return false;
-> >  		cond_resched();
-> 
-> Works with your fix, but I think mine is more intuitive ;-)
+On Mon, Feb 18, 2019 at 05:41:32PM +0800, Shikai Wang wrote:
+> When the adapter receive arbitration lost error interrupts,
+> cdns_i2c_master_xfer return to the caller directly instead of resetting
+> the adapter which resulted in the adapter being out of control.
+>=20
+> So when driver detect err_status such as arbitration lost,
+> then try to repair and fix it.
 
-I would rather go and rework this to pfns. What about this instead.
-Slightly larger but arguably cleared code?
+Thanks for working on this issue.
 
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 124e794867c5..a799a0bdbf34 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1188,11 +1188,13 @@ static inline int pageblock_free(struct page *page)
- 	return PageBuddy(page) && page_order(page) >= pageblock_order;
- }
- 
--/* Return the start of the next active pageblock after a given page */
--static struct page *next_active_pageblock(struct page *page)
-+/* Return the pfn of the start of the next active pageblock after a given pfn */
-+static unsigned long next_active_pageblock(unsigned long pfn)
- {
-+	struct page *page = pfn_to_page(pfn);
-+
- 	/* Ensure the starting page is pageblock-aligned */
--	BUG_ON(page_to_pfn(page) & (pageblock_nr_pages - 1));
-+	BUG_ON(pfn & (pageblock_nr_pages - 1));
- 
- 	/* If the entire pageblock is free, move to the end of free page */
- 	if (pageblock_free(page)) {
-@@ -1200,16 +1202,16 @@ static struct page *next_active_pageblock(struct page *page)
- 		/* be careful. we don't have locks, page_order can be changed.*/
- 		order = page_order(page);
- 		if ((order < MAX_ORDER) && (order >= pageblock_order))
--			return page + (1 << order);
-+			return pfn + (1 << order);
- 	}
- 
--	return page + pageblock_nr_pages;
-+	return pfn + pageblock_nr_pages;
- }
- 
--static bool is_pageblock_removable_nolock(struct page *page)
-+static bool is_pageblock_removable_nolock(unsigned long pfn)
- {
-+	struct page *page = pfn_to_page(pfn);
- 	struct zone *zone;
--	unsigned long pfn;
- 
- 	/*
- 	 * We have to be careful here because we are iterating over memory
-@@ -1232,13 +1234,14 @@ static bool is_pageblock_removable_nolock(struct page *page)
- /* Checks if this range of memory is likely to be hot-removable. */
- bool is_mem_section_removable(unsigned long start_pfn, unsigned long nr_pages)
- {
--	struct page *page = pfn_to_page(start_pfn);
--	unsigned long end_pfn = min(start_pfn + nr_pages, zone_end_pfn(page_zone(page)));
--	struct page *end_page = pfn_to_page(end_pfn);
-+	unsigned long end_pfn;
-+
-+	end_pfn = min(start_pfn + nr_pages,
-+			zone_end_pfn(page_zone(pfn_to_page(start_pfn))));
- 
- 	/* Check the starting page of each pageblock within the range */
--	for (; page < end_page; page = next_active_pageblock(page)) {
--		if (!is_pageblock_removable_nolock(page))
-+	for (; start_pfn < end_pfn; start_pfn = next_active_pageblock(start_pfn)) {
-+		if (!is_pageblock_removable_nolock(start_pfn))
- 			return false;
- 		cond_resched();
- 	}
--- 
-Michal Hocko
-SUSE Labs
+> Signed-off-by: Shikai Wang <sxauwsk@163.com>
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+
+Reading the previous thread, isn't this more of an acked-by or
+reviewed-by than a Signed-off?
+
+Also, is there a suitable Fixes tag?
+
+
+--55tyi4ztso44igmw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxq5fgACgkQFA3kzBSg
+KbZszRAAljXV2RneaUpe4jL8KnONqVWgRXYtj/MG7rxBhl6B2jg5TH1HqH0MRZIO
+hhTB21+VhdzjEyg9/Dai52L1BbndZKkTGTeL/jjIBI740iC4Nn6+3qerN3UmNkYR
+tHKCw1LLmDj0gph9Gez9PXZwBYBJAdnCugvbE88iNiJ1E8TrVxGV4mGkdXjGJDqV
+gYOV3cvlQoznHiq3iaoSrF05iCMJCvoPuHAWPoRGXNk2wuHkWr+H2RK7jBzZE4GQ
+Q+JJQe0AgXIgE5ivAkTanKcmu/6vZpEnUKu2Q1jS2fESt1nd00tgT0zhi3Mr1oB2
+EhjAxdq46q74gKAJGm0GgHnhzwjBTBi5rHuglxR/Z5yCdHc7WgM7bASsKKpVmcQt
+vBO0geyHGL5rsyIgKIBzQXpJeB0fCdpUEO/CNmQqTRJEbHM2Ra8X/BRYWFwof1Ae
+9G1LnECNAQOoXVV3bmq+CpzXCJZOQVh+LnMb1sBiltKLSdMVgIx35Q7fL5hiJF/I
+FjEEH4MUjvjwocer9fLOArAUWggPdKKSbcQAOE9jKi1BBIzwIEdL39eM/Mq2Ih96
+bR2C72CHEqSAsbCNcxNrYSCy54pL9tW/QZJb/DousDgbpJGwPbZJWXUr12bfml9G
++s+/LU37XtbG262QCd0CKbSb8Nz4gbzz0ZQWQ2Dh+jVUi7EJ1Ns=
+=WSqx
+-----END PGP SIGNATURE-----
+
+--55tyi4ztso44igmw--
