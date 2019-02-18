@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1014C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:10:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4E9FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:11:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA3A921901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:10:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 848CC217D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:11:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499058;
-	bh=UUzycFdO9P3qEEBnRfjzvjvivja4YgUSzXIaLPJTrTI=;
+	s=default; t=1550499060;
+	bh=O1rU7BpPLNofySE0bseJDF+ZOj0NSExWGCgzQt84D1o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cjT9RDCO7Q73sVpryAa+GjcJJ392uOOB2A4OxpUKSvw2lK+2louCPhsx2rfAKlu3U
-	 0AfqklGcTmR7I3wRr/LdX5T9CAZA/JAwtqEoM1ZI80vOc5CHOvhudo17fWxLGBGW/Y
-	 Y47JEF8YCcQRUSNouCHla+i9MS9f9ZtAOV8LCiuM=
+	b=cqFCkofJoF9pu/snvNjoNWVlv17Ya/yFp74GtR2Kh9hCkM2G/urSSe1/dEi3vQSTS
+	 4zHN9GX1izF2Bqz12MHxmvJi111iVJrLtEHFcX1y4HpLlA0GNz6pHNufLGAShabza2
+	 KnLGDUPefXH4U9TtC2MbLjhYuWHf0AZ2bwZXT1dU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391620AbfBROK5 (ORCPT
+        id S2391639AbfBROK7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:10:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54780 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:10:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391605AbfBROKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:10:53 -0500
+        id S2391615AbfBROK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:10:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2DCB217D7;
-        Mon, 18 Feb 2019 14:10:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0BEB2217D9;
+        Mon, 18 Feb 2019 14:10:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550499053;
-        bh=UUzycFdO9P3qEEBnRfjzvjvivja4YgUSzXIaLPJTrTI=;
+        s=default; t=1550499056;
+        bh=O1rU7BpPLNofySE0bseJDF+ZOj0NSExWGCgzQt84D1o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d6IhoyNjDZ4V4/gyz5zkmSb42geQmTTh1TzAEA+U69MyrgGlIAh+bTyjjiBFI5Tw0
-         3S8Uf1N7lP0qYFoggGC6IVkjK+iukbiX2WoSikVAdTA96aUUaPZ3RfF7SCBpHvXMh4
-         Vdad49BgJpwk5iYwqdBTX1vDeHMBR9WGX7faiKwE=
+        b=upwbUMGoQbHaZvs37zB/MZIYR1/AD1O18kxcf9bG8sILOfvtlmc6TwbSBlfdkwjYx
+         Lfn8ak5RTM19aL1QxJ/nQ0KpTvf8WthBubrr4DO4qOxM75McKzLzLNiIo4QtaY8ThY
+         669mye+HBeWJdqFBcz9t/X+Dt9bQlYAZZFGbl1Vg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 3.18 062/108] ALSA: compress: Fix stop handling on compressed capture streams
-Date:   Mon, 18 Feb 2019 14:43:58 +0100
-Message-Id: <20190218133522.394681154@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 3.18 063/108] fuse: call pipe_buf_release() under pipe lock
+Date:   Mon, 18 Feb 2019 14:43:59 +0100
+Message-Id: <20190218133522.438627431@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -65,51 +64,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
+From: Jann Horn <jannh@google.com>
 
-commit 4f2ab5e1d13d6aa77c55f4914659784efd776eb4 upstream.
+commit 9509941e9c534920ccc4771ae70bd6cbbe79df1c upstream.
 
-It is normal user behaviour to start, stop, then start a stream
-again without closing it. Currently this works for compressed
-playback streams but not capture ones.
+Some of the pipe_buf_release() handlers seem to assume that the pipe is
+locked - in particular, anon_pipe_buf_release() accesses pipe->tmp_page
+without taking any extra locks. From a glance through the callers of
+pipe_buf_release(), it looks like FUSE is the only one that calls
+pipe_buf_release() without having the pipe locked.
 
-The states on a compressed capture stream go directly from OPEN to
-PREPARED, unlike a playback stream which moves to SETUP and waits
-for a write of data before moving to PREPARED. Currently however,
-when a stop is sent the state is set to SETUP for both types of
-streams. This leaves a capture stream in the situation where a new
-start can't be sent as that requires the state to be PREPARED and
-a new set_params can't be sent as that requires the state to be
-OPEN. The only option being to close the stream, and then reopen.
+This bug should only lead to a memory leak, nothing terrible.
 
-Correct this issues by allowing snd_compr_drain_notify to set the
-state depending on the stream direction, as we already do in
-set_params.
-
-Fixes: 49bb6402f1aa ("ALSA: compress_core: Add support for capture streams")
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: dd3bb14f44a6 ("fuse: support splice() writing to fuse device")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/sound/compress_driver.h |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/fuse/dev.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/include/sound/compress_driver.h
-+++ b/include/sound/compress_driver.h
-@@ -176,7 +176,11 @@ static inline void snd_compr_drain_notif
- 	if (snd_BUG_ON(!stream))
- 		return;
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1971,10 +1971,13 @@ static ssize_t fuse_dev_splice_write(str
  
--	stream->runtime->state = SNDRV_PCM_STATE_SETUP;
-+	if (stream->direction == SND_COMPRESS_PLAYBACK)
-+		stream->runtime->state = SNDRV_PCM_STATE_SETUP;
-+	else
-+		stream->runtime->state = SNDRV_PCM_STATE_PREPARED;
+ 	ret = fuse_dev_do_write(fc, &cs, len);
+ 
++	pipe_lock(pipe);
+ 	for (idx = 0; idx < nbuf; idx++) {
+ 		struct pipe_buffer *buf = &bufs[idx];
+ 		buf->ops->release(pipe, buf);
+ 	}
++	pipe_unlock(pipe);
 +
- 	wake_up(&stream->runtime->sleep);
- }
- 
+ out:
+ 	kfree(bufs);
+ 	return ret;
 
 
