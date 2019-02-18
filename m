@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3261C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF157C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3A8621908
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:53:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FC4221905
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:53:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498000;
-	bh=2WwFNnXJR80r3GMhM9pE/wlNSerjrShpLR7BNvhv5tM=;
+	s=default; t=1550498004;
+	bh=g3h8S5UY7FYKhqQlPPXYJib/YJBqlw/fbhTruOzvoBU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YdyPLSLPPshEYCeDhkzyDh2WG0wldOZHFxgcGo/u7V1w2oq/K4BZtMB6Sld3BwDMg
-	 8nmlJ0U9OHVNhicCoUxStK4sw9Pe3kyHBa4M03ETYQQXQy4Uc4VyvgVgXCBf9SxZQc
-	 v8P4iDoVw/iwfBOj/+AyOnzWlfwx+0uEKXTssVa8=
+	b=JEZtIx92mY1UJQ57onxv/hjz/i8d9iEFY1GiPNnop3bhFChuAjHv58mwEN6Dhre6Q
+	 90ko5Ukg2GlZ70VqO/Lxl13Pmw7278UJcd+hqDvHX7oZLnxR7+/qXuHZFLMWKbUAa9
+	 bgd2lT1t3S0U3Z+COPdOAIPmmKg8vmkFuQbUj6gI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732940AbfBRNxS (ORCPT
+        id S1732949AbfBRNxX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:53:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32982 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:53:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732923AbfBRNxP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:53:15 -0500
+        id S1732934AbfBRNxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:53:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52C2921908;
-        Mon, 18 Feb 2019 13:53:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1992A21905;
+        Mon, 18 Feb 2019 13:53:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497994;
-        bh=2WwFNnXJR80r3GMhM9pE/wlNSerjrShpLR7BNvhv5tM=;
+        s=default; t=1550497997;
+        bh=g3h8S5UY7FYKhqQlPPXYJib/YJBqlw/fbhTruOzvoBU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Necny8VdafyNF6dYnhU4j/XNS1P8nDTCPZEhywD5fx4dbD/Aita79qS10Cxvhmrr0
-         V1eD4vnst/JUV6QZFU1OjtNL96KswJy1orMVJ4IiO1/D0ySqwdo2Z4OXoaytvF3OTt
-         gdnZobDb7P7Qx35wKDBTfaT7XlRdzrEK3fXjz2wQ=
+        b=Rdlkw642qndqiTvpHaw3exUz13eBlG5DQEvFCx56+8hvJIaIk6qUU9z8s1HJjI8im
+         F1y1TWsKYq0tbnll3zq88R2YJH588B+5frNYddDQ4GUbyq4EtwTKA8oJ9d/9E5L0d4
+         W/ESNbMffJFlgNoUELZb4FmKKmGBjKvx1Bjwkhig=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan ORear <sorear2@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Palmer Dabbelt <palmer@sifive.com>
-Subject: [PATCH 4.19 60/85] riscv: Add pte bit to distinguish swap from invalid
-Date:   Mon, 18 Feb 2019 14:43:26 +0100
-Message-Id: <20190218133505.846915178@linuxfoundation.org>
+        stable@vger.kernel.org, Zdenek Kaspar <zkaspar82@gmail.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.19 61/85] x86/kvm/nVMX: read from MSR_IA32_VMX_PROCBASED_CTLS2 only when it is available
+Date:   Mon, 18 Feb 2019 14:43:27 +0100
+Message-Id: <20190218133505.917379421@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -66,82 +66,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan O'Rear <sorear2@gmail.com>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-commit e3613bb8afc2a9474c9214d65c8326c5ac02135e upstream.
+commit 6b1971c694975e49af302229202c0043568b1791 upstream.
 
-Previously, invalid PTEs and swap PTEs had the same binary
-representation, causing errors when attempting to unmap PROT_NONE
-mappings, including implicit unmap on exit.
+SDM says MSR_IA32_VMX_PROCBASED_CTLS2 is only available "If
+(CPUID.01H:ECX.[5] && IA32_VMX_PROCBASED_CTLS[63])". It was found that
+some old cpus (namely "Intel(R) Core(TM)2 CPU 6600 @ 2.40GHz (family: 0x6,
+model: 0xf, stepping: 0x6") don't have it. Add the missing check.
 
-Typical error:
-
-swap_info_get: Bad swap file entry 40000000007a9879
-BUG: Bad page map in process a.out  pte:3d4c3cc0 pmd:3e521401
-
+Reported-by: Zdenek Kaspar <zkaspar82@gmail.com>
+Tested-by: Zdenek Kaspar <zkaspar82@gmail.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Stefan O'Rear <sorear2@gmail.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/riscv/include/asm/pgtable-bits.h |    6 ++++++
- arch/riscv/include/asm/pgtable.h      |    8 ++++----
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ arch/x86/kvm/vmx.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/arch/riscv/include/asm/pgtable-bits.h
-+++ b/arch/riscv/include/asm/pgtable-bits.h
-@@ -35,6 +35,12 @@
- #define _PAGE_SPECIAL   _PAGE_SOFT
- #define _PAGE_TABLE     _PAGE_PRESENT
- 
-+/*
-+ * _PAGE_PROT_NONE is set on not-present pages (and ignored by the hardware) to
-+ * distinguish them from swapped out pages
-+ */
-+#define _PAGE_PROT_NONE _PAGE_READ
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -3601,9 +3601,11 @@ static void nested_vmx_setup_ctls_msrs(s
+ 	 * secondary cpu-based controls.  Do not include those that
+ 	 * depend on CPUID bits, they are added later by vmx_cpuid_update.
+ 	 */
+-	rdmsr(MSR_IA32_VMX_PROCBASED_CTLS2,
+-		msrs->secondary_ctls_low,
+-		msrs->secondary_ctls_high);
++	if (msrs->procbased_ctls_high & CPU_BASED_ACTIVATE_SECONDARY_CONTROLS)
++		rdmsr(MSR_IA32_VMX_PROCBASED_CTLS2,
++		      msrs->secondary_ctls_low,
++		      msrs->secondary_ctls_high);
 +
- #define _PAGE_PFN_SHIFT 10
- 
- /* Set of bits to preserve across pte_modify() */
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -44,7 +44,7 @@
- /* Page protection bits */
- #define _PAGE_BASE	(_PAGE_PRESENT | _PAGE_ACCESSED | _PAGE_USER)
- 
--#define PAGE_NONE		__pgprot(0)
-+#define PAGE_NONE		__pgprot(_PAGE_PROT_NONE)
- #define PAGE_READ		__pgprot(_PAGE_BASE | _PAGE_READ)
- #define PAGE_WRITE		__pgprot(_PAGE_BASE | _PAGE_READ | _PAGE_WRITE)
- #define PAGE_EXEC		__pgprot(_PAGE_BASE | _PAGE_EXEC)
-@@ -98,7 +98,7 @@ extern unsigned long empty_zero_page[PAG
- 
- static inline int pmd_present(pmd_t pmd)
- {
--	return (pmd_val(pmd) & _PAGE_PRESENT);
-+	return (pmd_val(pmd) & (_PAGE_PRESENT | _PAGE_PROT_NONE));
- }
- 
- static inline int pmd_none(pmd_t pmd)
-@@ -178,7 +178,7 @@ static inline pte_t *pte_offset_kernel(p
- 
- static inline int pte_present(pte_t pte)
- {
--	return (pte_val(pte) & _PAGE_PRESENT);
-+	return (pte_val(pte) & (_PAGE_PRESENT | _PAGE_PROT_NONE));
- }
- 
- static inline int pte_none(pte_t pte)
-@@ -380,7 +380,7 @@ static inline int ptep_clear_flush_young
-  *
-  * Format of swap PTE:
-  *	bit            0:	_PAGE_PRESENT (zero)
-- *	bit            1:	reserved for future use (zero)
-+ *	bit            1:	_PAGE_PROT_NONE (zero)
-  *	bits      2 to 6:	swap type
-  *	bits 7 to XLEN-1:	swap offset
-  */
+ 	msrs->secondary_ctls_low = 0;
+ 	msrs->secondary_ctls_high &=
+ 		SECONDARY_EXEC_DESC |
 
 
