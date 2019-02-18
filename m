@@ -2,542 +2,167 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED132C10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA83DC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:54:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8F39206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:50:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73F2D21479
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:54:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="o4AHmCc4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731309AbfBROuj (ORCPT
+        id S1731080AbfBROyZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:50:39 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:44368 "EHLO huawei.com"
+        Mon, 18 Feb 2019 09:54:25 -0500
+Received: from mail-eopbgr10080.outbound.protection.outlook.com ([40.107.1.80]:35008
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729923AbfBROui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:50:38 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 96AC241D24F901BF5493;
-        Mon, 18 Feb 2019 22:50:34 +0800 (CST)
-Received: from localhost (10.47.94.189) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Mon, 18 Feb 2019
- 22:50:32 +0800
-Date:   Mon, 18 Feb 2019 14:50:19 +0000
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     Renato Lui Geh <renatogeh@gmail.com>
-CC:     Jonathan Cameron <jic23@kernel.org>, <lars@metafoo.de>,
-        <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
-        <pmeerw@pmeerw.net>, <gregkh@linuxfoundation.org>,
-        <stefan.popa@analog.com>, <alexandru.Ardelean@analog.com>,
-        <giuliano.belinassi@usp.br>, <linux-iio@vger.kernel.org>,
-        <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-usp@googlegroups.com>
-Subject: Re: [PATCH v3 4/4] staging: iio: ad7780: moving ad7780 out of
- staging
-Message-ID: <20190218145019.000066de@huawei.com>
-In-Reply-To: <20190214204814.kqblknn65pjcb3ve@renatolg>
-References: <cover.1549385784.git.renatogeh@gmail.com>
-        <b1feb550e130e22ce2907e45cd0def81bd653349.1549385784.git.renatogeh@gmail.com>
-        <20190209163732.3966de58@archlinux>
-        <20190214204814.kqblknn65pjcb3ve@renatolg>
-Organization: Huawei
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; i686-w64-mingw32)
+        id S1729907AbfBROyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:54:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HWvvHy8HvmzxLUSIatbAIxHkUpLUPw7/+dRpeIEGJ5I=;
+ b=o4AHmCc4nbYjNX7dlrn4WV+RcJJIlva2YmqvIDvcnDEGrdvvpjmsOWu8ch8azJgqz2smBGem6lkDQYjieo7jA8bU2n4DrG+iVQjPhfI2i/D18TjHgNDKBoC/WTynYNcHy4cJiGtdLCuylS3buARtJtEFegAamtZWxBPg9TL19sc=
+Received: from HE1PR05MB3257.eurprd05.prod.outlook.com (10.170.243.19) by
+ HE1PR05MB4636.eurprd05.prod.outlook.com (20.176.163.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.19; Mon, 18 Feb 2019 14:54:19 +0000
+Received: from HE1PR05MB3257.eurprd05.prod.outlook.com
+ ([fe80::550a:a35e:2062:792a]) by HE1PR05MB3257.eurprd05.prod.outlook.com
+ ([fe80::550a:a35e:2062:792a%7]) with mapi id 15.20.1622.018; Mon, 18 Feb 2019
+ 14:54:19 +0000
+From:   Tariq Toukan <tariqt@mellanox.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Tariq Toukan <tariqt@mellanox.com>
+CC:     Colin King <colin.king@canonical.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net/mlx4_en: fix spelling mistake: "quiting" ->
+ "quitting"
+Thread-Topic: [PATCH] net/mlx4_en: fix spelling mistake: "quiting" ->
+ "quitting"
+Thread-Index: AQHUxxUCv2ce2u0HVkKjUo1mCtzjkqXlbnAA///sEYCAAEr2gA==
+Date:   Mon, 18 Feb 2019 14:54:18 +0000
+Message-ID: <3dbc29c2-2f6f-5854-2ac6-729fba100f79@mellanox.com>
+References: <20190217230331.18678-1-colin.king@canonical.com>
+ <2a1a6636-7795-addb-d7b7-711a23dbafa5@mellanox.com>
+ <20190218102557.GC17104@kadam>
+In-Reply-To: <20190218102557.GC17104@kadam>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM6P195CA0049.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:209:87::26) To HE1PR05MB3257.eurprd05.prod.outlook.com
+ (2603:10a6:7:35::19)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=tariqt@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [193.47.165.251]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f1bae95d-2b91-4be5-26a2-08d695b0f585
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:HE1PR05MB4636;
+x-ms-traffictypediagnostic: HE1PR05MB4636:
+x-microsoft-exchange-diagnostics: =?utf-8?B?MTtIRTFQUjA1TUI0NjM2OzIzOmx3KzlrVjROZm83NGdGa0MzVnBGbisyc1M1?=
+ =?utf-8?B?MjVLejdwK0RaQ1c3K3hxV0V0Nzk5L05GZy9zYTkwZkpDRWszN20wRXFBNEhD?=
+ =?utf-8?B?UzJrVXNaRXFMRDZPQlVBUEpmeEJJbVVnZU1TbkxEMG9wQklzNmNEOTUyRXdz?=
+ =?utf-8?B?OGYrejA2VDJNUlI1VEt1Y29UYnVveGhuQ1h4NERvZk1iTUhRakFzS0J1TXY3?=
+ =?utf-8?B?SnZUc3VEMDIvYWpXM0lRempZbndnTkJ6NHpkaXpwaTZjeElTbGoveTVVUS9J?=
+ =?utf-8?B?STU2TXZNamhiaXNoMWVRNFhhZWgySlBucmpIdTl2Q3ZTRGtpQTdEQm42Q2Vu?=
+ =?utf-8?B?WHE4MStkWVduVFByamlrWFlURVBEYmlBNnpvc0ZOVjVrRFNwSmN3V1hzRU5n?=
+ =?utf-8?B?S05pYWxIdUdFSUk2a0ZHclRIcU9Yb2dDamt6VmVOMUhuMm9QUUUvTEV4Z1dT?=
+ =?utf-8?B?S29hTmIxZXdsREFWMWhYTnovU2hERW1iV1pPSVlxR3JyZURGVXErWE1kVVJB?=
+ =?utf-8?B?WTNmV2Z3dm45T2VjMVNCTmhiK2svV1NVMUsxUU1iYzlJNWpPMHI3cm9TbDhp?=
+ =?utf-8?B?RVJ5VE9BVEpCRUV2QklsaS9aaWJ6RlVhN05lVVlWS2xCckZVTFRDTFdhUXhD?=
+ =?utf-8?B?TUE1c3ZjRm9Bbit1TEZlM2pKcWg5V1dHa2lncnBNci92Y1Q3eHF2d3luWnhy?=
+ =?utf-8?B?d1psTmtTS1ZVSTRkeVFFYzFTS1M0QjR2RHE5VHh0bFpZQlhBOFB6bjh4RUh6?=
+ =?utf-8?B?cHFYV0srZUIvVi9yL0pudXNjcHVmRkdNVFhwbHhFMVdnUDJnNEZiaUFPSWxP?=
+ =?utf-8?B?WGtGaVl1UHBveWxTMFdaYitxaU9FNEc5WmhYYUxxVjJnUE1XaVVhbDVURnRq?=
+ =?utf-8?B?VFFWWmVGZWpWKzMxNkFOK3dJN3k0WEVDYXF5L3Yzdk1YeVI4SDdVT0RoU1V2?=
+ =?utf-8?B?cUxUTWY5a2FxaHNYZW93L0xrRFNZUHdxaGZNQ04xMzZiQ2tZa3JLSTIvMVlC?=
+ =?utf-8?B?N0JsWExoaUJnakZLUi91TklwN1RmQWVMNDRLaHN5NVdVNXAyYlpraTlNajhF?=
+ =?utf-8?B?VHNxaWVRUmFTVFRJRGYvV3ljdlJ2Y2pyVmI1V1pPZDJzWjIzSThqL1M1cUV1?=
+ =?utf-8?B?UHA3WWpwd3VEUzZOWmFxZkU5cjY1UC90QzhTYmlTMjFBblhjUE1FbUVxOHRT?=
+ =?utf-8?B?VWlqU1hDZWtQM05FeFc1K3ZvSFJ6UGZFb2ZZR2JXOXZ5NFlMVmFjbnFFK2Ju?=
+ =?utf-8?B?YWZHSllnUGsrVjZwMkdJWDExNk9yWThvVEtSVHpGZ0lHOURxcjNqNm82ckZU?=
+ =?utf-8?B?MGVKWGpMODZZd20zSTlyWm1IZG43Z0RTTXpVTjdIZTVmSXQzWVZzZXB2cHBT?=
+ =?utf-8?B?OFd0MDBCaUdvQk9EcWtxR3c1NnEzWWhaSmRyZG9QdC9PazhFRFF6R0NPWFdx?=
+ =?utf-8?B?Uitvd25zZ2Z4bEdqR1FQVHVLN3NZVG9ZRDFxOGRXb1M4bEhJWnplZzJHd1B1?=
+ =?utf-8?B?aE5DZ3duNjZaclB2Q1U0QnJCVkcvWDhNSzhsMGlRYWMrcGVDL2JmMURtdXgr?=
+ =?utf-8?B?YjQ5eWF2SFZSUGd1OEN3NjVFL1BoQ2dUNHFDVHFtZHhkTWlmZUQ4SHRUY3B6?=
+ =?utf-8?B?S1RsT0IrODBBM3JuekZUYlAxd0JYRjhRZGRKQ21lYnN4UmFSZU90Q3FITnln?=
+ =?utf-8?B?QnRYemZQTXVDdzRWcDBFKzZ2WGtQd2dEd2VUeFE3TEpXYXBWSTh4Y2FDdUF0?=
+ =?utf-8?B?OGhVci8wTmV2YXZ3SUhtdz09?=
+x-microsoft-antispam-prvs: <HE1PR05MB4636F83077729AA6FED622A1AE630@HE1PR05MB4636.eurprd05.prod.outlook.com>
+x-forefront-prvs: 09525C61DB
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(366004)(136003)(376002)(346002)(199004)(189003)(53546011)(31686004)(386003)(446003)(6506007)(97736004)(6436002)(53936002)(110136005)(76176011)(8936002)(486006)(316002)(6486002)(6512007)(11346002)(6116002)(3846002)(2616005)(5660300002)(54906003)(229853002)(256004)(105586002)(14444005)(71190400001)(71200400001)(36756003)(106356001)(26005)(476003)(68736007)(25786009)(99286004)(81166006)(186003)(7736002)(14454004)(8676002)(6246003)(66066001)(31696002)(305945005)(81156014)(478600001)(4326008)(86362001)(52116002)(2906002)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR05MB4636;H:HE1PR05MB3257.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: NEplJgcsAqOln6wlGwyEii33G5+/EwZg8IJbBT5OWIlPYq6nUtbw1FJ4BRZZP4hGNtvTgPr0Ygtm/0aiKK9rI/OLne53V0m1/QSDlOkdP/s8W0vx2bPliAvXwREQhSnFBOuq5jaa3aWvj72NE3BRZYIo2HlmJHxcgfLMWOADfI6qMh5SFo9Esy90JczMfj1s/5fqJGwx6nIkaSvaY6APOXlodj+6rdIBAFZgjklkNP40oSVO19mf4TuAK6yB+5KAH/lXS8UStL1zz3yptp/UPomu8Z733SIO0vlDxwXGqmud+cPtX8Pci0y5fqrFu9iydcNlRYniwo+9D88ZpSPJ4avBFRqgbJR890p3LdJBl6d8f00UJYEa2ZUqMTctQYqe8RpyOxtsw8MO2UvhujrZq52coUrASvAUOdDjzvAW1jM=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BD3D1790EF69374298A681E7FB132C31@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.47.94.189]
-X-CFilter-Loop: Reflected
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1bae95d-2b91-4be5-26a2-08d695b0f585
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2019 14:54:17.5373
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR05MB4636
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 14 Feb 2019 18:48:15 -0200
-Renato Lui Geh <renatogeh@gmail.com> wrote:
-
-> On 02/09, Jonathan Cameron wrote:
-> >On Tue, 5 Feb 2019 15:14:03 -0200
-> >Renato Lui Geh <renatogeh@gmail.com> wrote:
-> >  
-> >> Move ad7780 ADC driver out of staging and into the mainline.
-> >>
-> >> The ad7780 is a sigma-delta analog to digital converter. This driver provides
-> >> reading voltage values and status bits from both the ad778x and ad717x series.
-> >> Its interface also allows writing on the FILTER and GAIN GPIO pins on the
-> >> ad778x.
-> >>
-> >> Signed-off-by: Renato Lui Geh <renatogeh@gmail.com>
-> >> Signed-off-by: Giuliano Belinassi <giuliano.belinassi@usp.br>
-> >> Co-developed-by: Giuliano Belinassi <giuliano.belinassi@usp.br>  
-> >
-> >This needs a device tree binding doc which should be reviewed before we move
-> >the driver out of staging.  Make sure to cc the dt-binding maintainers and
-> >list.  Doesn't really matter if that patch is before or after this one
-> >in the series but needs to be in the same series.  
-> 
-> Ok! I see that some Analog dt-bindings are prefixed by adi and some are
-> not. Should I follow any naming standard?
-
-Yeah, comes of history and the fact that we can't 'fix' a binding that
-is in the wild if the driver is already out of staging.  Even in the
-staging case we won't generally do it if we know of real devices out
-there using the defacto binding.
-
-They should be prefixed if they aren't 'generic'. Exactly where that lines
-tends to be a little unclear unfortunately.
-
-> >
-> >There are a few more minor tidy ups that would be nice to have inline
-> >given you are doing a v4. Stuff like this could have been cleaned up
-> >after moving out of staging (nothing wrong with improving non staging
-> >drivers after all) but always better to do it whilst we remember!
-> >  
-> >> ---
-> >> Changes in v3:
-> >> 	- Changes unrelated to moving the driver to main tree were resent as
-> >> 	  individual patches
-> >>
-> >>  drivers/iio/adc/Kconfig          |  13 ++
-> >>  drivers/iio/adc/Makefile         |   1 +
-> >>  drivers/iio/adc/ad7780.c         | 359 +++++++++++++++++++++++++++++++
-> >>  drivers/staging/iio/adc/Kconfig  |  13 --
-> >>  drivers/staging/iio/adc/Makefile |   1 -
-> >>  drivers/staging/iio/adc/ad7780.c | 359 -------------------------------
-> >>  6 files changed, 373 insertions(+), 373 deletions(-)
-> >>  create mode 100644 drivers/iio/adc/ad7780.c
-> >>  delete mode 100644 drivers/staging/iio/adc/ad7780.c
-> >>
-> >> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> >> index f3cc7a31bce5..2cdee166d0e9 100644
-> >> --- a/drivers/iio/adc/Kconfig
-> >> +++ b/drivers/iio/adc/Kconfig
-> >> @@ -108,6 +108,19 @@ config AD7766
-> >>  	  To compile this driver as a module, choose M here: the module will be
-> >>  	  called ad7766.
-> >>
-> >> +config AD7780
-> >> +	tristate "Analog Devices AD7780 and similar ADCs driver"
-> >> +	depends on SPI
-> >> +	depends on GPIOLIB || COMPILE_TEST
-> >> +	select AD_SIGMA_DELTA
-> >> +	help
-> >> +	  Say yes here to build support for Analog Devices AD7170, AD7171,
-> >> +	  AD7780 and AD7781 SPI analog to digital converters (ADC).
-> >> +	  If unsure, say N (but it's safe to say "Y").  
-> >
-> >I wouldn't bother with this statement, doesn't add any real info!
-> >  
-> >> +
-> >> +	  To compile this driver as a module, choose M here: the
-> >> +	  module will be called ad7780.
-> >> +
-> >>  config AD7791
-> >>  	tristate "Analog Devices AD7791 ADC driver"
-> >>  	depends on SPI
-> >> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-> >> index ea5031348052..b48852157115 100644
-> >> --- a/drivers/iio/adc/Makefile
-> >> +++ b/drivers/iio/adc/Makefile
-> >> @@ -15,6 +15,7 @@ obj-$(CONFIG_AD7606_IFACE_PARALLEL) += ad7606_par.o
-> >>  obj-$(CONFIG_AD7606_IFACE_SPI) += ad7606_spi.o
-> >>  obj-$(CONFIG_AD7606) += ad7606.o
-> >>  obj-$(CONFIG_AD7766) += ad7766.o
-> >> +obj-$(CONFIG_AD7780) += ad7780.o
-> >>  obj-$(CONFIG_AD7791) += ad7791.o
-> >>  obj-$(CONFIG_AD7793) += ad7793.o
-> >>  obj-$(CONFIG_AD7887) += ad7887.o
-> >> diff --git a/drivers/iio/adc/ad7780.c b/drivers/iio/adc/ad7780.c
-> >> new file mode 100644
-> >> index 000000000000..163e3c983598
-> >> --- /dev/null
-> >> +++ b/drivers/iio/adc/ad7780.c
-> >> @@ -0,0 +1,359 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +/*
-> >> + * AD7170/AD7171 and AD7780/AD7781 SPI ADC driver
-> >> + *
-> >> + * Copyright 2011 Analog Devices Inc.  
-> >
-> >I think you have done more than enough to this driver to add
-> >an additional copyright line if you want to!  
-> 
-> Oh wow, that'd be awesome! Thanks! Should I just add my full name there?
-
-Yes.
-
-> >  
-> >> + */
-> >> +
-> >> +#include <linux/interrupt.h>
-> >> +#include <linux/device.h>
-> >> +#include <linux/kernel.h>
-> >> +#include <linux/slab.h>
-> >> +#include <linux/sysfs.h>
-> >> +#include <linux/spi/spi.h>
-> >> +#include <linux/regulator/consumer.h>
-> >> +#include <linux/err.h>
-> >> +#include <linux/sched.h>
-> >> +#include <linux/gpio/consumer.h>
-> >> +#include <linux/module.h>
-> >> +
-> >> +#include <linux/iio/iio.h>
-> >> +#include <linux/iio/sysfs.h>
-> >> +#include <linux/iio/adc/ad_sigma_delta.h>
-> >> +
-> >> +#define AD7780_RDY		BIT(7)
-> >> +#define AD7780_FILTER		BIT(6)
-> >> +#define AD7780_ERR		BIT(5)
-> >> +#define AD7780_ID1		BIT(4)
-> >> +#define AD7780_ID0		BIT(3)
-> >> +#define AD7780_GAIN		BIT(2)
-> >> +#define AD7780_PAT1		BIT(1)
-> >> +#define AD7780_PAT0		BIT(0)  
-> >These two bits of pattern don't really add anything. I'd drop them in
-> >favour of something like
-> >
-> >#define AD7780_PATTERN_GOOD 1
-> >#define AD7780_PATTERN_MASK GENMASK(1, 0)
-> >
-> >Same for ID for that matter.  These aren't one bit fields, so we shouldn't
-> >ever present them as such (though the datasheet confusingly sort of does
-> >so!)
-> >  
-> >> +
-> >> +#define AD7780_PATTERN		(AD7780_PAT0)
-> >> +#define AD7780_PATTERN_MASK	(AD7780_PAT0 | AD7780_PAT1)
-> >> +
-> >> +#define AD7170_PAT2		BIT(2)
-> >> +
-> >> +#define AD7170_PATTERN		(AD7780_PAT0 | AD7170_PAT2)
-> >> +#define AD7170_PATTERN_MASK	(AD7780_PAT0 | AD7780_PAT1 | AD7170_PAT2)  
-> >I'd use a value for the pattern directly and
-> >GENMASK for the mask.
-> >  
-> >> +
-> >> +#define AD7780_GAIN_GPIO	0
-> >> +#define AD7780_FILTER_GPIO	1
-> >> +
-> >> +#define AD7780_GAIN_MIDPOINT	64
-> >> +#define AD7780_FILTER_MIDPOINT	13350
-> >> +
-> >> +static const unsigned int ad778x_gain[2]      = { 1, 128 };
-> >> +static const unsigned int ad778x_odr_avail[2] = { 10000, 16700 };
-> >> +
-> >> +struct ad7780_chip_info {
-> >> +	struct iio_chan_spec	channel;
-> >> +	unsigned int		pattern_mask;
-> >> +	unsigned int		pattern;
-> >> +	bool			is_ad778x;
-> >> +};
-> >> +
-> >> +struct ad7780_state {
-> >> +	const struct ad7780_chip_info	*chip_info;
-> >> +	struct regulator		*reg;
-> >> +	struct gpio_desc		*powerdown_gpio;
-> >> +	struct gpio_desc		*gain_gpio;
-> >> +	struct gpio_desc		*filter_gpio;
-> >> +	unsigned int			gain;
-> >> +	unsigned int			odr;
-> >> +	unsigned int			int_vref_mv;
-> >> +
-> >> +	struct ad_sigma_delta sd;
-> >> +};
-> >> +
-> >> +enum ad7780_supported_device_ids {
-> >> +	ID_AD7170,
-> >> +	ID_AD7171,
-> >> +	ID_AD7780,
-> >> +	ID_AD7781,
-> >> +};
-> >> +
-> >> +static struct ad7780_state *ad_sigma_delta_to_ad7780(struct ad_sigma_delta *sd)
-> >> +{
-> >> +	return container_of(sd, struct ad7780_state, sd);
-> >> +}
-> >> +
-> >> +static int ad7780_set_mode(struct ad_sigma_delta *sigma_delta,
-> >> +			   enum ad_sigma_delta_mode mode)
-> >> +{
-> >> +	struct ad7780_state *st = ad_sigma_delta_to_ad7780(sigma_delta);
-> >> +	unsigned int val;
-> >> +
-> >> +	switch (mode) {
-> >> +	case AD_SD_MODE_SINGLE:
-> >> +	case AD_SD_MODE_CONTINUOUS:
-> >> +		val = 1;
-> >> +		break;
-> >> +	default:
-> >> +		val = 0;
-> >> +		break;
-> >> +	}
-> >> +
-> >> +	gpiod_set_value(st->powerdown_gpio, val);
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static int ad7780_read_raw(struct iio_dev *indio_dev,
-> >> +			   struct iio_chan_spec const *chan,
-> >> +			   int *val,
-> >> +			   int *val2,
-> >> +			   long m)
-> >> +{
-> >> +	struct ad7780_state *st = iio_priv(indio_dev);
-> >> +	int voltage_uv;
-> >> +
-> >> +	switch (m) {
-> >> +	case IIO_CHAN_INFO_RAW:
-> >> +		return ad_sigma_delta_single_conversion(indio_dev, chan, val);
-> >> +	case IIO_CHAN_INFO_SCALE:
-> >> +		voltage_uv = regulator_get_voltage(st->reg);
-> >> +		if (voltage_uv < 0)
-> >> +			return voltage_uv;
-> >> +		voltage_uv /= 1000;
-> >> +		*val = voltage_uv * st->gain;
-> >> +		*val2 = chan->scan_type.realbits - 1;
-> >> +		st->int_vref_mv = voltage_uv;
-> >> +		return IIO_VAL_FRACTIONAL_LOG2;
-> >> +	case IIO_CHAN_INFO_OFFSET:
-> >> +		*val = -(1 << (chan->scan_type.realbits - 1));
-> >> +		return IIO_VAL_INT;
-> >> +	case IIO_CHAN_INFO_SAMP_FREQ:
-> >> +		*val = st->odr;
-> >> +		return IIO_VAL_INT;
-> >> +	}
-> >> +
-> >> +	return -EINVAL;
-> >> +}
-> >> +
-> >> +static int ad7780_write_raw(struct iio_dev *indio_dev,
-> >> +			    struct iio_chan_spec const *chan,
-> >> +			    int val,
-> >> +			    int val2,
-> >> +			    long m)
-> >> +{
-> >> +	struct ad7780_state *st = iio_priv(indio_dev);
-> >> +	const struct ad7780_chip_info *chip_info = st->chip_info;
-> >> +	unsigned long long vref;
-> >> +	unsigned int full_scale, gain;
-> >> +
-> >> +	if (!chip_info->is_ad778x)
-> >> +		return 0;
-> >> +
-> >> +	switch (m) {
-> >> +	case IIO_CHAN_INFO_SCALE:
-> >> +		if (val != 0)
-> >> +			return -EINVAL;
-> >> +
-> >> +		vref = st->int_vref_mv * 1000000LL;
-> >> +		full_scale = 1 << (chip_info->channel.scan_type.realbits - 1);
-> >> +		gain = DIV_ROUND_CLOSEST(vref, full_scale);
-> >> +		gain = DIV_ROUND_CLOSEST(gain, val2);
-> >> +		st->gain = gain;
-> >> +		if (gain < AD7780_GAIN_MIDPOINT)
-> >> +			gain = 0;
-> >> +		else
-> >> +			gain = 1;
-> >> +		gpiod_set_value(st->gain_gpio, gain);
-> >> +	break;
-> >> +	case IIO_CHAN_INFO_SAMP_FREQ:
-> >> +		if (1000*val + val2/1000 < AD7780_FILTER_MIDPOINT)
-> >> +			val = 0;
-> >> +		else
-> >> +			val = 1;
-> >> +		st->odr = ad778x_odr_avail[val];
-> >> +		gpiod_set_value(st->filter_gpio, val);
-> >> +	break;  
-> >We'll get a warning here due to the lack of a default handler.
-> >It's pointless except to suppress the warning, but best to add one.
-> >  
-> >> +	}
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static int ad7780_postprocess_sample(struct ad_sigma_delta *sigma_delta,
-> >> +				     unsigned int raw_sample)
-> >> +{
-> >> +	struct ad7780_state *st = ad_sigma_delta_to_ad7780(sigma_delta);
-> >> +	const struct ad7780_chip_info *chip_info = st->chip_info;
-> >> +
-> >> +	if ((raw_sample & AD7780_ERR) ||
-> >> +	    ((raw_sample & chip_info->pattern_mask) != chip_info->pattern))
-> >> +		return -EIO;
-> >> +
-> >> +	if (chip_info->is_ad778x) {
-> >> +		st->gain = ad778x_gain[raw_sample & AD7780_GAIN];
-> >> +		st->odr = ad778x_odr_avail[raw_sample & AD7780_FILTER];
-> >> +	}
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static const struct ad_sigma_delta_info ad7780_sigma_delta_info = {
-> >> +	.set_mode = ad7780_set_mode,
-> >> +	.postprocess_sample = ad7780_postprocess_sample,
-> >> +	.has_registers = false,
-> >> +};
-> >> +
-> >> +#define AD7780_CHANNEL(bits, wordsize) \
-> >> +	AD_SD_CHANNEL_NO_SAMP_FREQ(1, 0, 0, bits, 32, wordsize - bits)
-> >> +
-> >> +static const struct ad7780_chip_info ad7780_chip_info_tbl[] = {
-> >> +	[ID_AD7170] = {
-> >> +		.channel = AD7780_CHANNEL(12, 24),
-> >> +		.pattern = AD7170_PATTERN,
-> >> +		.pattern_mask = AD7170_PATTERN_MASK,
-> >> +		.is_ad778x = false,
-> >> +	},
-> >> +	[ID_AD7171] = {
-> >> +		.channel = AD7780_CHANNEL(16, 24),
-> >> +		.pattern = AD7170_PATTERN,
-> >> +		.pattern_mask = AD7170_PATTERN_MASK,
-> >> +		.is_ad778x = false,
-> >> +	},
-> >> +	[ID_AD7780] = {
-> >> +		.channel = AD7780_CHANNEL(24, 32),
-> >> +		.pattern = AD7780_PATTERN,
-> >> +		.pattern_mask = AD7780_PATTERN_MASK,
-> >> +		.is_ad778x = true,
-> >> +	},
-> >> +	[ID_AD7781] = {
-> >> +		.channel = AD7780_CHANNEL(20, 32),
-> >> +		.pattern = AD7780_PATTERN,
-> >> +		.pattern_mask = AD7780_PATTERN_MASK,
-> >> +		.is_ad778x = true,
-> >> +	},
-> >> +};
-> >> +
-> >> +static const struct iio_info ad7780_info = {
-> >> +	.read_raw = ad7780_read_raw,
-> >> +	.write_raw = ad7780_write_raw,
-> >> +};
-> >> +
-> >> +static int ad7780_probe(struct spi_device *spi)
-> >> +{
-> >> +	struct ad7780_state *st;
-> >> +	struct iio_dev *indio_dev;
-> >> +	int ret;
-> >> +
-> >> +	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
-> >> +	if (!indio_dev)
-> >> +		return -ENOMEM;
-> >> +
-> >> +	st = iio_priv(indio_dev);
-> >> +	st->gain = 1;
-> >> +
-> >> +	ad_sd_init(&st->sd, indio_dev, spi, &ad7780_sigma_delta_info);
-> >> +
-> >> +	st->chip_info =
-> >> +		&ad7780_chip_info_tbl[spi_get_device_id(spi)->driver_data];
-> >> +
-> >> +	spi_set_drvdata(spi, indio_dev);
-> >> +
-> >> +	indio_dev->dev.parent = &spi->dev;
-> >> +	indio_dev->name = spi_get_device_id(spi)->name;
-> >> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> >> +	indio_dev->channels = &st->chip_info->channel;
-> >> +	indio_dev->num_channels = 1;
-> >> +	indio_dev->info = &ad7780_info;
-> >> +
-> >> +	st->powerdown_gpio = devm_gpiod_get_optional(&spi->dev,
-> >> +						     "powerdown",
-> >> +						     GPIOD_OUT_LOW);
-> >> +	if (IS_ERR(st->powerdown_gpio)) {
-> >> +		ret = PTR_ERR(st->powerdown_gpio);
-> >> +		dev_err(&spi->dev, "Failed to request powerdown GPIO: %d\n",
-> >> +			ret);
-> >> +		return ret;
-> >> +	}
-> >> +
-> >> +	if (st->chip_info->is_ad778x) {
-> >> +		st->gain_gpio = devm_gpiod_get_optional(&spi->dev,
-> >> +							"gain",
-> >> +							GPIOD_OUT_HIGH);
-> >> +		if (IS_ERR(st->gain_gpio)) {
-> >> +			ret = PTR_ERR(st->gain_gpio);
-> >> +			dev_err(&spi->dev, "Failed to request gain GPIO: %d\n",
-> >> +				ret);
-> >> +			return ret;
-> >> +		}
-> >> +
-> >> +		st->filter_gpio = devm_gpiod_get_optional(&spi->dev,
-> >> +							  "filter",
-> >> +							  GPIOD_OUT_HIGH);
-> >> +		if (IS_ERR(st->filter_gpio)) {
-> >> +			ret = PTR_ERR(st->filter_gpio);
-> >> +			dev_err(&spi->dev,
-> >> +				"Failed to request filter GPIO: %d\n",
-> >> +				ret);
-> >> +			return ret;
-> >> +		}
-> >> +	}
-> >> +
-> >> +	st->reg = devm_regulator_get(&spi->dev, "avdd");
-> >> +	if (IS_ERR(st->reg))
-> >> +		return PTR_ERR(st->reg);
-> >> +
-> >> +	ret = regulator_enable(st->reg);
-> >> +	if (ret) {
-> >> +		dev_err(&spi->dev, "Failed to enable specified AVdd supply\n");
-> >> +		return ret;
-> >> +	}
-> >> +
-> >> +	ret = ad_sd_setup_buffer_and_trigger(indio_dev);
-> >> +	if (ret)
-> >> +		goto error_disable_reg;
-> >> +
-> >> +	ret = iio_device_register(indio_dev);
-> >> +	if (ret)
-> >> +		goto error_cleanup_buffer_and_trigger;
-> >> +
-> >> +	return 0;
-> >> +
-> >> +error_cleanup_buffer_and_trigger:
-> >> +	ad_sd_cleanup_buffer_and_trigger(indio_dev);
-> >> +error_disable_reg:
-> >> +	regulator_disable(st->reg);
-> >> +
-> >> +	return ret;
-> >> +}
-> >> +
-> >> +static int ad7780_remove(struct spi_device *spi)
-> >> +{
-> >> +	struct iio_dev *indio_dev = spi_get_drvdata(spi);
-> >> +	struct ad7780_state *st = iio_priv(indio_dev);
-> >> +
-> >> +	iio_device_unregister(indio_dev);
-> >> +	ad_sd_cleanup_buffer_and_trigger(indio_dev);
-> >> +
-> >> +	regulator_disable(st->reg);
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static const struct spi_device_id ad7780_id[] = {
-> >> +	{"ad7170", ID_AD7170},
-> >> +	{"ad7171", ID_AD7171},
-> >> +	{"ad7780", ID_AD7780},
-> >> +	{"ad7781", ID_AD7781},
-> >> +	{}
-> >> +};
-> >> +MODULE_DEVICE_TABLE(spi, ad7780_id);
-> >> +
-> >> +static struct spi_driver ad7780_driver = {
-> >> +	.driver = {
-> >> +		.name	= "ad7780",
-> >> +	},
-> >> +	.probe		= ad7780_probe,
-> >> +	.remove		= ad7780_remove,
-> >> +	.id_table	= ad7780_id,
-> >> +};
-> >> +module_spi_driver(ad7780_driver);
-> >> +
-> >> +MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
-> >> +MODULE_DESCRIPTION("Analog Devices AD7780 and similar ADCs");
-> >> +MODULE_LICENSE("GPL v2");  
-
-
+DQoNCk9uIDIvMTgvMjAxOSAxMjoyNSBQTSwgRGFuIENhcnBlbnRlciB3cm90ZToNCj4gT24gTW9u
+LCBGZWIgMTgsIDIwMTkgYXQgMDk6Mzc6MjJBTSArMDAwMCwgVGFyaXEgVG91a2FuIHdyb3RlOg0K
+Pj4NCj4+DQo+PiBPbiAyLzE4LzIwMTkgMTowMyBBTSwgQ29saW4gS2luZyB3cm90ZToNCj4+PiBG
+cm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPj4+DQo+Pj4g
+VGhlcmUgaXMgYSBzcGVsbGluZyBtaXN0YWtlIGluIGEgZW5fZXJyIGVycm9yIG1lc3NhZ2UuIEZp
+eCBpdC4NCj4+Pg0KPj4+IFNpZ25lZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5n
+QGNhbm9uaWNhbC5jb20+DQo+Pj4gLS0tDQo+Pj4gICAgZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVs
+bGFub3gvbWx4NC9lbl9uZXRkZXYuYyB8IDIgKy0NCj4+PiAgICAxIGZpbGUgY2hhbmdlZCwgMSBp
+bnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4+Pg0KPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg0L2VuX25ldGRldi5jIGIvZHJpdmVycy9uZXQvZXRo
+ZXJuZXQvbWVsbGFub3gvbWx4NC9lbl9uZXRkZXYuYw0KPj4+IGluZGV4IDZiODg4ODFiOGUzNS4u
+YzE0MzhhZTUyYTExIDEwMDY0NA0KPj4+IC0tLSBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxh
+bm94L21seDQvZW5fbmV0ZGV2LmMNCj4+PiArKysgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxs
+YW5veC9tbHg0L2VuX25ldGRldi5jDQo+Pj4gQEAgLTMzNjAsNyArMzM2MCw3IEBAIGludCBtbHg0
+X2VuX2luaXRfbmV0ZGV2KHN0cnVjdCBtbHg0X2VuX2RldiAqbWRldiwgaW50IHBvcnQsDQo+Pj4g
+ICAgCWRldi0+YWRkcl9sZW4gPSBFVEhfQUxFTjsNCj4+PiAgICAJbWx4NF9lbl91NjRfdG9fbWFj
+KGRldi0+ZGV2X2FkZHIsIG1kZXYtPmRldi0+Y2Fwcy5kZWZfbWFjW3ByaXYtPnBvcnRdKTsNCj4+
+PiAgICAJaWYgKCFpc192YWxpZF9ldGhlcl9hZGRyKGRldi0+ZGV2X2FkZHIpKSB7DQo+Pj4gLQkJ
+ZW5fZXJyKHByaXYsICJQb3J0OiAlZCwgaW52YWxpZCBtYWMgYnVybmVkOiAlcE0sIHF1aXRpbmdc
+biIsDQo+Pj4gKwkJZW5fZXJyKHByaXYsICJQb3J0OiAlZCwgaW52YWxpZCBtYWMgYnVybmVkOiAl
+cE0sIHF1aXR0aW5nXG4iLA0KPj4+ICAgIAkJICAgICAgIHByaXYtPnBvcnQsIGRldi0+ZGV2X2Fk
+ZHIpOw0KPj4+ICAgIAkJZXJyID0gLUVJTlZBTDsNCj4+PiAgICAJCWdvdG8gb3V0Ow0KPj4+DQo+
+Pg0KPj4gSGkgQ29saW4sIHRoYW5rcyBmb3IgeW91ciBwYXRjaC4NCj4+DQo+PiBSZXZpZXdlZC1i
+eTogVGFyaXEgVG91a2FuIDx0YXJpcXRAbWVsbGFub3guY29tPg0KPj4NCj4+IEkgd291bGQgc3Vn
+Z2VzdCBhZGRpbmcgYSBGaXhlcyBsaW5lLCBidXQgbG9va2luZyBpbnRvIHRoZSBoaXN0b3J5IG9m
+IHRoZQ0KPj4gdHlwbywgaXQgd2VudCB0aHJvdWdoIG1hbnkgcGF0Y2hlcyB0aGF0IG1vZGlmaWVk
+IHRoaXMgbGluZSBidXQgcHJlc2VydmVkDQo+PiB0aGUgdHlwby4NCj4+IEFjdHVhbGx5LCBpdCBk
+YXRlcyBiYWNrIHRvIHRoZSB2ZXJ5IGZpcnN0IGNvbW1pdCB0aGF0IGludHJvZHVjZXMgbWx4NA0K
+Pj4gZHJpdmVyOg0KPj4NCj4+IFBhdGNoZXMgaGlzdG9yeToNCj4+IDJiM2RkZjI3ZjQ4YyBuZXQv
+bWx4NF9jb3JlOiBSZXBsYWNlIFZGIHplcm8gbWFjIHdpdGggcmFuZG9tIG1hYyBpbiBtbHg0X2Nv
+cmUNCj4+IGVmOTZmN2Q0NmFkOCBuZXQvbWx4NF9lbjogSGFuZGxlIHVuYXNzaWduZWQgVkYgTUFD
+IGFkZHJlc3MgY29ycmVjdGx5DQo+PiA2YmJiNmQ5OWYzZDIgbmV0L21seDRfZW46IE9wdGltaXpl
+IFJ4IGZhc3QgcGF0aCBmaWx0ZXIgY2hlY2tzDQo+PiA0NTNhNjA4Mjc3MzUgbWx4NF9lbjogR2l2
+aW5nIGludGVyZmFjZSBuYW1lIGluIGRlYnVnIG1lc3NhZ2VzDQo+PiBjMjdhMDJjZDk0ZDYgbWx4
+NF9lbjogQWRkIGRyaXZlciBmb3IgTWVsbGFub3ggQ29ubmVjdFggMTBHYkUgTklDDQo+Pg0KPj4g
+SSdtIG5vdCBzdXJlIHdoYXQgdGhlICJGaXhlczoiIHBvbGljeSBpcyBpbiB0aGVzZSBjYXNlcy4N
+Cj4gDQo+IEkgd291bGRuJ3QgbmVjZXNzYXJpbHkgcHV0IGEgRml4ZXMgdGFnIG9uIHRoaXMsIGJl
+Y2F1c2UgZG9lcyBmaXhpbmcgdGhlDQo+IHNwZWxsaW5nIHJlYWxseSBjb3VudCBhcyBhIGJ1Z2Zp
+eD8gIEl0J3MgYm9yZGVybGluZSB3aGV0aGVyIGl0J3MgYSBmaXgNCj4gb3IgYSBjbGVhbnVwLg0K
+PiANCj4gcmVnYXJkcywNCj4gZGFhbiBjYXJwZW50ZXINCj4gDQoNClRoYW5rcyBEYW4sIEknbSBm
+aW5lIHdpdGggdGhhdC4NCg==
