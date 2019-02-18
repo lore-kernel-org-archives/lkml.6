@@ -7,46 +7,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD76C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:52:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F41DDC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:52:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DF4221904
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:52:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C452221905
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:52:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497970;
-	bh=JKW9zQAikkGlLnKQVsFoolO9Y+11ZHGvrgbhgB5VP1g=;
+	s=default; t=1550497976;
+	bh=HmjuXY+xhZ1Q/kk1ErLmJaVzR8Pjjskr0w3XhA/M8yE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NKltGuIitrR08CVxTXfhhQbLn3tnclag7ZSOVKCHX7j9OGshttHACTxe2flOHPfBt
-	 cGlHGVM6YgWnXq56A7khAldX7lS2V1k04Fx7LU6fsbRY9oejZbSU4b73hUSU6ricn1
-	 3oqOdviHP5DiKILLnxT7B14Wrd02MgoFh819OYjw=
+	b=ikDfsnZzj4nKeFi/Mq7OW3FeF8x9WJxDju78worAFjDT6Y1j7k1obIo1WTzc32VHU
+	 6mMV0WWpA39Qi7mlrZao18Fvoyo9WPsrHGMBcyxLvs1pMlmCRXpClgaLI1yqup3OSK
+	 ov5+2u13SBF6XhoCVv0tNvGMePnUQ+Dg3VOWGi1k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732810AbfBRNwt (ORCPT
+        id S1732832AbfBRNwy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:52:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60716 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:52:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731635AbfBRNwr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:52:47 -0500
+        id S1731635AbfBRNwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:52:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A19E21901;
-        Mon, 18 Feb 2019 13:52:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A472F20842;
+        Mon, 18 Feb 2019 13:52:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497966;
-        bh=JKW9zQAikkGlLnKQVsFoolO9Y+11ZHGvrgbhgB5VP1g=;
+        s=default; t=1550497970;
+        bh=HmjuXY+xhZ1Q/kk1ErLmJaVzR8Pjjskr0w3XhA/M8yE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AfjwIzx9aTdgaI0uxo+lOXSss3CzCHzHLz3SB1m18z9u6N51c6MbqNlp27fnHHIHe
-         Yu0Q2Otepw91QHKdyINZyYKaG4Ig9PwA/kdmSrJ5Bz3xUE4wvhqP0KfNEaLGZRPwyn
-         5DKOY/gpBsLQrEnZurDccXngK0CQ07BuEZbkLFqQ=
+        b=GmivtXvTf488eBI4uuPlmq4gZpCT0aG4JM8mEMkVHgKXokuhC4KP7O1TZuCbuCUtX
+         W+6KRzkWVAacn2Hu+lDQKEM2+L0iuhMTtXB2EAhrdlJBmXeA7v8JSoJhDyN2xBa4An
+         acbkcuumK6Nog9WYgDaPqsO4pp1e+CjBcDoOImZY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Donald Buczek <buczek@molgen.mpg.de>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.19 67/85] Revert "nfsd4: return default lease period"
-Date:   Mon, 18 Feb 2019 14:43:33 +0100
-Message-Id: <20190218133506.397572778@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
+        Wolfgang Walter <linux@stwm.de>, Roman Gushchin <guro@fb.com>,
+        Spock <dairinin@gmail.com>, Rik van Riel <riel@surriel.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 68/85] Revert "mm: dont reclaim inodes with many attached pages"
+Date:   Mon, 18 Feb 2019 14:43:34 +0100
+Message-Id: <20190218133506.495855150@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -65,48 +69,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: J. Bruce Fields <bfields@redhat.com>
+From: Dave Chinner <dchinner@redhat.com>
 
-commit 3bf6b57ec2ec945e5a6edf5c202a754f1e852ecd upstream.
+commit 69056ee6a8a3d576ed31e38b3b14c70d6c74edcc upstream.
 
-This reverts commit d6ebf5088f09472c1136cd506bdc27034a6763f8.
+This reverts commit a76cf1a474d7d ("mm: don't reclaim inodes with many
+attached pages").
 
-I forgot that the kernel's default lease period should never be
-decreased!
+This change causes serious changes to page cache and inode cache
+behaviour and balance, resulting in major performance regressions when
+combining worklaods such as large file copies and kernel compiles.
 
-After a kernel upgrade, the kernel has no way of knowing on its own what
-the previous lease time was.  Unless userspace tells it otherwise, it
-will assume the previous lease period was the same.
+  https://bugzilla.kernel.org/show_bug.cgi?id=202441
 
-So if we decrease this value in a kernel upgrade, we end up enforcing a
-grace period that's too short, and clients will fail to reclaim state in
-time.  Symptoms may include EIO and log messages like "NFS:
-nfs4_reclaim_open_state: Lock reclaim failed!"
+This change is a hack to work around the problems introduced by changing
+how agressive shrinkers are on small caches in commit 172b06c32b94 ("mm:
+slowly shrink slabs with a relatively small number of objects").  It
+creates more problems than it solves, wasn't adequately reviewed or
+tested, so it needs to be reverted.
 
-There was no real justification for the lease period decrease anyway.
-
-Reported-by: Donald Buczek <buczek@molgen.mpg.de>
-Fixes: d6ebf5088f09 "nfsd4: return default lease period"
-Cc: stable@vger.kernel.org
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Link: http://lkml.kernel.org/r/20190130041707.27750-2-david@fromorbit.com
+Fixes: a76cf1a474d7d ("mm: don't reclaim inodes with many attached pages")
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+Cc: Wolfgang Walter <linux@stwm.de>
+Cc: Roman Gushchin <guro@fb.com>
+Cc: Spock <dairinin@gmail.com>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfsd/nfsctl.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/inode.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
---- a/fs/nfsd/nfsctl.c
-+++ b/fs/nfsd/nfsctl.c
-@@ -1239,8 +1239,8 @@ static __net_init int nfsd_init_net(stru
- 	retval = nfsd_idmap_init(net);
- 	if (retval)
- 		goto out_idmap_error;
--	nn->nfsd4_lease = 45;	/* default lease time */
--	nn->nfsd4_grace = 45;
-+	nn->nfsd4_lease = 90;	/* default lease time */
-+	nn->nfsd4_grace = 90;
- 	nn->somebody_reclaimed = false;
- 	nn->clverifier_counter = prandom_u32();
- 	nn->clientid_counter = prandom_u32();
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -730,11 +730,8 @@ static enum lru_status inode_lru_isolate
+ 		return LRU_REMOVED;
+ 	}
+ 
+-	/*
+-	 * Recently referenced inodes and inodes with many attached pages
+-	 * get one more pass.
+-	 */
+-	if (inode->i_state & I_REFERENCED || inode->i_data.nrpages > 1) {
++	/* recently referenced inodes get one more pass */
++	if (inode->i_state & I_REFERENCED) {
+ 		inode->i_state &= ~I_REFERENCED;
+ 		spin_unlock(&inode->i_lock);
+ 		return LRU_ROTATE;
 
 
