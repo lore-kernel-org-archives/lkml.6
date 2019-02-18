@@ -2,158 +2,183 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A61C4C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED71C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:52:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CBC5217F9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:49:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38BE3217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:52:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lnCZINN7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XsVB7dOp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727143AbfBRTtn (ORCPT
+        id S1726627AbfBRTwm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 14:49:43 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:40382 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726316AbfBRTtm (ORCPT
+        Mon, 18 Feb 2019 14:52:42 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:42401 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbfBRTwl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 14:49:42 -0500
-Received: by mail-it1-f194.google.com with SMTP id i2so713727ite.5
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 11:49:42 -0800 (PST)
+        Mon, 18 Feb 2019 14:52:41 -0500
+Received: by mail-pl1-f193.google.com with SMTP id s1so9213428plp.9;
+        Mon, 18 Feb 2019 11:52:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0wtsBdExeMA1wwCJ28I4aSi9QBIDjm+ySXCh9WlH+r8=;
-        b=lnCZINN7IoVMhyN6Ibb/qlSwbfdgcKLoKqRCpyFvlLWtuAoP/FCJcQKLFGQi09gDVr
-         5DiPNsJ3wLufD+iHIhNZDCwwyRCLWiwKRGn/GJIg8q191GC4x6c+6wVVnjJ1WaSYzq9O
-         3x4YrPPt0p1oh4zkAc1KgwK83gxLOg25m+qlcqCvbwwptQv/6HSlZVPVC36c+OTBDIBy
-         APQe2ue7roT6A2u6aQFmTgeF65aUI+pCdpn/VkyjDeN3Lu2FSg8S8Dqg0Li9uFHFoFEt
-         Kjpz3ydKeddO0GqHPTLYFF+2YmEsV0f+vPa64ELLx8sRS1MhTdY5T/XF3M1qgBM3LpeO
-         eB8A==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JEPXci3KQI2klfVBfktqeKE5UjX27j54j5u/w1t6njM=;
+        b=XsVB7dOp4modAKdRFW+7/ijHREnsb7qLP6ur6KOYfoGO682O8o5SodYK3WkuQa3fww
+         bJekk3q0RSaGWhidOU7/8j2XOOazNhZ4PbPsdNwhLJ4XjaYakFqJ9seB9e9WswsS2ytd
+         NaYQ4jh4DF7kPmfDf5DqlNa2CJ0V62nTBhHAvmHU/29b712dUIpdbz3usdoQnFlhF9HZ
+         /2yp2yvO+QU55tIWC6JL5B/pHzE0Suxddb68wzK9FolUGrLhXcPsdyf760AQ/2mz9aAY
+         Hh5Z+RWGSOk9F7y3cGPHXiAVWMfxfbf0V3bu5fVYf2ghdI79T8Lhm/Xy+FcXSST19yzI
+         J0xQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0wtsBdExeMA1wwCJ28I4aSi9QBIDjm+ySXCh9WlH+r8=;
-        b=B8TXjlXXDSHlf1dYyT4zentR5lBF/OxlgJNGae4FI8btNRr7fsRl7/vvSaGm7AnHzf
-         CK4HD0TjDN1gF8sT+tcR2lWprxsLZWpIqYdIB6v4o9+wJP9Z+1uYJM1TffpQM5R8zTNQ
-         giMVmQ2ykqa2qQFuf2YbmmjoDoYlJjx6/SSeoaTC2CUOxR0VXacenQqFtYC2Wwk30aWY
-         zAIX7hYC1AfUpoDxyGciUGXtxWS2GQodVugOU1S0SZnTTBs6m4PqYAqXXOhYkUpHLsTc
-         k5BTGUUGiqp7eKuxrzTTcVpY7vNroy8X74Q12F4tVGvwfC3wCkrakFIdw5/okfEnONWa
-         mAOA==
-X-Gm-Message-State: AHQUAuZI3CRTjihXgwykARXPEki6J2Wg8od06drcItEKp85Ge1FGTqaq
-        7/+OG++ry7lEYHBsuwBxXy2qVw==
-X-Google-Smtp-Source: AHgI3IYgK3DVojWmklhiIeoLq404ESnMMVIaR2vGDGMXORI8El0uFkQrhGihzkrV0E3C0Mg6kZr77A==
-X-Received: by 2002:a02:c943:: with SMTP id u3mr13451152jao.96.1550519381443;
-        Mon, 18 Feb 2019 11:49:41 -0800 (PST)
-Received: from google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
-        by smtp.gmail.com with ESMTPSA id x17sm5606036ioa.6.2019.02.18.11.49.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Feb 2019 11:49:40 -0800 (PST)
-Date:   Mon, 18 Feb 2019 12:49:38 -0700
-From:   Yu Zhao <yuzhao@google.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        mark.rutland@arm.com
-Subject: Re: [PATCH] arm64: mm: enable per pmd page table lock
-Message-ID: <20190218194938.GA184109@google.com>
-References: <20190214211642.2200-1-yuzhao@google.com>
- <20190218151223.GB16091@fuggles.cambridge.arm.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JEPXci3KQI2klfVBfktqeKE5UjX27j54j5u/w1t6njM=;
+        b=e+fc369uw9hgCE/vG0HGJDgSlwLqJhV0WesfCs85Hj3I6isQlN7M08S9KMI2dIqxWq
+         wiH1YI7eVxZJrshUQBLOq0g6g3/wANDPeYOS18mbSZSzVCqCd8ibsAFvmniqDWmcZ/Nt
+         HdI4VJ1XTMlM7HdGVXHjYyrb1+yex1rEekvtsGqMcwu8O9DrF19U0HWrJD0uSVwqCpra
+         4Osn+nYAnGXiBjinAUGLulwyRWCP4A4XpbAYJrSOJx0256M81vxVOfh0DBA52vIzKT55
+         6eYgauDlIkKRqNLui5hk9EmBs4F5Sid56vZJt6/AZgAc/cuuV7ybxGDwjLfAOAgYYh6j
+         f3Sg==
+X-Gm-Message-State: AHQUAub5PB+pi9jBgiGcQ0RgxVnn890hg9bKEV/Dzt1cwL1DdzxPgwpy
+        y0ZcqxyKfvo1EBCDVdYRzvY=
+X-Google-Smtp-Source: AHgI3IaHfF0xeNU3nsTqBNbvRHMP45E49KKY4SxHMqIYceeKw2abxZ1zNqiFC7Vj9ZoK+9oIFQf+wQ==
+X-Received: by 2002:a17:902:e18c:: with SMTP id cd12mr25983536plb.279.1550519560714;
+        Mon, 18 Feb 2019 11:52:40 -0800 (PST)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id e123sm26852981pgc.14.2019.02.18.11.52.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Feb 2019 11:52:40 -0800 (PST)
+Subject: Re: [RFC v4 08/17] kunit: test: add support for test abort
+To:     Brendan Higgins <brendanhiggins@google.com>, keescook@google.com,
+        mcgrof@kernel.org, shuah@kernel.org, robh@kernel.org,
+        kieran.bingham@ideasonboard.com
+Cc:     gregkh@linuxfoundation.org, joel@jms.id.au, mpe@ellerman.id.au,
+        joe@perches.com, brakmo@fb.com, rostedt@goodmis.org,
+        Tim.Bird@sony.com, khilman@baylibre.com, julia.lawall@lip6.fr,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, jdike@addtoit.com, richard@nod.at,
+        linux-um@lists.infradead.org, daniel@ffwll.ch,
+        dri-devel@lists.freedesktop.org, dan.j.williams@intel.com,
+        linux-nvdimm@lists.01.org, knut.omang@oracle.com,
+        devicetree@vger.kernel.org, pmladek@suse.com,
+        Alexander.Levin@microsoft.com, amir73il@gmail.com,
+        dan.carpenter@oracle.com, wfg@linux.intel.com
+References: <20190214213729.21702-1-brendanhiggins@google.com>
+ <20190214213729.21702-9-brendanhiggins@google.com>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <da1995fa-a362-dfe6-8184-7fcdf2b923e8@gmail.com>
+Date:   Mon, 18 Feb 2019 11:52:37 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190218151223.GB16091@fuggles.cambridge.arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190214213729.21702-9-brendanhiggins@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 03:12:23PM +0000, Will Deacon wrote:
-> [+Mark]
+On 2/14/19 1:37 PM, Brendan Higgins wrote:
+> Add support for aborting/bailing out of test cases. Needed for
+> implementing assertions.
 > 
-> On Thu, Feb 14, 2019 at 02:16:42PM -0700, Yu Zhao wrote:
-> > Switch from per mm_struct to per pmd page table lock by enabling
-> > ARCH_ENABLE_SPLIT_PMD_PTLOCK. This provides better granularity for
-> > large system.
-> > 
-> > I'm not sure if there is contention on mm->page_table_lock. Given
-> > the option comes at no cost (apart from initializing more spin
-> > locks), why not enable it now.
-> > 
-> > Signed-off-by: Yu Zhao <yuzhao@google.com>
-> > ---
-> >  arch/arm64/Kconfig               |  3 +++
-> >  arch/arm64/include/asm/pgalloc.h | 12 +++++++++++-
-> >  arch/arm64/include/asm/tlb.h     |  5 ++++-
-> >  3 files changed, 18 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> > index a4168d366127..104325a1ffc3 100644
-> > --- a/arch/arm64/Kconfig
-> > +++ b/arch/arm64/Kconfig
-> > @@ -872,6 +872,9 @@ config ARCH_WANT_HUGE_PMD_SHARE
-> >  config ARCH_HAS_CACHE_LINE_SIZE
-> >  	def_bool y
-> >  
-> > +config ARCH_ENABLE_SPLIT_PMD_PTLOCK
-> > +	def_bool y
-> > +
-> >  config SECCOMP
-> >  	bool "Enable seccomp to safely compute untrusted bytecode"
-> >  	---help---
-> > diff --git a/arch/arm64/include/asm/pgalloc.h b/arch/arm64/include/asm/pgalloc.h
-> > index 52fa47c73bf0..dabba4b2c61f 100644
-> > --- a/arch/arm64/include/asm/pgalloc.h
-> > +++ b/arch/arm64/include/asm/pgalloc.h
-> > @@ -33,12 +33,22 @@
-> >  
-> >  static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long addr)
-> >  {
-> > -	return (pmd_t *)__get_free_page(PGALLOC_GFP);
-> > +	struct page *page;
-> > +
-> > +	page = alloc_page(PGALLOC_GFP);
-> > +	if (!page)
-> > +		return NULL;
-> > +	if (!pgtable_pmd_page_ctor(page)) {
-> > +		__free_page(page);
-> > +		return NULL;
-> > +	}
-> > +	return page_address(page);
-> 
-> I'm a bit worried as to how this interacts with the page-table code in
-> arch/arm64/mm/mmu.c when pgd_pgtable_alloc is used as the allocator. It
-> looks like that currently always calls pgtable_page_ctor(), regardless of
-> level. Do we now need a separate allocator function for the PMD level?
+> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> ---
+> Changes Since Last Version
+>  - This patch is new introducing a new cross-architecture way to abort
+>    out of a test case (needed for KUNIT_ASSERT_*, see next patch for
+>    details).
+>  - On a side note, this is not a complete replacement for the UML abort
+>    mechanism, but covers the majority of necessary functionality. UML
+>    architecture specific featurs have been dropped from the initial
+>    patchset.
+> ---
+>  include/kunit/test.h |  24 +++++
+>  kunit/Makefile       |   3 +-
+>  kunit/test-test.c    | 127 ++++++++++++++++++++++++++
+>  kunit/test.c         | 208 +++++++++++++++++++++++++++++++++++++++++--
+>  4 files changed, 353 insertions(+), 9 deletions(-)
+>  create mode 100644 kunit/test-test.c
 
-Thanks for reminding me, I never noticed this. The short answer is
-no.
+< snip >
 
-I guess pgtable_page_ctor() is used on all pud/pmd/pte entries
-there because it's also compatible with pud, and pmd too without
-this patch. So your concern is valid. Thanks again.
+> diff --git a/kunit/test.c b/kunit/test.c
+> index d18c50d5ed671..6e5244642ab07 100644
+> --- a/kunit/test.c
+> +++ b/kunit/test.c
+> @@ -6,9 +6,9 @@
+>   * Author: Brendan Higgins <brendanhiggins@google.com>
+>   */
+>  
+> -#include <linux/sched.h>
+>  #include <linux/sched/debug.h>
+> -#include <os.h>
+> +#include <linux/completion.h>
+> +#include <linux/kthread.h>
+>  #include <kunit/test.h>
+>  
+>  static bool kunit_get_success(struct kunit *test)
+> @@ -32,6 +32,27 @@ static void kunit_set_success(struct kunit *test, bool success)
+>  	spin_unlock_irqrestore(&test->lock, flags);
+>  }
+>  
+> +static bool kunit_get_death_test(struct kunit *test)
+> +{
+> +	unsigned long flags;
+> +	bool death_test;
+> +
+> +	spin_lock_irqsave(&test->lock, flags);
+> +	death_test = test->death_test;
+> +	spin_unlock_irqrestore(&test->lock, flags);
+> +
+> +	return death_test;
+> +}
+> +
+> +static void kunit_set_death_test(struct kunit *test, bool death_test)
+> +{
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&test->lock, flags);
+> +	test->death_test = death_test;
+> +	spin_unlock_irqrestore(&test->lock, flags);
+> +}
+> +
+>  static int kunit_vprintk_emit(const struct kunit *test,
+>  			      int level,
+>  			      const char *fmt,
+> @@ -70,13 +91,29 @@ static void kunit_fail(struct kunit *test, struct kunit_stream *stream)
+>  	stream->commit(stream);
+>  }
+>  
+> +static void __noreturn kunit_abort(struct kunit *test)
+> +{
+> +	kunit_set_death_test(test, true);
+> +
+> +	test->try_catch.throw(&test->try_catch);
+> +
+> +	/*
+> +	 * Throw could not abort from test.
+> +	 */
+> +	kunit_err(test, "Throw could not abort from test!");
+> +	show_stack(NULL, NULL);
+> +	BUG();
 
-Why my answer is no? Because I don't think the ctor matters for
-pgd_pgtable_alloc(). The ctor is only required for userspace page
-tables, and that's why we don't have it in pte_alloc_one_kernel().
-AFAICT, none of the pgds (efi_mm.pgd, tramp_pg_dir and init_mm.pgd)
-pre-populated by pgd_pgtable_alloc() is. (I doubt we pre-populate
-userspace page tables in any other arch).
+kunit_abort() is what will be call as the result of an assert failure.
 
-So to avoid future confusion, we might just remove the ctor from
-pgd_pgtable_alloc().
+BUG(), which is a panic, which is crashing the system is not acceptable
+in the Linux kernel.  You will just annoy Linus if you submit this.
+
+-Frank
+
+< snip >
