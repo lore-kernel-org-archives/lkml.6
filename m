@@ -6,321 +6,186 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81583C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E48DDC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:22:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E0522146E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:22:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD7E0217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:22:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392438AbfBRSWw (ORCPT
+        id S2392470AbfBRSW5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:22:52 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46928 "EHLO mx1.suse.de"
+        Mon, 18 Feb 2019 13:22:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46976 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2403982AbfBRSWr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:22:47 -0500
+        id S2392402AbfBRSWw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 13:22:52 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4ABF2AF7A;
-        Mon, 18 Feb 2019 18:22:45 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 50DFDAFD4;
+        Mon, 18 Feb 2019 18:22:50 +0000 (UTC)
 Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id EDE1FE0122; Mon, 18 Feb 2019 19:22:44 +0100 (CET)
-Message-Id: <245dea0700fe52a3430958c1eab97f21a964c6ee.1550513384.git.mkubecek@suse.cz>
+        id 00831E0122; Mon, 18 Feb 2019 19:22:49 +0100 (CET)
+Message-Id: <3e11d2901feca6a4aa8460a63537f5e59204a14a.1550513384.git.mkubecek@suse.cz>
 In-Reply-To: <cover.1550513384.git.mkubecek@suse.cz>
 References: <cover.1550513384.git.mkubecek@suse.cz>
 From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [RFC PATCH net-next v3 16/21] ethtool: provide WoL information in
+Subject: [RFC PATCH net-next v3 17/21] ethtool: provide message level in
  GET_SETTINGS request
 To:     netdev@vger.kernel.org
 Cc:     David Miller <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
         Jakub Kicinski <jakub.kicinski@netronome.com>,
         Jiri Pirko <jiri@resnulli.us>, linux-kernel@vger.kernel.org
-Date:   Mon, 18 Feb 2019 19:22:44 +0100 (CET)
+Date:   Mon, 18 Feb 2019 19:22:49 +0100 (CET)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add information about supported and enabled wake on LAN modes into the
-GET_SETTINGS reply when ETH_SETTINGS_IM_WOLINFO flag is set in the request.
-
-The GET_SETTINGS request can be still sent by unprivileged users but in
-such case the SecureOn password (if any) is not included in the reply.
+Add information about supported and enabled message levels to the
+GET_SETTINGS reply when ETH_SETTINGS_IM_MSGLEVEL flag is set in the
+request.
 
 Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
 ---
- Documentation/networking/ethtool-netlink.txt | 13 ++++-
- include/uapi/linux/ethtool_netlink.h         | 13 ++++-
- net/ethtool/common.c                         | 10 ++++
- net/ethtool/common.h                         |  1 +
- net/ethtool/ioctl.c                          |  8 +--
- net/ethtool/settings.c                       | 61 ++++++++++++++++++++
- 6 files changed, 100 insertions(+), 6 deletions(-)
+ Documentation/networking/ethtool-netlink.txt |  7 ++++++-
+ include/linux/netdevice.h                    |  2 ++
+ include/uapi/linux/ethtool_netlink.h         |  4 +++-
+ net/ethtool/settings.c                       | 16 ++++++++++++++++
+ 4 files changed, 27 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/networking/ethtool-netlink.txt b/Documentation/networking/ethtool-netlink.txt
-index 0ea7d89c6052..913df35cb762 100644
+index 913df35cb762..057eb3213cfe 100644
 --- a/Documentation/networking/ethtool-netlink.txt
 +++ b/Documentation/networking/ethtool-netlink.txt
-@@ -283,6 +283,7 @@ Info mask bits meaning:
- 
+@@ -284,6 +284,7 @@ Info mask bits meaning:
      ETH_SETTINGS_IM_LINKINFO		link_ksettings except link modes
      ETH_SETTINGS_IM_LINKMODES		link modes from link_ksettings
-+    ETH_SETTINGS_IM_WOLINFO		struct ethtool_wolinfo
+     ETH_SETTINGS_IM_WOLINFO		struct ethtool_wolinfo
++    ETH_SETTINGS_IM_MSGLEVEL		msglevel
  
  Response contents:
  
-@@ -298,12 +299,22 @@ Response contents:
-         ETHA_LINKINFO_TRANSCEIVER	(u8)		transceiver
-     ETHA_SETTINGS_LINK_MODES	(bitset)	device link modes
-     ETHA_SETTINGS_PEER_MODES	(bitset)	link partner link modes
-+    ETHA_SETTINGS_WOL		(nested)	wake on LAN settings
-+        ETHA_WOL_MODES			(bitfield32)	wake on LAN modes
-+        ETHA_WOL_SOPASS			(binary)	SecureOn(tm) password
+@@ -302,6 +303,7 @@ Response contents:
+     ETHA_SETTINGS_WOL		(nested)	wake on LAN settings
+         ETHA_WOL_MODES			(bitfield32)	wake on LAN modes
+         ETHA_WOL_SOPASS			(binary)	SecureOn(tm) password
++    ETHA_SETTINGS_MSGLEVEL	(bitfield32)	debug level
  
  Most of the attributes and their values have the same meaning as matching
  members of the corresponding ioctl structures. For ETHA_SETTINGS_LINK_MODES,
- value represents advertised modes and mask represents supported modes.
- ETHA_SETTINGS_PEER_MODES in the reply is a bit list.
+@@ -311,6 +313,9 @@ ETHA_SETTINGS_PEER_MODES in the reply is a bit list.
+ For ETHA_WOL_MODES, selector reports wake on LAN modes supported by the
+ device and value enabled modes.
  
-+For ETHA_WOL_MODES, selector reports wake on LAN modes supported by the
-+device and value enabled modes.
++For ETHA_SETTINGS_MSGLEVEL, selector reports all flags supported by kernel and
++value flags enabled for the device.
 +
-+GET_SETTINGS request is allowed for unprivileged user but ETHA_SETTINGS_SOPASS
-+is only provided by kernel in response to privileged (netns CAP_NET_ADMIN)
-+requests.
-+
- GET_SETTINGS requests allow dumps and messages in the same format as response
- to them are broadcasted as notifications on change of these settings using
- netlink or ioctl ethtool interface.
-@@ -322,7 +333,7 @@ ETHTOOL_GSET			ETHNL_CMD_GET_SETTINGS
- ETHTOOL_SSET			n/a
- ETHTOOL_GDRVINFO		ETHNL_CMD_GET_INFO
+ GET_SETTINGS request is allowed for unprivileged user but ETHA_SETTINGS_SOPASS
+ is only provided by kernel in response to privileged (netns CAP_NET_ADMIN)
+ requests.
+@@ -335,7 +340,7 @@ ETHTOOL_GDRVINFO		ETHNL_CMD_GET_INFO
  ETHTOOL_GREGS			n/a
--ETHTOOL_GWOL			n/a
-+ETHTOOL_GWOL			ETHNL_CMD_GET_SETTINGS
+ ETHTOOL_GWOL			ETHNL_CMD_GET_SETTINGS
  ETHTOOL_SWOL			n/a
- ETHTOOL_GMSGLVL			n/a
+-ETHTOOL_GMSGLVL			n/a
++ETHTOOL_GMSGLVL			ETHNL_CMD_GET_SETTINGS
  ETHTOOL_SMSGLVL			n/a
+ ETHTOOL_NWAY_RST		n/a
+ ETHTOOL_GLINK			n/a
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index 9a50a67f328f..a2ddfeb381bb 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -3846,6 +3846,8 @@ enum {
+ 	NETIF_MSG_PKTDATA	= 0x1000,
+ 	NETIF_MSG_HW		= 0x2000,
+ 	NETIF_MSG_WOL		= 0x4000,
++
++	NETIF_MSG_ALL		= 0x7fff,
+ };
+ 
+ #define netif_msg_drv(p)	((p)->msg_enable & NETIF_MSG_DRV)
 diff --git a/include/uapi/linux/ethtool_netlink.h b/include/uapi/linux/ethtool_netlink.h
-index 4e1fa4a06aac..ce9d6b48f814 100644
+index ce9d6b48f814..360e20a73f19 100644
 --- a/include/uapi/linux/ethtool_netlink.h
 +++ b/include/uapi/linux/ethtool_netlink.h
-@@ -201,6 +201,7 @@ enum {
- 	ETHA_SETTINGS_LINK_INFO,		/* nested */
+@@ -202,6 +202,7 @@ enum {
  	ETHA_SETTINGS_LINK_MODES,		/* bitset */
  	ETHA_SETTINGS_PEER_MODES,		/* bitset */
-+	ETHA_SETTINGS_WOL,			/* nested */
+ 	ETHA_SETTINGS_WOL,			/* nested */
++	ETHA_SETTINGS_MSGLEVEL,			/* bitfield32 */
  
  	__ETHA_SETTINGS_CNT,
  	ETHA_SETTINGS_MAX = (__ETHA_SETTINGS_CNT - 1)
-@@ -208,8 +209,9 @@ enum {
- 
+@@ -210,8 +211,9 @@ enum {
  #define ETH_SETTINGS_IM_LINKINFO		0x01
  #define ETH_SETTINGS_IM_LINKMODES		0x02
-+#define ETH_SETTINGS_IM_WOLINFO			0x04
+ #define ETH_SETTINGS_IM_WOLINFO			0x04
++#define ETH_SETTINGS_IM_MSGLEVEL		0x08
  
--#define ETH_SETTINGS_IM_ALL			0x03
-+#define ETH_SETTINGS_IM_ALL			0x07
+-#define ETH_SETTINGS_IM_ALL			0x07
++#define ETH_SETTINGS_IM_ALL			0x0f
  
  enum {
  	ETHA_LINKINFO_UNSPEC,
-@@ -226,6 +228,15 @@ enum {
- 	ETHA_LINKINFO_MAX = (__ETHA_LINKINFO_CNT - 1)
- };
- 
-+enum {
-+	ETHA_WOL_UNSPEC,
-+	ETHA_WOL_MODES,				/* bitfield32 */
-+	ETHA_WOL_SOPASS,			/* binary */
-+
-+	__ETHA_WOL_CNT,
-+	ETHA_WOL_MAX = (__ETHA_WOL_CNT - 1)
-+};
-+
- /* generic netlink info */
- #define ETHTOOL_GENL_NAME "ethtool"
- #define ETHTOOL_GENL_VERSION 1
-diff --git a/net/ethtool/common.c b/net/ethtool/common.c
-index 3316e9e403c9..9fba57f554dd 100644
---- a/net/ethtool/common.c
-+++ b/net/ethtool/common.c
-@@ -207,3 +207,13 @@ convert_legacy_settings_to_link_ksettings(
- 		= legacy_settings->eth_tp_mdix_ctrl;
- 	return retval;
- }
-+
-+int __ethtool_get_wol(struct net_device *dev, struct ethtool_wolinfo *wol)
-+{
-+	if (!dev->ethtool_ops->get_wol)
-+		return -EOPNOTSUPP;
-+
-+	dev->ethtool_ops->get_wol(dev, wol);
-+
-+	return 0;
-+}
-diff --git a/net/ethtool/common.h b/net/ethtool/common.h
-index 7a3e0b10e69a..ed3f1ca54660 100644
---- a/net/ethtool/common.h
-+++ b/net/ethtool/common.h
-@@ -17,6 +17,7 @@ phy_tunable_strings[__ETHTOOL_PHY_TUNABLE_COUNT][ETH_GSTRING_LEN];
- 
- int __ethtool_get_drvinfo(struct net_device *dev, struct ethtool_drvinfo *info);
- int __ethtool_get_ts_info(struct net_device *dev, struct ethtool_ts_info *info);
-+int __ethtool_get_wol(struct net_device *dev, struct ethtool_wolinfo *wol);
- 
- bool convert_legacy_settings_to_link_ksettings(
- 	struct ethtool_link_ksettings *link_ksettings,
-diff --git a/net/ethtool/ioctl.c b/net/ethtool/ioctl.c
-index 5e878cf6f418..945eaf551a4c 100644
---- a/net/ethtool/ioctl.c
-+++ b/net/ethtool/ioctl.c
-@@ -1230,11 +1230,11 @@ static int ethtool_reset(struct net_device *dev, char __user *useraddr)
- static int ethtool_get_wol(struct net_device *dev, char __user *useraddr)
- {
- 	struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
-+	int rc;
- 
--	if (!dev->ethtool_ops->get_wol)
--		return -EOPNOTSUPP;
--
--	dev->ethtool_ops->get_wol(dev, &wol);
-+	rc = __ethtool_get_wol(dev, &wol);
-+	if (rc < 0)
-+		return rc;
- 
- 	if (copy_to_user(useraddr, &wol, sizeof(wol)))
- 		return -EFAULT;
 diff --git a/net/ethtool/settings.c b/net/ethtool/settings.c
-index 4f2858fe1a7d..d296625edb2b 100644
+index d296625edb2b..58cd2d19a75d 100644
 --- a/net/ethtool/settings.c
 +++ b/net/ethtool/settings.c
-@@ -6,11 +6,13 @@
- 
- struct settings_data {
- 	struct common_req_info		reqinfo_base;
-+	bool				privileged;
- 
- 	/* everything below here will be reset for each device in dumps */
- 	struct common_reply_data	repdata_base;
+@@ -13,6 +13,7 @@ struct settings_data {
  	struct ethtool_link_ksettings	ksettings;
  	struct ethtool_link_settings	*lsettings;
-+	struct ethtool_wolinfo		wolinfo;
+ 	struct ethtool_wolinfo		wolinfo;
++	u32				msglevel;
  	bool				lpm_empty;
  };
  
-@@ -22,15 +24,20 @@ static const struct nla_policy get_settings_policy[ETHA_SETTINGS_MAX + 1] = {
- 	[ETHA_SETTINGS_LINK_INFO]	= { .type = NLA_REJECT },
+@@ -25,6 +26,7 @@ static const struct nla_policy get_settings_policy[ETHA_SETTINGS_MAX + 1] = {
  	[ETHA_SETTINGS_LINK_MODES]	= { .type = NLA_REJECT },
  	[ETHA_SETTINGS_PEER_MODES]	= { .type = NLA_REJECT },
-+	[ETHA_SETTINGS_WOL]		= { .type = NLA_REJECT },
+ 	[ETHA_SETTINGS_WOL]		= { .type = NLA_REJECT },
++	[ETHA_SETTINGS_MSGLEVEL]	= { .type = NLA_REJECT },
  };
  
  static int parse_settings(struct common_req_info *req_info,
- 			  struct sk_buff *skb, struct genl_info *info,
- 			  const struct nlmsghdr *nlhdr)
- {
-+	struct settings_data *data =
-+		container_of(req_info, struct settings_data, reqinfo_base);
- 	struct nlattr *tb[ETHA_SETTINGS_MAX + 1];
+@@ -91,6 +93,7 @@ static int prepare_settings(struct common_req_info *req_info,
+ 	struct settings_data *data =
+ 		container_of(req_info, struct settings_data, reqinfo_base);
+ 	struct net_device *dev = data->repdata_base.dev;
++	const struct ethtool_ops *eops = dev->ethtool_ops;
+ 	u32 req_mask = req_info->req_mask;
  	int ret;
  
-+	data->privileged = ethnl_is_privileged(skb);
-+
- 	ret = genlmsg_parse(nlhdr, &ethtool_genl_family, tb,
- 			    ETHA_SETTINGS_MAX, get_settings_policy,
- 			    info ? info->extack : NULL);
-@@ -68,6 +75,16 @@ static int ethnl_get_link_ksettings(struct genl_info *info,
- 	return ret;
- }
- 
-+static int ethnl_get_wol(struct genl_info *info, struct net_device *dev,
-+			 struct ethtool_wolinfo *wolinfo)
-+{
-+	int ret = __ethtool_get_wol(dev, wolinfo);
-+
-+	if (ret < 0)
-+		ETHNL_SET_ERRMSG(info, "failed to retrieve wol info");
-+	return ret;
-+}
-+
- static int prepare_settings(struct common_req_info *req_info,
- 			    struct genl_info *info)
- {
-@@ -100,6 +117,11 @@ static int prepare_settings(struct common_req_info *req_info,
- 		ethnl_bitmap_to_u32(data->ksettings.link_modes.lp_advertising,
- 				    __ETHTOOL_LINK_MODE_MASK_NWORDS);
+@@ -122,6 +125,12 @@ static int prepare_settings(struct common_req_info *req_info,
+ 		if (ret < 0)
+ 			req_mask &= ~ETH_SETTINGS_IM_WOLINFO;
  	}
-+	if (req_mask & ETH_SETTINGS_IM_WOLINFO) {
-+		ret = ethnl_get_wol(info, dev, &data->wolinfo);
-+		if (ret < 0)
-+			req_mask &= ~ETH_SETTINGS_IM_WOLINFO;
++	if (req_mask & ETH_SETTINGS_IM_MSGLEVEL) {
++		if (eops->get_msglevel)
++			data->msglevel = eops->get_msglevel(dev);
++		else
++			req_mask &= ~ETH_SETTINGS_IM_MSGLEVEL;
 +	}
  	ethnl_after_ops(dev);
  
  	data->repdata_base.info_mask = req_mask;
-@@ -147,6 +169,12 @@ static int link_modes_size(const struct ethtool_link_ksettings *ksettings,
- 	return len;
- }
- 
-+static int wol_size(void)
-+{
-+	return nla_total_size(nla_total_size(sizeof(struct nla_bitfield32)) +
-+			      nla_total_size(SOPASS_MAX));
-+}
-+
- /* To keep things simple, reserve space for some attributes which may not
-  * be added to the message (e.g. ETHA_SETTINGS_SOPASS); therefore the length
-  * returned may be bigger than the actual length of the message sent
-@@ -168,6 +196,8 @@ static int settings_size(const struct common_req_info *req_info)
- 			return ret;
- 		len += ret;
+@@ -198,6 +207,8 @@ static int settings_size(const struct common_req_info *req_info)
  	}
-+	if (info_mask & ETH_SETTINGS_IM_WOLINFO)
-+		len += wol_size();
+ 	if (info_mask & ETH_SETTINGS_IM_WOLINFO)
+ 		len += wol_size();
++	if (info_mask & ETH_SETTINGS_IM_MSGLEVEL)
++		len += nla_total_size(sizeof(struct nla_bitfield32));
  
  	return len;
  }
-@@ -227,6 +257,32 @@ static int fill_link_modes(struct sk_buff *skb,
- 	return 0;
- }
- 
-+static int fill_wolinfo(struct sk_buff *skb,
-+			const struct ethtool_wolinfo *wolinfo, bool privileged)
-+{
-+	struct nlattr *nest = ethnl_nest_start(skb, ETHA_SETTINGS_WOL);
-+
-+	if (!nest)
-+		return -EMSGSIZE;
-+	if (nla_put_bitfield32(skb, ETHA_WOL_MODES, wolinfo->wolopts,
-+			       wolinfo->supported))
-+		goto err;
-+	/* ioctl() restricts read access to wolinfo but the actual
-+	 * reason is to hide sopass from unprivileged users; netlink
-+	 * can show wol modes without sopass
-+	 */
-+	if (privileged &&
-+	    nla_put(skb, ETHA_WOL_SOPASS, sizeof(wolinfo->sopass),
-+		    wolinfo->sopass))
-+		goto err;
-+	nla_nest_end(skb, nest);
-+	return 0;
-+
-+err:
-+	nla_nest_cancel(skb, nest);
-+	return -EMSGSIZE;
-+}
-+
- static int fill_settings(struct sk_buff *skb,
- 			 const struct common_req_info *req_info)
- {
-@@ -247,6 +303,11 @@ static int fill_settings(struct sk_buff *skb,
+@@ -308,6 +319,11 @@ static int fill_settings(struct sk_buff *skb,
  		if (ret < 0)
  			return ret;
  	}
-+	if (info_mask & ETH_SETTINGS_IM_WOLINFO) {
-+		ret = fill_wolinfo(skb, &data->wolinfo, data->privileged);
-+		if (ret < 0)
-+			return ret;
++	if (info_mask & ETH_SETTINGS_IM_MSGLEVEL) {
++		if (nla_put_bitfield32(skb, ETHA_SETTINGS_MSGLEVEL,
++				       data->msglevel, NETIF_MSG_ALL))
++			return -EMSGSIZE;
 +	}
  
  	return 0;
