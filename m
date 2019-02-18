@@ -2,120 +2,150 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8352FC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCE8C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:50:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FDA8217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:50:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550512223;
-	bh=jRZeoTFlKyXvf/zLxsbrmXQfvKgjmaZRswVDpAZdZy4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=LrJ4M/KBYBEGr53mlJHI1MiNZx9oJ0BYOccuRZkD8ddU5Nd5NM12qM5D2dw32lq4q
-	 xXIImo+AEDIWp3Ua1oYgqS9mcl8YFCcHiq/9K1DckdaW5S6AGdl860nWL6AFhlzksh
-	 Nuz4tBYb90FyHqyKdj2KBn06eldUtKZ7dz0uDTNc=
+	by mail.kernel.org (Postfix) with ESMTP id C627B217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:50:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391421AbfBRRuV (ORCPT
+        id S2391460AbfBRRuc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 12:50:21 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55244 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389827AbfBRRuV (ORCPT
+        Mon, 18 Feb 2019 12:50:32 -0500
+Received: from gateway23.websitewelcome.com ([192.185.49.180]:24652 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732914AbfBRRub (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 12:50:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=wUM7cc3kcAaNGX8m52ndMeki5M7z/2TxPAmJdk/6L1c=; b=DDe2riewxv/XliYCdtyFQZ4IV
-        jNbUgOzrymlBJrDOKXWePKMojIZ5Px1Uqq2a7+YwQJzG0CIK6strAVo+2Y6CxpL95VsGirlse/qbk
-        crWIleSe7FwBVOhfLJz11/5PRC8/QH7K57rt2CqzOVYN61rNPw2yRNGcsvhtlPzqgKbGU=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gvn3U-0001No-CY; Mon, 18 Feb 2019 17:50:12 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id BEEE41128008; Mon, 18 Feb 2019 17:50:10 +0000 (GMT)
-Date:   Mon, 18 Feb 2019 17:50:10 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Daniel Baluta <daniel.baluta@nxp.com>,
-        "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "vicencb@gmail.com" <vicencb@gmail.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: simple-card: Fix refcount underflow
-Message-ID: <20190218175010.GB10794@sirena.org.uk>
-References: <20190216100927.10017-1-daniel.baluta@nxp.com>
- <87pnrp52jl.wl-kuninori.morimoto.gx@renesas.com>
- <87lg2d51lv.wl-kuninori.morimoto.gx@renesas.com>
- <b4bee8ff1307004ec9d1122f70ab2cb0d636ea4a.camel@nxp.com>
- <s5hpnrp8ret.wl-tiwai@suse.de>
+        Mon, 18 Feb 2019 12:50:31 -0500
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 3A29C10131
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 11:50:30 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id vn3mgHauliQervn3mgVsqD; Mon, 18 Feb 2019 11:50:30 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.119.20] (port=34682 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gvn3l-004MnZ-Ry; Mon, 18 Feb 2019 11:50:29 -0600
+Subject: Re: [PATCH] watchdog: pc87413: Mark expected switch fall-through
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+References: <20190214202618.GA18658@embeddedor>
+ <d7065d30-d56b-1b76-cfc6-e209aadc61c0@roeck-us.net>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <81ad685a-054c-6d5d-4501-ca983da0fc9d@embeddedor.com>
+Date:   Mon, 18 Feb 2019 11:50:28 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="aM3YZ0Iwxop3KEKx"
-Content-Disposition: inline
-In-Reply-To: <s5hpnrp8ret.wl-tiwai@suse.de>
-X-Cookie: Take an astronaut to launch.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <d7065d30-d56b-1b76-cfc6-e209aadc61c0@roeck-us.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.119.20
+X-Source-L: No
+X-Exim-ID: 1gvn3l-004MnZ-Ry
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:34682
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 12
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---aM3YZ0Iwxop3KEKx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Mon, Feb 18, 2019 at 08:52:26AM +0100, Takashi Iwai wrote:
-> Daniel Baluta wrote:
+On 2/18/19 10:09 AM, Guenter Roeck wrote:
+> On 2/14/19 12:26 PM, Gustavo A. R. Silva wrote:
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch
+>> cases where we are expecting to fall through.
+>>
+>> This patch fixes the following warning:
+>>
+>> drivers/watchdog/pc87413_wdt.c: In function ‘pc87413_ioctl’:
+>> drivers/watchdog/pc87413_wdt.c:439:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>     pc87413_refresh();
+>>     ^~~~~~~~~~~~~~~~~
+>> drivers/watchdog/pc87413_wdt.c:441:2: note: here
+>>    case WDIOC_GETTIMEOUT:
+>>    ^~~~
+>>
+>> Warning level 3 was used: -Wimplicit-fallthrough=3
+>>
+>> Notice that, in this particular case, the code comment is modified
+>> in accordance with what GCC is expecting to find.
+>>
+>> This patch is part of the ongoing efforts to enable
+>> -Wimplicit-fallthrough.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> 
 
-> > > Fixes: commit da215354eb55c ("ASoC: simple-card: merge simple-scu-
-> > > card")
+Thanks, Guenter.
 
-> > Thanks! I thought about adding this but the current patch will not
-> > cleanly apply because of:
-
-> > 2d01a84605a55c ("ASoC: simple-card: reduce naming prefix")
-
-That doesn't matter for fixes tags.  However...
-
-> Yeah, it's a bit tricky because of the code change at this time.
-
-> At best, send two patches, once for 5.0 and once for 5.1, and let Mark
-> apply both of them and do the empty merge from 5.0 to 5.1, or let him
-> resolve the merge conflict by applying manually the 5.1 patch.
-
-...since this is something that needs to be fixed for v5.0 we need a
-patch that can be applied on v5.0 (and has been tested by someone who
-sees the issue there).  Takashi's plan seems like a good way to do that,
-if you could send a patch against my for-5.0 branch (or just Linus'
-tree) that'd be great.
-
---aM3YZ0Iwxop3KEKx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxq8FIACgkQJNaLcl1U
-h9B58Qf+I/VpXqp+ASMjZ2UG85bKjLNGgZTHGDBbBYTTHLdWKjUrcyZqeiZ5A/lJ
-DxUx8EIo+4PbmytunRjAvZHyp3K9s/6ozEyj4qbyCe81YyE2cqNQopHkucIA0b+X
-nwyse/s7n7QqFjkFgTd4WNkveRowP/CvV4FzfucxBRKoL/5AkpGFkfDAGNTY6RDb
-M5xpiDeUErV52RCFuZ7rwGNh57G4RVFnKcQV507ZuwxVlZ4kl++QdyeAHMGDlnXS
-sUc3GXS4QzMCuTYUUW4aR+FkBjvFitc/3q1MTqQ8UytaiyGNIgqIYOjSHkhDFZIa
-pBqnUzari84A+/+ehuQbJNUUeo9y9Q==
-=dxr7
------END PGP SIGNATURE-----
-
---aM3YZ0Iwxop3KEKx--
+--
+Gustavo
