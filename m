@@ -2,196 +2,162 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF441C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 11:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC7D8C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 11:14:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 979BA2173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 11:12:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BC67217F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 11:14:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="SN/xW1TU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729722AbfBRLM2 (ORCPT
+        id S1729647AbfBRLO3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 06:12:28 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:42224 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729013AbfBRLM1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 06:12:27 -0500
-Received: by mail-ed1-f67.google.com with SMTP id j89so4084420edb.9
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 03:12:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+m3L/IeBglQAy401vuVM/5Heee7mjNGQdnMC755SIlk=;
-        b=o/E2UfvAh7a3v+OpyJc8ST1janLbZBBkkIy3VMliFRQyhZOd2JO4sNTVAG8pDA1CQ9
-         EqM74Gty4EVpY6krpLY2JDTVBmh8LgOomNHvtgFDwoUBlQeEBmHy06ZXqvs0eEWKUcQ1
-         MLgA455t/0GQq/kcfFdxRaoPKongsbmWSA8KGDs0flHPTgfAX0+jkfUf4O0gUFIOsw02
-         BrQYYV+qh0Cb7+pdiTX00AhI8c+w9T92HT9uQg/zx6wzsttw1Gkn0drqEaYJd9HB5GtY
-         3hLaFT2V208o8ptEFWsLX13BZSpNZKoTkklN5ZFD/+yRwvPn+ayegIQLtMiFU3dHUSRk
-         Cu3g==
-X-Gm-Message-State: AHQUAuZKt6tirnXbWP4MGoMXKm1j9veBnvtKta+duxAHyJeodM/P72eD
-        PL3jUenbtBn4iS7bDMU9pbArPw==
-X-Google-Smtp-Source: AHgI3IbKWh6UvsEcQVf/n/xppbKWEULDYt/0ytXbsBMc4f/d+MSs5UsEa5TKY7qVPzwKJjl58pHQnw==
-X-Received: by 2002:a50:ed81:: with SMTP id h1mr11933707edr.145.1550488345346;
-        Mon, 18 Feb 2019 03:12:25 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id j46sm2588236ede.6.2019.02.18.03.12.24
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Feb 2019 03:12:24 -0800 (PST)
-Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
- LEDs
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Yauhen Kharuzhy <jekhor@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-References: <3d5407a7-9458-f071-a1d5-511b09678e20@gmail.com>
- <87a21c4e-8e5e-c180-2ff3-eb8170746e71@redhat.com>
- <80971bc3-1193-83ed-913a-12f6217016c8@gmail.com>
- <b15fd048-8206-4057-a354-07dc14ca15e3@redhat.com>
- <8a263266-a41f-c916-e990-02d04de9b5d0@gmail.com>
- <af5bec7b-0da1-ee19-cdf4-0240f56221ad@redhat.com>
- <20190216193727.GA14305@amd>
- <7be63b6b-8d8d-90b8-fb17-d219b87a101f@redhat.com>
- <20190217000851.GA29803@amd>
- <81cc42f5-1f3d-c7f2-eb13-c2f8c4f9bfb4@redhat.com>
- <20190217174549.GA13301@amd>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <98896f2f-1752-d52a-f755-3daa3b29a83f@redhat.com>
-Date:   Mon, 18 Feb 2019 12:12:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <20190217174549.GA13301@amd>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+        Mon, 18 Feb 2019 06:14:29 -0500
+Received: from mail-eopbgr70077.outbound.protection.outlook.com ([40.107.7.77]:51376
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727058AbfBRLO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 06:14:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector1-arm-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=v+kg+3SUn8YALUSgNr6Ir2VTidISkCWDI/Gzi//ZmY4=;
+ b=SN/xW1TUIgRvUHT4QCEAi3CoxJtju28dlN8M3Hw3TvAvXRuDhqkaCc/9G6l3cnnmbQ5IudTMqJFV+OiGOpH4UwqGrMm7JGteNIBYw11kRUAquwsDcBx0NzfkxZuTe3u2Au8Lhr692ebSbmAI08FnLosDacpjBzfjn/b5ffCVpjI=
+Received: from VI1PR08MB3742.eurprd08.prod.outlook.com (20.178.15.26) by
+ VI1PR08MB4592.eurprd08.prod.outlook.com (20.178.13.90) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.18; Mon, 18 Feb 2019 11:14:24 +0000
+Received: from VI1PR08MB3742.eurprd08.prod.outlook.com
+ ([fe80::2508:8790:80cb:2f91]) by VI1PR08MB3742.eurprd08.prod.outlook.com
+ ([fe80::2508:8790:80cb:2f91%6]) with mapi id 15.20.1622.018; Mon, 18 Feb 2019
+ 11:14:24 +0000
+From:   Mark Rutland <Mark.Rutland@arm.com>
+To:     Steven Price <Steven.Price@arm.com>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "x86@kernel.org" <x86@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <Catalin.Marinas@arm.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Will Deacon <Will.Deacon@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        =?iso-8859-1?Q?J=E9r=F4me_Glisse?= <jglisse@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        James Morse <James.Morse@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 03/13] mm: Add generic p?d_large() macros
+Thread-Topic: [PATCH 03/13] mm: Add generic p?d_large() macros
+Thread-Index: AQHUxVB13qXbZZSGCkaNmBP9ni6xCaXla5CA
+Date:   Mon, 18 Feb 2019 11:14:23 +0000
+Message-ID: <20190218111421.GC8036@lakrids.cambridge.arm.com>
+References: <20190215170235.23360-1-steven.price@arm.com>
+ <20190215170235.23360-4-steven.price@arm.com>
+In-Reply-To: <20190215170235.23360-4-steven.price@arm.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+x-originating-ip: [217.140.106.52]
+x-clientproxiedby: LO2P265CA0014.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:62::26) To VI1PR08MB3742.eurprd08.prod.outlook.com
+ (2603:10a6:803:bc::26)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Mark.Rutland@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c9d66bc4-5040-437a-c302-08d695923cba
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR08MB4592;
+x-ms-traffictypediagnostic: VI1PR08MB4592:
+x-ms-exchange-purlcount: 1
+x-microsoft-exchange-diagnostics: 1;VI1PR08MB4592;20:+LaEaSls8RFdyZp8JCBePq6fsER350oifRElVu9PkeUYOE/7f3GTgIqhWjdnfX43V29xc4fvgR4rxCrZOEmEGVda7y/DHstmUdlbctibbDGiuKiNgGE0S+NXJyhqmQeOEj+wKN3NZZjarYEY7OlurQ93avcj6ZcqoI2bn7t0gSA=
+x-microsoft-antispam-prvs: <VI1PR08MB45924F5EC4EE6FB3B2955EBB84630@VI1PR08MB4592.eurprd08.prod.outlook.com>
+x-forefront-prvs: 09525C61DB
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(136003)(346002)(376002)(39860400002)(40434004)(199004)(189003)(6436002)(81166006)(8676002)(478600001)(4326008)(71200400001)(446003)(6512007)(11346002)(102836004)(6246003)(6862004)(5024004)(14444005)(256004)(6306002)(76176011)(99286004)(68736007)(476003)(6506007)(386003)(71190400001)(316002)(81156014)(58126008)(7736002)(54906003)(966005)(8936002)(2906002)(14454004)(72206003)(86362001)(5660300002)(305945005)(1076003)(186003)(97736004)(106356001)(7416002)(52116002)(26005)(105586002)(3846002)(6116002)(6636002)(486006)(33656002)(44832011)(53936002)(6486002)(66066001)(25786009)(229853002)(18370500001)(41533002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB4592;H:VI1PR08MB3742.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: AW0NrUKeAakbjy85/NBtXV21wpnIrAjcnMTJU2xeRwfixyvWPMmDLEsQ+HU6JUpWjf1tuLdBuvMHR8TwqKjwoxasfgSsJLCnWaIoAGesRuYuwOpvnTqA5SMecKsV1+gJjs+2AVmyk4pOcra2JDONbm5Z/ZcRk+e8ngxULwYR5YfjWCvndTtm5L4i5TPrdvqSE7oe9nl7Op7I3THsq9zNEKu8agrWySFq2YJ1Chb0ee1JtfOV+R/VFAyChasBrDpouX46iQ9yWzy4IHHNb2Lh9GRViy5YA5AjbIkjwoHa26EXPUtEjMThux4KGLRsV+aREjcPe5ddvpRJCb0gAGif4dm1C0cYXy6Sy8htmfGn/RwXs5pZYhMNCTwmMFrJJpFk4wZWVWPv2lKk4RI75wGa5Eh9OzWYmGY1v8Uuc2hQGnU=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <1EAE3F73B7FC5443939FAD57784A5865@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9d66bc4-5040-437a-c302-08d695923cba
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2019 11:14:23.0296
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB4592
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, Feb 15, 2019 at 05:02:24PM +0000, Steven Price wrote:
+> From: James Morse <james.morse@arm.com>
+>
+> Exposing the pud/pgd levels of the page tables to walk_page_range() means
+> we may come across the exotic large mappings that come with large areas
+> of contiguous memory (such as the kernel's linear map).
+>
+> For architectures that don't provide p?d_large() macros, provided a
+> does nothing default.
+>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+>  include/asm-generic/pgtable.h | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.=
+h
+> index 05e61e6c843f..7630d663cd51 100644
+> --- a/include/asm-generic/pgtable.h
+> +++ b/include/asm-generic/pgtable.h
+> @@ -1186,4 +1186,14 @@ static inline bool arch_has_pfn_modify_check(void)
+>  #define mm_pmd_folded(mm)__is_defined(__PAGETABLE_PMD_FOLDED)
+>  #endif
+>
+> +#ifndef pgd_large
+> +#define pgd_large(x)0
+> +#endif
+> +#ifndef pud_large
+> +#define pud_large(x)0
+> +#endif
+> +#ifndef pmd_large
+> +#define pmd_large(x)0
+> +#endif
 
-On 17-02-19 18:45, Pavel Machek wrote:
-> Hi!
-> 
->>> I see... and yes, that would be the easiest solution.
->>>
->>> But somehow I see "this LED is controlled by charging state" as
->>> primary and "it shows pulses instead of staying on" as secondary
->>> eye-candy.
->>>
->>> This week there was another driver for charger LED.. but that one does
->>> not do pulses. Ideally, we'd like consistent interface to the
->>> userland.
->>>
->>> (To make it complex, the other driver supports things like:
->>>    LED solid on -- fully charged
->>>    LED blinking slowly -- charging
->>>    LED blinking fast -- charge error
->>>    LED off -- not charging).
->>
->> Something like that could be supported with my original hw_pattern
->> proposal where we simply encode all of this in the hw-pattern file:
->>
->> tupple0: charging blinking_on_time
->> tupple1: charging blinking_off_time
->> tupple2: charging breathing_time
->> tupple3: manual blinking_on_time
->> tupple4: manual blinking_off_time
->> tupple5: manual breathing_time
-> 
-> So the userland would need to know "I'm on yoga, so 3rd tupple sets up
-> breathing when charging"?
+It might be worth a comment defining the semantics of these, e.g. how
+they differ from p?d_huge() and p?d_trans_huge().
 
-Yes this is for the hw_pattern file not the regular pattern file and if I've
-understood things correctly then the hw_pattern file is often (always?)
-specific to the LED controller model. See e.g. :
-Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+Thanks,
+Mark.
 
-Also userland is not really expected to touch this, the user himself
-could touch it if he/she wants to customize things.
-
->> So for this chip you mention, we do not need the breathing time (no breathing support),
->> so we would get the following tupples:
->>
->> tupple0: not charging blinking_on_time
->> tupple1: not charging blinking_off_time
->> tupple2: slow charging blinking_on_time
->> tupple3: slow charging blinking_off_time
->> tupple4: fast charging blinking_on_time
->> tupple5: fast charging blinking_off_time
->> tupple6: charging error blinking_on_time
->> tupple7: charging error blinking_off_time
-> 
-> Patterns and their meanings are fixed (or almost) on that driver, so
-> fortunately that will not be neccessary.
-
-Ok, so back the Whiskey Cove PMIC LED controller, I think
-there was some agreement to add a hw_control sysfs
-attribute and simplify the hw_pattern ABI to:
-
-tupple0: blinking_on_time
-tupple1: blinking_off_time
-tupple2: breathing_time
-
-You suggested adding support for a hw_control
-sysfs attribute to the core, activated by a flag.
-
-I assume that there will then be a callback into the
-driver when that file gets written. The semantics for
-the Whiskey Cove PMIC LED controller are clear, but
-how should the patch adding support for this to the LED core
-describe the new hw_control sysfs attribute in:
-Documentation/ABI/testing/sysfs-class-led ?
-
-Or do you just want to have the basic handling in the
-core and then describe the semantics in a per LED controller
-way like how we do for hw_pattern, so for the
-Whiskey Cove PMIC LED controller we would add a:
-Documentation/ABI/testing/sysfs-class-led-cht-wc
-file, which we need to do anyways for the hw_pattern file?
-
-<snip stuff about N900>
-
-Regards,
-
-Hans
-
-
-
-
-> 
->> Where by solid on/off can be done by setting one
->> of the blinking times to 0.
->>
->> Having hw_pattern ABIs like this where some of
->> the tupples only activate on certain conditions
->> might be better then a hardware_control sysfs
->> file as it offers more flexibility.
-> 
-> Agreed about flexibility, but I don't think it does enough to provide
-> hardware abstraction. It might be too much flexibility.
-> 
-> Also it only works with hw controlled LEDs.
-> 
-> With RGB LED multiple patterns per LED make a lot of sense (as there's
-> typically just one led.
-> 
-> For example on N900, we have
-> 
-> green: fully charged.
-> yellow pulsing: charging.
-> solid yellow: hardware feature, emergency charging.
-> white pulsing: happy phone, no events
-> blue fast pulses: message waiting
-> 
-> On N900, I'm handling that in userspace, but...
-> 
-> Best regards,
-> 									Pavel
-> 
+> +
+>  #endif /* _ASM_GENERIC_PGTABLE_H */
+> --
+> 2.20.1
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+IMPORTANT NOTICE: The contents of this email and any attachments are confid=
+ential and may also be privileged. If you are not the intended recipient, p=
+lease notify the sender immediately and do not disclose the contents to any=
+ other person, use it for any purpose, or store or copy the information in =
+any medium. Thank you.
