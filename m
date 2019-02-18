@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E56FDC10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF123C10F02
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:18:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B89E52177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:18:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A67EA2177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:18:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499519;
-	bh=3TLcunzvaty7vMQCH5ezlUG7mPU8Lm6jjSxQoP33T8w=;
+	s=default; t=1550499525;
+	bh=V9WzqRCRE5udLyTFg2wVqacKjLnDU7NibAWq64ci1Ew=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AtHrjX602oLfWoOYPY3ZOa3AoMbaFSCKuakeOenMA4NqnQzOco+ma5WcegxkiCkwC
-	 CKURJ3V76kGVTAQgKSgZ2p6lB3ctBLq69bxzTDTl1NaRfgZG/21UkuNnIkdV963h2A
-	 T9KADDbkpxc9W0mjY5WCfrjcbq+g+y55X46AusOg=
+	b=r3mfJDqTpl0P/87dPeX5x7r5bPeE5VYksUKAshhc/8NgJAYL2lPtBrctHBmDTnP3f
+	 PTo5qzi4bU1vU9EbahXDuNyl1Qihd3CiRqA0nwE4EJhJ/qgiPVa8ETqkGCy2n+ysCb
+	 Lqy0SPaRsIJWbKTp8IzizkIRkjjIxkJXriYIWra4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391000AbfBROIp (ORCPT
+        id S2390337AbfBROSo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:08:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52032 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:18:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390093AbfBROIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:08:42 -0500
+        id S2390975AbfBROIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:08:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B15D21901;
-        Mon, 18 Feb 2019 14:08:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66F4D204FD;
+        Mon, 18 Feb 2019 14:08:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498921;
-        bh=3TLcunzvaty7vMQCH5ezlUG7mPU8Lm6jjSxQoP33T8w=;
+        s=default; t=1550498918;
+        bh=V9WzqRCRE5udLyTFg2wVqacKjLnDU7NibAWq64ci1Ew=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RD6Fe4pMe8H4rlzXURj5EVYoXgTHLTxWgkFJZWhBTfU6aqfs6sY52eL0cCDE13a9C
-         lrvJlDdWyCCFeAqRoaytAasfyknDjX8+rzNQ84xOSS2pNhfETN5Y3n3jj+luk6Oecj
-         r0ZxVEA+UwohN8CAdAzNeKevvwBAiCqxdQ31kWUE=
+        b=z1Ctuu6XGG4webLcmix9oDqrcXpYYem0iRmV/D2f0mdGVes7Kq1d/S/COZDgN4wCs
+         R1IqPsAd/Z8VmapdscRN5CZ1cHCtt82fk8RlhEbCCGMSx+rsL8EVZnxUDAZqwXuw7g
+         4KlpEjJi1n0ADslO/iopTn8VHdm79Z3ELANXVfs4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yufen Wang <wangyufen@huawei.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
+        Thomas Gleixner <tglx@linutronix.de>, peterz@infradead.org,
+        tj@kernel.org, johannes.berg@intel.com,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 002/108] ARM: 8808/1: kexec:offline panic_smp_self_stop CPU
-Date:   Mon, 18 Feb 2019 14:42:58 +0100
-Message-Id: <20190218133519.639416387@linuxfoundation.org>
+Subject: [PATCH 3.18 019/108] timekeeping: Use proper seqcount initializer
+Date:   Mon, 18 Feb 2019 14:43:15 +0100
+Message-Id: <20190218133520.397474840@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -66,61 +67,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 82c08c3e7f171aa7f579b231d0abbc1d62e91974 ]
+[ Upstream commit ce10a5b3954f2514af726beb78ed8d7350c5e41c ]
 
-In case panic() and panic() called at the same time on different CPUS.
-For example:
-CPU 0:
-  panic()
-     __crash_kexec
-       machine_crash_shutdown
-         crash_smp_send_stop
-       machine_kexec
-         BUG_ON(num_online_cpus() > 1);
+tk_core.seq is initialized open coded, but that misses to initialize the
+lockdep map when lockdep is enabled. Lockdep splats involving tk_core seq
+consequently lack a name and are hard to read.
 
-CPU 1:
-  panic()
-    local_irq_disable
-    panic_smp_self_stop
+Use the proper initializer which takes care of the lockdep map
+initialization.
 
-If CPU 1 calls panic_smp_self_stop() before crash_smp_send_stop(), kdump
-fails. CPU1 can't receive the ipi irq, CPU1 will be always online.
-To fix this problem, this patch split out the panic_smp_self_stop()
-and add set_cpu_online(smp_processor_id(), false).
+[ tglx: Massaged changelog ]
 
-Signed-off-by: Yufen Wang <wangyufen@huawei.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: peterz@infradead.org
+Cc: tj@kernel.org
+Cc: johannes.berg@intel.com
+Link: https://lkml.kernel.org/r/20181128234325.110011-12-bvanassche@acm.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/kernel/smp.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ kernel/time/timekeeping.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
-index a8e32aaf0383..bae65844ff03 100644
---- a/arch/arm/kernel/smp.c
-+++ b/arch/arm/kernel/smp.c
-@@ -658,6 +658,21 @@ void smp_send_stop(void)
- 		pr_warn("SMP: failed to stop secondary CPUs\n");
- }
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 70e3e6ae06d2..05397615d048 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -39,7 +39,9 @@
+ static struct {
+ 	seqcount_t		seq;
+ 	struct timekeeper	timekeeper;
+-} tk_core ____cacheline_aligned;
++} tk_core ____cacheline_aligned = {
++	.seq = SEQCNT_ZERO(tk_core.seq),
++};
  
-+/* In case panic() and panic() called at the same time on CPU1 and CPU2,
-+ * and CPU 1 calls panic_smp_self_stop() before crash_smp_send_stop()
-+ * CPU1 can't receive the ipi irqs from CPU2, CPU1 will be always online,
-+ * kdump fails. So split out the panic_smp_self_stop() and add
-+ * set_cpu_online(smp_processor_id(), false).
-+ */
-+void panic_smp_self_stop(void)
-+{
-+	pr_debug("CPU %u will stop doing anything useful since another CPU has paniced\n",
-+	         smp_processor_id());
-+	set_cpu_online(smp_processor_id(), false);
-+	while (1)
-+		cpu_relax();
-+}
-+
- /*
-  * not supported here
-  */
+ static DEFINE_RAW_SPINLOCK(timekeeper_lock);
+ static struct timekeeper shadow_timekeeper;
 -- 
 2.19.1
 
