@@ -3,159 +3,151 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DEA3C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CAB3C10F01
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:48:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47EEA2184A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:47:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="eRuMP2LW"
+	by mail.kernel.org (Postfix) with ESMTP id 39B8520C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:48:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550504908;
+	bh=Xd/iRCsn6/K7S0Mk6bCD41qjZY2c6p/jhPrQwc8FyMM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=OjVS1CpInOfp4hA90zQNzohba6o7wGFhM5E14elAzEi75Kb7/5+SUiUUpBXaL6QUR
+	 gCvpByz5+TzAflyTx83sHvqcWeoiss5JTA6+c2xX4VwaBk1yuExsZJ9tCLdTx4SkXM
+	 u885XNCL1/SxEzFKSAThfA5V1MzmXzFJ/r1v5fbY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387740AbfBRPrZ (ORCPT
+        id S2387700AbfBRPs1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 10:47:25 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:35508 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728873AbfBRPrZ (ORCPT
+        Mon, 18 Feb 2019 10:48:27 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:43504 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726535AbfBRPs0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 10:47:25 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1IFde9P120594;
-        Mon, 18 Feb 2019 15:47:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=qtCMuks1r6QRCTuDpQwz/YqR7y9/vntSZBbqdG7n0QU=;
- b=eRuMP2LWvB6EG3gJXjJSXZX+bFWhfL7Fg0kJgaREL9b9GNMIWEdJGYbNMH68JbUkk4ci
- tGxRtOHZcv2YHJwqqVBeIEUTCDoN3tFjDrwb0hZGFyLJ3RZVRhhxh9O/xBqLUvP6JMCA
- ariH6WjW74J6c9dfY7L0gS3b6Xlynw3275V+UunkgRc8m43KYEBzyPiAuhGSrFQE92mf
- T5fBGMwbTthol2iSp3FdRm7+L8GNK8NjBw59sn8UoVKMGA9kAOvYRjNesqaU7xiZbOQK
- Q8mhDVbRi8/TtFtcZMXRFj4YMuEtfd6hL8h0Gtma3bt9oLet7lk+ZDH1fFMbv1f82I9w TQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2qpb5r6s25-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 18 Feb 2019 15:47:15 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1IFlETg025589
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 18 Feb 2019 15:47:14 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1IFlDDN020763;
-        Mon, 18 Feb 2019 15:47:13 GMT
-Received: from kadam (/197.157.0.22)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 18 Feb 2019 07:47:12 -0800
-Date:   Mon, 18 Feb 2019 18:47:03 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     James Bottomley <jejb@linux.ibm.com>
-Cc:     Walter Harms <wharms@bfs.de>,
-        Colin King <colin.king@canonical.com>,
-        Jianyun Li <jyli@marvell.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: mvumi: fix 32 bit shift of a 32 bit unsigned int
-Message-ID: <20190218154703.GR2304@kadam>
-References: <1596625925.142066.1550334436646@ox-groupware.bfs.de>
- <20190218093710.GB17104@kadam>
- <1550503925.2834.3.camel@linux.ibm.com>
+        Mon, 18 Feb 2019 10:48:26 -0500
+Received: by mail-ot1-f67.google.com with SMTP id n71so28948985ota.10;
+        Mon, 18 Feb 2019 07:48:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Y6yxkg7qrm3Yj/JlHLGtkgFxQYAdQMcxpMZZhqrjvyc=;
+        b=Tm9qa6YjaXYv3l53Vgx+OP4PLQkHM2SIgnOHKcO41hGv32BcRUDgWtKBzlSDg34PbR
+         6NEwVkwrMxmYvXP92lXuyLcR1+JCYsfbD6MU8/LvA1uUEI4SYIakVurTGgkolyMbjSpZ
+         CRbKpE+owc32+vnIf2pB7ANENl9ph50OmHfJQhLmy9Q4CwMPIW0xjksEwhyQV3x4rG3m
+         C1wsWyj0zsDI2fnAWLnOPnrGs/Q2ozB7gaYpKjEF7QHT+WU9appI8eSg4b8nL9gZ0r1k
+         qrhUqArmICV4Zc23vVjg/mVoxsBx2vt2iFtYQYn4JQbsfSv9t+Rk+tuViPeFQODd9XXE
+         +hPw==
+X-Gm-Message-State: AHQUAuYHEb8QGc9qTQKbR6erv2zVuI2riMsRl0eQr07FZPaV2hgdotNj
+        plUkOj7SpXZuYSJm0Ah77w==
+X-Google-Smtp-Source: AHgI3IYwDLG9UKzh+4ytyV2W6xeyPi2GNZirFS/yQlzqBnFYv4s5jdqzanKWrjRhfZY443wznRPRiQ==
+X-Received: by 2002:aca:4a15:: with SMTP id x21mr14156415oia.122.1550504905275;
+        Mon, 18 Feb 2019 07:48:25 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id k16sm5814336otl.58.2019.02.18.07.48.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Feb 2019 07:48:24 -0800 (PST)
+Date:   Mon, 18 Feb 2019 09:48:23 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     Erin Lo <erin.lo@mediatek.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        devicetree@vger.kernel.org,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, yingjoe.chen@mediatek.com,
+        mars.cheng@mediatek.com, eddie.huang@mediatek.com,
+        linux-clk@vger.kernel.org, Zhiyong Tao <zhiyong.tao@mediatek.com>
+Subject: Re: [PATCH v7 3/6] dt-bindings: pinctrl: mt8183: add binding document
+Message-ID: <20190218154823.GA2714@bogus>
+References: <1550210558-30516-1-git-send-email-erin.lo@mediatek.com>
+ <1550210558-30516-4-git-send-email-erin.lo@mediatek.com>
+ <2b221339-3933-2a25-ab60-d4d772d2873a@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1550503925.2834.3.camel@linux.ibm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9170 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902180117
+In-Reply-To: <2b221339-3933-2a25-ab60-d4d772d2873a@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 07:32:05AM -0800, James Bottomley wrote:
-> On Mon, 2019-02-18 at 12:37 +0300, Dan Carpenter wrote:
-> > On Sat, Feb 16, 2019 at 05:27:16PM +0100, Walter Harms wrote:
-> > > Am 16.02.2019 15:44, schrieb Colin King:
-> > > > From: Colin Ian King <colin.king@canonical.com>
-> > > > 
-> > > > Currently m_sg->baseaddr_h (a 32 bit unsigned int) is being
-> > > > shifted by a
-> > > > total of 32 bits; this always produces a 0 result.  Fix this by
-> > > > casting
-> > > > it to a dma_addr_t (a 64 bit unsigned int) before performing the
-> > > > shift.
-> > > > 
-> > > > Detected by CoverityScan, CID#147270 ("Operands don't affect
-> > > > result")
-> > > > 
-> > > > Fixes: f0c568a478f0 ("[SCSI] mvumi: Add Marvell UMI driver")
-> > > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > > > ---
-> > > >  drivers/scsi/mvumi.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/scsi/mvumi.c b/drivers/scsi/mvumi.c
-> > > > index 36f64205ecfa..d3582accfd09 100644
-> > > > --- a/drivers/scsi/mvumi.c
-> > > > +++ b/drivers/scsi/mvumi.c
-> > > > @@ -313,7 +313,7 @@ static void mvumi_delete_internal_cmd(struct
-> > > > mvumi_hba
-> > > > *mhba,
-> > > >  			sgd_getsz(mhba, m_sg, size);
-> > > >  
-> > > >  			phy_addr = (dma_addr_t) m_sg->baseaddr_l 
-> > > > |
-> > > > -				(dma_addr_t) ((m_sg->baseaddr_h
-> > > > << 16) << 16);
-> > > > +				(((dma_addr_t) m_sg->baseaddr_h
-> > > > << 16) << 16);
-> > > >  
-> > > >  			dma_free_coherent(&mhba->pdev->dev,
-> > > > size, cmd->data_buf,
-> > > >  								
-> > > > phy_addr);
-> > > 
-> > > i would suggest to try a version with less casts to make it more
-> > > readable
-> > > like this untested suggestion:
-> > > 
-> > > phy_addr =(m_sg->baseaddr_h << 16)| m_sg->baseaddr_l;
-> > > phy_addr <<= 16;
-> > > 
-> > 
-> > That would be a behavior change but it also might be a bugfix?  Why
-> > doesn't the code just do:
-> > 
-> > 	phy_addr = ((dma_addr_t)m_sg->baseaddr_h << 32) | m_sg-
-> > >baseaddr_l;
-> > 
-> > (Probably they broke it up into two shifts to silence a GCC warning
-> > that the shift was wrong because of the missing cast?)
+On Fri, Feb 15, 2019 at 10:35:39AM +0100, Matthias Brugger wrote:
 > 
-> No because dma_addr_t can be 32 bits and the warning would then always
-> appear on some builds.  The << 16 << 16 makes sure it doesn't.
 > 
+> On 15/02/2019 07:02, Erin Lo wrote:
+> > From: Zhiyong Tao <zhiyong.tao@mediatek.com>
+> > 
+> > The commit adds mt8183 compatible node in binding document.
+> > 
+> > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+> > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> > ---
+> >  .../devicetree/bindings/pinctrl/pinctrl-mt8183.txt | 115 +++++++++++++++++++++
+> >  1 file changed, 115 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
+> > new file mode 100644
+> > index 0000000..364e673
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
+> > @@ -0,0 +1,115 @@
+> > +* Mediatek MT8183 Pin Controller
+> > +
+> > +The Mediatek's Pin controller is used to control SoC pins.
+> > +
+> > +Required properties:
+> > +- compatible: value should be one of the following.
+> > +	"mediatek,mt8183-pinctrl", compatible with mt8183 pinctrl.
+> > +- gpio-controller : Marks the device node as a gpio controller.
+> > +- #gpio-cells: number of cells in GPIO specifier. Since the generic GPIO
+> > +  binding is used, the amount of cells must be specified as 2. See the below
+> > +  mentioned gpio binding representation for description of particular cells.
+> > +- gpio-ranges : gpio valid number range.
+> > +- reg: physicall address base for gpio base registers. There are nine
+> 
+> s/physicall/physical
+> 
+> > +  physicall address base in mt8183. They are 0x10005000, 0x11F20000,
+> > +  0x11E80000, 0x11E70000, 0x11E90000, 0x11D30000, 0x11D20000, 0x11C50000,
+> > +  0x11F30000.
+> > +
+> > +	Eg: <&pio 6 0>
+> > +	<[phandle of the gpio controller node]
+> > +	[line number within the gpio controller]
+> > +	[flags]>
+> > +
+> > +	Values for gpio specifier:
+> > +	- Line number: is a value between 0 to 202.
+> > +	- Flags:  bit field of flags, as defined in <dt-bindings/gpio/gpio.h>.
+> > +            Only the following flags are supported:
+> > +            0 - GPIO_ACTIVE_HIGH
+> > +            1 - GPIO_ACTIVE_LOW
+> > +
+> > +Optional properties:
+> > +- reg-names: gpio base register names. There are nine gpio base register
+> > +  names in mt8183. They are "iocfg0", "iocfg1", "iocfg2", "iocfg3", "iocfg4",
+> > +  "iocfg5", "iocfg6", "iocfg7", "iocfg8".
+> > +- interrupt-controller: Marks the device node as an interrupt controller
+> > +- #interrupt-cells: Should be two.
+> > +- interrupts : The interrupt outputs from the controller.
+> 
+> we are missing interrupt-parent here.
 
-Yeah.  You're right.  Thanks.
+No, because interrupt-parent is implied and may be in a parent node.
 
-The original patch is the right fix.  Although it sort of feels like the
-double shift should be a macro.
+What's missing is how many interrupts and what are they? 
 
-/*
- * The dma_addr_t type can be either 32 or 64 bit.  Left shifting a 32
- * bit number is undefined so this do two 16 bit left shifts.
- *
- */
-#define DMA_LSHIFT_32(val) (((dma_addr_t)(val) << 16) << 16)
-
-regards,
-dan carpenter
-
-
+Rob
