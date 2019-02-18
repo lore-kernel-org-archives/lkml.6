@@ -2,118 +2,133 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03EC0C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7873FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:26:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4AF020675
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:24:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D28F21736
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:26:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WqQ/fiYI"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3BNieQk1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729719AbfBRKYL (ORCPT
+        id S1729833AbfBRK0W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 05:24:11 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55132 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726324AbfBRKYL (ORCPT
+        Mon, 18 Feb 2019 05:26:22 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:38708 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729359AbfBRK0W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 05:24:11 -0500
-Received: by mail-wm1-f67.google.com with SMTP id a62so16787980wmh.4
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 02:24:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BWGCuuvZHZX+r9SBWzJZUPE3587L0he98T9cKlhJ7WU=;
-        b=WqQ/fiYI1W/NqvA3bC+blsHRxWQivFovezYEdwbKlTnDDF/eK9nTJh8qUCBJGq1wtO
-         lx/ks1tMRIek41/LSRfkN/Z2rwVz50ni+5njrwn8z6z0Qc7YyuWLTigLIH9Yr8hBahB3
-         iVrhya9oyXHmw1J3Ftpd5LT0ULzjgs2AZ78N17XafaHniMWO2xZOimpCRclHbBB0eMrU
-         QdVGXKXpsS+p4z6zYv2sw2q20qIrlosK5wYQ0HMiYbdncOuWUE/sJQ/HvCivmUiCDxiN
-         /V8DSOMp33yP0l1EGrTKAHXJVK7EJTJIDqealytjBdtXTToIgOGPF8FchC0FrCPNJIy1
-         VJ6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BWGCuuvZHZX+r9SBWzJZUPE3587L0he98T9cKlhJ7WU=;
-        b=imP5lTck9FtEd/4n+Cdzdqd0a6Xfe/PgvScz1hS8aoPzhi4wqL6RAMPvnx5dgR4rEj
-         XcB9cCsWWiS46AR2rVFk8IIbnOEwf63zp7uiS7Dyv/QGpdZls369R+OzFJimnvD4APkA
-         9XAfh2VvblfmvzGyph+uATPF1Th8SxwWiePqDREKuv6fInfkzB6coEh8y0dY05zA3nMX
-         yGvjSZh+ORFO+ediIMs6le/wqzFihPFlv2T6VsXBKq/P6NPC3Jl/ySK9z0xDIgjD1VsG
-         /LNkDmbXbPd1N1lSCLVKfZwOwoihdJvkMjPfS2+Jqnm06gSEcveAG5ZPDFJTg+MONkbm
-         zamA==
-X-Gm-Message-State: AHQUAuZrweBQrzwftv1lbpuTXzkP66+ZYXkZWtKyD78s164EL0kWbqm6
-        p5e6QygQF+4rVoWSBtyFxLEXmQ==
-X-Google-Smtp-Source: AHgI3IaXEvSBf8pa3dI0wZwFVSlgVPULbTlPp4qE7PMeTn8wxyzciuQQhQF129LBi778p77wRjcFVA==
-X-Received: by 2002:a1c:f00a:: with SMTP id a10mr15188287wmb.148.1550485448147;
-        Mon, 18 Feb 2019 02:24:08 -0800 (PST)
-Received: from [192.168.0.41] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
-        by smtp.googlemail.com with ESMTPSA id a184sm18018534wmh.37.2019.02.18.02.24.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Feb 2019 02:24:07 -0800 (PST)
-Subject: Re: [PATCH v7 2/3] thermal: tegra: fix memory allocation
-To:     Wei Ni <wni@nvidia.com>, edubezval@gmail.com
-Cc:     thierry.reding@gmail.com, linux-tegra@vger.kernel.org,
-        rui.zhang@intel.com, srikars@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-References: <1546510369-28491-1-git-send-email-wni@nvidia.com>
- <1546510369-28491-3-git-send-email-wni@nvidia.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <e02ad969-129f-1967-57c2-78533e2c7dbe@linaro.org>
-Date:   Mon, 18 Feb 2019 11:24:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 18 Feb 2019 05:26:22 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1IANvFf057174;
+        Mon, 18 Feb 2019 10:26:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=MdctsrHLwoVfhEFYIwA5HozozuG7ovaT9mVdwrcmTE8=;
+ b=3BNieQk1ha6CffGkIjxQQFk2qzT9XgwR/265oTWSdf0pFYzN2lkXcWj0pxPwXk50l24N
+ 5pLOMvQ73GVVJzaSN2NVEVTvRgnap21zc/Un4mULeJI/P8dk+OpIYOUPcLk9MOB3M95d
+ SklDdkre5q2L6JNjuS8Z6ahvpYB/0CQcFkaFDZwUVJ2bhQUzc1ycCniZu/rnJdpvJS/J
+ ZDmMuEesUh/eqJQmG34/4PQgA0qsccOoRhme/cWDnEieWslZqtw69EqYJ7AXmnkHB3XS
+ zAF7shZUI/O1XBUgdhS0+oBhEQdtFD9fTY4FMklAs8p4ox481n26XXHqzg7fyF1NTdyA ng== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2qp9xtnhf2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 18 Feb 2019 10:26:14 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1IAQ7Po014421
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 18 Feb 2019 10:26:07 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1IAQ66t013344;
+        Mon, 18 Feb 2019 10:26:06 GMT
+Received: from kadam (/197.157.0.22)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 18 Feb 2019 02:26:05 -0800
+Date:   Mon, 18 Feb 2019 13:25:57 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Tariq Toukan <tariqt@mellanox.com>
+Cc:     Colin King <colin.king@canonical.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net/mlx4_en: fix spelling mistake: "quiting" ->
+ "quitting"
+Message-ID: <20190218102557.GC17104@kadam>
+References: <20190217230331.18678-1-colin.king@canonical.com>
+ <2a1a6636-7795-addb-d7b7-711a23dbafa5@mellanox.com>
 MIME-Version: 1.0
-In-Reply-To: <1546510369-28491-3-git-send-email-wni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2a1a6636-7795-addb-d7b7-711a23dbafa5@mellanox.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9170 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902180080
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/01/2019 11:12, Wei Ni wrote:
-> Fix memory allocation to store the pointers to
-> thermal_zone_device.
+On Mon, Feb 18, 2019 at 09:37:22AM +0000, Tariq Toukan wrote:
 > 
-> Signed-off-by: Wei Ni <wni@nvidia.com>
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> ---
-
-Good catch
-
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-
-
->  drivers/thermal/tegra/soctherm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-> index f07de8258e93..fd2703c0cfc5 100644
-> --- a/drivers/thermal/tegra/soctherm.c
-> +++ b/drivers/thermal/tegra/soctherm.c
-> @@ -1339,7 +1339,7 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
->  	}
->  
->  	tegra->thermctl_tzs = devm_kcalloc(&pdev->dev,
-> -					   soc->num_ttgs, sizeof(*z),
-> +					   soc->num_ttgs, sizeof(z),
->  					   GFP_KERNEL);
->  	if (!tegra->thermctl_tzs)
->  		return -ENOMEM;
+> On 2/18/2019 1:03 AM, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > There is a spelling mistake in a en_err error message. Fix it.
+> > 
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > ---
+> >   drivers/net/ethernet/mellanox/mlx4/en_netdev.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+> > index 6b88881b8e35..c1438ae52a11 100644
+> > --- a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+> > +++ b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+> > @@ -3360,7 +3360,7 @@ int mlx4_en_init_netdev(struct mlx4_en_dev *mdev, int port,
+> >   	dev->addr_len = ETH_ALEN;
+> >   	mlx4_en_u64_to_mac(dev->dev_addr, mdev->dev->caps.def_mac[priv->port]);
+> >   	if (!is_valid_ether_addr(dev->dev_addr)) {
+> > -		en_err(priv, "Port: %d, invalid mac burned: %pM, quiting\n",
+> > +		en_err(priv, "Port: %d, invalid mac burned: %pM, quitting\n",
+> >   		       priv->port, dev->dev_addr);
+> >   		err = -EINVAL;
+> >   		goto out;
+> > 
 > 
+> Hi Colin, thanks for your patch.
+> 
+> Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
+> 
+> I would suggest adding a Fixes line, but looking into the history of the 
+> typo, it went through many patches that modified this line but preserved 
+> the typo.
+> Actually, it dates back to the very first commit that introduces mlx4 
+> driver:
+> 
+> Patches history:
+> 2b3ddf27f48c net/mlx4_core: Replace VF zero mac with random mac in mlx4_core
+> ef96f7d46ad8 net/mlx4_en: Handle unassigned VF MAC address correctly
+> 6bbb6d99f3d2 net/mlx4_en: Optimize Rx fast path filter checks
+> 453a60827735 mlx4_en: Giving interface name in debug messages
+> c27a02cd94d6 mlx4_en: Add driver for Mellanox ConnectX 10GbE NIC
+> 
+> I'm not sure what the "Fixes:" policy is in these cases.
 
+I wouldn't necessarily put a Fixes tag on this, because does fixing the
+spelling really count as a bugfix?  It's borderline whether it's a fix
+or a cleanup.
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+regards,
+daan carpenter
