@@ -2,88 +2,95 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9ACFC4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:38:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0304FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B40BB20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:38:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550522314;
-	bh=D61QD1haHpNP+7nuWOaJbEqyRz7EpRfOyk5CudZjh6U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=XNrozdvKsgHnJdgKnqcXVzBlBL0LX8LmUb7iGyWQUVeAzgHFatHjnqsUtDz3Fbf1L
-	 xw4rPEsJCwCjM70V9ufECfYL1ZtqRxBT7S7DWbuZplQVjYuz2KaOYzgjlcQ3ngqKtX
-	 N4WXF1spv0sOhOgrCj8S5k4VdKrBtKGe1BvGNZd0=
+	by mail.kernel.org (Postfix) with ESMTP id C98BB217F9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:38:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pUf+pAaD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729684AbfBRUid (ORCPT
+        id S1729736AbfBRUiv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 15:38:33 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:42386 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726476AbfBRUic (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 15:38:32 -0500
-Received: by mail-ot1-f66.google.com with SMTP id i5so30462825oto.9;
-        Mon, 18 Feb 2019 12:38:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+iubiBzRbH/fHfgfShr9Oh6WrzhFtDL9VNH6fDaBPdg=;
-        b=J6Nhm7taMKQgpPy1HcE9r1rlocqNWZoDU8jE/RR+ITHmOH709o8CT9YBKKyku6ZAnz
-         m8nRfe3RxoHsGEDh+CP6qij22bFvSz2wL0b7YsGkG2Qi36J4M2BfKD+aL3ForgrUwFMX
-         zS7hH8BRJQnHnzdktzx/B1zVlMJzJn/9p/m9CyeHsY0ViB/QAKt/Fs5nhiZn5BdWONjn
-         WHPdA/od1tYzLGFEW6FujnG90U0limUnTwI83nXB5iz2sW24ahugVC3qZk1qVRaSETMX
-         UQqOG0JU0v6b6ekMP7XOkaDTtAvBH17NviRsXRQGazogRpY0fQQBNUIR2ldGaLWzNqLu
-         Us2A==
-X-Gm-Message-State: AHQUAuZK76ir+8nxSGUkhqN898MD4teo3MMlGF/oyD0ULyI+OVcQ251K
-        qs7Lik20fscNfdOqsp8J2A==
-X-Google-Smtp-Source: AHgI3IacNmoAKEddLhbkOEtx94sthcrdDVgeDCUg1UD+dKeI/oKG0dMDH0Ja1x0bMwn+yplyAmF9ZA==
-X-Received: by 2002:aca:6c04:: with SMTP id h4mr436056oic.10.1550522311952;
-        Mon, 18 Feb 2019 12:38:31 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id g3sm8145493otb.66.2019.02.18.12.38.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Feb 2019 12:38:31 -0800 (PST)
-Date:   Mon, 18 Feb 2019 14:38:31 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Ryder Lee <ryder.lee@mediatek.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        Weijie Gao <weijie.gao@mediatek.com>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: Re: [PATCH v1 5/5] dt-bindings: pwm: update bindings for MT7629 SoC
-Message-ID: <20190218203831.GA26838@bogus>
-References: <de316385a84e079d3b23891e61c959094b9fa7e5.1547781007.git.ryder.lee@mediatek.com>
- <e7a59d288a4e23130e0303fec3aeba1f46ed1c26.1547781007.git.ryder.lee@mediatek.com>
+        Mon, 18 Feb 2019 15:38:51 -0500
+Received: from ozlabs.org ([203.11.71.1]:55117 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726476AbfBRUiu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 15:38:50 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 443G142pQhz9s5c;
+        Tue, 19 Feb 2019 07:38:48 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1550522328;
+        bh=G8WKPUXeotVxGJLhgIXc+4KXv15XmcBUQLbME+hgOK4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=pUf+pAaDM/Z+7hg6SJ5WZHqt/N2r3bkxHhvT4iM9X/J96RYHWMKcRPuBhI2JJpaN9
+         90miV9rpYfED+nAPJNd1tacJkYNnpbGw4V50OvANvP5fbTPGrCjUg/WT+vQjFdvB05
+         +AQee/XOb8O8tsNZsUz2e9Wdg8poSkCvOUMGF+Xq2a5Olu32tyCHMQhi5eEx4ygXcp
+         1Cv5InJ3KNB5letbiQlGOHnfm9frjr992YawGGvAxmE++qjUYcWZhBW015WlrWVnGU
+         qBcHyxrewLsHaO3Z9W+Ab1tnHhI2wKelPQm455am6Jbw9HnV6qCueiC/4/H4ziT/B2
+         tbQWJGepfy0nw==
+Date:   Tue, 19 Feb 2019 07:38:47 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the s390 tree
+Message-ID: <20190219073847.6f288b66@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e7a59d288a4e23130e0303fec3aeba1f46ed1c26.1547781007.git.ryder.lee@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/B9/EvsB9I=piEZuCoRd.Qe="; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 18 Jan 2019 11:24:45 +0800, Ryder Lee wrote:
-> This updates bindings for MT7629 pwm controller.
-> 
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-> ---
-> Changes since v1: add a Reviewed-by tag.
-> ---
->  Documentation/devicetree/bindings/pwm/pwm-mediatek.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
+--Sig_/B9/EvsB9I=piEZuCoRd.Qe=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Hi all,
+
+In commit
+
+  b99740ef221f ("s390/setup: fix boot crash for machine without EDAT-1")
+
+Fixes tag
+
+  Fixes: 94f85ed3e2 ("s390/setup: fix early warning messages")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/B9/EvsB9I=piEZuCoRd.Qe=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxrF9cACgkQAVBC80lX
+0Gy+UAf/Ze5thMdyBppz5qmN/BIEI0bSQ+hSYJ1MUnb3c7eVlFu5fn/6oJTyWNpc
+kqk2+Gr9X86R5JM6JhTUv9hXzqNXc4ONyeB2HQLbkncQimeXh4gcVkvNS0VFEsuT
++ty74o0w123QTYcqIyI99ZOMpDtV+MBsHLQ1XZYom20sEztv+5Jm/r6HvtFYexEL
+Rp0drPnRb0XYNPnjMx5elmkCFFxTNxpt0B36sDhsqgNiM5VuRxGD+rvbiiJrW9g+
+EMjCOeXY4QdKK8ENobPx+MlxAnM0hU7x65iGb/ze0LISArMAiqmXEUUqbfdnhlaq
+9usrqJ61WQzfwxpb88+VvVrADLwt1g==
+=Llpo
+-----END PGP SIGNATURE-----
+
+--Sig_/B9/EvsB9I=piEZuCoRd.Qe=--
