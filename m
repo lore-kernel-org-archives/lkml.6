@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91412C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDABAC4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F8812070D
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9293A2173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498527;
-	bh=w08EYP4GavT7AozW074LhVSzzCSQhhOFxsnba0kxqu8=;
+	s=default; t=1550498530;
+	bh=mtUItnYdoMPJ2isFZzVGav2YxRSY8rNC0jwnyXUG/54=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RndsJrt/FobehaJG/13EjHcRiliykjDvo83RAGW+giQKcsanpSXkoUpdP5PCqHVU7
-	 vZqlso4rP4yGIEMNSetWuxaXB8NnH2AzrXKRzxVg9dNqN/fLfZbOsgqZD/QEuSxVFa
-	 4q2sxqMVEu725m/lP95GygrLQvIwwCslnAYR6sQo=
+	b=ESV6VviPHNGK/UYGc6zzTAXt1VAfgQLcSgopFAjFG5fiRLVQ44EfJxlu5aiUFnABd
+	 KXW1OLh9MdPDPna8jOf8sX/mFGOuUoLsA512jnm4a1XiZRmEJoEJ+/ugweg5jNJlvO
+	 1+U5sohjqZJyfJsSCxLQ4IhzPrINrtX4eQo0t3As=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389256AbfBROCD (ORCPT
+        id S2389359AbfBROCJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:02:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43560 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:02:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388705AbfBROB7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:01:59 -0500
+        id S2389317AbfBROCF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:02:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C1042070D;
-        Mon, 18 Feb 2019 14:01:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7ABA2173C;
+        Mon, 18 Feb 2019 14:02:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498519;
-        bh=w08EYP4GavT7AozW074LhVSzzCSQhhOFxsnba0kxqu8=;
+        s=default; t=1550498525;
+        bh=mtUItnYdoMPJ2isFZzVGav2YxRSY8rNC0jwnyXUG/54=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g1wMi0VeQKmUpS0PjkQQm98rFX6KvsbmAUxZVgsmPDnVlus+T5Z95OY2YPDG1WVSZ
-         g8egSFAgxNMjusqSzmUg4OQWQ2ZmDG2rw+C0GPm6ox1kx9HbfAk4j88MCqkPvXBjCi
-         uH7jCdeNbfYOMqBgSiFV1+LLGe4ilh2l/kreaj3A=
+        b=wh2SyVyCZSUBazr07OVYYAuIH7S83Fz/BJgpgwMY2zOB6LL66T9f8iBpKWiKtK73j
+         y6j1QjJrT/QP13JASEfhFBo+LZvGbASIOC9AobjJ9+AOFQaiqkPCn5MISE1BKzZaJ7
+         tFbHDvz2fZRms6oEBh25Hk7u740Bc68a30RqQhRc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
-        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 035/143] udf: Fix BUG on corrupted inode
-Date:   Mon, 18 Feb 2019 14:42:43 +0100
-Message-Id: <20190218133530.415327095@linuxfoundation.org>
+        stable@vger.kernel.org, Young Xiao <YangX92@hotmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 019/143] sunvdc: Do not spin in an infinite loop when vio_ldc_send() returns EAGAIN
+Date:   Mon, 18 Feb 2019 14:42:27 +0100
+Message-Id: <20190218133529.860260792@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -66,36 +65,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d288d95842f1503414b7eebce3773bac3390457e ]
+[ Upstream commit a11f6ca9aef989b56cd31ff4ee2af4fb31a172ec ]
 
-When inode is corrupted so that extent type is invalid, some functions
-(such as udf_truncate_extents()) will just BUG. Check that extent type
-is valid when loading the inode to memory.
+__vdc_tx_trigger should only loop on EAGAIN a finite
+number of times.
 
-Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+See commit adddc32d6fde ("sunvnet: Do not spin in an
+infinite loop when vio_ldc_send() returns EAGAIN") for detail.
+
+Signed-off-by: Young Xiao <YangX92@hotmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/udf/inode.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/block/sunvdc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/udf/inode.c b/fs/udf/inode.c
-index 0e659d9c69a1..613193c6bb42 100644
---- a/fs/udf/inode.c
-+++ b/fs/udf/inode.c
-@@ -1364,6 +1364,12 @@ reread:
+diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
+index 4b911ed96ea3..31219fb9e7f4 100644
+--- a/drivers/block/sunvdc.c
++++ b/drivers/block/sunvdc.c
+@@ -40,6 +40,8 @@ MODULE_VERSION(DRV_MODULE_VERSION);
+ #define WAITING_FOR_GEN_CMD	0x04
+ #define WAITING_FOR_ANY		-1
  
- 	iinfo->i_alloc_type = le16_to_cpu(fe->icbTag.flags) &
- 							ICBTAG_FLAG_AD_MASK;
-+	if (iinfo->i_alloc_type != ICBTAG_FLAG_AD_SHORT &&
-+	    iinfo->i_alloc_type != ICBTAG_FLAG_AD_LONG &&
-+	    iinfo->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB) {
-+		ret = -EIO;
-+		goto out;
-+	}
- 	iinfo->i_unique = 0;
- 	iinfo->i_lenEAttr = 0;
- 	iinfo->i_lenExtents = 0;
++#define	VDC_MAX_RETRIES	10
++
+ static struct workqueue_struct *sunvdc_wq;
+ 
+ struct vdc_req_entry {
+@@ -419,6 +421,7 @@ static int __vdc_tx_trigger(struct vdc_port *port)
+ 		.end_idx		= dr->prod,
+ 	};
+ 	int err, delay;
++	int retries = 0;
+ 
+ 	hdr.seq = dr->snd_nxt;
+ 	delay = 1;
+@@ -431,6 +434,8 @@ static int __vdc_tx_trigger(struct vdc_port *port)
+ 		udelay(delay);
+ 		if ((delay <<= 1) > 128)
+ 			delay = 128;
++		if (retries++ > VDC_MAX_RETRIES)
++			break;
+ 	} while (err == -EAGAIN);
+ 
+ 	if (err == -ENOTCONN)
 -- 
 2.19.1
 
