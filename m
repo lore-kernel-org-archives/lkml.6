@@ -4,50 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E072C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:59:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33FC9C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:59:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 359582173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:59:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02045217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:59:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498395;
-	bh=J7IZgV5rQHeYcNkalBMpdRaAo/i/QB+uMfCCmVgkOZ4=;
+	s=default; t=1550498399;
+	bh=kR216GrfSalPzPX82UrnXjeTki067F74faW46FXbyTI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TlfnclOYj8GKYpMj0bLi6eT0hY5TMOnJIhSGnJI5x+rt3oVuF3wlLAAi5uyzWudAp
-	 KQFMUah0VolhAmkDhEKNxWVkVB1kt3cmU8C36J0lTDoQ6Mg+sLRCbPPAT2yyME/sHc
-	 RkWLR9bMV4+91/Qc79hPsy/N4QHuyUOCceoDz3EQ=
+	b=wpoy/Bo1fHSw3qXaLhX5+3rWPOyDF/6EXCYlagSVofDM99Qajq7rSWkPKAh7cWP1U
+	 yGwhwOktMNPbHPBB81Za3mUYOyfnVvkZCdk18duqtXBNqLFOEqsz/mVwd1JpJw4beB
+	 dOF3JDqAAcvuK2viW0JCvvLlYHuu+w3N9oxitw2E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388711AbfBRN7x (ORCPT
+        id S2388690AbfBRN7v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:59:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40878 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:59:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388685AbfBRN7w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:59:52 -0500
+        id S2388673AbfBRN7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:59:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDE0321901;
-        Mon, 18 Feb 2019 13:59:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 175F62173C;
+        Mon, 18 Feb 2019 13:59:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498391;
-        bh=J7IZgV5rQHeYcNkalBMpdRaAo/i/QB+uMfCCmVgkOZ4=;
+        s=default; t=1550498388;
+        bh=kR216GrfSalPzPX82UrnXjeTki067F74faW46FXbyTI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FWGZLSZqPNWYSratbn21XnwnhfEwn90asWAjnKjoIy4wvy2rEvUX0mBzdAjBrFdTK
-         OGhBnczvMlczehvNuyBx3Lj9Sy4xyrdFnCE9tk+9WKA/xyMFrZ358F/jRLRSASArJk
-         OgJNHfQFnaTeGdRyKJtGXRHls2copOX6YALrUYLc=
+        b=ybID3I6uBMTdo1Ra7F00vKA6EFffge8HMCNRs7dEBFHvfGToLnoSJ5/EmDLpi8RXO
+         WIv7B96RL2AhtJ17Phji5IFQdI49D/bnMRuP+zOnHQRSOUmow9UcNehB2aldaE/Urd
+         ihrDaVd9HtLedYZVNwEQJGAjN0jiYGasn+eWmiEo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
         James Hughes <james.hughes@raspberrypi.org>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
         "David S. Miller" <davem@davemloft.net>,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.9 54/58] kaweth: use skb_cow_head() to deal with cloned skbs
-Date:   Mon, 18 Feb 2019 14:44:15 +0100
-Message-Id: <20190218133512.592074350@linuxfoundation.org>
+Subject: [PATCH 4.9 53/58] ch9200: use skb_cow_head() to deal with cloned skbs
+Date:   Mon, 18 Feb 2019 14:44:14 +0100
+Message-Id: <20190218133512.532827950@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133508.567416115@linuxfoundation.org>
 References: <20190218133508.567416115@linuxfoundation.org>
@@ -68,48 +70,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Dumazet <edumazet@google.com>
 
-commit 39fba7835aacda65284a86e611774cbba71dac20 upstream.
+commit 6bc6895bdd6744e0136eaa4a11fbdb20a7db4e40 upstream.
 
-We can use skb_cow_head() to properly deal with clones,
-especially the ones coming from TCP stack that allow their head being
-modified. This avoids a copy.
+We need to ensure there is enough headroom to push extra header,
+but we also need to check if we are allowed to change headers.
 
+skb_cow_head() is the proper helper to deal with this.
+
+Fixes: 4a476bd6d1d9 ("usbnet: New driver for QinHeng CH9200 devices")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
 Cc: James Hughes <james.hughes@raspberrypi.org>
+Cc: Matthew Garrett <mjg59@srcf.ucam.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/usb/kaweth.c |   18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+ drivers/net/usb/ch9200.c |    9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
---- a/drivers/net/usb/kaweth.c
-+++ b/drivers/net/usb/kaweth.c
-@@ -803,18 +803,12 @@ static netdev_tx_t kaweth_start_xmit(str
+--- a/drivers/net/usb/ch9200.c
++++ b/drivers/net/usb/ch9200.c
+@@ -254,14 +254,9 @@ static struct sk_buff *ch9200_tx_fixup(s
+ 	tx_overhead = 0x40;
+ 
+ 	len = skb->len;
+-	if (skb_headroom(skb) < tx_overhead) {
+-		struct sk_buff *skb2;
+-
+-		skb2 = skb_copy_expand(skb, tx_overhead, 0, flags);
++	if (skb_cow_head(skb, tx_overhead)) {
+ 		dev_kfree_skb_any(skb);
+-		skb = skb2;
+-		if (!skb)
+-			return NULL;
++		return NULL;
  	}
  
- 	/* We now decide whether we can put our special header into the sk_buff */
--	if (skb_cloned(skb) || skb_headroom(skb) < 2) {
--		/* no such luck - we make our own */
--		struct sk_buff *copied_skb;
--		copied_skb = skb_copy_expand(skb, 2, 0, GFP_ATOMIC);
--		dev_kfree_skb_irq(skb);
--		skb = copied_skb;
--		if (!copied_skb) {
--			kaweth->stats.tx_errors++;
--			netif_start_queue(net);
--			spin_unlock_irq(&kaweth->device_lock);
--			return NETDEV_TX_OK;
--		}
-+	if (skb_cow_head(skb, 2)) {
-+		kaweth->stats.tx_errors++;
-+		netif_start_queue(net);
-+		spin_unlock_irq(&kaweth->device_lock);
-+		dev_kfree_skb_any(skb);
-+		return NETDEV_TX_OK;
- 	}
- 
- 	private_header = (__le16 *)__skb_push(skb, 2);
+ 	__skb_push(skb, tx_overhead);
 
 
