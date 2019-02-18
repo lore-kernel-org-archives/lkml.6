@@ -4,55 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F5E9C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E6CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E7A721900
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F58621901
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497532;
-	bh=n9g7DiLvsDGRL//KtI0LDtHCc11JJTMqOaOEEX4sirQ=;
+	s=default; t=1550497536;
+	bh=B35KzBPpLQiQ2y/mBJ1JQp7EVQENs6mIRbZQvIgWsE8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ep7xcvlvjLh2ufkJSvl2i37zpr3mdSxRJu78BNf/r6BGYdLSIhiMObMaxQToe/25x
-	 j7HTYA/MFjWftInKXHBnYPhgOJJhDTloB0PtR8dfCCAvEl/qAWwfkWDZLKBtoefIrC
-	 UaUxpI+SlRlNQPWS3G0uHlmPFZdD+FrtYbRc8mdQ=
+	b=AyLP8OPQUx09g5iKuHFEMVAuzMr710VVWieIjFAzLkTOQWOCVYatlyM+cYObGN+id
+	 9pDpNz8aWRZS4LGkxXUe5+NcfZJwroqkfKykEN89y/RBBfn9t0DHBkH2WWKzDX6edS
+	 XVCSGpoZOaIMgxHgMb/u8/J1gZalL3BE9ywC4qVo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730664AbfBRNpa (ORCPT
+        id S1731359AbfBRNpf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:45:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51576 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:45:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731340AbfBRNp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:45:28 -0500
+        id S1730630AbfBRNpb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:45:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA6CE218FC;
-        Mon, 18 Feb 2019 13:45:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D928217F5;
+        Mon, 18 Feb 2019 13:45:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497527;
-        bh=n9g7DiLvsDGRL//KtI0LDtHCc11JJTMqOaOEEX4sirQ=;
+        s=default; t=1550497530;
+        bh=B35KzBPpLQiQ2y/mBJ1JQp7EVQENs6mIRbZQvIgWsE8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qbXtPvNtMfoVAT/Y5cJAxFmeKZFIz5OI1UukMTT3IioVbP5hm8K6nT2OXOpND/frI
-         26BI6GBbI7W8+yGBz1W2RLkrkgHD2k+BZ0A+7+wzUyS2EagksM1rP7lQ+wKYZKugdx
-         +EX6AmHywajDzYU3efJSf+Z+c0NmVRArD+NIbtUo=
+        b=YSUa81I5mKNGBNOXE2WKANWfPuxKqhLVgAs41+vahKHZe7azooV8s4pv+3/QxQJG2
+         2tp95Q9Q4eHnzpzW0tgRFxvg4MiZGDKhEynH2+CJb2YZPoZLp3ahWMLB4uYMn3hAZR
+         AViWYmKDHDy1TsIEmZUF7s+qDhUnVUVovjWO/cDE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jin Yao <yao.jin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
         Kan Liang <kan.liang@linux.intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 06/92] perf stat: Fix endless wait for child process
-Date:   Mon, 18 Feb 2019 14:42:09 +0100
-Message-Id: <20190218133455.188837879@linuxfoundation.org>
+Subject: [PATCH 4.20 07/92] perf report: Fix wrong iteration count in --branch-history
+Date:   Mon, 18 Feb 2019 14:42:10 +0100
+Message-Id: <20190218133455.301365321@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
 References: <20190218133454.668268457@linuxfoundation.org>
@@ -71,90 +70,223 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8a99255a50c0b4c2a449b96fd8d45fcc8d72c701 ]
+[ Upstream commit a3366db06bb656cef2e03f30f780d93059bcc594 ]
 
-We hit a 'perf stat' issue by using following script:
+By calculating the removed loops, we can get the iteration count.
 
-  #!/bin/bash
+But the iteration count could be reported incorrectly, reporting
+impossibly high counts.
 
-  sleep 1000 &
-  exec perf stat -a -e cycles -I1000 -- sleep 5
+That's because previous code uses the number of removed LBR entries for
+the iteration count. That's not good. Fix this by increasing the
+iteration count when a loop is detected.
 
-Since "perf stat" is launched by exec, the "sleep 1000" would be the
-child process of "perf stat". The wait4() call will not return because
-it's waiting for the child process "sleep 1000" to end. So 'perf stat'
-doesn't return even after 5s passes.
+When matching the chain, the iteration count would be added up, finally we need
+to compute the average value when printing out.
 
-This patch lets 'perf stat' return when the specified child process ends
-(in this case, the specified child process is "sleep 5").
+For example,
 
-Committer testing:
-
-  # cat test.sh
-  #!/bin/bash
-
-  sleep 10 &
-  exec perf stat -a -e cycles -I1000 -- sleep 5
-  #
+  $ perf report --branch-history --stdio --no-children
 
 Before:
 
-  # time ./test.sh
-  #           time             counts unit events
-       1.001113090        108,453,351      cycles
-       2.002062196        142,075,435      cycles
-       3.002896194        164,801,068      cycles
-       4.003731666        107,062,140      cycles
-       5.002068867        112,241,832      cycles
+  ---f2 +0
+     |
+     |--33.62%--f1 +9 (cycles:1)
+     |          f1 +0
+     |          main +22 (cycles:1)
+     |          main +17
+     |          main +38 (cycles:1)
+     |          main +27
+     |          f1 +26 (cycles:1)
+     |          f1 +24
+     |          f2 +27 (cycles:7)
+     |          f2 +0
+     |          f1 +19 (cycles:1)
+     |          f1 +14
+     |          f2 +27 (cycles:11)
+     |          f2 +0
+     |          f1 +9 (cycles:1 iter:2968 avg_cycles:3)
+     |          f1 +0
+     |          main +22 (cycles:1 iter:2968 avg_cycles:3)
+     |          main +17
+     |          main +38 (cycles:1 iter:2968 avg_cycles:3)
 
-  real	0m10.066s
-  user	0m0.016s
-  sys	0m0.101s
-  #
+2968 is an impossible high iteration count and avg_cycles is too small.
 
 After:
 
-  # time ./test.sh
-  #           time             counts unit events
-       1.001016096         91,412,027      cycles
-       2.002014963        124,063,708      cycles
-       3.002883964        125,993,929      cycles
-       4.003706470        120,465,734      cycles
-       5.002006778        163,560,355      cycles
+  ---f2 +0
+     |
+     |--33.62%--f1 +9 (cycles:1)
+     |          f1 +0
+     |          main +22 (cycles:1)
+     |          main +17
+     |          main +38 (cycles:1)
+     |          main +27
+     |          f1 +26 (cycles:1)
+     |          f1 +24
+     |          f2 +27 (cycles:7)
+     |          f2 +0
+     |          f1 +19 (cycles:1)
+     |          f1 +14
+     |          f2 +27 (cycles:11)
+     |          f2 +0
+     |          f1 +9 (cycles:1 iter:1 avg_cycles:23)
+     |          f1 +0
+     |          main +22 (cycles:1 iter:1 avg_cycles:23)
+     |          main +17
+     |          main +38 (cycles:1 iter:1 avg_cycles:23)
 
-  real	0m5.123s
-  user	0m0.014s
-  sys	0m0.105s
-  #
+avg_cycles:23 is the average cycles of this iteration.
+
+Fixes: c4ee06251d42 ("perf report: Calculate the average cycles of iterations")
 
 Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Kan Liang <kan.liang@linux.intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1546501245-4512-1-git-send-email-yao.jin@linux.intel.com
+Link: http://lkml.kernel.org/r/1546582230-17507-1-git-send-email-yao.jin@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/builtin-stat.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/perf/util/callchain.c | 32 ++++++++++++++++++++------------
+ tools/perf/util/callchain.h |  1 +
+ tools/perf/util/machine.c   |  2 +-
+ 3 files changed, 22 insertions(+), 13 deletions(-)
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 1410d66192f7..63a3afc7f32b 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -561,7 +561,8 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
- 					break;
- 			}
+diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
+index 32ef7bdca1cf..dc2212e12184 100644
+--- a/tools/perf/util/callchain.c
++++ b/tools/perf/util/callchain.c
+@@ -766,6 +766,7 @@ static enum match_result match_chain(struct callchain_cursor_node *node,
+ 			cnode->cycles_count += node->branch_flags.cycles;
+ 			cnode->iter_count += node->nr_loop_iter;
+ 			cnode->iter_cycles += node->iter_cycles;
++			cnode->from_count++;
  		}
--		wait4(child_pid, &status, 0, &stat_config.ru_data);
-+		if (child_pid != -1)
-+			wait4(child_pid, &status, 0, &stat_config.ru_data);
+ 	}
  
- 		if (workload_exec_errno) {
- 			const char *emsg = str_error_r(workload_exec_errno, msg, sizeof(msg));
+@@ -1345,10 +1346,10 @@ static int branch_to_str(char *bf, int bfsize,
+ static int branch_from_str(char *bf, int bfsize,
+ 			   u64 branch_count,
+ 			   u64 cycles_count, u64 iter_count,
+-			   u64 iter_cycles)
++			   u64 iter_cycles, u64 from_count)
+ {
+ 	int printed = 0, i = 0;
+-	u64 cycles;
++	u64 cycles, v = 0;
+ 
+ 	cycles = cycles_count / branch_count;
+ 	if (cycles) {
+@@ -1357,14 +1358,16 @@ static int branch_from_str(char *bf, int bfsize,
+ 				bf + printed, bfsize - printed);
+ 	}
+ 
+-	if (iter_count) {
+-		printed += count_pri64_printf(i++, "iter",
+-				iter_count,
+-				bf + printed, bfsize - printed);
++	if (iter_count && from_count) {
++		v = iter_count / from_count;
++		if (v) {
++			printed += count_pri64_printf(i++, "iter",
++					v, bf + printed, bfsize - printed);
+ 
+-		printed += count_pri64_printf(i++, "avg_cycles",
+-				iter_cycles / iter_count,
+-				bf + printed, bfsize - printed);
++			printed += count_pri64_printf(i++, "avg_cycles",
++					iter_cycles / iter_count,
++					bf + printed, bfsize - printed);
++		}
+ 	}
+ 
+ 	if (i)
+@@ -1377,6 +1380,7 @@ static int counts_str_build(char *bf, int bfsize,
+ 			     u64 branch_count, u64 predicted_count,
+ 			     u64 abort_count, u64 cycles_count,
+ 			     u64 iter_count, u64 iter_cycles,
++			     u64 from_count,
+ 			     struct branch_type_stat *brtype_stat)
+ {
+ 	int printed;
+@@ -1389,7 +1393,8 @@ static int counts_str_build(char *bf, int bfsize,
+ 				predicted_count, abort_count, brtype_stat);
+ 	} else {
+ 		printed = branch_from_str(bf, bfsize, branch_count,
+-				cycles_count, iter_count, iter_cycles);
++				cycles_count, iter_count, iter_cycles,
++				from_count);
+ 	}
+ 
+ 	if (!printed)
+@@ -1402,13 +1407,14 @@ static int callchain_counts_printf(FILE *fp, char *bf, int bfsize,
+ 				   u64 branch_count, u64 predicted_count,
+ 				   u64 abort_count, u64 cycles_count,
+ 				   u64 iter_count, u64 iter_cycles,
++				   u64 from_count,
+ 				   struct branch_type_stat *brtype_stat)
+ {
+ 	char str[256];
+ 
+ 	counts_str_build(str, sizeof(str), branch_count,
+ 			 predicted_count, abort_count, cycles_count,
+-			 iter_count, iter_cycles, brtype_stat);
++			 iter_count, iter_cycles, from_count, brtype_stat);
+ 
+ 	if (fp)
+ 		return fprintf(fp, "%s", str);
+@@ -1422,6 +1428,7 @@ int callchain_list_counts__printf_value(struct callchain_list *clist,
+ 	u64 branch_count, predicted_count;
+ 	u64 abort_count, cycles_count;
+ 	u64 iter_count, iter_cycles;
++	u64 from_count;
+ 
+ 	branch_count = clist->branch_count;
+ 	predicted_count = clist->predicted_count;
+@@ -1429,11 +1436,12 @@ int callchain_list_counts__printf_value(struct callchain_list *clist,
+ 	cycles_count = clist->cycles_count;
+ 	iter_count = clist->iter_count;
+ 	iter_cycles = clist->iter_cycles;
++	from_count = clist->from_count;
+ 
+ 	return callchain_counts_printf(fp, bf, bfsize, branch_count,
+ 				       predicted_count, abort_count,
+ 				       cycles_count, iter_count, iter_cycles,
+-				       &clist->brtype_stat);
++				       from_count, &clist->brtype_stat);
+ }
+ 
+ static void free_callchain_node(struct callchain_node *node)
+diff --git a/tools/perf/util/callchain.h b/tools/perf/util/callchain.h
+index 154560b1eb65..99d38ac019b8 100644
+--- a/tools/perf/util/callchain.h
++++ b/tools/perf/util/callchain.h
+@@ -118,6 +118,7 @@ struct callchain_list {
+ 		bool		has_children;
+ 	};
+ 	u64			branch_count;
++	u64			from_count;
+ 	u64			predicted_count;
+ 	u64			abort_count;
+ 	u64			cycles_count;
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 9397e3f2444d..ea228dd0a187 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -2005,7 +2005,7 @@ static void save_iterations(struct iterations *iter,
+ {
+ 	int i;
+ 
+-	iter->nr_loop_iter = nr;
++	iter->nr_loop_iter++;
+ 	iter->cycles = 0;
+ 
+ 	for (i = 0; i < nr; i++)
 -- 
 2.19.1
 
