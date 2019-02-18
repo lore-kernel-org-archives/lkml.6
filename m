@@ -2,251 +2,138 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D78C10F02
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD67C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:55:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41D1A2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:53:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="WnN6DP/a"
+	by mail.kernel.org (Postfix) with ESMTP id D24C221738
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:55:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550480115;
+	bh=fryPfb3qUEsbv7prLXOwjbwv4MMuRGFOWfXs1TXlaxQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=q7n0Gtg3dZLY2qb7tRAkCaOgCihmOkURVLbopLwvtX9P6n9SMOsG0EpzR4XL40IJM
+	 cIZooA3r3pkdpzxIBhAhaevVq7M6mjgLxUosGzKVSYi9dA1JqHYfg9JyswimJWzEV/
+	 QUjIemslRWkefQ1I0ISCWxmQp/lKwqd1ogZj8lsk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729290AbfBRIx0 (ORCPT
+        id S1729318AbfBRIzN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 03:53:26 -0500
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:38242 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727423AbfBRIx0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 03:53:26 -0500
-Received: from mailhost.synopsys.com (badc-mailhost2.synopsys.com [10.192.0.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay.synopsys.com (Postfix) with ESMTPS id 44A6E24E253B;
-        Mon, 18 Feb 2019 00:53:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1550480005; bh=QMKgPyRPcysygxidt0E4qdJghyTEkcdP0iQKo45+51A=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=WnN6DP/a4fR+gCkT14t0T/H26QfUr34FgpYfMcaEa5j+egQulXbJqYO56rCYp6Ch7
-         UVkDpbwkMCq+BYVYF9CI8hgmxqv9WqnCGVHwChMIL1PzybnCexHspzzgXSjsoXfHZ7
-         UZROzsb43nF8nln1jnxIDiz39Mhx+VtCctPWPWfYU+4RrX5g4SJI+2YPq43KSPY4Qj
-         cw21K/Qd7VSDi8syJeOVjG4gubRvRtbZCXCpx7bvLCEKY+L4x1Msat4gPjZv/LIZcn
-         G99hEpdWA7X3eySCWavqtR2040CUakGvCM4+Z3AoOmCpa1grt1bKvCKaH3D/4oJXzM
-         7TSlQF7vwyfqA==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 390B8A005A;
-        Mon, 18 Feb 2019 08:53:23 +0000 (UTC)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 18 Feb 2019 00:53:23 -0800
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Mon,
- 18 Feb 2019 09:53:20 +0100
-From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
-To:     Vineet Gupta <vineet.gupta1@synopsys.com>
-CC:     David Laight <David.Laight@ACULAB.COM>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        Arnd Bergmann <arnd.bergmann@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: RE: [PATCH] ARC: Explicitly set ARCH_SLAB_MINALIGN = 8
-Thread-Topic: [PATCH] ARC: Explicitly set ARCH_SLAB_MINALIGN = 8
-Thread-Index: AQHUv5zONn7dHynHO02cFkcDzI3gNKXcXZ6AgAADuwCAAARCgIABQZSAgACvHQCAAKYKEIABENyAgAVB4EA=
-Date:   Mon, 18 Feb 2019 08:53:19 +0000
-Message-ID: <4881796E12491D4BB15146FE0209CE64681EECE5@DE02WEMBXB.internal.synopsys.com>
-References: <20190208105519.26750-1-abrodkin@synopsys.com>
- <81017fe4-b31f-4942-e822-a7b70008b74d@synopsys.com>
- <f83412d1e7fd4d67b4632c1f81fae963@AcuMS.aculab.com>
- <bfc65835-21f9-6d5e-791d-ee49113d939c@synopsys.com>
- <20190213125651.GP32494@hirez.programming.kicks-ass.net>
- <e6138aeb-9ce4-fbfa-4d6a-b76f189a3e47@synopsys.com>
- <4881796E12491D4BB15146FE0209CE64681DB01F@DE02WEMBXB.internal.synopsys.com>
- <e4aed55f-656b-ebec-c3e3-393714cc693e@synopsys.com>
-In-Reply-To: <e4aed55f-656b-ebec-c3e3-393714cc693e@synopsys.com>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: =?utf-8?B?UEcxbGRHRStQR0YwSUc1dFBTSmliMlI1TG5SNGRDSWdjRDBpWXpwY2RYTmxj?=
- =?utf-8?B?bk5jWVdKeWIyUnJhVzVjWVhCd1pHRjBZVnh5YjJGdGFXNW5YREE1WkRnME9X?=
- =?utf-8?B?STJMVE15WkRNdE5HRTBNQzA0TldWbExUWmlPRFJpWVRJNVpUTTFZbHh0YzJk?=
- =?utf-8?B?elhHMXpaeTFoTVdKbVpERm1aaTB6TXpWaExURXhaVGt0WW1Wa05TMDRPR0l4?=
- =?utf-8?B?TVRGalpHVXlNVGRjWVcxbExYUmxjM1JjWVRGaVptUXlNREV0TXpNMVlTMHhN?=
- =?utf-8?B?V1U1TFdKbFpEVXRPRGhpTVRFeFkyUmxNakUzWW05a2VTNTBlSFFpSUhONlBT?=
- =?utf-8?B?SXpOamMzSWlCMFBTSXhNekU1TkRrMU16VTVOelUyTURBeU1ESWlJR2c5SW5C?=
- =?utf-8?B?NVpYY3JabVpHVVVONlNXUlNjVXRpZVhKaVQySllVMHRzVlQwaUlHbGtQU0lp?=
- =?utf-8?B?SUdKc1BTSXdJaUJpYnowaU1TSWdZMms5SW1OQlFVRkJSVkpJVlRGU1UxSlZS?=
- =?utf-8?B?azVEWjFWQlFVSlJTa0ZCUWt0alFuQnJXamhtVlVGVFN6WlpibnBPWTJoeFNV?=
- =?utf-8?B?bHljR2xtVFRGNVIyOW5UMEZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRklRVUZCUVVOclEwRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGRlFVRlJRVUpCUVVGQlpXWjRVMnAzUVVGQlFVRkJRVUZCUVVGQlFVRkJT?=
- =?utf-8?B?alJCUVVGQ2JVRkhhMEZpWjBKb1FVYzBRVmwzUW14QlJqaEJZMEZDYzBGSFJV?=
- =?utf-8?B?RmlaMEoxUVVkclFXSm5RbTVCUmpoQlpIZENhRUZJVVVGYVVVSjVRVWN3UVZs?=
- =?utf-8?B?UlFubEJSM05CUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVWQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlowRkJRVUZCUVc1blFVRkJSMWxCWW5kQ01VRkhORUZhUVVKNVFVaHJRVmgz?=
- =?utf-8?B?UW5kQlIwVkJZMmRDTUVGSE5FRmFVVUo1UVVoTlFWaDNRbTVCUjFsQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRlJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRMEZCUVVGQlFVTmxRVUZCUVZwblFuWkJTRlZCWW1kQ2Ew?=
- =?utf-8?B?RklTVUZsVVVKbVFVaEJRVmxSUW5sQlNGRkJZbWRDYkVGSVNVRmpkMEptUVVo?=
- =?utf-8?B?TlFWbFJRblJCU0UxQlpGRkNkVUZIWTBGWWQwSnFRVWM0UVdKblFtMUJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZDUVVGQlFVRkJRVUZCUVVsQlFVRkJRVUZLTkVGQlFVSnRRVWM0?=
- =?utf-8?B?UVdSUlFuVkJSMUZCWTJkQ05VRkdPRUZqUVVKb1FVaEpRV1JCUW5WQlIxVkJZ?=
- =?utf-8?B?MmRDZWtGR09FRmpkMEpvUVVjd1FXTjNRakZCUnpSQlduZENaa0ZJU1VGYVVV?=
- =?utf-8?B?SjZRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlJVRkJRVUZCUVVGQlFVRm5RVUZCUVVGQmJt?=
- =?utf-8?B?ZEJRVUZIV1VGaWQwSXhRVWMwUVZwQlFubEJTR3RCV0hkQ2QwRkhSVUZqWjBJ?=
- =?utf-8?B?d1FVYzBRVnBSUW5sQlNFMUJXSGRDZWtGSE1FRmhVVUpxUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVkZCUVVGQlFVRkJRVUZE?=
- =?utf-8?B?UVVGQlFVRkJRMlZCUVVGQldtZENka0ZJVlVGaVowSnJRVWhKUVdWUlFtWkJT?=
- =?utf-8?B?RUZCV1ZGQ2VVRklVVUZpWjBKc1FVaEpRV04zUW1aQlNFMUJaRUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVKQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlNVRkJRVUZCUVVvMFFVRkJRbTFCUnpoQlpGRkNkVUZIVVVG?=
- =?utf-8?B?alowSTFRVVk0UVdOQlFtaEJTRWxCWkVGQ2RVRkhWVUZqWjBKNlFVWTRRV1JC?=
- =?utf-8?B?UW5wQlJ6QkJXWGRCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkZRVUZCUVVGQlFVRkJRV2RCUVVGQlFVRnVaMEZCUVVkWlFXSjNR?=
- =?utf-8?B?akZCUnpSQldrRkNlVUZJYTBGWWQwSjNRVWRGUVdOblFqQkJSelJCV2xGQ2VV?=
- =?utf-8?B?RklUVUZZZDBJeFFVY3dRVmwzUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCVVVGQlFVRkJRVUZCUVVOQlFVRkJRVUZEWlVG?=
- =?utf-8?B?QlFVRmFkMEl3UVVoTlFWaDNRbmRCU0VsQlluZENhMEZJVlVGWmQwSXdRVVk0?=
- =?utf-8?B?UVdSQlFubEJSMFZCWVZGQ2RVRkhhMEZpWjBKdVFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFrRkJRVUZCUVVGQlFVRkpR?=
- =?utf-8?B?VUZCUVVGQlNqUkJRVUZDZWtGSFJVRmlRVUpzUVVoTlFWaDNRbWhCUjAxQldY?=
- =?utf-8?B?ZENka0ZJVlVGaVowSXdRVVk0UVdOQlFuTkJSMFZCWW1kQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVVZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCWjBGQlFVRkJRVzVuUVVGQlNFMUJXVkZDYzBGSFZVRmpkMEpt?=
- =?utf-8?B?UVVoRlFXUlJRblpCU0ZGQldsRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGUlFVRkJRVUZCUVVGQlEwRkJRVUZCUVVObFFVRkJRV04zUW5WQlNF?=
- =?utf-8?B?RkJZM2RDWmtGSGQwRmhVVUpxUVVkVlFXSm5RbnBCUjFWQldIZENNRUZIVlVG?=
- =?utf-8?B?alowSjBRVVk0UVUxUlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkNRVUZCUVVGQlFVRkJRVWxCUVVGQlFVRktORUZC?=
- =?utf-8?B?UVVKNlFVYzBRV05CUW5wQlJqaEJZa0ZDY0VGSFRVRmFVVUoxUVVoTlFWcFJR?=
- =?utf-8?B?bVpCU0ZGQldsRkNlVUZITUVGWWQwSjZRVWhSUVdSUlFtdEJSMVZCWW1kQ01F?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUlVGQlFVRkJRVUZCUVVGblFV?=
- =?utf-8?B?RkJRVUZCYm1kQlFVRklXVUZhZDBKbVFVZHpRVnBSUWpWQlNHTkJZbmRDZVVG?=
- =?utf-8?B?SFVVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFWRkJRVUZC?=
- =?utf-8?Q?QUFBQUFDQUFBQUFBQT0iLz48L21ldGE+?=
-x-dg-rorf: 
-x-originating-ip: [10.121.8.93]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 18 Feb 2019 03:55:13 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52854 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727423AbfBRIzN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 03:55:13 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6F640ACA2;
+        Mon, 18 Feb 2019 08:55:11 +0000 (UTC)
+Date:   Mon, 18 Feb 2019 09:55:10 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     kernel test robot <rong.a.chen@intel.com>
+Cc:     Oscar Salvador <osalvador@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-kernel@vger.kernel.org, LKP <lkp@01.org>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>
+Subject: Re: [LKP] efad4e475c [ 40.308255] Oops: 0000 [#1] PREEMPT SMP PTI
+Message-ID: <20190218085510.GC7251@dhcp22.suse.cz>
+References: <20190218052823.GH29177@shao2-debian>
+ <20190218070844.GC4525@dhcp22.suse.cz>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190218070844.GC4525@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgVmluZWV0LA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFZpbmVl
-dCBHdXB0YSA8dmd1cHRhQHN5bm9wc3lzLmNvbT4NCj4gU2VudDogRnJpZGF5LCBGZWJydWFyeSAx
-NSwgMjAxOSA0OjM0IEFNDQo+IFRvOiBBbGV4ZXkgQnJvZGtpbiA8YWxleGV5LmJyb2RraW5Ac3lu
-b3BzeXMuY29tPjsgUGV0ZXIgWmlqbHN0cmEgPHBldGVyekBpbmZyYWRlYWQub3JnPg0KPiBDYzog
-RGF2aWQgTGFpZ2h0IDxEYXZpZC5MYWlnaHRAQUNVTEFCLkNPTT47IGxpbnV4LXNucHMtYXJjQGxp
-c3RzLmluZnJhZGVhZC5vcmc7IEFybmQgQmVyZ21hbm4NCj4gPGFybmQuYmVyZ21hbm5AbGluYXJv
-Lm9yZz47IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IHN0YWJsZUB2Z2VyLmtlcm5lbC5v
-cmc7IE1hcmsgUnV0bGFuZA0KPiA8bWFyay5ydXRsYW5kQGFybS5jb20+DQo+IFN1YmplY3Q6IFJl
-OiBbUEFUQ0hdIEFSQzogRXhwbGljaXRseSBzZXQgQVJDSF9TTEFCX01JTkFMSUdOID0gOA0KPiAN
-Cj4gT24gMi8xNC8xOSAxMjo1MCBBTSwgQWxleGV5IEJyb2RraW4gd3JvdGU6DQo+IA0KPiA+Pj4+
-PiBJIHN1c3BlY3QgdGhlIHNsYWIgYWxsb2NhdG9yIHNob3VsZCBiZSByZXR1cm5pbmcgOCBieXRl
-IGFsaWduZWQgYWRkcmVzc2VzDQo+ID4+Pj4+IG9uIGFsbCBzeXN0ZW1zLi4uLg0KPiA+Pj4+DQo+
-ID4+Pj4gd2h5ID8gQXMgSSB1bmRlcnN0YW5kIGl0IGlzIHN0aWxsIG5vdCBmb29sIHByb29mIGFn
-YWluc3QgdGhlIGV4cGVjdGVkIGFsaWdubWVudCBvZg0KPiA+Pj4+IGlubmVyIG1lbWJlcnMuIFRo
-ZXJlIG91Z2h0IHRvIGJlIGEgYmV0dGVyIHdheSB0byBlbmZvcmNlIGFsbCB0aGlzLg0KPiA+Pj4N
-Cj4gPj4+IEkgYWdyZWUgdGhhdCBmb3IgQVJDIEFSQ0hfU0xBQl9NSU5BTElHTiBzaG91bGQgYmUg
-YXQgbGVhc3QgOC4NCj4gPj4NCj4gPj4gVGhpcyBpc3N1ZSBhc2lkZSwgYXJlIHRoZXJlIG90aGVy
-IHJlYXNvbnMgPyBCZWNhdXNlIG1ha2luZyBpdCA4IG9uIEFSQyBpcyBqdXN0DQo+ID4+IHBlbmRp
-bmcgdGhlIGV2ZW50dWFsaXR5IGZvciBsYXRlci4NCj4gPg0KPiA+IEJ1dCB0aGF0J3MgcHJldHR5
-IG11Y2ggdGhlIHNhbWUgZm9yIG90aGVyIDMyLWJpdCBhcmNoZXMgdGhhdCBoYXZlIDY0LWJpdCBh
-dG9taWNzDQo+ID4gbGlrZSBBUk0gZXRjLiBGcm9tIHdoYXQgSSBtYXkgc2VlIGZyb20gQVJNJ3Mg
-ZG9jdW1lbnRhdGlvbiBmb3IgTERSRVhEL1NSUkVYRCB0aGV5DQo+ID4gcmVxdWlyZSBkb3VibGUt
-d29yZCBhbGlnbm1lbnQgb2YgZGF0YSBhcyB3ZWxsLg0KPiANCj4gUmlnaHQgTExPQ0tEL1NDT05E
-RCAoNjQtYml0IGV4Y2x1c2l2ZSBsb2FkL3N0b3JlKSBuZWVkcyA2NC1iaXQgYWxpZ25lZCBlZmZl
-Y3RpdmUNCj4gYWRkcmVzc2VzIGZvciBtaWNyby1hcmNoIHJlYXNvbnMgKDEgdnMgMiBjYWNoZSBs
-aW5lcykgZXRjLg0KPiANCj4gU28gbGV0cyB0cnkgdG8gdW5wYWNrIHRoaXMgZm9yIG1lLiBTYXkg
-d2UgaGFkLg0KPiANCj4gICAgc3RydWN0IGZvbyB7DQo+IAlpbnQgICAgICAgIGE7DQo+IAlhdG9t
-aWM2NF90IGI7DQo+ICAgIH07DQo+IA0KPiBUaGUgYXRvbWljNjRfdCAod2hpY2ggZm9yIEFSQyBh
-bmQgbW9zdCBvdGhlcnMgaXMgdTY0IF9fYXR0cmlidXRlX18oKGFsaWduZWQoOCkpDQo+ICphbHJl
-YWR5IGVuc3VyZXMqIHRoYXQgdGhlcmUgYSA0IGIgcGFkZGluZyBpcyBnZW5lcmF0ZWQgYnkgZ2Nj
-IChJIGp1c3QgY29uZmlybWVkDQo+IHdpdGggYSBzaW1wbGUgdGVzdCBjYXNlKS4NCj4gDQo+ICAg
-ICNpZmRlZiBET0FMSUdOX18NCj4gICAgI2RlZmluZSBteV91NjQJX191NjQgX19hdHRyaWJ1dGVf
-XygoYWxpZ25lZCg4KSkpDQo+ICAgICNlbHNlDQo+ICAgICNkZWZpbmUgbXlfdTY0CV9fdTY0DQo+
-ICAgICNlbmRpZg0KPiANCj4gICBzdHJ1Y3QgZm9vIG9uX2hlYXA7DQo+IA0KPiAgIHByaW50Zigl
-ZCIsICZvbl9oZWFwLmIpDQo+IA0KPiAkIGFyYy1saW51eC1nY2MgLU8yIHRlc3QuYyAtRERPQUxJ
-R05fXyAtYyAtLXNhdmUtdGVtcHMNCj4gDQo+ICAgIG1haW46DQo+IAltb3ZfcyByMSxAb25faGVh
-cCs4ICAgPC0tLS0NCj4gCW1vdl9zIHIwLEAuTEMwDQo+IAliIEBwcmludGYNCj4gDQo+IFcvbyB0
-aGUgYWxpZ25tZW50IGF0dHJpYnV0ZSAoc2F5IG5vcm1hbCBMREQvU1REKQ0KPiANCj4gJCBhcmMt
-bGludXgtZ2NjIC1PMiB0ZXN0LmMgLWMgLS1zYXZlLXRlbXBzDQo+IA0KPiAgICBtYWluOg0KPiAJ
-bW92X3MgcjEsQG9uX2hlYXArNA0KPiAJbW92X3MgcjAsQC5MQzANCj4gCWIgQHByaW50Zg0KPiAN
-Cj4gU28gaW5kZWVkIHlvdXIgcGF0Y2ggYWxpZ25zIGR5bmFtaWMgc3RydWN0cyB0byA2NC1iaXQs
-IGVuc3VyaW5nIGFueSBlbWJlZGRlZA0KPiBhbGlnbmVkX3U2NCB0byBiZSA2NC1iaXQgYWxpZ25l
-ZCBhcyB3ZWxsLiBQaGV3ICENCj4gDQo+IA0KPiA+IFRoYXQgc2FpZCBpZiBmb3Igc29tZSByZWFz
-b24gYXRvbWljNjRfdCB2YXJpYWJsZSBpcyB1bmFsaWduZWQgZXhlY3V0aW9uIG9uDQo+ID4gYW55
-IChvciBhdCBsZWFzdCBtb3N0KSAzMi1iaXQgYXJjaGl0ZWN0dXJlcyB3aWxsIGxlYWQgdG8gcnVu
-LXRpbWUgZmFpbHVyZSwNCj4gPiBpLmUuIHdlJ2xsIGtub3cgYWJvdXQgaXQgYW5kIHRoaXMgd2ls
-bCBiZSBmaXhlZC4NCj4gPg0KPiA+IEFuZCB3aGF0IEknbSBkb2luZyBieSB0aGF0IGNoYW5nZSAo
-QVJDSF9TTEFCX01JTkFMSUdOPTggZm9yIEFSQykgSSdtIGp1c3QNCj4gPiB3b3JraW5nLWFyb3Vu
-ZCBwZWN1bGlhcml0eSBvZiBBUkMgQUJJLg0KPiANCj4gUmlnaHQuDQoNClNvIGFyZSB5b3UgT0sg
-d2l0aCB0aGlzIHBhdGNoIG9yIHNvbWV0aGluZyBzaG91bGQgYmUgZG9uZSBiZWZvcmUgYXBwbHlp
-bmc/DQoNCj4gPg0KPiA+IE91dCBvZiBjdXJpb3NpdHkgSSBjaGVja2VkIGlmIHRoZXJlJ3JlIGFu
-eSBvdGhlciBvY2N1cnJlbmNlcyBvZiAiYWxpbmdvZihsb25nIGxvbmcpIg0KPiA+IGFuZCB0aGVy
-ZSBzZWVtcyB0byBiZSBhIGNvdXBsZSBvZiBtb3JlOg0KPiA+IC0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tPjgtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+ICMgZ2l0
-IGdyZXAgYWxpZ25vZiB8IGdyZXAgImxvbmcgbG9uZyINCj4gPg0KPiA+IC4uLg0KPiA+DQo+ID4g
-a2VybmVsL3dvcmtxdWV1ZS5jOjU2OTM6ICAgICAgICBXQVJOX09OKF9fYWxpZ25vZl9fKHN0cnVj
-dCBwb29sX3dvcmtxdWV1ZSkgPCBfX2FsaWdub2ZfXyhsb25nDQo+IGxvbmcpKTsNCj4gPiBtbS9z
-bGFiLmM6MTU1OiNkZWZpbmUgICBSRURaT05FX0FMSUdOICAgICAgICAgICBtYXgoQllURVNfUEVS
-X1dPUkQsIF9fYWxpZ25vZl9fKHVuc2lnbmVkIGxvbmcgbG9uZykpDQo+IA0KPiBGb3IgQVJDLCBp
-dCB3aWxsIGJlIG1heCg0LDQpIHNvIDQNCj4gZm9yIG90aGVycyAzMi1iaXQsaXQgd2lsbCBiZSBt
-YXgoNCw4KQ0KPiANCj4gU28gaW5kZWVkIGl0IG1ha2VzIHNlbnNlIHRvIGNoYW5nZSBpdC4NCg0K
-SSBndWVzcyB0aGF0J3Mgc3RpbGwgYSBzZXBhcmF0ZSBjaGFuZ2UgZm9yIGdlbmVyaWMgY29kZSwg
-cmlnaHQ/DQpJLmUuIEknbGwgZG8gaXQgaW4gYSBzZXBhcmF0ZSBwYXRjaC4NCg0KLUFsZXhleQ0K
-DQo=
+[Sorry for an excessive quoting in the previous email]
+[Cc Pavel - the full report is http://lkml.kernel.org/r/20190218052823.GH29177@shao2-debian[]
+
+On Mon 18-02-19 08:08:44, Michal Hocko wrote:
+> On Mon 18-02-19 13:28:23, kernel test robot wrote:
+[...]
+> > [   40.305212] PGD 0 P4D 0 
+> > [   40.308255] Oops: 0000 [#1] PREEMPT SMP PTI
+> > [   40.313055] CPU: 1 PID: 239 Comm: udevd Not tainted 5.0.0-rc4-00149-gefad4e4 #1
+> > [   40.321348] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> > [   40.330813] RIP: 0010:page_mapping+0x12/0x80
+> > [   40.335709] Code: 5d c3 48 89 df e8 0e ad 02 00 85 c0 75 da 89 e8 5b 5d c3 0f 1f 44 00 00 53 48 89 fb 48 8b 43 08 48 8d 50 ff a8 01 48 0f 45 da <48> 8b 53 08 48 8d 42 ff 83 e2 01 48 0f 44 c3 48 83 38 ff 74 2f 48
+> > [   40.356704] RSP: 0018:ffff88801fa87cd8 EFLAGS: 00010202
+> > [   40.362714] RAX: ffffffffffffffff RBX: fffffffffffffffe RCX: 000000000000000a
+> > [   40.370798] RDX: fffffffffffffffe RSI: ffffffff820b9a20 RDI: ffff88801e5c0000
+> > [   40.378830] RBP: 6db6db6db6db6db7 R08: ffff88801e8bb000 R09: 0000000001b64d13
+> > [   40.386902] R10: ffff88801fa87cf8 R11: 0000000000000001 R12: ffff88801e640000
+> > [   40.395033] R13: ffffffff820b9a20 R14: ffff88801f145258 R15: 0000000000000001
+> > [   40.403138] FS:  00007fb2079817c0(0000) GS:ffff88801dd00000(0000) knlGS:0000000000000000
+> > [   40.412243] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [   40.418846] CR2: 0000000000000006 CR3: 000000001fa82000 CR4: 00000000000006a0
+> > [   40.426951] Call Trace:
+> > [   40.429843]  __dump_page+0x14/0x2c0
+> > [   40.433947]  is_mem_section_removable+0x24c/0x2c0
+> 
+> This looks like we are stumbling over an unitialized struct page again.
+> Something this patch should prevent from. Could you try to apply [1]
+> which will make __dump_page more robust so that we do not blow up there
+> and give some more details in return.
+> 
+> Btw. is this reproducible all the time?
+
+And forgot to ask whether this is reproducible with pending mmotm
+patches in linux-next.
+
+> I will have a look at the memory layout later today.
+
+[    0.059335] No NUMA configuration found
+[    0.059345] Faking a node at [mem 0x0000000000000000-0x000000001ffdffff]
+[    0.059399] NODE_DATA(0) allocated [mem 0x1e8c3000-0x1e8c5fff]
+[    0.073143] Zone ranges:
+[    0.073175]   DMA32    [mem 0x0000000000001000-0x000000001ffdffff]
+[    0.073204]   Normal   empty
+[    0.073212] Movable zone start for each node
+[    0.073240] Early memory node ranges
+[    0.073247]   node   0: [mem 0x0000000000001000-0x000000000009efff]
+[    0.073275]   node   0: [mem 0x0000000000100000-0x000000001ffdffff]
+[    0.073309] Zeroed struct page in unavailable ranges: 98 pages
+[    0.073312] Initmem setup node 0 [mem 0x0000000000001000-0x000000001ffdffff]
+[    0.073343] On node 0 totalpages: 130942
+[    0.073373]   DMA32 zone: 1792 pages used for memmap
+[    0.073400]   DMA32 zone: 21 pages reserved
+[    0.073408]   DMA32 zone: 130942 pages, LIFO batch:31
+
+We have only a single NUMA node with a single ZONE_DMA32. But there is a
+hole in the zone and the first range before the hole is not section
+aligned. We do zero some unavailable ranges but from the number it is no
+clear which range it is and 98. [0x60fff, 0xfffff) is 96 pages. The
+patch below should tell us whether we are covering all we need. If yes
+then the hole shouldn't make any difference and the problem must be
+somewhere else.
+
+---
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 35fdde041f5c..c60642505e04 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -6706,10 +6706,13 @@ void __init zero_resv_unavail(void)
+ 	pgcnt = 0;
+ 	for_each_mem_range(i, &memblock.memory, NULL,
+ 			NUMA_NO_NODE, MEMBLOCK_NONE, &start, &end, NULL) {
+-		if (next < start)
++		if (next < start) {
++			pr_info("zeroying %llx-%llx\n", PFN_DOWN(next), PFN_UP(start));
+ 			pgcnt += zero_pfn_range(PFN_DOWN(next), PFN_UP(start));
++		}
+ 		next = end;
+ 	}
++	pr_info("zeroying %llx-%lx\n", PFN_DOWN(next), max_pfn);
+ 	pgcnt += zero_pfn_range(PFN_DOWN(next), max_pfn);
+ 
+ 	/*
+-- 
+Michal Hocko
+SUSE Labs
