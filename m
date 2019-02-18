@@ -2,139 +2,221 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B436C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 626F6C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 548AB21736
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UCDjMOzf"
+	by mail.kernel.org (Postfix) with ESMTP id 3161121736
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550501031;
+	bh=KddCNh8EehFoZsQAxas3bP9N4Ga/I5rT1UKN7Sms0cU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=euu3CND1z13ut2weXLlHU4taUItMXdPhbKAFrgT5rRL7gCDWE+qu7xoENUOQT55ux
+	 q0nUGUlJOE/wyBXkztXhH/Qpl3bbh5h+A5Q1SGreJ4AJ2QxYgu0dQeQ3FVc01+FaI0
+	 0IymDYZehrbOlc3ILYaXkjj/OiLS+oSR1NegX4k8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732141AbfBROnm (ORCPT
+        id S1732887AbfBROnt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:43:42 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39959 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730366AbfBROnk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:43:40 -0500
-Received: by mail-wm1-f68.google.com with SMTP id t15so9256858wmi.5;
-        Mon, 18 Feb 2019 06:43:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=aeur/q/3yWzC3nkpi8nxeHc+K6TQc9JCz1dt6FZUrek=;
-        b=UCDjMOzfW5AIIYjmVupvfJW12cJU3lIQXbJnOsJM5ZlTpQ++dKScqq8ko80ZBQBEwZ
-         XLXbB/y1Q58WzAADmQeztpbGvVH4d/+5Bw7/PUaq9HDExwjQqtgoRrgissKpOzOBVylz
-         wklWwa/YQzbQtRW8xK3PHDra4DI/7sqQ9GXMsBy4rx0Kt2XpUHFSEYTwZulU1nOInabd
-         GcfndqbFIm8K1Jwvk8Iwxl1bD9/Jztw0nvlrVZDamzkWtTw8Pr+5qdHdonkyyAyVoeza
-         T57qxi6/ET0pgp90uIzw0AMrVvExmp//nMUb/Qi8ViWilw8VNtMf0se0SuhuoUX0N2P3
-         JuJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aeur/q/3yWzC3nkpi8nxeHc+K6TQc9JCz1dt6FZUrek=;
-        b=E18r5D8/lNjsRtl8APuPO19BA441Xdk8iBvirlqbRnrg/e7ry8uotTNypj0PZnzweK
-         GieiggAhHUONjfFxhPa4kAOkC3Qh3cyWlAXZL7nuJpnNy70Cp27dXZ5xdQTdaURAp6XK
-         ZaL/Mv7BjuYPK20rY62LNOZqOMx8HyWmWPres7XS9hIags0tnfQSGzjW7RbhpuRIbJ3I
-         h2XxMN7muzPXqvbybI2jMCkDyX4IkiSgD0r+Qxdg0ES1d/ST2cWfJXaSppyaIgONYk4D
-         lHbHc3ESKS+BpxtIncfetmDQq2gMC3Jn3yikeRh88dGg0Olu+EjVMyU/Pdo5OYAADSpq
-         gyjA==
-X-Gm-Message-State: AHQUAuZIkX3P0EN8TRTGbjskcSUsfcUiXX30omwqJ/kMatGsvioAeQKU
-        Y/HmS6P1B+9Y9RagKxPXhRXMbiyb
-X-Google-Smtp-Source: AHgI3Ia1pKS7FgVeeJkhSzEw5jWEjA1WD+t/cRpB/vglsM8ItC1NfOMk49SmIBMJvj6r2OD5KEehZA==
-X-Received: by 2002:a7b:c0c3:: with SMTP id s3mr15391171wmh.141.1550501018870;
-        Mon, 18 Feb 2019 06:43:38 -0800 (PST)
-Received: from localhost (pD9E51D2D.dip0.t-ipconnect.de. [217.229.29.45])
-        by smtp.gmail.com with ESMTPSA id a8sm16839482wmh.26.2019.02.18.06.43.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Feb 2019 06:43:38 -0800 (PST)
-Date:   Mon, 18 Feb 2019 15:43:37 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     airlied@linux.ie, daniel@ffwll.ch, jonathanh@nvidia.com,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/tegra: vic: fix implicit function declaration warning
-Message-ID: <20190218144337.GB19190@ulmo>
-References: <20190218110050.10589-1-anders.roxell@linaro.org>
+        Mon, 18 Feb 2019 09:43:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56034 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729707AbfBRNtA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:49:00 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78BC220449;
+        Mon, 18 Feb 2019 13:48:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550497739;
+        bh=KddCNh8EehFoZsQAxas3bP9N4Ga/I5rT1UKN7Sms0cU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=XMck4q4U3RraxgncucGofBBL7s5XPWpDwxX1Alkucc+G7DfiokfPg/zR5aS9V1/4f
+         JLCr9b3WKDPWFwA09TI+XjyITXUQI47hQJGETRYGfa+2vZhJUP/YaXrZMKWOBXyTJE
+         gArCczH3S0OP3TxH7VTVIhWj9rVypxth//PlFIa4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Nikos Tsironis <ntsironis@arrikto.com>,
+        Joe Thornber <ejt@redhat.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.20 87/92] dm thin: fix bug where bio that overwrites thin block ignores FUA
+Date:   Mon, 18 Feb 2019 14:43:30 +0100
+Message-Id: <20190218133503.442692574@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
+References: <20190218133454.668268457@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wq9mPyueHGvFACwf"
-Content-Disposition: inline
-In-Reply-To: <20190218110050.10589-1-anders.roxell@linaro.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
---wq9mPyueHGvFACwf
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+------------------
 
-On Mon, Feb 18, 2019 at 12:00:50PM +0100, Anders Roxell wrote:
-> When CONFIG_IOMMU_API isn't set the following warnings pops up:
->=20
-> drivers/gpu/drm/tegra/vic.c: In function =E2=80=98vic_boot=E2=80=99:
-> drivers/gpu/drm/tegra/vic.c:110:31: error: implicit declaration of functi=
-on =E2=80=98dev_iommu_fwspec_get=E2=80=99; did you mean =E2=80=98iommu_fwsp=
-ec_free=E2=80=99? [-Werror=3Dimplicit-function-declaration]
->    struct iommu_fwspec *spec =3D dev_iommu_fwspec_get(vic->dev);
->                                ^~~~~~~~~~~~~~~~~~~~
->                                iommu_fwspec_free
-> drivers/gpu/drm/tegra/vic.c:110:31: warning: initialization of =E2=80=98s=
-truct iommu_fwspec *=E2=80=99 from =E2=80=98int=E2=80=99 makes pointer from=
- integer without a cast [-Wint-conversion]
-> drivers/gpu/drm/tegra/vic.c:117:19: error: =E2=80=98struct iommu_fwspec=
-=E2=80=99 has no member named =E2=80=98num_ids=E2=80=99
->    if (spec && spec->num_ids > 0) {
->                    ^~
-> drivers/gpu/drm/tegra/vic.c:118:16: error: =E2=80=98struct iommu_fwspec=
-=E2=80=99 has no member named =E2=80=98ids=E2=80=99
->     value =3D spec->ids[0] & 0xffff;
->                 ^~
->=20
-> Rework so that its inside a '#ifdef CONFIG_IOMMU_API' block.
->=20
-> Fixes: f3779cb190a5 ("drm/tegra: vic: Support stream ID register programm=
-ing")
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
->  drivers/gpu/drm/tegra/vic.c | 2 ++
->  1 file changed, 2 insertions(+)
+From: Nikos Tsironis <ntsironis@arrikto.com>
 
-Applied, thanks.
+commit 4ae280b4ee3463fa57bbe6eede26b97daff8a0f1 upstream.
 
-Thierry
+When provisioning a new data block for a virtual block, either because
+the block was previously unallocated or because we are breaking sharing,
+if the whole block of data is being overwritten the bio that triggered
+the provisioning is issued immediately, skipping copying or zeroing of
+the data block.
 
---wq9mPyueHGvFACwf
-Content-Type: application/pgp-signature; name="signature.asc"
+When this bio completes the new mapping is inserted in to the pool's
+metadata by process_prepared_mapping(), where the bio completion is
+signaled to the upper layers.
 
------BEGIN PGP SIGNATURE-----
+This completion is signaled without first committing the metadata.  If
+the bio in question has the REQ_FUA flag set and the system crashes
+right after its completion and before the next metadata commit, then the
+write is lost despite the REQ_FUA flag requiring that I/O completion for
+this request must only be signaled after the data has been committed to
+non-volatile storage.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxqxJgACgkQ3SOs138+
-s6FdzxAAqMQwVpAXY7534MRScbODw+x2lR1SKl9F6NuD2JXGRtMUFBPehoy/2Z/P
-pWmBhDczB9oqD7kbLPeyjcmg1UH76F7ozMFpbmuL8+G/UFBBkv5tFnzWGWGremPC
-DdmOUVwb79F10AUFmhb2lzvYD7IqV0FVWcQ9TmTpXnEr41jvXtGrmwbhOvS0Ihfa
-l1fx07dybPZ3M/qmMHxT7Jf8iXPvxOv5KUjSpbIo89JXOguMirXNt1W5PfUkA2j+
-D5ek4bHO2Y83kSUi2lQ99qZ7Yfm2XLkutGrGS1aWaWPkPusz9eAoBPOQhNs28Jjq
-NC7VcuztkJDVMZYa2MR+vtMoGD371/OdHST7lI+4KfM+u5oE/rWx/CzK8gUc6Nlm
-3QyIsLsf2/NAoK77FSffAtrTq2TBUviZFEPKxZ2RcZkAji22DkQtQfv1UgPAGbPK
-RFju4jRiez2QPEj6HzIZllrZSkkD0GTaN6vc2BsJ1ZCkLutB2GyQMJPFJtWlxlvp
-Q4+UumjC3COO5XHZhh5WLfMqYfvI1A0hLk/2C1aILC83xh36ZJUjdNAejtpAPa/6
-O1BLgZRphcNtXfRzr2Kojd7yL2oHchazE7vqEO5qQeHe4V7fkHFp0m/7gn28RuXn
-KkKV2p56dYWnXfDU9mvN2d3kvzqT3wIkM+tx/qDP3pmRgmYYdGA=
-=6gu4
------END PGP SIGNATURE-----
+Fix this by deferring the completion of overwrite bios, with the REQ_FUA
+flag set, until after the metadata has been committed.
 
---wq9mPyueHGvFACwf--
+Cc: stable@vger.kernel.org
+Signed-off-by: Nikos Tsironis <ntsironis@arrikto.com>
+Acked-by: Joe Thornber <ejt@redhat.com>
+Acked-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/md/dm-thin.c |   55 ++++++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 50 insertions(+), 5 deletions(-)
+
+--- a/drivers/md/dm-thin.c
++++ b/drivers/md/dm-thin.c
+@@ -257,6 +257,7 @@ struct pool {
+ 
+ 	spinlock_t lock;
+ 	struct bio_list deferred_flush_bios;
++	struct bio_list deferred_flush_completions;
+ 	struct list_head prepared_mappings;
+ 	struct list_head prepared_discards;
+ 	struct list_head prepared_discards_pt2;
+@@ -956,6 +957,39 @@ static void process_prepared_mapping_fai
+ 	mempool_free(m, &m->tc->pool->mapping_pool);
+ }
+ 
++static void complete_overwrite_bio(struct thin_c *tc, struct bio *bio)
++{
++	struct pool *pool = tc->pool;
++	unsigned long flags;
++
++	/*
++	 * If the bio has the REQ_FUA flag set we must commit the metadata
++	 * before signaling its completion.
++	 */
++	if (!bio_triggers_commit(tc, bio)) {
++		bio_endio(bio);
++		return;
++	}
++
++	/*
++	 * Complete bio with an error if earlier I/O caused changes to the
++	 * metadata that can't be committed, e.g, due to I/O errors on the
++	 * metadata device.
++	 */
++	if (dm_thin_aborted_changes(tc->td)) {
++		bio_io_error(bio);
++		return;
++	}
++
++	/*
++	 * Batch together any bios that trigger commits and then issue a
++	 * single commit for them in process_deferred_bios().
++	 */
++	spin_lock_irqsave(&pool->lock, flags);
++	bio_list_add(&pool->deferred_flush_completions, bio);
++	spin_unlock_irqrestore(&pool->lock, flags);
++}
++
+ static void process_prepared_mapping(struct dm_thin_new_mapping *m)
+ {
+ 	struct thin_c *tc = m->tc;
+@@ -988,7 +1022,7 @@ static void process_prepared_mapping(str
+ 	 */
+ 	if (bio) {
+ 		inc_remap_and_issue_cell(tc, m->cell, m->data_block);
+-		bio_endio(bio);
++		complete_overwrite_bio(tc, bio);
+ 	} else {
+ 		inc_all_io_entry(tc->pool, m->cell->holder);
+ 		remap_and_issue(tc, m->cell->holder, m->data_block);
+@@ -2317,7 +2351,7 @@ static void process_deferred_bios(struct
+ {
+ 	unsigned long flags;
+ 	struct bio *bio;
+-	struct bio_list bios;
++	struct bio_list bios, bio_completions;
+ 	struct thin_c *tc;
+ 
+ 	tc = get_first_thin(pool);
+@@ -2328,26 +2362,36 @@ static void process_deferred_bios(struct
+ 	}
+ 
+ 	/*
+-	 * If there are any deferred flush bios, we must commit
+-	 * the metadata before issuing them.
++	 * If there are any deferred flush bios, we must commit the metadata
++	 * before issuing them or signaling their completion.
+ 	 */
+ 	bio_list_init(&bios);
++	bio_list_init(&bio_completions);
++
+ 	spin_lock_irqsave(&pool->lock, flags);
+ 	bio_list_merge(&bios, &pool->deferred_flush_bios);
+ 	bio_list_init(&pool->deferred_flush_bios);
++
++	bio_list_merge(&bio_completions, &pool->deferred_flush_completions);
++	bio_list_init(&pool->deferred_flush_completions);
+ 	spin_unlock_irqrestore(&pool->lock, flags);
+ 
+-	if (bio_list_empty(&bios) &&
++	if (bio_list_empty(&bios) && bio_list_empty(&bio_completions) &&
+ 	    !(dm_pool_changed_this_transaction(pool->pmd) && need_commit_due_to_time(pool)))
+ 		return;
+ 
+ 	if (commit(pool)) {
++		bio_list_merge(&bios, &bio_completions);
++
+ 		while ((bio = bio_list_pop(&bios)))
+ 			bio_io_error(bio);
+ 		return;
+ 	}
+ 	pool->last_commit_jiffies = jiffies;
+ 
++	while ((bio = bio_list_pop(&bio_completions)))
++		bio_endio(bio);
++
+ 	while ((bio = bio_list_pop(&bios)))
+ 		generic_make_request(bio);
+ }
+@@ -2954,6 +2998,7 @@ static struct pool *pool_create(struct m
+ 	INIT_DELAYED_WORK(&pool->no_space_timeout, do_no_space_timeout);
+ 	spin_lock_init(&pool->lock);
+ 	bio_list_init(&pool->deferred_flush_bios);
++	bio_list_init(&pool->deferred_flush_completions);
+ 	INIT_LIST_HEAD(&pool->prepared_mappings);
+ 	INIT_LIST_HEAD(&pool->prepared_discards);
+ 	INIT_LIST_HEAD(&pool->prepared_discards_pt2);
+
+
