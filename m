@@ -2,205 +2,123 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=1.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB14C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59BA2C4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:20:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2C4D218AD
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:20:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="i8aXmBBn"
+	by mail.kernel.org (Postfix) with ESMTP id 14A14218AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:20:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550478036;
+	bh=VaukHjZcktjfNr37o6tmfDPvxlo1894PBCTOca6mesg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=fkMIAVAU8Ww9CurT5zXJ3CAgJlFRFz03x1b2ylfKMkIVbZNuBddyfq+nmNAlN5GMN
+	 7IBK1XzVFwuHSTmOwt70peuiuR+nmx1tb3i1Yu834vlx4iA5Q7lhyAg5TddGkR1T2a
+	 mYn7xIzMT55H6hmQjwtRzpEfnM0WvrggZmGjsM1I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728976AbfBRIUO (ORCPT
+        id S1729077AbfBRIUe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 03:20:14 -0500
-Received: from mout.web.de ([212.227.15.4]:46969 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725920AbfBRIUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 03:20:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1550477987;
-        bh=Gzozkklv+IHrtUVNGXYvPX4o1QM+OQ228VE0F162nxc=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=i8aXmBBnKf73ERFLeGep9+fHFIyALksZYSXfy42o12NeV53tTxdM5zIvhHIio5XrC
-         JZJ8H31M0cmk29B+jE8z/IsRg5FztL+eH2fLx83v46exDSupIGvMXh/OpBPEVGgWHt
-         O+Go+F/2AeVtbyPuKxrH6saa+hwO4wwlbpI7Nc4s=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([78.49.162.105]) by smtp.web.de (mrweb002
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0LvB6w-1h3vai44OY-010KC0; Mon, 18
- Feb 2019 09:19:47 +0100
-Subject: Re: [v6] coccinelle: semantic code search for missing put_device()
-To:     Julia Lawall <julia.lawall@lip6.fr>,
-        Wen Yang <wen.yang99@zte.com.cn>
-Cc:     Wen Yang <yellowriver2010@hotmail.com>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Cheng Shengyu <cheng.shengyu@zte.com.cn>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        cocci@systeme.lip6.fr
-References: <201902181122502228026@zte.com.cn>
- <alpine.DEB.2.21.1902180740550.3111@hadrien>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
- +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
- mpVJgXGKkNJ1ey+QOXouzlErVvE2fRh+KXXN1Q7fSmTJlAW9XJYHS3BDHb0uRpymRSX3O+E2
- lA87C7R8qAigPDZi6Z7UmwIA83ZMKXQ5stA0lhPyYgQcM7fh7V4ZYhnR0I5/qkUoxKpqaYLp
- YHBczVP+Zx/zHOM0KQphOMbU7X3c1pmMruoe6ti9uZzqZSLsF+NKXFEPBS665tQr66HJvZvY
- GMDlntZFAZ6xQvCC1r3MGoxEC1tuEa24vPCC9RZ9wk2sY5Csbva0WwYv3WKRZZBv8eIhGMxs
- rcpeGShRFyZ/0BYO53wZAPV1pEhGLLxd8eLN/nEWjJE0ejakPC1H/mt5F+yQBJAzz9JzbToU
- 5jKLu0SugNI18MspJut8AiA1M44CIWrNHXvWsQ+nnBKHDHHYZu7MoXlOmB32ndsfPthR3GSv
- jN7YD4Ad724H8fhRijmC1+RpuSce7w2JLj5cYj4MlccmNb8YUxsE8brY2WkXQYS8Ivse39MX
- BE66MQN0r5DQ6oqgoJ4gHIVBUv/ZwgcmUNS5gQkNCFA0dWXznQARAQABtCZNYXJrdXMgRWxm
- cmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPokCVAQTAQgAPhYhBHDP0hzibeXjwQ/ITuU9
- Figxg9azBQJYNvsQAhsjBQkJZgGABQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJEOU9Figx
- g9azcyMP/iVihZkZ4VyH3/wlV3nRiXvSreqg+pGPI3c8J6DjP9zvz7QHN35zWM++1yNek7Ar
- OVXwuKBo18ASlYzZPTFJZwQQdkZSV+atwIzG3US50ZZ4p7VyUuDuQQVVqFlaf6qZOkwHSnk+
- CeGxlDz1POSHY17VbJG2CzPuqMfgBtqIU1dODFLpFq4oIAwEOG6fxRa59qbsTLXxyw+PzRaR
- LIjVOit28raM83Efk07JKow8URb4u1n7k9RGAcnsM5/WMLRbDYjWTx0lJ2WO9zYwPgRykhn2
- sOyJVXk9xVESGTwEPbTtfHM+4x0n0gC6GzfTMvwvZ9G6xoM0S4/+lgbaaa9t5tT/PrsvJiob
- kfqDrPbmSwr2G5mHnSM9M7B+w8odjmQFOwAjfcxoVIHxC4Cl/GAAKsX3KNKTspCHR0Yag78w
- i8duH/eEd4tB8twcqCi3aCgWoIrhjNS0myusmuA89kAWFFW5z26qNCOefovCx8drdMXQfMYv
- g5lRk821ZCNBosfRUvcMXoY6lTwHLIDrEfkJQtjxfdTlWQdwr0mM5ye7vd83AManSQwutgpI
- q+wE8CNY2VN9xAlE7OhcmWXlnAw3MJLW863SXdGlnkA3N+U4BoKQSIToGuXARQ14IMNvfeKX
- NphLPpUUnUNdfxAHu/S3tPTc/E/oePbHo794dnEm57LuuQINBFg2+xABEADZg/T+4o5qj4cw
- nd0G5pFy7ACxk28mSrLuva9tyzqPgRZ2bdPiwNXJUvBg1es2u81urekeUvGvnERB/TKekp25
- 4wU3I2lEhIXj5NVdLc6eU5czZQs4YEZbu1U5iqhhZmKhlLrhLlZv2whLOXRlLwi4jAzXIZAu
- 76mT813jbczl2dwxFxcT8XRzk9+dwzNTdOg75683uinMgskiiul+dzd6sumdOhRZR7YBT+xC
- wzfykOgBKnzfFscMwKR0iuHNB+VdEnZw80XGZi4N1ku81DHxmo2HG3icg7CwO1ih2jx8ik0r
- riIyMhJrTXgR1hF6kQnX7p2mXe6K0s8tQFK0ZZmYpZuGYYsV05OvU8yqrRVL/GYvy4Xgplm3
- DuMuC7/A9/BfmxZVEPAS1gW6QQ8vSO4zf60zREKoSNYeiv+tURM2KOEj8tCMZN3k3sNASfoG
- fMvTvOjT0yzMbJsI1jwLwy5uA2JVdSLoWzBD8awZ2X/eCU9YDZeGuWmxzIHvkuMj8FfX8cK/
- 2m437UA877eqmcgiEy/3B7XeHUipOL83gjfq4ETzVmxVswkVvZvR6j2blQVr+MhCZPq83Ota
- xNB7QptPxJuNRZ49gtT6uQkyGI+2daXqkj/Mot5tKxNKtM1Vbr/3b+AEMA7qLz7QjhgGJcie
- qp4b0gELjY1Oe9dBAXMiDwARAQABiQI8BBgBCAAmFiEEcM/SHOJt5ePBD8hO5T0WKDGD1rMF
- Alg2+xACGwwFCQlmAYAACgkQ5T0WKDGD1rOYSw/+P6fYSZjTJDAl9XNfXRjRRyJSfaw6N1pA
- Ahuu0MIa3djFRuFCrAHUaaFZf5V2iW5xhGnrhDwE1Ksf7tlstSne/G0a+Ef7vhUyeTn6U/0m
- +/BrsCsBUXhqeNuraGUtaleatQijXfuemUwgB+mE3B0SobE601XLo6MYIhPh8MG32MKO5kOY
- hB5jzyor7WoN3ETVNQoGgMzPVWIRElwpcXr+yGoTLAOpG7nkAUBBj9n9TPpSdt/npfok9ZfL
- /Q+ranrxb2Cy4tvOPxeVfR58XveX85ICrW9VHPVq9sJf/a24bMm6+qEg1V/G7u/AM3fM8U2m
- tdrTqOrfxklZ7beppGKzC1/WLrcr072vrdiN0icyOHQlfWmaPv0pUnW3AwtiMYngT96BevfA
- qlwaymjPTvH+cTXScnbydfOQW8220JQwykUe+sHRZfAF5TS2YCkQvsyf7vIpSqo/ttDk4+xc
- Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
- x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
- pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <ab463e94-287a-6188-6795-06eeb832e861@web.de>
-Date:   Mon, 18 Feb 2019 09:19:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Mon, 18 Feb 2019 03:20:34 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41548 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725920AbfBRIUe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 03:20:34 -0500
+Received: by mail-pg1-f193.google.com with SMTP id m1so8067659pgq.8;
+        Mon, 18 Feb 2019 00:20:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=smQ3UZLScYHvuL/U/au9eTzJZ5+ZHSry0nos0pW1Ac8=;
+        b=Od1xhSljbWo3lxm8juCFdcBlxaiHw1ZEjfyL0pHfxUmCLSsd1hn2KPoNWCgczS3I6w
+         gWGMmNp0+ZVap4NtrZHLS1nhFeAgML7oRffvfXsLt+KSxzTgpogIKsHcYQC7Cqvn0TEC
+         OOzPqI8D3Vttbqwu7wGqNJEKzU3YbpgGjgVhY7EWV2DY5lCGeBxfSEx7O309AaaohDcO
+         ej859s2vNfLRttVJ5SzQs6uXmim244ihj/Rz/Bjdi/1FP2RHcC/UKCThxDmynmyF5Suo
+         u450ETx3MTHnDZpcZQLopLTq2+sE4OuRyMjvdBuOCNTuMswIC4gCFksFULypR364s2k8
+         GSGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=smQ3UZLScYHvuL/U/au9eTzJZ5+ZHSry0nos0pW1Ac8=;
+        b=d1CtuXzaCU/b8ev4c/me1/ZeJ/UMgw02o07MCWMdHpzm7fs4l776UFxiPdi3zrUpXb
+         4fS62LkbAQbATARtuKmZXwottEdB9GQbGfboC02tYEZeMBzjpcyuf3IUzO7HrFZCRZCV
+         JZbjrs9OeqHSB6fFTIPY+YeRPBbTOpdISR95YHOf4IV7HaKlB5E0Ahbu51SHY1bc2ILH
+         wU3hX6/Kw3EMRagbo2bOeWaA+SYeKegJErnGEpYHq1fSr2u2uBK3XE5w7mJ4bTS+aGgV
+         UMHkSMLe+Q6dT5UmtUvrHtGJ9Zov0fkAnPHwJBHXV4tK+eJX/wOJujLnQ3Qd9KDZWyxq
+         UUvg==
+X-Gm-Message-State: AHQUAuZ/tIAK/9vQltbCinuJqfEj9L66Ep1lyb+y/TApvI5qForZzAGN
+        Zv10YBGoLMy41wiEurYfJds=
+X-Google-Smtp-Source: AHgI3Iav4jqBKezlgwNb3JzRYCs5r7JAWnEaRBCpeQQShzGNANjFafBIxhvWEUa4FSBUB4T5kF5I3Q==
+X-Received: by 2002:a63:5964:: with SMTP id j36mr17725124pgm.210.1550478032951;
+        Mon, 18 Feb 2019 00:20:32 -0800 (PST)
+Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
+        by smtp.gmail.com with ESMTPSA id q75sm20865180pfa.38.2019.02.18.00.20.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Feb 2019 00:20:31 -0800 (PST)
+Date:   Mon, 18 Feb 2019 17:20:26 +0900
+From:   Minchan Kim <minchan@kernel.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] mm: Fix the pgtable leak
+Message-ID: <20190218082026.GA88360@google.com>
+References: <20190213112900.33963-1-minchan@kernel.org>
+ <20190213133624.GB9460@kroah.com>
+ <20190214072352.GA15820@google.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1902180740550.3111@hadrien>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:s0Qmnm++jcdIjGkNjhKEHp/e/fkruH15Vk30MeSnGtIxaR+5ES2
- I+nhhcnV81gqKecXZaUUSfA5Y+t7+Vj+f0GiwwuibFwgtDahkC010SXnbtLTWFFKh/JE25r
- 6BkZkzhf2+qyT4ApmHP5kw7y6BnWaPxdwrVmEzuQbEvAUxbkQSeyea+z6N+PeMo3Fq1pHXf
- PRNae7VG7AHnSbNbOxoiA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:rqHtMltt+Ks=:kbdKVSHjB9PASC/dWqG3Cp
- kSimnsKneM743zklCXJFnyoGdIMYaVV8f5hvCQFQQnlKF3mbhcpi+LTw0dxqYCj/UR0WHgvb+
- AP5aCj/JPLwNZDFNfmTIjLMuJNJIM+GvZH3uXJJK1KITPNUVIfUb+s+n/CSU6jtX8TKyBrch9
- ka7QKHcyf8hR3pe4N3YyBYEHmGbAZXWgfFm8J9+WhxeD254gnG27Vcdb5P+pt8zuYsr0SPVAE
- nqO2wRxjlQy9PTIYgLNDjfG++6k+N96eziaoJvCfEofLay83/Q4jzdIqUoXzZUrud2OcEblmx
- j0OsFyw7Zhf3IC3J09bFwmJ4Ih1QeMaG/HmctAru4XpO7k9ld4uzGUiGKSPixONMYUXQdYLxH
- nhGYVdVoUX3te75RGzI1RBuyTv2inAh+0KtjnFUtnuhzxl9tD3tkIKyv7eS6BTYYSfBstppW4
- QLyQtY6w9LkLybjNH6BVk3/+nj0lfBUZts6yzy/qHLzQzLiZYkVMAP5Vp1BAB6Vl/c1KUuugR
- UsRiWh7lg0mrizvi32BSHVJJir8BWBQkp8le6gYAOxt+dQVaGbgxX0UAHa81VGM50pgYRu25S
- fDv06X4pzNKOxE+Lz7tIVe6NT0Rh68y8J7FHqwbB3vYJ2xmbWzanbLn3FFda28kLmCN6FMxH9
- rcD537sCkcKLlH+n7g5mZItuYK0CPIX3F4ebaDjOfXNLVZKvRu2W5XPL9XvQwwPSnxCPRl1Lm
- M2QynyczVFcBPBUxRnd+NYHXd3FKQTeocP9jjQKtTB+djXZ+roYXJRkWJMGxO9ypmIMK5zzjE
- 5WpTHxh3jLBPjXMj5fn8qn+3iGNSJG8i6om++v1Te5l26kIDxc37nUzhYVh097mypKC0Ko9Xf
- vE53cOfd3bQeZxjfom/9pVvG1fBuLWGHZ5rpbt0cLilPo15ty2ZZSmM2PTA0976U1Ipnnc8Sc
- y1kzLWHy8yQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190214072352.GA15820@google.com>
+User-Agent: Mutt/1.10.1+60 (6df12dc1) (2018-08-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>> Which data element should not get reassigned here (before a correspond=
-ing
->>> null pointer check)?
->>>
->>
->> Thank you for your comments.
->> We did some experiments:
->> +id =3D of_find_device_by_node@p1(x)
->> +... when !=3D e =3D id
->> ...
->> Or:
->> ...
->> + ... when !=3D id =3D e
->>
->> The number of issuses found by these two methods is the same.
+On Thu, Feb 14, 2019 at 04:23:52PM +0900, Minchan Kim wrote:
+> On Wed, Feb 13, 2019 at 02:36:24PM +0100, Greg KH wrote:
+> > On Wed, Feb 13, 2019 at 08:29:00PM +0900, Minchan Kim wrote:
+> > > [1] was backported to v4.9 stable tree but it introduces pgtable
+> > > memory leak because with fault retrial, preallocated pagetable
+> > > could be leaked in second iteration.
+> > > To fix the problem, this patch backport [2].
+> > > 
+> > > [1] 5cf3e5ff95876, mm, memcg: fix reclaim deadlock with writeback
+> > 
+> > This is really commit 63f3655f9501 ("mm, memcg: fix reclaim deadlock
+> > with writeback") which was in 4.9.152, 4.14.94, 4.19.16, and 4.20.3 as
+> > well as 5.0-rc2.
+> 
+> Since 4.10, we has [2] so it should be okay other (tree > 4.10)
+> 
+> > 
+> > > [2] b0b9b3df27d10, mm: stop leaking PageTables
+> > 
+> > This commit was in 4.10, so I am guessing that this really is just a
+> > backport of that commit?
+> 
+> Yub.
+> 
+> > 
+> > If so, it's not the full backport, why not take the whole thing?  Why
+> > only cherry-pick one chunk of it?  Why do we not need the other parts?
+> 
+> Because [2] actually aims for fixing [3] which was introduced at 4.10.
+> Since then, [1] relies on the chunk I sent. Thus we don't need other part
+> for 4.9.
+> 
+> [3] 953c66c2b22a ("mm: THP page cache support for ppc64")
 
-This can be because these SmPL specifications share some source code searc=
-h functionality.
+Hi Greg,
 
-
->> When !=3D e =3D id achieves this behavior.
->
-> They are the same because neither issue arises.
-
-You might not notice a difference from a specific source file selection so=
- far.
-
-
-> I would have a hard time saying which one is more reasonable to test,
-
-I suggest to reconsider the interpretation of this software situation once=
- more.
-
-
-> since both are extremely unlikely.
-
-I disagree to this view because two ellipses were intentionally specified
-in published SmPL scripts.
-So some software developers found these =E2=80=9Cspecial use cases=E2=80=
-=9D important enough.
-
-
->> In addition, we feel that we should probably accept this patch first,
-
-I disagree to this imagination because I would prefer to integrate a sourc=
-e code variant
-without a bug (which was copied from a version on 2013-05-08 by Petr Strna=
-d).
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/sc=
-ripts/coccinelle/free/pci_free_consistent.cocci?id=3Df7b167113753e95ae6138=
-3e234f8d10142782ace#n12
-
-I hope that nicer run time behaviour can become also relevant here.
-
-
->> use it to find more memory leaks, and solve the actual problems in the =
-kernel code.
-
-Your are not hindered to achieve specific software improvements with evolv=
-ing
-development approaches while the clarification and the final integration
-of useful scripts for the semantic patch language can take a bit longer.
-
-
->> As for the patch itself, we can continue to pursue perfect in the proce=
-ss
->> of using it to solve practical problems.
-
-I am curious on how your attention will evolve further for the correspondi=
-ng
-software correctness.
-
-1. How much will you care for the order of identifiers within the applicat=
-ion
-   of SmPL assignment exclusions?
-
-2. Would you like to take additional data type restrictions into account?
-
-Regards,
-Markus
+Any chance to look into this patch?
