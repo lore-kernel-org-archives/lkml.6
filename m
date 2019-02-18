@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F085FC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54690C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3336217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F7BA20842
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498101;
-	bh=y28mxSDhRUEhQeLAu/Xp4d/xE1cJ6D61D2rm7ZHH0QA=;
+	s=default; t=1550498106;
+	bh=IDqVaifCncmyqhpwyFP8PJZVk16qA/KdoKHF6I6F3I0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ipvBnC4yLIyBOVHh9GJuFsaU5eJsgsewqfHfBURQ+7T5bKjSr6OMYbYa2B7+syiQS
-	 HCibDG5v/7caqoNQm3uMzAZI7GNGqNUjbDyUH87cVbwH0RFMcmK3lgZwFuavLD036t
-	 Xvx0uCOBB2wqtyPx49yhMIKnatPKHgJ49a3UqTnE=
+	b=AAToMguxYtq5Zm6IR5uqN8aT37G2/i/4bONp+H7us1x1rhWXFLT19sJD5YLrL6TGa
+	 CwjqJGU4cCRA841KPaqnEMJjtUNt70yYUteHgRj+4gXt77eveaAO5liU6JyMoWbULX
+	 +C86J5mfi03fePTMDlQwOXNA/xbnutNPlIEppyYM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732684AbfBRNzA (ORCPT
+        id S2387447AbfBRNzE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:55:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34982 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:55:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387414AbfBRNy7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:54:59 -0500
+        id S2387414AbfBRNzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:55:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 007F82077B;
-        Mon, 18 Feb 2019 13:54:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52FE820842;
+        Mon, 18 Feb 2019 13:55:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498098;
-        bh=y28mxSDhRUEhQeLAu/Xp4d/xE1cJ6D61D2rm7ZHH0QA=;
+        s=default; t=1550498101;
+        bh=IDqVaifCncmyqhpwyFP8PJZVk16qA/KdoKHF6I6F3I0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e0HkOvPeNEaHLiiRgzEEOACTtqoDoDn5TN2y/qUGta8ClfLcdBXVz4TRwwaPIw7qn
-         nTR1LKu9teEcv3wdLqpv65VtKOobeCWHxnMGFazwwxZ3XIXuhZbbILSKl65k9hNel6
-         GSplcorOwVg35oiISLxpm8KlRMd6uc7dkjtSBXjM=
+        b=bQKOfW69pNuvio/X5QXAZZkMEsOlwuGow+V9Mp9+YGlmlj3oB6XxtJPUdFHObH1TE
+         GIpTxhHZm/XpfQkP2jjl1mXXGzmCv0CSFgdH2IWx2KuUPhHBNY9TNSekyJFPKo0lzI
+         cuHi6ADs2UjHyU4MXKzKBO0ZmwNfmlGXtNr2A07U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        "David A. Long" <dave.long@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 04/62] uapi/if_ether.h: prevent redefinition of struct ethhdr
-Date:   Mon, 18 Feb 2019 14:43:10 +0100
-Message-Id: <20190218133506.144278426@linuxfoundation.org>
+Subject: [PATCH 4.14 05/62] ARM: 8789/1: signal: copy registers using __copy_to_user()
+Date:   Mon, 18 Feb 2019 14:43:11 +0100
+Message-Id: <20190218133506.231756602@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
 References: <20190218133505.801423074@linuxfoundation.org>
@@ -67,65 +67,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 6926e041a8920c8ec27e4e155efa760aa01551fd upstream.
+Commit 5ca451cf6ed04443774bbb7ee45332dafa42e99f upstream.
 
-Musl provides its own ethhdr struct definition. Add a guard to prevent
-its definition of the appropriate musl header has already been included.
+When saving the ARM integer registers, use __copy_to_user() to
+copy them into user signal frame, rather than __put_user_error().
+This has the benefit of disabling/enabling PAN once for the whole copy
+intead of once per write.
 
-glibc does not implement this header, but when glibc will implement this
-they can just define __UAPI_DEF_ETHHDR 0 to make it work with the
-kernel.
-
-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: David A. Long <dave.long@linaro.org>
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/uapi/linux/if_ether.h    | 3 +++
- include/uapi/linux/libc-compat.h | 6 ++++++
- 2 files changed, 9 insertions(+)
+ arch/arm/kernel/signal.c | 49 ++++++++++++++++++++++------------------
+ 1 file changed, 27 insertions(+), 22 deletions(-)
 
-diff --git a/include/uapi/linux/if_ether.h b/include/uapi/linux/if_ether.h
-index 244e3213ecb0..60ec9114e28f 100644
---- a/include/uapi/linux/if_ether.h
-+++ b/include/uapi/linux/if_ether.h
-@@ -23,6 +23,7 @@
- #define _UAPI_LINUX_IF_ETHER_H
+diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
+index cdfe52b15a0a..1dc1f39825b6 100644
+--- a/arch/arm/kernel/signal.c
++++ b/arch/arm/kernel/signal.c
+@@ -296,30 +296,35 @@ static int
+ setup_sigframe(struct sigframe __user *sf, struct pt_regs *regs, sigset_t *set)
+ {
+ 	struct aux_sigframe __user *aux;
++	struct sigcontext context;
+ 	int err = 0;
  
- #include <linux/types.h>
-+#include <linux/libc-compat.h>
- 
- /*
-  *	IEEE 802.3 Ethernet magic constants.  The frame sizes omit the preamble
-@@ -150,11 +151,13 @@
-  *	This is an Ethernet frame header.
-  */
- 
-+#if __UAPI_DEF_ETHHDR
- struct ethhdr {
- 	unsigned char	h_dest[ETH_ALEN];	/* destination eth addr	*/
- 	unsigned char	h_source[ETH_ALEN];	/* source ether addr	*/
- 	__be16		h_proto;		/* packet type ID field	*/
- } __attribute__((packed));
-+#endif
- 
- 
- #endif /* _UAPI_LINUX_IF_ETHER_H */
-diff --git a/include/uapi/linux/libc-compat.h b/include/uapi/linux/libc-compat.h
-index 8254c937c9f4..fc29efaa918c 100644
---- a/include/uapi/linux/libc-compat.h
-+++ b/include/uapi/linux/libc-compat.h
-@@ -264,4 +264,10 @@
- 
- #endif /* __GLIBC__ */
- 
-+/* Definitions for if_ether.h */
-+/* allow libcs like musl to deactivate this, glibc does not implement this. */
-+#ifndef __UAPI_DEF_ETHHDR
-+#define __UAPI_DEF_ETHHDR		1
-+#endif
+-	__put_user_error(regs->ARM_r0, &sf->uc.uc_mcontext.arm_r0, err);
+-	__put_user_error(regs->ARM_r1, &sf->uc.uc_mcontext.arm_r1, err);
+-	__put_user_error(regs->ARM_r2, &sf->uc.uc_mcontext.arm_r2, err);
+-	__put_user_error(regs->ARM_r3, &sf->uc.uc_mcontext.arm_r3, err);
+-	__put_user_error(regs->ARM_r4, &sf->uc.uc_mcontext.arm_r4, err);
+-	__put_user_error(regs->ARM_r5, &sf->uc.uc_mcontext.arm_r5, err);
+-	__put_user_error(regs->ARM_r6, &sf->uc.uc_mcontext.arm_r6, err);
+-	__put_user_error(regs->ARM_r7, &sf->uc.uc_mcontext.arm_r7, err);
+-	__put_user_error(regs->ARM_r8, &sf->uc.uc_mcontext.arm_r8, err);
+-	__put_user_error(regs->ARM_r9, &sf->uc.uc_mcontext.arm_r9, err);
+-	__put_user_error(regs->ARM_r10, &sf->uc.uc_mcontext.arm_r10, err);
+-	__put_user_error(regs->ARM_fp, &sf->uc.uc_mcontext.arm_fp, err);
+-	__put_user_error(regs->ARM_ip, &sf->uc.uc_mcontext.arm_ip, err);
+-	__put_user_error(regs->ARM_sp, &sf->uc.uc_mcontext.arm_sp, err);
+-	__put_user_error(regs->ARM_lr, &sf->uc.uc_mcontext.arm_lr, err);
+-	__put_user_error(regs->ARM_pc, &sf->uc.uc_mcontext.arm_pc, err);
+-	__put_user_error(regs->ARM_cpsr, &sf->uc.uc_mcontext.arm_cpsr, err);
+-
+-	__put_user_error(current->thread.trap_no, &sf->uc.uc_mcontext.trap_no, err);
+-	__put_user_error(current->thread.error_code, &sf->uc.uc_mcontext.error_code, err);
+-	__put_user_error(current->thread.address, &sf->uc.uc_mcontext.fault_address, err);
+-	__put_user_error(set->sig[0], &sf->uc.uc_mcontext.oldmask, err);
++	context = (struct sigcontext) {
++		.arm_r0        = regs->ARM_r0,
++		.arm_r1        = regs->ARM_r1,
++		.arm_r2        = regs->ARM_r2,
++		.arm_r3        = regs->ARM_r3,
++		.arm_r4        = regs->ARM_r4,
++		.arm_r5        = regs->ARM_r5,
++		.arm_r6        = regs->ARM_r6,
++		.arm_r7        = regs->ARM_r7,
++		.arm_r8        = regs->ARM_r8,
++		.arm_r9        = regs->ARM_r9,
++		.arm_r10       = regs->ARM_r10,
++		.arm_fp        = regs->ARM_fp,
++		.arm_ip        = regs->ARM_ip,
++		.arm_sp        = regs->ARM_sp,
++		.arm_lr        = regs->ARM_lr,
++		.arm_pc        = regs->ARM_pc,
++		.arm_cpsr      = regs->ARM_cpsr,
 +
- #endif /* _UAPI_LIBC_COMPAT_H */
++		.trap_no       = current->thread.trap_no,
++		.error_code    = current->thread.error_code,
++		.fault_address = current->thread.address,
++		.oldmask       = set->sig[0],
++	};
++
++	err |= __copy_to_user(&sf->uc.uc_mcontext, &context, sizeof(context));
+ 
+ 	err |= __copy_to_user(&sf->uc.uc_sigmask, set, sizeof(*set));
+ 
 -- 
 2.19.1
 
