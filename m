@@ -2,452 +2,975 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8712C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F8B9C4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:24:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F80420838
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:24:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4C1C20838
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:24:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="APtHxAO8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729544AbfBRJYq (ORCPT
+        id S1729573AbfBRJYu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 04:24:46 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:39066 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728781AbfBRJYp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 04:24:45 -0500
-Received: by mail-ed1-f68.google.com with SMTP id p27so5666256edc.6
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 01:24:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9e7PSIuyn5oInq+/JOF5GrvSV8UZzC/AkHaNtDdEfr0=;
-        b=gKP2OlvEPPHxT+VvsK/U1wJFzvzeS7/Vnxuge6RSl/8ijA/5Vm3oy2FcwVd4LYIVLH
-         bplK0ioaSgu7axu+R8UTNLHL/MVSNA33+gpAFfeVRWRse4G+7MYIDD3+R0u0IFIo6rN7
-         B7HZwBDRvlHxNL6qLOt4y/PmENN6dpvNmNkdPrQop2RucIKRbjPQuS1ey4g+SfYxZOLs
-         jMIT52lxecVWUqt0F/Vd3ZYvQFMUJAr6rSu2/EoNM+KmuRW/AmWGG/+r8IeWQU9+eAIU
-         l6KzjvhraR5rS0P09GdqAlMP/tRfi6anaf3FlGt15UU3yjHNIMMa3F4S50RO4CP3G8yL
-         5IyQ==
-X-Gm-Message-State: AHQUAubpx06m2UcGicKA1N9Xxcv2O5RclPdmBRvj+XhhvyU9S2gln35o
-        YwBOn88hEo4y4oCFzBQtpRsMu0Ci/fA=
-X-Google-Smtp-Source: AHgI3IbeYTs6M9DVYRcQ5jWb6K7mQgKKJukF5x8Pb7S/F5jIAYGzblO7pwoU6J8qH9gokERdw6kz+A==
-X-Received: by 2002:a50:adfa:: with SMTP id b55mr18601118edd.160.1550481881220;
-        Mon, 18 Feb 2019 01:24:41 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id s12sm2584188edb.11.2019.02.18.01.24.40
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Feb 2019 01:24:40 -0800 (PST)
-Subject: Re: [PATCH 2/2] extcon intel-cht-wc: Enable external charger
-To:     Yauhen Kharuzhy <jekhor@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-References: <20190210203649.21691-1-jekhor@gmail.com>
- <20190210203649.21691-3-jekhor@gmail.com>
- <1b2f04fc-05a0-4f09-c84e-dc7adc63ec63@redhat.com>
- <20190215063250.GB30250@jeknote.loshitsa1.net>
- <20190217215242.GA12656@jeknote.loshitsa1.net>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <416a0e12-aa0e-e781-2ef2-f11b97ba77a0@redhat.com>
-Date:   Mon, 18 Feb 2019 10:24:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <20190217215242.GA12656@jeknote.loshitsa1.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Mon, 18 Feb 2019 04:24:50 -0500
+Received: from mail-eopbgr10078.outbound.protection.outlook.com ([40.107.1.78]:52192
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729510AbfBRJYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 04:24:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=a4Wx9sT504IJgOVHznKuYPH3wLsIOlSEutveFhk40Tc=;
+ b=APtHxAO85uR1IX6qaufwo/Xj6uRrexP6c/dqVMErjx32ezVBA8X6xxy1NtkEPmLUloVwsVXQRnc1DbUB1W/5OEELaBwtT+EDTf7a8ob2xJPlmpAigG9LsX+zSkmJy9AUkWkfjvFjsK4IxYXibZBUdsd1YC9a0DTRqJS8/ZpX1os=
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
+ AM0PR04MB4497.eurprd04.prod.outlook.com (52.135.144.28) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.18; Mon, 18 Feb 2019 09:24:33 +0000
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::ec4e:4756:a9dc:914c]) by AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::ec4e:4756:a9dc:914c%3]) with mapi id 15.20.1622.018; Mon, 18 Feb 2019
+ 09:24:33 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: [RESEND] clk: imx: Refactor entire sccg pll clk
+Thread-Topic: [RESEND] clk: imx: Refactor entire sccg pll clk
+Thread-Index: AQHUx2vCpgBJkAD4HEunj12vyPTxwA==
+Date:   Mon, 18 Feb 2019 09:24:33 +0000
+Message-ID: <1550481854-14338-1-git-send-email-abel.vesa@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM6P191CA0034.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:209:8b::47) To AM0PR04MB5779.eurprd04.prod.outlook.com
+ (2603:10a6:208:131::23)
+x-originating-ip: [95.76.156.53]
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.7.4
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 53b349b7-3c21-4a7b-898d-08d69582e4a3
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4497;
+x-ms-traffictypediagnostic: AM0PR04MB4497:
+x-ms-exchange-purlcount: 1
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;AM0PR04MB4497;23:welAXCsEqdg2k0CnQvzfrgClH3rhduN67++z96Q?=
+ =?iso-8859-1?Q?Xv3NG/egP5VwifVbPBCxk33izsezlTo9gG24HjquWSujK0DWbdomppwRls?=
+ =?iso-8859-1?Q?I4vjqk7tnlgdIdjiO9g9c0e1OzMfE2mBbpTbC0vzNIhwS/czHxmCr4h6Yc?=
+ =?iso-8859-1?Q?1VzR4yqMVrb7p9zmVnUFgLP6gJCc2Zufe60VvjxYc9e7b2GNkmq1ByRjYC?=
+ =?iso-8859-1?Q?B6jSCQZss9LKbFWPufBBfkiNczSYCy2hJk/1SUsCuLtjwF0tVBGidVMJHy?=
+ =?iso-8859-1?Q?vaf5N5nqqiKxSyk4/euU4IF3J+6VfcRRDdTvBEmfQ5dARNZrQYi+Eq3loW?=
+ =?iso-8859-1?Q?CCTXr0f4xB+uAdyapCplzVYdXlMOnJ0tkYhi+WXnFMTCba4yIW/GMaYixA?=
+ =?iso-8859-1?Q?1ZR6MxtFOi5bT4JTCu2vRkADi1IKNrPrlmi6+d3KRAmJX6u0km9V4RepLX?=
+ =?iso-8859-1?Q?X7DET7ipDTKKJhoxDeIh/OVx8Uho6tfyBeCf0nMJj8tPdrsYjDBYAKN2iJ?=
+ =?iso-8859-1?Q?G50TthgqosFf7Bt4EK9ENiGmURAFEErQwOP9ubLIvpbMaVZPQj8rbFONiM?=
+ =?iso-8859-1?Q?lsdXaEdGgII7RugfBjDIfTTV3GwSW2y820QYBKz4LDiiFVbdOwSUw/bhR+?=
+ =?iso-8859-1?Q?VohIWGPdZgjWVBTTWe9x6MLN0jC+Gx50T8EbZ8tUkx4LtUicE8pLhaDxdD?=
+ =?iso-8859-1?Q?q/Ko3cBe4qfAh4l9YDmlmBD+B73ttUXuwKTE+ISkNu9W4qKkd1iy2TSS9w?=
+ =?iso-8859-1?Q?uODpzwelD1aKNsAUQBGvfZnbe1iyoigx8HBMrNY5Y0a89AddzF0iTEXTKN?=
+ =?iso-8859-1?Q?7vC90BpgJgQX+QQtA8BHKzQukLUJl8QVhvco4/Gjt3HpuUU6E3LZPbu7yf?=
+ =?iso-8859-1?Q?m6Q0sU10kcA2b33K7MKHxJiOcRPBwrNVyYxNaVq0DtHYqcWlUZsesPzTcc?=
+ =?iso-8859-1?Q?EKJjjaFFfRFOUv4MtxmG93YmYVEUOFpLdtVILnakuY1L3VSxReU+FfN+qS?=
+ =?iso-8859-1?Q?1FTcN2cCZ/SGX8yR7UTkFOYza+7Vfb3r9hHzWfoLaiNsq89WUSJAnLpe1j?=
+ =?iso-8859-1?Q?prMhq7Y1Ru0pzzFuHMOH2oPsZ+Pkz6mAWdZBRnIEoF1X2kmv0qo0bER/Ik?=
+ =?iso-8859-1?Q?u4apQiVcQMFsRsAnCbe2JUeYp5nhUCF+QIutF/tp4SsbwS2WR7BXmzRAR6?=
+ =?iso-8859-1?Q?TCBOFR3eguKql+ekhmOcmbQ3Ytwb8ydHxE6VoFd4/Ni3SV7vx2Rg4Znz21?=
+ =?iso-8859-1?Q?3evO3OuZl5mBR5d7Ac6Oe/WAe1si+KcRGqmvr2hnxOwu0iFQ/mTWnz6AlW?=
+ =?iso-8859-1?Q?9HvaZVlK+IvP/a3oFm5qYTjlQULPqiMmhuGvMtOzc+VsJLcEyrxXAf+Dnj?=
+ =?iso-8859-1?Q?d9Ul0sffpJ+bh2Ajigw0ubX+XtP4V?=
+x-microsoft-antispam-prvs: <AM0PR04MB4497A34D193AA46FEB3E896BF6630@AM0PR04MB4497.eurprd04.prod.outlook.com>
+x-forefront-prvs: 09525C61DB
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(136003)(366004)(346002)(39860400002)(199004)(189003)(6512007)(14444005)(3846002)(5660300002)(186003)(71190400001)(54906003)(30864003)(110136005)(66066001)(71200400001)(53946003)(6306002)(50226002)(44832011)(256004)(8676002)(8936002)(53936002)(6436002)(81166006)(81156014)(36756003)(476003)(2616005)(305945005)(7736002)(86362001)(486006)(105586002)(102836004)(6636002)(99286004)(6506007)(68736007)(6116002)(4326008)(6486002)(14454004)(52116002)(25786009)(106356001)(97736004)(386003)(316002)(478600001)(966005)(26005)(2906002)(921003)(1121003)(579004)(559001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4497;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: sFE3WmkWnE70DMLkKBENZYO6++WEJwnaGkc00MsPZe3BslNWWT0kvWZenpq8l6m4z/BYJEpvGT+/c+Ubj4Q8i0f4elctfaVz4105sj+qvS9r7vB8djQuq/kRtkdnQsFD7G3cUuNYejE2r4p9YTzwk3uDyrkMktavrxkZgSYhjr9QYdQzfLyUNiA1aW2jNYN8/I5UAQLTJpYZ1ncGFsQRVMSsCIbhmLF7tgxdH2CGOO99bS3vZoJoDEP51OftMueWPQX47q3NLsLu69ipH98SlBe8NAddC+Ev6Q6wjdAzHRphgA5McUDXnQQn8bTEDHRrSrnthvL8WufO9n3Hb6ICg9lzOu+opzyWfeo7947JD1Ihrh25Q7AZ6WnAKBhTxWyTzd6LNCVtIj66Bi3y++caofbkALtNbZGzYXA8mugeSqU=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53b349b7-3c21-4a7b-898d-08d69582e4a3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2019 09:24:32.6658
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4497
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Make the entire combination of plls to be one single clock. The parents use=
+d
+for bypasses are specified each as an index in the parents list.
+The determine_rate does a lookup throughout all the possible combinations
+for all the divs and returns the best possible 'setup' which in turn is use=
+d
+by set_rate later to set up all the divs and bypasses.
 
-On 17-02-19 22:52, Yauhen Kharuzhy wrote:
-> On Fri, Feb 15, 2019 at 09:32:50AM +0300, Yauhen Kharuzhy wrote:
->> On Thu, Feb 14, 2019 at 05:31:48PM +0100, Hans de Goede wrote:
->>> Hi,
->>>
->>> On 10-02-19 21:36, Yauhen Kharuzhy wrote:
->>>> In some configuration external charge "#charge enable" signal is
->>>> connected to PMIC. Enable it at device probing to allow charging.
->>>>
->>>> Tested at Lenovo Yoga Book (YB1-X91L).
->>>>
->>>> Signed-off-by: Yauhen Kharuzhy <jekhor@gmail.com>
->>>> ---
->>>>    drivers/extcon/extcon-intel-cht-wc.c | 33 ++++++++++++++++++++++++++++
->>>>    1 file changed, 33 insertions(+)
->>>>
->>>> diff --git a/drivers/extcon/extcon-intel-cht-wc.c b/drivers/extcon/extcon-intel-cht-wc.c
->>>> index 4f6ba249bc30..00cb3084955e 100644
->>>> --- a/drivers/extcon/extcon-intel-cht-wc.c
->>>> +++ b/drivers/extcon/extcon-intel-cht-wc.c
->>>> @@ -57,6 +57,11 @@
->>>>    #define CHT_WC_USBSRC_TYPE_OTHER	8
->>>>    #define CHT_WC_USBSRC_TYPE_DCP_EXTPHY	9
->>>> +#define CHT_WC_CHGDISCTRL		0x5e2f
->>>> +#define CHT_WC_CHGDISCTRL_CCSM_DIS	0x11
->>>> +#define CHT_WC_CHGDISCTRL_CCSM_EN	0x00
->>>
->>> Hmm, the enable mask here does not match the enable mask from:
->>>
->>> https://github.com/01org/ProductionKernelQuilts/blob/master/uefi/cht-m1stable/patches/EM-Charger-Disable-battery-charging-in-S3-and-enable.patch
->>>
->>> Which has:
->>>
->>> #define CHGDISFN_EN_CCSM_VAL           0x50
->>> #define CHGDISFN_DIS_CCSM_VAL          0x11
->>> #define CHGDISFN_CCSM_MASK             0x51
->>>
->>> Where as on my hardware, the PMIC comes up with 0x50
->>> in the 0x5e2f register, exactly matching the values
->>> from that patch.
->>>
->>> Why did you change this value ?
->>
->> Good question... I found this values in Lenovo's sources and use them
->> 'as is':
->> https://github.com/jekhor/yogabook-linux-android-kernel/blob/b7aa015ab794b516da7b6cb76e5e2d427e3b8b0c/drivers/power/intel_pmic_ccsm.h#L255
->>
->> I don't remember if charger worked with Intel's value, I need to
->> re-check this.
-> 
-> As we know now, value 0x50 meaning is:
-> - HW mode
-> - regular output type
-> - low level at output
-> 
-> 0x00 meaning is:
-> - SW mode
-> - open-drain output
-> - low level at output
-> 
-> I don't know what exactly "HW/SW mode" means but I suppose that this pin
-> can be controlled by PMIC internal charge state algorithm (if it is
-> enabled) or by software (extcon driver).
-> 
-> So, if we set 0x50 value and disable HW-controlled charging entirely (as
-> extcon driver does), we don't set 'charger enable' signal to low as
-> expected. Its exactly state is unknown, but I checked – it is HIGH.
-> Charger doesn't start charging with this value and starts with 0x00.
-> 
-> 0x0b register of 0x6b device on bus 7 – it is the status register of BQ25892
-> charger, where bits 3,4 describe charging state, 10b means fast charging,
-> 00b means not charging.
-> 
-> root@yogabook:/home/jek# i2cset -y -f 6 0x5e 0x2f 0x00
-> root@yogabook:/home/jek# i2cget -y -f 7 0x6b 0x0b
-> 0x16
-> root@yogabook:/home/jek# i2cset -y -f 6 0x5e 0x2f 0x01
-> root@yogabook:/home/jek# i2cget -y -f 7 0x6b 0x0b
-> 0x06
-> root@yogabook:/home/jek# i2cset -y -f 6 0x5e 0x2f 0x10
-> root@yogabook:/home/jek# i2cget -y -f 7 0x6b 0x0b
-> 0x16
-> root@yogabook:/home/jek# i2cset -y -f 6 0x5e 0x2f 0x11
-> root@yogabook:/home/jek# i2cget -y -f 7 0x6b 0x0b
-> 0x06
-> root@yogabook:/home/jek# i2cset -y -f 6 0x5e 0x2f 0x50
-> root@yogabook:/home/jek# i2cget -y -f 7 0x6b 0x0b
-> 0x06
-> root@yogabook:/home/jek# i2cset -y -f 6 0x5e 0x2f 0x51
-> root@yogabook:/home/jek# i2cget -y -f 7 0x6b 0x0b
-> 0x06
-> 
-> 
-> After reading of Intel's and Lenovo's sources i understood that Intel's
-> meaning of CHGDISFN_EN_CCSM_VAL is 'enable HW control of charging' and
-> Lenovo's is 'enable charging'. Lenovo set this value immediately after
-> probing and after resume, Intel – only after resume. HW-controlled
-> charging is disabled entirely at probing, so I don't know how Intel's
-> driver enables charging.
-> 
-> So, I propose:
-> 
-> 1) save initial value of CHGDIS register for restoring it at driver
-> remove (because the extcon-intel-cht-wc driver restores HW control in
-> cht_wc_extcon_remove()).
-> 2) at driver start, enable SW control of CHGDIS and set its value to 0.
-> 3) at driver removing, restore the saved state.
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Tested-by: Lucas Stach <l.stach@pengutronix.de>
+Acked-by: Lucas Stach <l.stach@pengutronix.de>
+---
 
-This sounds good to me, note I believe the extcon code should not touch
-bit 4 (open-drain,vs regular), but since we disable the charger state-machine
-we should obviously then switch the pin to sw mode and drive the pin low
-so that the charger still works.
+This is basically just a resend of the following:
+https://lkml.org/lkml/2019/1/29/874
 
-I believe that on the GPD win / GPD pocket the chgdis pin of the PMIC
-is not connected to the charger, since writing different values to reg
-5e2f has no effect there.
+There are no changes. Just added T-b and A-b tags from Lucas.
 
-I do wonder how this interacts with inserting an otg-host cable into
-the micro-usb, I mean a cable like this:
+Waiting for review.
 
-https://alexnld.com/wp-content/uploads/2013/11/S-UDC-103.jpg
+ drivers/clk/imx/clk-imx8mq.c   |  58 ++---
+ drivers/clk/imx/clk-sccg-pll.c | 514 ++++++++++++++++++++++++++++++++-----=
+----
+ drivers/clk/imx/clk.h          |   9 +-
+ 3 files changed, 423 insertions(+), 158 deletions(-)
 
-A cable like this will short the id-pin to ground and at this point
-we should disable the charger and enable a 5V boost converter to
-supply 5V to the device connected to the USB-A connector.
+diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+index 398ab0b..7326dce 100644
+--- a/drivers/clk/imx/clk-imx8mq.c
++++ b/drivers/clk/imx/clk-imx8mq.c
+@@ -34,15 +34,10 @@ static const char * const audio_pll1_bypass_sels[] =3D =
+{"audio_pll1", "audio_pll1_
+ static const char * const audio_pll2_bypass_sels[] =3D {"audio_pll2", "aud=
+io_pll2_ref_sel", };
+ static const char * const video_pll1_bypass_sels[] =3D {"video_pll1", "vid=
+eo_pll1_ref_sel", };
+=20
+-static const char * const sys1_pll1_out_sels[] =3D {"sys1_pll1", "sys1_pll=
+1_ref_sel", };
+-static const char * const sys2_pll1_out_sels[] =3D {"sys2_pll1", "sys1_pll=
+1_ref_sel", };
+-static const char * const sys3_pll1_out_sels[] =3D {"sys3_pll1", "sys3_pll=
+1_ref_sel", };
+-static const char * const dram_pll1_out_sels[] =3D {"dram_pll1", "dram_pll=
+1_ref_sel", };
+-
+-static const char * const sys1_pll2_out_sels[] =3D {"sys1_pll2_div", "sys1=
+_pll1_ref_sel", };
+-static const char * const sys2_pll2_out_sels[] =3D {"sys2_pll2_div", "sys2=
+_pll1_ref_sel", };
+-static const char * const sys3_pll2_out_sels[] =3D {"sys3_pll2_div", "sys2=
+_pll1_ref_sel", };
+-static const char * const dram_pll2_out_sels[] =3D {"dram_pll2_div", "dram=
+_pll1_ref_sel", };
++static const char * const sys1_pll_out_sels[] =3D {"sys1_pll1_ref_sel", };
++static const char * const sys2_pll_out_sels[] =3D {"sys1_pll1_ref_sel", "s=
+ys2_pll1_ref_sel", };
++static const char * const sys3_pll_out_sels[] =3D {"sys3_pll1_ref_sel", "s=
+ys2_pll1_ref_sel", };
++static const char * const dram_pll_out_sels[] =3D {"dram_pll1_ref_sel", };
+=20
+ /* CCM ROOT */
+ static const char * const imx8mq_a53_sels[] =3D {"osc_25m", "arm_pll_out",=
+ "sys2_pll_500m", "sys2_pll_1000m",
+@@ -308,10 +303,6 @@ static int imx8mq_clocks_probe(struct platform_device =
+*pdev)
+ 	clks[IMX8MQ_AUDIO_PLL1_REF_DIV] =3D imx_clk_divider("audio_pll1_ref_div",=
+ "audio_pll1_ref_sel", base + 0x0, 5, 6);
+ 	clks[IMX8MQ_AUDIO_PLL2_REF_DIV] =3D imx_clk_divider("audio_pll2_ref_div",=
+ "audio_pll2_ref_sel", base + 0x8, 5, 6);
+ 	clks[IMX8MQ_VIDEO_PLL1_REF_DIV] =3D imx_clk_divider("video_pll1_ref_div",=
+ "video_pll1_ref_sel", base + 0x10, 5, 6);
+-	clks[IMX8MQ_SYS1_PLL1_REF_DIV]	=3D imx_clk_divider("sys1_pll1_ref_div", "=
+sys1_pll1_ref_sel", base + 0x38, 25, 3);
+-	clks[IMX8MQ_SYS2_PLL1_REF_DIV]	=3D imx_clk_divider("sys2_pll1_ref_div", "=
+sys2_pll1_ref_sel", base + 0x44, 25, 3);
+-	clks[IMX8MQ_SYS3_PLL1_REF_DIV]	=3D imx_clk_divider("sys3_pll1_ref_div", "=
+sys3_pll1_ref_sel", base + 0x50, 25, 3);
+-	clks[IMX8MQ_DRAM_PLL1_REF_DIV]	=3D imx_clk_divider("dram_pll1_ref_div", "=
+dram_pll1_ref_sel", base + 0x68, 25, 3);
+=20
+ 	clks[IMX8MQ_ARM_PLL] =3D imx_clk_frac_pll("arm_pll", "arm_pll_ref_div", b=
+ase + 0x28);
+ 	clks[IMX8MQ_GPU_PLL] =3D imx_clk_frac_pll("gpu_pll", "gpu_pll_ref_div", b=
+ase + 0x18);
+@@ -319,25 +310,6 @@ static int imx8mq_clocks_probe(struct platform_device =
+*pdev)
+ 	clks[IMX8MQ_AUDIO_PLL1] =3D imx_clk_frac_pll("audio_pll1", "audio_pll1_re=
+f_div", base + 0x0);
+ 	clks[IMX8MQ_AUDIO_PLL2] =3D imx_clk_frac_pll("audio_pll2", "audio_pll2_re=
+f_div", base + 0x8);
+ 	clks[IMX8MQ_VIDEO_PLL1] =3D imx_clk_frac_pll("video_pll1", "video_pll1_re=
+f_div", base + 0x10);
+-	clks[IMX8MQ_SYS1_PLL1] =3D imx_clk_sccg_pll("sys1_pll1", "sys1_pll1_ref_d=
+iv", base + 0x30, SCCG_PLL1);
+-	clks[IMX8MQ_SYS2_PLL1] =3D imx_clk_sccg_pll("sys2_pll1", "sys2_pll1_ref_d=
+iv", base + 0x3c, SCCG_PLL1);
+-	clks[IMX8MQ_SYS3_PLL1] =3D imx_clk_sccg_pll("sys3_pll1", "sys3_pll1_ref_d=
+iv", base + 0x48, SCCG_PLL1);
+-	clks[IMX8MQ_DRAM_PLL1] =3D imx_clk_sccg_pll("dram_pll1", "dram_pll1_ref_d=
+iv", base + 0x60, SCCG_PLL1);
+-
+-	clks[IMX8MQ_SYS1_PLL2] =3D imx_clk_sccg_pll("sys1_pll2", "sys1_pll1_out_d=
+iv", base + 0x30, SCCG_PLL2);
+-	clks[IMX8MQ_SYS2_PLL2] =3D imx_clk_sccg_pll("sys2_pll2", "sys2_pll1_out_d=
+iv", base + 0x3c, SCCG_PLL2);
+-	clks[IMX8MQ_SYS3_PLL2] =3D imx_clk_sccg_pll("sys3_pll2", "sys3_pll1_out_d=
+iv", base + 0x48, SCCG_PLL2);
+-	clks[IMX8MQ_DRAM_PLL2] =3D imx_clk_sccg_pll("dram_pll2", "dram_pll1_out_d=
+iv", base + 0x60, SCCG_PLL2);
+-
+-	/* PLL divs */
+-	clks[IMX8MQ_SYS1_PLL1_OUT_DIV] =3D imx_clk_divider("sys1_pll1_out_div", "=
+sys1_pll1_out", base + 0x38, 19, 6);
+-	clks[IMX8MQ_SYS2_PLL1_OUT_DIV] =3D imx_clk_divider("sys2_pll1_out_div", "=
+sys2_pll1_out", base + 0x44, 19, 6);
+-	clks[IMX8MQ_SYS3_PLL1_OUT_DIV] =3D imx_clk_divider("sys3_pll1_out_div", "=
+sys3_pll1_out", base + 0x50, 19, 6);
+-	clks[IMX8MQ_DRAM_PLL1_OUT_DIV] =3D imx_clk_divider("dram_pll1_out_div", "=
+dram_pll1_out", base + 0x68, 19, 6);
+-	clks[IMX8MQ_SYS1_PLL2_DIV] =3D imx_clk_divider("sys1_pll2_div", "sys1_pll=
+2", base + 0x38, 1, 6);
+-	clks[IMX8MQ_SYS2_PLL2_DIV] =3D imx_clk_divider("sys2_pll2_div", "sys2_pll=
+2", base + 0x44, 1, 6);
+-	clks[IMX8MQ_SYS3_PLL2_DIV] =3D imx_clk_divider("sys3_pll2_div", "sys3_pll=
+2", base + 0x50, 1, 6);
+-	clks[IMX8MQ_DRAM_PLL2_DIV] =3D imx_clk_divider("dram_pll2_div", "dram_pll=
+2", base + 0x68, 1, 6);
+=20
+ 	/* PLL bypass out */
+ 	clks[IMX8MQ_ARM_PLL_BYPASS] =3D imx_clk_mux("arm_pll_bypass", base + 0x28=
+, 14, 1, arm_pll_bypass_sels, ARRAY_SIZE(arm_pll_bypass_sels));
+@@ -347,14 +319,12 @@ static int imx8mq_clocks_probe(struct platform_device=
+ *pdev)
+ 	clks[IMX8MQ_AUDIO_PLL2_BYPASS] =3D imx_clk_mux("audio_pll2_bypass", base =
++ 0x8, 14, 1, audio_pll2_bypass_sels, ARRAY_SIZE(audio_pll2_bypass_sels));
+ 	clks[IMX8MQ_VIDEO_PLL1_BYPASS] =3D imx_clk_mux("video_pll1_bypass", base =
++ 0x10, 14, 1, video_pll1_bypass_sels, ARRAY_SIZE(video_pll1_bypass_sels));
+=20
+-	clks[IMX8MQ_SYS1_PLL1_OUT] =3D imx_clk_mux("sys1_pll1_out", base + 0x30, =
+5, 1, sys1_pll1_out_sels, ARRAY_SIZE(sys1_pll1_out_sels));
+-	clks[IMX8MQ_SYS2_PLL1_OUT] =3D imx_clk_mux("sys2_pll1_out", base + 0x3c, =
+5, 1, sys2_pll1_out_sels, ARRAY_SIZE(sys2_pll1_out_sels));
+-	clks[IMX8MQ_SYS3_PLL1_OUT] =3D imx_clk_mux("sys3_pll1_out", base + 0x48, =
+5, 1, sys3_pll1_out_sels, ARRAY_SIZE(sys3_pll1_out_sels));
+-	clks[IMX8MQ_DRAM_PLL1_OUT] =3D imx_clk_mux("dram_pll1_out", base + 0x60, =
+5, 1, dram_pll1_out_sels, ARRAY_SIZE(dram_pll1_out_sels));
+-	clks[IMX8MQ_SYS1_PLL2_OUT] =3D imx_clk_mux("sys1_pll2_out", base + 0x30, =
+4, 1, sys1_pll2_out_sels, ARRAY_SIZE(sys1_pll2_out_sels));
+-	clks[IMX8MQ_SYS2_PLL2_OUT] =3D imx_clk_mux("sys2_pll2_out", base + 0x3c, =
+4, 1, sys2_pll2_out_sels, ARRAY_SIZE(sys2_pll2_out_sels));
+-	clks[IMX8MQ_SYS3_PLL2_OUT] =3D imx_clk_mux("sys3_pll2_out", base + 0x48, =
+4, 1, sys3_pll2_out_sels, ARRAY_SIZE(sys3_pll2_out_sels));
+-	clks[IMX8MQ_DRAM_PLL2_OUT] =3D imx_clk_mux("dram_pll2_out", base + 0x60, =
+4, 1, dram_pll2_out_sels, ARRAY_SIZE(dram_pll2_out_sels));
++	/* unbypass all the plls */
++	clk_set_parent(clks[IMX8MQ_GPU_PLL_BYPASS], clks[IMX8MQ_GPU_PLL]);
++	clk_set_parent(clks[IMX8MQ_VPU_PLL_BYPASS], clks[IMX8MQ_VPU_PLL]);
++	clk_set_parent(clks[IMX8MQ_AUDIO_PLL1_BYPASS], clks[IMX8MQ_AUDIO_PLL1]);
++	clk_set_parent(clks[IMX8MQ_AUDIO_PLL2_BYPASS], clks[IMX8MQ_AUDIO_PLL2]);
++	clk_set_parent(clks[IMX8MQ_VIDEO_PLL1_BYPASS], clks[IMX8MQ_VIDEO_PLL1]);
+=20
+ 	/* PLL OUT GATE */
+ 	clks[IMX8MQ_ARM_PLL_OUT] =3D imx_clk_gate("arm_pll_out", "arm_pll_bypass"=
+, base + 0x28, 21);
+@@ -363,11 +333,11 @@ static int imx8mq_clocks_probe(struct platform_device=
+ *pdev)
+ 	clks[IMX8MQ_AUDIO_PLL1_OUT] =3D imx_clk_gate("audio_pll1_out", "audio_pll=
+1_bypass", base + 0x0, 21);
+ 	clks[IMX8MQ_AUDIO_PLL2_OUT] =3D imx_clk_gate("audio_pll2_out", "audio_pll=
+2_bypass", base + 0x8, 21);
+ 	clks[IMX8MQ_VIDEO_PLL1_OUT] =3D imx_clk_gate("video_pll1_out", "video_pll=
+1_bypass", base + 0x10, 21);
+-	clks[IMX8MQ_SYS1_PLL_OUT] =3D imx_clk_gate("sys1_pll_out", "sys1_pll2_out=
+", base + 0x30, 9);
+-	clks[IMX8MQ_SYS2_PLL_OUT] =3D imx_clk_gate("sys2_pll_out", "sys2_pll2_out=
+", base + 0x3c, 9);
+-	clks[IMX8MQ_SYS3_PLL_OUT] =3D imx_clk_gate("sys3_pll_out", "sys3_pll2_out=
+", base + 0x48, 9);
+-	clks[IMX8MQ_DRAM_PLL_OUT] =3D imx_clk_gate("dram_pll_out", "dram_pll2_out=
+", base + 0x60, 9);
+=20
++	clks[IMX8MQ_SYS1_PLL_OUT] =3D imx_clk_sccg_pll("sys1_pll_out", sys1_pll_o=
+ut_sels, ARRAY_SIZE(sys1_pll_out_sels), 0, 0, 0, base + 0x30, CLK_IS_CRITIC=
+AL);
++	clks[IMX8MQ_SYS2_PLL_OUT] =3D imx_clk_sccg_pll("sys2_pll_out", sys2_pll_o=
+ut_sels, ARRAY_SIZE(sys2_pll_out_sels), 0, 0, 1, base + 0x3c, CLK_IS_CRITIC=
+AL);
++	clks[IMX8MQ_SYS3_PLL_OUT] =3D imx_clk_sccg_pll("sys3_pll_out", sys3_pll_o=
+ut_sels, ARRAY_SIZE(sys3_pll_out_sels), 0, 0, 1, base + 0x48, CLK_IS_CRITIC=
+AL);
++	clks[IMX8MQ_DRAM_PLL_OUT] =3D imx_clk_sccg_pll("dram_pll_out", dram_pll_o=
+ut_sels, ARRAY_SIZE(dram_pll_out_sels), 0, 0, 0, base + 0x60, CLK_IS_CRITIC=
+AL);
+ 	/* SYS PLL fixed output */
+ 	clks[IMX8MQ_SYS1_PLL_40M] =3D imx_clk_fixed_factor("sys1_pll_40m", "sys1_=
+pll_out", 1, 20);
+ 	clks[IMX8MQ_SYS1_PLL_80M] =3D imx_clk_fixed_factor("sys1_pll_80m", "sys1_=
+pll_out", 1, 10);
+diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-pll.=
+c
+index ee7752b..f480af3 100644
+--- a/drivers/clk/imx/clk-sccg-pll.c
++++ b/drivers/clk/imx/clk-sccg-pll.c
+@@ -25,87 +25,292 @@
+ #define PLL_DIVF2_MASK		GENMASK(12, 7)
+ #define PLL_DIVR1_MASK		GENMASK(27, 25)
+ #define PLL_DIVR2_MASK		GENMASK(24, 19)
++#define PLL_DIVQ_MASK           GENMASK(6, 1)
+ #define PLL_REF_MASK		GENMASK(2, 0)
+=20
+ #define PLL_LOCK_MASK		BIT(31)
+ #define PLL_PD_MASK		BIT(7)
+=20
+-#define OSC_25M			25000000
+-#define OSC_27M			27000000
++/* These are the specification limits for the SSCG PLL */
++#define PLL_REF_MIN_FREQ		25000000
++#define PLL_REF_MAX_FREQ		235000000
+=20
+-#define PLL_SCCG_LOCK_TIMEOUT	70
++#define PLL_STAGE1_MIN_FREQ		1600000000
++#define PLL_STAGE1_MAX_FREQ		2400000000
++
++#define PLL_STAGE1_REF_MIN_FREQ		25000000
++#define PLL_STAGE1_REF_MAX_FREQ		54000000
++
++#define PLL_STAGE2_MIN_FREQ		1200000000
++#define PLL_STAGE2_MAX_FREQ		2400000000
++
++#define PLL_STAGE2_REF_MIN_FREQ		54000000
++#define PLL_STAGE2_REF_MAX_FREQ		75000000
++
++#define PLL_OUT_MIN_FREQ		20000000
++#define PLL_OUT_MAX_FREQ		1200000000
++
++#define PLL_DIVR1_MAX			7
++#define PLL_DIVR2_MAX			63
++#define PLL_DIVF1_MAX			63
++#define PLL_DIVF2_MAX			63
++#define PLL_DIVQ_MAX			63
++
++#define PLL_BYPASS_NONE			0x0
++#define PLL_BYPASS1			0x2
++#define PLL_BYPASS2			0x1
++
++#define SSCG_PLL_BYPASS1_MASK           BIT(5)
++#define SSCG_PLL_BYPASS2_MASK           BIT(4)
++#define SSCG_PLL_BYPASS_MASK		GENMASK(5, 4)
++
++#define PLL_SCCG_LOCK_TIMEOUT		70
++
++struct clk_sccg_pll_setup {
++	int divr1, divf1;
++	int divr2, divf2;
++	int divq;
++	int bypass;
++
++	unsigned long vco1;
++	unsigned long vco2;
++	unsigned long fout;
++	unsigned long ref;
++	unsigned long ref_div1;
++	unsigned long ref_div2;
++	unsigned long fout_request;
++	int fout_error;
++};
+=20
+ struct clk_sccg_pll {
+ 	struct clk_hw	hw;
+-	void __iomem	*base;
++	const struct clk_ops  ops;
++
++	void __iomem *base;
++
++	struct clk_sccg_pll_setup setup;
++
++	u8 parent;
++	u8 bypass1;
++	u8 bypass2;
+ };
+=20
+ #define to_clk_sccg_pll(_hw) container_of(_hw, struct clk_sccg_pll, hw)
+=20
+-static int clk_pll_wait_lock(struct clk_sccg_pll *pll)
++static int clk_sccg_pll_wait_lock(struct clk_sccg_pll *pll)
+ {
+ 	u32 val;
+=20
+-	return readl_poll_timeout(pll->base, val, val & PLL_LOCK_MASK, 0,
+-					PLL_SCCG_LOCK_TIMEOUT);
++	val =3D readl_relaxed(pll->base + PLL_CFG0);
++
++	/* don't wait for lock if all plls are bypassed */
++	if (!(val & SSCG_PLL_BYPASS2_MASK))
++		return readl_poll_timeout(pll->base, val, val & PLL_LOCK_MASK,
++						0, PLL_SCCG_LOCK_TIMEOUT);
++
++	return 0;
+ }
+=20
+-static int clk_pll1_is_prepared(struct clk_hw *hw)
++static int clk_sccg_pll2_check_match(struct clk_sccg_pll_setup *setup,
++					struct clk_sccg_pll_setup *temp_setup)
+ {
+-	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+-	u32 val;
++	int new_diff =3D temp_setup->fout - temp_setup->fout_request;
++	int diff =3D temp_setup->fout_error;
+=20
+-	val =3D readl_relaxed(pll->base + PLL_CFG0);
+-	return (val & PLL_PD_MASK) ? 0 : 1;
++	if (abs(diff) > abs(new_diff)) {
++		temp_setup->fout_error =3D new_diff;
++		memcpy(setup, temp_setup, sizeof(struct clk_sccg_pll_setup));
++
++		if (temp_setup->fout_request =3D=3D temp_setup->fout)
++			return 0;
++	}
++	return -1;
+ }
+=20
+-static unsigned long clk_pll1_recalc_rate(struct clk_hw *hw,
+-					 unsigned long parent_rate)
++static int clk_sccg_divq_lookup(struct clk_sccg_pll_setup *setup,
++				struct clk_sccg_pll_setup *temp_setup)
+ {
+-	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+-	u32 val, divf;
++	int ret =3D -EINVAL;
++
++	for (temp_setup->divq =3D 0; temp_setup->divq <=3D PLL_DIVQ_MAX;
++	     temp_setup->divq++) {
++		temp_setup->vco2 =3D temp_setup->vco1;
++		do_div(temp_setup->vco2, temp_setup->divr2 + 1);
++		temp_setup->vco2 *=3D 2;
++		temp_setup->vco2 *=3D temp_setup->divf2 + 1;
++		if (temp_setup->vco2 >=3D PLL_STAGE2_MIN_FREQ &&
++				temp_setup->vco2 <=3D PLL_STAGE2_MAX_FREQ) {
++			temp_setup->fout =3D temp_setup->vco2;
++			do_div(temp_setup->fout, 2 * (temp_setup->divq + 1));
++
++			ret =3D clk_sccg_pll2_check_match(setup, temp_setup);
++			if (!ret) {
++				temp_setup->bypass =3D PLL_BYPASS1;
++				return ret;
++			}
++		}
++	}
+=20
+-	val =3D readl_relaxed(pll->base + PLL_CFG2);
+-	divf =3D FIELD_GET(PLL_DIVF1_MASK, val);
++	return ret;
++}
++
++static int clk_sccg_divf2_lookup(struct clk_sccg_pll_setup *setup,
++					struct clk_sccg_pll_setup *temp_setup)
++{
++	int ret =3D -EINVAL;
++
++	for (temp_setup->divf2 =3D 0; temp_setup->divf2 <=3D PLL_DIVF2_MAX;
++	     temp_setup->divf2++) {
++		ret =3D clk_sccg_divq_lookup(setup, temp_setup);
++		if (!ret)
++			return ret;
++	}
+=20
+-	return parent_rate * 2 * (divf + 1);
++	return ret;
+ }
+=20
+-static long clk_pll1_round_rate(struct clk_hw *hw, unsigned long rate,
+-			       unsigned long *prate)
++static int clk_sccg_divr2_lookup(struct clk_sccg_pll_setup *setup,
++				struct clk_sccg_pll_setup *temp_setup)
+ {
+-	unsigned long parent_rate =3D *prate;
+-	u32 div;
++	int ret =3D -EINVAL;
++
++	for (temp_setup->divr2 =3D 0; temp_setup->divr2 <=3D PLL_DIVR2_MAX;
++	     temp_setup->divr2++) {
++		temp_setup->ref_div2 =3D temp_setup->vco1;
++		do_div(temp_setup->ref_div2, temp_setup->divr2 + 1);
++		if (temp_setup->ref_div2 >=3D PLL_STAGE2_REF_MIN_FREQ &&
++		    temp_setup->ref_div2 <=3D PLL_STAGE2_REF_MAX_FREQ) {
++			ret =3D clk_sccg_divf2_lookup(setup, temp_setup);
++			if (!ret)
++				return ret;
++		}
++	}
++
++	return ret;
++}
++
++static int clk_sccg_pll2_find_setup(struct clk_sccg_pll_setup *setup,
++					struct clk_sccg_pll_setup *temp_setup,
++					long ref)
++{
++
++	int ret =3D -EINVAL;
+=20
+-	if (!parent_rate)
+-		return 0;
++	if (ref < PLL_STAGE1_MIN_FREQ || ref > PLL_STAGE1_MAX_FREQ)
++		return ret;
+=20
+-	div =3D rate / (parent_rate * 2);
++	temp_setup->vco1 =3D ref;
+=20
+-	return parent_rate * div * 2;
++	ret =3D clk_sccg_divr2_lookup(setup, temp_setup);
++	return ret;
+ }
+=20
+-static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
+-			    unsigned long parent_rate)
++static int clk_sccg_divf1_lookup(struct clk_sccg_pll_setup *setup,
++				struct clk_sccg_pll_setup *temp_setup)
+ {
+-	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+-	u32 val;
+-	u32 divf;
++	int ret =3D -EINVAL;
+=20
+-	if (!parent_rate)
+-		return -EINVAL;
++	for (temp_setup->divf1 =3D 0; temp_setup->divf1 <=3D PLL_DIVF1_MAX;
++	     temp_setup->divf1++) {
++		long vco1 =3D temp_setup->ref;
+=20
+-	divf =3D rate / (parent_rate * 2);
++		do_div(vco1, temp_setup->divr1 + 1);
++		vco1 *=3D 2;
++		vco1 *=3D temp_setup->divf1 + 1;
+=20
+-	val =3D readl_relaxed(pll->base + PLL_CFG2);
+-	val &=3D ~PLL_DIVF1_MASK;
+-	val |=3D FIELD_PREP(PLL_DIVF1_MASK, divf - 1);
+-	writel_relaxed(val, pll->base + PLL_CFG2);
++		ret =3D clk_sccg_pll2_find_setup(setup, temp_setup, vco1);
++		if (!ret) {
++			temp_setup->bypass =3D PLL_BYPASS_NONE;
++			return ret;
++		}
++	}
++
++	return ret;
++}
++
++static int clk_sccg_divr1_lookup(struct clk_sccg_pll_setup *setup,
++				struct clk_sccg_pll_setup *temp_setup)
++{
++	int ret =3D -EINVAL;
++
++	for (temp_setup->divr1 =3D 0; temp_setup->divr1 <=3D PLL_DIVR1_MAX;
++	     temp_setup->divr1++) {
++		temp_setup->ref_div1 =3D temp_setup->ref;
++		do_div(temp_setup->ref_div1, temp_setup->divr1 + 1);
++		if (temp_setup->ref_div1 >=3D PLL_STAGE1_REF_MIN_FREQ &&
++		    temp_setup->ref_div1 <=3D PLL_STAGE1_REF_MAX_FREQ) {
++			ret =3D clk_sccg_divf1_lookup(setup, temp_setup);
++			if (!ret)
++				return ret;
++		}
++	}
++
++	return ret;
++}
++
++static int clk_sccg_pll1_find_setup(struct clk_sccg_pll_setup *setup,
++					struct clk_sccg_pll_setup *temp_setup,
++					long ref)
++{
++
++	int ret =3D -EINVAL;
++
++	if (ref < PLL_REF_MIN_FREQ || ref > PLL_REF_MAX_FREQ)
++		return ret;
++
++	temp_setup->ref =3D ref;
++
++	ret =3D clk_sccg_divr1_lookup(setup, temp_setup);
++
++	return ret;
++}
++
++static int clk_sccg_pll_find_setup(struct clk_sccg_pll_setup *setup,
++					unsigned long prate,
++					unsigned long rate, int try_bypass)
++{
++	struct clk_sccg_pll_setup temp_setup;
++	int ret =3D -EINVAL;
++
++	memset(&temp_setup, 0, sizeof(struct clk_sccg_pll_setup));
++	memset(setup, 0, sizeof(struct clk_sccg_pll_setup));
++
++	temp_setup.fout_error =3D PLL_OUT_MAX_FREQ;
++	temp_setup.fout_request =3D rate;
+=20
+-	return clk_pll_wait_lock(pll);
++	switch (try_bypass) {
++
++	case PLL_BYPASS2:
++		if (prate =3D=3D rate) {
++			setup->bypass =3D PLL_BYPASS2;
++			setup->fout =3D rate;
++			ret =3D 0;
++		}
++		break;
++
++	case PLL_BYPASS1:
++		ret =3D clk_sccg_pll2_find_setup(setup, &temp_setup, prate);
++		break;
++
++	case PLL_BYPASS_NONE:
++		ret =3D clk_sccg_pll1_find_setup(setup, &temp_setup, prate);
++		break;
++	}
++
++	return ret;
++}
++
++
++static int clk_sccg_pll_is_prepared(struct clk_hw *hw)
++{
++	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
++
++	u32 val =3D readl_relaxed(pll->base + PLL_CFG0);
++
++	return (val & PLL_PD_MASK) ? 0 : 1;
+ }
+=20
+-static int clk_pll1_prepare(struct clk_hw *hw)
++static int clk_sccg_pll_prepare(struct clk_hw *hw)
+ {
+ 	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+ 	u32 val;
+@@ -114,10 +319,10 @@ static int clk_pll1_prepare(struct clk_hw *hw)
+ 	val &=3D ~PLL_PD_MASK;
+ 	writel_relaxed(val, pll->base + PLL_CFG0);
+=20
+-	return clk_pll_wait_lock(pll);
++	return clk_sccg_pll_wait_lock(pll);
+ }
+=20
+-static void clk_pll1_unprepare(struct clk_hw *hw)
++static void clk_sccg_pll_unprepare(struct clk_hw *hw)
+ {
+ 	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+ 	u32 val;
+@@ -125,121 +330,208 @@ static void clk_pll1_unprepare(struct clk_hw *hw)
+ 	val =3D readl_relaxed(pll->base + PLL_CFG0);
+ 	val |=3D PLL_PD_MASK;
+ 	writel_relaxed(val, pll->base + PLL_CFG0);
+-
+ }
+=20
+-static unsigned long clk_pll2_recalc_rate(struct clk_hw *hw,
++static unsigned long clk_sccg_pll_recalc_rate(struct clk_hw *hw,
+ 					 unsigned long parent_rate)
+ {
+ 	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+-	u32 val, ref, divr1, divf1, divr2, divf2;
++	u32 val, divr1, divf1, divr2, divf2, divq;
+ 	u64 temp64;
+=20
+-	val =3D readl_relaxed(pll->base + PLL_CFG0);
+-	switch (FIELD_GET(PLL_REF_MASK, val)) {
+-	case 0:
+-		ref =3D OSC_25M;
+-		break;
+-	case 1:
+-		ref =3D OSC_27M;
+-		break;
+-	default:
+-		ref =3D OSC_25M;
+-		break;
+-	}
+-
+ 	val =3D readl_relaxed(pll->base + PLL_CFG2);
+ 	divr1 =3D FIELD_GET(PLL_DIVR1_MASK, val);
+ 	divr2 =3D FIELD_GET(PLL_DIVR2_MASK, val);
+ 	divf1 =3D FIELD_GET(PLL_DIVF1_MASK, val);
+ 	divf2 =3D FIELD_GET(PLL_DIVF2_MASK, val);
++	divq =3D FIELD_GET(PLL_DIVQ_MASK, val);
++
++	temp64 =3D parent_rate;
++
++	val =3D clk_readl(pll->base + PLL_CFG0);
++	if (val & SSCG_PLL_BYPASS2_MASK) {
++		temp64 =3D parent_rate;
++	} else if (val & SSCG_PLL_BYPASS1_MASK) {
++		temp64 *=3D divf2;
++		do_div(temp64, (divr2 + 1) * (divq + 1));
++	} else {
++		temp64 *=3D 2;
++		temp64 *=3D (divf1 + 1) * (divf2 + 1);
++		do_div(temp64, (divr1 + 1) * (divr2 + 1) * (divq + 1));
++	}
++
++	return (unsigned long)temp64;
++}
+=20
+-	temp64 =3D ref * 2;
+-	temp64 *=3D (divf1 + 1) * (divf2 + 1);
++static int clk_sccg_pll_set_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long parent_rate)
++{
++	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
++	struct clk_sccg_pll_setup *setup =3D &pll->setup;
++	u32 val;
+=20
+-	do_div(temp64, (divr1 + 1) * (divr2 + 1));
++	/* set bypass here too since the parent might be the same */
++	val =3D clk_readl(pll->base + PLL_CFG0);
++	val &=3D ~SSCG_PLL_BYPASS_MASK;
++	val |=3D FIELD_PREP(SSCG_PLL_BYPASS_MASK, setup->bypass);
++	clk_writel(val, pll->base + PLL_CFG0);
+=20
+-	return temp64;
++	val =3D readl_relaxed(pll->base + PLL_CFG2);
++	val &=3D ~(PLL_DIVF1_MASK | PLL_DIVF2_MASK);
++	val &=3D ~(PLL_DIVR1_MASK | PLL_DIVR2_MASK | PLL_DIVQ_MASK);
++	val |=3D FIELD_PREP(PLL_DIVF1_MASK, setup->divf1);
++	val |=3D FIELD_PREP(PLL_DIVF2_MASK, setup->divf2);
++	val |=3D FIELD_PREP(PLL_DIVR1_MASK, setup->divr1);
++	val |=3D FIELD_PREP(PLL_DIVR2_MASK, setup->divr2);
++	val |=3D FIELD_PREP(PLL_DIVQ_MASK, setup->divq);
++	writel_relaxed(val, pll->base + PLL_CFG2);
++
++	return clk_sccg_pll_wait_lock(pll);
+ }
+=20
+-static long clk_pll2_round_rate(struct clk_hw *hw, unsigned long rate,
+-			       unsigned long *prate)
++static u8 clk_sccg_pll_get_parent(struct clk_hw *hw)
+ {
+-	u32 div;
+-	unsigned long parent_rate =3D *prate;
++	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
++	u32 val;
++	u8 ret =3D pll->parent;
++
++	val =3D clk_readl(pll->base + PLL_CFG0);
++	if (val & SSCG_PLL_BYPASS2_MASK)
++		ret =3D pll->bypass2;
++	else if (val & SSCG_PLL_BYPASS1_MASK)
++		ret =3D pll->bypass1;
++	return ret;
++}
+=20
+-	if (!parent_rate)
+-		return 0;
++static int clk_sccg_pll_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
++	u32 val;
+=20
+-	div =3D rate / parent_rate;
++	val =3D clk_readl(pll->base + PLL_CFG0);
++	val &=3D ~SSCG_PLL_BYPASS_MASK;
++	val |=3D FIELD_PREP(SSCG_PLL_BYPASS_MASK, pll->setup.bypass);
++	clk_writel(val, pll->base + PLL_CFG0);
+=20
+-	return parent_rate * div;
++	return clk_sccg_pll_wait_lock(pll);
+ }
+=20
+-static int clk_pll2_set_rate(struct clk_hw *hw, unsigned long rate,
+-			    unsigned long parent_rate)
++static int __clk_sccg_pll_determine_rate(struct clk_hw *hw,
++					struct clk_rate_request *req,
++					unsigned long min,
++					unsigned long max,
++					unsigned long rate,
++					int bypass)
+ {
+-	u32 val;
+-	u32 divf;
+ 	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
++	struct clk_sccg_pll_setup *setup =3D &pll->setup;
++	struct clk_hw *parent_hw =3D NULL;
++	int bypass_parent_index;
++	int ret =3D -EINVAL;
+=20
+-	if (!parent_rate)
+-		return -EINVAL;
++	req->max_rate =3D max;
++	req->min_rate =3D min;
+=20
+-	divf =3D rate / parent_rate;
++	switch (bypass) {
++	case PLL_BYPASS2:
++		bypass_parent_index =3D pll->bypass2;
++		break;
++	case PLL_BYPASS1:
++		bypass_parent_index =3D pll->bypass1;
++		break;
++	default:
++		bypass_parent_index =3D pll->parent;
++		break;
++	}
+=20
+-	val =3D readl_relaxed(pll->base + PLL_CFG2);
+-	val &=3D ~PLL_DIVF2_MASK;
+-	val |=3D FIELD_PREP(PLL_DIVF2_MASK, divf - 1);
+-	writel_relaxed(val, pll->base + PLL_CFG2);
++	parent_hw =3D clk_hw_get_parent_by_index(hw, bypass_parent_index);
++	ret =3D __clk_determine_rate(parent_hw, req);
++	if (!ret) {
++		ret =3D clk_sccg_pll_find_setup(setup, req->rate,
++						rate, bypass);
++	}
+=20
+-	return clk_pll_wait_lock(pll);
++	req->best_parent_hw =3D parent_hw;
++	req->best_parent_rate =3D req->rate;
++	req->rate =3D setup->fout;
++
++	return ret;
+ }
+=20
+-static const struct clk_ops clk_sccg_pll1_ops =3D {
+-	.is_prepared	=3D clk_pll1_is_prepared,
+-	.recalc_rate	=3D clk_pll1_recalc_rate,
+-	.round_rate	=3D clk_pll1_round_rate,
+-	.set_rate	=3D clk_pll1_set_rate,
+-};
++static int clk_sccg_pll_determine_rate(struct clk_hw *hw,
++				       struct clk_rate_request *req)
++{
++	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
++	struct clk_sccg_pll_setup *setup =3D &pll->setup;
++	unsigned long rate =3D req->rate;
++	unsigned long min =3D req->min_rate;
++	unsigned long max =3D req->max_rate;
++	int ret =3D -EINVAL;
++
++	if (rate < PLL_OUT_MIN_FREQ || rate > PLL_OUT_MAX_FREQ)
++		return ret;
++
++	ret =3D __clk_sccg_pll_determine_rate(hw, req, req->rate, req->rate,
++						rate, PLL_BYPASS2);
++	if (!ret)
++		return ret;
++
++	ret =3D __clk_sccg_pll_determine_rate(hw, req, PLL_STAGE1_REF_MIN_FREQ,
++						PLL_STAGE1_REF_MAX_FREQ, rate,
++						PLL_BYPASS1);
++	if (!ret)
++		return ret;
++
++	ret =3D __clk_sccg_pll_determine_rate(hw, req, PLL_REF_MIN_FREQ,
++						PLL_REF_MAX_FREQ, rate,
++						PLL_BYPASS_NONE);
++	if (!ret)
++		return ret;
++
++	if (setup->fout >=3D min && setup->fout <=3D max)
++		ret =3D 0;
++
++	return ret;
++}
+=20
+-static const struct clk_ops clk_sccg_pll2_ops =3D {
+-	.prepare	=3D clk_pll1_prepare,
+-	.unprepare	=3D clk_pll1_unprepare,
+-	.recalc_rate	=3D clk_pll2_recalc_rate,
+-	.round_rate	=3D clk_pll2_round_rate,
+-	.set_rate	=3D clk_pll2_set_rate,
++static const struct clk_ops clk_sccg_pll_ops =3D {
++	.prepare	=3D clk_sccg_pll_prepare,
++	.unprepare	=3D clk_sccg_pll_unprepare,
++	.is_prepared	=3D clk_sccg_pll_is_prepared,
++	.recalc_rate	=3D clk_sccg_pll_recalc_rate,
++	.set_rate	=3D clk_sccg_pll_set_rate,
++	.set_parent	=3D clk_sccg_pll_set_parent,
++	.get_parent	=3D clk_sccg_pll_get_parent,
++	.determine_rate	=3D clk_sccg_pll_determine_rate,
+ };
+=20
+ struct clk *imx_clk_sccg_pll(const char *name,
+-				const char *parent_name,
++				const char * const *parent_names,
++				u8 num_parents,
++				u8 parent, u8 bypass1, u8 bypass2,
+ 				void __iomem *base,
+-				enum imx_sccg_pll_type pll_type)
++				unsigned long flags)
+ {
+ 	struct clk_sccg_pll *pll;
+ 	struct clk_init_data init;
+ 	struct clk_hw *hw;
+ 	int ret;
+=20
+-	switch (pll_type) {
+-	case SCCG_PLL1:
+-		init.ops =3D &clk_sccg_pll1_ops;
+-		break;
+-	case SCCG_PLL2:
+-		init.ops =3D &clk_sccg_pll2_ops;
+-		break;
+-	default:
+-		return ERR_PTR(-EINVAL);
+-	}
+-
+ 	pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
+ 	if (!pll)
+ 		return ERR_PTR(-ENOMEM);
+=20
++	pll->parent =3D parent;
++	pll->bypass1 =3D bypass1;
++	pll->bypass2 =3D bypass2;
++
++	pll->base =3D base;
+ 	init.name =3D name;
+-	init.flags =3D 0;
+-	init.parent_names =3D &parent_name;
+-	init.num_parents =3D 1;
++	init.ops =3D &clk_sccg_pll_ops;
++
++	init.flags =3D flags;
++	init.parent_names =3D parent_names;
++	init.num_parents =3D num_parents;
+=20
+ 	pll->base =3D base;
+ 	pll->hw.init =3D &init;
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 2e442d8..dc7ee99 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -36,9 +36,12 @@ struct clk *imx_clk_pllv2(const char *name, const char *=
+parent,
+ struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
+ 			     void __iomem *base);
+=20
+-struct clk *imx_clk_sccg_pll(const char *name, const char *parent_name,
+-			     void __iomem *base,
+-			     enum imx_sccg_pll_type pll_type);
++struct clk *imx_clk_sccg_pll(const char *name,
++				const char * const *parent_names,
++				u8 num_parents,
++				u8 parent, u8 bypass1, u8 bypass2,
++				void __iomem *base,
++				unsigned long flags);
+=20
+ enum imx_pllv3_type {
+ 	IMX_PLLV3_GENERIC,
+--=20
+2.7.4
 
-On the GPD win / GPD pocket this is controlled through the Type-C
-framework and the V5 boost converter is actually part of the
-charger-IC, so charging gets disabled automatically when we tell
-the charger-IC to do enable its 5V boost converter.
-
-Do you already have an idea how to deal with this, it might be good
-to have at least an idea how we want to handle 5V boost before we
-merge the patch to control the CHGDIS pin, since we may need to
-disable the charger when the id-pin is connected to GND, so that
-the charger does not try to charge from the output of the 5V boost
-converter, which happens when an external 5v boost converter is used.
-
-I also wonder if you've considered just disabling the extcon driver
-for the PMIC leaving it in automatic mode. Unlike the GPD win / pocket
-with their Type-C connector, your device seems to actually be using
-the PMIC as it was designed, so the automatic mode might just work
-and not touching the PMIC at all might be best.
-
-> Q: In theory, enabling of 'charge enable' output without of properly
-> configuration of external charger can cause some problems (USB overload,
-> battery overcurrent etc.). I think that there are no such stupidly
-> designed devices exist but we cannot be sure. What should we do with this?
-
-This should not be a problem, the input-current-limit of the charger
-will already be setup by the firmware at boot and if a charger gets
-plugged in later then the input-current-limit will reset to 500mA.
-
-Likewise the max charging current for the battery should already
-be configured properly by the firmware (this must be the case since
-the device will also charge while off) and we don't even know what
-the max charging current for the battery is, so we just have to rely
-on the firmware/BIOS here.
-
->>> It would be interesting to get a dump of the
->>> charger's i2c registers using i2cdump before
->>> and after writing this new value to register
->>> 0x5e2f. Note you can simply leave the patch adding
->>> the write out of the kernel, and then do:
->>>
->>> i2cdump <charger>
->>> i2cget -y -f 6 0x5e 0x2f
->>> # check 0x00 is the correct val
->>> i2cset -y -f 6 0x5e 0x2f 0x00
->>> i2cdump <charger>
->>>
->>> To see if any reg values of the charger-ic have changed.
->>>
->>> Note bus 6 is the right bus for the PMIC on my systems,
->>> but it might be different, to find the right bus do:
->>>
->>> ls -l /sys/bus/devices/i2c-INT34D3:00
->>>
->>> And look at what the i2c bus-number is in that symlink.
->>>
->>>
->>> Also can you please provide i2cdump output for the
->>> 0x5e and 0x6e devices of the PMIC, preferably from a
->>> clean boot, without your patches, so that we can
->>> see what the value of the 0x5e2f register is before
->>> your code modifies it.
->>>
->>> i2cdump -y -f 6 0x5e
->>> i2cdump -y -f 6 0x6e
-> 
-> linux-next (5.0.0-rc5-next-20190208+), extcon module is disabled,
-> charger is connected before power-on:
-> 
-> root@yogabook:/home/jek# i2cdump -f -y 6 0x5e
-> No size specified (using byte-data access)
->       0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f    0123456789abcdef
-> 00: 00 ff 00 XX XX 03 00 00 50 00 XX XX 09 XX 00 XX    ...XX?..P.XX?X.X
-> 10: 00 00 4a 01 0b 0b 10 80 01 29 01 XX 00 74 04 1b    ..J??????)?X.t??
-> 20: 06 ff 00 6b 00 6b 0a 03 73 8a 03 ff 6c 6c 00 10    ?..k.k??s??.ll.?
-> 30: 02 0e 00 fe 00 00 03 ff 00 51 01 3b 01 a7 01 62    ??.?..?..Q?;???b
-> 40: 00 42 00 42 00 9f 00 9f 00 9f 00 d2 00 d2 00 d2    .B.B.?.?.?.?.?.?
-> 50: 01 09 00 4d 00 8e 00 d3 01 11 01 56 02 XX XX XX    ??.M.?.????V?XXX
-> 60: XX 02 0b ff 6a 6c 0e 26 34 44 52 60 XX XX XX XX    X??.jl?&4DR`XXXX
-> 70: 00 00 00 00 00 00 00 00 00 00 00 XX XX XX XX XX    ...........XXXXX
-> 80: XX 00 00 00 XX XX 00 00 00 00 00 00 00 00 00 00    X...XX..........
-> 90: 00 XX XX XX XX XX XX ff ff ff ff ff ff ff ff ff    .XXXXXX.........
-> a0: ff ff XX XX XX XX XX XX 00 00 XX XX XX XX XX XX    ..XXXXXX..XXXXXX
-> b0: XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX    XXXXXXXXXXXXXXXX
-> c0: XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX    XXXXXXXXXXXXXXXX
-> d0: XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX    XXXXXXXXXXXXXXXX
-> e0: XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX    XXXXXXXXXXXXXXXX
-> f0: XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX    XXXXXXXXXXXXXXXX
-> 
-> root@yogabook:/home/jek# i2cdump -f -y 6 0x6e
-> No size specified (using byte-data access)
->       0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f    0123456789abcdef
-> 00: 01 02 00 00 00 80 00 18 0d XX 11 00 00 80 af 00    ??...?.??X?..??.
-> 10: 00 00 b0 00 1a ff XX 11 XX 60 03 XX 00 XX 15 00    ..?.?.X?X`?X.X?.
-> 20: 00 00 00 0c ac 0b 5a 11 10 0c 1f 18 2b 00 00 XX    ...???Z?????+..X
-> 30: 4a 4a XX 08 09 00 09 01 09 08 08 00 38 XX XX XX    JJX??.?????.8XXX
-> 40: XX XX XX 09 08 XX XX XX XX XX XX XX XX XX XX XX    XXX??XXXXXXXXXXX
-> 50: XX XX XX 0f XX XX 07 00 07 01 01 9b 63 01 07 01    XXX?XX?.????c???
-> 60: XX XX XX 02 06 06 06 00 06 20 00 00 66 00 XX XX    XXX????.? ..f.XX
-> 70: XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX    XXXXXXXXXXXXXXXX
-> 80: XX XX XX XX XX XX XX XX XX XX XX 37 XX XX XX XX    XXXXXXXXXXX7XXXX
-> 90: 01 01 XX XX XX 01 XX XX XX 01 01 01 01 00 01 01    ??XXX?XXX????.??
-> a0: 01 01 01 01 XX XX XX XX XX XX XX XX XX XX XX XX    ????XXXXXXXXXXXX
-> b0: XX XX XX XX 12 14 ad XX 00 00 00 18 00 XX XX XX    XXXX???X...?.XXX
-> c0: 1f 1f 1f 14 14 1f 3d 34 3d 33 33 3d 3d 1f 1f 3d    ??????=4=33==??=
-> d0: 1f 1f 3d 3d XX XX XX XX XX 00 f0 02 05 00 b0 XX    ??==XXXXX.???.?X
-> e0: XX XX XX 00 00 00 7d 04 XX XX XX XX XX XX XX XX    XXX...}?XXXXXXXX
-> f0: 81 08 XX XX XX XX XX XX 0f XX 03 06 06 06 2f XX    ??XXXXXX?X????/X
-> 
-> root@yogabook:/home/jek# i2cdump -f -y 6 0x4f
-> No size specified (using byte-data access)
->       0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f    0123456789abcdef
-> 00: 06 46 00 00 28 02 00 00 00 00 00 00 00 92 08 04    ?F..(?.......???
-> 10: 00 00 00 00 00 00 00 00 00 00 00 00 00 02 11 52    .............??R
-> 20: 12 00 01 20 b8 10 87 20 b8 10 87 20 b8 10 87 31    ?.? ??? ??? ???1
-> 30: 65 31 65 05 8e 00 20 b8 00 0c 00 38 00 46 00 ff    e1e??. ?.?.8.F..
-> 40: 00 00 00 d8 25 a1 15 12 11 2d 10 fe 10 b8 27 45    ...?%????-????'E
-> 50: 10 87 00 89 06 2f 00 59 00 59 00 59 10 65 10 65    ??.??/.Y.Y.Y?e?e
-> 60: 10 65 05 de 20 b8 20 b8 1f 00 00 00 00 00 00 00    ?e?? ? ??.......
-> 70: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-> 80: 00 00 77 07 77 77 77 07 00 00 00 00 00 00 00 00    ..w?www?........
-> 90: 00 00 00 00 00 00 00 00 00 00 00 ff ff ff ff ff    ................
-> a0: ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00    ................
-> b0: 00 00 XX XX XX 00 00 06 00 14 18 3f 3f 2c 3f 3f    ..XXX..?.????,??
-> c0: 04 1f 1f 04 10 05 00 a8 8e b3 00 1f 04 72 00 83    ??????.???.??r.?
-> d0: 00 81 17 00 XX 00 00 00 00 00 94 7a b7 XX XX 19    .??.X.....?z?XX?
-> e0: 06 ff 00 23 3e 3b ff ff 00 02 1f 03 00 08 00 00    ?..#>;...???.?..
-> f0: 00 00 00 00 00 e9 00 50 00 02 00 01 XX XX 01 00    .....?.P.?.?XX?.
-> 
-> 
-> The same, without charger connected:
-> 
-> root@yogabook:/home/jek# i2cdump -f -y 6 0x5e
-> No size specified (using byte-data access)
->       0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f    0123456789abcdef
-> 00: 00 ff 00 XX XX 03 00 00 50 00 XX XX 09 XX 00 XX    ...XX?..P.XX?X.X
-> 10: 00 00 4a 01 0b 0b 10 80 01 0b 01 XX 00 74 04 1b    ..J????????X.t??
-> 20: 06 ff 00 6b 00 6b 0a 03 73 43 00 ff 6c 6c 00 10    ?..k.k??sC..ll.?
-> 30: 02 0e 00 fe 00 00 03 ff 00 51 01 3b 01 a7 01 62    ??.?..?..Q?;???b
-> 40: 00 42 00 42 00 9f 00 9f 00 9f 00 d2 00 d2 00 d2    .B.B.?.?.?.?.?.?
-> 50: 01 09 00 4d 00 8e 00 d3 01 11 01 56 02 XX XX XX    ??.M.?.????V?XXX
-> 60: XX 02 0b ff 6a 6c 0e 26 34 44 52 60 XX XX XX XX    X??.jl?&4DR`XXXX
-> 70: 00 00 00 00 00 00 00 00 00 00 00 XX XX XX XX XX    ...........XXXXX
-> 80: XX 00 00 00 XX XX 00 00 00 00 00 00 00 00 00 00    X...XX..........
-> 90: 00 XX XX XX XX XX XX ff ff ff ff ff ff ff ff ff    .XXXXXX.........
-> a0: ff ff XX XX XX XX XX XX 00 00 XX XX XX XX XX XX    ..XXXXXX..XXXXXX
-> b0: XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX    XXXXXXXXXXXXXXXX
-> c0: XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX    XXXXXXXXXXXXXXXX
-> d0: XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX    XXXXXXXXXXXXXXXX
-> e0: XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX    XXXXXXXXXXXXXXXX
-> f0: XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX    XXXXXXXXXXXXXXXX
-> root@yogabook:/home/jek# i2cdump -f -y 6 0x6e
-> No size specified (using byte-data access)
->       0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f    0123456789abcdef
-> 00: 01 02 01 05 00 80 00 18 0d XX 10 00 00 80 af 00    ????.?.??X?..??.
-> 10: 00 00 b0 00 1a ff XX 11 XX 60 03 XX 00 XX 14 00    ..?.?.X?X`?X.X?.
-> 20: 00 00 01 0c ac 0b 5a 11 10 0c 1f 18 2b 00 00 XX    ..????Z?????+..X
-> 30: 4a 4a XX 08 09 00 09 01 09 08 08 00 38 XX XX XX    JJX??.?????.8XXX
-> 40: XX XX XX 09 08 XX XX XX XX XX XX XX XX XX XX XX    XXX??XXXXXXXXXXX
-> 50: XX XX XX 0f XX XX 07 00 07 01 01 9b 63 01 07 01    XXX?XX?.????c???
-> 60: XX XX XX 02 06 06 06 00 06 20 00 00 66 00 XX XX    XXX????.? ..f.XX
-> 70: XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX    XXXXXXXXXXXXXXXX
-> 80: XX XX XX XX XX XX XX XX XX XX XX 37 XX XX XX XX    XXXXXXXXXXX7XXXX
-> 90: 01 01 XX XX XX 01 XX XX XX 01 01 01 01 00 01 01    ??XXX?XXX????.??
-> a0: 01 01 01 01 XX XX XX XX XX XX XX XX XX XX XX XX    ????XXXXXXXXXXXX
-> b0: XX XX XX XX 12 14 ad XX 00 00 00 18 00 XX XX XX    XXXX???X...?.XXX
-> c0: 1f 1f 1f 14 14 1f 3d 34 3d 33 33 3d 3d 1f 1f 3d    ??????=4=33==??=
-> d0: 1f 1f 3d 3d XX XX XX XX XX 00 f0 02 05 00 a0 XX    ??==XXXXX.???.?X
-> e0: XX XX XX 00 00 00 7d 04 XX XX XX XX XX XX XX XX    XXX...}?XXXXXXXX
-> f0: 81 08 XX XX XX XX XX XX 0f XX 03 06 06 06 2f XX    ??XXXXXX?X????/X
-> root@yogabook:/home/jek# i2cdump -f -y 6 0x4f
-> No size specified (using byte-data access)
->       0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f    0123456789abcdef
-> 00: 06 46 00 00 a6 02 00 00 00 00 00 00 00 92 08 03    ?F..??.......???
-> 10: 00 00 00 00 00 00 00 00 00 00 00 00 00 02 11 52    .............??R
-> 20: 12 00 01 20 b8 10 87 20 b8 10 87 20 b8 10 87 31    ?.? ??? ??? ???1
-> 30: 65 31 65 05 8e 00 20 b8 00 6f 00 49 00 5f 00 ff    e1e??. ?.o.I._..
-> 40: 00 00 00 d1 25 a1 15 12 11 2d 10 fe 10 b8 27 45    ...?%????-????'E
-> 50: 10 87 00 89 06 2f 00 59 00 59 00 59 10 65 10 65    ??.??/.Y.Y.Y?e?e
-> 60: 10 65 05 de 20 b8 20 b8 08 00 00 00 00 00 00 00    ?e?? ? ??.......
-> 70: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-> 80: 00 00 77 07 77 77 77 07 00 00 00 00 00 00 00 00    ..w?www?........
-> 90: 00 00 00 00 00 00 00 00 00 00 00 ff ff ff ff ff    ................
-> a0: ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00    ................
-> b0: 00 00 XX XX XX 00 00 06 00 14 31 3f 3f 2f 3f 3f    ..XXX..?.?1??/??
-> c0: 04 1f 1f 04 10 05 00 75 8f b3 00 1f 04 72 00 83    ??????.u??.??r.?
-> d0: 00 81 17 00 XX 00 00 00 00 00 b2 90 7a XX XX 19    .??.X.....??zXX?
-> e0: 06 ff 00 23 3e 3b ff ff 00 02 1f 03 00 08 00 00    ?..#>;...???.?..
-> f0: 00 00 00 00 00 9c 00 ac 00 02 00 01 XX XX 01 00    .....?.?.?.?XX?.
-> 
-> 
-> The same, with USB hub connected (OTG host mode):
-> 
-> root@yogabook:/home/jek# i2cdump -f -y 6 0x5e
-> No size specified (using byte-data access)
->       0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f    0123456789abcdef
-> 00: 00 ff 00 XX XX 03 00 01 50 00 XX XX 09 XX 00 XX    ...XX?.?P.XX?X.X
-> 10: 00 00 4a 01 0b 0b 10 c0 01 0f 01 XX 00 74 04 1b    ..J????????X.t??
-> 20: 06 ff 00 6b 00 6b 0a 2a 73 00 00 ff 6c 6c 00 50    ?..k.k?*s...ll.P
-> 30: 02 0e 00 fe 00 00 03 ff 00 51 01 3b 01 a7 01 62    ??.?..?..Q?;???b
-> 40: 00 42 00 42 00 9f 00 9f 00 9f 00 d2 00 d2 00 d2    .B.B.?.?.?.?.?.?
-> 50: 01 09 00 4d 00 8e 00 d3 01 11 01 56 02 XX XX XX    ??.M.?.????V?XXX
-> 60: XX 02 0b ff 6a 6c 0e 26 34 44 52 60 XX XX XX XX    X??.jl?&4DR`XXXX
-> 70: 00 00 00 00 00 00 00 00 00 00 00 XX XX XX XX XX    ...........XXXXX
-> 80: XX 00 00 00 XX XX 00 00 00 00 00 00 00 00 00 00    X...XX..........
-> 90: 00 XX XX XX XX XX XX ff ff ff ff ff ff ff ff ff    .XXXXXX.........
-> a0: ff ff XX XX XX XX XX XX 00 00 XX XX XX XX XX XX    ..XXXXXX..XXXXXX
-> b0: XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX    XXXXXXXXXXXXXXXX
-> c0: XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX    XXXXXXXXXXXXXXXX
-> d0: XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX    XXXXXXXXXXXXXXXX
-> e0: XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX    XXXXXXXXXXXXXXXX
-> f0: XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX    XXXXXXXXXXXXXXXX
-> root@yogabook:/home/jek# i2cdump -f -y 6 0x6e
-> No size specified (using byte-data access)
->       0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f    0123456789abcdef
-> 00: 01 02 01 15 00 00 00 18 0d XX 00 00 00 80 af 00    ????...??X...??.
-> 10: 00 00 b0 00 1a ff XX 11 XX 60 03 XX 00 XX 0d 00    ..?.?.X?X`?X.X?.
-> 20: 00 00 01 0c ac 0b 5a 11 10 0c 1f 18 2b 00 00 XX    ..????Z?????+..X
-> 30: 4a 4a XX 08 09 00 09 01 09 08 08 00 38 XX XX XX    JJX??.?????.8XXX
-> 40: XX XX XX 09 08 XX XX XX XX XX XX XX XX XX XX XX    XXX??XXXXXXXXXXX
-> 50: XX XX XX 0f XX XX 07 00 07 01 01 9b 63 01 07 01    XXX?XX?.????c???
-> 60: XX XX XX 02 06 06 06 00 06 20 00 00 66 00 XX XX    XXX????.? ..f.XX
-> 70: XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX    XXXXXXXXXXXXXXXX
-> 80: XX XX XX XX XX XX XX XX XX XX XX 37 XX XX XX XX    XXXXXXXXXXX7XXXX
-> 90: 01 01 XX XX XX 01 XX XX XX 01 01 01 01 00 01 01    ??XXX?XXX????.??
-> a0: 01 01 01 01 XX XX XX XX XX XX XX XX XX XX XX XX    ????XXXXXXXXXXXX
-> b0: XX XX XX XX 12 14 ad XX 00 00 00 18 00 XX XX XX    XXXX???X...?.XXX
-> c0: 1f 1f 1f 14 14 1f 3d 34 3d 33 33 3d 3d 1f 1f 3d    ??????=4=33==??=
-> d0: 1f 1f 3d 3d XX XX XX XX XX 00 f0 02 05 00 c0 XX    ??==XXXXX.???.?X
-> e0: XX XX XX 00 00 00 7d 04 XX XX XX XX XX XX XX XX    XXX...}?XXXXXXXX
-> f0: 81 08 XX XX XX XX XX XX 0f XX 03 06 06 06 2f XX    ??XXXXXX?X????/X
-> root@yogabook:/home/jek# i2cdump -f -y 6 0x4f
-> No size specified (using byte-data access)
->       0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f    0123456789abcdef
-> 00: 06 46 00 00 99 02 00 00 00 00 00 00 00 92 08 04    ?F..??.......???
-> 10: 00 00 00 00 00 00 00 00 00 00 00 00 00 02 11 52    .............??R
-> 20: 12 00 07 20 b8 10 87 20 b8 10 87 20 b8 10 87 31    ?.? ??? ??? ???1
-> 30: 65 31 65 05 8e 00 20 b8 00 d9 00 a2 00 c6 00 ff    e1e??. ?.?.?.?..
-> 40: 00 00 00 cc 25 a1 15 12 11 2d 10 fe 10 b8 27 45    ...?%????-????'E
-> 50: 10 87 00 89 06 2f 00 59 00 59 00 59 10 65 10 65    ??.??/.Y.Y.Y?e?e
-> 60: 10 65 05 de 20 b8 20 b8 08 00 00 00 00 00 00 00    ?e?? ? ??.......
-> 70: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-> 80: 00 00 77 07 77 77 77 07 00 00 00 00 00 00 00 00    ..w?www?........
-> 90: 00 00 00 00 00 00 00 00 00 00 00 ff ff ff ff ff    ................
-> a0: ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00    ................
-> b0: 00 00 XX XX XX 00 00 06 00 14 39 3f 3f 36 3f 3f    ..XXX..?.?9??6??
-> c0: 04 1f 1f 04 10 05 00 21 91 b3 00 1f 04 72 00 83    ??????.!??.??r.?
-> d0: 00 81 17 00 XX 00 00 00 00 00 b2 92 67 XX XX 19    .??.X.....??gXX?
-> e0: 06 ff 00 23 3e 3b ff ff 00 02 1f 03 00 08 00 00    ?..#>;...???.?..
-> f0: 00 00 00 00 00 94 00 99 00 03 00 03 XX XX 01 00    .....?.?.?.?XX?.
-
-Thank you.
-
-Regards,
-
-Hans
