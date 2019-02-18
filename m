@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31EE0C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F5DC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0144B218FC
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8034021902
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497525;
-	bh=4bFnIsdXg55p+eIb1TKr2naeNkOSvdw6mjz19Cju5IQ=;
+	s=default; t=1550497528;
+	bh=S9+e2DFe7/fEz18pceNUZFPRtTekNejRagJO0DCyLu4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YlzXHTHHCftFeOyl9lgLPwxT4o+/qWgLiLLHH/4tRclRTpsC7pfRP0qD6QByMAlcA
-	 svtmhF6BkFV84fXGr/l5awvgJUgOxaYKLuWlNbuEKDwFQzxGmzg7xw3EL+iWYCJzsx
-	 zANMRwrlbgE6QaEOrr61HomEmI6uzbLwIioaXCos=
+	b=CA2iLDhPQnT3skefUiEctUijLy/iOP1UN+GjVhcGw2ZtVMPxV05yftbVg359sT/SR
+	 /UajQqfG9mXZjlLBvFppPOfeF6xPrqNv4PG096TBJKqmbdX56e2ntXitRrvifIpUn/
+	 0fvvBauiRPEmXc7WgXhEY52iyqFNAM10Aug3F1c4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731318AbfBRNpX (ORCPT
+        id S1730530AbfBRNp0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:45:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51364 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:45:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731293AbfBRNpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:45:18 -0500
+        id S1731319AbfBRNpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:45:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 014CF218FC;
-        Mon, 18 Feb 2019 13:45:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 153C0217F5;
+        Mon, 18 Feb 2019 13:45:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497517;
-        bh=4bFnIsdXg55p+eIb1TKr2naeNkOSvdw6mjz19Cju5IQ=;
+        s=default; t=1550497523;
+        bh=S9+e2DFe7/fEz18pceNUZFPRtTekNejRagJO0DCyLu4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DqyFS1FBT8RHihNhJNUAKcacxClNT52/E4w8Fx9f/as+kiARQxkW7Ze0f6xXsg/nB
-         Zi3GBo0lJNpNVTJ9RuPSVAcWCw8OhlRrCmSvlosEunIilDWwRu6sO5M5/97cKSbebF
-         0wbo0xukXqsQNB4teIr6PQ6O69hF0CR9LyjagZqQ=
+        b=L+eUC8Shiru31PB7A/8hBjsD5cqJvI8HCz7QfsjXiD41GMtM/sXwJ/2mYHCnN69eV
+         PUIbw+74TcJ/1r3tCgMXIYXboGG2hKkdlsQt4SJbQp9//oVHGBwIWFn9ySyTIr4g0o
+         tiEvBI6UaMzsbBnSEXzyqr/KrDqZaEKvvFsXLo9o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Stecker <m19@florianstecker.de>,
-        Jianchao Wang <jianchao.w.wang@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 03/92] blk-mq: fix a hung issue when fsync
-Date:   Mon, 18 Feb 2019 14:42:06 +0100
-Message-Id: <20190218133454.948976156@linuxfoundation.org>
+        stable@vger.kernel.org, Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 05/92] ACPI: NUMA: Use correct type for printing addresses on i386-PAE
+Date:   Mon, 18 Feb 2019 14:42:08 +0100
+Message-Id: <20190218133455.111633430@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
 References: <20190218133454.668268457@linuxfoundation.org>
@@ -66,58 +66,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 85bd6e61f34dffa8ec2dc75ff3c02ee7b2f1cbce ]
+[ Upstream commit b9ced18acf68dffebe6888c7ec765a2b1db7a039 ]
 
-Florian reported a io hung issue when fsync(). It should be
-triggered by following race condition.
+The addresses of NUMA nodes are not printed correctly on i386-PAE
+which is misleading.
 
-data + post flush         a flush
+Here is a debian9-32bit with PAE in a QEMU guest having more than 4G
+of memory:
 
-blk_flush_complete_seq
-  case REQ_FSEQ_DATA
-    blk_flush_queue_rq
-    issued to driver      blk_mq_dispatch_rq_list
-                            try to issue a flush req
-                            failed due to NON-NCQ command
-                            .queue_rq return BLK_STS_DEV_RESOURCE
+qemu-system-i386 \
+-hda /var/lib/libvirt/images/debian32.qcow2 \
+-m 5G \
+-enable-kvm \
+-smp 10 \
+-numa node,mem=512M,nodeid=0,cpus=0 \
+-numa node,mem=512M,nodeid=1,cpus=1 \
+-numa node,mem=512M,nodeid=2,cpus=2 \
+-numa node,mem=512M,nodeid=3,cpus=3 \
+-numa node,mem=512M,nodeid=4,cpus=4 \
+-numa node,mem=512M,nodeid=5,cpus=5 \
+-numa node,mem=512M,nodeid=6,cpus=6 \
+-numa node,mem=512M,nodeid=7,cpus=7 \
+-numa node,mem=512M,nodeid=8,cpus=8 \
+-numa node,mem=512M,nodeid=9,cpus=9 \
+-serial stdio
 
-request completion
-  req->end_io // doesn't check RESTART
-  mq_flush_data_end_io
-    case REQ_FSEQ_POSTFLUSH
-      blk_kick_flush
-        do nothing because previous flush
-        has not been completed
-     blk_mq_run_hw_queue
-                              insert rq to hctx->dispatch
-                              due to RESTART is still set, do nothing
+Because of the wrong value type, it prints as below:
 
-To fix this, replace the blk_mq_run_hw_queue in mq_flush_data_end_io
-with blk_mq_sched_restart to check and clear the RESTART flag.
+[    0.021049] ACPI: SRAT Memory (0x0 length 0xa0000) in proximity domain 0 enabled
+[    0.021740] ACPI: SRAT Memory (0x100000 length 0x1ff00000) in proximity domain 0 enabled
+[    0.022425] ACPI: SRAT Memory (0x20000000 length 0x20000000) in proximity domain 1 enabled
+[    0.023092] ACPI: SRAT Memory (0x40000000 length 0x20000000) in proximity domain 2 enabled
+[    0.023764] ACPI: SRAT Memory (0x60000000 length 0x20000000) in proximity domain 3 enabled
+[    0.024431] ACPI: SRAT Memory (0x80000000 length 0x20000000) in proximity domain 4 enabled
+[    0.025104] ACPI: SRAT Memory (0xa0000000 length 0x20000000) in proximity domain 5 enabled
+[    0.025791] ACPI: SRAT Memory (0x0 length 0x20000000) in proximity domain 6 enabled
+[    0.026412] ACPI: SRAT Memory (0x20000000 length 0x20000000) in proximity domain 7 enabled
+[    0.027118] ACPI: SRAT Memory (0x40000000 length 0x20000000) in proximity domain 8 enabled
+[    0.027802] ACPI: SRAT Memory (0x60000000 length 0x20000000) in proximity domain 9 enabled
 
-Fixes: bd166ef1 (blk-mq-sched: add framework for MQ capable IO schedulers)
-Reported-by: Florian Stecker <m19@florianstecker.de>
-Tested-by: Florian Stecker <m19@florianstecker.de>
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+The upper half of the start address of the NUMA domains between 6
+and 9 inclusive was cut, so the printed values are incorrect.
+
+Fix the value type, to get the correct values in the log as follows:
+
+[    0.023698] ACPI: SRAT Memory (0x0 length 0xa0000) in proximity domain 0 enabled
+[    0.024325] ACPI: SRAT Memory (0x100000 length 0x1ff00000) in proximity domain 0 enabled
+[    0.024981] ACPI: SRAT Memory (0x20000000 length 0x20000000) in proximity domain 1 enabled
+[    0.025659] ACPI: SRAT Memory (0x40000000 length 0x20000000) in proximity domain 2 enabled
+[    0.026317] ACPI: SRAT Memory (0x60000000 length 0x20000000) in proximity domain 3 enabled
+[    0.026980] ACPI: SRAT Memory (0x80000000 length 0x20000000) in proximity domain 4 enabled
+[    0.027635] ACPI: SRAT Memory (0xa0000000 length 0x20000000) in proximity domain 5 enabled
+[    0.028311] ACPI: SRAT Memory (0x100000000 length 0x20000000) in proximity domain 6 enabled
+[    0.028985] ACPI: SRAT Memory (0x120000000 length 0x20000000) in proximity domain 7 enabled
+[    0.029667] ACPI: SRAT Memory (0x140000000 length 0x20000000) in proximity domain 8 enabled
+[    0.030334] ACPI: SRAT Memory (0x160000000 length 0x20000000) in proximity domain 9 enabled
+
+Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+[ rjw: Subject & changelog ]
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/blk-flush.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/numa.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/block/blk-flush.c b/block/blk-flush.c
-index 8b44b86779da..87fc49daa2b4 100644
---- a/block/blk-flush.c
-+++ b/block/blk-flush.c
-@@ -424,7 +424,7 @@ static void mq_flush_data_end_io(struct request *rq, blk_status_t error)
- 	blk_flush_complete_seq(rq, fq, REQ_FSEQ_DATA, error);
- 	spin_unlock_irqrestore(&fq->mq_flush_lock, flags);
- 
--	blk_mq_run_hw_queue(hctx, true);
-+	blk_mq_sched_restart(hctx);
- }
- 
- /**
+diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
+index 274699463b4f..7bbbf8256a41 100644
+--- a/drivers/acpi/numa.c
++++ b/drivers/acpi/numa.c
+@@ -146,9 +146,9 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
+ 		{
+ 			struct acpi_srat_mem_affinity *p =
+ 			    (struct acpi_srat_mem_affinity *)header;
+-			pr_debug("SRAT Memory (0x%lx length 0x%lx) in proximity domain %d %s%s%s\n",
+-				 (unsigned long)p->base_address,
+-				 (unsigned long)p->length,
++			pr_debug("SRAT Memory (0x%llx length 0x%llx) in proximity domain %d %s%s%s\n",
++				 (unsigned long long)p->base_address,
++				 (unsigned long long)p->length,
+ 				 p->proximity_domain,
+ 				 (p->flags & ACPI_SRAT_MEM_ENABLED) ?
+ 				 "enabled" : "disabled",
 -- 
 2.19.1
 
