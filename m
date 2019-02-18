@@ -7,61 +7,54 @@ X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A51C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C532CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D79192177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94FAF217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550515780;
-	bh=I/tS1M3b5ySesCipRj3YCueHYB3IjNRSh74UJw4Nqb4=;
+	s=default; t=1550515787;
+	bh=H1RmBgQYjc0QzYPcs3yweTeNye/yiFjgxoyLbGqAx4c=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=qskSJDUP/p6ZxS0T1c8yIIjTmmPKsJ6yCjRIohd8xAml3auNEvVAREDMgAvmEZr5C
-	 jtXY8OqguS7GQbyB/OKZvHt/lVyrRqdM1XtuZM2t3OO8PMDqJMhqaWvcKyqwZzVz4Z
-	 pqUA9AaXRN+icRz3GNgwfCg3QIiG/DRhgJR9eLgU=
+	b=YQ1rX3/06lW2fAjmUO8XoAzuhPjw6e3OpWw3trpPWFyq9lLkXifOvrGmyhQCWwxMv
+	 pJcpyMT1IyoUlZyMn7BbtRG5PwZLzap5ocCYZERXhuTyus6B2JX/8Z/fAHkA8Y8bgT
+	 xQ0a2PkHEETLLVsIRgODHh+aoSgg1VFNPm7dbPPw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbfBRStj (ORCPT
+        id S1726790AbfBRStp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:49:39 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41840 "EHLO
+        Mon, 18 Feb 2019 13:49:45 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42110 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfBRStf (ORCPT
+        with ESMTP id S1726370AbfBRStm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:49:35 -0500
+        Mon, 18 Feb 2019 13:49:42 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=a4RStyqL0UfseD8kB7ojNjyPlgcCXXilGpt7LZX1HH4=; b=eLgdrugzd5cJ
-        cX6onjmRCk172QpPY7IvojH2azM0jmylq/UbUHwfOoTjRLYNzVofBfpApau+/C+u8XsJLrYAkuQ7S
-        7Ni48MLB90fBNo6agWCCjGzdhYC6XCN7gs3Zegfqg8JcUy1AVy++9SlUCR2HXaMi7j3Fpx4JXAoUD
-        u1Kk8=;
+        List-Archive; bh=6xQggqp64e2GEZ5jFy5uGoHxF/xXGAVPwyMYdKfZ1Pk=; b=qWbnhcMQCwlU
+        8rEMiNbstNGqxsEdcf9mtC1oebU19v4V7lu75WhvcI7Vo64l66tb5h5J2EdO5Js52qMwWYmhwQQH9
+        u8p8jE92M0388+2LgO9lvttqxiTXADb1KgXYopGVIU2/NCPgZUvFI+bprsoleJ9ihJKPxE7unBuBp
+        iGQek=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gvnyk-0001dp-Ma; Mon, 18 Feb 2019 18:49:22 +0000
+        id 1gvnyy-0001ey-1Y; Mon, 18 Feb 2019 18:49:36 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 395091128008; Mon, 18 Feb 2019 18:49:22 +0000 (GMT)
+        id 72BB11128008; Mon, 18 Feb 2019 18:49:35 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     James Schulman <james.schulman@cirrus.com>,
-        Mark Brown <broonie@kernel.org>,
-        Brian Austin <brian.austin@cirrus.com>,
-        Paul Handrigan <Paul.Handrigan@cirrus.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        James Schulman <james.schulman@cirrus.com>,
-        kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org,
+To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Cc:     Mark Brown <broonie@kernel.org>, lars@metafoo.de,
+        lgirdwood@gmail.com, broonie@kernel.org,
+        alsa-devel@alsa-project.org, Codrin.Ciubotariu@microchip.com,
         linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: cs35l36: Make some symbols static" to the asoc tree
-In-Reply-To:  <20190218074653.181365-1-weiyongjun1@huawei.com>
+Subject: Applied "ASoC: codecs: ad193x: Fix frame polarity for DSP_A format" to the asoc tree
+In-Reply-To:  <20190218160954.13929-4-codrin.ciubotariu@microchip.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190218184922.395091128008@debutante.sirena.org.uk>
-Date:   Mon, 18 Feb 2019 18:49:22 +0000 (GMT)
+Message-Id: <20190218184935.72BB11128008@debutante.sirena.org.uk>
+Date:   Mon, 18 Feb 2019 18:49:35 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -69,7 +62,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: cs35l36: Make some symbols static
+   ASoC: codecs: ad193x: Fix frame polarity for DSP_A format
 
 has been applied to the asoc tree at
 
@@ -94,70 +87,39 @@ to this mail.
 Thanks,
 Mark
 
-From b2c02c63ac254530cffe3a7dc7d4e433da1b3a67 Mon Sep 17 00:00:00 2001
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 18 Feb 2019 07:46:53 +0000
-Subject: [PATCH] ASoC: cs35l36: Make some symbols static
+From 90f6e68031397fb6212bef5619193cd15707fa0f Mon Sep 17 00:00:00 2001
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Date: Mon, 18 Feb 2019 16:10:32 +0000
+Subject: [PATCH] ASoC: codecs: ad193x: Fix frame polarity for DSP_A format
 
-Fixes the following sparse warnings:
+By default, the codec starts to interpret the left (first) channel on
+the falling edge (low polarity) of LRCLK. However, for DSP_A, the left
+channel needs to start on the rising edge of LRCLK. This patch fixes
+this channel swap by toggling the bit which selects the LRCLK polarity.
 
-sound/soc/codecs/cs35l36.c:135:20: warning:
- symbol 'cs35l36_reg' was not declared. Should it be static?
-sound/soc/codecs/cs35l36.c:248:6: warning:
- symbol 'cs35l36_readable_reg' was not declared. Should it be static?
-sound/soc/codecs/cs35l36.c:398:6: warning:
- symbol 'cs35l36_precious_reg' was not declared. Should it be static?
-sound/soc/codecs/cs35l36.c:410:6: warning:
- symbol 'cs35l36_volatile_reg' was not declared. Should it be static?
-
-Fixes: 6ba9dd6c893b ("ASoC: cs35l36: Add support for Cirrus CS35L36 Amplifier")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Acked-by: James Schulman <james.schulman@cirrus.com>
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/cs35l36.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ sound/soc/codecs/ad193x.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/sound/soc/codecs/cs35l36.c b/sound/soc/codecs/cs35l36.c
-index e374fffb7e17..dc8cf61b9db8 100644
---- a/sound/soc/codecs/cs35l36.c
-+++ b/sound/soc/codecs/cs35l36.c
-@@ -131,7 +131,7 @@ static const struct cs35l36_pll_config cs35l36_pll_sysclk[] = {
- 	{27000000,	0x3F, 0x0A},
- };
- 
--struct reg_default cs35l36_reg[] = {
-+static struct reg_default cs35l36_reg[] = {
- 	{CS35L36_TESTKEY_CTRL,			0x00000000},
- 	{CS35L36_USERKEY_CTL,			0x00000000},
- 	{CS35L36_OTP_CTRL1,			0x00002460},
-@@ -244,7 +244,7 @@ struct reg_default cs35l36_reg[] = {
- 	{CS35L36_PAC_INT7_CTRL,			0x00000001},
- };
- 
--bool cs35l36_readable_reg(struct device *dev, unsigned int reg)
-+static bool cs35l36_readable_reg(struct device *dev, unsigned int reg)
- {
- 	switch (reg) {
- 	case CS35L36_SW_RESET:
-@@ -394,7 +394,7 @@ bool cs35l36_readable_reg(struct device *dev, unsigned int reg)
+diff --git a/sound/soc/codecs/ad193x.c b/sound/soc/codecs/ad193x.c
+index c16c9969d1a0..315ec9775118 100644
+--- a/sound/soc/codecs/ad193x.c
++++ b/sound/soc/codecs/ad193x.c
+@@ -228,6 +228,12 @@ static int ad193x_set_dai_fmt(struct snd_soc_dai *codec_dai,
+ 		return -EINVAL;
  	}
- }
  
--bool cs35l36_precious_reg(struct device *dev, unsigned int reg)
-+static bool cs35l36_precious_reg(struct device *dev, unsigned int reg)
- {
- 	switch (reg) {
- 	case CS35L36_TESTKEY_CTRL:
-@@ -406,7 +406,7 @@ bool cs35l36_precious_reg(struct device *dev, unsigned int reg)
- 	}
- }
- 
--bool cs35l36_volatile_reg(struct device *dev, unsigned int reg)
-+static bool cs35l36_volatile_reg(struct device *dev, unsigned int reg)
- {
- 	switch (reg) {
- 	case CS35L36_SW_RESET:
++	/* For DSP_*, LRCLK's polarity must be inverted */
++	if (fmt & SND_SOC_DAIFMT_DSP_A) {
++		change_bit(ffs(AD193X_DAC_LEFT_HIGH) - 1,
++			   (unsigned long *)&dac_fmt);
++	}
++
+ 	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+ 	case SND_SOC_DAIFMT_CBM_CFM: /* codec clk & frm master */
+ 		adc_fmt |= AD193X_ADC_LCR_MASTER;
 -- 
 2.20.1
 
