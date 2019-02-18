@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46434C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A43C4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:12:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BE7A218AD
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:12:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B464621901
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:12:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499133;
-	bh=WaSdcNFr/vciRpFuiFoDV4DjiTGsvMQi55wNW2jF8gg=;
+	s=default; t=1550499136;
+	bh=m1YsGFE9LpO5o3YzBJsKL0Ceo7xgf3LMc9ca9iqqR0c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=muQbIxPpFHcmzW6zwdp0sfPQeWsW/LMhpifhDacwG5VgrRML1/3SviVXQ5qDf+DdC
-	 9C64ls7V64XSv4kw1qiuTKazA+tgMyta9aKc2zQbGiQqKNiyfzR/iAAogQG4AqVKZ3
-	 KqCOr+XYWe43zWKHtavq1qlMNyrXYP1i7r9aCDGQ=
+	b=ztMSpQVJjJAndCBbC1G3kJgOooP3yQdO1dE83cRn0Qo+VU8BKNWPgoypIRxkyxQBN
+	 N+vYY9McWjurCrf0MYfEkPrwIELXKksq1pEgLOZWP401NwuKm4k4SNGZd2XNZpmhE4
+	 q2OroS8EF/HoXYe9H8GJPM2xm0n39ne0HBBItIWQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392026AbfBROML (ORCPT
+        id S2391967AbfBROMP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:12:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56550 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:12:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392022AbfBROMH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:12:07 -0500
+        id S2391907AbfBROMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:12:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87FA0218AD;
-        Mon, 18 Feb 2019 14:12:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67740217D7;
+        Mon, 18 Feb 2019 14:12:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550499126;
-        bh=WaSdcNFr/vciRpFuiFoDV4DjiTGsvMQi55wNW2jF8gg=;
+        s=default; t=1550499128;
+        bh=m1YsGFE9LpO5o3YzBJsKL0Ceo7xgf3LMc9ca9iqqR0c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hN34qF+l62ph9yQK5a1mVvq6RYhIW6K6XOYy01dnsYzoEcVYDHUtdcGp4a4aaWCkD
-         YHns0whPchfqvkDSWQXG9WZh1WqWau9IVC2dnOSWr1Tiz+bH5+XrS6P1y37oewgrXa
-         s1OxplZ+Q3KaTsZCFc/zaTtDZ+BflzGLLSkjl5Js=
+        b=TpOxOMy8vGnkv6TzCOmYA8xnDIaCJcMCjr1GqidDnQKMrh8lTmIlYRG2p/LAepgNF
+         gQuOTDkIWibSPlAXVxtv540zJOuLm+PzLYUXSWHXjey4JsDcukz0zP/Wo3PLyPPYIc
+         hFbHT2bfD+Giddtt39lnqicWZC7PJxe1rgStLuVc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vladis Dronov <vdronov@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 3.18 085/108] HID: debug: fix the ring buffer implementation
-Date:   Mon, 18 Feb 2019 14:44:21 +0100
-Message-Id: <20190218133523.499665342@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+acdeb633f6211ccdf886@syzkaller.appspotmail.com,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Myungho Jung <mhjungk@gmail.com>
+Subject: [PATCH 3.18 086/108] libceph: avoid KEEPALIVE_PENDING races in ceph_con_keepalive()
+Date:   Mon, 18 Feb 2019 14:44:22 +0100
+Message-Id: <20190218133523.562175618@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -65,275 +67,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vladis Dronov <vdronov@redhat.com>
+From: Ilya Dryomov <idryomov@gmail.com>
 
-commit 13054abbaa4f1fd4e6f3b4b63439ec033b4c8035 upstream.
+commit 4aac9228d16458cedcfd90c7fb37211cf3653ac3 upstream.
 
-Ring buffer implementation in hid_debug_event() and hid_debug_events_read()
-is strange allowing lost or corrupted data. After commit 717adfdaf147
-("HID: debug: check length before copy_to_user()") it is possible to enter
-an infinite loop in hid_debug_events_read() by providing 0 as count, this
-locks up a system. Fix this by rewriting the ring buffer implementation
-with kfifo and simplify the code.
+con_fault() can transition the connection into STANDBY right after
+ceph_con_keepalive() clears STANDBY in clear_standby():
 
-This fixes CVE-2019-3819.
+    libceph user thread               ceph-msgr worker
 
-v2: fix an execution logic and add a comment
-v3: use __set_current_state() instead of set_current_state()
+ceph_con_keepalive()
+  mutex_lock(&con->mutex)
+  clear_standby(con)
+  mutex_unlock(&con->mutex)
+                                mutex_lock(&con->mutex)
+                                con_fault()
+                                  ...
+                                  if KEEPALIVE_PENDING isn't set
+                                    set state to STANDBY
+                                  ...
+                                mutex_unlock(&con->mutex)
+  set KEEPALIVE_PENDING
+  set WRITE_PENDING
 
-Backport to v3.18: some (tree-wide) patches are missing in v3.18 so
-cherry-pick relevant pieces from:
- * 6396bb221514 ("treewide: kzalloc() -> kcalloc()")
- * a9a08845e9ac ("vfs: do bulk POLL* -> EPOLL* replacement")
- * 92529623d242 ("HID: debug: improve hid_debug_event()")
- * 174cd4b1e5fb ("sched/headers: Prepare to move signal wakeup & sigpending
-   methods from <linux/sched.h> into <linux/sched/signal.h>")
- * 8fec02a73e31 ("HID: debug: fix error handling in hid_debug_events_read()")
+This triggers warnings in clear_standby() when either ceph_con_send()
+or ceph_con_keepalive() get to clearing STANDBY next time.
 
+I don't see a reason to condition queue_con() call on the previous
+value of KEEPALIVE_PENDING, so move the setting of KEEPALIVE_PENDING
+into the critical section -- unlike WRITE_PENDING, KEEPALIVE_PENDING
+could have been a non-atomic flag.
 
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=1669187
-Cc: stable@vger.kernel.org # v4.18+
-Fixes: cd667ce24796 ("HID: use debugfs for events/reports dumping")
-Fixes: 717adfdaf147 ("HID: debug: check length before copy_to_user()")
-Signed-off-by: Vladis Dronov <vdronov@redhat.com>
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Reported-by: syzbot+acdeb633f6211ccdf886@syzkaller.appspotmail.com
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Tested-by: Myungho Jung <mhjungk@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/hid-debug.c   |  121 ++++++++++++++++++----------------------------
- include/linux/hid-debug.h |    9 +--
- 2 files changed, 52 insertions(+), 78 deletions(-)
+ net/ceph/messenger.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/hid/hid-debug.c
-+++ b/drivers/hid/hid-debug.c
-@@ -30,6 +30,7 @@
- 
- #include <linux/debugfs.h>
- #include <linux/seq_file.h>
-+#include <linux/kfifo.h>
- #include <linux/sched.h>
- #include <linux/export.h>
- #include <linux/slab.h>
-@@ -454,7 +455,7 @@ static char *resolv_usage_page(unsigned
- 	char *buf = NULL;
- 
- 	if (!f) {
--		buf = kzalloc(sizeof(char) * HID_DEBUG_BUFSIZE, GFP_ATOMIC);
-+		buf = kzalloc(HID_DEBUG_BUFSIZE, GFP_ATOMIC);
- 		if (!buf)
- 			return ERR_PTR(-ENOMEM);
- 	}
-@@ -658,17 +659,12 @@ EXPORT_SYMBOL_GPL(hid_dump_device);
- /* enqueue string to 'events' ring buffer */
- void hid_debug_event(struct hid_device *hdev, char *buf)
- {
--	int i;
- 	struct hid_debug_list *list;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&hdev->debug_list_lock, flags);
--	list_for_each_entry(list, &hdev->debug_list, node) {
--		for (i = 0; i < strlen(buf); i++)
--			list->hid_debug_buf[(list->tail + i) % HID_DEBUG_BUFSIZE] =
--				buf[i];
--		list->tail = (list->tail + i) % HID_DEBUG_BUFSIZE;
--        }
-+	list_for_each_entry(list, &hdev->debug_list, node)
-+		kfifo_in(&list->hid_debug_fifo, buf, strlen(buf));
- 	spin_unlock_irqrestore(&hdev->debug_list_lock, flags);
- 
- 	wake_up_interruptible(&hdev->debug_wait);
-@@ -719,8 +715,7 @@ void hid_dump_input(struct hid_device *h
- 	hid_debug_event(hdev, buf);
- 
- 	kfree(buf);
--        wake_up_interruptible(&hdev->debug_wait);
--
-+	wake_up_interruptible(&hdev->debug_wait);
+--- a/net/ceph/messenger.c
++++ b/net/ceph/messenger.c
+@@ -3068,9 +3068,10 @@ void ceph_con_keepalive(struct ceph_conn
+ 	dout("con_keepalive %p\n", con);
+ 	mutex_lock(&con->mutex);
+ 	clear_standby(con);
++	con_flag_set(con, CON_FLAG_KEEPALIVE_PENDING);
+ 	mutex_unlock(&con->mutex);
+-	if (con_flag_test_and_set(con, CON_FLAG_KEEPALIVE_PENDING) == 0 &&
+-	    con_flag_test_and_set(con, CON_FLAG_WRITE_PENDING) == 0)
++
++	if (con_flag_test_and_set(con, CON_FLAG_WRITE_PENDING) == 0)
+ 		queue_con(con);
  }
- EXPORT_SYMBOL_GPL(hid_dump_input);
- 
-@@ -1085,8 +1080,8 @@ static int hid_debug_events_open(struct
- 		goto out;
- 	}
- 
--	if (!(list->hid_debug_buf = kzalloc(sizeof(char) * HID_DEBUG_BUFSIZE, GFP_KERNEL))) {
--		err = -ENOMEM;
-+	err = kfifo_alloc(&list->hid_debug_fifo, HID_DEBUG_FIFOSIZE, GFP_KERNEL);
-+	if (err) {
- 		kfree(list);
- 		goto out;
- 	}
-@@ -1106,76 +1101,57 @@ static ssize_t hid_debug_events_read(str
- 		size_t count, loff_t *ppos)
- {
- 	struct hid_debug_list *list = file->private_data;
--	int ret = 0, len;
-+	int ret = 0, copied;
- 	DECLARE_WAITQUEUE(wait, current);
- 
- 	mutex_lock(&list->read_mutex);
--	while (ret == 0) {
--		if (list->head == list->tail) {
--			add_wait_queue(&list->hdev->debug_wait, &wait);
--			set_current_state(TASK_INTERRUPTIBLE);
--
--			while (list->head == list->tail) {
--				if (file->f_flags & O_NONBLOCK) {
--					ret = -EAGAIN;
--					break;
--				}
--				if (signal_pending(current)) {
--					ret = -ERESTARTSYS;
--					break;
--				}
--
--				if (!list->hdev || !list->hdev->debug) {
--					ret = -EIO;
--					break;
--				}
--
--				/* allow O_NONBLOCK from other threads */
--				mutex_unlock(&list->read_mutex);
--				schedule();
--				mutex_lock(&list->read_mutex);
--				set_current_state(TASK_INTERRUPTIBLE);
-+	if (kfifo_is_empty(&list->hid_debug_fifo)) {
-+		add_wait_queue(&list->hdev->debug_wait, &wait);
-+		set_current_state(TASK_INTERRUPTIBLE);
-+
-+		while (kfifo_is_empty(&list->hid_debug_fifo)) {
-+			if (file->f_flags & O_NONBLOCK) {
-+				ret = -EAGAIN;
-+				break;
- 			}
- 
--			set_current_state(TASK_RUNNING);
--			remove_wait_queue(&list->hdev->debug_wait, &wait);
--		}
--
--		if (ret)
--			goto out;
--
--		/* pass the ringbuffer contents to userspace */
--copy_rest:
--		if (list->tail == list->head)
--			goto out;
--		if (list->tail > list->head) {
--			len = list->tail - list->head;
--			if (len > count)
--				len = count;
--
--			if (copy_to_user(buffer + ret, &list->hid_debug_buf[list->head], len)) {
--				ret = -EFAULT;
--				goto out;
-+			if (signal_pending(current)) {
-+				ret = -ERESTARTSYS;
-+				break;
- 			}
--			ret += len;
--			list->head += len;
--		} else {
--			len = HID_DEBUG_BUFSIZE - list->head;
--			if (len > count)
--				len = count;
- 
--			if (copy_to_user(buffer, &list->hid_debug_buf[list->head], len)) {
--				ret = -EFAULT;
-+			/* if list->hdev is NULL we cannot remove_wait_queue().
-+			 * if list->hdev->debug is 0 then hid_debug_unregister()
-+			 * was already called and list->hdev is being destroyed.
-+			 * if we add remove_wait_queue() here we can hit a race.
-+			 */
-+			if (!list->hdev || !list->hdev->debug) {
-+				ret = -EIO;
-+				set_current_state(TASK_RUNNING);
- 				goto out;
- 			}
--			list->head = 0;
--			ret += len;
--			count -= len;
--			if (count > 0)
--				goto copy_rest;
-+
-+			/* allow O_NONBLOCK from other threads */
-+			mutex_unlock(&list->read_mutex);
-+			schedule();
-+			mutex_lock(&list->read_mutex);
-+			set_current_state(TASK_INTERRUPTIBLE);
- 		}
- 
-+		__set_current_state(TASK_RUNNING);
-+		remove_wait_queue(&list->hdev->debug_wait, &wait);
-+
-+		if (ret)
-+			goto out;
- 	}
-+
-+	/* pass the fifo content to userspace, locking is not needed with only
-+	 * one concurrent reader and one concurrent writer
-+	 */
-+	ret = kfifo_to_user(&list->hid_debug_fifo, buffer, count, &copied);
-+	if (ret)
-+		goto out;
-+	ret = copied;
- out:
- 	mutex_unlock(&list->read_mutex);
- 	return ret;
-@@ -1186,7 +1162,7 @@ static unsigned int hid_debug_events_pol
- 	struct hid_debug_list *list = file->private_data;
- 
- 	poll_wait(file, &list->hdev->debug_wait, wait);
--	if (list->head != list->tail)
-+	if (!kfifo_is_empty(&list->hid_debug_fifo))
- 		return POLLIN | POLLRDNORM;
- 	if (!list->hdev->debug)
- 		return POLLERR | POLLHUP;
-@@ -1201,7 +1177,7 @@ static int hid_debug_events_release(stru
- 	spin_lock_irqsave(&list->hdev->debug_list_lock, flags);
- 	list_del(&list->node);
- 	spin_unlock_irqrestore(&list->hdev->debug_list_lock, flags);
--	kfree(list->hid_debug_buf);
-+	kfifo_free(&list->hid_debug_fifo);
- 	kfree(list);
- 
- 	return 0;
-@@ -1252,4 +1228,3 @@ void hid_debug_exit(void)
- {
- 	debugfs_remove_recursive(hid_debug_root);
- }
--
---- a/include/linux/hid-debug.h
-+++ b/include/linux/hid-debug.h
-@@ -24,7 +24,10 @@
- 
- #ifdef CONFIG_DEBUG_FS
- 
-+#include <linux/kfifo.h>
-+
- #define HID_DEBUG_BUFSIZE 512
-+#define HID_DEBUG_FIFOSIZE 512
- 
- void hid_dump_input(struct hid_device *, struct hid_usage *, __s32);
- void hid_dump_report(struct hid_device *, int , u8 *, int);
-@@ -37,11 +40,8 @@ void hid_debug_init(void);
- void hid_debug_exit(void);
- void hid_debug_event(struct hid_device *, char *);
- 
--
- struct hid_debug_list {
--	char *hid_debug_buf;
--	int head;
--	int tail;
-+	DECLARE_KFIFO_PTR(hid_debug_fifo, char);
- 	struct fasync_struct *fasync;
- 	struct hid_device *hdev;
- 	struct list_head node;
-@@ -64,4 +64,3 @@ struct hid_debug_list {
- #endif
- 
- #endif
--
+ EXPORT_SYMBOL(ceph_con_keepalive);
 
 
