@@ -2,124 +2,98 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE70C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:47:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A83FDC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:48:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D065217F9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:47:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65946217F9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:48:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sUjNRDWa"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="s7D0nn2T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729779AbfBRJrx (ORCPT
+        id S1729801AbfBRJsK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 04:47:53 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44793 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728890AbfBRJrw (ORCPT
+        Mon, 18 Feb 2019 04:48:10 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43001 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728890AbfBRJsJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 04:47:52 -0500
-Received: by mail-wr1-f67.google.com with SMTP id w2so2955864wrt.11
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 01:47:51 -0800 (PST)
+        Mon, 18 Feb 2019 04:48:09 -0500
+Received: by mail-wr1-f66.google.com with SMTP id r5so4198120wrg.9
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 01:48:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zXbsVRRHBOgUZgWU8/grzVbisM8HhoSMUai2Uv5hHzI=;
-        b=sUjNRDWaF8xAVRBvT/yVFdnSwPm1buhHXyevoBhWsw2BI0iL+rPbbQUHGg/lLXbbQp
-         wlEDIVO8h0p6MgiWs01ncntuEXuLAUYN0rnL7wvCSxxpEnwMqHlnssSEcN92wYpmP+YM
-         U4mAPmVV65KbMu48MJvZTQQMQyMyRu5bU0iJqYgQ65umPhlr+7YIaNoGawdX7k1olYxI
-         /w02oWxMH+1O2lbAiXBfGjgO54LjX7COisw9NQUTSzg7jAGVGIc9gzC/HUKjod+zhTSU
-         Y9pTepaXwHTergtAVH500U5wYBh7vXAyx/N5scjGIAMNf61JxwCfPoFQQwIfRo8ZNuLQ
-         nSVQ==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nGqYI1tFUvXzb6Qt6BCRzM/Y80lHTx6YZMCEPujBRZw=;
+        b=s7D0nn2TPxnA7MuvAo84ZoeykWgf+hGbtKqtXYdQowdMf4K/X4yrbUk6Pm92tlKVxb
+         FvQ4uPpKTOe+yDSL8uecpzCe4BlQ1wHrhqETfEK3MYqzLGHRo9/+7eXCKvda6ozDprtQ
+         QT5g8Y103CVA3UYhKdqPsU8o25djxrY8DMaeyUSwOdH+e6wF2OQn2XVDCCbU9mw6IlDO
+         k2iwuGAgFmk7vY6n1FaWs2ER8wneJb5kt9lK+ol1DuPKrNyAdVHGamnhWCgDNpwiNDc2
+         hfimsovDBJm0GgtzcuWqBQvMmsEJ1AaokcT+9T6c365UNgy/yht2yw6bcr39cZ5JPk/1
+         ydVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=zXbsVRRHBOgUZgWU8/grzVbisM8HhoSMUai2Uv5hHzI=;
-        b=IsyAaWryqzxkCC3reLzxM5BCV2cFk2f2K3+8ufyyz0CA7O84MB3isztRbZLMVHDJFO
-         j3dSJq7hY6b6+LWk0bFZ16WW4QulodQTFLJ+3ocx7quMBXhKs0VCZOXXfMWasIkxruGz
-         ZHTb//iRDTjCu2kFcNu3bAnvJqqwi+gi6zS+Oox5nyFPpJU/p/4w8Bk0gJ23z1O+Qavq
-         8bKQn+IVjVlG8uXi+HenxIAjROhq3lkdktEM0yU5Fizvy2JQRJC/ijRVrNzS1GTRDbMs
-         cVOpRipPjsqzsiiadauZkp/d6PnhiMvwMhIfLTPzQNDeOMSOAAQymRwjLvTPEvD9C00d
-         dWBg==
-X-Gm-Message-State: AHQUAuaeJhH8e0//WBL2LI7JdJ0dd/r4mdQSWirMXTjAoAowG7RtHeB1
-        yttUpxpM3GKMnpzTPfXI0285/w==
-X-Google-Smtp-Source: AHgI3IZXORASBL44km4GkpITgVyDpQqPsd7IJowqs27H301NKiqNYZp0zj8Iq178/QO2bmrUAhI4Dg==
-X-Received: by 2002:adf:ba8e:: with SMTP id p14mr15576904wrg.230.1550483270374;
-        Mon, 18 Feb 2019 01:47:50 -0800 (PST)
-Received: from [192.168.0.41] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
-        by smtp.googlemail.com with ESMTPSA id a8sm15700429wmh.26.2019.02.18.01.47.49
+        bh=nGqYI1tFUvXzb6Qt6BCRzM/Y80lHTx6YZMCEPujBRZw=;
+        b=XC//D5chFSoNDYdqW6ffABDtS9R0uH0XC/gdDFGj0f40ESZHhDjhhNwcNsM323iXms
+         ozlxYhq9tiv1Cg3PB97rFL4nroKPfDH/ZhRejQwOyCs4SHwrSDFI6hmLReaGMFZFYgeu
+         5eIwQ+ESJxY9sTLykhTPrNcaAMpS2xVwoJflDsRCbT0IJ/ebKir9RvdUJWkd0/TSFYll
+         GYuPrPZiVWDUc7UQ7U0Kx3wBPoS25ZCcSJBWu1huDhUpe1YWXQASbRlJT3pO3YTqqYxr
+         FDn/VHiVWZpsLy1wdxFWjSLqMAM/rtZaaQYPwLTUwzkd5NfQxi3Kw1IjhsrNVNjUBTsQ
+         rRMw==
+X-Gm-Message-State: AHQUAuaYIgq8AaSuUJkpbcl+mG06VE55XA7/tsLGXv72HDpjjViY2LQL
+        AEaueGRqFv0YgZ29Q3HhxydoWw==
+X-Google-Smtp-Source: AHgI3IYlU3MR0x1gOughxtZRKN92dZRiuEeVNvD7bwrjLqwFubavwpJW031aJiYw4Pu3AZ4zjXLRXw==
+X-Received: by 2002:a5d:6810:: with SMTP id w16mr15936783wru.62.1550483287735;
+        Mon, 18 Feb 2019 01:48:07 -0800 (PST)
+Received: from localhost.localdomain (aputeaux-684-1-7-43.w90-86.abo.wanadoo.fr. [90.86.124.43])
+        by smtp.gmail.com with ESMTPSA id u15sm17582974wmu.17.2019.02.18.01.48.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Feb 2019 01:47:49 -0800 (PST)
-Subject: Re: [PATCH v7 1/3] thermal: tegra: remove unnecessary warnings
-To:     Wei Ni <wni@nvidia.com>, edubezval@gmail.com
-Cc:     thierry.reding@gmail.com, linux-tegra@vger.kernel.org,
-        rui.zhang@intel.com, srikars@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-References: <1546510369-28491-1-git-send-email-wni@nvidia.com>
- <1546510369-28491-2-git-send-email-wni@nvidia.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <ec484530-0a07-b725-a376-43c65ca4a723@linaro.org>
-Date:   Mon, 18 Feb 2019 10:47:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 18 Feb 2019 01:48:07 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 0/6] gpio: mockup: rework the testing driver - alternative version
+Date:   Mon, 18 Feb 2019 10:47:53 +0100
+Message-Id: <20190218094759.14545-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <1546510369-28491-2-git-send-email-wni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/01/2019 11:12, Wei Ni wrote:
-> Convert warnings to info as not all platforms may
-> have all the thresholds and sensors enabled.
-> 
-> Signed-off-by: Wei Ni <wni@nvidia.com>
-> ---
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+It's very late in the release cycle and we cannot seem to get the irq
+subsystem maintainers' ack on the proposed change in the interrupt
+simulator. This series contains only the gpio-mockup patches from the
+previous submission in order to at least partially track the line's
+state and add a way to verify the results of uAPI calls. The interrupts
+are fired regardless of their type configuration. This will be fixed
+once irq_sim supports it.
 
->  drivers/thermal/tegra/soctherm.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-> index ed28110a3535..f07de8258e93 100644
-> --- a/drivers/thermal/tegra/soctherm.c
-> +++ b/drivers/thermal/tegra/soctherm.c
-> @@ -569,7 +569,7 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
->  set_throttle:
->  	ret = get_hot_temp(tz, &trip, &temperature);
->  	if (ret) {
-> -		dev_warn(dev, "throttrip: %s: missing hot temperature\n",
-> +		dev_info(dev, "throttrip: %s: missing hot temperature\n",
->  			 sg->name);
->  		return 0;
->  	}
-> @@ -600,7 +600,7 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
->  	}
->  
->  	if (i == THROTTLE_SIZE)
-> -		dev_warn(dev, "throttrip: %s: missing throttle cdev\n",
-> +		dev_info(dev, "throttrip: %s: missing throttle cdev\n",
->  			 sg->name);
->  
->  	return 0;
-> 
+Bartosz Golaszewski (6):
+  gpio: mockup: add locking
+  gpio: mockup: implement get_multiple()
+  gpio: mockup: don't create the debugfs link named after the label
+  gpio: mockup: change the type of 'offset' to unsigned int
+  gpio: mockup: change the signature of unlocked get/set helpers
+  gpio: mockup: rework debugfs interface
 
+ drivers/gpio/gpio-mockup.c | 188 +++++++++++++++++++++++++++++++------
+ 1 file changed, 161 insertions(+), 27 deletions(-)
 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.20.1
 
