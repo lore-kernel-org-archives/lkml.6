@@ -7,54 +7,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2906C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:24:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EED7FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:25:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7084A21903
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:24:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB2E421903
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:25:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=essensium-com.20150623.gappssmtp.com header.i=@essensium-com.20150623.gappssmtp.com header.b="kdHcXhxC"
+	dkim=pass (2048-bit key) header.d=essensium-com.20150623.gappssmtp.com header.i=@essensium-com.20150623.gappssmtp.com header.b="IsB2vKUQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390242AbfBROYy (ORCPT
+        id S2390428AbfBROZF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:24:54 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43477 "EHLO
+        Mon, 18 Feb 2019 09:25:05 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:36181 "EHLO
         mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389770AbfBRODx (ORCPT
+        with ESMTP id S2389149AbfBRODu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:03:53 -0500
-Received: by mail-ed1-f68.google.com with SMTP id m35so9950590ede.10
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 06:03:52 -0800 (PST)
+        Mon, 18 Feb 2019 09:03:50 -0500
+Received: by mail-ed1-f68.google.com with SMTP id g9so3393970eds.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 06:03:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=essensium-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=I6Qr3PnJqhUErKNHRtGnpwGVLGbDm4vYaQedao4hHXI=;
-        b=kdHcXhxCjuyfL/RsbUdI7m1L2Yqy6Ch6aOf/JLBNnD5HRcGRSlgFnLV7GDHT0+O/ZH
-         WwhadtXZC4vVGNOZDuBn55xN7S4uRWX++KyhraFKHbfOfDIpV2BF2i1X1ZZmPSUG4VoF
-         AkRhIRakB9igwGHCOjQRaHFAWn158WcLofcO9Bvujyxj6a9Q5/FR2tK/sXcaVtMFDepB
-         mzDtU5X9T6XAokc0oVHVyJYLk6aWrjK7mlq7vIRYN+67ZQfflVjoZTlS3hBnJ8v3vCvY
-         cUmqgkNmUgZCJM9+9LD/mdkYFxEuSclcXauFOzLsjW1gmke/0ca5/PZRLVfeL0qwR77Y
-         7kDw==
+        h=from:to:cc:subject:date:message-id;
+        bh=C7LfhrPnx4nAAVgxwo9NlyGkJiC6uZjQ0aP5k7jZulQ=;
+        b=IsB2vKUQ0fFFZ3Si03pp+C3YnEwIGfiap8SKOQSLsqp4xuu3XfOVwg7fS4wRCKDkQE
+         OLbC93ZPgfinbdENjBY13fGRfsVOXYmWZMIvCSNjAjwJ/sXxaUa5ojgt9KK1UuKQYO8h
+         J79qQcugI6ovrMgtNAZEgOiapw8Y/bCxMzOhI3luA6lQt1ihP1n13m1SxJ1g3sNASLa8
+         nsBt5b9wjpatlE8nuWNvOSCk+Yk6MQptaJ6/19HWYHgNZOYJDLjOAzmo2BDsVnCRx2nR
+         y0XD07OFkIXEAJU15ujUJyhmbdp7FEDw9YapXo1H/XWzsEPNetMGdGgJmzijzH0lqEKK
+         igpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=I6Qr3PnJqhUErKNHRtGnpwGVLGbDm4vYaQedao4hHXI=;
-        b=VXRaBq1P/07I8MkF/ffPHhZbo4VPrg34eDUwo0incBoUkpB4KCJ4nWr0EltN0ww/bY
-         3Pi5ONiogOciOy+gDjj9rujQbpF5nn4KKvOvZWj398cpTvdxVvSMM0zdgG5IUGTTWDP6
-         erNymSgIgHQEj8cxctfbCFF4Y7FDyWGqVKJNtnht6GB2VhfSncF3Vz2hjiVptFqkdUAQ
-         SR+5xmtbjq5VwCC4EvFEG7jATZ+Rxesh5xUUIo06sjFiZYSTKAd6zXkFig0FJvkx2Mpt
-         iSDUwVPbSs3VrkqrkpbcZEjfqko0Y6nVnJeIy8DmLYZ1o6UNkmAXgi6R2uHCT7gEM6dT
-         zKDg==
-X-Gm-Message-State: AHQUAuaWD9w2VtBHq+K+ik+ysg29Z5P2FwrwLsdwoVZAiuBUEAvVLn3z
-        hNJT0oB9Z9chJ5EBIxCgneXrVA==
-X-Google-Smtp-Source: AHgI3IZi9n1v6BYfISfADbqQLufHezmPHIqiJiJUI3/6IPWV+cI2byGpqq/pa18Sn/cvn8B5knGS2w==
-X-Received: by 2002:a17:906:ee2:: with SMTP id x2mr16832980eji.202.1550498631380;
-        Mon, 18 Feb 2019 06:03:51 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=C7LfhrPnx4nAAVgxwo9NlyGkJiC6uZjQ0aP5k7jZulQ=;
+        b=KZZ0d+9hcytEoR1ON51726SkmNls3bqkiWdVtchjiCClVnwaY4+8eyjLtFLvgpvchb
+         Q3XBVHSrLrJuPPDQdTKyvtRT6e4fv4wqxH32ng5RSh0hKSKyhEVNhufvryvqYti2T1BL
+         RyQsvKiiX4azcYlTk/o+qgUac9owfebds4U6lHi/LSHF5uHHBXhtKoHdsG+1ljTKgTTa
+         1LgCQAboWN0i+lFctqIQfFCyMWo/nR8GGXDNlqLanT1kzc2wfQQunIXeQuEpQ8lhPIe3
+         Vl7qVAY1Iqfq27w9vZHuIcL7LlGYF9MUzeZk0GAufkaTOmX/nFL1rmBOfldd/emB7k9I
+         AmrQ==
+X-Gm-Message-State: AHQUAuZJv9fzbC478NIKTeMqF+jdvDR9uV8UD6l8r+nxFyxiDsL1/qnt
+        pv5LxvOoqJHg8R3nPFxIkobOWQ==
+X-Google-Smtp-Source: AHgI3Ia0x1ktlXNUOXQ9qmej4UWt8bjITH2AKcym466NvP3q2IEYPeYewvhp2d01vHGZ6OHrFmkucQ==
+X-Received: by 2002:a17:906:381:: with SMTP id b1mr16659937eja.67.1550498627933;
+        Mon, 18 Feb 2019 06:03:47 -0800 (PST)
 Received: from localhost.localdomain (ip-188-118-3-185.reverse.destiny.be. [188.118.3.185])
-        by smtp.gmail.com with ESMTPSA id w48sm1421606eda.88.2019.02.18.06.03.50
+        by smtp.gmail.com with ESMTPSA id w48sm1421606eda.88.2019.02.18.06.03.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Feb 2019 06:03:50 -0800 (PST)
+        Mon, 18 Feb 2019 06:03:47 -0800 (PST)
 From:   Patrick Havelange <patrick.havelange@essensium.com>
 To:     Jonathan Cameron <jic23@kernel.org>,
         Hartmut Knaack <knaack.h@gmx.de>,
@@ -73,50 +72,116 @@ To:     Jonathan Cameron <jic23@kernel.org>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-pwm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
 Cc:     Patrick Havelange <patrick.havelange@essensium.com>
-Subject: [PATCH 4/8] dt-bindings: iio/counter: ftm-quaddec
-Date:   Mon, 18 Feb 2019 15:03:17 +0100
-Message-Id: <20190218140321.19166-4-patrick.havelange@essensium.com>
+Subject: [PATCH 1/8] include/fsl: add common FlexTimer #defines in a separate header.
+Date:   Mon, 18 Feb 2019 15:03:14 +0100
+Message-Id: <20190218140321.19166-1-patrick.havelange@essensium.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190218140321.19166-1-patrick.havelange@essensium.com>
-References: <20190218140321.19166-1-patrick.havelange@essensium.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FlexTimer quadrature decoder driver.
-
 Signed-off-by: Patrick Havelange <patrick.havelange@essensium.com>
 Reviewed-by: Esben Haabendal <esben@haabendal.dk>
 ---
- .../bindings/iio/counter/ftm-quaddec.txt       | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/counter/ftm-quaddec.txt
+ include/linux/fsl/ftm.h | 88 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 88 insertions(+)
+ create mode 100644 include/linux/fsl/ftm.h
 
-diff --git a/Documentation/devicetree/bindings/iio/counter/ftm-quaddec.txt b/Documentation/devicetree/bindings/iio/counter/ftm-quaddec.txt
+diff --git a/include/linux/fsl/ftm.h b/include/linux/fsl/ftm.h
 new file mode 100644
-index 000000000000..4d18cd722074
+index 000000000000..d59011acf66c
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/counter/ftm-quaddec.txt
-@@ -0,0 +1,18 @@
-+FlexTimer Quadrature decoder counter
++++ b/include/linux/fsl/ftm.h
+@@ -0,0 +1,88 @@
++// SPDX-License-Identifier: GPL-2.0
++#ifndef __FSL_FTM_H__
++#define __FSL_FTM_H__
 +
-+This driver exposes a simple counter for the quadrature decoder mode.
++#define FTM_SC       0x0 /* Status And Control */
++#define FTM_CNT      0x4 /* Counter */
++#define FTM_MOD      0x8 /* Modulo */
 +
-+Required properties:
-+- compatible:		Must be "fsl,ftm-quaddec".
-+- reg:			Must be set to the memory region of the flextimer.
++#define FTM_CNTIN    0x4C /* Counter Initial Value */
++#define FTM_STATUS   0x50 /* Capture And Compare Status */
++#define FTM_MODE     0x54 /* Features Mode Selection */
++#define FTM_SYNC     0x58 /* Synchronization */
++#define FTM_OUTINIT  0x5C /* Initial State For Channels Output */
++#define FTM_OUTMASK  0x60 /* Output Mask */
++#define FTM_COMBINE  0x64 /* Function For Linked Channels */
++#define FTM_DEADTIME 0x68 /* Deadtime Insertion Control */
++#define FTM_EXTTRIG  0x6C /* FTM External Trigger */
++#define FTM_POL      0x70 /* Channels Polarity */
++#define FTM_FMS      0x74 /* Fault Mode Status */
++#define FTM_FILTER   0x78 /* Input Capture Filter Control */
++#define FTM_FLTCTRL  0x7C /* Fault Control */
++#define FTM_QDCTRL   0x80 /* Quadrature Decoder Control And Status */
++#define FTM_CONF     0x84 /* Configuration */
++#define FTM_FLTPOL   0x88 /* FTM Fault Input Polarity */
++#define FTM_SYNCONF  0x8C /* Synchronization Configuration */
++#define FTM_INVCTRL  0x90 /* FTM Inverting Control */
++#define FTM_SWOCTRL  0x94 /* FTM Software Output Control */
++#define FTM_PWMLOAD  0x98 /* FTM PWM Load */
 +
-+Optional property:
-+- big-endian:		Access the device registers in big-endian mode.
++#define FTM_SC_CLK_MASK_SHIFT	3
++#define FTM_SC_CLK_MASK		(3 << FTM_SC_CLK_MASK_SHIFT)
++#define FTM_SC_TOF		0x80
++#define FTM_SC_TOIE		0x40
++#define FTM_SC_CPWMS		0x20
++#define FTM_SC_CLKS		0x18
++#define FTM_SC_PS_1		0x0
++#define FTM_SC_PS_2		0x1
++#define FTM_SC_PS_4		0x2
++#define FTM_SC_PS_8		0x3
++#define FTM_SC_PS_16		0x4
++#define FTM_SC_PS_32		0x5
++#define FTM_SC_PS_64		0x6
++#define FTM_SC_PS_128		0x7
++#define FTM_SC_PS_MASK		0x7
 +
-+Example:
-+		counter0: counter@29d0000 {
-+			compatible = "fsl,ftm-quaddec";
-+			reg = <0x0 0x29d0000 0x0 0x10000>;
-+			big-endian;
-+			status = "disabled";
-+		};
++#define FTM_MODE_FAULTIE	0x80
++#define FTM_MODE_FAULTM		0x60
++#define FTM_MODE_CAPTEST	0x10
++#define FTM_MODE_PWMSYNC	0x8
++#define FTM_MODE_WPDIS		0x4
++#define FTM_MODE_INIT		0x2
++#define FTM_MODE_FTMEN		0x1
++
++/* NXP Errata: The PHAFLTREN and PHBFLTREN bits are tide to zero internally
++ * and these bits cannot be set. Flextimer cannot use Filter in
++ * Quadrature Decoder Mode.
++ * https://community.nxp.com/thread/467648#comment-1010319
++ */
++#define FTM_QDCTRL_PHAFLTREN	0x80
++#define FTM_QDCTRL_PHBFLTREN	0x40
++#define FTM_QDCTRL_PHAPOL	0x20
++#define FTM_QDCTRL_PHBPOL	0x10
++#define FTM_QDCTRL_QUADMODE	0x8
++#define FTM_QDCTRL_QUADDIR	0x4
++#define FTM_QDCTRL_TOFDIR	0x2
++#define FTM_QDCTRL_QUADEN	0x1
++
++#define FTM_FMS_FAULTF		0x80
++#define FTM_FMS_WPEN		0x40
++#define FTM_FMS_FAULTIN		0x10
++#define FTM_FMS_FAULTF3		0x8
++#define FTM_FMS_FAULTF2		0x4
++#define FTM_FMS_FAULTF1		0x2
++#define FTM_FMS_FAULTF0		0x1
++
++#define FTM_CSC_BASE		0xC
++#define FTM_CSC_MSB		0x20
++#define FTM_CSC_MSA		0x10
++#define FTM_CSC_ELSB		0x8
++#define FTM_CSC_ELSA		0x4
++#define FTM_CSC(_channel)	(FTM_CSC_BASE + ((_channel) * 8))
++
++#define FTM_CV_BASE		0x10
++#define FTM_CV(_channel)	(FTM_CV_BASE + ((_channel) * 8))
++
++#define FTM_PS_MAX		7
++
++#endif
 -- 
 2.17.1
 
