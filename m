@@ -6,81 +6,83 @@ X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4C3C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45266C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:46:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A89B2177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:45:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 132F121736
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:46:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550508330;
-	bh=QU2UgcPUAccH9HTvOtNBTb078j+XMuXQoiyQMrYP7J8=;
+	s=default; t=1550508374;
+	bh=eqsId/OK+VlIKdF3LFs5zis7SQlmLtl9muLmB3wljzU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=10QmV8NvtG6sG4vuVUTHvT8AZ+1DSHrCSBg/pek84PIuyo9JFhlmwwW1HsyxrdHMx
-	 1oLT/JYq3HEJloQESoY4o/8p9Qsj5bpBL97GcEUyxA2JtGqnLMXzUicL8LCDEgkL70
-	 /GKwO/DGIkImLKX+jRYFr78qW3HLVeCo6BmaSo7o=
+	b=Jr434FC6k20U5dPw5DdL/aqZoMUu/jUyfud6IJke5ARtowUUdNP4/K3R3Suf07V0C
+	 AtlZx2mWVal1Z3mdilf6focGe+vIVDfTP4akGgEidLcJQ5AXZpannsRhDM40qDGeX2
+	 gfX7yLDYlvQ1DNmSFTxS7ErZ3IRdOdTlBA8rcMlE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387730AbfBRQp3 (ORCPT
+        id S2390130AbfBRQqL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 11:45:29 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:46632 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731585AbfBRQp2 (ORCPT
+        Mon, 18 Feb 2019 11:46:11 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:42414 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731585AbfBRQqL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 11:45:28 -0500
-Received: by mail-ot1-f65.google.com with SMTP id c18so7733432otl.13;
-        Mon, 18 Feb 2019 08:45:28 -0800 (PST)
+        Mon, 18 Feb 2019 11:46:11 -0500
+Received: by mail-ot1-f66.google.com with SMTP id i5so29280692oto.9;
+        Mon, 18 Feb 2019 08:46:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=r0RbpQNLkeIuoLTSc4LRdbNTPI4NVxo5sXSpkaEhmfo=;
-        b=PMb/Z+XRjeo2uWFalLmS07dSKZ+Zqt9pDXUdijnVwfxQwmA4me7Uc3jTZnx7WxefFW
-         o4Uhu85Nap3/YG/0N6P+QDNnXOyWFBlRErCbNRuDkSuFvnECsvzEbd4/cSgBNqBzoxyD
-         ci/LjjQSrdb8QfV4jyecRwYa5x7QCl2dB+/hp3jb8+eEdawt7ABFvl6j/Fe+cAX3F6Wx
-         SzA/+fVdYjh1Jh2ZbUVa9r4OrE65uFbN24PQ91MGo+WRJk+vjlZOPAcEuE2XS3OCmzYU
-         Qpa5n63e62VWiA5Vsfm9C7tRevpsmZTpWPPO0WqnmiqXDyDBp7aiHlFg7gRgwyst+0WO
-         pzWw==
-X-Gm-Message-State: AHQUAuYPwZdxCugqme1J07u5ofUG6xiDOi05yKegIzPdzGSUxuqwSd4m
-        WZtrmq8prj9cqgaq9F68Uw==
-X-Google-Smtp-Source: AHgI3Ibjk9v+IXxtpjzUiTo5cIz56v9rTtezW1IWrRk6lF1SmJ445J9Bi7ysFijvEBHGn4VUVe7f3A==
-X-Received: by 2002:aca:cd93:: with SMTP id d141mr14949521oig.163.1550508327699;
-        Mon, 18 Feb 2019 08:45:27 -0800 (PST)
+        bh=1pB+kd9kPsoPu+0PZ/6uERp37dnafLQ9czcFpu+3E54=;
+        b=et2AwFvyJyyupSinUjxXT43Rrij4M3YMlGni1/+DU0C0PbyK4Z9UZD7MkvZNinULcF
+         E8RHuRHa8XaVVRpFo7SuIZjRC9Vks0eme0TwEphrnnuj4eJOkgoklVpwivOet4QTNSCJ
+         N3xpkZw2S4bn+tcLo7pXKXV2qXwh0i4DbY+lpB+jEKUExszknQI4y0D97DoBl19jYHKg
+         CGg24JiiK81YY49sE6lpU3AHQVSl4fBxFAg3JY1NTtLgStPkbPQxjCbbvugEKYesSRUT
+         m/7iL6afastX4iWoU960X9cF95Fx3qKkNoRF9bM9AjH0z3bdbAW6JjAh6ZhgfAZZEM55
+         pgpQ==
+X-Gm-Message-State: AHQUAuZRTULG5TSgUM+4sALESEdtyknmIsOPV1zxbi3L4UOVgQE50M4C
+        6ErEJLjxxy7AUqEZVftj9Q==
+X-Google-Smtp-Source: AHgI3IaPhio2Z5Z0HIlrJVwOEzy8R4oA9FoihKKFFa2nNeU1n/uSFKnnSAzI5qnN5ynzv/EYxWzjnA==
+X-Received: by 2002:a9d:4e10:: with SMTP id p16mr4425800otf.65.1550508370538;
+        Mon, 18 Feb 2019 08:46:10 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id p129sm6228294oif.17.2019.02.18.08.45.26
+        by smtp.gmail.com with ESMTPSA id n8sm5848662otl.40.2019.02.18.08.46.09
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Feb 2019 08:45:27 -0800 (PST)
-Date:   Mon, 18 Feb 2019 10:45:26 -0600
+        Mon, 18 Feb 2019 08:46:09 -0800 (PST)
+Date:   Mon, 18 Feb 2019 10:46:09 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Fabrice Gasnier <fabrice.gasnier@st.com>
-Cc:     thierry.reding@gmail.com, robh+dt@kernel.org,
-        u.kleine-koenig@pengutronix.de, tduszyns@gmail.com,
-        mark.rutland@arm.com, alexandre.torgue@st.com,
-        mcoquelin.stm32@gmail.com, fabrice.gasnier@st.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v4 1/3] dt-bindings: pwm-stm32-lp: document pinctrl sleep
- state
-Message-ID: <20190218164526.GA1356@bogus>
-References: <1550139951-25788-1-git-send-email-fabrice.gasnier@st.com>
- <1550139951-25788-2-git-send-email-fabrice.gasnier@st.com>
+To:     Pawel Laszczak <pawell@cadence.com>
+Cc:     devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
+        felipe.balbi@linux.intel.com, mark.rutland@arm.com,
+        linux-usb@vger.kernel.org, hdegoede@redhat.com,
+        heikki.krogerus@linux.intel.com, andy.shevchenko@gmail.com,
+        robh+dt@kernel.org, rogerq@ti.com, linux-kernel@vger.kernel.org,
+        jbergsagel@ti.com, nsekhar@ti.com, nm@ti.com, sureshp@cadence.com,
+        peter.chen@nxp.com, kurahul@cadence.com,
+        Pawel Laszczak <pawell@cadence.com>
+Subject: Re: [PATCH v4 1/6] dt-bindings: add binding for USBSS-DRD controller.
+Message-ID: <20190218164609.GA2649@bogus>
+References: <1550173514-23573-1-git-send-email-pawell@cadence.com>
+ <1550173514-23573-2-git-send-email-pawell@cadence.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1550139951-25788-2-git-send-email-fabrice.gasnier@st.com>
+In-Reply-To: <1550173514-23573-2-git-send-email-pawell@cadence.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 14 Feb 2019 11:25:49 +0100, Fabrice Gasnier wrote:
-> Add documentation for pinctrl sleep state on STM32 LPTimer PWM.
+On Thu, 14 Feb 2019 19:45:09 +0000, Pawel Laszczak wrote:
+> This patch aim at documenting USB related dt-bindings for the
+> Cadence USBSS-DRD controller.
 > 
-> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
 > ---
->  Documentation/devicetree/bindings/pwm/pwm-stm32-lp.txt | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
+>  .../devicetree/bindings/usb/cdns-usb3.txt     | 30 +++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/cdns-usb3.txt
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
