@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C8CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C437CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:09:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D555B2173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:08:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9599B217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:09:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498940;
-	bh=kFNYqA1bBDRvIIKNcqgZ/cgX3NxNdCMgCPm83Gid1Nw=;
+	s=default; t=1550498944;
+	bh=hHXuPVNKqm5EwvArmijSPMGakS1YYa0NSmhYEjUAKZg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rJnsQo1QWPcSoCjuFZ1Q1B1NvcD3/TOglo5Z7mmSX91vf3qhTVs8kXMhXTWDWSxFr
-	 F1UrYsyQNDfElbkokhWzgBMjxypHzht8WMH2GL1bBeTvu999FQ8Kn2jFVjKbvYmqPg
-	 DN2EslYNOiJtt/XPCgcNRVN8gSaOkTxq5mNY/2tQ=
+	b=qfnlbT1gx18V/1J2erj/p2i/QY4BfUUDaeqKdfW1ZzaGAOnXmVTi0DnUWLO5qOUuU
+	 +JkkG9KcUS1cR2NAO1/pooekpKDjYZ6kn/FnHtb5Ro7wo36DVK9fK4/Xxd5iJH3z2T
+	 /H8n4B1sODyJrC/1WGyvBfLUXoctgSsmuted+YDI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391052AbfBROI6 (ORCPT
+        id S2391085AbfBROJD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:08:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52318 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:09:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390468AbfBROIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:08:55 -0500
+        id S2391055AbfBROJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:09:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4F04204FD;
-        Mon, 18 Feb 2019 14:08:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BFF62173C;
+        Mon, 18 Feb 2019 14:09:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498934;
-        bh=kFNYqA1bBDRvIIKNcqgZ/cgX3NxNdCMgCPm83Gid1Nw=;
+        s=default; t=1550498941;
+        bh=hHXuPVNKqm5EwvArmijSPMGakS1YYa0NSmhYEjUAKZg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=plLruX3M9Kie//W6y9PLOIsjeTk2i90DZypJ9d0INLWzyITbXuGjoR7buuh04zoDb
-         NpDYDhwELjWq12bPsjLo2vpv2q+hfnSqyijEE1pCgKYb4wR+TgkVVfSdgWJhhxgupB
-         xIUQ4SEG3XcxlAyN0ffHGCAD8VyHDSddOy1yIbpk=
+        b=l03eVnAlXFfurSJRIwj+y462Uy6T2w6VSQpv6cjVd7HthuSBmkAL07+4NdMlxjjN2
+         I3UIYlCqrq4Uh+whWrsI1b8QoPtunAUWjYivIKDvBf0hJAzebp1TJ4VVCwlCVM5mg7
+         aB3CU08nhS7TxXIF0vfv5gGCwvlyvoA7c5dyh1+0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Andy Duan <fugang.duan@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 006/108] serial: fsl_lpuart: clear parity enable bit when disable parity
-Date:   Mon, 18 Feb 2019 14:43:02 +0100
-Message-Id: <20190218133519.809487299@linuxfoundation.org>
+        stable@vger.kernel.org, Renato Lui Geh <renatogeh@gmail.com>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 008/108] staging: iio: ad7780: update voltage on read
+Date:   Mon, 18 Feb 2019 14:43:04 +0100
+Message-Id: <20190218133519.899623689@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -68,44 +67,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 397bd9211fe014b347ca8f95a8f4e1017bac1aeb ]
+[ Upstream commit 336650c785b62c3bea7c8cf6061c933a90241f67 ]
 
-Current driver only enable parity enable bit and never clear it
-when user set the termios. The fix clear the parity enable bit when
-PARENB flag is not set in termios->c_cflag.
+The ad7780 driver previously did not read the correct device output, as
+it read an outdated value set at initialization. It now updates its
+voltage on read.
 
-Cc: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Andy Duan <fugang.duan@nxp.com>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Renato Lui Geh <renatogeh@gmail.com>
+Acked-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/fsl_lpuart.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/staging/iio/adc/ad7780.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 92b7a5bf7c4d..839e65da4d3f 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -1284,6 +1284,8 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
- 			else
- 				cr1 &= ~UARTCR1_PT;
- 		}
-+	} else {
-+		cr1 &= ~UARTCR1_PE;
- 	}
+diff --git a/drivers/staging/iio/adc/ad7780.c b/drivers/staging/iio/adc/ad7780.c
+index 273add3ed63f..5a3072740326 100644
+--- a/drivers/staging/iio/adc/ad7780.c
++++ b/drivers/staging/iio/adc/ad7780.c
+@@ -90,12 +90,16 @@ static int ad7780_read_raw(struct iio_dev *indio_dev,
+ 			   long m)
+ {
+ 	struct ad7780_state *st = iio_priv(indio_dev);
++	int voltage_uv;
  
- 	/* ask the core to calculate the divisor */
-@@ -1419,6 +1421,8 @@ lpuart32_set_termios(struct uart_port *port, struct ktermios *termios,
- 			else
- 				ctrl &= ~UARTCTRL_PT;
- 		}
-+	} else {
-+		ctrl &= ~UARTCTRL_PE;
- 	}
- 
- 	/* ask the core to calculate the divisor */
+ 	switch (m) {
+ 	case IIO_CHAN_INFO_RAW:
+ 		return ad_sigma_delta_single_conversion(indio_dev, chan, val);
+ 	case IIO_CHAN_INFO_SCALE:
+-		*val = st->int_vref_mv * st->gain;
++		voltage_uv = regulator_get_voltage(st->reg);
++		if (voltage_uv < 0)
++			return voltage_uv;
++		*val = (voltage_uv / 1000) * st->gain;
+ 		*val2 = chan->scan_type.realbits - 1;
+ 		return IIO_VAL_FRACTIONAL_LOG2;
+ 	case IIO_CHAN_INFO_OFFSET:
 -- 
 2.19.1
 
