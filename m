@@ -2,86 +2,140 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C70C0C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:07:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2E9FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:09:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0A502146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:07:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA45C2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:09:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729539AbfBRKG7 (ORCPT
+        id S1729624AbfBRKJg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 05:06:59 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:35758 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729460AbfBRKG7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 05:06:59 -0500
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1IA4Oic010942;
-        Mon, 18 Feb 2019 04:06:53 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail3.cirrus.com ([87.246.76.56])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2qpftrter5-1;
-        Mon, 18 Feb 2019 04:06:53 -0600
-Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
-        by mail3.cirrus.com (Postfix) with ESMTP id 0FBB5611C8AF;
-        Mon, 18 Feb 2019 04:07:05 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Mon, 18 Feb 2019
- 10:06:52 +0000
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com
- [198.61.86.93])        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id
- x1IA6q9e002932;        Mon, 18 Feb 2019 10:06:52 GMT
-Date:   Mon, 18 Feb 2019 10:06:52 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Jim Broadus <jbroadus@gmail.com>
-CC:     <benjamin.tissoires@redhat.com>, <wsa@the-dreams.de>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] i2c: Allow recovery of the initial IRQ by a i2c client
- device.
-Message-ID: <20190218100652.GB27940@ediswmail.ad.cirrus.com>
-References: <20190216001533.5465-1-jbroadus@gmail.com>
+        Mon, 18 Feb 2019 05:09:36 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51548 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728908AbfBRKJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 05:09:35 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D6105203D6;
+        Mon, 18 Feb 2019 10:09:34 +0000 (UTC)
+Received: from localhost (ovpn-12-45.pek2.redhat.com [10.72.12.45])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CFB125EDE1;
+        Mon, 18 Feb 2019 10:09:33 +0000 (UTC)
+Date:   Mon, 18 Feb 2019 18:09:31 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
+        Mike Travis <travis@sgi.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>
+Subject: Re: [PATCH v3 5/6] x86/mm/KASLR: Calculate the actual size of
+ vmemmap region
+Message-ID: <20190218100931.GK14858@MiWiFi-R3L-srv>
+References: <20190216140008.28671-1-bhe@redhat.com>
+ <20190216140008.28671-6-bhe@redhat.com>
+ <CAGXu5jJjed2yS1OZ2+rKuMiPr7HTXLx5qMSV+xWHJs-DJGT4-A@mail.gmail.com>
+ <20190218095010.GJ14858@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190216001533.5465-1-jbroadus@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=832 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902180077
+In-Reply-To: <20190218095010.GJ14858@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 18 Feb 2019 10:09:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 04:15:33PM -0800, Jim Broadus wrote:
-> A previous change allowed i2c client devices to discover new IRQs upon
-> reprobe. By clearing the IRQ in i2c_device_remove. However, if an IRQ was
-> assigned in i2c_new_device, that information is lost.
+On 02/18/19 at 05:50pm, Baoquan He wrote:
+> On 02/17/19 at 09:25am, Kees Cook wrote:
+> > On Sat, Feb 16, 2019 at 6:04 AM Baoquan He <bhe@redhat.com> wrote:
+> > >
+> > > Vmemmap region has different maximum size depending on paging mode.
+> > > Now its size is hardcoded as 1TB in memory KASLR, this is not
+> > > right for 5-level paging mode. It will cause overflow if vmemmap
+> > > region is randomized to be adjacent to cpu_entry_area region and
+> > > its actual size is bigger than 1TB.
+> > >
+> > > So here calculate how many TB by the actual size of vmemmap region
+> > > and align up to 1TB boundary.
+> > >
+> > > Signed-off-by: Baoquan He <bhe@redhat.com>
+> > > ---
+> > >  arch/x86/mm/kaslr.c | 11 ++++++++++-
+> > >  1 file changed, 10 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+> > > index 97768df923e3..ca12ed4e5239 100644
+> > > --- a/arch/x86/mm/kaslr.c
+> > > +++ b/arch/x86/mm/kaslr.c
+> > > @@ -101,7 +101,7 @@ static __initdata struct kaslr_memory_region {
+> > >  } kaslr_regions[] = {
+> > >         { &page_offset_base, 0 },
+> > >         { &vmalloc_base, 0 },
+> > > -       { &vmemmap_base, 1 },
+> > > +       { &vmemmap_base, 0 },
+> > >  };
+> > >
+> > >  /*
+> > > @@ -121,6 +121,7 @@ void __init kernel_randomize_memory(void)
+> > >         unsigned long rand, memory_tb;
+> > >         struct rnd_state rand_state;
+> > >         unsigned long remain_entropy;
+> > > +       unsigned long vmemmap_size;
+> > >
+> > >         vaddr_start = pgtable_l5_enabled() ? __PAGE_OFFSET_BASE_L5 : __PAGE_OFFSET_BASE_L4;
+> > >         vaddr = vaddr_start;
+> > > @@ -152,6 +153,14 @@ void __init kernel_randomize_memory(void)
+> > >         if (memory_tb < kaslr_regions[0].size_tb)
+> > >                 kaslr_regions[0].size_tb = memory_tb;
+> > >
+> > > +       /*
+> > > +        * Calculate how many TB vmemmap region needs, and align to
+> > > +        * 1TB boundary.
+> > 
+> > Can you describe why this is the right calculation? (This will help
+> > explain why 4-level is different from 5-level here.)
 > 
-> For example, the touchscreen and trackpad devices on a Dell Inspiron laptop
-> are I2C devices whose IRQs are defined by ACPI extended IRQ types. The
-> client device structures are initialized during an ACPI walk. After
-> removing the i2c_hid device, modprobe fails.
+> In the old code, the size of vmemmap is hardcoded as 1 TB. This is true
+> in 4-level paging mode, 64 TB RAM supported at most, and usually
+> sizeof(struct page) is 64 Bytes, it happens to be 1 TB.
 > 
-> This change caches the initial IRQ value in i2c_new_device and then resets
-> the client device IRQ to the initial value in i2c_device_remove.
+> However, in 5-level paging mode, 4 PB is the biggest RAM size we can
+> support, it's (4 PB)/64 == 1<<48, namely 256 TB area needed for vmemmap,
+> assuming sizeof(struct page) is 64 Bytes here.
 > 
-> Fixes: 6f108dd70d30 ("i2c: Clear client->irq in i2c_device_remove")
-> Signed-off-by: Jim Broadus <jbroadus@gmail.com>
-> ---
+> So, the hardcoding of 1 TB is not correct for 5-level paging mode. 
+> 
+> Thanks
+> Baoquan
+> 
+> > 
+> > > +        */
+> > > +       vmemmap_size = (kaslr_regions[0].size_tb << (TB_SHIFT - PAGE_SHIFT)) *
+> > > +               sizeof(struct page);
+> > > +       kaslr_regions[2].size_tb = DIV_ROUND_UP(vmemmap_size, 1UL << TB_SHIFT);
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Forgot mentioning what this patch is trying to do. As you can see, we
+just use the adjusted size of the direct mapping section, including the
+possible later hotplugged memory region, to calculate the actual needed
+size for vmemmap, then aligned up to 1 TB. For 4-level paging mode, it's
+still 1 TB. For 5-level paging mode, it will be smaller than 256 TB
+which is in the case of 4 PB RAM installed.
 
-Apologies for the issues caused. I think this looks like a good fix
-to me.
-
-Thanks,
-Charles
+Thanks
+Baoquan
