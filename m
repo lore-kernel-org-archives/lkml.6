@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1FD4C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:27:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 911CAC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:27:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABBE221900
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:27:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5323421900
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:27:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550500040;
-	bh=ALVQY5JJKyd/HdSAcyirPV0B0xMIy+Yo/hCXJvTNQog=;
+	s=default; t=1550500066;
+	bh=xJGo2eYGLla95ljBWJd2nfHolofcaQoa6y+0wUQsDKs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qyVWljQScng+ZZk9bqUVWZOMUTZN+B3bhZMH/RkvJaEuY8c6cZOccupoWMfATMfkp
-	 6Und8TO6gxZivlIz/66I1O1qhGrN1OqEhKSkKflo6W7yD4x3seAn2d1yK9BylU9Ghs
-	 ACtGaw5YS1gV36fxKLs/PlCGg1ZQgoVzS1zViGqY=
+	b=ALIKfXjgnk4haAknWcXTTzPqGJzuhk/1gytbqEL35TknW8iyAhhp5/j/EMBdnqgQU
+	 icXUqRuN/gv3MeiQhmUNkSPmB5XVCPPtAfoyG9GhEq1/j9vnxOp6k9Assp7yBYILwJ
+	 p+kARcy6hiY0uz2r4rYKfiPvzBbHS6Twvb7F92ww=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391755AbfBRO1T (ORCPT
+        id S1732468AbfBRO1p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:27:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43602 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:27:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389222AbfBROCD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:02:03 -0500
+        id S1730988AbfBROBe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:01:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F9C62070D;
-        Mon, 18 Feb 2019 14:02:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BED3F2070D;
+        Mon, 18 Feb 2019 14:01:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498522;
-        bh=ALVQY5JJKyd/HdSAcyirPV0B0xMIy+Yo/hCXJvTNQog=;
+        s=default; t=1550498494;
+        bh=xJGo2eYGLla95ljBWJd2nfHolofcaQoa6y+0wUQsDKs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gCig6/ddeZdhcRuRR5TxEZXaBOe+s1MvXkzc5kvA/Lv6iVwFNcKeFUl6kbyi9TD+9
-         j0r6l1RHZjHLT9WB/dEmA27su/Gv3Ci6Ts03v9ms3nBYOzIii2WpB7SpY3bUgY6CZv
-         dOAmV9pbcfv1IhVeVofzwgWsb3gJ8hI3DSe/YSPM=
+        b=oqgmeEa1nY3bzbdlxFvWAl4eOHN+N4C2eSqOHzOGa0r1rSGIIc7OU8gEdtZq4+h58
+         b2z4rCfc5ioi9+QtbGNtHn7m25k/Cu7OBsLEgmEQ3T4Y4G+D7bzpymWMPI2bu2TzUC
+         n6l6XCDJ5v6EmgxKSpRHGlyLBehN3nKxN0hvY+CY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>,
+        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
+        Thomas Gleixner <tglx@linutronix.de>, peterz@infradead.org,
+        tj@kernel.org, johannes.berg@intel.com,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 036/143] ARM: pxa: avoid section mismatch warning
-Date:   Mon, 18 Feb 2019 14:42:44 +0100
-Message-Id: <20190218133530.449578714@linuxfoundation.org>
+Subject: [PATCH 4.4 027/143] timekeeping: Use proper seqcount initializer
+Date:   Mon, 18 Feb 2019 14:42:35 +0100
+Message-Id: <20190218133530.141605859@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -66,74 +67,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 88af3209aa0881aa5ffd99664b6080a4be5f24e5 ]
+[ Upstream commit ce10a5b3954f2514af726beb78ed8d7350c5e41c ]
 
-WARNING: vmlinux.o(.text+0x19f90): Section mismatch in reference from the function littleton_init_lcd() to the function .init.text:pxa_set_fb_info()
-The function littleton_init_lcd() references
-the function __init pxa_set_fb_info().
-This is often because littleton_init_lcd lacks a __init
-annotation or the annotation of pxa_set_fb_info is wrong.
+tk_core.seq is initialized open coded, but that misses to initialize the
+lockdep map when lockdep is enabled. Lockdep splats involving tk_core seq
+consequently lack a name and are hard to read.
 
-WARNING: vmlinux.o(.text+0xf824): Section mismatch in reference from the function zeus_register_ohci() to the function .init.text:pxa_set_ohci_info()
-The function zeus_register_ohci() references
-the function __init pxa_set_ohci_info().
-This is often because zeus_register_ohci lacks a __init
-annotation or the annotation of pxa_set_ohci_info is wrong.
+Use the proper initializer which takes care of the lockdep map
+initialization.
 
-WARNING: vmlinux.o(.text+0xf95c): Section mismatch in reference from the function cm_x300_init_u2d() to the function .init.text:pxa3xx_set_u2d_info()
-The function cm_x300_init_u2d() references
-the function __init pxa3xx_set_u2d_info().
-This is often because cm_x300_init_u2d lacks a __init
-annotation or the annotation of pxa3xx_set_u2d_info is wrong.
+[ tglx: Massaged changelog ]
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: peterz@infradead.org
+Cc: tj@kernel.org
+Cc: johannes.berg@intel.com
+Link: https://lkml.kernel.org/r/20181128234325.110011-12-bvanassche@acm.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-pxa/cm-x300.c   | 2 +-
- arch/arm/mach-pxa/littleton.c | 2 +-
- arch/arm/mach-pxa/zeus.c      | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ kernel/time/timekeeping.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-pxa/cm-x300.c b/arch/arm/mach-pxa/cm-x300.c
-index a7dae60810e8..307fc18edede 100644
---- a/arch/arm/mach-pxa/cm-x300.c
-+++ b/arch/arm/mach-pxa/cm-x300.c
-@@ -547,7 +547,7 @@ static struct pxa3xx_u2d_platform_data cm_x300_u2d_platform_data = {
- 	.exit		= cm_x300_u2d_exit,
- };
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index fed86b2dfc89..d9837d25dfe0 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -39,7 +39,9 @@
+ static struct {
+ 	seqcount_t		seq;
+ 	struct timekeeper	timekeeper;
+-} tk_core ____cacheline_aligned;
++} tk_core ____cacheline_aligned = {
++	.seq = SEQCNT_ZERO(tk_core.seq),
++};
  
--static void cm_x300_init_u2d(void)
-+static void __init cm_x300_init_u2d(void)
- {
- 	pxa3xx_set_u2d_info(&cm_x300_u2d_platform_data);
- }
-diff --git a/arch/arm/mach-pxa/littleton.c b/arch/arm/mach-pxa/littleton.c
-index 5d665588c7eb..05aa7071efd6 100644
---- a/arch/arm/mach-pxa/littleton.c
-+++ b/arch/arm/mach-pxa/littleton.c
-@@ -183,7 +183,7 @@ static struct pxafb_mach_info littleton_lcd_info = {
- 	.lcd_conn		= LCD_COLOR_TFT_16BPP,
- };
- 
--static void littleton_init_lcd(void)
-+static void __init littleton_init_lcd(void)
- {
- 	pxa_set_fb_info(NULL, &littleton_lcd_info);
- }
-diff --git a/arch/arm/mach-pxa/zeus.c b/arch/arm/mach-pxa/zeus.c
-index d757cfb5f8a6..4da2458d7f32 100644
---- a/arch/arm/mach-pxa/zeus.c
-+++ b/arch/arm/mach-pxa/zeus.c
-@@ -558,7 +558,7 @@ static struct pxaohci_platform_data zeus_ohci_platform_data = {
- 	.flags		= ENABLE_PORT_ALL | POWER_SENSE_LOW,
- };
- 
--static void zeus_register_ohci(void)
-+static void __init zeus_register_ohci(void)
- {
- 	/* Port 2 is shared between host and client interface. */
- 	UP2OCR = UP2OCR_HXOE | UP2OCR_HXS | UP2OCR_DMPDE | UP2OCR_DPPDE;
+ static DEFINE_RAW_SPINLOCK(timekeeper_lock);
+ static struct timekeeper shadow_timekeeper;
 -- 
 2.19.1
 
