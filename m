@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1443C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CBBBC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:52:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90BCE21904
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:52:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B43321904
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:52:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497941;
-	bh=WV62iM9jnvtZ5udSl96Jm57KuCg/7S7YgVVRleOzjZo=;
+	s=default; t=1550497945;
+	bh=Uorm3hJGnm5xAlnlLIGEHgCMOsG1IXSguWyKjhIKcsA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=buUaldfnCBNLUVzb6w+z6tysjpeQyAk3+EtjWxkZNEgCebwVjOajAOUoMBFQNWvXM
-	 7mgTCpzONFfJR1zLOfMGNPJx9CLMlH3Ln5UQmhd/WdWIXheVP84pe7LCtxGo4EJ3T4
-	 2/ZDbpf6NzBiFpWb9RlS5loPxBC7UwgVg8q6JINg=
+	b=U5a5Xn2y532HQy65X0Jg07gh7QUy5LM9djw/IJIiX2KtPfyYqej6PXoc4KCnf8owY
+	 jvIuWtEasI1RKZI+fY37krpoQJzfQ08LbcKnGBiSK5gdBXCvIBZ83AXt3HyVNCYmY6
+	 2VVMr2IXR1QqzUqlOHGbN/zfNlEz8nDmpzczPuT4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732690AbfBRNwU (ORCPT
+        id S1732700AbfBRNwX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:52:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60182 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:52:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732650AbfBRNwT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:52:19 -0500
+        id S1732650AbfBRNwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:52:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 093CA21904;
-        Mon, 18 Feb 2019 13:52:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEE1F20842;
+        Mon, 18 Feb 2019 13:52:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497938;
-        bh=WV62iM9jnvtZ5udSl96Jm57KuCg/7S7YgVVRleOzjZo=;
+        s=default; t=1550497941;
+        bh=Uorm3hJGnm5xAlnlLIGEHgCMOsG1IXSguWyKjhIKcsA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=szKUztnq2z83+lHtdKRbBIirXWKrqrffYwODecxVHjvUEpsS9vx1IIIKQGpH8+Wyr
-         ESOPEP3ouEjSDrwEwBtVrt++C9w5a17Or7v6telUMu8aInU9Xcsjk0UKY3jZR3dqTt
-         gL3cC1ken8qLzMPgB365UIdE0WTPges36x2SCsy0=
+        b=Aks4rjuLHxqbqQOE+mEGS3IMqmWhp/YEh5CqD4OIfnnS3umUcURC2Enf0/jHChGgD
+         qMaArtb7v5BW8shXm9jZoALru2bP6t3T1Tt+ZLM1HdHLWLpfWJiED0KuAem0fqbJbp
+         HeN0/zv6sJ0WZ/DCgbcMT9mZrsm2ZO5Mn3dUocpI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
         Sekhar Nori <nsekhar@ti.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 41/85] ARM: dts: da850-lcdk: Correct the audio codec regulators
-Date:   Mon, 18 Feb 2019 14:43:07 +0100
-Message-Id: <20190218133504.190518934@linuxfoundation.org>
+Subject: [PATCH 4.19 42/85] ARM: dts: da850-lcdk: Correct the sound card name
+Date:   Mon, 18 Feb 2019 14:43:08 +0100
+Message-Id: <20190218133504.271705819@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -65,78 +65,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit bd540ebe68c3017194a1caa38e075bbbc0832749 ]
+[ Upstream commit c25748acc5c20786ecb7518bfeae8fcef93472d6 ]
 
-Add the board level fixed regulators for 3.3V and 1.8V which is used to
-power - among other things - the tlv320aic3106 codec.
+To avoid  the following error:
+asoc-simple-card sound: ASoC: Failed to create card debugfs directory
 
-Apart from removing the following warning during boot:
-tlv320aic3x-codec 0-0018: Invalid supply voltage(s) AVDD: -22, DVDD: -22
-
-With the correct voltages the driver can select correct OCMV value to
-reduce pop noise.
+Which is because the card name contains '/' character, which can not be
+used in file or directory names.
 
 Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/da850-lcdk.dts | 36 ++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ arch/arm/boot/dts/da850-lcdk.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/da850-lcdk.dts b/arch/arm/boot/dts/da850-lcdk.dts
-index 0177e3ed20fe..c196e37606c4 100644
+index c196e37606c4..3a2fa6e035a3 100644
 --- a/arch/arm/boot/dts/da850-lcdk.dts
 +++ b/arch/arm/boot/dts/da850-lcdk.dts
-@@ -39,6 +39,36 @@
- 		};
- 	};
+@@ -71,7 +71,7 @@
  
-+	vcc_5vd: fixedregulator-vcc_5vd {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc_5vd";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-boot-on;
-+	};
-+
-+	vcc_3v3d: fixedregulator-vcc_3v3d {
-+		/* TPS650250 - VDCDC1 */
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc_3v3d";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&vcc_5vd>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	vcc_1v8d: fixedregulator-vcc_1v8d {
-+		/* TPS650250 - VDCDC2 */
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc_1v8d";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&vcc_5vd>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
  	sound {
  		compatible = "simple-audio-card";
- 		simple-audio-card,name = "DA850/OMAP-L138 LCDK";
-@@ -221,6 +251,12 @@
- 		compatible = "ti,tlv320aic3106";
- 		reg = <0x18>;
- 		status = "okay";
-+
-+		/* Regulators */
-+		IOVDD-supply = <&vcc_3v3d>;
-+		AVDD-supply = <&vcc_3v3d>;
-+		DRVDD-supply = <&vcc_3v3d>;
-+		DVDD-supply = <&vcc_1v8d>;
- 	};
- };
- 
+-		simple-audio-card,name = "DA850/OMAP-L138 LCDK";
++		simple-audio-card,name = "DA850-OMAPL138 LCDK";
+ 		simple-audio-card,widgets =
+ 			"Line", "Line In",
+ 			"Line", "Line Out";
 -- 
 2.19.1
 
