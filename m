@@ -2,89 +2,123 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EF00C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:10:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 313EEC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:20:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7AEF2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:10:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04FA021872
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:20:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730614AbfBRNKc convert rfc822-to-8bit (ORCPT
+        id S1730906AbfBRNUY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:10:32 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:42989 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730497AbfBRNKb (ORCPT
+        Mon, 18 Feb 2019 08:20:24 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:6939 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729714AbfBRNUY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:10:31 -0500
-Received: from marcel-macpro.fritz.box (p4FF9F361.dip0.t-ipconnect.de [79.249.243.97])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 8E053CF2C7;
-        Mon, 18 Feb 2019 14:18:22 +0100 (CET)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH 0/6]Bluetooth: mediatek: add support for MediaTek MT7663U
- and MT7668U UART devices
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <cover.1550184473.git.sean.wang@mediatek.com>
-Date:   Mon, 18 Feb 2019 14:10:29 +0100
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        devicetree@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <B7EBA86E-B6C2-4301-BA01-004EA83A50A9@holtmann.org>
-References: <cover.1550184473.git.sean.wang@mediatek.com>
-To:     Sean Wang <sean.wang@mediatek.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Mon, 18 Feb 2019 08:20:24 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1IDHAHG025384;
+        Mon, 18 Feb 2019 14:20:04 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2qpc6x2khq-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 18 Feb 2019 14:20:04 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C049231;
+        Mon, 18 Feb 2019 13:20:02 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4CD7B2B38;
+        Mon, 18 Feb 2019 13:20:02 +0000 (GMT)
+Received: from [10.48.0.167] (10.75.127.48) by SFHDAG5NODE3.st.com
+ (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 18 Feb
+ 2019 14:20:01 +0100
+Subject: Re: [PATCH 1/4] dt-bindings: nvmem: Add STM32 factory-programmed
+ romem
+To:     <robh+dt@kernel.org>
+CC:     <srinivas.kandagatla@linaro.org>, <alexandre.torgue@st.com>,
+        <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>,
+        <lionel.debieve@st.com>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1548866336-14765-1-git-send-email-fabrice.gasnier@st.com>
+ <1548866336-14765-2-git-send-email-fabrice.gasnier@st.com>
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+Message-ID: <c733fe5d-0686-8596-6dc1-369969c782ed@st.com>
+Date:   Mon, 18 Feb 2019 14:20:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <1548866336-14765-2-git-send-email-fabrice.gasnier@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG7NODE2.st.com (10.75.127.20) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-18_10:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sean,
+On 1/30/19 5:38 PM, Fabrice Gasnier wrote:
+> Add documentation for STMicroelectronics STM32 Factory-programmed
+> read only memory area.
 
-> This adds the support of enabling MT7668U and MT7663U UART based Bluetooth
-> function running on the top of btmtkuart driver.
-> 
-> We are through several patches to reach the goal and also wish applied
-> the same flow in MediaTek btusb [1] for the transport independence.
-> Once [1] and the series is being merged and then in next step I will
-> consider to add a btmtk.c to hold these independent operations among
-> various transport reused by MediaTek UART, USB and SDIO-based Bluetooth.
-> 
-> Firstly,
-> in patch 1/6 to update the dt-binding document for the kind of devices.
-> in patch 2/6, 3/6 to fix the common error issues in the current code.
-> in Patch 4/6, 5/6 to add the general flow which MT7622 and even MT7663U and
-> MT7668U USB devices also utilize.
-> 
-> Finally, in patch 6/6 to add the specific setups for MediaTek UART-based
-> Bluetooth and enable MT7663U and MT7668U device.
-> 
-> [1] http://lists.infradead.org/pipermail/linux-mediatek/2019-January/017074.html 
-> 
-> Sean Wang (6):
->  dt-bindings: net: bluetooth: add support for MediaTek MT7663U and
->    MT7668U UART devices
->  Bluetooth: mediatek: trivial typo fix
->  Bluetooth: mediatek: fix up an error path to restore bdev->tx_state
->  Bluetooth: mediatek: pass a pointer to mtk_hci_wmt_sync
->  Bluetooth: mediatek: update the common setup between MT7622 and other
->    devices
->  Bluetooth: mediatek: add support for MediaTek MT7663U and MT7668U UART
->    devices
-> 
-> .../bindings/net/mediatek-bluetooth.txt       |  64 +++
-> drivers/bluetooth/btmtkuart.c                 | 538 ++++++++++++++++--
-> 2 files changed, 569 insertions(+), 33 deletions(-)
+Hello Rob, DT Maintainers,
 
-please re-send 1/6 and 6/6 when the DT changes are ACKed by Rob.
+Gentlemen reminder for new DT bindings review.
 
-Regards
-
-Marcel
-
+Best Regards,
+Fabrice
+> 
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> ---
+>  .../devicetree/bindings/nvmem/st,stm32-romem.txt   | 31 ++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/nvmem/st,stm32-romem.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/nvmem/st,stm32-romem.txt b/Documentation/devicetree/bindings/nvmem/st,stm32-romem.txt
+> new file mode 100644
+> index 0000000..fbff52e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/nvmem/st,stm32-romem.txt
+> @@ -0,0 +1,31 @@
+> +STMicroelectronics STM32 Factory-programmed data device tree bindings
+> +
+> +This represents STM32 Factory-programmed read only non-volatile area: locked
+> +flash, OTP, read-only HW regs... This contains various information such as:
+> +analog calibration data for temperature sensor (e.g. TS_CAL1, TS_CAL2),
+> +internal vref (VREFIN_CAL), unique device ID...
+> +
+> +Required properties:
+> +- compatible:		Should be one of:
+> +			"st,stm32-romem"
+> +			"st,stm32mp15-bsec"
+> +- reg:			Offset and length of factory-programmed area.
+> +- #address-cells:	Should be '<1>'.
+> +- #size-cells:		Should be '<1>'.
+> +
+> +Optional Data cells:
+> +- Must be child nodes as described in nvmem.txt.
+> +
+> +Example on stm32f4:
+> +	romem: nvmem@1fff7800 {
+> +		compatible = "st,stm32-romem";
+> +		reg = <0x1fff7800 0x400>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +
+> +		/* Data cells: ts_cal1 at 0x1fff7a2c */
+> +		ts_cal1: calib@22c {
+> +			reg = <0x22c 0x2>;
+> +		};
+> +		...
+> +	};
+> 
