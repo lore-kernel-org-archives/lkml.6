@@ -2,56 +2,65 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D291C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:32:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A507C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:32:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55F312081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:32:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6587B2081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:32:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550500357;
-	bh=uFGi3J/BVKFQekJCNTQ1p/kn8GFvaR/wpYjWs/ElwM4=;
+	s=default; t=1550500369;
+	bh=anL+7f5/DRkgbWzrDz8wEjuVDr5L2Q8S4DG5QgLKe8Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=i6XrZoU/p7G81bGtRls+lJF7SCb0fsk3yWLgbGKmLtMx2wmYQZTD7MIxD2qc+tVhE
-	 7i/uWFiiu9d9QOms7ESZ1DgEh2c65wFQPvG9A5aAkY6MeebF8sqQgWmyTKbbFN2SFQ
-	 EC4kdmrL9K4M8sgWl2wgoT/H78MWJbqfvZOgO+do=
+	b=gDHmdlHrZn060vPEBcMQiXT5ImKTMdYXyXn2VgYhd/zLpslykP7xLVUFPIMEeOYUU
+	 GOfcl8HXQUq7Ed9ozo0KzdnfjvzFyUU2BkaC0YoBWVlOtU54vifPNlKFzXyRYimZV5
+	 qHtAR1wyDB1qXtgO39mR2NH4ODKJ47rRJuHBvFmM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733180AbfBROcf (ORCPT
+        id S2388128AbfBROcs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:32:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38136 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:32:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388127AbfBRN5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:57:38 -0500
+        id S2388019AbfBRN50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:57:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C36821903;
-        Mon, 18 Feb 2019 13:57:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B03B2217D9;
+        Mon, 18 Feb 2019 13:57:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498257;
-        bh=uFGi3J/BVKFQekJCNTQ1p/kn8GFvaR/wpYjWs/ElwM4=;
+        s=default; t=1550498245;
+        bh=anL+7f5/DRkgbWzrDz8wEjuVDr5L2Q8S4DG5QgLKe8Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xXA3M/tfIXd/mktbxtNHt2/rj+lP+Z0sOB3nvl+sV5Lfj82cH6IWEvFcme3/x/rd/
-         rrXs7rrnJVEmhZKzUZHL9EhLfZKaxtguKZ+kjBoXOOeDqq06SoQw9S97WpChu/Sdx2
-         T0VL/OPyTvIGO7wvhAKyt1G3mQuv7wxiPCdzt3gw=
+        b=UK+9HX3jBfHYBQa0N/WwwXVoQcWN8VpxQsxnawbWsRpUthp5m6WaH6GDm58NIR3dr
+         KrmFxtdAyX1XLtbgCQw0tXOLgz5lwX92X7GAVab+IhUL6lsE7aSC+pcIrF8CY74Q5j
+         4gwEbrUbt4GmA8+lqlKBpgrimywQjnom/XiTNFr4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        "David A. Long" <dave.long@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 11/58] ARM: 8797/1: spectre-v1.1: harden __copy_to_user
-Date:   Mon, 18 Feb 2019 14:43:32 +0100
-Message-Id: <20190218133509.437499837@linuxfoundation.org>
+        stable@vger.kernel.org, Hedi Berriche <hedi.berriche@hpe.com>,
+        Borislav Petkov <bp@suse.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Russ Anderson <rja@hpe.com>,
+        Dimitri Sivanich <sivanich@hpe.com>,
+        Mike Travis <mike.travis@hpe.com>,
+        Andy Shevchenko <andy@infradead.org>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Darren Hart <dvhart@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        Steve Wahl <steve.wahl@hpe.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>
+Subject: [PATCH 4.14 53/62] x86/platform/UV: Use efi_runtime_lock to serialise BIOS calls
+Date:   Mon, 18 Feb 2019 14:43:59 +0100
+Message-Id: <20190218133510.320971777@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190218133508.567416115@linuxfoundation.org>
-References: <20190218133508.567416115@linuxfoundation.org>
+In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
+References: <20190218133505.801423074@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -63,62 +72,130 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-Commit a1d09e074250fad24f1b993f327b18cc6812eb7a upstream.
+From: Hedi Berriche <hedi.berriche@hpe.com>
 
-Sanitize user pointer given to __copy_to_user, both for standard version
-and memcopy version of the user accessor.
+commit f331e766c4be33f4338574f3c9f7f77e98ab4571 upstream.
 
-Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: David A. Long <dave.long@linaro.org>
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Calls into UV firmware must be protected against concurrency, expose the
+efi_runtime_lock to the UV platform, and use it to serialise UV BIOS
+calls.
+
+Signed-off-by: Hedi Berriche <hedi.berriche@hpe.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Reviewed-by: Russ Anderson <rja@hpe.com>
+Reviewed-by: Dimitri Sivanich <sivanich@hpe.com>
+Reviewed-by: Mike Travis <mike.travis@hpe.com>
+Cc: Andy Shevchenko <andy@infradead.org>
+Cc: Bhupesh Sharma <bhsharma@redhat.com>
+Cc: Darren Hart <dvhart@infradead.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: linux-efi <linux-efi@vger.kernel.org>
+Cc: platform-driver-x86@vger.kernel.org
+Cc: stable@vger.kernel.org # v4.9+
+Cc: Steve Wahl <steve.wahl@hpe.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190213193413.25560-5-hedi.berriche@hpe.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm/lib/copy_to_user.S        | 6 +++++-
- arch/arm/lib/uaccess_with_memcpy.c | 3 ++-
- 2 files changed, 7 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/uv/bios.h          |    8 +++++++-
+ arch/x86/platform/uv/bios_uv.c          |   23 +++++++++++++++++++++--
+ drivers/firmware/efi/runtime-wrappers.c |    7 +++++++
+ 3 files changed, 35 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/lib/copy_to_user.S b/arch/arm/lib/copy_to_user.S
-index caf5019d8161..970abe521197 100644
---- a/arch/arm/lib/copy_to_user.S
-+++ b/arch/arm/lib/copy_to_user.S
-@@ -94,6 +94,11 @@
+--- a/arch/x86/include/asm/uv/bios.h
++++ b/arch/x86/include/asm/uv/bios.h
+@@ -48,7 +48,8 @@ enum {
+ 	BIOS_STATUS_SUCCESS		=  0,
+ 	BIOS_STATUS_UNIMPLEMENTED	= -ENOSYS,
+ 	BIOS_STATUS_EINVAL		= -EINVAL,
+-	BIOS_STATUS_UNAVAIL		= -EBUSY
++	BIOS_STATUS_UNAVAIL		= -EBUSY,
++	BIOS_STATUS_ABORT		= -EINTR,
+ };
  
- ENTRY(__copy_to_user_std)
- WEAK(arm_copy_to_user)
-+#ifdef CONFIG_CPU_SPECTRE
-+	get_thread_info r3
-+	ldr	r3, [r3, #TI_ADDR_LIMIT]
-+	uaccess_mask_range_ptr r0, r2, r3, ip
-+#endif
+ /* Address map parameters */
+@@ -167,4 +168,9 @@ extern long system_serial_number;
  
- #include "copy_template.S"
+ extern struct kobject *sgi_uv_kobj;	/* /sys/firmware/sgi_uv */
  
-@@ -108,4 +113,3 @@ ENDPROC(__copy_to_user_std)
- 	rsb	r0, r0, r2
- 	copy_abort_end
- 	.popsection
--
-diff --git a/arch/arm/lib/uaccess_with_memcpy.c b/arch/arm/lib/uaccess_with_memcpy.c
-index 6bd1089b07e0..f598d792bace 100644
---- a/arch/arm/lib/uaccess_with_memcpy.c
-+++ b/arch/arm/lib/uaccess_with_memcpy.c
-@@ -152,7 +152,8 @@ arm_copy_to_user(void __user *to, const void *from, unsigned long n)
- 		n = __copy_to_user_std(to, from, n);
- 		uaccess_restore(ua_flags);
- 	} else {
--		n = __copy_to_user_memcpy(to, from, n);
-+		n = __copy_to_user_memcpy(uaccess_mask_range_ptr(to, n),
-+					  from, n);
- 	}
- 	return n;
++/*
++ * EFI runtime lock; cf. firmware/efi/runtime-wrappers.c for details
++ */
++extern struct semaphore __efi_uv_runtime_lock;
++
+ #endif /* _ASM_X86_UV_BIOS_H */
+--- a/arch/x86/platform/uv/bios_uv.c
++++ b/arch/x86/platform/uv/bios_uv.c
+@@ -29,7 +29,8 @@
+ 
+ struct uv_systab *uv_systab;
+ 
+-s64 uv_bios_call(enum uv_bios_cmd which, u64 a1, u64 a2, u64 a3, u64 a4, u64 a5)
++static s64 __uv_bios_call(enum uv_bios_cmd which, u64 a1, u64 a2, u64 a3,
++			u64 a4, u64 a5)
+ {
+ 	struct uv_systab *tab = uv_systab;
+ 	s64 ret;
+@@ -51,6 +52,19 @@ s64 uv_bios_call(enum uv_bios_cmd which,
+ 
+ 	return ret;
  }
--- 
-2.19.1
-
++
++s64 uv_bios_call(enum uv_bios_cmd which, u64 a1, u64 a2, u64 a3, u64 a4, u64 a5)
++{
++	s64 ret;
++
++	if (down_interruptible(&__efi_uv_runtime_lock))
++		return BIOS_STATUS_ABORT;
++
++	ret = __uv_bios_call(which, a1, a2, a3, a4, a5);
++	up(&__efi_uv_runtime_lock);
++
++	return ret;
++}
+ EXPORT_SYMBOL_GPL(uv_bios_call);
+ 
+ s64 uv_bios_call_irqsave(enum uv_bios_cmd which, u64 a1, u64 a2, u64 a3,
+@@ -59,10 +73,15 @@ s64 uv_bios_call_irqsave(enum uv_bios_cm
+ 	unsigned long bios_flags;
+ 	s64 ret;
+ 
++	if (down_interruptible(&__efi_uv_runtime_lock))
++		return BIOS_STATUS_ABORT;
++
+ 	local_irq_save(bios_flags);
+-	ret = uv_bios_call(which, a1, a2, a3, a4, a5);
++	ret = __uv_bios_call(which, a1, a2, a3, a4, a5);
+ 	local_irq_restore(bios_flags);
+ 
++	up(&__efi_uv_runtime_lock);
++
+ 	return ret;
+ }
+ 
+--- a/drivers/firmware/efi/runtime-wrappers.c
++++ b/drivers/firmware/efi/runtime-wrappers.c
+@@ -50,6 +50,13 @@ void efi_call_virt_check_flags(unsigned
+ }
+ 
+ /*
++ * Expose the EFI runtime lock to the UV platform
++ */
++#ifdef CONFIG_X86_UV
++extern struct semaphore __efi_uv_runtime_lock __alias(efi_runtime_lock);
++#endif
++
++/*
+  * According to section 7.1 of the UEFI spec, Runtime Services are not fully
+  * reentrant, and there are particular combinations of calls that need to be
+  * serialized. (source: UEFI Specification v2.4A)
 
 
