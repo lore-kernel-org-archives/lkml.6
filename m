@@ -6,48 +6,51 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B877C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A6F2C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:06:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEF4E21908
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:06:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2AA621901
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:06:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498772;
-	bh=HEB9v7A5hYtuNEOt3CVHtd+W6AuzMhvXUs1pngTDgTA=;
+	s=default; t=1550498778;
+	bh=Z7CREte0dj5m8AD2Wx6+fRmDxHmPe4vQH1TvOuPNUPA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AyBEHyL0LxlTkqb/RH6xHtfjygOeL+TrJ6YbOGbDBLPlflMqCxFMYlRrdWJo++tc5
-	 m7W/y3KVoJq9cIEIgxpU8WduOMPjGKK/G27gFGQpw+ipsQw9LsRYFfQ0NeG+j+WmiW
-	 QTY+Dpilb+Ccgl+l0BJcPDUsWUiCDvdyo82F9e2k=
+	b=pGC6hOYj+ekKdxnPr/peuDPL3UQbphqiljx/K69yn/DOgbq7eI28f46xuhi63esRq
+	 2zKJjQg7CAQMy22AGbDxWxJCz978t7kSoN2U6TCa/sBwdTa3Jk03Z9uTTMOi9MbUD7
+	 1CfpiHwrpWu26O9jQk3jsiySX0iuzRKfMX2+n4Jo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388553AbfBROGK (ORCPT
+        id S2389477AbfBROGQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:06:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49126 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:06:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390327AbfBROGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:06:06 -0500
+        id S2390335AbfBROGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:06:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4759221902;
-        Mon, 18 Feb 2019 14:06:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 140F8204FD;
+        Mon, 18 Feb 2019 14:06:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498765;
-        bh=HEB9v7A5hYtuNEOt3CVHtd+W6AuzMhvXUs1pngTDgTA=;
+        s=default; t=1550498768;
+        bh=Z7CREte0dj5m8AD2Wx6+fRmDxHmPe4vQH1TvOuPNUPA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dnFHTQZmBp/CLB2uQMNtHNjQXGtJKGoIFG0zS0M7Vlm6tbytRwA/uppFdm01lfNC/
-         o5Kz/HDY44SzZkGwgRROCpqYjuVaF9983jeBkVkaA4mYks+3XMj3Ox+SJ8pLSf97fi
-         bB6S0bXDuo6tKzJ39ckmwa/uwkNQFNwvndlJjXAQ=
+        b=qRrt0xN1n/woMeZZm1q36YMkN0HuNj+Tm+1o5QXQZAlAtS7mQ456VwORTy9N4QNca
+         hWC2uVf60XZHZlVx6gIlbksZeeB5feP0q3xanU/kV+Y13BZiwMAMc+e+hYZxvQ76Bi
+         baUMS6VTkKbRsoumnJnCyKPjhgePC3k5lKH8Lwec=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+acdeb633f6211ccdf886@syzkaller.appspotmail.com,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Myungho Jung <mhjungk@gmail.com>
-Subject: [PATCH 4.4 114/143] libceph: avoid KEEPALIVE_PENDING races in ceph_con_keepalive()
-Date:   Mon, 18 Feb 2019 14:44:02 +0100
-Message-Id: <20190218133533.184728207@linuxfoundation.org>
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.4 097/143] perf tests evsel-tp-sched: Fix bitwise operator
+Date:   Mon, 18 Feb 2019 14:43:45 +0100
+Message-Id: <20190218133532.594653372@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -66,60 +69,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ilya Dryomov <idryomov@gmail.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 4aac9228d16458cedcfd90c7fb37211cf3653ac3 upstream.
+commit 489338a717a0dfbbd5a3fabccf172b78f0ac9015 upstream.
 
-con_fault() can transition the connection into STANDBY right after
-ceph_con_keepalive() clears STANDBY in clear_standby():
+Notice that the use of the bitwise OR operator '|' always leads to true
+in this particular case, which seems a bit suspicious due to the context
+in which this expression is being used.
 
-    libceph user thread               ceph-msgr worker
+Fix this by using bitwise AND operator '&' instead.
 
-ceph_con_keepalive()
-  mutex_lock(&con->mutex)
-  clear_standby(con)
-  mutex_unlock(&con->mutex)
-                                mutex_lock(&con->mutex)
-                                con_fault()
-                                  ...
-                                  if KEEPALIVE_PENDING isn't set
-                                    set state to STANDBY
-                                  ...
-                                mutex_unlock(&con->mutex)
-  set KEEPALIVE_PENDING
-  set WRITE_PENDING
+This bug was detected with the help of Coccinelle.
 
-This triggers warnings in clear_standby() when either ceph_con_send()
-or ceph_con_keepalive() get to clearing STANDBY next time.
-
-I don't see a reason to condition queue_con() call on the previous
-value of KEEPALIVE_PENDING, so move the setting of KEEPALIVE_PENDING
-into the critical section -- unlike WRITE_PENDING, KEEPALIVE_PENDING
-could have been a non-atomic flag.
-
-Reported-by: syzbot+acdeb633f6211ccdf886@syzkaller.appspotmail.com
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Tested-by: Myungho Jung <mhjungk@gmail.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: stable@vger.kernel.org
+Fixes: 6a6cd11d4e57 ("perf test: Add test for the sched tracepoint format fields")
+Link: http://lkml.kernel.org/r/20190122233439.GA5868@embeddedor
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ceph/messenger.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ tools/perf/tests/evsel-tp-sched.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ceph/messenger.c
-+++ b/net/ceph/messenger.c
-@@ -3181,9 +3181,10 @@ void ceph_con_keepalive(struct ceph_conn
- 	dout("con_keepalive %p\n", con);
- 	mutex_lock(&con->mutex);
- 	clear_standby(con);
-+	con_flag_set(con, CON_FLAG_KEEPALIVE_PENDING);
- 	mutex_unlock(&con->mutex);
--	if (con_flag_test_and_set(con, CON_FLAG_KEEPALIVE_PENDING) == 0 &&
--	    con_flag_test_and_set(con, CON_FLAG_WRITE_PENDING) == 0)
-+
-+	if (con_flag_test_and_set(con, CON_FLAG_WRITE_PENDING) == 0)
- 		queue_con(con);
- }
- EXPORT_SYMBOL(ceph_con_keepalive);
+--- a/tools/perf/tests/evsel-tp-sched.c
++++ b/tools/perf/tests/evsel-tp-sched.c
+@@ -16,7 +16,7 @@ static int perf_evsel__test_field(struct
+ 		return -1;
+ 	}
+ 
+-	is_signed = !!(field->flags | FIELD_IS_SIGNED);
++	is_signed = !!(field->flags & FIELD_IS_SIGNED);
+ 	if (should_be_signed && !is_signed) {
+ 		pr_debug("%s: \"%s\" signedness(%d) is wrong, should be %d\n",
+ 			 evsel->name, name, is_signed, should_be_signed);
 
 
