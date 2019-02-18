@@ -4,52 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82B86C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81CDFC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 543FE21901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47C3B21905
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498534;
-	bh=MJbq7oTPtW1A5buusR5+pSFLAC/TXBOsZUe11+GZ79I=;
+	s=default; t=1550498539;
+	bh=JLbJ73SGnxO0EnhKF2/7NK3ppavo3KHOUrtNfmmHnAc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Kc6BMnz6+UwIMCJkfgDRUas8bOfDWQHwzRWXpOcvuyhS2LkXzSNorDYeGxMyflUj6
-	 mEyyxc842CkXDYAYpziOR0/xY7ExwdGU0YKFoMoDnDgAEEutD1huIw4wmVSafiWIbj
-	 TjJm/0LHI3FePzURle/z+9P2HeXVWTw+4i5YsC1k=
+	b=lWI1RVJTx2Feg2UYZCM9jvyiKTN/LIYGljyrSGLeMV33gLt7Gr/TgC1eTuqtQlpLP
+	 /0Re9PJkiNk8RtRkE0C0Zk9UtlveCBbnzZBNehsslEc3WolwGq567BqS7Y5xKlOmow
+	 jQMome6WsAgzIvlGOuePH15HKo0laAQUdq4smgWo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389369AbfBROCM (ORCPT
+        id S2388702AbfBROCR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:02:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43714 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:02:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389350AbfBROCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:02:08 -0500
+        id S2388374AbfBROCO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:02:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77CA821901;
-        Mon, 18 Feb 2019 14:02:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6F6E2070D;
+        Mon, 18 Feb 2019 14:02:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498528;
-        bh=MJbq7oTPtW1A5buusR5+pSFLAC/TXBOsZUe11+GZ79I=;
+        s=default; t=1550498534;
+        bh=JLbJ73SGnxO0EnhKF2/7NK3ppavo3KHOUrtNfmmHnAc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=INjWj6AiSml9wu/UTaoHgfG8Gd8A9zZyHHT8jgUVk06+fhCICIhSt1YlkQA6IR5Xb
-         JJ1EemEj/sd5fRtM8ktvJx78Winpz/wAE7JIeSxuAxiTl4ZYU0JcVEkMGWZS2XY+J+
-         pXrFwAhJMmW1ZcRczCfdrWu8MqpPEfnK6KGiE2zQ=
+        b=topoiZX9T1FVPmvHbWkWb2EPFaqjKXFIEl10hQmJ39+jtrjIL6kX0Y3kC5SHTA+3T
+         ChqJwSyobeWj6axTA+AJD/0ooTxUcKPUWz8aAWr8wmsUcs6aAmRKfVQle1Oppjkhbc
+         qfVctrVYqqxsNIYN36Iki78y69I/rHnNEimCIe/4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Beomho Seo <beomho.seo@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 037/143] ASoC: fsl: Fix SND_SOC_EUKREA_TLV320 build error on i.MX8M
-Date:   Mon, 18 Feb 2019 14:42:45 +0100
-Message-Id: <20190218133530.483836262@linuxfoundation.org>
+Subject: [PATCH 4.4 039/143] tty: serial: samsung: Properly set flags in autoCTS mode
+Date:   Mon, 18 Feb 2019 14:42:47 +0100
+Message-Id: <20190218133530.580341061@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -68,43 +66,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit add6883619a9e3bf9658eaff1a547354131bbcd9 ]
+[ Upstream commit 31e933645742ee6719d37573a27cce0761dcf92b ]
 
-eukrea-tlv320.c machine driver runs on non-DT platforms
-and include <asm/mach-types.h> header file in order to be able
-to use some machine_is_eukrea_xxx() macros.
+Commit 391f93f2ec9f ("serial: core: Rework hw-assited flow control support")
+has changed the way the autoCTS mode is handled.
 
-Building it for ARM64 causes the following build error:
+According to that change, serial drivers which enable H/W autoCTS mode must
+set UPSTAT_AUTOCTS to prevent the serial core from inadvertently disabling
+TX. This patch adds proper handling of UPSTAT_AUTOCTS flag.
 
-sound/soc/fsl/eukrea-tlv320.c:28:10: fatal error: asm/mach-types.h: No such file or directory
-
-Avoid this error by not allowing to build the SND_SOC_EUKREA_TLV320
-driver when ARM64 is selected.
-
-This is needed in preparation for the i.MX8M support.
-
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
-Acked-by: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
+[mszyprow: rephrased commit message]
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/fsl/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/samsung.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/sound/soc/fsl/Kconfig b/sound/soc/fsl/Kconfig
-index 14dfdee05fd5..3066e068aae5 100644
---- a/sound/soc/fsl/Kconfig
-+++ b/sound/soc/fsl/Kconfig
-@@ -219,7 +219,7 @@ config SND_SOC_PHYCORE_AC97
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index 4d532a085db9..12bac2cbae4b 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1329,11 +1329,14 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
+ 	wr_regl(port, S3C2410_ULCON, ulcon);
+ 	wr_regl(port, S3C2410_UBRDIV, quot);
  
- config SND_SOC_EUKREA_TLV320
- 	tristate "Eukrea TLV320"
--	depends on ARCH_MXC && I2C
-+	depends on ARCH_MXC && !ARM64 && I2C
- 	select SND_SOC_TLV320AIC23_I2C
- 	select SND_SOC_IMX_AUDMUX
- 	select SND_SOC_IMX_SSI
++	port->status &= ~UPSTAT_AUTOCTS;
++
+ 	umcon = rd_regl(port, S3C2410_UMCON);
+ 	if (termios->c_cflag & CRTSCTS) {
+ 		umcon |= S3C2410_UMCOM_AFC;
+ 		/* Disable RTS when RX FIFO contains 63 bytes */
+ 		umcon &= ~S3C2412_UMCON_AFC_8;
++		port->status = UPSTAT_AUTOCTS;
+ 	} else {
+ 		umcon &= ~S3C2410_UMCOM_AFC;
+ 	}
 -- 
 2.19.1
 
