@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7190DC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A969AC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:54:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45A1321773
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:54:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FE082177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:54:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730387AbfBRKyG (ORCPT
+        id S1730374AbfBRKyb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 05:54:06 -0500
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:42665 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729525AbfBRKyG (ORCPT
+        Mon, 18 Feb 2019 05:54:31 -0500
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:37059 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729525AbfBRKya (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 05:54:06 -0500
+        Mon, 18 Feb 2019 05:54:30 -0500
 X-Originating-IP: 141.70.45.131
 Received: from localhost (hadi-gate-vlan-851.hadiko.whka.de [141.70.45.131])
         (Authenticated sender: hle@owl.eu.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id AE21320002;
-        Mon, 18 Feb 2019 10:54:03 +0000 (UTC)
-Date:   Mon, 18 Feb 2019 11:54:02 +0100
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id EEEA61BF207;
+        Mon, 18 Feb 2019 10:54:27 +0000 (UTC)
+Date:   Mon, 18 Feb 2019 11:54:27 +0100
 From:   Hugo Lefeuvre <hle@owl.eu.com>
 To:     Arnd Bergmann <arnd@arndb.de>
 Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] iomap: add missing const to ioread*/iowrite addr arg
-Message-ID: <4b6808438be9262b8b68876bc4c4a03072b10d8e.1550485787.git.hle@owl.eu.com>
+Subject: [PATCH 3/4] io: change io*_rep definitions to take ulong count
+Message-ID: <2162a4ee6b1fe781853a75c45d38f73d042d2bc9.1550485787.git.hle@owl.eu.com>
 References: <cover.1550485787.git.hle@owl.eu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -43,113 +43,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ioread* and iowrite* definitions from asm-generic/iomap.h and
-lib/iomap.c are missing const qualifiers. This is inconsistent with
-the definitions from asm-generic/io.h and results in compilation
-warnings when compiling drivers.
+ioread*_rep and iowrite*_rep from asm-generic/io.h expect unsigned
+int count parameter. This is inconsistent with all other definitions
+in the kernel which take unsigned long count.
 
-Add missing const qualifiers.
+Change io*_rep definitions to take unsigned long count instead of
+unsigned int.
 
 Signed-off-by: Hugo Lefeuvre <hle@owl.eu.com>
 ---
- include/asm-generic/iomap.h | 20 ++++++++++----------
- lib/iomap.c                 | 16 ++++++++--------
- 2 files changed, 18 insertions(+), 18 deletions(-)
+ include/asm-generic/io.h | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/include/asm-generic/iomap.h b/include/asm-generic/iomap.h
-index 7e26f21b466f..cd92d32a4d87 100644
---- a/include/asm-generic/iomap.h
-+++ b/include/asm-generic/iomap.h
-@@ -26,14 +26,14 @@
-  * in the low address range. Architectures for which this is not
-  * true can't use this generic implementation.
-  */
--extern unsigned int ioread8(void __iomem *addr);
--extern unsigned int ioread16(void __iomem *addr);
--extern unsigned int ioread16be(void __iomem *addr);
--extern unsigned int ioread32(void __iomem *addr);
--extern unsigned int ioread32be(void __iomem *addr);
-+extern unsigned int ioread8(const void __iomem *addr);
-+extern unsigned int ioread16(const void __iomem *addr);
-+extern unsigned int ioread16be(const void __iomem *addr);
-+extern unsigned int ioread32(const void __iomem *addr);
-+extern unsigned int ioread32be(const void __iomem *addr);
- #ifdef CONFIG_64BIT
--extern u64 ioread64(void __iomem *addr);
--extern u64 ioread64be(void __iomem *addr);
-+extern u64 ioread64(const void __iomem *addr);
-+extern u64 ioread64be(const void __iomem *addr);
- #endif
- 
- extern void iowrite8(u8 value, void __iomem *addr);
-@@ -57,9 +57,9 @@ extern void iowrite64be(u64 value, void __iomem *addr);
-  * memory across multiple ports, use "memcpy_toio()"
-  * and friends.
-  */
--extern void ioread8_rep(void __iomem *port, void *buf, unsigned long count);
--extern void ioread16_rep(void __iomem *port, void *buf, unsigned long count);
--extern void ioread32_rep(void __iomem *port, void *buf, unsigned long count);
-+extern void ioread8_rep(const void __iomem *port, void *buf, unsigned long count);
-+extern void ioread16_rep(const void __iomem *port, void *buf, unsigned long count);
-+extern void ioread32_rep(const void __iomem *port, void *buf, unsigned long count);
- 
- extern void iowrite8_rep(void __iomem *port, const void *buf, unsigned long count);
- extern void iowrite16_rep(void __iomem *port, const void *buf, unsigned long count);
-diff --git a/lib/iomap.c b/lib/iomap.c
-index 541d926da95e..8cc3270697e9 100644
---- a/lib/iomap.c
-+++ b/lib/iomap.c
-@@ -69,27 +69,27 @@ static void bad_io_access(unsigned long port, const char *access)
- #define mmio_read32be(addr) be32_to_cpu(__raw_readl(addr))
- #endif
- 
--unsigned int ioread8(void __iomem *addr)
-+unsigned int ioread8(const void __iomem *addr)
+diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
+index d356f802945a..345ae6a09bca 100644
+--- a/include/asm-generic/io.h
++++ b/include/asm-generic/io.h
+@@ -811,7 +811,7 @@ static inline void iowrite64be(u64 value, volatile void __iomem *addr)
+ #ifndef ioread8_rep
+ #define ioread8_rep ioread8_rep
+ static inline void ioread8_rep(const volatile void __iomem *addr, void *buffer,
+-			       unsigned int count)
++			       unsigned long count)
  {
- 	IO_COND(addr, return inb(port), return readb(addr));
- 	return 0xff;
+ 	readsb(addr, buffer, count);
  }
--unsigned int ioread16(void __iomem *addr)
-+unsigned int ioread16(const void __iomem *addr)
+@@ -820,7 +820,7 @@ static inline void ioread8_rep(const volatile void __iomem *addr, void *buffer,
+ #ifndef ioread16_rep
+ #define ioread16_rep ioread16_rep
+ static inline void ioread16_rep(const volatile void __iomem *addr,
+-				void *buffer, unsigned int count)
++				void *buffer, unsigned long count)
  {
- 	IO_COND(addr, return inw(port), return readw(addr));
- 	return 0xffff;
+ 	readsw(addr, buffer, count);
  }
--unsigned int ioread16be(void __iomem *addr)
-+unsigned int ioread16be(const void __iomem *addr)
+@@ -829,7 +829,7 @@ static inline void ioread16_rep(const volatile void __iomem *addr,
+ #ifndef ioread32_rep
+ #define ioread32_rep ioread32_rep
+ static inline void ioread32_rep(const volatile void __iomem *addr,
+-				void *buffer, unsigned int count)
++				void *buffer, unsigned long count)
  {
- 	IO_COND(addr, return pio_read16be(port), return mmio_read16be(addr));
- 	return 0xffff;
+ 	readsl(addr, buffer, count);
  }
--unsigned int ioread32(void __iomem *addr)
-+unsigned int ioread32(const void __iomem *addr)
+@@ -839,7 +839,7 @@ static inline void ioread32_rep(const volatile void __iomem *addr,
+ #ifndef ioread64_rep
+ #define ioread64_rep ioread64_rep
+ static inline void ioread64_rep(const volatile void __iomem *addr,
+-				void *buffer, unsigned int count)
++				void *buffer, unsigned long count)
  {
- 	IO_COND(addr, return inl(port), return readl(addr));
- 	return 0xffffffff;
+ 	readsq(addr, buffer, count);
  }
--unsigned int ioread32be(void __iomem *addr)
-+unsigned int ioread32be(const void __iomem *addr)
+@@ -850,7 +850,7 @@ static inline void ioread64_rep(const volatile void __iomem *addr,
+ #define iowrite8_rep iowrite8_rep
+ static inline void iowrite8_rep(volatile void __iomem *addr,
+ 				const void *buffer,
+-				unsigned int count)
++				unsigned long count)
  {
- 	IO_COND(addr, return pio_read32be(port), return mmio_read32be(addr));
- 	return 0xffffffff;
-@@ -193,15 +193,15 @@ static inline void mmio_outsl(void __iomem *addr, const u32 *src, int count)
+ 	writesb(addr, buffer, count);
  }
- #endif
- 
--void ioread8_rep(void __iomem *addr, void *dst, unsigned long count)
-+void ioread8_rep(const void __iomem *addr, void *dst, unsigned long count)
+@@ -860,7 +860,7 @@ static inline void iowrite8_rep(volatile void __iomem *addr,
+ #define iowrite16_rep iowrite16_rep
+ static inline void iowrite16_rep(volatile void __iomem *addr,
+ 				 const void *buffer,
+-				 unsigned int count)
++				 unsigned long count)
  {
- 	IO_COND(addr, insb(port,dst,count), mmio_insb(addr, dst, count));
+ 	writesw(addr, buffer, count);
  }
--void ioread16_rep(void __iomem *addr, void *dst, unsigned long count)
-+void ioread16_rep(const void __iomem *addr, void *dst, unsigned long count)
+@@ -870,7 +870,7 @@ static inline void iowrite16_rep(volatile void __iomem *addr,
+ #define iowrite32_rep iowrite32_rep
+ static inline void iowrite32_rep(volatile void __iomem *addr,
+ 				 const void *buffer,
+-				 unsigned int count)
++				 unsigned long count)
  {
- 	IO_COND(addr, insw(port,dst,count), mmio_insw(addr, dst, count));
+ 	writesl(addr, buffer, count);
  }
--void ioread32_rep(void __iomem *addr, void *dst, unsigned long count)
-+void ioread32_rep(const void __iomem *addr, void *dst, unsigned long count)
+@@ -881,7 +881,7 @@ static inline void iowrite32_rep(volatile void __iomem *addr,
+ #define iowrite64_rep iowrite64_rep
+ static inline void iowrite64_rep(volatile void __iomem *addr,
+ 				 const void *buffer,
+-				 unsigned int count)
++				 unsigned long count)
  {
- 	IO_COND(addr, insl(port,dst,count), mmio_insl(addr, dst, count));
+ 	writesq(addr, buffer, count);
  }
 -- 
 2.20.1
