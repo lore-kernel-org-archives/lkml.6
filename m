@@ -4,50 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D3CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8942EC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 411CC20449
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B04921901
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497903;
-	bh=ZaN8Xvp0931p9i0YBsp1beuZx0Crizs9oF4tzPPg6w4=;
+	s=default; t=1550497908;
+	bh=Io/nK3y6WRoOSlGTpWhLre7voXt5NvTnPmJI6XVLBRA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IbgsLsugYlVOO9W6TXqahrYGuC/X2kqqWesbZuLz430vm82lhHn3haY2fCFzj+czl
-	 S9g774WeNtPIqzBm19wHSNN1DW3xv/hB75mDjbiWKYHXH94yjKaSj7gz7hMMTOzkVg
-	 +M58xeFWMnkiZ9himLSU1fNsT+O4oqqf0S/Ix7SU=
+	b=uvxkl49c9txEGxXkCY2aP/sXjZ02d2TtoB3Gkyf8lwlHGq/VpaNrTDQ7VH44xAkol
+	 /BH7pb1uM3kx7kHgP9Q80Sou+IHYGBFeh2sg0D4IxgsQTX2Tp72HP+wOAJ4GjEABIf
+	 sO8j9170PTiD1eh+dwWS6TM8GpcH57jrdzQiGNHo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732471AbfBRNvm (ORCPT
+        id S1732495AbfBRNvq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:51:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59474 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:51:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732449AbfBRNvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:51:38 -0500
+        id S1732462AbfBRNvl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:51:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0163121905;
-        Mon, 18 Feb 2019 13:51:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90A2221901;
+        Mon, 18 Feb 2019 13:51:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497897;
-        bh=ZaN8Xvp0931p9i0YBsp1beuZx0Crizs9oF4tzPPg6w4=;
+        s=default; t=1550497901;
+        bh=Io/nK3y6WRoOSlGTpWhLre7voXt5NvTnPmJI6XVLBRA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jhcIoGecM7mSGv4YQg1LUvRHkG1H/WrTyuqnKIE2TIEpbTs6hDxtoO1O8uhpM+c08
-         1lPGPs9vYySijwfGOxtOYjk1bh46c/0nMlCUCOhKUmVCHSHklcrrqKv0QkkTGK9RRM
-         OdKy7EEi1tZ7f1EbeSYc5gc9sdhdKBlZdI7qnsr4=
+        b=hPiH7/oy6wbjOrH8LmCDYrzVaPpADxwOqD3XeSRWD54VKaJlRSN8twdhvhkVsUdxx
+         ySysf4lDAyh9kPyhcQmAlsmKonjpR5QB4pykOT/wXryeB4UAyOS5x4Dtt2NvxE0N61
+         qed2zu6xJb5eVvpTdiC1AJvyuqyQ/ReGjWHiGfSQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
+        stable@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        "David A. Long" <dave.long@linaro.org>,
+        Julien Thierry <julien.thierry@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 28/85] drm/bridge: tc358767: add bus flags
-Date:   Mon, 18 Feb 2019 14:42:54 +0100
-Message-Id: <20190218133502.817099167@linuxfoundation.org>
+Subject: [PATCH 4.19 19/85] ARM: ensure that processor vtables is not lost after boot
+Date:   Mon, 18 Feb 2019 14:42:45 +0100
+Message-Id: <20190218133501.719981367@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -66,38 +70,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 4842379cbe6e851de914a7132f76f4e200b9a98b ]
+Commit 3a4d0c2172bcf15b7a3d9d498b2b355f9864286b upstream.
 
-tc358767 driver does not set DRM bus_flags, even if it does configures
-the polarity settings into its registers. This means that the DPI source
-can't configure the polarities correctly.
+Marek Szyprowski reported problems with CPU hotplug in current kernels.
+This was tracked down to the processor vtables being located in an
+init section, and therefore discarded after kernel boot, despite being
+required after boot to properly initialise the non-boot CPUs.
 
-Add sync flags accordingly.
+Arrange for these tables to end up in .rodata when required.
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-2-tomi.valkeinen@ti.com
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
+Fixes: 383fb3ee8024 ("ARM: spectre-v2: per-CPU vtables to work around big.Little systems")
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: David A. Long <dave.long@linaro.org>
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Tested-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/bridge/tc358767.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/mm/proc-macros.S | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index 8e28e738cb52..29a7e33e8ae0 100644
---- a/drivers/gpu/drm/bridge/tc358767.c
-+++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -1195,6 +1195,10 @@ static int tc_bridge_attach(struct drm_bridge *bridge)
+diff --git a/arch/arm/mm/proc-macros.S b/arch/arm/mm/proc-macros.S
+index 81d0efb055c6..19516fbc2c55 100644
+--- a/arch/arm/mm/proc-macros.S
++++ b/arch/arm/mm/proc-macros.S
+@@ -274,6 +274,13 @@
+ 	.endm
  
- 	drm_display_info_set_bus_formats(&tc->connector.display_info,
- 					 &bus_format, 1);
-+	tc->connector.display_info.bus_flags =
-+		DRM_BUS_FLAG_DE_HIGH |
-+		DRM_BUS_FLAG_PIXDATA_NEGEDGE |
-+		DRM_BUS_FLAG_SYNC_NEGEDGE;
- 	drm_connector_attach_encoder(&tc->connector, tc->bridge.encoder);
+ .macro define_processor_functions name:req, dabort:req, pabort:req, nommu=0, suspend=0, bugs=0
++/*
++ * If we are building for big.Little with branch predictor hardening,
++ * we need the processor function tables to remain available after boot.
++ */
++#if 1 // defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
++	.section ".rodata"
++#endif
+ 	.type	\name\()_processor_functions, #object
+ 	.align 2
+ ENTRY(\name\()_processor_functions)
+@@ -309,6 +316,9 @@ ENTRY(\name\()_processor_functions)
+ 	.endif
  
- 	return 0;
+ 	.size	\name\()_processor_functions, . - \name\()_processor_functions
++#if 1 // defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
++	.previous
++#endif
+ .endm
+ 
+ .macro define_cache_functions name:req
 -- 
 2.19.1
 
