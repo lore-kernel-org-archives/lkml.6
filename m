@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 403EFC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 216BEC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:05:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E97221902
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:05:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E52B321901
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:05:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498755;
-	bh=1p2m4t3XZaWE5sUwsqLw3y5dK9qIqU85jYRTYn5dbf4=;
+	s=default; t=1550498758;
+	bh=2mY/HG+Z2IIbNG8FGG9jjQtEwWorK3Kq6J7WcUrthPY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EQ32yK78AYhKR+UQaJu3bXwhA3Qzuxf3yy0Wm3HX2HrkngS5FPPqa5CGRtqi757Tv
-	 Vi/N/1tftPeKWeebR1XCsAAyWhtBzpdxdCik5I8qvDhUsuT5xm8qgS0n8glyl5XK4U
-	 l5PYig5kPCAngKGzlx6S78p+LovLZ4ZU19vrcSgQ=
+	b=zDnbh4JHxdrruDW0vnKkoQiSXQ86SFhsi4+Zn+UTHaHemBEvTQuDgwyBbhzOLnK9M
+	 FpndKGANNClX32tX/we5szeLR8GWyNqu4h9qdn63iL2gZVPRo9xvlqulqLFxk8Wn8Q
+	 Mg94P7UPMN4QFENascgEn1dDOmXR24QQmR+XDbbM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388620AbfBROFx (ORCPT
+        id S2390286AbfBROF4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:05:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48782 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:05:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390242AbfBROFu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:05:50 -0500
+        id S2390260AbfBROFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:05:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 067E1204FD;
-        Mon, 18 Feb 2019 14:05:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5FF4204FD;
+        Mon, 18 Feb 2019 14:05:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498749;
-        bh=1p2m4t3XZaWE5sUwsqLw3y5dK9qIqU85jYRTYn5dbf4=;
+        s=default; t=1550498752;
+        bh=2mY/HG+Z2IIbNG8FGG9jjQtEwWorK3Kq6J7WcUrthPY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VRDdZ4zFWhQ5o5/JxP0mPV0UKJLixzOJczXTXr3ySWm8nhilrsArYJXTfNdFm1Eqv
-         pd+Mpco8G2otEd5SWimD8wPjUIZKUkigZpuAdjWddzI1XuMPwtAUMcLkOfac/5aa50
-         SJU3DWrH/lZahX/uF60ndodtEUV3WD59ZWwkh3tg=
+        b=xvM5Ta/G+0M55/ftgTmtUZHZ8MXEfGZKQ2SuXGZEDPI1K8RL7aiCgvVfcIdvsObzc
+         UJTEX+LBq2RfkH7DqFKScWd8jRk58kpUe8JJmSL/gfWIeeGLRURb0iAPLFlbYSHQzA
+         XrwuSIp7qkfBpUAIEvqM5oAKaVSVL+B77ajtV4iI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Thomas Hellstrom <thellstrom@vmware.com>,
         Deepak Rawat <drawat@vmware.com>
-Subject: [PATCH 4.4 109/143] drm/vmwgfx: Fix setting of dma masks
-Date:   Mon, 18 Feb 2019 14:43:57 +0100
-Message-Id: <20190218133533.010186785@linuxfoundation.org>
+Subject: [PATCH 4.4 110/143] drm/vmwgfx: Return error code from vmw_execbuf_copy_fence_user
+Date:   Mon, 18 Feb 2019 14:43:58 +0100
+Message-Id: <20190218133533.049404361@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -66,42 +66,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Hellstrom <thellstrom@vmware.com>
 
-commit 4cbfa1e6c09e98450aab3240e5119b0ab2c9795b upstream.
+commit 728354c005c36eaf44b6e5552372b67e60d17f56 upstream.
 
-Previously we set only the dma mask and not the coherent mask. Fix that.
-Also, for clarity, make sure both are initially set to 64 bits.
+The function was unconditionally returning 0, and a caller would have to
+rely on the returned fence pointer being NULL to detect errors. However,
+the function vmw_execbuf_copy_fence_user() would expect a non-zero error
+code in that case and would BUG otherwise.
+
+So make sure we return a proper non-zero error code if the fence pointer
+returned is NULL.
 
 Cc: <stable@vger.kernel.org>
-Fixes: 0d00c488f3de: ("drm/vmwgfx: Fix the driver for large dma addresses")
+Fixes: ae2a104058e2: ("vmwgfx: Implement fence objects")
 Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
 Reviewed-by: Deepak Rawat <drawat@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-@@ -594,13 +594,16 @@ out_fixup:
- static int vmw_dma_masks(struct vmw_private *dev_priv)
- {
- 	struct drm_device *dev = dev_priv->dev;
-+	int ret = 0;
- 
--	if (intel_iommu_enabled &&
-+	ret = dma_set_mask_and_coherent(dev->dev, DMA_BIT_MASK(64));
-+	if (dev_priv->map_mode != vmw_dma_phys &&
- 	    (sizeof(unsigned long) == 4 || vmw_restrict_dma_mask)) {
- 		DRM_INFO("Restricting DMA addresses to 44 bits.\n");
--		return dma_set_mask(dev->dev, DMA_BIT_MASK(44));
-+		return dma_set_mask_and_coherent(dev->dev, DMA_BIT_MASK(44));
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+@@ -3663,7 +3663,7 @@ int vmw_execbuf_fence_commands(struct dr
+ 		*p_fence = NULL;
  	}
+ 
 -	return 0;
-+
 +	return ret;
  }
- #else
- static int vmw_dma_masks(struct vmw_private *dev_priv)
+ 
+ /**
 
 
