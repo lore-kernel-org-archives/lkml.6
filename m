@@ -2,129 +2,97 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F9EC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 435FBC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:50:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 472742176F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:50:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12F722176F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:50:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dgk6Skko"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730267AbfBRKuc (ORCPT
+        id S1730312AbfBRKuu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 05:50:32 -0500
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:52423 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728258AbfBRKuc (ORCPT
+        Mon, 18 Feb 2019 05:50:50 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42015 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728258AbfBRKuu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 05:50:32 -0500
-X-Originating-IP: 90.88.30.68
-Received: from localhost (aaubervilliers-681-1-89-68.w90-88.abo.wanadoo.fr [90.88.30.68])
-        (Authenticated sender: antoine.tenart@bootlin.com)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id F28BF4001B;
-        Mon, 18 Feb 2019 10:50:27 +0000 (UTC)
-Date:   Mon, 18 Feb 2019 11:50:27 +0100
-From:   Antoine Tenart <antoine.tenart@bootlin.com>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
-        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
-        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
-        mw@semihalf.com
-Subject: Re: [PATCH net-next 10/13] net: mvpp2: reset the XPCS while
- reconfiguring the serdes lanes
-Message-ID: <20190218105027.GC3784@kwain>
-References: <20190215153241.6857-1-antoine.tenart@bootlin.com>
- <20190215153241.6857-11-antoine.tenart@bootlin.com>
- <20190215171224.sjfrid5csseywuks@shell.armlinux.org.uk>
- <20190218102630.GA3784@kwain>
- <20190218104302.bp6ccmpkt26dflyx@shell.armlinux.org.uk>
+        Mon, 18 Feb 2019 05:50:50 -0500
+Received: by mail-wr1-f65.google.com with SMTP id r5so4428819wrg.9
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 02:50:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=aS3pn+FwO9e/L96l1q5GR2QSJA56tlCPGB22Banj6Dw=;
+        b=Dgk6Skko9GsFD0mcudXrG04MKcVYNkihFXasB2fqsiLvRxuck2gewPVRDdiUHIpdLA
+         mnXLXsSYIHPVrIrrDz7DRwZ+lAf9H9iB5zxHfxN11xxbmz9GKOIrwpqa61ajzGmLA0qh
+         68DhjobONdawx1wEOZCycF2BbTRwTejckluNO8LPXiJatoIIFhYB1bReoL5/h2nuE/f7
+         INmxzTaSnScZKBquhV+G59Lsit9TvqgwzIlPshpksZzMnQ00MCfrHJ5UK2FT6uy12JL4
+         poRMKi529e951w/tvsoI06AVrhWvMQawO6pEazE1fAwQQAaKuP+VG60040ZPDNHLs2R9
+         Vbxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=aS3pn+FwO9e/L96l1q5GR2QSJA56tlCPGB22Banj6Dw=;
+        b=EhbLvw0mM5p/g2SRvquNwiM04v7vLh6PmB3xJLRfwIlJF6OEwlQ7g3txpbOCI+RuxL
+         fNbUo02YsycgBIzZ59HKs4YuLVmnUZnra/fmhHg0XNp2C1Nzy/YdNh3ZMzpaU3fbVA0r
+         dtLdgY90cKcZPnqaG4lybWZGu63NEGXdl0h76oPRGK0JExNIRbn1r2AfudIaoBETh2oN
+         K2X2To5y4K1zq4Xq9b4+UqpDXS+dA1WcrZEnibTVx77hjG7Rq81PDFtk8Q+yVbltf1VI
+         K0sasbHN+SK9n+LJPOkQVs2n9E1/3wHi2j6t9wdNlXe10w6R6xzzDVz6fwfKKkN78LoZ
+         XunQ==
+X-Gm-Message-State: AHQUAuaRwIHBGX+wOXw9Z3BspA4hWgrQ6jFNd5kPdmF8dWnyuZUnS4Iw
+        3Z4YqxCCx/cLMLOf74u5tcqUKA==
+X-Google-Smtp-Source: AHgI3IYNs/h8krv9CzyRnk7cIkNdzuI64vf9d1Ac/qGJhfux3UPLXK2iHgWB4zvH421oHoPAElIzZw==
+X-Received: by 2002:a5d:5351:: with SMTP id t17mr10493701wrv.73.1550487048409;
+        Mon, 18 Feb 2019 02:50:48 -0800 (PST)
+Received: from [192.168.0.41] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
+        by smtp.googlemail.com with ESMTPSA id b8sm2310542wmj.35.2019.02.18.02.50.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Feb 2019 02:50:47 -0800 (PST)
+Subject: Re: [PATCH] clocksource: exynos_mct: Remove unused header includes
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+References: <1550484598-1952-1-git-send-email-krzk@kernel.org>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <1d6a2fd0-60e1-cf36-e9fe-23de07e76019@linaro.org>
+Date:   Mon, 18 Feb 2019 11:50:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <1550484598-1952-1-git-send-email-krzk@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190218104302.bp6ccmpkt26dflyx@shell.armlinux.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Russell,
+On 18/02/2019 11:09, Krzysztof Kozlowski wrote:
+> The driver does not use sched.h and platform_device.h.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
 
-On Mon, Feb 18, 2019 at 10:43:02AM +0000, Russell King - ARM Linux admin wrote:
-> On Mon, Feb 18, 2019 at 11:26:30AM +0100, Antoine Tenart wrote:
-> > On Fri, Feb 15, 2019 at 05:12:24PM +0000, Russell King - ARM Linux admin wrote:
-> > > On Fri, Feb 15, 2019 at 04:32:38PM +0100, Antoine Tenart wrote:
-> > > > The documentation advises to set the XPCS in reset while reconfiguring
-> > > > the serdes lanes. This seems to be a good thing to do, but the PPv2
-> > > > driver wasn't doing it. This patch fixes it.
-> > > 
-> > > Hmm.  That statment seems to have some ambiguity in it - we do two
-> > > "reconfigurations" - one may be upon initialisation, where the lane
-> > > is already configured for 10Gbase-KR, and we're re-initialising it
-> > > for the same mode.  The other case is when we're switching between
-> > > 10Gbase-KR and SGMII, or as will be the case with 2.5G support for
-> > > the Alaska PHYs, 2500base-X.
-> > 
-> > The configuration at the lane at boot time is dependent to the
-> > firmware or bootloader configuration. On the mcbin, the lane may be
-> > configured in 10Gbase-KR, but it could be configured in SGMII as well.
-> > The configuration upon initialization and the re-configuration are quite
-> > similar then, as we might change mode as well at boot time.
-> > 
-> > You're right in that we might be re-configuring the lane for the same
-> > exact mode at boot time, if it was already configured in the same mode.
-> > 
-> > > Does this apply to reconfiguration of the serdes lane between
-> > > 10Gbase-KR and slower modes?
-> > 
-> > This applies only when configuring a line in a 10G mode,
-> > mvpp22_gop_init_10gkr isn't called otherwise.
-> > 
-> > When switching to an non-10G mode we might want to put the XPCS in reset
-> > though, which is not done today with this patch.
-> 
-> I'm merely pointing out the discrepency between the commit message and
-> what is actually being done.  I'm not particularly concerned about what
-> happens at boot.
-> 
-> We have four different transitions a port can go through, all of which
-> reconfigure the serdes lanes:
-> 
-> 1. 10gkr -> 10gkr
-> 2. 10gkr -> non-10gkr
-> 3. non-10gkr -> non-10gkr
-> 4. non-10gkr -> 10gkr
-> 
-> With this patch, XPCS is only placed into reset during the
-> reconfiguration for cases 1 and 4.  Case 3 doesn't matter (the XPCS
-> should already be in reset right?)  Case 2 isn't covered, and this
-> leaves a rather big hole.
-> 
-> It seems to me that if the documentation states that the XPCS needs to
-> be placed in reset while the serdes is reconfigured, then what should
-> be happening is:
-> 
-> - at boot, place the XPCS into reset.
-> - when we configure for 10gkr, release the reset once we've finished
->   configuring the serdes.
-> - when we configure away from 10gkr, place the XPCS back into reset
->   before configuring the serdes.
-> 
-> Merely placing the XPCS into reset while we configure the serdes for
-> 10gkr doesn't seem to be "fixing" the driver to conform to your commit
-> message opening statement.
+Applied for 5.1
 
-That's right, we should put the XPCS in reset when booting and when
-switching away from a 10G mode. I'll fix that in v2.
+Thanks
 
-Antoine
 
 -- 
-Antoine Ténart, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+ <http://www.linaro.org/> Linaro.org â”‚ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
