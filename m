@@ -2,88 +2,73 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B5DAC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 12:01:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A60DC10F01
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 12:02:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E0652147C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 12:01:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 456232147C
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 12:02:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730326AbfBRMBy (ORCPT
+        id S1730461AbfBRMCL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 07:01:54 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52200 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727084AbfBRMBx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 07:01:53 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9CCB3C03DFE1;
-        Mon, 18 Feb 2019 12:01:53 +0000 (UTC)
-Received: from gondolin (ovpn-116-217.ams2.redhat.com [10.36.116.217])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 80D7010027DE;
-        Mon, 18 Feb 2019 12:01:50 +0000 (UTC)
-Date:   Mon, 18 Feb 2019 13:01:47 +0100
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.ibm.com>
-Cc:     pmorel@linux.ibm.com, borntraeger@de.ibm.com,
-        alex.williamson@redhat.com, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        frankja@linux.ibm.com, pasic@linux.ibm.com, david@redhat.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        freude@linux.ibm.com, mimu@linux.ibm.com
-Subject: Re: [PATCH v3 1/9] s390: vfio_ap: link the vfio_ap devices to the
- vfio_ap bus subsystem
-Message-ID: <20190218130147.5ed3edbe.cohuck@redhat.com>
-In-Reply-To: <f38c99e6-bb25-9179-e4cd-20ba8482111f@linux.ibm.com>
-References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
-        <1550152269-6317-2-git-send-email-pmorel@linux.ibm.com>
-        <20190214155441.087d2a68.cohuck@redhat.com>
-        <9403117a-04a6-8f69-2a61-f96d35a59555@linux.ibm.com>
-        <20190214175730.4ab609ae.cohuck@redhat.com>
-        <9200b1f8-874f-ffa7-bef0-19ca570d7ac1@linux.ibm.com>
-        <eac03540-a499-fa0f-1a4a-b5cc99030775@linux.ibm.com>
-        <20190215101118.5417d725.cohuck@redhat.com>
-        <f38c99e6-bb25-9179-e4cd-20ba8482111f@linux.ibm.com>
-Organization: Red Hat GmbH
+        Mon, 18 Feb 2019 07:02:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56848 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727084AbfBRMCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 07:02:11 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D435AAF1B;
+        Mon, 18 Feb 2019 12:02:09 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 82E1E1E088D; Mon, 18 Feb 2019 13:02:09 +0100 (CET)
+Date:   Mon, 18 Feb 2019 13:02:09 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Meelis Roos <mroos@linux.ee>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>, linux-alpha@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, linux-block@vger.kernel.org,
+        Jan Kara <jack@suse.cz>
+Subject: Re: ext4 corruption on alpha with 4.20.0-09062-gd8372ba8ce28
+Message-ID: <20190218120209.GC20919@quack2.suse.cz>
+References: <fb63a4d0-d124-21c8-7395-90b34b57c85a@linux.ee>
+ <1c26eab4-3277-9066-5dce-6734ca9abb96@linux.ee>
+ <076b8b72-fab0-ea98-f32f-f48949585f9d@linux.ee>
+ <20190216174536.GC23000@mit.edu>
+ <e175b885-082a-97c1-a0be-999040a06443@linux.ee>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 18 Feb 2019 12:01:53 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e175b885-082a-97c1-a0be-999040a06443@linux.ee>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 15 Feb 2019 16:59:33 -0500
-Tony Krowiak <akrowiak@linux.ibm.com> wrote:
-
-> On 2/15/19 4:11 AM, Cornelia Huck wrote:
-> > On Thu, 14 Feb 2019 13:30:59 -0500
-> > Tony Krowiak <akrowiak@linux.ibm.com> wrote:
-> >   
-> >> On 2/14/19 12:36 PM, Pierre Morel wrote:  
-> >>> On 14/02/2019 17:57, Cornelia Huck wrote:  
-
-> >>>> (And reading further in the current code, it seems we clear that
-> >>>> structure _after_ the matrix device had been setup, so how can that
-> >>>> even work? Where am I confused?)  
-> >>>
-> >>> On device_register there were no bus, so the core just do not look for a
-> >>> driver and this field was nor tested nor overwritten.  
+On Sun 17-02-19 00:29:40, Meelis Roos wrote:
+> > > The result of the bisection is
+> > > [88dbcbb3a4847f5e6dfeae952d3105497700c128] blkdev: avoid migration stalls for blkdev pages
+> > > 
+> > > Is that result relevant for the problem or should I continue bisecting between 4.20.0 and the so far first bad commit?
 > > 
-> > Hm... so has the callback in driver_for_each_device() in
-> > vfio_ap_verify_queue_reserved() ever been invoked at all? It seems this
-> > patch fixes more than just libudev issues...  
+> > Can you try reverting the commit and see if it makes the problem go away?
 > 
-> It is this patch that rendered the driver_for_each_device() in
-> vfio_ap_verify_queue_reserved() erroneous. That function gets called
-> every time an adapter or domain is assigned to the mdev. This patch
-> introduced the problem with driver_for_each_device().
+> Tried reverting it on top of 5.0.0-rc6-00153-g5ded5871030e and it seems
+> to make the kernel work - emerge --sync succeeded.
+> 
+> Unfinished further bisection has also not yielded any other bad revisions
+> so far.
 
-So, does this function need to be removed or called from another place,
-then? (It looks like it was dead code before.)
+Hum, weird. I have hard time understanding how that change could be causing
+fs corruption on Aplha but OTOH it is not completely unthinkable. With this
+commit we may migrate some block device pages we were not able to migrate
+previously and that could be causing some unexpected issue. I'll look into
+this.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
