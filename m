@@ -2,97 +2,69 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5BEFC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:12:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A477C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:15:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F80A217F9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:12:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA5EA2085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:15:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550513520;
-	bh=aIDLe6snRWr8wWaVZkz/A5HyMyS0EJorB2VBSt292KI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1WfONgbKBZK6/NJDPYSp5sj8s33qUKL3oS682qHkmf8ibz2ppgpKZPbxZ/PqhAVhF
-	 CVcbt/y1meaXQq/MtEz51eH4a2gxFvmsgmmqNCl6n4vYPAfpkE9vq8qr3f7lhvxwOQ
-	 S+7gc7YeJbNVA9UcYpoQruqgSP4vRKMnfD6apHOs=
+	s=default; t=1550513704;
+	bh=TIoIcT0AHcVjT0/AD3rYdzXunPYu8q1Dta0bt9ZKN18=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=pQpENeuQeYym0dv4Rs86RcPhRuVGu3Xa7aXiMMYY60EksBXuU9eXbnghxaaGtcRMZ
+	 zGGjtJKTvR50RKI892Al7t63BdQs8i7fXMUmg7f+bibBqWCPL0XiPoxzL30Y1A1fgb
+	 27zJP/FIC39+2rueW+xncVDxZuDgQO9Xo9W6c4sM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390137AbfBRSL6 (ORCPT
+        id S2390780AbfBRSPD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:11:58 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41956 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387881AbfBRSL6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:11:58 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E0754AC4C;
-        Mon, 18 Feb 2019 18:11:56 +0000 (UTC)
-Date:   Mon, 18 Feb 2019 19:11:55 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Mike Rapoport <rppt@linux.ibm.com>,
-        Rong Chen <rong.a.chen@intel.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        linux-kernel@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>, LKP <lkp@01.org>,
-        Oscar Salvador <osalvador@suse.de>
-Subject: Re: [LKP] efad4e475c [ 40.308255] Oops: 0000 [#1] PREEMPT SMP PTI
-Message-ID: <20190218181155.GC4525@dhcp22.suse.cz>
-References: <20190218070844.GC4525@dhcp22.suse.cz>
- <20190218085510.GC7251@dhcp22.suse.cz>
- <4c75d424-2c51-0d7d-5c28-78c15600e93c@intel.com>
- <20190218103013.GK4525@dhcp22.suse.cz>
- <20190218140515.GF25446@rapoport-lnx>
- <20190218152050.GS4525@dhcp22.suse.cz>
- <20190218152213.GT4525@dhcp22.suse.cz>
- <20190218164813.GG25446@rapoport-lnx>
- <20190218170558.GV4525@dhcp22.suse.cz>
- <20190218175726.GU12668@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190218175726.GU12668@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 18 Feb 2019 13:15:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38026 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732601AbfBRSPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 13:15:03 -0500
+Subject: Re: [GIT PULL] Mailbox fixes for v5.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550513702;
+        bh=TIoIcT0AHcVjT0/AD3rYdzXunPYu8q1Dta0bt9ZKN18=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=WQzHhJV3Qm47I5oKYqQZ6MdZ4nmkJQrLGGPIaIFUQDH6qdc81d5hZOwwB1zgPZqGZ
+         FIBIJY5dyac3dFmd3MtC4oR1K3tik2j/H+pTNBO/nJAVb54p9pbrB9fVzjfTUGWHsE
+         55flB65S97lxcW373L1HE+gpDCT2mKlhG9tuARpU=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CABb+yY2SrgwFNgKa4+ossU3i3U76m2sa63r1=QsRg=PGGWAPxw@mail.gmail.com>
+References: <CABb+yY2SrgwFNgKa4+ossU3i3U76m2sa63r1=QsRg=PGGWAPxw@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CABb+yY2SrgwFNgKa4+ossU3i3U76m2sa63r1=QsRg=PGGWAPxw@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.linaro.org/landing-teams/working/fujitsu/integration.git
+ tags/mailbox-fixes-v5.0-rc7
+X-PR-Tracked-Commit-Id: d7bf31a0f85faaf63c63c39d55154825a1eaaea9
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 301e361072e56a6d6afbf952ae5e746dc8bbb865
+Message-Id: <155051370246.15678.3936601576340770886.pr-tracker-bot@kernel.org>
+Date:   Mon, 18 Feb 2019 18:15:02 +0000
+To:     Jassi Brar <jassisinghbrar@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 18-02-19 09:57:26, Matthew Wilcox wrote:
-> On Mon, Feb 18, 2019 at 06:05:58PM +0100, Michal Hocko wrote:
-> > +	end_pfn = min(start_pfn + nr_pages,
-> > +			zone_end_pfn(page_zone(pfn_to_page(start_pfn))));
-> >  
-> >  	/* Check the starting page of each pageblock within the range */
-> > -	for (; page < end_page; page = next_active_pageblock(page)) {
-> > -		if (!is_pageblock_removable_nolock(page))
-> > +	for (; start_pfn < end_pfn; start_pfn = next_active_pageblock(start_pfn)) {
-> > +		if (!is_pageblock_removable_nolock(start_pfn))
-> 
-> If you have a zone which contains pfns that run from ULONG_MAX-n to ULONG_MAX,
-> end_pfn is going to wrap around to 0 and this loop won't execute.
+The pull request you sent on Mon, 18 Feb 2019 11:01:57 -0600:
 
-Is this a realistic situation to bother?
+> git://git.linaro.org/landing-teams/working/fujitsu/integration.git tags/mailbox-fixes-v5.0-rc7
 
-> I think
-> you should use:
-> 
-> 	max_pfn = min(start_pfn + nr_pages,
-> 			zone_end_pfn(page_zone(pfn_to_page(start_pfn)))) - 1;
-> 
-> 	for (; start_pfn <= max_pfn; ...)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/301e361072e56a6d6afbf952ae5e746dc8bbb865
 
-I do not really care strongly, but we have more places were we do
-start_pfn + nr_pages and then use it as pfn < end_pfn construct. I
-suspect we would need to make a larger audit and make the code
-consistent so unless there are major concerns I would stick with what
-I have for now and leave the rest for the cleanup. Does that sound
-reasonable?
+Thank you!
 
 -- 
-Michal Hocko
-SUSE Labs
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
