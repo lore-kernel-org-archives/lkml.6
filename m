@@ -4,54 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64298C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9891AC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27F4321906
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6850021905
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497891;
-	bh=xHVH6HlfYOmHAIH0PcmV7RCdr7m3ixFIi37swglZnMc=;
+	s=default; t=1550497895;
+	bh=7KaUl2gvYXcq3EzUhU2kQqSkmMPxfcpbmgdLO+kf7XA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IgGXU792RiRMK8jWwn9sFgzfOxetAQydisrIGr5Yh+F7IsAl9YexVbIQa52KcORho
-	 nZLC6qD7gnL/taOgKt5wZpfsQHL7g0VbFtR5r6G0XUod7945GZGMsnel5LRrVbaFq1
-	 HZwKwuBQtHFb2l+H6BbSPpuwk3IukvEtL0SF1Mms=
+	b=QycVsVjwlBruBGbyz5l3F1Xk2vJqawg8dwzEQ8EsQ4pHweQAX78qjn8CSS+kWkITo
+	 X3+WiHxRl3KPHkAg9e7nRZN51W0lZAOEC0Pd3Cg39xuJZhG8cwOzcIuKNlzctRthI4
+	 LwXxcmG4FqwjNdgivobAdkuj1i6maUl6nCl4AetE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732431AbfBRNv3 (ORCPT
+        id S1732440AbfBRNve (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:51:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59228 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:51:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732396AbfBRNvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:51:23 -0500
+        id S1731926AbfBRNvc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:51:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0C2B21904;
-        Mon, 18 Feb 2019 13:51:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B9FA221905;
+        Mon, 18 Feb 2019 13:51:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497882;
-        bh=xHVH6HlfYOmHAIH0PcmV7RCdr7m3ixFIi37swglZnMc=;
+        s=default; t=1550497891;
+        bh=7KaUl2gvYXcq3EzUhU2kQqSkmMPxfcpbmgdLO+kf7XA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=frVMqwaMW1hTWpHWIb2B7DSeZuZOulh3hXQlCATsHnteH/TDsTgoE+2my3QLXO2KA
-         ZqZAgYYT6SqLzWAUjhPBMkQ8o3ZOV+jPNw1O4xYRjls+Dpx1gelQ4EN/0rKUqavjNR
-         aRmeVRERWyb3qXPC+jsLEzTy0MD5MVXWdf07HQDE=
+        b=quOug3QSwGg9JJreZqtHUnZhDVrlg9EN8jXSuckoEGabEyd4jqMFwwKMO3g1ClmMq
+         IOGJdBgIX4sLRiaEaEw1WFStQAhfohEKWw8ov0rOTuOgGkLOGKa49AzCb1uqRuPeXz
+         sJQW/yRuOOC8eRkErJL1+fGOaGtMfiJqrDyEcnak=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jin Yao <yao.jin@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org,
+        David Abdurachmanov <david.abdurachmanov@gmail.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 23/85] perf report: Fix wrong iteration count in --branch-history
-Date:   Mon, 18 Feb 2019 14:42:49 +0100
-Message-Id: <20190218133502.144952478@linuxfoundation.org>
+Subject: [PATCH 4.19 26/85] riscv: fix trace_sys_exit hook
+Date:   Mon, 18 Feb 2019 14:42:52 +0100
+Message-Id: <20190218133502.544125934@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -70,223 +67,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a3366db06bb656cef2e03f30f780d93059bcc594 ]
+[ Upstream commit 775800b0f1d7303d4fd8ce0e0d9eca4ff2f338f2 ]
 
-By calculating the removed loops, we can get the iteration count.
+Fix compilation error.
 
-But the iteration count could be reported incorrectly, reporting
-impossibly high counts.
-
-That's because previous code uses the number of removed LBR entries for
-the iteration count. That's not good. Fix this by increasing the
-iteration count when a loop is detected.
-
-When matching the chain, the iteration count would be added up, finally we need
-to compute the average value when printing out.
-
-For example,
-
-  $ perf report --branch-history --stdio --no-children
-
-Before:
-
-  ---f2 +0
-     |
-     |--33.62%--f1 +9 (cycles:1)
-     |          f1 +0
-     |          main +22 (cycles:1)
-     |          main +17
-     |          main +38 (cycles:1)
-     |          main +27
-     |          f1 +26 (cycles:1)
-     |          f1 +24
-     |          f2 +27 (cycles:7)
-     |          f2 +0
-     |          f1 +19 (cycles:1)
-     |          f1 +14
-     |          f2 +27 (cycles:11)
-     |          f2 +0
-     |          f1 +9 (cycles:1 iter:2968 avg_cycles:3)
-     |          f1 +0
-     |          main +22 (cycles:1 iter:2968 avg_cycles:3)
-     |          main +17
-     |          main +38 (cycles:1 iter:2968 avg_cycles:3)
-
-2968 is an impossible high iteration count and avg_cycles is too small.
-
-After:
-
-  ---f2 +0
-     |
-     |--33.62%--f1 +9 (cycles:1)
-     |          f1 +0
-     |          main +22 (cycles:1)
-     |          main +17
-     |          main +38 (cycles:1)
-     |          main +27
-     |          f1 +26 (cycles:1)
-     |          f1 +24
-     |          f2 +27 (cycles:7)
-     |          f2 +0
-     |          f1 +19 (cycles:1)
-     |          f1 +14
-     |          f2 +27 (cycles:11)
-     |          f2 +0
-     |          f1 +9 (cycles:1 iter:1 avg_cycles:23)
-     |          f1 +0
-     |          main +22 (cycles:1 iter:1 avg_cycles:23)
-     |          main +17
-     |          main +38 (cycles:1 iter:1 avg_cycles:23)
-
-avg_cycles:23 is the average cycles of this iteration.
-
-Fixes: c4ee06251d42 ("perf report: Calculate the average cycles of iterations")
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1546582230-17507-1-git-send-email-yao.jin@linux.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: David Abdurachmanov <david.abdurachmanov@gmail.com>
+Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/callchain.c | 32 ++++++++++++++++++++------------
- tools/perf/util/callchain.h |  1 +
- tools/perf/util/machine.c   |  2 +-
- 3 files changed, 22 insertions(+), 13 deletions(-)
+ arch/riscv/kernel/ptrace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
-index 32ef7bdca1cf..dc2212e12184 100644
---- a/tools/perf/util/callchain.c
-+++ b/tools/perf/util/callchain.c
-@@ -766,6 +766,7 @@ static enum match_result match_chain(struct callchain_cursor_node *node,
- 			cnode->cycles_count += node->branch_flags.cycles;
- 			cnode->iter_count += node->nr_loop_iter;
- 			cnode->iter_cycles += node->iter_cycles;
-+			cnode->from_count++;
- 		}
- 	}
+diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
+index 9f82a7e34c64..9db7d0076375 100644
+--- a/arch/riscv/kernel/ptrace.c
++++ b/arch/riscv/kernel/ptrace.c
+@@ -120,6 +120,6 @@ void do_syscall_trace_exit(struct pt_regs *regs)
  
-@@ -1345,10 +1346,10 @@ static int branch_to_str(char *bf, int bfsize,
- static int branch_from_str(char *bf, int bfsize,
- 			   u64 branch_count,
- 			   u64 cycles_count, u64 iter_count,
--			   u64 iter_cycles)
-+			   u64 iter_cycles, u64 from_count)
- {
- 	int printed = 0, i = 0;
--	u64 cycles;
-+	u64 cycles, v = 0;
- 
- 	cycles = cycles_count / branch_count;
- 	if (cycles) {
-@@ -1357,14 +1358,16 @@ static int branch_from_str(char *bf, int bfsize,
- 				bf + printed, bfsize - printed);
- 	}
- 
--	if (iter_count) {
--		printed += count_pri64_printf(i++, "iter",
--				iter_count,
--				bf + printed, bfsize - printed);
-+	if (iter_count && from_count) {
-+		v = iter_count / from_count;
-+		if (v) {
-+			printed += count_pri64_printf(i++, "iter",
-+					v, bf + printed, bfsize - printed);
- 
--		printed += count_pri64_printf(i++, "avg_cycles",
--				iter_cycles / iter_count,
--				bf + printed, bfsize - printed);
-+			printed += count_pri64_printf(i++, "avg_cycles",
-+					iter_cycles / iter_count,
-+					bf + printed, bfsize - printed);
-+		}
- 	}
- 
- 	if (i)
-@@ -1377,6 +1380,7 @@ static int counts_str_build(char *bf, int bfsize,
- 			     u64 branch_count, u64 predicted_count,
- 			     u64 abort_count, u64 cycles_count,
- 			     u64 iter_count, u64 iter_cycles,
-+			     u64 from_count,
- 			     struct branch_type_stat *brtype_stat)
- {
- 	int printed;
-@@ -1389,7 +1393,8 @@ static int counts_str_build(char *bf, int bfsize,
- 				predicted_count, abort_count, brtype_stat);
- 	} else {
- 		printed = branch_from_str(bf, bfsize, branch_count,
--				cycles_count, iter_count, iter_cycles);
-+				cycles_count, iter_count, iter_cycles,
-+				from_count);
- 	}
- 
- 	if (!printed)
-@@ -1402,13 +1407,14 @@ static int callchain_counts_printf(FILE *fp, char *bf, int bfsize,
- 				   u64 branch_count, u64 predicted_count,
- 				   u64 abort_count, u64 cycles_count,
- 				   u64 iter_count, u64 iter_cycles,
-+				   u64 from_count,
- 				   struct branch_type_stat *brtype_stat)
- {
- 	char str[256];
- 
- 	counts_str_build(str, sizeof(str), branch_count,
- 			 predicted_count, abort_count, cycles_count,
--			 iter_count, iter_cycles, brtype_stat);
-+			 iter_count, iter_cycles, from_count, brtype_stat);
- 
- 	if (fp)
- 		return fprintf(fp, "%s", str);
-@@ -1422,6 +1428,7 @@ int callchain_list_counts__printf_value(struct callchain_list *clist,
- 	u64 branch_count, predicted_count;
- 	u64 abort_count, cycles_count;
- 	u64 iter_count, iter_cycles;
-+	u64 from_count;
- 
- 	branch_count = clist->branch_count;
- 	predicted_count = clist->predicted_count;
-@@ -1429,11 +1436,12 @@ int callchain_list_counts__printf_value(struct callchain_list *clist,
- 	cycles_count = clist->cycles_count;
- 	iter_count = clist->iter_count;
- 	iter_cycles = clist->iter_cycles;
-+	from_count = clist->from_count;
- 
- 	return callchain_counts_printf(fp, bf, bfsize, branch_count,
- 				       predicted_count, abort_count,
- 				       cycles_count, iter_count, iter_cycles,
--				       &clist->brtype_stat);
-+				       from_count, &clist->brtype_stat);
+ #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
+ 	if (test_thread_flag(TIF_SYSCALL_TRACEPOINT))
+-		trace_sys_exit(regs, regs->regs[0]);
++		trace_sys_exit(regs, regs_return_value(regs));
+ #endif
  }
- 
- static void free_callchain_node(struct callchain_node *node)
-diff --git a/tools/perf/util/callchain.h b/tools/perf/util/callchain.h
-index 154560b1eb65..99d38ac019b8 100644
---- a/tools/perf/util/callchain.h
-+++ b/tools/perf/util/callchain.h
-@@ -118,6 +118,7 @@ struct callchain_list {
- 		bool		has_children;
- 	};
- 	u64			branch_count;
-+	u64			from_count;
- 	u64			predicted_count;
- 	u64			abort_count;
- 	u64			cycles_count;
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index d7403d1207d7..b1508ce3e412 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -1988,7 +1988,7 @@ static void save_iterations(struct iterations *iter,
- {
- 	int i;
- 
--	iter->nr_loop_iter = nr;
-+	iter->nr_loop_iter++;
- 	iter->cycles = 0;
- 
- 	for (i = 0; i < nr; i++)
 -- 
 2.19.1
 
