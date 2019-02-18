@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD45AC4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A51C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DEF9217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D79192177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550515777;
-	bh=FTBPbaPV5AfbGpUtx43+ePkqVlO443VfbUe6v309n7w=;
+	s=default; t=1550515780;
+	bh=I/tS1M3b5ySesCipRj3YCueHYB3IjNRSh74UJw4Nqb4=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=Q55z58dWlRucJIdyQ1ltfwSbMO/94UQMNLNa1rucm11vD8MfpM4Ordi16vMUO2qVy
-	 B2Qvntt2/hOv8of8t17ght/QttxEtqt4RKl1QajXa6ZYnNHXwrqFIHZJj5Cpjo0/JJ
-	 SFr41CVmivtaaqur9csnzsBPyOp8AqyBODQpNWKM=
+	b=qskSJDUP/p6ZxS0T1c8yIIjTmmPKsJ6yCjRIohd8xAml3auNEvVAREDMgAvmEZr5C
+	 jtXY8OqguS7GQbyB/OKZvHt/lVyrRqdM1XtuZM2t3OO8PMDqJMhqaWvcKyqwZzVz4Z
+	 pqUA9AaXRN+icRz3GNgwfCg3QIiG/DRhgJR9eLgU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726202AbfBRStf (ORCPT
+        id S1726307AbfBRStj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:49:35 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41874 "EHLO
+        Mon, 18 Feb 2019 13:49:39 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41840 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726122AbfBRStf (ORCPT
+        with ESMTP id S1725832AbfBRStf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 18 Feb 2019 13:49:35 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -34,28 +34,34 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=V462IumyxR+y3sckXpOoKDQDxLViaSTjuv8PZIOQYrY=; b=nKNJO4Ql9l7m
-        ToYw2mjeNOMaziy8puI88Wc7lZwHpIah3Wd90+VCAAM9nfRTns6/DT46Z/XvnikZcbXZIc1XaH2Lr
-        zopvpVQuWbPlueENTRHFcB5+M3EJEagmcyFDqew4231JTp5/icl9yaEp3QvJnECk4tqcpMOqUKpNp
-        C4sLM=;
+        List-Archive; bh=a4RStyqL0UfseD8kB7ojNjyPlgcCXXilGpt7LZX1HH4=; b=eLgdrugzd5cJ
+        cX6onjmRCk172QpPY7IvojH2azM0jmylq/UbUHwfOoTjRLYNzVofBfpApau+/C+u8XsJLrYAkuQ7S
+        7Ni48MLB90fBNo6agWCCjGzdhYC6XCN7gs3Zegfqg8JcUy1AVy++9SlUCR2HXaMi7j3Fpx4JXAoUD
+        u1Kk8=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gvnyr-0001dw-Uc; Mon, 18 Feb 2019 18:49:29 +0000
+        id 1gvnyk-0001dp-Ma; Mon, 18 Feb 2019 18:49:22 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 5EFF41128008; Mon, 18 Feb 2019 18:49:24 +0000 (GMT)
+        id 395091128008; Mon, 18 Feb 2019 18:49:22 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Cheng-Yi Chiang <cychiang@chromium.org>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, tzungbi@chromium.org,
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     James Schulman <james.schulman@cirrus.com>,
         Mark Brown <broonie@kernel.org>,
-        Rohit kumar <rohitkr@codeaurora.org>, dgreid@chromium.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: qcom: Kconfig: select dmic for sdm845" to the asoc tree
-In-Reply-To:  <20190218041819.115729-1-cychiang@chromium.org>
+        Brian Austin <brian.austin@cirrus.com>,
+        Paul Handrigan <Paul.Handrigan@cirrus.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        James Schulman <james.schulman@cirrus.com>,
+        kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: cs35l36: Make some symbols static" to the asoc tree
+In-Reply-To:  <20190218074653.181365-1-weiyongjun1@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190218184924.5EFF41128008@debutante.sirena.org.uk>
-Date:   Mon, 18 Feb 2019 18:49:24 +0000 (GMT)
+Message-Id: <20190218184922.395091128008@debutante.sirena.org.uk>
+Date:   Mon, 18 Feb 2019 18:49:22 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -63,7 +69,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: qcom: Kconfig: select dmic for sdm845
+   ASoC: cs35l36: Make some symbols static
 
 has been applied to the asoc tree at
 
@@ -88,31 +94,70 @@ to this mail.
 Thanks,
 Mark
 
-From 74c6ecf4194ebed285b29964a950e0cd7414fe19 Mon Sep 17 00:00:00 2001
-From: Cheng-Yi Chiang <cychiang@chromium.org>
-Date: Mon, 18 Feb 2019 12:18:19 +0800
-Subject: [PATCH] ASoC: qcom: Kconfig: select dmic for sdm845
+From b2c02c63ac254530cffe3a7dc7d4e433da1b3a67 Mon Sep 17 00:00:00 2001
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 18 Feb 2019 07:46:53 +0000
+Subject: [PATCH] ASoC: cs35l36: Make some symbols static
 
-sdm845 uses dmic on EC so it should select CROS_EC_CODEC.
+Fixes the following sparse warnings:
 
-Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
+sound/soc/codecs/cs35l36.c:135:20: warning:
+ symbol 'cs35l36_reg' was not declared. Should it be static?
+sound/soc/codecs/cs35l36.c:248:6: warning:
+ symbol 'cs35l36_readable_reg' was not declared. Should it be static?
+sound/soc/codecs/cs35l36.c:398:6: warning:
+ symbol 'cs35l36_precious_reg' was not declared. Should it be static?
+sound/soc/codecs/cs35l36.c:410:6: warning:
+ symbol 'cs35l36_volatile_reg' was not declared. Should it be static?
+
+Fixes: 6ba9dd6c893b ("ASoC: cs35l36: Add support for Cirrus CS35L36 Amplifier")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Acked-by: James Schulman <james.schulman@cirrus.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/qcom/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/codecs/cs35l36.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/qcom/Kconfig b/sound/soc/qcom/Kconfig
-index 7948e993adba..8f206cb4fcc0 100644
---- a/sound/soc/qcom/Kconfig
-+++ b/sound/soc/qcom/Kconfig
-@@ -103,6 +103,7 @@ config SND_SOC_SDM845
- 	select SND_SOC_QCOM_COMMON
- 	select SND_SOC_RT5663
- 	select SND_SOC_MAX98927
-+	select SND_SOC_CROS_EC_CODEC
- 	help
- 	  To add support for audio on Qualcomm Technologies Inc.
- 	  SDM845 SoC-based systems.
+diff --git a/sound/soc/codecs/cs35l36.c b/sound/soc/codecs/cs35l36.c
+index e374fffb7e17..dc8cf61b9db8 100644
+--- a/sound/soc/codecs/cs35l36.c
++++ b/sound/soc/codecs/cs35l36.c
+@@ -131,7 +131,7 @@ static const struct cs35l36_pll_config cs35l36_pll_sysclk[] = {
+ 	{27000000,	0x3F, 0x0A},
+ };
+ 
+-struct reg_default cs35l36_reg[] = {
++static struct reg_default cs35l36_reg[] = {
+ 	{CS35L36_TESTKEY_CTRL,			0x00000000},
+ 	{CS35L36_USERKEY_CTL,			0x00000000},
+ 	{CS35L36_OTP_CTRL1,			0x00002460},
+@@ -244,7 +244,7 @@ struct reg_default cs35l36_reg[] = {
+ 	{CS35L36_PAC_INT7_CTRL,			0x00000001},
+ };
+ 
+-bool cs35l36_readable_reg(struct device *dev, unsigned int reg)
++static bool cs35l36_readable_reg(struct device *dev, unsigned int reg)
+ {
+ 	switch (reg) {
+ 	case CS35L36_SW_RESET:
+@@ -394,7 +394,7 @@ bool cs35l36_readable_reg(struct device *dev, unsigned int reg)
+ 	}
+ }
+ 
+-bool cs35l36_precious_reg(struct device *dev, unsigned int reg)
++static bool cs35l36_precious_reg(struct device *dev, unsigned int reg)
+ {
+ 	switch (reg) {
+ 	case CS35L36_TESTKEY_CTRL:
+@@ -406,7 +406,7 @@ bool cs35l36_precious_reg(struct device *dev, unsigned int reg)
+ 	}
+ }
+ 
+-bool cs35l36_volatile_reg(struct device *dev, unsigned int reg)
++static bool cs35l36_volatile_reg(struct device *dev, unsigned int reg)
+ {
+ 	switch (reg) {
+ 	case CS35L36_SW_RESET:
 -- 
 2.20.1
 
