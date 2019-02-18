@@ -2,63 +2,61 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DFACC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:53:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18055C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:54:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE28220823
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:53:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDD16218AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:54:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="hJ4YsDHk";
-	dkim=pass (1024-bit key) header.d=marvell.onmicrosoft.com header.i=@marvell.onmicrosoft.com header.b="v9bPsV2O"
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="MmZXWJpg";
+	dkim=pass (1024-bit key) header.d=marvell.onmicrosoft.com header.i=@marvell.onmicrosoft.com header.b="FKzBpwsq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730198AbfBRJxz (ORCPT
+        id S1729802AbfBRJyK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 04:53:55 -0500
-Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:56050 "EHLO
+        Mon, 18 Feb 2019 04:54:10 -0500
+Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:56036 "EHLO
         mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729951AbfBRJwi (ORCPT
+        by vger.kernel.org with ESMTP id S1729626AbfBRJwh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 04:52:38 -0500
+        Mon, 18 Feb 2019 04:52:37 -0500
 Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-        by mx0b-0016f401.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1I9qEYK025113;
-        Mon, 18 Feb 2019 01:52:27 -0800
+        by mx0b-0016f401.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1I9qE5b025142;
+        Mon, 18 Feb 2019 01:52:22 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pfpt0818;
- bh=2EzC6rX36BewKhRwnhCbiJLmyghA4rQx8aJY3zkElXA=;
- b=hJ4YsDHk+CaHgl5UZDfIbShzp7ouoi7/qaRR6rZtfTFVwWQVg2pA16nXgm1TbugNRvL9
- k/ykwDZeMFLwY0jeVTqoIlQ/x7HJS4rKQObbjHiWxfusg/mO9BiBJtwoZ9+KovcPYfIi
- lmdq3x07r+RuMZ6WgxXTLiaI1gYKp/V2bI8873uBKMLLh5Que06WWuNvq03/nKAO+Z6P
- VMPTaY3SMCvBMufPayN+Xpx10jmkNyH1Z4wgieqenV9IdpsqFbHhD195e3acpjOi55og
- Pmo0OxJ9rBuc1zkPEGASDbDFFEEwXq3Pk3kqYzCxwmDn0SYFhLIc+bja1P13eqvbIWLG aQ== 
-Received: from sc-exch03.marvell.com ([199.233.58.183])
-        by mx0b-0016f401.pphosted.com with ESMTP id 2qpjwpw13t-13
+ subject : date : message-id : content-type : content-transfer-encoding :
+ mime-version; s=pfpt0818; bh=LOE+25pPYfmKDG7wyiqm+Gv37rqQ2rPnP33iBRu+YPA=;
+ b=MmZXWJpgnVcnDW/6jTWLJYgBoH8y8X4EjGtf9mFePyi+4FN5oS/xpMdra0eKOkBQ+fck
+ LYwWQsuisoi1jo+BlUkx3MjoidYepOvX5DPT1zGFzKGDwwWJr+UUKCrhfBbr7ZXormkq
+ FtMpXguMq4P5UE8UFbHv/17oyfYqTf/+dGJ9Xi5sVY/2ikf7qqDdd7BzaRvJvnCQH3D9
+ 8EQ+lBKS35AVLSQA/Z4eIfzue0fri3QSMPui8i0NR1LEBMA52xdJZtEvz7Pf5JFJxELJ
+ sd0gLNVjYGdOkHzATcHIdrOuCQGFytB9zVr3IGWGtfm3KmUTiNx/ypBAPjOCwT0gFmQi wA== 
+Received: from sc-exch02.marvell.com ([199.233.58.182])
+        by mx0b-0016f401.pphosted.com with ESMTP id 2qpjwpw14e-4
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 18 Feb 2019 01:52:27 -0800
-Received: from SC-EXCH02.marvell.com (10.93.176.82) by SC-EXCH03.marvell.com
- (10.93.176.83) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Mon, 18 Feb
- 2019 01:52:18 -0800
+        Mon, 18 Feb 2019 01:52:22 -0800
+Received: from SC-EXCH02.marvell.com (10.93.176.82) by SC-EXCH02.marvell.com
+ (10.93.176.82) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Mon, 18 Feb
+ 2019 01:52:17 -0800
 Received: from NAM02-CY1-obe.outbound.protection.outlook.com (104.47.37.51) by
  SC-EXCH02.marvell.com (10.93.176.82) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Mon, 18 Feb 2019 01:52:17 -0800
+ 15.0.1367.3 via Frontend Transport; Mon, 18 Feb 2019 01:52:16 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=marvell.onmicrosoft.com; s=selector1-marvell-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2EzC6rX36BewKhRwnhCbiJLmyghA4rQx8aJY3zkElXA=;
- b=v9bPsV2O2oFlaJe0CHJlNwa1T3vu5LLzaKbBEkOr0cc2ipTIxvK/cHFKMsjaEb9q9+0ExJv7i51j4jY4v2RvdAWbOMtBx8kWAMdNBlSdt4gclDFsjIDWLMgQ+3vqM6kupURdQ5IOLZPTzD7B7N5+4PnXDU/hwTUrfWnYAo3YhHg=
+ bh=LOE+25pPYfmKDG7wyiqm+Gv37rqQ2rPnP33iBRu+YPA=;
+ b=FKzBpwsqyDlDt7VIbZrHbhvcaZnYNXodLRTgRmdJqRWTfrc2Ib4dCDGdyM1QMc0+BUZ4dUNTQxNOAu+Xr1//Z5cDT4q/2Ovywm7b4zosM/6IoGXPFHj5YCWKQnWZ+JAkDpFkSTOh0m6ya4UcyMmgKccOKOyFgvgJuaUDUj+F/HQ=
 Received: from CY4PR18MB1112.namprd18.prod.outlook.com (10.173.183.147) by
  CY4PR18MB0968.namprd18.prod.outlook.com (10.173.182.149) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.18; Mon, 18 Feb 2019 09:52:15 +0000
+ 15.20.1622.18; Mon, 18 Feb 2019 09:52:14 +0000
 Received: from CY4PR18MB1112.namprd18.prod.outlook.com
  ([fe80::7561:d13b:e106:12b4]) by CY4PR18MB1112.namprd18.prod.outlook.com
  ([fe80::7561:d13b:e106:12b4%4]) with mapi id 15.20.1622.020; Mon, 18 Feb 2019
- 09:52:15 +0000
+ 09:52:14 +0000
 From:   Vadim Lomovtsev <vlomovtsev@marvell.com>
 To:     "sgoutham@cavium.com" <sgoutham@cavium.com>,
         "rric@kernel.org" <rric@kernel.org>,
@@ -68,38 +66,35 @@ To:     "sgoutham@cavium.com" <sgoutham@cavium.com>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 CC:     "dnelson@redhat.com" <dnelson@redhat.com>,
-        Vadim Lomovtsev <vlomovtsev@marvell.com>
-Subject: [PATCH v2 2/8] net: thunderx: replace global nicvf_rx_mode_wq work
- queue for all VFs to private for each of them.
-Thread-Topic: [PATCH v2 2/8] net: thunderx: replace global nicvf_rx_mode_wq
- work queue for all VFs to private for each of them.
-Thread-Index: AQHUx2+g6lBtaeFQ70ypcYaA7yT7zA==
-Date:   Mon, 18 Feb 2019 09:52:14 +0000
-Message-ID: <20190218095159.3847-3-vlomovtsev@marvell.com>
-References: <20190218095159.3847-1-vlomovtsev@marvell.com>
-In-Reply-To: <20190218095159.3847-1-vlomovtsev@marvell.com>
+        Vadim Lomovtsev <vadim.lomovtsev@auriga.com>
+Subject: [PATCH v2 0/8] nic: thunderx: fix communication races between VF & PF
+Thread-Topic: [PATCH v2 0/8] nic: thunderx: fix communication races between VF
+ & PF
+Thread-Index: AQHUx2+f14WSblrWyUeOACPWjEMbhA==
+Date:   Mon, 18 Feb 2019 09:52:13 +0000
+Message-ID: <20190218095159.3847-1-vlomovtsev@marvell.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [4.28.12.78]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 9e5b7fba-5813-4aff-2041-08d69586c36d
+x-ms-office365-filtering-correlation-id: af0bf6d2-8447-42b3-ab8d-08d69586c29c
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:CY4PR18MB0968;
 x-ms-traffictypediagnostic: CY4PR18MB0968:
-x-microsoft-exchange-diagnostics: 1;CY4PR18MB0968;20:dAQbKszDcWfSW/khALleLFjR2BuoBZXnnnXWNwAwNDxkUYAYM6CITXOFzmMM3hlSjF1FCvbc6NG5tE3fgiwVOIwiq25KiGxnfXCl3TftYZOvU8DPw76Z86UxAFfNvlW2oHXeMwBrFl0gcuvfMifxuddMTs315nnQm5PSX32bYYc=
-x-microsoft-antispam-prvs: <CY4PR18MB0968E6A91019899A99A88CFECD630@CY4PR18MB0968.namprd18.prod.outlook.com>
+x-microsoft-exchange-diagnostics: 1;CY4PR18MB0968;20:XdMQGaIdin1AL9UUoBgdamPlUnkf5O586ESAvSTdEHaqaW+Yfytnj+YP+vJXGWZYKp6YxsYvS1Yn8pBXVEVwVXxL3lLsIK+JucQxUh29D0pXxQ5E4zXKlyEsQy5EWwitpvwt3rjkGuBVfUYqrO4vkb2NfZSB0W6mfoQsnJuNKwQ=
+x-microsoft-antispam-prvs: <CY4PR18MB096855017E7FCBC4A0D5AA0ECD630@CY4PR18MB0968.namprd18.prod.outlook.com>
 x-forefront-prvs: 09525C61DB
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39850400004)(396003)(376002)(366004)(346002)(136003)(199004)(189003)(486006)(7736002)(305945005)(316002)(4326008)(110136005)(54906003)(25786009)(99286004)(8936002)(476003)(5660300002)(186003)(2616005)(76176011)(81166006)(81156014)(6436002)(446003)(11346002)(14454004)(2906002)(8676002)(71190400001)(71200400001)(14444005)(6506007)(256004)(68736007)(1076003)(2501003)(2201001)(36756003)(6486002)(53936002)(86362001)(106356001)(102836004)(26005)(97736004)(3846002)(105586002)(66066001)(6116002)(478600001)(6512007)(107886003);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR18MB0968;H:CY4PR18MB1112.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39850400004)(396003)(376002)(366004)(346002)(136003)(199004)(189003)(486006)(7736002)(305945005)(316002)(4326008)(110136005)(54906003)(25786009)(99286004)(8936002)(476003)(5660300002)(186003)(2616005)(81166006)(81156014)(6436002)(14454004)(2906002)(8676002)(71190400001)(71200400001)(6506007)(256004)(68736007)(1076003)(2501003)(2201001)(36756003)(6486002)(53936002)(86362001)(106356001)(102836004)(26005)(97736004)(3846002)(105586002)(66066001)(6116002)(478600001)(6512007);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR18MB0968;H:CY4PR18MB1112.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: marvell.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: OJWzW/spQReM2YJZ9HTW9kJ2L+0yLMv9eZU1bcNOIn5a1522EpDQwkuIUmglCDAgBmVmrTEHomVpDXMQFbgOkZcL5gm0Qq2fgHoZh274uASeR2csmYyBH5kzRGc7qcSkTKuwkX5HRBi9jhso2bTdp2sbF5RyC3/B4LPv4fuulPFTb8R6YceSa9Flnv3BArkDIkRGs/HyktQtLL5wJdU05igw88UU3Cr8lDzxq+2Cf89jBwGVEe0+o1FTzg4T03t8vu+3ttTgOuLocwKl/1ZeP17wUVHn+itlrvmiwSMpcz3hUf4NAvSRLrBcPR+HW3hQoGVAmqO0aWdFVDb4X1Q0WRkNMwjiUBD0KChCU9pmumbg00PMrqp3mZT2kzPOuiAF1vHlYVH9fHlAh+amRUCE5RfCxpe37SnX/ZJiUHe+NIE=
+x-microsoft-antispam-message-info: XY2CEShGRlgs1ZLm/+FEyvHWDBLNERPou2nYUHWfvbTBZIrkvui8I0HJieNGNVDxiaOfewOfL/Vn+lSR801djugZImwOoVTkzqi31Iklp8ALIjBavaZKLNgq5z/5IZJU0U/VnkSi7XJ5M5ggdzNIAbH/Lujb0hBmeaH1HZQxxU8qRa18d3cHvRaZj4XDPq51PRKj4R12iydT5GFntcGWmaK3VwLHpKjKPNnOjt8qZ9JSZbY3vg3b9VXhsyBQA1OJiDLXx7BhQbAdJz++McZdp8nt8oLjUBwQYQQVrxcNHGn0pOwJI1656FITUqY5TH2iW5TzjylC2j8Ejee+teeyTduWx8mNM3ITQEbzw05CrQIBPmsoAilXJ1MIP0B0+8qoTEQYI1FFEPCynuI+atkQC03V3J+beQECpn27vpOdY+A=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e5b7fba-5813-4aff-2041-08d69586c36d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2019 09:52:14.6620
+X-MS-Exchange-CrossTenant-Network-Message-Id: af0bf6d2-8447-42b3-ab8d-08d69586c29c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2019 09:52:13.9695
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
@@ -111,161 +106,56 @@ X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019
 X-Proofpoint-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=846 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=407 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1902180075
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Having one work queue for receive mode configuration ndo_set_rx_mode()
-call for all VFs results in making each of them wait till the
-set_rx_mode() call completes for another VF if any of close, set
-receive mode and change flags calls being already invoked. Potentially
-this could cause device state change before appropriate call of receive
-mode configuration completes, so the call itself became meaningless,
-corrupt data or break configuration sequence.
+From: Vadim Lomovtsev <vadim.lomovtsev@auriga.com>
 
-We don't need any delays in NIC VF configuration sequence so having delayed
-work call with 0 delay has no sense.
+The ThunderX CN88XX NIC Virtual Function driver uses mailbox interface=20
+to communicate to physical function driver. Each of VF has it's own pair
+of mailbox registers to read from and write to. The mailbox registers
+has no protection from possible races, so it has to be implemented
+at software side.
 
-This commit is to implement one work queue for each NIC VF for set_rx_mode
-task and to let them work independently and replacing delayed_work
-with work_struct.
+After long term testing by loop of 'ip link set <ifname> up/down'
+command it was found that there are two possible scenarios when
+race condition appears:
+ 1. VF receives link change message from PF and VF send RX mode
+configuration message to PF in the same time from separate thread.
+ 2. PF receives RX mode configuration from VF and in the same time,
+in separate thread PF detects link status change and sends appropriate
+message to particular VF.
 
-Signed-off-by: Vadim Lomovtsev <vlomovtsev@marvell.com>
----
- drivers/net/ethernet/cavium/thunder/nic.h     |  4 ++-
- .../net/ethernet/cavium/thunder/nicvf_main.c  | 30 ++++++++++---------
- 2 files changed, 19 insertions(+), 15 deletions(-)
+Both cases leads to mailbox data to be rewritten, NIC VF messaging control
+data to be updated incorrectly and communication sequence gets broken.
 
-diff --git a/drivers/net/ethernet/cavium/thunder/nic.h b/drivers/net/ethern=
-et/cavium/thunder/nic.h
-index f4d81765221e..376a96bce33f 100644
---- a/drivers/net/ethernet/cavium/thunder/nic.h
-+++ b/drivers/net/ethernet/cavium/thunder/nic.h
-@@ -271,7 +271,7 @@ struct xcast_addr_list {
- };
-=20
- struct nicvf_work {
--	struct delayed_work    work;
-+	struct work_struct     work;
- 	u8                     mode;
- 	struct xcast_addr_list *mc;
- };
-@@ -327,6 +327,8 @@ struct nicvf {
- 	struct nicvf_work       rx_mode_work;
- 	/* spinlock to protect workqueue arguments from concurrent access */
- 	spinlock_t              rx_mode_wq_lock;
-+	/* workqueue for handling kernel ndo_set_rx_mode() calls */
-+	struct workqueue_struct *nicvf_rx_mode_wq;
-=20
- 	/* PTP timestamp */
- 	struct cavium_ptp	*ptp_clock;
-diff --git a/drivers/net/ethernet/cavium/thunder/nicvf_main.c b/drivers/net=
-/ethernet/cavium/thunder/nicvf_main.c
-index 88f8a8fa93cd..abf24e7dff2d 100644
---- a/drivers/net/ethernet/cavium/thunder/nicvf_main.c
-+++ b/drivers/net/ethernet/cavium/thunder/nicvf_main.c
-@@ -68,9 +68,6 @@ module_param(cpi_alg, int, 0444);
- MODULE_PARM_DESC(cpi_alg,
- 		 "PFC algorithm (0=3Dnone, 1=3DVLAN, 2=3DVLAN16, 3=3DIP Diffserv)");
-=20
--/* workqueue for handling kernel ndo_set_rx_mode() calls */
--static struct workqueue_struct *nicvf_rx_mode_wq;
--
- static inline u8 nicvf_netdev_qidx(struct nicvf *nic, u8 qidx)
- {
- 	if (nic->sqs_mode)
-@@ -1311,6 +1308,9 @@ int nicvf_stop(struct net_device *netdev)
- 	struct nicvf_cq_poll *cq_poll =3D NULL;
- 	union nic_mbx mbx =3D {};
-=20
-+	/* wait till all queued set_rx_mode tasks completes */
-+	drain_workqueue(nic->nicvf_rx_mode_wq);
-+
- 	mbx.msg.msg =3D NIC_MBOX_MSG_SHUTDOWN;
- 	nicvf_send_msg_to_pf(nic, &mbx);
-=20
-@@ -1418,6 +1418,9 @@ int nicvf_open(struct net_device *netdev)
- 	struct nicvf_cq_poll *cq_poll =3D NULL;
- 	union nic_mbx mbx =3D {};
-=20
-+	/* wait till all queued set_rx_mode tasks completes if any */
-+	drain_workqueue(nic->nicvf_rx_mode_wq);
-+
- 	netif_carrier_off(netdev);
-=20
- 	err =3D nicvf_register_misc_interrupt(nic);
-@@ -1973,7 +1976,7 @@ static void __nicvf_set_rx_mode_task(u8 mode, struct =
-xcast_addr_list *mc_addrs,
- static void nicvf_set_rx_mode_task(struct work_struct *work_arg)
- {
- 	struct nicvf_work *vf_work =3D container_of(work_arg, struct nicvf_work,
--						  work.work);
-+						  work);
- 	struct nicvf *nic =3D container_of(vf_work, struct nicvf, rx_mode_work);
- 	u8 mode;
- 	struct xcast_addr_list *mc;
-@@ -2030,7 +2033,7 @@ static void nicvf_set_rx_mode(struct net_device *netd=
-ev)
- 	kfree(nic->rx_mode_work.mc);
- 	nic->rx_mode_work.mc =3D mc_list;
- 	nic->rx_mode_work.mode =3D mode;
--	queue_delayed_work(nicvf_rx_mode_wq, &nic->rx_mode_work.work, 0);
-+	queue_work(nic->nicvf_rx_mode_wq, &nic->rx_mode_work.work);
- 	spin_unlock(&nic->rx_mode_wq_lock);
- }
-=20
-@@ -2187,7 +2190,10 @@ static int nicvf_probe(struct pci_dev *pdev, const s=
-truct pci_device_id *ent)
-=20
- 	INIT_WORK(&nic->reset_task, nicvf_reset_task);
-=20
--	INIT_DELAYED_WORK(&nic->rx_mode_work.work, nicvf_set_rx_mode_task);
-+	nic->nicvf_rx_mode_wq =3D alloc_ordered_workqueue("nicvf_rx_mode_wq_VF%d"=
-,
-+							WQ_MEM_RECLAIM,
-+							nic->vf_id);
-+	INIT_WORK(&nic->rx_mode_work.work, nicvf_set_rx_mode_task);
- 	spin_lock_init(&nic->rx_mode_wq_lock);
-=20
- 	err =3D register_netdev(netdev);
-@@ -2228,13 +2234,15 @@ static void nicvf_remove(struct pci_dev *pdev)
- 	nic =3D netdev_priv(netdev);
- 	pnetdev =3D nic->pnicvf->netdev;
-=20
--	cancel_delayed_work_sync(&nic->rx_mode_work.work);
--
- 	/* Check if this Qset is assigned to different VF.
- 	 * If yes, clean primary and all secondary Qsets.
- 	 */
- 	if (pnetdev && (pnetdev->reg_state =3D=3D NETREG_REGISTERED))
- 		unregister_netdev(pnetdev);
-+	if (nic->nicvf_rx_mode_wq) {
-+		destroy_workqueue(nic->nicvf_rx_mode_wq);
-+		nic->nicvf_rx_mode_wq =3D NULL;
-+	}
- 	nicvf_unregister_interrupts(nic);
- 	pci_set_drvdata(pdev, NULL);
- 	if (nic->drv_stats)
-@@ -2261,17 +2269,11 @@ static struct pci_driver nicvf_driver =3D {
- static int __init nicvf_init_module(void)
- {
- 	pr_info("%s, ver %s\n", DRV_NAME, DRV_VERSION);
--	nicvf_rx_mode_wq =3D alloc_ordered_workqueue("nicvf_generic",
--						   WQ_MEM_RECLAIM);
- 	return pci_register_driver(&nicvf_driver);
- }
-=20
- static void __exit nicvf_cleanup_module(void)
- {
--	if (nicvf_rx_mode_wq) {
--		destroy_workqueue(nicvf_rx_mode_wq);
--		nicvf_rx_mode_wq =3D NULL;
--	}
- 	pci_unregister_driver(&nicvf_driver);
- }
-=20
+This patch series is to address race condition with VF & PF communication.
+
+Vadim Lomovtsev (8):
+  net: thunderx: correct typo in macro name
+  net: thunderx: replace global nicvf_rx_mode_wq work queue for all VFs
+    to private for each of them.
+  net: thunderx: make CFG_DONE message to run through generic send-ack
+    sequence
+  net: thunderx: add nicvf_send_msg_to_pf result check for
+    set_rx_mode_task
+  net: thunderx: rework xcast message structure to make it fit into 64
+    bit
+  net: thunderx: add mutex to protect mailbox from concurrent calls for
+    same VF
+  net: thunderx: add LINK_CHANGE message handler at nicpf
+  net: thunderx: remove link change polling code and info from nicpf
+
+ drivers/net/ethernet/cavium/thunder/nic.h     |  14 +-
+ .../net/ethernet/cavium/thunder/nic_main.c    | 149 ++++++------------
+ .../net/ethernet/cavium/thunder/nicvf_main.c  | 133 +++++++++++-----
+ .../net/ethernet/cavium/thunder/thunder_bgx.c |   2 +-
+ .../net/ethernet/cavium/thunder/thunder_bgx.h |   2 +-
+ 5 files changed, 147 insertions(+), 153 deletions(-)
+
 --=20
 2.17.2
