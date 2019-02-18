@@ -2,112 +2,116 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A36C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4941C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:23:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DFCD20643
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:23:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499836;
-	bh=M3nDQ8y5l5celtxDdRYx8vnM5uOTT6/6PRv1K9amscU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HbTJpihRXwe2DSlmb5pBpispYLg8jf3KBCJuWZpxo2YHfjwVqhAM2cbLaXqjs8h7L
-	 X8pQ7M7evKPOOwPrexIY3H+sTfEh+HjN/KIr0p5154FFWS9falu7Xn/ECl3CnBTLAS
-	 WtTu+/gDHSt+tb6bMEe9rNOeJBNqNRvCJyqvDFLw=
+	by mail.kernel.org (Postfix) with ESMTP id 9219621902
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:23:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=essensium-com.20150623.gappssmtp.com header.i=@essensium-com.20150623.gappssmtp.com header.b="KJPSI94h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389883AbfBROEI (ORCPT
+        id S2389881AbfBROEH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:04:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46292 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389060AbfBROD6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:03:58 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C09122070B;
-        Mon, 18 Feb 2019 14:03:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498638;
-        bh=M3nDQ8y5l5celtxDdRYx8vnM5uOTT6/6PRv1K9amscU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NP6ySWVt6YRb07zp8TEomyWF49Rb7HB2EZVb0GLbYd0iwqbF8+DU3d2nuJbKiO+eI
-         kTV6Ws9FmQmFfOkAOu1DTOHYYJFjyR/cVHGDCapHvIdS2LQLKeYT8lhC4KxjnUfl6d
-         z7nzU3xNXS8GoslO+r8n/DiYaPGZr45ZUQgW0zW4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 050/143] video: clps711x-fb: release disp device node in probe()
-Date:   Mon, 18 Feb 2019 14:42:58 +0100
-Message-Id: <20190218133530.957152565@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
-References: <20190218133529.099444112@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 18 Feb 2019 09:04:07 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:43485 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389801AbfBROD5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:03:57 -0500
+Received: by mail-ed1-f67.google.com with SMTP id m35so9950773ede.10
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 06:03:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=essensium-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=TMKsmtSeB2s1AaZbZadZjj3xF8b5OyVicGrn8cs6Cxc=;
+        b=KJPSI94h/3tr09gSDgWJ5ok7TSJC7JE/SFp+CPCPi5fV/xhzlIP8m+1T5aj3kNAVCS
+         xawDKsAC8POcScc1qfEU3Mx7JR/0TIz2paMShO/Y2zlRdoxPpLXQcVNXOi1BkhNbvT5t
+         k0Dsnts9zdDl5ya7+AE5PYVl1eet6ZUddv22gxrkx+FfPCHE1QFt1rqHB425oMLtX2dH
+         DLj9oeRh/NaIiuETNkVr+lgZUDEJeC/mlCLreb/nV4Sgwr66LdO2XTOmd/gnnQ92GugB
+         s6PgCWxnsmxMFnaVMIB24Cm2z6lH0e8xo+pB9gUvDoZQ5IXH9k28jMdD5ZInypUxMlVn
+         vJpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=TMKsmtSeB2s1AaZbZadZjj3xF8b5OyVicGrn8cs6Cxc=;
+        b=Ll5L/j+AIBsOoKObA+czcc72lsDD3E0+eG8D3FLFzTrqME/pLADqqf3PHGKn0KJnT0
+         JcY3IU5Lc2Puub6/ssiP5Chv/1wngbbwjXOWT+/iOlhJnsjGL2paQEvwwgXFq9VARi0J
+         UKn9xRfECeU/TV+bNITUSHCIx05K+A5HaV3tDOfwUGC5AZfVqtRGWns7AYxTaoU6bMPX
+         CUE+rlnGvYr/rTvMDtpLLYL0FBBK2b1Oq7A97Sqin2C+YQXagGKrQD82Sripu38N+Gmt
+         ka+EnpVD81zMTsygMrcW8OOXkT3qFTneleHVAPwBXJIiR+D0CvBSJ8Th4W2ALJM/jlOI
+         P/SQ==
+X-Gm-Message-State: AHQUAuZJk0ripgL9l+OnuhDyHJ+d7xoOa1Ar1PP2fmH5PTf5hCS2uhCG
+        jYofQG0L7iMYqJ78sdhwcOVXvg==
+X-Google-Smtp-Source: AHgI3IZWqJlESiACGZSBuFtcSlgUTXzB5UwYLjy0fJjTMr4Yq/bz8Bc0PoTINj2B3ihTtaQ8an9+iQ==
+X-Received: by 2002:a50:fc12:: with SMTP id i18mr19300418edr.149.1550498635286;
+        Mon, 18 Feb 2019 06:03:55 -0800 (PST)
+Received: from localhost.localdomain (ip-188-118-3-185.reverse.destiny.be. [188.118.3.185])
+        by smtp.gmail.com with ESMTPSA id w48sm1421606eda.88.2019.02.18.06.03.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Feb 2019 06:03:54 -0800 (PST)
+From:   Patrick Havelange <patrick.havelange@essensium.com>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Esben Haabendal <esben@haabendal.dk>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pwm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc:     Patrick Havelange <patrick.havelange@essensium.com>
+Subject: [PATCH 7/8] dt-bindings: iio/counter: ftm-quaddec: add poll-interval parameter
+Date:   Mon, 18 Feb 2019 15:03:20 +0100
+Message-Id: <20190218140321.19166-7-patrick.havelange@essensium.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190218140321.19166-1-patrick.havelange@essensium.com>
+References: <20190218140321.19166-1-patrick.havelange@essensium.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+New optional parameter supported by updated driver.
 
-------------------
-
-[ Upstream commit fdac751355cd76e049f628afe6acb8ff4b1399f7 ]
-
-clps711x_fb_probe() increments refcnt of disp device node by
-of_parse_phandle() and leaves it undecremented on both
-successful and error paths.
-
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Cc: Alexander Shiyan <shc_work@mail.ru>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Patrick Havelange <patrick.havelange@essensium.com>
+Reviewed-by: Esben Haabendal <esben@haabendal.dk>
 ---
- drivers/video/fbdev/clps711x-fb.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/iio/counter/ftm-quaddec.txt       | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/video/fbdev/clps711x-fb.c b/drivers/video/fbdev/clps711x-fb.c
-index 649b32f78c08..c55109524fd5 100644
---- a/drivers/video/fbdev/clps711x-fb.c
-+++ b/drivers/video/fbdev/clps711x-fb.c
-@@ -287,14 +287,17 @@ static int clps711x_fb_probe(struct platform_device *pdev)
- 	}
+diff --git a/Documentation/devicetree/bindings/iio/counter/ftm-quaddec.txt b/Documentation/devicetree/bindings/iio/counter/ftm-quaddec.txt
+index 4d18cd722074..60554e6c4367 100644
+--- a/Documentation/devicetree/bindings/iio/counter/ftm-quaddec.txt
++++ b/Documentation/devicetree/bindings/iio/counter/ftm-quaddec.txt
+@@ -6,8 +6,14 @@ Required properties:
+ - compatible:		Must be "fsl,ftm-quaddec".
+ - reg:			Must be set to the memory region of the flextimer.
  
- 	ret = of_get_fb_videomode(disp, &cfb->mode, OF_USE_NATIVE_MODE);
--	if (ret)
-+	if (ret) {
-+		of_node_put(disp);
- 		goto out_fb_release;
-+	}
+-Optional property:
++Optional properties:
+ - big-endian:		Access the device registers in big-endian mode.
++- poll-interval		Poll interval time in milliseconds for detecting
++			the under/overflow of the counter. Default value
++			is 100.
++			A value of 0 disables polling. This value can also
++			be set at runtime, but not to less than this initial
++			value (except 0 for disabling).
  
- 	of_property_read_u32(disp, "ac-prescale", &cfb->ac_prescale);
- 	cfb->cmap_invert = of_property_read_bool(disp, "cmap-invert");
- 
- 	ret = of_property_read_u32(disp, "bits-per-pixel",
- 				   &info->var.bits_per_pixel);
-+	of_node_put(disp);
- 	if (ret)
- 		goto out_fb_release;
- 
+ Example:
+ 		counter0: counter@29d0000 {
 -- 
-2.19.1
-
-
+2.17.1
 
