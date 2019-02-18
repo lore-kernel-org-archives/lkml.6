@@ -2,85 +2,122 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4E9C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5547C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:11:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC8C9218FF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:10:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="G+CQ1d97"
+	by mail.kernel.org (Postfix) with ESMTP id 7F7FF21479
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:11:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550477517;
+	bh=F9y7lSaqxWYTV9o8SAQ8gMQ0TIi7C/kjNQfrjGg8j6g=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=qveHnHrj6p+Qh30CZqh0Tfsr4+8D7EDFm8V3PvjR1K3oZXMLmuCs7WETJhUnI0TTW
+	 UmZjTWZOj9GNc4aMXYh4RRzDKhvYmPyp1Pmxy5VwEDAVyuyVjwI/xTkq87dB2fOc6D
+	 yi8c6kDuj3hxqSOKm4J987D/FBm5osa0pBgCuouQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728929AbfBRIKI (ORCPT
+        id S1728973AbfBRILz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 03:10:08 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:40574 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725881AbfBRIKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 03:10:07 -0500
-Received: from zn.tnic (p200300EC2BC7C70041AEC7F500F46BD2.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:c700:41ae:c7f5:f4:6bd2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CBD2F1EC03D8;
-        Mon, 18 Feb 2019 09:10:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1550477406;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=9a6fjGS1nnOT3qGqL3lsM6PvXgQzae+pAQOqUgOc4Yg=;
-        b=G+CQ1d97BYbTIdAX4LHo7po9bHF7pqBMcV8hLvpqh49CelC6zZwa2op8J7ogUROkvABEDk
-        SNNuqCMsjQJWRnFpERqnSYY97UaPYebNXM+wpNuu/0Ar80FtfzMBxRgQS8cpt+Xu3/mi58
-        qclD6qBE9j0ENd1vGU/UJrSkG2tV77c=
-Date:   Mon, 18 Feb 2019 09:09:49 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Kalle Valo <kvalo@codeaurora.org>,
-        linux-wireless@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] x86: disable CONFIG_GENERIC_HWEIGHT and remove
- __HAVE_ARCH_SW_HWEIGHT
-Message-ID: <20190218080949.GA4265@zn.tnic>
-References: <1550469571-25933-1-git-send-email-yamada.masahiro@socionext.com>
- <1550469571-25933-3-git-send-email-yamada.masahiro@socionext.com>
+        Mon, 18 Feb 2019 03:11:55 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46783 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725881AbfBRILz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 03:11:55 -0500
+Received: by mail-pg1-f193.google.com with SMTP id w7so8048506pgp.13
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 00:11:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZcZRnl9lE4QIkCI9psKc6XHAkAhb2o/LPyacWFNhV/U=;
+        b=oJLd1xUKXzNOyX9QvChe8wA7ahme5SG2YsDQ63pkv1TwtGcoNlOwc79LjVAY1VrSKI
+         iYQzyy++6a5pHcyiZeyjwfzqRP45NIE9oO2ZqZrz+KruyL52iWh0AudMyy4uwj/3ETXZ
+         l6AYOgRj9PCKutOMjxEa/v64MRv1rIth8Vd+kIpdJIwyMmDTVCvW8YhhedRYJHaCmBVV
+         nUcqweLjkRXR/78oRqt/sKLUXblTPF8sTPmrWsaPi7PzZckRllbro/FVH4pSBwPaPd9+
+         vv4QlDC9A3RCs8/KQfD1PTld5PNF0EEJY8IlgihsEADtSop4AYS8M/7BVNex6m9NLdt5
+         wsdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=ZcZRnl9lE4QIkCI9psKc6XHAkAhb2o/LPyacWFNhV/U=;
+        b=oTM/6CzICkaO37qJkDdjIWoxoegvJPk6jih70ysX5kx8kO88vO9v4NXSTQZrkw65TR
+         70i+RmSqnw9Ow4uQosWENnu9SAb/QzYkLkAekLwAa4wH5vn8ocDFAz5vu9W26uJn1Oob
+         ETsdHqMaCWTCRliMjjqx6DPCrfm+IjoPAjOohAKUF9mDH8483R75f/hPh9NZa+LQaVp2
+         Ca8hXOkYwJnVzHbeuZJ+HujYPmtHqWJXYzTHPYZ9L8NSvbL4Wpp/PyelK0qKxVOmmAjl
+         RbPzbTnv+j6gh4YiOceYXbNawLeZ/3pBhT7/1qzLJyO8hgIbYVsjOwblK/azJ2WfMB8b
+         stBg==
+X-Gm-Message-State: AHQUAubuq2ha8Q26vNdkz+YRL6JQWDe2aAQnOFrCEDohKfaj4ZgKc2/C
+        5ws+jZiEUVqHmOPemGnfO90=
+X-Google-Smtp-Source: AHgI3IaX38tq461oE/F9v/3NRbYaDAsj9yeudPC/GKwX9bpSoJRbiqKsOW3XAXBofp2H5i/LnfJxpg==
+X-Received: by 2002:a63:d342:: with SMTP id u2mr17722234pgi.41.1550477513947;
+        Mon, 18 Feb 2019 00:11:53 -0800 (PST)
+Received: from bbox-2.seo.corp.google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
+        by smtp.gmail.com with ESMTPSA id l87sm31865694pfj.35.2019.02.18.00.11.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Feb 2019 00:11:52 -0800 (PST)
+From:   Minchan Kim <minchan@kernel.org>
+To:     gregkh@linuxfoundation.org
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Minchan Kim <minchan@kernel.org>, Todd Kjos <tkjos@google.com>,
+        Martijn Coenen <maco@android.com>,
+        =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>
+Subject: [PATCH] binder: reduce mmap_sem write-side lock
+Date:   Mon, 18 Feb 2019 17:11:45 +0900
+Message-Id: <20190218081145.86633-1-minchan@kernel.org>
+X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1550469571-25933-3-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 02:59:31PM +0900, Masahiro Yamada wrote:
-> arch/x86/include/asm/arch_hweight.h uses __sw_hweight{32,64} as
-> alternatives, but they are implemented in arch/x86/lib/hweight.S
-> 
-> x86 does not rely on the generic C implementation lib/hweight.c
-> at all, so CONFIG_GENERIC_HWEIGHT should be disabled.
-> 
-> __HAVE_ARCH_SW_HWEIGHT was unneeded in the first place.
+binder has used write-side mmap_sem semaphore to release memory
+mapped at address space of the process. However, right lock to
+release pages is down_read, not down_write because page table lock
+already protects the race for parallel freeing.
 
-Well, it was needed because I didn't think of removing the selection of
-GENERIC_HWEIGHT in arch/x86/ at the time:
+Please do not use mmap_sem write-side lock which is well known
+contented lock.
 
-ld: lib/built-in.o:/dev/shm/bpetkov/kernel/linux/lib/hweight.c:27: multiple definition of `__ksymtab___sw_hweight32'; arch/x86/built-in.o:/dev/shm/bpetkov/kernel/linux/arch/x86/kernel/x8664_ksyms_64.c:47: first defined here
-ld: lib/built-in.o:/dev/shm/bpetkov/kernel/linux/lib/hweight.c:67: multiple definition of `__ksymtab___sw_hweight64'; arch/x86/built-in.o:/dev/shm/bpetkov/kernel/linux/arch/x86/kernel/x8664_ksyms_64.c:48: first defined here
-ld: arch/x86/lib/built-in.o: in function `__sw_hweight32':
-/dev/shm/bpetkov/kernel/linux/arch/x86/lib/hweight.S:12: multiple definition of `__sw_hweight32'; lib/built-in.o:/dev/shm/bpetkov/kernel/linux/lib/hweight.c:15: first defined here
-ld: arch/x86/lib/built-in.o: in function `__sw_hweight64':
-/dev/shm/bpetkov/kernel/linux/arch/x86/lib/hweight.S:38: multiple definition of `__sw_hweight64'; lib/built-in.o:/dev/shm/bpetkov/kernel/linux/lib/hweight.c:53: first defined here
-make: *** [vmlinux] Error 1
+Cc: Todd Kjos <tkjos@google.com>
+Cc: Martijn Coenen <maco@android.com>
+Cc: Arve Hjønnevåg <arve@android.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Minchan Kim <minchan@kernel.org>
+---
+ drivers/android/binder_alloc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
+index 022cd80e80cc3..2a62553b20fcc 100644
+--- a/drivers/android/binder_alloc.c
++++ b/drivers/android/binder_alloc.c
+@@ -964,7 +964,7 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
+ 		if (!mmget_not_zero(alloc->vma_vm_mm))
+ 			goto err_mmget;
+ 		mm = alloc->vma_vm_mm;
+-		if (!down_write_trylock(&mm->mmap_sem))
++		if (!down_read_trylock(&mm->mmap_sem))
+ 			goto err_down_write_mmap_sem_failed;
+ 	}
+ 
+@@ -980,7 +980,7 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
+ 
+ 		trace_binder_unmap_user_end(alloc, index);
+ 
+-		up_write(&mm->mmap_sem);
++		up_read(&mm->mmap_sem);
+ 		mmput(mm);
+ 	}
+ 
 -- 
-Regards/Gruss,
-    Boris.
+2.21.0.rc0.258.g878e2cd30e-goog
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
