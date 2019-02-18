@@ -7,50 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52854C10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67EE5C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:14:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 241F42177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:14:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A767217D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:14:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499274;
-	bh=T2eETLAdLGx3VCeNNE+PJH8A6htvLs23g+zsY6X7EuY=;
+	s=default; t=1550499277;
+	bh=ozzyg10gIQKGPCbJ5c36x9uXqhHGTEkA/YGfLxsHRUc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EAWcTQrHIFhiU0XIqio2I0KIer19aU9ej6nnatF7pUfJ6ZB+/SxSxMYt7HcTE3kXB
-	 Ylb6UGEcN9yWRmG9LLmXpH+QtSHk2l84Ci0D/3YLfSpzFVWhC0CpHr3cyD9TnnGE8t
-	 5JOa/upNFr2Y7PH6T2agJDrqGVLFyJmGXgP+Mxj4=
+	b=Lsv0Mjqxc+FYzZGYYdrpAh5fGSINg2QKWox5SqG4Xw0HpHmENfpr56hVSS6Z1tmcL
+	 je4t0sxb4fFsnhZouKZ/ABdnRF3x/r8JZLZvkdnQI5Q+dt+AQClVjLg2TQIGKC3Cbf
+	 UWcJOf4glh7yInuM4BjBJsv0XDUXxhHo9uYq6GGw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392246AbfBRONI (ORCPT
+        id S2392224AbfBRONF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:13:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57582 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:13:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392193AbfBROM4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:12:56 -0500
+        id S2388932AbfBRONA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:13:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 955BF217D7;
-        Mon, 18 Feb 2019 14:12:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62AAA21901;
+        Mon, 18 Feb 2019 14:12:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550499176;
-        bh=T2eETLAdLGx3VCeNNE+PJH8A6htvLs23g+zsY6X7EuY=;
+        s=default; t=1550499178;
+        bh=ozzyg10gIQKGPCbJ5c36x9uXqhHGTEkA/YGfLxsHRUc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ONZqYuydHGOhFnlQB8vRquF1ze7CDZrhtyYtOM4SHvvG7Wt4eInmGky90O2IXLwJZ
-         atAxPveFU9C64ns2VeUXU0XtHcE7tbFoeIDSwSkajwB0EyfC8d/BsA25zOC9lRqE2B
-         TEblmv7z+BeFQPk67zmMxVGRA1CdkXJYvn/zb3J4=
+        b=ofboetP6sA/v60F6Mw9PzwM4u2p/SEHRwiVDixPsX8X0uFp9GWDcb+difnBtzn9hM
+         FExrMHdNDW74vm42qN69q/kWB1ijZHTcQdn6R1wPL+3V54qTXWCmS5R4rldQzPBdwS
+         s345uSDLGuJFfPz7R+JuYnbcRW6GYWhkag5FkZBg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        linux-alpha@vger.kernel.org,
-        Sergei Trofimovich <slyfox@gentoo.org>,
-        Matt Turner <mattst88@gmail.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>
-Subject: [PATCH 3.18 100/108] alpha: fix page fault handling for r16-r18 targets
-Date:   Mon, 18 Feb 2019 14:44:36 +0100
-Message-Id: <20190218133524.292841585@linuxfoundation.org>
+        stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH 3.18 077/108] signal: Better detection of synchronous signals
+Date:   Mon, 18 Feb 2019 14:44:13 +0100
+Message-Id: <20190218133523.091627777@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -69,118 +65,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sergei Trofimovich <slyfox@gentoo.org>
+From: Eric W. Biederman <ebiederm@xmission.com>
 
-commit 491af60ffb848b59e82f7c9145833222e0bf27a5 upstream.
+commit 7146db3317c67b517258cb5e1b08af387da0618b upstream.
 
-Fix page fault handling code to fixup r16-r18 registers.
-Before the patch code had off-by-two registers bug.
-This bug caused overwriting of ps,pc,gp registers instead
-of fixing intended r16,r17,r18 (see `struct pt_regs`).
+Recently syzkaller was able to create unkillablle processes by
+creating a timer that is delivered as a thread local signal on SIGHUP,
+and receiving SIGHUP SA_NODEFERER.  Ultimately causing a loop failing
+to deliver SIGHUP but always trying.
 
-More details:
+When the stack overflows delivery of SIGHUP fails and force_sigsegv is
+called.  Unfortunately because SIGSEGV is numerically higher than
+SIGHUP next_signal tries again to deliver a SIGHUP.
 
-Initially Dmitry noticed a kernel bug as a failure
-on strace test suite. Test passes unmapped userspace
-pointer to io_submit:
+>From a quality of implementation standpoint attempting to deliver the
+timer SIGHUP signal is wrong.  We should attempt to deliver the
+synchronous SIGSEGV signal we just forced.
 
-```c
-    #include <err.h>
-    #include <unistd.h>
-    #include <sys/mman.h>
-    #include <asm/unistd.h>
-    int main(void)
-    {
-        unsigned long ctx = 0;
-        if (syscall(__NR_io_setup, 1, &ctx))
-            err(1, "io_setup");
-        const size_t page_size = sysconf(_SC_PAGESIZE);
-        const size_t size = page_size * 2;
-        void *ptr = mmap(NULL, size, PROT_READ | PROT_WRITE,
-                         MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-        if (MAP_FAILED == ptr)
-            err(1, "mmap(%zu)", size);
-        if (munmap(ptr, size))
-            err(1, "munmap");
-        syscall(__NR_io_submit, ctx, 1, ptr + page_size);
-        syscall(__NR_io_destroy, ctx);
-        return 0;
-    }
-```
+We can make that happening in a fairly straight forward manner by
+instead of just looking at the signal number we also look at the
+si_code.  In particular for exceptions (aka synchronous signals) the
+si_code is always greater than 0.
 
-Running this test causes kernel to crash when handling page fault:
+That still has the potential to pick up a number of asynchronous
+signals as in a few cases the same si_codes that are used
+for synchronous signals are also used for asynchronous signals,
+and SI_KERNEL is also included in the list of possible si_codes.
 
-```
-    Unable to handle kernel paging request at virtual address ffffffffffff9468
-    CPU 3
-    aio(26027): Oops 0
-    pc = [<fffffc00004eddf8>]  ra = [<fffffc00004edd5c>]  ps = 0000    Not tainted
-    pc is at sys_io_submit+0x108/0x200
-    ra is at sys_io_submit+0x6c/0x200
-    v0 = fffffc00c58e6300  t0 = fffffffffffffff2  t1 = 000002000025e000
-    t2 = fffffc01f159fef8  t3 = fffffc0001009640  t4 = fffffc0000e0f6e0
-    t5 = 0000020001002e9e  t6 = 4c41564e49452031  t7 = fffffc01f159c000
-    s0 = 0000000000000002  s1 = 000002000025e000  s2 = 0000000000000000
-    s3 = 0000000000000000  s4 = 0000000000000000  s5 = fffffffffffffff2
-    s6 = fffffc00c58e6300
-    a0 = fffffc00c58e6300  a1 = 0000000000000000  a2 = 000002000025e000
-    a3 = 00000200001ac260  a4 = 00000200001ac1e8  a5 = 0000000000000001
-    t8 = 0000000000000008  t9 = 000000011f8bce30  t10= 00000200001ac440
-    t11= 0000000000000000  pv = fffffc00006fd320  at = 0000000000000000
-    gp = 0000000000000000  sp = 00000000265fd174
-    Disabling lock debugging due to kernel taint
-    Trace:
-    [<fffffc0000311404>] entSys+0xa4/0xc0
-```
+Still the heuristic is much better and timer signals are definitely
+excluded.  Which is enough to prevent all known ways for someone
+sending a process signals fast enough to cause unexpected and
+arguably incorrect behavior.
 
-Here `gp` has invalid value. `gp is s overwritten by a fixup for the
-following page fault handler in `io_submit` syscall handler:
-
-```
-    __se_sys_io_submit
-    ...
-        ldq     a1,0(t1)
-        bne     t0,4280 <__se_sys_io_submit+0x180>
-```
-
-After a page fault `t0` should contain -EFALUT and `a1` is 0.
-Instead `gp` was overwritten in place of `a1`.
-
-This happens due to a off-by-two bug in `dpf_reg()` for `r16-r18`
-(aka `a0-a2`).
-
-I think the bug went unnoticed for a long time as `gp` is one
-of scratch registers. Any kernel function call would re-calculate `gp`.
-
-Dmitry tracked down the bug origin back to 2.1.32 kernel version
-where trap_a{0,1,2} fields were inserted into struct pt_regs.
-And even before that `dpf_reg()` contained off-by-one error.
-
-Cc: Richard Henderson <rth@twiddle.net>
-Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-Cc: linux-alpha@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Reported-and-reviewed-by: "Dmitry V. Levin" <ldv@altlinux.org>
-Cc: stable@vger.kernel.org # v2.1.32+
-Bug: https://bugs.gentoo.org/672040
-Signed-off-by: Sergei Trofimovich <slyfox@gentoo.org>
-Signed-off-by: Matt Turner <mattst88@gmail.com>
+Cc: stable@vger.kernel.org
+Fixes: a27341cd5fcb ("Prioritize synchronous signals over 'normal' signals")
+Tested-by: Dmitry Vyukov <dvyukov@google.com>
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/alpha/mm/fault.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/signal.c |   52 +++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 51 insertions(+), 1 deletion(-)
 
---- a/arch/alpha/mm/fault.c
-+++ b/arch/alpha/mm/fault.c
-@@ -78,7 +78,7 @@ __load_new_mm_context(struct mm_struct *
- /* Macro for exception fixup code to access integer registers.  */
- #define dpf_reg(r)							\
- 	(((unsigned long *)regs)[(r) <= 8 ? (r) : (r) <= 15 ? (r)-16 :	\
--				 (r) <= 18 ? (r)+8 : (r)-10])
-+				 (r) <= 18 ? (r)+10 : (r)-10])
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -686,6 +686,48 @@ int dequeue_signal(struct task_struct *t
+ 	return signr;
+ }
  
- asmlinkage void
- do_page_fault(unsigned long address, unsigned long mmcsr,
++static int dequeue_synchronous_signal(siginfo_t *info)
++{
++	struct task_struct *tsk = current;
++	struct sigpending *pending = &tsk->pending;
++	struct sigqueue *q, *sync = NULL;
++
++	/*
++	 * Might a synchronous signal be in the queue?
++	 */
++	if (!((pending->signal.sig[0] & ~tsk->blocked.sig[0]) & SYNCHRONOUS_MASK))
++		return 0;
++
++	/*
++	 * Return the first synchronous signal in the queue.
++	 */
++	list_for_each_entry(q, &pending->list, list) {
++		/* Synchronous signals have a postive si_code */
++		if ((q->info.si_code > SI_USER) &&
++		    (sigmask(q->info.si_signo) & SYNCHRONOUS_MASK)) {
++			sync = q;
++			goto next;
++		}
++	}
++	return 0;
++next:
++	/*
++	 * Check if there is another siginfo for the same signal.
++	 */
++	list_for_each_entry_continue(q, &pending->list, list) {
++		if (q->info.si_signo == sync->info.si_signo)
++			goto still_pending;
++	}
++
++	sigdelset(&pending->signal, sync->info.si_signo);
++	recalc_sigpending();
++still_pending:
++	list_del_init(&sync->list);
++	copy_siginfo(info, &sync->info);
++	__sigqueue_free(sync);
++	return info->si_signo;
++}
++
+ /*
+  * Tell a process that it has a new active signal..
+  *
+@@ -2259,7 +2301,15 @@ relock:
+ 			goto relock;
+ 		}
+ 
+-		signr = dequeue_signal(current, &current->blocked, &ksig->info);
++		/*
++		 * Signals generated by the execution of an instruction
++		 * need to be delivered before any other pending signals
++		 * so that the instruction pointer in the signal stack
++		 * frame points to the faulting instruction.
++		 */
++		signr = dequeue_synchronous_signal(&ksig->info);
++		if (!signr)
++			signr = dequeue_signal(current, &current->blocked, &ksig->info);
+ 
+ 		if (!signr)
+ 			break; /* will return 0 */
 
 
