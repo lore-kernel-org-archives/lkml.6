@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5749C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 198EEC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:11:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACFFD217D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:11:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBAB7217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:11:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499070;
-	bh=WRMRhMN3G7C0wxSd9EI6ykCEvg21hgaTroPbBTrCtFE=;
+	s=default; t=1550499074;
+	bh=YPCAAnrIDUZIqLMyNXBJQ4ZRMjdodKk+D0fIq4OmijI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vJDpXoQX3YPMOx+/0eqDfogDjaGPXpmoPq1IRbSMjGTxdetNQdFyeFQArp4+dfTY9
-	 Ww4cFn1bJpddMAjdfGEeTSBrQS7xIv4Hv5KPKRuKbP/r8oqQBzJMC88/mI7988kp/1
-	 E9kUYXR8vGNLq/rRL4wB8DGTx/lPL5Vky2YTFSjU=
+	b=Dak2p9Py2fN2sMRnqLs1DX7wallenUp7uQqTBFno8P9xYTX+Ed0YRoKA2qmzic8Wg
+	 +rUi4wM8w/gfnajm/N3XioylGQq5tEt6VNptChJ6vt77tXKSdXEeFmmDU9S7W+Lted
+	 qpFLfxN7hA/uYak0G1zpIRLbRwGpQ7rkWVvYHdpQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391658AbfBROLI (ORCPT
+        id S2390513AbfBROLN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:11:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54992 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:11:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391646AbfBROLD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:11:03 -0500
+        id S2391060AbfBROLJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:11:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C8CF217D7;
-        Mon, 18 Feb 2019 14:11:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BD5C217D7;
+        Mon, 18 Feb 2019 14:11:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550499062;
-        bh=WRMRhMN3G7C0wxSd9EI6ykCEvg21hgaTroPbBTrCtFE=;
+        s=default; t=1550499069;
+        bh=YPCAAnrIDUZIqLMyNXBJQ4ZRMjdodKk+D0fIq4OmijI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1j2d1SM8S6WXsw0ZpmQyybVFN/vi/hqacRfvArtceDs7ElaXSbcx3x3anvNjjMjnH
-         y0Z6aTdVATd59mnohRJuDrPtg44f0kC12HJT+mCdN36WGPgpdWuB2tezS0VltAb+jh
-         jDHuly5SG46M28IamPviYEDR1dp9h7QmGoGr8RFE=
+        b=az35KRmrLsd04mytK+m1fsFBWoeBlaQRmA+e0YT1psqidvteSdejrzNrjCDOcUcQ8
+         ZF8DSB0A0qlTxBDqmj5IsaRdPhTyQAUAQRBthaC89hasBHwOnCsqA/OKFjYnVjKhMx
+         Qb+Sf4pqcWmZrEwcKDSUDmqBpRFGDoPVrfvSX/sc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+c1e36d30ee3416289cc0@syzkaller.appspotmail.com,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 3.18 065/108] fuse: handle zero sized retrieve correctly
-Date:   Mon, 18 Feb 2019 14:44:01 +0100
-Message-Id: <20190218133522.537535951@linuxfoundation.org>
+        stable@vger.kernel.org, Bin Liu <b-liu@ti.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 3.18 067/108] usb: phy: am335x: fix race condition in _probe
+Date:   Mon, 18 Feb 2019 14:44:03 +0100
+Message-Id: <20190218133522.629204627@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -65,40 +64,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Bin Liu <b-liu@ti.com>
 
-commit 97e1532ef81acb31c30f9e75bf00306c33a77812 upstream.
+commit a53469a68eb886e84dd8b69a1458a623d3591793 upstream.
 
-Dereferencing req->page_descs[0] will Oops if req->max_pages is zero.
+power off the phy should be done before populate the phy. Otherwise,
+am335x_init() could be called by the phy owner to power on the phy first,
+then am335x_phy_probe() turns off the phy again without the caller knowing
+it.
 
-Reported-by: syzbot+c1e36d30ee3416289cc0@syzkaller.appspotmail.com
-Tested-by: syzbot+c1e36d30ee3416289cc0@syzkaller.appspotmail.com
-Fixes: b2430d7567a3 ("fuse: add per-page descriptor <offset, length> to fuse_req")
-Cc: <stable@vger.kernel.org> # v3.9
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: 2fc711d76352 ("usb: phy: am335x: Enable USB remote wakeup using PHY wakeup")
+Cc: stable@vger.kernel.org # v3.18+
+Signed-off-by: Bin Liu <b-liu@ti.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/phy/phy-am335x.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1645,7 +1645,6 @@ static int fuse_retrieve(struct fuse_con
- 	req->in.h.nodeid = outarg->nodeid;
- 	req->in.numargs = 2;
- 	req->in.argpages = 1;
--	req->page_descs[0].offset = offset;
- 	req->end = fuse_retrieve_end;
+--- a/drivers/usb/phy/phy-am335x.c
++++ b/drivers/usb/phy/phy-am335x.c
+@@ -56,9 +56,6 @@ static int am335x_phy_probe(struct platf
+ 	if (ret)
+ 		return ret;
  
- 	index = outarg->offset >> PAGE_CACHE_SHIFT;
-@@ -1660,6 +1659,7 @@ static int fuse_retrieve(struct fuse_con
+-	ret = usb_add_phy_dev(&am_phy->usb_phy_gen.phy);
+-	if (ret)
+-		return ret;
+ 	am_phy->usb_phy_gen.phy.init = am335x_init;
+ 	am_phy->usb_phy_gen.phy.shutdown = am335x_shutdown;
  
- 		this_num = min_t(unsigned, num, PAGE_CACHE_SIZE - offset);
- 		req->pages[req->num_pages] = page;
-+		req->page_descs[req->num_pages].offset = offset;
- 		req->page_descs[req->num_pages].length = this_num;
- 		req->num_pages++;
+@@ -77,7 +74,7 @@ static int am335x_phy_probe(struct platf
+ 	device_set_wakeup_enable(dev, false);
+ 	phy_ctrl_power(am_phy->phy_ctrl, am_phy->id, false);
  
+-	return 0;
++	return usb_add_phy_dev(&am_phy->usb_phy_gen.phy);
+ }
+ 
+ static int am335x_phy_remove(struct platform_device *pdev)
 
 
