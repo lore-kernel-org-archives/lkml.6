@@ -2,132 +2,88 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11294C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:37:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9ACFC4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:38:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD13E20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:37:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B40BB20855
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:38:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550522314;
+	bh=D61QD1haHpNP+7nuWOaJbEqyRz7EpRfOyk5CudZjh6U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=XNrozdvKsgHnJdgKnqcXVzBlBL0LX8LmUb7iGyWQUVeAzgHFatHjnqsUtDz3Fbf1L
+	 xw4rPEsJCwCjM70V9ufECfYL1ZtqRxBT7S7DWbuZplQVjYuz2KaOYzgjlcQ3ngqKtX
+	 N4WXF1spv0sOhOgrCj8S5k4VdKrBtKGe1BvGNZd0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729627AbfBRUhn (ORCPT
+        id S1729684AbfBRUid (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 15:37:43 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:33858 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726476AbfBRUhn (ORCPT
+        Mon, 18 Feb 2019 15:38:33 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:42386 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726476AbfBRUic (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 15:37:43 -0500
-Received: by mail-qt1-f195.google.com with SMTP id w4so20757524qtc.1;
-        Mon, 18 Feb 2019 12:37:42 -0800 (PST)
+        Mon, 18 Feb 2019 15:38:32 -0500
+Received: by mail-ot1-f66.google.com with SMTP id i5so30462825oto.9;
+        Mon, 18 Feb 2019 12:38:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NKzlvpPCBfl/HspEfo61GVQogaZ+wGy+HESxChrvz/4=;
-        b=mSNHqZ/QKfHVLu+B1vDkjtt5yC+z2uhcK8+ZnibRNkKEgKMc7wzPQcr5u1osZ9bIB8
-         PqfZx2ikFbtYN1gJyP3BxpTEVk50U7bh/5bqbYLEA3gfZsnxJBycs2c8WWqDXpzh+OJL
-         PM0mAU4mzHVBZy1A2/l0CNMbaIetE7vAyQHMI4HRPfYG7GDNaaewI7VWGpU0nZZIB2UL
-         dRV3XXOYHEC/E0pi79rMd8JoOmXby3Coxb6iQELyQP8uV0pTP5hJsS8nLd+ZI1sI++gp
-         yUAJbbK6wUC4qjS08Exw328glNz3OKOss22SUAz43WPHTZv/PLxayj33kJtmo2RuyM5u
-         EcCQ==
-X-Gm-Message-State: AHQUAuYqJJFV5F4L7vHNstdJDLzk1JzSGB0C2+Ij1VkPkxFFutywumCQ
-        5xBUbW2qvq16HBtgoa84CN2y1KLvLHpR5b2r8FI=
-X-Google-Smtp-Source: AHgI3IZnd346+DQECP+ADDSsCH9kiGtCJblvuGer6EDdlx2/LUKdYeBFiLnjWli2BWR/+UbufjYelw5o+ONVEVOHgkc=
-X-Received: by 2002:ac8:4141:: with SMTP id e1mr19070263qtm.96.1550522261697;
- Mon, 18 Feb 2019 12:37:41 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+iubiBzRbH/fHfgfShr9Oh6WrzhFtDL9VNH6fDaBPdg=;
+        b=J6Nhm7taMKQgpPy1HcE9r1rlocqNWZoDU8jE/RR+ITHmOH709o8CT9YBKKyku6ZAnz
+         m8nRfe3RxoHsGEDh+CP6qij22bFvSz2wL0b7YsGkG2Qi36J4M2BfKD+aL3ForgrUwFMX
+         zS7hH8BRJQnHnzdktzx/B1zVlMJzJn/9p/m9CyeHsY0ViB/QAKt/Fs5nhiZn5BdWONjn
+         WHPdA/od1tYzLGFEW6FujnG90U0limUnTwI83nXB5iz2sW24ahugVC3qZk1qVRaSETMX
+         UQqOG0JU0v6b6ekMP7XOkaDTtAvBH17NviRsXRQGazogRpY0fQQBNUIR2ldGaLWzNqLu
+         Us2A==
+X-Gm-Message-State: AHQUAuZK76ir+8nxSGUkhqN898MD4teo3MMlGF/oyD0ULyI+OVcQ251K
+        qs7Lik20fscNfdOqsp8J2A==
+X-Google-Smtp-Source: AHgI3IacNmoAKEddLhbkOEtx94sthcrdDVgeDCUg1UD+dKeI/oKG0dMDH0Ja1x0bMwn+yplyAmF9ZA==
+X-Received: by 2002:aca:6c04:: with SMTP id h4mr436056oic.10.1550522311952;
+        Mon, 18 Feb 2019 12:38:31 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id g3sm8145493otb.66.2019.02.18.12.38.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Feb 2019 12:38:31 -0800 (PST)
+Date:   Mon, 18 Feb 2019 14:38:31 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Ryder Lee <ryder.lee@mediatek.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        Weijie Gao <weijie.gao@mediatek.com>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: Re: [PATCH v1 5/5] dt-bindings: pwm: update bindings for MT7629 SoC
+Message-ID: <20190218203831.GA26838@bogus>
+References: <de316385a84e079d3b23891e61c959094b9fa7e5.1547781007.git.ryder.lee@mediatek.com>
+ <e7a59d288a4e23130e0303fec3aeba1f46ed1c26.1547781007.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
-References: <20190211172948.3322-1-will.deacon@arm.com> <CAK8P3a2Pr2oWYB7QHQMaHRq6H8h9xMwhhyJz5Pu67bVe4GaK9g@mail.gmail.com>
- <20190218162954.GB16713@fuggles.cambridge.arm.com> <CAK8P3a1TY9S=zYsdZ5O021p2yYcZhehVuwB3_65dR6x6zbkTYQ@mail.gmail.com>
- <20190218175625.GD16713@fuggles.cambridge.arm.com>
-In-Reply-To: <20190218175625.GD16713@fuggles.cambridge.arm.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 18 Feb 2019 21:37:25 +0100
-Message-ID: <CAK8P3a2mjjr94hwj_eXxfyKDKDuA=MogXW7xJygh-X0Hqgf6rg@mail.gmail.com>
-Subject: Re: [RFC PATCH] docs/memory-barriers.txt: Rewrite "KERNEL I/O BARRIER
- EFFECTS" section
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Gregory CLEMENT <gregory.clement@free-electrons.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e7a59d288a4e23130e0303fec3aeba1f46ed1c26.1547781007.git.ryder.lee@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 6:56 PM Will Deacon <will.deacon@arm.com> wrote:
->
-> On Mon, Feb 18, 2019 at 05:59:13PM +0100, Arnd Bergmann wrote:
-> > On Mon, Feb 18, 2019 at 5:30 PM Will Deacon <will.deacon@arm.com> wrote:
-> > >
-> > > >
-> > > > ioremap_wc() in turn is used almost exclusively to map RAM behind
-> > > > a bus, (typically for frame buffers) and we may be better off not
-> > > > assuming any particular MMIO barrier semantics for it at all, but possibly
-> > > > audit the few uses that are not frame buffers.
-> > >
-> > > Right, my expectation is actually that you very rarely need ordering
-> > > guarantees for wc mappings, and so saying "relaxed + mandatory barriers"
-> > > is the best thing to say for portable driver code. I'm deliberately /not/
-> > > trying to enumerate arch or device-specific behaviours.
-> >
-> > That's fine, my worry is more that you are already saying too much
-> > by describing a behavior for ioremap_wc+relaxed+barrier that is
-> > neither a good idea or guaranteed to do what you describe.
->
-> I could drop the mention of relaxed accessors here for now, if you like?
-> For example:
->
->   "__iomem pointers obtained with non-default attributes (e.g. those returned
->    by ioremap_wc()) are unlikely to provide many of these guarantees. If
->    ordering is required for such mappings, then the mandatory barriers should
->    be used."
->
-> which we could flesh out if/when we have a notion of the portable semantics.
+On Fri, 18 Jan 2019 11:24:45 +0800, Ryder Lee wrote:
+> This updates bindings for MT7629 pwm controller.
+> 
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+> ---
+> Changes since v1: add a Reviewed-by tag.
+> ---
+>  Documentation/devicetree/bindings/pwm/pwm-mediatek.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-I'd go further then and drop the second sentence entirely until we are sure
-what portable behaviour would be.
-
-> >
-> > I would say we should strengthen the behavior of outX() where possible.
-> > I don't know if arm64 actually has a way of doing that, my understanding
-> > earlier was that the AXI bus was already posted, so there is not much
-> > you can do here to define __io_paw() in a way that will prevent posted
-> > writes.
->
-> If we could map I/O space using different page table attributes (probably by
-> hacking pci_remap_iospace() ?) then we could disable the
-> early-write-acknowledge hint and implement __io_paw() as a completion
-> barrier, although it would be at the mercy of the system as to whether or
-> not that requires a response from the RC.
-
-Ah, it seems we actually do that on 32-bit ARM, at least on one platform,
-see 6a02734d420f ("ARM: mvebu: map PCI I/O regions strongly ordered")
-and prior commits.
-
-> I would still prefer to document the weaker semantics as the portable
-> interface, unless there are portable drivers relying on this today (which
-> would imply that it's widely supported by other architectures).
-
-I don't know of any portable driver that actually relies on it, but
-that's mainly because there are very few portable drivers that
-use inb()/outb() in the first place. How many of those require
-the non-posted behavior I don't know
-
-Adding Thomas, Gregory and Russell to Cc, as they were involved
-in the discussion that led to the 32-bit change, maybe they are
-aware of a specific example.
-
-       Arnd
+Reviewed-by: Rob Herring <robh@kernel.org>
