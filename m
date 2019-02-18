@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3871C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76493C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:50:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6A8620449
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:50:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48F5120449
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:50:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497842;
-	bh=SpJmUOK12lBvMvy+VaRqGmw36bxH+TDDa3doijzH4mg=;
+	s=default; t=1550497848;
+	bh=h3WI74dQwhJvOcyTd1+ZvqvP8RinpobEL5JsNJwcwaA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xVeAIUu8qR9UVPJOYGyABFwpy9KcVIM3/yJH5djN6jhMpT6Md97SsEoIL2RVt13G+
-	 lh94dffTcxTuEG8a2BUnttYwjSMHj7f4wkX1spTIQUOP+MUUjaNXxfWAkB3OQjH5ak
-	 vR1rp3NJgI/kPigHRd1LDX959sWp5c7DIbV26Yvk=
+	b=fQgTSL4jX2ZvQyK4YFsDq6CXgWhkl4CJy8FG2q568PYNN4rfLf2ctB26wknKkEHiu
+	 ynMbIejaeD1Nj7034xTMbaqRQWsDH8ERzIUAp5dRQlM7J8KfaJOl4PPBvA+NNAnHGZ
+	 KAln+w+VKSR7JPYpNdaWzYp8n8JJCGg309/tXtKA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732031AbfBRNuk (ORCPT
+        id S1732275AbfBRNuq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:50:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58278 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:50:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732247AbfBRNuf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:50:35 -0500
+        id S1731823AbfBRNup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:50:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2CDD20449;
-        Mon, 18 Feb 2019 13:50:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C8CA20449;
+        Mon, 18 Feb 2019 13:50:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497835;
-        bh=SpJmUOK12lBvMvy+VaRqGmw36bxH+TDDa3doijzH4mg=;
+        s=default; t=1550497844;
+        bh=h3WI74dQwhJvOcyTd1+ZvqvP8RinpobEL5JsNJwcwaA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KXNBOoBvzevM0QvXK6TkPTg1nhWPqL3RQWJjpAAbVtsqQdSRoGRXIr0HhgTwCxJaX
-         QupZvrVxQ+Uy4aYGYf4NFOw0N457l74UN/YLDZiEqwamqxocfdq/pUyN7kizmWkqr0
-         lNrKmTwzMC7lQ6Xe5+ur5LlmDaGi0MKRK2wDwHCc=
+        b=sc+Ps3oFUG2sBnJiKre/evY8ME3VG9V9Z7+qpMMR9QnHEEqEIO/oPB8EU8q47fNrG
+         U+uDzA8evo/NddCbt8mYvlUxfyxybltCZ6pQQaKBnUgieNuXa1lfqiG6dW4wiaNr1H
+         NAJkw+Y9yPa1ej5N62XVcdYwEdJa88Fu6NRwmQdU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
         "David A. Long" <dave.long@linaro.org>,
+        Julien Thierry <julien.thierry@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 08/85] ARM: 8793/1: signal: replace __put_user_error with __put_user
-Date:   Mon, 18 Feb 2019 14:42:34 +0100
-Message-Id: <20190218133500.648885987@linuxfoundation.org>
+Subject: [PATCH 4.19 20/85] ARM: fix the cockup in the previous patch
+Date:   Mon, 18 Feb 2019 14:42:46 +0100
+Message-Id: <20190218133501.841869863@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -67,53 +67,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-Commit 18ea66bd6e7a95bdc598223d72757190916af28b upstream.
+Commit d6951f582cc50ba0ad22ef46b599740966599b14 upstream.
 
-With Spectre-v1.1 mitigations, __put_user_error is pointless. In an attempt
-to remove it, replace its references in frame setups with __put_user.
+The intention in the previous patch was to only place the processor
+tables in the .rodata section if big.Little was being built and we
+wanted the branch target hardening, but instead (due to the way it
+was tested) it ended up always placing the tables into the .rodata
+section.
 
-Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+Although harmless, let's correct this anyway.
+
+Fixes: 3a4d0c2172bc ("ARM: ensure that processor vtables is not lost after boot")
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: David A. Long <dave.long@linaro.org>
 Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Tested-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/kernel/signal.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/mm/proc-macros.S | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
-index 1e2ecfe080bb..b908382b69ff 100644
---- a/arch/arm/kernel/signal.c
-+++ b/arch/arm/kernel/signal.c
-@@ -336,7 +336,7 @@ setup_sigframe(struct sigframe __user *sf, struct pt_regs *regs, sigset_t *set)
- 	if (err == 0)
- 		err |= preserve_vfp_context(&aux->vfp);
+diff --git a/arch/arm/mm/proc-macros.S b/arch/arm/mm/proc-macros.S
+index 19516fbc2c55..5461d589a1e2 100644
+--- a/arch/arm/mm/proc-macros.S
++++ b/arch/arm/mm/proc-macros.S
+@@ -278,7 +278,7 @@
+  * If we are building for big.Little with branch predictor hardening,
+  * we need the processor function tables to remain available after boot.
+  */
+-#if 1 // defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
++#if defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
+ 	.section ".rodata"
  #endif
--	__put_user_error(0, &aux->end_magic, err);
-+	err |= __put_user(0, &aux->end_magic);
+ 	.type	\name\()_processor_functions, #object
+@@ -316,7 +316,7 @@ ENTRY(\name\()_processor_functions)
+ 	.endif
  
- 	return err;
- }
-@@ -499,7 +499,7 @@ setup_frame(struct ksignal *ksig, sigset_t *set, struct pt_regs *regs)
- 	/*
- 	 * Set uc.uc_flags to a value which sc.trap_no would never have.
- 	 */
--	__put_user_error(0x5ac3c35a, &frame->uc.uc_flags, err);
-+	err = __put_user(0x5ac3c35a, &frame->uc.uc_flags);
- 
- 	err |= setup_sigframe(frame, regs, set);
- 	if (err == 0)
-@@ -519,8 +519,8 @@ setup_rt_frame(struct ksignal *ksig, sigset_t *set, struct pt_regs *regs)
- 
- 	err |= copy_siginfo_to_user(&frame->info, &ksig->info);
- 
--	__put_user_error(0, &frame->sig.uc.uc_flags, err);
--	__put_user_error(NULL, &frame->sig.uc.uc_link, err);
-+	err |= __put_user(0, &frame->sig.uc.uc_flags);
-+	err |= __put_user(NULL, &frame->sig.uc.uc_link);
- 
- 	err |= __save_altstack(&frame->sig.uc.uc_stack, regs->ARM_sp);
- 	err |= setup_sigframe(&frame->sig, regs, set);
+ 	.size	\name\()_processor_functions, . - \name\()_processor_functions
+-#if 1 // defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
++#if defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
+ 	.previous
+ #endif
+ .endm
 -- 
 2.19.1
 
