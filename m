@@ -2,162 +2,218 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C05C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:56:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC2F9C10F01
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D5F72177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:56:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 728C8217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:57:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cNtmHRp7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390458AbfBRQ4L (ORCPT
+        id S2390581AbfBRQ5Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 11:56:11 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:46091 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731632AbfBRQ4L (ORCPT
+        Mon, 18 Feb 2019 11:57:16 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37942 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733069AbfBRQ5Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 11:56:11 -0500
-Received: by mail-qk1-f193.google.com with SMTP id i5so10319079qkd.13
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 08:56:10 -0800 (PST)
+        Mon, 18 Feb 2019 11:57:16 -0500
+Received: by mail-wm1-f68.google.com with SMTP id v26so17832282wmh.3;
+        Mon, 18 Feb 2019 08:57:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Te/+py7/8j9kLxPbLdOqa2CQTZpN9pqS5WYOYHf4nJg=;
+        b=cNtmHRp7rXeg9Ep48gVhu8ZlNBoWHN1JTWGcm9qhMrqoV8kBIEtvl1/9vMo6vX2738
+         Y4/Wrj646OoCw3I1fx3cSuDgcrK7B43AmCZP3ZaC93ZImw2srVfJglnTKUI3xlScIrAB
+         uteGio+F1WIj9kqvfWwk1AjORAZ9V/AWZbk7VtBV1dQbvNVm4ofWqsCGRkVo1Lqca1jP
+         NVtwpaJiIGFqAaHWw3+SSYCFi1iatM0tO8IuSIvax4hKRQCETOgX8qCDkkgyCPPRqHBQ
+         0oDxgc5NuWlIYrROmszAO3Vdombxl+fwEGwn0To6mPJ4DgaoeF7stpy1VXl4iyIGfK65
+         sz8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding;
-        bh=FR5YgBqnbU1sKoRWEfj6850DTW3GqcOpetPCtjylHa4=;
-        b=lmX5o2qiPF+A+UviYcMCBwSBGUUqL8tyoxNssJN1c//UqeF/6L0cSPYzXeLeBMpSS9
-         bGgRJw/DbpIJp2+n9a0S5nj+w8fnFG+Ne6tgPShS25Pc97msTK020tDr5sZaVynCp6Hj
-         daJDKREzgfx4OqSAwV2s6sAUbalylec/lZRn5c93Ddljjs54YBO2fdxhsE8m2aelk7Qt
-         1lCxe/7AhL5t/BBPtz9zQfDxwX8KX7j1rGXsusEcX9KXCXSPp26/0TdB5nHAreFeSBc6
-         lBONL10xxR2kTd4ueTUvbDMTeFBFS45uuVU2aE4wvWe8x+ILxnfuWwG8EuR2RJKQDBg+
-         k9mQ==
-X-Gm-Message-State: AHQUAuZ5T8GvXx5GRH7NOlXDqK5WU8I/76ppC207Q1lE3ES2J4PvYDyd
-        xab1YDjOMj7XvuEXtKcPzONgcs8VNdmyFg==
-X-Google-Smtp-Source: AHgI3IZKV6IhKIIhb10b9C7mu4mM00I+/gl6EmIwibwm8P/ZdQ2JhzMKKkJw15vtIp7YlBfkFBsklg==
-X-Received: by 2002:ae9:ed0c:: with SMTP id c12mr16649602qkg.306.1550508970059;
-        Mon, 18 Feb 2019 08:56:10 -0800 (PST)
-Received: from redhat.com (pool-173-76-246-42.bstnma.fios.verizon.net. [173.76.246.42])
-        by smtp.gmail.com with ESMTPSA id p186sm7259687qkb.69.2019.02.18.08.56.08
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Te/+py7/8j9kLxPbLdOqa2CQTZpN9pqS5WYOYHf4nJg=;
+        b=GIU/KSe5tqjIltDRBINJTBm7AFKPFyF4AwDYnSYcyplsoBPMKDXSt6VzxXNRFC29ia
+         Uo55+9WZaAPzKQQ1iU21q8VR45RIaxA1OFGsiF9fEHiZgPYCl06PLCOkARCp1i2fng3d
+         54r0qc54BsiZkEV8DOZ8Onn7r8nVnv4dURb3/o79/oqposCWwZ+sA8rO9LLKxKg/kD8x
+         0Z5Z5SeIZJf7tS/dfI+5nO5DPMr4EuThwKtAx//u3fbazWjyuVcAPLK69iczFAEjVUbT
+         b68Lh+KqwhX4hgGOBuWUyRqvKI49jrnOQBbg6omls1bHJHuAAjsTIOc7JOYKXfYIsmgi
+         b/CQ==
+X-Gm-Message-State: AHQUAuYjCLzHXKZVnKvDBvp18VX6KR68E0uTVg3d4/LrZg9zlsosfZWx
+        nEJVgJOSoRygnc088Xm/wfg=
+X-Google-Smtp-Source: AHgI3Iam1UNgqaSdUK1u9wD3MUMnBvJwgCAw9PzzE5b4ZxeIKU1TqE/XE7HuZ/dtFRNGP1c34vu6Og==
+X-Received: by 2002:a1c:740d:: with SMTP id p13mr17707006wmc.46.1550509032980;
+        Mon, 18 Feb 2019 08:57:12 -0800 (PST)
+Received: from debian64.daheim (p4FD09F2C.dip0.t-ipconnect.de. [79.208.159.44])
+        by smtp.gmail.com with ESMTPSA id 184sm19291828wmz.18.2019.02.18.08.57.12
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Feb 2019 08:56:09 -0800 (PST)
-Date:   Mon, 18 Feb 2019 11:56:07 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     netdev@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Fwd: Invitation to comment on Virtual I/O Device (VIRTIO) Version
- 1.1 - ends February 21st
-Message-ID: <20190218115145-mutt-send-email-mst@kernel.org>
+        Mon, 18 Feb 2019 08:57:12 -0800 (PST)
+Received: from localhost.daheim ([127.0.0.1] helo=debian64.localnet)
+        by debian64.daheim with esmtp (Exim 4.92-RC6)
+        (envelope-from <chunkeey@gmail.com>)
+        id 1gvmEB-0002ap-Ix; Mon, 18 Feb 2019 17:57:11 +0100
+From:   Christian Lamparter <chunkeey@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>
+Subject: Re: [PATCH 4.14 62/62] pinctrl: msm: fix gpio-hog related boot issues
+Date:   Mon, 18 Feb 2019 17:57:11 +0100
+Message-ID: <4323375.xCQYxFPVKo@debian64>
+In-Reply-To: <20190218133511.112652987@linuxfoundation.org>
+References: <20190218133505.801423074@linuxfoundation.org> <20190218133511.112652987@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For everyone's information, pls see below.
+On Monday, February 18, 2019 2:44:08 PM CET Greg Kroah-Hartman wrote:
+> 4.14-stable review patch.  If anyone has any objections, please let me know.
+> 
 
-Unfortunately earlier attempts to forward this announcement got blocked
-by the spm filter. Sorry about that.  There are still a couple of days
-left to comment though.
 
------ Forwarded message from Paul Knight <paul.knight@oasis-open.org> -----
+Wait! There's a problem! This patch "alone" is not enough to fix "the gpio-hog
+kills system" bug. The series also included the necessary dts change:
 
-Date: Mon, 11 Feb 2019 00:01:28 -0500
-From: Paul Knight <paul.knight@oasis-open.org>
-To: tc-announce@lists.oasis-open.org, members@lists.oasis-open.org, OASIS TAB <tab@lists.oasis-open.org>,
-	virtio-email@lists.oasis-open.org, virtio-comment@lists.oasis-open.org
-Subject: [virtio-comment] Invitation to comment on Virtual I/O Device (VIRTIO) Version 1.1 - ends February 21st
-Message-ID: <CADgeAH9MH8sJpuzmNidBsxf7-8CqnQteXVTSgPNcsrY9W9xg+w@mail.gmail.com>
+"[v6,2/2] ARM: dts: qcom: add gpio-ranges property"
+<https://patchwork.kernel.org/patch/10432105/>
 
-OASIS members and other interested parties,
+This patch is still set to "Awaiting upstream". But, from what I can tell
+"linux-arm-msm" is the upstream, right?
 
-OASIS and the OASIS Virtual I/O Device (VIRTIO) TC are pleased to announce
-that Virtual I/O Device (VIRTIO) Version 1.1 is now available for public
-review and comment.
+Anyway we had this discussion before:
+<https://www.spinics.net/lists/stable-commits/msg95383.html>
+But I don't have a long enough "poking tool" you speak of to do
+anything about it.
 
-Specification Overview:
+So @Amit / @greg : can you please poke Andy about it?
 
-This document describes the specifications of the “virtio” family of
-devices. These  devices are found in virtual environments, yet by design
-they look like physical devices to the guest within the virtual machine -
-and this document treats them as such. This similarity allows the guest to
-use standard drivers and discovery mechanisms. The purpose of virtio and
-this specification is that virtual environments and guests should have a
-straightforward, efficient, standard and extensible mechanism for virtual
-devices, rather than boutique per-environment or per-OS mechanisms.
+Note 2:
+The series also included a dt-binding patch:
+"[v6,1/2] dt-bindings: pinctrl: qcom: add gpio-ranges, gpio-reserved-ranges"
+<https://patchwork.kernel.org/patch/10431593/> 
 
-The documents and related files are available here:
+which made its way (with the same changes as the 2/2 patch) upstream.
+commit c1e802f68ca0 ("dt-bindings: pinctrl: qcom: add gpio-ranges, gpio-reserved-ranges")
 
-Virtual I/O Device (VIRTIO) Version 1.1
-Committee Specification Draft 01 / Public Review Draft 01
-20 December 2018
+Cheers,
+Christian
 
-Editable source (Authoritative):
-https://docs.oasis-open.org/virtio/virtio/v1.1/csprd01/tex/
-HTML:
-https://docs.oasis-open.org/virtio/virtio/v1.1/csprd01/virtio-v1.1-csprd01.html
-PDF:
-https://docs.oasis-open.org/virtio/virtio/v1.1/csprd01/virtio-v1.1-csprd01.pdf
+> ------------------
+> 
+> From: Christian Lamparter <chunkeey@gmail.com>
+> 
+> commit a86caa9ba5d70696ceb35d1d39caa20d8b641387 upstream.
+> 
+> Sven Eckelmann reported an issue with the current IPQ4019 pinctrl.
+> Setting up any gpio-hog in the device-tree for his device would
+> "kill the bootup completely":
+> 
+> | [    0.477838] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
+> | [    0.499828] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferring probe
+> | [    1.298883] requesting hog GPIO enable USB2 power (chip 1000000.pinctrl, offset 58) failed, -517
+> | [    1.299609] gpiochip_add_data: GPIOs 0..99 (1000000.pinctrl) failed to register
+> | [    1.308589] ipq4019-pinctrl 1000000.pinctrl: Failed register gpiochip
+> | [    1.316586] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
+> | [    1.322415] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferri
+> 
+> This was also verified on a RT-AC58U (IPQ4018) which would
+> no longer boot, if a gpio-hog was specified. (Tried forcing
+> the USB LED PIN (GPIO0) to high.).
+> 
+> The problem is that Pinctrl+GPIO registration is currently
+> peformed in the following order in pinctrl-msm.c:
+> 	1. pinctrl_register()
+> 	2. gpiochip_add()
+> 	3. gpiochip_add_pin_range()
+> 
+> The actual error code -517 == -EPROBE_DEFER is coming from
+> pinctrl_get_device_gpio_range(), which is called through:
+>         gpiochip_add
+>             of_gpiochip_add
+>                 of_gpiochip_scan_gpios
+>                     gpiod_hog
+>                         gpiochip_request_own_desc
+>                             __gpiod_request
+>                                 chip->request
+>                                     gpiochip_generic_request
+>                                        pinctrl_gpio_request
+>                                           pinctrl_get_device_gpio_range
+> 
+> pinctrl_get_device_gpio_range() is unable to find any valid
+> pin ranges, since nothing has been added to the pinctrldev_list yet.
+> so the range can't be found, and the operation fails with -EPROBE_DEFER.
+> 
+> This patch fixes the issue by adding the "gpio-ranges" property to
+> the pinctrl device node of all upstream Qcom SoC. The pin ranges are
+> then added by the gpio core.
+> 
+> In order to remain compatible with older, existing DTs (and ACPI)
+> a check for the "gpio-ranges" property has been added to
+> msm_gpio_init(). This prevents the driver of adding the same entry
+> to the pinctrldev_list twice.
+> 
+> Reported-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+> Tested-by: Sven Eckelmann <sven.eckelmann@openmesh.com> [ipq4019]
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> ---
+>  drivers/pinctrl/qcom/pinctrl-msm.c |   23 ++++++++++++++++++-----
+>  1 file changed, 18 insertions(+), 5 deletions(-)
+> 
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> @@ -839,11 +839,24 @@ static int msm_gpio_init(struct msm_pinc
+>  		return ret;
+>  	}
+>  
+> -	ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev), 0, 0, chip->ngpio);
+> -	if (ret) {
+> -		dev_err(pctrl->dev, "Failed to add pin range\n");
+> -		gpiochip_remove(&pctrl->chip);
+> -		return ret;
+> +	/*
+> +	 * For DeviceTree-supported systems, the gpio core checks the
+> +	 * pinctrl's device node for the "gpio-ranges" property.
+> +	 * If it is present, it takes care of adding the pin ranges
+> +	 * for the driver. In this case the driver can skip ahead.
+> +	 *
+> +	 * In order to remain compatible with older, existing DeviceTree
+> +	 * files which don't set the "gpio-ranges" property or systems that
+> +	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
+> +	 */
+> +	if (!of_property_read_bool(pctrl->dev->of_node, "gpio-ranges")) {
+> +		ret = gpiochip_add_pin_range(&pctrl->chip,
+> +			dev_name(pctrl->dev), 0, 0, chip->ngpio);
+> +		if (ret) {
+> +			dev_err(pctrl->dev, "Failed to add pin range\n");
+> +			gpiochip_remove(&pctrl->chip);
+> +			return ret;
+> +		}
+>  	}
+>  
+>  	ret = gpiochip_irqchip_add(chip,
+> 
+> 
+> 
 
-Example driver listing:
-https://docs.oasis-open.org/virtio/virtio/v1.1/csprd01/listings/
 
-For your convenience, OASIS provides a complete package of the
-specification document and any related files in ZIP distribution files. You
-can download the ZIP file at:
-https://docs.oasis-open.org/virtio/virtio/v1.1/csprd01/virtio-v1.1-csprd01.zip
 
-How to Provide Feedback
-
-OASIS and the OASIS Virtual I/O Device (VIRTIO) TC value your feedback. We
-solicit input from developers, users and others, whether OASIS members or
-not, for the sake of improving the interoperability and quality of its
-technical work.
-
-The public review starts 23 January 2019 at 00:00 UTC and ends 21 February
-2019 at 23:59 UTC.
-
-Comments may be submitted to the TC by any person through the use of the
-OASIS TC Comment Facility which can be used by following the instructions
-on the TC's "Send A Comment" page (
-https://www.oasis-open.org/committees/comments/index.php?wg_abbrev=virtio).
-
-Comments submitted by TC non-members for this work and for other work of
-this TC are publicly archived and can be viewed at:
-
-https://lists.oasis-open.org/archives/virtio-comment/
-
-All comments submitted to OASIS are subject to the OASIS Feedback License,
-which ensures that the feedback you provide carries the same obligations at
-least as the obligations of the TC members. In connection with this public
-review, we call your attention to the OASIS IPR Policy [1] applicable
-especially [2] to the work of this technical committee. All members of the
-TC should be familiar with this document, which may create obligations
-regarding the disclosure and availability of a member's patent, copyright,
-trademark and license rights that read on an approved OASIS specification.
-
-OASIS invites any persons who know of any such claims to disclose these if
-they may be essential to the implementation of the above specification, so
-that notice of them may be posted to the notice page for this TC's work.
-
-Additional information about the specification and the VIRTIO TC can be
-found at the TC's public home page:
-https://www.oasis-open.org/committees/virtio/
-
-========== Additional references:
-
-[1] https://www.oasis-open.org/policies-guidelines/ipr
-
-[2] https://www.oasis-open.org/committees/virtio/ipr.php
-https://www.oasis-open.org/policies-guidelines/ipr#Non-Assertion-Mode
-Non-Assertion Mode
--- 
-Paul Knight <paul.knight@oasis-open.org>  - Tel: +1 781-883-1783
-OASIS <https://www.oasis-open.org/> - Advancing open standards for the
-information society - Document Process Analyst
-<https://www.oasis-open.org/people/staff/paul-knight>
-
------ End forwarded message -----
