@@ -2,174 +2,85 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6991C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:29:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBBCEC4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:30:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B6D220661
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:29:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550521783;
-	bh=DvHDuGfz5U1kcmQ/KyetDgQ6dnhMfIpzpt7mGe9M3Qc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Sj7LnhNHWuw/VcItf2MHt4KZMhWbww85CPzyMfgV2S3oHpBI59UHZEuqu/YdriLtb
-	 YVndEmafr3OLclo6XWn7xLwm9GlgTCY6YZKxUak5moZYQho+vxa6kRKPUML+OUL8db
-	 Kx9IhhcZ6uRN8KDtqEpzyh+xLdREQlouygmLLFpE=
+	by mail.kernel.org (Postfix) with ESMTP id AAC1F20661
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:30:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729529AbfBRU3m (ORCPT
+        id S1729587AbfBRUaK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 15:29:42 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:44102 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725844AbfBRU3m (ORCPT
+        Mon, 18 Feb 2019 15:30:10 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:49421 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725844AbfBRUaK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 15:29:42 -0500
-Received: by mail-ot1-f66.google.com with SMTP id g1so30379217otj.11;
-        Mon, 18 Feb 2019 12:29:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HLwAr1KiOR6gPz8z1KdNOOBU1NlxDF2d/eQtn3tZWlc=;
-        b=HOJ7BW3U7kHEoCzRDid3LOhDFWLoL5ktMsAAhyNOkySnx5DRs+b6hhB2gCrWgb9bG2
-         8Uvgd+X7XHuoGvwYfB64BRp1lpggdoA0JTLVVfKAoQllZrD4yL3X78tCJyNWgglA75Ol
-         8ZDz2Eti5amGXjpCZZBHb9hO2xNzFXTfHIfdeBg1bVgt+G4b2rLGG+BiILs4ku5uWeah
-         reh7h+HuVi+qjAGtsvpDFzrpqH20WTl6Hc5Q0BLtqaIBIWNrURZUZ47ProayBij9BunW
-         YUX7vJKDbMk4D4HuTXceJ4PJ1kr710mVclvFLj3bNktfsLKxoHJnrq42kKoMmAYq9Tjt
-         tkcQ==
-X-Gm-Message-State: AHQUAuascr4tgfy3UuFPJrqvnIccJjrMvsu9rS4o8sLyL5Ll+Nd6nI+Q
-        MqzVPSVwuHM5tEeIkzvflg==
-X-Google-Smtp-Source: AHgI3IY7cK6lsX5psdvMxWusJXTlkWAjX9oLUnGA3ABICQEz/74JMHk2Y+6a/54jSd2BFqy/DOy2Vw==
-X-Received: by 2002:a9d:6012:: with SMTP id h18mr14619342otj.341.1550521780797;
-        Mon, 18 Feb 2019 12:29:40 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id d65sm7014200oih.13.2019.02.18.12.29.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Feb 2019 12:29:40 -0800 (PST)
-Date:   Mon, 18 Feb 2019 14:29:39 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Wei Ni <wni@nvidia.com>
-Cc:     thierry.reding@gmail.com, daniel.lezcano@linaro.org,
-        edubezval@gmail.com, linux-tegra@vger.kernel.org,
-        rui.zhang@intel.com, srikars@nvidia.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v1 04/12] of: Add bindings of gpu hw throttle for Tegra
- soctherm
-Message-ID: <20190218202939.GA7473@bogus>
-References: <1545118484-23641-1-git-send-email-wni@nvidia.com>
- <1545118484-23641-6-git-send-email-wni@nvidia.com>
+        Mon, 18 Feb 2019 15:30:10 -0500
+X-Originating-IP: 141.70.45.131
+Received: from localhost (hadi-gate-vlan-851.hadiko.whka.de [141.70.45.131])
+        (Authenticated sender: hle@owl.eu.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id A37FD240008;
+        Mon, 18 Feb 2019 20:30:07 +0000 (UTC)
+Date:   Mon, 18 Feb 2019 21:30:07 +0100
+From:   Hugo Lefeuvre <hle@owl.eu.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/4] iomap: fix multiple consistency issues, interface
+ cleanup
+Message-ID: <20190218203007.GB18457@behemoth.owl.eu.com.local>
+References: <cover.1550485787.git.hle@owl.eu.com>
+ <CAK8P3a3de3ti6B3A0Mgy_eVv8SmNyCLx7AvwYRK2k8rxtBG-3g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1545118484-23641-6-git-send-email-wni@nvidia.com>
+In-Reply-To: <CAK8P3a3de3ti6B3A0Mgy_eVv8SmNyCLx7AvwYRK2k8rxtBG-3g@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 03:34:36PM +0800, Wei Ni wrote:
-> Add "nvidia,gpu-throt-level" property to set gpu hw
-> throttle level.
-> 
-> Signed-off-by: Wei Ni <wni@nvidia.com>
-> ---
->  .../bindings/thermal/nvidia,tegra124-soctherm.txt  | 17 +++++++++++++++--
->  include/dt-bindings/thermal/tegra124-soctherm.h    | 22 ++++++++++++++++++----
->  2 files changed, 33 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
-> index ab66d6feab4b..cf6d0be56b7a 100644
-> --- a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
-> +++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
-> @@ -52,6 +52,15 @@ Required properties :
->          Must set as following values:
->          TEGRA_SOCTHERM_THROT_LEVEL_LOW, TEGRA_SOCTHERM_THROT_LEVEL_MED
->          TEGRA_SOCTHERM_THROT_LEVEL_HIGH, TEGRA_SOCTHERM_THROT_LEVEL_NONE
-> +      - nvidia,gpu-throt-level: This property is for Tegra124 and Tegra210.
-> +        It is the level of pulse skippers, which used to throttle clock
-> +        frequencies. It indicates gpu clock throttling depth and can be
-> +        programmed to any of the following values which represent a throttling
-> +        percentage:
-> +        TEGRA_SOCTHERM_THROT_LEVEL_NONE (0%)
-> +        TEGRA_SOCTHERM_THROT_LEVEL_LOW (50%),
-> +        TEGRA_SOCTHERM_THROT_LEVEL_MED (75%),
-> +        TEGRA_SOCTHERM_THROT_LEVEL_HIGH (85%).
->        - #cooling-cells: Should be 1. This cooling device only support on/off state.
->          See ./thermal.txt for a description of this property.
->  
-> @@ -96,22 +105,26 @@ Example :
->  		throttle-cfgs {
->  			/*
->  			 * When the "heavy" cooling device triggered,
-> -			 * the HW will skip cpu clock's pulse in 85% depth
-> +			 * the HW will skip cpu clock's pulse in 85% depth,
-> +			 * skip gpu clock's pulse in 85% level
->  			 */
->  			throttle_heavy: heavy {
->  				nvidia,priority = <100>;
->  				nvidia,cpu-throt-percent = <85>;
-> +				nvidia,gpu-throt-level = <TEGRA_SOCTHERM_THROT_LEVEL_HIGH>;
->  
->  				#cooling-cells = <1>;
->  			};
->  
->  			/*
->  			 * When the "light" cooling device triggered,
-> -			 * the HW will skip cpu clock's pulse in 50% depth
-> +			 * the HW will skip cpu clock's pulse in 50% depth,
-> +			 * skip gpu clock's pulse in 50% level
->  			 */
->  			throttle_light: light {
->  				nvidia,priority = <80>;
->  				nvidia,cpu-throt-percent = <50>;
-> +				nvidia,gpu-throt-level = <TEGRA_SOCTHERM_THROT_LEVEL_LOW>;
->  
->  				#cooling-cells = <1>;
->  			};
-> diff --git a/include/dt-bindings/thermal/tegra124-soctherm.h b/include/dt-bindings/thermal/tegra124-soctherm.h
-> index c15e8b709a0d..75853df1c609 100644
-> --- a/include/dt-bindings/thermal/tegra124-soctherm.h
-> +++ b/include/dt-bindings/thermal/tegra124-soctherm.h
-> @@ -1,5 +1,19 @@
->  /* SPDX-License-Identifier: GPL-2.0 */
->  /*
-> + * Copyright (c) 2014 - 2018, NVIDIA CORPORATION.  All rights reserved.
-> + *
-> + * Author:
-> + *      Mikko Perttunen <mperttunen@nvidia.com>
-> + *
-> + * This software is licensed under the terms of the GNU General Public
-> + * License version 2, as published by the Free Software Foundation, and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
+Hi,
 
-Why are you adding this?
+> Nice cleanup! Applied to my asm-generic tree now.
 
->   * This header provides constants for binding nvidia,tegra124-soctherm.
->   */
->  
-> @@ -12,9 +26,9 @@
->  #define TEGRA124_SOCTHERM_SENSOR_PLLX 3
->  #define TEGRA124_SOCTHERM_SENSOR_NUM 4
->  
-> -#define TEGRA_SOCTHERM_THROT_LEVEL_LOW  0
-> -#define TEGRA_SOCTHERM_THROT_LEVEL_MED  1
-> -#define TEGRA_SOCTHERM_THROT_LEVEL_HIGH 2
-> -#define TEGRA_SOCTHERM_THROT_LEVEL_NONE -1
-> +#define TEGRA_SOCTHERM_THROT_LEVEL_NONE 0
-> +#define TEGRA_SOCTHERM_THROT_LEVEL_LOW  1
-> +#define TEGRA_SOCTHERM_THROT_LEVEL_MED  2
-> +#define TEGRA_SOCTHERM_THROT_LEVEL_HIGH 3
+Thanks!
 
-You are breaking an ABI.
+> I notice that you did not add a 'volatile' qualifier in addition to 'const'.
+> Is that something you considered doing? I think the traditional
+> readl/writel style accessors have them partly for historic reasons,
+> and partly to simply the trivial implementation that is based on
+> a volatile pointer dereference. Neither is needed here, and I don't
+> think we have any drivers that pass volatile pointers into ioread()/iowrite()
+> (which would cause a warning), so we can probably leave it at that,
+> but it's still a bit inconsistent.
 
-Rob
+Right, I intentionally omitted the volatile qualifier here.
+
+Adding it to the definitions from asm-generic/iomap.h would require to
+also update lib/iomap.c and arch/ implementations. This should, imo, only
+be done if really necessary.
+
+From what I've seen, almost all ioread() implementations simply redirect
+to readl style accessors. I could not find one implementation that does
+something with the addr argument which requires the volatile qualifier.
+
+Also, I'm not even sure to understand why we need the volatile qualifier
+in the ioread() definitions from asm-generic/io.h...
+
+Drivers wishing to pass volatile pointers to ioread() should probably use
+a more low level api.
+
+regards,
+ Hugo
+
+-- 
+                Hugo Lefeuvre (hle)    |    www.owl.eu.com
+RSA4096_ 360B 03B3 BF27 4F4D 7A3F D5E8 14AA 1EB8 A247 3DFD
+ed25519_ 37B2 6D38 0B25 B8A2 6B9F 3A65 A36F 5357 5F2D DC4C
