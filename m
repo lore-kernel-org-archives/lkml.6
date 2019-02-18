@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14816C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9134CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5C7720449
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6197C20449
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497860;
-	bh=FX83/G13E90Jfl+2ngpLUNE0LT7sVAbfj83kpOLpl7s=;
+	s=default; t=1550497864;
+	bh=ociT4bO8JGx2XV/H96MU+m8mYK2B49N/+sLX3sjLX98=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=icJKHacoZ4c6BTb+iXYs8qE84KYEIU+YbObQmq8/sVsfpXgiUeWAbim5p1p+Q1rHc
-	 MCdcjfdr4gGORxbvYf/3fHrRsQchVOb05ndUSvbX1T5jbr7IZLf6nuRb+diUvkxn+3
-	 i9Gwf3/WeABSJAHZxioby9qx4W/j2hsWyiR8udfc=
+	b=aq4LTdknXPvgXIZTbjYyPRv9AhxvGKKSpcbCS+x96v6gHq/rlzTBbShvbQlnSVbM4
+	 7s82tNr2TwiqWy93+pLn71sQA0kc3LtBPZj5gVC9Vpp6RcMvzOfG0NVVvktybGes9E
+	 z1MYCkYsZOeygwu/ql2BZm6FhgwkoXP7WrHOTtXE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732309AbfBRNu7 (ORCPT
+        id S1732322AbfBRNvC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:50:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58660 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:51:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732298AbfBRNuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:50:54 -0500
+        id S1732298AbfBRNvA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:51:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57D9F20449;
-        Mon, 18 Feb 2019 13:50:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D35D20842;
+        Mon, 18 Feb 2019 13:50:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497853;
-        bh=FX83/G13E90Jfl+2ngpLUNE0LT7sVAbfj83kpOLpl7s=;
+        s=default; t=1550497860;
+        bh=ociT4bO8JGx2XV/H96MU+m8mYK2B49N/+sLX3sjLX98=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kAnt92SXLZrCe4qaCktIxLyGC1DXEFFhhICYHnmWrKep02pbD/ErKXoH1n/Y/wRH0
-         rROHOQm1V1iZcqzgzHyW8k1ealxfVIN+pL+q6rVUXVPcG/fcBCyD7gMC/7gNuva4xb
-         rrwCOaM5+CxHcjx0Fca0VbxO9zx/ZSi+ViwFKkiE=
+        b=C9WchNmj4CNdj/Xb6y7Az7jy4svTjF5nt6G6AJQEEFUJgv119k6aXe3pbtPUVoEfd
+         xE5WqnJR5cdTYxSdgGM1XxPartTt9T6albCuq/q2qtYI8ArurgUDdhbM1nrEGIYTe7
+         q/1C7mPQUENPsH8dkwSpmD5R2lZbFbDQ/9rgHTD8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
         Andrzej Hajda <a.hajda@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 31/85] drm/bridge: tc358767: fix initial DP0/1_SRCCTRL value
-Date:   Mon, 18 Feb 2019 14:42:57 +0100
-Message-Id: <20190218133503.200026610@linuxfoundation.org>
+Subject: [PATCH 4.19 33/85] drm/bridge: tc358767: fix output H/V syncs
+Date:   Mon, 18 Feb 2019 14:42:59 +0100
+Message-Id: <20190218133503.411993643@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -66,51 +66,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9a63bd6fe1b5590ffa42ae2ed22ee21363293e31 ]
+[ Upstream commit 7923e09c7a766e2d58de7fc395bb84c18e5bc625 ]
 
-Initially DP0_SRCCTRL is set to a static value which includes
-DP0_SRCCTRL_LANES_2 and DP0_SRCCTRL_BW27, even when only 1 lane of
-1.62Gbps speed is used. DP1_SRCCTRL is configured to a magic number.
-
-This patch changes the configuration as follows:
-
-Configure DP0_SRCCTRL by using tc_srcctrl() which provides the correct
-value.
-
-DP1_SRCCTRL needs two bits to be set to the same value as DP0_SRCCTRL:
-SSCG and BW27. All other bits can be zero.
+The H and V syncs of the DP output are always set to active high. This
+patch fixes the syncs by configuring them according to the videomode.
 
 Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-5-tomi.valkeinen@ti.com
+Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-7-tomi.valkeinen@ti.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/bridge/tc358767.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/bridge/tc358767.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index fee53422c31f..ab299f4debfa 100644
+index a1f3dd2afbb1..391547358756 100644
 --- a/drivers/gpu/drm/bridge/tc358767.c
 +++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -836,12 +836,11 @@ static int tc_main_link_setup(struct tc_data *tc)
- 	if (!tc->mode)
- 		return -EINVAL;
+@@ -98,6 +98,8 @@
+ #define DP0_STARTVAL		0x064c
+ #define DP0_ACTIVEVAL		0x0650
+ #define DP0_SYNCVAL		0x0654
++#define SYNCVAL_HS_POL_ACTIVE_LOW	(1 << 15)
++#define SYNCVAL_VS_POL_ACTIVE_LOW	(1 << 31)
+ #define DP0_MISC		0x0658
+ #define TU_SIZE_RECOMMENDED		(63) /* LSCLK cycles per TU */
+ #define BPC_6				(0 << 5)
+@@ -726,7 +728,9 @@ static int tc_set_video_mode(struct tc_data *tc, struct drm_display_mode *mode)
  
--	/* from excel file - DP0_SrcCtrl */
--	tc_write(DP0_SRCCTRL, DP0_SRCCTRL_SCRMBLDIS | DP0_SRCCTRL_EN810B |
--		 DP0_SRCCTRL_LANESKEW | DP0_SRCCTRL_LANES_2 |
--		 DP0_SRCCTRL_BW27 | DP0_SRCCTRL_AUTOCORRECT);
--	/* from excel file - DP1_SrcCtrl */
--	tc_write(DP1_SRCCTRL, 0x00003083);
-+	tc_write(DP0_SRCCTRL, tc_srcctrl(tc));
-+	/* SSCG and BW27 on DP1 must be set to the same as on DP0 */
-+	tc_write(DP1_SRCCTRL,
-+		 (tc->link.spread ? DP0_SRCCTRL_SSCG : 0) |
-+		 ((tc->link.base.rate != 162000) ? DP0_SRCCTRL_BW27 : 0));
+ 	tc_write(DP0_ACTIVEVAL, (mode->vdisplay << 16) | (mode->hdisplay));
  
- 	rate = clk_get_rate(tc->refclk);
- 	switch (rate) {
+-	tc_write(DP0_SYNCVAL, (vsync_len << 16) | (hsync_len << 0));
++	tc_write(DP0_SYNCVAL, (vsync_len << 16) | (hsync_len << 0) |
++		 ((mode->flags & DRM_MODE_FLAG_NHSYNC) ? SYNCVAL_HS_POL_ACTIVE_LOW : 0) |
++		 ((mode->flags & DRM_MODE_FLAG_NVSYNC) ? SYNCVAL_VS_POL_ACTIVE_LOW : 0));
+ 
+ 	tc_write(DPIPXLFMT, VS_POL_ACTIVE_LOW | HS_POL_ACTIVE_LOW |
+ 		 DE_POL_ACTIVE_HIGH | SUB_CFG_TYPE_CONFIG1 | DPI_BPP_RGB888);
 -- 
 2.19.1
 
