@@ -2,86 +2,90 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C9C2C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:37:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C64C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:38:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8D2E20838
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:37:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AD4C20838
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:38:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550511510;
+	bh=8azRhy948dviRG1YyP/pjoqIcsOu26pK2KsaaUP4l1g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=UY3Z1CGCMAWPTNRmcWpPYRsdxeTzYJEowdd92KeOT57JQUlNO+SFr6ZOOIOTkaxiG
+	 dUP69wiBIuYBQ41H2V0PH8vr6hDYgGjqPYmI0W8WcDdvPtC1cJLbrrm720YfmWXa5m
+	 KW5unU1TpYV2F5ieIgF6uUPFDkz8mFjmm+KFlgzQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388688AbfBRRhg (ORCPT
+        id S2388386AbfBRRi2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 12:37:36 -0500
-Received: from foss.arm.com ([217.140.101.70]:34952 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729728AbfBRRhg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 12:37:36 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E565D80D;
-        Mon, 18 Feb 2019 09:02:22 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 87C683F675;
-        Mon, 18 Feb 2019 09:02:01 -0800 (PST)
-Subject: Re: MT76x2U crashes XHCI driver on AMD Ryzen system
-To:     Stanislaw Gruszka <sgruszka@redhat.com>,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Cc:     Samuel Sieb <samuel@sieb.net>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Rosen Penev <rosenp@gmail.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-References: <CAKxU2N9o5WeUwFMUwwXKHaPj7R+oiSKV1c2n8RtXwGNZRtw5Sw@mail.gmail.com>
- <CAJ0CqmVNF83bWgc+LSQ3_i=zfp-sXC5Nf=nKfqB3SWa8r7sKdQ@mail.gmail.com>
- <83A1D243-9073-48D1-9F26-5A2581DCB829@gmail.com>
- <CAJ0CqmUgPWNJtCW4Q__sOtB8w-YtwW+uZy7crxMNrmSgQ6OFyA@mail.gmail.com>
- <1547404075.1582.0@smtp.gmail.com>
- <CAJ0CqmU7k5i26g7dGPxNdts7Gm67W6qNsr4vYuW05ugsEF1ohw@mail.gmail.com>
- <CAKxU2N-+CTaRdJMFVRdozJ5TTpN+_4thiDRBJBFq8gGtuRVYvA@mail.gmail.com>
- <20190114091841.GA23045@localhost.localdomain>
- <CAKxU2N8ioMszBCyQcH7CVhgBdW4aj7yZ+kYQe14DCV5OSAnxrg@mail.gmail.com>
- <20190115090400.GA2267@localhost.localdomain>
- <20190218143742.GA11872@redhat.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <2cc5674a-a3a0-d8fe-65f5-4357da9b85d3@arm.com>
-Date:   Mon, 18 Feb 2019 17:01:59 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 18 Feb 2019 12:38:28 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36794 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729728AbfBRRi2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 12:38:28 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D38B9AD9C;
+        Mon, 18 Feb 2019 17:38:26 +0000 (UTC)
+Date:   Mon, 18 Feb 2019 18:38:25 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
+        Wolfgang Walter <linux@stwm.de>, Roman Gushchin <guro@fb.com>,
+        Spock <dairinin@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 4.20 71/92] Revert "mm: slowly shrink slabs with a
+ relatively small number of objects"
+Message-ID: <20190218173825.GB4525@dhcp22.suse.cz>
+References: <20190218133454.668268457@linuxfoundation.org>
+ <20190218133501.533140116@linuxfoundation.org>
+ <a998a5028aa3bb17a5a60fffd3db558223b84cd5.camel@surriel.com>
+ <20190218161634.GA30873@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20190218143742.GA11872@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190218161634.GA30873@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/02/2019 14:37, Stanislaw Gruszka wrote:
-[...]
-> Another issue is that dma_map_sg() & dma_map_page() may require some
-> constraints. I'm not sure about that and I want to clarify that with
-> CCed mm maintainers. I think DMA drivers may expect sg->offset < PAGE_SIZE
-> for both dma_map_sg() and dma_map_page(). Additionally dma_map_page()
-> maight expect that offset & length specify buffer within one page.
+On Mon 18-02-19 17:16:34, Greg KH wrote:
+> On Mon, Feb 18, 2019 at 10:30:44AM -0500, Rik van Riel wrote:
+> > On Mon, 2019-02-18 at 14:43 +0100, Greg Kroah-Hartman wrote:
+> > > 4.20-stable review patch.  If anyone has any objections, please let
+> > > me know.
+> > > 
+> > > ------------------
+> > > 
+> > > From: Dave Chinner <dchinner@redhat.com>
+> > > 
+> > > commit a9a238e83fbb0df31c3b9b67003f8f9d1d1b6c96 upstream.
+> > > 
+> > > This reverts commit 172b06c32b9497 ("mm: slowly shrink slabs with a
+> > > relatively small number of objects").
+> > 
+> > This revert will result in the slab caches of dead
+> > cgroups with a small number of remaining objects never
+> > getting reclaimed, which can be a memory leak in some
+> > configurations.
+> > 
+> > But hey, that's your tradeoff to make.
+> 
+> That's what is in Linus's tree.  Should we somehow diverge from that?
 
-Luckily, this came up a while back[1] and we seemed to reach a consensus 
-that sg->offset >= PAGE_SIZE for dma_map_sg() was weird but valid. IIRC 
-it was only the Intel IOMMU code which failed to handle that case 
-appropriately (and which I fixed) - the AMD IOMMU code always looked 
-like it should be OK, but I'm not sure I've ever seen definitive test 
-results (and I don't have hardware to do so myself).
+I believe we should start working on a memcg specific solution to
+minimize regressions for others and start a more complex solution from
+there.
 
-For dma_map_page(), length >= PAGE_SIZE should be perfectly valid and 
-handled correctly. The offset >= PAGE_SIZE case is a bit harder to 
-justify, but at the same time has less scope for the DMA API backend to 
-get it wrong, so either way is likely to be OK in practice (in 
-particular the AMD IOMMU code looks like it won't have a problem, since 
-its map_page() implementation converts page and offset to a plain 
-physical address before doing anything else).
-
-Robin.
-
-[1] 
-https://lists.linuxfoundation.org/pipermail/iommu/2017-September/024148.html
+Can we special case dead memcgs in the slab reclaim and reclaim more
+aggressively?
+-- 
+Michal Hocko
+SUSE Labs
