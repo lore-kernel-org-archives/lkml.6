@@ -2,117 +2,123 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 379C2C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:29:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C05C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:29:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 060B22081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:29:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550500166;
-	bh=X15JsUl+Ec2Ozny10O2a4xlCNIAoQ8hI4PNfrma1qnA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QEaz+oNe2Dmg5vlMwfjrcZCw+W4Ftw9EwoecELGpOzR9RJZFFBFFPP+5ZJb0UwjNR
-	 deps7HhZ6aSaiw3Y1e2LytAybiD/qskjPhU8Oo/XF2kXJTyQiWGrg2BIQ9BpysIas+
-	 Rxu3tVkeJcVNnLShdr3IYCtFBjUJ7i5ibDieADPo=
+	by mail.kernel.org (Postfix) with ESMTP id 4BD152081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:29:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388612AbfBRN7h (ORCPT
+        id S1731889AbfBRO3g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:59:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40526 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:29:36 -0500
+Received: from foss.arm.com ([217.140.101.70]:60040 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388592AbfBRN7d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:59:33 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E4612070D;
-        Mon, 18 Feb 2019 13:59:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498372;
-        bh=X15JsUl+Ec2Ozny10O2a4xlCNIAoQ8hI4PNfrma1qnA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ORhGc5haqHHl0yvhlAyzXmRoLDXE/4Dp2lj0aFTDgj01Ro/tm/xVh4gxszULq3R8i
-         cYKhCt8g6ek+R8SkOAD/5RrXvh9I4lgdADjVh9toftuTbIwXFbuydCOTHqmEdlIyki
-         JdFGdTulG+SxdzSst1wNkGnkTnma2JDDZGnK2E7k=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 26/58] drm/bridge: tc358767: fix initial DP0/1_SRCCTRL value
-Date:   Mon, 18 Feb 2019 14:43:47 +0100
-Message-Id: <20190218133510.605405097@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190218133508.567416115@linuxfoundation.org>
-References: <20190218133508.567416115@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        id S1733129AbfBRO3d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:29:33 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 90ADAA78;
+        Mon, 18 Feb 2019 06:29:33 -0800 (PST)
+Received: from why.wild-wind.fr.eu.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4580F3F589;
+        Mon, 18 Feb 2019 06:29:28 -0800 (PST)
+Date:   Mon, 18 Feb 2019 14:28:45 +0000
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     guoren@kernel.org
+Cc:     tglx@linutronix.de, robh+dt@kernel.org,
+        linux-kernel@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>
+Subject: Re: [PATCH V2 5/7] dt-bindings: interrupt-controller: Update csky
+ mpintc
+Message-ID: <20190218142845.4ad56ec0@why.wild-wind.fr.eu.org>
+In-Reply-To: <1550455483-11710-5-git-send-email-guoren@kernel.org>
+References: <1550455483-11710-1-git-send-email-guoren@kernel.org>
+        <1550455483-11710-5-git-send-email-guoren@kernel.org>
+Organization: ARM Ltd
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Mon, 18 Feb 2019 10:04:41 +0800
+guoren@kernel.org wrote:
 
-------------------
+> From: Guo Ren <ren_guo@c-sky.com>
+> 
+> Add trigger type and priority setting for csky,mpintc.
+> 
+> Changelog:
+>  - change #interrupt-cells to <3>
+> 
+> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> ---
+>  .../bindings/interrupt-controller/csky,mpintc.txt   | 21 +++++++++++++++++----
+>  1 file changed, 17 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
+> index ab921f1..dccd913 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
+> @@ -6,11 +6,18 @@ C-SKY Multi-processors Interrupt Controller is designed for ck807/ck810/ck860
+>  SMP soc, and it also could be used in non-SMP system.
+>  
+>  Interrupt number definition:
+> -
+>    0-15  : software irq, and we use 15 as our IPI_IRQ.
+>   16-31  : private  irq, and we use 16 as the co-processor timer.
+>   31-1024: common irq for soc ip.
+>  
+> +Interrupt triger mode:
+> + IRQ_TYPE_LEVEL_HIGH (default)
+> + IRQ_TYPE_LEVEL_LOW
+> + IRQ_TYPE_EDGE_RISING
+> + IRQ_TYPE_EDGE_FALLING
+> +
+> +Interrupt priority range: 0-255
+> +
+>  =============================
+>  intc node bindings definition
+>  =============================
+> @@ -26,15 +33,21 @@ intc node bindings definition
+>  	- #interrupt-cells
+>  		Usage: required
+>  		Value type: <u32>
+> -		Definition: must be <1>
+> +		Definition: <3>
 
-[ Upstream commit 9a63bd6fe1b5590ffa42ae2ed22ee21363293e31 ]
+This seem to be invalidating all existing DTs. Is this an acceptable
+thing to do? It will require an Ack from a DT maintainer.
 
-Initially DP0_SRCCTRL is set to a static value which includes
-DP0_SRCCTRL_LANES_2 and DP0_SRCCTRL_BW27, even when only 1 lane of
-1.62Gbps speed is used. DP1_SRCCTRL is configured to a magic number.
+>  	- interrupt-controller:
+>  		Usage: required
+>  
+> -Examples:
+> +Examples: ("interrupts = <irq_num IRQ_TYPE_XXX priority>")
+>  ---------
+>  
+>  	intc: interrupt-controller {
+>  		compatible = "csky,mpintc";
+> -		#interrupt-cells = <1>;
+> +		#interrupt-cells = <3>;
+>  		interrupt-controller;
+>  	};
+> +
+> +	device: device-example {
+> +		...
+> +		interrupts = <34 IRQ_TYPE_EDGE_RISING 254>;
+> +		interrupt-parent = <&intc>;
+> +	};
 
-This patch changes the configuration as follows:
+Thanks,
 
-Configure DP0_SRCCTRL by using tc_srcctrl() which provides the correct
-value.
-
-DP1_SRCCTRL needs two bits to be set to the same value as DP0_SRCCTRL:
-SSCG and BW27. All other bits can be zero.
-
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-5-tomi.valkeinen@ti.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/drm/bridge/tc358767.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index 8098297c5fe5..dbe403ea130d 100644
---- a/drivers/gpu/drm/bridge/tc358767.c
-+++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -834,12 +834,11 @@ static int tc_main_link_setup(struct tc_data *tc)
- 	if (!tc->mode)
- 		return -EINVAL;
- 
--	/* from excel file - DP0_SrcCtrl */
--	tc_write(DP0_SRCCTRL, DP0_SRCCTRL_SCRMBLDIS | DP0_SRCCTRL_EN810B |
--		 DP0_SRCCTRL_LANESKEW | DP0_SRCCTRL_LANES_2 |
--		 DP0_SRCCTRL_BW27 | DP0_SRCCTRL_AUTOCORRECT);
--	/* from excel file - DP1_SrcCtrl */
--	tc_write(DP1_SRCCTRL, 0x00003083);
-+	tc_write(DP0_SRCCTRL, tc_srcctrl(tc));
-+	/* SSCG and BW27 on DP1 must be set to the same as on DP0 */
-+	tc_write(DP1_SRCCTRL,
-+		 (tc->link.spread ? DP0_SRCCTRL_SSCG : 0) |
-+		 ((tc->link.base.rate != 162000) ? DP0_SRCCTRL_BW27 : 0));
- 
- 	rate = clk_get_rate(tc->refclk);
- 	switch (rate) {
+	M.
 -- 
-2.19.1
-
-
-
+Without deviation from the norm, progress is not possible.
