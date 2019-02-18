@@ -2,203 +2,195 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C9FCC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 22:16:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EBCCC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 22:17:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3B9B217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 22:16:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57AE7217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 22:17:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731544AbfBRWQC (ORCPT
+        id S1731600AbfBRWR5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 17:16:02 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:48862 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731463AbfBRWQC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 17:16:02 -0500
-Received: from 79.184.254.15.ipv4.supernova.orange.pl (79.184.254.15) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id b6aa6df7bd2ef30d; Mon, 18 Feb 2019 23:15:59 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lukas Wunner <lukas@wunner.de>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 2/2] driver core: Fix possible supplier PM-usage counter imbalance
-Date:   Mon, 18 Feb 2019 23:14:35 +0100
-Message-ID: <1643324.bcmPelzAHY@aspire.rjw.lan>
-In-Reply-To: <6ee66fc6-cba5-7aea-0e92-3380544c1a94@nvidia.com>
-References: <5510642.nRbR3bcduN@aspire.rjw.lan> <CAJZ5v0gywb2jE-FRowxuosucNVqQ4iLLTCFte4hN_CELF9rHRA@mail.gmail.com> <6ee66fc6-cba5-7aea-0e92-3380544c1a94@nvidia.com>
+        Mon, 18 Feb 2019 17:17:57 -0500
+Received: from mail-oln040092005016.outbound.protection.outlook.com ([40.92.5.16]:28384
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731463AbfBRWR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 17:17:56 -0500
+Received: from SN1NAM02FT024.eop-nam02.prod.protection.outlook.com
+ (10.152.72.58) by SN1NAM02HT084.eop-nam02.prod.protection.outlook.com
+ (10.152.72.214) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1580.10; Mon, 18 Feb
+ 2019 22:17:52 +0000
+Received: from BYAPR02MB5495.namprd02.prod.outlook.com (10.152.72.55) by
+ SN1NAM02FT024.mail.protection.outlook.com (10.152.72.127) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.11 via Frontend Transport; Mon, 18 Feb 2019 22:17:52 +0000
+Received: from BYAPR02MB5495.namprd02.prod.outlook.com
+ ([fe80::b889:1a99:77fa:d4fe]) by BYAPR02MB5495.namprd02.prod.outlook.com
+ ([fe80::b889:1a99:77fa:d4fe%2]) with mapi id 15.20.1622.018; Mon, 18 Feb 2019
+ 22:17:52 +0000
+From:   Jonathan Bakker <xc-racer2@live.ca>
+To:     Rob Herring <robh@kernel.org>,
+        =?utf-8?B?UGF3ZcWCIENobWllbA==?= <pawel.mikolaj.chmiel@gmail.com>
+CC:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/5] dt-bindings: input: Add binding for bma150 sensor
+Thread-Topic: [PATCH v2 1/5] dt-bindings: input: Add binding for bma150 sensor
+Thread-Index: AQHUuwqEs9ddExnmjk2wbubgN7E4HKXmB3kAgAAyAQA=
+Date:   Mon, 18 Feb 2019 22:17:51 +0000
+Message-ID: <BYAPR02MB5495DAE1E28F1EA4578BE3F4A3630@BYAPR02MB5495.namprd02.prod.outlook.com>
+References: <20190202151806.9064-1-pawel.mikolaj.chmiel@gmail.com>
+ <20190202151806.9064-2-pawel.mikolaj.chmiel@gmail.com>
+ <20190218191850.GA31221@bogus>
+In-Reply-To: <20190218191850.GA31221@bogus>
+Accept-Language: en-CA, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR08CA0024.namprd08.prod.outlook.com
+ (2603:10b6:301:5f::37) To BYAPR02MB5495.namprd02.prod.outlook.com
+ (2603:10b6:a03:9a::25)
+x-incomingtopheadermarker: OriginalChecksum:661343AB6C1D89E034DB093A4FAEAB439312F058E00D4C6A06AC07FFB39E2BD5;UpperCasedChecksum:C3471983B3CA1664AA16871EEC0B291967C7EB8662BEB66242852C46BD60282C;SizeAsReceived:8853;Count:63
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [x7KR18QPaJJUy//1zmxb1O4ZHD8XqYF6LBuzXRGP1srkMZDLu7qsMc1Qww4v+2Ee]
+x-microsoft-original-message-id: <c8bfdb1d-750b-e19b-256a-3bd9f5c96396@live.ca>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 63
+x-eopattributedmessage: 0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031323274)(2017031324274)(2017031322404)(1601125500)(1603101475)(1701031045);SRVR:SN1NAM02HT084;
+x-ms-traffictypediagnostic: SN1NAM02HT084:
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:SN1NAM02HT084;BCL:0;PCL:0;RULEID:;SRVR:SN1NAM02HT084;
+x-microsoft-antispam-message-info: zdJnLdIcwH+TyRDRyIAxwjTlDkmtwo4DTSbkINzQbSaNPUqGyB5bq6jRraM0FOJE
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <AECFA3B68BA15D48B0D167B4D27EF053@namprd02.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 9bd8b953-1c55-4da7-b616-8bcad099ae8b
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36ea69a1-d0bb-4cf9-b709-08d695eeebdf
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 9bd8b953-1c55-4da7-b616-8bcad099ae8b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2019 22:17:50.6732
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1NAM02HT084
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, February 18, 2019 2:02:50 PM CET Jon Hunter wrote:
-> 
-> On 18/02/2019 12:12, Rafael J. Wysocki wrote:
-> >  On Fri, Feb 15, 2019 at 5:44 PM Jon Hunter <jonathanh@nvidia.com> wrote:
-> >>
-> >>
-> >> On 15/02/2019 14:37, Ulf Hansson wrote:
-> >>> On Fri, 15 Feb 2019 at 12:00, Jon Hunter <jonathanh@nvidia.com> wrote:
-> >>>>
-> >>>> Hi Rafael,
-> >>>>
-> >>>> On 12/02/2019 12:08, Rafael J. Wysocki wrote:
-> >>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >>>>>
-> >>>>> If a stateless device link to a certain supplier with
-> >>>>> DL_FLAG_PM_RUNTIME set in the flags is added and then removed by the
-> >>>>> consumer driver's probe callback, the supplier's PM-runtime usage
-> >>>>> counter will be nonzero after that which effectively causes the
-> >>>>> supplier to remain "always on" going forward.
-> >>>>>
-> >>>>> Namely, device_link_add() called to add the link invokes
-> >>>>> device_link_rpm_prepare() which notices that the consumer driver is
-> >>>>> probing, so it increments the supplier's PM-runtime usage counter
-> >>>>> with the assumption that the link will stay around until
-> >>>>> pm_runtime_put_suppliers() is called by driver_probe_device(),
-> >>>>> but if the link goes away before that point, the supplier's
-> >>>>> PM-runtime usage counter will remain nonzero.
-> >>>>>
-> >>>>> To prevent that from happening, first rework pm_runtime_get_suppliers()
-> >>>>> and pm_runtime_put_suppliers() to use the rpm_active refounts of device
-> >>>>> links and make the latter only drop rpm_active and the supplier's
-> >>>>> PM-runtime usage counter for each link by one, unless rpm_active is
-> >>>>> one already for it.  Next, modify device_link_add() to bump up the
-> >>>>> new link's rpm_active refcount and the suppliers PM-runtime usage
-> >>>>> counter by two, to prevent pm_runtime_put_suppliers(), if it is
-> >>>>> called subsequently, from suspending the supplier prematurely (in
-> >>>>> case its PM-runtime usage counter goes down to 0 in there).
-> >>>>>
-> >>>>> Due to the way rpm_put_suppliers() works, this change does not
-> >>>>> affect runtime suspend of the consumer ends of new device links (or,
-> >>>>> generally, device links for which DL_FLAG_PM_RUNTIME has just been
-> >>>>> set).
-> >>>>>
-> >>>>> Fixes: e2f3cd831a28 ("driver core: Fix handling of runtime PM flags in device_link_add()")
-> >>>>> Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
-> >>>>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >>>>> ---
-> >>>>>
-> >>>>> Note that the issue had been there before commit e2f3cd831a28, but it was
-> >>>>> overlooked by that commit and this change is a fix on top of it, so make
-> >>>>> the Fixes: tag point to commit e2f3cd831a28 (instead of an earlier one
-> >>>>> that the patch will not be applicable to).
-> >>>> I noticed that yesterday's and today's -next were no longer booting on
-> >>>> one of our Tegra boards (Tegra210 Jetson TX2) because networking is
-> >>>> failing. The ethernet chip is a USB device and looking at the bootlogs I
-> >>>> can see that the Tegra XHCI driver is failing ...
-> >>>>
-> >>>>  tegra-xusb 70090000.usb: xHCI host controller not responding, assume dead
-> >>>>  tegra-xusb 70090000.usb: HC died; cleaning up
-> >>>>
-> >>>> The Tegra XHCI driver uses multiple power-domains and uses
-> >>>> device_link_add() to attach them. So now I am wondering if there is
-> >>>> something that we have got wrong in our implementation. However, I don't
-> >>>> see the device being probed deferred on boot or anything like that.
-> >>>>
-> >>>> The driver in question is drivers/usb/host/xhci-tegra.c and we add the
-> >>>> links in the function tegra_xusb_powerdomain_init() which is before RPM
-> >>>> is enabled. Let me know if you have any thoughts.
-> >>>
-> >>> If you are willing to help debugging then I am offering my assistance.
-> >>>
-> >>> I would start by enabling CONFIG_PM_ADVANCED_DEBUG, which gives you
-> >>> some more information about the runtime PM state of the device, like
-> >>> the usage count for example.
-> >>> I would also add a couple of prints in
-> >>> tegra_xusb_runtime_suspend|resume() and in the ->power_on|off()
-> >>> callbacks for the corresponding genpds, to see when those gets called.
-> >>
-> >> From the bootlog I see ...
-> >>
-> >> [    4.445827] tegra_xusb_runtime_resume-788
-> >> [    4.508799] tegra-xusb 70090000.usb: Firmware timestamp: 2015-08-10 09:47:54 UTC
-> > 
-> > This message comes from tegra_xusb_load_firmware() in
-> > tegra_xusb_probe() which is after the pm_runtime_get_sync().
-> > 
-> > If the device was PM-runtime-suspended before, the
-> > pm_runtime_get_sync() will runtime-resume and reference-count the
-> > suppliers in addition to resuming the device.  In that case
-> > pm_runtime_put_suppliers() will suspend the suppliers, so there is a
-> > bug in there.
-> > 
-> > What happens is that the links are new when pm_runtime_get_sync() runs
-> > and so their rpm_active refcounts are one.  After the
-> > pm_runtime_get_sync() they are two and pm_runtime_put_suppliers() will
-> > drop them by one and drop the PM-runtime usage counter of each of them
-> > by one, so they will become zero and the suppliers will suspend.
-> > 
-> > Passing DL_FLAG_RPM_ACTIVE to device_link_add() should help, but IMO
-> > things should also work without that.
-> 
-> I can confirm that DL_FLAG_RPM_ACTIVE does indeed work. I assume though
-> this would prevent the suppliers from ever being suspended,
-
-No, it wouldn't.  It only prevents the supplier from suspending as long as
-the consumer remains active.
-
-In your case it shouldn't matter (it only matters because of the bug in
-the $subject patch), because the consumer is suspended to start with.
-
-Had it been active initially, though, passing DL_FLAG_RPM_ACTIVE to
-device_link_add() would have been the only way to to force the supplier to
-remain active accross the return from consumer probe until the consumer is
-suspended.
-
-> which maybe
-> we will want to do eventually.
-> 
-> >> [    4.516223] tegra-xusb 70090000.usb: xHCI Host Controller
-> >> [    4.521622] tegra-xusb 70090000.usb: new USB bus registered, assigned bus number 1
-> > 
-> > This comes from usb_add_hcd()
-> > 
-> >> [    4.530087] tegra-xusb 70090000.usb: hcc params 0x0184f525 hci version 0x100 quirks 0x0000000000010010
-> >> [    4.539398] tegra-xusb 70090000.usb: irq 69, io mem 0x70090000
-> >> [    4.553671] tegra-xusb 70090000.usb: xHCI Host Controller
-> >> [    4.559064] tegra-xusb 70090000.usb: new USB bus registered, assigned bus number 2
-> > 
-> > Like this.
-> > 
-> >> [    4.566622] tegra-xusb 70090000.usb: Host supports USB 3.0  SuperSpeed
-> > 
-> > And this if from xhci_gen_setup(), so probe returns around this point.
-> > 
-> >> [    4.595393] tegra-pmc: tegra_genpd_power_off-673: xusbc
-> >> [    4.600672] tegra-pmc: tegra_genpd_power_off-673: xusba
-> > 
-> > And this appears to be done by pm_runtime_put_suppliers().
-> > 
-> > Hmm, I need to think how to fix this.  Maybe we'll need to revert
-> > $subject patch and do something else, we'll see (later today).
-> 
-> OK, thanks. Let me know if there is anything else I can test.
-
-Please test https://patchwork.kernel.org/patch/10818923/
-
-Cheers,
-Rafael
-
+DQoNCk9uIDIwMTktMDItMTggMTE6MTggYS5tLiwgUm9iIEhlcnJpbmcgd3JvdGU6DQo+IE9uIFNh
+dCwgRmViIDAyLCAyMDE5IGF0IDA0OjE4OjAyUE0gKzAxMDAsIFBhd2XFgiBDaG1pZWwgd3JvdGU6
+DQo+PiBGcm9tOiBKb25hdGhhbiBCYWtrZXIgPHhjLXJhY2VyMkBsaXZlLmNhPg0KPj4NCj4+IEFk
+ZCBkZXZpY2UgdHJlZSBiaW5kaW5ncyBmb3IgQm9zY2ggQk1BMTUwIEFjY2VsZXJvbWV0ZXIgU2Vu
+c29yDQo+Pg0KPj4gQ2hhbmdlcyBmcm9tIHYxOg0KPj4gIC0gQWRkIHByb3BlcnRpZXMgZm9yIGFs
+bCBvZiBibWExNTBfY2ZnDQo+PiAgLSBDb3JyZWN0IElSUSB0eXBlIGluIGV4YW1wbGUNCj4+DQo+
+PiBTaWduZWQtb2ZmLWJ5OiBKb25hdGhhbiBCYWtrZXIgPHhjLXJhY2VyMkBsaXZlLmNhPg0KPj4g
+U2lnbmVkLW9mZi1ieTogUGF3ZcWCIENobWllbCA8cGF3ZWwubWlrb2xhai5jaG1pZWxAZ21haWwu
+Y29tPg0KPj4gLS0tDQo+PiAgLi4uL2JpbmRpbmdzL2lucHV0L2Jvc2NoLGJtYTE1MC50eHQgICAg
+ICAgICAgIHwgMzggKysrKysrKysrKysrKysrKysrKw0KPj4gIGluY2x1ZGUvZHQtYmluZGluZ3Mv
+aW5wdXQvYm1hMTUwLmggICAgICAgICAgICB8IDIyICsrKysrKysrKysrDQo+PiAgaW5jbHVkZS9s
+aW51eC9ibWExNTAuaCAgICAgICAgICAgICAgICAgICAgICAgIHwgMTMgKy0tLS0tLQ0KPj4gIDMg
+ZmlsZXMgY2hhbmdlZCwgNjIgaW5zZXJ0aW9ucygrKSwgMTEgZGVsZXRpb25zKC0pDQo+PiAgY3Jl
+YXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9pbnB1dC9i
+b3NjaCxibWExNTAudHh0DQo+PiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGluY2x1ZGUvZHQtYmluZGlu
+Z3MvaW5wdXQvYm1hMTUwLmgNCj4+DQo+PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZp
+Y2V0cmVlL2JpbmRpbmdzL2lucHV0L2Jvc2NoLGJtYTE1MC50eHQgYi9Eb2N1bWVudGF0aW9uL2Rl
+dmljZXRyZWUvYmluZGluZ3MvaW5wdXQvYm9zY2gsYm1hMTUwLnR4dA0KPj4gbmV3IGZpbGUgbW9k
+ZSAxMDA2NDQNCj4+IGluZGV4IDAwMDAwMDAwMDAwMC4uZjY0NGQxMzJmNzljDQo+PiAtLS0gL2Rl
+di9udWxsDQo+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvaW5wdXQv
+Ym9zY2gsYm1hMTUwLnR4dA0KPj4gQEAgLTAsMCArMSwzOCBAQA0KPj4gKyogQm9zY2ggQk1BMTUw
+IEFjY2VsZXJvbWV0ZXIgU2Vuc29yDQo+PiArDQo+PiArQWxzbyB3b3JrcyBmb3IgdGhlIFNNQjM4
+MCBhbmQgQk1BMDIzIGFjY2VsZXJvbWV0ZXJzDQo+PiArDQo+PiArUmVxdWlyZWQgcHJvcGVydGll
+czoNCj4+ICstIGNvbXBhdGlibGUgOiBTaG91bGQgYmUgImJvc2NoLGJtYTE1MCINCj4+ICstIHJl
+ZyA6IFRoZSBJMkMgYWRkcmVzcyBvZiB0aGUgc2Vuc29yDQo+PiArDQo+PiArT3B0aW9uYWwgcHJv
+cGVydGllczoNCj4+ICstIGludGVycnVwdC1wYXJlbnQgOiBzaG91bGQgYmUgdGhlIHBoYW5kbGUg
+Zm9yIHRoZSBpbnRlcnJ1cHQgY29udHJvbGxlcg0KPiANCj4gVGhpcyBpcyBpbXBsaWVkIGFuZCBj
+YW4gYmUgZHJvcHBlZC4NCj4gDQpPaywgc291bmRzIGdvb2QuDQo+PiArLSBpbnRlcnJ1cHRzIDog
+SW50ZXJydXB0IG1hcHBpbmcgZm9yIElSUS4gIElmIG5vdCBwcmVzZW50IGRldmljZSB3aWxsIGJl
+IHBvbGxlZA0KPiANCj4+ICstIGFueS1tb3Rpb24taW50IDogYm9vbCBmb3IgaWYgdGhlIGFueSBt
+b3Rpb24gaW50ZXJydXB0IHNob3VsZCBiZSBlbmFibGVkDQo+PiArLSBoZy1pbnQgOiBib29sIGZv
+ciBpZiB0aGUgaGlnaC1HIGludGVycnVwdCBzaG91bGQgYmUgZW5hYmxlZA0KPj4gKy0gbGctaW50
+IDogYm9vbCBmb3IgaWYgdGhlIGxvdy1HIGludGVycnVwdCBzaG91bGQgYmUgZW5hYmxlZA0KPj4g
+Ky0gYW55LW1vdGlvbi1jZmcgOiBhcnJheSBvZiBpbnRlZ2VycyBmb3IgYW55IG1vdGlvbiBkdXJh
+dGlvbiBhbmQgdGhyZXNob2xkDQo+PiArLSBoZy1jZmcgOiBhcnJheSBvZiBpbnRlZ2VycyBmb3Ig
+aGlnaC1HIGh5c3RlcmlzaXMsIGR1cmF0aW9uLCBhbmQgdGhyZXNob2xkDQo+PiArLSBsZy1jZmcg
+OiBhcnJheSBvZiBpbnRlZ2VycyBmb3IgbG93LUcgaHlzdGVyaXNpcywgZHVyYXRpb24sIGFuZCB0
+aHJlc2hvbGQNCj4+ICstIHJhbmdlIDogY29uZmlndXJhdGlvbiBvZiByYW5nZSwgb25lIG9mIEJN
+QTE1MF9SQU5HRV8qIGFzIGRlZmluZWQgaW4gWzFdDQo+PiArLSBiYW5kd2lkdGggOiByZWZyZXNo
+IHJhdGUgb2YgZGV2aWNlLCBvbmUgb2YgQk1BMTUwX0JXXyogYXMgZGVmaW5lZCBpbiBbMV0NCj4g
+DQo+IFRoZXNlIGFsbCBuZWVkIHZlbmRvciBwcmVmaXhlcyBpZiB0aGV5IHN0YXkuDQo+IA0KPiBX
+aGF0IGRldGVybWluZXMgYWxsIHRoaXMgY29uZmlndXJhdGlvbj8gSXQgc2VlbXMgbGlrZSBhIHVz
+ZXIgbWF5IHdhbnQgdG8gDQo+IGNoYW5nZSBhdCBydW4tdGltZSBpbiB3aGljaCBjYXNlIHN5c2Zz
+IHdvdWxkIGJlIG1vcmUgYXBwcm9wcmlhdGUuDQo+IA0KPiBJIGRvbid0IHJlY2FsbCBzZWVpbmcg
+b3RoZXIgYWNjZWxlcm9tZXRlcnMgd2l0aCB0aGVzZSwgYnV0IHNlZW1zIHRoZXNlIA0KPiBjb3Vs
+ZCBhcHBseSB0byBvdGhlciBhY2NlbGVyb21ldGVycy4gSW4gd2hpY2ggY2FzZSwgdGhleSBzaG91
+bGQgYmUgDQo+IGNvbW1vbi4NCj4gDQpGcm9tIG15IHVuZGVyc3RhbmRpbmcgb2YgdGhlIHByZS1l
+eGlzdGluZyBub24tRFQgZHJpdmVyIGFuZCB0aGUgZGF0YXNoZWV0IChhdmFpbGFibGUgYXQgaHR0
+cHM6Ly9tZWRpYS5kaWdpa2V5LmNvbS9wZGYvRGF0YSUyMFNoZWV0cy9Cb3NjaC9CTUExNTAucGRm
+KSwgdGhlICotaW50IGFuZCAqLWNmZyBhcmUgZm9yIGNvbmZpZ3VyaW5nIG9mIHdoYXQgd2lsbCBj
+YXVzZSB0aGUgY2hpcCB0byBzZW5kIGFuIGludGVycnVwdC4gIEEgc3lzZnMgcHJvcGVydHkgd291
+bGQgcHJvYmFibHkgd29yayBmb3IgdGhlbSBhcyB3ZWxsIGFsdGhvdWdoIEkgZG9uJ3Qga25vdyBp
+ZiB0aGV5IGNhbiBiZSBhZGp1c3RlZCBvbiB0aGUgZmx5IG9yIG5vdC4gIE15IGRldmljZSBkb2Vz
+bid0IGhhdmUgdGhlIGludGVycnVwdCBsaW5lIGhvb2tlZCB1cCBhbmQgaW5zdGVhZCB1c2VzIHRo
+ZSBwb2xsaW5nIG1ldGhvZCwgc28gdGhlIG9ubHkgdHVuYWJsZXMgSSBjYW4gdGVzdCBhcmUgdGhl
+IHJhbmdlIGFuZCBiYW5kd2l0aCB3aGljaCBhcmUgdXNlZCBhcyBhIHR5cGUgb2YgZGlnaXRhbCBz
+bW9vdGhpbmcuDQoNCkFzIEkgcGVyc29uYWxseSB1c2UgdGhlIGRlZmF1bHRzIGFuZCB0aGVyZSBh
+cmUgbm8gY3VycmVudCBpbi10cmVlIHVzZXJzLCBJIGFtIGZpbmUgd2l0aCBkcm9wcGluZyBhbGwg
+b2YgdGhpcyBjb25maWd1cmF0aW9uIGFuZCBnb2luZyB3aXRoIHRoZSBkZWZhdWx0cyB0aGF0IGFy
+ZSBzYWlkIHRvIHByb3ZpZGUgImdlbmVyaWMgc2Vuc2l0aXZpdHkgcGVyZm9ybWFuY2UiLiAgSWYg
+c29tZW9uZSB3YW50cyB0byBhZGQgaXQgaW4gdGhlIGZ1dHVyZSwgdGhleSBjYW4gYWRkIHRoZSBz
+eXNmcyBhbmQvb3IgRFQgcHJvcGVydGllcy4gIFRoZSBzaW1pbGFyIGJtYTE4MCBJSU8gZHJpdmVy
+IGhhcmRjb2RlcyBldmVyeXRoaW5nLg0KDQpIb3dldmVyLCBsb29raW5nIHRocm91Z2ggYWxsIHRo
+aXMgYWdhaW4sIGluc3RlYWQgb2YgbWFraW5nIHRoaXMgZHJpdmVyIERULWF3YXJlLCBpdCBtaWdo
+dCBtYWtlIG1vcmUgc2Vuc2UgdG8gZXhwYW5kIHRoZSBibWExODAgSUlPIGRyaXZlciB0byBhZGQg
+c3VwcG9ydCBmb3IgYm1hMTUwLiAgTW9zdCBvZiB0aGUgYWNjZWxlcm9tZXRlciBkcml2ZXJzIGFy
+ZSBhbHJlYWR5IGluIGlpbyBwbHVzIGl0IHdvdWxkIGFkZCBzdXBwb3J0IGZvciB0aGUgdGVtcGVy
+YXR1cmUgcGFydCBvZiB0aGUgc2Vuc29yLiAgV291bGQgaXQgdGhlbiBtYWtlIHNlbnNlIHRvIHJl
+bW92ZSB0aGlzIGRyaXZlciBlbnRpcmVseSBvciBjYW4gdGhlIHR3byBjby1leGlzdD8NCj4+ICsN
+Cj4+ICtFeGFtcGxlOg0KPj4gKw0KPj4gK2JtYTE1MEAzOCB7DQo+IA0KPiBhY2NlbGVyb21ldGVy
+QDM4DQpHb3QgaXQuDQo+IA0KPj4gKwljb21wYXRpYmxlID0gImJvc2NoLGJtYTE1MCI7DQo+PiAr
+CXJlZyA9IDwweDM4PjsNCj4+ICsJaW50ZXJydXB0LXBhcmVudCA9IDwmZ3BoMD47DQo+PiArCWlu
+dGVycnVwdHMgPSA8MSBJUlFfVFlQRV9FREdFX1JJU0lORz47DQo+PiArCWFueS1tb3Rpb24taW50
+Ow0KPj4gKwloZy1pbnQ7DQo+PiArCWxnLWludDsNCj4+ICsJYW55LW1vdGlvbi1jZmcgPSA8MCAw
+PjsNCj4+ICsJaGctY2ZnID0gPDAgMTUwIDE2MD47DQo+PiArCWxnLWNmZyA9IDwwIDE1MCAyMD47
+DQo+PiArCXJhbmdlID0gPEJNQTE1MF9SQU5HRV8yRz47DQo+PiArCWJhbmR3aWR0aCA9IDxCTUEx
+NTBfQldfNTBIWj47DQo+PiArfTsNCj4+ICsNCj4+ICtbMV0gaW5jbHVkZS9kdC1iaW5kaW5ncy9p
+bnB1dC9ibWExNTAuaA0KPj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHQtYmluZGluZ3MvaW5wdXQv
+Ym1hMTUwLmggYi9pbmNsdWRlL2R0LWJpbmRpbmdzL2lucHV0L2JtYTE1MC5oDQo+PiBuZXcgZmls
+ZSBtb2RlIDEwMDY0NA0KPj4gaW5kZXggMDAwMDAwMDAwMDAwLi5mYjM4Y2E3ODdmMGYNCj4+IC0t
+LSAvZGV2L251bGwNCj4+ICsrKyBiL2luY2x1ZGUvZHQtYmluZGluZ3MvaW5wdXQvYm1hMTUwLmgN
+Cj4+IEBAIC0wLDAgKzEsMjIgQEANCj4+ICsvKiBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BM
+LTIuMCAqLw0KPj4gKy8qDQo+PiArICogVGhpcyBoZWFkZXIgcHJvdmlkZXMgYmluZGluZ3MgZm9y
+IHRoZSBCTUExNTAgYWNjZWxlcm9tZXRlcg0KPj4gKyAqLw0KPj4gKyNpZm5kZWYgX0RUX0JJTkRJ
+TkdTX0lOUFVUX0JNQTE1MF9IDQo+PiArI2RlZmluZSBfRFRfQklORElOR1NfSU5QVVRfQk1BMTUw
+X0gNCj4+ICsNCj4+ICsvKiBSYW5nZSAqLw0KPj4gKyNkZWZpbmUgQk1BMTUwX1JBTkdFXzJHCQkw
+DQo+PiArI2RlZmluZSBCTUExNTBfUkFOR0VfNEcJCTENCj4+ICsjZGVmaW5lIEJNQTE1MF9SQU5H
+RV84RwkJMg0KPj4gKw0KPj4gKy8qIFJlZnJlc2ggcmF0ZSAqLw0KPj4gKyNkZWZpbmUgQk1BMTUw
+X0JXXzI1SFoJCTANCj4+ICsjZGVmaW5lIEJNQTE1MF9CV181MEhaCQkxDQo+PiArI2RlZmluZSBC
+TUExNTBfQldfMTAwSFoJCTINCj4+ICsjZGVmaW5lIEJNQTE1MF9CV18xOTBIWgkJMw0KPj4gKyNk
+ZWZpbmUgQk1BMTUwX0JXXzM3NUhaCQk0DQo+PiArI2RlZmluZSBCTUExNTBfQldfNzUwSFoJCTUN
+Cj4+ICsjZGVmaW5lIEJNQTE1MF9CV18xNTAwSFoJNg0KPj4gKw0KPj4gKyNlbmRpZiAvKiBfRFRf
+QklORElOR1NfSU5QVVRfQk1BMTUwX0ggKi8NCj4+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4
+L2JtYTE1MC5oIGIvaW5jbHVkZS9saW51eC9ibWExNTAuaA0KPj4gaW5kZXggOTdhZGU3Y2RjODcw
+Li5iODUyNjZhOWMzNWMgMTAwNjQ0DQo+PiAtLS0gYS9pbmNsdWRlL2xpbnV4L2JtYTE1MC5oDQo+
+PiArKysgYi9pbmNsdWRlL2xpbnV4L2JtYTE1MC5oDQo+PiBAQCAtMjAsMTkgKzIwLDEwIEBADQo+
+PiAgI2lmbmRlZiBfQk1BMTUwX0hfDQo+PiAgI2RlZmluZSBfQk1BMTUwX0hfDQo+PiAgDQo+PiAt
+I2RlZmluZSBCTUExNTBfRFJJVkVSCQkiYm1hMTUwIg0KPj4gKyNpbmNsdWRlIDxkdC1iaW5kaW5n
+cy9pbnB1dC9ibWExNTAuaD4NCj4+ICANCj4+IC0jZGVmaW5lIEJNQTE1MF9SQU5HRV8yRwkJMA0K
+Pj4gLSNkZWZpbmUgQk1BMTUwX1JBTkdFXzRHCQkxDQo+PiAtI2RlZmluZSBCTUExNTBfUkFOR0Vf
+OEcJCTINCj4+ICsjZGVmaW5lIEJNQTE1MF9EUklWRVIJCSJibWExNTAiDQo+PiAgDQo+PiAtI2Rl
+ZmluZSBCTUExNTBfQldfMjVIWgkJMA0KPj4gLSNkZWZpbmUgQk1BMTUwX0JXXzUwSFoJCTENCj4+
+IC0jZGVmaW5lIEJNQTE1MF9CV18xMDBIWgkJMg0KPj4gLSNkZWZpbmUgQk1BMTUwX0JXXzE5MEha
+CQkzDQo+PiAtI2RlZmluZSBCTUExNTBfQldfMzc1SFoJCTQNCj4+IC0jZGVmaW5lIEJNQTE1MF9C
+V183NTBIWgkJNQ0KPj4gLSNkZWZpbmUgQk1BMTUwX0JXXzE1MDBIWgk2DQo+PiAgDQo+PiAgc3Ry
+dWN0IGJtYTE1MF9jZmcgew0KPj4gIAlib29sIGFueV9tb3Rpb25faW50OwkJLyogU2V0IHRvIGVu
+YWJsZSBhbnktbW90aW9uIGludGVycnVwdCAqLw0KPj4gLS0gDQo+PiAyLjE3LjENCj4+DQpUaGFu
+a3MsDQpKb25hdGhhbg0K
