@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43F50C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:35:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0078C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:35:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 158D22173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:35:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF9BC21736
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:35:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550500541;
-	bh=AHj2qwe4oPT3tGAoTtwE+7JEtaSitJN8WqB141BCrkg=;
+	s=default; t=1550500553;
+	bh=LMZSKr/B1Pugzg0aQKVy53+oDWVKVom40ZCqLVl+o9g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xg2F2LssK2hP+cpx4jNkJGMMHU4iC5lNm9fXxDsnWsPHfW/Ae1kpru9JxbqQYmHcu
-	 RLQX0RKdDcnJBYFqAZbeCEeyAHQ7HCUOjfyjbzuwYABZfMjqolvKExl1jFN6uAEfgv
-	 WvdSsx2twtxUR5rEGpTje9mJg0y2cgqv5XZZfj7E=
+	b=KIL0MTVrRrXBBc1NF92WVbMXMfbEaAAj6nQwZXXVtH4zWlrNjecWujHElMmxqEM1G
+	 1kCMkGuUTqY9zt21b7YmM6ycyiRI95u3OrWeU3jYAzv9lr/ZnfDvMM+ItM3iFZe6+C
+	 9LZXmRoeBld77ug4NAZV1wGnZQ24UkRLISsv4tzc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389179AbfBROfj (ORCPT
+        id S2387651AbfBRNz7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:35:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36420 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:55:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387711AbfBRN4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:56:14 -0500
+        id S2387627AbfBRNzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:55:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE5032077B;
-        Mon, 18 Feb 2019 13:56:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45BFD20842;
+        Mon, 18 Feb 2019 13:55:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498173;
-        bh=AHj2qwe4oPT3tGAoTtwE+7JEtaSitJN8WqB141BCrkg=;
+        s=default; t=1550498154;
+        bh=LMZSKr/B1Pugzg0aQKVy53+oDWVKVom40ZCqLVl+o9g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JI5vtKAOiH0HPjt3BnGsDw77KzMZh5gtzpm4RCgnKLjS7h0WIdwLrcrL2xcuumy0R
-         gIu3JAv3vNU0zaSoO1CDHyqkEYMAEUGHIOsGQaZF6/23GGtDTRh85suTakaknm13sJ
-         6KqJxmPsyNGx2jl0/nt97kjMaHXP8knk2H6CG/ig=
+        b=zIamtyFHJQIsHv4OQrFRz1xcBJzYbrgoA4TI54Hj9oqy9kWx9RZjUKVHbL5muIzp4
+         eeFXDgzDG1juc3GxSzAI7Y8XjAfY5LCknxQvPNh72iNsdkpk3t4E0abSSbvIs5MTeH
+         kM6+wxWT7VmHVidG8i1hq1a1xBYzcsNC22W8VrJU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Daniel Axtens <dja@axtens.net>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jack Wang <jinpu.wang@cloud.ionos.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 26/62] cpufreq: check if policy is inactive early in __cpufreq_get()
-Date:   Mon, 18 Feb 2019 14:43:32 +0100
-Message-Id: <20190218133508.232660089@linuxfoundation.org>
+Subject: [PATCH 4.14 23/62] bnx2x: disable GSO where gso_size is too big for hardware
+Date:   Mon, 18 Feb 2019 14:43:29 +0100
+Message-Id: <20190218133507.952903511@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
 References: <20190218133505.801423074@linuxfoundation.org>
@@ -67,94 +68,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2f66196208c98b3d1b4294edffb2c5a8197be899 ]
+commit 8914a595110a6eca69a5e275b323f5d09e18f4f9 upstream
 
-cpuinfo_cur_freq gets current CPU frequency as detected by hardware
-while scaling_cur_freq last known CPU frequency. Some platforms may not
-allow checking the CPU frequency of an offline CPU or the associated
-resources may have been released via cpufreq_exit when the CPU gets
-offlined, in which case the policy would have been invalidated already.
-If we attempt to get current frequency from the hardware, it may result
-in hang or crash.
+If a bnx2x card is passed a GSO packet with a gso_size larger than
+~9700 bytes, it will cause a firmware error that will bring the card
+down:
 
-For example on Juno, I see:
+bnx2x: [bnx2x_attn_int_deasserted3:4323(enP24p1s0f0)]MC assert!
+bnx2x: [bnx2x_mc_assert:720(enP24p1s0f0)]XSTORM_ASSERT_LIST_INDEX 0x2
+bnx2x: [bnx2x_mc_assert:736(enP24p1s0f0)]XSTORM_ASSERT_INDEX 0x0 = 0x00000000 0x25e43e47 0x00463e01 0x00010052
+bnx2x: [bnx2x_mc_assert:750(enP24p1s0f0)]Chip Revision: everest3, FW Version: 7_13_1
+... (dump of values continues) ...
 
-Unable to handle kernel NULL pointer dereference at virtual address 0000000000000188
-[0000000000000188] pgd=0000000000000000
-Internal error: Oops: 96000004 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 5 PID: 4202 Comm: cat Not tainted 4.20.0-08251-ga0f2c0318a15-dirty #87
-Hardware name: ARM LTD ARM Juno Development Platform/ARM Juno Development Platform
-pstate: 40000005 (nZcv daif -PAN -UAO)
-pc : scmi_cpufreq_get_rate+0x34/0xb0
-lr : scmi_cpufreq_get_rate+0x34/0xb0
-Call trace:
- scmi_cpufreq_get_rate+0x34/0xb0
- __cpufreq_get+0x34/0xc0
- show_cpuinfo_cur_freq+0x24/0x78
- show+0x40/0x60
- sysfs_kf_seq_show+0xc0/0x148
- kernfs_seq_show+0x44/0x50
- seq_read+0xd4/0x480
- kernfs_fop_read+0x15c/0x208
- __vfs_read+0x60/0x188
- vfs_read+0x94/0x150
- ksys_read+0x6c/0xd8
- __arm64_sys_read+0x24/0x30
- el0_svc_common+0x78/0x100
- el0_svc_handler+0x38/0x78
- el0_svc+0x8/0xc
----[ end trace 3d1024e58f77f6b2 ]---
+Detect when the mac length of a GSO packet is greater than the maximum
+packet size (9700 bytes) and disable GSO.
 
-So fix the issue by checking if the policy is invalid early in
-__cpufreq_get before attempting to get the current frequency.
-
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[jwang: cherry pick for CVE-2018-1000026]
+Signed-off-by: Jack Wang <jinpu.wang@cloud.ionos.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpufreq/cpufreq.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ .../net/ethernet/broadcom/bnx2x/bnx2x_main.c   | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 93754300cb57..66c2790dcc5f 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -1523,17 +1523,16 @@ static unsigned int __cpufreq_get(struct cpufreq_policy *policy)
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+index 022b06e770d1..41ac9a2bc153 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+@@ -12978,6 +12978,24 @@ static netdev_features_t bnx2x_features_check(struct sk_buff *skb,
+ 					      struct net_device *dev,
+ 					      netdev_features_t features)
  {
- 	unsigned int ret_freq = 0;
- 
--	if (!cpufreq_driver->get)
-+	if (unlikely(policy_is_inactive(policy)) || !cpufreq_driver->get)
- 		return ret_freq;
- 
- 	ret_freq = cpufreq_driver->get(policy->cpu);
- 
- 	/*
--	 * Updating inactive policies is invalid, so avoid doing that.  Also
--	 * if fast frequency switching is used with the given policy, the check
-+	 * If fast frequency switching is used with the given policy, the check
- 	 * against policy->cur is pointless, so skip it in that case too.
- 	 */
--	if (unlikely(policy_is_inactive(policy)) || policy->fast_switch_enabled)
-+	if (policy->fast_switch_enabled)
- 		return ret_freq;
- 
- 	if (ret_freq && policy->cur &&
-@@ -1562,10 +1561,7 @@ unsigned int cpufreq_get(unsigned int cpu)
- 
- 	if (policy) {
- 		down_read(&policy->rwsem);
--
--		if (!policy_is_inactive(policy))
--			ret_freq = __cpufreq_get(policy);
--
-+		ret_freq = __cpufreq_get(policy);
- 		up_read(&policy->rwsem);
- 
- 		cpufreq_cpu_put(policy);
++	/*
++	 * A skb with gso_size + header length > 9700 will cause a
++	 * firmware panic. Drop GSO support.
++	 *
++	 * Eventually the upper layer should not pass these packets down.
++	 *
++	 * For speed, if the gso_size is <= 9000, assume there will
++	 * not be 700 bytes of headers and pass it through. Only do a
++	 * full (slow) validation if the gso_size is > 9000.
++	 *
++	 * (Due to the way SKB_BY_FRAGS works this will also do a full
++	 * validation in that case.)
++	 */
++	if (unlikely(skb_is_gso(skb) &&
++		     (skb_shinfo(skb)->gso_size > 9000) &&
++		     !skb_gso_validate_mac_len(skb, 9700)))
++		features &= ~NETIF_F_GSO_MASK;
++
+ 	features = vlan_features_check(skb, features);
+ 	return vxlan_features_check(skb, features);
+ }
 -- 
 2.19.1
 
