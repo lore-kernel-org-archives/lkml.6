@@ -2,109 +2,119 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56DFAC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B03C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27B3321903
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:26:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6039121900
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:27:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550500010;
-	bh=fh+Qv6RlwWnw+QjANmPCdjy7iy5MOfwZ3/EAuwAUP2k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AjJC9RZHpnkX9fDssGqgCqpOViZRpQzpzcj1ZAzTW8mByJxK7xguk1ahJrxp8CbPR
-	 vtrVgAd8DOcdUocfahlQy7uGCqBvGQSlKdAEOgOdm3Rhq6PqlEWwn2fy+tQ+swK6pm
-	 o3dcysskH0MwHVY7nrBGV9JmEIn/ySrtlmXLAilM=
+	s=default; t=1550500028;
+	bh=6sbzkspViInVknbHtfHnMOLKmqRq3UyiTAp+IY7mhGU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=lzSFTyL+70SkEVqoXhIG2N0mJF7p/XOmBHqHDf+K/qTi9TBk2KNdRLgR/8aXRebfs
+	 rojWkhmzi38uJfXQIPvncmuYa3PxBF8wPlQnbSRIyqpG27APjfrnZv3jAiavXh73fV
+	 425hQ1FpW01GIxqMT8vZdrEUGxr3fJljMD+LNY0w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388600AbfBRO0s (ORCPT
+        id S2391677AbfBRO1H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:26:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44064 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:27:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388374AbfBROCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:02:21 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2389275AbfBROCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:02:20 -0500
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46C7520842;
-        Mon, 18 Feb 2019 14:02:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42EA921904;
+        Mon, 18 Feb 2019 14:02:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498540;
-        bh=fh+Qv6RlwWnw+QjANmPCdjy7iy5MOfwZ3/EAuwAUP2k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yqMdY+dP+rd541OXs/VK8STqS1LDc0pQ5TLt7qiW9dh0Ik5kR1+u4+diNGldumpAQ
-         XXUntgs5VSI7YhK4Q85IrsJRpE3svVBNN9IwSxnolzHa0/u6mdPPrTkJzVqp0T2syY
-         F6oqFH5VdxKDj2IBDXRYDPBalJMGCEq1C2MF9j2M=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 041/143] powerpc/uaccess: fix warning/error with access_ok()
-Date:   Mon, 18 Feb 2019 14:42:49 +0100
-Message-Id: <20190218133530.649016810@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
-References: <20190218133529.099444112@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        s=default; t=1550498539;
+        bh=6sbzkspViInVknbHtfHnMOLKmqRq3UyiTAp+IY7mhGU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=zqm3bUCAPlZCKbohJ7n2BF9kKtsqBZe6jTHO04BbAbHy4BqqmZWtBULEtfdBi+YDU
+         bFLLveuJKnX0pwucSNHvTbjLbhwLoPgzxRskBRGncYqE6L5RkVfRJp/zqRnDxMhdNE
+         jT733ek2mmvyw/l+PxAeAgvxquxgPpjGq2C0DbX0=
+Received: by mail-qk1-f170.google.com with SMTP id f196so9977259qke.10;
+        Mon, 18 Feb 2019 06:02:19 -0800 (PST)
+X-Gm-Message-State: AHQUAubNKrnFaCiA8llCNXefKTVgv5STlKgydNuit/hhlerWQu/r2PkL
+        WAGxsBUlUDcSmgVoyc+EFoqSh+kjcv3GqkEppA==
+X-Google-Smtp-Source: AHgI3IYWx+4HcmvsFGsb75VvtKrdIIgBjjao6ulEeRHLDzJjA5VYvwX57xw+N2TZuJVAG1LFdru49JyoRxDr/SmHVtg=
+X-Received: by 2002:a37:94d:: with SMTP id 74mr16881117qkj.79.1550498538397;
+ Mon, 18 Feb 2019 06:02:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <11e55b5f9b0d83649a5b81c7e3fdb667cd3ddc5b.1550043082.git.baolin.wang@linaro.org>
+ <2be9d6de92507e5886433fb2cd55117c63b63d72.1550043082.git.baolin.wang@linaro.org>
+In-Reply-To: <2be9d6de92507e5886433fb2cd55117c63b63d72.1550043082.git.baolin.wang@linaro.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 18 Feb 2019 08:02:06 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqK+x+XgxSn7ks84_JZxTkpQ-irFBmRc3tp3zsfUcHUPpg@mail.gmail.com>
+Message-ID: <CAL_JsqK+x+XgxSn7ks84_JZxTkpQ-irFBmRc3tp3zsfUcHUPpg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] dt-bindings: spi: Add the DMA properties for the
+ SPI dma mode
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Lyra Zhang <zhang.lyra@gmail.com>, lanqing.liu@unisoc.com,
+        linux-spi <linux-spi@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Wed, Feb 13, 2019 at 1:37 AM Baolin Wang <baolin.wang@linaro.org> wrote:
+>
+> From: Lanqing Liu <lanqing.liu@unisoc.com>
+>
+> Add the DMA properties for the SPI dma mode.
+>
+> Signed-off-by: Lanqing Liu <lanqing.liu@unisoc.com>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> ---
+> Changes from v1:
+>  - Remove sprd,dma-slave-ids property.
+> ---
+>  Documentation/devicetree/bindings/spi/spi-sprd.txt |    7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/spi/spi-sprd.txt b/Documentation/devicetree/bindings/spi/spi-sprd.txt
+> index bad211a..3c7eacc 100644
+> --- a/Documentation/devicetree/bindings/spi/spi-sprd.txt
+> +++ b/Documentation/devicetree/bindings/spi/spi-sprd.txt
+> @@ -14,6 +14,11 @@ Required properties:
+>         address on the SPI bus. Should be set to 1.
+>  - #size-cells: Should be set to 0.
+>
+> +Optional properties:
+> +dma-names: Should contain names of the SPI used DMA channel.
+> +dmas: Should contain DMA channels and DMA slave ids which the SPI used
+> +       sorted in the same order as the dma-names property.
 
-------------------
+These need to define the order and names.
 
-[ Upstream commit 05a4ab823983d9136a460b7b5e0d49ee709a6f86 ]
+> +
+>  Example:
+>  spi0: spi@70a00000{
+>         compatible = "sprd,sc9860-spi";
+> @@ -21,6 +26,8 @@ spi0: spi@70a00000{
+>         interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+>         clock-names = "spi", "source","enable";
+>         clocks = <&clk_spi0>, <&ext_26m>, <&clk_ap_apb_gates 5>;
+> +       dma-names = "rx_chn", "tx_chn";
 
-With the following piece of code, the following compilation warning
-is encountered:
+Everyone else uses "rx" and "tx". Do you really need something different?
 
-	if (_IOC_DIR(ioc) != _IOC_NONE) {
-		int verify = _IOC_DIR(ioc) & _IOC_READ ? VERIFY_WRITE : VERIFY_READ;
-
-		if (!access_ok(verify, ioarg, _IOC_SIZE(ioc))) {
-
-drivers/platform/test/dev.c: In function 'my_ioctl':
-drivers/platform/test/dev.c:219:7: warning: unused variable 'verify' [-Wunused-variable]
-   int verify = _IOC_DIR(ioc) & _IOC_READ ? VERIFY_WRITE : VERIFY_READ;
-
-This patch fixes it by referencing 'type' in the macro allthough
-doing nothing with it.
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/powerpc/include/asm/uaccess.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
-index a5ffe0207c16..05f1389228d2 100644
---- a/arch/powerpc/include/asm/uaccess.h
-+++ b/arch/powerpc/include/asm/uaccess.h
-@@ -59,7 +59,7 @@
- #endif
- 
- #define access_ok(type, addr, size)		\
--	(__chk_user_ptr(addr),			\
-+	(__chk_user_ptr(addr), (void)(type),		\
- 	 __access_ok((__force unsigned long)(addr), (size), get_fs()))
- 
- /*
--- 
-2.19.1
-
-
-
+> +       dmas = <&apdma 11 11>, <&apdma 12 12>;
+>         #address-cells = <1>;
+>         #size-cells = <0>;
+>  };
+> --
+> 1.7.9.5
+>
