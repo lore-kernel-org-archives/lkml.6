@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D07C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6026DC4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:49:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AF0221906
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:49:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E77820842
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:49:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497791;
-	bh=MfioDp7ea0Bw5rmAFwRpeWGDO3YowNu5XCZzVCnm1yU=;
+	s=default; t=1550497794;
+	bh=rrl9uyEZHZgBdkGd6lqlrnqvGXS7vY5vs479sjvnilA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mbJRvh7MvJ5AWWQER8O3Jc4HGWbsn87W8WNKBR2IfyKVH9VwhPGhj2wrVJYJ0XdFg
-	 SLiWbxMR56htpRDD6kBCKlY4yuHf1ksT3eBLuv359qpzV8xRvCMOwsVBkCK5nPMN62
-	 Q4pFsLWizLVcornU7wbtxJxXx8xiwINb2sGztaOo=
+	b=VtME9451JEnI0E+U11tfi897wiqkM6/PhvKq1uej4BK+TOsTi4UVcjrZeIZ8bXojv
+	 OYJbR9N0UFKHgbCu8ZkLzluRGbe/vqnFMucHyKO+McNW0g4W9Wj7MOCJpJQaGrUAfz
+	 aCDEbnVM3jowVPLOUy57kMG4KQHbn8J5zGs+DasA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732093AbfBRNtt (ORCPT
+        id S1732113AbfBRNtw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:49:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57158 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:49:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732079AbfBRNtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:49:45 -0500
+        id S1731743AbfBRNtt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:49:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6C2E21901;
-        Mon, 18 Feb 2019 13:49:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4607121901;
+        Mon, 18 Feb 2019 13:49:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497785;
-        bh=MfioDp7ea0Bw5rmAFwRpeWGDO3YowNu5XCZzVCnm1yU=;
+        s=default; t=1550497788;
+        bh=rrl9uyEZHZgBdkGd6lqlrnqvGXS7vY5vs479sjvnilA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BkueuUQOHevueema28lJin8jDzWtLQSnaqUwTynQkSCcSBRTjyd2FbrVILWK5gJIJ
-         qBCxSI/qKugyIC/babIIkkX3xTjTBd0RPbSS+PNHarIA1X0g+HklzWcJRMg/BVsrNJ
-         UDv0YgoUWhX2r7txmrkpxWO1rVKPzycfsMPXEKx4=
+        b=mBZATX594dI/pyJeB7ouzoO/Cqb5AjtuNEJ2ufrolbwSk06Y3oyKwk1ikO390kiEo
+         oiVw4Td99BFd0FtMjM6Q1cX1EvMjypv/Eu7MoZiUfRXnsMYbfi+09Dq/M0bVNalsM+
+         mCO/e3v5hlCZ2dgNUrv0OUMQbn/LJqYU7IpsosUo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Bunk <bunk@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
+        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        "David A. Long" <dave.long@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 01/85] dt-bindings: eeprom: at24: add "atmel,24c2048" compatible string
-Date:   Mon, 18 Feb 2019 14:42:27 +0100
-Message-Id: <20190218133459.917563861@linuxfoundation.org>
+Subject: [PATCH 4.19 10/85] ARM: 8795/1: spectre-v1.1: use put_user() for __put_user()
+Date:   Mon, 18 Feb 2019 14:42:36 +0100
+Message-Id: <20190218133500.855729282@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -67,30 +67,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6c0c5dc33ff42af49243e94842d0ebdb153189ea ]
+Commit e3aa6243434fd9a82e84bb79ab1abd14f2d9a5a7 upstream.
 
-Add new compatible to the device tree bindings.
+When Spectre mitigation is required, __put_user() needs to include
+check_uaccess. This is already the case for put_user(), so just make
+__put_user() an alias of put_user().
 
-Signed-off-by: Adrian Bunk <bunk@kernel.org>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: David A. Long <dave.long@linaro.org>
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/devicetree/bindings/eeprom/at24.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/include/asm/uaccess.h | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/eeprom/at24.txt b/Documentation/devicetree/bindings/eeprom/at24.txt
-index aededdbc262b..f9a7c984274c 100644
---- a/Documentation/devicetree/bindings/eeprom/at24.txt
-+++ b/Documentation/devicetree/bindings/eeprom/at24.txt
-@@ -27,6 +27,7 @@ Required properties:
-                 "atmel,24c256",
-                 "atmel,24c512",
-                 "atmel,24c1024",
-+                "atmel,24c2048",
+diff --git a/arch/arm/include/asm/uaccess.h b/arch/arm/include/asm/uaccess.h
+index d65ef85fc617..1191e7da8fab 100644
+--- a/arch/arm/include/asm/uaccess.h
++++ b/arch/arm/include/asm/uaccess.h
+@@ -370,6 +370,14 @@ do {									\
+ 	__pu_err;							\
+ })
  
-                 If <manufacturer> is not "atmel", then a fallback must be used
-                 with the same <model> and "atmel" as manufacturer.
++#ifdef CONFIG_CPU_SPECTRE
++/*
++ * When mitigating Spectre variant 1.1, all accessors need to include
++ * verification of the address space.
++ */
++#define __put_user(x, ptr) put_user(x, ptr)
++
++#else
+ #define __put_user(x, ptr)						\
+ ({									\
+ 	long __pu_err = 0;						\
+@@ -377,12 +385,6 @@ do {									\
+ 	__pu_err;							\
+ })
+ 
+-#define __put_user_error(x, ptr, err)					\
+-({									\
+-	__put_user_switch((x), (ptr), (err), __put_user_nocheck);	\
+-	(void) 0;							\
+-})
+-
+ #define __put_user_nocheck(x, __pu_ptr, __err, __size)			\
+ 	do {								\
+ 		unsigned long __pu_addr = (unsigned long)__pu_ptr;	\
+@@ -462,6 +464,7 @@ do {									\
+ 	: "r" (x), "i" (-EFAULT)				\
+ 	: "cc")
+ 
++#endif /* !CONFIG_CPU_SPECTRE */
+ 
+ #ifdef CONFIG_MMU
+ extern unsigned long __must_check
 -- 
 2.19.1
 
