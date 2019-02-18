@@ -2,114 +2,72 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD1AC4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D47C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:24:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27A6F20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:24:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499852;
-	bh=tg63zNs+wbs/kk1TbXXWQ895a6+V2hWcWhczaDzVw/Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iw89sEf+J4twb9lSI9BQ2yfXkRtrGl2QwZjpWql8M6sZEeWtjmXT7VJhoEVCNFgZZ
-	 hdBT/BB+UWmHQsn+2zSg2fUDMGY6Yl1ttAhK43mUFtDt4zYIPB33OVKAunCTsGt7XE
-	 NMEDN8KjGJIMeiH8Ne1SRvh5APHN7EN5UrCWSI28=
+	by mail.kernel.org (Postfix) with ESMTP id 02EB620851
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:24:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390318AbfBROYL (ORCPT
+        id S2390763AbfBROYY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:24:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46456 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389860AbfBROEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:04:05 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7A5E20643;
-        Mon, 18 Feb 2019 14:04:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498644;
-        bh=tg63zNs+wbs/kk1TbXXWQ895a6+V2hWcWhczaDzVw/Q=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HhoR46z4M7Dgr8h2DsqjH70M1AV4PotgQ0GibPDGblwc3MALNCKCLILT6FaY/YAQg
-         Cf0cFIpBSWQMPyu0k9vhAk+JJYqIRbHY+79ktY7K6rVD4ARStRdcbSF4v3PS6o12Us
-         b4Vszmbi4P4u8GORw6juKRwtUHXnqjkeTdhmc/6Y=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 042/143] mac80211: fix radiotap vendor presence bitmap handling
-Date:   Mon, 18 Feb 2019 14:42:50 +0100
-Message-Id: <20190218133530.682683787@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
-References: <20190218133529.099444112@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 18 Feb 2019 09:24:24 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:35624 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389824AbfBROD7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:03:59 -0500
+Received: by mail-qt1-f193.google.com with SMTP id p48so19258472qtk.2;
+        Mon, 18 Feb 2019 06:03:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=b4sONZ6+wIQzAEC4r3Eih9LxrlYi3tim017hVQtTnck=;
+        b=O71xPI2Qh42noiRHPaFR9XwZH6RY0hd4AYpCja7c095NtIRGW+5PFqHe52BJunSA9S
+         llpxmNN3Bwl14GOZKOZiuzsPrtuD96KkWU8BzU/puM5TeBHOWrClGshiOg6s72g8M4Ua
+         DP6uWYw86m6JjgBviMQk/ib0rDb3Z8LlxW85alaa5bRKt5mP0PceKmOcdIUKmdDp9CW/
+         qwQ4mhfRnUJF4WJ975aegmmKANcbli9PL2mDNR+hNZjIMSEtYHXXCZyH222loxXDoqTl
+         h9h3yRDo93TAgJ81SgsBWL8eXTkd4/mTTDkPvDw94EXBAb2JF7HWqL/9hiG9oftZylQa
+         UV8w==
+X-Gm-Message-State: AHQUAuaCFbNOltlCa+fnV0RnZGkBTmrfXZWSqAE8pTi7J2n4I1kgDOcC
+        gAbeXYNrEs8YhMgWrXJo3R6+g2ntwD9x/t8KaIc=
+X-Google-Smtp-Source: AHgI3IZ+nklwfLZIjKglkHxayVQZezn5oCGC5EXEtnPb4rGm9EEfXvShbhNYBK/fTow8slx4feqjpwkK7IAA/+4syVU=
+X-Received: by 2002:a0c:98c8:: with SMTP id g8mr17760033qvd.161.1550498638517;
+ Mon, 18 Feb 2019 06:03:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20190124142448.23243-1-mst@redhat.com> <20190210231841-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20190210231841-mutt-send-email-mst@kernel.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 18 Feb 2019 15:03:41 +0100
+Message-ID: <CAK8P3a2cWjSSUJehMGEMCmnjdWJRZcyoegtN1ERqX7Tzkm-DXg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] generic asm: mman cleanup
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Mon, Feb 11, 2019 at 5:20 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+>
+> On Fri, Feb 08, 2019 at 01:02:51AM -0500, Michael S. Tsirkin wrote:
+> > Now that we have MAP_SHARED, MAP_PRIVATE and MAP_SHARED_VALIDATE on all
+> > architectures, it probably makes sense to de-duplicate these
+> > and put them into a common header.
+> >
+> > Please review and consider merging though the generic tree.
+> >
+> > Build tested on x86 only. Has been in linux-next for a while now.
+>
+> Arnd, would you consider merging at least the cleanups 2/3 and 3/3?
+> In linux-next they had no ill effects and make things
+> slightly cleaner IMO.
 
-------------------
+I applied patches 2 and 3 now, sorry for the late reply.
 
-[ Upstream commit efc38dd7d5fa5c8cdd0c917c5d00947aa0539443 ]
-
-Due to the alignment handling, it actually matters where in the code
-we add the 4 bytes for the presence bitmap to the length; the first
-field is the timestamp with 8 byte alignment so we need to add the
-space for the extra vendor namespace presence bitmap *before* we do
-any alignment for the fields.
-
-Move the presence bitmap length accounting to the right place to fix
-the alignment for the data properly.
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/mac80211/rx.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
-index 64f76f88f819..acacceec8cd8 100644
---- a/net/mac80211/rx.c
-+++ b/net/mac80211/rx.c
-@@ -149,6 +149,9 @@ ieee80211_rx_radiotap_hdrlen(struct ieee80211_local *local,
- 	/* allocate extra bitmaps */
- 	if (status->chains)
- 		len += 4 * hweight8(status->chains);
-+	/* vendor presence bitmap */
-+	if (status->flag & RX_FLAG_RADIOTAP_VENDOR_DATA)
-+		len += 4;
- 
- 	if (ieee80211_have_rx_timestamp(status)) {
- 		len = ALIGN(len, 8);
-@@ -185,8 +188,6 @@ ieee80211_rx_radiotap_hdrlen(struct ieee80211_local *local,
- 	if (status->flag & RX_FLAG_RADIOTAP_VENDOR_DATA) {
- 		struct ieee80211_vendor_radiotap *rtap = (void *)skb->data;
- 
--		/* vendor presence bitmap */
--		len += 4;
- 		/* alignment for fixed 6-byte vendor data header */
- 		len = ALIGN(len, 2);
- 		/* vendor data header */
--- 
-2.19.1
-
-
-
+     Arnd
