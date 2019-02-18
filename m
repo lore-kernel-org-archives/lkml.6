@@ -2,51 +2,53 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB925C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:16:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FBD2C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:17:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A35912177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:16:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41872217D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:17:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499410;
-	bh=OswJ3PrXTJF0EI1ucVQ60Z5hEMjARhehUHfESEwW8Cg=;
+	s=default; t=1550499433;
+	bh=to5i0QYXJnXr8R0ip+glezZKoUL8Uyd9lDO2IBx3H70=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RW7EXV8Om/xOb9MaPzoKLOc0gjJWct3zRnEKfkj56CI3kQmFpOZbS62wff+qXBwyj
-	 OO1fYs45gzzjuuwnz3Qh4RIDIeoAxdVrjuMXfQez9Y8F7cTB714cdRk5MmdA6V4/tn
-	 nD1EoQxbEyxi9+KA3cAD5Cxgz2RKt12TBFvvh4JE=
+	b=O3QX2n0VMN3iU6zFpdBJ1UVIilYLSO72GYINfyaHcPshN07Fmc+/6yjPLrsw7cQC9
+	 tkAZMyWr2BUYdS4Cvymj32cfjW34hWQih/7P93la+5eGj0xqs0wH6Zl89OqlgA8ne1
+	 ZtggGfk/F2eKecmtph/CWCwO9MfnuIiIjsx5FPJI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729026AbfBROQt (ORCPT
+        id S2391413AbfBROKK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:16:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54510 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:10:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391515AbfBROKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:10:41 -0500
+        id S2391397AbfBROKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:10:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D39A8217D7;
-        Mon, 18 Feb 2019 14:10:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 277FA217D7;
+        Mon, 18 Feb 2019 14:10:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550499040;
-        bh=OswJ3PrXTJF0EI1ucVQ60Z5hEMjARhehUHfESEwW8Cg=;
+        s=default; t=1550499006;
+        bh=to5i0QYXJnXr8R0ip+glezZKoUL8Uyd9lDO2IBx3H70=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x9P1j9t7viTPZH64Bycsl03J5NuCqXTr1WuhJMzBfGtxgqe2QkT2tCYugMtk3Uhol
-         AShusK91aJPnvklz9gCKorrW5GJ1Tg9/2SRxEZf2shT+npWzzQe3o8a7jNH6ZUEL7s
-         dAcJ6/0JTWC923AjkPVxfn5hysOUJDjUm9N1JMm8=
+        b=adjcvm5OR1O7F6/kJMC2TE3GmyvsWPqmUOPP+0Xc+O8FsIRYAPh5ohqN76T5CImyi
+         a8YZCRx3b87r9yqoUVjokkN2cCGhCuKPnVOTe4kOJhI+3HMLBmW83J25V33yOY3blp
+         t+6gjAsHVbZh4mPXy+gUWZrLBiwjJM2MZKrR/w4k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 058/108] skge: potential memory corruption in skge_get_regs()
-Date:   Mon, 18 Feb 2019 14:43:54 +0100
-Message-Id: <20190218133522.204530410@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Richard Weinberger <richard@nod.at>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 046/108] um: Avoid marking pages with "changed protection"
+Date:   Mon, 18 Feb 2019 14:43:42 +0100
+Message-Id: <20190218133521.661077196@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -65,37 +67,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+[ Upstream commit 8892d8545f2d0342b9c550defbfb165db237044b ]
 
-[ Upstream commit 294c149a209c6196c2de85f512b52ef50f519949 ]
+Changing protection is a very high cost operation in UML
+because in addition to an extra syscall it also interrupts
+mmap merge sequences generated by the tlb.
 
-The "p" buffer is 0x4000 bytes long.  B3_RI_WTO_R1 is 0x190.  The value
-of "regs->len" is in the 1-0x4000 range.  The bug here is that
-"regs->len - B3_RI_WTO_R1" can be a negative value which would lead to
-memory corruption and an abrupt crash.
+While the condition is not particularly common it is worth
+avoiding.
 
-Fixes: c3f8be961808 ("[PATCH] skge: expand ethtool debug register dump")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/marvell/skge.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/um/include/asm/pgtable.h | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/marvell/skge.c
-+++ b/drivers/net/ethernet/marvell/skge.c
-@@ -152,8 +152,10 @@ static void skge_get_regs(struct net_dev
- 	memset(p, 0, regs->len);
- 	memcpy_fromio(p, io, B3_RAM_ADDR);
+diff --git a/arch/um/include/asm/pgtable.h b/arch/um/include/asm/pgtable.h
+index bf974f712af7..e75fa226f08a 100644
+--- a/arch/um/include/asm/pgtable.h
++++ b/arch/um/include/asm/pgtable.h
+@@ -210,12 +210,17 @@ static inline pte_t pte_mkold(pte_t pte)
  
--	memcpy_fromio(p + B3_RI_WTO_R1, io + B3_RI_WTO_R1,
--		      regs->len - B3_RI_WTO_R1);
-+	if (regs->len > B3_RI_WTO_R1) {
-+		memcpy_fromio(p + B3_RI_WTO_R1, io + B3_RI_WTO_R1,
-+			      regs->len - B3_RI_WTO_R1);
-+	}
+ static inline pte_t pte_wrprotect(pte_t pte)
+ { 
+-	pte_clear_bits(pte, _PAGE_RW);
++	if (likely(pte_get_bits(pte, _PAGE_RW)))
++		pte_clear_bits(pte, _PAGE_RW);
++	else
++		return pte;
+ 	return(pte_mknewprot(pte)); 
  }
  
- /* Wake on Lan only supported on Yukon chips with rev 1 or above */
+ static inline pte_t pte_mkread(pte_t pte)
+ { 
++	if (unlikely(pte_get_bits(pte, _PAGE_USER)))
++		return pte;
+ 	pte_set_bits(pte, _PAGE_USER);
+ 	return(pte_mknewprot(pte)); 
+ }
+@@ -234,6 +239,8 @@ static inline pte_t pte_mkyoung(pte_t pte)
+ 
+ static inline pte_t pte_mkwrite(pte_t pte)	
+ {
++	if (unlikely(pte_get_bits(pte,  _PAGE_RW)))
++		return pte;
+ 	pte_set_bits(pte, _PAGE_RW);
+ 	return(pte_mknewprot(pte)); 
+ }
+-- 
+2.19.1
+
 
 
