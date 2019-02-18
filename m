@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7151C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4789C10F01
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:21:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 875D321901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:21:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9724E21901
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:21:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499688;
-	bh=6rPC7+17S/IeFKx++5Ot66kC/7QEHJPZ6p5jsoRoZB0=;
+	s=default; t=1550499693;
+	bh=m51NO63qifD/N2cT38M9UoVF7mAcHTaA48h/zT/arCk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bUVskewcB04tIv3oVCmrSoFWPJU9doRyK4PSuD75Prg7REhVmR+k6swto9SDzwqSi
-	 IUqpBtGBNOIMZ9JHoMlULbCxPzp76iAOtGgGD8vVAIzewzx4g/HWSPJSj9VDe63QIm
-	 wvz6GDlOw6A5gxe2pN0ZdmYGReW7V4O6otCZ+NH4=
+	b=KVoGnGid+qjY4AzUPZ5kubpDOxlWRBPYg+jc5Htj1l9HiDRbN65CFfF10uMGtc57r
+	 hsJXBh2o6goeFnRJAAdY+LZurBzkMx3w5fcbzsftqrTZ+B2bueYiV13IPfpt+JBfVC
+	 Zgzfbu52I20fQp6QTmv4aqYxCsGA2/0Z4WVRDd3o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390435AbfBROGf (ORCPT
+        id S2390408AbfBROG2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:06:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49630 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:06:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389899AbfBROGd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:06:33 -0500
+        id S2390387AbfBROGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:06:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 97F5F21916;
-        Mon, 18 Feb 2019 14:06:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09584204FD;
+        Mon, 18 Feb 2019 14:06:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498793;
-        bh=6rPC7+17S/IeFKx++5Ot66kC/7QEHJPZ6p5jsoRoZB0=;
+        s=default; t=1550498783;
+        bh=m51NO63qifD/N2cT38M9UoVF7mAcHTaA48h/zT/arCk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xPvHgYofhLznBaq365BJCW50iXDSFPii9bxFHd2dgru+Z8j/1Hh7G9BvEPUeDjmkT
-         SMUNcemKwjWPcXJuL6aUt4gC6k+loSfAaDE0Q9K5Zc57FkseJtApblu77UumDAnlEq
-         0kKsy3Y8cgRzPMLeHp2lM6+KXTIs2yRFPNRgtGbo=
+        b=1PNqOWyuR0nocwSzH7hdxN7j03jJfRjK90Ic4Gu4Ypb2KZdBLnbmrP6AaZ2lyV1g4
+         mNR20ZuTR5zu/mJRon8GO3b8o9FNhlnmO8gqjtmWyUgeLpHJn3/n0cdBK856GsBybS
+         dLo2lYi7mpSzNGDa7TXls8/D//h0XKUWbT0RACdA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
+        stable@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
+        "David S. Miller" <davem@davemloft.net>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 122/143] gpio: pl061: handle failed allocations
-Date:   Mon, 18 Feb 2019 14:44:10 +0100
-Message-Id: <20190218133533.459749509@linuxfoundation.org>
+Subject: [PATCH 4.4 119/143] uapi/if_ether.h: prevent redefinition of struct ethhdr
+Date:   Mon, 18 Feb 2019 14:44:07 +0100
+Message-Id: <20190218133533.355474548@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -66,41 +67,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit df209c43a0e8258e096fb722dfbdae4f0dd13fde ]
+commit 6926e041a8920c8ec27e4e155efa760aa01551fd upstream.
 
-devm_kzalloc(), devm_kstrdup() and devm_kasprintf() all can
-fail internal allocation and return NULL. Using any of the assigned
-objects without checking is not safe. As this is early in the boot
-phase and these allocations really should not fail, any failure here
-is probably an indication of a more serious issue so it makes little
-sense to try and rollback the previous allocated resources or try to
-continue;  but rather the probe function is simply exited with -ENOMEM.
+Musl provides its own ethhdr struct definition. Add a guard to prevent
+its definition of the appropriate musl header has already been included.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: 684284b64aae ("ARM: integrator: add MMCI device to IM-PD1")
+glibc does not implement this header, but when glibc will implement this
+they can just define __UAPI_DEF_ETHHDR 0 to make it work with the
+kernel.
+
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-integrator/impd1.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ include/uapi/linux/if_ether.h    | 3 +++
+ include/uapi/linux/libc-compat.h | 6 ++++++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/arch/arm/mach-integrator/impd1.c b/arch/arm/mach-integrator/impd1.c
-index 38b0da300dd5..423a88ff908c 100644
---- a/arch/arm/mach-integrator/impd1.c
-+++ b/arch/arm/mach-integrator/impd1.c
-@@ -394,7 +394,11 @@ static int __init_refok impd1_probe(struct lm_device *dev)
- 					      sizeof(*lookup) + 3 * sizeof(struct gpiod_lookup),
- 					      GFP_KERNEL);
- 			chipname = devm_kstrdup(&dev->dev, devname, GFP_KERNEL);
--			mmciname = kasprintf(GFP_KERNEL, "lm%x:00700", dev->id);
-+			mmciname = devm_kasprintf(&dev->dev, GFP_KERNEL,
-+						  "lm%x:00700", dev->id);
-+			if (!lookup || !chipname || !mmciname)
-+				return -ENOMEM;
+diff --git a/include/uapi/linux/if_ether.h b/include/uapi/linux/if_ether.h
+index 064d2026ab38..cb490cd9376f 100644
+--- a/include/uapi/linux/if_ether.h
++++ b/include/uapi/linux/if_ether.h
+@@ -22,6 +22,7 @@
+ #define _UAPI_LINUX_IF_ETHER_H
+ 
+ #include <linux/types.h>
++#include <linux/libc-compat.h>
+ 
+ /*
+  *	IEEE 802.3 Ethernet magic constants.  The frame sizes omit the preamble
+@@ -136,11 +137,13 @@
+  *	This is an Ethernet frame header.
+  */
+ 
++#if __UAPI_DEF_ETHHDR
+ struct ethhdr {
+ 	unsigned char	h_dest[ETH_ALEN];	/* destination eth addr	*/
+ 	unsigned char	h_source[ETH_ALEN];	/* source ether addr	*/
+ 	__be16		h_proto;		/* packet type ID field	*/
+ } __attribute__((packed));
++#endif
+ 
+ 
+ #endif /* _UAPI_LINUX_IF_ETHER_H */
+diff --git a/include/uapi/linux/libc-compat.h b/include/uapi/linux/libc-compat.h
+index e4f048ee7043..5da44c571cdd 100644
+--- a/include/uapi/linux/libc-compat.h
++++ b/include/uapi/linux/libc-compat.h
+@@ -184,4 +184,10 @@
+ 
+ #endif /* __GLIBC__ */
+ 
++/* Definitions for if_ether.h */
++/* allow libcs like musl to deactivate this, glibc does not implement this. */
++#ifndef __UAPI_DEF_ETHHDR
++#define __UAPI_DEF_ETHHDR		1
++#endif
 +
- 			lookup->dev_id = mmciname;
- 			/*
- 			 * Offsets on GPIO block 1:
+ #endif /* _UAPI_LIBC_COMPAT_H */
 -- 
 2.19.1
 
