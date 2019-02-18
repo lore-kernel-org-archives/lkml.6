@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE471C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:53:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3261C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:53:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F18321906
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:53:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3A8621908
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:53:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497996;
-	bh=vCtZKajdIfTmPnMe+xoVP4trmv0aE7ivwETL1uXf7gY=;
+	s=default; t=1550498000;
+	bh=2WwFNnXJR80r3GMhM9pE/wlNSerjrShpLR7BNvhv5tM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tnx0z7FwEvROutyJ3Z0n0qCp/C9T6k6XZGk9s/VVscqrgbgIrjl22FbTuQ2HEpHLo
-	 h8CaVnBim3DOButAYCs9l6QhHy0z9WxDSPW380RHFmJ2NBI3qDAvcPHxMGnn3iwwqO
-	 RSonZMX0fPmunHiReGDLH+jmCItuG1GOLqS0GzEo=
+	b=YdyPLSLPPshEYCeDhkzyDh2WG0wldOZHFxgcGo/u7V1w2oq/K4BZtMB6Sld3BwDMg
+	 8nmlJ0U9OHVNhicCoUxStK4sw9Pe3kyHBa4M03ETYQQXQy4Uc4VyvgVgXCBf9SxZQc
+	 v8P4iDoVw/iwfBOj/+AyOnzWlfwx+0uEKXTssVa8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732926AbfBRNxP (ORCPT
+        id S1732940AbfBRNxS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:53:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32904 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:53:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732906AbfBRNxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:53:11 -0500
+        id S1732923AbfBRNxP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:53:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C36762190B;
-        Mon, 18 Feb 2019 13:53:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52C2921908;
+        Mon, 18 Feb 2019 13:53:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497991;
-        bh=vCtZKajdIfTmPnMe+xoVP4trmv0aE7ivwETL1uXf7gY=;
+        s=default; t=1550497994;
+        bh=2WwFNnXJR80r3GMhM9pE/wlNSerjrShpLR7BNvhv5tM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Uj7OacmE2iQYh5gk0hF7ZYQocbt4D9g3nhyK13GsETllkWpgNoPYX63I6LPgcCzJM
-         8aR3iXqYNv2QuxG+PbUpL77MtYtwxH2lMVnLjkNMFJC3zlYVBvRU6intjLKYbosNJO
-         PB1oJH0h+vy36VtXTLBfJIeNUC85Mzp6FUjapPX4=
+        b=Necny8VdafyNF6dYnhU4j/XNS1P8nDTCPZEhywD5fx4dbD/Aita79qS10Cxvhmrr0
+         V1eD4vnst/JUV6QZFU1OjtNL96KswJy1orMVJ4IiO1/D0ySqwdo2Z4OXoaytvF3OTt
+         gdnZobDb7P7Qx35wKDBTfaT7XlRdzrEK3fXjz2wQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bob Tracy <rct@frus.com>,
-        Matt Turner <mattst88@gmail.com>
-Subject: [PATCH 4.19 59/85] tools uapi: fix Alpha support
-Date:   Mon, 18 Feb 2019 14:43:25 +0100
-Message-Id: <20190218133505.773468436@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan ORear <sorear2@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Palmer Dabbelt <palmer@sifive.com>
+Subject: [PATCH 4.19 60/85] riscv: Add pte bit to distinguish swap from invalid
+Date:   Mon, 18 Feb 2019 14:43:26 +0100
+Message-Id: <20190218133505.846915178@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -65,29 +66,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bob Tracy <rct@frus.com>
+From: Stefan O'Rear <sorear2@gmail.com>
 
-commit 842fc0f5dc5c9f9bd91f891554996d903c40cf35 upstream.
+commit e3613bb8afc2a9474c9214d65c8326c5ac02135e upstream.
 
-Cc: stable@vger.kernel.org # v4.18+
-Signed-off-by: Bob Tracy <rct@frus.com>
-Signed-off-by: Matt Turner <mattst88@gmail.com>
+Previously, invalid PTEs and swap PTEs had the same binary
+representation, causing errors when attempting to unmap PROT_NONE
+mappings, including implicit unmap on exit.
+
+Typical error:
+
+swap_info_get: Bad swap file entry 40000000007a9879
+BUG: Bad page map in process a.out  pte:3d4c3cc0 pmd:3e521401
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Stefan O'Rear <sorear2@gmail.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/include/uapi/asm/bitsperlong.h |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/riscv/include/asm/pgtable-bits.h |    6 ++++++
+ arch/riscv/include/asm/pgtable.h      |    8 ++++----
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
---- a/tools/include/uapi/asm/bitsperlong.h
-+++ b/tools/include/uapi/asm/bitsperlong.h
-@@ -15,6 +15,8 @@
- #include "../../arch/ia64/include/uapi/asm/bitsperlong.h"
- #elif defined(__riscv)
- #include "../../arch/riscv/include/uapi/asm/bitsperlong.h"
-+#elif defined(__alpha__)
-+#include "../../arch/alpha/include/uapi/asm/bitsperlong.h"
- #else
- #include <asm-generic/bitsperlong.h>
- #endif
+--- a/arch/riscv/include/asm/pgtable-bits.h
++++ b/arch/riscv/include/asm/pgtable-bits.h
+@@ -35,6 +35,12 @@
+ #define _PAGE_SPECIAL   _PAGE_SOFT
+ #define _PAGE_TABLE     _PAGE_PRESENT
+ 
++/*
++ * _PAGE_PROT_NONE is set on not-present pages (and ignored by the hardware) to
++ * distinguish them from swapped out pages
++ */
++#define _PAGE_PROT_NONE _PAGE_READ
++
+ #define _PAGE_PFN_SHIFT 10
+ 
+ /* Set of bits to preserve across pte_modify() */
+--- a/arch/riscv/include/asm/pgtable.h
++++ b/arch/riscv/include/asm/pgtable.h
+@@ -44,7 +44,7 @@
+ /* Page protection bits */
+ #define _PAGE_BASE	(_PAGE_PRESENT | _PAGE_ACCESSED | _PAGE_USER)
+ 
+-#define PAGE_NONE		__pgprot(0)
++#define PAGE_NONE		__pgprot(_PAGE_PROT_NONE)
+ #define PAGE_READ		__pgprot(_PAGE_BASE | _PAGE_READ)
+ #define PAGE_WRITE		__pgprot(_PAGE_BASE | _PAGE_READ | _PAGE_WRITE)
+ #define PAGE_EXEC		__pgprot(_PAGE_BASE | _PAGE_EXEC)
+@@ -98,7 +98,7 @@ extern unsigned long empty_zero_page[PAG
+ 
+ static inline int pmd_present(pmd_t pmd)
+ {
+-	return (pmd_val(pmd) & _PAGE_PRESENT);
++	return (pmd_val(pmd) & (_PAGE_PRESENT | _PAGE_PROT_NONE));
+ }
+ 
+ static inline int pmd_none(pmd_t pmd)
+@@ -178,7 +178,7 @@ static inline pte_t *pte_offset_kernel(p
+ 
+ static inline int pte_present(pte_t pte)
+ {
+-	return (pte_val(pte) & _PAGE_PRESENT);
++	return (pte_val(pte) & (_PAGE_PRESENT | _PAGE_PROT_NONE));
+ }
+ 
+ static inline int pte_none(pte_t pte)
+@@ -380,7 +380,7 @@ static inline int ptep_clear_flush_young
+  *
+  * Format of swap PTE:
+  *	bit            0:	_PAGE_PRESENT (zero)
+- *	bit            1:	reserved for future use (zero)
++ *	bit            1:	_PAGE_PROT_NONE (zero)
+  *	bits      2 to 6:	swap type
+  *	bits 7 to XLEN-1:	swap offset
+  */
 
 
