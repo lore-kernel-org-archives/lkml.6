@@ -6,27 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F2AC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 22:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C9FCC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 22:16:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 460E621479
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 22:09:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3B9B217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 22:16:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731496AbfBRWJ3 (ORCPT
+        id S1731544AbfBRWQC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 17:09:29 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:46935 "EHLO
+        Mon, 18 Feb 2019 17:16:02 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:48862 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729530AbfBRWJ2 (ORCPT
+        with ESMTP id S1731463AbfBRWQC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 17:09:28 -0500
+        Mon, 18 Feb 2019 17:16:02 -0500
 Received: from 79.184.254.15.ipv4.supernova.orange.pl (79.184.254.15) (HELO aspire.rjw.lan)
  by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id acadc6c5712d3779; Mon, 18 Feb 2019 23:09:24 +0100
+ id b6aa6df7bd2ef30d; Mon, 18 Feb 2019 23:15:59 +0100
 From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Jon Hunter <jonathanh@nvidia.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Linux PM <linux-pm@vger.kernel.org>,
         Daniel Vetter <daniel@ffwll.ch>,
@@ -37,10 +38,13 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [RFT/RFC][PATCH] driver core: Fix PM-runtime for links added during consumer probe
-Date:   Mon, 18 Feb 2019 23:08:00 +0100
-Message-ID: <14371356.imFjPFOrCi@aspire.rjw.lan>
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 2/2] driver core: Fix possible supplier PM-usage counter imbalance
+Date:   Mon, 18 Feb 2019 23:14:35 +0100
+Message-ID: <1643324.bcmPelzAHY@aspire.rjw.lan>
+In-Reply-To: <6ee66fc6-cba5-7aea-0e92-3380544c1a94@nvidia.com>
+References: <5510642.nRbR3bcduN@aspire.rjw.lan> <CAJZ5v0gywb2jE-FRowxuosucNVqQ4iLLTCFte4hN_CELF9rHRA@mail.gmail.com> <6ee66fc6-cba5-7aea-0e92-3380544c1a94@nvidia.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -49,152 +53,152 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Monday, February 18, 2019 2:02:50 PM CET Jon Hunter wrote:
+> 
+> On 18/02/2019 12:12, Rafael J. Wysocki wrote:
+> >  On Fri, Feb 15, 2019 at 5:44 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+> >>
+> >>
+> >> On 15/02/2019 14:37, Ulf Hansson wrote:
+> >>> On Fri, 15 Feb 2019 at 12:00, Jon Hunter <jonathanh@nvidia.com> wrote:
+> >>>>
+> >>>> Hi Rafael,
+> >>>>
+> >>>> On 12/02/2019 12:08, Rafael J. Wysocki wrote:
+> >>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>>>>
+> >>>>> If a stateless device link to a certain supplier with
+> >>>>> DL_FLAG_PM_RUNTIME set in the flags is added and then removed by the
+> >>>>> consumer driver's probe callback, the supplier's PM-runtime usage
+> >>>>> counter will be nonzero after that which effectively causes the
+> >>>>> supplier to remain "always on" going forward.
+> >>>>>
+> >>>>> Namely, device_link_add() called to add the link invokes
+> >>>>> device_link_rpm_prepare() which notices that the consumer driver is
+> >>>>> probing, so it increments the supplier's PM-runtime usage counter
+> >>>>> with the assumption that the link will stay around until
+> >>>>> pm_runtime_put_suppliers() is called by driver_probe_device(),
+> >>>>> but if the link goes away before that point, the supplier's
+> >>>>> PM-runtime usage counter will remain nonzero.
+> >>>>>
+> >>>>> To prevent that from happening, first rework pm_runtime_get_suppliers()
+> >>>>> and pm_runtime_put_suppliers() to use the rpm_active refounts of device
+> >>>>> links and make the latter only drop rpm_active and the supplier's
+> >>>>> PM-runtime usage counter for each link by one, unless rpm_active is
+> >>>>> one already for it.  Next, modify device_link_add() to bump up the
+> >>>>> new link's rpm_active refcount and the suppliers PM-runtime usage
+> >>>>> counter by two, to prevent pm_runtime_put_suppliers(), if it is
+> >>>>> called subsequently, from suspending the supplier prematurely (in
+> >>>>> case its PM-runtime usage counter goes down to 0 in there).
+> >>>>>
+> >>>>> Due to the way rpm_put_suppliers() works, this change does not
+> >>>>> affect runtime suspend of the consumer ends of new device links (or,
+> >>>>> generally, device links for which DL_FLAG_PM_RUNTIME has just been
+> >>>>> set).
+> >>>>>
+> >>>>> Fixes: e2f3cd831a28 ("driver core: Fix handling of runtime PM flags in device_link_add()")
+> >>>>> Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
+> >>>>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>>>> ---
+> >>>>>
+> >>>>> Note that the issue had been there before commit e2f3cd831a28, but it was
+> >>>>> overlooked by that commit and this change is a fix on top of it, so make
+> >>>>> the Fixes: tag point to commit e2f3cd831a28 (instead of an earlier one
+> >>>>> that the patch will not be applicable to).
+> >>>> I noticed that yesterday's and today's -next were no longer booting on
+> >>>> one of our Tegra boards (Tegra210 Jetson TX2) because networking is
+> >>>> failing. The ethernet chip is a USB device and looking at the bootlogs I
+> >>>> can see that the Tegra XHCI driver is failing ...
+> >>>>
+> >>>>  tegra-xusb 70090000.usb: xHCI host controller not responding, assume dead
+> >>>>  tegra-xusb 70090000.usb: HC died; cleaning up
+> >>>>
+> >>>> The Tegra XHCI driver uses multiple power-domains and uses
+> >>>> device_link_add() to attach them. So now I am wondering if there is
+> >>>> something that we have got wrong in our implementation. However, I don't
+> >>>> see the device being probed deferred on boot or anything like that.
+> >>>>
+> >>>> The driver in question is drivers/usb/host/xhci-tegra.c and we add the
+> >>>> links in the function tegra_xusb_powerdomain_init() which is before RPM
+> >>>> is enabled. Let me know if you have any thoughts.
+> >>>
+> >>> If you are willing to help debugging then I am offering my assistance.
+> >>>
+> >>> I would start by enabling CONFIG_PM_ADVANCED_DEBUG, which gives you
+> >>> some more information about the runtime PM state of the device, like
+> >>> the usage count for example.
+> >>> I would also add a couple of prints in
+> >>> tegra_xusb_runtime_suspend|resume() and in the ->power_on|off()
+> >>> callbacks for the corresponding genpds, to see when those gets called.
+> >>
+> >> From the bootlog I see ...
+> >>
+> >> [    4.445827] tegra_xusb_runtime_resume-788
+> >> [    4.508799] tegra-xusb 70090000.usb: Firmware timestamp: 2015-08-10 09:47:54 UTC
+> > 
+> > This message comes from tegra_xusb_load_firmware() in
+> > tegra_xusb_probe() which is after the pm_runtime_get_sync().
+> > 
+> > If the device was PM-runtime-suspended before, the
+> > pm_runtime_get_sync() will runtime-resume and reference-count the
+> > suppliers in addition to resuming the device.  In that case
+> > pm_runtime_put_suppliers() will suspend the suppliers, so there is a
+> > bug in there.
+> > 
+> > What happens is that the links are new when pm_runtime_get_sync() runs
+> > and so their rpm_active refcounts are one.  After the
+> > pm_runtime_get_sync() they are two and pm_runtime_put_suppliers() will
+> > drop them by one and drop the PM-runtime usage counter of each of them
+> > by one, so they will become zero and the suppliers will suspend.
+> > 
+> > Passing DL_FLAG_RPM_ACTIVE to device_link_add() should help, but IMO
+> > things should also work without that.
+> 
+> I can confirm that DL_FLAG_RPM_ACTIVE does indeed work. I assume though
+> this would prevent the suppliers from ever being suspended,
 
-Commit 4c06c4e6cf63 ("driver core: Fix possible supplier PM-usage
-counter imbalance") introduced a regression that causes suppliers
-to be suspended prematurely for device links added during consumer
-driver probe if the initial PM-runtime status of the consumer is
-"suspended" and the consumer is resumed after adding the link and
-before pm_runtime_put_suppliers() is called.  In that case,
-pm_runtime_put_suppliers() will drop the rpm_active refcount for
-the link by one and (since rpm_active is equal to two after the
-preceding consumer resume) the supplier's PM-runtime usage counter
-will be decremented, which may cause the supplier to suspend even
-though the consumer's PM-runtime status is "active".
+No, it wouldn't.  It only prevents the supplier from suspending as long as
+the consumer remains active.
 
-For this reason, partially revert commit 4c06c4e6cf63 as the problem
-it tried to fix needs to be addressed somewhat differently, and
-change pm_runtime_get_suppliers() and pm_runtime_put_suppliers() so
-that the latter only drops rpm_active references acquired by the
-former.  [This requires adding a new field to struct device_link,
-but I coulnd't find a cleaner way to address the issue that would
-work in all cases.]
+In your case it shouldn't matter (it only matters because of the bug in
+the $subject patch), because the consumer is suspended to start with.
 
-Fixes: 4c06c4e6cf63 ("driver core: Fix possible supplier PM-usage counter imbalance")
-Reported-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+Had it been active initially, though, passing DL_FLAG_RPM_ACTIVE to
+device_link_add() would have been the only way to to force the supplier to
+remain active accross the return from consumer probe until the consumer is
+suspended.
 
-On top of driver-core/driver-core-next.
+> which maybe
+> we will want to do eventually.
+> 
+> >> [    4.516223] tegra-xusb 70090000.usb: xHCI Host Controller
+> >> [    4.521622] tegra-xusb 70090000.usb: new USB bus registered, assigned bus number 1
+> > 
+> > This comes from usb_add_hcd()
+> > 
+> >> [    4.530087] tegra-xusb 70090000.usb: hcc params 0x0184f525 hci version 0x100 quirks 0x0000000000010010
+> >> [    4.539398] tegra-xusb 70090000.usb: irq 69, io mem 0x70090000
+> >> [    4.553671] tegra-xusb 70090000.usb: xHCI Host Controller
+> >> [    4.559064] tegra-xusb 70090000.usb: new USB bus registered, assigned bus number 2
+> > 
+> > Like this.
+> > 
+> >> [    4.566622] tegra-xusb 70090000.usb: Host supports USB 3.0  SuperSpeed
+> > 
+> > And this if from xhci_gen_setup(), so probe returns around this point.
+> > 
+> >> [    4.595393] tegra-pmc: tegra_genpd_power_off-673: xusbc
+> >> [    4.600672] tegra-pmc: tegra_genpd_power_off-673: xusba
+> > 
+> > And this appears to be done by pm_runtime_put_suppliers().
+> > 
+> > Hmm, I need to think how to fix this.  Maybe we'll need to revert
+> > $subject patch and do something else, we'll see (later today).
+> 
+> OK, thanks. Let me know if there is anything else I can test.
 
-Jon, Ulf, please test!
+Please test https://patchwork.kernel.org/patch/10818923/
 
----
- drivers/base/core.c          |    4 ++--
- drivers/base/power/runtime.c |   29 ++++++-----------------------
- include/linux/device.h       |    1 +
- include/linux/pm_runtime.h   |    4 ----
- 4 files changed, 9 insertions(+), 29 deletions(-)
-
-Index: linux-pm/drivers/base/core.c
-===================================================================
---- linux-pm.orig/drivers/base/core.c
-+++ linux-pm/drivers/base/core.c
-@@ -277,7 +277,7 @@ struct device_link *device_link_add(stru
- 				link->flags |= DL_FLAG_PM_RUNTIME;
- 			}
- 			if (flags & DL_FLAG_RPM_ACTIVE)
--				pm_runtime_active_link(link, supplier);
-+				refcount_inc(&link->rpm_active);
- 		}
- 
- 		if (flags & DL_FLAG_STATELESS) {
-@@ -310,7 +310,7 @@ struct device_link *device_link_add(stru
- 
- 	if (flags & DL_FLAG_PM_RUNTIME) {
- 		if (flags & DL_FLAG_RPM_ACTIVE)
--			pm_runtime_active_link(link, supplier);
-+			refcount_inc(&link->rpm_active);
- 
- 		pm_runtime_new_link(consumer);
- 	}
-Index: linux-pm/drivers/base/power/runtime.c
-===================================================================
---- linux-pm.orig/drivers/base/power/runtime.c
-+++ linux-pm/drivers/base/power/runtime.c
-@@ -1656,6 +1656,7 @@ void pm_runtime_get_suppliers(struct dev
- 
- 	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
- 		if (link->flags & DL_FLAG_PM_RUNTIME) {
-+			link->supplier_preactivated = true;
- 			refcount_inc(&link->rpm_active);
- 			pm_runtime_get_sync(link->supplier);
- 		}
-@@ -1675,9 +1676,11 @@ void pm_runtime_put_suppliers(struct dev
- 	idx = device_links_read_lock();
- 
- 	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
--		if (link->flags & DL_FLAG_PM_RUNTIME &&
--		    refcount_dec_not_one(&link->rpm_active))
--			pm_runtime_put(link->supplier);
-+		if (link->supplier_preactivated) {
-+			link->supplier_preactivated = false;
-+			if (refcount_dec_not_one(&link->rpm_active))
-+				pm_runtime_put(link->supplier);
-+		}
- 
- 	device_links_read_unlock(idx);
- }
-@@ -1689,26 +1692,6 @@ void pm_runtime_new_link(struct device *
- 	spin_unlock_irq(&dev->power.lock);
- }
- 
--/**
-- * pm_runtime_active_link - Set up new device link as active for PM-runtime.
-- * @link: Device link to be set up as active.
-- * @supplier: Supplier end of the link.
-- *
-- * Add 2 to the rpm_active refcount of @link and increment the PM-runtime
-- * usage counter of @supplier once more in case the link is being added while
-- * the consumer driver is probing and pm_runtime_put_suppliers() will be called
-- * subsequently.
-- *
-- * Note that this doesn't prevent rpm_put_suppliers() from decreasing the link's
-- * rpm_active refcount down to one, so runtime suspend of the consumer end of
-- * @link is not affected.
-- */
--void pm_runtime_active_link(struct device_link *link, struct device *supplier)
--{
--	refcount_add(2, &link->rpm_active);
--	pm_runtime_get_noresume(supplier);
--}
--
- void pm_runtime_drop_link(struct device *dev)
- {
- 	spin_lock_irq(&dev->power.lock);
-Index: linux-pm/include/linux/device.h
-===================================================================
---- linux-pm.orig/include/linux/device.h
-+++ linux-pm/include/linux/device.h
-@@ -861,6 +861,7 @@ struct device_link {
- #ifdef CONFIG_SRCU
- 	struct rcu_head rcu_head;
- #endif
-+	bool supplier_preactivated; /* Owned by consumer probe. */
- };
- 
- /**
-Index: linux-pm/include/linux/pm_runtime.h
-===================================================================
---- linux-pm.orig/include/linux/pm_runtime.h
-+++ linux-pm/include/linux/pm_runtime.h
-@@ -59,8 +59,6 @@ extern void pm_runtime_clean_up_links(st
- extern void pm_runtime_get_suppliers(struct device *dev);
- extern void pm_runtime_put_suppliers(struct device *dev);
- extern void pm_runtime_new_link(struct device *dev);
--extern void pm_runtime_active_link(struct device_link *link,
--				   struct device *supplier);
- extern void pm_runtime_drop_link(struct device *dev);
- 
- static inline void pm_suspend_ignore_children(struct device *dev, bool enable)
-@@ -180,8 +178,6 @@ static inline void pm_runtime_clean_up_l
- static inline void pm_runtime_get_suppliers(struct device *dev) {}
- static inline void pm_runtime_put_suppliers(struct device *dev) {}
- static inline void pm_runtime_new_link(struct device *dev) {}
--static inline void pm_runtime_active_link(struct device_link *link,
--					  struct device *supplier) {}
- static inline void pm_runtime_drop_link(struct device *dev) {}
- 
- #endif /* !CONFIG_PM */
+Cheers,
+Rafael
 
