@@ -2,95 +2,91 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A56D1C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A8ADC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71FE720700
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:02:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nH2FfnmE"
+	by mail.kernel.org (Postfix) with ESMTP id 5925F20C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:05:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390937AbfBRRCK (ORCPT
+        id S2388000AbfBRRFI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 12:02:10 -0500
-Received: from mail-it1-f177.google.com ([209.85.166.177]:40158 "EHLO
-        mail-it1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387648AbfBRRCJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 12:02:09 -0500
-Received: by mail-it1-f177.google.com with SMTP id i2so42589717ite.5
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 09:02:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=8giBFLa/6EJULGKbVseEpa5JgyJ5hnHBS5FmwtBLcvo=;
-        b=nH2FfnmEMYbVA5JGK+Ii5TNJNGtPIeft3XTi60B2+FhIjVBDXzL9C9LWIfZg+Zb57R
-         m5b6F1+lh8HI0QxXWjWyCwm2UKjAUKJHzEcOcPfH7inLBhOZdnZ7jC+j3RGW0umjuG5L
-         MC6VXZp2SefY6cd54cF4RGOsHJK/Yk84nf3/uKZpafBkBE5h1UYu4zWBM/sKsO2PkX1g
-         wCvISVOHpbs50hyJboeAf1PjocFgCwrtyTFi9Xb6gy4RLV77zGvSY4LcwTa3tcyed2Pi
-         Lgz1KPSNS4RBOuLiUghZWMaCEkx7ubI0CpgKPyQ3XOvhSq15lKoS26b9uKrnp04taeHh
-         JXFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=8giBFLa/6EJULGKbVseEpa5JgyJ5hnHBS5FmwtBLcvo=;
-        b=sKQC9QFvKgJ8OqOYSbZdg25/6aRXwQg8Ko5w+G1+AW+Vv2zl2kB/mcwWYqw01mPqcu
-         HKgs1oZH3Duj96xV4rFhiWTVffpeSWKzvqV9c7McvEVJy4s78tGXTuceX0CtvNhmUODp
-         rrs5W0H2qlOWGPrlkCNZpMXZUrRHFDIVgz850u2SglHmBbi0duUz6O/y6dgmQF4GINJU
-         dT30wSeNZqeLH0pHiT39o1Vdmw2APdYUYKWGECRiBbNLKGQdA0KGAMAtW7ss6vV/ppBW
-         oiHiRnZlTcqKu74Dm5ekEsTtBZszPXqkW5oKEiJwulKR/PaJZpNMO/ZzOW/cPPTTKCP9
-         BTHg==
-X-Gm-Message-State: AHQUAuYPDyocqMDGQKHkhmQf8pT9IHbwujfJG9XLmHbj45NlRE6A3Ben
-        aHaLljIeFSijBqEVtiudD+h2FsKg6LcvWKPrsSuuf74U
-X-Google-Smtp-Source: AHgI3IYSMpmkE/KaLQCY1dJwB5T55Q4SPc++viyH62BASZZ//WnbYPiPAdNtkQo6EOuP8/Chvnq1pBJFVy958rgl1gI=
-X-Received: by 2002:a24:5608:: with SMTP id o8mr11834924itb.35.1550509328514;
- Mon, 18 Feb 2019 09:02:08 -0800 (PST)
-MIME-Version: 1.0
-From:   Jassi Brar <jassisinghbrar@gmail.com>
-Date:   Mon, 18 Feb 2019 11:01:57 -0600
-Message-ID: <CABb+yY2SrgwFNgKa4+ossU3i3U76m2sa63r1=QsRg=PGGWAPxw@mail.gmail.com>
-Subject: [GIT PULL] Mailbox fixes for v5.0
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mon, 18 Feb 2019 12:05:08 -0500
+Received: from foss.arm.com ([217.140.101.70]:34422 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731720AbfBRRFI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 12:05:08 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 28F431BB0;
+        Mon, 18 Feb 2019 09:05:02 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2FE863F675;
+        Mon, 18 Feb 2019 09:04:54 -0800 (PST)
+Date:   Mon, 18 Feb 2019 17:04:51 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Steven Price <steven.price@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        James Morse <james.morse@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 01/13] arm64: mm: Add p?d_large() definitions
+Message-ID: <20190218170451.GB10145@lakrids.cambridge.arm.com>
+References: <20190215170235.23360-1-steven.price@arm.com>
+ <20190215170235.23360-2-steven.price@arm.com>
+ <20190218112922.GT32477@hirez.programming.kicks-ass.net>
+ <fe36ed1c-b90d-8062-f7a9-e52d940733c4@arm.com>
+ <20190218142951.GA10145@lakrids.cambridge.arm.com>
+ <20190218150657.GU32494@hirez.programming.kicks-ass.net>
+ <eb7e0203-db08-743b-dbed-a7032b352ded@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eb7e0203-db08-743b-dbed-a7032b352ded@arm.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Mon, Feb 18, 2019 at 03:30:38PM +0000, Steven Price wrote:
+> On 18/02/2019 15:06, Peter Zijlstra wrote:
+> > On Mon, Feb 18, 2019 at 02:29:52PM +0000, Mark Rutland wrote:
+> >> I think that Peter means p?d_huge(x) should imply p?d_large(x), e.g.
+> >>
+> >> #define pmd_large(x) \
+> >> 	(pmd_sect(x) || pmd_huge(x) || pmd_trans_huge(x))
+> >>
+> >> ... which should work regardless of CONFIG_HUGETLB_PAGE.
+> > 
+> > Yep, that.
+> 
+> I'm not aware of a situation where pmd_huge(x) is true but pmd_sect(x)
+> isn't. Equally for pmd_huge(x) and pmd_trans_huge(x).
+> 
+> What am I missing?
 
-The following changes since commit a3b22b9f11d9fbc48b0291ea92259a5a810e9438:
+Having dug for a bit, I think you're right in asserting that pmd_sect()
+should cover those.
 
-  Linux 5.0-rc7 (2019-02-17 18:46:40 -0800)
+I had worried that wouldn't cater for contiguous pmd entries, but those
+have to be contiguous section entries, so they get picked up.
 
-are available in the Git repository at:
+That said, do we have any special handling for contiguous PTEs? We use
+those in kernel mappings regardless of hugetlb support, and I didn't
+spot a pte_large() helper.
 
-  git://git.linaro.org/landing-teams/working/fujitsu/integration.git
-tags/mailbox-fixes-v5.0-rc7
-
-for you to fetch changes up to d7bf31a0f85faaf63c63c39d55154825a1eaaea9:
-
-  mailbox: bcm-flexrm-mailbox: Fix FlexRM ring flush timeout issue
-(2019-02-18 10:40:58 -0600)
-
-----------------------------------------------------------------
-- API: Fix build breakge by exporting the function mbox_flush
-- BRCM: Fix FlexRM ring flush timeout issue
-
-----------------------------------------------------------------
-Rayagonda Kokatanur (1):
-      mailbox: bcm-flexrm-mailbox: Fix FlexRM ring flush timeout issue
-
-Thierry Reding (1):
-      mailbox: Export mbox_flush()
-
- drivers/mailbox/bcm-flexrm-mailbox.c | 4 ++--
- drivers/mailbox/mailbox.c            | 1 +
- 2 files changed, 3 insertions(+), 2 deletions(-)
+Thanks,
+Mark.
