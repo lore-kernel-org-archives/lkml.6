@@ -2,88 +2,93 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C97C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4171AC4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4BA52177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:54:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1856F217D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:58:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730405AbfBRKyy (ORCPT
+        id S1730394AbfBRK6L convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 05:54:54 -0500
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:56503 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729525AbfBRKyy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 05:54:54 -0500
-X-Originating-IP: 141.70.45.131
-Received: from localhost (hadi-gate-vlan-851.hadiko.whka.de [141.70.45.131])
-        (Authenticated sender: hle@owl.eu.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id F281DC0006;
-        Mon, 18 Feb 2019 10:54:51 +0000 (UTC)
-Date:   Mon, 18 Feb 2019 11:54:51 +0100
-From:   Hugo Lefeuvre <hle@owl.eu.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] lib/iomap: add missing const to mmio_ins* addr arg
-Message-ID: <860beee91f5f22a3f8afc75390a488eba095fa85.1550485787.git.hle@owl.eu.com>
-References: <cover.1550485787.git.hle@owl.eu.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1550485787.git.hle@owl.eu.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 18 Feb 2019 05:58:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45110 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729465AbfBRK6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 05:58:11 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 707C6AE0F;
+        Mon, 18 Feb 2019 10:58:09 +0000 (UTC)
+Date:   Mon, 18 Feb 2019 11:58:07 +0100
+From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-pci@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [PATCH 6/7] MIPS: SGI-IP27: use generic PCI driver
+Message-Id: <20190218115807.1a683d2c6824acd4ea78eb11@suse.de>
+In-Reply-To: <20190128133215.GC744@infradead.org>
+References: <20190124174728.28812-1-tbogendoerfer@suse.de>
+        <20190124174728.28812-7-tbogendoerfer@suse.de>
+        <20190128133215.GC744@infradead.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mmio_ins* definitions from lib/iomap.c are missing const qualifiers
-for the addr argument. This results in compilation warnings when
-compiling drivers.
+On Mon, 28 Jan 2019 05:32:15 -0800
+Christoph Hellwig <hch@infradead.org> wrote:
 
-Add missing const qualifiers.
+> Note that we could probably fix these by just switching IP27 and
+> other users of the bridge chip to use the dma_pfn_offset field
+> in struct device and stop overriding these functions.
 
-Signed-off-by: Hugo Lefeuvre <hle@owl.eu.com>
----
- lib/iomap.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+during my final round of tests for v2 of the patchset I found a problem with
+the current implementation regarding dma_pfn_offset. Right now it asumes that
+dma addresses are lower than physical addresses, which probably came from the
+sh7786 usage (at least that's how I understand the SH7786 datasheet). But for
+IP27 physical addresses starts at 0 and dma address is more at the end of the
+64bit address space. So using following patch gets it right for IP27:
 
-diff --git a/lib/iomap.c b/lib/iomap.c
-index 8cc3270697e9..2bcc5d9d30b1 100644
---- a/lib/iomap.c
-+++ b/lib/iomap.c
-@@ -143,7 +143,7 @@ EXPORT_SYMBOL(iowrite32be);
-  * order" (we also don't have IO barriers).
-  */
- #ifndef mmio_insb
--static inline void mmio_insb(void __iomem *addr, u8 *dst, int count)
-+static inline void mmio_insb(const void __iomem *addr, u8 *dst, int count)
+diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
+index b7338702592a..19dfadc292f5 100644
+--- a/include/linux/dma-direct.h
++++ b/include/linux/dma-direct.h
+@@ -12,14 +12,14 @@ static inline dma_addr_t __phys_to_dma(struct device *dev, phys_addr_t paddr)
  {
- 	while (--count >= 0) {
- 		u8 data = __raw_readb(addr);
-@@ -151,7 +151,7 @@ static inline void mmio_insb(void __iomem *addr, u8 *dst, int count)
- 		dst++;
- 	}
+        dma_addr_t dev_addr = (dma_addr_t)paddr;
+ 
+-       return dev_addr - ((dma_addr_t)dev->dma_pfn_offset << PAGE_SHIFT);
++       return dev_addr + ((dma_addr_t)dev->dma_pfn_offset << PAGE_SHIFT);
  }
--static inline void mmio_insw(void __iomem *addr, u16 *dst, int count)
-+static inline void mmio_insw(const void __iomem *addr, u16 *dst, int count)
+ 
+ static inline phys_addr_t __dma_to_phys(struct device *dev, dma_addr_t dev_addr)
  {
- 	while (--count >= 0) {
- 		u16 data = __raw_readw(addr);
-@@ -159,7 +159,7 @@ static inline void mmio_insw(void __iomem *addr, u16 *dst, int count)
- 		dst++;
- 	}
+        phys_addr_t paddr = (phys_addr_t)dev_addr;
+ 
+-       return paddr + ((phys_addr_t)dev->dma_pfn_offset << PAGE_SHIFT);
++       return paddr - ((phys_addr_t)dev->dma_pfn_offset << PAGE_SHIFT);
  }
--static inline void mmio_insl(void __iomem *addr, u32 *dst, int count)
-+static inline void mmio_insl(const void __iomem *addr, u32 *dst, int count)
- {
- 	while (--count >= 0) {
- 		u32 data = __raw_readl(addr);
+ 
+ static inline bool dma_capable(struct device *dev, dma_addr_t addr, size_t size)
+
+This of course will break SH7786. To fix both cases how about making dma_pfn_offset
+a signed long ?
+
+Thomas.
+
 -- 
-2.20.1
+SUSE Linux GmbH
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
