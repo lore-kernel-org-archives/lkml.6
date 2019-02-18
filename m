@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D2BC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FFECC4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:46:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1547C218FC
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:46:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0180D218FC
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:46:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497561;
-	bh=/tHg8PqH82sXL0mn5LUtdrZDF6wkhCpc3wkyFxEApB4=;
+	s=default; t=1550497563;
+	bh=qmQZ8NTYvxWsyzkNu4E6aB8O7Slp/2tlaDX2eaEXgyU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XM/oOcOU1ou1D4vEQHQHNQMme2HdmGpbYJBRJ+UABT8psmuA84MpJP0IHHPZ2dSlh
-	 QwmPQKpedhTRWdPGKCoxMZ7B3czqF5B1yK9cPOJDs/XAZbU+lN5khnZXaufKdnJnVE
-	 3iUYUuVQ3a6MSe71Q01s8hXjtVAYiQb3+/ZUzSF4=
+	b=Zn2DjFdUJGW0MPOtQHiiNRiYtNhZW6LKeDvFvAd0jxDrSFcwuZdr33siNCliAb84u
+	 xO6kMdNJFoQXENnNL0eaMRnK+zcjbnNnqBNvtTuyYIyD/WIyrTvMAgL+Ovot4RTXtt
+	 RtjsSrU3ilaGoHti5/FeLO8FxygANse7QYCLM60M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731497AbfBRNp6 (ORCPT
+        id S1731514AbfBRNqB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:45:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52258 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:46:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731463AbfBRNpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:45:55 -0500
+        id S1730711AbfBRNp7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:45:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 421EB21901;
-        Mon, 18 Feb 2019 13:45:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDA8B218FC;
+        Mon, 18 Feb 2019 13:45:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497554;
-        bh=/tHg8PqH82sXL0mn5LUtdrZDF6wkhCpc3wkyFxEApB4=;
+        s=default; t=1550497558;
+        bh=qmQZ8NTYvxWsyzkNu4E6aB8O7Slp/2tlaDX2eaEXgyU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=neopGRNaVuz+YSdx/Qvv1DTe5lqkl6FcVmAKKDX15A07rgvQFkk+Nyh+wSeaAvhI9
-         LFKqS/sJP25XNWH2MoaihTC1sgnoluYsY1Z9J69FhpiBK7h5O1BcK9VYE+KdWV4AUb
-         NNfIE6BgCdzT9BT83ahWAMMWciljsHbV6KhTmFzI=
+        b=rdgYz0/EV9lFDZPPoLwqbj/sae+/Y5ovkTLV79MbDqS6b4zmS/N1yNLdaOG/eTUDi
+         Q9sucsKP0D1zvRYhJQXU32bmRROJObZNl6niObWPrFdyg2yzcP5DvQN0VTsALCOHeL
+         Fc42p0wesYcHgynKx2xiX+4AOckk0lwpJvyEGS48=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
-        James Dingwall <james@dingwall.me.uk>,
-        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 28/92] nvme: introduce NVME_QUIRK_IGNORE_DEV_SUBNQN
-Date:   Mon, 18 Feb 2019 14:42:31 +0100
-Message-Id: <20190218133457.366587430@linuxfoundation.org>
+        stable@vger.kernel.org, Tao Zhou <tao.zhou1@amd.com>,
+        "Yukun.Li" <yukun1.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 29/92] drm/amdgpu: fix CPDMA hang in PRT mode for VEGA20
+Date:   Mon, 18 Feb 2019 14:42:32 +0100
+Message-Id: <20190218133457.464238605@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
 References: <20190218133454.668268457@linuxfoundation.org>
@@ -66,83 +67,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6299358d198a0635da2dd3c4b3ec37789e811e44 ]
+[ Upstream commit 3e958fe67720b37d04ab8ef81b9d507a56a09bbc ]
 
-If a device provides an NQN it is expected to be globally unique.
-Unfortunately some firmware revisions for Intel 760p/Pro 7600p devices did
-not satisfy this requirement.  In these circumstances if a system has >1
-affected device then only one device is enabled.  If this quirk is enabled
-then the device supplied subnqn is ignored and we fallback to generating
-one as if the field was empty.  In this case we also suppress the version
-check so we don't print a warning when the quirk is enabled.
+Fix CPDMA hang in PRT mode for both VEGA10 and VEGA20
 
-Reviewed-by: Keith Busch <keith.busch@intel.com>
-Signed-off-by: James Dingwall <james@dingwall.me.uk>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Tao Zhou <tao.zhou1@amd.com>
+Tested-by: Yukun.Li <yukun1.li@amd.com>
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/core.c | 16 +++++++++-------
- drivers/nvme/host/nvme.h |  5 +++++
- drivers/nvme/host/pci.c  |  2 ++
- 3 files changed, 16 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 971ca6754959..5f9a5ef93969 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -2084,14 +2084,16 @@ static void nvme_init_subnqn(struct nvme_subsystem *subsys, struct nvme_ctrl *ct
- 	size_t nqnlen;
- 	int off;
- 
--	nqnlen = strnlen(id->subnqn, NVMF_NQN_SIZE);
--	if (nqnlen > 0 && nqnlen < NVMF_NQN_SIZE) {
--		strlcpy(subsys->subnqn, id->subnqn, NVMF_NQN_SIZE);
--		return;
--	}
-+	if(!(ctrl->quirks & NVME_QUIRK_IGNORE_DEV_SUBNQN)) {
-+		nqnlen = strnlen(id->subnqn, NVMF_NQN_SIZE);
-+		if (nqnlen > 0 && nqnlen < NVMF_NQN_SIZE) {
-+			strlcpy(subsys->subnqn, id->subnqn, NVMF_NQN_SIZE);
-+			return;
-+		}
- 
--	if (ctrl->vs >= NVME_VS(1, 2, 1))
--		dev_warn(ctrl->device, "missing or invalid SUBNQN field.\n");
-+		if (ctrl->vs >= NVME_VS(1, 2, 1))
-+			dev_warn(ctrl->device, "missing or invalid SUBNQN field.\n");
-+	}
- 
- 	/* Generate a "fake" NQN per Figure 254 in NVMe 1.3 + ECN 001 */
- 	off = snprintf(subsys->subnqn, NVMF_NQN_SIZE,
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 081cbdcce880..6ffa99a10a60 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -90,6 +90,11 @@ enum nvme_quirks {
- 	 * Set MEDIUM priority on SQ creation
- 	 */
- 	NVME_QUIRK_MEDIUM_PRIO_SQ		= (1 << 7),
-+
-+	/*
-+	 * Ignore device provided subnqn.
-+	 */
-+	NVME_QUIRK_IGNORE_DEV_SUBNQN		= (1 << 8),
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+index 21363b2b2ee5..88ed064b3585 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+@@ -112,7 +112,10 @@ static const struct soc15_reg_golden golden_settings_gc_9_0[] =
+ 	SOC15_REG_GOLDEN_VALUE(GC, 0, mmTCP_CHAN_STEER_HI, 0xffffffff, 0x4a2c0e68),
+ 	SOC15_REG_GOLDEN_VALUE(GC, 0, mmTCP_CHAN_STEER_LO, 0xffffffff, 0xb5d3f197),
+ 	SOC15_REG_GOLDEN_VALUE(GC, 0, mmVGT_CACHE_INVALIDATION, 0x3fff3af3, 0x19200000),
+-	SOC15_REG_GOLDEN_VALUE(GC, 0, mmVGT_GS_MAX_WAVE_ID, 0x00000fff, 0x000003ff)
++	SOC15_REG_GOLDEN_VALUE(GC, 0, mmVGT_GS_MAX_WAVE_ID, 0x00000fff, 0x000003ff),
++	SOC15_REG_GOLDEN_VALUE(GC, 0, mmCP_MEC1_F32_INT_DIS, 0x00000000, 0x00000800),
++	SOC15_REG_GOLDEN_VALUE(GC, 0, mmCP_MEC2_F32_INT_DIS, 0x00000000, 0x00000800),
++	SOC15_REG_GOLDEN_VALUE(GC, 0, mmCP_DEBUG, 0x00000000, 0x00008000)
  };
  
- /*
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 47597046c14f..c0d01048ce4d 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -2700,6 +2700,8 @@ static const struct pci_device_id nvme_id_table[] = {
- 	{ PCI_VDEVICE(INTEL, 0xf1a5),	/* Intel 600P/P3100 */
- 		.driver_data = NVME_QUIRK_NO_DEEPEST_PS |
- 				NVME_QUIRK_MEDIUM_PRIO_SQ },
-+	{ PCI_VDEVICE(INTEL, 0xf1a6),	/* Intel 760p/Pro 7600p */
-+		.driver_data = NVME_QUIRK_IGNORE_DEV_SUBNQN, },
- 	{ PCI_VDEVICE(INTEL, 0x5845),	/* Qemu emulated controller */
- 		.driver_data = NVME_QUIRK_IDENTIFY_CNS, },
- 	{ PCI_DEVICE(0x1bb1, 0x0100),   /* Seagate Nytro Flash Storage */
+ static const struct soc15_reg_golden golden_settings_gc_9_0_vg10[] =
+@@ -134,10 +137,7 @@ static const struct soc15_reg_golden golden_settings_gc_9_0_vg10[] =
+ 	SOC15_REG_GOLDEN_VALUE(GC, 0, mmRMI_UTCL1_CNTL2, 0x00030000, 0x00020000),
+ 	SOC15_REG_GOLDEN_VALUE(GC, 0, mmSPI_CONFIG_CNTL_1, 0x0000000f, 0x01000107),
+ 	SOC15_REG_GOLDEN_VALUE(GC, 0, mmTD_CNTL, 0x00001800, 0x00000800),
+-	SOC15_REG_GOLDEN_VALUE(GC, 0, mmWD_UTCL1_CNTL, 0x08000000, 0x08000080),
+-	SOC15_REG_GOLDEN_VALUE(GC, 0, mmCP_MEC1_F32_INT_DIS, 0x00000000, 0x00000800),
+-	SOC15_REG_GOLDEN_VALUE(GC, 0, mmCP_MEC2_F32_INT_DIS, 0x00000000, 0x00000800),
+-	SOC15_REG_GOLDEN_VALUE(GC, 0, mmCP_DEBUG, 0x00000000, 0x00008000)
++	SOC15_REG_GOLDEN_VALUE(GC, 0, mmWD_UTCL1_CNTL, 0x08000000, 0x08000080)
+ };
+ 
+ static const struct soc15_reg_golden golden_settings_gc_9_0_vg20[] =
 -- 
 2.19.1
 
