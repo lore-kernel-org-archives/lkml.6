@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D901C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40280C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:34:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F05F42190C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:33:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18E1621736
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:34:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388948AbfBROd6 (ORCPT
+        id S2387892AbfBRN4p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:33:58 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38448 "EHLO mx1.redhat.com"
+        Mon, 18 Feb 2019 08:56:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36362 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387926AbfBRN4x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:56:53 -0500
+        id S2387855AbfBRN4k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:56:40 -0500
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 984113B3C0;
-        Mon, 18 Feb 2019 13:56:52 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id DCCF181F13;
+        Mon, 18 Feb 2019 13:56:38 +0000 (UTC)
 Received: from laptop.redhat.com (ovpn-116-102.ams2.redhat.com [10.36.116.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9A4F35D70A;
-        Mon, 18 Feb 2019 13:56:45 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 402965D70A;
+        Mon, 18 Feb 2019 13:56:34 +0000 (UTC)
 From:   Eric Auger <eric.auger@redhat.com>
 To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
@@ -36,222 +36,157 @@ To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
         will.deacon@arm.com, robin.murphy@arm.com
 Cc:     kevin.tian@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
         christoffer.dall@arm.com, peter.maydell@linaro.org
-Subject: [PATCH v4 11/22] iommu/arm-smmu-v3: Maintain a SID->device structure
-Date:   Mon, 18 Feb 2019 14:54:52 +0100
-Message-Id: <20190218135504.25048-12-eric.auger@redhat.com>
+Subject: [PATCH v4 09/22] vfio: VFIO_IOMMU_BIND/UNBIND_MSI
+Date:   Mon, 18 Feb 2019 14:54:50 +0100
+Message-Id: <20190218135504.25048-10-eric.auger@redhat.com>
 In-Reply-To: <20190218135504.25048-1-eric.auger@redhat.com>
 References: <20190218135504.25048-1-eric.auger@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 18 Feb 2019 13:56:52 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 18 Feb 2019 13:56:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+This patch adds the VFIO_IOMMU_BIND/UNBIND_MSI ioctl which aim
+to pass/withdraw the guest MSI binding to/from the host.
 
-When handling faults from the event or PRI queue, we need to find the
-struct device associated to a SID. Add a rb_tree to keep track of SIDs.
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
 
-Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
 ---
- drivers/iommu/arm-smmu-v3.c | 136 ++++++++++++++++++++++++++++++++++--
- 1 file changed, 132 insertions(+), 4 deletions(-)
+v3 -> v4:
+- add UNBIND
+- unwind on BIND error
 
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index ce222705f52b..9af68266bbb1 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -589,6 +589,16 @@ struct arm_smmu_device {
- 
- 	/* IOMMU core code handle */
- 	struct iommu_device		iommu;
-+
-+	struct rb_root			streams;
-+	struct mutex			streams_mutex;
-+
-+};
-+
-+struct arm_smmu_stream {
-+	u32				id;
-+	struct arm_smmu_master_data	*master;
-+	struct rb_node			node;
- };
- 
- /* SMMU private data for each master */
-@@ -598,6 +608,7 @@ struct arm_smmu_master_data {
- 
- 	struct arm_smmu_domain		*domain;
- 	struct list_head		list; /* domain->devices */
-+	struct arm_smmu_stream		*streams;
- 
- 	struct device			*dev;
- };
-@@ -1244,6 +1255,32 @@ static int arm_smmu_init_l2_strtab(struct arm_smmu_device *smmu, u32 sid)
- 	return 0;
+v2 -> v3:
+- adapt to new proto of bind_guest_msi
+- directly use vfio_iommu_for_each_dev
+
+v1 -> v2:
+- s/vfio_iommu_type1_guest_msi_binding/vfio_iommu_type1_bind_guest_msi
+---
+ drivers/vfio/vfio_iommu_type1.c | 58 +++++++++++++++++++++++++++++++++
+ include/uapi/linux/vfio.h       | 29 +++++++++++++++++
+ 2 files changed, 87 insertions(+)
+
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 12a40b9db6aa..66513679081b 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -1710,6 +1710,25 @@ static int vfio_cache_inv_fn(struct device *dev, void *data)
+ 	return iommu_cache_invalidate(d, dev, &ustruct->info);
  }
  
-+__maybe_unused
-+static struct arm_smmu_master_data *
-+arm_smmu_find_master(struct arm_smmu_device *smmu, u32 sid)
++static int vfio_bind_msi_fn(struct device *dev, void *data)
 +{
-+	struct rb_node *node;
-+	struct arm_smmu_stream *stream;
-+	struct arm_smmu_master_data *master = NULL;
++	struct vfio_iommu_type1_bind_msi *ustruct =
++		(struct vfio_iommu_type1_bind_msi *)data;
++	struct iommu_domain *d = iommu_get_domain_for_dev(dev);
 +
-+	mutex_lock(&smmu->streams_mutex);
-+	node = smmu->streams.rb_node;
-+	while (node) {
-+		stream = rb_entry(node, struct arm_smmu_stream, node);
-+		if (stream->id < sid) {
-+			node = node->rb_right;
-+		} else if (stream->id > sid) {
-+			node = node->rb_left;
-+		} else {
-+			master = stream->master;
-+			break;
-+		}
-+	}
-+	mutex_unlock(&smmu->streams_mutex);
-+
-+	return master;
++	return iommu_bind_guest_msi(d, dev, ustruct->iova,
++				    ustruct->gpa, ustruct->size);
 +}
 +
- /* IRQ and event handlers */
- static irqreturn_t arm_smmu_evtq_thread(int irq, void *dev)
- {
-@@ -1882,6 +1919,71 @@ static bool arm_smmu_sid_in_range(struct arm_smmu_device *smmu, u32 sid)
- 	return sid < limit;
- }
- 
-+static int arm_smmu_insert_master(struct arm_smmu_device *smmu,
-+				  struct arm_smmu_master_data *master)
++static int vfio_unbind_msi_fn(struct device *dev, void *data)
 +{
-+	int i;
-+	int ret = 0;
-+	struct arm_smmu_stream *new_stream, *cur_stream;
-+	struct rb_node **new_node, *parent_node = NULL;
-+	struct iommu_fwspec *fwspec = master->dev->iommu_fwspec;
++	dma_addr_t *iova = (dma_addr_t *)data;
++	struct iommu_domain *d = iommu_get_domain_for_dev(dev);
 +
-+	master->streams = kcalloc(fwspec->num_ids,
-+				  sizeof(struct arm_smmu_stream), GFP_KERNEL);
-+	if (!master->streams)
-+		return -ENOMEM;
-+
-+	mutex_lock(&smmu->streams_mutex);
-+	for (i = 0; i < fwspec->num_ids && !ret; i++) {
-+		new_stream = &master->streams[i];
-+		new_stream->id = fwspec->ids[i];
-+		new_stream->master = master;
-+
-+		new_node = &(smmu->streams.rb_node);
-+		while (*new_node) {
-+			cur_stream = rb_entry(*new_node, struct arm_smmu_stream,
-+					      node);
-+			parent_node = *new_node;
-+			if (cur_stream->id > new_stream->id) {
-+				new_node = &((*new_node)->rb_left);
-+			} else if (cur_stream->id < new_stream->id) {
-+				new_node = &((*new_node)->rb_right);
-+			} else {
-+				dev_warn(master->dev,
-+					 "stream %u already in tree\n",
-+					 cur_stream->id);
-+				ret = -EINVAL;
-+				break;
-+			}
-+		}
-+
-+		if (!ret) {
-+			rb_link_node(&new_stream->node, parent_node, new_node);
-+			rb_insert_color(&new_stream->node, &smmu->streams);
-+		}
-+	}
-+	mutex_unlock(&smmu->streams_mutex);
-+
-+	return ret;
-+}
-+
-+static void arm_smmu_remove_master(struct arm_smmu_device *smmu,
-+				   struct arm_smmu_master_data *master)
-+{
-+	int i;
-+	struct iommu_fwspec *fwspec = master->dev->iommu_fwspec;
-+
-+	if (!master->streams)
-+		return;
-+
-+	mutex_lock(&smmu->streams_mutex);
-+	for (i = 0; i < fwspec->num_ids; i++)
-+		rb_erase(&master->streams[i].node, &smmu->streams);
-+	mutex_unlock(&smmu->streams_mutex);
-+
-+	kfree(master->streams);
-+}
-+
- static struct iommu_ops arm_smmu_ops;
- 
- static int arm_smmu_add_device(struct device *dev)
-@@ -1930,13 +2032,35 @@ static int arm_smmu_add_device(struct device *dev)
- 		}
- 	}
- 
-+	ret = iommu_device_link(&smmu->iommu, dev);
-+	if (ret)
-+		goto err_free_master;
-+
-+	ret = arm_smmu_insert_master(smmu, master);
-+	if (ret)
-+		goto err_unlink;
-+
- 	group = iommu_group_get_for_dev(dev);
--	if (!IS_ERR(group)) {
--		iommu_group_put(group);
--		iommu_device_link(&smmu->iommu, dev);
-+	if (IS_ERR(group)) {
-+		ret = PTR_ERR(group);
-+		goto err_remove_master;
- 	}
- 
--	return PTR_ERR_OR_ZERO(group);
-+	iommu_group_put(group);
-+
++	iommu_unbind_guest_msi(d, dev, *iova);
 +	return 0;
++}
 +
-+err_remove_master:
-+	arm_smmu_remove_master(smmu, master);
-+
-+err_unlink:
-+	iommu_device_unlink(&smmu->iommu, dev);
-+
-+err_free_master:
-+	kfree(master);
-+	fwspec->iommu_priv = NULL;
-+
-+	return ret;
- }
- 
- static void arm_smmu_remove_device(struct device *dev)
-@@ -1953,6 +2077,7 @@ static void arm_smmu_remove_device(struct device *dev)
- 	if (master && master->ste.assigned)
- 		arm_smmu_detach_dev(dev);
- 	iommu_group_remove_device(dev);
-+	arm_smmu_remove_master(smmu, master);
- 	iommu_device_unlink(&smmu->iommu, dev);
- 	kfree(master);
- 	iommu_fwspec_free(dev);
-@@ -2266,6 +2391,9 @@ static int arm_smmu_init_structures(struct arm_smmu_device *smmu)
+ static long vfio_iommu_type1_ioctl(void *iommu_data,
+ 				   unsigned int cmd, unsigned long arg)
  {
- 	int ret;
- 
-+	mutex_init(&smmu->streams_mutex);
-+	smmu->streams = RB_ROOT;
-+
- 	ret = arm_smmu_init_queues(smmu);
- 	if (ret)
+@@ -1814,6 +1833,45 @@ static long vfio_iommu_type1_ioctl(void *iommu_data,
+ 					      vfio_cache_inv_fn);
+ 		mutex_unlock(&iommu->lock);
  		return ret;
++	} else if (cmd == VFIO_IOMMU_BIND_MSI) {
++		struct vfio_iommu_type1_bind_msi ustruct;
++		int ret;
++
++		minsz = offsetofend(struct vfio_iommu_type1_bind_msi,
++				    size);
++
++		if (copy_from_user(&ustruct, (void __user *)arg, minsz))
++			return -EFAULT;
++
++		if (ustruct.argsz < minsz || ustruct.flags)
++			return -EINVAL;
++
++		mutex_lock(&iommu->lock);
++		ret = vfio_iommu_for_each_dev(iommu, &ustruct,
++					      vfio_bind_msi_fn);
++		if (ret)
++			vfio_iommu_for_each_dev(iommu, &ustruct.iova,
++						vfio_unbind_msi_fn);
++		mutex_unlock(&iommu->lock);
++		return ret;
++	} else if (cmd == VFIO_IOMMU_UNBIND_MSI) {
++		struct vfio_iommu_type1_unbind_msi ustruct;
++		int ret;
++
++		minsz = offsetofend(struct vfio_iommu_type1_unbind_msi,
++				    iova);
++
++		if (copy_from_user(&ustruct, (void __user *)arg, minsz))
++			return -EFAULT;
++
++		if (ustruct.argsz < minsz || ustruct.flags)
++			return -EINVAL;
++
++		mutex_lock(&iommu->lock);
++		ret = vfio_iommu_for_each_dev(iommu, &ustruct.iova,
++					      vfio_unbind_msi_fn);
++		mutex_unlock(&iommu->lock);
++		return ret;
+ 	}
+ 
+ 	return -ENOTTY;
+diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+index 29f0ef2d805d..6763389b6adc 100644
+--- a/include/uapi/linux/vfio.h
++++ b/include/uapi/linux/vfio.h
+@@ -789,6 +789,35 @@ struct vfio_iommu_type1_cache_invalidate {
+ };
+ #define VFIO_IOMMU_CACHE_INVALIDATE      _IO(VFIO_TYPE, VFIO_BASE + 24)
+ 
++/**
++ * VFIO_IOMMU_BIND_MSI - _IOWR(VFIO_TYPE, VFIO_BASE + 25,
++ *			struct vfio_iommu_type1_bind_msi)
++ *
++ * Pass a stage 1 MSI doorbell mapping to the host so that this
++ * latter can build a nested stage2 mapping
++ */
++struct vfio_iommu_type1_bind_msi {
++	__u32   argsz;
++	__u32   flags;
++	__u64	iova;
++	__u64	gpa;
++	__u64	size;
++};
++#define VFIO_IOMMU_BIND_MSI      _IO(VFIO_TYPE, VFIO_BASE + 25)
++
++/**
++ * VFIO_IOMMU_UNBIND_MSI - _IOWR(VFIO_TYPE, VFIO_BASE + 26,
++ *			struct vfio_iommu_type1_unbind_msi)
++ *
++ * Unregister an MSI mapping
++ */
++struct vfio_iommu_type1_unbind_msi {
++	__u32   argsz;
++	__u32   flags;
++	__u64	iova;
++};
++#define VFIO_IOMMU_UNBIND_MSI      _IO(VFIO_TYPE, VFIO_BASE + 26)
++
+ /* -------- Additional API for SPAPR TCE (Server POWERPC) IOMMU -------- */
+ 
+ /*
 -- 
 2.20.1
 
