@@ -2,86 +2,166 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 589C7C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAAB9C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:36:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 277F92173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:36:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550507762;
-	bh=MJwNWChgbMmJsYfzGROcZfELeBC9joxSS+OU/KSG8p0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=LWIn8nr+aPPBadc2g52qTINm6mm71fHSJ1VKcCesbb/3pjdhKoFcmurtFrcF3zBy1
-	 lU8InSg/Gy7jLv44kz4PYPWMgYW3Mh03hxfY5cr+sY4O6gqz9WTrPIr5sap8mILg1k
-	 TR/uwdrLDTs6AyVo+wqVo9ENZvsWyjd7iHkE6YPU=
+	by mail.kernel.org (Postfix) with ESMTP id 8F5602173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:36:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="jcvdRXBi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389765AbfBRQgB (ORCPT
+        id S2389792AbfBRQg6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 11:36:01 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:38683 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389434AbfBRQf7 (ORCPT
+        Mon, 18 Feb 2019 11:36:58 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35815 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389770AbfBRQg5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 11:35:59 -0500
-Received: by mail-ot1-f66.google.com with SMTP id m1so29285464otf.5;
-        Mon, 18 Feb 2019 08:35:59 -0800 (PST)
+        Mon, 18 Feb 2019 11:36:57 -0500
+Received: by mail-ed1-f67.google.com with SMTP id g19so5363934edp.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 08:36:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Jb7xRsjvZ9Wi6wUmflywBCpxpmZ2rI3iyrcwl2Wo6/g=;
+        b=jcvdRXBiHJlRaVNLOpdg85jL/N1yQs4tdH/tMpbH6tjSLY2A4MaxbLaMDbOse9ah9Q
+         26RxKv4eRUm73mMkoYetasSgN6aTbn4hCqyMxlDNj0vRCkFYV2bRWEOG1nXCY/XWugJz
+         ZkvxS3WKhOxmtNK7wA4FYFogLmH20e/kzQV7U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5t1I1YWmOCGfkrNJVJPcvywIoqaoGu3OB54u7RrBuRA=;
-        b=gI/nc5gXhoQ3xiATQeUZB6jPZ8Fowz+KPNqB1E6K+p6neID/UogrlOwcNHtljq2bo1
-         dheZ34QEeFN8dbYGAf8F4wXCH8HdEfSISDdNWT2BcHqULGXythbsOoj9H5PQneqG5gYe
-         ugYJAjGe1BAQNrZWF6ceGyqH4dRoHBQ2cVbgBVvZ2GHEVyzZ/peAujHna9xDVVHjMTRI
-         RW1qqimdiRbHiBcAG6hID7qsxbz4JLkrKGDIjwxch5VAh4LKEvZH3nF0sIN2THtTwYOl
-         w4hY6mhRiID9YUxgJAOZtCGAV4q1b2uOQUfeXIlJKq/QYEsCEuO6mNYB/ghR0ZYO0I+4
-         ymvQ==
-X-Gm-Message-State: AHQUAuaq42TzOzY+gMPH8TkDxztjhSau6fxaT6zOm6V99BTf/EQMIwIj
-        Ueul7CsID7POcvNsyi7pcg==
-X-Google-Smtp-Source: AHgI3IZnMhkkp8HIYX8TvmAOVWI+axNVybYrjYlMC7UPjT1cd46IGinTWui1zA3gb0+oaacDkQyidg==
-X-Received: by 2002:aca:6cc9:: with SMTP id h192mr15462456oic.161.1550507758691;
-        Mon, 18 Feb 2019 08:35:58 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id a27sm6069346oiy.6.2019.02.18.08.35.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Feb 2019 08:35:58 -0800 (PST)
-Date:   Mon, 18 Feb 2019 10:35:57 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Jb7xRsjvZ9Wi6wUmflywBCpxpmZ2rI3iyrcwl2Wo6/g=;
+        b=JtTPk3BzadSMIXUmt9+wrV3rN6GljF6DDGhqBsBl+fPayW448BXGKemwm8QYategn5
+         D/vax/OKQh7+b23lbhFrtvXkQSNYS97M2vUtt6kKDiMn5FZskXb72+vEphP8FvB3P/ua
+         838oDvVaedvo8dF7bIGPW9CK1Ror3Ql+I6HyHesVfeBVs0IQOxdvXq+KKSbsYuN7lwhg
+         9rd6AfiyMfGtvx49/oZ+YR4kdOI019x44T2iY0pAalf6SrC2Kbz8EuG3ezhULFwXZv5b
+         HVDTs6zXSoPMkXf3nrtDg6nI5Q5GSOr/ChTuI0wNxWAXvxEbDiY1AXvSOuHGg0hWFbFY
+         tGOw==
+X-Gm-Message-State: AHQUAuaUNTPwnC7cFVuBa3M+oOyrfEdIBQsDSSY/AMUTBf9OSKxChXPi
+        8QqPasawzC7myJdFcT8jl/UcKJO49jg5dw==
+X-Google-Smtp-Source: AHgI3IaGQcQnbT4YMp06E23p6vRhNHusbawSMQNi8yr/dfuBRzBMHe0LdZYEpHE2TKUCMBlaf/8trg==
+X-Received: by 2002:a17:906:d1c4:: with SMTP id bs4mr17162809ejb.205.1550507815630;
+        Mon, 18 Feb 2019 08:36:55 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id o37sm4226476edc.32.2019.02.18.08.36.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Feb 2019 08:36:54 -0800 (PST)
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+To:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v6 04/11] dt-bindings: input: add DT bindings for max77650
-Message-ID: <20190218163557.GA18049@bogus>
-References: <20190214140022.19201-1-brgl@bgdev.pl>
- <20190214140022.19201-5-brgl@bgdev.pl>
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Ramalingam C <ramalingam.c@intel.com>
+Subject: [PATCH] drivers/component: kerneldoc polish
+Date:   Mon, 18 Feb 2019 17:36:48 +0100
+Message-Id: <20190218163648.28987-1-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190218085242.18845-1-daniel.vetter@ffwll.ch>
+References: <20190218085242.18845-1-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190214140022.19201-5-brgl@bgdev.pl>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 14 Feb 2019 15:00:15 +0100, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Add the DT binding document for the onkey module of max77650.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  .../bindings/input/max77650-onkey.txt         | 26 +++++++++++++++++++
->  1 file changed, 26 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/max77650-onkey.txt
-> 
+Polish the kerneldoc a bit with suggestions from Randy.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+v2: Randy found another typo: s/compent/component/
+
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Ramalingam C <ramalingam.c@intel.com>
+---
+ drivers/base/component.c  | 14 +++++++-------
+ include/linux/component.h |  2 +-
+ 2 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/base/component.c b/drivers/base/component.c
+index 7dbc41cccd58..532a3a5d8f63 100644
+--- a/drivers/base/component.c
++++ b/drivers/base/component.c
+@@ -27,7 +27,7 @@
+  * helper fills the niche of aggregate drivers for specific hardware, where
+  * further standardization into a subsystem would not be practical. The common
+  * example is when a logical device (e.g. a DRM display driver) is spread around
+- * the SoC on various component (scanout engines, blending blocks, transcoders
++ * the SoC on various components (scanout engines, blending blocks, transcoders
+  * for various outputs and so on).
+  *
+  * The component helper also doesn't solve runtime dependencies, e.g. for system
+@@ -378,7 +378,7 @@ static void __component_match_add(struct device *master,
+ }
+ 
+ /**
+- * component_match_add_release - add a component match with release callback
++ * component_match_add_release - add a component match entry with release callback
+  * @master: device with the aggregate driver
+  * @matchptr: pointer to the list of component matches
+  * @release: release function for @compare_data
+@@ -408,7 +408,7 @@ void component_match_add_release(struct device *master,
+ EXPORT_SYMBOL(component_match_add_release);
+ 
+ /**
+- * component_match_add_typed - add a compent match for a typed component
++ * component_match_add_typed - add a component match entry for a typed component
+  * @master: device with the aggregate driver
+  * @matchptr: pointer to the list of component matches
+  * @compare_typed: compare function to match against all typed components
+@@ -537,11 +537,11 @@ static void component_unbind(struct component *component,
+ }
+ 
+ /**
+- * component_unbind_all - unbind all component to an aggregate driver
++ * component_unbind_all - unbind all components of an aggregate driver
+  * @master_dev: device with the aggregate driver
+  * @data: opaque pointer, passed to all components
+  *
+- * Unbinds all components to the aggregate @dev by passing @data to their
++ * Unbinds all components of the aggregate @dev by passing @data to their
+  * &component_ops.unbind functions. Should be called from
+  * &component_master_ops.unbind.
+  */
+@@ -619,11 +619,11 @@ static int component_bind(struct component *component, struct master *master,
+ }
+ 
+ /**
+- * component_bind_all - bind all component to an aggregate driver
++ * component_bind_all - bind all components of an aggregate driver
+  * @master_dev: device with the aggregate driver
+  * @data: opaque pointer, passed to all components
+  *
+- * Binds all components to the aggregate @dev by passing @data to their
++ * Binds all components of the aggregate @dev by passing @data to their
+  * &component_ops.bind functions. Should be called from
+  * &component_master_ops.bind.
+  */
+diff --git a/include/linux/component.h b/include/linux/component.h
+index 30bcc7e590eb..16de18f473d7 100644
+--- a/include/linux/component.h
++++ b/include/linux/component.h
+@@ -98,7 +98,7 @@ void component_match_add_typed(struct device *master,
+ 	int (*compare_typed)(struct device *, int, void *), void *compare_data);
+ 
+ /**
+- * component_match_add - add a compent match
++ * component_match_add - add a component match entry
+  * @master: device with the aggregate driver
+  * @matchptr: pointer to the list of component matches
+  * @compare: compare function to match against all components
+-- 
+2.20.1
+
