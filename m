@@ -2,261 +2,134 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 103F1C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:47:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5858EC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:48:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D559521736
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:47:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AE852070B
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:48:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550501285;
+	bh=UZqmBvyGkp5XKRpopOT/b04dKpEo3ya82MLY4LnMAvI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=U+XgAUtG7/vkHHuPEAOoFFfsgnYzPeuWme470Uq9ScieeHlfZPx3K4oIIClB68UTq
+	 7uz5VEzSCYTgVnMGMSgTr+NJnreXdfvcjcjMWTFihVziBXCf8EAHUzz/JaZwuNh4pH
+	 9daSSn0rnRCb3NCwbGC4DBVhb1ultPvDghQQ56l0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732116AbfBROr5 convert rfc822-to-8bit (ORCPT
+        id S1732944AbfBROsE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:47:57 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:41288 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731769AbfBROrA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:47:00 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 7EDED4B7DD1476A1272A;
-        Mon, 18 Feb 2019 22:46:51 +0800 (CST)
-Received: from localhost (10.47.94.189) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Mon, 18 Feb 2019
- 22:46:48 +0800
-Date:   Mon, 18 Feb 2019 14:46:34 +0000
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     "Popa, Stefan Serban" <StefanSerban.Popa@analog.com>
-CC:     "ardeleanalex@gmail.com" <ardeleanalex@gmail.com>,
-        "rodrigorsdc@gmail.com" <rodrigorsdc@gmail.com>,
-        "kernel-usp@googlegroups.com" <kernel-usp@googlegroups.com>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "Ardelean, Alexandru" <Alex.Ardelean@analog.com>,
-        "jic23@kernel.org" <jic23@kernel.org>,
-        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "rafael.tsuha@usp.br" <rafael.tsuha@usp.br>
-Subject: Re: [PATCH] staging:iio:ad7152: Rename misspelled RESEVERD ->
- RESERVED
-Message-ID: <20190218144634.00001d74@huawei.com>
-In-Reply-To: <1550141494.9460.51.camel@analog.com>
-References: <1548358316-8062-1-git-send-email-rodrigorsdc@gmail.com>
-        <CA+U=DsqG6PKs1Off9QP_3_q+c5=uzRypHCs+O6iur=NC5QdDdQ@mail.gmail.com>
-        <CAOeBkLogWyxbB3ZNwZh9=6xVUKxmT1YGZQseAx4uo7a4u+M+gw@mail.gmail.com>
-        <CAOeBkLq18nP6xsOCNNE2Bew=u37MsLCgH=W-8ofnFSAi6dYx=Q@mail.gmail.com>
-        <20190126181321.1439e485@archlinux>
-        <CA+U=DsqwVsXyaDiBa1VLUjWmEcGLCYfk3iVZ5h5xEAcqyrXgQw@mail.gmail.com>
-        <CAOeBkLok_PJ-ZbHcTN-yc6+p-qb5RMMmALp4fOpfAr2cqRO5Ug@mail.gmail.com>
-        <1550141494.9460.51.camel@analog.com>
-Organization: Huawei
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; i686-w64-mingw32)
+        Mon, 18 Feb 2019 09:48:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51442 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731301AbfBRNpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:45:21 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 611E2217F5;
+        Mon, 18 Feb 2019 13:45:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550497520;
+        bh=UZqmBvyGkp5XKRpopOT/b04dKpEo3ya82MLY4LnMAvI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=fFwmDbnYOAnmLFE5iWIdIrUL26mxgAKKsFQvCyI8SqRFXCIhmjTPAqW8zzSBU1/UA
+         bRnYo1DRiaq1fCI9K0hTEtZOdNuIBZPpEKL5UvaOSu0KuzLV5WjoEXospdXwr/hN4K
+         2DacbtPS8EUiUQsQ3SSJ86Kbe4/RMpROkpxRgJfY=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Emily Deng <Emily.Deng@amd.com>,
+        Xiangliang Yu <Xiangliang.Yu@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 04/92] drm/amdgpu/sriov:Correct pfvf exchange logic
+Date:   Mon, 18 Feb 2019 14:42:07 +0100
+Message-Id: <20190218133455.030250084@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
+References: <20190218133454.668268457@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [10.47.94.189]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 14 Feb 2019 10:51:49 +0000
-"Popa, Stefan Serban" <StefanSerban.Popa@analog.com> wrote:
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-> On Mi, 2019-02-13 at 22:25 -0200, Rodrigo Ribeiro wrote:
-> > [External]
-> > 
-> > 
-> > Em ter, 29 de jan de 2019 às 07:10, Alexandru Ardelean <ardeleanalex@gmai  
-> > l.com> escreveu:
-> > >
-> > > On Sat, Jan 26, 2019 at 8:13 PM Jonathan Cameron <jic23@kernel.org>  
-> > wrote:  
-> > > >
-> > > > On Fri, 25 Jan 2019 22:14:32 -0200
-> > > > Rodrigo Ribeiro <rodrigorsdc@gmail.com> wrote:
-> > > >  
-> > > > > Em sex, 25 de jan de 2019 às 21:46, Rodrigo Ribeiro
-> > > > > <rodrigorsdc@gmail.com> escreveu:  
-> > > > > >
-> > > > > > Em sex, 25 de jan de 2019 às 06:20, Alexandru Ardelean
-> > > > > > <ardeleanalex@gmail.com> escreveu:  
-> > > > > > >
-> > > > > > > On Thu, Jan 24, 2019 at 9:35 PM Rodrigo Ribeiro <rodrigorsdc@gm  
-> > ail.com> wrote:  
-> > > > > > > >
-> > > > > > > > Remove the checkpatch.pl check:
-> > > > > > > >
-> > > > > > > > CHECK: 'RESEVERD' may be misspelled - perhaps 'RESERVED'?  
-> > > > > > >
-> > > > > > > Hey,  
-> > > > > >
-> > > > > > Hi,
-> > > > > >
-> > > > > > Thanks for answering.
-> > > > > >  
-> > > > > > > A bit curios about this one.
-> > > > > > > Are you using this chip/driver ?  
-> > > > > >
-> > > > > > No, I am just a student at USP (University of São Paulo) starting  
-> > in Linux  
-> > > > > > Kernel and a new member of the USP Linux Kernel group that has  
-> > contributed  
-> > > > > > for a few months.
-> > > > > >  
-> > > > > > > Thing is: the part is nearing EOL, and it could be an idea to  
-> > be  
-> > > > > > > marked for removal (since it's still in staging).
-> > > > > > > But if there are users for this driver, it could be left around  
-> > for a while.  
-> > > > > >
-> > > > > > This is my first patch in Linux Kernel, but if the driver will be  
-> > removed, I  
-> > > > > > can send a patch for another driver. Is there any driver that I  
-> > can  
-> > > > > > fix a style warning?  
-> > > > >
-> > > > > Maybe, one checkstyle patch is enough, right? Which drivers can I  
-> > truly  
-> > > > > contribute to?  
-> > > >
-> > > > How about the ad7150?  That one is still listed as production.
-> > > > What do you think Alex, you probably have better visibility on the
-> > > > status of these parts and their drivers than I do!
-> > > >
-> > > > (note I haven't even opened that one for a few years so no idea
-> > > > what state the driver is in!)
-> > > >  
-> > >
-> > > ad7150 is a good alternative.
-> > > At a first glance over the driver it looks like it could do with some
-> > > polish/conversions to newer IIO constructs (like IIO triggers, maybe
-> > > some newer event handling mechanisms?).
-> > > I'll sync with Stefan [Popa] to see about this stuff at a later point  
-> > in time.  
-> > >
-> > > I'd also add here the adxl345 driver.
-> > > This is mostly informational for anyone who'd find this interesting.
-> > > There are 2 drivers for this chip, one in IIO
-> > > [drivers/iio/accel/adxl345] and another one in
-> > > "drivers/misc/adxl34x.c" as part of the input sub-system.
-> > > What would be interesting here is to finalize the IIO driver [ I think
-> > > some features are lacking behind the input driver], and make the input
-> > > driver a consumer of the IIO driver.
-> > >
-> > > From my side, both these variants are fine to take on.
-> > > The ad7150 is a good idea as a starter project, and the adxl one is
-> > > more of a long-term medium-level project.
-> > >
-> > > Thanks
-> > > Alex
-> > >  
-> > 
-> > Hi Alex, thanks for suggestions.
-> > 
-> > I read the IIO trigger documentation 
-> > (https://www.kernel.org/doc/html/v4.12/driver-api/iio/triggers.html) and
-> > ask one question: What is the difference between events and triggers? 
-> > They are sounds me same things.
-> > 
-> > I am trying to understand how to implement a IIO trigger by reading
-> > the IIO Simple Dummy code but this driver does not implements IIO
-> > triggers
-> > but only IIO events. Is there a didactic example like IIO Simple Dummy
-> > that implements IIO triggers?
-> > 
-> > Thanks
-> > Rodrigo
-> >   
-> 
-> Hi Rodrigo,
-> 
-> From what I know, IIO Events are not used for passing readings from devices
-> to userspace, but rather out of bounds information such as crossing of
-> voltage thresholds, proximity detection, motion detection, etc.
-> Triggers are typically used to determine when valid data can be read from a
-> device which is then stored in the buffer.
-> 
-> After a quick look over the AD7150, I think that using IIO events, might be
-> the correct approach, since it is a proximity sensing device. 
+------------------
 
-To answer the question on generic triggers (agreed, probably not relevant here
-from what Stefan has said), there are several software triggers under
-drivers/iio/triggers.
+[ Upstream commit b8cf66182eddb22e9c7539821ed6eecdb4f86d1a ]
 
-Wasn't a lot of point in adding another one to the dummy driver given you
-can use the hrtimer, or sysfs triggers directly.
-(loop will result in craziness given the near zero read time of the
-dummy driver ;)
+The pfvf exchange need be in exclusive mode. And add pfvf exchange in gpu
+reset.
 
-Jonathan
+Signed-off-by: Emily Deng <Emily.Deng@amd.com>
+Reviewed-By: Xiangliang Yu <Xiangliang.Yu@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 8 ++++----
+ drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c      | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-> 
-> -Stefan
-> 
-> > > > Jonathan
-> > > >  
-> > > > >  
-> > > > > > Thanks
-> > > > > >
-> > > > > >
-> > > > > > Em sex, 25 de jan de 2019 às 06:20, Alexandru Ardelean
-> > > > > > <ardeleanalex@gmail.com> escreveu:  
-> > > > > > >
-> > > > > > > On Thu, Jan 24, 2019 at 9:35 PM Rodrigo Ribeiro <rodrigorsdc@gm  
-> > ail.com> wrote:  
-> > > > > > > >
-> > > > > > > > Remove the checkpatch.pl check:
-> > > > > > > >
-> > > > > > > > CHECK: 'RESEVERD' may be misspelled - perhaps 'RESERVED'?  
-> > > > > > >
-> > > > > > > Hey,
-> > > > > > >
-> > > > > > > A bit curios about this one.
-> > > > > > > Are you using this chip/driver ?
-> > > > > > >
-> > > > > > > Thing is: the part is nearing EOL, and it could be an idea to  
-> > be  
-> > > > > > > marked for removal (since it's still in staging).
-> > > > > > > But if there are users for this driver, it could be left around  
-> > for a while.  
-> > > > > > >
-> > > > > > > Thanks
-> > > > > > > Alex
-> > > > > > >  
-> > > > > > > >
-> > > > > > > > Signed-off-by: Rodrigo Ribeiro <rodrigorsdc@gmail.com>
-> > > > > > > > Signed-off-by: Rafael Tsuha <rafael.tsuha@usp.br>
-> > > > > > > > ---
-> > > > > > > > This macro is not used anywhere. Should we just correct the
-> > > > > > > > spelling or remove the macro?
-> > > > > > > >
-> > > > > > > >  drivers/staging/iio/cdc/ad7152.c | 2 +-
-> > > > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > > > >
-> > > > > > > > diff --git a/drivers/staging/iio/cdc/ad7152.c  
-> > b/drivers/staging/iio/cdc/ad7152.c  
-> > > > > > > > index 25f51db..c9da6d4 100644
-> > > > > > > > --- a/drivers/staging/iio/cdc/ad7152.c
-> > > > > > > > +++ b/drivers/staging/iio/cdc/ad7152.c
-> > > > > > > > @@ -35,7 +35,7 @@
-> > > > > > > >  #define AD7152_REG_CH2_GAIN_HIGH       12
-> > > > > > > >  #define AD7152_REG_CH2_SETUP           14
-> > > > > > > >  #define AD7152_REG_CFG                 15
-> > > > > > > > -#define AD7152_REG_RESEVERD            16
-> > > > > > > > +#define AD7152_REG_RESERVED            16
-> > > > > > > >  #define AD7152_REG_CAPDAC_POS          17
-> > > > > > > >  #define AD7152_REG_CAPDAC_NEG          18
-> > > > > > > >  #define AD7152_REG_CFG2                        26
-> > > > > > > > --
-> > > > > > > > 2.7.4
-> > > > > > > >  
-> > >   
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+index 30bc345d6fdf..8547fdaf8273 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -1684,8 +1684,10 @@ static int amdgpu_device_ip_init(struct amdgpu_device *adev)
+ 	amdgpu_xgmi_add_device(adev);
+ 	amdgpu_amdkfd_device_init(adev);
+ 
+-	if (amdgpu_sriov_vf(adev))
++	if (amdgpu_sriov_vf(adev)) {
++		amdgpu_virt_init_data_exchange(adev);
+ 		amdgpu_virt_release_full_gpu(adev, true);
++	}
+ 
+ 	return 0;
+ }
+@@ -2597,9 +2599,6 @@ int amdgpu_device_init(struct amdgpu_device *adev,
+ 		goto failed;
+ 	}
+ 
+-	if (amdgpu_sriov_vf(adev))
+-		amdgpu_virt_init_data_exchange(adev);
+-
+ 	amdgpu_fbdev_init(adev);
+ 
+ 	r = amdgpu_pm_sysfs_init(adev);
+@@ -3271,6 +3270,7 @@ static int amdgpu_device_reset_sriov(struct amdgpu_device *adev,
+ 	r = amdgpu_ib_ring_tests(adev);
+ 
+ error:
++	amdgpu_virt_init_data_exchange(adev);
+ 	amdgpu_virt_release_full_gpu(adev, true);
+ 	if (!r && adev->virt.gim_feature & AMDGIM_FEATURE_GIM_FLR_VRAMLOST) {
+ 		atomic_inc(&adev->vram_lost_counter);
+diff --git a/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c b/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c
+index 8cbb4655896a..b11a1c17a7f2 100644
+--- a/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c
++++ b/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c
+@@ -174,7 +174,7 @@ static int xgpu_ai_send_access_requests(struct amdgpu_device *adev,
+ 			return r;
+ 		}
+ 		/* Retrieve checksum from mailbox2 */
+-		if (req == IDH_REQ_GPU_INIT_ACCESS) {
++		if (req == IDH_REQ_GPU_INIT_ACCESS || req == IDH_REQ_GPU_RESET_ACCESS) {
+ 			adev->virt.fw_reserve.checksum_key =
+ 				RREG32_NO_KIQ(SOC15_REG_OFFSET(NBIO, 0,
+ 					mmBIF_BX_PF0_MAILBOX_MSGBUF_RCV_DW2));
+-- 
+2.19.1
+
 
 
