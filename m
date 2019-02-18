@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA22EC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3110BC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 759DA217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED82A20842
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498089;
-	bh=JfD0qXbbvKeyVZzurIiqCH3gRgW/tUnlgrAywxm9m4M=;
+	s=default; t=1550498092;
+	bh=IqFz+Sqqk9kKOGo8nMTqrdYyZVohbuBXnd6+ZCOTaGU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vff403vQd1tMqJUYaugbEhCzKZEjPSo+z8s+Tossbo1x0Ct31lFeNC2hJAsS+wKSf
-	 Mu+tnZTn5ZIFUrdbzTUUn6qrBq8qx1/TMIgJV4XhQ0NwzgWN3g1S8fnIWE5WDJDaFm
-	 6biHlmKs5MaxHdsELPkhqRwEnJTdQq23Oc1fPURQ=
+	b=mf6+Zi1UUUUSsG4sDnPOmAcB/kXsmm+naMR/0Hix873cNFYDh/WX2hc8HuVC8Cn7+
+	 OzVsOOZFs1Ml7qtxORBVQsXbQM6FtN5TB5LboGDUnoAfPD/NFaHcottZsYdirXAHMm
+	 D9lyE6X2uYcyJHpNIDKdtBuoIxsvZB7f6zFEzVKI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733285AbfBRNyr (ORCPT
+        id S1733298AbfBRNyu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:54:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34676 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:54:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733274AbfBRNyo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:54:44 -0500
+        id S1732824AbfBRNyr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:54:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F03B920842;
-        Mon, 18 Feb 2019 13:54:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83D83217D9;
+        Mon, 18 Feb 2019 13:54:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498083;
-        bh=JfD0qXbbvKeyVZzurIiqCH3gRgW/tUnlgrAywxm9m4M=;
+        s=default; t=1550498086;
+        bh=IqFz+Sqqk9kKOGo8nMTqrdYyZVohbuBXnd6+ZCOTaGU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q6wubXjwHTVkhbyq33aoAaz1SewTXpbE00sW7J+eP7lko0v9wTyth3ronIfY0m9qd
-         UyPJz/EU6n6g8Vt1kHflBbMwgKyDbbgZuWZ/By7vDMD7D/qxT4AOZAKLPePmh5SG9Z
-         zemDmyOAKnkxHSjW4Rzoi0+x3ZrBbRFSyoqy7XKI=
+        b=mr9u2hY7cHXfW4zpGVCllf/n7TyFwonU4M85nt7GrOk0iXXdLN52J5+v+6N3RpPgb
+         AzjxpSIA+AXKHKibc2Cu2YPA8mwwEVk8TzGMbPaEz4L1mCFHtRXykvQJEHV43xWhws
+         EzDklM++xYSPS/ugqrJ7YFSpHwpvtiib848yuF/M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -46,9 +46,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Russell King <rmk+kernel@armlinux.org.uk>,
         "David A. Long" <dave.long@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 18/62] ARM: add PROC_VTABLE and PROC_TABLE macros
-Date:   Mon, 18 Feb 2019 14:43:24 +0100
-Message-Id: <20190218133507.405335285@linuxfoundation.org>
+Subject: [PATCH 4.14 19/62] ARM: spectre-v2: per-CPU vtables to work around big.Little systems
+Date:   Mon, 18 Feb 2019 14:43:25 +0100
+Message-Id: <20190218133507.501488244@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
 References: <20190218133505.801423074@linuxfoundation.org>
@@ -67,16 +67,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-Commit e209950fdd065d2cc46e6338e47e52841b830cba upstream.
+Commit 383fb3ee8024d596f488d2dbaf45e572897acbdb upstream.
 
-Allow the way we access members of the processor vtable to be changed
-at compile time.  We will need to move to per-CPU vtables to fix the
-Spectre variant 2 issues on big.Little systems.
+In big.Little systems, some CPUs require the Spectre workarounds in
+paths such as the context switch, but other CPUs do not.  In order
+to handle these differences, we need per-CPU vtables.
 
-However, we have a couple of calls that do not need the vtable
-treatment, and indeed cause a kernel warning due to the (later) use
-of smp_processor_id(), so also introduce the PROC_TABLE macro for
-these which always use CPU 0's function pointers.
+We are unable to use the kernel's per-CPU variables to support this
+as per-CPU is not initialised at times when we need access to the
+vtables, so we have to use an array indexed by logical CPU number.
+
+We use an array-of-pointers to avoid having function pointers in
+the kernel's read/write .data section.
 
 Reviewed-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
@@ -85,92 +87,191 @@ Reviewed-by: Julien Thierry <julien.thierry@arm.com>
 Tested-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/include/asm/proc-fns.h | 39 ++++++++++++++++++++++-----------
- arch/arm/kernel/setup.c         |  4 +---
- 2 files changed, 27 insertions(+), 16 deletions(-)
+ arch/arm/include/asm/proc-fns.h | 23 +++++++++++++++++++++++
+ arch/arm/kernel/setup.c         |  5 +++++
+ arch/arm/kernel/smp.c           | 31 +++++++++++++++++++++++++++++++
+ arch/arm/mm/proc-v7-bugs.c      | 17 ++---------------
+ 4 files changed, 61 insertions(+), 15 deletions(-)
 
 diff --git a/arch/arm/include/asm/proc-fns.h b/arch/arm/include/asm/proc-fns.h
-index 30c499146320..c259cc49c641 100644
+index c259cc49c641..e1b6f280ab08 100644
 --- a/arch/arm/include/asm/proc-fns.h
 +++ b/arch/arm/include/asm/proc-fns.h
-@@ -23,7 +23,7 @@ struct mm_struct;
- /*
-  * Don't change this structure - ASM code relies on it.
-  */
--extern struct processor {
-+struct processor {
- 	/* MISC
- 	 * get data abort address/flags
- 	 */
-@@ -79,9 +79,13 @@ extern struct processor {
- 	unsigned int suspend_size;
- 	void (*do_suspend)(void *);
- 	void (*do_resume)(void *);
--} processor;
-+};
- 
- #ifndef MULTI_CPU
-+static inline void init_proc_vtable(const struct processor *p)
-+{
-+}
-+
- extern void cpu_proc_init(void);
- extern void cpu_proc_fin(void);
- extern int cpu_do_idle(void);
-@@ -98,18 +102,27 @@ extern void cpu_reset(unsigned long addr, bool hvc) __attribute__((noreturn));
- extern void cpu_do_suspend(void *);
- extern void cpu_do_resume(void *);
+@@ -104,12 +104,35 @@ extern void cpu_do_resume(void *);
  #else
--#define cpu_proc_init			processor._proc_init
--#define cpu_check_bugs			processor.check_bugs
--#define cpu_proc_fin			processor._proc_fin
--#define cpu_reset			processor.reset
--#define cpu_do_idle			processor._do_idle
--#define cpu_dcache_clean_area		processor.dcache_clean_area
--#define cpu_set_pte_ext			processor.set_pte_ext
--#define cpu_do_switch_mm		processor.switch_mm
  
--/* These three are private to arch/arm/kernel/suspend.c */
--#define cpu_do_suspend			processor.do_suspend
--#define cpu_do_resume			processor.do_resume
-+extern struct processor processor;
-+#define PROC_VTABLE(f)			processor.f
-+#define PROC_TABLE(f)			processor.f
+ extern struct processor processor;
++#if defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
++#include <linux/smp.h>
++/*
++ * This can't be a per-cpu variable because we need to access it before
++ * per-cpu has been initialised.  We have a couple of functions that are
++ * called in a pre-emptible context, and so can't use smp_processor_id()
++ * there, hence PROC_TABLE().  We insist in init_proc_vtable() that the
++ * function pointers for these are identical across all CPUs.
++ */
++extern struct processor *cpu_vtable[];
++#define PROC_VTABLE(f)			cpu_vtable[smp_processor_id()]->f
++#define PROC_TABLE(f)			cpu_vtable[0]->f
 +static inline void init_proc_vtable(const struct processor *p)
 +{
-+	processor = *p;
++	unsigned int cpu = smp_processor_id();
++	*cpu_vtable[cpu] = *p;
++	WARN_ON_ONCE(cpu_vtable[cpu]->dcache_clean_area !=
++		     cpu_vtable[0]->dcache_clean_area);
++	WARN_ON_ONCE(cpu_vtable[cpu]->set_pte_ext !=
++		     cpu_vtable[0]->set_pte_ext);
 +}
-+
-+#define cpu_proc_init			PROC_VTABLE(_proc_init)
-+#define cpu_check_bugs			PROC_VTABLE(check_bugs)
-+#define cpu_proc_fin			PROC_VTABLE(_proc_fin)
-+#define cpu_reset			PROC_VTABLE(reset)
-+#define cpu_do_idle			PROC_VTABLE(_do_idle)
-+#define cpu_dcache_clean_area		PROC_TABLE(dcache_clean_area)
-+#define cpu_set_pte_ext			PROC_TABLE(set_pte_ext)
-+#define cpu_do_switch_mm		PROC_VTABLE(switch_mm)
-+
-+/* These two are private to arch/arm/kernel/suspend.c */
-+#define cpu_do_suspend			PROC_VTABLE(do_suspend)
-+#define cpu_do_resume			PROC_VTABLE(do_resume)
- #endif
++#else
+ #define PROC_VTABLE(f)			processor.f
+ #define PROC_TABLE(f)			processor.f
+ static inline void init_proc_vtable(const struct processor *p)
+ {
+ 	processor = *p;
+ }
++#endif
  
- extern void cpu_resume(void);
+ #define cpu_proc_init			PROC_VTABLE(_proc_init)
+ #define cpu_check_bugs			PROC_VTABLE(check_bugs)
 diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
-index 1a041ad4881e..c1588e31aa83 100644
+index c1588e31aa83..a6d27284105a 100644
 --- a/arch/arm/kernel/setup.c
 +++ b/arch/arm/kernel/setup.c
-@@ -693,9 +693,7 @@ static void __init setup_processor(void)
- 	cpu_name = list->cpu_name;
- 	__cpu_architecture = __get_cpu_architecture();
+@@ -115,6 +115,11 @@ EXPORT_SYMBOL(elf_hwcap2);
  
--#ifdef MULTI_CPU
--	processor = *list->proc;
--#endif
-+	init_proc_vtable(list->proc);
- #ifdef MULTI_TLB
- 	cpu_tlb = *list->tlb;
+ #ifdef MULTI_CPU
+ struct processor processor __ro_after_init;
++#if defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
++struct processor *cpu_vtable[NR_CPUS] = {
++	[0] = &processor,
++};
++#endif
  #endif
+ #ifdef MULTI_TLB
+ struct cpu_tlb_fns cpu_tlb __ro_after_init;
+diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
+index 5e31c62127a0..f57333f46242 100644
+--- a/arch/arm/kernel/smp.c
++++ b/arch/arm/kernel/smp.c
+@@ -42,6 +42,7 @@
+ #include <asm/mmu_context.h>
+ #include <asm/pgtable.h>
+ #include <asm/pgalloc.h>
++#include <asm/procinfo.h>
+ #include <asm/processor.h>
+ #include <asm/sections.h>
+ #include <asm/tlbflush.h>
+@@ -102,6 +103,30 @@ static unsigned long get_arch_pgd(pgd_t *pgd)
+ #endif
+ }
+ 
++#if defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
++static int secondary_biglittle_prepare(unsigned int cpu)
++{
++	if (!cpu_vtable[cpu])
++		cpu_vtable[cpu] = kzalloc(sizeof(*cpu_vtable[cpu]), GFP_KERNEL);
++
++	return cpu_vtable[cpu] ? 0 : -ENOMEM;
++}
++
++static void secondary_biglittle_init(void)
++{
++	init_proc_vtable(lookup_processor(read_cpuid_id())->proc);
++}
++#else
++static int secondary_biglittle_prepare(unsigned int cpu)
++{
++	return 0;
++}
++
++static void secondary_biglittle_init(void)
++{
++}
++#endif
++
+ int __cpu_up(unsigned int cpu, struct task_struct *idle)
+ {
+ 	int ret;
+@@ -109,6 +134,10 @@ int __cpu_up(unsigned int cpu, struct task_struct *idle)
+ 	if (!smp_ops.smp_boot_secondary)
+ 		return -ENOSYS;
+ 
++	ret = secondary_biglittle_prepare(cpu);
++	if (ret)
++		return ret;
++
+ 	/*
+ 	 * We need to tell the secondary core where to find
+ 	 * its stack and the page tables.
+@@ -360,6 +389,8 @@ asmlinkage void secondary_start_kernel(void)
+ 	struct mm_struct *mm = &init_mm;
+ 	unsigned int cpu;
+ 
++	secondary_biglittle_init();
++
+ 	/*
+ 	 * The identity mapping is uncached (strongly ordered), so
+ 	 * switch away from it before attempting any exclusive accesses.
+diff --git a/arch/arm/mm/proc-v7-bugs.c b/arch/arm/mm/proc-v7-bugs.c
+index 5544b82a2e7a..9a07916af8dd 100644
+--- a/arch/arm/mm/proc-v7-bugs.c
++++ b/arch/arm/mm/proc-v7-bugs.c
+@@ -52,8 +52,6 @@ static void cpu_v7_spectre_init(void)
+ 	case ARM_CPU_PART_CORTEX_A17:
+ 	case ARM_CPU_PART_CORTEX_A73:
+ 	case ARM_CPU_PART_CORTEX_A75:
+-		if (processor.switch_mm != cpu_v7_bpiall_switch_mm)
+-			goto bl_error;
+ 		per_cpu(harden_branch_predictor_fn, cpu) =
+ 			harden_branch_predictor_bpiall;
+ 		spectre_v2_method = "BPIALL";
+@@ -61,8 +59,6 @@ static void cpu_v7_spectre_init(void)
+ 
+ 	case ARM_CPU_PART_CORTEX_A15:
+ 	case ARM_CPU_PART_BRAHMA_B15:
+-		if (processor.switch_mm != cpu_v7_iciallu_switch_mm)
+-			goto bl_error;
+ 		per_cpu(harden_branch_predictor_fn, cpu) =
+ 			harden_branch_predictor_iciallu;
+ 		spectre_v2_method = "ICIALLU";
+@@ -88,11 +84,9 @@ static void cpu_v7_spectre_init(void)
+ 					  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
+ 			if ((int)res.a0 != 0)
+ 				break;
+-			if (processor.switch_mm != cpu_v7_hvc_switch_mm && cpu)
+-				goto bl_error;
+ 			per_cpu(harden_branch_predictor_fn, cpu) =
+ 				call_hvc_arch_workaround_1;
+-			processor.switch_mm = cpu_v7_hvc_switch_mm;
++			cpu_do_switch_mm = cpu_v7_hvc_switch_mm;
+ 			spectre_v2_method = "hypervisor";
+ 			break;
+ 
+@@ -101,11 +95,9 @@ static void cpu_v7_spectre_init(void)
+ 					  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
+ 			if ((int)res.a0 != 0)
+ 				break;
+-			if (processor.switch_mm != cpu_v7_smc_switch_mm && cpu)
+-				goto bl_error;
+ 			per_cpu(harden_branch_predictor_fn, cpu) =
+ 				call_smc_arch_workaround_1;
+-			processor.switch_mm = cpu_v7_smc_switch_mm;
++			cpu_do_switch_mm = cpu_v7_smc_switch_mm;
+ 			spectre_v2_method = "firmware";
+ 			break;
+ 
+@@ -119,11 +111,6 @@ static void cpu_v7_spectre_init(void)
+ 	if (spectre_v2_method)
+ 		pr_info("CPU%u: Spectre v2: using %s workaround\n",
+ 			smp_processor_id(), spectre_v2_method);
+-	return;
+-
+-bl_error:
+-	pr_err("CPU%u: Spectre v2: incorrect context switching function, system vulnerable\n",
+-		cpu);
+ }
+ #else
+ static void cpu_v7_spectre_init(void)
 -- 
 2.19.1
 
