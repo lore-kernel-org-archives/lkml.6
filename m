@@ -2,118 +2,115 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD1BBC10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:19:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F57C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:19:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8875821902
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:19:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22C0321902
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:19:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550499585;
+	bh=O9zp4adY/8RJK/DcvByr6q2DT7tyKXSFn5YKE8GMT9Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=fLyI2wsG3AK1/qd8poiyzJMBdrby7kRXD4Ei33AM9FGJlZAALG67eJcNpActhY/uN
+	 3Lt+MXjSrhC2HdsiZ7A+IIUDihYa9TgAXNg3QUw0CO/zyIWc/kUqA5114g2sRLy50H
+	 BZQP/cJXIapWgsx4YC38fD7Ego57xBZ+155Bq3rk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390276AbfBROTg (ORCPT
+        id S2390680AbfBROTn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:19:36 -0500
-Received: from foss.arm.com ([217.140.101.70]:59640 "EHLO foss.arm.com"
+        Mon, 18 Feb 2019 09:19:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389442AbfBROTe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:19:34 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B64AF15AB;
-        Mon, 18 Feb 2019 06:19:33 -0800 (PST)
-Received: from [10.1.196.69] (e112269-lin.cambridge.arm.com [10.1.196.69])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 770F73F589;
-        Mon, 18 Feb 2019 06:19:15 -0800 (PST)
-Subject: Re: [PATCH 03/13] mm: Add generic p?d_large() macros
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        kirill@shutemov.name, Dave Hansen <dave.hansen@linux.intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        James Morse <james.morse@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org, kan.liang@linux.intel.com
-References: <20190215170235.23360-1-steven.price@arm.com>
- <20190215170235.23360-4-steven.price@arm.com>
- <20190218113134.GU32477@hirez.programming.kicks-ass.net>
-From:   Steven Price <steven.price@arm.com>
-Message-ID: <aad21496-a86b-ca91-70b7-0c23ea6fefd3@arm.com>
-Date:   Mon, 18 Feb 2019 14:19:14 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        id S2390795AbfBROH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:07:57 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86FC321916;
+        Mon, 18 Feb 2019 14:07:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550498877;
+        bh=O9zp4adY/8RJK/DcvByr6q2DT7tyKXSFn5YKE8GMT9Q=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=bx2YDMkw6Cq2ctSyEiw5/ku5MsbpFcCFzaUZJSBF5iB4BTsZYkaYDpaHzB4QAA6X5
+         T95wU7c/25CJpy96O7vlxrilU673qrggQtk57zHMEgwncVwZILgUJZAtvd0BpBLqIT
+         qvEwZlVaLVld5Fpba24eol85SZFopPByy7rh8O1s=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Matti Kurkela <Matti.Kurkela@iki.fi>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.4 131/143] Input: elantech - enable 3rd button support on Fujitsu CELSIUS H780
+Date:   Mon, 18 Feb 2019 14:44:19 +0100
+Message-Id: <20190218133533.771686744@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
+References: <20190218133529.099444112@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-In-Reply-To: <20190218113134.GU32477@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/02/2019 11:31, Peter Zijlstra wrote:
-> On Fri, Feb 15, 2019 at 05:02:24PM +0000, Steven Price wrote:
->> From: James Morse <james.morse@arm.com>
->>
->> Exposing the pud/pgd levels of the page tables to walk_page_range() means
->> we may come across the exotic large mappings that come with large areas
->> of contiguous memory (such as the kernel's linear map).
->>
->> For architectures that don't provide p?d_large() macros, provided a
->> does nothing default.
-> 
-> Kan was going to fix that for all archs I think..
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-The latest series I can find from Kan is still x86 specific. I'm happy
-to rebase onto something else if Kan has an implementation already
-(please point me in the right direction). Otherwise Kan is obviously
-free to base on these changes.
+------------------
 
-Steve
+From: Matti Kurkela <Matti.Kurkela@iki.fi>
 
-> See:
-> 
->   http://lkml.kernel.org/r/20190204105409.GA17550@hirez.programming.kicks-ass.net
-> 
->> Signed-off-by: James Morse <james.morse@arm.com>
->> Signed-off-by: Steven Price <steven.price@arm.com>
->> ---
->>  include/asm-generic/pgtable.h | 10 ++++++++++
->>  1 file changed, 10 insertions(+)
->>
->> diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
->> index 05e61e6c843f..7630d663cd51 100644
->> --- a/include/asm-generic/pgtable.h
->> +++ b/include/asm-generic/pgtable.h
->> @@ -1186,4 +1186,14 @@ static inline bool arch_has_pfn_modify_check(void)
->>  #define mm_pmd_folded(mm)	__is_defined(__PAGETABLE_PMD_FOLDED)
->>  #endif
->>  
->> +#ifndef pgd_large
->> +#define pgd_large(x)	0
->> +#endif
->> +#ifndef pud_large
->> +#define pud_large(x)	0
->> +#endif
->> +#ifndef pmd_large
->> +#define pmd_large(x)	0
->> +#endif
->> +
->>  #endif /* _ASM_GENERIC_PGTABLE_H */
->> -- 
->> 2.20.1
->>
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+commit e8b22d0a329f0fb5c7ef95406872d268f01ee3b1 upstream.
+
+Like Fujitsu CELSIUS H760, the H780 also has a three-button Elantech
+touchpad, but the driver needs to be told so to enable the middle touchpad
+button.
+
+The elantech_dmi_force_crc_enabled quirk was not necessary with the H780.
+
+Also document the fw_version and caps values detected for both H760 and
+H780 models.
+
+Signed-off-by: Matti Kurkela <Matti.Kurkela@iki.fi>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/input/mouse/elantech.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+--- a/drivers/input/mouse/elantech.c
++++ b/drivers/input/mouse/elantech.c
+@@ -1121,6 +1121,8 @@ static int elantech_get_resolution_v4(st
+  * Asus UX31               0x361f00        20, 15, 0e      clickpad
+  * Asus UX32VD             0x361f02        00, 15, 0e      clickpad
+  * Avatar AVIU-145A2       0x361f00        ?               clickpad
++ * Fujitsu CELSIUS H760    0x570f02        40, 14, 0c      3 hw buttons (**)
++ * Fujitsu CELSIUS H780    0x5d0f02        41, 16, 0d      3 hw buttons (**)
+  * Fujitsu LIFEBOOK E544   0x470f00        d0, 12, 09      2 hw buttons
+  * Fujitsu LIFEBOOK E546   0x470f00        50, 12, 09      2 hw buttons
+  * Fujitsu LIFEBOOK E547   0x470f00        50, 12, 09      2 hw buttons
+@@ -1173,6 +1175,13 @@ static const struct dmi_system_id elante
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "CELSIUS H760"),
+ 		},
+ 	},
++	{
++		/* Fujitsu H780 also has a middle button */
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "FUJITSU"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "CELSIUS H780"),
++		},
++	},
+ #endif
+ 	{ }
+ };
+
 
