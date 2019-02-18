@@ -2,381 +2,102 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B8EC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:01:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C176C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:03:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88EAF2175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:01:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Z6rABJMd"
+	by mail.kernel.org (Postfix) with ESMTP id 2B5892175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:03:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550480596;
+	bh=hI8OJOUsEhFtBEQI8UfTQKYqQ2Nvs6lsAYQd2YliCvo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=19odLooG0ZQbpdpRSiLc9ks++yOpp5Tom16qJGycBA2GBFYJhB0ntt11568ijjkwr
+	 wsn1Hpduw7MVsFzsDfpfSnR6nbmrQnfY8YzIT85izrtHyAWH+wxG/ZHBZOqHVBEQMP
+	 4he91wK2TTuwZ48J1jldqLKkVul82921K2KSYEWM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729295AbfBRJBd (ORCPT
+        id S1729348AbfBRJDN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 04:01:33 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:14549 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727570AbfBRJBc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 04:01:32 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c6a746e0000>; Mon, 18 Feb 2019 01:01:34 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 18 Feb 2019 01:01:29 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 18 Feb 2019 01:01:29 -0800
-Received: from DRHQMAIL101.nvidia.com (10.27.9.10) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 18 Feb
- 2019 09:01:26 +0000
-Received: from [10.19.108.132] (10.124.1.5) by DRHQMAIL101.nvidia.com
- (10.27.9.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 18 Feb
- 2019 09:01:23 +0000
-Subject: Re: [PATCH V6 2/7] clocksource: tegra: add Tegra210 timer support
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>
-CC:     <linux-tegra@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Thierry Reding <treding@nvidia.com>
-References: <20190201161654.18315-1-josephl@nvidia.com>
- <20190201161654.18315-3-josephl@nvidia.com>
- <3849a41f-ab36-d7e0-b2ce-1aa5c4e34aec@linaro.org>
-From:   Joseph Lo <josephl@nvidia.com>
-Message-ID: <87731d61-10f6-0842-a90f-0c78ffba9ef7@nvidia.com>
-Date:   Mon, 18 Feb 2019 17:01:12 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 18 Feb 2019 04:03:13 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53966 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727423AbfBRJDN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 04:03:13 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 51037AECF;
+        Mon, 18 Feb 2019 09:03:12 +0000 (UTC)
+Date:   Mon, 18 Feb 2019 10:03:10 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Rong Chen <rong.a.chen@intel.com>
+Cc:     Oscar Salvador <osalvador@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-kernel@vger.kernel.org, LKP <lkp@01.org>
+Subject: Re: [LKP] efad4e475c [ 40.308255] Oops: 0000 [#1] PREEMPT SMP PTI
+Message-ID: <20190218090310.GE4525@dhcp22.suse.cz>
+References: <20190218052823.GH29177@shao2-debian>
+ <20190218070844.GC4525@dhcp22.suse.cz>
+ <79a3d305-1d96-3938-dc14-617a9e475648@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <3849a41f-ab36-d7e0-b2ce-1aa5c4e34aec@linaro.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- DRHQMAIL101.nvidia.com (10.27.9.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1550480494; bh=gdeGp+7F1da5XhRVBHV92J2zxc10m7bbBVaUwykl8w4=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=Z6rABJMdGz9GG4rWOKyAAcBxbO63lDq8HgN3RBw2m1L2mFQ2uHpiBqbQ3hpkJF6YG
-         jmUamw2EW3FampqUxfwdb1nvcy2EtkE6QP1ZWkGKDQVm8jlV6SrH4AIaPfMvLb0VsV
-         kJtZOLFDWj+UrNGSiez2hQZ9NDIt99l6kRKh+q9mkJzY0HZoDN7gnS/Zh63nDRgAhx
-         acVgPhJlWXJQeKHKkj7IYzE48oJET0GYJmJhZbUcShicxPpE2C3NwOO33jhWEysY5M
-         MnCNmYQzMr9e4jtHQVuZF2Bs3Uwg2g678YiLvCApDzYvUZ7yjNMEoPQAT1itLVfX8t
-         Ylw3WxOErhVog==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <79a3d305-1d96-3938-dc14-617a9e475648@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/15/19 11:14 PM, Daniel Lezcano wrote:
-> On 01/02/2019 17:16, Joseph Lo wrote:
->> Add support for the Tegra210 timer that runs at oscillator clock
->> (TMR10-TMR13). We need these timers to work as clock event device and to
->> replace the ARMv8 architected timer due to it can't survive across the
->> power cycle of the CPU core or CPUPORESET signal. So it can't be a wake-up
->> source when CPU suspends in power down state.
->>
->> Also convert the original driver to use timer-of API.
->>
->> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: linux-kernel@vger.kernel.org
->> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->> Acked-by: Thierry Reding <treding@nvidia.com>
->> Acked-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->> v6:
->>   * refine the timer defines
->>   * add ack tag from Jon.
->> v5:
->>   * add ack tag from Thierry
->> v4:
->>   * merge timer-tegra210.c in previous version into timer-tegra20.c
->> v3:
->>   * use timer-of API
->> v2:
->>   * add error clean-up code
->> ---
->>   drivers/clocksource/Kconfig         |   2 +-
->>   drivers/clocksource/timer-tegra20.c | 371 ++++++++++++++++++++--------
->>   include/linux/cpuhotplug.h          |   1 +
->>   3 files changed, 270 insertions(+), 104 deletions(-)
->>
->> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
->> index a9e26f6a81a1..6af78534a285 100644
->> --- a/drivers/clocksource/Kconfig
->> +++ b/drivers/clocksource/Kconfig
->> @@ -131,7 +131,7 @@ config SUN5I_HSTIMER
->>   config TEGRA_TIMER
->>   	bool "Tegra timer driver" if COMPILE_TEST
->>   	select CLKSRC_MMIO
->> -	depends on ARM
+On Mon 18-02-19 16:47:26, Rong Chen wrote:
 > 
-> This will break because the delay functions are defined in
-> arch/arm/include/asm/delay.h and the 01.org will try to compile the
-> driver on x86.
+> On 2/18/19 3:08 PM, Michal Hocko wrote:
+> > On Mon 18-02-19 13:28:23, kernel test robot wrote:
+[...]
+> > > [   40.305212] PGD 0 P4D 0
+> > > [   40.308255] Oops: 0000 [#1] PREEMPT SMP PTI
+> > > [   40.313055] CPU: 1 PID: 239 Comm: udevd Not tainted 5.0.0-rc4-00149-gefad4e4 #1
+> > > [   40.321348] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> > > [   40.330813] RIP: 0010:page_mapping+0x12/0x80
+> > > [   40.335709] Code: 5d c3 48 89 df e8 0e ad 02 00 85 c0 75 da 89 e8 5b 5d c3 0f 1f 44 00 00 53 48 89 fb 48 8b 43 08 48 8d 50 ff a8 01 48 0f 45 da <48> 8b 53 08 48 8d 42 ff 83 e2 01 48 0f 44 c3 48 83 38 ff 74 2f 48
+> > > [   40.356704] RSP: 0018:ffff88801fa87cd8 EFLAGS: 00010202
+> > > [   40.362714] RAX: ffffffffffffffff RBX: fffffffffffffffe RCX: 000000000000000a
+> > > [   40.370798] RDX: fffffffffffffffe RSI: ffffffff820b9a20 RDI: ffff88801e5c0000
+> > > [   40.378830] RBP: 6db6db6db6db6db7 R08: ffff88801e8bb000 R09: 0000000001b64d13
+> > > [   40.386902] R10: ffff88801fa87cf8 R11: 0000000000000001 R12: ffff88801e640000
+> > > [   40.395033] R13: ffffffff820b9a20 R14: ffff88801f145258 R15: 0000000000000001
+> > > [   40.403138] FS:  00007fb2079817c0(0000) GS:ffff88801dd00000(0000) knlGS:0000000000000000
+> > > [   40.412243] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > [   40.418846] CR2: 0000000000000006 CR3: 000000001fa82000 CR4: 00000000000006a0
+> > > [   40.426951] Call Trace:
+> > > [   40.429843]  __dump_page+0x14/0x2c0
+> > > [   40.433947]  is_mem_section_removable+0x24c/0x2c0
+> > This looks like we are stumbling over an unitialized struct page again.
+> > Something this patch should prevent from. Could you try to apply [1]
+> > which will make __dump_page more robust so that we do not blow up there
+> > and give some more details in return.
 > 
-> You may want to add 'depends on ARM && ARM64'
 > 
+> Hi Hocko,
+> 
+> I have applied [1] and attached the dmesg file.
 
-OK, I think it's 'depends on ARM || ARM64'.
-Will fix.
+Thanks so the log confirms that this is really an unitialized struct
+page
+[   12.228622] raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff
+[   12.231474] page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+[   12.232135] ------------[ cut here ]------------
+[   12.232649] kernel BUG at include/linux/mm.h:1020!
 
->> +	select TIMER_OF
->>   	help
->>   	  Enables support for the Tegra driver.
->>   
-[snip]
->> -
->>   static struct timespec64 persistent_ts;
->>   static u64 persistent_ms, last_persistent_ms;
-> 
-> Did you check the above changes are still relevant after commit
-> 39232ed5a1793f67 and after doing a change similar to
-> commit 1569557549697207e523 ?
-> 
-
-Yes, just check both commits. I think it's okay to use the same. But 
-need another patch to do that, this patch only adds new support for 
-Tegra210. Doesn't touch the original code.
-
-> 
->>   static struct delay_timer tegra_delay_timer;
-[snip]
->> +#ifdef CONFIG_ARM64
->> +static DEFINE_PER_CPU(struct timer_of, tegra_to) = {
->> +	.flags = TIMER_OF_CLOCK | TIMER_OF_BASE,
->> +
->> +	.clkevt = {
->> +		.name = "tegra_timer",
->> +		.rating = 460,
->> +		.features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
-> 
-> 			CLOCK_EVT_FEAT_DYNIRQ ?
-Yes, good catch.
-> 
->> +		.set_next_event = tegra_timer_set_next_event,
->> +		.set_state_shutdown = tegra_timer_shutdown,
->> +		.set_state_periodic = tegra_timer_set_periodic,
->> +		.set_state_oneshot = tegra_timer_shutdown,
->> +		.tick_resume = tegra_timer_shutdown,
->> +	},
->> +};
-[snip]
->> -static unsigned long tegra_delay_timer_read_counter_long(void)
->> +static int tegra_timer_suspend(void)
->>   {
->> -	return readl(timer_reg_base + TIMERUS_CNTR_1US);
->> +#ifdef CONFIG_ARM64
-> 
-> Please do not add those #ifdef but function stubs.
-> 
->> +	int cpu;
->> +
->> +	for_each_possible_cpu(cpu) {
->> +		struct timer_of *to = per_cpu_ptr(&tegra_to, cpu);
->> +		void __iomem *reg_base = timer_of_base(to);
->> +
->> +		writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
->> +	}
->> +#else
->> +	void __iomem *reg_base = timer_of_base(&tegra_to);
->> +
->> +	writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
->> +#endif
->> +
->> +	return 0;
->>   }
->>   
->> -static irqreturn_t tegra_timer_interrupt(int irq, void *dev_id)
->> +static void tegra_timer_resume(void)
->>   {
->> -	struct clock_event_device *evt = (struct clock_event_device *)dev_id;
->> -	timer_writel(1<<30, TIMER3_BASE + TIMER_PCR);
->> -	evt->event_handler(evt);
->> -	return IRQ_HANDLED;
->> +	writel(usec_config, timer_reg_base + TIMERUS_USEC_CFG);
->>   }
->>   
->> -static struct irqaction tegra_timer_irq = {
->> -	.name		= "timer0",
->> -	.flags		= IRQF_TIMER | IRQF_TRIGGER_HIGH,
->> -	.handler	= tegra_timer_interrupt,
->> -	.dev_id		= &tegra_clockevent,
->> +static struct syscore_ops tegra_timer_syscore_ops = {
->> +	.suspend = tegra_timer_suspend,
->> +	.resume = tegra_timer_resume,
->>   };
-> 
-> It will be nicer to use the suspend/resume callbacks defined in the
-> clockevent structure, so you can use generic as there are multiple
-> clockevents defined for the tegra210, thus multiple timer-of
-> encapsulating them. When the suspend/resume callbacks are called, they
-> have the clock_event pointer and you can use it to retrieve the timer-of
-> and then the base address. At the end, the callbacks will end up the
-> same for tegra20 and tegra210.
-> 
-
-Very good suggestion, will follow up.
-
->> -static int __init tegra20_init_timer(struct device_node *np)
->> +static int tegra_timer_init(struct device_node *np, struct timer_of *to)
-[snip]
->> +	for_each_possible_cpu(cpu) {
->> +		struct timer_of *cpu_to;
->> +
->> +		cpu_to = per_cpu_ptr(&tegra_to, cpu);
->> +		cpu_to->of_base.base = timer_reg_base + TIMER_BASE_FOR_CPU(cpu);
->> +		cpu_to->of_clk.rate = timer_of_rate(to);
->> +		cpu_to->clkevt.cpumask = cpumask_of(cpu);
->> +
->> +		cpu_to->clkevt.irq =
->> +			irq_of_parse_and_map(np, IRQ_IDX_FOR_CPU(cpu));
->> +		if (!cpu_to->clkevt.irq) {
->> +			pr_err("%s: can't map IRQ for CPU%d\n",
->> +			       __func__, cpu);
->> +			ret = -EINVAL;
->> +			goto out;
->> +		}
->> +
->> +		irq_set_status_flags(cpu_to->clkevt.irq, IRQ_NOAUTOEN);
->> +		ret = request_irq(cpu_to->clkevt.irq, tegra_timer_isr,
->> +				  IRQF_TIMER | IRQF_NOBALANCING,
->> +				  cpu_to->clkevt.name, &cpu_to->clkevt);
->> +		if (ret) {
->> +			pr_err("%s: cannot setup irq %d for CPU%d\n",
->> +				__func__, cpu_to->clkevt.irq, cpu);
->> +			ret = -EINVAL;
->> +			goto out_irq;
->> +		}
->> +	}
-> 
-> You should configure the timer in the tegra_timer_setup() function
-> instead of using this cpu loop.
-> 
-
-I think I still need to leave 'irq_of_parse_and_map' and 'request_irq' 
-here. Is that ok?
-
->> +
->> +	cpuhp_setup_state(CPUHP_AP_TEGRA_TIMER_STARTING,
->> +			  "AP_TEGRA_TIMER_STARTING", tegra_timer_setup,
->> +			  tegra_timer_stop);
->> +
->> +	return ret;
->> +
->> +out_irq:
->> +	for_each_possible_cpu(cpu) {
->> +		struct timer_of *cpu_to;
->> +
->> +		cpu_to = per_cpu_ptr(&tegra_to, cpu);
->> +		if (cpu_to->clkevt.irq) {
->> +			free_irq(cpu_to->clkevt.irq, &cpu_to->clkevt);
->> +			irq_dispose_mapping(cpu_to->clkevt.irq);
->> +		}
->>   	}
->> +out:
->> +	timer_of_cleanup(to);
->> +	return ret;
->> +}
->> +TIMER_OF_DECLARE(tegra210_timer, "nvidia,tegra210-timer", tegra210_timer_init);
->> +#else /* CONFIG_ARM */
-> 
-> Don't use the macro to select one or another. Just define the functions
-> and let the init postcalls to free the memory.
-> 
-
-Okay, I think I can move 'TIMER_OF_DECLARE' out of the ifdef. They will 
-be something like below. And change tegraxxx_init_timer to tegra_init_timer.
-
-TIMER_OF_DECLARE(tegra210_timer, "nvidia,tegra210-timer", tegra_timer_init);
-TIMER_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra_timer_init);
-
-Is that ok?
-
-Thanks for reviewing,
-Joseph
-
->> +static int __init tegra20_init_timer(struct device_node *np)
->> +{
->> +	int ret = 0;
->> +
->> +	ret = tegra_timer_init(np, &tegra_to);
->> +	if (ret < 0)
->> +		goto out;
->>   
->> -	sched_clock_register(tegra_read_sched_clock, 32, 1000000);
->> +	tegra_to.of_base.base = timer_reg_base + TIMER_BASE_FOR_CPU(0);
->> +	tegra_to.of_clk.rate = 1000000; /* microsecond timer */
->>   
->> +	sched_clock_register(tegra_read_sched_clock, 32,
->> +			     timer_of_rate(&tegra_to));
->>   	ret = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
->> -				    "timer_us", 1000000, 300, 32,
->> -				    clocksource_mmio_readl_up);
->> +				    "timer_us", timer_of_rate(&tegra_to),
->> +				    300, 32, clocksource_mmio_readl_up);
->>   	if (ret) {
->>   		pr_err("Failed to register clocksource\n");
->> -		return ret;
->> +		goto out;
->>   	}
->>   
->>   	tegra_delay_timer.read_current_timer =
->>   			tegra_delay_timer_read_counter_long;
->> -	tegra_delay_timer.freq = 1000000;
->> +	tegra_delay_timer.freq = timer_of_rate(&tegra_to);
->>   	register_current_timer_delay(&tegra_delay_timer);
->>   
->> -	ret = setup_irq(tegra_timer_irq.irq, &tegra_timer_irq);
->> -	if (ret) {
->> -		pr_err("Failed to register timer IRQ: %d\n", ret);
->> -		return ret;
->> -	}
->> +	clockevents_config_and_register(&tegra_to.clkevt,
->> +					timer_of_rate(&tegra_to),
->> +					0x1,
->> +					0x1fffffff);
->>   
->> -	tegra_clockevent.cpumask = cpu_possible_mask;
->> -	tegra_clockevent.irq = tegra_timer_irq.irq;
->> -	clockevents_config_and_register(&tegra_clockevent, 1000000,
->> -					0x1, 0x1fffffff);
->> +	return ret;
->> +out:
->> +	timer_of_cleanup(&tegra_to);
->>   
->> -	return 0;
->> +	return ret;
->>   }
->>   TIMER_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
->>   
->> @@ -261,3 +425,4 @@ static int __init tegra20_init_rtc(struct device_node *np)
->>   	return register_persistent_clock(tegra_read_persistent_clock64);
->>   }
->>   TIMER_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
->> +#endif
->> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
->> index fd586d0301e7..e78281d07b70 100644
->> --- a/include/linux/cpuhotplug.h
->> +++ b/include/linux/cpuhotplug.h
->> @@ -121,6 +121,7 @@ enum cpuhp_state {
->>   	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
->>   	CPUHP_AP_ARM_TWD_STARTING,
->>   	CPUHP_AP_QCOM_TIMER_STARTING,
->> +	CPUHP_AP_TEGRA_TIMER_STARTING,
->>   	CPUHP_AP_ARMADA_TIMER_STARTING,
->>   	CPUHP_AP_MARCO_TIMER_STARTING,
->>   	CPUHP_AP_MIPS_GIC_TIMER_STARTING,
->>
-> 
-> 
+So now, we have to find out what has been left behind. Please see my
+other email. Also could you give me faddr2line of the
+is_mem_section_removable offset please? I assume it is 
+is_pageblock_removable_nolock:
+	if (!node_online(page_to_nid(page)))
+		return false;
+-- 
+Michal Hocko
+SUSE Labs
