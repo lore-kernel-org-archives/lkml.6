@@ -2,27 +2,27 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71737C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:08:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 426FDC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:08:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ADA821872
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:08:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 155A721872
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:08:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729088AbfBRVIG (ORCPT
+        id S1728809AbfBRVID (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 16:08:06 -0500
-Received: from mout.kundenserver.de ([212.227.17.13]:49771 "EHLO
+        Mon, 18 Feb 2019 16:08:03 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:42149 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728055AbfBRVH7 (ORCPT
+        with ESMTP id S1727340AbfBRVH6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 16:07:59 -0500
+        Mon, 18 Feb 2019 16:07:58 -0500
 Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
  (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1Mbj7g-1hTVem3oWU-00dE5E; Mon, 18 Feb 2019 22:07:23 +0100
+ 1MwPjf-1hESyz1HV7-00sQM3; Mon, 18 Feb 2019 22:07:28 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     y2038@lists.linaro.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-arch@vger.kernel.org,
@@ -36,103 +36,60 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-arch@vger.kernel.org,
         Guo Ren <guoren@kernel.org>, Greentime Hu <green.hu@gmail.com>,
         arnd@arndb.de, linux-riscv@lists.infradead.org,
         Guan Xuetao <gxt@pku.edu.cn>
-Subject: [PATCH 0/8] y2038: remove time32 ABI on rv32 and csky
-Date:   Mon, 18 Feb 2019 22:07:04 +0100
-Message-Id: <20190218210712.3503891-1-arnd@arndb.de>
+Subject: [PATCH 5/8] unicore32: Fix __ARCH_WANT_STAT64 definition
+Date:   Mon, 18 Feb 2019 22:07:09 +0100
+Message-Id: <20190218210712.3503891-6-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20190218210712.3503891-1-arnd@arndb.de>
+References: <20190218210712.3503891-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:bewU9ZGmWDBtcDorCLKIF2OaAK8VSnBIubbe5DS6pS/6b8qt/SS
- f6LXyp4kr6e6Z3kldb3eHoHSBObighrIEpHcdRLjtlUPPrk5QaLjeSKlsAalGwaRwzXX4i9
- I83r7JDkzhbY1oGOcJJFrP/4x2NukuhHqN2o+gloMkAatap4+DzKebOdWAJ22I/7kBwNYRi
- 1mAoh4l7XSz+NHzV2I+ZQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:++/WGXsV8HA=:0G8jutlWE0HQkQ4WJ8Mb7c
- KiLTRFlvlB8D5fy2LLKwEBvdniXHVLQV/K02hHS0WqbLmncvVe9AO/1/nOwnpTNMPA1W/Uho8
- IcoZGgfbRm0vGPpPsIfypOitumOArxmY/Vs6CNuM7akXOgVqwFd2ineAvikWOCzEobBxGakGd
- 7AleQ8CwfhvspfbAQbk2LS0SaSJkHRQVHJEOCyuP/wlz5budE5RuA1gdrdFB/wzqs2Y2ikqg2
- wQifJ1JpoGpCzNexZvBEw61IhCOd7J5zv6OVwCQOHHGuDwTQ3HQfTyI011wozNiwu2SIBqOkn
- E1cI2rmf6MdhLdAkPtUhYwUWPs8TZY43ERGOWO8FjeCk33FQZXbWNjOdbO67u/5iZI5RVH59+
- GUZqpSIRTFMwS1BewtQz/J0DOeQ/6VeHxTeSTgiptXAbdcY0/bpNLgf8e68qhrnov48b2VUJm
- BMHkXb/DJXGgoWJNGbmCVG/chPZI0HvUvUXY6tAWGK0r+Cx3OZCBJwm068oRCLs0b/cJSa/LS
- JQemRph4DrHk//s+R+YfjRnXaelFSEW6uTnjgbm4L1fVOhoqDV3sdL3bPwM6zsaCmJY1UEGH1
- ROzslqjkbtkvJagvVWMVIEkWjTQ9H+ENnSfylSAz2AIYZX1JlVEguoT7+yom8s95pckxI1BUE
- +SfLFDshAmo1Iz+rTA+QYorObhMRmETUNiseYSOOx8yjZfOUfYG83cQQ08crrIoNv6o3uKdWE
- YTKfcKNTEPtOrDWOeBedIyB8a+3LOR22Eh10vg==
+X-Provags-ID: V03:K1:e5iV7jAPMPcGjRPi5MYNZ2dkznZ8Mrfx++9ngOzQfg3eN/TiQ1R
+ 189AXFIfz0cS7YjZUjf7xpRIC+5HGDzQrVDpbwnWeWZYnSH6gDE4OS2+d9PddhFkBcsqNC3
+ gkSMnhQ/1X5TPh7cDtrVgQk3tG6Ere1m238Mf0fY6tAGIKRw+GnPuguBJ/QmmtfBExPQkwj
+ K2FyVc6iNYGZicULIu0mw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:gI5wfFjSFEE=:LWNxFn7RL5I+WsBjHLIVXM
+ omzfoUukQpkdif1Aifk2CaM+uCLu97sodQrVqAKEmJNvL8vU6Rz9au8I7/6LYLLZ2Xefe1eyV
+ yLVyxmJITR7cFaGJFSJZd1M+8eGYej0R3l54Fv/8S8RG9V6H+NHo+21tr+XgtPZI1lIZyCX0V
+ 7+2ZkslAxXFR1f9dW/f+LURiJgEol+sc9RxYBxrPxZmBSXpOXmIAIHIEUaLPlX3lQmfG7INRy
+ 6t/+5EEqHWX8EiwZ+IzrT7I4TV5KQwHVLcFvL1bUEHe7VJdUTsEuTWu0cnXqpwfffnPGKU2LE
+ fwCgv2n584SKNZjerSO2/h38m3glzmb+jAPCsjG531KFMC3DxlWx/ODxizOg2YBQaaWJAGOrM
+ O5DJRP/rCYfLXHLEXJznQHzpFW0iXSrQUdPx8Fqy6+JmUP87frzv0lqxkUp9DBTYzIcAnL23M
+ PevSFPAOiAyZDx8D76O37xtLpeUKAZ3WqrhLhuR6rScgKhDLYRZhQAn2LU0ZCuh0pKi2EwSP4
+ P0RK0vT6L/LizZRXGqGbc+xOyK0lTz1D1TR1UDUD7KuKGcgcde5rioT/7YltNq2n4OdsmcFkG
+ YPsdOCZDgRO/gIiVXOoFxrCLvlhT3KuPIu2ZmnZyKHx7c+72B0dzBTBCtMVIQ96cojUzrxUL/
+ g2+5u37brMmdGBJ2Snq66VsTdJMLw2bBbRfwT1aOBa/kfbVBefs52sMhbLLuIaM1hKxxDc79r
+ lj/4nMMwaxinhvIehCaknN+7V1PQlxYngbqhyw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a follow-up to the y2038 syscall patches that Thomas already
-merged. Both the csky and riscv maintainers have requested that the
-time_t syscall ABI should be completely converted before an official
-glibc port is merged.
+The __ARCH_WANT_STAT64 macro must be defined before including
+asm-generic/unistd.h. I got this right for everything except
+unicore32.
 
-The series achieves this in a few steps:
+Fixes: bf4b6a7d371e ("y2038: Remove stat64 family from default syscall set")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/unicore32/include/uapi/asm/unistd.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- A couple of bug fixes for minor regressions I introduced
-  in the original series
-
-- A couple of older patches from Yury Norov that I had never
-  merged in the past, these fix up the openat/open_by_handle_at
-  and getrlimit/setrlimit syscalls to disallow the old versions
-  of off_t and rlimit.
-
-- Hiding the deprecated system calls behind an #ifdef in
-  include/uapi/asm-generic/unistd.h
-
-- Changing the two architectures to use the new style
-  syscall ABI for all three types: loff_t, rusage, and
-  time_t.
-
-Arnd Bergmann (5):
-  asm-generic: Make time32 syscall numbers optional
-  unicore32: Fix __ARCH_WANT_STAT64 definition
-  checksyscalls: fix up mq_timedreceive and stat exceptions
-  csky: Use latest system call ABI
-  riscv: Use latest system call ABI
-
-Yury Norov (3):
-  compat ABI: use non-compat openat and open_by_handle_at variants
-  32-bit userspace ABI: introduce ARCH_32BIT_OFF_T config option
-  asm-generic: Drop getrlimit and setrlimit syscalls from default list
-
- arch/Kconfig                             | 15 ++++++++
- arch/arc/Kconfig                         |  1 +
- arch/arc/include/uapi/asm/unistd.h       |  2 ++
- arch/arm/Kconfig                         |  1 +
- arch/arm64/include/uapi/asm/unistd.h     |  2 ++
- arch/c6x/Kconfig                         |  1 +
- arch/c6x/include/uapi/asm/unistd.h       |  2 ++
- arch/h8300/Kconfig                       |  1 +
- arch/h8300/include/uapi/asm/unistd.h     |  2 ++
- arch/hexagon/Kconfig                     |  1 +
- arch/hexagon/include/uapi/asm/unistd.h   |  2 ++
- arch/m68k/Kconfig                        |  1 +
- arch/microblaze/Kconfig                  |  1 +
- arch/mips/Kconfig                        |  1 +
- arch/nds32/Kconfig                       |  1 +
- arch/nds32/include/uapi/asm/unistd.h     |  2 ++
- arch/nios2/Kconfig                       |  1 +
- arch/nios2/include/uapi/asm/unistd.h     |  2 ++
- arch/openrisc/Kconfig                    |  1 +
- arch/openrisc/include/uapi/asm/unistd.h  |  2 ++
- arch/parisc/Kconfig                      |  1 +
- arch/powerpc/Kconfig                     |  1 +
- arch/riscv/include/uapi/asm/unistd.h     |  1 +
- arch/riscv/kernel/vdso/Makefile          |  2 ++
- arch/sh/Kconfig                          |  1 +
- arch/sparc/Kconfig                       |  1 +
- arch/unicore32/Kconfig                   |  1 +
- arch/unicore32/include/uapi/asm/unistd.h |  4 ++-
- arch/x86/Kconfig                         |  1 +
- arch/x86/um/Kconfig                      |  1 +
- arch/xtensa/Kconfig                      |  1 +
- include/linux/fcntl.h                    |  2 +-
- include/uapi/asm-generic/unistd.h        | 46 ++++++++++++++++++++++--
- scripts/checksyscalls.sh                 | 15 ++++++--
- 34 files changed, 112 insertions(+), 8 deletions(-)
-
+diff --git a/arch/unicore32/include/uapi/asm/unistd.h b/arch/unicore32/include/uapi/asm/unistd.h
+index 4e5e624f5d7e..54a7378a70b1 100644
+--- a/arch/unicore32/include/uapi/asm/unistd.h
++++ b/arch/unicore32/include/uapi/asm/unistd.h
+@@ -13,9 +13,9 @@
+ 
+ #define __ARCH_WANT_RENAMEAT
+ #define __ARCH_WANT_SET_GET_RLIMIT
++#define __ARCH_WANT_STAT64
+ #define __ARCH_WANT_TIME32_SYSCALLS
+ 
+ /* Use the standard ABI for syscalls. */
+ #include <asm-generic/unistd.h>
+-#define __ARCH_WANT_STAT64
+ #define __ARCH_WANT_SYS_CLONE
 -- 
 2.20.0
 
