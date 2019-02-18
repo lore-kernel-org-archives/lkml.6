@@ -4,56 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69075C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:45:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6682C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:45:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BD002070B
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:45:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 878D221736
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:45:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550501146;
-	bh=5y30JKxGx+uKKUURFdfc9dXjPyAEA70XEMgJ0imC+zA=;
+	s=default; t=1550501149;
+	bh=hHjUWAo6tzeUL5Q52lvJwHdUUbttPzeSBYZvgdorf/o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YikQ67zSP0YtQf+UPsWRR9OW44nDElCMurO/k9iCW1Q9GyqAbLj6iDonAdyTiPVgs
-	 uKccSZpv5XLm5AhcTTEDTRBBhkMIA3qCtG4Q7CIsO160P+AoDwoHx8BauiCEGFmFk4
-	 VAx0hpXTlwDDkRlcjmEinjpZnTE29L/0IkOKOX7Y=
+	b=z8RXh2B4DHsNkqB1cZ//UUvdWQNFdWsLtcuxiEx8UKdGSCkZijZrbgYENJFqO1Dow
+	 V6f7wuVDQd7xeBdAwZKXGyiAjYIADei55Q7U91PjKW/4ZsZpGUHgMBVQp20MQrERB7
+	 /wJsYMdVEKRuDVjLCLft53v2SvGK9YtmR7rGb2Jc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730496AbfBRNrO (ORCPT
+        id S1731965AbfBROpr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:47:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53696 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:45:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730930AbfBRNrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:47:07 -0500
+        id S1731721AbfBRNrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:47:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4384821900;
-        Mon, 18 Feb 2019 13:47:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15CFC218FC;
+        Mon, 18 Feb 2019 13:47:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497626;
-        bh=5y30JKxGx+uKKUURFdfc9dXjPyAEA70XEMgJ0imC+zA=;
+        s=default; t=1550497635;
+        bh=hHjUWAo6tzeUL5Q52lvJwHdUUbttPzeSBYZvgdorf/o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lXs/4ryxc5ZdOeDGoRUAbMo0W4CM5v7P4BPM98mhP60BocsYfadHDYOeIV6nggGZs
-         VH0C5caELeABZ4UEhMgFPhhhpi4p0ndYsyIzfnf/yIs3AIyraUbM7HpnbnuB4gkZOb
-         MvkXOdfFQwRRRtROqeDU48qhfJ3wufxG4HlwihOM=
+        b=s4cqAKsnRXpUmXyoTiLFmqPsygZu95QkPyBnT52CUTe7pteJ21VO9k0w/sEnM+IXb
+         UOW+Ja3gaKO8cp29vXMxLi+BbLD5DBIoIEHVvR5gTbmOII45ayRlj72ykdvV7MPc19
+         QxPB3tqhAfiMiYWADfqJe3kQa1I09NHdhyi1yWwc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jamie Lentin <jm@lentin.co.uk>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Julien DAscenzio <jdascenzio@posteo.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Thomas Blume <thomas.blume@suse.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Martin Peres <martin.peres@free.fr>,
+        Ben Skeggs <bskeggs@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 36/92] ARM: dts: kirkwood: Fix polarity of GPIO fan lines
-Date:   Mon, 18 Feb 2019 14:42:39 +0100
-Message-Id: <20190218133458.100487318@linuxfoundation.org>
+Subject: [PATCH 4.20 39/92] drm/nouveau: Dont disable polling in fallback mode
+Date:   Mon, 18 Feb 2019 14:42:42 +0100
+Message-Id: <20190218133458.369368868@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
 References: <20190218133454.668268457@linuxfoundation.org>
@@ -72,46 +68,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b5f034845e70916fd33e172fad5ad530a29c10ab ]
+[ Upstream commit 118780066e30c34de3d9349710b51780bfa0ba83 ]
 
-These two lines are active high, not active low. The bug was
-found when we changed the kernel to respect the polarity defined
-in the device tree.
+When a fan is controlled via linear fallback without cstate, we
+shouldn't stop polling.  Otherwise it won't be adjusted again and
+keeps running at an initial crazy pace.
 
-Fixes: 1b90e06b1429 ("ARM: kirkwood: Use devicetree to define DNS-32[05] fan")
-Cc: Jamie Lentin <jm@lentin.co.uk>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Gregory Clement <gregory.clement@bootlin.com>
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Julien D'Ascenzio <jdascenzio@posteo.net>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Tested-by: Jamie Lentin <jm@lentin.co.uk>
-Reported-by: Julien D'Ascenzio <jdascenzio@posteo.net>
-Tested-by: Julien D'Ascenzio <jdascenzio@posteo.net>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Fixes: 800efb4c2857 ("drm/nouveau/drm/therm/fan: add a fallback if no fan control is specified in the vbios")
+Bugzilla: https://bugzilla.suse.com/show_bug.cgi?id=1103356
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=107447
+Reported-by: Thomas Blume <thomas.blume@suse.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Reviewed-by: Martin Peres <martin.peres@free.fr>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/kirkwood-dnskw.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/nouveau/nvkm/subdev/therm/base.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/kirkwood-dnskw.dtsi b/arch/arm/boot/dts/kirkwood-dnskw.dtsi
-index cbaf06f2f78e..eb917462b219 100644
---- a/arch/arm/boot/dts/kirkwood-dnskw.dtsi
-+++ b/arch/arm/boot/dts/kirkwood-dnskw.dtsi
-@@ -36,8 +36,8 @@
- 		compatible = "gpio-fan";
- 		pinctrl-0 = <&pmx_fan_high_speed &pmx_fan_low_speed>;
- 		pinctrl-names = "default";
--		gpios = <&gpio1 14 GPIO_ACTIVE_LOW
--			 &gpio1 13 GPIO_ACTIVE_LOW>;
-+		gpios = <&gpio1 14 GPIO_ACTIVE_HIGH
-+			 &gpio1 13 GPIO_ACTIVE_HIGH>;
- 		gpio-fan,speed-map = <0    0
- 				      3000 1
- 				      6000 2>;
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/base.c b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/base.c
+index 3695cde669f8..07914e36939e 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/base.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/base.c
+@@ -132,11 +132,12 @@ nvkm_therm_update(struct nvkm_therm *therm, int mode)
+ 			duty = nvkm_therm_update_linear(therm);
+ 			break;
+ 		case NVBIOS_THERM_FAN_OTHER:
+-			if (therm->cstate)
++			if (therm->cstate) {
+ 				duty = therm->cstate;
+-			else
++				poll = false;
++			} else {
+ 				duty = nvkm_therm_update_linear_fallback(therm);
+-			poll = false;
++			}
+ 			break;
+ 		}
+ 		immd = false;
 -- 
 2.19.1
 
