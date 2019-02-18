@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B2FC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B98EFC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA30921904
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A0E121904
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497869;
-	bh=QAYKQUkQsUGhaL0TS0Sf73iRmo1Lfx56+mNR5UHG+zg=;
+	s=default; t=1550497871;
+	bh=hrone2WqInClRJmpVN4wZ9HDvXz0sboI3ZEXuhqx0Zk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nRlwQ52XBYvc6bEnLL35uf/uvaFfetqvAS8pLktql1piIPy6juj8mWFBy+4BkR3lD
-	 QCoR1walIqOYzuqXaI6WxMq+rlfR6BgvhC+fFqJTlMK5ZJHv4RFUxfHNOR8mV1uP+L
-	 jwz8YWqYFSRSV4RQpbudrqKm8Hp2a+rUdpnVDiGQ=
+	b=Wz3RwAO4sI31W2BNlE0e8XPHoVQbDsF7kJ9pPmc/2bG19JiR96RFIe9sWIoNHbGhA
+	 xEbj23ipOMcXD13I2/3Mcd+9c/m6tSS1dv5HiTUjJ5lyiqkggY8bzsGp8zvuSsMxB+
+	 4/Cb3LxjUOxEVxOQnuYDgkQrVlm1FrfaDim3BpqY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732339AbfBRNvI (ORCPT
+        id S1732357AbfBRNvK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:51:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58886 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:51:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731430AbfBRNvE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:51:04 -0500
+        id S1732088AbfBRNvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:51:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12DC720842;
-        Mon, 18 Feb 2019 13:51:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC14720449;
+        Mon, 18 Feb 2019 13:51:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497863;
-        bh=QAYKQUkQsUGhaL0TS0Sf73iRmo1Lfx56+mNR5UHG+zg=;
+        s=default; t=1550497866;
+        bh=hrone2WqInClRJmpVN4wZ9HDvXz0sboI3ZEXuhqx0Zk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hD/riLlYfbjoTzf8Xyz/Dd0HnCA4k1kNbEsVgTMY/F6gcA/Tp50iRMgCHbDxrCPBk
-         rPvmubrq+5YL7jPQGzi91aU8AvBlTgXc32eQqKc57TQO/fq1fqcLA8Fe4kCoJUgs5R
-         ISQkVXPh8PdJyRL8LVz2Yo46LmkWyzct6HA6eKck=
+        b=0PKOom14fJjuZUbxaRaBA06IczLSm0/On2IKeVdbjAT6Qnosn377+cabYE7KPzQus
+         oQDzUF59JGOkcI28KE9emfA5axq/Za0lAOgrgxVtZJTV/HT55vDkzrrD6p+lymkCyC
+         l/bXO/tf/5mA0uUFkc0IphxReH8/daSVEWKSqGOw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liviu Dudau <liviu@dudau.co.uk>,
+        stable@vger.kernel.org, Hongbo Yao <yaohongbo@huawei.com>,
         Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 34/85] nvme-pci: use the same attributes when freeing host_mem_desc_bufs.
-Date:   Mon, 18 Feb 2019 14:43:00 +0100
-Message-Id: <20190218133503.537761497@linuxfoundation.org>
+Subject: [PATCH 4.19 35/85] nvme-pci: fix out of bounds access in nvme_cqe_pending
+Date:   Mon, 18 Feb 2019 14:43:01 +0100
+Message-Id: <20190218133503.679442052@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -65,47 +65,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit cc667f6d5de023ee131e96bb88e5cddca23272bd ]
+[ Upstream commit dcca1662727220d18fa351097ddff33f95f516c5 ]
 
-When using HMB the PCIe host driver allocates host_mem_desc_bufs using
-dma_alloc_attrs() but frees them using dma_free_coherent(). Use the
-correct dma_free_attrs() function to free the buffers.
+There is an out of bounds array access in nvme_cqe_peding().
 
-Signed-off-by: Liviu Dudau <liviu@dudau.co.uk>
+When enable irq_thread for nvme interrupt, there is racing between the
+nvmeq->cq_head updating and reading.
+
+nvmeq->cq_head is updated in nvme_update_cq_head(), if nvmeq->cq_head
+equals nvmeq->q_depth and before its value set to zero, nvme_cqe_pending()
+uses its value as an array index, the index will be out of bounds.
+
+Signed-off-by: Hongbo Yao <yaohongbo@huawei.com>
+[hch: slight coding style update]
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/pci.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/nvme/host/pci.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index d668682f91df..40f76b4f08fc 100644
+index 40f76b4f08fc..f46313f441ec 100644
 --- a/drivers/nvme/host/pci.c
 +++ b/drivers/nvme/host/pci.c
-@@ -1727,8 +1727,9 @@ static void nvme_free_host_mem(struct nvme_dev *dev)
- 		struct nvme_host_mem_buf_desc *desc = &dev->host_mem_descs[i];
- 		size_t size = le32_to_cpu(desc->size) * dev->ctrl.page_size;
+@@ -908,9 +908,11 @@ static void nvme_complete_cqes(struct nvme_queue *nvmeq, u16 start, u16 end)
  
--		dma_free_coherent(dev->dev, size, dev->host_mem_desc_bufs[i],
--				le64_to_cpu(desc->addr));
-+		dma_free_attrs(dev->dev, size, dev->host_mem_desc_bufs[i],
-+			       le64_to_cpu(desc->addr),
-+			       DMA_ATTR_NO_KERNEL_MAPPING | DMA_ATTR_NO_WARN);
+ static inline void nvme_update_cq_head(struct nvme_queue *nvmeq)
+ {
+-	if (++nvmeq->cq_head == nvmeq->q_depth) {
++	if (nvmeq->cq_head == nvmeq->q_depth - 1) {
+ 		nvmeq->cq_head = 0;
+ 		nvmeq->cq_phase = !nvmeq->cq_phase;
++	} else {
++		nvmeq->cq_head++;
  	}
+ }
  
- 	kfree(dev->host_mem_desc_bufs);
-@@ -1794,8 +1795,9 @@ static int __nvme_alloc_host_mem(struct nvme_dev *dev, u64 preferred,
- 	while (--i >= 0) {
- 		size_t size = le32_to_cpu(descs[i].size) * dev->ctrl.page_size;
- 
--		dma_free_coherent(dev->dev, size, bufs[i],
--				le64_to_cpu(descs[i].addr));
-+		dma_free_attrs(dev->dev, size, bufs[i],
-+			       le64_to_cpu(descs[i].addr),
-+			       DMA_ATTR_NO_KERNEL_MAPPING | DMA_ATTR_NO_WARN);
- 	}
- 
- 	kfree(bufs);
 -- 
 2.19.1
 
