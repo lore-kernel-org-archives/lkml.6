@@ -4,55 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFC26C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE3FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:01:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C033121902
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:01:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D16B20842
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:01:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498504;
-	bh=tw1Y1dNcPZQUsnO4/BX3fqCm1F2egscx4MAU+4T9Xkg=;
+	s=default; t=1550498508;
+	bh=WFgEMJyWIWxaeDBTbHRgzgSTwQtI/vpgNHMunlbNpIA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Bscb3Bixx9TeXLTpcdElgU8fYVdF+ZhqiMJBzLqFgTiVI/vugI/ucedgMuMxluekC
-	 xhHGy4gnKRnGrcsM5mCPZCKzxm3fNByYcodk/uY64wjyh6srSUnG/oRsUHrGFj8YyH
-	 KVYEqRFFcW8aMJH/vtaeUHbQNDixfuAw8ut6Go4g=
+	b=fi7KeRTw/OfcytlovM7U+1FqnZ7UuqWkdEH0SiwCEBSkeK73OoDXxUTfr467DerPS
+	 ENosa/ejv3xSMU+zDwAjKoY5fF0J7PWHLWYvMdGgVXWq8YLFYFFdYGb/jZ81Wc0SpM
+	 KsB1cMd3M0LCeWS0bqZowsNhRssiGruaA2J9MjkY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389147AbfBROBn (ORCPT
+        id S2388629AbfBROBq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:01:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43180 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:01:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389134AbfBROBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:01:41 -0500
+        id S2389146AbfBROBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:01:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B50F21901;
-        Mon, 18 Feb 2019 14:01:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1C7721905;
+        Mon, 18 Feb 2019 14:01:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498500;
-        bh=tw1Y1dNcPZQUsnO4/BX3fqCm1F2egscx4MAU+4T9Xkg=;
+        s=default; t=1550498503;
+        bh=WFgEMJyWIWxaeDBTbHRgzgSTwQtI/vpgNHMunlbNpIA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=13t6zwqJdVtGjcMDymDiTsP3c0QuvAVuuUBmnA6F8ltbef4Uba4IfMnHho6WKSK4C
-         Lf3Jtd9u2L8ogHrhYF+l4hlHzKfoEQFObLDFZDVIo7t6IpprqBOA7kF3ymbXLmdmUJ
-         cqw+XvvIywubWDKJqp0ZNVWuWPncFLTAkraZw7xo=
+        b=L6870o02QPOHzS59NgTdHJHoekdOtl/ikPVHC6oSwMpuQwYUkhk2gmabDg4bl5GNZ
+         Y67sK7VrikQ3X2Dq0CrInO5X4pdzhjercCFXiOrpCc6kxZPZcjILpsEAqAQc5BN57D
+         nWwmabrViesL39BREO8gYsrOhfHFmS76v/G+n6DY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Markos Chandras <markos.chandras@imgtec.com>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Song Liu <songliubraving@fb.com>,
-        Jiong Wang <jiong.wang@netronome.com>,
-        Alexei Starovoitov <ast@kernel.org>,
+        stable@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 029/143] mips: bpf: fix encoding bug for mm_srlv32_op
-Date:   Mon, 18 Feb 2019 14:42:37 +0100
-Message-Id: <20190218133530.209682498@linuxfoundation.org>
+Subject: [PATCH 4.4 030/143] iommu/arm-smmu-v3: Use explicit mb() when moving cons pointer
+Date:   Mon, 18 Feb 2019 14:42:38 +0100
+Message-Id: <20190218133530.244329883@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -71,45 +66,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 17f6c83fb5ebf7db4fcc94a5be4c22d5a7bfe428 ]
+[ Upstream commit a868e8530441286342f90c1fd9c5f24de3aa2880 ]
 
-For micro-mips, srlv inside POOL32A encoding space should use 0x50
-sub-opcode, NOT 0x90.
+After removing an entry from a queue (e.g. reading an event in
+arm_smmu_evtq_thread()) it is necessary to advance the MMIO consumer
+pointer to free the queue slot back to the SMMU. A memory barrier is
+required here so that all reads targetting the queue entry have
+completed before the consumer pointer is updated.
 
-Some early version ISA doc describes the encoding as 0x90 for both srlv and
-srav, this looks to me was a typo. I checked Binutils libopcode
-implementation which is using 0x50 for srlv and 0x90 for srav.
+The implementation of queue_inc_cons() relies on a writel() to complete
+the previous reads, but this is incorrect because writel() is only
+guaranteed to complete prior writes. This patch replaces the call to
+writel() with an mb(); writel_relaxed() sequence, which gives us the
+read->write ordering which we require.
 
-v1->v2:
-  - Keep mm_srlv32_op sorted by value.
-
-Fixes: f31318fdf324 ("MIPS: uasm: Add srlv uasm instruction")
-Cc: Markos Chandras <markos.chandras@imgtec.com>
-Cc: Paul Burton <paul.burton@mips.com>
-Cc: linux-mips@vger.kernel.org
-Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Acked-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Jiong Wang <jiong.wang@netronome.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/include/uapi/asm/inst.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iommu/arm-smmu-v3.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/arch/mips/include/uapi/asm/inst.h b/arch/mips/include/uapi/asm/inst.h
-index 1b6f2f219298..9db764b51ffe 100644
---- a/arch/mips/include/uapi/asm/inst.h
-+++ b/arch/mips/include/uapi/asm/inst.h
-@@ -290,8 +290,8 @@ enum mm_32a_minor_op {
- 	mm_ext_op = 0x02c,
- 	mm_pool32axf_op = 0x03c,
- 	mm_srl32_op = 0x040,
-+	mm_srlv32_op = 0x050,
- 	mm_sra_op = 0x080,
--	mm_srlv32_op = 0x090,
- 	mm_rotr_op = 0x0c0,
- 	mm_lwxs_op = 0x118,
- 	mm_addu32_op = 0x150,
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index fc6eb752ab35..eb9937225d64 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -683,7 +683,13 @@ static void queue_inc_cons(struct arm_smmu_queue *q)
+ 	u32 cons = (Q_WRP(q, q->cons) | Q_IDX(q, q->cons)) + 1;
+ 
+ 	q->cons = Q_OVF(q, q->cons) | Q_WRP(q, cons) | Q_IDX(q, cons);
+-	writel(q->cons, q->cons_reg);
++
++	/*
++	 * Ensure that all CPU accesses (reads and writes) to the queue
++	 * are complete before we update the cons pointer.
++	 */
++	mb();
++	writel_relaxed(q->cons, q->cons_reg);
+ }
+ 
+ static int queue_sync_prod(struct arm_smmu_queue *q)
 -- 
 2.19.1
 
