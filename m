@@ -2,91 +2,98 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEB9C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:06:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC25C10F01
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:14:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AA2C20C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:06:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6445217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:14:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XlPaoM/y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391039AbfBRRGN (ORCPT
+        id S2388392AbfBRROM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 12:06:13 -0500
-Received: from sauhun.de ([88.99.104.3]:37886 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390984AbfBRRGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 12:06:12 -0500
-Received: from localhost (p54B3327C.dip0.t-ipconnect.de [84.179.50.124])
-        by pokefinder.org (Postfix) with ESMTPSA id A98BD2C7BF4;
-        Mon, 18 Feb 2019 18:06:09 +0100 (CET)
-Date:   Mon, 18 Feb 2019 18:06:06 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Shikai Wang <sxauwsk@163.com>
-Cc:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: cadence: try reset when master receive arbitration
- lost
-Message-ID: <20190218170606.qt35ciis4zpqo7d2@katana>
-References: <20190218094132.5226-1-sxauwsk@163.com>
+        Mon, 18 Feb 2019 12:14:12 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41850 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731396AbfBRROL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 12:14:11 -0500
+Received: by mail-ot1-f66.google.com with SMTP id t7so13085984otk.8;
+        Mon, 18 Feb 2019 09:14:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e9Ju8o7UI0AE5oEO08Wi6g50YqLMKlVnM2Sf/QzK7J0=;
+        b=XlPaoM/yy+gaPvXUQlf6IVhNEhO4cWMtw9PNgcOtK5VapyrujCJK4FOLkoMVamEFhV
+         Mwe9FKkHAGW2iZGhwGpq6I56RkEU4SqNMGlTvOVcSIh4ivP+lpG8EtwaLTYNYGsq9VHy
+         7glXivZuZoFubR8VZ5a7TaL/KSTrpVfxFk2NZOZ3arNqziF5UVfcy6w3Nbnv5VPoBieJ
+         v+WLD1XKGZ/z8PwGf6R0GOQAROBeY6Cu0trwEp0bRJiDAkItF4k3KQI26w08dFsH8BcX
+         vs03CmgyN9zf3f2b/lXLPLXELrjcr+vAScslA28gSSy1cX+dFlObPokLv6/ITCRRBcT4
+         kuoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e9Ju8o7UI0AE5oEO08Wi6g50YqLMKlVnM2Sf/QzK7J0=;
+        b=Bv1azvVBiCuKPHLHLAhn6xCMh34k7Uoq6HGU5FWjiT/HTodmqSZstr9kAPvs+vz0tq
+         MSJ6bk0gU506G6eXffMPB1pLhGomuOcNNSos5VypuZ5J9MnDOPwAS/SBZK97x3N+1y8r
+         JIEsw7Dyc3+11hXHK0iLMJ1TLlNDiqFB+M1PdXs3HAFNcD2xKZi5Z8DXVVKoUR2EXMQO
+         iyhChAIda7+NAfJyB+utharmSqMNqprhXBbS6hwqfwYqOR4CuLO6qhqV5O6Bfj+Wx2o0
+         OkYkl2Q7mpoe6XOOo5vrT+aclmDKbaVEJNZVeeNJ+sBSeSuC4jXKNk7aFVxhvYWXhmbX
+         hffA==
+X-Gm-Message-State: AHQUAuYbhl66iX5gFgk49FICwO0YaC5pIekE9VihQ3QsRLXA+1ScNubT
+        dxZWAMjjNWDaEjL+SbIfPtf9Z/Dp6vNy48AR2z4=
+X-Google-Smtp-Source: AHgI3IYiqorHvlu0UFdovwaDJepUFtIFyU0xQLLdv8hhpT7WH6kAgAQBbl4JMYoHtfMXXpJ+mmgWBZNUvhxGG/Eyadc=
+X-Received: by 2002:a05:6808:693:: with SMTP id k19mr14234489oig.77.1550510050977;
+ Mon, 18 Feb 2019 09:14:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="55tyi4ztso44igmw"
-Content-Disposition: inline
-In-Reply-To: <20190218094132.5226-1-sxauwsk@163.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <89716a4433cd83aea5f4200359b184b0ee2cc8bd.1549828313.git.bobbyeshleman@gmail.com>
+ <CAGngYiXPsj-TAZxC43UtAZYTkbztFtDB-z4jW29CthmaoeNy_w@mail.gmail.com>
+ <20190213021753.GA19621@bobby.localdomain> <CAGngYiUvEpSgESzFGJOtYjLi+_xmZ18GwiSTxaaMjEmjk2pu4Q@mail.gmail.com>
+ <20190218152224.00007920@huawei.com>
+In-Reply-To: <20190218152224.00007920@huawei.com>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Mon, 18 Feb 2019 12:13:59 -0500
+Message-ID: <CAGngYiXz=o6m41wsETbt7i9c6Ut=GsW2Kvf8cwhqSQnO6Jg4zA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] iio: light: Add driver for ap3216c
+To:     Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc:     Robert Eshleman <bobbyeshleman@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-iio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello Jonathan,
 
---55tyi4ztso44igmw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+First of all, thank you so much for taking the time for such a detailed
+reply !
 
-On Mon, Feb 18, 2019 at 05:41:32PM +0800, Shikai Wang wrote:
-> When the adapter receive arbitration lost error interrupts,
-> cdns_i2c_master_xfer return to the caller directly instead of resetting
-> the adapter which resulted in the adapter being out of control.
->=20
-> So when driver detect err_status such as arbitration lost,
-> then try to repair and fix it.
+On Mon, Feb 18, 2019 at 10:22 AM Jonathan Cameron
+<jonathan.cameron@huawei.com> wrote:
+>
+>
+> So, what I'm reading above is worrying.   The interrupt is cleared
+> by the read of the data registers?  I thought the datasheet allowed
+> for an explicit clear?
+>
 
-Thanks for working on this issue.
+I don't think there's any need to worry. The part allows us to choose between
+clear-on-read, and explicit clear. Bobby's approach is fundamentally sound.
 
-> Signed-off-by: Shikai Wang <sxauwsk@163.com>
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+IMHO most of my suggestions were based on an incomplete understanding of
+a) the interrupt in the device, and b) the event guarantees in iio.
 
-Reading the previous thread, isn't this more of an acked-by or
-reviewed-by than a Signed-off?
-
-Also, is there a suitable Fixes tag?
-
-
---55tyi4ztso44igmw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxq5fgACgkQFA3kzBSg
-KbZszRAAljXV2RneaUpe4jL8KnONqVWgRXYtj/MG7rxBhl6B2jg5TH1HqH0MRZIO
-hhTB21+VhdzjEyg9/Dai52L1BbndZKkTGTeL/jjIBI740iC4Nn6+3qerN3UmNkYR
-tHKCw1LLmDj0gph9Gez9PXZwBYBJAdnCugvbE88iNiJ1E8TrVxGV4mGkdXjGJDqV
-gYOV3cvlQoznHiq3iaoSrF05iCMJCvoPuHAWPoRGXNk2wuHkWr+H2RK7jBzZE4GQ
-Q+JJQe0AgXIgE5ivAkTanKcmu/6vZpEnUKu2Q1jS2fESt1nd00tgT0zhi3Mr1oB2
-EhjAxdq46q74gKAJGm0GgHnhzwjBTBi5rHuglxR/Z5yCdHc7WgM7bASsKKpVmcQt
-vBO0geyHGL5rsyIgKIBzQXpJeB0fCdpUEO/CNmQqTRJEbHM2Ra8X/BRYWFwof1Ae
-9G1LnECNAQOoXVV3bmq+CpzXCJZOQVh+LnMb1sBiltKLSdMVgIx35Q7fL5hiJF/I
-FjEEH4MUjvjwocer9fLOArAUWggPdKKSbcQAOE9jKi1BBIzwIEdL39eM/Mq2Ih96
-bR2C72CHEqSAsbCNcxNrYSCy54pL9tW/QZJb/DousDgbpJGwPbZJWXUr12bfml9G
-+s+/LU37XtbG262QCd0CKbSb8Nz4gbzz0ZQWQ2Dh+jVUi7EJ1Ns=
-=WSqx
------END PGP SIGNATURE-----
-
---55tyi4ztso44igmw--
+I will respond to your larger reply properly soon.
