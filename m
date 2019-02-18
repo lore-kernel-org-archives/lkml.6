@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85019C10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:30:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 238EFC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:31:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D2812081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:30:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E65DF2081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:31:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550500258;
-	bh=VPif0orIIULkZew+r4PMJnLlAMk0GDxGSY02UuR/K/I=;
+	s=default; t=1550500262;
+	bh=3UbwZ/nAzSgjEEn+CVIXECWdWwIRPTtOcjDa3S8zF2I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OYmxE/jaszYgvTmAih4QTUj0V9YAJK3wqMmvOrbv+V9vP4j/E8bbeSZS+7azn6v5f
-	 bkZ/0leUSyUy9jtDidzW1oFCpyIJAi8WGkLsCLoaF8fJAgfGqCDRzAZTPZDqnoLKOz
-	 obeGyARms2R7CtyLX+JJLIsKx2NB/Lk1NYT8Gpi4=
+	b=BOuw2dHyDCoJgiAbLEK9UBBgPdOFrOczqdW4U4F35qBQn6A52+1UUPwWbpVhG2dRZ
+	 8Jv0yCjxr9hP+iHxXVYNf5kViNLOUG6a/J0j7UCgu3ioXyNGDg0a1S1bPBlTQZfWKe
+	 b+OI2hEJSSE79uBlEzj44BTiSYyRzug/XZ8Jtxiw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388337AbfBRN6X (ORCPT
+        id S2388318AbfBRN6U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:58:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38992 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:58:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388310AbfBRN6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:58:19 -0500
+        id S2388296AbfBRN6P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:58:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CDE021901;
-        Mon, 18 Feb 2019 13:58:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAAFA20842;
+        Mon, 18 Feb 2019 13:58:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498298;
-        bh=VPif0orIIULkZew+r4PMJnLlAMk0GDxGSY02UuR/K/I=;
+        s=default; t=1550498295;
+        bh=3UbwZ/nAzSgjEEn+CVIXECWdWwIRPTtOcjDa3S8zF2I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=konenjjg2Gyr8kQnBN0J7wXw1+vB58tZecoyksh+z8VGVBBGKd11VdFQhTTjICfnt
-         KrZuP402C+rcTMRCLklqs8SzIDzlh31K/1JUaO8Sr83yGb4mB67f6JQ1d5fRlR2VvD
-         Z2wR1iw1e6lGhUKzmGGq+htN+qW1UnoetZP9jVVk=
+        b=XVFqlF118Mjl87TFIJUETx+ZMQxT7JxgiXITOIrCcQp3OflhvIodFenQFWz40DnKV
+         qsw7zBwj+27eoY4xfFzJAlWL9qp/5bqpPBmlDUQJNToq6OKODmVjBJqiT4PYwz/LzS
+         KoxYWaP2rM25APkBJPKgjjQCTgOAqJA0tmWJjbaQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -46,9 +46,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Russell King <rmk+kernel@armlinux.org.uk>,
         "David A. Long" <dave.long@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 08/58] ARM: 8794/1: uaccess: Prevent speculative use of the current addr_limit
-Date:   Mon, 18 Feb 2019 14:43:29 +0100
-Message-Id: <20190218133509.231691321@linuxfoundation.org>
+Subject: [PATCH 4.9 07/58] ARM: 8793/1: signal: replace __put_user_error with __put_user
+Date:   Mon, 18 Feb 2019 14:43:28 +0100
+Message-Id: <20190218133509.143435263@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133508.567416115@linuxfoundation.org>
 References: <20190218133508.567416115@linuxfoundation.org>
@@ -67,18 +67,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-Commit 621afc677465db231662ed126ae1f355bf8eac47 upstream.
+Commit 18ea66bd6e7a95bdc598223d72757190916af28b upstream.
 
-A mispredicted conditional call to set_fs could result in the wrong
-addr_limit being forwarded under speculation to a subsequent access_ok
-check, potentially forming part of a spectre-v1 attack using uaccess
-routines.
-
-This patch prevents this forwarding from taking place, but putting heavy
-barriers in set_fs after writing the addr_limit.
-
-Porting commit c2f0ad4fc089cff8 ("arm64: uaccess: Prevent speculative use
-of the current addr_limit").
+With Spectre-v1.1 mitigations, __put_user_error is pointless. In an attempt
+to remove it, replace its references in frame setups with __put_user.
 
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
@@ -86,28 +78,42 @@ Signed-off-by: David A. Long <dave.long@linaro.org>
 Reviewed-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/include/asm/uaccess.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/kernel/signal.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/include/asm/uaccess.h b/arch/arm/include/asm/uaccess.h
-index 7b17460127fd..9ae888775743 100644
---- a/arch/arm/include/asm/uaccess.h
-+++ b/arch/arm/include/asm/uaccess.h
-@@ -99,6 +99,14 @@ extern int __put_user_bad(void);
- static inline void set_fs(mm_segment_t fs)
- {
- 	current_thread_info()->addr_limit = fs;
-+
-+	/*
-+	 * Prevent a mispredicted conditional call to set_fs from forwarding
-+	 * the wrong address limit to access_ok under speculation.
-+	 */
-+	dsb(nsh);
-+	isb();
-+
- 	modify_domain(DOMAIN_KERNEL, fs ? DOMAIN_CLIENT : DOMAIN_MANAGER);
- }
+diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
+index 135b1a8e12eb..0a066f03b5ec 100644
+--- a/arch/arm/kernel/signal.c
++++ b/arch/arm/kernel/signal.c
+@@ -302,7 +302,7 @@ setup_sigframe(struct sigframe __user *sf, struct pt_regs *regs, sigset_t *set)
+ 	if (err == 0)
+ 		err |= preserve_vfp_context(&aux->vfp);
+ #endif
+-	__put_user_error(0, &aux->end_magic, err);
++	err |= __put_user(0, &aux->end_magic);
  
+ 	return err;
+ }
+@@ -434,7 +434,7 @@ setup_frame(struct ksignal *ksig, sigset_t *set, struct pt_regs *regs)
+ 	/*
+ 	 * Set uc.uc_flags to a value which sc.trap_no would never have.
+ 	 */
+-	__put_user_error(0x5ac3c35a, &frame->uc.uc_flags, err);
++	err = __put_user(0x5ac3c35a, &frame->uc.uc_flags);
+ 
+ 	err |= setup_sigframe(frame, regs, set);
+ 	if (err == 0)
+@@ -454,8 +454,8 @@ setup_rt_frame(struct ksignal *ksig, sigset_t *set, struct pt_regs *regs)
+ 
+ 	err |= copy_siginfo_to_user(&frame->info, &ksig->info);
+ 
+-	__put_user_error(0, &frame->sig.uc.uc_flags, err);
+-	__put_user_error(NULL, &frame->sig.uc.uc_link, err);
++	err |= __put_user(0, &frame->sig.uc.uc_flags);
++	err |= __put_user(NULL, &frame->sig.uc.uc_link);
+ 
+ 	err |= __save_altstack(&frame->sig.uc.uc_stack, regs->ARM_sp);
+ 	err |= setup_sigframe(&frame->sig, regs, set);
 -- 
 2.19.1
 
