@@ -2,193 +2,125 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40EC8C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D9BC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:33:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A5902081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:33:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13F9D2081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:33:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388364AbfBROdp (ORCPT
+        id S2388008AbfBROdr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:33:45 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40462 "EHLO mx1.redhat.com"
+        Mon, 18 Feb 2019 09:33:47 -0500
+Received: from foss.arm.com ([217.140.101.70]:60342 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387937AbfBRN45 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:56:57 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E4DD240D87;
-        Mon, 18 Feb 2019 13:56:56 +0000 (UTC)
-Received: from laptop.redhat.com (ovpn-116-102.ams2.redhat.com [10.36.116.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ED7FB5D70A;
-        Mon, 18 Feb 2019 13:56:52 +0000 (UTC)
-From:   Eric Auger <eric.auger@redhat.com>
-To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
-        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
-        will.deacon@arm.com, robin.murphy@arm.com
-Cc:     kevin.tian@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, peter.maydell@linaro.org
-Subject: [PATCH v4 12/22] iommu/smmuv3: Get prepared for nested stage support
-Date:   Mon, 18 Feb 2019 14:54:53 +0100
-Message-Id: <20190218135504.25048-13-eric.auger@redhat.com>
-In-Reply-To: <20190218135504.25048-1-eric.auger@redhat.com>
-References: <20190218135504.25048-1-eric.auger@redhat.com>
+        id S2388743AbfBROdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:33:45 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 06046A78;
+        Mon, 18 Feb 2019 06:33:45 -0800 (PST)
+Received: from [10.1.196.50] (e108454-lin.cambridge.arm.com [10.1.196.50])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 95D9E3F589;
+        Mon, 18 Feb 2019 06:33:38 -0800 (PST)
+Subject: Re: [RFC PATCH] arm64/fpsimd: Don't disable softirq when touching
+ FPSIMD/SVE state
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-arm-kernel@lists.infradead.org, Dave.Martin@arm.com,
+        linux-rt-users@vger.kernel.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        linux-kernel@vger.kernel.org
+References: <20190208165513.8435-1-julien.grall@arm.com>
+ <20190213143029.ad2kzg7vtuo3zpjk@linutronix.de>
+From:   Julien Grall <julien.grall@arm.com>
+Message-ID: <205c0b3a-d905-544f-31c3-1bb6ab68bb5b@arm.com>
+Date:   Mon, 18 Feb 2019 14:33:36 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 18 Feb 2019 13:56:57 +0000 (UTC)
+In-Reply-To: <20190213143029.ad2kzg7vtuo3zpjk@linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To allow nested stage support, we need to store both
-stage 1 and stage 2 configurations (and remove the former
-union).
+Hello Sebastian,
 
-A nested setup is characterized by both s1_cfg and s2_cfg
-set. If s1_cfg is NULL, if ste.abort is set, traffic can't pass.
-If abort is not set, S1 is bypassed. Abort can be induced by the
-guest of by the host.
+On 13/02/2019 14:30, Sebastian Andrzej Siewior wrote:
+> On 2019-02-08 16:55:13 [+0000], Julien Grall wrote:
+>> When the kernel is compiled with CONFIG_KERNEL_MODE_NEON, some part of
+>> the kernel may be able to use FPSIMD/SVE. This is for instance the case
+>> for crypto code.
+>>
+>> Any use of FPSIMD/SVE in the kernel are clearly marked by using the
+>> function kernel_neon_{begin, end}. Furthermore, this can only be used
+>> when may_use_simd() returns true.
+> 
+> This is equal what x86 is currently doing. The naming is slightly
+> different, there is irq_fpu_usable().
+The idea behind the patch was taken from x86. On x86, softirq does not seem to 
+be disabled when context switching the FPUs registers.
 
-arm_smmu_write_strtab_ent() is modified to write both stage
-fields in the STE and deal with the abort field.
+> 
+>> The current implementation of may_use_simd() allows softirq to use
+>> FPSIMD/SVE unless it is currently in used (i.e kernel_neon_busy is true).
+>> When in used, softirqs usually fallback to a software method.
+>>
+>> At the moment, as a softirq may use FPSIMD/SVE, softirqs are disabled
+>> when touching the FPSIMD/SVE context. This has the drawback to disable
+>> all softirqs even if they are not using FPSIMD/SVE.
+> 
+> Is this bad? This means also that your crypto code will not be
+> interrupted by a softirq. Also if you would get rid of it, you could
+> avoid the software fallback in case may_use_simd() says false.
 
-Only S2 stage is "finalized" as the host does not configure
-S1 CD, guest does.
+There seem to have some misunderstanding about the purpose of this patch. Any 
+use of crypto in the kernel is only protected by preempt_disable(). softirqs are 
+only disabled when context switching the FPU register between two userspace tasks.
 
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
+ From the commit log cb84d11e1625 "arm64: neon: Remove support for nested or 
+hardirq kernel-mode NEON" this was done to protect against rare softirqs use 
+crypto. It seems to me this is a bit overkill to increase softirq latency if 
+they barely use FPSIMD/SVE. Indeed, the SVE context can be quite large, 
+therefore it can take some times to save/restore it.
 
----
+[...]
 
-v2 -> v3:
-- s1_cfg.nested_abort and nested_bypass removed.
-- s/ste.nested/ste.abort
-- arm_smmu_write_strtab_ent modifications with introduction
-  of local abort, bypass and translate local variables
-- comment updated
+>> For RT-linux, it might be possible to use migrate_{enable, disable}. I
+>> am quite new with RT and have some trouble to understand the semantics
+>> of migrate_{enable, disable}. So far, I am still unsure if it is possible
+>> to run another userspace task on the same CPU while getting preempted
+>> when the migration is disabled.
+> 
+> In RT:
+> - preemt_disable() is the same as !RT. A thread can not be suspend. An
+>    interrupt may interrupt. However on RT we have threaded interrupts so
+>    the interrupt is limited to the first-level handler (not the threaded
+>    handler).
+> 
+> - migrate_disable() means that the thread can not be moved to another
+>    CPU. It can be suspended.
+> 
+> - local_bh_disable() disables the BH: No softirq can run. In RT
+>    local_bh_disable() does not inherit preempt_disable(). Two different
+>    softirqs can be executed in parallel.
+>    The BH is usually invoked at the end of the threaded interrupt
+>    (because the threaded interrupt handler raises the softirq). It can
+>    also run in the ksoftirqd.
+> 
+> Usually you should not get preempted in a migrate_disable() section. A
+> SCHED_OTHER task should not interrupt another SCHED_OTHER task in a
+> migrate_disable() section. A task with a higher priority (a RT/DL task)
+> will. Since threaded interrupts run with a RT priority of 50, they will
+> interrupt your task in a migrate_disable() section.
 
-v1 -> v2:
-- invalidate the STE before moving from a live STE config to another
-- add the nested_abort and nested_bypass fields
----
- drivers/iommu/arm-smmu-v3.c | 34 +++++++++++++++++++---------------
- 1 file changed, 19 insertions(+), 15 deletions(-)
+Thank you for the explanation!
 
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 9af68266bbb1..80ab9a77cf80 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -212,6 +212,7 @@
- #define STRTAB_STE_0_CFG_BYPASS		4
- #define STRTAB_STE_0_CFG_S1_TRANS	5
- #define STRTAB_STE_0_CFG_S2_TRANS	6
-+#define STRTAB_STE_0_CFG_NESTED		7
- 
- #define STRTAB_STE_0_S1FMT		GENMASK_ULL(5, 4)
- #define STRTAB_STE_0_S1FMT_LINEAR	0
-@@ -515,6 +516,7 @@ struct arm_smmu_strtab_ent {
- 	 * configured according to the domain type.
- 	 */
- 	bool				assigned;
-+	bool				abort;
- 	struct arm_smmu_s1_cfg		*s1_cfg;
- 	struct arm_smmu_s2_cfg		*s2_cfg;
- };
-@@ -629,10 +631,8 @@ struct arm_smmu_domain {
- 	bool				non_strict;
- 
- 	enum arm_smmu_domain_stage	stage;
--	union {
--		struct arm_smmu_s1_cfg	s1_cfg;
--		struct arm_smmu_s2_cfg	s2_cfg;
--	};
-+	struct arm_smmu_s1_cfg	s1_cfg;
-+	struct arm_smmu_s2_cfg	s2_cfg;
- 
- 	struct iommu_domain		domain;
- 
-@@ -1109,12 +1109,13 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
- 				      __le64 *dst, struct arm_smmu_strtab_ent *ste)
- {
- 	/*
--	 * This is hideously complicated, but we only really care about
--	 * three cases at the moment:
-+	 * We care about the following transitions:
- 	 *
- 	 * 1. Invalid (all zero) -> bypass/fault (init)
--	 * 2. Bypass/fault -> translation/bypass (attach)
--	 * 3. Translation/bypass -> bypass/fault (detach)
-+	 * 2. Bypass/fault -> single stage translation/bypass (attach)
-+	 * 3. single stage Translation/bypass -> bypass/fault (detach)
-+	 * 4. S2 -> S1 + S2 (attach_pasid_table)
-+	 * 5. S1 + S2 -> S2 (detach_pasid_table)
- 	 *
- 	 * Given that we can't update the STE atomically and the SMMU
- 	 * doesn't read the thing in a defined order, that leaves us
-@@ -1125,7 +1126,7 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
- 	 * 3. Update Config, sync
- 	 */
- 	u64 val = le64_to_cpu(dst[0]);
--	bool ste_live = false;
-+	bool abort, bypass, translate, ste_live = false;
- 	struct arm_smmu_cmdq_ent prefetch_cmd = {
- 		.opcode		= CMDQ_OP_PREFETCH_CFG,
- 		.prefetch	= {
-@@ -1139,11 +1140,11 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
- 			break;
- 		case STRTAB_STE_0_CFG_S1_TRANS:
- 		case STRTAB_STE_0_CFG_S2_TRANS:
-+		case STRTAB_STE_0_CFG_NESTED:
- 			ste_live = true;
- 			break;
- 		case STRTAB_STE_0_CFG_ABORT:
--			if (disable_bypass)
--				break;
-+			break;
- 		default:
- 			BUG(); /* STE corruption */
- 		}
-@@ -1153,8 +1154,13 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
- 	val = STRTAB_STE_0_V;
- 
- 	/* Bypass/fault */
--	if (!ste->assigned || !(ste->s1_cfg || ste->s2_cfg)) {
--		if (!ste->assigned && disable_bypass)
-+
-+	abort = (!ste->assigned && disable_bypass) || ste->abort;
-+	translate = ste->s1_cfg || ste->s2_cfg;
-+	bypass = !abort && !translate;
-+
-+	if (abort || bypass) {
-+		if (abort)
- 			val |= FIELD_PREP(STRTAB_STE_0_CFG, STRTAB_STE_0_CFG_ABORT);
- 		else
- 			val |= FIELD_PREP(STRTAB_STE_0_CFG, STRTAB_STE_0_CFG_BYPASS);
-@@ -1173,7 +1179,6 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
- 	}
- 
- 	if (ste->s1_cfg) {
--		BUG_ON(ste_live);
- 		dst[1] = cpu_to_le64(
- 			 FIELD_PREP(STRTAB_STE_1_S1CIR, STRTAB_STE_1_S1C_CACHE_WBRA) |
- 			 FIELD_PREP(STRTAB_STE_1_S1COR, STRTAB_STE_1_S1C_CACHE_WBRA) |
-@@ -1192,7 +1197,6 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
- 	}
- 
- 	if (ste->s2_cfg) {
--		BUG_ON(ste_live);
- 		dst[2] = cpu_to_le64(
- 			 FIELD_PREP(STRTAB_STE_2_S2VMID, ste->s2_cfg->vmid) |
- 			 FIELD_PREP(STRTAB_STE_2_VTCR, ste->s2_cfg->vtcr) |
+Cheers,
+
 -- 
-2.20.1
-
+Julien Grall
