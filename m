@@ -2,53 +2,62 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C24A0C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:59:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92192C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:59:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 856D82173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:59:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 584B2217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:59:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498345;
-	bh=3w2vcr9DnqIJlW13qrBfNf9pNV1soxV3KyFfhwdmQO0=;
+	s=default; t=1550498350;
+	bh=zhuDKFR+cm5/QRKmdFYBagZN4i7+XUP6cp68wwrgkAM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kGDv7nSGwI1UQBev7iX7qu9aqA/5ynKbqptHONjvC83dbkWKSsQ5bhGcEtvZVaaEv
-	 R+if+q+LjG3097SM/ZGz3meXzIddaRRr0nvy2HLDxIbGcWSBI3OyjGfpjqBFpN7yMY
-	 qe78gKQWDIukEqmYSkVeAUWYM0SABZvXeNml7ymo=
+	b=0PAJEvmwyXqkVa+82qarePBgLQ7oQXC47Rei2tBXhYtWmu1+VPPx40cun5u0RTmJo
+	 waRRmvbmlIf9ej1iehjXczEpB/PiBIgexk8i8iT7LKEDXYA1rbOXQ3qxRqBrPxLjli
+	 UcWTZWi5A0clny852jmCu404uIekW5R4mZLUXULs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388490AbfBRN7D (ORCPT
+        id S2388503AbfBRN7I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:59:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39952 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:59:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731637AbfBRN7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:59:02 -0500
+        id S2388493AbfBRN7G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:59:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1C2120842;
-        Mon, 18 Feb 2019 13:59:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47BB720842;
+        Mon, 18 Feb 2019 13:59:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498341;
-        bh=3w2vcr9DnqIJlW13qrBfNf9pNV1soxV3KyFfhwdmQO0=;
+        s=default; t=1550498344;
+        bh=zhuDKFR+cm5/QRKmdFYBagZN4i7+XUP6cp68wwrgkAM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z2z6EaCnZg14yesAjjD7PVYfy1D+bDwILukVOuNheTWfQAOyzgX5F2M4ZlhAoRXMh
-         0VPv6esh6Df9TeJovsHybUmdrI2qvGqfP1yoyHyLp9ch0qrD3ESIVauw5PvVRcZ4dy
-         tI88c2CiQOr3g8kPjsCBH4cy0V3m3lOJvJiZK0WA=
+        b=yUEfhe/lXp0bQ9edIwHmwk9mlU32HpEXMC1eRGNK3zlQk0oYmdIqW/bYvL+t5TPDh
+         a+Z0Ug4vwikCLHjagNiX9ylMDMV1UufSeO/hg9bjAK5J+4/kwaUQVhNNO+RdH+vBS4
+         6OwFofUty52iSFn9mAoPZzfN0mm5DYICIwBfqfEU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Axtens <dja@axtens.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jack Wang <jinpu.wang@cloud.ionos.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 20/58] net: create skb_gso_validate_mac_len()
-Date:   Mon, 18 Feb 2019 14:43:41 +0100
-Message-Id: <20190218133510.108755343@linuxfoundation.org>
+        stable@vger.kernel.org, Vince Weaver <vincent.weaver@maine.edu>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 38/58] perf/x86: Add check_period PMU callback
+Date:   Mon, 18 Feb 2019 14:43:59 +0100
+Message-Id: <20190218133511.577067236@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133508.567416115@linuxfoundation.org>
 References: <20190218133508.567416115@linuxfoundation.org>
@@ -67,176 +76,250 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 2b16f048729bf35e6c28a40cbfad07239f9dcd90 upstream
+From: Jiri Olsa <jolsa@redhat.com>
 
-If you take a GSO skb, and split it into packets, will the MAC
-length (L2 + L3 + L4 headers + payload) of those packets be small
-enough to fit within a given length?
+commit 81ec3f3c4c4d78f2d3b6689c9816bfbdf7417dbb upstream.
 
-Move skb_gso_mac_seglen() to skbuff.h with other related functions
-like skb_gso_network_seglen() so we can use it, and then create
-skb_gso_validate_mac_len to do the full calculation.
+Vince (and later on Ravi) reported crashes in the BTS code during
+fuzzing with the following backtrace:
 
-Signed-off-by: Daniel Axtens <dja@axtens.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[jwang: cherry pick for CVE-2018-1000026]
-Signed-off-by: Jack Wang <jinpu.wang@cloud.ionos.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+  general protection fault: 0000 [#1] SMP PTI
+  ...
+  RIP: 0010:perf_prepare_sample+0x8f/0x510
+  ...
+  Call Trace:
+   <IRQ>
+   ? intel_pmu_drain_bts_buffer+0x194/0x230
+   intel_pmu_drain_bts_buffer+0x160/0x230
+   ? tick_nohz_irq_exit+0x31/0x40
+   ? smp_call_function_single_interrupt+0x48/0xe0
+   ? call_function_single_interrupt+0xf/0x20
+   ? call_function_single_interrupt+0xa/0x20
+   ? x86_schedule_events+0x1a0/0x2f0
+   ? x86_pmu_commit_txn+0xb4/0x100
+   ? find_busiest_group+0x47/0x5d0
+   ? perf_event_set_state.part.42+0x12/0x50
+   ? perf_mux_hrtimer_restart+0x40/0xb0
+   intel_pmu_disable_event+0xae/0x100
+   ? intel_pmu_disable_event+0xae/0x100
+   x86_pmu_stop+0x7a/0xb0
+   x86_pmu_del+0x57/0x120
+   event_sched_out.isra.101+0x83/0x180
+   group_sched_out.part.103+0x57/0xe0
+   ctx_sched_out+0x188/0x240
+   ctx_resched+0xa8/0xd0
+   __perf_event_enable+0x193/0x1e0
+   event_function+0x8e/0xc0
+   remote_function+0x41/0x50
+   flush_smp_call_function_queue+0x68/0x100
+   generic_smp_call_function_single_interrupt+0x13/0x30
+   smp_call_function_single_interrupt+0x3e/0xe0
+   call_function_single_interrupt+0xf/0x20
+   </IRQ>
+
+The reason is that while event init code does several checks
+for BTS events and prevents several unwanted config bits for
+BTS event (like precise_ip), the PERF_EVENT_IOC_PERIOD allows
+to create BTS event without those checks being done.
+
+Following sequence will cause the crash:
+
+If we create an 'almost' BTS event with precise_ip and callchains,
+and it into a BTS event it will crash the perf_prepare_sample()
+function because precise_ip events are expected to come
+in with callchain data initialized, but that's not the
+case for intel_pmu_drain_bts_buffer() caller.
+
+Adding a check_period callback to be called before the period
+is changed via PERF_EVENT_IOC_PERIOD. It will deny the change
+if the event would become BTS. Plus adding also the limit_period
+check as well.
+
+Reported-by: Vince Weaver <vincent.weaver@maine.edu>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: <stable@vger.kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20190204123532.GA4794@krava
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- include/linux/skbuff.h | 16 +++++++++++
- net/core/skbuff.c      | 63 +++++++++++++++++++++++++++++++++---------
- net/sched/sch_tbf.c    | 10 -------
- 3 files changed, 66 insertions(+), 23 deletions(-)
+ arch/x86/events/core.c       |   14 ++++++++++++++
+ arch/x86/events/intel/core.c |    9 +++++++++
+ arch/x86/events/perf_event.h |   16 ++++++++++++++--
+ include/linux/perf_event.h   |    5 +++++
+ kernel/events/core.c         |   16 ++++++++++++++++
+ 5 files changed, 58 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index ed329a39d621..f8761774a94f 100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -3102,6 +3102,7 @@ int skb_shift(struct sk_buff *tgt, struct sk_buff *skb, int shiftlen);
- void skb_scrub_packet(struct sk_buff *skb, bool xnet);
- unsigned int skb_gso_transport_seglen(const struct sk_buff *skb);
- bool skb_gso_validate_mtu(const struct sk_buff *skb, unsigned int mtu);
-+bool skb_gso_validate_mac_len(const struct sk_buff *skb, unsigned int len);
- struct sk_buff *skb_segment(struct sk_buff *skb, netdev_features_t features);
- struct sk_buff *skb_vlan_untag(struct sk_buff *skb);
- int skb_ensure_writable(struct sk_buff *skb, int write_len);
-@@ -3880,6 +3881,21 @@ static inline unsigned int skb_gso_network_seglen(const struct sk_buff *skb)
- 	return hdr_len + skb_gso_transport_seglen(skb);
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2196,6 +2196,19 @@ void perf_check_microcode(void)
  }
+ EXPORT_SYMBOL_GPL(perf_check_microcode);
  
-+/**
-+ * skb_gso_mac_seglen - Return length of individual segments of a gso packet
-+ *
-+ * @skb: GSO skb
-+ *
-+ * skb_gso_mac_seglen is used to determine the real size of the
-+ * individual segments, including MAC/L2, Layer3 (IP, IPv6) and L4
-+ * headers (TCP/UDP).
-+ */
-+static inline unsigned int skb_gso_mac_seglen(const struct sk_buff *skb)
++static int x86_pmu_check_period(struct perf_event *event, u64 value)
 +{
-+	unsigned int hdr_len = skb_transport_header(skb) - skb_mac_header(skb);
-+	return hdr_len + skb_gso_transport_seglen(skb);
++	if (x86_pmu.check_period && x86_pmu.check_period(event, value))
++		return -EINVAL;
++
++	if (value && x86_pmu.limit_period) {
++		if (x86_pmu.limit_period(event, value) > value)
++			return -EINVAL;
++	}
++
++	return 0;
 +}
 +
- /* Local Checksum Offload.
-  * Compute outer checksum based on the assumption that the
-  * inner checksum will be offloaded later.
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index dca1fed0d7da..11501165f0df 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -4469,37 +4469,74 @@ unsigned int skb_gso_transport_seglen(const struct sk_buff *skb)
- EXPORT_SYMBOL_GPL(skb_gso_transport_seglen);
+ static struct pmu pmu = {
+ 	.pmu_enable		= x86_pmu_enable,
+ 	.pmu_disable		= x86_pmu_disable,
+@@ -2220,6 +2233,7 @@ static struct pmu pmu = {
+ 	.event_idx		= x86_pmu_event_idx,
+ 	.sched_task		= x86_pmu_sched_task,
+ 	.task_ctx_size          = sizeof(struct x86_perf_task_context),
++	.check_period		= x86_pmu_check_period,
+ };
+ 
+ void arch_perf_update_userpage(struct perf_event *event,
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3262,6 +3262,11 @@ static void intel_pmu_sched_task(struct
+ 		intel_pmu_lbr_sched_task(ctx, sched_in);
+ }
+ 
++static int intel_pmu_check_period(struct perf_event *event, u64 value)
++{
++	return intel_pmu_has_bts_period(event, value) ? -EINVAL : 0;
++}
++
+ PMU_FORMAT_ATTR(offcore_rsp, "config1:0-63");
+ 
+ PMU_FORMAT_ATTR(ldlat, "config1:0-15");
+@@ -3328,6 +3333,8 @@ static __initconst const struct x86_pmu
+ 	.cpu_starting		= intel_pmu_cpu_starting,
+ 	.cpu_dying		= intel_pmu_cpu_dying,
+ 	.cpu_dead		= intel_pmu_cpu_dead,
++
++	.check_period		= intel_pmu_check_period,
+ };
+ 
+ static __initconst const struct x86_pmu intel_pmu = {
+@@ -3367,6 +3374,8 @@ static __initconst const struct x86_pmu
+ 
+ 	.guest_get_msrs		= intel_guest_get_msrs,
+ 	.sched_task		= intel_pmu_sched_task,
++
++	.check_period		= intel_pmu_check_period,
+ };
+ 
+ static __init void intel_clovertown_quirk(void)
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -626,6 +626,11 @@ struct x86_pmu {
+ 	 * Intel host/guest support (KVM)
+ 	 */
+ 	struct perf_guest_switch_msr *(*guest_get_msrs)(int *nr);
++
++	/*
++	 * Check period value for PERF_EVENT_IOC_PERIOD ioctl.
++	 */
++	int (*check_period) (struct perf_event *event, u64 period);
+ };
+ 
+ struct x86_perf_task_context {
+@@ -833,7 +838,7 @@ static inline int amd_pmu_init(void)
+ 
+ #ifdef CONFIG_CPU_SUP_INTEL
+ 
+-static inline bool intel_pmu_has_bts(struct perf_event *event)
++static inline bool intel_pmu_has_bts_period(struct perf_event *event, u64 period)
+ {
+ 	struct hw_perf_event *hwc = &event->hw;
+ 	unsigned int hw_event, bts_event;
+@@ -844,7 +849,14 @@ static inline bool intel_pmu_has_bts(str
+ 	hw_event = hwc->config & INTEL_ARCH_EVENT_MASK;
+ 	bts_event = x86_pmu.event_map(PERF_COUNT_HW_BRANCH_INSTRUCTIONS);
+ 
+-	return hw_event == bts_event && hwc->sample_period == 1;
++	return hw_event == bts_event && period == 1;
++}
++
++static inline bool intel_pmu_has_bts(struct perf_event *event)
++{
++	struct hw_perf_event *hwc = &event->hw;
++
++	return intel_pmu_has_bts_period(event, hwc->sample_period);
+ }
+ 
+ int intel_pmu_save_and_restart(struct perf_event *event);
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -455,6 +455,11 @@ struct pmu {
+ 	 * Filter events for PMU-specific reasons.
+ 	 */
+ 	int (*filter_match)		(struct perf_event *event); /* optional */
++
++	/*
++	 * Check period value for PERF_EVENT_IOC_PERIOD ioctl.
++	 */
++	int (*check_period)		(struct perf_event *event, u64 value); /* optional */
+ };
  
  /**
-- * skb_gso_validate_mtu - Return in case such skb fits a given MTU
-+ * skb_gso_size_check - check the skb size, considering GSO_BY_FRAGS
-  *
-- * @skb: GSO skb
-- * @mtu: MTU to validate against
-+ * There are a couple of instances where we have a GSO skb, and we
-+ * want to determine what size it would be after it is segmented.
-  *
-- * skb_gso_validate_mtu validates if a given skb will fit a wanted MTU
-- * once split.
-+ * We might want to check:
-+ * -    L3+L4+payload size (e.g. IP forwarding)
-+ * - L2+L3+L4+payload size (e.g. sanity check before passing to driver)
-+ *
-+ * This is a helper to do that correctly considering GSO_BY_FRAGS.
-+ *
-+ * @seg_len: The segmented length (from skb_gso_*_seglen). In the
-+ *           GSO_BY_FRAGS case this will be [header sizes + GSO_BY_FRAGS].
-+ *
-+ * @max_len: The maximum permissible length.
-+ *
-+ * Returns true if the segmented length <= max length.
-  */
--bool skb_gso_validate_mtu(const struct sk_buff *skb, unsigned int mtu)
--{
-+static inline bool skb_gso_size_check(const struct sk_buff *skb,
-+				      unsigned int seg_len,
-+				      unsigned int max_len) {
- 	const struct skb_shared_info *shinfo = skb_shinfo(skb);
- 	const struct sk_buff *iter;
--	unsigned int hlen;
--
--	hlen = skb_gso_network_seglen(skb);
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -4600,6 +4600,11 @@ static void __perf_event_period(struct p
+ 	}
+ }
  
- 	if (shinfo->gso_size != GSO_BY_FRAGS)
--		return hlen <= mtu;
-+		return seg_len <= max_len;
++static int perf_event_check_period(struct perf_event *event, u64 value)
++{
++	return event->pmu->check_period(event, value);
++}
++
+ static int perf_event_period(struct perf_event *event, u64 __user *arg)
+ {
+ 	u64 value;
+@@ -4616,6 +4621,9 @@ static int perf_event_period(struct perf
+ 	if (event->attr.freq && value > sysctl_perf_event_sample_rate)
+ 		return -EINVAL;
  
- 	/* Undo this so we can re-use header sizes */
--	hlen -= GSO_BY_FRAGS;
-+	seg_len -= GSO_BY_FRAGS;
++	if (perf_event_check_period(event, value))
++		return -EINVAL;
++
+ 	event_function_call(event, __perf_event_period, &value);
  
- 	skb_walk_frags(skb, iter) {
--		if (hlen + skb_headlen(iter) > mtu)
-+		if (seg_len + skb_headlen(iter) > max_len)
- 			return false;
+ 	return 0;
+@@ -8622,6 +8630,11 @@ static int perf_pmu_nop_int(struct pmu *
+ 	return 0;
+ }
+ 
++static int perf_event_nop_int(struct perf_event *event, u64 value)
++{
++	return 0;
++}
++
+ static DEFINE_PER_CPU(unsigned int, nop_txn_flags);
+ 
+ static void perf_pmu_start_txn(struct pmu *pmu, unsigned int flags)
+@@ -8944,6 +8957,9 @@ got_cpu_context:
+ 		pmu->pmu_disable = perf_pmu_nop_void;
  	}
  
- 	return true;
- }
++	if (!pmu->check_period)
++		pmu->check_period = perf_event_nop_int;
 +
-+/**
-+ * skb_gso_validate_mtu - Return in case such skb fits a given MTU
-+ *
-+ * @skb: GSO skb
-+ * @mtu: MTU to validate against
-+ *
-+ * skb_gso_validate_mtu validates if a given skb will fit a wanted MTU
-+ * once split.
-+ */
-+bool skb_gso_validate_mtu(const struct sk_buff *skb, unsigned int mtu)
-+{
-+	return skb_gso_size_check(skb, skb_gso_network_seglen(skb), mtu);
-+}
- EXPORT_SYMBOL_GPL(skb_gso_validate_mtu);
+ 	if (!pmu->event_idx)
+ 		pmu->event_idx = perf_event_idx_default;
  
-+/**
-+ * skb_gso_validate_mac_len - Will a split GSO skb fit in a given length?
-+ *
-+ * @skb: GSO skb
-+ * @len: length to validate against
-+ *
-+ * skb_gso_validate_mac_len validates if a given skb will fit a wanted
-+ * length once split, including L2, L3 and L4 headers and the payload.
-+ */
-+bool skb_gso_validate_mac_len(const struct sk_buff *skb, unsigned int len)
-+{
-+	return skb_gso_size_check(skb, skb_gso_mac_seglen(skb), len);
-+}
-+EXPORT_SYMBOL_GPL(skb_gso_validate_mac_len);
-+
- static struct sk_buff *skb_reorder_vlan_header(struct sk_buff *skb)
- {
- 	int mac_len;
-diff --git a/net/sched/sch_tbf.c b/net/sched/sch_tbf.c
-index b3f7980b0f27..d646aa770ac8 100644
---- a/net/sched/sch_tbf.c
-+++ b/net/sched/sch_tbf.c
-@@ -142,16 +142,6 @@ static u64 psched_ns_t2l(const struct psched_ratecfg *r,
- 	return len;
- }
- 
--/*
-- * Return length of individual segments of a gso packet,
-- * including all headers (MAC, IP, TCP/UDP)
-- */
--static unsigned int skb_gso_mac_seglen(const struct sk_buff *skb)
--{
--	unsigned int hdr_len = skb_transport_header(skb) - skb_mac_header(skb);
--	return hdr_len + skb_gso_transport_seglen(skb);
--}
--
- /* GSO packet is too big, segment it so that tbf can transmit
-  * each segment in time
-  */
--- 
-2.19.1
-
 
 
