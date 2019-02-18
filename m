@@ -2,519 +2,192 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1353C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C92C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:17:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CB96218D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:07:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="oV/I+WAX"
+	by mail.kernel.org (Postfix) with ESMTP id 95AA7208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:17:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728371AbfBRDHR (ORCPT
+        id S1728480AbfBRDRf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 22:07:17 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:53499 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727602AbfBRDHQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 22:07:16 -0500
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id x1I373G9002054;
-        Mon, 18 Feb 2019 12:07:03 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x1I373G9002054
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1550459224;
-        bh=L1XqnuV2cGGvBiG0SVgjTsCI6UzRnL93ImGl029cLDk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=oV/I+WAXB1zy02vmAIWtqw7rh8jMe65ifQDEwFnLNU1TJeTr8jT4B+kmLkxO3iBR8
-         gmS1zOWcCGxEeLEVK+1P7MUvSy+4n+4jX20kQAcdwLoA7u4GcpgvWv4HStZ3OS2lfI
-         PUp4nHFDt2MSNui/EnDlWml9ge+KlRxTw972u9LlI3nHJvazmiaDktT+JX+sZgo/Dk
-         Aw9lgvVCWtj2y02FlGA2/S8huvsU/10fkf/kCZu4c+970LFC/k6LDP0ezw/B0Orvef
-         X0+VuWhvw41ecUoZtuNgJNFdvExAKyPtj7DoLvgZv4LtMbopHwfp0ygRw4PcyUObyy
-         SJTYI7ZJkfzKg==
-X-Nifty-SrcIP: [209.85.217.45]
-Received: by mail-vs1-f45.google.com with SMTP id e10so8839742vsp.1;
-        Sun, 17 Feb 2019 19:07:03 -0800 (PST)
-X-Gm-Message-State: AHQUAubVJNfDbUCQnuBL94M9I54g7WOstpXtniTRr0NCP63sNJORll0s
-        Rj08BEAdtnagIjjtE3rQgHKjJN8nX6S57pPWyf8=
-X-Google-Smtp-Source: AHgI3IZP1tz9IqvvhKD2DfnRrqwr0wKKUIUAasZvJEoykVV0yrLIxihsfZA6Ss/p2qrtVaeCIRhXa9zJt0BqIwg1SYs=
-X-Received: by 2002:a67:c913:: with SMTP id w19mr10824086vsk.179.1550459222293;
- Sun, 17 Feb 2019 19:07:02 -0800 (PST)
+        Sun, 17 Feb 2019 22:17:35 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45924 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728052AbfBRDRe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 22:17:34 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 76F69C03DFE1;
+        Mon, 18 Feb 2019 03:17:33 +0000 (UTC)
+Received: from localhost (ovpn-12-45.pek2.redhat.com [10.72.12.45])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 792491024965;
+        Mon, 18 Feb 2019 03:17:32 +0000 (UTC)
+Date:   Mon, 18 Feb 2019 11:17:29 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
+        Mike Travis <travis@sgi.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>
+Subject: Re: [PATCH v3 1/6] x86/mm/KASLR: Improve code comments about struct
+ kaslr_memory_region
+Message-ID: <20190218031729.GG14858@MiWiFi-R3L-srv>
+References: <20190216140008.28671-1-bhe@redhat.com>
+ <20190216140008.28671-2-bhe@redhat.com>
+ <CAGXu5j+MUrt70E6YiwM0QWOQxQeU9+rY7UPvuDrASne1pkCZLA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190213174005.28785-1-hch@lst.de> <20190213174005.28785-11-hch@lst.de>
-In-Reply-To: <20190213174005.28785-11-hch@lst.de>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 18 Feb 2019 12:06:26 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARo5Sd-2rpHtFMfxEuEUej4P8oSbUdV+-EBp+V8qU+Gww@mail.gmail.com>
-Message-ID: <CAK7LNARo5Sd-2rpHtFMfxEuEUej4P8oSbUdV+-EBp+V8qU+Gww@mail.gmail.com>
-Subject: Re: [PATCH 10/11] lib: consolidate the GENERIC_HWEIGHT symbol
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-xtensa@linux-xtensa.org,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5j+MUrt70E6YiwM0QWOQxQeU9+rY7UPvuDrASne1pkCZLA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 18 Feb 2019 03:17:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 2:41 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> Introduce a new ARCH_HAS_HWEIGHT symbol for alpha and ia64,
+On 02/17/19 at 09:07am, Kees Cook wrote:
+> > diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+> > index 3f452ffed7e9..d7c6e4e8e48e 100644
+> > --- a/arch/x86/mm/kaslr.c
+> > +++ b/arch/x86/mm/kaslr.c
+> > @@ -42,10 +42,59 @@
+> >  static const unsigned long vaddr_end = CPU_ENTRY_AREA_BASE;
+> >
+> >  /*
+> > - * Memory regions randomized by KASLR (except modules that use a separate logic
+> > - * earlier during boot). The list is ordered based on virtual addresses. This
+> > - * order is kept after randomization.
+> > + * 'struct kasl_memory_region' entries represent continuous chunks of
+> 
+> Typo: struct kaslr_memory_region
+
+Will change.
+
+Thanks for reviewing this patchset and great suggestions.
+
+> 
+> Also, while you're rewriting this, how about putting it in full
+> kern-doc format? (You're already using the "@field" style...) I think
+> you just need the "/**" header...
+
+Sure, will update.
+
+> 
+> /**
+>  * struct name.... - short description...
+> 
+> > + * kernel virtual memory regions, to be randomized by KASLR.
+> > + *
+> > + * ( The exception is the module space virtual memory window which
+> > + *   uses separate logic earlier during bootup. )
+> > + *
+> > + * Currently there are three such regions: the physical memory mapping,
+> > + * vmalloc and vmemmap regions.
+> > + *
+> > + * The array below has the entries ordered based on virtual addresses.
+> > + * The order is kept after randomization, i.e. the randomized
+> > + * virtual addresses of these regions are still ascending.
+> > + *
+> > + * Here are the fields:
+> > + *
+> > + * @base: points to a global variable used by the MM to get the
+> > + * virtual base address of any of the above regions. This allows the
+> > + * early KASLR code to modify these base addresses early during bootup,
+> > + * on a per bootup basis, without the MM code even being aware of whether
+> > + * it got changed and to what value.
+> > + *
+> > + * When KASLR is active then the MM code makes sure that for each region
+> > + * there's such a single, dynamic, global base address 'unsigned long'
+> > + * variable available for the KASLR code to point to and modify directly:
+> > + *
+> > + *     { &page_offset_base, 0 },
+> > + *     { &vmalloc_base,     0 },
+> > + *     { &vmemmap_base,     1 },
+> > + *
+> > + * @size_tb: size in TB of each memory region. Thereinto, the size of
+> 
+> nit: "Thereinto" is odd. I'd say "Therefore".
+
+Will replace it with 'Therefore'.
+
+> 
+> > + * the physical memory mapping region is variable, calculated according
+> > + * to the actual size of system RAM in order to save more space for
+> > + * randomization. The rest are fixed values related to paging mode.
+> > + *
+> > + * @size_tb: is the size of each memory region after randomization, and
+> > + * its unit is TB.
+> 
+> Redundant lines?
+
+I added it on purpose to stress these regions and their sizes, can
+remove this line. Or edit it like:
 
 
-I think this is really confusing.
+* @size_tb: is the size of each memory region after randomization, and
+* its unit is TB:
+*     Physical memory mapping: (actual RAM size + 10 TB padding)
+*     Vmalloc: 32 TB
+*     Vmemmap: 1 TB
 
+> 
+> > + *
+> > + * Physical memory mapping: (actual RAM size + 10 TB padding)
+> > + * Vmalloc: 32 TB
+> > + * Vmemmap: 1 TB
+> > + *
+> > + * When randomize the layout, their order are kept, still the physical
+> > + * memory mapping region is handled fistly, next vmalloc and vmemmap.
+> 
+> typo: "first"
 
-"ARCH has its own optimized hweight implementation"
+Will change.
 
-   is not equivalent to
+> 
+> > + * E.g the physical memory region, we limit the starting address to be
+> > + * taken from the 1st 1/3 part of the whole available virtual address
+> > + * space which is from 0xffff880000000000 to 0xfffffe0000000000, namely
+> > + * the original starting address of the physical memory mapping region
+> > + * to the starting address of cpu_entry_area mapping region. Once a random
+> > + * address is chosen for the physical memory mapping, we jump over the
+> > + * region and add 1G to begin the next region handling with the remaining
+> > + * available space.
+> 
+> Should the "operation" comments (rather than the struct field
+> comments) be moved to the start of the kernel_randomize_memory()
+> function instead?
 
-"ARCH does not need generic hweight at all".
+This paragraph is used to describe the order in which regions are
+handled, incidentally give an example to detail it. Since struct
+kasl_memory_region is the core and only data KASLR handled, put it here.
 
-
-For example, see
-
-arch/powerpc/lib/hweight_64.S
-
-
-As far as I understood the code,
-it will fallback to generic lib/hweight.c
-if it turns out the optimized one is not available.
-
-
-Thanks.
-
-
-> and just
-> default to the generic version otherwise.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  arch/alpha/Kconfig      | 5 +----
->  arch/arc/Kconfig        | 3 ---
->  arch/arm/Kconfig        | 4 ----
->  arch/arm64/Kconfig      | 3 ---
->  arch/c6x/Kconfig        | 3 ---
->  arch/csky/Kconfig       | 3 ---
->  arch/h8300/Kconfig      | 3 ---
->  arch/hexagon/Kconfig    | 3 ---
->  arch/ia64/Kconfig       | 1 +
->  arch/m68k/Kconfig       | 4 ----
->  arch/microblaze/Kconfig | 3 ---
->  arch/mips/Kconfig       | 4 ----
->  arch/nds32/Kconfig      | 3 ---
->  arch/nios2/Kconfig      | 3 ---
->  arch/openrisc/Kconfig   | 3 ---
->  arch/parisc/Kconfig     | 4 ----
->  arch/powerpc/Kconfig    | 4 ----
->  arch/riscv/Kconfig      | 3 ---
->  arch/s390/Kconfig       | 3 ---
->  arch/sh/Kconfig         | 3 ---
->  arch/sparc/Kconfig      | 4 ----
->  arch/unicore32/Kconfig  | 3 ---
->  arch/x86/Kconfig        | 3 ---
->  arch/x86/um/Kconfig     | 3 ---
->  arch/xtensa/Kconfig     | 3 ---
->  lib/Kconfig             | 7 +++++++
->  26 files changed, 9 insertions(+), 79 deletions(-)
->
-> diff --git a/arch/alpha/Kconfig b/arch/alpha/Kconfig
-> index 65b5514e5a7f..a549c53563e8 100644
-> --- a/arch/alpha/Kconfig
-> +++ b/arch/alpha/Kconfig
-> @@ -2,6 +2,7 @@
->  config ALPHA
->         bool
->         default y
-> +       select ARCH_HAS_HWEIGHT if ALPHA_EV67
->         select ARCH_MIGHT_HAVE_PC_PARPORT
->         select ARCH_MIGHT_HAVE_PC_SERIO
->         select ARCH_NO_PREEMPT
-> @@ -446,10 +447,6 @@ config ALPHA_IRONGATE
->         depends on ALPHA_NAUTILUS
->         default y
->
-> -config GENERIC_HWEIGHT
-> -       bool
-> -       default y if !ALPHA_EV67
-> -
->  config ALPHA_AVANTI
->         bool
->         depends on ALPHA_XL || ALPHA_AVANTI_CH
-> diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-> index 6476404b98b8..8bf4c0f7cc1d 100644
-> --- a/arch/arc/Kconfig
-> +++ b/arch/arc/Kconfig
-> @@ -72,9 +72,6 @@ config MMU
->  config NO_IOPORT_MAP
->         def_bool y
->
-> -config GENERIC_HWEIGHT
-> -       def_bool y
-> -
->  config HAVE_ARCH_TRANSPARENT_HUGEPAGE
->         def_bool y
->         depends on ARC_MMU_V4
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index c230fb1e09ba..b47825767e3d 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -182,10 +182,6 @@ config ARCH_HAS_BANDGAP
->  config FIX_EARLYCON_MEM
->         def_bool y if MMU
->
-> -config GENERIC_HWEIGHT
-> -       bool
-> -       default y
-> -
->  config ARCH_MAY_HAVE_PC_FDC
->         bool
->
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 7cc3334aba29..98c3776ccf6b 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -237,9 +237,6 @@ config ILLEGAL_POINTER_VALUE
->         hex
->         default 0xdead000000000000
->
-> -config GENERIC_HWEIGHT
-> -       def_bool y
-> -
->  config ZONE_DMA32
->         def_bool y
->
-> diff --git a/arch/c6x/Kconfig b/arch/c6x/Kconfig
-> index 19b145ef7d92..c439d2f46af0 100644
-> --- a/arch/c6x/Kconfig
-> +++ b/arch/c6x/Kconfig
-> @@ -28,9 +28,6 @@ config MMU
->  config FPU
->         def_bool n
->
-> -config GENERIC_HWEIGHT
-> -       def_bool y
-> -
->  config C6X_BIG_KERNEL
->         bool "Build a big kernel"
->         help
-> diff --git a/arch/csky/Kconfig b/arch/csky/Kconfig
-> index c0a49cbd3df0..14a9905e99a4 100644
-> --- a/arch/csky/Kconfig
-> +++ b/arch/csky/Kconfig
-> @@ -84,9 +84,6 @@ config CPU_NO_USER_BKPT
->           instruction exception.
->           In kernel we parse the *regs->pc to determine whether to send SIGTRAP or not.
->
-> -config GENERIC_HWEIGHT
-> -       def_bool y
-> -
->  config MMU
->         def_bool y
->
-> diff --git a/arch/h8300/Kconfig b/arch/h8300/Kconfig
-> index 4f5a1efab822..77ce104bb42e 100644
-> --- a/arch/h8300/Kconfig
-> +++ b/arch/h8300/Kconfig
-> @@ -27,9 +27,6 @@ config H8300
->  config CPU_BIG_ENDIAN
->         def_bool y
->
-> -config GENERIC_HWEIGHT
-> -       def_bool y
-> -
->  config NO_IOPORT_MAP
->         def_bool y
->
-> diff --git a/arch/hexagon/Kconfig b/arch/hexagon/Kconfig
-> index 7a01f4c5a4f6..fb2996063d5a 100644
-> --- a/arch/hexagon/Kconfig
-> +++ b/arch/hexagon/Kconfig
-> @@ -61,9 +61,6 @@ config MMU
->  config GENERIC_IRQ_PROBE
->         def_bool y
->
-> -config GENERIC_HWEIGHT
-> -       def_bool y
-> -
->  menu "Machine selection"
->
->  choice
-> diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
-> index fc44c046953e..c9eb106b1f4c 100644
-> --- a/arch/ia64/Kconfig
-> +++ b/arch/ia64/Kconfig
-> @@ -8,6 +8,7 @@ menu "Processor type and features"
->
->  config IA64
->         bool
-> +       select ARCH_HAS_HWEIGHT
->         select ARCH_MIGHT_HAVE_PC_PARPORT
->         select ARCH_MIGHT_HAVE_PC_SERIO
->         select ACPI if (!IA64_HP_SIM)
-> diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-> index 1bf6abaea604..91b150b6572c 100644
-> --- a/arch/m68k/Kconfig
-> +++ b/arch/m68k/Kconfig
-> @@ -38,10 +38,6 @@ config ARCH_HAS_ILOG2_U32
->  config ARCH_HAS_ILOG2_U64
->         bool
->
-> -config GENERIC_HWEIGHT
-> -       bool
-> -       default y
-> -
->  config TIME_LOW_RES
->         bool
->         default y
-> diff --git a/arch/microblaze/Kconfig b/arch/microblaze/Kconfig
-> index d8907d6f969c..0185ac1f0268 100644
-> --- a/arch/microblaze/Kconfig
-> +++ b/arch/microblaze/Kconfig
-> @@ -71,9 +71,6 @@ config ARCH_HAS_ILOG2_U32
->  config ARCH_HAS_ILOG2_U64
->         def_bool n
->
-> -config GENERIC_HWEIGHT
-> -       def_bool y
-> -
->  source "arch/microblaze/Kconfig.platform"
->
->  menu "Processor type and features"
-> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-> index bd0c9be7e7cf..04e041cac595 100644
-> --- a/arch/mips/Kconfig
-> +++ b/arch/mips/Kconfig
-> @@ -1042,10 +1042,6 @@ source "arch/mips/paravirt/Kconfig"
->
->  endmenu
->
-> -config GENERIC_HWEIGHT
-> -       bool
-> -       default y
-> -
->  config SCHED_OMIT_FRAME_POINTER
->         bool
->         default y
-> diff --git a/arch/nds32/Kconfig b/arch/nds32/Kconfig
-> index 7b3a36705aa8..979661f0ab51 100644
-> --- a/arch/nds32/Kconfig
-> +++ b/arch/nds32/Kconfig
-> @@ -50,9 +50,6 @@ config NDS32
->         help
->           Andes(nds32) Linux support.
->
-> -config GENERIC_HWEIGHT
-> -        def_bool y
-> -
->  config GENERIC_LOCKBREAK
->          def_bool y
->         depends on PREEMPT
-> diff --git a/arch/nios2/Kconfig b/arch/nios2/Kconfig
-> index 11ef63217ebe..a0485f5f0db0 100644
-> --- a/arch/nios2/Kconfig
-> +++ b/arch/nios2/Kconfig
-> @@ -27,9 +27,6 @@ config NIOS2
->         select CPU_NO_EFFICIENT_FFS
->         select ARCH_DISCARD_MEMBLOCK
->
-> -config GENERIC_HWEIGHT
-> -       def_bool y
-> -
->  config NO_IOPORT_MAP
->         def_bool y
->
-> diff --git a/arch/openrisc/Kconfig b/arch/openrisc/Kconfig
-> index 15d7df402c19..dc026973e6f6 100644
-> --- a/arch/openrisc/Kconfig
-> +++ b/arch/openrisc/Kconfig
-> @@ -46,9 +46,6 @@ config CPU_BIG_ENDIAN
->  config MMU
->         def_bool y
->
-> -config GENERIC_HWEIGHT
-> -       def_bool y
-> -
->  config NO_IOPORT_MAP
->         def_bool y
->
-> diff --git a/arch/parisc/Kconfig b/arch/parisc/Kconfig
-> index 42282b8e086d..7d5ded83c180 100644
-> --- a/arch/parisc/Kconfig
-> +++ b/arch/parisc/Kconfig
-> @@ -86,10 +86,6 @@ config ARCH_HAS_ILOG2_U64
->         bool
->         default n
->
-> -config GENERIC_HWEIGHT
-> -       bool
-> -       default y
-> -
->  config TIME_LOW_RES
->         bool
->         depends on SMP
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index a0e9207893c8..8dd4d2b24fdb 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -96,10 +96,6 @@ config GENERIC_LOCKBREAK
->         default y
->         depends on SMP && PREEMPT
->
-> -config GENERIC_HWEIGHT
-> -       bool
-> -       default y
-> -
->  config ARCH_HAS_DMA_SET_COHERENT_MASK
->          bool
->
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 2b173a48bdbc..0acdd7aaaaea 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -69,9 +69,6 @@ config PAGE_OFFSET
->         default 0xffffffff80000000 if 64BIT && MAXPHYSMEM_2GB
->         default 0xffffffe000000000 if 64BIT && MAXPHYSMEM_128GB
->
-> -config GENERIC_HWEIGHT
-> -       def_bool y
-> -
->  config PGTABLE_LEVELS
->         int
->         default 3 if 64BIT
-> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-> index 2a5c12be633e..9a25e19364f5 100644
-> --- a/arch/s390/Kconfig
-> +++ b/arch/s390/Kconfig
-> @@ -14,9 +14,6 @@ config ARCH_HAS_ILOG2_U32
->  config ARCH_HAS_ILOG2_U64
->         def_bool n
->
-> -config GENERIC_HWEIGHT
-> -       def_bool y
-> -
->  config GENERIC_LOCKBREAK
->         def_bool y if SMP && PREEMPT
->
-> diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
-> index 3d0bd7fbe11a..af6a40af1702 100644
-> --- a/arch/sh/Kconfig
-> +++ b/arch/sh/Kconfig
-> @@ -94,9 +94,6 @@ config ARCH_DEFCONFIG
->         default "arch/sh/configs/shx3_defconfig" if SUPERH32
->         default "arch/sh/configs/cayman_defconfig" if SUPERH64
->
-> -config GENERIC_HWEIGHT
-> -       def_bool y
-> -
->  config GENERIC_LOCKBREAK
->         def_bool y
->         depends on SMP && PREEMPT
-> diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
-> index 58270c021b01..78135ac357ed 100644
-> --- a/arch/sparc/Kconfig
-> +++ b/arch/sparc/Kconfig
-> @@ -187,10 +187,6 @@ config NR_CPUS
->
->  source "kernel/Kconfig.hz"
->
-> -config GENERIC_HWEIGHT
-> -       bool
-> -       default y
-> -
->  config ARCH_MAY_HAVE_PC_FDC
->         bool
->         default y
-> diff --git a/arch/unicore32/Kconfig b/arch/unicore32/Kconfig
-> index 9de1d983a99a..e69a8c3232e1 100644
-> --- a/arch/unicore32/Kconfig
-> +++ b/arch/unicore32/Kconfig
-> @@ -38,9 +38,6 @@ config ARCH_HAS_ILOG2_U32
->  config ARCH_HAS_ILOG2_U64
->         bool
->
-> -config GENERIC_HWEIGHT
-> -       def_bool y
-> -
->  config ARCH_MAY_HAVE_PC_FDC
->         bool
->
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index f4cb31174e1b..7a9347c7448e 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -255,9 +255,6 @@ config GENERIC_ISA_DMA
->         def_bool y
->         depends on ISA_DMA_API
->
-> -config GENERIC_HWEIGHT
-> -       def_bool y
-> -
->  config ARCH_MAY_HAVE_PC_FDC
->         def_bool y
->         depends on ISA_DMA_API
-> diff --git a/arch/x86/um/Kconfig b/arch/x86/um/Kconfig
-> index f5a8cded3ca4..1628a54af003 100644
-> --- a/arch/x86/um/Kconfig
-> +++ b/arch/x86/um/Kconfig
-> @@ -49,6 +49,3 @@ config ARCH_HAS_SC_SIGNALS
->
->  config ARCH_REUSE_HOST_VSYSCALL_AREA
->         def_bool !64BIT
-> -
-> -config GENERIC_HWEIGHT
-> -       def_bool y
-> diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
-> index d02c25184ca0..ff57afdeda04 100644
-> --- a/arch/xtensa/Kconfig
-> +++ b/arch/xtensa/Kconfig
-> @@ -47,9 +47,6 @@ config XTENSA
->           with reasonable minimum requirements.  The Xtensa Linux project has
->           a home page at <http://www.linux-xtensa.org/>.
->
-> -config GENERIC_HWEIGHT
-> -       def_bool y
-> -
->  config ARCH_HAS_ILOG2_U32
->         def_bool n
->
-> diff --git a/lib/Kconfig b/lib/Kconfig
-> index bd2e7e74c321..91019f26d0a8 100644
-> --- a/lib/Kconfig
-> +++ b/lib/Kconfig
-> @@ -35,6 +35,13 @@ config RATIONAL
->  config GENERIC_CSUM
->         bool
->
-> +config ARCH_HAS_HWEIGHT
-> +       bool
-> +
-> +config GENERIC_HWEIGHT
-> +       default y if !ARCH_HAS_HWEIGHT
-> +       bool
-> +
->  config GENERIC_STRNCPY_FROM_USER
->         bool
->
-> --
-> 2.20.1
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
-
-
-
---
-Best Regards
-Masahiro Yamada
+> 
+> -Kees
+> 
+> >   */
+> > +
+> >  static __initdata struct kaslr_memory_region {
+> >         unsigned long *base;
+> >         unsigned long size_tb;
+> > --
+> > 2.17.2
+> >
+> 
+> 
+> -- 
+> Kees Cook
