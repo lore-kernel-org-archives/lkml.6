@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E76C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD60C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:58:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AF10217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:58:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C1672077B
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:58:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498318;
-	bh=gt8js6bW8WLLjEi5Zh3UB7HXo/ikp0tVHO9urK7YR1c=;
+	s=default; t=1550498321;
+	bh=hIulLO6j04JflVdat8kjuLBKzOqoD5O+9INfDw8Gbx4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ijzS1/dRQ1oEJbcmp0vHRDMafTz5kZkZHaiEwz+CV7LphEuGp42mkFGyuaZvK0QeD
-	 uweuEPVoMZJZyWWnh48GfURa/rrJ7HKjdWzHsEjj96q5VG2o9SWEHSIrF7cqhv8QCL
-	 D7Nm/ub2CIUsHFesI+mbRSubx9Ravi9vYqIRR9NU=
+	b=Wn3LJmu/uWD4wjWHvHLo5Ru/iHOwLq4EWAgb6AOXFPsBPqgkoo/Z7ZSGuVXCXvZC9
+	 3Qmd19WLWAEWc5XsBF6z10+ppmhj4EZwy0WX4WZZu2iPmpPwnbq6KIkAYwh0KnUvCw
+	 LymXc2YWcgww6K1/XzIsaHKo6JottwvLp2c/kSQs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388396AbfBRN6g (ORCPT
+        id S2388410AbfBRN6j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:58:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39262 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:58:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388375AbfBRN6b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:58:31 -0500
+        id S2388399AbfBRN6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:58:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27B50217D9;
-        Mon, 18 Feb 2019 13:58:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32AD02077B;
+        Mon, 18 Feb 2019 13:58:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498310;
-        bh=gt8js6bW8WLLjEi5Zh3UB7HXo/ikp0tVHO9urK7YR1c=;
+        s=default; t=1550498316;
+        bh=hIulLO6j04JflVdat8kjuLBKzOqoD5O+9INfDw8Gbx4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W87+2bQZe8Cp46iGVYL+4yq8NCwPcjf4ywrTHwI5jMV/OCuehDGApOQa9M7qpluQU
-         Pu4Sm2rQDbP/zPYyKDU8IevoOK5/yoHn3FlPRbQa0Uu7vPWqcMlAXJZZPbBHfOmcQt
-         5DC0pWPj7KQFATqHsnAHv7HdXGunkgaCYHUX09aw=
+        b=noEqXP2Lbz4gfEar+zYuNpz6k2WFLW8zt2/vk6yb+maMYrV0SI54eMDtB97Bus9/Z
+         5gZpexC0MuBBfDlCiQK2GsXummQFHTDkMZgBMyeQUWkUD/ATtH/S3zerSb4eEtSZGH
+         zqnuGbj7P/lA+0btEwyNPy1JGCjOUSmUYj9w3x+w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 28/58] drm/bridge: tc358767: fix output H/V syncs
-Date:   Mon, 18 Feb 2019 14:43:49 +0100
-Message-Id: <20190218133510.768733485@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 30/58] ARM: dts: da850-lcdk: Correct the sound card name
+Date:   Mon, 18 Feb 2019 14:43:51 +0100
+Message-Id: <20190218133510.956779154@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133508.567416115@linuxfoundation.org>
 References: <20190218133508.567416115@linuxfoundation.org>
@@ -66,44 +65,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7923e09c7a766e2d58de7fc395bb84c18e5bc625 ]
+[ Upstream commit c25748acc5c20786ecb7518bfeae8fcef93472d6 ]
 
-The H and V syncs of the DP output are always set to active high. This
-patch fixes the syncs by configuring them according to the videomode.
+To avoid  the following error:
+asoc-simple-card sound: ASoC: Failed to create card debugfs directory
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-7-tomi.valkeinen@ti.com
+Which is because the card name contains '/' character, which can not be
+used in file or directory names.
+
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/bridge/tc358767.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/da850-lcdk.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index 16fa42984c50..fa3f2f039a74 100644
---- a/drivers/gpu/drm/bridge/tc358767.c
-+++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -96,6 +96,8 @@
- #define DP0_STARTVAL		0x064c
- #define DP0_ACTIVEVAL		0x0650
- #define DP0_SYNCVAL		0x0654
-+#define SYNCVAL_HS_POL_ACTIVE_LOW	(1 << 15)
-+#define SYNCVAL_VS_POL_ACTIVE_LOW	(1 << 31)
- #define DP0_MISC		0x0658
- #define TU_SIZE_RECOMMENDED		(63) /* LSCLK cycles per TU */
- #define BPC_6				(0 << 5)
-@@ -724,7 +726,9 @@ static int tc_set_video_mode(struct tc_data *tc, struct drm_display_mode *mode)
+diff --git a/arch/arm/boot/dts/da850-lcdk.dts b/arch/arm/boot/dts/da850-lcdk.dts
+index 7b8ab21fed6c..920e64cdb673 100644
+--- a/arch/arm/boot/dts/da850-lcdk.dts
++++ b/arch/arm/boot/dts/da850-lcdk.dts
+@@ -26,7 +26,7 @@
  
- 	tc_write(DP0_ACTIVEVAL, (mode->vdisplay << 16) | (mode->hdisplay));
- 
--	tc_write(DP0_SYNCVAL, (vsync_len << 16) | (hsync_len << 0));
-+	tc_write(DP0_SYNCVAL, (vsync_len << 16) | (hsync_len << 0) |
-+		 ((mode->flags & DRM_MODE_FLAG_NHSYNC) ? SYNCVAL_HS_POL_ACTIVE_LOW : 0) |
-+		 ((mode->flags & DRM_MODE_FLAG_NVSYNC) ? SYNCVAL_VS_POL_ACTIVE_LOW : 0));
- 
- 	tc_write(DPIPXLFMT, VS_POL_ACTIVE_LOW | HS_POL_ACTIVE_LOW |
- 		 DE_POL_ACTIVE_HIGH | SUB_CFG_TYPE_CONFIG1 | DPI_BPP_RGB888);
+ 	sound {
+ 		compatible = "simple-audio-card";
+-		simple-audio-card,name = "DA850/OMAP-L138 LCDK";
++		simple-audio-card,name = "DA850-OMAPL138 LCDK";
+ 		simple-audio-card,widgets =
+ 			"Line", "Line In",
+ 			"Line", "Line Out";
 -- 
 2.19.1
 
