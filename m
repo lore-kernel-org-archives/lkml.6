@@ -4,96 +4,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F9BC4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 06:03:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 762A7C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 06:09:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C866218C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 06:03:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A7AA218C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 06:09:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="YYo8l7fA"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="JdzuboHy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728125AbfBRGDU (ORCPT
+        id S1726395AbfBRGJV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 01:03:20 -0500
-Received: from conuserg-07.nifty.com ([210.131.2.74]:23763 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726286AbfBRGDU (ORCPT
+        Mon, 18 Feb 2019 01:09:21 -0500
+Received: from conuserg-09.nifty.com ([210.131.2.76]:56512 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725852AbfBRGJV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 01:03:20 -0500
+        Mon, 18 Feb 2019 01:09:21 -0500
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id x1I617hQ006910;
-        Mon, 18 Feb 2019 15:01:09 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x1I617hQ006910
+        by conuserg-09.nifty.com with ESMTP id x1I68mT5029459;
+        Mon, 18 Feb 2019 15:08:48 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com x1I68mT5029459
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1550469670;
-        bh=qOxNgKzvwDnjG50PQePnvnPUqjWVkaPbhPq17iGF30M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YYo8l7fAwJT/nx0ArY/No5xP16LoQ3HbWUe2PSY3OXR7minn3wmrACWbJVQP46EUb
-         ZswDcrb30TOQbhhfqbbx39fmJqILnNiRlBjFFFthNsUROoQWh4+5NUjxxWz5dQp8iQ
-         l9688rRodF0N+Lq0e3BwZWksHw4xCOHZgSmkr5XIpqrzUlPYuTLBNhcbfgYGes8aLK
-         W3cpwF7az8tkzQR+R+c1Voco6bX3GzYy/SDYEBPyU4+uh82DDlhL0B305UuXV7B5M8
-         ePYFGl65I1Ti0kcbqewERUBfr/MYJWpmLu96A7NbMyHSnE/Czm/M22YmBHwAl9H2Sk
-         MTI3qGDusKrlw==
+        s=dec2015msa; t=1550470128;
+        bh=RRs7iTOqt6oCNZE8ATx0fL2NncDfzADyNLizR6ngoOM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=JdzuboHyr8fARcNsPeIMRTGmnpltNU0H6EYxzI4WS/WlvGWo4K26x3ChgbYTS2P7r
+         PxHPHwZ5hohxQhsnddB8geaw8T8Bygw1/6ewW2JkSUjKZyi+ivuVBLvJD5IaDiw8uE
+         5bEBGW8hH0njuTcy1np6iJboPOt7uRc6KTqqcBpo2w60WHsKOs/b0dXTT9PPKv+Ugt
+         X9BQh+Snkg0oSInQgxZxz8jhQ/bs8sxqUswBjkghH2IzbEEpG9EFQ04+8mx+EEWvs1
+         UJBBWvKns6ZgrP+g/s2/LdKnTfOm+QWTSpr5FbPYuHvqusyQg/rBcYr0nWJCIk62gs
+         ENnGhW/A+cOiA==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Cc:     Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, Felix Fietkau <nbd@nbd.name>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Subject: [PATCH 1/2] wireless: mt76: call hweight8() instead of __sw_hweight8()
-Date:   Mon, 18 Feb 2019 14:59:30 +0900
-Message-Id: <1550469571-25933-2-git-send-email-yamada.masahiro@socionext.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] regulator: core: remove unused rdev_get_supply()
+Date:   Mon, 18 Feb 2019 15:08:38 +0900
+Message-Id: <1550470118-26648-1-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1550469571-25933-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1550469571-25933-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__sw_hweight8() is just internal implementation.
-
-Drivers should use the common API, hweight8().
+This is a remnant of commit 70a7fb80e85a ("regulator: core: Fix nested
+locking of supplies").
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
-This patch should go to x86 tree along with 2/2.
+ drivers/regulator/core.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-Otherwise, all{yes,mod}config of x86 would be broken.
-
-This patch is trivial enough.
-I want ACK from the net/wireless maintainer
-so that this can go in via x86 tree.
-
-
- drivers/net/wireless/mediatek/mt76/mac80211.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/mediatek/mt76/mac80211.c b/drivers/net/wireless/mediatek/mt76/mac80211.c
-index 7b926df..c42e0d3 100644
---- a/drivers/net/wireless/mediatek/mt76/mac80211.c
-+++ b/drivers/net/wireless/mediatek/mt76/mac80211.c
-@@ -124,7 +124,7 @@ static void mt76_init_stream_cap(struct mt76_dev *dev,
- 				 bool vht)
- {
- 	struct ieee80211_sta_ht_cap *ht_cap = &sband->ht_cap;
--	int i, nstream = __sw_hweight8(dev->antenna_mask);
-+	int i, nstream = hweight8(dev->antenna_mask);
- 	struct ieee80211_sta_vht_cap *vht_cap;
- 	u16 mcs_map = 0;
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index b9d7b45..bc25a17 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -145,14 +145,6 @@ static bool regulator_ops_is_valid(struct regulator_dev *rdev, int ops)
+ 	return false;
+ }
  
+-static inline struct regulator_dev *rdev_get_supply(struct regulator_dev *rdev)
+-{
+-	if (rdev && rdev->supply)
+-		return rdev->supply->rdev;
+-
+-	return NULL;
+-}
+-
+ /**
+  * regulator_lock_nested - lock a single regulator
+  * @rdev:		regulator source
 -- 
 2.7.4
 
