@@ -4,65 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6882C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 843B0C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:50:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99D6B2177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:50:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57F8F217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:50:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550515837;
-	bh=9lWJY3aZWr6YBk9u3ZAv4XZIA/7VvI/gSHDFzob2frQ=;
+	s=default; t=1550515845;
+	bh=NuHeaDMfTX2psv2L9dqhSkTSVcTTO8pFjHXTaB54uPw=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=bI8Nb1nvrc9mzRz2+8WQ3Y/RLvyppzWalNi35HhkSA3qn+WMOVmhCxNtPdvwghriF
-	 oiih75zPdmD97X2/v1qp+cd1BbnS48PgktLCEmIUb5PsGfqosYMLsnoSWLBTfOfSlf
-	 1xhxprDuZKadsh/xVNUgkqx9okHxF1RZ8Ks8QlF0=
+	b=pNEM2GtXjQfErnl3nM6x37ljDQUqX0xzHZIaJsMCCfd4IAdjpGrjhuzVrzuORashV
+	 6H73gELVNmW3tduo+Of68aBctubN1oGeN9Ad3Tigce8zYRrH4zs0Vq2JWbL0t/mEmQ
+	 zMwHryNuDLzWFwjmMd9qpgztuuRbiqwiEVPTYSTs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbfBRSto (ORCPT
+        id S1727356AbfBRSul (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:49:44 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42018 "EHLO
+        Mon, 18 Feb 2019 13:50:41 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42052 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726272AbfBRStk (ORCPT
+        with ESMTP id S1725832AbfBRStm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:49:40 -0500
+        Mon, 18 Feb 2019 13:49:42 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=39BnjRBP3mAF1mj98V17S7lBxoprAgwGQFFxs8scGXw=; b=G0kq8j3fA/nT
-        WsohoCUvuOH3V2iTvkp3rNj/ClOXcSjW0TSr0qalCpXG1LLzr5+ohQbOjJ7Cs3iJnmJFwPSU9sU8a
-        dlPagFXxQz9tYBwYjZN+tKio7ezI1gXfn2jfHQRjCHpRBVXMaSkbEBPPeKhgNaPGrqKpQsHpZBupB
-        y6hTI=;
+        List-Archive; bh=kkcCCbEVAeopxo4OYLu/yuE6mrCwvwYeWMTMzA4rIBw=; b=Gb5WxoJ+A/j/
+        Xy4XX2bDGBAnunV/f4Xaq/o7jW4X8Zhu0yq3ukVIbl2DzvG3zjnHriHIKSEsNkbAgwoza1tYGtj34
+        Cm/3yAQjPdDJ6bz7Dqo3DNYt2NYl5aFz7P049DJLaK/aJUiSJJnWKx9X4VVIGO5eIwDjgHe5YvYri
+        3D4AQ=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gvnyg-0001dc-CQ; Mon, 18 Feb 2019 18:49:18 +0000
+        id 1gvnyw-0001en-2Q; Mon, 18 Feb 2019 18:49:34 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id CDEC21128008; Mon, 18 Feb 2019 18:49:17 +0000 (GMT)
+        id 433021128008; Mon, 18 Feb 2019 18:49:33 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Olivier Moysan <olivier.moysan@st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: stm32: sai: remove set but not used variables 'mask, cr1'" to the asoc tree
-In-Reply-To:  <20190218145026.142805-1-yuehaibing@huawei.com>
+To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Cc:     Mark Brown <broonie@kernel.org>, lars@metafoo.de,
+        lgirdwood@gmail.com, broonie@kernel.org,
+        alsa-devel@alsa-project.org, Codrin.Ciubotariu@microchip.com,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: codecs: ad193x: Add runtime support for DSP_A and I2S modes" to the asoc tree
+In-Reply-To:  <20190218160954.13929-5-codrin.ciubotariu@microchip.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190218184917.CDEC21128008@debutante.sirena.org.uk>
-Date:   Mon, 18 Feb 2019 18:49:17 +0000 (GMT)
+Message-Id: <20190218184933.433021128008@debutante.sirena.org.uk>
+Date:   Mon, 18 Feb 2019 18:49:33 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -70,7 +62,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: stm32: sai: remove set but not used variables 'mask, cr1'
+   ASoC: codecs: ad193x: Add runtime support for DSP_A and I2S modes
 
 has been applied to the asoc tree at
 
@@ -95,55 +87,66 @@ to this mail.
 Thanks,
 Mark
 
-From 70605450fd42060783b0072a61a30f42a74f2917 Mon Sep 17 00:00:00 2001
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 18 Feb 2019 14:50:26 +0000
-Subject: [PATCH] ASoC: stm32: sai: remove set but not used variables 'mask,
- cr1'
+From bccf9c7e14830af0004399d42d861b33c92eacff Mon Sep 17 00:00:00 2001
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Date: Mon, 18 Feb 2019 16:10:34 +0000
+Subject: [PATCH] ASoC: codecs: ad193x: Add runtime support for DSP_A and I2S
+ modes
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+The driver only supports DPS_A for DAC, which is configured at probe.
+This patch adds support for DSP_A and I2S modes by using the set_fmt()
+callback.
 
-sound/soc/stm/stm32_sai_sub.c: In function 'stm32_sai_configure_clock':
-sound/soc/stm/stm32_sai_sub.c:902:11: warning:
- variable 'mask' set but not used [-Wunused-but-set-variable]
-sound/soc/stm/stm32_sai_sub.c:902:6: warning:
- variable 'cr1' set but not used [-Wunused-but-set-variable]
+A trivial break is also removed from a case's default branch.
 
-It's not used any more after 8307b2afd386 ("ASoC: stm32: sai: set sai as
-mclk clock provider")
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/stm/stm32_sai_sub.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ sound/soc/codecs/ad193x.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
-index d4825700b63f..f9297228c41c 100644
---- a/sound/soc/stm/stm32_sai_sub.c
-+++ b/sound/soc/stm/stm32_sai_sub.c
-@@ -898,7 +898,7 @@ static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
- 				     struct snd_pcm_hw_params *params)
+diff --git a/sound/soc/codecs/ad193x.c b/sound/soc/codecs/ad193x.c
+index 315ec9775118..f8cf182518a3 100644
+--- a/sound/soc/codecs/ad193x.c
++++ b/sound/soc/codecs/ad193x.c
+@@ -188,23 +188,26 @@ static int ad193x_set_dai_fmt(struct snd_soc_dai *codec_dai,
  {
- 	struct stm32_sai_sub_data *sai = snd_soc_dai_get_drvdata(cpu_dai);
--	int cr1, mask, div = 0;
-+	int div = 0;
- 	int sai_clk_rate, mclk_ratio, den;
- 	unsigned int rate = params_rate(params);
+ 	struct ad193x_priv *ad193x = snd_soc_component_get_drvdata(codec_dai->component);
+ 	unsigned int adc_serfmt = 0;
++	unsigned int dac_serfmt = 0;
+ 	unsigned int adc_fmt = 0;
+ 	unsigned int dac_fmt = 0;
  
-@@ -943,10 +943,8 @@ static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
- 		} else {
- 			if (sai->mclk_rate) {
- 				mclk_ratio = sai->mclk_rate / rate;
--				if (mclk_ratio == 512) {
--					mask = SAI_XCR1_OSR;
--					cr1 = SAI_XCR1_OSR;
--				} else if (mclk_ratio != 256) {
-+				if ((mclk_ratio != 512) &&
-+				    (mclk_ratio != 256)) {
- 					dev_err(cpu_dai->dev,
- 						"Wrong mclk ratio %d\n",
- 						mclk_ratio);
+ 	/* At present, the driver only support AUX ADC mode(SND_SOC_DAIFMT_I2S
+-	 * with TDM) and ADC&DAC TDM mode(SND_SOC_DAIFMT_DSP_A)
++	 * with TDM), ADC&DAC TDM mode(SND_SOC_DAIFMT_DSP_A) and DAC I2S mode
++	 * (SND_SOC_DAIFMT_I2S)
+ 	 */
+ 	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+ 	case SND_SOC_DAIFMT_I2S:
+ 		adc_serfmt |= AD193X_ADC_SERFMT_TDM;
++		dac_serfmt |= AD193X_DAC_SERFMT_STEREO;
+ 		break;
+ 	case SND_SOC_DAIFMT_DSP_A:
+ 		adc_serfmt |= AD193X_ADC_SERFMT_AUX;
++		dac_serfmt |= AD193X_DAC_SERFMT_TDM;
+ 		break;
+ 	default:
+ 		if (ad193x_has_adc(ad193x))
+ 			return -EINVAL;
+-		break;
+ 	}
+ 
+ 	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
+@@ -261,6 +264,8 @@ static int ad193x_set_dai_fmt(struct snd_soc_dai *codec_dai,
+ 		regmap_update_bits(ad193x->regmap, AD193X_ADC_CTRL2,
+ 				   AD193X_ADC_FMT_MASK, adc_fmt);
+ 	}
++	regmap_update_bits(ad193x->regmap, AD193X_DAC_CTRL0,
++			   AD193X_DAC_SERFMT_MASK, dac_serfmt);
+ 	regmap_update_bits(ad193x->regmap, AD193X_DAC_CTRL1,
+ 		AD193X_DAC_FMT_MASK, dac_fmt);
+ 
 -- 
 2.20.1
 
