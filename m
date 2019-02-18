@@ -2,121 +2,73 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F82DC4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38684C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:52:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 799A72176F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:50:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 047EB2176F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:52:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730361AbfBRKuz convert rfc822-to-8bit (ORCPT
+        id S1730300AbfBRKw2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 05:50:55 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:50998 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728258AbfBRKuy (ORCPT
+        Mon, 18 Feb 2019 05:52:28 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:60795 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728258AbfBRKw2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 05:50:54 -0500
-Received: from marcel-macpro.fritz.box (p4FF9F361.dip0.t-ipconnect.de [79.249.243.97])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 63B80CF2C7;
-        Mon, 18 Feb 2019 11:58:45 +0100 (CET)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH v11 0/3] Bug fixes for Qualcomm BT chip wcn3990
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20190204150643.25165-1-bgodavar@codeaurora.org>
-Date:   Mon, 18 Feb 2019 11:50:51 +0100
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>, mka@chromium.org,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <CB022FBC-122B-41D8-A7C1-DD29276C3A3A@holtmann.org>
-References: <20190204150643.25165-1-bgodavar@codeaurora.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Mon, 18 Feb 2019 05:52:28 -0500
+X-Originating-IP: 90.88.30.68
+Received: from localhost (aaubervilliers-681-1-89-68.w90-88.abo.wanadoo.fr [90.88.30.68])
+        (Authenticated sender: antoine.tenart@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 4A0EEE0011;
+        Mon, 18 Feb 2019 10:52:23 +0000 (UTC)
+Date:   Mon, 18 Feb 2019 11:52:22 +0100
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
+        mw@semihalf.com
+Subject: Re: [PATCH net-next 10/13] net: mvpp2: reset the XPCS while
+ reconfiguring the serdes lanes
+Message-ID: <20190218105222.GD3784@kwain>
+References: <20190215153241.6857-1-antoine.tenart@bootlin.com>
+ <20190215153241.6857-11-antoine.tenart@bootlin.com>
+ <20190215171224.sjfrid5csseywuks@shell.armlinux.org.uk>
+ <20190218102630.GA3784@kwain>
+ <20190218104302.bp6ccmpkt26dflyx@shell.armlinux.org.uk>
+ <20190218104757.be63b5ft5jpongn3@shell.armlinux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190218104757.be63b5ft5jpongn3@shell.armlinux.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Balakrishna,
+Russell,
 
-> The below issues are found in our recent testing.
+On Mon, Feb 18, 2019 at 10:47:57AM +0000, Russell King - ARM Linux admin wrote:
 > 
-> 1. Observed device is not going into off state or not responding.
->    As wcn3990 require a power pulses to turn on the irrespctive of
->    igniting regulators, it was observed that power on or power off
->    pulses are not in sync with respective to chip.
->    The below patch will help us to wait until byte is pushed on to wires.          
-> 
->    * Bluetooth: hci_qca: use wait_until_sent() for power pulses
-> 
-> 2. Observed Chip responding when we are in sleep.
->   This is due to turn on flow control during change baudrate request.
->   The below patch will only pull the RTS line high instead of turning off
->   the flow.
-> 
->   * Bluetooth: hci_qca: Pull RTS line high for baudrate change command.
-> 
-> 3. Disable IBS state machine and flush Tx buffer
->   We are disabling IBS and flushing the Tx buffer before turning off the chip.
-> 
->   This is due to IBS state machine is active when we turn off the chip.
->   This will stop queuing IBS protocol bytes.
-> 
->   * Bluetooth: hci_qca: Disable IBS state machine and flush Tx buffer
-> 
-> Changes in v11:
-> * added correct signatures for the patch.
-> 
-> Changes in v10:
-> * Decreased wait time for power pulse to 100 ms instead of 1second.
-> * enabling the flow control back when baudarte change request fails.
-> * updated review comments.
-> 
-> Changes in v9:
-> * Reverted the 100us delay and used msecs to jiffies inline call.
-> * Disabling the flow control and enabling it back while setting the firmware.
-> * Added spinlock while clearing the IBS state machine.
-> 
-> Changes in v8:
-> * dropped inject the command complete event.
-> * added one second time for the power pules instead of the indefinite time.
-> 
-> Changes in v7:
-> * dropped frame reassmebly error patch.
-> * dropped baudrate change wait time patch.
-> * increased a wait to 5 ms for power pulses.
-> 
-> Changes in v6:
-> * added serdev_device_write_flush in qca_send_power_pulse().
-> * added new patch to update the baudrate change wait time.
-> 
-> Changes in V5:
-> * added serdev_device_write_flush before sending the power off pulse
->   during shutdown.
-> 
-> Changes in v4:
-> * used serdev_device_write_buf() instead of serdev_device_write().
-> * added new patch to stop logging of 0xfc00 timeout on console.
-> 
-> Changes in v3:
-> * moved IBS & qca_flush to different patch
-> * updated comments in code fo Deassert RTS patch
-> Balakrishna Godavarthi (3):
->  Bluetooth: hci_qca: use wait_until_sent() for power pulses
->  Bluetooth: hci_qca: Deassert RTS while baudrate change command
->  Bluetooth: hci_qca: Disable IBS state machine and flush Tx buffer
-> 
-> drivers/bluetooth/hci_qca.c | 82 ++++++++++++++++++++-----------------
-> 1 file changed, 44 insertions(+), 38 deletions(-)
+> Another case that needs to be considered: if the XPCS should be placed
+> into reset while reconfiguring the serdes lanes, is the same treatment
+> needed for the GMAC?
 
-all 3 patches have been applied to bluetooth-next tree.
+That's something I wanted to check as well. I don't know for the GMAC,
+while I'm sure the documentation explicitly state to put the XPCS in
+reset when reconfiguring the lanes.
 
-Regards
+Antoine
 
-Marcel
-
+-- 
+Antoine Ténart, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
