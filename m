@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6150C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:09:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD08C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:09:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DEE021916
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:09:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5934F217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:09:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498958;
-	bh=gJQLgPQsdAWecXHZUD/UrxSac7/NeLSHDsGNqA1zNoU=;
+	s=default; t=1550498960;
+	bh=CXgD/p+aVujwtm2dhhSmoN9B/DGQl059/yOCixsn3wc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2icQR3OqahUl2UM/1O62nf2ofVVgj8ttSmFg/R6xhtd+iwqKR1P+4424GhH/jQWNU
-	 XwjOmE+zq4Miz3+gbDwscc5+kqn+k7vaEYaHH1a1Z7LM/Hcz6OrXJQNb+kKUQ4W6Gr
-	 JHCGUOqIe6faDYzRrbwnQUG1aFqJJngLA05pcROI=
+	b=fQISeJqJI7kKsaseUxei4CYe5E7vJrJ01ciP+Aq3aeCOSjka7JayEmxBZ+Ojr8bgM
+	 HpH8a1TqiIJop5p/f/PI9DyhhwL+XCwDh14TU0ACBiK7ORXreVZbYXuRUuu5rtNwBp
+	 QImxV76Nt2wfsJGGasjgdFngwntTEjMDwNwVDNxM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390442AbfBROJQ (ORCPT
+        id S2391172AbfBROJS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:09:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52758 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:09:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391118AbfBROJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:09:13 -0500
+        id S2391159AbfBROJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:09:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B83721916;
-        Mon, 18 Feb 2019 14:09:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF690217D7;
+        Mon, 18 Feb 2019 14:09:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498952;
-        bh=gJQLgPQsdAWecXHZUD/UrxSac7/NeLSHDsGNqA1zNoU=;
+        s=default; t=1550498956;
+        bh=CXgD/p+aVujwtm2dhhSmoN9B/DGQl059/yOCixsn3wc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HFoPMDLqjOdnk0EXB49aAZA/+aHL5eFDGewIqJgpyeglc/LehuWhuLYO40ObF0MXU
-         VF8k6BOTyXlrTYSIfne7SbFIa7/0n8uXK+NF29u7poP5+6719O4Y5MDAHgnNSWWcwY
-         grewA739UvV0IlL1JUqBzWV8DcIXDvDnsK/n1VaA=
+        b=MIiraSrm5ab95Su+lHmG9khqTgPM5TrVBblS8IgzXLQoGyffk6Z4rnMViFt5M6wwP
+         aTiTVixh0MGiuDAfqikHkr4+jkmZN/5XMLMLBP2YSOggJESGXJNCYZyXqI+K4JPQiP
+         ksIoCkx14AW1zz0OTrHBR3k879Ju30U+PafBm0ls=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 030/108] powerpc/uaccess: fix warning/error with access_ok()
-Date:   Mon, 18 Feb 2019 14:43:26 +0100
-Message-Id: <20190218133520.932262330@linuxfoundation.org>
+Subject: [PATCH 3.18 031/108] xfrm6_tunnel: Fix spi check in __xfrm6_tunnel_alloc_spi
+Date:   Mon, 18 Feb 2019 14:43:27 +0100
+Message-Id: <20190218133520.979676466@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -66,43 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 05a4ab823983d9136a460b7b5e0d49ee709a6f86 ]
+[ Upstream commit fa89a4593b927b3f59c3b69379f31d3b22272e4e ]
 
-With the following piece of code, the following compilation warning
-is encountered:
+gcc warn this:
 
-	if (_IOC_DIR(ioc) != _IOC_NONE) {
-		int verify = _IOC_DIR(ioc) & _IOC_READ ? VERIFY_WRITE : VERIFY_READ;
+net/ipv6/xfrm6_tunnel.c:143 __xfrm6_tunnel_alloc_spi() warn:
+ always true condition '(spi <= 4294967295) => (0-u32max <= u32max)'
 
-		if (!access_ok(verify, ioarg, _IOC_SIZE(ioc))) {
+'spi' is u32, which always not greater than XFRM6_TUNNEL_SPI_MAX
+because of wrap around. So the second forloop will never reach.
 
-drivers/platform/test/dev.c: In function 'my_ioctl':
-drivers/platform/test/dev.c:219:7: warning: unused variable 'verify' [-Wunused-variable]
-   int verify = _IOC_DIR(ioc) & _IOC_READ ? VERIFY_WRITE : VERIFY_READ;
-
-This patch fixes it by referencing 'type' in the macro allthough
-doing nothing with it.
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/include/asm/uaccess.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv6/xfrm6_tunnel.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
-index 46c486599645..1bb8cc3fbbf1 100644
---- a/arch/powerpc/include/asm/uaccess.h
-+++ b/arch/powerpc/include/asm/uaccess.h
-@@ -59,7 +59,7 @@
- #endif
- 
- #define access_ok(type, addr, size)		\
--	(__chk_user_ptr(addr),			\
-+	(__chk_user_ptr(addr), (void)(type),		\
- 	 __access_ok((__force unsigned long)(addr), (size), get_fs()))
- 
- /*
+diff --git a/net/ipv6/xfrm6_tunnel.c b/net/ipv6/xfrm6_tunnel.c
+index 5743044cd660..56b72cada346 100644
+--- a/net/ipv6/xfrm6_tunnel.c
++++ b/net/ipv6/xfrm6_tunnel.c
+@@ -144,6 +144,9 @@ static u32 __xfrm6_tunnel_alloc_spi(struct net *net, xfrm_address_t *saddr)
+ 		index = __xfrm6_tunnel_spi_check(net, spi);
+ 		if (index >= 0)
+ 			goto alloc_spi;
++
++		if (spi == XFRM6_TUNNEL_SPI_MAX)
++			break;
+ 	}
+ 	for (spi = XFRM6_TUNNEL_SPI_MIN; spi < xfrm6_tn->spi; spi++) {
+ 		index = __xfrm6_tunnel_spi_check(net, spi);
 -- 
 2.19.1
 
