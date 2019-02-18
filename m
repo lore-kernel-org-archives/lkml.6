@@ -2,162 +2,186 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A39DBC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:52:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B3ADC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:58:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74C05217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:52:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550515979;
-	bh=I/tS1M3b5ySesCipRj3YCueHYB3IjNRSh74UJw4Nqb4=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=MIKbfyVO1LknDpuRdfs3ZgSoKRMtBR81WOOsbOinC8mD8UlgELlVh/aXzmM9CzDaf
-	 WvVa9MTM3GwORZQNpN9i1QYlDJcVw5DDYV49UzDlVEXILy0mRFY2LAuRyMOW3envi4
-	 70xNktAAeNhKfMa7Xib2MVOLDVKZ6ZHxrYlrcECY=
+	by mail.kernel.org (Postfix) with ESMTP id E3272217D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:58:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="fpn6oSMd";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="iME5jE6D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727930AbfBRSw5 (ORCPT
+        id S1728061AbfBRS6c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:52:57 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47274 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727760AbfBRSwl (ORCPT
+        Mon, 18 Feb 2019 13:58:32 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:48718 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728023AbfBRS6c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:52:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=a4RStyqL0UfseD8kB7ojNjyPlgcCXXilGpt7LZX1HH4=; b=ig1YB3d4qF6F
-        URknWdKn440biN4tarUZXIRcBb0k5xtJs00qZzzaifB6byM9woCxpiW4npxhRB4WfeD0aLdnqD2U5
-        vxJsWnHTxkhyDOt42LdetlhkgDHXvDrtahSVbrUjCNk/Oa08yjj03ydQVid7Z+DZDwXTSJcUQ4oP3
-        ekjxQ=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gvo1m-0001il-98; Mon, 18 Feb 2019 18:52:30 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id B34E61128008; Mon, 18 Feb 2019 18:52:29 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     James Schulman <james.schulman@cirrus.com>,
-        Mark Brown <broonie@kernel.org>,
-        Brian Austin <brian.austin@cirrus.com>,
-        Paul Handrigan <Paul.Handrigan@cirrus.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        James Schulman <james.schulman@cirrus.com>,
-        kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: cs35l36: Make some symbols static" to the asoc tree
-In-Reply-To:  <20190218074653.181365-1-weiyongjun1@huawei.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190218185229.B34E61128008@debutante.sirena.org.uk>
-Date:   Mon, 18 Feb 2019 18:52:29 +0000 (GMT)
+        Mon, 18 Feb 2019 13:58:32 -0500
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1IIvjiv009289;
+        Mon, 18 Feb 2019 10:57:49 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=tALuHWBatwglxy3yoUHlBUDPau8p7GN6WT364Z04GQk=;
+ b=fpn6oSMdPiW4PxhMOpfiD4IxTnZnWBHZDITMn9+19oedz6lTd+D8CyNCCcc6RLTNwyGm
+ TFzYwlYQdVSBwFDNs8dwEAjelNMiQSOh6BMpDBDjKw4y2f5UPIcnJ7hQcsDoM7p431VR
+ GmWo5LdjeL5YE1wsvXlbhKJCXJAs7bZi2p0= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2qqy20gnfw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 18 Feb 2019 10:57:49 -0800
+Received: from prn-hub01.TheFacebook.com (2620:10d:c081:35::125) by
+ prn-hub03.TheFacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Mon, 18 Feb 2019 10:57:48 -0800
+Received: from NAM04-SN1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Mon, 18 Feb 2019 10:57:47 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tALuHWBatwglxy3yoUHlBUDPau8p7GN6WT364Z04GQk=;
+ b=iME5jE6Dn0prgZrjjePV+fCytYousb88C+B2/E+ty/CUoSFbvV9i7FKE3lLPMXFSHUvHZgx5ugMd+98hCVW8YRMnLunN7HzXjkA65W5Oi5GVAvDJ6/+g1yC9HyktFD1wW0YJReLv4OGJP56jNX2U7uKi9BbX4vUbN7cMmDkMiws=
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.156.24) by
+ BYAPR15MB3509.namprd15.prod.outlook.com (20.179.60.25) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.16; Mon, 18 Feb 2019 18:57:45 +0000
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::ecc7:1a8c:289f:df92]) by BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::ecc7:1a8c:289f:df92%3]) with mapi id 15.20.1601.016; Mon, 18 Feb 2019
+ 18:57:45 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rik van Riel <riel@surriel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Wolfgang Walter <linux@stwm.de>, Spock <dairinin@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 4.20 71/92] Revert "mm: slowly shrink slabs with a
+ relatively small number of objects"
+Thread-Topic: [PATCH 4.20 71/92] Revert "mm: slowly shrink slabs with a
+ relatively small number of objects"
+Thread-Index: AQHUx5DFfbn2t2YpWUeoO4VrMVhutaXlrrEAgAAMzwCAABbegIAAFiaA
+Date:   Mon, 18 Feb 2019 18:57:45 +0000
+Message-ID: <20190218185738.GA3745@castle.DHCP.thefacebook.com>
+References: <20190218133454.668268457@linuxfoundation.org>
+ <20190218133501.533140116@linuxfoundation.org>
+ <a998a5028aa3bb17a5a60fffd3db558223b84cd5.camel@surriel.com>
+ <20190218161634.GA30873@kroah.com> <20190218173825.GB4525@dhcp22.suse.cz>
+In-Reply-To: <20190218173825.GB4525@dhcp22.suse.cz>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR0201CA0050.namprd02.prod.outlook.com
+ (2603:10b6:301:73::27) To BYAPR15MB2631.namprd15.prod.outlook.com
+ (2603:10b6:a03:152::24)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:180::1:17d5]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6d33c108-463c-434b-6b36-08d695d2f7c8
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:BYAPR15MB3509;
+x-ms-traffictypediagnostic: BYAPR15MB3509:
+x-microsoft-exchange-diagnostics: 1;BYAPR15MB3509;20:gSTJ2UQyz61jx+g5wn5SgFaM1mAM24CsYcQ8C0L3kd2HwvTc5tCtKaSmNPhLKNs8JocQkU9th26l4rz4ZgA46Ca1znsZ2kbObm6Qkxfa+vlT0+eIjV6nhoc7Rhl+k3WVbE3vUT9P3bZnAG4EtpQ40Qo+52fU+/nkxZ+KAFp5LXM=
+x-microsoft-antispam-prvs: <BYAPR15MB3509FD64E3CA226EFB4FCC73BE630@BYAPR15MB3509.namprd15.prod.outlook.com>
+x-forefront-prvs: 09525C61DB
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(366004)(39860400002)(396003)(136003)(189003)(199004)(6486002)(71200400001)(7416002)(71190400001)(6916009)(93886005)(229853002)(4326008)(256004)(33656002)(14444005)(561944003)(6116002)(76176011)(106356001)(486006)(11346002)(25786009)(99286004)(446003)(476003)(8676002)(53936002)(97736004)(2906002)(54906003)(9686003)(386003)(6512007)(5660300002)(81156014)(316002)(46003)(14454004)(81166006)(8936002)(68736007)(1076003)(6436002)(186003)(33896004)(7736002)(52116002)(305945005)(86362001)(6246003)(105586002)(102836004)(478600001)(6506007);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB3509;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 52fJeHqQ2DijjadVR3gTH+qD4jMq4ub/cZaR2INqm1zCxDMzo0VzUpragVbXSbUUnknjx+H21nj/MC/KMcyUNbTPZ3tO2jJ0wOVXWCV+UNPoRgner9ubL8AIB/6ZJ+CjYVKYb3npuc3gfKwG5aRNHZYpQwQgdd+tV9QvPBec/B5ivRXhnpPkd6vpo8QR9INLrVAI7Py0Lf7q/VgWKBng9bHk4nsrsBPalJpOoFM6wBU+5xufxRfw+V8x9KFxLZBx0jKtQJ0Op+h9mh1zG1nuq0f72CauEuJNrysEOkJEDRyyE3fxdLj12Z9N1/zZNcFvokNWLYoJVwz7/gKrMgW2SSQFZQLW/DHr74Kb61wpLHKl3I4AEFdkE1Oe7JLI4IKeHShj1sU/ABWO0g5jU9daXj1Cky3ZN9X1rD2cKUeSxyg=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <9D17D0574BFA2F44A1BA2B0DBFFE7361@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d33c108-463c-434b-6b36-08d695d2f7c8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2019 18:57:44.4286
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3509
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-18_14:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Mon, Feb 18, 2019 at 06:38:25PM +0100, Michal Hocko wrote:
+> On Mon 18-02-19 17:16:34, Greg KH wrote:
+> > On Mon, Feb 18, 2019 at 10:30:44AM -0500, Rik van Riel wrote:
+> > > On Mon, 2019-02-18 at 14:43 +0100, Greg Kroah-Hartman wrote:
+> > > > 4.20-stable review patch.  If anyone has any objections, please let
+> > > > me know.
+> > > >=20
+> > > > ------------------
+> > > >=20
+> > > > From: Dave Chinner <dchinner@redhat.com>
+> > > >=20
+> > > > commit a9a238e83fbb0df31c3b9b67003f8f9d1d1b6c96 upstream.
+> > > >=20
+> > > > This reverts commit 172b06c32b9497 ("mm: slowly shrink slabs with a
+> > > > relatively small number of objects").
+> > >=20
+> > > This revert will result in the slab caches of dead
+> > > cgroups with a small number of remaining objects never
+> > > getting reclaimed, which can be a memory leak in some
+> > > configurations.
+> > >=20
+> > > But hey, that's your tradeoff to make.
+> >=20
+> > That's what is in Linus's tree.  Should we somehow diverge from that?
+>=20
+> I believe we should start working on a memcg specific solution to
+> minimize regressions for others and start a more complex solution from
+> there.
+>=20
+> Can we special case dead memcgs in the slab reclaim and reclaim more
+> aggressively?
 
-   ASoC: cs35l36: Make some symbols static
+It's probably better to start a new thread to discuss this issue (btw,
+doesn't LSF/MM looks like the best place to do it? I can send a proposal).
 
-has been applied to the asoc tree at
+But I don't think dead cgroups are any special here. At the moment when
+a cgroup is deleted, associated slab objects can be perfectly used by proce=
+sses
+in other cgroups, so we can't reclaim them. Slab objects (vfs objects first
+of all) are quite often shared between cgroups, we can't just ignore it.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+So in order to avoid leaks we'll need to apply some artificial pressure
+constantly, and then it's not clear why we need to do it separately
+for dead and living cgroups.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+So I still believe that Rik's/mine approach is the right thing to do,
+we just need to apply the pressure gently, including all corner cases
+(e.g. concurrency issues spotted by Dave).
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Generally speaking, the problem occurs because the lifecycle of a
+slab object can be much longer than the lifecycle of the corresponding memo=
+ry
+cgroup. And because we pin the memcg by the object, we're wasting lot of
+memory. Right now we allow certain amount of vfs objects to reside in the
+memory pretty much forever unless we have a really strong memory pressure.
+It's arguable fine because inodes and dentries are relatively small, but
+if each of them holds a 200kb+ dead memcg, it becomes very noticeable.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+So we either have to apply the memory pressure more evenly (what Rik and I
+are proposing), or completely reparent slab objects on cgroup removal.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From b2c02c63ac254530cffe3a7dc7d4e433da1b3a67 Mon Sep 17 00:00:00 2001
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 18 Feb 2019 07:46:53 +0000
-Subject: [PATCH] ASoC: cs35l36: Make some symbols static
-
-Fixes the following sparse warnings:
-
-sound/soc/codecs/cs35l36.c:135:20: warning:
- symbol 'cs35l36_reg' was not declared. Should it be static?
-sound/soc/codecs/cs35l36.c:248:6: warning:
- symbol 'cs35l36_readable_reg' was not declared. Should it be static?
-sound/soc/codecs/cs35l36.c:398:6: warning:
- symbol 'cs35l36_precious_reg' was not declared. Should it be static?
-sound/soc/codecs/cs35l36.c:410:6: warning:
- symbol 'cs35l36_volatile_reg' was not declared. Should it be static?
-
-Fixes: 6ba9dd6c893b ("ASoC: cs35l36: Add support for Cirrus CS35L36 Amplifier")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Acked-by: James Schulman <james.schulman@cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/cs35l36.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/sound/soc/codecs/cs35l36.c b/sound/soc/codecs/cs35l36.c
-index e374fffb7e17..dc8cf61b9db8 100644
---- a/sound/soc/codecs/cs35l36.c
-+++ b/sound/soc/codecs/cs35l36.c
-@@ -131,7 +131,7 @@ static const struct cs35l36_pll_config cs35l36_pll_sysclk[] = {
- 	{27000000,	0x3F, 0x0A},
- };
- 
--struct reg_default cs35l36_reg[] = {
-+static struct reg_default cs35l36_reg[] = {
- 	{CS35L36_TESTKEY_CTRL,			0x00000000},
- 	{CS35L36_USERKEY_CTL,			0x00000000},
- 	{CS35L36_OTP_CTRL1,			0x00002460},
-@@ -244,7 +244,7 @@ struct reg_default cs35l36_reg[] = {
- 	{CS35L36_PAC_INT7_CTRL,			0x00000001},
- };
- 
--bool cs35l36_readable_reg(struct device *dev, unsigned int reg)
-+static bool cs35l36_readable_reg(struct device *dev, unsigned int reg)
- {
- 	switch (reg) {
- 	case CS35L36_SW_RESET:
-@@ -394,7 +394,7 @@ bool cs35l36_readable_reg(struct device *dev, unsigned int reg)
- 	}
- }
- 
--bool cs35l36_precious_reg(struct device *dev, unsigned int reg)
-+static bool cs35l36_precious_reg(struct device *dev, unsigned int reg)
- {
- 	switch (reg) {
- 	case CS35L36_TESTKEY_CTRL:
-@@ -406,7 +406,7 @@ bool cs35l36_precious_reg(struct device *dev, unsigned int reg)
- 	}
- }
- 
--bool cs35l36_volatile_reg(struct device *dev, unsigned int reg)
-+static bool cs35l36_volatile_reg(struct device *dev, unsigned int reg)
- {
- 	switch (reg) {
- 	case CS35L36_SW_RESET:
--- 
-2.20.1
-
+Thanks!
