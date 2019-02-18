@@ -2,136 +2,90 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 095A4C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:40:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 172AFC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:40:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE4AB20838
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:40:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550500817;
-	bh=vNXZS326ej0UuJlep865XmY6jwpnQ9v8IabyYZVjEGc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=P8kGj30V9l5pC/9UD2iF8bPCoTxgOL9vYYozC/PrYpG7kk4nrMj1JQWE/TVHxa4lI
-	 cJDgV0VUE+G/XzsGbH+hV8SKMe6X0aNsWTcSlLTAI+Fix8XwL+00ldWHOZhx5gj3Oo
-	 PU2MoZ+vYWwMicZx4cAx74iTKndPm+Ar83ckXq2E=
+	by mail.kernel.org (Postfix) with ESMTP id BB37020838
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:40:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="jb71VZiB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732610AbfBRNwJ (ORCPT
+        id S1732599AbfBRNwD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:52:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59994 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732538AbfBRNwG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:52:06 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        Mon, 18 Feb 2019 08:52:03 -0500
+Received: from smtprelay.synopsys.com ([198.182.60.111]:48652 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732506AbfBRNv7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:51:59 -0500
+Received: from mailhost.synopsys.com (badc-mailhost2.synopsys.com [10.192.0.18])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DE9120842;
-        Mon, 18 Feb 2019 13:52:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497926;
-        bh=vNXZS326ej0UuJlep865XmY6jwpnQ9v8IabyYZVjEGc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W7xioJnsRnaApKYhFxwwSSSatOJIFuG56faduee1rFWfXrir5nDASh5v5KfoDiqtD
-         bAcrMG0gzBVM1ZmxTIMQ3qN3EgDZg5+jwqS/IcRE4n3eKtLwmL99u2SAop5Tlxly+t
-         2XPG5TiaZ0SUA60rGgRWWTDIHUznqUev4rkh6kNw=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Jin, Yao" <yao.jin@linux.intel.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>
-Subject: [PATCH 4.19 54/85] perf/core: Fix impossible ring-buffer sizes warning
-Date:   Mon, 18 Feb 2019 14:43:20 +0100
-Message-Id: <20190218133505.362148034@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
-References: <20190218133459.758004711@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        by smtprelay.synopsys.com (Postfix) with ESMTPS id D374A10C1732;
+        Mon, 18 Feb 2019 05:51:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1550497918; bh=bx1EOQ94lWF49openRIpnt3uRY3WI1jWSJ5uiunmFUI=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=jb71VZiBEfigj/Kbi7mXAn7BQzWm7xmbGWJiLL2ykpE20SGVZZM2jZHdy/osYjrk7
+         1F/Cyu2mU07/FzLvrqwHGpudgnsPIhpb41PD/k4x8gGpxs6Jj8NeKzEZ74esM4Fo0k
+         vcmgrqsZcQqmiSdSDq4U6d8S37pLRdY+dFNSXm0n/pQnu3HDE6F63UgItZblIGcS/8
+         s2sxqnVyG/D8b8nCu7MQTw2oiYyfyujpnG7KVHPEofDH6ZHCEHCIK47565slJnsjyf
+         ++Qo3ANj5YyaY6BGQLULfATzmDaYF4uLWcU0yZ30w5zw1oo29C/Cf39D00W1fwvfbA
+         jpMqM2iWpE7sA==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 697A7A0086;
+        Mon, 18 Feb 2019 13:51:58 +0000 (UTC)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 18 Feb 2019 05:51:57 -0800
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 18 Feb 2019 14:51:55 +0100
+Received: from [10.107.19.176] (10.107.19.176) by
+ DE02WEHTCA.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 18 Feb 2019 14:51:55 +0100
+Subject: Re: [PATCH net-next v2 3/3] net: stmmac: dwxgmac2: Also use TBU
+ interrupt to clean TX path
+To:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Joao Pinto <joao.pinto@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+References: <cover.1550479678.git.joabreu@synopsys.com>
+ <b338784c2af1aba885b6822d2ec614774f1f78dd.1550479678.git.joabreu@synopsys.com>
+From:   Jose Abreu <jose.abreu@synopsys.com>
+Message-ID: <677badce-d90b-82c5-0d11-88327d32a05b@synopsys.com>
+Date:   Mon, 18 Feb 2019 13:51:54 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <b338784c2af1aba885b6822d2ec614774f1f78dd.1550479678.git.joabreu@synopsys.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.107.19.176]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On 2/18/2019 8:49 AM, Jose Abreu wrote:
+>  #define XGMAC_DMA_INT_DEFAULT_EN	(XGMAC_NIE | XGMAC_AIE | XGMAC_RBUE | \
+> -					XGMAC_RIE | XGMAC_TIE)
+> +					XGMAC_RIE | XGMAC_TBUE | XGMAC_TIE)
 
-------------------
+This is wrong and was a left-over from debug. Enabling this will
+cause an high volume of interrupts which I just noticed.
 
-From: Ingo Molnar <mingo@kernel.org>
+We can only look at the status and not enable the int.
 
-commit 528871b456026e6127d95b1b2bd8e3a003dc1614 upstream.
+I will send v3 without this define change. Sorry.
 
-The following commit:
-
-  9dff0aa95a32 ("perf/core: Don't WARN() for impossible ring-buffer sizes")
-
-results in perf recording failures with larger mmap areas:
-
-  root@skl:/tmp# perf record -g -a
-  failed to mmap with 12 (Cannot allocate memory)
-
-The root cause is that the following condition is buggy:
-
-	if (order_base_2(size) >= MAX_ORDER)
-		goto fail;
-
-The problem is that @size is in bytes and MAX_ORDER is in pages,
-so the right test is:
-
-	if (order_base_2(size) >= PAGE_SHIFT+MAX_ORDER)
-		goto fail;
-
-Fix it.
-
-Reported-by: "Jin, Yao" <yao.jin@linux.intel.com>
-Bisected-by: Borislav Petkov <bp@alien8.de>
-Analyzed-by: Peter Zijlstra <peterz@infradead.org>
-Cc: Julien Thierry <julien.thierry@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: <stable@vger.kernel.org>
-Fixes: 9dff0aa95a32 ("perf/core: Don't WARN() for impossible ring-buffer sizes")
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- kernel/events/ring_buffer.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/kernel/events/ring_buffer.c
-+++ b/kernel/events/ring_buffer.c
-@@ -724,7 +724,7 @@ struct ring_buffer *rb_alloc(int nr_page
- 	size = sizeof(struct ring_buffer);
- 	size += nr_pages * sizeof(void *);
- 
--	if (order_base_2(size) >= MAX_ORDER)
-+	if (order_base_2(size) >= PAGE_SHIFT+MAX_ORDER)
- 		goto fail;
- 
- 	rb = kzalloc(size, GFP_KERNEL);
-
-
+Thanks,
+Jose Miguel Abreu
