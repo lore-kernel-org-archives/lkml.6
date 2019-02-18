@@ -2,164 +2,81 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A64C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:31:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE2DC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FB4F2177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:31:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="MyZTaVId"
+	by mail.kernel.org (Postfix) with ESMTP id 7B4DA217F9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:33:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550511225;
+	bh=p4SdIGkvVgtQhEIp2ZxCGiKPuadNN6Gytyjdd1O37WA=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=aNtOvI0Bio0b0gcZD2+88wfc/j5o/jP7YA6RwVevIkE2xJyh4plPQ7Br7FfArisP6
+	 D+i11k156zDX6GCEmI1EBt6AfWgfrLDfIgze2ra1WNcZ5AHIP6a/+/hhq0Ac6luR/w
+	 zCefE8LZRBtIvV4DVcNMSQZZ4KACppDSd28/6/FM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388379AbfBRRba (ORCPT
+        id S2388175AbfBRRdo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 12:31:30 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:19716 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388105AbfBRRb0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 12:31:26 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c6aebf20002>; Mon, 18 Feb 2019 09:31:30 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 18 Feb 2019 09:31:26 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 18 Feb 2019 09:31:26 -0800
-Received: from [192.168.45.1] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 18 Feb
- 2019 17:31:25 +0000
-From:   Zi Yan <ziy@nvidia.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        Nitin Gupta <nigupta@nvidia.com>,
-        David Nellans <dnellans@nvidia.com>
-Subject: Re: [RFC PATCH 01/31] mm: migrate: Add exchange_pages to exchange two
- lists of pages.
-Date:   Mon, 18 Feb 2019 09:31:24 -0800
-X-Mailer: MailMate (1.12.4r5594)
-Message-ID: <65A1FFA0-531C-4078-9704-3F44819C3C07@nvidia.com>
-In-Reply-To: <20190217112943.GP12668@bombadil.infradead.org>
-References: <20190215220856.29749-1-zi.yan@sent.com>
- <20190215220856.29749-2-zi.yan@sent.com>
- <20190217112943.GP12668@bombadil.infradead.org>
-MIME-Version: 1.0
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; format=flowed
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1550511090; bh=HJkJlnLD0m3SLvolz+Or478/D93/bUDY90ZxzZo8WK4=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:X-Mailer:Message-ID:
-         In-Reply-To:References:MIME-Version:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type;
-        b=MyZTaVId2Dx9mHBPrizve/E6uSnTVYvxcFZ7Oyuq0t8Qq3yyWn4eJ08iIbehTWBQZ
-         w+2tFhLbgwCXmgMQMnatKYxCx59vhvICbiSOQDRsDhyiYzcH1a3lrj6NsZxuKuRvbu
-         W25F8abVndwfblbKKqcUendSHT9sXBBdLYtZpHsYr7CEaKwlRcvRlG9fq4ZMPJCpSs
-         d3Qn6mQxk28onpf768DBQWUIJUkEBeRL/psUBrNPd6BYi4wjVqpXC32sNX+ktu+unl
-         yVy72Li2XynNuOWTNTuV5NWHamFBNDqbpmhI2O5VVtYTwF6f80AOBvmk2g/bD2IMHa
-         4vJrx/ml57Y2Q==
+        Mon, 18 Feb 2019 12:33:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37284 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729822AbfBRRdo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 12:33:44 -0500
+Received: from localhost.localdomain (unknown [194.230.155.153])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 939972177E;
+        Mon, 18 Feb 2019 17:33:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550511223;
+        bh=p4SdIGkvVgtQhEIp2ZxCGiKPuadNN6Gytyjdd1O37WA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UHlh3SBtznH3NUfKYTZQUVDYzvshrQQyOO+r2GJxd8R/91Vcjdh4HFPyX9DkG0AMs
+         jqSc2s02e3laqHR13BM6rbpf4bZeoK1dI6dq5VjRogrY0UpseM374GsTvf6ugk1cox
+         v8ySh0U/rosrJh3ihlTcSC0eXkQ/xFMTTfWWGE7c=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Markus Reichl <reichl@t-online.de>
+Subject: [PATCH 1/3] ARM: dts: exynos: Use stdout path property on Arndale Octa board
+Date:   Mon, 18 Feb 2019 18:32:56 +0100
+Message-Id: <20190218173258.7071-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17 Feb 2019, at 3:29, Matthew Wilcox wrote:
+Replacing bootargs with stdout-path property in chosen node allows using
+early console by adding just 'earlycon' parameter to kernel command
+line.
 
-> On Fri, Feb 15, 2019 at 02:08:26PM -0800, Zi Yan wrote:
->> +struct page_flags {
->> +	unsigned int page_error :1;
->> +	unsigned int page_referenced:1;
->> +	unsigned int page_uptodate:1;
->> +	unsigned int page_active:1;
->> +	unsigned int page_unevictable:1;
->> +	unsigned int page_checked:1;
->> +	unsigned int page_mappedtodisk:1;
->> +	unsigned int page_dirty:1;
->> +	unsigned int page_is_young:1;
->> +	unsigned int page_is_idle:1;
->> +	unsigned int page_swapcache:1;
->> +	unsigned int page_writeback:1;
->> +	unsigned int page_private:1;
->> +	unsigned int __pad:3;
->> +};
->
-> I'm not sure how to feel about this.  It's a bit fragile versus 
-> somebody adding
-> new page flags.  I don't know whether it's needed or whether you can 
-> just
-> copy page->flags directly because you're holding PageLock.
+Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I agree with you that current way of copying page flags individually 
-could miss
-new page flags. I will try to come up with something better. Copying 
-page->flags as a whole
-might not simply work, since the upper part of page->flags has the page 
-node information,
-which should not be changed. I think I need to add a helper function to 
-just copy/exchange
-all page flags, like calling migrate_page_stats() twice.
+diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+index 3447160e1fbf..832757999e4f 100644
+--- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
++++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+@@ -24,7 +24,7 @@
+ 	};
+ 
+ 	chosen {
+-		bootargs = "console=ttySAC3,115200";
++		stdout-path = "serial3:115200n8";
+ 	};
+ 
+ 	firmware@2073000 {
+-- 
+2.17.1
 
->> +static void exchange_page(char *to, char *from)
->> +{
->> +	u64 tmp;
->> +	int i;
->> +
->> +	for (i = 0; i < PAGE_SIZE; i += sizeof(tmp)) {
->> +		tmp = *((u64 *)(from + i));
->> +		*((u64 *)(from + i)) = *((u64 *)(to + i));
->> +		*((u64 *)(to + i)) = tmp;
->> +	}
->> +}
->
-> I have a suspicion you'd be better off allocating a temporary page and
-> using copy_page().  Some architectures have put a lot of effort into
-> making copy_page() run faster.
-
-When I am doing exchange_pages() between two NUMA nodes on a x86_64 
-machine,
-I actually can saturate the QPI bandwidth with this operation. I think 
-cache
-prefetching was doing its job.
-
-The purpose of proposing exchange_pages() is to avoid allocating any new 
-page,
-so that we would not trigger any potential page reclaim or memory 
-compaction.
-Allocating a temporary page defeats the purpose.
-
->
->> +		xa_lock_irq(&to_mapping->i_pages);
->> +
->> +		to_pslot = radix_tree_lookup_slot(&to_mapping->i_pages,
->> +			page_index(to_page));
->
-> This needs to be converted to the XArray.  radix_tree_lookup_slot() is
-> going away soon.  You probably need:
->
-> 	XA_STATE(to_xas, &to_mapping->i_pages, page_index(to_page));
-
-Thank you for pointing this out. I will do the change.
-
->
-> This is a lot of code and I'm still trying to get my head aroud it 
-> all.
-> Thanks for putting in this work; it's good to see this approach being
-> explored.
-
-Thank you for taking a look at the code.
-
---
-Best Regards,
-Yan Zi
