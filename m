@@ -4,41 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F41DDC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:52:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F90C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:53:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C452221905
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:52:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A601F21904
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:53:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497976;
-	bh=HmjuXY+xhZ1Q/kk1ErLmJaVzR8Pjjskr0w3XhA/M8yE=;
+	s=default; t=1550497980;
+	bh=JPuOPPwe1vpd79QlefI/HJMcOG+y33JJ+4UuB/2XBbY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ikDfsnZzj4nKeFi/Mq7OW3FeF8x9WJxDju78worAFjDT6Y1j7k1obIo1WTzc32VHU
-	 6mMV0WWpA39Qi7mlrZao18Fvoyo9WPsrHGMBcyxLvs1pMlmCRXpClgaLI1yqup3OSK
-	 ov5+2u13SBF6XhoCVv0tNvGMePnUQ+Dg3VOWGi1k=
+	b=qYHtsblVWKRDwGz7JcpE73KqCV75nW+Fq4RK7KrIJ5pdvOd2XsIsTCC/E4FEUQHvt
+	 WbQzqobT7uiJzN+5vcaiY+Tx6OvNXVAIIGsl3brm9FxO2jPaJ5PLcQ2bNC35hRmlh2
+	 NBCJKGXPxtkwCkxfCs4AV7ABLp7ALerF6cZSngBA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732832AbfBRNwy (ORCPT
+        id S1732850AbfBRNw7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:52:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60740 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:52:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731635AbfBRNwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:52:51 -0500
+        id S1731591AbfBRNwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:52:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A472F20842;
-        Mon, 18 Feb 2019 13:52:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C27621901;
+        Mon, 18 Feb 2019 13:52:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497970;
-        bh=HmjuXY+xhZ1Q/kk1ErLmJaVzR8Pjjskr0w3XhA/M8yE=;
+        s=default; t=1550497972;
+        bh=JPuOPPwe1vpd79QlefI/HJMcOG+y33JJ+4UuB/2XBbY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GmivtXvTf488eBI4uuPlmq4gZpCT0aG4JM8mEMkVHgKXokuhC4KP7O1TZuCbuCUtX
-         W+6KRzkWVAacn2Hu+lDQKEM2+L0iuhMTtXB2EAhrdlJBmXeA7v8JSoJhDyN2xBa4An
-         acbkcuumK6Nog9WYgDaPqsO4pp1e+CjBcDoOImZY=
+        b=zMr55T5G3jEhozuL8wJeRaaoa/aOCThoFreL/M/QT1WMIBuWEeZ8NY9/436xekPPh
+         ES4RNJteQoJbvhQmx6dkTLzGRPnQe6s56dPGgH1+Moif049Ohfs0OIO6KxLoJYQKRa
+         lzTEEzObYJnQqn3XgHfA9kle4hICgiFZ2XW1ZXXI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -48,9 +47,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Michal Hocko <mhocko@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 68/85] Revert "mm: dont reclaim inodes with many attached pages"
-Date:   Mon, 18 Feb 2019 14:43:34 +0100
-Message-Id: <20190218133506.495855150@linuxfoundation.org>
+Subject: [PATCH 4.19 69/85] Revert "mm: slowly shrink slabs with a relatively small number of objects"
+Date:   Mon, 18 Feb 2019 14:43:35 +0100
+Message-Id: <20190218133506.595726183@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -71,25 +70,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Chinner <dchinner@redhat.com>
 
-commit 69056ee6a8a3d576ed31e38b3b14c70d6c74edcc upstream.
+commit a9a238e83fbb0df31c3b9b67003f8f9d1d1b6c96 upstream.
 
-This reverts commit a76cf1a474d7d ("mm: don't reclaim inodes with many
-attached pages").
+This reverts commit 172b06c32b9497 ("mm: slowly shrink slabs with a
+relatively small number of objects").
 
-This change causes serious changes to page cache and inode cache
-behaviour and balance, resulting in major performance regressions when
-combining worklaods such as large file copies and kernel compiles.
+This change changes the agressiveness of shrinker reclaim, causing small
+cache and low priority reclaim to greatly increase scanning pressure on
+small caches.  As a result, light memory pressure has a disproportionate
+affect on small caches, and causes large caches to be reclaimed much
+faster than previously.
 
-  https://bugzilla.kernel.org/show_bug.cgi?id=202441
+As a result, it greatly perturbs the delicate balance of the VFS caches
+(dentry/inode vs file page cache) such that the inode/dentry caches are
+reclaimed much, much faster than the page cache and this drives us into
+several other caching imbalance related problems.
 
-This change is a hack to work around the problems introduced by changing
-how agressive shrinkers are on small caches in commit 172b06c32b94 ("mm:
-slowly shrink slabs with a relatively small number of objects").  It
-creates more problems than it solves, wasn't adequately reviewed or
-tested, so it needs to be reverted.
+As such, this is a bad change and needs to be reverted.
 
-Link: http://lkml.kernel.org/r/20190130041707.27750-2-david@fromorbit.com
-Fixes: a76cf1a474d7d ("mm: don't reclaim inodes with many attached pages")
+[ Needs some massaging to retain the later seekless shrinker
+  modifications.]
+
+Link: http://lkml.kernel.org/r/20190130041707.27750-3-david@fromorbit.com
+Fixes: 172b06c32b9497 ("mm: slowly shrink slabs with a relatively small number of objects")
 Signed-off-by: Dave Chinner <dchinner@redhat.com>
 Cc: Wolfgang Walter <linux@stwm.de>
 Cc: Roman Gushchin <guro@fb.com>
@@ -102,24 +105,27 @@ Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/inode.c |    7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ mm/vmscan.c |   10 ----------
+ 1 file changed, 10 deletions(-)
 
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -730,11 +730,8 @@ static enum lru_status inode_lru_isolate
- 		return LRU_REMOVED;
- 	}
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -477,16 +477,6 @@ static unsigned long do_shrink_slab(stru
+ 	delta *= 4;
+ 	do_div(delta, shrinker->seeks);
  
 -	/*
--	 * Recently referenced inodes and inodes with many attached pages
--	 * get one more pass.
+-	 * Make sure we apply some minimal pressure on default priority
+-	 * even on small cgroups. Stale objects are not only consuming memory
+-	 * by themselves, but can also hold a reference to a dying cgroup,
+-	 * preventing it from being reclaimed. A dying cgroup with all
+-	 * corresponding structures like per-cpu stats and kmem caches
+-	 * can be really big, so it may lead to a significant waste of memory.
 -	 */
--	if (inode->i_state & I_REFERENCED || inode->i_data.nrpages > 1) {
-+	/* recently referenced inodes get one more pass */
-+	if (inode->i_state & I_REFERENCED) {
- 		inode->i_state &= ~I_REFERENCED;
- 		spin_unlock(&inode->i_lock);
- 		return LRU_ROTATE;
+-	delta = max_t(unsigned long long, delta, min(freeable, batch_size));
+-
+ 	total_scan += delta;
+ 	if (total_scan < 0) {
+ 		pr_err("shrink_slab: %pF negative objects to delete nr=%ld\n",
 
 
