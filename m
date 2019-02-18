@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBDACC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:18:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E92EAC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:18:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90EE02177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:18:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50D5F2177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:18:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499486;
-	bh=NZedyh42inb2hcJAJS57CP8u/bwikYxsV3j1JjUVXOc=;
+	s=default; t=1550499498;
+	bh=Dgo9ZnjZM5q817zL4HXXjOQClkJ+/vSJH+3xCT7ezCY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VOPkxxAWCw7JxMsFadodpaYSJKQFAKj0g0+GaerHvlS208Y/lGQT/InUG5XZNMWFu
-	 9lYD9vo2yTmzPz60u8xpHM3Cr+kHJLkEPjcrkQONw3T3YElm0oJI39zy4W92aLZNle
-	 877DjIvmVuYiS5GY2tciDuHmErN44qVg6GiCC21Q=
+	b=VSimm/3TQoI5vqoh8fUNbC8i7yIIisLsBz2j32q8OMfXCuDngXeT39wne0HQd+hy/
+	 VFfSTjEfJxOUFEsQlOFUkeBpQmhUcm56KobTNdNV+vadFjpBGTfzggb7DHIFCJuUsA
+	 0WCL7HRq3akZIZ/3Oiff3G8G0Wx1R57QnpabcBx4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391285AbfBROSF (ORCPT
+        id S2391071AbfBROJC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:18:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54172 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:09:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391473AbfBROK0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:10:26 -0500
+        id S2391045AbfBROI6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:08:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3A53217D9;
-        Mon, 18 Feb 2019 14:10:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5AC02173C;
+        Mon, 18 Feb 2019 14:08:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550499025;
-        bh=NZedyh42inb2hcJAJS57CP8u/bwikYxsV3j1JjUVXOc=;
+        s=default; t=1550498937;
+        bh=Dgo9ZnjZM5q817zL4HXXjOQClkJ+/vSJH+3xCT7ezCY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ods6iwJsTFVKqf5/lirSh97n4UEI/VM+qgdqRUz7H+JU8VsbXabgFZ1kSGpgSPt0w
-         pJSYdnD1hnTlqUw+Ek2lukbBDU3cv9Msf1jVGR4wmjas0hYN9Xv/3rUh3gp+CVWwAE
-         wvQAOX6UcpXvy/A75mIjvGuzcdYekkU275R6tuzA=
+        b=rq/gR/XxKD/BSeEmHebsQnvMlICUe+bdCth7ehOT2ps+ZQq43k0noUUUoKPuQn9+8
+         oNv5dRGK3ENvM0jJxhso6keiTJOnrKhER77jibyQU4BEASSc+VNUbktFNcIB02haTO
+         tV/qu4Yq3VUNvJkcnQ42vsGqCu98MEldhe2RpqZM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        Matheus Tavares <matheus.bernardino@usp.br>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 027/108] ASoC: fsl: Fix SND_SOC_EUKREA_TLV320 build error on i.MX8M
-Date:   Mon, 18 Feb 2019 14:43:23 +0100
-Message-Id: <20190218133520.791461795@linuxfoundation.org>
+Subject: [PATCH 3.18 007/108] staging:iio:ad2s90: Make probe handle spi_setup failure
+Date:   Mon, 18 Feb 2019 14:43:03 +0100
+Message-Id: <20190218133519.854034846@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -68,43 +67,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit add6883619a9e3bf9658eaff1a547354131bbcd9 ]
+[ Upstream commit b3a3eafeef769c6982e15f83631dcbf8d1794efb ]
 
-eukrea-tlv320.c machine driver runs on non-DT platforms
-and include <asm/mach-types.h> header file in order to be able
-to use some machine_is_eukrea_xxx() macros.
+Previously, ad2s90_probe ignored the return code from spi_setup, not
+handling its possible failure. This patch makes ad2s90_probe check if
+the code is an error code and, if so, do the following:
 
-Building it for ARM64 causes the following build error:
+- Call dev_err with an appropriate error message.
+- Return the spi_setup's error code.
 
-sound/soc/fsl/eukrea-tlv320.c:28:10: fatal error: asm/mach-types.h: No such file or directory
+Note: The 'return ret' statement could be out of the 'if' block, but
+this whole block will be moved up in the function in the patch:
+'staging:iio:ad2s90: Move device registration to the end of probe'.
 
-Avoid this error by not allowing to build the SND_SOC_EUKREA_TLV320
-driver when ARM64 is selected.
-
-This is needed in preparation for the i.MX8M support.
-
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
-Acked-by: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/fsl/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/iio/resolver/ad2s90.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/fsl/Kconfig b/sound/soc/fsl/Kconfig
-index 081e406b3713..009d1893901b 100644
---- a/sound/soc/fsl/Kconfig
-+++ b/sound/soc/fsl/Kconfig
-@@ -219,7 +219,7 @@ config SND_SOC_PHYCORE_AC97
+diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
+index e24c5890652f..c0cee97bd0f1 100644
+--- a/drivers/staging/iio/resolver/ad2s90.c
++++ b/drivers/staging/iio/resolver/ad2s90.c
+@@ -86,7 +86,12 @@ static int ad2s90_probe(struct spi_device *spi)
+ 	/* need 600ns between CS and the first falling edge of SCLK */
+ 	spi->max_speed_hz = 830000;
+ 	spi->mode = SPI_MODE_3;
+-	spi_setup(spi);
++	ret = spi_setup(spi);
++
++	if (ret < 0) {
++		dev_err(&spi->dev, "spi_setup failed!\n");
++		return ret;
++	}
  
- config SND_SOC_EUKREA_TLV320
- 	tristate "Eukrea TLV320"
--	depends on ARCH_MXC && I2C
-+	depends on ARCH_MXC && !ARM64 && I2C
- 	select SND_SOC_TLV320AIC23_I2C
- 	select SND_SOC_IMX_AUDMUX
- 	select SND_SOC_IMX_SSI
+ 	return 0;
+ }
 -- 
 2.19.1
 
