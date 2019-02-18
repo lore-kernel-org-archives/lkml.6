@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68819C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F05A5C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:33:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 378E6217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:33:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE9DD2177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:33:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550511231;
-	bh=Z0Ah1bzAtSTk6QmnAo4lDyi6ia6LZcfqWbU6RHGBKaQ=;
+	s=default; t=1550511235;
+	bh=lK+JHr7EO0NyLhpmUHMOKSsymoC78ioH0CGzMJHmkDs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gKd+fAq5sFN/kmMc6rO9rWVtEMwHTx2soHnENtSB1RFKDbC83tx3x2fj5nJmSQzq8
-	 TVqQ6rD+TJP86C+vM86V05wu+onESHmad7ec3FwEKiovpSiCuAnQ/MesHGqed2A1zg
-	 oxpax+tLxvyeW6YzpDCXL2quwAraxMrF3NjsCUIU=
+	b=AUKDdBI+8PVpV31YMm2zL1u2a3gnqOdg3ER2jE/BtL5A4aH0+bvHfl9GtHI173oeV
+	 AxhgTvPhNRHCpqP3jyV111Kbin5TiqgqSga07yvPvQxxopiSdhp0WnErtRS3AAamQ7
+	 HSGKMVapDw+kw1VU072IPRw87EezWn3rSqACpjvI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388536AbfBRRdt (ORCPT
+        id S2388621AbfBRRdy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 12:33:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37336 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 12:33:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729822AbfBRRdr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 12:33:47 -0500
+        id S2388519AbfBRRdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 12:33:49 -0500
 Received: from localhost.localdomain (unknown [194.230.155.153])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 254FE217F5;
-        Mon, 18 Feb 2019 17:33:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F24F42177E;
+        Mon, 18 Feb 2019 17:33:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550511226;
-        bh=Z0Ah1bzAtSTk6QmnAo4lDyi6ia6LZcfqWbU6RHGBKaQ=;
+        s=default; t=1550511229;
+        bh=lK+JHr7EO0NyLhpmUHMOKSsymoC78ioH0CGzMJHmkDs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xNOTl7HWr6m3jWizSTQ2r2qFl0luMhmtLxjoIjyhIxE6Vbpx35Te5jsvM9C5nCSNL
-         IABeg25RxmxHgCx9L2s1Lz8kQ1keWa7B0qVYluuapm88+Rjz2NrfHEMm20i9UkHgfc
-         iTTAn/XqYlpD8U7qXRz7yRoji9qltcJtmYy8GFT4=
+        b=xAq2P3DPn+Y2Fbda6cAhas0pnMDZmtoqu+WL503tCX3dz8s9VnDtZSqXlTkNjzOgM
+         8i15G6qEunRwuTsI4TfScK0YJkJyHIE5kpYEbawYVJLRQwqiCwSgggVx0Utx1sul5m
+         cUVy5e8Sd2/1LNVlh160gfM6EMBdYL3MwH2E7eME=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Markus Reichl <reichl@t-online.de>
-Subject: [PATCH 2/3] ARM: dts: exynos: Add unused PMIC regulators on Arndale Octa board
-Date:   Mon, 18 Feb 2019 18:32:57 +0100
-Message-Id: <20190218173258.7071-2-krzk@kernel.org>
+Subject: [PATCH 3/3] ARM: dts: exynos: Raise maximum buck regulator voltages on Arndale Octa
+Date:   Mon, 18 Feb 2019 18:32:58 +0100
+Message-Id: <20190218173258.7071-3-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190218173258.7071-1-krzk@kernel.org>
 References: <20190218173258.7071-1-krzk@kernel.org>
@@ -55,122 +55,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define the LDO14, LDO17, LDO22, LDO25, LDO30, LDO34, LDO36 and LDO37
-unused regulators to describe the hardware.
+Raise the buck 1-7 regulators voltages to allow cpufreq choosing them
+and to fix warnings during boot:
+
+    core: _opp_supported_by_regulators: OPP minuV: 1250000 maxuV: 1250000, not supported by regulator
+    cpu cpu0: _opp_add: OPP not supported by regulators (1800000000)
+
+The maximum value is now in sync with other Exynos5420 boards with
+S2MPS11 PMIC (SMDK5420, Odroid XU3 family).  This also matches the
+values used in old patches done by Linaro Samsung team.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos5420-arndale-octa.dts | 56 +++++++++++++++++++
- 1 file changed, 56 insertions(+)
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-index 832757999e4f..308c74ebeacd 100644
+index 308c74ebeacd..c7d9604a119e 100644
 --- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
 +++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-@@ -180,6 +180,13 @@
- 				regulator-max-microvolt = <2800000>;
+@@ -342,48 +342,48 @@
+ 			buck1_reg: BUCK1 {
+ 				regulator-name = "PVDD_MIF_1V1";
+ 				regulator-min-microvolt = <800000>;
+-				regulator-max-microvolt = <1100000>;
++				regulator-max-microvolt = <1300000>;
+ 				regulator-always-on;
  			};
  
-+			ldo14_reg: LDO14 {
-+				/* Unused */
-+				regulator-name = "PVDD_LDO14";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
- 			ldo15_reg: LDO15 {
- 				regulator-name = "PVDD_PERI_2V8";
- 				regulator-min-microvolt = <3300000>;
-@@ -192,6 +199,13 @@
- 				regulator-max-microvolt = <2200000>;
+ 			buck2_reg: BUCK2 {
+ 				regulator-name = "vdd_arm";
+ 				regulator-min-microvolt = <800000>;
+-				regulator-max-microvolt = <1000000>;
++				regulator-max-microvolt = <1500000>;
+ 				regulator-always-on;
  			};
  
-+			ldo17_reg: LDO17 {
-+				/* Unused */
-+				regulator-name = "PVDD_LDO17";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
- 			ldo18_reg: LDO18 {
- 				regulator-name = "PVDD_EMMC_1V8";
- 				regulator-min-microvolt = <1800000>;
-@@ -216,6 +230,13 @@
- 				regulator-max-microvolt = <1800000>;
+ 			buck3_reg: BUCK3 {
+ 				regulator-name = "PVDD_INT_1V0";
+ 				regulator-min-microvolt = <800000>;
+-				regulator-max-microvolt = <1000000>;
++				regulator-max-microvolt = <1400000>;
+ 				regulator-always-on;
  			};
  
-+			ldo22_reg: LDO22 {
-+				/* Unused */
-+				regulator-name = "PVDD_LDO22";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <2375000>;
-+			};
-+
- 			ldo23_reg: LDO23 {
- 				regulator-name = "PVDD_MIFS_1V1";
- 				regulator-min-microvolt = <1200000>;
-@@ -229,6 +250,13 @@
- 				regulator-max-microvolt = <2800000>;
+ 			buck4_reg: BUCK4 {
+ 				regulator-name = "PVDD_G3D_1V0";
+ 				regulator-min-microvolt = <800000>;
+-				regulator-max-microvolt = <1000000>;
++				regulator-max-microvolt = <1400000>;
  			};
  
-+			ldo25_reg: LDO25 {
-+				/* Unused */
-+				regulator-name = "PVDD_LDO25";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
- 			ldo26_reg: LDO26 {
- 				regulator-name = "PVDD_CAM0_AF_2V8";
- 				regulator-min-microvolt = <3000000>;
-@@ -253,6 +281,13 @@
- 				regulator-max-microvolt = <1800000>;
+ 			buck5_reg: BUCK5 {
+ 				regulator-name = "PVDD_LPDDR3_1V2";
+ 				regulator-min-microvolt = <800000>;
+-				regulator-max-microvolt = <1200000>;
++				regulator-max-microvolt = <1400000>;
+ 				regulator-always-on;
  			};
  
-+			ldo30_reg: LDO30 {
-+				/* Unused */
-+				regulator-name = "PVDD_LDO30";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
- 			ldo31_reg: LDO31 {
- 				regulator-name = "PVDD_PERI_1V8";
- 				regulator-min-microvolt = <1800000>;
-@@ -271,12 +306,33 @@
- 				regulator-max-microvolt = <1800000>;
+ 			buck6_reg: BUCK6 {
+ 				regulator-name = "PVDD_KFC_1V0";
+ 				regulator-min-microvolt = <800000>;
+-				regulator-max-microvolt = <1000000>;
++				regulator-max-microvolt = <1500000>;
+ 				regulator-always-on;
  			};
  
-+			ldo34_reg: LDO34 {
-+				/* Unused */
-+				regulator-name = "PVDD_LDO34";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
- 			ldo35_reg: LDO35 {
- 				regulator-name = "PVDD_CAM0_DVDD_1V2";
- 				regulator-min-microvolt = <1200000>;
- 				regulator-max-microvolt = <1200000>;
+ 			buck7_reg: BUCK7 {
+ 				regulator-name = "VIN_LLDO_1V4";
+ 				regulator-min-microvolt = <800000>;
+-				regulator-max-microvolt = <1400000>;
++				regulator-max-microvolt = <1500000>;
+ 				regulator-always-on;
  			};
  
-+			ldo36_reg: LDO36 {
-+				/* Unused */
-+				regulator-name = "PVDD_LDO36";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
-+			ldo37_reg: LDO37 {
-+				/* Unused */
-+				regulator-name = "PVDD_LDO37";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
- 			ldo38_reg: LDO38 {
- 				regulator-name = "PVDD_CAM0_AVDD_2V8";
- 				regulator-min-microvolt = <2800000>;
 -- 
 2.17.1
 
