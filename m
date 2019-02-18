@@ -2,114 +2,164 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16B28C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:23:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D53C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:25:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3B2F217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:23:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4872D21848
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:25:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="RC4/vMbc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732128AbfBRPXx (ORCPT
+        id S1731785AbfBRPZD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 10:23:53 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33244 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729977AbfBRPXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 10:23:52 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 14442A78;
-        Mon, 18 Feb 2019 07:23:37 -0800 (PST)
-Received: from [10.1.196.69] (e112269-lin.cambridge.arm.com [10.1.196.69])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F2E1C3F675;
-        Mon, 18 Feb 2019 07:23:23 -0800 (PST)
-Subject: Re: [PATCH 06/13] mm: pagewalk: Add 'depth' parameter to pte_hole
-To:     Mark Rutland <Mark.Rutland@arm.com>
-Cc:     "x86@kernel.org" <x86@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <Catalin.Marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Will Deacon <Will.Deacon@arm.com>,
+        Mon, 18 Feb 2019 10:25:03 -0500
+Received: from mail-eopbgr30073.outbound.protection.outlook.com ([40.107.3.73]:40512
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729621AbfBRPZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 10:25:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qWKPaf2jF/kciS0KBtUJjSvvYpofoLLLsHtskMy7AOY=;
+ b=RC4/vMbcRM0b7BUF+Cbfq/s0S5xBpm5WfH6KVOiVBV5OdpkI4b6kEl3KO1kaQqwXwbWuo52weKhiaLGMEbR6UfOfPFo0RPduUE0t9lUBpg0LfRGC92xit3ktU8Wkw+6psL9rY7m9b0RmJfKiSDW7K02BE9IM+7BBqYmKbfM7X6U=
+Received: from AM6PR04MB4693.eurprd04.prod.outlook.com (20.177.33.222) by
+ AM6PR04MB4533.eurprd04.prod.outlook.com (20.177.38.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.19; Mon, 18 Feb 2019 15:25:00 +0000
+Received: from AM6PR04MB4693.eurprd04.prod.outlook.com
+ ([fe80::78b6:cae3:86df:a936]) by AM6PR04MB4693.eurprd04.prod.outlook.com
+ ([fe80::78b6:cae3:86df:a936%4]) with mapi id 15.20.1622.018; Mon, 18 Feb 2019
+ 15:25:00 +0000
+From:   Viorel Suman <viorel.suman@nxp.com>
+To:     Timur Tabi <timur@kernel.org>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>
+CC:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        James Morse <James.Morse@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190215170235.23360-1-steven.price@arm.com>
- <20190215170235.23360-7-steven.price@arm.com>
- <20190218112350.GE8036@lakrids.cambridge.arm.com>
-From:   Steven Price <steven.price@arm.com>
-Message-ID: <7b0c6eed-102e-ff79-0f65-16bcec043a09@arm.com>
-Date:   Mon, 18 Feb 2019 15:23:22 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        dl-linux-imx <linux-imx@nxp.com>,
+        Viorel Suman <viorel.suman@gmail.com>
+Subject: [PATCH] ASoC: fsl_spdif: fix sysclk_df type
+Thread-Topic: [PATCH] ASoC: fsl_spdif: fix sysclk_df type
+Thread-Index: AQHUx54cV0e+cjZqWUucEsNTrxgp8Q==
+Date:   Mon, 18 Feb 2019 15:25:00 +0000
+Message-ID: <1550503474-18865-1-git-send-email-viorel.suman@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM5P189CA0013.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:206:15::26) To AM6PR04MB4693.eurprd04.prod.outlook.com
+ (2603:10a6:20b:7::30)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=viorel.suman@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.7.4
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: cfca4032-1908-4cac-ef41-08d695b53f1a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB4533;
+x-ms-traffictypediagnostic: AM6PR04MB4533:
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;AM6PR04MB4533;23:0tKOhhWx3KQ6/7xkBy7/0F4KkCr4NS10Ca646U1?=
+ =?iso-8859-1?Q?5yq53MEi5VmPQuDYFrx4jAu1TyNAse6he3rAsnU/1JtUL53mfbz6h/jtMK?=
+ =?iso-8859-1?Q?7IbWmLS48taqS2cJOloqFmGxkUeKOV2Zs4TroQsqPPQHIpagBD2nTa9zm+?=
+ =?iso-8859-1?Q?peDiuz1o2KhKYksq3F3CshbOOMxCnbICwcf8zwn0IcDwUTKp0IWRtCOzNo?=
+ =?iso-8859-1?Q?EMZMR+vBfLwVMaBJ+npvtYI/Ovepgy2UAw5ePnkFs7s7byBqtGollY0Jl3?=
+ =?iso-8859-1?Q?BYmvXtfWFTldtNvO7b58Ri6j/MmiTuqFAW/XQPZmZomXkN/0TVDb6zx9CW?=
+ =?iso-8859-1?Q?KoeMmUUQuZUOaE6tY+2EKYxQjbQiOH0fVnhzfKWxf7zelS/bEzLaqIRMsy?=
+ =?iso-8859-1?Q?M+FQCyiHw0XX5ArA77tGJf4jBH6Awi4o0ZXKCBn7CEjlywogDemE9exjNx?=
+ =?iso-8859-1?Q?wnn5WIUOn7K/oZwqs/ugqUXho7BnCRtK0JPIE9Y4yMwkfBrXfMSUNwWRRc?=
+ =?iso-8859-1?Q?alUzs1kx74/SvrpGMjO0R2CCL51NKd2cuvzzp/m1TUTbNv2uMU2r8w8gby?=
+ =?iso-8859-1?Q?aqBS3/C+pyXyvGAq4vuuV5eaQl7B5r6zi/3FHbuQ/9XCNdz3sPnmgABoz6?=
+ =?iso-8859-1?Q?xRZfImu4Fe5TCwyqIE0GbkIWS78rohQ/HVRzjNAWTjgmjmGz/TlG2RNzGQ?=
+ =?iso-8859-1?Q?/tX7WFxsIIfxU6rOYtOUsB9euaj11ycN2vM8TD+FO6dbULqxGg+xnhmxgw?=
+ =?iso-8859-1?Q?+hWUdZcNPsmMM0Z4scrUOq/cN+5WTr5mqg4JCLCNOLp/XBYqF2Qyyjy9Bq?=
+ =?iso-8859-1?Q?KD/tUVtfnNTnwVc6NFl1XKpw5cO+R8qP8bdtPYc04lpDQy8Shq7ZBxpBJl?=
+ =?iso-8859-1?Q?bPD/5z1YYc7nwx5e120duV3FVcAiFEdmrb70aAB8b7eoBrAdyfozP5zbyD?=
+ =?iso-8859-1?Q?NvWQG6p/103/DRSrpjEIqTghnyBAxd2iVQSwRpY+rtuYhnLv+QHHTikbVc?=
+ =?iso-8859-1?Q?uotneF6nQm+4zfwjCiNH7MlLULjMbC0yWnZ2bOCLLwtxU4TwgMgnq2DOSD?=
+ =?iso-8859-1?Q?GqlY2MrhpoFBb5VIMzze7t3Bp6ZWKyy+nGbpHqCqMSPBT1UVkQKcp05Dcw?=
+ =?iso-8859-1?Q?xTbxoG7vrvqnPz9s/i2M6Frj8PBFilmY1Y8HZm61IxGay6zMQXXKR7nur0?=
+ =?iso-8859-1?Q?KiEAdHMF+Bc93Oss6ytkOGN77MGJFLI+61hMhIQgDpEqdIMn6oEy0I=3D?=
+x-microsoft-antispam-prvs: <AM6PR04MB45339DD53A092195E207E88C92630@AM6PR04MB4533.eurprd04.prod.outlook.com>
+x-forefront-prvs: 09525C61DB
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(346002)(376002)(366004)(396003)(189003)(199004)(6512007)(2616005)(5660300002)(8676002)(36756003)(26005)(81156014)(7416002)(8936002)(81166006)(86362001)(25786009)(7736002)(4326008)(2906002)(305945005)(476003)(486006)(97736004)(53936002)(14444005)(110136005)(50226002)(256004)(6436002)(66066001)(99286004)(68736007)(6486002)(52116002)(186003)(6506007)(71200400001)(54906003)(386003)(478600001)(14454004)(44832011)(316002)(106356001)(105586002)(6116002)(3846002)(102836004)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4533;H:AM6PR04MB4693.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: pSxKWc02S85XakGHFhnFONMpx+PbALMoLXwW4+rworsWz8OiQcIURnjH5L9l8c5/NEJDQxsbPm/cELca2Xr13Bcp8FnOmq8zNIui9skybTpQb7Hc9YB2sNv9JeeHdjNqCq8TJHY9Kbu9Lan7UrM48yBaGYyF8KCC+zi3K4hsyyjz3EshssQF4Qmj8WIvKsKrW3KdVXItAAEXy45BCzKxJ+Hix8w+cPFTs2SYnRIa4CYRErGmn6zE4WGS4i1eaYW3KAz/yq2bjWv0ttCg4YGmy5bGMS+9NtBsszX/vBGwdsBn2USPm++Jbn7xh9Br4Qz/DCD6C07lwCUmygNHzascBTgd8MVWrgidZ6OXiDTpykfPf4UyZVCdNEZB5TOpao32Urnqct0BChTK980+yh1Y+IGIPk1xI30/ZkCzBczQ6uU=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <20190218112350.GE8036@lakrids.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cfca4032-1908-4cac-ef41-08d695b53f1a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2019 15:24:59.2557
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4533
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/02/2019 11:23, Mark Rutland wrote:
-> On Fri, Feb 15, 2019 at 05:02:27PM +0000, Steven Price wrote:
->> +/* If the p4ds are actually just pgds then we should report a depth
->> + * of 0 not 1 (as a missing entry is really a missing pgd
->> + */
-> 
-> Nit: comment style violation. This should look like:
-> should be:
-> 
-> /*
->  * If the p4ds are actually just pgds then we should report a depth
->  * of 0 not 1 (as a missing entry is really a missing pgd
->  */
-> 
->> +int depth = (PTRS_PER_P4D == 1)?0:1;
-> 
-> Nit: the ternary should have spacing.
-> 
-> We don't seem to do this at any other level that could be folded, so why
-> does p4d need special care?
-> 
-> For example, what happens on arm64 when using 64K pages and 3 level
-> paging, where puds are folded into pgds?
-> 
-> Thanks,
-> Mark.
+According to RM SPDIF STC SYSCLK_DF field is 9-bit wide, values
+being in 0..511 range. Use a proper type to handle sysclk_df.
 
-Yes, you are entirely correct I've missed the other potential foldings.
-I somehow imagined that p4d was special and was folded the opposite
-direction (I'm not sure why!).
+Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
+---
+ sound/soc/fsl/fsl_spdif.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-The best solution I can come up with is a function which will convert
-from the level the entry is found at, back to the 'real' level the entry
-was missing at. This is needed to produce the correct output in the
-debugfs file. Something like:
+diff --git a/sound/soc/fsl/fsl_spdif.c b/sound/soc/fsl/fsl_spdif.c
+index a26686e..4842e6d 100644
+--- a/sound/soc/fsl/fsl_spdif.c
++++ b/sound/soc/fsl/fsl_spdif.c
+@@ -96,7 +96,7 @@ struct fsl_spdif_priv {
+ 	bool dpll_locked;
+ 	u32 txrate[SPDIF_TXRATE_MAX];
+ 	u8 txclk_df[SPDIF_TXRATE_MAX];
+-	u8 sysclk_df[SPDIF_TXRATE_MAX];
++	u16 sysclk_df[SPDIF_TXRATE_MAX];
+ 	u8 txclk_src[SPDIF_TXRATE_MAX];
+ 	u8 rxclk_src;
+ 	struct clk *txclk[SPDIF_TXRATE_MAX];
+@@ -376,7 +376,8 @@ static int spdif_set_sample_rate(struct snd_pcm_substre=
+am *substream,
+ 	struct platform_device *pdev =3D spdif_priv->pdev;
+ 	unsigned long csfs =3D 0;
+ 	u32 stc, mask, rate;
+-	u8 clk, txclk_df, sysclk_df;
++	u16 sysclk_df;
++	u8 clk, txclk_df;
+ 	int ret;
+=20
+ 	switch (sample_rate) {
+@@ -1109,8 +1110,9 @@ static u32 fsl_spdif_txclk_caldiv(struct fsl_spdif_pr=
+iv *spdif_priv,
+ 	static const u32 rate[] =3D { 32000, 44100, 48000, 96000, 192000 };
+ 	bool is_sysclk =3D clk_is_match(clk, spdif_priv->sysclk);
+ 	u64 rate_ideal, rate_actual, sub;
+-	u32 sysclk_dfmin, sysclk_dfmax;
+-	u32 txclk_df, sysclk_df, arate;
++	u32 arate;
++	u16 sysclk_dfmin, sysclk_dfmax, sysclk_df;
++	u8 txclk_df;
+=20
+ 	/* The sysclk has an extra divisor [2, 512] */
+ 	sysclk_dfmin =3D is_sysclk ? 2 : 1;
+--=20
+2.7.4
 
-static int real_depth(int depth)
-{
-	if (depth == 3 && PTRS_PER_PMD == 1)
-		depth = 2;
-	if (depth == 2 && PTRS_PER_PUD == 1)
-		depth = 1;
-	if (depth == 1 && PTRS_PER_P4D == 1)
-		depth = 0;
-	return depth;
-}
-
-This should of course get folded by the compiler and not actually
-generate any code.
-
-Thanks,
-
-Steve
