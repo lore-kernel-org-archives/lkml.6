@@ -2,58 +2,54 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F81DC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:06:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 224D7C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:06:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5132121929
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:06:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E79EF21902
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:06:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498799;
-	bh=IsKSm2+Aecn6T5dGzy791fmisIGXzarNuTWJjAtU28A=;
+	s=default; t=1550498804;
+	bh=pGOkujAZf70LVKYINCd95JfKPSQkpZJSe1LKKkkpLPM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oPoZkMKB539QWVM/QUl2ygIofz2s72u7u5yoAGRv05/iE/TaVSmPpoejtskxSKyQo
-	 X7FwqiYtewfSuoDx+xLv+VLSibq/VNe9BEt4vO0kebWhPb0kriG4Iqu/ysT+5o4uXN
-	 sJWZ3jWGnYplpfoXc5OiIv3nijukZrqBPxEptp30=
+	b=P0s9bRrGnw9D7lTC3aTSbqFH1UraHeLgfwYj53ms6XfhIdeT2YlUsy69DiJeclFdp
+	 A+pVh2g7BG6M9rVuspMZ1s3ijFxf8ijj+PAyqrJVvExkK2BBENu8RLuAqJHiu5Yv+N
+	 Qd/fcZfah2LOmyXghAKnBw+g2LqmyNkXJ4TAAhRE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389837AbfBROGh (ORCPT
+        id S2390461AbfBROGm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:06:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49556 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:06:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390411AbfBROGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:06:30 -0500
+        id S2390445AbfBROGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:06:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D71FD21901;
-        Mon, 18 Feb 2019 14:06:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6705221902;
+        Mon, 18 Feb 2019 14:06:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498789;
-        bh=IsKSm2+Aecn6T5dGzy791fmisIGXzarNuTWJjAtU28A=;
+        s=default; t=1550498795;
+        bh=pGOkujAZf70LVKYINCd95JfKPSQkpZJSe1LKKkkpLPM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f42Dq74smWGb70pfyVGNVBu+xb9BldySee1OqS7XOlWEYAHxpGy4jlGeWC+Qjh5LB
-         lifKzUZrFCkXWr49N2Z36Yk6XAFR1woIiiLIY0/j6U5UeNieHXdV75mZpt0NlE+IuE
-         DYr4YBp7P0PuNPgpAZq7ratPhEZWHlNAe2J0TF3A=
+        b=nQ4MMPXvcy9tSLYkrVHr/WZQbJPbToRmtEuwPJouWo0na9qJhtNyGyz81AqQmnKJ9
+         jmSrr5QQrm28vLVbr/ggFKSwIP0jADsHg60wYOUDGlxxK4g1WCmaFPxto+/DKksjrz
+         K1l1dltQ4KW44Hqu9cI4BBSFlXDeg5KfghdistI4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jamie Lentin <jm@lentin.co.uk>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Julien DAscenzio <jdascenzio@posteo.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 121/143] ARM: dts: kirkwood: Fix polarity of GPIO fan lines
-Date:   Mon, 18 Feb 2019 14:44:09 +0100
-Message-Id: <20190218133533.424256590@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Manfred Schlaegl <manfred.schlaegl@ginzinger.com>,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>,
+        Boris Brezillon <bbrezillon@kernel.org>
+Subject: [PATCH 4.4 098/143] mtd: rawnand: gpmi: fix MX28 bus master lockup problem
+Date:   Mon, 18 Feb 2019 14:43:46 +0100
+Message-Id: <20190218133532.629640951@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -72,48 +68,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b5f034845e70916fd33e172fad5ad530a29c10ab ]
+From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
 
-These two lines are active high, not active low. The bug was
-found when we changed the kernel to respect the polarity defined
-in the device tree.
+commit d5d27fd9826b59979b184ec288e4812abac0e988 upstream.
 
-Fixes: 1b90e06b1429 ("ARM: kirkwood: Use devicetree to define DNS-32[05] fan")
-Cc: Jamie Lentin <jm@lentin.co.uk>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Gregory Clement <gregory.clement@bootlin.com>
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Julien D'Ascenzio <jdascenzio@posteo.net>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Tested-by: Jamie Lentin <jm@lentin.co.uk>
-Reported-by: Julien D'Ascenzio <jdascenzio@posteo.net>
-Tested-by: Julien D'Ascenzio <jdascenzio@posteo.net>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Disable BCH soft reset according to MX23 erratum #2847 ("BCH soft
+reset may cause bus master lock up") for MX28 too. It has the same
+problem.
+
+Observed problem: once per 100,000+ MX28 reboots NAND read failed on
+DMA timeout errors:
+[    1.770823] UBI: attaching mtd3 to ubi0
+[    2.768088] gpmi_nand: DMA timeout, last DMA :1
+[    3.958087] gpmi_nand: BCH timeout, last DMA :1
+[    4.156033] gpmi_nand: Error in ECC-based read: -110
+[    4.161136] UBI warning: ubi_io_read: error -110 while reading 64
+bytes from PEB 0:0, read only 0 bytes, retry
+[    4.171283] step 1 error
+[    4.173846] gpmi_nand: Chip: 0, Error -1
+
+Without BCH soft reset we successfully executed 1,000,000 MX28 reboots.
+
+I have a quote from NXP regarding this problem, from July 18th 2016:
+
+"As the i.MX23 and i.MX28 are of the same generation, they share many
+characteristics. Unfortunately, also the erratas may be shared.
+In case of the documented erratas and the workarounds, you can also
+apply the workaround solution of one device on the other one. This have
+been reported, but I’m afraid that there are not an estimated date for
+updating the Errata documents.
+Please accept our apologies for any inconveniences this may cause."
+
+Fixes: 6f2a6a52560a ("mtd: nand: gpmi: reset BCH earlier, too, to avoid NAND startup problems")
+Cc: stable@vger.kernel.org
+Signed-off-by: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
+Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Acked-by: Han Xu <han.xu@nxp.com>
+Signed-off-by: Boris Brezillon <bbrezillon@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm/boot/dts/kirkwood-dnskw.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mtd/nand/gpmi-nand/gpmi-lib.c |   15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/boot/dts/kirkwood-dnskw.dtsi b/arch/arm/boot/dts/kirkwood-dnskw.dtsi
-index 113dcf056dcf..1b2dacfa6132 100644
---- a/arch/arm/boot/dts/kirkwood-dnskw.dtsi
-+++ b/arch/arm/boot/dts/kirkwood-dnskw.dtsi
-@@ -35,8 +35,8 @@
- 		compatible = "gpio-fan";
- 		pinctrl-0 = <&pmx_fan_high_speed &pmx_fan_low_speed>;
- 		pinctrl-names = "default";
--		gpios = <&gpio1 14 GPIO_ACTIVE_LOW
--			 &gpio1 13 GPIO_ACTIVE_LOW>;
-+		gpios = <&gpio1 14 GPIO_ACTIVE_HIGH
-+			 &gpio1 13 GPIO_ACTIVE_HIGH>;
- 		gpio-fan,speed-map = <0    0
- 				      3000 1
- 				      6000 2>;
--- 
-2.19.1
-
+--- a/drivers/mtd/nand/gpmi-nand/gpmi-lib.c
++++ b/drivers/mtd/nand/gpmi-nand/gpmi-lib.c
+@@ -168,9 +168,10 @@ int gpmi_init(struct gpmi_nand_data *thi
+ 
+ 	/*
+ 	 * Reset BCH here, too. We got failures otherwise :(
+-	 * See later BCH reset for explanation of MX23 handling
++	 * See later BCH reset for explanation of MX23 and MX28 handling
+ 	 */
+-	ret = gpmi_reset_block(r->bch_regs, GPMI_IS_MX23(this));
++	ret = gpmi_reset_block(r->bch_regs,
++			       GPMI_IS_MX23(this) || GPMI_IS_MX28(this));
+ 	if (ret)
+ 		goto err_out;
+ 
+@@ -274,13 +275,11 @@ int bch_set_geometry(struct gpmi_nand_da
+ 
+ 	/*
+ 	* Due to erratum #2847 of the MX23, the BCH cannot be soft reset on this
+-	* chip, otherwise it will lock up. So we skip resetting BCH on the MX23.
+-	* On the other hand, the MX28 needs the reset, because one case has been
+-	* seen where the BCH produced ECC errors constantly after 10000
+-	* consecutive reboots. The latter case has not been seen on the MX23
+-	* yet, still we don't know if it could happen there as well.
++	* chip, otherwise it will lock up. So we skip resetting BCH on the MX23
++	* and MX28.
+ 	*/
+-	ret = gpmi_reset_block(r->bch_regs, GPMI_IS_MX23(this));
++	ret = gpmi_reset_block(r->bch_regs,
++			       GPMI_IS_MX23(this) || GPMI_IS_MX28(this));
+ 	if (ret)
+ 		goto err_out;
+ 
 
 
