@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CFFC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08108C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:53:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D45D721901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:53:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD24020449
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:53:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498034;
-	bh=2rzS+yDury+RC4jm5x3MHNiJemNPFozlbu73tsrMLLs=;
+	s=default; t=1550498037;
+	bh=BOVgg23+grdp3HPyWGT1rDuUWOQGPL9hkIsrtHqVzr8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Wwk7sERzMb8GCj6nCE4YSwNPAaLyiL/L2yu4cdYpB1HIsgno7jjPT9Z5oMYcfmwrM
-	 5zqvU9mgsiu7Lzaq3Bz5BbNe9EreyUH5C7c4zn+5ZHOUXuAUDDhylZcTPmE6D+Iwwp
-	 oaZ9z1HktPi7e0Th66ExeL9BZ0ExRFn4XR2xxppM=
+	b=dNdYdA1ibGVXxg+NbPTIWwoId8sf133HjqRYsAm6Xz0jJKj3zirIPK1HczzvIFwWT
+	 eZOLeZB0ywj2do8KfxunN0tNRTRNbl80tUtkI0XtoLO/s0dqlyLPCy1aTcdgm5coXt
+	 zr1xxA71t/vpzbHzH3MxRdblVdNNGxGdRL11uAsY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733046AbfBRNxx (ORCPT
+        id S1733065AbfBRNx4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:53:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33598 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:53:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733032AbfBRNxt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:53:49 -0500
+        id S1732399AbfBRNxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:53:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A43B621901;
-        Mon, 18 Feb 2019 13:53:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FD1221901;
+        Mon, 18 Feb 2019 13:53:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498029;
-        bh=2rzS+yDury+RC4jm5x3MHNiJemNPFozlbu73tsrMLLs=;
+        s=default; t=1550498032;
+        bh=BOVgg23+grdp3HPyWGT1rDuUWOQGPL9hkIsrtHqVzr8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wGifLUTwFf0JFI3c5AxBe1V+7ZDIvhBi5+cUY405bQv3IuGqEcq0EAa2uwMXjLwDV
-         HIIiz3rQNBQeO3PmcEUh3YcbE4H9M8KQwz4UP58KxB5pH0NwfXfkxZu+YUOaqaPyC1
-         DTjAUNsI+ym/Gnr6lvzh9gxs+vaVkNcAL2oW6z48=
+        b=ixEscnzxcUjk7b9pp1lMU0v/yU2x6izqNqZ2cUOLudQTL6vJnQshXDoRR1UE4ikUq
+         zxGzuqGfvxX1bkVqRdNIr2ofBV9VRVu/hMjtYiKbxK0OBqyk+hk+uU2bFLmbqd1SF8
+         ND4WihagapGRlPmR6DDDFbVhzdUHQQrmnh3Q7Eaw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Derek Robson <robsonde@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Matz <matz@suse.de>, x86@kernel.org
-Subject: [PATCH 4.19 78/85] x86/a.out: Clear the dump structure initially
-Date:   Mon, 18 Feb 2019 14:43:44 +0100
-Message-Id: <20190218133507.388340035@linuxfoundation.org>
+        stable@vger.kernel.org, Milan Broz <mbroz@redhat.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.19 79/85] dm crypt: dont overallocate the integrity tag space
+Date:   Mon, 18 Feb 2019 14:43:45 +0100
+Message-Id: <20190218133507.492528303@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -66,59 +65,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 10970e1b4be9c74fce8ab6e3c34a7d718f063f2c upstream.
+commit ff0c129d3b5ecb3df7c8f5e2236582bf745b6c5f upstream.
 
-dump_thread32() in aout_core_dump() does not clear the user32 structure
-allocated on the stack as the first thing on function entry.
+bio_sectors() returns the value in the units of 512-byte sectors (no
+matter what the real sector size of the device).  dm-crypt multiplies
+bio_sectors() by on_disk_tag_size to calculate the space allocated for
+integrity tags.  If dm-crypt is running with sector size larger than
+512b, it allocates more data than is needed.
 
-As a result, the dump.u_comm, dump.u_ar0 and dump.signal which get
-assigned before the clearing, get overwritten.
+Device Mapper trims the extra space when passing the bio to
+dm-integrity, so this bug didn't result in any visible misbehavior.
+But it must be fixed to avoid wasteful memory allocation for the block
+integrity payload.
 
-Rename that function to fill_dump() to make it clear what it does and
-call it first thing.
-
-This was caught while staring at a patch by Derek Robson
-<robsonde@gmail.com>.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Derek Robson <robsonde@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Matz <matz@suse.de>
-Cc: x86@kernel.org
-Cc: <stable@vger.kernel.org>
-Link: https://lkml.kernel.org/r/20190202005512.3144-1-robsonde@gmail.com
+Fixes: ef43aa38063a6 ("dm crypt: add cryptographic data integrity protection (authenticated encryption)")
+Cc: stable@vger.kernel.org # 4.12+
+Reported-by: Milan Broz <mbroz@redhat.com>
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/ia32/ia32_aout.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/md/dm-crypt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/ia32/ia32_aout.c
-+++ b/arch/x86/ia32/ia32_aout.c
-@@ -51,7 +51,7 @@ static unsigned long get_dr(int n)
- /*
-  * fill in the user structure for a core dump..
-  */
--static void dump_thread32(struct pt_regs *regs, struct user32 *dump)
-+static void fill_dump(struct pt_regs *regs, struct user32 *dump)
- {
- 	u32 fs, gs;
- 	memset(dump, 0, sizeof(*dump));
-@@ -157,10 +157,12 @@ static int aout_core_dump(struct coredum
- 	fs = get_fs();
- 	set_fs(KERNEL_DS);
- 	has_dumped = 1;
-+
-+	fill_dump(cprm->regs, &dump);
-+
- 	strncpy(dump.u_comm, current->comm, sizeof(current->comm));
- 	dump.u_ar0 = offsetof(struct user32, regs);
- 	dump.signal = cprm->siginfo->si_signo;
--	dump_thread32(cprm->regs, &dump);
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -932,7 +932,7 @@ static int dm_crypt_integrity_io_alloc(s
+ 	if (IS_ERR(bip))
+ 		return PTR_ERR(bip);
  
- 	/*
- 	 * If the size of the dump file exceeds the rlimit, then see
+-	tag_len = io->cc->on_disk_tag_size * bio_sectors(bio);
++	tag_len = io->cc->on_disk_tag_size * (bio_sectors(bio) >> io->cc->sector_shift);
+ 
+ 	bip->bip_iter.bi_size = tag_len;
+ 	bip->bip_iter.bi_sector = io->cc->start + io->sector;
 
 
