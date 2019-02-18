@@ -2,104 +2,131 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 815DDC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:33:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FCB1C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:33:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50D31217F9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:33:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550521998;
-	bh=A4ja4HTcsByf/U7YpS1F/SraQtgmrpMbvBGvjm/nZjA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=tyQWWctpDJJFU0Ev0UJj6dS6tAyvxLN8DK/RERb6D9eWaPb2tCd4RzQfVf0UZZUWW
-	 9JnlIDhuGHJgY6fLP35d1F8OQQwW3UeyZ5WG/0mPAYuB9nkz5XwBygyiub6HtNjt0q
-	 5loRSKDh+g/eWLn/qeu/4Jpwfen0+GDz9/F71C1k=
+	by mail.kernel.org (Postfix) with ESMTP id 6936B21929
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:33:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729610AbfBRUdQ (ORCPT
+        id S1729246AbfBRUdt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 15:33:16 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:34045 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726831AbfBRUdQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 15:33:16 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 98so30573901oty.1;
-        Mon, 18 Feb 2019 12:33:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yvm3pH6cxtlAzN/9pwY/UuTRQR4gOgeaCA1EXwFSEI0=;
-        b=X9Q68lVk6nq6LvGC83uYNddq3rky2TK9acRs2Un6HdRucmOL6RoNHCyk885XaYAro0
-         7jyGDZkfeX2JFGEvIpYiFaAKQzzMyn0JuKOvaJS92CDbTpBwgrbHu/MwTcQm0tAR1ImU
-         +jebbmZJMUcJHrGv1EIKkoQvi4z16TKgIl+rmIQIxdh2L9Eoqh/T3s0CvLcFYLI6wxsp
-         ObyzNEy7+L7tLUWPmhHMPRlbeJ+OjXRgKGe88B+WqoELX6r1TXw0qNS2WgIZZhVRFo27
-         GLE0O6OOeR6+S0Fb9vjyXZCwdMm1fXU5sdM9XUWBVTrOXLgiuFbGyPlcEeF1Fa0zLjPq
-         aTKw==
-X-Gm-Message-State: AHQUAuY/l7ZcdbbAOaBEtbwIPr4zw5A/etVzbV2qS9lhVIu0cQZaZLtL
-        OL2jGPjRjM3SwnGoVmg3tw==
-X-Google-Smtp-Source: AHgI3Ibf/QXjyDT/pIoAftowZtC9vT947lxnYME7IUo62b3yCBZjVwZPA7CTaXerWL5VjXS+D5JJCg==
-X-Received: by 2002:a9d:644b:: with SMTP id m11mr15741262otl.90.1550521995426;
-        Mon, 18 Feb 2019 12:33:15 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id z5sm3506779otm.14.2019.02.18.12.33.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Feb 2019 12:33:14 -0800 (PST)
-Date:   Mon, 18 Feb 2019 14:33:14 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Wei Ni <wni@nvidia.com>
-Cc:     thierry.reding@gmail.com, daniel.lezcano@linaro.org,
-        edubezval@gmail.com, linux-tegra@vger.kernel.org,
-        rui.zhang@intel.com, srikars@nvidia.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v1 04/12] of: Add bindings of gpu hw throttle for Tegra
- soctherm
-Message-ID: <20190218203314.GB12911@bogus>
-References: <1545118484-23641-1-git-send-email-wni@nvidia.com>
- <1545118484-23641-6-git-send-email-wni@nvidia.com>
+        Mon, 18 Feb 2019 15:33:49 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45658 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726831AbfBRUds (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 15:33:48 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5FB7E85360;
+        Mon, 18 Feb 2019 20:33:48 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4238C19C4F;
+        Mon, 18 Feb 2019 20:33:46 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Tan Xiaojun <tanxiaojun@huawei.com>
+Cc:     <viro@zeniv.linux.org.uk>, <bcrl@kvack.org>, <linux-aio@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <guohanjun@huawei.com>,
+        <wangxiongfeng2@huawei.com>
+Subject: Re: [RFC PATCH] aio: add check for timeout to aviod invalid value
+References: <1550311021-60612-1-git-send-email-tanxiaojun@huawei.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Mon, 18 Feb 2019 15:33:46 -0500
+In-Reply-To: <1550311021-60612-1-git-send-email-tanxiaojun@huawei.com> (Tan
+        Xiaojun's message of "Sat, 16 Feb 2019 17:57:01 +0800")
+Message-ID: <x497edw4z11.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1545118484-23641-6-git-send-email-wni@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 18 Feb 2019 20:33:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 03:34:36PM +0800, Wei Ni wrote:
-> Add "nvidia,gpu-throt-level" property to set gpu hw
-> throttle level.
-> 
-> Signed-off-by: Wei Ni <wni@nvidia.com>
+Tan Xiaojun <tanxiaojun@huawei.com> writes:
+
+> (When I was testing with syzkaller, I found a lot of ubsan problems. Here 
+> is one of them. I am not sure if it needs to be fixed and how it will be 
+> fixed. So I sent this patch to ask your opinion.)
+>
+> Syzkaller reported a UBSAN bug below, which was mainly caused by a large
+> negative number passed to the timeout of the io_getevents system call.
+>
+> ================================================================================
+> UBSAN: Undefined behaviour in ./include/linux/ktime.h:42:14
+> signed integer overflow:
+> -8427032702788048137 * 1000000000 cannot be represented in type 'long long int'
+> CPU: 3 PID: 11668 Comm: syz-executor0 Not tainted 4.19.18-514.55.6.9.x86_64+ #1
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0xca/0x13e lib/dump_stack.c:113
+>  ubsan_epilogue+0xe/0x81 lib/ubsan.c:159
+>  handle_overflow+0x193/0x1e2 lib/ubsan.c:190
+>  ktime_set include/linux/ktime.h:42 [inline]
+>  timespec64_to_ktime include/linux/ktime.h:78 [inline]
+>  do_io_getevents+0x307/0x390 fs/aio.c:2043
+>  __do_sys_io_getevents fs/aio.c:2080 [inline]
+>  __se_sys_io_getevents fs/aio.c:2068 [inline]
+>  __x64_sys_io_getevents+0x163/0x250 fs/aio.c:2068
+>  do_syscall_64+0xc8/0x580 arch/x86/entry/common.c:290
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x462589
+> Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fde9b04ec58 EFLAGS: 00000246 ORIG_RAX: 00000000000000d0
+> RAX: ffffffffffffffda RBX: 000000000072bf00 RCX: 0000000000462589
+> RDX: 0000000000000006 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: 0000000000000005 R08: 0000000020000100 R09: 0000000000000000
+> R10: 0000000020000040 R11: 0000000000000246 R12: 00007fde9b04f6bc
+> R13: 00000000004bd1f0 R14: 00000000006f6b60 R15: 00000000ffffffff
+> ================================================================================
+> bond0 (unregistering): Released all slaves
+>
+> The timeout described in "man io_getevents" does not say whether it
+> can be negative or not, but as a waiting time, a negative number has
+> no meaning. So I add check to avoid this case.
+
+It's embarrassing that this bug is still present.  See, for example,
+this discussion, started in 2015:
+  https://lore.kernel.org/lkml/CACT4Y+bBxVYLQ6LtOKrKtnLthqLHcw-BMp3aqP3mjdAvr9FULQ@mail.gmail.com/
+
+I could swear it was brought up again since then, but I can't find
+records of that.
+
+> Signed-off-by: Tan Xiaojun <tanxiaojun@huawei.com>
 > ---
->  .../bindings/thermal/nvidia,tegra124-soctherm.txt  | 17 +++++++++++++++--
->  include/dt-bindings/thermal/tegra124-soctherm.h    | 22 ++++++++++++++++++----
->  2 files changed, 33 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
-> index ab66d6feab4b..cf6d0be56b7a 100644
-> --- a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
-> +++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
-> @@ -52,6 +52,15 @@ Required properties :
->          Must set as following values:
->          TEGRA_SOCTHERM_THROT_LEVEL_LOW, TEGRA_SOCTHERM_THROT_LEVEL_MED
->          TEGRA_SOCTHERM_THROT_LEVEL_HIGH, TEGRA_SOCTHERM_THROT_LEVEL_NONE
-> +      - nvidia,gpu-throt-level: This property is for Tegra124 and Tegra210.
+>  fs/aio.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/aio.c b/fs/aio.c
+> index aaaaf4d..28e0fa6 100644
+> --- a/fs/aio.c
+> +++ b/fs/aio.c
+> @@ -2078,10 +2078,15 @@ static long do_io_getevents(aio_context_t ctx_id,
+>  		struct io_event __user *events,
+>  		struct timespec64 *ts)
+>  {
+> -	ktime_t until = ts ? timespec64_to_ktime(*ts) : KTIME_MAX;
+> +	ktime_t until;
+>  	struct kioctx *ioctx = lookup_ioctx(ctx_id);
+>  	long ret = -EINVAL;
+>  
+> +	if (ts && !timespec64_valid(ts))
+> +		return -EINVAL;
+> +
+> +	until = ts ? timespec64_to_ktime(*ts) : KTIME_MAX;
+> +
+>  	if (likely(ioctx)) {
+>  		if (likely(min_nr <= nr && min_nr >= 0))
+>  			ret = read_events(ioctx, min_nr, nr, events, until);
 
-Also, why not just use percents like nvidia,cpu-throt-percent?
+Looks good to me.  Thanks for fixing this.
 
-> +        It is the level of pulse skippers, which used to throttle clock
-> +        frequencies. It indicates gpu clock throttling depth and can be
-> +        programmed to any of the following values which represent a throttling
-> +        percentage:
-> +        TEGRA_SOCTHERM_THROT_LEVEL_NONE (0%)
-> +        TEGRA_SOCTHERM_THROT_LEVEL_LOW (50%),
-> +        TEGRA_SOCTHERM_THROT_LEVEL_MED (75%),
-> +        TEGRA_SOCTHERM_THROT_LEVEL_HIGH (85%).
->        - #cooling-cells: Should be 1. This cooling device only support on/off state.
->          See ./thermal.txt for a description of this property.
+Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
