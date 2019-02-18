@@ -4,50 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BE38C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A81D0C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D21621901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7926820842
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:54:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498048;
-	bh=KjkbFpmmkAvwPvGMvfbw+MdWRMKccZwO7UQFYJwP/lM=;
+	s=default; t=1550498053;
+	bh=m7YknPK1TsjW4OZ1jQmQ2x4aPYcuLcUQeViLMBt+o7s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=w11V/bT9OrfQ5AvOOBIKHB8Tt5qxqPpX4u5yMVpdi4c1QChNQETbe3IgQmVdpsUnd
-	 O1ISP1szDbVwPVl/NhbY1iKcH7kcvK0mnjvMag1h+l3dFDc/ASL425U4916GYt4oz2
-	 Oq/7XOWm+PTLUgCdUgLcHOeQKJbXSWGg3YNmDzgw=
+	b=OMVek8hyApp5lmDijh02S5P3odnrsW5Jg/+YRHKXzSH+B/BFIWvlKkVN8k0pxkmIz
+	 wFOUULUiuxLneN45V+ATCzmmbR/AErPc6EXXf1JTvEybRB3tdHMk4udw/eWWJGZiF8
+	 ciofYR+SzfnUxlVGeN4puF0rAORZA8NuIl7wxY54=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733118AbfBRNyH (ORCPT
+        id S1733132AbfBRNyL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:54:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33878 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:54:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733093AbfBRNyC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:54:02 -0500
+        id S1732445AbfBRNyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:54:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34920208E4;
-        Mon, 18 Feb 2019 13:54:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B4DF2089F;
+        Mon, 18 Feb 2019 13:54:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498041;
-        bh=KjkbFpmmkAvwPvGMvfbw+MdWRMKccZwO7UQFYJwP/lM=;
+        s=default; t=1550498047;
+        bh=m7YknPK1TsjW4OZ1jQmQ2x4aPYcuLcUQeViLMBt+o7s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SeC6lWfSIg1x6dLh8mrBiuqkpV0XFIETJp8ivLKIrVR5TfjSoj1kI/AtQ/2sZMpWC
-         Y47HIUwpjAf+uxL7e2ya3ioscHz1BxKcsLobyGltvcfmjWS6IVvKVpVaRrze5/GqHO
-         DfBmyI0EC6i0BmTmwJ2mmekTkX0laETWVCa9vllc=
+        b=Ul4qcvhEJWfhm3M3mCVs6JhKMgrRrEhUKsv06QgU53qZzmbaz0NBAeguw1MT60Yy2
+         /3L3Zbx/4hPiQAW776kNue2lkz/XLRWzulWhaiPOdrqd1Gwc+JGlH9x2d35SMWTTGn
+         +bYADMy8bz7LOj6sibNLS0o3ObE7e5WGMqiGwVo4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 4.19 82/85] drm/vkms: Fix license inconsistent
-Date:   Mon, 18 Feb 2019 14:43:48 +0100
-Message-Id: <20190218133507.882959527@linuxfoundation.org>
+        stable@vger.kernel.org, Adam Zabrocki <adamza@microsoft.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Akash Goel <akash.goel@intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Subject: [PATCH 4.19 84/85] drm/i915: Prevent a race during I915_GEM_MMAP ioctl with WC set
+Date:   Mon, 18 Feb 2019 14:43:50 +0100
+Message-Id: <20190218133508.066299337@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -66,106 +71,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+From: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 
-commit 7fd56e0260a22c0cfaf9adb94a2427b76e239dd0 upstream.
+commit 2e7bd10e05afb866b5fb13eda25095c35d7a27cc upstream.
 
-Fixes license inconsistent related to the VKMS driver and remove the
-redundant boilerplate comment.
+Make sure the underlying VMA in the process address space is the
+same as it was during vm_mmap to avoid applying WC to wrong VMA.
 
-Fixes: 854502fa0a38 ("drm/vkms: Add basic CRTC initialization")
+A more long-term solution would be to have vm_mmap_locked variant
+in linux/mmap.h for when caller wants to hold mmap_sem for an
+extended duration.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190206140116.7qvy2lpwbcd7wds6@smtp.gmail.com
+v2:
+- Refactor the compare function
+
+Fixes: 1816f9236303 ("drm/i915: Support creation of unbound wc user mappings for objects")
+Reported-by: Adam Zabrocki <adamza@microsoft.com>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: <stable@vger.kernel.org> # v4.0+
+Cc: Akash Goel <akash.goel@intel.com>
+Cc: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+Cc: Adam Zabrocki <adamza@microsoft.com>
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com> #v1
+Link: https://patchwork.freedesktop.org/patch/msgid/20190207085454.10598-1-joonas.lahtinen@linux.intel.com
+(cherry picked from commit 5c4604e757ba9b193b09768d75a7d2105a5b883f)
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/vkms/vkms_crtc.c   |    8 +-------
- drivers/gpu/drm/vkms/vkms_drv.c    |    7 +------
- drivers/gpu/drm/vkms/vkms_drv.h    |    2 ++
- drivers/gpu/drm/vkms/vkms_gem.c    |    8 +-------
- drivers/gpu/drm/vkms/vkms_output.c |    8 +-------
- drivers/gpu/drm/vkms/vkms_plane.c  |    8 +-------
- 6 files changed, 7 insertions(+), 34 deletions(-)
+ drivers/gpu/drm/i915/i915_gem.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/vkms/vkms_crtc.c
-+++ b/drivers/gpu/drm/vkms/vkms_crtc.c
-@@ -1,10 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
+--- a/drivers/gpu/drm/i915/i915_gem.c
++++ b/drivers/gpu/drm/i915/i915_gem.c
+@@ -1821,6 +1821,16 @@ i915_gem_sw_finish_ioctl(struct drm_devi
+ 	return 0;
+ }
  
- #include "vkms_drv.h"
- #include <drm/drm_atomic_helper.h>
---- a/drivers/gpu/drm/vkms/vkms_drv.c
-+++ b/drivers/gpu/drm/vkms/vkms_drv.c
-@@ -1,9 +1,4 @@
--/*
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
- 
- #include <linux/module.h>
- #include <drm/drm_gem.h>
---- a/drivers/gpu/drm/vkms/vkms_drv.h
-+++ b/drivers/gpu/drm/vkms/vkms_drv.h
-@@ -1,3 +1,5 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
++static inline bool
++__vma_matches(struct vm_area_struct *vma, struct file *filp,
++	      unsigned long addr, unsigned long size)
++{
++	if (vma->vm_file != filp)
++		return false;
 +
- #ifndef _VKMS_DRV_H_
- #define _VKMS_DRV_H_
- 
---- a/drivers/gpu/drm/vkms/vkms_gem.c
-+++ b/drivers/gpu/drm/vkms/vkms_gem.c
-@@ -1,10 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
- 
- #include <linux/shmem_fs.h>
- 
---- a/drivers/gpu/drm/vkms/vkms_output.c
-+++ b/drivers/gpu/drm/vkms/vkms_output.c
-@@ -1,10 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
- 
- #include "vkms_drv.h"
- #include <drm/drm_crtc_helper.h>
---- a/drivers/gpu/drm/vkms/vkms_plane.c
-+++ b/drivers/gpu/drm/vkms/vkms_plane.c
-@@ -1,10 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
- 
- #include "vkms_drv.h"
- #include <drm/drm_plane_helper.h>
++	return vma->vm_start == addr && (vma->vm_end - vma->vm_start) == size;
++}
++
+ /**
+  * i915_gem_mmap_ioctl - Maps the contents of an object, returning the address
+  *			 it is mapped to.
+@@ -1879,7 +1889,7 @@ i915_gem_mmap_ioctl(struct drm_device *d
+ 			return -EINTR;
+ 		}
+ 		vma = find_vma(mm, addr);
+-		if (vma)
++		if (vma && __vma_matches(vma, obj->base.filp, addr, args->size))
+ 			vma->vm_page_prot =
+ 				pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
+ 		else
 
 
