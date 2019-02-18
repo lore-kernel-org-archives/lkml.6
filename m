@@ -2,128 +2,92 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD41C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:21:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 530EDC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:21:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D42B21901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:21:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499674;
-	bh=zq/4FDu2VWztYRXm+dxcTENNT1mCm4zRa+bcM5GH/ew=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pwd/L4jvyyTeLT8ImInHJljk26tfXis7c1J3Z0nwlqN5hx38k5qmO6qrnwayNvN46
-	 Fqcpl8vZ9kzWR/rebHPZBFIJB2Wc20OQZb9fAvmfhfy0PdO3vD1mnhkGiJp9+5ktS5
-	 Ir1Sbv/u253X5z0uunHi8aMpRWndQDRADT3cyPKQ=
+	by mail.kernel.org (Postfix) with ESMTP id 2292221901
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:21:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tpbvR+xO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390978AbfBROVN (ORCPT
+        id S2391311AbfBROVS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:21:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49714 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390450AbfBROGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:06:39 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FCC321917;
-        Mon, 18 Feb 2019 14:06:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498799;
-        bh=zq/4FDu2VWztYRXm+dxcTENNT1mCm4zRa+bcM5GH/ew=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iaJTZmkuxZcXqv/kQpMgKQolOK7OwHk1fzbYHm7yQrEiFiz3bnMZYfiKOLiXkdkT0
-         039S13woC4BYXGLzxb/AWaBAMbSQ7bds6hSaJImwfRdJSjwxr/m/flQ6yrAQF2H/jS
-         9LZ5uN4Yf3DCTrNfTtBik1vpDW0TnFOVpE4c2Hj8=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Mon, 18 Feb 2019 09:21:18 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34550 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390450AbfBROVQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:21:16 -0500
+Received: by mail-wr1-f67.google.com with SMTP id f14so18633677wrg.1;
+        Mon, 18 Feb 2019 06:21:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KvO5W3n5/ix1CMmiWjgbJ0NECWDFUH/XXGsLppnW1oY=;
+        b=tpbvR+xO6XHRggzsVbMWxTQzmjkqMIm0+173Cq3m1HoGjoivA+KUGM1YGP8OzSYqR1
+         LoCKjU5ox4mo8MxA5OQNAFyWb5Ax9DhBgM6pxMbp2Q6fL9xSglDqVJPEjTW/esJXJ7gx
+         qwXY6ILMcxXoysKo0u3cJzl5REjkD/G0H3O2au9CpPVVKZ59tzOuztp/C4bvhZBfUfKj
+         0sP7E+EkemaMFTx+2HNSBikI2bKdvFaThwWJKY9N4lg2Dd2XJOocS1SAuadzcuUGYJq+
+         cJj4emV6AadZTMX7JdXHBrE+nen8y8N98FBk0w+K4sswzHowAPKSSFcbcdE/sLGdev0b
+         3FZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KvO5W3n5/ix1CMmiWjgbJ0NECWDFUH/XXGsLppnW1oY=;
+        b=OreSw0bxhVAjFv/X0YEYnaZ7G8X+e7y5CTOmmw2kcnloskL13kfAtCcR8Cmyryzu7E
+         azamjSrgsiOBSLn0NzPmTdfms4+U742Rva4+JuWuf94IKrvymUxjtu1E86culInekuYH
+         obbz9whuuPv5OBLZRdmBRiEGthTfbH5tcxa/icptRcwT5Kh0DbzGVhHVaShWNDTMUz60
+         rxk1Lyib5KlbXcaFQj6mR27PD1+3zjiwEIE/fE4dESRTshL9JYuku3yEi3LPxjDXs6NZ
+         vYl2u5Pw3C5Pw88KqKOjBar59gHKNlVmJVAb1O5/FVXz+FAGI1D2Q2dKUoDxTzl0oO/9
+         8NNg==
+X-Gm-Message-State: AHQUAubWQAx0bVsxkIFiL5swsBCkBw+eIs8ySUvgyEVfNELm/8W2FIIR
+        i4xCktWSOpxh5Wzm7/IIOEJ4O0ln
+X-Google-Smtp-Source: AHgI3Ib6bq5EU2s8BKMEOgC9CtZO870HLkUgbhjmy0myAp8Hedad+jhueml+j7iMz/t7+cNkttH9bQ==
+X-Received: by 2002:a5d:6288:: with SMTP id k8mr18060533wru.173.1550499674481;
+        Mon, 18 Feb 2019 06:21:14 -0800 (PST)
+Received: from casa ([89.128.102.109])
+        by smtp.gmail.com with ESMTPSA id j3sm12542217wmb.39.2019.02.18.06.21.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Feb 2019 06:21:13 -0800 (PST)
+Date:   Mon, 18 Feb 2019 15:21:10 +0100
+From:   Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 4.4 099/143] signal: Always notice exiting tasks
-Date:   Mon, 18 Feb 2019 14:43:47 +0100
-Message-Id: <20190218133532.663992132@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
-References: <20190218133529.099444112@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+Cc:     dmitry.torokhov@gmail.com, rodrigorivascosta@gmail.com,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Peter Hutterer <peter.hutterer@who-t.net>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Martin Kepplinger <martink@posteo.de>,
+        "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)" 
+        <linux-input@vger.kernel.org>
+Subject: Re: [PATCH] Input: uinput - Allow uinput_request to be interrupted
+Message-ID: <20190218142110.GA23087@casa>
+References: <20190218004305.339758-1-marcos.souza.org@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190218004305.339758-1-marcos.souza.org@gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Sun, Feb 17, 2019 at 09:42:52PM -0300, Marcos Paulo de Souza wrote:
+> -	if (!wait_for_completion_timeout(&request->done, 30 * HZ)) {
+> +	if (!wait_for_completion_interruptible_timeout(&request->done,
+> +							30 * HZ)) {
+>  		retval = -ETIMEDOUT;
+>  		goto out;
+>  	}
 
-------------------
-
-From: Eric W. Biederman <ebiederm@xmission.com>
-
-commit 35634ffa1751b6efd8cf75010b509dcb0263e29b upstream.
-
-Recently syzkaller was able to create unkillablle processes by
-creating a timer that is delivered as a thread local signal on SIGHUP,
-and receiving SIGHUP SA_NODEFERER.  Ultimately causing a loop
-failing to deliver SIGHUP but always trying.
-
-Upon examination it turns out part of the problem is actually most of
-the solution.  Since 2.5 signal delivery has found all fatal signals,
-marked the signal group for death, and queued SIGKILL in every threads
-thread queue relying on signal->group_exit_code to preserve the
-information of which was the actual fatal signal.
-
-The conversion of all fatal signals to SIGKILL results in the
-synchronous signal heuristic in next_signal kicking in and preferring
-SIGHUP to SIGKILL.  Which is especially problematic as all
-fatal signals have already been transformed into SIGKILL.
-
-Instead of dequeueing signals and depending upon SIGKILL to
-be the first signal dequeued, first test if the signal group
-has already been marked for death.  This guarantees that
-nothing in the signal queue can prevent a process that needs
-to exit from exiting.
-
-Cc: stable@vger.kernel.org
-Tested-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Ref: ebf5ebe31d2c ("[PATCH] signal-fixes-2.5.59-A4")
-History Tree: https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- kernel/signal.c |    6 ++++++
- 1 file changed, 6 insertions(+)
-
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2198,6 +2198,11 @@ relock:
- 		goto relock;
- 	}
- 
-+	/* Has this task already been marked for death? */
-+	ksig->info.si_signo = signr = SIGKILL;
-+	if (signal_group_exit(signal))
-+		goto fatal;
-+
- 	for (;;) {
- 		struct k_sigaction *ka;
- 
-@@ -2293,6 +2298,7 @@ relock:
- 			continue;
- 		}
- 
-+	fatal:
- 		spin_unlock_irq(&sighand->siglock);
- 
- 		/*
-
+Now this function can succeed or fail because of ETIMEDOUT or an
+interrupt. I think you should return -EINTR or maybe -ESYSRESTART if
+interrupted.
 
