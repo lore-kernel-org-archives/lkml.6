@@ -2,76 +2,109 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B4BFC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:44:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2998EC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:44:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2AA3217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:44:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB897217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:44:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bofh-nu.20150623.gappssmtp.com header.i=@bofh-nu.20150623.gappssmtp.com header.b="drdfA6Ux"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729808AbfBRNoJ (ORCPT
+        id S1730237AbfBRNoM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:44:09 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:42730 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726302AbfBRNoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:44:09 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id CEAD5C5F464A6C2B5A16;
-        Mon, 18 Feb 2019 21:44:04 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 18 Feb 2019 21:43:56 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Toshi Kani <toshi.kani@hpe.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-CC:     YueHaibing <yuehaibing@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] mm: fix set but not used warning
-Date:   Mon, 18 Feb 2019 13:57:43 +0000
-Message-ID: <20190218135743.131904-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 18 Feb 2019 08:44:12 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:42400 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726302AbfBRNoL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:44:11 -0500
+Received: by mail-ot1-f67.google.com with SMTP id i5so28252708oto.9
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 05:44:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bofh-nu.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wFz5T/gKS4sQKCfoA+LnrdX7HOe7jBqNz1iE1oIU+e8=;
+        b=drdfA6UxeMOkGPRrukDac0Pfot+RfjI7X4llH+DqvnrjuMY14f/nJfGe9lu88QsPA/
+         ZG+V3FrYSD0bDqmCdl24m/ZWWYDoA8rp728t/jWwPlfuS1GTSCKeidWlo71ssgQE47iL
+         PyKI7cSnwttBv0anKgfK/L5qrEGekLuWaV3xKcgGv89ZcatVbOQzWTF6QNJU/4+vqlxb
+         O/3Tq4j8ZHvn4VTXW7JRzwh54XLEo4u5JwT6MXn4ZfgH3jH8ch+uDCje+Fxe2Q1OR5+d
+         sGz9crjI6+erc0Q9MNo0UseeJgH+u4Y8TnhOL5l7m1g9FRAnZr7PmPvs6//v8lcxwust
+         sTgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wFz5T/gKS4sQKCfoA+LnrdX7HOe7jBqNz1iE1oIU+e8=;
+        b=IIkzohsr2Qa0gMpIQ7zkW/4DdcLRdROUAeMd0ZDEJIV6vb4t6DixvWzAzL91ZWCc2d
+         VV5cxr3Jo0NGpXia/OkuwHCKlCYcsqATPMbYhORsfd5udHc5VRuLjotEAB/6agLRAEgz
+         O8tWdgPgFNfezYFwArtZ0N3v7+KNBRkyhQ6LX9VlRFLBTftpSAOHSxDBMiEbl3ZeX0ov
+         tFthAII05jwSkJrchisIvk0DhqwAMiSIFg7JHLFGMu1f+Am+2WwLa7rZV/EEfCmdUo4J
+         CO/KNUpJh8TT4OwHptFbygaL4QSaAAp784FoHpD2Hs68wqXmneeFYCb4uAbzwGljXIHU
+         G2NQ==
+X-Gm-Message-State: AHQUAuZY9Yj5smiAS9qeTdOXRoEmmYVFbX282ExkNm38ZsGmS+uf1Kj9
+        Wl1tGp0G4vcTMpzuNMvrZnjM/1v5S4mVWQmGYtJXLA==
+X-Google-Smtp-Source: AHgI3IZdX+BaKD9r8NSRj2jb9ncPlX8I5T5KiNHlt3XTaZjkEcj2TuEK74CefWHQLOWud5almRRl1Nk45eigelx5Kck=
+X-Received: by 2002:aca:fd4c:: with SMTP id b73mr14874883oii.33.1550497449575;
+ Mon, 18 Feb 2019 05:44:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+References: <eabca57aa14f4df723173b24891f4a2d9c501f21.1543526537.git.jstancek@redhat.com>
+ <c440d69879e34209feba21e12d236d06bc0a25db.1543577156.git.jstancek@redhat.com>
+ <CADnJP=vsum7_YYWBpknpahTQFAzm7G40_E2dLMB_poFEhPKEfw@mail.gmail.com> <997509746.100933786.1549350874925.JavaMail.zimbra@redhat.com>
+In-Reply-To: <997509746.100933786.1549350874925.JavaMail.zimbra@redhat.com>
+From:   Lars Persson <lists@bofh.nu>
+Date:   Mon, 18 Feb 2019 14:43:58 +0100
+Message-ID: <CADnJP=t25=AcVq7z3w8iG1+ywnSNN4Vbow3-7tOai+qnyD5ACQ@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: page_mapped: don't assume compound page is huge or THP
+To:     Jan Stancek <jstancek@redhat.com>
+Cc:     linux-mm@kvack.org, lersek@redhat.com,
+        alex williamson <alex.williamson@redhat.com>,
+        aarcange@redhat.com, rientjes@google.com, kirill@shutemov.name,
+        mgorman@techsingularity.net, mhocko@suse.com,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Tue, Feb 5, 2019 at 8:14 AM Jan Stancek <jstancek@redhat.com> wrote:
+> Hi,
+>
+> are you using THP (CONFIG_TRANSPARENT_HUGEPAGE)?
+>
+> The changed line should affect only THP and normal compound pages,
+> so a test with THP disabled might be interesting.
+>
+> >
+> > The breakage consists of random processes dying with SIGILL or SIGSEGV
+> > when we stress test the system with high memory pressure and explicit
+> > memory compaction requested through /proc/sys/vm/compact_memory.
+> > Reverting this patch fixes the crashes.
+> >
+> > We can put some effort on debugging if there are no obvious
+> > explanations for this. Keep in mind that this is 32-bit system with
+> > HIGHMEM.
+>
+> Nothing obvious that I can see. I've been trying to reproduce on
+> 32-bit x86 Fedora with no luck so far.
+>
 
-lib/ioremap.c: In function 'ioremap_page_range':
-lib/ioremap.c:203:16: warning:
- variable 'start' set but not used [-Wunused-but-set-variable]
+Hi
 
-flush_cache_vmap may no need param, so add __maybe_unused fix this warning.
+Thanks for looking in to it. After some deep dive in MM code, I think
+it is safe to say this patch was innocent.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- lib/ioremap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+All traces studied so far points to a missing cache coherency call in
+mm/migrate.c:migrate_page that is needed only for those evil MIPSes
+that lack I/D cache coherency. I will send a write-up to linux-mips
+about this. Basically for a non-mapped page it does only a copy of
+page data and metadata but no flush_dcache_page() call will be done.
+This races with subsequent use of the page.
 
-diff --git a/lib/ioremap.c b/lib/ioremap.c
-index 063213685563..d1c7a488e731 100644
---- a/lib/ioremap.c
-+++ b/lib/ioremap.c
-@@ -200,7 +200,7 @@ int ioremap_page_range(unsigned long addr,
- 		       unsigned long end, phys_addr_t phys_addr, pgprot_t prot)
- {
- 	pgd_t *pgd;
--	unsigned long start;
-+	unsigned long __maybe_unused start;
- 	unsigned long next;
- 	int err;
-
-
-
+BR,
+ Lars
