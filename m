@@ -4,57 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A87C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:44:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76988C10F01
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:45:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82C0E2070B
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:44:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36B142070B
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:45:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550501095;
-	bh=Moic23RSBrO/4JNdxn8LWqZOLnMuJ18kaeB+JQco6K0=;
+	s=default; t=1550501100;
+	bh=KxmmkrIb+o6UnYAt0SylanGs/QbZtD/uXYwr+OurmzE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Nz9MUpTp1NJK4qruFtoxUWlHSjjketKiFl/JGRyvrjghx7avPbHK2efVye+KyRv/X
-	 XGX9D8qbJnJKdS4BtTstvxzMM4GgB0WfLYDE5o6RaepW+fxvyRucWfaJKpFmBYubjq
-	 CR1ycOLRb6/+goe45uVWtNq3gp0zwS3Rse/DUU20=
+	b=CpQyMzC//xMmauTQJVKAiEvmJwbS8vMOc8ALykUpA4piyUc6r0RogzdpgNh9O/Gi9
+	 pya7UMapZ5L1KKd1G7veNblsys9IM/R6WcX5EOR5ZyoIYpDqv6r3ax1ZfdeyVghLVc
+	 wzsYNWUspVz4eBrqGN68+CPpVeB6Mlc02BpJuytg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388950AbfBROox (ORCPT
+        id S1731746AbfBRNsE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:44:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54848 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:48:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731145AbfBRNsF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:48:05 -0500
+        id S1729182AbfBRNsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:48:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AAFE021903;
-        Mon, 18 Feb 2019 13:48:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C387217F5;
+        Mon, 18 Feb 2019 13:47:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497685;
-        bh=Moic23RSBrO/4JNdxn8LWqZOLnMuJ18kaeB+JQco6K0=;
+        s=default; t=1550497679;
+        bh=KxmmkrIb+o6UnYAt0SylanGs/QbZtD/uXYwr+OurmzE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y/2d4GZGcqFJiZRLj4WdluMW76vmXmzG+N70x3D3UZQzWKFTmDc6UaDh8llAniioa
-         uAl113gnuUT6nWMn7R6vQoQ2l8FNoDbjwmKCQx+5kYeYlxlbS9huHldUAHm2wwunDF
-         j1OzkdFv9bAJm9c+JUz7aOI/9wcce7rPiO2WrtjE=
+        b=VZYIUHO9ZBCbZ72+yqcuMmvDeT0kZ2+dlmIxIofFIdS6uxy1x5c51fSzzvHljOoNp
+         v0hgUnQ/x+bTm09Qhm/Ys3GI0ZYJk0Zg2HD6c2pMbxgONK8Wk1RolvCp2YcZIwUgxk
+         rM/iY70i6Oo1g4HjmAjYCrdxBe63Q3I8eI4Lh4U8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Jin, Yao" <yao.jin@linux.intel.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>
-Subject: [PATCH 4.20 54/92] perf/core: Fix impossible ring-buffer sizes warning
-Date:   Mon, 18 Feb 2019 14:42:57 +0100
-Message-Id: <20190218133459.848656243@linuxfoundation.org>
+        stable@vger.kernel.org, Matti Kurkela <Matti.Kurkela@iki.fi>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.20 68/92] Input: elantech - enable 3rd button support on Fujitsu CELSIUS H780
+Date:   Mon, 18 Feb 2019 14:43:11 +0100
+Message-Id: <20190218133501.258613913@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
 References: <20190218133454.668268457@linuxfoundation.org>
@@ -73,64 +65,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ingo Molnar <mingo@kernel.org>
+From: Matti Kurkela <Matti.Kurkela@iki.fi>
 
-commit 528871b456026e6127d95b1b2bd8e3a003dc1614 upstream.
+commit e8b22d0a329f0fb5c7ef95406872d268f01ee3b1 upstream.
 
-The following commit:
+Like Fujitsu CELSIUS H760, the H780 also has a three-button Elantech
+touchpad, but the driver needs to be told so to enable the middle touchpad
+button.
 
-  9dff0aa95a32 ("perf/core: Don't WARN() for impossible ring-buffer sizes")
+The elantech_dmi_force_crc_enabled quirk was not necessary with the H780.
 
-results in perf recording failures with larger mmap areas:
+Also document the fw_version and caps values detected for both H760 and
+H780 models.
 
-  root@skl:/tmp# perf record -g -a
-  failed to mmap with 12 (Cannot allocate memory)
-
-The root cause is that the following condition is buggy:
-
-	if (order_base_2(size) >= MAX_ORDER)
-		goto fail;
-
-The problem is that @size is in bytes and MAX_ORDER is in pages,
-so the right test is:
-
-	if (order_base_2(size) >= PAGE_SHIFT+MAX_ORDER)
-		goto fail;
-
-Fix it.
-
-Reported-by: "Jin, Yao" <yao.jin@linux.intel.com>
-Bisected-by: Borislav Petkov <bp@alien8.de>
-Analyzed-by: Peter Zijlstra <peterz@infradead.org>
-Cc: Julien Thierry <julien.thierry@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: <stable@vger.kernel.org>
-Fixes: 9dff0aa95a32 ("perf/core: Don't WARN() for impossible ring-buffer sizes")
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Matti Kurkela <Matti.Kurkela@iki.fi>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/events/ring_buffer.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/mouse/elantech.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/kernel/events/ring_buffer.c
-+++ b/kernel/events/ring_buffer.c
-@@ -734,7 +734,7 @@ struct ring_buffer *rb_alloc(int nr_page
- 	size = sizeof(struct ring_buffer);
- 	size += nr_pages * sizeof(void *);
- 
--	if (order_base_2(size) >= MAX_ORDER)
-+	if (order_base_2(size) >= PAGE_SHIFT+MAX_ORDER)
- 		goto fail;
- 
- 	rb = kzalloc(size, GFP_KERNEL);
+--- a/drivers/input/mouse/elantech.c
++++ b/drivers/input/mouse/elantech.c
+@@ -1119,6 +1119,8 @@ static int elantech_get_resolution_v4(st
+  * Asus UX31               0x361f00        20, 15, 0e      clickpad
+  * Asus UX32VD             0x361f02        00, 15, 0e      clickpad
+  * Avatar AVIU-145A2       0x361f00        ?               clickpad
++ * Fujitsu CELSIUS H760    0x570f02        40, 14, 0c      3 hw buttons (**)
++ * Fujitsu CELSIUS H780    0x5d0f02        41, 16, 0d      3 hw buttons (**)
+  * Fujitsu LIFEBOOK E544   0x470f00        d0, 12, 09      2 hw buttons
+  * Fujitsu LIFEBOOK E546   0x470f00        50, 12, 09      2 hw buttons
+  * Fujitsu LIFEBOOK E547   0x470f00        50, 12, 09      2 hw buttons
+@@ -1171,6 +1173,13 @@ static const struct dmi_system_id elante
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "CELSIUS H760"),
+ 		},
+ 	},
++	{
++		/* Fujitsu H780 also has a middle button */
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "FUJITSU"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "CELSIUS H780"),
++		},
++	},
+ #endif
+ 	{ }
+ };
 
 
