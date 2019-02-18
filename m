@@ -2,117 +2,124 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA711C10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE28C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:08:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8622F20836
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:04:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFABB20836
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:08:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aF9bG9HN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388360AbfBRQEU (ORCPT
+        id S2388394AbfBRQIO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 11:04:20 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51946 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732251AbfBRQEU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 11:04:20 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 18709315FC5;
-        Mon, 18 Feb 2019 16:04:19 +0000 (UTC)
-Received: from redhat.com (ovpn-125-191.rdu2.redhat.com [10.10.125.191])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DBA20A68E5;
-        Mon, 18 Feb 2019 16:04:16 +0000 (UTC)
-Date:   Mon, 18 Feb 2019 11:04:13 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Andrea Arcangeli <aarcange@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Peter Xu <peterx@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>, kvm@vger.kernel.org
-Subject: Re: [RFC PATCH 0/4] Restore change_pte optimization to its former
- glory
-Message-ID: <20190218160411.GA3142@redhat.com>
-References: <20190131183706.20980-1-jglisse@redhat.com>
- <20190201235738.GA12463@redhat.com>
- <20190211190931.GA3908@redhat.com>
- <20190211200200.GA30128@redhat.com>
+        Mon, 18 Feb 2019 11:08:14 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:47015 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730490AbfBRQIN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 11:08:13 -0500
+Received: by mail-pg1-f196.google.com with SMTP id w7so8659773pgp.13;
+        Mon, 18 Feb 2019 08:08:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ym4aVNV4+Bh3UkUva4Br9bSSCixwDn+0xNcam5VhODI=;
+        b=aF9bG9HNZ4VF1Z4Q/puKyufeKIv6T7qNVVBK52BXPyjKx2xVcHZ6Ov1w1Pm6Yq+z/E
+         yxjtV6U38TtOQ6NaSyzPy6UGXTrJUtlF2x0v6v9NJE5MmNseHgicq9K5MgWKBWGpqrMS
+         vRETciYVw+KHNXzEszSCv4h+oMkgK+Ke82Op9ed3XBGuVmi2jxL0cfOOioQZCZAOb7Mr
+         iU7Q9QrWFppBaAd2n3mcao/gyEwNlH/8AF2IikvSV3JT2ESH7+X54qTMGUl9wBgf99+e
+         TWrUo4Qy/mjp0yZn16xm+KxiWkvAoE11mEVh1Qi89KHqbeZbho9JaKMEbUCBImYL/oSZ
+         3GJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ym4aVNV4+Bh3UkUva4Br9bSSCixwDn+0xNcam5VhODI=;
+        b=No1QX2HGeUeA5+ajP6KqXWyTXsj+MEk2/MfAfZ2QTrHwcK2/Z+t4/3e8IjUV5ejqan
+         IkPQEriHBEc2SW4Tie9RinJOXESf5JIGXD2aVJxM0l2xCfmELkZCvyyN0ZtpHThK9wWa
+         yJKG+GrnhQBFzgGb+U72MbLJWh4BFLIvoAapvIG6HTfFGk0HXif5CZkPC4Abi4scVtpV
+         TsYwBUXOl8saMM37y2gMH31JqEkNfEIHKSI4Hu00Lyqk2VhlilZNE8Vxx9LrzPVnKFkY
+         WdMOEySVwJPKEIToQenmkfI6p9ixPo6UHz5mzcclVjPArBV0a0/1yIr2XCai+PDVr6aS
+         G0mg==
+X-Gm-Message-State: AHQUAua8gIYk2ZJhDk+ZyyADdPZzzyb1sPlbNWtrHEHze9l19aMQ+cMN
+        5s6x+2Nos8UCQ0iDsthUOe4=
+X-Google-Smtp-Source: AHgI3Ia49c8kcU7G7FUSyPcAbmzpYI3uKuhVZsS9kw7UAlZ+z7uzsa6OUyRyW/6hLSrLC3cwfcXJGQ==
+X-Received: by 2002:a63:3fc8:: with SMTP id m191mr23507115pga.240.1550506092893;
+        Mon, 18 Feb 2019 08:08:12 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id t5sm23169100pfb.60.2019.02.18.08.08.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Feb 2019 08:08:12 -0800 (PST)
+Subject: Re: [PATCH] watchdog: smsc37b787_wdt: Mark expected switch
+ fall-through
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+References: <20190214201601.GA13098@embeddedor>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <b914131b-fd1d-2a99-4903-856e2808034d@roeck-us.net>
+Date:   Mon, 18 Feb 2019 08:08:11 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20190214201601.GA13098@embeddedor>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190211200200.GA30128@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 18 Feb 2019 16:04:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 03:02:00PM -0500, Andrea Arcangeli wrote:
-> On Mon, Feb 11, 2019 at 02:09:31PM -0500, Jerome Glisse wrote:
-> > Yeah, between do you have any good workload for me to test this ? I
-> > was thinking of running few same VM and having KSM work on them. Is
-> > there some way to trigger KVM to fork ? As the other case is breaking
-> > COW after fork.
+On 2/14/19 12:16 PM, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> cases where we are expecting to fall through.
 > 
-> KVM can fork on guest pci-hotplug events or network init to run host
-> scripts and re-init the signals before doing the exec, but it won't
-> move the needle because all guest memory registered in the MMU
-> notifier is set as MADV_DONTFORK... so fork() is a noop unless qemu is
-> also modified not to call MADV_DONTFORK.
+> This patch fixes the following warning:
 > 
-> Calling if (!fork()) exit(0) from a timer at regular intervals during
-> qemu runtime after turning off MADV_DONTFORK in qemu would allow to
-> exercise fork against the KVM MMU Notifier methods.
+> drivers/watchdog/smsc37b787_wdt.c: In function â€˜wb_smsc_wdt_ioctlâ€™:
+> drivers/watchdog/smsc37b787_wdt.c:480:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>     wb_smsc_wdt_set_timeout(timeout);
+>     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/watchdog/smsc37b787_wdt.c:482:2: note: here
+>    case WDIOC_GETTIMEOUT:
+>    ^~~~
 > 
-> The optimized change_pte code in copy-on-write code is the same
-> post-fork or post-KSM merge and fork() itself doesn't use change_pte
-> while KSM does, so with regard to change_pte it should already provide
-> a good test coverage to test with only KSM without fork(). It'll cover
-> the read-write -> readonly transition with same PFN
-> (write_protect_page), the read-only to read-only changing PFN
-> (replace_page) as well as the readonly -> read-write transition
-> changing PFN (wp_page_copy) all three optimized with change_pte. Fork
-> would not leverage change_pte for the first two cases.
+> Warning level 3 was used: -Wimplicit-fallthrough=3
+> 
+> Notice that, in this particular case, the code comment is modified
+> in accordance with what GCC is expecting to find.
+> 
+> This patch is part of the ongoing efforts to enable
+> -Wimplicit-fallthrough.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-So i run 2 exact same VMs side by side (copy of same COW image) and
-built the same kernel tree inside each (that is the only important
-workload that exist ;)) but the change_pte did not have any impact:
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-before  mean  {real: 1358.250977, user: 16650.880859, sys: 839.199524, npages: 76855.390625}
-before  stdev {real:    6.744010, user:   108.863762, sys:   6.840437, npages:  1868.071899}
-after   mean  {real: 1357.833740, user: 16685.849609, sys: 839.646973, npages: 76210.601562}
-after   stdev {real:    5.124797, user:    78.469360, sys:   7.009164, npages:  2468.017578}
-without mean  {real: 1358.501343, user: 16674.478516, sys: 837.791992, npages: 76225.203125}
-without stdev {real:    5.541104, user:    97.998367, sys:   6.715869, npages:  1682.392578}
+> ---
+>   drivers/watchdog/smsc37b787_wdt.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/watchdog/smsc37b787_wdt.c b/drivers/watchdog/smsc37b787_wdt.c
+> index 445ea1ad1fa9..c768dcd53034 100644
+> --- a/drivers/watchdog/smsc37b787_wdt.c
+> +++ b/drivers/watchdog/smsc37b787_wdt.c
+> @@ -478,7 +478,7 @@ static long wb_smsc_wdt_ioctl(struct file *file,
+>   			return -EINVAL;
+>   		timeout = new_timeout;
+>   		wb_smsc_wdt_set_timeout(timeout);
+> -		/* fall through and return the new timeout... */
+> +		/* fall through - and return the new timeout... */
+>   	case WDIOC_GETTIMEOUT:
+>   		new_timeout = timeout;
+>   		if (unit == UNIT_MINUTE)
+> 
 
-Above is time taken by make inside each VM for all yes config. npages
-is the number of page shared reported on the host at the end of the
-build.
-
-There is no change before and after the patchset to restore change
-pte. I tried removing the change_pte callback alltogether to see if
-that did have any effect (without above) and it did not have any
-effect either.
-
-Should we still restore change_pte() ? It does not hurt, but it does
-not seems to help in anyway. Maybe you have a better benchmark i could
-run ?
-
-Cheers,
-Jérôme
