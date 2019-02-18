@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 490D9C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:08:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E554C4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 205DD217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:08:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35974217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:08:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728501AbfBRVIA (ORCPT
+        id S1729352AbfBRVII (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 16:08:00 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:50101 "EHLO
+        Mon, 18 Feb 2019 16:08:08 -0500
+Received: from mout.kundenserver.de ([212.227.17.24]:57907 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725806AbfBRVH6 (ORCPT
+        with ESMTP id S1728676AbfBRVID (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 16:07:58 -0500
+        Mon, 18 Feb 2019 16:08:03 -0500
 Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
  (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MYvHa-1gZvZR2VSy-00UtS6; Mon, 18 Feb 2019 22:07:29 +0100
+ 1M894P-1gzOdr1DG7-005Hqb; Mon, 18 Feb 2019 22:07:24 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     y2038@lists.linaro.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-arch@vger.kernel.org,
@@ -35,70 +35,75 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-arch@vger.kernel.org,
         Palmer Dabbelt <palmer@sifive.com>,
         Guo Ren <guoren@kernel.org>, Greentime Hu <green.hu@gmail.com>,
         arnd@arndb.de, linux-riscv@lists.infradead.org,
-        Guan Xuetao <gxt@pku.edu.cn>
-Subject: [PATCH 7/8] csky: Use latest system call ABI
-Date:   Mon, 18 Feb 2019 22:07:11 +0100
-Message-Id: <20190218210712.3503891-8-arnd@arndb.de>
+        Guan Xuetao <gxt@pku.edu.cn>,
+        Yury Norov <ynorov@caviumnetworks.com>,
+        Yury Norov <ynorov@marvell.com>
+Subject: [PATCH 1/8] compat ABI: use non-compat openat and open_by_handle_at variants
+Date:   Mon, 18 Feb 2019 22:07:05 +0100
+Message-Id: <20190218210712.3503891-2-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20190218210712.3503891-1-arnd@arndb.de>
 References: <20190218210712.3503891-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:b9uGlJZjYWR0TeRDyLkO0y46fjRMT6X+cqSqFO9XKVQTCBbYU4k
- lqAzapNVCiizm6JQu9hlZXLd9zdDa9NpI6N+vWtguD18PgqQWTdIUMiNfWHZyyu1VhmCnZO
- YuhMkgj/O//KHs+9BWKQAluN3GvcadruPhi2m7LWm2ED2/epAJVhzvFqPEA0jiBJGkYNa1z
- ef5UNsDCjbuUd1nCxCBzA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:yfd0sA9GaOs=:n7pkNDVjGX9jsrtkpjCKIV
- MvNdGj/B2VYYToKFb9TuPve71L7+IOm3/m1RCEuBcNbHVzfi8Emh1bkaa7pEB3XdxI2f5Xxah
- G3P7RlCMPGJOigz8xG+g16DXO5WzQQ20cohHSra7HNSngbL/jBCaI9WidivWeqYD7j3r12zyi
- bFtTj44bzd4yQwNOgdkzzGMaGYuuoaTCzXqDHYAiFUL+U+dcSFJOYQW18COw8vtgi7+/H4jwA
- PKmhKUdYYTMIXfsn9UB1Ix8R+2u07rBRyPa1alYMR4rbphJdyYznT/nG8r9NkKjYVufKkeToA
- tX76RZ/OzwNr2xSpl60cgLFDy0w9YOGKAIz79D2zDSAt+ekxc/+GahpvAUk41+PZsPV/CR9am
- 5ww8qcFJ7KxnfkAg9SpVSwIxHzGV0kw3SiR46FdF4IvPSMgcbpI3PX1vszcTMaNtrcMP7Ft2y
- kaiaWtwZHtdM6WnewsRAfHQJsBwF1oia3pggtfzbltLG6MkoBRjc5GAsPW4Aa/WktuMjUqbD9
- 3f3eu1XmnOAQUL3mq3GJhP85UdM1qoiANVdgpWg1eFVcbc4z8NmNlIoNmIvZz387xvq69rxpQ
- YfIWJj9/ZKhwjAYQSbD/HD/MBzzwAlnybqjHn1pSWtB5hnIgVJuIDq9Kg63l/eaU4Aks2tgwv
- pAfKYIFDhID4rHBl2cJFxxCAZDvVSk3zFn2/2SWyPszeYuNF+KMp7tqDwEHKFSnpmrS8rRwlG
- vY3wB1GLQ7Vv12T2FIyyPgLmxKnAad1RKx+GDg==
+X-Provags-ID: V03:K1:Orj12xgdgMLKf/0v9QWyyXfYt0be3LlRpxJPHPgrMPDM0BnJ6WV
+ BiLjhwLgc5U1C/Ku6TThTvBytLILEw94wcflD2P4D8aMVj1M6BMTtsRvQzpDcQi5i2KJmXB
+ F+hHXIGVuNx9XyXbHpXSVjE9Lmp6xT8wlf1TVaf6ckTcv5FJ+tMk94wMt83YlYfQSPdcQQA
+ vUP00Bef/iee0lCoDfhSQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:AmDHvMow4jU=:wgjN+bHjmauBTwC5INBuZa
+ kwbgPKcxBciSswCZ8/hJX+dA1uKNGxkSQqFWNgUDq9u0H35s+lBE0HS7/bwFirv911RTPPV64
+ 1QQOCoG/Xv16krmGDJ0c0FzpFwadl4hNLJI+Of0fiQby0i/vJelQdmZf0mt/pgQAazojAZe/e
+ FWGpoxzc87oMSDeCUkmRkMA8mZlSuVFPeffCZ7ItzTPBD1xRE4ZLjuMLdzFP14X2czSBqH/UY
+ Qt98uvuQb7EUmsBv6mfPxSoUAJ+xKyi4AGkXToXFKc9WOxk4oVhtemBgsFNLGANMqI804JiBv
+ 700hovB3xfegQzjPemFFwbqE+VpkKpGnOBo+j5MxJvZa03KP3teLkNLAJJmpJu9X7/P/V5fLC
+ kNo31gUG4OUYLmep7kwSXhwP46H8zabPtxvXjLdzCWuNQIagzzPoMHMK53ARD8D1gfuZ3Lq+E
+ V0DRm9L/csRhGFpfi1EAIYC60T1NxI1BuKAMPqmji5oCBs9q34kiY4mwkWt2J8XVqod77IJ8u
+ Yf2GWsxQRDzHfuxfF4pbfj/LBpeaNJUQD8894H24It3r7y4vmCe5Tq0DkkONzy/RhHtKS3ckF
+ NRb9duTX2JUd+mqkIgwf8c+sC1K4i+njwigthjhjFPzpp1qDiHQ7BKuyPaDeU5NeFTyPLBjSW
+ AQ75D7twBBuOAdhOdZbLdPptocCntHHJS0RbZTTRKKS3NOJpQiiCwk/+18PZkGe7zRx+jzjAs
+ Y3NEYyjIAXAUv4vZQ0frh0vqCvbkPt9qcs+E0Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We don't yet have an upstream glibc port for csky, so there is no user
-space for the existing ABI, and we can remove the definitions for 32-bit
-time_t, off_t and struct resource.
+From: Yury Norov <ynorov@caviumnetworks.com>
 
+The only difference between native and compat openat and open_by_handle_at
+is that non-compat version forces O_LARGEFILE, and it should be the
+default behaviour for all architectures, as we are going to drop the
+support of 32-bit userspace off_t.
+
+Signed-off-by: Yury Norov <ynorov@caviumnetworks.com>
+Signed-off-by: Yury Norov <ynorov@marvell.com>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/csky/Kconfig                   | 1 -
- arch/csky/include/uapi/asm/unistd.h | 2 --
- 2 files changed, 3 deletions(-)
+ include/uapi/asm-generic/unistd.h | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/csky/Kconfig b/arch/csky/Kconfig
-index 6959e0b1e956..398113c845f5 100644
---- a/arch/csky/Kconfig
-+++ b/arch/csky/Kconfig
-@@ -1,6 +1,5 @@
- config CSKY
- 	def_bool y
--	select ARCH_32BIT_OFF_T
- 	select ARCH_HAS_SYNC_DMA_FOR_CPU
- 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
- 	select ARCH_USE_BUILTIN_BSWAP
-diff --git a/arch/csky/include/uapi/asm/unistd.h b/arch/csky/include/uapi/asm/unistd.h
-index ec60e49cea66..224c9a9ab45b 100644
---- a/arch/csky/include/uapi/asm/unistd.h
-+++ b/arch/csky/include/uapi/asm/unistd.h
-@@ -2,8 +2,6 @@
- // Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
- 
- #define __ARCH_WANT_SYS_CLONE
--#define __ARCH_WANT_SET_GET_RLIMIT
--#define __ARCH_WANT_TIME32_SYSCALLS
- #include <asm-generic/unistd.h>
- 
- #define __NR_set_thread_area	(__NR_arch_specific_syscall + 0)
+diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+index acf9a07ab2ff..b928eff3bf92 100644
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -179,7 +179,7 @@ __SYSCALL(__NR_fchownat, sys_fchownat)
+ #define __NR_fchown 55
+ __SYSCALL(__NR_fchown, sys_fchown)
+ #define __NR_openat 56
+-__SC_COMP(__NR_openat, sys_openat, compat_sys_openat)
++__SYSCALL(__NR_openat, sys_openat)
+ #define __NR_close 57
+ __SYSCALL(__NR_close, sys_close)
+ #define __NR_vhangup 58
+@@ -678,8 +678,7 @@ __SYSCALL(__NR_fanotify_mark, sys_fanotify_mark)
+ #define __NR_name_to_handle_at         264
+ __SYSCALL(__NR_name_to_handle_at, sys_name_to_handle_at)
+ #define __NR_open_by_handle_at         265
+-__SC_COMP(__NR_open_by_handle_at, sys_open_by_handle_at, \
+-	  compat_sys_open_by_handle_at)
++__SYSCALL(__NR_open_by_handle_at, sys_open_by_handle_at)
+ #define __NR_clock_adjtime 266
+ __SC_3264(__NR_clock_adjtime, sys_clock_adjtime32, sys_clock_adjtime)
+ #define __NR_syncfs 267
 -- 
 2.20.0
 
