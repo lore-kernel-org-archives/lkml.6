@@ -2,111 +2,86 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39548C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:22:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F18C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:25:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 096FB2146F
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:22:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD3512146F
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:25:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729634AbfBSUWx (ORCPT
+        id S1728333AbfBSUZb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 15:22:53 -0500
-Received: from gateway21.websitewelcome.com ([192.185.45.89]:34146 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726239AbfBSUWw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 15:22:52 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id D7456400C9C4A
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 14:22:51 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id wBulgdPDwiQerwBulgrTTZ; Tue, 19 Feb 2019 14:22:51 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=44156 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gwBul-001dBQ-0O; Tue, 19 Feb 2019 14:22:51 -0600
-Date:   Tue, 19 Feb 2019 14:22:50 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] igb_main: mark expected switch fall-through
-Message-ID: <20190219202250.GA32418@embeddedor>
+        Tue, 19 Feb 2019 15:25:31 -0500
+Received: from sauhun.de ([88.99.104.3]:49298 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726110AbfBSUZa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 15:25:30 -0500
+Received: from localhost (p54B338D8.dip0.t-ipconnect.de [84.179.56.216])
+        by pokefinder.org (Postfix) with ESMTPSA id 78A892CF689;
+        Tue, 19 Feb 2019 21:25:28 +0100 (CET)
+Date:   Tue, 19 Feb 2019 21:25:27 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Gareth Williams <gareth.williams.jx@renesas.com>
+Cc:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] i2c: designware: Add support for a bus clock
+Message-ID: <20190219202527.rz45advkmpyzvaf4@katana>
+References: <1550589042-11096-1-git-send-email-gareth.williams.jx@renesas.com>
+ <1550589042-11096-3-git-send-email-gareth.williams.jx@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xncw63d3ut7d66zp"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gwBul-001dBQ-0O
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.119.20]:44156
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 22
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <1550589042-11096-3-git-send-email-gareth.williams.jx@renesas.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
 
-This patch fixes the following warning:
+--xncw63d3ut7d66zp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-drivers/net/ethernet/intel/igb/igb_main.c: In function ‘__igb_notify_dca’:
-drivers/net/ethernet/intel/igb/igb_main.c:6694:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   if (dca_add_requester(dev) == 0) {
-      ^
-drivers/net/ethernet/intel/igb/igb_main.c:6701:2: note: here
-  case DCA_PROVIDER_REMOVE:
-  ^~~~
 
-Warning level 3 was used: -Wimplicit-fallthrough=3
+> -	if (prepare)
+> +	if (prepare) {
+> +		/* Optional bus clock */
+> +		ret = clk_prepare_enable(dev->busclk);
+> +		if (ret)
+> +			return ret;
+> +
+>  		return clk_prepare_enable(dev->clk);
 
-Notice that, in this particular case, the code comment is modified
-in accordance with what GCC is expecting to find.
+This leaves 'busclk' enabled when the other clock fails.
 
-This patch is part of the ongoing efforts to enable
--Wimplicit-fallthrough.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/ethernet/intel/igb/igb_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--xncw63d3ut7d66zp
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index 69b230c53fed..483f0977f70e 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -6697,7 +6697,7 @@ static int __igb_notify_dca(struct device *dev, void *data)
- 			igb_setup_dca(adapter);
- 			break;
- 		}
--		/* Fall Through since DCA is disabled. */
-+		/* Fall Through - since DCA is disabled. */
- 	case DCA_PROVIDER_REMOVE:
- 		if (adapter->flags & IGB_FLAG_DCA_ENABLED) {
- 			/* without this a class_device is left
--- 
-2.20.1
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxsZjcACgkQFA3kzBSg
+KbYF/Q//YfCWlIPd7f5aibwFWpnbkSx2UvQwQg/+XuG/IA8BTP3NTwXD6r/S5zOZ
+5DSUrYAkyRlvzisB7IEKhTzAG9lTNgIhGZxYWraI00zw9ahpfxJP9Eu45t7sPmPW
+nWRg6WlHtVlEYIOP+AAR4+qnlb6FaNYISpy14pSA1xNSGf3SidE9yKZANblrKGuS
+HECknFMvMHTJ4AayzyjzZXUH3AIXvTKXVgKGOgkk1Uv5AdI5AOtRmVFpaW5Ax30J
+LRKr2Ald7345U4uyuA9nXctaLu2PR9UyVJ/Vpiu5k8K1ucW7XMMUcHnHNXdZUqMI
+yAIZimb5tjAHh3TbsBQ00CG9vip9FkpavPLjLouGBXvc0ixKXZlpJyCkYn5C4d8+
+vn/YdV3GzEcicXSPKh8dJA5OSCeeAtIDIo+C46tNDnm9vw/3ZROi3Al+SDdzPAtl
+TbUR7thUTQ2bz6rMJD4HPYQ3Pi3D0EGGpQJ0yhfgBaCdJhBHwP1jSH05NfgffODt
+TBj690d1s+xaU0LAR/vSVQFPXjqwC5BBYUTu92CopAIJJc9/6EfsQTCQbKa5zI1y
+/ZLX9SeBFRKMdGx0C7odTmcudUi9N9UkPiVVpsYJApAAKd6rjYpRc14eEwHpQqFg
+qo1Jny5QJ5fQWwgNOKHkMePzdnwVME0BXNzHzAw2SGbbkHDDKPw=
+=1A/8
+-----END PGP SIGNATURE-----
+
+--xncw63d3ut7d66zp--
