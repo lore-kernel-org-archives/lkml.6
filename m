@@ -2,130 +2,127 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A77C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A058BC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:06:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D8512147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:06:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B1212147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:06:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SgcwCMkf"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jwLt0N8f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729214AbfBSTGB (ORCPT
+        id S1729480AbfBSTG0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 14:06:01 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43253 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbfBSTGB (ORCPT
+        Tue, 19 Feb 2019 14:06:26 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37025 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728136AbfBSTGZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 14:06:01 -0500
-Received: by mail-pg1-f195.google.com with SMTP id v28so10551406pgk.10
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 11:06:01 -0800 (PST)
+        Tue, 19 Feb 2019 14:06:25 -0500
+Received: by mail-pl1-f195.google.com with SMTP id q3so3498244pll.4
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 11:06:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nrk4QYLpo4qvuxxWH/lg1WeZY/SrvgqAwlsmSMHY39k=;
-        b=SgcwCMkfbVSA488eLFY30t6OTq/ozpLACZntUyGESHAvwr849VCjoS3b6hULDTBF+c
-         B2BVb1RzNoG/zLpvCAe7F0UXvnMBw/B4HaAnAe1W1enRhQxCS4G/qPgoDeYB0UsWdUqS
-         ilijjN0POsDyGVH0FKlkOcyZ3VwkUGtTdFIDM4Mjk4eIyQn3tGXbRLZPZScxN4eiURLM
-         9l/ce0SuCTU/BJS5Z0m8zFwDViuBjJrgPMhFZLpFQtBM5wY1IfqaLK4tUPL8hvacogow
-         K9pfE7t5jABmnYUTwSTvwz3fF8XdS6nlhwFFdzaI85WlNdi67BX3nBNMyepPGGXUCJtj
-         GLBw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=I4LcM2XBTrkfUUVyaeSdAN2dPlTfFQPTd7YEe6AD0zw=;
+        b=jwLt0N8fNHdUwJdXOlSYTSlQ/1fyUotRs62f6sGjPZo/svxilSw2rroNDsQJjE7Az7
+         fcleijRl2Nch8HGAbgFT4Nwzsn4hzIcau3+sIPMK9r08ATUIkGVTqksfFs7BYCgLQk5x
+         1nwLx2wn6XiPPixZXxcoVZdQ9xcku/PosugqE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nrk4QYLpo4qvuxxWH/lg1WeZY/SrvgqAwlsmSMHY39k=;
-        b=osycPgQr8d5A2j6aBlXWNIoIyI3Hain0X6U7lKbTvlJJ5obkzU4LTQMkHY22TLiy9l
-         Q5B2KJZz/aysy2/Ddik/j4xXiFFKZki2kBj6PC6g4LAF8UkAoQ9SDOuO0QvmfatPCRvm
-         59bPEqhH7QbEOuL3PtRdr89ySMQ9MpiPKgKVWOLYOeufqkAXgDCs53VSIEo4rdF787p1
-         RSpWk2etuAFh3Wrl4fok6jCgsfrs6BDeRBm6gjsPgRrkyAJ9umDhZY5ayuIkSlVolp9e
-         staOFjYkgr5YTIFqNxWTpO49ZfxluoTWzH5Q76XPOvw+YWmamiZGv9/ZRUXnOI6o08kO
-         qF7g==
-X-Gm-Message-State: AHQUAuZk3vRR274Feo/CHJ2M1jdLUSvRwOQEpllxKLoPRXnKg4i7CkZY
-        qyuv6+TUd8H8JCRc5nmuXz/BnyoBoDTzMJvW5Vnyfg==
-X-Google-Smtp-Source: AHgI3IZf074hanX/iTBIzRRiZjGrwMeArSAXfkjKELtEgCQhDvOE4tbH7DvXQkq9qjv1ElNy3WPtGe1O1ti4mWxGpCM=
-X-Received: by 2002:a63:5506:: with SMTP id j6mr1721996pgb.202.1550603160395;
- Tue, 19 Feb 2019 11:06:00 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=I4LcM2XBTrkfUUVyaeSdAN2dPlTfFQPTd7YEe6AD0zw=;
+        b=USluJut7xxrwNLlsB7jueEpZMxqVrzpsF72lQuXoBsZUl0cgNhJpGN1MpfgjQogBAJ
+         pj2uwiGIZj2+mcfpam+0nhzP7W48yQexlbFGiCkHuEk3ev86QW2sRTXEMYfjEnyuSGw6
+         XnnekDjjDPRRfvVqEIJvkn2Z4AFb+YkdY+0JQ8uTNGObooZPNV2ZA7Q8EmEXoB7eoFje
+         jPqkTKwf5Pj/+RC8ZXgEs/TBvSgMGfq1QeiRnnky890HuULdWFrSC1LMWW6Oz+UVLm8V
+         GI93Q/jJT/6032BdmHNZt07pj5vuBfjEy0uPgsNUHZuylQz5rRDOxFgaJFBBWQ2iz8JZ
+         MHvQ==
+X-Gm-Message-State: AHQUAuZLgWsgdTQ4Ri9bd4kgVO/9/hrkAoeqFOtM3ZR77twp110MuPys
+        b4xolJA7WEyDlRdyW7JZwNBHfA==
+X-Google-Smtp-Source: AHgI3IY6yq/EMfadrl0MmfNVvwCACvmtBhV57YHyZcEeoTEYGMvvCmQD0Xtuf+Z1/OtiHtfXzUA7Rw==
+X-Received: by 2002:a17:902:1e8:: with SMTP id b95mr32109887plb.325.1550603184871;
+        Tue, 19 Feb 2019 11:06:24 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id n85sm5092156pfj.177.2019.02.19.11.06.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Feb 2019 11:06:24 -0800 (PST)
+Date:   Tue, 19 Feb 2019 11:06:23 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Subject: Re: [PATCH RESEND 0/3] Add quirk for reading BD_ADDR from fwnode
+ property
+Message-ID: <20190219190623.GA116191@google.com>
+References: <20190131221021.176809-1-mka@chromium.org>
+ <D45CF782-148F-4076-911B-50AC28718701@holtmann.org>
 MIME-Version: 1.0
-References: <20190219182105.19933-1-natechancellor@gmail.com>
-In-Reply-To: <20190219182105.19933-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 19 Feb 2019 11:05:49 -0800
-Message-ID: <CAKwvOdmFE0kQoxvRDcarT+kYLXxqKYJfVHo4uTiYm7-wDefrrw@mail.gmail.com>
-Subject: Re: [PATCH] iwlwifi: mvm: Use div64_s64 instead of do_div in iwl_mvm_debug_range_resp
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <D45CF782-148F-4076-911B-50AC28718701@holtmann.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 10:21 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Clang warns:
->
-> drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c:465:2: warning:
-> comparison of distinct pointer types ('typeof ((rtt_avg)) *' (aka 'long
-> long *') and 'uint64_t *' (aka 'unsigned long long *'))
-> [-Wcompare-distinct-pointer-types]
->         do_div(rtt_avg, 6666);
->         ^~~~~~~~~~~~~~~~~~~~~
-> include/asm-generic/div64.h:222:28: note: expanded from macro 'do_div'
->         (void)(((typeof((n)) *)0) == ((uint64_t *)0));  \
->                ~~~~~~~~~~~~~~~~~~ ^  ~~~~~~~~~~~~~~~
-> 1 warning generated.
->
-> do_div expects an unsigned dividend. Use div64_s64, which expects a
-> signed dividend.
+Hi Marcel,
 
-Eh, IIRC, signed vs unsigned division has implications for rounding
-towards zero or not, but I doubt that the round trip time average (RTT
-avg) should ever be negative.  General rule of thumb for C is to keep
-arithmetic signed (even when working with non zero values), so rather
-than make the literal (6666) a unsigned long, I agree with your change
-to keep the division signed as well.  Thanks for the fix.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+On Mon, Feb 18, 2019 at 11:48:21AM +0100, Marcel Holtmann wrote:
+> Hi Matthias,
+> 
+> > [initial post: https://lore.kernel.org/patchwork/cover/1028184/]
+> > 
+> > On some systems the Bluetooth Device Address (BD_ADDR) isn't stored
+> > on the Bluetooth chip itself. One way to configure the address is
+> > through the device tree (patched in by the bootloader). The btqcomsmd
+> > driver is an example, it can read the address from the DT property
+> > 'local-bd-address'.
+> > 
+> > To avoid redundant open-coded reading of 'local-bd-address' and error
+> > handling this series adds the quirk HCI_QUIRK_USE_BDADDR_PROPERTY to
+> > retrieve the BD address of a device from the DT and adapts the
+> > btqcomsmd and hci_qca drivers to use this quirk.
+> > 
+> > Matthias Kaehlcke (3):
+> >  Bluetooth: Add quirk for reading BD_ADDR from fwnode property
+> >  Bluetooth: btqcomsmd: use HCI_QUIRK_USE_BDADDR_PROPERTY
+> >  Bluetooth: hci_qca: Set HCI_QUIRK_USE_BDADDR_PROPERTY for wcn3990
+> > 
+> > drivers/bluetooth/btqcomsmd.c | 29 +++--------------------
+> > drivers/bluetooth/hci_qca.c   |  1 +
+> > include/net/bluetooth/hci.h   | 12 ++++++++++
+> > net/bluetooth/hci_core.c      | 43 +++++++++++++++++++++++++++++++++++
+> > net/bluetooth/mgmt.c          |  6 +++--
+> > 5 files changed, 63 insertions(+), 28 deletions(-)
+> 
+> I am getting compiler warnings when trying to apply this set:
+> 
+>   CC      drivers/bluetooth/btqcomsmd.o
+> drivers/bluetooth/btqcomsmd.c: In function ‘btqcomsmd_setup’:
+> drivers/bluetooth/btqcomsmd.c:120:6: warning: unused variable ‘err’ [-Wunused-variable]
+>   int err;
+>       ^~~
+> drivers/bluetooth/btqcomsmd.c:118:20: warning: unused variable ‘btq’ [-Wunused-variable]
+>   struct btqcomsmd *btq = hci_get_drvdata(hdev);
+>                     ^~~
 
->
-> Fixes: 937b10c0de68 ("iwlwifi: mvm: add debug prints for FTM")
-> Link: https://github.com/ClangBuiltLinux/linux/issues/372
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c b/drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c
-> index e9822a3ec373..92b22250eb7d 100644
-> --- a/drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c
-> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c
-> @@ -462,7 +462,7 @@ static void iwl_mvm_debug_range_resp(struct iwl_mvm *mvm, u8 index,
->  {
->         s64 rtt_avg = res->ftm.rtt_avg * 100;
->
-> -       do_div(rtt_avg, 6666);
-> +       div64_s64(rtt_avg, 6666);
->
->         IWL_DEBUG_INFO(mvm, "entry %d\n", index);
->         IWL_DEBUG_INFO(mvm, "\tstatus: %d\n", res->status);
-> --
-> 2.21.0.rc1
->
+Sorry, I missed that the variables aren't used anymore. I'll send a
+new version soon.
 
+Thanks
 
--- 
-Thanks,
-~Nick Desaulniers
+Matthias
