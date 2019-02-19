@@ -2,145 +2,100 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27EB4C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65271C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:32:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC17C217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:31:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3376A217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:32:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ZvRR9f05"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Iw0WGHJX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726172AbfBSGbc (ORCPT
+        id S1726364AbfBSGcE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 01:31:32 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:15132 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725767AbfBSGbc (ORCPT
+        Tue, 19 Feb 2019 01:32:04 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38003 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726190AbfBSGcE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 01:31:32 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c6ba2c20000>; Mon, 18 Feb 2019 22:31:30 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 18 Feb 2019 22:31:31 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 18 Feb 2019 22:31:31 -0800
-Received: from [10.19.225.182] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 19 Feb
- 2019 06:31:28 +0000
-Subject: Re: [PATCH v1 11/12] of: Add bindings of OC hw throttle for Tegra
- soctherm
-To:     Rob Herring <robh@kernel.org>
-CC:     <thierry.reding@gmail.com>, <daniel.lezcano@linaro.org>,
-        <edubezval@gmail.com>, <linux-tegra@vger.kernel.org>,
-        <rui.zhang@intel.com>, <srikars@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <1545118484-23641-1-git-send-email-wni@nvidia.com>
- <1545118484-23641-13-git-send-email-wni@nvidia.com>
- <20190218203204.GA12911@bogus>
-From:   Wei Ni <wni@nvidia.com>
-Message-ID: <9b489907-d776-230b-7e82-df823ad72854@nvidia.com>
-Date:   Tue, 19 Feb 2019 14:31:26 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190218203204.GA12911@bogus>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1550557890; bh=xFImaNPNacPuSNJLjp9m1keBVusYeVj1Q5xGbHlML2w=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=ZvRR9f05zYF2X2P8S3kpTjzSp6ck4PGSi2WHD+JlfVXSkCqrDO4n0Vf5373LhhSga
-         ZA8SyracJP2A9DtcVBKc1V5uhSh8ldkD2+UFU7MBj17MCjAUQWlUUGdGgw9xzFnoj1
-         8/KpMj6LfwASHtGO/tO642lHdk/LpHpb4xZb6IOuno5+RdiNPF4biroN0n5MrAwCG8
-         dpO00EoJzW9w/W2Tq1/dajmVZEsC5MbsPELCxKEYFzBI35Zw2JxlifR52LQtxbSr0k
-         ZVT3IMw3dY4eoGv7wmy6J4nPvcpmBqfuyS1FQgakkRM3CNi9WmBwPwSY+BL1f7SLaB
-         9d22FRMy3k/vg==
+        Tue, 19 Feb 2019 01:32:04 -0500
+Received: by mail-pf1-f194.google.com with SMTP id n125so2457679pfn.5
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 22:32:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=UV3B+xBgLoio5q5tCht2yjz3ygXKrXEGxSKWQW1x/vU=;
+        b=Iw0WGHJXXWTtNP3Vgds5NSBRcFNV4w57sTqtUOzG6LS7IOXihcg7fPIR4JBUB4L7Ej
+         iqZR1IPOwpBllasmPJBRLRJwZ8/4FNKwojg3SrQSwMPGpXY3I3fTTlIJy3slB6j83X+U
+         IHfoXz7a6rmaVaC8HSsvh34jEa1jea/Dzbzt9vb2fGHxhbSHVA1WCnPevAeQR09bqDCs
+         rO3FSoZOpVQDgKtpl6oVk0fd9YgbAj6RTWw0mEy6AwsbpvDKVFn9pKfq9+ECl1TkZrk3
+         neEL9M+y0GD7Rv3NPz6x9QSDV6kIGRnmm6hoxdNClzHODb06Jb0KfqpLMbBfEokE74GD
+         DJwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=UV3B+xBgLoio5q5tCht2yjz3ygXKrXEGxSKWQW1x/vU=;
+        b=pP4VIAjnWzaIgKK118DzVqrkjASPI7vdpbSBfwb4gB4OpiBPf+B2ZD2Vq8i7KFjieU
+         qWlVAQEjXnQsZk/L6p3rvd5wHE6KxMsiX4i6V3z76Da1TOA9PQ1SviwgFNZet2TT94P7
+         ObvZu5RzXE43Ri2q05xpvvtBxD5RP4KMB+I0qOIH6MsWO7Mo+a4Cer9Zx3VR/oW7YndY
+         T5MdI4R4aEeO3Xb6ljvH3DP48EF8YfIo3yylAB/40ciKHG3Y61sSkCQU2vIyK+OVTh+x
+         bRbrvJMBLGdoW5Og+JArJ+YcSlu8oD/Wekz1FsnPnlOCv/kCC3HB+3TFEZ/ZoDEOO6lH
+         1CKQ==
+X-Gm-Message-State: AHQUAuYVzb63MNp1pXSL42LsNwA0nY67dF6A/B06ebv3DIsxGJlEk2ZR
+        BPV7ajzmG79c490iT9rPhBALrw==
+X-Google-Smtp-Source: AHgI3IYBVv+puxwc+tCcRvvfZkC/Qxpc0mzmgOXp0ro0cFm684dgOUh+YiVDw4HVaZi8pJVp60zOBQ==
+X-Received: by 2002:a65:5c41:: with SMTP id v1mr2736420pgr.404.1550557923564;
+        Mon, 18 Feb 2019 22:32:03 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id t6sm18048025pgu.46.2019.02.18.22.32.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Feb 2019 22:32:02 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] arm64: dts: qcs404: evb: Fix voltage for l3
+Date:   Mon, 18 Feb 2019 22:32:22 -0800
+Message-Id: <20190219063222.15656-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+PMS405 L3 is outside the acceptable range, causing PCIe to fail. Fix
+this.
 
+Fixes: 0b363f5b871c ("arm64: dts: qcom: qcs404: Add PMS405 RPM regulators")
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-On 19/2/2019 4:32 AM, Rob Herring wrote:
-> On Tue, Dec 18, 2018 at 03:34:43PM +0800, Wei Ni wrote:
->> Add OC HW throttle configuration for soctherm in DT.
->> It is used to describe the OCx throttle events.
->>
->> Signed-off-by: Wei Ni <wni@nvidia.com>
->> ---
->>  .../bindings/thermal/nvidia,tegra124-soctherm.txt  | 26 ++++++++++++++++++++++
->>  1 file changed, 26 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
->> index cf6d0be56b7a..d112a8e59ec3 100644
->> --- a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
->> +++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
->> @@ -64,6 +64,21 @@ Required properties :
->>        - #cooling-cells: Should be 1. This cooling device only support on/off state.
->>          See ./thermal.txt for a description of this property.
->>  
->> +      Optional properties: The following properties are T210 specific and
->> +      valid only for OCx throttle events.
->> +      - nvidia,count-threshold: Specifies the number of OC events that are
->> +        required for triggering an interrupt. Interrupts are not triggered if
->> +        the property is missing. A value of 0 will interrupt on every OC alarm.
->> +      - nvidia,polarity-active-low: Configures the polarity of the OC alaram
->> +        signal. Accepted values are 1 for assert low and 0 for assert high.
->> +        Default value is 0.
-> 
-> Why not boolean?
+Changes since v1:
+- Rebased upon https://lore.kernel.org/lkml/20181213183200.3204-1-bjorn.andersson@linaro.org/
 
-Ok, will change to use boolean.
+ arch/arm64/boot/dts/qcom/qcs404-evb.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
->> +      - nvidia,alarm-filter: Number of clocks to filter event. When the filter
->> +        expires (which means the OC event has not occurred for a long time),
->> +        the counter is cleared and filter is rearmed. Default value is 0.
->> +      - nvidia,throttle-period: Specifies the number of uSec for which
->> +        throttling is engaged after the OC event is deasserted. Default value
->> +        is 0.
-> 
-> Needs a unit suffix as defined in property-units.txt.
+diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
+index 3a7f0d42e35a..6146f3577961 100644
+--- a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
++++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
+@@ -87,7 +87,7 @@
+ 		};
+ 
+ 		vreg_l3_1p05: l3 {
+-			regulator-min-microvolt = <976000>;
++			regulator-min-microvolt = <1048000>;
+ 			regulator-max-microvolt = <1160000>;
+ 		};
+ 
+-- 
+2.18.0
 
-Yes, will add suffix "-us" for it.
-
-> 
->> +
->>  Optional properties:
->>  - nvidia,thermtrips : When present, this property specifies the temperature at
->>    which the soctherm hardware will assert the thermal trigger signal to the
->> @@ -134,6 +149,17 @@ Example :
->>  			 * arbiter will select the highest priority as the final throttle
->>  			 * settings to skip cpu pulse.
->>  			 */
->> +
->> +			throttle_oc1: oc1 {
->> +				nvidia,priority = <50>;
->> +				nvidia,polarity-active-low = <1>;
->> +				nvidia,count-threshold = <100>;
->> +				nvidia,alarm-filter = <5100000>;
->> +				nvidia,throttle-period = <0>;
->> +				nvidia,cpu-throt-percent = <75>;
->> +				nvidia,gpu-throt-level =
->> +						<TEGRA_SOCTHERM_THROT_LEVEL_MED>;
->> +                        };
->>  		};
->>  	};
->>  
->> -- 
->> 2.7.4
->>
