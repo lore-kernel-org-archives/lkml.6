@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CF99C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3EB5C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:07:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E91F2147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:07:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4A3C2147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:07:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="qlZ8eZ5O"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="JZ3Cdpf0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729106AbfBSQHF (ORCPT
+        id S1729204AbfBSQHS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:07:05 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37725 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729037AbfBSQHC (ORCPT
+        Tue, 19 Feb 2019 11:07:18 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39256 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727303AbfBSQHF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:07:02 -0500
-Received: by mail-wm1-f65.google.com with SMTP id x10so3344580wmg.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 08:07:01 -0800 (PST)
+        Tue, 19 Feb 2019 11:07:05 -0500
+Received: by mail-wr1-f67.google.com with SMTP id l5so21502344wrw.6
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 08:07:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=03DPhzkzBjEgdOWVhFdZb0AzmHi0UfZRp68bha7kwZI=;
-        b=qlZ8eZ5OnPTUP3S7fsfm6Rz+FwI6kyN4SBm00r768z2nHTu5qAAQZjdsEmmiwMQHPU
-         8co+L58+8cb5KQk+Hnbu29h6/P32JxpQh7761v4tM/0xYhdRaZUwlBU6nDduNlaOyH3m
-         6eYMRxpqhJJ0ehucGhg10uj/NFIfWDuchrNoVa7wlIh0ek78J64WlXr89qgdpivG+hyj
-         kmsvXOxRUQiwFMdYj9vkxVWhvnSWKqoHeYq8JRwc6cJgN7WAhaQpxwmC6r8VmqV5ogtA
-         PvWfGXcGGxUbW58wR/Rkwid3DgBBF9zLPebfZavk6VgB1jIkBGuxIgPL0oCMDsETPRZu
-         /53A==
+        bh=2P/9cB+jmoaw2Dnwldpp3xOYGEGj2ZimLHwmer8wLno=;
+        b=JZ3Cdpf01v3f95tWFcyIm1PFjLLpFXqUbezFbWiNdrZav1XK9jmJd9vtle/LuBaTi6
+         +d5i3FCo3NhCPQdvxBANYKYjgRPvMwRJHeg5Yo18I6+cyoMWWD/KT5s+ibSjko0MCiho
+         ffazSsnPstdgmv8H5a4ZTCVGkAaiTb1NBVaAdTypIJREED0IKBGQiEjPcOFe7KDbzdJ/
+         cnucl64didN0AWXGSYY6WVENAUlpEVMtGoXmMK4u0cuKma2vpEcTFQkk7+WsexMzMghD
+         389MKMl7yQGDsZfjOnDI5nVaWaggrzg0SLfmAUdmYbs2CcMy4ucEewOhsw0RMCnjcKTq
+         Sotg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=03DPhzkzBjEgdOWVhFdZb0AzmHi0UfZRp68bha7kwZI=;
-        b=oy/MOvmrJyw9DUr9Nr0vXYYeydkd1oqa2wBGvZ3LnoKu+jQtbNHH5w1eD4PiRcKE/5
-         eFxQ90olq9L/H5+aGj/Q8jnvm9V8cXhzajbVkkpsPoI1JNPZFSL79jDvVquc9QqldqbF
-         hEZVzKscVgJtP+5E4sq1VWOxUz0o7Zpfa1mgHGQdfIrP9KI5nMrArEamaw7OrRuyF1aa
-         /M3Y45xALFeWXL2+jytnYxWdJQSA50QtNgpoh1eer6sJK3xAkf5hVNlGk7cHPFWAHf00
-         s86O0SRyfhedbTkdVBBYTXw1d+dZbpo+Xw793D2a2YBTXrqYhQzaCPFew1x7cpAYJXb/
-         zcfA==
-X-Gm-Message-State: AHQUAuaUkR49+v+8PBGIvu9qaTSrmO5mw5nQJAtmi05F8slm5Nx/ibqi
-        u1N02Y04lkgzxeKxgc4PaY5oow==
-X-Google-Smtp-Source: AHgI3IaAn8AYuHkTeR4leU5qH0d8Hbg2i3ONE9nCXv+dMrX92kHXx5kMvxa3aILYNf6dvM3BxaUfug==
-X-Received: by 2002:a1c:4884:: with SMTP id v126mr3483841wma.118.1550592420920;
-        Tue, 19 Feb 2019 08:07:00 -0800 (PST)
+        bh=2P/9cB+jmoaw2Dnwldpp3xOYGEGj2ZimLHwmer8wLno=;
+        b=Q/0IBWI66YMGR0y/qeBQwYGEWhjVtbruZ0vuc+2eDrZZeUKVZpAxQ8MnLflAwCXkcm
+         JiJvh/4o2H3ibvOthSaSfS4mKZg+IqxtCZD5rLiZ1VBDqhS+rVIITm+/FZfyR/UdUijH
+         2/pe/5tuFjOUpjqOvPy+YEJmwq0hglu92Tr+s+Ln03ziG3HAFh5aDFvzmgeO1hhDgtT6
+         5b//vJSVCpl6MFmES7SezdMZLK4CiJrEx9Vllhs1O1rMpO0Pq2oeov78MYVXK3ool0hk
+         w8WPaLH9OQYOI/H6ADvM6MR4871a3yhqHna+MIpKbrx88KYLsHVBQa4lQFOexyktDFIG
+         DJOw==
+X-Gm-Message-State: AHQUAuaJDb5b779QC1/MfSwpRejUAzkm28Xig14BPiHdnV0bTonu9e3Q
+        cgnKmP4aI6h6Z7OXREtt3RDSCg==
+X-Google-Smtp-Source: AHgI3IbHTkJfATmA1ixBS46x3h49PMwOuh2XTCmY4OQl1AwKcLpRC3yJnrF0EI4oSBcvR3oH3cEWTA==
+X-Received: by 2002:a5d:4710:: with SMTP id y16mr6977634wrq.305.1550592423407;
+        Tue, 19 Feb 2019 08:07:03 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id h17sm12161381wrq.17.2019.02.19.08.06.59
+        by smtp.gmail.com with ESMTPSA id h17sm12161381wrq.17.2019.02.19.08.07.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 08:07:00 -0800 (PST)
+        Tue, 19 Feb 2019 08:07:02 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -64,9 +64,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         <u.kleine-koenig@pengutronix.de>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v6 4/7] gpio: mockup: don't create the debugfs link named after the label
-Date:   Tue, 19 Feb 2019 17:06:47 +0100
-Message-Id: <20190219160650.9614-5-brgl@bgdev.pl>
+Subject: [PATCH v6 6/7] gpio: mockup: change the signature of unlocked get/set helpers
+Date:   Tue, 19 Feb 2019 17:06:49 +0100
+Message-Id: <20190219160650.9614-7-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190219160650.9614-1-brgl@bgdev.pl>
 References: <20190219160650.9614-1-brgl@bgdev.pl>
@@ -79,38 +79,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-User-space tests no longer use it and we're breaking the interface
-anyway.
+The unlocked variants only get called from places where we already have
+the pointer to the underlying gpio_mockup_chip structure, so take it
+as parameter instead of struct gpio_chip.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-mockup.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/gpio/gpio-mockup.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 1c945c967f60..0317917a3678 100644
+index 433adb3b4617..c498b0fbbec8 100644
 --- a/drivers/gpio/gpio-mockup.c
 +++ b/drivers/gpio/gpio-mockup.c
-@@ -234,7 +234,7 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
- 				      struct gpio_mockup_chip *chip)
- {
- 	struct gpio_mockup_dbgfs_private *priv;
--	struct dentry *evfile, *link;
-+	struct dentry *evfile;
- 	struct gpio_chip *gc;
- 	const char *devname;
- 	char *name;
-@@ -247,10 +247,6 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
- 	if (IS_ERR_OR_NULL(chip->dbg_dir))
- 		goto err;
+@@ -83,10 +83,9 @@ static int gpio_mockup_range_ngpio(unsigned int index)
+ 	return gpio_mockup_ranges[index * 2 + 1];
+ }
  
--	link = debugfs_create_symlink(gc->label, gpio_mockup_dbg_dir, devname);
--	if (IS_ERR_OR_NULL(link))
--		goto err;
+-static int __gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
++static int __gpio_mockup_get(struct gpio_mockup_chip *chip,
++			     unsigned int offset)
+ {
+-	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
 -
- 	for (i = 0; i < gc->ngpio; i++) {
- 		name = devm_kasprintf(dev, GFP_KERNEL, "%d", i);
- 		if (!name)
+ 	return chip->lines[offset].value;
+ }
+ 
+@@ -96,7 +95,7 @@ static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
+ 	int val;
+ 
+ 	mutex_lock(&chip->lock);
+-	val = __gpio_mockup_get(gc, offset);
++	val = __gpio_mockup_get(chip, offset);
+ 	mutex_unlock(&chip->lock);
+ 
+ 	return val;
+@@ -110,7 +109,7 @@ static int gpio_mockup_get_multiple(struct gpio_chip *gc,
+ 
+ 	mutex_lock(&chip->lock);
+ 	for_each_set_bit(bit, mask, gc->ngpio) {
+-		val = __gpio_mockup_get(gc, bit);
++		val = __gpio_mockup_get(chip, bit);
+ 		__assign_bit(bit, bits, val);
+ 	}
+ 	mutex_unlock(&chip->lock);
+@@ -118,11 +117,9 @@ static int gpio_mockup_get_multiple(struct gpio_chip *gc,
+ 	return 0;
+ }
+ 
+-static void __gpio_mockup_set(struct gpio_chip *gc,
++static void __gpio_mockup_set(struct gpio_mockup_chip *chip,
+ 			      unsigned int offset, int value)
+ {
+-	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+-
+ 	chip->lines[offset].value = !!value;
+ }
+ 
+@@ -132,7 +129,7 @@ static void gpio_mockup_set(struct gpio_chip *gc,
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 
+ 	mutex_lock(&chip->lock);
+-	__gpio_mockup_set(gc, offset, value);
++	__gpio_mockup_set(chip, offset, value);
+ 	mutex_unlock(&chip->lock);
+ }
+ 
+@@ -144,7 +141,7 @@ static void gpio_mockup_set_multiple(struct gpio_chip *gc,
+ 
+ 	mutex_lock(&chip->lock);
+ 	for_each_set_bit(bit, mask, gc->ngpio)
+-		__gpio_mockup_set(gc, bit, test_bit(bit, bits));
++		__gpio_mockup_set(chip, bit, test_bit(bit, bits));
+ 	mutex_unlock(&chip->lock);
+ }
+ 
+@@ -155,7 +152,7 @@ static int gpio_mockup_dirout(struct gpio_chip *gc,
+ 
+ 	mutex_lock(&chip->lock);
+ 	chip->lines[offset].dir = GPIO_MOCKUP_DIR_OUT;
+-	__gpio_mockup_set(gc, offset, value);
++	__gpio_mockup_set(chip, offset, value);
+ 	mutex_unlock(&chip->lock);
+ 
+ 	return 0;
 -- 
 2.20.1
 
