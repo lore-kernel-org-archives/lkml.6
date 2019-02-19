@@ -2,122 +2,139 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B86DEC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:47:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2F2C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:50:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F245208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:47:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C8D720C01
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:50:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729717AbfBSVr6 (ORCPT
+        id S1729588AbfBSVt6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 16:47:58 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:36598 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725994AbfBSVr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 16:47:57 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7B652806A8;
-        Tue, 19 Feb 2019 21:47:57 +0000 (UTC)
-Received: from w520.home (ovpn-116-24.phx2.redhat.com [10.3.116.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2A01B66076;
-        Tue, 19 Feb 2019 21:47:55 +0000 (UTC)
-Date:   Tue, 19 Feb 2019 14:47:54 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Eric Auger <eric.auger@redhat.com>
-Cc:     eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: Re: [PATCH v3] vfio_pci: Enable memory accesses before calling
- pci_map_rom
-Message-ID: <20190219144754.278fb075@w520.home>
-In-Reply-To: <20190215161606.32334-1-eric.auger@redhat.com>
-References: <20190215161606.32334-1-eric.auger@redhat.com>
+        Tue, 19 Feb 2019 16:49:58 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:50197 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726877AbfBSVt6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 16:49:58 -0500
+Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1M7KKA-1gxI8A0kgu-007mo4; Tue, 19 Feb 2019 22:49:42 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Dmitry Vyukov <dvyukov@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Mark Brown <broonie@kernel.org>, Qian Cai <cai@lca.pw>,
+        Alexander Potapenko <glider@google.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        kasan-dev@googlegroups.com
+Subject: [PATCH] kasan: turn off asan-stack for clang-8 and earlier
+Date:   Tue, 19 Feb 2019 22:49:06 +0100
+Message-Id: <20190219214940.391081-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 19 Feb 2019 21:47:57 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:f/vy0JI+ZBaJTq6VorjxfZ+Z5wOykJeG99zj8JlrGsVU3qMEfOd
+ bQ+6pv6D6Jw8ngrIrUXVVKww3K/C4f9onMQI3AXmTeiBfkLNhn9tUkEI9309roY1VJQD4l+
+ POCSLpy/4elQKj8Q1dBr727CZWoQG/yf3L3hPTq9bRY1hS40VEv+Tx+sINobUFlK2u0fGOp
+ xPMSbqqNkE00rzLyLJsHg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:sp9Y7cWE308=:KoAkoM0T8AYyR3hrEqo349
+ AuKYP93+lEdQJ9V19lvqT+F4WaMD9SPI2/ZLibTatcCjV2Dlr5igZn2gNsfj7Y4Zdd5mPElZd
+ wbhaFNRyN6WrrPWmp7HCz8Jb6v7FrrxRZx5B8OynoD+4Hasxvdk97uXu55DNCP/NwJEQea2gd
+ 7FVJE94gnFjaTGeuSkzAxMkFOR+QQ9JA3Zx/nG19dyclL7oWvT1H1XLcz1QWaGevL1dyUYyFj
+ FOCllSZzmDkDnindfWq+T/vcUyvNTeDhTju/zZpGETT8ge9+m5NJ8s+P0ZZvMxio0pl45t1G2
+ 3YK1oJZXb+mpls6rHrIa4UKzGhlJrF+uBTe/n2pYQAWV1RF9s7zwKTjEEBfUE2BZCoNsvYvEt
+ 7ErSTzK9e7NKFJ5wUennshlSndxkekluR2Xigc8r4Ss4WinZrMxm0dPo3H6J4/t8dHmFqjbQV
+ pqfj4enxUM9+af3WLDcsgtgECTWIytrzIOBJEhP1vtbdlQD1paD26OJkf9tCWDhmY6G9y76lf
+ E4zRUh0xU6UX3+SyMAn9duhRFLZb/6Zcd2+36JMU6X6Cab8YK2+HYuDewSW/gENRS59sQ6D1+
+ 2g/mSCxCZ9w8rsmIjRSKN68RHyYXLnPUlhPajeDaBxeY0nBjvhCvC1ncn1ekBzt8IsOn2hp5A
+ owhx+BWDQ3o+9m8NsRiUtWVyE+6naRukufBUVdID9w14udfefLfja4ACb3VU6dE3u1Zo5kE2I
+ pJh73o8sVGWUykkmjSs5yRtGP2wlNa824DvygA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 15 Feb 2019 17:16:06 +0100
-Eric Auger <eric.auger@redhat.com> wrote:
+Building an arm64 allmodconfig kernel with clang results in over 140 warnings
+about overly large stack frames, the worst ones being:
 
-> pci_map_rom/pci_get_rom_size() performs memory access in the ROM.
-> In case the Memory Space accesses were disabled, readw() is likely
-> to trigger a synchronous external abort on some platforms.
-> 
-> In case memory accesses were disabled, re-enable them before the
-> call and disable them back again just after.
-> 
-> Fixes: 89e1f7d4c66d ("vfio: Add PCI device driver")
-> 
-> Signed-off-by: Eric Auger <eric.auger@redhat.com>
-> Suggested-by: Alex Williamson <alex.williamson@redhat.com>
+drivers/gpu/drm/panel/panel-sitronix-st7789v.c:196:12: error: stack frame size of 20224 bytes in function 'st7789v_prepare'
+drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td028ttec1.c:196:12: error: stack frame size of 13120 bytes in function 'td028ttec1_panel_enable'
+drivers/usb/host/max3421-hcd.c:1395:1: error: stack frame size of 10048 bytes in function 'max3421_spi_thread'
+drivers/net/wan/slic_ds26522.c:209:12: error: stack frame size of 9664 bytes in function 'slic_ds26522_probe'
+drivers/crypto/ccp/ccp-ops.c:2434:5: error: stack frame size of 8832 bytes in function 'ccp_run_cmd'
+drivers/media/dvb-frontends/stv0367.c:1005:12: error: stack frame size of 7840 bytes in function 'stv0367ter_algo'
 
-Applied to vfio next branch for v5.1.  Thanks,
+None of these happen with gcc today, and almost all of these are the result
+of a single known bug in llvm.  Hopefully it will eventually get fixed with the
+clang-9 release.
 
-Alex
+In the meantime, the best idea I have is to turn off asan-stack for clang-8
+and earlier, so we can produce a kernel that is safe to run.
 
-> ---
-> v2 -> v3:
-> - follow Alex re-writing
-> 
-> v1 -> v2:
-> - also re-enable in case of error
-> ---
->  drivers/vfio/pci/vfio_pci.c | 25 +++++++++++++++++--------
->  1 file changed, 17 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-> index ff60bd1ea587..4b0d30f1eabc 100644
-> --- a/drivers/vfio/pci/vfio_pci.c
-> +++ b/drivers/vfio/pci/vfio_pci.c
-> @@ -708,6 +708,7 @@ static long vfio_pci_ioctl(void *device_data,
->  		{
->  			void __iomem *io;
->  			size_t size;
-> +			u16 orig_cmd;
->  
->  			info.offset = VFIO_PCI_INDEX_TO_OFFSET(info.index);
->  			info.flags = 0;
-> @@ -723,15 +724,23 @@ static long vfio_pci_ioctl(void *device_data,
->  					break;
->  			}
->  
-> -			/* Is it really there? */
-> -			io = pci_map_rom(pdev, &size);
-> -			if (!io || !size) {
-> -				info.size = 0;
-> -				break;
-> -			}
-> -			pci_unmap_rom(pdev, io);
-> +			/*
-> +			 * Is it really there?  Enable memory decode for
-> +			 * implicit access in pci_map_rom().
-> +			 */
-> +			pci_read_config_word(pdev, PCI_COMMAND, &orig_cmd);
-> +			pci_write_config_word(pdev, PCI_COMMAND,
-> +					      orig_cmd | PCI_COMMAND_MEMORY);
->  
-> -			info.flags = VFIO_REGION_INFO_FLAG_READ;
-> +			io = pci_map_rom(pdev, &size);
-> +			if (io) {
-> +				info.flags = VFIO_REGION_INFO_FLAG_READ;
-> +				pci_unmap_rom(pdev, io);
-> +			} else {
-> +				info.size = 0;
-> +			}
-> +
-> +			pci_write_config_word(pdev, PCI_COMMAND, orig_cmd);
->  			break;
->  		}
->  		case VFIO_PCI_VGA_REGION_INDEX:
+I have posted three patches that address the frame overflow warnings that are
+not addressed by turning off asan-stack, so in combination with this change,
+we get much closer to a clean allmodconfig build, which in turn is necessary
+to do meaningful build regression testing.
+
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Qian Cai <cai@lca.pw>
+Link: https://bugs.llvm.org/show_bug.cgi?id=38809
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ lib/Kconfig.kasan      | 13 +++++++++++++
+ scripts/Makefile.kasan |  2 +-
+ 2 files changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
+index 67d7d1309c52..219cddc913ac 100644
+--- a/lib/Kconfig.kasan
++++ b/lib/Kconfig.kasan
+@@ -103,6 +103,19 @@ config KASAN_INLINE
+ 
+ endchoice
+ 
++config KASAN_STACK
++	int
++	default 0 if CC_IS_CLANG && (CLANG_VERSION < 90000)
++	default 1
++	help
++	  The LLVM stack address sanitizer has a know bug that
++	  causes excessive stack usage in a lot of functions, see
++	  https://bugs.llvm.org/show_bug.cgi?id=38809
++	  Disabling asan-stack makes it safe to run kernels build
++	  with clang-8 with KASAN enabled, though it loses some of
++	  the functionality.  We assume that clang-9 will have a fix,
++	  so the feature can be used.
++
+ config KASAN_S390_4_LEVEL_PAGING
+ 	bool "KASan: use 4-level paging"
+ 	depends on KASAN && S390
+diff --git a/scripts/Makefile.kasan b/scripts/Makefile.kasan
+index f1fb8e502657..6410bd22fe38 100644
+--- a/scripts/Makefile.kasan
++++ b/scripts/Makefile.kasan
+@@ -26,7 +26,7 @@ else
+ 	CFLAGS_KASAN := $(CFLAGS_KASAN_SHADOW) \
+ 	 $(call cc-param,asan-globals=1) \
+ 	 $(call cc-param,asan-instrumentation-with-call-threshold=$(call_threshold)) \
+-	 $(call cc-param,asan-stack=1) \
++	 $(call cc-param,asan-stack=$(CONFIG_KASAN_STACK)) \
+ 	 $(call cc-param,asan-instrument-allocas=1)
+ endif
+ 
+-- 
+2.20.0
 
