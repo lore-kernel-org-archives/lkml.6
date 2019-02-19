@@ -2,158 +2,162 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C17C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:09:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC175C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:10:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 029D6217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:09:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99688217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:10:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726213AbfBSEJF (ORCPT
+        id S1726274AbfBSEKD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 23:09:05 -0500
-Received: from mail-it1-f200.google.com ([209.85.166.200]:42737 "EHLO
-        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725764AbfBSEJF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 23:09:05 -0500
-Received: by mail-it1-f200.google.com with SMTP id j127so88261itj.7
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 20:09:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=YjnQ9Zus/FCA+7QdLz3Th3HUkorcnehB56B8l35aOdI=;
-        b=ad053Z+PFgJKnycc5AdW7zGePOtBglaOmLmCYYEk/U754N41ProAYVRDsgah+f2g//
-         I0u82FGhwNCJNZETg+7JNQnoFosB/CpoFlt58co8uHzY+85ARF+3qxwSpvg8RkalGO4/
-         WN/6EV9cwRvq/wDme6YF9Sf16VwpLLNUjFk6sy0UaU+VBlR2XuYkOQueEQA+m0aR5VMY
-         tRYGxBH10wVF9j5S+mmoicUaodg/ShL8s9t/hROacQOW9alWibaAxt1icb+Sw81XYn94
-         U9ATDMAVR646FxRVXE9G1pFdKSqs4MGpGJGXnFgWjxUKfBRMUTYy68tX7SQkxQM8AEx6
-         WqTw==
-X-Gm-Message-State: AHQUAuYhS2emArx7Q3fwseDc2zkNZq4jPvmIGH/I7J0LfGPtRD0jAn6W
-        0hoRn+gsifbEgAkICA/fe0J9AcwTIp5408xhuPbcGxNtXJ8G
-X-Google-Smtp-Source: AHgI3IbLynI9H0sVKeEI4T4ibbrMWkkxPhkGH9S2YLjkL5l1hT55bdhlVuDff1yfCQgoGfSovu8VbNwVlYtoTEMhF16lCeA++LyC
+        Mon, 18 Feb 2019 23:10:03 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40080 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725497AbfBSEKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 23:10:03 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0E469EBD;
+        Mon, 18 Feb 2019 20:10:01 -0800 (PST)
+Received: from [10.162.40.139] (p8cg001049571a15.blr.arm.com [10.162.40.139])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5C51B3F675;
+        Mon, 18 Feb 2019 20:09:56 -0800 (PST)
+Subject: Re: [PATCH] arm64: mm: enable per pmd page table lock
+To:     Yu Zhao <yuzhao@google.com>, Will Deacon <will.deacon@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        mark.rutland@arm.com
+References: <20190214211642.2200-1-yuzhao@google.com>
+ <20190218151223.GB16091@fuggles.cambridge.arm.com>
+ <20190218194938.GA184109@google.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <885bcfa8-1085-d454-540d-4511f5f3886e@arm.com>
+Date:   Tue, 19 Feb 2019 09:39:59 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Received: by 2002:a05:660c:708:: with SMTP id l8mr1306300itk.14.1550549343847;
- Mon, 18 Feb 2019 20:09:03 -0800 (PST)
-Date:   Mon, 18 Feb 2019 20:09:03 -0800
-In-Reply-To: <00000000000055ee31057ce8f277@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d8cfe60582376608@google.com>
-Subject: Re: KASAN: use-after-free Read in addr_handler
-From:   syzbot <syzbot+b358909d8d01556b790b@syzkaller.appspotmail.com>
-To:     danielj@mellanox.com, dledford@redhat.com, jgg@ziepe.ca,
-        leon@kernel.org, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, parav@mellanox.com,
-        swise@opengridcomputing.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20190218194938.GA184109@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
 
-HEAD commit:    a3b22b9f11d9 Linux 5.0-rc7
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14c5df58c00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7132344728e7ec3f
-dashboard link: https://syzkaller.appspot.com/bug?extid=b358909d8d01556b790b
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1493d4d0c00000
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+b358909d8d01556b790b@syzkaller.appspotmail.com
+On 02/19/2019 01:19 AM, Yu Zhao wrote:
+> On Mon, Feb 18, 2019 at 03:12:23PM +0000, Will Deacon wrote:
+>> [+Mark]
+>>
+>> On Thu, Feb 14, 2019 at 02:16:42PM -0700, Yu Zhao wrote:
+>>> Switch from per mm_struct to per pmd page table lock by enabling
+>>> ARCH_ENABLE_SPLIT_PMD_PTLOCK. This provides better granularity for
+>>> large system.
+>>>
+>>> I'm not sure if there is contention on mm->page_table_lock. Given
+>>> the option comes at no cost (apart from initializing more spin
+>>> locks), why not enable it now.
+>>>
+>>> Signed-off-by: Yu Zhao <yuzhao@google.com>
+>>> ---
+>>>  arch/arm64/Kconfig               |  3 +++
+>>>  arch/arm64/include/asm/pgalloc.h | 12 +++++++++++-
+>>>  arch/arm64/include/asm/tlb.h     |  5 ++++-
+>>>  3 files changed, 18 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>>> index a4168d366127..104325a1ffc3 100644
+>>> --- a/arch/arm64/Kconfig
+>>> +++ b/arch/arm64/Kconfig
+>>> @@ -872,6 +872,9 @@ config ARCH_WANT_HUGE_PMD_SHARE
+>>>  config ARCH_HAS_CACHE_LINE_SIZE
+>>>  	def_bool y
+>>>  
+>>> +config ARCH_ENABLE_SPLIT_PMD_PTLOCK
+>>> +	def_bool y
+>>> +
+>>>  config SECCOMP
+>>>  	bool "Enable seccomp to safely compute untrusted bytecode"
+>>>  	---help---
+>>> diff --git a/arch/arm64/include/asm/pgalloc.h b/arch/arm64/include/asm/pgalloc.h
+>>> index 52fa47c73bf0..dabba4b2c61f 100644
+>>> --- a/arch/arm64/include/asm/pgalloc.h
+>>> +++ b/arch/arm64/include/asm/pgalloc.h
+>>> @@ -33,12 +33,22 @@
+>>>  
+>>>  static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long addr)
+>>>  {
+>>> -	return (pmd_t *)__get_free_page(PGALLOC_GFP);
+>>> +	struct page *page;
+>>> +
+>>> +	page = alloc_page(PGALLOC_GFP);
+>>> +	if (!page)
+>>> +		return NULL;
+>>> +	if (!pgtable_pmd_page_ctor(page)) {
+>>> +		__free_page(page);
+>>> +		return NULL;
+>>> +	}
+>>> +	return page_address(page);
+>>
+>> I'm a bit worried as to how this interacts with the page-table code in
+>> arch/arm64/mm/mmu.c when pgd_pgtable_alloc is used as the allocator. It
+>> looks like that currently always calls pgtable_page_ctor(), regardless of
+>> level. Do we now need a separate allocator function for the PMD level?> 
+> Thanks for reminding me, I never noticed this. The short answer is
+> no.
+> 
+> I guess pgtable_page_ctor() is used on all pud/pmd/pte entries
+> there because it's also compatible with pud, and pmd too without
+> this patch. So your concern is valid. Thanks again.
 
-==================================================================
-BUG: KASAN: use-after-free in __lock_acquire+0x30e0/0x4700  
-kernel/locking/lockdep.c:3215
-Read of size 8 at addr ffff88808bfc1150 by task kworker/u4:5/7685
+pgtable_page_ctor() acts on a given page used as page table at any level
+which sets appropriate page type (page flag PG_table) and increments the
+zone stat for NR_PAGETABLE. pgtable_page_dtor() exactly does the inverse.
 
-CPU: 1 PID: 7685 Comm: kworker/u4:5 Not tainted 5.0.0-rc7 #77
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: ib_addr process_one_req
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
-  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
-  __lock_acquire+0x30e0/0x4700 kernel/locking/lockdep.c:3215
-  lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:3841
-  __mutex_lock_common kernel/locking/mutex.c:925 [inline]
-  __mutex_lock+0xf7/0x1310 kernel/locking/mutex.c:1072
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
-  addr_handler+0xa5/0x300 drivers/infiniband/core/cma.c:2970
-  process_one_req+0x109/0x680 drivers/infiniband/core/addr.c:643
-  process_one_work+0x98e/0x1790 kernel/workqueue.c:2173
-  worker_thread+0x98/0xe40 kernel/workqueue.c:2319
-  kthread+0x357/0x430 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+These two complimentary operations are required for every level page table
+pages for their proper initialization, identification in buddy and zone
+statistics. Hence these need to be called for all level page table pages.
 
-Allocated by task 27464:
-  save_stack+0x45/0xd0 mm/kasan/common.c:73
-  set_track mm/kasan/common.c:85 [inline]
-  __kasan_kmalloc mm/kasan/common.c:496 [inline]
-  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
-  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:504
-  kmem_cache_alloc_trace+0x151/0x760 mm/slab.c:3609
-  kmalloc include/linux/slab.h:545 [inline]
-  kzalloc include/linux/slab.h:740 [inline]
-  __rdma_create_id+0x5f/0x4e0 drivers/infiniband/core/cma.c:879
-  ucma_create_id+0x1de/0x640 drivers/infiniband/core/ucma.c:506
-  ucma_write+0x2da/0x3c0 drivers/infiniband/core/ucma.c:1689
-  __vfs_write+0x116/0x8e0 fs/read_write.c:485
-  vfs_write+0x20c/0x580 fs/read_write.c:549
-  ksys_write+0xea/0x1f0 fs/read_write.c:598
-  __do_sys_write fs/read_write.c:610 [inline]
-  __se_sys_write fs/read_write.c:607 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+pgtable_pmd_page_ctor()/pgtable_pmd_page_dtor() on the other hand just
+init/free page table lock on the page for !THP cases and additionally
+init page->pmd_huge_pte (deposited page table page) for THP cases.
+Some archs seem to be calling pgtable_pmd_page_ctor() in place of
+pgtable_page_ctor(). Wondering would not that approach skip page flag
+and accounting requirements.
 
-Freed by task 27463:
-  save_stack+0x45/0xd0 mm/kasan/common.c:73
-  set_track mm/kasan/common.c:85 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:458
-  kasan_slab_free+0xe/0x10 mm/kasan/common.c:466
-  __cache_free mm/slab.c:3487 [inline]
-  kfree+0xcf/0x230 mm/slab.c:3806
-  rdma_destroy_id+0x723/0xab0 drivers/infiniband/core/cma.c:1849
-  ucma_close+0x115/0x320 drivers/infiniband/core/ucma.c:1770
-  __fput+0x2df/0x8d0 fs/file_table.c:278
-  ____fput+0x16/0x20 fs/file_table.c:309
-  task_work_run+0x14a/0x1c0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-  exit_to_usermode_loop+0x273/0x2c0 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x52d/0x610 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> Why my answer is no? Because I don't think the ctor matters for
+> pgd_pgtable_alloc(). The ctor is only required for userspace page
+> tables, and that's why we don't have it in pte_alloc_one_kernel().
 
-The buggy address belongs to the object at ffff88808bfc0dc0
-  which belongs to the cache kmalloc-2k of size 2048
-The buggy address is located 912 bytes inside of
-  2048-byte region [ffff88808bfc0dc0, ffff88808bfc15c0)
-The buggy address belongs to the page:
-page:ffffea00022ff000 count:1 mapcount:0 mapping:ffff88812c3f0c40 index:0x0  
-compound_mapcount: 0
-flags: 0x1fffc0000010200(slab|head)
-raw: 01fffc0000010200 ffffea000281a888 ffffea0002999e08 ffff88812c3f0c40
-raw: 0000000000000000 ffff88808bfc0540 0000000100000003 0000000000000000
-page dumped because: kasan: bad access detected
+At present on arm64 certain kernel page table page allocations call
+pgtable_pmd_page_ctor() and some dont. The series which I had posted
+make sure that all kernel and user page table page allocations go through
+pgtable_page_ctor()/dtor(). These constructs are required for kernel
+page table pages as well for accurate init and accounting not just for
+user space. The series just skips vmemmap struct page mapping from this
+as that would require generic sparse vmemmap allocation/free functions
+which I believe should also be changed going forward as well.
 
-Memory state around the buggy address:
-  ffff88808bfc1000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff88808bfc1080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff88808bfc1100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                  ^
-  ffff88808bfc1180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff88808bfc1200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+> AFAICT, none of the pgds (efi_mm.pgd, tramp_pg_dir and init_mm.pgd)
+> pre-populated by pgd_pgtable_alloc() is. (I doubt we pre-populate
+> userspace page tables in any other arch).
+> 
+> So to avoid future confusion, we might just remove the ctor from
+> pgd_pgtable_alloc().
 
+No. Instead we should just make sure the that those pages go through
+dtor() destructor path when getting freed and the clean up series
+does that.
