@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE25C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 07:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C27FC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 07:32:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DC8A21904
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 07:32:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51728217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 07:32:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R/T95oDK"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mBVRP98Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbfBSHb6 (ORCPT
+        id S1727216AbfBSHcC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 02:31:58 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37231 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725767AbfBSHb4 (ORCPT
+        Tue, 19 Feb 2019 02:32:02 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41015 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbfBSHcB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 02:31:56 -0500
-Received: by mail-pl1-f195.google.com with SMTP id q3so2627330pll.4
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 23:31:55 -0800 (PST)
+        Tue, 19 Feb 2019 02:32:01 -0500
+Received: by mail-pf1-f193.google.com with SMTP id d25so1470323pfn.8
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 23:32:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=yyLHgf/fg0UKT/vKQ5XRuE7/YcLw7WJlhicYn1jLCNw=;
-        b=R/T95oDKjrZuBgj/s9/l0Ok04YZ1LfuEY+5bc/RCjr/FhhohsJVD7Wdi8/TCiKOjzp
-         dLB9L19bqz43sU+M1WUOHrDm6CYgFLgQOMWW8te5c/1X+dlsnzdunOlbWsejqGotKoEj
-         nbbnueQzHAGvhBLG5YCIOH6CU0R2O+lp+KjBXfMZR5pv+sTk6P1eSqe9A7oo1Bvhj0YW
-         9rfgWGnnRym0pdOig+pwXpgfb8mdc7RBQzbSHwavE4vMIXT0oWf8PBdZk6OycdLG4h2P
-         +Das0nfAupMhubdzLC9rB4b9QQx8BWA5QL5Xh33UOL99UdFxJyjiJ1RWzi/GVdec9kob
-         Sx9g==
+        bh=OH4/R/+Sw0xSAT1PY7Jcu+TD5xcCuEZT5i9WHOVRd/E=;
+        b=mBVRP98YrgXxSycI+IEpurKiIyLWSygxELFbpBiYNuhcEegSpkm8ZYEkBKgHbHaOXl
+         8p22pkX0L8RdjuZay61ImSfuY+W2gLqUR64kM6GcN2YHly9w/hZKA9FoCBEWLbCJt7be
+         T+OHTKD+0tD4AnNTzMIBJrOlpm84cd5HoSEMj/SjPMM1WOmDgQ1w4mOY5KyUChN+sXG4
+         /Z+aryL/8ty5KWOYxQ/JesGZZ79S62Wtz4qqY/yOu+oraDQBJ3LsEotuWCoeQsalXPXo
+         FxH7b6KPXrhlby6qbdISBaSfi/an3m2z18Lpi38RWDjGwunSaoRKZX46867Bst+BrpHy
+         jnlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=yyLHgf/fg0UKT/vKQ5XRuE7/YcLw7WJlhicYn1jLCNw=;
-        b=mMGxqU4XMaSus0snkVOOkfxRGDUEKA7ZNzB6CUuF5MqaE5GIQvt3lUTk4nATXyCppz
-         B/Cz8lKjEZChsRKuqa5Ski+/xiBXXP5P+P8VJRWbHNpxo8oB7a7Md8dbGCUnz07XD39G
-         cxR0d1UA76u85/VtYy44Z2VURzuln1nOHf3DNF/ywCIgENNKnrK2L0DzYWCBHn/acPHY
-         RZ3Vb+FgMabE6Q/c1sEE1xU8AWu5ijzOxYrvGixHsl9efgQNx0r2QSVa5EGih/4o1RpZ
-         xLTO6aeMVtERVdpF/DB1C0CnnbVZNCUSJvhT7bmqVEWz5Piauj0AzydvPte5KEVYRF0o
-         3Mrg==
-X-Gm-Message-State: AHQUAuajBm7tDIvIaquQ2Oc59Wn0P57SNSksjmdTUYygHl3bWjrqsdhk
-        Ersgham1y60zpiWVXnNABeFYBw==
-X-Google-Smtp-Source: AHgI3IbVxvKZUFuwubn1vEkX+UQWGACwzbAhhuvdyEG6xIW1xJs82ZSCcJmC1B6tV0/tuzgluIsN4w==
-X-Received: by 2002:a17:902:7c98:: with SMTP id y24mr11632179pll.191.1550561515473;
-        Mon, 18 Feb 2019 23:31:55 -0800 (PST)
+        bh=OH4/R/+Sw0xSAT1PY7Jcu+TD5xcCuEZT5i9WHOVRd/E=;
+        b=Y7cn8AbCm9q7o5HS5HpXEal38N+2HsuUYnQioiPjD/sz1CanP1D0Wv3RjG7t1Xjn//
+         sYlSz11uvfeKiKSkFsSMFsJn92SSYYWhWqMXK/Nk/5KZZ6RHvqKqlEQLoN0cFH6xucAW
+         9+sZZKxI/sUft221K6En1UkCMNejPPIZQVFLrstHiaCT2MHwwpvZfZVpB5IrfKAl8qfZ
+         GgCo9HWemK9OivkviSySqbRsSXecvYr5TTdz0rrWr0f6yWgo4EOKosPYAK8kS7TmMOp+
+         ngCRfhleEkcFQmtZ3Ujv+R0zFkF1DnBWMEvh/4TEmNj+DXbzHZmouFSAlhQvPqjI83jC
+         OCtg==
+X-Gm-Message-State: AHQUAubMAZNQbSSx6mFl3rX6lEl4WTXPrUP3YSzJV6vHrzuGNfpIz9TW
+        7yBOgYJH8Pn/aEhGPZTl5S1VFg==
+X-Google-Smtp-Source: AHgI3IaYV+Z0u6vu2iSnRUvbIWIjREnK4q0xLxz8adm1PsN6poR3bQtaDUtBgpDO4lx6jjylbodEsg==
+X-Received: by 2002:a63:ae0e:: with SMTP id q14mr26926027pgf.151.1550561519923;
+        Mon, 18 Feb 2019 23:31:59 -0800 (PST)
 Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id n27sm31556569pfb.8.2019.02.18.23.31.51
+        by smtp.gmail.com with ESMTPSA id n27sm31556569pfb.8.2019.02.18.23.31.55
         (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 18 Feb 2019 23:31:54 -0800 (PST)
+        Mon, 18 Feb 2019 23:31:59 -0800 (PST)
 From:   Baolin Wang <baolin.wang@linaro.org>
 To:     gregkh@linuxfoundation.org, jslaby@suse.com, robh+dt@kernel.org,
         mark.rutland@arm.com, orsonzhai@gmail.com, zhang.lyra@gmail.com
 Cc:     baolin.wang@linaro.org, broonie@kernel.org, lanqing.liu@unisoc.com,
         linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH 2/5] dt-bindings: serial: sprd: Add clocks and clocks-names properties
-Date:   Tue, 19 Feb 2019 15:31:12 +0800
-Message-Id: <c2b4db380c044bebe9fdf546b8a9f3aa351c6867.1550560916.git.baolin.wang@linaro.org>
+Subject: [PATCH 3/5] serial: sprd: Add power management for the Spreadtrum serial controller
+Date:   Tue, 19 Feb 2019 15:31:13 +0800
+Message-Id: <cb94ee643102cc2fd35af5ee517e46a20d5c00d9.1550560916.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1550560916.git.baolin.wang@linaro.org>
 References: <cover.1550560916.git.baolin.wang@linaro.org>
@@ -77,42 +77,122 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lanqing Liu <lanqing.liu@unisoc.com>
 
-This patch adds clocks and clocks-names properties, which are used to do
-power management for our UART driver.
+This patch adds power management for the Spreadtrum serial controller.
 
 Signed-off-by: Lanqing Liu <lanqing.liu@unisoc.com>
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- .../devicetree/bindings/serial/sprd-uart.txt       |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/tty/serial/sprd_serial.c |   61 +++++++++++++++++++++++++++++++++++---
+ 1 file changed, 57 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/serial/sprd-uart.txt b/Documentation/devicetree/bindings/serial/sprd-uart.txt
-index cab40f0..6eb5863 100644
---- a/Documentation/devicetree/bindings/serial/sprd-uart.txt
-+++ b/Documentation/devicetree/bindings/serial/sprd-uart.txt
-@@ -7,7 +7,13 @@ Required properties:
+diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd_serial.c
+index 1891a45..8f45b66 100644
+--- a/drivers/tty/serial/sprd_serial.c
++++ b/drivers/tty/serial/sprd_serial.c
+@@ -100,10 +100,12 @@
+ #define SPRD_IMSR_TX_FIFO_EMPTY	BIT(1)
+ #define SPRD_IMSR_BREAK_DETECT	BIT(7)
+ #define SPRD_IMSR_TIMEOUT	BIT(13)
++#define SPRD_DEFAULT_SOURCE_CLK	26000000
  
- - reg: offset and length of the register set for the device
- - interrupts: exactly one interrupt specifier
--- clocks: phandles to input clocks.
-+- clock-names: Should contain following entries:
-+  "enable" for UART module enable clock,
-+  "uart" for UART clock,
-+  "source" for UART source (parent) clock.
-+- clocks: Should contain a clock specifier for each entry in clock-names.
-+  UART clock and source clock are optional properties, but enable clock
-+  is required.
+ struct sprd_uart_port {
+ 	struct uart_port port;
+ 	char name[16];
++	struct clk *clk;
+ };
  
- Example:
- 	uart0: serial@0 {
-@@ -15,5 +21,6 @@ Example:
- 			     "sprd,sc9836-uart";
- 		reg = <0x0 0x100>;
- 		interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&ext_26m>;
-+		clock-names = "enable", "uart", "source";
-+		clocks = <&clk_ap_apb_gates 9>, <&clk_uart0>, <&ext_26m>;
- 	};
+ static struct sprd_uart_port *sprd_port[UART_NR_MAX];
+@@ -491,6 +493,22 @@ static int sprd_verify_port(struct uart_port *port, struct serial_struct *ser)
+ 	return 0;
+ }
+ 
++static void sprd_pm(struct uart_port *port, unsigned int state,
++		unsigned int oldstate)
++{
++	struct sprd_uart_port *sup =
++		container_of(port, struct sprd_uart_port, port);
++
++	switch (state) {
++	case UART_PM_STATE_ON:
++		clk_prepare_enable(sup->clk);
++		break;
++	case UART_PM_STATE_OFF:
++		clk_disable_unprepare(sup->clk);
++		break;
++	}
++}
++
+ static const struct uart_ops serial_sprd_ops = {
+ 	.tx_empty = sprd_tx_empty,
+ 	.get_mctrl = sprd_get_mctrl,
+@@ -507,6 +525,7 @@ static int sprd_verify_port(struct uart_port *port, struct serial_struct *ser)
+ 	.request_port = sprd_request_port,
+ 	.config_port = sprd_config_port,
+ 	.verify_port = sprd_verify_port,
++	.pm = sprd_pm,
+ };
+ 
+ #ifdef CONFIG_SERIAL_SPRD_CONSOLE
+@@ -671,11 +690,45 @@ static int sprd_remove(struct platform_device *dev)
+ 	return 0;
+ }
+ 
++static int sprd_clk_init(struct uart_port *uport)
++{
++	struct clk *clk_uart, *clk_parent;
++	struct sprd_uart_port *u = sprd_port[uport->line];
++
++	clk_uart = devm_clk_get(uport->dev, "uart");
++	if (IS_ERR(clk_uart)) {
++		dev_warn(uport->dev, "uart%d can't get uart clock\n",
++			 uport->line);
++		clk_uart = NULL;
++	}
++
++	clk_parent = devm_clk_get(uport->dev, "source");
++	if (IS_ERR(clk_parent)) {
++		dev_warn(uport->dev, "uart%d can't get source clock\n",
++			 uport->line);
++		clk_parent = NULL;
++	}
++
++	if (!clk_uart || clk_set_parent(clk_uart, clk_parent))
++		uport->uartclk = SPRD_DEFAULT_SOURCE_CLK;
++	else
++		uport->uartclk = clk_get_rate(clk_uart);
++
++	u->clk = devm_clk_get(uport->dev, "enable");
++	if (IS_ERR(u->clk)) {
++		if (PTR_ERR(u->clk) != -EPROBE_DEFER)
++			dev_err(uport->dev, "uart%d can't get enable clock\n",
++				uport->line);
++		return PTR_ERR(u->clk);
++	}
++
++	return 0;
++}
++
+ static int sprd_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
+ 	struct uart_port *up;
+-	struct clk *clk;
+ 	int irq;
+ 	int index;
+ 	int ret;
+@@ -704,9 +757,9 @@ static int sprd_probe(struct platform_device *pdev)
+ 	up->ops = &serial_sprd_ops;
+ 	up->flags = UPF_BOOT_AUTOCONF;
+ 
+-	clk = devm_clk_get(&pdev->dev, NULL);
+-	if (!IS_ERR_OR_NULL(clk))
+-		up->uartclk = clk_get_rate(clk);
++	ret = sprd_clk_init(up);
++	if (ret)
++		return ret;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	up->membase = devm_ioremap_resource(&pdev->dev, res);
 -- 
 1.7.9.5
 
