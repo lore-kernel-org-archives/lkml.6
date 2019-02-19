@@ -3,101 +3,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F7AC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC909C10F00
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:10:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D04C21902
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:08:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D9F821902
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:10:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbfBSLI5 (ORCPT
+        id S1727721AbfBSLKh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 06:08:57 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44036 "EHLO mx1.redhat.com"
+        Tue, 19 Feb 2019 06:10:37 -0500
+Received: from foss.arm.com ([217.140.101.70]:43750 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725805AbfBSLI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 06:08:57 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E2023AD885;
-        Tue, 19 Feb 2019 11:08:56 +0000 (UTC)
-Received: from localhost (unknown [10.43.2.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 18DFB60BE8;
-        Tue, 19 Feb 2019 11:08:53 +0000 (UTC)
-Date:   Tue, 19 Feb 2019 12:08:52 +0100
-From:   Stanislaw Gruszka <sgruszka@redhat.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        Samuel Sieb <samuel@sieb.net>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Rosen Penev <rosenp@gmail.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Subject: Re: MT76x2U crashes XHCI driver on AMD Ryzen system
-Message-ID: <20190219110851.GA23223@redhat.com>
-References: <83A1D243-9073-48D1-9F26-5A2581DCB829@gmail.com>
- <CAJ0CqmUgPWNJtCW4Q__sOtB8w-YtwW+uZy7crxMNrmSgQ6OFyA@mail.gmail.com>
- <1547404075.1582.0@smtp.gmail.com>
- <CAJ0CqmU7k5i26g7dGPxNdts7Gm67W6qNsr4vYuW05ugsEF1ohw@mail.gmail.com>
- <CAKxU2N-+CTaRdJMFVRdozJ5TTpN+_4thiDRBJBFq8gGtuRVYvA@mail.gmail.com>
- <20190114091841.GA23045@localhost.localdomain>
- <CAKxU2N8ioMszBCyQcH7CVhgBdW4aj7yZ+kYQe14DCV5OSAnxrg@mail.gmail.com>
- <20190115090400.GA2267@localhost.localdomain>
- <20190218143742.GA11872@redhat.com>
- <2cc5674a-a3a0-d8fe-65f5-4357da9b85d3@arm.com>
+        id S1726322AbfBSLKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 06:10:37 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7F23EA78;
+        Tue, 19 Feb 2019 03:10:36 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D4B313F720;
+        Tue, 19 Feb 2019 03:10:29 -0800 (PST)
+Date:   Tue, 19 Feb 2019 11:10:27 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Khasim Syed Mohammed <khasim.mohammed@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] PCI: qcom: Don't deassert reset GPIO during probe
+Message-ID: <20190219111027.GB14696@e107981-ln.cambridge.arm.com>
+References: <20190125232616.25714-1-bjorn.andersson@linaro.org>
+ <20190213152352.GB417@e107981-ln.cambridge.arm.com>
+ <20190219051602.GB13018@tuxbook-pro>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2cc5674a-a3a0-d8fe-65f5-4357da9b85d3@arm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 19 Feb 2019 11:08:57 +0000 (UTC)
+In-Reply-To: <20190219051602.GB13018@tuxbook-pro>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 05:01:59PM +0000, Robin Murphy wrote:
-> On 18/02/2019 14:37, Stanislaw Gruszka wrote:
-> [...]
-> >Another issue is that dma_map_sg() & dma_map_page() may require some
-> >constraints. I'm not sure about that and I want to clarify that with
-> >CCed mm maintainers. I think DMA drivers may expect sg->offset < PAGE_SIZE
-> >for both dma_map_sg() and dma_map_page(). Additionally dma_map_page()
-> >maight expect that offset & length specify buffer within one page.
+On Mon, Feb 18, 2019 at 09:16:03PM -0800, Bjorn Andersson wrote:
+> On Wed 13 Feb 07:23 PST 2019, Lorenzo Pieralisi wrote:
 > 
-> Luckily, this came up a while back[1] and we seemed to reach a
-> consensus that sg->offset >= PAGE_SIZE for dma_map_sg() was weird
-> but valid. IIRC it was only the Intel IOMMU code which failed to
-> handle that case appropriately (and which I fixed) - the AMD IOMMU
-> code always looked like it should be OK, but I'm not sure I've ever
-> seen definitive test results (and I don't have hardware to do so
-> myself).
+> > On Fri, Jan 25, 2019 at 03:26:16PM -0800, Bjorn Andersson wrote:
+> > > Acquiring the reset GPIO low means that reset is being deasserted, this
+> > > is followed almost immediately with qcom_pcie_host_init() asserting it,
+> > > initializing it and then finally deasserting it again, for the link to
+> > > come up.
+> > > 
+> > > Some PCIe devices requires a minimum time between the initial deassert
+> > > and subsequent reset cycles. In a platform that boots with the reset
+> > > GPIO asserted this requirement is being violated by this deassert/assert
+> > > pulse.
+> > > 
+> > > Acquiring the reset GPIO high will prevent this by matching the state to
+> > > the subsequent asserted state.
+> > > 
+> > > Cc: stable@vger.kernel.org
+> > 
+> > Missing Fixes: tag, please provide me one so that I can proceed.
+> > 
+> 
+> This applies to the original commit introducing this driver, so:
+> 
+> Fixes: 82a823833f4e ("PCI: qcom: Add Qualcomm PCIe controller driver")
 
-Funny that we have problems on AMD IOMMU and not with Intel IOMMU.
+Applied to pci/dwc for v5.1, thanks.
 
-> For dma_map_page(), length >= PAGE_SIZE should be perfectly valid
-> and handled correctly. The offset >= PAGE_SIZE case is a bit harder
-> to justify, but at the same time has less scope for the DMA API
-> backend to get it wrong, so either way is likely to be OK in
-> practice (in particular the AMD IOMMU code looks like it won't have
-> a problem, since its map_page() implementation converts page and
-> offset to a plain physical address before doing anything else).
-
-Thanks for clarify this. So my patch which do:
-
--		page = virt_to_head_page(data);
-+		page = virt_to_page(data);
- 		offset = data - page_address(page);
- 		sg_set_page(&urb->sg[i], page, sglen, offset);
-
-should not be necessary as IOMMU driver do exactly the same internally.
-
-Are there any alignment requirement for offset for dma_map_{page,sg} ?
-It will work with let say sg->offset=113 or we have make sure it is
-aligned to some boundary. If so, what boundary ?
-
-Stanislaw
+Lorenzo
