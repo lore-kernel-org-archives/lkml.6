@@ -3,84 +3,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8D7DC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D929BC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:48:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AB1E2183E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:47:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A820521773
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:48:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729166AbfBSQrN (ORCPT
+        id S1729210AbfBSQsb convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:47:13 -0500
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:37489 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725820AbfBSQrM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:47:12 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R731e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TKabDau_1550594825;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TKabDau_1550594825)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 20 Feb 2019 00:47:07 +0800
-Subject: Re: [PATCH] doc: cgroup: correct the wrong information about measure
- of memory pressure
-To:     Tejun Heo <tj@kernel.org>
-Cc:     hannes@cmpxchg.org, corbet@lwn.net, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1550278564-81540-1-git-send-email-yang.shi@linux.alibaba.com>
- <20190218210504.GT50184@devbig004.ftw2.facebook.com>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <79dc6298-a062-51e0-64d0-9696dc602767@linux.alibaba.com>
-Date:   Tue, 19 Feb 2019 08:47:02 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20190218210504.GT50184@devbig004.ftw2.facebook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Tue, 19 Feb 2019 11:48:31 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60984 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725820AbfBSQsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 11:48:31 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 029C3AE26;
+        Tue, 19 Feb 2019 16:48:29 +0000 (UTC)
+Date:   Tue, 19 Feb 2019 17:48:29 +0100
+From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 09/10] genirq/irqdomain: fall back to default domain
+ when creating hierarchy domain
+Message-Id: <20190219174829.26576a5b6bf62cd99adf294a@suse.de>
+In-Reply-To: <20190219162716.04b0a54b@why.wild-wind.fr.eu.org>
+References: <20190219155728.19163-1-tbogendoerfer@suse.de>
+        <20190219155728.19163-10-tbogendoerfer@suse.de>
+        <20190219162716.04b0a54b@why.wild-wind.fr.eu.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 19 Feb 2019 16:27:16 +0000
+Marc Zyngier <marc.zyngier@arm.com> wrote:
 
+> On Tue, 19 Feb 2019 16:57:23 +0100
+> Thomas Bogendoerfer <tbogendoerfer@suse.de> wrote:
+> 
+> Hi Thomas,
+> 
+> > When creating hierarchy domains use irq_default_domain as parent, if no
+> > parent was given by the caller. This avoids adding helper code for
+> > querying the underlying platform irq domain.
+> > 
+> > Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+> > ---
+> >  kernel/irq/irqdomain.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+> > index 8b0be4bd6565..617c482d0778 100644
+> > --- a/kernel/irq/irqdomain.c
+> > +++ b/kernel/irq/irqdomain.c
+> > @@ -1021,7 +1021,10 @@ struct irq_domain *irq_domain_create_hierarchy(struct irq_domain *parent,
+> >  	else
+> >  		domain = irq_domain_create_tree(fwnode, ops, host_data);
+> >  	if (domain) {
+> > -		domain->parent = parent;
+> > +		if (parent)
+> > +			domain->parent = parent;
+> > +		else
+> > +			domain->parent = irq_default_domain;
+> >  		domain->flags |= flags;
+> >  	}
+> >  
+> 
+> I'm really not keen on this. The whole "default domain" made sense at a
+> distant point in time (when irqdomains were new and platform code was
+> blissfully ignoring it), but it really looks like a sore spot in the
+> hierarchy code, which assumes that you always know what you're building
+> your hierarchy on top of.
+> 
+> It also create a small issue in the sense that you can create a root
+> domain using irq_domain_create_hierarchy() by passing NULL as the
+> parent. With this patch, the new domain now points to the default one,
+> with unexpected consequences.
+> 
+> So let's come back to first principles: How comes you can't obtain the
+> parent domain at creation time? Because I'd rather give you a way to
+> retrieve it instead if this.
 
-On 2/18/19 1:05 PM, Tejun Heo wrote:
-> On Sat, Feb 16, 2019 at 08:56:04AM +0800, Yang Shi wrote:
->> Since PSI has implemented some kind of measure of memory pressure, the
->> statement about lack of such measure is not true anymore.
->>
->> Cc: Tejun Heo <tj@kernel.org>
->> Cc: Johannes Weiner <hannes@cmpxchg.org>
->> Cc: Jonathan Corbet <corbet@lwn.net>
->> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
->> ---
->>   Documentation/admin-guide/cgroup-v2.rst | 3 +--
->>   1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
->> index 7bf3f12..9a92013 100644
->> --- a/Documentation/admin-guide/cgroup-v2.rst
->> +++ b/Documentation/admin-guide/cgroup-v2.rst
->> @@ -1310,8 +1310,7 @@ network to a file can use all available memory but can also operate as
->>   performant with a small amount of memory.  A measure of memory
->>   pressure - how much the workload is being impacted due to lack of
->>   memory - is necessary to determine whether a workload needs more
->> -memory; unfortunately, memory pressure monitoring mechanism isn't
->> -implemented yet.
->> +memory.
-> Maybe refer to PSI?
+the bridge irq domain could be stacked on different underlying irq domains
+for different platforms (HUB is IP27, HEART for IP30 and BEDROCK for IP35).
+And my idea was to set a irq default domain in the IP27/IP30/IP35 platform
+code so that bridge code will pick up the correct underlying irq domain.
+As there is no device tree I haven't found an already implemented other way.
+Right now I have two idea to solve my problem without this patch:
 
-I thought so too, but the above "memory.pressure" has already referred 
-to PSI. So, I was not sure if we should duplicate PSI information.
+- implement a SGI specific helper for getting the underlying irq domain
+- use a helper function to read irq_default_domain
 
-Thanks,
-Yang
+What do you prefer ? Or do you see something else ?
 
->
-> Thanks.
->
+Thomas.
 
+-- 
+SUSE Linux GmbH
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
