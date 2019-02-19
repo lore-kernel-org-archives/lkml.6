@@ -2,72 +2,160 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71397C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 656E7C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:45:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4416A2147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:43:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E36D2085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:45:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728868AbfBSNng (ORCPT
+        id S1728873AbfBSNp3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 08:43:36 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:54410 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728008AbfBSNng (ORCPT
+        Tue, 19 Feb 2019 08:45:29 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:36212 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728611AbfBSNp3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 08:43:36 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gw5gM-0000kz-8G; Tue, 19 Feb 2019 13:43:34 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] usb: typec: mux: remove redundant check on variable match
-Date:   Tue, 19 Feb 2019 13:43:33 +0000
-Message-Id: <20190219134333.10142-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 19 Feb 2019 08:45:29 -0500
+Received: by mail-qt1-f195.google.com with SMTP id p25so22840472qtb.3;
+        Tue, 19 Feb 2019 05:45:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ok/bPWmoRh3V02dyhMl5PyZU/ZPoyF6FhprZOPxPR/Q=;
+        b=HufVlOpPe0fUaGhBJrsvxd2qe1AMWKXbiGIUbhkoZqLJEsWcj/NKZDwYvaMMW60c1x
+         8mAs+82sKfrBqp6lilALBo8AX61XkrlbYXsn5L2oSU9cusibgdadBuNQwGpXJnUTx90I
+         yEWy6tZ7VorgEgJIaGaklRDk4rrq4EG56kWGQmMAzhutTt7JjSnk6FO0U/bM4o6OxPOQ
+         cZg3DRlfTtzjFFAIZytLqkTkM+kC1psKGui5Fwj8qZ2234tmv23alDT2k0mXotw/CEAC
+         bj4h7QtBNEgpOzZC2dF16fB8+oSAg50KXnBcGIqO+/T5wIS27TPigHiPVfDpWUVFklO8
+         s5JA==
+X-Gm-Message-State: AHQUAuYXdSTXi4Cp+o/gizXaJH6jB6KVjdpHlPJvppdZKRuaaYYKw8A9
+        pqKNAHmNSJEZ8XwswG2Yf4MDmLIWfWG/LERCIuoUdiHe
+X-Google-Smtp-Source: AHgI3IY5AcbK+mS5ZEq78xstYfnCaclTewU8D7KoP0nz0W3b2fEAER1Z+xactvIDbpXriqr5NVLgsP7SnJjlcXWzuIk=
+X-Received: by 2002:a0c:c60f:: with SMTP id v15mr21155229qvi.40.1550583928032;
+ Tue, 19 Feb 2019 05:45:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20190211172948.3322-1-will.deacon@arm.com> <CAK8P3a2Pr2oWYB7QHQMaHRq6H8h9xMwhhyJz5Pu67bVe4GaK9g@mail.gmail.com>
+ <20190218162954.GB16713@fuggles.cambridge.arm.com> <CAK8P3a1TY9S=zYsdZ5O021p2yYcZhehVuwB3_65dR6x6zbkTYQ@mail.gmail.com>
+ <20190218175625.GD16713@fuggles.cambridge.arm.com> <CAK8P3a2mjjr94hwj_eXxfyKDKDuA=MogXW7xJygh-X0Hqgf6rg@mail.gmail.com>
+ <20190219112747.7db95e58@windsurf.home> <CAK8P3a3n2meqogz7MeMUA48LBOEV9_AYQPxU3+V8A=Fn_63v4A@mail.gmail.com>
+ <20190219113609.GC4027@fuggles.cambridge.arm.com> <CAK8P3a0iM17ABoaFn9+KymZ-JkjM9hmBNDMyn6-A=s06p1fvnQ@mail.gmail.com>
+ <20190219132021.GJ8501@fuggles.cambridge.arm.com>
+In-Reply-To: <20190219132021.GJ8501@fuggles.cambridge.arm.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 19 Feb 2019 14:45:11 +0100
+Message-ID: <CAK8P3a2RLo_zG-GkHR=KDpUmV-=ZcTVyqDimGXT1_gR9AfQ2fg@mail.gmail.com>
+Subject: Re: [RFC PATCH] docs/memory-barriers.txt: Rewrite "KERNEL I/O BARRIER
+ EFFECTS" section
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Gregory CLEMENT <gregory.clement@free-electrons.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Feb 19, 2019 at 2:20 PM Will Deacon <will.deacon@arm.com> wrote:
+> On Tue, Feb 19, 2019 at 02:01:50PM +0100, Arnd Bergmann wrote:
+> > On Tue, Feb 19, 2019 at 12:36 PM Will Deacon <will.deacon@arm.com> wrote:
+> > > On Tue, Feb 19, 2019 at 12:31:50PM +0100, Arnd Bergmann wrote:
+> > > > On Tue, Feb 19, 2019 at 11:27 AM Thomas Petazzoni
+> > One reference to non-posted transaction in a comment is in
+> > drivers/net/ethernet/dec/tulip/de4x5.c:
+> >
+> > /*
+> > ** The DE4X5 interrupt handler.
+> > **
+> > ** I/O Read/Writes through intermediate PCI bridges are never 'posted',
+> > ** so that the asserted interrupt always has some real data to work with -
+> > ** if these I/O accesses are ever changed to memory accesses, ensure the
+> > ** STS write is read immediately to complete the transaction if the adapter
+> > ** is not on bus 0. Lost interrupts can still occur when the PCI bus load
+> > ** is high and descriptor status bits cannot be set before the associated
+> > ** interrupt is asserted and this routine entered.
+> > */
+>
+> Thankfully, that driver is both old and non-portable:
+>
+>   depends on VIRT_TO_BUS || ALPHA || PPC || SPARC
+>
+> so I'm not especially concerned about it. Judging by the comment, we'd
+> need to add something like:
+>
+>
+> diff --git a/drivers/net/ethernet/dec/tulip/de4x5.c b/drivers/net/ethernet/dec/tulip/de4x5.c
+> index 66535d1653f6..c85089f65b0e 100644
+> --- a/drivers/net/ethernet/dec/tulip/de4x5.c
+> +++ b/drivers/net/ethernet/dec/tulip/de4x5.c
+> @@ -1556,6 +1556,10 @@ de4x5_interrupt(int irq, void *dev_id)
+>         sts = inl(DE4X5_STS);            /* Read IRQ status */
+>         outl(sts, DE4X5_STS);            /* Reset the board interrupts */
+>
+> +       /* Beware of PCI posted writes */
+> +       if (IS_ENABLED(CONFIG_ARM64) && lp->bus_num)
+> +               inl(DE4X5_STS);
+> +
+>         if (!(sts & lp->irq_mask)) break;/* All done */
+>         handled = 1;
+>
+>
+>
+> if we wanted to get this working reliably on arm64. However, I'll be honest
+> and say we haven't had much demand for supporting DEC PCI devices yet :)
 
-All the code paths that lead to the return statement are where
-match is always true, hence the check to see if it is true is
-redundant and can be removed.
+Agreed. I find a total of 590 drivers calling inb/outb and related
+helpers, using "git grep -wl 'out\(l\|w\|b\)' drivers/ sound/" (there
+are probably a couple more. There are hardly any among those
+that one would expect to see in a modern machine:
 
-Detected by CoverityScan, CID#14769672 ("Logically dead code")
+- The majority is for ISA, PCMCIA or PCI devices, as opposed
+  to PCIe, and presumably no longer sold.
+- Many are de factor architecture specific, e.g. drivers for
+  stuff in a PC chipset.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/usb/typec/mux.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+drivers/staging/comedi/ has some things in it that have
+a slight chance of still being put into modern machines
+when moving from an old embedded system to a new one,
+but being staging, chances are that the drivers also require
+other changes before they work on a new architecture.
 
-diff --git a/drivers/usb/typec/mux.c b/drivers/usb/typec/mux.c
-index a5947d98824d..b94e2920eb38 100644
---- a/drivers/usb/typec/mux.c
-+++ b/drivers/usb/typec/mux.c
-@@ -184,7 +184,7 @@ static void *typec_mux_match(struct device_connection *con, int ep, void *data)
- 		if (dev_fwnode(mux->dev) == con->fwnode)
- 			return mux;
- 
--	return match ? ERR_PTR(-EPROBE_DEFER) : NULL;
-+	return ERR_PTR(-EPROBE_DEFER);
- }
- 
- /**
--- 
-2.20.1
+Overall, I wonder if we'd be better off completely disabling
+outb etc on arm64, and only supporting iomap()/ioread()/iowrite()
+instead, without giving any guarantees there.
+Getting there would definitely require some code changes
+(and many Kconfig changes), but it still seems appealing
+given how much legacy stuff we could completely ignore
+afterwards.
 
+> > I found another comment in the via-rhine driver:
+> >
+> > /* Beware of PCI posted writes */
+> > #define IOSYNC  do { ioread8(ioaddr + StationAddr); } while (0)
+> >
+> > this one is used in the chip reset function, and in the transmit
+> > path.
+>
+> Since this is doing a read-back, I take this comment as saying "posted
+> writes are a thing, so perform a read-back to force the prior write to
+> complete", which is fine.
+
+Right.
+
+       Arnd
