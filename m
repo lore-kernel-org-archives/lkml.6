@@ -2,100 +2,72 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47697C4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BCB9C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:25:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 199C12085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:21:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D54E2083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:25:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="wIBf3yip"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="XtTN5cGT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729255AbfBSRVR (ORCPT
+        id S1728899AbfBSRZW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 12:21:17 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:42699 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725613AbfBSRVQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 12:21:16 -0500
-Received: by mail-ot1-f65.google.com with SMTP id i5so35448530oto.9
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 09:21:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ryAQx0eVnsFaBRoyj/Aqm9Xj5ZU4/2+jLsvZlamla6w=;
-        b=wIBf3yipRO+l0XcyAv6d3K1DP9jpRwd+IldHS4k7GZRYS8Pa1ClJMyIJWisvmH3EmX
-         ryQVJuatBrDmoMgULUP9zWW+hGrvqa4zcN3x4s3oDrgLYZTRkbz2ayi1CkodNnRaUg0+
-         XxFvHwB2T9skWsHhdqOiC5gwQAJlAZYvtXxJ1WR3iqDvakQiVe8MQprDxDhxA3bQS1vD
-         QqgJHb3FG9O1jXi8UB9PoUsxer32oEFHJrbT0uw8c3kNspfMPCJurQPmFuw9UGbR6J7n
-         qd2tpX83P0kd/ihHcXMP/F2SD95DDFjyK1nJ4OLyoAQGrR3i7g+hv+pSiitn+lB6WJ75
-         DOpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ryAQx0eVnsFaBRoyj/Aqm9Xj5ZU4/2+jLsvZlamla6w=;
-        b=hRvXuzs+PQ/zxuRZ3sWMHK7TC31iaSJzVtdS0+ROO3WDKLr4y/88/DZz6F1UCJaaAm
-         NZt3M4cNh6IeubvYZmMmZL5dh31cZVdloghssotJ/m144C6siFizj5YTHY9Feg57W56v
-         YqRe+aXZa5VnqMRTt26p0EgxvAxLafkN6SUMU4D3G2msPtUQVxNfFTFCJ75HVVQ3EnKf
-         nK7WvZ8g3uvsGBo9oR4QJPELYuu7jshXbCktWr756GaB7WjzfBBfjd3ukdsc7G7CLNdz
-         lDaiAfXDoTvzBB5g/dj0q7LN0l2w7Dp1klFl7TLvYSyhfoARo/WTLSmHy4wkMoef2KL5
-         GprQ==
-X-Gm-Message-State: AHQUAuaV1kWjZO4OLj3JqiQrYUJBvuFhXlEjal4SlYvkaRGbK8sIO/YH
-        lG8UVZBWIpgkVlTN6lxCYwUPLaWPoKnyPkszGL/2x+1G
-X-Google-Smtp-Source: AHgI3IabMTTtMCANoEAm9u/yt6MTkzJywrPCaORBEHuWmy67T3mEXwDsosPfa9WaWm+ZdSUoQw88DALgXj+tnqoHQBQ=
-X-Received: by 2002:a9d:37b7:: with SMTP id x52mr19722344otb.214.1550596876126;
- Tue, 19 Feb 2019 09:21:16 -0800 (PST)
+        Tue, 19 Feb 2019 12:25:22 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:58628 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725613AbfBSRZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 12:25:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=LnvyGOgjbYVLRVfBv50PQAnCAvcPo714q4+V/Tj3lPI=; b=XtTN5cGTUZp/UrCmN0lXD5AJ5C
+        aMg2IHbXdsyABQdEMlHJj2Wr7VBCxmS5UDXVxLzh2PzgqBpQ1Rvc9noH3H+3rZfd2FCPAFu3KuQM1
+        oJgIkop+FF/fbMAQVRwVCkvrPO7rdMgm5EhfkqH2G1y1JSvYM+EGsu1IgBjmpJ0QNFcs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gw98t-0004TM-L7; Tue, 19 Feb 2019 18:25:15 +0100
+Date:   Tue, 19 Feb 2019 18:25:15 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH RESEND net] net: phy: xgmiitorgmii: Support generic PHY
+ status read
+Message-ID: <20190219172515.GC13075@lunn.ch>
+References: <20190215163220.20041-1-paul.kocialkowski@bootlin.com>
+ <387ed483-b205-beda-319d-6f2b8ea55601@gmail.com>
+ <38f6708476e9beca4583ccc2a62e238a4981b735.camel@bootlin.com>
+ <958bb823-3dc8-607f-3c38-3d902acb85a8@gmail.com>
+ <b0f700f85cd35bf26a97280f3bef7c4e87102d63.camel@bootlin.com>
 MIME-Version: 1.0
-References: <154899811208.3165233.17623209031065121886.stgit@dwillia2-desk3.amr.corp.intel.com>
- <154899812264.3165233.5219320056406926223.stgit@dwillia2-desk3.amr.corp.intel.com>
- <4672701b-6775-6efd-0797-b6242591419e@suse.cz>
-In-Reply-To: <4672701b-6775-6efd-0797-b6242591419e@suse.cz>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 19 Feb 2019 09:21:04 -0800
-Message-ID: <CAPcyv4g5YwQFVjz+TLSwZZ7LE9h+JU==+KDrL37025dXMyXWoA@mail.gmail.com>
-Subject: Re: [PATCH v10 2/3] mm: Move buddy list manipulations into helpers
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Keith Busch <keith.busch@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b0f700f85cd35bf26a97280f3bef7c4e87102d63.camel@bootlin.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 7:24 AM Vlastimil Babka <vbabka@suse.cz> wrote:
->
-> On 2/1/19 6:15 AM, Dan Williams wrote:
-> > In preparation for runtime randomization of the zone lists, take all
-> > (well, most of) the list_*() functions in the buddy allocator and put
-> > them in helper functions. Provide a common control point for injecting
-> > additional behavior when freeing pages.
-> >
-> > Acked-by: Michal Hocko <mhocko@suse.com>
-> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
->
-> Here's another fixlet to fold into mm-move-buddy-list-manipulations-into-helpers.patch
-> This time not critical.
->
-> ----8<----
-> From 05aaff61f62f86e646c4a2581fe2ff63ff66a199 Mon Sep 17 00:00:00 2001
-> From: Vlastimil Babka <vbabka@suse.cz>
-> Date: Tue, 19 Feb 2019 16:20:33 +0100
-> Subject: [PATCH] mm: Move buddy list manipulations into helpers-fix2
->
-> del_page_from_free_area() migratetype parameter is unused, remove it.
+> Thanks for the suggestion! So I had a closer look at that driver to try
+> and see what could go wrong and it looks like I found a few things
+> there.
 
-Looks good,
+Hi Paul
 
-Acked-by: Dan Williams <dan.j.williams@intel.com>
+Yes, this driver has issues. If i remember correctly, it got merged
+while i was on vacation. I pointed out a few issues, but the authors
+never responded. Feel free to fix it up.
+
+      Andrew
