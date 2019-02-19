@@ -2,81 +2,81 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7418BC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:58:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3292BC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:58:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D1392146F
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:58:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC4762146F
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:58:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550570338;
+	bh=+uH09RUwku0p/qABLzhZVQknZYm3YLcaVqlx6KVLB6s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=k6xkdX1vYy+bGwMehwn4AnATimg/0Jb86YkJATz6F7jepSlWYXtATk9y0qrfA6FKe
+	 ANcfoXQrgmH9aj+Z3tkrLXFc+WaVulOaPz3efjtDbbT2t0yjgBSz8Uk58+tDnNIJiT
+	 G7Pxsu/PMYK0jzkE4/itn3Cc2RVRyJ9bEGwi2OaY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728202AbfBSJ6v (ORCPT
+        id S1727774AbfBSJ6Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 04:58:51 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:60484 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727950AbfBSJ63 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 04:58:29 -0500
-Received: from 79.184.254.15.ipv4.supernova.orange.pl (79.184.254.15) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id a25239dae484f5e6; Tue, 19 Feb 2019 10:58:27 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-Cc:     "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "lenb@kernel.org" <lenb@kernel.org>
-Subject: Re: [PATCH] ACPI / processor: Set P_LVL{2,3} idle state descriptions
-Date:   Tue, 19 Feb 2019 10:57:02 +0100
-Message-ID: <3670654.07UQUedC4A@aspire.rjw.lan>
-In-Reply-To: <20190218013335.233265-1-Yazen.Ghannam@amd.com>
-References: <20190218013335.233265-1-Yazen.Ghannam@amd.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Tue, 19 Feb 2019 04:58:24 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52074 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727464AbfBSJ6V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 04:58:21 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0221725EEA;
+        Tue, 19 Feb 2019 09:58:21 +0000 (UTC)
+Received: from krava.brq.redhat.com (unknown [10.43.17.42])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 29762600C8;
+        Tue, 19 Feb 2019 09:58:19 +0000 (UTC)
+From:   Jiri Olsa <jolsa@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: [PATCH 1/4] perf header: Fix wrong node write in NUMA_TOPOLOGY feature
+Date:   Tue, 19 Feb 2019 10:58:12 +0100
+Message-Id: <20190219095815.15931-2-jolsa@kernel.org>
+In-Reply-To: <20190219095815.15931-1-jolsa@kernel.org>
+References: <20190219095815.15931-1-jolsa@kernel.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 19 Feb 2019 09:58:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, February 18, 2019 2:33:49 AM CET Ghannam, Yazen wrote:
-> From: Yazen Ghannam <yazen.ghannam@amd.com>
-> 
-> The ACPI idle driver will fallback to using the legacy P_LVL* SystemIO
-> method of entering C-states if the _CST method is disabled and P_BLK is
-> defined. However, in this case the C2 and C3 states won't have a
-> description set, so the user will see "<null>" when reading the
-> description from sysfs.
-> 
-> Give each of these states a description.
-> 
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> ---
->  drivers/acpi/processor_idle.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
-> index b2131c4ea124..98d4ec5bf450 100644
-> --- a/drivers/acpi/processor_idle.c
-> +++ b/drivers/acpi/processor_idle.c
-> @@ -282,6 +282,13 @@ static int acpi_processor_get_power_info_fadt(struct acpi_processor *pr)
->  			  pr->power.states[ACPI_STATE_C2].address,
->  			  pr->power.states[ACPI_STATE_C3].address));
->  
-> +	snprintf(pr->power.states[ACPI_STATE_C2].desc,
-> +			 ACPI_CX_DESC_LEN, "ACPI P_LVL2 IOPORT 0x%x",
-> +			 pr->power.states[ACPI_STATE_C2].address);
-> +	snprintf(pr->power.states[ACPI_STATE_C3].desc,
-> +			 ACPI_CX_DESC_LEN, "ACPI P_LVL3 IOPORT 0x%x",
-> +			 pr->power.states[ACPI_STATE_C3].address);
-> +
->  	return 0;
->  }
->  
-> 
+We are currently passing the node index instead of the
+real node number.
 
-Applied, thanks!
+Fixes: fbe96f29ce4b ("perf tools: Make perf.data more self-descriptive (v8)"
+Link: http://lkml.kernel.org/n/tip-rbtlsr9ts23c89rki7d4s5sm@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/util/header.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 61ce197c5362..c66f26ec557a 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -879,7 +879,7 @@ static int write_numa_topology(struct feat_fd *ff,
+ 		if (ret < 0)
+ 			break;
+ 
+-		ret = write_topo_node(ff, i);
++		ret = write_topo_node(ff, j);
+ 		if (ret < 0)
+ 			break;
+ 	}
+-- 
+2.17.2
 
