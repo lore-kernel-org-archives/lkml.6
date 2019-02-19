@@ -6,191 +6,118 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3837C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:47:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B86DEC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:47:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD6CF208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:47:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F245208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:47:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729638AbfBSVry (ORCPT
+        id S1729717AbfBSVr6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 16:47:54 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:36160 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725994AbfBSVry (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 16:47:54 -0500
-Received: from localhost ([127.0.0.1] helo=vostro.local)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <john.ogness@linutronix.de>)
-        id 1gwDEw-0000yh-PT; Tue, 19 Feb 2019 22:47:46 +0100
-From:   John Ogness <john.ogness@linutronix.de>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC PATCH v1 06/25] printk-rb: add blocking reader support
-References: <20190212143003.48446-1-john.ogness@linutronix.de>
-        <20190212143003.48446-7-john.ogness@linutronix.de>
-        <20190218140538.5sug36qiji2rurxx@pathway.suse.cz>
-Date:   Tue, 19 Feb 2019 22:47:45 +0100
-In-Reply-To: <20190218140538.5sug36qiji2rurxx@pathway.suse.cz> (Petr Mladek's
-        message of "Mon, 18 Feb 2019 15:05:38 +0100")
-Message-ID: <87k1hvv4am.fsf@linutronix.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+        Tue, 19 Feb 2019 16:47:58 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36598 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725994AbfBSVr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 16:47:57 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7B652806A8;
+        Tue, 19 Feb 2019 21:47:57 +0000 (UTC)
+Received: from w520.home (ovpn-116-24.phx2.redhat.com [10.3.116.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2A01B66076;
+        Tue, 19 Feb 2019 21:47:55 +0000 (UTC)
+Date:   Tue, 19 Feb 2019 14:47:54 -0700
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Eric Auger <eric.auger@redhat.com>
+Cc:     eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: Re: [PATCH v3] vfio_pci: Enable memory accesses before calling
+ pci_map_rom
+Message-ID: <20190219144754.278fb075@w520.home>
+In-Reply-To: <20190215161606.32334-1-eric.auger@redhat.com>
+References: <20190215161606.32334-1-eric.auger@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 19 Feb 2019 21:47:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-02-18, Petr Mladek <pmladek@suse.com> wrote:
->> Add a blocking read function for readers. An irq_work function is
->> used to signal the wait queue so that write notification can
->> be triggered from any context.
->
-> I would be more precise what exacly is problematic in which context.
-> Something like:
->
-> An irq_work function is used because wake_up() cannot be called safely
-> from NMI and scheduler context.
+On Fri, 15 Feb 2019 17:16:06 +0100
+Eric Auger <eric.auger@redhat.com> wrote:
 
-OK.
+> pci_map_rom/pci_get_rom_size() performs memory access in the ROM.
+> In case the Memory Space accesses were disabled, readw() is likely
+> to trigger a synchronous external abort on some platforms.
+> 
+> In case memory accesses were disabled, re-enable them before the
+> call and disable them back again just after.
+> 
+> Fixes: 89e1f7d4c66d ("vfio: Add PCI device driver")
+> 
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> Suggested-by: Alex Williamson <alex.williamson@redhat.com>
 
->> Signed-off-by: John Ogness <john.ogness@linutronix.de>
->> ---
->>  include/linux/printk_ringbuffer.h | 20 ++++++++++++++++
->>  lib/printk_ringbuffer.c           | 49 +++++++++++++++++++++++++++++++++++++++
->>  2 files changed, 69 insertions(+)
->> 
->> diff --git a/include/linux/printk_ringbuffer.h b/include/linux/printk_ringbuffer.h
->> index 5fdaf632c111..106f20ef8b4d 100644
->> --- a/include/linux/printk_ringbuffer.h
->> +++ b/include/linux/printk_ringbuffer.h
->> @@ -2,8 +2,10 @@
->>  #ifndef _LINUX_PRINTK_RINGBUFFER_H
->>  #define _LINUX_PRINTK_RINGBUFFER_H
->>  
->> +#include <linux/irq_work.h>
->>  #include <linux/atomic.h>
->>  #include <linux/percpu.h>
->> +#include <linux/wait.h>
->>  
->>  struct prb_cpulock {
->>  	atomic_t owner;
->> @@ -22,6 +24,10 @@ struct printk_ringbuffer {
->>  
->>  	struct prb_cpulock *cpulock;
->>  	atomic_t ctx;
->> +
->> +	struct wait_queue_head *wq;
->> +	atomic_long_t wq_counter;
->> +	struct irq_work *wq_work;
->>  };
->>  
->>  struct prb_entry {
->> @@ -59,6 +65,15 @@ struct prb_iterator {
->>  #define DECLARE_STATIC_PRINTKRB(name, szbits, cpulockptr)		\
->>  static char _##name##_buffer[1 << (szbits)]				\
->>  	__aligned(__alignof__(long));					\
->> +static DECLARE_WAIT_QUEUE_HEAD(_##name##_wait);				\
->> +static void _##name##_wake_work_func(struct irq_work *irq_work)		\
->> +{									\
->> +	wake_up_interruptible_all(&_##name##_wait);			\
->> +}									\
->
-> All ring buffers might share the same generic function, something like:
->
-> void prb_wake_readers_work_func(struct irq_work *irq_work)
-> {
-> 	struct printk_ringbuffer *rb;
->
-> 	rb = container_of(irq_work, struct printk_ring_buffer, wq_work);
-> 	wake_up_interruptible_all(rb->wq);			\
-> }
+Applied to vfio next branch for v5.1.  Thanks,
 
-Agreed.
+Alex
 
->> +static struct irq_work _##name##_wake_work = {				\
->> +	.func = _##name##_wake_work_func,				\
->> +	.flags = IRQ_WORK_LAZY,						\
->> +};									\
->>  static struct printk_ringbuffer name = {				\
->>  	.buffer = &_##name##_buffer[0],					\
->>  	.size_bits = szbits,						\
->> diff --git a/lib/printk_ringbuffer.c b/lib/printk_ringbuffer.c
->> index 1d1e886a0966..c2ddf4cb9f92 100644
->> --- a/lib/printk_ringbuffer.c
->> +++ b/lib/printk_ringbuffer.c
->> @@ -185,6 +188,12 @@ void prb_commit(struct prb_handle *h)
->>  	}
->>  
->>  	prb_unlock(rb->cpulock, h->cpu);
->> +
->> +	if (changed) {
->> +		atomic_long_inc(&rb->wq_counter);
->> +		if (wq_has_sleeper(rb->wq))
->> +			irq_work_queue(rb->wq_work);
->> +	}
->>  }
->>  
->>  /*
->> @@ -437,3 +446,43 @@ int prb_iter_next(struct prb_iterator *iter, char *buf, int size, u64 *seq)
->>  
->>  	return 1;
->>  }
->> +
->> +/*
->> + * prb_iter_wait_next: Advance to the next record, blocking if none available.
->> + * @iter: Iterator tracking the current position.
->> + * @buf: A buffer to store the data of the next record. May be NULL.
->> + * @size: The size of @buf. (Ignored if @buf is NULL.)
->> + * @seq: The sequence number of the next record. May be NULL.
->> + *
->> + * If a next record is already available, this function works like
->> + * prb_iter_next(). Otherwise block interruptible until a next record is
->> + * available.
->> + *
->> + * When a next record is available, @iter is advanced and (if specified)
->> + * the data and/or sequence number of that record are provided.
->> + *
->> + * This function might sleep.
->> + *
->> + * Returns 1 if @iter was advanced, -EINVAL if @iter is now invalid, or
->> + * -ERESTARTSYS if interrupted by a signal.
->> + */
->> +int prb_iter_wait_next(struct prb_iterator *iter, char *buf, int size, u64 *seq)
->> +{
->> +	unsigned long last_seen;
->> +	int ret;
->> +
->> +	for (;;) {
->> +		last_seen = atomic_long_read(&iter->rb->wq_counter);
->> +
->> +		ret = prb_iter_next(iter, buf, size, seq);
->> +		if (ret != 0)
->> +			break;
->> +
->> +		ret = wait_event_interruptible(*iter->rb->wq,
->> +			last_seen != atomic_long_read(&iter->rb->wq_counter));
->
-> Do we really need yet another counter here?
->
-> I think that rb->seq might do the same job. Or if there is problem
-> with atomicity then rb->head might work as well. Or do I miss
-> anything?
+> ---
+> v2 -> v3:
+> - follow Alex re-writing
+> 
+> v1 -> v2:
+> - also re-enable in case of error
+> ---
+>  drivers/vfio/pci/vfio_pci.c | 25 +++++++++++++++++--------
+>  1 file changed, 17 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+> index ff60bd1ea587..4b0d30f1eabc 100644
+> --- a/drivers/vfio/pci/vfio_pci.c
+> +++ b/drivers/vfio/pci/vfio_pci.c
+> @@ -708,6 +708,7 @@ static long vfio_pci_ioctl(void *device_data,
+>  		{
+>  			void __iomem *io;
+>  			size_t size;
+> +			u16 orig_cmd;
+>  
+>  			info.offset = VFIO_PCI_INDEX_TO_OFFSET(info.index);
+>  			info.flags = 0;
+> @@ -723,15 +724,23 @@ static long vfio_pci_ioctl(void *device_data,
+>  					break;
+>  			}
+>  
+> -			/* Is it really there? */
+> -			io = pci_map_rom(pdev, &size);
+> -			if (!io || !size) {
+> -				info.size = 0;
+> -				break;
+> -			}
+> -			pci_unmap_rom(pdev, io);
+> +			/*
+> +			 * Is it really there?  Enable memory decode for
+> +			 * implicit access in pci_map_rom().
+> +			 */
+> +			pci_read_config_word(pdev, PCI_COMMAND, &orig_cmd);
+> +			pci_write_config_word(pdev, PCI_COMMAND,
+> +					      orig_cmd | PCI_COMMAND_MEMORY);
+>  
+> -			info.flags = VFIO_REGION_INFO_FLAG_READ;
+> +			io = pci_map_rom(pdev, &size);
+> +			if (io) {
+> +				info.flags = VFIO_REGION_INFO_FLAG_READ;
+> +				pci_unmap_rom(pdev, io);
+> +			} else {
+> +				info.size = 0;
+> +			}
+> +
+> +			pci_write_config_word(pdev, PCI_COMMAND, orig_cmd);
+>  			break;
+>  		}
+>  		case VFIO_PCI_VGA_REGION_INDEX:
 
-You are correct. rb->head would be appropriate.
-
-John Ogness
