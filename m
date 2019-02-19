@@ -2,123 +2,258 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D563AC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5A03C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADD3121773
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:56:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A7B121773
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:56:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729440AbfBSQ4T (ORCPT
+        id S1729456AbfBSQ4b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:56:19 -0500
-Received: from out02.mta.xmission.com ([166.70.13.232]:40259 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726321AbfBSQ4S (ORCPT
+        Tue, 19 Feb 2019 11:56:31 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41583 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729089AbfBSQ4b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:56:18 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gw8gr-0004sc-CN; Tue, 19 Feb 2019 09:56:17 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gw8gq-0006os-E3; Tue, 19 Feb 2019 09:56:16 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     David Howells <dhowells@redhat.com>
-Cc:     keyrings@vger.kernel.org, trond.myklebust@hammerspace.com,
-        sfrench@samba.org, linux-security-module@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, rgb@redhat.com,
-        linux-kernel@vger.kernel.org
-References: <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
-        <155024685321.21651.1504201877881622756.stgit@warthog.procyon.org.uk>
-Date:   Tue, 19 Feb 2019 10:56:05 -0600
-In-Reply-To: <155024685321.21651.1504201877881622756.stgit@warthog.procyon.org.uk>
-        (David Howells's message of "Fri, 15 Feb 2019 16:07:33 +0000")
-Message-ID: <87h8czvhsq.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gw8gq-0006os-E3;;;mid=<87h8czvhsq.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+Hkz9xC2ZtoJq9WrUfQB5JLxVLoRP611w=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [RFC PATCH 02/27] containers: Implement containers as kernel objects
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+        Tue, 19 Feb 2019 11:56:31 -0500
+Received: by mail-pf1-f196.google.com with SMTP id d25so2151159pfn.8;
+        Tue, 19 Feb 2019 08:56:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=9ptH2xuHwY53hQbwe/SGEtrtxHdHaH6z+s31L2PF5/k=;
+        b=W6T19A3OK/0VQB9FxHMnPj11Xx2fuBWLxJoVEiCn6sCMUAqGHBDbftxi7gp9bl4ASx
+         MRivO92FyVf+DH4LvIiCqEu+i/iAYCi7L57LLzKf3w/dUoAknQzNmEAKOVjY1ges72ho
+         KSjSEWbcDHF/QbDG7C54QcXlbX+EWqj9bMLJdGP2IkHcVkl1tfP2GICk71gO9M90GAIN
+         5vtxClJFVEpWgyS/Ch7DG+htAnAkb313WPBjmmcqyCrENz4IbQ75fN+RSjb7UrPydWlF
+         AFHffc3MkRhZhVYoxXt75YUVJ/HSUhuQlTmDw35ZEPllWw/+l0cAv18FZujDU5Bbb0Rq
+         kGUw==
+X-Gm-Message-State: AHQUAuaZC48OQaZj+U1lOummKmynmlYRqg7hoEsrg+l8J0PMpRXUUVTQ
+        SHJV28PTZ7/a3YejihF5R6U=
+X-Google-Smtp-Source: AHgI3IYk8Lpd7+5j1W1GXfIx0t4V6ghhzJoKvBeY/1vncVxfKQSwIBq2ypGHBIQs/IM0bWvDbtQmbQ==
+X-Received: by 2002:a65:6099:: with SMTP id t25mr28462111pgu.448.1550595390253;
+        Tue, 19 Feb 2019 08:56:30 -0800 (PST)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id o26sm17545136pfk.139.2019.02.19.08.56.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Feb 2019 08:56:29 -0800 (PST)
+Message-ID: <1550595388.31902.133.camel@acm.org>
+Subject: Re: [RFC PATCH] scsi: fix oops in scsi_uninit_cmd()
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Jason Yan <yanaijie@huawei.com>, martin.petersen@oracle.com,
+        jejb@linux.vnet.ibm.com, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hare@suse.com, dan.j.williams@intel.com, jthumshirn@suse.de,
+        Steffen Maier <maier@linux.ibm.com>
+Date:   Tue, 19 Feb 2019 08:56:28 -0800
+In-Reply-To: <20190219072743.13606-1-yanaijie@huawei.com>
+References: <20190219072743.13606-1-yanaijie@huawei.com>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> writes:
+On Tue, 2019-02-19 at 15:27 +-0800, Jason Yan wrote:
++AD4 If we remove the scsi disk when running io with fio, oops occured with
++AD4 the following condition.
++AD4 
++AD4 +AFs-scsi+AF8-eh+AF8-0+AF0                              +AFs-fio+AF0
++AD4 scsi+AF8-end+AF8-request
++AD4   -+AD4-blk+AF8-update+AF8-request
++AD4     -+AD4-end+AF8-bio(io returned to userspace)
++AD4                                          close
++AD4                                            -+AD4-sd+AF8-release
++AD4                                               -+AD4-scsi+AF8-disk+AF8-put
++AD4                                                  -+AD4-scsi+AF8-disk+AF8-release
++AD4                                                      -+AD4-disk-+AD4-private+AF8-data +AD0 NULL+ADs
++AD4 
++AD4   -+AD4-scsi+AF8-mq+AF8-uninit+AF8-cmd
++AD4     -+AD4-scsi+AF8-uninit+AF8-cmd
++AD4       -+AD4-scsi+AF8-cmd+AF8-to+AF8-driver
++AD4     -+AD4-drv is NULL, Oops
++AD4 
++AD4 There is a small window between blk+AF8-update+AF8-request() and
++AD4 scsi+AF8-mq+AF8-uninit+AF8-cmd() that scsi disk may have been released. This will
++AD4 cause a oops like below:
++AD4 
++AD4 Unable to handle kernel NULL pointer dereference at virtual address
++AD4 0000000000000000
++AD4 s/sync.c:67, func+AD0-xfer, error+AD0-In+AFs-11347.116050+AF0 Mem abort info:
++AD4 put/output error
++AD4 +AFs-11347.121598+AF0   ESR +AD0 0x96000006
++AD4 +AFs-11347.126200+AF0   Exception class +AD0 DABT (current EL), IL +AD0 32 bits
++AD4 +AFs-11347.132117+AF0   SET +AD0 0, FnV +AD0 0
++AD4 +AFs-11347.135170+AF0   EA +AD0 0, S1PTW +AD0 0
++AD4 +AFs-11347.138308+AF0 Data abort info:
++AD4 +AFs-11347.141186+AF0   ISV +AD0 0, ISS +AD0 0x00000006
++AD4 +AFs-11347.145019+AF0   CM +AD0 0, WnR +AD0 0
++AD4 +AFs-11347.147977+AF0 user pgtable: 4k pages, 48-bit VAs, pgdp +AD0
++AD4 00000000a67aece2
++AD4 +AFs-11347.154591+AF0 +AFs-0000000000000000+AF0 pgd+AD0-0000002f90774003,
++AD4 pud+AD0-0000002fab098003, pmd+AD0-0000000000000000
++AD4 +AFs-11347.163304+AF0 Internal error: Oops: 96000006 +AFsAIw-1+AF0 PREEMPT SMP
++AD4 +AFs-11347.168870+AF0 Modules linked in: hisi+AF8-sas+AF8-v3+AF8-hw hisi+AF8-sas+AF8-main libsas
++AD4 +AFs-11347.175044+AF0 CPU: 56 PID: 4294 Comm: scsi+AF8-eh+AF8-2 Not tainted
++AD4 4.19.0-g8052059-dirty +ACM-2
++AD4 +AFs-11347.182600+AF0 Hardware name: Huawei D06/D06, BIOS Hisilicon D06 UEFI
++AD4 RC0 - B601 (V6.01) 11/08/2018
++AD4 +AFs-11347.191370+AF0 pstate: a0c00009 (NzCv daif +-PAN +-UAO)
++AD4 +AFs-11347.196155+AF0 pc : scsi+AF8-uninit+AF8-cmd+-0x24/0x3c
++AD4 +AFs-11347.200240+AF0 lr : scsi+AF8-mq+AF8-uninit+AF8-cmd+-0x1c/0x30
++AD4 +AFs-11347.204583+AF0 sp : ffff000024dabb60
++AD4 +AFs-11347.207884+AF0 x29: ffff000024dabb60 x28: ffff000024dabd38
++AD4 +AFs-11347.213184+AF0 x27: ffff000000f5b3a8 x26: ffff7df3b0181600
++AD4 +AFs-11347.218484+AF0 x25: 0000000000000000 x24: ffff803bc5d36778
++AD4 +AFs-11347.223783+AF0 x23: 000000000000000a x22: 0000000000000000
++AD4 +AFs-11347.229082+AF0 x21: ffff803bc7397000 x20: ffff802f9148e530
++AD4 +AFs-11347.234381+AF0 x19: ffff802f9148e530 x18: ffff7e0000000000
++AD4 +AFs-11347.239679+AF0 x17: 0000000000000000 x16: 0000002f9e37d000
++AD4 +AFs-11347.244979+AF0 x15: ffff7e0000000000 x14: 3863206336203839
++AD4 +AFs-11347.250278+AF0 x13: 2036302030302038 x12: a46fac3d0d363d00
++AD4 +AFs-11347.255578+AF0 x11: ffffffffffffffff x10: a46fac3d0d363d00
++AD4 +AFs-11347.260877+AF0 x9 : 0000000040040000 x8 : 000000000000eb4b
++AD4 +AFs-11347.266177+AF0 x7 : ffff000009771000 x6 : 0000000000210d00
++AD4 +AFs-11347.271476+AF0 x5 : ffff803bc9f50000 x4 : 0000000000000000
++AD4 +AFs-11347.276775+AF0 x3 : ffff802fb02b4380 x2 : ffff802f9148e400
++AD4 +AFs-11347.282075+AF0 x1 : 0000000000000000 x0 : ffff802f9148e530
++AD4 +AFs-11347.287375+AF0 Process scsi+AF8-eh+AF8-2 (pid: 4294, stack limit +AD0
++AD4 0x000000007d2257f8)
++AD4 +AFs-11347.294323+AF0 Call trace:
++AD4 Jobs: 6 (f+AD0-6): +AFs-R+AFs-RRR1XXX1XRR3+AF0 47.296758+AF0  scsi+AF8-uninit+AF8-cmd+-0x24/0x3c
++AD4 +AFs-22.7+ACU done+AF0 +AFs-1516MB/0KB/0KB /s+AF0 +AFs-754/0/0 iops+AF0 +AFs-eta 08m:39s+AF0
++AD4 +AFs-11347.308390+AF0  scsi+AF8-mq+AF8-uninit+AF8-cmd+-0x1c/0x30
++AD4 +AFs-11347.312387+AF0  scsi+AF8-end+AF8-request+-0x7c/0x1b8
++AD4 +AFs-11347.316297+AF0  scsi+AF8-io+AF8-completion+-0x464/0x668
++AD4 +AFs-11347.320467+AF0  scsi+AF8-finish+AF8-command+-0xbc/0x160
++AD4 +AFs-11347.324636+AF0  scsi+AF8-eh+AF8-flush+AF8-done+AF8-q+-0x10c/0x170
++AD4 +AFs-11347.328990+AF0  sas+AF8-scsi+AF8-recover+AF8-host+-0x84c/0xa98 +AFs-libsas+AF0
++AD4 +AFs-11347.334202+AF0  scsi+AF8-error+AF8-handler+-0x140/0x5b0
++AD4 +AFs-11347.338374+AF0  kthread+-0x100/0x12c
++AD4 +AFs-11347.341590+AF0  ret+AF8-from+AF8-fork+-0x10/0x18
++AD4 +AFs-11347.345153+AF0 Code: 71000c3f 540000e9 f9404c41 f941f421 (f9400021)
++AD4 +AFs-11347.351234+AF0 ---+AFs end trace f496aacdaa1dcc51 +AF0----
++AD4 
++AD4 To fix this, get a refcount of scsi+AF8-disk in sd+AF8-init+AF8-command() to ensure
++AD4 it will not be released before sd+AF8-uninit+AF8-command().
++AD4 
++AD4 Signed-off-by: Jason Yan +ADw-yanaijie+AEA-huawei.com+AD4
++AD4 ---
++AD4  drivers/scsi/sd.c +AHw 46 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+------------
++AD4  1 file changed, 35 insertions(+-), 11 deletions(-)
++AD4 
++AD4 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
++AD4 index 5464d467e23e..6bdb8fbb570f 100644
++AD4 --- a/drivers/scsi/sd.c
++AD4 +-+-+- b/drivers/scsi/sd.c
++AD4 +AEAAQA -1249,42 +-1249,64 +AEAAQA static blk+AF8-status+AF8-t sd+AF8-setup+AF8-read+AF8-write+AF8-cmnd(struct scsi+AF8-cmnd +ACo-SCpnt)
++AD4  static blk+AF8-status+AF8-t sd+AF8-init+AF8-command(struct scsi+AF8-cmnd +ACo-cmd)
++AD4  +AHs
++AD4  	struct request +ACo-rq +AD0 cmd-+AD4-request+ADs
++AD4 +-	struct scsi+AF8-disk +ACo-sdkp +AD0 NULL+ADs
++AD4 +-	blk+AF8-status+AF8-t ret+ADs
++AD4  
++AD4  	switch (req+AF8-op(rq)) +AHs
++AD4  	case REQ+AF8-OP+AF8-DISCARD:
++AD4  		switch (scsi+AF8-disk(rq-+AD4-rq+AF8-disk)-+AD4-provisioning+AF8-mode) +AHs
++AD4  		case SD+AF8-LBP+AF8-UNMAP:
++AD4 -			return sd+AF8-setup+AF8-unmap+AF8-cmnd(cmd)+ADs
++AD4 +-			ret +AD0 sd+AF8-setup+AF8-unmap+AF8-cmnd(cmd)+ADs
++AD4 +-			break+ADs
++AD4  		case SD+AF8-LBP+AF8-WS16:
++AD4 -			return sd+AF8-setup+AF8-write+AF8-same16+AF8-cmnd(cmd, true)+ADs
++AD4 +-			ret +AD0 sd+AF8-setup+AF8-write+AF8-same16+AF8-cmnd(cmd, true)+ADs
++AD4 +-			break+ADs
++AD4  		case SD+AF8-LBP+AF8-WS10:
++AD4 -			return sd+AF8-setup+AF8-write+AF8-same10+AF8-cmnd(cmd, true)+ADs
++AD4 +-			ret +AD0 sd+AF8-setup+AF8-write+AF8-same10+AF8-cmnd(cmd, true)+ADs
++AD4 +-			break+ADs
++AD4  		case SD+AF8-LBP+AF8-ZERO:
++AD4 -			return sd+AF8-setup+AF8-write+AF8-same10+AF8-cmnd(cmd, false)+ADs
++AD4 +-			ret +AD0 sd+AF8-setup+AF8-write+AF8-same10+AF8-cmnd(cmd, false)+ADs
++AD4 +-			break+ADs
++AD4  		default:
++AD4 -			return BLK+AF8-STS+AF8-TARGET+ADs
++AD4 +-			ret +AD0 BLK+AF8-STS+AF8-TARGET+ADs
++AD4 +-			break+ADs
++AD4  		+AH0
++AD4 +-		break+ADs
++AD4  	case REQ+AF8-OP+AF8-WRITE+AF8-ZEROES:
++AD4 -		return sd+AF8-setup+AF8-write+AF8-zeroes+AF8-cmnd(cmd)+ADs
++AD4 +-		ret +AD0 sd+AF8-setup+AF8-write+AF8-zeroes+AF8-cmnd(cmd)+ADs
++AD4 +-		break+ADs
++AD4  	case REQ+AF8-OP+AF8-WRITE+AF8-SAME:
++AD4 -		return sd+AF8-setup+AF8-write+AF8-same+AF8-cmnd(cmd)+ADs
++AD4 +-		ret +AD0 sd+AF8-setup+AF8-write+AF8-same+AF8-cmnd(cmd)+ADs
++AD4 +-		break+ADs
++AD4  	case REQ+AF8-OP+AF8-FLUSH:
++AD4 -		return sd+AF8-setup+AF8-flush+AF8-cmnd(cmd)+ADs
++AD4 +-		ret +AD0 sd+AF8-setup+AF8-flush+AF8-cmnd(cmd)+ADs
++AD4 +-		break+ADs
++AD4  	case REQ+AF8-OP+AF8-READ:
++AD4  	case REQ+AF8-OP+AF8-WRITE:
++AD4 -		return sd+AF8-setup+AF8-read+AF8-write+AF8-cmnd(cmd)+ADs
++AD4 +-		ret +AD0 sd+AF8-setup+AF8-read+AF8-write+AF8-cmnd(cmd)+ADs
++AD4 +-		break+ADs
++AD4  	case REQ+AF8-OP+AF8-ZONE+AF8-RESET:
++AD4 -		return sd+AF8-zbc+AF8-setup+AF8-reset+AF8-cmnd(cmd)+ADs
++AD4 +-		ret +AD0 sd+AF8-zbc+AF8-setup+AF8-reset+AF8-cmnd(cmd)+ADs
++AD4 +-		break+ADs
++AD4  	default:
++AD4  		WARN+AF8-ON+AF8-ONCE(1)+ADs
++AD4 -		return BLK+AF8-STS+AF8-NOTSUPP+ADs
++AD4 +-		ret +AD0 BLK+AF8-STS+AF8-NOTSUPP+ADs
++AD4 +-		break+ADs
++AD4  	+AH0
++AD4 +-
++AD4 +-	if (+ACE-ret) +AHs
++AD4 +-		sdkp +AD0 scsi+AF8-disk(rq-+AD4-rq+AF8-disk)+ADs
++AD4 +-		get+AF8-device(+ACY-sdkp-+AD4-dev)+ADs
++AD4 +-	+AH0
++AD4 +-
++AD4 +-	return ret+ADs
++AD4  +AH0
++AD4  
++AD4  static void sd+AF8-uninit+AF8-command(struct scsi+AF8-cmnd +ACo-SCpnt)
++AD4  +AHs
++AD4  	struct request +ACo-rq +AD0 SCpnt-+AD4-request+ADs
++AD4  	u8 +ACo-cmnd+ADs
++AD4 +-	struct scsi+AF8-disk +ACo-sdkp +AD0 NULL+ADs
++AD4  
++AD4  	if (rq-+AD4-rq+AF8-flags +ACY RQF+AF8-SPECIAL+AF8-PAYLOAD)
++AD4  		mempool+AF8-free(rq-+AD4-special+AF8-vec.bv+AF8-page, sd+AF8-page+AF8-pool)+ADs
++AD4 +AEAAQA -1295,6 +-1317,8 +AEAAQA static void sd+AF8-uninit+AF8-command(struct scsi+AF8-cmnd +ACo-SCpnt)
++AD4  		SCpnt-+AD4-cmd+AF8-len +AD0 0+ADs
++AD4  		mempool+AF8-free(cmnd, sd+AF8-cdb+AF8-pool)+ADs
++AD4  	+AH0
++AD4 +-	sdkp +AD0 scsi+AF8-disk(rq-+AD4-rq+AF8-disk)+ADs
++AD4 +-	put+AF8-device(+ACY-sdkp-+AD4-dev)+ADs
++AD4  +AH0
 
-The container id details are ludicrous and will break practically
-every use case.  This completely unacceptable.
+Hi Jens and Christoph,
 
-Nacked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+My interpretation of the above bug report and patch is that this is a
+regression in the SCSI sd driver due to the switch from the legacy block
+layer to scsi-mq. The above patch introduces two atomic operations in the
+hot path and hence would introduce a performance regression. I think this
+can be avoided by making sure that sd+AF8-uninit+AF8-command() gets called before
+the request tag is freed. What changes would be required to make the block
+layer core call sd+AF8-uninit+AF8-command() before the request tag is freed? Would
+introducing prep+AF8-rq+AF8-fn and unprep+AF8-rq+AF8-fn callbacks in struct blk+AF8-mq+AF8-ops and
+making sure that the SCSI core sets these callback function pointers
+appropriately be sufficient? Would such a change allow to simplify the NVMe
+initiator driver? Are there any alternatives to this approach that are more
+elegant?
 
-> diff --git a/include/linux/container.h b/include/linux/container.h
-> new file mode 100644
-> index 000000000000..0a8918435097
-> --- /dev/null
-> +++ b/include/linux/container.h
-> +/*
-> + * The container object.
-> + */
-> +struct container {
-> +	u64			id;		/* Container ID */
-...
+Thanks,
 
-No.  This is absolutely unacceptable.
-As this breaks breaks nested containers and process migration.
-
-> +};
-> +
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index d2f90fa92468..073a3a930514 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -36,6 +36,7 @@ struct backing_dev_info;
->  struct bio_list;
->  struct blk_plug;
->  struct cfs_rq;
-> +struct container;
->  struct fs_struct;
->  struct futex_pi_state;
->  struct io_context;
-> @@ -870,6 +871,8 @@ struct task_struct {
->  
->  	/* Namespaces: */
->  	struct nsproxy			*nsproxy;
-> +	struct container		*container;
-> +	struct list_head		container_link;
-
-Why?  nsproxy would be a much cheaper location to put this.
-Less space and less foobar.
-
->  	/* Signal handlers: */
->  	struct signal_struct		*signal;
-> diff --git a/kernel/container.c b/kernel/container.c
-> new file mode 100644
-> index 000000000000..ca4012632cfa
-> --- /dev/null
-> +++ b/kernel/container.c
-> @@ -0,0 +1,348 @@
-[...]
-> +
-> +	c->id = atomic64_inc_return(&container_id_counter);
-
-This id is not in a namespace, and it doesn't have enough bits
-of entropy to be globally unique.   Not that 64bit is enough
-to have a chance at being globablly unique.
-
-
-Eric
+Bart.
