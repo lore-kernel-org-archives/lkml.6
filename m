@@ -2,173 +2,123 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31561C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19048C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:07:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0D1B2147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:06:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA1162147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:06:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="KgScEmvb";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="QmWJoDFA"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="sBwQjTHT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728999AbfBSQGT (ORCPT
+        id S1726352AbfBSQG6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:06:19 -0500
-Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:54572 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726352AbfBSQGS (ORCPT
+        Tue, 19 Feb 2019 11:06:58 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46729 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727303AbfBSQG5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:06:18 -0500
-Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
-        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1JG2StA006447;
-        Tue, 19 Feb 2019 08:06:07 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=proofpoint;
- bh=amAxK71xGvlbN2ODYKdMHfVkx9mr/KuPoP6csszdfEU=;
- b=KgScEmvbUrYkmQ24l6cix1/EwFI/BhMtjF3kspbQSGfzjeYvOBawC63d/0gFq+d4xeh4
- ZlpVA4DN3agshekLl4Rm+YjDNtNcLhkumWoLcIWON8pVgrz1PBwvPsld1zT7ULvmdmTb
- FbFYKXLU7KJdD5HOE8ZSXdduxBpFSp87VrPRc3RGil9IljuEZilr1E/8rtlzP9GOaEfN
- zqaqnUrqaSPFm3Rr0DE6BlYUPP1EUMBAWI6xJnxm1YhF1EP0IhClbjpzOYPHkRqsAMCG
- Bfq7qVKVr0jh6pl5qYNvNQdD4ja0ltiGF1q6EyeIIwYEUjyUeNh+CaRXc1wjp+4Mx9iF ag== 
-Authentication-Results: cadence.com;
-        spf=pass smtp.mailfrom=tjoseph@cadence.com
-Received: from nam04-co1-obe.outbound.protection.outlook.com (mail-co1nam04lp2053.outbound.protection.outlook.com [104.47.45.53])
-        by mx0a-0014ca01.pphosted.com with ESMTP id 2qqt6q5je5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 19 Feb 2019 08:06:07 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=amAxK71xGvlbN2ODYKdMHfVkx9mr/KuPoP6csszdfEU=;
- b=QmWJoDFAecuk3dq5N/Rex5gY8kQvD52QG58ycOgdvHBuA4WKveGQayggf+t898a6weBEj/MGxWFC3ruADyxaNTE+jRD/sOt6b99SwQwO0irxC1f8GI39DTg6xfnDJ7bfRoHcP3Tq8SnaGeAefEU6nJLxD1mBKWTk9GqJsvYmBGo=
-Received: from BYAPR07CA0006.namprd07.prod.outlook.com (2603:10b6:a02:bc::19)
- by BL0PR07MB3971.namprd07.prod.outlook.com (2603:10b6:207:4a::33) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1622.16; Tue, 19 Feb
- 2019 16:06:04 +0000
-Received: from DM3NAM05FT030.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e51::207) by BYAPR07CA0006.outlook.office365.com
- (2603:10b6:a02:bc::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1622.16 via Frontend
- Transport; Tue, 19 Feb 2019 16:06:04 +0000
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- cadence.com discourages use of 158.140.1.28 as permitted sender)
-Received: from sjmaillnx1.cadence.com (158.140.1.28) by
- DM3NAM05FT030.mail.protection.outlook.com (10.152.98.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.11 via Frontend Transport; Tue, 19 Feb 2019 16:06:03 +0000
-Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by sjmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id x1JG60Mn011536
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Tue, 19 Feb 2019 08:06:02 -0800
-X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
-Received: from maileu3.global.cadence.com (10.160.88.99) by
- maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Tue, 19 Feb 2019 17:05:59 +0100
-Received: from lvlogina.cadence.com (10.165.176.102) by
- maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Tue, 19 Feb 2019 17:05:59 +0100
-Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
-        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id x1JG5xw5005430;
-        Tue, 19 Feb 2019 16:05:59 GMT
-Received: (from tjoseph@localhost)
-        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id x1JG5x53005413;
-        Tue, 19 Feb 2019 16:05:59 GMT
-From:   Tom Joseph <tjoseph@cadence.com>
-To:     <mchehab+samsung@kernel.org>
-CC:     <davem@davemloft.net>, <gregkh@linuxfoundation.org>,
-        <nicolas.ferre@microchip.com>, <arnd@arndb.de>,
-        <lorenzo.pieralisi@arm.com>, <linux-kernel@vger.kernel.org>,
-        Tom Joseph <tjoseph@cadence.com>
-Subject: [PATCH] MAINTAINERS: pci/cadence: Updating maintainer information.  Removing Alan and adding myself(tjoseph@cadence.com) as the maintainer.
-Date:   Tue, 19 Feb 2019 16:04:54 +0000
-Message-ID: <1550592294-1768-2-git-send-email-tjoseph@cadence.com>
-X-Mailer: git-send-email 2.2.2
-In-Reply-To: <1550592294-1768-1-git-send-email-tjoseph@cadence.com>
-References: <1550592294-1768-1-git-send-email-tjoseph@cadence.com>
+        Tue, 19 Feb 2019 11:06:57 -0500
+Received: by mail-wr1-f68.google.com with SMTP id i16so14356141wrs.13
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 08:06:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7s4eDmqcVrJit+LRNz/3DTAZJVvDNlWByMSZ7/sgKQ0=;
+        b=sBwQjTHTUad96tqXQ19VixTG8equAaSgvO9R99ygJbZT+h74UDZ5wjzsQURo3tJ+qM
+         2LFUexxGD3rjFyS6fbtpmtTsWPAm09UcFHsUnAPHqsDwKMkPcQL7ppNdt3S/NQtxX7BE
+         ZRYtmBVYUe9lQ6ppBtkwUAEgFnNyq/pxYNpjVR9oyctuOHjNHbFmXezjqnHp4WYr68pY
+         p8+KRjd6+mEcxHn5w7aCKxVqs+PCsvyHZFRz2i3kluGDgN7T1X4O0ep8tbfiNyW1874q
+         aDr4mS9d5oT7vcvHOk9RrUQnDdGZ/9zL0lMSvFTuW2hTUtT451NUlaBSsv86Trcmd1ss
+         f3Gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7s4eDmqcVrJit+LRNz/3DTAZJVvDNlWByMSZ7/sgKQ0=;
+        b=g/INbCV+kDTnwdwFYOCR0kbLjD8opCR+Ig0RCvSNPxn25rMHSIQhXfUpKKX/Fie9s+
+         2MAuXE+pzqqscwEpjgA5tXbgZF4zOWX2fqjEVmw4StvSc+k6xnjcV1pa6S0ck3ckJ5+F
+         OHb3x5lENcB8WSAXLROsyZJjcf3cv90j5PoqrJLF+hhR5qSFcWKvMXqH3quYmKCzWvCo
+         HbRB8sSmptJ5lEv5MUZm/R+ODglNm60pKqYky9PTxVFIQAv2R4h5a/vqYB4rfEgcGQ4L
+         HVK8PgerX1y1zQfIEcdbfzkGrzfhTzaGQA6SHVjiN96A8mrqqz4A8o4DnzBGygQsD8jn
+         YLiQ==
+X-Gm-Message-State: AHQUAua+Lyje0gDggqzsXgtWp8Qh3T/pJimXOlKY8ng8EAabIvR4osBt
+        48Vmrp9w37TyoxvMKGPxw+prZg==
+X-Google-Smtp-Source: AHgI3Ibu006gCFFU8Jrjp0vF5YcczrijRkjyZex9+wQbWHRu8l3vLw6K1KLC7tDkSI9Yak26bslVyw==
+X-Received: by 2002:adf:ef4a:: with SMTP id c10mr21210682wrp.180.1550592415724;
+        Tue, 19 Feb 2019 08:06:55 -0800 (PST)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id h17sm12161381wrq.17.2019.02.19.08.06.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Feb 2019 08:06:54 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v6 0/7] gpio: mockup: improve the user-space testing interface
+Date:   Tue, 19 Feb 2019 17:06:43 +0100
+Message-Id: <20190219160650.9614-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-OrganizationHeadersPreserved: maileu3.global.cadence.com
-X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(136003)(346002)(396003)(39860400002)(2980300002)(36092001)(189003)(199004)(126002)(476003)(14444005)(486006)(2351001)(48376002)(50466002)(11346002)(446003)(426003)(36756003)(105596002)(106466001)(2616005)(222073003)(26005)(356004)(47776003)(186003)(51416003)(6346003)(6666004)(107886003)(305945005)(8936002)(316002)(50226002)(42186006)(16586007)(54906003)(246002)(7636002)(4326008)(4744005)(8676002)(76176011)(2906002)(87636003)(478600001)(86362001)(26826003)(5660300002)(336012)(94303002);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR07MB3971;H:sjmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: cd09c58e-3f15-41ea-f37f-08d696842660
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(2017052603328)(7153060);SRVR:BL0PR07MB3971;
-X-MS-TrafficTypeDiagnostic: BL0PR07MB3971:
-X-Microsoft-Exchange-Diagnostics: 1;BL0PR07MB3971;20:4mK+4VEx92oCX7du7R4lnEF0/HuIgw9LtM7RdeS2AbvzyrjcRSj7xzKvuezoX2ZEolzKk3f4I43613kvBVxBn/Qk2qaaBqCx9JwfwthyWhjPh3IlRISEx2jgYL5esaLmUH3DL/gju44cMOcjoFYaJq4TuDZvegqSO6RU0ZUCefXAb4ESV5HUKkB0D/c8vghU6PqZjtkJ8Rp9/H6LXIttWdB0tOQwQiJ6lKfoFRvUKxxc+Xe+Yx360zR9mEj9hZsJ8E+FieHmZ7qQ4jSwdtLe7OKLtwbi+IhUQr2XXpyQdPYPyduLy0qE6wVMlfZiobk3vwgxARrUtzUCBNVO7PqFM9ahCCMFrqgCA9Yc5jpQV/adfMaAJbW8+yz1GGfvCFwUpwGYLq9KVr/NdgAXB/HznLG+wxBFA0UeF0E6MfWhsmQ7NMdhS4PdVnGykHJ5H5jsf6F0oTH4tE/ddbmWjhC4ZXafd3wpHS+MvWZUJYFXGwmvkb8tB8IZXMiGGDq0Fhyw
-X-Microsoft-Antispam-PRVS: <BL0PR07MB3971B6513523EAAC04995CF6A17C0@BL0PR07MB3971.namprd07.prod.outlook.com>
-X-Forefront-PRVS: 09538D3531
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BL0PR07MB3971;23:Mz4zL5nWpPFmHB3iB2FhLVjZ1yUDpityeyx3Txobn?=
- =?us-ascii?Q?lVfppzJJrJIZqcYluJYiL1BKTjhf4PE1BIhZr+yuyyr/1R8JnTaKc1PYe63a?=
- =?us-ascii?Q?yloe7wMOOizAPNvakZ5EPCJJjUyovN+3ZUPEkO5Z8z1xS85a0uY4g0AUbz5N?=
- =?us-ascii?Q?DV+uL0CZhUjgq+tuOwm+ggp9zyxFp/P8+En5tBUHTM9b68pVDO8nbRod6s1f?=
- =?us-ascii?Q?OAa8kfgRvSI/smy412twcD0afliElb5dHJ0R9Ew7Ri4p899/SF4iRZeiqx4+?=
- =?us-ascii?Q?l2aJbILfw8CRC0wzwVyWohNkZXVlB8/RsG6DmyEjDTjUUQxAoBwyLswRDDH4?=
- =?us-ascii?Q?MXYSNOAWW/MH+wguyz4sBR8rl6auE35YpaA8A/ESWZRHgLrnAy6SUN4PMg+l?=
- =?us-ascii?Q?w6KfnQz7y5Gc0fKBACH5lXSysV3ibLbFtdDReKqMr8heuSuw59duJc3v0ApY?=
- =?us-ascii?Q?uEEsgcOOgw5iZ9IW+CnzqQR2x7lk3d/J20F+yRueQjZhqtVFUTfS3H4bAOpf?=
- =?us-ascii?Q?9ZkM+I8qB0WJekOK39rT1AJzyzSIjAUxuEjEY62O3rr6xiX/GZvOHsqoA/WS?=
- =?us-ascii?Q?+XGhzEiXvXK9fUCM4NQCw+01wyJ6nMvyu7bK9ZITnyyQHBGtFpb5HDxM3DEq?=
- =?us-ascii?Q?0g4YfV7LZ65P8nGuGSegKAMAER/Lc9rJMq9ws75kHilifAiH4iCjiFi0S/4T?=
- =?us-ascii?Q?wWkPk8Ok4JawI8TTLic8EUdxSFtwaM5CtooW2qi1C0WxHJEyCb1UsB8bd4b7?=
- =?us-ascii?Q?dRFxUjvBhFl8Az3ADMExIgzcxozF9L1+T3uKD3vr/J5nt1+GB/7pY5h05jP1?=
- =?us-ascii?Q?Zv3Gcfe6JV3m8NNF+YmMiwQJvzuj4NCIO9nwVnb2BsDdWNiYQjbjSrhGqqle?=
- =?us-ascii?Q?uXgSjhwpQ4qddbXe7I4Xlfc0lBmTca+MwfwQGkOdeRYqfTNy41BEYB6kfN+O?=
- =?us-ascii?Q?/LC1cXlqHwrp7OvjAjmyvLn0Wd+WjP7EFGRb80qZ6ZX7uEzCfKzXESCbwflc?=
- =?us-ascii?Q?oS/ZJHYBFbjfz36nQOzErhWxiboKV37FZ/jO3acalnijwmuVQrByhbHgq4UF?=
- =?us-ascii?Q?BBlYVCdvnvuoOE7p9r6I8+rDKIAt+zsVQ3KijRwxd5ZnhBffTJ3aA4qsUAEr?=
- =?us-ascii?Q?6Q58msJGDvzB4QVwzo/gVwz1z8Wk1Ujs+aV81y+4A6qLPeVcDWJAg=3D=3D?=
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: 4JrfBUez4QVHugMEW1rc0dAcHFCnWYLeEIAC+itnmevkM+Di1bd2P1rkvcLT5+KdytcKcl8QisRW9BxK7wDV+841vI8P80xn8sypT4zF8zr8s+7UPuXp2+uUqd1FEKfP8ZhiGNc5cIvSrlbE4crA/vE5IsmvICD37J9KJE6ZlCvfb2xEv0Xu2x3QkzrkI2DYx8XBNhGZsCYGqSw7uBb3odChEvNitUfkqa/E4pwoZbYKrWjTZidYtLywkMIhySjVjeMd77XjGZCXW0kwcAR+VxNYOzdDfiVTeExpogWWZ/laWTxcjYuBv+g3Dv9pTtxMxsNZrMYEcq7ZdgBhBT6xoyKhBqcuNRphGjpcpe8l2VJ52DNVJ2kLj4aUiQNFJT13kWonbOHGMvXAfNWxQemo+j79to6RfraQVrWYr3KJbA0=
-X-Microsoft-Exchange-Diagnostics: 1;BL0PR07MB3971;20:kTQVjggp8W1zZ+xDccxtUnBKXjo9A0uDnilxmiiyqTxpVZt+Pe0vTddOVT3cMo878Kxu0yWWsr6DobyQ9zJUFkmEn2bho6ubx/+fwKCmB7mKaXWWZ3ueD53W4b3clN/FOqxey2R6EG74RcblqRCrkW12qWHUFzbGdLoBqOLYeaPg9lrobxkNIQTnOhNqO4/RfTJzQ4nATqC4RRPuntC0kKcGlA7/NCC9RA4jOcbpIRTgTvm4AyW6ZS/zJuHO+lMM
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2019 16:06:03.8607
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cd09c58e-3f15-41ea-f37f-08d696842660
-X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx1.cadence.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR07MB3971
-X-Proofpoint-SPF-Result: pass
-X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
- include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
- include:auth.msgapp.com include:spf.mandrillapp.com ~all
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-19_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
- priorityscore=1501 malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=893 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902190119
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Tom Joseph <tjoseph@cadence.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 41ce5f4..7938e3f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11592,7 +11592,7 @@ F:	Documentation/devicetree/bindings/pci/pci-armada8k.txt
- F:	drivers/pci/controller/dwc/pcie-armada8k.c
- 
- PCI DRIVER FOR CADENCE PCIE IP
--M:	Alan Douglas <adouglas@cadence.com>
-+M:	Tom Joseph <tjoseph@cadence.com>
- L:	linux-pci@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/pci/cdns,*.txt
+Marc,
+
+as discussed. This is hopefully the last version. The irq_set_type()
+callback now only accepts edge triggers.
+
+v1 -> v2:
+- instead of providing the irq_sim_get_type() helper, move the irq type
+  logic into the simulator and provide a helper that allows users to specify
+  the type of the fired interrupt
+
+v2 -> v3:
+- switch back to having irq_sim_type() and put the line state logic into the
+  GPIO testing module
+
+v3 -> v4:
+- drop irq_sim_get_type() and use a notifier chain instead so that any change
+  in type configuration can be pushed out to interested users
+- change the locking mechanism in gpio-mockup to a spinlock as we can't take
+  a mutex when a hardirq-safe spinlock in irq_desc is being held when the
+  irq_set_type() callback is called
+- refuse to set any other type than falling or rising edge in irq_set_config
+
+v4 -> v5:
+- drop the notifier, use irqd_set_trigger_type() instead
+
+v5 -> v6:
+- same as v5, but we're now validating the trigger type and only allow
+  edge triggers
+
+Bartosz Golaszewski (7):
+  irq/irq_sim: add irq_set_type() callback
+  gpio: mockup: add locking
+  gpio: mockup: implement get_multiple()
+  gpio: mockup: don't create the debugfs link named after the label
+  gpio: mockup: change the type of 'offset' to unsigned int
+  gpio: mockup: change the signature of unlocked get/set helpers
+  gpio: mockup: rework debugfs interface
+
+ drivers/gpio/gpio-mockup.c | 189 +++++++++++++++++++++++++++++++------
+ kernel/irq/irq_sim.c       |  12 +++
+ 2 files changed, 174 insertions(+), 27 deletions(-)
+
 -- 
-2.2.2
+2.20.1
 
