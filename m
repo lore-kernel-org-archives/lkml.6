@@ -2,73 +2,123 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 690BDC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:21:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E4FC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:24:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 409F62177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:21:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 039732177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:24:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="d60XzpJI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728309AbfBSKVj (ORCPT
+        id S1728188AbfBSKYf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 05:21:39 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:64237 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727023AbfBSKVj (ORCPT
+        Tue, 19 Feb 2019 05:24:35 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:18748 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728034AbfBSKYe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 05:21:39 -0500
-Received: from 79.184.254.15.ipv4.supernova.orange.pl (79.184.254.15) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id 4034a995d08c4900; Tue, 19 Feb 2019 11:21:36 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: Replace double NOT (!!) with single NOT (!)
-Date:   Tue, 19 Feb 2019 11:20:12 +0100
-Message-ID: <2245714.fz2rs2yT5a@aspire.rjw.lan>
-In-Reply-To: <e0ea5fc21f9d3bd38eb4eb678d39359d66c8e79e.1550141092.git.viresh.kumar@linaro.org>
-References: <e0ea5fc21f9d3bd38eb4eb678d39359d66c8e79e.1550141092.git.viresh.kumar@linaro.org>
+        Tue, 19 Feb 2019 05:24:34 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c6bd9690000>; Tue, 19 Feb 2019 02:24:41 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 19 Feb 2019 02:24:33 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 19 Feb 2019 02:24:33 -0800
+Received: from [10.21.132.148] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 19 Feb
+ 2019 10:24:30 +0000
+Subject: Re: [RFT/RFC][PATCH] driver core: Fix PM-runtime for links added
+ during consumer probe
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+References: <14371356.imFjPFOrCi@aspire.rjw.lan>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <eeaa7369-31bb-293e-e585-6014e4bcdd14@nvidia.com>
+Date:   Tue, 19 Feb 2019 10:24:29 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <14371356.imFjPFOrCi@aspire.rjw.lan>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1550571881; bh=mRbLdYa0YQ4hDOEbu97IECr+bQAxsEB6jgUkcv3H+Y4=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=d60XzpJIwPamCwQggxdyiV4NDkcHBpSVY2nHwdVy3LUWKcF4q2uzY1SAsqq1yHOcQ
+         SmhF/ArgdNnUXa2XsegtiC/wwGk2kf9Q6mr0z0KwpLh3dc8XHUoitO96WwXigX1YnC
+         74sYe8YTTMATJiKy4aiCxAIGqq1lhFMhTlTpeDtMauLhKmDiZJu66jsTZyN6MlyPMq
+         V1p9URaJMwKla1gD8s+cIsn6LpvaTVQp+2NVuyG+fWa9u4lgR7V84s+5Znxcips4Lo
+         6H1vvNIj8n0524kg+x02x/yMb6k10BVkUU6a3/3CbmqFRVLiC9PPsQDIOf0CtRyU7T
+         TowRP5Rai67FQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, February 14, 2019 11:46:21 AM CET Viresh Kumar wrote:
-> Double NOT (!!) operation is normally done to convert a non-zero value
-> to 1 and keep zero as is, but that isn't the requirement in this case.
-> All we wanted was to make sure that only one of the two routines isn't
-> set, i.e. either both function pointers are set or both are unset.
+
+On 18/02/2019 22:08, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> This can be done with a single NOT (!) operation as well.
+> Commit 4c06c4e6cf63 ("driver core: Fix possible supplier PM-usage
+> counter imbalance") introduced a regression that causes suppliers
+> to be suspended prematurely for device links added during consumer
+> driver probe if the initial PM-runtime status of the consumer is
+> "suspended" and the consumer is resumed after adding the link and
+> before pm_runtime_put_suppliers() is called.  In that case,
+> pm_runtime_put_suppliers() will drop the rpm_active refcount for
+> the link by one and (since rpm_active is equal to two after the
+> preceding consumer resume) the supplier's PM-runtime usage counter
+> will be decremented, which may cause the supplier to suspend even
+> though the consumer's PM-runtime status is "active".
 > 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> For this reason, partially revert commit 4c06c4e6cf63 as the problem
+> it tried to fix needs to be addressed somewhat differently, and
+> change pm_runtime_get_suppliers() and pm_runtime_put_suppliers() so
+> that the latter only drops rpm_active references acquired by the
+> former.  [This requires adding a new field to struct device_link,
+> but I coulnd't find a cleaner way to address the issue that would
+> work in all cases.]
+> 
+> Fixes: 4c06c4e6cf63 ("driver core: Fix possible supplier PM-usage counter imbalance")
+> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > ---
->  drivers/cpufreq/cpufreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index 55e9795801a4..ad4e9991c3cc 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -2505,7 +2505,7 @@ int cpufreq_register_driver(struct cpufreq_driver *driver_data)
->  		    driver_data->target) ||
->  	     (driver_data->setpolicy && (driver_data->target_index ||
->  		    driver_data->target)) ||
-> -	     (!!driver_data->get_intermediate != !!driver_data->target_intermediate) ||
-> +	     (!driver_data->get_intermediate != !driver_data->target_intermediate) ||
->  	     (!driver_data->online != !driver_data->offline))
->  		return -EINVAL;
->  
+> On top of driver-core/driver-core-next.
 > 
+> Jon, Ulf, please test!
 
-Applied, thanks!
+Thanks Rafael this works for me!
 
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
+Cheers
+Jon
+
+-- 
+nvpublic
