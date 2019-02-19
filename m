@@ -2,66 +2,95 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8AE8C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F38E8C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:20:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9535C21773
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:17:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gs2F8T7b"
+	by mail.kernel.org (Postfix) with ESMTP id C46C821903
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:20:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726013AbfBSERt (ORCPT
+        id S1726219AbfBSEU1 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 23:17:49 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:40170 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725497AbfBSERs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 23:17:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=J1kuKbtxD6MNyy8D9naKRJnlEZrpwaWn+gsbVLfqxOU=; b=gs2F8T7bBVArkP6bUHZM4zN4v
-        f7tlZUtpfbsNVUvFu7oH+l2a2SX/GPtp7oiVhdK9ZnuX50An5iuEFBqr978PI792scRsV2lc6+z7E
-        ykyd/XCzr6IaI5jwZW6TDxDYl9E6Q6E+EM13Z/Scmd1hb+eSSBxSZhQZUWgnWzD6qH5xsniUzn6c/
-        5OFRn1SjwWCww7ohT51pQBOBUYxQ2H9fS6SA91kFqJ97F6S02pCvm8kH/ueNNoLk5KTNOKrpkrFuv
-        iyNMO4g2vAAyjTeIMO/5zccaJiol0XGU7S/AQlK5gTft8vCoqz157RA21Q5RojC3eVEs6PKbDJePy
-        FTQhQVm/Q==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gvwqq-0008DP-5b; Tue, 19 Feb 2019 04:17:48 +0000
-Date:   Mon, 18 Feb 2019 20:17:47 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] linux/kernel.h: fix reST markup warning for roundup
-Message-ID: <20190219041747.GY12668@bombadil.infradead.org>
-References: <e79e49d4-4a7d-48c6-afdf-0f958f423f62@infradead.org>
+        Mon, 18 Feb 2019 23:20:27 -0500
+Received: from ozlabs.org ([203.11.71.1]:38677 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725770AbfBSEU1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 23:20:27 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 443SFh3vWsz9s5c;
+        Tue, 19 Feb 2019 15:20:23 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Mark Cave-Ayland <mark.cave-ayland@ilande.co.uk>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kvm-ppc@vger.kernel.org
+Subject: Re: [PATCH] powerpc: fix 32-bit KVM-PR lockup and panic with MacOS guest
+In-Reply-To: <2ed8efb9-5cd4-31bf-6c7b-501b9d1925e6@ilande.co.uk>
+References: <20190208143319.11980-1-mark.cave-ayland@ilande.co.uk> <41b02fb0-cdc6-6de0-d8fc-44d3d0a8ad70@c-s.fr> <2ed8efb9-5cd4-31bf-6c7b-501b9d1925e6@ilande.co.uk>
+Date:   Tue, 19 Feb 2019 15:20:21 +1100
+Message-ID: <87pnrobe9m.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e79e49d4-4a7d-48c6-afdf-0f958f423f62@infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 04:34:26PM -0800, Randy Dunlap wrote:
-> - * The `const' here prevents gcc-3.3 from calling __divdi3
-> + * The ``const`` here prevents gcc-3.3 from calling __divdi3
+Mark Cave-Ayland <mark.cave-ayland@ilande.co.uk> writes:
+> On 08/02/2019 14:45, Christophe Leroy wrote:
+>
+>> Le 08/02/2019 à 15:33, Mark Cave-Ayland a écrit :
+>>> Commit 8792468da5e1 "powerpc: Add the ability to save FPU without giving it up"
+>> 
+>> Expected format for the above is:
+>> 
+>> Commit 123456789abc ("text")
+>
+> Hi Christophe,
+>
+> Apologies - I'm fairly new at submitting kernel patches, but I can re-send it in the
+> correct format later if required.
+>
+>>> unexpectedly removed the MSR_FE0 and MSR_FE1 bits from the bitmask used to
+>>> update the MSR of the previous thread in __giveup_fpu() causing a KVM-PR MacOS
+>>> guest to lockup and panic the kernel.
 
-Probably time to remove this hack ...
+Which kernel is panicking? The guest or the host?
 
-willy@bobo:~/kernel/idrext$ grep gcc Documentation/Changes 
-GNU C                  4.6              gcc --version
+>>> Reinstate these bits to the MSR bitmask to enable MacOS guests to run under
+>>> 32-bit KVM-PR once again without issue.
+>>>
+>>> Signed-off-by: Mark Cave-Ayland <mark.cave-ayland@ilande.co.uk>
+>> 
+>> Should include a Fixes: and a Cc to stable ?
+>> 
+>> Fixes: 8792468da5e1 ("powerpc: Add the ability to save FPU without giving it up")
+>> Cc: stable@vger.kernel.org
+>
+> Indeed, but there are still some questions to be asked here:
+>
+> 1) Why were these bits removed from the original bitmask in the first place without
+> it being documented in the commit message?
 
+It was almost certainly an accident.
+
+> 2) Is this the right fix? I'm told that MacOS guests already run without this patch
+> on a G5 under 64-bit KVM-PR which may suggest that this is a workaround for another
+> bug elsewhere in the 32-bit powerpc code.
+
+That's slightly worrying. It's hard to say without more detail on why
+the guest is crashing.
+
+I think your patch looks OK based just on the fact that it restores the
+previous behaviour, so I'll pick it up and pass it through my usual
+testing. If nothing breaks I'll merge it.
+
+cheers
