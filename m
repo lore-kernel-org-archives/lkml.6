@@ -2,212 +2,168 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF771C10F00
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:25:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C781FC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:26:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7F3721905
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:25:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93FEC21848
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:26:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728262AbfBSJZk (ORCPT
+        id S1728102AbfBSJ0Q convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 04:25:40 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42552 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726565AbfBSJZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 04:25:03 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A463D1596;
-        Tue, 19 Feb 2019 01:25:01 -0800 (PST)
-Received: from a075553-lin.blr.arm.com (a075553-lin.blr.arm.com [10.162.0.144])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6780B3F675;
-        Tue, 19 Feb 2019 01:24:52 -0800 (PST)
-From:   Amit Daniel Kachhap <amit.kachhap@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        Tue, 19 Feb 2019 04:26:16 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:56007 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726565AbfBSJ0Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 04:26:16 -0500
+Received: from [IPv6:2601:646:8680:2bb1:8028:226d:d731:7182] ([IPv6:2601:646:8680:2bb1:8028:226d:d731:7182])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x1J9LrJV2978378
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Tue, 19 Feb 2019 01:21:54 -0800
+Date:   Tue, 19 Feb 2019 01:21:44 -0800
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20190219090409.GW32494@hirez.programming.kicks-ass.net>
+References: <dd33cc20-f335-0e4c-e3f4-02497ecc3710@arm.com> <20190213144145.GY32494@hirez.programming.kicks-ass.net> <20190213154532.GQ32534@hirez.programming.kicks-ass.net> <D61C430D-4321-4114-AB85-671A3C7B8EAE@amacapital.net> <20190213222146.GC32494@hirez.programming.kicks-ass.net> <D3E1B64D-3E91-4A82-9C3B-92D9EB7326CE@amacapital.net> <20190214101429.GD32494@hirez.programming.kicks-ass.net> <20ABBED1-E505-45F6-8520-FB93786DF9A9@zytor.com> <20190216103044.GR32494@hirez.programming.kicks-ass.net> <9e037d68-75e7-1beb-0c9c-33a7ffeced1b@zytor.com> <20190219090409.GW32494@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH] sched/x86: Save [ER]FLAGS on context switch
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     Andy Lutomirski <luto@amacapital.net>,
+        Julien Thierry <julien.thierry@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        kvmarm@lists.cs.columbia.edu,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        linux-kernel@vger.kernel.org,
-        Amit Daniel Kachhap <amit.kachhap@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>
-Subject: [PATCH v6 0/6] Add ARMv8.3 pointer authentication for kvm guest
-Date:   Tue, 19 Feb 2019 14:54:25 +0530
-Message-Id: <1550568271-5319-1-git-send-email-amit.kachhap@arm.com>
-X-Mailer: git-send-email 2.7.4
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, mingo@redhat.com,
+        catalin.marinas@arm.com, james.morse@arm.com,
+        valentin.schneider@arm.com, brgerst@gmail.com, jpoimboe@redhat.com,
+        luto@kernel.org, bp@alien8.de, dvlasenk@redhat.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de
+From:   hpa@zytor.com
+Message-ID: <D9BA7815-5028-4000-8155-71955786B953@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On February 19, 2019 1:04:09 AM PST, Peter Zijlstra <peterz@infradead.org> wrote:
+>On Mon, Feb 18, 2019 at 02:30:21PM -0800, H. Peter Anvin wrote:
+>> On 2/16/19 2:30 AM, Peter Zijlstra wrote:
+>> > On Fri, Feb 15, 2019 at 08:06:56PM -0800, hpa@zytor.com wrote:
+>> >> This implies we invoke schedule -- a restricted operation
+>(consider
+>> >> may_sleep) during execution of STAC-enabled code, but *not* as an
+>> >> exception or interrupt, since those preserve the flags.
+>> > 
+>> > Meet preempt_enable().
+>> 
+>> I believe this falls under "doctor, it hurts when I do that." And it
+>hurts for
+>> very good reasons. See below.
+>
+>I disagree; the basic rule is that if you're preemptible you must also
+>be able to schedule and vice-versa. These AC regions violate this.
+>
+>And, like illustrated, it is _very_ easy to get all sorts inside that
+>AC
+>crap.
+>
+>> >> I have serious concerns about this. This is more or less saying
+>that
+>> >> we have left an unlimited gap and have had AC escape.
+>> > 
+>> > Yes; by allowing normal C in between STAC and CLAC this is so.
+>> > 
+>> >> Does *anyone* see a need to allow this? I got a question at LPC
+>from
+>> >> someone about this, and what they were trying to do once all the
+>> >> layers had been unwound was so far down the wrong track for a root
+>> >> problem that actually has a very simple solution.
+>> > 
+>> > Have you read the rest of the thread?
+>> > 
+>> > All it takes for this to explode is a call to a C function that has
+>> > tracing on it in between the user_access_begin() and
+>user_access_end()
+>> > things. That is a _very_ easy thing to do.
+>> > 
+>> > Heck, GCC is allowed to generate that broken code compiling
+>> > lib/strnlen_user.c; it doesn't _have_ to inline do_strnlen_user
+>(esp.
+>> > with CONFIG_OPTIMIZE_INLINING), and making that a function call
+>would
+>> > get us fentry hooks and ftrace and *BOOM*.
+>> > 
+>> > (Now, of course, its a static function with a single caller, and
+>GCC
+>> > isn't _THAT_ stupid, but it could, if it wanted to)
+>> > 
+>> > Since the bar is _that_ low for mistakes, I figure we'd better fix
+>it.
+>> > 
+>> 
+>> The question is what "fix it" means. 
+>
+>It means that when we do schedule, the next task doesn't have AC set,
+>and when we schedule back, we'll restore our AC when we had it. Unlike
+>the current situation, where the next task will run with AC set.
+>
+>IOW, it confines AC to the task context where it was set.
+>
+>> I'm really concerned about AC escapes,
+>> and everyone else should be, too.
+>
+>Then _that_ should be asserted.
+>
+>> For an issue specific to tracing, it would be more appropriate to do
+>the
+>> appropriate things in the tracing entry/exit than in schedule.
+>Otherwise, we
+>> don't want to silently paper over mistakes which could mean that we
+>run a
+>> large portion of the kernel without protection we thought we had.
+>> 
+>> In that sense, calling schedule() with AC set is in fact a great
+>place to have
+>> a WARN() or even BUG(), because such an event really could imply that
+>the
+>> kernel has been security compromised.
+>
+>It is not specific to tracing, tracing is just one of the most trivial
+>and non-obvious ways to make it go splat.
+>
+>There's lot of fairly innocent stuff that does preempt_disable() /
+>preempt_enable(). And just a warning in schedule() isn't sufficient,
+>you'd have to actually trigger a reschedule before you know your code
+>is
+>bad.
+>
+>And like I said; the invariant is: if you're preemptible you can
+>schedule and v.v.
+>
+>Now, clearly you don't want to mark these whole regions as
+>!preemptible,
+>because then you can also not take faults, but somehow you're not
+>worried about the whole fault handler, but you are worried about the
+>scheduler ?!? How does that work? The fault handler can touch a _ton_
+>more code. Heck, the fault handler can schedule.
+>
+>So either pre-fault, and run the whole AC crap with preemption disabled
+>and retry, or accept that we have to schedule.
+>
+>> Does that make more sense?
+>
+>It appears to me you're going about it backwards.
 
-This patch series adds pointer authentication support for KVM guest and
-is based on top of Linux 5.0-rc6. The basic patches in this series was
-originally posted by Mark Rutland earlier[1,2] and contains some history
-of this work.
+I'm not worried about the fault handler, because AC is always presented/disabled on exception entry; otherwise I would of course be very concerned.
 
-Extension Overview:
-=============================================
+To be clear: I'm not worried about the scheduler itself. I'm worried about how much code we have gone through to get there. Perhaps the scheduler itself is not the right point to probe for it, but we do need to catch things that have gone wrong, rather than just leaving the door wide open.
 
-The ARMv8.3 pointer authentication extension adds functionality to detect
-modification of pointer values, mitigating certain classes of attack such as
-stack smashing, and making return oriented programming attacks harder.
+I would personally be far more comfortable saying you have to disable preemption in user access regions. It may be an unnecessary constraint for x86 and ARM64, but it is safe.
 
-The extension introduces the concept of a pointer authentication code (PAC),
-which is stored in some upper bits of pointers. Each PAC is derived from the
-original pointer, another 64-bit value (e.g. the stack pointer), and a secret
-128-bit key.
-
-New instructions are added which can be used to:
-
-* Insert a PAC into a pointer
-* Strip a PAC from a pointer
-* Authenticate and strip a PAC from a pointer
-
-The detailed description of ARMv8.3 pointer authentication support in
-userspace/kernel and can be found in Kristina's generic pointer authentication
-patch series[3].
-
-KVM guest work:
-==============================================
-
-If pointer authentication is enabled for KVM guests then the new PAC instructions
-will not trap to EL2. If not then they may be ignored if in HINT region or trapped
-in EL2 as illegal instruction. Since KVM guest vcpu runs as a thread so they have
-a key initialized which will be used by PAC. When world switch happens between
-host and guest then this key is exchanged.
-
-There were some review comments by Christoffer Dall in the original series [1,2,3]
-and this patch series tries to implement them.
-
-The current v6 patch series contains most of the suggestions by James Morse,
-Kristina, Julien and Dave.
-
-This patch series is based on just a single patch from Dave Martin [8] which add
-control checks for accessing sys registers. 
-
-Changes since v5 [7]: Major changes are listed below.
-
-* Split hcr_el2 and mdcr_el2 save/restore in two patches.
-* Reverted back save/restore of sys-reg keys as done in V4 [5]. There was
-  suggestion by James Morse to use ptrauth utilities in a single place
-  in arm core and use them from kvm. However this change deviates from the
-  existing sys-reg implementations and is not scalable.
-* Invoked the key switch C functions from __guest_enter/__guest_exit assembly.
-* Host key save is now done inside vcpu_load.
-* Reverted back masking of cpufeature ID registers for ptrauth when disabled
-  from userpace.
-* Reset of ptrauth key registers not done conditionally.
-* Code and Documentation cleanup.
-
-Changes since v4 [6]: Several suggestions from James Morse
-* Move host registers to be saved/restored inside struct kvm_cpu_context.
-* Similar to hcr_el2, save/restore mdcr_el2 register also.
-* Added save routines for ptrauth keys in generic arm core and
-  use them during KVM context switch.
-* Defined a GCC attribute __no_ptrauth which discards generating
-  ptrauth instructions in a function. This is taken from Kristina's
-  earlier kernel pointer authentication support patches [4].
-* Dropped a patch to mask cpufeature when not enabled from userspace and
-  now only key registers are masked from register list.
-
-Changes since v3 [5]:
-* Use pointer authentication only when VHE is present as ARM8.3 implies ARM8.1
-  features to be present.
-* Added lazy context handling of ptrauth instructions from V2 version again. 
-* Added more details in Documentation.
-
-Changes since v2 [1,2]:
-* Allow host and guest to have different HCR_EL2 settings and not just constant
-  value HCR_HOST_VHE_FLAGS or HCR_HOST_NVHE_FLAGS.
-* Optimise the reading of HCR_EL2 in host/guest switch by fetching it once
-  during KVM initialisation state and using it later.
-* Context switch pointer authentication keys when switching between guest
-  and host. Pointer authentication was enabled in a lazy context earlier[2] and
-  is removed now to make it simple. However it can be revisited later if there
-  is significant performance issue.
-* Added a userspace option to choose pointer authentication.
-* Based on the userspace option, ptrauth cpufeature will be visible.
-* Based on the userspace option, ptrauth key registers will be accessible.
-* A small document is added on how to enable pointer authentication from
-  userspace KVM API.
-
-Looking for feedback and comments.
-
-Thanks,
-Amit
-
-[1]: https://lore.kernel.org/lkml/20171127163806.31435-11-mark.rutland@arm.com/
-[2]: https://lore.kernel.org/lkml/20171127163806.31435-10-mark.rutland@arm.com/
-[3]: https://lkml.org/lkml/2018/12/7/666
-[4]: https://lore.kernel.org/lkml/20181005084754.20950-1-kristina.martsenko@arm.com/
-[5]: https://lkml.org/lkml/2018/10/17/594
-[6]: https://lkml.org/lkml/2018/12/18/80
-[7]: https://lkml.org/lkml/2019/1/28/49
-[8]: https://lore.kernel.org/linux-arm-kernel/1547757219-19439-13-git-send-email-Dave.Martin@arm.com/
-
-
-Linux (5.0-rc6 based):
-
-Amit Daniel Kachhap (5):
-  arm64/kvm: preserve host HCR_EL2 value
-  arm64/kvm: preserve host MDCR_EL2 value
-  arm64/kvm: context-switch ptrauth registers
-  arm64/kvm: add a userspace option to enable pointer authentication
-  arm64/kvm: control accessibility of ptrauth key registers
-
- Documentation/arm64/pointer-authentication.txt |  13 ++-
- Documentation/virtual/kvm/api.txt              |   4 +
- arch/arm/include/asm/kvm_host.h                |   4 +-
- arch/arm64/include/asm/kvm_asm.h               |   2 +
- arch/arm64/include/asm/kvm_emulate.h           |  22 ++---
- arch/arm64/include/asm/kvm_host.h              |  45 ++++++++--
- arch/arm64/include/asm/kvm_hyp.h               |   9 +-
- arch/arm64/include/uapi/asm/kvm.h              |   1 +
- arch/arm64/kernel/traps.c                      |   1 +
- arch/arm64/kvm/debug.c                         |  28 ++----
- arch/arm64/kvm/guest.c                         |   2 +-
- arch/arm64/kvm/handle_exit.c                   |  21 +++--
- arch/arm64/kvm/hyp/Makefile                    |   1 +
- arch/arm64/kvm/hyp/entry.S                     |  17 ++++
- arch/arm64/kvm/hyp/ptrauth-sr.c                | 115 +++++++++++++++++++++++++
- arch/arm64/kvm/hyp/switch.c                    |  40 ++++-----
- arch/arm64/kvm/hyp/sysreg-sr.c                 |  27 +++++-
- arch/arm64/kvm/hyp/tlb.c                       |   6 +-
- arch/arm64/kvm/reset.c                         |   3 +
- arch/arm64/kvm/sys_regs.c                      |  66 +++++++++++---
- include/uapi/linux/kvm.h                       |   1 +
- virt/kvm/arm/arm.c                             |   4 +-
- 22 files changed, 338 insertions(+), 94 deletions(-)
- create mode 100644 arch/arm64/kvm/hyp/ptrauth-sr.c
-
-kvmtool:
-
-Repo: git.kernel.org/pub/scm/linux/kernel/git/will/kvmtool.git
-
-Amit Daniel Kachhap (1):
-  arm/kvm: arm64: Add a vcpu feature for pointer authentication
-
- arm/aarch32/include/kvm/kvm-cpu-arch.h    | 1 +
- arm/aarch64/include/asm/kvm.h             | 1 +
- arm/aarch64/include/kvm/kvm-config-arch.h | 4 +++-
- arm/aarch64/include/kvm/kvm-cpu-arch.h    | 1 +
- arm/include/arm-common/kvm-config-arch.h  | 1 +
- arm/kvm-cpu.c                             | 6 ++++++
- include/linux/kvm.h                       | 1 +
- 7 files changed, 14 insertions(+), 1 deletion(-)
-
+And Julien, yes, it is "somewhat arbitrary", but so are many engineering tradeoffs. Not everything has a very sharply definable line.
 -- 
-2.7.4
-
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
