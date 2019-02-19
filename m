@@ -2,91 +2,76 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32341C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:59:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F673C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:01:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA89E21736
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:59:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="QvwpZODS"
+	by mail.kernel.org (Postfix) with ESMTP id D9C6F21736
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:01:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728532AbfBSO7a (ORCPT
+        id S1727117AbfBSPBg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 09:59:30 -0500
-Received: from mail-pf1-f174.google.com ([209.85.210.174]:43837 "EHLO
-        mail-pf1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbfBSO7a (ORCPT
+        Tue, 19 Feb 2019 10:01:36 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:56237 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725885AbfBSPBg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 09:59:30 -0500
-Received: by mail-pf1-f174.google.com with SMTP id q17so10349023pfh.10
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 06:59:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=bbQyydwGTTirw3UzuZQPM7i19iX5dNbackQGV5c/VjU=;
-        b=QvwpZODSOJ2StdYW8IfVo9SDX33D5VsDBx9qA5dRZydxW/loh8hW1FWcucykiNKNG1
-         hX+1Y3+rE/N90tPoyq12ks0nhJaQOUl7Knw7vCV4QAm4H6hKzkMLbk66sotvbMgoc/Bj
-         m0gGX+Q4cFmGVfIaMakXqUcfg1Pu88UUAPPGSELkrC7m9B5/OYoSaOMGb1TqDBrDjEkO
-         23tHpTQ4Mu5lxElyJpPwXJUQv4HgyVEowqVWzNYfAv6f30uQrACorOuiFI36hmtAq6el
-         ZkIMMPxgT8FgrNJGQ9GYv0P5YSmSam38aYe36tPmXi4rzjzuIPVE0Ey5d4VAUH5rNAcM
-         Qdxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=bbQyydwGTTirw3UzuZQPM7i19iX5dNbackQGV5c/VjU=;
-        b=SD2dMvioRLSfIxdw0uwjfz+qQe9ZIxMNQ0hh8CQwlMg17TGhglJY49yXyb5J4K/p3f
-         Q1alhA0GAUKe6k9FyiQMOGTSyyQ1RMFz2NM/A2nU7lpGN6OFkzUYIF4dWuCNC3Ib81LI
-         wNw6gD228zCa5z8FoZzxfxy178QivcsjElqamuizEGnwoxwM7VAVulZW7IKtsODS6rZr
-         yi1T4pfwfLA2wAb1weJviIq0hLEs9VyoAPVhPaq2fgbqNrDzqBC9PXMOUuZch/45/syr
-         C8p0242RQWI9JKJXYOgh4wPqdq8kaSNTwWGvHazwkqyTJm7o2dQddIcNog9THEZsk1ad
-         H2zw==
-X-Gm-Message-State: AHQUAuZUuEngqm++JwqcbEISa8m9O0Fm+VA1tkiTpvd9D++6xysoeZmO
-        HNOxBkyUumyDw6ab+hITF7lvn/7Xit9gkA==
-X-Google-Smtp-Source: AHgI3IZhBLBIl7gr45g4/ywjr+kx/11oegon7QkE1zbhG8r+ngTxBEesExphcdFsaEuh4bQjyvi9Sw==
-X-Received: by 2002:a63:ed03:: with SMTP id d3mr24010990pgi.275.1550588369155;
-        Tue, 19 Feb 2019 06:59:29 -0800 (PST)
-Received: from kshutemo-mobl1.localdomain ([192.55.54.44])
-        by smtp.gmail.com with ESMTPSA id p6sm23767707pfp.15.2019.02.19.06.59.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 06:59:28 -0800 (PST)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id DCC843002B2; Tue, 19 Feb 2019 17:59:24 +0300 (+03)
-Date:   Tue, 19 Feb 2019 17:59:24 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     lsf-pc@lists.linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [LSF/MM ATTEND] MM track: Memory encryption, THP
-Message-ID: <20190219145924.olggllneomorpenu@kshutemo-mobl1>
+        Tue, 19 Feb 2019 10:01:36 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gw6tl-0008Fe-UA; Tue, 19 Feb 2019 15:01:30 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/i915/selftests: fix memory leak of 'spin'
+Date:   Tue, 19 Feb 2019 15:01:29 +0000
+Message-Id: <20190219150129.12728-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Colin Ian King <colin.king@canonical.com>
 
-I would like to attend upcoming summit.
+There is a memory leak of 'spin' on an error return path. Fix this by
+kfree'ing spin before the return.
 
-I was not very active in generic memory managment field last year. I hope
-it will change this year.
+Fixes: c06ee6ff2cbc ("drm/i915/selftests: Context SSEU reconfiguration tests")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/selftests/i915_gem_context.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-I'm still interested in moving THP forward and I see there is a number of
-THP-related topics proposed for the summit. I would like to participate in
-the discussion (and hopefully contribute something).
-
-The other topic I would like to discuss is memory encryption and userspace
-APIs for it. See Dave's topic proposal[1].
-
-[1] https://lore.kernel.org/linux-mm/788d7050-f6bb-b984-69d9-504056e6c5a6@intel.com
-
+diff --git a/drivers/gpu/drm/i915/selftests/i915_gem_context.c b/drivers/gpu/drm/i915/selftests/i915_gem_context.c
+index d00d0bb07784..cf988797bb17 100644
+--- a/drivers/gpu/drm/i915/selftests/i915_gem_context.c
++++ b/drivers/gpu/drm/i915/selftests/i915_gem_context.c
+@@ -725,8 +725,10 @@ __sseu_prepare(struct drm_i915_private *i915,
+ 		}
+ 
+ 		ret = igt_spinner_init(spin, i915);
+-		if (ret)
++		if (ret) {
++			kfree(spin);
+ 			return ret;
++		}
+ 
+ 		rq = igt_spinner_create_request(spin, ctx, engine, MI_NOOP);
+ 		if (IS_ERR(rq)) {
 -- 
- Kirill A. Shutemov
+2.20.1
+
