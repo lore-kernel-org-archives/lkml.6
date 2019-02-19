@@ -2,144 +2,246 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37884C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:46:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1FACC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:48:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FABA21773
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:46:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EDA721773
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:48:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728556AbfBSOqL (ORCPT
+        id S1727168AbfBSOsS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 09:46:11 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55008 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726206AbfBSOqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 09:46:10 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 88A08787FC;
-        Tue, 19 Feb 2019 14:46:10 +0000 (UTC)
-Received: from [10.36.117.212] (ovpn-117-212.ams2.redhat.com [10.36.117.212])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EAE43600C8;
-        Tue, 19 Feb 2019 14:45:58 +0000 (UTC)
-Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
-From:   David Hildenbrand <david@redhat.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Alexander Duyck <alexander.duyck@gmail.com>,
-        Nitesh Narayan Lal <nitesh@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
-        pagupta@redhat.com, wei.w.wang@intel.com,
-        Yang Zhang <yang.zhang.wz@gmail.com>,
-        Rik van Riel <riel@surriel.com>, dodgen@google.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
-References: <20190204201854.2328-1-nitesh@redhat.com>
- <af4430fd-0a2c-8f35-b767-3f93fc6db270@redhat.com>
- <20190218114601-mutt-send-email-mst@kernel.org>
- <44740a29-bb14-e6e6-2992-98d0ae58e994@redhat.com>
- <CAKgT0UcHv0S1-ZUpAZ9w=GTLRtG8=-cuoT3fa4Ej2A==aky5dg@mail.gmail.com>
- <a3b64b60-a745-0ac1-574d-e5904c1bf161@redhat.com>
- <CAKgT0Ue=A16PhUzqziBBzMXdZ_C1H74-qCttwb8iD6tGCxfp6g@mail.gmail.com>
- <93c78cb7-5dc9-39ae-83bf-a4d6426b5221@redhat.com>
- <20190219093000-mutt-send-email-mst@kernel.org>
- <e022e192-37e8-6e26-cec7-c3ba83b50b0b@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <6f61a9ce-a85f-aae6-57ad-adfe90e50950@redhat.com>
-Date:   Tue, 19 Feb 2019 15:45:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 19 Feb 2019 09:48:18 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:48213 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725803AbfBSOsS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 09:48:18 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1gw6gs-00037B-2h; Tue, 19 Feb 2019 15:48:10 +0100
+Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1gw6gq-0007nd-Lm; Tue, 19 Feb 2019 15:48:08 +0100
+Date:   Tue, 19 Feb 2019 15:48:08 +0100
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH] dt-bindings: imx: update scu resource id headfile
+Message-ID: <20190219144808.qqpaubjcsb4huoml@pengutronix.de>
+References: <1550566601-11497-1-git-send-email-Anson.Huang@nxp.com>
+ <20190219125211.2pg2bqxner4klcb5@pengutronix.de>
+ <DB3PR0402MB3916AF3AA0283DB22DF61E2FF57C0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <e022e192-37e8-6e26-cec7-c3ba83b50b0b@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 19 Feb 2019 14:46:10 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB3PR0402MB3916AF3AA0283DB22DF61E2FF57C0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 15:21:18 up 31 days, 19:03, 36 users,  load average: 0.07, 0.07,
+ 0.03
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>>>
->>>> Also one reason why I am not a fan of working with anything less than
->>>> PMD order is because there have been issues in the past with false
->>>> memory leaks being created when hints were provided on THP pages that
->>>> essentially fragmented them. I guess hugepaged went through and
->>>> started trying to reassemble the huge pages and as a result there have
->>>> been apps that ended up consuming more memory than they would have
->>>> otherwise since they were using fragments of THP pages after doing an
->>>> MADV_DONTNEED on sections of the page.
->>>
->>> I understand your concerns, but we should not let bugs in the hypervisor
->>> dictate the design. Bugs are there to be fixed. Interesting read,
->>> though, thanks!
->>
->> Right but if we break up a huge page we are then creating
->> more work for hypervisor to reassemble it.
-> 
-> Yes, but the hypervisor can decide what to do. E.g. on s390x there are
-> no THP, so nothing to break up.
+Hi Anson,
 
-To clarify as that might be confusing: No THP in a KVM guest mapping for
-now.
+On 19-02-19 13:21, Anson Huang wrote:
+> Hi, Marco
+> 
+> Best Regards!
+> Anson Huang
+> 
+> > -----Original Message-----
+> > From: Marco Felsch [mailto:m.felsch@pengutronix.de]
+> > 
+> > Hi Anson,
+> > 
+> > On 19-02-19 09:01, Anson Huang wrote:
+> > > Update i.MX SCU resource ID table according to latest system
+> > > controller firmware.
+> > 
+> > will this happen every time the scu firmware gets a update?
+> 
+> If SCU firmware updates this table, then yes, it MUST keep same as SCU firmware,
+> but such ID table is NOT updated very often, I checked the history in our internal tree, there
+> are ONLY 3 updates since 2016.
+
+Please don't get me wrong, but 3 times since 2016 == every year (since
+now) == every 3rd kernel. This seems wrong to me. Can you explain me if
+the following use-case will work:
+
+Starting point:
+ - firmware (incl. bootloader, dtb, scu and other nxp closed source fw)
+   from 2017
+ - kernel from 2017
+
+Now the project update the kernel to a version from 2019, but the fw
+won't be updated.
+
+There are a lot of projects using such a approach to retrieve security
+updates.
+
+I don't like droping some ID's (e.g. IMX_SC_R_DC_0_CAPTURE0) by mark
+them as unused or even worse give them a other meaning. IMHO the scu-api
+should be stable since day 1 and the ID's should only be extended.
+Marking ID's as deprecated is much better than moving them around.
+
+Regards,
+Marco
 
 > 
-> It is all very complicated :)
+> Anson.
 > 
-
+> > 
+> > Regards,
+> > Marco
+> > 
+> > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> > > ---
+> > >  include/dt-bindings/firmware/imx/rsrc.h | 39
+> > > +++++++++++++++++++--------------
+> > >  1 file changed, 22 insertions(+), 17 deletions(-)
+> > >
+> > > diff --git a/include/dt-bindings/firmware/imx/rsrc.h
+> > > b/include/dt-bindings/firmware/imx/rsrc.h
+> > > index 4481f2d..ad747a8 100644
+> > > --- a/include/dt-bindings/firmware/imx/rsrc.h
+> > > +++ b/include/dt-bindings/firmware/imx/rsrc.h
+> > > @@ -36,15 +36,15 @@
+> > >  #define IMX_SC_R_DC_0_BLIT1		20
+> > >  #define IMX_SC_R_DC_0_BLIT2		21
+> > >  #define IMX_SC_R_DC_0_BLIT_OUT		22
+> > > -#define IMX_SC_R_DC_0_CAPTURE0		23
+> > > -#define IMX_SC_R_DC_0_CAPTURE1		24
+> > > +#define IMX_SC_R_PERF			23
+> > > +#define IMX_SC_R_UNUSED5		24
+> > >  #define IMX_SC_R_DC_0_WARP		25
+> > > -#define IMX_SC_R_DC_0_INTEGRAL0		26
+> > > -#define IMX_SC_R_DC_0_INTEGRAL1		27
+> > > +#define IMX_SC_R_UNUSED7		26
+> > > +#define IMX_SC_R_UNUSED8		27
+> > >  #define IMX_SC_R_DC_0_VIDEO0		28
+> > >  #define IMX_SC_R_DC_0_VIDEO1		29
+> > >  #define IMX_SC_R_DC_0_FRAC0		30
+> > > -#define IMX_SC_R_DC_0_FRAC1		31
+> > > +#define IMX_SC_R_UNUSED6		31
+> > >  #define IMX_SC_R_DC_0			32
+> > >  #define IMX_SC_R_GPU_2_PID0		33
+> > >  #define IMX_SC_R_DC_0_PLL_0		34
+> > > @@ -53,17 +53,17 @@
+> > >  #define IMX_SC_R_DC_1_BLIT1		37
+> > >  #define IMX_SC_R_DC_1_BLIT2		38
+> > >  #define IMX_SC_R_DC_1_BLIT_OUT		39
+> > > -#define IMX_SC_R_DC_1_CAPTURE0		40
+> > > -#define IMX_SC_R_DC_1_CAPTURE1		41
+> > > +#define IMX_SC_R_UNUSED9		40
+> > > +#define IMX_SC_R_UNUSED10		41
+> > >  #define IMX_SC_R_DC_1_WARP		42
+> > > -#define IMX_SC_R_DC_1_INTEGRAL0		43
+> > > -#define IMX_SC_R_DC_1_INTEGRAL1		44
+> > > +#define IMX_SC_R_UNUSED11		43
+> > > +#define IMX_SC_R_UNUSED12		44
+> > >  #define IMX_SC_R_DC_1_VIDEO0		45
+> > >  #define IMX_SC_R_DC_1_VIDEO1		46
+> > >  #define IMX_SC_R_DC_1_FRAC0		47
+> > > -#define IMX_SC_R_DC_1_FRAC1		48
+> > > +#define IMX_SC_R_UNUSED13		48
+> > >  #define IMX_SC_R_DC_1			49
+> > > -#define IMX_SC_R_GPU_3_PID0		50
+> > > +#define IMX_SC_R_UNUSED14		50
+> > >  #define IMX_SC_R_DC_1_PLL_0		51
+> > >  #define IMX_SC_R_DC_1_PLL_1		52
+> > >  #define IMX_SC_R_SPI_0			53
+> > > @@ -303,8 +303,8 @@
+> > >  #define IMX_SC_R_M4_0_UART		287
+> > >  #define IMX_SC_R_M4_0_I2C		288
+> > >  #define IMX_SC_R_M4_0_INTMUX		289
+> > > -#define IMX_SC_R_M4_0_SIM		290
+> > > -#define IMX_SC_R_M4_0_WDOG		291
+> > > +#define IMX_SC_R_UNUSED15		290
+> > > +#define IMX_SC_R_UNUSED16		291
+> > >  #define IMX_SC_R_M4_0_MU_0B		292
+> > >  #define IMX_SC_R_M4_0_MU_0A0		293
+> > >  #define IMX_SC_R_M4_0_MU_0A1		294
+> > > @@ -323,8 +323,8 @@
+> > >  #define IMX_SC_R_M4_1_UART		307
+> > >  #define IMX_SC_R_M4_1_I2C		308
+> > >  #define IMX_SC_R_M4_1_INTMUX		309
+> > > -#define IMX_SC_R_M4_1_SIM		310
+> > > -#define IMX_SC_R_M4_1_WDOG		311
+> > > +#define IMX_SC_R_UNUSED17		310
+> > > +#define IMX_SC_R_UNUSED18		311
+> > >  #define IMX_SC_R_M4_1_MU_0B		312
+> > >  #define IMX_SC_R_M4_1_MU_0A0		313
+> > >  #define IMX_SC_R_M4_1_MU_0A1		314
+> > > @@ -337,7 +337,7 @@
+> > >  #define IMX_SC_R_IRQSTR_SCU2		321
+> > >  #define IMX_SC_R_IRQSTR_DSP		322
+> > >  #define IMX_SC_R_ELCDIF_PLL		323
+> > > -#define IMX_SC_R_UNUSED6		324
+> > > +#define IMX_SC_R_OCRAM			324
+> > >  #define IMX_SC_R_AUDIO_PLL_0		325
+> > >  #define IMX_SC_R_PI_0			326
+> > >  #define IMX_SC_R_PI_0_PWM_0		327
+> > > @@ -554,6 +554,11 @@
+> > >  #define IMX_SC_R_VPU_MU_3		538
+> > >  #define IMX_SC_R_VPU_ENC_1		539
+> > >  #define IMX_SC_R_VPU			540
+> > > -#define IMX_SC_R_LAST			541
+> > > +#define IMX_SC_R_DMA_5_CH0		541
+> > > +#define IMX_SC_R_DMA_5_CH1		542
+> > > +#define IMX_SC_R_DMA_5_CH2		543
+> > > +#define IMX_SC_R_DMA_5_CH3		544
+> > > +#define IMX_SC_R_ATTESTATION		545
+> > > +#define IMX_SC_R_LAST			546
+> > >
+> > >  #endif /* __DT_BINDINGS_RSCRC_IMX_H */
+> > > --
+> > > 2.7.4
+> > >
+> > >
+> > >
+> > 
+> > --
+> > Pengutronix e.K.                           |                             |
+> > Industrial Linux Solutions                 |
+> > https://emea01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fww
+> > w.pengutronix.de%2F&amp;data=02%7C01%7Canson.huang%40nxp.com%7
+> > Cfe709ac17a164d82c7d508d6966915fb%7C686ea1d3bc2b4c6fa92cd99c5c301
+> > 635%7C0%7C0%7C636861775412076730&amp;sdata=05ZzPf2%2BQF10JXLLs
+> > OPqDdqTi00BWXNHxmMOsQ1z0yI%3D&amp;reserved=0  |
+> > Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+> > Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
 -- 
-
-Thanks,
-
-David / dhildenb
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
