@@ -2,144 +2,172 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBED8C10F00
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A2B9C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88EC92147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:30:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="DS1LTTqJ"
+	by mail.kernel.org (Postfix) with ESMTP id 63C182147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:30:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550619038;
+	bh=fWo1xkeeNjGWZo2YZUVhWLgi8eFQh0BY6waxHe8D1gc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=wm9qq0y8l4GhDaqu3yaYk28XMnisirUFaoC7xGfARiueQpWmXl0Tb4v0sTY0+ql/7
+	 z1vKsXpWFKBVrns1Auo0rF4ubdDRsLIV2kjwXcyHU4qOqelJ8VuMs/kvccxru4YGnC
+	 yCGq5c+1ooHg2562L04a61l3Oe1jLC1rVD8em9AY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730015AbfBSXad (ORCPT
+        id S1730070AbfBSXag (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Feb 2019 18:30:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38642 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729700AbfBSXad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 19 Feb 2019 18:30:33 -0500
-Received: from smtprelay.synopsys.com ([198.182.47.9]:37050 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbfBSXac (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 18:30:32 -0500
-Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
+Received: from earth.universe (unknown [185.216.33.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtprelay.synopsys.com (Postfix) with ESMTPS id DEAE024E140D;
-        Tue, 19 Feb 2019 15:30:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1550619032; bh=VmpWHXwSrYXRg2Ml8v6Yv+kAthucdUMYDIyHvlAIOZk=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=DS1LTTqJzBWXMFWG5embgPlRidYVrHzHiV7doyaYmSiVAE4LV2zupGzb2r4YXfTLZ
-         qsmPKeXHw1Iw3ugSv7hhNk2lDFwcpZVHzJmtSAq0izsMYDDVY7lzhNmaPXOZAneY1j
-         7YSIgR8shnIFxUqc+t5YkY1krr8KzHgH+uQBQ8jl+bekeAn/i3MsZ2OgFl3Qou84bD
-         Lz2QoXpiY6P3sNWgCtufrLCluSzWc/r50byZFHMjQdHtULZJ5sjGvzBljp30ivpP4O
-         3LWfu6/fllHsOiMFMYTXc+KIcXcM9lS1Y8tJcZvmgHbIrwbGS7U3GAFFrzd/OBiFOb
-         v2A6fkg5/LFXw==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 1A902A0078;
-        Tue, 19 Feb 2019 23:30:29 +0000 (UTC)
-Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.104) by
- us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 19 Feb 2019 15:30:29 -0800
-Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.105) by
- IN01WEHTCA.internal.synopsys.com (10.144.199.103) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 20 Feb 2019 05:00:32 +0530
-Received: from [10.10.161.59] (10.10.161.59) by
- IN01WEHTCB.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 20 Feb 2019 05:00:32 +0530
-Subject: Re: [PATCH] ARC: Explicitly set ARCH_SLAB_MINALIGN = 8
-To:     Alexey Brodkin <alexey.brodkin@synopsys.com>
-CC:     David Laight <David.Laight@ACULAB.COM>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        Arnd Bergmann <arnd.bergmann@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Newsgroups: gmane.linux.kernel.stable,gmane.linux.kernel.arc,gmane.linux.kernel
-References: <20190208105519.26750-1-abrodkin@synopsys.com>
- <81017fe4-b31f-4942-e822-a7b70008b74d@synopsys.com>
- <f83412d1e7fd4d67b4632c1f81fae963@AcuMS.aculab.com>
- <bfc65835-21f9-6d5e-791d-ee49113d939c@synopsys.com>
- <20190213125651.GP32494@hirez.programming.kicks-ass.net>
- <e6138aeb-9ce4-fbfa-4d6a-b76f189a3e47@synopsys.com>
- <4881796E12491D4BB15146FE0209CE64681DB01F@DE02WEMBXB.internal.synopsys.com>
- <e4aed55f-656b-ebec-c3e3-393714cc693e@synopsys.com>
- <4881796E12491D4BB15146FE0209CE64681EECE5@DE02WEMBXB.internal.synopsys.com>
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vgupta@synopsys.com; keydata=
- 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
- hhqBJlyU6MVUa6vZNv8E
-Message-ID: <d20680b3-f71e-9eb7-f79c-660e25673d82@synopsys.com>
-Date:   Tue, 19 Feb 2019 15:30:19 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 592462147A;
+        Tue, 19 Feb 2019 23:30:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550619032;
+        bh=fWo1xkeeNjGWZo2YZUVhWLgi8eFQh0BY6waxHe8D1gc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bEMcXfVlwT5xhHDk2YszufV15IA2hVPjBa7CV6jf0PW+SY1eNjM1J/qy7vFVA07UZ
+         +Ej6w2sGvTODqYXi3N+X2UAvDc72U5A8mcLf6SSucDSPwRF8sLV19JTXanC7/pv0aL
+         zv9EzSA5uyJKNkzyJrXJXIRoTEaBPTE3nTKeb9x4=
+Received: by earth.universe (Postfix, from userid 1000)
+        id 58B793C08DD; Wed, 20 Feb 2019 00:30:30 +0100 (CET)
+Date:   Wed, 20 Feb 2019 00:30:30 +0100
+From:   Sebastian Reichel <sre@kernel.org>
+To:     "Andrew F. Davis" <afd@ti.com>
+Cc:     Arthur Demchenkov <spinal.by@gmail.com>,
+        Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bq27x00: use cached flags
+Message-ID: <20190219233030.uo3akxvvf47ymxsg@earth.universe>
+References: <20190218065920.16205-1-spinal.by@gmail.com>
+ <be028fd4-f05b-4357-d693-46e226b0f2c7@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <4881796E12491D4BB15146FE0209CE64681EECE5@DE02WEMBXB.internal.synopsys.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.10.161.59]
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gt374reos3wdetyp"
+Content-Disposition: inline
+In-Reply-To: <be028fd4-f05b-4357-d693-46e226b0f2c7@ti.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/18/19 12:53 AM, Alexey Brodkin wrote:
-> So are you OK with this patch or something should be done before applying?
 
-Or your original patch was
+--gt374reos3wdetyp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-+#ifdef CONFIG_ARC_HAS_LL64
-+#define ARCH_SLAB_MINALIGN     8
-+#endif
+Hi,
 
-I don't think this issue is related to LL64 at all. A long long on ARC could be 4
-byte aligned (as mandated by the ABI). It could use LDD or 2 separate LDs. This
-has no bearing on the fact that LLOCKD have to use a 64-bit aligned addresses. So
-I think we should just do this unconditionally. Agree ?
+On Tue, Feb 19, 2019 at 10:55:37AM -0600, Andrew F. Davis wrote:
+> On 2/18/19 12:59 AM, Arthur Demchenkov wrote:
+> > The flags were just read by bq27xxx_battery_update(),
+> > no need to read them again.
+> >=20
+> > Signed-off-by: Arthur Demchenkov <spinal.by@gmail.com>
+> > ---
+>=20
+> Nothing obviously wrong with this patch so:
+>=20
+> Reviewed-by: Andrew F. Davis <afd@ti.com>
+>=20
+> At this point we have W1 regmap and so we now have everything we should
+> need to convert this driver over to regmap. Then the caching comes for
+> free and a lot of checks and such can be dropped.
+
+Yes, bq27xxx could be simplified a lot by converting to regmap and a
+patch would be appreciated. This register cannot be cached by regmap,
+though. Regmap caching is only for registers, that are not modified
+by the hardware (except during reset).
+
+Thanks for the patch and the review, I just merged this to power-supply-nex=
+t.
+
+-- Sebastian
+
+>=20
+> Thanks,
+> Andrew
+>=20
+> >  drivers/power/supply/bq27xxx_battery.c | 20 ++++----------------
+> >  1 file changed, 4 insertions(+), 16 deletions(-)
+> >=20
+> > diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/sup=
+ply/bq27xxx_battery.c
+> > index 6dbbe95844a3..29b3a4056865 100644
+> > --- a/drivers/power/supply/bq27xxx_battery.c
+> > +++ b/drivers/power/supply/bq27xxx_battery.c
+> > @@ -1555,27 +1555,14 @@ static bool bq27xxx_battery_dead(struct bq27xxx=
+_device_info *di, u16 flags)
+> >  		return flags & (BQ27XXX_FLAG_SOC1 | BQ27XXX_FLAG_SOCF);
+> >  }
+> > =20
+> > -/*
+> > - * Read flag register.
+> > - * Return < 0 if something fails.
+> > - */
+> >  static int bq27xxx_battery_read_health(struct bq27xxx_device_info *di)
+> >  {
+> > -	int flags;
+> > -	bool has_singe_flag =3D di->opts & BQ27XXX_O_ZERO;
+> > -
+> > -	flags =3D bq27xxx_read(di, BQ27XXX_REG_FLAGS, has_singe_flag);
+> > -	if (flags < 0) {
+> > -		dev_err(di->dev, "error reading flag register:%d\n", flags);
+> > -		return flags;
+> > -	}
+> > -
+> >  	/* Unlikely but important to return first */
+> > -	if (unlikely(bq27xxx_battery_overtemp(di, flags)))
+> > +	if (unlikely(bq27xxx_battery_overtemp(di, di->cache.flags)))
+> >  		return POWER_SUPPLY_HEALTH_OVERHEAT;
+> > -	if (unlikely(bq27xxx_battery_undertemp(di, flags)))
+> > +	if (unlikely(bq27xxx_battery_undertemp(di, di->cache.flags)))
+> >  		return POWER_SUPPLY_HEALTH_COLD;
+> > -	if (unlikely(bq27xxx_battery_dead(di, flags)))
+> > +	if (unlikely(bq27xxx_battery_dead(di, di->cache.flags)))
+> >  		return POWER_SUPPLY_HEALTH_DEAD;
+> > =20
+> >  	return POWER_SUPPLY_HEALTH_GOOD;
+> > @@ -1612,6 +1599,7 @@ void bq27xxx_battery_update(struct bq27xxx_device=
+_info *di)
+> >  			cache.capacity =3D bq27xxx_battery_read_soc(di);
+> >  			if (di->regs[BQ27XXX_REG_AE] !=3D INVALID_REG_ADDR)
+> >  				cache.energy =3D bq27xxx_battery_read_energy(di);
+> > +			di->cache.flags =3D cache.flags;
+> >  			cache.health =3D bq27xxx_battery_read_health(di);
+> >  		}
+> >  		if (di->regs[BQ27XXX_REG_CYCT] !=3D INVALID_REG_ADDR)
+> >=20
+
+--gt374reos3wdetyp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlxskZMACgkQ2O7X88g7
++ppFag/8Cm5PzVT+V0CTAJcdVmSmW2D3uTcE4OkT+zftbiyiqPnI31P+7rJ8MDoE
+zl+ruccb6ZUp7ngncYfSXcJpGlIo6x5yVfFe+ZNFzn3oWCbSHHfZFW7guVyeVua5
+mP4hHR8Q0EWfJld0mAHmqFWKUbq+Fkc2mQTRZRlomlzKyJYRXkKO0zrLTZscDTlZ
+eC08urUkv8AZOIcNS23dG4kdaEqXtokQ2z1f1JznRo/DrGTJWoNRmX33O+D5vJpe
+u0DW6S6lcWWadMGB5uIRODzjyds7dikF+v3nq4ojw+66VZmyvALD62zrdIuB2oYI
+lPA050JNjJ6ELoWhTUYJr70GEtRoJ40ygQLi7+Tj6XlbSwc8yZ+HX0N1Z2Hl7j9e
+eZ9UxRkXOrkpo+bjFOCUCdK0Z2v/t7vhaMQrRTvobIm9BpOAO5GCx8Eh7UO1KXnG
+k+PObGKxQqwkYISApUOvkF/7asCxRsuLo1zc6qFN28lqDm+GJAHdu/h3cs4DP0hg
+ZbuKhjw5W5ItsI48ZADxLY2yrsiF2ngsZmyaLnKMlL8Jqcw5dXDv5q++yC0M79QU
+jagWz8AcJK5XAh+H1cNe/ccCGfBGgd1AY21e83ydE/aBd9KedMLt9YR/nZe6FuTt
+GZkOaUlVCYoHLTo8nCz7O8VVG4rV3Z8VsHZ3Usclqc4KhbKU4iw=
+=3O4w
+-----END PGP SIGNATURE-----
+
+--gt374reos3wdetyp--
