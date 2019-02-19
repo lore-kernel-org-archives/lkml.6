@@ -2,137 +2,99 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B4BC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45453C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:38:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 543AD21479
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:35:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B22721479
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:38:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WYf8DoPJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729104AbfBSUfe (ORCPT
+        id S1729424AbfBSUiQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 15:35:34 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:44696 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726321AbfBSUfe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 15:35:34 -0500
-Received: by mail-qk1-f195.google.com with SMTP id r21so523113qkl.11
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 12:35:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=hUt6sJ49rTCFCTY7OXH0axGKeFz1kBU+YkLIo7sABdY=;
-        b=ZEHN7hkaQg9MpVEFCe4hi9Nf4II21NbYfje7NeCHCISEjnHrt2pMCcbmjBhcTK7WfO
-         aFi82CU6wC6QQiFTXBPO/34ZmkI7PREdgiun3uAM81tzurVoPI77CTkNGNumtF11Buni
-         75b+ihmNocyWBwqA2h2bo0FnbLEwBm8+5M928FHyGhbli+rR2kIQMJ98dt1LF9qQCwcQ
-         NWaP3cKDWhDc3M6S/jyhYGvwrn8XKdDE7tYmico3eRdlBXMOIKoH1hI7GKpmeWxJHwTo
-         Zao0Z8VZoEz0fE63YsW1wFsBDEisAVYjBuAyvtqJ8Ir7igixdUqJzpOj3oK7KzVgZmZo
-         pFOA==
-X-Gm-Message-State: AHQUAuZFFiK5CSmJ1htmZBYQZqQXInk9be4t0vZIJhoS4tQybo4G1A6n
-        DhWTu4jJB43zjstobYe1oCeiIA==
-X-Google-Smtp-Source: AHgI3Ibg+9JCNCoPn/oXM+Zrbjr9z7ZdD0k4uojgzvxawU2vhxGryLKbwFVbUwB/ZHqlbFEnDEAnfA==
-X-Received: by 2002:a37:9fd7:: with SMTP id i206mr19203091qke.278.1550608533151;
-        Tue, 19 Feb 2019 12:35:33 -0800 (PST)
-Received: from redhat.com (pool-173-76-246-42.bstnma.fios.verizon.net. [173.76.246.42])
-        by smtp.gmail.com with ESMTPSA id 188sm9729628qkd.67.2019.02.19.12.35.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Feb 2019 12:35:32 -0800 (PST)
-Date:   Tue, 19 Feb 2019 15:35:29 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Alexander Duyck <alexander.duyck@gmail.com>,
-        Nitesh Narayan Lal <nitesh@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
-        pagupta@redhat.com, wei.w.wang@intel.com,
-        Yang Zhang <yang.zhang.wz@gmail.com>,
-        Rik van Riel <riel@surriel.com>, dodgen@google.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
-Message-ID: <20190219152504-mutt-send-email-mst@kernel.org>
-References: <20190218152021-mutt-send-email-mst@kernel.org>
- <18d87846-72c7-adf0-5ca3-7312540bb31b@redhat.com>
- <478a9574-a604-0aa9-d569-6a5cd98d7cdc@redhat.com>
- <CAKgT0UfEeDJOYmm5L0Q9QSNrEm=w39_+5Js5CEx=0o2_fhkaGQ@mail.gmail.com>
- <77e71dc3-640b-bbf6-6a47-bb2371c06172@redhat.com>
- <CAKgT0UfqSQoBehg7JZ=tzmk7wqSF=h9aMnsk_wpQXqh0NyRCHA@mail.gmail.com>
- <20190219145241-mutt-send-email-mst@kernel.org>
- <0118482c-e633-3949-6797-94d7deb8a382@redhat.com>
- <20190219151552-mutt-send-email-mst@kernel.org>
- <488d4113-fef5-17cb-c000-41ece1cdd4ca@redhat.com>
+        Tue, 19 Feb 2019 15:38:16 -0500
+Received: from ozlabs.org ([203.11.71.1]:48869 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726239AbfBSUiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 15:38:16 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 443sxw6MS9z9s21;
+        Wed, 20 Feb 2019 07:38:12 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1550608693;
+        bh=TfKmog2tlEgzfKE3NMmvV670sHD3SSIZpPwXmH9/CDA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=WYf8DoPJrCATtoNE3GRdBpeuow8emsMD7hKvWklr2rq65lGp8PuI5QtucRPL5Sju4
+         BV/TH3bGS3M+hRafV8WdIabByJySIHQXA2AXA5MEEmAb8G1sHG6Cf6+6kGn/MKapIo
+         7AF582cqM8eqCMbwVkfXt+6M8luDPM/iRXwdmTIazmYQ7IEplq07ovINCnxNZp4ObG
+         Y6yLkT9DxzeBqfW6SphTtqB2nVYvFNfpqzOm4AGzUjxakNmL05aQPgOKnDer1Bgf+N
+         d6fUpo8Y3anvKG0dCCjYa65pV0ixtDGskHKk6vGtcVezwnKSe6RRV5UvpMah+wwv13
+         lN7HqPzyZgSEg==
+Date:   Wed, 20 Feb 2019 07:38:05 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Christoffer Dall <cdall@cs.columbia.edu>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the kvm-arm tree
+Message-ID: <20190220073801.3cb6082a@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <488d4113-fef5-17cb-c000-41ece1cdd4ca@redhat.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/k78+FvmXYI+NSxj2YGr6R6H"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 09:21:20PM +0100, David Hildenbrand wrote:
-> On 19.02.19 21:17, Michael S. Tsirkin wrote:
-> > On Tue, Feb 19, 2019 at 09:02:52PM +0100, David Hildenbrand wrote:
-> >> On 19.02.19 20:58, Michael S. Tsirkin wrote:
-> >>> On Tue, Feb 19, 2019 at 10:06:35AM -0800, Alexander Duyck wrote:
-> >>>>> I tend to like an asynchronous reporting approach as discussed in this
-> >>>>> thread, we would have to see if Nitesh could get it implemented.
-> >>>>
-> >>>> I agree it would be great if it could work. However I have concerns
-> >>>> given that work on this patch set dates back to 2017, major issues
-> >>>> such as working around device assignment have yet to be addressed,
-> >>>
-> >>> BTW for device assignment to work, your idea of sending
-> >>> data directly to kvm won't work, will it?
-> >>> You need to update userspace so it can update VFIO right?
-> >>> Another blocker for assignment is ability to make holes
-> >>> an an existing mapping - supported by hardware but
-> >>> not by IOMMU drivers.
-> >>
-> >> I had the exact same thought and then realized that we decided to block
-> >> the balloon in user space until we figured out how to handle this properly.
-> >>
-> >> I wonder if MADV_FREE behaves differently compared to MADV_DONTNEED when
-> >> finding pinned pages, but I doubt it. Most probably we'll have to
-> >> disable hinting for device assignments as well.
-> > 
-> > OK but let's recognize it as a bug not a feature.
-> > 
-> 
-> Yes, btw interesting read: https://lwn.net/Articles/198380/
+--Sig_/k78+FvmXYI+NSxj2YGr6R6H
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-There's also slideware from Rik van Riel circa 2011. His idea
-was tagging pages in guest memory, freeing a page involves
-- drop the EPT PTE
-- check page is still free
-- unpin page
+Hi all,
 
-This way you can hint without exits at all if you like.
+Commits
 
-> 
-> "Pages which have been locked into memory pose an extra challenge here -
-> they can be part of the page cache, but they still shouldn't be taken
-> away by the host system. So such pages cannot be marked as "volatile."
-> The problem is that figuring out if a page is locked is harder than it
-> might seem; it can involve scanning a list of virtual memory area (VMA)
-> structures, which is slow. So the hinting patches add a new flag to the
-> address_space structure to note that somebody has locked pages from that
-> address space in memory."
-> 
-> I assume locked here actually means pinned.
+  32296b9048b7 ("KVM: arm64: Fix comment for KVM_PHYS_SHIFT")
+  bfc871bad87c ("KVM: arm/arm64: fix spelling mistake: "auxilary" -> "auxil=
+iary"")
+  1c1c37e5600b ("KVM: arm/arm64: Update MAINTAINERS entries")
+  b1206bfb39d6 ("KVM: arm/arm64: Prefix header search paths with $(srctree)=
+/")
+  507f5a8474ef ("KVM: arm/arm64: Remove -I. header search paths")
+  af8c5901d5e3 ("KVM: arm/arm64: Fix TRACE_INCLUDE_PATH")
+  d116a11d3ccc ("KVM: arm/arm64: arch_timer: Mark physical interrupt active=
+ when a virtual interrupt is pending")
+  17925ec8a87d ("arm64: KVM: Describe data or unified caches as having 1 se=
+t and 1 way")
+  eabb8caadca8 ("arm64: KVM: Expose sanitised cache type register to guest")
 
-Locked seems to mean mlock there.
+are missing a Signed-off-by from their committers.
 
-This seems to also resemble Xen's tmem a bit.
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/k78+FvmXYI+NSxj2YGr6R6H
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> -- 
-> 
-> Thanks,
-> 
-> David / dhildenb
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxsaS0ACgkQAVBC80lX
+0GzQjAf+NWA40y/iJlRA9RE6gK3SVcBtezJaNKWR+9d7eO9HkFNgbl441OfGMAcQ
+9KLDI5dXwYA5/J3LeqrJJQokQ5f3tthkVsb2WeOJT8DglIn+QNLR7xRd2bgZBtg8
+idXnIHkz7ZFZIllh/y7wGfq9mPHBN6QO9A0Sg/BINaCi2lxRczi/VNJrF3Uh/nDq
+p8E2hzI/TfvTEHf7gAmyD9BKjcEkAErwUP83cijfZl6jjEt69DOk+e009EnUgd4M
+U0FnIzxTdIjbSjk2lUYd+u53b23M3TxC1Z2rlpO5zwVXtcwJPnjzsNciSrqqxv+N
+8Bm9dgCaPeP4fuJBG2QUM39IQdcFQA==
+=K9ro
+-----END PGP SIGNATURE-----
+
+--Sig_/k78+FvmXYI+NSxj2YGr6R6H--
