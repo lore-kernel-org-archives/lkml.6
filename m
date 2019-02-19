@@ -2,109 +2,268 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B50C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96820C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:42:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA4EE2146E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:42:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 660CC2146E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:42:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727478AbfBSOmU (ORCPT
+        id S1727939AbfBSOmj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 09:42:20 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:41239 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726357AbfBSOmU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 09:42:20 -0500
-Received: by mail-qt1-f193.google.com with SMTP id v10so23341293qtp.8;
-        Tue, 19 Feb 2019 06:42:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VV2DLHSJG0WzEiXZTUh22wQH5wNlBSLqE89RN91Csgg=;
-        b=h2efei/XKnJ+w0RLheSIiOikViuqY/ZHDehWEpd6m+SayLoeZY8/7+s+SjPJpvcTU+
-         yzfkuIJzl6ZJ6C+ibQgsLt1TTYeb5tQOXMJTG7uSyPfTtVSy+Qu2s2JaeVKF5eBVxM6y
-         IQddAACDADRZylbZXRJfrfJW906VIgkzIBG/uh6QXq64OMJ5OzHUzw0nLnJSK724PKaO
-         F9SUaCx1QxDzqprEfyH4vb3pTlxr/X21ukgD02J2BSB25zmgvlcLlAxSSP7HzcjvdPQc
-         W/nINlynIUz+F/sa9yfahDsGfb5vZVY2FHgz3ur6CParOTGS35nbwbJ0fRrUwt2nIy6V
-         O6Ww==
-X-Gm-Message-State: AHQUAuYncFVYfzOVVgtB9R3oQ+fD/avdL6Jx3nXjNx3X9BOauPgIV52E
-        bXg+ERB8qVEmfaYcv6MM10lXK2ZF0NZXnUrnKq6sTw==
-X-Google-Smtp-Source: AHgI3IYs2MqftGxmfubP57HFGVgpbDD0MgfaydgkUHAD5NgsatcBHk56kv+D3kcz59vsmpio88UKDWgD6X1fMqj+SjU=
-X-Received: by 2002:a0c:d791:: with SMTP id z17mr21343363qvi.149.1550587339200;
- Tue, 19 Feb 2019 06:42:19 -0800 (PST)
+        Tue, 19 Feb 2019 09:42:39 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:34518 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727118AbfBSOmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 09:42:38 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id D0D444EC450C9B8530DA;
+        Tue, 19 Feb 2019 22:42:30 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.408.0; Tue, 19 Feb 2019
+ 22:42:24 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <john.garry@huawei.com>, <jejb@linux.ibm.com>,
+        <martin.petersen@oracle.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] scsi: hisi_sas: remove duplicated code
+Date:   Tue, 19 Feb 2019 22:40:38 +0800
+Message-ID: <20190219144038.26384-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-References: <20190219173654.47e9bc36@canb.auug.org.au> <20190219074519.GA2294@behemoth.owl.eu.com.local>
- <CAK8P3a0omA-__7MLAw_SKuug_GZ0FfFPVr1Tsnx5Hb0sesv8gw@mail.gmail.com> <20190219111918.GC2294@behemoth.owl.eu.com.local>
-In-Reply-To: <20190219111918.GC2294@behemoth.owl.eu.com.local>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 19 Feb 2019 15:42:02 +0100
-Message-ID: <CAK8P3a3vVr+nJWuc3tWOcWn55DW6a=YF_OntqwPYnemW_jos6Q@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the asm-generic tree
-To:     Hugo Lefeuvre <hle@owl.eu.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 12:19 PM Hugo Lefeuvre <hle@owl.eu.com> wrote:
->
-> > I'm not sending a pull request for this if it breaks any architectures,
-> > so I think we need to fix them all, and I suppose we also have to
-> > change all architectures in the same patch that changes the architecture
-> > independent declaration, so it doesn't break intermittently.
-> >
-> > At this point, I'd probably drop your patches from my asm-generic
-> > tree  entirely to avoid the regression, and wait for you to resend
-> > them all after 5.1-rc1, for inclusion in 5.2.
-> >
-> > Can you elaborate on the original problem that you saw? Maybe
-> > we can have a different workaround for it in the meantime.
->
-> Agree, these two patches should be dropped:
->
-> 1. iomap: add missing const to ioread*/iowrite addr arg
->
-> since there are incompatible definitions or declarations in
->
-> arch/alpha/include/asm/core_apecs.h
-> arch/alpha/include/asm/core_cia.h
-> arch/alpha/include/asm/core_lca.h
-> arch/alpha/include/asm/core_marvel.h
-> arch/alpha/include/asm/core_mcpcia.h
-> arch/alpha/include/asm/core_t2.h
-> arch/alpha/include/asm/io.h
-> arch/alpha/include/asm/io_trivial.h
-> arch/alpha/include/asm/jensen.h
-> arch/alpha/include/asm/machvec.h
-> arch/alpha/kernel/core_marvel.c
-> arch/alpha/kernel/io.c
-> arch/parisc/lib/iomap.c
-> arch/powerpc/kernel/iomap.c
-> arch/sh/kernel/iomap.c
->
-> 2. lib/iomap: add missing const to mmio_ins* addr arg
->
-> since there are incompatible definitions or declarations in
->
-> arch/sh/kernel/iomap.c
->
-> I will resubmit them with all changes required for arch/. The ones for
-> alpha, powerpc and sh are already ready and built with cross compiler.
-> I still have to setup a cross compiler to build my parisc changes.
+move some functions to hisi_sas_main.c,
+which can eliminate redundant code.
 
-I've dropped all your patches for the moment, since one of the remaining
-ones had a conflict against changes in the char-misc tree, and the
-last one didn't do much by itself.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/scsi/hisi_sas/hisi_sas.h       |  6 ++++++
+ drivers/scsi/hisi_sas/hisi_sas_main.c  | 37 +++++++++++++++++++++++++++++++++
+ drivers/scsi/hisi_sas/hisi_sas_v1_hw.c | 38 ----------------------------------
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 37 ---------------------------------
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 37 ---------------------------------
+ 5 files changed, 43 insertions(+), 112 deletions(-)
 
-Please submit the full set again after -rc1.
+diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
+index 6c87bd3..3b00bf6 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas.h
++++ b/drivers/scsi/hisi_sas/hisi_sas.h
+@@ -561,4 +561,10 @@ extern void hisi_sas_controller_reset_done(struct hisi_hba *hisi_hba);
+ extern void hisi_sas_debugfs_init(struct hisi_hba *hisi_hba);
+ extern void hisi_sas_debugfs_exit(struct hisi_hba *hisi_hba);
+ extern void hisi_sas_debugfs_work_handler(struct work_struct *work);
++u32 hisi_sas_read32(struct hisi_hba *hisi_hba, u32 off);
++u32 hisi_sas_read32_relaxed(struct hisi_hba *hisi_hba, u32 off);
++void hisi_sas_write32(struct hisi_hba *hisi_hba, u32 off, u32 val);
++void hisi_sas_phy_write32(struct hisi_hba *hisi_hba, int phy_no,
++			  u32 off, u32 val);
++u32 hisi_sas_phy_read32(struct hisi_hba *hisi_hba, int phy_no, u32 off);
+ #endif
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+index 9232966..56e98fc 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_main.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+@@ -28,6 +28,43 @@ static void hisi_sas_release_task(struct hisi_hba *hisi_hba,
+ 				  struct domain_device *device);
+ static void hisi_sas_dev_gone(struct domain_device *device);
+ 
++u32 hisi_sas_read32(struct hisi_hba *hisi_hba, u32 off)
++{
++	void __iomem *regs = hisi_hba->regs + off;
++
++	return readl(regs);
++}
++
++u32 hisi_sas_read32_relaxed(struct hisi_hba *hisi_hba, u32 off)
++{
++	void __iomem *regs = hisi_hba->regs + off;
++
++	return readl_relaxed(regs);
++}
++
++void hisi_sas_write32(struct hisi_hba *hisi_hba, u32 off, u32 val)
++{
++	void __iomem *regs = hisi_hba->regs + off;
++
++	writel(val, regs);
++}
++
++void hisi_sas_phy_write32(struct hisi_hba *hisi_hba, int phy_no,
++			  u32 off, u32 val)
++{
++	void __iomem *regs = hisi_hba->regs + (0x400 * phy_no) + off;
++
++	writel(val, regs);
++}
++
++u32 hisi_sas_phy_read32(struct hisi_hba *hisi_hba,
++			int phy_no, u32 off)
++{
++	void __iomem *regs = hisi_hba->regs + (0x400 * phy_no) + off;
++
++	return readl(regs);
++}
++
+ u8 hisi_sas_get_ata_protocol(struct host_to_dev_fis *fis, int direction)
+ {
+ 	switch (fis->command) {
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+index 2938074..41671b2 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+@@ -416,44 +416,6 @@ enum {
+ 	(HISI_SAS_PHY_MAX_INT_NR + HISI_SAS_CQ_MAX_INT_NR +\
+ 	HISI_SAS_FATAL_INT_NR)
+ 
+-static u32 hisi_sas_read32(struct hisi_hba *hisi_hba, u32 off)
+-{
+-	void __iomem *regs = hisi_hba->regs + off;
+-
+-	return readl(regs);
+-}
+-
+-static u32 hisi_sas_read32_relaxed(struct hisi_hba *hisi_hba, u32 off)
+-{
+-	void __iomem *regs = hisi_hba->regs + off;
+-
+-	return readl_relaxed(regs);
+-}
+-
+-static void hisi_sas_write32(struct hisi_hba *hisi_hba,
+-				    u32 off, u32 val)
+-{
+-	void __iomem *regs = hisi_hba->regs + off;
+-
+-	writel(val, regs);
+-}
+-
+-static void hisi_sas_phy_write32(struct hisi_hba *hisi_hba,
+-					int phy_no, u32 off, u32 val)
+-{
+-	void __iomem *regs = hisi_hba->regs + (0x400 * phy_no) + off;
+-
+-	writel(val, regs);
+-}
+-
+-static u32 hisi_sas_phy_read32(struct hisi_hba *hisi_hba,
+-				      int phy_no, u32 off)
+-{
+-	void __iomem *regs = hisi_hba->regs + (0x400 * phy_no) + off;
+-
+-	return readl(regs);
+-}
+-
+ static void config_phy_opt_mode_v1_hw(struct hisi_hba *hisi_hba, int phy_no)
+ {
+ 	u32 cfg = hisi_sas_phy_read32(hisi_hba, phy_no, PHY_CFG);
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+index e40cc6b..3827d11 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+@@ -731,43 +731,6 @@ enum {
+ 
+ static void link_timeout_disable_link(struct timer_list *t);
+ 
+-static u32 hisi_sas_read32(struct hisi_hba *hisi_hba, u32 off)
+-{
+-	void __iomem *regs = hisi_hba->regs + off;
+-
+-	return readl(regs);
+-}
+-
+-static u32 hisi_sas_read32_relaxed(struct hisi_hba *hisi_hba, u32 off)
+-{
+-	void __iomem *regs = hisi_hba->regs + off;
+-
+-	return readl_relaxed(regs);
+-}
+-
+-static void hisi_sas_write32(struct hisi_hba *hisi_hba, u32 off, u32 val)
+-{
+-	void __iomem *regs = hisi_hba->regs + off;
+-
+-	writel(val, regs);
+-}
+-
+-static void hisi_sas_phy_write32(struct hisi_hba *hisi_hba, int phy_no,
+-				 u32 off, u32 val)
+-{
+-	void __iomem *regs = hisi_hba->regs + (0x400 * phy_no) + off;
+-
+-	writel(val, regs);
+-}
+-
+-static u32 hisi_sas_phy_read32(struct hisi_hba *hisi_hba,
+-				      int phy_no, u32 off)
+-{
+-	void __iomem *regs = hisi_hba->regs + (0x400 * phy_no) + off;
+-
+-	return readl(regs);
+-}
+-
+ /* This function needs to be protected from pre-emption. */
+ static int
+ slot_index_alloc_quirk_v2_hw(struct hisi_hba *hisi_hba,
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+index 0420df2..4f30eda 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+@@ -418,43 +418,6 @@ module_param(auto_affine_msi_experimental, bool, 0444);
+ MODULE_PARM_DESC(auto_affine_msi_experimental, "Enable auto-affinity of MSI IRQs as experimental:\n"
+ 		 "default is off");
+ 
+-static u32 hisi_sas_read32(struct hisi_hba *hisi_hba, u32 off)
+-{
+-	void __iomem *regs = hisi_hba->regs + off;
+-
+-	return readl(regs);
+-}
+-
+-static u32 hisi_sas_read32_relaxed(struct hisi_hba *hisi_hba, u32 off)
+-{
+-	void __iomem *regs = hisi_hba->regs + off;
+-
+-	return readl_relaxed(regs);
+-}
+-
+-static void hisi_sas_write32(struct hisi_hba *hisi_hba, u32 off, u32 val)
+-{
+-	void __iomem *regs = hisi_hba->regs + off;
+-
+-	writel(val, regs);
+-}
+-
+-static void hisi_sas_phy_write32(struct hisi_hba *hisi_hba, int phy_no,
+-				 u32 off, u32 val)
+-{
+-	void __iomem *regs = hisi_hba->regs + (0x400 * phy_no) + off;
+-
+-	writel(val, regs);
+-}
+-
+-static u32 hisi_sas_phy_read32(struct hisi_hba *hisi_hba,
+-				      int phy_no, u32 off)
+-{
+-	void __iomem *regs = hisi_hba->regs + (0x400 * phy_no) + off;
+-
+-	return readl(regs);
+-}
+-
+ #define hisi_sas_read32_poll_timeout(off, val, cond, delay_us,		\
+ 				     timeout_us)			\
+ ({									\
+-- 
+2.7.0
 
-        Arnd
+
