@@ -2,566 +2,141 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 410A2C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A4FC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:29:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1CC32147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:29:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65D0A21738
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:29:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dsMrbsmY"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fJJeF7px"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730072AbfBSX3M (ORCPT
+        id S1730077AbfBSX3f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 18:29:12 -0500
-Received: from mail-wr1-f45.google.com ([209.85.221.45]:38326 "EHLO
-        mail-wr1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbfBSX3L (ORCPT
+        Tue, 19 Feb 2019 18:29:35 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:39712 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbfBSX3f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 18:29:11 -0500
-Received: by mail-wr1-f45.google.com with SMTP id v13so23843562wrw.5;
-        Tue, 19 Feb 2019 15:29:08 -0800 (PST)
+        Tue, 19 Feb 2019 18:29:35 -0500
+Received: by mail-lf1-f68.google.com with SMTP id m11so16123544lfc.6
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 15:29:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=iZBmMIOpmOhS0ObYeyP0R76Ye2Oh5EPaJcsWwkj5rIM=;
-        b=dsMrbsmYMCBJjmOlv0kMXkGk8RwkiVMG2tJx1H5RHLn0d9n+u2zaPUT8z2rRG6Ga8s
-         JDEcRCm8j6rIPHsUclLodEjskYJgCrFhOOH/sAffXXhrP9Ax93swLZoNGALezjLSTyoM
-         FpzAAFF0GQoNa7qmLH8HdHKjYo5jPwEDzs/wQnsoLBjCQahitoPq1SBcCrCrFANV3c46
-         BzMoIabUVPPW3LsYeInUsTElnvxBy5tNUsgigeYz6YV69V7kAiOEzwESKBYm1HNIMN2o
-         P5z1t0M8bAcXLcYDXEv3G2FYzUzK1NMT7U5e5Mt77/JWffWEsNc00l9yJEQ8ZPuUwP9y
-         FBHw==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XvAitqVF8YTDJoXqz+MECJPCjC0B0qtBCBm3syoZ1lY=;
+        b=fJJeF7pxmhyxP5CMXJYWqYUgN8BQY7QRE8dWdogXcMMuQjawDaKEBbGQzjmCrEP68i
+         Iq/3EH+VwQT5qWqcNNkysB7EFHtuO9t21eSbRI0ZukDb/r32Seq1I/7GHcznOmeI+z5A
+         FGm46KPQixrj+ejLOjCFQ8yJqu51F0Frv1o4I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=iZBmMIOpmOhS0ObYeyP0R76Ye2Oh5EPaJcsWwkj5rIM=;
-        b=fCaqSNAf3PHNMHCpIZ7xOCZuEP5RWrjOjpVRH8ue3Jtp18CzPniEWhyppdOD/zeu0d
-         PJ5TS99fh0L4OEayAPKhQ3PDvZQ+frqvrTeKUMpZGY/yhB+luADBqfTa6qHYeLj4Tlfw
-         c/nIpWda13450MYYOWN6bpIr0K/Lg+Mj3Qztc27EIAtnfGZp9ba3mpS8GUkiiq/6u3f/
-         Ax1C7j5sdQ4Ahko2En5xlaoyAO7WwzENyv6yDzVl4ksNVhw4zi1FI8N2+20FaXJcmJOb
-         Q7/k8gWpzytJr+kFOmV5QS5CDHyxAZzHuCENbgi/TAGFKfRHFhj/Bgqrihoh405n0czJ
-         w1xQ==
-X-Gm-Message-State: AHQUAuZd8TW06h4f7xZMYYTd7m6baEHWO5mAYvvOWeZC2ME7heN0He1K
-        GRad/HRoxwXBoAkTDVtzj5xUEgkJ
-X-Google-Smtp-Source: AHgI3IYWARotDqP6Eaxl96D0QbkpZ3Bd28nCHzMe//RIJz0E9rKV3IY+KKsffnx1aPVDNiaFsBycBQ==
-X-Received: by 2002:adf:dcc2:: with SMTP id x2mr4305521wrm.72.1550618947109;
-        Tue, 19 Feb 2019 15:29:07 -0800 (PST)
-Received: from localhost (168.50.187.35.bc.googleusercontent.com. [35.187.50.168])
-        by smtp.gmail.com with ESMTPSA id l129sm2298355wml.42.2019.02.19.15.29.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Feb 2019 15:29:06 -0800 (PST)
-From:   Junio C Hamano <gitster@pobox.com>
-To:     git@vger.kernel.org
-Cc:     Linux Kernel <linux-kernel@vger.kernel.org>,
-        git-packagers@googlegroups.com
-Subject: [ANNOUNCE] Git v2.21.0-rc2
-Date:   Tue, 19 Feb 2019 15:29:05 -0800
-Message-ID: <xmqq8sybz7b2.fsf@gitster-ct.c.googlers.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XvAitqVF8YTDJoXqz+MECJPCjC0B0qtBCBm3syoZ1lY=;
+        b=QpW47dJaO54yiYjkIFQx0jqwW0kR6h7FZ/2MGMSJnshFHPzbWw2qvbTT0UWcgZc7Cu
+         246sWCSQrT8rGuO7cbCLc2d1G8a1OpkbNyq1SHERHq75JOPJt8HyyzlVErX2xXrYv8+f
+         MXS3/7wwzqAjxqlaqyLANJyEchcvxqdJn1FGXSHtZlp2iwwf0ZuIXaQresebCQe4Iw4b
+         VbWX6qpKeiaesMYF4JCUJZnaTWErWmWWKLVZXReHGfPE3VaH4jSqBh2GAv1fKtAy8xBs
+         IPsQFWg5Gl+jnJfXVsapdewUXlKVY0oiE09tYbc2EUMcBqbpehSHwzLb/GQykuOKDBsu
+         8R8w==
+X-Gm-Message-State: AHQUAua6xrZhbiG0RjXPHLaFnnY4EczTIAZLeQPCd/wNrRXK9F1hop/4
+        xyod/p/+X5t8aL1Zi121FGlFGyiMmnE=
+X-Google-Smtp-Source: AHgI3IYUINpmWwYjoAcq2+lcpaigNrnlqqDGzGMQkYOHZM0TKFGMJxEl1Ogc6F12THAkTn3gC3zFYw==
+X-Received: by 2002:a19:4847:: with SMTP id v68mr17994744lfa.136.1550618972762;
+        Tue, 19 Feb 2019 15:29:32 -0800 (PST)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id a3-v6sm4664088ljd.20.2019.02.19.15.29.31
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Feb 2019 15:29:32 -0800 (PST)
+Received: by mail-lj1-f174.google.com with SMTP id d14so7958289ljl.9
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 15:29:31 -0800 (PST)
+X-Received: by 2002:a2e:9ad1:: with SMTP id p17mr2704106ljj.30.1550618970718;
+ Tue, 19 Feb 2019 15:29:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+References: <1550394300-17420-1-git-send-email-yong.wu@mediatek.com> <1550394300-17420-2-git-send-email-yong.wu@mediatek.com>
+In-Reply-To: <1550394300-17420-2-git-send-email-yong.wu@mediatek.com>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Tue, 19 Feb 2019 15:28:54 -0800
+X-Gmail-Original-Message-ID: <CAE=gft5pp7sUHM8P3RTeFPdY-VWVLwLM6=abS6FffZU4WSOd8g@mail.gmail.com>
+Message-ID: <CAE=gft5pp7sUHM8P3RTeFPdY-VWVLwLM6=abS6FffZU4WSOd8g@mail.gmail.com>
+Subject: Re: [PATCH v6 01/22] dt-bindings: mediatek: Add binding for mt8183
+ IOMMU and SMI
+To:     Yong Wu <yong.wu@mediatek.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tomasz Figa <tfiga@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, yingjoe.chen@mediatek.com,
+        youlin.pei@mediatek.com, Nicolas Boichat <drinkcat@chromium.org>,
+        anan.sun@mediatek.com, Matthias Kaehlcke <mka@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A release candidate Git v2.21.0-rc2 is now available for testing
-at the usual places.  It is comprised of 474 non-merge commits
-since v2.20.0, contributed by 61 people, 16 of which are new faces.
-
-The tarballs are found at:
-
-    https://www.kernel.org/pub/software/scm/git/testing/
-
-The following public repositories all have a copy of the
-'v2.21.0-rc2' tag and the 'master' branch that the tag points at:
-
-  url = https://kernel.googlesource.com/pub/scm/git/git
-  url = git://repo.or.cz/alt-git.git
-  url = https://github.com/gitster/git
-
-New contributors whose contributions weren't in v2.20.0 are as follows.
-Welcome to the Git development community!
-
-  Arti Zirk, Brandon Richardson, Chayoung You, Denis Ovsienko,
-  Emilio Cobos Álvarez, Erin Dahlgren, Force Charlie, Frank Dana,
-  Issac Trotts, Katrin Leinweber, Laura Abbott, Patrick Hogg,
-  Peter Osterlund, Shahzad Lone, Slavica Djukic, and Tanushree
-  Tumane.
-
-Returning contributors who helped this release are as follows.
-Thanks for your continued support.
-
-  Ævar Arnfjörð Bjarmason, Ben Peart, Brandon Williams, brian
-  m. carlson, Carlo Marcelo Arenas Belón, Christian Couder,
-  David Turner, Derrick Stolee, Elijah Newren, Eric Sunshine,
-  Eric Wong, Jean-Noël Avila, Jeff King, Johannes Schindelin,
-  Jonathan Nieder, Jonathan Tan, Josh Steadmon, Junio C Hamano,
-  Kevin Daudt, Kim Gybels, Kyle Meyer, Linus Torvalds, Luke
-  Diamand, Martin Ågren, Masaya Suzuki, Matthew DeVore, Matthieu
-  Moy, Max Kirillov, Nguyễn Thái Ngọc Duy, Olga Telezhnaya,
-  Orgad Shaneh, Phillip Wood, Pranit Bauva, Ramsay Jones,
-  Randall S. Becker, René Scharfe, Sebastian Staudt, Sergey
-  Organov, Stefan Beller, Stephen P. Smith, Sven van Haastregt,
-  SZEDER Gábor, Thomas Braun, Thomas Gummerer, Todd Zullinger,
-  and Torsten Bögershausen.
-
-----------------------------------------------------------------
-
-Git 2.21 Release Notes (draft)
-==============================
-
-Backward Compatibility Notes
-----------------------------
-
- * Historically, the "-m" (mainline) option can only be used for "git
-   cherry-pick" and "git revert" when working with a merge commit.
-   This version of Git no longer warns or errors out when working with
-   a single-parent commit, as long as the argument to the "-m" option
-   is 1 (i.e. it has only one parent, and the request is to pick or
-   revert relative to that first parent).  Scripts that relied on the
-   behaviour may get broken with this change.
-
-
-Updates since v2.20
--------------------
-
-UI, Workflows & Features
-
- * The "http.version" configuration variable can be used with recent
-   enough versions of cURL library to force the version of HTTP used
-   to talk when fetching and pushing.
-
- * Small fixes and features for fast-export and fast-import, mostly on
-   the fast-export side has been made.
-
- * "git push $there $src:$dst" rejects when $dst is not a fully
-   qualified refname and it is not clear what the end user meant.  The
-   codepath has been taught to give a clearer error message, and also
-   guess where the push should go by taking the type of the pushed
-   object into account (e.g. a tag object would want to go under
-   refs/tags/).
-
- * "git checkout [<tree-ish>] path..." learned to report the number of
-   paths that have been checked out of the index or the tree-ish,
-   which gives it the same degree of noisy-ness as the case in which
-   the command checks out a branch.  "git checkout -m <pathspec>" to
-   undo conflict resolution gives a similar message.
-
- * "git quiltimport" learned "--keep-non-patch" option.
-
- * "git worktree remove" and "git worktree move" refused to work when
-   there is a submodule involved.  This has been loosened to ignore
-   uninitialized submodules.
-
- * "git cherry-pick -m1" was forbidden when picking a non-merge
-   commit, even though there _is_ parent number 1 for such a commit.
-   This was done to avoid mistakes back when "cherry-pick" was about
-   picking a single commit, but is no longer useful with "cherry-pick"
-   that can pick a range of commits.  Now the "-m$num" option is
-   allowed when picking any commit, as long as $num names an existing
-   parent of the commit.
-
- * Update "git multimail" from the upstream.
-
- * "git p4" update.
-
- * The "--format=<placeholder>" option of for-each-ref, branch and tag
-   learned to show a few more traits of objects that can be learned by
-   the object_info API.
-
- * "git rebase -i" learned to re-execute a command given with 'exec'
-   to run after it failed the last time.
-
- * "git diff --color-moved-ws" updates.
-
- * Custom userformat "log --format" learned %S atom that stands for
-   the tip the traversal reached the commit from, i.e. --source.
-
- * "git instaweb" learned to drive http.server that comes with
-   "batteries included" Python installation (both Python2 & 3).
-
- * A new encoding UTF-16LE-BOM has been invented to force encoding to
-   UTF-16 with BOM in little endian byte order, which cannot be directly
-   generated by using iconv.
-
- * A new date format "--date=human" that morphs its output depending
-   on how far the time is from the current time has been introduced.
-   "--date=auto:human" can be used to use this new format (or any
-   existing format) when the output is going to the pager or to the
-   terminal, and otherwise the default format.
-
-
-Performance, Internal Implementation, Development Support etc.
-
- * Code clean-up with optimization for the codepath that checks
-   (non-)existence of loose objects.
-
- * More codepaths have become aware of working with in-core repository
-   instances other than the default "the_repository".
-
- * The "strncat()" function is now among the banned functions.
-
- * Portability updates for the HPE NonStop platform.
-
- * Earlier we added "-Wformat-security" to developer builds, assuming
-   that "-Wall" (which includes "-Wformat" which in turn is required
-   to use "-Wformat-security") is always in effect.  This is not true
-   when config.mak.autogen is in use, unfortunately.  This has been
-   fixed by unconditionally adding "-Wall" to developer builds.
-
- * The loose object cache used to optimize existence look-up has been
-   updated.
-
- * Flaky tests can now be repeatedly run under load with the
-   "--stress" option.
-
- * Documentation/Makefile is getting prepared for manpage
-   localization.
-
- * "git fetch-pack" now can talk the version 2 protocol.
-
- * sha-256 hash has been added and plumbed through the code to allow
-   building Git with the "NewHash".
-
- * Debugging help for http transport.
-
- * "git fetch --deepen=<more>" has been corrected to work over v2
-   protocol.
-
- * The code to walk tree objects has been taught that we may be
-   working with object names that are not computed with SHA-1.
-
- * The in-core repository instances are passed through more codepaths.
-
- * Update the protocol message specification to allow only the limited
-   use of scaled quantities.  This is to ensure potential compatibility
-   issues will not get out of hand.
-
- * Micro-optimize the code that prepares commit objects to be walked
-   by "git rev-list" when the commit-graph is available.
-
- * "git fetch" and "git upload-pack" learned to send all exchanges over
-   the sideband channel while talking the v2 protocol.
-
- * The codepath to write out commit-graph has been optimized by
-   following the usual pattern of visiting objects in in-pack order.
-
- * The codepath to show progress meter while writing out commit-graph
-   file has been improved.
-
- * Cocci rules have been updated to encourage use of strbuf_addbuf().
-
- * "git rebase --merge" has been reimplemented by reusing the internal
-   machinery used for "git rebase -i".
-
- * More code in "git bisect" has been rewritten in C.
-
- * Instead of going through "git-rebase--am" scriptlet to use the "am"
-   backend, the built-in version of "git rebase" learned to drive the
-   "am" backend directly.
-
- * The assumption to work on the single "in-core index" instance has
-   been reduced from the library-ish part of the codebase.
-
- * The test lint learned to catch non-portable "sed" options.
-
- * "git pack-objects" learned another algorithm to compute the set of
-   objects to send, that trades the resulting packfile off to save
-   traversal cost to favor small pushes.
-
- * The travis CI scripts have been corrected to build Git with the
-   compiler(s) of our choice.
-
- * "git submodule update" learned to abort early when core.worktree
-   for the submodule is not set correctly to prevent spreading damage.
-
- * Test suite has been adjusted to run on Azure Pipeline.
-
- * Running "Documentation/doc-diff x" from anywhere other than the
-   top-level of the working tree did not show the usage string
-   correctly, which has been fixed.
-
- * Use of the sparse tool got easier to customize from the command
-   line to help developers.
-
- * A new target "coverage-prove" to run the coverage test under
-   "prove" has been added.
-
- * A flakey "p4" test has been removed.
-
- * The code and tests assume that the system supplied iconv() would
-   always use BOM in its output when asked to encode to UTF-16 (or
-   UTF-32), but apparently some implementations output big-endian
-   without BOM.  A compile-time knob has been added to help such
-   systems (e.g. NonStop) to add BOM to the output to increase
-   portability.
-
-
-Fixes since v2.20
------------------
-
- * Updates for corner cases in merge-recursive.
-   (merge cc4cb0902c en/merge-path-collision later to maint).
-
- * "git checkout frotz" (without any double-dash) avoids ambiguity by
-   making sure 'frotz' cannot be interpreted as a revision and as a
-   path at the same time.  This safety has been updated to check also
-   a unique remote-tracking branch 'frotz' in a remote, when dwimming
-   to create a local branch 'frotz' out of a remote-tracking branch
-   'frotz' from a remote.
-   (merge be4908f103 nd/checkout-dwim-fix later to maint).
-
- * Refspecs configured with "git -c var=val clone" did not propagate
-   to the resulting repository, which has been corrected.
-   (merge 7eae4a3ac4 sg/clone-initial-fetch-configuration later to maint).
-
- * A properly configured username/email is required under
-   user.useConfigOnly in order to create commits; now "git stash"
-   (even though it creates commit objects to represent stash entries)
-   command is exempt from the requirement.
-   (merge 3bc2111fc2 sd/stash-wo-user-name later to maint).
-
- * The http-backend CGI process did not correctly clean up the child
-   processes it spawns to run upload-pack etc. when it dies itself,
-   which has been corrected.
-   (merge 02818a98d7 mk/http-backend-kill-children-before-exit later to maint).
-
- * "git rev-list --exclude-promisor-objects" had to take an object
-   that does not exist locally (and is lazily available) from the
-   command line without barfing, but the code dereferenced NULL.
-   (merge 4cf67869b2 md/list-lazy-objects-fix later to maint).
-
- * The traversal over tree objects has learned to honor
-   ":(attr:label)" pathspec match, which has been implemented only for
-   enumerating paths on the filesystem.
-   (merge 5a0b97b34c nd/attr-pathspec-in-tree-walk later to maint).
-
- * BSD port updates.
-   (merge 4e3ecbd439 cb/openbsd-allows-reading-directory later to maint).
-   (merge b6bdc2a0f5 cb/t5004-empty-tar-archive-fix later to maint).
-   (merge 82cbc8cde2 cb/test-lint-cp-a later to maint).
-
- * Lines that begin with a certain keyword that come over the wire, as
-   well as lines that consist only of one of these keywords, ought to
-   be painted in color for easier eyeballing, but the latter was
-   broken ever since the feature was introduced in 2.19, which has
-   been corrected.
-   (merge 1f67290450 hn/highlight-sideband-keywords later to maint).
-
- * "git log -G<regex>" looked for a hunk in the "git log -p" patch
-   output that contained a string that matches the given pattern.
-   Optimize this code to ignore binary files, which by default will
-   not show any hunk that would match any pattern (unless textconv or
-   the --text option is in effect, that is).
-   (merge e0e7cb8080 tb/log-G-binary later to maint).
-
- * "git submodule update" ought to use a single job unless asked, but
-   by mistake used multiple jobs, which has been fixed.
-   (merge e3a9d1aca9 sb/submodule-fetchjobs-default-to-one later to maint).
-
- * "git stripspace" should be usable outside a git repository, but
-   under the "-s" or "-c" mode, it didn't.
-   (merge 957da75802 jn/stripspace-wo-repository later to maint).
-
- * Some of the documentation pages formatted incorrectly with
-   Asciidoctor, which have been fixed.
-   (merge b62eb1d2f4 ma/asciidoctor later to maint).
-
- * The core.worktree setting in a submodule repository should not be
-   pointing at a directory when the submodule loses its working tree
-   (e.g. getting deinit'ed), but the code did not properly maintain
-   this invariant.
-
- * With zsh, "git cmd path<TAB>" was completed to "git cmd path name"
-   when the completed path has a special character like SP in it,
-   without any attempt to keep "path name" a single filename.  This
-   has been fixed to complete it to "git cmd path\ name" just like
-   Bash completion does.
-
- * The test suite tried to see if it is run under bash, but the check
-   itself failed under some other implementations of shell (notably
-   under NetBSD).  This has been corrected.
-   (merge 54ea72f09c sg/test-bash-version-fix later to maint).
-
- * "git gc" and "git repack" did not close the open packfiles that
-   they found unneeded before removing them, which didn't work on a
-   platform incapable of removing an open file.  This has been
-   corrected.
-   (merge 5bdece0d70 js/gc-repack-close-before-remove later to maint).
-
- * The code to drive GIT_EXTERNAL_DIFF command relied on the string
-   returned from getenv() to be non-volatile, which is not true, that
-   has been corrected.
-   (merge 6776a84dae kg/external-diff-save-env later to maint).
-
- * There were many places the code relied on the string returned from
-   getenv() to be non-volatile, which is not true, that have been
-   corrected.
-   (merge 0da0e9268b jk/save-getenv-result later to maint).
-
- * The v2 upload-pack protocol implementation failed to honor
-   hidden-ref configuration, which has been corrected.
-   (merge e20b4192a3 jk/proto-v2-hidden-refs-fix later to maint).
-
- * "git fetch --recurse-submodules" may not fetch the necessary commit
-   that is bound to the superproject, which is getting corrected.
-   (merge be76c21282 sb/submodule-recursive-fetch-gets-the-tip later to maint).
-
- * "git rebase" internally runs "checkout" to switch between branches,
-   and the command used to call the post-checkout hook, but the
-   reimplementation stopped doing so, which is getting fixed.
-
- * "git add -e" got confused when the change it wants to let the user
-   edit is smaller than the previous change that was left over in a
-   temporary file.
-   (merge fa6f225e01 js/add-e-clear-patch-before-stating later to maint).
-
- * "git p4" failed to update a shelved change when there were moved
-   files, which has been corrected.
-   (merge 7a10946ab9 ld/git-p4-shelve-update-fix later to maint).
-
- * The codepath to read from the commit-graph file attempted to read
-   past the end of it when the file's table-of-contents was corrupt.
-
- * The compat/obstack code had casts that -Wcast-function-type
-   compilation option found questionable.
-   (merge 764473d257 sg/obstack-cast-function-type-fix later to maint).
-
- * An obvious typo in an assertion error message has been fixed.
-   (merge 3c27e2e059 cc/test-ref-store-typofix later to maint).
-
- * In Git for Windows, "git clone \\server\share\path" etc. that uses
-   UNC paths from command line had bad interaction with its shell
-   emulation.
-
- * "git add --ignore-errors" did not work as advertised and instead
-   worked as an unintended synonym for "git add --renormalize", which
-   has been fixed.
-   (merge e2c2a37545 jk/add-ignore-errors-bit-assignment-fix later to maint).
-
- * On a case-insensitive filesystem, we failed to compare the part of
-   the path that is above the worktree directory in an absolute
-   pathname, which has been corrected.
-
- * Asking "git check-attr" about a macro (e.g. "binary") on a specific
-   path did not work correctly, even though "git check-attr -a" listed
-   such a macro correctly.  This has been corrected.
-   (merge 7b95849be4 jk/attr-macro-fix later to maint).
-
- * "git pack-objects" incorrectly used uninitialized mutex, which has
-   been corrected.
-   (merge edb673cf10 ph/pack-objects-mutex-fix later to maint).
-
- * "git checkout -b <new> [HEAD]" to create a new branch from the
-   current commit and check it out ought to be a no-op in the index
-   and the working tree in normal cases, but there are corner cases
-   that do require updates to the index and the working tree.  Running
-   it immediately after "git clone --no-checkout" is one of these
-   cases that an earlier optimization kicked in incorrectly, which has
-   been fixed.
-   (merge 8424bfd45b bp/checkout-new-branch-optim later to maint).
-
- * "git diff --color-moved --cc --stat -p" did not work well due to
-   funny interaction between a bug in color-moved and the rest, which
-   has been fixed.
-   (merge dac03b5518 jk/diff-cc-stat-fixes later to maint).
-
- * When GIT_SEQUENCE_EDITOR is set, the command was incorrectly
-   started when modes of "git rebase" that implicitly uses the
-   machinery for the interactive rebase are run, which has been
-   corrected.
-   (merge 891d4a0313 pw/no-editor-in-rebase-i-implicit later to maint).
-
- * The commit-graph facility did not work when in-core objects that
-   are promoted from unknown type to commit (e.g. a commit that is
-   accessed via a tag that refers to it) were involved, which has been
-   corrected.
-   (merge 4468d4435c sg/object-as-type-commit-graph-fix later to maint).
-
- * "git fetch" output cleanup.
-   (merge dc40b24df4 nd/fetch-compact-update later to maint).
-
- * "git cat-file --batch" reported a dangling symbolic link by
-   mistake, when it wanted to report that a given name is ambiguous.
-
- * Documentation around core.crlf has been updated.
-   (merge c9446f0504 jk/autocrlf-overrides-eol-doc later to maint).
-
- * The documentation of "git commit-tree" said that the command
-   understands "--gpg-sign" in addition to "-S", but the command line
-   parser did not know about the longhand, which has been corrected.
-
- * "git rebase -x $cmd" did not reject multi-line command, even though
-   the command is incapable of handling such a command.  It now is
-   rejected upfront.
-   (merge c762aada1a pw/rebase-x-sanity-check later to maint).
-
- * Output from "git help" was not correctly aligned, which has been
-   fixed.
-   (merge 6195a76da4 nd/help-align-command-desc later to maint).
-
- * The "git submodule summary" subcommand showed shortened commit
-   object names by mechanically truncating them at 7-hexdigit, which
-   has been improved to let "rev-parse --short" scale the length of
-   the abbreviation with the size of the repository.
-   (merge 0586a438f6 sh/submodule-summary-abbrev-fix later to maint).
-
- * The way the OSX build jobs updates its build environment used the
-   "--quiet" option to "brew update" command, but it wasn't all that
-   quiet to be useful.  The use of the option has been replaced with
-   an explicit redirection to the /dev/null (which incidentally would
-   have worked around a breakage by recent updates to homebrew, which
-   has fixed itself already).
-   (merge a1ccaedd62 sg/travis-osx-brew-breakage-workaround later to maint).
-
- * "git --work-tree=$there --git-dir=$here describe --dirty" did not
-   work correctly as it did not pay attention to the location of the
-   worktree specified by the user by mistake, which has been
-   corrected.
-   (merge c801170b0c ss/describe-dirty-in-the-right-directory later to maint).
-
- * "git fetch" over protocol v2 that needs to make a second connection
-   to backfill tags did not clear a variable that holds shallow
-   repository information correctly, leading to an access of freed
-   piece of memory.
-
- * Some errors from the other side coming over smart HTTP transport
-   were not noticed, which has been corrected.
-
- * Code cleanup, docfix, build fix, etc.
-   (merge 89ba9a79ae hb/t0061-dot-in-path-fix later to maint).
-   (merge d173e799ea sb/diff-color-moved-config-option-fixup later to maint).
-   (merge a8f5a59067 en/directory-renames-nothanks-doc-update later to maint).
-   (merge ec36c42a63 nd/indentation-fix later to maint).
-   (merge f116ee21cd do/gitweb-strict-export-conf-doc later to maint).
-   (merge 112ea42663 fd/gitweb-snapshot-conf-doc-fix later to maint).
-   (merge 1cadad6f65 tb/use-common-win32-pathfuncs-on-cygwin later to maint).
-   (merge 57e9dcaa65 km/rebase-doc-typofix later to maint).
-   (merge b8b4cb27e6 ds/gc-doc-typofix later to maint).
-   (merge 3b3357626e nd/style-opening-brace later to maint).
-   (merge b4583d5595 es/doc-worktree-guessremote-config later to maint).
-   (merge cce99cd8c6 ds/commit-graph-assert-missing-parents later to maint).
-   (merge 0650614982 cy/completion-typofix later to maint).
-   (merge 6881925ef5 rs/sha1-file-close-mapped-file-on-error later to maint).
-   (merge bd8d6f0def en/show-ref-doc-fix later to maint).
-   (merge 1747125e2c cc/partial-clone-doc-typofix later to maint).
-   (merge e01378753d cc/fetch-error-message-fix later to maint).
-   (merge 54e8c11215 jk/remote-insteadof-cleanup later to maint).
-   (merge d609615f48 js/test-git-installed later to maint).
-   (merge ba170517be ja/doc-style-fix later to maint).
-   (merge 86fb1c4e77 km/init-doc-typofix later to maint).
-   (merge 5cfd4a9d10 nd/commit-doc later to maint).
-   (merge 9fce19a431 ab/diff-tree-doc-fix later to maint).
-   (merge 2e285e7803 tz/gpg-test-fix later to maint).
-   (merge 5427de960b kl/pretty-doc-markup-fix later to maint).
-   (merge 3815f64b0d js/mingw-host-cpu later to maint).
-   (merge 5fe81438b5 rj/sequencer-sign-off-header-static later to maint).
-   (merge 18a4f6be6b nd/fileno-may-be-macro later to maint).
-   (merge 99e9ab54ab kd/t0028-octal-del-is-377-not-777 later to maint).
+On Sun, Feb 17, 2019 at 1:06 AM Yong Wu <yong.wu@mediatek.com> wrote:
+>
+> This patch adds decriptions for mt8183 IOMMU and SMI.
+>
+> mt8183 has only one M4U like mt8173 and is also MTK IOMMU gen2 which
+> uses ARM Short-Descriptor translation table format.
+>
+> The mt8183 M4U-SMI HW diagram is as below:
+>
+>                           EMI
+>                            |
+>                           M4U
+>                            |
+>                        ----------
+>                        |        |
+>                    gals0-rx   gals1-rx
+>                        |        |
+>                        |        |
+>                    gals0-tx   gals1-tx
+>                        |        |
+>                       ------------
+>                        SMI Common
+>                       ------------
+>                            |
+>   +-----+-----+--------+-----+-----+-------+-------+
+>   |     |     |        |     |     |       |       |
+>   |     |  gals-rx  gals-rx  |   gals-rx gals-rx gals-rx
+>   |     |     |        |     |     |       |       |
+>   |     |     |        |     |     |       |       |
+>   |     |  gals-tx  gals-tx  |   gals-tx gals-tx gals-tx
+>   |     |     |        |     |     |       |       |
+> larb0 larb1  IPU0    IPU1  larb4  larb5  larb6    CCU
+> disp  vdec   img     cam    venc   img    cam
+>
+> All the connections are HW fixed, SW can NOT adjust it.
+>
+> Compared with mt8173, we add a GALS(Global Async Local Sync) module
+> between SMI-common and M4U, and additional GALS between larb2/3/5/6
+> and SMI-common. GALS can help synchronize for the modules in different
+> clock frequency, it can be seen as a "asynchronous fifo".
+>
+> GALS can only help transfer the command/data while it doesn't have
+> the configuring register, thus it has the special "smi" clock and it
+> doesn't have the "apb" clock. From the diagram above, we add "gals0"
+> and "gals1" clocks for smi-common and add a "gals" clock for smi-larb.
+>
+> From the diagram above, IPU0/IPU1(Image Processor Unit) and CCU(Camera
+> Control Unit) is connected with smi-common directly, we can take them
+> as "larb2", "larb3" and "larb7", and their register spaces are
+> different with the normal larb.
+>
+> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+
+Reviewed-by: Evan Green <evgreen@chromium.org>
