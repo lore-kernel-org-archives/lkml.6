@@ -2,199 +2,170 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 035CCC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 05:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B7EC10F00
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 05:42:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B246E217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 05:41:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C49E7217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 05:42:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k8RP/xCU"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tjAdkHm8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726054AbfBSFls (ORCPT
+        id S1726355AbfBSFmK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 00:41:48 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40991 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbfBSFlr (ORCPT
+        Tue, 19 Feb 2019 00:42:10 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42926 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726092AbfBSFmK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 00:41:47 -0500
-Received: by mail-pg1-f195.google.com with SMTP id m1so9540665pgq.8
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 21:41:47 -0800 (PST)
+        Tue, 19 Feb 2019 00:42:10 -0500
+Received: by mail-lf1-f67.google.com with SMTP id l10so13954255lfh.9
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 21:42:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:subject:to:cc:references:in-reply-to:mime-version
-         :user-agent:message-id:content-transfer-encoding;
-        bh=+EU00narZM+oAtb9nqVNjy8vCYE2Vcg6Zve0xM2lu1U=;
-        b=k8RP/xCUxV5xtkryv/jf100lW4O5XaRbWAMk287JpR5LmMSL1lZAChVuWUoJxPOD3L
-         hVov2BLsWjOMpP6nm4uVflQ+ATADIyGsuNwlawetV47BcEQ6zfD5kCgmH2hIQq04hYpZ
-         tJkMCDsjVcHEXR9EKVOC+GJvBbJM/UNQmZQGnTMM5HX7F+TPT/bB4naLtaS4abrs7RCN
-         ZFL+bzXRxyH3MBl62uTO9zC9fr2Co2LZQQYgM9FWtTWIuz+26nt4iBMsxPw2SXv6Wmkl
-         Cojtg8EKS5le5bt280Xkwd7XVAB+GkykE9UrnBhMw31oI+5k6rLUd7HaEOu90FEj3Pws
-         Vgkg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=CsTexNJ+0nszifNJ0CLUQEXYJMDa8ijraZXB55MIxq4=;
+        b=tjAdkHm81bFcK6VhwQSOpcdfux+LhvwlcifjjiOGlczbGNKACZPdt+bSEIVesWj5Bd
+         vr8ma/O8/v2W2bZxPzt5HvLaSIKVFf/S9XjUnGn/iHCa/VcznF5+ZjPkMamI4ETQjB6m
+         GdqpbNoqjUh83asf9hbzuWsgtKLI7m9F9ZvGtPd4xb97Hr5BXXXjLvmSDwewG37cp2kB
+         n9AU2bXS6bYtYuYd1DXCtU+rGdL7nO8cyilzKkMS3y74nE2eIjmsoYCQaNdvOmbfx4Uq
+         hz6mLiKZqlUL1ECwvDsMG/tsLw9fusr55+3gXD3iDZL8kjVZXbKMDUc5oHAWjSnFSZui
+         Y2Xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
-         :mime-version:user-agent:message-id:content-transfer-encoding;
-        bh=+EU00narZM+oAtb9nqVNjy8vCYE2Vcg6Zve0xM2lu1U=;
-        b=ZWcRrIxhAMlY8cTAokZDsp4v0wmUIZAOKc8YXkShnuD8yDu6uLhLQWuV4E9gLA/Wno
-         frpF4Oxvpps38jIwLliW5yupAjc0dqYDOnrt3iF7fDBr9BnuuCRoZKGz1wPGEBgHg/oF
-         GXB0oOCdnuKWW/kwdhLagzyuJ5j7iGPLyMeQUzJMOkzwRgpeA86qoxK73MJF4BNcZJUi
-         /ZCH/0TTve6MB7HWuOCbtUjeXZn+kgcEhU/2joFB2Zcos93JX7+z+Au7OebSN+vJeNWA
-         VmSBeWhTTbj4KTdY4r6i6LsguQXLuMhlpPurHws8zStb7GCpoui8bq2VpYTqctDvztZR
-         pJvw==
-X-Gm-Message-State: AHQUAuYWYh8Cszz/wH5r5CfSjsgIjTYQ4EV0Zy5YCmzfs+EqCGwbgTsh
-        gvZZjUl4iVOi0UXoMVoRS5Q=
-X-Google-Smtp-Source: AHgI3IYKIZExQR5r3/aPnC9yZU1oFOJPqaz46Q01uOmBSGih1YxF52Jq80uYH8490YaGWWQstq/MpQ==
-X-Received: by 2002:a63:698a:: with SMTP id e132mr22420032pgc.136.1550554906838;
-        Mon, 18 Feb 2019 21:41:46 -0800 (PST)
-Received: from localhost ([61.69.157.156])
-        by smtp.gmail.com with ESMTPSA id v15sm14400741pfa.75.2019.02.18.21.41.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Feb 2019 21:41:46 -0800 (PST)
-Date:   Tue, 19 Feb 2019 15:41:38 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: [RFC PATCH v1] powerpc/accounting: do not account system time on
- transition to user.
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <a952f14712b90f182c0fcace434b2a0e9f21ed9f.1549636481.git.christophe.leroy@c-s.fr>
-In-Reply-To: <a952f14712b90f182c0fcace434b2a0e9f21ed9f.1549636481.git.christophe.leroy@c-s.fr>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=CsTexNJ+0nszifNJ0CLUQEXYJMDa8ijraZXB55MIxq4=;
+        b=OvFqoZXoT7NP0dXw50qwvnyEpK8oqSeXt10QjHXwXKJ9H33kHmFsVsPE76LvTjEMZR
+         bWbh5OhmLDLpDq5G8+3ppWSoawYX47TYXoySEcuiHKlbHOrQ2oX66spJXPtAc+ewqdCD
+         yExQV8f3PMiPUtpABNHmV7H/CeVfBfnXNCYx1WamEiWgpGzwtPrZEY0O1dmKDRmkS+ud
+         +/Maifn9dFzBuX/lef0rl7wDIKFCS8yVYAqKENkBUAIyJmx12VKT97UfUeRh5/yoIF2x
+         NKskEqReklWVPFbZ+SfvbjF0BCOum/3+i0TRCjSwanA6qovZ5WMN7Giunx74KPQvDKMH
+         hYIw==
+X-Gm-Message-State: AHQUAubvmokj4EaP2NT6VGPqQfPcJFhYv11LrisS64gRITUzQXZWklEy
+        1/X8EvZqVqP21drye7770Q3zSEDd0lMwUxQnRJIkNg==
+X-Google-Smtp-Source: AHgI3IbVLgu5ktDQruSx/tdl4EhdI1+7Ft0I7Z7GUNGIS0XC2FRsuiT9qd6/gVMu/XlyP4VTDdXx0AumGwXZNYfONTc=
+X-Received: by 2002:a19:c111:: with SMTP id r17mr7393263lff.60.1550554928230;
+ Mon, 18 Feb 2019 21:42:08 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: astroid/0.14.0 (https://github.com/astroidmail/astroid)
-Message-Id: <1550554276.8eb89h3g4q.astroid@bobo.none>
-Content-Type: text/plain; charset=utf-8
+References: <20190218133459.758004711@linuxfoundation.org>
+In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 19 Feb 2019 11:11:55 +0530
+Message-ID: <CA+G9fYtHBoQwt1=d_s=UcaYpaeUQMbZ-atzNxFPtV2K68cUWdQ@mail.gmail.com>
+Subject: Re: [PATCH 4.19 00/85] 4.19.24-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy's on February 9, 2019 12:40 am:
-> Time spent in kernel mode don't need to be accounted on transition
-> to user space. As far as the time spent in user is known, it
-> is possible to calculate the time spent in kernel by substracting
-> the time spent in user.
->=20
-> To do so, this patch modifies vtime_delta() to substract the
-> time spent in user since the last call to vtime_delta().
->=20
-> This patch gives a 2% improvment of null_syscall() selftest on a 83xx.
->=20
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+On Mon, 18 Feb 2019 at 19:21, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.19.24 release.
+> There are 85 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed Feb 20 13:34:30 UTC 2019.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.19.24-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.19.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-This looks like a clever little optimization, although I don't know
-this time accounting code very well.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-> ---
-> But surprisingly, this patch degrades the null_syscall selftest by 20% on=
- the 8xx. Any idea of the reason ?
+Summary
+------------------------------------------------------------------------
 
-I don't know microarchitecture of any of those CPUs I'm afraid.
-On the 64s CPUs, mftb is what hurts.
+kernel: 4.19.24-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.19.y
+git commit: e187e9146a190d89cf5c3e63a0792fdbad05f6c9
+git describe: v4.19.23-86-ge187e9146a19
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
+ild/v4.19.23-86-ge187e9146a19
 
->=20
->  arch/powerpc/include/asm/accounting.h | 1 +
->  arch/powerpc/include/asm/ppc_asm.h    | 8 +-------
->  arch/powerpc/kernel/asm-offsets.c     | 8 ++------
->  arch/powerpc/kernel/time.c            | 4 +++-
->  4 files changed, 7 insertions(+), 14 deletions(-)
->=20
-> diff --git a/arch/powerpc/include/asm/accounting.h b/arch/powerpc/include=
-/asm/accounting.h
-> index c607c5d835cc..2f1ff5f9fd7a 100644
-> --- a/arch/powerpc/include/asm/accounting.h
-> +++ b/arch/powerpc/include/asm/accounting.h
-> @@ -27,6 +27,7 @@ struct cpu_accounting_data {
->  	/* Internal counters */
->  	unsigned long starttime;	/* TB value snapshot */
->  	unsigned long starttime_user;	/* TB value on exit to usermode */
-> +	unsigned long utime_asm;
->  #ifdef CONFIG_ARCH_HAS_SCALED_CPUTIME
->  	unsigned long startspurr;	/* SPURR value snapshot */
->  	unsigned long utime_sspurr;	/* ->user_time when ->startspurr set */
-> diff --git a/arch/powerpc/include/asm/ppc_asm.h b/arch/powerpc/include/as=
-m/ppc_asm.h
-> index e0637730a8e7..be17d570d484 100644
-> --- a/arch/powerpc/include/asm/ppc_asm.h
-> +++ b/arch/powerpc/include/asm/ppc_asm.h
-> @@ -28,9 +28,8 @@
->  #define ACCOUNT_STOLEN_TIME
->  #else
->  #define ACCOUNT_CPU_USER_ENTRY(ptr, ra, rb)				\
-> -	MFTB(ra);			/* get timebase */		\
->  	PPC_LL	rb, ACCOUNT_STARTTIME_USER(ptr);			\
-> -	PPC_STL	ra, ACCOUNT_STARTTIME(ptr);				\
-> +	MFTB(ra);			/* get timebase */		\
->  	subf	rb,rb,ra;		/* subtract start value */	\
->  	PPC_LL	ra, ACCOUNT_USER_TIME(ptr);				\
->  	add	ra,ra,rb;		/* add on to user time */	\
-> @@ -38,12 +37,7 @@
-> =20
->  #define ACCOUNT_CPU_USER_EXIT(ptr, ra, rb)				\
->  	MFTB(ra);			/* get timebase */		\
-> -	PPC_LL	rb, ACCOUNT_STARTTIME(ptr);				\
->  	PPC_STL	ra, ACCOUNT_STARTTIME_USER(ptr);			\
-> -	subf	rb,rb,ra;		/* subtract start value */	\
-> -	PPC_LL	ra, ACCOUNT_SYSTEM_TIME(ptr);				\
-> -	add	ra,ra,rb;		/* add on to system time */	\
-> -	PPC_STL	ra, ACCOUNT_SYSTEM_TIME(ptr)
-> =20
->  #ifdef CONFIG_PPC_SPLPAR
->  #define ACCOUNT_STOLEN_TIME						\
-> diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-=
-offsets.c
-> index 7a1b93c5af63..f2ba7735f56f 100644
-> --- a/arch/powerpc/kernel/asm-offsets.c
-> +++ b/arch/powerpc/kernel/asm-offsets.c
-> @@ -260,19 +260,15 @@ int main(void)
->  	OFFSET(PACAHWCPUID, paca_struct, hw_cpu_id);
->  	OFFSET(PACAKEXECSTATE, paca_struct, kexec_state);
->  	OFFSET(PACA_DSCR_DEFAULT, paca_struct, dscr_default);
-> -	OFFSET(ACCOUNT_STARTTIME, paca_struct, accounting.starttime);
->  	OFFSET(ACCOUNT_STARTTIME_USER, paca_struct, accounting.starttime_user);
-> -	OFFSET(ACCOUNT_USER_TIME, paca_struct, accounting.utime);
-> -	OFFSET(ACCOUNT_SYSTEM_TIME, paca_struct, accounting.stime);
-> +	OFFSET(ACCOUNT_USER_TIME, paca_struct, accounting.utime_asm);
->  	OFFSET(PACA_TRAP_SAVE, paca_struct, trap_save);
->  	OFFSET(PACA_NAPSTATELOST, paca_struct, nap_state_lost);
->  	OFFSET(PACA_SPRG_VDSO, paca_struct, sprg_vdso);
->  #else /* CONFIG_PPC64 */
->  #ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
-> -	OFFSET(ACCOUNT_STARTTIME, thread_info, accounting.starttime);
->  	OFFSET(ACCOUNT_STARTTIME_USER, thread_info, accounting.starttime_user);
-> -	OFFSET(ACCOUNT_USER_TIME, thread_info, accounting.utime);
-> -	OFFSET(ACCOUNT_SYSTEM_TIME, thread_info, accounting.stime);
-> +	OFFSET(ACCOUNT_USER_TIME, thread_info, accounting.utime_asm);
->  #endif
->  #endif /* CONFIG_PPC64 */
-> =20
-> diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
-> index bc0503ef9c9c..79420643b45f 100644
-> --- a/arch/powerpc/kernel/time.c
-> +++ b/arch/powerpc/kernel/time.c
-> @@ -331,8 +331,10 @@ static unsigned long vtime_delta(struct task_struct =
-*tsk,
->  	WARN_ON_ONCE(!irqs_disabled());
-> =20
->  	now =3D mftb();
-> -	stime =3D now - acct->starttime;
-> +	stime =3D now - acct->starttime - acct->utime_asm;
->  	acct->starttime =3D now;
-> +	acct->utime +=3D acct->utime_asm;
-> +	acct->utime_asm =3D 0;
-> =20
->  	*stime_scaled =3D vtime_delta_scaled(acct, now, stime);
-> =20
-> --=20
-> 2.13.3
->=20
->=20
-=
+
+No regressions (compared to build v4.19.23)
+
+No fixes (compared to build v4.19.23)
+
+Ran 21318 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* spectre-meltdown-checker-test
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
