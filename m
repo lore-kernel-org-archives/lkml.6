@@ -2,122 +2,81 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D6A3C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 00:30:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7583C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 00:34:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2542021848
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 00:30:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6306C21736
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 00:34:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="k21QWivp"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jCU1lfUG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732398AbfBSAap (ORCPT
+        id S1728077AbfBSAed (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 19:30:45 -0500
-Received: from ozlabs.org ([203.11.71.1]:49577 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726220AbfBSAao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 19:30:44 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 443M8f1PH6z9s6w;
-        Tue, 19 Feb 2019 11:30:41 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1550536242;
-        bh=a465LHsDNmSaR6xgZ3/ZT+J4+ALAxXNnonMuodeftQ0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=k21QWivpaXPHxcthjFF1m8miONZiSpsRjPU1CkZ+WorRKtNq0CN7wWhDVvlUjIhYg
-         vP+dzgzWQPSnfpgLrRbFSTfStRKS6rb70ATY+xnscqqFpJicw2AaPkbsDCgGYHghM8
-         g4EjT6nxNeXhmra78P8Y3yELC9reF2vDHAP9YvRyJcxEvCrsIgWY0PemtdF2qEYQ/E
-         x88ecgLQu4Dx/pdnis301X14Tq2Sd78PmzJsEbBgeG2vWaoutj8CrtOnaw+F9vfZPc
-         fwpC9pSJFUfehMPdInqu36ff+I7pcchWMlpMe6NGroWcLOplEY3rAbRKeTVudYno7j
-         bqsBr+7SmrFgw==
-Date:   Tue, 19 Feb 2019 11:30:41 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eric Dumazet <edumazet@google.com>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20190219113041.14ac62ec@canb.auug.org.au>
+        Mon, 18 Feb 2019 19:34:33 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:55582 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726039AbfBSAec (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 19:34:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:To:From:Sender:Reply-To:Cc:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MuSagUH5XPEJCwh3elDPVuxbyPPp7iyK4WfM21b8kCM=; b=jCU1lfUGNYi6QWT28N6jUS82P
+        iSX2/NoVZVaojzE1rJLuq3vZra11oaOMfWDCCVjq65qRmIWfDUMU31BW6a7uwPXv9QIOWKzHfRgN/
+        zyjqfHl9kFUasjrVXDbTQonmUH4+IzrQ2RFyZW1KDxUSKH9YVSFSiqsa8lnl6raSx0rP4ateVxZnR
+        qf1h+RHJQvfdbGzkmNV0UAXNMEPFhXP4DFTiOhAHbIHOgG3js9HqfE0OmB6/E0bOjS6C253He50xJ
+        Pz3jaXCUXYPojg+OCWYeWhrQzgZwGVjyXmYltQs/OtU1g81rzJCgIm41vDA4k/IVSDU5MIjaFf0ER
+        0Lb34n4cg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gvtMl-0003Nc-B9; Tue, 19 Feb 2019 00:34:31 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH] linux/kernel.h: fix reST markup warning for roundup
+Message-ID: <e79e49d4-4a7d-48c6-afdf-0f958f423f62@infradead.org>
+Date:   Mon, 18 Feb 2019 16:34:26 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5ElCMpKabLiTj9k5rBR2gWg"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/5ElCMpKabLiTj9k5rBR2gWg
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Hi all,
+Fix reST inline markup warning:
 
-Today's linux-next merge of the net-next tree got a conflict in:
+../include/linux/kernel.h:137: WARNING: Inline interpreted text or phrase reference start-string without end-string.
 
-  net/ipv4/tcp.c
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+---
+ include/linux/kernel.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-between commit:
+--- linux-next-20190218.orig/include/linux/kernel.h
++++ linux-next-20190218/include/linux/kernel.h
+@@ -108,7 +108,7 @@
+  * Rounds @x up to next multiple of @y. If @y will always be a power
+  * of 2, consider using the faster round_up().
+  *
+- * The `const' here prevents gcc-3.3 from calling __divdi3
++ * The ``const`` here prevents gcc-3.3 from calling __divdi3
+  */
+ #define roundup(x, y) (					\
+ {							\
 
-  04c03114be82 ("tcp: clear icsk_backoff in tcp_write_queue_purge()")
 
-from the net tree and commit:
-
-  3a9a57f63794 ("tcp: move snd_cwnd & snd_cwnd_cnt init to tcp_disconnect()=
-")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc net/ipv4/tcp.c
-index cf3c5095c10e,cab6b2f2f61d..000000000000
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@@ -2577,9 -2595,11 +2596,10 @@@ int tcp_disconnect(struct sock *sk, in
-  	tp->write_seq +=3D tp->max_window + 2;
-  	if (tp->write_seq =3D=3D 0)
-  		tp->write_seq =3D 1;
-- 	tp->snd_cwnd =3D 2;
- -	icsk->icsk_backoff =3D 0;
-  	icsk->icsk_probes_out =3D 0;
-+ 	icsk->icsk_rto =3D TCP_TIMEOUT_INIT;
-  	tp->snd_ssthresh =3D TCP_INFINITE_SSTHRESH;
-+ 	tp->snd_cwnd =3D TCP_INIT_CWND;
-  	tp->snd_cwnd_cnt =3D 0;
-  	tp->window_clamp =3D 0;
-  	tp->delivered_ce =3D 0;
-
---Sig_/5ElCMpKabLiTj9k5rBR2gWg
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxrTjEACgkQAVBC80lX
-0GykxQgAhmkUZF9T2XBiTBPoNGpQddPNWswwqQNAdux7QXADtx8d/PxYr2WIwyp2
-5yHeL9px085+nHv743KIIqX2kiEwQfGpz++HRD4oKnGdSp7GpW6ENbFa/iFqf6Ph
-XFoayY07RU0nXhW7FsxrcGeLR+6kR2xLf1QzUwLm9nFPkVqcJhTrHWtWpjSOrdSl
-JC6z/r2E+5EZa93aD65T8oIAXtp7YdKD2px5tpNykzmlpVR6GhyXSsmNQM4RdUm0
-uxBVsDWuekxPvFoFsWt4+49Zb4/G1U8oDzcQ7I0nqu7J7kyNRYmj8KtHDEaYlDZ6
-lCvica66mdZu66Z2KMDAGvZbPIY4rg==
-=j0KX
------END PGP SIGNATURE-----
-
---Sig_/5ElCMpKabLiTj9k5rBR2gWg--
