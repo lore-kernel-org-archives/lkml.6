@@ -2,120 +2,119 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A791AC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:03:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 529E7C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:05:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77C6B2177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:03:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EhEG3ZBd"
+	by mail.kernel.org (Postfix) with ESMTP id 28A522177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:05:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726152AbfBSDDw (ORCPT
+        id S1725379AbfBSDFE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 22:03:52 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46378 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725308AbfBSDDw (ORCPT
+        Mon, 18 Feb 2019 22:05:04 -0500
+Received: from mail-it1-f200.google.com ([209.85.166.200]:53965 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725809AbfBSDFE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 22:03:52 -0500
-Received: by mail-pf1-f194.google.com with SMTP id g6so9476181pfh.13
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 19:03:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AUxYkpUOGVLojnBzMownAJmT4JzMv+qBE9F7iqL0iVA=;
-        b=EhEG3ZBdr5KMPHwlgs8yf6x65xyo7j/jwyEiUjomuC3LRBxryAu3H7JUlwydWQ0UWW
-         S3UVaafT5AflEbLmT4Ey8bQ4aBKBRL+yE57z0BvDyIf7/26nDamfkGGRRtSEw3uJ8I9s
-         QzqXzcvEZkmkjZfDViOrjhaRVUhmY6nWRsvWRS3Ajo40X98mACI5DtIR3cCrylhu8lW0
-         s76omqRGoNgOqhsqFXRP9BVdsQAXvS78nsvb9q86ka3nbO/aIGF9bHRB/+VYcrPn5Nhd
-         Jh0RYJV5n3pdsNtaNItezixpGBHTtV6uBL4JoT0v2UIJJaxTOYmQmH7bLor7IaMp2U6i
-         PYiQ==
+        Mon, 18 Feb 2019 22:05:04 -0500
+Received: by mail-it1-f200.google.com with SMTP id i65so2189782ite.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 19:05:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AUxYkpUOGVLojnBzMownAJmT4JzMv+qBE9F7iqL0iVA=;
-        b=Me2w5jIXsRrSNxSVi6KrPqdSMyhQNeiif+DUmG/rhHPbcz/nBdUM6h8l1Zcy7CInjf
-         dTHgnQseXr3kKqCju7wXloKZI/JvVTg7fwXBgv51dJ0ylOB4p2M8QgbkTtx9mJflQDmy
-         F3EjI984OpH6SCcYrCfxzHuiO3onjxA7C/1IqEuIhaIw9m0rOxVPX95M5Tl7kJDvJ7Bg
-         u5YvDJgQMNZH1H8s0kVI5173Duatee19UrdLWoWRaLP/TBg8T3ZNMOaBO2oTmdMikjSY
-         uoEiP0d3s9RhWxzrc6D6jMTy6AS3WpXuI1OHUtIDc9f/k1X1Cec3Gm89P7SNX0NxyiTG
-         C+PA==
-X-Gm-Message-State: AHQUAuYzf9deYgncoGSrgOUmZn4OVZDT2Dv/N6/iXhHyGLoAH2GXVBp6
-        h/VzL7tnq0do+pm7tBJbYHs=
-X-Google-Smtp-Source: AHgI3IYFEzvQmV2+NSDG8NO+PzEHwvueCAJyYDiz9a4WXoTm+s5pXsI7ZOxGN57Yj1V/BCwzMCP+kg==
-X-Received: by 2002:a62:bd17:: with SMTP id a23mr26929404pff.233.1550545431216;
-        Mon, 18 Feb 2019 19:03:51 -0800 (PST)
-Received: from localhost ([175.223.35.193])
-        by smtp.gmail.com with ESMTPSA id e20sm18309778pgg.62.2019.02.18.19.03.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Feb 2019 19:03:50 -0800 (PST)
-Date:   Tue, 19 Feb 2019 12:03:46 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 9/9] vsprintf: Avoid confusion between invalid address
- and value
-Message-ID: <20190219030300.GA640@jagdpanzerIV>
-References: <20190208152310.29531-1-pmladek@suse.com>
- <20190208152310.29531-10-pmladek@suse.com>
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=M+mkyJ/hGQngn7YX1uDc8pbk4lHG23PAGDCXhbQHtUU=;
+        b=nMinO+40XN3sPxVCGTMKUXqKxOyKRoV6K5YYnJyZb4CiFYm0Amw2bLPmuG3ltxIFW6
+         QiYqqM4LEMtDqKzBJ73xEO3+YGjvaU0Lf8lJVIy1LmNTK6899A8Et5vY/bFSCKEphNoP
+         iCGQBAF6lNeK3IZnoTeoeEn0dkji1lJjab5qaQG1tGtSueVZcUf9fYh1rbV/sDf+i5b8
+         MQFYLO29I/nJPniMJ+5GuwtfDySLws5o0Eccrxk2Z/vFesHzKGsvCuC83jKm3jdrWbJN
+         3ja1vTjbszDKrR1JKYrJ2B960GsDfiYa7acHXzSIwFsmvPcOctmd0smEo4ApFdEQzIGd
+         Zitw==
+X-Gm-Message-State: AHQUAubtmiBSjWNo5ZsvGQodX8cE5CuvWrK+69IOd04wPQwOaA4n8xgH
+        hOkbi7abjZkF5P5F27IQoY3tb8q6x40J8Y811nYaUpnEaZbx
+X-Google-Smtp-Source: AHgI3IZ5Enc6Ujqe+3v1CWhH6vAIeRrXSVIB4QEfJGeGVNJx+YG5lnvzyNaUveaL6JeUIMj69NiB3zmhHurXOTkWFd23QC4aOkTx
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190208152310.29531-10-pmladek@suse.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Received: by 2002:a24:4d8e:: with SMTP id l136mr1215448itb.5.1550545503344;
+ Mon, 18 Feb 2019 19:05:03 -0800 (PST)
+Date:   Mon, 18 Feb 2019 19:05:03 -0800
+In-Reply-To: <000000000000c5745b0573d62311@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ef6010058236812f@google.com>
+Subject: Re: WARNING in xfrm_policy_fini
+From:   syzbot <syzbot+9bce6db6c82f06b85d8b@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (02/08/19 16:23), Petr Mladek wrote:
-[..]
->  Plain Pointers
->  --------------
-> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-> index 3a95b4d1ca2e..e51cbc2be540 100644
-> --- a/lib/vsprintf.c
-> +++ b/lib/vsprintf.c
-> @@ -1510,7 +1510,7 @@ char *ip_addr_string(char *buf, char *end, const void *ptr,
->  		case AF_INET6:
->  			return ip6_addr_string_sa(buf, end, &sa->v6, spec, fmt);
->  		default:
-> -			return string_nocheck(buf, end, "(invalid address)", spec);
-> +			return string_nocheck(buf, end, "(einval)", spec);
->  		}}
+syzbot has found a reproducer for the following crash on:
 
-Hmm... The original code looks "a bit" dangerous.
+HEAD commit:    a3b22b9f11d9 Linux 5.0-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17e3d4d0c00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7132344728e7ec3f
+dashboard link: https://syzkaller.appspot.com/bug?extid=9bce6db6c82f06b85d8b
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=177317a8c00000
 
-Suppose, in my driver I want to sprintf() IPv4 address. The longest
-possible address is 3 * 4 (%d%d%d) + 3 bytes (dots) + terminating NULL.
-E.g. 111.111.111.111
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+9bce6db6c82f06b85d8b@syzkaller.appspotmail.com
 
-So I can allocate a 16-bytes buffer (stack or slab) and accidentally
-do an %piS sprintf() on a corrupted in_addr struct:
+bond0 (unregistering): Releasing backup interface bond_slave_1
+bond0 (unregistering): Releasing backup interface bond_slave_0
+bond0 (unregistering): Released all slaves
+cgroup: fork rejected by pids controller in /syz3
+cgroup: fork rejected by pids controller in /syz2
+WARNING: CPU: 1 PID: 31 at net/xfrm/xfrm_policy.c:3871  
+xfrm_policy_fini+0x30c/0x3a0 net/xfrm/xfrm_policy.c:3871
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 31 Comm: kworker/u4:2 Not tainted 5.0.0-rc7 #77
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: netns cleanup_net
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  panic+0x2cb/0x65c kernel/panic.c:214
+  __warn.cold+0x20/0x45 kernel/panic.c:571
+  report_bug+0x263/0x2b0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  fixup_bug arch/x86/kernel/traps.c:173 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+kobject: 'loop1' (00000000fd200829): kobject_uevent_env
+RIP: 0010:xfrm_policy_fini+0x30c/0x3a0 net/xfrm/xfrm_policy.c:3871
+Code: c3 e8 b8 e9 72 fb 0f 0b e9 49 fe ff ff e8 ac e9 72 fb 0f 0b e9 cd fd  
+ff ff e8 a0 e9 72 fb 0f 0b e9 00 ff ff ff e8 94 e9 72 fb <0f> 0b e9 62 fd  
+ff ff e8 98 e8 a9 fb e9 7d fe ff ff 4c 89 ff e8 ab
+kobject: 'loop1' (00000000fd200829): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+RSP: 0018:ffff8880a9a8fbb0 EFLAGS: 00010293
+RAX: ffff8880a9a82100 RBX: ffff88808e30dbf0 RCX: 1ffff1101535053e
+RDX: 0000000000000000 RSI: ffffffff85fcf7ec RDI: ffff8880a9a8297c
+RBP: ffff8880a9a8fbf0 R08: ffff8880a9a82100 R09: ffff8880a9a829f0
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff88808e30c080
+R13: ffff8880a9a8fcc8 R14: ffffffff893d5eb8 R15: dffffc0000000000
+  xfrm_net_exit+0x1d/0x70 net/xfrm/xfrm_policy.c:3931
+  ops_exit_list.isra.0+0xb0/0x160 net/core/net_namespace.c:153
+  cleanup_net+0x3fb/0x960 net/core/net_namespace.c:551
+kobject: 'loop1' (00000000fd200829): kobject_uevent_env
+kobject: 'loop1' (00000000fd200829): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+cgroup: fork rejected by pids controller in /syz1
+  process_one_work+0x98e/0x1790 kernel/workqueue.c:2173
+  worker_thread+0x98/0xe40 kernel/workqueue.c:2319
+  kthread+0x357/0x430 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-		char buf[16];
-		sprintf(buf, "%piS", in_addr);
-
-forcing sprintf() to write "(invalid address)" to a 16-bytes buffer,
-but the thing is - strlen("(invalid address)") > 16.
-
-
-We might want to take this change out of this series.
-
-	-ss
