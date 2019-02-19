@@ -2,100 +2,90 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B6DEC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D27C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:21:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69A7221904
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:19:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZeErcinx"
+	by mail.kernel.org (Postfix) with ESMTP id DF9DB21904
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:21:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727986AbfBSJTc (ORCPT
+        id S1727947AbfBSJVT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 04:19:32 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:40274 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727250AbfBSJTc (ORCPT
+        Tue, 19 Feb 2019 04:21:19 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:35753 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726695AbfBSJVS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 04:19:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=RroBk7fs8CRSGgKhBmgKC8IAco1Oh6TluQO/2qsXZhQ=; b=ZeErcinxMR3VEEs6ZftOlGMq8
-        zXsJj7oL1hDokgePdwx7STlW7b5DrRWJjmdf3nK0XTIxcv0830ndu+GW2kDM6EMRwEjlagH+Fz3hd
-        i/ZskpQf8nfFyIoBFKVaUY0l4+Mh/NJR5hAAOB6PhbQYBPdCisqT/lThCEo2UMQeGQXKRzhC2+SHa
-        zdlWeR2ETVJah6mEXwELCxuc7vgsBRzXgMXZqY7QebTF1azuuXMrmCOe56N/jY1fNkIxruvfhkbqY
-        +viQH1n5aIC9v/WunW+ALkx42h9hkwswhEk2bo1ZDdPr6Ylwi+HVGrwpIbpee/4m0HFMBXGv6wTNO
-        1Rx8AEsrQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gw1Yk-0000Cr-NP; Tue, 19 Feb 2019 09:19:26 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3FF71286C98E1; Tue, 19 Feb 2019 10:19:25 +0100 (CET)
-Date:   Tue, 19 Feb 2019 10:19:25 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "linux-alpha@vger.kernel.org" <linux-arm-kernel@lists.infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morse <james.morse@arm.com>, valentin.schneider@arm.com,
-        Brian Gerst <brgerst@gmail.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] sched/x86: Save [ER]FLAGS on context switch
-Message-ID: <20190219091925.GU32534@hirez.programming.kicks-ass.net>
-References: <20190213154532.GQ32534@hirez.programming.kicks-ass.net>
- <D61C430D-4321-4114-AB85-671A3C7B8EAE@amacapital.net>
- <20190213222146.GC32494@hirez.programming.kicks-ass.net>
- <D3E1B64D-3E91-4A82-9C3B-92D9EB7326CE@amacapital.net>
- <20190214101429.GD32494@hirez.programming.kicks-ass.net>
- <20ABBED1-E505-45F6-8520-FB93786DF9A9@zytor.com>
- <20190216103044.GR32494@hirez.programming.kicks-ass.net>
- <9e037d68-75e7-1beb-0c9c-33a7ffeced1b@zytor.com>
- <CAHk-=wj4Ws1s3iw+w62jcFdnarWhiVxs9zCBjoo7WysxRVZAgQ@mail.gmail.com>
- <20190219091525.GX32494@hirez.programming.kicks-ass.net>
+        Tue, 19 Feb 2019 04:21:18 -0500
+Received: by mail-qt1-f196.google.com with SMTP id p48so22364248qtk.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 01:21:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YaRJXWMPwMF5dOfThdKY2XaRgXEOtBxAahcDGKBFIjY=;
+        b=sw4EZxQP8nxorLpFgdc0ZBIpud+2i93E2mj9a7Nq97rE1ZfLNmZsyxUC9eReI5lTPv
+         ibJN6I/Jcq1/Hs1WPSRbLJhHGnltvnFBc2YBqiwZyd0lwSK/tUXjZXENeJ7ONLLXSs9U
+         A7Y9z1LxxM9lzOydnnv83nqij41PvdsPc/4p7BM0hx3syT8GW2tv7+5Z03A0tvP5iSK7
+         dH1AARraeTlU6aginqmkDm8KIKvfGo/sIUhBAPFK3fNRM4BybxlkUGLKs/2CDfT6Ph91
+         a2zOOYaXMu5+42eOMIp1EgIhUCmspKi12MZYo7ZdYlgNSXQPXHiCNHbc63NGReP0w/9k
+         VyMA==
+X-Gm-Message-State: AHQUAuaNX2HILkjb4+FSBk88J5BF3FoE84VFWSnJ2xZ5zoSqJOlhDBJn
+        99jDWkT7O+hY4Rr0KlrEpUikW1g0qTJXfx8pPcU=
+X-Google-Smtp-Source: AHgI3IZa7a2MFIPVdfBN9ABbvVneQCmsRaOOBg/wA5iD7KfxHwGBiQJ32bmJ/wzm27PHOhJbEMrZgqQU9YhM2nQg6MI=
+X-Received: by 2002:ac8:237b:: with SMTP id b56mr7506433qtb.343.1550568077655;
+ Tue, 19 Feb 2019 01:21:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190219091525.GX32494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1549628778-30785-1-git-send-email-sugaya.taichi@socionext.com>
+ <CAK8P3a026P7tZpJ7gsZbf_MnJJ0eVv60ggGXYndX9kCDLpNy4Q@mail.gmail.com> <7266af3b-aeec-4c29-c96e-ee0d21d3e867@socionext.com>
+In-Reply-To: <7266af3b-aeec-4c29-c96e-ee0d21d3e867@socionext.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 19 Feb 2019 10:21:01 +0100
+Message-ID: <CAK8P3a09+K7ZPBgHs45Z2e_w6DPzXDMPT+DpXBowT0SBu8oCtw@mail.gmail.com>
+Subject: Re: [PATCH v2 04/15] ARM: milbeaut: Add basic support for Milbeaut
+ m10v SoC
+To:     "Sugaya, Taichi" <sugaya.taichi@socionext.com>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Takao Orito <orito.takao@socionext.com>,
+        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 10:15:25AM +0100, Peter Zijlstra wrote:
-> On Mon, Feb 18, 2019 at 04:24:30PM -0800, Linus Torvalds wrote:
-> > On Mon, Feb 18, 2019 at 2:31 PM H. Peter Anvin <hpa@zytor.com> wrote:
-> > >
-> > > The question is what "fix it" means. I'm really concerned about AC escapes,
-> > > and everyone else should be, too.
-> > 
-> > I do think that it might be the right thing to do to add some kind of
-> > WARN_ON_ONCE() for AC being set in various can-reschedule situations.
-> 
-> So I disagree.
-> 
-> Either we set AC with preempt disabled, and then we don't need an extra
-> warning, because we already have a warning about scheduling with
-> preemption disabled, or we accept that the fault handler can run.
+On Tue, Feb 19, 2019 at 8:12 AM Sugaya, Taichi
+<sugaya.taichi@socionext.com> wrote:
+> On 2019/02/18 21:15, Arnd Bergmann wrote:
+> > On Fri, Feb 8, 2019 at 1:26 PM Sugaya Taichi
+> > <sugaya.taichi@socionext.com> wrote:
+>
+> >> +static int __init m10v_pm_init(void)
+> >> +{
+> >> +       suspend_set_ops(&m10v_pm_ops);
+> >> +
+> >> +       return 0;
+> >> +}
+> >> +late_initcall(m10v_pm_init);
+> >
+> > This requires a check to ensure you are actually on the right platform,
+> > otherwise you break suspend/resume in a multiplatform kernel running
+> > on anything other than milbeaut.
+> >
+>
+> OK.
+> I think the solution is adding a "if statement with mlbeaut compatible"
+> above suspend_set_ops(&m10v_pm_ops).
 
-n/m about the faults, forgot the obvious :/
+Right, you can either use a call to of_machine_is_compatible(),
+or you add a machine descriptor with OF_MACHINE_START()
+and use this as the init_late() callback.
 
-I still really dislike wrecking the preemption model over this.
+      Arnd
