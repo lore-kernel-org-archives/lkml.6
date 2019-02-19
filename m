@@ -2,142 +2,290 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95B1DC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C0DC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:13:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4594820645
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:12:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="Hr2cJyMy"
+	by mail.kernel.org (Postfix) with ESMTP id 7D82820645
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:13:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbfBSIMz (ORCPT
+        id S1727479AbfBSINW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 03:12:55 -0500
-Received: from mout.web.de ([212.227.17.12]:33541 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726289AbfBSIMz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 03:12:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1550563956;
-        bh=HcNCexWKzixXVPB7/Xd1WaaVIctiTzp1VwIqMu6CMbs=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=Hr2cJyMyx/gekdEX1lTGArU/JkNvquiHebIZZV25bI0JOS0vQgGrKM3tjkusgqU6Z
-         I2jEl39Fsr86RAYSadQMVZHUETAbmSQ4enliDLrL254ISVJIJxZhrm6Z1NrtEzuXz9
-         uG7redd65bLv4stY3a8Bl9QckxHx8C0Qkb4bj1tU=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.131.74.8]) by smtp.web.de (mrweb101
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0LgYG1-1hRRlx0Btt-00nyJQ; Tue, 19
- Feb 2019 09:12:36 +0100
-Subject: Re: [v6] coccinelle: semantic code search for missing put_device()
-To:     Julia Lawall <julia.lawall@lip6.fr>,
-        Wen Yang <wen.yang99@zte.com.cn>
-Cc:     Wen Yang <yellowriver2010@hotmail.com>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Cheng Shengyu <cheng.shengyu@zte.com.cn>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        cocci@systeme.lip6.fr
-References: <201902191014156680299@zte.com.cn>
- <alpine.DEB.2.21.1902190804150.2570@hadrien>
-From:   Markus Elfring <Markus.Elfring@web.de>
+        Tue, 19 Feb 2019 03:13:22 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52064 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725764AbfBSINV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 03:13:21 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1J8BLBu106516
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 03:13:20 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qrdsa15x8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 03:13:20 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Tue, 19 Feb 2019 08:13:18 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 19 Feb 2019 08:13:15 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1J8DDSV51445918
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 19 Feb 2019 08:13:13 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 46F3C4C044;
+        Tue, 19 Feb 2019 08:13:13 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B50344C040;
+        Tue, 19 Feb 2019 08:13:12 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.152.98.175])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 19 Feb 2019 08:13:12 +0000 (GMT)
+Subject: Re: [PATCH v2 1/1] s390: vfio_ap: link the vfio_ap devices to the
+ vfio_ap bus subsystem
+To:     Pierre Morel <pmorel@linux.ibm.com>
+Cc:     cohuck@redhat.com, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, frankja@linux.ibm.com,
+        akrowiak@linux.ibm.com, pasic@linux.ibm.com, david@redhat.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        freude@linux.ibm.com
+References: <1550513328-12646-1-git-send-email-pmorel@linux.ibm.com>
+ <1550513328-12646-2-git-send-email-pmorel@linux.ibm.com>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <fc48cfe9-3d01-8ab6-7bf0-a481b72f4a1a@web.de>
-Date:   Tue, 19 Feb 2019 09:12:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Tue, 19 Feb 2019 09:13:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1902190804150.2570@hadrien>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1550513328-12646-2-git-send-email-pmorel@linux.ibm.com>
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:msZVpyyQUpLhLihtedfxAeQTQKHhRH1jPwO59u6c+VwmVaOD2PC
- k6A47BThUeRVAMffsxO7bDy2b+TjrpTy2ahD3yfH0GSguWG8HVbA7EvrAeCGohfQNs9eNag
- OviZ4RAJnXAww1Z8wxgmz4o6hCuNnrcCZu+yqIRNwjEmzIiU0ZGYG9dU5zyX4HrKiOSnzuY
- k/NsvvF9CuKchU9Icg3NQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:vDj9WKj5tYM=:bnjhBuyiRgsQ3jKX24+GxH
- cFyhxX6Oi7iOGnpOmmEnjOuFu7duAc0jQv6lOncbeRYwerqBoGz1Atyob2W3lfclg86xCPwMA
- /9VJlZRAKXHV0FdJGnkd7Z27Nlhn0Qb5q1d/MQAsleLBvUpdp9dDshoYe5nVnYyg0NMwHM0EL
- VBlVRXLwo4ihi5cD67/zHDoWLmfz442Oz/7AqylWJ+ufv7qzQJcOjEFzfkBlhRWFc9rDCtByC
- oPuitbae50KO4wcE/Ys7WviGHmSkRPjdh8sLlBeAOloDnfLnXvUpRrmHCLGvh5BmoS0HeP/C5
- lFe153Vr1IT/Ee9WEFkKMdHNsn8FDasmyUf0bcUE7gBhQN+xxtxC8pCN0fgfMIJUiKRh4T+rK
- AjUkzG0Nn5jWHyLzxEWHArBwZPk2u2Cc+r6TU8oQBU0puwqkqubDNVrwBINSQT98EanAOH0g1
- 24Huf8CpeiZkMChwd491cPUaGUIVfdAbJSo265S5VQjLrQ2W/u73v6XEs1W3yOrUn3VkdGJds
- NqpT3teDGk5XBL3T8xtMO9VDWUfMGBw+LRn3z81MfkHrAgcMHkaaFRVcSl7SvjeHgUPoWMN44
- jsE2h28gZZ05/fGoySiq3TQHZeUpJrU+0UfaemqXDjCv8Sm2XXqCeCmE9ffcATN0k9/Nr5xER
- h2pub8hFCLHztII57VBPpoLrecFl6bCWyBQ8BUWWFmvQNl8OGq6g1IrskEEVInCcLOLfO66YU
- mFJEi37dsFq+RhLdEDwU1n+MktIjWpl3rK3+lvbvl/4jyM0d81Whx2/fV4Y9adFLeNVpp1kgw
- DqEJXMlN2icCNqrFSmszIISZIiJ+92+EJJwD3iswrGAesIhJYUbHw0Z5AzWxFH6Gtc54f7XjB
- iHHNLANRqtzQ1mI2olVHQ4Lb5NqVMm5EdKrA/XghUMegpEfk1ijYxuEa15lvB43HrKH3uvTCL
- EPzHL58+XPw==
+X-TM-AS-GCONF: 00
+x-cbid: 19021908-0016-0000-0000-000002582336
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021908-0017-0000-0000-000032B265E9
+Message-Id: <71026b64-d6c5-37e3-455d-07b40ff760e3@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-19_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902190062
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> Although we have tested these two methods in the existing kernel code,
->> considering the evolution of the kernel code, these special cases may o=
-ccur, so we are willing to take them into account.
->> We plan to modify the code like this:
->>
->>  id =3D of_find_device_by_node@p1(x)
->> -... when !=3D e =3D id
->> +... when !=3D e =3D (T)id
->> +    when !=3D id =3D (T)e
->
-> This change is fine with me.
 
-Thanks for another positive feedback on such software implementation detai=
-ls.
 
-Regards,
-Markus
+On 18.02.2019 19:08, Pierre Morel wrote:
+> Libudev relies on having a subsystem link for non-root devices. To
+> avoid libudev (and potentially other userspace tools) choking on the
+> matrix device let us introduce a vfio_ap bus and with that the vfio_ap
+> bus subsytem, and make the matrix device reside within it.
+> 
+> Doing this we need to suppress the forced link from the matrix device to
+> the vfio_ap driver and we suppress the device_type we do not need
+> anymore.
+> 
+> Since the associated matrix driver is not the vfio_ap driver any more,
+> we have to change the search for the devices on the vfio_ap driver in
+> the function vfio_ap_verify_queue_reserved.
+> 
+> Reported-by: Marc Hartmayer <mhartmay@linux.ibm.com>
+> Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
+
+Can you also add a "Fixes:" tag
+
+Tested-by: Christian Borntraeger <borntraeger@de.ibm.com>
+
+Would be good to have someone with device experience reviewing the changed.
+
+> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+> ---
+>  drivers/s390/crypto/vfio_ap_drv.c     | 48 +++++++++++++++++++++++++++++------
+>  drivers/s390/crypto/vfio_ap_ops.c     |  4 +--
+>  drivers/s390/crypto/vfio_ap_private.h |  1 +
+>  3 files changed, 43 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
+> index 31c6c84..8e45559 100644
+> --- a/drivers/s390/crypto/vfio_ap_drv.c
+> +++ b/drivers/s390/crypto/vfio_ap_drv.c
+> @@ -24,10 +24,6 @@ MODULE_LICENSE("GPL v2");
+>  
+>  static struct ap_driver vfio_ap_drv;
+>  
+> -static struct device_type vfio_ap_dev_type = {
+> -	.name = VFIO_AP_DEV_TYPE_NAME,
+> -};
+> -
+>  struct ap_matrix_dev *matrix_dev;
+>  
+>  /* Only type 10 adapters (CEX4 and later) are supported
+> @@ -62,6 +58,27 @@ static void vfio_ap_matrix_dev_release(struct device *dev)
+>  	kfree(matrix_dev);
+>  }
+>  
+> +static int matrix_bus_match(struct device *dev, struct device_driver *drv)
+> +{
+> +	return 1;
+> +}
+> +
+> +static struct bus_type matrix_bus = {
+> +	.name = "vfio_ap",
+> +	.match = &matrix_bus_match,
+> +};
+> +
+> +static int matrix_probe(struct device *dev)
+> +{
+> +	return 0;
+> +}
+> +
+> +static struct device_driver matrix_driver = {
+> +	.name = "vfio_ap",
+> +	.bus = &matrix_bus,
+> +	.probe = matrix_probe,
+> +};
+> +
+>  static int vfio_ap_matrix_dev_create(void)
+>  {
+>  	int ret;
+> @@ -71,6 +88,10 @@ static int vfio_ap_matrix_dev_create(void)
+>  	if (IS_ERR(root_device))
+>  		return PTR_ERR(root_device);
+>  
+> +	ret = bus_register(&matrix_bus);
+> +	if (ret)
+> +		goto bus_register_err;
+> +
+>  	matrix_dev = kzalloc(sizeof(*matrix_dev), GFP_KERNEL);
+>  	if (!matrix_dev) {
+>  		ret = -ENOMEM;
+> @@ -87,30 +108,41 @@ static int vfio_ap_matrix_dev_create(void)
+>  	mutex_init(&matrix_dev->lock);
+>  	INIT_LIST_HEAD(&matrix_dev->mdev_list);
+>  
+> -	matrix_dev->device.type = &vfio_ap_dev_type;
+>  	dev_set_name(&matrix_dev->device, "%s", VFIO_AP_DEV_NAME);
+>  	matrix_dev->device.parent = root_device;
+> +	matrix_dev->device.bus = &matrix_bus;
+>  	matrix_dev->device.release = vfio_ap_matrix_dev_release;
+> -	matrix_dev->device.driver = &vfio_ap_drv.driver;
+> +	matrix_dev->vfio_ap_drv = &vfio_ap_drv;
+>  
+>  	ret = device_register(&matrix_dev->device);
+>  	if (ret)
+>  		goto matrix_reg_err;
+>  
+> +	ret = driver_register(&matrix_driver);
+> +	if (ret)
+> +		goto matrix_drv_err;
+> +
+>  	return 0;
+>  
+> +matrix_drv_err:
+> +	device_unregister(&matrix_dev->device);
+>  matrix_reg_err:
+>  	put_device(&matrix_dev->device);
+>  matrix_alloc_err:
+> +	bus_unregister(&matrix_bus);
+> +bus_register_err:
+>  	root_device_unregister(root_device);
+> -
+>  	return ret;
+>  }
+>  
+>  static void vfio_ap_matrix_dev_destroy(void)
+>  {
+> +	struct device *root_device = matrix_dev->device.parent;
+> +
+> +	driver_unregister(&matrix_driver);
+>  	device_unregister(&matrix_dev->device);
+> -	root_device_unregister(matrix_dev->device.parent);
+> +	bus_unregister(&matrix_bus);
+> +	root_device_unregister(root_device);
+>  }
+>  
+>  static int __init vfio_ap_init(void)
+> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+> index 272ef42..900b9cf 100644
+> --- a/drivers/s390/crypto/vfio_ap_ops.c
+> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> @@ -198,8 +198,8 @@ static int vfio_ap_verify_queue_reserved(unsigned long *apid,
+>  	qres.apqi = apqi;
+>  	qres.reserved = false;
+>  
+> -	ret = driver_for_each_device(matrix_dev->device.driver, NULL, &qres,
+> -				     vfio_ap_has_queue);
+> +	ret = driver_for_each_device(&matrix_dev->vfio_ap_drv->driver, NULL,
+> +				     &qres, vfio_ap_has_queue);
+>  	if (ret)
+>  		return ret;
+>  
+> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
+> index 5675492..76b7f98 100644
+> --- a/drivers/s390/crypto/vfio_ap_private.h
+> +++ b/drivers/s390/crypto/vfio_ap_private.h
+> @@ -40,6 +40,7 @@ struct ap_matrix_dev {
+>  	struct ap_config_info info;
+>  	struct list_head mdev_list;
+>  	struct mutex lock;
+> +	struct ap_driver  *vfio_ap_drv;
+>  };
+>  
+>  extern struct ap_matrix_dev *matrix_dev;
+> 
+
