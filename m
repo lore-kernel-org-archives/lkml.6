@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40B7EC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:36:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80606C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:36:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11D7121848
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:36:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48198217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:36:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="x+MhAm/8"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="d735xJ+J"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbfBSGgI (ORCPT
+        id S1727083AbfBSGgS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 01:36:08 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:54938 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725765AbfBSGgG (ORCPT
+        Tue, 19 Feb 2019 01:36:18 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:36950 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726232AbfBSGfx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 01:36:06 -0500
+        Tue, 19 Feb 2019 01:35:53 -0500
 Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1J6ZkZW106310;
-        Tue, 19 Feb 2019 00:35:46 -0600
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1J6ZOQV073416;
+        Tue, 19 Feb 2019 00:35:24 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1550558146;
-        bh=ar9/zidlSzMeE+mIPajTlV0BwC8y9cYI3NC9lb7nhHs=;
+        s=ti-com-17Q1; t=1550558124;
+        bh=dUbVvAJOUT23RMCUfeRHsOYjhpvilHTO7UcJWgYrhI0=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=x+MhAm/8UkEJ2H7sGQVITRCnI1ZDUWrX9SduTFxFxLZjVUZ/R9ibZPCado6QyA1SA
-         3EZaiEB7DtFn4DUCGAF8NzHv4uSxnSr3OlIG8meRhBcvMpj7txVJCzqvFXfZy92du+
-         oq7cZwnhPyvR27Wd9HwKYppwoRgNvT1Bp7DHMrpY=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1J6ZkGL123565
+        b=d735xJ+JpApYJoSHegy7vU+pgFoDES6K8KWvwYU8owxT/6YYh3Q455+dp/Qmn7c2g
+         Yic7opPQ+tZflf93XFXrZIoBy4inzzpwtiKwwkZjz6lLXvMFS7FDdxhEauT7JSLN7x
+         AhWlajoQmxj+je6Qtno3K4E2lNonzV8IF0hBdB9Q=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1J6ZOrm123319
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 19 Feb 2019 00:35:46 -0600
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+        Tue, 19 Feb 2019 00:35:24 -0600
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 19
- Feb 2019 00:35:45 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_0,
+ Feb 2019 00:35:24 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 19 Feb 2019 00:35:45 -0600
+ Tue, 19 Feb 2019 00:35:24 -0600
 Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1J6ZCt3025516;
-        Tue, 19 Feb 2019 00:35:40 -0600
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1J6ZCsx025516;
+        Tue, 19 Feb 2019 00:35:19 -0600
 From:   Vignesh R <vigneshr@ti.com>
 To:     Vignesh R <vigneshr@ti.com>, David Woodhouse <dwmw2@infradead.org>,
         Brian Norris <computersforpeace@gmail.com>,
@@ -60,9 +60,9 @@ CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <tudor.ambarus@microchip.com>, <nsekhar@ti.com>
-Subject: [RFC PATCH 5/5] mtd: hyperbus: Add driver for TI's Hyperbus memory controller
-Date:   Tue, 19 Feb 2019 12:06:07 +0530
-Message-ID: <20190219063607.29949-6-vigneshr@ti.com>
+Subject: [RFC PATCH 1/5] mtd: cfi_cmdset_0002: Add support for polling status register
+Date:   Tue, 19 Feb 2019 12:06:03 +0530
+Message-ID: <20190219063607.29949-2-vigneshr@ti.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190219063607.29949-1-vigneshr@ti.com>
 References: <20190219063607.29949-1-vigneshr@ti.com>
@@ -75,130 +75,137 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add driver for Hyperbus memory controller on TI's AM654 SoC. Programming
-IP is pretty simple and provides direct memory mapped access to
-connected Flash devices.
+HyperFlash devices are compliant with CFI AMD/Fujitsu Extended Command
+Set(0x0002) for flash operations, therefore drivers/mtd/chips/cfi_cmdset_0002.c
+can be use as is. But these devices do not support DQ polling method of
+determining chip ready/good status. These flashes provide Status
+Register whose bits can be polled to know status of flash operation.
 
-Add basic support for the IP without DMA. Second ChipSelect is not
-supported for now.
+Cypress HyperFlash datasheet here[1], talks about CFI Amd/Fujitsu
+Extended Query version 1.5. Bit 0 of "Software Features supported" field
+of CFI Primary Vendor-Specific Extended Query table indicates
+presence/absence of status register and Bit 1 indicates whether or not
+DQ polling is supported. Using these bits, its possible to determine
+whether flash supports DQ polling or need to use Status Register.
+
+Add support for polling status register to know device ready/status of
+erase/write operations when DQ polling is not supported.
+
+[1] https://www.cypress.com/file/213346/download
 
 Signed-off-by: Vignesh R <vigneshr@ti.com>
 ---
- drivers/mtd/hyperbus/hbmc_am654.c | 105 ++++++++++++++++++++++++++++++
- 1 file changed, 105 insertions(+)
- create mode 100644 drivers/mtd/hyperbus/hbmc_am654.c
 
-diff --git a/drivers/mtd/hyperbus/hbmc_am654.c b/drivers/mtd/hyperbus/hbmc_am654.c
-new file mode 100644
-index 000000000000..1f0d2dc52f9f
---- /dev/null
-+++ b/drivers/mtd/hyperbus/hbmc_am654.c
-@@ -0,0 +1,105 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
-+// Author: Vignesh R <vigneshr@ti.com>
+Note: PRI extended query table size is bigger on 1.5 than on older
+revision. Not sure if this causes problems on older rev. because of
+reading beyond current size.
+
+ drivers/mtd/chips/cfi_cmdset_0002.c | 50 +++++++++++++++++++++++++++++
+ include/linux/mtd/cfi.h             |  5 +++
+ 2 files changed, 55 insertions(+)
+
+diff --git a/drivers/mtd/chips/cfi_cmdset_0002.c b/drivers/mtd/chips/cfi_cmdset_0002.c
+index 72428b6bfc47..7a4ef0237750 100644
+--- a/drivers/mtd/chips/cfi_cmdset_0002.c
++++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+@@ -49,6 +49,14 @@
+ #define SST49LF008A		0x005a
+ #define AT49BV6416		0x00d6
+ 
++/*
++ * Bits of Status Register definition for flash devices that don't
++ * support DQ polling (Eg.: Hyperflash)
++ */
++#define CFI_SR_DRB		BIT(7)
++#define CFI_SR_ESB		BIT(5)
++#define CFI_SR_PSB		BIT(4)
 +
-+#include <linux/err.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/mtd/hyperbus.h>
-+#include <linux/mtd/mtd.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/types.h>
-+
-+struct am654_hbmc_priv {
-+	struct hb_device hbdev;
-+	void __iomem	*regbase;
-+};
-+
-+static int am654_hbmc_probe(struct platform_device *pdev)
+ static int cfi_amdstd_read (struct mtd_info *, loff_t, size_t, size_t *, u_char *);
+ static int cfi_amdstd_write_words(struct mtd_info *, loff_t, size_t, size_t *, const u_char *);
+ static int cfi_amdstd_write_buffers(struct mtd_info *, loff_t, size_t, size_t *, const u_char *);
+@@ -97,6 +105,18 @@ static struct mtd_chip_driver cfi_amdstd_chipdrv = {
+ 	.module		= THIS_MODULE
+ };
+ 
++/*
++ * Use status register to poll for Erase/write completion when DQ is not
++ * supported. This is indicated by Bit[1:0] of SoftwareFeatures field in
++ * CFI Primary Vendor-Specific Extended Query table 1.5
++ */
++static int cfi_use_status_reg(struct cfi_private *cfi)
 +{
-+	struct device *dev = &pdev->dev;
-+	struct am654_hbmc_priv *priv;
-+	struct resource *res;
-+	int err;
++	struct cfi_pri_amdstd *extp = cfi->cmdset_priv;
 +
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (IS_ERR(res)) {
-+		dev_err(&pdev->dev, "failed to get memory resource\n");
-+		return -ENOENT;
-+	}
-+
-+	priv->regbase = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(priv->regbase)) {
-+		dev_err(dev, "Cannot remap controller address.\n");
-+		return PTR_ERR(priv->regbase);
-+	}
-+
-+	pm_runtime_enable(&pdev->dev);
-+	err = pm_runtime_get_sync(&pdev->dev);
-+	if (err < 0) {
-+		pm_runtime_put_noidle(&pdev->dev);
-+		return err;
-+	}
-+
-+	priv->hbdev.needs_calib = true;
-+	priv->hbdev.dev = &pdev->dev;
-+	priv->hbdev.np = of_get_next_child(dev->of_node, NULL);
-+	err = hb_register_device(&priv->hbdev);
-+	if (err) {
-+		dev_err(&pdev->dev, "failed to register controller\n");
-+		goto err_destroy;
-+	}
-+
-+	return 0;
-+
-+err_destroy:
-+	hb_unregister_device(&priv->hbdev);
-+	pm_runtime_put_sync(&pdev->dev);
-+	return err;
++	return (extp->MinorVersion >= '5') &&
++		((extp->SoftwareFeatures & 0x11) == 1);
 +}
+ 
+ /* #define DEBUG_CFI_FEATURES */
+ 
+@@ -744,8 +764,21 @@ static struct mtd_info *cfi_amdstd_setup(struct mtd_info *mtd)
+  */
+ static int __xipram chip_ready(struct map_info *map, unsigned long addr)
+ {
++	struct cfi_private *cfi = map->fldrv_priv;
+ 	map_word d, t;
+ 
++	if (cfi_use_status_reg(cfi)) {
++		/*
++		 * For chips that support status register, check device
++		 * ready bit
++		 */
++		cfi_send_gen_cmd(0x70, cfi->addr_unlock1, 0, map, cfi,
++				 cfi->device_type, NULL);
++		d = map_read(map, addr);
 +
-+static int am654_hbmc_remove(struct platform_device *pdev)
-+{
-+	struct am654_hbmc_priv *priv = platform_get_drvdata(pdev);
-+	int ret;
++		return (d.x[0] & CFI_SR_DRB);
++	}
 +
-+	ret = hb_unregister_device(&priv->hbdev);
-+	pm_runtime_put_sync(&pdev->dev);
-+	pm_runtime_disable(&pdev->dev);
+ 	d = map_read(map, addr);
+ 	t = map_read(map, addr);
+ 
+@@ -769,8 +802,25 @@ static int __xipram chip_ready(struct map_info *map, unsigned long addr)
+  */
+ static int __xipram chip_good(struct map_info *map, unsigned long addr, map_word expected)
+ {
++	struct cfi_private *cfi = map->fldrv_priv;
+ 	map_word oldd, curd;
+ 
++	if (cfi_use_status_reg(cfi)) {
++		/*
++		 * For chips that support status register, check device
++		 * ready bit and Erase/Program status bit to know if
++		 * operation succeeded.
++		 */
++		cfi_send_gen_cmd(0x70, cfi->addr_unlock1, 0, map, cfi,
++				 cfi->device_type, NULL);
++		curd = map_read(map, addr);
 +
-+	return ret;
-+}
++		if (curd.x[0] & CFI_SR_DRB)
++			return !(curd.x[0] & (CFI_SR_PSB | CFI_SR_ESB));
 +
-+static const struct of_device_id am654_hbmc_dt_ids[] = {
-+	{
-+		.compatible = "ti,am654-hbmc",
-+	},
-+	{ /* end of table */ }
-+};
++		return 0;
++	}
 +
-+MODULE_DEVICE_TABLE(of, am654_hbmc_dt_ids);
-+
-+static struct platform_driver am654_hbmc_platform_driver = {
-+	.probe = am654_hbmc_probe,
-+	.remove = am654_hbmc_remove,
-+	.driver = {
-+		.name = "hbmc-am654",
-+		.of_match_table = am654_hbmc_dt_ids,
-+	},
-+};
-+
-+module_platform_driver(am654_hbmc_platform_driver);
-+
-+MODULE_DESCRIPTION("HBMC driver for AM654 SoC");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:hbmc-am654");
-+MODULE_AUTHOR("Vignesh R <vigneshr@ti.com>");
+ 	oldd = map_read(map, addr);
+ 	curd = map_read(map, addr);
+ 
+diff --git a/include/linux/mtd/cfi.h b/include/linux/mtd/cfi.h
+index cbf77168658c..92ac82ac2329 100644
+--- a/include/linux/mtd/cfi.h
++++ b/include/linux/mtd/cfi.h
+@@ -233,6 +233,11 @@ struct cfi_pri_amdstd {
+ 	uint8_t  VppMin;
+ 	uint8_t  VppMax;
+ 	uint8_t  TopBottom;
++	/* Below field are added from version 1.5 */
++	uint8_t  ProgramSuspend;
++	uint8_t  UnlockBypass;
++	uint8_t  SecureSiliconSector;
++	uint8_t  SoftwareFeatures;
+ } __packed;
+ 
+ /* Vendor-Specific PRI for Atmel chips (command set 0x0002) */
 -- 
 2.20.1
 
