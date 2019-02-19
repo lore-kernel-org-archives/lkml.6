@@ -2,162 +2,280 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC175C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:10:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A56C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:14:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99688217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:10:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E97D021773
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:14:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="P3L6jNDw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726274AbfBSEKD (ORCPT
+        id S1726124AbfBSEO5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 23:10:03 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40080 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725497AbfBSEKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 23:10:03 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0E469EBD;
-        Mon, 18 Feb 2019 20:10:01 -0800 (PST)
-Received: from [10.162.40.139] (p8cg001049571a15.blr.arm.com [10.162.40.139])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5C51B3F675;
-        Mon, 18 Feb 2019 20:09:56 -0800 (PST)
-Subject: Re: [PATCH] arm64: mm: enable per pmd page table lock
-To:     Yu Zhao <yuzhao@google.com>, Will Deacon <will.deacon@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        mark.rutland@arm.com
-References: <20190214211642.2200-1-yuzhao@google.com>
- <20190218151223.GB16091@fuggles.cambridge.arm.com>
- <20190218194938.GA184109@google.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <885bcfa8-1085-d454-540d-4511f5f3886e@arm.com>
-Date:   Tue, 19 Feb 2019 09:39:59 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 18 Feb 2019 23:14:57 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:31526 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725497AbfBSEO5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 23:14:57 -0500
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id x1J4ElIV008320;
+        Tue, 19 Feb 2019 13:14:48 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x1J4ElIV008320
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1550549688;
+        bh=s2rmefywG5qxRfRX9Ispy/WfF/VrvGNX/NJKAR+FOgQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=P3L6jNDwzr1EB2636z7AQnlpfMbyj+LnMf900heL9+Ndk32TtOinAaxEoM3eg+Rx2
+         9UD1YGia+VwuHWVHrP5DpQrvjb24LS7gHlBFwiABApsAfYA2q/6jhCyn/n8gsmI2R6
+         YJ1iTbdLAhIQkXKUnVN+swpGv6BrGoyJXF2pH+4HJJ9dc3iOknEdQJKqhTRnjPdl+3
+         IWtdazLHP57x2qtdxlz0hNMBQD1BTbDxlRJL5qIAD2LuEsKf8RxI/aClvzL5kPMALD
+         zmSKYsfFuM5w9pPqk8kG5b6bjJJ3ZBX9AJHkxIJEO5JtP1ks/3AS2cvjIxa0URQMba
+         lwjkl1ykuQvfw==
+X-Nifty-SrcIP: [209.85.221.169]
+Received: by mail-vk1-f169.google.com with SMTP id h128so4351596vkg.11;
+        Mon, 18 Feb 2019 20:14:48 -0800 (PST)
+X-Gm-Message-State: AHQUAubfAMYUu67mKnQIpRCqchKHKFB9RGW2qWI8VRveEh3YZP2BIpkd
+        jlveAJCpEanCqP8+NXrT0wvn1yVNq/ph7aw2wFw=
+X-Google-Smtp-Source: AHgI3IZo5AE7PNvPF825jn5n7M6ABkfNkD3bMbBFDTxwEOkbOxLdQFDki0790yv0sV2JLjhr45qp9yNq9QHzV7LaeY4=
+X-Received: by 2002:a1f:5e96:: with SMTP id s144mr13298575vkb.74.1550549687283;
+ Mon, 18 Feb 2019 20:14:47 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190218194938.GA184109@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190211143600.15021-1-joel@joelfernandes.org> <20190215031926.ljzluy2cfxp64u6o@ast-mbp>
+In-Reply-To: <20190215031926.ljzluy2cfxp64u6o@ast-mbp>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 19 Feb 2019 13:14:11 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAThSm1n1B_Ss0gRDZ3H-DWj2bvpZ+6Ui2jEo4Pt9YynEA@mail.gmail.com>
+Message-ID: <CAK7LNAThSm1n1B_Ss0gRDZ3H-DWj2bvpZ+6Ui2jEo4Pt9YynEA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] Provide in-kernel headers for making it easy to
+ extend the kernel
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc:     Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        atish patra <atishp04@gmail.com>,
+        Daniel Colascione <dancol@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Manoj Rao <linux@manojrajarao.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Yonghong Song <yhs@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 15, 2019 at 11:48 PM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Mon, Feb 11, 2019 at 09:35:59AM -0500, Joel Fernandes (Google) wrote:
+> > Introduce in-kernel headers and other artifacts which are made available
+> > as an archive through proc (/proc/kheaders.txz file).
 
 
-On 02/19/2019 01:19 AM, Yu Zhao wrote:
-> On Mon, Feb 18, 2019 at 03:12:23PM +0000, Will Deacon wrote:
->> [+Mark]
->>
->> On Thu, Feb 14, 2019 at 02:16:42PM -0700, Yu Zhao wrote:
->>> Switch from per mm_struct to per pmd page table lock by enabling
->>> ARCH_ENABLE_SPLIT_PMD_PTLOCK. This provides better granularity for
->>> large system.
->>>
->>> I'm not sure if there is contention on mm->page_table_lock. Given
->>> the option comes at no cost (apart from initializing more spin
->>> locks), why not enable it now.
->>>
->>> Signed-off-by: Yu Zhao <yuzhao@google.com>
->>> ---
->>>  arch/arm64/Kconfig               |  3 +++
->>>  arch/arm64/include/asm/pgalloc.h | 12 +++++++++++-
->>>  arch/arm64/include/asm/tlb.h     |  5 ++++-
->>>  3 files changed, 18 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->>> index a4168d366127..104325a1ffc3 100644
->>> --- a/arch/arm64/Kconfig
->>> +++ b/arch/arm64/Kconfig
->>> @@ -872,6 +872,9 @@ config ARCH_WANT_HUGE_PMD_SHARE
->>>  config ARCH_HAS_CACHE_LINE_SIZE
->>>  	def_bool y
->>>  
->>> +config ARCH_ENABLE_SPLIT_PMD_PTLOCK
->>> +	def_bool y
->>> +
->>>  config SECCOMP
->>>  	bool "Enable seccomp to safely compute untrusted bytecode"
->>>  	---help---
->>> diff --git a/arch/arm64/include/asm/pgalloc.h b/arch/arm64/include/asm/pgalloc.h
->>> index 52fa47c73bf0..dabba4b2c61f 100644
->>> --- a/arch/arm64/include/asm/pgalloc.h
->>> +++ b/arch/arm64/include/asm/pgalloc.h
->>> @@ -33,12 +33,22 @@
->>>  
->>>  static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long addr)
->>>  {
->>> -	return (pmd_t *)__get_free_page(PGALLOC_GFP);
->>> +	struct page *page;
->>> +
->>> +	page = alloc_page(PGALLOC_GFP);
->>> +	if (!page)
->>> +		return NULL;
->>> +	if (!pgtable_pmd_page_ctor(page)) {
->>> +		__free_page(page);
->>> +		return NULL;
->>> +	}
->>> +	return page_address(page);
->>
->> I'm a bit worried as to how this interacts with the page-table code in
->> arch/arm64/mm/mmu.c when pgd_pgtable_alloc is used as the allocator. It
->> looks like that currently always calls pgtable_page_ctor(), regardless of
->> level. Do we now need a separate allocator function for the PMD level?> 
-> Thanks for reminding me, I never noticed this. The short answer is
-> no.
-> 
-> I guess pgtable_page_ctor() is used on all pud/pmd/pte entries
-> there because it's also compatible with pud, and pmd too without
-> this patch. So your concern is valid. Thanks again.
+The extension '.txz' is not used in kernel code.
 
-pgtable_page_ctor() acts on a given page used as page table at any level
-which sets appropriate page type (page flag PG_table) and increments the
-zone stat for NR_PAGETABLE. pgtable_page_dtor() exactly does the inverse.
 
-These two complimentary operations are required for every level page table
-pages for their proper initialization, identification in buddy and zone
-statistics. Hence these need to be called for all level page table pages.
+'.tar.xz' is used for 'tarxz-pkg', 'perf-tarxz-src-pkg' etc.
 
-pgtable_pmd_page_ctor()/pgtable_pmd_page_dtor() on the other hand just
-init/free page table lock on the page for !THP cases and additionally
-init page->pmd_huge_pte (deposited page table page) for THP cases.
-Some archs seem to be calling pgtable_pmd_page_ctor() in place of
-pgtable_page_ctor(). Wondering would not that approach skip page flag
-and accounting requirements.
 
-> 
-> Why my answer is no? Because I don't think the ctor matters for
-> pgd_pgtable_alloc(). The ctor is only required for userspace page
-> tables, and that's why we don't have it in pte_alloc_one_kernel().
+$ git grep  '\.txz'
+$ git grep  '\.tar\.xz'
+Documentation/admin-guide/README.rst:     xz -cd linux-4.X.tar.xz | tar xvf -
+arch/x86/crypto/camellia-aesni-avx-asm_64.S: *
+http://koti.mbnet.fi/axh/crypto/camellia-BSD-1.2.0-aesni1.tar.xz
+crypto/testmgr.h: *   https://bench.cr.yp.to/supercop/supercop-20170228.tar.xz
+crypto/testmgr.h: *   https://bench.cr.yp.to/supercop/supercop-20170228.tar.xz
+crypto/testmgr.h: *   https://bench.cr.yp.to/supercop/supercop-20170228.tar.xz
+crypto/testmgr.h: *   https://bench.cr.yp.to/supercop/supercop-20170228.tar.xz
+crypto/testmgr.h: *   https://bench.cr.yp.to/supercop/supercop-20170228.tar.xz
+scripts/package/Makefile:       @echo '  perf-tarxz-src-pkg  - Build
+$(perf-tar).tar.xz source tarball'
+tools/testing/selftests/gen_kselftest_tar.sh:
+ ext=".tar.xz"
 
-At present on arm64 certain kernel page table page allocations call
-pgtable_pmd_page_ctor() and some dont. The series which I had posted
-make sure that all kernel and user page table page allocations go through
-pgtable_page_ctor()/dtor(). These constructs are required for kernel
-page table pages as well for accurate init and accounting not just for
-user space. The series just skips vmemmap struct page mapping from this
-as that would require generic sparse vmemmap allocation/free functions
-which I believe should also be changed going forward as well.
 
-> AFAICT, none of the pgds (efi_mm.pgd, tramp_pg_dir and init_mm.pgd)
-> pre-populated by pgd_pgtable_alloc() is. (I doubt we pre-populate
-> userspace page tables in any other arch).
-> 
-> So to avoid future confusion, we might just remove the ctor from
-> pgd_pgtable_alloc().
 
-No. Instead we should just make sure the that those pages go through
-dtor() destructor path when getting freed and the clean up series
-does that.
+I prefer '.tar.xz' for consistency.
+
+
+
+
+
+
+BTW, have you ever looked at scripts/extract-ikconfig?
+
+You added IKHD_ST and IKHD_ED
+just to mimic kernel/configs.c
+
+It is currently pointless without the extracting tool,
+but you might think it is useful to extract headers
+from vmlinux or the module without mounting procfs.
+
+
+
+
+> > This archive makes
+> > it possible to build kernel modules, run eBPF programs, and other
+> > tracing programs that need to extend the kernel for tracing purposes
+> > without any dependency on the file system having headers and build
+> > artifacts.
+> >
+> > On Android and embedded systems, it is common to switch kernels but not
+> > have kernel headers available on the file system. Raw kernel headers
+> > also cannot be copied into the filesystem like they can be on other
+> > distros, due to licensing and other issues. There's no linux-headers
+> > package on Android. Further once a different kernel is booted, any
+> > headers stored on the file system will no longer be useful. By storing
+> > the headers as a compressed archive within the kernel, we can avoid these
+> > issues that have been a hindrance for a long time.
+>
+> The set looks good to me and since the main use case is building bpf progs
+> I can route it via bpf-next tree if there are no objections.
+> Masahiro, could you please ack it?
+
+
+Honestly, I was not tracking this thread
+since I did not know I was responsible for this.
+
+
+I just started to take a closer look, then immediately got scared.
+
+This version is not mature enough for the merge.
+
+
+
+First of all, this patch cannot be compiled out-of-tree (O= option).
+
+
+I do not know why 0-day bot did not catch this apparent breakage.
+
+
+$ make -j8 O=hoge
+make[1]: Entering directory '/home/masahiro/workspace/bsp/linux/hoge'
+  GEN     Makefile
+  Using .. as source for kernel
+  DESCEND  objtool
+  CALL    ../scripts/checksyscalls.sh
+  CHK     include/generated/compile.h
+make[2]: *** No rule to make target 'Module.symvers', needed by
+'kernel/kheaders_data.txz'.  Stop.
+make[2]: *** Waiting for unfinished jobs....
+/home/masahiro/workspace/bsp/linux/Makefile:1043: recipe for target
+'kernel' failed
+make[1]: *** [kernel] Error 2
+make[1]: *** Waiting for unfinished jobs....
+make[1]: Leaving directory '/home/masahiro/workspace/bsp/linux/hoge'
+Makefile:152: recipe for target 'sub-make' failed
+make: *** [sub-make] Error 2
+
+
+
+
+
+I was able to compile it in-tree
+but it makes the incremental build extremely slow.
+
+(Here, the incremental build means
+"make" without changing any code after the full build.)
+
+
+
+
+Before this patch, "make -j8" took 11 sec on my machine.
+
+real 0m11.777s
+user 0m16.608s
+sys 0m5.164s
+
+
+
+After this patch, x86_64_defconfig + CONFIG_IKHEADERS_PROC=y
+takes 53 sec for me since kernel/kheaders_data.txz is regenerated
+every time even when you did not touch any source file.
+
+
+$ time make -j8
+  DESCEND  objtool
+  CALL    scripts/checksyscalls.sh
+  CHK     include/generated/compile.h
+  GEN     kernel/kheaders_data.txz
+  UPD     kernel/kheaders_data.h
+  CC      kernel/kheaders.o
+  AR      kernel/built-in.a
+  GEN     .version
+  CHK     include/generated/compile.h
+  UPD     include/generated/compile.h
+  CC      init/version.o
+  AR      init/built-in.a
+  AR      built-in.a
+  LD      vmlinux.o
+  MODPOST vmlinux.o
+  KSYM    .tmp_kallsyms1.o
+  KSYM    .tmp_kallsyms2.o
+  LD      vmlinux
+  SORTEX  vmlinux
+  SYSMAP  System.map
+  Building modules, stage 2.
+  CC      arch/x86/boot/version.o
+  MODPOST 17 modules
+  VOFFSET arch/x86/boot/compressed/../voffset.h
+  OBJCOPY arch/x86/boot/compressed/vmlinux.bin
+  RELOCS  arch/x86/boot/compressed/vmlinux.relocs
+  CC      arch/x86/boot/compressed/kaslr.o
+  GZIP    arch/x86/boot/compressed/vmlinux.bin.gz
+  CC      arch/x86/boot/compressed/misc.o
+  MKPIGGY arch/x86/boot/compressed/piggy.S
+  AS      arch/x86/boot/compressed/piggy.o
+  LD      arch/x86/boot/compressed/vmlinux
+  ZOFFSET arch/x86/boot/zoffset.h
+  OBJCOPY arch/x86/boot/vmlinux.bin
+  AS      arch/x86/boot/header.o
+  LD      arch/x86/boot/setup.elf
+  OBJCOPY arch/x86/boot/setup.bin
+  BUILD   arch/x86/boot/bzImage
+Setup is 15612 bytes (padded to 15872 bytes).
+System is 12673 kB
+CRC 697aaf88
+Kernel: arch/x86/boot/bzImage is ready  (#6)
+
+real 0m53.024s
+user 0m32.076s
+sys 0m9.296s
+
+
+
+
+Also, I notice $(ARCH) must be fixed to $(SRCARCH),
+but that is one of minor issues.
+
+
+
+We should take time for careful review and test.
+
+
+Please give me more time for thorough review.
+
+
+
+--
+Best Regards
+Masahiro Yamada
