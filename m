@@ -2,85 +2,99 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F03CCC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E17BC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:30:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3C75208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:29:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4221D2146F
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:30:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729467AbfBSU3X (ORCPT
+        id S1729433AbfBSUam (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 15:29:23 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:37503 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbfBSU3X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 15:29:23 -0500
-Received: by mail-qk1-f196.google.com with SMTP id m9so541237qkl.4;
-        Tue, 19 Feb 2019 12:29:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bPY1f5W3M3S0pVQ+klaobPrfxSm2NF3tA5R2/oioi8Y=;
-        b=JcKq7wNNxISl2PALLURO0ODawwNNsL0AgKXIT4A1XX+56bTNbWyCADyLjwZgko+0bB
-         fp9JSC0ILhBWTuDHVVMdOtQfp/aMRFNxRuSXQEK/apcES2TxPgqaabmjtw4+8Zm2Lg6l
-         c8SyxhqCMHnpK4bw1rWOWNg5yiwF2y6Q5DpXbIQo9HDui6iiessG+wbafTRaybHTQyni
-         GziSiIjPfq3dx8SAn6WDmwnHvNx3is8/XpuXPfdfvf4g9LlA9le28+omxM6R9M6FZ3/N
-         8PtaraOfFs+na4znOWDc1OdAzMJ4D3JkE9WNpDLh7HCI9BuBj45tXqFmPidjkCkFdpHh
-         dECw==
-X-Gm-Message-State: AHQUAuY35A7IO9nwvEhIIUiambaCUO/OvVidxwZU+bOeyTm/tX2badga
-        8RtgDwZAdGJqTsOYHdp4spocYT6udP9FQ6BpVgU=
-X-Google-Smtp-Source: AHgI3IZWyX/lVaQAvClHL38keads40kOoUMMxm2i4x66H1BX9+lk6NC00fUlkEoemnqJp2fXcbm2Hb1h0YEdHgBZwpY=
-X-Received: by 2002:a05:620a:12a5:: with SMTP id x5mr22351671qki.291.1550608158219;
- Tue, 19 Feb 2019 12:29:18 -0800 (PST)
-MIME-Version: 1.0
-References: <20190218210712.3503891-1-arnd@arndb.de> <20190218210712.3503891-5-arnd@arndb.de>
- <CAMuHMdVbz=_GFMnKx4PuxpmG9jpdA=Do2XnR3bY5wRZPM3G+Gw@mail.gmail.com>
-In-Reply-To: <CAMuHMdVbz=_GFMnKx4PuxpmG9jpdA=Do2XnR3bY5wRZPM3G+Gw@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 19 Feb 2019 21:29:01 +0100
-Message-ID: <CAK8P3a0UD7_omc4=o7VLaLKUX4Z1eWXU15TeqgvjXfhyv+7xCA@mail.gmail.com>
-Subject: Re: [PATCH 4/8] asm-generic: Make time32 syscall numbers optional
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
+        Tue, 19 Feb 2019 15:30:42 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56810 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725963AbfBSUam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 15:30:42 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id ABDE383F45;
+        Tue, 19 Feb 2019 20:30:41 +0000 (UTC)
+Received: from redhat.com (ovpn-122-134.rdu2.redhat.com [10.10.122.134])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B6F6A60C1D;
+        Tue, 19 Feb 2019 20:30:35 +0000 (UTC)
+Date:   Tue, 19 Feb 2019 15:30:33 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Yury Norov <yury.norov@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>,
-        "moderated list:H8/300 ARCHITECTURE" 
-        <uclinux-h8-devel@lists.sourceforge.jp>,
-        Stafford Horne <shorne@gmail.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Guo Ren <guoren@kernel.org>, Greentime Hu <green.hu@gmail.com>,
-        linux-riscv@lists.infradead.org, Guan Xuetao <gxt@pku.edu.cn>
-Content-Type: text/plain; charset="UTF-8"
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, Jan Kara <jack@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        KVM list <kvm@vger.kernel.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v5 0/9] mmu notifier provide context informations
+Message-ID: <20190219203032.GC3959@redhat.com>
+References: <20190219200430.11130-1-jglisse@redhat.com>
+ <CAPcyv4gq23RXk3BTqP2O+gi3FGE85NSGXD8bdLk+_cgtZrn+Kg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPcyv4gq23RXk3BTqP2O+gi3FGE85NSGXD8bdLk+_cgtZrn+Kg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 19 Feb 2019 20:30:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 9:06 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Arnd,
->
-> On Tue, Feb 19, 2019 at 3:34 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> > We don't want new architectures to even provide the old 32-bit time_t
-> > based system calls any more, or define the syscall number macros.
+On Tue, Feb 19, 2019 at 12:15:55PM -0800, Dan Williams wrote:
+> On Tue, Feb 19, 2019 at 12:04 PM <jglisse@redhat.com> wrote:
 > >
-> > Add a new __ARCH_WANT_TIME32_SYSCALLS macro that gets enabled for all
-> > existing 32-bit architectures so we don't change any current behavior.
->
-> ... (only) 32-bit architectures using the generic syscall list, right?
+> > From: Jérôme Glisse <jglisse@redhat.com>
+> >
+> > Since last version [4] i added the extra bits needed for the change_pte
+> > optimization (which is a KSM thing). Here i am not posting users of
+> > this, they will be posted to the appropriate sub-systems (KVM, GPU,
+> > RDMA, ...) once this serie get upstream. If you want to look at users
+> > of this see [5] [6]. If this gets in 5.1 then i will be submitting
+> > those users for 5.2 (including KVM if KVM folks feel comfortable with
+> > it).
+> 
+> The users look small and straightforward. Why not await acks and
+> reviewed-by's for the users like a typical upstream submission and
+> merge them together? Is all of the functionality of this
+> infrastructure consumed by the proposed users? Last time I checked it
+> was only a subset.
 
-Correct, I've added a clarification in the commit text in my git tree now,
-thanks for the proofreading!
+Yes pretty much all is use, the unuse case is SOFT_DIRTY and CLEAR
+vs UNMAP. Both of which i intend to use. The RDMA folks already ack
+the patches IIRC, so did radeon and amdgpu. I believe the i915 folks
+were ok with it too. I do not want to merge things through Andrew
+for all of this we discussed that in the past, merge mm bits through
+Andrew in one release and bits that use things in the next release.
 
-       Arnd
+Cheers,
+Jérôme
