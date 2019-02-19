@@ -6,190 +6,161 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A21C8C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 343AFC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:34:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F0462147C
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:31:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 017032147C
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:34:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729714AbfBSVb0 (ORCPT
+        id S1729470AbfBSVeO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 16:31:26 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48090 "EHLO
+        Tue, 19 Feb 2019 16:34:14 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36706 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729140AbfBSVb0 (ORCPT
+        by vger.kernel.org with ESMTP id S1727206AbfBSVeO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 16:31:26 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1JLIu6Z134455
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 16:31:24 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qrs7m1am9-1
+        Tue, 19 Feb 2019 16:34:14 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1JLYAIA152828
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 16:34:12 -0500
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qrs761fhe-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 16:31:23 -0500
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 16:34:08 -0500
 Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Tue, 19 Feb 2019 21:31:22 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Tue, 19 Feb 2019 21:34:06 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 19 Feb 2019 21:31:19 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1JLVIgY24051938
+        Tue, 19 Feb 2019 21:34:04 -0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1JLY0R123330996
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Feb 2019 21:31:18 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 079F3A405B;
-        Tue, 19 Feb 2019 21:31:18 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 88284A405F;
-        Tue, 19 Feb 2019 21:31:17 +0000 (GMT)
-Received: from [9.145.76.69] (unknown [9.145.76.69])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 19 Feb 2019 21:31:17 +0000 (GMT)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v2 1/1] s390: vfio_ap: link the vfio_ap devices to the
- vfio_ap bus subsystem
-To:     Tony Krowiak <akrowiak@linux.ibm.com>, borntraeger@de.ibm.com
-Cc:     cohuck@redhat.com, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, frankja@linux.ibm.com,
-        pasic@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, freude@linux.ibm.com
-References: <1550513328-12646-1-git-send-email-pmorel@linux.ibm.com>
- <1550513328-12646-2-git-send-email-pmorel@linux.ibm.com>
- <8e6853ba-12ed-a4f3-1263-0e15f715b644@linux.ibm.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Tue, 19 Feb 2019 22:31:17 +0100
+        Tue, 19 Feb 2019 21:34:00 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 372D2AE05F;
+        Tue, 19 Feb 2019 21:34:00 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DA980AE05C;
+        Tue, 19 Feb 2019 21:33:59 +0000 (GMT)
+Received: from [9.60.75.235] (unknown [9.60.75.235])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 19 Feb 2019 21:33:59 +0000 (GMT)
+Subject: Re: [PATCH v3 6/9] vfio: ap: register IOMMU VFIO notifier
+To:     Halil Pasic <pasic@linux.ibm.com>
+Cc:     Pierre Morel <pmorel@linux.ibm.com>, borntraeger@de.ibm.com,
+        alex.williamson@redhat.com, cohuck@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, david@redhat.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        freude@linux.ibm.com, mimu@linux.ibm.com
+References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
+ <1550152269-6317-7-git-send-email-pmorel@linux.ibm.com>
+ <3ce0a3a0-22fb-c418-321d-7e6e3af5b66c@linux.ibm.com>
+ <20190219105946.29e510a6@oc2783563651>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Tue, 19 Feb 2019 16:33:59 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <8e6853ba-12ed-a4f3-1263-0e15f715b644@linux.ibm.com>
+In-Reply-To: <20190219105946.29e510a6@oc2783563651>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-x-cbid: 19021921-0028-0000-0000-0000034A897E
+x-cbid: 19021921-2213-0000-0000-000003547517
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010628; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000281; SDB=6.01163473; UDB=6.00607498; IPR=6.00944055;
+ MB=3.00025661; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-19 21:34:05
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021921-0029-0000-0000-00002408C6C2
-Message-Id: <6cc5b478-4678-9a82-b902-cc9aed22becf@linux.ibm.com>
+x-cbparentid: 19021921-2214-0000-0000-00005D68F5C6
+Message-Id: <ef8ac760-8da9-6f79-ac26-933d998f4c3a@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-19_14:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902190149
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902190150
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/02/2019 19:52, Tony Krowiak wrote:
-> On 2/18/19 1:08 PM, Pierre Morel wrote:
->> Libudev relies on having a subsystem link for non-root devices. To
->> avoid libudev (and potentially other userspace tools) choking on the
->> matrix device let us introduce a vfio_ap bus and with that the vfio_ap
->> bus subsytem, and make the matrix device reside within it.
+On 2/19/19 4:59 AM, Halil Pasic wrote:
+> On Fri, 15 Feb 2019 17:55:35 -0500
+> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+> 
+>> On 2/14/19 8:51 AM, Pierre Morel wrote:
+>>> To be able to use the VFIO interface to facilitate the
+>>> mediated device memory pining/unpining we need to register
+>>> a notifier for IOMMU.
+>>>
+>>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+>>> ---
+>>>    drivers/s390/crypto/vfio_ap_ops.c     | 64 +++++++++++++++++++++++++++++++----
+>>>    drivers/s390/crypto/vfio_ap_private.h |  2 ++
+>>>    2 files changed, 60 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+>>> index 1851b24..6eddc2c 100644
+>>> --- a/drivers/s390/crypto/vfio_ap_ops.c
+>>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> 
+> [..]
+>    	struct vfio_ap_queue *q;
+>>> @@ -967,12 +996,32 @@ static int vfio_ap_mdev_open(struct mdev_device *mdev)
+>>>    
+>>>    	ret = vfio_register_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
+>>>    				     &events, &matrix_mdev->group_notifier);
+>>> -	if (ret) {
+>>> -		module_put(THIS_MODULE);
+>>> -		return ret;
+>>> -	}
+>>> +	if (ret)
+>>> +		goto err_group;
+>>> +
+>>> +	matrix_mdev->iommu_notifier.notifier_call = vfio_ap_mdev_iommu_notifier;
+>>> +	events = VFIO_IOMMU_NOTIFY_DMA_UNMAP;
+>>> +
+>>> +	ret = vfio_register_notifier(mdev_dev(mdev), VFIO_IOMMU_NOTIFY,
+>>> +				     &events, &matrix_mdev->iommu_notifier);
+>>> +	if (ret)
+>>> +		goto err_iommu;
+>>> +
+>>> +	ret = vfio_ap_associate_queues(matrix_mdev);
+>>> +	if (ret)
+>>> +		goto err_associate;
 >>
->> Doing this we need to suppress the forced link from the matrix device to
->> the vfio_ap driver and we suppress the device_type we do not need
->> anymore.
+>> I think the matrix_mdev should be associated with queues when an
+>> assignment of an adapter or domain is made to the mdev device via its
+>> sysfs interfaces. I say this because assigning an adapter or domain to
+>> an mdev device effectively grants ownership of any additional AP queues
+>> added to the mdev device's AP matrix as a result of the assignment. It
+>> only makes sense to assign ownership to the vfio_ap_queue objects
+>> representing the queues at that time. If an adapter or domain is
+>> dynamically assigned while a guest is using the affected queues, then
+>> the associations will have to be made at that time and this code will
+>> likely go bye bye.
 >>
->> Since the associated matrix driver is not the vfio_ap driver any more,
->> we have to change the search for the devices on the vfio_ap driver in
->> the function vfio_ap_verify_queue_reserved.
->>
->> Reported-by: Marc Hartmayer <mhartmay@linux.ibm.com>
->> Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->> ---
->>   drivers/s390/crypto/vfio_ap_drv.c     | 48 
->> +++++++++++++++++++++++++++++------
->>   drivers/s390/crypto/vfio_ap_ops.c     |  4 +--
->>   drivers/s390/crypto/vfio_ap_private.h |  1 +
->>   3 files changed, 43 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/s390/crypto/vfio_ap_drv.c 
->> b/drivers/s390/crypto/vfio_ap_drv.c
->> index 31c6c84..8e45559 100644
->> --- a/drivers/s390/crypto/vfio_ap_drv.c
->> +++ b/drivers/s390/crypto/vfio_ap_drv.c
->> @@ -24,10 +24,6 @@ MODULE_LICENSE("GPL v2");
->>   static struct ap_driver vfio_ap_drv;
->> -static struct device_type vfio_ap_dev_type = {
->> -    .name = VFIO_AP_DEV_TYPE_NAME,
->> -};
->> -
->>   struct ap_matrix_dev *matrix_dev;
->>   /* Only type 10 adapters (CEX4 and later) are supported
->> @@ -62,6 +58,27 @@ static void vfio_ap_matrix_dev_release(struct 
->> device *dev)
->>       kfree(matrix_dev);
->>   }
->> +static int matrix_bus_match(struct device *dev, struct device_driver 
->> *drv)
->> +{
->> +    return 1;
 > 
-> I think we should verify the following:
 > 
-> * dev == matrix_dev->device
-> * drv == &matrix_driver
-> 
-> The model employed is for the matrix device to be a singleton, so I
-> think we should verify that the matrix device and driver defined herein
-> ought to be the only possible choices for a match. Of course, doing so
-> will require some restructuring of this patch.
+> Actually, we need the stuff in vfio_ap_queues only if the guest is
+> offered to  decides to use AP adaper interrupts. I would prefer to have
+> it around only when needed: as long as we have the nib pinned for any
+> given queue. Is there a reason why not to do so?
 
-I think Conny already answered this question.
+Even if we keep the vfio_ap_queue around for the life of a guest,
+association/dissociation will have to be done when an adapter or domain
+is dynamically assigned.
 
 > 
->> +}
->> +
->> +static struct bus_type matrix_bus = {
->> +    .name = "vfio_ap",
->> +    .match = &matrix_bus_match,
->> +};
->> +
->> +static int matrix_probe(struct device *dev)
->> +{
->> +    return 0;
->> +}
->> +
->> +static struct device_driver matrix_driver = {
->> +    .name = "vfio_ap",
+> Regards,
+> Halil
+>   
+> [..]
 > 
-> This is the same name used for the original device driver. I think
-> this driver ought to have a different name to avoid confusion.
-> How about vfio_ap_matrix or some other name to differentiate the
-> two.
-
-I would like too, but changing this will change the path to the mediated 
-device supported type.
-
-
-> 
->> +    .bus = &matrix_bus,
->> +    .probe = matrix_probe,
-> 
-> I would add:
->      .suppress_bind_attrs = true;
-> 
-> This will remove the sysfs bind/unbind interfaces. Since there is only
-> one matrix device and it's lifecycle is controlled herein, there is no
-> sense in allowing a root user to bind/unbind it.
-> 
-
-OTOH bind/unbind has no impact.
-If no one else ask for this I will not change what has already been 
-reviewed by Conny and Christian.
-
-Regards,
-Pierre
-
-
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
 
