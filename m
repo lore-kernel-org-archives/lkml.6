@@ -6,65 +6,65 @@ X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B2B0C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7056C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:40:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05B4421738
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:39:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93AAD21479
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:40:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SWzMxd2s"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="H579K5eZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730068AbfBSXjj (ORCPT
+        id S1730093AbfBSXkN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 18:39:39 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38390 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728787AbfBSXjh (ORCPT
+        Tue, 19 Feb 2019 18:40:13 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45380 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729813AbfBSXkM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 18:39:37 -0500
-Received: by mail-lf1-f67.google.com with SMTP id n15so16155146lfe.5
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 15:39:36 -0800 (PST)
+        Tue, 19 Feb 2019 18:40:12 -0500
+Received: by mail-lf1-f66.google.com with SMTP id h10so15929242lfc.12
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 15:40:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=zxFGa80PRFQNZ0iIIPGTuF/1GgUnWcFVVtlV5AVJGzY=;
-        b=SWzMxd2s312nAdp04588KTgH4jh5miGItESLcy+KlwQ6BBIsp74P0x1nT4HFEqqasf
-         8PyOPXfFCmnVz1F7xxwTFyoNLJZrv+rHme+9L+j+E2hFKyk5QRsuvKzXR8crLl1bH9tq
-         y0hReo2aYyBvdeVzLwLwelVuWuDTjd46760jI=
+        bh=94SH4zc3GWblxSgsPBw9cZZKhheiEMLicrGfPJ6Mqjo=;
+        b=H579K5eZ+cwh29VMDSywEbZ/LsPFLC1U9Cl8GVKk+TbufvQ+liENSxNT2OGpEhimeQ
+         bElJQIXTEEnrJDdyMHvgj0CTe+Jdd1qCcKuWoWmp47tsbNB6df59kC5Xy4YjYwtgzUzv
+         B2EJsxiS8IgETNTM1cutVe9lbgaXJBVVudeZ8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=zxFGa80PRFQNZ0iIIPGTuF/1GgUnWcFVVtlV5AVJGzY=;
-        b=jV8lRzuSPb6ZnlcOZdR5zYcK+hwnGaci40AP8TL2ZAmdtygEfTD79Zp+L4pvj3zGr3
-         wNyKGSfD/SwNw3BErMWfH5sTy86QED8iFitZaCl4XXbsvqQM6c6ZNBAAtTfuH6YZPVhV
-         j59zf3YVylNxv18lIac76C8wklG50aGz+PI7e46aF2TsgbvgraL6VvjYt/TjZTuOvrM8
-         uThhbw80DkmNOB3tpA1SS4NNlvP4lRv/XgNFzJCBhaxUsvy2roImwR2UW75WMuV1IPvA
-         C2OS0+UuPEi+vjzIkNllMAy1cc5RTxc2sfLXiY6bI6HsABrAWD9Ru0udoqIHTzdckEmN
-         bVEQ==
-X-Gm-Message-State: AHQUAuYqIJXNbmX2ROPwSHvzxVLS4WC7x1nuOBFisGAyODYDrGfpreJy
-        X0wXBbw3Z5Ojpy7a+NbcZpQta5tinps=
-X-Google-Smtp-Source: AHgI3IY0ge7oERlXwPMQ4gUPwlpHOB3RxzTTu4g1tkpZ6DZ+S8rzv+F2INK7rC/JsARHWG5BDV/gcg==
-X-Received: by 2002:a19:e347:: with SMTP id c7mr9089403lfk.137.1550619575181;
-        Tue, 19 Feb 2019 15:39:35 -0800 (PST)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id a3-v6sm4667172ljd.20.2019.02.19.15.39.35
+        bh=94SH4zc3GWblxSgsPBw9cZZKhheiEMLicrGfPJ6Mqjo=;
+        b=awo6RFfadt75lSA0uYx8g/Z1IxcFx8JsaVZF7gWGzJLPeCbrYfLVnhmhyBRH/y7+83
+         LZEf2jlmBDuoW/PDJP7EsRUDSoOIPU7fs0i9depMXqsmoMEQbyp284QboREVLPlRdUuh
+         yPEEZFTLDnZMAgUHBwpjLt1WZhZRQymLfJrWQAz9oWZBirGW/dltJYhAtuw1hllh5Ljt
+         KvAGlnU+PCUuzJR/z4QVGCcjvaif1UULAErOJc3j13NeKOKfst+6m3sNvdGpAjIctrnU
+         ZkXW0mJXz7ikBCScYoV0lgFwR9GDD44pVVCrQx7pSxf0mNkcN7ZJ1cs50HTEZgKAwpId
+         NaZQ==
+X-Gm-Message-State: AHQUAuZE1Qij7iKkkJlMV9/CiNg4XdERY+XsYQ44b8h+XeAeXpjwQUln
+        SyXwUorV/2Clmvg7hT1J+9pyPIKB2dw=
+X-Google-Smtp-Source: AHgI3IapTJIWQi6tezSoz0mjHXDA5nSdywI1Lj8mjTL79Yr+RZZwRfmOnjysq6Hji8XTB2ZiV4LPmw==
+X-Received: by 2002:ac2:43ad:: with SMTP id t13mr11128459lfl.93.1550619610627;
+        Tue, 19 Feb 2019 15:40:10 -0800 (PST)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id k15sm4486019ljc.39.2019.02.19.15.40.10
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 15:39:35 -0800 (PST)
-Received: by mail-lj1-f172.google.com with SMTP id f24-v6so19164845ljk.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 15:39:35 -0800 (PST)
-X-Received: by 2002:a2e:3a10:: with SMTP id h16-v6mr913549lja.184.1550619160820;
- Tue, 19 Feb 2019 15:32:40 -0800 (PST)
+        Tue, 19 Feb 2019 15:40:10 -0800 (PST)
+Received: by mail-lj1-f176.google.com with SMTP id s5-v6so19083642ljd.12
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 15:40:10 -0800 (PST)
+X-Received: by 2002:a2e:6109:: with SMTP id v9-v6mr18507676ljb.126.1550619182560;
+ Tue, 19 Feb 2019 15:33:02 -0800 (PST)
 MIME-Version: 1.0
-References: <1550394300-17420-1-git-send-email-yong.wu@mediatek.com> <1550394300-17420-18-git-send-email-yong.wu@mediatek.com>
-In-Reply-To: <1550394300-17420-18-git-send-email-yong.wu@mediatek.com>
+References: <1550394300-17420-1-git-send-email-yong.wu@mediatek.com> <1550394300-17420-21-git-send-email-yong.wu@mediatek.com>
+In-Reply-To: <1550394300-17420-21-git-send-email-yong.wu@mediatek.com>
 From:   Evan Green <evgreen@chromium.org>
-Date:   Tue, 19 Feb 2019 15:32:04 -0800
-X-Gmail-Original-Message-ID: <CAE=gft5uXTZJms62_M7=14E7sSNepyLt9CL1KbfD163DsxHHFA@mail.gmail.com>
-Message-ID: <CAE=gft5uXTZJms62_M7=14E7sSNepyLt9CL1KbfD163DsxHHFA@mail.gmail.com>
-Subject: Re: [PATCH v6 17/22] memory: mtk-smi: Get rid of need_larbid
+Date:   Tue, 19 Feb 2019 15:32:26 -0800
+X-Gmail-Original-Message-ID: <CAE=gft4Y+YiAdOHEbqO-d9JAs3AqK76AQ6_3AJ9Qqn_82HYtrA@mail.gmail.com>
+Message-ID: <CAE=gft4Y+YiAdOHEbqO-d9JAs3AqK76AQ6_3AJ9Qqn_82HYtrA@mail.gmail.com>
+Subject: Re: [PATCH v6 20/22] iommu/mediatek: Rename enable_4GB to dram_is_4gb
 To:     Yong Wu <yong.wu@mediatek.com>
 Cc:     Joerg Roedel <joro@8bytes.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -87,21 +87,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Sun, Feb 17, 2019 at 1:09 AM Yong Wu <yong.wu@mediatek.com> wrote:
 >
-> The "mediatek,larb-id" has already been parsed in MTK IOMMU driver.
-> It's no need to parse it again in SMI driver. Only clean some codes.
-> This patch is fit for all the current mt2701, mt2712, mt7623, mt8173
-> and mt8183.
+> This patch only rename the variable name from enable_4GB to
+> dram_is_4gb for readable.
 >
-> After this patch, the "mediatek,larb-id" only be needed for mt2712
-> which have 2 M4Us. In the other SoCs, we can get the larb-id from M4U
-> in which the larbs in the "mediatek,larbs" always are ordered.
->
-> Correspondingly, the larb_nr in the "struct mtk_smi_iommu" could also
-> be deleted.
->
-> CC: Matthias Brugger <matthias.bgg@gmail.com>
 > Signed-off-by: Yong Wu <yong.wu@mediatek.com>
 
-Thanks for the cleanup.
+Nice, this is clearer.
 
 Reviewed-by: Evan Green <evgreen@chromium.org>
