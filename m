@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E4EC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ACD3C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:54:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B7592147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:53:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD9502147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:54:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="qUJhrZVh";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nHUF4UDd"
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="prRsamLv";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="5cRdXFlr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729391AbfBSVxL (ORCPT
+        id S1729782AbfBSVyD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 16:53:11 -0500
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:52857 "EHLO
+        Tue, 19 Feb 2019 16:54:03 -0500
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:52547 "EHLO
         wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725994AbfBSVxL (ORCPT
+        by vger.kernel.org with ESMTP id S1725994AbfBSVyC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 16:53:11 -0500
+        Tue, 19 Feb 2019 16:54:02 -0500
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 6CB6A34DD;
-        Tue, 19 Feb 2019 16:53:07 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Tue, 19 Feb 2019 16:53:08 -0500
+        by mailout.west.internal (Postfix) with ESMTP id 50B3034FB;
+        Tue, 19 Feb 2019 16:54:01 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Tue, 19 Feb 2019 16:54:01 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
         :from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=FzLxDwgW+cZFMnnA66l2LUVdJW9
-        nX4e7lM9SFG06iVI=; b=qUJhrZVhajLl12cFoEr/3vNVuh0/VsW2b7teKdMMMe8
-        xxQxqxsDoc01SNEPuuddYPBXHSmfR8Ab8f38EhzhSFNpEIUsemZRQe5SuGV1dkmD
-        SDpjtqZD1BA/0GHeXHNvbulLHVqMxLJNkLVnoNBQfPM0gQ9uKCx85seYE/R5pYqU
-        ESdiYYx6LWbcbS48BWXof2kTa76ViPFkIdEuyG5JwKmHMQlTlbX9keC8Jgf8uPXR
-        2mOf41+ivv0pGvy7wyQBZ58S/UUeqaNp6Cvt/voJAssaeq0jTJDM7SL9mSPdv5m2
-        xS6FqXIdiqD/tqgkVQmR1JNoWJQitP9mli6QZPYIcNg==
+        :content-type:in-reply-to; s=fm2; bh=DZCAgcu4gs6HRV3PBwax+lMpNOc
+        XGgzw0yN/Ik3WJp4=; b=prRsamLvJ8qxlGB39vntN5Xzl8h/90IVtJyhkH/8BOl
+        VEe1DdgK/aLa6yDt8jwK0G09CrP2bL9M/p+1AfCUoN6frarX9RHxWKyqXXJc9QRd
+        0c94P94VfEECLwkCCGeWFg21p3Bwyck9ZMaxA7LJVy6jBMAQpyFEiZBQYOOVikek
+        IYdP01rOYu5ZVqhQ74NDZzEbMl+3dREN5BIlLfDOtVfIcMYmmkuXPGQxNgmYKWBx
+        BSNrDaLjKln4svuGiGceDOxxfuCZEQ6RwLLlplrmgMoaKz8uiGkaZBZeKUBLEfS/
+        i/zXBO7waFaoWfo763kQ3ZJIEpyk9QQYnj8YDDNsodQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-type:date:from:in-reply-to
         :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=FzLxDw
-        gW+cZFMnnA66l2LUVdJW9nX4e7lM9SFG06iVI=; b=nHUF4UDdrB/M9NPRdD1Tam
-        9LQZ+hc30ZsEIQ0TuCp6OHcRJ3HMCymRyQ8juomXEGg+eS72IZtvm+THdUmu/0MJ
-        vfulGxjhoACdIvD1/X8Wq++MjTIgRxUFECeetOLpKjxdGcl22M7tNJ4fUdZvWxnq
-        JkyHjrzKKPg0nl0sBdx5jsSk3VCrViia+M5CBgmJe6Ma6j6WO52xlKDHULv88cqO
-        v+s+PfG9+j7sHvN6pnCe27aT/IA9ezXN2S8XIIEE4+6oY0ZVMU5YgGahAUHQUHu1
-        p+vO7/O2sHRtaHjkzOqZW6lH3oZSC1KiaLqexIAPF+zUM6UzMdh8NWWgHOttCo0w
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=DZCAgc
+        u4gs6HRV3PBwax+lMpNOcXGgzw0yN/Ik3WJp4=; b=5cRdXFlr+mwNb+xmMZFjk2
+        kPscke6MmRbqz9wN3Q+nMNtXM6koCtzLM4otcIIn+5Xn4+t3PajFHcZ3Tik8UGn7
+        ryzqPdnFpDvQBV34+ArZTpMfEh3GFSKuVUpj5BMEwdGWhAAORD/EIc7GiWME1SwU
+        JX563HFNftHt77HDPT/Humvl5xZf3v53sYOoFCn5EUBhthrPlVynOINcZAIUi1MA
+        cGHLKdNhA2Y6aJbzJKADlMxXsZE8LB2U2sYN125kIngdGjyr2D24jnzY0ZcQ4d6G
+        XTsb5tV6xDfR5oxBAFOi6d+9N0FLc+Pq+4v8/zbbWOM99IzPln0SOlnRhz1d5mtw
         ==
-X-ME-Sender: <xms:wXpsXFO0LbeXWHvjciIHIEvKrcDF2sMAqWxlfxCiwV2xAF1MUfkPyg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrtdeggdduheefucdltddurdegtdelrddttd
+X-ME-Sender: <xms:-HpsXDK0i-ga70nQJdWa3WHGrXfpWZr3OV-H2kgY8UJw7y9zs2JR3w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrtdeggdduheegucdltddurdegtdelrddttd
     dmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfquhht
     necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
     enfghrlhcuvffnffculdeftddmnecujfgurhepfffhvffukfhfgggtuggjofgfsehttder
     tdforedvnecuhfhrohhmpedfvfhosghinhcuvedrucfjrghrughinhhgfdcuoehmvgesth
     hosghinhdrtggtqeenucfkphepuddvuddrgeegrddvfeelrddugeegnecurfgrrhgrmhep
     mhgrihhlfhhrohhmpehmvgesthhosghinhdrtggtnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:wXpsXOaUfYpgr_RPnDFCG7tgqQyihx-kgEZoILDMzh63JC25dYoGwg>
-    <xmx:wXpsXNEc4W0d1zelpmsYih1I0wypLkl4YhN85j7Y8FAxaCKJnE5yhw>
-    <xmx:wXpsXEnw1NtsihrbnVWX9AuPfOTRPMebqnmZAboyrn1sRY32G2vMOA>
-    <xmx:w3psXAbCG8HX6HaH1AdILcSdAZATFdzU7clHomtw6x3PGFU7vmpwBg>
+X-ME-Proxy: <xmx:-HpsXD5Pw57jgBcFipPCViqNF1AZHK7zNW_NZ4KCRORLyHkGfQ5XlQ>
+    <xmx:-HpsXGTxFj6lOcz1AkDUkwKUW1uYrwYMQStxnLAexGBg4GvScy2qVg>
+    <xmx:-HpsXPpZ0lhdLsk6-wvQ5GZWSIRC3Ko9A6Dgq69ViKmebxgRfvXgzw>
+    <xmx:-HpsXDKacph6aUtdHR3NBqLLKN5TITT75-i9BxJepGeJhe8SSc4J6g>
 Received: from localhost (ppp121-44-239-144.bras2.syd2.internode.on.net [121.44.239.144])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5F959E45E2;
-        Tue, 19 Feb 2019 16:53:04 -0500 (EST)
-Date:   Wed, 20 Feb 2019 08:52:45 +1100
+        by mail.messagingengine.com (Postfix) with ESMTPA id E99DE10310;
+        Tue, 19 Feb 2019 16:53:59 -0500 (EST)
+Date:   Wed, 20 Feb 2019 08:53:45 +1100
 From:   "Tobin C. Harding" <me@tobin.cc>
 To:     Jann Horn <jannh@google.com>
 Cc:     "Tobin C. Harding" <tobin@kernel.org>,
@@ -74,17 +74,16 @@ Cc:     "Tobin C. Harding" <tobin@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [PATCH 5/6] lib: Fix function documentation for strncpy_from_user
-Message-ID: <20190219215245.GA16094@eros.localdomain>
+        kernel list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6/6] lib: Add function strscpy_from_user()
+Message-ID: <20190219215345.GB16094@eros.localdomain>
 References: <20190218232308.11241-1-tobin@kernel.org>
- <20190218232308.11241-6-tobin@kernel.org>
- <CAG48ez0utQJjoJW69OwGiuH1EQtcD939-5u71ruD_1nr0eJK0g@mail.gmail.com>
+ <20190218232308.11241-7-tobin@kernel.org>
+ <CAG48ez1n=+GsvhMxHhxL=EBxD6VEqopdLRPcEAff9vrP3+a30g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAG48ez0utQJjoJW69OwGiuH1EQtcD939-5u71ruD_1nr0eJK0g@mail.gmail.com>
+In-Reply-To: <CAG48ez1n=+GsvhMxHhxL=EBxD6VEqopdLRPcEAff9vrP3+a30g@mail.gmail.com>
 X-Mailer: Mutt 1.11.3 (2019-02-01)
 User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -92,72 +91,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 01:51:45AM +0100, Jann Horn wrote:
-> +cc Andy because he's also preparing a patch for this function
-> 
+On Tue, Feb 19, 2019 at 03:12:33AM +0100, Jann Horn wrote:
 > On Tue, Feb 19, 2019 at 12:25 AM Tobin C. Harding <tobin@kernel.org> wrote:
-> > Current function documentation for strncpy_from_user() is incorrect.  If
-> > @count (size of destination buffer) is less than the length of the user
-> > string the function does _not_ return @count but rather returns -EFAULT.
+> > Currently we have strncpy_from_userspace().  If the user string is
+> > longer than the destination kernel buffer we get an error code -EFAULT.
+> > We are unable to recover from here because this is the same error
+> > returned if the access to userspace fails totally.
 > >
-> > Document correctly the function return value, also add note that string
-> > may be left non-null terminated.
+> > There is no reason we cannot continue execution with the user string
+> > truncated.
+> >
+> > Add a function strscpy_from_user() that guarantees the string written is
+> > null-terminated.  If user string is longer than destination buffer
+> > truncates the string.  Returns the number of characters written
+> > excluding the null-terminator.
 > >
 > > Signed-off-by: Tobin C. Harding <tobin@kernel.org>
 > > ---
-> >  lib/strncpy_from_user.c | 17 +++++++----------
-> >  1 file changed, 7 insertions(+), 10 deletions(-)
+> >  lib/strncpy_from_user.c | 43 +++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 43 insertions(+)
 > >
 > > diff --git a/lib/strncpy_from_user.c b/lib/strncpy_from_user.c
-> > index 58eacd41526c..11fe9a4a00fd 100644
+> > index 11fe9a4a00fd..6bd603ccec7a 100644
 > > --- a/lib/strncpy_from_user.c
 > > +++ b/lib/strncpy_from_user.c
-> > @@ -82,22 +82,19 @@ static inline long do_strncpy_from_user(char *dst, const char __user *src, long
-> >  }
-> >
-> >  /**
-> > - * strncpy_from_user: - Copy a NUL terminated string from userspace.
-> > + * strncpy_from_user() - Copy a NUL terminated string from userspace.
-> >   * @dst:   Destination address, in kernel space.  This buffer must be at
-> >   *         least @count bytes long.
-> >   * @src:   Source address, in user space.
-> > - * @count: Maximum number of bytes to copy, including the trailing NUL.
-> > + * @count: Maximum number of bytes to copy, including the trailing %NUL.
-> >   *
-> >   * Copies a NUL-terminated string from userspace to kernel space.
-> >   *
-> > - * On success, returns the length of the string (not including the trailing
-> > - * NUL).
-> > - *
-> > - * If access to userspace fails, returns -EFAULT (some data may have been
-> > - * copied).
-> > - *
-> > - * If @count is smaller than the length of the string, copies @count bytes
-> > - * and returns @count.
-> > + * Return: If access to userspace fails, returns -EFAULT.  Otherwise,
-> > + *         return the number of characters copied excluding the trailing
-> > + *         %NUL, if the length of the user string exceeds @count return
-> > + *         -EFAULT (in which case @dst will be left without a %NUL
-> > + *         terminator).
-> >   */
 > 
-> AFAICS the byte_at_a_time loop exits when max==0 is reached, and then
-> if `res >= count` (in other words, if we've copied as many bytes as
-> requested, haven't encountered a null byte so far, and haven't reached
-> the end of the address space), we return `res`, which is the same as
-> `count`. Are you sure?
+> This file is only built when CONFIG_GENERIC_STRNCPY_FROM_USER is set.
+> Some architectures have their own versions of strncpy_from_user() and
+> don't set that, so on those architectures, your code wouldn't be built
+> into the kernel.
 
-Thanks for the review Jaan.  Seems I was in a world of confused, I
-misread count to be the size of the destination buffer not the size of
-the source string.
+thanks!  Dropping *_from_user() stuff from set.
 
-Also, re-reading strscpy() and why its better I think I may not be the
-correct person to implement strscpy_from_user() since I'm not across all
-the subtleties.
-
-If v2 seems wanted for the first patches in this set I'll drop the
-*_from_user() stuff.
-
-thanks,
-Tobin.
-
+	Tobin
