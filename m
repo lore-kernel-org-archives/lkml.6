@@ -2,163 +2,121 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B807FC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:25:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93222C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:29:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 848FB21903
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:25:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nIZgUdQ6"
+	by mail.kernel.org (Postfix) with ESMTP id 66EDC2086C
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:29:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729240AbfBSVYv (ORCPT
+        id S1728848AbfBSV3A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 16:24:51 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36453 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726239AbfBSVYv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 16:24:51 -0500
-Received: by mail-wr1-f66.google.com with SMTP id o17so23607786wrw.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 13:24:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ms2tRmhgh7YfcmvnmAX6PNIwDOg54reqN7wxeDE3+AA=;
-        b=nIZgUdQ6ogeKoCSTVws8IMHkQXW2ifFvlnVAg7lALMhMGlxMK1afCZJ03AvrknLMsi
-         sESlJACPQfmV9x3crfCrkahfg7m9BFURdjbev8UkyoC3uWEwJ21vwV1yxIuQ5fsmSIzQ
-         3gsGAWgar6lPar6U3svBUF7bl12RKdGyprsEpUx9I136SguT5NLKAN+g6KmafhBAIRxC
-         ikezTdZFyk4JQk7OGgOE8sl5cv30FVAQB1JxKITavIwY9szgGaPNPw0IMeMqvd6nJTl2
-         elTb4iQdy+BBZuxcO9CwRGHRB+YCdQwYViwON+3sVFF/jrNFEluf8JydzTgCxokDU93E
-         GjVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ms2tRmhgh7YfcmvnmAX6PNIwDOg54reqN7wxeDE3+AA=;
-        b=WHqnryOlr0CRaF4r3UThhDJKgBDbwJ2nC5D9dHaAuuCCQjciGOxWzDGfKd0iELkM7a
-         k1jmpqRbsa/4454hZUOVHbxMjm6quUIvmVBUqKqfxlqsB9sZxTb88GTDpHlwffwJlhDP
-         QfR9wZDCtQKnNNFZrkwIb7BFXB67ezcuJXYzJru1eWXwTS6AIX2uU38AmZhZ+bRyfgL8
-         1NE3it5sQ91m8ufsSpbZoV5AzDtcfZ6eOLlidL32xJbv6QagEyxT4Gfez+Vnnbf1Njih
-         Jt2sP7Ar5/T+7BhyIcuwX1MdjUOlSSSp2BLgfgrsss+Ag648pVORamaluuPg0bOhJM/j
-         Tblg==
-X-Gm-Message-State: AHQUAuYTYW6vYfLV4giB7gHJfKVznoxqRyR0tMh/YnTIETcFVzdrzmsj
-        8Zswf3ZTnaqL9+egRU9oyqbqH2+q
-X-Google-Smtp-Source: AHgI3Ian/TIf3lZ1M/uhPP+QoTR8yNp6VmvCqCgGXdwFToiwohySUVZ4AjBU4/kqryx3qi1XedSseQ==
-X-Received: by 2002:a5d:550f:: with SMTP id b15mr23409869wrv.251.1550611488595;
-        Tue, 19 Feb 2019 13:24:48 -0800 (PST)
-Received: from localhost.localdomain ([46.216.153.243])
-        by smtp.gmail.com with ESMTPSA id n11sm12311758wrw.60.2019.02.19.13.24.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Feb 2019 13:24:47 -0800 (PST)
-Received: from jek by localhost.localdomain with local (Exim 4.92-RC4)
-        (envelope-from <jekhor@gmail.com>)
-        id 1gwCsf-00053Z-9W; Wed, 20 Feb 2019 00:24:45 +0300
-From:   Yauhen Kharuzhy <jekhor@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Yauhen Kharuzhy <jekhor@gmail.com>
-Subject: [PATCH v2 1/2] extcon-intel-cht-wc: Make charger detection co-existed with OTG host mode
-Date:   Wed, 20 Feb 2019 00:24:40 +0300
-Message-Id: <20190219212441.19391-2-jekhor@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190219212441.19391-1-jekhor@gmail.com>
-References: <20190219212441.19391-1-jekhor@gmail.com>
+        Tue, 19 Feb 2019 16:29:00 -0500
+Received: from mga02.intel.com ([134.134.136.20]:61634 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725829AbfBSV27 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 16:28:59 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2019 13:28:58 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,388,1544515200"; 
+   d="scan'208";a="321696263"
+Received: from orsmsx108.amr.corp.intel.com ([10.22.240.6])
+  by fmsmga005.fm.intel.com with ESMTP; 19 Feb 2019 13:28:57 -0800
+Received: from orsmsx112.amr.corp.intel.com ([169.254.3.70]) by
+ ORSMSX108.amr.corp.intel.com ([169.254.2.157]) with mapi id 14.03.0415.000;
+ Tue, 19 Feb 2019 13:28:56 -0800
+From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To:     "bp@alien8.de" <bp@alien8.de>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "nadav.amit@gmail.com" <nadav.amit@gmail.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux_dti@icloud.com" <linux_dti@icloud.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2 14/20] mm: Make hibernate handle unmapped pages
+Thread-Topic: [PATCH v2 14/20] mm: Make hibernate handle unmapped pages
+Thread-Index: AQHUt2sViQgi+Bs0HkOgKSmVUNQOKqXnnOgAgACunoA=
+Date:   Tue, 19 Feb 2019 21:28:55 +0000
+Message-ID: <07ea2a4a9f1771f7bad82ad8fe5ee9483b79d115.camel@intel.com>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+         <20190129003422.9328-15-rick.p.edgecombe@intel.com>
+         <20190219110400.GA19514@zn.tnic>
+In-Reply-To: <20190219110400.GA19514@zn.tnic>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.54.75.11]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D2C7ED715E2C204FA4910F9B0DA68816@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Whiskey Cove Cherry Trail PMIC requires disabling OTG host mode before
-of charger detection procedure. Do this by manipulationg of CHGRCTRL1
-register.
-
-Source: APCI DSDT code of Lenovo Yoga Book YB1-X91L and open-sourced
-Intel's drivers.
-
-Signed-off-by: Yauhen Kharuzhy <jekhor@gmail.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/extcon/extcon-intel-cht-wc.c | 38 +++++++++++++++++++++++++++-
- 1 file changed, 37 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/extcon/extcon-intel-cht-wc.c b/drivers/extcon/extcon-intel-cht-wc.c
-index 5ef215297101..4f6ba249bc30 100644
---- a/drivers/extcon/extcon-intel-cht-wc.c
-+++ b/drivers/extcon/extcon-intel-cht-wc.c
-@@ -29,7 +29,16 @@
- #define CHT_WC_CHGRCTRL0_DBPOFF		BIT(6)
- #define CHT_WC_CHGRCTRL0_CHR_WDT_NOKICK	BIT(7)
- 
--#define CHT_WC_CHGRCTRL1		0x5e17
-+#define CHT_WC_CHGRCTRL1			0x5e17
-+#define CHT_WC_CHGRCTRL1_DBPEN_MASK		BIT(7)
-+#define CHT_WC_CHGRCTRL1_OTGMODE		BIT(6)
-+#define CHT_WC_CHGRCTRL1_FTEMP_EVENT		BIT(5)
-+#define CHT_WC_CHGRCTRL1_FUSB_INLMT_1500	BIT(4)
-+#define CHT_WC_CHGRCTRL1_FUSB_INLMT_900		BIT(3)
-+#define CHT_WC_CHGRCTRL1_FUSB_INLMT_500		BIT(2)
-+#define CHT_WC_CHGRCTRL1_FUSB_INLMT_150		BIT(1)
-+#define CHT_WC_CHGRCTRL1_FUSB_INLMT_100		BIT(0)
-+
- 
- #define CHT_WC_USBSRC			0x5e29
- #define CHT_WC_USBSRC_STS_MASK		GENMASK(1, 0)
-@@ -198,6 +207,29 @@ static void cht_wc_extcon_set_5v_boost(struct cht_wc_extcon_data *ext,
- 		dev_err(ext->dev, "Error writing Vbus GPIO CTLO: %d\n", ret);
- }
- 
-+static void cht_wc_extcon_set_otgmode(struct cht_wc_extcon_data *ext,
-+				      bool enable)
-+{
-+	unsigned int chgrctrl1;
-+	int ret;
-+
-+	ret = regmap_read(ext->regmap, CHT_WC_CHGRCTRL1, &chgrctrl1);
-+	if (ret) {
-+		dev_err(ext->dev, "Error reading CHGRCTRL1 reg: %d\n", ret);
-+		return;
-+	}
-+
-+	if (enable)
-+		chgrctrl1 |= CHT_WC_CHGRCTRL1_OTGMODE;
-+	else
-+		chgrctrl1 &= ~(CHT_WC_CHGRCTRL1_OTGMODE);
-+
-+	ret = regmap_write(ext->regmap, CHT_WC_CHGRCTRL1, chgrctrl1);
-+	if (ret)
-+		dev_err(ext->dev,
-+			"Error writing CHGRCTRL1 OTG mode bit: %d\n", ret);
-+}
-+
- /* Small helper to sync EXTCON_CHG_USB_SDP and EXTCON_USB state */
- static void cht_wc_extcon_set_state(struct cht_wc_extcon_data *ext,
- 				    unsigned int cable, bool state)
-@@ -222,10 +254,14 @@ static void cht_wc_extcon_pwrsrc_event(struct cht_wc_extcon_data *ext)
- 
- 	id = cht_wc_extcon_get_id(ext, pwrsrc_sts);
- 	if (id == USB_ID_GND) {
-+		cht_wc_extcon_set_otgmode(ext, true);
-+
- 		/* The 5v boost causes a false VBUS / SDP detect, skip */
- 		goto charger_det_done;
- 	}
- 
-+	cht_wc_extcon_set_otgmode(ext, false);
-+
- 	/* Plugged into a host/charger or not connected? */
- 	if (!(pwrsrc_sts & CHT_WC_PWRSRC_VBUS)) {
- 		/* Route D+ and D- to PMIC for future charger detection */
--- 
-2.20.1
-
+T24gVHVlLCAyMDE5LTAyLTE5IGF0IDEyOjA0ICswMTAwLCBCb3Jpc2xhdiBQZXRrb3Ygd3JvdGU6
+DQo+IE9uIE1vbiwgSmFuIDI4LCAyMDE5IGF0IDA0OjM0OjE2UE0gLTA4MDAsIFJpY2sgRWRnZWNv
+bWJlIHdyb3RlOg0KPiA+IEZvciBhcmNoaXRlY3R1cmVzIHdpdGggQ09ORklHX0FSQ0hfSEFTX1NF
+VF9BTElBUywgcGFnZXMgY2FuIGJlIHVubWFwcGVkDQo+ID4gYnJpZWZseSBvbiB0aGUgZGlyZWN0
+bWFwLCBldmVuIHdoZW4gQ09ORklHX0RFQlVHX1BBR0VBTExPQyBpcyBub3QNCj4gPiBjb25maWd1
+cmVkLiBTbyB0aGlzIGNoYW5nZXMga2VybmVsX21hcF9wYWdlcyBhbmQga2VybmVsX3BhZ2VfcHJl
+c2VudCB0byBiZQ0KPiANCj4gcy90aGlzIGNoYW5nZXMvY2hhbmdlLw0KPiANCj4gRnJvbSBEb2N1
+bWVudGF0aW9uL3Byb2Nlc3Mvc3VibWl0dGluZy1wYXRjaGVzLnJzdDoNCj4gDQo+ICAiRGVzY3Jp
+YmUgeW91ciBjaGFuZ2VzIGluIGltcGVyYXRpdmUgbW9vZCwgZS5nLiAibWFrZSB4eXp6eSBkbyBm
+cm90eiINCj4gICBpbnN0ZWFkIG9mICJbVGhpcyBwYXRjaF0gbWFrZXMgeHl6enkgZG8gZnJvdHoi
+IG9yICJbSV0gY2hhbmdlZCB4eXp6eQ0KPiAgIHRvIGRvIGZyb3R6IiwgYXMgaWYgeW91IGFyZSBn
+aXZpbmcgb3JkZXJzIHRvIHRoZSBjb2RlYmFzZSB0byBjaGFuZ2UNCj4gICBpdHMgYmVoYXZpb3Vy
+LiINCj4gDQo+IEFsc28sIHBsZWFzZSBlbmQgZnVuY3Rpb24gbmFtZXMgd2l0aCBwYXJlbnRoZXNl
+cy4NClllcywgZ290Y2hhLg0KDQo+ID4gZGVmaW5lZCB3aGVuIENPTkZJR19BUkNIX0hBU19TRVRf
+QUxJQVMgaXMgZGVmaW5lZCBhcyB3ZWxsLiBJdCBhbHNvIGNoYW5nZXMNCj4gPiBwbGFjZXMgKHBh
+Z2VfYWxsb2MuYykgd2hlcmUgdGhvc2UgZnVuY3Rpb25zIGFyZSBhc3N1bWVkIHRvIG9ubHkgYmUN
+Cj4gPiBpbXBsZW1lbnRlZCB3aGVuIENPTkZJR19ERUJVR19QQUdFQUxMT0MgaXMgZGVmaW5lZC4N
+Cj4gDQo+IFRoZSBjb21taXQgbWVzc2FnZSBkb2Vzbid0IG5lZWQgdG8gc2F5ICJ3aGF0IiB5b3Un
+cmUgZG9pbmcgLSB0aGF0IHNob3VsZA0KPiBiZSBvYnZpb3VzIGZyb20gdGhlIGRpZmYgYmVsb3cu
+IEl0IHNob3VsZCByYXRoZXIgc2F5ICJ3aHkiIHlvdSdyZSBkb2luZw0KPiBpdC4NCk9rLCBzb3Jy
+eS4gSSdsbCBjaGFuZ2UgdGhpcyB0byBiZSBtb3JlIGNvbmNpc2UuDQoNCj4gPiBTbyBub3cgd2hl
+biBDT05GSUdfQVJDSF9IQVNfU0VUX0FMSUFTPXksIGhpYmVybmF0ZSB3aWxsIGhhbmRsZSBub3Qg
+cHJlc2VudA0KPiA+IHBhZ2Ugd2hlbiBzYXZpbmcuIFByZXZpb3VzbHkgdGhpcyB3YXMgYWxyZWFk
+eSBkb25lIHdoZW4NCj4gDQo+IHBhZ2VzDQo+IA0KPiA+IENPTkZJR19ERUJVR19QQUdFQUxMT0Mg
+d2FzIGNvbmZpZ3VyZWQuIEl0IGRvZXMgbm90IGFwcGVhciB0byBoYXZlIGEgYmlnDQo+ID4gaGli
+ZXJuYXRpbmcgcGVyZm9ybWFuY2UgaW1wYWN0Lg0KPiANCj4gQ29tbWVudCBvdmVyIHNhZmVfY29w
+eV9wYWdlDQpPaCwgeWVzIHlvdSBhcmUgcmlnaHQuDQoNCj4gPiBCZWZvcmU6DQo+ID4gWyAgICA0
+LjY3MDkzOF0gUE06IFdyb3RlIDE3MTk5NiBrYnl0ZXMgaW4gMC4yMSBzZWNvbmRzICg4MTkuMDIg
+TUIvcykNCj4gPiANCj4gPiBBZnRlcjoNCj4gPiBbICAgIDQuNTA0NzE0XSBQTTogV3JvdGUgMTc4
+OTMyIGtieXRlcyBpbiAwLjIyIHNlY29uZHMgKDgxMy4zMiBNQi9zKQ0KPiANCj4gSUlOTSwgdGhh
+dCdzIGxpa2UgMTczNCBwYWdlcyBtb3JlLiBIb3cgYW0gSSB0byB1bmRlcnN0YW5kIHRoaXMgbnVt
+YmVyPw0KPiANCj4gQ29kZSBoYXMgY2FsbGVkIHNldF9hbGlhc19udl9ub2ZsdXNoKCkgb24gdGhl
+bSBhbmQgc2FmZV9jb3B5X3BhZ2UoKSBub3cNCj4gbWFwcyB0aGVtIG9uZSBieSBvbmUgdG8gY29w
+eSB0aGVtIHRvIHRoZSBoaWJlcm5hdGlvbiBpbWFnZT8NCj4gDQo+IFRoeC4NCj4gDQpUaGVzZSBh
+cmUgZnJvbSBsb2dzIGhpYmVybmF0ZSBnZW5lcmF0ZXMuIFRoZSBjb25jZXJuIHdhcyB0aGF0IGhp
+YmVybmF0ZSBjb3VsZCBiZQ0Kc2xpZ2h0bHkgc2xvd2VyIGJlY2F1c2Ugb2YgdGhlIGNoZWNraW5n
+IG9mIHdoZXRoZXIgdGhlIHBhZ2VzIGFyZSBtYXBwZWQuIFRoZQ0KYmFuZHdpZHRoIG51bWJlciBj
+YW4gYmUgdXNlZCB0byBjb21wYXJlLCA4MTkuMDItPjgxMy4zMiBNQi9zLiBTb21lIHJhbmRvbW5l
+c3MNCm11c3QgaGF2ZSByZXN1bHRlZCBpbiBkaWZmZXJlbnQgYW1vdW50cyBvZiBtZW1vcnkgdXNl
+ZCBiZXR3ZWVuIHRlc3RzLiBJIGNhbiBqdXN0DQpyZW1vdmUgdGhlIGxvZyBsaW5lcyBhbmQgaW5j
+bHVkZSB0aGUgYmFuZHdpZHRoIG51bWJlcnMuDQoNClRoYW5rcywNCg0KUmljaw0K
