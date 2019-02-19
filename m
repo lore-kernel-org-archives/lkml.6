@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A4B0C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 984F5C4360F
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F22C421738
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:01:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 504BB21738
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:01:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729827AbfBSUBC (ORCPT
+        id S1729878AbfBSUBQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 15:01:02 -0500
-Received: from mga11.intel.com ([192.55.52.93]:8744 "EHLO mga11.intel.com"
+        Tue, 19 Feb 2019 15:01:16 -0500
+Received: from mga11.intel.com ([192.55.52.93]:8764 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729746AbfBSUA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 15:00:58 -0500
+        id S1729822AbfBSUBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 15:01:02 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2019 12:00:58 -0800
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2019 12:01:02 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,388,1544515200"; 
-   d="scan'208";a="139918077"
+   d="scan'208";a="139918118"
 Received: from otc-lr-04.jf.intel.com ([10.54.39.129])
-  by orsmga001.jf.intel.com with ESMTP; 19 Feb 2019 12:00:59 -0800
+  by orsmga001.jf.intel.com with ESMTP; 19 Feb 2019 12:01:02 -0800
 From:   kan.liang@linux.intel.com
 To:     peterz@infradead.org, tglx@linutronix.de, acme@kernel.org,
         mingo@redhat.com, x86@kernel.org, linux-kernel@vger.kernel.org
 Cc:     len.brown@intel.com, jolsa@redhat.com, namhyung@kernel.org,
         eranian@google.com, ak@linux.intel.com,
         Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH 04/10] perf/x86/intel/rapl: Apply "domain" for RAPL
-Date:   Tue, 19 Feb 2019 12:00:05 -0800
-Message-Id: <1550606411-5313-5-git-send-email-kan.liang@linux.intel.com>
+Subject: [PATCH 09/10] perf header: Add die information in cpu topology
+Date:   Tue, 19 Feb 2019 12:00:10 -0800
+Message-Id: <1550606411-5313-10-git-send-email-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1550606411-5313-1-git-send-email-kan.liang@linux.intel.com>
 References: <1550606411-5313-1-git-send-email-kan.liang@linux.intel.com>
@@ -47,546 +47,469 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-The RAPL counters are not package scope only anymore. For example, there
-will be die scope RAPL counters on CLX-AP.
-Apply "domain" for RAPL, and make it easy to be extended later.
+With the new CPUID.1F, a new level type of processor topology, 'die', is
+introduced. The 'die' information in cpu topology should be added in
+perf header.
 
-Each type of domain needs a dedicated rapl_pmus. The struct rapl_pmus is
-modified accordingly.
- - The fixed counters may be different among different domain types.
-   Move rapl_cntr_mask to struct rapl_pmus.
- - The CPU mask may be different among different domain types as well.
-   Move rapl_cpu_mask to struct rapl_pmus. Also update
-   rapl_cpu_online/offline accordingly.
- - Replace maxpkg by the number of domain
+To be compatible with old perf.data, the patch checks the section size
+before reading the die information. It never reads data crossing the
+section boundary.
+Because the new info is added at the end of the cpu_topology section,
+the old perf tool ignores the extra data.
 
-Rename rapl_pmu_events_group to rapl_pkg_pmu_events_group for domains of
-PACKAGE_DOMAIN type.
+The new perf tool with the patch may be used on legacy kernel. Add a
+new function check_x86_die_exists() to check if die topology
+information is supported by kernel. The function only check X86 and
+CPU 0. Assuming other CPUs have same topology.
 
-Added PMU name in rapl_advertise() to distinguish between different type
-of domain.
+A similar way for core and socket is used to support die id and sibling
+dies string.
 
-Extend intel_rapl_init_fun to support events from different type of
-domain.
-
-If there are more than two types of domain on a machine, using new PMU
-name, "power_$domain_type", otherwise, still use "power".
+Add a new function in cpumap.c to fetch die id information.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
- arch/x86/events/intel/rapl.c | 306 +++++++++++++++++++++++++++++++------------
- 1 file changed, 224 insertions(+), 82 deletions(-)
+ tools/perf/Documentation/perf.data-file-format.txt |   9 +-
+ tools/perf/util/cpumap.c                           |   7 +
+ tools/perf/util/cpumap.h                           |   1 +
+ tools/perf/util/env.c                              |   1 +
+ tools/perf/util/env.h                              |   3 +
+ tools/perf/util/header.c                           | 185 +++++++++++++++++++--
+ 6 files changed, 187 insertions(+), 19 deletions(-)
 
-diff --git a/arch/x86/events/intel/rapl.c b/arch/x86/events/intel/rapl.c
-index 91039ff..c1ba09c 100644
---- a/arch/x86/events/intel/rapl.c
-+++ b/arch/x86/events/intel/rapl.c
-@@ -57,6 +57,7 @@
- #include <asm/cpu_device_id.h>
- #include <asm/intel-family.h>
- #include "../perf_event.h"
-+#include "../domain.h"
+diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
+index dfb218f..d2ec58d 100644
+--- a/tools/perf/Documentation/perf.data-file-format.txt
++++ b/tools/perf/Documentation/perf.data-file-format.txt
+@@ -154,7 +154,7 @@ struct {
  
- MODULE_LICENSE("GPL");
+ String lists defining the core and CPU threads topology.
+ The string lists are followed by a variable length array
+-which contains core_id and socket_id of each cpu.
++which contains core_id, die_id (for x86) and socket_id of each cpu.
+ The number of entries can be determined by the size of the
+ section minus the sizes of both string lists.
  
-@@ -148,26 +149,31 @@ struct rapl_pmu {
- 
- struct rapl_pmus {
- 	struct pmu		pmu;
--	unsigned int		maxpkg;
-+	struct domain_type	type;
-+	unsigned int		rapl_cntr_mask;
-+	cpumask_t		rapl_cpu_mask;
- 	struct rapl_pmu		*pmus[];
+@@ -163,14 +163,19 @@ struct {
+        struct perf_header_string_list threads; /* Variable length */
+        struct {
+ 	      uint32_t core_id;
++	      uint32_t die_id;
+ 	      uint32_t socket_id;
+        } cpus[nr]; /* Variable length records */
  };
  
-  /* 1/2^hw_unit Joule */
- static int rapl_hw_unit[NR_RAPL_DOMAINS] __read_mostly;
--static struct rapl_pmus *rapl_pmus;
--static cpumask_t rapl_cpu_mask;
--static unsigned int rapl_cntr_mask;
-+static struct rapl_pmus *rapl_pmus[DOMAIN_TYPE_MAX];
- static u64 rapl_timer_ms;
-+static unsigned int rapl_domain_type_mask;
+ Example:
+-	sibling cores   : 0-3
++	sibling cores   : 0-8
++	sibling dies	: 0-3
++	sibling dies	: 4-7
+ 	sibling threads : 0-1
+ 	sibling threads : 2-3
++	sibling threads : 4-5
++	sibling threads : 6-7
  
--static inline struct rapl_pmu *cpu_to_rapl_pmu(unsigned int cpu)
-+static inline struct rapl_pmu *cpu_to_rapl_pmu(unsigned int cpu,
-+					       struct rapl_pmus *pmus)
- {
--	unsigned int pkgid = topology_logical_package_id(cpu);
-+	unsigned int id = get_domain_id(cpu, &pmus->type);
-+
-+	if (!pmus)
-+		return NULL;
+ 	HEADER_NUMA_TOPOLOGY = 14,
  
- 	/*
- 	 * The unsigned check also catches the '-1' return value for non
- 	 * existent mappings in the topology map.
- 	 */
--	return pkgid < rapl_pmus->maxpkg ? rapl_pmus->pmus[pkgid] : NULL;
-+	return id < pmus->type.max_domains ? pmus->pmus[id] : NULL;
- }
- 
- static inline u64 rapl_read_counter(struct perf_event *event)
-@@ -350,10 +356,15 @@ static int rapl_pmu_event_init(struct perf_event *event)
- {
- 	u64 cfg = event->attr.config & RAPL_EVENT_MASK;
- 	int bit, msr, ret = 0;
-+	struct rapl_pmus *pmus;
- 	struct rapl_pmu *pmu;
- 
-+	pmus = container_of(event->pmu, struct rapl_pmus, pmu);
-+	if (!pmus)
-+		return -ENOENT;
-+
- 	/* only look at RAPL events */
--	if (event->attr.type != rapl_pmus->pmu.type)
-+	if (event->attr.type != pmus->pmu.type)
- 		return -ENOENT;
- 
- 	/* check only supported bits are set */
-@@ -393,7 +404,7 @@ static int rapl_pmu_event_init(struct perf_event *event)
- 		return -EINVAL;
- 	}
- 	/* check event supported */
--	if (!(rapl_cntr_mask & (1 << bit)))
-+	if (!(pmus->rapl_cntr_mask & (1 << bit)))
- 		return -EINVAL;
- 
- 	/* unsupported modes and filters */
-@@ -407,7 +418,7 @@ static int rapl_pmu_event_init(struct perf_event *event)
- 		return -EINVAL;
- 
- 	/* must be done before validate_group */
--	pmu = cpu_to_rapl_pmu(event->cpu);
-+	pmu = cpu_to_rapl_pmu(event->cpu, pmus);
- 	if (!pmu)
- 		return -EINVAL;
- 	event->cpu = pmu->cpu;
-@@ -425,9 +436,21 @@ static void rapl_pmu_event_read(struct perf_event *event)
- }
- 
- static ssize_t rapl_get_attr_cpumask(struct device *dev,
--				struct device_attribute *attr, char *buf)
-+					 struct device_attribute *attr,
-+					 char *buf)
- {
--	return cpumap_print_to_pagebuf(true, buf, &rapl_cpu_mask);
-+	struct pmu *pmu = dev_get_drvdata(dev);
-+	struct rapl_pmus *pmus;
-+	int i;
-+
-+	for (i = 0; i < DOMAIN_TYPE_MAX; i++) {
-+		pmus = rapl_pmus[i];
-+		if (!pmus || &pmus->pmu != pmu)
-+			continue;
-+
-+		return cpumap_print_to_pagebuf(true, buf, &pmus->rapl_cpu_mask);
-+	}
-+	return 0;
- }
- 
- static DEVICE_ATTR(cpumask, S_IRUGO, rapl_get_attr_cpumask, NULL);
-@@ -543,7 +566,7 @@ static struct attribute *rapl_events_knl_attr[] = {
- 	NULL,
- };
- 
--static struct attribute_group rapl_pmu_events_group = {
-+static struct attribute_group rapl_pkg_pmu_events_group = {
- 	.name = "events",
- 	.attrs = NULL, /* patched at runtime */
- };
-@@ -559,39 +582,63 @@ static struct attribute_group rapl_pmu_format_group = {
- 	.attrs = rapl_formats_attr,
- };
- 
--static const struct attribute_group *rapl_attr_groups[] = {
-+static const struct attribute_group *rapl_pkg_attr_groups[] = {
- 	&rapl_pmu_attr_group,
- 	&rapl_pmu_format_group,
--	&rapl_pmu_events_group,
-+	&rapl_pkg_pmu_events_group,
- 	NULL,
- };
- 
--static int rapl_cpu_offline(unsigned int cpu)
-+static int __rapl_cpu_offline(unsigned int cpu, struct rapl_pmus *pmus)
- {
--	struct rapl_pmu *pmu = cpu_to_rapl_pmu(cpu);
-+	struct rapl_pmu *pmu = cpu_to_rapl_pmu(cpu, pmus);
-+	const struct cpumask *cpu_mask;
- 	int target;
- 
-+	if (!pmus)
-+		return -1;
-+
- 	/* Check if exiting cpu is used for collecting rapl events */
--	if (!cpumask_test_and_clear_cpu(cpu, &rapl_cpu_mask))
-+	if (!cpumask_test_and_clear_cpu(cpu, &pmus->rapl_cpu_mask))
- 		return 0;
- 
- 	pmu->cpu = -1;
- 	/* Find a new cpu to collect rapl events */
--	target = cpumask_any_but(topology_core_cpumask(cpu), cpu);
-+	cpu_mask = get_domain_cpu_mask(cpu, &pmus->type);
-+	if (!cpu_mask)
-+		return -1;
-+	target = cpumask_any_but(cpu_mask, cpu);
- 
- 	/* Migrate rapl events to the new target */
- 	if (target < nr_cpu_ids) {
--		cpumask_set_cpu(target, &rapl_cpu_mask);
-+		cpumask_set_cpu(target, &pmus->rapl_cpu_mask);
- 		pmu->cpu = target;
- 		perf_pmu_migrate_context(pmu->pmu, cpu, target);
- 	}
+diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
+index 383674f..b84fcd4 100644
+--- a/tools/perf/util/cpumap.c
++++ b/tools/perf/util/cpumap.c
+@@ -373,6 +373,13 @@ int cpu_map__build_map(struct cpu_map *cpus, struct cpu_map **res,
  	return 0;
  }
  
--static int rapl_cpu_online(unsigned int cpu)
-+static int rapl_cpu_offline(unsigned int cpu)
- {
--	struct rapl_pmu *pmu = cpu_to_rapl_pmu(cpu);
--	int target;
-+	int i;
++int cpu_map__get_die_id(int cpu)
++{
++	int value, ret = cpu__get_topology_int(cpu, "die_id", &value);
 +
-+	for (i = 0; i < DOMAIN_TYPE_MAX; i++) {
-+		if (!rapl_pmus[i])
-+			continue;
-+
-+		__rapl_cpu_offline(cpu, rapl_pmus[i]);
-+	}
-+	return 0;
++	return ret ?: value;
 +}
 +
-+static int __rapl_cpu_online(unsigned int cpu, struct rapl_pmus *pmus)
-+{
-+	struct rapl_pmu *pmu = cpu_to_rapl_pmu(cpu, pmus);
-+	const struct cpumask *cpu_mask;
-+	int target, id;
+ int cpu_map__get_core_id(int cpu)
+ {
+ 	int value, ret = cpu__get_topology_int(cpu, "core_id", &value);
+diff --git a/tools/perf/util/cpumap.h b/tools/perf/util/cpumap.h
+index ed8999d..4d66f67 100644
+--- a/tools/perf/util/cpumap.h
++++ b/tools/perf/util/cpumap.h
+@@ -25,6 +25,7 @@ size_t cpu_map__snprint_mask(struct cpu_map *map, char *buf, size_t size);
+ size_t cpu_map__fprintf(struct cpu_map *map, FILE *fp);
+ int cpu_map__get_socket_id(int cpu);
+ int cpu_map__get_socket(struct cpu_map *map, int idx, void *data);
++int cpu_map__get_die_id(int cpu);
+ int cpu_map__get_core_id(int cpu);
+ int cpu_map__get_core(struct cpu_map *map, int idx, void *data);
+ int cpu_map__build_socket_map(struct cpu_map *cpus, struct cpu_map **sockp);
+diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
+index 4c23779..4d576e5 100644
+--- a/tools/perf/util/env.c
++++ b/tools/perf/util/env.c
+@@ -87,6 +87,7 @@ int perf_env__read_cpu_topology_map(struct perf_env *env)
+ 	for (cpu = 0; cpu < nr_cpus; ++cpu) {
+ 		env->cpu[cpu].core_id	= cpu_map__get_core_id(cpu);
+ 		env->cpu[cpu].socket_id	= cpu_map__get_socket_id(cpu);
++		env->cpu[cpu].die_id	= cpu_map__get_die_id(cpu);
+ 	}
+ 
+ 	env->nr_cpus_avail = nr_cpus;
+diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
+index d01b8355..b6e6741 100644
+--- a/tools/perf/util/env.h
++++ b/tools/perf/util/env.h
+@@ -7,6 +7,7 @@
+ 
+ struct cpu_topology_map {
+ 	int	socket_id;
++	int	die_id;
+ 	int	core_id;
+ };
+ 
+@@ -47,6 +48,7 @@ struct perf_env {
+ 
+ 	int			nr_cmdline;
+ 	int			nr_sibling_cores;
++	int			nr_sibling_dies;
+ 	int			nr_sibling_threads;
+ 	int			nr_numa_nodes;
+ 	int			nr_memory_nodes;
+@@ -55,6 +57,7 @@ struct perf_env {
+ 	char			*cmdline;
+ 	const char		**cmdline_argv;
+ 	char			*sibling_cores;
++	char			*sibling_dies;
+ 	char			*sibling_threads;
+ 	char			*pmu_mappings;
+ 	struct cpu_topology_map	*cpu;
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index dec6d21..11637ca 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -557,20 +557,43 @@ static int write_cmdline(struct feat_fd *ff,
+ 	return 0;
+ }
+ 
++#define DIE_SIBLINGS_LIST \
++	"/sys/devices/system/cpu/cpu0/topology/die_siblings_list"
 +
-+	if (!pmus)
-+		return -EINVAL;
++static bool check_x86_die_exists(void)
++{
++	struct utsname uts;
++
++	if (uname(&uts) < 0)
++		return false;
++
++	if (strncmp(uts.machine, "x86_64", 6))
++		return false;
++
++	if (access(DIE_SIBLINGS_LIST, F_OK) == -1)
++		return false;
++
++	return true;
++}
++
+ #define CORE_SIB_FMT \
+ 	"/sys/devices/system/cpu/cpu%d/topology/core_siblings_list"
++#define DIE_SIB_FMT \
++	"/sys/devices/system/cpu/cpu%d/topology/die_siblings_list"
+ #define THRD_SIB_FMT \
+ 	"/sys/devices/system/cpu/cpu%d/topology/thread_siblings_list"
  
- 	if (!pmu) {
- 		pmu = kzalloc_node(sizeof(*pmu), GFP_KERNEL, cpu_to_node(cpu));
-@@ -600,26 +647,47 @@ static int rapl_cpu_online(unsigned int cpu)
+ struct cpu_topo {
+ 	u32 cpu_nr;
+ 	u32 core_sib;
++	u32 die_sib;
+ 	u32 thread_sib;
+ 	char **core_siblings;
++	char **die_siblings;
+ 	char **thread_siblings;
+ };
  
- 		raw_spin_lock_init(&pmu->lock);
- 		INIT_LIST_HEAD(&pmu->active_list);
--		pmu->pmu = &rapl_pmus->pmu;
-+		pmu->pmu = &pmus->pmu;
- 		pmu->timer_interval = ms_to_ktime(rapl_timer_ms);
- 		rapl_hrtimer_init(pmu);
+-static int build_cpu_topo(struct cpu_topo *tp, int cpu)
++static int build_cpu_topo(struct cpu_topo *tp, int cpu, bool has_die)
+ {
+ 	FILE *fp;
+ 	char filename[MAXPATHLEN];
+@@ -583,12 +606,12 @@ static int build_cpu_topo(struct cpu_topo *tp, int cpu)
+ 	sprintf(filename, CORE_SIB_FMT, cpu);
+ 	fp = fopen(filename, "r");
+ 	if (!fp)
+-		goto try_threads;
++		goto try_dies;
  
--		rapl_pmus->pmus[topology_logical_package_id(cpu)] = pmu;
-+		id = get_domain_id(cpu, &pmus->type);
-+		if (id < 0) {
-+			kfree(pmu);
-+			return -EINVAL;
+ 	sret = getline(&buf, &len, fp);
+ 	fclose(fp);
+ 	if (sret <= 0)
+-		goto try_threads;
++		goto try_dies;
+ 
+ 	p = strchr(buf, '\n');
+ 	if (p)
+@@ -606,6 +629,34 @@ static int build_cpu_topo(struct cpu_topo *tp, int cpu)
+ 	}
+ 	ret = 0;
+ 
++try_dies:
++	if (has_die) {
++		sprintf(filename, DIE_SIB_FMT, cpu);
++		fp = fopen(filename, "r");
++		if (!fp)
++			goto try_threads;
++
++		sret = getline(&buf, &len, fp);
++		fclose(fp);
++		if (sret <= 0)
++			goto try_threads;
++
++		p = strchr(buf, '\n');
++		if (p)
++			*p = '\0';
++
++		for (i = 0; i < tp->die_sib; i++) {
++			if (!strcmp(buf, tp->die_siblings[i]))
++				break;
 +		}
-+		pmus->pmus[id] = pmu;
++		if (i == tp->die_sib) {
++			tp->die_siblings[i] = buf;
++			tp->die_sib++;
++			buf = NULL;
++			len = 0;
++		}
++		ret = 0;
++	}
+ try_threads:
+ 	sprintf(filename, THRD_SIB_FMT, cpu);
+ 	fp = fopen(filename, "r");
+@@ -636,7 +687,7 @@ static int build_cpu_topo(struct cpu_topo *tp, int cpu)
+ 	return ret;
+ }
+ 
+-static void free_cpu_topo(struct cpu_topo *tp)
++static void free_cpu_topo(struct cpu_topo *tp, bool has_die)
+ {
+ 	u32 i;
+ 
+@@ -646,17 +697,22 @@ static void free_cpu_topo(struct cpu_topo *tp)
+ 	for (i = 0 ; i < tp->core_sib; i++)
+ 		zfree(&tp->core_siblings[i]);
+ 
++	if (has_die) {
++		for (i = 0 ; i < tp->die_sib; i++)
++			zfree(&tp->die_siblings[i]);
++	}
++
+ 	for (i = 0 ; i < tp->thread_sib; i++)
+ 		zfree(&tp->thread_siblings[i]);
+ 
+ 	free(tp);
+ }
+ 
+-static struct cpu_topo *build_cpu_topology(void)
++static struct cpu_topo *build_cpu_topology(bool has_die)
+ {
+ 	struct cpu_topo *tp = NULL;
+ 	void *addr;
+-	u32 nr, i;
++	u32 nr, i, nr_addr;
+ 	size_t sz;
+ 	long ncpus;
+ 	int ret = -1;
+@@ -674,7 +730,11 @@ static struct cpu_topo *build_cpu_topology(void)
+ 	nr = (u32)(ncpus & UINT_MAX);
+ 
+ 	sz = nr * sizeof(char *);
+-	addr = calloc(1, sizeof(*tp) + 2 * sz);
++	if (has_die)
++		nr_addr = 3;
++	else
++		nr_addr = 2;
++	addr = calloc(1, sizeof(*tp) + nr_addr * sz);
+ 	if (!addr)
+ 		goto out_free;
+ 
+@@ -683,13 +743,17 @@ static struct cpu_topo *build_cpu_topology(void)
+ 	addr += sizeof(*tp);
+ 	tp->core_siblings = addr;
+ 	addr += sz;
++	if (has_die) {
++		tp->die_siblings = addr;
++		addr += sz;
++	}
+ 	tp->thread_siblings = addr;
+ 
+ 	for (i = 0; i < nr; i++) {
+ 		if (!cpu_map__has(map, i))
+ 			continue;
+ 
+-		ret = build_cpu_topo(tp, i);
++		ret = build_cpu_topo(tp, i, has_die);
+ 		if (ret < 0)
+ 			break;
  	}
- 
- 	/*
- 	 * Check if there is an online cpu in the package which collects rapl
- 	 * events already.
- 	 */
--	target = cpumask_any_and(&rapl_cpu_mask, topology_core_cpumask(cpu));
-+	cpu_mask = get_domain_cpu_mask(cpu, &pmus->type);
-+	if (!cpu_mask)
-+		return -1;
-+	target = cpumask_any_and(&pmus->rapl_cpu_mask, cpu_mask);
- 	if (target < nr_cpu_ids)
- 		return 0;
- 
--	cpumask_set_cpu(cpu, &rapl_cpu_mask);
-+	cpumask_set_cpu(cpu, &pmus->rapl_cpu_mask);
- 	pmu->cpu = cpu;
- 	return 0;
- }
- 
-+static int rapl_cpu_online(unsigned int cpu)
-+{
-+	int i;
-+
-+	for (i = 0; i < DOMAIN_TYPE_MAX; i++) {
-+		if (!rapl_pmus[i])
-+			continue;
-+
-+		__rapl_cpu_online(cpu, rapl_pmus[i]);
-+	}
-+	return 0;
-+}
-+
- static int rapl_check_hw_unit(bool apply_quirk)
- {
- 	u64 msr_rapl_power_unit_bits;
-@@ -657,94 +725,163 @@ static int rapl_check_hw_unit(bool apply_quirk)
- 
- static void __init rapl_advertise(void)
- {
--	int i;
--
--	pr_info("API unit is 2^-32 Joules, %d fixed counters, %llu ms ovfl timer\n",
--		hweight32(rapl_cntr_mask), rapl_timer_ms);
--
--	for (i = 0; i < NR_RAPL_DOMAINS; i++) {
--		if (rapl_cntr_mask & (1 << i)) {
--			pr_info("hw unit of domain %s 2^-%d Joules\n",
--				rapl_domain_names[i], rapl_hw_unit[i]);
-+	int i, j;
-+
-+	for (i = 0; i < DOMAIN_TYPE_MAX; i++) {
-+		if (!rapl_pmus[i])
-+			continue;
-+
-+		pr_info("%s: API unit is 2^-32 Joules, "
-+			"%d fixed counters, %llu ms ovfl timer\n",
-+			rapl_pmus[i]->pmu.name,
-+			hweight32(rapl_pmus[i]->rapl_cntr_mask),
-+			rapl_timer_ms);
-+
-+		for (j = 0; j < NR_RAPL_DOMAINS; j++) {
-+			if (rapl_pmus[i]->rapl_cntr_mask & (1 << j)) {
-+				pr_info("hw unit of domain %s 2^-%d Joules\n",
-+					rapl_domain_names[j], rapl_hw_unit[j]);
-+			}
- 		}
+@@ -697,7 +761,7 @@ static struct cpu_topo *build_cpu_topology(void)
+ out_free:
+ 	cpu_map__put(map);
+ 	if (ret) {
+-		free_cpu_topo(tp);
++		free_cpu_topo(tp, has_die);
+ 		tp = NULL;
  	}
- }
+ 	return tp;
+@@ -709,8 +773,11 @@ static int write_cpu_topology(struct feat_fd *ff,
+ 	struct cpu_topo *tp;
+ 	u32 i;
+ 	int ret, j;
++	bool has_die;
++
++	has_die = check_x86_die_exists();
  
- static void cleanup_rapl_pmus(void)
- {
--	int i;
--
--	for (i = 0; i < rapl_pmus->maxpkg; i++)
--		kfree(rapl_pmus->pmus[i]);
--	kfree(rapl_pmus);
-+	int i, j;
-+
-+	for (i = 0; i < DOMAIN_TYPE_MAX; i++) {
-+		if (!rapl_pmus[i])
-+			continue;
-+		for (j = 0; j < rapl_pmus[i]->type.max_domains; j++)
-+			kfree(rapl_pmus[i]->pmus[j]);
-+		kfree(rapl_pmus[i]);
-+		rapl_pmus[i] = NULL;
-+	}
- }
+-	tp = build_cpu_topology();
++	tp = build_cpu_topology(has_die);
+ 	if (!tp)
+ 		return -1;
  
--static int __init init_rapl_pmus(void)
-+struct intel_rapl_events {
-+	int cntr_mask;
-+	struct attribute **attrs;
-+};
+@@ -747,8 +814,28 @@ static int write_cpu_topology(struct feat_fd *ff,
+ 		if (ret < 0)
+ 			return ret;
+ 	}
 +
-+struct intel_rapl_init_fun {
-+	bool apply_quirk;
-+	const struct intel_rapl_events events[DOMAIN_TYPE_MAX];
-+};
++	if (!has_die)
++		goto done;
 +
-+static int __init init_rapl_pmus(const struct intel_rapl_events *events,
-+				 enum domain_types type)
- {
--	int maxpkg = topology_max_packages();
-+	struct domain_type domain_type;
-+	struct rapl_pmus *pmus;
- 	size_t size;
- 
--	size = sizeof(*rapl_pmus) + maxpkg * sizeof(struct rapl_pmu *);
--	rapl_pmus = kzalloc(size, GFP_KERNEL);
--	if (!rapl_pmus)
-+	domain_type.type = type;
-+	if (domain_type_init(&domain_type))
-+		return -ENODEV;
++	ret = do_write(ff, &tp->die_sib, sizeof(tp->die_sib));
++	if (ret < 0)
++		goto done;
 +
-+	size = sizeof(struct rapl_pmus) + domain_type.max_domains * sizeof(struct rapl_pmu *);
-+	pmus = kzalloc(size, GFP_KERNEL);
-+	if (!pmus)
- 		return -ENOMEM;
- 
--	rapl_pmus->maxpkg		= maxpkg;
--	rapl_pmus->pmu.attr_groups	= rapl_attr_groups;
--	rapl_pmus->pmu.task_ctx_nr	= perf_invalid_context;
--	rapl_pmus->pmu.event_init	= rapl_pmu_event_init;
--	rapl_pmus->pmu.add		= rapl_pmu_event_add;
--	rapl_pmus->pmu.del		= rapl_pmu_event_del;
--	rapl_pmus->pmu.start		= rapl_pmu_event_start;
--	rapl_pmus->pmu.stop		= rapl_pmu_event_stop;
--	rapl_pmus->pmu.read		= rapl_pmu_event_read;
--	rapl_pmus->pmu.module		= THIS_MODULE;
-+	memcpy(&pmus->type, &domain_type, sizeof(struct domain_type));
-+	pmus->rapl_cntr_mask = events->cntr_mask;
-+	if (type == PACKAGE_DOMAIN) {
-+		rapl_pkg_pmu_events_group.attrs = events->attrs;
-+		pmus->pmu.attr_groups = rapl_pkg_attr_groups;
-+	}
-+	pmus->pmu.task_ctx_nr = perf_invalid_context;
-+	pmus->pmu.event_init = rapl_pmu_event_init;
-+	pmus->pmu.add = rapl_pmu_event_add;
-+	pmus->pmu.del = rapl_pmu_event_del;
-+	pmus->pmu.start = rapl_pmu_event_start;
-+	pmus->pmu.stop = rapl_pmu_event_stop;
-+	pmus->pmu.read = rapl_pmu_event_read;
-+	pmus->pmu.module = THIS_MODULE;
-+
-+	rapl_pmus[type] = pmus;
- 	return 0;
- }
- 
-+static int __init rapl_pmus_register(void)
-+{
-+	bool registered = false;
-+	char name[DOMAIN_NAME_LEN];
-+	int i, ret;
-+
-+	for (i = 0; i < DOMAIN_TYPE_MAX; i++) {
-+		if (!rapl_pmus[i])
-+			continue;
-+
-+		if (hweight32(rapl_domain_type_mask) > 1)
-+			ret = snprintf(name, DOMAIN_NAME_LEN, "power_%s",
-+				       rapl_pmus[i]->type.postfix);
-+		else
-+			ret = snprintf(name, DOMAIN_NAME_LEN, "power");
++	for (i = 0; i < tp->die_sib; i++) {
++		ret = do_write_string(ff, tp->die_siblings[i]);
 +		if (ret < 0)
-+			continue;
-+		ret = perf_pmu_register(&rapl_pmus[i]->pmu, name, -1);
-+		if (ret) {
-+			kfree(rapl_pmus[i]);
-+			rapl_pmus[i] = NULL;
-+			continue;
-+		}
-+		registered = true;
++			goto done;
 +	}
 +
-+	return registered ? 0 : -1;
-+}
-+
-+static void rapl_pmus_unregister(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < DOMAIN_TYPE_MAX; i++) {
-+		if (!rapl_pmus[i])
-+			continue;
-+		perf_pmu_unregister(&rapl_pmus[i]->pmu);
++	for (j = 0; j < perf_env.nr_cpus_avail; j++) {
++		ret = do_write(ff, &perf_env.cpu[j].die_id,
++			       sizeof(perf_env.cpu[j].die_id));
++		if (ret < 0)
++			return ret;
 +	}
-+}
-+
- #define X86_RAPL_MODEL_MATCH(model, init)	\
- 	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY, (unsigned long)&init }
- 
--struct intel_rapl_init_fun {
--	bool apply_quirk;
--	int cntr_mask;
--	struct attribute **attrs;
--};
--
- static const struct intel_rapl_init_fun snb_rapl_init __initconst = {
- 	.apply_quirk = false,
--	.cntr_mask = RAPL_IDX_CLN,
--	.attrs = rapl_events_cln_attr,
-+	.events[PACKAGE_DOMAIN].cntr_mask = RAPL_IDX_CLN,
-+	.events[PACKAGE_DOMAIN].attrs = rapl_events_cln_attr,
- };
- 
- static const struct intel_rapl_init_fun hsx_rapl_init __initconst = {
- 	.apply_quirk = true,
--	.cntr_mask = RAPL_IDX_SRV,
--	.attrs = rapl_events_srv_attr,
-+	.events[PACKAGE_DOMAIN].cntr_mask = RAPL_IDX_SRV,
-+	.events[PACKAGE_DOMAIN].attrs = rapl_events_srv_attr,
- };
- 
- static const struct intel_rapl_init_fun hsw_rapl_init __initconst = {
- 	.apply_quirk = false,
--	.cntr_mask = RAPL_IDX_HSW,
--	.attrs = rapl_events_hsw_attr,
-+	.events[PACKAGE_DOMAIN].cntr_mask = RAPL_IDX_HSW,
-+	.events[PACKAGE_DOMAIN].attrs = rapl_events_hsw_attr,
- };
- 
- static const struct intel_rapl_init_fun snbep_rapl_init __initconst = {
- 	.apply_quirk = false,
--	.cntr_mask = RAPL_IDX_SRV,
--	.attrs = rapl_events_srv_attr,
-+	.events[PACKAGE_DOMAIN].cntr_mask = RAPL_IDX_SRV,
-+	.events[PACKAGE_DOMAIN].attrs = rapl_events_srv_attr,
- };
- 
- static const struct intel_rapl_init_fun knl_rapl_init __initconst = {
- 	.apply_quirk = true,
--	.cntr_mask = RAPL_IDX_KNL,
--	.attrs = rapl_events_knl_attr,
-+	.events[PACKAGE_DOMAIN].cntr_mask = RAPL_IDX_KNL,
-+	.events[PACKAGE_DOMAIN].attrs = rapl_events_knl_attr,
- };
- 
- static const struct intel_rapl_init_fun skl_rapl_init __initconst = {
- 	.apply_quirk = false,
--	.cntr_mask = RAPL_IDX_SKL_CLN,
--	.attrs = rapl_events_skl_attr,
-+	.events[PACKAGE_DOMAIN].cntr_mask = RAPL_IDX_SKL_CLN,
-+	.events[PACKAGE_DOMAIN].attrs = rapl_events_skl_attr,
- };
- 
- static const struct x86_cpu_id rapl_cpu_match[] __initconst = {
-@@ -790,7 +927,7 @@ static int __init rapl_pmu_init(void)
- 	const struct x86_cpu_id *id;
- 	struct intel_rapl_init_fun *rapl_init;
- 	bool apply_quirk;
--	int ret;
-+	int i, ret;
- 
- 	id = x86_match_cpu(rapl_cpu_match);
- 	if (!id)
-@@ -798,16 +935,21 @@ static int __init rapl_pmu_init(void)
- 
- 	rapl_init = (struct intel_rapl_init_fun *)id->driver_data;
- 	apply_quirk = rapl_init->apply_quirk;
--	rapl_cntr_mask = rapl_init->cntr_mask;
--	rapl_pmu_events_group.attrs = rapl_init->attrs;
- 
- 	ret = rapl_check_hw_unit(apply_quirk);
- 	if (ret)
- 		return ret;
- 
--	ret = init_rapl_pmus();
--	if (ret)
--		return ret;
-+	for (i = 0; i < DOMAIN_TYPE_MAX; i++) {
-+		if (!rapl_init->events[i].cntr_mask)
-+			continue;
-+		ret = init_rapl_pmus(&rapl_init->events[i], i);
-+		if (ret)
-+			continue;
-+		rapl_domain_type_mask |= (1 << i);
-+	}
-+	if (hweight32(rapl_domain_type_mask) == 0)
-+		return -ENODEV;
- 
- 	/*
- 	 * Install callbacks. Core will call them for each online cpu.
-@@ -818,7 +960,7 @@ static int __init rapl_pmu_init(void)
- 	if (ret)
- 		goto out;
- 
--	ret = perf_pmu_register(&rapl_pmus->pmu, "power", -1);
-+	ret = rapl_pmus_register();
- 	if (ret)
- 		goto out1;
- 
-@@ -837,7 +979,7 @@ module_init(rapl_pmu_init);
- static void __exit intel_rapl_exit(void)
- {
- 	cpuhp_remove_state_nocalls(CPUHP_AP_PERF_X86_RAPL_ONLINE);
--	perf_pmu_unregister(&rapl_pmus->pmu);
-+	rapl_pmus_unregister();
- 	cleanup_rapl_pmus();
+ done:
+-	free_cpu_topo(tp);
++	free_cpu_topo(tp, has_die);
+ 	return ret;
  }
- module_exit(intel_rapl_exit);
+ 
+@@ -1523,6 +1610,8 @@ static void print_cmdline(struct feat_fd *ff, FILE *fp)
+ 	fputc('\n', fp);
+ }
+ 
++static bool has_die;
++
+ static void print_cpu_topology(struct feat_fd *ff, FILE *fp)
+ {
+ 	struct perf_header *ph = ff->ph;
+@@ -1538,6 +1627,16 @@ static void print_cpu_topology(struct feat_fd *ff, FILE *fp)
+ 		str += strlen(str) + 1;
+ 	}
+ 
++	if (has_die) {
++		nr = ph->env.nr_sibling_dies;
++		str = ph->env.sibling_dies;
++
++		for (i = 0; i < nr; i++) {
++			fprintf(fp, "# sibling dies   : %s\n", str);
++			str += strlen(str) + 1;
++		}
++	}
++
+ 	nr = ph->env.nr_sibling_threads;
+ 	str = ph->env.sibling_threads;
+ 
+@@ -1546,12 +1645,28 @@ static void print_cpu_topology(struct feat_fd *ff, FILE *fp)
+ 		str += strlen(str) + 1;
+ 	}
+ 
+-	if (ph->env.cpu != NULL) {
+-		for (i = 0; i < cpu_nr; i++)
+-			fprintf(fp, "# CPU %d: Core ID %d, Socket ID %d\n", i,
+-				ph->env.cpu[i].core_id, ph->env.cpu[i].socket_id);
+-	} else
+-		fprintf(fp, "# Core ID and Socket ID information is not available\n");
++	if (has_die) {
++		if (ph->env.cpu != NULL) {
++			for (i = 0; i < cpu_nr; i++)
++				fprintf(fp, "# CPU %d: Core ID %d, "
++					    "Die ID %d, Socket ID %d\n",
++					    i, ph->env.cpu[i].core_id,
++					    ph->env.cpu[i].die_id,
++					    ph->env.cpu[i].socket_id);
++		} else
++			fprintf(fp, "# Core ID, Die ID and Socket ID "
++				    "information is not available\n");
++	} else {
++		if (ph->env.cpu != NULL) {
++			for (i = 0; i < cpu_nr; i++)
++				fprintf(fp, "# CPU %d: Core ID %d, "
++					    "Socket ID %d\n",
++					    i, ph->env.cpu[i].core_id,
++					    ph->env.cpu[i].socket_id);
++		} else
++			fprintf(fp, "# Core ID and Socket ID "
++				    "information is not available\n");
++	}
+ }
+ 
+ static void print_clockid(struct feat_fd *ff, FILE *fp)
+@@ -2245,6 +2360,7 @@ static int process_cpu_topology(struct feat_fd *ff, void *data __maybe_unused)
+ 			goto free_cpu;
+ 
+ 		ph->env.cpu[i].core_id = nr;
++		size += sizeof(u32);
+ 
+ 		if (do_read_u32(ff, &nr))
+ 			goto free_cpu;
+@@ -2256,7 +2372,42 @@ static int process_cpu_topology(struct feat_fd *ff, void *data __maybe_unused)
+ 		}
+ 
+ 		ph->env.cpu[i].socket_id = nr;
++		size += sizeof(u32);
++	}
++
++	/*
++	 * The header may be from old perf,
++	 * which doesn't include die information.
++	 */
++	if (ff->size <= size)
++		return 0;
++
++	if (do_read_u32(ff, &nr))
++		return -1;
++
++	ph->env.nr_sibling_dies = nr;
++	size += sizeof(u32);
++
++	for (i = 0; i < nr; i++) {
++		str = do_read_string(ff);
++		if (!str)
++			goto error;
++
++		/* include a NULL character at the end */
++		if (strbuf_add(&sb, str, strlen(str) + 1) < 0)
++			goto error;
++		size += string_size(str);
++		free(str);
++	}
++	ph->env.sibling_dies = strbuf_detach(&sb, NULL);
++
++	for (i = 0; i < (u32)cpu_nr; i++) {
++		if (do_read_u32(ff, &nr))
++			goto free_cpu;
++
++		ph->env.cpu[i].die_id = nr;
+ 	}
++	has_die = true;
+ 
+ 	return 0;
+ 
 -- 
 2.7.4
 
