@@ -2,93 +2,144 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6641C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B12C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:55:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5D0D2086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:54:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6932821736
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:55:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vQhPttEr"
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="Z/7b/1vA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730064AbfBSXyf (ORCPT
+        id S1730099AbfBSXzl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 18:54:35 -0500
-Received: from mail-qk1-f201.google.com ([209.85.222.201]:38853 "EHLO
-        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728652AbfBSXyf (ORCPT
+        Tue, 19 Feb 2019 18:55:41 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:38343 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729891AbfBSXzl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 18:54:35 -0500
-Received: by mail-qk1-f201.google.com with SMTP id x63so1126350qka.5
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 15:54:34 -0800 (PST)
+        Tue, 19 Feb 2019 18:55:41 -0500
+Received: by mail-yb1-f193.google.com with SMTP id f196so4019214yba.5
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 15:55:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=48uoaBkr5Fhc7UlZ8wN/irXAr/m44zxpQNOys3T/n9c=;
-        b=vQhPttEr/V+we7WUTgebhvd9qs/GKVCEiWDXMDUDATEj9NFF5IlmzXX+/cUZCyZy+m
-         HinE3xUtvhkocPkgJ2vs8/p7EAbjW/OifHt0RlrkZPxNZ7UImATgPuyeKD9x6TKXDc5E
-         QBg5sjloI9JGurGoVjd9mt34KLsWdv0i9Jw9vsQJNyhKiNlkqd5lih8oQiwAhkx6Mh0L
-         9lgk/ABo+eULqq84Z9zCJBg2FXei3M2OEpsHxAZk/qxgZ0tC+KZgKtiDnFMu8fSoLRgA
-         mlba8E3UzUCTfvgG7engcJdvJqr0/8PKEo7Z5Zn/GkjMqAmRRnq6WiaCUTR/ox7gZoVD
-         mHKQ==
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XmfykJFWMdzt50aQZr96YqLCUVrpFtYe1zYWBcFZzcA=;
+        b=Z/7b/1vAoATLYB980TMrZnS7a9RZhkaOR+kZaRlTSKJ2TW2hKAF1Drh3EQ4Ly0Glgc
+         xs0V5+JSQ7F0m8mn2l+d/+4qIGgNI/fUN81yfRnBcs69K2Psmy9VjGESBckZHyE2kwxB
+         xRm3tMIngV4zq82LrVYsILkQkvRzAHxXgKwbtuY8YBc2gZgmZ0iyY68dauf+YQsmSibJ
+         x3rdISbdn9/77fMX5S7SuazmkcDnt9j9omFPPdlyA3/L/y241YHXK0vE/eNLsmmEKCBf
+         UWX7v0pSGDjEDkVVhHXwdOwIZUQrJK8wyi1dCBPG3jsNP42fJ1HiQ1lvP6YEABIzbHhm
+         LLCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=48uoaBkr5Fhc7UlZ8wN/irXAr/m44zxpQNOys3T/n9c=;
-        b=aBXzsyiO3q0cm5r06yDML1141/+TsD0xIILWPTGWs18SIU10qCl1+6e9l76Ygt5NrH
-         KoH2+N4g5DyzMD+VMlFM6Ny6ka6J9tWnzbv3s2K48QoQMBAZZbXMe62+U+h/i1QeIgBv
-         V0coi391BXYKmcHeVDYLRLTosm6CTdU4+4a0a1YBcHAYe0HEutdaUNK/7Fo8MAQzVEXg
-         KgaeMNwb3TK47wgHAn9gH7jGP2W4GMVYCzFKrjx3e8fPTgJ/FMwgja5nZvXhLYDvHGIj
-         waF8iN7/5OF1Nporxsdf3XbyGSGev8lC+y5WeotXeS370ij66rQAhkXAl96u2Ix9yR8Z
-         0/IA==
-X-Gm-Message-State: AHQUAuZccUUbij3nRLIJwXwYX1SqKvmWbQKGA1i5aQiiR6da8knU9qBX
-        9hBCLqGWOo7oclmh3YL9NDodwjLKH2HRsTGFVf2wpg==
-X-Google-Smtp-Source: AHgI3IbFmMMiCdRLSyrDQs/0Y6Xj0UiXXLL2TnDpdz/cFRsD6CH1Xeegee4edVNdJYVfuyrPdd20ZJsoYGR4Q2leAEQUZg==
-X-Received: by 2002:a37:d186:: with SMTP id o6mr18154572qkl.19.1550620474204;
- Tue, 19 Feb 2019 15:54:34 -0800 (PST)
-Date:   Tue, 19 Feb 2019 15:54:22 -0800
-Message-Id: <20190219235422.256847-1-brendanhiggins@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
-Subject: [PATCH v3] of: unittest: unflatten device tree on UML when testing
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     robh+dt@kernel.org, frowand.list@gmail.com, mcgrof@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brendan Higgins <brendanhiggins@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XmfykJFWMdzt50aQZr96YqLCUVrpFtYe1zYWBcFZzcA=;
+        b=Vus52+cHBvLsxNA660ICMIgbYKKuQP+Y6IG/0MfH0ctpxISPBrDBiz0nwjlen3yTMO
+         eOMbSimYzI/TU63aVWlcOB1/Lns7j97EdHmo0KlooveTdZi0dec//8A8asXP70oEjHB4
+         pHGr1a7aOyEf4gzDCi7QVwQRw3tCdU5iqMIB/wwPbroVABc0DlmO55YRi4TLqMCDq6KO
+         lk7DYnMO6a7oAzFyohnVkBHfIlEGa7YrYRfJ1yUtk8mr8awnwkGNl6eWpUa2w+UeQeL1
+         YhOIpIQKOC9lvka1Zr2ec9G043izsTTd1BU7nGMLGtg0zM3LedPUlfCG8S9vA++xJdII
+         3RXQ==
+X-Gm-Message-State: AHQUAubOdiTAXBKqMo/6v05jVuuarGmJBDwF8EBLWbojGLL5MZIBcKBa
+        SC0B4LPLkKFtEUJkyddtwVpWkQ==
+X-Google-Smtp-Source: AHgI3Ia2i9jHTYEQ7iOijMe8HCPEysNc4k8d73BEpsZQ5AC7eUJ2apQHuYie8xBVEi4zutUdVt+6LQ==
+X-Received: by 2002:a5b:501:: with SMTP id o1mr25411431ybp.85.1550620539905;
+        Tue, 19 Feb 2019 15:55:39 -0800 (PST)
+Received: from cisco ([128.107.241.177])
+        by smtp.gmail.com with ESMTPSA id v9sm7655589ywe.59.2019.02.19.15.55.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Feb 2019 15:55:39 -0800 (PST)
+Date:   Tue, 19 Feb 2019 16:55:37 -0700
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     David Howells <dhowells@redhat.com>
+Cc:     keyrings@vger.kernel.org, trond.myklebust@hammerspace.com,
+        sfrench@samba.org, linux-security-module@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, rgb@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 02/27] containers: Implement containers as kernel
+ objects
+Message-ID: <20190219235537.GC5274@cisco>
+References: <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
+ <155024685321.21651.1504201877881622756.stgit@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <155024685321.21651.1504201877881622756.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-UML supports enabling OF, and is useful for running the device tree
-tests, so add support for unflattening device tree blobs so we can
-actually use it.
+On Fri, Feb 15, 2019 at 04:07:33PM +0000, David Howells wrote:
+> ==================
+> FUTURE DEVELOPMENT
+> ==================
+> 
+>  (1) Setting up the container.
+> 
+>      A container would be created with, say:
+> 
+> 	int cfd = container_create("fred", CONTAINER_NEW_EMPTY_FS_NS);
+> 
 
-Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
----
- drivers/of/unittest.c | 4 ++++
- 1 file changed, 4 insertions(+)
+...
 
-diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index 84427384654d5..98f0dfc91c2a3 100644
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -2514,6 +2514,10 @@ static int __init of_unittest(void)
- 	int res;
- 
- 	/* adding data for unittest */
-+
-+	if (IS_ENABLED(CONFIG_UML))
-+		unittest_unflatten_overlay_base();
-+
- 	res = unittest_data_add();
- 	if (res)
- 		return res;
--- 
-2.21.0.rc0.258.g878e2cd30e-goog
+>      Further mounts can be added by:
+> 
+> 	move_mount(mfd, "", cfd, "proc", MOVE_MOUNT_F_EMPTY_PATH);
+> 
 
+...
+
+>  (2) Starting the container.
+> 
+>      Once all modifications are complete, the container's 'init' process
+>      can be started by:
+> 
+> 	fork_into_container(int cfd);
+> 
+>      This precludes further external modification of the mount tree within
+>      the container.
+
+Is there a technical reason for this? In particular, there are some
+container runtimes that do this today via clever use of bind mounts
+and MS_MOVE, for things like dynamically attaching volumes. It would
+be useful to be able to mount things into the container after the
+fact.
+
+>  (3) Waiting for the container to complete.
+> 
+>      The container fd can then be polled to wait for init process therein
+>      to complete and the exit code collected by:
+> 
+> 	container_wait(int container_fd, int *_wstatus, unsigned int wait,
+> 		       struct rusage *rusage);
+> 
+>      The container and everything in it can be terminated or killed off:
+> 
+> 	container_kill(int container_fd, int initonly, int signal);
+> 
+>      If 'init' dies, all other processes in the container are preemptively
+>      SIGKILL'd by the kernel.
+
+Isn't this essentially how the pid ns works today? I'm not sure what
+the container fd offers here (of course if it lands, then having the
+same semantics makes sense).
+
+>  (6) Running different LSM policies by container.  This might particularly
+>      make sense with something like Apparmor where different path-based
+>      rules might be required inside a container to inside the parent.
+
+Apparmor supports this today, as long as the host is also running
+Apparmor. For the more general case, Casey (and others) have been
+working on LSM stacking for a long time.
+
+Tycho
