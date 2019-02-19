@@ -2,287 +2,135 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24174C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10CCFC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:03:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E624D21736
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:02:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D704821736
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:03:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728935AbfBSPCJ (ORCPT
+        id S1728930AbfBSPDQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 10:02:09 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:37994 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727529AbfBSPCJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 10:02:09 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 767A4532B6EDDFDD2A84;
-        Tue, 19 Feb 2019 23:02:04 +0800 (CST)
-Received: from [127.0.0.1] (10.202.227.238) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Tue, 19 Feb 2019
- 23:01:58 +0800
-Subject: Re: [PATCH -next] scsi: hisi_sas: remove duplicated code
-To:     YueHaibing <yuehaibing@huawei.com>, <jejb@linux.ibm.com>,
-        <martin.petersen@oracle.com>
-References: <20190219144038.26384-1-yuehaibing@huawei.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <a7b5b2a5-bfbb-0551-2ec5-fa666031b430@huawei.com>
-Date:   Tue, 19 Feb 2019 15:01:54 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Tue, 19 Feb 2019 10:03:16 -0500
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:59617 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725885AbfBSPDP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 10:03:15 -0500
+X-Originating-IP: 90.88.23.190
+Received: from localhost (aaubervilliers-681-1-81-190.w90-88.abo.wanadoo.fr [90.88.23.190])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 81528FF811;
+        Tue, 19 Feb 2019 15:03:12 +0000 (UTC)
+Date:   Tue, 19 Feb 2019 16:03:11 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/5] nvmem: sunxi-sid: add support for H5's SID controller
+Message-ID: <20190219150311.yfqkr5svs6b3arjy@flea>
+References: <20190217162316.14111-1-tiny.windzz@gmail.com>
+ <20190217162316.14111-3-tiny.windzz@gmail.com>
+ <20190218084931.fdut6d4cgwkwvihx@flea>
+ <CAGb2v65Frw+=DjcuqNUPd-UG6qsiVDBH0bd5btx+5=ns7VAQrQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190219144038.26384-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="a5jbqqvrdaqbxyhn"
+Content-Disposition: inline
+In-Reply-To: <CAGb2v65Frw+=DjcuqNUPd-UG6qsiVDBH0bd5btx+5=ns7VAQrQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/02/2019 14:40, YueHaibing wrote:
-> move some functions to hisi_sas_main.c,
-> which can eliminate redundant code.
->
 
-main.c is for core driver, and does not access hw directly - We have hw 
-module - like hisi_sas_v1_hw.c - for this. You're moving hw accessors to 
-main.c now.
+--a5jbqqvrdaqbxyhn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I don't think that this small amount of duplicated code is a big deal 
-anyway.
+Hi,
 
-More below.
+On Mon, Feb 18, 2019 at 05:19:40PM +0800, Chen-Yu Tsai wrote:
+> On Mon, Feb 18, 2019 at 4:49 PM Maxime Ripard <maxime.ripard@bootlin.com>=
+ wrote:
+> >
+> > On Sun, Feb 17, 2019 at 11:23:13AM -0500, Yangtao Li wrote:
+> > > Add support for H5's SID controller.
+> > >
+> > > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> > > ---
+> > >  drivers/nvmem/sunxi_sid.c | 6 ++++++
+> > >  1 file changed, 6 insertions(+)
+> > >
+> > > diff --git a/drivers/nvmem/sunxi_sid.c b/drivers/nvmem/sunxi_sid.c
+> > > index 570a2e354f30..036029e90921 100644
+> > > --- a/drivers/nvmem/sunxi_sid.c
+> > > +++ b/drivers/nvmem/sunxi_sid.c
+> > > @@ -219,11 +219,17 @@ static const struct sunxi_sid_cfg sun50i_a64_cf=
+g =3D {
+> > >       .size =3D 0x100,
+> > >  };
+> > >
+> > > +static const struct sunxi_sid_cfg sun50i_h5_cfg =3D {
+> > > +     .value_offset =3D 0x200,
+> > > +     .size =3D 0x100,
+> > > +};
+> >
+> > IIRC, there was an endianness issue on the newer SoCs, with the driver
+> > converting the data from big endian to little endian, while it's
+> > actually stored little endian in the SID.
+>=20
+> About that, it seems the internals are either little endian or native (sa=
+me
+> as the bus). Either way the nvmem the driver currently exposes is wrong.
 
-Thanks
+Do you mean that it can be configured either way, or it's little
+endian and since you are running a little endian system you can't
+tell?
 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/scsi/hisi_sas/hisi_sas.h       |  6 ++++++
->  drivers/scsi/hisi_sas/hisi_sas_main.c  | 37 +++++++++++++++++++++++++++++++++
->  drivers/scsi/hisi_sas/hisi_sas_v1_hw.c | 38 ----------------------------------
->  drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 37 ---------------------------------
->  drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 37 ---------------------------------
->  5 files changed, 43 insertions(+), 112 deletions(-)
->
-> diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
-> index 6c87bd3..3b00bf6 100644
-> --- a/drivers/scsi/hisi_sas/hisi_sas.h
-> +++ b/drivers/scsi/hisi_sas/hisi_sas.h
-> @@ -561,4 +561,10 @@ extern void hisi_sas_controller_reset_done(struct hisi_hba *hisi_hba);
->  extern void hisi_sas_debugfs_init(struct hisi_hba *hisi_hba);
->  extern void hisi_sas_debugfs_exit(struct hisi_hba *hisi_hba);
->  extern void hisi_sas_debugfs_work_handler(struct work_struct *work);
-> +u32 hisi_sas_read32(struct hisi_hba *hisi_hba, u32 off);
-> +u32 hisi_sas_read32_relaxed(struct hisi_hba *hisi_hba, u32 off);
-> +void hisi_sas_write32(struct hisi_hba *hisi_hba, u32 off, u32 val);
-> +void hisi_sas_phy_write32(struct hisi_hba *hisi_hba, int phy_no,
-> +			  u32 off, u32 val);
-> +u32 hisi_sas_phy_read32(struct hisi_hba *hisi_hba, int phy_no, u32 off);
->  #endif
-> diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-> index 9232966..56e98fc 100644
-> --- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-> +++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-> @@ -28,6 +28,43 @@ static void hisi_sas_release_task(struct hisi_hba *hisi_hba,
->  				  struct domain_device *device);
->  static void hisi_sas_dev_gone(struct domain_device *device);
->
-> +u32 hisi_sas_read32(struct hisi_hba *hisi_hba, u32 off)
-> +{
-> +	void __iomem *regs = hisi_hba->regs + off;
-> +
-> +	return readl(regs);
-> +}
-> +
-> +u32 hisi_sas_read32_relaxed(struct hisi_hba *hisi_hba, u32 off)
-> +{
-> +	void __iomem *regs = hisi_hba->regs + off;
-> +
-> +	return readl_relaxed(regs);
-> +}
-> +
-> +void hisi_sas_write32(struct hisi_hba *hisi_hba, u32 off, u32 val)
-> +{
-> +	void __iomem *regs = hisi_hba->regs + off;
-> +
-> +	writel(val, regs);
-> +}
-> +
-> +void hisi_sas_phy_write32(struct hisi_hba *hisi_hba, int phy_no,
-> +			  u32 off, u32 val)
-> +{
-> +	void __iomem *regs = hisi_hba->regs + (0x400 * phy_no) + off;
-> +
-> +	writel(val, regs);
-> +}
-> +
-> +u32 hisi_sas_phy_read32(struct hisi_hba *hisi_hba,
-> +			int phy_no, u32 off)
-> +{
-> +	void __iomem *regs = hisi_hba->regs + (0x400 * phy_no) + off;
-> +
-> +	return readl(regs);
-> +}
+> My idea is to keep the current one with the current name, but have it not
+> associate itself with the DT node. We then register an extra one, called
+> "sunxi-sid-native" which uses the native endian. This one will be associa=
+ted
+> with the DT node, so the THS driver can consume nvmem cells.
+>=20
+> What do you think?
 
-Did you compile this driver as a module, as I don't see how this will 
-link? You're not exporting the symbols.
+I thought about this some more, and I don't think anyone really has
+used the sysfs interface for it. Since the data are in an unusable
+order (without an additional conversion at least), we would have had a
+bug report by now (just like we had when someone tried to use it for
+the thermal calibration).
 
-> +
->  u8 hisi_sas_get_ata_protocol(struct host_to_dev_fis *fis, int direction)
->  {
->  	switch (fis->command) {
-> diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-> index 2938074..41671b2 100644
-> --- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-> +++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-> @@ -416,44 +416,6 @@ enum {
->  	(HISI_SAS_PHY_MAX_INT_NR + HISI_SAS_CQ_MAX_INT_NR +\
->  	HISI_SAS_FATAL_INT_NR)
->
-> -static u32 hisi_sas_read32(struct hisi_hba *hisi_hba, u32 off)
-> -{
-> -	void __iomem *regs = hisi_hba->regs + off;
-> -
-> -	return readl(regs);
-> -}
-> -
-> -static u32 hisi_sas_read32_relaxed(struct hisi_hba *hisi_hba, u32 off)
-> -{
-> -	void __iomem *regs = hisi_hba->regs + off;
-> -
-> -	return readl_relaxed(regs);
-> -}
-> -
-> -static void hisi_sas_write32(struct hisi_hba *hisi_hba,
-> -				    u32 off, u32 val)
-> -{
-> -	void __iomem *regs = hisi_hba->regs + off;
-> -
-> -	writel(val, regs);
-> -}
-> -
-> -static void hisi_sas_phy_write32(struct hisi_hba *hisi_hba,
-> -					int phy_no, u32 off, u32 val)
-> -{
-> -	void __iomem *regs = hisi_hba->regs + (0x400 * phy_no) + off;
-> -
-> -	writel(val, regs);
-> -}
-> -
-> -static u32 hisi_sas_phy_read32(struct hisi_hba *hisi_hba,
-> -				      int phy_no, u32 off)
-> -{
-> -	void __iomem *regs = hisi_hba->regs + (0x400 * phy_no) + off;
-> -
-> -	return readl(regs);
-> -}
-> -
->  static void config_phy_opt_mode_v1_hw(struct hisi_hba *hisi_hba, int phy_no)
->  {
->  	u32 cfg = hisi_sas_phy_read32(hisi_hba, phy_no, PHY_CFG);
-> diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-> index e40cc6b..3827d11 100644
-> --- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-> +++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-> @@ -731,43 +731,6 @@ enum {
->
->  static void link_timeout_disable_link(struct timer_list *t);
->
-> -static u32 hisi_sas_read32(struct hisi_hba *hisi_hba, u32 off)
-> -{
-> -	void __iomem *regs = hisi_hba->regs + off;
-> -
-> -	return readl(regs);
-> -}
-> -
-> -static u32 hisi_sas_read32_relaxed(struct hisi_hba *hisi_hba, u32 off)
-> -{
-> -	void __iomem *regs = hisi_hba->regs + off;
-> -
-> -	return readl_relaxed(regs);
-> -}
-> -
-> -static void hisi_sas_write32(struct hisi_hba *hisi_hba, u32 off, u32 val)
-> -{
-> -	void __iomem *regs = hisi_hba->regs + off;
-> -
-> -	writel(val, regs);
-> -}
-> -
-> -static void hisi_sas_phy_write32(struct hisi_hba *hisi_hba, int phy_no,
-> -				 u32 off, u32 val)
-> -{
-> -	void __iomem *regs = hisi_hba->regs + (0x400 * phy_no) + off;
-> -
-> -	writel(val, regs);
-> -}
-> -
-> -static u32 hisi_sas_phy_read32(struct hisi_hba *hisi_hba,
-> -				      int phy_no, u32 off)
-> -{
-> -	void __iomem *regs = hisi_hba->regs + (0x400 * phy_no) + off;
-> -
-> -	return readl(regs);
-> -}
-> -
->  /* This function needs to be protected from pre-emption. */
->  static int
->  slot_index_alloc_quirk_v2_hw(struct hisi_hba *hisi_hba,
-> diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-> index 0420df2..4f30eda 100644
-> --- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-> +++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-> @@ -418,43 +418,6 @@ module_param(auto_affine_msi_experimental, bool, 0444);
->  MODULE_PARM_DESC(auto_affine_msi_experimental, "Enable auto-affinity of MSI IRQs as experimental:\n"
->  		 "default is off");
->
-> -static u32 hisi_sas_read32(struct hisi_hba *hisi_hba, u32 off)
-> -{
-> -	void __iomem *regs = hisi_hba->regs + off;
-> -
-> -	return readl(regs);
-> -}
-> -
-> -static u32 hisi_sas_read32_relaxed(struct hisi_hba *hisi_hba, u32 off)
-> -{
-> -	void __iomem *regs = hisi_hba->regs + off;
-> -
-> -	return readl_relaxed(regs);
-> -}
-> -
-> -static void hisi_sas_write32(struct hisi_hba *hisi_hba, u32 off, u32 val)
-> -{
-> -	void __iomem *regs = hisi_hba->regs + off;
-> -
-> -	writel(val, regs);
-> -}
-> -
-> -static void hisi_sas_phy_write32(struct hisi_hba *hisi_hba, int phy_no,
-> -				 u32 off, u32 val)
-> -{
-> -	void __iomem *regs = hisi_hba->regs + (0x400 * phy_no) + off;
-> -
-> -	writel(val, regs);
-> -}
-> -
-> -static u32 hisi_sas_phy_read32(struct hisi_hba *hisi_hba,
-> -				      int phy_no, u32 off)
-> -{
-> -	void __iomem *regs = hisi_hba->regs + (0x400 * phy_no) + off;
-> -
-> -	return readl(regs);
-> -}
-> -
->  #define hisi_sas_read32_poll_timeout(off, val, cond, delay_us,		\
->  				     timeout_us)			\
->  ({									\
->
+So maybe the easy way out is just to disable the conversion on the
+affected SoCs, and see if anyone complains?
 
+Maxime
 
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--a5jbqqvrdaqbxyhn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXGwarwAKCRDj7w1vZxhR
+xRlQAP9SuuNNe+uQxmVUomjF7GRR7ixRMF2zFKil/KKkT6MwzQD+LppkfKh/by7K
+sUOXOlTBwGw8BGOtEByqkfFONxx9/wo=
+=n1MX
+-----END PGP SIGNATURE-----
+
+--a5jbqqvrdaqbxyhn--
