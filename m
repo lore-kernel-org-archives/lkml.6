@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51CC6C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:03:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C18CCC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:03:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F6EF217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:03:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9126420823
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:03:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mathembedded-com.20150623.gappssmtp.com header.i=@mathembedded-com.20150623.gappssmtp.com header.b="ZBid+p+K"
+	dkim=pass (2048-bit key) header.d=mathembedded-com.20150623.gappssmtp.com header.i=@mathembedded-com.20150623.gappssmtp.com header.b="bQBLGMry"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728690AbfBSNDp (ORCPT
+        id S1728730AbfBSNDt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 08:03:45 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37389 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728556AbfBSNDn (ORCPT
+        Tue, 19 Feb 2019 08:03:49 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41535 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728689AbfBSNDq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 08:03:43 -0500
-Received: by mail-wm1-f67.google.com with SMTP id x10so2700469wmg.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 05:03:42 -0800 (PST)
+        Tue, 19 Feb 2019 08:03:46 -0500
+Received: by mail-wr1-f68.google.com with SMTP id n2so9722215wrw.8
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 05:03:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=mathembedded-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:subject:date:message-id:in-reply-to:references;
-        bh=UX76xod9X+zXCg7JKouCVEpytXUP9Ng1RnH772L+OKo=;
-        b=ZBid+p+Keiv1SBhQaOn8qUYKQgVxy3Fveba6NMdztq2HEafBcXQYOo9OG/I9R2ULh2
-         TwnE4b/uZsuquiGvAs0vkPDd62yB5sBICb0u5fBNJBY3yndChDFCDcPDwWBCvteGtayg
-         7F2ChnaoJUc4HjMzQP+B6ewxWsvp7FaLlwO22vFvJZdR+QkZmNWVIHIQh4+c62fuRdhp
-         1znFuG2Yybp3Zxght3tfogtc3hQ3rjF05O3f2VP3eYscqkoTTIfIXlTg3qgqyTXhmcen
-         JgTB3bWtjKLTc48K3q5oaZLEEvK3vBYtxlLdkLZfHk1We5XnLJd5FXC6pLIFs2C0937r
-         xhzA==
+        bh=ib3nWTzMlMvOHJNOPsg7HqLqSUd8Q6N9xMvPHRojwVU=;
+        b=bQBLGMryGLAb2PDgTNx/wOurFGL8n9JNoeUl/0J8cuctXc+PK7zN8udi6OsLJ++yAQ
+         wyj59U8dx2ZjJ1Ra6Bcgo5UD+LCJRj6x4LNMW8fXz1JAI0B9wrnNbWBUhUd6wxA6F1w2
+         dYqVzJvF3xFMSlqx82ToEjNy140T40QitHA/smdTu3ZgIQ4fFxD1KwchRKyEBIhmVuTa
+         z7/J/YK8mStOt22l8tFXf6Wy/bUdjsOYMcNLmb8BixVqp4xT1n+kVovM616SAFhgQixT
+         JLjNTcAt3rPvXvxvpSjWwm/2egYRc17vS4/QtF7bViCgeeiTSXRnFwugb/xsDWTn/+Ev
+         1Drw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references;
-        bh=UX76xod9X+zXCg7JKouCVEpytXUP9Ng1RnH772L+OKo=;
-        b=h9TbsRcasejrznw9UET+b5JsXd8C2TkW3NNt86Q9yuKUb5NFG6ZNV32UlTGFMTpEXJ
-         H75fudlq8gPqHLUq+6APrP2Kq+EN0w+muugIwQ1Tl8Yi8vMBPEGNa2PTwaNUCU7vOi59
-         tAPPf/1vHpYilsyKA6Vgi+MOhAuYwUwwIldN6h/5t4jP4OvTGyZq8qa+g5V0WYYqu6ZU
-         /Yv3VNoMdWkk2haOrO6GVmLZxVb/eg5nXuWvqQhSe/uROlTf0YEYNFbtids9MHECmAlB
-         H1oEZEScandyhVN8ldi3h4/PCHyfVghOg10MgQgmNPl5whGXL7oBETxjXoDayLZo2axH
-         GS+Q==
-X-Gm-Message-State: AHQUAuY3DydaEmcF22nyMo9zZFyWlAbrjHe9gupfYfg5+RelCpPIpJdl
-        jj7Ueq7ax0Oag5FB+3mlqw+gGQ==
-X-Google-Smtp-Source: AHgI3Ibw7pREYmcgsu239XRSfhXs9H2h3akRczM2hHgfUTLKr0xB1Ta3pR8R8KyKejopILO1Mee0KA==
-X-Received: by 2002:a1c:7fca:: with SMTP id a193mr2878403wmd.36.1550581421445;
-        Tue, 19 Feb 2019 05:03:41 -0800 (PST)
+        bh=ib3nWTzMlMvOHJNOPsg7HqLqSUd8Q6N9xMvPHRojwVU=;
+        b=ZotZaR/eJV5nA+10TqlJAa85SmItrNLbhHWB6OOJiZ6dwGyF9coM3x15aBCOJReiZf
+         DpPuL87/vBgOvNstXs0XSp9BBDij/AqAjs5sRHRqK37EuylO1TToYq3YdlfGclGR6X2/
+         8saZYpcPhfZsVRKRvb48mt7GU7y6jtkT+0t7XOXFhqyUVKxpqnqxhMlu3T4PJISFAm8u
+         omlAMsJXU+bw/IsaYFbP5fz3SLSDCDmkgIBdA+6/GOjHxMStFjI/lLYpGZxjZs6MI7Sv
+         x2Py0MzBM5IdgQGX/Dp12hUwS7dk/ICGFAiVTZ4ubToY1zFgDatikRqCb+pbaKCFxZDj
+         5apQ==
+X-Gm-Message-State: AHQUAuY6HB7quEN1aMrZUQNeSBxx+2BsJnZ1bDjsS5TrlzYccoVjWUpv
+        Z2/8yzwMrk8XhFE7rl1FnXLEaQ==
+X-Google-Smtp-Source: AHgI3IbwmjRNZn7bwTYAg0gBYMFuvwAwGyPrmZu6O37VDNX/OrDqL2+7iXonCx7pQ6GfSTKylZsNdA==
+X-Received: by 2002:adf:b741:: with SMTP id n1mr19971800wre.287.1550581425138;
+        Tue, 19 Feb 2019 05:03:45 -0800 (PST)
 Received: from diamond.mathembedded.com (host86-137-106-133.range86-137.btcentralplus.com. [86.137.106.133])
-        by smtp.gmail.com with ESMTPSA id y22sm61899811wrd.45.2019.02.19.05.03.40
+        by smtp.gmail.com with ESMTPSA id y22sm61899811wrd.45.2019.02.19.05.03.44
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Feb 2019 05:03:40 -0800 (PST)
+        Tue, 19 Feb 2019 05:03:44 -0800 (PST)
 From:   Stuart Menefy <stuart.menefy@mathembedded.com>
 X-Google-Original-From: Stuart Menefy <stuart@menefy.org>
 To:     Rob Herring <robh+dt@kernel.org>,
@@ -64,9 +64,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/4] ARM: dts: exynos: Use bustop PLL as the source for MMC clocks on Exynos5260
-Date:   Tue, 19 Feb 2019 13:03:34 +0000
-Message-Id: <20190219130337.21353-2-stuart@menefy.org>
+Subject: [PATCH v2 4/4] ARM: dts: exynos: Fix interrupt for shared EINTs on Exynos5260
+Date:   Tue, 19 Feb 2019 13:03:37 +0000
+Message-Id: <20190219130337.21353-5-stuart@menefy.org>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20190219130337.21353-1-stuart@menefy.org>
 References: <20190219130337.21353-1-stuart@menefy.org>
@@ -77,66 +77,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stuart Menefy <stuart.menefy@mathembedded.com>
 
-By default the MMC clock will be derived from mediatop PLL, which
-usually runs at 666MHz. However as most SD and MMC clocks are multiples
-or fractions of 100MHz, it makes more sense to use the bustop PLL
-which runs at 800MHz. This matches the behaviour of the Samsung vendor
-supplied 3.4 kernel.
+Fix the interrupt information for the GPIO lines with a shared EINT
+interrupt.
 
 Signed-off-by: Stuart Menefy <stuart.menefy@mathembedded.com>
 ---
- arch/arm/boot/dts/exynos5260.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/arm/boot/dts/exynos5260.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
-index 55167850619c..14b423de9137 100644
+index a8c7c6e589a0..3581b57fbbf7 100644
 --- a/arch/arm/boot/dts/exynos5260.dtsi
 +++ b/arch/arm/boot/dts/exynos5260.dtsi
-@@ -288,6 +288,14 @@
- 			#size-cells = <0>;
- 			clocks = <&clock_fsys FSYS_CLK_MMC0>, <&clock_top TOP_SCLK_MMC0>;
- 			clock-names = "biu", "ciu";
-+			assigned-clocks =
-+				<&clock_top TOP_MOUT_SCLK_FSYS_MMC0_SDCLKIN_A>,
-+				<&clock_top TOP_MOUT_SCLK_FSYS_MMC0_SDCLKIN_B>,
-+				<&clock_top TOP_SCLK_MMC0>;
-+			assigned-clock-parents =
-+				<&clock_top TOP_MOUT_BUSTOP_PLL_USER>,
-+				<&clock_top TOP_MOUT_SCLK_FSYS_MMC0_SDCLKIN_A>;
-+			assigned-clock-rates = <0>, <0>, <800000000>;
- 			fifo-depth = <64>;
- 			status = "disabled";
+@@ -227,7 +227,7 @@
+ 			wakeup-interrupt-controller {
+ 				compatible = "samsung,exynos4210-wakeup-eint";
+ 				interrupt-parent = <&gic>;
+-				interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
++				interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
+ 			};
  		};
-@@ -300,6 +308,14 @@
- 			#size-cells = <0>;
- 			clocks = <&clock_fsys FSYS_CLK_MMC1>, <&clock_top TOP_SCLK_MMC1>;
- 			clock-names = "biu", "ciu";
-+			assigned-clocks =
-+				<&clock_top TOP_MOUT_SCLK_FSYS_MMC1_SDCLKIN_A>,
-+				<&clock_top TOP_MOUT_SCLK_FSYS_MMC1_SDCLKIN_B>,
-+				<&clock_top TOP_SCLK_MMC1>;
-+			assigned-clock-parents =
-+				<&clock_top TOP_MOUT_BUSTOP_PLL_USER>,
-+				<&clock_top TOP_MOUT_SCLK_FSYS_MMC1_SDCLKIN_A>;
-+			assigned-clock-rates = <0>, <0>, <800000000>;
- 			fifo-depth = <64>;
- 			status = "disabled";
- 		};
-@@ -312,6 +328,14 @@
- 			#size-cells = <0>;
- 			clocks = <&clock_fsys FSYS_CLK_MMC2>, <&clock_top TOP_SCLK_MMC2>;
- 			clock-names = "biu", "ciu";
-+			assigned-clocks =
-+				<&clock_top TOP_MOUT_SCLK_FSYS_MMC2_SDCLKIN_A>,
-+				<&clock_top TOP_MOUT_SCLK_FSYS_MMC2_SDCLKIN_B>,
-+				<&clock_top TOP_SCLK_MMC2>;
-+			assigned-clock-parents =
-+				<&clock_top TOP_MOUT_BUSTOP_PLL_USER>,
-+				<&clock_top TOP_MOUT_SCLK_FSYS_MMC2_SDCLKIN_A>;
-+			assigned-clock-rates = <0>, <0>, <800000000>;
- 			fifo-depth = <64>;
- 			status = "disabled";
- 		};
+ 
 -- 
 2.13.6
 
