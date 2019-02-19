@@ -2,149 +2,125 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ACE4C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23F6EC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:56:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 264FB2146F
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:54:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFD952146E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:56:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727228AbfBSJyj (ORCPT
+        id S1727250AbfBSJ4W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 04:54:39 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:17718 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725763AbfBSJyj (ORCPT
+        Tue, 19 Feb 2019 04:56:22 -0500
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:32971 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725763AbfBSJ4W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 04:54:39 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1J9pPpe027674;
-        Tue, 19 Feb 2019 10:54:22 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2qr6x5jjsk-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 19 Feb 2019 10:54:22 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B2EAA34;
-        Tue, 19 Feb 2019 09:54:21 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6AF822750;
-        Tue, 19 Feb 2019 09:54:21 +0000 (GMT)
-Received: from [10.48.0.167] (10.75.127.51) by SFHDAG5NODE3.st.com
- (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 19 Feb
- 2019 10:54:20 +0100
-Subject: Re: [PATCH v4 3/3] pwm: core: add consumer device link
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-CC:     <thierry.reding@gmail.com>, <robh+dt@kernel.org>,
-        <tduszyns@gmail.com>, <mark.rutland@arm.com>,
-        <alexandre.torgue@st.com>, <mcoquelin.stm32@gmail.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <1550139951-25788-1-git-send-email-fabrice.gasnier@st.com>
- <1550139951-25788-4-git-send-email-fabrice.gasnier@st.com>
- <20190218172223.lw3e5tn5hzsow6tg@pengutronix.de>
- <53bc3d80-8732-46be-caef-015998c9ad0e@st.com>
- <20190219085516.dz5ux37kdszqkisy@pengutronix.de>
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-Message-ID: <b4f42c35-df0e-8b61-6132-39a453a3b11c@st.com>
-Date:   Tue, 19 Feb 2019 10:54:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 19 Feb 2019 04:56:22 -0500
+X-Originating-IP: 90.88.30.68
+Received: from aptenodytes (aaubervilliers-681-1-89-68.w90-88.abo.wanadoo.fr [90.88.30.68])
+        (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 34E9EC001D;
+        Tue, 19 Feb 2019 09:56:11 +0000 (UTC)
+Message-ID: <b0f700f85cd35bf26a97280f3bef7c4e87102d63.camel@bootlin.com>
+Subject: Re: [PATCH RESEND net] net: phy: xgmiitorgmii: Support generic PHY
+ status read
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date:   Tue, 19 Feb 2019 10:56:10 +0100
+In-Reply-To: <958bb823-3dc8-607f-3c38-3d902acb85a8@gmail.com>
+References: <20190215163220.20041-1-paul.kocialkowski@bootlin.com>
+         <387ed483-b205-beda-319d-6f2b8ea55601@gmail.com>
+         <38f6708476e9beca4583ccc2a62e238a4981b735.camel@bootlin.com>
+         <958bb823-3dc8-607f-3c38-3d902acb85a8@gmail.com>
+Organization: Bootlin
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 
 MIME-Version: 1.0
-In-Reply-To: <20190219085516.dz5ux37kdszqkisy@pengutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG7NODE2.st.com (10.75.127.20) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-19_06:,,
- signatures=0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/19/19 9:55 AM, Uwe Kleine-König wrote:
-> On Tue, Feb 19, 2019 at 09:46:32AM +0100, Fabrice Gasnier wrote:
->> On 2/18/19 6:22 PM, Uwe Kleine-König wrote:
->>> Hello,
->>>
->>> On Thu, Feb 14, 2019 at 11:25:51AM +0100, Fabrice Gasnier wrote:
->>>> Add a device link between the PWM consumer and the PWM provider. This
->>>> enforces the PWM user to get suspended before the PWM provider. It
->>>> allows proper synchronization of suspend/resume sequences: the PWM user
->>>> is responsible for properly stopping PWM, before the provider gets
->>>> suspended: see [1]. Add the device link in:
->>>> - of_pwm_get()
->>>> - pwm_get()
->>>> - devm_*pwm_get() variants
->>>> as it requires a reference to the device for the PWM consumer.
->>>>
->>>> [1] https://lkml.org/lkml/2019/2/5/770
->>>>
->>>> Suggested-by: Thierry Reding <thierry.reding@gmail.com>
->>>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
->>>> ---
->>>> Changes in v4:
->>>> - rework error handling following Thierry's comments
->>>> - turn/split pr_debug() into dev_err()/pr_warn().
->>>>
->>>> Changes in v3:
->>>> - add struct device to of_get_pwm() arguments to handle device link from
->>>>   there as discussed with Uwe.
->>>> ---
->>>>  drivers/pwm/core.c  | 50 +++++++++++++++++++++++++++++++++++++++++++++++---
->>>>  include/linux/pwm.h |  6 ++++--
->>>>  2 files changed, 51 insertions(+), 5 deletions(-)
->>>>
->>>> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
->>>> index 1581f6a..64e10a6 100644
->>>> --- a/drivers/pwm/core.c
->>>> +++ b/drivers/pwm/core.c
->>>> @@ -636,8 +636,35 @@ static struct pwm_chip *of_node_to_pwmchip(struct device_node *np)
->>>>  	return ERR_PTR(-EPROBE_DEFER);
->>>>  }
->>>>  
->>>> +static struct device_link *pwm_device_link_add(struct device *dev,
->>>> +					       struct pwm_device *pwm)
->>>> +{
->>>> +	struct device_link *dl;
->>>> +
->>>> +	if (!dev) {
->>>> +		/*
->>>> +		 * No device for the PWM consumer has been provided. It may
->>>> +		 * impact the PM sequence ordering: the PWM supplier may get
->>>> +		 * suspended before the consumer.
->>>> +		 */
->>>> +		pr_warn("no consumer dev, can't create device link to %s\n",
->>>> +			dev_name(pwm->chip->dev));
->>>
->>> Maybe use dev_warn(pwm->chip->dev, ...) ?
->>
->> Hi Uwe,
->>
->> I'm wondering a bit about this: In this case, the caller that doesn't
->> provide a struct device *, PWM provider isn't responsible for that. So I
->> just hope this wouldn't be miss-leading ?
-> 
-> IMHO it's more the wording that might make the message misleading. If
-> you use
-> 
-> 	dev_warn(pwm->chip->dev, "No consumer device specified to create a device link to\n");
-> 
-> that's completely fine in my eyes.
+Hi,
 
-Thanks for the suggestion, I'll update this as well in v5.
-
-Best regards,
-Fabrice
->  
-> Best regards
-> Uwe
+On Fri, 2019-02-15 at 10:53 -0800, Florian Fainelli wrote:
+> On 2/15/19 10:34 AM, Paul Kocialkowski wrote:
+> > As I was mentionning to Andrew in the initial submission of this patch,
+> > this driver is a bit unusual since it represents a GMII to RGMII
+> > bridge, so it's not actually a PHY driver on its own -- it just sticks
+> > itself in between the actual PHY and the MAC.
 > 
+> Yes, my bad, you should still consider checking priv->phy_drv though, if
+> someone unbinds the PHY driver on either side, you are toast.
+
+Thanks for the suggestion! So I had a closer look at that driver to try
+and see what could go wrong and it looks like I found a few things
+there.
+
+First, we have:
+> priv->phy_dev->priv = priv;
+
+Which basically overwrites that target PHY driver's priv with the
+gmii2rgmii driver's. It looks like most PHY drivers don't use their
+priv data so much so it kind of works in practice. But that's still a
+receipe for disaster. I don't really see an immediate easy fix for that
+one.
+
+It might help to do things the other way round and bind the gmii2rgmii
+PHY to the MAC, which itself would bind the actual PHY. That way we can
+just have the gmii2rgmii redirect all ops to the actual PHY, except for
+read_status. Maybe there was a reason I'm not seeing for doing things
+the way they are done now though?
+
+Then, it looks like there is no way for the gmii2rgmii driver to know
+whether the PHY driver is still alive. It gets a pointer to the initial
+priv->phy_dev->drv and then overwrites it. So when the target driver is
+removed, the pointer will still be alive. Perhaps the memory backing it
+will have been freed too.
+
+How realistic does this scneario sound? I guess there are not many
+cases where the PHY driver will be unregistered once it was picked up
+by the gmii2rgmii driver, but I'm pretty new to the subsystem.
+
+Cheers,
+
+Paul
+
+> > > >  drivers/net/phy/xilinx_gmii2rgmii.c | 5 ++++-
+> > > >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/net/phy/xilinx_gmii2rgmii.c b/drivers/net/phy/xilinx_gmii2rgmii.c
+> > > > index 74a8782313cf..bd6084e315de 100644
+> > > > --- a/drivers/net/phy/xilinx_gmii2rgmii.c
+> > > > +++ b/drivers/net/phy/xilinx_gmii2rgmii.c
+> > > > @@ -44,7 +44,10 @@ static int xgmiitorgmii_read_status(struct phy_device *phydev)
+> > > >  	u16 val = 0;
+> > > >  	int err;
+> > > >  
+> > > > -	err = priv->phy_drv->read_status(phydev);
+> > > > +	if (priv->phy_drv->read_status)
+> > > > +		err = priv->phy_drv->read_status(phydev);
+> > > > +	else
+> > > > +		err = genphy_read_status(phydev);
+> > > >  	if (err < 0)
+> > > >  		return err;
+> > > >  
+> > > > 
+> 
+> 
+-- 
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
