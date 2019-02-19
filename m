@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A956BC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 07:57:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA34C10F00
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 07:57:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79C6421903
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 07:57:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5704921903
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 07:57:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727634AbfBSH5K (ORCPT
+        id S1727680AbfBSH5L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 02:57:10 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3782 "EHLO huawei.com"
+        Tue, 19 Feb 2019 02:57:11 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3781 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727417AbfBSH5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727298AbfBSH5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 19 Feb 2019 02:57:08 -0500
 Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id C81D06C226B520B95EC4;
+        by Forcepoint Email with ESMTP id C2A23C5DFA5D557064F3;
         Tue, 19 Feb 2019 15:57:05 +0800 (CST)
 Received: from HGHY1l002753561.china.huawei.com (10.177.23.164) by
  DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.408.0; Tue, 19 Feb 2019 15:56:57 +0800
+ 14.3.408.0; Tue, 19 Feb 2019 15:56:56 +0800
 From:   Zhen Lei <thunder.leizhen@huawei.com>
 To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
         Robin Murphy <robin.murphy@arm.com>,
@@ -34,9 +34,9 @@ To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
         iommu <iommu@lists.linux-foundation.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
 CC:     Zhen Lei <thunder.leizhen@huawei.com>
-Subject: [PATCH 5/5] iommu/arm-smmu-v3: workaround for STE abort in kdump kernel
-Date:   Tue, 19 Feb 2019 15:54:43 +0800
-Message-ID: <20190219075443.17732-6-thunder.leizhen@huawei.com>
+Subject: [PATCH 3/5] iommu/arm-smmu-v3: add macro xxx_SIZE to replace xxx_DWORDS shift
+Date:   Tue, 19 Feb 2019 15:54:41 +0800
+Message-ID: <20190219075443.17732-4-thunder.leizhen@huawei.com>
 X-Mailer: git-send-email 2.19.2.windows.1
 In-Reply-To: <20190219075443.17732-1-thunder.leizhen@huawei.com>
 References: <20190219075443.17732-1-thunder.leizhen@huawei.com>
@@ -50,163 +50,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some boards may not implement the STE.config=0b000 correctly, it also
-reports event C_BAD_STE when a transaction incoming. To make kdump kernel
-can be worked well in this situation, backup the strtab_base which is used
-in the first kernel, to make the unexpected devices can reuse the old
-mapping if we detected the STE.config=0b000 take no effect.
+The (STRTAB_L1_DESC_DWORDS << 3) appears more than 1 times, replace it
+with STRTAB_L1_DESC_SIZE to eliminate the duplication. And the latter
+seems more clear when it's used to calculate memory size. And the same is
+true for STRTAB_STE_DWORDS and CTXDESC_CD_DWORDS.
 
 Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
 ---
- drivers/iommu/arm-smmu-v3.c | 100 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 100 insertions(+)
+ drivers/iommu/arm-smmu-v3.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 84adecc..4e95710 100644
+index c3c4ff2..5bb5dcd 100644
 --- a/drivers/iommu/arm-smmu-v3.c
 +++ b/drivers/iommu/arm-smmu-v3.c
-@@ -335,6 +335,9 @@
- #define EVTQ_MAX_SZ_SHIFT		7
+@@ -202,10 +202,12 @@
+ #define STRTAB_SPLIT			8
 
- #define EVTQ_0_ID			GENMASK_ULL(7, 0)
-+#define EVTQ_0_ID_C_BAD_STE		0x4
-+#define EVTQ_0_SSV			GENMASK_ULL(11, 11)
-+#define EVTQ_0_SID			GENMASK_ULL(63, 32)
+ #define STRTAB_L1_DESC_DWORDS		1
++#define STRTAB_L1_DESC_SIZE		(STRTAB_L1_DESC_DWORDS << 3)
+ #define STRTAB_L1_DESC_SPAN		GENMASK_ULL(4, 0)
+ #define STRTAB_L1_DESC_L2PTR_MASK	GENMASK_ULL(51, 6)
 
- /* PRI queue */
- #define PRIQ_ENT_DWORDS			2
-@@ -525,6 +528,7 @@ struct arm_smmu_strtab_ent {
- struct arm_smmu_strtab_cfg {
- 	__le64				*strtab;
- 	dma_addr_t			strtab_dma;
-+	dma_addr_t			former_strtab_dma;
- 	struct arm_smmu_strtab_l1_desc	*l1_desc;
- 	unsigned int			num_l1_ents;
+ #define STRTAB_STE_DWORDS		8
++#define STRTAB_STE_SIZE			(STRTAB_STE_DWORDS << 3)
+ #define STRTAB_STE_0_V			(1UL << 0)
+ #define STRTAB_STE_0_CFG		GENMASK_ULL(3, 1)
+ #define STRTAB_STE_0_CFG_ABORT		0
+@@ -251,6 +253,7 @@
 
-@@ -1295,6 +1299,95 @@ static __le64 *arm_smmu_get_step_for_sid(struct arm_smmu_device *smmu, u32 sid)
- 	return step;
- }
+ /* Context descriptor (stage-1 only) */
+ #define CTXDESC_CD_DWORDS		8
++#define CTXDESC_CD_SIZE			(CTXDESC_CD_DWORDS << 3)
+ #define CTXDESC_CD_0_TCR_T0SZ		GENMASK_ULL(5, 0)
+ #define ARM64_TCR_T0SZ			GENMASK_ULL(5, 0)
+ #define CTXDESC_CD_0_TCR_TG0		GENMASK_ULL(7, 6)
+@@ -1563,7 +1566,7 @@ static void arm_smmu_domain_free(struct iommu_domain *domain)
 
-+/*
-+ * This function is only called in the kdump kernel, and mainly because of the
-+ * smmu hardware feature "ste abort" is not effective.
-+ *
-+ * The first kernel flushed all cache before start the secondary kernel, so
-+ * it's safe base on ioremap() to access the former smmu tables.
-+ *
-+ * If any error detected, just simply give up the attempt, directly return
-+ * without any error reported.
-+ */
-+static void arm_smmu_ste_abort_quirks(struct arm_smmu_device *smmu, u64 evt0)
-+{
-+	int i;
-+	__le64 *dst, *src;
-+	u64 val, paddr;
-+	u32 sid = FIELD_GET(EVTQ_0_SID, evt0);
-+	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
-+
-+	/* SubStreamID is not support yet */
-+	if (FIELD_GET(EVTQ_0_SSV, evt0))
-+		return;
-+
-+	/*
-+	 * If no device within this L2ST range has been added, the L1STD.L2Ptr
-+	 * still point to the dummy L2ST, we should allocate one now.
-+	 */
-+	if (smmu->features & ARM_SMMU_FEAT_2_LVL_STRTAB) {
-+		int idx, ret;
-+
-+		idx = (sid >> STRTAB_SPLIT) * STRTAB_L1_DESC_DWORDS;
-+		if (!cfg->l1_desc[idx].l2ptr) {
-+			ret = arm_smmu_init_l2_strtab(smmu, sid);
-+			if (ret)
-+				return;
-+		}
-+	}
-+
-+	dst = arm_smmu_get_step_for_sid(smmu, sid);
-+	val = le64_to_cpu(dst[0]);
-+	if (FIELD_GET(STRTAB_STE_0_CFG, val) != STRTAB_STE_0_CFG_ABORT)
-+		return;
-+
-+	/* The value of SMMU_STRTAB_BASE maybe corrupted, sanity check it */
-+	if (cfg->former_strtab_dma & ~(STRTAB_BASE_RA | STRTAB_BASE_ADDR_MASK))
-+		return;
-+
-+	/* Find the STE base address of "sid" */
-+	if (smmu->features & ARM_SMMU_FEAT_2_LVL_STRTAB) {
-+		u32 span;
-+
-+		paddr = cfg->former_strtab_dma +
-+			(sid >> STRTAB_SPLIT) * STRTAB_L1_DESC_SIZE;
-+		src = ioremap(paddr, STRTAB_L1_DESC_SIZE);
-+		if (!src)
-+			return;
-+
-+		val   = le64_to_cpu(*src);
-+		paddr = val & STRTAB_L1_DESC_L2PTR_MASK;
-+		span  = val & STRTAB_L1_DESC_SPAN;
-+		iounmap(src);
-+
-+		/* The content of L1STD maybe corrupted, sanity check it */
-+		if (val & ~(STRTAB_L1_DESC_L2PTR_MASK | STRTAB_L1_DESC_SPAN))
-+			return;
-+		paddr += (sid & ((1 << STRTAB_SPLIT) - 1)) * STRTAB_STE_SIZE;
-+	} else {
-+		paddr = cfg->former_strtab_dma + (sid * STRTAB_STE_SIZE);
-+	}
-+
-+	src = ioremap(paddr, STRTAB_STE_SIZE);
-+	if (!src)
-+		return;
-+
-+	/*
-+	 * Copy the former STE content, so that the device can base the former
-+	 * mapping to access "memory", and does not report any event again.
-+	 *
-+	 * Please note that, the "memory" is legally allocated in the first
-+	 * kernel, so that it will not corrupt the memory of current secondary
-+	 * kernel.
-+	 */
-+	for (i = 1; i < STRTAB_STE_DWORDS; i++)
-+		dst[i] = src[i];
-+	arm_smmu_sync_ste_for_sid(smmu, sid);
-+	dst[0] = src[0];
-+	arm_smmu_sync_ste_for_sid(smmu, sid);
-+	iounmap(src);
-+}
-+
- /* IRQ and event handlers */
- static irqreturn_t arm_smmu_evtq_thread(int irq, void *dev)
- {
-@@ -1312,6 +1405,8 @@ static irqreturn_t arm_smmu_evtq_thread(int irq, void *dev)
- 				dev_info(smmu->dev, "\t0x%016llx\n",
- 					 (unsigned long long)evt[i]);
+ 		if (cfg->cdptr) {
+ 			dmam_free_coherent(smmu_domain->smmu->dev,
+-					   CTXDESC_CD_DWORDS << 3,
++					   CTXDESC_CD_SIZE,
+ 					   cfg->cdptr,
+ 					   cfg->cdptr_dma);
 
-+			if ((id == EVTQ_0_ID_C_BAD_STE) && is_kdump_kernel())
-+				arm_smmu_ste_abort_quirks(smmu, evt[0]);
+@@ -1590,7 +1593,7 @@ static int arm_smmu_domain_finalise_s1(struct arm_smmu_domain *smmu_domain,
+ 	if (asid < 0)
+ 		return asid;
+
+-	cfg->cdptr = dmam_alloc_coherent(smmu->dev, CTXDESC_CD_DWORDS << 3,
++	cfg->cdptr = dmam_alloc_coherent(smmu->dev, CTXDESC_CD_SIZE,
+ 					 &cfg->cdptr_dma,
+ 					 GFP_KERNEL | __GFP_ZERO);
+ 	if (!cfg->cdptr) {
+@@ -2176,7 +2179,7 @@ static int arm_smmu_init_l1_strtab(struct arm_smmu_device *smmu)
+ 			arm_smmu_init_dummy_l2_strtab(smmu, i << STRTAB_SPLIT);
+ 		} else {
+ 			arm_smmu_write_strtab_l1_desc(strtab, &cfg->l1_desc[i]);
+-			strtab += STRTAB_L1_DESC_DWORDS << 3;
++			strtab += STRTAB_L1_DESC_SIZE;
  		}
+ 	}
 
- 		/*
-@@ -2491,6 +2586,7 @@ static int arm_smmu_device_reset(struct arm_smmu_device *smmu, bool bypass)
- {
- 	int ret;
- 	u32 reg, enables;
-+	u64 reg64;
- 	struct arm_smmu_cmdq_ent cmd;
+@@ -2201,7 +2204,7 @@ static int arm_smmu_init_strtab_2lvl(struct arm_smmu_device *smmu)
+ 			 "2-level strtab only covers %u/%u bits of SID\n",
+ 			 size, smmu->sid_bits);
 
- 	/* Clear CR0 and sync (disables SMMU and queue processing) */
-@@ -2519,6 +2615,10 @@ static int arm_smmu_device_reset(struct arm_smmu_device *smmu, bool bypass)
- 	reg = CR2_PTM | CR2_RECINVSID | CR2_E2H;
- 	writel_relaxed(reg, smmu->base + ARM_SMMU_CR2);
+-	l1size = cfg->num_l1_ents * (STRTAB_L1_DESC_DWORDS << 3);
++	l1size = cfg->num_l1_ents * STRTAB_L1_DESC_SIZE;
+ 	strtab = dmam_alloc_coherent(smmu->dev, l1size, &cfg->strtab_dma,
+ 				     GFP_KERNEL | __GFP_ZERO);
+ 	if (!strtab) {
+@@ -2228,7 +2231,7 @@ static int arm_smmu_init_strtab_linear(struct arm_smmu_device *smmu)
+ 	u32 size;
+ 	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
 
-+	/* save the former strtab base */
-+	reg64 = readq_relaxed(smmu->base + ARM_SMMU_STRTAB_BASE);
-+	smmu->strtab_cfg.former_strtab_dma = reg64 & STRTAB_BASE_ADDR_MASK;
-+
- 	/* Stream table */
- 	writeq_relaxed(smmu->strtab_cfg.strtab_base,
- 		       smmu->base + ARM_SMMU_STRTAB_BASE);
+-	size = (1 << smmu->sid_bits) * (STRTAB_STE_DWORDS << 3);
++	size = (1 << smmu->sid_bits) * STRTAB_STE_SIZE;
+ 	strtab = dmam_alloc_coherent(smmu->dev, size, &cfg->strtab_dma,
+ 				     GFP_KERNEL | __GFP_ZERO);
+ 	if (!strtab) {
 --
 1.8.3
 
