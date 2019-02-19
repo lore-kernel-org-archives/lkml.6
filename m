@@ -2,156 +2,158 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D50D5C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:20:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A4CDC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:21:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99DFC2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:20:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zz8pbu+y"
+	by mail.kernel.org (Postfix) with ESMTP id 357AF2146F
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:21:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbfBSUUL (ORCPT
+        id S1729569AbfBSUVj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 15:20:11 -0500
-Received: from mail-wm1-f44.google.com ([209.85.128.44]:38483 "EHLO
-        mail-wm1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725875AbfBSUUK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 15:20:10 -0500
-Received: by mail-wm1-f44.google.com with SMTP id v26so4118385wmh.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 12:20:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=uOnH1MWNRj4KWHIToZUIdU6Ad2tv4oLRG9w9N2RKNkM=;
-        b=Zz8pbu+ykI3yIPdrZt0EdGf3oFIH7/RROOj0MBCth8DB3k9pGX9V8uC7aWCeKX72/E
-         9mKeFzIUJ74nxUb61Bs6TS43tsVJUvG//3PtHyyXwa3X6j7h5GFUfMmFMRyBL+uknUVE
-         g6RfutpLny2q15XkeKLX9d4XyblIO9qFYDgy7bP+7fHL+R3LNsHXTyH/QZ0GO0wJUTgr
-         kc2gCUAbxWfsg+ftiRLecnSn6GIXwsajdwf2RbKJ89YUeH7BkP1GGKLcXddm5lKafp17
-         keA1Q83VJghB8hzYmiRPQCYBvsXDOi2bNaclpd08z+RF71WHCWb+9myQOnms94liw6bb
-         nNGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uOnH1MWNRj4KWHIToZUIdU6Ad2tv4oLRG9w9N2RKNkM=;
-        b=TqWOcl/THQfKc9P3rZcuE2pOleILyBrw+wBTXDlj7lAxlhE7hvenTwfcobbhj8jqYc
-         FDFi4JEltryQ9Vz92VgtZgIQDPAbkPS904doH8iDK8aTuw7RacLt4/hNMWbxvjqNF+q9
-         brlmLzlj/3v+aeEp9vRic8GSArtSc0tILGnx0xz7YDPyckCKQCq14OqQbOJNln3EGRWU
-         LmrIdzVh9OppHHXHr/MoB55lKzuBKJhOX5jc6+G3T/F6BPItyuk9dgDTwrJulZofQvkd
-         53b+UWbgnhVcHdG5D6J+1miCZtsMtphhipJCAwBoYVqXL/zPwRL1C3tgVVz452yCZvwp
-         GVag==
-X-Gm-Message-State: AHQUAuYGA/5dcxzi+UYG8dPNdc7vcFr2MAYqr6Fa4NzLfeqMnCDMma09
-        ZwtW0dfOpN/EEEuXFMFZYPI=
-X-Google-Smtp-Source: AHgI3IZyb94bK73ou6dhGP4YMltUkGwBHPaX48//3kG0zqXlhQwmqN3fdR2QxQKmpgTtNvObpst65Q==
-X-Received: by 2002:a7b:cb49:: with SMTP id v9mr4026008wmj.138.1550607608065;
-        Tue, 19 Feb 2019 12:20:08 -0800 (PST)
-Received: from localhost.localdomain ([46.216.153.243])
-        by smtp.gmail.com with ESMTPSA id s8sm34443620wrn.44.2019.02.19.12.20.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Feb 2019 12:20:07 -0800 (PST)
-Received: from [127.0.0.1] (helo=jeknote.loshitsa1.net)
-        by localhost.localdomain with esmtp (Exim 4.92-RC4)
-        (envelope-from <jekhor@gmail.com>)
-        id 1gwBs5-0001R6-2K; Tue, 19 Feb 2019 23:20:05 +0300
-Date:   Tue, 19 Feb 2019 23:20:05 +0300
-From:   Yauhen Kharuzhy <jekhor@gmail.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH 2/2] extcon intel-cht-wc: Enable external charger
-Message-ID: <20190219202005.GA3699@jeknote.loshitsa1.net>
-References: <20190210203649.21691-1-jekhor@gmail.com>
- <20190210203649.21691-3-jekhor@gmail.com>
- <1b2f04fc-05a0-4f09-c84e-dc7adc63ec63@redhat.com>
- <20190215063250.GB30250@jeknote.loshitsa1.net>
- <20190217215242.GA12656@jeknote.loshitsa1.net>
- <416a0e12-aa0e-e781-2ef2-f11b97ba77a0@redhat.com>
- <CAKWEGV7r_026NhT96AiXJUT_9WOTy_=DC3Kx9qVNRfjWmMkEBA@mail.gmail.com>
- <8e3d9949-4bd3-f229-ace4-196a5f08fad3@redhat.com>
+        Tue, 19 Feb 2019 15:21:39 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52490 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725875AbfBSUVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 15:21:39 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 446CC81E07;
+        Tue, 19 Feb 2019 20:21:38 +0000 (UTC)
+Received: from [10.36.116.120] (ovpn-116-120.ams2.redhat.com [10.36.116.120])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 93F1760C4C;
+        Tue, 19 Feb 2019 20:21:26 +0000 (UTC)
+Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Alexander Duyck <alexander.duyck@gmail.com>,
+        Nitesh Narayan Lal <nitesh@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
+        pagupta@redhat.com, wei.w.wang@intel.com,
+        Yang Zhang <yang.zhang.wz@gmail.com>,
+        Rik van Riel <riel@surriel.com>, dodgen@google.com,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
+References: <20190218143819-mutt-send-email-mst@kernel.org>
+ <58714908-f203-0b64-845b-5818e52a62fa@redhat.com>
+ <20190218152021-mutt-send-email-mst@kernel.org>
+ <18d87846-72c7-adf0-5ca3-7312540bb31b@redhat.com>
+ <478a9574-a604-0aa9-d569-6a5cd98d7cdc@redhat.com>
+ <CAKgT0UfEeDJOYmm5L0Q9QSNrEm=w39_+5Js5CEx=0o2_fhkaGQ@mail.gmail.com>
+ <77e71dc3-640b-bbf6-6a47-bb2371c06172@redhat.com>
+ <CAKgT0UfqSQoBehg7JZ=tzmk7wqSF=h9aMnsk_wpQXqh0NyRCHA@mail.gmail.com>
+ <20190219145241-mutt-send-email-mst@kernel.org>
+ <0118482c-e633-3949-6797-94d7deb8a382@redhat.com>
+ <20190219151552-mutt-send-email-mst@kernel.org>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <488d4113-fef5-17cb-c000-41ece1cdd4ca@redhat.com>
+Date:   Tue, 19 Feb 2019 21:21:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8e3d9949-4bd3-f229-ace4-196a5f08fad3@redhat.com>
+In-Reply-To: <20190219151552-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 19 Feb 2019 20:21:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 02:39:55PM +0100, Hans de Goede wrote:
-> > > I also wonder if you've considered just disabling the extcon driver
-> > > for the PMIC leaving it in automatic mode. Unlike the GPD win / pocket
-> > > with their Type-C connector, your device seems to actually be using
-> > > the PMIC as it was designed, so the automatic mode might just work
-> > > and not touching the PMIC at all might be best.
-> > 
-> > Hm. We need to detect charger type (which can be kind of ACA) and set charging
-> > limit properly, control OTG boost converter of the charger, request
-> > hi-voltage charging etc.
-> > I am not sure that this is possible without of software intervention.
-> > Mixing of software
-> > events handling with hardware charging control will be a source of
-> > errors and instability.
-> > So, no, I didn't think about HW-controlled charging when Linux is
-> > running. But this may
-> > be subject of future investigation.
+On 19.02.19 21:17, Michael S. Tsirkin wrote:
+> On Tue, Feb 19, 2019 at 09:02:52PM +0100, David Hildenbrand wrote:
+>> On 19.02.19 20:58, Michael S. Tsirkin wrote:
+>>> On Tue, Feb 19, 2019 at 10:06:35AM -0800, Alexander Duyck wrote:
+>>>>> I tend to like an asynchronous reporting approach as discussed in this
+>>>>> thread, we would have to see if Nitesh could get it implemented.
+>>>>
+>>>> I agree it would be great if it could work. However I have concerns
+>>>> given that work on this patch set dates back to 2017, major issues
+>>>> such as working around device assignment have yet to be addressed,
+>>>
+>>> BTW for device assignment to work, your idea of sending
+>>> data directly to kvm won't work, will it?
+>>> You need to update userspace so it can update VFIO right?
+>>> Another blocker for assignment is ability to make holes
+>>> an an existing mapping - supported by hardware but
+>>> not by IOMMU drivers.
+>>
+>> I had the exact same thought and then realized that we decided to block
+>> the balloon in user space until we figured out how to handle this properly.
+>>
+>> I wonder if MADV_FREE behaves differently compared to MADV_DONTNEED when
+>> finding pinned pages, but I doubt it. Most probably we'll have to
+>> disable hinting for device assignments as well.
 > 
-> Ok, I was hoping that the CCSM hardware would automatically do charger-type
-> detection and set the input-current-limit accordingly.
-
-I have checked this. UEFI firmware configures PMIC to SW-controlled
-mode if no OTG cable connected at start. If change PMIC mode to
-HW-controlled, charging works but no IINLIM control by PMIC is observed
-(ILIM pin is disabled and 0x00 register value is not changed). When OTG
-cable is connected, bq25892 registers are not changed also (OTG boost
-converter is disabled).
-
-So, I consider that this machine is designed for software charging and
-OTG mode control.
-
-
-> > > > Q: In theory, enabling of 'charge enable' output without of properly
-> > > > configuration of external charger can cause some problems (USB overload,
-> > > > battery overcurrent etc.). I think that there are no such stupidly
-> > > > designed devices exist but we cannot be sure. What should we do with this?
-> > > 
-> > > This should not be a problem, the input-current-limit of the charger
-> > > will already be setup by the firmware at boot and if a charger gets
-> > > plugged in later then the input-current-limit will reset to 500mA.
-> > > 
-> > > Likewise the max charging current for the battery should already
-> > > be configured properly by the firmware (this must be the case since
-> > > the device will also charge while off) and we don't even know what
-> > > the max charging current for the battery is, so we just have to rely
-> > > on the firmware/BIOS here.
-> > 
-> > In the Lenovo Yoga Book the firmware seems to set safe input current limit
-> > only (500 mA). Fast charging can be enabled by software and exactly value
-> > of limits for this are known from Lenovo's sources only...
+> OK but let's recognize it as a bug not a feature.
 > 
-> The input-current-limit only specifies how much current the charger may
-> draw from the micro-usb for both supplying the laptop as well as for
-> charging the battery combined. You can safely set this as high as
-> the charger can handle (2A for a dedicated charger).
-> 
-> The BQ25892 should have a *separate* setting for the max current to
-> use while charging the battery (assuming that the input current allows
-> drawing enough current in the first place). I would hope that those bits
-> have some sane value set from the firmware...
 
-Yes, the charger has separate battery current limit but firmware doesn't
-change its default value (2048 mA) while Lenovo's software driver does.
-It set battery charging limit to 4 A and input limit to 2 A (it makes
-sense because Lenovo adapter and BQ25892 both support voltage increasing
-upto 12V).
+Yes, btw interesting read: https://lwn.net/Articles/198380/
 
+"Pages which have been locked into memory pose an extra challenge here -
+they can be part of the page cache, but they still shouldn't be taken
+away by the host system. So such pages cannot be marked as "volatile."
+The problem is that figuring out if a page is locked is harder than it
+might seem; it can involve scanning a list of virtual memory area (VMA)
+structures, which is slow. So the hinting patches add a new flag to the
+address_space structure to note that somebody has locked pages from that
+address space in memory."
+
+I assume locked here actually means pinned.
 
 -- 
-Yauhen Kharuzhy
+
+Thanks,
+
+David / dhildenb
