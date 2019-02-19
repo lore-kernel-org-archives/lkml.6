@@ -2,168 +2,106 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C781FC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE103C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:30:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93FEC21848
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:26:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A14AB21738
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:30:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="a27qwm5p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbfBSJ0Q convert rfc822-to-8bit (ORCPT
+        id S1727899AbfBSJah (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 04:26:16 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:56007 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726565AbfBSJ0Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 04:26:16 -0500
-Received: from [IPv6:2601:646:8680:2bb1:8028:226d:d731:7182] ([IPv6:2601:646:8680:2bb1:8028:226d:d731:7182])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x1J9LrJV2978378
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Tue, 19 Feb 2019 01:21:54 -0800
-Date:   Tue, 19 Feb 2019 01:21:44 -0800
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20190219090409.GW32494@hirez.programming.kicks-ass.net>
-References: <dd33cc20-f335-0e4c-e3f4-02497ecc3710@arm.com> <20190213144145.GY32494@hirez.programming.kicks-ass.net> <20190213154532.GQ32534@hirez.programming.kicks-ass.net> <D61C430D-4321-4114-AB85-671A3C7B8EAE@amacapital.net> <20190213222146.GC32494@hirez.programming.kicks-ass.net> <D3E1B64D-3E91-4A82-9C3B-92D9EB7326CE@amacapital.net> <20190214101429.GD32494@hirez.programming.kicks-ass.net> <20ABBED1-E505-45F6-8520-FB93786DF9A9@zytor.com> <20190216103044.GR32494@hirez.programming.kicks-ass.net> <9e037d68-75e7-1beb-0c9c-33a7ffeced1b@zytor.com> <20190219090409.GW32494@hirez.programming.kicks-ass.net>
+        Tue, 19 Feb 2019 04:30:37 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:6160 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725802AbfBSJag (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 04:30:36 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c6bccbb0000>; Tue, 19 Feb 2019 01:30:35 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 19 Feb 2019 01:30:35 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 19 Feb 2019 01:30:35 -0800
+Received: from [10.21.132.148] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 19 Feb
+ 2019 09:30:33 +0000
+Subject: Re: [PATCH 4.4 000/143] 4.4.175-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20190218133529.099444112@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <108c1239-3734-a69b-1d92-656c2c6450cd@nvidia.com>
+Date:   Tue, 19 Feb 2019 09:30:31 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH] sched/x86: Save [ER]FLAGS on context switch
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     Andy Lutomirski <luto@amacapital.net>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mingo@redhat.com,
-        catalin.marinas@arm.com, james.morse@arm.com,
-        valentin.schneider@arm.com, brgerst@gmail.com, jpoimboe@redhat.com,
-        luto@kernel.org, bp@alien8.de, dvlasenk@redhat.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de
-From:   hpa@zytor.com
-Message-ID: <D9BA7815-5028-4000-8155-71955786B953@zytor.com>
+In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1550568635; bh=XvCLdGWxvdq/ajbaOJQygmmNaut0MRseRt69A7n+rgo=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=a27qwm5pbVHWkc37MBedYOA6U6t1h+TLxepuS5x2Acr/2mUtHFUUlY2sGU0auqZb9
+         MLt1FfTorYnJP5fsk7WFvICeemMwCdOj65X583ZACDMzg8Q0VArXqaO+tjoI4znV+H
+         ER8230DVR6/HplHXtPv7hgGCIPO/+urmLPgx9vjIbeBSc2IakrGPJkwBJoa8inVWa0
+         sH1l/KNdORW24YMnW3KNInMsptV/uFGAveNe6N8F7+8vjUJuDkGUN1HuB6MQvHYPS6
+         WZDrOa7s5ZHXlcCRI5Wmtr2hZsBoUkgYHKeNGIARrXBGyPZvo8mw2mrO2P7wZeoFQr
+         bBNpqaCy8AUKQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On February 19, 2019 1:04:09 AM PST, Peter Zijlstra <peterz@infradead.org> wrote:
->On Mon, Feb 18, 2019 at 02:30:21PM -0800, H. Peter Anvin wrote:
->> On 2/16/19 2:30 AM, Peter Zijlstra wrote:
->> > On Fri, Feb 15, 2019 at 08:06:56PM -0800, hpa@zytor.com wrote:
->> >> This implies we invoke schedule -- a restricted operation
->(consider
->> >> may_sleep) during execution of STAC-enabled code, but *not* as an
->> >> exception or interrupt, since those preserve the flags.
->> > 
->> > Meet preempt_enable().
->> 
->> I believe this falls under "doctor, it hurts when I do that." And it
->hurts for
->> very good reasons. See below.
->
->I disagree; the basic rule is that if you're preemptible you must also
->be able to schedule and vice-versa. These AC regions violate this.
->
->And, like illustrated, it is _very_ easy to get all sorts inside that
->AC
->crap.
->
->> >> I have serious concerns about this. This is more or less saying
->that
->> >> we have left an unlimited gap and have had AC escape.
->> > 
->> > Yes; by allowing normal C in between STAC and CLAC this is so.
->> > 
->> >> Does *anyone* see a need to allow this? I got a question at LPC
->from
->> >> someone about this, and what they were trying to do once all the
->> >> layers had been unwound was so far down the wrong track for a root
->> >> problem that actually has a very simple solution.
->> > 
->> > Have you read the rest of the thread?
->> > 
->> > All it takes for this to explode is a call to a C function that has
->> > tracing on it in between the user_access_begin() and
->user_access_end()
->> > things. That is a _very_ easy thing to do.
->> > 
->> > Heck, GCC is allowed to generate that broken code compiling
->> > lib/strnlen_user.c; it doesn't _have_ to inline do_strnlen_user
->(esp.
->> > with CONFIG_OPTIMIZE_INLINING), and making that a function call
->would
->> > get us fentry hooks and ftrace and *BOOM*.
->> > 
->> > (Now, of course, its a static function with a single caller, and
->GCC
->> > isn't _THAT_ stupid, but it could, if it wanted to)
->> > 
->> > Since the bar is _that_ low for mistakes, I figure we'd better fix
->it.
->> > 
->> 
->> The question is what "fix it" means. 
->
->It means that when we do schedule, the next task doesn't have AC set,
->and when we schedule back, we'll restore our AC when we had it. Unlike
->the current situation, where the next task will run with AC set.
->
->IOW, it confines AC to the task context where it was set.
->
->> I'm really concerned about AC escapes,
->> and everyone else should be, too.
->
->Then _that_ should be asserted.
->
->> For an issue specific to tracing, it would be more appropriate to do
->the
->> appropriate things in the tracing entry/exit than in schedule.
->Otherwise, we
->> don't want to silently paper over mistakes which could mean that we
->run a
->> large portion of the kernel without protection we thought we had.
->> 
->> In that sense, calling schedule() with AC set is in fact a great
->place to have
->> a WARN() or even BUG(), because such an event really could imply that
->the
->> kernel has been security compromised.
->
->It is not specific to tracing, tracing is just one of the most trivial
->and non-obvious ways to make it go splat.
->
->There's lot of fairly innocent stuff that does preempt_disable() /
->preempt_enable(). And just a warning in schedule() isn't sufficient,
->you'd have to actually trigger a reschedule before you know your code
->is
->bad.
->
->And like I said; the invariant is: if you're preemptible you can
->schedule and v.v.
->
->Now, clearly you don't want to mark these whole regions as
->!preemptible,
->because then you can also not take faults, but somehow you're not
->worried about the whole fault handler, but you are worried about the
->scheduler ?!? How does that work? The fault handler can touch a _ton_
->more code. Heck, the fault handler can schedule.
->
->So either pre-fault, and run the whole AC crap with preemption disabled
->and retry, or accept that we have to schedule.
->
->> Does that make more sense?
->
->It appears to me you're going about it backwards.
 
-I'm not worried about the fault handler, because AC is always presented/disabled on exception entry; otherwise I would of course be very concerned.
+On 18/02/2019 13:42, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.175 release.
+> There are 143 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed Feb 20 13:34:55 UTC 2019.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.175-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+All tests are passing for Tegra ...
 
-To be clear: I'm not worried about the scheduler itself. I'm worried about how much code we have gone through to get there. Perhaps the scheduler itself is not the right point to probe for it, but we do need to catch things that have gone wrong, rather than just leaving the door wide open.
+Test results for stable-v4.4:
+    6 builds:	6 pass, 0 fail
+    12 boots:	12 pass, 0 fail
+    10 tests:	10 pass, 0 fail
 
-I would personally be far more comfortable saying you have to disable preemption in user access regions. It may be an unnecessary constraint for x86 and ARM64, but it is safe.
+Linux version:	4.4.175-rc1-gb2148834
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra30-cardhu-a04
 
-And Julien, yes, it is "somewhat arbitrary", but so are many engineering tradeoffs. Not everything has a very sharply definable line.
+Cheers
+Jon
+
 -- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+nvpublic
