@@ -2,107 +2,130 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E98C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:03:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E1B7C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:03:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AF3B21902
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:03:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEF712173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:03:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SyiEXisE"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ANiDQy+k"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726135AbfBSGDw (ORCPT
+        id S1726360AbfBSGDx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 01:03:52 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42259 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725767AbfBSGDu (ORCPT
+        Tue, 19 Feb 2019 01:03:53 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42820 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726092AbfBSGDw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 01:03:50 -0500
-Received: by mail-pf1-f193.google.com with SMTP id n74so9688119pfi.9
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 22:03:50 -0800 (PST)
+        Tue, 19 Feb 2019 01:03:52 -0500
+Received: by mail-pg1-f194.google.com with SMTP id b2so3844365pgl.9
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 22:03:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=WAJkt5pKYVfaSlTbiQyzNhjMJz/17VQ97ZsS8VrSTns=;
-        b=SyiEXisEw8m2f8P4XliUEL1x1ifBMrLtI9hZ2DIjOSvalBWB9Ie/TsZTWmuNIDQzuf
-         3/rbzu2GUhPHJbPI1KeD572UQAGQHYWyqkgVhK+3+kfbGbaUoe4Yzs4CrUEE7az9sR6H
-         8gKTfnc1gCl0qpTu8UYKvpC0H+j/ulyfBtWYmyvwz9dyeH7xm6zPemqskg9aXfSxEoWo
-         O8P04nVn6lbncvtAzPfosFNLYvO8l9VlKa4y7SLX1SpFU3+8pDVpDvGLB6DCTFz9ysEN
-         KQ5GaicA9iRhgGLrjJQ4uuU/TKwppJOfTRniuVzuP8d09HPYAXMvCnPgly6NsIa5lu63
-         sj4w==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=GyjR1K+SCkiQJRz7sqZ/Dyo0n3Et48Yb+zUiZSu0/dQ=;
+        b=ANiDQy+khlnfvD/w1RKC5rOs+Q2wteA0b4ldJqmxAFgowdd/bphom+Cz+tWc2FUAwj
+         SM4t1zeZL5sK4TCY/qDKjyYxPd7Q80aTk75sjo2bkeY1B85g++OUiwYFv3GJIUK0JF76
+         Tw3fsaITrSP94oFVYgbXhaQ6U5S2UK1r/AUvRZMGn5ufrEPta1NcMnob6upo6i6pr4ud
+         5t4Ro4s12GPpjTwDYbg8sPHi/wLggL6Mrn5FXTsar3TEBznzfuN95ngIMWb7VQx8GzYe
+         ylLi/kYUXkSYupzA1OUzArx3jOR6YDcwxlU1H0TFykPwYmnicAOqN3lwoKdzoK0EznLx
+         /fKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=WAJkt5pKYVfaSlTbiQyzNhjMJz/17VQ97ZsS8VrSTns=;
-        b=MKdKCCbSFEK26J8/FzyXVHNhiiiAK9NC9DGtk2q4pOrkDTbXUefADLgK2/X3402bUY
-         jBrE8cH4WeLbDPqlvpWJSjZlbOqgBw5Z4JQXHJeZQOZyxJuhhXElkBHKoecW3KMceoyk
-         9zZU6FRBtbV1oAFOD22Wg+J0VOCNpccc39hF7V0gpJTdrTDx8jMAfbXmq8e5Q78TcyGj
-         hMmn2PcbbYmmcFlkCvUoqJuz5+0TJ5qzJVXUxFstBAopXSILOi85k3zgD5S/UjrMj43B
-         RoK/PsK570iotwxxEdETSHcaSKFNxXrGvTXD5zEQM4688kYXmFmYDLpL1zNAQ63byqv/
-         KOzQ==
-X-Gm-Message-State: AHQUAuYBxzjam22AphAj/UoTIacNLx63w8jKkoD1UKbb03xs6TsPLScb
-        3BN7ma+FzxfklczwP7pqRrV9Jw==
-X-Google-Smtp-Source: AHgI3IZZA2BipuFrb5VuJRSHdSRZgQaYi2Gg6KmPRfE1ezlffV9/u5JJw8fOqUkkemGbOao6TvGitQ==
-X-Received: by 2002:a63:c04b:: with SMTP id z11mr22001661pgi.135.1550556229700;
-        Mon, 18 Feb 2019 22:03:49 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=GyjR1K+SCkiQJRz7sqZ/Dyo0n3Et48Yb+zUiZSu0/dQ=;
+        b=aKNsJ2TPALkNReEmKmDfx040/0ce5sd2Wsjm5V1WncAmwHFwuj+IQ+D1FeDcpgNQgx
+         nU6VA4MEtA7GivzVxwWLcCKk92vniEqooDLP5QdN7e8lS8A3kc6/AeWB6gszlZbFkYlh
+         2zsNSMEdOhy/E/eXextlKv0s67STGGi4sjlsHY9TsyudFT+EvN8SWClaDG7kGCQamq1y
+         6vfEuN9yoiSsM5VvQddV7OCQqGiXISeK0DzkRnb+qyfFjpyd4NVn+ImBG4tjSwdcdqAB
+         QdUE5SonEaIeXik8/BPkoAppCg6JMq86O2FFQywn0VpZLGvikm7+MVyiHcNS4fiWL4RJ
+         /bmw==
+X-Gm-Message-State: AHQUAua97kVcGSIPJq1xDWKwLTxgmHuaGGck7EkjTjjK31T7nGji0J7G
+        TDnwa5BlV/1rHLiPKF9AbSiusA==
+X-Google-Smtp-Source: AHgI3IYqMUM8xyL6zRq4Npy/+3U9kfU+r5bItEm8svJ14Et8uSwLZAjgbmTYQRjz92/hdmcS8lc7cg==
+X-Received: by 2002:a63:6506:: with SMTP id z6mr22343021pgb.334.1550556231327;
+        Mon, 18 Feb 2019 22:03:51 -0800 (PST)
 Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 86sm31914838pfk.157.2019.02.18.22.03.47
+        by smtp.gmail.com with ESMTPSA id 86sm31914838pfk.157.2019.02.18.22.03.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Feb 2019 22:03:48 -0800 (PST)
+        Mon, 18 Feb 2019 22:03:50 -0800 (PST)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
 Cc:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
         Bjorn Helgaas <bhelgaas@google.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Kishon Vijay Abraham I <kishon@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
         Stanimir Varbanov <svarbanov@mm-sol.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v2 0/7] QCS404 PCIe PHY and controller
-Date:   Mon, 18 Feb 2019 22:04:00 -0800
-Message-Id: <20190219060407.15263-1-bjorn.andersson@linaro.org>
+Subject: [PATCH v2 1/7] clk: gcc-qcs404: Add PCIe resets
+Date:   Mon, 18 Feb 2019 22:04:01 -0800
+Message-Id: <20190219060407.15263-2-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.18.0
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <20190219060407.15263-1-bjorn.andersson@linaro.org>
+References: <20190219060407.15263-1-bjorn.andersson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds support for the PCIe controller and PHY found in the Qualcomm
-platform QCS404.
+Enabling PCIe requires several of the PCIe related resets from GCC, so
+add them all.
 
-Bjorn Andersson (7):
-  clk: gcc-qcs404: Add PCIe resets
-  dt-bindings: phy: Add binding for Qualcomm PCIe2 PHY
-  phy: qcom: Add Qualcomm PCIe2 PHY driver
-  PCI: qcom: Use clk_bulk API for 2.4.0 controllers
-  dt-bindings: PCI: qcom: Add QCS404 to the binding
-  PCI: qcom: Add QCS404 PCIe controller support
-  arm64: dts: qcom: qcs404: Add PCIe related nodes
+Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/clk/qcom/gcc-qcs404.c               | 7 +++++++
+ include/dt-bindings/clock/qcom,gcc-qcs404.h | 7 +++++++
+ 2 files changed, 14 insertions(+)
 
- .../devicetree/bindings/pci/qcom,pcie.txt     |  25 +-
- .../bindings/phy/qcom-pcie2-phy.txt           |  40 +++
- arch/arm64/boot/dts/qcom/qcs404-evb.dtsi      |  25 ++
- arch/arm64/boot/dts/qcom/qcs404.dtsi          |  67 ++++
- drivers/clk/qcom/gcc-qcs404.c                 |   7 +
- drivers/pci/controller/dwc/pcie-qcom.c        | 108 +++---
- drivers/phy/qualcomm/Kconfig                  |   8 +
- drivers/phy/qualcomm/Makefile                 |   1 +
- drivers/phy/qualcomm/phy-qcom-pcie2.c         | 331 ++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-qcs404.h   |   7 +
- 10 files changed, 558 insertions(+), 61 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt
- create mode 100644 drivers/phy/qualcomm/phy-qcom-pcie2.c
-
+diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
+index 64da032bb9ed..5aed43923239 100644
+--- a/drivers/clk/qcom/gcc-qcs404.c
++++ b/drivers/clk/qcom/gcc-qcs404.c
+@@ -2675,6 +2675,13 @@ static const struct qcom_reset_map gcc_qcs404_resets[] = {
+ 	[GCC_PCIE_0_PHY_BCR] = { 0x3e004 },
+ 	[GCC_PCIE_0_LINK_DOWN_BCR] = { 0x3e038 },
+ 	[GCC_PCIEPHY_0_PHY_BCR] = { 0x3e03c },
++	[GCC_PCIE_0_AXI_MASTER_STICKY_ARES] = { 0x3e040, 6},
++	[GCC_PCIE_0_AHB_ARES] = { 0x3e040, 5 },
++	[GCC_PCIE_0_AXI_SLAVE_ARES] = { 0x3e040, 4 },
++	[GCC_PCIE_0_AXI_MASTER_ARES] = { 0x3e040, 3 },
++	[GCC_PCIE_0_CORE_STICKY_ARES] = { 0x3e040, 2 },
++	[GCC_PCIE_0_SLEEP_ARES] = { 0x3e040, 1 },
++	[GCC_PCIE_0_PIPE_ARES] = { 0x3e040, 0 },
+ 	[GCC_EMAC_BCR] = { 0x4e000 },
+ };
+ 
+diff --git a/include/dt-bindings/clock/qcom,gcc-qcs404.h b/include/dt-bindings/clock/qcom,gcc-qcs404.h
+index 6ceb55ed72c6..00ab0d77b38a 100644
+--- a/include/dt-bindings/clock/qcom,gcc-qcs404.h
++++ b/include/dt-bindings/clock/qcom,gcc-qcs404.h
+@@ -161,5 +161,12 @@
+ #define GCC_PCIE_0_LINK_DOWN_BCR			11
+ #define GCC_PCIEPHY_0_PHY_BCR				12
+ #define GCC_EMAC_BCR					13
++#define GCC_PCIE_0_AXI_MASTER_STICKY_ARES		14
++#define GCC_PCIE_0_AHB_ARES				15
++#define GCC_PCIE_0_AXI_SLAVE_ARES			16
++#define GCC_PCIE_0_AXI_MASTER_ARES			17
++#define GCC_PCIE_0_CORE_STICKY_ARES			18
++#define GCC_PCIE_0_SLEEP_ARES				19
++#define GCC_PCIE_0_PIPE_ARES				20
+ 
+ #endif
 -- 
 2.18.0
 
