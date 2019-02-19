@@ -2,148 +2,121 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF50C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 18:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B2CC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 18:42:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 982B821738
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 18:41:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R8M0N5lj"
+	by mail.kernel.org (Postfix) with ESMTP id 4EBAE21479
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 18:42:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbfBSSlx (ORCPT
+        id S1728201AbfBSSmf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 13:41:53 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34660 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfBSSlx (ORCPT
+        Tue, 19 Feb 2019 13:42:35 -0500
+Received: from gateway33.websitewelcome.com ([192.185.145.9]:22383 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726794AbfBSSmf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 13:41:53 -0500
-Received: by mail-pg1-f196.google.com with SMTP id i130so10547956pgd.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 10:41:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9s69XlhG+rRUIrkn6yxaGUkhCuvBhy94WZ4hm4ODnMw=;
-        b=R8M0N5ljrUrduztIOfzNDe0GzE6DUxoJ3taB6rypmsfHTLmG5tK+IpRZPUq6b1+yvJ
-         zylQBL8LnaYzsaX30zoAzz3oxogj+4ogVB8oe+fYkndJS4z1giI+9Y40qO6PJFVuoqX+
-         xu+oNl2ZkV/r9pYzWOpfepVW2WBg1AINKEL5E6CEMom007Z30IB8kXb1+MFIwKN8xX2g
-         Fm3k5qqm87KmGblenCfuZM9nM9Jdx3pihLyMKzWPb33O0qD9Q8mDdwSxR6PN41oOwxXI
-         AxcpgM03kym/PUlDem2VSwgrwCHB8Rw07xsQc14atpaZj9A4ceVkY+etkRfm+ZvoeL4+
-         Tg7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9s69XlhG+rRUIrkn6yxaGUkhCuvBhy94WZ4hm4ODnMw=;
-        b=n7YC8osXWalqRfo0i+Sgg/3hMrTYIxleDV/1UxSVNur12v5jlPc14SjmllQB+tK5Dk
-         KOL3FEndxbQ/pPjIc0VJwxqf1ABIWuo5ngUeGwaS+FSfnDEbIGFClcPK3nvwSafIQk/I
-         ZH4cNT9izddSRRTMC7lSuIMkgqhMhxxztKXdLZh5LRAT5SrCNC7Mi+JxSFPCMDsQItRO
-         GcdEgQP15a5GZEHuTRLJDxed6yepyc01ZElV8QVxomYIZPy8UU4BB5m/B17lML43UXQG
-         3oFK/62PILpx9w0qIKPxhqdiV/Srhcto3CnjRAM3g+kzuPeommucPsZAQrVAumlJuZoV
-         sRcg==
-X-Gm-Message-State: AHQUAubzcKYjGywYFHHTfFOYS1LjuJ/krWYJGp9AqMsn6uiVENpqGB+k
-        GiyoST7RNxg8opT8mN0mbrUw4ARbgyewyX5v/5FQRQ==
-X-Google-Smtp-Source: AHgI3Ib5rMiouOq5fatIVAbVX7DtWdoUPhO1ZfJIiBUm1lwEw7GjTKuYJ+06U6AxqQBlrF9bDZeXuYZb8PYkjEV+8jU=
-X-Received: by 2002:a63:fe58:: with SMTP id x24mr25325202pgj.255.1550601712051;
- Tue, 19 Feb 2019 10:41:52 -0800 (PST)
+        Tue, 19 Feb 2019 13:42:35 -0500
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 72FFE1FB60
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 12:42:34 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id wALigQvUh90onwALigmyR5; Tue, 19 Feb 2019 12:42:34 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.119.20] (port=40816 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gwALh-000kxH-E4; Tue, 19 Feb 2019 12:42:33 -0600
+Date:   Tue, 19 Feb 2019 12:42:32 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] drm/amd/powerplay/smu8_hwmgr: use struct_size() in kzalloc()
+Message-ID: <20190219184232.GA20672@embeddedor>
 MIME-Version: 1.0
-References: <20190219170209.4180739-1-arnd@arndb.de>
-In-Reply-To: <20190219170209.4180739-1-arnd@arndb.de>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 19 Feb 2019 10:41:40 -0800
-Message-ID: <CAKwvOdn0hF0s7-O2X98TSgO0C685ktZPTXRQ7CeR5vKHVZktPQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] media: saa7146: avoid high stack usage with clang
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        linux-media@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.119.20
+X-Source-L: No
+X-Exim-ID: 1gwALh-000kxH-E4
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.119.20]:40816
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 9:02 AM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> Two saa7146/hexium files contain a construct that causes a warning
-> when built with clang:
->
-> drivers/media/pci/saa7146/hexium_orion.c:210:12: error: stack frame size of 2272 bytes in function 'hexium_probe'
->       [-Werror,-Wframe-larger-than=]
-> static int hexium_probe(struct saa7146_dev *dev)
->            ^
-> drivers/media/pci/saa7146/hexium_gemini.c:257:12: error: stack frame size of 2304 bytes in function 'hexium_attach'
->       [-Werror,-Wframe-larger-than=]
-> static int hexium_attach(struct saa7146_dev *dev, struct saa7146_pci_extension_data *info)
->            ^
->
-> This one happens regardless of KASAN, and the problem is that a
-> constructor to initalize a dynamically allocated structure leads
-> to a copy of that structure on the stack, whereas gcc initializes
-> it in place.
->
-> Link: https://bugs.llvm.org/show_bug.cgi?id=40776
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-oof, great bug report by the way!  Thanks for the fix.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+struct foo {
+    int stuff;
+    struct boo entry[];
+};
 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/media/pci/saa7146/hexium_gemini.c | 4 +---
->  drivers/media/pci/saa7146/hexium_orion.c  | 4 +---
->  2 files changed, 2 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/media/pci/saa7146/hexium_gemini.c b/drivers/media/pci/saa7146/hexium_gemini.c
-> index 5817d9cde4d0..f7ce0e1770bf 100644
-> --- a/drivers/media/pci/saa7146/hexium_gemini.c
-> +++ b/drivers/media/pci/saa7146/hexium_gemini.c
-> @@ -270,9 +270,7 @@ static int hexium_attach(struct saa7146_dev *dev, struct saa7146_pci_extension_d
->         /* enable i2c-port pins */
->         saa7146_write(dev, MC1, (MASK_08 | MASK_24 | MASK_10 | MASK_26));
->
-> -       hexium->i2c_adapter = (struct i2c_adapter) {
-> -               .name = "hexium gemini",
-> -       };
-> +       strscpy(hexium->i2c_adapter.name, "hexium gemini", sizeof(hexium->i2c_adapter.name));
->         saa7146_i2c_adapter_prepare(dev, &hexium->i2c_adapter, SAA7146_I2C_BUS_BIT_RATE_480);
->         if (i2c_add_adapter(&hexium->i2c_adapter) < 0) {
->                 DEB_S("cannot register i2c-device. skipping.\n");
-> diff --git a/drivers/media/pci/saa7146/hexium_orion.c b/drivers/media/pci/saa7146/hexium_orion.c
-> index 0a05176c18ab..b9f4a09c744d 100644
-> --- a/drivers/media/pci/saa7146/hexium_orion.c
-> +++ b/drivers/media/pci/saa7146/hexium_orion.c
-> @@ -231,9 +231,7 @@ static int hexium_probe(struct saa7146_dev *dev)
->         saa7146_write(dev, DD1_STREAM_B, 0x00000000);
->         saa7146_write(dev, MC2, (MASK_09 | MASK_25 | MASK_10 | MASK_26));
->
-> -       hexium->i2c_adapter = (struct i2c_adapter) {
-> -               .name = "hexium orion",
-> -       };
-> +       strscpy(hexium->i2c_adapter.name, "hexium orion", sizeof(hexium->i2c_adapter.name));
+size = sizeof(struct foo) + count * sizeof(struct boo);
+instance = kzalloc(size, GFP_KERNEL);
 
-Note that "sparse" designated initialization zero initializes unnnamed members:
-https://godbolt.org/z/LkSpJp
-This transform you've done is safe because hexium was zero initialized
-via kzalloc, and struct hexium contains a struct i2c_adapter (as
-opposed to  a pointer to a struct i2c_adapter).  The same is true for
-both translation units you've touched. LGTM
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
 
->         saa7146_i2c_adapter_prepare(dev, &hexium->i2c_adapter, SAA7146_I2C_BUS_BIT_RATE_480);
->         if (i2c_add_adapter(&hexium->i2c_adapter) < 0) {
->                 DEB_S("cannot register i2c-device. skipping.\n");
-> --
-> 2.20.0
->
+instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
 
+Notice that, in this case, variable table_size is not necessary, hence
+it is removed.
 
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c
+index 553a203ac47c..019d6a206492 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c
+@@ -272,12 +272,10 @@ static int smu8_init_dynamic_state_adjustment_rule_settings(
+ 			struct pp_hwmgr *hwmgr,
+ 			ATOM_CLK_VOLT_CAPABILITY *disp_voltage_table)
+ {
+-	uint32_t table_size =
+-		sizeof(struct phm_clock_voltage_dependency_table) +
+-		(7 * sizeof(struct phm_clock_voltage_dependency_record));
++	struct phm_clock_voltage_dependency_table *table_clk_vlt;
+ 
+-	struct phm_clock_voltage_dependency_table *table_clk_vlt =
+-					kzalloc(table_size, GFP_KERNEL);
++	table_clk_vlt = kzalloc(struct_size(table_clk_vlt, entries, 7),
++				GFP_KERNEL);
+ 
+ 	if (NULL == table_clk_vlt) {
+ 		pr_err("Can not allocate memory!\n");
 -- 
-Thanks,
-~Nick Desaulniers
+2.20.1
+
