@@ -2,168 +2,130 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E00C7C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:04:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A77C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:06:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B335C20855
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:04:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D8512147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:06:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SgcwCMkf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729422AbfBSTEd (ORCPT
+        id S1729214AbfBSTGB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 14:04:33 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39348 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725939AbfBSTEc (ORCPT
+        Tue, 19 Feb 2019 14:06:01 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43253 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726610AbfBSTGB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 14:04:32 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1JImkle012408
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 14:04:31 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qrpkwk8nq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 14:04:30 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Tue, 19 Feb 2019 19:04:29 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 19 Feb 2019 19:04:25 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1JJ4OcL26869948
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 19 Feb 2019 19:04:24 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EF2B3AE053;
-        Tue, 19 Feb 2019 19:04:23 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4DBBDAE045;
-        Tue, 19 Feb 2019 19:04:23 +0000 (GMT)
-Received: from [9.145.49.77] (unknown [9.145.49.77])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 19 Feb 2019 19:04:23 +0000 (GMT)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v3 6/9] vfio: ap: register IOMMU VFIO notifier
-To:     Halil Pasic <pasic@linux.ibm.com>,
-        Tony Krowiak <akrowiak@linux.ibm.com>
-Cc:     borntraeger@de.ibm.com, alex.williamson@redhat.com,
-        cohuck@redhat.com, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        frankja@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
-References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
- <1550152269-6317-7-git-send-email-pmorel@linux.ibm.com>
- <3ce0a3a0-22fb-c418-321d-7e6e3af5b66c@linux.ibm.com>
- <20190219105946.29e510a6@oc2783563651>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Tue, 19 Feb 2019 20:04:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 19 Feb 2019 14:06:01 -0500
+Received: by mail-pg1-f195.google.com with SMTP id v28so10551406pgk.10
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 11:06:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nrk4QYLpo4qvuxxWH/lg1WeZY/SrvgqAwlsmSMHY39k=;
+        b=SgcwCMkfbVSA488eLFY30t6OTq/ozpLACZntUyGESHAvwr849VCjoS3b6hULDTBF+c
+         B2BVb1RzNoG/zLpvCAe7F0UXvnMBw/B4HaAnAe1W1enRhQxCS4G/qPgoDeYB0UsWdUqS
+         ilijjN0POsDyGVH0FKlkOcyZ3VwkUGtTdFIDM4Mjk4eIyQn3tGXbRLZPZScxN4eiURLM
+         9l/ce0SuCTU/BJS5Z0m8zFwDViuBjJrgPMhFZLpFQtBM5wY1IfqaLK4tUPL8hvacogow
+         K9pfE7t5jABmnYUTwSTvwz3fF8XdS6nlhwFFdzaI85WlNdi67BX3nBNMyepPGGXUCJtj
+         GLBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nrk4QYLpo4qvuxxWH/lg1WeZY/SrvgqAwlsmSMHY39k=;
+        b=osycPgQr8d5A2j6aBlXWNIoIyI3Hain0X6U7lKbTvlJJ5obkzU4LTQMkHY22TLiy9l
+         Q5B2KJZz/aysy2/Ddik/j4xXiFFKZki2kBj6PC6g4LAF8UkAoQ9SDOuO0QvmfatPCRvm
+         59bPEqhH7QbEOuL3PtRdr89ySMQ9MpiPKgKVWOLYOeufqkAXgDCs53VSIEo4rdF787p1
+         RSpWk2etuAFh3Wrl4fok6jCgsfrs6BDeRBm6gjsPgRrkyAJ9umDhZY5ayuIkSlVolp9e
+         staOFjYkgr5YTIFqNxWTpO49ZfxluoTWzH5Q76XPOvw+YWmamiZGv9/ZRUXnOI6o08kO
+         qF7g==
+X-Gm-Message-State: AHQUAuZk3vRR274Feo/CHJ2M1jdLUSvRwOQEpllxKLoPRXnKg4i7CkZY
+        qyuv6+TUd8H8JCRc5nmuXz/BnyoBoDTzMJvW5Vnyfg==
+X-Google-Smtp-Source: AHgI3IZf074hanX/iTBIzRRiZjGrwMeArSAXfkjKELtEgCQhDvOE4tbH7DvXQkq9qjv1ElNy3WPtGe1O1ti4mWxGpCM=
+X-Received: by 2002:a63:5506:: with SMTP id j6mr1721996pgb.202.1550603160395;
+ Tue, 19 Feb 2019 11:06:00 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190219105946.29e510a6@oc2783563651>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021919-0028-0000-0000-0000034A7F94
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021919-0029-0000-0000-00002408BC89
-Message-Id: <fb4711cb-bcd6-ff63-7a73-c9452ea7564b@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-19_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902190134
+References: <20190219182105.19933-1-natechancellor@gmail.com>
+In-Reply-To: <20190219182105.19933-1-natechancellor@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 19 Feb 2019 11:05:49 -0800
+Message-ID: <CAKwvOdmFE0kQoxvRDcarT+kYLXxqKYJfVHo4uTiYm7-wDefrrw@mail.gmail.com>
+Subject: Re: [PATCH] iwlwifi: mvm: Use div64_s64 instead of do_div in iwl_mvm_debug_range_resp
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/02/2019 10:59, Halil Pasic wrote:
-> On Fri, 15 Feb 2019 17:55:35 -0500
-> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
-> 
->> On 2/14/19 8:51 AM, Pierre Morel wrote:
->>> To be able to use the VFIO interface to facilitate the
->>> mediated device memory pining/unpining we need to register
->>> a notifier for IOMMU.
->>>
->>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->>> ---
->>>    drivers/s390/crypto/vfio_ap_ops.c     | 64 +++++++++++++++++++++++++++++++----
->>>    drivers/s390/crypto/vfio_ap_private.h |  2 ++
->>>    2 files changed, 60 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
->>> index 1851b24..6eddc2c 100644
->>> --- a/drivers/s390/crypto/vfio_ap_ops.c
->>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
-> 
-> [..]
->    	struct vfio_ap_queue *q;
->>> @@ -967,12 +996,32 @@ static int vfio_ap_mdev_open(struct mdev_device *mdev)
->>>    
->>>    	ret = vfio_register_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
->>>    				     &events, &matrix_mdev->group_notifier);
->>> -	if (ret) {
->>> -		module_put(THIS_MODULE);
->>> -		return ret;
->>> -	}
->>> +	if (ret)
->>> +		goto err_group;
->>> +
->>> +	matrix_mdev->iommu_notifier.notifier_call = vfio_ap_mdev_iommu_notifier;
->>> +	events = VFIO_IOMMU_NOTIFY_DMA_UNMAP;
->>> +
->>> +	ret = vfio_register_notifier(mdev_dev(mdev), VFIO_IOMMU_NOTIFY,
->>> +				     &events, &matrix_mdev->iommu_notifier);
->>> +	if (ret)
->>> +		goto err_iommu;
->>> +
->>> +	ret = vfio_ap_associate_queues(matrix_mdev);
->>> +	if (ret)
->>> +		goto err_associate;
->>
->> I think the matrix_mdev should be associated with queues when an
->> assignment of an adapter or domain is made to the mdev device via its
->> sysfs interfaces. I say this because assigning an adapter or domain to
->> an mdev device effectively grants ownership of any additional AP queues
->> added to the mdev device's AP matrix as a result of the assignment. It
->> only makes sense to assign ownership to the vfio_ap_queue objects
->> representing the queues at that time. If an adapter or domain is
->> dynamically assigned while a guest is using the affected queues, then
->> the associations will have to be made at that time and this code will
->> likely go bye bye.
->>
-> 
-> 
-> Actually, we need the stuff in vfio_ap_queues only if the guest is
-> offered to  decides to use AP adaper interrupts. I would prefer to have
-> it around only when needed: as long as we have the nib pinned for any
-> given queue. Is there a reason why not to do so?
-> 
-> Regards,
-> Halil
->   
-> [..]
-> 
+On Tue, Feb 19, 2019 at 10:21 AM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> Clang warns:
+>
+> drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c:465:2: warning:
+> comparison of distinct pointer types ('typeof ((rtt_avg)) *' (aka 'long
+> long *') and 'uint64_t *' (aka 'unsigned long long *'))
+> [-Wcompare-distinct-pointer-types]
+>         do_div(rtt_avg, 6666);
+>         ^~~~~~~~~~~~~~~~~~~~~
+> include/asm-generic/div64.h:222:28: note: expanded from macro 'do_div'
+>         (void)(((typeof((n)) *)0) == ((uint64_t *)0));  \
+>                ~~~~~~~~~~~~~~~~~~ ^  ~~~~~~~~~~~~~~~
+> 1 warning generated.
+>
+> do_div expects an unsigned dividend. Use div64_s64, which expects a
+> signed dividend.
 
-Since I will rework the vfio_ap_queue life cycle, I will study this.
-But I find the creation / deletion in probe/remove and the link/unlimk 
-to the matrix device in assign/un_assign as suggested by Tony more logical.
+Eh, IIRC, signed vs unsigned division has implications for rounding
+towards zero or not, but I doubt that the round trip time average (RTT
+avg) should ever be negative.  General rule of thumb for C is to keep
+arithmetic signed (even when working with non zero values), so rather
+than make the literal (6666) a unsigned long, I agree with your change
+to keep the division signed as well.  Thanks for the fix.
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-Regards,
-Pierre
+>
+> Fixes: 937b10c0de68 ("iwlwifi: mvm: add debug prints for FTM")
+> Link: https://github.com/ClangBuiltLinux/linux/issues/372
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c b/drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c
+> index e9822a3ec373..92b22250eb7d 100644
+> --- a/drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c
+> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c
+> @@ -462,7 +462,7 @@ static void iwl_mvm_debug_range_resp(struct iwl_mvm *mvm, u8 index,
+>  {
+>         s64 rtt_avg = res->ftm.rtt_avg * 100;
+>
+> -       do_div(rtt_avg, 6666);
+> +       div64_s64(rtt_avg, 6666);
+>
+>         IWL_DEBUG_INFO(mvm, "entry %d\n", index);
+>         IWL_DEBUG_INFO(mvm, "\tstatus: %d\n", res->status);
+> --
+> 2.21.0.rc1
+>
+
 
 -- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
-
+Thanks,
+~Nick Desaulniers
