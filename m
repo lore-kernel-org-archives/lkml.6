@@ -2,156 +2,156 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B37DC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF91AC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:46:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B932D21773
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:45:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D59221773
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:46:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VnnyoTWW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729018AbfBSQps (ORCPT
+        id S1729126AbfBSQqQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:45:48 -0500
-Received: from out02.mta.xmission.com ([166.70.13.232]:36707 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbfBSQpr (ORCPT
+        Tue, 19 Feb 2019 11:46:16 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43429 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726244AbfBSQqP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:45:47 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gw8Wf-0002cJ-D4; Tue, 19 Feb 2019 09:45:45 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gw8We-0006S1-L9; Tue, 19 Feb 2019 09:45:45 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     David Howells <dhowells@redhat.com>
-Cc:     keyrings@vger.kernel.org, trond.myklebust@hammerspace.com,
-        sfrench@samba.org, linux-security-module@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, rgb@redhat.com,
-        linux-kernel@vger.kernel.org
-References: <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
-        <155024688620.21651.16013251077091180213.stgit@warthog.procyon.org.uk>
-Date:   Tue, 19 Feb 2019 10:45:33 -0600
-In-Reply-To: <155024688620.21651.16013251077091180213.stgit@warthog.procyon.org.uk>
-        (David Howells's message of "Fri, 15 Feb 2019 16:08:06 +0000")
-Message-ID: <8736ojwwuq.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Tue, 19 Feb 2019 11:46:15 -0500
+Received: by mail-pf1-f196.google.com with SMTP id q17so10481406pfh.10;
+        Tue, 19 Feb 2019 08:46:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=1Qu2t5Kd9pgLrX06LIAt+b3Zb2/etIust7WpLoqpeB4=;
+        b=VnnyoTWWXidBBt1pIhmQhNUC9SzzTpvgaTLeao1BXgcGOWzsewI9x5wHlWUVy7SBSI
+         rR7evGhQDQCRcWt+HoBI+Dccj3VLpVqJJf5GbhEDGdj4+284Z4Su9n9ms2B73HEPJNdf
+         hiORm99BPGhH9qVdCeKQm1cIrN0dO30q/DXNJiqacLLgmCY2+cFxR6LHAR+H0rfaghWq
+         EdhkmviPFG72waxZmMQ7ON6eManhKvNwBttKW9zif2vzPrX9hGa0G+gUPaimEUVt6jZn
+         IKm6HCP23jHSCRDoUqf6WwovJzELuHIYDNzC+4cW6ch+SgpHRtbi4OAFK2tG3P+gX803
+         eBzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1Qu2t5Kd9pgLrX06LIAt+b3Zb2/etIust7WpLoqpeB4=;
+        b=hPd3IgNrSiqZaK81Gxb6mEywcp/jT7LUZ5xri9/fMAP+K3DbPwcdsnac+lCfT413aC
+         dLRkvseLVPAgBIDfyyf3WTbwO5NHjlJQYnwVLBHGfRbetPG/IhZct90sVOqCC2DtvH+e
+         lB20ARGZoiGha7Q4oklAYKWmaUNa6bhonLpzXWcg9SthPVOlhPulB8H4j7FGpn6bbmsH
+         ZkQxfFLufMwyeyLiEv5qnrIbnDZau1oXfkqyzn1QMxYERH7pe0+yD3l1p3aNlAfkYKAF
+         gId4P9vfugn9+7sDDJSakvUxYlWUMotEuevm21tF3K142BMTC2anMYiOoEPoWTbRt3jz
+         KZxQ==
+X-Gm-Message-State: AHQUAua1SShOVtFMard4o+7Nx4ZuFA3XFVPkqf2LOhklq2RyOIvpcDeg
+        hdaQio4dpG5rfFv/BiEt6pNzDNDc
+X-Google-Smtp-Source: AHgI3Ib6+IpIb6iWPXOP+ND0r+rOxPkRYt30YOrDjAMvpO2KclWCe/WX0wQv6DxvIOFfolyWkUmHyw==
+X-Received: by 2002:a63:7403:: with SMTP id p3mr1737158pgc.343.1550594774669;
+        Tue, 19 Feb 2019 08:46:14 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id q5sm23049732pga.71.2019.02.19.08.46.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Feb 2019 08:46:14 -0800 (PST)
+Subject: Re: [PATCH 11/11] hwmon/coretemp: Support multi-die/package
+To:     Len Brown <lenb@kernel.org>, x86@kernel.org
+Cc:     linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org,
+        linux-hwmon@vger.kernel.org
+References: <635b2bf8b1151a191cd9299276b75791a818c0c2.1550545163.git.len.brown@intel.com>
+ <8ce75b95ef6105ebe5fb8c9e43b33f06516e3c16.1550545163.git.len.brown@intel.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <2e9ca4e1-d9ff-8f0c-c3c3-80f8b19bb7ee@roeck-us.net>
+Date:   Tue, 19 Feb 2019 08:46:12 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gw8We-0006S1-L9;;;mid=<8736ojwwuq.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+0bCbJs2NZ1f0Qu2dc3RqzP0PhMAUsnbg=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [RFC PATCH 06/27] containers, vfs: Allow syscall dirfd arguments to take a container fd
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+In-Reply-To: <8ce75b95ef6105ebe5fb8c9e43b33f06516e3c16.1550545163.git.len.brown@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> writes:
+On 2/18/19 7:40 PM, Len Brown wrote:
+> From: Zhang Rui <rui.zhang@intel.com>
+> 
+> This patch introduces coretemp driver support
+> for new dual-die/package systems.
+> 
+> On the new dual-die/package systems, the package temperature MSRs becomes
+> die-scope. Thus instead of one hwmon device per physical package, now
+> there should be one hwmon device for each die on these systems.
+> 
+> On the hardwares that do not have multi-die support,
+> topology_unique_die_id() equals topology_physical_package_id(), thus the
+> only difference is that physical package id is used as the coretemp
+> platform device id, instead of logical package id on these systems.
+> 
+> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+> Signed-off-by: Len Brown <len.brown@intel.com>
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-hwmon@vger.kernel.org
+> Signed-off-by: Len Brown <len.brown@intel.com>
 
-> Some filesystem system calls, such as mkdirat(), take a 'directory fd' to
-> specify the pathwalk origin.  This takes either AT_FDCWD or a file
-> descriptor that refers to an open directory.
->
-> Make it possible to supply a container fd, as obtained from
-> container_create(), instead thereby specifying the container's root as the
-> origin.  This performs the filesystem operation into the container's mount
-> namespace.  For example:
->
-> 	int cfd = container_create("fred", CONTAINER_NEW_MNT_NS, 0);
-> 	mkdirat(cfd, "/fred", 0755);
->
-> A better way to do this might be to temporarily override current->fs and
-> current->nsproxy, but this requires splitting those fields so that procfs
-> doesn't see the override.
->
-> A sequence number and lock are available to protect the root pointer in
-> case container_chroot() and/or container_pivot_root() are implemented.
+Acked-by: Guenter Roeck <linux@roeck-us.net>
 
-If this is desirable we can do this without a ``container''.  We already
-have mount namespaces.
-
-Nacked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-
-In fact if you take care to use a path that starts with '/' the normal
-dirfd based operations work just fine.
-
-So I don't see the point of this system call at all.
-
-
-> Signed-off-by: David Howells <dhowells@redhat.com>
 > ---
->
->  fs/namei.c |   45 ++++++++++++++++++++++++++++++++++-----------
->  1 file changed, 34 insertions(+), 11 deletions(-)
->
-> diff --git a/fs/namei.c b/fs/namei.c
-> index a85deb55d0c9..4932b5467285 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -2232,20 +2232,43 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
->  		if (!f.file)
->  			return ERR_PTR(-EBADF);
->  
-> -		dentry = f.file->f_path.dentry;
-> +		if (is_container_file(f.file)) {
-> +			struct container *c = f.file->private_data;
-> +			unsigned seq;
->  
-> -		if (*s && unlikely(!d_can_lookup(dentry))) {
-> -			fdput(f);
-> -			return ERR_PTR(-ENOTDIR);
-> -		}
-> +			if (!*s)
-> +				return ERR_PTR(-EINVAL);
->  
-> -		nd->path = f.file->f_path;
-> -		if (flags & LOOKUP_RCU) {
-> -			nd->inode = nd->path.dentry->d_inode;
-> -			nd->seq = read_seqcount_begin(&nd->path.dentry->d_seq);
-> +			if (flags & LOOKUP_RCU) {
-> +				do {
-> +					seq = read_seqcount_begin(&c->seq);
-> +					nd->path = c->root;
-> +					nd->inode = nd->path.dentry->d_inode;
-> +					nd->seq = __read_seqcount_begin(&nd->path.dentry->d_seq);
-> +				} while (read_seqcount_retry(&c->seq, seq));
-> +			} else {
-> +				spin_lock(&c->lock);
-> +				nd->path = c->root;
-> +				path_get(&nd->path);
-> +				spin_unlock(&c->lock);
-> +				nd->inode = nd->path.dentry->d_inode;
-> +			}
->  		} else {
-> -			path_get(&nd->path);
-> -			nd->inode = nd->path.dentry->d_inode;
-> +			dentry = f.file->f_path.dentry;
-> +
-> +			if (*s && unlikely(!d_can_lookup(dentry))) {
-> +				fdput(f);
-> +				return ERR_PTR(-ENOTDIR);
-> +			}
-> +
-> +			nd->path = f.file->f_path;
-> +			if (flags & LOOKUP_RCU) {
-> +				nd->inode = nd->path.dentry->d_inode;
-> +				nd->seq = read_seqcount_begin(&nd->path.dentry->d_seq);
-> +			} else {
-> +				path_get(&nd->path);
-> +				nd->inode = nd->path.dentry->d_inode;
-> +			}
->  		}
->  		fdput(f);
->  		return s;
+>   drivers/hwmon/coretemp.c | 9 +++++----
+>   1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/hwmon/coretemp.c b/drivers/hwmon/coretemp.c
+> index 5d34f7271e67..a0b6b2247c3a 100644
+> --- a/drivers/hwmon/coretemp.c
+> +++ b/drivers/hwmon/coretemp.c
+> @@ -435,7 +435,7 @@ static int chk_ucode_version(unsigned int cpu)
+>   
+>   static struct platform_device *coretemp_get_pdev(unsigned int cpu)
+>   {
+> -	int pkgid = topology_logical_package_id(cpu);
+> +	int pkgid = topology_unique_die_id(cpu);
+>   
+>   	if (pkgid >= 0 && pkgid < max_packages)
+>   		return pkg_devices[pkgid];
+> @@ -579,7 +579,7 @@ static struct platform_driver coretemp_driver = {
+>   
+>   static struct platform_device *coretemp_device_add(unsigned int cpu)
+>   {
+> -	int err, pkgid = topology_logical_package_id(cpu);
+> +	int err, pkgid = topology_unique_die_id(cpu);
+>   	struct platform_device *pdev;
+>   
+>   	if (pkgid < 0)
+> @@ -703,7 +703,7 @@ static int coretemp_cpu_offline(unsigned int cpu)
+>   	 * the rest.
+>   	 */
+>   	if (cpumask_empty(&pd->cpumask)) {
+> -		pkg_devices[topology_logical_package_id(cpu)] = NULL;
+> +		pkg_devices[topology_unique_die_id(cpu)] = NULL;
+>   		platform_device_unregister(pdev);
+>   		return 0;
+>   	}
+> @@ -732,6 +732,7 @@ static enum cpuhp_state coretemp_hp_online;
+>   static int __init coretemp_init(void)
+>   {
+>   	int err;
+> +	struct cpuinfo_x86 *c = &cpu_data(0);
+>   
+>   	/*
+>   	 * CPUID.06H.EAX[0] indicates whether the CPU has thermal
+> @@ -741,7 +742,7 @@ static int __init coretemp_init(void)
+>   	if (!x86_match_cpu(coretemp_ids))
+>   		return -ENODEV;
+>   
+> -	max_packages = topology_max_packages();
+> +	max_packages = topology_max_packages() * c->x86_max_dies;
+>   	pkg_devices = kcalloc(max_packages, sizeof(struct platform_device *),
+>   			      GFP_KERNEL);
+>   	if (!pkg_devices)
+> 
+
