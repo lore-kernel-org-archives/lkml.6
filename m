@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E47C4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:28:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 136BDC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:28:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE72E2147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:28:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD0D921738
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:28:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729951AbfBSX2F (ORCPT
+        id S1729989AbfBSX2J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 18:28:05 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:59927 "EHLO
+        Tue, 19 Feb 2019 18:28:09 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:63351 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728084AbfBSX2E (ORCPT
+        with ESMTP id S1726405AbfBSX2F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 18:28:04 -0500
+        Tue, 19 Feb 2019 18:28:05 -0500
 Received: from 79.184.254.15.ipv4.supernova.orange.pl (79.184.254.15) (HELO aspire.rjw.lan)
  by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id ea03d70d688a5585; Wed, 20 Feb 2019 00:28:02 +0100
+ id ab6004f183a040c8; Wed, 20 Feb 2019 00:28:03 +0100
 From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
 To:     Linux PM <linux-pm@vger.kernel.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
         Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH 3/4] cpufreq: Fix two debug messages in cpufreq_set_policy()
-Date:   Wed, 20 Feb 2019 00:25:18 +0100
-Message-ID: <2486777.RhoGZOM3Wg@aspire.rjw.lan>
+Subject: [PATCH 1/4] cpufreq: Add kerneldoc comments for two core functions
+Date:   Wed, 20 Feb 2019 00:22:51 +0100
+Message-ID: <3161414.QiNJczLRHX@aspire.rjw.lan>
 In-Reply-To: <11668536.bBDtnvkYQE@aspire.rjw.lan>
 References: <11668536.bBDtnvkYQE@aspire.rjw.lan>
 MIME-Version: 1.0
@@ -42,34 +42,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Remove the redundant "cpufreq:" prefix from two debug messages in
-cpufreq_set_policy().
+Add kerneldoc comments describing cpufreq_set_policy() and
+cpufreq_update_policy() as they have not been properly documented
+so far and they really need to be documented.
+
+While at it, fix white space around the cpufreq_set_policy() header.
 
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/cpufreq/cpufreq.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/cpufreq/cpufreq.c |   32 ++++++++++++++++++++++++--------
+ 1 file changed, 24 insertions(+), 8 deletions(-)
 
 Index: linux-pm/drivers/cpufreq/cpufreq.c
 ===================================================================
 --- linux-pm.orig/drivers/cpufreq/cpufreq.c
 +++ linux-pm/drivers/cpufreq/cpufreq.c
-@@ -2290,7 +2290,7 @@ static int cpufreq_set_policy(struct cpu
- 	}
+@@ -2218,12 +2218,25 @@ int cpufreq_get_policy(struct cpufreq_po
+ }
+ EXPORT_SYMBOL(cpufreq_get_policy);
  
- 	if (new_policy->governor == policy->governor) {
--		pr_debug("cpufreq: governor limits update\n");
-+		pr_debug("governor limits update\n");
- 		cpufreq_governor_limits(policy);
- 		return 0;
- 	}
-@@ -2311,7 +2311,7 @@ static int cpufreq_set_policy(struct cpu
- 	if (!ret) {
- 		ret = cpufreq_start_governor(policy);
- 		if (!ret) {
--			pr_debug("cpufreq: governor change\n");
-+			pr_debug("governor change\n");
- 			sched_cpufreq_governor_change(policy, old_gov);
- 			return 0;
- 		}
+-/*
+- * policy : current policy.
+- * new_policy: policy to be set.
++/**
++ * cpufreq_set_policy - Modify cpufreq policy parameters.
++ * @policy: Policy object to modify.
++ * @new_policy: New policy data.
++ *
++ * Pass @new_policy to the cpufreq driver's ->verify() callback, run the
++ * installed policy notifiers for it with the CPUFREQ_ADJUST value, pass it to
++ * the driver's ->verify() callback again and run the notifiers for it again
++ * with the CPUFREQ_NOTIFY value.  Next, copy the min and max parameters
++ * of @new_policy to @policy and either invoke the driver's ->setpolicy()
++ * callback (if present) or carry out a governor update for @policy.  That is,
++ * run the current governor's ->limits() callback (if the governor field in
++ * @new_policy points to the same object as the one in @policy) or replace the
++ * governor for @policy with the new one stored in @new_policy.
++ *
++ * The cpuinfo part of @policy is not updated by this function.
+  */
+ static int cpufreq_set_policy(struct cpufreq_policy *policy,
+-				struct cpufreq_policy *new_policy)
++			      struct cpufreq_policy *new_policy)
+ {
+ 	struct cpufreq_governor *old_gov;
+ 	int ret;
+@@ -2319,11 +2332,14 @@ static int cpufreq_set_policy(struct cpu
+ }
+ 
+ /**
+- *	cpufreq_update_policy - re-evaluate an existing cpufreq policy
+- *	@cpu: CPU which shall be re-evaluated
++ * cpufreq_update_policy - Re-evaluate an existing cpufreq policy.
++ * @cpu: CPU to re-evaluate the policy for.
+  *
+- *	Useful for policy notifiers which have different necessities
+- *	at different times.
++ * Update the current frequency for the cpufreq policy of @cpu and use
++ * cpufreq_set_policy() to re-apply the min and max limits saved in the
++ * user_policy sub-structure of that policy, which triggers the evaluation
++ * of policy notifiers and the cpufreq driver's ->verify() callback for the
++ * policy in question, among other things.
+  */
+ void cpufreq_update_policy(unsigned int cpu)
+ {
 
