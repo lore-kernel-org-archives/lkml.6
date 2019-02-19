@@ -3,251 +3,136 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C9AC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 02:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0E4C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:03:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E546F21479
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 02:57:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 529E12177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:03:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726285AbfBSC5t (ORCPT
+        id S1726074AbfBSDDd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 21:57:49 -0500
-Received: from gateway33.websitewelcome.com ([192.185.145.9]:29191 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725308AbfBSC5s (ORCPT
+        Mon, 18 Feb 2019 22:03:33 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:3809 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725308AbfBSDDd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 21:57:48 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 4533DDC2A1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 20:57:47 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id vvbPgVn68dnCevvbPgThi3; Mon, 18 Feb 2019 20:57:47 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=51730 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gvvbO-000B1C-M3; Mon, 18 Feb 2019 20:57:46 -0600
-Subject: Re: [PATCH] can: mark expected switch fall-throughs
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Nicolas.Ferre@microchip.com, wg@grandegger.com, mkl@pengutronix.de,
-        davem@davemloft.net, alexandre.belloni@bootlin.com,
-        Ludovic.Desroches@microchip.com
-Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-References: <20190129180612.GA28650@embeddedor>
- <432a9399-95f4-e988-5cd2-93340f155fa1@microchip.com>
- <daae008e-35fd-7553-fcb2-7932fe53b959@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <638c5b62-ac3e-21d3-4ac4-0fad0ef8d9e8@embeddedor.com>
-Date:   Mon, 18 Feb 2019 20:57:45 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 18 Feb 2019 22:03:33 -0500
+X-UUID: cad6f202ab1049e4832e8dcd40e5834f-20190219
+X-UUID: cad6f202ab1049e4832e8dcd40e5834f-20190219
+Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1068112833; Tue, 19 Feb 2019 11:03:27 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33DR.mediatek.inc
+ (172.27.6.106) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 19 Feb
+ 2019 11:03:26 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 19 Feb 2019 11:03:25 +0800
+Message-ID: <1550545405.2210.30.camel@mhfsdcap03>
+Subject: Re: [PATCH v2 01/10] dt-bindings: phy: Add support for HiSilicon's
+ hi3660 USB PHY
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Chen Yu <chenyu56@huawei.com>
+CC:     Rob Herring <robh@kernel.org>, <liuyu712@hisilicon.com>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <john.stultz@linaro.org>,
+        <suzhuangluan@hisilicon.com>, <kongfei@hisilicon.com>,
+        <wanghu17@hisilicon.com>, <butao@hisilicon.com>,
+        <chenyao11@huawei.com>, <fangshengzhou@hisilicon.com>,
+        <lipengcheng8@huawei.com>, <songxiaowei@hisilicon.com>,
+        <xuyiping@hisilicon.com>, <xuyoujun4@huawei.com>,
+        <yudongbin@hisilicon.com>, <zangleigang@hisilicon.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Binghui Wang" <wangbinghui@hisilicon.com>
+Date:   Tue, 19 Feb 2019 11:03:25 +0800
+In-Reply-To: <a944cd27-f7d5-eece-1ef5-c7dc5dbc311b@huawei.com>
+References: <20190218112310.17860-1-chenyu56@huawei.com>
+         <20190218112310.17860-2-chenyu56@huawei.com> <20190218201824.GA23724@bogus>
+         <a944cd27-f7d5-eece-1ef5-c7dc5dbc311b@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-In-Reply-To: <daae008e-35fd-7553-fcb2-7932fe53b959@embeddedor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gvvbO-000B1C-M3
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:51730
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 20
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
-
-Friendly ping:
-
-Dave, I wonder if you can take this.
-
-Thanks
---
-Gustavo
-
-On 2/14/19 3:37 PM, Gustavo A. R. Silva wrote:
+On Tue, 2019-02-19 at 09:50 +0800, Chen Yu wrote:
+> Hi,
 > 
-> 
-> On 1/30/19 2:11 AM, Nicolas.Ferre@microchip.com wrote:
->> On 29/01/2019 at 19:06, Gustavo A. R. Silva wrote:
->>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->>> where we are expecting to fall through.
->>>
->>> This patch fixes the following warnings:
->>>
->>> drivers/net/can/peak_canfd/peak_pciefd_main.c:668:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>> drivers/net/can/spi/mcp251x.c:875:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>> drivers/net/can/usb/peak_usb/pcan_usb.c:422:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>> drivers/net/can/at91_can.c:895:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>> drivers/net/can/at91_can.c:953:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>> drivers/net/can/usb/peak_usb/pcan_usb.c: In function ‘pcan_usb_decode_error’:
->>> drivers/net/can/usb/peak_usb/pcan_usb.c:422:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>>     if (n & PCAN_USB_ERROR_BUS_LIGHT) {
->>>        ^
->>> drivers/net/can/usb/peak_usb/pcan_usb.c:428:2: note: here
->>>    case CAN_STATE_ERROR_WARNING:
->>>    ^~~~
->>>
->>> Warning level 3 was used: -Wimplicit-fallthrough=3
->>>
->>> This patch is part of the ongoing efforts to enabling
->>> -Wimplicit-fallthrough.
->>>
->>> Notice that in some cases spelling mistakes were fixed.
->>> In other cases, the /* fall through */ comment is placed
->>> at the bottom of the case statement, which is what GCC
->>> is expecting to find.
->>>
->>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>> ---
->>>   drivers/net/can/at91_can.c                    | 6 ++++--
->>
->> For this one:
->> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
->>
-> 
-> Thanks, Nicolas.
-> 
-> Dave:
-> 
-> I wonder if you can take this patch.
+> On 2019/2/19 4:18, Rob Herring wrote:
+> > On Mon, Feb 18, 2019 at 07:23:01PM +0800, Yu Chen wrote:
+> >> This patch adds binding documentation for supporting the hi3660 usb
+> >> phy on boards like the HiKey960.
+> >>
+> >> Cc: Rob Herring <robh+dt@kernel.org>
+> >> Cc: Mark Rutland <mark.rutland@arm.com>
+> >> Cc: John Stultz <john.stultz@linaro.org>
+> >> Cc: Binghui Wang <wangbinghui@hisilicon.com>
+> >> Signed-off-by: Yu Chen <chenyu56@huawei.com>
+> >> ---
+> >> v1:
+> >> * Fix some format error as suggested by Rob.
+> >> v2:
+> >> * Change hi3660 usb PHY to hi3660 USB PHY
+> >> ---
+> >> ---
+> >>  .../devicetree/bindings/phy/phy-hi3660-usb3.txt     | 21 +++++++++++++++++++++
+> >>  1 file changed, 21 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt b/Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt
+> >> new file mode 100644
+> >> index 000000000000..f9a3d56cfdd2
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt
+> >> @@ -0,0 +1,21 @@
+> >> +Hisilicon hi3660 USB PHY
+> >> +-----------------------
+> >> +
+> >> +Required properties:
+> >> +- compatible: should be "hisilicon,hi3660-usb-phy"
+> >> +- #phy-cells: must be 0
+> >> +- hisilicon,pericrg-syscon: phandle of syscon used to control phy.
+> >> +- hisilicon,pctrl-syscon: phandle of syscon used to control phy.
+> >> +- hisilicon,usb3-otg-bc-syscon: phandle of syscon used to control phy.
+> >> +- hisilicon,eye-diagram-param: parameter set for phy
+> >> +Refer to phy/phy-bindings.txt for the generic PHY binding properties
+> >> +
+> >> +Example:
+> >> +	usb-phy {
+> >> +		compatible = "hisilicon,hi3660-usb-phy";
+> >> +		#phy-cells = <0>;
+> >> +		hisilicon,pericrg-syscon = <&crg_ctrl>;
+> >> +		hisilicon,pctrl-syscon = <&pctrl>;
+> >> +		hisilicon,usb3-otg-bc-syscon = <&usb3_otg_bc>;
+> > 
+> > Are most of the registers within one of these blocks? If so, make this 
+> > node a child of that node.
+> I met a problem when I made this node a child of the syscon node,
+> the driver "phy-hi3660-usb3" was not probed.
+> Do you have any idea about how to make it probed when it is a child node?
+call of_platform_populate() in parent node's driver,
+but I don't know whether it's a standard way
+> > 
+> >> +		hisilicon,eye-diagram-param = <0x22466e4>;
+> >> +	};
+> >> -- 
+> >> 2.15.0-rc2
+> >>
+> > 
+> > .
+> > 
 > 
 > Thanks
-> --
-> Gustavo
+> Yu Chen
 > 
->>>   drivers/net/can/peak_canfd/peak_pciefd_main.c | 2 +-
->>>   drivers/net/can/spi/mcp251x.c                 | 3 ++-
->>>   drivers/net/can/usb/peak_usb/pcan_usb.c       | 2 +-
->>>   4 files changed, 8 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/net/can/at91_can.c b/drivers/net/can/at91_can.c
->>> index d98c69045b17..1718c20f9c99 100644
->>> --- a/drivers/net/can/at91_can.c
->>> +++ b/drivers/net/can/at91_can.c
->>> @@ -902,7 +902,8 @@ static void at91_irq_err_state(struct net_device *dev,
->>>   				CAN_ERR_CRTL_TX_WARNING :
->>>   				CAN_ERR_CRTL_RX_WARNING;
->>>   		}
->>> -	case CAN_STATE_ERROR_WARNING:	/* fallthrough */
->>> +		/* fall through */
->>> +	case CAN_STATE_ERROR_WARNING:
->>>   		/*
->>>   		 * from: ERROR_ACTIVE, ERROR_WARNING
->>>   		 * to  : ERROR_PASSIVE, BUS_OFF
->>> @@ -951,7 +952,8 @@ static void at91_irq_err_state(struct net_device *dev,
->>>   		netdev_dbg(dev, "Error Active\n");
->>>   		cf->can_id |= CAN_ERR_PROT;
->>>   		cf->data[2] = CAN_ERR_PROT_ACTIVE;
->>> -	case CAN_STATE_ERROR_WARNING:	/* fallthrough */
->>> +		/* fall through */
->>> +	case CAN_STATE_ERROR_WARNING:
->>>   		reg_idr = AT91_IRQ_ERRA | AT91_IRQ_WARN | AT91_IRQ_BOFF;
->>>   		reg_ier = AT91_IRQ_ERRP;
->>>   		break;
->>> diff --git a/drivers/net/can/peak_canfd/peak_pciefd_main.c b/drivers/net/can/peak_canfd/peak_pciefd_main.c
->>> index c458d5fdc8d3..e4f4d65a76b4 100644
->>> --- a/drivers/net/can/peak_canfd/peak_pciefd_main.c
->>> +++ b/drivers/net/can/peak_canfd/peak_pciefd_main.c
->>> @@ -668,7 +668,7 @@ static int pciefd_can_probe(struct pciefd_board *pciefd)
->>>   		pciefd_can_writereg(priv, CANFD_CLK_SEL_80MHZ,
->>>   				    PCIEFD_REG_CAN_CLK_SEL);
->>>   
->>> -		/* fallthough */
->>> +		/* fall through */
->>>   	case CANFD_CLK_SEL_80MHZ:
->>>   		priv->ucan.can.clock.freq = 80 * 1000 * 1000;
->>>   		break;
->>> diff --git a/drivers/net/can/spi/mcp251x.c b/drivers/net/can/spi/mcp251x.c
->>> index e90817608645..17257c73c302 100644
->>> --- a/drivers/net/can/spi/mcp251x.c
->>> +++ b/drivers/net/can/spi/mcp251x.c
->>> @@ -875,7 +875,8 @@ static irqreturn_t mcp251x_can_ist(int irq, void *dev_id)
->>>   			if (new_state >= CAN_STATE_ERROR_WARNING &&
->>>   			    new_state <= CAN_STATE_BUS_OFF)
->>>   				priv->can.can_stats.error_warning++;
->>> -		case CAN_STATE_ERROR_WARNING:	/* fallthrough */
->>> +			/* fall through */
->>> +		case CAN_STATE_ERROR_WARNING:
->>>   			if (new_state >= CAN_STATE_ERROR_PASSIVE &&
->>>   			    new_state <= CAN_STATE_BUS_OFF)
->>>   				priv->can.can_stats.error_passive++;
->>> diff --git a/drivers/net/can/usb/peak_usb/pcan_usb.c b/drivers/net/can/usb/peak_usb/pcan_usb.c
->>> index 13238a72a338..eca785532b6b 100644
->>> --- a/drivers/net/can/usb/peak_usb/pcan_usb.c
->>> +++ b/drivers/net/can/usb/peak_usb/pcan_usb.c
->>> @@ -423,7 +423,7 @@ static int pcan_usb_decode_error(struct pcan_usb_msg_context *mc, u8 n,
->>>   			new_state = CAN_STATE_ERROR_WARNING;
->>>   			break;
->>>   		}
->>> -		/* else: fall through */
->>> +		/* fall through */
->>>   
->>>   	case CAN_STATE_ERROR_WARNING:
->>>   		if (n & PCAN_USB_ERROR_BUS_HEAVY) {
->>>
->>
->>
+
+
