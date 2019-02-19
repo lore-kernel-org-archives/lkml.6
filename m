@@ -2,117 +2,151 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10234C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B74C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:41:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC68521738
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:38:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550605129;
-	bh=HN856G7OScD4ymC2G12gYgRWPPMaBjqzJxKza6+Cwbo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=0uaERhuo3pjfABQ7BDdgZIFgCTr2TmnlY2XQ+nu61s10iA8b98lfPPeiNaawVEXJq
-	 miu0Tl97L0tNDzS91krDuPJ10cZP57NT22id2pkJPqJth6J6zMW184nlPb7+tnvxvO
-	 4YnP/mtIp3pwv0Pluit4TBqSEVwyFH/7eAmO639w=
+	by mail.kernel.org (Postfix) with ESMTP id 6E7F62146F
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:41:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728633AbfBSTis (ORCPT
+        id S1728261AbfBSTlm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 14:38:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49164 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725963AbfBSTis (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 14:38:48 -0500
-Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 478D020855;
-        Tue, 19 Feb 2019 19:38:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550605127;
-        bh=HN856G7OScD4ymC2G12gYgRWPPMaBjqzJxKza6+Cwbo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QzKR/lETnvBSR8q6aPJahzpi3LHgLhrlabHxeTU5UGrxS5fD15Yk29ylcvTJ85IlX
-         iKXb2hgn8tU0i3/kBY5t01yUxWN+MFp0U8GQQl6Ye1Vvkf15eYxKFfkLKqaGcMhKac
-         q8OngXALcJ/9pRaKXz1vkE5z0NMCS/9xIalZTKhE=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 66E72410D5; Tue, 19 Feb 2019 16:38:44 -0300 (-03)
-Date:   Tue, 19 Feb 2019 16:38:44 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
-        Milian Wolff <milian.wolff@kdab.com>
-Cc:     linux-perf-users@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        Stephane Eranian <eranian@google.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] perf evsel: add support for inlined function in
- callchains
-Message-ID: <20190219193844.GB25535@kernel.org>
-References: <cover.1550600520.git.jonas.rabenstein@studium.uni-erlangen.de>
+        Tue, 19 Feb 2019 14:41:42 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45474 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725963AbfBSTlm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 14:41:42 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1JJenmP039676
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 14:41:40 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qrqx38p5x-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 14:41:39 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Tue, 19 Feb 2019 19:41:38 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 19 Feb 2019 19:41:35 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1JJfXVV28836052
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 19 Feb 2019 19:41:33 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8DC9DAE056;
+        Tue, 19 Feb 2019 19:41:33 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EF26DAE053;
+        Tue, 19 Feb 2019 19:41:32 +0000 (GMT)
+Received: from [9.145.25.7] (unknown [9.145.25.7])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 19 Feb 2019 19:41:32 +0000 (GMT)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v3 8/9] s390: ap: Cleanup on removing the AP device
+To:     Tony Krowiak <akrowiak@linux.ibm.com>, borntraeger@de.ibm.com
+Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, pasic@linux.ibm.com,
+        david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
+ <1550152269-6317-9-git-send-email-pmorel@linux.ibm.com>
+ <e5c18c62-97bd-95d7-1fa4-8b149bd62e6d@linux.ibm.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Tue, 19 Feb 2019 20:41:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1550600520.git.jonas.rabenstein@studium.uni-erlangen.de>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <e5c18c62-97bd-95d7-1fa4-8b149bd62e6d@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19021919-0020-0000-0000-00000318BE8A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021919-0021-0000-0000-0000216A0653
+Message-Id: <263d3aa9-700e-ad6e-0dfa-69190611d9c0@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-19_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902190138
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Feb 19, 2019 at 07:38:08PM +0100, Jonas Rabenstein escreveu:
-> Hi,
-> sample__fprintf_callchain currently did not use the already available
-> code to get the symbols of an inlined function if such information is
-> available in a dso. This patchset adds the required logic to add
-> appropriate lines.
+On 16/02/2019 00:36, Tony Krowiak wrote:
+> On 2/14/19 8:51 AM, Pierre Morel wrote:
+>> When the device is remove, we must make sure to
+>> clear the interruption and reset the AP device.
+>>
+...snip...
 
-You forgot to add the person that did lots of work in this area more
-recently, Milian, which I'm adding here so that he have the opportunity
-to comment on your work,
+>> @@ -74,6 +159,13 @@ static void vfio_ap_queue_dev_remove(struct 
+>> ap_device *apdev)
+>>       struct vfio_ap_queue *q;
+>>       q = dev_get_drvdata(&apdev->device);
+>> +    if (!q)
+>> +        return;
+>> +
+>> +    vfio_ap_update_crycb(q);
+> 
+> The root user is warned in the Limitations section of the vfio-ap.txt
+> doc delivered with the AP pass-through support warns that the
+> administrator (i.e., root user) should ensure that AP devices are not
+> removed without taking proper care to ensure they are not in use by a
+> guest. I am currently working on a patch set to handle this, so this
+> may simply get ripped out when those patches are integrated. That may
+> very well be simultaneously with this patch series as I plan on posting
+> those soon.
+> 
+> If this call is to remain, then you ought to update the vfio-ap.txt
+> document to let users know that when queues are unbound, the guests
+> will lose access to them unbeknown to the admin of the guest.
 
-Thanks for working on this!
+I do not see where is the problem, the admin should still take care the 
+APQN are not in use by the guest when he does an unbind.
 
-- Arnaldo
- 
-> As I am quite new to the code base of perf I am not sure how to test
-> that changeset in a correct way. At least the codes builds and the tools
-> that make use of sample__fprintf_callchain (perf-script, perf-trace and
-> perf-sched as far as I can see) did not fail to run - also I did not get
-> into the details of perf-trace and perf-sched as I have never used them
-> before.
+This just makes sure it is not used anymore by the guest when the admin 
+rebound it to the host or another guest.
+
 > 
-> Another thing I am not sure how to deal with are some warnings of
-> checkpatch.pl due to the 80 character line limit. Due to the long
-> function names in use the current implementation already exceeded that
-> limit in the same spots by even more characters as I have taken the
-> inner loop and put it into a separate function.
+>> +    vfio_ap_zapq(q);
 > 
-> I hope to expand my work to perf-report but thought it might be usefull
-> to get already early feedback on those patches.
-> 
-> Thank you,
->  Jonas
-> 
-> Jonas Rabenstein (2):
->   perf evsel: split sample__fprintf_callchain in output and iteration
->   perf evsel: add inline functions to sample callchain output
-> 
->  tools/perf/util/evsel_fprintf.c | 157 ++++++++++++++++++++++----------
->  1 file changed, 109 insertions(+), 48 deletions(-)
-> 
-> -- 
-> 2.19.2
+> One last thing. I've explained before that prior to the AP bus
+> invoking this remove callback, it flushes and zeroizes the
+> queue. Why do you insist it needs to be done again in the remove
+> callback?
+
+The problem is that the AP_BUS is not aware from the CRYCB and let the 
+guest play with the queue.
+
+The sequence an be like:
+
+-> AP_BUS remove RESET the queue and zeroes with ZAPQ
+-> AP_BUS call remove from driver
+	- the APQN still belong to the guest !
+		-> the guest issue a NQAP
+===> We need to take the queue away from the guest
+===> and we need to RESET the queue with ZAPQ and wait
+      until no more message is in the queue
+-> driver remove ends
+
+
+Regards,
+Pierre
+
 
 -- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
 
-- Arnaldo
