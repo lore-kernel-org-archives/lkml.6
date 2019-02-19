@@ -2,138 +2,154 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93791C10F00
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C31CEC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:13:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58FAD21773
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:12:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90D2F21773
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:13:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="u+bXc0vS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="brWoLpgm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729466AbfBSRMs (ORCPT
+        id S1729505AbfBSRM7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 12:12:48 -0500
-Received: from mail-eopbgr760080.outbound.protection.outlook.com ([40.107.76.80]:30946
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728086AbfBSRMs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 12:12:48 -0500
+        Tue, 19 Feb 2019 12:12:59 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41670 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726940AbfBSRM7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 12:12:59 -0500
+Received: by mail-wr1-f67.google.com with SMTP id n2so10677170wrw.8;
+        Tue, 19 Feb 2019 09:12:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector1-analog-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GGpGMwAUZqGUdD+p2LS5LbkMBkIzcBs8AWfX8kMpnac=;
- b=u+bXc0vS7ra4uVD+4wtIxvG5UTSff8YiNngI8S5yyjUGrouGjqBS+fVlzmrbb9C5rw19HcNvyEjYla4/eMFDZFna8UJ0tUb5fEI4bIaMhj5LroGY33r9bicozaF1VYj82v0Qs5x2A3CVVugSz1sJoYuJli0/7pTyvcXkA4DtvQM=
-Received: from BN6PR03CA0072.namprd03.prod.outlook.com (2603:10b6:404:4c::34)
- by BN6PR03MB3058.namprd03.prod.outlook.com (2603:10b6:405:44::25) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1643.14; Tue, 19 Feb
- 2019 17:12:46 +0000
-Received: from CY1NAM02FT053.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::202) by BN6PR03CA0072.outlook.office365.com
- (2603:10b6:404:4c::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1643.14 via Frontend
- Transport; Tue, 19 Feb 2019 17:12:46 +0000
-Authentication-Results: spf=pass (sender IP is 137.71.25.55)
- smtp.mailfrom=analog.com; gmx.de; dkim=none (message not signed)
- header.d=none;gmx.de; dmarc=bestguesspass action=none header.from=analog.com;
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
-Received: from nwd2mta1.analog.com (137.71.25.55) by
- CY1NAM02FT053.mail.protection.outlook.com (10.152.74.165) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1643.11
- via Frontend Transport; Tue, 19 Feb 2019 17:12:45 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id x1JHCit8009103
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Tue, 19 Feb 2019 09:12:44 -0800
-Received: from linux.ad.analog.com (10.50.1.179) by NWD2HUBCAS7.ad.analog.com
- (10.64.69.107) with Microsoft SMTP Server id 14.3.408.0; Tue, 19 Feb 2019
- 12:12:44 -0500
-From:   Stefan Popa <stefan.popa@analog.com>
-To:     <jic23@kernel.org>, <robh+dt@kernel.org>
-CC:     Stefan Popa <stefan.popa@analog.com>,
-        <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
-        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>
-Subject: [PATCH 0/6] iio: imu: adis16480: Add support for ADIS1649x family of devices
-Date:   Tue, 19 Feb 2019 19:12:12 +0200
-Message-ID: <1550596338-24220-1-git-send-email-stefan.popa@analog.com>
-X-Mailer: git-send-email 2.7.4
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GKN22z+eZt+a0N2z1UgMr5Ee4KDOCGLkvP2W0Q8ZWEA=;
+        b=brWoLpgm+NXQTWa5kGhD/XIXdvUZ2+MkAIUXsbKw846DFcsrJBkTf/3IbI+0Vo7IlG
+         y7/4lAS3jKBfgOct3JZqKu3/6fpGInwsQXntBhKDypiV3Xlrjifl1X8kRUOmLHQwj3vi
+         I91wRMTUDN7FUua9lvyxIdiIUlLBJzn9ZHEc+FbLN7li1ZqkQD2w7XW76IdL8pxr8Kqk
+         lkctGbR57IXs5NxpP3ZloLc8sNHPPc9rHboJTCc5o/V2mkcJ6SHTBUC2j7Qi28pdyrW0
+         d+HZhsbc0rE4vUhFTiF81JVxwl0gZyBFivvSjWByScOIC+PFbLB6uYxOSh4gIZTfKRE8
+         8m0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GKN22z+eZt+a0N2z1UgMr5Ee4KDOCGLkvP2W0Q8ZWEA=;
+        b=oqjTr1BNKNlNQD0RcOH9te40LFaKc8ohk2xrBGuHmyoft/7vmRBS9PgIq0PDN00/wO
+         UDS/OnhlRQ3ueY8qV+1RIPoLex/2/jLgp3jJSqhCsLYx4m8USQejXaqx8zTYbzUfDFJU
+         O2kFO/SfQ1U5SHAoy+4YERF+LbQ+ZqGs8tRKx+X07hDbBLIOxeiIyHxdqccvfPpeoVGh
+         Bbj5nYws76aPQeQA8+hFDWWF9eA6L8XyNHYhhvACd+sW+QRZKH9YHNjGJ8y39d2VKA/8
+         /Cj0dVgPaJuz5bgVD1dIq8FR+V2i89QmAbOpwAok4onV2QLVn58kA7IdoOvaYOp2jrGc
+         zSVA==
+X-Gm-Message-State: AHQUAuaP3Bnm3L0TzK2I7umHOsjvEa+BJ6OcWffYpXuzIr89No2iE/8t
+        5QU5fRrrSLXzfD8ltegWDBo=
+X-Google-Smtp-Source: AHgI3IZUQ63uivHupDnWw/8HaaqJdQMKkNCAsnPe8PwoNcE6dsjDUaGaDxNlXgJ1eEPrBsBmA46HJw==
+X-Received: by 2002:adf:8447:: with SMTP id 65mr20475202wrf.328.1550596376901;
+        Tue, 19 Feb 2019 09:12:56 -0800 (PST)
+Received: from localhost (pD9E51D2D.dip0.t-ipconnect.de. [217.229.29.45])
+        by smtp.gmail.com with ESMTPSA id m189sm3067628wmf.7.2019.02.19.09.12.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Feb 2019 09:12:56 -0800 (PST)
+Date:   Tue, 19 Feb 2019 18:12:55 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     jonathanh@nvidia.com, talho@nvidia.com, wsa@the-dreams.de,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+Subject: Re: [PATCH V4 2/2] i2c: tegra: remove multi-master support
+Message-ID: <20190219171255.GD14351@ulmo>
+References: <1550551825-1245-1-git-send-email-skomatineni@nvidia.com>
+ <1550551825-1245-2-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(346002)(376002)(136003)(396003)(2980300002)(3190300001)(189003)(199004)(476003)(2616005)(426003)(336012)(6666004)(316002)(246002)(72206003)(44832011)(116002)(7636002)(478600001)(305945005)(5660300002)(356004)(7696005)(126002)(486006)(106466001)(47776003)(4744005)(51416003)(110136005)(16586007)(50226002)(77096007)(186003)(26005)(54906003)(2906002)(50466002)(8676002)(4326008)(106002)(36756003)(8936002)(48376002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR03MB3058;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 01a129c8-3531-4efd-9ad9-08d6968d7786
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4608103)(4709054)(2017052603328)(7153060);SRVR:BN6PR03MB3058;
-X-MS-TrafficTypeDiagnostic: BN6PR03MB3058:
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB3058;20:3WnQUVDC0TFIgrZTksXbmw3iFPCJsOFJRnEojQ+gCljGDvtBzBN5t8/MmMNSjjfeaBw6HlP8/diwaKsMq6uqvIFnSgspnMa2Sv5X8fVWjgZikIRNz+bLhU0Ac7+NgRakozvFNb5nbBfLHtzQGQ/ppGYsYu0Z7qMYIuRyOpfxPH60Z6Th31DiI/rWjeibRBZ0ehAcmo9tNgSVmzgjeMgAuiiwQPjdZGN8f12uqKKUAyBdwMPiK8Q8i5TpBOR0XwDCFjtWgIxidGLe7A2oaymGaqQAGEh9Wj51yCujZIvUwsKVrxtk2Iv1e7RLxCmCXQJLFv7YXa3kyr2v3e0DEvhnGOAbmZQc+KNH+7ituKET2dXeZ+BwoDdXNNHMLYvNSJk3pi9X7zu49IB5XMBR1k/kp+bqLwmHMnlbyG1jNYw2u/U+pIfbdoTKWO02wRi0yhv6ez74UZjEGa5QPa4wKO4lZVsei618zFHmbrvuiMaJbG6DA44hHRNdT28+NJ4SdG+m
-X-Microsoft-Antispam-PRVS: <BN6PR03MB3058DF9BF2AAA63B5CE50E609D7C0@BN6PR03MB3058.namprd03.prod.outlook.com>
-X-Forefront-PRVS: 09538D3531
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR03MB3058;23:Bo9UL4DnDqZ+EfSsi3s1ZJZ84SLtPdNOL/wStL/Wt?=
- =?us-ascii?Q?IFqtYwx74WTwQC9M5mDpWfV72D/lzW0bJ920zs8mMGlNYYl3rbd9EvvP5qxx?=
- =?us-ascii?Q?6mRCirXBjgTr8DIYAlZ3eWZxoRjnQznQMSGh/l56MeXzDDrWMXDY536Aommb?=
- =?us-ascii?Q?0be/gw8whypIpNxVcq9fsf+VvKI6zb+XLXd+E7No0DP/FQn0H4pYLQzci3LQ?=
- =?us-ascii?Q?jWAODpC5dz2SnAiBz5cLKmGtzdpSYKcxY0y+3s3bvvAT1Wb6hOtDo0sFiMIQ?=
- =?us-ascii?Q?SoNUtw0JcV3K7vZEBTsLT3I8b8ismBI3s+n+olf5vNWSxt6DeBWE/lYb5vbI?=
- =?us-ascii?Q?P+LSHfOTmtDZr+k82yz5PHPwbJiX1uLP5r+n0hf9PF8uGveEhtR0qwrdhASi?=
- =?us-ascii?Q?Hj6rIJ8WgSsguBH6CtbLAUy/qeobWCW5U0SrjPiqR30wJTNRhFLVZXIAWNRW?=
- =?us-ascii?Q?o4TWUvovMIWiK+0u9msf9/7APFQtP+HyUnEySTILzS0xMME3Dfbb5K7OqVLV?=
- =?us-ascii?Q?kO2vGvDA2A6mFK5F3S5am9/g7mq2UibedFUM0rATmFKVfSUUaFtgo2VAsUcA?=
- =?us-ascii?Q?vOzP32t33KtlGMKyVvq+D1f0nGWI00EzszKi0aHmmL/tAnzxgJhsBG25hftB?=
- =?us-ascii?Q?OO0I4e7KjcH4bkpzy6fvUxXQbspncdSLiGWSKkybonySIxc+umc/Y35WDkvE?=
- =?us-ascii?Q?c3wGXPM8crOCOcZKKEumn6hGeKWbc8uYFG4JMC9k8v7wOGUFuHBdGPHLm4Jl?=
- =?us-ascii?Q?ua34+lff5yxzHB/0ln25L9YfP05Hl7WkptligrtpSag7/S66eq1akZB7kT6y?=
- =?us-ascii?Q?1KXUBnetL6rEmZ1Al5H6K+MOBgdKjo5N+la5aV3IN461xjrHb0WB8YYV8CMQ?=
- =?us-ascii?Q?vMF3+iksM7G9Kw76eViRceIAxe4B4PbS+chPymkhqwMjydtnwAwDxCOJ649A?=
- =?us-ascii?Q?vBqIxg13ykOb2WXS8umDt90E/LjbmYcEGIFy4taouyxWJq7Z02WwiDadCiQP?=
- =?us-ascii?Q?xobNdEVdkFIwSJdFW3AeX1q?=
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: ltPECj1l6EARwgIcPUw44hCGWcTOuohJzjgmRXNRzfm0tY0jsuUgf2IUnCUGLme7E9k+Mqv38d4jppU2GbzinjX3gkwV/WPgdrQKg/cexiiF3NYecgpCmhVMc852iXj2CLu1ZJgh7b797nb3YipdTjMy7vC7ZNRlKCwpLPmZXZs3dTEd8V/Ja78nFRau/zKDvKE8geiDHvrcXFUwdkINOIgPbZKIKLhPor0Qdbpghegg+I4rLfpCabaRXx/3rfF4hzjJ9ZAVUmXnwzzFD1A7tMdauhNHkMOT1GGu8xnBnRHLt2nywdaorfPSmcsJsbuyFvIHyTlRDxQxyg4n4GMMyuFDXsLw/H+lSRurH9ua7s2S6a0ui5gZHuZhE+WHxNvYEsbC3r3RPGVkq1mSJj9IDNXUzdFzdMxAdskoRPa2KY0=
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2019 17:12:45.5195
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01a129c8-3531-4efd-9ad9-08d6968d7786
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR03MB3058
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uxuisgdDHaNETlh8"
+Content-Disposition: inline
+In-Reply-To: <1550551825-1245-2-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series has as main goal to add support for ADIS1649x family of devices as
-part of the already existing adis16480, but on the way it also deals with some
-outstanding items:
 
-* Make drdy pin configurable
-* Add OF device ID table
-* Deal with the temperature max scale in a generic way
-* Add missing docs
+--uxuisgdDHaNETlh8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Stefan Popa (6):
-  iio: imu: adis16480: Use the default data ready pin configuration
-  iio: imu: adis16480: Add support for configurable drdy indicator
-  iio: imu: adis16480: Add OF device ID table
-  iio: imu: adis16480: Treat temperature scale in a generic way
-  iio: imu: adis16480: Add support for ADIS1649x family of devices
-  iio: imu: adis16480: Add docs for ADIS16480 IMU
+On Mon, Feb 18, 2019 at 08:50:25PM -0800, Sowjanya Komatineni wrote:
+> multi-master support is defeatured on Tegra210 and Tegra186 due to
+> known bugs.
 
- .../devicetree/bindings/iio/imu/adi,adis16480.txt  |  49 +++++
- MAINTAINERS                                        |   1 +
- drivers/iio/imu/adis16480.c                        | 198 ++++++++++++++++++++-
- 3 files changed, 243 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/iio/imu/adi,adis16480.txt
+Nit: "Multi-master" because it's the beginning of a sentence.
 
--- 
-2.7.4
+>=20
+> This patch removes multi-master support for Tegra210 and Tegra186
+> i2c hw feature.
 
+Nit: i2c -> I2C, hw -> HW
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+>=20
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegr=
+a.c
+> index e6851904acc1..26f686bc3491 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -1409,7 +1409,7 @@ static const struct tegra_i2c_hw_feature tegra210_i=
+2c_hw =3D {
+>  	.clk_divisor_fast_mode =3D 0x19,
+>  	.clk_divisor_fast_plus_mode =3D 0x10,
+>  	.has_config_load_reg =3D true,
+> -	.has_multi_master_mode =3D true,
+> +	.has_multi_master_mode =3D false,
+>  	.has_slcg_override_reg =3D true,
+>  	.has_mst_fifo =3D false,
+>  	.quirks =3D &tegra_i2c_quirks,
+> @@ -1434,7 +1434,7 @@ static const struct tegra_i2c_hw_feature tegra186_i=
+2c_hw =3D {
+>  	.clk_divisor_fast_mode =3D 0x19,
+>  	.clk_divisor_fast_plus_mode =3D 0x10,
+>  	.has_config_load_reg =3D true,
+> -	.has_multi_master_mode =3D true,
+> +	.has_multi_master_mode =3D false,
+>  	.has_slcg_override_reg =3D true,
+>  	.has_mst_fifo =3D false,
+>  	.quirks =3D &tegra_i2c_quirks,
+> --=20
+> 2.7.4
+>=20
+
+--uxuisgdDHaNETlh8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxsORcACgkQ3SOs138+
+s6HCUw/9FoLedx9d+wNnvZGbn/SxVMxrq5MaFIKY1jbBlaa35hM42BkQg7bdVmBE
+mAzDLFTX5/V1afIPovDVrN4ZV7sGMsVRsbua51/9lY/tw2AAuDj5qDIdRRBfht2M
+iOVqk5uZtbN74t+GAgZbF86QHupzr0z3byd62TvWWsheErhx6y6njyJ2l2VnYVok
+VtDxOVH0T2TaFIXoYSXTZ8Tq4/NeJ8b7Q6+Pac/OonkixZ38ltqXnZuq4yiXUF2k
+K6RQriy49xl3FNV+PTEKw4p+6RQy4Mn42r2jbKE9dfqONljcBs3Xc+nulkiUwNs0
+avUEeD/gdEP1Iv1bYXxnA0TPeg5Ww56xh1x2epy0+OMvzAY5dPfICuSdLmkfupmA
+oI7lzPQN5pdu5ihDS0DRfe8BzfjaHCtx6xtyW3Q0AoffClzywE41aPYc2blGu4g7
+NW8cmE3rHQGS7qUUqwU1ZlcesIkKFco5gS9gaejSIxdZg0Kvh2mUmfaGKA1S9JnH
+qZfx9Cb3fs7jVNzdYme1rBJiq69Lu1e9ofeOCPoovqIcWBSY3X7pS/Ou/eMUjRlu
+a7PqJ5FJm7eWzbSqU40hkTM0JjGf/I71rMWKmf03UuDPVb/JWucy5RFIXiz3Mxe3
+BiSrYuqx4/2nnJpWHtukVPBetXDNaJe3NrGd/hdWDBGTgEmDop0=
+=LvUh
+-----END PGP SIGNATURE-----
+
+--uxuisgdDHaNETlh8--
