@@ -3,74 +3,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 674CDC4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:13:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6FFDC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:13:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 382A62147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:13:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DE322147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:13:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728891AbfBSQNE (ORCPT
+        id S1728983AbfBSQNn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:13:04 -0500
-Received: from mga18.intel.com ([134.134.136.126]:4902 "EHLO mga18.intel.com"
+        Tue, 19 Feb 2019 11:13:43 -0500
+Received: from foss.arm.com ([217.140.101.70]:46952 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728312AbfBSQNE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:13:04 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2019 08:13:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,388,1544515200"; 
-   d="scan'208";a="320290226"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by fmsmga006.fm.intel.com with ESMTP; 19 Feb 2019 08:13:00 -0800
-Date:   Tue, 19 Feb 2019 09:12:57 -0700
-From:   Keith Busch <keith.busch@intel.com>
-To:     =?utf-8?B?6ZmI5Y2O5omN?= <chenhc@lemote.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Huacai Chen <chenhuacai@gmail.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-nvme <linux-nvme@lists.infradead.org>,
-        Ming Lei <ming.lei@redhat.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH V3 1/5] genirq/affinity: don't mark 'affd' as const
-Message-ID: <20190219161256.GA16341@localhost.localdomain>
-References: <20190213105041.13537-2-ming.lei@redhat.com>
- <20190213150407.GB96272@google.com>
- <alpine.DEB.2.21.1902132112590.1659@nanos.tec.linutronix.de>
- <20190213213149.GB8027@localhost.localdomain>
- <alpine.DEB.2.21.1902132232560.1659@nanos.tec.linutronix.de>
- <20190213223711.GC8027@localhost.localdomain>
- <alpine.DEB.2.21.1902140949280.1659@nanos.tec.linutronix.de>
- <tencent_6460D33741AF25B57E7BE493@qq.com>
- <alpine.DEB.2.21.1902141430190.1561@nanos.tec.linutronix.de>
- <tencent_6C5D1EC74B826B1E2F22293C@qq.com>
+        id S1725885AbfBSQNn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 11:13:43 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 386C7EBD;
+        Tue, 19 Feb 2019 08:13:42 -0800 (PST)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D14C23F690;
+        Tue, 19 Feb 2019 08:13:39 -0800 (PST)
+Date:   Tue, 19 Feb 2019 16:13:34 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Tony Luck <tony.luck@intel.com>, mpe@ellerman.id.au,
+        paulus@samba.org
+Subject: Re: [RFC PATCH] docs/memory-barriers.txt: Rewrite "KERNEL I/O
+ BARRIER EFFECTS" section
+Message-ID: <20190219161334.GA28803@fuggles.cambridge.arm.com>
+References: <20190211172948.3322-1-will.deacon@arm.com>
+ <CAHk-=wiP42aqBApAUJbLAB43u5ips9ArgLxXn5L1r74bowxdow@mail.gmail.com>
+ <20190213172047.GH6346@brain-police>
+ <CAHk-=wigYDMPnoFRC9eBystt0gi6n1yQtAyuEqVg6x+5znOk6A@mail.gmail.com>
+ <20190218165007.GC16713@fuggles.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <tencent_6C5D1EC74B826B1E2F22293C@qq.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20190218165007.GC16713@fuggles.cambridge.arm.com>
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 04:42:27PM -0800, 陈华才 wrote:
-> I've tested, this patch can fix the nvme problem, but it can't be applied
-> to 4.19 because of different context. And, I still think my original solution
-> (genirq/affinity: Assign default affinity to pre/post vectors) is correct.
-> There may be similar problems except nvme.
+[+more ppc folks]
 
-I'll send a proper patch to fix the warning.  It's always a driver bug if
-they try to extract affinity from a non-managed irq, but I don't think
-this particular nvme instance is very urgent as the end result is the
-same, just without the warning.
+On Mon, Feb 18, 2019 at 04:50:12PM +0000, Will Deacon wrote:
+> On Wed, Feb 13, 2019 at 10:27:09AM -0800, Linus Torvalds wrote:
+> > Note that even if mmiowb() is expensive (and I don't think that's
+> > actually even the case on ia64), you can - and probably should - do
+> > what PowerPC does.
+> > 
+> > Doing an IO barrier on PowerPC is insanely expensive, but they solve
+> > that simply track the whole "have I done any IO" manually. It's not
+> > even that expensive, it just uses a percpu flag.
+> > 
+> > (Admittedly, PowerPC makes it less obvious that it's a percpu variable
+> > because it's actually in the special "paca" region that is like a
+> > hyper-local percpu area).
+
+[...]
+
+> > But we *could* first just do the mmiowb() unconditionally in the ia64
+> > unlocking code, and then see if anybody notices?
+> 
+> I'll hack this up as a starting point. We can always try to be clever later
+> on if it's deemed necessary.
+
+Ok, so I started hacking this up in core code with the percpu flag (since
+riscv apparently needs it), but I've now realised that I don't understand
+how the PowerPC trick works after all. Consider the following:
+
+	spin_lock(&foo);	// io_sync = 0
+	outb(42, port);		// io_sync = 1
+	spin_lock(&bar);	// io_sync = 0
+	...
+	spin_unlock(&bar);
+	spin_unlock(&foo);
+
+The inner lock could even happen in an irq afaict, but we'll end up skipping
+the mmiowb()/sync because the io_sync flag is unconditionally cleared by
+spin_lock(). Fixing this is complicated by the fact that I/O writes can be
+performed in preemptible context with no locks held, so we can end up
+spuriously setting the io_sync flag for arbitrary CPUs, hence the desire
+to clear it in spin_lock().
+
+If the paca entry was more than a byte, we could probably track that a
+spinlock is held and then avoid clearing the flag prematurely, but I have
+a feeling that I'm missing something. Anybody know how this is supposed to
+work?
+
+Will
