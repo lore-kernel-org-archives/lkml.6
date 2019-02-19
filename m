@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3138C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 22:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB27EC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 22:03:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F4A32147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 22:03:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53E302147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 22:03:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OLA3CV4t"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HXGu5iV2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729924AbfBSWDM (ORCPT
+        id S1729982AbfBSWDP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 17:03:12 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46416 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729848AbfBSWDI (ORCPT
+        Tue, 19 Feb 2019 17:03:15 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37242 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729864AbfBSWDJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 17:03:08 -0500
-Received: by mail-pf1-f195.google.com with SMTP id g6so10834632pfh.13;
-        Tue, 19 Feb 2019 14:03:07 -0800 (PST)
+        Tue, 19 Feb 2019 17:03:09 -0500
+Received: by mail-pl1-f196.google.com with SMTP id q3so3705965pll.4;
+        Tue, 19 Feb 2019 14:03:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=EXXdq7GrYAICjYexP9jF/A5d/mueQ96ws92MW4tT5O4=;
-        b=OLA3CV4tn6lzXLl6iKpHEQ9DD5iwCGH0PUshgOZysZoeGlzW3fYRQA4Bc3qSRtPu6E
-         pVod7ci3kF6COGP+EgqKMHZ83TypdDXU5eEpxtXWzYhCHT/MvdmRQR/ylUalw2VXBMgy
-         UevxePM5JkJSDxyn+sX0E+AvBq5NUuzK0/pbf3/JAoXFAhFvpMXLiAeEdfA1AKfzx6Zu
-         mU5rAGN+PVMpYkiVIofsPVNMyUWV+RodDOWLYdHN4UJ07o78JVyA5Ob+ENkvZm18IKCq
-         a9TL6bUekRePyZka7MzEPn93ObggbEHDb/t6yr+6WJL5pvt+O+EkdbACz3aAXJooBID+
-         G5wQ==
+        bh=GRz9xrMRnPNxnHZIH95b3G/FW0oAWHbb9lfth0aZt0k=;
+        b=HXGu5iV2mqLWpkAnPNCJQf21xxAt8Mi0vkzCvX/tFKjZ4OgsGBwF/o8sKU5ro03cwb
+         0PsNZMHjwrZsYWLiPHP1H8ONBqBcn3EJPAnaqcFqoLH/lK/8HW4UURAgl4qtG7T8vAib
+         DkRCisaEa0Q41s4LmFMYjiPWJbSkBcSzLm+T6LGB3jlJujbX/EsiIbsuvfv4QvupGV71
+         7gCfmJG9hP1lvRFwyrIDSsdvPh5pzgSYRINtX5CuaD7RmKxvYNUyqaeGMFqJBpkhhOVO
+         qD69uAVb7yrzsrHXpLfsX/EUt5kGU4kNkWvib5K1ciEOcNdXqvf85bB/PT8GlsJoIule
+         cz/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=EXXdq7GrYAICjYexP9jF/A5d/mueQ96ws92MW4tT5O4=;
-        b=S7RoRXxoo2MzDaHpqbGW8P7BEQ0D8mBSGL4+6pe4AyLnM9+kNHQO96Qq1W5ovqjdOf
-         jB9LXx2Pt7Pz7Sju0NY2dCJDGC3PuSDRzZmCioZ16ka8L1t/cqu9JUzBJIgQpGCyoOeU
-         ZnhuSVdkNp6hAcmJCxemY4JpgsqgK0M88mx7bKiKzqjPwqFvTFTkhUQBU2zUMdyIhSWE
-         xCAwPkWbYWDTdj1sdZkifHpJ12QX2PkkIVydkWRT8AMHDOucC+kx/CP/hHn/99iNOtwm
-         gu7uAZzgKHYTYpOz4i0Yv/TK6Ux0N8oIk/yHA1kooNda6iw7CokfKF0Rno67wn0SaXvu
-         wAVw==
-X-Gm-Message-State: AHQUAua2YIO8AWOfLG37JdC8IAQc9/0i76X26eF1F+KCd4lQ21IKZJdY
-        1hCSFvRb7QeQsdJyPc49KkXZAJ1A5wg=
-X-Google-Smtp-Source: AHgI3IbSX5U7gDzk8gFT1FTLG9K6pbcGKeJN7LyI9ZVatJDtSOS1Vh583QeAMvPUhksQsE+kdGsU7g==
-X-Received: by 2002:a65:60c5:: with SMTP id r5mr26408736pgv.427.1550613787425;
-        Tue, 19 Feb 2019 14:03:07 -0800 (PST)
+        bh=GRz9xrMRnPNxnHZIH95b3G/FW0oAWHbb9lfth0aZt0k=;
+        b=O2mxlYXe2cZ6fwURK5crbjojleTsWDKupQLyDg6cJZW4Z85jzOK6hWIl2KZPBgHdoS
+         2Gpwm5VaTtjUF04loZdG60OgIf2CjKWVY0TvmDInjULbXdRfpMcua6u/V3OjmnDm/2ta
+         H84TjUh8Er4l0+KwnYOo4lSqAfm/26JLrMfgrmQGFWEqsNBlFaLgI4npiGj/mu4sTvVs
+         ggxzAe2x8IROG9jHE4SZdWR8yEGam1sSQsq86UuUYkc84ADnT9iPBW8heHng/yERYtYl
+         FSt/7vUi8c1IQhSje4We9Rzk2+Y0AXgvVJEJKgwx7y7zeQDZ5E3BR/RofId6/VfntlYH
+         EpTw==
+X-Gm-Message-State: AHQUAuZb+fHy0Va5hIhY59qMEbnHl185y8TabQgg0ZetpU1dQPuA3xQz
+        bNaFhcNN3NlFtFA6GhDmYZk=
+X-Google-Smtp-Source: AHgI3IZKp9WBuJlPT0Tjz2ndohFrtDgV8cPzOX4DIHIel6PZCImVRETai/axWtnlZUUpu8/MI5w5JA==
+X-Received: by 2002:a17:902:b101:: with SMTP id q1mr33154570plr.135.1550613788695;
+        Tue, 19 Feb 2019 14:03:08 -0800 (PST)
 Received: from tower.thefacebook.com ([2620:10d:c090:200::5:161b])
-        by smtp.gmail.com with ESMTPSA id e6sm33539779pfe.59.2019.02.19.14.03.06
+        by smtp.gmail.com with ESMTPSA id e6sm33539779pfe.59.2019.02.19.14.03.07
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Feb 2019 14:03:06 -0800 (PST)
+        Tue, 19 Feb 2019 14:03:07 -0800 (PST)
 From:   Roman Gushchin <guroan@gmail.com>
 X-Google-Original-From: Roman Gushchin <guro@fb.com>
 To:     Tejun Heo <tj@kernel.org>, Oleg Nesterov <oleg@redhat.com>
 Cc:     kernel-team@fb.com, cgroups@vger.kernel.org,
         linux-kernel@vger.kernel.org, Roman Gushchin <guro@fb.com>,
         Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-Subject: [PATCH v8 5/7] kselftests: cgroup: don't fail on cg_kill_all() error in cg_destroy()
-Date:   Tue, 19 Feb 2019 14:02:50 -0800
-Message-Id: <20190219220252.4906-6-guro@fb.com>
+Subject: [PATCH v8 6/7] kselftests: cgroup: add freezer controller self-tests
+Date:   Tue, 19 Feb 2019 14:02:51 -0800
+Message-Id: <20190219220252.4906-7-guro@fb.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190219220252.4906-1-guro@fb.com>
 References: <20190219220252.4906-1-guro@fb.com>
@@ -75,10 +75,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the cgroup destruction races with an exit() of a belonging
-process(es), cg_kill_all() may fail. It's not a good reason to make
-cg_destroy() fail and leave the cgroup in place, potentially causing
-next test runs to fail.
+This patch implements 8 tests for the freezer controller for
+cgroup v2:
+1) a simple test, which aims to freeze and unfreeze a cgroup with 100
+processes
+2) a more complicated tree test, which creates a hierarchy of cgroups,
+puts some processes in some cgroups, and tries to freeze and unfreeze
+different parts of the subtree
+3) a forkbomb test: the test aims to freeze a forkbomb running in a
+cgroup, kill all tasks in the cgroup and remove the cgroup without
+the unfreezing.
+4) rmdir test: the test creates two nested cgroups, freezes the parent
+one, checks that the child can be successfully removed, and a new
+child can be created
+5) migration tests: the test checks migration of a task between
+frozen cgroups: from a frozen to a running, from a running to a
+frozen, and from a frozen to a frozen.
+6) ptrace test: the test checks that it's possible to attach to
+a process in a frozen cgroup, get some information and detach, and
+the cgroup will remain frozen.
+7) stopped test: the test checks that it's possible to freeze a cgroup
+with a stopped task
+8) ptraced test: the test checks that it's possible to freeze a cgroup
+with a ptraced task
+
+Expected output:
+
+  $ ./test_freezer
+  ok 1 test_cgfreezer_simple
+  ok 2 test_cgfreezer_tree
+  ok 3 test_cgfreezer_forkbomb
+  ok 4 test_cgrreezer_rmdir
+  ok 5 test_cgfreezer_migrate
+  ok 6 test_cgfreezer_ptrace
+  ok 7 test_cgfreezer_stopped
+  ok 8 test_cgfreezer_ptraced
 
 Signed-off-by: Roman Gushchin <guro@fb.com>
 Cc: Shuah Khan <shuah@kernel.org>
@@ -86,24 +117,1024 @@ Cc: Tejun Heo <tj@kernel.org>
 Cc: kernel-team@fb.com
 Cc: linux-kselftest@vger.kernel.org
 ---
- tools/testing/selftests/cgroup/cgroup_util.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ tools/testing/selftests/cgroup/.gitignore     |   1 +
+ tools/testing/selftests/cgroup/Makefile       |   2 +
+ tools/testing/selftests/cgroup/cgroup_util.c  |  81 +-
+ tools/testing/selftests/cgroup/cgroup_util.h  |   7 +
+ tools/testing/selftests/cgroup/test_freezer.c | 842 ++++++++++++++++++
+ 5 files changed, 932 insertions(+), 1 deletion(-)
+ create mode 100644 tools/testing/selftests/cgroup/test_freezer.c
 
+diff --git a/tools/testing/selftests/cgroup/.gitignore b/tools/testing/selftests/cgroup/.gitignore
+index adacda50a4b2..7f9835624793 100644
+--- a/tools/testing/selftests/cgroup/.gitignore
++++ b/tools/testing/selftests/cgroup/.gitignore
+@@ -1,2 +1,3 @@
+ test_memcontrol
+ test_core
++test_freezer
+diff --git a/tools/testing/selftests/cgroup/Makefile b/tools/testing/selftests/cgroup/Makefile
+index 23fbaa4a9630..8d369b6a2069 100644
+--- a/tools/testing/selftests/cgroup/Makefile
++++ b/tools/testing/selftests/cgroup/Makefile
+@@ -5,8 +5,10 @@ all:
+ 
+ TEST_GEN_PROGS = test_memcontrol
+ TEST_GEN_PROGS += test_core
++TEST_GEN_PROGS += test_freezer
+ 
+ include ../lib.mk
+ 
+ $(OUTPUT)/test_memcontrol: cgroup_util.c
+ $(OUTPUT)/test_core: cgroup_util.c
++$(OUTPUT)/test_freezer: cgroup_util.c
 diff --git a/tools/testing/selftests/cgroup/cgroup_util.c b/tools/testing/selftests/cgroup/cgroup_util.c
-index 14c9fe284806..eba06f94433b 100644
+index eba06f94433b..e9cdad673901 100644
 --- a/tools/testing/selftests/cgroup/cgroup_util.c
 +++ b/tools/testing/selftests/cgroup/cgroup_util.c
-@@ -227,9 +227,7 @@ int cg_destroy(const char *cgroup)
- retry:
- 	ret = rmdir(cgroup);
- 	if (ret && errno == EBUSY) {
--		ret = cg_killall(cgroup);
--		if (ret)
--			return ret;
-+		cg_killall(cgroup);
- 		usleep(100);
- 		goto retry;
- 	}
+@@ -74,6 +74,16 @@ char *cg_name_indexed(const char *root, const char *name, int index)
+ 	return ret;
+ }
+ 
++char *cg_control(const char *cgroup, const char *control)
++{
++	size_t len = strlen(cgroup) + strlen(control) + 2;
++	char *ret = malloc(len);
++
++	snprintf(ret, len, "%s/%s", cgroup, control);
++
++	return ret;
++}
++
+ int cg_read(const char *cgroup, const char *control, char *buf, size_t len)
+ {
+ 	char path[PATH_MAX];
+@@ -196,7 +206,59 @@ int cg_create(const char *cgroup)
+ 	return mkdir(cgroup, 0644);
+ }
+ 
+-static int cg_killall(const char *cgroup)
++int cg_for_all_procs(const char *cgroup, int (*fn)(int pid, void *arg),
++		     void *arg)
++{
++	char buf[PAGE_SIZE];
++	char *ptr = buf;
++	int ret;
++
++	if (cg_read(cgroup, "cgroup.procs", buf, sizeof(buf)))
++		return -1;
++
++	while (ptr < buf + sizeof(buf)) {
++		int pid = strtol(ptr, &ptr, 10);
++
++		if (pid == 0)
++			break;
++		if (*ptr)
++			ptr++;
++		else
++			break;
++		ret = fn(pid, arg);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
++int cg_wait_for_proc_count(const char *cgroup, int count)
++{
++	char buf[10 * PAGE_SIZE] = {0};
++	int attempts;
++	char *ptr;
++
++	for (attempts = 10; attempts >= 0; attempts--) {
++		int nr = 0;
++
++		if (cg_read(cgroup, "cgroup.procs", buf, sizeof(buf)))
++			break;
++
++		for (ptr = buf; *ptr; ptr++)
++			if (*ptr == '\n')
++				nr++;
++
++		if (nr >= count)
++			return 0;
++
++		usleep(100000);
++	}
++
++	return -1;
++}
++
++int cg_killall(const char *cgroup)
+ {
+ 	char buf[PAGE_SIZE];
+ 	char *ptr = buf;
+@@ -238,6 +300,14 @@ int cg_destroy(const char *cgroup)
+ 	return ret;
+ }
+ 
++int cg_enter(const char *cgroup, int pid)
++{
++	char pidbuf[64];
++
++	snprintf(pidbuf, sizeof(pidbuf), "%d", pid);
++	return cg_write(cgroup, "cgroup.procs", pidbuf);
++}
++
+ int cg_enter_current(const char *cgroup)
+ {
+ 	char pidbuf[64];
+@@ -367,3 +437,12 @@ int set_oom_adj_score(int pid, int score)
+ 	close(fd);
+ 	return 0;
+ }
++
++char proc_read_text(int pid, const char *item, char *buf, size_t size)
++{
++	char path[PATH_MAX];
++
++	snprintf(path, sizeof(path), "/proc/%d/%s", pid, item);
++
++	return read_text(path, buf, size);
++}
+diff --git a/tools/testing/selftests/cgroup/cgroup_util.h b/tools/testing/selftests/cgroup/cgroup_util.h
+index 9ac8b7958f83..8ee63c00a668 100644
+--- a/tools/testing/selftests/cgroup/cgroup_util.h
++++ b/tools/testing/selftests/cgroup/cgroup_util.h
+@@ -18,6 +18,7 @@ static inline int values_close(long a, long b, int err)
+ extern int cg_find_unified_root(char *root, size_t len);
+ extern char *cg_name(const char *root, const char *name);
+ extern char *cg_name_indexed(const char *root, const char *name, int index);
++extern char *cg_control(const char *cgroup, const char *control);
+ extern int cg_create(const char *cgroup);
+ extern int cg_destroy(const char *cgroup);
+ extern int cg_read(const char *cgroup, const char *control,
+@@ -32,6 +33,7 @@ extern int cg_write(const char *cgroup, const char *control, char *buf);
+ extern int cg_run(const char *cgroup,
+ 		  int (*fn)(const char *cgroup, void *arg),
+ 		  void *arg);
++extern int cg_enter(const char *cgroup, int pid);
+ extern int cg_enter_current(const char *cgroup);
+ extern int cg_run_nowait(const char *cgroup,
+ 			 int (*fn)(const char *cgroup, void *arg),
+@@ -41,3 +43,8 @@ extern int alloc_pagecache(int fd, size_t size);
+ extern int alloc_anon(const char *cgroup, void *arg);
+ extern int is_swap_enabled(void);
+ extern int set_oom_adj_score(int pid, int score);
++extern int cg_for_all_procs(const char *cgroup, int (*fn)(int pid, void *arg),
++			    void *arg);
++extern int cg_wait_for_proc_count(const char *cgroup, int count);
++extern int cg_killall(const char *cgroup);
++extern char proc_read_text(int pid, const char *item, char *buf, size_t size);
+diff --git a/tools/testing/selftests/cgroup/test_freezer.c b/tools/testing/selftests/cgroup/test_freezer.c
+new file mode 100644
+index 000000000000..c11176a92474
+--- /dev/null
++++ b/tools/testing/selftests/cgroup/test_freezer.c
+@@ -0,0 +1,842 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#include <stdbool.h>
++#include <linux/limits.h>
++#include <sys/ptrace.h>
++#include <sys/types.h>
++#include <sys/mman.h>
++#include <unistd.h>
++#include <stdio.h>
++#include <errno.h>
++#include <poll.h>
++#include <stdlib.h>
++#include <sys/inotify.h>
++#include <string.h>
++#include <sys/types.h>
++#include <sys/wait.h>
++
++#include "../kselftest.h"
++#include "cgroup_util.h"
++
++#define DEBUG
++#ifdef DEBUG
++#define debug(args...) fprintf(stderr, args)
++#else
++#define debug(args...)
++#endif
++
++/*
++ * Freeze the given cgroup and wait for the inotify signal.
++ * If there is no signal in 10 seconds, treat this as an error.
++ */
++static int cg_freeze_wait(const char *cgroup, bool freeze)
++{
++	int fd, wd;
++	struct pollfd fds;
++	int ret = -1;
++
++	fd = inotify_init1(IN_NONBLOCK);
++	if (fd == -1)
++		return fd;
++
++	wd = inotify_add_watch(fd, cg_control(cgroup, "cgroup.events"),
++			       IN_MODIFY);
++	if (wd == -1) {
++		close(fd);
++		return wd;
++	}
++	fds.fd = fd;
++	fds.events = POLLIN;
++
++	ret = cg_write(cgroup, "cgroup.freeze", freeze ? "1" : "0");
++	if (ret) {
++		close(fd);
++		return ret;
++	}
++
++	while (true) {
++		wd = poll(&fds, 1, 10000);
++
++		if (wd == -1 && errno == EINTR)
++			continue;
++
++		if (wd == 1 && fds.revents & POLLIN)
++			ret = 0;
++
++		break;
++	}
++
++	close(fd);
++
++	return ret;
++}
++
++/*
++ * Check if the process is frozen and parked in a proper place.
++ */
++static int proc_check_frozen(int pid, void *arg)
++{
++	char buf[PAGE_SIZE];
++	int len;
++
++	len = proc_read_text(pid, "stat", buf, sizeof(buf));
++	if (len == -1) {
++		debug("Can't get %d stat\n", pid);
++		return -1;
++	}
++
++	if (strstr(buf, "(test_freezer) S ") == NULL) {
++		debug("Process %d in the unexpected state: %s\n", pid, buf);
++		return -1;
++	}
++
++	len = proc_read_text(pid, "stack", buf, sizeof(buf));
++	if (len == -1) {
++		debug("Can't get stack of the process %d\n", pid);
++		return -1;
++	}
++
++	if (strstr(buf, "[<0>] get_signal") != buf) {
++		debug("Process %d has unexpected stacktrace: %s\n", pid, buf);
++		return -1;
++	}
++
++	return 0;
++}
++
++/*
++ * Check if the cgroup is frozen by looking at the cgroup.events::frozen value.
++ */
++static int __cg_check_frozen(const char *cgroup, bool frozen)
++{
++	if (frozen) {
++		if (cg_read_strstr(cgroup, "cgroup.events", "frozen 1") != 0) {
++			debug("Cgroup %s isn't unexpectedly frozen\n", cgroup);
++			return -1;
++		}
++	} else {
++		/*
++		 * Check the cgroup.events::frozen value.
++		 */
++		if (cg_read_strstr(cgroup, "cgroup.events", "frozen 0") != 0) {
++			debug("Cgroup %s is unexpectedly frozen\n", cgroup);
++			return -1;
++		}
++	}
++
++	return 0;
++}
++
++/*
++ * Check if the cgroup is frozen and all belonging processes are
++ * parked in a proper place.
++ */
++static int cg_check_frozen(const char *cgroup, bool frozen)
++{
++	if (__cg_check_frozen(cgroup, frozen))
++		return -1;
++
++	/*
++	 * Check that all processes are parked in the proper place.
++	 */
++	if (frozen && cg_for_all_procs(cgroup, proc_check_frozen, NULL)) {
++		debug("Some processes of cgroup %s are not frozen\n",
++		      cgroup);
++		return -1;
++	}
++
++	return 0;
++}
++
++/*
++ * A simple process running in a sleep loop until being
++ * re-parented.
++ */
++static int child_fn(const char *cgroup, void *arg)
++{
++	int ppid = getppid();
++
++	while (getppid() == ppid)
++		usleep(1000);
++
++	return getppid() == ppid;
++}
++
++/*
++ * A simple test for the cgroup freezer: populated the cgroup with 100
++ * running processes and freeze it. Then unfreeze it. Then it kills all
++ * processes and destroys the cgroup.
++ */
++static int test_cgfreezer_simple(const char *root)
++{
++	int ret = KSFT_FAIL;
++	char *cgroup = NULL;
++	int i;
++
++	cgroup = cg_name(root, "cg_test");
++	if (!cgroup)
++		goto cleanup;
++
++	if (cg_create(cgroup))
++		goto cleanup;
++
++	for (i = 0; i < 100; i++)
++		cg_run_nowait(cgroup, child_fn, NULL);
++
++	if (cg_wait_for_proc_count(cgroup, 100))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup, false))
++		goto cleanup;
++
++	if (cg_freeze_wait(cgroup, true))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup, true))
++		goto cleanup;
++
++	if (cg_freeze_wait(cgroup, false))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup, false))
++		goto cleanup;
++
++	ret = KSFT_PASS;
++
++cleanup:
++	if (cgroup)
++		cg_destroy(cgroup);
++	free(cgroup);
++	return ret;
++}
++
++/*
++ * The test creates the following hierarchy:
++ *       A
++ *    / / \ \
++ *   B  E  I K
++ *  /\  |
++ * C  D F
++ *      |
++ *      G
++ *      |
++ *      H
++ *
++ * with a process in C, H and 3 processes in K.
++ * Then it tries to freeze and unfreeze the whole tree.
++ */
++static int test_cgfreezer_tree(const char *root)
++{
++	char *cgroup[10] = {0};
++	int ret = KSFT_FAIL;
++	int i;
++
++	cgroup[0] = cg_name(root, "cg_test_A");
++	if (!cgroup[0])
++		goto cleanup;
++
++	cgroup[1] = cg_name(cgroup[0], "cg_test_B");
++	if (!cgroup[1])
++		goto cleanup;
++
++	cgroup[2] = cg_name(cgroup[1], "cg_test_C");
++	if (!cgroup[2])
++		goto cleanup;
++
++	cgroup[3] = cg_name(cgroup[1], "cg_test_D");
++	if (!cgroup[3])
++		goto cleanup;
++
++	cgroup[4] = cg_name(cgroup[0], "cg_test_E");
++	if (!cgroup[4])
++		goto cleanup;
++
++	cgroup[5] = cg_name(cgroup[4], "cg_test_F");
++	if (!cgroup[5])
++		goto cleanup;
++
++	cgroup[6] = cg_name(cgroup[5], "cg_test_G");
++	if (!cgroup[6])
++		goto cleanup;
++
++	cgroup[7] = cg_name(cgroup[6], "cg_test_H");
++	if (!cgroup[7])
++		goto cleanup;
++
++	cgroup[8] = cg_name(cgroup[0], "cg_test_I");
++	if (!cgroup[8])
++		goto cleanup;
++
++	cgroup[9] = cg_name(cgroup[0], "cg_test_K");
++	if (!cgroup[9])
++		goto cleanup;
++
++	for (i = 0; i < 10; i++)
++		if (cg_create(cgroup[i]))
++			goto cleanup;
++
++	cg_run_nowait(cgroup[2], child_fn, NULL);
++	cg_run_nowait(cgroup[7], child_fn, NULL);
++	cg_run_nowait(cgroup[9], child_fn, NULL);
++	cg_run_nowait(cgroup[9], child_fn, NULL);
++	cg_run_nowait(cgroup[9], child_fn, NULL);
++
++	/*
++	 * Wait until all child processes will enter
++	 * corresponding cgroups.
++	 */
++
++	if (cg_wait_for_proc_count(cgroup[2], 1) ||
++	    cg_wait_for_proc_count(cgroup[7], 1) ||
++	    cg_wait_for_proc_count(cgroup[9], 3))
++		goto cleanup;
++
++	/*
++	 * Freeze B.
++	 */
++	if (cg_freeze_wait(cgroup[1], true))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup[1], true))
++		goto cleanup;
++
++	/*
++	 * Freeze F.
++	 */
++	if (cg_freeze_wait(cgroup[5], true))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup[5], true))
++		goto cleanup;
++
++	/*
++	 * Freeze G.
++	 */
++	if (cg_freeze_wait(cgroup[6], true))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup[6], true))
++		goto cleanup;
++
++	/*
++	 * Check that A and E are not frozen.
++	 */
++	if (cg_check_frozen(cgroup[0], false))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup[4], false))
++		goto cleanup;
++
++	/*
++	 * Freeze A. Check that A, B and E are frozen.
++	 */
++	if (cg_freeze_wait(cgroup[0], true))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup[0], true))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup[1], true))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup[4], true))
++		goto cleanup;
++
++	/*
++	 * Unfreeze B, F and G
++	 */
++	if (cg_freeze_wait(cgroup[1], false))
++		goto cleanup;
++
++	if (cg_freeze_wait(cgroup[5], false))
++		goto cleanup;
++
++	if (cg_freeze_wait(cgroup[6], false))
++		goto cleanup;
++
++	/*
++	 * Check that C and H are still frozen.
++	 */
++	if (cg_check_frozen(cgroup[2], true))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup[7], true))
++		goto cleanup;
++
++	/*
++	 * Unfreezing A failed. Check that A, C and K are not frozen.
++	 */
++	if (cg_freeze_wait(cgroup[0], false))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup[0], false))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup[2], false))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup[9], false))
++		goto cleanup;
++
++	ret = KSFT_PASS;
++
++cleanup:
++	for (i = 9; i >= 0 && cgroup[i]; i--) {
++		cg_destroy(cgroup[i]);
++		free(cgroup[i]);
++	}
++
++	return ret;
++}
++
++/*
++ * A fork bomb emulator.
++ */
++static int forkbomb_fn(const char *cgroup, void *arg)
++{
++	int ppid;
++
++	fork();
++	fork();
++
++	ppid = getppid();
++
++	while (getppid() == ppid)
++		usleep(1000);
++
++	return getppid() == ppid;
++}
++
++/*
++ * The test runs a fork bomb in a cgroup and tries to freeze it.
++ * Then it kills all processes and checks that cgroup isn't populated
++ * anymore.
++ */
++static int test_cgfreezer_forkbomb(const char *root)
++{
++	int ret = KSFT_FAIL;
++	char *cgroup = NULL;
++
++	cgroup = cg_name(root, "cg_forkbomb_test");
++	if (!cgroup)
++		goto cleanup;
++
++	if (cg_create(cgroup))
++		goto cleanup;
++
++	cg_run_nowait(cgroup, forkbomb_fn, NULL);
++
++	usleep(100000);
++
++	if (cg_freeze_wait(cgroup, true))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup, true))
++		goto cleanup;
++
++	if (cg_killall(cgroup))
++		goto cleanup;
++
++	if (cg_wait_for_proc_count(cgroup, 0))
++		goto cleanup;
++
++	ret = KSFT_PASS;
++
++cleanup:
++	if (cgroup)
++		cg_destroy(cgroup);
++	free(cgroup);
++	return ret;
++}
++
++/*
++ * The test creates two nested cgroups, freezes the parent
++ * and removes the child. Then it checks that the parent cgroup
++ * remains frozen and it's possible to create a new child
++ * without unfreezing. The new child is frozen too.
++ */
++static int test_cgfreezer_rmdir(const char *root)
++{
++	int ret = KSFT_FAIL;
++	char *parent, *child = NULL;
++
++	parent = cg_name(root, "cg_test_A");
++	if (!parent)
++		goto cleanup;
++
++	child = cg_name(parent, "cg_test_B");
++	if (!child)
++		goto cleanup;
++
++	if (cg_create(parent))
++		goto cleanup;
++
++	if (cg_create(child))
++		goto cleanup;
++
++	if (cg_freeze_wait(parent, true))
++		goto cleanup;
++
++	if (cg_check_frozen(parent, true))
++		goto cleanup;
++
++	if (cg_destroy(child))
++		goto cleanup;
++
++	if (cg_check_frozen(parent, true))
++		goto cleanup;
++
++	if (cg_create(child))
++		goto cleanup;
++
++	if (cg_check_frozen(child, true))
++		goto cleanup;
++
++	ret = KSFT_PASS;
++
++cleanup:
++	if (child)
++		cg_destroy(child);
++	free(child);
++	if (parent)
++		cg_destroy(parent);
++	free(parent);
++	return ret;
++}
++
++/*
++ * The test creates two cgroups: A and B. The it runs a process in A,
++ * and performs several migrations:
++ * 1) A (running) -> B (frozen)
++ * 2) B (frozen) -> A (running)
++ * 3) A (frozen) -> B (frozen)
++ *
++ * One each step it checks that the actual state of cgroups matches
++ * the expected state.
++ */
++static int test_cgfreezer_migrate(const char *root)
++{
++	int ret = KSFT_FAIL;
++	char *cgroup[2] = {0};
++	int pid;
++
++	cgroup[0] = cg_name(root, "cg_test_A");
++	if (!cgroup[0])
++		goto cleanup;
++
++	cgroup[1] = cg_name(root, "cg_test_B");
++	if (!cgroup[1])
++		goto cleanup;
++
++	if (cg_create(cgroup[0]))
++		goto cleanup;
++
++	if (cg_create(cgroup[1]))
++		goto cleanup;
++
++	pid = cg_run_nowait(cgroup[0], child_fn, NULL);
++	if (pid < 0)
++		goto cleanup;
++
++	if (cg_wait_for_proc_count(cgroup[0], 1))
++		goto cleanup;
++
++	/*
++	 * Migrate from A (running) to B (frozen)
++	 */
++	if (cg_freeze_wait(cgroup[1], true))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup[1], true))
++		goto cleanup;
++
++	if (cg_enter(cgroup[1], pid))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup[0], false))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup[1], true))
++		goto cleanup;
++
++	/*
++	 * Migrate from B (frozen) to A (running)
++	 */
++	if (cg_enter(cgroup[0], pid))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup[0], false))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup[1], true))
++		goto cleanup;
++
++	/*
++	 * Migrate from A (frozen) to B (frozen)
++	 */
++	if (cg_freeze_wait(cgroup[0], true))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup[0], true))
++		goto cleanup;
++
++	if (cg_enter(cgroup[1], pid))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup[0], true))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup[1], true))
++		goto cleanup;
++
++	ret = KSFT_PASS;
++
++cleanup:
++	if (cgroup[0])
++		cg_destroy(cgroup[0]);
++	free(cgroup[0]);
++	if (cgroup[1])
++		cg_destroy(cgroup[1]);
++	free(cgroup[1]);
++	return ret;
++}
++
++/*
++ * The test checks that ptrace works with a tracing process in a frozen cgroup.
++ */
++static int test_cgfreezer_ptrace(const char *root)
++{
++	int ret = KSFT_FAIL;
++	char *cgroup = NULL;
++	siginfo_t siginfo;
++	int pid;
++
++	cgroup = cg_name(root, "cg_test");
++	if (!cgroup)
++		goto cleanup;
++
++	if (cg_create(cgroup))
++		goto cleanup;
++
++	pid = cg_run_nowait(cgroup, child_fn, NULL);
++	if (pid < 0)
++		goto cleanup;
++
++	if (cg_wait_for_proc_count(cgroup, 1))
++		goto cleanup;
++
++	if (cg_freeze_wait(cgroup, true))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup, true))
++		goto cleanup;
++
++	if (ptrace(PTRACE_SEIZE, pid, NULL, NULL))
++		goto cleanup;
++
++	if (ptrace(PTRACE_INTERRUPT, pid, NULL, NULL))
++		goto cleanup;
++
++	waitpid(pid, NULL, 0);
++
++	/*
++	 * Cgroup has to remain frozen, however the test task
++	 * is in traced state.
++	 */
++	if (__cg_check_frozen(cgroup, true))
++		goto cleanup;
++
++	if (ptrace(PTRACE_GETSIGINFO, pid, NULL, &siginfo))
++		goto cleanup;
++
++	if (ptrace(PTRACE_DETACH, pid, NULL, NULL))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup, true))
++		goto cleanup;
++
++	ret = KSFT_PASS;
++
++cleanup:
++	if (cgroup)
++		cg_destroy(cgroup);
++	free(cgroup);
++	return ret;
++}
++
++/*
++ * Check if the process is stopped.
++ */
++static int proc_check_stopped(int pid)
++{
++	char buf[PAGE_SIZE];
++	int len;
++
++	len = proc_read_text(pid, "stat", buf, sizeof(buf));
++	if (len == -1) {
++		debug("Can't get %d stat\n", pid);
++		return -1;
++	}
++
++	if (strstr(buf, "(test_freezer) T ") == NULL) {
++		debug("Process %d in the unexpected state: %s\n", pid, buf);
++		return -1;
++	}
++
++	return 0;
++}
++
++/*
++ * Test that it's possible to freeze a cgroup with a stopped process.
++ */
++static int test_cgfreezer_stopped(const char *root)
++{
++	int pid, ret = KSFT_FAIL;
++	char *cgroup = NULL;
++
++	cgroup = cg_name(root, "cg_test");
++	if (!cgroup)
++		goto cleanup;
++
++	if (cg_create(cgroup))
++		goto cleanup;
++
++	pid = cg_run_nowait(cgroup, child_fn, NULL);
++
++	if (cg_wait_for_proc_count(cgroup, 1))
++		goto cleanup;
++
++	if (kill(pid, SIGSTOP))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup, false))
++		goto cleanup;
++
++	if (cg_freeze_wait(cgroup, true))
++		goto cleanup;
++
++	/*
++	 * cg_check_frozen(cgroup, true) will fail here,
++	 * because the task in in the STOPped state;
++	 * but the cgroup is expected to be frozen.
++	 */
++	if (__cg_check_frozen(cgroup, true))
++		goto cleanup;
++
++	if (cg_freeze_wait(cgroup, false))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup, false))
++		goto cleanup;
++
++	if (proc_check_stopped(pid))
++		goto cleanup;
++
++	ret = KSFT_PASS;
++
++cleanup:
++	if (cgroup)
++		cg_destroy(cgroup);
++	free(cgroup);
++	return ret;
++}
++
++/*
++ * Test that it's possible to freeze a cgroup with a ptraced process.
++ */
++static int test_cgfreezer_ptraced(const char *root)
++{
++	int pid, ret = KSFT_FAIL;
++	char *cgroup = NULL;
++	siginfo_t siginfo;
++
++	cgroup = cg_name(root, "cg_test");
++	if (!cgroup)
++		goto cleanup;
++
++	if (cg_create(cgroup))
++		goto cleanup;
++
++	pid = cg_run_nowait(cgroup, child_fn, NULL);
++
++	if (cg_wait_for_proc_count(cgroup, 1))
++		goto cleanup;
++
++	if (ptrace(PTRACE_SEIZE, pid, NULL, NULL))
++		goto cleanup;
++
++	if (ptrace(PTRACE_INTERRUPT, pid, NULL, NULL))
++		goto cleanup;
++
++	waitpid(pid, NULL, 0);
++
++	if (cg_check_frozen(cgroup, false))
++		goto cleanup;
++
++	if (cg_freeze_wait(cgroup, true))
++		goto cleanup;
++
++	/*
++	 * cg_check_frozen(cgroup, true) will fail here,
++	 * because the task in in the TRACEd state.
++	 */
++	if (cg_freeze_wait(cgroup, false))
++		goto cleanup;
++
++	if (cg_check_frozen(cgroup, false))
++		goto cleanup;
++
++	if (ptrace(PTRACE_GETSIGINFO, pid, NULL, &siginfo))
++		goto cleanup;
++
++	if (ptrace(PTRACE_DETACH, pid, NULL, NULL))
++		goto cleanup;
++
++	ret = KSFT_PASS;
++
++cleanup:
++	if (cgroup)
++		cg_destroy(cgroup);
++	free(cgroup);
++	return ret;
++}
++
++#define T(x) { x, #x }
++struct cgfreezer_test {
++	int (*fn)(const char *root);
++	const char *name;
++} tests[] = {
++	T(test_cgfreezer_simple),
++	T(test_cgfreezer_tree),
++	T(test_cgfreezer_forkbomb),
++	T(test_cgfreezer_rmdir),
++	T(test_cgfreezer_migrate),
++	T(test_cgfreezer_ptrace),
++	T(test_cgfreezer_stopped),
++	T(test_cgfreezer_ptraced),
++};
++#undef T
++
++int main(int argc, char *argv[])
++{
++	char root[PATH_MAX];
++	int i, ret = EXIT_SUCCESS;
++
++	if (cg_find_unified_root(root, sizeof(root)))
++		ksft_exit_skip("cgroup v2 isn't mounted\n");
++	for (i = 0; i < ARRAY_SIZE(tests); i++) {
++		switch (tests[i].fn(root)) {
++		case KSFT_PASS:
++			ksft_test_result_pass("%s\n", tests[i].name);
++			break;
++		case KSFT_SKIP:
++			ksft_test_result_skip("%s\n", tests[i].name);
++			break;
++		default:
++			ret = EXIT_FAILURE;
++			ksft_test_result_fail("%s\n", tests[i].name);
++			break;
++		}
++	}
++
++	return ret;
++}
 -- 
 2.20.1
 
