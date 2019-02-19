@@ -2,146 +2,111 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F1A8C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C05C10F00
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:04:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 158F921738
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:03:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C22B21738
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:04:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p5V2n/p5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729523AbfBSUD1 (ORCPT
+        id S1729619AbfBSUEO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 15:03:27 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48000 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725963AbfBSUD0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 15:03:26 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 62D571F58E;
-        Tue, 19 Feb 2019 20:03:24 +0000 (UTC)
-Received: from [10.36.116.120] (ovpn-116-120.ams2.redhat.com [10.36.116.120])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 51EBC60F94;
-        Tue, 19 Feb 2019 20:02:53 +0000 (UTC)
-Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
-To:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     Nitesh Narayan Lal <nitesh@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
-        pagupta@redhat.com, wei.w.wang@intel.com,
-        Yang Zhang <yang.zhang.wz@gmail.com>,
-        Rik van Riel <riel@surriel.com>, dodgen@google.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
-References: <20190218140947-mutt-send-email-mst@kernel.org>
- <4039c2e8-5db4-cddd-b997-2fdbcc6f529f@redhat.com>
- <20190218143819-mutt-send-email-mst@kernel.org>
- <58714908-f203-0b64-845b-5818e52a62fa@redhat.com>
- <20190218152021-mutt-send-email-mst@kernel.org>
- <18d87846-72c7-adf0-5ca3-7312540bb31b@redhat.com>
- <478a9574-a604-0aa9-d569-6a5cd98d7cdc@redhat.com>
- <CAKgT0UfEeDJOYmm5L0Q9QSNrEm=w39_+5Js5CEx=0o2_fhkaGQ@mail.gmail.com>
- <77e71dc3-640b-bbf6-6a47-bb2371c06172@redhat.com>
- <CAKgT0UfqSQoBehg7JZ=tzmk7wqSF=h9aMnsk_wpQXqh0NyRCHA@mail.gmail.com>
- <20190219145241-mutt-send-email-mst@kernel.org>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <0118482c-e633-3949-6797-94d7deb8a382@redhat.com>
-Date:   Tue, 19 Feb 2019 21:02:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 19 Feb 2019 15:04:14 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:32974 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727597AbfBSUEO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 15:04:14 -0500
+Received: by mail-pg1-f193.google.com with SMTP id h11so8273117pgl.0;
+        Tue, 19 Feb 2019 12:04:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bEG5J67YzK79II1Bqsot5pa/6iNTJCjnXXIT96/SY68=;
+        b=p5V2n/p5qJOwrUZIQB7TqaZrmr1eq5el2zgmjJwzcej1/lHAzhwGWKx5tY2/z6B4pD
+         rTW2qiSucXx/K4VHy6HEPQc5Xt/eb66ceYiRJVgLWKUTf7Sn1iijkLQDQFa7RoOg0G61
+         mtGqvJ52t4Fsnd4AmZ6cKKRX66y0G3RYLybTZx3nennldGk0BpJDVp/izxVm1pE4oCg5
+         QLQZCZwUZ0uOEVJYFPxIZurMi5A/wpTzAL2xpnDms+xUcr3gpH/GktUE2NMw7/HSDrOj
+         9Pp9VOwCesaHCe8jZCZAkgCoLcnqFVPztHbT/aMdTWx1qKjRo9QvtrPgOiWc00HB+lOX
+         i4/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bEG5J67YzK79II1Bqsot5pa/6iNTJCjnXXIT96/SY68=;
+        b=QZA3v+bU7WFXbByWBRKyuhul47J/riqXsVgjeaFneY08Gw18FRTO2G5p7qvF99wcP+
+         I5A7lek7mmdHHVVlSqCPxOYu9dCV2/PHTRrJN0NpMOzBrCgBIQFblCDnfRG7jOvMVzGL
+         Vkz4ZzqrxzCEiD1M4ZDlHnzsGeZ/fY7ZaV36u+z4UB3G1CGNU0+nmlMQZMG7L3xllTrH
+         xtpvhXjlVqM2HnaW7xYEPEkOK/Ac16bl7kFTvj10hTh/5fnohCj5hHXKw64XPVUrR/a9
+         7PVBFN98eMQi0Nu3DDM00czJYAFinDcpkWEBqKozB0zrKHnfrHLmQndGsxFeHEYg3ooS
+         37xA==
+X-Gm-Message-State: AHQUAuaIBxNLNsKNB8LgbiGQGQnyUNIaHJ11wv7YRV/J3+q4DHd4M9vh
+        l7cLeo3LZDemDfIzDdstRL0=
+X-Google-Smtp-Source: AHgI3Ia9U6/EBEGiHLHYxnaLmRUrTdUz9pHjZ0uYR81cVEcdrvv4tmJisNYrjWqXxN8Nh6Xshi8q6A==
+X-Received: by 2002:a63:6e02:: with SMTP id j2mr21081313pgc.229.1550606653489;
+        Tue, 19 Feb 2019 12:04:13 -0800 (PST)
+Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
+        by smtp.gmail.com with ESMTPSA id e63sm31519622pfc.47.2019.02.19.12.04.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Feb 2019 12:04:12 -0800 (PST)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: [PATCH 0/5] DesignWare PCI improvements
+Date:   Tue, 19 Feb 2019 12:02:37 -0800
+Message-Id: <20190219200242.17243-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190219145241-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 19 Feb 2019 20:03:25 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19.02.19 20:58, Michael S. Tsirkin wrote:
-> On Tue, Feb 19, 2019 at 10:06:35AM -0800, Alexander Duyck wrote:
->>> I tend to like an asynchronous reporting approach as discussed in this
->>> thread, we would have to see if Nitesh could get it implemented.
->>
->> I agree it would be great if it could work. However I have concerns
->> given that work on this patch set dates back to 2017, major issues
->> such as working around device assignment have yet to be addressed,
-> 
-> BTW for device assignment to work, your idea of sending
-> data directly to kvm won't work, will it?
-> You need to update userspace so it can update VFIO right?
-> Another blocker for assignment is ability to make holes
-> an an existing mapping - supported by hardware but
-> not by IOMMU drivers.
+Everyone:
 
-I had the exact same thought and then realized that we decided to block
-the balloon in user space until we figured out how to handle this properly.
+This is the series is a spin-off from [imx6-dwc] containing only small
+improvements that I made while reading the code and researching commit
+history of pcie-designware*.c. All changes are optional, so
+commits that don't seem like an improvement can be easily
+dropped. Hopefully each patch is self-explanatory.
 
-I wonder if MADV_FREE behaves differently compared to MADV_DONTNEED when
-finding pinned pages, but I doubt it. Most probably we'll have to
-disable hinting for device assignments as well.
+I tested this series on i.MX6Q, i.MX7D and i.MX8MQ.
 
-> 
-> All the issues are shared with balloon btw, so that
-> could be another reason to use the balloon.
-
-Yes, smells like it.
-
--- 
+Feedback is welcome!
 
 Thanks,
+Andrey Smirnov
 
-David / dhildenb
+[imx6-dwc] https://lore.kernel.org/lkml/20190104174925.17153-1-andrew.smirnov@gmail.com
+
+Andrey Smirnov (5):
+  PCI: dwc: Make use of IS_ALIGNED()
+  PCI: dwc: Share code for dw_pcie_rd/wr_other_conf()
+  PCI: dwc: Make use of BIT() in constant definitions
+  PCI: dwc: Make use of GENMASK/FIELD_PREP
+  PCI: dwc: Remove superfluous shifting in definitions
+
+ .../pci/controller/dwc/pcie-designware-host.c | 61 +++++++------------
+ drivers/pci/controller/dwc/pcie-designware.c  |  6 +-
+ drivers/pci/controller/dwc/pcie-designware.h  | 57 +++++++++--------
+ 3 files changed, 56 insertions(+), 68 deletions(-)
+
+-- 
+2.20.1
+
