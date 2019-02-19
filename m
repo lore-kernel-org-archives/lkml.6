@@ -2,94 +2,100 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E36CCC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:03:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F4FAC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:03:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B17C120823
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:03:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1952021736
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:03:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h1QOqPHx"
+	dkim=pass (2048-bit key) header.d=mathembedded-com.20150623.gappssmtp.com header.i=@mathembedded-com.20150623.gappssmtp.com header.b="EFQUjzCz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728517AbfBSND3 (ORCPT
+        id S1728625AbfBSNDm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 08:03:29 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43497 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbfBSND2 (ORCPT
+        Tue, 19 Feb 2019 08:03:42 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34804 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728008AbfBSNDm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 08:03:28 -0500
-Received: by mail-ed1-f68.google.com with SMTP id m35so12691936ede.10;
-        Tue, 19 Feb 2019 05:03:27 -0800 (PST)
+        Tue, 19 Feb 2019 08:03:42 -0500
+Received: by mail-wr1-f66.google.com with SMTP id f14so21959119wrg.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 05:03:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=4otjqvATyvxwtVAjMO64Wyk2yKEX+nv7+hkGyQumr8Q=;
-        b=h1QOqPHxb0dQS+i1scczue+yDCPTQWMTBzaoASbFniIE0ODG40vXqeIzi+Pq0rz1Pt
-         A7YKhhJNlRDoAoz0sFPc4wkwIKSCmFMuojSewnexBiYUzm8MrqJlnukvjaifafdSRwlm
-         qeIhew2m+wtB4chjLAYenrPbUUS9qgAGha76UnoB+fYUF4u1jBKvm6cmwnmcCx9tBUOE
-         pmEPgCP+ecrqcUKj9Iy7wMY40Z6LyhlQlRtJPqIOscY/UuIUnw3hD/9CEZnHMhJzctRM
-         PsaBC3lcxgrREHZ0p8hTnrfMOgPRPBRrYFo4G+nJU62jq0xyXbNtxBMGN3N3pGZ10uz2
-         9sBA==
+        d=mathembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:subject:date:message-id;
+        bh=+gQlFZa1wdF25zlNKhW2637JpdXuTp6UB6jqREyKiOE=;
+        b=EFQUjzCzBaBnTbOTiQ3kB5vpOPa0wz23b3f1dRZs3GghvdENheV6nccoLJlACL25ot
+         mtqlH2y1e7JwhrCFYlvqWM7b9NHBTSGRq9Se7XfVKI4cr8drR1ofcOFX9JM/7bCVU39A
+         9egW65Y0qtgqVSaPK5dAHZv8nfVJz0nnelTrE6TI66mscmhn9bmohS8rxHkS6RZpLTcg
+         RPQczq/KKngZp/K9rncicCiob+4wi8skSjyi5gbwIg/t9uRI+SAwbQ46mVvpnoeeeytM
+         ObeHUA7ZHt2jPgBBnD7VJ+zP1hLl4ml4CLdM83cwXjf80SG868WBO6+tEUE46Alc7u+/
+         8nNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=4otjqvATyvxwtVAjMO64Wyk2yKEX+nv7+hkGyQumr8Q=;
-        b=g5PVx4CSAX5iv8lAZYy6PumcTDZVqvCOpnZybFT0YmIguJ5J9POA/jVrvYds65qcaJ
-         f70ZAMRW7PE9biu8cZ1Zz4gFV4hjW1UqMQafkcJG/msJlk/YMu3XNjNCUBsO5z6Fzxt1
-         Dw7f3YRt42e6Jo00EKEq/Td0w8ohupxsxSl9KcWcxd9qwqoTpKnHIhE+QAyncKOWfqXv
-         gpS+9BGyhvv3jE3FtlyE9fbQtuG28AeppbUsvBa6Fpn5oXVtLTsPP1CTwlsAbQisYYxJ
-         VuB5QU6OzGhTl0nlenK/Qp0hnhk88Aj7bNACUP0X4zwoNFkdZuHff1d/Bj42yO73eGnY
-         jjDQ==
-X-Gm-Message-State: AHQUAuZ0gHU1zCOKZ+Fd2XYiotLDEouyHxlxy4g9LnQUQ0esqTUm+gIS
-        KYpn4z+YPVlbFiPPbt3mhMw=
-X-Google-Smtp-Source: AHgI3IZtJFi/bzGmxFTbDze/yTGnMZmPq4B8GqNOp622LvTMvtcFMSOQKD/BXMh0fO8vkhrgX9M9xQ==
-X-Received: by 2002:a17:906:68f:: with SMTP id u15mr19903730ejb.147.1550581406801;
-        Tue, 19 Feb 2019 05:03:26 -0800 (PST)
-Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id q3sm3707505eja.40.2019.02.19.05.03.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 05:03:26 -0800 (PST)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     heiko@sntech.de
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: rockchip: remove disable-wp from rv1108-elgin-r1 emmc node
-Date:   Tue, 19 Feb 2019 14:03:17 +0100
-Message-Id: <20190219130317.2817-1-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=+gQlFZa1wdF25zlNKhW2637JpdXuTp6UB6jqREyKiOE=;
+        b=hKHv1UBwa9GpNb6uNrD2D9E7e0pL/0lHJ+QJiDdYOxjvUTPAJFuZ3c1NFak4bLzt/6
+         ztUxvBGQuLPC+zCjGQFWoKUDC8CKjtZqjSnRc8GDgmKZh1rwQbvF3TgQw9TqhGz3/mFr
+         t+edihbW/zTuQGkYh6cK049C7bSTJYtT9rJ1b/zRcXIbhtZEm3ABmJMqbUDWhPoHs8gp
+         H0djhyLA6gjtF8zhTe+mZ1DMhIGkslzzwO6mj0C/2R4BqcfDf7NhcHCNeKDD41RJ3vmF
+         mO3m5qVZTo5rP4XVS49uEbcgIti8xRN3Ek8ee7IpVgxL6FRfrpKAUcTDUdGCa2V/fZua
+         yqiQ==
+X-Gm-Message-State: AHQUAuYxHzlNVr0ZuFwmNHw/G6uVXmYwMlDDSvjvI58Z7kWlI5579N4b
+        +yNC7xUPGBpdqzroszoY7mGgWQ==
+X-Google-Smtp-Source: AHgI3IbS2Q5qLE/JWW7pqezyvz51nUcoMMmlGLa1pZ6hh0XdR81xHuRLW5leWVQ+QtjI+ftSrYD3qQ==
+X-Received: by 2002:a5d:6107:: with SMTP id v7mr21664141wrt.78.1550581420366;
+        Tue, 19 Feb 2019 05:03:40 -0800 (PST)
+Received: from diamond.mathembedded.com (host86-137-106-133.range86-137.btcentralplus.com. [86.137.106.133])
+        by smtp.gmail.com with ESMTPSA id y22sm61899811wrd.45.2019.02.19.05.03.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Feb 2019 05:03:39 -0800 (PST)
+From:   Stuart Menefy <stuart.menefy@mathembedded.com>
+X-Google-Original-From: Stuart Menefy <stuart@menefy.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/4] Devicetree updates for Exynos 5260
+Date:   Tue, 19 Feb 2019 13:03:33 +0000
+Message-Id: <20190219130337.21353-1-stuart@menefy.org>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mmc.txt didn't explicitly say disable-wp is for SD card slot only,
-but that is what it was designed for in the first place.
-Remove all disable-wp from emmc or sdio controllers.
+These four patches are stand alone updates for the Exynos 5260 device
+tree, which do not depend on any other code changes. They either
+fix issues or add functionality which is already available
+on other Exynos devices. They were previously posted as version 1
+of the larger patch series "Resuscitate Exynos 5260 support"
+https://www.spinics.net/lists/linux-samsung-soc/#65035
+which was only posted to the samsung-soc mailing list.
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
- arch/arm/boot/dts/rv1108-elgin-r1.dts | 1 -
- 1 file changed, 1 deletion(-)
+Changes since v1:
+- Removed from larger patch set for easier review
+- Applied reviewer comments to patch 2/4 "Add high speed I2C ports
+  for exynos5260"
+- Expanded patch comments
 
-diff --git a/arch/arm/boot/dts/rv1108-elgin-r1.dts b/arch/arm/boot/dts/rv1108-elgin-r1.dts
-index 1c4507b..b1db924 100644
---- a/arch/arm/boot/dts/rv1108-elgin-r1.dts
-+++ b/arch/arm/boot/dts/rv1108-elgin-r1.dts
-@@ -37,7 +37,6 @@
- &emmc {
- 	bus-width = <8>;
- 	cap-mmc-highspeed;
--	disable-wp;
- 	no-sd;
- 	no-sdio;
- 	non-removable;
+Stuart Menefy (4):
+  ARM: dts: exynos: Use bustop PLL as the source for MMC clocks on
+    Exynos5260
+  ARM: dts: exynos: Add high speed I2C ports for exynos5260
+  ARM: dts: exynos: Add interrupts for dedicated EINTs on Exynos5260
+  ARM: dts: exynos: Fix interrupt for shared EINTs on Exynos5260
+
+ arch/arm/boot/dts/exynos5260-pinctrl.dtsi | 16 ++++++
+ arch/arm/boot/dts/exynos5260.dtsi         | 82 ++++++++++++++++++++++++++++++-
+ 2 files changed, 97 insertions(+), 1 deletion(-)
+
 -- 
-2.11.0
+2.13.6
 
