@@ -2,120 +2,166 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A469C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 22:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CEDAC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 22:27:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 215D921479
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 22:17:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="COFQxgwh"
+	by mail.kernel.org (Postfix) with ESMTP id F39242083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 22:27:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729938AbfBSWRs (ORCPT
+        id S1729538AbfBSW1O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 17:17:48 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:40411 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729893AbfBSWRs (ORCPT
+        Tue, 19 Feb 2019 17:27:14 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60600 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727375AbfBSW1O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 17:17:48 -0500
-Received: by mail-qt1-f195.google.com with SMTP id j36so25096432qta.7
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 14:17:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=R/AADH7d9dPw/Xlf484yHkcGyiZK43PrzsOjFifHGL0=;
-        b=COFQxgwhRUGp+dQANarOvJpdGglFUtsDRm13pOqtjyEgoFqognzyLa+oTlFjdIomJ3
-         EmoBPFgmqNbNw35fn4jBz3v3rso8XItYJ0zY2WzL/WUXCYjsiCtgs+pzQiWDWzCUdjo5
-         OSYAJS5Zhkdm3DXNuCIMVBngbaEEq/0zdmjcNe/eLxkjDwrkwMypBEEiAvWypYMTsNq+
-         FiBAF8D/1ynqgxdRB+nfuUAEQuqMU6/6YycAo+QBoop1geNNPqV2DmTC1AMtrVlJvfdY
-         4qgOw3VxzthvIC7KoCphNzie6yKEgV+CeJ/0wRXe0dknwPFyEN+kGrb9qtSHZqND3FqY
-         Du+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=R/AADH7d9dPw/Xlf484yHkcGyiZK43PrzsOjFifHGL0=;
-        b=uXaCoctYNSvTt2tzsYTS1FJn8mL8OqQFhbS5XV8Uju/SLqUiYkWFPJSsn4EVYldp6R
-         eIx9iEe1pyTw2g5lwW/Doi0IbDaUAOA9zRiljHqjOOgA/rzgO/xAWiDXoB0ZMLjWny3J
-         7oFJh8YDL67PA1bG6BbJshJSnklNBPxzZa33nbdwA/9m7m3Xx911wZbMKOCPAqsOypHc
-         r2oY44Ed3YHH4AQ69Itz9BHA6Xm4yyBXWnX/wtP/WnLj5RrJAKMMJsg6dG+Rjn/3jeM5
-         c9u5FTY7mQjkJnPEtXWPXhg25PmVUpI4cqmJLKtv/OWdwoA3ysOg5f/eEHcJIrkpnDVN
-         WESA==
-X-Gm-Message-State: AHQUAuZ3zWNm4hShlCGSsLjQzlvTQrK8aw5lr9Zz6NnIIDOE1jCtnQQr
-        TwFdRfKWE/4BqOwBZqK9txCP0Q==
-X-Google-Smtp-Source: AHgI3IaktnIhhelEWrARCTRyyhHIfM6pj9uHjCcrsYTDwd2aUlACh+U7Cu3DeoDZUAVF1gGpGFK+qQ==
-X-Received: by 2002:aed:3b25:: with SMTP id p34mr24118031qte.310.1550614666905;
-        Tue, 19 Feb 2019 14:17:46 -0800 (PST)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id o124sm9793596qkf.72.2019.02.19.14.17.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 14:17:46 -0800 (PST)
-Message-ID: <1550614664.6911.45.camel@lca.pw>
-Subject: Re: [PATCH] kasan: turn off asan-stack for clang-8 and earlier
-From:   Qian Cai <cai@lca.pw>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Mark Brown <broonie@kernel.org>,
-        Alexander Potapenko <glider@google.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        kasan-dev@googlegroups.com
-Date:   Tue, 19 Feb 2019 17:17:44 -0500
-In-Reply-To: <20190219214940.391081-1-arnd@arndb.de>
-References: <20190219214940.391081-1-arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 19 Feb 2019 17:27:14 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1JMQ2I9099378
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 17:27:13 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qrtf8r8c4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 17:27:12 -0500
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Tue, 19 Feb 2019 22:27:11 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 19 Feb 2019 22:27:09 -0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1JMR5dR18481310
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Feb 2019 22:27:05 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C2E1DAE05C;
+        Tue, 19 Feb 2019 22:27:05 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 750D7AE05F;
+        Tue, 19 Feb 2019 22:27:05 +0000 (GMT)
+Received: from [9.60.75.235] (unknown [9.60.75.235])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 19 Feb 2019 22:27:05 +0000 (GMT)
+Subject: Re: [PATCH v3 1/9] s390: vfio_ap: link the vfio_ap devices to the
+ vfio_ap bus subsystem
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     pmorel@linux.ibm.com, borntraeger@de.ibm.com,
+        alex.williamson@redhat.com, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        frankja@linux.ibm.com, pasic@linux.ibm.com, david@redhat.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        freude@linux.ibm.com, mimu@linux.ibm.com
+References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
+ <1550152269-6317-2-git-send-email-pmorel@linux.ibm.com>
+ <20190214155441.087d2a68.cohuck@redhat.com>
+ <9403117a-04a6-8f69-2a61-f96d35a59555@linux.ibm.com>
+ <20190214175730.4ab609ae.cohuck@redhat.com>
+ <9200b1f8-874f-ffa7-bef0-19ca570d7ac1@linux.ibm.com>
+ <eac03540-a499-fa0f-1a4a-b5cc99030775@linux.ibm.com>
+ <20190215101118.5417d725.cohuck@redhat.com>
+ <f38c99e6-bb25-9179-e4cd-20ba8482111f@linux.ibm.com>
+ <20190218130147.5ed3edbe.cohuck@redhat.com>
+ <602fd1f8-0ac1-42dc-30fd-ea16bb7bbc99@linux.ibm.com>
+ <20190218175747.53212f95.cohuck@redhat.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Tue, 19 Feb 2019 17:27:05 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20190218175747.53212f95.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19021922-0052-0000-0000-0000038CFD05
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010628; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000281; SDB=6.01163490; UDB=6.00607508; IPR=6.00944073;
+ MB=3.00025661; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-19 22:27:11
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021922-0053-0000-0000-00005FE75083
+Message-Id: <f95dec76-ba2e-38b2-64f3-9abe4ca6a501@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-19_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=592 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902190154
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-02-19 at 22:49 +0100, Arnd Bergmann wrote:
-> Building an arm64 allmodconfig kernel with clang results in over 140 warnings
-> about overly large stack frames, the worst ones being:
+On 2/18/19 11:57 AM, Cornelia Huck wrote:
+> On Mon, 18 Feb 2019 11:35:45 -0500
+> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
 > 
-> drivers/gpu/drm/panel/panel-sitronix-st7789v.c:196:12: error: stack frame size
-> of 20224 bytes in function 'st7789v_prepare'
-> drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td028ttec1.c:196:12:
-> error: stack frame size of 13120 bytes in function 'td028ttec1_panel_enable'
-> drivers/usb/host/max3421-hcd.c:1395:1: error: stack frame size of 10048 bytes
-> in function 'max3421_spi_thread'
-> drivers/net/wan/slic_ds26522.c:209:12: error: stack frame size of 9664 bytes
-> in function 'slic_ds26522_probe'
-> drivers/crypto/ccp/ccp-ops.c:2434:5: error: stack frame size of 8832 bytes in
-> function 'ccp_run_cmd'
-> drivers/media/dvb-frontends/stv0367.c:1005:12: error: stack frame size of 7840
-> bytes in function 'stv0367ter_algo'
+>> On 2/18/19 7:01 AM, Cornelia Huck wrote:
+>>> On Fri, 15 Feb 2019 16:59:33 -0500
+>>> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+>>>    
+>>>> On 2/15/19 4:11 AM, Cornelia Huck wrote:
+>>>>> On Thu, 14 Feb 2019 13:30:59 -0500
+>>>>> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+>>>>>       
+>>>>>> On 2/14/19 12:36 PM, Pierre Morel wrote:
+>>>>>>> On 14/02/2019 17:57, Cornelia Huck wrote:
+>>>    
+>>>>>>>> (And reading further in the current code, it seems we clear that
+>>>>>>>> structure _after_ the matrix device had been setup, so how can that
+>>>>>>>> even work? Where am I confused?)
+>>>>>>>
+>>>>>>> On device_register there were no bus, so the core just do not look for a
+>>>>>>> driver and this field was nor tested nor overwritten.
+>>>>>
+>>>>> Hm... so has the callback in driver_for_each_device() in
+>>>>> vfio_ap_verify_queue_reserved() ever been invoked at all? It seems this
+>>>>> patch fixes more than just libudev issues...
+>>>>
+>>>> It is this patch that rendered the driver_for_each_device() in
+>>>> vfio_ap_verify_queue_reserved() erroneous. That function gets called
+>>>> every time an adapter or domain is assigned to the mdev. This patch
+>>>> introduced the problem with driver_for_each_device().
+>>>
+>>> So, does this function need to be removed or called from another place,
+>>> then? (It looks like it was dead code before.)
+>>
+>> I don't see why you think it's dead code:
+>>
+>> assign_adapter_store
+>> ==> vfio_ap_mdev_verify_queues_reserved_for_apid
+>>       ==> vfio_ap_verify_queue_reserved
+>>           ==> driver_for_each_device
+>>
+>> The only way that the vfio_ap_verify_queue_reserved - the function that
+>> calls driver_for_each_device - does not get called is if no bits have
+>> yet been set in matrix_mdev->matrix.aqm.
 > 
-> None of these happen with gcc today, and almost all of these are the result
-> of a single known bug in llvm.  Hopefully it will eventually get fixed with
-> the
-> clang-9 release.
-> 
-> In the meantime, the best idea I have is to turn off asan-stack for clang-8
-> and earlier, so we can produce a kernel that is safe to run.
-> 
-> I have posted three patches that address the frame overflow warnings that are
-> not addressed by turning off asan-stack, so in combination with this change,
-> we get much closer to a clean allmodconfig build, which in turn is necessary
-> to do meaningful build regression testing.
+> What I don't see is how this can be called if no device has been, in
+> fact, bound to the driver in the driver core...
 
-Well, I am using clang 8.0 on arm64 and running the kernel just fine for a few
-weeks now and never trigger a single stack overflow (THREAD_SHIFT = 15) because
-I never use any of those drivers you mentioned above. I don't think it is a good
-idea to blankly remove the testing coverage here and affect people don't use all
-those offensive functions at all.
+Let's start with the fact that one can create an mdev device regardless
+of whether a queue has been bound to the vfio_ap driver. Once an mdev
+device is created, one can start assigning adapters, domains and control
+domains to it. Let's say the admin now attempts to assign an adapter, in
+which case the assign_adapter_store() function is invoked. After
+verifying that the APID passed in is a valid adapter number, the
+vfio_ap_mdev_verify_queues_reserved_for_apid() function is called.
+This function first checks if any domains have been assigned and if not,
+calls vfio_ap_verify_queue_reserved(&apid, NULL). It is in this function
+that the driver_for_each_device() function is called. Since there are
+no devices bound to the vfio_ap device driver, the callback passed in to
+the driver_for_each_device() function will never get called, so the
+vfio_ap_mdev_verify_queues_reserved_for_apid() function will return
+-EADDRNOTAVAIL. A similar flow will occur if the first assignment is for
+a domain. The bottom line is, the driver_for_each_device() function is
+called every time an adapter or domain is assigned.
+
+> 
+
