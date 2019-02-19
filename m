@@ -2,146 +2,93 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 268E8C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:39:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D365CC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:40:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5E222183E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:39:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="MbGwtIG9"
+	by mail.kernel.org (Postfix) with ESMTP id A0B0B217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:40:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550547624;
+	bh=l1g4TzNMDPVPnAzL1kqDObVlI8dMDQ7tO4dKoGLZuGw=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=Zqb9yDJG52MeUP7Im1DI8lnWh0txREUUa1Y5gAzMdzn+zfyGJM3DQRQp3yJg3/K1E
+	 NIK7yGjxXX3FgGMoC/XL47z6S8HyC/6K+WGWBQZGhA8klBS+0OfGBzyG9onhh1IXxE
+	 TCL0eWNYO12lrPUN9Puc0ueEjmPBflHno5exqjA0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726154AbfBSDjS (ORCPT
+        id S1726209AbfBSDkW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 22:39:18 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46600 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725536AbfBSDjR (ORCPT
+        Mon, 18 Feb 2019 22:40:22 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:36715 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725536AbfBSDkW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 22:39:17 -0500
-Received: by mail-wr1-f68.google.com with SMTP id i16so12308317wrs.13
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 19:39:16 -0800 (PST)
+        Mon, 18 Feb 2019 22:40:22 -0500
+Received: by mail-qt1-f193.google.com with SMTP id p25so21373400qtb.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 19:40:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7u+jUl+pHoifvQw91b5Cy043+xtHUs9SHNI6k3y94I8=;
-        b=MbGwtIG9ixkSAKI0UlVbblw2v5+3qBMhgOA/WA11WUnXLcl/qTX59PGn1ANH/mhs6/
-         oBvO8MbsvC8jIWII4wFs3a5YV9z7D1TViraz0/kbu29ceHmO2xX7AveiqbuEdly3siGT
-         8NPRlHumuUDFGfhavLqwDAVs7Y4oxnwkMWxbE=
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=EM+bwIatlVJyJ7ZZcy1LNMJoJp1bSjYRN5FGaaOtuFk=;
+        b=rzvZF8bs4HSld9KM1D2QBZ633kV6XJy9WYpR0TyksauPj3ugQQzGT1y6buq2YEHknC
+         SyMoEGXezcJl+53mL9tZdU36gs7N2TPC60L7fZUzZfNuHD/KRpM4YFkXWavs5t/iQL6K
+         6cxySXvXJnL0k8eoU7QAuGWlOXraPGtFLAeW+URNfx8rtFNcKVHUn11I8sVLm8vncguv
+         HRHESI8hHoT1mIKAir+cepTgC7geLYkSEFIhZ40MEHfmYrOJ0K15SZIyg4gepVUixWER
+         qvk4hF8DblRsK0DwQEV3NM6k+rqS0ISraacDzZQbyqSeQJEpEUs0Hpny1o1terUjyOEi
+         I2Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7u+jUl+pHoifvQw91b5Cy043+xtHUs9SHNI6k3y94I8=;
-        b=j2qgtYm/SnepmfGkvduSW8fplRAExSH674yWZP9Sq8A7np64fCm3ph4ZBwF3W+/Qbk
-         7Zuj7+jYze4CF2PyuKaHv5+2KPowp9DSaH03rCRzbZwaDio4mLc3aD5B1HXsJpOntn99
-         9idvDV3pNedwowVVODYWqek/1Ll6T7O6qlrMJrGjeU40k3pxacKIhBUh0vrm0wLOarhm
-         lNVRkvs/9u9J0pXEC+0K3PG/HjtHEUugU7Woho1SOetyYgo9C6kdDM/VaoAMt8ilHU+V
-         BSsZjvHVWnFXRJ/byJN5HXRhtBif6DH9hjk+c8iD1/Py7MbEQl0JjIgzJgjj9x6dlgQN
-         rtDw==
-X-Gm-Message-State: AHQUAuYBvlyuCm7jPdfPm01oLZdYP4KZERXu1HpNGcWbOpX5fCaz4jIW
-        w0SCm/IRo4Y3OApxI6VmY0SqhEfkEPF8QWJMUzkLBrRtKQY=
-X-Google-Smtp-Source: AHgI3IaaKinDr5OVklKBstwktXybRbHDtdlFhoigqsr1ehlJ2YesAw1NB9BX6BveIJgQH2QHaDlHB4bKqAaleg8Hfas=
-X-Received: by 2002:adf:8251:: with SMTP id 75mr20013144wrb.112.1550547555689;
- Mon, 18 Feb 2019 19:39:15 -0800 (PST)
-MIME-Version: 1.0
-References: <1549474347-7224-1-git-send-email-srinath.mannam@broadcom.com>
- <1549474347-7224-2-git-send-email-srinath.mannam@broadcom.com> <20190218172221.GA20334@bogus>
-In-Reply-To: <20190218172221.GA20334@bogus>
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-Date:   Tue, 19 Feb 2019 09:09:04 +0530
-Message-ID: <CABe79T6W_NrgAsJnfX-tBmTWZCDUGC7wkWfayQ6BNF-7S_iRYA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] dt-bindings: phy: Add Stingray USB PHY binding document
-To:     Rob Herring <robh@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Tejun Heo <tj@kernel.org>,
-        Jayachandran C <jnair@caviumnetworks.com>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=EM+bwIatlVJyJ7ZZcy1LNMJoJp1bSjYRN5FGaaOtuFk=;
+        b=p/KOb/xPKtC/8KFexXyNV80ycEUJUJAXFf4iP9tQxGY/pPUO28E9dgdyuyXNnRdURX
+         ztaVmT9veCeerUt//giuqxS/c6iTv43UoW4jXIfgwdVU0fKgMiqkSUriTtxpRR2iHFT7
+         2SbIVL4P16ZqTnTQLOpWcVdk/f9CQ7CXu1C9bj6jK06XG6I2CbuPBYoEr1wRxV4S72XG
+         Ogb+wOwXG+3Q8a/ih0pGZ0pQYgtGcC15rX2/2ZjmRhpXeUUbF+2q1c2eO2iD2hiTjfZj
+         0N2JRSQe7scMYeIIEuF9Pk1VMaUp8BvjNUfLFjLQy2+JdkYKF7pvc6Had52i2fIVXioy
+         ZC4g==
+X-Gm-Message-State: AHQUAubda5TOXIB0l6E96L2JgoCSKVpBDIUF5FZb4bmcJXkyG+hr/vWl
+        IR0jC9ss7keZfLOD4WEDAZM3zt/I
+X-Google-Smtp-Source: AHgI3IY0QFsbz9oKHqqGYEt3HLdRSSlfYGxg/jCbW03/yaqIi0ucrgvlgDGgQHjujyOZsyX6fTXk6A==
+X-Received: by 2002:a0c:c584:: with SMTP id a4mr19592201qvj.227.1550547621541;
+        Mon, 18 Feb 2019 19:40:21 -0800 (PST)
+Received: from kbl.fios-router.home (pool-96-233-42-17.bstnma.fios.verizon.net. [96.233.42.17])
+        by smtp.gmail.com with ESMTPSA id u5sm7327680qtg.37.2019.02.18.19.40.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Feb 2019 19:40:20 -0800 (PST)
+From:   Len Brown <lenb@kernel.org>
+To:     x86@kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH 0/11] multi-die/package support
+Date:   Mon, 18 Feb 2019 22:40:02 -0500
+Message-Id: <20190219034013.4147-1-lenb@kernel.org>
+X-Mailer: git-send-email 2.18.0-rc0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+This patch series does 3 things.
 
-Thanks for review, please see my comments below inline.
+1. Parses the new CPUID.1F leaf to discover multi-die/package topology
 
-On Mon, Feb 18, 2019 at 10:52 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Wed, Feb 06, 2019 at 11:02:25PM +0530, Srinath Mannam wrote:
-> > Add DT binding document for Stingray USB PHY.
-> >
-> > Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
-> > Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-> > Reviewed-by: Scott Branden <scott.branden@broadcom.com>
-> > ---
-> >  .../bindings/phy/brcm,stingray-usb-phy.txt         | 62 ++++++++++++++++++++++
-> >  1 file changed, 62 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/phy/brcm,stingray-usb-phy.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/phy/brcm,stingray-usb-phy.txt b/Documentation/devicetree/bindings/phy/brcm,stingray-usb-phy.txt
-> > new file mode 100644
-> > index 0000000..bfe1367
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/phy/brcm,stingray-usb-phy.txt
-> > @@ -0,0 +1,62 @@
-> > +Broadcom Stingray USB PHY
-> > +
-> > +Required properties:
-> > + - compatible : should be one of the listed compatibles
-> > +     - "brcm,sr-usb-phy"
-> > +     - "brcm,sr-usb-phy-v2"
->
-> SoC specific compatibles are preferred. Version numbers can be used but
-> should follow some documented scheme and be meaningful. What we don't
-> want is just Linux developers making up numbering.
->
-Both versions are different phy controllers and also have separate
-register offsets.
-I will provide more meaningful compatible IDs and their documentation
-in next patchset.
-> > + - reg: offset and length of the PHY blocks registers
-> > + - address-cells: should be 1
-> > + - size-cells: should be 0
-> > +
-> > +Sub-nodes:
-> > +  Each port's PHY should be represented as a sub-node.
-> > +
-> > +Sub-nodes required properties:
-> > + - reg: required for brcm,sr-usb-phy model phy.
-> > +     reg value 0 is HS phy and 1 is SS phy.
-> > + - phy-cells: generic PHY binding; must be 0
-> > +
-> > +Refer to phy/phy-bindings.txt for the generic PHY binding properties
-> > +
-> > +Example:
-> > +     usbphy0: usb-phy@0 {
-> > +             compatible = "brcm,sr-usb-phy";
-> > +             reg = <0x00000000 0x100>;
-> > +             #address-cells = <1>;
-> > +             #size-cells = <0>;
-> > +
-> > +             usb0_phy0: phy@0 {
-> > +                     reg = <0>;
-> > +                     #phy-cells = <0>;
->
-> Unless there's DT resources for each child node, you don't need these.
-> Just make #phy-cells 1 in the parent.
-With the use of phy-cell, PHY argument is available with xlate
-function, But controller specific assignments required
-to be done while probe. So I will take your first option given in
-previous comment.
+2. Exports knowledge of multi-die topology inside the kernel,
+   and also to user space via the topology sysfs.
 
-Regards,
-Srinath.
->
-> Rob
+3. Updates parts of the kernel that need to know the difference between
+   a die-scope MSR and a package_scope MSR.
+
+To follow, Kan will send some additional perf-uncore patches for #3.
+
+Also not include here are some updates to user-space utilities,
+cpuid, lscpu, turbostat, x86_energy_perf_policy.
+
+Rafael suggests that the most practical way to handle this series
+is via the x86 tree.
+
+Thanks,
+-Len
+
+
