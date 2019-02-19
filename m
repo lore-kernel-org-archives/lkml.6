@@ -2,81 +2,128 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3292BC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9660AC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:59:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC4762146F
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:58:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550570338;
-	bh=+uH09RUwku0p/qABLzhZVQknZYm3YLcaVqlx6KVLB6s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=k6xkdX1vYy+bGwMehwn4AnATimg/0Jb86YkJATz6F7jepSlWYXtATk9y0qrfA6FKe
-	 ANcfoXQrgmH9aj+Z3tkrLXFc+WaVulOaPz3efjtDbbT2t0yjgBSz8Uk58+tDnNIJiT
-	 G7Pxsu/PMYK0jzkE4/itn3Cc2RVRyJ9bEGwi2OaY=
+	by mail.kernel.org (Postfix) with ESMTP id 5D46721479
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:59:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gmZYJq3E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbfBSJ6Y (ORCPT
+        id S1728250AbfBSJ7A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Feb 2019 04:59:00 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41604 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727501AbfBSJ6Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 19 Feb 2019 04:58:24 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52074 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727464AbfBSJ6V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 04:58:21 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0221725EEA;
-        Tue, 19 Feb 2019 09:58:21 +0000 (UTC)
-Received: from krava.brq.redhat.com (unknown [10.43.17.42])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 29762600C8;
-        Tue, 19 Feb 2019 09:58:19 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH 1/4] perf header: Fix wrong node write in NUMA_TOPOLOGY feature
-Date:   Tue, 19 Feb 2019 10:58:12 +0100
-Message-Id: <20190219095815.15931-2-jolsa@kernel.org>
-In-Reply-To: <20190219095815.15931-1-jolsa@kernel.org>
-References: <20190219095815.15931-1-jolsa@kernel.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 19 Feb 2019 09:58:21 +0000 (UTC)
+Received: by mail-wr1-f65.google.com with SMTP id n2so9288516wrw.8;
+        Tue, 19 Feb 2019 01:58:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=SKvnZE8FRNSDrOi2i7LIYAhX4r86ogk967jOuzBNxJ8=;
+        b=gmZYJq3EVs/GLEYLKTki9zHJ0/gH7q1NM5Wr67MBcFn4on04RaJvIppP0LBCix+wjx
+         QgRpbf3A25ui8nVgPUwR+uJFIXU0jCxExbx2A+sjgZwx5LnEdannR6RiWhR3ZTewWy6w
+         UHOMButpLrk8sRedjlOIYFw/f6KvIVWPHygPD8jEJI0IfEv3yhrusX+hhbvJJe5Z+dz9
+         +THieDH+Y8638ptIpPasL2eTgIEks5/pOypEj2YWK3dCg3U1s+vf4PXnga+9FbO7BwkD
+         /WPQNJ5syuax/6qs/yz9HiAcYY8FBtaoBlnahxuIyleFffCiOfblivF/5YtIaohUyznN
+         lU8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=SKvnZE8FRNSDrOi2i7LIYAhX4r86ogk967jOuzBNxJ8=;
+        b=JxMoULt1OEA2oZ0l9GGMicD7eNFLz9L2VzyCal3DDvx9k7/pVZOzA+MFCKKTv43SNG
+         r04gRCTDVWBcbGizS6gD4JaAjy+owOmwJtjj4xGKQkhwvb2ZYK9oUegNIc/nqhMp8M0v
+         QodZE9FnfMORwSRgALRSH/Y8e7g1fYmwCSMsJgRoqeH4J2x1PaZWDgNwU1VKqZ6PQXLP
+         VTjRuyIaMw6e9dj9MoUyA8e8gYA5feVHyDlJOABOP7ZyJQeUjCIrALWKGgibQUOIrwzm
+         7A6lApjJI5YehH05kN/ZHWPBA47iVDx84Hy2fpHiQJbuprPv7shlgnVBCwD/UJQAzVOl
+         PLfg==
+X-Gm-Message-State: AHQUAuavu6U7bxhsfwL525UKaT0zsO413RhH074Tv0qUfLBFIyG5MGxA
+        IcZKscojGU/3Oe6JEeDcRC8=
+X-Google-Smtp-Source: AHgI3IYAj+J1tqAUPOBuR6osbM7yLZXX4MklFHSY3BnLZetYUh8GKtxt4Mri6/1sbyxfFQOfv6/m0g==
+X-Received: by 2002:adf:c752:: with SMTP id b18mr20122745wrh.105.1550570301773;
+        Tue, 19 Feb 2019 01:58:21 -0800 (PST)
+Received: from fuji.Parrot.Biz (smtp.parrot.biz. [62.23.167.188])
+        by smtp.gmail.com with ESMTPSA id k20sm31639220wre.41.2019.02.19.01.58.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Feb 2019 01:58:20 -0800 (PST)
+From:   Mathieu Othacehe <m.othacehe@gmail.com>
+To:     thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mathieu Othacehe <m.othacehe@gmail.com>
+Subject: [PATCH v3 1/3] pwm: hibvt: Use individual struct per of-data.
+Date:   Tue, 19 Feb 2019 10:58:06 +0100
+Message-Id: <20190219095808.12059-1-m.othacehe@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are currently passing the node index instead of the
-real node number.
+Split pwm-soc array in one struct per soc and point to the
+corresponding on in of-data.
 
-Fixes: fbe96f29ce4b ("perf tools: Make perf.data more self-descriptive (v8)"
-Link: http://lkml.kernel.org/n/tip-rbtlsr9ts23c89rki7d4s5sm@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Mathieu Othacehe <m.othacehe@gmail.com>
 ---
- tools/perf/util/header.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pwm/pwm-hibvt.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 61ce197c5362..c66f26ec557a 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -879,7 +879,7 @@ static int write_numa_topology(struct feat_fd *ff,
- 		if (ret < 0)
- 			break;
+diff --git a/drivers/pwm/pwm-hibvt.c b/drivers/pwm/pwm-hibvt.c
+index 27c107e78d59..ffc803818c3c 100644
+--- a/drivers/pwm/pwm-hibvt.c
++++ b/drivers/pwm/pwm-hibvt.c
+@@ -49,15 +49,19 @@ struct hibvt_pwm_chip {
+ 	struct clk *clk;
+ 	void __iomem *base;
+ 	struct reset_control *rstc;
++	const struct hibvt_pwm_soc *soc;
+ };
  
--		ret = write_topo_node(ff, i);
-+		ret = write_topo_node(ff, j);
- 		if (ret < 0)
- 			break;
- 	}
+ struct hibvt_pwm_soc {
+ 	u32 num_pwms;
+ };
+ 
+-static const struct hibvt_pwm_soc pwm_soc[2] = {
+-	{ .num_pwms = 4 },
+-	{ .num_pwms = 8 },
++static const struct hibvt_pwm_soc hi3516cv300_soc_info = {
++	.num_pwms = 4,
++};
++
++static const struct hibvt_pwm_soc hi3519v100_soc_info = {
++	.num_pwms = 8,
+ };
+ 
+ static inline struct hibvt_pwm_chip *to_hibvt_pwm_chip(struct pwm_chip *chip)
+@@ -198,6 +202,7 @@ static int hibvt_pwm_probe(struct platform_device *pdev)
+ 	pwm_chip->chip.npwm = soc->num_pwms;
+ 	pwm_chip->chip.of_xlate = of_pwm_xlate_with_flags;
+ 	pwm_chip->chip.of_pwm_n_cells = 3;
++	pwm_chip->soc = soc;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	pwm_chip->base = devm_ioremap_resource(&pdev->dev, res);
+@@ -250,8 +255,10 @@ static int hibvt_pwm_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id hibvt_pwm_of_match[] = {
+-	{ .compatible = "hisilicon,hi3516cv300-pwm", .data = &pwm_soc[0] },
+-	{ .compatible = "hisilicon,hi3519v100-pwm", .data = &pwm_soc[1] },
++	{ .compatible = "hisilicon,hi3516cv300-pwm",
++	  .data = &hi3516cv300_soc_info },
++	{ .compatible = "hisilicon,hi3519v100-pwm",
++	  .data = &hi3519v100_soc_info },
+ 	{  }
+ };
+ MODULE_DEVICE_TABLE(of, hibvt_pwm_of_match);
 -- 
-2.17.2
+2.17.1
 
