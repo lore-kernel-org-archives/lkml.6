@@ -2,393 +2,149 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A77C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:58:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A7DC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:58:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE89F21904
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:58:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550570322;
-	bh=PaaD3A2xYKe096koBXuwMcggCuNQ/3dHc1caT/N8pw0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UQ26GejecfFGSTSb6tMEiNpglEF+FPInlfIaXPoXwOovNw9VDuHUvjgtzaN6sd3So
-	 IzSlKXE0AkPKB893WYGHt4x1JGZvjX0uNrPC5m5sRSEIzIJ2SbN0S8TDfJV9g7eM4I
-	 Tx1ez/QqAaNlw8ra86G1XazQcqRdP4cpOJdJlyWY=
+	by mail.kernel.org (Postfix) with ESMTP id D690821848
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:58:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B4DLEUO0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728033AbfBSJ6a (ORCPT
+        id S1728173AbfBSJ6n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 04:58:30 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:36530 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727796AbfBSJ6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 04:58:25 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9DD33C071887;
-        Tue, 19 Feb 2019 09:58:24 +0000 (UTC)
-Received: from krava.brq.redhat.com (unknown [10.43.17.42])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 24797600C8;
-        Tue, 19 Feb 2019 09:58:22 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH 3/4] perf tools: Add numa_topology object
-Date:   Tue, 19 Feb 2019 10:58:14 +0100
-Message-Id: <20190219095815.15931-4-jolsa@kernel.org>
-In-Reply-To: <20190219095815.15931-1-jolsa@kernel.org>
-References: <20190219095815.15931-1-jolsa@kernel.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 19 Feb 2019 09:58:24 +0000 (UTC)
+        Tue, 19 Feb 2019 04:58:43 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51603 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727942AbfBSJ63 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 04:58:29 -0500
+Received: by mail-wm1-f67.google.com with SMTP id n19so1860228wmi.1;
+        Tue, 19 Feb 2019 01:58:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=MmokmzNg6WkTR+NygtzuXU+g6jndTuYFkgnanLj3Ipo=;
+        b=B4DLEUO0DFsRBjtKvitDAKr7JA8wB558yyNXOe0AF8OFun32pRzSMXI+4bIjb+58R0
+         x5wU1ZthIDtA8nMbne+AjAJRtu0ANmZg42Eyj72ZTaXcYJoRbGsdoeoWDlls/aCx0Ba9
+         oAQtJWtQeSp/r0MpqLz4DYDbZ1/utmQtltjZzqC2sVdGVYGzz1yPeMZbCyKpuNjYp2y3
+         mxEhe0CR/AYryQ1MgIuHpJy7dPkVECGaTKvC0kud8Bzr2V0u9ibzGLmzGG7zxqmXk9rl
+         GlQ2cM1Vu9PxqGess0cAwQp5fuKnnfJwi6ZfDhA4UPSEhyK4oPndXumFZCW/28fVIatL
+         3L6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=MmokmzNg6WkTR+NygtzuXU+g6jndTuYFkgnanLj3Ipo=;
+        b=I3xs2q4MhAZwA4lILB1JckE6lAJIhn/UKWhnL16bJO+u92CjAYjsvUDD3pL/6SSGbK
+         6xw0zhSI7ZCHl0c79j9oZiYuTzj8P3CtghsHYf+wVQeDtv0iUAp9bL0vWyYgeRu7KOL3
+         4RMnCmHEQLXxody133j12BUBsi2Qgfd8plBfk1lXCrVPlgEIC3V1nqTjcaw5KMarRBzE
+         YcOa4EGH57oCUkRUXmk9U4Fi63e5yYSLy80rU/aUAQ/JmKvaJtSPFxEozbL0Bq43x3EW
+         v5gHgmirt1lvNoEXNHaHx0HzRf+CL1+d68cwwNHQG4ZuJP4FZsykP+26NdrmFozTa0gb
+         uvLA==
+X-Gm-Message-State: AHQUAububSfNhBec0BwGE8usNBjvA+DZokjbecAJLmWKez9gj7fmiJta
+        L+XYQfjboViO63cydr2QaCY=
+X-Google-Smtp-Source: AHgI3IZ8oVD5uxw/MiO3KUSfJZ+7bVrdejE22hlYNUuSdIPuPWie8H43PcjkKNjcapqgcihkv4L1Jg==
+X-Received: by 2002:a05:600c:2159:: with SMTP id v25mr2097620wml.17.1550570307194;
+        Tue, 19 Feb 2019 01:58:27 -0800 (PST)
+Received: from fuji.Parrot.Biz (smtp.parrot.biz. [62.23.167.188])
+        by smtp.gmail.com with ESMTPSA id k20sm31639220wre.41.2019.02.19.01.58.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Feb 2019 01:58:26 -0800 (PST)
+From:   Mathieu Othacehe <m.othacehe@gmail.com>
+To:     thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mathieu Othacehe <m.othacehe@gmail.com>
+Subject: [PATCH v3 3/3] pwm: hibvt: Add hi3559v100 support
+Date:   Tue, 19 Feb 2019 10:58:08 +0100
+Message-Id: <20190219095808.12059-3-m.othacehe@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190219095808.12059-1-m.othacehe@gmail.com>
+References: <20190219095808.12059-1-m.othacehe@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding numa_topology object to return the list of numa
-nodes together with their cpus. It will replace the numa
-code in header.c and will be used from perf record code
-in following patches.
+Add support for hi3559v100-shub-pwm and hisilicon,hi3559v100-pwm
+platforms. They require a special quirk: pwm has to be enabled again
+to force duty_cycle refresh.
 
-Adding following interface functions to load numa details:
-
-  struct numa_topology *numa_topology__new(void);
-  void numa_topology__delete(struct numa_topology *tp);
-
-And replacing current (copied) local interface, with no
-functional changes.
-
-Link: http://lkml.kernel.org/n/tip-rn15st6hjj7txg2i88v7yff4@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Mathieu Othacehe <m.othacehe@gmail.com>
 ---
- tools/perf/util/cputopo.c | 118 +++++++++++++++++++++++++++++++++++++
- tools/perf/util/cputopo.h |  16 +++++
- tools/perf/util/header.c  | 119 +++++++++-----------------------------
- 3 files changed, 160 insertions(+), 93 deletions(-)
+ drivers/pwm/pwm-hibvt.c | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/cputopo.c b/tools/perf/util/cputopo.c
-index 84470ed4e707..83ffca2ea9ee 100644
---- a/tools/perf/util/cputopo.c
-+++ b/tools/perf/util/cputopo.c
-@@ -1,9 +1,11 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <sys/param.h>
-+#include <inttypes.h>
+diff --git a/drivers/pwm/pwm-hibvt.c b/drivers/pwm/pwm-hibvt.c
+index ffc803818c3c..f81c6fcb79be 100644
+--- a/drivers/pwm/pwm-hibvt.c
++++ b/drivers/pwm/pwm-hibvt.c
+@@ -54,6 +54,7 @@ struct hibvt_pwm_chip {
  
- #include "cputopo.h"
- #include "cpumap.h"
- #include "util.h"
-+#include "env.h"
- 
- 
- #define CORE_SIB_FMT \
-@@ -142,3 +144,119 @@ struct cpu_topology *cpu_topology__new(void)
- 	}
- 	return tp;
- }
-+
-+static int load_numa_node(struct numa_topology_node *node, int nr)
-+{
-+	char str[MAXPATHLEN];
-+	char field[32];
-+	char *buf = NULL, *p;
-+	size_t len = 0;
-+	int ret = -1;
-+	FILE *fp;
-+	u64 mem;
-+
-+	node->node = (u32) nr;
-+
-+	sprintf(str, "/sys/devices/system/node/node%d/meminfo", nr);
-+	fp = fopen(str, "r");
-+	if (!fp)
-+		return -1;
-+
-+	while (getline(&buf, &len, fp) > 0) {
-+		/* skip over invalid lines */
-+		if (!strchr(buf, ':'))
-+			continue;
-+		if (sscanf(buf, "%*s %*d %31s %"PRIu64, field, &mem) != 2)
-+			goto err;
-+		if (!strcmp(field, "MemTotal:"))
-+			node->mem_total = mem;
-+		if (!strcmp(field, "MemFree:"))
-+			node->mem_free = mem;
-+		if (node->mem_total && node->mem_free)
-+			break;
-+	}
-+
-+	fclose(fp);
-+	fp = NULL;
-+
-+	sprintf(str, "/sys/devices/system/node/node%d/cpulist", nr);
-+
-+	fp = fopen(str, "r");
-+	if (!fp)
-+		return -1;
-+
-+	if (getline(&buf, &len, fp) <= 0)
-+		goto err;
-+
-+	p = strchr(buf, '\n');
-+	if (p)
-+		*p = '\0';
-+
-+	node->cpus = buf;
-+	fclose(fp);
-+	return 0;
-+
-+err:
-+	free(buf);
-+	if (fp)
-+		fclose(fp);
-+	return ret;
-+}
-+
-+struct numa_topology *numa_topology__new(void)
-+{
-+	struct cpu_map *node_map = NULL;
-+	struct numa_topology *tp = NULL;
-+	char *buf = NULL;
-+	size_t len = 0;
-+	u32 nr, i;
-+	FILE *fp;
-+	char *c;
-+
-+	fp = fopen("/sys/devices/system/node/online", "r");
-+	if (!fp)
-+		return NULL;
-+
-+	if (getline(&buf, &len, fp) <= 0)
-+		goto out;
-+
-+	c = strchr(buf, '\n');
-+	if (c)
-+		*c = '\0';
-+
-+	node_map = cpu_map__new(buf);
-+	if (!node_map)
-+		goto out;
-+
-+	nr = (u32) node_map->nr;
-+
-+	tp = zalloc(sizeof(*tp) + sizeof(tp->nodes[0])*nr);
-+	if (!tp)
-+		goto out;
-+
-+	tp->nr = nr;
-+
-+	for (i = 0; i < nr; i++) {
-+		if (load_numa_node(&tp->nodes[i], node_map->map[i])) {
-+			numa_topology__delete(tp);
-+			tp = NULL;
-+			break;
-+		}
-+	}
-+
-+out:
-+	free(buf);
-+	fclose(fp);
-+	cpu_map__put(node_map);
-+	return tp;
-+}
-+
-+void numa_topology__delete(struct numa_topology *tp)
-+{
-+	u32 i;
-+
-+	for (i = 0; i < tp->nr; i++)
-+		free(tp->nodes[i].cpus);
-+
-+	free(tp);
-+}
-diff --git a/tools/perf/util/cputopo.h b/tools/perf/util/cputopo.h
-index 4b5f4112b6f8..47a97e71acdf 100644
---- a/tools/perf/util/cputopo.h
-+++ b/tools/perf/util/cputopo.h
-@@ -3,6 +3,7 @@
- #define __PERF_CPUTOPO_H
- 
- #include <linux/types.h>
-+#include "env.h"
- 
- struct cpu_topology {
- 	u32	  core_sib;
-@@ -11,7 +12,22 @@ struct cpu_topology {
- 	char	**thread_siblings;
+ struct hibvt_pwm_soc {
+ 	u32 num_pwms;
++	bool quirk_force_enable;
  };
  
-+struct numa_topology_node {
-+	char		*cpus;
-+	u32		 node;
-+	u64		 mem_total;
-+	u64		 mem_free;
+ static const struct hibvt_pwm_soc hi3516cv300_soc_info = {
+@@ -64,6 +65,16 @@ static const struct hibvt_pwm_soc hi3519v100_soc_info = {
+ 	.num_pwms = 8,
+ };
+ 
++static const struct hibvt_pwm_soc hi3559v100_shub_soc_info = {
++	.num_pwms = 8,
++	.quirk_force_enable = true,
 +};
 +
-+struct numa_topology {
-+	u32				nr;
-+	struct numa_topology_node	nodes[0];
++static const struct hibvt_pwm_soc hi3559v100_soc_info = {
++	.num_pwms = 2,
++	.quirk_force_enable = true,
 +};
 +
- struct cpu_topology *cpu_topology__new(void);
- void cpu_topology__delete(struct cpu_topology *tp);
- 
-+struct numa_topology *numa_topology__new(void);
-+void numa_topology__delete(struct numa_topology *tp);
-+
- #endif /* __PERF_CPUTOPO_H */
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 80ac57e6d38f..a2323d777dae 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -639,112 +639,45 @@ static int write_total_mem(struct feat_fd *ff,
- 	return ret;
- }
- 
--static int write_topo_node(struct feat_fd *ff, int node)
--{
--	char str[MAXPATHLEN];
--	char field[32];
--	char *buf = NULL, *p;
--	size_t len = 0;
--	FILE *fp;
--	u64 mem_total, mem_free, mem;
--	int ret = -1;
--
--	sprintf(str, "/sys/devices/system/node/node%d/meminfo", node);
--	fp = fopen(str, "r");
--	if (!fp)
--		return -1;
--
--	while (getline(&buf, &len, fp) > 0) {
--		/* skip over invalid lines */
--		if (!strchr(buf, ':'))
--			continue;
--		if (sscanf(buf, "%*s %*d %31s %"PRIu64, field, &mem) != 2)
--			goto done;
--		if (!strcmp(field, "MemTotal:"))
--			mem_total = mem;
--		if (!strcmp(field, "MemFree:"))
--			mem_free = mem;
--	}
--
--	fclose(fp);
--	fp = NULL;
--
--	ret = do_write(ff, &mem_total, sizeof(u64));
--	if (ret)
--		goto done;
--
--	ret = do_write(ff, &mem_free, sizeof(u64));
--	if (ret)
--		goto done;
--
--	ret = -1;
--	sprintf(str, "/sys/devices/system/node/node%d/cpulist", node);
--
--	fp = fopen(str, "r");
--	if (!fp)
--		goto done;
--
--	if (getline(&buf, &len, fp) <= 0)
--		goto done;
--
--	p = strchr(buf, '\n');
--	if (p)
--		*p = '\0';
--
--	ret = do_write_string(ff, buf);
--done:
--	free(buf);
--	if (fp)
--		fclose(fp);
--	return ret;
--}
--
- static int write_numa_topology(struct feat_fd *ff,
- 			       struct perf_evlist *evlist __maybe_unused)
+ static inline struct hibvt_pwm_chip *to_hibvt_pwm_chip(struct pwm_chip *chip)
  {
--	char *buf = NULL;
--	size_t len = 0;
--	FILE *fp;
--	struct cpu_map *node_map = NULL;
--	char *c;
--	u32 nr, i, j;
-+	struct numa_topology *tp;
- 	int ret = -1;
-+	u32 i;
- 
--	fp = fopen("/sys/devices/system/node/online", "r");
--	if (!fp)
--		return -1;
-+	tp = numa_topology__new();
-+	if (!tp)
-+		return -ENOMEM;
- 
--	if (getline(&buf, &len, fp) <= 0)
--		goto done;
-+	ret = do_write(ff, &tp->nr, sizeof(u32));
-+	if (ret < 0)
-+		goto err;
- 
--	c = strchr(buf, '\n');
--	if (c)
--		*c = '\0';
-+	for (i = 0; i < tp->nr; i++) {
-+		struct numa_topology_node *n = &tp->nodes[i];
- 
--	node_map = cpu_map__new(buf);
--	if (!node_map)
--		goto done;
--
--	nr = (u32)node_map->nr;
-+		ret = do_write(ff, &n->node, sizeof(u32));
-+		if (ret < 0)
-+			goto err;
- 
--	ret = do_write(ff, &nr, sizeof(nr));
--	if (ret < 0)
--		goto done;
-+		ret = do_write(ff, &n->mem_total, sizeof(u64));
-+		if (ret)
-+			goto err;
- 
--	for (i = 0; i < nr; i++) {
--		j = (u32)node_map->map[i];
--		ret = do_write(ff, &j, sizeof(j));
--		if (ret < 0)
--			break;
-+		ret = do_write(ff, &n->mem_free, sizeof(u64));
-+		if (ret)
-+			goto err;
- 
--		ret = write_topo_node(ff, j);
-+		ret = do_write_string(ff, n->cpus);
- 		if (ret < 0)
--			break;
-+			goto err;
- 	}
--done:
--	free(buf);
--	fclose(fp);
--	cpu_map__put(node_map);
+ 	return container_of(chip, struct hibvt_pwm_chip, chip);
+@@ -152,13 +163,23 @@ static void hibvt_pwm_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
+ static int hibvt_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ 				struct pwm_state *state)
+ {
++	struct hibvt_pwm_chip *hi_pwm_chip = to_hibvt_pwm_chip(chip);
 +
-+	ret = 0;
-+
-+err:
-+	numa_topology__delete(tp);
- 	return ret;
- }
+ 	if (state->polarity != pwm->state.polarity)
+ 		hibvt_pwm_set_polarity(chip, pwm, state->polarity);
  
+ 	if (state->period != pwm->state.period ||
+-		state->duty_cycle != pwm->state.duty_cycle)
++	    state->duty_cycle != pwm->state.duty_cycle) {
+ 		hibvt_pwm_config(chip, pwm, state->duty_cycle, state->period);
+ 
++		/*
++		 * Some implementations require the pwm to be enabled
++		 * once more each time the duty cycle is refreshed.
++		 */
++		if (hi_pwm_chip->soc->quirk_force_enable && state->enabled)
++			hibvt_pwm_enable(chip, pwm);
++	}
++
+ 	if (state->enabled != pwm->state.enabled) {
+ 		if (state->enabled)
+ 			hibvt_pwm_enable(chip, pwm);
+@@ -259,6 +280,10 @@ static const struct of_device_id hibvt_pwm_of_match[] = {
+ 	  .data = &hi3516cv300_soc_info },
+ 	{ .compatible = "hisilicon,hi3519v100-pwm",
+ 	  .data = &hi3519v100_soc_info },
++	{ .compatible = "hisilicon,hi3559v100-shub-pwm",
++	  .data = &hi3559v100_shub_soc_info },
++	{ .compatible = "hisilicon,hi3559v100-pwm",
++	  .data = &hi3559v100_soc_info },
+ 	{  }
+ };
+ MODULE_DEVICE_TABLE(of, hibvt_pwm_of_match);
 -- 
-2.17.2
+2.17.1
 
