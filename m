@@ -6,74 +6,82 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B78DC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:08:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7394AC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:08:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A2CE217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:08:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FBD62147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:08:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729247AbfBSQH7 (ORCPT
+        id S1729080AbfBSQIq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:07:59 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:33941 "EHLO
+        Tue, 19 Feb 2019 11:08:46 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:34062 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726321AbfBSQH7 (ORCPT
+        with ESMTP id S1726546AbfBSQIq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:07:59 -0500
+        Tue, 19 Feb 2019 11:08:46 -0500
 Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1gw7w4-00016W-8D; Tue, 19 Feb 2019 17:07:56 +0100
-Date:   Tue, 19 Feb 2019 17:07:56 +0100
+        id 1gw7wp-0001FM-2l; Tue, 19 Feb 2019 17:08:43 +0100
+Date:   Tue, 19 Feb 2019 17:08:43 +0100
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-rt-users@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH RT 3/2] softirq: Avoid "local_softirq_pending" messages if
- task is in cpu_chill()
-Message-ID: <20190219160755.fn4c65ph4lzqflw2@linutronix.de>
+Subject: [PATCH RT 4/2] hrtimer: Don't lose state in cpu_chill()
+Message-ID: <20190219160842.qxpwicoa5tzq4njo@linutronix.de>
 References: <20190218163107.iwdpngwmbs6xyk7x@linutronix.de>
  <20190218163137.cmor4ek3odus5m6j@linutronix.de>
+ <20190219160755.fn4c65ph4lzqflw2@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190218163137.cmor4ek3odus5m6j@linutronix.de>
+In-Reply-To: <20190219160755.fn4c65ph4lzqflw2@linutronix.de>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the softirq thread enters cpu_chill() then ->state is UNINTERRUPTIBLE
-and has no ->pi_blocked_on set and so its mask is not taken into account.
+In cpu_chill() the state is set to TASK_UNINTERRUPTIBLE and a timer is
+programmed. On return the state is always TASK_RUNNING which means we
+lose the state if it was something other than RUNNING. Also
+set_current_state() sets ->task_state_change to within cpu_chill() which
+is not expected.
 
-->sleeping_lock is increased by cpu_chill() since it is also requried to
-avoid a splat by RCU in case cpu_chill() is used while a RCU-read lock
-is held. Use the same mechanism for the softirq-pending check.
+Save the task state on entry and restore it on return. Simply set the
+state in order to avoid updating ->task_state_change.
 
 Cc: stable-rt@vger.kernel.org
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- kernel/softirq.c | 5 ++++-
+ kernel/time/hrtimer.c | 5 ++++-
  1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/softirq.c b/kernel/softirq.c
-index 48ae7dae81b9c..25bcf2f2714ba 100644
---- a/kernel/softirq.c
-+++ b/kernel/softirq.c
-@@ -105,9 +105,12 @@ static bool softirq_check_runner_tsk(struct task_struct *tsk,
- 	 * _before_ it sets pi_blocked_on to NULL under
- 	 * tsk->pi_lock. So we need to check for both: state
- 	 * and pi_blocked_on.
-+	 * The test against UNINTERRUPTIBLE + ->sleeping_lock is in case the
-+	 * task does cpu_chill().
- 	 */
- 	raw_spin_lock(&tsk->pi_lock);
--	if (tsk->pi_blocked_on || tsk->state == TASK_RUNNING) {
-+	if (tsk->pi_blocked_on || tsk->state == TASK_RUNNING ||
-+	    (tsk->state == TASK_UNINTERRUPTIBLE && tsk->sleeping_lock)) {
- 		/* Clear all bits pending in that task */
- 		*pending &= ~(tsk->softirqs_raised);
- 		ret = true;
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index 851b2134e77f4..6f2736ec4b8ef 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -1902,15 +1902,18 @@ void cpu_chill(void)
+ {
+ 	ktime_t chill_time;
+ 	unsigned int freeze_flag = current->flags & PF_NOFREEZE;
++	long saved_state;
+ 
++	saved_state = current->state;
+ 	chill_time = ktime_set(0, NSEC_PER_MSEC);
+-	set_current_state(TASK_UNINTERRUPTIBLE);
++	__set_current_state_no_track(TASK_UNINTERRUPTIBLE);
+ 	current->flags |= PF_NOFREEZE;
+ 	sleeping_lock_inc();
+ 	schedule_hrtimeout(&chill_time, HRTIMER_MODE_REL_HARD);
+ 	sleeping_lock_dec();
+ 	if (!freeze_flag)
+ 		current->flags &= ~PF_NOFREEZE;
++	__set_current_state_no_track(saved_state);
+ }
+ EXPORT_SYMBOL(cpu_chill);
+ #endif
 -- 
 2.20.1
 
