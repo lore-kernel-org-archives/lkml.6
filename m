@@ -2,152 +2,94 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6064EC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 438FCC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:00:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DF8121903
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:59:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A64A92146F
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:00:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="N56/Vu0l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727903AbfBSJ74 (ORCPT
+        id S1728116AbfBSKAQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 04:59:56 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36346 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726969AbfBSJ7z (ORCPT
+        Tue, 19 Feb 2019 05:00:16 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45862 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726800AbfBSKAP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 04:59:55 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1J9sHe5082526
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 04:59:54 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qrfg0rm8h-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 04:59:54 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
-        Tue, 19 Feb 2019 09:59:52 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 19 Feb 2019 09:59:49 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1J9xl8C58523690
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 19 Feb 2019 09:59:47 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 75DC342045;
-        Tue, 19 Feb 2019 09:59:47 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 06C4B4203F;
-        Tue, 19 Feb 2019 09:59:47 +0000 (GMT)
-Received: from oc2783563651 (unknown [9.152.97.246])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 19 Feb 2019 09:59:46 +0000 (GMT)
-Date:   Tue, 19 Feb 2019 10:59:46 +0100
-From:   Halil Pasic <pasic@linux.ibm.com>
-To:     Tony Krowiak <akrowiak@linux.ibm.com>
-Cc:     Pierre Morel <pmorel@linux.ibm.com>, borntraeger@de.ibm.com,
-        alex.williamson@redhat.com, cohuck@redhat.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, frankja@linux.ibm.com, david@redhat.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        freude@linux.ibm.com, mimu@linux.ibm.com
-Subject: Re: [PATCH v3 6/9] vfio: ap: register IOMMU VFIO notifier
-In-Reply-To: <3ce0a3a0-22fb-c418-321d-7e6e3af5b66c@linux.ibm.com>
-References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
-        <1550152269-6317-7-git-send-email-pmorel@linux.ibm.com>
-        <3ce0a3a0-22fb-c418-321d-7e6e3af5b66c@linux.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021909-0012-0000-0000-000002F774A6
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021909-0013-0000-0000-0000212F00D2
-Message-Id: <20190219105946.29e510a6@oc2783563651>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-19_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902190074
+        Tue, 19 Feb 2019 05:00:15 -0500
+Received: by mail-pg1-f194.google.com with SMTP id y4so9893029pgc.12
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 02:00:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=AWF8WmIcXsXp+3YLVFL2KKMhmk7vP1sOCsapR6uiVtg=;
+        b=N56/Vu0l+xENo+8kFkZvIw8yq6zRsidMWIqgKNjJPeo5T1P0g4SmvkuKEuSCt2PYGV
+         zysJebYmvbUmaAD3ChR+0NiH97H5u0Gbq+G3zWIEzr17tiN9rBgxANsIildfEkbzS9au
+         RK7uz6GnDD/pYGHiYkwBAw9zaIQnqYxgSeBNYD2VklfLiVHr20Oe5C/ncYFY2Xp0TDkM
+         n2hK66Rl6k4rZFraPQ+lBb0cHOPRvurH336Gv8842DEZYdOt5P489oOvNIJaAmYltpO5
+         6lv6DpSSkH6HrKscYLG5acGrmuWdbqtx2c+gEWavVtW6nRJ5WVQIe4TMDcAZVzXCqpXp
+         xI9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=AWF8WmIcXsXp+3YLVFL2KKMhmk7vP1sOCsapR6uiVtg=;
+        b=jKr62j8z4zBQLrlj4RNsDXVQ8CMiwfn5o/XQVDzv5bwwcme5LmL+tDINyvmPByBQrl
+         +WzHt6UOlxZ+i2G+VdwU+gU2VlOAyz1NqGQQ9E0AME++2baSSrSJPUgrgjfvB3ai1p6G
+         rsaSC+H8tFWi09qzeGRfqfIL/CYH2zToCoHqC3hwLsWuig5mjoWpIBitU5IE0Msed1x8
+         krSdn+3sreY/GRkcnaLy1iJyJq1lpk+58gq+h4B+821vzFHYWkTko1yTDfyIRtZ44n7T
+         pjdefiXOx6NG9GfnCdsF5si9K/9vQ8rOYxtL2ksWfHsOsQiAY2uGqkg8TPs2Hnv625cS
+         Bu9A==
+X-Gm-Message-State: AHQUAuY2Lzimd+y4FGPfHlEwHZvQPl6WuUCuE3Psrfs5eLi3i/R1fv2H
+        xnW6rq9Kcl9pHuCIquiyenBNYw==
+X-Google-Smtp-Source: AHgI3IYyTk226rS2N5xSvS9+RETGsgZNGECtwDJfN6EglyJ7rI9nd2j6jXC6MRuiJ2oMqJjVqQRVlg==
+X-Received: by 2002:a62:6f06:: with SMTP id k6mr16476958pfc.257.1550570414754;
+        Tue, 19 Feb 2019 02:00:14 -0800 (PST)
+Received: from localhost.localdomain (220-133-186-239.HINET-IP.hinet.net. [220.133.186.239])
+        by smtp.gmail.com with ESMTPSA id m20sm18229216pgv.93.2019.02.19.02.00.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Feb 2019 02:00:14 -0800 (PST)
+From:   Axel Lin <axel.lin@ingics.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     James Ban <James.Ban.opensource@diasemi.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH 1/3] regulator: pv88060: Fix array out-of-bounds access
+Date:   Tue, 19 Feb 2019 18:00:00 +0800
+Message-Id: <20190219100002.29026-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 15 Feb 2019 17:55:35 -0500
-Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+Fix off-by-one while iterating current_limits array.
+The valid index should be 0 ~ n_current_limits -1.
 
-> On 2/14/19 8:51 AM, Pierre Morel wrote:
-> > To be able to use the VFIO interface to facilitate the
-> > mediated device memory pining/unpining we need to register
-> > a notifier for IOMMU.
-> > 
-> > Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> > ---
-> >   drivers/s390/crypto/vfio_ap_ops.c     | 64 +++++++++++++++++++++++++++++++----
-> >   drivers/s390/crypto/vfio_ap_private.h |  2 ++
-> >   2 files changed, 60 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-> > index 1851b24..6eddc2c 100644
-> > --- a/drivers/s390/crypto/vfio_ap_ops.c
-> > +++ b/drivers/s390/crypto/vfio_ap_ops.c
+Fixes: f307a7e9b7af ("regulator: pv88060: new regulator driver")
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/regulator/pv88060-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[..]
-  	struct vfio_ap_queue *q;
-> > @@ -967,12 +996,32 @@ static int vfio_ap_mdev_open(struct mdev_device *mdev)
-> >   
-> >   	ret = vfio_register_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
-> >   				     &events, &matrix_mdev->group_notifier);
-> > -	if (ret) {
-> > -		module_put(THIS_MODULE);
-> > -		return ret;
-> > -	}
-> > +	if (ret)
-> > +		goto err_group;
-> > +
-> > +	matrix_mdev->iommu_notifier.notifier_call = vfio_ap_mdev_iommu_notifier;
-> > +	events = VFIO_IOMMU_NOTIFY_DMA_UNMAP;
-> > +
-> > +	ret = vfio_register_notifier(mdev_dev(mdev), VFIO_IOMMU_NOTIFY,
-> > +				     &events, &matrix_mdev->iommu_notifier);
-> > +	if (ret)
-> > +		goto err_iommu;
-> > +
-> > +	ret = vfio_ap_associate_queues(matrix_mdev);
-> > +	if (ret)
-> > +		goto err_associate;
-> 
-> I think the matrix_mdev should be associated with queues when an 
-> assignment of an adapter or domain is made to the mdev device via its
-> sysfs interfaces. I say this because assigning an adapter or domain to
-> an mdev device effectively grants ownership of any additional AP queues 
-> added to the mdev device's AP matrix as a result of the assignment. It
-> only makes sense to assign ownership to the vfio_ap_queue objects
-> representing the queues at that time. If an adapter or domain is
-> dynamically assigned while a guest is using the affected queues, then
-> the associations will have to be made at that time and this code will
-> likely go bye bye.
->
-
-
-Actually, we need the stuff in vfio_ap_queues only if the guest is
-offered to  decides to use AP adaper interrupts. I would prefer to have
-it around only when needed: as long as we have the nib pinned for any
-given queue. Is there a reason why not to do so? 
-
-Regards,
-Halil
+diff --git a/drivers/regulator/pv88060-regulator.c b/drivers/regulator/pv88060-regulator.c
+index d5dab9bef378..da6ed723e398 100644
+--- a/drivers/regulator/pv88060-regulator.c
++++ b/drivers/regulator/pv88060-regulator.c
+@@ -135,7 +135,7 @@ static int pv88060_set_current_limit(struct regulator_dev *rdev, int min,
+ 	int i;
  
-[..]
+ 	/* search for closest to maximum */
+-	for (i = info->n_current_limits; i >= 0; i--) {
++	for (i = info->n_current_limits - 1; i >= 0; i--) {
+ 		if (min <= info->current_limits[i]
+ 			&& max >= info->current_limits[i]) {
+ 			return regmap_update_bits(rdev->regmap,
+-- 
+2.17.1
 
