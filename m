@@ -2,111 +2,68 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7A3C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 18:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A1FC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 18:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 291132147C
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 18:56:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y6iqVvlE"
+	by mail.kernel.org (Postfix) with ESMTP id 0E1152147C
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 18:57:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729102AbfBSS4N (ORCPT
+        id S1727529AbfBSS5z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 13:56:13 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44630 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726078AbfBSS4N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 13:56:13 -0500
-Received: by mail-pg1-f195.google.com with SMTP id y1so10537099pgk.11
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 10:56:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=eCJsi/sClMlcGZSq/RzjhArlVntOHBohk5vpJvo7ZjM=;
-        b=Y6iqVvlEO/r1Y5Dwp65PqH+aKevXK9DYc8MX1wthWIyEg4LRTrkVqzH+CtXq/FHdg6
-         DMBmKqcIxWwqjpr7R2ZBBN2L6JEC7Vn7uvWVwBcsYqTRxxBQRbyoDubTAtMfAlutq/jx
-         0n/52RLdCorJ+zjlCIreYyN5/EeENNsKUI67oFSUVc0FL9qvxVyzPxT9uzg0k9Ktxixn
-         XudFdFC/jhKJWejH3OgbnB54z7DuH/5Nh0t6rkZTjI6Lrw38K3AxDx4sdKjESRHrbch2
-         SjXHuURWHFUMzlYzh2VFs4IEjAOUvv/O4RDGsyV8Btz+wsPpvJblGE0zLxemae3Gh0yh
-         tvCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eCJsi/sClMlcGZSq/RzjhArlVntOHBohk5vpJvo7ZjM=;
-        b=XF3cMtU9DTBRVTR3utTCEoflIYqvrXkVOYprBC/ybA4KKQCThWzxMHUeJS4pqDEF0w
-         IgVdJqs6yWIRkry8hbLdt4MfHvUUPYDkHBm2c1LDm4SSZ5Gc5o0XWi7cEfUGIhXJkVVi
-         14aAHWql9bsF+9LqNBpcGfcGRiQvlbZhzDNb4Nqjiio5W8VhIF6FoCNjTS0vLTAKxkqD
-         dfwG15+mEqIbG0x34zCtEPzGQsKYGM4iRmz45rsvrD0Lmn0fVYBvcY8YhaSWZrgSSPbj
-         A3DIbJwGkS/ghiRCrX1gT8uv3bG2x3gu3e4zU0F2KxdQNjN0zAKM0hEsJwBYAqPHEeoF
-         SwAg==
-X-Gm-Message-State: AHQUAubkRgeCHSOneIaG55C/oMF0V21/lZWirPZBazAOOETOsRZsX3qH
-        L5/sdF4FpahkpGiGYLT00by2pMyA
-X-Google-Smtp-Source: AHgI3Ia8YGCOHNXxfyPw+ya7GUVeO9IAeGhZymLzD9yXk+drMvtXm3p9oSvcW81vx75zs4BQcHnOUA==
-X-Received: by 2002:a65:628e:: with SMTP id f14mr25326479pgv.193.1550602572110;
-        Tue, 19 Feb 2019 10:56:12 -0800 (PST)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id w10sm18334151pgr.42.2019.02.19.10.56.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Feb 2019 10:56:11 -0800 (PST)
-Date:   Tue, 19 Feb 2019 10:56:07 -0800
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Viorel Suman <viorel.suman@nxp.com>
-Cc:     Timur Tabi <timur@kernel.org>, Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Viorel Suman <viorel.suman@gmail.com>
-Subject: Re: [PATCH] ASoC: fsl_spdif: fix TXCLK_DF mask
-Message-ID: <20190219185606.GA13373@Asurada-Nvidia.nvidia.com>
-References: <1550499117-11801-1-git-send-email-viorel.suman@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1550499117-11801-1-git-send-email-viorel.suman@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Tue, 19 Feb 2019 13:57:55 -0500
+Received: from mga02.intel.com ([134.134.136.20]:40390 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725875AbfBSS5z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 13:57:55 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2019 10:57:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,388,1544515200"; 
+   d="scan'208";a="117434277"
+Received: from tthayer-hp-z620.an.intel.com ([10.122.105.146])
+  by orsmga006.jf.intel.com with ESMTP; 19 Feb 2019 10:57:53 -0800
+From:   thor.thayer@linux.intel.com
+To:     bp@alien8.de, dinguyen@kernel.org, linux@armlinux.org.uk,
+        mchehab@kernel.org, james.morse@arm.com
+Cc:     thor.thayer@linux.intel.com, linux-edac@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] Distinct SOCFPGA SDRAM EDAC config
+Date:   Tue, 19 Feb 2019 12:59:57 -0600
+Message-Id: <1550602799-22737-1-git-send-email-thor.thayer@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 02:12:17PM +0000, Viorel Suman wrote:
-> According to RM SPDIF TXCLK_DF mask is 7-bit wide.
-> 
-> Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
+From: Thor Thayer <thor.thayer@linux.intel.com>
 
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Most users want EDAC support so make it the default.
 
-> ---
->  sound/soc/fsl/fsl_spdif.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/fsl/fsl_spdif.h b/sound/soc/fsl/fsl_spdif.h
-> index 7666dab..e6c61e0 100644
-> --- a/sound/soc/fsl/fsl_spdif.h
-> +++ b/sound/soc/fsl/fsl_spdif.h
-> @@ -152,7 +152,7 @@ enum spdif_gainsel {
->  #define STC_TXCLK_ALL_EN_MASK		(1 << STC_TXCLK_ALL_EN_OFFSET)
->  #define STC_TXCLK_ALL_EN		(1 << STC_TXCLK_ALL_EN_OFFSET)
->  #define STC_TXCLK_DF_OFFSET		0
-> -#define STC_TXCLK_DF_MASK		(0x7ff << STC_TXCLK_DF_OFFSET)
-> +#define STC_TXCLK_DF_MASK		(0x7f << STC_TXCLK_DF_OFFSET)
->  #define STC_TXCLK_DF(x)		((((x) - 1) << STC_TXCLK_DF_OFFSET) & STC_TXCLK_DF_MASK)
->  #define STC_TXCLK_SRC_MAX		8
->  
-> -- 
-> 2.7.4
-> 
+SOCFPGA SDRAM EDAC reporting was enabled by the parent EDAC
+config (CONFIG_ALTERA_EDAC) since initial customers always
+wanted SDRAM EDAC enabled.
+There are cases where the SDRAM needs to be disabled while
+the other block EDACs remain enabled.
+This patch set 1) splits out the SDRAM EDAC into a separate
+config and 2) enables all the EDAC blocks by default for
+32 bit SOCFPGA.
+
+Thor Thayer (2):
+  EDAC, altera: Add separate SDRAM EDAC config
+  ARM: socfpga_defconfig: enable EDAC by default
+
+ arch/arm/configs/socfpga_defconfig | 36 ++++++++++++--------
+ drivers/edac/Kconfig               | 14 ++++++--
+ drivers/edac/altera_edac.c         | 67 ++++++++++++++++++++------------------
+ 3 files changed, 69 insertions(+), 48 deletions(-)
+
+-- 
+2.7.4
+
