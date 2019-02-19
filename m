@@ -2,455 +2,86 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E6EC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 07:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ADABC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 07:48:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7D6D21848
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 07:48:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 248F221904
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 07:48:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727224AbfBSHsG (ORCPT
+        id S1727313AbfBSHsL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 02:48:06 -0500
-Received: from mga12.intel.com ([192.55.52.136]:4929 "EHLO mga12.intel.com"
+        Tue, 19 Feb 2019 02:48:11 -0500
+Received: from mga01.intel.com ([192.55.52.88]:22919 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725730AbfBSHsF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 02:48:05 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1727233AbfBSHsK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 02:48:10 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2019 23:48:04 -0800
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2019 23:48:09 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,387,1544515200"; 
-   d="scan'208";a="144620270"
-Received: from joy-optiplex-7040.sh.intel.com ([10.239.13.9])
-  by fmsmga002.fm.intel.com with ESMTP; 18 Feb 2019 23:48:02 -0800
-From:   Yan Zhao <yan.y.zhao@intel.com>
-To:     intel-gvt-dev@lists.freedesktop.org, alex.williamson@redhat.com
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH 0/8] VFIO Device states interface in GVT
-Date:   Tue, 19 Feb 2019 02:42:42 -0500
-Message-Id: <20190219074242.14015-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.17.1
+   d="scan'208";a="147957512"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 18 Feb 2019 23:48:07 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 19 Feb 2019 09:48:06 +0200
+Date:   Tue, 19 Feb 2019 09:48:06 +0200
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH -next] usb: typec: mux: Fix unsigned comparison with less
+ than zero
+Message-ID: <20190219074806.GC1626@kuha.fi.intel.com>
+References: <20190219065750.9004-1-yuehaibing@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190219065750.9004-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset provides GVT vGPU with device states control and
-interfaces to get/set device data.
+On Tue, Feb 19, 2019 at 02:57:50PM +0800, YueHaibing wrote:
+> The return from the call to fwnode_property_read_u16_array is int, 
+> it can be a negative error code however this is being assigned to
+> an size_t variable 'nval', hence the check is always false.
+> Fix this by making 'nval' an int.
+> 
+> Detected by Coccinelle ("Unsigned expression compared with
+> zero: nval < 0")
+> 
+> Fixes: 96a6d031ca99 ("usb: typec: mux: Find the muxes by also matching against the device node")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
+Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Desgin of device state control and interfaces to get/set device data
-====================================================================
+> ---
+>  drivers/usb/typec/mux.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/mux.c b/drivers/usb/typec/mux.c
+> index a5947d9..54d7497 100644
+> --- a/drivers/usb/typec/mux.c
+> +++ b/drivers/usb/typec/mux.c
+> @@ -126,7 +126,7 @@ static void *typec_mux_match(struct device_connection *con, int ep, void *data)
+>  {
+>  	const struct typec_altmode_desc *desc = data;
+>  	struct typec_mux *mux;
+> -	size_t nval;
+> +	int nval;
+>  	bool match;
+>  	u16 *val;
+>  	int i;
 
-CODE STRUCTURES
----------------
-/* Device State region type and sub-type */
-#define VFIO_REGION_TYPE_DEVICE_STATE           (1 << 1)
-#define VFIO_REGION_SUBTYPE_DEVICE_STATE_CTL       (1)
-#define VFIO_REGION_SUBTYPE_DEVICE_STATE_DATA_CONFIG      (2)
-#define VFIO_REGION_SUBTYPE_DEVICE_STATE_DATA_MEMORY      (3)
-#define VFIO_REGION_SUBTYPE_DEVICE_STATE_DATA_DIRTYBITMAP (4)
-
-#define VFIO_DEVICE_STATE_INTERFACE_VERSION 1
-#define VFIO_DEVICE_DATA_CAP_DEVICE_MEMORY 1
-#define VFIO_DEVICE_DATA_CAP_SYSTEM_MEMORY 2
-
-#define VFIO_DEVICE_STATE_RUNNING 0 
-#define VFIO_DEVICE_STATE_STOP 1
-#define VFIO_DEVICE_STATE_LOGGING 2
-
-#define VFIO_DEVICE_DATA_ACTION_GET_BUFFER 1
-#define VFIO_DEVICE_DATA_ACTION_SET_BUFFER 2
-
-struct vfio_device_state_ctl {
-	__u32 version;	  /* ro, version of device control interface*/
-	__u32 device_state;       /* VFIO device state, wo */
-	__u32 caps;		 /* ro */
-        struct {
-		__u32 action;  /* wo, GET_BUFFER or SET_BUFFER */ 
-		__u64 size;    /*rw, total size of device config*/
-	} device_config;
-	struct {
-		__u32 action;    /* wo, GET_BUFFER or SET_BUFFER */ 
-		__u64 size;     /* rw, total size of device memory*/  
-                __u64 pos;/*chunk offset in total buffer of device memory*/
-	} device_memory;
-	struct {
-		__u64 start_addr; /* wo */
-		__u64 page_nr;   /* wo */
-	} system_memory;
-};
-
-DEVICE DATA
------------
-A VFIO device's data can be divided into 3 categories: device config,
-device memory and system memory dirty pages.
-
-Device Config: such kind of data like MMIOs, page tables...
-               Every device is supposed to possess device config data.
-               Usually the size of device config data is small (no big
-               than 10M), and it needs to be loaded in certain strict
-               order.
-               Therefore no dirty data logging is enabled for device
-               config and it must be got/set as a whole.
-
-Device Memory: device's internal memory, standalone and outside system
-               memory.  It is usually very big.
-               Not all device has device memory. Like IGD only uses system
-               memory and has no device memory.
-
-System Memory Dirty Pages: A device can produce dirty pages in system
-               memory. 
-
-
-DEVICE STATE REGIONS
----------------------
-A VFIO device driver needs to register two mandatory regions and optionally
-another two regions if it plans to support device state management.
-
-So, there are up to four regions in total.
-one is control region (region CTL) which is accessed via read/write system
-call from user space;
-the left three are data regions which are mmaped into user space and can be
-accessed in the same way as accessing memory from user space.
-(If data regions failed to be mmaped into user space, the way of read/write
-system calls from user space is also valid).
-
-1. region CTL:
-          Mandatory.
-          This is a control region.
-          Its layout is defined in struct vfio_device_state_ctl.
-          Reading from this region can get version, capabilities and data
-          size of device state interfaces.
-          Writing to this region can set device state, data size and
-          choose which interface to use, i.e, among
-          "get device config buffer", "set device config buffer",
-          "get device memory buffer", "set device memory buffer",
-          "get system memory dirty bitmap". 
-2. region DEVICE_CONFIG
-          Mandatory.
-          This is a data region that holds device config data.
-          It is able to be mmaped into user space.
-3. region DEVICE_MEMORY
-          Optional.
-          This is a data region that holds device memory data.
-          It is able to be mmaped into user space.
-4. region DIRTY_BITMAP
-          Optional.
-          This is a data region that holds bitmap of dirty pages in system
-          memory that a VFIO devices produces.
-          It is able to be mmaped into user space.
-
-
-DEVICE STATES
--------------
-Four states are defined for a VFIO device:
-        RUNNING, RUNNING & LOGGING, STOP & LOGGING, STOP.
-They can be set by writing to device_state field of vfio_device_state_ctl
-region.
-
-LOGGING state is a special state that it CANNOT exist independently.
-It must be set alongside with state RUNNING or STOP, i.e, 
-        RUNNING & LOGGING, STOP & LOGGING
-
-It is used for dirty data logging both for device memory and system memory.
-
-LOGGING only impacts device/system memory.
-Device config should be always accessible and return whole config snapshot
-regardless of LOGGING state.
-
-Typical state transition flows for VFIO devices are:
-    (a) RUNNING --> RUNNING & LOGGING --> STOP & LOGGING --> STOP
-    (b) RUNNING --> STOP --> RUNNING
-
-RUNNING: In this state, a VFIO device is in active state ready to receive
-         commands from device driver.
-         interfaces includes "get device config buffer", "get device config
-         size", "get device memory buffer", "get device memory size"
-         return whole data snapshot.
-         "get system memory dirty bitmap" returns empty bitmap.
-         It is the default state that a VFIO device enters initially.
-
-STOP:	 In this state, a VFIO device is deactivated to interact with
-         device driver.
-         "get device config buffer", "get device config size"
-         "get device memory buffer", "get device memory size",
-          return whole data snapshot.
-         "get system memory dirty bitmap" returns empty bitmap.
-
-RUNNING & LOGGING: In this state, a VFIO device is in active state.
-         "get device config buffer", "get device config size" returns whole
-         snapshot of device config. 
-         "get device memory buffer", "get device memory size", "get system
-         memory dirty bitmap" returns dirty data since last call to those
-         interfaces.
-
-STOP & LOGGING: In this state, the VFIO device is deactivated.
-         "get device config buffer", "get device config size" returns whole
-         snapshot of device config. 
-         "get device memory buffer", "get device memory size", "get system
-         memory dirty bitmap" returns dirty data since last call to those
-         interfaces.
-
-Note:
-The reason why RUNNING is the default state is that device's active state
-must not depend on device state interface.
-It is possible that region vfio_device_state_ctl fails to got registered.
-In that condition, a device needs be in active state by default. 
-
-
-DEVICE DATA CAPS
-------------------
-Device Config capability is by default on, no need to set this cap.
-
-For devices that have devcie memory, it is required to expose DEVICE_MEMORY
-capability.
-#define VFIO_DEVICE_DATA_CAP_DEVICE_MEMORY 1
-
-For devices producing dirty pages in system memory, it is required to
-expose cap SYSTEM_MEMORY in order to get dirty bitmap in certain range of
-system memory.
-#define VFIO_DEVICE_DATA_CAP_SYSTEM_MEMORY 2
-
-see section "DEVICE STATE INTERFACE" for "get caps" interface to get device
-data caps from userspace VFIO.
-
-
-DEVICE STATE INTERFACES
-------------------------
-1. get version
-   (1) user space calls read system call on "version" field of region CTL.
-   (2) VFIO driver writes version number of device state interfaces to the
-       "version" field of region CTL.
-
-2. get caps
-   (1) user space calls read system call on "caps" field of region CTL.
-   (2) if a VFIO device has huge device memory, VFIO driver reports
-       VFIO_DEVICE_DATA_CAP_DEVICE_MEMORY in "caps" field of region CTL.
-       if a VFIO device produces dirty pages in system memory, VFIO driver
-       reports VFIO_DEVICE_DATA_CAP_SYSTEM_MEMORY in "caps" field of
-       region CTL.
-
-3. set device state
-   (1) user space calls write system call on "device_state" field of region
-       CTL.
-   (2) device state transitions as:
-
-       RUNNING -- start dirty data logging --> RUNNING & LOGGING 
-       RUNNING -- deactivate --> STOP
-       RUNNING -- deactivate & start dirty data longging --> STOP & LOGGING
-       RUNNING & LOGGING -- stop dirty data logging --> RUNNING
-       RUNNING & LOGGING -- deactivate --> STOP & LOGGING
-       RUNNING & LOGGING -- deactivate & stop dirty data logging --> STOP
-       STOP -- activate --> RUNNING
-       STOP -- start dirty data logging --> STOP & LOGGING
-       STOP -- activate & start dirty data logging --> RUNNING & LOGGING
-       STOP & LOGGING -- stop dirty data logging --> STOP
-       STOP & LOGGING -- activate --> RUNNING & LOGGING
-       STOP & LOGGING -- activate & stop dirty data logging --> RUNNING
-
-4. get device config size
-   (1) user space calls read system call on "device_config.size" field of
-       region CTL for the total size of device config snapshot.
-   (2) VFIO driver writes device config data's total size in
-       "device_config.size" field of region CTL.
-
-5. set device config size
-   (1) user space calls write system call.
-       total size of device config snapshot --> "device_config.size" field
-       of region CTL.
-   (2) VFIO driver reads device config data's total size from
-       "device_config.size" field of region CTL.
-
-6 get device config buffer
-   (1) user space calls write system call.
-       "GET_BUFFER" --> "device_config.action" field of region CTL.
-   (2) VFIO driver
-       a. gets whole snapshot for device config 
-       b. writes whole device config snapshot to region
-       DEVICE_CONFIG.
-   (3) user space reads the whole of device config snapshot from region
-       DEVICE_CONFIG.
- 
-7. set device config buffer
-   (1) user space writes whole of device config data to region
-       DEVICE_CONFIG.
-   (2) user space calls write system call.
-       "SET_BUFFER" --> "device_config.action" field of region CTL.
-   (3) VFIO driver loads whole of device config from region DEVICE_CONFIG.
-
-8. get device memory size
-   (1) user space calls read system call on "device_memory.size" field of
-       region CTL for device memory size.
-   (2) VFIO driver
-       a. gets device memory snapshot (in state RUNNING or STOP), or
-          gets device memory dirty data (in state RUNNING & LOGGING or
-          state STOP & LOGGING)
-       b. writes size in "device_memory.size" field of region CTL
- 
-9. set device memory size
-   (1) user space calls write system call on "device_memory.size" field of
-       region CTL to set total size of device memory snapshot.
-   (2) VFIO driver reads device memory's size from "device_memory.size"
-       field of region CTL.
-
-
-10. get device memory buffer
-   (1) user space calls write system.
-       pos --> "device_memory.pos" field of region CTL,
-       "GET_BUFFER" --> "device_memory.action" field of region CTL.
-       (pos must be 0 or multiples of length of region DEVICE_MEMORY).
-   (2) VFIO driver writes N'th chunk of device memory snapshot/dirty data
-       to region DEVICE_MEMORY.
-       (N equals to pos/(region length of DEVICE_MEMORY))
-   (3) user space reads the N'th chunk of device memory snapshot/dirty data
-       from region DEVICE_MEMORY.
- 
-11. set device memory buffer
-   (1) user space writes N'th chunk of device memory snapshot/dirty data to
-       region DEVICE_MEMORY.
-       (N equals to pos/(region length of DEVICE_MEMORY))
-   (2) user space writes pos to "device_memory.pos" field and writes
-       "SET_BUFFER" to "device_memory.action" field of region CTL.
-   (3) VFIO driver loads N'th chunk of device memory snapshot/dirty data
-       from region DEVICE_MEMORY.
-
-12. get system memory dirty bitmap
-   (1) user space calls write system call to specify a range of system
-       memory that querying dirty pages.
-       system memory's start address --> "system_memory.start_addr" field
-       of region CTL,
-       system memory's page count --> "system_memory.page_nr" field of
-       region CTL.
-   (2) if device state is not in RUNNING or STOP & LOGGING,
-       VFIO driver returns empty bitmap; otherwise,
-       VFIO driver checks the page_nr,
-       if it's larger than the size that region DIRTY_BITMAP can support,
-       error returns; if not,
-       VFIO driver returns as bitmap to specify dirty pages that
-       device produces since last query in this range of system memory .
-   (3) usespace reads back the dirty bitmap from region DIRTY_BITMAP.
-
-
-EXAMPLE USAGE
--------------
-Take live migration of a VFIO device as an example to use those device
-state interfaces.
-
-Live migration save path:
-
-(QEMU LIVE MIGRATION STATE --> DEVICE STATE INTERFACE --> DEVICE STATE)
-
-MIGRATION_STATUS_NONE --> VFIO_DEVICE_STATE_RUNNING
- |
-MIGRATION_STATUS_SAVE_SETUP
- |
- .save_setup callback -->
- get device memory size (whole snapshot size)
- get device memory buffer (whole snapshot data)
- set device state --> VFIO_DEVICE_STATE_RUNNING & VFIO_DEVICE_STATE_LOGGING
- |
-MIGRATION_STATUS_ACTIVE
- |
- .save_live_pending callback --> get device memory size (dirty data)
- .save_live_iteration callback --> get device memory buffer (dirty data)
- .log_sync callback --> get system memory dirty bitmap
- |
-(vcpu stops) --> set device state -->
- VFIO_DEVICE_STATE_STOP & VFIO_DEVICE_STATE_LOGGING
- |
-.save_live_complete_precopy callback -->
- get device memory size (dirty data)
- get device memory buffer (dirty data)
- get device config size (whole snapshot size)
- get device config buffer (whole snapshot data)
- |
-.save_cleanup callback -->  set device state --> VFIO_DEVICE_STATE_STOP
-MIGRATION_STATUS_COMPLETED
-
-MIGRATION_STATUS_CANCELLED or
-MIGRATION_STATUS_FAILED
- |
-(vcpu starts) --> set device state --> VFIO_DEVICE_STATE_RUNNING
-
-
-Live migration load path:
-
-(QEMU LIVE MIGRATION STATE --> DEVICE STATE INTERFACE --> DEVICE STATE)
-
-MIGRATION_STATUS_NONE --> VFIO_DEVICE_STATE_RUNNING
- |
-(vcpu stops) --> set device state --> VFIO_DEVICE_STATE_STOP
- |
-MIGRATION_STATUS_ACTIVE
- |
-.load state callback -->
- set device memory size, set device memory buffer, set device config size,
- set device config buffer
- |
-(vcpu starts) --> set device state --> VFIO_DEVICE_STATE_RUNNING
- |
-MIGRATION_STATUS_COMPLETED
-
-
-Patch Orgnization
-=================
-
-The first 6 patches let vGPU view its base ggtt address as starting from
-0. Before vGPU submitting workloads to HW, trap vGPU's workloads, scan
-commands to patch them to start from base address of the ggtt partition
-assiggned to the vGPU.
-
-The latter two patches implements the VFIO device states interfaces.
-Patch 7 implements loading device config data from vGPU and restoring
-device config data into vGPU through GVT's internal interface
-intel_gvt_save_restore.
-
-Patch 8 exposes device states interfaces to userspace VFIO through VFIO
-regions of type VFIO_REGION_TYPE_DEVICE_STATE. Through those regions, user
-space VFIO can get/set device's state and data.
-
-
-Yan Zhao (2):
-  drm/i915/gvt: vGPU device config data save/restore interface
-  drm/i915/gvt: VFIO device states interfaces
-
-Yulei Zhang (6):
-  drm/i915/gvt: Apply g2h adjust for GTT mmio access
-  drm/i915/gvt: Apply g2h adjustment during fence mmio access
-  drm/i915/gvt: Patch the gma in gpu commands during command parser
-  drm/i915/gvt: Retrieve the guest gm base address from PVINFO
-  drm/i915/gvt: Align the guest gm aperture start offset for live
-    migration
-  drm/i915/gvt: Apply g2h adjustment to buffer start gma for dmabuf
-
- drivers/gpu/drm/i915/gvt/Makefile      |   2 +-
- drivers/gpu/drm/i915/gvt/aperture_gm.c |   6 +-
- drivers/gpu/drm/i915/gvt/cfg_space.c   |   3 +-
- drivers/gpu/drm/i915/gvt/cmd_parser.c  |  31 +-
- drivers/gpu/drm/i915/gvt/dmabuf.c      |   3 +
- drivers/gpu/drm/i915/gvt/execlist.c    |   2 +-
- drivers/gpu/drm/i915/gvt/gtt.c         |  25 +-
- drivers/gpu/drm/i915/gvt/gtt.h         |   3 +
- drivers/gpu/drm/i915/gvt/gvt.c         |   1 +
- drivers/gpu/drm/i915/gvt/gvt.h         |  48 +-
- drivers/gpu/drm/i915/gvt/kvmgt.c       | 414 +++++++++++-
- drivers/gpu/drm/i915/gvt/migrate.c     | 863 +++++++++++++++++++++++++
- drivers/gpu/drm/i915/gvt/migrate.h     |  97 +++
- drivers/gpu/drm/i915/gvt/mmio.c        |  13 +
- drivers/gpu/drm/i915/gvt/mmio.h        |   1 +
- drivers/gpu/drm/i915/gvt/vgpu.c        |  11 +-
- include/uapi/linux/vfio.h              |  38 ++
- 17 files changed, 1511 insertions(+), 50 deletions(-)
- create mode 100644 drivers/gpu/drm/i915/gvt/migrate.c
- create mode 100644 drivers/gpu/drm/i915/gvt/migrate.h
+thanks,
 
 -- 
-2.17.1
-
+heikki
