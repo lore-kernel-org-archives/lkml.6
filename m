@@ -2,142 +2,158 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 852F9C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C17C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:09:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F651217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:07:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Pon7C6so";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZXnqq/mu"
+	by mail.kernel.org (Postfix) with ESMTP id 029D6217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:09:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726144AbfBSEHE (ORCPT
+        id S1726213AbfBSEJF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 23:07:04 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:50762 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbfBSEHD (ORCPT
+        Mon, 18 Feb 2019 23:09:05 -0500
+Received: from mail-it1-f200.google.com ([209.85.166.200]:42737 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725764AbfBSEJF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 23:07:03 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3ECF2608D2; Tue, 19 Feb 2019 04:07:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550549222;
-        bh=uGVscGjQWC/OWhL7Z0iOTmLrqP/qoK8+9ZkjZ8C43BM=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=Pon7C6somlLT8MvPhjFlnoGcMVaWSSzK0917xz20W7aIlNxIB1QOe9KZV29+mZlTV
-         t1oclUOyWx5h2OoqLLs05Elv12gHi40B3M7O69Efz8byrD0uSkqC7o5YHqtturlNbp
-         jyfH9qC7vWBnbuUc/RjFWElI3iPNfCrktm8oF5QU=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8F703607DE;
-        Tue, 19 Feb 2019 04:06:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550549221;
-        bh=uGVscGjQWC/OWhL7Z0iOTmLrqP/qoK8+9ZkjZ8C43BM=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=ZXnqq/muos6OXLaGdJKEDSMuxWkMSt5fMt5AiOjzHffWHaINR9QBRRQ9V/cx9OMLz
-         pxj7UO2fOgPNA4pO/jWk/7wtmXJ7XiPfQzP8jRnWvzEoEa5w5bHis+TIGXof08T445
-         pA8fOkp4+Qwf+Sr3hk8lbntI8nmamfR9JC5VaTV8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8F703607DE
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        linux-wireless@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        "moderated list\:ARM\/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Felix Fietkau <nbd@nbd.name>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH 1/2] wireless: mt76: call hweight8() instead of __sw_hweight8()
-References: <1550469571-25933-1-git-send-email-yamada.masahiro@socionext.com>
-        <1550469571-25933-2-git-send-email-yamada.masahiro@socionext.com>
-        <877edxt1f1.fsf@kamboji.qca.qualcomm.com>
-        <87tvh0syq2.fsf@kamboji.qca.qualcomm.com>
-        <87pnrosy29.fsf@kamboji.qca.qualcomm.com>
-        <CAK7LNAQMgFXw=rtpdPNZ=xpLw-SiwKGAgM__Owvqd1EhTCUntQ@mail.gmail.com>
-Date:   Tue, 19 Feb 2019 06:06:54 +0200
-In-Reply-To: <CAK7LNAQMgFXw=rtpdPNZ=xpLw-SiwKGAgM__Owvqd1EhTCUntQ@mail.gmail.com>
-        (Masahiro Yamada's message of "Tue, 19 Feb 2019 10:13:27 +0900")
-Message-ID: <878sycs9pd.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Mon, 18 Feb 2019 23:09:05 -0500
+Received: by mail-it1-f200.google.com with SMTP id j127so88261itj.7
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 20:09:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=YjnQ9Zus/FCA+7QdLz3Th3HUkorcnehB56B8l35aOdI=;
+        b=ad053Z+PFgJKnycc5AdW7zGePOtBglaOmLmCYYEk/U754N41ProAYVRDsgah+f2g//
+         I0u82FGhwNCJNZETg+7JNQnoFosB/CpoFlt58co8uHzY+85ARF+3qxwSpvg8RkalGO4/
+         WN/6EV9cwRvq/wDme6YF9Sf16VwpLLNUjFk6sy0UaU+VBlR2XuYkOQueEQA+m0aR5VMY
+         tRYGxBH10wVF9j5S+mmoicUaodg/ShL8s9t/hROacQOW9alWibaAxt1icb+Sw81XYn94
+         U9ATDMAVR646FxRVXE9G1pFdKSqs4MGpGJGXnFgWjxUKfBRMUTYy68tX7SQkxQM8AEx6
+         WqTw==
+X-Gm-Message-State: AHQUAuYhS2emArx7Q3fwseDc2zkNZq4jPvmIGH/I7J0LfGPtRD0jAn6W
+        0hoRn+gsifbEgAkICA/fe0J9AcwTIp5408xhuPbcGxNtXJ8G
+X-Google-Smtp-Source: AHgI3IbLynI9H0sVKeEI4T4ibbrMWkkxPhkGH9S2YLjkL5l1hT55bdhlVuDff1yfCQgoGfSovu8VbNwVlYtoTEMhF16lCeA++LyC
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a05:660c:708:: with SMTP id l8mr1306300itk.14.1550549343847;
+ Mon, 18 Feb 2019 20:09:03 -0800 (PST)
+Date:   Mon, 18 Feb 2019 20:09:03 -0800
+In-Reply-To: <00000000000055ee31057ce8f277@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d8cfe60582376608@google.com>
+Subject: Re: KASAN: use-after-free Read in addr_handler
+From:   syzbot <syzbot+b358909d8d01556b790b@syzkaller.appspotmail.com>
+To:     danielj@mellanox.com, dledford@redhat.com, jgg@ziepe.ca,
+        leon@kernel.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, parav@mellanox.com,
+        swise@opengridcomputing.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Masahiro Yamada <yamada.masahiro@socionext.com> writes:
+syzbot has found a reproducer for the following crash on:
 
-> On Tue, Feb 19, 2019 at 4:38 AM Kalle Valo <kvalo@codeaurora.org> wrote:
->>
->> Kalle Valo <kvalo@codeaurora.org> writes:
->>
->> > Kalle Valo <kvalo@codeaurora.org> writes:
->> >
->> >> Masahiro Yamada <yamada.masahiro@socionext.com> writes:
->> >>
->> >>> __sw_hweight8() is just internal implementation.
->> >>>
->> >>> Drivers should use the common API, hweight8().
->> >>>
->> >>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> >>
->> >> Acked-by: Kalle Valo <kvalo@codeaurora.org>
->> >>
->> >>> This patch should go to x86 tree along with 2/2.
->> >>>
->> >>> Otherwise, all{yes,mod}config of x86 would be broken.
->> >>>
->> >>> This patch is trivial enough.
->> >>> I want ACK from the net/wireless maintainer
->> >>> so that this can go in via x86 tree.
->> >>
->> >> Sounds good to me, feel free to push via the x86 tree.
->> >
->> > Actually, can you wait a bit? Felix just reminded me that we have a
->> > similar patch pending from Ben Hutchings:
->> >
->> > https://patchwork.kernel.org/patch/10808203/
->> >
->> > And it seems there are two instances of __sw_hweight8, at least in my
->> > wireless-drivers-next tree:
->> >
->> > drivers/net/wireless/mediatek/mt76/mac80211.c: int i, nstream =
->> > __sw_hweight8(dev->antenna_mask);
->> > drivers/net/wireless/mediatek/mt76/mac80211.c: int n_chains =
->> > __sw_hweight8(dev->antenna_mask);
->> >
->> > So we need to think what to do.
->>
->> I think the best would be that Felix applies Ben's patch to the wireless
->> tree and I'll push it to Linus during the next merge window (via
->> net-next). Simpler and less conflicts that way.
->>
->> So Masahiro, could you hold your x86 patch for a while until the mt76
->> patch will be in Linus' tree? That should not take more than two weeks,
->> I think.
->
-> Sure.
-> I will resend 2/2 later.
+HEAD commit:    a3b22b9f11d9 Linux 5.0-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14c5df58c00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7132344728e7ec3f
+dashboard link: https://syzkaller.appspot.com/bug?extid=b358909d8d01556b790b
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1493d4d0c00000
 
-Great, thanks!
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+b358909d8d01556b790b@syzkaller.appspotmail.com
 
--- 
-Kalle Valo
+==================================================================
+BUG: KASAN: use-after-free in __lock_acquire+0x30e0/0x4700  
+kernel/locking/lockdep.c:3215
+Read of size 8 at addr ffff88808bfc1150 by task kworker/u4:5/7685
+
+CPU: 1 PID: 7685 Comm: kworker/u4:5 Not tainted 5.0.0-rc7 #77
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: ib_addr process_one_req
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
+  __lock_acquire+0x30e0/0x4700 kernel/locking/lockdep.c:3215
+  lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:3841
+  __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+  __mutex_lock+0xf7/0x1310 kernel/locking/mutex.c:1072
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
+  addr_handler+0xa5/0x300 drivers/infiniband/core/cma.c:2970
+  process_one_req+0x109/0x680 drivers/infiniband/core/addr.c:643
+  process_one_work+0x98e/0x1790 kernel/workqueue.c:2173
+  worker_thread+0x98/0xe40 kernel/workqueue.c:2319
+  kthread+0x357/0x430 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+
+Allocated by task 27464:
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  __kasan_kmalloc mm/kasan/common.c:496 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
+  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:504
+  kmem_cache_alloc_trace+0x151/0x760 mm/slab.c:3609
+  kmalloc include/linux/slab.h:545 [inline]
+  kzalloc include/linux/slab.h:740 [inline]
+  __rdma_create_id+0x5f/0x4e0 drivers/infiniband/core/cma.c:879
+  ucma_create_id+0x1de/0x640 drivers/infiniband/core/ucma.c:506
+  ucma_write+0x2da/0x3c0 drivers/infiniband/core/ucma.c:1689
+  __vfs_write+0x116/0x8e0 fs/read_write.c:485
+  vfs_write+0x20c/0x580 fs/read_write.c:549
+  ksys_write+0xea/0x1f0 fs/read_write.c:598
+  __do_sys_write fs/read_write.c:610 [inline]
+  __se_sys_write fs/read_write.c:607 [inline]
+  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 27463:
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:458
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:466
+  __cache_free mm/slab.c:3487 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3806
+  rdma_destroy_id+0x723/0xab0 drivers/infiniband/core/cma.c:1849
+  ucma_close+0x115/0x320 drivers/infiniband/core/ucma.c:1770
+  __fput+0x2df/0x8d0 fs/file_table.c:278
+  ____fput+0x16/0x20 fs/file_table.c:309
+  task_work_run+0x14a/0x1c0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+  exit_to_usermode_loop+0x273/0x2c0 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x52d/0x610 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff88808bfc0dc0
+  which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 912 bytes inside of
+  2048-byte region [ffff88808bfc0dc0, ffff88808bfc15c0)
+The buggy address belongs to the page:
+page:ffffea00022ff000 count:1 mapcount:0 mapping:ffff88812c3f0c40 index:0x0  
+compound_mapcount: 0
+flags: 0x1fffc0000010200(slab|head)
+raw: 01fffc0000010200 ffffea000281a888 ffffea0002999e08 ffff88812c3f0c40
+raw: 0000000000000000 ffff88808bfc0540 0000000100000003 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff88808bfc1000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff88808bfc1080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff88808bfc1100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                  ^
+  ffff88808bfc1180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff88808bfc1200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
