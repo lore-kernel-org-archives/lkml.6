@@ -2,70 +2,159 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2591CC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE29DC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB5B02177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:50:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="MkCc7Sif"
+	by mail.kernel.org (Postfix) with ESMTP id 82B532147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:53:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728914AbfBSNuJ (ORCPT
+        id S1728697AbfBSNxF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 08:50:09 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:34480 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726221AbfBSNuI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 08:50:08 -0500
-Received: from zn.tnic (p200300EC2BCDC800C58ECA98EDA20EC9.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:c800:c58e:ca98:eda2:ec9])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4A9FB1EC038F;
-        Tue, 19 Feb 2019 14:50:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1550584207;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=hMMsthxUAhA6hTqzqSgLbL2D/neNfkUCSn0Hhx9jDcY=;
-        b=MkCc7SifxX/797iCERsUDd/ZD2asAd7qtFmc1x+gC3gpsmbFAwYY8Q8OQGd/jmtK+tnGE+
-        oB5QJmNYO5IqbDVBR7vP3S4GfYeXX6/2Sd/fPuyQb9Ky9BBJXTotYeUgzrU3DKQTakwRWb
-        XLa60xAtKPy96zZRnIQ9hyQtiIX7R7c=
-Date:   Tue, 19 Feb 2019 14:50:04 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Ross Lagerwall <ross.lagerwall@citrix.com>,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-efi@vger.kernel.org, Len Brown <lenb@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Huang Ying <ying.huang@intel.com>
-Subject: Re: [PATCH v2 0/2] Fix crash in cper_estatus_check()
-Message-ID: <20190219135004.GC19514@zn.tnic>
-References: <20190128100424.30278-1-ross.lagerwall@citrix.com>
- <2534482.fmfRlZkPUo@aspire.rjw.lan>
+        Tue, 19 Feb 2019 08:53:05 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57732 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727601AbfBSNxF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 08:53:05 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 25B7BAF2D;
+        Tue, 19 Feb 2019 13:53:03 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 63FC21E1570; Tue, 19 Feb 2019 14:53:02 +0100 (CET)
+Date:   Tue, 19 Feb 2019 14:53:02 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     stummala@codeaurora.org
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: huge fsync latencies for a small file on ext4
+Message-ID: <20190219135302.GB27420@quack2.suse.cz>
+References: <b1ba05256affe171c2afca6c3aceeb7a@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2534482.fmfRlZkPUo@aspire.rjw.lan>
+In-Reply-To: <b1ba05256affe171c2afca6c3aceeb7a@codeaurora.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 11:00:49AM +0100, Rafael J. Wysocki wrote:
-> Boris, any comments here?
+Hi!
 
-For both:
+On Tue 19-02-19 15:50:23, stummala@codeaurora.org wrote:
+> I am observing huge fsync latencies for a small file under the below test
+> scenario -
+> 
+> process A -
+> Issue async write of 4GB using dd command (say large_file) on /data mounted
+> with ext4:
+> dd if=/dev/zero of=/data/testfile bs=1M count=4096
+> 
+> process B -
+> In parallel another process wrote a small 4KB data to another file
+> (say, small_file) and has issued fsync on this file.
+> 
+> Problem -
+> The fsync() on 4KB file, is taking upto ~30sec (worst case latency).
+> This is tested on an eMMC based device.
+> 
+> Observations -
+> This happens when the small_file and large_file both are part of the same
+> committing transaction or when the small_file is part of the running
+> transaction
+> while large_file is part of the committing transaction.
+> 
+> During the commit of a transaction which includes large_file, the jbd2
+> thread
+> does journal_finish_inode_data_buffers() by calling
+> filemap_fdatawait_keep_errors() on the file's inode address space. While
+> this is
+> happening, if the writeback thread is running in parallel for the
+> large_file, then
+> filemap_fdatawait_keep_errors() could potentially run in a loop of all the
+> pages (upto 4GB of data) and also wait for all the file's data to be written
+> to the disk in the current transaction context itself. At the time
+> of calling journal_finish_inode_data_buffers(), the file size is of only
+> 150MB.
+> and by the time filemap_fdatawait_keep_errors() returns, the file size is
+> 4GB
+> and the page index also points to 4GB file offset in
+> __filemap_fdatawait_range(), indicating that is has scanned and waited for
+> writeback
+> all the pages upto 4GB and not just 150MB.
 
-Acked-by: Borislav Petkov <bp@suse.de>
+Thanks for the detailed analysis! I'm somewhat surprised that the flusher
+is able to submit new batch of pages for writeback faster than
+__filemap_fdatawait_range() is scanning the radix tree but it is certainly
+a possibility.
 
+> Ideally, I think the jbd2 thread should have waited for only the amount of
+> data
+> it has submitted as part of the current transaction and not to wait for the
+> on-going pages that are getting tagged for writeback in parallel in another
+> context.
+> So along these lines, I have tried to use the inode's size at the time of
+> calling
+> journal_finish_inode_data_buffers() as below -
+
+One has to be really careful when using i_size like this. By the time the
+transaction is committing, i_size could have been reduced from the value at
+the time page writeback was issued. And that change will be journalled only
+in the following transaction. So if the system crashes in the wrong moment,
+user could see uninitialized blocks between new_size and old_size after
+journal replay. So I don't think your patch is really correct.
+
+Ted has outlined a plan how to get rid of data=ordered limitations [1] and
+thus also this problem. It is quite some work but you're certainly welcome
+to help out :)
+
+								Honza
+
+[1] https://www.spinics.net/lists/linux-ext4/msg64175.html
+
+> 
+> diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
+> index 2eb55c3..e86cf67 100644
+> --- a/fs/jbd2/commit.c
+> +++ b/fs/jbd2/commit.c
+> @@ -261,8 +261,8 @@ static int journal_finish_inode_data_buffers(journal_t
+> *journal,
+>                         continue;
+>                 jinode->i_flags |= JI_COMMIT_RUNNING;
+>                 spin_unlock(&journal->j_list_lock);
+> -               err = filemap_fdatawait_keep_errors(
+> -                               jinode->i_vfs_inode->i_mapping);
+> +               err =
+> filemap_fdatawait_range(jinode->i_vfs_inode->i_mapping,
+> +                               0,
+> i_size_read(jinode->i_vfs_inode->i_mapping->host));
+>                 if (!ret)
+>                         ret = err;
+>                 spin_lock(&journal->j_list_lock);
+> 
+> With this, the fsync latencies for small_file have reduced significantly.
+> It took upto max ~5sec (worst case latency).
+> 
+> Although this is seen in a test code, this could potentially impact the
+> phone's performance if any application or main UI thread in Android issues
+> fsync() in foreground while a large data transfer is going on in another
+> context.
+> 
+> Request you to share your thoughts and comments on this issue
+> and the fix suggested above.
+> 
+> Thanks,
+> Sahitya.
+> 
+> --
+> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
+> Inc.
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux
+> Foundation Collaborative Project.
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
