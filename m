@@ -2,183 +2,126 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC23C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD6FDC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:17:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56F7F2075A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:08:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="SWpMev0U"
+	by mail.kernel.org (Postfix) with ESMTP id 968F3217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:17:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725865AbfBSGIf (ORCPT
+        id S1725822AbfBSGRV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 01:08:35 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:17991 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbfBSGIf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 01:08:35 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c6b9d5f0000>; Mon, 18 Feb 2019 22:08:32 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 18 Feb 2019 22:08:33 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 18 Feb 2019 22:08:33 -0800
-Received: from [10.19.225.182] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 19 Feb
- 2019 06:08:29 +0000
-Subject: Re: [PATCH v1 04/12] of: Add bindings of gpu hw throttle for Tegra
- soctherm
-To:     Rob Herring <robh@kernel.org>
-CC:     <thierry.reding@gmail.com>, <daniel.lezcano@linaro.org>,
-        <edubezval@gmail.com>, <linux-tegra@vger.kernel.org>,
-        <rui.zhang@intel.com>, <srikars@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <1545118484-23641-1-git-send-email-wni@nvidia.com>
- <1545118484-23641-6-git-send-email-wni@nvidia.com>
- <20190218202939.GA7473@bogus>
-From:   Wei Ni <wni@nvidia.com>
-Message-ID: <5ce01da3-cb00-3d35-5164-d837df65c184@nvidia.com>
-Date:   Tue, 19 Feb 2019 14:08:26 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 19 Feb 2019 01:17:21 -0500
+Received: from foss.arm.com ([217.140.101.70]:40622 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725730AbfBSGRV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 01:17:21 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DFFB1EBD;
+        Mon, 18 Feb 2019 22:17:15 -0800 (PST)
+Received: from [10.162.40.139] (p8cg001049571a15.blr.arm.com [10.162.40.139])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3CF8E3F575;
+        Mon, 18 Feb 2019 22:17:09 -0800 (PST)
+Subject: Re: [PATCH v2 1/3] arm64: mm: use appropriate ctors for page tables
+To:     Yu Zhao <yuzhao@google.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Jun Yao <yaojun8558363@gmail.com>,
+        Laura Abbott <labbott@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        Matthew Wilcox <willy@infradead.org>
+References: <20190214211642.2200-1-yuzhao@google.com>
+ <20190218231319.178224-1-yuzhao@google.com>
+ <863acc9a-53fb-86ad-4521-828ee8d9c222@arm.com>
+ <20190219053205.GA124985@google.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <8f9b0bfb-b787-fa3e-7322-73a56a618aa8@arm.com>
+Date:   Tue, 19 Feb 2019 11:47:12 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20190218202939.GA7473@bogus>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20190219053205.GA124985@google.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1550556513; bh=F4VXMFnxSNm23FFb83QK8MzofUbP12Bnt1hGWLKIul4=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=SWpMev0UhwORMDbzXuioKEiDpbx4HTP2XJkMHTopoly407O3MTWapr61NTvnVbwq0
-         fgN6Qw961LLVJC4KAHsIXX9s+/iDHO5m8KClqKD6ER4GElzKId5U3veNVcr3GXmWQE
-         AGltqohhuTg4fvKY0JNGCdLwReiAJQBBheSD1tEnP03ziNEY75qzYAI2FrzIU8ooMM
-         9puiYGzEQgwJ67aQWu30sycG0ikZG2wCb/Ok5W5JMASFARCOMamCSqFBWQM1NlzKqF
-         rQRekVEwSuaRMOu3SmnbR+m9sY6HNxxGw21kll+e9FuDvkGwIIvNPdrBmaSvUQgWce
-         a9NkUjKf1JAIA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
++ Matthew Wilcox
 
-
-On 19/2/2019 4:29 AM, Rob Herring wrote:
-> On Tue, Dec 18, 2018 at 03:34:36PM +0800, Wei Ni wrote:
->> Add "nvidia,gpu-throt-level" property to set gpu hw
->> throttle level.
+On 02/19/2019 11:02 AM, Yu Zhao wrote:
+> On Tue, Feb 19, 2019 at 09:51:01AM +0530, Anshuman Khandual wrote:
 >>
->> Signed-off-by: Wei Ni <wni@nvidia.com>
->> ---
->>  .../bindings/thermal/nvidia,tegra124-soctherm.txt  | 17 +++++++++++++++--
->>  include/dt-bindings/thermal/tegra124-soctherm.h    | 22 ++++++++++++++++++----
->>  2 files changed, 33 insertions(+), 6 deletions(-)
 >>
->> diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
->> index ab66d6feab4b..cf6d0be56b7a 100644
->> --- a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
->> +++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
->> @@ -52,6 +52,15 @@ Required properties :
->>          Must set as following values:
->>          TEGRA_SOCTHERM_THROT_LEVEL_LOW, TEGRA_SOCTHERM_THROT_LEVEL_MED
->>          TEGRA_SOCTHERM_THROT_LEVEL_HIGH, TEGRA_SOCTHERM_THROT_LEVEL_NONE
->> +      - nvidia,gpu-throt-level: This property is for Tegra124 and Tegra210.
->> +        It is the level of pulse skippers, which used to throttle clock
->> +        frequencies. It indicates gpu clock throttling depth and can be
->> +        programmed to any of the following values which represent a throttling
->> +        percentage:
->> +        TEGRA_SOCTHERM_THROT_LEVEL_NONE (0%)
->> +        TEGRA_SOCTHERM_THROT_LEVEL_LOW (50%),
->> +        TEGRA_SOCTHERM_THROT_LEVEL_MED (75%),
->> +        TEGRA_SOCTHERM_THROT_LEVEL_HIGH (85%).
->>        - #cooling-cells: Should be 1. This cooling device only support on/off state.
->>          See ./thermal.txt for a description of this property.
->>  
->> @@ -96,22 +105,26 @@ Example :
->>  		throttle-cfgs {
->>  			/*
->>  			 * When the "heavy" cooling device triggered,
->> -			 * the HW will skip cpu clock's pulse in 85% depth
->> +			 * the HW will skip cpu clock's pulse in 85% depth,
->> +			 * skip gpu clock's pulse in 85% level
->>  			 */
->>  			throttle_heavy: heavy {
->>  				nvidia,priority = <100>;
->>  				nvidia,cpu-throt-percent = <85>;
->> +				nvidia,gpu-throt-level = <TEGRA_SOCTHERM_THROT_LEVEL_HIGH>;
->>  
->>  				#cooling-cells = <1>;
->>  			};
->>  
->>  			/*
->>  			 * When the "light" cooling device triggered,
->> -			 * the HW will skip cpu clock's pulse in 50% depth
->> +			 * the HW will skip cpu clock's pulse in 50% depth,
->> +			 * skip gpu clock's pulse in 50% level
->>  			 */
->>  			throttle_light: light {
->>  				nvidia,priority = <80>;
->>  				nvidia,cpu-throt-percent = <50>;
->> +				nvidia,gpu-throt-level = <TEGRA_SOCTHERM_THROT_LEVEL_LOW>;
->>  
->>  				#cooling-cells = <1>;
->>  			};
->> diff --git a/include/dt-bindings/thermal/tegra124-soctherm.h b/include/dt-bindings/thermal/tegra124-soctherm.h
->> index c15e8b709a0d..75853df1c609 100644
->> --- a/include/dt-bindings/thermal/tegra124-soctherm.h
->> +++ b/include/dt-bindings/thermal/tegra124-soctherm.h
->> @@ -1,5 +1,19 @@
->>  /* SPDX-License-Identifier: GPL-2.0 */
->>  /*
->> + * Copyright (c) 2014 - 2018, NVIDIA CORPORATION.  All rights reserved.
->> + *
->> + * Author:
->> + *      Mikko Perttunen <mperttunen@nvidia.com>
->> + *
->> + * This software is licensed under the terms of the GNU General Public
->> + * License version 2, as published by the Free Software Foundation, and
->> + * may be copied, distributed, and modified under those terms.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + * GNU General Public License for more details.
->> + *
+>> On 02/19/2019 04:43 AM, Yu Zhao wrote:
+>>> For pte page, use pgtable_page_ctor(); for pmd page, use
+>>> pgtable_pmd_page_ctor() if not folded; and for the rest (pud,
+>>> p4d and pgd), don't use any.
+>> pgtable_page_ctor()/dtor() is not optional for any level page table page
+>> as it determines the struct page state and zone statistics.
 > 
-> Why are you adding this?
+> This is not true. pgtable_page_ctor() is only meant for user pte
+> page. The name isn't perfect (we named it this way before we had
+> split pmd page table lock, and never bothered to change it).
+> 
+> The commit cccd843f54be ("mm: mark pages in use for page tables")
+> clearly states so:
+>   Note that only pages currently accounted as NR_PAGETABLES are
+>   tracked as PageTable; this does not include pgd/p4d/pud/pmd pages.
 
-We doesn't need it, will remove it.
+I think the commit is the following one and it does say so. But what is
+the rationale of tagging only PTE page as PageTable and updating the zone
+stat but not doing so for higher level page table pages ? Are not they
+used as page table pages ? Should not they count towards NR_PAGETABLE ?
+
+1d40a5ea01d53251c ("mm: mark pages in use for page tables")
+> 
+> I'm sure if we go back further, we can find similar stories: we
+> don't set PageTable on page tables other than pte; and we don't
+> account page tables other than pte. I don't have any objection if
+> you want change these two. But please make sure they are consistent
+> across all archs.
+
+pgtable_page_ctor/dtor() use across arch is not consistent and there is a need
+for generalization which has been already acknowledged earlier. But for now we
+can atleast fix this on arm64.
+
+https://lore.kernel.org/lkml/1547619692-7946-1-git-send-email-anshuman.khandual@arm.com/
 
 > 
->>   * This header provides constants for binding nvidia,tegra124-soctherm.
->>   */
->>  
->> @@ -12,9 +26,9 @@
->>  #define TEGRA124_SOCTHERM_SENSOR_PLLX 3
->>  #define TEGRA124_SOCTHERM_SENSOR_NUM 4
->>  
->> -#define TEGRA_SOCTHERM_THROT_LEVEL_LOW  0
->> -#define TEGRA_SOCTHERM_THROT_LEVEL_MED  1
->> -#define TEGRA_SOCTHERM_THROT_LEVEL_HIGH 2
->> -#define TEGRA_SOCTHERM_THROT_LEVEL_NONE -1
->> +#define TEGRA_SOCTHERM_THROT_LEVEL_NONE 0
->> +#define TEGRA_SOCTHERM_THROT_LEVEL_LOW  1
->> +#define TEGRA_SOCTHERM_THROT_LEVEL_MED  2
->> +#define TEGRA_SOCTHERM_THROT_LEVEL_HIGH 3
+>> We should not skip it for any page table page.
 > 
-> You are breaking an ABI.
+> In fact, calling it on pmd/pud/p4d is peculiar, and may even be
+> considered wrong. AFAIK, no other arch does so.
+
+Why would it be considered wrong ? IIUC archs have their own understanding
+of this and there are different implementations. But doing something for
+PTE page and skipping for others is plain inconsistent.
+
 > 
-> Rob
+>> As stated before pgtable_pmd_page_ctor() is not a replacement for
+>> pgtable_page_ctor().
 > 
+> pgtable_pmd_page_ctor() must be used on user pmd. For kernel pmd,
+> it's okay to use pgtable_page_ctor() instead only because kernel
+> doesn't have thp.
+
+The only extra thing to be done for THP is initializing page->pmd_huge_pte
+apart from calling pgtable_page_ctor(). Right not it just works on arm64
+may be because page->pmd_huge_pte never gets accessed before it's init and
+no path checks for it when not THP. Its better to init/reset pmd_huge_pte.
