@@ -2,199 +2,316 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A43F4C4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:15:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF98C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:15:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B92F2077B
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:15:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FI9uz13J"
+	by mail.kernel.org (Postfix) with ESMTP id E8A2821904
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:15:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727411AbfBSIPO (ORCPT
+        id S1727518AbfBSIPo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 03:15:14 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46671 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbfBSIPO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 03:15:14 -0500
-Received: by mail-pg1-f196.google.com with SMTP id w7so9744751pgp.13;
-        Tue, 19 Feb 2019 00:15:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=oNujeU7qzhkK3JY0Befn7uYd90h7Ocpo7KzFQEHrNVg=;
-        b=FI9uz13JXul2nE9DiSF0kL91BihrS3Z2rSAxtd8ZK3/cs/zVOtGQW/Lv8z/2jPK7y3
-         MbRvXhnugQzFIxHhWgrivEwEo52t74CuFaSLZufwXbJTjhqRU0uK2mSGaKXetg/EkufL
-         mXCBMlzfFAfaLYBRHGlsYgn2Ok5Pt6LHWbzOw1/LwBk4MriwzND7qfK/FhW13h8cTGDJ
-         EloATziEHoRbIeU1Gz38aRT6reVNzWvi1sv4iKqvCxV/YEv6F6j1Crv9+LvOzb1ReNsD
-         Z4paR5FPsnPjGY9sT4PyFSWRVtjQK2mEVRxC4E1YOFlULyo4UWK+f/5ezMABXNsxPkly
-         CxhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oNujeU7qzhkK3JY0Befn7uYd90h7Ocpo7KzFQEHrNVg=;
-        b=obobt3IS/z7ItZH9Pzuotv+1ITkxv1kaMdBSNQCbtdL550qsaDRoOE3V6/wvjTX89Q
-         Te88p3bAlqQHE0nuzLyECN+biDTyWXcCfSdIrlyvXuHSosMLcvCtqbYWer/vYec2lCeJ
-         ZJPnEbfXo2jHFeSHquAhk7HsjFX9XFVeTQy2AmiFiIBl6h4KDM/PhF/n+wZuM1vunIw1
-         58esxfc10wiRKrB6efcPDgwmiFuFs8YMA6qJMTg5VkUdQ9UY0epkMQiSQMxPqJVmNxsf
-         kX76S47MNsMwpZH4mh6XFgTDOgydF48iirJWWj6e9E9BQzVm23MFvyiiHmFBNxxzoGga
-         U/Zg==
-X-Gm-Message-State: AHQUAua6YMW0i9gdjPsgVHoTfxNHQnaGojuO+iJAgN9h+F7CdF21Rsu1
-        767UxVklntvn9XW6KUByNm4=
-X-Google-Smtp-Source: AHgI3IbCr1IIDViv1S8BxYBn/8A8M5sD6POqB+Rw9rc6mOwUi69JlBtcg7/7WcqwS1bSA92CUu8BDQ==
-X-Received: by 2002:a62:445a:: with SMTP id r87mr27943600pfa.13.1550564112520;
-        Tue, 19 Feb 2019 00:15:12 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id h13sm8543471pfn.114.2019.02.19.00.15.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Feb 2019 00:15:11 -0800 (PST)
-Date:   Tue, 19 Feb 2019 00:15:10 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, linux-input@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com
-Subject: Re: [PATCH v3 1/4] dt-bindings: input: touchscreen: goodix: Document
- AVDD28-supply property
-Message-ID: <20190219081510.GB65896@dtor-ws>
-References: <CAL_JsqKTnPVM7Qahy9ejQbPfENpLCdzf5K5uUTcPh8j3EiqWRA@mail.gmail.com>
- <CAMty3ZCyq=tZMt6RC1aYJuEWgYp2zv1LBh+ZUwucE+g4RCoUaQ@mail.gmail.com>
- <CAL_JsqKCw3EV+0_DuMiHh7GRGxv7YogQf-xwp71n9gpc2GzSSQ@mail.gmail.com>
- <CAMty3ZBtoocXBW5A0astyQPh2y7vG7NtbZ_M0BjSeex2etmGsw@mail.gmail.com>
- <CAL_JsqJSMX7E2zQA2O8ofZQPDrm3S6PMCLG1iAQ95P10Pe2yFg@mail.gmail.com>
- <CAMty3ZDMB=pwY8Rxdt3du=90pksBedLo0Pc_-=diqx9-Xndzqg@mail.gmail.com>
- <CAMty3ZDBu2Y9psNu9nrZ=BNVvhpJ2qYn-Qp7MDqdhK9_SrcpNg@mail.gmail.com>
- <20190218071207.GE242714@dtor-ws>
- <CAMty3ZDbFU-NpWQvkaUWgUiVTabjTZoFWUCUZSPKMA6VuHc+iQ@mail.gmail.com>
- <CAMty3ZBVpNY+JF_vEMs83M29WKQDhzmk7LyL-HHCCA7uD0Y+=g@mail.gmail.com>
+        Tue, 19 Feb 2019 03:15:44 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3680 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725768AbfBSIPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 03:15:43 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 508B951D1409C7E68666;
+        Tue, 19 Feb 2019 16:15:41 +0800 (CST)
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.408.0; Tue, 19 Feb 2019 16:15:34 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v4] f2fs: add bio cache for IPU
+Date:   Tue, 19 Feb 2019 16:15:29 +0800
+Message-ID: <20190219081529.5106-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZBVpNY+JF_vEMs83M29WKQDhzmk7LyL-HHCCA7uD0Y+=g@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 01:00:19AM +0530, Jagan Teki wrote:
-> On Mon, Feb 18, 2019 at 3:03 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> >
-> > Hi Dmitry,
-> >
-> > On Mon, Feb 18, 2019 at 12:42 PM Dmitry Torokhov
-> > <dmitry.torokhov@gmail.com> wrote:
-> > >
-> > > On Sun, Feb 17, 2019 at 02:45:52PM +0530, Jagan Teki wrote:
-> > > > On Sun, Feb 17, 2019 at 1:21 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > > > >
-> > > > > Hi Dmitry and Rob,
-> > > > >
-> > > > > On Thu, Feb 14, 2019 at 3:21 AM Rob Herring <robh@kernel.org> wrote:
-> > > > > >
-> > > > > > On Tue, Jan 22, 2019 at 7:39 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > > > > > >
-> > > > > > > On Mon, Jan 21, 2019 at 9:46 PM Rob Herring <robh@kernel.org> wrote:
-> > > > > > > >
-> > > > > > > > On Fri, Jan 18, 2019 at 10:01 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > > > > > > > >
-> > > > > > > > > On Wed, Jan 9, 2019 at 7:08 PM Rob Herring <robh@kernel.org> wrote:
-> > > > > > > > > >
-> > > > > > > > > > Please CC DT list if you want bindings reviewed.
-> > > > > > > > >
-> > > > > > > > > Sorry I forgot.
-> > > > > > > > >
-> > > > > > > > > >
-> > > > > > > > > > On Wed, Jan 9, 2019 at 1:40 AM Dmitry Torokhov
-> > > > > > > > > > <dmitry.torokhov@gmail.com> wrote:
-> > > > > > > > > > >
-> > > > > > > > > > > On Sat, Dec 15, 2018 at 08:47:59PM +0530, Jagan Teki wrote:
-> > > > > > > > > > > > Most of the Goodix CTP controllers are supply with AVDD28 pin.
-> > > > > > > > > > > > which need to supply for controllers like GT5663 on some boards
-> > > > > > > > > > > > to trigger the power.
-> > > > > > > > > > > >
-> > > > > > > > > > > > So, document the supply property so-that the require boards
-> > > > > > > > > > > > that used on GT5663 can enable it via device tree.
-> > > > > > > > > > > >
-> > > > > > > > > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > > > > > > > > > ---
-> > > > > > > > > > > >  Documentation/devicetree/bindings/input/touchscreen/goodix.txt | 1 +
-> > > > > > > > > > > >  1 file changed, 1 insertion(+)
-> > > > > > > > > > > >
-> > > > > > > > > > > > diff --git a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-> > > > > > > > > > > > index f7e95c52f3c7..c4622c983e08 100644
-> > > > > > > > > > > > --- a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-> > > > > > > > > > > > +++ b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-> > > > > > > > > > > > @@ -23,6 +23,7 @@ Optional properties:
-> > > > > > > > > > > >   - touchscreen-inverted-y  : Y axis is inverted (boolean)
-> > > > > > > > > > > >   - touchscreen-swapped-x-y : X and Y axis are swapped (boolean)
-> > > > > > > > > > > >                               (swapping is done after inverting the axis)
-> > > > > > > > > > > > + - AVDD28-supply     : Analog power supply regulator on AVDD28 pin
-> > > > > > > > > > >
-> > > > > > > > > > > I think we normally use lower case in DT bindings and rarely encode
-> > > > > > > > > > > voltage in the supply name unless we are dealing with several supplies
-> > > > > > > > > > > of the same kind, but I'll let Ron comment on this.
-> > > > > > > > > >
-> > > > > > > > > > Yes on lowercase though there are some exceptions.
-> > > > > > > > > >
-> > > > > > > > > > There's also a AVDD22 supply as well as DVDD12 and VDDIO. So we
-> > > > > > > > > > probably need to keep the voltage, but the binding is incomplete.
-> > > > > > > > >
-> > > > > > > > > What is incomplete here? can you please elaborate.
-> > > > > > > >
-> > > > > > > > You are missing the 3 other supplies the chip has: AVDD22, DVDD12 and VDDIO.
-> > > > > > >
-> > > > > > > Though it has other supplies, only AVDD28 is connected in the Host
-> > > > > > > interface design similar like 9. Reference Schematic on Page, 23 in
-> > > > > > > attached manual.
-> > > > > >
-> > > > > > That is for a particular board design. It still has other supplies.
-> > > > > > Just make the binding complete please. You can make them optional. I
-> > > > > > don't care if the driver supports controlling all the supplies or not
-> > > > > > (though Dmitry might).
-> > > > >
-> > > > > So, Can I make bulk get and enable in all 4 regulators global to
-> > > > > driver or specific to that chip, in either way the regulators which
-> > > > > are not used to process via dummy regulators (which we all know).
-> > > > >
-> > > > > or regulator which are not using are get via devm_regulator_get_optional.
-> > > > >
-> > > > > Any suggestions?
-> > > >
-> > > > Just realized to go with bulk calls, please have a look at on v5 [1]
-> > >
-> > > I do not believe you can use bulk regulator API here as you need to
-> > > implement the power up timing scheme mentioned on p. 12 of the spec you
-> > > referenced earlier. And, because of that timing diagram, I believe if
-> > > you want to control AVDD supply, you also have to control VDDIO supply
-> > > as it has to be on only after enabling AVDD.
-> >
-> > AVDD here is AVDD28 it' is an out name of pin (mentioned in p. 23). So
-> > the power scheme goes to enable AVDD28 and then VDDIO does that really
-> > mean bulk of two regulators?
-> 
-> The time between these two regulator operations is nearly 0, as per
-> power scheme diagram T1 >= 0us. I think I can use bulk since there is
-> no necessity of delay between these two regulator operations.
-> 
-> What do you think?
+SQLite in Wal mode may trigger sequential IPU write in db-wal file, after
+commit d1b3e72d5490 ("f2fs: submit bio of in-place-update pages"), we
+lost the chance of merging page in inner managed bio cache, result in
+submitting more small-sized IO.
 
-Does the bulk enable provide any guarantees as to the order of
-operations? If it does not then I think we should ensure that they are
-powered up/down in the right order.
+So let's add temporary bio in writepages() to cache mergeable write IO as
+much as possible.
 
-Thanks.
+Test case:
+1. xfs_io -f /mnt/f2fs/file -c "pwrite 0 65536" -c "fsync"
+2. xfs_io -f /mnt/f2fs/file -c "pwrite 0 65536" -c "fsync"
 
+Before:
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65544, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65552, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65560, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65568, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65576, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65584, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65592, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65600, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65608, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65616, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65624, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65632, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65640, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65648, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65656, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65664, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), NODE, sector = 57352, size = 4096
+
+After:
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65544, size = 65536
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), NODE, sector = 57368, size = 4096
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v4:
+- fix to set *bio to NULL in f2fs_submit_ipu_bio()
+- spread f2fs_submit_ipu_bio()
+- fix to count dirty encrypted page correctly in f2fs_merge_page_bio()
+- remove redundant assignment of fio->last_block
+ fs/f2fs/data.c    | 88 ++++++++++++++++++++++++++++++++++++++++++-----
+ fs/f2fs/f2fs.h    |  3 ++
+ fs/f2fs/segment.c |  5 ++-
+ 3 files changed, 86 insertions(+), 10 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 35910ff23582..e4c183e85de8 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -296,20 +296,20 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
+ 	io->bio = NULL;
+ }
+ 
+-static bool __has_merged_page(struct f2fs_bio_info *io, struct inode *inode,
++static bool __has_merged_page(struct bio *bio, struct inode *inode,
+ 						struct page *page, nid_t ino)
+ {
+ 	struct bio_vec *bvec;
+ 	struct page *target;
+ 	int i;
+ 
+-	if (!io->bio)
++	if (!bio)
+ 		return false;
+ 
+ 	if (!inode && !page && !ino)
+ 		return true;
+ 
+-	bio_for_each_segment_all(bvec, io->bio, i) {
++	bio_for_each_segment_all(bvec, bio, i) {
+ 
+ 		if (bvec->bv_page->mapping)
+ 			target = bvec->bv_page;
+@@ -360,7 +360,7 @@ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
+ 			struct f2fs_bio_info *io = sbi->write_io[btype] + temp;
+ 
+ 			down_read(&io->io_rwsem);
+-			ret = __has_merged_page(io, inode, page, ino);
++			ret = __has_merged_page(io->bio, inode, page, ino);
+ 			up_read(&io->io_rwsem);
+ 		}
+ 		if (ret)
+@@ -429,6 +429,61 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+ 	return 0;
+ }
+ 
++int f2fs_merge_page_bio(struct f2fs_io_info *fio)
++{
++	struct bio *bio = *fio->bio;
++	struct page *page = fio->encrypted_page ?
++			fio->encrypted_page : fio->page;
++
++	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->new_blkaddr,
++			__is_meta_io(fio) ? META_GENERIC : DATA_GENERIC))
++		return -EFAULT;
++
++	trace_f2fs_submit_page_bio(page, fio);
++	f2fs_trace_ios(fio, 0);
++
++	if (bio && (*fio->last_block + 1 != fio->new_blkaddr ||
++			!__same_bdev(fio->sbi, fio->new_blkaddr, bio))) {
++		__submit_bio(fio->sbi, bio, fio->type);
++		bio = NULL;
++	}
++alloc_new:
++	if (!bio) {
++		bio = __bio_alloc(fio->sbi, fio->new_blkaddr, fio->io_wbc,
++				BIO_MAX_PAGES, false, fio->type, fio->temp);
++		bio_set_op_attrs(bio, fio->op, fio->op_flags);
++	}
++
++	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
++		__submit_bio(fio->sbi, bio, fio->type);
++		bio = NULL;
++		goto alloc_new;
++	}
++
++	if (fio->io_wbc)
++		wbc_account_io(fio->io_wbc, page, PAGE_SIZE);
++
++	inc_page_count(fio->sbi, WB_DATA_TYPE(page));
++
++	*fio->last_block = fio->new_blkaddr;
++	*fio->bio = bio;
++
++	return 0;
++}
++
++void f2fs_submit_ipu_bio(struct f2fs_sb_info *sbi, struct bio **bio,
++							struct page *page)
++{
++	if (!bio)
++		return;
++
++	if (!__has_merged_page(*bio, NULL, page, 0))
++		return;
++
++	__submit_bio(sbi, *bio, DATA);
++	*bio = NULL;
++}
++
+ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ {
+ 	struct f2fs_sb_info *sbi = fio->sbi;
+@@ -1854,6 +1909,8 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+ }
+ 
+ static int __write_data_page(struct page *page, bool *submitted,
++				struct bio **bio,
++				sector_t *last_block,
+ 				struct writeback_control *wbc,
+ 				enum iostat_type io_type)
+ {
+@@ -1879,6 +1936,8 @@ static int __write_data_page(struct page *page, bool *submitted,
+ 		.need_lock = LOCK_RETRY,
+ 		.io_type = io_type,
+ 		.io_wbc = wbc,
++		.bio = bio,
++		.last_block = last_block,
+ 	};
+ 
+ 	trace_f2fs_writepage(page, DATA);
+@@ -1976,10 +2035,13 @@ static int __write_data_page(struct page *page, bool *submitted,
+ 	}
+ 
+ 	unlock_page(page);
+-	if (!S_ISDIR(inode->i_mode) && !IS_NOQUOTA(inode))
++	if (!S_ISDIR(inode->i_mode) && !IS_NOQUOTA(inode)) {
++		f2fs_submit_ipu_bio(sbi, bio, page);
+ 		f2fs_balance_fs(sbi, need_balance_fs);
++	}
+ 
+ 	if (unlikely(f2fs_cp_error(sbi))) {
++		f2fs_submit_ipu_bio(sbi, bio, page);
+ 		f2fs_submit_merged_write(sbi, DATA);
+ 		submitted = NULL;
+ 	}
+@@ -2006,7 +2068,7 @@ static int __write_data_page(struct page *page, bool *submitted,
+ static int f2fs_write_data_page(struct page *page,
+ 					struct writeback_control *wbc)
+ {
+-	return __write_data_page(page, NULL, wbc, FS_DATA_IO);
++	return __write_data_page(page, NULL, NULL, NULL, wbc, FS_DATA_IO);
+ }
+ 
+ /*
+@@ -2022,6 +2084,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 	int done = 0;
+ 	struct pagevec pvec;
+ 	struct f2fs_sb_info *sbi = F2FS_M_SB(mapping);
++	struct bio *bio = NULL;
++	sector_t last_block;
+ 	int nr_pages;
+ 	pgoff_t uninitialized_var(writeback_index);
+ 	pgoff_t index;
+@@ -2098,17 +2162,20 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 			}
+ 
+ 			if (PageWriteback(page)) {
+-				if (wbc->sync_mode != WB_SYNC_NONE)
++				if (wbc->sync_mode != WB_SYNC_NONE) {
+ 					f2fs_wait_on_page_writeback(page,
+ 							DATA, true, true);
+-				else
++					f2fs_submit_ipu_bio(sbi, &bio, page);
++				} else {
+ 					goto continue_unlock;
++				}
+ 			}
+ 
+ 			if (!clear_page_dirty_for_io(page))
+ 				goto continue_unlock;
+ 
+-			ret = __write_data_page(page, &submitted, wbc, io_type);
++			ret = __write_data_page(page, &submitted, &bio,
++					&last_block, wbc, io_type);
+ 			if (unlikely(ret)) {
+ 				/*
+ 				 * keep nr_to_write, since vfs uses this to
+@@ -2157,6 +2224,9 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 	if (nwritten)
+ 		f2fs_submit_merged_write_cond(F2FS_M_SB(mapping), mapping->host,
+ 								NULL, 0, DATA);
++	/* submit cached bio of IPU write */
++	if (bio)
++		__submit_bio(sbi, bio, DATA);
+ 
+ 	return ret;
+ }
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 46db3ed87c84..7c4355927d28 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1048,6 +1048,8 @@ struct f2fs_io_info {
+ 	bool retry;		/* need to reallocate block address */
+ 	enum iostat_type io_type;	/* io type */
+ 	struct writeback_control *io_wbc; /* writeback control */
++	struct bio **bio;		/* bio for ipu */
++	sector_t *last_block;		/* last block number in bio */
+ 	unsigned char version;		/* version of the node */
+ };
+ 
+@@ -3105,6 +3107,7 @@ void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
+ 				nid_t ino, enum page_type type);
+ void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi);
+ int f2fs_submit_page_bio(struct f2fs_io_info *fio);
++int f2fs_merge_page_bio(struct f2fs_io_info *fio);
+ void f2fs_submit_page_write(struct f2fs_io_info *fio);
+ struct block_device *f2fs_target_device(struct f2fs_sb_info *sbi,
+ 			block_t blk_addr, struct bio *bio);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index b2167d53fb9d..66838ab2f21e 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3196,7 +3196,10 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
+ 
+ 	stat_inc_inplace_blocks(fio->sbi);
+ 
+-	err = f2fs_submit_page_bio(fio);
++	if (fio->bio)
++		err = f2fs_merge_page_bio(fio);
++	else
++		err = f2fs_submit_page_bio(fio);
+ 	if (!err)
+ 		update_device_state(fio);
+ 
 -- 
-Dmitry
+2.18.0.rc1
+
