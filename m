@@ -2,129 +2,126 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
+X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT,USER_IN_DEF_DKIM_WL autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73A3FC10F00
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 05:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE3AC10F00
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 05:32:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 434782173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 05:26:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAB9C217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 05:32:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IFdYJ03B"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gc35xBK2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725837AbfBSF05 (ORCPT
+        id S1726116AbfBSFcJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 00:26:57 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:39545 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbfBSF05 (ORCPT
+        Tue, 19 Feb 2019 00:32:09 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:36670 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725730AbfBSFcJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 00:26:57 -0500
-Received: by mail-ot1-f66.google.com with SMTP id n8so32227382otl.6
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 21:26:56 -0800 (PST)
+        Tue, 19 Feb 2019 00:32:09 -0500
+Received: by mail-it1-f194.google.com with SMTP id h6so3490994itl.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 21:32:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:user-agent:mime-version;
-        bh=Nn7jvN56Aij59rB16XbFytNtDnwP8hvfDgxfVmhsN+4=;
-        b=IFdYJ03BUDOzKwP2gwBMlbooLzhGcLWZDVHmjwf9ZDSeSb+YuYEGtkaLmxWFwwlZPR
-         zwVwFZ+IOC7/n4lzvQakHGbrUJk89//jhxZ0sQaWVSlZhVBNAOhSG6DECh90OQzP4/eC
-         XCIE1bIk3WjqwBojZ+FBcre0vLgYdYQgXFbYLXYDQICZM1QP+f1Q+H7FIqmERzIYSZfP
-         lahbNq61TkIsedWlXZ5jxkvapFFvMNzxamYa/bvUX8WDx1GEObw32T4lymRSlWFSGNno
-         cz2TeQ4ajPJDc3Mi91VFPnu5xz6A8FY1AY0DY0TRCpexK5I0DDXZXvwIKPLM9/Fk6+i4
-         8GOA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=N3a1F+phTWNP4vUdqbdRG2LlbC8gmOfizcSGQCqcX2o=;
+        b=gc35xBK2JBhKjw035oTY1u93BDW82QcWBUDh0TI0DviPy3CeCAzv7UjcT9TBy+JNXD
+         lXsqfikYlopTFD18nTHjmmRrxttVYtwzVpdrcmcShD2mF0FD+Y2mPGor4BJ+JyWMkPEF
+         4WDiECLbmuY+tNd3wpir2eUCE5HFOoUVxhvpG6f8UjS7IMrSRDbkoXfZbnvCnf1E+xpy
+         Gb2iaVw9vsJrlo8mFuMRiG9pQMgi2y9rMP6W/VBNr1Pq8BIMegopo5fRM5cCHHRzONVc
+         O/Xlf5nReRAxB9UeaX5jp8SO8MCBrq7et2MGGu2s6g7pXO7MPqGB0DajNG+e+Z61lxQj
+         25UA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
-         :mime-version;
-        bh=Nn7jvN56Aij59rB16XbFytNtDnwP8hvfDgxfVmhsN+4=;
-        b=cobXRtPdLz6hBQVqX2Cp1oW7tMhthbRNYO84ySeMp2mx1dsBHBW668RHy5qb1GDKdX
-         lg3Nn8Zbc+ZSgNA6IAbjvtL2Ey/Q2VC9UiMW0u6mUfC8fhdm94huV/v/SgczpVWkMLfh
-         RSSIQXJV4tSHkdgvUBAWJH0XiW9wTzUNmpILSuAgWbNy8Eel5PthQ5SwZUVAcC4A81Dr
-         isNKLTgpJFOysW092JXaE4yVYChEW6++4Y+EfjlEW3Af3Qnmd+hc1ChYtpPOb4foHAGD
-         Pe2KMmsaEnalcEz84KolnD0gE2MBnJhKSoTVSYOpVdgCGQK2lDloaukjr19BLD/Zr6UY
-         /Gaw==
-X-Gm-Message-State: AHQUAubb93O5XeeE2Qknh7AmPHt0Rh3TSVX2ZXVxH+ZnoKsCQz0T9Im3
-        UFp7homx8f1n+BvT/WD9i4jpjg==
-X-Google-Smtp-Source: AHgI3IZP4FYhFOb0TC+x7B0bKWbbezKsrPAqVG/zOjPc10LzdCDMZ0Y8xraBhpTywalhPMH/5SBlUg==
-X-Received: by 2002:aca:33d5:: with SMTP id z204mr1399324oiz.61.1550554015453;
-        Mon, 18 Feb 2019 21:26:55 -0800 (PST)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id y137sm2154861oia.9.2019.02.18.21.26.53
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 18 Feb 2019 21:26:54 -0800 (PST)
-Date:   Mon, 18 Feb 2019 21:26:46 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Andrew Morton <akpm@linux-foundation.org>
-cc:     Yang Shi <yang.shi@linux.alibaba.com>, ktkhai@virtuozzo.com,
-        jhubbard@nvidia.com, hughd@google.com, aarcange@redhat.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH mmotm] mm: ksm: do not block on page lock when searching
- stable tree fix
-Message-ID: <alpine.LSU.2.11.1902182122280.6914@eggly.anvils>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=N3a1F+phTWNP4vUdqbdRG2LlbC8gmOfizcSGQCqcX2o=;
+        b=k0QDBYh7LEeuXoXAFpi3B9w92osD0assRF4FasH8DGiQV8UIKIrK+QgMPXNiqzex/e
+         lMg0TRRO112ShbLriGQHDjBFoCE271zu/roYABxzZBp+fBMA/1qOs105sw98PopLL/ZH
+         JjNQTV5s2lseTVeJ7GUJW4zfoaUiMRuk9hA2yPJ9YwpDIvOZCTYGC6x5zsqdTvmXUsLr
+         G9sSwAmWlWHs8Drd5Ppi6QrAJEPfiipGuz3VDvaSFHgwIGt9sIhP6+cTZ8yHwoNtVutG
+         QGb7YCk3CDzD2bsrczLcbj16pGOXGjpYXq+qD504+aPhSpGR6f1yUzf0SxDwzCalqFhG
+         sPTA==
+X-Gm-Message-State: AHQUAuaVgq+f70bHnRNVmmXSejmXUKNa3AkW3cUDcc/s0u49wP4NXX8B
+        4lZrN15ToE6OYVjiN2BNF0KYlw==
+X-Google-Smtp-Source: AHgI3IZ5ltUtXza7ruJZojlSoyiNc3n4l7gI2q26hEETIjvCNdzWMCapc6G79N9F+MyPSvpcyvD6wQ==
+X-Received: by 2002:a6b:4a09:: with SMTP id w9mr17157160iob.260.1550554327823;
+        Mon, 18 Feb 2019 21:32:07 -0800 (PST)
+Received: from google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
+        by smtp.gmail.com with ESMTPSA id k26sm6197007iol.14.2019.02.18.21.32.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Feb 2019 21:32:07 -0800 (PST)
+Date:   Mon, 18 Feb 2019 22:32:05 -0700
+From:   Yu Zhao <yuzhao@google.com>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Jun Yao <yaojun8558363@gmail.com>,
+        Laura Abbott <labbott@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2 1/3] arm64: mm: use appropriate ctors for page tables
+Message-ID: <20190219053205.GA124985@google.com>
+References: <20190214211642.2200-1-yuzhao@google.com>
+ <20190218231319.178224-1-yuzhao@google.com>
+ <863acc9a-53fb-86ad-4521-828ee8d9c222@arm.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <863acc9a-53fb-86ad-4521-828ee8d9c222@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I hit the kernel BUG at mm/ksm.c:809! quite easily under KSM swapping
-load.  That's the BUG_ON(age > 1) in remove_rmap_item_from_tree().
+On Tue, Feb 19, 2019 at 09:51:01AM +0530, Anshuman Khandual wrote:
+> 
+> 
+> On 02/19/2019 04:43 AM, Yu Zhao wrote:
+> > For pte page, use pgtable_page_ctor(); for pmd page, use
+> > pgtable_pmd_page_ctor() if not folded; and for the rest (pud,
+> > p4d and pgd), don't use any.
+> pgtable_page_ctor()/dtor() is not optional for any level page table page
+> as it determines the struct page state and zone statistics.
 
-There is a comment above it, but explaining in more detail: KSM saves
-effort by not fully maintaining the unstable tree like a proper RB
-tree throughout, but at the start of each pass forgetting the old tree
-and rebuilding anew from scratch. But that means that whenever it looks
-like we need to remove an item from the unstable tree, we have to check
-whether it has already been linked into the new tree this time around
-(hence rb_erase needed), or it's just a free-floating leftover from the
-previous tree.
+This is not true. pgtable_page_ctor() is only meant for user pte
+page. The name isn't perfect (we named it this way before we had
+split pmd page table lock, and never bothered to change it).
 
-"age" 0 or 1 says which: but if it's more than 1, then something has
-gone wrong: cmp_and_merge_page() was forgetting to remove the item
-in the new EBUSY case.
+The commit cccd843f54be ("mm: mark pages in use for page tables")
+clearly states so:
+  Note that only pages currently accounted as NR_PAGETABLES are
+  tracked as PageTable; this does not include pgd/p4d/pud/pmd pages.
 
-Signed-off-by: Hugh Dickins <hughd@google.com>
----
-Fix to fold into
-mm-ksm-do-not-block-on-page-lock-when-searching-stable-tree.patch
+I'm sure if we go back further, we can find similar stories: we
+don't set PageTable on page tables other than pte; and we don't
+account page tables other than pte. I don't have any objection if
+you want change these two. But please make sure they are consistent
+across all archs.
 
-I like that patch better now it has the mods suggested by John Hubbard;
-but what I'd still really prefer to do is to make the patch unnecessary,
-by reworking that window of KSM page migration so that there's just no
-need for stable_tree_search() to take page lock.  We would all prefer
-that.  However, each time I've gone to do so, it's turned out to need
-more care than I expected, and I run out of time.  So, let's go with
-what we have, and one day I might perhaps get back to it.
+> We should not skip it for any page table page.
 
- mm/ksm.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+In fact, calling it on pmd/pud/p4d is peculiar, and may even be
+considered wrong. AFAIK, no other arch does so.
 
---- mmotm/mm/ksm.c	2019-02-14 15:16:13.000000000 -0800
-+++ linux/mm/ksm.c	2019-02-18 20:36:44.707310427 -0800
-@@ -2082,10 +2082,6 @@ static void cmp_and_merge_page(struct pa
- 
- 	/* We first start with searching the page inside the stable tree */
- 	kpage = stable_tree_search(page);
--
--	if (PTR_ERR(kpage) == -EBUSY)
--		return;
--
- 	if (kpage == page && rmap_item->head == stable_node) {
- 		put_page(kpage);
- 		return;
-@@ -2094,6 +2090,9 @@ static void cmp_and_merge_page(struct pa
- 	remove_rmap_item_from_tree(rmap_item);
- 
- 	if (kpage) {
-+		if (PTR_ERR(kpage) == -EBUSY)
-+			return;
-+
- 		err = try_to_merge_with_ksm_page(rmap_item, page, kpage);
- 		if (!err) {
- 			/*
+> As stated before pgtable_pmd_page_ctor() is not a replacement for
+> pgtable_page_ctor().
+
+pgtable_pmd_page_ctor() must be used on user pmd. For kernel pmd,
+it's okay to use pgtable_page_ctor() instead only because kernel
+doesn't have thp.
