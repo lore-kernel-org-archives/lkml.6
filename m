@@ -2,148 +2,159 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3556C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 233C6C10F00
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:53:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCF6921479
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:46:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F17252183F
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:53:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727983AbfBSPqu (ORCPT
+        id S1727037AbfBSPx1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 10:46:50 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38448 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726110AbfBSPqu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 10:46:50 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1JFcxwa066335
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 10:46:49 -0500
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qrmfg903g-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 10:46:48 -0500
-Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <mwb@linux.vnet.ibm.com>;
-        Tue, 19 Feb 2019 15:46:47 -0000
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 19 Feb 2019 15:46:44 -0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1JFkhLv28967000
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Feb 2019 15:46:43 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BD149BE059;
-        Tue, 19 Feb 2019 15:46:43 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2AA88BE04F;
-        Tue, 19 Feb 2019 15:46:43 +0000 (GMT)
-Received: from oc8380061452.ibm.com (unknown [9.53.179.224])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 19 Feb 2019 15:46:43 +0000 (GMT)
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        "Juliet M. Kim" <minkim@linux.vnet.ibm.com>,
-        Nathan Lynch <nathanl@linux.vnet.ibm.com>,
-        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
-        Michael Bringmann <mwb@linux.vnet.ibm.com>
-To:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-From:   Michael Bringmann <mwb@linux.vnet.ibm.com>
-Subject: [PATCH] powerpc/pseries: Fix dn reference error in
- dlpar_cpu_remove_by_index
-Openpgp: preference=signencrypt
-Autocrypt: addr=mwb@linux.vnet.ibm.com; prefer-encrypt=mutual; keydata=
- mQENBFcY7GcBCADzw3en+yzo9ASFGCfldVkIg95SAMPK0myXp2XJYET3zT45uBsX/uj9/2nA
- lBmXXeOSXnPfJ9V3vtiwcfATnWIsVt3tL6n1kqikzH9nXNxZT7MU/7gqzWZngMAWh/GJ9qyg
- DTOZdjsvdUNUWxtiLvBo7y+reA4HjlQhwhYxxvCpXBeRoF0qDWfQ8DkneemqINzDZPwSQ7zY
- t4F5iyN1I9GC5RNK8Y6jiKmm6bDkrrbtXPOtzXKs0J0FqWEIab/u3BDrRP3STDVPdXqViHua
- AjEzthQbGZm0VCxI4a7XjMi99g614/qDcXZCs00GLZ/VYIE8hB9C5Q+l66S60PLjRrxnABEB
- AAG0LU1pY2hhZWwgVy4gQnJpbmdtYW5uIDxtd2JAbGludXgudm5ldC5pYm0uY29tPokBOAQT
- AQIAIgUCVxjsZwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQSEdag3dpuTI0NAf8
- CKYTDKQLgOSjVrU2L5rM4lXaJRmQV6oidD3vIhKSnWRvPq9C29ifRG6ri20prTHAlc0vycgm
- 41HHg0y2vsGgNXGTWC2ObemoZBI7mySXe/7Tq5mD/semGzOp0YWZ7teqrkiSR8Bw0p+LdE7K
- QmT7tpjjvuhrtQ3RRojUYcuy1nWUsc4D+2cxsnZslsx84FUKxPbLagDgZmgBhUw/sUi40s6S
- AkdViVCVS0WANddLIpG0cfdsV0kCae/XdjK3mRK6drFKv1z+QFjvOhc8QIkkxFD0da9w3tJj
- oqnqHFV5gLcHO6/wizPx/NV90y6RngeBORkQiRFWxTXS4Oj9GVI/UrkBDQRXGOxnAQgAmJ5Y
- ikTWrMWPfiveUacETyEhWVl7u8UhZcx3yy2te8O0ay7t9fYcZgIEfQPPVVus89acIXlG3wYL
- DDPvb21OprLxi+ZJ2a0S5we+LcSWN1jByxJlbWBq+/LcMtGAOhNLpysY1gD0Y4UW/eKS+TFZ
- 562qKC3k1dBvnV9JXCgeS1taYFxRdVAn+2DwK3nuyG/DDq/XgJ5BtmyC3MMx8CiW3POj+O+l
- 6SedIeAfZlZ7/xhijx82g93h07VavUQRwMZgZFsqmuxBxVGiav2HB+dNvs3PFB087Pvc9OHe
- qhajPWOP/gNLMmvBvknn1NToM9a8/E8rzcIZXoYs4RggRRYh6wARAQABiQEfBBgBAgAJBQJX
- GOxnAhsMAAoJEEhHWoN3abky+RUH/jE08/r5QzaNKYeVhu0uVbgXu5fsxqr2cAxhf+KuwT3T
- efhEP2alarxzUZdEh4MsG6c+X2NYLbD3cryiXxVx/7kSAJEFQJfA5P06g8NLR25Qpq9BLsN7
- ++dxQ+CLKzSEb1X24hYAJZpOhS8ev3ii+M/XIo+olDBKuTaTgB6elrg3CaxUsVgLBJ+jbRkW
- yQe2S5f/Ja1ThDpSSLLWLiLK/z7+gaqwhnwjQ8Z8Y9D2itJQcj4itHilwImsqwLG7SxzC0NX
- IQ5KaAFYdRcOgwR8VhhkOIVd70ObSZU+E4pTET1WDz4o65xZ89yfose1No0+r5ht/xWOOrh8
- 53/hcWvxHVs=
-Organization: IBM Linux Technology Center
-Date:   Tue, 19 Feb 2019 09:46:42 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Tue, 19 Feb 2019 10:53:27 -0500
+Received: from nat.nue.novell.com ([195.135.221.2]:1520 "EHLO suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725820AbfBSPx1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 10:53:27 -0500
+Received: by suse.de (Postfix, from userid 1000)
+        id D6F964317; Tue, 19 Feb 2019 16:53:24 +0100 (CET)
+Date:   Tue, 19 Feb 2019 16:53:24 +0100
+From:   Oscar Salvador <osalvador@suse.de>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        hughd@google.com, viro@zeniv.linux.org.uk,
+        torvalds@linux-foundation.org
+Subject: Re: mremap vs sysctl_max_map_count
+Message-ID: <20190219155320.tkfkwvqk53tfdojt@d104.suse.de>
+References: <20190218083326.xsnx7cx2lxurbmux@d104.suse.de>
+ <a11a10b5-4a31-2537-7b14-83f4b22e5f6c@suse.cz>
+ <20190218111535.dxkm7w7c2edgl2lh@kshutemo-mobl1>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021915-0012-0000-0000-0000170D32BE
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010626; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000281; SDB=6.01163357; UDB=6.00607428; IPR=6.00943939;
- MB=3.00025659; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-19 15:46:46
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021915-0013-0000-0000-0000564264E7
-Message-Id: <cc20c5cc-cf8e-d125-cac9-5d1b938a1d86@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-19_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902190116
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190218111535.dxkm7w7c2edgl2lh@kshutemo-mobl1>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-powerpc/pseries: Fix dn reference error in dlpar_cpu_remove_by_index()
+On Mon, Feb 18, 2019 at 02:15:35PM +0300, Kirill A. Shutemov wrote:
+> On Mon, Feb 18, 2019 at 10:57:18AM +0100, Vlastimil Babka wrote:
+> > IMHO it makes sense to do all such resource limit checks upfront. It
+> > should all be protected by mmap_sem and thus stable, right? Even if it
+> > was racy, I'd think it's better to breach the limit a bit due to a race
+> > than bail out in the middle of operation. Being also resilient against
+> > "real" ENOMEM's due to e.g. failure to alocate a vma would be much
+> > harder perhaps (but maybe it's already mostly covered by the
+> > too-small-to-fail in page allocator), but I'd try with the artificial
+> > limits at least.
+> 
+> There's slight chance of false-postive -ENOMEM with upfront approach:
+> unmapping can reduce number of VMAs so in some cases upfront check would
+> fail something that could succeed otherwise.
+> 
+> We could check also what number of VMA unmap would free (if any). But it
+> complicates the picture and I don't think worth it in the end.
 
-A reference to the device node of the CPU to be removed is released
-upon successful removal of the associated CPU device.  If the call
-to remove the CPU device fails, dlpar_cpu_remove_by_index() still
-frees the reference and this leads to miscomparisons and/or
-addressing errors later on.
-
-This problem may be observed when trying to DLPAR 'hot-remove' a CPU
-from a system that has only a single CPU.  The operation will fail
-because there is no other CPU to which the kernel operations may be
-migrated, but the refcount will still be decremented.
-
-Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
+I came up with an approach which tries to check how many vma's are we going
+to split and the number of vma's that we are going to free.
+I did several tests and it worked for me, but I am not sure if I overlooked
+something due to false assumptions.
+I am also not sure either if the extra code is worth, but from my POV
+it could avoid such cases where we unmap regions but move_vma()
+is not going to succeed at all.
 
 
-diff --git a/arch/powerpc/platforms/pseries/hotplug-cpu.c b/arch/powerpc/platforms/pseries/hotplug-cpu.c
-index 97feb6e..9537bb9 100644
---- a/arch/powerpc/platforms/pseries/hotplug-cpu.c
-+++ b/arch/powerpc/platforms/pseries/hotplug-cpu.c
-@@ -635,7 +635,8 @@ static int dlpar_cpu_remove_by_index(u32 drc_index)
- 	}
- 
- 	rc = dlpar_cpu_remove(dn, drc_index);
--	of_node_put(dn);
-+	if (!rc)
-+		of_node_put(dn);
- 	return rc;
+It is not yet complete (sanity checks are missing), but I wanted to show it
+to see whether it is something that is worth spending time with:
+
+diff --git a/mm/mremap.c b/mm/mremap.c
+index 3320616ed93f..f504c29d2af4 100644
+--- a/mm/mremap.c
++++ b/mm/mremap.c
+@@ -494,6 +494,51 @@ static struct vm_area_struct *vma_to_resize(unsigned long addr,
+ 	return vma;
  }
  
-
++static int pre_compute_maps(unsigned long addr, unsigned long len)
++{
++	struct mm_struct *mm = current->mm;
++	struct vm_area_struct *vma, *vma_end;
++	unsigned long end;
++	int maps_needed = 0;
++
++	end = addr + len;
++
++	vma = find_vma(mm, addr);
++	if (!vma)
++		return 0;
++	vma_end = find_vma(mm, end);
++
++	if (addr >= vma->vm_start && end <= vma->vm_end) {
++		/*
++		 * Possible outcomes when dealing with a single vma:
++		 * the vma will be entirely removed: map_count will be decremented by 1
++		 * it needs to be split in 2 before unmapping: map_count not changed
++		 * it needs to be split in 3 before unmapping: map_count incremented by 1
++		 */
++		if (addr > vma->vm_start && end < vma->vm_end)
++			maps_needed++;
++		else if (addr == vma->vm_start && end == vma->vm_end)
++			maps_needed--;
++	} else {
++		struct vm_area_struct *tmp = vma;
++		int vmas;
++
++		if (addr > tmp->vm_start)
++			vmas = -1;
++		else
++			vmas = 0;
++
++		while (tmp != vma_end) {
++			if (end >= tmp->vm_end)
++				vmas++;
++			tmp = tmp->vm_next;
++		}
++		maps_needed -= vmas;
++	}
++
++	return maps_needed;
++}
++
+ static unsigned long mremap_to(unsigned long addr, unsigned long old_len,
+ 		unsigned long new_addr, unsigned long new_len, bool *locked,
+ 		struct vm_userfaultfd_ctx *uf,
+@@ -516,6 +561,24 @@ static unsigned long mremap_to(unsigned long addr, unsigned long old_len,
+ 	if (addr + old_len > new_addr && new_addr + new_len > addr)
+ 		goto out;
+ 
++	/*
++	 * Worst-scenario case is when a vma gets split in 3 before unmaping it.
++	 * So, that would mean 2 (1 for new_addr and 1 for addr) more maps to
++	 * the ones we already hold.
++	 * If that is the case, let us check further if we are going to free
++	 * enough to go beyond the check in move_vma().
++	 */
++	if ((mm->map_count + 2) >= sysctl_max_map_count - 3) {
++		int maps_needed = 0;
++
++		maps_needed += pre_compute_maps(new_addr, new_len);
++		if (old_len > new_len)
++			maps_needed += pre_compute_maps(addr + new_len, old_len - new_len);
++
++		if ((mm->map_count + maps_needed) >= sysctl_max_map_count - 3)
++			return -ENOMEM;
++	}
++
+ 	ret = do_munmap(mm, new_addr, new_len, uf_unmap_early);
+ 	if (ret)
+ 		goto out;
+Thanks
+-- 
+Oscar Salvador
+SUSE L3
