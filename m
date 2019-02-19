@@ -2,89 +2,113 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 656C0C10F00
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 12:56:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73892C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:02:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27DA72070D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 12:56:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HpNL3RAH"
+	by mail.kernel.org (Postfix) with ESMTP id 4AA4120823
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:02:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728299AbfBSM4X (ORCPT
+        id S1728353AbfBSNCJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 07:56:23 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:56766 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbfBSM4X (ORCPT
+        Tue, 19 Feb 2019 08:02:09 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:37064 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726149AbfBSNCJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 07:56:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=dNnoJF5z3YPMcWSyBEpmYmJYxRPnyE5bqoQcnXKlBxk=; b=HpNL3RAHgekvGBpoVraNsM2Zb
-        Mu2RxvHy1PMkUNEQTOAfvHd42wifxahAOU/cLmja0FsxUAOoW9TZrMvAhuEykwqxEEojC02ekMzoG
-        qIGKNyeLp7q8XEsrDeXfWm4kibkXUZm8Wimgu532uAVvRafwcM6RBsEf2FZTQwjtRZZkWO6GdPhEA
-        ouhtIH4Qe5Zy5LtHrpiT2Cj5z1RSdupe39mc8IYnj+X6aKPyzU7ob738qG6Hkuxyv2wJ48VeEpv/1
-        GRJ0PBua69SP1ajzfcv8l+GeKe+xLk8v8//mK7CdoqZcsvCP2fWqARRzom+HI/2zgM0LqWmu1FOoH
-        pWhs6vbeQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gw4wd-0002QY-Rl; Tue, 19 Feb 2019 12:56:19 +0000
-Date:   Tue, 19 Feb 2019 04:56:19 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     Zi Yan <ziy@nvidia.com>, Vlastimil Babka <vbabka@suse.cz>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        Nitin Gupta <nigupta@nvidia.com>,
-        David Nellans <dnellans@nvidia.com>
-Subject: Re: [RFC PATCH 01/31] mm: migrate: Add exchange_pages to exchange
- two lists of pages.
-Message-ID: <20190219125619.GA12668@bombadil.infradead.org>
-References: <20190215220856.29749-1-zi.yan@sent.com>
- <20190215220856.29749-2-zi.yan@sent.com>
- <20190217112943.GP12668@bombadil.infradead.org>
- <65A1FFA0-531C-4078-9704-3F44819C3C07@nvidia.com>
- <2630a452-8c53-f109-1748-36b98076c86e@suse.cz>
- <53690FCD-B0BA-4619-8DF1-B9D721EE1208@nvidia.com>
- <20190218175224.GT12668@bombadil.infradead.org>
- <C84D2490-B6C6-4C7C-870F-945E31719728@nvidia.com>
- <1ce6ae99-4865-df62-5f20-cb07ebb95327@arm.com>
+        Tue, 19 Feb 2019 08:02:09 -0500
+Received: by mail-qt1-f195.google.com with SMTP id a48so22953653qtb.4;
+        Tue, 19 Feb 2019 05:02:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BdqjMlHllaQgH1N6KZKsajlALVR7GNWBr+8I5nZAir8=;
+        b=KX1N2jJCR2Lu2J+8T1CDxNrnDDmMtYDwmRg/rh1LVt0zImsFGENLOqlqCTptz8J7C0
+         XfdwAgmGcFr32MHjaECly611NV2DoRZIjXizkCEtSn4jVH9qbSYctT+UAFdZnIoNM2OO
+         zn1UTT52FRYcKnZ/Y2z8Dx4opqYGJIEHBw6LYFEnDLm5RsQQ+cEk1iOMagT90OpPo1LV
+         LJUE6WQKvg0bHZfJsqh/avIE0GX/3ey0QF4o1Dv4GzX6zi7JjdumpzL6IkE72H7JkCJF
+         xpwK7sOgQHrLcUmlewd4tAxDzrAoF9WDyHEJNzlOMKmbsD0BnAG6cIwXrv5p1Mbbza3u
+         +3Eg==
+X-Gm-Message-State: AHQUAuZYMPCrThiZ1qJh2MYyODI7O9/n4Gvy57ETZ1ot3goqBMzeSnty
+        4dJLQkUyMz/GElnTpUVmAio15qnEpoemxLoMggc=
+X-Google-Smtp-Source: AHgI3IZ2OMC92fSzVfilgQxuMFNCfegIK+KWr+hXt9Sg80gmJ20msl3BS7egXB91JIBkeNFoJ7+Ms/DQawCxh2JfJl4=
+X-Received: by 2002:a0c:98c8:: with SMTP id g8mr21709729qvd.161.1550581327610;
+ Tue, 19 Feb 2019 05:02:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1ce6ae99-4865-df62-5f20-cb07ebb95327@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20190211172948.3322-1-will.deacon@arm.com> <CAK8P3a2Pr2oWYB7QHQMaHRq6H8h9xMwhhyJz5Pu67bVe4GaK9g@mail.gmail.com>
+ <20190218162954.GB16713@fuggles.cambridge.arm.com> <CAK8P3a1TY9S=zYsdZ5O021p2yYcZhehVuwB3_65dR6x6zbkTYQ@mail.gmail.com>
+ <20190218175625.GD16713@fuggles.cambridge.arm.com> <CAK8P3a2mjjr94hwj_eXxfyKDKDuA=MogXW7xJygh-X0Hqgf6rg@mail.gmail.com>
+ <20190219112747.7db95e58@windsurf.home> <CAK8P3a3n2meqogz7MeMUA48LBOEV9_AYQPxU3+V8A=Fn_63v4A@mail.gmail.com>
+ <20190219113609.GC4027@fuggles.cambridge.arm.com>
+In-Reply-To: <20190219113609.GC4027@fuggles.cambridge.arm.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 19 Feb 2019 14:01:50 +0100
+Message-ID: <CAK8P3a0iM17ABoaFn9+KymZ-JkjM9hmBNDMyn6-A=s06p1fvnQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] docs/memory-barriers.txt: Rewrite "KERNEL I/O BARRIER
+ EFFECTS" section
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Gregory CLEMENT <gregory.clement@free-electrons.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 01:12:07PM +0530, Anshuman Khandual wrote:
-> But the location of this temp page matters as well because you would like to
-> saturate the inter node interface. It needs to be either of the nodes where
-> the source or destination page belongs. Any other node would generate two
-> internode copy process which is not what you intend here I guess.
+On Tue, Feb 19, 2019 at 12:36 PM Will Deacon <will.deacon@arm.com> wrote:
+> On Tue, Feb 19, 2019 at 12:31:50PM +0100, Arnd Bergmann wrote:
+> > On Tue, Feb 19, 2019 at 11:27 AM Thomas Petazzoni
+> > <thomas.petazzoni@bootlin.com> wrote:
+> >
+> > I think an example of this would be a driver using outb() to disable
+> > an interrupt, and then relying on the the interrupt no longer happening
+> > after the outb().
+>
+> Isn't that racy already? i.e. the interrupt could fire just before you
+> disabled it, but not get delivered by the irq controller until after you'd
+> disabled it at the device?
 
-That makes no sense.  It should be allocated on the local node of the CPU
-performing the copy.  If the CPU is in node A, the destination is in node B
-and the source is in node C, then you're doing 4k worth of reads from node C,
-4k worth of reads from node B, 4k worth of writes to node C followed by
-4k worth of writes to node B.  Eventually the 4k of dirty cachelines on
-node A will be written back from cache to the local memory (... or not,
-if that page gets reused for some other purpose first).
+Probably, I had a hard enough time trying to come up with any example ;-)
 
-If you allocate the page on node B or node C, that's an extra 4k of writes
-to be sent across the inter-node link.
+One reference to non-posted transaction in a comment is in
+drivers/net/ethernet/dec/tulip/de4x5.c:
+
+/*
+** The DE4X5 interrupt handler.
+**
+** I/O Read/Writes through intermediate PCI bridges are never 'posted',
+** so that the asserted interrupt always has some real data to work with -
+** if these I/O accesses are ever changed to memory accesses, ensure the
+** STS write is read immediately to complete the transaction if the adapter
+** is not on bus 0. Lost interrupts can still occur when the PCI bus load
+** is high and descriptor status bits cannot be set before the associated
+** interrupt is asserted and this routine entered.
+*/
+
+I found another comment in the via-rhine driver:
+
+/* Beware of PCI posted writes */
+#define IOSYNC  do { ioread8(ioaddr + StationAddr); } while (0)
+
+this one is used in the chip reset function, and in the transmit
+path.
+
+       Arnd
+
+
+     Arnd
