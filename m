@@ -2,139 +2,148 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D93C5C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:52:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B90C4360F
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:56:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A24E021738
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:52:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TF4Qfnkk"
+	by mail.kernel.org (Postfix) with ESMTP id A0C5021738
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:56:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728231AbfBSTwJ (ORCPT
+        id S1726794AbfBST4d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 14:52:09 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40897 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726089AbfBSTwJ (ORCPT
+        Tue, 19 Feb 2019 14:56:33 -0500
+Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:38475 "EHLO
+        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725807AbfBST4d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 14:52:09 -0500
-Received: by mail-wr1-f66.google.com with SMTP id q1so23330011wrp.7
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 11:52:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hwFTKdSwPZtqX0QtMqOoFg3pkIluI2fPczZHfa6feJM=;
-        b=TF4Qfnkk+jXddJZAwjMmQPuXh4SK+qgdsCiMY+MdACqLdDB6vbG83Dd1MNypyTFUod
-         vkQ6tunBIiDGZoEEFhbJ1vbLwT922X2thHwIX2LJ8yMkV+AEqPdIpGmW9r0xNmVRsETi
-         AKmILSheFh8xLQJOFizQzpMz6sMYhe5mIQ2/0ZJ+Ws8POSV0hTjJO3TUVJ6/gjdlxU2r
-         ZfBr5SkSm4ezrjIR5GopcQYEJ6Ctcsk0MsDL85EEsB0kWuoVOQ3WtPjYCljiIM7ig+W6
-         3b2ikXQ/wHe2tOIR6Ozorh9v8SlGbh8R8VZ5J7U4jgoOLGOGxet9xIN+QHSDN5NzKiPv
-         6gjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hwFTKdSwPZtqX0QtMqOoFg3pkIluI2fPczZHfa6feJM=;
-        b=BYEQVHfM7dsXfVMHj/KXQmrXV5u8ivjSdtkeoet5TZQfHQvF6BElCck6PhLOd4fBY9
-         LNF8kLzURLMPH8bIOjzj8IKOPGrV1scP1E/HV1kCy6unlaKZv5h1bOxKzE4P4duDh+4b
-         CDr/d5YO5iw7Hc+riQoBrm9ZIgrNay/olwJTyTlv8h5SVueumfmJrNPzarsU4/pFqkwk
-         uNc1ElOPlric1xuYRge6FehWZvDwVWQ/usIsS/N0oQT1vnbbIohYoho9CFL+nbVHAxKW
-         4QJb/MXfd2Oxu0iOdjo1DtjAVtplWv8pJEE/Uup61rOBT52lw2Am5ytA8qYr02iH36Ig
-         vuag==
-X-Gm-Message-State: AHQUAuYJWeRLGnpPLpPesGe37OsAvpSzzRxAc1/SiESXLJneoDY6Sr4s
-        S1EyfKsfQwMQ/G87BRfu+/FibkacPEwGrdFjtgI/Vg==
-X-Google-Smtp-Source: AHgI3IYNTnseh9Ou5OC1DGL6fW+f3f7UX1x2latowH7BYdoyi57d2WZHTNFfXtnH1pwqBNvVV6GbqjMTLRUDWjjLHBg=
-X-Received: by 2002:a05:6000:1091:: with SMTP id y17mr21139194wrw.317.1550605927320;
- Tue, 19 Feb 2019 11:52:07 -0800 (PST)
+        Tue, 19 Feb 2019 14:56:33 -0500
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id wBVBgleFzLMwIwBVEgqtzT; Tue, 19 Feb 2019 20:56:31 +0100
+Subject: Re: [PATCH 2/3] media: vicodec: avoic clang frame size warning
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Mark Brown <broonie@kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Dafna Hirschfeld <dafna3@gmail.com>,
+        Tom aan de Wiel <tom.aandewiel@gmail.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190219170209.4180739-1-arnd@arndb.de>
+ <20190219170209.4180739-2-arnd@arndb.de>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <eaf45207-2741-2e0d-4ae4-aabb36e4417d@xs4all.nl>
+Date:   Tue, 19 Feb 2019 20:56:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190219185509.GA23853@embeddedor>
-In-Reply-To: <20190219185509.GA23853@embeddedor>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Tue, 19 Feb 2019 14:51:53 -0500
-Message-ID: <CADnq5_Nntrq2zdzkwERV3ShCRptifbgVNhKP+xNgtyaWftWDdg@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/powerplay/smu10_hwmgr: use struct_size() in kzalloc()
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190219170209.4180739-2-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfB8XEDPigTwbqan9jvvIRl53y+bOjIGampXSDthERoMDOuK1YH07MaVhxIMTMHjxVCI8rbf2HPXJ0+/ODoWfj43k7km5czVmyt2y/EMb3x5MCzo4TQGT
+ X3xeViJ3fSFseZONrwqy+e0epVG6AsYXlJ9/qArzlXIBXQ5S9QFnq9cbTYRSNdfBm6fe0RmhA/jyAx8W6HQGG0sJmg3mh/Zf1zwmWLN2/lNHW1Vs7FqCwUaK
+ pNHAgfCEopUzP9Dxcs6+VGQBAxZfyQgQQEMkqaNtXCJQ+bXaRWexV5CRzIJnwu15OgiXz7d4dQ6pKSfADPB4sqIo7i1dRH25C2+TJLSKAaz9IByOCWjIDCpU
+ Q9L2kdwCgM4a8lLpDFyIVcCT6Y6fyImK+Cx9aPyR6Nh2pJuTK9kzjDzxZuTWWDSQPk9d7iSsbkC7ygQOgVOKLKJsFL9DXh/+NxM7cwtAQU78dq1H7jLCHKnO
+ uGdG48Fj+eBRjjVP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 1:55 PM Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
->
-> One of the more common cases of allocation size calculations is finding
-> the size of a structure that has a zero-sized array at the end, along
-> with memory for some number of elements for that array. For example:
->
-> struct foo {
->     int stuff;
->     struct boo entry[];
-> };
->
-> size = sizeof(struct foo) + count * sizeof(struct boo);
-> instance = kzalloc(size, GFP_KERNEL);
->
-> Instead of leaving these open-coded and prone to type mistakes, we can
-> now use the new struct_size() helper:
->
-> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
->
-> Notice that, in this case, variable table_size is not necessary, hence
-> it is removed.
->
-> This code was detected with the help of Coccinelle.
->
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-
-Applied this and the smu8 patch.  Thanks!
-
-Alex
-
+On 2/19/19 6:01 PM, Arnd Bergmann wrote:
+> Clang-9 makes some different inlining decisions compared to gcc, which
+> leads to a warning about a possible stack overflow problem when building
+> with CONFIG_KASAN, including when setting asan-stack=0, which avoids
+> most other frame overflow warnings:
+> 
+> drivers/media/platform/vicodec/codec-fwht.c:673:12: error: stack frame size of 2224 bytes in function 'encode_plane'
+> 
+> Manually adding noinline_for_stack annotations in those functions
+> called by encode_plane() or decode_plane() that require a significant
+> amount of kernel stack makes this impossible to happen with any
+> compiler.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
-> index 5273de3c5b98..0ad8fe4a6277 100644
-> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
-> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
-> @@ -139,12 +139,10 @@ static int smu10_construct_max_power_limits_table(struct pp_hwmgr *hwmgr,
->  static int smu10_init_dynamic_state_adjustment_rule_settings(
->                                                         struct pp_hwmgr *hwmgr)
+>  drivers/media/platform/vicodec/codec-fwht.c | 18 ++++++++++--------
+>  1 file changed, 10 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/media/platform/vicodec/codec-fwht.c b/drivers/media/platform/vicodec/codec-fwht.c
+> index d1d6085da9f1..135d56bcc2c5 100644
+> --- a/drivers/media/platform/vicodec/codec-fwht.c
+> +++ b/drivers/media/platform/vicodec/codec-fwht.c
+> @@ -47,7 +47,7 @@ static const uint8_t zigzag[64] = {
+>  };
+>  
+>  
+> -static int rlc(const s16 *in, __be16 *output, int blocktype)
+> +static int noinline_for_stack rlc(const s16 *in, __be16 *output, int blocktype)
 >  {
-> -       uint32_t table_size =
-> -               sizeof(struct phm_clock_voltage_dependency_table) +
-> -               (7 * sizeof(struct phm_clock_voltage_dependency_record));
-> +       struct phm_clock_voltage_dependency_table *table_clk_vlt;
->
-> -       struct phm_clock_voltage_dependency_table *table_clk_vlt =
-> -                                       kzalloc(table_size, GFP_KERNEL);
-> +       table_clk_vlt = kzalloc(struct_size(table_clk_vlt, entries, 7),
-> +                               GFP_KERNEL);
->
->         if (NULL == table_clk_vlt) {
->                 pr_err("Can not allocate memory!\n");
-> --
-> 2.20.1
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>  	s16 block[8 * 8];
+>  	s16 *wp = block;
+> @@ -106,8 +106,8 @@ static int rlc(const s16 *in, __be16 *output, int blocktype)
+>   * This function will worst-case increase rlc_in by 65*2 bytes:
+>   * one s16 value for the header and 8 * 8 coefficients of type s16.
+>   */
+> -static u16 derlc(const __be16 **rlc_in, s16 *dwht_out,
+> -		 const __be16 *end_of_input)
+> +static noinline_for_stack u16
+> +derlc(const __be16 **rlc_in, s16 *dwht_out, const __be16 *end_of_input)
+>  {
+>  	/* header */
+>  	const __be16 *input = *rlc_in;
+> @@ -373,7 +373,8 @@ static void fwht(const u8 *block, s16 *output_block, unsigned int stride,
+>   * Furthermore values can be negative... This is just a version that
+>   * works with 16 signed data
+>   */
+> -static void fwht16(const s16 *block, s16 *output_block, int stride, int intra)
+> +static void noinline_for_stack
+> +fwht16(const s16 *block, s16 *output_block, int stride, int intra)
+>  {
+>  	/* we'll need more than 8 bits for the transformed coefficients */
+>  	s32 workspace1[8], workspace2[8];
+> @@ -456,7 +457,8 @@ static void fwht16(const s16 *block, s16 *output_block, int stride, int intra)
+>  	}
+>  }
+>  
+> -static void ifwht(const s16 *block, s16 *output_block, int intra)
+> +static noinline_for_stack void
+> +ifwht(const s16 *block, s16 *output_block, int intra)
+>  {
+
+Please add it for fwht as well. It makes no sense to have it for fwht16, ifwht
+but not the fwht function.
+
+Got to say this is all very magic...
+
+I think it would be good to perhaps have a comment at the start of the source
+that explains why noinline_for_stack is added to selected functions.
+
+Patches 1 & 3 are fine, BTW.
+
+Regards,
+
+	Hans
+
+>  	/*
+>  	 * we'll need more than 8 bits for the transformed coefficients
+> @@ -604,9 +606,9 @@ static int var_inter(const s16 *old, const s16 *new)
+>  	return ret;
+>  }
+>  
+> -static int decide_blocktype(const u8 *cur, const u8 *reference,
+> -			    s16 *deltablock, unsigned int stride,
+> -			    unsigned int input_step)
+> +static noinline_for_stack int
+> +decide_blocktype(const u8 *cur, const u8 *reference, s16 *deltablock,
+> +		 unsigned int stride, unsigned int input_step)
+>  {
+>  	s16 tmp[64];
+>  	s16 old[64];
+> 
+
