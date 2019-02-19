@@ -6,68 +6,68 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35CA5C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:41:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB602C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:41:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07DE221773
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:41:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72230217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:41:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550547660;
-	bh=ctuB6HQ7t4dDjmMLoZUKtjdDAEpaQjwTSGmWpOD9GyM=;
+	s=default; t=1550547667;
+	bh=7Fc8JQrJ/HQ6WUDneyt8rHe9oG955W6ZMdACClr4UMQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:Reply-To:List-ID:
 	 From;
-	b=VTct+OC2Ejj7I404N9P+656TDhZhbO5DWJpaR0TCCl9K7c6fmCvYtl/x34wGR4DaT
-	 4KzVSFWzWvg4nEDSd6u4RkXTA3FY3sLBgJ13a59ug3a0KvxyGeoo3INFjk/ZUxWf9A
-	 APdGMWJ74xPslo2iNl0KdsflriPG3/5N/xid+t6k=
+	b=PSNtoupJqyomHTHFiP/oGIYP7rrNQ6216J2ngqolH40klSvmyuc3YvsKU5pJUuOvC
+	 YdWMxQLYcGu1DBzEU9WJAOwC2CZLnXFs6COvVu38g6LjPzfOUDQcdBAK9o2gFTOdYQ
+	 U+GNoZCruRf7TBTE0kW8c0Vx3arRSLhGWO/8hBEU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726886AbfBSDk6 (ORCPT
+        id S1727003AbfBSDlG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 22:40:58 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:32927 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726377AbfBSDkc (ORCPT
+        Mon, 18 Feb 2019 22:41:06 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:46227 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725870AbfBSDk2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 22:40:32 -0500
-Received: by mail-qk1-f195.google.com with SMTP id x9so11280715qkf.0;
-        Mon, 18 Feb 2019 19:40:31 -0800 (PST)
+        Mon, 18 Feb 2019 22:40:28 -0500
+Received: by mail-qk1-f194.google.com with SMTP id i5so11220033qkd.13;
+        Mon, 18 Feb 2019 19:40:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :reply-to:organization;
-        bh=MAczlCx3mIAKVe8ps2sOQcXtmOH1S9j5/HyQaCUgiyQ=;
-        b=aNVDM5Eduf+HK54rx9q3r74mqa+lvMGBpZrrOlCgGe/1UNFxukOh9a6tYLwi5kRoFb
-         mwN/5S2LMWcFyNX/p2HchOTfzgXkI+w68leEIWzuIy/cTPwFU0J8Tq+uf9jvBnGu6Hrc
-         3SNjZ2OjT4tm7zAbfWtaGEhJFO7WbyHE6hHCFZLTF5s36OImQIXzDO5DPj3nRADImnUC
-         /Wd15Rg7/pgU0Fj5ss993fadnYcpflVQkYJ03nMqDudRwxB4hL50tGEljQXsvC+hxjrH
-         6NhklfebI+3gdrON4II7ivR7qXz09iPCLr1ufuelbsgV+qrePsE1yUcUsDEgepQVf2B0
-         8X2w==
+        bh=vd7SXS+DM9G/S+g6dKoqWpmBLRLvj4kTz4MPUfwNqzY=;
+        b=KTbn0ntzQ/+3XzAGlb3ei0HzItGTvGOBcdRtK4IWqXyPCkLRC6EBT3XpZiKzGnSVMX
+         Uv2BP7uiKi/WJlduRTzk1zZFokbKQPbw6HZ1vrsc/3BAjGe7IkQmKaiFexgwp525I3HO
+         s30ClDMgOSBJkcroHU+gv/9slMqA21K+POzUr7jcs+iFM5KjQOiWyr8ltFrTIKWkmuRA
+         E4QwDCzJcA1p9lxy3QiWpHxWpcBP0QGPy1XlqrUWOETahvqMPP7ixsnVXPvatItBJ6xQ
+         JPrmYDAEgvg+gIvDMLwviKXVu6Br8bWzALX3maIkbdMSVcX7elgdgblJLlTE92N5kvCb
+         P+jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:reply-to:organization;
-        bh=MAczlCx3mIAKVe8ps2sOQcXtmOH1S9j5/HyQaCUgiyQ=;
-        b=mVrEhfQeQA2lDPhlzywcW7CNvsJqU0+ZGhThsWtWplEhlUSLH5no3XPss6AULXPVAM
-         GM+IXcT/X+znMIqniCOEIUUPa9Iy+/9v0N8anPn3UYp95Et1AVtJ5A1BIr17DL+xzn3W
-         qt/yZFWH6OgWvC8O/1KlmFCANuSvHUiPDLc6anuaoYNoijb1bes/wTY8Ua25dI3IGwGj
-         0u0wZPBtiTirbrcXP5joE82d8gPBctEkA6E9p5MslX+FiQ2mnvssxhl7wLDL9DYm0/z/
-         44c3IGsRg6+RY7jeqY8fCWCn1GQaJPRLqVYi1ckC/l+UJgE5fmgpbZc+b5Q6IpxLHF8W
-         Qtdg==
-X-Gm-Message-State: AHQUAubqpyNkJFankjzkdiwq0XU4EEqFFldrR0wktVeRZZkVDsVmlbGL
-        rNWmseUkx6P5OMMriIziSlw=
-X-Google-Smtp-Source: AHgI3IZwyh+3fv8WFmpVb/GQ31KPY9GpDStCojNU97RH9opDcQGIn166uv7d0tCiD/hHBlUxdylFJA==
-X-Received: by 2002:a37:4d52:: with SMTP id a79mr3390686qkb.75.1550547631341;
-        Mon, 18 Feb 2019 19:40:31 -0800 (PST)
+        bh=vd7SXS+DM9G/S+g6dKoqWpmBLRLvj4kTz4MPUfwNqzY=;
+        b=OgRZ+jIIfNa/00MzjG8zd+v+QckajPwb/ZxU79+/m9K7z4Ej3zAuyz/pFmaA9LxJLM
+         R1rnnYzQ3X8AzqrYRDqJIbYBqxM9q9RGPRHSrBmMPKWoZUQwDGTlvuooG+ev3aLx///G
+         GWtBGzNJMLihzSKULmx21/LGHCbw3Ix7ok3heGbWYlWZavBwSDlQK14tXDnCycPDwN5k
+         5mHym7Y3xSXWqCDIs7MJRPEzem0Zj6GY3OeClZWXdTfMbGAMJ9QMQ8HcPUfLLs53m7es
+         P0d/WGdi/LffsxS4gmt/2d8EE/sGcWWw2QQEwpXWVjibznuC3g5g48XgZY9nNbYtiHqs
+         sK+g==
+X-Gm-Message-State: AHQUAuZUn0CxUIQ8yLIlFwMaOJ9EowkuFqUwNhnH/3IZ1SwA7U+AtTcp
+        Lu0SexmuzzNmEcPXszWmZ9E=
+X-Google-Smtp-Source: AHgI3IbJvpNPL4fDWhK85P8Ha2hIXxEfJWYUkGhL/iPYsueLyXevlDL5W6OY9gPHWAypSIjOEEXLyQ==
+X-Received: by 2002:a37:a546:: with SMTP id o67mr19056989qke.42.1550547627089;
+        Mon, 18 Feb 2019 19:40:27 -0800 (PST)
 Received: from kbl.fios-router.home (pool-96-233-42-17.bstnma.fios.verizon.net. [96.233.42.17])
-        by smtp.gmail.com with ESMTPSA id u5sm7327680qtg.37.2019.02.18.19.40.30
+        by smtp.gmail.com with ESMTPSA id u5sm7327680qtg.37.2019.02.18.19.40.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Feb 2019 19:40:30 -0800 (PST)
+        Mon, 18 Feb 2019 19:40:26 -0800 (PST)
 From:   Len Brown <lenb@kernel.org>
 To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org
-Subject: [PATCH 07/11] powercap/intel_rapl: simplify rapl_find_package()
-Date:   Mon, 18 Feb 2019 22:40:09 -0500
-Message-Id: <c21fb21e1cd476b2806d5f88c96e8cc54d3fd08a.1550545163.git.len.brown@intel.com>
+Cc:     linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
+        linux-doc@vger.kernel.org
+Subject: [PATCH 04/11] cpu topology: export die_id
+Date:   Mon, 18 Feb 2019 22:40:06 -0500
+Message-Id: <a1faeb72345227a49aae0475abf910421dc40a1c.1550545163.git.len.brown@intel.com>
 X-Mailer: git-send-email 2.18.0-rc0
 In-Reply-To: <635b2bf8b1151a191cd9299276b75791a818c0c2.1550545163.git.len.brown@intel.com>
 References: <635b2bf8b1151a191cd9299276b75791a818c0c2.1550545163.git.len.brown@intel.com>
@@ -78,93 +78,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhang Rui <rui.zhang@intel.com>
+From: Len Brown <len.brown@intel.com>
 
-Simplify how the code to discover a package is called.
-Rename find_package_by_id() to rapl_find_package()
+Export die_id in cpu topology, for the benefit of hardware that
+has multiple die per package.  die_id is quite similar to core_id,
+in that it holds multiple CPUs, but is inside a package.
 
-No functional change.
+This needed by topology-aware user-space.  In particular,
+an application, such as turbostat(8), which needs to know
+the actual scope of "package-scope" MSRs.
 
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
 Signed-off-by: Len Brown <len.brown@intel.com>
-Cc: linux-pm@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
 Signed-off-by: Len Brown <len.brown@intel.com>
 ---
- drivers/powercap/intel_rapl.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ Documentation/cputopology.txt   | 10 ++++++++--
+ arch/x86/include/asm/topology.h |  1 +
+ drivers/base/topology.c         |  4 ++++
+ include/linux/topology.h        |  3 +++
+ 4 files changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/powercap/intel_rapl.c b/drivers/powercap/intel_rapl.c
-index 6cdb2c14eee4..6057d9695fed 100644
---- a/drivers/powercap/intel_rapl.c
-+++ b/drivers/powercap/intel_rapl.c
-@@ -264,8 +264,9 @@ static struct powercap_control_type *control_type; /* PowerCap Controller */
- static struct rapl_domain *platform_rapl_domain; /* Platform (PSys) domain */
+diff --git a/Documentation/cputopology.txt b/Documentation/cputopology.txt
+index 2698da7e4f49..287213b4517b 100644
+--- a/Documentation/cputopology.txt
++++ b/Documentation/cputopology.txt
+@@ -12,6 +12,12 @@ physical_package_id:
+ 	socket number, but the actual value is architecture and platform
+ 	dependent.
  
- /* caller to ensure CPU hotplug lock is held */
--static struct rapl_package *find_package_by_id(int id)
-+static struct rapl_package *rapl_find_package(int cpu)
- {
-+	int id = topology_physical_package_id(cpu);
- 	struct rapl_package *rp;
++die_id:
++
++	the CPU die ID of cpuX. Typically it is the hardware platform's
++	identifier (rather than the kernel's).  The actual value is
++	architecture and platform dependent.
++
+ core_id:
  
- 	list_for_each_entry(rp, &rapl_packages, plist) {
-@@ -1298,7 +1299,7 @@ static int __init rapl_register_psys(void)
- 	rd->rpl[0].name = pl1_name;
- 	rd->rpl[1].prim_id = PL2_ENABLE;
- 	rd->rpl[1].name = pl2_name;
--	rd->rp = find_package_by_id(0);
-+	rd->rp = rapl_find_package(0);
+ 	the CPU core ID of cpuX. Typically it is the hardware platform's
+@@ -43,12 +49,12 @@ thread_siblings_list:
+ core_siblings:
  
- 	power_zone = powercap_register_zone(&rd->power_zone, control_type,
- 					    "psys", NULL,
-@@ -1454,8 +1455,9 @@ static void rapl_remove_package(struct rapl_package *rp)
- }
+ 	internal kernel map of cpuX's hardware threads within the same
+-	physical_package_id.
++	die_id.
  
- /* called from CPU hotplug notifier, hotplug lock held */
--static struct rapl_package *rapl_add_package(int cpu, int pkgid)
-+static struct rapl_package *rapl_add_package(int cpu)
- {
-+	int id = topology_physical_package_id(cpu);
- 	struct rapl_package *rp;
- 	int ret;
+ core_siblings_list:
  
-@@ -1464,7 +1466,7 @@ static struct rapl_package *rapl_add_package(int cpu, int pkgid)
- 		return ERR_PTR(-ENOMEM);
+ 	human-readable list of cpuX's hardware threads within the same
+-	physical_package_id.
++	die_id.
  
- 	/* add the new package to the list */
--	rp->id = pkgid;
-+	rp->id = id;
- 	rp->lead_cpu = cpu;
+ book_siblings:
  
- 	/* check if the package contains valid domains */
-@@ -1495,12 +1497,11 @@ static struct rapl_package *rapl_add_package(int cpu, int pkgid)
-  */
- static int rapl_cpu_online(unsigned int cpu)
- {
--	int pkgid = topology_physical_package_id(cpu);
- 	struct rapl_package *rp;
+diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
+index 453cf38a1c33..281be6bbc80d 100644
+--- a/arch/x86/include/asm/topology.h
++++ b/arch/x86/include/asm/topology.h
+@@ -106,6 +106,7 @@ extern const struct cpumask *cpu_coregroup_mask(int cpu);
  
--	rp = find_package_by_id(pkgid);
-+	rp = rapl_find_package(cpu);
- 	if (!rp) {
--		rp = rapl_add_package(cpu, pkgid);
-+		rp = rapl_add_package(cpu);
- 		if (IS_ERR(rp))
- 			return PTR_ERR(rp);
- 	}
-@@ -1510,11 +1511,10 @@ static int rapl_cpu_online(unsigned int cpu)
+ #define topology_logical_package_id(cpu)	(cpu_data(cpu).logical_proc_id)
+ #define topology_physical_package_id(cpu)	(cpu_data(cpu).phys_proc_id)
++#define topology_die_id(cpu)			(cpu_data(cpu).cpu_die_id)
+ #define topology_core_id(cpu)			(cpu_data(cpu).cpu_core_id)
  
- static int rapl_cpu_down_prep(unsigned int cpu)
- {
--	int pkgid = topology_physical_package_id(cpu);
- 	struct rapl_package *rp;
- 	int lead_cpu;
+ #ifdef CONFIG_SMP
+diff --git a/drivers/base/topology.c b/drivers/base/topology.c
+index 5fd9f167ecc1..50352cf96f85 100644
+--- a/drivers/base/topology.c
++++ b/drivers/base/topology.c
+@@ -43,6 +43,9 @@ static ssize_t name##_list_show(struct device *dev,			\
+ define_id_show_func(physical_package_id);
+ static DEVICE_ATTR_RO(physical_package_id);
  
--	rp = find_package_by_id(pkgid);
-+	rp = rapl_find_package(cpu);
- 	if (!rp)
- 		return 0;
++define_id_show_func(die_id);
++static DEVICE_ATTR_RO(die_id);
++
+ define_id_show_func(core_id);
+ static DEVICE_ATTR_RO(core_id);
  
+@@ -72,6 +75,7 @@ static DEVICE_ATTR_RO(drawer_siblings_list);
+ 
+ static struct attribute *default_attrs[] = {
+ 	&dev_attr_physical_package_id.attr,
++	&dev_attr_die_id.attr,
+ 	&dev_attr_core_id.attr,
+ 	&dev_attr_thread_siblings.attr,
+ 	&dev_attr_thread_siblings_list.attr,
+diff --git a/include/linux/topology.h b/include/linux/topology.h
+index cb0775e1ee4b..5cc8595dd0e4 100644
+--- a/include/linux/topology.h
++++ b/include/linux/topology.h
+@@ -184,6 +184,9 @@ static inline int cpu_to_mem(int cpu)
+ #ifndef topology_physical_package_id
+ #define topology_physical_package_id(cpu)	((void)(cpu), -1)
+ #endif
++#ifndef topology_die_id
++#define topology_die_id(cpu)			((void)(cpu), -1)
++#endif
+ #ifndef topology_core_id
+ #define topology_core_id(cpu)			((void)(cpu), 0)
+ #endif
 -- 
 2.18.0-rc0
 
