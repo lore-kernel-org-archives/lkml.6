@@ -2,224 +2,177 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63749C10F00
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7191EC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:44:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A670217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:43:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="xQavpI6V"
+	by mail.kernel.org (Postfix) with ESMTP id 4CFBC217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:44:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726280AbfBSEnM (ORCPT
+        id S1726380AbfBSEoM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 23:43:12 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:56277 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbfBSEnM (ORCPT
+        Mon, 18 Feb 2019 23:44:12 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:6809 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725730AbfBSEoL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 23:43:12 -0500
-X-Greylist: delayed 1696 seconds by postgrey-1.27 at vger.kernel.org; Mon, 18 Feb 2019 23:43:10 EST
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id x1J4gom1002993;
-        Tue, 19 Feb 2019 13:42:50 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x1J4gom1002993
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1550551371;
-        bh=Ouc8G4KLNZaE6lveGhLr5rpPmdwDIB4HyR9ERDNDPIE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=xQavpI6Vzfdk7kv0oqLKCznvBpaMj9/ZR/FqLArqmriudYyOSAI7btDhXj/0gGIAj
-         Yu4TKaae76BGnPGfFQ6TIaFc67vB9TEHMuMejJeD7EW1dNNNXFYJGMdz6+pP/tLx3t
-         /3j2kvIdl1+hDDvSj1qLi/V5z2MZvMIKuRcqb20czXkLOOXTw3e3ZALkhYBz7YkWfZ
-         JB3MhxBgqmwiU7mMA+Z3AvlGUru6SZ06WLPo7sKsIEGXCynrf4Lbf77dOWkBZfA+aY
-         q28hQekDK6jNLVKnKJTwKZE5ICx7y5FkgPl9LgOKusq4OUSY0aTprDemaUEV1ZXess
-         YG3kzkVklocKg==
-X-Nifty-SrcIP: [209.85.217.43]
-Received: by mail-vs1-f43.google.com with SMTP id w14so3997885vso.6;
-        Mon, 18 Feb 2019 20:42:50 -0800 (PST)
-X-Gm-Message-State: AHQUAuaZ7a/rxYeBfeTXXTz5O5QWlaiBLLD5RomGagxzHtp84/WptqdM
-        W9FPijBOCKs9kWA5f65Px7GBuZi6cHsd+A8fCKk=
-X-Google-Smtp-Source: AHgI3IYnm0B/yD23GE1FOk2xDlSaKzk45t+t4haO0qql7ZKhC1nkKgfoSRCwu5lfwmlBRHfY9auboKM1NXZBq/OdDQg=
-X-Received: by 2002:a05:6102:18f:: with SMTP id r15mr7742118vsq.215.1550551369552;
- Mon, 18 Feb 2019 20:42:49 -0800 (PST)
-MIME-Version: 1.0
-References: <20190211143600.15021-1-joel@joelfernandes.org>
- <20190215031926.ljzluy2cfxp64u6o@ast-mbp> <CAK7LNAThSm1n1B_Ss0gRDZ3H-DWj2bvpZ+6Ui2jEo4Pt9YynEA@mail.gmail.com>
-In-Reply-To: <CAK7LNAThSm1n1B_Ss0gRDZ3H-DWj2bvpZ+6Ui2jEo4Pt9YynEA@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 19 Feb 2019 13:42:13 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATf4adEEqWko2YO46wHHi-Vvc+_LBjQGNnM7rt8GSOgZQ@mail.gmail.com>
-Message-ID: <CAK7LNATf4adEEqWko2YO46wHHi-Vvc+_LBjQGNnM7rt8GSOgZQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] Provide in-kernel headers for making it easy to
- extend the kernel
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     Networking <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        atish patra <atishp04@gmail.com>,
-        Daniel Colascione <dancol@google.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Karim Yaghmour <karim.yaghmour@opersys.com>,
-        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Manoj Rao <linux@manojrajarao.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Yonghong Song <yhs@fb.com>
+        Mon, 18 Feb 2019 23:44:11 -0500
+X-UUID: fc6aca95214c4feba9e6222c19c1e397-20190219
+X-UUID: fc6aca95214c4feba9e6222c19c1e397-20190219
+Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1518967249; Tue, 19 Feb 2019 12:43:59 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ MTKMBS33N1.mediatek.inc (172.27.4.75) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 19 Feb 2019 12:43:58 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 19 Feb 2019 12:43:57 +0800
+Message-ID: <1550551437.9232.4.camel@mtksdaap41>
+Subject: Re: [v2 1/1] drm/mediatek: add mt8183 dpi support
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Jitao Shi <jitao.shi@mediatek.com>
+CC:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>, <linux-pwm@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        "Ajay Kumar" <ajaykumar.rs@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        "Rahul Sharma" <rahul.sharma@samsung.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Vincent Palatin <vpalatin@chromium.org>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Russell King" <rmk+kernel@arm.linux.org.uk>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
+        <cawa.cheng@mediatek.com>, <bibby.hsieh@mediatek.com>,
+        <stonea168@163.com>
+Date:   Tue, 19 Feb 2019 12:43:57 +0800
+In-Reply-To: <20190219030645.68321-1-jitao.shi@mediatek.com>
+References: <20190219030645.68321-1-jitao.shi@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 1:14 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> On Fri, Feb 15, 2019 at 11:48 PM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> >
-> > On Mon, Feb 11, 2019 at 09:35:59AM -0500, Joel Fernandes (Google) wrote:
-> > > Introduce in-kernel headers and other artifacts which are made available
-> > > as an archive through proc (/proc/kheaders.txz file).
->
->
-> The extension '.txz' is not used in kernel code.
->
->
-> '.tar.xz' is used for 'tarxz-pkg', 'perf-tarxz-src-pkg' etc.
->
->
-> $ git grep  '\.txz'
-> $ git grep  '\.tar\.xz'
-> Documentation/admin-guide/README.rst:     xz -cd linux-4.X.tar.xz | tar xvf -
-> arch/x86/crypto/camellia-aesni-avx-asm_64.S: *
-> http://koti.mbnet.fi/axh/crypto/camellia-BSD-1.2.0-aesni1.tar.xz
-> crypto/testmgr.h: *   https://bench.cr.yp.to/supercop/supercop-20170228.tar.xz
-> crypto/testmgr.h: *   https://bench.cr.yp.to/supercop/supercop-20170228.tar.xz
-> crypto/testmgr.h: *   https://bench.cr.yp.to/supercop/supercop-20170228.tar.xz
-> crypto/testmgr.h: *   https://bench.cr.yp.to/supercop/supercop-20170228.tar.xz
-> crypto/testmgr.h: *   https://bench.cr.yp.to/supercop/supercop-20170228.tar.xz
-> scripts/package/Makefile:       @echo '  perf-tarxz-src-pkg  - Build
-> $(perf-tar).tar.xz source tarball'
-> tools/testing/selftests/gen_kselftest_tar.sh:
->  ext=".tar.xz"
->
->
->
-> I prefer '.tar.xz' for consistency.
->
->
->
->
->
->
-> BTW, have you ever looked at scripts/extract-ikconfig?
->
-> You added IKHD_ST and IKHD_ED
-> just to mimic kernel/configs.c
->
-> It is currently pointless without the extracting tool,
-> but you might think it is useful to extract headers
-> from vmlinux or the module without mounting procfs.
->
->
->
->
-> > > This archive makes
-> > > it possible to build kernel modules, run eBPF programs, and other
-> > > tracing programs that need to extend the kernel for tracing purposes
-> > > without any dependency on the file system having headers and build
-> > > artifacts.
-> > >
-> > > On Android and embedded systems, it is common to switch kernels but not
-> > > have kernel headers available on the file system. Raw kernel headers
-> > > also cannot be copied into the filesystem like they can be on other
-> > > distros, due to licensing and other issues. There's no linux-headers
-> > > package on Android. Further once a different kernel is booted, any
-> > > headers stored on the file system will no longer be useful. By storing
-> > > the headers as a compressed archive within the kernel, we can avoid these
-> > > issues that have been a hindrance for a long time.
-> >
-> > The set looks good to me and since the main use case is building bpf progs
-> > I can route it via bpf-next tree if there are no objections.
-> > Masahiro, could you please ack it?
->
->
-> Honestly, I was not tracking this thread
-> since I did not know I was responsible for this.
->
->
-> I just started to take a closer look, then immediately got scared.
->
-> This version is not mature enough for the merge.
->
->
->
-> First of all, this patch cannot be compiled out-of-tree (O= option).
->
->
-> I do not know why 0-day bot did not catch this apparent breakage.
->
->
-> $ make -j8 O=hoge
-> make[1]: Entering directory '/home/masahiro/workspace/bsp/linux/hoge'
->   GEN     Makefile
->   Using .. as source for kernel
->   DESCEND  objtool
->   CALL    ../scripts/checksyscalls.sh
->   CHK     include/generated/compile.h
-> make[2]: *** No rule to make target 'Module.symvers', needed by
-> 'kernel/kheaders_data.txz'.  Stop.
-> make[2]: *** Waiting for unfinished jobs....
-> /home/masahiro/workspace/bsp/linux/Makefile:1043: recipe for target
-> 'kernel' failed
-> make[1]: *** [kernel] Error 2
-> make[1]: *** Waiting for unfinished jobs....
-> make[1]: Leaving directory '/home/masahiro/workspace/bsp/linux/hoge'
-> Makefile:152: recipe for target 'sub-make' failed
-> make: *** [sub-make] Error 2
+Hi, Jitao:
+
+On Tue, 2019-02-19 at 11:06 +0800, Jitao Shi wrote:
+> MT8183 samples on rising and falling edge. It can reduce half data
+> io.
+> MT8173 also has those registers. But the hw function is removed.
+> So MT8173 doesn't support DPI dual edge sample and can't use the
+> same setting to mt8183.
+> 
+> Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_dpi.c | 29 +++++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
+> index 62a9d47df948..610c23334047 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
+> @@ -117,6 +117,7 @@ struct mtk_dpi_conf {
+>  	unsigned int (*cal_factor)(int clock);
+>  	u32 reg_h_fre_con;
+>  	bool edge_sel_en;
+> +	bool dual_edge;
+>  };
+>  
+>  static void mtk_dpi_mask(struct mtk_dpi *dpi, u32 offset, u32 val, u32 mask)
+> @@ -353,6 +354,13 @@ static void mtk_dpi_config_disable_edge(struct mtk_dpi *dpi)
+>  		mtk_dpi_mask(dpi, dpi->conf->reg_h_fre_con, 0, EDGE_SEL_EN);
+>  }
+>  
+> +static void mtk_dpi_enable_dual_edge(struct mtk_dpi *dpi)
+> +{
+> +	mtk_dpi_mask(dpi, DPI_DDR_SETTING, DDR_EN | DDR_4PHASE,
+> +		     DDR_EN | DDR_4PHASE);
+> +	mtk_dpi_mask(dpi, DPI_OUTPUT_SETTING, EDGE_SEL, EDGE_SEL);
+> +}
+
+I would like to move dual edge function to an independent patch. Maybe
+some other SoC need dual edge function but it's not mt8183 so it could
+cherry-pick the dual edge part only.
+
+> +
+>  static void mtk_dpi_config_color_format(struct mtk_dpi *dpi,
+>  					enum mtk_dpi_out_color_format format)
+>  {
+> @@ -509,6 +517,8 @@ static int mtk_dpi_set_display_mode(struct mtk_dpi *dpi,
+>  	mtk_dpi_config_color_format(dpi, dpi->color_format);
+>  	mtk_dpi_config_2n_h_fre(dpi);
+>  	mtk_dpi_config_disable_edge(dpi);
+> +	if (dpi->conf->dual_edge)
+> +		mtk_dpi_enable_dual_edge(dpi);
+>  	mtk_dpi_sw_reset(dpi, false);
+>  
+>  	return 0;
+> @@ -671,6 +681,16 @@ static unsigned int mt2701_calculate_factor(int clock)
+>  		return 2;
+>  }
+>  
+> +static unsigned int mt8183_calculate_factor(int clock)
+> +{
+> +	if (clock <= 27000)
+> +		return 8;
+> +	else if (clock <= 167000)
+> +		return 4;
+> +	else
+> +		return 2;
+> +}
+> +
+>  static const struct mtk_dpi_conf mt8173_conf = {
+>  	.cal_factor = mt8173_calculate_factor,
+>  	.reg_h_fre_con = 0xe0,
+> @@ -682,6 +702,12 @@ static const struct mtk_dpi_conf mt2701_conf = {
+>  	.edge_sel_en = true,
+>  };
+>  
+> +static const struct mtk_dpi_conf mt8183_conf = {
+> +	.cal_factor = mt8183_calculate_factor,
+> +	.reg_h_fre_con = 0xe0,
+> +	.dual_edge = true,
+> +};
+> +
+>  static int mtk_dpi_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -777,6 +803,9 @@ static const struct of_device_id mtk_dpi_of_ids[] = {
+>  	{ .compatible = "mediatek,mt8173-dpi",
+>  	  .data = &mt8173_conf,
+>  	},
+> +	{ .compatible = "mediatek,mt8183-dpi",
+
+I could not find "mediatek,mt8183-dpi" in binding document, please add
+it.
+
+Regards,
+CK
+
+> +	  .data = &mt8183_conf,
+> +	},
+>  	{ },
+>  };
+>  
 
 
-
-
-I saw this build error for in-tree building as well.
-
-We cannot build this from a pristine source tree.
-
-For example, I observed the build error in the following procedure.
-
-$ make mrproper
-$ make defconfig
- Set CONFIG_IKHEADERS_PROC=y
-$ make
-
-
-
-
-Module.symvers is generated in the modpost stage
-(the very last stage of build).
-
-But, vmlinux depends on kernel/kheaders_data.txz,
-which includes Module.symvers.
-
-So, this is not so simple since it is a circular dependency...
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
