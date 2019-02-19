@@ -2,290 +2,199 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C0DC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:13:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A43F4C4360F
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:15:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D82820645
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:13:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B92F2077B
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:15:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FI9uz13J"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727479AbfBSINW (ORCPT
+        id S1727411AbfBSIPO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 03:13:22 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52064 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725764AbfBSINV (ORCPT
+        Tue, 19 Feb 2019 03:15:14 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46671 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbfBSIPO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 03:13:21 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1J8BLBu106516
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 03:13:20 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qrdsa15x8-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 03:13:20 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Tue, 19 Feb 2019 08:13:18 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 19 Feb 2019 08:13:15 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1J8DDSV51445918
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 19 Feb 2019 08:13:13 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 46F3C4C044;
-        Tue, 19 Feb 2019 08:13:13 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B50344C040;
-        Tue, 19 Feb 2019 08:13:12 +0000 (GMT)
-Received: from oc7455500831.ibm.com (unknown [9.152.98.175])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 19 Feb 2019 08:13:12 +0000 (GMT)
-Subject: Re: [PATCH v2 1/1] s390: vfio_ap: link the vfio_ap devices to the
- vfio_ap bus subsystem
-To:     Pierre Morel <pmorel@linux.ibm.com>
-Cc:     cohuck@redhat.com, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, frankja@linux.ibm.com,
-        akrowiak@linux.ibm.com, pasic@linux.ibm.com, david@redhat.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        freude@linux.ibm.com
-References: <1550513328-12646-1-git-send-email-pmorel@linux.ibm.com>
- <1550513328-12646-2-git-send-email-pmorel@linux.ibm.com>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- syiRa+UVlsKmx1hsEg==
-Date:   Tue, 19 Feb 2019 09:13:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 19 Feb 2019 03:15:14 -0500
+Received: by mail-pg1-f196.google.com with SMTP id w7so9744751pgp.13;
+        Tue, 19 Feb 2019 00:15:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=oNujeU7qzhkK3JY0Befn7uYd90h7Ocpo7KzFQEHrNVg=;
+        b=FI9uz13JXul2nE9DiSF0kL91BihrS3Z2rSAxtd8ZK3/cs/zVOtGQW/Lv8z/2jPK7y3
+         MbRvXhnugQzFIxHhWgrivEwEo52t74CuFaSLZufwXbJTjhqRU0uK2mSGaKXetg/EkufL
+         mXCBMlzfFAfaLYBRHGlsYgn2Ok5Pt6LHWbzOw1/LwBk4MriwzND7qfK/FhW13h8cTGDJ
+         EloATziEHoRbIeU1Gz38aRT6reVNzWvi1sv4iKqvCxV/YEv6F6j1Crv9+LvOzb1ReNsD
+         Z4paR5FPsnPjGY9sT4PyFSWRVtjQK2mEVRxC4E1YOFlULyo4UWK+f/5ezMABXNsxPkly
+         CxhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oNujeU7qzhkK3JY0Befn7uYd90h7Ocpo7KzFQEHrNVg=;
+        b=obobt3IS/z7ItZH9Pzuotv+1ITkxv1kaMdBSNQCbtdL550qsaDRoOE3V6/wvjTX89Q
+         Te88p3bAlqQHE0nuzLyECN+biDTyWXcCfSdIrlyvXuHSosMLcvCtqbYWer/vYec2lCeJ
+         ZJPnEbfXo2jHFeSHquAhk7HsjFX9XFVeTQy2AmiFiIBl6h4KDM/PhF/n+wZuM1vunIw1
+         58esxfc10wiRKrB6efcPDgwmiFuFs8YMA6qJMTg5VkUdQ9UY0epkMQiSQMxPqJVmNxsf
+         kX76S47MNsMwpZH4mh6XFgTDOgydF48iirJWWj6e9E9BQzVm23MFvyiiHmFBNxxzoGga
+         U/Zg==
+X-Gm-Message-State: AHQUAua6YMW0i9gdjPsgVHoTfxNHQnaGojuO+iJAgN9h+F7CdF21Rsu1
+        767UxVklntvn9XW6KUByNm4=
+X-Google-Smtp-Source: AHgI3IbCr1IIDViv1S8BxYBn/8A8M5sD6POqB+Rw9rc6mOwUi69JlBtcg7/7WcqwS1bSA92CUu8BDQ==
+X-Received: by 2002:a62:445a:: with SMTP id r87mr27943600pfa.13.1550564112520;
+        Tue, 19 Feb 2019 00:15:12 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id h13sm8543471pfn.114.2019.02.19.00.15.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Feb 2019 00:15:11 -0800 (PST)
+Date:   Tue, 19 Feb 2019 00:15:10 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, linux-input@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH v3 1/4] dt-bindings: input: touchscreen: goodix: Document
+ AVDD28-supply property
+Message-ID: <20190219081510.GB65896@dtor-ws>
+References: <CAL_JsqKTnPVM7Qahy9ejQbPfENpLCdzf5K5uUTcPh8j3EiqWRA@mail.gmail.com>
+ <CAMty3ZCyq=tZMt6RC1aYJuEWgYp2zv1LBh+ZUwucE+g4RCoUaQ@mail.gmail.com>
+ <CAL_JsqKCw3EV+0_DuMiHh7GRGxv7YogQf-xwp71n9gpc2GzSSQ@mail.gmail.com>
+ <CAMty3ZBtoocXBW5A0astyQPh2y7vG7NtbZ_M0BjSeex2etmGsw@mail.gmail.com>
+ <CAL_JsqJSMX7E2zQA2O8ofZQPDrm3S6PMCLG1iAQ95P10Pe2yFg@mail.gmail.com>
+ <CAMty3ZDMB=pwY8Rxdt3du=90pksBedLo0Pc_-=diqx9-Xndzqg@mail.gmail.com>
+ <CAMty3ZDBu2Y9psNu9nrZ=BNVvhpJ2qYn-Qp7MDqdhK9_SrcpNg@mail.gmail.com>
+ <20190218071207.GE242714@dtor-ws>
+ <CAMty3ZDbFU-NpWQvkaUWgUiVTabjTZoFWUCUZSPKMA6VuHc+iQ@mail.gmail.com>
+ <CAMty3ZBVpNY+JF_vEMs83M29WKQDhzmk7LyL-HHCCA7uD0Y+=g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1550513328-12646-2-git-send-email-pmorel@linux.ibm.com>
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 19021908-0016-0000-0000-000002582336
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021908-0017-0000-0000-000032B265E9
-Message-Id: <71026b64-d6c5-37e3-455d-07b40ff760e3@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-19_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902190062
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZBVpNY+JF_vEMs83M29WKQDhzmk7LyL-HHCCA7uD0Y+=g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 18.02.2019 19:08, Pierre Morel wrote:
-> Libudev relies on having a subsystem link for non-root devices. To
-> avoid libudev (and potentially other userspace tools) choking on the
-> matrix device let us introduce a vfio_ap bus and with that the vfio_ap
-> bus subsytem, and make the matrix device reside within it.
+On Tue, Feb 19, 2019 at 01:00:19AM +0530, Jagan Teki wrote:
+> On Mon, Feb 18, 2019 at 3:03 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> >
+> > Hi Dmitry,
+> >
+> > On Mon, Feb 18, 2019 at 12:42 PM Dmitry Torokhov
+> > <dmitry.torokhov@gmail.com> wrote:
+> > >
+> > > On Sun, Feb 17, 2019 at 02:45:52PM +0530, Jagan Teki wrote:
+> > > > On Sun, Feb 17, 2019 at 1:21 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> > > > >
+> > > > > Hi Dmitry and Rob,
+> > > > >
+> > > > > On Thu, Feb 14, 2019 at 3:21 AM Rob Herring <robh@kernel.org> wrote:
+> > > > > >
+> > > > > > On Tue, Jan 22, 2019 at 7:39 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> > > > > > >
+> > > > > > > On Mon, Jan 21, 2019 at 9:46 PM Rob Herring <robh@kernel.org> wrote:
+> > > > > > > >
+> > > > > > > > On Fri, Jan 18, 2019 at 10:01 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> > > > > > > > >
+> > > > > > > > > On Wed, Jan 9, 2019 at 7:08 PM Rob Herring <robh@kernel.org> wrote:
+> > > > > > > > > >
+> > > > > > > > > > Please CC DT list if you want bindings reviewed.
+> > > > > > > > >
+> > > > > > > > > Sorry I forgot.
+> > > > > > > > >
+> > > > > > > > > >
+> > > > > > > > > > On Wed, Jan 9, 2019 at 1:40 AM Dmitry Torokhov
+> > > > > > > > > > <dmitry.torokhov@gmail.com> wrote:
+> > > > > > > > > > >
+> > > > > > > > > > > On Sat, Dec 15, 2018 at 08:47:59PM +0530, Jagan Teki wrote:
+> > > > > > > > > > > > Most of the Goodix CTP controllers are supply with AVDD28 pin.
+> > > > > > > > > > > > which need to supply for controllers like GT5663 on some boards
+> > > > > > > > > > > > to trigger the power.
+> > > > > > > > > > > >
+> > > > > > > > > > > > So, document the supply property so-that the require boards
+> > > > > > > > > > > > that used on GT5663 can enable it via device tree.
+> > > > > > > > > > > >
+> > > > > > > > > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > > > > > > > > > ---
+> > > > > > > > > > > >  Documentation/devicetree/bindings/input/touchscreen/goodix.txt | 1 +
+> > > > > > > > > > > >  1 file changed, 1 insertion(+)
+> > > > > > > > > > > >
+> > > > > > > > > > > > diff --git a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
+> > > > > > > > > > > > index f7e95c52f3c7..c4622c983e08 100644
+> > > > > > > > > > > > --- a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
+> > > > > > > > > > > > +++ b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
+> > > > > > > > > > > > @@ -23,6 +23,7 @@ Optional properties:
+> > > > > > > > > > > >   - touchscreen-inverted-y  : Y axis is inverted (boolean)
+> > > > > > > > > > > >   - touchscreen-swapped-x-y : X and Y axis are swapped (boolean)
+> > > > > > > > > > > >                               (swapping is done after inverting the axis)
+> > > > > > > > > > > > + - AVDD28-supply     : Analog power supply regulator on AVDD28 pin
+> > > > > > > > > > >
+> > > > > > > > > > > I think we normally use lower case in DT bindings and rarely encode
+> > > > > > > > > > > voltage in the supply name unless we are dealing with several supplies
+> > > > > > > > > > > of the same kind, but I'll let Ron comment on this.
+> > > > > > > > > >
+> > > > > > > > > > Yes on lowercase though there are some exceptions.
+> > > > > > > > > >
+> > > > > > > > > > There's also a AVDD22 supply as well as DVDD12 and VDDIO. So we
+> > > > > > > > > > probably need to keep the voltage, but the binding is incomplete.
+> > > > > > > > >
+> > > > > > > > > What is incomplete here? can you please elaborate.
+> > > > > > > >
+> > > > > > > > You are missing the 3 other supplies the chip has: AVDD22, DVDD12 and VDDIO.
+> > > > > > >
+> > > > > > > Though it has other supplies, only AVDD28 is connected in the Host
+> > > > > > > interface design similar like 9. Reference Schematic on Page, 23 in
+> > > > > > > attached manual.
+> > > > > >
+> > > > > > That is for a particular board design. It still has other supplies.
+> > > > > > Just make the binding complete please. You can make them optional. I
+> > > > > > don't care if the driver supports controlling all the supplies or not
+> > > > > > (though Dmitry might).
+> > > > >
+> > > > > So, Can I make bulk get and enable in all 4 regulators global to
+> > > > > driver or specific to that chip, in either way the regulators which
+> > > > > are not used to process via dummy regulators (which we all know).
+> > > > >
+> > > > > or regulator which are not using are get via devm_regulator_get_optional.
+> > > > >
+> > > > > Any suggestions?
+> > > >
+> > > > Just realized to go with bulk calls, please have a look at on v5 [1]
+> > >
+> > > I do not believe you can use bulk regulator API here as you need to
+> > > implement the power up timing scheme mentioned on p. 12 of the spec you
+> > > referenced earlier. And, because of that timing diagram, I believe if
+> > > you want to control AVDD supply, you also have to control VDDIO supply
+> > > as it has to be on only after enabling AVDD.
+> >
+> > AVDD here is AVDD28 it' is an out name of pin (mentioned in p. 23). So
+> > the power scheme goes to enable AVDD28 and then VDDIO does that really
+> > mean bulk of two regulators?
 > 
-> Doing this we need to suppress the forced link from the matrix device to
-> the vfio_ap driver and we suppress the device_type we do not need
-> anymore.
+> The time between these two regulator operations is nearly 0, as per
+> power scheme diagram T1 >= 0us. I think I can use bulk since there is
+> no necessity of delay between these two regulator operations.
 > 
-> Since the associated matrix driver is not the vfio_ap driver any more,
-> we have to change the search for the devices on the vfio_ap driver in
-> the function vfio_ap_verify_queue_reserved.
-> 
-> Reported-by: Marc Hartmayer <mhartmay@linux.ibm.com>
-> Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> What do you think?
 
-Can you also add a "Fixes:" tag
+Does the bulk enable provide any guarantees as to the order of
+operations? If it does not then I think we should ensure that they are
+powered up/down in the right order.
 
-Tested-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Thanks.
 
-Would be good to have someone with device experience reviewing the changed.
-
-> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> ---
->  drivers/s390/crypto/vfio_ap_drv.c     | 48 +++++++++++++++++++++++++++++------
->  drivers/s390/crypto/vfio_ap_ops.c     |  4 +--
->  drivers/s390/crypto/vfio_ap_private.h |  1 +
->  3 files changed, 43 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
-> index 31c6c84..8e45559 100644
-> --- a/drivers/s390/crypto/vfio_ap_drv.c
-> +++ b/drivers/s390/crypto/vfio_ap_drv.c
-> @@ -24,10 +24,6 @@ MODULE_LICENSE("GPL v2");
->  
->  static struct ap_driver vfio_ap_drv;
->  
-> -static struct device_type vfio_ap_dev_type = {
-> -	.name = VFIO_AP_DEV_TYPE_NAME,
-> -};
-> -
->  struct ap_matrix_dev *matrix_dev;
->  
->  /* Only type 10 adapters (CEX4 and later) are supported
-> @@ -62,6 +58,27 @@ static void vfio_ap_matrix_dev_release(struct device *dev)
->  	kfree(matrix_dev);
->  }
->  
-> +static int matrix_bus_match(struct device *dev, struct device_driver *drv)
-> +{
-> +	return 1;
-> +}
-> +
-> +static struct bus_type matrix_bus = {
-> +	.name = "vfio_ap",
-> +	.match = &matrix_bus_match,
-> +};
-> +
-> +static int matrix_probe(struct device *dev)
-> +{
-> +	return 0;
-> +}
-> +
-> +static struct device_driver matrix_driver = {
-> +	.name = "vfio_ap",
-> +	.bus = &matrix_bus,
-> +	.probe = matrix_probe,
-> +};
-> +
->  static int vfio_ap_matrix_dev_create(void)
->  {
->  	int ret;
-> @@ -71,6 +88,10 @@ static int vfio_ap_matrix_dev_create(void)
->  	if (IS_ERR(root_device))
->  		return PTR_ERR(root_device);
->  
-> +	ret = bus_register(&matrix_bus);
-> +	if (ret)
-> +		goto bus_register_err;
-> +
->  	matrix_dev = kzalloc(sizeof(*matrix_dev), GFP_KERNEL);
->  	if (!matrix_dev) {
->  		ret = -ENOMEM;
-> @@ -87,30 +108,41 @@ static int vfio_ap_matrix_dev_create(void)
->  	mutex_init(&matrix_dev->lock);
->  	INIT_LIST_HEAD(&matrix_dev->mdev_list);
->  
-> -	matrix_dev->device.type = &vfio_ap_dev_type;
->  	dev_set_name(&matrix_dev->device, "%s", VFIO_AP_DEV_NAME);
->  	matrix_dev->device.parent = root_device;
-> +	matrix_dev->device.bus = &matrix_bus;
->  	matrix_dev->device.release = vfio_ap_matrix_dev_release;
-> -	matrix_dev->device.driver = &vfio_ap_drv.driver;
-> +	matrix_dev->vfio_ap_drv = &vfio_ap_drv;
->  
->  	ret = device_register(&matrix_dev->device);
->  	if (ret)
->  		goto matrix_reg_err;
->  
-> +	ret = driver_register(&matrix_driver);
-> +	if (ret)
-> +		goto matrix_drv_err;
-> +
->  	return 0;
->  
-> +matrix_drv_err:
-> +	device_unregister(&matrix_dev->device);
->  matrix_reg_err:
->  	put_device(&matrix_dev->device);
->  matrix_alloc_err:
-> +	bus_unregister(&matrix_bus);
-> +bus_register_err:
->  	root_device_unregister(root_device);
-> -
->  	return ret;
->  }
->  
->  static void vfio_ap_matrix_dev_destroy(void)
->  {
-> +	struct device *root_device = matrix_dev->device.parent;
-> +
-> +	driver_unregister(&matrix_driver);
->  	device_unregister(&matrix_dev->device);
-> -	root_device_unregister(matrix_dev->device.parent);
-> +	bus_unregister(&matrix_bus);
-> +	root_device_unregister(root_device);
->  }
->  
->  static int __init vfio_ap_init(void)
-> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-> index 272ef42..900b9cf 100644
-> --- a/drivers/s390/crypto/vfio_ap_ops.c
-> +++ b/drivers/s390/crypto/vfio_ap_ops.c
-> @@ -198,8 +198,8 @@ static int vfio_ap_verify_queue_reserved(unsigned long *apid,
->  	qres.apqi = apqi;
->  	qres.reserved = false;
->  
-> -	ret = driver_for_each_device(matrix_dev->device.driver, NULL, &qres,
-> -				     vfio_ap_has_queue);
-> +	ret = driver_for_each_device(&matrix_dev->vfio_ap_drv->driver, NULL,
-> +				     &qres, vfio_ap_has_queue);
->  	if (ret)
->  		return ret;
->  
-> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
-> index 5675492..76b7f98 100644
-> --- a/drivers/s390/crypto/vfio_ap_private.h
-> +++ b/drivers/s390/crypto/vfio_ap_private.h
-> @@ -40,6 +40,7 @@ struct ap_matrix_dev {
->  	struct ap_config_info info;
->  	struct list_head mdev_list;
->  	struct mutex lock;
-> +	struct ap_driver  *vfio_ap_drv;
->  };
->  
->  extern struct ap_matrix_dev *matrix_dev;
-> 
-
+-- 
+Dmitry
