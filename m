@@ -2,104 +2,102 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F7E8C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:06:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F7AC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:08:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1944821902
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:06:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ISrD8kek"
+	by mail.kernel.org (Postfix) with ESMTP id 0D04C21902
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:08:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727767AbfBSLGa (ORCPT
+        id S1727425AbfBSLI5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 06:06:30 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44092 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725802AbfBSLG3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 06:06:29 -0500
-Received: by mail-pf1-f195.google.com with SMTP id a3so269567pff.11
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 03:06:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QPETnU+mWBKOD5sx7k+2RWTN0s+o3IDgyt+zCQDa7lA=;
-        b=ISrD8kekBFHx72RhdohRPqXd8xe3dxS/DjvqpTDTzUSSobCBqQ/AFbdfiNLIw/bs/D
-         b4U5zp8uyFV2o3YdaVAHzQPo6dBBRiA1aRCI5cCtd8QflTQEz+uIzY2Y3VB1y+RbSWOt
-         +zjLNS30xsP1W4Omv2WRwLCBMhBFOKozqrqFDqS769/Yu2ll99DvysXbQVQB9CH204yb
-         ujbP5M++JIqU7MKXLKmUqC8+Zp3/Gtt1lUgSmNuclkfSNv+O0VTqxr1EslIKavks2xAI
-         GF8vaEdzmNRgRsA6N+pOWVRJRjvFXl08PrilYEEPK/Brs9EhVzpGKpNW/a1QAXumsFUE
-         kQ6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QPETnU+mWBKOD5sx7k+2RWTN0s+o3IDgyt+zCQDa7lA=;
-        b=g7YCRYjPhfoLn9pQu9hNoqypKFNW2z+4cKKLZ9GO6lyB2gcs2FXGJzs9aBfh1kup2W
-         aVBY+apZKaFhbcw7BNBwVND61KnGilN3VRTFBZsvRBP6QfSLh2haYsJ3Y+FzJyBrhLdD
-         Z28YbxYz7/XA3WfV9DnAxKeXFXGCsDklBzKhci4H6TOIPr8MpoSRHPaXKbDKHs0d2239
-         IPhbrbJJfo+27nLMsnwXy9kfoBISyTfv4onYbFn8ci2v9agopUoKyPNytWJDZPtKEdj9
-         vqco09r8OxrEVxOhz6FDJHuLOTBqma8YAaUTEWY3ZGfE6KPMSQE3lfejOqiKro+6IFeZ
-         J+Pg==
-X-Gm-Message-State: AHQUAuadXQuq1nKmzvNq7KIuQxz57ee5G5tam67clzYZV4gnNW5YbvMs
-        4yFezYNFQ155tMFmCvZ84eMyYBwjvM/YjcjRe0k=
-X-Google-Smtp-Source: AHgI3IYwfB42sKZHbGQWSRLrygo6cUuEJATwjd1f6lejILr05WJbvMb2HFNJnE6qQlswMBBdOqvGANaaxNYjfO4+ibg=
-X-Received: by 2002:a63:f148:: with SMTP id o8mr23534628pgk.337.1550574389138;
- Tue, 19 Feb 2019 03:06:29 -0800 (PST)
+        Tue, 19 Feb 2019 06:08:57 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44036 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725805AbfBSLI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 06:08:57 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E2023AD885;
+        Tue, 19 Feb 2019 11:08:56 +0000 (UTC)
+Received: from localhost (unknown [10.43.2.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 18DFB60BE8;
+        Tue, 19 Feb 2019 11:08:53 +0000 (UTC)
+Date:   Tue, 19 Feb 2019 12:08:52 +0100
+From:   Stanislaw Gruszka <sgruszka@redhat.com>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        Samuel Sieb <samuel@sieb.net>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Rosen Penev <rosenp@gmail.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Subject: Re: MT76x2U crashes XHCI driver on AMD Ryzen system
+Message-ID: <20190219110851.GA23223@redhat.com>
+References: <83A1D243-9073-48D1-9F26-5A2581DCB829@gmail.com>
+ <CAJ0CqmUgPWNJtCW4Q__sOtB8w-YtwW+uZy7crxMNrmSgQ6OFyA@mail.gmail.com>
+ <1547404075.1582.0@smtp.gmail.com>
+ <CAJ0CqmU7k5i26g7dGPxNdts7Gm67W6qNsr4vYuW05ugsEF1ohw@mail.gmail.com>
+ <CAKxU2N-+CTaRdJMFVRdozJ5TTpN+_4thiDRBJBFq8gGtuRVYvA@mail.gmail.com>
+ <20190114091841.GA23045@localhost.localdomain>
+ <CAKxU2N8ioMszBCyQcH7CVhgBdW4aj7yZ+kYQe14DCV5OSAnxrg@mail.gmail.com>
+ <20190115090400.GA2267@localhost.localdomain>
+ <20190218143742.GA11872@redhat.com>
+ <2cc5674a-a3a0-d8fe-65f5-4357da9b85d3@arm.com>
 MIME-Version: 1.0
-References: <20190208152310.29531-1-pmladek@suse.com> <20190208152310.29531-10-pmladek@suse.com>
- <20190219030300.GA640@jagdpanzerIV>
-In-Reply-To: <20190219030300.GA640@jagdpanzerIV>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 19 Feb 2019 13:06:17 +0200
-Message-ID: <CAHp75Vckf_aJqpK75-7xmN-u3aVs8nUrAOWiRzSLP5Gh3uHUEQ@mail.gmail.com>
-Subject: Re: [PATCH v6 9/9] vsprintf: Avoid confusion between invalid address
- and value
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2cc5674a-a3a0-d8fe-65f5-4357da9b85d3@arm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 19 Feb 2019 11:08:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 5:07 AM Sergey Senozhatsky
-<sergey.senozhatsky.work@gmail.com> wrote:
+On Mon, Feb 18, 2019 at 05:01:59PM +0000, Robin Murphy wrote:
+> On 18/02/2019 14:37, Stanislaw Gruszka wrote:
+> [...]
+> >Another issue is that dma_map_sg() & dma_map_page() may require some
+> >constraints. I'm not sure about that and I want to clarify that with
+> >CCed mm maintainers. I think DMA drivers may expect sg->offset < PAGE_SIZE
+> >for both dma_map_sg() and dma_map_page(). Additionally dma_map_page()
+> >maight expect that offset & length specify buffer within one page.
+> 
+> Luckily, this came up a while back[1] and we seemed to reach a
+> consensus that sg->offset >= PAGE_SIZE for dma_map_sg() was weird
+> but valid. IIRC it was only the Intel IOMMU code which failed to
+> handle that case appropriately (and which I fixed) - the AMD IOMMU
+> code always looked like it should be OK, but I'm not sure I've ever
+> seen definitive test results (and I don't have hardware to do so
+> myself).
 
-> Suppose, in my driver I want to sprintf() IPv4 address. The longest
-> possible address is 3 * 4 (%d%d%d) + 3 bytes (dots) + terminating NULL.
-> E.g. 111.111.111.111
->
-> So I can allocate a 16-bytes buffer (stack or slab) and accidentally
-> do an %piS sprintf() on a corrupted in_addr struct:
->
->                 char buf[16];
->                 sprintf(buf, "%piS", in_addr);
->
-> forcing sprintf() to write "(invalid address)" to a 16-bytes buffer,
-> but the thing is - strlen("(invalid address)") > 16.
+Funny that we have problems on AMD IOMMU and not with Intel IOMMU.
 
-It would print as many characters as buffer allows. In your case above
-the use of sprintf() is a bit fragile.
+> For dma_map_page(), length >= PAGE_SIZE should be perfectly valid
+> and handled correctly. The offset >= PAGE_SIZE case is a bit harder
+> to justify, but at the same time has less scope for the DMA API
+> backend to get it wrong, so either way is likely to be OK in
+> practice (in particular the AMD IOMMU code looks like it won't have
+> a problem, since its map_page() implementation converts page and
+> offset to a plain physical address before doing anything else).
 
-But yes, the error messages should not be longer than 8 / 16 bytes
-depending on 32- or 64-bit build we have.
+Thanks for clarify this. So my patch which do:
 
--- 
-With Best Regards,
-Andy Shevchenko
+-		page = virt_to_head_page(data);
++		page = virt_to_page(data);
+ 		offset = data - page_address(page);
+ 		sg_set_page(&urb->sg[i], page, sglen, offset);
+
+should not be necessary as IOMMU driver do exactly the same internally.
+
+Are there any alignment requirement for offset for dma_map_{page,sg} ?
+It will work with let say sg->offset=113 or we have make sure it is
+aligned to some boundary. If so, what boundary ?
+
+Stanislaw
