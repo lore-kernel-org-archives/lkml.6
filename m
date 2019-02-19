@@ -2,154 +2,408 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D75C10F00
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:24:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A95CEC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:25:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B49B21848
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:24:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="B+HgC0MV"
+	by mail.kernel.org (Postfix) with ESMTP id 6871221848
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:25:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728044AbfBSJYP (ORCPT
+        id S1727992AbfBSJZD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 04:24:15 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:43309 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727959AbfBSJYP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 04:24:15 -0500
-Received: by mail-ed1-f67.google.com with SMTP id m35so12126261ede.10
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 01:24:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lJU/fJXNcb/Zph8+8eeZOOhDAUkdJM37dCiIWrHqNbs=;
-        b=B+HgC0MVDTvCT/NqjS8YMR+9xBPkNNDxCwzG2QVyBNPe70TtHKhfbKJn99ZCLWIZfI
-         lLl6anIPMiZtg4gVnbP60fWjy0FQ6fXeam/hPS5d6u3ZYm5/ytBkLVgxQsCKJdLnLyJY
-         o/FqzJRt3NwTzuHFJ6kbipxzzR/lZV0m3XTMr0k0Hp9QQ6TUb/0w5Yj3pxPDrM/2RkVH
-         hV01KnQeHIMh2PAZu01hDGPUIuqv6ie9QrFIlFr5FuamqkTNEa76Z0JKxc95a+K/weOg
-         +Y8rJEPRUjdTVoMPJMEKaLI7lXici9EzQkwJF5VwIpIxupqbuYMxmvXNpzko759CGzbS
-         qDbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lJU/fJXNcb/Zph8+8eeZOOhDAUkdJM37dCiIWrHqNbs=;
-        b=PmUl4itaw6JzIW/CMAyh0wFYlb4m/H5LymbUD/qeo1T1op68f8eP7jrjtSFH1rAQft
-         P9auLUxk4iMUlTz+dSHEan8tunpOSTXNoPMWtDpL2OuKcpu2MUpNeyPMsk7T5M+K5zT8
-         8+9g/pCimPEt0B44SBaGJQVvnw6UB0Sn9zuUZCVM26rpWdoZuZlNRgSjhkFqierXZlMu
-         CWPJKC5a2hGLYejxQoCvgvevmdW3ERNBh1UJBbHGLqi96EPIli4vHcN6Fw0/8P1ftPUF
-         axewqictfhtA0/bSwwA+P/gHzEzHfCX81+XPIXG1eY6tBP9ngcGkWI6kCScZvGAtWPG8
-         DbrQ==
-X-Gm-Message-State: AHQUAuYI0KwRvEcGVaGvhRFPxtM2dZ6ik/k1dKdsKh+cJjD+wLDwX/hy
-        ipeuTAh4/nQy8i7EFcsnuSLyFR8VMJmK/A==
-X-Google-Smtp-Source: AHgI3Ia1UoKS989OSrFIG351jKZ3mwF+ThQzb9n/Ewt83O2um3yChrOnbXRIU4oBdL07x9Y7Ul257A==
-X-Received: by 2002:a17:906:49c7:: with SMTP id w7mr4998399ejv.226.1550568252875;
-        Tue, 19 Feb 2019 01:24:12 -0800 (PST)
-Received: from brauner.io ([2a02:8109:b6c0:76e:98b0:e7d6:f97c:a75f])
-        by smtp.gmail.com with ESMTPSA id b46sm4833068edd.94.2019.02.19.01.24.11
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 19 Feb 2019 01:24:12 -0800 (PST)
-Date:   Tue, 19 Feb 2019 10:24:11 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, ebiederm@xmission.com,
-        ebiggers@google.com, willy@infradead.org, dhowells@redhat.com
-Subject: Re: [PATCH 1/2] devpts: remove unneeded inode_lock in mknod_ptmx
-Message-ID: <20190219092410.ottcfwsgt7734vx7@brauner.io>
-References: <20190128171133.539-1-christian@brauner.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190128171133.539-1-christian@brauner.io>
-User-Agent: NeoMutt/20180716
+        Tue, 19 Feb 2019 04:25:03 -0500
+Received: from foss.arm.com ([217.140.101.70]:42544 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726844AbfBSJZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 04:25:03 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 595ECEBD;
+        Tue, 19 Feb 2019 01:25:01 -0800 (PST)
+Received: from a075553-lin.blr.arm.com (a075553-lin.blr.arm.com [10.162.0.144])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1E9AD3F740;
+        Tue, 19 Feb 2019 01:24:56 -0800 (PST)
+From:   Amit Daniel Kachhap <amit.kachhap@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        kvmarm@lists.cs.columbia.edu,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        linux-kernel@vger.kernel.org,
+        Amit Daniel Kachhap <amit.kachhap@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>
+Subject: [PATCH v6 1/6] arm64/kvm: preserve host HCR_EL2 value
+Date:   Tue, 19 Feb 2019 14:54:26 +0530
+Message-Id: <1550568271-5319-2-git-send-email-amit.kachhap@arm.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1550568271-5319-1-git-send-email-amit.kachhap@arm.com>
+References: <1550568271-5319-1-git-send-email-amit.kachhap@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 06:11:32PM +0100, Christian Brauner wrote:
-> Afaict, the mknod_ptmx() call is a no-op on subsequent calls and the first
-> call is done before we unlock the suberblock. If I'm not mistaken this is
-> exactly parallel to what Al pointed out for binderfs 29ef1c8e16a
-> ("binderfs: drop lock in binderfs_binder_ctl_create"). In both filesystems
-> it should not be necessary to take inode_lock() in there. Let's remove it
-> and remove the goto.
-> 
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Signed-off-by: Christian Brauner <christian@brauner.io>
+From: Mark Rutland <mark.rutland@arm.com>
 
-Since the merge window is coming up: are you fine with this patch, Al?
+When restoring HCR_EL2 for the host, KVM uses HCR_HOST_VHE_FLAGS, which
+is a constant value. This works today, as the host HCR_EL2 value is
+always the same, but this will get in the way of supporting extensions
+that require HCR_EL2 bits to be set conditionally for the host.
 
-Christian
+To allow such features to work without KVM having to explicitly handle
+every possible host feature combination, this patch has KVM save/restore
+for the host HCR when switching to/from a guest HCR. The saving of the
+register is done once during cpu hypervisor initialization state and is
+just restored after switch from guest.
 
-> ---
->  fs/devpts/inode.c | 19 ++++++-------------
->  1 file changed, 6 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
-> index c53814539070..8fa1492f9712 100644
-> --- a/fs/devpts/inode.c
-> +++ b/fs/devpts/inode.c
-> @@ -325,7 +325,6 @@ static int parse_mount_options(char *data, int op, struct pts_mount_opts *opts)
->  static int mknod_ptmx(struct super_block *sb)
->  {
->  	int mode;
-> -	int rc = -ENOMEM;
->  	struct dentry *dentry;
->  	struct inode *inode;
->  	struct dentry *root = sb->s_root;
-> @@ -334,18 +333,14 @@ static int mknod_ptmx(struct super_block *sb)
->  	kuid_t ptmx_uid = current_fsuid();
->  	kgid_t ptmx_gid = current_fsgid();
->  
-> -	inode_lock(d_inode(root));
-> -
->  	/* If we have already created ptmx node, return */
-> -	if (fsi->ptmx_dentry) {
-> -		rc = 0;
-> -		goto out;
-> -	}
-> +	if (fsi->ptmx_dentry)
-> +		return 0;
->  
->  	dentry = d_alloc_name(root, "ptmx");
->  	if (!dentry) {
->  		pr_err("Unable to alloc dentry for ptmx node\n");
-> -		goto out;
-> +		return -ENOMEM;
->  	}
->  
->  	/*
-> @@ -355,7 +350,7 @@ static int mknod_ptmx(struct super_block *sb)
->  	if (!inode) {
->  		pr_err("Unable to alloc inode for ptmx node\n");
->  		dput(dentry);
-> -		goto out;
-> +		return -ENOMEM;
->  	}
->  
->  	inode->i_ino = 2;
-> @@ -369,10 +364,8 @@ static int mknod_ptmx(struct super_block *sb)
->  	d_add(dentry, inode);
->  
->  	fsi->ptmx_dentry = dentry;
-> -	rc = 0;
-> -out:
-> -	inode_unlock(d_inode(root));
-> -	return rc;
-> +
-> +	return 0;
->  }
->  
->  static void update_ptmx_mode(struct pts_fs_info *fsi)
-> -- 
-> 2.20.1
-> 
+For fetching HCR_EL2 during kvm initialisation, a hyp call is made using
+kvm_call_hyp and is helpful in NHVE case.
+
+For the hyp TLB maintenance code, __tlb_switch_to_host_vhe() is updated
+to toggle the TGE bit with a RMW sequence, as we already do in
+__tlb_switch_to_guest_vhe().
+
+The value of hcr_el2 is now stored in struct kvm_cpu_context as both host
+and guest can now use this field in a common way.
+
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+[Added __cpu_copy_hyp_conf, hcr_el2 field in struct kvm_cpu_context]
+Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Christoffer Dall <christoffer.dall@arm.com>
+Cc: kvmarm@lists.cs.columbia.edu
+---
+ arch/arm/include/asm/kvm_host.h      |  2 ++
+ arch/arm64/include/asm/kvm_asm.h     |  2 ++
+ arch/arm64/include/asm/kvm_emulate.h | 22 +++++++++++-----------
+ arch/arm64/include/asm/kvm_host.h    | 13 ++++++++++++-
+ arch/arm64/include/asm/kvm_hyp.h     |  2 +-
+ arch/arm64/kvm/guest.c               |  2 +-
+ arch/arm64/kvm/hyp/switch.c          | 23 +++++++++++++----------
+ arch/arm64/kvm/hyp/sysreg-sr.c       | 21 ++++++++++++++++++++-
+ arch/arm64/kvm/hyp/tlb.c             |  6 +++++-
+ virt/kvm/arm/arm.c                   |  1 +
+ 10 files changed, 68 insertions(+), 26 deletions(-)
+
+diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
+index ca56537..05706b4 100644
+--- a/arch/arm/include/asm/kvm_host.h
++++ b/arch/arm/include/asm/kvm_host.h
+@@ -273,6 +273,8 @@ static inline void __cpu_init_stage2(void)
+ 	kvm_call_hyp(__init_stage2_translation);
+ }
+ 
++static inline void __cpu_copy_hyp_conf(void) {}
++
+ static inline int kvm_arch_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ {
+ 	return 0;
+diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
+index f5b79e9..8acd73f 100644
+--- a/arch/arm64/include/asm/kvm_asm.h
++++ b/arch/arm64/include/asm/kvm_asm.h
+@@ -80,6 +80,8 @@ extern void __vgic_v3_init_lrs(void);
+ 
+ extern u32 __kvm_get_mdcr_el2(void);
+ 
++extern void __kvm_populate_host_regs(void);
++
+ /* Home-grown __this_cpu_{ptr,read} variants that always work at HYP */
+ #define __hyp_this_cpu_ptr(sym)						\
+ 	({								\
+diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
+index 506386a..0dbe795 100644
+--- a/arch/arm64/include/asm/kvm_emulate.h
++++ b/arch/arm64/include/asm/kvm_emulate.h
+@@ -50,25 +50,25 @@ void kvm_inject_pabt32(struct kvm_vcpu *vcpu, unsigned long addr);
+ 
+ static inline bool vcpu_el1_is_32bit(struct kvm_vcpu *vcpu)
+ {
+-	return !(vcpu->arch.hcr_el2 & HCR_RW);
++	return !(vcpu->arch.ctxt.hcr_el2 & HCR_RW);
+ }
+ 
+ static inline void vcpu_reset_hcr(struct kvm_vcpu *vcpu)
+ {
+-	vcpu->arch.hcr_el2 = HCR_GUEST_FLAGS;
++	vcpu->arch.ctxt.hcr_el2 = HCR_GUEST_FLAGS;
+ 	if (is_kernel_in_hyp_mode())
+-		vcpu->arch.hcr_el2 |= HCR_E2H;
++		vcpu->arch.ctxt.hcr_el2 |= HCR_E2H;
+ 	if (cpus_have_const_cap(ARM64_HAS_RAS_EXTN)) {
+ 		/* route synchronous external abort exceptions to EL2 */
+-		vcpu->arch.hcr_el2 |= HCR_TEA;
++		vcpu->arch.ctxt.hcr_el2 |= HCR_TEA;
+ 		/* trap error record accesses */
+-		vcpu->arch.hcr_el2 |= HCR_TERR;
++		vcpu->arch.ctxt.hcr_el2 |= HCR_TERR;
+ 	}
+ 	if (cpus_have_const_cap(ARM64_HAS_STAGE2_FWB))
+-		vcpu->arch.hcr_el2 |= HCR_FWB;
++		vcpu->arch.ctxt.hcr_el2 |= HCR_FWB;
+ 
+ 	if (test_bit(KVM_ARM_VCPU_EL1_32BIT, vcpu->arch.features))
+-		vcpu->arch.hcr_el2 &= ~HCR_RW;
++		vcpu->arch.ctxt.hcr_el2 &= ~HCR_RW;
+ 
+ 	/*
+ 	 * TID3: trap feature register accesses that we virtualise.
+@@ -76,22 +76,22 @@ static inline void vcpu_reset_hcr(struct kvm_vcpu *vcpu)
+ 	 * are currently virtualised.
+ 	 */
+ 	if (!vcpu_el1_is_32bit(vcpu))
+-		vcpu->arch.hcr_el2 |= HCR_TID3;
++		vcpu->arch.ctxt.hcr_el2 |= HCR_TID3;
+ }
+ 
+ static inline unsigned long *vcpu_hcr(struct kvm_vcpu *vcpu)
+ {
+-	return (unsigned long *)&vcpu->arch.hcr_el2;
++	return (unsigned long *)&vcpu->arch.ctxt.hcr_el2;
+ }
+ 
+ static inline void vcpu_clear_wfe_traps(struct kvm_vcpu *vcpu)
+ {
+-	vcpu->arch.hcr_el2 &= ~HCR_TWE;
++	vcpu->arch.ctxt.hcr_el2 &= ~HCR_TWE;
+ }
+ 
+ static inline void vcpu_set_wfe_traps(struct kvm_vcpu *vcpu)
+ {
+-	vcpu->arch.hcr_el2 |= HCR_TWE;
++	vcpu->arch.ctxt.hcr_el2 |= HCR_TWE;
+ }
+ 
+ static inline unsigned long vcpu_get_vsesr(struct kvm_vcpu *vcpu)
+diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+index 7732d0b..1b2e05b 100644
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -203,6 +203,8 @@ struct kvm_cpu_context {
+ 		u32 copro[NR_COPRO_REGS];
+ 	};
+ 
++	/* HYP host/guest configuration */
++	u64 hcr_el2;
+ 	struct kvm_vcpu *__hyp_running_vcpu;
+ };
+ 
+@@ -212,7 +214,6 @@ struct kvm_vcpu_arch {
+ 	struct kvm_cpu_context ctxt;
+ 
+ 	/* HYP configuration */
+-	u64 hcr_el2;
+ 	u32 mdcr_el2;
+ 
+ 	/* Exception Information */
+@@ -458,6 +459,16 @@ int kvm_arm_vcpu_arch_has_attr(struct kvm_vcpu *vcpu,
+ 
+ static inline void __cpu_init_stage2(void) {}
+ 
++/**
++ * __cpu_copy_hyp_conf - copy the boot hyp configuration registers
++ *
++ * It is called once per-cpu during CPU hyp initialisation.
++ */
++static inline void __cpu_copy_hyp_conf(void)
++{
++	kvm_call_hyp(__kvm_populate_host_regs);
++}
++
+ /* Guest/host FPSIMD coordination helpers */
+ int kvm_arch_vcpu_run_map_fp(struct kvm_vcpu *vcpu);
+ void kvm_arch_vcpu_load_fp(struct kvm_vcpu *vcpu);
+diff --git a/arch/arm64/include/asm/kvm_hyp.h b/arch/arm64/include/asm/kvm_hyp.h
+index a80a7ef..6e65cad 100644
+--- a/arch/arm64/include/asm/kvm_hyp.h
++++ b/arch/arm64/include/asm/kvm_hyp.h
+@@ -151,7 +151,7 @@ void __fpsimd_restore_state(struct user_fpsimd_state *fp_regs);
+ bool __fpsimd_enabled(void);
+ 
+ void activate_traps_vhe_load(struct kvm_vcpu *vcpu);
+-void deactivate_traps_vhe_put(void);
++void deactivate_traps_vhe_put(struct kvm_vcpu *vcpu);
+ 
+ u64 __guest_enter(struct kvm_vcpu *vcpu, struct kvm_cpu_context *host_ctxt);
+ void __noreturn __hyp_do_panic(unsigned long, ...);
+diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
+index dd436a5..e2f0268 100644
+--- a/arch/arm64/kvm/guest.c
++++ b/arch/arm64/kvm/guest.c
+@@ -345,7 +345,7 @@ int kvm_arch_vcpu_ioctl_set_sregs(struct kvm_vcpu *vcpu,
+ int __kvm_arm_vcpu_get_events(struct kvm_vcpu *vcpu,
+ 			      struct kvm_vcpu_events *events)
+ {
+-	events->exception.serror_pending = !!(vcpu->arch.hcr_el2 & HCR_VSE);
++	events->exception.serror_pending = !!(vcpu->arch.ctxt.hcr_el2 & HCR_VSE);
+ 	events->exception.serror_has_esr = cpus_have_const_cap(ARM64_HAS_RAS_EXTN);
+ 
+ 	if (events->exception.serror_pending && events->exception.serror_has_esr)
+diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
+index b0b1478..006bd33 100644
+--- a/arch/arm64/kvm/hyp/switch.c
++++ b/arch/arm64/kvm/hyp/switch.c
+@@ -126,7 +126,7 @@ static void __hyp_text __activate_traps_nvhe(struct kvm_vcpu *vcpu)
+ 
+ static void __hyp_text __activate_traps(struct kvm_vcpu *vcpu)
+ {
+-	u64 hcr = vcpu->arch.hcr_el2;
++	u64 hcr = vcpu->arch.ctxt.hcr_el2;
+ 
+ 	write_sysreg(hcr, hcr_el2);
+ 
+@@ -139,10 +139,10 @@ static void __hyp_text __activate_traps(struct kvm_vcpu *vcpu)
+ 		__activate_traps_nvhe(vcpu);
+ }
+ 
+-static void deactivate_traps_vhe(void)
++static void deactivate_traps_vhe(struct kvm_cpu_context *host_ctxt)
+ {
+ 	extern char vectors[];	/* kernel exception vectors */
+-	write_sysreg(HCR_HOST_VHE_FLAGS, hcr_el2);
++	write_sysreg(host_ctxt->hcr_el2, hcr_el2);
+ 
+ 	/*
+ 	 * ARM erratum 1165522 requires the actual execution of the above
+@@ -155,7 +155,7 @@ static void deactivate_traps_vhe(void)
+ 	write_sysreg(vectors, vbar_el1);
+ }
+ 
+-static void __hyp_text __deactivate_traps_nvhe(void)
++static void __hyp_text __deactivate_traps_nvhe(struct kvm_cpu_context *host_ctxt)
+ {
+ 	u64 mdcr_el2 = read_sysreg(mdcr_el2);
+ 
+@@ -165,25 +165,28 @@ static void __hyp_text __deactivate_traps_nvhe(void)
+ 	mdcr_el2 |= MDCR_EL2_E2PB_MASK << MDCR_EL2_E2PB_SHIFT;
+ 
+ 	write_sysreg(mdcr_el2, mdcr_el2);
+-	write_sysreg(HCR_HOST_NVHE_FLAGS, hcr_el2);
++	write_sysreg(host_ctxt->hcr_el2, hcr_el2);
+ 	write_sysreg(CPTR_EL2_DEFAULT, cptr_el2);
+ }
+ 
+ static void __hyp_text __deactivate_traps(struct kvm_vcpu *vcpu)
+ {
++	struct kvm_cpu_context *host_ctxt;
++
++	host_ctxt = vcpu->arch.host_cpu_context;
+ 	/*
+ 	 * If we pended a virtual abort, preserve it until it gets
+ 	 * cleared. See D1.14.3 (Virtual Interrupts) for details, but
+ 	 * the crucial bit is "On taking a vSError interrupt,
+ 	 * HCR_EL2.VSE is cleared to 0."
+ 	 */
+-	if (vcpu->arch.hcr_el2 & HCR_VSE)
+-		vcpu->arch.hcr_el2 = read_sysreg(hcr_el2);
++	if (vcpu->arch.ctxt.hcr_el2 & HCR_VSE)
++		vcpu->arch.ctxt.hcr_el2 = read_sysreg(hcr_el2);
+ 
+ 	if (has_vhe())
+-		deactivate_traps_vhe();
++		deactivate_traps_vhe(host_ctxt);
+ 	else
+-		__deactivate_traps_nvhe();
++		__deactivate_traps_nvhe(host_ctxt);
+ }
+ 
+ void activate_traps_vhe_load(struct kvm_vcpu *vcpu)
+@@ -191,7 +194,7 @@ void activate_traps_vhe_load(struct kvm_vcpu *vcpu)
+ 	__activate_traps_common(vcpu);
+ }
+ 
+-void deactivate_traps_vhe_put(void)
++void deactivate_traps_vhe_put(struct kvm_vcpu *vcpu)
+ {
+ 	u64 mdcr_el2 = read_sysreg(mdcr_el2);
+ 
+diff --git a/arch/arm64/kvm/hyp/sysreg-sr.c b/arch/arm64/kvm/hyp/sysreg-sr.c
+index 68d6f7c..68ddc0f 100644
+--- a/arch/arm64/kvm/hyp/sysreg-sr.c
++++ b/arch/arm64/kvm/hyp/sysreg-sr.c
+@@ -21,6 +21,7 @@
+ #include <asm/kvm_asm.h>
+ #include <asm/kvm_emulate.h>
+ #include <asm/kvm_hyp.h>
++#include <asm/kvm_mmu.h>
+ 
+ /*
+  * Non-VHE: Both host and guest must save everything.
+@@ -294,7 +295,7 @@ void kvm_vcpu_put_sysregs(struct kvm_vcpu *vcpu)
+ 	if (!has_vhe())
+ 		return;
+ 
+-	deactivate_traps_vhe_put();
++	deactivate_traps_vhe_put(vcpu);
+ 
+ 	__sysreg_save_el1_state(guest_ctxt);
+ 	__sysreg_save_user_state(guest_ctxt);
+@@ -316,3 +317,21 @@ void __hyp_text __kvm_enable_ssbs(void)
+ 	"msr	sctlr_el2, %0"
+ 	: "=&r" (tmp) : "L" (SCTLR_ELx_DSSBS));
+ }
++
++/**
++ * __kvm_populate_host_regs - Stores host register values
++ *
++ * This function acts as a function handler parameter for kvm_call_hyp and
++ * may be called from EL1 exception level to fetch the register value.
++ */
++void __hyp_text __kvm_populate_host_regs(void)
++{
++	struct kvm_cpu_context *host_ctxt;
++
++	if (has_vhe())
++		host_ctxt = this_cpu_ptr(&kvm_host_cpu_state);
++	else
++		host_ctxt = __hyp_this_cpu_ptr(kvm_host_cpu_state);
++
++	host_ctxt->hcr_el2 = read_sysreg(hcr_el2);
++}
+diff --git a/arch/arm64/kvm/hyp/tlb.c b/arch/arm64/kvm/hyp/tlb.c
+index 76c3086..c5e7144 100644
+--- a/arch/arm64/kvm/hyp/tlb.c
++++ b/arch/arm64/kvm/hyp/tlb.c
+@@ -86,12 +86,16 @@ static hyp_alternate_select(__tlb_switch_to_guest,
+ static void __hyp_text __tlb_switch_to_host_vhe(struct kvm *kvm,
+ 						struct tlb_inv_context *cxt)
+ {
++	u64 val;
++
+ 	/*
+ 	 * We're done with the TLB operation, let's restore the host's
+ 	 * view of HCR_EL2.
+ 	 */
+ 	write_sysreg(0, vttbr_el2);
+-	write_sysreg(HCR_HOST_VHE_FLAGS, hcr_el2);
++	val = read_sysreg(hcr_el2);
++	val |= HCR_TGE;
++	write_sysreg(val, hcr_el2);
+ 	isb();
+ 
+ 	if (cpus_have_const_cap(ARM64_WORKAROUND_1165522)) {
+diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+index 9e350fd3..8e18f7f 100644
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -1328,6 +1328,7 @@ static void cpu_hyp_reinit(void)
+ 		cpu_init_hyp_mode(NULL);
+ 
+ 	kvm_arm_init_debug();
++	__cpu_copy_hyp_conf();
+ 
+ 	if (vgic_present)
+ 		kvm_vgic_init_cpu_hardware();
+-- 
+2.7.4
+
