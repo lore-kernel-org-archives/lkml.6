@@ -2,165 +2,129 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 343AFC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC9F0C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:37:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 017032147C
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:34:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70E78217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:37:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729470AbfBSVeO (ORCPT
+        id S1728980AbfBSVhs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 16:34:14 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36706 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727206AbfBSVeO (ORCPT
+        Tue, 19 Feb 2019 16:37:48 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:38397 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbfBSVhs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 16:34:14 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1JLYAIA152828
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 16:34:12 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qrs761fhe-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 16:34:08 -0500
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Tue, 19 Feb 2019 21:34:06 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 19 Feb 2019 21:34:04 -0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1JLY0R123330996
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Feb 2019 21:34:00 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 372D2AE05F;
-        Tue, 19 Feb 2019 21:34:00 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DA980AE05C;
-        Tue, 19 Feb 2019 21:33:59 +0000 (GMT)
-Received: from [9.60.75.235] (unknown [9.60.75.235])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 19 Feb 2019 21:33:59 +0000 (GMT)
-Subject: Re: [PATCH v3 6/9] vfio: ap: register IOMMU VFIO notifier
-To:     Halil Pasic <pasic@linux.ibm.com>
-Cc:     Pierre Morel <pmorel@linux.ibm.com>, borntraeger@de.ibm.com,
-        alex.williamson@redhat.com, cohuck@redhat.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, frankja@linux.ibm.com, david@redhat.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        freude@linux.ibm.com, mimu@linux.ibm.com
-References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
- <1550152269-6317-7-git-send-email-pmorel@linux.ibm.com>
- <3ce0a3a0-22fb-c418-321d-7e6e3af5b66c@linux.ibm.com>
- <20190219105946.29e510a6@oc2783563651>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Tue, 19 Feb 2019 16:33:59 -0500
+        Tue, 19 Feb 2019 16:37:48 -0500
+Received: by mail-qt1-f194.google.com with SMTP id 2so25000193qtb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 13:37:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=negk3eC+GoymokVpzay6lU5dVWvVumB0yt3iSqDQKz4=;
+        b=heVpDPm7gVnNFhEXI/8Rkpr/kBurZgnGVnl/0fSQQwTReqFUQOWpsa5EcpZH2xxq4h
+         xVp64y7QH1crlFLePs+hlyx+zB0h7JML3Lyz2/40aQsQt3Auc1TwmSXQwJBq2pSQyK07
+         sy06lcJSMGNGqmfsz4eOy6p15GencREHoUe9Y6X0GfyB/qwMAtOtJtIsA5P5rdZTOnSC
+         TgvS/1bhJJygu+npzJ4UHFtNn4jTHxhBcABE6yuTYumIfjTvsP+W54oOf/TvzZFiiQ0E
+         o5jZFeQJFHbOreCodp4qxQZhoM7DPmxLO1MoyDOKYZwQykUY1T0rMetURypuUhc9mLlf
+         lpCg==
+X-Gm-Message-State: AHQUAuaNQtACcvmULXfO5GMK3+b9HRyRrcnLDeYzycoLJyJWy/NwLnMb
+        pRu9pQ25ZZRf7Qz2jtKUgoSf4A==
+X-Google-Smtp-Source: AHgI3IbpmKfkXdViySCLxHF6q/t9Qg9NtFvv2uWFvZyT+wtfvK/WOJxQyhPq1pWcGMo9NH5DmqU82Q==
+X-Received: by 2002:ac8:2b17:: with SMTP id 23mr9492711qtu.157.1550612267403;
+        Tue, 19 Feb 2019 13:37:47 -0800 (PST)
+Received: from ?IPv6:2601:602:9800:dae6::112f? ([2601:602:9800:dae6::112f])
+        by smtp.gmail.com with ESMTPSA id u32sm21096992qtc.54.2019.02.19.13.37.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Feb 2019 13:37:46 -0800 (PST)
+Subject: Re: [PATCH 13/14] staging: android: ion: Do not sync CPU cache on
+ map/unmap
+To:     Brian Starkey <Brian.Starkey@arm.com>,
+        "Andrew F. Davis" <afd@ti.com>
+Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
+        Liam Mark <lmark@codeaurora.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>, nd <nd@arm.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+References: <alpine.DEB.2.10.1901161450470.10666@lmark-linux.qualcomm.com>
+ <3bf4bfce-aee6-9c52-c2f7-783dc63bfc3a@ti.com>
+ <alpine.DEB.2.10.1901171704270.12287@lmark-linux.qualcomm.com>
+ <b8b16d71-e09b-6bf9-259e-79c1de7fd15b@ti.com>
+ <20190121112235.g36qqptpv6wjuj7w@DESKTOP-E1NTVVP.localdomain>
+ <b89df12e-00bc-5484-6458-f7c85a362b42@ti.com>
+ <CAO_48GEYPW0u6uWkkFgqjmmabLcBm69OD34QihSNGewqz_AqSQ@mail.gmail.com>
+ <d24949d2-3736-0e6f-99ae-b8550d53a828@ti.com>
+ <20190123171153.ql25gyg6sma4fpqb@DESKTOP-E1NTVVP.localdomain>
+ <af5c22b2-0d9e-4bd1-6fdd-1a3880890916@ti.com>
+ <20190124164447.3dwwampprzofwbyr@DESKTOP-E1NTVVP.localdomain>
+From:   Laura Abbott <labbott@redhat.com>
+Message-ID: <08057adf-d1da-7cb7-79ac-8e6e3934e7d7@redhat.com>
+Date:   Tue, 19 Feb 2019 13:37:44 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190219105946.29e510a6@oc2783563651>
+In-Reply-To: <20190124164447.3dwwampprzofwbyr@DESKTOP-E1NTVVP.localdomain>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021921-2213-0000-0000-000003547517
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010628; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000281; SDB=6.01163473; UDB=6.00607498; IPR=6.00944055;
- MB=3.00025661; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-19 21:34:05
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021921-2214-0000-0000-00005D68F5C6
-Message-Id: <ef8ac760-8da9-6f79-ac26-933d998f4c3a@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-19_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902190150
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/19/19 4:59 AM, Halil Pasic wrote:
-> On Fri, 15 Feb 2019 17:55:35 -0500
-> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+On 1/24/19 8:44 AM, Brian Starkey wrote:
+> On Thu, Jan 24, 2019 at 10:04:46AM -0600, Andrew F. Davis wrote:
+>> On 1/23/19 11:11 AM, Brian Starkey wrote:
 > 
->> On 2/14/19 8:51 AM, Pierre Morel wrote:
->>> To be able to use the VFIO interface to facilitate the
->>> mediated device memory pining/unpining we need to register
->>> a notifier for IOMMU.
->>>
->>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->>> ---
->>>    drivers/s390/crypto/vfio_ap_ops.c     | 64 +++++++++++++++++++++++++++++++----
->>>    drivers/s390/crypto/vfio_ap_private.h |  2 ++
->>>    2 files changed, 60 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
->>> index 1851b24..6eddc2c 100644
->>> --- a/drivers/s390/crypto/vfio_ap_ops.c
->>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> [snip]
 > 
-> [..]
->    	struct vfio_ap_queue *q;
->>> @@ -967,12 +996,32 @@ static int vfio_ap_mdev_open(struct mdev_device *mdev)
->>>    
->>>    	ret = vfio_register_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
->>>    				     &events, &matrix_mdev->group_notifier);
->>> -	if (ret) {
->>> -		module_put(THIS_MODULE);
->>> -		return ret;
->>> -	}
->>> +	if (ret)
->>> +		goto err_group;
->>> +
->>> +	matrix_mdev->iommu_notifier.notifier_call = vfio_ap_mdev_iommu_notifier;
->>> +	events = VFIO_IOMMU_NOTIFY_DMA_UNMAP;
->>> +
->>> +	ret = vfio_register_notifier(mdev_dev(mdev), VFIO_IOMMU_NOTIFY,
->>> +				     &events, &matrix_mdev->iommu_notifier);
->>> +	if (ret)
->>> +		goto err_iommu;
->>> +
->>> +	ret = vfio_ap_associate_queues(matrix_mdev);
->>> +	if (ret)
->>> +		goto err_associate;
 >>
->> I think the matrix_mdev should be associated with queues when an
->> assignment of an adapter or domain is made to the mdev device via its
->> sysfs interfaces. I say this because assigning an adapter or domain to
->> an mdev device effectively grants ownership of any additional AP queues
->> added to the mdev device's AP matrix as a result of the assignment. It
->> only makes sense to assign ownership to the vfio_ap_queue objects
->> representing the queues at that time. If an adapter or domain is
->> dynamically assigned while a guest is using the affected queues, then
->> the associations will have to be made at that time and this code will
->> likely go bye bye.
+>> I'm very new to all this, so any pointers to history in this area are
+>> appreciated.
 >>
 > 
+> [snip]
 > 
-> Actually, we need the stuff in vfio_ap_queues only if the guest is
-> offered to  decides to use AP adaper interrupts. I would prefer to have
-> it around only when needed: as long as we have the nib pinned for any
-> given queue. Is there a reason why not to do so?
-
-Even if we keep the vfio_ap_queue around for the life of a guest,
-association/dissociation will have to be done when an adapter or domain
-is dynamically assigned.
-
+>>
+>>> In case you didn't come across it already, the effort which seems to
+>>> have gained the most "air-time" recently is
+>>> https://github.com/cubanismo/allocator, which is still a userspace
+>>> module (perhaps some concepts from there could go into the kernel?),
+>>> but makes some attempts at generic constraint solving. It's also not
+>>> really moving anywhere at the moment.
+>>>
+>>
+>> Very interesting, I'm going to have to stare at this for a bit.
 > 
-> Regards,
-> Halil
->   
-> [..]
+> In which case, some reading material that might be of interest :-)
+> 
+> https://www.x.org/wiki/Events/XDC2016/Program/Unix_Device_Memory_Allocation.pdf
+> https://www.x.org/wiki/Events/XDC2017/jones_allocator.pdf
+> https://lists.freedesktop.org/archives/mesa-dev/2017-November/177632.html
+> 
+> -Brian
 > 
 
+In some respects this is more a question of "what is the purpose
+of Ion". Once upon a time, Ion was going to do constraint solving
+but that never really happened and I figured Ion would get deprecated.
+People keep coming out of the woodwork with new uses for Ion so
+its stuck around. This is why I've primarily focused on Ion as a
+framework for exposing available memory types to userspace and leave
+the constraint solving to someone else, since that's what most
+users seem to want out of Ion ("I know I want memory type X please
+give it to me"). That's not to say that this was a perfect or
+even the correct approach, just what made the most sense based
+on users.
+
+Thanks,
+Laura
