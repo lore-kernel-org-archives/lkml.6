@@ -6,108 +6,145 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F90C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC00C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:02:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C846C2146E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:02:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05B742146E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:02:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728588AbfBSOCR (ORCPT
+        id S1728869AbfBSOCn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 09:02:17 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46682 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726221AbfBSOCR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 09:02:17 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D55C987643;
-        Tue, 19 Feb 2019 14:02:16 +0000 (UTC)
-Received: from krava (unknown [10.43.17.42])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 37CED60149;
-        Tue, 19 Feb 2019 14:02:15 +0000 (UTC)
-Date:   Tue, 19 Feb 2019 15:02:13 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     He Kuang <hekuang@huawei.com>
-Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+        Tue, 19 Feb 2019 09:02:43 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59626 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725845AbfBSOCm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 09:02:42 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BFEF2AE6E;
+        Tue, 19 Feb 2019 14:02:40 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 40DE71E1570; Tue, 19 Feb 2019 15:02:40 +0100 (CET)
+Date:   Tue, 19 Feb 2019 15:02:40 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Jan Kara <jack@suse.com>, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf report: Don't shadow inlined symbol with different
- addr range
-Message-ID: <20190219140213.GC6435@krava>
-References: <20190219130531.15692-1-hekuang@huawei.com>
+Subject: Re: [PATCH][udf-next] udf: don't call mark_buffer_dirty on a null bh
+ pointer
+Message-ID: <20190219140240.GA31849@quack2.suse.cz>
+References: <20190219114403.24771-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed; boundary="cWoXeonUoKmBZSoM"
 Content-Disposition: inline
-In-Reply-To: <20190219130531.15692-1-hekuang@huawei.com>
+In-Reply-To: <20190219114403.24771-1-colin.king@canonical.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 19 Feb 2019 14:02:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 09:05:31PM +0800, He Kuang wrote:
-> We can't assume inlined symbols with the same name are equal, because
-> their address range may be different. This will cause the symbols with
-> different addresses be shadowed when adding to the hist entry, and lead
-> to ERANGE error when checking the symbol address during sample parse, the
-> addr should be within the range of [sym.start, sym.end].
-> 
-> The error message is like: "0x36aea60 [0x8]: failed to process type: 68".
-> 
-> The second parameter of symbol__new() is the length of the fake symbol for
-> the inline frame, which is the subtraction of the end and start address of
-> base_sym.
-> 
-> Signed-off-by: He Kuang <hekuang@huawei.com>
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+--cWoXeonUoKmBZSoM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-thanks,
-jirka
+On Tue 19-02-19 11:44:03, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a null check on the pointer bh to avoid a null pointer dereference
+> on bh->b_data however later bh is passed to mark_buffer_dirty that can also
+> cause a null pointer dereference on bh.  Avoid this potential null pointer
+> dereference by moving the call to mark_buffer_dirty inside the null checked
+> block.
+> 
+> Fixes: e8b4274735e4 ("udf: finalize integrity descriptor before writeback")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Thanks for the patch! In fact it is the 'if (bh)' check that's
+unnecessarily defensive (we cannot have sbi->s_lvid_dirty and
+!sbi->s_lvid_bh). So I'll just drop that check (attached patch).
+
+								Honza
 
 > ---
->  tools/perf/util/sort.c    | 10 ++++++++--
->  tools/perf/util/srcline.c |  2 +-
->  2 files changed, 9 insertions(+), 3 deletions(-)
+>  fs/udf/super.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 > 
-> diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
-> index 6c1a83768eb0..d0334c33da54 100644
-> --- a/tools/perf/util/sort.c
-> +++ b/tools/perf/util/sort.c
-> @@ -230,8 +230,14 @@ static int64_t _sort__sym_cmp(struct symbol *sym_l, struct symbol *sym_r)
->  	if (sym_l == sym_r)
->  		return 0;
+> diff --git a/fs/udf/super.c b/fs/udf/super.c
+> index a6940d90bedd..b7e9a83d39db 100644
+> --- a/fs/udf/super.c
+> +++ b/fs/udf/super.c
+> @@ -2336,13 +2336,13 @@ static int udf_sync_fs(struct super_block *sb, int wait)
 >  
-> -	if (sym_l->inlined || sym_r->inlined)
-> -		return strcmp(sym_l->name, sym_r->name);
-> +	if (sym_l->inlined || sym_r->inlined) {
-> +		int ret = strcmp(sym_l->name, sym_r->name);
-> +
-> +		if (ret)
-> +			return ret;
-> +		if ((sym_l->start <= sym_r->end) && (sym_l->end >= sym_r->start))
-> +			return 0;
-> +	}
+>  			lvid = (struct logicalVolIntegrityDesc *)bh->b_data;
+>  			udf_finalize_lvid(lvid);
+> -		}
 >  
->  	if (sym_l->start != sym_r->start)
->  		return (int64_t)(sym_r->start - sym_l->start);
-> diff --git a/tools/perf/util/srcline.c b/tools/perf/util/srcline.c
-> index dc86597d0cc4..ccf42c4e83f0 100644
-> --- a/tools/perf/util/srcline.c
-> +++ b/tools/perf/util/srcline.c
-> @@ -104,7 +104,7 @@ static struct symbol *new_inline_sym(struct dso *dso,
->  	} else {
->  		/* create a fake symbol for the inline frame */
->  		inline_sym = symbol__new(base_sym ? base_sym->start : 0,
-> -					 base_sym ? base_sym->end : 0,
-> +					 base_sym ? (base_sym->end - base_sym->start) : 0,
->  					 base_sym ? base_sym->binding : 0,
->  					 base_sym ? base_sym->type : 0,
->  					 funcname);
+> -		/*
+> -		 * Blockdevice will be synced later so we don't have to submit
+> -		 * the buffer for IO
+> -		 */
+> -		mark_buffer_dirty(bh);
+> +			/*
+> +			 * Blockdevice will be synced later so we don't have
+> +			 * to submit the buffer for IO
+> +			 */
+> +			mark_buffer_dirty(bh);
+> +		}
+>  		sbi->s_lvid_dirty = 0;
+>  	}
+>  	mutex_unlock(&sbi->s_alloc_mutex);
 > -- 
 > 2.20.1
 > 
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
+
+--cWoXeonUoKmBZSoM
+Content-Type: text/x-patch; charset=us-ascii
+Content-Disposition: attachment; filename="0001-udf-Drop-pointless-check-from-udf_sync_fs.patch"
+
+From a00eb52e3f2f815efa52a9e3bf1b730d86c05faa Mon Sep 17 00:00:00 2001
+From: Jan Kara <jack@suse.cz>
+Date: Tue, 19 Feb 2019 14:59:43 +0100
+Subject: [PATCH] udf: Drop pointless check from udf_sync_fs()
+
+The check if (bh) in udf_sync_fs() is pointless as we cannot have
+sbi->s_lvid_dirty and !sbi->s_lvid_bh (as already asserted by
+udf_updated_lvid()). So just drop the pointless check.
+
+Reported-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/udf/super.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/fs/udf/super.c b/fs/udf/super.c
+index a6940d90bedd..ffd8038ff728 100644
+--- a/fs/udf/super.c
++++ b/fs/udf/super.c
+@@ -2330,13 +2330,10 @@ static int udf_sync_fs(struct super_block *sb, int wait)
+ 	mutex_lock(&sbi->s_alloc_mutex);
+ 	if (sbi->s_lvid_dirty) {
+ 		struct buffer_head *bh = sbi->s_lvid_bh;
++		struct logicalVolIntegrityDesc *lvid;
+ 
+-		if (bh) {
+-			struct logicalVolIntegrityDesc *lvid;
+-
+-			lvid = (struct logicalVolIntegrityDesc *)bh->b_data;
+-			udf_finalize_lvid(lvid);
+-		}
++		lvid = (struct logicalVolIntegrityDesc *)bh->b_data;
++		udf_finalize_lvid(lvid);
+ 
+ 		/*
+ 		 * Blockdevice will be synced later so we don't have to submit
+-- 
+2.16.4
+
+
+--cWoXeonUoKmBZSoM--
