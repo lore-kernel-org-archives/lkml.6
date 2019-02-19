@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.4 required=3.0 tests=DATE_IN_PAST_12_24,
 	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C61C0C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B54A8C10F01
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:13:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 950072146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:13:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 899052087B
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:13:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550661229;
-	bh=96LMg4TzWLSZVdHTvW4WrLJJp5uxPRw6D5MCVxyfumY=;
+	s=default; t=1550661232;
+	bh=ZbKN+64r1HSS+TbwFY9CTTWInt11N95xh9aX03EAqrc=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=KUGaih2s775yVHGf989Z2CpaoC27cngd06bJrYtmmszrULYBWLd0ZuwsYRbbqths5
-	 N7UV/OVPgmlAWbv888uvACwjdFcjdydH+b8cilIYry8cAhh68thjshOAFa8fOM2S8m
-	 zYhVNG4Z7M4NR4I8emlEOvw5ecgv0imL0wj4ljv8=
+	b=1dqfF0e7TssGEFkY50t0AtUshyqCFUmQRIXyEVtKEJTLNlTzezwQ6PNsd6ft3qJ8A
+	 r6kdHaUvHSXqXVQmlMa6/qPaD1nULGBcFEGn4zyswAu2D467leNOKIdod2tDcapqzs
+	 AQUSak16zwL+3Lk5Oxe9fC+5UE/NLY8e/ZDdz7iA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727979AbfBTLNs (ORCPT
+        id S1728001AbfBTLNu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 06:13:48 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45094 "EHLO
+        Wed, 20 Feb 2019 06:13:50 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45062 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727924AbfBTLNp (ORCPT
+        with ESMTP id S1727914AbfBTLNp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 20 Feb 2019 06:13:45 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -34,28 +34,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=6BZ7sydURhTQtY3rpfXg+bUYm3hrRA4zd7SOKO4qu6o=; b=L6fElBGaVn/J
-        6wi74Me+VbEdvaqiTriff0szjTKpdZPqo0cjvSNJg5s6AWEE4jsjRVwfGcFjEHrJpOWyoVqcSxwuK
-        l6zzM6vb4INCfxk5vH4thkSljE1JxFZGjMHpAUaRXIgYC7JALoN3GDYriQzEDrHw8SukWnFrVrL8u
-        ifjVY=;
+        List-Archive; bh=5a9zKw2eSUcz77NUFjUpGYNDUVyazIqQEz09C8lddxA=; b=FbeTJQj4Repv
+        Uv3zQEif4WY6sjCmcAKF86ToBbO+mVaTlBekKITAVeVT0hoPssrAV1XXhlzldiq3rXUcDzgdNpjNc
+        GrjttCnlHnWp11sMbSyeB1bXKDE1OEKfh/v66YGL0tfzyyQVr5B5jyY/YEmFc5BSlrPF5rXGB0olf
+        Ilp10=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gwPom-00011l-D9; Wed, 20 Feb 2019 11:13:36 +0000
+        id 1gwPom-00011g-Mo; Wed, 20 Feb 2019 11:13:36 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 7E59C11284C0; Tue, 19 Feb 2019 15:50:20 +0000 (GMT)
+        id 29FAB11284BB; Tue, 19 Feb 2019 15:50:16 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Bogdan Togorean <bogdan.togorean@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, lars@metafoo.de,
-        linux-kernel@vger.kernel.org, lgirdwood@gmail.com,
-        robh+dt@kernel.org, tiwai@suse.com, broonie@kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: adau1977: Add MICBIAS example in DT bindings" to the asoc tree
-In-Reply-To:  <20190219141139.24216-2-bogdan.togorean@gmail.com>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: sunxi: sun50i-codec-analog: Rename hpvcc regulator supply to cpvdd" to the asoc tree
+In-Reply-To:  <20190213070457.26049-2-wens@csie.org>
 X-Patchwork-Hint: ignore
-Message-Id: <20190219155020.7E59C11284C0@debutante.sirena.org.uk>
-Date:   Tue, 19 Feb 2019 15:50:20 +0000 (GMT)
+Message-Id: <20190219155016.29FAB11284BB@debutante.sirena.org.uk>
+Date:   Tue, 19 Feb 2019 15:50:16 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -63,7 +64,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: adau1977: Add MICBIAS example in DT bindings
+   ASoC: sunxi: sun50i-codec-analog: Rename hpvcc regulator supply to cpvdd
 
 has been applied to the asoc tree at
 
@@ -88,44 +89,49 @@ to this mail.
 Thanks,
 Mark
 
-From fb7a97456e324b4ac13044db17a4f5b974e49e33 Mon Sep 17 00:00:00 2001
-From: Bogdan Togorean <bogdan.togorean@gmail.com>
-Date: Tue, 19 Feb 2019 16:11:38 +0200
-Subject: [PATCH] ASoC: adau1977: Add MICBIAS example in DT bindings
+From 5fd812e6f5ae0376134234ceb70e8de541ccb10d Mon Sep 17 00:00:00 2001
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 13 Feb 2019 15:04:56 +0800
+Subject: [PATCH] ASoC: sunxi: sun50i-codec-analog: Rename hpvcc regulator
+ supply to cpvdd
 
-Add MICBIAS property to the optional devicetree bindings.
+The A64 datasheet lists the supply rail for the headphone amp's charge
+pump as "CPVDD". cpvdd-supply is the name of the property for this power
+rail specified in the device tree bindings. "HPVCC" was the name used in
+the A33 datasheet for the same function.
 
-Signed-off-by: Bogdan Togorean <bogdan.togorean@gmail.com>
+Rename the supply so it matches the datasheet, bindings, and the subject
+from the original commit.
+
+Fixes: ca0412a05756 ("ASoC: sunxi: sun50i-codec-analog: Add support for cpvdd regulator supply")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- Documentation/devicetree/bindings/sound/adi,adau1977.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
+ sound/soc/sunxi/sun50i-codec-analog.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/adi,adau1977.txt b/Documentation/devicetree/bindings/sound/adi,adau1977.txt
-index e79aeef73f28..87c16e6f2e7c 100644
---- a/Documentation/devicetree/bindings/sound/adi,adau1977.txt
-+++ b/Documentation/devicetree/bindings/sound/adi,adau1977.txt
-@@ -23,6 +23,12 @@ Optional properties:
-  - DVDD-supply: supply voltage for the digital core, please consult
-                 Documentation/devicetree/bindings/regulator/regulator.txt
+diff --git a/sound/soc/sunxi/sun50i-codec-analog.c b/sound/soc/sunxi/sun50i-codec-analog.c
+index df1fed0aa001..d105c90c3706 100644
+--- a/sound/soc/sunxi/sun50i-codec-analog.c
++++ b/sound/soc/sunxi/sun50i-codec-analog.c
+@@ -274,7 +274,7 @@ static const struct snd_soc_dapm_widget sun50i_a64_codec_widgets[] = {
+ 	 * stream widgets at the card level.
+ 	 */
  
-+- adi,micbias: configures the voltage setting for the MICBIAS pin.
-+		Select 0/1/2/3/4/5/6/7/8 to specify MICBIAS voltage
-+		5V/5.5V/6V/6.5V/7V/7.5V/8V/8.5V/9V
-+		If not specified the default value will be "7" meaning 8.5 Volts.
-+		This property is only valid for the ADAU1977
-+
- For required properties on SPI, please consult
- Documentation/devicetree/bindings/spi/spi-bus.txt
+-	SND_SOC_DAPM_REGULATOR_SUPPLY("hpvcc", 0, 0),
++	SND_SOC_DAPM_REGULATOR_SUPPLY("cpvdd", 0, 0),
+ 	SND_SOC_DAPM_MUX("Headphone Source Playback Route",
+ 			 SND_SOC_NOPM, 0, 0, sun50i_codec_hp_src),
+ 	SND_SOC_DAPM_OUT_DRV("Headphone Amp", SUN50I_ADDA_HP_CTRL,
+@@ -362,7 +362,7 @@ static const struct snd_soc_dapm_route sun50i_a64_codec_routes[] = {
+ 	{ "Headphone Source Playback Route", "Mixer", "Left Mixer" },
+ 	{ "Headphone Source Playback Route", "Mixer", "Right Mixer" },
+ 	{ "Headphone Amp", NULL, "Headphone Source Playback Route" },
+-	{ "Headphone Amp", NULL, "hpvcc" },
++	{ "Headphone Amp", NULL, "cpvdd" },
+ 	{ "HP", NULL, "Headphone Amp" },
  
-@@ -40,6 +46,7 @@ Examples:
- 		AVDD-supply = <&regulator>;
- 		DVDD-supply = <&regulator_digital>;
- 
-+		adi,micbias = <3>;
- 		reset_gpio = <&gpio 10 GPIO_ACTIVE_LOW>;
- 	};
- 
+ 	/* Microphone Routes */
 -- 
 2.20.1
 
