@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6DB1C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:47:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04FA4C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:47:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7434621479
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:47:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C68D421479
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:47:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550576868;
-	bh=uNCL7lkdZKb42ZY+X9p/OHzhh7ToBltahtV+4wmVXIw=;
+	s=default; t=1550576872;
+	bh=MQsCmNBECz9rqVFR/kCT4VeFtpl+VnO5lAf9vbGJ1KI=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=wnyijlvGjHQWNNBu3CdAGOXcQ7GOdJGbCgX8fk+0I8EVryZyCaBvWhBfNZVHW2MzU
-	 bXdoLUzDmKo2oGsQyml8zJ62FKedfm5vnsWqtdJLAuS/QHWwtWzs7TfzPEQv5QUQzf
-	 kf6MZHl9V3AVEFT+W5QbxH/iMCwkrdTI7fb39Tco=
+	b=oQFS+7Soa60OctsC1I4X0R6XqR09utiQjl4oDKPIPL0vejwQM5ktl/+jiPEJ6sAo5
+	 4d01PVHLDB8pMEnUTUe1UfIJX9y+LzMlK8Mfr+lM1dsFo7C2ylwquH3Lewz1fufz4s
+	 JZUIzKX0CFCVLKn9z3viInNB2rmzGuOUkhhLopOc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728503AbfBSLrr (ORCPT
+        id S1728544AbfBSLrv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 06:47:47 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56630 "EHLO
+        Tue, 19 Feb 2019 06:47:51 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56600 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728034AbfBSLrb (ORCPT
+        with ESMTP id S1728316AbfBSLra (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 06:47:31 -0500
+        Tue, 19 Feb 2019 06:47:30 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=T9FRXjm3wYRqxfzUDTLYBLeQSBA6LicNZE8laXiG9Pg=; b=VkWhmEBuNxD/
-        OEsX7BuhWY2Ao86CRpkyr+R6O5KcKrhtm8vQW7LvoS7pNAzbwrEGQSbcsgS3WNsNehCU7VzJn5nQ/
-        LE/Q/W89hARywRm6H+Nq+M3t6wrSuUITWNlZj1/Nr/3vHTFhs9UJXib9fLJRR6vG15ISd22L+1hvV
-        12rDE=;
+        List-Archive; bh=gWrW107XXOcmZlPwv9dOaLOM6StImDOf61y2AC+glFU=; b=ZkmuSLQj8pcy
+        +gDW8eB/sk7bOG/idkn8e8J1d8qb+QIJ/SNuhpyCUwTAgt5aKImv32RReR2QRU3EH2aNa8ehZyVel
+        VxJ0jEcvQt/elKzQNApni6+5CmGBVLa0KTCQBoAaRbkQc/XY7SGWjZbWoGyPdSLX5oL3dAumB0bFO
+        /b+wM=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gw3s0-0008Tc-Ns; Tue, 19 Feb 2019 11:47:28 +0000
+        id 1gw3rp-0008Sh-1Z; Tue, 19 Feb 2019 11:47:17 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 5640C11284A7; Tue, 19 Feb 2019 11:47:28 +0000 (GMT)
+        id 6643D11284A6; Tue, 19 Feb 2019 11:47:16 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Pascal PAILLET-LME <p.paillet@st.com>
 Cc:     pascal paillet <p.paillet@st.com>, Mark Brown <broonie@kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: Applied "regulator: stpmic1: Use regulator mode definition from bindings" to the regulator tree
+Subject: Applied "regulator: stpmic1: Change buck1 voltage range" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190219114728.5640C11284A7@debutante.sirena.org.uk>
-Date:   Tue, 19 Feb 2019 11:47:28 +0000 (GMT)
+Message-Id: <20190219114716.6643D11284A6@debutante.sirena.org.uk>
+Date:   Tue, 19 Feb 2019 11:47:16 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -60,7 +60,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: stpmic1: Use regulator mode definition from bindings
+   regulator: stpmic1: Change buck1 voltage range
 
 has been applied to the regulator tree at
 
@@ -85,43 +85,37 @@ to this mail.
 Thanks,
 Mark
 
-From b9058da8199dfdcdb6a83c60dd7d84e1c88e7d07 Mon Sep 17 00:00:00 2001
+From 48593a99a1f6245000fa90606dd9ec5eb96b54a6 Mon Sep 17 00:00:00 2001
 From: Pascal PAILLET-LME <p.paillet@st.com>
-Date: Tue, 19 Feb 2019 10:04:31 +0000
-Subject: [PATCH] regulator: stpmic1: Use regulator mode definition from
- bindings
+Date: Tue, 19 Feb 2019 10:04:34 +0000
+Subject: [PATCH] regulator: stpmic1: Change buck1 voltage range
 
-Get the regulator mode definition from the bindings header.
+Change buck1 voltage range to be conform with the data-sheet.
 
 Signed-off-by: pascal paillet <p.paillet@st.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/stpmic1_regulator.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/regulator/stpmic1_regulator.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/regulator/stpmic1_regulator.c b/drivers/regulator/stpmic1_regulator.c
-index d456fb5d4044..c25f82fc28f4 100644
+index 16ba0297f709..a1f88e996cae 100644
 --- a/drivers/regulator/stpmic1_regulator.c
 +++ b/drivers/regulator/stpmic1_regulator.c
-@@ -12,6 +12,8 @@
- #include <linux/regulator/machine.h>
- #include <linux/regulator/of_regulator.h>
+@@ -75,9 +75,10 @@ enum {
+ #define STPMIC1_BUCK_MODE_NORMAL 0
+ #define STPMIC1_BUCK_MODE_LP BUCK_HPLP_ENABLE_MASK
  
-+#include <dt-bindings/mfd/st,stpmic1.h>
-+
- /**
-  * stpmic1 regulator description
-  * @desc: regulator framework description
-@@ -68,9 +70,6 @@ enum {
- /* Enable time worst case is 5000mV/(2250uV/uS) */
- #define PMIC_ENABLE_TIME_US 2200
+-struct regulator_linear_range buck1_ranges[] = {
+-	REGULATOR_LINEAR_RANGE(600000, 0, 30, 25000),
+-	REGULATOR_LINEAR_RANGE(1350000, 31, 63, 0),
++static const struct regulator_linear_range buck1_ranges[] = {
++	REGULATOR_LINEAR_RANGE(725000, 0, 4, 0),
++	REGULATOR_LINEAR_RANGE(725000, 5, 36, 25000),
++	REGULATOR_LINEAR_RANGE(1500000, 37, 63, 0),
+ };
  
--#define STPMIC1_BUCK_MODE_NORMAL 0
--#define STPMIC1_BUCK_MODE_LP BUCK_HPLP_ENABLE_MASK
--
- static const struct regulator_linear_range buck1_ranges[] = {
- 	REGULATOR_LINEAR_RANGE(600000, 0, 30, 25000),
- 	REGULATOR_LINEAR_RANGE(1350000, 31, 63, 0),
+ struct regulator_linear_range buck2_ranges[] = {
 -- 
 2.20.1
 
