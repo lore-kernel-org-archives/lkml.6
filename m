@@ -2,119 +2,176 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 372D4C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84DEDC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:32:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 104182146E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:27:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DFFB20818
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:32:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728288AbfBSK1y (ORCPT
+        id S1728162AbfBSKcg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 05:27:54 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:35625 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727023AbfBSK1y (ORCPT
+        Tue, 19 Feb 2019 05:32:36 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37950 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726969AbfBSKcf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 05:27:54 -0500
-X-Originating-IP: 90.88.30.68
-Received: from windsurf.home (aaubervilliers-681-1-89-68.w90-88.abo.wanadoo.fr [90.88.30.68])
-        (Authenticated sender: thomas.petazzoni@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 49DC61C001E;
-        Tue, 19 Feb 2019 10:27:48 +0000 (UTC)
-Date:   Tue, 19 Feb 2019 11:27:47 +0100
-From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Gregory CLEMENT <gregory.clement@free-electrons.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [RFC PATCH] docs/memory-barriers.txt: Rewrite "KERNEL I/O
- BARRIER EFFECTS" section
-Message-ID: <20190219112747.7db95e58@windsurf.home>
-In-Reply-To: <CAK8P3a2mjjr94hwj_eXxfyKDKDuA=MogXW7xJygh-X0Hqgf6rg@mail.gmail.com>
-References: <20190211172948.3322-1-will.deacon@arm.com>
-        <CAK8P3a2Pr2oWYB7QHQMaHRq6H8h9xMwhhyJz5Pu67bVe4GaK9g@mail.gmail.com>
-        <20190218162954.GB16713@fuggles.cambridge.arm.com>
-        <CAK8P3a1TY9S=zYsdZ5O021p2yYcZhehVuwB3_65dR6x6zbkTYQ@mail.gmail.com>
-        <20190218175625.GD16713@fuggles.cambridge.arm.com>
-        <CAK8P3a2mjjr94hwj_eXxfyKDKDuA=MogXW7xJygh-X0Hqgf6rg@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Tue, 19 Feb 2019 05:32:35 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1JAOQ42112381
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 05:32:34 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qrd5tj95r-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 05:32:33 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <maier@linux.ibm.com>;
+        Tue, 19 Feb 2019 10:32:29 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 19 Feb 2019 10:32:26 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1JAWPHN55181366
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Feb 2019 10:32:25 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D8A4BA405F;
+        Tue, 19 Feb 2019 10:32:25 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 59E76A4054;
+        Tue, 19 Feb 2019 10:32:25 +0000 (GMT)
+Received: from oc4120165700.ibm.com (unknown [9.152.99.189])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 19 Feb 2019 10:32:25 +0000 (GMT)
+Subject: Re: [RFC PATCH] scsi: fix oops in scsi_uninit_cmd()
+To:     Jason Yan <yanaijie@huawei.com>, martin.petersen@oracle.com,
+        jejb@linux.vnet.ibm.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hare@suse.com, dan.j.williams@intel.com, jthumshirn@suse.de,
+        hch@lst.de
+References: <20190219072743.13606-1-yanaijie@huawei.com>
+From:   Steffen Maier <maier@linux.ibm.com>
+Date:   Tue, 19 Feb 2019 11:32:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190219072743.13606-1-yanaijie@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19021910-0012-0000-0000-000002F778F7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021910-0013-0000-0000-0000212F054D
+Message-Id: <ca0a03a1-6b36-2626-cb16-113cbc01f4bc@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-19_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902190078
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-On Mon, 18 Feb 2019 21:37:25 +0100
-Arnd Bergmann <arnd@arndb.de> wrote:
-
-> > > I would say we should strengthen the behavior of outX() where possible.
-> > > I don't know if arm64 actually has a way of doing that, my understanding
-> > > earlier was that the AXI bus was already posted, so there is not much
-> > > you can do here to define __io_paw() in a way that will prevent posted
-> > > writes.  
-> >
-> > If we could map I/O space using different page table attributes (probably by
-> > hacking pci_remap_iospace() ?) then we could disable the
-> > early-write-acknowledge hint and implement __io_paw() as a completion
-> > barrier, although it would be at the mercy of the system as to whether or
-> > not that requires a response from the RC.  
+On 02/19/2019 08:27 AM, Jason Yan wrote:
+> If we remove the scsi disk when running io with fio, oops occured with
+> the following condition.
 > 
-> Ah, it seems we actually do that on 32-bit ARM, at least on one platform,
-> see 6a02734d420f ("ARM: mvebu: map PCI I/O regions strongly ordered")
-> and prior commits.
-
-Yes, some Marvell Armada 32-bit platforms have an errata that require
-the PCI MEM and PCI I/O regions to be mapped strongly ordered.
-
-BTW, this requirement prevents us from using the pci_remap_iospace()
-API from drivers/pci, because it assumes page attributes of
-pgprot_device(PAGE_KERNEL). That's why we're still using the
-ARM-specific pci_ioremap_io() function.
-
-> > I would still prefer to document the weaker semantics as the portable
-> > interface, unless there are portable drivers relying on this today (which
-> > would imply that it's widely supported by other architectures).  
+> [scsi_eh_0]                              [fio]
+> scsi_end_request
+>    ->blk_update_request
+>      ->end_bio(io returned to userspace)
+>                                           close
+>                                             ->sd_release
+>                                                ->scsi_disk_put
+>                                                   ->scsi_disk_release
+>                                                       ->disk->private_data = NULL;
 > 
-> I don't know of any portable driver that actually relies on it, but
-> that's mainly because there are very few portable drivers that
-> use inb()/outb() in the first place. How many of those require
-> the non-posted behavior I don't know
+>    ->scsi_mq_uninit_cmd
+>      ->scsi_uninit_cmd
+>        ->scsi_cmd_to_driver
+>      ->drv is NULL, Oops
 > 
-> Adding Thomas, Gregory and Russell to Cc, as they were involved
-> in the discussion that led to the 32-bit change, maybe they are
-> aware of a specific example.
+> There is a small window between blk_update_request() and
+> scsi_mq_uninit_cmd() that scsi disk may have been released. This will
+> cause a oops like below:
 
-I'm just arriving in the middle of this thread, and I'm not sure to
-understand what is the question. If the question is whether PCI I/O is
-really used in practice, then I've never seen it be used with Marvell
-platforms (but I'm also not aware of all PCIe devices people are
-using). I personally have a hacked-up version of the e1000e driver
-that intentionally does some PCI I/O accesses, that I use as a way to
-validate that PCI I/O support is minimally working, but that's it.
+> To fix this, get a refcount of scsi_disk in sd_init_command() to ensure
+> it will not be released before sd_uninit_command().
+> 
+> Signed-off-by: Jason Yan <yanaijie@huawei.com>
+> ---
+>   drivers/scsi/sd.c | 46 +++++++++++++++++++++++++++++++++++-----------
+>   1 file changed, 35 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+> index 5464d467e23e..6bdb8fbb570f 100644
+> --- a/drivers/scsi/sd.c
+> +++ b/drivers/scsi/sd.c
+> @@ -1249,42 +1249,64 @@ static blk_status_t sd_setup_read_write_cmnd(struct scsi_cmnd *SCpnt)
+>   static blk_status_t sd_init_command(struct scsi_cmnd *cmd)
+>   {
+>   	struct request *rq = cmd->request;
+> +	struct scsi_disk *sdkp = NULL;
 
-Best regards,
+This pre-init with NULL kinda prevents static compile warnings on uninitialized 
+use?
 
-Thomas
+> +	blk_status_t ret;
+> 
+>   	switch (req_op(rq)) {
+
+>   	}
+> +
+> +	if (!ret) {
+> +		sdkp = scsi_disk(rq->rq_disk);
+> +		get_device(&sdkp->dev);
+> +	}
+> +
+> +	return ret;
+>   }
+> 
+>   static void sd_uninit_command(struct scsi_cmnd *SCpnt)
+>   {
+>   	struct request *rq = SCpnt->request;
+>   	u8 *cmnd;
+> +	struct scsi_disk *sdkp = NULL;
+
+dito
+
+> 
+>   	if (rq->rq_flags & RQF_SPECIAL_PAYLOAD)
+>   		mempool_free(rq->special_vec.bv_page, sd_page_pool);
+> @@ -1295,6 +1317,8 @@ static void sd_uninit_command(struct scsi_cmnd *SCpnt)
+>   		SCpnt->cmd_len = 0;
+>   		mempool_free(cmnd, sd_cdb_pool);
+>   	}
+> +	sdkp = scsi_disk(rq->rq_disk);
+> +	put_device(&sdkp->dev);
+>   }
+> 
+>   /**
+> 
+
+
 -- 
-Thomas Petazzoni, CTO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Mit freundlichen Gruessen / Kind regards
+Steffen Maier
+
+Linux on IBM Z Development
+
+https://www.ibm.com/privacy/us/en/
+IBM Deutschland Research & Development GmbH
+Vorsitzender des Aufsichtsrats: Matthias Hartmann
+Geschaeftsfuehrung: Dirk Wittkopp
+Sitz der Gesellschaft: Boeblingen
+Registergericht: Amtsgericht Stuttgart, HRB 243294
+
