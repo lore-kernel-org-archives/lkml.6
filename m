@@ -6,158 +6,108 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5874AC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 01:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D65C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 01:26:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CE0C217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 01:16:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CFF4217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 01:26:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="N3EjsaZC"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="i2Lr6wPR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732664AbfBSBQ4 (ORCPT
+        id S1732694AbfBSB0t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 20:16:56 -0500
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:19130 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726175AbfBSBQ4 (ORCPT
+        Mon, 18 Feb 2019 20:26:49 -0500
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:26113 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726175AbfBSB0t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 20:16:56 -0500
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id x1J1GcBe031407;
-        Tue, 19 Feb 2019 10:16:38 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x1J1GcBe031407
+        Mon, 18 Feb 2019 20:26:49 -0500
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id x1J1QYGa003087;
+        Tue, 19 Feb 2019 10:26:35 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x1J1QYGa003087
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1550538999;
-        bh=Douiv15xBB5mdwLvrk43kW9DatkEu5DyhdQekoTVJo4=;
+        s=dec2015msa; t=1550539595;
+        bh=Syvc8CYUnyJsga+YWR2VemKzeLLMgqDIsdamLYpWt6Y=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=N3EjsaZCDdE5xA6+/thXXwKv+jyhtTvSVbprT1r/Nwew7Rll5FG0b4Bv/SWLwq82r
-         I+xEI+Jg8vO7GeVGHTa6eUhD9Qh8izJRN9v9BsqAmeHla7FvKq2FmWIO+ESPcJf8a3
-         BlJYgZnjgsvaJaQEOwCPZQ6aBhFXv+T0doi6O+Di+3Pxg2s0OR6wUSl6BlB2fapwPZ
-         2X5kqPkuV3tpeR8Q8PNR0NNdk27Dg6BXa5lYqz0WYgY4K6OFeFBhArazn5OvOJWKJk
-         4x5pdh7Vrl1Ot3S8wRtKKmqsfoXF6uLWmM+ATdvnUj7YZyzA48S10GG5T8X3ZKxkEh
-         XxyjBNcGzPPPQ==
-X-Nifty-SrcIP: [209.85.217.49]
-Received: by mail-vs1-f49.google.com with SMTP id z18so10767504vso.7;
-        Mon, 18 Feb 2019 17:16:38 -0800 (PST)
-X-Gm-Message-State: AHQUAuYbSdmUgVEUR0nDKQ6NfOf2kgAl8V+fvR1hpJh5y6dCq4RHpaM1
-        ahHnDkTBcvh1/R+L2Aynz28zr5RVeOCkOYJ0JSI=
-X-Google-Smtp-Source: AHgI3Ib3puRMlLmBdffOatDI18/7F9DkPs0JYxpfBTR47cKD/YQ0OhyQMoUTf8dBjrHdow5axdEImDNGgMDv3y+huug=
-X-Received: by 2002:a05:6102:18f:: with SMTP id r15mr7412998vsq.215.1550538997631;
- Mon, 18 Feb 2019 17:16:37 -0800 (PST)
+        b=i2Lr6wPRQ8hi+A49Jo7CgGnfNEUofXKy/F430HjcnO/PKC+waSYXzrL/VLzFgZfc5
+         AVBAlH2sZUiKBq/ToftG/4boCMCPrz9wrnxF5/kCYP2FyG1lyrcoBV/WhoGQKnBpTa
+         Jcq7qIbgmh0Lb0tZPib1f4HZ7Ay1CndCGyHgh2nFOSBUGhZl42wEoxyk7gMkT9yXL1
+         RD7w6OQuCOpRBUJwMaw8DVD+MJmCz0Yjioc1eL0nZCua3CqJKGvfTTVtP+4d+ZI/Wf
+         6jiWZUfYhWpDBeTMfZhjoGzpOXeAfNMJfxpahNPaDNpLK0VtRdYRCz7CzwI5lMJOSq
+         IZFsf4K0bKY7Q==
+X-Nifty-SrcIP: [209.85.222.52]
+Received: by mail-ua1-f52.google.com with SMTP id k5so1640262uao.2;
+        Mon, 18 Feb 2019 17:26:34 -0800 (PST)
+X-Gm-Message-State: AHQUAuYRuQbDITw0zRsq9Y9TRS6wVnCbLX5AvWWmmixRYB9Vy2DpbQ0z
+        3/JGTMw5FKjlHKzjoDVwMY2rbpHaakU40eCZ4b8=
+X-Google-Smtp-Source: AHgI3IZas5ygeL45f0Nha89sjRomBSU9T2uUd8P0L/EZiHQFjvc53s26SFm8p//v0TaUto4qUriOFaV6W60kzhImkk0=
+X-Received: by 2002:ab0:c07:: with SMTP id a7mr2581963uak.55.1550539593750;
+ Mon, 18 Feb 2019 17:26:33 -0800 (PST)
 MIME-Version: 1.0
-References: <1550469571-25933-1-git-send-email-yamada.masahiro@socionext.com> <1550469571-25933-3-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1550469571-25933-3-git-send-email-yamada.masahiro@socionext.com>
+References: <1549628764-30587-1-git-send-email-sugaya.taichi@socionext.com>
+In-Reply-To: <1549628764-30587-1-git-send-email-sugaya.taichi@socionext.com>
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 19 Feb 2019 10:16:01 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATS_4AjrehQ7uW26=bjw-VHc_GcD7oqS_C9Rsgs1-jHUw@mail.gmail.com>
-Message-ID: <CAK7LNATS_4AjrehQ7uW26=bjw-VHc_GcD7oqS_C9Rsgs1-jHUw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] x86: disable CONFIG_GENERIC_HWEIGHT and remove __HAVE_ARCH_SW_HWEIGHT
-To:     Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>
-Cc:     Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Tue, 19 Feb 2019 10:25:57 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARTX4_phfcXRXUKGp_V0k_q_RKjL6A3Kz=Hxyqj6VXW+Q@mail.gmail.com>
+Message-ID: <CAK7LNARTX4_phfcXRXUKGp_V0k_q_RKjL6A3Kz=Hxyqj6VXW+Q@mail.gmail.com>
+Subject: Re: [PATCH v2 03/15] dt-bindings: Add documentation for Milbeaut SoCs
+To:     Sugaya Taichi <sugaya.taichi@socionext.com>
+Cc:     DTML <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
+        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 3:09 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Fri, Feb 8, 2019 at 9:26 PM Sugaya Taichi
+<sugaya.taichi@socionext.com> wrote:
 >
-> arch/x86/include/asm/arch_hweight.h uses __sw_hweight{32,64} as
-> alternatives, but they are implemented in arch/x86/lib/hweight.S
+> This adds a DT binding documentation for the M10V and its evaluation
+> board.
 >
-> x86 does not rely on the generic C implementation lib/hweight.c
-> at all, so CONFIG_GENERIC_HWEIGHT should be disabled.
->
-> __HAVE_ARCH_SW_HWEIGHT was unneeded in the first place.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-
-
-Maintainers,
-
-As I replied to 1/2,
-please ignore this for now.
-
-
-I will resend this later,
-hopefully in the next development cycle.
-
-
+> Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
 > ---
+>  Documentation/devicetree/bindings/arm/milbeaut.txt | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/milbeaut.txt
 >
->  arch/x86/Kconfig                    | 3 ---
->  arch/x86/include/asm/arch_hweight.h | 2 --
->  lib/hweight.c                       | 4 ----
->  3 files changed, 9 deletions(-)
->
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 6826143..c2813af 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -262,9 +262,6 @@ config GENERIC_BUG
->  config GENERIC_BUG_RELATIVE_POINTERS
->         bool
->
-> -config GENERIC_HWEIGHT
-> -       def_bool y
-> -
->  config ARCH_MAY_HAVE_PC_FDC
->         def_bool y
->         depends on ISA_DMA_API
-> diff --git a/arch/x86/include/asm/arch_hweight.h b/arch/x86/include/asm/arch_hweight.h
-> index fc06935..ba88edd 100644
-> --- a/arch/x86/include/asm/arch_hweight.h
-> +++ b/arch/x86/include/asm/arch_hweight.h
-> @@ -12,8 +12,6 @@
->  #define REG_OUT "a"
->  #endif
->
-> -#define __HAVE_ARCH_SW_HWEIGHT
-> -
->  static __always_inline unsigned int __arch_hweight32(unsigned int w)
->  {
->         unsigned int res;
-> diff --git a/lib/hweight.c b/lib/hweight.c
-> index 7660d88..c94586b 100644
-> --- a/lib/hweight.c
-> +++ b/lib/hweight.c
-> @@ -10,7 +10,6 @@
->   * The Hamming Weight of a number is the total number of bits set in it.
->   */
->
-> -#ifndef __HAVE_ARCH_SW_HWEIGHT
->  unsigned int __sw_hweight32(unsigned int w)
->  {
->  #ifdef CONFIG_ARCH_HAS_FAST_MULTIPLIER
-> @@ -27,7 +26,6 @@ unsigned int __sw_hweight32(unsigned int w)
->  #endif
->  }
->  EXPORT_SYMBOL(__sw_hweight32);
-> -#endif
->
->  unsigned int __sw_hweight16(unsigned int w)
->  {
-> @@ -46,7 +44,6 @@ unsigned int __sw_hweight8(unsigned int w)
->  }
->  EXPORT_SYMBOL(__sw_hweight8);
->
-> -#ifndef __HAVE_ARCH_SW_HWEIGHT
->  unsigned long __sw_hweight64(__u64 w)
->  {
->  #if BITS_PER_LONG == 32
-> @@ -69,4 +66,3 @@ unsigned long __sw_hweight64(__u64 w)
->  #endif
->  }
->  EXPORT_SYMBOL(__sw_hweight64);
-> -#endif
+> diff --git a/Documentation/devicetree/bindings/arm/milbeaut.txt b/Documentation/devicetree/bindings/arm/milbeaut.txt
+
+
+
+I added uniphier SoC/board binding into
+
+Documentation/devicetree/bindings/arm/socionext/uniphier.txt
+
+
+You can milbeaut.txt to the socionext directory as well.
+
+
+
+
+> new file mode 100644
+> index 0000000..9fd053a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/milbeaut.txt
+> @@ -0,0 +1,6 @@
+> +Milbeaut platforms device tree bindings
+> +---------------------------------------
+> +
+> +- Milbeaut M10V Evaluation Board
+> +    Required root node properties:
+> +      - compatible = "socionext,milbeaut-m10v-evb", "socionext,sc2000a";
 > --
-> 2.7.4
+> 1.9.1
 >
 
 
