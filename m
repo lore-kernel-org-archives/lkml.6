@@ -2,117 +2,99 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FD7AC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 02:46:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D74A5C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 02:46:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 248E221773
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 02:46:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADFF321773
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 02:46:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727445AbfBSCqU (ORCPT
+        id S1727530AbfBSCqn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 21:46:20 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48238 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726317AbfBSCqT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 21:46:19 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DB8392D7E9;
-        Tue, 19 Feb 2019 02:46:18 +0000 (UTC)
-Received: from sky.random (ovpn-120-13.rdu2.redhat.com [10.10.120.13])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A5E0E60C66;
-        Tue, 19 Feb 2019 02:46:12 +0000 (UTC)
-Date:   Mon, 18 Feb 2019 21:46:11 -0500
-From:   Andrea Arcangeli <aarcange@redhat.com>
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Nitesh Narayan Lal <nitesh@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
-        pagupta@redhat.com, wei.w.wang@intel.com,
-        Yang Zhang <yang.zhang.wz@gmail.com>,
-        Rik van Riel <riel@surriel.com>, dodgen@google.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        dhildenb@redhat.com
-Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
-Message-ID: <20190219024611.GC24502@redhat.com>
-References: <20190204201854.2328-1-nitesh@redhat.com>
- <af4430fd-0a2c-8f35-b767-3f93fc6db270@redhat.com>
- <20190218114601-mutt-send-email-mst@kernel.org>
- <44740a29-bb14-e6e6-2992-98d0ae58e994@redhat.com>
- <CAKgT0UcHv0S1-ZUpAZ9w=GTLRtG8=-cuoT3fa4Ej2A==aky5dg@mail.gmail.com>
- <a3b64b60-a745-0ac1-574d-e5904c1bf161@redhat.com>
- <CAKgT0Ue=A16PhUzqziBBzMXdZ_C1H74-qCttwb8iD6tGCxfp6g@mail.gmail.com>
+        Mon, 18 Feb 2019 21:46:43 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:38993 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726969AbfBSCqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 21:46:43 -0500
+Received: from carbon-x1.hos.anvin.org ([IPv6:2601:646:8680:2bb1:1b64:2c6c:6ec3:aa41])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x1J2kB1h2852107
+        (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+        Mon, 18 Feb 2019 18:46:12 -0800
+Subject: Re: [PATCH] sched/x86: Save [ER]FLAGS on context switch
+To:     Andy Lutomirski <luto@amacapital.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "linux-alpha@vger.kernel.org" <linux-arm-kernel@lists.infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morse <james.morse@arm.com>, valentin.schneider@arm.com,
+        Brian Gerst <brgerst@gmail.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20190213140025.GB6346@brain-police>
+ <20190213142524.GW32494@hirez.programming.kicks-ass.net>
+ <dd33cc20-f335-0e4c-e3f4-02497ecc3710@arm.com>
+ <20190213144145.GY32494@hirez.programming.kicks-ass.net>
+ <20190213154532.GQ32534@hirez.programming.kicks-ass.net>
+ <D61C430D-4321-4114-AB85-671A3C7B8EAE@amacapital.net>
+ <20190213222146.GC32494@hirez.programming.kicks-ass.net>
+ <D3E1B64D-3E91-4A82-9C3B-92D9EB7326CE@amacapital.net>
+ <20190214101429.GD32494@hirez.programming.kicks-ass.net>
+ <20ABBED1-E505-45F6-8520-FB93786DF9A9@zytor.com>
+ <20190216103044.GR32494@hirez.programming.kicks-ass.net>
+ <9e037d68-75e7-1beb-0c9c-33a7ffeced1b@zytor.com>
+ <CAHk-=wj4Ws1s3iw+w62jcFdnarWhiVxs9zCBjoo7WysxRVZAgQ@mail.gmail.com>
+ <573ACC45-4537-46D0-93D9-4091D7CB6090@amacapital.net>
+From:   "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <3b98220d-5c2e-b769-1f55-ceb9565379a2@zytor.com>
+Date:   Mon, 18 Feb 2019 18:46:06 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKgT0Ue=A16PhUzqziBBzMXdZ_C1H74-qCttwb8iD6tGCxfp6g@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 19 Feb 2019 02:46:19 +0000 (UTC)
+In-Reply-To: <573ACC45-4537-46D0-93D9-4091D7CB6090@amacapital.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 2/18/19 6:20 PM, Andy Lutomirski wrote:
+> 
+> 
+>> On Feb 18, 2019, at 4:24 PM, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>>
+>>> On Mon, Feb 18, 2019 at 2:31 PM H. Peter Anvin <hpa@zytor.com> wrote:
+>>>
+>>> The question is what "fix it" means. I'm really concerned about AC escapes,
+>>> and everyone else should be, too.
+>>
+>> I do think that it might be the right thing to do to add some kind of
+>> WARN_ON_ONCE() for AC being set in various can-reschedule situations.
+>>
+>> We'd just have to abstract it sanely. I'm sure arm64 has the exact
+>> same issue with PAN - maybe it saves properly, but the same "we
+>> wouldn't want to go through the scheduler with PAN clear".
+>>
+>> On x86, we might as well check DF at the same time as AC.
+>>
+> 
+> hpa is right, though — calling into tracing code with AC set is not really so good.  And calling schedule() (via preempt_enable() or whatever) is also bad because it runs all the scheduler code with AC on.  Admittedly, the scheduler is not *that* interesting of an attack surface.
+> 
 
-On Mon, Feb 18, 2019 at 03:47:22PM -0800, Alexander Duyck wrote:
-> essentially fragmented them. I guess hugepaged went through and
-> started trying to reassemble the huge pages and as a result there have
-> been apps that ended up consuming more memory than they would have
-> otherwise since they were using fragments of THP pages after doing an
-> MADV_DONTNEED on sections of the page.
+Not just that, but the other question is just how much code we are running
+with AC open. It really should only be done in some very small regions.
 
-With relatively recent kernels MADV_DONTNEED doesn't necessarily free
-anything when it's applied to a THP subpage, it only splits the
-pagetables and queues the THP for deferred splitting. If there's
-memory pressure a shrinker will be invoked and the queue is scanned
-and the THPs are physically splitted, but to be reassembled/collapsed
-after a physical split it requires at least one young pte.
+	-hpa
 
-If this is particularly problematic for page hinting, this behavior
-where the MADV_DONTNEED can be undoed by khugepaged (if some subpage is
-being frequently accessed), can be turned off by setting
-/sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none to
-0. Then the THP will only be collapsed if all 512 subpages are mapped
-(i.e. they've all be re-allocated by the guest).
-
-Regardless of the max_ptes_none default, keeping the smaller guest
-buddy orders as the last target for page hinting should be good for
-performance.
-
-> Yeah, no problem. The only thing I don't like about MADV_FREE is that
-> you have to have memory pressure before the pages really start getting
-> scrubbed with is both a benefit and a drawback. Basically it defers
-> the freeing until you are under actual memory pressure so when you hit
-> that case things start feeling much slower, that and it limits your
-> allocations since the kernel doesn't recognize the pages as free until
-> it would have to start trying to push memory to swap.
-
-The guest allocation behavior should not be influenced by MADV_FREE vs
-MADV_DONTNEED, the guest can't see the difference anyway, so why
-should it limit the allocations?
-
-The benefit of MADV_FREE should be that when the same guest frees and
-reallocates an huge amount of RAM (i.e. guest app allocating and
-freeing lots of RAM in a loop, not so uncommon), there will be no KVM
-page fault during guest re-allocations. So in absence of memory
-pressure in the host it should be a major win. Overall it sounds like
-a good tradeoff compared to MADV_DONTNEED that forcefully invokes MMU
-notifiers and forces host allocations and KVM page faults in order to
-reallocate the same RAM in the same guest.
-
-When there's memory pressure it's up to the host Linux VM to notice
-there's plenty of MADV_FREE material to free at zero I/O cost before
-starting swapping.
-
-Thanks,
-Andrea
