@@ -2,167 +2,164 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E706C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 12:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28AD6C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 12:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAC45208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 12:00:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E675E21738
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 12:01:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iU/xVmig"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbfBSMAX (ORCPT
+        id S1728545AbfBSMBU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 07:00:23 -0500
-Received: from mga01.intel.com ([192.55.52.88]:38297 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726947AbfBSMAJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 07:00:09 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2019 04:00:04 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,388,1544515200"; 
-   d="scan'208";a="148009291"
-Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 19 Feb 2019 04:00:02 -0800
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Andy Shevchenko <andy@infradead.org>,
-        Hans de Goede <hdegoede@redhat.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] platform/x86: intel_cht_int33fe: Provide fwnode for the USB connector
-Date:   Tue, 19 Feb 2019 14:59:58 +0300
-Message-Id: <20190219115959.55553-2-heikki.krogerus@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190219115959.55553-1-heikki.krogerus@linux.intel.com>
-References: <20190219115959.55553-1-heikki.krogerus@linux.intel.com>
+        Tue, 19 Feb 2019 07:01:20 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41770 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726633AbfBSMBU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 07:01:20 -0500
+Received: by mail-pg1-f194.google.com with SMTP id m1so10035511pgq.8
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 04:01:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/LG/yEoER1LLbq1ZVxXJDkWgtoKcYvIkZiPzXMpJeVo=;
+        b=iU/xVmigyl6P6JQ+57cD4HVDHnGSrProH0Bj7J/IpfGxTbo5jggrj2JEO3KEx0vnOA
+         0U6lLcIN6jAKKai0MyqAA4vC3XPyGqdpr1dCMD0QHOYR6Ea6W9d8LCK6jdp6+YOJmnol
+         sJPlA8QkFRIoZ3qaWBBHgf+fikdu8LMUkeB+fCYhd+SzBE0sDcrS+B7mpWE6tBcXvyiz
+         NwPKXPltrdr05Or1JEujlgMfwxABSEVs7WRYJj4lOJ4v2npwW26pe+mGH7cMYhK7+Dbg
+         G2yqOxYMRwm8uHIS2zFIdMNg1ov5kgoTBobqduB/kY/KKStgWeNih+p8NCLASz91DtQ1
+         h0vQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/LG/yEoER1LLbq1ZVxXJDkWgtoKcYvIkZiPzXMpJeVo=;
+        b=o6z8VwwO5XSoF0iEUSnrnGkCSsaOkTcOk0lQQrJmhbUGoJZ6vIkf6fFsQJIcWuN614
+         81e05QWaDhIBIuGNwM8Ym0RQXNUL7CRLvkQIC8/c4PtnXMdChy1ej6i79fYoo2JffCUt
+         w7h9SbIkHS8PNvEZIhwjlxgoHvX07I1Z5yjyysWG5OrOwTA+Iwgj2MHIkFM9GWpH/TTT
+         9kmeV/diZhWGZm7AMnncIaRzIzxrnkaX9JRNrKAiWbYR1ZIaGpLfqggZoDE+i2lV7dds
+         SKSwYir8FWfEghAju4TiS0McOu6uLuiZRcMaIN1op5oIE8Kya8WoRrjw6vTKSyd2mtRK
+         YL3A==
+X-Gm-Message-State: AHQUAubZ9vvatL9F1Dm+3LDbWVCJhuP343lg2IFE+ZT971JsUDeObSnN
+        mdlE96dpBdFl/6eRZLTYM+TYd3bp
+X-Google-Smtp-Source: AHgI3IZIhLtBpykbTg6j8A/bl1aKD6Q13H0vmWwXiKvP/FU0TZwarjAbPGHY9e/NaBzjEBvj6uDodA==
+X-Received: by 2002:a63:6605:: with SMTP id a5mr2454975pgc.372.1550577678304;
+        Tue, 19 Feb 2019 04:01:18 -0800 (PST)
+Received: from localhost ([203.219.252.113])
+        by smtp.gmail.com with ESMTPSA id o2sm20849302pgq.29.2019.02.19.04.01.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Feb 2019 04:01:17 -0800 (PST)
+Date:   Tue, 19 Feb 2019 23:01:14 +1100
+From:   Balbir Singh <bsingharora@gmail.com>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Segher Boessenkool <segher@kernel.crashing.org>,
+        erhard_f@mailbox.org, jack@suse.cz, linuxppc-dev@ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        aneesh.kumar@linux.vnet.ibm.com
+Subject: Re: [PATCH] powerpc/64s: Fix possible corruption on big endian due
+ to pgd/pud_present()
+Message-ID: <20190219120114.GK31125@350D>
+References: <20190214062339.7139-1-mpe@ellerman.id.au>
+ <20190216105511.GA31125@350D>
+ <20190216142206.GE14180@gate.crashing.org>
+ <20190217062333.GC31125@350D>
+ <87ef86dd9v.fsf@concordia.ellerman.id.au>
+ <20190217215556.GH31125@350D>
+ <87imxhrkdt.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87imxhrkdt.fsf@concordia.ellerman.id.au>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In ACPI, and now also in DT, the USB connectors usually have
-their own device nodes. In case of USB Type-C, those
-connector (port) nodes are child nodes of the controller or
-PHY device, in our case the fusb302. The software fwnodes
-allow us to create a similar child node for fusb302 that
-represents the connector also on Intel CHT.
+On Mon, Feb 18, 2019 at 11:49:18AM +1100, Michael Ellerman wrote:
+> Balbir Singh <bsingharora@gmail.com> writes:
+> > On Sun, Feb 17, 2019 at 07:34:20PM +1100, Michael Ellerman wrote:
+> >> Balbir Singh <bsingharora@gmail.com> writes:
+> >> > On Sat, Feb 16, 2019 at 08:22:12AM -0600, Segher Boessenkool wrote:
+> >> >> On Sat, Feb 16, 2019 at 09:55:11PM +1100, Balbir Singh wrote:
+> >> >> > On Thu, Feb 14, 2019 at 05:23:39PM +1100, Michael Ellerman wrote:
+> >> >> > > In v4.20 we changed our pgd/pud_present() to check for _PAGE_PRESENT
+> >> >> > > rather than just checking that the value is non-zero, e.g.:
+> >> >> > > 
+> >> >> > >   static inline int pgd_present(pgd_t pgd)
+> >> >> > >   {
+> >> >> > >  -       return !pgd_none(pgd);
+> >> >> > >  +       return (pgd_raw(pgd) & cpu_to_be64(_PAGE_PRESENT));
+> >> >> > >   }
+> >> >> > > 
+> >> >> > > Unfortunately this is broken on big endian, as the result of the
+> >> >> > > bitwise && is truncated to int, which is always zero because
+> >> >> 
+> >> >> (Bitwise "&" of course).
+> >> >> 
+> >> >> > Not sure why that should happen, why is the result an int? What
+> >> >> > causes the casting of pgd_t & be64 to be truncated to an int.
+> >> >> 
+> >> >> Yes, it's not obvious as written...  It's simply that the return type of
+> >> >> pgd_present is int.  So it is truncated _after_ the bitwise and.
+> >> >>
+> >> >
+> >> > Thanks, I am surprised the compiler does not complain about the truncation
+> >> > of bits. I wonder if we are missing -Wconversion
+> >> 
+> >> Good luck with that :)
+> >> 
+> >> What I should start doing is building with it enabled and then comparing
+> >> the output before and after commits to make sure we're not introducing
+> >> new cases.
+> >
+> > Fair enough, my point was that the compiler can help out. I'll see what
+> > -Wconversion finds on my local build :)
+> 
+> I get about 43MB of warnings here :)
+>
 
-This makes it possible replace the fusb302 specific device
-properties which were deprecated with the common USB
-connector properties that tcpm.c is able to use directly.
+I got about 181M with a failed build :(, but the warnings pointed to some cases
+that can be a good project for cleanup
 
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
----
- drivers/platform/x86/intel_cht_int33fe.c | 48 ++++++++++++++++++++++--
- 1 file changed, 44 insertions(+), 4 deletions(-)
+For example
 
-diff --git a/drivers/platform/x86/intel_cht_int33fe.c b/drivers/platform/x86/intel_cht_int33fe.c
-index 6fa3cced6f8e..4857a57cfff5 100644
---- a/drivers/platform/x86/intel_cht_int33fe.c
-+++ b/drivers/platform/x86/intel_cht_int33fe.c
-@@ -24,6 +24,7 @@
- #include <linux/platform_device.h>
- #include <linux/regulator/consumer.h>
- #include <linux/slab.h>
-+#include <linux/usb/pd.h>
- 
- #define EXPECTED_PTYPE		4
- 
-@@ -31,6 +32,8 @@ struct cht_int33fe_data {
- 	struct i2c_client *max17047;
- 	struct i2c_client *fusb302;
- 	struct i2c_client *pi3usb30532;
-+	struct fwnode_handle *port_node;
-+	struct fwnode_handle *fusb302_node;
- 	/* Contain a list-head must be per device */
- 	struct device_connection connections[4];
- };
-@@ -80,9 +83,29 @@ static const struct property_entry max17047_props[] = {
- 
- static const struct property_entry fusb302_props[] = {
- 	PROPERTY_ENTRY_STRING("linux,extcon-name", "cht_wcove_pwrsrc"),
--	PROPERTY_ENTRY_U32("fcs,max-sink-microvolt", 12000000),
--	PROPERTY_ENTRY_U32("fcs,max-sink-microamp",   3000000),
--	PROPERTY_ENTRY_U32("fcs,max-sink-microwatt", 36000000),
-+	{ }
-+};
-+
-+#define PDO_FIXED_FLAGS \
-+	(PDO_FIXED_DUAL_ROLE | PDO_FIXED_DATA_SWAP | PDO_FIXED_USB_COMM)
-+
-+static const u32 src_pdo[] = {
-+	PDO_FIXED(5000, 1500, PDO_FIXED_FLAGS),
-+};
-+
-+static const u32 snk_pdo[] = {
-+	PDO_FIXED(5000, 400, PDO_FIXED_FLAGS),
-+	PDO_VAR(5000, 12000, 3000),
-+};
-+
-+static const struct property_entry usb_connector_props[] = {
-+	PROPERTY_ENTRY_STRING("name", "connector"),
-+	PROPERTY_ENTRY_STRING("data-role", "dual"),
-+	PROPERTY_ENTRY_STRING("power-role", "dual"),
-+	PROPERTY_ENTRY_STRING("try-power-role", "sink"),
-+	PROPERTY_ENTRY_U32_ARRAY("source-pdos", src_pdo),
-+	PROPERTY_ENTRY_U32_ARRAY("sink-pdos", snk_pdo),
-+	PROPERTY_ENTRY_U32("op-sink-microwatt", 36000000),
- 	{ }
- };
- 
-@@ -151,6 +174,19 @@ static int cht_int33fe_probe(struct platform_device *pdev)
- 	if (!data)
- 		return -ENOMEM;
- 
-+	/* Node for the FUSB302 controller */
-+	data->fusb302_node = fwnode_create_software_node(fusb302_props, NULL);
-+	if (IS_ERR(data->fusb302_node))
-+		return PTR_ERR(data->fusb302_node);
-+
-+	/* Node for the connector (FUSB302 is the parent) */
-+	data->port_node = fwnode_create_software_node(usb_connector_props,
-+						      data->fusb302_node);
-+	if (IS_ERR(data->port_node)) {
-+		fwnode_remove_software_node(data->fusb302_node);
-+		return PTR_ERR(data->port_node);
-+	}
-+
- 	/* Work around BIOS bug, see comment on cht_int33fe_find_max17047 */
- 	max17047 = cht_int33fe_find_max17047();
- 	if (max17047) {
-@@ -187,7 +223,7 @@ static int cht_int33fe_probe(struct platform_device *pdev)
- 	memset(&board_info, 0, sizeof(board_info));
- 	strlcpy(board_info.type, "typec_fusb302", I2C_NAME_SIZE);
- 	board_info.dev_name = "fusb302";
--	board_info.properties = fusb302_props;
-+	board_info.fwnode = data->fusb302_node;
- 	board_info.irq = fusb302_irq;
- 
- 	data->fusb302 = i2c_acpi_new_device(dev, 2, &board_info);
-@@ -217,6 +253,8 @@ static int cht_int33fe_probe(struct platform_device *pdev)
- 	i2c_unregister_device(data->max17047);
- 
- 	device_connections_remove(data->connections);
-+	fwnode_remove_software_node(data->port_node);
-+	fwnode_remove_software_node(data->fusb302_node);
- 
- 	return ret;
- }
-@@ -230,6 +268,8 @@ static int cht_int33fe_remove(struct platform_device *pdev)
- 	i2c_unregister_device(data->max17047);
- 
- 	device_connections_remove(data->connections);
-+	fwnode_remove_software_node(data->port_node);
-+	fwnode_remove_software_node(data->fusb302_node);
- 
- 	return 0;
- }
--- 
-2.20.1
+1. 
+static inline long regs_return_value(struct pt_regs *regs)
+{
+        if (is_syscall_success(regs))
+                return regs->gpr[3];
+        else
+                return -regs->gpr[3];
+}
+
+In the case of is_syscall_success() returning false, we should ensure that
+regs->gpr[3] is negative and capped within a certain limit, but it might
+be an expensive check
+
+2.
+static inline void mark_hpte_slot_valid(unsigned char *hpte_slot_array,
+                                        unsigned int index, unsigned int hidx)
+{
+        hpte_slot_array[index] = (hidx << 1) | 0x1;
+}
+
+hidx is 3 bits, but the argument is unsigned int. The caller probably does a
+hidx & 0x7, but it's not clear from the code
+
+3. hash__pmd_bad (pmd_bad) and hash__pud_bad (pud_bad) have issues similar to what was found,
+but since the the page table indices are below 32, the macros are safe :)
+
+And a few more, but I am not sure why I spent time looking at possible issues,
+may be I am being stupid or overly pessimistic :)
+
+Balbir
+
 
