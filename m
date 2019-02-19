@@ -2,110 +2,160 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 520F3C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78EF4C10F00
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:23:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 253AB2147C
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:20:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4987C2147C
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:23:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rppNowcT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726181AbfBSDUV (ORCPT
+        id S1726072AbfBSDXB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 22:20:21 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:37004 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725861AbfBSDUV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 22:20:21 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 50A2DBEC831247312DA2;
-        Tue, 19 Feb 2019 11:20:18 +0800 (CST)
-Received: from [127.0.0.1] (10.142.63.192) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.408.0; Tue, 19 Feb 2019
- 11:20:09 +0800
-CC:     <liuyu712@hisilicon.com>, <linux-usb@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <john.stultz@linaro.org>, <suzhuangluan@hisilicon.com>,
-        <kongfei@hisilicon.com>, <wanghu17@hisilicon.com>,
-        <butao@hisilicon.com>, <chenyao11@huawei.com>,
-        <fangshengzhou@hisilicon.com>, <lipengcheng8@huawei.com>,
-        <songxiaowei@hisilicon.com>, <xuyiping@hisilicon.com>,
-        <xuyoujun4@huawei.com>, <yudongbin@hisilicon.com>,
-        <zangleigang@hisilicon.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: Re: [PATCH v2 08/10] hikey960: Support usb functionality of Hikey960
-To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
-References: <20190218112310.17860-1-chenyu56@huawei.com>
- <20190218112310.17860-9-chenyu56@huawei.com>
- <1550544615.2210.27.camel@mhfsdcap03>
-From:   Chen Yu <chenyu56@huawei.com>
-Message-ID: <c02407b4-1825-83f5-2aff-dd41ae16e2ab@huawei.com>
-Date:   Tue, 19 Feb 2019 11:20:07 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Mon, 18 Feb 2019 22:23:01 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:35647 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725770AbfBSDXA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 22:23:00 -0500
+Received: by mail-ed1-f65.google.com with SMTP id g19so6515283edp.2;
+        Mon, 18 Feb 2019 19:22:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jl8mehWyrUBP556vhgCSLwlVFDpTSFATt786X/rXFy0=;
+        b=rppNowcTh7frIdWuG7SfdEhRYXnN6B9/ZLJWfNtcz1LccaZsL5AdjSi4ZvIwPULFqA
+         cKBOymYVgebWq1i7mItu5bW/+nA/WNfQDLm4TgfJn2GDeenpXUp9GNJeMdBIAtzxr883
+         hIR/onWd9CNv9U/G+15GFYhUCius83IDD2YaKpDJB3/zkfnK3oc63gT8cI/EaFWoE1Ey
+         vGB/SGTPeZAc7RlSUtXTLJolVJKvatap6LlSm5lSdQUe0hfz/EdRiVcChwmggdbzO8ew
+         sKOJyontu5csWIzylrVJdfGq8GGbo//m334+qHuwtrl2tXGtZdJSUL2tGOYoNJ7kcyCv
+         /cog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jl8mehWyrUBP556vhgCSLwlVFDpTSFATt786X/rXFy0=;
+        b=PHAiSrPD8//NBhLo0l1Lt0sg+qK/49gMFeH568R1/LHnehmBJ6pVE45AS30i6n1jLa
+         WagrljRxaOqPK5goRpCHKtDF9Kx+eW2RiGYKpV2Judb6PmUnrJfksEFGnB6nntqfZruV
+         QCJflPyTjNTS1c9qZReimLeutFYE2NioMvHNdqaJN+YMdTZlp+n3IqvLhoPw7WW+P2FZ
+         pHWNH408a1MddJT+oBB+faZd+Vgh31BWS1QxQHxNS9/L23XSb34a5Fole4cQXCfF6her
+         JAA5V5FlG8NvCP02nTDwbZepQjrfhrIk18VNuSLMnmQJvHtOTN52nqNrM6T2BeCG5nQJ
+         VqWQ==
+X-Gm-Message-State: AHQUAuZChVzJRTUnmikmy4imDvJpaxxZXNl21kRzniJROyMmPBpV7+dX
+        aQWH4XaX7ApsXBsvXWNhoGI=
+X-Google-Smtp-Source: AHgI3Ib8DAK2epvilWIwyDk/cQcbtCyMyjAo8X7djRfiF/LivxlJuQv04wI3dLeDDobLcFrK7YHPOA==
+X-Received: by 2002:a17:906:1d0d:: with SMTP id n13mr11051396ejh.23.1550546578588;
+        Mon, 18 Feb 2019 19:22:58 -0800 (PST)
+Received: from localhost.localdomain ([2a01:4f9:2a:1fae::2])
+        by smtp.gmail.com with ESMTPSA id b9sm4649069ede.12.2019.02.18.19.22.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Feb 2019 19:22:57 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Sumit Garg <sumit.garg@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>
+Cc:     Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] hwrng: optee: Initialize some structs using memset instead of braces
+Date:   Mon, 18 Feb 2019 20:22:40 -0700
+Message-Id: <20190219032240.22935-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.21.0.rc1
 MIME-Version: 1.0
-In-Reply-To: <1550544615.2210.27.camel@mhfsdcap03>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.142.63.192]
-X-CFilter-Loop: Reflected
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Clang warns:
 
-On 2019/2/19 10:50, Chunfeng Yun wrote:
->> +	if (ret)
->> +		hisi_hikey_usb->typec_vbus_enable_val = 1;
->> +
->> +	hisi_hikey_usb->typec_vbus = devm_gpiod_get(dev, "typec-vbus",
->> +			hisi_hikey_usb->typec_vbus_enable_val ?
->> +			GPIOD_OUT_LOW : GPIOD_OUT_HIGH);
->> +	if (!hisi_hikey_usb->typec_vbus)
->> +		return -ENOENT;
->> +	else if (IS_ERR(hisi_hikey_usb->typec_vbus))
->> +		return PTR_ERR(hisi_hikey_usb->typec_vbus);
->> +
->> +	gpiod_direction_output(hisi_hikey_usb->typec_vbus,
->> +			!hisi_hikey_usb->typec_vbus_enable_val);
-> maybe a simple way if use fixed regulator?
-> 
-The hardware of the Hikey960 board has been fixed, and the type-c
-port can act as UFP. So it is better to close the vbus when Hikey960
-connect to host(e.g PC).
->> +
->> +	hisi_hikey_usb->otg_switch = devm_gpiod_get(dev, "otg-switch", GPIOD_IN);
->> +	if (!hisi_hikey_usb->otg_switch)
->> +		return -ENOENT;
->> +	else if (IS_ERR(hisi_hikey_usb->otg_switch))
->> +		return PTR_ERR(hisi_hikey_usb->otg_switch);
->> +
->> +	gpiod_direction_output(hisi_hikey_usb->otg_switch, USB_SWITCH_TO_HUB);
->> +
->> +	/* hub-vdd33-en is optional */
->> +	hisi_hikey_usb->hub_vbus = devm_gpiod_get(dev, "hub-vdd33-en",
->> +			GPIOD_OUT_LOW);
->> +	if (IS_ERR(hisi_hikey_usb->hub_vbus))
->> +		return PTR_ERR(hisi_hikey_usb->hub_vbus);
->> +
->> +	gpiod_direction_output(hisi_hikey_usb->hub_vbus, HUB_VBUS_POWER_ON);
-> ditto
->> +
->> +	hisi_hikey_usb->role_sw = usb_role_switch_get(dev);
->> +	if (!hisi_hikey_usb->role_sw)
->> +		return -EPROBE_DEFER;
->> +	else if (IS_ERR(hisi_hikey_usb->role_sw))
->> +		return PTR_ERR(hisi_hikey_usb->role_sw);
->> +
+drivers/char/hw_random/optee-rng.c:80:31: warning: suggest braces around
+initialization of subobject [-Wmissing-braces]
+        struct tee_param param[4] = {0};
+                                     ^
+                                     {}
+drivers/char/hw_random/optee-rng.c:177:31: warning: suggest braces
+around initialization of subobject [-Wmissing-braces]
+        struct tee_param param[4] = {0};
+                                     ^
+                                     {}
+drivers/char/hw_random/optee-rng.c:212:48: warning: suggest braces
+around initialization of subobject [-Wmissing-braces]
+        struct tee_ioctl_open_session_arg sess_arg = {0};
+                                                      ^
+                                                      {}
+3 warnings generated.
 
-Thanks
-Yu Chen
+One way to fix these warnings is to add additional braces like Clang
+suggests; however, there has been a bit of push back from some
+maintainers, who just prefer memset as it is unambiguous, doesn't
+depend on a particular compiler version, and properly initializes all
+subobjects [1][2]. Do that here so there are no more warnings.
+
+[1]: https://lore.kernel.org/lkml/022e41c0-8465-dc7a-a45c-64187ecd9684@amd.com/
+[2]: https://lore.kernel.org/lkml/20181128.215241.702406654469517539.davem@davemloft.net/
+
+Fixes: 5fe8b1cc6a03 ("hwrng: add OP-TEE based rng driver")
+Link: https://github.com/ClangBuiltLinux/linux/issues/369
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/char/hw_random/optee-rng.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/char/hw_random/optee-rng.c b/drivers/char/hw_random/optee-rng.c
+index 2b9fc8ac5500..46f4bcd28c41 100644
+--- a/drivers/char/hw_random/optee-rng.c
++++ b/drivers/char/hw_random/optee-rng.c
+@@ -76,8 +76,11 @@ static size_t get_optee_rng_data(struct optee_rng_private *pvt_data,
+ 	u32 ret = 0;
+ 	u8 *rng_data = NULL;
+ 	size_t rng_size = 0;
+-	struct tee_ioctl_invoke_arg inv_arg = {0};
+-	struct tee_param param[4] = {0};
++	struct tee_ioctl_invoke_arg inv_arg;
++	struct tee_param param[4];
++
++	memset(&inv_arg, 0, sizeof(inv_arg));
++	memset(&param, 0, sizeof(param));
+ 
+ 	/* Invoke TA_CMD_GET_ENTROPY function of Trusted App */
+ 	inv_arg.func = TA_CMD_GET_ENTROPY;
+@@ -173,8 +176,11 @@ static struct optee_rng_private pvt_data = {
+ static int get_optee_rng_info(struct device *dev)
+ {
+ 	u32 ret = 0;
+-	struct tee_ioctl_invoke_arg inv_arg = {0};
+-	struct tee_param param[4] = {0};
++	struct tee_ioctl_invoke_arg inv_arg;
++	struct tee_param param[4];
++
++	memset(&inv_arg, 0, sizeof(inv_arg));
++	memset(&param, 0, sizeof(param));
+ 
+ 	/* Invoke TA_CMD_GET_RNG_INFO function of Trusted App */
+ 	inv_arg.func = TA_CMD_GET_RNG_INFO;
+@@ -209,7 +215,9 @@ static int optee_rng_probe(struct device *dev)
+ {
+ 	struct tee_client_device *rng_device = to_tee_client_device(dev);
+ 	int ret = 0, err = -ENODEV;
+-	struct tee_ioctl_open_session_arg sess_arg = {0};
++	struct tee_ioctl_open_session_arg sess_arg;
++
++	memset(&sess_arg, 0, sizeof(sess_arg));
+ 
+ 	/* Open context with TEE driver */
+ 	pvt_data.ctx = tee_client_open_context(NULL, optee_ctx_match, NULL,
+-- 
+2.21.0.rc1
 
