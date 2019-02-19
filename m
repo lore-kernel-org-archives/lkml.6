@@ -2,134 +2,183 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A85DC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 22:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D2DC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 22:51:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 085582147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 22:43:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nQcn58Ha"
+	by mail.kernel.org (Postfix) with ESMTP id EAA422147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 22:51:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729848AbfBSWnR (ORCPT
+        id S1729810AbfBSWvI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 17:43:17 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41347 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729134AbfBSWnR (ORCPT
+        Tue, 19 Feb 2019 17:51:08 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44156 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728001AbfBSWvH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 17:43:17 -0500
-Received: by mail-pf1-f195.google.com with SMTP id d25so2550524pfn.8
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 14:43:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pApVEXJUMILHLOZAriI8qcA0BzbM6/0ceKJa7Oe14Xw=;
-        b=nQcn58HaJIn+zUdtVolke6AId57tfgpL4hiX+/xPoj6Zgim1TqL0wls2jbAN+3SA1K
-         O6m95/59o6BD5Q+J9QE4S3MjuOQeBEyNUTRVusp5jLsHEzg6w+1cpXXHZ4g5v4WrdvHu
-         1MBXqv922EKdpac/2wSuDbdA3AFJv4d5OZDSt/tvEAtRv/WD0X3ZVnj3a5lnl4cdocUG
-         /cYyIAU29BXy0zNzNtx+2hPzFIL5TzWog07f2/fs58Vdqy91yJqNzkkVgow54fEQICQk
-         2/mK1wNeb9GUR5ZxUAFQIyLi2Zt+mJ1bRxOYCc/Fblxrs8wC5jAHRA2x6LcC9ofng7E0
-         hIHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pApVEXJUMILHLOZAriI8qcA0BzbM6/0ceKJa7Oe14Xw=;
-        b=kIGMC4yLhYcevqBEcZAg3Byd0BboSJ6QOQ6LwK/Dy0BUnAGwrY+1MUUy4gQsy3Mn8v
-         2OrQMlFVz1XHcU03C5IqPJV9t5EPkwYrU+4EqbaMX8NQyOdeRbbBAWjLbJ0lrOraHJzh
-         zxRXvfBrdfRdxqa20FMvym7LWoy00uuEvMwleaHkZyjC+QnU5yfZg6DKDTtBzKetvW+o
-         TL/r17XtM9mcbBvGg6FM/Ou8WlMJNFTz4jOkhTRSaCdyABnk3iITy5iMFRXaNjjcwsor
-         ZHlX1knOkCZlMl36sgwyk71NbfhSJLlaybVncbwIWDWqmDddmnEUfqIvd2IyniCudns7
-         Pr7g==
-X-Gm-Message-State: AHQUAuYzCoJS9eFJDvrCKfmRvgVuE3VnvL0j71eITBM3epYY0FGoPagl
-        9/DdY/0gVxg3UHh3p0sbBPGFaWqSWxN2i9F8EywLww==
-X-Google-Smtp-Source: AHgI3IZ7wRXKKHAa/B1hNn63/JnB9QYXquA0c8HPUMqB1IdtFjm2sUROTF41Ejq8Gf8kTaKaXSbaswGi6iexxEO9Rew=
-X-Received: by 2002:a62:e704:: with SMTP id s4mr31607789pfh.94.1550616195469;
- Tue, 19 Feb 2019 14:43:15 -0800 (PST)
+        Tue, 19 Feb 2019 17:51:07 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1JMhgv3141877
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 17:51:06 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qrqrj00kg-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 17:51:06 -0500
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Tue, 19 Feb 2019 22:51:04 -0000
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 19 Feb 2019 22:51:00 -0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1JMou8i22151336
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Feb 2019 22:50:56 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BB525AE05F;
+        Tue, 19 Feb 2019 22:50:56 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 75798AE05C;
+        Tue, 19 Feb 2019 22:50:56 +0000 (GMT)
+Received: from [9.60.75.235] (unknown [9.60.75.235])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 19 Feb 2019 22:50:56 +0000 (GMT)
+Subject: Re: [PATCH v3 2/9] s390: ap: kvm: setting a hook for PQAP
+ instructions
+To:     pmorel@linux.ibm.com, Cornelia Huck <cohuck@redhat.com>
+Cc:     borntraeger@de.ibm.com, alex.williamson@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, pasic@linux.ibm.com,
+        david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
+ <1550152269-6317-3-git-send-email-pmorel@linux.ibm.com>
+ <4b21f059-1d37-f341-bac7-5b1fe0d06521@linux.ibm.com>
+ <ee84fc90-e158-9c36-b56f-67fe7777f683@linux.ibm.com>
+ <20190218234235.7d9f547c.cohuck@redhat.com>
+ <74d812c6-bf83-0fb0-8fc3-af1341b0ae3c@linux.ibm.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Tue, 19 Feb 2019 17:50:56 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20190219214940.391081-1-arnd@arndb.de> <1550614664.6911.45.camel@lca.pw>
-In-Reply-To: <1550614664.6911.45.camel@lca.pw>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 19 Feb 2019 14:43:04 -0800
-Message-ID: <CAKwvOdn+MJxYc+ykvyf-WhEzzDn0zEusjpQuksknnf8bPb=Q6g@mail.gmail.com>
-Subject: Re: [PATCH] kasan: turn off asan-stack for clang-8 and earlier
-To:     Qian Cai <cai@lca.pw>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Mark Brown <broonie@kernel.org>,
-        Alexander Potapenko <glider@google.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Evgenii Stepanov <eugenis@google.com>,
-        Kostya Serebryany <kcc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <74d812c6-bf83-0fb0-8fc3-af1341b0ae3c@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19021922-0052-0000-0000-0000038CFEF9
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010628; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000281; SDB=6.01163498; UDB=6.00607513; IPR=6.00944081;
+ MB=3.00025661; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-19 22:51:02
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021922-0053-0000-0000-00005FE75A8E
+Message-Id: <342ffd56-b73a-b1f4-004d-de2c4aeef729@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-19_15:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=684 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902190155
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Evgenii, Kostya for KASAN
+On 2/19/19 2:50 PM, Pierre Morel wrote:
+> On 18/02/2019 23:42, Cornelia Huck wrote:
+>> On Mon, 18 Feb 2019 19:29:10 +0100
+>> Pierre Morel <pmorel@linux.ibm.com> wrote:
+>>
+>>> On 15/02/2019 23:02, Tony Krowiak wrote:
+>>>> On 2/14/19 8:51 AM, Pierre Morel wrote:
+>>
+>>>>> +/*
+>>>>> + * handle_pqap: Handling pqap interception
+>>>>> + * @vcpu: the vcpu having issue the pqap instruction
+>>>>> + *
+>>>>> + * This callback only handles PQAP/AQIC instruction and
+>>>>> + * calls a dedicated callback for this instruction if
+>>>>> + * a driver did register one in the CRYPTO satellite of the
+>>>>> + * SIE block.
+>>>>> + *
+>>>>> + * Do not change the behavior if, return -EOPNOTSUPP if:
+>>>>> + * - the hook is not used do not change the behavior.
+>>>>> + * - AP instructions are not available or not available to the guest
+>>>>> + * - the instruction is not PQAP with function code indicating
+>>>>> + *   AQIC do not change the previous behavior.
+>>>>> + *
+>>>>> + * For PQAP/AQIC instruction, verify privilege and specifications
+>>>>> + *
+>>>>> + * return the value returned by the callback.
+>>>>> + */
+>>>>> +static int handle_pqap(struct kvm_vcpu *vcpu)
+>>>>> +{
+>>>>> +    uint8_t fc;
+>>>>> +
+>>>>> +    /* Verify that the hook callback is registered */
+>>>>> +    if (!vcpu->kvm->arch.crypto.pqap_hook)
+>>>>> +        return -EOPNOTSUPP;
+>>>>> +    /* Verify that the AP instruction are available */
+>>>>> +    if (!ap_instructions_available())
+>>>>> +        return -EOPNOTSUPP;
+>>>>> +    /* Verify that the guest is allowed to use AP instructions */
+>>>>> +    if (!(vcpu->arch.sie_block->eca & ECA_APIE))
+>>>>> +        return -EOPNOTSUPP;
+>>>>> +    /* Verify that the function code is AQIC */
+>>>>> +    fc = vcpu->run->s.regs.gprs[0] >> 24;
+>>>>> +    if (fc != 0x03)
+>>>>> +        return -EOPNOTSUPP;
+>>>>
+>>>> This does not belong here. Function code 3 is one of 7 function codes
+>>>> that can be sent with the PQAP instruction. This belongs in the PQAP
+>>>> hook code.
+>>>
+>>> On one hand, effectively I would prefer to put the code in the VFIO
+>>> driver code.
+>>> On the other hand, doing this would lead to export the code for
+>>> test_kvm_facility() and kvm_s390_inject_program_int() from the 
+>>> kvm-s390.h
+>>>
+>>> I choose not to export these functions from the KVM code.
+>>>
+>>> Would like opinion from KVM maintainers?
+>>
+>> Looking at this (and without access to the specification...), I think
+>> the check for problem state makes sense in here (if this applies to all
+>> PQAP functions equally, which seems likely). The check for the facility
+>> makes more sense in the handler. You can probably still inject the
+>> specification exception here if you use a clever return code.
+>>
+> 
+> If there is no objection on exporting the KVM functions... I can do this.
 
-On Tue, Feb 19, 2019 at 2:17 PM Qian Cai <cai@lca.pw> wrote:
->
-> On Tue, 2019-02-19 at 22:49 +0100, Arnd Bergmann wrote:
-> > Building an arm64 allmodconfig kernel with clang results in over 140 warnings
-> > about overly large stack frames, the worst ones being:
-> >
-> > drivers/gpu/drm/panel/panel-sitronix-st7789v.c:196:12: error: stack frame size
-> > of 20224 bytes in function 'st7789v_prepare'
-> > drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td028ttec1.c:196:12:
-> > error: stack frame size of 13120 bytes in function 'td028ttec1_panel_enable'
-> > drivers/usb/host/max3421-hcd.c:1395:1: error: stack frame size of 10048 bytes
-> > in function 'max3421_spi_thread'
-> > drivers/net/wan/slic_ds26522.c:209:12: error: stack frame size of 9664 bytes
-> > in function 'slic_ds26522_probe'
-> > drivers/crypto/ccp/ccp-ops.c:2434:5: error: stack frame size of 8832 bytes in
-> > function 'ccp_run_cmd'
-> > drivers/media/dvb-frontends/stv0367.c:1005:12: error: stack frame size of 7840
-> > bytes in function 'stv0367ter_algo'
-> >
-> > None of these happen with gcc today, and almost all of these are the result
-> > of a single known bug in llvm.  Hopefully it will eventually get fixed with
-> > the
-> > clang-9 release.
+I think I understand where you are coming from. In looking back at the
+original patch, I see there are checks using the test_kvm_facility and
+kvm_s390_inject_program_int functions placed after your check for
+fc != 0x03. You clearly misunderstood what I was asking you to do.
+I was suggesting that ONLY the check for 'fc != 0x03' be done in the
+hook. I was NOT suggesting the instructions following the check for
+fc != 0x03 be done in the hook, so there is no need to export any KVM
+functions.
 
-Would it be better to disable outright if CC_IS_CLANG, then go back
-and adjust it once we know explicitly which version it lands in?
-(Maybe I'm being too pessimistic about when it may be fixed).
 
-> >
-> > In the meantime, the best idea I have is to turn off asan-stack for clang-8
-> > and earlier, so we can produce a kernel that is safe to run.
-> >
-> > I have posted three patches that address the frame overflow warnings that are
-> > not addressed by turning off asan-stack, so in combination with this change,
-> > we get much closer to a clean allmodconfig build, which in turn is necessary
-> > to do meaningful build regression testing.
->
-> Well, I am using clang 8.0 on arm64 and running the kernel just fine for a few
-> weeks now and never trigger a single stack overflow (THREAD_SHIFT = 15) because
-> I never use any of those drivers you mentioned above. I don't think it is a good
-> idea to blankly remove the testing coverage here and affect people don't use all
-> those offensive functions at all.
+> 
+>> Another option: Provide a way to register a callback per function code;
+>> this allows you to still do the check here and extend it later for
+>> other function codes (which will probably be indicated by another
+>> facility).
+> 
+> I like this option even better.
+> 
+> Regards,
+> Pierre
+> 
+> 
 
-Thanks for the patch, Arnd!  Hopefully we can fix that up in Clang
-soon.  Qian, I guess the alternative would be to add `-mllvm
--asan-stack=0` on potentially up to 140 Makefiles?
-
--- 
-Thanks,
-~Nick Desaulniers
