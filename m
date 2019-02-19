@@ -2,146 +2,184 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A396CC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:47:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95914C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:49:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ED6E21904
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:47:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 606B22146E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:49:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pDxcrzO2"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q50igjyU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728027AbfBSJrd (ORCPT
+        id S1727203AbfBSJtd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 04:47:33 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:44957 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725797AbfBSJrc (ORCPT
+        Tue, 19 Feb 2019 04:49:33 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35129 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbfBSJtd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 04:47:32 -0500
-Received: by mail-vs1-f66.google.com with SMTP id r201so11298079vsc.11
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 01:47:31 -0800 (PST)
+        Tue, 19 Feb 2019 04:49:33 -0500
+Received: by mail-lj1-f194.google.com with SMTP id j13-v6so16885336ljc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 01:49:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=AdqU4hPWRCpl2b+kX/GEU2aCB/25wPynl2JYRUOSoH8=;
-        b=pDxcrzO2TlQLpPvWV1iPlozjnw4kOdLYTWzOTQ0FM+P4McnVmNwu1Hx/Zi26ZE+kPt
-         K7pasG2p24dL777h6NtGwoeQMmURnvP3Y1dPKXkKGRLvNxgu+X7WT5AgPsc4syJkdXT9
-         xdaiSwGxGh32GjMDgmV7cz7vi9QZGeHFcTn3fS5PTUSkeU3Bx29hl80FioUmNloldzTp
-         RGcW115uunLfGUmiyYkb4Gt7/nyIFwL6qcvibouyVgIcduBLWxTj4N7HZggSgDvV2X/4
-         B7rzbMFU4EnKOGFjj2Kyn/Mip0Dpr3IBmUMsURjHriQSKS+X+wW9D3fNhxgJcO3toKE8
-         7SWQ==
+        bh=ceFCSGNoNWqq4YNDYdMfd0R6+0aefkkTFSwlzn3bDMc=;
+        b=q50igjyUXGTbdP2dtEYYaPbL4i99WirmmzhAVPlv+S+XTrjQcDAXaMgNCRwlqI2p1h
+         kFynGICCSdYbQEvpCzsdJ+ycZ8h2z5VGSecilLwhHCcPE4rDhm7NjDPy6h30bkgGpSPR
+         LmkVbvKagfs7bp/KyqpSQ5peufL01o9bHLTY9TZ5s0RHAW0Db1ISTGIL6gVka+q9dc+h
+         DCjkm/PKWBk/2oLr7axonWKyT9BWPgoU+egZoGWt5bQWmYHPco9Qt7kpPBdFKD5nqgel
+         7LPfX3YreztHtnN9jOsP0iLvT86XUQx5caJ7Jvufpy1aggKZ0884pJz5eKQOxHqinTRN
+         jErQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=AdqU4hPWRCpl2b+kX/GEU2aCB/25wPynl2JYRUOSoH8=;
-        b=Q/EeXkO1wINbD5qyzX288TCw7+HMlWI/HKGR2FDrHPQvKYETG3rl5zi0Pn2zTfDn3l
-         0giD1jRIqgoADhMZ0dqmeZ2NGB99rgWzohvW+O4Q+8wYskd1F4CWcY2/YS8SotrnZwRP
-         o1/xEJAeIidzTHWOlgE5WmJ63rVttPrByLLmCfjEbbNEhckRZhQbHStT1PcYqudfvmFK
-         M965JqYUVmymYxFzFlygDk04hbf8t+3NxTRMA/2/ekOv3benB56bQ/vkczwgQHaI9rpr
-         7B4vUBB98jJ4yB8qtwVWjc4/KS7r6ZcoVrnzoSDAabB23sstbgKm1VeUl0cZWfr3qWFJ
-         /htg==
-X-Gm-Message-State: AHQUAuZysnHXe9GKynUWBlmtneBlw7yqjdKL5JZWyuS6OLemrNNejlVx
-        QF/IaEtzk6KsKjEAmA+p6fJgwzO3niSE2moopJLwKg==
-X-Google-Smtp-Source: AHgI3IZ1Ov6w+qj1zBAFgts9Z3tv5yZqhsMjY+I6FnHkheHEVxYOczH1KCqC+TppIb6yi+gyRnmWAdNFygntZX2tVqs=
-X-Received: by 2002:a67:2045:: with SMTP id g66mr13968154vsg.180.1550569650919;
- Tue, 19 Feb 2019 01:47:30 -0800 (PST)
+        bh=ceFCSGNoNWqq4YNDYdMfd0R6+0aefkkTFSwlzn3bDMc=;
+        b=VmEqVPm8S9nyeDog0ycakrz2lH3UVLNaJlxyOEHJSfQE0esB3JorjQbDHo/eXvn1kJ
+         06p3G2/qhp8CJFZiEZ480Mstt8wdIW2vcxto5KGqKueInD7kIHGv7Qh3M0oe0sx1qTfV
+         T59/VyIAY21oUMx3SNokrCNSe0YbvtOWxMWB3vcA3+6FiTglMU5gZ/LIrDQ7RHkCnGki
+         2PEnESIZB6iyMj4GkfbiLVAloZRZ1mjCy2t+vjMA31UhM3pH8kD409lr9Pa//35Ybx6D
+         CJk1NHzGOwBqUiov+wc2tU+sFSvzNtbmwbHPre2wMWkB5O9pHZNknh8Pn8VrhBiLNU5x
+         oQ0Q==
+X-Gm-Message-State: AHQUAuZsAXqwUhRyJVMnBGoRisxLKfK3RIPzPhJrMAHSpLyOUOn6v4zL
+        WEyXQjw2whGrKssteuWJmvlq7mlZK4TAVTy7+ckuWQ==
+X-Google-Smtp-Source: AHgI3IYsae3AMyaa7jkN8e9h6ArVPBkR535/IDlsxe3Uwr0X0LXfFZ6l+PcQHAeYndpX5oPVjC1VymuTR5sD0VSszj0=
+X-Received: by 2002:a2e:251:: with SMTP id 78mr11030225ljc.90.1550569770704;
+ Tue, 19 Feb 2019 01:49:30 -0800 (PST)
 MIME-Version: 1.0
-References: <20190219091520.28990-1-natechancellor@gmail.com>
-In-Reply-To: <20190219091520.28990-1-natechancellor@gmail.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Tue, 19 Feb 2019 15:17:20 +0530
-Message-ID: <CAFA6WYP+vinWcM_wkSxaKfmRhG9hSZQSCh7f4WoUBEMWe-htbQ@mail.gmail.com>
-Subject: Re: [PATCH] tee: optee: Initialize some structs using memset instead
- of braces
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Jens Wiklander <jens.wiklander@linaro.org>,
+References: <a9718ae1e97a5911f47874fe23c00ef297d7fed8.1548158832.git.baolin.wang@linaro.org>
+ <CAK8P3a2zkhrZLMi5KZ5=fGJCt85dad3_pZC0o7GqcwJkk4es9w@mail.gmail.com>
+ <CAMz4ku+PR4bHtcPu2uT2f974+FWJVi8Tp3WzmuqE1TS-M-QawQ@mail.gmail.com>
+ <CAMz4kuLEut0LqZ4bSAGJDufE8xHr6DgZ3Z1RCLQ10q_k6MUesw@mail.gmail.com>
+ <CAK8P3a1Zq6XjymG3sAaHGeNRxU5UXPfJPbi0A9s47cTVK7vC3g@mail.gmail.com>
+ <CAMz4kuL=B53xLk4SFbrwWeUhp4P9zbUfOmXgftQCEjVSwOnD5A@mail.gmail.com>
+ <CAK8P3a03rPjWQvGrDupoTAywVmjCZdpSJpqW9Sv=NVPR2uwZeQ@mail.gmail.com>
+ <CAMz4kuKnVppCB0-9LVgq8bya6=iWPhMcrHL_N53QfiU5Kn9YAA@mail.gmail.com> <CAMuHMdWPZGYpvANL_V=YszPWjtTA+ZnU6GVDmn188LC=eC005Q@mail.gmail.com>
+In-Reply-To: <CAMuHMdWPZGYpvANL_V=YszPWjtTA+ZnU6GVDmn188LC=eC005Q@mail.gmail.com>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Tue, 19 Feb 2019 17:49:19 +0800
+Message-ID: <CAMz4ku+yzwaww5o06tz9-8n99UfiVh6d5UB2L12RYMpTow6K3w@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: dmaengine: Add one new cell to present
+ hardware slave id
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Olof Johansson <olof@lixom.net>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Lyra Zhang <zhang.lyra@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        DTML <devicetree@vger.kernel.org>, arm-soc <arm@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
+        dmaengine@vger.kernel.org, eric.long@unisoc.com,
+        Mark Brown <broonie@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Feb 2019 at 14:45, Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Clang warns:
->
-> drivers/tee/optee/device.c:39:31: warning: suggest braces around
-> initialization of subobject [-Wmissing-braces]
->         struct tee_param param[4] = {0};
->                                      ^
->                                      {}
-> drivers/tee/optee/device.c:92:48: warning: suggest braces around
-> initialization of subobject [-Wmissing-braces]
->         struct tee_ioctl_open_session_arg sess_arg = {0};
->                                                       ^
->                                                       {}
-> 2 warnings generated.
->
-> One way to fix these warnings is to add additional braces like Clang
-> suggests; however, there has been a bit of push back from some
-> maintainers, who just prefer memset as it is unambiguous, doesn't
-> depend on a particular compiler version, and properly initializes all
-> subobjects [1][2]. Do that here so there are no more warnings.
->
-> [1]: https://lore.kernel.org/lkml/022e41c0-8465-dc7a-a45c-64187ecd9684@amd.com/
-> [2]: https://lore.kernel.org/lkml/20181128.215241.702406654469517539.davem@davemloft.net/
->
-> Fixes: c3fa24af9244 ("tee: optee: add TEE bus device enumeration support")
-> Link: https://github.com/ClangBuiltLinux/linux/issues/370
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Hi Geert,
 
-Reviewed-by: Sumit Garg <sumit.garg@linaro.org>
+On Tue, 19 Feb 2019 at 17:30, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Baolin,
+>
+> On Tue, Feb 19, 2019 at 4:15 AM Baolin Wang <baolin.wang@linaro.org> wrote:
+> > On Mon, 18 Feb 2019 at 20:23, Arnd Bergmann <arnd@arndb.de> wrote:
+> > > On Mon, Feb 18, 2019 at 11:52 AM Baolin Wang <baolin.wang@linaro.org> wrote:
+> > > > On Mon, 18 Feb 2019 at 18:31, Arnd Bergmann <arnd@arndb.de> wrote:
+> > > > >
+> > > > > On Tue, Feb 12, 2019 at 9:25 AM Baolin Wang <baolin.wang@linaro.org> wrote:
+> > > > > > On Fri, 1 Feb 2019 at 19:53, Baolin Wang <baolin.wang@linaro.org> wrote:
+> > > > > > > On Thu, 31 Jan 2019 at 00:52, Arnd Bergmann <arnd@arndb.de> wrote:
+> > > > > > > > On Tue, Jan 22, 2019 at 2:21 PM Baolin Wang <baolin.wang@linaro.org> wrote:
+> > > > > > > > >
+> > > > > > > > >  Client:
+> > > > > > > > >  DMA clients connected to the Spreadtrum DMA controller must use the format
+> > > > > > > > > -described in the dma.txt file, using a two-cell specifier for each channel.
+> > > > > > > > > -The two cells in order are:
+> > > > > > > > > +described in the dma.txt file, using a three-cell specifier for each channel.
+> > > > > > > > > +The three cells in order are:
+> > > > > > > > >  1. A phandle pointing to the DMA controller.
+> > > > > > > > >  2. The channel id.
+> > > > > > > > > +3. The hardware slave id which is used for clients to trigger DMA engine
+> > > > > > > > > +automatically.
+> > > > > > > >
+> > > > > > > > I notice that this is an incompatible binding change. Is that necessary?
+> > > > > > > > If the current code works, I'd suggest allowing both #dma-cells=<2>
+> > > > > > > > and <3>, and then implementing both in the driver.
+> > > > > > >
+> > > > > > > Yes, this is necessary.
+> > > > > > >
+> > > > > > > Yes, current code can work, but the problem is that the DMA clients
+> > > > > > > must add one property (something like "sprd,slave-id") to specify the
+> > > > > > > slave id. So considering this, we want to change the dma-cells to 2,
+> > > > > > > including dma channel and dma slave id, which can avoid introducing
+> > > > > > > some similar properties for DMA clients.
+> > > > > > >
+> > > > > > > Now there are no DMA clients in mainline for Spreadtrum platform, and
+> > > > > > > we want to upstream our first DMA clients: SPI controller. So no other
+> > > > > > > drivers need to change when we changing dma cells. Thanks.
+> > > > > >
+> > > > > > Do you have any other concerns about this patch set? If not, I think
+> > > > > > Vinod can apply this patch set. Thanks.
+> > > > >
+> > > > > Sorry for the late reply. Yes, this makes sense since there are no
+> > > > > existing users then. For the DT changes going through the dmaengine
+> > > > > tree
+> > > > >
+> > > > > Acked-by: Arnd Bergmann <arnd@arndb.de>
+> > > >
+> > > > Thanks for your reviewing.
+> > > >
+> > > > >
+> > > > > One more question, to make sure we don't need to edit it again:
+> > > > > Why do you need both a 'channel id' and a 'slave id' here? Is this
+> > > > > a strict hardware requirement for your DMA engine? In many
+> > > > > other designs, only a DMA request line number needs to
+> > > > > be described, and I think this would correspond to what you
+> > > > > call the 'hardware slave id' in your documentation.
+> > > >
+> > > > I try to explain why we need the slave id.
+> > > >
+> > > > For our DMA engine driver, we have software request mode and hardware
+> > > > request mode. For software request mode, the DMA engine driver need
+> > > > trigger DMA to start transfer manually. But for hardware request mode,
+> > > > we just set one unique slave id corresponding to the slave hardware to
+> > > > the DMA engine, then the slave hardware can trigger DMA automatically.
+> > > > And the slave id is not always same with the channel id according to
+> > > > the SoC design, so we add one cell to specify the slave id.
+> > >
+> > > I did understand the need for a slave-id, I was instead wondering about
+> > > the channel-id number. On many SoCs, all channels are equal, and you
+> > > just have to pick one of those with the right capabilities for a particular
+> > > slave.
+> >
+> > Yes, all channels are equal. We just set a unique slave id for the
+> > channel for a particular slave. For example, the SPI slave can use
+> > channel 10 for tx transfer by setting slave id 11, or it also can use
+> > channel 9 for tx transfer by setting same slave id 11.
+>
+> So the channel selection is software policy, not hardware description, and
+> thus doesn't belong in DT?
+>
+> Can't the DMA engine driver allocate channels dynamically, removing the
+> need to specify this in DT?
 
-> ---
->  drivers/tee/optee/device.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/tee/optee/device.c b/drivers/tee/optee/device.c
-> index 5e4938bbef2b..167839b371f2 100644
-> --- a/drivers/tee/optee/device.c
-> +++ b/drivers/tee/optee/device.c
-> @@ -35,8 +35,11 @@ static int get_devices(struct tee_context *ctx, u32 session,
->                        struct tee_shm *device_shm, u32 *shm_size)
->  {
->         u32 ret = 0;
-> -       struct tee_ioctl_invoke_arg inv_arg = {0};
-> -       struct tee_param param[4] = {0};
-> +       struct tee_ioctl_invoke_arg inv_arg;
-> +       struct tee_param param[4];
-> +
-> +       memset(&inv_arg, 0, sizeof(inv_arg));
-> +       memset(&param, 0, sizeof(param));
->
->         /* Invoke PTA_CMD_GET_DEVICES function */
->         inv_arg.func = PTA_CMD_GET_DEVICES;
-> @@ -89,13 +92,15 @@ int optee_enumerate_devices(void)
->         const uuid_t pta_uuid =
->                 UUID_INIT(0x7011a688, 0xddde, 0x4053,
->                           0xa5, 0xa9, 0x7b, 0x3c, 0x4d, 0xdf, 0x13, 0xb8);
-> -       struct tee_ioctl_open_session_arg sess_arg = {0};
-> +       struct tee_ioctl_open_session_arg sess_arg;
->         struct tee_shm *device_shm = NULL;
->         const uuid_t *device_uuid = NULL;
->         struct tee_context *ctx = NULL;
->         u32 shm_size = 0, idx, num_devices = 0;
->         int rc;
->
-> +       memset(&sess_arg, 0, sizeof(sess_arg));
-> +
->         /* Open context with OP-TEE driver */
->         ctx = tee_client_open_context(NULL, optee_ctx_match, NULL, NULL);
->         if (IS_ERR(ctx))
-> --
-> 2.21.0.rc1
->
+In theory we can do as you suggested. But we still want to
+manage/assign the DMA channel resources manually for one SoC, we can
+make sure some important DMA slaves (such as audio)  can request a DMA
+channel at runtime firstly, another benefit is that it is easy to
+debug since we can easily know which channel is assigned for this
+slave.
+
+-- 
+Baolin Wang
+Best Regards
