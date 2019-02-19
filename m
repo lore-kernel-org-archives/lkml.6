@@ -2,131 +2,100 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3610C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:05:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C49C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:06:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91CD72147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:05:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oxuoAtkX"
+	by mail.kernel.org (Postfix) with ESMTP id C50BF2147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:06:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728643AbfBSNF2 (ORCPT
+        id S1728660AbfBSNG3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 08:05:28 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:42004 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727246AbfBSNF1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 08:05:27 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1JD5Len049102;
-        Tue, 19 Feb 2019 07:05:21 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1550581521;
-        bh=W3MXUIRYjrydCmiVUPaDNzLD7XNjkR6k7ZeLLEJmmQk=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=oxuoAtkXDuJLp+Tbo5Y9e+4nrAeIZgGUpq9gSqJ2gIP1qrO6Gjk2iC4ptRV789JmH
-         RdBgAsAOP/oZTX+2DpWBp6avX6isieeuKOq/kwPGX+3dbm4rkouFnpNTizJzMOX9jJ
-         sKpx3bC/3MXIAFEDcmWBrJFSYJDWIV0gHsZbryw4=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1JD5L9p121717
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 19 Feb 2019 07:05:21 -0600
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 19
- Feb 2019 07:05:21 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 19 Feb 2019 07:05:20 -0600
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1JD5HRu002253;
-        Tue, 19 Feb 2019 07:05:18 -0600
-Subject: Re: Linux-next 20190218: am57xx-evm: mmc1: ADMA error
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>
-CC:     <t-kristo@ti.com>, <nm@ti.com>,
-        Mark Rutland <mark.rutland@arm.com>, <robh+dt@kernel.org>
-References: <CA+G9fYsmC5ckLXfQxSUn-tqxLZ4NofEyb9RA69Q07RUoxc79RQ@mail.gmail.com>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <34c78d7f-cc3c-853d-b3fd-a70abdb66293@ti.com>
-Date:   Tue, 19 Feb 2019 18:38:33 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 19 Feb 2019 08:06:29 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:52066 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727438AbfBSNG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 08:06:28 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 9EBA5E0EDC91A9EF70E1;
+        Tue, 19 Feb 2019 21:06:24 +0800 (CST)
+Received: from huawei.com (100.95.165.100) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Tue, 19 Feb 2019
+ 21:06:16 +0800
+From:   He Kuang <hekuang@huawei.com>
+To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
+        <namhyung@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <hekuang@huawei.com>
+Subject: [PATCH] perf report: Don't shadow inlined symbol with different addr range
+Date:   Tue, 19 Feb 2019 21:05:31 +0800
+Message-ID: <20190219130531.15692-1-hekuang@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <CA+G9fYsmC5ckLXfQxSUn-tqxLZ4NofEyb9RA69Q07RUoxc79RQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [100.95.165.100]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Naresh,
+We can't assume inlined symbols with the same name are equal, because
+their address range may be different. This will cause the symbols with
+different addresses be shadowed when adding to the hist entry, and lead
+to ERANGE error when checking the symbol address during sample parse, the
+addr should be within the range of [sym.start, sym.end].
 
-On 18/02/19 6:57 PM, Naresh Kamboju wrote:
-> Do you see this error on am57xx-evm running Linux next 20190218 ?
-> I have tested on multiple devices and found this error.
-> Please find the full boot log [1].
-> Am i missing any pre required configs [2] ?
-> 
-> [    5.620263] mmc1: ADMA error
-> [    5.623266] mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
-> [    5.629740] mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00003302
-> [    5.636215] mmc1: sdhci: Blk size:  0x00000200 | Blk cnt:  0x0000ffff
-> [    5.642690] mmc1: sdhci: Argument:  0x002cec70 | Trn mode: 0x00000033
-> [    5.649162] mmc1: sdhci: Present:   0x01f00000 | Host ctl: 0x00000010
-> [    5.655634] mmc1: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
-> [    5.662108] mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x00000107
-> [    5.668582] mmc1: sdhci: Timeout:   0x0000000c | Int stat: 0x00000000
-> [    5.675055] mmc1: sdhci: Int enab:  0x027f000b | Sig enab: 0x027f000b
-> [    5.681529] mmc1: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000000
-> [    5.688002] mmc1: sdhci: Caps:      0x21e90080 | Caps_1:   0x00000f77
-> [    5.694474] mmc1: sdhci: Cmd:       0x0000123a | Max curr: 0x00000000
-> [    5.700949] mmc1: sdhci: Resp[0]:   0x00000900 | Resp[1]:  0xffffffef
-> [    5.707423] mmc1: sdhci: Resp[2]:   0x0f5903ff | Resp[3]:  0xd04f0132
-> [    5.713896] mmc1: sdhci: Host ctl2: 0x00000004
-> [    5.718364] mmc1: sdhci: ADMA Err:  0x00000007 | ADMA Ptr: 0xab868218
-> 
+The error message is like: "0x36aea60 [0x8]: failed to process type: 68".
 
-I see this as well on my setup. Trying to bisect now. Will keep you posted.
+The second parameter of symbol__new() is the length of the fake symbol for
+the inline frame, which is the subtraction of the end and start address of
+base_sym.
 
-Thanks,
-Faiz
+Signed-off-by: He Kuang <hekuang@huawei.com>
+---
+ tools/perf/util/sort.c    | 10 ++++++++--
+ tools/perf/util/srcline.c |  2 +-
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
-> <>
-> [   42.425587] print_req_error: I/O error, dev mmcblk1, sector 4542872 flags 1
-> [   42.429013] mmc1: ADMA error
-> [   42.432606] EXT4-fs warning (device mmcblk1p9): ext4_end_bio:324:
-> I/O error 10 writing to inode 35321 (offset 0 size 4096 starting block
-> 567860)
-> [   42.435475] mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
-> [   42.448543] Buffer I/O error on device mmcblk1p9, logical block 226675
-> [   42.454944] mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00003302
-> [   42.461528] EXT4-fs warning (device mmcblk1p9): ext4_end_bio:324:
-> I/O error 10 writing to inode 35322 (offset 0 size 4096 starting block
-> 567861)
-> [   42.467960] mmc1: sdhci: Blk size:  0x00000200 | Blk cnt:  0x0000ffff
-> [   42.480982] Buffer I/O error on device mmcblk1p9, logical block 226676
-> [   42.487427] mmc1: sdhci: Argument:  0x002cae20 | Trn mode: 0x00000033
-> [   42.494007] EXT4-fs warning (device mmcblk1p9): ext4_end_bio:324:
-> I/O error 10 writing to inode 315 (offset 0 size 4096 starting block
-> 567862)
-> 
-> Full boot log,
-> [1] https://lkft.validation.linaro.org/scheduler/job/610989#L4354
-> config,
-> [2] http://snapshots.linaro.org/openembedded/lkft/lkft/rocko/am57xx-evm/lkft/linux-next/467/config
-> 
-> Best regards
-> Naresh Kamboju
-> 
+diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+index 6c1a83768eb0..d0334c33da54 100644
+--- a/tools/perf/util/sort.c
++++ b/tools/perf/util/sort.c
+@@ -230,8 +230,14 @@ static int64_t _sort__sym_cmp(struct symbol *sym_l, struct symbol *sym_r)
+ 	if (sym_l == sym_r)
+ 		return 0;
+ 
+-	if (sym_l->inlined || sym_r->inlined)
+-		return strcmp(sym_l->name, sym_r->name);
++	if (sym_l->inlined || sym_r->inlined) {
++		int ret = strcmp(sym_l->name, sym_r->name);
++
++		if (ret)
++			return ret;
++		if ((sym_l->start <= sym_r->end) && (sym_l->end >= sym_r->start))
++			return 0;
++	}
+ 
+ 	if (sym_l->start != sym_r->start)
+ 		return (int64_t)(sym_r->start - sym_l->start);
+diff --git a/tools/perf/util/srcline.c b/tools/perf/util/srcline.c
+index dc86597d0cc4..ccf42c4e83f0 100644
+--- a/tools/perf/util/srcline.c
++++ b/tools/perf/util/srcline.c
+@@ -104,7 +104,7 @@ static struct symbol *new_inline_sym(struct dso *dso,
+ 	} else {
+ 		/* create a fake symbol for the inline frame */
+ 		inline_sym = symbol__new(base_sym ? base_sym->start : 0,
+-					 base_sym ? base_sym->end : 0,
++					 base_sym ? (base_sym->end - base_sym->start) : 0,
+ 					 base_sym ? base_sym->binding : 0,
+ 					 base_sym ? base_sym->type : 0,
+ 					 funcname);
+-- 
+2.20.1
+
