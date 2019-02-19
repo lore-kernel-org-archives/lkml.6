@@ -2,30 +2,31 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1137C4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A9DBC4151A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:04:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A5EC21738
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:04:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19CE121903
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:04:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729882AbfBSUEr (ORCPT
+        id S1729942AbfBSUEv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 15:04:47 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37978 "EHLO mx1.redhat.com"
+        Tue, 19 Feb 2019 15:04:51 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49070 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726215AbfBSUEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 15:04:46 -0500
+        id S1729891AbfBSUEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 15:04:49 -0500
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 372A081DE0;
-        Tue, 19 Feb 2019 20:04:45 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6A42A369A0;
+        Tue, 19 Feb 2019 20:04:48 +0000 (UTC)
 Received: from localhost.localdomain.com (ovpn-122-134.rdu2.redhat.com [10.10.122.134])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BA38B6013C;
-        Tue, 19 Feb 2019 20:04:39 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5ABE86013D;
+        Tue, 19 Feb 2019 20:04:45 +0000 (UTC)
 From:   jglisse@redhat.com
 To:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org,
@@ -47,14 +48,16 @@ Cc:     linux-kernel@vger.kernel.org,
         John Hubbard <jhubbard@nvidia.com>, kvm@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v5 0/9] mmu notifier provide context informations
-Date:   Tue, 19 Feb 2019 15:04:21 -0500
-Message-Id: <20190219200430.11130-1-jglisse@redhat.com>
+Subject: [PATCH v5 1/9] mm/mmu_notifier: helper to test if a range invalidation is blockable
+Date:   Tue, 19 Feb 2019 15:04:22 -0500
+Message-Id: <20190219200430.11130-2-jglisse@redhat.com>
+In-Reply-To: <20190219200430.11130-1-jglisse@redhat.com>
+References: <20190219200430.11130-1-jglisse@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 19 Feb 2019 20:04:45 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 19 Feb 2019 20:04:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,67 +65,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jérôme Glisse <jglisse@redhat.com>
 
-Since last version [4] i added the extra bits needed for the change_pte
-optimization (which is a KSM thing). Here i am not posting users of
-this, they will be posted to the appropriate sub-systems (KVM, GPU,
-RDMA, ...) once this serie get upstream. If you want to look at users
-of this see [5] [6]. If this gets in 5.1 then i will be submitting
-those users for 5.2 (including KVM if KVM folks feel comfortable with
-it).
+Simple helpers to test if range invalidation is blockable. Latter
+patches use cocinnelle to convert all direct dereference of range->
+blockable to use this function instead so that we can convert the
+blockable field to an unsigned for more flags.
 
-Note that this serie does not change any behavior for any existing
-code. It just pass down more informations to mmu notifier listener.
-
-The rational for this patchset:
-
-
-CPU page table update can happens for many reasons, not only as a
-result of a syscall (munmap(), mprotect(), mremap(), madvise(), ...)
-but also as a result of kernel activities (memory compression, reclaim,
-migration, ...).
-
-This patch introduce a set of enums that can be associated with each
-of the events triggering a mmu notifier:
-
-    - UNMAP: munmap() or mremap()
-    - CLEAR: page table is cleared (migration, compaction, reclaim, ...)
-    - PROTECTION_VMA: change in access protections for the range
-    - PROTECTION_PAGE: change in access protections for page in the range
-    - SOFT_DIRTY: soft dirtyness tracking
-
-Being able to identify munmap() and mremap() from other reasons why the
-page table is cleared is important to allow user of mmu notifier to
-update their own internal tracking structure accordingly (on munmap or
-mremap it is not longer needed to track range of virtual address as it
-becomes invalid). Without this serie, driver are force to assume that
-every notification is an munmap which triggers useless trashing within
-drivers that associate structure with range of virtual address. Each
-driver is force to free up its tracking structure and then restore it
-on next device page fault. With this serie we can also optimize device
-page table update [5].
-
-More over this can also be use to optimize out some page table updates
-like for KVM where we can update the secondary MMU directly from the
-callback instead of clearing it.
-
-Patches to leverage this serie will be posted separately to each sub-
-system.
-
-Cheers,
-Jérôme
-
-[1] v1 https://lkml.org/lkml/2018/3/23/1049
-[2] v2 https://lkml.org/lkml/2018/12/5/10
-[3] v3 https://lkml.org/lkml/2018/12/13/620
-[4] v4 https://lkml.org/lkml/2019/1/23/838
-[5] patches to use this:
-    https://lkml.org/lkml/2019/1/23/833
-    https://lkml.org/lkml/2019/1/23/834
-    https://lkml.org/lkml/2019/1/23/832
-    https://lkml.org/lkml/2019/1/23/831
-[6] KVM restore change pte optimization
-    https://patchwork.kernel.org/cover/10791179/
-
+Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
 Cc: Christian König <christian.koenig@amd.com>
 Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Cc: Jani Nikula <jani.nikula@linux.intel.com>
@@ -146,45 +94,39 @@ Cc: dri-devel@lists.freedesktop.org
 Cc: linux-rdma@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>
+---
+ include/linux/mmu_notifier.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Jérôme Glisse (9):
-  mm/mmu_notifier: helper to test if a range invalidation is blockable
-  mm/mmu_notifier: convert user range->blockable to helper function
-  mm/mmu_notifier: convert mmu_notifier_range->blockable to a flags
-  mm/mmu_notifier: contextual information for event enums
-  mm/mmu_notifier: contextual information for event triggering
-    invalidation v2
-  mm/mmu_notifier: use correct mmu_notifier events for each invalidation
-  mm/mmu_notifier: pass down vma and reasons why mmu notifier is
-    happening v2
-  mm/mmu_notifier: mmu_notifier_range_update_to_read_only() helper
-  mm/mmu_notifier: set MMU_NOTIFIER_USE_CHANGE_PTE flag where
-    appropriate v2
-
- drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c  |  8 +--
- drivers/gpu/drm/i915/i915_gem_userptr.c |  2 +-
- drivers/gpu/drm/radeon/radeon_mn.c      |  4 +-
- drivers/infiniband/core/umem_odp.c      |  5 +-
- drivers/xen/gntdev.c                    |  6 +-
- fs/proc/task_mmu.c                      |  3 +-
- include/linux/mmu_notifier.h            | 93 +++++++++++++++++++++++--
- kernel/events/uprobes.c                 |  3 +-
- mm/hmm.c                                |  6 +-
- mm/huge_memory.c                        | 14 ++--
- mm/hugetlb.c                            | 12 ++--
- mm/khugepaged.c                         |  3 +-
- mm/ksm.c                                |  9 ++-
- mm/madvise.c                            |  3 +-
- mm/memory.c                             | 26 ++++---
- mm/migrate.c                            |  5 +-
- mm/mmu_notifier.c                       | 12 +++-
- mm/mprotect.c                           |  4 +-
- mm/mremap.c                             |  3 +-
- mm/oom_kill.c                           |  3 +-
- mm/rmap.c                               |  6 +-
- virt/kvm/kvm_main.c                     |  3 +-
- 22 files changed, 180 insertions(+), 53 deletions(-)
-
+diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
+index 4050ec1c3b45..e630def131ce 100644
+--- a/include/linux/mmu_notifier.h
++++ b/include/linux/mmu_notifier.h
+@@ -226,6 +226,12 @@ extern void __mmu_notifier_invalidate_range_end(struct mmu_notifier_range *r,
+ extern void __mmu_notifier_invalidate_range(struct mm_struct *mm,
+ 				  unsigned long start, unsigned long end);
+ 
++static inline bool
++mmu_notifier_range_blockable(const struct mmu_notifier_range *range)
++{
++	return range->blockable;
++}
++
+ static inline void mmu_notifier_release(struct mm_struct *mm)
+ {
+ 	if (mm_has_notifiers(mm))
+@@ -455,6 +461,11 @@ static inline void _mmu_notifier_range_init(struct mmu_notifier_range *range,
+ #define mmu_notifier_range_init(range, mm, start, end) \
+ 	_mmu_notifier_range_init(range, start, end)
+ 
++static inline bool
++mmu_notifier_range_blockable(const struct mmu_notifier_range *range)
++{
++	return true;
++}
+ 
+ static inline int mm_has_notifiers(struct mm_struct *mm)
+ {
 -- 
 2.17.2
 
