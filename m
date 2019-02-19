@@ -2,66 +2,85 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA10C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26E3AC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:10:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C8FA21736
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:09:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCACE21736
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:10:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Vmb/rFJs";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OI98hxh4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728595AbfBSPJA convert rfc822-to-8bit (ORCPT
+        id S1728698AbfBSPKV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 10:09:00 -0500
-Received: from mail.fireflyinternet.com ([109.228.58.192]:65249 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725885AbfBSPI7 (ORCPT
+        Tue, 19 Feb 2019 10:10:21 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:38280 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725885AbfBSPKU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 10:08:59 -0500
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Received: from localhost (unverified [78.156.65.138]) 
-        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 15630220-1500050 
-        for multiple; Tue, 19 Feb 2019 15:08:54 +0000
+        Tue, 19 Feb 2019 10:10:20 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C0D366071A; Tue, 19 Feb 2019 15:10:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550589019;
+        bh=iqYquW/jRXJaGP3vvyXdhWzilNINTnMOTiRZn/jZIE8=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=Vmb/rFJsLHcGDWbRTR7gJg6FCLfdTjrBMO0AvRwWJb6MCBF+sF2aG76HQPdlzdepX
+         TpqletICEs+SoAeaO4Y4YlQnZcYlS0D434GrSPPWcpUfZUPflkARtA6XNSfrRhXmaj
+         NnMwyHBt5yI+PHRC3FQwemsOT6Sh2Xrrqjfkq2Rg=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BEFB460791;
+        Tue, 19 Feb 2019 15:10:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550589018;
+        bh=iqYquW/jRXJaGP3vvyXdhWzilNINTnMOTiRZn/jZIE8=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=OI98hxh4nrrqD8wL0g+x2rnEAxswA2Eo6rX9CiAaiGwMdPs4GpJJWIfhWgTQC/dep
+         7FBwk7FhmlACISQbv2qKQg2OwtggXaEL+WX6b8oTW4YqzOCfncUdwFdX00kVrrLWSi
+         EkLSqYbKMbkeQKv0CTwZGqtkmhGqFJmC9kUq+6qI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BEFB460791
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     Colin King <colin.king@canonical.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
-From:   Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <20190219150129.12728-1-colin.king@canonical.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190219150129.12728-1-colin.king@canonical.com>
-Message-ID: <155058893121.30979.13044488959474735904@skylake-alporthouse-com>
-User-Agent: alot/0.6
-Subject: Re: [PATCH][next] drm/i915/selftests: fix memory leak of 'spin'
-Date:   Tue, 19 Feb 2019 15:08:51 +0000
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] libertas_tf: lower the debug level of command trace
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20190210194735.17939-1-lkundrak@v3.sk>
+References: <20190210194735.17939-1-lkundrak@v3.sk>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20190219151019.C0D366071A@smtp.codeaurora.org>
+Date:   Tue, 19 Feb 2019 15:10:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Colin King (2019-02-19 15:01:29)
-> From: Colin Ian King <colin.king@canonical.com>
+Lubomir Rintel <lkundrak@v3.sk> wrote:
+
+> Logging each and every command response is way too much for INFO level.
+> Silence this, unless CONFIG_LIBERTAS_THINFIRM_DEBUG has been enabled.
 > 
-> There is a memory leak of 'spin' on an error return path. Fix this by
-> kfree'ing spin before the return.
-> 
-> Fixes: c06ee6ff2cbc ("drm/i915/selftests: Context SSEU reconfiguration tests")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> Reviewed-by: Steve deRosier <derosier@cal-sierra.com>
 
-I hope already fixed by
+Patch applied to wireless-drivers-next.git, thanks.
 
-commit 2a4a2754039594c60b58b02b6781428a85f6d745
-Author: Chris Wilson <chris@chris-wilson.co.uk>
-Date:   Fri Feb 15 19:50:10 2019 +0000
+744972b2c4d2 libertas_tf: lower the debug level of command trace
 
-    drm/i915/selftests: Always free spinner on __sseu_prepare error
+-- 
+https://patchwork.kernel.org/patch/10804873/
 
-Thanks,
--Chris
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
