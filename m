@@ -6,254 +6,258 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5A03C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BE68C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:57:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A7B121773
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:56:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A17C21773
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:57:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729456AbfBSQ4b (ORCPT
+        id S1729403AbfBSQ46 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:56:31 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41583 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729089AbfBSQ4b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:56:31 -0500
-Received: by mail-pf1-f196.google.com with SMTP id d25so2151159pfn.8;
-        Tue, 19 Feb 2019 08:56:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9ptH2xuHwY53hQbwe/SGEtrtxHdHaH6z+s31L2PF5/k=;
-        b=W6T19A3OK/0VQB9FxHMnPj11Xx2fuBWLxJoVEiCn6sCMUAqGHBDbftxi7gp9bl4ASx
-         MRivO92FyVf+DH4LvIiCqEu+i/iAYCi7L57LLzKf3w/dUoAknQzNmEAKOVjY1ges72ho
-         KSjSEWbcDHF/QbDG7C54QcXlbX+EWqj9bMLJdGP2IkHcVkl1tfP2GICk71gO9M90GAIN
-         5vtxClJFVEpWgyS/Ch7DG+htAnAkb313WPBjmmcqyCrENz4IbQ75fN+RSjb7UrPydWlF
-         AFHffc3MkRhZhVYoxXt75YUVJ/HSUhuQlTmDw35ZEPllWw/+l0cAv18FZujDU5Bbb0Rq
-         kGUw==
-X-Gm-Message-State: AHQUAuaZC48OQaZj+U1lOummKmynmlYRqg7hoEsrg+l8J0PMpRXUUVTQ
-        SHJV28PTZ7/a3YejihF5R6U=
-X-Google-Smtp-Source: AHgI3IYk8Lpd7+5j1W1GXfIx0t4V6ghhzJoKvBeY/1vncVxfKQSwIBq2ypGHBIQs/IM0bWvDbtQmbQ==
-X-Received: by 2002:a65:6099:: with SMTP id t25mr28462111pgu.448.1550595390253;
-        Tue, 19 Feb 2019 08:56:30 -0800 (PST)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id o26sm17545136pfk.139.2019.02.19.08.56.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Feb 2019 08:56:29 -0800 (PST)
-Message-ID: <1550595388.31902.133.camel@acm.org>
-Subject: Re: [RFC PATCH] scsi: fix oops in scsi_uninit_cmd()
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Jason Yan <yanaijie@huawei.com>, martin.petersen@oracle.com,
-        jejb@linux.vnet.ibm.com, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hare@suse.com, dan.j.williams@intel.com, jthumshirn@suse.de,
-        Steffen Maier <maier@linux.ibm.com>
-Date:   Tue, 19 Feb 2019 08:56:28 -0800
-In-Reply-To: <20190219072743.13606-1-yanaijie@huawei.com>
-References: <20190219072743.13606-1-yanaijie@huawei.com>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
+        Tue, 19 Feb 2019 11:56:58 -0500
+Received: from mga11.intel.com ([192.55.52.93]:58324 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729137AbfBSQ46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 11:56:58 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2019 08:56:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,388,1544515200"; 
+   d="scan'208";a="321621624"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga005.fm.intel.com with ESMTP; 19 Feb 2019 08:56:57 -0800
+Received: from [10.254.80.103] (kliang2-mobl1.ccr.corp.intel.com [10.254.80.103])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by linux.intel.com (Postfix) with ESMTPS id 9AA82580310;
+        Tue, 19 Feb 2019 08:56:56 -0800 (PST)
+Subject: Re: [PATCH 05/11] x86 topology: export die_siblings
+To:     Len Brown <lenb@kernel.org>, x86@kernel.org
+Cc:     linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
+        linux-doc@vger.kernel.org
+References: <635b2bf8b1151a191cd9299276b75791a818c0c2.1550545163.git.len.brown@intel.com>
+ <0d54a56186fb9be7a8f622a4625a41dc600dd7a4.1550545163.git.len.brown@intel.com>
+From:   "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <59e07a24-dc44-c21b-91d4-ea04e8d0653e@linux.intel.com>
+Date:   Tue, 19 Feb 2019 11:56:55 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
+MIME-Version: 1.0
+In-Reply-To: <0d54a56186fb9be7a8f622a4625a41dc600dd7a4.1550545163.git.len.brown@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-02-19 at 15:27 +-0800, Jason Yan wrote:
-+AD4 If we remove the scsi disk when running io with fio, oops occured with
-+AD4 the following condition.
-+AD4 
-+AD4 +AFs-scsi+AF8-eh+AF8-0+AF0                              +AFs-fio+AF0
-+AD4 scsi+AF8-end+AF8-request
-+AD4   -+AD4-blk+AF8-update+AF8-request
-+AD4     -+AD4-end+AF8-bio(io returned to userspace)
-+AD4                                          close
-+AD4                                            -+AD4-sd+AF8-release
-+AD4                                               -+AD4-scsi+AF8-disk+AF8-put
-+AD4                                                  -+AD4-scsi+AF8-disk+AF8-release
-+AD4                                                      -+AD4-disk-+AD4-private+AF8-data +AD0 NULL+ADs
-+AD4 
-+AD4   -+AD4-scsi+AF8-mq+AF8-uninit+AF8-cmd
-+AD4     -+AD4-scsi+AF8-uninit+AF8-cmd
-+AD4       -+AD4-scsi+AF8-cmd+AF8-to+AF8-driver
-+AD4     -+AD4-drv is NULL, Oops
-+AD4 
-+AD4 There is a small window between blk+AF8-update+AF8-request() and
-+AD4 scsi+AF8-mq+AF8-uninit+AF8-cmd() that scsi disk may have been released. This will
-+AD4 cause a oops like below:
-+AD4 
-+AD4 Unable to handle kernel NULL pointer dereference at virtual address
-+AD4 0000000000000000
-+AD4 s/sync.c:67, func+AD0-xfer, error+AD0-In+AFs-11347.116050+AF0 Mem abort info:
-+AD4 put/output error
-+AD4 +AFs-11347.121598+AF0   ESR +AD0 0x96000006
-+AD4 +AFs-11347.126200+AF0   Exception class +AD0 DABT (current EL), IL +AD0 32 bits
-+AD4 +AFs-11347.132117+AF0   SET +AD0 0, FnV +AD0 0
-+AD4 +AFs-11347.135170+AF0   EA +AD0 0, S1PTW +AD0 0
-+AD4 +AFs-11347.138308+AF0 Data abort info:
-+AD4 +AFs-11347.141186+AF0   ISV +AD0 0, ISS +AD0 0x00000006
-+AD4 +AFs-11347.145019+AF0   CM +AD0 0, WnR +AD0 0
-+AD4 +AFs-11347.147977+AF0 user pgtable: 4k pages, 48-bit VAs, pgdp +AD0
-+AD4 00000000a67aece2
-+AD4 +AFs-11347.154591+AF0 +AFs-0000000000000000+AF0 pgd+AD0-0000002f90774003,
-+AD4 pud+AD0-0000002fab098003, pmd+AD0-0000000000000000
-+AD4 +AFs-11347.163304+AF0 Internal error: Oops: 96000006 +AFsAIw-1+AF0 PREEMPT SMP
-+AD4 +AFs-11347.168870+AF0 Modules linked in: hisi+AF8-sas+AF8-v3+AF8-hw hisi+AF8-sas+AF8-main libsas
-+AD4 +AFs-11347.175044+AF0 CPU: 56 PID: 4294 Comm: scsi+AF8-eh+AF8-2 Not tainted
-+AD4 4.19.0-g8052059-dirty +ACM-2
-+AD4 +AFs-11347.182600+AF0 Hardware name: Huawei D06/D06, BIOS Hisilicon D06 UEFI
-+AD4 RC0 - B601 (V6.01) 11/08/2018
-+AD4 +AFs-11347.191370+AF0 pstate: a0c00009 (NzCv daif +-PAN +-UAO)
-+AD4 +AFs-11347.196155+AF0 pc : scsi+AF8-uninit+AF8-cmd+-0x24/0x3c
-+AD4 +AFs-11347.200240+AF0 lr : scsi+AF8-mq+AF8-uninit+AF8-cmd+-0x1c/0x30
-+AD4 +AFs-11347.204583+AF0 sp : ffff000024dabb60
-+AD4 +AFs-11347.207884+AF0 x29: ffff000024dabb60 x28: ffff000024dabd38
-+AD4 +AFs-11347.213184+AF0 x27: ffff000000f5b3a8 x26: ffff7df3b0181600
-+AD4 +AFs-11347.218484+AF0 x25: 0000000000000000 x24: ffff803bc5d36778
-+AD4 +AFs-11347.223783+AF0 x23: 000000000000000a x22: 0000000000000000
-+AD4 +AFs-11347.229082+AF0 x21: ffff803bc7397000 x20: ffff802f9148e530
-+AD4 +AFs-11347.234381+AF0 x19: ffff802f9148e530 x18: ffff7e0000000000
-+AD4 +AFs-11347.239679+AF0 x17: 0000000000000000 x16: 0000002f9e37d000
-+AD4 +AFs-11347.244979+AF0 x15: ffff7e0000000000 x14: 3863206336203839
-+AD4 +AFs-11347.250278+AF0 x13: 2036302030302038 x12: a46fac3d0d363d00
-+AD4 +AFs-11347.255578+AF0 x11: ffffffffffffffff x10: a46fac3d0d363d00
-+AD4 +AFs-11347.260877+AF0 x9 : 0000000040040000 x8 : 000000000000eb4b
-+AD4 +AFs-11347.266177+AF0 x7 : ffff000009771000 x6 : 0000000000210d00
-+AD4 +AFs-11347.271476+AF0 x5 : ffff803bc9f50000 x4 : 0000000000000000
-+AD4 +AFs-11347.276775+AF0 x3 : ffff802fb02b4380 x2 : ffff802f9148e400
-+AD4 +AFs-11347.282075+AF0 x1 : 0000000000000000 x0 : ffff802f9148e530
-+AD4 +AFs-11347.287375+AF0 Process scsi+AF8-eh+AF8-2 (pid: 4294, stack limit +AD0
-+AD4 0x000000007d2257f8)
-+AD4 +AFs-11347.294323+AF0 Call trace:
-+AD4 Jobs: 6 (f+AD0-6): +AFs-R+AFs-RRR1XXX1XRR3+AF0 47.296758+AF0  scsi+AF8-uninit+AF8-cmd+-0x24/0x3c
-+AD4 +AFs-22.7+ACU done+AF0 +AFs-1516MB/0KB/0KB /s+AF0 +AFs-754/0/0 iops+AF0 +AFs-eta 08m:39s+AF0
-+AD4 +AFs-11347.308390+AF0  scsi+AF8-mq+AF8-uninit+AF8-cmd+-0x1c/0x30
-+AD4 +AFs-11347.312387+AF0  scsi+AF8-end+AF8-request+-0x7c/0x1b8
-+AD4 +AFs-11347.316297+AF0  scsi+AF8-io+AF8-completion+-0x464/0x668
-+AD4 +AFs-11347.320467+AF0  scsi+AF8-finish+AF8-command+-0xbc/0x160
-+AD4 +AFs-11347.324636+AF0  scsi+AF8-eh+AF8-flush+AF8-done+AF8-q+-0x10c/0x170
-+AD4 +AFs-11347.328990+AF0  sas+AF8-scsi+AF8-recover+AF8-host+-0x84c/0xa98 +AFs-libsas+AF0
-+AD4 +AFs-11347.334202+AF0  scsi+AF8-error+AF8-handler+-0x140/0x5b0
-+AD4 +AFs-11347.338374+AF0  kthread+-0x100/0x12c
-+AD4 +AFs-11347.341590+AF0  ret+AF8-from+AF8-fork+-0x10/0x18
-+AD4 +AFs-11347.345153+AF0 Code: 71000c3f 540000e9 f9404c41 f941f421 (f9400021)
-+AD4 +AFs-11347.351234+AF0 ---+AFs end trace f496aacdaa1dcc51 +AF0----
-+AD4 
-+AD4 To fix this, get a refcount of scsi+AF8-disk in sd+AF8-init+AF8-command() to ensure
-+AD4 it will not be released before sd+AF8-uninit+AF8-command().
-+AD4 
-+AD4 Signed-off-by: Jason Yan +ADw-yanaijie+AEA-huawei.com+AD4
-+AD4 ---
-+AD4  drivers/scsi/sd.c +AHw 46 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+------------
-+AD4  1 file changed, 35 insertions(+-), 11 deletions(-)
-+AD4 
-+AD4 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-+AD4 index 5464d467e23e..6bdb8fbb570f 100644
-+AD4 --- a/drivers/scsi/sd.c
-+AD4 +-+-+- b/drivers/scsi/sd.c
-+AD4 +AEAAQA -1249,42 +-1249,64 +AEAAQA static blk+AF8-status+AF8-t sd+AF8-setup+AF8-read+AF8-write+AF8-cmnd(struct scsi+AF8-cmnd +ACo-SCpnt)
-+AD4  static blk+AF8-status+AF8-t sd+AF8-init+AF8-command(struct scsi+AF8-cmnd +ACo-cmd)
-+AD4  +AHs
-+AD4  	struct request +ACo-rq +AD0 cmd-+AD4-request+ADs
-+AD4 +-	struct scsi+AF8-disk +ACo-sdkp +AD0 NULL+ADs
-+AD4 +-	blk+AF8-status+AF8-t ret+ADs
-+AD4  
-+AD4  	switch (req+AF8-op(rq)) +AHs
-+AD4  	case REQ+AF8-OP+AF8-DISCARD:
-+AD4  		switch (scsi+AF8-disk(rq-+AD4-rq+AF8-disk)-+AD4-provisioning+AF8-mode) +AHs
-+AD4  		case SD+AF8-LBP+AF8-UNMAP:
-+AD4 -			return sd+AF8-setup+AF8-unmap+AF8-cmnd(cmd)+ADs
-+AD4 +-			ret +AD0 sd+AF8-setup+AF8-unmap+AF8-cmnd(cmd)+ADs
-+AD4 +-			break+ADs
-+AD4  		case SD+AF8-LBP+AF8-WS16:
-+AD4 -			return sd+AF8-setup+AF8-write+AF8-same16+AF8-cmnd(cmd, true)+ADs
-+AD4 +-			ret +AD0 sd+AF8-setup+AF8-write+AF8-same16+AF8-cmnd(cmd, true)+ADs
-+AD4 +-			break+ADs
-+AD4  		case SD+AF8-LBP+AF8-WS10:
-+AD4 -			return sd+AF8-setup+AF8-write+AF8-same10+AF8-cmnd(cmd, true)+ADs
-+AD4 +-			ret +AD0 sd+AF8-setup+AF8-write+AF8-same10+AF8-cmnd(cmd, true)+ADs
-+AD4 +-			break+ADs
-+AD4  		case SD+AF8-LBP+AF8-ZERO:
-+AD4 -			return sd+AF8-setup+AF8-write+AF8-same10+AF8-cmnd(cmd, false)+ADs
-+AD4 +-			ret +AD0 sd+AF8-setup+AF8-write+AF8-same10+AF8-cmnd(cmd, false)+ADs
-+AD4 +-			break+ADs
-+AD4  		default:
-+AD4 -			return BLK+AF8-STS+AF8-TARGET+ADs
-+AD4 +-			ret +AD0 BLK+AF8-STS+AF8-TARGET+ADs
-+AD4 +-			break+ADs
-+AD4  		+AH0
-+AD4 +-		break+ADs
-+AD4  	case REQ+AF8-OP+AF8-WRITE+AF8-ZEROES:
-+AD4 -		return sd+AF8-setup+AF8-write+AF8-zeroes+AF8-cmnd(cmd)+ADs
-+AD4 +-		ret +AD0 sd+AF8-setup+AF8-write+AF8-zeroes+AF8-cmnd(cmd)+ADs
-+AD4 +-		break+ADs
-+AD4  	case REQ+AF8-OP+AF8-WRITE+AF8-SAME:
-+AD4 -		return sd+AF8-setup+AF8-write+AF8-same+AF8-cmnd(cmd)+ADs
-+AD4 +-		ret +AD0 sd+AF8-setup+AF8-write+AF8-same+AF8-cmnd(cmd)+ADs
-+AD4 +-		break+ADs
-+AD4  	case REQ+AF8-OP+AF8-FLUSH:
-+AD4 -		return sd+AF8-setup+AF8-flush+AF8-cmnd(cmd)+ADs
-+AD4 +-		ret +AD0 sd+AF8-setup+AF8-flush+AF8-cmnd(cmd)+ADs
-+AD4 +-		break+ADs
-+AD4  	case REQ+AF8-OP+AF8-READ:
-+AD4  	case REQ+AF8-OP+AF8-WRITE:
-+AD4 -		return sd+AF8-setup+AF8-read+AF8-write+AF8-cmnd(cmd)+ADs
-+AD4 +-		ret +AD0 sd+AF8-setup+AF8-read+AF8-write+AF8-cmnd(cmd)+ADs
-+AD4 +-		break+ADs
-+AD4  	case REQ+AF8-OP+AF8-ZONE+AF8-RESET:
-+AD4 -		return sd+AF8-zbc+AF8-setup+AF8-reset+AF8-cmnd(cmd)+ADs
-+AD4 +-		ret +AD0 sd+AF8-zbc+AF8-setup+AF8-reset+AF8-cmnd(cmd)+ADs
-+AD4 +-		break+ADs
-+AD4  	default:
-+AD4  		WARN+AF8-ON+AF8-ONCE(1)+ADs
-+AD4 -		return BLK+AF8-STS+AF8-NOTSUPP+ADs
-+AD4 +-		ret +AD0 BLK+AF8-STS+AF8-NOTSUPP+ADs
-+AD4 +-		break+ADs
-+AD4  	+AH0
-+AD4 +-
-+AD4 +-	if (+ACE-ret) +AHs
-+AD4 +-		sdkp +AD0 scsi+AF8-disk(rq-+AD4-rq+AF8-disk)+ADs
-+AD4 +-		get+AF8-device(+ACY-sdkp-+AD4-dev)+ADs
-+AD4 +-	+AH0
-+AD4 +-
-+AD4 +-	return ret+ADs
-+AD4  +AH0
-+AD4  
-+AD4  static void sd+AF8-uninit+AF8-command(struct scsi+AF8-cmnd +ACo-SCpnt)
-+AD4  +AHs
-+AD4  	struct request +ACo-rq +AD0 SCpnt-+AD4-request+ADs
-+AD4  	u8 +ACo-cmnd+ADs
-+AD4 +-	struct scsi+AF8-disk +ACo-sdkp +AD0 NULL+ADs
-+AD4  
-+AD4  	if (rq-+AD4-rq+AF8-flags +ACY RQF+AF8-SPECIAL+AF8-PAYLOAD)
-+AD4  		mempool+AF8-free(rq-+AD4-special+AF8-vec.bv+AF8-page, sd+AF8-page+AF8-pool)+ADs
-+AD4 +AEAAQA -1295,6 +-1317,8 +AEAAQA static void sd+AF8-uninit+AF8-command(struct scsi+AF8-cmnd +ACo-SCpnt)
-+AD4  		SCpnt-+AD4-cmd+AF8-len +AD0 0+ADs
-+AD4  		mempool+AF8-free(cmnd, sd+AF8-cdb+AF8-pool)+ADs
-+AD4  	+AH0
-+AD4 +-	sdkp +AD0 scsi+AF8-disk(rq-+AD4-rq+AF8-disk)+ADs
-+AD4 +-	put+AF8-device(+ACY-sdkp-+AD4-dev)+ADs
-+AD4  +AH0
 
-Hi Jens and Christoph,
 
-My interpretation of the above bug report and patch is that this is a
-regression in the SCSI sd driver due to the switch from the legacy block
-layer to scsi-mq. The above patch introduces two atomic operations in the
-hot path and hence would introduce a performance regression. I think this
-can be avoided by making sure that sd+AF8-uninit+AF8-command() gets called before
-the request tag is freed. What changes would be required to make the block
-layer core call sd+AF8-uninit+AF8-command() before the request tag is freed? Would
-introducing prep+AF8-rq+AF8-fn and unprep+AF8-rq+AF8-fn callbacks in struct blk+AF8-mq+AF8-ops and
-making sure that the SCSI core sets these callback function pointers
-appropriately be sufficient? Would such a change allow to simplify the NVMe
-initiator driver? Are there any alternatives to this approach that are more
-elegant?
+On 2/18/2019 10:40 PM, Len Brown wrote:
+> From: Len Brown <len.brown@intel.com>
+> 
+> like core_siblings, except it shows which die are in the same package.
+> 
+> This is needed for lscpu(1) to correctly display die topology.
+> 
+> Signed-off-by: Len Brown <len.brown@intel.com>
+> Cc: linux-doc@vger.kernel.org
+> Signed-off-by: Len Brown <len.brown@intel.com>
+> ---
+>   Documentation/cputopology.txt   | 10 ++++++++++
+>   arch/x86/include/asm/smp.h      |  1 +
+>   arch/x86/include/asm/topology.h |  1 +
+>   arch/x86/kernel/smpboot.c       | 20 ++++++++++++++++++++
+>   arch/x86/xen/smp_pv.c           |  1 +
+>   drivers/base/topology.c         |  6 ++++++
+>   include/linux/topology.h        |  3 +++
+>   7 files changed, 42 insertions(+)
+> 
+> diff --git a/Documentation/cputopology.txt b/Documentation/cputopology.txt
+> index 287213b4517b..7dd2ae3df233 100644
+> --- a/Documentation/cputopology.txt
+> +++ b/Documentation/cputopology.txt
+> @@ -56,6 +56,16 @@ core_siblings_list:
+>   	human-readable list of cpuX's hardware threads within the same
+>   	die_id.
+>   
+> +die_siblings:
+> +
+> +	internal kernel map of cpuX's hardware threads within the same
+> +	physical_package_id.
+> +
+> +die_siblings_list:
+> +
+> +	human-readable list of cpuX's hardware threads within the same
+> +	physical_package_id.
+> +
+>   book_siblings:
+>   
+>   	internal kernel map of cpuX's hardware threads within the same
+> diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
+> index 2e95b6c1bca3..39266d193597 100644
+> --- a/arch/x86/include/asm/smp.h
+> +++ b/arch/x86/include/asm/smp.h
+> @@ -23,6 +23,7 @@ extern unsigned int num_processors;
+>   
+>   DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_sibling_map);
+>   DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_core_map);
+> +DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_die_map);
+>   /* cpus sharing the last level cache: */
+>   DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_llc_shared_map);
+>   DECLARE_PER_CPU_READ_MOSTLY(u16, cpu_llc_id);
+> diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
+> index 281be6bbc80d..a52a572147ba 100644
+> --- a/arch/x86/include/asm/topology.h
+> +++ b/arch/x86/include/asm/topology.h
+> @@ -110,6 +110,7 @@ extern const struct cpumask *cpu_coregroup_mask(int cpu);
+>   #define topology_core_id(cpu)			(cpu_data(cpu).cpu_core_id)
+>   
+>   #ifdef CONFIG_SMP
+> +#define topology_die_cpumask(cpu)		(per_cpu(cpu_die_map, cpu))
+>   #define topology_core_cpumask(cpu)		(per_cpu(cpu_core_map, cpu))
+
+Could you please update the document regarding to topology_die_cpumask 
+and topology_core_cpumask in Documentation/x86/topology.txt
 
 Thanks,
+Kan
 
-Bart.
+>   #define topology_sibling_cpumask(cpu)		(per_cpu(cpu_sibling_map, cpu))
+>   
+> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+> index 4250a87f57db..42d37e4a1918 100644
+> --- a/arch/x86/kernel/smpboot.c
+> +++ b/arch/x86/kernel/smpboot.c
+> @@ -90,6 +90,10 @@ EXPORT_PER_CPU_SYMBOL(cpu_sibling_map);
+>   DEFINE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_core_map);
+>   EXPORT_PER_CPU_SYMBOL(cpu_core_map);
+>   
+> +/* representing HT and core and die siblings of each logical CPU */
+> +DEFINE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_die_map);
+> +EXPORT_PER_CPU_SYMBOL(cpu_die_map);
+> +
+>   DEFINE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_llc_shared_map);
+>   
+>   /* Per CPU bogomips and other parameters */
+> @@ -461,6 +465,12 @@ static bool match_llc(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
+>    * multicore group inside a NUMA node.  If this happens, we will
+>    * discard the MC level of the topology later.
+>    */
+> +static bool match_pkg(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
+> +{
+> +	if (c->phys_proc_id == o->phys_proc_id)
+> +		return true;
+> +	return false;
+> +}
+>   static bool match_die(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
+>   {
+>   	if (c->cpu_die_id == o->cpu_die_id)
+> @@ -530,6 +540,7 @@ void set_cpu_sibling_map(int cpu)
+>   		cpumask_set_cpu(cpu, topology_sibling_cpumask(cpu));
+>   		cpumask_set_cpu(cpu, cpu_llc_shared_mask(cpu));
+>   		cpumask_set_cpu(cpu, topology_core_cpumask(cpu));
+> +		cpumask_set_cpu(cpu, topology_die_cpumask(cpu));
+>   		c->booted_cores = 1;
+>   		return;
+>   	}
+> @@ -576,8 +587,12 @@ void set_cpu_sibling_map(int cpu)
+>   			} else if (i != cpu && !c->booted_cores)
+>   				c->booted_cores = cpu_data(i).booted_cores;
+>   		}
+> +
+>   		if (match_die(c, o) && !topology_same_node(c, o))
+>   			x86_has_numa_in_package = true;
+> +
+> +		if ((i == cpu) || (has_mp && match_pkg(c, o)))
+> +			link_mask(topology_die_cpumask, cpu, i);
+>   	}
+>   
+>   	threads = cpumask_weight(topology_sibling_cpumask(cpu));
+> @@ -1173,6 +1188,7 @@ static __init void disable_smp(void)
+>   		physid_set_mask_of_physid(0, &phys_cpu_present_map);
+>   	cpumask_set_cpu(0, topology_sibling_cpumask(0));
+>   	cpumask_set_cpu(0, topology_core_cpumask(0));
+> +	cpumask_set_cpu(0, topology_die_cpumask(0));
+>   }
+>   
+>   /*
+> @@ -1268,6 +1284,7 @@ void __init native_smp_prepare_cpus(unsigned int max_cpus)
+>   	for_each_possible_cpu(i) {
+>   		zalloc_cpumask_var(&per_cpu(cpu_sibling_map, i), GFP_KERNEL);
+>   		zalloc_cpumask_var(&per_cpu(cpu_core_map, i), GFP_KERNEL);
+> +		zalloc_cpumask_var(&per_cpu(cpu_die_map, i), GFP_KERNEL);
+>   		zalloc_cpumask_var(&per_cpu(cpu_llc_shared_map, i), GFP_KERNEL);
+>   	}
+>   
+> @@ -1488,6 +1505,8 @@ static void remove_siblinginfo(int cpu)
+>   			cpu_data(sibling).booted_cores--;
+>   	}
+>   
+> +	for_each_cpu(sibling, topology_die_cpumask(cpu))
+> +		cpumask_clear_cpu(cpu, topology_die_cpumask(sibling));
+>   	for_each_cpu(sibling, topology_sibling_cpumask(cpu))
+>   		cpumask_clear_cpu(cpu, topology_sibling_cpumask(sibling));
+>   	for_each_cpu(sibling, cpu_llc_shared_mask(cpu))
+> @@ -1495,6 +1514,7 @@ static void remove_siblinginfo(int cpu)
+>   	cpumask_clear(cpu_llc_shared_mask(cpu));
+>   	cpumask_clear(topology_sibling_cpumask(cpu));
+>   	cpumask_clear(topology_core_cpumask(cpu));
+> +	cpumask_clear(topology_die_cpumask(cpu));
+>   	c->cpu_core_id = 0;
+>   	c->booted_cores = 0;
+>   	cpumask_clear_cpu(cpu, cpu_sibling_setup_mask);
+> diff --git a/arch/x86/xen/smp_pv.c b/arch/x86/xen/smp_pv.c
+> index 145506f9fdbe..ac13b0be8448 100644
+> --- a/arch/x86/xen/smp_pv.c
+> +++ b/arch/x86/xen/smp_pv.c
+> @@ -251,6 +251,7 @@ static void __init xen_pv_smp_prepare_cpus(unsigned int max_cpus)
+>   	for_each_possible_cpu(i) {
+>   		zalloc_cpumask_var(&per_cpu(cpu_sibling_map, i), GFP_KERNEL);
+>   		zalloc_cpumask_var(&per_cpu(cpu_core_map, i), GFP_KERNEL);
+> +		zalloc_cpumask_var(&per_cpu(cpu_die_map, i), GFP_KERNEL);
+>   		zalloc_cpumask_var(&per_cpu(cpu_llc_shared_map, i), GFP_KERNEL);
+>   	}
+>   	set_cpu_sibling_map(0);
+> diff --git a/drivers/base/topology.c b/drivers/base/topology.c
+> index 50352cf96f85..5b1317ae3262 100644
+> --- a/drivers/base/topology.c
+> +++ b/drivers/base/topology.c
+> @@ -57,6 +57,10 @@ define_siblings_show_func(core_siblings, core_cpumask);
+>   static DEVICE_ATTR_RO(core_siblings);
+>   static DEVICE_ATTR_RO(core_siblings_list);
+>   
+> +define_siblings_show_func(die_siblings, die_cpumask);
+> +static DEVICE_ATTR_RO(die_siblings);
+> +static DEVICE_ATTR_RO(die_siblings_list);
+> +
+>   #ifdef CONFIG_SCHED_BOOK
+>   define_id_show_func(book_id);
+>   static DEVICE_ATTR_RO(book_id);
+> @@ -81,6 +85,8 @@ static struct attribute *default_attrs[] = {
+>   	&dev_attr_thread_siblings_list.attr,
+>   	&dev_attr_core_siblings.attr,
+>   	&dev_attr_core_siblings_list.attr,
+> +	&dev_attr_die_siblings.attr,
+> +	&dev_attr_die_siblings_list.attr,
+>   #ifdef CONFIG_SCHED_BOOK
+>   	&dev_attr_book_id.attr,
+>   	&dev_attr_book_siblings.attr,
+> diff --git a/include/linux/topology.h b/include/linux/topology.h
+> index 5cc8595dd0e4..47a3e3c08036 100644
+> --- a/include/linux/topology.h
+> +++ b/include/linux/topology.h
+> @@ -196,6 +196,9 @@ static inline int cpu_to_mem(int cpu)
+>   #ifndef topology_core_cpumask
+>   #define topology_core_cpumask(cpu)		cpumask_of(cpu)
+>   #endif
+> +#ifndef topology_die_cpumask
+> +#define topology_die_cpumask(cpu)		cpumask_of(cpu)
+> +#endif
+>   
+>   #ifdef CONFIG_SCHED_SMT
+>   static inline const struct cpumask *cpu_smt_mask(int cpu)
+> 
