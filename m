@@ -4,57 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44062C4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:03:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 477B0C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:04:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 146D920823
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:03:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14F6D21736
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:04:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mathembedded-com.20150623.gappssmtp.com header.i=@mathembedded-com.20150623.gappssmtp.com header.b="k1r0V9pz"
+	dkim=pass (2048-bit key) header.d=mathembedded-com.20150623.gappssmtp.com header.i=@mathembedded-com.20150623.gappssmtp.com header.b="vODLDL71"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728763AbfBSNDv (ORCPT
+        id S1728799AbfBSNED (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 08:03:51 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38258 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728649AbfBSNDq (ORCPT
+        Tue, 19 Feb 2019 08:04:03 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42540 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728008AbfBSNDo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 08:03:46 -0500
-Received: by mail-wm1-f66.google.com with SMTP id v26so2723871wmh.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 05:03:44 -0800 (PST)
+        Tue, 19 Feb 2019 08:03:44 -0500
+Received: by mail-wr1-f67.google.com with SMTP id r5so8516976wrg.9
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 05:03:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=mathembedded-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:subject:date:message-id:in-reply-to:references;
-        bh=EertYF60nStrNT1pM/X5LNwETvlDNxIyb8iUT32CCOc=;
-        b=k1r0V9pzqPf1k7YkvK+Mnc+vNjIU1GBIaNunGV37gSaX1P4AMXW+Icvikk/vHx3AWu
-         NJntWhXNfJAbuRhVzVg5M+ANzfcWhGKhJHxRAebEU/omqNK4wFjXlntQhtU+e5VY/4vN
-         Mq9WdeweQ4bCjC81ClZ4i6d77vsxhvqleBjcHTJwlDlUszPqmzCcw8dPE4v974PGqVTg
-         uLhQEkTxOB7AV3DhnPKlKkROcIjMdIkjebk+CMuLorzGkEMa4a94jpQ7UV3z+g3+JfGZ
-         TN7RGNmf5UHd9q7Rb3LqXM7UlQOBMNeEgQTqLY2SCK5py/yXAeM91R4QUDU3NcGldrV3
-         ZvIw==
+        bh=LbMWZVugHEDDl6B6kVACz748pwTAoghLveLfYXT/bz4=;
+        b=vODLDL71oqbgI5RJ82lTdYcsU7rdCYlZN2Y/PNrUH7G1RB/itFSgKmWF2j4+63fHnl
+         nuslTo6bGLfS2W+9NBuoEt6l9+DL+UzbR8MmzlFHmHq3WDoOvjAyts4lqhZ6Kin3Dist
+         DVgrnn1G88iZKM4YTon9LfdOtaXlQihvUcj8aXhwe9wPwDf6sJJifhOju7dsegZX60Vd
+         +nM3TQG9bR2+ZOunyfcsa5Fs5AgdCd9j3CQtMHvSnrLpD7nRq4SbBjxHOZj9Cea7H/qI
+         PRZV3awFJCyMh+sN8sM293tvSdkNRCqUS+STzTLweuPp0STxarVsdjjg72qy5MQf/Epb
+         UDeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references;
-        bh=EertYF60nStrNT1pM/X5LNwETvlDNxIyb8iUT32CCOc=;
-        b=CYU3ZM4UmyhMh41xnsDBYJN5ALhKcQYMq/EIO28M8YPRmaI8eTxyR6mT5JlELt13zm
-         brJoZsipA8T847AfwempMQ7K2k/1LBWveT1zrrEx0FQcdcbCNsly/gcF10UARZrx9GRc
-         nl8bKcmGoWZ0rHGzk81idP/mv+c+sqJ6CGe7oRX4BRekEIGGrbdHfzKI+JCh0M4OtJ+Q
-         lBfKZIiYQCrbiEmsQWRhHuHwqjMyjcZehvPtNPXNxbayp2qnGC7BvcupkOl1cqaPUQWc
-         VC4j5O4TsqVJwCQKImZ295gddpgEbLB2oGLP155FM24xl9fifxQvWPfWbX/9ZUoCRnXH
-         wMbw==
-X-Gm-Message-State: AHQUAubYiVycVL0LonF7TDJaBFwYWMZ4ilMtn+PcHXizgu9ChF7x0aVb
-        aDTYJ018XzToZPLXFgYFzedj7A==
-X-Google-Smtp-Source: AHgI3IahmvczfF6HiUC5cZZcrTMX3conJgIDIOKJ6IdgWS6h591ZBz0sh6VnyCcCDLAG9Vi5S8HNOg==
-X-Received: by 2002:a1c:99c3:: with SMTP id b186mr2738670wme.79.1550581424034;
-        Tue, 19 Feb 2019 05:03:44 -0800 (PST)
+        bh=LbMWZVugHEDDl6B6kVACz748pwTAoghLveLfYXT/bz4=;
+        b=bG5+ljtupwGr2YTVh9cv/V4oSB5p40XXmP326X49RX5V7Tqh0kJJ3jgyOSvdCJBXLH
+         8Sr7wJpJVFaZjTFw4pkV4UdEQFuRh3W7hOhShIqJAt9T97asheFcrigl7lOZwmpeQAj3
+         WKYHNOC/Q6mbWKt49enO6GP6dBLsUi2gz1sy4/+jC7zXcUcXH+H6wWK/zD31HaQ+fP+2
+         EFx31NpNdinXwRQtoispCf3Up4AVwDMV9b1JROhIkyhKkeeVgT4oO7rTQwrNfqPMeYm2
+         OnTeFGkbrSeJUCfshnEScLz+3qXQeBGkNcJ4j0CjiQly6XitHT0yb4CiCqNgPmBGTFm0
+         Vi7g==
+X-Gm-Message-State: AHQUAuZxVmkDE6TMZVDkMtevcwGOLLnNjZv8OcXDxVWK00jhgKBvVltC
+        jogGfxF2fMPgiDfhaKyNXgfOVA==
+X-Google-Smtp-Source: AHgI3IZdJMw9NzriD/8qRpvqfCu1suufsqr2zsVvvPz39toDMwdi0FYjyO3QJSWzMFUH4/BQ0wctcA==
+X-Received: by 2002:a5d:4686:: with SMTP id u6mr21557468wrq.206.1550581422617;
+        Tue, 19 Feb 2019 05:03:42 -0800 (PST)
 Received: from diamond.mathembedded.com (host86-137-106-133.range86-137.btcentralplus.com. [86.137.106.133])
-        by smtp.gmail.com with ESMTPSA id y22sm61899811wrd.45.2019.02.19.05.03.42
+        by smtp.gmail.com with ESMTPSA id y22sm61899811wrd.45.2019.02.19.05.03.41
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Feb 2019 05:03:43 -0800 (PST)
+        Tue, 19 Feb 2019 05:03:41 -0800 (PST)
 From:   Stuart Menefy <stuart.menefy@mathembedded.com>
 X-Google-Original-From: Stuart Menefy <stuart@menefy.org>
 To:     Rob Herring <robh+dt@kernel.org>,
@@ -64,9 +64,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/4] ARM: dts: exynos: Add interrupts for dedicated EINTs on Exynos5260
-Date:   Tue, 19 Feb 2019 13:03:36 +0000
-Message-Id: <20190219130337.21353-4-stuart@menefy.org>
+Subject: [PATCH v2 2/4] ARM: dts: exynos: Add high speed I2C ports for exynos5260
+Date:   Tue, 19 Feb 2019 13:03:35 +0000
+Message-Id: <20190219130337.21353-3-stuart@menefy.org>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20190219130337.21353-1-stuart@menefy.org>
 References: <20190219130337.21353-1-stuart@menefy.org>
@@ -77,47 +77,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stuart Menefy <stuart.menefy@mathembedded.com>
 
-Add the missing interrupt information for the GPIO lines with
-dedicated EINT interrupts.
+Most of the work to support the high speed I2C ports on the Exynos 5260
+was added in commit 218e1496135e ("i2c: exynos5: add support for HSI2C
+on Exynos5260 SoC") and the pinctrl nodes have always been available.
+All that is missing to get them working is the additon of the DT bindings.
 
 Signed-off-by: Stuart Menefy <stuart.menefy@mathembedded.com>
 ---
- arch/arm/boot/dts/exynos5260-pinctrl.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5260-pinctrl.dtsi b/arch/arm/boot/dts/exynos5260-pinctrl.dtsi
-index b1edb20b789e..17e2f3e0d71e 100644
---- a/arch/arm/boot/dts/exynos5260-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5260-pinctrl.dtsi
-@@ -153,6 +153,14 @@
- 		#gpio-cells = <2>;
+Changes since v1:
+- Removed unused attribute: samsung,check-transdone-int
+- Reordered additions so they now appear in address order
+- Changed hex addresses to lower case
+
+ arch/arm/boot/dts/exynos5260.dtsi | 56 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
+index 14b423de9137..a8c7c6e589a0 100644
+--- a/arch/arm/boot/dts/exynos5260.dtsi
++++ b/arch/arm/boot/dts/exynos5260.dtsi
+@@ -17,6 +17,10 @@
+ 	#size-cells = <1>;
  
- 		interrupt-controller;
-+		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
- 		#interrupt-cells = <2>;
+ 	aliases {
++		i2c0 = &hsi2c_0;
++		i2c1 = &hsi2c_1;
++		i2c2 = &hsi2c_2;
++		i2c3 = &hsi2c_3;
+ 		pinctrl0 = &pinctrl_0;
+ 		pinctrl1 = &pinctrl_1;
+ 		pinctrl2 = &pinctrl_2;
+@@ -339,6 +343,58 @@
+ 			fifo-depth = <64>;
+ 			status = "disabled";
+ 		};
++
++		hsi2c_0: hsi2c@12da0000 {
++			compatible = "samsung,exynos5260-hsi2c";
++			reg = <0x12DA0000 0x1000>;
++			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&i2c0_hs_bus>;
++			clocks = <&clock_peri PERI_CLK_HSIC0>;
++			clock-names = "hsi2c";
++			status = "disabled";
++		};
++
++		hsi2c_1: hsi2c@12db0000 {
++			compatible = "samsung,exynos5260-hsi2c";
++			reg = <0x12DB0000 0x1000>;
++			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&i2c1_hs_bus>;
++			clocks = <&clock_peri PERI_CLK_HSIC1>;
++			clock-names = "hsi2c";
++			status = "disabled";
++		};
++
++		hsi2c_2: hsi2c@12dc0000 {
++			compatible = "samsung,exynos5260-hsi2c";
++			reg = <0x12DC0000 0x1000>;
++			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&i2c2_hs_bus>;
++			clocks = <&clock_peri PERI_CLK_HSIC2>;
++			clock-names = "hsi2c";
++			status = "disabled";
++		};
++
++		hsi2c_3: hsi2c@12dd0000 {
++			compatible = "samsung,exynos5260-hsi2c";
++			reg = <0x12DD0000 0x1000>;
++			interrupts = <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&i2c3_hs_bus>;
++			clocks = <&clock_peri PERI_CLK_HSIC3>;
++			clock-names = "hsi2c";
++			status = "disabled";
++		};
  	};
- 
-@@ -161,6 +169,14 @@
- 		#gpio-cells = <2>;
- 
- 		interrupt-controller;
-+		interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
- 		#interrupt-cells = <2>;
- 	};
+ };
  
 -- 
 2.13.6
