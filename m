@@ -2,126 +2,110 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD6FDC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81CAAC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:20:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 968F3217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:17:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57FDE217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:20:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725822AbfBSGRV (ORCPT
+        id S1726396AbfBSGT7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 01:17:21 -0500
-Received: from foss.arm.com ([217.140.101.70]:40622 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725730AbfBSGRV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 01:17:21 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DFFB1EBD;
-        Mon, 18 Feb 2019 22:17:15 -0800 (PST)
-Received: from [10.162.40.139] (p8cg001049571a15.blr.arm.com [10.162.40.139])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3CF8E3F575;
-        Mon, 18 Feb 2019 22:17:09 -0800 (PST)
-Subject: Re: [PATCH v2 1/3] arm64: mm: use appropriate ctors for page tables
-To:     Yu Zhao <yuzhao@google.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Jun Yao <yaojun8558363@gmail.com>,
-        Laura Abbott <labbott@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        Matthew Wilcox <willy@infradead.org>
-References: <20190214211642.2200-1-yuzhao@google.com>
- <20190218231319.178224-1-yuzhao@google.com>
- <863acc9a-53fb-86ad-4521-828ee8d9c222@arm.com>
- <20190219053205.GA124985@google.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <8f9b0bfb-b787-fa3e-7322-73a56a618aa8@arm.com>
-Date:   Tue, 19 Feb 2019 11:47:12 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20190219053205.GA124985@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 19 Feb 2019 01:19:59 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33064 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725730AbfBSGT7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 01:19:59 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1J6E2FT063354
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 01:19:58 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qr94f1ass-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 01:19:57 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Tue, 19 Feb 2019 06:19:45 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 19 Feb 2019 06:19:42 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1J6JfnG22478926
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 19 Feb 2019 06:19:41 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 23ED84C04A;
+        Tue, 19 Feb 2019 06:19:41 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EFDC44C040;
+        Tue, 19 Feb 2019 06:19:39 +0000 (GMT)
+Received: from srikart450.in.ibm.com (unknown [9.122.211.92])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 19 Feb 2019 06:19:39 +0000 (GMT)
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        KAUSTUBH RAJENDRA WELANKAR 
+        <f20160095@hyderabad.bits-pilani.ac.in>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH] doc: trace: Fix documentation for uprobe_profile
+Date:   Tue, 19 Feb 2019 11:49:28 +0530
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 19021906-0008-0000-0000-000002C21C07
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021906-0009-0000-0000-0000222E4CC2
+Message-Id: <1550557168-12345-1-git-send-email-srikar@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-19_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=8 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902190048
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Matthew Wilcox
+uprobe_profile has filename and number of probe hits information for
+each uprobe event. The documentation erroneously talks about probe
+mis-hits. Update the documentation to the correct information.
 
-On 02/19/2019 11:02 AM, Yu Zhao wrote:
-> On Tue, Feb 19, 2019 at 09:51:01AM +0530, Anshuman Khandual wrote:
->>
->>
->> On 02/19/2019 04:43 AM, Yu Zhao wrote:
->>> For pte page, use pgtable_page_ctor(); for pmd page, use
->>> pgtable_pmd_page_ctor() if not folded; and for the rest (pud,
->>> p4d and pgd), don't use any.
->> pgtable_page_ctor()/dtor() is not optional for any level page table page
->> as it determines the struct page state and zone statistics.
-> 
-> This is not true. pgtable_page_ctor() is only meant for user pte
-> page. The name isn't perfect (we named it this way before we had
-> split pmd page table lock, and never bothered to change it).
-> 
-> The commit cccd843f54be ("mm: mark pages in use for page tables")
-> clearly states so:
->   Note that only pages currently accounted as NR_PAGETABLES are
->   tracked as PageTable; this does not include pgd/p4d/pud/pmd pages.
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Reported-by: KAUSTUBH RAJENDRA WELANKAR <f20160095@hyderabad.bits-pilani.ac.in>
+Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+---
+ Documentation/trace/uprobetracer.rst | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-I think the commit is the following one and it does say so. But what is
-the rationale of tagging only PTE page as PageTable and updating the zone
-stat but not doing so for higher level page table pages ? Are not they
-used as page table pages ? Should not they count towards NR_PAGETABLE ?
+diff --git a/Documentation/trace/uprobetracer.rst b/Documentation/trace/uprobetracer.rst
+index 4c3bfde2..4346e23 100644
+--- a/Documentation/trace/uprobetracer.rst
++++ b/Documentation/trace/uprobetracer.rst
+@@ -73,10 +73,9 @@ For $comm, the default type is "string"; any other type is invalid.
+ 
+ Event Profiling
+ ---------------
+-You can check the total number of probe hits and probe miss-hits via
+-/sys/kernel/debug/tracing/uprobe_profile.
+-The first column is event name, the second is the number of probe hits,
+-the third is the number of probe miss-hits.
++You can check the total number of probe hits per event via
++/sys/kernel/debug/tracing/uprobe_profile. The first column is the filename,
++the second is the event name, the third is the number of probe hits.
+ 
+ Usage examples
+ --------------
+-- 
+2.7.4
 
-1d40a5ea01d53251c ("mm: mark pages in use for page tables")
-> 
-> I'm sure if we go back further, we can find similar stories: we
-> don't set PageTable on page tables other than pte; and we don't
-> account page tables other than pte. I don't have any objection if
-> you want change these two. But please make sure they are consistent
-> across all archs.
-
-pgtable_page_ctor/dtor() use across arch is not consistent and there is a need
-for generalization which has been already acknowledged earlier. But for now we
-can atleast fix this on arm64.
-
-https://lore.kernel.org/lkml/1547619692-7946-1-git-send-email-anshuman.khandual@arm.com/
-
-> 
->> We should not skip it for any page table page.
-> 
-> In fact, calling it on pmd/pud/p4d is peculiar, and may even be
-> considered wrong. AFAIK, no other arch does so.
-
-Why would it be considered wrong ? IIUC archs have their own understanding
-of this and there are different implementations. But doing something for
-PTE page and skipping for others is plain inconsistent.
-
-> 
->> As stated before pgtable_pmd_page_ctor() is not a replacement for
->> pgtable_page_ctor().
-> 
-> pgtable_pmd_page_ctor() must be used on user pmd. For kernel pmd,
-> it's okay to use pgtable_page_ctor() instead only because kernel
-> doesn't have thp.
-
-The only extra thing to be done for THP is initializing page->pmd_huge_pte
-apart from calling pgtable_page_ctor(). Right not it just works on arm64
-may be because page->pmd_huge_pte never gets accessed before it's init and
-no path checks for it when not THP. Its better to init/reset pmd_huge_pte.
