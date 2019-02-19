@@ -2,72 +2,88 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D76E7C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E25C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:45:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CCA02146E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:45:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Bg+NNfXr"
+	by mail.kernel.org (Postfix) with ESMTP id A8C552146E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:45:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728075AbfBSOpB (ORCPT
+        id S1728369AbfBSOpl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 09:45:01 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:33814 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725885AbfBSOpA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 09:45:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=21DHr+RSj+xLDKfUOmmwQEe9U8Yhv3wyd3vmDfQBbJ8=; b=Bg+NNfXr8pMNxktAjX0ExkyVv
-        lOVOoBcOoNUemoyU0nqmdAKULhDXV51CARXuwixN51/frSvDKHAQyC9gWmOcQUKqwf2LBzaECW/v9
-        5T6e7ypytKZM1hjJQ5+vIH+M8S3EH0yWq0te02Qz3+j4NRy0KO+Vj8f+QrbUEO4qRquWe2sd0K4uM
-        29InieQC7y/wRfX+gkc/3SA8hQLf7Dk4jUEnQIR7wCmC+fR3QcDWxZGBHnuSnL5fxuP5FEtyfNNWs
-        wYYKgm3NuUkjYL6QAE0DtVmUV+Le0h5If2nKRN/8DgwColGlvf/ZNYAjJDstbSPcDoTIROfGBfSDm
-        4VliQC82g==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gw6di-0007i1-S2; Tue, 19 Feb 2019 14:44:54 +0000
-Date:   Tue, 19 Feb 2019 06:44:54 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Meelis Roos <mroos@linux.ee>, "Theodore Y. Ts'o" <tytso@mit.edu>,
-        linux-alpha@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-block@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: ext4 corruption on alpha with 4.20.0-09062-gd8372ba8ce28
-Message-ID: <20190219144454.GB12668@bombadil.infradead.org>
-References: <fb63a4d0-d124-21c8-7395-90b34b57c85a@linux.ee>
- <1c26eab4-3277-9066-5dce-6734ca9abb96@linux.ee>
- <076b8b72-fab0-ea98-f32f-f48949585f9d@linux.ee>
- <20190216174536.GC23000@mit.edu>
- <e175b885-082a-97c1-a0be-999040a06443@linux.ee>
- <20190218120209.GC20919@quack2.suse.cz>
- <4e015688-8633-d1a0-308b-ba2a78600544@linux.ee>
- <20190219132026.GA28293@quack2.suse.cz>
+        Tue, 19 Feb 2019 09:45:41 -0500
+Received: from mga14.intel.com ([192.55.52.115]:35668 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726352AbfBSOpl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 09:45:41 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2019 06:45:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,388,1544515200"; 
+   d="scan'208";a="148047966"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 19 Feb 2019 06:45:38 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 19 Feb 2019 16:45:38 +0200
+Date:   Tue, 19 Feb 2019 16:45:38 +0200
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] usb: typec: mux: remove redundant check on
+ variable match
+Message-ID: <20190219144538.GA27637@kuha.fi.intel.com>
+References: <20190219134333.10142-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190219132026.GA28293@quack2.suse.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20190219134333.10142-1-colin.king@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 02:20:26PM +0100, Jan Kara wrote:
-> Thanks for information. Yeah, that makes somewhat more sense. Can you ever
-> see the failure if you disable CONFIG_TRANSPARENT_HUGEPAGE? Because your
-> findings still seem to indicate that there' some problem with page
-> migration and Alpha (added MM list to CC).
+On Tue, Feb 19, 2019 at 01:43:33PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> All the code paths that lead to the return statement are where
+> match is always true, hence the check to see if it is true is
+> redundant and can be removed.
+> 
+> Detected by CoverityScan, CID#14769672 ("Logically dead code")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Could
-https://lore.kernel.org/linux-mm/20190219123212.29838-1-larper@axis.com/T/#u
-be relevant?
+Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
+> ---
+>  drivers/usb/typec/mux.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/mux.c b/drivers/usb/typec/mux.c
+> index a5947d98824d..b94e2920eb38 100644
+> --- a/drivers/usb/typec/mux.c
+> +++ b/drivers/usb/typec/mux.c
+> @@ -184,7 +184,7 @@ static void *typec_mux_match(struct device_connection *con, int ep, void *data)
+>  		if (dev_fwnode(mux->dev) == con->fwnode)
+>  			return mux;
+>  
+> -	return match ? ERR_PTR(-EPROBE_DEFER) : NULL;
+> +	return ERR_PTR(-EPROBE_DEFER);
+>  }
+>  
+>  /**
+> -- 
+> 2.20.1
+
+thanks,
+
+-- 
+heikki
