@@ -2,567 +2,161 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48330C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78BF4C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:06:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0136E2147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:04:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C56A2147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:06:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sx0xzSml"
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="ptpbq+YM";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="VgwTeztc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728399AbfBSQEV (ORCPT
+        id S1728661AbfBSQF6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:04:21 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:45997 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbfBSQEU (ORCPT
+        Tue, 19 Feb 2019 11:05:58 -0500
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:54434 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725885AbfBSQF5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:04:20 -0500
-Received: by mail-qk1-f194.google.com with SMTP id v139so1911882qkb.12;
-        Tue, 19 Feb 2019 08:04:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lLr6xH+OrrQ+36+8tkrMUBedy4v0/54r6u4Qhmo9I+0=;
-        b=sx0xzSmlrLmmqyfFEAmlURpC7UyP9x8RuJ5auIsyUhIuzwpeQq9UhvwFhh3tz31h8P
-         GsIFe1f//7F+Uha+AyUsQwD9E66OvR0AYya8VUu11nRdrZYBKKJBFWHexnCg1WFQZbgs
-         CJHkRHzTdgfUAjNn/j6bgOH5el6OBGuQWdzp2S5+VUURnb9a7lK8jI8vl4eeC/HX0MSs
-         ScmUw3WNTojByS1WhZWPgV59XnrTL0mgUJTC2rHWx49Tp2Y84FaMnBRXQmQ36mv673RY
-         HaALYvYk6yEj7GyHURvZYssX6/vTTsDL/5intlQkqT8rQlwumRKEuUFVvFCNddwiCDS9
-         qkcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lLr6xH+OrrQ+36+8tkrMUBedy4v0/54r6u4Qhmo9I+0=;
-        b=SDrfGfcyzyu2IkLiXDmOcnlXkkkseNy5V9mxPA82ZqRPhHOg5uLppYpB96UV9POJOl
-         RgjWLATbCVd9soAyWblU1Te8UpyKNXaf39C3NtJugk4Rj0oWvmtaqgmI56UkvuuX+/Ym
-         jRMmNfhwcpCSr+juAP5Bi461pn5IneP5mzE0UqYXmtisomLvaqSbGM3v/KexNofa/uDo
-         ooyXNr8KZg875fJm/k8w59bH4Lcw5drLBlM/uvtDXrmr+cfywy6FDHz9fy+/LIvlJChx
-         h+zpeORUUboRrf7wfqJUcJdI1fkL4+nxrHjwNlzssfh7f2RdUN74aMkjbL+wDqjKI+Jy
-         pFrA==
-X-Gm-Message-State: AHQUAuaSEWH+Lx+JdNpFjv8KD00ze/WLFvWG+nM/wJu8kEzih58qakfc
-        UA1Ngh/ZKSvhQ1EYBqwOaTqBRvy4ghOPHTWFuNk=
-X-Google-Smtp-Source: AHgI3IakhwrabbIT7c5A3KpHWCVxUCe5WWUvhvtzMXtHiHwfzGyEd6Nue1ATEgoDFCdC6Mi9jwV5R8CJKyi8h9FfQyA=
-X-Received: by 2002:a37:b12:: with SMTP id 18mr1264511qkl.125.1550592258017;
- Tue, 19 Feb 2019 08:04:18 -0800 (PST)
+        Tue, 19 Feb 2019 11:05:57 -0500
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1JG2St6006447;
+        Tue, 19 Feb 2019 08:05:45 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=proofpoint;
+ bh=4svhW4rCTFtXt3Xg6wR4rUMZ5Hv9s8vJuQd8Dt7FQOw=;
+ b=ptpbq+YM5HHJkJ7HPD6W85zayXTuUApX9w+InVLbT9FpSKEycqMB5faybD999Hhsf10Z
+ ArLFJ8cmpsN6NCNaPQqNpyBzPh6c54ewtcKSYDWnlUF19MJvB8t5WDrkAp5z9UQkRPQB
+ Cq6Hpz3+c4jRcBwNU3dTqVQS2ZMKYlkjFSA9w4gTj57npo5q7g9fnz3fomL1OABMu7i2
+ h2VioN1aSRKGPKM14xYAN6ISR8plzjVdenhPEV96eQcFmkHqXfAQwI8LLx9hrYN9YHqn
+ HYQTXN2ch78uocEuSbGD0qPnssLw8XY+NLBofVZ8IhfCBiHf/alf1d96V5rxNjh7lYmF Pw== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=tjoseph@cadence.com
+Received: from nam04-sn1-obe.outbound.protection.outlook.com (mail-sn1nam04lp2054.outbound.protection.outlook.com [104.47.44.54])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2qqt6q5jcn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 19 Feb 2019 08:05:45 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4svhW4rCTFtXt3Xg6wR4rUMZ5Hv9s8vJuQd8Dt7FQOw=;
+ b=VgwTeztcTaufJPLxAgbTjueZ3JjGBFsU4KJo1JiLMIhs5euHaVUIhN4W7nMqtLklLPsLutgYPK90dPf3RYU25YJSBn/2MSZldV3f4NTrRg0HcOSY6rbqm+3TkPuoAQPKkDfREOAlcowjQ5B1f5cP+isVDSYB/+mRsSRSZsywo38=
+Received: from CY1PR07CA0020.namprd07.prod.outlook.com
+ (2a01:111:e400:c60a::30) by MW2PR07MB3978.namprd07.prod.outlook.com
+ (2603:10b6:907:5::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1622.18; Tue, 19 Feb
+ 2019 16:05:42 +0000
+Received: from CO1NAM05FT007.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e50::208) by CY1PR07CA0020.outlook.office365.com
+ (2a01:111:e400:c60a::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1622.16 via Frontend
+ Transport; Tue, 19 Feb 2019 16:05:41 +0000
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ cadence.com discourages use of 199.43.4.28 as permitted sender)
+Received: from rmmaillnx1.cadence.com (199.43.4.28) by
+ CO1NAM05FT007.mail.protection.outlook.com (10.152.96.113) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.11 via Frontend Transport; Tue, 19 Feb 2019 16:05:40 +0000
+Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
+        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id x1JG5ZSo010015
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Tue, 19 Feb 2019 11:05:37 -0500
+X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
+Received: from maileu3.global.cadence.com (10.160.88.99) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3; Tue, 19 Feb 2019 17:05:34 +0100
+Received: from lvlogina.cadence.com (10.165.176.102) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Tue, 19 Feb 2019 17:05:34 +0100
+Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
+        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id x1JG5YgF003958;
+        Tue, 19 Feb 2019 16:05:34 GMT
+Received: (from tjoseph@localhost)
+        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id x1JG5Vb1003763;
+        Tue, 19 Feb 2019 16:05:31 GMT
+From:   Tom Joseph <tjoseph@cadence.com>
+To:     <mchehab+samsung@kernel.org>
+CC:     <davem@davemloft.net>, <gregkh@linuxfoundation.org>,
+        <nicolas.ferre@microchip.com>, <arnd@arndb.de>,
+        <lorenzo.pieralisi@arm.com>, <linux-kernel@vger.kernel.org>,
+        Tom Joseph <tjoseph@cadence.com>
+Subject: [PATCH] MAINTAINERS: pci/cadence: Updating maintainer information
+Date:   Tue, 19 Feb 2019 16:04:53 +0000
+Message-ID: <1550592294-1768-1-git-send-email-tjoseph@cadence.com>
+X-Mailer: git-send-email 2.2.2
 MIME-Version: 1.0
-References: <20190123183325.92946-1-ncrews@chromium.org> <20190123183325.92946-6-ncrews@chromium.org>
-In-Reply-To: <20190123183325.92946-6-ncrews@chromium.org>
-From:   Enric Balletbo Serra <eballetbo@gmail.com>
-Date:   Tue, 19 Feb 2019 17:04:06 +0100
-Message-ID: <CAFqH_509sadtsnN9zH=Z_uFv-sKLbo1gSDK6LbsuaCSdym2bNw@mail.gmail.com>
-Subject: Re: [PATCH v4 5/9] platform/chrome: Add sysfs attributes
-To:     Nick Crews <ncrews@chromium.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Simon Glass <sjg@chromium.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-input@vger.kernel.org, Guenter Roeck <groeck@chromium.org>,
-        dlaurie@chromium.org, Duncan Laurie <dlaurie@google.com>,
-        Nick Crews <ncrews@google.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Benson Leung <bleung@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-OrganizationHeadersPreserved: maileu3.global.cadence.com
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(136003)(346002)(39860400002)(376002)(2980300002)(199004)(189003)(36092001)(16586007)(54906003)(36756003)(86362001)(486006)(4326008)(26826003)(186003)(42186006)(316002)(26005)(336012)(426003)(53936002)(305945005)(107886003)(5660300002)(51416003)(69596002)(126002)(2616005)(476003)(50466002)(47776003)(6666004)(81166006)(356004)(558084003)(14444005)(106466001)(81156014)(50226002)(2906002)(8676002)(2351001)(87636003)(478600001)(97736004)(48376002)(105596002)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:MW2PR07MB3978;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:ErrorRetry;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: c6f86f0c-a068-462c-a556-08d69684182d
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:MW2PR07MB3978;
+X-MS-TrafficTypeDiagnostic: MW2PR07MB3978:
+X-Microsoft-Exchange-Diagnostics: 1;MW2PR07MB3978;20:ERGTgwYs6cB4+rUiYdFDKq9RX1hSQyqN6s3ZQV6IKHgXXds824c6OAAScQZyrlY82qBOgSx6qeybjA/RY/ss6lU5oKl9AWYhJxP2YlZl+RXu7lNed8kHi05OAhk6cPA+wCwH7ZJdR811wD5NjcqpeIkVMDwepmmHKLx0gLG9bh2fOKX2dmAjaG5k2INrWrhYRwasHeivSntAZeZV3TTKxOLPA0Z/GA21bQgLQIhCFHAVe02ASyJ+PmcCraV+57G8e88FMFDBDqdAOALHxPX374AR3QMMaXQBFtN5myoyNFCWGwfOjxM1eRI/g3JkfiNFjnBsyeRB4n0swKDeeiy8o87XcAYih/vnUemYgyySsECMst660XqEvePhiS9BF0Bp3DJZTwCl0tg4+4IqcKibavubWNR/PZqTzpe7DHu+gFCkzqRQC88Mex+o8IbI1RqVJ+ACrS+9AZlmu2poahVp9Mkg59/aZUxUhmx7qoasZBOky5KgIZwOIYqeKplE25gN
+X-Microsoft-Antispam-PRVS: <MW2PR07MB3978FDD190F2E2961614CC30A17C0@MW2PR07MB3978.namprd07.prod.outlook.com>
+X-Forefront-PRVS: 09538D3531
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MW2PR07MB3978;23:QzkfjEk0tDsAq5YKsDHwEgI8zjOE+KPKzOr3qgPvm?=
+ =?us-ascii?Q?0Id2mkeU3SguooMk/l4reCzUI65pgpvEH8xOcijXGU3/IJ5lI0oHcTQSfzol?=
+ =?us-ascii?Q?PW/UcE9kmRMwlVwjbhNapFRn6rf7uV2XKV0kGUokCgEMEcE2KSVirf86M0vG?=
+ =?us-ascii?Q?IUsAJnxbo7BWHyY2WiiwHY6PhilkF1RNNRvybH3Hexr5ZiZIHSbrwTSlU545?=
+ =?us-ascii?Q?RcIT3xwGtl2Abi/T7xATfZ60kTUTI5KAUmB71srBg6mMypEunN7jnm+N25N7?=
+ =?us-ascii?Q?6H321ksQs2fnG7VHKtb/1u1PmcC1eSarLm+J623tRCoBP0xVRBbWB+D4phrQ?=
+ =?us-ascii?Q?NnxIHaUw7A3qeo5tguwSuORTcwZYPlJT/Em+/NVhPL+H7sg//XAoL7cEdJAE?=
+ =?us-ascii?Q?sSzdKpWnjy5UYmSzhoKp95l2y5ebEeJU7CCyXddy6nIvJ0oYX2QkEkCBwazi?=
+ =?us-ascii?Q?B+DOVIXeG7VSI7bqFd5jR0aoBe00yAYeqwD018UmRXyP54uG01WQofpYNDkQ?=
+ =?us-ascii?Q?7T4A29oSNkhnA31cQW0NCsqekyE6LyDCq8qWXATfvQ1LRtTp6Wuwt3k5JZ5C?=
+ =?us-ascii?Q?NofsSNUwD2aTU6VVfmTIfblhNZsl+reAehlv7s2bQ/wTN3fa17MwiejB+hZj?=
+ =?us-ascii?Q?CP4sJbRBA6XgmYfcHfyQK6QmH/PVKNTAR3/4FbFM8bAFtWByGOcMa61fIbSc?=
+ =?us-ascii?Q?W7IAStq9SOwk6whZpE1oL46h3pxa0ThbF56KY/guPVOSeIRpEVzO4IYhZ5C0?=
+ =?us-ascii?Q?/ZBlf3FtwwKL9xenOOSfxHq0Qdpv1eQNqlASErTPx1yo0FQ/CObYwu1t6v0e?=
+ =?us-ascii?Q?2SMEuPFiUHl/ghpcccB9RCtcXhHyF10+Qw3E6s6i1bhOQAQdodg2eD2KVzoN?=
+ =?us-ascii?Q?JSLuVfK9cXmZtr6JFTag3xxotpuJzAsuBSepPEYxB1crpi/34vtKSemfbKG4?=
+ =?us-ascii?Q?bjSWt9Lx5kWX/Xe6S3quG/tRNCnX++vml68pQnnq+fM+81Ry0zfDhw0eAZaJ?=
+ =?us-ascii?Q?XA4+gdS2Gsb0mENmkavaf1Gqg5GzYZpFY54lbjGMWwCsLImMrHoGjyY1/8FW?=
+ =?us-ascii?Q?xJ/gV34YBLcfLLoeK/bZ7knQlkuv+tS+7mqCaU2/a7INVhAWRSSlgCSOX5ir?=
+ =?us-ascii?Q?9mPK0RRPxyxUBEK+XTlgHi4MX5T2Csu?=
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: 42hXW2bsIPyPKftmX/5ESo46upbA90kkIEQzujR/nDPfyCwOis7RT4LaINAMJRlGcYd3pm18Rh+Icu3b+VwCcZNWKQDuQS5yG9CvIYm/yYyEQu6w2RRTqoo+XOsNZi/Y7RhLY5Qaf3XhUKY9GQxW6Bs3osPhxcHwuPQ+MpTpJTJGoTtk1hFhZ28/Pq0saJdYKbL+Lo6c81DFifOTCB94j60tQSyrn+chNfFW61aoEfk5Z9A4bOhO0zsW8bLw2Y0q8jturfg8CTKEiR36J8/a7yEF2PChTd7WFknPgRmP/OLHvPFEsAfEkNsqd88XqHWjmBoCvMHDsrYf4VAF2kJNYugpQlPPIJ40LV39gCKuvy1B5n52yOE9SPLrstM0Lkj6ecmhTG35u2f8VvWwNdqiJgrXkufrw+zsO7wXSOjRkfU=
+X-Microsoft-Exchange-Diagnostics: 1;MW2PR07MB3978;20:eQSJSKB9yDbWeKvrk8oWkAUG3wqYv4r141hG2zRzj2rwyjlMDCHuiuFG0VUXsiVgEQft5v3+xdC1Ybk1gfH2410+CDm1TyR0sTWxNU1+MFZi9LMCwHPvPf/VpnOYszjm2Hr6eiycy5QEYE2n/5TymNEDzNA/SfIVNv6BTNcdNUtXXHbFZx6F4MmtfnAvCeFxQFnRM+NfY+UM0Er8qU/VVjwIPFK22qaI0alcUZG9fsSXWoxzihI5nqEdy/y/enwv
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2019 16:05:40.1264
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6f86f0c-a068-462c-a556-08d69684182d
+X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[199.43.4.28];Helo=[rmmaillnx1.cadence.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR07MB3978
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
+ include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
+ include:auth.msgapp.com include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-19_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ priorityscore=1501 malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=554 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902190119
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nick,
+Removing Alan Douglas and adding Tom Joseph as the current maintainer. 
 
-Missatge de Nick Crews <ncrews@chromium.org> del dia dc., 23 de gen.
-2019 a les 19:38:
->
-> From: Duncan Laurie <dlaurie@google.com>
->
-> Add some sample sysfs attributes for the Wilco EC that show how
-> the mailbox interface works. "Legacy" attributes are those that
-> existed in the EC before it was adapted to ChromeOS.
->
-> > cat /sys/bus/platform/devices/GOOG000C\:00/version
-> Label        : 99.99.99
-> SVN Revision : 738ed.99
-> Model Number : 08;8
-> Build Date   : 08/30/18
->
+Tom Joseph (1):
+  MAINTAINERS: pci/cadence: Updating maintainer information.     
+    Removing Alan and adding myself(tjoseph@cadence.com) as the
+    maintainer.
 
-Note that example is not correct with the new attributes.
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Signed-off-by: Duncan Laurie <dlaurie@google.com>
-> Signed-off-by: Nick Crews <ncrews@chromium.org>
-> ---
->
-> Changes in v4:
-> - Move "Add RTC driver" before "Add sysfs attributes" so that
->   it could get accepted earlier, since it is less contentious
->
-> Changes in v3:
-> - explicitly define toplevel_groups from the start,
-> so adding telem later makes sense
-> - Break version attribute into individual attributes
-> - rm unused WILCO_EC_ATTR_RW macro
-> - Moved some #defines from legacy.h to legacy.c
->
-> Changes in v2:
-> - Remove license boiler plate
-> - Remove "wilco_ec_sysfs -" docstring prefix
-> - Fix accidental Makefile deletion
-> - Add documentation for sysfs entries
-> - Change "enable ? 0 : 1" to "!enable"
-> - No longer override error code from sysfs_init()
-> - Put attributes in the legacy file to begin with, don't move later
-> - Remove duplicate error messages when init()ing sysfs
->
->  .../ABI/testing/sysfs-platform-wilco-ec       |  42 +++++++
->  drivers/platform/chrome/wilco_ec/Makefile     |   2 +-
->  drivers/platform/chrome/wilco_ec/core.c       |  12 ++
->  drivers/platform/chrome/wilco_ec/legacy.c     | 103 ++++++++++++++++++
->  drivers/platform/chrome/wilco_ec/legacy.h     |  79 ++++++++++++++
->  drivers/platform/chrome/wilco_ec/sysfs.c      |  79 ++++++++++++++
->  include/linux/platform_data/wilco-ec.h        |  14 +++
->  7 files changed, 330 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/ABI/testing/sysfs-platform-wilco-ec
->  create mode 100644 drivers/platform/chrome/wilco_ec/legacy.c
->  create mode 100644 drivers/platform/chrome/wilco_ec/legacy.h
->  create mode 100644 drivers/platform/chrome/wilco_ec/sysfs.c
->
-> diff --git a/Documentation/ABI/testing/sysfs-platform-wilco-ec b/Documentation/ABI/testing/sysfs-platform-wilco-ec
-> new file mode 100644
-> index 000000000000..fd2400844470
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-platform-wilco-ec
-> @@ -0,0 +1,42 @@
-> +What:          /sys/bus/platform/devices/GOOG000C\:00/version_label
-> +Date:          January 2019
-> +KernelVersion: 4.19
-> +Description:
-> +               Display Wilco Embedded Controller firmware version label.
-> +               Output will a version string be similar to the example below:
-> +               95.00.06
-> +
-> +What:          /sys/bus/platform/devices/GOOG000C\:00/version_svn_revision
+-- 
+2.2.2
 
-nit: don't know why but svn always reminds me to subversion ... I see
-that you always add the prefix version_, I assume this is to maintain
-in some way the old directory structure but we cleaned a lot the
-number of sysfs attributes, so makes sense always add the prefix
-version_? On some cases looks weird to me. Why not just 'revision'
-it's short an clear.
-
-> +Date:          January 2019
-> +KernelVersion: 4.19
-> +Description:
-> +               Display Wilco Embedded Controller SVN revision.
-> +               Output will a version string be similar to the example below:
-> +               5960a.06
-> +
-> +What:          /sys/bus/platform/devices/GOOG000C\:00/version_model_number
-
-nit: model_number?
-
-> +Date:          January 2019
-> +KernelVersion: 4.19
-> +Description:
-> +               Display Wilco Embedded Controller model number.
-> +               Output will a version string be similar to the example below:
-> +               08;8
-
-Which format is this? DD/MM?
-
-> +
-> +What:          /sys/bus/platform/devices/GOOG000C\:00/version_build_date
-
-nit: build_date?
-
-> +Date:          January 2019
-> +KernelVersion: 4.19
-> +Description:
-> +               Display Wilco Embedded Controller firmware build date.
-> +               Output will a MM/DD/YY string.
-> +
-
-Should match with the above example
-
-> +What:          /sys/bus/platform/devices/GOOG000C\:00/stealth_mode
-
-I guess that this should go on a separate patch for now, please.
-
-> +Date:          January 2019
-> +KernelVersion: 4.19
-> +Description:
-> +               Turn stealth_mode on or off on EC. Stealth mode means that the
-> +               various LEDs, the LCD backlight, and onboard speakers are turned
-> +               off and remain off even if activated from the off state.
-> +               External monitors connected to the system are not affected.
-> +               In addition Wireless devices are turned off.
-> +
-
-I understand correctly that's a power management feature? What's the
-use case from userspace point of view?
-
-> +               Input should be parseable by kstrtobool().
-> diff --git a/drivers/platform/chrome/wilco_ec/Makefile b/drivers/platform/chrome/wilco_ec/Makefile
-> index 063e7fb4ea17..b4dadf8b1a07 100644
-> --- a/drivers/platform/chrome/wilco_ec/Makefile
-> +++ b/drivers/platform/chrome/wilco_ec/Makefile
-> @@ -1,6 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->
-> -wilco_ec-objs                          := core.o mailbox.o
-> +wilco_ec-objs                          := core.o mailbox.o sysfs.o legacy.o
->  obj-$(CONFIG_WILCO_EC)                 += wilco_ec.o
->  wilco_ec_debugfs-objs                  := debugfs.o
->  obj-$(CONFIG_WILCO_EC_DEBUGFS)         += wilco_ec_debugfs.o
-> diff --git a/drivers/platform/chrome/wilco_ec/core.c b/drivers/platform/chrome/wilco_ec/core.c
-> index 7cfb047e2c89..1a1cd8e59f3f 100644
-> --- a/drivers/platform/chrome/wilco_ec/core.c
-> +++ b/drivers/platform/chrome/wilco_ec/core.c
-> @@ -101,6 +101,13 @@ static int wilco_ec_probe(struct platform_device *pdev)
->                 goto destroy_mec;
->         }
->
-> +       /* Create sysfs attributes for userspace interaction */
-> +       ret = wilco_ec_sysfs_init(ec);
-> +       if (ret) {
-> +               dev_err(dev, "Failed to create sysfs attributes\n");
-> +               goto destroy_mec;
-> +       }
-> +
->         return 0;
->
->  destroy_mec:
-> @@ -110,6 +117,11 @@ static int wilco_ec_probe(struct platform_device *pdev)
->
->  static int wilco_ec_remove(struct platform_device *pdev)
->  {
-> +       struct wilco_ec_device *ec = platform_get_drvdata(pdev);
-> +
-> +       /* Remove sysfs attributes */
-> +       wilco_ec_sysfs_remove(ec);
-> +
->         /* Teardown cros_ec interface */
->         cros_ec_lpc_mec_destroy();
->
-> diff --git a/drivers/platform/chrome/wilco_ec/legacy.c b/drivers/platform/chrome/wilco_ec/legacy.c
-> new file mode 100644
-> index 000000000000..f284088e70f4
-> --- /dev/null
-> +++ b/drivers/platform/chrome/wilco_ec/legacy.c
-> @@ -0,0 +1,103 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Legacy (non-Chrome-specific) sysfs attributes for Wilco EC
-> + *
-> + * Copyright 2018 Google LLC
-> + */
-> +
-> +#include <linux/ctype.h>
-> +#include <linux/device.h>
-> +#include <linux/platform_data/wilco-ec.h>
-> +
-> +#include "legacy.h"
-> +
-> +#define EC_COMMAND_EC_INFO             0x38
-> +#define EC_INFO_SIZE                   9
-> +#define EC_COMMAND_STEALTH_MODE                0xfc
-> +
-> +#define VERSION_INDEX_LABEL            0
-> +#define VERSION_INDEX_SVN_REVISION     1
-> +#define VERSION_INDEX_MODEL_NUMBER     2
-> +#define VERSION_INDEX_BUILD_DATE       3
-> +
-> +static ssize_t get_info(struct device *dev, char *buf, u8 index)
-> +{
-> +       struct wilco_ec_device *ec = dev_get_drvdata(dev);
-> +       char result[EC_INFO_SIZE];
-> +       struct wilco_ec_message msg = {
-> +               .type = WILCO_EC_MSG_LEGACY,
-> +               .command = EC_COMMAND_EC_INFO,
-> +               .request_data = &index,
-> +               .request_size = sizeof(index),
-> +               .response_data = result,
-> +               .response_size = EC_INFO_SIZE,
-> +       };
-> +       int ret;
-> +
-> +       ret = wilco_ec_mailbox(ec, &msg);
-> +       if (ret < 0)
-> +               return ret;
-> +       if (ret != EC_INFO_SIZE)
-> +               return -EBADMSG;
-> +
-> +       return scnprintf(buf, PAGE_SIZE, "%s\n", result);
-> +}
-> +
-> +ssize_t wilco_ec_version_label_show(struct device *dev,
-> +                                   struct device_attribute *attr,
-> +                                   char *buf)
-> +{
-> +       return get_info(dev, buf, VERSION_INDEX_LABEL);
-> +}
-> +
-> +ssize_t wilco_ec_version_svn_revision_show(struct device *dev,
-> +                                          struct device_attribute *attr,
-> +                                          char *buf)
-> +{
-> +       return get_info(dev, buf, VERSION_INDEX_SVN_REVISION);
-> +}
-> +
-> +ssize_t wilco_ec_version_model_number_show(struct device *dev,
-> +                                          struct device_attribute *attr,
-> +                                          char *buf)
-> +{
-> +       return get_info(dev, buf, VERSION_INDEX_MODEL_NUMBER);
-> +}
-> +
-> +ssize_t wilco_ec_version_build_date_show(struct device *dev,
-> +                                        struct device_attribute *attr,
-> +                                        char *buf)
-> +{
-> +       return get_info(dev, buf, VERSION_INDEX_BUILD_DATE);
-> +}
-> +
-> +ssize_t wilco_ec_stealth_mode_store(struct device *dev,
-> +                                   struct device_attribute *attr,
-> +                                   const char *buf, size_t count)
-> +{
-> +       struct wilco_ec_device *ec = dev_get_drvdata(dev);
-> +       u8 param;
-> +       struct wilco_ec_message msg = {
-> +               .type = WILCO_EC_MSG_LEGACY,
-> +               .command = EC_COMMAND_STEALTH_MODE,
-> +               .request_data = &param,
-> +               .request_size = sizeof(param),
-> +       };
-> +       int ret;
-> +       bool enable;
-> +
-> +       ret = kstrtobool(buf, &enable);
-> +       if (ret) {
-> +               dev_err(dev, "Unable to parse '%s' to bool", buf);
-> +               return ret;
-> +       }
-> +
-> +       /* Invert input parameter, EC expects 0=on and 1=off */
-> +       param = !enable;
-> +
-> +       ret = wilco_ec_mailbox(ec, &msg);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       return count;
-> +}
-> diff --git a/drivers/platform/chrome/wilco_ec/legacy.h b/drivers/platform/chrome/wilco_ec/legacy.h
-> new file mode 100644
-> index 000000000000..a7f51dec4ccb
-> --- /dev/null
-> +++ b/drivers/platform/chrome/wilco_ec/legacy.h
-> @@ -0,0 +1,79 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Legacy (non-Chrome-specific) sysfs attributes for Wilco EC
-> + *
-> + * Copyright 2018 Google LLC
-> + */
-> +
-> +#ifndef WILCO_EC_LEGACY_H
-> +#define WILCO_EC_LEGACY_H
-> +
-> +#include <linux/device.h>
-> +
-> +/**
-> + * wilco_ec_version_label_show() - Display Wilco EC version label
-> + * @dev: The device underlying the struct wilco_ec_device
-> + * @attr: The attribute being read from
-> + * @buf: Output buffer to fill with the result
-> + *
-> + * Output will a version string be similar to the example below:
-> + * 95.00.06
-> + */
-> +ssize_t wilco_ec_version_label_show(struct device *dev,
-> +                                   struct device_attribute *attr,
-> +                                   char *buf);
-> +
-> +/**
-> + * wilco_ec_version_svn_revision_show() - Display Wilco EC SVN revision
-> + * @dev: The device underlying the struct wilco_ec_device
-> + * @attr: The attribute being read from
-> + * @buf: Output buffer to fill with the result
-> + *
-> + * Output will a version string be similar to the example below:
-> + * 5960a.06
-> + */
-> +ssize_t wilco_ec_version_svn_revision_show(struct device *dev,
-> +                                          struct device_attribute *attr,
-> +                                          char *buf);
-> +
-> +/**
-> + * wilco_ec_version_model_number_show() - Display Wilco EC model number
-> + * @dev: The device underlying the struct wilco_ec_device
-> + * @attr: The attribute being read from
-> + * @buf: Output buffer to fill with the result
-> + *
-> + * Output will a version string be similar to the example below:
-> + * 08;8
-> + */
-> +ssize_t wilco_ec_version_model_number_show(struct device *dev,
-> +                                          struct device_attribute *attr,
-> +                                          char *buf);
-> +
-> +/**
-> + * wilco_ec_version_build_date_show() - Display Wilco EC firmware build date
-> + * @dev: The device underlying the struct wilco_ec_device
-> + * @attr: The attribute being read from
-> + * @buf: Output buffer to fill with the result
-> + *
-> + * Output will a MM/DD/YY string.
-> + */
-> +ssize_t wilco_ec_version_build_date_show(struct device *dev,
-> +                                        struct device_attribute *attr,
-> +                                        char *buf);
-> +
-> +
-> +/**
-> + * wilco_ec_stealth_mode_store() - Turn stealth_mode on or off on EC
-> + * @dev: Device representing the EC
-> + * @attr: The attribute in question
-> + * @buf: Input buffer, should be parseable by kstrtobool(). Anything parsed to
-> + *      True means enable stealth mode (turn off screen, etc)
-> + * @count: Number of bytes in input buffer
-> + *
-> + * Return: Number of bytes consumed from input, negative error code on failure
-> + */
-> +ssize_t wilco_ec_stealth_mode_store(struct device *dev,
-> +                                   struct device_attribute *attr,
-> +                                   const char *buf, size_t count);
-> +
-> +#endif /* WILCO_EC_LEGACY_H */
-> diff --git a/drivers/platform/chrome/wilco_ec/sysfs.c b/drivers/platform/chrome/wilco_ec/sysfs.c
-> new file mode 100644
-> index 000000000000..a885026e5d24
-> --- /dev/null
-> +++ b/drivers/platform/chrome/wilco_ec/sysfs.c
-> @@ -0,0 +1,79 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Sysfs attributes for Wilco Embedded Controller
-> + *
-> + * Copyright 2018 Google LLC
-> + *
-> + * The sysfs attributes appear under /sys/bus/platform/devices/GOOG000C\:00/
-> + * To actually learn what each attribute does, read the corresponding _show() or
-> + * _store() function source.
-> + */
-> +
-> +#include <linux/ctype.h>
-> +#include <linux/platform_data/wilco-ec.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/sysfs.h>
-> +
-> +#include "legacy.h"
-> +
-> +#define WILCO_EC_ATTR_RO(_name)                                                \
-> +__ATTR(_name, 0444, wilco_ec_##_name##_show, NULL)
-> +
-
-This is only to add the wilco_ec_ prefix to the attributes, I'd prefer
-you use the standard ATTR_ attibutes and just name the attributes
-without the wilco_ec_ prefix.
-
-> +#define WILCO_EC_ATTR_WO(_name)                                                \
-> +__ATTR(_name, 0200, NULL, wilco_ec_##_name##_store)
-> +
-
-ditto
-
-> +/* Make top-level attributes, which will live inside GOOG000C:00/ */
-> +static struct device_attribute stealth_attr = WILCO_EC_ATTR_WO(stealth_mode);
-> +static struct device_attribute version_label_attr =
-> +                                       WILCO_EC_ATTR_RO(version_label);
-> +static struct device_attribute version_svn_revision_attr =
-> +                                       WILCO_EC_ATTR_RO(version_svn_revision);
-> +static struct device_attribute version_model_number_attr =
-> +                                       WILCO_EC_ATTR_RO(version_model_number);
-> +static struct device_attribute version_build_date_attr =
-> +                                       WILCO_EC_ATTR_RO(version_build_date);
-> +static struct attribute *wilco_ec_toplevel_attrs[] = {
-> +       &version_label_attr.attr,
-> +       &version_svn_revision_attr.attr,
-> +       &version_model_number_attr.attr,
-> +       &version_build_date_attr.attr,
-> +       &stealth_attr.attr,
-> +       NULL
-> +};
-> +static const struct attribute_group wilco_ec_toplevel_group = {
-> +       .attrs = wilco_ec_toplevel_attrs,
-> +};
-> +static const struct attribute_group *wilco_ec_toplevel_groups[] = {
-> +       &wilco_ec_toplevel_group,
-> +       NULL,
-> +};
-> +
-> +/**
-> + * wilco_ec_sysfs_init() - Initialize the sysfs directories and attributes
-> + * @dev: The device representing the EC
-> + *
-> + * Creates the sysfs directory structure and populates it with all attributes.
-> + * If there is a problem it will clean up the entire filesystem.
-> + *
-> + * Return 0 on success, -ENOMEM on failure creating directories or attibutes.
-> + */
-> +int wilco_ec_sysfs_init(struct wilco_ec_device *ec)
-> +{
-> +       struct device *dev = ec->dev;
-> +       int ret;
-> +
-> +       /* add the top-level attributes */
-> +       ret = sysfs_create_groups(&dev->kobj, wilco_ec_toplevel_groups);
-> +       if (ret)
-> +               return -ENOMEM;
-> +
-> +       return 0;
-> +}
-> +
-> +void wilco_ec_sysfs_remove(struct wilco_ec_device *ec)
-> +{
-> +       struct device *dev = ec->dev;
-> +
-> +       /* go upwards through the directory structure */
-> +       sysfs_remove_groups(&dev->kobj, wilco_ec_toplevel_groups);
-> +}
-> diff --git a/include/linux/platform_data/wilco-ec.h b/include/linux/platform_data/wilco-ec.h
-> index 5477b8802f81..7c6ab6de7239 100644
-> --- a/include/linux/platform_data/wilco-ec.h
-> +++ b/include/linux/platform_data/wilco-ec.h
-> @@ -135,4 +135,18 @@ struct wilco_ec_response {
->   */
->  int wilco_ec_mailbox(struct wilco_ec_device *ec, struct wilco_ec_message *msg);
->
-> +/**
-> + * wilco_ec_sysfs_init() - Create sysfs attributes.
-> + * @ec: EC device.
-> + *
-> + * Return: 0 for success or negative error code on failure.
-> + */
-> +int wilco_ec_sysfs_init(struct wilco_ec_device *ec);
-> +
-> +/**
-> + * wilco_ec_sysfs_remove() - Remove sysfs attributes.
-> + * @ec: EC device.
-> + */
-> +void wilco_ec_sysfs_remove(struct wilco_ec_device *ec);
-> +
->  #endif /* WILCO_EC_H */
-> --
-> 2.20.1.321.g9e740568ce-goog
->
-
-Regards,
- Enric
