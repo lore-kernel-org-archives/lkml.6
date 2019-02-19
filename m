@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F02FCC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B40C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:06:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C032F21738
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:05:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAFDA21908
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:06:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729661AbfBSUFx (ORCPT
+        id S1730122AbfBSUGD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 15:05:53 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49336 "EHLO mx1.redhat.com"
+        Tue, 19 Feb 2019 15:06:03 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49482 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726610AbfBSUFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 15:05:52 -0500
+        id S1726473AbfBSUGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 15:06:02 -0500
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0D706C074132;
-        Tue, 19 Feb 2019 20:05:52 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 30C07C074F05;
+        Tue, 19 Feb 2019 20:06:02 +0000 (UTC)
 Received: from localhost.localdomain.com (ovpn-122-134.rdu2.redhat.com [10.10.122.134])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C1DEA6013C;
-        Tue, 19 Feb 2019 20:05:30 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3E7616013D;
+        Tue, 19 Feb 2019 20:05:52 +0000 (UTC)
 From:   jglisse@redhat.com
 To:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org,
@@ -48,16 +48,16 @@ Cc:     linux-kernel@vger.kernel.org,
         John Hubbard <jhubbard@nvidia.com>, kvm@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v5 8/9] mm/mmu_notifier: mmu_notifier_range_update_to_read_only() helper
-Date:   Tue, 19 Feb 2019 15:04:29 -0500
-Message-Id: <20190219200430.11130-9-jglisse@redhat.com>
+Subject: [PATCH v5 9/9] mm/mmu_notifier: set MMU_NOTIFIER_USE_CHANGE_PTE flag where appropriate v2
+Date:   Tue, 19 Feb 2019 15:04:30 -0500
+Message-Id: <20190219200430.11130-10-jglisse@redhat.com>
 In-Reply-To: <20190219200430.11130-1-jglisse@redhat.com>
 References: <20190219200430.11130-1-jglisse@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 19 Feb 2019 20:05:52 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 19 Feb 2019 20:06:02 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -65,10 +65,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jérôme Glisse <jglisse@redhat.com>
 
-Helper to test if a range is updated to read only (it is still valid
-to read from the range). This is useful for device driver or anyone
-who wish to optimize out update when they know that they already have
-the range map read only.
+When notifying change for a range use MMU_NOTIFIER_USE_CHANGE_PTE flag
+for page table update that use set_pte_at_notify() and where the we are
+going either from read and write to read only with same pfn or read only
+to read and write with new pfn.
+
+Note that set_pte_at_notify() itself should only be use in rare cases
+ie we do not want to use it when we are updating a significant range of
+virtual addresses and thus a significant number of pte. Instead for
+those cases the event provided to mmu notifer invalidate_range_start()
+callback should be use for optimization.
+
+Changes since v1:
+    - Use the new unsigned flags field in struct mmu_notifier_range
+    - Use the new flags parameter to mmu_notifier_range_init()
+    - Explicitly list all the patterns where we can use change_pte()
 
 Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
 Cc: Christian König <christian.koenig@amd.com>
@@ -93,50 +104,122 @@ Cc: dri-devel@lists.freedesktop.org
 Cc: linux-rdma@vger.kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>
 ---
- include/linux/mmu_notifier.h |  4 ++++
- mm/mmu_notifier.c            | 10 ++++++++++
- 2 files changed, 14 insertions(+)
+ include/linux/mmu_notifier.h | 34 ++++++++++++++++++++++++++++++++--
+ mm/ksm.c                     | 11 ++++++-----
+ mm/memory.c                  |  5 +++--
+ 3 files changed, 41 insertions(+), 9 deletions(-)
 
 diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
-index 0379956fff23..b6c004bd9f6a 100644
+index b6c004bd9f6a..0230a4b06b46 100644
 --- a/include/linux/mmu_notifier.h
 +++ b/include/linux/mmu_notifier.h
-@@ -259,6 +259,8 @@ extern void __mmu_notifier_invalidate_range_end(struct mmu_notifier_range *r,
- 				  bool only_end);
- extern void __mmu_notifier_invalidate_range(struct mm_struct *mm,
- 				  unsigned long start, unsigned long end);
-+extern bool
-+mmu_notifier_range_update_to_read_only(const struct mmu_notifier_range *range);
+@@ -40,6 +40,26 @@ enum mmu_notifier_event {
+ 	MMU_NOTIFY_SOFT_DIRTY,
+ };
  
- static inline bool
- mmu_notifier_range_blockable(const struct mmu_notifier_range *range)
-@@ -568,6 +570,8 @@ static inline void mmu_notifier_mm_destroy(struct mm_struct *mm)
- {
++/*
++ * @MMU_NOTIFIER_RANGE_BLOCKABLE: can the mmu notifier range_start/range_end
++ * callback block or not ? If set then the callback can block.
++ *
++ * @MMU_NOTIFIER_USE_CHANGE_PTE: only set when the page table it updated with
++ * the set_pte_at_notify() the valid patterns for this are:
++ *      - pte read and write to read only same pfn
++ *      - pte read only to read and write (pfn can change or stay the same)
++ *      - pte read only to read only with different pfn
++ * It is illegal to set in any other circumstances.
++ *
++ * Note that set_pte_at_notify() should not be use outside of the above cases.
++ * When updating a range in batch (like write protecting a range) it is better
++ * to rely on invalidate_range_start() and struct mmu_notifier_range to infer
++ * the kind of update that is happening (as an example you can look at the
++ * mmu_notifier_range_update_to_read_only() function).
++ */
++#define MMU_NOTIFIER_RANGE_BLOCKABLE (1 << 0)
++#define MMU_NOTIFIER_USE_CHANGE_PTE (1 << 1)
++
+ #ifdef CONFIG_MMU_NOTIFIER
+ 
+ /*
+@@ -55,8 +75,6 @@ struct mmu_notifier_mm {
+ 	spinlock_t lock;
+ };
+ 
+-#define MMU_NOTIFIER_RANGE_BLOCKABLE (1 << 0)
+-
+ struct mmu_notifier_range {
+ 	struct vm_area_struct *vma;
+ 	struct mm_struct *mm;
+@@ -268,6 +286,12 @@ mmu_notifier_range_blockable(const struct mmu_notifier_range *range)
+ 	return (range->flags & MMU_NOTIFIER_RANGE_BLOCKABLE);
  }
  
-+#define mmu_notifier_range_update_to_read_only(r) false
-+
- #define ptep_clear_flush_young_notify ptep_clear_flush_young
- #define pmdp_clear_flush_young_notify pmdp_clear_flush_young
- #define ptep_clear_young_notify ptep_test_and_clear_young
-diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
-index abd88c466eb2..ee36068077b6 100644
---- a/mm/mmu_notifier.c
-+++ b/mm/mmu_notifier.c
-@@ -395,3 +395,13 @@ void mmu_notifier_unregister_no_release(struct mmu_notifier *mn,
- 	mmdrop(mm);
- }
- EXPORT_SYMBOL_GPL(mmu_notifier_unregister_no_release);
-+
-+bool
-+mmu_notifier_range_update_to_read_only(const struct mmu_notifier_range *range)
++static inline bool
++mmu_notifier_range_use_change_pte(const struct mmu_notifier_range *range)
 +{
-+	if (!range->vma || range->event != MMU_NOTIFY_PROTECTION_VMA)
-+		return false;
-+	/* Return true if the vma still have the read flag set. */
-+	return range->vma->vm_flags & VM_READ;
++	return (range->flags & MMU_NOTIFIER_USE_CHANGE_PTE);
 +}
-+EXPORT_SYMBOL_GPL(mmu_notifier_range_update_to_read_only);
++
+ static inline void mmu_notifier_release(struct mm_struct *mm)
+ {
+ 	if (mm_has_notifiers(mm))
+@@ -509,6 +533,12 @@ mmu_notifier_range_blockable(const struct mmu_notifier_range *range)
+ 	return true;
+ }
+ 
++static inline bool
++mmu_notifier_range_use_change_pte(const struct mmu_notifier_range *range)
++{
++	return false;
++}
++
+ static inline int mm_has_notifiers(struct mm_struct *mm)
+ {
+ 	return 0;
+diff --git a/mm/ksm.c b/mm/ksm.c
+index b782fadade8f..41e51882f999 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -1066,9 +1066,9 @@ static int write_protect_page(struct vm_area_struct *vma, struct page *page,
+ 
+ 	BUG_ON(PageTransCompound(page));
+ 
+-	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma, mm,
+-				pvmw.address,
+-				pvmw.address + PAGE_SIZE);
++	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR,
++				MMU_NOTIFIER_USE_CHANGE_PTE, vma, mm,
++				pvmw.address, pvmw.address + PAGE_SIZE);
+ 	mmu_notifier_invalidate_range_start(&range);
+ 
+ 	if (!page_vma_mapped_walk(&pvmw))
+@@ -1155,8 +1155,9 @@ static int replace_page(struct vm_area_struct *vma, struct page *page,
+ 	if (!pmd)
+ 		goto out;
+ 
+-	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma, mm, addr,
+-				addr + PAGE_SIZE);
++	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR,
++				MMU_NOTIFIER_USE_CHANGE_PTE,
++				vma, mm, addr, addr + PAGE_SIZE);
+ 	mmu_notifier_invalidate_range_start(&range);
+ 
+ 	ptep = pte_offset_map_lock(mm, pmd, addr, &ptl);
+diff --git a/mm/memory.c b/mm/memory.c
+index 45dbc174a88c..cb71d3ff1b97 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2282,8 +2282,9 @@ static vm_fault_t wp_page_copy(struct vm_fault *vmf)
+ 
+ 	__SetPageUptodate(new_page);
+ 
+-	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma, mm,
+-				vmf->address & PAGE_MASK,
++	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR,
++				MMU_NOTIFIER_USE_CHANGE_PTE,
++				vma, mm, vmf->address & PAGE_MASK,
+ 				(vmf->address & PAGE_MASK) + PAGE_SIZE);
+ 	mmu_notifier_invalidate_range_start(&range);
+ 
 -- 
 2.17.2
 
