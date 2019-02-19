@@ -2,112 +2,101 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B668C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 01:33:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A39CC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 01:34:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 381C52173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 01:33:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE15A2173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 01:34:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rivUP56/"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="MRTuwdl5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732755AbfBSBdA (ORCPT
+        id S1732773AbfBSBeS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 20:33:00 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:46357 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730247AbfBSBdA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 20:33:00 -0500
-Received: by mail-pg1-f195.google.com with SMTP id w7so9266558pgp.13
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 17:32:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yFhGS+sKtZ9ud3/RQ5BnKO9UzV0PFfBpxHzEnlky7So=;
-        b=rivUP56/SNGg0dTaELvh1obOGfw6y4aF8iYCzyArftD+vGfqmIYiS1T6drHNiPtJW2
-         1tUKBtydY6E3oSH+oGcuN7lQP7fgqp2YpQ21f05s1S2gdQEGri1v/2DeJNaHS3bs2dYq
-         MkOmj4XotaqhPRN59eb3WeUfGW8MK+pi/UKKIdnLnjzfo+RkDNfluIq4ZUq1u3kYxHND
-         rpALitA0Zzd19IycBEMsBqAQM1mncjnP0yT+d3WtUKWmkbo7LFfpSjENlW3e+ayyjDJJ
-         fTu/iF9jvc7YeOMxtjwnxcXIfi1TSJrLaRBJRcj+IpZ8iLF1TsS46g1evmGWJTx6FXIJ
-         ZL+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yFhGS+sKtZ9ud3/RQ5BnKO9UzV0PFfBpxHzEnlky7So=;
-        b=MROXAELhybx6ODnb3fDTjxiHa+nPBDVhudQQbi7Q/XUnNKwgjmLsyFB8MlBV0/KMcm
-         e5qEom1l0Nur4tz371zp2TG0cc2knvnLLS2g4RSAGkorDlYVBBS59BYgsDLHl/w1pCN4
-         tVvBVZ+FMmoxeB2FPPa2aZlnXsImSWC+O2tvUPWgph7ocB3/IpKBN7jJyfNU3hRKEZJG
-         yLMiqdP087rxOITypXGKJARTfQWqLXzYgJ3wGAb6EZR1hdMnWW1L3yQNUsrETeaWRrti
-         alHBvv/Dd9nbne4KQrz4H5TIdvMi/xLfkg+n1+qJl/yrdtnGg5TZWHbeM69GC6IENX/t
-         59NQ==
-X-Gm-Message-State: AHQUAuY+E9Qlm/ROfGCrMmninIllOj+BtEV1bxFVlfRmb/+vUbghBNyM
-        3hc7LzyQPq1Oi9mWJVYqGjU=
-X-Google-Smtp-Source: AHgI3IbgccufJHT2a7yNOoLVqxG+39AJCRGFN/6OtdLna+ISRUMxdiSgQArhsekxi5yzVNsGxhQ2Cg==
-X-Received: by 2002:a62:2f87:: with SMTP id v129mr13443137pfv.220.1550539979134;
-        Mon, 18 Feb 2019 17:32:59 -0800 (PST)
-Received: from localhost ([175.223.35.193])
-        by smtp.gmail.com with ESMTPSA id z15sm6779941pgc.25.2019.02.18.17.32.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Feb 2019 17:32:58 -0800 (PST)
-Date:   Tue, 19 Feb 2019 10:32:54 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Yao HongBo <yaohongbo@huawei.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        linuxarm@huawei.com, linux-kernel@vger.kernel.org
-Subject: Re: possible deadlock in console_unlock
-Message-ID: <20190219013254.GA20023@jagdpanzerIV>
-References: <ebc01f4f-5b1d-4f8a-1d0d-463d5218ee45@huawei.com>
- <20190216072127.GA1945@tigerII.localdomain>
- <20190216073856.GA9979@tigerII.localdomain>
- <71b097a7-03c5-8a65-76fa-24312b452b51@huawei.com>
- <20190218054649.GA26686@jagdpanzerIV>
- <3fece106-baed-92f6-1389-62b8f2c4578b@huawei.com>
+        Mon, 18 Feb 2019 20:34:18 -0500
+Received: from m12-12.163.com ([220.181.12.12]:38987 "EHLO m12-12.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730247AbfBSBeS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 20:34:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=vJOxl
+        iD3ylQNF+bK3c+e1E/IPoF2RmPsUHSYa4f68G4=; b=MRTuwdl5hca/5724t3b7h
+        Dr4LnqeBtUejGLE3FLMPjrnSDFE6WlxYKdmkKEBXyDrzZ9jcRIA4oPda3nQqtHIk
+        QxTdlSzkMwEIxZtXJ7j0abGg+7jzZXdI7OshAkJaP6+Lzssht9u8AcVH1ngs3FoR
+        ggyP35j3nDDxE0Prw/iT4w=
+Received: from localhost.localdomain (unknown [117.36.119.220])
+        by smtp8 (Coremail) with SMTP id DMCowAC3NM4CXWtcMmt4GQ--.10745S3;
+        Tue, 19 Feb 2019 09:33:55 +0800 (CST)
+From:   Shikai Wang <sxauwsk@163.com>
+To:     Michal Simek <michal.simek@xilinx.com>
+Cc:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Shikai Wang <sxauwsk@163.com>
+Subject: [PATCH v2] i2c: cadence: try reset when master receive arbitration lost
+Date:   Tue, 19 Feb 2019 09:24:47 +0800
+Message-Id: <20190219012447.5900-1-sxauwsk@163.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3fece106-baed-92f6-1389-62b8f2c4578b@huawei.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: DMCowAC3NM4CXWtcMmt4GQ--.10745S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tr1xGw4UZr1DAw17CryUKFg_yoW8Gw1Upa
+        1DG39IkrW0qr4IqFs7Ar17ZF98uwsYga4UKF4Fk34q9F15CrWDtFy3tF95XF4xCry5Xw1a
+        qrZ0y39rG3W2vFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UgTmDUUUUU=
+X-Originating-IP: [117.36.119.220]
+X-CM-SenderInfo: 5v0d34lvn6il2tof0z/1tbiQBRgJlSIZQ4tnwABsW
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (02/18/19 22:07), Yao HongBo wrote:
-> >> I have tried GFP_NOWARN, but the problem still exists.
-> >> Only print_safe contexts for tty locks can solve the problem.
-> >> My test scenario is falt-injection.
-> > 
-> > Oh, I see. Yes, fault-injection is special.
-> > 
-> > I suspect that this patch series can be helpful then
-> > https://lore.kernel.org/lkml/20181016050428.17966-1-sergey.senozhatsky@gmail.com/T/#u
-> 
-> hi, sergey.
+When the adapter receive arbitration lost error interrupts,
+cdns_i2c_master_xfer return to the caller directly instead of resetting
+the adapter which resulted in the adapter being out of control.
 
-Hello,
+So when driver detect err_status such as arbitration lost,
+then try to repair and fix it.
 
-> I merged this patch series on linux-4.19.18, but it didn't work for the fault-injection cases.
+Reviewed-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Signed-off-by: Shikai Wang <sxauwsk@163.com>
+---
+ drivers/i2c/busses/i2c-cadence.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Thanks!
+diff --git a/drivers/i2c/busses/i2c-cadence.c b/drivers/i2c/busses/i2c-cadence.c
+index b13605718291..595b0d56ff1a 100644
+--- a/drivers/i2c/busses/i2c-cadence.c
++++ b/drivers/i2c/busses/i2c-cadence.c
+@@ -548,10 +548,6 @@ static int cdns_i2c_process_msg(struct cdns_i2c *id, struct i2c_msg *msg,
+ 	cdns_i2c_writereg(CDNS_I2C_IXR_ALL_INTR_MASK,
+ 			  CDNS_I2C_IDR_OFFSET);
+ 
+-	/* If it is bus arbitration error, try again */
+-	if (id->err_status & CDNS_I2C_IXR_ARB_LOST)
+-		return -EAGAIN;
+-
+ 	return 0;
+ }
+ 
+@@ -624,6 +620,12 @@ static int cdns_i2c_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+ 		if (id->err_status) {
+ 			cdns_i2c_master_reset(adap);
+ 
++			/* If it is bus arbitration error, try again */
++			if (id->err_status & CDNS_I2C_IXR_ARB_LOST) {
++				ret = -EAGAIN;
++				goto out;
++			}
++
+ 			if (id->err_status & CDNS_I2C_IXR_NACK) {
+ 				ret = -ENXIO;
+ 				goto out;
+-- 
+2.19.2
 
-> The failure seems to be the same as before.
 
-OK... So tty_port lock must switch to printk_safe, after all...
-I had it in one of the previous versions of the patchset which you
-have tested, but people were strictly against new locking rules
-in TTY, so I dropped that part. Need to think what we can do here.
-
-BTW,
-we are now looking at a completely new printk implementation; which
-would not use printk_safe at all:
-https://lore.kernel.org/lkml/20190212143003.48446-1-john.ogness@linutronix.de/T/#u
-
-	-ss
