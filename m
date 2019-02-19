@@ -2,237 +2,159 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 712F8C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 18:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C53DC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 18:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 340B02147C
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 18:51:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE77021738
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 18:52:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UNxfIOtY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727911AbfBSSv0 (ORCPT
+        id S1728032AbfBSSwV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 13:51:26 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56618 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725939AbfBSSv0 (ORCPT
+        Tue, 19 Feb 2019 13:52:21 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:37825 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725875AbfBSSwU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 13:51:26 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1JIml3T123621
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 13:51:24 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qrmgn9tn3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 13:51:22 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Tue, 19 Feb 2019 18:51:19 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 19 Feb 2019 18:51:17 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1JIpFib63045754
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 19 Feb 2019 18:51:16 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CF256AE056;
-        Tue, 19 Feb 2019 18:51:15 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D7F1AAE055;
-        Tue, 19 Feb 2019 18:51:14 +0000 (GMT)
-Received: from [9.145.49.77] (unknown [9.145.49.77])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 19 Feb 2019 18:51:14 +0000 (GMT)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v3 6/9] vfio: ap: register IOMMU VFIO notifier
-To:     Tony Krowiak <akrowiak@linux.ibm.com>, borntraeger@de.ibm.com
-Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, frankja@linux.ibm.com, pasic@linux.ibm.com,
-        david@redhat.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
-References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
- <1550152269-6317-7-git-send-email-pmorel@linux.ibm.com>
- <3ce0a3a0-22fb-c418-321d-7e6e3af5b66c@linux.ibm.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Tue, 19 Feb 2019 19:51:13 +0100
+        Tue, 19 Feb 2019 13:52:20 -0500
+Received: by mail-yb1-f194.google.com with SMTP id 2so8539720ybw.4;
+        Tue, 19 Feb 2019 10:52:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fNQ9Icbc65m2b+SpDs+KXMxcqOB+7+mb5hMs2CkFVA4=;
+        b=UNxfIOtYMSwXfnbssuX8E4Fe35S/R2FiQ55pz4IyiNTy9pq1fX6hi/Jwxi4LboKa6m
+         QjO2Vp53u8DaIQXVlIZeT/5/bPGvPuj07dCgXyOxspj8N9KwHBI5er2jBG0Zgu8KzEO0
+         tuQ75XZHXlvJ3uxEecN0GULfVC5gQNQIcieqBaieScXiWcbnOzVy334+46wu5rQUie1E
+         0F6/+FVZu1h1BTfqNvgKgPAfQbQ8iLpKCifnxCGAnYODFeIXFuOJn+oV/ZdbaykJPl/g
+         FiBdaqiy6aQoMHMaHI3ieMHKp93JiThy7enOBegDky7zgRlreOH0dy6IWmG1lJIosRQt
+         6exQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=fNQ9Icbc65m2b+SpDs+KXMxcqOB+7+mb5hMs2CkFVA4=;
+        b=hExMSLgwqi0vqwQShl1MVMRssx7dm9986DpdCgYtx4pykW89it7I61/QxDy+Yx8Qpj
+         JXl3J8AADCXwEpUo3k+LIUVLkmdYP8bB2K7Is9D2fpem64Sz1CXemUBnsZca8gMEtDZx
+         STh4uHppDVRpPGKgazt+uhjYoGkDwayZNA26wTqR4YGsfl/4bZEIVKvB40gBqQRuqBMo
+         +YME2dxoBgt4rqyiWYfh3WaSaS0ZkVQqtiurYp0aDcqSkWWLsxjjUO9/SYJZXUKWlWXB
+         FidYt0xQcZVlsH20MqQfohqY/RWsFPRu4mZ7n6eLUdt4t7pFiGpa8Ul771Elmnyd8FpX
+         F/Jw==
+X-Gm-Message-State: AHQUAuax9zDLYkBw8K8LIc3NKgxoATt8qklKZ1Nvg3aaL5EBKt/0vpo9
+        tZqXZC7ffFvYHCmmFvl4PDQ=
+X-Google-Smtp-Source: AHgI3Ia7tuSdOB20dK9wJgFBh8/4opJoTRetYSjX0chiFbl4YgAhgvx4tVfCK/XobyHeG+EZykneTw==
+X-Received: by 2002:a25:7284:: with SMTP id n126mr25751863ybc.504.1550602339366;
+        Tue, 19 Feb 2019 10:52:19 -0800 (PST)
+Received: from [10.67.49.152] ([192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id o4sm6457296ywe.102.2019.02.19.10.52.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Feb 2019 10:52:18 -0800 (PST)
+Subject: Re: [PATCH] hwrng: bcm2835 - fix probe as platform device
+To:     Jonas Gorski <jonas.gorski@gmail.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>
+References: <20190219121608.19406-1-jonas.gorski@gmail.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
+Message-ID: <da2960dd-5b52-d972-f7fa-09e9dd5bc30c@gmail.com>
+Date:   Tue, 19 Feb 2019 10:52:09 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <3ce0a3a0-22fb-c418-321d-7e6e3af5b66c@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20190219121608.19406-1-jonas.gorski@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021918-0016-0000-0000-00000258627C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021918-0017-0000-0000-000032B2A822
-Message-Id: <81c8422d-4952-747e-6c91-a613ce6d626e@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-19_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902190134
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/02/2019 23:55, Tony Krowiak wrote:
-> On 2/14/19 8:51 AM, Pierre Morel wrote:
->> To be able to use the VFIO interface to facilitate the
->> mediated device memory pining/unpining we need to register
->> a notifier for IOMMU.
->>
->> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->> ---
->>   drivers/s390/crypto/vfio_ap_ops.c     | 64 
->> +++++++++++++++++++++++++++++++----
->>   drivers/s390/crypto/vfio_ap_private.h |  2 ++
->>   2 files changed, 60 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/s390/crypto/vfio_ap_ops.c 
->> b/drivers/s390/crypto/vfio_ap_ops.c
->> index 1851b24..6eddc2c 100644
->> --- a/drivers/s390/crypto/vfio_ap_ops.c
->> +++ b/drivers/s390/crypto/vfio_ap_ops.c
->> @@ -781,6 +781,36 @@ static const struct attribute_group 
->> *vfio_ap_mdev_attr_groups[] = {
->>   };
->>   /**
->> + * vfio_ap_mdev_iommu_notifier: IOMMU notifier callback
->> + *
->> + * @nb: The notifier block
->> + * @action: Action to be taken (VFIO_IOMMU_NOTIFY_DMA_UNMAP)
->> + * @data: the specific unmap structure for vfio_iommu_type1
->> + *
->> + * Unpins the guest IOVA. (The NIB guest address we pinned before).
->> + * Return NOTIFY_OK after unpining on a UNMAP request.
->> + * otherwise, returns NOTIFY_DONE .
->> + */
->> +static int vfio_ap_mdev_iommu_notifier(struct notifier_block *nb,
->> +                       unsigned long action, void *data)
->> +{
->> +    struct ap_matrix_mdev *matrix_mdev;
->> +
->> +    matrix_mdev = container_of(nb, struct ap_matrix_mdev, 
->> iommu_notifier);
->> +
->> +    if (action == VFIO_IOMMU_NOTIFY_DMA_UNMAP) {
->> +        struct vfio_iommu_type1_dma_unmap *unmap = data;
->> +        unsigned long g_pfn = unmap->iova >> PAGE_SHIFT;
->> +
->> +        vfio_unpin_pages(mdev_dev(matrix_mdev->mdev), &g_pfn, 1);
->> +        return NOTIFY_OK;
->> +    }
->> +
->> +    return NOTIFY_DONE;
->> +}
->> +
->> +
->> +/**
->>    * vfio_ap_mdev_set_kvm
->>    *
->>    * @matrix_mdev: a mediated matrix device
->> @@ -904,8 +934,7 @@ static void vfio_ap_dissociate_queues(struct 
->> ap_matrix_mdev *matrix_mdev)
->>    * In the case a queue could not be found return -ENODEV.
->>    * Otherwise return 0.
->>    */
->> -static __attribute__((unused))
->> -    int vfio_ap_associate_queues(struct ap_matrix_mdev *matrix_mdev)
->> +static int vfio_ap_associate_queues(struct ap_matrix_mdev *matrix_mdev)
+On 2/19/19 4:16 AM, Jonas Gorski wrote:
+> BCM63XX (MIPS) does not use device tree, so there cannot be any
+> of_device_id, causing the driver to fail on probe:
 > 
-> Maybe this function should be introduced in this patch instead?
+> [    0.904564] bcm2835-rng: probe of bcm63xx-rng failed with error -22
 > 
->>   {
->>       unsigned long apid, apqi;
->>       struct vfio_ap_queue *q;
->> @@ -967,12 +996,32 @@ static int vfio_ap_mdev_open(struct mdev_device 
->> *mdev)
->>       ret = vfio_register_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
->>                        &events, &matrix_mdev->group_notifier);
->> -    if (ret) {
->> -        module_put(THIS_MODULE);
->> -        return ret;
->> -    }
->> +    if (ret)
->> +        goto err_group;
->> +
->> +    matrix_mdev->iommu_notifier.notifier_call = 
->> vfio_ap_mdev_iommu_notifier;
->> +    events = VFIO_IOMMU_NOTIFY_DMA_UNMAP;
->> +
->> +    ret = vfio_register_notifier(mdev_dev(mdev), VFIO_IOMMU_NOTIFY,
->> +                     &events, &matrix_mdev->iommu_notifier);
->> +    if (ret)
->> +        goto err_iommu;
->> +
->> +    ret = vfio_ap_associate_queues(matrix_mdev);
->> +    if (ret)
->> +        goto err_associate;
+> Fix this by checking for match data only if we are probing from device
+> tree.
 > 
-> I think the matrix_mdev should be associated with queues when an 
-> assignment of an adapter or domain is made to the mdev device via its
-> sysfs interfaces. I say this because assigning an adapter or domain to
-> an mdev device effectively grants ownership of any additional AP queues 
-> added to the mdev device's AP matrix as a result of the assignment. It
-> only makes sense to assign ownership to the vfio_ap_queue objects
-> representing the queues at that time. If an adapter or domain is
-> dynamically assigned while a guest is using the affected queues, then
-> the associations will have to be made at that time and this code will
-> likely go bye bye.
-> 
->>       return 0;
->> +
->> +err_associate:
->> +    vfio_unregister_notifier(mdev_dev(mdev), VFIO_IOMMU_NOTIFY,
->> +                 &matrix_mdev->iommu_notifier);
->> +err_iommu:
->> +    vfio_unregister_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
->> +                 &matrix_mdev->group_notifier);
->> +err_group:
->> +    module_put(THIS_MODULE);
->> +    return ret;
->>   }
->>   static void vfio_ap_mdev_release(struct mdev_device *mdev)
->> @@ -985,6 +1034,9 @@ static void vfio_ap_mdev_release(struct 
->> mdev_device *mdev)
->>       vfio_ap_mdev_reset_queues(mdev);
->>       vfio_unregister_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
->>                    &matrix_mdev->group_notifier);
->> +    vfio_unregister_notifier(mdev_dev(mdev), VFIO_IOMMU_NOTIFY,
->> +                 &matrix_mdev->iommu_notifier);
->> +    vfio_ap_dissociate_queues(matrix_mdev);
-> 
-> I think the matrix_mdev should be dissociated from queues when an
-> adapter or domain is unassigned from the mdev device via its
-> sysfs interfaces. I say this because unassigning an adapter or domain 
-> from an mdev device effectively takes away ownership of any AP queues
-> removed from the mdev device's AP matrix as a result of the
-> unassignment. It only makes sense to remove ownership from the
-> vfio_ap_queue objects representing the queues at that time. This will
-> become necessary for the forthcoming dynamic configuration patches.
-> If an adapter or domain is dynamically unassigned while a guest is
-> using the affected queues, then the dissociation will have to be made
-> at that time and this code will likely go bye bye.
+> Fixes: 8705f24f7b57 ("hwrng: bcm2835 - Enable BCM2835 RNG to work on BCM63xx platforms")
+> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 
-Effectively,having a link from the vfio_ap_queue to the mediated device 
-will simplify the sanity checking during assignment.
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
 
-I will go this way.
-
-Regards,
-Pierre
-
+Sorry about that, thanks for the fix!
 -- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
-
+Florian
