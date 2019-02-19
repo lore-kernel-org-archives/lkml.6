@@ -2,93 +2,47 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B822C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:17:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7F9EC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:17:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E94DA20700
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:17:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93A672146E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:17:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728971AbfBSPRI (ORCPT
+        id S1729000AbfBSPRW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 10:17:08 -0500
-Received: from mga18.intel.com ([134.134.136.126]:65209 "EHLO mga18.intel.com"
+        Tue, 19 Feb 2019 10:17:22 -0500
+Received: from verein.lst.de ([213.95.11.211]:52504 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727233AbfBSPRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 10:17:07 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2019 07:17:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,388,1544515200"; 
-   d="scan'208";a="125586257"
-Received: from marshy.an.intel.com ([10.122.105.159])
-  by fmsmga008.fm.intel.com with ESMTP; 19 Feb 2019 07:17:06 -0800
-From:   richard.gong@linux.intel.com
-To:     catalin.marinas@arm.com, will.deacon@arm.com, arnd@arndb.de,
-        olof@lixom.net, dinguyen@kernel.org, atull@kernel.org,
-        mdf@kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        todd.riffel@intel.com, richard.gong@linux.intel.com,
-        Richard Gong <richard.gong@intel.com>
-Subject: [RESEND PATCHv2] arm64: defconfig: enable fpga and service layer
-Date:   Tue, 19 Feb 2019 09:24:17 -0600
-Message-Id: <1550589857-10359-1-git-send-email-richard.gong@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727233AbfBSPRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 10:17:22 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 3FE5568CEC; Tue, 19 Feb 2019 16:17:21 +0100 (CET)
+Date:   Tue, 19 Feb 2019 16:17:21 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH] powerpc: drop unused GENERIC_CSUM Kconfig item
+Message-ID: <20190219151721.GC4121@lst.de>
+References: <3695e169b0367503f3a424d4862cba5a247fabf4.1550226577.git.christophe.leroy@c-s.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3695e169b0367503f3a424d4862cba5a247fabf4.1550226577.git.christophe.leroy@c-s.fr>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Richard Gong <richard.gong@intel.com>
+Looks fine,
 
-Enable FPGA framework, Intel Stratix10 SoC FPGA manager, Stratix10
-service layer, and Altera Freeze Bridge drivers.
-
-Intel Stratix10 service layer driver was added with commit 7ca5ce896524
-("firmware: add Intel Stratix10 service layer driver").
-
-Intel Stratix10 service layer provides kernel APIs for drivers to request
-access to the secure features. Such features include FPGA programming,
-remote status update, and read and write secure registers.
-
-While clients of the service layer can be built as modules, the service
-layer itself has to be configured as built-in.  The service layer is
-dependent on ARCH_STRATIX10.
-
-Enabling Altera Freeze Bridge depends on commit 38cd7ad5bd25
-("fpga: altera_freeze_bridge: remove restriction to socfpga").
-
-Signed-off-by: Richard Gong <richard.gong@intel.com>
----
-v2: add to enable FPGA framework, Intel Stratix10 SoC FPGA manager and
-    Altera freeze bridge drivers.
----
- arch/arm64/configs/defconfig | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 931429d9..96c52f4 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -733,6 +733,13 @@ CONFIG_QCOM_QFPROM=y
- CONFIG_ROCKCHIP_EFUSE=y
- CONFIG_UNIPHIER_EFUSE=y
- CONFIG_MESON_EFUSE=m
-+CONFIG_INTEL_STRATIX10_SERVICE=y
-+CONFIG_FPGA=m
-+CONFIG_FPGA_MGR_STRATIX10_SOC=m
-+CONFIG_FPGA_BRIDGE=m
-+CONFIG_ALTERA_FREEZE_BRIDGE=m
-+CONFIG_FPGA_REGION=m
-+CONFIG_OF_FPGA_REGION=m
- CONFIG_TEE=y
- CONFIG_OPTEE=y
- CONFIG_EXT2_FS=y
--- 
-2.7.4
-
+Reviewed-by: Christoph Hellwig <hch@lst.de>
