@@ -2,281 +2,129 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F060EC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:36:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02266C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:36:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD3F521738
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:36:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C611621738
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:36:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="z62YfArc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729248AbfBSQgV (ORCPT
+        id S1729409AbfBSQgg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:36:21 -0500
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:60046 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725991AbfBSQgU (ORCPT
+        Tue, 19 Feb 2019 11:36:36 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:35873 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726321AbfBSQgf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:36:20 -0500
-Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
-        id 1gw8NQ-000254-00; Tue, 19 Feb 2019 16:36:12 +0000
-Date:   Tue, 19 Feb 2019 11:36:12 -0500
-From:   Rich Felker <dalias@libc.org>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: Regression in SYS_membarrier expedited
-Message-ID: <20190219163612.GU23599@brightrain.aerifal.cx>
-References: <20190217184800.GA16118@brightrain.aerifal.cx>
- <53623603.9626.1550439285362.JavaMail.zimbra@efficios.com>
- <20190217215235.GH23599@brightrain.aerifal.cx>
- <20190217220805.GI23599@brightrain.aerifal.cx>
- <424503257.251.1550503352008.JavaMail.zimbra@efficios.com>
- <20190218215530.GJ23599@brightrain.aerifal.cx>
- <1972325116.852.1550592161990.JavaMail.zimbra@efficios.com>
+        Tue, 19 Feb 2019 11:36:35 -0500
+Received: by mail-it1-f193.google.com with SMTP id h6so7729783itl.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 08:36:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=fOTQ86NE8GSY6MHoe/MvhMiLDB3HABhTd81AyrO7PJE=;
+        b=z62YfArcj++TWkWCd5ZXtjoj2WA9JMB+KMoBBWuDCClFBovwLZdMhM7YeDWQysQHHx
+         iHMytDUzqyGY/SwhW7tO65A+Jhh2Nj21o7WvENPhXgSm9LJNg+h9Roppf252mJeMP5gm
+         yAmht0yCdILJUDsvWqTMhsMr5pWS3GfrSurTdaqP4D21SFBoMWUmrxC2h+hKHabETvYr
+         oaZV0pM2u+RleiF8/QUJlkCCosIWiS0GRQ0hbSRipfhcjvQnCKSwkOauvwUOg4h5dfqW
+         GDoHCziGYEK/VFvq1nG5sKa0hOTsylxBe6Zr5KX+xJE511dBEWuU3wxLuz91mBxyzIUn
+         KkuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=fOTQ86NE8GSY6MHoe/MvhMiLDB3HABhTd81AyrO7PJE=;
+        b=sTEBUGaEcFdmoTaLDFJvB/WgNTfGI6wwUd5I/0PGk+KWIHn6DRvuRNV6uyPXO3lud/
+         51hd0h9XQToof3xTgwT5+Nlz1SuDUaS7CF3nCX3CTIc7WlsKyDV0r/WUaME4j0vPLaur
+         GNgNGgb91f/vykTcmNDaMaWoqzZb0A8iIJjyoIYHgMRpVbzwEhSFZWzDiMiySfESwqlJ
+         9kCvrcQ6Not7vQmKJoUbBQhP9vedotRDcn2A3eUcD88nmwJIsAtekoPX4vMX6CmKx/Nq
+         qavVZg3WzTfgtFjeiy7tZLEYmogmMJnJsSNRYYnuFwFFsrhVbv81h9fYbujy5vDtJ9IY
+         4izg==
+X-Gm-Message-State: AHQUAuaRrqa681fzVyXj0ooyeA/wcS+MQj0Hju365FLhxxe3bgmlTJhd
+        kDSHMD3ospE5bWnjNMeiGQOhgNhz9TeFchvBORCTng==
+X-Google-Smtp-Source: AHgI3Ia5Ql3zMgR0mBOy2uFIsH5ga+5uR2KbZp+DEk8cWYJUTm3uyvAB6O+cZvirdNWyzJcH89MamlUcc+3uMFA+aBE=
+X-Received: by 2002:a5d:91d3:: with SMTP id k19mr17159916ior.258.1550594194250;
+ Tue, 19 Feb 2019 08:36:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1972325116.852.1550592161990.JavaMail.zimbra@efficios.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20190219160650.9614-1-brgl@bgdev.pl> <20190219160650.9614-2-brgl@bgdev.pl>
+ <20190219161449.26e99a2b@why.wild-wind.fr.eu.org>
+In-Reply-To: <20190219161449.26e99a2b@why.wild-wind.fr.eu.org>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 19 Feb 2019 17:36:23 +0100
+Message-ID: <CAMRc=Md4UAYD-emar9yGnJCEnFDXkP2CR7HgjGedPoTPtYH5OQ@mail.gmail.com>
+Subject: Re: [PATCH v6 1/7] irq/irq_sim: add irq_set_type() callback
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 11:02:41AM -0500, Mathieu Desnoyers wrote:
-> ----- On Feb 18, 2019, at 4:55 PM, Rich Felker dalias@libc.org wrote:
-> 
-> > On Mon, Feb 18, 2019 at 10:22:32AM -0500, Mathieu Desnoyers wrote:
-> >> ----- On Feb 17, 2019, at 5:08 PM, Rich Felker dalias@libc.org wrote:
-> >> 
-> >> > On Sun, Feb 17, 2019 at 04:52:35PM -0500, Rich Felker wrote:
-> >> >> On Sun, Feb 17, 2019 at 04:34:45PM -0500, Mathieu Desnoyers wrote:
-> >> >> > ----- On Feb 17, 2019, at 1:48 PM, Rich Felker dalias@libc.org wrote:
-> >> >> > 
-> >> >> > > commit a961e40917fb14614d368d8bc9782ca4d6a8cd11 made it so that the
-> >> >> > > MEMBARRIER_CMD_PRIVATE_EXPEDITED command cannot be used without first
-> >> >> > > registering intent to use it. However, registration is an expensive
-> >> >> > > operation since commit 3ccfebedd8cf54e291c809c838d8ad5cc00f5688, which
-> >> >> > > added synchronize_sched() to it; this means it's no longer possible to
-> >> >> > > lazily register intent at first use, and it's unreasonably expensive
-> >> >> > > to preemptively register intent for possibly extremely-short-lived
-> >> >> > > processes that will never use it. (My usage case is in libc (musl),
-> >> >> > > where I can't know if the process will be short- or long-lived;
-> >> >> > > unnecessary and potentially expensive syscalls can't be made
-> >> >> > > preemptively, only lazily at first use.)
-> >> >> > > 
-> >> >> > > Can we restore the functionality of MEMBARRIER_CMD_PRIVATE_EXPEDITED
-> >> >> > > to work even without registration? The motivation of requiring
-> >> >> > > registration seems to be:
-> >> >> > > 
-> >> >> > >    "Registering at this time removes the need to interrupt each and
-> >> >> > >    every thread in that process at the first expedited
-> >> >> > >    sys_membarrier() system call."
-> >> >> > > 
-> >> >> > > but interrupting every thread in the process is exactly what I expect,
-> >> >> > > and is not a problem. What does seem like a big problem is waiting for
-> >> >> > > synchronize_sched() to synchronize with an unboundedly large number of
-> >> >> > > cores (vs only a few threads in the process), especially in the
-> >> >> > > presence of full_nohz, where it seems like latency would be at least a
-> >> >> > > few ms and possibly unbounded.
-> >> >> > > 
-> >> >> > > Short of a working SYS_membarrier that doesn't require expensive
-> >> >> > > pre-registration, I'm stuck just implementing it in userspace with
-> >> >> > > signals...
-> >> >> > 
-> >> >> > Hi Rich,
-> >> >> > 
-> >> >> > Let me try to understand the scenario first.
-> >> >> > 
-> >> >> > musl libc support for using membarrier private expedited
-> >> >> > would require to first register membarrier private expedited for
-> >> >> > the process at musl library init (typically after exec). At that stage, the
-> >> >> > process is still single-threaded, right ? So there is no reason
-> >> >> > to issue a synchronize_sched() (or now synchronize_rcu() in newer
-> >> >> > kernels):
-> >> >> > 
-> >> >> > membarrier_register_private_expedited()
-> >> >> > 
-> >> >> >         if (!(atomic_read(&mm->mm_users) == 1 && get_nr_threads(p) == 1)) {
-> >> >> >                 /*
-> >> >> >                  * Ensure all future scheduler executions will observe the
-> >> >> >                  * new thread flag state for this process.
-> >> >> >                  */
-> >> >> >                 synchronize_rcu();
-> >> >> >         }
-> >> >> > 
-> >> >> > So considering that pre-registration carefully done before the process
-> >> >> > becomes multi-threaded just costs a system call (and not a synchronize_sched()),
-> >> >> > does it make the pre-registration approach more acceptable ?
-> >> >> 
-> >> >> It does get rid of the extreme cost, but I don't think it would be
-> >> >> well-received by users who don't like random unnecessary syscalls at
-> >> >> init time (each adding a few us of startup time cost). If it's so
-> >> >> cheap, why isn't it just the default at kernel-side process creation?
-> >> >> Why is there any requirement of registration to begin with? Reading
-> >> >> the code, it looks like all it does is set a flag, and all this flag
-> >> >> is used for is erroring-out if it's not set.
-> >> > 
-> >> > On further thought, pre-registration could be done at first
-> >> > pthread_create rather than process entry, which would probably be
-> >> > acceptable. But the question remains why it's needed at all, and
-> >> > neither of these approaches is available to code that doesn't have the
-> >> > privilege of being part of libc. For example, library code that might
-> >> > be loaded via dlopen can't safely use SYS_membarrier without
-> >> > introducing unbounded latency before the first use.
-> >> 
-> >> For membarrier private expedited, the need for pre-registration is currently
-> >> there because of powerpc not wanting to slow down switch_mm() for processes
-> >> not needing that command.
-> >> 
-> >> That's the only reason I see for it. If we would have accepted to add
-> >> a smp_mb() to the powerpc switch_mm() scheduler path, we could have done
-> >> so without registration for the private expedited membarrier command.
-> > 
-> > I don't understand why the barrier is needed at all; the ipi ping
-> > should suffice to execute a barrier instruction on all cores on which
-> > a thread of the process is running, and if any other core subsequently
-> > picks up a thread of the process to run, it must necessarily perform a
-> > barrier just to synchronize with whatever core the thread was
-> > previously running on (not to mention synchronizing the handoff
-> > itself). Is this just to optimize out ipi pinging cores that threads
-> > of the process are not currently running on, but were last running on
-> > and could become running on again without migration?
-> 
-> See this comment in context_switch():
-> 
->          * If mm is non-NULL, we pass through switch_mm(). If mm is
->          * NULL, we will pass through mmdrop() in finish_task_switch().
->          * Both of these contain the full memory barrier required by
->          * membarrier after storing to rq->curr, before returning to
->          * user-space.
-> 
-> So the full memory barrier we are discussing here in switch_mm() orders
-> the store to rq->curr before following memory accesses (including those
-> performed by user-space).
-> 
-> This pairs with the first smp_mb() in membarrier_private_expedited(), which
-> orders memory accesses before the membarrier system call before the following
-> loads of each cpu_rq(cpu)->curr.
-> 
-> This guarantees that if we happen to skip the IPI for a given CPU that
-> is just about to schedule in a thread belonging to our process (say, just before
-> storing rq->curr in the scheduler), the memory accesses performed by that thread
-> after it starts running are ordered after the memory accesses performed prior
-> to membarrier.
-> 
-> As we are not grabbing the runqueue locks for each CPU in membarrier because
-> it would be too costly, we need to ensure the proper barriers are there within
-> the scheduler. We cannot just rely on the memory barrier present at the very
-> start of the scheduler code to order with respect to memory accesses happening
-> in the newly scheduled-in thread _after_ scheduler execution. This is why we
-> need to ensure the proper barriers are present both before and after the
-> scheduler stores to rq->curr.
+wt., 19 lut 2019 o 17:14 Marc Zyngier <marc.zyngier@arm.com> napisa=C5=82(a=
+):
+>
+> On Tue, 19 Feb 2019 17:06:44 +0100
+> Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > Implement the irq_set_type() callback and call irqd_set_trigger_type()
+> > internally so that users interested in the configured trigger type can
+> > later retrieve it using irqd_get_trigger_type(). We only support edge
+> > trigger types.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > ---
+> >  kernel/irq/irq_sim.c | 12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> >
+> > diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
+> > index 98a20e1594ce..b992f88c5613 100644
+> > --- a/kernel/irq/irq_sim.c
+> > +++ b/kernel/irq/irq_sim.c
+> > @@ -25,10 +25,22 @@ static void irq_sim_irqunmask(struct irq_data *data=
+)
+> >       irq_ctx->enabled =3D true;
+> >  }
+> >
+> > +static int irq_sim_set_type(struct irq_data *data, unsigned int type)
+> > +{
+> > +     /* We only support rising and falling edge trigger types. */
+> > +     if (type & ~IRQ_TYPE_EDGE_BOTH)
+> > +             return -EINVAL;
+> > +
+> > +     irqd_set_trigger_type(data, type);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> >  static struct irq_chip irq_sim_irqchip =3D {
+> >       .name           =3D "irq_sim",
+> >       .irq_mask       =3D irq_sim_irqmask,
+> >       .irq_unmask     =3D irq_sim_irqunmask,
+> > +     .irq_set_type   =3D irq_sim_set_type,
+> >  };
+> >
+> >  static void irq_sim_handle_irq(struct irq_work *work)
+>
+> Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+>
 
-OK, this all makes sense.
+Thanks you! If you don't mind, I'll send this together with other
+patches directly to Linus Walleij.
 
-> >> commit a961e40917fb hints at the sync_core private expedited membarrier
-> >> commands (which was being actively designed at that time) which may
-> >> require pre-registration. However, things did not turn out that way: we
-> >> ended up adding the required core serializing barriers unconditionally
-> >> into each architecture.
-> >> 
-> >> Considering that sync_core private expedited membarrier ended up not needing
-> >> pre-registration, I think this pre-registration optimization may have been
-> >> somewhat counter-productive, since I doubt the overhead of smp_mb() in a
-> >> switch_mm() for powerpc is that high, but I don't have the hardware handy
-> >> to provide numbers. So we end up slowing down everyone by requiring a
-> >> registration system call after exec. :-(
-> > 
-> > I'm surprised it's even possible to do switch_mm correctly with no
-> > barrier...
-> 
-> There is a barrier at the beginning of the scheduler code, which is typically
-> enough for all use-cases that rely on the runqueue lock to synchronize with the
-> scheduler. Membarrier does not use rq lock for performance considerations, so
-> we end up having to make sure the proper barriers are in place both before/after
-> store to rq->curr. Those pair with the 2 barriers at the end/beginning of the
-> membarrier system call (e.g. in membarrier_private_expedited())
-
-This too.
-
-> >> One possible way out of this would be to make MEMBARRIER_CMD_PRIVATE_EXPEDITED
-> >> and MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE work fine without
-> >> pre-registration
-> >> in future kernels. Therefore, the application could try using them without
-> >> registration. If it works, all is fine, else it would treat the error how it
-> >> sees fit, either through explicit registration and trying again, or returning
-> >> the error to the caller.
-> > 
-> > This would be nice. I think the register-at-first-pthread_create works
-> > fine for my case now, but as noted it doesn't work when you can't
-> > control libc internals.
-> 
-> It seems to be a transient problem then: once all libc start supporting this,
-> there will be fewer and fewer "early adopter" libraries that need to register
-> while multithreaded. Therefore, I wonder if it's really worthwhile to introduce
-> a change at this point, considering that it will take a while before newer
-> kernels gets rolled out, and people will have to support legacy behavior anyway.
-
-It's slightly more complicated than that. At present, the code I have
-queued for push to musl only performs the syscall in pthread_create if
-the code using membarrier is linked (it's a weak reference, or rather
-as we implement those, a weak alias for a dummy function), and the
-only code using it is in the dynamic linker, so static-linked programs
-never register. This would be fixed for applications if we provide a
-public membarrier() function declared in some header, and applications
-use it rather than doing syscall(SYS_membarrier, ...) themselves,
-which I'd kinda like to do -- it would also let us offer a fallback on
-old kernels via the signaling mechanism musl already has as a
-fallback. But I don't think we have any consensus with glibc about
-whether or where to declare such a function, and we usually try to get
-that before adding new syscall wrappers. I can work on this.
-
-> >> The only change I see we would require to make this work is to turn
-> >> arch/powerpc/include/asm/membarrier.h membarrier_arch_switch_mm() into
-> >> an unconditional smp_mb().
-> > 
-> > I finally found this just now; before I was mistakenly grepping for
-> > MEMBARRIER_STATE_PRIVATE_EXPEDITED_READY rather than
-> > MEMBARRIER_STATE_PRIVATE_EXPEDITED, and couldn't find anywhere it was
-> > actually used.
-> > 
-> >> Thoughts ?
-> > 
-> > I'm all for making it work without pre-registration. I don't care
-> > whether this is via heavier barriers in ppc or via pinging more cores,
-> > or some other mechanism, but maybe others have opinions on this.
-> 
-> If from a libc perspective the current pre-registration scheme is acceptable,
-> I don't see a strong point for introducing a behavior change to an already
-> exposed system call (not requiring pre-registration). It may introduce user
-> confusion, and would require documenting per-kernel-version-ranges system call
-> error behavior, which seems to add an unwanted amount of complexity for
-> users of the system call.
-> 
-> > 
-> > One alternative might be auto-registration, ipi pinging all cores the
-> > process has threads on (even not currently running) for the first
-> > membarrier, so that they see the membarrier_state updated without
-> > having to synchronize with the rcu/scheduler, then doing the same as
-> > now after the first call. I'm not sure if this creates opportunities
-> > for abuse; probably no worse than the process could do just by
-> > actually running lots of threads.
-> 
-> We try really hard not to IPI a core that happens to be running
-> a realtime thread at high priority. I think this scheme would not
-> meet this requirement.
-
-That's a very reasonable requirement.
-
-Rich
+Bartosz
