@@ -2,121 +2,114 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B2CC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 18:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F2C3C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 18:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EBAE21479
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 18:42:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09D4F21479
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 18:43:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=stwm.de header.i=@stwm.de header.b="BQKXjjZw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728201AbfBSSmf (ORCPT
+        id S1728376AbfBSSnZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 13:42:35 -0500
-Received: from gateway33.websitewelcome.com ([192.185.145.9]:22383 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726794AbfBSSmf (ORCPT
+        Tue, 19 Feb 2019 13:43:25 -0500
+Received: from mailin.studentenwerk.mhn.de ([141.84.225.229]:53098 "EHLO
+        email.studentenwerk.mhn.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725875AbfBSSnY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 13:42:35 -0500
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 72FFE1FB60
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 12:42:34 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id wALigQvUh90onwALigmyR5; Tue, 19 Feb 2019 12:42:34 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=40816 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gwALh-000kxH-E4; Tue, 19 Feb 2019 12:42:33 -0600
-Date:   Tue, 19 Feb 2019 12:42:32 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] drm/amd/powerplay/smu8_hwmgr: use struct_size() in kzalloc()
-Message-ID: <20190219184232.GA20672@embeddedor>
+        Tue, 19 Feb 2019 13:43:24 -0500
+Received: from mailhub.studentenwerk.mhn.de (mailhub.studentenwerk.mhn.de [127.0.0.1])
+        by email.studentenwerk.mhn.de (Postfix) with ESMTP id 443qPQ6bmNzRhRx;
+        Tue, 19 Feb 2019 19:43:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stwm.de;
+        s=stwm-20170627; t=1550601802;
+        bh=K5MS3jZ13BGgh3RDJZiSh61A7blwovI8lflGwDP8VL8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=BQKXjjZwoTTYNQUcaNC+Jl1dGibLplg9PPcbHCS2jM6/HZwYpnPiZ89xe+PMG6hyI
+         kfPcyNmGjNGHnRtZIjRkiKRzpV/TX+AGdt/9/PMC03gsKIugQxLNmjSPUMuZmP1+9U
+         XyEtjPUJgNzZDP5aOLcrWOafrzejEN4SvdRA6rZmuBYyfXv1wgj8BTJy14HY1b7jP7
+         Z0ZWr4yRrxembIkboC25ex5d7/u8+Q3igU19rB7lUgkgPh51EXFcaXterdMwmlOBrd
+         /0w+E/y66LIoKuF2i2ksYNPvhF/4Tsgrf2IrdL1WK0wC8Z8xotMys96v+nsm5oKWBo
+         BIFPcAJ1Bhm0g==
+From:   Wolfgang Walter <linux@stwm.de>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Rik van Riel <riel@surriel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Dave Chinner <dchinner@redhat.com>,
+        Roman Gushchin <guro@fb.com>, Spock <dairinin@gmail.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 4.20 71/92] Revert "mm: slowly shrink slabs with a relatively small number of objects"
+Date:   Tue, 19 Feb 2019 19:43:22 +0100
+Message-ID: <4113759.4IQ3NfHFaI@stwm.de>
+User-Agent: KMail/4.14.3 (Linux/4.18.12-041812-generic; KDE/4.14.13; x86_64; ; )
+In-Reply-To: <20190218193452.GV10616@sasha-vm>
+References: <20190218133454.668268457@linuxfoundation.org> <a998a5028aa3bb17a5a60fffd3db558223b84cd5.camel@surriel.com> <20190218193452.GV10616@sasha-vm>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gwALh-000kxH-E4
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.119.20]:40816
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 10
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+Am Montag, 18. Februar 2019, 14:34:52 schrieb Sasha Levin:
+> On Mon, Feb 18, 2019 at 10:30:44AM -0500, Rik van Riel wrote:
+> >On Mon, 2019-02-18 at 14:43 +0100, Greg Kroah-Hartman wrote:
+> >> 4.20-stable review patch.  If anyone has any objections, please le=
+t
+> >> me know.
+> >>=20
+> >> ------------------
+> >>=20
+> >> From: Dave Chinner <dchinner@redhat.com>
+> >>=20
+> >> commit a9a238e83fbb0df31c3b9b67003f8f9d1d1b6c96 upstream.
+> >>=20
+> >> This reverts commit 172b06c32b9497 ("mm: slowly shrink slabs with =
+a
+> >> relatively small number of objects").
+> >
+> >This revert will result in the slab caches of dead
+> >cgroups with a small number of remaining objects never
+> >getting reclaimed, which can be a memory leak in some
+> >configurations.
+>=20
+> What's the "right" choice though? we get either leaky cgroups or hang=
+ing
+> xfs.
 
-struct foo {
-    int stuff;
-    struct boo entry[];
-};
+This not only made xfs hang. (Since 4.19.3) on two of our servers ext4 =
+got so=20
+sluggish that login with ssh needed a minute and more. bash tab complet=
+ion was=20
+unusable. Sometimes systemd-journald was restarted with "Watchdog timeo=
+ut=20
+(limit 3min)!", (journal also was on ext4).
 
-size = sizeof(struct foo) + count * sizeof(struct boo);
-instance = kzalloc(size, GFP_KERNEL);
+>=20
+> >But hey, that's your tradeoff to make.
+>=20
+> I don't think that any decision was made here, the stable tree simply=
 
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
+> follows upstream with regards to fixes and bugs such as these: we rem=
+ain
+> "bug compatible" with upstream in these scenarios, there was no decis=
+ion
+> made to prefer either bug.
+>=20
+> --
+> Thanks,
+> Sasha
 
-instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
-
-Notice that, in this case, variable table_size is not necessary, hence
-it is removed.
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c
-index 553a203ac47c..019d6a206492 100644
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c
-@@ -272,12 +272,10 @@ static int smu8_init_dynamic_state_adjustment_rule_settings(
- 			struct pp_hwmgr *hwmgr,
- 			ATOM_CLK_VOLT_CAPABILITY *disp_voltage_table)
- {
--	uint32_t table_size =
--		sizeof(struct phm_clock_voltage_dependency_table) +
--		(7 * sizeof(struct phm_clock_voltage_dependency_record));
-+	struct phm_clock_voltage_dependency_table *table_clk_vlt;
- 
--	struct phm_clock_voltage_dependency_table *table_clk_vlt =
--					kzalloc(table_size, GFP_KERNEL);
-+	table_clk_vlt = kzalloc(struct_size(table_clk_vlt, entries, 7),
-+				GFP_KERNEL);
- 
- 	if (NULL == table_clk_vlt) {
- 		pr_err("Can not allocate memory!\n");
--- 
-2.20.1
-
+Regards
+--=20
+Wolfgang Walter
+Studentenwerk M=FCnchen
+Anstalt des =F6ffentlichen Rechts
