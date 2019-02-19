@@ -2,57 +2,56 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E89C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6124AC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:07:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8120B2147C
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:06:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25FB721738
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:07:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O8nXH21x"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JzcH2CTX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730205AbfBSUG4 (ORCPT
+        id S1730134AbfBSUGj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 15:06:56 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34126 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730139AbfBSUGk (ORCPT
+        Tue, 19 Feb 2019 15:06:39 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45009 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729211AbfBSUGi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 15:06:40 -0500
-Received: by mail-pg1-f196.google.com with SMTP id i130so10648668pgd.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 12:06:40 -0800 (PST)
+        Tue, 19 Feb 2019 15:06:38 -0500
+Received: by mail-pg1-f193.google.com with SMTP id y1so10620193pgk.11
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 12:06:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=dV4n54u4Vk8nQPIidEsBnddfIzKpZiU37Lp+GMapMQM=;
-        b=O8nXH21xvSsrX1OsDJizzomvsSoTUNm6Z8wxdx3GPRef4zxxMrT5Hw2rBVCnSsUbLP
-         OnkWNZXT9o5Wxd047B4AdPMKRWt+66i0PbfL0w0D3/4h551wtKVf4ko6SQoOOrf/w328
-         dishnro/qOLVq4LAXLHyXHBFKWFYOl6qvjzvQ=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6fjaVe2IWAjjmpinqrQyhO+TSntXi4mEIVbc/jdZCkw=;
+        b=JzcH2CTX7Jza5c+4Su+PGpBbzoAXz3W58Lvdp0KY2jWbnt8b9eYrCr2is9cj9hotdo
+         P6B+Vw4GuRyZpgikr/gvEvOlorE8uaGbr1SWKKF6PD2Smmq0frzkjBih/u2U0gd0AQGK
+         6AX0flMrOgKbt+zSF5zNYxNb5JePCO+wol3Dg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dV4n54u4Vk8nQPIidEsBnddfIzKpZiU37Lp+GMapMQM=;
-        b=mntX1KqB/FbX+BIqIbCyT4k2oyNJ8jOlDFQH49Ol6zI4hR2jtodr7NQj3nddjNYBuk
-         wDOhn4N47Yl7JUeIfB82OpXAWyjPGHY6O5M+E7sEc+7u0VpdgDHBPHUS0Gmc++sTCmBo
-         DNgql1rKDFyLx3nxR6R0LHcyTByNvZ3JV/9rhn4xdltsZJoDad0QNvZ+dn81lvsUnj4d
-         720y/nULcgfxNzTBRiKIvEhYkd8ctnOIW03Q1gQa+BeDxe+xtXb24bgiIBlMK2iVSdHO
-         DauBAYj2m00CBZRsr6hoQkuVJTnrS/lIgLitkuKbUiMOoXVvaaZaJ44Pbh90eJ8OOB9g
-         H10w==
-X-Gm-Message-State: AHQUAuad1ESruxwH4UC+jozeyPA1gOtbClmoY/J9ZsdVuxO4nvrYMrMH
-        JB+kh+yjg6pLjVgrHNDrfQpPNg==
-X-Google-Smtp-Source: AHgI3IaziTruyfWBp7Vrqn1lWKCI19vVykxfzVF3UrkKad5S+8MtakmXc+6R+vcrRj2z6+M4dxIIMg==
-X-Received: by 2002:a62:442:: with SMTP id 63mr30538068pfe.156.1550606799734;
-        Tue, 19 Feb 2019 12:06:39 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6fjaVe2IWAjjmpinqrQyhO+TSntXi4mEIVbc/jdZCkw=;
+        b=iqrKg+NUiovTq8rVAgk51UNsq1R8RDBlyO/CtL/ib/Ri3qJDtsRiDzMd0OV0qoIhuL
+         tvfBh7bEQowy1y7slfIaXvC/4lPzHDMEsjrCFTkqxOlyv95HhU0enfUf4kLro8kNldhD
+         ArqY7mgH2bCPgm3SgspsMOePWdEM96OgBW3iRhEJq4fdMiufyrEjvQQ0M9mzapEmkqPH
+         0Z/kLLlHawat7CBvnEV82pFdpRUTr2z7iaKq2HyqsGVDoC7d9gVbw4yFdVINCu/rEzXg
+         B2D+hF0hzdXM9xJtVm1FasoGyj6wNQnmunXVOqR+3ZYXoUwk0T7/zxBWuT+iacrS41Te
+         B28Q==
+X-Gm-Message-State: AHQUAuZlZBf9iUhU3lOVi5MmbVT5g44hsI6FVU/HuWKVJxi/6mpRqdZX
+        ykxHKkjgYfm8GAzJiysh/UEIOQ==
+X-Google-Smtp-Source: AHgI3IYJxtI1kove61qhi04/fev9fsMWoilnBKzuhdhOkE9BqNqkt4khMHxXvjHq/Z5I+YpamhPDYQ==
+X-Received: by 2002:a65:6553:: with SMTP id a19mr25810247pgw.267.1550606797745;
+        Tue, 19 Feb 2019 12:06:37 -0800 (PST)
 Received: from mka.mtv.corp.google.com ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id s73sm50115476pfi.124.2019.02.19.12.06.38
+        by smtp.gmail.com with ESMTPSA id s73sm50115476pfi.124.2019.02.19.12.06.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 12:06:39 -0800 (PST)
+        Tue, 19 Feb 2019 12:06:36 -0800 (PST)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     Marcel Holtmann <marcel@holtmann.org>,
         Johan Hedberg <johan.hedberg@gmail.com>,
@@ -62,12 +61,10 @@ Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org,
         Balakrishna Godavarthi <bgodavar@codeaurora.org>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v4 2/3] Bluetooth: btqcomsmd: use HCI_QUIRK_USE_BDADDR_PROPERTY
-Date:   Tue, 19 Feb 2019 12:05:58 -0800
-Message-Id: <20190219200559.13079-3-mka@chromium.org>
+Subject: [PATCH v4 0/3] Add quirk for reading BD_ADDR from fwnode property
+Date:   Tue, 19 Feb 2019 12:05:56 -0800
+Message-Id: <20190219200559.13079-1-mka@chromium.org>
 X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
-In-Reply-To: <20190219200559.13079-1-mka@chromium.org>
-References: <20190219200559.13079-1-mka@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,92 +72,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the HCI_QUIRK_USE_BDADDR_PROPERTY quirk to let the HCI
-core handle the reading of 'local-bd-address'. With this there
-is no need to set HCI_QUIRK_INVALID_BDADDR, the case of a
-non-existing or invalid fwnode property is handled by the core
-code.
+On some systems the Bluetooth Device Address (BD_ADDR) isn't stored
+on the Bluetooth chip itself. One way to configure the address is
+through the device tree (patched in by the bootloader). The btqcomsmd
+driver is an example, it can read the address from the DT property
+'local-bd-address'.
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
----
-Changes in v4:
-- btqcomsmd_setup(): removed unused variables 'err' and 'btq'
+To avoid redundant open-coded reading of 'local-bd-address' and error
+handling this series adds the quirk HCI_QUIRK_USE_BDADDR_PROPERTY to
+retrieve the BD address of a device from the DT and adapts the
+btqcomsmd and hci_qca drivers to use this quirk.
 
-Changes in v3:
-- none
+Matthias Kaehlcke (3):
+  Bluetooth: Add quirk for reading BD_ADDR from fwnode property
+  Bluetooth: btqcomsmd: use HCI_QUIRK_USE_BDADDR_PROPERTY
+  Bluetooth: hci_qca: Set HCI_QUIRK_USE_BDADDR_PROPERTY for wcn3990
 
-Changes in v2:
-- removed now unused field 'bdaddr' from struct btqcomsmd
-- added 'Reviewed-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>' tag
----
- drivers/bluetooth/btqcomsmd.c | 31 +++----------------------------
- 1 file changed, 3 insertions(+), 28 deletions(-)
+ drivers/bluetooth/btqcomsmd.c | 31 +++----------------------
+ drivers/bluetooth/hci_qca.c   |  1 +
+ include/net/bluetooth/hci.h   | 12 ++++++++++
+ net/bluetooth/hci_core.c      | 43 +++++++++++++++++++++++++++++++++++
+ net/bluetooth/mgmt.c          |  6 +++--
+ 5 files changed, 63 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/bluetooth/btqcomsmd.c b/drivers/bluetooth/btqcomsmd.c
-index 7df3eed1ef5e9..e0d4c6f1d3ab6 100644
---- a/drivers/bluetooth/btqcomsmd.c
-+++ b/drivers/bluetooth/btqcomsmd.c
-@@ -28,7 +28,6 @@
- struct btqcomsmd {
- 	struct hci_dev *hdev;
- 
--	bdaddr_t bdaddr;
- 	struct rpmsg_endpoint *acl_channel;
- 	struct rpmsg_endpoint *cmd_channel;
- };
-@@ -116,32 +115,17 @@ static int btqcomsmd_close(struct hci_dev *hdev)
- 
- static int btqcomsmd_setup(struct hci_dev *hdev)
- {
--	struct btqcomsmd *btq = hci_get_drvdata(hdev);
- 	struct sk_buff *skb;
--	int err;
- 
- 	skb = __hci_cmd_sync(hdev, HCI_OP_RESET, 0, NULL, HCI_INIT_TIMEOUT);
- 	if (IS_ERR(skb))
- 		return PTR_ERR(skb);
- 	kfree_skb(skb);
- 
--	/* Devices do not have persistent storage for BD address. If no
--	 * BD address has been retrieved during probe, mark the device
--	 * as having an invalid BD address.
--	 */
--	if (!bacmp(&btq->bdaddr, BDADDR_ANY)) {
--		set_bit(HCI_QUIRK_INVALID_BDADDR, &hdev->quirks);
--		return 0;
--	}
--
--	/* When setting a configured BD address fails, mark the device
--	 * as having an invalid BD address.
-+	/* Devices do not have persistent storage for BD address. Retrieve
-+	 * it from the firmware node property.
- 	 */
--	err = qca_set_bdaddr_rome(hdev, &btq->bdaddr);
--	if (err) {
--		set_bit(HCI_QUIRK_INVALID_BDADDR, &hdev->quirks);
--		return 0;
--	}
-+	set_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks);
- 
- 	return 0;
- }
-@@ -169,15 +153,6 @@ static int btqcomsmd_probe(struct platform_device *pdev)
- 	if (IS_ERR(btq->cmd_channel))
- 		return PTR_ERR(btq->cmd_channel);
- 
--	/* The local-bd-address property is usually injected by the
--	 * bootloader which has access to the allocated BD address.
--	 */
--	if (!of_property_read_u8_array(pdev->dev.of_node, "local-bd-address",
--				       (u8 *)&btq->bdaddr, sizeof(bdaddr_t))) {
--		dev_info(&pdev->dev, "BD address %pMR retrieved from device-tree",
--			 &btq->bdaddr);
--	}
--
- 	hdev = hci_alloc_dev();
- 	if (!hdev)
- 		return -ENOMEM;
 -- 
 2.21.0.rc0.258.g878e2cd30e-goog
 
