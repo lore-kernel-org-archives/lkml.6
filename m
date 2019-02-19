@@ -2,95 +2,105 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B7DC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61425C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:43:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43C3A21479
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:42:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C0A121738
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:43:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730036AbfBSXmV (ORCPT
+        id S1730051AbfBSXnW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 18:42:21 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35740 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726405AbfBSXmU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 18:42:20 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EC39E81F12;
-        Tue, 19 Feb 2019 23:42:19 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6B09E19C57;
-        Tue, 19 Feb 2019 23:42:15 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <8736ojybw7.fsf@xmission.com>
-References: <8736ojybw7.fsf@xmission.com> <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
-To:     ebiederm@xmission.com (Eric W. Biederman)
-Cc:     dhowells@redhat.com, keyrings@vger.kernel.org,
-        trond.myklebust@hammerspace.com, sfrench@samba.org,
-        linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        rgb@redhat.com, linux-kernel@vger.kernel.org,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-api@vger.kernel.org
-Subject: Re: [RFC PATCH 00/27] Containers and using authenticated filesystems
+        Tue, 19 Feb 2019 18:43:22 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:45514 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbfBSXnV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 18:43:21 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 0851827FF96
+Received: by earth.universe (Postfix, from userid 1000)
+        id C09743C08DD; Wed, 20 Feb 2019 00:43:17 +0100 (CET)
+Date:   Wed, 20 Feb 2019 00:43:17 +0100
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] power: reset: at91-reset: add support for sam9x60
+ SoC
+Message-ID: <20190219234317.2oyp3ktqp3cikh5l@earth.universe>
+References: <20190206181221.27914-1-nicolas.ferre@microchip.com>
+ <20190206181221.27914-3-nicolas.ferre@microchip.com>
+ <20190208152435.GC23062@piout.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <22054.1550619729.1@warthog.procyon.org.uk>
-Date:   Tue, 19 Feb 2019 23:42:09 +0000
-Message-ID: <22055.1550619729@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 19 Feb 2019 23:42:20 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="tkplu3agw26zk46b"
+Content-Disposition: inline
+In-Reply-To: <20190208152435.GC23062@piout.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eric W. Biederman <ebiederm@xmission.com> wrote:
 
-> So you missed the main mailing lists for discussion of this kind of
-> thing
+--tkplu3agw26zk46b
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, sorry about that.  I was primarily aiming it at Trond and Steve as I'd
-like to consider how to go about interpolating request_key() into NFS and CIFS
-so that they can make use of the key-related facilities that this makes
-available with AFS.  And I was in a bit tight for time to mail it out before
-having to go out.  I know, excuses... ;-)
+Hi,
 
-> and the maintainer.
+On Fri, Feb 08, 2019 at 04:24:35PM +0100, Alexandre Belloni wrote:
+> On 06/02/2019 19:12:21+0100, Nicolas Ferre wrote:
+> > Add support for additional reset causes and the proper compatibility
+> > string for sam9x60 SoC. The restart function is the same as the samx7.
+> >=20
+> > Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> > Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+>=20
+> > ---
+> > v2: split series and collect tag
+> >=20
+> > Sebastian,
+> > I add your Acked-by tag here but as I would like that you take the 3 pa=
+tches on
+> > your tree now, I let you modify it on your side. I'm expecting Alexandr=
+e or
+> > Ludovic to have a look as well.
+> >=20
+>=20
+> Sebastian, please take this series through your tree. Thanks!
 
-That would be me.  I maintain keyrings.
+All right. I just merged them!
 
-No one is listed in MAINTAINERS as owning namespaces.  If you feel that should
-be you, please add a record.
+-- Sebastian
 
-> Looking at your description you are introducing a container id.
+--tkplu3agw26zk46b
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Yes.  For audit logging, which was why I cc'd Richard.
+-----BEGIN PGP SIGNATURE-----
 
-> You don't descibe which namespace your contianer id lives in.
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlxslJIACgkQ2O7X88g7
++ppA5A/+IgJmgk73r39b7sVQDIRJzLpLKH/r6ioaFSbPCcC4owKjc0U4O0V+peRz
+tZfwhfjeARci7EwVfrpmm9cXcoAtQ7A8uLrDjK/30zNZ6bIj/LymFzaF9YbuFo4P
+A6N/7HfGPSMjc6a0V09jYWkQ7nHuvdoxocr4TKDg8JREAZVdih4gKtUoWnc26iQQ
+gjWPx/yo4KAzHi9BbknO7z1LLxS4wmfjWlvLZTLJ6gv7oSEL48dM/KVsLXN5hWzn
+vvpeHgbLl87DWRxFNHLjhO7IDPfVh01lGWnThvqP+1+O/qjCq6w0QPvVbSU7ERPj
+qsyKE8ImbXOg8TBVswEord1chbOmCDbawL76vlOq7w1GN2B8Psedr/uu2vV+hS1c
+wvSvIEL8f5m8E2OsyfssRjbtJqS+rWHcTuucHdRZa/xY3M+/OscVX8dQ3FLgB9bQ
+2+V7AvAR7c8OHiXGF0nZZ4AHAwdb3XbkL/BUiD4+3ko3mpIHwId/EJXRCUlMPdCw
+0bGzo9IQSJx50FzIA/3s1Oih1nBto9Gr4qidCD8clRIMvbsyesDiiRgYUl+MqMTh
+RQd43y5CebvIchrYvIuM7xPnCHlwbb+7UM2wfHEaRMpoVVntr5HJcgaUlFRWavRs
+icJF/h7BInttqAm0OFCo6UoP4wyJvHXWOrNBxQ21EPjD8EqzO18=
+=oRbw
+-----END PGP SIGNATURE-----
 
-It doesn't.  Not everything has to have a namespace.  As you yourself pointed
-out, it should be globally unique, in which case the world is the namespace,
-maybe even the universe;-).
-
-> Without the container id living in a container this breaks
-> nested containers and process migration aka CRIU.
-
-As long as IDs are globally unique, why should break container migration?
-Having a kernel container object might even make CRIU easier.
-
-And what does "Without the container id living in a container" mean anyway?  I
-have IDs attached to containers.  A container can see the IDs of its child
-containers.  There should be no problem with nesting.
-
-David
+--tkplu3agw26zk46b--
