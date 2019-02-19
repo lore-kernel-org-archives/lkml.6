@@ -2,76 +2,89 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B01BC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:03:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F487C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:04:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21D222146E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:03:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C4B820700
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:04:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbfBSODU (ORCPT
+        id S1728434AbfBSOEN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 09:03:20 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59764 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725845AbfBSODU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 09:03:20 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CEB16AF51;
-        Tue, 19 Feb 2019 14:03:18 +0000 (UTC)
-Date:   Tue, 19 Feb 2019 15:03:18 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org,
+        Tue, 19 Feb 2019 09:04:13 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47200 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725803AbfBSOEN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 09:04:13 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CC46F81F31;
+        Tue, 19 Feb 2019 14:04:12 +0000 (UTC)
+Received: from krava (unknown [10.43.17.42])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 9BE1E173C1;
+        Tue, 19 Feb 2019 14:04:10 +0000 (UTC)
+Date:   Tue, 19 Feb 2019 15:04:09 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+Cc:     linux-perf-users@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC PATCH v1 09/25] printk: remove exclusive console hack
-Message-ID: <20190219140318.wnk2dbgvf3i5qdsb@pathway.suse.cz>
-References: <20190212143003.48446-1-john.ogness@linutronix.de>
- <20190212143003.48446-10-john.ogness@linutronix.de>
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Stephane Eranian <eranian@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf: fix HEADER_CMDLINE description in perf.data
+ documentation
+Message-ID: <20190219140409.GD6435@krava>
+References: <20190218124648.GN31177@kernel.org>
+ <20190218140203.1982-1-jonas.rabenstein@studium.uni-erlangen.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190212143003.48446-10-john.ogness@linutronix.de>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20190218140203.1982-1-jonas.rabenstein@studium.uni-erlangen.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 19 Feb 2019 14:04:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2019-02-12 15:29:47, John Ogness wrote:
-> In order to support printing the printk log history when new
-> consoles are registered, a global exclusive_console variable is
-> temporarily set. This only works because printk runs with
-> preemption disabled.
+On Mon, Feb 18, 2019 at 03:02:03PM +0100, Jonas Rabenstein wrote:
+> The content of this feature header is a perf_header_string_list of
+> the argument vector and not a perf_header_string of the commandline.
+
+missing your Signed-off-by
+
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+
+thanks,
+jirka
+
+> ---
+>  tools/perf/Documentation/perf.data-file-format.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> When console printing is moved to a fully preemptible dedicated
-> kthread, this hack no longer works.
-
-We need to keep this functionality. Otherwise, people would miss
-the beginning of the log on some consoles. Kernel does not know
-what console is important for monitoring or debugging.
-
-Fortunately, it should be easy to implement this with
-the new ring buffer a much cleaner way. Anyway, you
-need to switch to the new implementation in a single
-patch to avoid regression.
-
-I would personally postpone this into a separate patchset.
-
-Best Regards,
-Petr
+> diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
+> index dfb218feaad9..5f9a3924830b 100644
+> --- a/tools/perf/Documentation/perf.data-file-format.txt
+> +++ b/tools/perf/Documentation/perf.data-file-format.txt
+> @@ -131,7 +131,7 @@ An uint64_t with the total memory in bytes.
+>  
+>  	HEADER_CMDLINE = 11,
+>  
+> -A perf_header_string with the perf command line used to collect the data.
+> +A perf_header_string_list with the perf arg-vector used to collect the data.
+>  
+>  	HEADER_EVENT_DESC = 12,
+>  
+> -- 
+> 2.19.2
+> 
