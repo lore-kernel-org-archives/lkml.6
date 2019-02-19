@@ -2,166 +2,124 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8C3AC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:04:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8886FC10F00
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7B7421904
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:04:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cbL2VONK"
+	by mail.kernel.org (Postfix) with ESMTP id 507ED21904
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:07:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550567240;
+	bh=sMSKVV8l7NNhyoKncEMpbp0IQtcuBeEA4/nd5VD74Bc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Co0Bt3aPwe/wvPyMImONTM1hbFHcA3oE3xtbxxpNpYs7HMr02AxwMxWv5B7XjrDxL
+	 dLAUMMlIr5KvogOVKaIWB5y7cAays8Uhbab8QocLtBO3j28TKTcWDO/40/jZivV6F3
+	 1kCwd+tllx+yzKqTvLsANNl0D2NMyscurbbiiC5Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbfBSJEY (ORCPT
+        id S1727813AbfBSJHT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 04:04:24 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:49968 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727774AbfBSJEX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 04:04:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ThhYnbts7+zgv5MoHghFZR2EhyIZylWls9oz+nY7ndQ=; b=cbL2VONKqZ2oUIxiFUTzw4LXR
-        cOmb7G5oBIwxIREdaIZBTH6Iy9OSVhJvG+ouUsbl0P1pQP1hOqspHVsUqZeL1Z2kIaJBXqfGO3zYW
-        oeoGQ4j3bVIRo2g7WUBY95OkZ2y1kWmcX4XxuI6asdeza98OyQrBgpBNxdvQNeVAIo9LRYRH5r2W8
-        gENKrCwx6fBXutG08YmUACfQielax3shCpIM7fkqGJqiDpFlyb8FuKuZ0+esZWu9RcxuUGM1RsMH1
-        /8gjNPyHAzIHKaPgh9nnnb/fWlDz7CJdME39yYfALoeOk9AErBb2xCqG/1KtFAyYgrLxiV5kQ5afp
-        20+sHtOtA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gw1K1-0000y5-2B; Tue, 19 Feb 2019 09:04:13 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 7A1B7286B87C3; Tue, 19 Feb 2019 10:04:09 +0100 (CET)
-Date:   Tue, 19 Feb 2019 10:04:09 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "H. Peter Anvin" <hpa@zytor.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mingo@redhat.com,
-        catalin.marinas@arm.com, james.morse@arm.com,
-        valentin.schneider@arm.com, brgerst@gmail.com, jpoimboe@redhat.com,
-        luto@kernel.org, bp@alien8.de, dvlasenk@redhat.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de
-Subject: Re: [PATCH] sched/x86: Save [ER]FLAGS on context switch
-Message-ID: <20190219090409.GW32494@hirez.programming.kicks-ass.net>
-References: <dd33cc20-f335-0e4c-e3f4-02497ecc3710@arm.com>
- <20190213144145.GY32494@hirez.programming.kicks-ass.net>
- <20190213154532.GQ32534@hirez.programming.kicks-ass.net>
- <D61C430D-4321-4114-AB85-671A3C7B8EAE@amacapital.net>
- <20190213222146.GC32494@hirez.programming.kicks-ass.net>
- <D3E1B64D-3E91-4A82-9C3B-92D9EB7326CE@amacapital.net>
- <20190214101429.GD32494@hirez.programming.kicks-ass.net>
- <20ABBED1-E505-45F6-8520-FB93786DF9A9@zytor.com>
- <20190216103044.GR32494@hirez.programming.kicks-ass.net>
- <9e037d68-75e7-1beb-0c9c-33a7ffeced1b@zytor.com>
+        Tue, 19 Feb 2019 04:07:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46828 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727429AbfBSJHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 04:07:18 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9182D2146F;
+        Tue, 19 Feb 2019 09:07:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550567237;
+        bh=sMSKVV8l7NNhyoKncEMpbp0IQtcuBeEA4/nd5VD74Bc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2b7KO5W0zH5AqZL8nn6L0a9837a2FBlP1SWTEkqjGRChBH+Mb6dFjQampblQrScPg
+         NUDAPSwqVyy5YnhWuUr/PaVOz8ba2SfmmeCTwWCLGLpfB5uEG5AGd5vSNzuBEC+JCt
+         R/jID5QxHZb2PztXj0S4wksttgkosXBUWFctGbEs=
+Date:   Tue, 19 Feb 2019 10:07:14 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jiri Slaby <jirislaby@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: Re: [PATCH 4.20 11/50] signal: Always notice exiting tasks
+Message-ID: <20190219090714.GA27102@kroah.com>
+References: <20190213183655.747168774@linuxfoundation.org>
+ <20190213183656.733725215@linuxfoundation.org>
+ <95a41702-ac6a-cd58-2ca5-71d879ee923c@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9e037d68-75e7-1beb-0c9c-33a7ffeced1b@zytor.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <95a41702-ac6a-cd58-2ca5-71d879ee923c@gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 02:30:21PM -0800, H. Peter Anvin wrote:
-> On 2/16/19 2:30 AM, Peter Zijlstra wrote:
-> > On Fri, Feb 15, 2019 at 08:06:56PM -0800, hpa@zytor.com wrote:
-> >> This implies we invoke schedule -- a restricted operation (consider
-> >> may_sleep) during execution of STAC-enabled code, but *not* as an
-> >> exception or interrupt, since those preserve the flags.
+On Tue, Feb 19, 2019 at 07:23:41AM +0100, Jiri Slaby wrote:
+> On 13. 02. 19, 19:38, Greg Kroah-Hartman wrote:
+> > 4.20-stable review patch.  If anyone has any objections, please let me know.
 > > 
-> > Meet preempt_enable().
+> > ------------------
+> > 
+> > From: Eric W. Biederman <ebiederm@xmission.com>
+> > 
+> > commit 35634ffa1751b6efd8cf75010b509dcb0263e29b upstream.
+> > 
+> > Recently syzkaller was able to create unkillablle processes by
+> > creating a timer that is delivered as a thread local signal on SIGHUP,
+> > and receiving SIGHUP SA_NODEFERER.  Ultimately causing a loop
+> > failing to deliver SIGHUP but always trying.
+> > 
+> > Upon examination it turns out part of the problem is actually most of
+> > the solution.  Since 2.5 signal delivery has found all fatal signals,
+> > marked the signal group for death, and queued SIGKILL in every threads
+> > thread queue relying on signal->group_exit_code to preserve the
+> > information of which was the actual fatal signal.
+> > 
+> > The conversion of all fatal signals to SIGKILL results in the
+> > synchronous signal heuristic in next_signal kicking in and preferring
+> > SIGHUP to SIGKILL.  Which is especially problematic as all
+> > fatal signals have already been transformed into SIGKILL.
+> > 
+> > Instead of dequeueing signals and depending upon SIGKILL to
+> > be the first signal dequeued, first test if the signal group
+> > has already been marked for death.  This guarantees that
+> > nothing in the signal queue can prevent a process that needs
+> > to exit from exiting.
+> > 
+> > Cc: stable@vger.kernel.org
+> > Tested-by: Dmitry Vyukov <dvyukov@google.com>
+> > Reported-by: Dmitry Vyukov <dvyukov@google.com>
+> > Ref: ebf5ebe31d2c ("[PATCH] signal-fixes-2.5.59-A4")
+> > History Tree: https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
+> > Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > 
-> I believe this falls under "doctor, it hurts when I do that." And it hurts for
-> very good reasons. See below.
-
-I disagree; the basic rule is that if you're preemptible you must also
-be able to schedule and vice-versa. These AC regions violate this.
-
-And, like illustrated, it is _very_ easy to get all sorts inside that AC
-crap.
-
-> >> I have serious concerns about this. This is more or less saying that
-> >> we have left an unlimited gap and have had AC escape.
-> > 
-> > Yes; by allowing normal C in between STAC and CLAC this is so.
-> > 
-> >> Does *anyone* see a need to allow this? I got a question at LPC from
-> >> someone about this, and what they were trying to do once all the
-> >> layers had been unwound was so far down the wrong track for a root
-> >> problem that actually has a very simple solution.
-> > 
-> > Have you read the rest of the thread?
-> > 
-> > All it takes for this to explode is a call to a C function that has
-> > tracing on it in between the user_access_begin() and user_access_end()
-> > things. That is a _very_ easy thing to do.
-> > 
-> > Heck, GCC is allowed to generate that broken code compiling
-> > lib/strnlen_user.c; it doesn't _have_ to inline do_strnlen_user (esp.
-> > with CONFIG_OPTIMIZE_INLINING), and making that a function call would
-> > get us fentry hooks and ftrace and *BOOM*.
-> > 
-> > (Now, of course, its a static function with a single caller, and GCC
-> > isn't _THAT_ stupid, but it could, if it wanted to)
-> > 
-> > Since the bar is _that_ low for mistakes, I figure we'd better fix it.
-> > 
+> This patch breaks strace self-tests in 4.20.9. In particular,
+> "threads-execve":
+> https://github.com/strace/strace/blob/master/tests/threads-execve.c
+> https://github.com/strace/strace/blob/master/tests/threads-execve.test
 > 
-> The question is what "fix it" means. 
-
-It means that when we do schedule, the next task doesn't have AC set,
-and when we schedule back, we'll restore our AC when we had it. Unlike
-the current situation, where the next task will run with AC set.
-
-IOW, it confines AC to the task context where it was set.
-
-> I'm really concerned about AC escapes,
-> and everyone else should be, too.
-
-Then _that_ should be asserted.
-
-> For an issue specific to tracing, it would be more appropriate to do the
-> appropriate things in the tracing entry/exit than in schedule. Otherwise, we
-> don't want to silently paper over mistakes which could mean that we run a
-> large portion of the kernel without protection we thought we had.
+> The test received some fix a day ago, but it did not help in this case:
+>  https://github.com/strace/strace/commit/2a50278b9
 > 
-> In that sense, calling schedule() with AC set is in fact a great place to have
-> a WARN() or even BUG(), because such an event really could imply that the
-> kernel has been security compromised.
+> Only a revert of the above patch helped.
+> 
+> I don't know if the strace's test is broken (which is quite usual in
+> cases like these) or the patch affects some user-visible behaviour --
+> e.g. could this be a reason for sh failures in the build farm?
+> 
+> Any ideas?
 
-It is not specific to tracing, tracing is just one of the most trivial
-and non-obvious ways to make it go splat.
+Does cf43a757fd49 ("signal: Restore the stop PTRACE_EVENT_EXIT") help
+with this?  It's queued up for the next round of stable releases and is
+in Linus's tree.
 
-There's lot of fairly innocent stuff that does preempt_disable() /
-preempt_enable(). And just a warning in schedule() isn't sufficient,
-you'd have to actually trigger a reschedule before you know your code is
-bad.
+thanks,
 
-And like I said; the invariant is: if you're preemptible you can
-schedule and v.v.
-
-Now, clearly you don't want to mark these whole regions as !preemptible,
-because then you can also not take faults, but somehow you're not
-worried about the whole fault handler, but you are worried about the
-scheduler ?!? How does that work? The fault handler can touch a _ton_
-more code. Heck, the fault handler can schedule.
-
-So either pre-fault, and run the whole AC crap with preemption disabled
-and retry, or accept that we have to schedule.
-
-> Does that make more sense?
-
-It appears to me you're going about it backwards.
-
-
+greg k-h
