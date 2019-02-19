@@ -2,140 +2,116 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA034C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD9DC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:11:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94E572146F
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:10:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF61F21904
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:11:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550567469;
+	bh=bxAhFaJzYeh+kug4n0sOfuGcn+g4Ssg6hQRIRRNZKtE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=sfHC6B/2WL3Od99HGck534v6Z3nmWplW2+wysvjOzZn6veSwy7Yt7Ywd7uMKLZkwA
+	 b7He0mg/8r5NyrranXkE89m/HIst9oHjoeSVxIWuhiLNO5QaipS+NM1UPk1brqTQFC
+	 ewz5z65XcAvVjvSiqBfHIbdaL/GCgp+1gWnpi1fY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727912AbfBSJKf (ORCPT
+        id S1727955AbfBSJLH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 04:10:35 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:39757 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727881AbfBSJKd (ORCPT
+        Tue, 19 Feb 2019 04:11:07 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:46797 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727831AbfBSJLG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 04:10:33 -0500
-Received: by mail-qt1-f194.google.com with SMTP id o6so22302201qtk.6;
-        Tue, 19 Feb 2019 01:10:32 -0800 (PST)
+        Tue, 19 Feb 2019 04:11:06 -0500
+Received: by mail-ot1-f65.google.com with SMTP id c18so11408484otl.13;
+        Tue, 19 Feb 2019 01:11:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ZgZfbfGDAIrLHm8OGM0hyr2IUJKMkKhN5SqMTkRLPEM=;
-        b=jTM5rDy+3XD3Crgti4ne/1LV6bTtbI3g/bTNlcisPf8fU2aWjaPuBAoUxUT3Je7EAk
-         bVyAPpkZ8KLulunX2SaPdF8qBnWUh/EcavQ6vdUIQAMvLk39N9OUfO3Xk160yaxLHofm
-         xcefHmQsVoD9L5uqCLAEGU7AYoAhUSN6/F1g7NFtNPVvDM0JTn9S0VS7m0glcAqjVV1t
-         nF9BJizvV+3Zx+JWzSFN4LfJdooyCCxX3/g07PYCPGPtFz/GatdtyZa7Y0ch+PDt58ss
-         1tg8viDOK2jiSiYaFp2+wTPFStFC+4YkaaDbLEblw3lr2foR7krnYCzqX93D4+bhyva6
-         hNtg==
-X-Gm-Message-State: AHQUAuaUoACDyq/y1lFiXo6+B38wLLirRdH5oZoO833XcxJti0qivMDF
-        x/wHzPo4ix48rbKW7R8MP7G07DyQYTz52em2h2w=
-X-Google-Smtp-Source: AHgI3Ib1oYxLVKiIDWh7U+TqJfRLgTvr9IGfVMPPSTo6RezHMX4HFg8tiIfwxKyn6Qj1jqFpKTa9fVhbXPrYEoLnrfI=
-X-Received: by 2002:a0c:d791:: with SMTP id z17mr20279762qvi.149.1550567432050;
- Tue, 19 Feb 2019 01:10:32 -0800 (PST)
+        bh=fxDA+/dzu0nOfBkkmiudLRSxaWUAW+hOuZ4AgzPO4rc=;
+        b=bfVskMFpWtkgrZq8OJyO7W9b48oxOcitj4jvknAxK8CUTjlPlIh+wqprBGxLI/TfWT
+         GHvIs+OW7JsVpg/USxoeWF7l1GFCM5bArGNt15Ib7yjeAQ24vay0efoj3jsrL78n74yx
+         kkg8eG7PslBAAsJFx8MIbYlYo623HZDia/ACDkKttq3iwm5KHjukasw0ZJ/DqnCJUGAB
+         PIYkgqt2RnRfKHDDxt8qLdntes8xAaRUelMEStoUUEinwFzEhczWX6zFbopO5y+6Efbl
+         MtaJYmLJJCAFXzMc2r29RIh2HF9708HWa0ALJBu8VHyktp6VU9EAr8JmA2WBuymY9SmQ
+         PuLg==
+X-Gm-Message-State: AHQUAuYq60xdpRWzCDJ7WVHNIyq+2r/s6GfvybDsINsR+L+3KlWZ/RcG
+        NUhfgd2sbzqP+xgOTjwWcdY3DoSfLuR4V4XqsGA=
+X-Google-Smtp-Source: AHgI3IZfpWU8UOjAiG2wYUiGk6S3D7wUB9RiTpFO8XHvEHCNZiw6qRt9AV7uLy7CDngabgtTn/kUKwIaCc5tWff3J2M=
+X-Received: by 2002:aca:88d:: with SMTP id 135mr1823105oii.84.1550567465621;
+ Tue, 19 Feb 2019 01:11:05 -0800 (PST)
 MIME-Version: 1.0
-References: <20190218210712.3503891-1-arnd@arndb.de> <20190218210712.3503891-3-arnd@arndb.de>
- <CAMuHMdUb47nLkorUpQ1ohD-WMaEG7d3DBAs7JWA6rvgKTZAGGw@mail.gmail.com>
-In-Reply-To: <CAMuHMdUb47nLkorUpQ1ohD-WMaEG7d3DBAs7JWA6rvgKTZAGGw@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 19 Feb 2019 10:10:15 +0100
-Message-ID: <CAK8P3a3RTZDfc-4womPK2qbPTwuaP0Jin6Nzq6Ep3G4SnFpZvw@mail.gmail.com>
-Subject: Re: [PATCH 2/8] 32-bit userspace ABI: introduce ARCH_32BIT_OFF_T
- config option
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Yury Norov <yury.norov@gmail.com>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
+References: <635b2bf8b1151a191cd9299276b75791a818c0c2.1550545163.git.len.brown@intel.com>
+ <3349c9e551eecbfe849320c0e938daf4e0126734.1550545163.git.len.brown@intel.com>
+In-Reply-To: <3349c9e551eecbfe849320c0e938daf4e0126734.1550545163.git.len.brown@intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 19 Feb 2019 10:10:54 +0100
+Message-ID: <CAJZ5v0i7_UuHs_RMrL9GOfEVZPZpCF-uatw3=OwsrTpA=PNfWQ@mail.gmail.com>
+Subject: Re: [PATCH 08/11] powercap/intel_rapl: Support multi-die/package
+To:     Len Brown <lenb@kernel.org>
+Cc:     "the arch/x86 maintainers" <x86@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>,
-        "moderated list:H8/300 ARCHITECTURE" 
-        <uclinux-h8-devel@lists.sourceforge.jp>,
-        Stafford Horne <shorne@gmail.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Guo Ren <guoren@kernel.org>, Greentime Hu <green.hu@gmail.com>,
-        linux-riscv@lists.infradead.org, Guan Xuetao <gxt@pku.edu.cn>,
-        Yury Norov <ynorov@caviumnetworks.com>,
-        Yury Norov <ynorov@marvell.com>
+        Zhang Rui <rui.zhang@intel.com>,
+        Len Brown <len.brown@intel.com>,
+        Linux PM <linux-pm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 9:56 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On Tue, Feb 19, 2019 at 4:40 AM Len Brown <lenb@kernel.org> wrote:
 >
-> Hi Arnd, Yuri,
+> From: Zhang Rui <rui.zhang@intel.com>
 >
-> On Tue, Feb 19, 2019 at 3:35 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> > From: Yury Norov <ynorov@caviumnetworks.com>
-> >
-> > All new 32-bit architectures should have 64-bit userspace off_t type, but
-> > existing architectures has 32-bit ones.
-> >
-> > To enforce the rule, new config option is added to arch/Kconfig that defaults
-> > ARCH_32BIT_OFF_T to be disabled for new 32-bit architectures. All existing
-> > 32-bit architectures enable it explicitly.
-> >
-> > New option affects force_o_largefile() behaviour. Namely, if userspace
-> > off_t is 64-bits long, we have no reason to reject user to open big files.
-> >
-> > Note that even if architectures has only 64-bit off_t in the kernel
-> > (arc, c6x, h8300, hexagon, nios2, openrisc, and unicore32),
-> > a libc may use 32-bit off_t, and therefore want to limit the file size
-> > to 4GB unless specified differently in the open flags.
-> >
-> > Signed-off-by: Yury Norov <ynorov@caviumnetworks.com>
-> > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> > Signed-off-by: Yury Norov <ynorov@marvell.com>
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> On the new dual-die/package systems, the RAPL MSR becomes die-scope.
+> Thus instead of one powercap device per physical package, now there
+> should be one powercap device for each unique die on these systems.
 >
-> >  arch/m68k/Kconfig       |  1 +
+> This patch introduces intel_rapl driver support for new
+> dual-die/package systems.
 >
-> For m68k:
-> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> On the hardwares that do not have multi-die, topology_unique_die_id()
+> equals topology_physical_package_id(), thus there is no functional change.
+>
+> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+> Signed-off-by: Len Brown <len.brown@intel.com>
+> Cc: linux-pm@vger.kernel.org
+> Signed-off-by: Len Brown <len.brown@intel.com>
 
-Thanks!
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-> > --- a/arch/Kconfig
-> > +++ b/arch/Kconfig
-> > @@ -276,6 +276,21 @@ config ARCH_THREAD_STACK_ALLOCATOR
-> >  config ARCH_WANTS_DYNAMIC_TASK_STRUCT
-> >         bool
-> >
-> > +config ARCH_32BIT_OFF_T
-> > +       bool
-> > +       depends on !64BIT
-> > +       help
-> > +         All new 32-bit architectures should have 64-bit off_t type on
-> > +         userspace side which corresponds to the loff_t kernel type. This
-> > +         is the requirement for modern ABIs. Some existing architectures
-> > +         already have 32-bit off_t. This option is enabled for all such
+> ---
+>  drivers/powercap/intel_rapl.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> s/already/still/
+> diff --git a/drivers/powercap/intel_rapl.c b/drivers/powercap/intel_rapl.c
+> index 6057d9695fed..e004707283da 100644
+> --- a/drivers/powercap/intel_rapl.c
+> +++ b/drivers/powercap/intel_rapl.c
+> @@ -266,7 +266,7 @@ static struct rapl_domain *platform_rapl_domain; /* Platform (PSys) domain */
+>  /* caller to ensure CPU hotplug lock is held */
+>  static struct rapl_package *rapl_find_package(int cpu)
+>  {
+> -       int id = topology_physical_package_id(cpu);
+> +       int id = topology_unique_die_id(cpu);
+>         struct rapl_package *rp;
 >
-> > +         architectures explicitly. Namely: arc, arm, blackfin, cris, frv,
-> > +         h8300, hexagon, m32r, m68k, metag, microblaze, mips32, mn10300,
-> > +         nios2, openrisc, parisc32, powerpc32, score, sh, sparc, tile32,
-> > +         unicore32, x86_32 and xtensa. This is the complete list. Any
+>         list_for_each_entry(rp, &rapl_packages, plist) {
+> @@ -1457,7 +1457,7 @@ static void rapl_remove_package(struct rapl_package *rp)
+>  /* called from CPU hotplug notifier, hotplug lock held */
+>  static struct rapl_package *rapl_add_package(int cpu)
+>  {
+> -       int id = topology_physical_package_id(cpu);
+> +       int id = topology_unique_die_id(cpu);
+>         struct rapl_package *rp;
+>         int ret;
 >
-> Do we really need this list here?  It's intended to shrink only.
-> It includes removed architectures (blackfin, cris, frv, m32r, metag,
-> mn10300, score, tile32), but lacks several new ones affected by this
-> patch (c6x, csky, nds32, riscv).
-
-Right, I (finally)  took Yury's patch that was already several years old
-without checking this text (I did make sure all architectures are changed
-correctly).
-
-I'll just remove the list here.
-
-      Arnd
+> --
+> 2.18.0-rc0
+>
