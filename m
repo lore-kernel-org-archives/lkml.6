@@ -2,129 +2,70 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFFE3C4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:08:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 800E3C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:08:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABB7B2177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:08:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CC9E2064C
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:08:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726120AbfBSDIE (ORCPT
+        id S1726000AbfBSDIz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 22:08:04 -0500
-Received: from out1.zte.com.cn ([202.103.147.172]:46660 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725770AbfBSDID (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 22:08:03 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id CB692CFAEFC9CAEAF628;
-        Tue, 19 Feb 2019 11:06:23 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id x1J36EYn092400;
-        Tue, 19 Feb 2019 11:06:14 +0800 (GMT-8)
-        (envelope-from peng.hao2@zte.com.cn)
-Received: from localhost.localdomain.localdomain ([10.74.120.59])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019021911062691-595543 ;
-          Tue, 19 Feb 2019 11:06:26 +0800 
-From:   Peng Hao <peng.hao2@zte.com.cn>
-To:     gregkh@linuxfoundation.org, arnd@arndb.de,
-        andy.shevchenko@gmail.com
-Cc:     linux-kernel@vger.kernel.org, Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH V6 1/4]  misc/pvpanic : preparing for pvpanic driver framework
-Date:   Tue, 19 Feb 2019 19:27:45 +0800
-Message-Id: <1550575668-6240-2-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1550575668-6240-1-git-send-email-peng.hao2@zte.com.cn>
-References: <1550575668-6240-1-git-send-email-peng.hao2@zte.com.cn>
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-02-19 11:06:26,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-02-19 11:06:10,
-        Serialize complete at 2019-02-19 11:06:10
-X-MAIL: mse01.zte.com.cn x1J36EYn092400
+        Mon, 18 Feb 2019 22:08:55 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39718 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725613AbfBSDIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 22:08:55 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4CB1480D;
+        Mon, 18 Feb 2019 19:08:54 -0800 (PST)
+Received: from [10.162.40.139] (p8cg001049571a15.blr.arm.com [10.162.40.139])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0EB4C3F575;
+        Mon, 18 Feb 2019 19:08:50 -0800 (PST)
+Subject: Re: [PATCH] arm64: mm: enable per pmd page table lock
+To:     Yu Zhao <yuzhao@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org
+References: <20190214211642.2200-1-yuzhao@google.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <f67b5468-2144-c51f-6cf0-ea7ece93b502@arm.com>
+Date:   Tue, 19 Feb 2019 08:38:54 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20190214211642.2200-1-yuzhao@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Preparing for pvpanic driver framework. Create a pvpanic driver
-directory and move current driver file to new directory.
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
----
- drivers/misc/Kconfig                 | 9 +--------
- drivers/misc/Makefile                | 2 +-
- drivers/misc/pvpanic/Kconfig         | 7 +++++++
- drivers/misc/pvpanic/Makefile        | 5 +++++
- drivers/misc/{ => pvpanic}/pvpanic.c | 0
- 5 files changed, 14 insertions(+), 9 deletions(-)
- create mode 100644 drivers/misc/pvpanic/Kconfig
- create mode 100644 drivers/misc/pvpanic/Makefile
- rename drivers/misc/{ => pvpanic}/pvpanic.c (100%)
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index f417b06..aa3a805 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -513,14 +513,7 @@ config MISC_RTSX
- 	tristate
- 	default MISC_RTSX_PCI || MISC_RTSX_USB
+On 02/15/2019 02:46 AM, Yu Zhao wrote:
+> Switch from per mm_struct to per pmd page table lock by enabling
+> ARCH_ENABLE_SPLIT_PMD_PTLOCK. This provides better granularity for
+> large system.
+> 
+> I'm not sure if there is contention on mm->page_table_lock. Given
+> the option comes at no cost (apart from initializing more spin
+> locks), why not enable it now.
+> 
+
+This has similar changes to what I had posted part of the general page table
+page accounting clean up series on arm64 last month.
+
+https://www.spinics.net/lists/arm-kernel/msg701954.html
  
--config PVPANIC
--	tristate "pvpanic device support"
--	depends on HAS_IOMEM && (ACPI || OF)
--	help
--	  This driver provides support for the pvpanic device.  pvpanic is
--	  a paravirtualized device provided by QEMU; it lets a virtual machine
--	  (guest) communicate panic events to the host.
--
-+source "drivers/misc/pvpanic/Kconfig"
- source "drivers/misc/c2port/Kconfig"
- source "drivers/misc/eeprom/Kconfig"
- source "drivers/misc/cb710/Kconfig"
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index e39ccbb..cfe20b3 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -58,4 +58,4 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+= aspeed-lpc-snoop.o
- obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
- obj-$(CONFIG_OCXL)		+= ocxl/
- obj-y				+= cardreader/
--obj-$(CONFIG_PVPANIC)   	+= pvpanic.o
-+obj-$(CONFIG_PVPANIC)   	+= pvpanic/
-diff --git a/drivers/misc/pvpanic/Kconfig b/drivers/misc/pvpanic/Kconfig
-new file mode 100644
-index 0000000..3e612c6
---- /dev/null
-+++ b/drivers/misc/pvpanic/Kconfig
-@@ -0,0 +1,7 @@
-+config PVPANIC
-+	tristate "pvpanic device support"
-+	depends on HAS_IOMEM && (ACPI || OF)
-+	help
-+	  This driver provides support for the pvpanic device.  pvpanic is
-+	  a paravirtualized device provided by QEMU; it lets a virtual machine
-+	  (guest) communicate panic events to the host.
-diff --git a/drivers/misc/pvpanic/Makefile b/drivers/misc/pvpanic/Makefile
-new file mode 100644
-index 0000000..6394224
---- /dev/null
-+++ b/drivers/misc/pvpanic/Makefile
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0
-+# 
-+# Copyright (c) 2018 ZTE Ltd.
-+
-+obj-$(CONFIG_PVPANIC)            += pvpanic.o
-diff --git a/drivers/misc/pvpanic.c b/drivers/misc/pvpanic/pvpanic.c
-similarity index 100%
-rename from drivers/misc/pvpanic.c
-rename to drivers/misc/pvpanic/pvpanic.c
--- 
-1.8.3.1
-
