@@ -2,72 +2,69 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05EA5C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B80F3C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:13:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8A452177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:12:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82EE420823
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:13:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oYpWZ6GH"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gqgSGYti"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728803AbfBSOMz (ORCPT
+        id S1728840AbfBSONz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 09:12:55 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38601 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728448AbfBSOMw (ORCPT
+        Tue, 19 Feb 2019 09:13:55 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35438 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725808AbfBSONz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 09:12:52 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v13so22124696wrw.5;
-        Tue, 19 Feb 2019 06:12:51 -0800 (PST)
+        Tue, 19 Feb 2019 09:13:55 -0500
+Received: by mail-ed1-f67.google.com with SMTP id g19so7881478edp.2;
+        Tue, 19 Feb 2019 06:13:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/0JBM24FcnQmJde4WWzmBZkXqboeyOfFTcrQBHQ0MrE=;
-        b=oYpWZ6GHIP1tReRGBO0W3DC9apYQa7+3LWHqex46G4UucbgFSyL6XVfxc7IM9oZ75s
-         2Yl0R0N2QiUFjpaASb7hXdodlfMd0+/gLNw2+MoukVNQBsRC3CQy569ZjYTncmyViWuT
-         EZn4q5HmZdT3BYHQx4m5RLf9TPAZG7qKSCvhmwkYniZnOGxAHQ0+i6270ELvjYVGByH1
-         fsHXB2ZyFznxlsGJhNP1TT/ZFrvzYvUOD96mKU75cre2VZRaK5Ft2XBTuIGpLSxE8KTt
-         f4na/ZpeKqW22CYB+FSJS7SgWEYNb4kY4eLrscFzGgXaUxZoN7zlYpPUbvycWtMwi5O/
-         FvAw==
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZkemQaXDdoLf47LKaqQ66xqnzc6sSNK3Q/PXS/ocVm0=;
+        b=gqgSGYtiwwts7SqL9ZbRwwd2E3NmiJ4RbJnHiiT1eJXAZuAo0kSgProGeKI/+ggU0J
+         U7q0FjWBWXzhxv0IOji8+RNYSvVOPHwPUrMc06PvmHeM4jL0K31QLylAjXz9kdHGMSzA
+         lAs1EnA8+epTo2pmknLGvwHrqynHgWbdcZLMXNL5QI3gpCsjHkIb5gL503t9T1wS4lXy
+         obgaBs0CstVJUb1KslTXUdXbRdY7PH9t91kRXXLtdbih1FpRNulEcxSHrbscLYHSGRh8
+         YddXZzDxTT3EpL1hh30HcC/1n+LBYMHw2HHVORsgoikGVVd5MN/EF0OeBDptnbiVgs1D
+         Xg1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/0JBM24FcnQmJde4WWzmBZkXqboeyOfFTcrQBHQ0MrE=;
-        b=QCPyk0QRPrWSVdHhm9D6nQDTPnFnFlxjh8jNgTTvIupg2uvPs15Fkeyf7ctiqcEutA
-         q+Z04ffisU3Me91beAEXnzszvq1bpy/aGx624g13vpHnFRAKfrTILrm8zZoynMTGupp4
-         Q8k2zeMY9dqmAWhSqsv2rK6toQ7K+Nm4ApMIw1ioGDWBJ0JnkP1NaxYbY8CABugz3qay
-         5EGSfXBt/EyjSf1jxqJNU9kRjyHYwo59xz+zy6VpOhN5OtyoL3aTPYWOFo+QnI8BvMgU
-         hXztqWMv/+bbpiB9+P/vB1rsKNQSBC8QkOv7BMn7DeQJUMIfXY1xReT4r8Nu2yIiT+Fs
-         z7/w==
-X-Gm-Message-State: AHQUAuZ1Bb5m2z1Qunfo8+yzu22rJ/r0jE5jzth82Y6qnbrZXLdjae7M
-        JrFLeNqq2Qx69+CNA/3xMCk=
-X-Google-Smtp-Source: AHgI3IbFeA/jEEQdX/aZ4gZJjHe3Bm8VtiS1XfpZC787xUxsokGem+pWeQLBb2Tw+4nYc5GrEgZyzA==
-X-Received: by 2002:adf:e5cc:: with SMTP id a12mr22553510wrn.130.1550585570974;
-        Tue, 19 Feb 2019 06:12:50 -0800 (PST)
-Received: from localhost.localdomain ([5.2.196.146])
-        by smtp.gmail.com with ESMTPSA id w4sm4510587wrk.85.2019.02.19.06.12.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 06:12:50 -0800 (PST)
-From:   Bogdan Togorean <bogdan.togorean@gmail.com>
-To:     alsa-devel@alsa-project.org
-Cc:     lars@metafoo.de, lgirdwood@gmail.com, broonie@kernel.org,
-        robh+dt@kernel.org, tiwai@suse.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bogdan Togorean <bogdan.togorean@gmail.com>
-Subject: [PATCH 2/2] ASoC: adau1977: Add support for setting MICBIAS via DT
-Date:   Tue, 19 Feb 2019 16:11:39 +0200
-Message-Id: <20190219141139.24216-3-bogdan.togorean@gmail.com>
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=ZkemQaXDdoLf47LKaqQ66xqnzc6sSNK3Q/PXS/ocVm0=;
+        b=sCkk9Lmc9dicm6HnIZ8nQQMafQj8gnqyA2BpBFZV/2Te+nWjlmWRG13Rjc+qKPyHx9
+         QYQzTHJstyFbTqO5r2IFEm1JddkkfERY/vqV6WiCIYr80OypIFJYOExCgUNDzEqhp53I
+         eDGKxKWKvYY47VYHhHDJb3tkjZgBtlgCD+p3+IOTdmEqFWcg3FCMTWWdDxmtEW2zA7xf
+         nyKvk0QLo13qcVaOkqL06rLDsB8XsAPAXAkqoZDqrdYXvS7xIQR5+D7b03KJkWluDOnb
+         6cIBwOkQkvL6RVURTbWmy3/PbUfugzyWWH0cCdbNQu+cOwUNEd87QfHhXVqaZzEAEGYe
+         q7Ww==
+X-Gm-Message-State: AHQUAuZTJe9UbLVb7cBV9uUTd8v+5urnZG/EDIpqFVQLB6h7FQvf9HKr
+        Z5MbF3j1Ub0NgCPDNnY/Iahu+eIYISQ=
+X-Google-Smtp-Source: AHgI3IZejhkWJv9KT/paZ96MCUqlzD3QVMbal1+H5R9DXgLJqPYzU/uEmHwVYxqI/eYKva/b9DEKow==
+X-Received: by 2002:a50:b286:: with SMTP id p6mr23536245edd.202.1550585632803;
+        Tue, 19 Feb 2019 06:13:52 -0800 (PST)
+Received: from neptune.fritz.box ([178.19.216.175])
+        by smtp.gmail.com with ESMTPSA id f16sm1378848ejc.27.2019.02.19.06.13.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Feb 2019 06:13:52 -0800 (PST)
+From:   Alban Crequy <alban.crequy@gmail.com>
+X-Google-Original-From: Alban Crequy <alban@kinvolk.io>
+To:     ast@kernel.org, daniel@iogearbox.net, quentin.monnet@netronome.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        john.fastabend@gmail.com, alban@kinvolk.io, iago@kinvolk.io
+Subject: [PATCH bpf-next v2] bpf: bpftool, fix documentation for attach types
+Date:   Tue, 19 Feb 2019 15:13:32 +0100
+Message-Id: <20190219141332.23103-1-alban@kinvolk.io>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190219141139.24216-1-bogdan.togorean@gmail.com>
-References: <20190219141139.24216-1-bogdan.togorean@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,40 +72,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If platform_data is NULL add reading of optional adi,micbias
-property from DT. If adi,micbias is not set keep the default
-value for micbias.
+From: Alban Crequy <alban@kinvolk.io>
 
-Signed-off-by: Bogdan Togorean <bogdan.togorean@gmail.com>
+bpftool has support for attach types "stream_verdict" and
+"stream_parser" but the documentation was referring to them as
+"skb_verdict" and "skb_parse". The inconsistency comes from commit
+b7d3826c2ed6 ("bpf: bpftool, add support for attaching programs to
+maps").
+
+This patch changes the documentation to match the implementation:
+- "bpftool prog help"
+- man pages
+- bash completion
+
+Signed-off-by: Alban Crequy <alban@kinvolk.io>
+
 ---
- sound/soc/codecs/adau1977.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/codecs/adau1977.c b/sound/soc/codecs/adau1977.c
-index 116af6a9ce3b..11c53bcb71dd 100644
---- a/sound/soc/codecs/adau1977.c
-+++ b/sound/soc/codecs/adau1977.c
-@@ -885,13 +885,15 @@ static int adau1977_setup_micbias(struct adau1977 *adau1977)
- 	struct adau1977_platform_data *pdata = adau1977->dev->platform_data;
- 	unsigned int micbias;
+Changes v1 to v2:
+- fix man pages & bash completion (from Quentin's review)
+---
+ tools/bpf/bpftool/Documentation/bpftool-prog.rst | 2 +-
+ tools/bpf/bpftool/bash-completion/bpftool        | 4 ++--
+ tools/bpf/bpftool/prog.c                         | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/tools/bpf/bpftool/Documentation/bpftool-prog.rst b/tools/bpf/bpftool/Documentation/bpftool-prog.rst
+index 7e59495cb028..12bc1e2d4b46 100644
+--- a/tools/bpf/bpftool/Documentation/bpftool-prog.rst
++++ b/tools/bpf/bpftool/Documentation/bpftool-prog.rst
+@@ -42,7 +42,7 @@ PROG COMMANDS
+ |		**cgroup/connect4** | **cgroup/connect6** | **cgroup/sendmsg4** | **cgroup/sendmsg6**
+ |	}
+ |       *ATTACH_TYPE* := {
+-|		**msg_verdict** | **skb_verdict** | **skb_parse** | **flow_dissector**
++|		**msg_verdict** | **stream_verdict** | **stream_parser** | **flow_dissector**
+ |	}
  
--	if (pdata) {
-+	if (pdata)
- 		micbias = pdata->micbias;
--		if (micbias > ADAU1977_MICBIAS_9V0)
--			return -EINVAL;
--
--	} else {
-+	else if (device_property_read_u32(adau1977->dev, "adi,micbias",
-+					  &micbias))
- 		micbias = ADAU1977_MICBIAS_8V5;
-+
-+	if (micbias > ADAU1977_MICBIAS_9V0) {
-+		dev_err(adau1977->dev, "Invalid value for 'adi,micbias'\n");
-+		return -EINVAL;
- 	}
  
- 	return regmap_update_bits(adau1977->regmap, ADAU1977_REG_MICBIAS,
+diff --git a/tools/bpf/bpftool/bash-completion/bpftool b/tools/bpf/bpftool/bash-completion/bpftool
+index 763dd12482aa..b803827d01e8 100644
+--- a/tools/bpf/bpftool/bash-completion/bpftool
++++ b/tools/bpf/bpftool/bash-completion/bpftool
+@@ -311,8 +311,8 @@ _bpftool()
+                             return 0
+                             ;;
+                         5)
+-                            COMPREPLY=( $( compgen -W 'msg_verdict skb_verdict \
+-                                skb_parse flow_dissector' -- "$cur" ) )
++                            COMPREPLY=( $( compgen -W 'msg_verdict stream_verdict \
++                                stream_parser flow_dissector' -- "$cur" ) )
+                             return 0
+                             ;;
+                         6)
+diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
+index 33ed0806ccc0..db978c8d76a8 100644
+--- a/tools/bpf/bpftool/prog.c
++++ b/tools/bpf/bpftool/prog.c
+@@ -1199,7 +1199,7 @@ static int do_help(int argc, char **argv)
+ 		"                 cgroup/bind4 | cgroup/bind6 | cgroup/post_bind4 |\n"
+ 		"                 cgroup/post_bind6 | cgroup/connect4 | cgroup/connect6 |\n"
+ 		"                 cgroup/sendmsg4 | cgroup/sendmsg6 }\n"
+-		"       ATTACH_TYPE := { msg_verdict | skb_verdict | skb_parse |\n"
++		"       ATTACH_TYPE := { msg_verdict | stream_verdict | stream_parser |\n"
+ 		"                        flow_dissector }\n"
+ 		"       " HELP_SPEC_OPTIONS "\n"
+ 		"",
 -- 
 2.20.1
 
