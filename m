@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66DC6C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 07:51:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4774C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 07:51:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2882621848
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 07:51:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AD3C21848
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 07:51:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbfBSHvT (ORCPT
+        id S1727451AbfBSHvb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 02:51:19 -0500
-Received: from mga14.intel.com ([192.55.52.115]:10038 "EHLO mga14.intel.com"
+        Tue, 19 Feb 2019 02:51:31 -0500
+Received: from mga02.intel.com ([134.134.136.20]:16836 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727228AbfBSHvT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 02:51:19 -0500
+        id S1726948AbfBSHvb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 02:51:31 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2019 23:51:18 -0800
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2019 23:51:30 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,387,1544515200"; 
-   d="scan'208";a="147958349"
+   d="scan'208";a="147958373"
 Received: from joy-optiplex-7040.sh.intel.com ([10.239.13.9])
-  by fmsmga001.fm.intel.com with ESMTP; 18 Feb 2019 23:51:17 -0800
+  by fmsmga001.fm.intel.com with ESMTP; 18 Feb 2019 23:51:29 -0800
 From:   Yan Zhao <yan.y.zhao@intel.com>
 To:     intel-gvt-dev@lists.freedesktop.org, alex.williamson@redhat.com
 Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         Yulei Zhang <yulei.zhang@intel.com>,
         Zhenyu Wang <zhenyuw@linux.intel.com>
-Subject: [PATCH 4/8] drm/i915/gvt: Retrieve the guest gm base address from PVINFO
-Date:   Tue, 19 Feb 2019 02:46:02 -0500
-Message-Id: <20190219074602.14215-1-yan.y.zhao@intel.com>
+Subject: [PATCH 5/8] drm/i915/gvt: Align the guest gm aperture start offset for live migration
+Date:   Tue, 19 Feb 2019 02:46:10 -0500
+Message-Id: <20190219074610.14260-1-yan.y.zhao@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190219074242.14015-1-yan.y.zhao@intel.com>
 References: <20190219074242.14015-1-yan.y.zhao@intel.com>
@@ -46,112 +46,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yulei Zhang <yulei.zhang@intel.com>
 
-As after migration the host gm base address will be changed due
-to resource re-allocation, in order to make sure the guest gm
-address doesn't change with that to retrieve the guest gm base
-address from PVINFO.
+As guest gm aperture region start offset is initialized when vGPU created,
+in order to make sure that start offset is remain the same after migration,
+align the aperture start offset to 0 for guest.
 
 Signed-off-by: Yulei Zhang <yulei.zhang@intel.com>
 Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
 ---
- drivers/gpu/drm/i915/gvt/cfg_space.c |  3 ++-
- drivers/gpu/drm/i915/gvt/gtt.c       |  8 ++++----
- drivers/gpu/drm/i915/gvt/gvt.h       | 22 ++++++++++++++++++----
- 3 files changed, 24 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/i915/gvt/kvmgt.c |  3 +--
+ drivers/gpu/drm/i915/gvt/vgpu.c  | 10 ++++++++--
+ 2 files changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/gvt/cfg_space.c b/drivers/gpu/drm/i915/gvt/cfg_space.c
-index 19cf1bbe059d..272f8dba7b21 100644
---- a/drivers/gpu/drm/i915/gvt/cfg_space.c
-+++ b/drivers/gpu/drm/i915/gvt/cfg_space.c
-@@ -33,6 +33,7 @@
+diff --git a/drivers/gpu/drm/i915/gvt/kvmgt.c b/drivers/gpu/drm/i915/gvt/kvmgt.c
+index c1072143da1d..223c67e87680 100644
+--- a/drivers/gpu/drm/i915/gvt/kvmgt.c
++++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
+@@ -1198,8 +1198,7 @@ static long intel_vgpu_ioctl(struct mdev_device *mdev, unsigned int cmd,
+ 			sparse->header.version = 1;
+ 			sparse->nr_areas = nr_areas;
+ 			cap_type_id = VFIO_REGION_INFO_CAP_SPARSE_MMAP;
+-			sparse->areas[0].offset =
+-					PAGE_ALIGN(vgpu_aperture_offset(vgpu));
++			sparse->areas[0].offset = 0;
+ 			sparse->areas[0].size = vgpu_aperture_sz(vgpu);
+ 			break;
  
- #include "i915_drv.h"
- #include "gvt.h"
-+#include "i915_pvinfo.h"
+diff --git a/drivers/gpu/drm/i915/gvt/vgpu.c b/drivers/gpu/drm/i915/gvt/vgpu.c
+index c628be05fbfe..fcccda35a456 100644
+--- a/drivers/gpu/drm/i915/gvt/vgpu.c
++++ b/drivers/gpu/drm/i915/gvt/vgpu.c
+@@ -48,8 +48,7 @@ void populate_pvinfo_page(struct intel_vgpu *vgpu)
+ 	vgpu_vreg_t(vgpu, vgtif_reg(vgt_caps)) |= VGT_CAPS_HWSP_EMULATION;
+ 	vgpu_vreg_t(vgpu, vgtif_reg(vgt_caps)) |= VGT_CAPS_HUGE_GTT;
  
- enum {
- 	INTEL_GVT_PCI_BAR_GTTMMIO = 0,
-@@ -133,7 +134,7 @@ static int map_aperture(struct intel_vgpu *vgpu, bool map)
- 	else
- 		val = *(u32 *)(vgpu_cfg_space(vgpu) + PCI_BASE_ADDRESS_2);
+-	vgpu_vreg_t(vgpu, vgtif_reg(avail_rs.mappable_gmadr.base)) =
+-		vgpu_aperture_gmadr_base(vgpu);
++	vgpu_vreg_t(vgpu, vgtif_reg(avail_rs.mappable_gmadr.base)) = 0;
+ 	vgpu_vreg_t(vgpu, vgtif_reg(avail_rs.mappable_gmadr.size)) =
+ 		vgpu_aperture_sz(vgpu);
+ 	vgpu_vreg_t(vgpu, vgtif_reg(avail_rs.nonmappable_gmadr.base)) =
+@@ -524,6 +523,9 @@ void intel_gvt_reset_vgpu_locked(struct intel_vgpu *vgpu, bool dmlr,
+ {
+ 	struct intel_gvt *gvt = vgpu->gvt;
+ 	struct intel_gvt_workload_scheduler *scheduler = &gvt->scheduler;
++	u64 maddr = vgpu_vreg_t(vgpu, vgtif_reg(avail_rs.mappable_gmadr.base));
++	u64 unmaddr = vgpu_vreg_t(vgpu,
++				vgtif_reg(avail_rs.nonmappable_gmadr.base));
+ 	unsigned int resetting_eng = dmlr ? ALL_ENGINES : engine_mask;
  
--	first_gfn = (val + vgpu_aperture_offset(vgpu)) >> PAGE_SHIFT;
-+	first_gfn = (val + vgpu_guest_aperture_offset(vgpu)) >> PAGE_SHIFT;
+ 	gvt_dbg_core("------------------------------------------\n");
+@@ -556,6 +558,10 @@ void intel_gvt_reset_vgpu_locked(struct intel_vgpu *vgpu, bool dmlr,
  
- 	ret = intel_gvt_hypervisor_map_gfn_to_mfn(vgpu, first_gfn,
- 						  aperture_pa >> PAGE_SHIFT,
-diff --git a/drivers/gpu/drm/i915/gvt/gtt.c b/drivers/gpu/drm/i915/gvt/gtt.c
-index 8a5d26d1d402..753ad975c958 100644
---- a/drivers/gpu/drm/i915/gvt/gtt.c
-+++ b/drivers/gpu/drm/i915/gvt/gtt.c
-@@ -70,10 +70,10 @@ int intel_gvt_ggtt_gmadr_g2h(struct intel_vgpu *vgpu, u64 g_addr, u64 *h_addr)
+ 		intel_vgpu_reset_mmio(vgpu, dmlr);
+ 		populate_pvinfo_page(vgpu);
++		vgpu_vreg_t(vgpu, vgtif_reg(avail_rs.mappable_gmadr.base)) =
++			maddr;
++		vgpu_vreg_t(vgpu, vgtif_reg(avail_rs.nonmappable_gmadr.base)) =
++			unmaddr;
+ 		intel_vgpu_reset_display(vgpu);
  
- 	if (vgpu_gmadr_is_aperture(vgpu, g_addr))
- 		*h_addr = vgpu_aperture_gmadr_base(vgpu)
--			  + (g_addr - vgpu_aperture_offset(vgpu));
-+			  + (g_addr - vgpu_guest_aperture_gmadr_base(vgpu));
- 	else
- 		*h_addr = vgpu_hidden_gmadr_base(vgpu)
--			  + (g_addr - vgpu_hidden_offset(vgpu));
-+			  + (g_addr - vgpu_guest_hidden_gmadr_base(vgpu));
- 	return 0;
- }
- 
-@@ -85,10 +85,10 @@ int intel_gvt_ggtt_gmadr_h2g(struct intel_vgpu *vgpu, u64 h_addr, u64 *g_addr)
- 		return -EACCES;
- 
- 	if (gvt_gmadr_is_aperture(vgpu->gvt, h_addr))
--		*g_addr = vgpu_aperture_gmadr_base(vgpu)
-+		*g_addr = vgpu_guest_aperture_gmadr_base(vgpu)
- 			+ (h_addr - gvt_aperture_gmadr_base(vgpu->gvt));
- 	else
--		*g_addr = vgpu_hidden_gmadr_base(vgpu)
-+		*g_addr = vgpu_guest_hidden_gmadr_base(vgpu)
- 			+ (h_addr - gvt_hidden_gmadr_base(vgpu->gvt));
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/i915/gvt/gvt.h b/drivers/gpu/drm/i915/gvt/gvt.h
-index 8621d0f5fd26..1f5ef59a36ac 100644
---- a/drivers/gpu/drm/i915/gvt/gvt.h
-+++ b/drivers/gpu/drm/i915/gvt/gvt.h
-@@ -424,6 +424,20 @@ int intel_gvt_load_firmware(struct intel_gvt *gvt);
- #define vgpu_fence_base(vgpu) (vgpu->fence.base)
- #define vgpu_fence_sz(vgpu) (vgpu->fence.size)
- 
-+/* Aperture/GM space definitions for vGPU Guest view point */
-+#define vgpu_guest_aperture_offset(vgpu) \
-+	vgpu_vreg_t(vgpu, vgtif_reg(avail_rs.mappable_gmadr.base))
-+#define vgpu_guest_hidden_offset(vgpu)	\
-+	vgpu_vreg_t(vgpu, vgtif_reg(avail_rs.nonmappable_gmadr.base))
-+
-+#define vgpu_guest_aperture_gmadr_base(vgpu) (vgpu_guest_aperture_offset(vgpu))
-+#define vgpu_guest_aperture_gmadr_end(vgpu) \
-+	(vgpu_guest_aperture_gmadr_base(vgpu) + vgpu_aperture_sz(vgpu) - 1)
-+
-+#define vgpu_guest_hidden_gmadr_base(vgpu) (vgpu_guest_hidden_offset(vgpu))
-+#define vgpu_guest_hidden_gmadr_end(vgpu) \
-+	(vgpu_guest_hidden_gmadr_base(vgpu) + vgpu_hidden_sz(vgpu) - 1)
-+
- struct intel_vgpu_creation_params {
- 	__u64 handle;
- 	__u64 low_gm_sz;  /* in MB */
-@@ -499,12 +513,12 @@ void intel_gvt_deactivate_vgpu(struct intel_vgpu *vgpu);
- 
- /* validating GM functions */
- #define vgpu_gmadr_is_aperture(vgpu, gmadr) \
--	((gmadr >= vgpu_aperture_gmadr_base(vgpu)) && \
--	 (gmadr <= vgpu_aperture_gmadr_end(vgpu)))
-+	((gmadr >= vgpu_guest_aperture_gmadr_base(vgpu)) && \
-+	 (gmadr <= vgpu_guest_aperture_gmadr_end(vgpu)))
- 
- #define vgpu_gmadr_is_hidden(vgpu, gmadr) \
--	((gmadr >= vgpu_hidden_gmadr_base(vgpu)) && \
--	 (gmadr <= vgpu_hidden_gmadr_end(vgpu)))
-+	((gmadr >= vgpu_guest_hidden_gmadr_base(vgpu)) && \
-+	 (gmadr <= vgpu_guest_hidden_gmadr_end(vgpu)))
- 
- #define vgpu_gmadr_is_valid(vgpu, gmadr) \
- 	 ((vgpu_gmadr_is_aperture(vgpu, gmadr) || \
+ 		if (dmlr) {
 -- 
 2.17.1
 
