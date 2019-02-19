@@ -2,160 +2,113 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 656E7C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B86D9C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:48:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E36D2085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:45:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B9C12147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:48:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kinvolk.io header.i=@kinvolk.io header.b="Ahk9fha1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728873AbfBSNp3 (ORCPT
+        id S1728786AbfBSNsh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 08:45:29 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:36212 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728611AbfBSNp3 (ORCPT
+        Tue, 19 Feb 2019 08:48:37 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:34085 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726221AbfBSNsg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 08:45:29 -0500
-Received: by mail-qt1-f195.google.com with SMTP id p25so22840472qtb.3;
-        Tue, 19 Feb 2019 05:45:28 -0800 (PST)
+        Tue, 19 Feb 2019 08:48:36 -0500
+Received: by mail-ot1-f68.google.com with SMTP id 98so34295431oty.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 05:48:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kinvolk.io; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8QGfegZ1fIwdmPWV3WuX3nc8IFFPYVW7GFcBj01E8rc=;
+        b=Ahk9fha1oi4UAmfPTczoXZcJkOvnNnwuD0RvN9pZ/6UnP2wQ4N5khUNygWvYLPGTMS
+         AVmNN/HN1CvAg14z9HiMIuLv4lOX3btk2ZpdUjGor9cXcl39gKQHOyLxkeaLWQR4iZr7
+         Z8UXp40dAcwwPgmFjZreBVueQCeBCUCPgDzJc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Ok/bPWmoRh3V02dyhMl5PyZU/ZPoyF6FhprZOPxPR/Q=;
-        b=HufVlOpPe0fUaGhBJrsvxd2qe1AMWKXbiGIUbhkoZqLJEsWcj/NKZDwYvaMMW60c1x
-         8mAs+82sKfrBqp6lilALBo8AX61XkrlbYXsn5L2oSU9cusibgdadBuNQwGpXJnUTx90I
-         yEWy6tZ7VorgEgJIaGaklRDk4rrq4EG56kWGQmMAzhutTt7JjSnk6FO0U/bM4o6OxPOQ
-         cZg3DRlfTtzjFFAIZytLqkTkM+kC1psKGui5Fwj8qZ2234tmv23alDT2k0mXotw/CEAC
-         bj4h7QtBNEgpOzZC2dF16fB8+oSAg50KXnBcGIqO+/T5wIS27TPigHiPVfDpWUVFklO8
-         s5JA==
-X-Gm-Message-State: AHQUAuYXdSTXi4Cp+o/gizXaJH6jB6KVjdpHlPJvppdZKRuaaYYKw8A9
-        pqKNAHmNSJEZ8XwswG2Yf4MDmLIWfWG/LERCIuoUdiHe
-X-Google-Smtp-Source: AHgI3IY5AcbK+mS5ZEq78xstYfnCaclTewU8D7KoP0nz0W3b2fEAER1Z+xactvIDbpXriqr5NVLgsP7SnJjlcXWzuIk=
-X-Received: by 2002:a0c:c60f:: with SMTP id v15mr21155229qvi.40.1550583928032;
- Tue, 19 Feb 2019 05:45:28 -0800 (PST)
+        bh=8QGfegZ1fIwdmPWV3WuX3nc8IFFPYVW7GFcBj01E8rc=;
+        b=tmaamdIRIHd1UzMLJIrkj2yitwe3Csy9unC4SCwQD8I6u8/LdMboa6aE7k8NIKj8+A
+         RZdKhhED2X7ikh2AqHytng9Xt1ke/XaDYpjQHbcEBgABeR4IAubUC9CIA7LvmjhBnoFV
+         t47g84KJfsGAnCueQLEpnr4euilBquRFlJjZSEK6iGXAMU4p3+t3oAUbpDJyTULxN7zI
+         dNul8BI2RuFCqWlvjLbHu0ph1Wg4NOW7rpDgUiGjwIWQCPiaEgSdNr7SFCL7OBF0IkPX
+         7/Gto0WpZJEr37/6TIPchsAojPWeA0MF9wNjU4oj8zjUlhCydZ8Y4y6VkIwvhHJRv9Zz
+         JhGw==
+X-Gm-Message-State: AHQUAuYh1qrz7xPJiIP2v3bGogNXc1bLpH+hAShosHk3e3TZWw9zTfMq
+        wt1uNHGonOIkx8lDofzjuDXZmPkerlv6WCDYA5XpcQ==
+X-Google-Smtp-Source: AHgI3IY167wcTXAO5+nw5NfOrlQeCbT5tJSx6SWKDY26P2sAzhh+J95LFl6QBdbKdmH6tMT8z0aXLmckpM0U60VPpzg=
+X-Received: by 2002:aca:54d5:: with SMTP id i204mr2577395oib.143.1550584115546;
+ Tue, 19 Feb 2019 05:48:35 -0800 (PST)
 MIME-Version: 1.0
-References: <20190211172948.3322-1-will.deacon@arm.com> <CAK8P3a2Pr2oWYB7QHQMaHRq6H8h9xMwhhyJz5Pu67bVe4GaK9g@mail.gmail.com>
- <20190218162954.GB16713@fuggles.cambridge.arm.com> <CAK8P3a1TY9S=zYsdZ5O021p2yYcZhehVuwB3_65dR6x6zbkTYQ@mail.gmail.com>
- <20190218175625.GD16713@fuggles.cambridge.arm.com> <CAK8P3a2mjjr94hwj_eXxfyKDKDuA=MogXW7xJygh-X0Hqgf6rg@mail.gmail.com>
- <20190219112747.7db95e58@windsurf.home> <CAK8P3a3n2meqogz7MeMUA48LBOEV9_AYQPxU3+V8A=Fn_63v4A@mail.gmail.com>
- <20190219113609.GC4027@fuggles.cambridge.arm.com> <CAK8P3a0iM17ABoaFn9+KymZ-JkjM9hmBNDMyn6-A=s06p1fvnQ@mail.gmail.com>
- <20190219132021.GJ8501@fuggles.cambridge.arm.com>
-In-Reply-To: <20190219132021.GJ8501@fuggles.cambridge.arm.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 19 Feb 2019 14:45:11 +0100
-Message-ID: <CAK8P3a2RLo_zG-GkHR=KDpUmV-=ZcTVyqDimGXT1_gR9AfQ2fg@mail.gmail.com>
-Subject: Re: [RFC PATCH] docs/memory-barriers.txt: Rewrite "KERNEL I/O BARRIER
- EFFECTS" section
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Gregory CLEMENT <gregory.clement@free-electrons.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>
+References: <20190211125426.21072-1-alban@kinvolk.io> <208650eb-37bf-228b-43f8-de5027747db9@netronome.com>
+In-Reply-To: <208650eb-37bf-228b-43f8-de5027747db9@netronome.com>
+From:   Alban Crequy <alban@kinvolk.io>
+Date:   Tue, 19 Feb 2019 14:48:24 +0100
+Message-ID: <CADZs7q70CEUwgsiJQWmTBFict3ocyGDTU=mR+spMawcfhVr92Q@mail.gmail.com>
+Subject: Re: [PATCH] bpf: bpftool, fix documentation for attach types
+To:     Quentin Monnet <quentin.monnet@netronome.com>
+Cc:     Alban Crequy <alban.crequy@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        =?UTF-8?Q?Iago_L=C3=B3pez_Galeiras?= <iago@kinvolk.io>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 2:20 PM Will Deacon <will.deacon@arm.com> wrote:
-> On Tue, Feb 19, 2019 at 02:01:50PM +0100, Arnd Bergmann wrote:
-> > On Tue, Feb 19, 2019 at 12:36 PM Will Deacon <will.deacon@arm.com> wrote:
-> > > On Tue, Feb 19, 2019 at 12:31:50PM +0100, Arnd Bergmann wrote:
-> > > > On Tue, Feb 19, 2019 at 11:27 AM Thomas Petazzoni
-> > One reference to non-posted transaction in a comment is in
-> > drivers/net/ethernet/dec/tulip/de4x5.c:
+On Mon, Feb 11, 2019 at 2:26 PM Quentin Monnet
+<quentin.monnet@netronome.com> wrote:
+>
+> 2019-02-11 13:54 UTC+0100 ~ Alban Crequy <alban.crequy@gmail.com>
+> > From: Alban Crequy <alban@kinvolk.io>
 > >
-> > /*
-> > ** The DE4X5 interrupt handler.
-> > **
-> > ** I/O Read/Writes through intermediate PCI bridges are never 'posted',
-> > ** so that the asserted interrupt always has some real data to work with -
-> > ** if these I/O accesses are ever changed to memory accesses, ensure the
-> > ** STS write is read immediately to complete the transaction if the adapter
-> > ** is not on bus 0. Lost interrupts can still occur when the PCI bus load
-> > ** is high and descriptor status bits cannot be set before the associated
-> > ** interrupt is asserted and this routine entered.
-> > */
->
-> Thankfully, that driver is both old and non-portable:
->
->   depends on VIRT_TO_BUS || ALPHA || PPC || SPARC
->
-> so I'm not especially concerned about it. Judging by the comment, we'd
-> need to add something like:
->
->
-> diff --git a/drivers/net/ethernet/dec/tulip/de4x5.c b/drivers/net/ethernet/dec/tulip/de4x5.c
-> index 66535d1653f6..c85089f65b0e 100644
-> --- a/drivers/net/ethernet/dec/tulip/de4x5.c
-> +++ b/drivers/net/ethernet/dec/tulip/de4x5.c
-> @@ -1556,6 +1556,10 @@ de4x5_interrupt(int irq, void *dev_id)
->         sts = inl(DE4X5_STS);            /* Read IRQ status */
->         outl(sts, DE4X5_STS);            /* Reset the board interrupts */
->
-> +       /* Beware of PCI posted writes */
-> +       if (IS_ENABLED(CONFIG_ARM64) && lp->bus_num)
-> +               inl(DE4X5_STS);
-> +
->         if (!(sts & lp->irq_mask)) break;/* All done */
->         handled = 1;
->
->
->
-> if we wanted to get this working reliably on arm64. However, I'll be honest
-> and say we haven't had much demand for supporting DEC PCI devices yet :)
-
-Agreed. I find a total of 590 drivers calling inb/outb and related
-helpers, using "git grep -wl 'out\(l\|w\|b\)' drivers/ sound/" (there
-are probably a couple more. There are hardly any among those
-that one would expect to see in a modern machine:
-
-- The majority is for ISA, PCMCIA or PCI devices, as opposed
-  to PCIe, and presumably no longer sold.
-- Many are de factor architecture specific, e.g. drivers for
-  stuff in a PC chipset.
-
-drivers/staging/comedi/ has some things in it that have
-a slight chance of still being put into modern machines
-when moving from an old embedded system to a new one,
-but being staging, chances are that the drivers also require
-other changes before they work on a new architecture.
-
-Overall, I wonder if we'd be better off completely disabling
-outb etc on arm64, and only supporting iomap()/ioread()/iowrite()
-instead, without giving any guarantees there.
-Getting there would definitely require some code changes
-(and many Kconfig changes), but it still seems appealing
-given how much legacy stuff we could completely ignore
-afterwards.
-
-> > I found another comment in the via-rhine driver:
+> > bpftool has support for attach types "stream_verdict" and
+> > "stream_parser" but the documentation was referring to them with
+> > "skb_verdict" and "skb_parse". The inconsistency comes from commit
+> > b7d3826c2ed6 ("bpf: bpftool, add support for attaching programs to
+> > maps").
 > >
-> > /* Beware of PCI posted writes */
-> > #define IOSYNC  do { ioread8(ioaddr + StationAddr); } while (0)
+> > This patch changes the documentation to match the implementation.
 > >
-> > this one is used in the chip reset function, and in the transmit
-> > path.
+> > Signed-off-by: Alban Crequy <alban@kinvolk.io>
+> > ---
+> >  tools/bpf/bpftool/prog.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
+> > index 0640e9bc0ada..dfaa019a60f0 100644
+> > --- a/tools/bpf/bpftool/prog.c
+> > +++ b/tools/bpf/bpftool/prog.c
+> > @@ -1198,7 +1198,7 @@ static int do_help(int argc, char **argv)
+> >               "                 cgroup/bind4 | cgroup/bind6 | cgroup/post_bind4 |\n"
+> >               "                 cgroup/post_bind6 | cgroup/connect4 | cgroup/connect6 |\n"
+> >               "                 cgroup/sendmsg4 | cgroup/sendmsg6 }\n"
+> > -             "       ATTACH_TYPE := { msg_verdict | skb_verdict | skb_parse |\n"
+> > +             "       ATTACH_TYPE := { msg_verdict | stream_verdict | stream_parser |\n"
+> >               "                        flow_dissector }\n"
+> >               "       " HELP_SPEC_OPTIONS "\n"
+> >               "",
+> >
 >
-> Since this is doing a read-back, I take this comment as saying "posted
-> writes are a thing, so perform a read-back to force the prior write to
-> complete", which is fine.
+> Thanks Alban!
+>
+> Could you please fix the man page and the bash completion file at the
+> same time?
 
-Right.
+Yes, I will do that soon. Sorry for the delay in replying.
 
-       Arnd
+Thanks,
+Alban
