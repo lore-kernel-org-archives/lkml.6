@@ -2,99 +2,136 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E63A9C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 00:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F0CC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 01:14:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF46821738
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 00:59:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFAD0217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 01:14:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JupeUrOZ"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="mHzPx+VI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732565AbfBSA7x (ORCPT
+        id S1732626AbfBSBON (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 19:59:53 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:40092 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726175AbfBSA7w (ORCPT
+        Mon, 18 Feb 2019 20:14:13 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:51023 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726175AbfBSBON (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 19:59:52 -0500
-Received: by mail-vs1-f68.google.com with SMTP id z18so10750190vso.7
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 16:59:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/1yfBHI8Q//WBQ0oBmimeToowldh4F8o70yLmpUnyEk=;
-        b=JupeUrOZhKPW+Qcob0Ds7iM9ZBNJHlblm6FzS2gw7AfMnKq9Ius2AUTtKJ5Rq83sgd
-         T4MvCcO4ZqY5r6of7jFbRhP2K1hShb2IZDFJHewy4MdSTVCXgMh5QV/9ffkq98eM8cL1
-         MBxcC8lu1gkex9VzTTtbPhh0AoU/X8NIV4a5w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/1yfBHI8Q//WBQ0oBmimeToowldh4F8o70yLmpUnyEk=;
-        b=pFdoWzLcacB5Cl1oa8lpIyF/gcMZotOq13QQtqPIykpkX6BWC1HmDwd/lF2U4Kmjk/
-         O04mIVqS/kACencGXRpVxgWom8oeMWR71m08amuNDxabfnkJUYQXwocaMRdXxm8fuXLj
-         744DHI8Xrpsf7ovJGtnnIEHYiKfDV01j5rULHktrfkUJVpY5SKVOf9/DPH/l9+rniJ71
-         e+aDFK80ZQ3SuZiXG7QA926DFXUvUPgsR/vCsUpgJV5/4U8YqmO1b0Q6tb77/FL1WW7h
-         0rHYuAX6ifYJgqqSUDehiRu6jXr0K86FU1g+2R2ajNlsvFo5tViuxrLlW6ywH1q0O4eH
-         9ZyA==
-X-Gm-Message-State: AHQUAuYfSFwS/ACv2CU7xBHBiqogyM856qxQZ9KD09Bvyvp63nCvi5Le
-        AdjP7MkE8OP+G3n8xOYWzFLXrrkYF/E=
-X-Google-Smtp-Source: AHgI3Ibwb0m21bNzVUv0WjncebHEL9ho5S+kw/6SQFYgNhjO23MHwwbwJ/1+P43AKHBLWS3fKWdgBw==
-X-Received: by 2002:a05:6102:256:: with SMTP id a22mr6311631vsq.173.1550537991377;
-        Mon, 18 Feb 2019 16:59:51 -0800 (PST)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
-        by smtp.gmail.com with ESMTPSA id w19sm1694996uar.16.2019.02.18.16.59.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Feb 2019 16:59:50 -0800 (PST)
-Received: by mail-ua1-f50.google.com with SMTP id d21so6417269uap.9
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 16:59:50 -0800 (PST)
-X-Received: by 2002:ab0:6151:: with SMTP id w17mr13107731uan.114.1550537989755;
- Mon, 18 Feb 2019 16:59:49 -0800 (PST)
+        Mon, 18 Feb 2019 20:14:13 -0500
+X-Greylist: delayed 69089 seconds by postgrey-1.27 at vger.kernel.org; Mon, 18 Feb 2019 20:14:11 EST
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x1J1E4kD028381;
+        Tue, 19 Feb 2019 10:14:04 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x1J1E4kD028381
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1550538844;
+        bh=12GOMpHSdKq1T0/8pXwHzQ0yf/8DKFAjpoLne8aSI0A=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=mHzPx+VIf2tFY4/s0Sm+qhugjJTEsxEeUZh/Axra1Z4NUzg+Ao52uwCft1zCuKVtI
+         F7Cgo54OA5R2jD2f1ueIAICY+bVX0mvjKozOLsDyO7GG1jb61brtgck+MIvEWeqttE
+         IZNrvIPmM91rTMeE5XXo0vLWFVKoKp4Fm139wKOpe8ByUV93xTPSGbM+mUajA85+oI
+         KQixEWdcYHzU/NzdpHhNJC8YHCt7510jDtHW4uAYm3H6ZHHea9qSPBk1+GSJ8KTGyp
+         BHsPB+erA3qQnKfRUPCHzFVwjvLeiK93gcqzfZb3DyhRr+jnHMMXgH318dy8Ri6dCf
+         9DPgnh496TQjw==
+X-Nifty-SrcIP: [209.85.217.44]
+Received: by mail-vs1-f44.google.com with SMTP id u64so10731051vsc.12;
+        Mon, 18 Feb 2019 17:14:04 -0800 (PST)
+X-Gm-Message-State: AHQUAuYv+nrovpfgbEFLvgzXVF+3SN0gptu07LOmiDRsr/MeQGfx0Kti
+        w4uwltL2nHXIdjEkPDXa2tYAMSQ7AYqYabK0g3w=
+X-Google-Smtp-Source: AHgI3IYS1xQosfLMLt7IfKYeSFA7qXgC47MIextseXf408cL7JsP6OXTuuKu9KtdSNby9Mke9GzxSDWPItmjzXLIlUs=
+X-Received: by 2002:a67:c913:: with SMTP id w19mr13504171vsk.179.1550538843511;
+ Mon, 18 Feb 2019 17:14:03 -0800 (PST)
 MIME-Version: 1.0
-References: <20190219003648.GA26354@beast> <CAHk-=wjbNaTu+ktipPdM=_7PEmQ=-ue08zShjDASCsYSTzo1Mw@mail.gmail.com>
-In-Reply-To: <CAHk-=wjbNaTu+ktipPdM=_7PEmQ=-ue08zShjDASCsYSTzo1Mw@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 18 Feb 2019 16:59:37 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jJXgSEfUr70HpZnLzSZ3HSK56dgkeRzL0ie5RX6i6NOTg@mail.gmail.com>
-Message-ID: <CAGXu5jJXgSEfUr70HpZnLzSZ3HSK56dgkeRzL0ie5RX6i6NOTg@mail.gmail.com>
-Subject: Re: [PATCH v5] exec: load_script: Do not exec truncated interpreter path
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Samuel Dionne-Riel <samuel@dionne-riel.com>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        Graham Christensen <graham@grahamc.com>,
-        Michal Hocko <mhocko@suse.com>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <1550469571-25933-1-git-send-email-yamada.masahiro@socionext.com>
+ <1550469571-25933-2-git-send-email-yamada.masahiro@socionext.com>
+ <877edxt1f1.fsf@kamboji.qca.qualcomm.com> <87tvh0syq2.fsf@kamboji.qca.qualcomm.com>
+ <87pnrosy29.fsf@kamboji.qca.qualcomm.com>
+In-Reply-To: <87pnrosy29.fsf@kamboji.qca.qualcomm.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 19 Feb 2019 10:13:27 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQMgFXw=rtpdPNZ=xpLw-SiwKGAgM__Owvqd1EhTCUntQ@mail.gmail.com>
+Message-ID: <CAK7LNAQMgFXw=rtpdPNZ=xpLw-SiwKGAgM__Owvqd1EhTCUntQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] wireless: mt76: call hweight8() instead of __sw_hweight8()
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        linux-wireless@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Felix Fietkau <nbd@nbd.name>,
+        Matthias Brugger <matthias.bgg@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 4:52 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Tue, Feb 19, 2019 at 4:38 AM Kalle Valo <kvalo@codeaurora.org> wrote:
 >
-> On Mon, Feb 18, 2019 at 4:36 PM Kees Cook <keescook@chromium.org> wrote:
+> Kalle Valo <kvalo@codeaurora.org> writes:
+>
+> > Kalle Valo <kvalo@codeaurora.org> writes:
 > >
-> > This attempts the protection again, but allows arguments to
-> > remain truncated. In an effort to improve readability, helper functions
-> > and comments have been added.
+> >> Masahiro Yamada <yamada.masahiro@socionext.com> writes:
+> >>
+> >>> __sw_hweight8() is just internal implementation.
+> >>>
+> >>> Drivers should use the common API, hweight8().
+> >>>
+> >>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> >>
+> >> Acked-by: Kalle Valo <kvalo@codeaurora.org>
+> >>
+> >>> This patch should go to x86 tree along with 2/2.
+> >>>
+> >>> Otherwise, all{yes,mod}config of x86 would be broken.
+> >>>
+> >>> This patch is trivial enough.
+> >>> I want ACK from the net/wireless maintainer
+> >>> so that this can go in via x86 tree.
+> >>
+> >> Sounds good to me, feel free to push via the x86 tree.
+> >
+> > Actually, can you wait a bit? Felix just reminded me that we have a
+> > similar patch pending from Ben Hutchings:
+> >
+> > https://patchwork.kernel.org/patch/10808203/
+> >
+> > And it seems there are two instances of __sw_hweight8, at least in my
+> > wireless-drivers-next tree:
+> >
+> > drivers/net/wireless/mediatek/mt76/mac80211.c: int i, nstream =
+> > __sw_hweight8(dev->antenna_mask);
+> > drivers/net/wireless/mediatek/mt76/mac80211.c: int n_chains =
+> > __sw_hweight8(dev->antenna_mask);
+> >
+> > So we need to think what to do.
 >
-> Applied directly, in the (maybe naive) belief that this can't possibly
-> break anything, and let's just get it fixed for 5.0 rather than wait
-> another release.
+> I think the best would be that Felix applies Ben's patch to the wireless
+> tree and I'll push it to Linus during the next merge window (via
+> net-next). Simpler and less conflicts that way.
 >
-> Famous last words.
+> So Masahiro, could you hold your x86 patch for a while until the mt76
+> patch will be in Linus' tree? That should not take more than two weeks,
+> I think.
 
-Eek. :)
+Sure.
+I will resend 2/2 later.
+
+
+
 
 -- 
-Kees Cook
+Best Regards
+Masahiro Yamada
