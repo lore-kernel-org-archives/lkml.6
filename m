@@ -2,170 +2,78 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E646EC10F00
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:22:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1515C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:23:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEF4F21848
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:22:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 757B421904
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:23:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550568213;
+	bh=MtstvJRbHMzgYN2r3tObnXkYUbHPZaZOVnX/O+DZZ00=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=rHiu9wy9+bhfPs3CQeR7wRWwUeS7HLZoBKqAnl78XiSALT6fw6O3Qe8rIbsF9NVEI
+	 nwfjj0ov5JkNCsIuJmcWX1Z8e/CN+W19PZnd9Dsb9s6xFwyVlmlC0xv/52V0CDeKq/
+	 b/8+okC2uepSK3Cd1FuiZE7JSZqNhNs4ulNUVx14=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728140AbfBSJWa (ORCPT
+        id S1727937AbfBSJXc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 04:22:30 -0500
-Received: from dispatch1-us1.ppe-hosted.com ([67.231.154.164]:48768 "EHLO
-        dispatch1-us1.ppe-hosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727961AbfBSJWa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 04:22:30 -0500
-X-Virus-Scanned: Proofpoint Essentials engine
-Received: from webmail.solarflare.com (uk.solarflare.com [193.34.186.16])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        Tue, 19 Feb 2019 04:23:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50184 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727652AbfBSJXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 04:23:31 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1-us1.ppe-hosted.com (Proofpoint Essentials ESMTP Server) with ESMTPS id C5D1EB00067;
-        Tue, 19 Feb 2019 09:22:28 +0000 (UTC)
-Received: from hgk-desktop.uk.solarflarecom.com (10.17.20.82) by
- ukex01.SolarFlarecom.com (10.17.10.4) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 19 Feb 2019 09:22:23 +0000
-Subject: Re: [PATCH AUTOSEL 3.18 12/16] sfc: suppress duplicate nvmem
- partition types in efx_ef10_mtd_probe
-To:     Sasha Levin <sashal@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-CC:     Edward Cree <ecree@solarflare.com>,
-        "David S . Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>
-References: <20190215021546.179605-1-sashal@kernel.org>
- <20190215021546.179605-12-sashal@kernel.org>
-From:   Bert Kenward <bkenward@solarflare.com>
-Message-ID: <33b60bdb-8336-7ac0-4795-8cb3ceac167c@solarflare.com>
-Date:   Tue, 19 Feb 2019 09:22:19 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CE9021848;
+        Tue, 19 Feb 2019 09:23:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550568210;
+        bh=MtstvJRbHMzgYN2r3tObnXkYUbHPZaZOVnX/O+DZZ00=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fNjTOE98CJOVe2ubQCR43yiH0esai9DZh60jEyTwEAE8XcPUFaogR6KwQ6BtbbcRp
+         YoreKYbkRaApXqTu0wG/fay23juDT7fOyBz1QJAs+kgW4FKb71TGL8Zc77cn6hHYDc
+         cFjDPh8kexRNXTQUFgfnyaBmDOk9WhsnF/OZh3B0=
+Date:   Tue, 19 Feb 2019 10:23:28 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     saumah <saumah@gmail.com>
+Cc:     morris_ku@sunix.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] 8250_pci.c change for fix hanging problem.
+Message-ID: <20190219092328.GA30490@kroah.com>
+References: <20190219085031.3776-1-saumah@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190215021546.179605-12-sashal@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.17.20.82]
-X-ClientProxiedBy: ocex03.SolarFlarecom.com (10.20.40.36) To
- ukex01.SolarFlarecom.com (10.17.10.4)
-X-TM-AS-Product-Ver: SMEX-12.5.0.1300-8.5.1010-24438.003
-X-TM-AS-Result: No-12.197600-8.000000-10
-X-TMASE-MatchedRID: L8tZF6zWW2oOwH4pD14DsPHkpkyUphL9UAjrAJWsTe91/q26L79bTIiL
-        OGSrOVCj0/tq6TtYaL2C0c/BwxTs6eF7Pq0Toovm9UVHiwLx0/IoUVkB7ifJnlIEge/2lT8AiqO
-        LrgHmwxVOFu8ssjxG81dTP5dw4GERSOWjYlTyoLGiAZ3zAhQYgpHUt5D5WmclJLfQYoCQHFbX/y
-        R7HIDNarOT0m5mbI8apcCRA28drskZ7Eu9TqPx8J4CIKY/Hg3AtOt1ofVlaoLUHQeTVDUrItRnE
-        QCUU+jz9xS3mVzWUuA152LecOHHI58gti1SV0NX9KrZ3KtM1PrbI0PAS1eQZU2j09lMnQLQ09mI
-        728lYDE=
-X-TM-AS-User-Approved-Sender: Yes
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--12.197600-8.000000
-X-TMASE-Version: SMEX-12.5.0.1300-8.5.1010-24438.003
-X-MDID: 1550568149-yxAu7RJMKLbO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190219085031.3776-1-saumah@gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/02/2019 02:15, Sasha Levin wrote:
-> From: Edward Cree <ecree@solarflare.com>
+On Tue, Feb 19, 2019 at 04:50:31PM +0800, saumah wrote:
+> 8250_pci.c change for fix hanging problem while suspend machine. 8250_pci.c support the same vendor id and device id definition as sunix multi-I/O card driver, when the sunix multi-io borad driver is installed,there are two drivers to support the same sunix multi-io card,it will cause operation error.
 > 
-> [ Upstream commit 3366463513f544c12c6b88c13da4462ee9e7a1a1 ]
-> 
-> Use a bitmap to keep track of which partition types we've already seen;
->  for duplicates, return -EEXIST from efx_ef10_mtd_probe_partition() and
->  thus skip adding that partition.
-> Duplicate partitions occur because of the A/B backup scheme used by newer
->  sfc NICs.  Prior to this patch they cause sysfs_warn_dup errors because
->  they have the same name, causing us not to expose any MTDs at all.
-> 
-> Signed-off-by: Edward Cree <ecree@solarflare.com>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-
-I don't think this particularly needs to go to stable, but if it does it
-should be accompanied by:
-  c65285428b6e ("sfc: initialise found bitmap in efx_ef10_mtd_probe")
-
-Bert.
-
+> Signed-off-by: saumah <saumah@gmail.com>
 > ---
->  drivers/net/ethernet/sfc/ef10.c | 29 +++++++++++++++++++++--------
->  1 file changed, 21 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/sfc/ef10.c b/drivers/net/ethernet/sfc/ef10.c
-> index 010009d64017..84a17b41313c 100644
-> --- a/drivers/net/ethernet/sfc/ef10.c
-> +++ b/drivers/net/ethernet/sfc/ef10.c
-> @@ -3407,22 +3407,25 @@ static const struct efx_ef10_nvram_type_info efx_ef10_nvram_types[] = {
->  	{ NVRAM_PARTITION_TYPE_LICENSE,		   0,    0, "sfc_license" },
->  	{ NVRAM_PARTITION_TYPE_PHY_MIN,		   0xff, 0, "sfc_phy_fw" },
->  };
-> +#define EF10_NVRAM_PARTITION_COUNT	ARRAY_SIZE(efx_ef10_nvram_types)
->  
->  static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
->  					struct efx_mcdi_mtd_partition *part,
-> -					unsigned int type)
-> +					unsigned int type,
-> +					unsigned long *found)
->  {
->  	MCDI_DECLARE_BUF(inbuf, MC_CMD_NVRAM_METADATA_IN_LEN);
->  	MCDI_DECLARE_BUF(outbuf, MC_CMD_NVRAM_METADATA_OUT_LENMAX);
->  	const struct efx_ef10_nvram_type_info *info;
->  	size_t size, erase_size, outlen;
-> +	int type_idx = 0;
->  	bool protected;
->  	int rc;
->  
-> -	for (info = efx_ef10_nvram_types; ; info++) {
-> -		if (info ==
-> -		    efx_ef10_nvram_types + ARRAY_SIZE(efx_ef10_nvram_types))
-> +	for (type_idx = 0; ; type_idx++) {
-> +		if (type_idx == EF10_NVRAM_PARTITION_COUNT)
->  			return -ENODEV;
-> +		info = efx_ef10_nvram_types + type_idx;
->  		if ((type & ~info->type_mask) == info->type)
->  			break;
->  	}
-> @@ -3435,6 +3438,13 @@ static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
->  	if (protected)
->  		return -ENODEV; /* hide it */
->  
-> +	/* If we've already exposed a partition of this type, hide this
-> +	 * duplicate.  All operations on MTDs are keyed by the type anyway,
-> +	 * so we can't act on the duplicate.
-> +	 */
-> +	if (__test_and_set_bit(type_idx, found))
-> +		return -EEXIST;
-> +
->  	part->nvram_type = type;
->  
->  	MCDI_SET_DWORD(inbuf, NVRAM_METADATA_IN_TYPE, type);
-> @@ -3463,6 +3473,7 @@ static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
->  static int efx_ef10_mtd_probe(struct efx_nic *efx)
->  {
->  	MCDI_DECLARE_BUF(outbuf, MC_CMD_NVRAM_PARTITIONS_OUT_LENMAX);
-> +	DECLARE_BITMAP(found, EF10_NVRAM_PARTITION_COUNT);
->  	struct efx_mcdi_mtd_partition *parts;
->  	size_t outlen, n_parts_total, i, n_parts;
->  	unsigned int type;
-> @@ -3491,11 +3502,13 @@ static int efx_ef10_mtd_probe(struct efx_nic *efx)
->  	for (i = 0; i < n_parts_total; i++) {
->  		type = MCDI_ARRAY_DWORD(outbuf, NVRAM_PARTITIONS_OUT_TYPE_ID,
->  					i);
-> -		rc = efx_ef10_mtd_probe_partition(efx, &parts[n_parts], type);
-> -		if (rc == 0)
-> -			n_parts++;
-> -		else if (rc != -ENODEV)
-> +		rc = efx_ef10_mtd_probe_partition(efx, &parts[n_parts], type,
-> +						  found);
-> +		if (rc == -EEXIST || rc == -ENODEV)
-> +			continue;
-> +		if (rc)
->  			goto fail;
-> +		n_parts++;
->  	}
->  
->  	rc = efx_mtd_add(efx, &parts[0].common, n_parts, sizeof(*parts));
-> 
+>  8250_pci.c | 163 +----------------------------------------------------
+>  1 file changed, 1 insertion(+), 162 deletions(-)
+
+You can't just delete a ton of code, you just broke a bunch of existing
+devices out there :(
+
+Also, the patch is at the wrong level of the kernel source tree, you
+need to use your full name for author and signed-off-by, you forgot to
+ cc: the linux-serial mailing list, and you need to wrap your changelog
+text properly.
+
+Please look at Documentation/SubmittingPatches for how to do all of this
+and then redo and resend the patch.
+
+thanks,
+
+greg k-h
