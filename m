@@ -2,130 +2,80 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D4BC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D279C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:31:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8025621773
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:31:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C64C2147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:31:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729393AbfBSRbP (ORCPT
+        id S1729482AbfBSRb0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 12:31:15 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47898 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725613AbfBSRbP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 12:31:15 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C488BEBD;
-        Tue, 19 Feb 2019 09:31:14 -0800 (PST)
-Received: from [10.37.8.220] (unknown [10.37.8.220])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D69C13F720;
-        Tue, 19 Feb 2019 09:31:12 -0800 (PST)
-To:     Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>
-Cc:     xen-devel <xen-devel@lists.xenproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Dave P Martin <dave.martin@arm.com>
-From:   Julien Grall <julien.grall@arm.com>
-Subject: xen/evtchn and forced threaded irq
-Message-ID: <5e256d9a-572c-e01e-7706-407f99245b00@arm.com>
-Date:   Tue, 19 Feb 2019 17:31:10 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 19 Feb 2019 12:31:26 -0500
+Received: from mga04.intel.com ([192.55.52.120]:61718 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725613AbfBSRbZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 12:31:25 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2019 09:31:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,388,1544515200"; 
+   d="scan'208";a="125622201"
+Received: from vanderss-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.177])
+  by fmsmga008.fm.intel.com with ESMTP; 19 Feb 2019 09:31:22 -0800
+Date:   Tue, 19 Feb 2019 19:31:20 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     YueHaibing <yuehaibing@huawei.com>, peterhuewe@gmx.de,
+        arnd@arndb.de, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH -next] tpm: change the return type of
+ calc_tpm2_event_size to size_t
+Message-ID: <20190219173120.GA15462@linux.intel.com>
+References: <20190219072618.23048-1-yuehaibing@huawei.com>
+ <20190219085921.GA5609@linux.intel.com>
+ <820d3cf7-03ab-5434-5306-292b41aed860@huawei.com>
+ <20190219103532.GA16707@linux.intel.com>
+ <20190219163456.GB752@ziepe.ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190219163456.GB752@ziepe.ca>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+On Tue, Feb 19, 2019 at 09:34:56AM -0700, Jason Gunthorpe wrote:
+> > - Your real name is formatted incorrectly. It should be like "Yue Haibig"
+> >   as shown in [1].
+> > - If there is no actual regression, this change is useless.
+> 
+> Clarity of the code is a laudible goal - not everything is about
+> fixing bugs or adding features.
+> 
+> It is much easier to write the code properly than to try and prove
+> that event_size can not exceed INT_MAX.
 
-I have been looking at using Linux RT in Dom0. Once the guest is started,
-the console is ending to have a lot of warning (see trace below).
+I think it is actually a regression in 4d23cc323cdb.  Should carry a
+fixes tag. I did not quite undersand what commit message was saying.
+What it should would just
 
-After some investigation, this is because the irq handler will now be threaded.
-I can reproduce the same error with the vanilla Linux when passing the option
-'threadirqs' on the command line (the trace below is from 5.0.0-rc7 that has
-not RT support).
+"""
+tpm: Fix the type of the return value in calc_tpm2_event_size()
 
-FWIW, the interrupt for port 6 is used to for the guest to communicate with
-xenstore.
+calc_tpm2_event_size() has an invalid signature because it returns a 'size_t'
+where as its signature says that it returns 'int'.
+"""
 
-From my understanding, this is happening because the interrupt handler is now
-run in a thread. So we can have the following happening.
+Should be also Cc'd to linux-security-module and have cc to stable.
 
-   Interrupt context            |     Interrupt thread
-                                |  
-   receive interrupt port 6     |
-   clear the evtchn port        |
-   set IRQF_RUNTHREAD	        |
-   kick interrupt thread        |
-                                |    clear IRQF_RUNTHREAD
-                                |    call evtchn_interrupt
-   receive interrupt port 6     |
-   clear the evtchn port        |
-   set IRQF_RUNTHREAD           |
-   kick interrupt thread        |
-                                |    disable interrupt port 6
-                                |    evtchn->enabled = false
-                                |    [....]
-                                |
-                                |    *** Handling the second interrupt ***
-                                |    clear IRQF_RUNTHREAD
-                                |    call evtchn_interrupt
-                                |    WARN(...)
-
-I am not entirely sure how to fix this. I have two solutions in mind:
-
-1) Prevent the interrupt handler to be threaded. We would also need to
-switch from spin_lock to raw_spin_lock as the former may sleep on RT-Linux.
-
-2) Remove the warning
-
-None of them are ideals. Do you have an opionion/better suggestion?
-
-[  127.192087] Interrupt for port 6, but apparently not enabled; per-user 0000000078d39c7f
-[  127.200333] WARNING: CPU: 0 PID: 2553 at drivers/xen/evtchn.c:167 evtchn_interrupt+0xfc/0x120
-[  127.208799] Modules linked in:
-[  127.211939] CPU: 0 PID: 2553 Comm: irq/52-evtchn:x Tainted: G        W
-  5.0.0-rc7-00023-g2a3d41623699 #1257
-[  127.222374] Hardware name: ARM Juno development board (r2) (DT)
-[  127.228381] pstate: 40000005 (nZcv daif -PAN -UAO)
-[  127.233256] pc : evtchn_interrupt+0xfc/0x120
-[  127.237607] lr : evtchn_interrupt+0xfc/0x120
-[  127.241952] sp : ffff000012d2bd60
-[  127.245347] x29: ffff000012d2bd60 x28: ffff00001015d608
-[  127.250741] x27: ffff8008b39de400 x26: ffff00001015d330
-[  127.256137] x25: ffff00001015d2d4 x24: 0000000000000001
-[  127.261532] x23: ffff00001015d570 x22: 0000000000000034
-[  127.266926] x21: 0000000000000000 x20: ffff8008b7f02400
-[  127.272322] x19: ffff8008b3aba000 x18: 0000000000000037
-[  127.277717] x17: 0000000000000000 x16: 0000000000000000
-[  127.283112] x15: 00000000fffffff0 x14: 0000000000000000
-[  127.288507] x13: 3030303030207265 x12: 000000000000000c
-[  127.293902] x11: ffff000010ea0a88 x10: 0000000000000000
-[  127.299297] x9 : 00000000fffb9fff x8 : 0000000000000000
-[  127.304701] x7 : 0000000000000001 x6 : ffff8008bac5c240
-[  127.310087] x5 : ffff8008bac5c240 x4 : 0000000000000000
-[  127.315483] x3 : ffff8008bac64708 x2 : ffff8008b39de400
-[  127.320877] x1 : 893ac9b38837b800 x0 : 0000000000000000
-[  127.326272] Call trace:
-[  127.328802]  evtchn_interrupt+0xfc/0x120
-[  127.332804]  irq_forced_thread_fn+0x38/0x98
-[  127.337066]  irq_thread+0x190/0x238
-[  127.340636]  kthread+0x134/0x138
-[  127.343942]  ret_from_fork+0x10/0x1c
-[  127.347593] ---[ end trace 1d3fa385877cc18b ]---
-
-
-Cheers,
-
--- 
-Julien Grall
+/Jarkko
