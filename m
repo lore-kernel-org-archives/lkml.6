@@ -7,71 +7,70 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9860CC4151A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:04:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C72B6C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:04:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 695C52173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:04:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 985992075A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:04:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vBP3Q7Uv"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X0X699T4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726692AbfBSGD6 (ORCPT
+        id S1726882AbfBSGEC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 01:03:58 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34512 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726464AbfBSGD4 (ORCPT
+        Tue, 19 Feb 2019 01:04:02 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39023 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726700AbfBSGD6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 01:03:56 -0500
-Received: by mail-pg1-f195.google.com with SMTP id i130so9596395pgd.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 22:03:55 -0800 (PST)
+        Tue, 19 Feb 2019 01:03:58 -0500
+Received: by mail-pg1-f196.google.com with SMTP id r11so9575985pgp.6
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 22:03:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=l8UQ9did5daPN7vbbbv/m9+fBKkdM/403bDII4Lp1bQ=;
-        b=vBP3Q7Uvu7MrAgSzq8JCfPVAphwdTq/Lg2zCYffO9tYt17X/V88cbWzZBKztknP7Pc
-         VUekmEPQdY5pfrpvbtLgRwKbVXZO/uJdnmjznyTNXwxb2TMLm5zjkBEl6sPZmuTUeKp7
-         heQ1Zbmn61n2fNp9a2qo3uQr7xV9cACXaLzPy8XF1Eh654Trku5nLh79yH1lc1/TaVYz
-         KNfQyB7eLNUWaSHLlSziXrMoBzlKG4WaBVXA/ZJbF/ckx9OKN9rtaYUAKGIoknRGnBLH
-         hv8VBuv81rFPtqg4vcpXAfFThqBuyFNrV12VSoYlL39O9Lw/M9/NDs4oR85HmYQV9ube
-         EBbQ==
+        bh=MjqQ5MrTPtrU3W9FXHLXJjcm6p+zqVXIeiNOEeU3DKk=;
+        b=X0X699T4gNEhNz3HKmJRhtW6+rU1mseGBxQL03WubcdtE02y8HpEcXTP4yHdbQMZMN
+         6xIAwYwibZjjpUC3LJnBPZHZhnjJt5EyWLWuJLExVs4OzAOOiO6gGY24yAwV1L/nNMf7
+         gS2Oqe5G23351mGjA/tUuFNnxntVVXSFZCYtXoHJzq8X/JkXrzThflMkNxz0FS5L5Jwd
+         KVtiDH7w0fay0d0i1Pf1ATfAkLREFmELGUbmNnBf9FubBmXY2y9oXUGkIIxW2IgUC/3L
+         Q6AqJeY6FSKW7gw+8RLR5Hxj+bzRsSkuKERGW80vlZZ1AoPVbuhO6Ydls6hvUcQbHbZW
+         j8VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=l8UQ9did5daPN7vbbbv/m9+fBKkdM/403bDII4Lp1bQ=;
-        b=L8WQ7slut8qi/76bruh0iLxkHvsNf9LBNbYapqi7KiUUcYfCSy+9yjlZhE1SNe7p6y
-         uPJ24wEpLGCPU+npKHtgHwv0rGH8Jwvk6ggPF/cLtguKJRrNuyFnIj9iveFsQu5uKPFa
-         lg559wVzashf/WXQXSP24h+CljlTOwocrRom4za5nhI03L3svV9JbJjn3Mv40RrB+XJJ
-         hfIqPfhZaByFNU0mAbHG4NM+ND6veePjq2fw0+MdxXcHhOE8VlYmbSEZMk1hYo6cRM9b
-         /RI6D8jlcA80r2NueGUNmFCF5qu5jsv7hwQACIrpIIKwDdnCFOWrGGuNE0FHhkbo3ise
-         SCwA==
-X-Gm-Message-State: AHQUAuY+MNzoR/hjqxiT1bSSWVb9RQmEkaY2GCOiTcdwb5Wnd1dKX8A/
-        hxDVr9nWyfzTM7KepekHXoY9Nw==
-X-Google-Smtp-Source: AHgI3IYZ8BIYAckYS4GJ7Zwk8Kzeo5cKCZy8OniJrxI42pRAJy119L/vlRWVrJ0GJPhgfjl1lGpEUQ==
-X-Received: by 2002:a63:e950:: with SMTP id q16mr22518311pgj.138.1550556234923;
-        Mon, 18 Feb 2019 22:03:54 -0800 (PST)
+        bh=MjqQ5MrTPtrU3W9FXHLXJjcm6p+zqVXIeiNOEeU3DKk=;
+        b=EwrLk1pozYlC/NVanqkIaBM6zIOxIWaZMWLfBIb/xHWFcQb42cIFapy4O3VPXBjcsj
+         AxbbjJH9b1smt7Yfm5oxN1XDuMAMwouxo5YsckU7rYhiJ7x2S/BTMih+16OvYFSpq4+z
+         ys9LznUpskTXSqj2M1UsGmz1C7mm2XVfo4/6tMoxn56dOgOewa52yDxen7uZnft/SyFO
+         vXx9P4XpARh21O51gyedpznhlJ5qjvPqjey13BJWrUtcyHQPwisiUP0ss4f76Xn+vs0h
+         OKLOD9bc0XCW5h3dm+ZjzTkSnEz1SSBPlvmdjGPhaNNMy8fCOnJ1Lzlwkf+5TUtAViIj
+         87ng==
+X-Gm-Message-State: AHQUAua3Kw9DGlALxvSbazFgKkSf9wEUx/86+ZazPkyG84nQAbHg5Jv+
+        EOT8KH54tZ2+rK07KWoIzFR4Ag==
+X-Google-Smtp-Source: AHgI3Ia3oqcVHx0V2r5skicVPy5wv1cfeHDHW5oevwtVZwQoxxip9bpxyWuCFcZjd7Mmw2wbhBHt3A==
+X-Received: by 2002:a63:d709:: with SMTP id d9mr22034705pgg.157.1550556237979;
+        Mon, 18 Feb 2019 22:03:57 -0800 (PST)
 Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 86sm31914838pfk.157.2019.02.18.22.03.53
+        by smtp.gmail.com with ESMTPSA id 86sm31914838pfk.157.2019.02.18.22.03.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Feb 2019 22:03:53 -0800 (PST)
+        Mon, 18 Feb 2019 22:03:57 -0800 (PST)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+To:     Bjorn Helgaas <bhelgaas@google.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
         Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v2 3/7] phy: qcom: Add Qualcomm PCIe2 PHY driver
-Date:   Mon, 18 Feb 2019 22:04:03 -0800
-Message-Id: <20190219060407.15263-4-bjorn.andersson@linaro.org>
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v2 5/7] dt-bindings: PCI: qcom: Add QCS404 to the binding
+Date:   Mon, 18 Feb 2019 22:04:05 -0800
+Message-Id: <20190219060407.15263-6-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20190219060407.15263-1-bjorn.andersson@linaro.org>
 References: <20190219060407.15263-1-bjorn.andersson@linaro.org>
@@ -80,386 +79,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Qualcomm PCIe2 PHY is based on design from Synopsys and found in
-several different platforms where the QMP PHY isn't used.
+The Qualcomm QCS404 platform contains a PCIe controller, add this to the
+Qualcomm PCI binding document. The controller is the same version as the
+one used in IPQ4019, but the PHY part is described separately, hence the
+difference in clocks and resets.
 
-Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/phy/qualcomm/Kconfig          |   8 +
- drivers/phy/qualcomm/Makefile         |   1 +
- drivers/phy/qualcomm/phy-qcom-pcie2.c | 331 ++++++++++++++++++++++++++
- 3 files changed, 340 insertions(+)
- create mode 100644 drivers/phy/qualcomm/phy-qcom-pcie2.c
+ .../devicetree/bindings/pci/qcom,pcie.txt     | 25 +++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/phy/qualcomm/Kconfig b/drivers/phy/qualcomm/Kconfig
-index 32f7d34eb784..8688ce27d0a6 100644
---- a/drivers/phy/qualcomm/Kconfig
-+++ b/drivers/phy/qualcomm/Kconfig
-@@ -24,6 +24,14 @@ config PHY_QCOM_IPQ806X_SATA
- 	depends on OF
- 	select GENERIC_PHY
+diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.txt b/Documentation/devicetree/bindings/pci/qcom,pcie.txt
+index 1fd703bd73e0..ada80b01bf0c 100644
+--- a/Documentation/devicetree/bindings/pci/qcom,pcie.txt
++++ b/Documentation/devicetree/bindings/pci/qcom,pcie.txt
+@@ -10,6 +10,7 @@
+ 			- "qcom,pcie-msm8996" for msm8996 or apq8096
+ 			- "qcom,pcie-ipq4019" for ipq4019
+ 			- "qcom,pcie-ipq8074" for ipq8074
++			- "qcom,pcie-qcs404" for qcs404
  
-+config PHY_QCOM_PCIE2
-+	tristate "Qualcomm PCIe Gen2 PHY Driver"
-+	depends on OF && COMMON_CLK && (ARCH_QCOM || COMPILE_TEST)
-+	select GENERIC_PHY
-+	help
-+	  Enable this to support the Qualcomm PCIe PHY, used with the Synopsys
-+	  based PCIe controller.
-+
- config PHY_QCOM_QMP
- 	tristate "Qualcomm QMP PHY Driver"
- 	depends on OF && COMMON_CLK && (ARCH_QCOM || COMPILE_TEST)
-diff --git a/drivers/phy/qualcomm/Makefile b/drivers/phy/qualcomm/Makefile
-index c56efd3af205..283251d6a5d9 100644
---- a/drivers/phy/qualcomm/Makefile
-+++ b/drivers/phy/qualcomm/Makefile
-@@ -2,6 +2,7 @@
- obj-$(CONFIG_PHY_ATH79_USB)		+= phy-ath79-usb.o
- obj-$(CONFIG_PHY_QCOM_APQ8064_SATA)	+= phy-qcom-apq8064-sata.o
- obj-$(CONFIG_PHY_QCOM_IPQ806X_SATA)	+= phy-qcom-ipq806x-sata.o
-+obj-$(CONFIG_PHY_QCOM_PCIE2)		+= phy-qcom-pcie2.o
- obj-$(CONFIG_PHY_QCOM_QMP)		+= phy-qcom-qmp.o
- obj-$(CONFIG_PHY_QCOM_QUSB2)		+= phy-qcom-qusb2.o
- obj-$(CONFIG_PHY_QCOM_UFS)		+= phy-qcom-ufs.o
-diff --git a/drivers/phy/qualcomm/phy-qcom-pcie2.c b/drivers/phy/qualcomm/phy-qcom-pcie2.c
-new file mode 100644
-index 000000000000..5b9409abe4cf
---- /dev/null
-+++ b/drivers/phy/qualcomm/phy-qcom-pcie2.c
-@@ -0,0 +1,331 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2014-2017, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2019, Linaro Ltd.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/clk.h>
-+#include <linux/iopoll.h>
-+#include <linux/module.h>
-+#include <linux/phy/phy.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset.h>
-+#include <linux/slab.h>
-+
-+#include <dt-bindings/phy/phy.h>
-+
-+#define PCIE20_PARF_PHY_STTS         0x3c
-+#define PCIE2_PHY_RESET_CTRL         0x44
-+#define PCIE20_PARF_PHY_REFCLK_CTRL2 0xa0
-+#define PCIE20_PARF_PHY_REFCLK_CTRL3 0xa4
-+#define PCIE20_PARF_PCS_SWING_CTRL1  0x88
-+#define PCIE20_PARF_PCS_SWING_CTRL2  0x8c
-+#define PCIE20_PARF_PCS_DEEMPH1      0x74
-+#define PCIE20_PARF_PCS_DEEMPH2      0x78
-+#define PCIE20_PARF_PCS_DEEMPH3      0x7c
-+#define PCIE20_PARF_CONFIGBITS       0x84
-+#define PCIE20_PARF_PHY_CTRL3        0x94
-+#define PCIE20_PARF_PCS_CTRL         0x80
-+
-+#define TX_AMP_VAL                   120
-+#define PHY_RX0_EQ_GEN1_VAL          0
-+#define PHY_RX0_EQ_GEN2_VAL          4
-+#define TX_DEEMPH_GEN1_VAL           24
-+#define TX_DEEMPH_GEN2_3_5DB_VAL     26
-+#define TX_DEEMPH_GEN2_6DB_VAL       36
-+#define PHY_TX0_TERM_OFFST_VAL       0
-+
-+struct qcom_phy {
-+	struct device *dev;
-+	void __iomem *base;
-+
-+	struct regulator_bulk_data vregs[2];
-+
-+	struct reset_control *phy_reset;
-+	struct reset_control *pipe_reset;
-+	struct clk *pipe_clk;
-+};
-+
-+static int qcom_pcie2_phy_init(struct phy *phy)
-+{
-+	struct qcom_phy *qphy = phy_get_drvdata(phy);
-+	int ret;
-+
-+	ret = reset_control_deassert(qphy->phy_reset);
-+	if (ret) {
-+		dev_err(qphy->dev, "cannot deassert pipe reset\n");
-+		return ret;
-+	}
-+
-+	ret = regulator_bulk_enable(ARRAY_SIZE(qphy->vregs), qphy->vregs);
-+	if (ret)
-+		reset_control_assert(qphy->phy_reset);
-+
-+	return ret;
-+}
-+
-+static int qcom_pcie2_phy_power_on(struct phy *phy)
-+{
-+	struct qcom_phy *qphy = phy_get_drvdata(phy);
-+	int ret;
-+	u32 val;
-+
-+	/* Program REF_CLK source */
-+	val = readl(qphy->base + PCIE20_PARF_PHY_REFCLK_CTRL2);
-+	val &= ~BIT(1);
-+	writel(val, qphy->base + PCIE20_PARF_PHY_REFCLK_CTRL2);
-+
-+	usleep_range(1000, 2000);
-+
-+	/* Don't use PAD for refclock */
-+	val = readl(qphy->base + PCIE20_PARF_PHY_REFCLK_CTRL2);
-+	val &= ~BIT(0);
-+	writel(val, qphy->base + PCIE20_PARF_PHY_REFCLK_CTRL2);
-+
-+	/* Program SSP ENABLE */
-+	val = readl(qphy->base + PCIE20_PARF_PHY_REFCLK_CTRL3);
-+	val |= BIT(0);
-+	writel(val, qphy->base + PCIE20_PARF_PHY_REFCLK_CTRL3);
-+
-+	usleep_range(1000, 2000);
-+
-+	/* Assert Phy SW Reset */
-+	val = readl(qphy->base + PCIE2_PHY_RESET_CTRL);
-+	val |= BIT(0);
-+	writel(val, qphy->base + PCIE2_PHY_RESET_CTRL);
-+
-+	/* Program Tx Amplitude */
-+	val = readl(qphy->base + PCIE20_PARF_PCS_SWING_CTRL1);
-+	val &= ~0x7f;
-+	val |= TX_AMP_VAL;
-+	writel(val, qphy->base + PCIE20_PARF_PCS_SWING_CTRL1);
-+
-+	val = readl(qphy->base + PCIE20_PARF_PCS_SWING_CTRL2);
-+	val &= ~0x7f;
-+	val |= TX_AMP_VAL;
-+	writel(val, qphy->base + PCIE20_PARF_PCS_SWING_CTRL2);
-+
-+	/* Program De-Emphasis */
-+	val = readl(qphy->base + PCIE20_PARF_PCS_DEEMPH1);
-+	val &= ~0x3f;
-+	val |= TX_DEEMPH_GEN2_6DB_VAL;
-+	writel(val, qphy->base + PCIE20_PARF_PCS_DEEMPH1);
-+
-+	val = readl(qphy->base + PCIE20_PARF_PCS_DEEMPH2);
-+	val &= ~0x3f;
-+	val |= TX_DEEMPH_GEN2_3_5DB_VAL;
-+	writel(val, qphy->base + PCIE20_PARF_PCS_DEEMPH2);
-+
-+	val = readl(qphy->base + PCIE20_PARF_PCS_DEEMPH3);
-+	val &= ~0x3f;
-+	val |= TX_DEEMPH_GEN1_VAL;
-+	writel(val, qphy->base + PCIE20_PARF_PCS_DEEMPH3);
-+
-+	/* Program Rx_Eq */
-+	val = readl(qphy->base + PCIE20_PARF_CONFIGBITS);
-+	val &= ~0x7;
-+	val |= PHY_RX0_EQ_GEN2_VAL;
-+	writel(val, qphy->base + PCIE20_PARF_CONFIGBITS);
-+
-+	/* Program Tx0_term_offset */
-+	val = readl(qphy->base + PCIE20_PARF_PHY_CTRL3);
-+	val &= ~0x1f;
-+	val |= PHY_TX0_TERM_OFFST_VAL;
-+	writel(val, qphy->base + PCIE20_PARF_PHY_CTRL3);
-+
-+	/* disable Tx2Rx Loopback */
-+	val = readl(qphy->base + PCIE20_PARF_PCS_CTRL);
-+	val &= ~BIT(1);
-+	writel(val, qphy->base + PCIE20_PARF_PCS_CTRL);
-+
-+	/* De-assert Phy SW Reset */
-+	val = readl(qphy->base + PCIE2_PHY_RESET_CTRL);
-+	val &= ~BIT(0);
-+	writel(val, qphy->base + PCIE2_PHY_RESET_CTRL);
-+
-+	usleep_range(1000, 2000);
-+
-+	ret = reset_control_deassert(qphy->pipe_reset);
-+	if (ret) {
-+		dev_err(qphy->dev, "cannot deassert pipe reset\n");
-+		goto out;
-+	}
-+
-+	clk_set_rate(qphy->pipe_clk, 250000000);
-+
-+	ret = clk_prepare_enable(qphy->pipe_clk);
-+	if (ret) {
-+		dev_err(qphy->dev, "failed to enable pipe clock\n");
-+		goto out;
-+	}
-+
-+	ret = readl_poll_timeout(qphy->base + PCIE20_PARF_PHY_STTS, val,
-+				 !(val & BIT(0)), 1000, 10);
-+	if (ret)
-+		dev_err(qphy->dev, "phy initialization failed\n");
-+
-+out:
-+	return ret;
-+}
-+
-+static int qcom_pcie2_phy_power_off(struct phy *phy)
-+{
-+	struct qcom_phy *qphy = phy_get_drvdata(phy);
-+	u32 val;
-+
-+	val = readl(qphy->base + PCIE2_PHY_RESET_CTRL);
-+	val |= BIT(0);
-+	writel(val, qphy->base + PCIE2_PHY_RESET_CTRL);
-+
-+	clk_disable_unprepare(qphy->pipe_clk);
-+	reset_control_assert(qphy->pipe_reset);
-+
-+	return 0;
-+}
-+
-+static int qcom_pcie2_phy_exit(struct phy *phy)
-+{
-+	struct qcom_phy *qphy = phy_get_drvdata(phy);
-+
-+	regulator_bulk_disable(ARRAY_SIZE(qphy->vregs), qphy->vregs);
-+	reset_control_assert(qphy->phy_reset);
-+
-+	return 0;
-+}
-+
-+static const struct phy_ops qcom_pcie2_ops = {
-+	.init = qcom_pcie2_phy_init,
-+	.power_on = qcom_pcie2_phy_power_on,
-+	.power_off = qcom_pcie2_phy_power_off,
-+	.exit = qcom_pcie2_phy_exit,
-+	.owner = THIS_MODULE,
-+};
-+
-+/*
-+ * Register a fixed rate pipe clock.
-+ *
-+ * The <s>_pipe_clksrc generated by PHY goes to the GCC that gate
-+ * controls it. The <s>_pipe_clk coming out of the GCC is requested
-+ * by the PHY driver for its operations.
-+ * We register the <s>_pipe_clksrc here. The gcc driver takes care
-+ * of assigning this <s>_pipe_clksrc as parent to <s>_pipe_clk.
-+ * Below picture shows this relationship.
-+ *
-+ *         +---------------+
-+ *         |   PHY block   |<<---------------------------------------+
-+ *         |               |                                         |
-+ *         |   +-------+   |                   +-----+               |
-+ *   I/P---^-->|  PLL  |---^--->pipe_clksrc--->| GCC |--->pipe_clk---+
-+ *    clk  |   +-------+   |                   +-----+
-+ *         +---------------+
-+ */
-+static int phy_pipe_clksrc_register(struct qcom_phy *qphy)
-+{
-+	struct device_node *np = qphy->dev->of_node;
-+	struct clk_fixed_rate *fixed;
-+	struct clk_init_data init = { };
-+	int ret;
-+
-+	ret = of_property_read_string(np, "clock-output-names", &init.name);
-+	if (ret) {
-+		dev_err(qphy->dev, "%s: No clock-output-names\n", np->name);
-+		return ret;
-+	}
-+
-+	fixed = devm_kzalloc(qphy->dev, sizeof(*fixed), GFP_KERNEL);
-+	if (!fixed)
-+		return -ENOMEM;
-+
-+	init.ops = &clk_fixed_rate_ops;
-+
-+	/* controllers using QMP phys use 250MHz pipe clock interface */
-+	fixed->fixed_rate = 250000000;
-+	fixed->hw.init = &init;
-+
-+	return devm_clk_hw_register(qphy->dev, &fixed->hw);
-+}
-+
-+static int qcom_pcie2_phy_probe(struct platform_device *pdev)
-+{
-+	struct phy_provider *phy_provider;
-+	struct qcom_phy *qphy;
-+	struct resource *res;
-+	struct device *dev = &pdev->dev;
-+	struct phy *phy;
-+	int ret;
-+
-+	qphy = devm_kzalloc(dev, sizeof(*qphy), GFP_KERNEL);
-+	if (!qphy)
-+		return -ENOMEM;
-+
-+	qphy->dev = dev;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	qphy->base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(qphy->base))
-+		return PTR_ERR(qphy->base);
-+
-+	ret = phy_pipe_clksrc_register(qphy);
-+	if (ret) {
-+		dev_err(dev, "failed to register pipe_clk\n");
-+		return ret;
-+	}
-+
-+	qphy->vregs[0].supply = "vdda-vp";
-+	qphy->vregs[1].supply = "vdda-vph";
-+	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(qphy->vregs), qphy->vregs);
-+	if (ret < 0)
-+		return ret;
-+
-+	qphy->pipe_clk = devm_clk_get(dev, NULL);
-+	if (IS_ERR(qphy->pipe_clk)) {
-+		dev_err(dev, "failed to acquire pipe clock\n");
-+		return PTR_ERR(qphy->pipe_clk);
-+	}
-+
-+	qphy->phy_reset = devm_reset_control_get_exclusive(dev, "phy");
-+	if (IS_ERR(qphy->phy_reset)) {
-+		dev_err(dev, "failed to acquire phy reset\n");
-+		return PTR_ERR(qphy->phy_reset);
-+	}
-+
-+	qphy->pipe_reset = devm_reset_control_get_exclusive(dev, "pipe");
-+	if (IS_ERR(qphy->pipe_reset)) {
-+		dev_err(dev, "failed to acquire pipe reset\n");
-+		return PTR_ERR(qphy->pipe_reset);
-+	}
-+
-+	phy = devm_phy_create(dev, dev->of_node, &qcom_pcie2_ops);
-+	if (IS_ERR(phy)) {
-+		dev_err(dev, "failed to create phy\n");
-+		return PTR_ERR(phy);
-+	}
-+
-+	phy_set_drvdata(phy, qphy);
-+
-+	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-+	if (IS_ERR(phy_provider))
-+		dev_err(dev, "failed to register phy provider\n");
-+
-+	return PTR_ERR_OR_ZERO(phy_provider);
-+}
-+
-+static const struct of_device_id qcom_pcie2_phy_match_table[] = {
-+	{ .compatible = "qcom,pcie2-phy" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, qcom_pcie2_phy_match_table);
-+
-+static struct platform_driver qcom_pcie2_phy_driver = {
-+	.probe = qcom_pcie2_phy_probe,
-+	.driver = {
-+		.name = "qcom-pcie2-phy",
-+		.of_match_table = qcom_pcie2_phy_match_table,
-+	},
-+};
-+
-+module_platform_driver(qcom_pcie2_phy_driver);
-+
-+MODULE_DESCRIPTION("Qualcomm PCIe PHY driver");
-+MODULE_LICENSE("GPL v2");
+ - reg:
+ 	Usage: required
+@@ -116,6 +117,15 @@
+ 			- "ahb"		AHB clock
+ 			- "aux"		Auxiliary clock
+ 
++- clock-names:
++	Usage: required for qcs404
++	Value type: <stringlist>
++	Definition: Should contain the following entries
++			- "iface"	AHB clock
++			- "aux"		Auxiliary clock
++			- "master_bus"	AXI Master clock
++			- "slave_bus"	AXI Slave clock
++
+ - resets:
+ 	Usage: required
+ 	Value type: <prop-encoded-array>
+@@ -167,6 +177,17 @@
+ 			- "ahb"			AHB Reset
+ 			- "axi_m_sticky"	AXI Master Sticky reset
+ 
++- reset-names:
++	Usage: required for qcs404
++	Value type: <stringlist>
++	Definition: Should contain the following entries
++			- "axi_m"		AXI Master reset
++			- "axi_s"		AXI Slave reset
++			- "axi_m_sticky"	AXI Master Sticky reset
++			- "pipe_sticky"		PIPE sticky reset
++			- "pwr"			PWR reset
++			- "ahb"			AHB reset
++
+ - power-domains:
+ 	Usage: required for apq8084 and msm8996/apq8096
+ 	Value type: <prop-encoded-array>
+@@ -195,12 +216,12 @@
+ 	Definition: A phandle to the PCIe endpoint power supply
+ 
+ - phys:
+-	Usage: required for apq8084
++	Usage: required for apq8084 and qcs404
+ 	Value type: <phandle>
+ 	Definition: List of phandle(s) as listed in phy-names property
+ 
+ - phy-names:
+-	Usage: required for apq8084
++	Usage: required for apq8084 and qcs404
+ 	Value type: <stringlist>
+ 	Definition: Should contain "pciephy"
+ 
 -- 
 2.18.0
 
