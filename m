@@ -6,49 +6,51 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B580C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E06BC4360F
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:34:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F128820818
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:34:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C827820818
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:34:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GQV+aWWD"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Dott+BC9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728536AbfBSKdN (ORCPT
+        id S1728940AbfBSKec (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 05:33:13 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:39036 "EHLO
+        Tue, 19 Feb 2019 05:34:32 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:39060 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728018AbfBSKdI (ORCPT
+        with ESMTP id S1728527AbfBSKdN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 05:33:08 -0500
+        Tue, 19 Feb 2019 05:33:13 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=qjNJCW9VaWoPUrcjw4ZVmCtKdrbi+jA4eRz3lYRrRV0=; b=GQV+aWWD0uF54yBZACk5RksZPH
-        9j/UOm3no7u1rIP4L99eOppKfF6/v49uIThiUiOjnkE3Ts1yjOi3polOicPbrO9fwrS2ZCeIcpiUj
-        VDkuHhwRKB5m2qSkl4gK0oJBC0eJ8kt+CgFL1wjA95vEjX9M/pyHNGq+TLBVgmfvCp2xvN5v8IcAg
-        t1LgKQt2GWKqPHm7udVvWtvOy3WweALFim0i+q3Cmz0HKsQCUFqVtYUl2Wyp10pCCMTwxlWomdUFH
-        v9jWsggFZMi+xNXrxEizJo5FGXgpcrvrGFQvG80nxsx3wV+1T0IkpOpZCG36le6OevTPypRm36gjA
-        Xsayfeng==;
+        bh=d6CMV2hoQm5MnywciM5LER++5NYy5jN9jsJ9wqpDUgs=; b=Dott+BC9vmocj3ZSL9gYdJdgVe
+        66SUpKrkfDQgyJ+nEIOavGswfH7k2Xm1jflWTAqPdDVu/+A06ahJOB9SY8gxPKR7beJgQdsruRuxx
+        bYU6bPskXUJKMnPf+07rN0g8bYMjSVYSoTQ5GVv9k6kwBKA+Fxb0fNqJkOyHOJ49gkGJBg7J8EwY2
+        rknIhm+LdjjKU9pE8avmJvJBOwB5FAEB8kvSPbLCXzsQesatdnK7lhVmkUx78vtzcVSqcOpV7/PMd
+        wHfN5bgXY8N8l+WALh1F5dIOby8l3CubB0fsuVtv7davrXAZM9IwL/YrgFs692Di3Lz89AXqJSYaM
+        9N7lCuHA==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gw2hm-0006ZJ-W6; Tue, 19 Feb 2019 10:32:51 +0000
+        id 1gw2hn-0006ZP-RV; Tue, 19 Feb 2019 10:32:52 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 53390285202C7; Tue, 19 Feb 2019 11:32:48 +0100 (CET)
-Message-Id: <20190219103233.090636436@infradead.org>
+        id 677ED2852059D; Tue, 19 Feb 2019 11:32:48 +0100 (CET)
+Message-Id: <20190219103233.443069009@infradead.org>
 User-Agent: quilt/0.65
-Date:   Tue, 19 Feb 2019 11:31:52 +0100
+Date:   Tue, 19 Feb 2019 11:31:58 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     will.deacon@arm.com, aneesh.kumar@linux.vnet.ibm.com,
         akpm@linux-foundation.org, npiggin@gmail.com
 Cc:     linux-arch@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, peterz@infradead.org,
-        linux@armlinux.org.uk, heiko.carstens@de.ibm.com, riel@surriel.com
-Subject: [PATCH v6 04/18] asm-generic/tlb: Provide generic tlb_flush() based on flush_tlb_range()
+        linux@armlinux.org.uk, heiko.carstens@de.ibm.com, riel@surriel.com,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>
+Subject: [PATCH v6 10/18] sh/tlb: Convert SH to generic mmu_gather
 References: <20190219103148.192029670@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -57,209 +59,185 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide a generic tlb_flush() implementation that relies on
-flush_tlb_range(). This is a little awkward because flush_tlb_range()
-assumes a VMA for range invalidation, but we no longer have one.
+Generic mmu_gather provides everything SH needs (range tracking and
+cache coherency).
 
-Audit of all flush_tlb_range() implementations shows only vma->vm_mm
-and vma->vm_flags are used, and of the latter only VM_EXEC (I-TLB
-invalidates) and VM_HUGETLB (large TLB invalidate) are used.
-
-Therefore, track VM_EXEC and VM_HUGETLB in two more bits, and create a
-'fake' VMA.
-
-This allows architectures that have a reasonably efficient
-flush_tlb_range() to not require any additional effort.
-
-Cc: Nick Piggin <npiggin@gmail.com>
+Cc: Will Deacon <will.deacon@arm.com>
 Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
-Acked-by: Will Deacon <will.deacon@arm.com>
+Cc: Nick Piggin <npiggin@gmail.com>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Rich Felker <dalias@libc.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/arm64/include/asm/tlb.h   |    1 
- arch/powerpc/include/asm/tlb.h |    1 
- arch/riscv/include/asm/tlb.h   |    1 
- arch/x86/include/asm/tlb.h     |    1 
- include/asm-generic/tlb.h      |   95 +++++++++++++++++++++++++++++++++++------
- 5 files changed, 87 insertions(+), 12 deletions(-)
+ arch/sh/include/asm/pgalloc.h |    7 ++
+ arch/sh/include/asm/tlb.h     |  130 ------------------------------------------
+ 2 files changed, 8 insertions(+), 129 deletions(-)
 
---- a/arch/arm64/include/asm/tlb.h
-+++ b/arch/arm64/include/asm/tlb.h
-@@ -27,6 +27,7 @@ static inline void __tlb_remove_table(vo
- 	free_page_and_swap_cache((struct page *)_table);
- }
+--- a/arch/sh/include/asm/pgalloc.h
++++ b/arch/sh/include/asm/pgalloc.h
+@@ -72,6 +72,15 @@ do {							\
+ 	tlb_remove_page((tlb), (pte));			\
+ } while (0)
  
-+#define tlb_flush tlb_flush
- static void tlb_flush(struct mmu_gather *tlb);
- 
- #include <asm-generic/tlb.h>
---- a/arch/powerpc/include/asm/tlb.h
-+++ b/arch/powerpc/include/asm/tlb.h
-@@ -28,6 +28,7 @@
- #define tlb_end_vma(tlb, vma)	do { } while (0)
- #define __tlb_remove_tlb_entry	__tlb_remove_tlb_entry
- 
-+#define tlb_flush tlb_flush
- extern void tlb_flush(struct mmu_gather *tlb);
- 
- /* Get the generic bits... */
---- a/arch/riscv/include/asm/tlb.h
-+++ b/arch/riscv/include/asm/tlb.h
-@@ -18,6 +18,7 @@ struct mmu_gather;
- 
- static void tlb_flush(struct mmu_gather *tlb);
- 
-+#define tlb_flush tlb_flush
- #include <asm-generic/tlb.h>
- 
- static inline void tlb_flush(struct mmu_gather *tlb)
---- a/arch/x86/include/asm/tlb.h
-+++ b/arch/x86/include/asm/tlb.h
-@@ -6,6 +6,7 @@
- #define tlb_end_vma(tlb, vma) do { } while (0)
- #define __tlb_remove_tlb_entry(tlb, ptep, address) do { } while (0)
- 
-+#define tlb_flush tlb_flush
- static inline void tlb_flush(struct mmu_gather *tlb);
- 
- #include <asm-generic/tlb.h>
---- a/include/asm-generic/tlb.h
-+++ b/include/asm-generic/tlb.h
-@@ -95,7 +95,7 @@
-  *    flush the entire TLB irrespective of the range. For instance
-  *    x86-PAE needs this when changing top-level entries.
-  *
-- * And requires the architecture to provide and implement tlb_flush().
-+ * And allows the architecture to provide and implement tlb_flush():
-  *
-  * tlb_flush() may, in addition to the above mentioned mmu_gather fields, make
-  * use of:
-@@ -111,7 +111,10 @@
-  *
-  *  - tlb_get_unmap_shift() / tlb_get_unmap_size()
-  *
-- *    returns the smallest TLB entry size unmapped in this range
-+ *    returns the smallest TLB entry size unmapped in this range.
-+ *
-+ * If an architecture does not provide tlb_flush() a default implementation
-+ * based on flush_tlb_range() will be used.
-  *
-  * Additionally there are a few opt-in features:
-  *
-@@ -245,6 +248,12 @@ struct mmu_gather {
- 	unsigned int		cleared_puds : 1;
- 	unsigned int		cleared_p4ds : 1;
- 
-+	/*
-+	 * tracks VM_EXEC | VM_HUGETLB in tlb_start_vma
-+	 */
-+	unsigned int		vma_exec : 1;
-+	unsigned int		vma_huge : 1;
-+
- 	unsigned int		batch_count;
- 
- 	struct mmu_gather_batch *active;
-@@ -286,8 +295,59 @@ static inline void __tlb_reset_range(str
- 	tlb->cleared_pmds = 0;
- 	tlb->cleared_puds = 0;
- 	tlb->cleared_p4ds = 0;
-+	/*
-+	 * Do not reset mmu_gather::vma_* fields here, we do not
-+	 * call into tlb_start_vma() again to set them if there is an
-+	 * intermediate flush.
-+	 */
- }
- 
-+#ifndef tlb_flush
-+
-+#if defined(tlb_start_vma) || defined(tlb_end_vma)
-+#error Default tlb_flush() relies on default tlb_start_vma() and tlb_end_vma()
++#if CONFIG_PGTABLE_LEVELS > 2
++#define __pmd_free_tlb(tlb, pmdp, addr)			\
++do {							\
++	struct page *page = virt_to_page(pmdp);		\
++	pgtable_pmd_page_dtor(page);			\
++	tlb_remove_page((tlb), page);			\
++} while (0);
 +#endif
 +
-+static inline void tlb_flush(struct mmu_gather *tlb)
-+{
-+	if (tlb->fullmm || tlb->need_flush_all) {
-+		flush_tlb_mm(tlb->mm);
-+	} else if (tlb->end) {
-+		struct vm_area_struct vma = {
-+			.vm_mm = tlb->mm,
-+			.vm_flags = (tlb->vma_exec ? VM_EXEC    : 0) |
-+				    (tlb->vma_huge ? VM_HUGETLB : 0),
-+		};
-+
-+		flush_tlb_range(&vma, tlb->start, tlb->end);
-+	}
-+}
-+
-+static inline void
-+tlb_update_vma_flags(struct mmu_gather *tlb, struct vm_area_struct *vma)
-+{
-+	/*
-+	 * flush_tlb_range() implementations that look at VM_HUGETLB (tile,
-+	 * mips-4k) flush only large pages.
-+	 *
-+	 * flush_tlb_range() implementations that flush I-TLB also flush D-TLB
-+	 * (tile, xtensa, arm), so it's ok to just add VM_EXEC to an existing
-+	 * range.
-+	 *
-+	 * We rely on tlb_end_vma() to issue a flush, such that when we reset
-+	 * these values the batch is empty.
-+	 */
-+	tlb->vma_huge = !!(vma->vm_flags & VM_HUGETLB);
-+	tlb->vma_exec = !!(vma->vm_flags & VM_EXEC);
-+}
-+
-+#else
-+
-+static inline void
-+tlb_update_vma_flags(struct mmu_gather *tlb, struct vm_area_struct *vma) { }
-+
-+#endif
-+
- static inline void tlb_flush_mmu_tlbonly(struct mmu_gather *tlb)
+ static inline void check_pgt_cache(void)
  {
- 	if (!tlb->end)
-@@ -357,19 +417,30 @@ static inline unsigned long tlb_get_unma
-  * the vmas are adjusted to only cover the region to be torn down.
-  */
- #ifndef tlb_start_vma
--#define tlb_start_vma(tlb, vma)						\
--do {									\
--	if (!tlb->fullmm)						\
--		flush_cache_range(vma, vma->vm_start, vma->vm_end);	\
--} while (0)
-+static inline void tlb_start_vma(struct mmu_gather *tlb, struct vm_area_struct *vma)
-+{
-+	if (tlb->fullmm)
-+		return;
-+
-+	tlb_update_vma_flags(tlb, vma);
-+	flush_cache_range(vma, vma->vm_start, vma->vm_end);
-+}
- #endif
+ 	quicklist_trim(QUICK_PT, NULL, 25, 16);
+--- a/arch/sh/include/asm/tlb.h
++++ b/arch/sh/include/asm/tlb.h
+@@ -11,131 +11,8 @@
  
- #ifndef tlb_end_vma
--#define tlb_end_vma(tlb, vma)						\
--do {									\
--	if (!tlb->fullmm)						\
--		tlb_flush_mmu_tlbonly(tlb);				\
--} while (0)
-+static inline void tlb_end_vma(struct mmu_gather *tlb, struct vm_area_struct *vma)
-+{
-+	if (tlb->fullmm)
-+		return;
-+
-+	/*
-+	 * Do a TLB flush and reset the range at VMA boundaries; this avoids
-+	 * the ranges growing with the unused space between consecutive VMAs,
-+	 * but also the mmu_gather::vma_* flags from tlb_start_vma() rely on
-+	 * this.
-+	 */
-+	tlb_flush_mmu_tlbonly(tlb);
-+}
- #endif
+ #ifdef CONFIG_MMU
+ #include <linux/swap.h>
+-#include <asm/pgalloc.h>
+-#include <asm/tlbflush.h>
+-#include <asm/mmu_context.h>
+-
+-/*
+- * TLB handling.  This allows us to remove pages from the page
+- * tables, and efficiently handle the TLB issues.
+- */
+-struct mmu_gather {
+-	struct mm_struct	*mm;
+-	unsigned int		fullmm;
+-	unsigned long		start, end;
+-};
  
- #ifndef __tlb_remove_tlb_entry
+-static inline void init_tlb_gather(struct mmu_gather *tlb)
+-{
+-	tlb->start = TASK_SIZE;
+-	tlb->end = 0;
+-
+-	if (tlb->fullmm) {
+-		tlb->start = 0;
+-		tlb->end = TASK_SIZE;
+-	}
+-}
+-
+-static inline void
+-arch_tlb_gather_mmu(struct mmu_gather *tlb, struct mm_struct *mm,
+-		unsigned long start, unsigned long end)
+-{
+-	tlb->mm = mm;
+-	tlb->start = start;
+-	tlb->end = end;
+-	tlb->fullmm = !(start | (end+1));
+-
+-	init_tlb_gather(tlb);
+-}
+-
+-static inline void
+-arch_tlb_finish_mmu(struct mmu_gather *tlb,
+-		unsigned long start, unsigned long end, bool force)
+-{
+-	if (tlb->fullmm || force)
+-		flush_tlb_mm(tlb->mm);
+-
+-	/* keep the page table cache within bounds */
+-	check_pgt_cache();
+-}
+-
+-static inline void
+-tlb_remove_tlb_entry(struct mmu_gather *tlb, pte_t *ptep, unsigned long address)
+-{
+-	if (tlb->start > address)
+-		tlb->start = address;
+-	if (tlb->end < address + PAGE_SIZE)
+-		tlb->end = address + PAGE_SIZE;
+-}
+-
+-#define tlb_remove_huge_tlb_entry(h, tlb, ptep, address)	\
+-	tlb_remove_tlb_entry(tlb, ptep, address)
+-
+-/*
+- * In the case of tlb vma handling, we can optimise these away in the
+- * case where we're doing a full MM flush.  When we're doing a munmap,
+- * the vmas are adjusted to only cover the region to be torn down.
+- */
+-static inline void
+-tlb_start_vma(struct mmu_gather *tlb, struct vm_area_struct *vma)
+-{
+-	if (!tlb->fullmm)
+-		flush_cache_range(vma, vma->vm_start, vma->vm_end);
+-}
+-
+-static inline void
+-tlb_end_vma(struct mmu_gather *tlb, struct vm_area_struct *vma)
+-{
+-	if (!tlb->fullmm && tlb->end) {
+-		flush_tlb_range(vma, tlb->start, tlb->end);
+-		init_tlb_gather(tlb);
+-	}
+-}
+-
+-static inline void tlb_flush_mmu_tlbonly(struct mmu_gather *tlb)
+-{
+-}
+-
+-static inline void tlb_flush_mmu_free(struct mmu_gather *tlb)
+-{
+-}
+-
+-static inline void tlb_flush_mmu(struct mmu_gather *tlb)
+-{
+-}
+-
+-static inline int __tlb_remove_page(struct mmu_gather *tlb, struct page *page)
+-{
+-	free_page_and_swap_cache(page);
+-	return false; /* avoid calling tlb_flush_mmu */
+-}
+-
+-static inline void tlb_remove_page(struct mmu_gather *tlb, struct page *page)
+-{
+-	__tlb_remove_page(tlb, page);
+-}
+-
+-static inline bool __tlb_remove_page_size(struct mmu_gather *tlb,
+-					  struct page *page, int page_size)
+-{
+-	return __tlb_remove_page(tlb, page);
+-}
+-
+-static inline void tlb_remove_page_size(struct mmu_gather *tlb,
+-					struct page *page, int page_size)
+-{
+-	return tlb_remove_page(tlb, page);
+-}
+-
+-static inline void tlb_change_page_size(struct mmu_gather *tlb, unsigned int page_size)
+-{
+-}
+-
+-#define pte_free_tlb(tlb, ptep, addr)	pte_free((tlb)->mm, ptep)
+-#define pmd_free_tlb(tlb, pmdp, addr)	pmd_free((tlb)->mm, pmdp)
+-#define pud_free_tlb(tlb, pudp, addr)	pud_free((tlb)->mm, pudp)
+-
+-#define tlb_migrate_finish(mm)		do { } while (0)
++#include <asm-generic/tlb.h>
+ 
+ #if defined(CONFIG_CPU_SH4) || defined(CONFIG_SUPERH64)
+ extern void tlb_wire_entry(struct vm_area_struct *, unsigned long, pte_t);
+@@ -155,11 +32,6 @@ static inline void tlb_unwire_entry(void
+ 
+ #else /* CONFIG_MMU */
+ 
+-#define tlb_start_vma(tlb, vma)				do { } while (0)
+-#define tlb_end_vma(tlb, vma)				do { } while (0)
+-#define __tlb_remove_tlb_entry(tlb, pte, address)	do { } while (0)
+-#define tlb_flush(tlb)					do { } while (0)
+-
+ #include <asm-generic/tlb.h>
+ 
+ #endif /* CONFIG_MMU */
 
 
