@@ -2,187 +2,143 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81170C10F00
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:21:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE23FC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:22:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B92821773
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:21:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="dgpnal0Y";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="eXY8XyD+"
+	by mail.kernel.org (Postfix) with ESMTP id 7BBDF217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:22:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550586153;
+	bh=q8IAGCGPndn6ZY5trkXqM325/UglqRESL1pRQffvHFM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=voWNgnyFDHFvmPes5vVxHlgDjSLJk0DZT9eD49q2JC7/2UjfBnDMXCtpJQJX/EwUK
+	 Nk/3BSGMnwb+V0J07bLEWqAzCdqb+3rqdXw5bUVK5hofnL9PajnhiIBF5XXAEavZWC
+	 hmbCxs1xP9GlK3tzIM+s1P8bBwD3s2sHVX54Zwfk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728454AbfBSOVx (ORCPT
+        id S1728018AbfBSOWc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 09:21:53 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:48266 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725767AbfBSOVw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 09:21:52 -0500
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1JEEQd1016585;
-        Tue, 19 Feb 2019 06:21:24 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=tpSpmtQH9sPHKxv/KrgxaVnKto8SKKMUcwFkurOkNhg=;
- b=dgpnal0YkYQsWFXrmoCS52PObG8ergHQG9FPurhfL/oZLMmL8FzI7fXKOX23R1KJy5qN
- oGXyG/OKmZLCfa07kEeImw2hl3riw1zTJHdo9rG+Tjrm2zWc1bgWTj4pVxTgyeZReIKy
- y0/ZAbl0b54bRPo0bUafEwqUvNQsvDhtKVE= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2qrey5gqvq-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 19 Feb 2019 06:21:24 -0800
-Received: from frc-mbx06.TheFacebook.com (2620:10d:c0a1:f82::30) by
- frc-hub04.TheFacebook.com (2620:10d:c021:18::174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Tue, 19 Feb 2019 06:21:22 -0800
-Received: from frc-hub03.TheFacebook.com (2620:10d:c021:18::173) by
- frc-mbx06.TheFacebook.com (2620:10d:c0a1:f82::30) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Tue, 19 Feb 2019 06:21:22 -0800
-Received: from NAM04-SN1-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.73) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Tue, 19 Feb 2019 06:21:22 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tpSpmtQH9sPHKxv/KrgxaVnKto8SKKMUcwFkurOkNhg=;
- b=eXY8XyD+o+dkS1lKAtc0G32ce/RQDat+OncehBVwphRe8GLXzCAY12apj4w8jV4BdyGeK6eM3jwDxgJmBiEW/FwA242PVicq4dArtDAdSn8aCleIh5Nn6F3PfDCFIn3hdx1/P/KV7LyuKX4xM7zm4zkx6kCVGgJYbGHFCsvZjEQ=
-Received: from DM5PR15MB1163.namprd15.prod.outlook.com (10.173.208.149) by
- DM5PR15MB1817.namprd15.prod.outlook.com (10.174.246.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.19; Tue, 19 Feb 2019 14:21:03 +0000
-Received: from DM5PR15MB1163.namprd15.prod.outlook.com
- ([fe80::c430:ec26:cf33:6560]) by DM5PR15MB1163.namprd15.prod.outlook.com
- ([fe80::c430:ec26:cf33:6560%7]) with mapi id 15.20.1622.018; Tue, 19 Feb 2019
- 14:21:03 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     Jiri Olsa <jolsa@redhat.com>
-CC:     Netdev <netdev@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "acme@redhat.com" <acme@redhat.com>,
-        "jolsa@kernel.org" <jolsa@kernel.org>,
-        "namhyung@kernel.org" <namhyung@kernel.org>
-Subject: Re: [PATCH v3 perf,bpf 05/11] perf, bpf: save bpf_prog_info in a
- rbtree in perf_env
-Thread-Topic: [PATCH v3 perf,bpf 05/11] perf, bpf: save bpf_prog_info in a
- rbtree in perf_env
-Thread-Index: AQHUxXkOtC9zjVEe5kKW+v5YXb3KDaXkn4sAgAIECoCAADIngIAAXAAA
-Date:   Tue, 19 Feb 2019 14:21:03 +0000
-Message-ID: <55885497-4542-4FED-97E0-64664059FFC3@fb.com>
-References: <20190215215354.3114006-1-songliubraving@fb.com>
- <20190215215354.3114006-6-songliubraving@fb.com>
- <20190217230516.GA7443@krava> <4784383E-1BFA-4387-8864-B1814FFEC937@fb.com>
- <20190219085145.GC13284@krava>
-In-Reply-To: <20190219085145.GC13284@krava>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3445.102.3)
-x-originating-ip: [2620:10d:c090:180::1:eac4]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b0ecf842-d399-4781-1b0e-08d696757abf
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:DM5PR15MB1817;
-x-ms-traffictypediagnostic: DM5PR15MB1817:
-x-microsoft-exchange-diagnostics: 1;DM5PR15MB1817;20:NRXxsebuXBUfAjJF7esdYOlM9C3kI2OOIo+w6Sj3cLXdym05qzHs+Ue5c4XfHHmjorrH2uT9XU1Hp+PZ5rtSKlU4x4otD9CcpVBDBpvevGF5GMJL7MEG65IWAr3VOLjwF3wGVvGObYd33o5EbDVQX+fp/fIsQx3Y0xoVKSsPy6E=
-x-microsoft-antispam-prvs: <DM5PR15MB1817E9D1AEFCDA13F10E8101B37C0@DM5PR15MB1817.namprd15.prod.outlook.com>
-x-forefront-prvs: 09538D3531
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(136003)(366004)(396003)(376002)(199004)(189003)(83716004)(106356001)(36756003)(5660300002)(6512007)(86362001)(6506007)(68736007)(478600001)(71190400001)(71200400001)(256004)(102836004)(105586002)(6436002)(6916009)(82746002)(316002)(4326008)(6246003)(53936002)(305945005)(25786009)(6116002)(7736002)(53546011)(93886005)(54906003)(97736004)(57306001)(50226002)(2906002)(446003)(11346002)(6486002)(2616005)(33656002)(76176011)(486006)(81156014)(8676002)(46003)(14454004)(99286004)(476003)(81166006)(229853002)(186003)(8936002)(142933001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR15MB1817;H:DM5PR15MB1163.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: QhDKBMBDG4W0ytO9x+PkZSDdsbD+SF13PIHEOcLXp6wfczsGBVe1YmUJv2IRRIXf0mRzych475Ez2eZJQhy40mPTblSVngD0SmwpXg93nEx0tYGZuJ47O7p/u6qrgp5sKmKwo3KoIq2CGHo6oiy/dvawWVomXJeKZs+UYHwKD1mZRtDX252+YP8TbKbh7euo8lKsr4yC5qscAd1g2LS3l4eyxSj1E0OSytd1vHOZu1wZ6g8GbPu2akBOD8jlYb6pca07V7rJOztFt+Cb1MwGLzhFZB+KBjY2NmTVJT5xrPG+o/uNsMfE3YFNT86nWPJLV0rY3Rpdt6fRNOxzGC2TzEPQTnmMm+ifqTfUMLev8S91PcJTO8kLTU9/wSumkBCsEOTzgtu91fCfTdJwrdGB6oMMj+ag+qrs90HlkF4cj5c=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <703DEB218527A349A2E97465E69E672E@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Tue, 19 Feb 2019 09:22:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59686 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725767AbfBSOWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 09:22:31 -0500
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73508217D7;
+        Tue, 19 Feb 2019 14:22:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550586150;
+        bh=q8IAGCGPndn6ZY5trkXqM325/UglqRESL1pRQffvHFM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=KmcM1Dd84KcsRlcDgdZ4QwHYYE1qhMTT1efH5W8wH5aw+uKLUKoO1Vt93fW/oyPTh
+         vJFsNbOuZ6UwFXNedX9N6w8ocPrG4HfEUtmE7RiHA6p5/m8sD6K8fANPyfwDDeOe47
+         qPdaRDMhXRg9DEn2J2tAFOEeZ7xLDpUS0+YuiYWo=
+Received: by mail-qk1-f182.google.com with SMTP id u188so12075832qkh.8;
+        Tue, 19 Feb 2019 06:22:30 -0800 (PST)
+X-Gm-Message-State: AHQUAub81tBk+/H1KBniiv6ExzxN9TomGG6UiqpMSDvAFXqGCLR/Htdp
+        qszpMMz8l/muLiwGNTYRWiOJmrI4lOaUad6JkQ==
+X-Google-Smtp-Source: AHgI3IYTyJnxRns0g1gZ2t2wP5yw4tkdD1LovA3cpdxHa/0Ns7CJyB5HOXdEip63CXPfYOAerscO84u+x+ZzGQdRttk=
+X-Received: by 2002:a37:94d:: with SMTP id 74mr3980596qkj.79.1550586149646;
+ Tue, 19 Feb 2019 06:22:29 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: b0ecf842-d399-4781-1b0e-08d696757abf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2019 14:21:03.2146
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR15MB1817
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-19_09:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+References: <20190218112310.17860-1-chenyu56@huawei.com> <20190218112310.17860-2-chenyu56@huawei.com>
+ <20190218201824.GA23724@bogus> <a944cd27-f7d5-eece-1ef5-c7dc5dbc311b@huawei.com>
+ <1550545405.2210.30.camel@mhfsdcap03>
+In-Reply-To: <1550545405.2210.30.camel@mhfsdcap03>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 19 Feb 2019 08:22:18 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLaOj2FWgChMMUBrvtkXkgQ6v1QiYGMDMrYUdDq1zOs1Q@mail.gmail.com>
+Message-ID: <CAL_JsqLaOj2FWgChMMUBrvtkXkgQ6v1QiYGMDMrYUdDq1zOs1Q@mail.gmail.com>
+Subject: Re: [PATCH v2 01/10] dt-bindings: phy: Add support for HiSilicon's
+ hi3660 USB PHY
+To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
+Cc:     Chen Yu <chenyu56@huawei.com>, liuyu712@hisilicon.com,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Suzhuangluan <suzhuangluan@hisilicon.com>, kongfei@hisilicon.com,
+        wanghu17@hisilicon.com, butao@hisilicon.com, chenyao11@huawei.com,
+        fangshengzhou@hisilicon.com,
+        Li Pengcheng <lipengcheng8@huawei.com>,
+        Song Xiaowei <songxiaowei@hisilicon.com>,
+        Yiping Xu <xuyiping@hisilicon.com>, xuyoujun4@huawei.com,
+        yudongbin@hisilicon.com, zangleigang <zangleigang@hisilicon.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Binghui Wang <wangbinghui@hisilicon.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 18, 2019 at 9:03 PM Chunfeng Yun <chunfeng.yun@mediatek.com> wrote:
+>
+> Hi,
+> On Tue, 2019-02-19 at 09:50 +0800, Chen Yu wrote:
+> > Hi,
+> >
+> > On 2019/2/19 4:18, Rob Herring wrote:
+> > > On Mon, Feb 18, 2019 at 07:23:01PM +0800, Yu Chen wrote:
+> > >> This patch adds binding documentation for supporting the hi3660 usb
+> > >> phy on boards like the HiKey960.
+> > >>
+> > >> Cc: Rob Herring <robh+dt@kernel.org>
+> > >> Cc: Mark Rutland <mark.rutland@arm.com>
+> > >> Cc: John Stultz <john.stultz@linaro.org>
+> > >> Cc: Binghui Wang <wangbinghui@hisilicon.com>
+> > >> Signed-off-by: Yu Chen <chenyu56@huawei.com>
+> > >> ---
+> > >> v1:
+> > >> * Fix some format error as suggested by Rob.
+> > >> v2:
+> > >> * Change hi3660 usb PHY to hi3660 USB PHY
+> > >> ---
+> > >> ---
+> > >>  .../devicetree/bindings/phy/phy-hi3660-usb3.txt     | 21 +++++++++++++++++++++
+> > >>  1 file changed, 21 insertions(+)
+> > >>  create mode 100644 Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt
+> > >>
+> > >> diff --git a/Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt b/Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt
+> > >> new file mode 100644
+> > >> index 000000000000..f9a3d56cfdd2
+> > >> --- /dev/null
+> > >> +++ b/Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt
+> > >> @@ -0,0 +1,21 @@
+> > >> +Hisilicon hi3660 USB PHY
+> > >> +-----------------------
+> > >> +
+> > >> +Required properties:
+> > >> +- compatible: should be "hisilicon,hi3660-usb-phy"
+> > >> +- #phy-cells: must be 0
+> > >> +- hisilicon,pericrg-syscon: phandle of syscon used to control phy.
+> > >> +- hisilicon,pctrl-syscon: phandle of syscon used to control phy.
+> > >> +- hisilicon,usb3-otg-bc-syscon: phandle of syscon used to control phy.
+> > >> +- hisilicon,eye-diagram-param: parameter set for phy
+> > >> +Refer to phy/phy-bindings.txt for the generic PHY binding properties
+> > >> +
+> > >> +Example:
+> > >> +  usb-phy {
+> > >> +          compatible = "hisilicon,hi3660-usb-phy";
+> > >> +          #phy-cells = <0>;
+> > >> +          hisilicon,pericrg-syscon = <&crg_ctrl>;
+> > >> +          hisilicon,pctrl-syscon = <&pctrl>;
+> > >> +          hisilicon,usb3-otg-bc-syscon = <&usb3_otg_bc>;
+> > >
+> > > Are most of the registers within one of these blocks? If so, make this
+> > > node a child of that node.
+> > I met a problem when I made this node a child of the syscon node,
+> > the driver "phy-hi3660-usb3" was not probed.
+> > Do you have any idea about how to make it probed when it is a child node?
+> call of_platform_populate() in parent node's driver,
+> but I don't know whether it's a standard way
 
+It is. The other way is adding 'simple-mfd' compatible if there is no
+driver for the parent.
 
-> On Feb 19, 2019, at 12:51 AM, Jiri Olsa <jolsa@redhat.com> wrote:
->=20
-> On Tue, Feb 19, 2019 at 05:52:20AM +0000, Song Liu wrote:
->>=20
->>=20
->>> On Feb 17, 2019, at 3:05 PM, Jiri Olsa <jolsa@redhat.com> wrote:
->>>=20
->>> On Fri, Feb 15, 2019 at 01:53:48PM -0800, Song Liu wrote:
->>>=20
->>> SNIP
->>>=20
->>>> 	info_linear =3D bpf_program__get_prog_info_linear(fd, arrays);
->>>> 	if (IS_ERR_OR_NULL(info_linear)) {
->>>> @@ -151,8 +165,8 @@ static int perf_event__synthesize_one_bpf_prog(str=
-uct perf_tool *tool,
->>>> 						     machine, process);
->>>> 	}
->>>>=20
->>>> -	/* Synthesize PERF_RECORD_BPF_EVENT */
->>>> 	if (opts->bpf_event) {
->>>> +		/* Synthesize PERF_RECORD_BPF_EVENT */
->>>> 		*bpf_event =3D (struct bpf_event){
->>>> 			.header =3D {
->>>> 				.type =3D PERF_RECORD_BPF_EVENT,
->>>> @@ -165,6 +179,19 @@ static int perf_event__synthesize_one_bpf_prog(st=
-ruct perf_tool *tool,
->>>> 		memcpy(bpf_event->tag, info->tag, BPF_TAG_SIZE);
->>>> 		memset((void *)event + event->header.size, 0, machine->id_hdr_size);
->>>> 		event->header.size +=3D machine->id_hdr_size;
->>>> +
->>>> +		/* save bpf_prog_info to env */
->>>> +		info_node =3D malloc(sizeof(struct bpf_prog_info_node));
->>>> +		if (info_node) {
->>>> +			info_node->info_linear =3D info_linear;
->>>> +			perf_env__insert_bpf_prog_info(env, info_node);
->>>> +			info_linear =3D NULL;
->>>> +		}
->>>=20
->>> what if the allocation fails? we don't care?
->>>=20
->>> jirka
->>=20
->> My original plan is to just ignore it and accept that this program
->> doesn't have annotation. Any suggestion on what would be a better=20
->> approach?
->=20
-> there's an error path in the function, I'd bail out if the malloc fails
->=20
-> jirka
-
-If we go to bail out here, we will skip processing PERF_RECORD_BPF_EVENT.=20
-When malloc fails, this is still valuable information that we should try=20
-to save. So I think we don't have to bail out here. I will add a comment
-to explain this.=20
-
-Thanks,
-Song
-
-
-
+Rob
