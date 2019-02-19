@@ -2,237 +2,106 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D8BC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C759C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:42:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AECE021773
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:42:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MwYg0tM3"
+	by mail.kernel.org (Postfix) with ESMTP id 66A452177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:42:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550583769;
+	bh=xKE7Tv9wcvizIbJLVbiYwe9gHlNPCU1bI/p+qI0PaeA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=BfL6xLTp/giSEnSYFIqG8xFM1Ze8cp33BtTq7NfMBWxgJUKETvVWpbIx3J/0ENCso
+	 9agEZ1gnbYUwOB401yAS0lNpDLLOHBKBhWAdH62f+AdoJRijxrCFQCy1FdQbDo04eq
+	 r2BI9ugqV+0MPntYaJKCASV3pFzEEZQmfE1HvLvw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728810AbfBSNl7 (ORCPT
+        id S1728826AbfBSNmr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 08:41:59 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:52072 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726221AbfBSNl7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 08:41:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Tj1vGXOOGqIORKGSChRdWa7+WffbnM8fv4iQwuJOtH0=; b=MwYg0tM3lS1qp8OjJ1xnk0sao
-        p8TEzIsVFx8lBQnCi3SKtjzH8qwKH9LTgnPp/DncJEYeGFDcrolFhjrVZTWUCd6RXszihJxzxzIwN
-        bskQDO++VpQTcUUIIcVVMuiv7WhHGiZ6OTP7xNa8Fkz9gXH3ozghZjs6Td27e5oI7KYaSYF2FEBq9
-        9Y/tKhuv6CZY1IGpWL0vkLDGz70tQxDCBfdVlew6rxNTzOEpNWNbaLUhcUDjBj+qQHUCBGfItaxoB
-        KqqWe92sJV3TXnz2D2F//eY3CPH/w/UVThwSOZx5V8BXEthCnyBTm0wbMTJz3vJxVDFkm8npUx3FL
-        kcd/Unoeg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gw5ee-0002zx-M8; Tue, 19 Feb 2019 13:41:49 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 372832855E6A6; Tue, 19 Feb 2019 14:41:47 +0100 (CET)
-Date:   Tue, 19 Feb 2019 14:41:47 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     aneesh.kumar@linux.vnet.ibm.com, akpm@linux-foundation.org,
-        npiggin@gmail.com, linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
-        heiko.carstens@de.ibm.com, riel@surriel.com, tony.luck@intel.com
-Subject: Re: [PATCH v6 06/18] asm-generic/tlb: Conditionally provide
- tlb_migrate_finish()
-Message-ID: <20190219134147.GZ32494@hirez.programming.kicks-ass.net>
-References: <20190219103148.192029670@infradead.org>
- <20190219103233.207580251@infradead.org>
- <20190219124738.GD8501@fuggles.cambridge.arm.com>
+        Tue, 19 Feb 2019 08:42:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44894 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726221AbfBSNmr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 08:42:47 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10AAC2147A;
+        Tue, 19 Feb 2019 13:42:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550583766;
+        bh=xKE7Tv9wcvizIbJLVbiYwe9gHlNPCU1bI/p+qI0PaeA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Hr6NdoxAa9Dl8/Unn1EkTtFY4LCAKB3W6R5nTXlMgP0ribzYy4na78bBEYdOzymLx
+         D+NV/hQyBOrtWoIdajIKIOFAjxPUQ5XOXSi4RcOXWm8jI5z+snYXRVMFTikC0dr9nM
+         1Ac2+451OKPMC1bx8+YJfSCZE62Hsyw7hVjPYJGQ=
+Date:   Tue, 19 Feb 2019 14:42:44 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: core: skip interfaces disabled in devicetree
+Message-ID: <20190219134244.GA6815@kroah.com>
+References: <20190216170452.10884-1-mans@mansr.com>
+ <20190219131149.GA20719@kroah.com>
+ <yw1xftsjykpo.fsf@mansr.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190219124738.GD8501@fuggles.cambridge.arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <yw1xftsjykpo.fsf@mansr.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 12:47:38PM +0000, Will Deacon wrote:
-> Fine for now, but I agree that we should drop the hook altogether. AFAICT,
-> this only exists to help an ia64 optimisation which looks suspicious to
-> me since it uses:
+On Tue, Feb 19, 2019 at 01:24:51PM +0000, Måns Rullgård wrote:
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
 > 
->     mm == current->active_mm && atomic_read(&mm->mm_users) == 1
+> > On Sat, Feb 16, 2019 at 05:04:52PM +0000, Mans Rullgard wrote:
+> >> If an interface has an associated devicetree node with status disabled,
+> >> do not register the device.  This is useful for boards with a built-in
+> >> multifunction USB device where some functions are broken or otherwise
+> >> undesired.
+> >> 
+> >> Signed-off-by: Mans Rullgard <mans@mansr.com>
+> >> ---
+> >>  drivers/usb/core/message.c | 4 ++++
+> >>  1 file changed, 4 insertions(+)
+> >> 
+> >> diff --git a/drivers/usb/core/message.c b/drivers/usb/core/message.c
+> >> index bfa5eda0cc26..6b45d4835e41 100644
+> >> --- a/drivers/usb/core/message.c
+> >> +++ b/drivers/usb/core/message.c
+> >> @@ -2007,6 +2007,10 @@ int usb_set_configuration(struct usb_device *dev, int configuration)
+> >>  	for (i = 0; i < nintf; ++i) {
+> >>  		struct usb_interface *intf = cp->interface[i];
+> >>  
+> >> +		if (intf->dev.of_node &&
+> >> +		    !of_device_is_available(intf->dev.of_node))
+> >> +			continue;
+> >
+> > Shouldn't you at least print some message out saying you are skipping
+> > this?  Odds are this is going to cause regressions in devices that were
+> > not expecting this, right?  So pointing them at why their devices now no
+> > longer work would be good :)
 > 
-> to identify a "single-threaded fork()" and therefore perform only local TLB
-> invalidation. Even if this was the right thing to do, it's not clear to me
-> that tlb_migrate_finish() is called on the right CPU anyway.
-> 
-> So I'd be keen to remove this hook before it spreads, but in the meantime:
+> They will only be skipped if there is a device tree node for the
+> interface _and_ it has and explicit status = "disabled" property.
+> The default is still to create devices for all interfaces.
 
-Agreed :-)
+Yes, but today if you have such a status field set, it will not skip
+them, so who knows who has their DT messed up :)
 
-The obvious slash and kill patch ... untested
+> That said, printing a message is probably a good idea anyway.  Would
+> "info" level be appropriate for this?
 
----
- Documentation/core-api/cachetlb.rst |   10 ----------
- arch/ia64/include/asm/machvec.h     |    8 --------
- arch/ia64/include/asm/machvec_sn2.h |    2 --
- arch/ia64/include/asm/tlb.h         |    2 --
- arch/ia64/sn/kernel/sn2/sn2_smp.c   |    7 -------
- arch/nds32/include/asm/tlbflush.h   |    1 -
- include/asm-generic/tlb.h           |    4 ----
- kernel/sched/core.c                 |    1 -
- 8 files changed, 35 deletions(-)
+That is a good idea.
 
---- a/Documentation/core-api/cachetlb.rst
-+++ b/Documentation/core-api/cachetlb.rst
-@@ -101,16 +101,6 @@ invoke one of the following flush method
- 	translations for software managed TLB configurations.
- 	The sparc64 port currently does this.
- 
--6) ``void tlb_migrate_finish(struct mm_struct *mm)``
--
--	This interface is called at the end of an explicit
--	process migration. This interface provides a hook
--	to allow a platform to update TLB or context-specific
--	information for the address space.
--
--	The ia64 sn2 platform is one example of a platform
--	that uses this interface.
--
- Next, we have the cache flushing interfaces.  In general, when Linux
- is changing an existing virtual-->physical mapping to a new value,
- the sequence will be in one of the following forms::
---- a/arch/ia64/include/asm/machvec.h
-+++ b/arch/ia64/include/asm/machvec.h
-@@ -30,7 +30,6 @@ typedef void ia64_mv_irq_init_t (void);
- typedef void ia64_mv_send_ipi_t (int, int, int, int);
- typedef void ia64_mv_timer_interrupt_t (int, void *);
- typedef void ia64_mv_global_tlb_purge_t (struct mm_struct *, unsigned long, unsigned long, unsigned long);
--typedef void ia64_mv_tlb_migrate_finish_t (struct mm_struct *);
- typedef u8 ia64_mv_irq_to_vector (int);
- typedef unsigned int ia64_mv_local_vector_to_irq (u8);
- typedef char *ia64_mv_pci_get_legacy_mem_t (struct pci_bus *);
-@@ -96,7 +95,6 @@ machvec_noop_bus (struct pci_bus *bus)
- 
- extern void machvec_setup (char **);
- extern void machvec_timer_interrupt (int, void *);
--extern void machvec_tlb_migrate_finish (struct mm_struct *);
- 
- # if defined (CONFIG_IA64_HP_SIM)
- #  include <asm/machvec_hpsim.h>
-@@ -124,7 +122,6 @@ extern void machvec_tlb_migrate_finish (
- #  define platform_send_ipi	ia64_mv.send_ipi
- #  define platform_timer_interrupt	ia64_mv.timer_interrupt
- #  define platform_global_tlb_purge	ia64_mv.global_tlb_purge
--#  define platform_tlb_migrate_finish	ia64_mv.tlb_migrate_finish
- #  define platform_dma_init		ia64_mv.dma_init
- #  define platform_dma_get_ops		ia64_mv.dma_get_ops
- #  define platform_irq_to_vector	ia64_mv.irq_to_vector
-@@ -167,7 +164,6 @@ struct ia64_machine_vector {
- 	ia64_mv_send_ipi_t *send_ipi;
- 	ia64_mv_timer_interrupt_t *timer_interrupt;
- 	ia64_mv_global_tlb_purge_t *global_tlb_purge;
--	ia64_mv_tlb_migrate_finish_t *tlb_migrate_finish;
- 	ia64_mv_dma_init *dma_init;
- 	ia64_mv_dma_get_ops *dma_get_ops;
- 	ia64_mv_irq_to_vector *irq_to_vector;
-@@ -206,7 +202,6 @@ struct ia64_machine_vector {
- 	platform_send_ipi,			\
- 	platform_timer_interrupt,		\
- 	platform_global_tlb_purge,		\
--	platform_tlb_migrate_finish,		\
- 	platform_dma_init,			\
- 	platform_dma_get_ops,			\
- 	platform_irq_to_vector,			\
-@@ -270,9 +265,6 @@ extern const struct dma_map_ops *dma_get
- #ifndef platform_global_tlb_purge
- # define platform_global_tlb_purge	ia64_global_tlb_purge /* default to architected version */
- #endif
--#ifndef platform_tlb_migrate_finish
--# define platform_tlb_migrate_finish	machvec_noop_mm
--#endif
- #ifndef platform_kernel_launch_event
- # define platform_kernel_launch_event	machvec_noop
- #endif
---- a/arch/ia64/include/asm/machvec_sn2.h
-+++ b/arch/ia64/include/asm/machvec_sn2.h
-@@ -34,7 +34,6 @@ extern ia64_mv_irq_init_t sn_irq_init;
- extern ia64_mv_send_ipi_t sn2_send_IPI;
- extern ia64_mv_timer_interrupt_t sn_timer_interrupt;
- extern ia64_mv_global_tlb_purge_t sn2_global_tlb_purge;
--extern ia64_mv_tlb_migrate_finish_t	sn_tlb_migrate_finish;
- extern ia64_mv_irq_to_vector sn_irq_to_vector;
- extern ia64_mv_local_vector_to_irq sn_local_vector_to_irq;
- extern ia64_mv_pci_get_legacy_mem_t sn_pci_get_legacy_mem;
-@@ -77,7 +76,6 @@ extern ia64_mv_pci_fixup_bus_t		sn_pci_f
- #define platform_send_ipi		sn2_send_IPI
- #define platform_timer_interrupt	sn_timer_interrupt
- #define platform_global_tlb_purge       sn2_global_tlb_purge
--#define platform_tlb_migrate_finish	sn_tlb_migrate_finish
- #define platform_pci_fixup		sn_pci_fixup
- #define platform_inb			__sn_inb
- #define platform_inw			__sn_inw
---- a/arch/ia64/include/asm/tlb.h
-+++ b/arch/ia64/include/asm/tlb.h
-@@ -47,8 +47,6 @@
- #include <asm/tlbflush.h>
- #include <asm/machvec.h>
- 
--#define tlb_migrate_finish(mm)	platform_tlb_migrate_finish(mm)
--
- #include <asm-generic/tlb.h>
- 
- #endif /* _ASM_IA64_TLB_H */
---- a/arch/ia64/sn/kernel/sn2/sn2_smp.c
-+++ b/arch/ia64/sn/kernel/sn2/sn2_smp.c
-@@ -120,13 +120,6 @@ void sn_migrate(struct task_struct *task
- 		cpu_relax();
- }
- 
--void sn_tlb_migrate_finish(struct mm_struct *mm)
--{
--	/* flush_tlb_mm is inefficient if more than 1 users of mm */
--	if (mm == current->mm && mm && atomic_read(&mm->mm_users) == 1)
--		flush_tlb_mm(mm);
--}
--
- static void
- sn2_ipi_flush_all_tlb(struct mm_struct *mm)
- {
---- a/arch/nds32/include/asm/tlbflush.h
-+++ b/arch/nds32/include/asm/tlbflush.h
-@@ -42,6 +42,5 @@ void local_flush_tlb_page(struct vm_area
- 
- void update_mmu_cache(struct vm_area_struct *vma,
- 		      unsigned long address, pte_t * pte);
--void tlb_migrate_finish(struct mm_struct *mm);
- 
- #endif
---- a/include/asm-generic/tlb.h
-+++ b/include/asm-generic/tlb.h
-@@ -604,8 +604,4 @@ static inline void tlb_end_vma(struct mm
- 
- #endif /* CONFIG_MMU */
- 
--#ifndef tlb_migrate_finish
--#define tlb_migrate_finish(mm) do {} while (0)
--#endif
--
- #endif /* _ASM_GENERIC__TLB_H */
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1151,7 +1151,6 @@ static int __set_cpus_allowed_ptr(struct
- 		/* Need help from migration thread: drop lock and wait. */
- 		task_rq_unlock(rq, p, &rf);
- 		stop_one_cpu(cpu_of(rq), migration_cpu_stop, &arg);
--		tlb_migrate_finish(p->mm);
- 		return 0;
- 	} else if (task_on_rq_queued(p)) {
- 		/*
+thanks,
+
+greg k-h
