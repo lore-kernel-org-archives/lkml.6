@@ -2,99 +2,141 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B2CC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 18:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6ABEC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 18:48:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 858D520645
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 18:47:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 913B720645
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 18:48:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WUPcD9Kp"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DNU6lQ1N";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="acKjserT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727829AbfBSSrl (ORCPT
+        id S1727972AbfBSSs2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 13:47:41 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41649 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbfBSSrl (ORCPT
+        Tue, 19 Feb 2019 13:48:28 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:46246 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725875AbfBSSs1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 13:47:41 -0500
-Received: by mail-pf1-f194.google.com with SMTP id d25so2285205pfn.8;
-        Tue, 19 Feb 2019 10:47:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3OETKXStBibk3GWbQisutIiswzQhSNXZDKKLjOHU0qY=;
-        b=WUPcD9KpxImQPTrHtSrO+ejeEUgDADQOprPW4qX1t6Oy6Bplz0eMXoFBfuWfXqWHtV
-         ILMWkMfXXLqB028vqhPm/ZNdoKxpqmVYxZfifR+vAGsjUQJ6drB7hDhflfClts7IZFAn
-         B1w4S9jFGEdGDSY+8oLiJwjVASuHQufOLcuP1KYs+SPLit4tYQBww/jRHmzZhQY5Oul9
-         mFXhin83OOkDpdIqY7yKrxXo+fpUmyB7TuK/NtEkA//7EmzUhL7d+zuLoF+Th44qGdNd
-         hlfjCBpMEBoHKSn8ZjJLun90pYb5Q9NBNt+8rKpSM46+bWmMekKzy8H+9im3So1fl2yX
-         yYfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3OETKXStBibk3GWbQisutIiswzQhSNXZDKKLjOHU0qY=;
-        b=AN125HBw8KfNO5fKjbyY8SjWAh9/MYA/klm1utJlFRYfOV6CoQY6QDYsXgCM6Yn9tI
-         /TVfUpnl+WQWHOSIXsWAiaBJwPdUnPnw+cClFuAv6ENkQot+5mZuMMH2mGeXLvtzGxf/
-         xIwGc5DFLznZvr46BzLSDy8qLCBQpzTtMmPuhKv/e1TlnBiilTP1l3YVbFhs2Jv6RpLU
-         DOxpnTK0EejyFTGdoNjO4bEVKPNnsO1hDzlOrrVRaFWSj2sPbu6sfhv3KUaQdxuqiCQT
-         lP5qvuXm9/+7WN30wYYax9PMirkxtdko1wMMaQAZy6qZ6b+m/Z7FINypaFVN2vZ39NEN
-         1a+A==
-X-Gm-Message-State: AHQUAubUMJNv2ijFtR/XdDVMtcSowMwKO1HYIUcVFQjEaqKLnmayHo10
-        yD6cm46S2YL3ndOhmwGdr/TN59n9
-X-Google-Smtp-Source: AHgI3IZLzKH0vQbZb3EbvppqShMdyvi8aXAbR8KQN5S0RrivLrmzzSgWMY/qywHP9haU56YdJNradg==
-X-Received: by 2002:a63:9348:: with SMTP id w8mr25216355pgm.198.1550602060169;
-        Tue, 19 Feb 2019 10:47:40 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id f62sm26859651pgc.67.2019.02.19.10.47.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 10:47:39 -0800 (PST)
-Subject: Re: [PATCH] s390/setup: fix early warning messages
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190218154640.GA27699@roeck-us.net>
- <20190218180146.79930fe6@mschwideX1> <20190218182106.61b10ee4@mschwideX1>
- <20190218191655.103c81ca.cohuck@redhat.com>
- <05e78442-07e1-9783-965f-b3d64a2c5e99@roeck-us.net>
- <20190218233021.368bb475.cohuck@redhat.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <eca82ff3-bc07-ee2f-b67a-91425fe1ace0@roeck-us.net>
-Date:   Tue, 19 Feb 2019 10:47:38 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190218233021.368bb475.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 19 Feb 2019 13:48:27 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4D5D7608D4; Tue, 19 Feb 2019 18:48:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550602106;
+        bh=WdeFdupR5GGp/lujcSH4hA7KIn8EpzdZx7fdgS1qJL8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DNU6lQ1N7XVAwh3MMhXfTfkO3u6UOGYoeKIC469wKxvE32fdghzQxZgdt0QaUttIF
+         n+0SI1wmK6hcpzCTbeUvhqPcbs/O3j6pL61ufUY4yneQ/mxUCx8q6b511nYmp013OX
+         jvR3jehxnsX4yAKcqMpE1sf5botsvivX6dr6h3k8=
+Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jcrouse@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7383960850;
+        Tue, 19 Feb 2019 18:48:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550602105;
+        bh=WdeFdupR5GGp/lujcSH4hA7KIn8EpzdZx7fdgS1qJL8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=acKjserTShX380jvLVM/bn7GREsKosoJNhSI7TD74agEqEjzbwEku6aytzBM4oDri
+         NWw/QzpmDTaOPGz3XvmvjNEqMGl/Cpnhu+/PSUgj/n+MkExbhraMRTYlmoXSDmd/uG
+         JJ196fGKylCF4LJNrT23clqoFaAcEts//3da8wcM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7383960850
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     freedreno@lists.freedesktop.org
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Doug Anderson <dianders@chromium.org>,
+        Kristian Kristensen <hoegsberg@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Rob Clark <robdclark@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH] drm/msm: Remove pm_runtime calls from msm_iommu.c
+Date:   Tue, 19 Feb 2019 11:48:20 -0700
+Message-Id: <1550602100-14169-1-git-send-email-jcrouse@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Cornelia,
+Currently the IOMMU code calls pm_runtime_get/put on the GPU or display
+device before doing a IOMMU operation. This was because usually the
+IOMMU driver didn't do power control of its own and since the hardware
+used the same clocks and power as the respective multimedia device it
+was a easy way to make sure that the power was available.
 
-On 2/18/19 2:30 PM, Cornelia Huck wrote:
+Now two things have changed. First, the SMMU devices can do their own power
+control and more important bringing up the a6xx GPU isn't as easy as
+turning on some clocks. To bring the GPU up we need the GMU which itself
+needs the IOMMU so we have a chicken and egg problem.
 
->> What is your qemu command line ?
-> 
-> Ignoring any additional devices:
-> 
-> s390x-softmmu/qemu-system-s390x -M s390-ccw-virtio,accel=tcg -cpu max  -m 1024 -nographic -device virtio-scsi-ccw,id=scsi0,devno=fe.0.0001 -drive file=/home/cohuck/vm-images/vm1.qcow2,format=qcow2,if=none,id=drive-scsi0-0-0-0 -device scsi-hd,bus=scsi0.0,channel=0,scsi-id=0,lun=0,drive=drive-scsi0-0-0-0,id=scsi0-0-0-0,bootindex=1 -sandbox on -kernel ~/git/linux/arch/s390/boot/bzImage -append "root=/dev/sda3"
-> 
+Luckily this is easily fixed by removing the pm_runtime calls from the
+functions and letting the device link to the IOMMU device handle the magic.
 
-Is "accel=tcg" and "-cpu max" expected to make any difference ? CPU consumption
-on my system seems to be identical to the default (no -M or -cpu on command line).
-This is with qemu 3.1.
+Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+---
 
-Thanks,
-Guenter
+ drivers/gpu/drm/msm/msm_iommu.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/msm_iommu.c b/drivers/gpu/drm/msm/msm_iommu.c
+index 4d62790..12bb54c 100644
+--- a/drivers/gpu/drm/msm/msm_iommu.c
++++ b/drivers/gpu/drm/msm/msm_iommu.c
+@@ -38,13 +38,8 @@ static int msm_iommu_attach(struct msm_mmu *mmu, const char * const *names,
+ 			    int cnt)
+ {
+ 	struct msm_iommu *iommu = to_msm_iommu(mmu);
+-	int ret;
+ 
+-	pm_runtime_get_sync(mmu->dev);
+-	ret = iommu_attach_device(iommu->domain, mmu->dev);
+-	pm_runtime_put_sync(mmu->dev);
+-
+-	return ret;
++	return iommu_attach_device(iommu->domain, mmu->dev);
+ }
+ 
+ static void msm_iommu_detach(struct msm_mmu *mmu, const char * const *names,
+@@ -52,9 +47,7 @@ static void msm_iommu_detach(struct msm_mmu *mmu, const char * const *names,
+ {
+ 	struct msm_iommu *iommu = to_msm_iommu(mmu);
+ 
+-	pm_runtime_get_sync(mmu->dev);
+ 	iommu_detach_device(iommu->domain, mmu->dev);
+-	pm_runtime_put_sync(mmu->dev);
+ }
+ 
+ static int msm_iommu_map(struct msm_mmu *mmu, uint64_t iova,
+@@ -63,9 +56,7 @@ static int msm_iommu_map(struct msm_mmu *mmu, uint64_t iova,
+ 	struct msm_iommu *iommu = to_msm_iommu(mmu);
+ 	size_t ret;
+ 
+-//	pm_runtime_get_sync(mmu->dev);
+ 	ret = iommu_map_sg(iommu->domain, iova, sgt->sgl, sgt->nents, prot);
+-//	pm_runtime_put_sync(mmu->dev);
+ 	WARN_ON(!ret);
+ 
+ 	return (ret == len) ? 0 : -EINVAL;
+@@ -75,9 +66,7 @@ static int msm_iommu_unmap(struct msm_mmu *mmu, uint64_t iova, unsigned len)
+ {
+ 	struct msm_iommu *iommu = to_msm_iommu(mmu);
+ 
+-	pm_runtime_get_sync(mmu->dev);
+ 	iommu_unmap(iommu->domain, iova, len);
+-	pm_runtime_put_sync(mmu->dev);
+ 
+ 	return 0;
+ }
+-- 
+2.7.4
+
