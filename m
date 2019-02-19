@@ -2,222 +2,201 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC9FC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:22:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF7EC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:23:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9BE52146E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:22:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="poTf62Hj"
+	by mail.kernel.org (Postfix) with ESMTP id 2660921736
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:23:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728520AbfBSNWG (ORCPT
+        id S1728664AbfBSNXH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 08:22:06 -0500
-Received: from mail-eopbgr50050.outbound.protection.outlook.com ([40.107.5.50]:11088
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726221AbfBSNWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 08:22:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OyokebQRf+qqqLgKoNNI6Xyy9SbbeUGgKivvBGJNTMg=;
- b=poTf62Hjjj4udPkikbtO5q2JjFltKGCZlGMOJekTEr9q7YgP5Oooi5SRApL1xi99fGgTHKU1bFFIhKXyBBIywjr/AnL033LuAWw8pbO5ym1OPsc1HaLXbW/DwbhqaJ9Rbtg+Ven8VMWj0age5DOH2dmvk09m6mGGS12QYtpbMjM=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3897.eurprd04.prod.outlook.com (52.134.73.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.19; Tue, 19 Feb 2019 13:21:59 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::14e8:6d2e:fe21:4fd5]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::14e8:6d2e:fe21:4fd5%3]) with mapi id 15.20.1601.023; Tue, 19 Feb 2019
- 13:21:59 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Marco Felsch <m.felsch@pengutronix.de>
-CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH] dt-bindings: imx: update scu resource id headfile
-Thread-Topic: [PATCH] dt-bindings: imx: update scu resource id headfile
-Thread-Index: AQHUyDGr6JcuNwk39kK74/kE/Vm176XnE3iAgAAGyxA=
-Date:   Tue, 19 Feb 2019 13:21:59 +0000
-Message-ID: <DB3PR0402MB3916AF3AA0283DB22DF61E2FF57C0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1550566601-11497-1-git-send-email-Anson.Huang@nxp.com>
- <20190219125211.2pg2bqxner4klcb5@pengutronix.de>
-In-Reply-To: <20190219125211.2pg2bqxner4klcb5@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.68]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a80fa1a7-2a88-4b98-1b7a-08d6966d3a9b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3897;
-x-ms-traffictypediagnostic: DB3PR0402MB3897:
-x-ms-exchange-purlcount: 1
-x-microsoft-exchange-diagnostics: =?gb2312?B?MTtEQjNQUjA0MDJNQjM4OTc7MjM6K0FERnFoT1g1RklNMTNVMThuQ1hBRVJH?=
- =?gb2312?B?Ykg1NGw3dUZqL21VcFQxUjI4bGh4T2NETjRxd0Z0cVNwaExtZzJLL3MrTnlp?=
- =?gb2312?B?RGhLRmJiclZ0MFh3a3F3dUZxaisyWTZ1QjJxYmorakx1bXcrWGovWnFYQkVI?=
- =?gb2312?B?enpsMkNtVEtyczYwSEM0VUNSY05helRYejI2UkRiYnlmRENzNThGak1RVkZP?=
- =?gb2312?B?dVFXa0IrOVp5N0h5NWRzYStwd3VKcHg4MmJVRDZIc1NDTmFXWCsxMDAxRXF5?=
- =?gb2312?B?aitkTzBZdUJFZldDZjlldlYyZjRST253L0J6LzV4eDVWS1ZSbjhjYlRYTmg1?=
- =?gb2312?B?RitoaTdYTWNnTHVEenFpd1N0MjhtdVZQNnI1MzNjdW5DNXV5M3RkL2lJQU9V?=
- =?gb2312?B?SGN1SkJaelJ3WlpHak9tWU5tOEpEQWxuUFJJRDhkUWp4TVQ2MGxkeEM3TEpu?=
- =?gb2312?B?SWFDZnk3ekZZcmhCVnJqYmhoTEZVd0U0UkdZbnkvYWVRaHVhUklQajJaQjY4?=
- =?gb2312?B?RDdZUGwzT1ZMbS9jWGFTdkFLakxtUFV0QkV4YUV5TnUxcVh3NXAxN3ZSbEoy?=
- =?gb2312?B?eEFva2luMXhsbDFZSjBLUVlMRVRoU0tkd3I3YURqR0cyTmtSYVg3NTI4bnpo?=
- =?gb2312?B?VTVGV29XaGFCL1luQ1UwZlFSZ2JneFUyV0NWNXBRbzRySm1aQUZTRFdhQkxa?=
- =?gb2312?B?VytEL3FwT3dqbzlYeUV4anFYUFJBbUxEVkMyd2hDTmZaZUJUYmpvdFp3WklH?=
- =?gb2312?B?bVlrWlRod0w1RFVta0dVbmxjWjBtMmpRRE1QeXlYUDdHZ2dXY1laRFRMbm1m?=
- =?gb2312?B?RiswT014dEhBRzc2SktpQnJiSER0RisxYklib3NibnhaeFUvTjZ5MzhCck4w?=
- =?gb2312?B?cWlwQW04b3RMaDlicVE2ZmtVZlRNNXREY0pJejhYQ25LN2ZCclE2Q0xQQlhB?=
- =?gb2312?B?LzNnNkJmbVBSMXJpNGVYMFlpUU5OTmZiSHdOVStiNVdaSEZ3T1NoMjNlZ25h?=
- =?gb2312?B?SG9MVU1NUTBFT01LRlJVS1E2cU1JUno5WU50eE9pekxlUlhGWklpUDUxdi9P?=
- =?gb2312?B?UkFiVjFFbk84MlRYYUNWaWREaTdPWkNydzVoVmxjaXpISmc3ek1JdFNQOFJI?=
- =?gb2312?B?bnJGOGFyeU5qaDhZeU5hSk00dzhIWXFTMWFybnlnTjUzYm9TZXN6UDdIMVZG?=
- =?gb2312?B?bUQwRk5FTGVXMG1QRnVRRC9Tb0ZHNjZlTFNndTF1QTN0b041VDl6Skd6SjRm?=
- =?gb2312?B?WVp6djVTWlFaeE5PRUtJMDVHQjdKZHhGd2tELzR5MG10RjhyTWVnNmhzakRP?=
- =?gb2312?B?WmNHc2x1RVBCeHNYMDFBYmxYNkxFak0wYjFBazVFNXd5RXpTNmpDV3VSRzJG?=
- =?gb2312?B?VUUybnRYTzVCZ2hNZnR1N1B6d0NDQ09lblAzU2ZjYzl3SWxtNEpwQXdNZEcw?=
- =?gb2312?B?Y3JienlXL3dWaksvd2Y4OTRqLytQczBoZXk0N2krNU81OXlZRTVWaFdsS2ZH?=
- =?gb2312?B?WXYzeVBuSHBCLzFwcDFYVXpHdjV5MkxwdWxMWVlPcm10dEpwbERxYVc2Um02?=
- =?gb2312?B?azYzUCt6K3QyL0h1ZXBDaVozN3lsSWtnNGNSUWxZWm1LV1YxRXpZc1Y1K3Nq?=
- =?gb2312?B?NGpRSVc4RzBITk5qZldGajBhemh4RU5EMjJueXBWUG9FaVJ2bjV3ZmllL0JN?=
- =?gb2312?B?WGVHZmc3L3hMUHFqK2R0QVh0ODE5Yml6bWQ0WHRBV3BKejN4TmhIL1ZJS1Fz?=
- =?gb2312?B?eDdGcDRWaHJjamFuYnZNNlhibFc3dzZJTU05bFhxeUE0RWZ1WkJjbHBXNk9I?=
- =?gb2312?B?akVtTDdmOXJCcnNTVDFpb21TUzRQMk9aampNR0dGZ2tqYkpEcXBsaVJwVlcw?=
- =?gb2312?Q?++EAzit2y90nw=3D?=
-x-microsoft-antispam-prvs: <DB3PR0402MB389745D00C53098BD49A7460F57C0@DB3PR0402MB3897.eurprd04.prod.outlook.com>
-x-forefront-prvs: 09538D3531
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(376002)(346002)(136003)(396003)(13464003)(189003)(199004)(68736007)(2906002)(6306002)(9686003)(55016002)(74316002)(8676002)(106356001)(81156014)(81166006)(33656002)(4326008)(53936002)(105586002)(305945005)(7736002)(15650500001)(102836004)(53546011)(6506007)(25786009)(7416002)(6436002)(97736004)(478600001)(6246003)(7696005)(99286004)(76176011)(45080400002)(966005)(14454004)(8936002)(229853002)(476003)(446003)(66066001)(486006)(11346002)(316002)(3846002)(71190400001)(71200400001)(54906003)(5660300002)(26005)(86362001)(186003)(6916009)(14444005)(256004)(6116002)(44832011);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3897;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: +ZhIOgHNRgxmakcFqruEWxsoDjOCPY2sRgSX1tV3CycbI0ulZ0EuqcOTMBJJQGI1zotntNI5VOswgLphZdoVBG5WcEnpKPWr1VBa02Ic3CHfSRp1Wf9jPlFFKKXLRdf3ujdmBNMfKGrLD1shpuJEZNMTOTu9vF4psrkUiVNL79TngK5H7razGY70BOwUtFIK8wD5ESm83YQL8biEYxDaHCYVZ2xTR4teaoEWLjFUPDg4A4qXoynDUHktudnOBxxAvUMtNuWIvFmwcyeCY06K6QHVAGjitZ8/kMuoCVAE9gqTFAASQ4gaHmTPFqj1wQ8Ww6hks3Qb/16niH0e1kO6mAW2TvmNWTwdkRdgNNvuQXtgtNVy6xzWjwELqzYvRr9o2aeAZK6tpXedYhPGNTDgBYihBe7DIThVstxsjJLWDB4=
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        Tue, 19 Feb 2019 08:23:07 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:43737 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728425AbfBSNXH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 08:23:07 -0500
+Received: by mail-ed1-f65.google.com with SMTP id m35so12747712ede.10
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 05:23:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=hfkGdySoQCzWZ8jGRYKbA1EKMfqb0tqLUT2kHc7bsCI=;
+        b=Lh181nVPkRwio3J8df0whpgEe6OKr+Au3J3Sh5LJpQNO4nUuGCySXMrVnS3BSyCMsk
+         1swaM56PP6TGaVHB5hEKS/IaWUVHWTJjm2feewH0w7pjHMhUybldQgXPTrt7ExYBbrvS
+         cZYcCkAgw1yuYrHzRf6sdEum4W2tieSHvPil6i8sfr9EjMTqYRtz2GW3GC6rAu+2ZbNp
+         GPjr/xs5fx+LRUqdjDCz6GBCbyeZuo6O1+G9a5gnJlag6MUfOOTU7MgFlzyQiMxfSGoY
+         ueWMf5Bd9yn15YtLi2D98FTqWztiKKVjq/gSH3HVSmM8XLXmezBdWH0tZqWvVaNEbaRh
+         g2yw==
+X-Gm-Message-State: AHQUAubMEAmn24ICpDDXs2rrXm1MfQuRNh7FYyWHCo0rnHuiatBnSIH9
+        UqlygzY5h0Z4iMAXiIA/dCvWDppEh5c=
+X-Google-Smtp-Source: AHgI3IZyEyfBelUAWYlPZOypjkjFIUhz4svU9v8zYHp+4Ad+QxzwrhQM+cuKKoCCEVW8SgjI1hz8Qg==
+X-Received: by 2002:a17:906:1602:: with SMTP id m2mr8943719ejd.228.1550582585040;
+        Tue, 19 Feb 2019 05:23:05 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id cd11sm707579ejb.61.2019.02.19.05.23.03
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Feb 2019 05:23:04 -0800 (PST)
+Subject: Re: [RFC] pinctrl/amd: Clear interrupt enable bits on probe
+To:     Leonard Crestez <cdleonard@gmail.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nehal Shah <Nehal-bakulchandra.Shah@amd.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Cc:     Daniel Drake <drake@endlessm.com>,
+        Nitesh Kumar Agrawal <Nitesh-kumar.Agrawal@amd.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <2155095e66a8b6329fa6b316b0e9ecd4b6d0c9bb.1550573871.git.cdleonard@gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <c64f4836-fb32-ed03-e5ab-807c42aa95b7@redhat.com>
+Date:   Tue, 19 Feb 2019 14:23:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a80fa1a7-2a88-4b98-1b7a-08d6966d3a9b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2019 13:21:59.7348
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3897
+In-Reply-To: <2155095e66a8b6329fa6b316b0e9ecd4b6d0c9bb.1550573871.git.cdleonard@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIE1hcmNvDQoNCkJlc3QgUmVnYXJkcyENCkFuc29uIEh1YW5nDQoNCj4gLS0tLS1PcmlnaW5h
-bCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTWFyY28gRmVsc2NoIFttYWlsdG86bS5mZWxzY2hAcGVu
-Z3V0cm9uaXguZGVdDQo+IFNlbnQ6IDIwMTnE6jLUwjE5yNUgMjA6NTINCj4gVG86IEFuc29uIEh1
-YW5nIDxhbnNvbi5odWFuZ0BueHAuY29tPg0KPiBDYzogcm9iaCtkdEBrZXJuZWwub3JnOyBtYXJr
-LnJ1dGxhbmRAYXJtLmNvbTsgc2hhd25ndW9Aa2VybmVsLm9yZzsNCj4gcy5oYXVlckBwZW5ndXRy
-b25peC5kZTsga2VybmVsQHBlbmd1dHJvbml4LmRlOyBmZXN0ZXZhbUBnbWFpbC5jb207DQo+IHVs
-Zi5oYW5zc29uQGxpbmFyby5vcmc7IEFpc2hlbmcgRG9uZyA8YWlzaGVuZy5kb25nQG54cC5jb20+
-Ow0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5p
-bmZyYWRlYWQub3JnOyBsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZzsgZGwtbGludXgt
-aW14IDxsaW51eC1pbXhAbnhwLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSF0gZHQtYmluZGlu
-Z3M6IGlteDogdXBkYXRlIHNjdSByZXNvdXJjZSBpZCBoZWFkZmlsZQ0KPiANCj4gSGkgQW5zb24s
-DQo+IA0KPiBPbiAxOS0wMi0xOSAwOTowMSwgQW5zb24gSHVhbmcgd3JvdGU6DQo+ID4gVXBkYXRl
-IGkuTVggU0NVIHJlc291cmNlIElEIHRhYmxlIGFjY29yZGluZyB0byBsYXRlc3Qgc3lzdGVtDQo+
-ID4gY29udHJvbGxlciBmaXJtd2FyZS4NCj4gDQo+IHdpbGwgdGhpcyBoYXBwZW4gZXZlcnkgdGlt
-ZSB0aGUgc2N1IGZpcm13YXJlIGdldHMgYSB1cGRhdGU/DQoNCklmIFNDVSBmaXJtd2FyZSB1cGRh
-dGVzIHRoaXMgdGFibGUsIHRoZW4geWVzLCBpdCBNVVNUIGtlZXAgc2FtZSBhcyBTQ1UgZmlybXdh
-cmUsDQpidXQgc3VjaCBJRCB0YWJsZSBpcyBOT1QgdXBkYXRlZCB2ZXJ5IG9mdGVuLCBJIGNoZWNr
-ZWQgdGhlIGhpc3RvcnkgaW4gb3VyIGludGVybmFsIHRyZWUsIHRoZXJlDQphcmUgT05MWSAzIHVw
-ZGF0ZXMgc2luY2UgMjAxNi4NCg0KQW5zb24uDQoNCj4gDQo+IFJlZ2FyZHMsDQo+IE1hcmNvDQo+
-IA0KPiA+IFNpZ25lZC1vZmYtYnk6IEFuc29uIEh1YW5nIDxBbnNvbi5IdWFuZ0BueHAuY29tPg0K
-PiA+IC0tLQ0KPiA+ICBpbmNsdWRlL2R0LWJpbmRpbmdzL2Zpcm13YXJlL2lteC9yc3JjLmggfCAz
-OQ0KPiA+ICsrKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLQ0KPiA+ICAxIGZpbGUgY2hh
-bmdlZCwgMjIgaW5zZXJ0aW9ucygrKSwgMTcgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0t
-Z2l0IGEvaW5jbHVkZS9kdC1iaW5kaW5ncy9maXJtd2FyZS9pbXgvcnNyYy5oDQo+ID4gYi9pbmNs
-dWRlL2R0LWJpbmRpbmdzL2Zpcm13YXJlL2lteC9yc3JjLmgNCj4gPiBpbmRleCA0NDgxZjJkLi5h
-ZDc0N2E4IDEwMDY0NA0KPiA+IC0tLSBhL2luY2x1ZGUvZHQtYmluZGluZ3MvZmlybXdhcmUvaW14
-L3JzcmMuaA0KPiA+ICsrKyBiL2luY2x1ZGUvZHQtYmluZGluZ3MvZmlybXdhcmUvaW14L3JzcmMu
-aA0KPiA+IEBAIC0zNiwxNSArMzYsMTUgQEANCj4gPiAgI2RlZmluZSBJTVhfU0NfUl9EQ18wX0JM
-SVQxCQkyMA0KPiA+ICAjZGVmaW5lIElNWF9TQ19SX0RDXzBfQkxJVDIJCTIxDQo+ID4gICNkZWZp
-bmUgSU1YX1NDX1JfRENfMF9CTElUX09VVAkJMjINCj4gPiAtI2RlZmluZSBJTVhfU0NfUl9EQ18w
-X0NBUFRVUkUwCQkyMw0KPiA+IC0jZGVmaW5lIElNWF9TQ19SX0RDXzBfQ0FQVFVSRTEJCTI0DQo+
-ID4gKyNkZWZpbmUgSU1YX1NDX1JfUEVSRgkJCTIzDQo+ID4gKyNkZWZpbmUgSU1YX1NDX1JfVU5V
-U0VENQkJMjQNCj4gPiAgI2RlZmluZSBJTVhfU0NfUl9EQ18wX1dBUlAJCTI1DQo+ID4gLSNkZWZp
-bmUgSU1YX1NDX1JfRENfMF9JTlRFR1JBTDAJCTI2DQo+ID4gLSNkZWZpbmUgSU1YX1NDX1JfRENf
-MF9JTlRFR1JBTDEJCTI3DQo+ID4gKyNkZWZpbmUgSU1YX1NDX1JfVU5VU0VENwkJMjYNCj4gPiAr
-I2RlZmluZSBJTVhfU0NfUl9VTlVTRUQ4CQkyNw0KPiA+ICAjZGVmaW5lIElNWF9TQ19SX0RDXzBf
-VklERU8wCQkyOA0KPiA+ICAjZGVmaW5lIElNWF9TQ19SX0RDXzBfVklERU8xCQkyOQ0KPiA+ICAj
-ZGVmaW5lIElNWF9TQ19SX0RDXzBfRlJBQzAJCTMwDQo+ID4gLSNkZWZpbmUgSU1YX1NDX1JfRENf
-MF9GUkFDMQkJMzENCj4gPiArI2RlZmluZSBJTVhfU0NfUl9VTlVTRUQ2CQkzMQ0KPiA+ICAjZGVm
-aW5lIElNWF9TQ19SX0RDXzAJCQkzMg0KPiA+ICAjZGVmaW5lIElNWF9TQ19SX0dQVV8yX1BJRDAJ
-CTMzDQo+ID4gICNkZWZpbmUgSU1YX1NDX1JfRENfMF9QTExfMAkJMzQNCj4gPiBAQCAtNTMsMTcg
-KzUzLDE3IEBADQo+ID4gICNkZWZpbmUgSU1YX1NDX1JfRENfMV9CTElUMQkJMzcNCj4gPiAgI2Rl
-ZmluZSBJTVhfU0NfUl9EQ18xX0JMSVQyCQkzOA0KPiA+ICAjZGVmaW5lIElNWF9TQ19SX0RDXzFf
-QkxJVF9PVVQJCTM5DQo+ID4gLSNkZWZpbmUgSU1YX1NDX1JfRENfMV9DQVBUVVJFMAkJNDANCj4g
-PiAtI2RlZmluZSBJTVhfU0NfUl9EQ18xX0NBUFRVUkUxCQk0MQ0KPiA+ICsjZGVmaW5lIElNWF9T
-Q19SX1VOVVNFRDkJCTQwDQo+ID4gKyNkZWZpbmUgSU1YX1NDX1JfVU5VU0VEMTAJCTQxDQo+ID4g
-ICNkZWZpbmUgSU1YX1NDX1JfRENfMV9XQVJQCQk0Mg0KPiA+IC0jZGVmaW5lIElNWF9TQ19SX0RD
-XzFfSU5URUdSQUwwCQk0Mw0KPiA+IC0jZGVmaW5lIElNWF9TQ19SX0RDXzFfSU5URUdSQUwxCQk0
-NA0KPiA+ICsjZGVmaW5lIElNWF9TQ19SX1VOVVNFRDExCQk0Mw0KPiA+ICsjZGVmaW5lIElNWF9T
-Q19SX1VOVVNFRDEyCQk0NA0KPiA+ICAjZGVmaW5lIElNWF9TQ19SX0RDXzFfVklERU8wCQk0NQ0K
-PiA+ICAjZGVmaW5lIElNWF9TQ19SX0RDXzFfVklERU8xCQk0Ng0KPiA+ICAjZGVmaW5lIElNWF9T
-Q19SX0RDXzFfRlJBQzAJCTQ3DQo+ID4gLSNkZWZpbmUgSU1YX1NDX1JfRENfMV9GUkFDMQkJNDgN
-Cj4gPiArI2RlZmluZSBJTVhfU0NfUl9VTlVTRUQxMwkJNDgNCj4gPiAgI2RlZmluZSBJTVhfU0Nf
-Ul9EQ18xCQkJNDkNCj4gPiAtI2RlZmluZSBJTVhfU0NfUl9HUFVfM19QSUQwCQk1MA0KPiA+ICsj
-ZGVmaW5lIElNWF9TQ19SX1VOVVNFRDE0CQk1MA0KPiA+ICAjZGVmaW5lIElNWF9TQ19SX0RDXzFf
-UExMXzAJCTUxDQo+ID4gICNkZWZpbmUgSU1YX1NDX1JfRENfMV9QTExfMQkJNTINCj4gPiAgI2Rl
-ZmluZSBJTVhfU0NfUl9TUElfMAkJCTUzDQo+ID4gQEAgLTMwMyw4ICszMDMsOCBAQA0KPiA+ICAj
-ZGVmaW5lIElNWF9TQ19SX000XzBfVUFSVAkJMjg3DQo+ID4gICNkZWZpbmUgSU1YX1NDX1JfTTRf
-MF9JMkMJCTI4OA0KPiA+ICAjZGVmaW5lIElNWF9TQ19SX000XzBfSU5UTVVYCQkyODkNCj4gPiAt
-I2RlZmluZSBJTVhfU0NfUl9NNF8wX1NJTQkJMjkwDQo+ID4gLSNkZWZpbmUgSU1YX1NDX1JfTTRf
-MF9XRE9HCQkyOTENCj4gPiArI2RlZmluZSBJTVhfU0NfUl9VTlVTRUQxNQkJMjkwDQo+ID4gKyNk
-ZWZpbmUgSU1YX1NDX1JfVU5VU0VEMTYJCTI5MQ0KPiA+ICAjZGVmaW5lIElNWF9TQ19SX000XzBf
-TVVfMEIJCTI5Mg0KPiA+ICAjZGVmaW5lIElNWF9TQ19SX000XzBfTVVfMEEwCQkyOTMNCj4gPiAg
-I2RlZmluZSBJTVhfU0NfUl9NNF8wX01VXzBBMQkJMjk0DQo+ID4gQEAgLTMyMyw4ICszMjMsOCBA
-QA0KPiA+ICAjZGVmaW5lIElNWF9TQ19SX000XzFfVUFSVAkJMzA3DQo+ID4gICNkZWZpbmUgSU1Y
-X1NDX1JfTTRfMV9JMkMJCTMwOA0KPiA+ICAjZGVmaW5lIElNWF9TQ19SX000XzFfSU5UTVVYCQkz
-MDkNCj4gPiAtI2RlZmluZSBJTVhfU0NfUl9NNF8xX1NJTQkJMzEwDQo+ID4gLSNkZWZpbmUgSU1Y
-X1NDX1JfTTRfMV9XRE9HCQkzMTENCj4gPiArI2RlZmluZSBJTVhfU0NfUl9VTlVTRUQxNwkJMzEw
-DQo+ID4gKyNkZWZpbmUgSU1YX1NDX1JfVU5VU0VEMTgJCTMxMQ0KPiA+ICAjZGVmaW5lIElNWF9T
-Q19SX000XzFfTVVfMEIJCTMxMg0KPiA+ICAjZGVmaW5lIElNWF9TQ19SX000XzFfTVVfMEEwCQkz
-MTMNCj4gPiAgI2RlZmluZSBJTVhfU0NfUl9NNF8xX01VXzBBMQkJMzE0DQo+ID4gQEAgLTMzNyw3
-ICszMzcsNyBAQA0KPiA+ICAjZGVmaW5lIElNWF9TQ19SX0lSUVNUUl9TQ1UyCQkzMjENCj4gPiAg
-I2RlZmluZSBJTVhfU0NfUl9JUlFTVFJfRFNQCQkzMjINCj4gPiAgI2RlZmluZSBJTVhfU0NfUl9F
-TENESUZfUExMCQkzMjMNCj4gPiAtI2RlZmluZSBJTVhfU0NfUl9VTlVTRUQ2CQkzMjQNCj4gPiAr
-I2RlZmluZSBJTVhfU0NfUl9PQ1JBTQkJCTMyNA0KPiA+ICAjZGVmaW5lIElNWF9TQ19SX0FVRElP
-X1BMTF8wCQkzMjUNCj4gPiAgI2RlZmluZSBJTVhfU0NfUl9QSV8wCQkJMzI2DQo+ID4gICNkZWZp
-bmUgSU1YX1NDX1JfUElfMF9QV01fMAkJMzI3DQo+ID4gQEAgLTU1NCw2ICs1NTQsMTEgQEANCj4g
-PiAgI2RlZmluZSBJTVhfU0NfUl9WUFVfTVVfMwkJNTM4DQo+ID4gICNkZWZpbmUgSU1YX1NDX1Jf
-VlBVX0VOQ18xCQk1MzkNCj4gPiAgI2RlZmluZSBJTVhfU0NfUl9WUFUJCQk1NDANCj4gPiAtI2Rl
-ZmluZSBJTVhfU0NfUl9MQVNUCQkJNTQxDQo+ID4gKyNkZWZpbmUgSU1YX1NDX1JfRE1BXzVfQ0gw
-CQk1NDENCj4gPiArI2RlZmluZSBJTVhfU0NfUl9ETUFfNV9DSDEJCTU0Mg0KPiA+ICsjZGVmaW5l
-IElNWF9TQ19SX0RNQV81X0NIMgkJNTQzDQo+ID4gKyNkZWZpbmUgSU1YX1NDX1JfRE1BXzVfQ0gz
-CQk1NDQNCj4gPiArI2RlZmluZSBJTVhfU0NfUl9BVFRFU1RBVElPTgkJNTQ1DQo+ID4gKyNkZWZp
-bmUgSU1YX1NDX1JfTEFTVAkJCTU0Ng0KPiA+DQo+ID4gICNlbmRpZiAvKiBfX0RUX0JJTkRJTkdT
-X1JTQ1JDX0lNWF9IICovDQo+ID4gLS0NCj4gPiAyLjcuNA0KPiA+DQo+ID4NCj4gPg0KPiANCj4g
-LS0NCj4gUGVuZ3V0cm9uaXggZS5LLiAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgIHwNCj4gSW5kdXN0cmlhbCBMaW51eCBTb2x1dGlvbnMgICAg
-ICAgICAgICAgICAgIHwNCj4gaHR0cHM6Ly9lbWVhMDEuc2FmZWxpbmtzLnByb3RlY3Rpb24ub3V0
-bG9vay5jb20vP3VybD1odHRwJTNBJTJGJTJGd3cNCj4gdy5wZW5ndXRyb25peC5kZSUyRiZhbXA7
-ZGF0YT0wMiU3QzAxJTdDYW5zb24uaHVhbmclNDBueHAuY29tJTcNCj4gQ2ZlNzA5YWMxN2ExNjRk
-ODJjN2Q1MDhkNjk2NjkxNWZiJTdDNjg2ZWExZDNiYzJiNGM2ZmE5MmNkOTljNWMzMDENCj4gNjM1
-JTdDMCU3QzAlN0M2MzY4NjE3NzU0MTIwNzY3MzAmYW1wO3NkYXRhPTA1WnpQZjIlMkJRRjEwSlhM
-THMNCj4gT1BxRGRxVGkwMEJXWE5IeG1NT3NRMXoweUklM0QmYW1wO3Jlc2VydmVkPTAgIHwNCj4g
-UGVpbmVyIFN0ci4gNi04LCAzMTEzNyBIaWxkZXNoZWltLCBHZXJtYW55IHwgUGhvbmU6ICs0OS01
-MTIxLTIwNjkxNy0wICAgIHwNCj4gQW10c2dlcmljaHQgSGlsZGVzaGVpbSwgSFJBIDI2ODYgICAg
-ICAgICAgIHwgRmF4OiAgICs0OS01MTIxLTIwNjkxNy01NTU1IHwNCg==
+Hi,
+
+On 19-02-19 11:59, Leonard Crestez wrote:
+> My Acer Nitro 5 AN515-42 laptop with a Ryzen 2700U hangs on boot because
+> of spurious interrupts from pinctrl-amd.
+> 
+> This seems to happen because the touchpad interrupt is enabled on boot
+> in "level" mode and there is no way to clear it until a touchpad driver
+> probes.
+> 
+> Fix by disabling all gpio interrupts at probe time until they are
+> explicitly requested by drivers.
+> 
+> Signed-off-by: Leonard Crestez <cdleonard@gmail.com>
+> 
+> ---
+> 
+> It's strange that nobody else has run into this problem, AMD hardware is
+> relatively common. Maybe firmware generally disables GPIO interrupts
+> itself?
+
+Others have run into the problem, but no-one so far has had both time and
+access to the hardware to actually get to the bottom of this, see:
+https://bugzilla.kernel.org/show_bug.cgi?id=201817#c4
+
+Your patch looks like it is exactly what is needed to fix this,
+thank you very much for the patch!
+
+I will attach a copy of your patch to that bug and ask people who are
+having similar problems to test it.
+
+Regards,
+
+Hans
+
+
+
+
+>
+> This patch fixes boot but this same laptop has other issues:
+> 
+>   * Suspend is broken
+>   * Ethernet is broken (only sometimes)
+>   * The CPU freq gets stuck at 400 Mhz (sometimes)
+> 
+> Those issues happen on maybe 80% of boots without a clear pattern. It
+> seems that inserting/removing the ethernet jack during boot helps
+> cpufreq? It's possible that these problems are also caused by pin
+> misconfiguration so this fix might be incomplete.
+> 
+> When the cpufreq issue happens `rdmsr 0xc0010061 -a` shows 0x22 for all
+> cpus; maybe this is some broken thermal throttling?
+> 
+> Also, perhaps amd_gpio_irq_disable_all should enumerate in a nicer less
+> verbose way?
+> 
+> Previously: https://lore.kernel.org/patchwork/patch/1028047/
+> 
+> diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+> index 2a7d638978d8..3cb7ea46f32c 100644
+> --- a/drivers/pinctrl/pinctrl-amd.c
+> +++ b/drivers/pinctrl/pinctrl-amd.c
+> @@ -592,10 +592,53 @@ static irqreturn_t amd_gpio_irq_handler(int irq, void *dev_id)
+>   	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
+>   
+>   	return ret;
+>   }
+>   
+> +static void amd_gpio_irq_disable_all(struct amd_gpio *gpio_dev)
+> +{
+> +	unsigned int bank, i, pin_num;
+> +	u32 regval;
+> +
+> +	for (bank = 0; bank < gpio_dev->hwbank_num; bank++) {
+> +		switch (bank) {
+> +		case 0:
+> +			i = 0;
+> +			pin_num = AMD_GPIO_PINS_BANK0;
+> +			break;
+> +		case 1:
+> +			i = 64;
+> +			pin_num = AMD_GPIO_PINS_BANK1 + i;
+> +			break;
+> +		case 2:
+> +			i = 128;
+> +			pin_num = AMD_GPIO_PINS_BANK2 + i;
+> +			break;
+> +		case 3:
+> +			i = 192;
+> +			pin_num = AMD_GPIO_PINS_BANK3 + i;
+> +			break;
+> +		default:
+> +			/* Illegal bank number, ignore */
+> +			continue;
+> +		}
+> +
+> +		for (; i < pin_num; i++) {
+> +			unsigned long flags;
+> +			raw_spin_lock_irqsave(&gpio_dev->lock, flags);
+> +			regval = readl(gpio_dev->base + i * 4);
+> +			if (regval & BIT(INTERRUPT_ENABLE_OFF)) {
+> +				dev_info(&gpio_dev->pdev->dev,
+> +						"Pin %d interrupt enabled on boot: disable\n", i);
+> +				regval &= ~BIT(INTERRUPT_ENABLE_OFF);
+> +				writel(regval, gpio_dev->base + i * 4);
+> +			}
+> +			raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
+> +		}
+> +	}
+> +}
+> +
+>   static int amd_get_groups_count(struct pinctrl_dev *pctldev)
+>   {
+>   	struct amd_gpio *gpio_dev = pinctrl_dev_get_drvdata(pctldev);
+>   
+>   	return gpio_dev->ngroups;
+> @@ -910,10 +953,12 @@ static int amd_gpio_probe(struct platform_device *pdev)
+>   
+>   	ret = gpiochip_add_data(&gpio_dev->gc, gpio_dev);
+>   	if (ret)
+>   		return ret;
+>   
+> +	amd_gpio_irq_disable_all(gpio_dev);
+> +
+>   	ret = gpiochip_add_pin_range(&gpio_dev->gc, dev_name(&pdev->dev),
+>   				0, 0, gpio_dev->gc.ngpio);
+>   	if (ret) {
+>   		dev_err(&pdev->dev, "Failed to add pin range\n");
+>   		goto out2;
+> 
