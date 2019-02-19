@@ -2,246 +2,138 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC7FBC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:30:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42452C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:30:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4BB221479
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:30:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19B1B2147C
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:30:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729327AbfBSVaG (ORCPT
+        id S1729660AbfBSVar (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 16:30:06 -0500
-Received: from gofer.mess.org ([88.97.38.141]:53349 "EHLO gofer.mess.org"
+        Tue, 19 Feb 2019 16:30:47 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55262 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725829AbfBSVaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 16:30:05 -0500
-Received: by gofer.mess.org (Postfix, from userid 1000)
-        id 0F95A600B4; Tue, 19 Feb 2019 21:30:03 +0000 (GMT)
-Date:   Tue, 19 Feb 2019 21:30:03 +0000
-From:   Sean Young <sean@mess.org>
-To:     Gonsolo <gonsolo@gmail.com>
-Cc:     crope@iki.fi, linux-media@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Subject: Re: DVB-T2 Stick
-Message-ID: <20190219213003.l7hzy2emdsxe4izy@gofer.mess.org>
-References: <CANL0fFSGG_+R2zbf-9MxVLJMTMgc+-fwSoLCqS1qc+jWo-zNLA@mail.gmail.com>
+        id S1727736AbfBSVar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 16:30:47 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 332EDC007325;
+        Tue, 19 Feb 2019 21:30:46 +0000 (UTC)
+Received: from redhat.com (ovpn-122-134.rdu2.redhat.com [10.10.122.134])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C5FB060BE8;
+        Tue, 19 Feb 2019 21:30:35 +0000 (UTC)
+Date:   Tue, 19 Feb 2019 16:30:33 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, Jan Kara <jack@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        KVM list <kvm@vger.kernel.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v5 0/9] mmu notifier provide context informations
+Message-ID: <20190219213032.GE3959@redhat.com>
+References: <20190219200430.11130-1-jglisse@redhat.com>
+ <CAPcyv4gq23RXk3BTqP2O+gi3FGE85NSGXD8bdLk+_cgtZrn+Kg@mail.gmail.com>
+ <20190219203032.GC3959@redhat.com>
+ <CAPcyv4gUFSA6u77dGA6XxO41217zQ27DNteiHRG515Gtm_uGgg@mail.gmail.com>
+ <20190219205751.GD3959@redhat.com>
+ <CAPcyv4hCNSsk5EP7+BcnVp-zJjQyQ701U3QXkQyUteQZr-ZumA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CANL0fFSGG_+R2zbf-9MxVLJMTMgc+-fwSoLCqS1qc+jWo-zNLA@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPcyv4hCNSsk5EP7+BcnVp-zJjQyQ701U3QXkQyUteQZr-ZumA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 19 Feb 2019 21:30:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Wed, Jan 30, 2019 at 11:32:12AM +0100, Gonsolo wrote:
-> Hi!
+On Tue, Feb 19, 2019 at 01:19:09PM -0800, Dan Williams wrote:
+> On Tue, Feb 19, 2019 at 12:58 PM Jerome Glisse <jglisse@redhat.com> wrote:
+> >
+> > On Tue, Feb 19, 2019 at 12:40:37PM -0800, Dan Williams wrote:
+> > > On Tue, Feb 19, 2019 at 12:30 PM Jerome Glisse <jglisse@redhat.com> wrote:
+> > > >
+> > > > On Tue, Feb 19, 2019 at 12:15:55PM -0800, Dan Williams wrote:
+> > > > > On Tue, Feb 19, 2019 at 12:04 PM <jglisse@redhat.com> wrote:
+> > > > > >
+> > > > > > From: Jérôme Glisse <jglisse@redhat.com>
+> > > > > >
+> > > > > > Since last version [4] i added the extra bits needed for the change_pte
+> > > > > > optimization (which is a KSM thing). Here i am not posting users of
+> > > > > > this, they will be posted to the appropriate sub-systems (KVM, GPU,
+> > > > > > RDMA, ...) once this serie get upstream. If you want to look at users
+> > > > > > of this see [5] [6]. If this gets in 5.1 then i will be submitting
+> > > > > > those users for 5.2 (including KVM if KVM folks feel comfortable with
+> > > > > > it).
+> > > > >
+> > > > > The users look small and straightforward. Why not await acks and
+> > > > > reviewed-by's for the users like a typical upstream submission and
+> > > > > merge them together? Is all of the functionality of this
+> > > > > infrastructure consumed by the proposed users? Last time I checked it
+> > > > > was only a subset.
+> > > >
+> > > > Yes pretty much all is use, the unuse case is SOFT_DIRTY and CLEAR
+> > > > vs UNMAP. Both of which i intend to use. The RDMA folks already ack
+> > > > the patches IIRC, so did radeon and amdgpu. I believe the i915 folks
+> > > > were ok with it too. I do not want to merge things through Andrew
+> > > > for all of this we discussed that in the past, merge mm bits through
+> > > > Andrew in one release and bits that use things in the next release.
+> > >
+> > > Ok, I was trying to find the links to the acks on the mailing list,
+> > > those references would address my concerns. I see no reason to rush
+> > > SOFT_DIRTY and CLEAR ahead of the upstream user.
+> >
+> > I intend to post user for those in next couple weeks for 5.2 HMM bits.
+> > So user for this (CLEAR/UNMAP/SOFTDIRTY) will definitly materialize in
+> > time for 5.2.
+> >
+> > ACKS AMD/RADEON https://lkml.org/lkml/2019/2/1/395
+> > ACKS RDMA https://lkml.org/lkml/2018/12/6/1473
 > 
-> The following patch adds support for the Logilink VG0022A DVB-T2 stick.
-> After patching and building the kernel it shows up with lsusb and I
-> used w_scan to scan for channels and vlc for watching.
-> The original patches were from Andreas Kemnade.
-> The only thing that doesn't work is wake up after standby.
+> Nice, thanks!
 > 
-> Do you think you can apply this patch?
-
-I'm afraid there are many problems with this patch. First of all it looks
-like support was added for a si2168 tuner but it looks like it will break
-for any other si2157-type device.
-
-Secondly there are lots of coding style issues, see:
-
-https://www.kernel.org/doc/html/v4.10/process/coding-style.html
-
-Thanks,
-
-Sean
+> > For KVM Andrea Arcangeli seems to like the whole idea to restore the
+> > change_pte optimization but i have not got ACK from Radim or Paolo,
+> > however given the small performance improvement figure i get with it
+> > i do not see while they would not ACK.
 > 
-> Thanks
-> -- 
-> g
+> Sure, but no need to push ahead without that confirmation, right? At
+> least for the piece that KVM cares about, maybe that's already covered
+> in the infrastructure RDMA and RADEON are using?
 
-> diff --git a/drivers/media/tuners/si2157.c b/drivers/media/tuners/si2157.c
-> index d389f1fc237a..1f923418ff10 100644
-> --- a/drivers/media/tuners/si2157.c
-> +++ b/drivers/media/tuners/si2157.c
-> @@ -84,7 +84,7 @@ static int si2157_init(struct dvb_frontend *fe)
->  	struct si2157_cmd cmd;
->  	const struct firmware *fw;
->  	const char *fw_name;
-> -	unsigned int uitmp, chip_id;
-> +        unsigned int uitmp;
->  
->  	dev_dbg(&client->dev, "\n");
->  
-> @@ -126,7 +126,7 @@ static int si2157_init(struct dvb_frontend *fe)
->  		if (ret)
->  			goto err;
->  	}
-> -
-> +#if 0
->  	/* query chip revision */
->  	memcpy(cmd.args, "\x02", 1);
->  	cmd.wlen = 1;
-> @@ -146,6 +146,8 @@ static int si2157_init(struct dvb_frontend *fe)
->  	#define SI2141_A10 ('A' << 24 | 41 << 16 | '1' << 8 | '0' << 0)
->  
->  	switch (chip_id) {
-> +#endif
-> +        switch (dev->chip_id) {
->  	case SI2158_A20:
->  	case SI2148_A20:
->  		fw_name = SI2158_A20_FIRMWARE;
-> @@ -166,9 +168,9 @@ static int si2157_init(struct dvb_frontend *fe)
->  		goto err;
->  	}
->  
-> -	dev_info(&client->dev, "found a 'Silicon Labs Si21%d-%c%c%c'\n",
-> -			cmd.args[2], cmd.args[1], cmd.args[3], cmd.args[4]);
-> -
-> +//	dev_info(&client->dev, "found a 'Silicon Labs Si21%d-%c%c%c'\n",
-> +//			cmd.args[2], cmd.args[1], cmd.args[3], cmd.args[4]);
-> +//
->  	if (fw_name == NULL)
->  		goto skip_fw_download;
->  
-> @@ -461,6 +463,38 @@ static int si2157_probe(struct i2c_client *client,
->  	memcpy(&fe->ops.tuner_ops, &si2157_ops, sizeof(struct dvb_tuner_ops));
->  	fe->tuner_priv = client;
->  
-> +       /* power up */
-> +       if (dev->chiptype == SI2157_CHIPTYPE_SI2146) {
-> +               memcpy(cmd.args, "\xc0\x05\x01\x00\x00\x0b\x00\x00\x01", 9);
-> +               cmd.wlen = 9;
-> +       } else {
-> +               memcpy(cmd.args,
-> +               "\xc0\x00\x0c\x00\x00\x01\x01\x01\x01\x01\x01\x02\x00\x00\x01",
-> +               15);
-> +               cmd.wlen = 15;
-> +       }
-> +       cmd.rlen = 1;
-> +       ret = si2157_cmd_execute(client, &cmd);
-> +       if (ret)
-> +               goto err;
-> +       /* query chip revision */
-> +       /* hack: do it here because after the si2168 gets 0101, commands will
-> +        * still be executed here but no result
-> +        */
-> +       memcpy(cmd.args, "\x02", 1);
-> +       cmd.wlen = 1;
-> +       cmd.rlen = 13;
-> +       ret = si2157_cmd_execute(client, &cmd);
-> +       if (ret)
-> +               goto err_kfree;
-> +       dev->chip_id = cmd.args[1] << 24 |
-> +                       cmd.args[2] << 16 |
-> +                       cmd.args[3] << 8 |
-> +                       cmd.args[4] << 0;
-> +       dev_info(&client->dev, "found a 'Silicon Labs Si21%d-%c%c%c'\n",
-> +                       cmd.args[2], cmd.args[1], cmd.args[3], cmd.args[4]);
-> + 
-> +
->  #ifdef CONFIG_MEDIA_CONTROLLER
->  	if (cfg->mdev) {
->  		dev->mdev = cfg->mdev;
-> diff --git a/drivers/media/tuners/si2157_priv.h b/drivers/media/tuners/si2157_priv.h
-> index 50f86300d965..3592146cf49a 100644
-> --- a/drivers/media/tuners/si2157_priv.h
-> +++ b/drivers/media/tuners/si2157_priv.h
-> @@ -37,6 +37,7 @@ struct si2157_dev {
->  	u8 chiptype;
->  	u8 if_port;
->  	u32 if_frequency;
-> +        u32 chip_id;
->  	struct delayed_work stat_work;
->  
->  #if defined(CONFIG_MEDIA_CONTROLLER)
-> @@ -51,6 +52,13 @@ struct si2157_dev {
->  #define SI2157_CHIPTYPE_SI2146 1
->  #define SI2157_CHIPTYPE_SI2141 2
->  
-> +#define SI2158_A20 ('A' << 24 | 58 << 16 | '2' << 8 | '0' << 0)
-> +#define SI2148_A20 ('A' << 24 | 48 << 16 | '2' << 8 | '0' << 0)
-> +#define SI2157_A30 ('A' << 24 | 57 << 16 | '3' << 8 | '0' << 0)
-> +#define SI2147_A30 ('A' << 24 | 47 << 16 | '3' << 8 | '0' << 0)
-> +#define SI2146_A10 ('A' << 24 | 46 << 16 | '1' << 8 | '0' << 0)
-> +#define SI2141_A10 ('A' << 24 | 41 << 16 | '1' << 8 | '0' << 0)
-> +
->  /* firmware command struct */
->  #define SI2157_ARGLEN      30
->  struct si2157_cmd {
-> diff --git a/drivers/media/usb/dvb-usb-v2/af9035.c b/drivers/media/usb/dvb-usb-v2/af9035.c
-> index 80d3bd3a0f24..28b073bfe0d4 100644
-> --- a/drivers/media/usb/dvb-usb-v2/af9035.c
-> +++ b/drivers/media/usb/dvb-usb-v2/af9035.c
-> @@ -1216,8 +1216,51 @@ static int it930x_frontend_attach(struct dvb_usb_adapter *adap)
->  	struct si2168_config si2168_config;
->  	struct i2c_adapter *adapter;
->  
-> -	dev_dbg(&intf->dev, "adap->id=%d\n", adap->id);
-> -
-> +	//dev_dbg(&intf->dev, "adap->id=%d\n", adap->id);
-> +       dev_dbg(&intf->dev, "%s  adap->id=%d\n", __func__, adap->id);
-> +
-> +       /* I2C master bus 2 clock speed 300k */
-> +       ret = af9035_wr_reg(d, 0x00f6a7, 0x07);
-> +       if (ret < 0)
-> +               goto err;
-> +
-> +       /* I2C master bus 1,3 clock speed 300k */
-> +       ret = af9035_wr_reg(d, 0x00f103, 0x07);
-> +       if (ret < 0)
-> +               goto err;
-> +
-> +       /* set gpio11 low */
-> +       ret = af9035_wr_reg_mask(d, 0xd8d4, 0x01, 0x01);
-> +       if (ret < 0)
-> +               goto err;
-> +
-> +       ret = af9035_wr_reg_mask(d, 0xd8d5, 0x01, 0x01);
-> +       if (ret < 0)
-> +               goto err;
-> +
-> +       ret = af9035_wr_reg_mask(d, 0xd8d3, 0x01, 0x01);
-> +       if (ret < 0)
-> +               goto err;
-> + 
-> +       /* Tuner enable using gpiot2_en, gpiot2_on and gpiot2_o (reset) */
-> +       ret = af9035_wr_reg_mask(d, 0xd8b8, 0x01, 0x01);
-> +       if (ret < 0)
-> +               goto err;
-> +
-> +       ret = af9035_wr_reg_mask(d, 0xd8b9, 0x01, 0x01);
-> +       if (ret < 0)
-> +               goto err;
-> +
-> +       ret = af9035_wr_reg_mask(d, 0xd8b7, 0x00, 0x01);
-> +       if (ret < 0)
-> +               goto err;
-> +
-> +       msleep(200);
-> +
-> +       ret = af9035_wr_reg_mask(d, 0xd8b7, 0x01, 0x01);
-> +       if (ret < 0)
-> +               goto err;
-> + 
->  	memset(&si2168_config, 0, sizeof(si2168_config));
->  	si2168_config.i2c_adapter = &adapter;
->  	si2168_config.fe = &adap->fe[0];
-> @@ -2128,6 +2171,8 @@ static const struct usb_device_id af9035_id_table[] = {
->  	/* IT930x devices */
->  	{ DVB_USB_DEVICE(USB_VID_ITETECH, USB_PID_ITETECH_IT9303,
->  		&it930x_props, "ITE 9303 Generic", NULL) },
-> +        { DVB_USB_DEVICE(USB_VID_DEXATEK, 0x0100,
-> +                &it930x_props, "Logilink VG0022A", NULL) },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(usb, af9035_id_table);
+The change_pte() for KVM is just one bit flag on top of the rest. So
+i don't see much value in saving this last patch. I will be working
+with KVM folks to merge KVM bits in 5.2. If they do not want that then
+removing that extra flags is not much work.
 
+But if you prefer than Andrew can drop the last patch in the serie.
+
+Cheers,
+Jérôme
