@@ -2,222 +2,117 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0A26C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 02:46:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FD7AC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 02:46:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B03FB21773
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 02:46:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 248E221773
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 02:46:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727286AbfBSCqN (ORCPT
+        id S1727445AbfBSCqU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 21:46:13 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:55323 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726413AbfBSCqM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 21:46:12 -0500
-X-UUID: b66e9a5f864d42d18f647a76ed5889f1-20190219
-X-UUID: b66e9a5f864d42d18f647a76ed5889f1-20190219
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
-        (envelope-from <zhiyong.tao@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 641928010; Tue, 19 Feb 2019 10:46:00 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by mtkmbs08n1.mediatek.inc
- (172.21.101.55) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 19 Feb
- 2019 10:45:58 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 19 Feb 2019 10:45:57 +0800
-Message-ID: <1550544357.4739.32.camel@mhfsdcap03>
-Subject: Re: [PATCH v7 3/6] dt-bindings: pinctrl: mt8183: add binding
- document
-From:   Zhiyong Tao <zhiyong.tao@mediatek.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     Erin Lo <erin.lo@mediatek.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        <devicetree@vger.kernel.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <yingjoe.chen@mediatek.com>, <mars.cheng@mediatek.com>,
-        <eddie.huang@mediatek.com>, <linux-clk@vger.kernel.org>
-Date:   Tue, 19 Feb 2019 10:45:57 +0800
-In-Reply-To: <20190218163211.GB2714@bogus>
-References: <1550210558-30516-1-git-send-email-erin.lo@mediatek.com>
-         <1550210558-30516-4-git-send-email-erin.lo@mediatek.com>
-         <20190218163211.GB2714@bogus>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Mon, 18 Feb 2019 21:46:20 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48238 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726317AbfBSCqT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 21:46:19 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DB8392D7E9;
+        Tue, 19 Feb 2019 02:46:18 +0000 (UTC)
+Received: from sky.random (ovpn-120-13.rdu2.redhat.com [10.10.120.13])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A5E0E60C66;
+        Tue, 19 Feb 2019 02:46:12 +0000 (UTC)
+Date:   Mon, 18 Feb 2019 21:46:11 -0500
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Nitesh Narayan Lal <nitesh@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
+        pagupta@redhat.com, wei.w.wang@intel.com,
+        Yang Zhang <yang.zhang.wz@gmail.com>,
+        Rik van Riel <riel@surriel.com>, dodgen@google.com,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        dhildenb@redhat.com
+Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
+Message-ID: <20190219024611.GC24502@redhat.com>
+References: <20190204201854.2328-1-nitesh@redhat.com>
+ <af4430fd-0a2c-8f35-b767-3f93fc6db270@redhat.com>
+ <20190218114601-mutt-send-email-mst@kernel.org>
+ <44740a29-bb14-e6e6-2992-98d0ae58e994@redhat.com>
+ <CAKgT0UcHv0S1-ZUpAZ9w=GTLRtG8=-cuoT3fa4Ej2A==aky5dg@mail.gmail.com>
+ <a3b64b60-a745-0ac1-574d-e5904c1bf161@redhat.com>
+ <CAKgT0Ue=A16PhUzqziBBzMXdZ_C1H74-qCttwb8iD6tGCxfp6g@mail.gmail.com>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKgT0Ue=A16PhUzqziBBzMXdZ_C1H74-qCttwb8iD6tGCxfp6g@mail.gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 19 Feb 2019 02:46:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-02-18 at 10:32 -0600, Rob Herring wrote:
-> On Fri, Feb 15, 2019 at 02:02:35PM +0800, Erin Lo wrote:
-> > From: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> > 
-> > The commit adds mt8183 compatible node in binding document.
-> > 
-> > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> > ---
-> >  .../devicetree/bindings/pinctrl/pinctrl-mt8183.txt | 115 +++++++++++++++++++++
-> >  1 file changed, 115 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> > new file mode 100644
-> > index 0000000..364e673
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> > @@ -0,0 +1,115 @@
-> > +* Mediatek MT8183 Pin Controller
-> > +
-> > +The Mediatek's Pin controller is used to control SoC pins.
-> > +
-> > +Required properties:
-> > +- compatible: value should be one of the following.
-> > +	"mediatek,mt8183-pinctrl", compatible with mt8183 pinctrl.
-> > +- gpio-controller : Marks the device node as a gpio controller.
-> > +- #gpio-cells: number of cells in GPIO specifier. Since the generic GPIO
-> > +  binding is used, the amount of cells must be specified as 2. See the below
-> > +  mentioned gpio binding representation for description of particular cells.
-> > +- gpio-ranges : gpio valid number range.
-> > +- reg: physicall address base for gpio base registers. There are nine
-> > +  physicall address base in mt8183. They are 0x10005000, 0x11F20000,
-> > +  0x11E80000, 0x11E70000, 0x11E90000, 0x11D30000, 0x11D20000, 0x11C50000,
-> > +  0x11F30000.
-> 
-> You don't need to list out each address, just what each address is. (Or 
-> just '9 GPIO base addresses'.)
+Hello,
 
-==>ok, we will change it.
-> 
-> > +
-> > +	Eg: <&pio 6 0>
-> 
-> How is this an example of reg? Seems something is missing.
-> 
-> > +	<[phandle of the gpio controller node]
-> > +	[line number within the gpio controller]
-> > +	[flags]>
-> > +
-> > +	Values for gpio specifier:
-> > +	- Line number: is a value between 0 to 202.
-> > +	- Flags:  bit field of flags, as defined in <dt-bindings/gpio/gpio.h>.
-> > +            Only the following flags are supported:
-> > +            0 - GPIO_ACTIVE_HIGH
-> > +            1 - GPIO_ACTIVE_LOW
-> > +
-> > +Optional properties:
-> > +- reg-names: gpio base register names. There are nine gpio base register
-> > +  names in mt8183. They are "iocfg0", "iocfg1", "iocfg2", "iocfg3", "iocfg4",
-> > +  "iocfg5", "iocfg6", "iocfg7", "iocfg8".
-> > +- interrupt-controller: Marks the device node as an interrupt controller
-> > +- #interrupt-cells: Should be two.
-> > +- interrupts : The interrupt outputs from the controller.
-> 
-> outputs? More than 1? If so, need to say what they are and the order.
-> 
-==> there is only use one interrupt in mt8183. we will change
-"interrupts" to "interrupt" in v8.
-> > +
-> > +Please refer to pinctrl-bindings.txt in this directory for details of the
-> > +common pinctrl bindings used by client devices.
-> > +
-> > +Subnode format
-> > +A pinctrl node should contain at least one subnodes representing the
-> > +pinctrl groups available on the machine. Each subnode will list the
-> > +pins it needs, and how they should be configured, with regard to muxer
-> > +configuration, pullups, drive strength, input enable/disable and input schmitt.
-> > +
-> > +    node {
-> > +	pinmux = <PIN_NUMBER_PINMUX>;
-> > +	GENERIC_PINCONFIG;
-> > +    };
-> > +
-> > +Required properties:
-> > +- pinmux: integer array, represents gpio pin number and mux setting.
-> > +    Supported pin number and mux varies for different SoCs, and are defined
-> > +    as macros in boot/dts/<soc>-pinfunc.h directly.
-> > +
-> > +Optional properties:
-> > +- GENERIC_PINCONFIG: is the generic pinconfig options to use, bias-disable,
-> > +    bias-pull-down, bias-pull-up, input-enable, input-disable, output-low, output-high,
-> > +    input-schmitt-enable, input-schmitt-disable and drive-strength are valid.
-> > +
-> > +    Some special pins have extra pull up strength, there are R0 and R1 pull-up
-> > +    resistors available, but for user, it's only need to set R1R0 as 00, 01, 10 or 11.
-> > +    So when config mediatek,pull-up-adv or mediatek,pull-down-adv,
-> > +    it support arguments for those special pins.
-> > +
-> > +    When config drive-strength, it can support some arguments, such as
-> > +    MTK_DRIVE_4mA, MTK_DRIVE_6mA, etc. See dt-bindings/pinctrl/mt65xx.h.
-> > +
-> > +Examples:
-> > +
-> > +#include "mt8183-pinfunc.h"
-> > +
-> > +...
-> > +{
-> > +	pio: pinctrl@10005000 {
-> > +		compatible = "mediatek,mt8183-pinctrl";
-> > +		reg = <0 0x10005000 0 0x1000>,
-> > +		      <0 0x11F20000 0 0x1000>,
-> > +		      <0 0x11E80000 0 0x1000>,
-> > +		      <0 0x11E70000 0 0x1000>,
-> > +		      <0 0x11E90000 0 0x1000>,
-> > +		      <0 0x11D30000 0 0x1000>,
-> > +		      <0 0x11D20000 0 0x1000>,
-> > +		      <0 0x11C50000 0 0x1000>,
-> > +		      <0 0x11F30000 0 0x1000>;
-> > +		reg-names = "iocfg0", "iocfg1", "iocfg2",
-> > +			    "iocfg3", "iocfg4", "iocfg5",
-> > +			    "iocfg6", "iocfg7", "iocfg8";
-> > +		gpio-controller;
-> > +		#gpio-cells = <2>;
-> > +		gpio-ranges = <&pio 0 0 192>;
-> > +		interrupt-controller;
-> > +		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-> > +		interrupt-parent = <&gic>;
-> > +		#interrupt-cells = <2>;
-> > +
-> > +		i2c0_pins_a: i2c0 {
-> > +			pins1 {
-> > +				pinmux = <PINMUX_GPIO48__FUNC_SCL5>,
-> > +					 <PINMUX_GPIO49__FUNC_SDA5>;
-> > +				mediatek,pull-up-adv = <11>;
-> > +			};
-> > +		};
-> > +
-> > +		i2c1_pins_a: i2c1 {
-> > +			pins {
-> > +				pinmux = <PINMUX_GPIO50__FUNC_SCL3>,
-> > +					 <PINMUX_GPIO51__FUNC_SDA3>;
-> > +				mediatek,pull-down-adv = <10>;
-> > +			};
-> > +		};
-> > +		...
-> > +	};
-> > +};
-> > -- 
-> > 1.9.1
-> > 
+On Mon, Feb 18, 2019 at 03:47:22PM -0800, Alexander Duyck wrote:
+> essentially fragmented them. I guess hugepaged went through and
+> started trying to reassemble the huge pages and as a result there have
+> been apps that ended up consuming more memory than they would have
+> otherwise since they were using fragments of THP pages after doing an
+> MADV_DONTNEED on sections of the page.
 
+With relatively recent kernels MADV_DONTNEED doesn't necessarily free
+anything when it's applied to a THP subpage, it only splits the
+pagetables and queues the THP for deferred splitting. If there's
+memory pressure a shrinker will be invoked and the queue is scanned
+and the THPs are physically splitted, but to be reassembled/collapsed
+after a physical split it requires at least one young pte.
 
+If this is particularly problematic for page hinting, this behavior
+where the MADV_DONTNEED can be undoed by khugepaged (if some subpage is
+being frequently accessed), can be turned off by setting
+/sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none to
+0. Then the THP will only be collapsed if all 512 subpages are mapped
+(i.e. they've all be re-allocated by the guest).
+
+Regardless of the max_ptes_none default, keeping the smaller guest
+buddy orders as the last target for page hinting should be good for
+performance.
+
+> Yeah, no problem. The only thing I don't like about MADV_FREE is that
+> you have to have memory pressure before the pages really start getting
+> scrubbed with is both a benefit and a drawback. Basically it defers
+> the freeing until you are under actual memory pressure so when you hit
+> that case things start feeling much slower, that and it limits your
+> allocations since the kernel doesn't recognize the pages as free until
+> it would have to start trying to push memory to swap.
+
+The guest allocation behavior should not be influenced by MADV_FREE vs
+MADV_DONTNEED, the guest can't see the difference anyway, so why
+should it limit the allocations?
+
+The benefit of MADV_FREE should be that when the same guest frees and
+reallocates an huge amount of RAM (i.e. guest app allocating and
+freeing lots of RAM in a loop, not so uncommon), there will be no KVM
+page fault during guest re-allocations. So in absence of memory
+pressure in the host it should be a major win. Overall it sounds like
+a good tradeoff compared to MADV_DONTNEED that forcefully invokes MMU
+notifiers and forces host allocations and KVM page faults in order to
+reallocate the same RAM in the same guest.
+
+When there's memory pressure it's up to the host Linux VM to notice
+there's plenty of MADV_FREE material to free at zero I/O cost before
+starting swapping.
+
+Thanks,
+Andrea
