@@ -3,105 +3,121 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4897C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 00:30:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D6A3C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 00:30:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67B19208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 00:30:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2542021848
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 00:30:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="K9KWD8FM"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="k21QWivp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732370AbfBSAaU (ORCPT
+        id S1732398AbfBSAap (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 19:30:20 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34451 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726220AbfBSAaT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 19:30:19 -0500
-Received: by mail-lj1-f193.google.com with SMTP id l5so12484087lje.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 16:30:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0zKkxq7u9soSKx977a2TN2khMo8GljzoTf2CcQJBrew=;
-        b=K9KWD8FMFZ3Iohm9XcQwvNm0TlzOyLhGMMfHG9LmvM6vXr7HmmUPHrwvB7yGDfzfXO
-         wzuvgA/2RFz3rktcQUCGWn83g3CSYbYigjsJ40BQpTBTbYb4NxCULqfs0iYrQ4+TJrP8
-         yo0MjD3NVUVr+ganHwajFzdazuEYrtmGWDjGk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0zKkxq7u9soSKx977a2TN2khMo8GljzoTf2CcQJBrew=;
-        b=p3W0lLqxwGuxXRIluSXR5dDJ58dsxqGrV6uNMy04OFSSiUpkQgpaD3AQI7WketLoeU
-         I/dE/edR0zVGzSYKKM9jAxMkP9yWK+2tYNNNw/eaSiPKW+qxixkPCQQs12uuiuBhun9L
-         GdhFEieso9RQrcXe+geMc/NKmDwxyiJ/5N7wRHmB6axuuZgwjgauvkVWJRE3wTUfdgxz
-         QKBqLjnN4fMxvP8HLMlufpIMxwdbN/gxojcVbvplfSXznnn9fCRHlMdPsAE9sH/rITlC
-         sWiB+6/B20VgPbDudyKI8gI8zQX04l3NZ71lfJ6AuAaSRdqOb7OW8I4Lcq+Thdr5qyN5
-         TFSw==
-X-Gm-Message-State: AHQUAuYUVulTjiCRGo4UdM1RAnpSrb8Y0ahHsfYyEPU0J90rFnkqds1Z
-        ngA+405pl6CjdZA2Jjsao8Px0SkS93U=
-X-Google-Smtp-Source: AHgI3IZm4Lm5CySqtGsrf6d+RiyjrXSx+qdnTaNVFWKs2r+3vsgCU+ifw6IoYiE9rLxo5MwQz+qWWA==
-X-Received: by 2002:a2e:9983:: with SMTP id w3mr14702268lji.71.1550536216643;
-        Mon, 18 Feb 2019 16:30:16 -0800 (PST)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id u15-v6sm4374778lja.63.2019.02.18.16.30.13
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Feb 2019 16:30:13 -0800 (PST)
-Received: by mail-lf1-f50.google.com with SMTP id q11so13590671lfd.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 16:30:13 -0800 (PST)
-X-Received: by 2002:a19:4847:: with SMTP id v68mr14958607lfa.136.1550536212763;
- Mon, 18 Feb 2019 16:30:12 -0800 (PST)
+        Mon, 18 Feb 2019 19:30:45 -0500
+Received: from ozlabs.org ([203.11.71.1]:49577 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726220AbfBSAao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 19:30:44 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 443M8f1PH6z9s6w;
+        Tue, 19 Feb 2019 11:30:41 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1550536242;
+        bh=a465LHsDNmSaR6xgZ3/ZT+J4+ALAxXNnonMuodeftQ0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=k21QWivpaXPHxcthjFF1m8miONZiSpsRjPU1CkZ+WorRKtNq0CN7wWhDVvlUjIhYg
+         vP+dzgzWQPSnfpgLrRbFSTfStRKS6rb70ATY+xnscqqFpJicw2AaPkbsDCgGYHghM8
+         g4EjT6nxNeXhmra78P8Y3yELC9reF2vDHAP9YvRyJcxEvCrsIgWY0PemtdF2qEYQ/E
+         x88ecgLQu4Dx/pdnis301X14Tq2Sd78PmzJsEbBgeG2vWaoutj8CrtOnaw+F9vfZPc
+         fwpC9pSJFUfehMPdInqu36ff+I7pcchWMlpMe6NGroWcLOplEY3rAbRKeTVudYno7j
+         bqsBr+7SmrFgw==
+Date:   Tue, 19 Feb 2019 11:30:41 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Dumazet <edumazet@google.com>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20190219113041.14ac62ec@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20190218165620.383905466@infradead.org> <CAHk-=wh32Zgp+bN7G1KH7SuCiY1YSJ41Y-_eWpfWubGjqq2_dw@mail.gmail.com>
- <20190218204020.GV32494@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190218204020.GV32494@hirez.programming.kicks-ass.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 18 Feb 2019 16:29:56 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whVrNomWXRmCjnBJkosiwiGXz5pYb63aXy=nSPGjvc-1g@mail.gmail.com>
-Message-ID: <CAHk-=whVrNomWXRmCjnBJkosiwiGXz5pYb63aXy=nSPGjvc-1g@mail.gmail.com>
-Subject: Re: [RFC][PATCH 00/16] sched: Core scheduling
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        subhra.mazumdar@oracle.com,
-        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>, kerrnel@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/5ElCMpKabLiTj9k5rBR2gWg"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 12:40 PM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> If there were close to no VMEXITs, it beat smt=off, if there were lots
-> of VMEXITs it was far far worse. Supposedly hosting people try their
-> very bestest to have no VMEXITs so it mostly works for them (with the
-> obvious exception of single VCPU guests).
->
-> It's just that people have been bugging me for this crap; and I figure
-> I'd post it now that it's not exploding anymore and let others have at.
+--Sig_/5ElCMpKabLiTj9k5rBR2gWg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The patches didn't look disgusting to me, but I admittedly just
-scanned through them quickly.
+Hi all,
 
-Are there downsides (maintenance and/or performance) when core
-scheduling _isn't_ enabled? I guess if it's not a maintenance or
-performance nightmare when off, it's ok to just give people the
-option.
+Today's linux-next merge of the net-next tree got a conflict in:
 
-That all assumes that it works at all for the people who are clamoring
-for this feature, but I guess they can run some loads on it
-eventually. It's a holiday in the US right now ("Presidents' Day"),
-but maybe we can get some numebrs this week?
+  net/ipv4/tcp.c
 
-                Linus
+between commit:
+
+  04c03114be82 ("tcp: clear icsk_backoff in tcp_write_queue_purge()")
+
+from the net tree and commit:
+
+  3a9a57f63794 ("tcp: move snd_cwnd & snd_cwnd_cnt init to tcp_disconnect()=
+")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc net/ipv4/tcp.c
+index cf3c5095c10e,cab6b2f2f61d..000000000000
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@@ -2577,9 -2595,11 +2596,10 @@@ int tcp_disconnect(struct sock *sk, in
+  	tp->write_seq +=3D tp->max_window + 2;
+  	if (tp->write_seq =3D=3D 0)
+  		tp->write_seq =3D 1;
+- 	tp->snd_cwnd =3D 2;
+ -	icsk->icsk_backoff =3D 0;
+  	icsk->icsk_probes_out =3D 0;
++ 	icsk->icsk_rto =3D TCP_TIMEOUT_INIT;
+  	tp->snd_ssthresh =3D TCP_INFINITE_SSTHRESH;
++ 	tp->snd_cwnd =3D TCP_INIT_CWND;
+  	tp->snd_cwnd_cnt =3D 0;
+  	tp->window_clamp =3D 0;
+  	tp->delivered_ce =3D 0;
+
+--Sig_/5ElCMpKabLiTj9k5rBR2gWg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxrTjEACgkQAVBC80lX
+0GykxQgAhmkUZF9T2XBiTBPoNGpQddPNWswwqQNAdux7QXADtx8d/PxYr2WIwyp2
+5yHeL9px085+nHv743KIIqX2kiEwQfGpz++HRD4oKnGdSp7GpW6ENbFa/iFqf6Ph
+XFoayY07RU0nXhW7FsxrcGeLR+6kR2xLf1QzUwLm9nFPkVqcJhTrHWtWpjSOrdSl
+JC6z/r2E+5EZa93aD65T8oIAXtp7YdKD2px5tpNykzmlpVR6GhyXSsmNQM4RdUm0
+uxBVsDWuekxPvFoFsWt4+49Zb4/G1U8oDzcQ7I0nqu7J7kyNRYmj8KtHDEaYlDZ6
+lCvica66mdZu66Z2KMDAGvZbPIY4rg==
+=j0KX
+-----END PGP SIGNATURE-----
+
+--Sig_/5ElCMpKabLiTj9k5rBR2gWg--
