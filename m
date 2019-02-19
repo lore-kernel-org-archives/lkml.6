@@ -2,140 +2,113 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92058C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:15:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FFE7C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C28D2077B
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:15:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 487D72077B
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:16:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbfBSIPs (ORCPT
+        id S1727682AbfBSIQu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 03:15:48 -0500
-Received: from chuckie.co.uk ([82.165.15.123]:35747 "EHLO
-        s16892447.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725768AbfBSIPr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 03:15:47 -0500
-Received: from host86-186-67-148.range86-186.btcentralplus.com ([86.186.67.148] helo=[192.168.1.65])
-        by s16892447.onlinehome-server.info with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <mark.cave-ayland@ilande.co.uk>)
-        id 1gw0ZJ-0003ii-FT; Tue, 19 Feb 2019 08:15:58 +0000
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>, paulus@samba.org,
-        npiggin@gmail.com, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org
-References: <20190208143319.11980-1-mark.cave-ayland@ilande.co.uk>
- <41b02fb0-cdc6-6de0-d8fc-44d3d0a8ad70@c-s.fr>
- <2ed8efb9-5cd4-31bf-6c7b-501b9d1925e6@ilande.co.uk>
- <c2d6938902656f2829be8077c656cee9235c21b1.camel@kernel.crashing.org>
- <46205b6a-7671-5d90-9507-b5b20045b99d@ilande.co.uk>
- <87mumsbcnl.fsf@concordia.ellerman.id.au>
-From:   Mark Cave-Ayland <mark.cave-ayland@ilande.co.uk>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mark.cave-ayland@ilande.co.uk; keydata=
- mQENBFQJuzwBCADAYvxrwUh1p/PvUlNFwKosVtVHHplgWi5p29t58QlOUkceZG0DBYSNqk93
- 3JzBTbtd4JfFcSupo6MNNOrCzdCbCjZ64ik8ycaUOSzK2tKbeQLEXzXoaDL1Y7vuVO7nL9bG
- E5Ru3wkhCFc7SkoypIoAUqz8EtiB6T89/D9TDEyjdXUacc53R5gu8wEWiMg5MQQuGwzbQy9n
- PFI+mXC7AaEUqBVc2lBQVpAYXkN0EyqNNT12UfDLdxaxaFpUAE2pCa2LTyo5vn5hEW+i3VdN
- PkmjyPvL6DdY03fvC01PyY8zaw+UI94QqjlrDisHpUH40IUPpC/NB0LwzL2aQOMkzT2NABEB
- AAG0ME1hcmsgQ2F2ZS1BeWxhbmQgPG1hcmsuY2F2ZS1heWxhbmRAaWxhbmRlLmNvLnVrPokB
- OAQTAQIAIgUCVAm7PAIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQW8LFb64PMh9f
- NAgAuc3ObOEY8NbZko72AGrg2tWKdybcMVITxmcor4hb9155o/OWcA4IDbeATR6cfiDL/oxU
- mcmtXVgPqOwtW3NYAKr5g/FrZZ3uluQ2mtNYAyTFeALy8YF7N3yhs7LOcpbFP7tEbkSzoXNG
- z8iYMiYtKwttt40WaheWuRs0ZOLbs6yoczZBDhna3Nj0LA3GpeJKlaV03O4umjKJgACP1c/q
- T2Pkg+FCBHHFP454+waqojHp4OCBo6HyK+8I4wJRa9Z0EFqXIu8lTDYoggeX0Xd6bWeCFHK3
- DhD0/Xi/kegSW33unsp8oVcM4kcFxTkpBgj39dB4KwAUznhTJR0zUHf63LkBDQRUCbs8AQgA
- y7kyevA4bpetM/EjtuqQX4U05MBhEz/2SFkX6IaGtTG2NNw5wbcAfhOIuNNBYbw6ExuaJ3um
- 2uLseHnudmvN4VSJ5Hfbd8rhqoMmmO71szgT/ZD9MEe2KHzBdmhmhxJdp+zQNivy215j6H27
- 14mbC2dia7ktwP1rxPIX1OOfQwPuqlkmYPuVwZP19S4EYnCELOrnJ0m56tZLn5Zj+1jZX9Co
- YbNLMa28qsktYJ4oU4jtn6V79H+/zpERZAHmH40IRXdR3hA+Ye7iC/ZpWzT2VSDlPbGY9Yja
- Sp7w2347L5G+LLbAfaVoejHlfy/msPeehUcuKjAdBLoEhSPYzzdvEQARAQABiQEfBBgBAgAJ
- BQJUCbs8AhsMAAoJEFvCxW+uDzIfabYIAJXmBepHJpvCPiMNEQJNJ2ZSzSjhic84LTMWMbJ+
- opQgr5cb8SPQyyb508fc8b4uD8ejlF/cdbbBNktp3BXsHlO5BrmcABgxSP8HYYNsX0n9kERv
- NMToU0oiBuAaX7O/0K9+BW+3+PGMwiu5ml0cwDqljxfVN0dUBZnQ8kZpLsY+WDrIHmQWjtH+
- Ir6VauZs5Gp25XLrL6bh/SL8aK0BX6y79m5nhfKI1/6qtzHAjtMAjqy8ChPvOqVVVqmGUzFg
- KPsrrIoklWcYHXPyMLj9afispPVR8e0tMKvxzFBWzrWX1mzljbBlnV2n8BIwVXWNbgwpHSsj
- imgcU9TTGC5qd9g=
-Message-ID: <86f4b1df-78c7-ae1b-1144-554860903077@ilande.co.uk>
-Date:   Tue, 19 Feb 2019 08:15:36 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Tue, 19 Feb 2019 03:16:50 -0500
+Received: from szxga02-in.huawei.com ([45.249.212.188]:2505 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725768AbfBSIQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 03:16:49 -0500
+Received: from DGGEMA402-HUB.china.huawei.com (unknown [172.30.72.56])
+        by Forcepoint Email with ESMTP id 7726650D7C7325BAB31B;
+        Tue, 19 Feb 2019 16:16:44 +0800 (CST)
+Received: from DGGEMA422-HUB.china.huawei.com (10.1.198.155) by
+ DGGEMA402-HUB.china.huawei.com (10.3.20.43) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Tue, 19 Feb 2019 16:16:43 +0800
+Received: from DGGEMA503-MBX.china.huawei.com ([169.254.1.64]) by
+ dggema422-hub.china.huawei.com ([10.1.198.155]) with mapi id 14.03.0399.000;
+ Tue, 19 Feb 2019 16:16:36 +0800
+From:   "chenzefeng (A)" <chenzefeng2@huawei.com>
+To:     Petr Mladek <pmladek@suse.com>,
+        "chengjian (D)" <cj.chengjian@huawei.com>
+CC:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        "hjl.tools@gmail.com" <hjl.tools@gmail.com>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "sjenning@redhat.com" <sjenning@redhat.com>,
+        "vojtech@suse.com" <vojtech@suse.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "live-patching@vger.kernel.org" <live-patching@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Xiexiuqi <xiexiuqi@huawei.com>
+Subject: Re: [PATCH] x86: livepatch: Treat R_X86_64_PLT32 as R_X86_64_PC32
+Thread-Topic: [PATCH] x86: livepatch: Treat R_X86_64_PLT32 as R_X86_64_PC32
+Thread-Index: AdTIKsBW2gpAWHtWSgWckva/AXbo3Q==
+Date:   Tue, 19 Feb 2019 08:16:36 +0000
+Message-ID: <79A62BFA453EFB42B7A4E40AD8F3A2264F2AA52F@DGGEMA503-MBX.china.huawei.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.57.50.95]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <87mumsbcnl.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 86.186.67.148
-X-SA-Exim-Mail-From: mark.cave-ayland@ilande.co.uk
-Subject: Re: [PATCH] powerpc: fix 32-bit KVM-PR lockup and panic with MacOS
- guest
-X-SA-Exim-Version: 4.2.1 (built Sun, 08 Jan 2012 02:45:44 +0000)
-X-SA-Exim-Scanned: Yes (on s16892447.onlinehome-server.info)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/02/2019 04:55, Michael Ellerman wrote:
-
-> Mark Cave-Ayland <mark.cave-ayland@ilande.co.uk> writes:
->> On 11/02/2019 00:30, Benjamin Herrenschmidt wrote:
->>
->>> On Fri, 2019-02-08 at 14:51 +0000, Mark Cave-Ayland wrote:
->>>>
->>>> Indeed, but there are still some questions to be asked here:
->>>>
->>>> 1) Why were these bits removed from the original bitmask in the first place without
->>>> it being documented in the commit message?
->>>>
->>>> 2) Is this the right fix? I'm told that MacOS guests already run without this patch
->>>> on a G5 under 64-bit KVM-PR which may suggest that this is a workaround for another
->>>> bug elsewhere in the 32-bit powerpc code.
->>>>
->>>>
->>>> If you think that these points don't matter, then I'm happy to resubmit the patch
->>>> as-is based upon your comments above.
->>>
->>> We should write a test case to verify that FE0/FE1 are properly
->>> preserved/context-switched etc... I bet if we accidentally wiped them,
->>> we wouldn't notice 99.9% of the time.
->>
->> Right I guess it's more likely to cause in issue in the KVM PR case because the guest
->> can alter the flags in a way that doesn't go through the normal process switch mechanism.
->>
->> The original patchset at
->> https://www.mail-archive.com/linuxppc-dev@lists.ozlabs.org/msg98326.html does include
->> some tests in the first few patches, but AFAICT they are concerned with the contents
->> of the FP registers rather than the related MSRs.
-> 
-> fpu_preempt.c should be able to be adapted to also check the MSR bits.
-> 
->> Who is the right person to ask about fixing issues related to context switching with
->> KVM PR?
-> 
-> KVM PR doesn't really have a maintainer TBH. Feel like volunteering? :)
-
-Well I only have a 32-bit Mac Mini here which I'm using to help flush out bugs in
-QEMU's emulation, so I can keep an occasional eye on the 32-bit side of things but as
-it's a hobby project time is quite limited.
-
-As/when time allows I'd be interested to figure out what MacOS 9 does that causes KVM
-PR to bail, and if it's possible to run KVM PR on an SMP kernel but certainly I'd
-need some help from the very knowledgable people on these lists.
-
->> I did add the original author's email address to my first few emails but have
->> had no response back :/
-> 
-> Cyril who wrote the original FPU patch has moved on to other things.
-
-Ah okay then.
-
-
-ATB,
-
-Mark.
+SGksDQoNCkkgYW0gc29ycnkgdGhpcyBlbWFpbCB3YXMgc2VudCBieSBhY2NpZGVudC4gUGxlYXNl
+IGlnbm9yZSB0aGlzIGVtYWlsLg0KDQpCZXN0IFJlZ2FyZHMNCg0KDQoNCi0tLS0t6YKu5Lu25Y6f
+5Lu2LS0tLS0NCuWPkeS7tuS6ujogY2hlbnplZmVuZyAoQSkgDQrlj5HpgIHml7bpl7Q6IDIwMTnl
+ubQy5pyIMTnml6UgMTQ6MzgNCuaUtuS7tuS6ujogJ1BldHIgTWxhZGVrJyA8cG1sYWRla0BzdXNl
+LmNvbT47IGNoZW5namlhbiAoRCkgPGNqLmNoZW5namlhbkBodWF3ZWkuY29tPg0K5oqE6YCBOiAn
+c3RhYmxlQHZnZXIua2VybmVsLm9yZycgPHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmc+OyBKaXJpIEtv
+c2luYSA8amlrb3NAa2VybmVsLm9yZz47IGhqbC50b29sc0BnbWFpbC5jb207IGpwb2ltYm9lQHJl
+ZGhhdC5jb207IHNqZW5uaW5nQHJlZGhhdC5jb207IHZvanRlY2hAc3VzZS5jb207IHRnbHhAbGlu
+dXRyb25peC5kZTsgbWluZ29AcmVkaGF0LmNvbTsgaHBhQHp5dG9yLmNvbTsgZ3JlZ2toQGxpbnV4
+Zm91bmRhdGlvbi5vcmc7IHg4NkBrZXJuZWwub3JnOyBsaXZlLXBhdGNoaW5nQHZnZXIua2VybmVs
+Lm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgWGlleGl1cWkgPHhpZXhpdXFpQGh1
+YXdlaS5jb20+DQrkuLvpopg6IFJlOltQQVRDSF0geDg2OiBsaXZlcGF0Y2g6IFRyZWF0IFJfWDg2
+XzY0X1BMVDMyIGFzIFJfWDg2XzY0X1BDMzINCg0KT24gTW9uIDIwMTktMDItMTggMTc6MjIsIFBl
+dHIgd3JvdGU6DQoNCj4gT24gTW9uIDIwMTktMDItMTggMTM6Mjk6MTEsIGNoZW5namlhbiAoRCkg
+d3JvdGU6DQo+ID4gSGnvvIxKaXJpDQo+ID4NCj4gPg0KPiA+IFRoaXMgcGF0Y2ggc2hvdWxkIGJl
+IG1lcmdlZCBpbnRvIDQuNCBzdGFibGUsDQo+ID4NCj4gPiB3aGljaCBzdGlsbCB1c2Uga2xwX3dy
+aXRlX21vZHVsZV9yZWxvYy4NCj4gPg0KPiA+DQo+ID4gaHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5j
+b20vbGludXgvdjQuNC4xNzQvc291cmNlL2FyY2gveDg2L2tlcm5lbC9saXZlcA0KPiA+IGF0Y2gu
+Yw0KPiA+DQo+ID4NCj4gPiBaZUZlbmcgbWF5IGhhdmUgc2VudCBhIHN0YWJsZSg0LjQteSkgcGF0
+Y2ggdG8gdGhlIHdyb25nIG1haWwtbGlzdChtYWlubGluZSkuDQo+IA0KPiBaZUZlbmcgb3IgQ2hl
+bmdqaWFuLCBwbGVhc2UsIHNlbmQgdGhlIHBhdGNoIG9uY2UgYWdhaW4gd2l0aCBzdGFibGVAdmdl
+ci5rZXJuZWwub3JnIGluIENDIGFuZCBleHBsYW5hdGlvbiB0aGF0IGl0IGlzIG5lZWRlZCBvbmx5
+IGZvciA0LjQgYW5kIHdoeS4NCj4gDQo+IFRoaXMgdGhyZWFkIGlzIGFscmVhZHkgdG9vIGxvbmcg
+YW5kIG1lc3NlZCB0byBiZSBwcm9jZWVkIGJ5IHN0YWJsZSBwZW9wbGUgZWZmZWN0aXZlbHkuDQo+
+DQo+IEJlc3QgUmVnYXJkcywNCj4gUGV0cg0KDQpPbiB4ODYtNjQsIGZvciAzMi1iaXQgUEMtcmVs
+YWNpdmUgYnJhbmNoZXMsIHdlIGNhbiBnZW5lcmF0ZSBQTFQzMiByZWxvY2F0aW9uLCBpbnN0ZWFk
+IG9mIFBDMzIgcmVsb2NhdGlvbi4gYW5kIFJfWDg2XzY0X1BMVDMyIGNhbiBiZSB0cmVhdGVkIHRo
+ZSBzYW1lIGFzIFJfWDg2XzY0X1BDMzIgc2luY2UgbGludXgga2VybmVsIGRvZXNuJ3QgdXNlIFBM
+VC4NCg0KY29tbWl0IGIyMWViZjJmYjRjZCAoIng4NjogVHJlYXQgUl9YODZfNjRfUExUMzIgYXMg
+Ul9YODZfNjRfUEMzMiIpIGJlZW4gZml4ZWQgZm9yIHRoZSBtb2R1bGUgbG9hZGluZywgYnV0IG5v
+dCBmaXhlZCBmb3IgbGl2ZXBhdGNoIHJlbG9jYXRpb24sIHdoaWNoIHdpbGwgZmFpbCB0byBsb2Fk
+IGxpdmVwYXRjaCB3aXRoIHRoZSBlcnJvciBtZXNzYWdlIGFzIGZvbGxvdzoNCnJlbG9jYXRpb24g
+ZmFpbGVkIGZvciBzeW1ib2wgPHN5bWJvbCBuYW1lPiBhdCA8c3ltYm9sIGFkZHJlc3M+DQoNClRo
+aXMgaXNzdWUgb25seSBlZmZhY3RlZCB0aGUga2VybmVsIHZlcnNpb24gZnJvbSA0LjAgdG8gNC42
+LCBiZWNhdWNlIHRoZSBmdW5jdGlvbiBrbHBfd3JpdGVfbW9kdWxlX3JlbG9jIGlzIGludHJvZHVj
+ZWQgYnk6DQpjb21taXQgYjcwMGU3ZjAzZGY1ICgibGl2ZXBhdGNoOiBrZXJuZWw6IGFkZCBzdXBw
+b3J0IGZvciBsaXZlIHBhdGNoaW5nIikgYW5kIGRlbGV0ZWQgYnk6IGNvbW1pdCA0MjU1OTVhN2Zj
+MjANCigibGl2ZXBhdGNoOiByZXVzZSBtb2R1bGUgbG9hZGVyIGNvZGUgdG8gd3JpdGUgcmVsb2Nh
+dGlvbnMiKQ0KDQpTaWduZWQtb2ZmLWJ5OiBjaGVuemVmZW5nIDxjaGVuemVmZW5nMkBodWF3ZWku
+Y29tPg0KLS0tDQogYXJjaC94ODYva2VybmVsL2xpdmVwYXRjaC5jIHwgMSArDQogMSBmaWxlIGNo
+YW5nZWQsIDEgaW5zZXJ0aW9uKCspDQoNCmRpZmYgLS1naXQgYS9hcmNoL3g4Ni9rZXJuZWwvbGl2
+ZXBhdGNoLmMgYi9hcmNoL3g4Ni9rZXJuZWwvbGl2ZXBhdGNoLmMgaW5kZXggZDFkMzVjYy4uNTc5
+ZjhmOCAxMDA2NDQNCi0tLSBhL2FyY2gveDg2L2tlcm5lbC9saXZlcGF0Y2guYw0KKysrIGIvYXJj
+aC94ODYva2VybmVsL2xpdmVwYXRjaC5jDQpAQCAtNTgsNiArNTgsNyBAQCBpbnQga2xwX3dyaXRl
+X21vZHVsZV9yZWxvYyhzdHJ1Y3QgbW9kdWxlICptb2QsIHVuc2lnbmVkIGxvbmcgdHlwZSwNCiAJ
+CXZhbCA9IChzMzIpdmFsdWU7DQogCQlicmVhazsNCiAJY2FzZSBSX1g4Nl82NF9QQzMyOg0KKwlj
+YXNlIFJfWDg2XzY0X1BMVDMyOg0KIAkJdmFsID0gKHUzMikodmFsdWUgLSBsb2MpOw0KIAkJYnJl
+YWs7DQogCWRlZmF1bHQ6DQotLQ0KMS44LjUuNg0KDQoNCg==
