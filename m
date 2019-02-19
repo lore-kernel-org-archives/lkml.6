@@ -2,148 +2,133 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC5EC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 02:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22855C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 02:15:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39F9C217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 02:15:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E25BB217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 02:15:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="BGtr2b5F"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RksZb2ib"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727922AbfBSCPL (ORCPT
+        id S1728007AbfBSCP2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 21:15:11 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:8814 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725766AbfBSCPL (ORCPT
+        Mon, 18 Feb 2019 21:15:28 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33694 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726372AbfBSCP1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 21:15:11 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c6b66ae0000>; Mon, 18 Feb 2019 18:15:10 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 18 Feb 2019 18:15:10 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 18 Feb 2019 18:15:10 -0800
-Received: from [10.19.225.182] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 19 Feb
- 2019 02:15:08 +0000
-Subject: Re: [PATCH v7 3/3] thermal: tegra: add get_trend ops
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>, <edubezval@gmail.com>
-CC:     <thierry.reding@gmail.com>, <linux-tegra@vger.kernel.org>,
-        <rui.zhang@intel.com>, <srikars@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>
-References: <1546510369-28491-1-git-send-email-wni@nvidia.com>
- <1546510369-28491-4-git-send-email-wni@nvidia.com>
- <bae5b0c3-3d7f-0b60-da96-730c7e8c4e5c@linaro.org>
-From:   Wei Ni <wni@nvidia.com>
-Message-ID: <ecabe3d8-274f-7c0e-f875-6968c65a4425@nvidia.com>
-Date:   Tue, 19 Feb 2019 10:15:05 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 18 Feb 2019 21:15:27 -0500
+Received: by mail-lj1-f194.google.com with SMTP id f24-v6so16062046ljk.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 18:15:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=M037U6aipv5HSHtoXlgn20nsrqaH/sUD/ARA/RhtHh8=;
+        b=RksZb2ibk50KRaRvwZk35X5nq1c6kM9T5p10Q2Ur+71gkTa/8UHP12DMXqf3atfgpd
+         5zAvxmbG6nGzFl3hpkF7lVDwr2dTJvlY9v5fprgC1Z68QOVpavf+BYE4RvTyhTgKwyxn
+         KM7Mek8QjlK2XXPhPDhooKqHv/SdNz1usT0eT3Lfie4/vurisjZ0YGJ/PifRJzZGPD/c
+         lK/bWTC4K7hm9p+nEua5B5e3IP4bDv1QbTyAs8Yum/rCXyEqaqbkrmDYcPGgZPQAE13J
+         2W9LGEr0UyPc8C8vkWhpNo3adLGeCn4Hy1Rfv+AHR3mkH21p14FrRPs7eoyy+0lBbdZb
+         lPRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=M037U6aipv5HSHtoXlgn20nsrqaH/sUD/ARA/RhtHh8=;
+        b=DR7dHS+Y+pmSog6UAveQ5RVwFcEm6N4Lr5iqoriEysJHgGQRTJ5WCKOGnY8IAim7mS
+         LhgZ4jz882UJ0YlrYk+2tri/a1APoIICphKlwKxBaPIjWu7TgWcli2dmfqZZ1W+ojNhU
+         eK6poym053crmcwjLdGZyYaHe8K+4rt6MoZ23NoEkNxbCl6M+aPryn9CqW9S5OhCbGzv
+         2RCG8+zL/rHTUxqXiNgEaCBd0nEJdBH6NhbFz6eOW3kjloYGOXJBraAq2lkwHydWZdrF
+         ADSTp+fpuxOYPI+NIXpqBghb61bEQlr037ewSqFJ4PaaJZw8rZNT/uqYZdpTgLN+7lOW
+         W8/w==
+X-Gm-Message-State: AHQUAuaMOkhYH+F8rvMPnIlzAR03FM2Z4rTE74ZT18uX5Kj2cfwdCWEq
+        jpStsbPWfCasSIpR0jMfOt5CjRG76XrDYRJKhhQ=
+X-Google-Smtp-Source: AHgI3IaFb8otcknhYixmmGcbBjP3xYNADrmh/uI8OT05qKublagPxh4CxO+W0HvTv3I+ZZItSkjWFfh2LeGMVB0ANsA=
+X-Received: by 2002:a2e:91d4:: with SMTP id u20mr6156203ljg.54.1550542525612;
+ Mon, 18 Feb 2019 18:15:25 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <bae5b0c3-3d7f-0b60-da96-730c7e8c4e5c@linaro.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1550542510; bh=PjMVT6E2DOr7ZQEr7mDt49kl1Qjrn8fP6m8/uvzE78w=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=BGtr2b5F2CxqoZoLEmYLU5H5LvDQ2tzwtyfrkfTj6VBUHPkRx4W/jBWVlp4Zrv9au
-         48bONdc4HyNrk9h7taVGoM0shE0xnJVQCM2wmgxMTxlq1H6VnmDJCdEWByVGpJz07x
-         +GQP3QKHF8mamMf5V2W4r3Y3dv5+KcHBHMF6y669j1cGdMo/Qy9fxLVMjkz0t8nQow
-         uuk9c0NZtQVHT74eowPutuDheMUZ2qNmQRZm4zqFGB5IpUJTB02P6NkwUCPhcJ3sBM
-         zBcLdicio++fB5iMCurgVQ9ju1RhkN+7oWRi9f4J5bzsgB30czdoaHoFUjjj/XN1Ur
-         vkwfGHxVZDWwQ==
+References: <1548236816-18712-1-git-send-email-ufo19890607@gmail.com>
+ <20190206171915.GJ17564@hirez.programming.kicks-ass.net> <CAHCio2ggaG9gCB642=GgwfM2iCRm+ZcAp0HGqevJtVrRmnKPUA@mail.gmail.com>
+In-Reply-To: <CAHCio2ggaG9gCB642=GgwfM2iCRm+ZcAp0HGqevJtVrRmnKPUA@mail.gmail.com>
+From:   =?UTF-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>
+Date:   Tue, 19 Feb 2019 10:15:14 +0800
+Message-ID: <CAHCio2hn-r1_4bCEPtTm7=EjZmD=kUAFvLB9KEsEDbLi0mGvEg@mail.gmail.com>
+Subject: Re: [PATCH] sched/debug: Show intergroup and hierarchy sum wait time
+ of a task group
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@redhat.com,
+        =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>,
+        Wind Yu <yuzhoujian@didichuxing.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+PING
 
-
-On 18/2/2019 6:27 PM, Daniel Lezcano wrote:
-> On 03/01/2019 11:12, Wei Ni wrote:
->> Add support for get_trend ops that allows soctherm
->> sensors to be used with the step-wise governor.
->>
->> Signed-off-by: Wei Ni <wni@nvidia.com>
->> ---
->>  drivers/thermal/tegra/soctherm.c | 34 ++++++++++++++++++++++++++++++++++
->>  1 file changed, 34 insertions(+)
->>
->> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
->> index fd2703c0cfc5..864205af104b 100644
->> --- a/drivers/thermal/tegra/soctherm.c
->> +++ b/drivers/thermal/tegra/soctherm.c
->> @@ -488,9 +488,43 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
->>  	return 0;
->>  }
->>  
->> +static int tegra_thermctl_get_trend(void *data, int trip,
->> +				    enum thermal_trend *trend)
->> +{
->> +	struct tegra_thermctl_zone *zone = data;
->> +	struct thermal_zone_device *tz = zone->tz;
->> +	int trip_temp, temp, last_temp, ret;
->> +
->> +	if (!tz)
->> +		return -EINVAL;
->> +
->> +	ret = tz->ops->get_trip_temp(zone->tz, trip, &trip_temp);
->> +	if (ret)
->> +		return ret;
->> +
->> +	mutex_lock(&tz->lock);
-> 
-> No need to use the mutex here.
-> 
-> Why not ?
-> 
-> temp = READ_ONCE(tz->temperature);
-> last_temp = READ_ONCE(tz->last_temperature);
-
-Yes, you are right, will change it in next version.
-
-Wei.
-
-> 
->> +	temp = tz->temperature;
->> +	last_temp = tz->last_temperature;
->> +	mutex_unlock(&tz->lock);
->> +
->> +	if (temp > trip_temp) {
->> +		if (temp >= last_temp)
->> +			*trend = THERMAL_TREND_RAISING;
->> +		else
->> +			*trend = THERMAL_TREND_STABLE;
->> +	} else if (temp < trip_temp) {
->> +		*trend = THERMAL_TREND_DROPPING;
->> +	} else {
->> +		*trend = THERMAL_TREND_STABLE;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->>  static const struct thermal_zone_of_device_ops tegra_of_thermal_ops = {
->>  	.get_temp = tegra_thermctl_get_temp,
->>  	.set_trip_temp = tegra_thermctl_set_trip_temp,
->> +	.get_trend = tegra_thermctl_get_trend,
->>  };
->>  
->>  static int get_hot_temp(struct thermal_zone_device *tz, int *trip, int *temp)
->>
-> 
-> 
+=E7=A6=B9=E8=88=9F=E9=94=AE <ufo19890607@gmail.com> =E4=BA=8E2019=E5=B9=B42=
+=E6=9C=8812=E6=97=A5=E5=91=A8=E4=BA=8C =E4=B8=8A=E5=8D=8811:14=E5=86=99=E9=
+=81=93=EF=BC=9A
+>
+> Hi, Peter
+> I think hierarchy wait time for task groups is worth accounting
+> despite with a little extra overhead. Because we can evaluate task
+> groups' condition with a more direct metric. We cannot get the real
+> situation just with some general metrics, like idle or loadavg, since
+> their value is decreased with the elapse of time. So, I think general
+> metrics cannot satisify the request for task groups.
+>
+> Thanks
+> Yuzhoujian
+>
+>
+> Peter Zijlstra <peterz@infradead.org> =E4=BA=8E2019=E5=B9=B42=E6=9C=887=
+=E6=97=A5=E5=91=A8=E5=9B=9B =E4=B8=8A=E5=8D=881:19=E5=86=99=E9=81=93=EF=BC=
+=9A
+> >
+> > On Wed, Jan 23, 2019 at 05:46:56PM +0800, ufo19890607@gmail.com wrote:
+> > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > > index e2ff4b6..35e89ca 100644
+> > > --- a/kernel/sched/fair.c
+> > > +++ b/kernel/sched/fair.c
+> > > @@ -858,6 +858,19 @@ static void update_curr_fair(struct rq *rq)
+> > >  }
+> > >
+> > >  static inline void
+> > > +update_hierarchy_wait_sum(struct sched_entity *se,
+> > > +                     u64 delta_wait)
+> > > +{
+> > > +     for_each_sched_entity(se) {
+> > > +             struct cfs_rq *cfs_rq =3D cfs_rq_of(se);
+> > > +
+> > > +             if (cfs_rq->tg !=3D &root_task_group)
+> > > +                     __schedstat_add(cfs_rq->hierarchy_wait_sum,
+> > > +                                     delta_wait);
+> > > +     }
+> > > +}
+> > > +
+> > > +static inline void
+> > >  update_stats_wait_end(struct cfs_rq *cfs_rq, struct sched_entity *se=
+)
+> > >  {
+> > >       struct task_struct *p;
+> > > @@ -880,6 +893,7 @@ static void update_curr_fair(struct rq *rq)
+> > >                       return;
+> > >               }
+> > >               trace_sched_stat_wait(p, delta);
+> > > +             update_hierarchy_wait_sum(se, delta);
+> > >       }
+> > >
+> > >       __schedstat_set(se->statistics.wait_max,
+> >
+> > The problem I have with this is that it will make schedstats even more
+> > expensive :/
