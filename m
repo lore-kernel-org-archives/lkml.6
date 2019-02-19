@@ -2,54 +2,56 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 274CDC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 22:55:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B2BC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 22:55:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E29E121479
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 22:55:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F417821479
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 22:55:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="jud1Wcqb"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="dNIo0tN5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729868AbfBSWzh (ORCPT
+        id S1729941AbfBSWzo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 17:55:37 -0500
-Received: from mail-wr1-f42.google.com ([209.85.221.42]:40507 "EHLO
-        mail-wr1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727736AbfBSWzh (ORCPT
+        Tue, 19 Feb 2019 17:55:44 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44320 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729881AbfBSWzn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 17:55:37 -0500
-Received: by mail-wr1-f42.google.com with SMTP id q1so23773864wrp.7
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 14:55:35 -0800 (PST)
+        Tue, 19 Feb 2019 17:55:43 -0500
+Received: by mail-wr1-f66.google.com with SMTP id w2so9171092wrt.11
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 14:55:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=BrB8Q/eUpJDA/Zjf4iU7uKKPX52T9AWESmHfx6pF9L4=;
-        b=jud1WcqbKLbtXBU7LLCUyqRDjUDZ87ElfoH4iQCr6+DlRA2PVwngmDC3oiR0zImm6u
-         dIF9tHvFSUdrs4CNOv+AnlOyFR8VAnIEFYJJChM1PpBdpHGtUqfZPBGZpPJayyhOCsh/
-         aJAVSuZ9rVpX0bsxm+weW9NC+zE2LLjCIPldU=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=s4hPtNIW+4JpE4krGVUXkCHrfjClFqO96IlJ54/CCjE=;
+        b=dNIo0tN55G1gOruc7lEOLHA0LlbAk8TSo7vTYj02grU4RHevrmvV6PI2iixRZ0v7sX
+         y9MagNvvYBMTzlgVKBFGYOasxGJnFL+tvQfgFeqYxZKYg1Xus8KZ3BgsNiMYZk2Tc0uM
+         W786sA2PL7yAKzaQvG0edaQt6f+OLVNSienpA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=BrB8Q/eUpJDA/Zjf4iU7uKKPX52T9AWESmHfx6pF9L4=;
-        b=sCuDMo0scmo2RkGzOk5+8a1Ajub+GuuxFx9JWg4eZ8tvrpom2uwlfnmi4RplGOfV1+
-         1bj1A3Of84ObXd8OaGK/G2hEG7QVl7MeE+TsqhwP2jVC6HJ+cnrR72GJ9Hh+M1CvlN8b
-         WpWMmCm8i7v28Nh4NZnVtBnHCL/Mb7EBZ9Y+QL8FAGvlynhbsawetHzTJ6usXG1I5S3C
-         wyiQfWAIzILK32Up/q50RJBkiug0uvuBwo9B3MkpuRhuHzVQKrq+/0J1vzMr+73/JXrS
-         zZ9ZtqWD/cny1Ay8Mh+Yz5bHoWNAyp1Ziz/2JKIuINnIrbB+e+w70tQEPSv5HR1C/KFI
-         tV2A==
-X-Gm-Message-State: AHQUAualdjDX1TBXKf0iYZNzIpN1DeympmTuBc1ysBxeB5YOrHcXRP78
-        nQCbIZPXGhofxdAKyBz7ACK3XzHCdEkKIA==
-X-Google-Smtp-Source: AHgI3IZD7TFPlElGIAwXiBx9ilCw6zyTUm9jwuhyg+b2IfPZZpePg5oFZe/u5B5OCOb1g0TDUv9Aow==
-X-Received: by 2002:adf:ee4d:: with SMTP id w13mr22603220wro.16.1550616934921;
-        Tue, 19 Feb 2019 14:55:34 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=s4hPtNIW+4JpE4krGVUXkCHrfjClFqO96IlJ54/CCjE=;
+        b=hdTZFuqCxi19t9kI94uvgjEFmQiy0NdxahxSYBA2AlrQH3tRbqcT4+9+hi/MeTUM6x
+         OQiZSS7pLGFPF8cJm3/WSoTwrJ++xfhHMru/AuKC0ULrkVYhBwa2sWrIVfLKhXyXdvgy
+         fwCUCVJOHL6/bBOLB/eFYOGNQ6bP/uBxKcczGTmtuZ5w8NI/BDPIQMdERsnGRTWtFO94
+         2onicIhjk2c0taAvttnEue+R4w7QvAAAxsIdJAW8gZQyroxmFKW3VMvF0CzmdlzaqBH6
+         Z+BgURtvzTOncA82+zKK6ElWt6+63dn4TwIVpAxa25flWT5TS/C/7MMncN8lA+x8tauG
+         GjQg==
+X-Gm-Message-State: AHQUAuZUECOenIsRxXfgqBMUIjDMgK1qoZyCN/CEB0J/cKTHjoDTN6IS
+        a1TkdLEsdznW2ZzUfTxUJ6Z5a0dlqz40Ow==
+X-Google-Smtp-Source: AHgI3IZiGD2rUaPzTIE+OKDDw3SMpOcyYY+mwi+sj7tn/fhEOW8eVXBwbzVcxhP4WWcHgBbojTwDuw==
+X-Received: by 2002:adf:c7c6:: with SMTP id y6mr21798453wrg.217.1550616941215;
+        Tue, 19 Feb 2019 14:55:41 -0800 (PST)
 Received: from localhost.localdomain ([89.22.71.151])
-        by smtp.gmail.com with ESMTPSA id b3sm7073951wme.27.2019.02.19.14.55.33
+        by smtp.gmail.com with ESMTPSA id b3sm7073951wme.27.2019.02.19.14.55.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 19 Feb 2019 14:55:34 -0800 (PST)
+        Tue, 19 Feb 2019 14:55:40 -0800 (PST)
 From:   Andrea Parri <andrea.parri@amarulasolutions.com>
 To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
 Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
@@ -64,17 +66,20 @@ Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
         "Paul E. McKenney" <paulmck@linux.ibm.com>,
         Akira Yokosawa <akiyks@gmail.com>,
         Daniel Lustig <dlustig@nvidia.com>
-Subject: [PATCH 0/2] tools/memory-model: Trivialities
-Date:   Tue, 19 Feb 2019 23:55:21 +0100
-Message-Id: <1550616923-4795-1-git-send-email-andrea.parri@amarulasolutions.com>
+Subject: [PATCH 1/2] tools/memory-model: Fix comment in MP+poonceonces.litmus
+Date:   Tue, 19 Feb 2019 23:55:22 +0100
+Message-Id: <1550616923-4795-2-git-send-email-andrea.parri@amarulasolutions.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1550616923-4795-1-git-send-email-andrea.parri@amarulasolutions.com>
+References: <1550616923-4795-1-git-send-email-andrea.parri@amarulasolutions.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes to inline comments, documentation, script usage.
+The comment should say "Sometimes" for the result.
 
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
 Cc: Alan Stern <stern@rowland.harvard.edu>
 Cc: Will Deacon <will.deacon@arm.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
@@ -86,21 +91,23 @@ Cc: Luc Maranget <luc.maranget@inria.fr>
 Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
 Cc: Akira Yokosawa <akiyks@gmail.com>
 Cc: Daniel Lustig <dlustig@nvidia.com>
-
-Andrea Parri (2):
-  tools/memory-model: Fix comment in MP+poonceonces.litmus
-  tools/memory-model: Do not use "herd" to refer to "herd7"
-
+---
  tools/memory-model/litmus-tests/MP+poonceonces.litmus | 2 +-
- tools/memory-model/litmus-tests/README                | 2 +-
- tools/memory-model/lock.cat                           | 2 +-
- tools/memory-model/scripts/README                     | 4 ++--
- tools/memory-model/scripts/checkalllitmus.sh          | 2 +-
- tools/memory-model/scripts/checklitmus.sh             | 2 +-
- tools/memory-model/scripts/parseargs.sh               | 2 +-
- tools/memory-model/scripts/runlitmushist.sh           | 2 +-
- 8 files changed, 9 insertions(+), 9 deletions(-)
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/tools/memory-model/litmus-tests/MP+poonceonces.litmus b/tools/memory-model/litmus-tests/MP+poonceonces.litmus
+index b2b60b84fb9dc..172f0145301c5 100644
+--- a/tools/memory-model/litmus-tests/MP+poonceonces.litmus
++++ b/tools/memory-model/litmus-tests/MP+poonceonces.litmus
+@@ -1,7 +1,7 @@
+ C MP+poonceonces
+ 
+ (*
+- * Result: Maybe
++ * Result: Sometimes
+  *
+  * Can the counter-intuitive message-passing outcome be prevented with
+  * no ordering at all?
 -- 
 2.7.4
 
