@@ -2,134 +2,228 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92205C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 07:23:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8629CC10F00
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 07:24:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FE5B20578
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 07:23:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ycwVFAP/"
+	by mail.kernel.org (Postfix) with ESMTP id 60D2420851
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 07:24:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727077AbfBSHX4 (ORCPT
+        id S1727137AbfBSHYR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 02:23:56 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:42704 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725763AbfBSHXz (ORCPT
+        Tue, 19 Feb 2019 02:24:17 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:37638 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725763AbfBSHYQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 02:23:55 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1J7Ndtg040491;
-        Tue, 19 Feb 2019 01:23:39 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1550561019;
-        bh=RJ/ssE7i7ZV21iek2H9iOK7v6JGeQReTmBrQkJA9y4I=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=ycwVFAP/JYASxmbD/IrwNuQpQz+lJLsMROYj6egak0TkfWjoM1gzMLSqVtlIELNSj
-         MG7EJ1SZkqXwBcOfKHIm4XzqNy5a+KCA8puX76zwE5ecKSiFtXuR6Ehes+2mhCZlvT
-         YL7QVuIsxpwRBEHtgFQBxMZUVj5oDl5oXzMm7OdU=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1J7NdvS055001
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 19 Feb 2019 01:23:39 -0600
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 19
- Feb 2019 01:23:38 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 19 Feb 2019 01:23:39 -0600
-Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1J7NXaG024750;
-        Tue, 19 Feb 2019 01:23:34 -0600
-Subject: Re: [RFC PATCH 0/5] MTD: Add Initial Hyperbus support
-To:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, <linux-mtd@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <tudor.ambarus@microchip.com>, <nsekhar@ti.com>
-References: <20190219063607.29949-1-vigneshr@ti.com>
-From:   Vignesh R <vigneshr@ti.com>
-Message-ID: <a843dbb2-054a-2afd-863f-2d1822b3ca33@ti.com>
-Date:   Tue, 19 Feb 2019 12:54:34 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 19 Feb 2019 02:24:16 -0500
+X-UUID: f36f122fcbc24c36bfaf674bf5e173e4-20190219
+X-UUID: f36f122fcbc24c36bfaf674bf5e173e4-20190219
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <jianjun.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1907254790; Tue, 19 Feb 2019 15:24:04 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 19 Feb 2019 15:24:02 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 19 Feb 2019 15:24:02 +0800
+From:   Jianjun Wang <jianjun.wang@mediatek.com>
+To:     <marc.zyngier@arm.com>, <ryder.lee@mediatek.com>,
+        <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
+        <matthias.bgg@gmail.com>
+CC:     <linux-pci@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <youlin.pei@mediatek.com>,
+        <honghui.zhang@mediatek.com>, <jianjun.wang@mediatek.com>
+Subject: [v2] PCI: mediatek: Remove MSI inner domain
+Date:   Tue, 19 Feb 2019 15:24:00 +0800
+Message-ID: <1550561040-30892-1-git-send-email-jianjun.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-In-Reply-To: <20190219063607.29949-1-vigneshr@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+There is no need to create the inner domain as a parent for MSI domian,
+some feature has been implemented by MSI framework.
 
+Remove the inner domain and its irq chip, it will be more closer to the
+hardware implementation.
 
-On 19/02/19 12:06 PM, Vignesh R wrote:
-[...]
-> 
-> Tested on modified TI AM654 EVM with Cypress Hyperflash S26KS512 by
-> creating a UBIFS partition and writing and reading files to it.
-> Stress tested by writing/reading 16MB flash repeatedly at different
-> offsets using dd commmand.
-> 
+Signed-off-by: Jianjun Wang <jianjun.wang@mediatek.com>
+---
+ drivers/pci/controller/pcie-mediatek.c | 83 +++++++++++---------------
+ 1 file changed, 36 insertions(+), 47 deletions(-)
 
-Here is the enumeration log from dmesg:
-https://pastebin.ubuntu.com/p/Vd5jYQT4FH/
-
-> HyperBus specification can be found at[1]
-> HyperFlash datasheet can be found at[2]
-> TI's HBMC controller details at[3]
-> 
-> [1] https://www.cypress.com/file/213356/download
-> [2] https://www.cypress.com/file/213346/download
-> [3] http://www.ti.com/lit/ug/spruid7b/spruid7b.pdf
->     Table 12-5741. HyperFlash Access Sequence
-> 
-> Vignesh R (5):
->   mtd: cfi_cmdset_0002: Add support for polling status register
->   dt-bindings: mtd: Add binding documentation for Hyperbus memory
->     devices
->   mtd: Add support for Hyperbus memory devices
->   dt-bindings: mtd: Add bindings for TI's AM654 Hyperbus memory
->     controller
->   mtd: hyperbus: Add driver for TI's Hyperbus memory controller
-> 
->  .../bindings/mtd/cypress,hyperbus.txt         |   6 +
->  .../devicetree/bindings/mtd/ti,am654-hbmc.txt |  27 +++
->  MAINTAINERS                                   |   8 +
->  drivers/mtd/Kconfig                           |   2 +
->  drivers/mtd/Makefile                          |   1 +
->  drivers/mtd/chips/cfi_cmdset_0002.c           |  50 ++++++
->  drivers/mtd/hyperbus/Kconfig                  |  23 +++
->  drivers/mtd/hyperbus/Makefile                 |   4 +
->  drivers/mtd/hyperbus/core.c                   | 167 ++++++++++++++++++
->  drivers/mtd/hyperbus/hbmc_am654.c             | 105 +++++++++++
->  include/linux/mtd/cfi.h                       |   5 +
->  include/linux/mtd/hyperbus.h                  |  73 ++++++++
->  12 files changed, 471 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mtd/cypress,hyperbus.txt
->  create mode 100644 Documentation/devicetree/bindings/mtd/ti,am654-hbmc.txt
->  create mode 100644 drivers/mtd/hyperbus/Kconfig
->  create mode 100644 drivers/mtd/hyperbus/Makefile
->  create mode 100644 drivers/mtd/hyperbus/core.c
->  create mode 100644 drivers/mtd/hyperbus/hbmc_am654.c
->  create mode 100644 include/linux/mtd/hyperbus.h
-> 
-
+diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+index 8d05df56158b..cd55c8ae392e 100644
+--- a/drivers/pci/controller/pcie-mediatek.c
++++ b/drivers/pci/controller/pcie-mediatek.c
+@@ -169,7 +169,6 @@ struct mtk_pcie_soc {
+  * @slot: port slot
+  * @irq: GIC irq
+  * @irq_domain: legacy INTx IRQ domain
+- * @inner_domain: inner IRQ domain
+  * @msi_domain: MSI IRQ domain
+  * @lock: protect the msi_irq_in_use bitmap
+  * @msi_irq_in_use: bit map for assigned MSI IRQ
+@@ -190,7 +189,6 @@ struct mtk_pcie_port {
+ 	u32 slot;
+ 	int irq;
+ 	struct irq_domain *irq_domain;
+-	struct irq_domain *inner_domain;
+ 	struct irq_domain *msi_domain;
+ 	struct mutex lock;
+ 	DECLARE_BITMAP(msi_irq_in_use, MTK_MSI_IRQS_NUM);
+@@ -420,20 +418,12 @@ static void mtk_msi_ack_irq(struct irq_data *data)
+ 	writel(1 << hwirq, port->base + PCIE_IMSI_STATUS);
+ }
+ 
+-static struct irq_chip mtk_msi_bottom_irq_chip = {
+-	.name			= "MTK MSI",
+-	.irq_compose_msi_msg	= mtk_compose_msi_msg,
+-	.irq_set_affinity	= mtk_msi_set_affinity,
+-	.irq_ack		= mtk_msi_ack_irq,
+-};
+-
+-static int mtk_pcie_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
+-				     unsigned int nr_irqs, void *args)
++static irq_hw_number_t mtk_pcie_msi_get_hwirq(struct msi_domain_info *info,
++					      msi_alloc_info_t *arg)
+ {
+-	struct mtk_pcie_port *port = domain->host_data;
+-	unsigned long bit;
++	struct mtk_pcie_port *port = info->chip_data;
++	irq_hw_number_t bit;
+ 
+-	WARN_ON(nr_irqs != 1);
+ 	mutex_lock(&port->lock);
+ 
+ 	bit = find_first_zero_bit(port->msi_irq_in_use, MTK_MSI_IRQS_NUM);
+@@ -446,18 +436,14 @@ static int mtk_pcie_irq_domain_alloc(struct irq_domain *domain, unsigned int vir
+ 
+ 	mutex_unlock(&port->lock);
+ 
+-	irq_domain_set_info(domain, virq, bit, &mtk_msi_bottom_irq_chip,
+-			    domain->host_data, handle_edge_irq,
+-			    NULL, NULL);
+-
+-	return 0;
++	return bit;
+ }
+ 
+-static void mtk_pcie_irq_domain_free(struct irq_domain *domain,
+-				     unsigned int virq, unsigned int nr_irqs)
++static void mtk_pcie_msi_free(struct irq_domain *domain,
++			      struct msi_domain_info *info, unsigned int virq)
+ {
+ 	struct irq_data *d = irq_domain_get_irq_data(domain, virq);
+-	struct mtk_pcie_port *port = irq_data_get_irq_chip_data(d);
++	struct mtk_pcie_port *port = info->chip_data;
+ 
+ 	mutex_lock(&port->lock);
+ 
+@@ -468,46 +454,50 @@ static void mtk_pcie_irq_domain_free(struct irq_domain *domain,
+ 		__clear_bit(d->hwirq, port->msi_irq_in_use);
+ 
+ 	mutex_unlock(&port->lock);
+-
+-	irq_domain_free_irqs_parent(domain, virq, nr_irqs);
+ }
+ 
+-static const struct irq_domain_ops msi_domain_ops = {
+-	.alloc	= mtk_pcie_irq_domain_alloc,
+-	.free	= mtk_pcie_irq_domain_free,
++static struct msi_domain_ops mtk_msi_domain_ops = {
++	.get_hwirq	= mtk_pcie_msi_get_hwirq,
++	.msi_free	= mtk_pcie_msi_free,
+ };
+ 
+ static struct irq_chip mtk_msi_irq_chip = {
+-	.name		= "MTK PCIe MSI",
+-	.irq_ack	= irq_chip_ack_parent,
+-	.irq_mask	= pci_msi_mask_irq,
+-	.irq_unmask	= pci_msi_unmask_irq,
++	.name			= "MTK PCIe",
++	.irq_compose_msi_msg	= mtk_compose_msi_msg,
++	.irq_write_msi_msg	= pci_msi_domain_write_msg,
++	.irq_set_affinity	= mtk_msi_set_affinity,
++	.irq_ack		= mtk_msi_ack_irq,
++	.irq_mask		= pci_msi_mask_irq,
++	.irq_unmask		= pci_msi_unmask_irq,
+ };
+ 
+ static struct msi_domain_info mtk_msi_domain_info = {
+-	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
+-		   MSI_FLAG_PCI_MSIX),
+-	.chip	= &mtk_msi_irq_chip,
++	.flags		= (MSI_FLAG_USE_DEF_DOM_OPS |
++			   MSI_FLAG_USE_DEF_CHIP_OPS | MSI_FLAG_PCI_MSIX),
++	.ops		= &mtk_msi_domain_ops,
++	.chip		= &mtk_msi_irq_chip,
++	.handler	= handle_edge_irq,
++	.handler_name	= "MSI",
+ };
+ 
+ static int mtk_pcie_allocate_msi_domains(struct mtk_pcie_port *port)
+ {
+-	struct fwnode_handle *fwnode = of_node_to_fwnode(port->pcie->dev->of_node);
++	struct device *dev = port->pcie->dev;
++	struct fwnode_handle *fwnode = of_node_to_fwnode(dev->of_node);
++	struct msi_domain_info *info;
+ 
+ 	mutex_init(&port->lock);
+ 
+-	port->inner_domain = irq_domain_create_linear(fwnode, MTK_MSI_IRQS_NUM,
+-						      &msi_domain_ops, port);
+-	if (!port->inner_domain) {
+-		dev_err(port->pcie->dev, "failed to create IRQ domain\n");
++	info = devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
++	if (!info)
+ 		return -ENOMEM;
+-	}
+ 
+-	port->msi_domain = pci_msi_create_irq_domain(fwnode, &mtk_msi_domain_info,
+-						     port->inner_domain);
++	memcpy(info, &mtk_msi_domain_info, sizeof(*info));
++	info->chip_data = port;
++
++	port->msi_domain = pci_msi_create_irq_domain(fwnode, info, NULL);
+ 	if (!port->msi_domain) {
+-		dev_err(port->pcie->dev, "failed to create MSI domain\n");
+-		irq_domain_remove(port->inner_domain);
++		dev_err(dev, "failed to create MSI domain\n");
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -541,8 +531,6 @@ static void mtk_pcie_irq_teardown(struct mtk_pcie *pcie)
+ 		if (IS_ENABLED(CONFIG_PCI_MSI)) {
+ 			if (port->msi_domain)
+ 				irq_domain_remove(port->msi_domain);
+-			if (port->inner_domain)
+-				irq_domain_remove(port->inner_domain);
+ 		}
+ 
+ 		irq_dispose_mapping(port->irq);
+@@ -619,7 +607,8 @@ static void mtk_pcie_intr_handler(struct irq_desc *desc)
+ 
+ 			while ((imsi_status = readl(port->base + PCIE_IMSI_STATUS))) {
+ 				for_each_set_bit(bit, &imsi_status, MTK_MSI_IRQS_NUM) {
+-					virq = irq_find_mapping(port->inner_domain, bit);
++					virq = irq_find_mapping(
++							port->msi_domain, bit);
+ 					generic_handle_irq(virq);
+ 				}
+ 			}
 -- 
-Regards
-Vignesh
+2.20.1
+
