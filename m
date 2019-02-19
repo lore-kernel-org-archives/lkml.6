@@ -2,158 +2,103 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 491DAC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7356BC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:20:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13961217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:20:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZoB+65Ye";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="W8Wpr9XM"
+	by mail.kernel.org (Postfix) with ESMTP id 3DDA52177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:20:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728265AbfBSKU0 (ORCPT
+        id S1728295AbfBSKUt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 05:20:26 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:48278 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728167AbfBSKU0 (ORCPT
+        Tue, 19 Feb 2019 05:20:49 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:44344 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727023AbfBSKUt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 05:20:26 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 91441609C3; Tue, 19 Feb 2019 10:20:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550571624;
-        bh=J03gcVqxNPsDDBTSK0dIWV201s18cUHgGf7TLBwBHpc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ZoB+65Yed3sjqIvjl/P4B6BoBol2BF//4wKVM6FlupilrYFUfYMU/E54f/+WNzWWI
-         oamh5iMPjS/OIVphOi/AsFDPv3stj19hW4pPs/+JMStfsMyYfVTS34c2ynGpGlV4j0
-         8Fy9VjBZ67f81iiQbkdx7TniPrSz1Xh4QAY2hIxg=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 7FC3A609F2;
-        Tue, 19 Feb 2019 10:20:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550571623;
-        bh=J03gcVqxNPsDDBTSK0dIWV201s18cUHgGf7TLBwBHpc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=W8Wpr9XMxm9vHwnVukeMdiBR5cRr4U/CFWjqHYXQ0IgjZu1/kD73g4/0prnVZU1KX
-         +ihNbHG98clA0k2ST8/Tia1ymEY1Ua+8prwrTZ1QmoxOmxcA/DW2DIX+1DwRTQVXiU
-         j0KWSNZS+bL5qLEFD6UcfUo6LRJkOwy3y3s+QQms=
+        Tue, 19 Feb 2019 05:20:49 -0500
+Received: from 79.184.254.15.ipv4.supernova.orange.pl (79.184.254.15) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
+ id 615bca79ca1cceb2; Tue, 19 Feb 2019 11:20:46 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-arm-msm@vger.kernel.org,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>, swboyd@chromium.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Len Brown <len.brown@intel.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 1/2] PM / Domains: Mark "name" const in genpd_dev_pm_attach_by_name()
+Date:   Tue, 19 Feb 2019 11:19:22 +0100
+Message-ID: <5139346.Didr8HbKkM@aspire.rjw.lan>
+In-Reply-To: <20190214181249.2749-1-dianders@chromium.org>
+References: <20190214181249.2749-1-dianders@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 19 Feb 2019 15:50:23 +0530
-From:   stummala@codeaurora.org
-To:     tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     stummala@codeaurora.org
-Subject: huge fsync latencies for a small file on ext4
-Message-ID: <b1ba05256affe171c2afca6c3aceeb7a@codeaurora.org>
-X-Sender: stummala@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thursday, February 14, 2019 7:12:48 PM CET Douglas Anderson wrote:
+> The genpd_dev_pm_attach_by_name() simply takes the name and passes it
+> to of_property_match_string() where the argument is "const char *".
+> Adding a const here allows a later patch to add a const to
+> dev_pm_domain_attach_by_name() which allows drivers to pass in a name
+> that was declared "const" in a driver.
+> 
+> Fixes: 5d6be70add65 ("PM / Domains: Introduce option to attach a device by name to genpd")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+> 
+>  drivers/base/power/domain.c | 2 +-
+>  include/linux/pm_domain.h   | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index 45eafe8cf7dd..2c334c01fc43 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -2483,7 +2483,7 @@ EXPORT_SYMBOL_GPL(genpd_dev_pm_attach_by_id);
+>   * power-domain-names DT property. For further description see
+>   * genpd_dev_pm_attach_by_id().
+>   */
+> -struct device *genpd_dev_pm_attach_by_name(struct device *dev, char *name)
+> +struct device *genpd_dev_pm_attach_by_name(struct device *dev, const char *name)
+>  {
+>  	int index;
+>  
+> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+> index dd364abb649a..203be5082f33 100644
+> --- a/include/linux/pm_domain.h
+> +++ b/include/linux/pm_domain.h
+> @@ -271,7 +271,7 @@ int genpd_dev_pm_attach(struct device *dev);
+>  struct device *genpd_dev_pm_attach_by_id(struct device *dev,
+>  					 unsigned int index);
+>  struct device *genpd_dev_pm_attach_by_name(struct device *dev,
+> -					   char *name);
+> +					   const char *name);
+>  #else /* !CONFIG_PM_GENERIC_DOMAINS_OF */
+>  static inline int of_genpd_add_provider_simple(struct device_node *np,
+>  					struct generic_pm_domain *genpd)
+> @@ -324,7 +324,7 @@ static inline struct device *genpd_dev_pm_attach_by_id(struct device *dev,
+>  }
+>  
+>  static inline struct device *genpd_dev_pm_attach_by_name(struct device *dev,
+> -							 char *name)
+> +							 const char *name)
+>  {
+>  	return NULL;
+>  }
+> 
 
-I am observing huge fsync latencies for a small file under the below 
-test scenario -
+Both this and the [2/2] applied, thanks!
 
-process A -
-Issue async write of 4GB using dd command (say large_file) on /data 
-mounted
-with ext4:
-dd if=/dev/zero of=/data/testfile bs=1M count=4096
 
-process B -
-In parallel another process wrote a small 4KB data to another file
-(say, small_file) and has issued fsync on this file.
-
-Problem -
-The fsync() on 4KB file, is taking upto ~30sec (worst case latency).
-This is tested on an eMMC based device.
-
-Observations -
-This happens when the small_file and large_file both are part of the 
-same
-committing transaction or when the small_file is part of the running 
-transaction
-while large_file is part of the committing transaction.
-
-During the commit of a transaction which includes large_file, the jbd2 
-thread
-does journal_finish_inode_data_buffers() by calling
-filemap_fdatawait_keep_errors() on the file's inode address space. While 
-this is
-happening, if the writeback thread is running in parallel for the 
-large_file, then
-filemap_fdatawait_keep_errors() could potentially run in a loop of all 
-the
-pages (upto 4GB of data) and also wait for all the file's data to be 
-written
-to the disk in the current transaction context itself. At the time
-of calling journal_finish_inode_data_buffers(), the file size is of only 
-150MB.
-and by the time filemap_fdatawait_keep_errors() returns, the file size 
-is 4GB
-and the page index also points to 4GB file offset in
-__filemap_fdatawait_range(), indicating that is has scanned and waited 
-for writeback
-all the pages upto 4GB and not just 150MB.
-
-Ideally, I think the jbd2 thread should have waited for only the amount 
-of data
-it has submitted as part of the current transaction and not to wait for 
-the
-on-going pages that are getting tagged for writeback in parallel in 
-another context.
-So along these lines, I have tried to use the inode's size at the time 
-of calling
-journal_finish_inode_data_buffers() as below -
-
-diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
-index 2eb55c3..e86cf67 100644
---- a/fs/jbd2/commit.c
-+++ b/fs/jbd2/commit.c
-@@ -261,8 +261,8 @@ static int 
-journal_finish_inode_data_buffers(journal_t *journal,
-                         continue;
-                 jinode->i_flags |= JI_COMMIT_RUNNING;
-                 spin_unlock(&journal->j_list_lock);
--               err = filemap_fdatawait_keep_errors(
--                               jinode->i_vfs_inode->i_mapping);
-+               err = 
-filemap_fdatawait_range(jinode->i_vfs_inode->i_mapping,
-+                               0, 
-i_size_read(jinode->i_vfs_inode->i_mapping->host));
-                 if (!ret)
-                         ret = err;
-                 spin_lock(&journal->j_list_lock);
-
-With this, the fsync latencies for small_file have reduced 
-significantly.
-It took upto max ~5sec (worst case latency).
-
-Although this is seen in a test code, this could potentially impact the
-phone's performance if any application or main UI thread in Android 
-issues
-fsync() in foreground while a large data transfer is going on in another
-context.
-
-Request you to share your thoughts and comments on this issue
-and the fix suggested above.
-
-Thanks,
-Sahitya.
-
---
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, 
-Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
-Linux Foundation Collaborative Project.
