@@ -2,128 +2,86 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26E22C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B91C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:52:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3CCB21773
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:51:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550587889;
-	bh=IF88uaAexNPXcn6h6tTFa8UBfKJhFLbWoCvjruc4xzU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=dMEgR6BjhYctjK/WQ3wwJvOCVfKKqFVy+PF5sKD/DPrMpKPR1ZLkuzM38+6aopVI5
-	 albTeTDHqN70NG2DlpkpIuCOwp9YN4bT4yTZv5rQSzUz+3jxDUzWpNR4b2I5oLd+zD
-	 0IuRldR5h+bPaH8RoyAiQvXRnFS2tBxBZSQ8IMME=
+	by mail.kernel.org (Postfix) with ESMTP id 3651321773
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:52:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726555AbfBSOv1 (ORCPT
+        id S1727915AbfBSOwa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 09:51:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42462 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725794AbfBSOv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 09:51:27 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 302012146E;
-        Tue, 19 Feb 2019 14:51:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550587886;
-        bh=IF88uaAexNPXcn6h6tTFa8UBfKJhFLbWoCvjruc4xzU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Wm4AfbHT4yeXaGFDKM7vVqA3M9qKNX9cULcbRed6Ot7n7Hm0do9vIOagxhiLRvUpW
-         b8kM32lQrrlx69oS0ltun2qVcUI2W+RrGB+T93wuQ6L+d8NTTnOlFud7Chn7bIo2OD
-         L92nD8jerxGLFdv/fEInGX6SBs4R+dMTJwpUOMkM=
-Date:   Tue, 19 Feb 2019 23:51:22 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Jann Horn <jannh@google.com>, Ingo Molnar <mingo@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org, Song Liu <songliubraving@fb.com>
-Subject: Re: [PATCH] perf/core: use strndup_user() instead of buggy
- open-coded version
-Message-Id: <20190219235122.b9f8c6c47392a27131526018@kernel.org>
-In-Reply-To: <20190219204502.d0c4f95d1cda533990d96cd9@kernel.org>
-References: <20190218220723.176737-1-jannh@google.com>
-        <20190219204502.d0c4f95d1cda533990d96cd9@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 19 Feb 2019 09:52:30 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:56481 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725803AbfBSOwa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 09:52:30 -0500
+Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1M1YlB-1gujBA2Yln-00357Z; Tue, 19 Feb 2019 15:52:19 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     arm@kernel.org
+Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: pxa: remove CONFIG_SND_PXA2XX_AC97 in pxa_defconfig
+Date:   Tue, 19 Feb 2019 15:51:57 +0100
+Message-Id: <20190219145214.3811804-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:x4bvBMHiHPbWMhKrQcdgWXDZO6WyzNAmLpDDxKm89QKrHAOI5eD
+ IlnHRvII32Ujc91l5+oVC+f87fVpvY6PfU/FrdnPkFNaj2VBtJefuQq/Jhm4/Qq1plfJI0P
+ ro+/3K6qwvauN2rnoYeeloPGB7ojJa7KZtFJVKOKepwTPDyaA2UFPuKeOYZauFC5z5w2iB0
+ umju6PwWOxyPY7G8SEqxw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:04mafl0Eoak=:Pte53+ULKDbyM2QN1JQz9R
+ sXq/KKtbnycw22I6SEFgltIpvhCFinDD8KPflOMPg6jQHoEs9XYbaZo96ruA3lpwH8cvG2LB+
+ ErB4Ic8/K1zGeNPXwdJ9Pman04YW0/U7Ym6Ap0DXrlLT+Ijbp/LM4LBo2HbZr44NRBK5WVFM7
+ cWSPPDoVZuNCAbDV6ZblpzwIK6x2TfQ+NNpPfvIedLpNGq4loBVTozY4KSzchmniSZiiiwhiy
+ 8q53Kp8QQg9e+LYQwVTtzyikKq+ekSWZc3fo2eRXCAN+GMPVfO2r3sJYsxfSbKKBLjQ00dEoO
+ fsR52mA7YFl3s2+NJvSptE52K+/PjyIpgV6FkP5WpW70cMEOn8l/Ib1z9zYokbl5OydPYlgYG
+ aOwcuZ4Dd+P/S4aQsX0KMZU6oWKMyx6eFDvvgJFlo4LnHS0ZxYXmw9H+I+AoSmePqj7ryoD4S
+ ffC87srX8dOb6BAEX5PkLntB51yIx6NHWKOyeGxgNDZhGUQtMEjGwKoEkn4uQBlai5cABLuCQ
+ eMfRukPiOS8B/p1fDAi5KxhEa/+ggcSOUB1sQ/fkvdk3/OCjgx/hzWSXhzVwrX2M7p8mKFh0q
+ VUx7VcwG0b2Xjz7j13648iuO4v5nYPJyTEqyOiZqjBwIzXMpXLDujbnW8lWTYCCRUtDidnza4
+ az2QonX8mzNVQRXHaepeB0FgQu3WgvWE8W+JU5omiO4KMohEh+maZCo2kCSx0yzzxqGMR7mXG
+ Xk04ORUgA8IdzFWGpgLluDBfpdzyNzntn41tAg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Feb 2019 20:45:02 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+The CONFIG_SND_PXA2XX_AC97 driver is for the old AC97 bus implementation,
+and conflicts with all the new-style AC97 drivers after the conversion,
+so the drivers we want all get turned off.
 
-> On Mon, 18 Feb 2019 23:07:23 +0100
-> Jann Horn <jannh@google.com> wrote:
-> 
-> > The first version of this method was missing the check for
-> > `ret == PATH_MAX`; then such a check was added, but it didn't call kfree()
-> > on error, so there was still a small memory leak in the error case.
-> > Fix it by using strndup_user() instead of open-coding it.
-> > 
-> 
-> This looks good to me.
-> 
-> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Not disabling the symbol however does the right thing, and we get
+the drivers that are selectively enabled here.
 
-BTW, I think it should note that if the string is longer than PATH_MAX.
-caller will receive -EINVAL instead of -E2BIG with this fix.
+Fixes: 25540f68c871 ("ASoC: pxa: change ac97 dependencies")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/configs/pxa_defconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-Thank you,
-
-> 
-> Thank you!
-> 
-> > Fixes: 0eadcc7a7bc0 ("perf/core: Fix perf_uprobe_init()")
-> > Signed-off-by: Jann Horn <jannh@google.com>
-> > ---
-> > compile-tested only
-> > 
-> >  kernel/trace/trace_event_perf.c | 14 +++++---------
-> >  1 file changed, 5 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/kernel/trace/trace_event_perf.c b/kernel/trace/trace_event_perf.c
-> > index 76217bbef815..c744b02081c3 100644
-> > --- a/kernel/trace/trace_event_perf.c
-> > +++ b/kernel/trace/trace_event_perf.c
-> > @@ -299,15 +299,11 @@ int perf_uprobe_init(struct perf_event *p_event,
-> >  
-> >  	if (!p_event->attr.uprobe_path)
-> >  		return -EINVAL;
-> > -	path = kzalloc(PATH_MAX, GFP_KERNEL);
-> > -	if (!path)
-> > -		return -ENOMEM;
-> > -	ret = strncpy_from_user(
-> > -		path, u64_to_user_ptr(p_event->attr.uprobe_path), PATH_MAX);
-> > -	if (ret == PATH_MAX)
-> > -		return -E2BIG;
-> > -	if (ret < 0)
-> > -		goto out;
-> > +
-> > +	path = strndup_user(u64_to_user_ptr(p_event->attr.uprobe_path),
-> > +			    PATH_MAX);
-> > +	if (IS_ERR(path))
-> > +		return PTR_ERR(path);
-> >  	if (path[0] == '\0') {
-> >  		ret = -EINVAL;
-> >  		goto out;
-> > -- 
-> > 2.21.0.rc0.258.g878e2cd30e-goog
-> > 
-> 
-> 
-> -- 
-> Masami Hiramatsu <mhiramat@kernel.org>
-
-
+diff --git a/arch/arm/configs/pxa_defconfig b/arch/arm/configs/pxa_defconfig
+index 6bb506edb1f5..7f0f1fda2584 100644
+--- a/arch/arm/configs/pxa_defconfig
++++ b/arch/arm/configs/pxa_defconfig
+@@ -482,7 +482,6 @@ CONFIG_SND_PCM_OSS=m
+ CONFIG_SND_DYNAMIC_MINORS=y
+ CONFIG_SND_VERBOSE_PRINTK=y
+ CONFIG_SND_DEBUG=y
+-CONFIG_SND_PXA2XX_AC97=m
+ CONFIG_SND_USB_AUDIO=m
+ CONFIG_SND_SOC=m
+ CONFIG_SND_ATMEL_SOC=m
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.20.0
+
