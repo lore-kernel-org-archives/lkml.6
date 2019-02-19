@@ -2,111 +2,69 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0259BC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E93BC10F00
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:30:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C577F217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:28:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550586527;
-	bh=mbACBgK8AlicBJ9acnA6+42dWLobWs1pjQgRu/dXC1k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=ycnePzljw+VIrqPdaBmsL2DsilHmNZdo37xH4OyyMOZl98/Vz1fHtLiqs7DKVFAaL
-	 MEfb9ySlh2JyJrU0FATafIx/U6QhbQ3sX2JX1xSRvuqahIhqk0aFlko/ZuG8JEXKIV
-	 2eJ+/jQlDXwfYAyGv/ElADcfppkP/8X8PNthH2fY=
+	by mail.kernel.org (Postfix) with ESMTP id 170022147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 14:30:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbfBSO2q (ORCPT
+        id S1726947AbfBSOa5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 09:28:46 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40434 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725780AbfBSO2q (ORCPT
+        Tue, 19 Feb 2019 09:30:57 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:55387 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725841AbfBSOa5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 09:28:46 -0500
-Received: by mail-wr1-f66.google.com with SMTP id q1so22201787wrp.7
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 06:28:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iXrUyJoCzKaaHCoUt3slywreurfOOxrTlRkYOAb7QFw=;
-        b=EskcLpXeHZX2jJsNfcbwix3NpwTatk/6IAG+hfl7L9f+QQQGFMgEg7WvMrtkLqVjLh
-         vqAwWnxxhY1iIekD7jNd64H/HuXHuIJ5gB6nc9Rk+5bGGKCr4te34NPMlJduC/Seavc4
-         6DrMi+Ne5HpA3PPPuHLf3AM5crV3uyMnr7O/uedJHw35VfCi4Ej2Xk9FNLW77QcnROC0
-         UA2WkQP8SIIhquGo6eIoqcrMDWsiMurXjPekEe4lrrTwWIW1+5y6yVQMfmCraqjnBHiy
-         NtbIxxkdQk7f7sWCba0Kx1Yl67LIOjJ7eLD72VA32Ffy2YFY1BuaqLNFJQETrQgs+Cld
-         pRpw==
-X-Gm-Message-State: AHQUAuZDgb7QmSMfMr54PhYGWMbNLYy4Sg0fW63xdVFuuGyMRJ1Xob8S
-        g/z8nicq5EuFMg4CNyKKGpNuj9TEWcgorydt1NE=
-X-Google-Smtp-Source: AHgI3IYOZoqcGR0s5IzPNkjTCk6shHCBSQBTx6M0CJbFdX8+TMgq43Zatb5zi3luPMNyf1lGcSgSYrGw+RP4VTN7Hvg=
-X-Received: by 2002:adf:9e0c:: with SMTP id u12mr20494909wre.216.1550586524032;
- Tue, 19 Feb 2019 06:28:44 -0800 (PST)
+        Tue, 19 Feb 2019 09:30:57 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gw6QB-0005ZK-Db; Tue, 19 Feb 2019 14:30:55 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] block: don't dereference a potential null bio pointer until is has been null checked
+Date:   Tue, 19 Feb 2019 14:30:55 +0000
+Message-Id: <20190219143055.11633-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190219095815.15931-1-jolsa@kernel.org>
-In-Reply-To: <20190219095815.15931-1-jolsa@kernel.org>
-From:   Namhyung Kim <namhyung@kernel.org>
-Date:   Tue, 19 Feb 2019 23:28:31 +0900
-Message-ID: <CAM9d7cjJ59Uyv5TtosZYQBm4F5eFadyCpuxHioU99=3HH7xg9Q@mail.gmail.com>
-Subject: Re: [PATCHv3 0/4] perf tools: Assorted fixes
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jirka,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Tue, Feb 19, 2019 at 6:58 PM Jiri Olsa <jolsa@kernel.org> wrote:
->
-> hi,
-> sending assorted general fixes that queued
-> up in my other branches.
->
-> v3 changes:
->   - fix for fixes found by Namhyung
->   - new patch to use sysfs__mountpoint
->
-> v2 changes:
->   - renamed the interface to struct cpu_topology/numa_topology
->     plus related changes in function names
->   - adding missing Fixes tag
->
-> Also available in here:
->   https://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
->   perf/fixes
->
-> thanks,
-> jirka
->
->
-> ---
-> Jiri Olsa (4):
->       perf header: Fix wrong node write in NUMA_TOPOLOGY feature
->       perf tools: Add cpu_topology object
->       perf tools: Add numa_topology object
->       perf tools: Use sysfs__mountpoint() when reading cpu topology
+The bio pointer is being null checked hence it can be potentially
+null, however earlier it is being derefefenced on the assignment of
+front_seg_size.  Avoid the dereference issue by only assigning
+front_seg_size after bios has been null sanity checked.
 
-Acked-by: Namhyung Kim <namhyung@kernel.org>
+Fixes: dcebd755926b ("block: use bio_for_each_bvec() to compute multi-page bvec count")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ block/blk-merge.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks,
-Namhyung
+diff --git a/block/blk-merge.c b/block/blk-merge.c
+index bed065904677..1bec20fbe465 100644
+--- a/block/blk-merge.c
++++ b/block/blk-merge.c
+@@ -379,6 +379,7 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
+ 		return 1;
+ 	}
+ 
++	front_seg_size = bio->bi_seg_front_size;
+ 	fbio = bio;
+ 	seg_size = 0;
+ 	nr_phys_segs = 0;
+-- 
+2.20.1
 
-
->
->  tools/perf/util/Build     |   1 +
->  tools/perf/util/cputopo.c | 277 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  tools/perf/util/cputopo.h |  33 ++++++++++++++++++++++
->  tools/perf/util/header.c  | 269 ++++++++++++++++++++--------------------------------------------------------------------------------------------------------------------------------------------------------
->  4 files changed, 341 insertions(+), 239 deletions(-)
->  create mode 100644 tools/perf/util/cputopo.c
->  create mode 100644 tools/perf/util/cputopo.h
