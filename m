@@ -2,141 +2,144 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A4FC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:29:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBED8C10F00
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65D0A21738
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:29:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88EC92147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:30:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fJJeF7px"
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="DS1LTTqJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730077AbfBSX3f (ORCPT
+        id S1730015AbfBSXad (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 18:29:35 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:39712 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbfBSX3f (ORCPT
+        Tue, 19 Feb 2019 18:30:33 -0500
+Received: from smtprelay.synopsys.com ([198.182.47.9]:37050 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbfBSXac (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 18:29:35 -0500
-Received: by mail-lf1-f68.google.com with SMTP id m11so16123544lfc.6
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 15:29:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XvAitqVF8YTDJoXqz+MECJPCjC0B0qtBCBm3syoZ1lY=;
-        b=fJJeF7pxmhyxP5CMXJYWqYUgN8BQY7QRE8dWdogXcMMuQjawDaKEBbGQzjmCrEP68i
-         Iq/3EH+VwQT5qWqcNNkysB7EFHtuO9t21eSbRI0ZukDb/r32Seq1I/7GHcznOmeI+z5A
-         FGm46KPQixrj+ejLOjCFQ8yJqu51F0Frv1o4I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XvAitqVF8YTDJoXqz+MECJPCjC0B0qtBCBm3syoZ1lY=;
-        b=QpW47dJaO54yiYjkIFQx0jqwW0kR6h7FZ/2MGMSJnshFHPzbWw2qvbTT0UWcgZc7Cu
-         246sWCSQrT8rGuO7cbCLc2d1G8a1OpkbNyq1SHERHq75JOPJt8HyyzlVErX2xXrYv8+f
-         MXS3/7wwzqAjxqlaqyLANJyEchcvxqdJn1FGXSHtZlp2iwwf0ZuIXaQresebCQe4Iw4b
-         VbWX6qpKeiaesMYF4JCUJZnaTWErWmWWKLVZXReHGfPE3VaH4jSqBh2GAv1fKtAy8xBs
-         IPsQFWg5Gl+jnJfXVsapdewUXlKVY0oiE09tYbc2EUMcBqbpehSHwzLb/GQykuOKDBsu
-         8R8w==
-X-Gm-Message-State: AHQUAua6xrZhbiG0RjXPHLaFnnY4EczTIAZLeQPCd/wNrRXK9F1hop/4
-        xyod/p/+X5t8aL1Zi121FGlFGyiMmnE=
-X-Google-Smtp-Source: AHgI3IYUINpmWwYjoAcq2+lcpaigNrnlqqDGzGMQkYOHZM0TKFGMJxEl1Ogc6F12THAkTn3gC3zFYw==
-X-Received: by 2002:a19:4847:: with SMTP id v68mr17994744lfa.136.1550618972762;
-        Tue, 19 Feb 2019 15:29:32 -0800 (PST)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id a3-v6sm4664088ljd.20.2019.02.19.15.29.31
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 15:29:32 -0800 (PST)
-Received: by mail-lj1-f174.google.com with SMTP id d14so7958289ljl.9
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 15:29:31 -0800 (PST)
-X-Received: by 2002:a2e:9ad1:: with SMTP id p17mr2704106ljj.30.1550618970718;
- Tue, 19 Feb 2019 15:29:30 -0800 (PST)
+        Tue, 19 Feb 2019 18:30:32 -0500
+Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay.synopsys.com (Postfix) with ESMTPS id DEAE024E140D;
+        Tue, 19 Feb 2019 15:30:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1550619032; bh=VmpWHXwSrYXRg2Ml8v6Yv+kAthucdUMYDIyHvlAIOZk=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=DS1LTTqJzBWXMFWG5embgPlRidYVrHzHiV7doyaYmSiVAE4LV2zupGzb2r4YXfTLZ
+         qsmPKeXHw1Iw3ugSv7hhNk2lDFwcpZVHzJmtSAq0izsMYDDVY7lzhNmaPXOZAneY1j
+         7YSIgR8shnIFxUqc+t5YkY1krr8KzHgH+uQBQ8jl+bekeAn/i3MsZ2OgFl3Qou84bD
+         Lz2QoXpiY6P3sNWgCtufrLCluSzWc/r50byZFHMjQdHtULZJ5sjGvzBljp30ivpP4O
+         3LWfu6/fllHsOiMFMYTXc+KIcXcM9lS1Y8tJcZvmgHbIrwbGS7U3GAFFrzd/OBiFOb
+         v2A6fkg5/LFXw==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 1A902A0078;
+        Tue, 19 Feb 2019 23:30:29 +0000 (UTC)
+Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.104) by
+ us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 19 Feb 2019 15:30:29 -0800
+Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.105) by
+ IN01WEHTCA.internal.synopsys.com (10.144.199.103) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 20 Feb 2019 05:00:32 +0530
+Received: from [10.10.161.59] (10.10.161.59) by
+ IN01WEHTCB.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 20 Feb 2019 05:00:32 +0530
+Subject: Re: [PATCH] ARC: Explicitly set ARCH_SLAB_MINALIGN = 8
+To:     Alexey Brodkin <alexey.brodkin@synopsys.com>
+CC:     David Laight <David.Laight@ACULAB.COM>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        Arnd Bergmann <arnd.bergmann@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Newsgroups: gmane.linux.kernel.stable,gmane.linux.kernel.arc,gmane.linux.kernel
+References: <20190208105519.26750-1-abrodkin@synopsys.com>
+ <81017fe4-b31f-4942-e822-a7b70008b74d@synopsys.com>
+ <f83412d1e7fd4d67b4632c1f81fae963@AcuMS.aculab.com>
+ <bfc65835-21f9-6d5e-791d-ee49113d939c@synopsys.com>
+ <20190213125651.GP32494@hirez.programming.kicks-ass.net>
+ <e6138aeb-9ce4-fbfa-4d6a-b76f189a3e47@synopsys.com>
+ <4881796E12491D4BB15146FE0209CE64681DB01F@DE02WEMBXB.internal.synopsys.com>
+ <e4aed55f-656b-ebec-c3e3-393714cc693e@synopsys.com>
+ <4881796E12491D4BB15146FE0209CE64681EECE5@DE02WEMBXB.internal.synopsys.com>
+From:   Vineet Gupta <vineet.gupta1@synopsys.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vgupta@synopsys.com; keydata=
+ mQINBFEffBMBEADIXSn0fEQcM8GPYFZyvBrY8456hGplRnLLFimPi/BBGFA24IR+B/Vh/EFk
+ B5LAyKuPEEbR3WSVB1x7TovwEErPWKmhHFbyugdCKDv7qWVj7pOB+vqycTG3i16eixB69row
+ lDkZ2RQyy1i/wOtHt8Kr69V9aMOIVIlBNjx5vNOjxfOLux3C0SRl1veA8sdkoSACY3McOqJ8
+ zR8q1mZDRHCfz+aNxgmVIVFN2JY29zBNOeCzNL1b6ndjU73whH/1hd9YMx2Sp149T8MBpkuQ
+ cFYUPYm8Mn0dQ5PHAide+D3iKCHMupX0ux1Y6g7Ym9jhVtxq3OdUI5I5vsED7NgV9c8++baM
+ 7j7ext5v0l8UeulHfj4LglTaJIvwbUrCGgtyS9haKlUHbmey/af1j0sTrGxZs1ky1cTX7yeF
+ nSYs12GRiVZkh/Pf3nRLkjV+kH++ZtR1GZLqwamiYZhAHjo1Vzyl50JT9EuX07/XTyq/Bx6E
+ dcJWr79ZphJ+mR2HrMdvZo3VSpXEgjROpYlD4GKUApFxW6RrZkvMzuR2bqi48FThXKhFXJBd
+ JiTfiO8tpXaHg/yh/V9vNQqdu7KmZIuZ0EdeZHoXe+8lxoNyQPcPSj7LcmE6gONJR8ZqAzyk
+ F5voeRIy005ZmJJ3VOH3Gw6Gz49LVy7Kz72yo1IPHZJNpSV5xwARAQABtCpWaW5lZXQgR3Vw
+ dGEgKGFsaWFzKSA8dmd1cHRhQHN5bm9wc3lzLmNvbT6JAj4EEwECACgCGwMGCwkIBwMCBhUI
+ AgkKCwQWAgMBAh4BAheABQJbBYpwBQkLx0HcAAoJEGnX8d3iisJeChAQAMR2UVbJyydOv3aV
+ jmqP47gVFq4Qml1weP5z6czl1I8n37bIhdW0/lV2Zll+yU1YGpMgdDTHiDqnGWi4pJeu4+c5
+ xsI/VqkH6WWXpfruhDsbJ3IJQ46//jb79ogjm6VVeGlOOYxx/G/RUUXZ12+CMPQo7Bv+Jb+t
+ NJnYXYMND2Dlr2TiRahFeeQo8uFbeEdJGDsSIbkOV0jzrYUAPeBwdN8N0eOB19KUgPqPAC4W
+ HCg2LJ/o6/BImN7bhEFDFu7gTT0nqFVZNXlOw4UcGGpM3dq/qu8ZgRE0turY9SsjKsJYKvg4
+ djAaOh7H9NJK72JOjUhXY/sMBwW5vnNwFyXCB5t4ZcNxStoxrMtyf35synJVinFy6wCzH3eJ
+ XYNfFsv4gjF3l9VYmGEJeI8JG/ljYQVjsQxcrU1lf8lfARuNkleUL8Y3rtxn6eZVtAlJE8q2
+ hBgu/RUj79BKnWEPFmxfKsaj8of+5wubTkP0I5tXh0akKZlVwQ3lbDdHxznejcVCwyjXBSny
+ d0+qKIXX1eMh0/5sDYM06/B34rQyq9HZVVPRHdvsfwCU0s3G+5Fai02mK68okr8TECOzqZtG
+ cuQmkAeegdY70Bpzfbwxo45WWQq8dSRURA7KDeY5LutMphQPIP2syqgIaiEatHgwetyVCOt6
+ tf3ClCidHNaGky9KcNSQuQINBFEffBMBEADXZ2pWw4Regpfw+V+Vr6tvZFRl245PV9rWFU72
+ xNuvZKq/WE3xMu+ZE7l2JKpSjrEoeOHejtT0cILeQ/Yhf2t2xAlrBLlGOMmMYKK/K0Dc2zf0
+ MiPRbW/NCivMbGRZdhAAMx1bpVhInKjU/6/4mT7gcE57Ep0tl3HBfpxCK8RRlZc3v8BHOaEf
+ cWSQD7QNTZK/kYJo+Oyux+fzyM5TTuKAaVE63NHCgWtFglH2vt2IyJ1XoPkAMueLXay6enSK
+ Nci7qAG2UwicyVDCK9AtEub+ps8NakkeqdSkDRp5tQldJbfDaMXuWxJuPjfSojHIAbFqP6Qa
+ ANXvTCSuBgkmGZ58skeNopasrJA4z7OsKRUBvAnharU82HGemtIa4Z83zotOGNdaBBOHNN2M
+ HyfGLm+kEoccQheH+my8GtbH1a8eRBtxlk4c02ONkq1Vg1EbIzvgi4a56SrENFx4+4sZcm8o
+ ItShAoKGIE/UCkj/jPlWqOcM/QIqJ2bR8hjBny83ONRf2O9nJuEYw9vZAPFViPwWG8tZ7J+R
+ euXKai4DDr+8oFOi/40mIDe/Bat3ftyd+94Z1RxDCngd3Q85bw13t2ttNLw5eHufLIpoEyAh
+ TCLNQ58eT91YGVGvFs39IuH0b8ovVvdkKGInCT59Vr0MtfgcsqpDxWQXJXYZYTFHd3/RswAR
+ AQABiQIlBBgBAgAPAhsMBQJbBYpwBQkLx0HdAAoJEGnX8d3iisJewe8P/36pkZrVTfO+U+Gl
+ 1OQh4m6weozuI8Y98/DHLMxEujKAmRzy+zMHYlIl3WgSih1UMOZ7U84yVZQwXQkLItcwXoih
+ ChKD5D2BKnZYEOLM+7f9DuJuWhXpee80aNPzEaubBYQ7dYt8rcmB7SdRz/yZq3lALOrF/zb6
+ SRleBh0DiBLP/jKUV74UAYV3OYEDHN9blvhWUEFFE0Z+j96M4/kuRdxvbDmp04Nfx79AmJEn
+ fv1Vvc9CFiWVbBrNPKomIN+JV7a7m2lhbfhlLpUk0zGFDTWcWejl4qz/pCYSoIUU4r/VBsCV
+ ZrOun4vd4cSi/yYJRY4kaAJGCL5k7qhflL2tgldUs+wERH8ZCzimWVDBzHTBojz0Ff3w2+gY
+ 6FUbAJBrBZANkymPpdAB/lTsl8D2ZRWyy90f4VVc8LB/QIWY/GiS2towRXQBjHOfkUB1JiEX
+ YH/i93k71mCaKfzKGXTVxObU2I441w7r4vtNlu0sADRHCMUqHmkpkjV1YbnYPvBPFrDBS1V9
+ OfD9SutXeDjJYe3N+WaLRp3T3x7fYVnkfjQIjDSOdyPWlTzqQv0I3YlUk7KjFrh1rxtrpoYS
+ IQKf5HuMowUNtjyiK2VhA5V2XDqd+ZUT3RqfAPf3Y5HjkhKJRqoIDggUKMUKmXaxCkPGi91T
+ hhqBJlyU6MVUa6vZNv8E
+Message-ID: <d20680b3-f71e-9eb7-f79c-660e25673d82@synopsys.com>
+Date:   Tue, 19 Feb 2019 15:30:19 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <1550394300-17420-1-git-send-email-yong.wu@mediatek.com> <1550394300-17420-2-git-send-email-yong.wu@mediatek.com>
-In-Reply-To: <1550394300-17420-2-git-send-email-yong.wu@mediatek.com>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Tue, 19 Feb 2019 15:28:54 -0800
-X-Gmail-Original-Message-ID: <CAE=gft5pp7sUHM8P3RTeFPdY-VWVLwLM6=abS6FffZU4WSOd8g@mail.gmail.com>
-Message-ID: <CAE=gft5pp7sUHM8P3RTeFPdY-VWVLwLM6=abS6FffZU4WSOd8g@mail.gmail.com>
-Subject: Re: [PATCH v6 01/22] dt-bindings: mediatek: Add binding for mt8183
- IOMMU and SMI
-To:     Yong Wu <yong.wu@mediatek.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tomasz Figa <tfiga@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, yingjoe.chen@mediatek.com,
-        youlin.pei@mediatek.com, Nicolas Boichat <drinkcat@chromium.org>,
-        anan.sun@mediatek.com, Matthias Kaehlcke <mka@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <4881796E12491D4BB15146FE0209CE64681EECE5@DE02WEMBXB.internal.synopsys.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.10.161.59]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 17, 2019 at 1:06 AM Yong Wu <yong.wu@mediatek.com> wrote:
->
-> This patch adds decriptions for mt8183 IOMMU and SMI.
->
-> mt8183 has only one M4U like mt8173 and is also MTK IOMMU gen2 which
-> uses ARM Short-Descriptor translation table format.
->
-> The mt8183 M4U-SMI HW diagram is as below:
->
->                           EMI
->                            |
->                           M4U
->                            |
->                        ----------
->                        |        |
->                    gals0-rx   gals1-rx
->                        |        |
->                        |        |
->                    gals0-tx   gals1-tx
->                        |        |
->                       ------------
->                        SMI Common
->                       ------------
->                            |
->   +-----+-----+--------+-----+-----+-------+-------+
->   |     |     |        |     |     |       |       |
->   |     |  gals-rx  gals-rx  |   gals-rx gals-rx gals-rx
->   |     |     |        |     |     |       |       |
->   |     |     |        |     |     |       |       |
->   |     |  gals-tx  gals-tx  |   gals-tx gals-tx gals-tx
->   |     |     |        |     |     |       |       |
-> larb0 larb1  IPU0    IPU1  larb4  larb5  larb6    CCU
-> disp  vdec   img     cam    venc   img    cam
->
-> All the connections are HW fixed, SW can NOT adjust it.
->
-> Compared with mt8173, we add a GALS(Global Async Local Sync) module
-> between SMI-common and M4U, and additional GALS between larb2/3/5/6
-> and SMI-common. GALS can help synchronize for the modules in different
-> clock frequency, it can be seen as a "asynchronous fifo".
->
-> GALS can only help transfer the command/data while it doesn't have
-> the configuring register, thus it has the special "smi" clock and it
-> doesn't have the "apb" clock. From the diagram above, we add "gals0"
-> and "gals1" clocks for smi-common and add a "gals" clock for smi-larb.
->
-> From the diagram above, IPU0/IPU1(Image Processor Unit) and CCU(Camera
-> Control Unit) is connected with smi-common directly, we can take them
-> as "larb2", "larb3" and "larb7", and their register spaces are
-> different with the normal larb.
->
-> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+On 2/18/19 12:53 AM, Alexey Brodkin wrote:
+> So are you OK with this patch or something should be done before applying?
 
-Reviewed-by: Evan Green <evgreen@chromium.org>
+Or your original patch was
+
++#ifdef CONFIG_ARC_HAS_LL64
++#define ARCH_SLAB_MINALIGN     8
++#endif
+
+I don't think this issue is related to LL64 at all. A long long on ARC could be 4
+byte aligned (as mandated by the ABI). It could use LDD or 2 separate LDs. This
+has no bearing on the fact that LLOCKD have to use a 64-bit aligned addresses. So
+I think we should just do this unconditionally. Agree ?
