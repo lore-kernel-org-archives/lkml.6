@@ -2,121 +2,246 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93222C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC7FBC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:30:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66EDC2086C
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:29:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4BB221479
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:30:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728848AbfBSV3A (ORCPT
+        id S1729327AbfBSVaG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 16:29:00 -0500
-Received: from mga02.intel.com ([134.134.136.20]:61634 "EHLO mga02.intel.com"
+        Tue, 19 Feb 2019 16:30:06 -0500
+Received: from gofer.mess.org ([88.97.38.141]:53349 "EHLO gofer.mess.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725829AbfBSV27 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 16:28:59 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2019 13:28:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,388,1544515200"; 
-   d="scan'208";a="321696263"
-Received: from orsmsx108.amr.corp.intel.com ([10.22.240.6])
-  by fmsmga005.fm.intel.com with ESMTP; 19 Feb 2019 13:28:57 -0800
-Received: from orsmsx112.amr.corp.intel.com ([169.254.3.70]) by
- ORSMSX108.amr.corp.intel.com ([169.254.2.157]) with mapi id 14.03.0415.000;
- Tue, 19 Feb 2019 13:28:56 -0800
-From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To:     "bp@alien8.de" <bp@alien8.de>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "nadav.amit@gmail.com" <nadav.amit@gmail.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux_dti@icloud.com" <linux_dti@icloud.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v2 14/20] mm: Make hibernate handle unmapped pages
-Thread-Topic: [PATCH v2 14/20] mm: Make hibernate handle unmapped pages
-Thread-Index: AQHUt2sViQgi+Bs0HkOgKSmVUNQOKqXnnOgAgACunoA=
-Date:   Tue, 19 Feb 2019 21:28:55 +0000
-Message-ID: <07ea2a4a9f1771f7bad82ad8fe5ee9483b79d115.camel@intel.com>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
-         <20190129003422.9328-15-rick.p.edgecombe@intel.com>
-         <20190219110400.GA19514@zn.tnic>
-In-Reply-To: <20190219110400.GA19514@zn.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.54.75.11]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D2C7ED715E2C204FA4910F9B0DA68816@intel.com>
-Content-Transfer-Encoding: base64
+        id S1725829AbfBSVaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 16:30:05 -0500
+Received: by gofer.mess.org (Postfix, from userid 1000)
+        id 0F95A600B4; Tue, 19 Feb 2019 21:30:03 +0000 (GMT)
+Date:   Tue, 19 Feb 2019 21:30:03 +0000
+From:   Sean Young <sean@mess.org>
+To:     Gonsolo <gonsolo@gmail.com>
+Cc:     crope@iki.fi, linux-media@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Subject: Re: DVB-T2 Stick
+Message-ID: <20190219213003.l7hzy2emdsxe4izy@gofer.mess.org>
+References: <CANL0fFSGG_+R2zbf-9MxVLJMTMgc+-fwSoLCqS1qc+jWo-zNLA@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANL0fFSGG_+R2zbf-9MxVLJMTMgc+-fwSoLCqS1qc+jWo-zNLA@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE5LTAyLTE5IGF0IDEyOjA0ICswMTAwLCBCb3Jpc2xhdiBQZXRrb3Ygd3JvdGU6
-DQo+IE9uIE1vbiwgSmFuIDI4LCAyMDE5IGF0IDA0OjM0OjE2UE0gLTA4MDAsIFJpY2sgRWRnZWNv
-bWJlIHdyb3RlOg0KPiA+IEZvciBhcmNoaXRlY3R1cmVzIHdpdGggQ09ORklHX0FSQ0hfSEFTX1NF
-VF9BTElBUywgcGFnZXMgY2FuIGJlIHVubWFwcGVkDQo+ID4gYnJpZWZseSBvbiB0aGUgZGlyZWN0
-bWFwLCBldmVuIHdoZW4gQ09ORklHX0RFQlVHX1BBR0VBTExPQyBpcyBub3QNCj4gPiBjb25maWd1
-cmVkLiBTbyB0aGlzIGNoYW5nZXMga2VybmVsX21hcF9wYWdlcyBhbmQga2VybmVsX3BhZ2VfcHJl
-c2VudCB0byBiZQ0KPiANCj4gcy90aGlzIGNoYW5nZXMvY2hhbmdlLw0KPiANCj4gRnJvbSBEb2N1
-bWVudGF0aW9uL3Byb2Nlc3Mvc3VibWl0dGluZy1wYXRjaGVzLnJzdDoNCj4gDQo+ICAiRGVzY3Jp
-YmUgeW91ciBjaGFuZ2VzIGluIGltcGVyYXRpdmUgbW9vZCwgZS5nLiAibWFrZSB4eXp6eSBkbyBm
-cm90eiINCj4gICBpbnN0ZWFkIG9mICJbVGhpcyBwYXRjaF0gbWFrZXMgeHl6enkgZG8gZnJvdHoi
-IG9yICJbSV0gY2hhbmdlZCB4eXp6eQ0KPiAgIHRvIGRvIGZyb3R6IiwgYXMgaWYgeW91IGFyZSBn
-aXZpbmcgb3JkZXJzIHRvIHRoZSBjb2RlYmFzZSB0byBjaGFuZ2UNCj4gICBpdHMgYmVoYXZpb3Vy
-LiINCj4gDQo+IEFsc28sIHBsZWFzZSBlbmQgZnVuY3Rpb24gbmFtZXMgd2l0aCBwYXJlbnRoZXNl
-cy4NClllcywgZ290Y2hhLg0KDQo+ID4gZGVmaW5lZCB3aGVuIENPTkZJR19BUkNIX0hBU19TRVRf
-QUxJQVMgaXMgZGVmaW5lZCBhcyB3ZWxsLiBJdCBhbHNvIGNoYW5nZXMNCj4gPiBwbGFjZXMgKHBh
-Z2VfYWxsb2MuYykgd2hlcmUgdGhvc2UgZnVuY3Rpb25zIGFyZSBhc3N1bWVkIHRvIG9ubHkgYmUN
-Cj4gPiBpbXBsZW1lbnRlZCB3aGVuIENPTkZJR19ERUJVR19QQUdFQUxMT0MgaXMgZGVmaW5lZC4N
-Cj4gDQo+IFRoZSBjb21taXQgbWVzc2FnZSBkb2Vzbid0IG5lZWQgdG8gc2F5ICJ3aGF0IiB5b3Un
-cmUgZG9pbmcgLSB0aGF0IHNob3VsZA0KPiBiZSBvYnZpb3VzIGZyb20gdGhlIGRpZmYgYmVsb3cu
-IEl0IHNob3VsZCByYXRoZXIgc2F5ICJ3aHkiIHlvdSdyZSBkb2luZw0KPiBpdC4NCk9rLCBzb3Jy
-eS4gSSdsbCBjaGFuZ2UgdGhpcyB0byBiZSBtb3JlIGNvbmNpc2UuDQoNCj4gPiBTbyBub3cgd2hl
-biBDT05GSUdfQVJDSF9IQVNfU0VUX0FMSUFTPXksIGhpYmVybmF0ZSB3aWxsIGhhbmRsZSBub3Qg
-cHJlc2VudA0KPiA+IHBhZ2Ugd2hlbiBzYXZpbmcuIFByZXZpb3VzbHkgdGhpcyB3YXMgYWxyZWFk
-eSBkb25lIHdoZW4NCj4gDQo+IHBhZ2VzDQo+IA0KPiA+IENPTkZJR19ERUJVR19QQUdFQUxMT0Mg
-d2FzIGNvbmZpZ3VyZWQuIEl0IGRvZXMgbm90IGFwcGVhciB0byBoYXZlIGEgYmlnDQo+ID4gaGli
-ZXJuYXRpbmcgcGVyZm9ybWFuY2UgaW1wYWN0Lg0KPiANCj4gQ29tbWVudCBvdmVyIHNhZmVfY29w
-eV9wYWdlDQpPaCwgeWVzIHlvdSBhcmUgcmlnaHQuDQoNCj4gPiBCZWZvcmU6DQo+ID4gWyAgICA0
-LjY3MDkzOF0gUE06IFdyb3RlIDE3MTk5NiBrYnl0ZXMgaW4gMC4yMSBzZWNvbmRzICg4MTkuMDIg
-TUIvcykNCj4gPiANCj4gPiBBZnRlcjoNCj4gPiBbICAgIDQuNTA0NzE0XSBQTTogV3JvdGUgMTc4
-OTMyIGtieXRlcyBpbiAwLjIyIHNlY29uZHMgKDgxMy4zMiBNQi9zKQ0KPiANCj4gSUlOTSwgdGhh
-dCdzIGxpa2UgMTczNCBwYWdlcyBtb3JlLiBIb3cgYW0gSSB0byB1bmRlcnN0YW5kIHRoaXMgbnVt
-YmVyPw0KPiANCj4gQ29kZSBoYXMgY2FsbGVkIHNldF9hbGlhc19udl9ub2ZsdXNoKCkgb24gdGhl
-bSBhbmQgc2FmZV9jb3B5X3BhZ2UoKSBub3cNCj4gbWFwcyB0aGVtIG9uZSBieSBvbmUgdG8gY29w
-eSB0aGVtIHRvIHRoZSBoaWJlcm5hdGlvbiBpbWFnZT8NCj4gDQo+IFRoeC4NCj4gDQpUaGVzZSBh
-cmUgZnJvbSBsb2dzIGhpYmVybmF0ZSBnZW5lcmF0ZXMuIFRoZSBjb25jZXJuIHdhcyB0aGF0IGhp
-YmVybmF0ZSBjb3VsZCBiZQ0Kc2xpZ2h0bHkgc2xvd2VyIGJlY2F1c2Ugb2YgdGhlIGNoZWNraW5n
-IG9mIHdoZXRoZXIgdGhlIHBhZ2VzIGFyZSBtYXBwZWQuIFRoZQ0KYmFuZHdpZHRoIG51bWJlciBj
-YW4gYmUgdXNlZCB0byBjb21wYXJlLCA4MTkuMDItPjgxMy4zMiBNQi9zLiBTb21lIHJhbmRvbW5l
-c3MNCm11c3QgaGF2ZSByZXN1bHRlZCBpbiBkaWZmZXJlbnQgYW1vdW50cyBvZiBtZW1vcnkgdXNl
-ZCBiZXR3ZWVuIHRlc3RzLiBJIGNhbiBqdXN0DQpyZW1vdmUgdGhlIGxvZyBsaW5lcyBhbmQgaW5j
-bHVkZSB0aGUgYmFuZHdpZHRoIG51bWJlcnMuDQoNClRoYW5rcywNCg0KUmljaw0K
+Hi,
+
+On Wed, Jan 30, 2019 at 11:32:12AM +0100, Gonsolo wrote:
+> Hi!
+> 
+> The following patch adds support for the Logilink VG0022A DVB-T2 stick.
+> After patching and building the kernel it shows up with lsusb and I
+> used w_scan to scan for channels and vlc for watching.
+> The original patches were from Andreas Kemnade.
+> The only thing that doesn't work is wake up after standby.
+> 
+> Do you think you can apply this patch?
+
+I'm afraid there are many problems with this patch. First of all it looks
+like support was added for a si2168 tuner but it looks like it will break
+for any other si2157-type device.
+
+Secondly there are lots of coding style issues, see:
+
+https://www.kernel.org/doc/html/v4.10/process/coding-style.html
+
+Thanks,
+
+Sean
+> 
+> Thanks
+> -- 
+> g
+
+> diff --git a/drivers/media/tuners/si2157.c b/drivers/media/tuners/si2157.c
+> index d389f1fc237a..1f923418ff10 100644
+> --- a/drivers/media/tuners/si2157.c
+> +++ b/drivers/media/tuners/si2157.c
+> @@ -84,7 +84,7 @@ static int si2157_init(struct dvb_frontend *fe)
+>  	struct si2157_cmd cmd;
+>  	const struct firmware *fw;
+>  	const char *fw_name;
+> -	unsigned int uitmp, chip_id;
+> +        unsigned int uitmp;
+>  
+>  	dev_dbg(&client->dev, "\n");
+>  
+> @@ -126,7 +126,7 @@ static int si2157_init(struct dvb_frontend *fe)
+>  		if (ret)
+>  			goto err;
+>  	}
+> -
+> +#if 0
+>  	/* query chip revision */
+>  	memcpy(cmd.args, "\x02", 1);
+>  	cmd.wlen = 1;
+> @@ -146,6 +146,8 @@ static int si2157_init(struct dvb_frontend *fe)
+>  	#define SI2141_A10 ('A' << 24 | 41 << 16 | '1' << 8 | '0' << 0)
+>  
+>  	switch (chip_id) {
+> +#endif
+> +        switch (dev->chip_id) {
+>  	case SI2158_A20:
+>  	case SI2148_A20:
+>  		fw_name = SI2158_A20_FIRMWARE;
+> @@ -166,9 +168,9 @@ static int si2157_init(struct dvb_frontend *fe)
+>  		goto err;
+>  	}
+>  
+> -	dev_info(&client->dev, "found a 'Silicon Labs Si21%d-%c%c%c'\n",
+> -			cmd.args[2], cmd.args[1], cmd.args[3], cmd.args[4]);
+> -
+> +//	dev_info(&client->dev, "found a 'Silicon Labs Si21%d-%c%c%c'\n",
+> +//			cmd.args[2], cmd.args[1], cmd.args[3], cmd.args[4]);
+> +//
+>  	if (fw_name == NULL)
+>  		goto skip_fw_download;
+>  
+> @@ -461,6 +463,38 @@ static int si2157_probe(struct i2c_client *client,
+>  	memcpy(&fe->ops.tuner_ops, &si2157_ops, sizeof(struct dvb_tuner_ops));
+>  	fe->tuner_priv = client;
+>  
+> +       /* power up */
+> +       if (dev->chiptype == SI2157_CHIPTYPE_SI2146) {
+> +               memcpy(cmd.args, "\xc0\x05\x01\x00\x00\x0b\x00\x00\x01", 9);
+> +               cmd.wlen = 9;
+> +       } else {
+> +               memcpy(cmd.args,
+> +               "\xc0\x00\x0c\x00\x00\x01\x01\x01\x01\x01\x01\x02\x00\x00\x01",
+> +               15);
+> +               cmd.wlen = 15;
+> +       }
+> +       cmd.rlen = 1;
+> +       ret = si2157_cmd_execute(client, &cmd);
+> +       if (ret)
+> +               goto err;
+> +       /* query chip revision */
+> +       /* hack: do it here because after the si2168 gets 0101, commands will
+> +        * still be executed here but no result
+> +        */
+> +       memcpy(cmd.args, "\x02", 1);
+> +       cmd.wlen = 1;
+> +       cmd.rlen = 13;
+> +       ret = si2157_cmd_execute(client, &cmd);
+> +       if (ret)
+> +               goto err_kfree;
+> +       dev->chip_id = cmd.args[1] << 24 |
+> +                       cmd.args[2] << 16 |
+> +                       cmd.args[3] << 8 |
+> +                       cmd.args[4] << 0;
+> +       dev_info(&client->dev, "found a 'Silicon Labs Si21%d-%c%c%c'\n",
+> +                       cmd.args[2], cmd.args[1], cmd.args[3], cmd.args[4]);
+> + 
+> +
+>  #ifdef CONFIG_MEDIA_CONTROLLER
+>  	if (cfg->mdev) {
+>  		dev->mdev = cfg->mdev;
+> diff --git a/drivers/media/tuners/si2157_priv.h b/drivers/media/tuners/si2157_priv.h
+> index 50f86300d965..3592146cf49a 100644
+> --- a/drivers/media/tuners/si2157_priv.h
+> +++ b/drivers/media/tuners/si2157_priv.h
+> @@ -37,6 +37,7 @@ struct si2157_dev {
+>  	u8 chiptype;
+>  	u8 if_port;
+>  	u32 if_frequency;
+> +        u32 chip_id;
+>  	struct delayed_work stat_work;
+>  
+>  #if defined(CONFIG_MEDIA_CONTROLLER)
+> @@ -51,6 +52,13 @@ struct si2157_dev {
+>  #define SI2157_CHIPTYPE_SI2146 1
+>  #define SI2157_CHIPTYPE_SI2141 2
+>  
+> +#define SI2158_A20 ('A' << 24 | 58 << 16 | '2' << 8 | '0' << 0)
+> +#define SI2148_A20 ('A' << 24 | 48 << 16 | '2' << 8 | '0' << 0)
+> +#define SI2157_A30 ('A' << 24 | 57 << 16 | '3' << 8 | '0' << 0)
+> +#define SI2147_A30 ('A' << 24 | 47 << 16 | '3' << 8 | '0' << 0)
+> +#define SI2146_A10 ('A' << 24 | 46 << 16 | '1' << 8 | '0' << 0)
+> +#define SI2141_A10 ('A' << 24 | 41 << 16 | '1' << 8 | '0' << 0)
+> +
+>  /* firmware command struct */
+>  #define SI2157_ARGLEN      30
+>  struct si2157_cmd {
+> diff --git a/drivers/media/usb/dvb-usb-v2/af9035.c b/drivers/media/usb/dvb-usb-v2/af9035.c
+> index 80d3bd3a0f24..28b073bfe0d4 100644
+> --- a/drivers/media/usb/dvb-usb-v2/af9035.c
+> +++ b/drivers/media/usb/dvb-usb-v2/af9035.c
+> @@ -1216,8 +1216,51 @@ static int it930x_frontend_attach(struct dvb_usb_adapter *adap)
+>  	struct si2168_config si2168_config;
+>  	struct i2c_adapter *adapter;
+>  
+> -	dev_dbg(&intf->dev, "adap->id=%d\n", adap->id);
+> -
+> +	//dev_dbg(&intf->dev, "adap->id=%d\n", adap->id);
+> +       dev_dbg(&intf->dev, "%s  adap->id=%d\n", __func__, adap->id);
+> +
+> +       /* I2C master bus 2 clock speed 300k */
+> +       ret = af9035_wr_reg(d, 0x00f6a7, 0x07);
+> +       if (ret < 0)
+> +               goto err;
+> +
+> +       /* I2C master bus 1,3 clock speed 300k */
+> +       ret = af9035_wr_reg(d, 0x00f103, 0x07);
+> +       if (ret < 0)
+> +               goto err;
+> +
+> +       /* set gpio11 low */
+> +       ret = af9035_wr_reg_mask(d, 0xd8d4, 0x01, 0x01);
+> +       if (ret < 0)
+> +               goto err;
+> +
+> +       ret = af9035_wr_reg_mask(d, 0xd8d5, 0x01, 0x01);
+> +       if (ret < 0)
+> +               goto err;
+> +
+> +       ret = af9035_wr_reg_mask(d, 0xd8d3, 0x01, 0x01);
+> +       if (ret < 0)
+> +               goto err;
+> + 
+> +       /* Tuner enable using gpiot2_en, gpiot2_on and gpiot2_o (reset) */
+> +       ret = af9035_wr_reg_mask(d, 0xd8b8, 0x01, 0x01);
+> +       if (ret < 0)
+> +               goto err;
+> +
+> +       ret = af9035_wr_reg_mask(d, 0xd8b9, 0x01, 0x01);
+> +       if (ret < 0)
+> +               goto err;
+> +
+> +       ret = af9035_wr_reg_mask(d, 0xd8b7, 0x00, 0x01);
+> +       if (ret < 0)
+> +               goto err;
+> +
+> +       msleep(200);
+> +
+> +       ret = af9035_wr_reg_mask(d, 0xd8b7, 0x01, 0x01);
+> +       if (ret < 0)
+> +               goto err;
+> + 
+>  	memset(&si2168_config, 0, sizeof(si2168_config));
+>  	si2168_config.i2c_adapter = &adapter;
+>  	si2168_config.fe = &adap->fe[0];
+> @@ -2128,6 +2171,8 @@ static const struct usb_device_id af9035_id_table[] = {
+>  	/* IT930x devices */
+>  	{ DVB_USB_DEVICE(USB_VID_ITETECH, USB_PID_ITETECH_IT9303,
+>  		&it930x_props, "ITE 9303 Generic", NULL) },
+> +        { DVB_USB_DEVICE(USB_VID_DEXATEK, 0x0100,
+> +                &it930x_props, "Logilink VG0022A", NULL) },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(usb, af9035_id_table);
+
