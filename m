@@ -2,182 +2,162 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A297DC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:07:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFA0C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:08:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37D0D2147C
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:07:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="D3xJGdxA"
+	by mail.kernel.org (Postfix) with ESMTP id E3E6C2147C
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:08:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729771AbfBSUHb (ORCPT
+        id S1729694AbfBSUIa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 15:07:31 -0500
-Received: from mail-eopbgr60058.outbound.protection.outlook.com ([40.107.6.58]:3776
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726215AbfBSUHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 15:07:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qlnu2xq850A9e5tFnHYaGTbGQryzXqdqu0hi8yKWlMQ=;
- b=D3xJGdxAFnegCPidRjOMdSgzg9ZrpAMhMvIFaYj579JXeSISew9NXaEL9aKgIk2rsUDKjQn46RAoTTUD0G4nJPukZkoOcfj1q/uB+3rcRHRmlKlC49VJI5RuUHaXnMjZurS/90kHiltZpQaUoX5PD05pyVK0pbDOQFrbbEjlpZY=
-Received: from AM6PR04MB5863.eurprd04.prod.outlook.com (20.179.1.11) by
- AM6PR04MB3973.eurprd04.prod.outlook.com (52.135.160.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.19; Tue, 19 Feb 2019 20:07:27 +0000
-Received: from AM6PR04MB5863.eurprd04.prod.outlook.com
- ([fe80::6c22:d122:2edf:d948]) by AM6PR04MB5863.eurprd04.prod.outlook.com
- ([fe80::6c22:d122:2edf:d948%5]) with mapi id 15.20.1643.014; Tue, 19 Feb 2019
- 20:07:27 +0000
-From:   Leo Li <leoyang.li@nxp.com>
-To:     Peter Rosin <peda@axentia.se>,
-        Pankaj Bansal <pankaj.bansal@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Subject: RE: [PATCH] drivers: mux: Generic register bitfield-based multiplexer
- driver
-Thread-Topic: [PATCH] drivers: mux: Generic register bitfield-based
- multiplexer driver
-Thread-Index: AQHUx0xz2hlFfSdjRkyo3ywwDF+eo6XlTzmAgAADfWCAAErjAIAAbmmQgAArf4CAAVNNAA==
-Date:   Tue, 19 Feb 2019 20:07:27 +0000
-Message-ID: <AM6PR04MB5863258E5168DD5115AEBDA88F7C0@AM6PR04MB5863.eurprd04.prod.outlook.com>
-References: <20190218110509.28225-1-pankaj.bansal@nxp.com>
- <3d8168fa-d71a-bcb7-6a1a-a82fad1a01f4@axentia.se>
- <VI1PR0401MB2496C7B8250C4E760108F6FFF1630@VI1PR0401MB2496.eurprd04.prod.outlook.com>
- <a653de12-4785-615a-670e-2cf68bee1372@axentia.se>
- <AM0PR04MB58588DDADE24F3612E5EF5108F630@AM0PR04MB5858.eurprd04.prod.outlook.com>
- <bfe3fd9c-7375-1c53-5692-7cdea3c9b670@axentia.se>
-In-Reply-To: <bfe3fd9c-7375-1c53-5692-7cdea3c9b670@axentia.se>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leoyang.li@nxp.com; 
-x-originating-ip: [64.157.242.222]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 4dae1890-638f-4a89-916c-08d696a5defd
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB3973;
-x-ms-traffictypediagnostic: AM6PR04MB3973:
-x-microsoft-exchange-diagnostics: =?utf-8?B?MTtBTTZQUjA0TUIzOTczOzIzOkl0Y0hqK0t4Mjlja3AzMloxRFpBb0VOWlNu?=
- =?utf-8?B?ZHVzKzlXS2dIczhlVXR0a0pPTEY2WWVYRkdxaStybDd0ZThOaDJPOE5DMEtz?=
- =?utf-8?B?UzkrblZLWDlONTN4dmZDRCtZSVozQmVBNEVUWlhaQWxheFd6eVl5UFVPOW5T?=
- =?utf-8?B?RXdWZk9RWDZLSFpZMzE2UllrNGh5cS9tQWZMOXdOcVVuTThHQ2NwU3VYYS8v?=
- =?utf-8?B?VnhKVndwb0UzZ0srcUI2ak9saVh5SGw3T2RlKzVlazV6QzFHSWRCNHpKUjBO?=
- =?utf-8?B?OVl2SjV1UFVSeFkyMXY2VVh2RHo3cmhXYXMrV21LRlhhbVFkYUR1OHprS3NX?=
- =?utf-8?B?NERTUHlHUzZsN1VGeG4xWTJCL0tlS3FZV3AxNXYrUjFHTDVsa1pNeWhaZnBE?=
- =?utf-8?B?ZS9ORU9adDlvYm5LeFFFbTZmSWN5aE9Sa3p0U2J6QkxXTEZxMmExRjZYdkJv?=
- =?utf-8?B?ZkdxV25VOG1Wd09pamZvamloSTZield1NXhCcW5qaG1XZEtFS29QUWNJdEVz?=
- =?utf-8?B?OHVHQWZLaDlWVlBvSGxxNEJDRHlnS2VoYkhJZXR4TkZ2dld1TUNuSDhKTTN2?=
- =?utf-8?B?Nk93Rm5rdkNFRWFTNmdRbkhwRktXeURWeFZGVWZvaFlOVkZ4NWFNWVlpUzEx?=
- =?utf-8?B?djY3SGhmd0FLV2Z6cTh2VE9QelQ5c3haTEh5VUxPQUlOWU82MGtnRStZNG9u?=
- =?utf-8?B?cUs5QW5sZUxTNzF5TUl5TWUvakxZMTJLSlRzV1ZqZk5tSjh3YU5DSXVwSEkr?=
- =?utf-8?B?dW95WER1RVVibTlEYTVvbWlUM1kwbnN6dmp6UVZlYWs1N1BoczZzOGtMcHBv?=
- =?utf-8?B?RzUrVDRxckEyb0tRVytvSmdHZUs0a3pUM29qTHg4NisrVy80dnZqanBUZlJp?=
- =?utf-8?B?TG5RTXh4K05Ha3pSaFZSUmJSbHRTMFN2Vm5YeS9hZmN3M3YrL3FjcFl5Sm9n?=
- =?utf-8?B?aHVFb01mNUF0dlpIbWc4dkJROThrdVZYQktCbWNBbmo5ODVVNFVIQndnOS84?=
- =?utf-8?B?QVpESStaL1REK0dBbjV4V1dzeGZ0NUdSMk53L2ZhcHg1WHl6R0RUZU93dUk2?=
- =?utf-8?B?ZnhjUzlqY0FqV2NzaVpmTnk1UktQOWVreEI5OTc3cUtwWGZUbS9XbFZhMzZE?=
- =?utf-8?B?WGRtY1V6eUlPTEtZL08zTkVNNVFLUzVuWE8rNW50ei9RWS9ybkh5SXBTSzQ3?=
- =?utf-8?B?ZWpDOFFqWERubXdEVjJrcnRUcFZHUU9FdDdZSmJ3b0ZoQWIzR1luay9qemRY?=
- =?utf-8?B?RUNRZjNQYWhheEh5a0prNTJRTHc1SkczQ1JRbGRqaFF1THlNV3JqWXMyaDZY?=
- =?utf-8?B?clFOVlpja2hGdW1DdTV0RklHcmVUZW53MEtJV3RubTVVWHp0NFJpTUFHMlZP?=
- =?utf-8?B?RE5nQ2xsZkZSSVYyeUJLTDJFWjlkdFdBZVdWMnU4aEdnNlNLb21KZkk3Slpi?=
- =?utf-8?B?NmFFbllmeUVLNjdHekZ0alVuaGE1OFV5NHVldEZkUDZjbmp1S09kdkpIVDJq?=
- =?utf-8?B?enhublRseGpyTzg4YVZOdTd0TG5CMThwS0hvcXI2WDZGQWh3SUNIcFRBdHZM?=
- =?utf-8?B?YW5haUtsZWI3aU5HV01OVXVzWEk3bUxoSTg0Z01EaU9kc3VLVXJIb3JYbkdD?=
- =?utf-8?B?eDdWTE1lS29mZjJESURvRkFjTWlXeWptc3ZXVjhycnRNenZiSVdqNldHcGVW?=
- =?utf-8?B?RWtKa21yZyttNkxyWU5LK0g5VjV3bXZFamNzdkFRQStmNUl6dUJOQ2YvVWVo?=
- =?utf-8?B?cSsvSzBYcGZlODJ1U2xFQT09?=
-x-microsoft-antispam-prvs: <AM6PR04MB3973C2AD71030EB1768A5E4D8F7C0@AM6PR04MB3973.eurprd04.prod.outlook.com>
-x-forefront-prvs: 09538D3531
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(376002)(39860400002)(366004)(346002)(189003)(199004)(13464003)(52314003)(6116002)(3846002)(14454004)(316002)(229853002)(93886005)(66066001)(68736007)(97736004)(71200400001)(71190400001)(5660300002)(74316002)(86362001)(26005)(99286004)(105586002)(2501003)(305945005)(7736002)(256004)(14444005)(33656002)(25786009)(102836004)(446003)(53546011)(6506007)(76176011)(478600001)(106356001)(476003)(486006)(11346002)(186003)(6246003)(8676002)(81156014)(81166006)(53936002)(8936002)(2906002)(55016002)(9686003)(110136005)(6436002)(7696005)(41533002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB3973;H:AM6PR04MB5863.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: mJztLjHoJzSXA5DWkSQWaNgPJKlC5o+z0vddeANU9X9pWnlWHIH6UubCkeebyqQcrCaG9sjhprzsdYxBVyAcJSe2/WOPn21qC23q7TlpA6ZqhRMR2FV7mAK96Bz4nVnParkXcSvYNo/1ufsyQMpVVO1q8h5p758cPPlRE1jwTAXMR5ZegqXLLeJC4WDs+G1KJCaZwscz0T+ONmA9IzWXZkZ2LCSAY4ZLh41XuOZJ5euKANqebALXgdNcWO2wGuahlCg99+UbPREKBCm9KsraSQklnysU7qEPP2xwOEMH0G5nZ+NeeQ+GSQ5zA24ri/vAgvja0T/UkxMYf61OwYBw4WyrTlHAZhGbDjZayXcK+Rm1IhSY1l/uYLvnv6cpBoN1uWSNNGHNQYHdyJGKgQS61YeMG6XFFbNU60H8nwaurVA=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 19 Feb 2019 15:08:30 -0500
+Received: from gateway30.websitewelcome.com ([192.185.144.21]:23542 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726215AbfBSUIa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 15:08:30 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id E77A29FA7
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 14:08:28 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id wBgqglDeCdnCewBgqgizV7; Tue, 19 Feb 2019 14:08:28 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.119.20] (port=37648 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gwBgq-001Vgl-9b; Tue, 19 Feb 2019 14:08:28 -0600
+Subject: Re: [PATCH] drm/amd/powerplay/smu10_hwmgr: use struct_size() in
+ kzalloc()
+To:     Alex Deucher <alexdeucher@gmail.com>
+Cc:     Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20190219185509.GA23853@embeddedor>
+ <CADnq5_Nntrq2zdzkwERV3ShCRptifbgVNhKP+xNgtyaWftWDdg@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <636b1826-b6c1-9a64-5abb-ee84bebaae1a@embeddedor.com>
+Date:   Tue, 19 Feb 2019 14:08:26 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4dae1890-638f-4a89-916c-08d696a5defd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2019 20:07:27.3613
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB3973
+In-Reply-To: <CADnq5_Nntrq2zdzkwERV3ShCRptifbgVNhKP+xNgtyaWftWDdg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.119.20
+X-Source-L: No
+X-Exim-ID: 1gwBgq-001Vgl-9b
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:37648
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUGV0ZXIgUm9zaW4gPHBl
-ZGFAYXhlbnRpYS5zZT4NCj4gU2VudDogTW9uZGF5LCBGZWJydWFyeSAxOCwgMjAxOSA1OjM5IFBN
-DQo+IFRvOiBMZW8gTGkgPGxlb3lhbmcubGlAbnhwLmNvbT47IFBhbmthaiBCYW5zYWwgPHBhbmth
-ai5iYW5zYWxAbnhwLmNvbT47DQo+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IFBoaWxp
-cHAgWmFiZWwgPHAuemFiZWxAcGVuZ3V0cm9uaXguZGU+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0hd
-IGRyaXZlcnM6IG11eDogR2VuZXJpYyByZWdpc3RlciBiaXRmaWVsZC1iYXNlZA0KPiBtdWx0aXBs
-ZXhlciBkcml2ZXINCj4gDQo+IE9uIDIwMTktMDItMTggMjI6MDcsIExlbyBMaSB3cm90ZToNCj4g
-PiBGcm9tOiBQZXRlciBSb3NpbiA8cGVkYUBheGVudGlhLnNlPg0KPiA+PiBPbiAyMDE5LTAyLTE4
-IDExOjIwLCBQYW5rYWogQmFuc2FsIHdyb3RlOg0KPiA+Pj4gRnJvbTogUGV0ZXIgUm9zaW4gW21h
-aWx0bzpwZWRhQGF4ZW50aWEuc2VdDQo+ID4+Pj4gQW55d2F5LCBJIHdvdWxkIHByZWZlciBpZiB5
-b3UgY291bGQgZXh0ZW5kIGRyaXZlcnMvbXV4L21taW8uYyB0bw0KPiA+Pj4+IHN1cHBvcnQgYm90
-aCBjb21wYXRpYmxlcywgYW5kIHVzaW5nIHRoZSBjb21wYXRpYmxlIHRvIHNlbGVjdCBpZg0KPiA+
-Pj4+DQo+ID4+Pj4gCXJlZ21hcCA9IHN5c2Nvbl9ub2RlX3RvX3JlZ21hcChucC0+cGFyZW50KTsN
-Cj4gPj4+Pg0KPiA+Pj4+IG9yDQo+ID4+Pj4NCj4gPj4+PiAJcmVnbWFwID0gZGV2X2dldF9yZWdt
-YXAoZGV2LT5wYXJlbnQsIE5VTEwpOw0KPiA+Pj4+DQo+ID4+Pj4gaXMgY2FsbGVkIHRvIGdldCB0
-byB0aGUgZGVzaXJlZCByZWdtYXAuDQo+ID4+Pg0KPiA+Pj4gVGhpcyBjYW4gYmUgZG9uZS4gVGhl
-IG5hbWUgbW1pby5jIGhvd2V2ZXIgc3VnZ2VzdHMgdGhhdCBtdXggaXMNCj4gPj4+IGNvbnRyb2xs
-ZWQgYnkgYSBNZW1vcnkgbWFwcGVkIGRldmljZS4NCj4gPj4+IElNTywgaWYgdGhlIGdlbmVyaWMg
-cmVnbWFwIEFQSSBpcyB0byBiZSBhZGRlZCB0byBpdCwgdGhlIG5hbWUgbmVlZHMNCj4gPj4+IHRv
-IGNoYW5nZWQuIEFueSBzdWdnZXN0aW9ucyA/DQo+ID4+DQo+ID4+IEp1c3Qga2VlcCB0aGUgZHJp
-dmVyIG5hbWUgYXMgaXMsIHRoZXJlIGlzIG5vIHNob3J0YWdlIG9mIGRyaXZlcnMNCj4gPj4gc3Vw
-cG9ydGluZyBtb3JlIHRoYW4gb25lIHRoaW5nLi4uDQo+ID4NCj4gPiBZb3UgYXJlIHJpZ2h0IHRo
-YXQgYSBsb3Qgb2YgZHJpdmVycyBzdXBwb3J0IG11bHRpcGxlIGZ1bmN0aW9ucy4gQnV0DQo+ID4g
-dGhlIHByb2JsZW0gaGVyZSBpcyB0aGF0IHRoZSBjdXJyZW50IG5hbWUgbW1pbyBpcyBvbmx5IGEg
-c3Vic2V0IG9mDQo+ID4gd2hhdCB0aGUgdXBkYXRlZCBkcml2ZXIgd2lsbCBoYW5kbGUsIHdoaWNo
-IGNhbiBjcmVhdGUgY29uZnVzaW9uLg0KPiANCj4gSSByZWZ1c2UgdGhlIGR1cGxpY2F0aW9uLiBU
-aGlzIG5ldyBkcml2ZXIgaXMgZG9pbmcgdGhlIGV4YWN0IHNhbWUgdGhpbmcgKC1pc2gpDQo+IGFz
-IHRoZSBvbGQgb25lLiBIYXZpbmcgdGhlIHNhbWUgY29kZSBpbiB0d28gcGxhY2VzIGlzIGp1c3Qg
-YSByZWNpcGUgZm9yIGZ1dHVyZQ0KPiBkaXZlcmdlbmNlIHdoZW4gZXZlcnlvbmUgaGF2ZSBmb3Jn
-b3R0ZW4gdGhhdCB0aGVyZSBhcmUgdHdvIG5lYXJseQ0KPiBpZGVudGljYWwgZHJpdmVycyB0aGF0
-IGJvdGggbmVlZCBwYXRjaGluZy4gU3RhdGluZyB0aGlzIGluIGEgY29tbWVudA0KPiBzb21ld2hl
-cmUgaW4gdGhlIGRyaXZlcnMgd2lsbCBub3QgaGVscCBhbGwgdGhhdCBtdWNoIGluIG15IGV4cGVy
-aWVuY2UuIFRoZQ0KPiBjb21tZW50IHdpbGwgYmUgbWlzc2luZyBmcm9tIHRoZSBjb250ZXh0IGlu
-IHNvbWUgc2VlbWluZ2x5IHRyaXZpYWwgcGF0Y2gsDQo+IGFuZCB0aGVyZSB5b3UgZ28uIFRoZXJl
-ICp3aWxsKiBiZSB3ZWVkIGRvd24gdGhlIGxpbmUsIGlmIGR1cGxpY2F0aW9uIGlzDQo+IGFsbG93
-ZWQuDQoNCkkgYWdyZWUgdGhhdCB3ZSBzaG91bGQgYXZvaWQgdGhlIGR1cGxpY2F0aW9uLg0KDQo+
-IA0KPiBJIGNhbiBhZ3JlZSB0aGF0IG11eC1yZWdtYXAuYyBhbmQgQ09ORklHX01VWF9SRUdNQVAg
-d291bGQgaGF2ZQ0KPiBiZWVuIGJldHRlciBuYW1lcywgYnV0IG11eC1tbWlvIGlzIGFscmVhZHkg
-dGhlcmUuIFNvIGl0IGlzIHdoYXQgaXQgaXMuIEJ1dCBpZg0KPiB5b3UgY2FuIGNvbnZpbmNlIG1l
-IHRoYXQgY2hhbmdpbmcgdGhlIG5hbWUgd2lsbCBub3QgY2F1c2UgYW55IHRyb3VibGUNCj4gYW55
-d2hlcmUgZm9yIGFueSBleGlzdGluZyBtdXgtbW1pbyB1c2VycywgSSBzdXBwb3NlIHdlIGNhbiBk
-byBhIHJlbmFtZS4NCj4gQnV0IEkgYmV0IHRoZXJlIHdpbGwgYmUgc29tZSBuYXN0eSBjb3JuZXIg
-Y2FzZXMgYW5kIG9kZCB1c2UgY2FzZXMsIHNvIHlvdSB3aWxsDQo+IGhhdmUgdG8gcHJlc2VudCBz
-dHJvbmcgYXJndW1lbnRzLg0KDQpJIGRvbid0IHRoaW5rIHRoYXQgaXQgaXMgaGFyZCB0byBtYWlu
-dGFpbiB0aGUgYmFja3dhcmQgY29tcGF0aWJpbGl0eSB3aXRoIHRoZSByZW5hbWUuICBUaGUgdXBk
-YXRlZCBkcml2ZXIgY2FuIGtlZXAgaGFuZGxpbmcgdGhlICJtbWlvLW11eCIgZGV2aWNlIHRyZWUg
-Y29tcGF0aWJsZSBzdHJpbmcuICBBbmQgd2UgY2FuIGFsc28gaGF2ZSBNVVhfTU1JTyBzZWxlY3Rz
-IHRoZSBuZXcgTVVYX1JFR01BUCBpZiB3ZSB3YW50IHRvIGtlZXAgdGhlIGNvbXBhdGliaWxpdHkg
-d2l0aCBvbGQga2VybmVsIGNvbmZpZyBmaWxlLg0KDQo+IA0KPiBKdXN0IHVwZGF0ZSB0aGUgS2Nv
-bmZpZyB0byBkb2N1bWVudCB0aGUgZHVhbCBuYXR1cmUgYW5kIHJlbW92ZSB0aGUNCj4gTUZEX1NZ
-U0NPTiBkZXBlbmRlbmN5LiBJIHN1cHBvc2UgeW91IGFsc28gbmVlZCB0byBoYW5kbGUgdGhlIHBv
-c3NpYmx5DQo+IG1pc3Npbmcgc3lzY29uIGluIHRoZSAuYyBmaWxlLCBkZXRhaWxzLCBkZXRhaWxz
-LiBCdXQgc29tZXRoaW5nIGxpa2UgdGhpcyBwZXJoYXBzOg0KPiANCj4gY29uZmlnIE1VWF9NTUlP
-DQo+IAl0cmlzdGF0ZSAiTU1JTy9SZWdtYXAgcmVnaXN0ZXIgYml0ZmllbGQtY29udHJvbGxlZCBN
-dWx0aXBsZXhlciINCj4gCWRlcGVuZHMgb24gT0YgfHwgQ09NUElMRV9URVNUDQo+IAloZWxwDQo+
-IAkgIE1NSU8vUmVnbWFwIHJlZ2lzdGVyIGJpdGZpZWxkLWNvbnRyb2xsZWQgTXVsdGlwbGV4ZXIg
-Y29udHJvbGxlci4NCj4gDQo+IAkgIFRoZSBkcml2ZXIgYnVpbGRzIG11bHRpcGxleGVyIGNvbnRy
-b2xsZXJzIGZvciBiaXRmaWVsZHMgaW4gZWl0aGVyDQo+IAkgIGEgc3lzY29uIHJlZ2lzdGVyIG9y
-IGEgZHJpdmVyIHJlZ21hcCByZWdpc3Rlci4gRm9yIE4gYml0IHdpZGUNCj4gCSAgYml0ZmllbGRz
-LCB0aGVyZSB3aWxsIGJlIDJeTiBwb3NzaWJsZSBtdWx0aXBsZXhlciBzdGF0ZXMuDQo+IA0KPiAJ
-ICBUbyBjb21waWxlIHRoZSBkcml2ZXIgYXMgYSBtb2R1bGUsIGNob29zZSBNIGhlcmU6IHRoZSBt
-b2R1bGUgd2lsbA0KPiAJICBiZSBjYWxsZWQgbXV4LW1taW8uDQo+IA0KPiBDaGVlcnMsDQo+IFBl
-dGVyDQo=
+
+
+On 2/19/19 1:51 PM, Alex Deucher wrote:
+> On Tue, Feb 19, 2019 at 1:55 PM Gustavo A. R. Silva
+> <gustavo@embeddedor.com> wrote:
+>>
+>> One of the more common cases of allocation size calculations is finding
+>> the size of a structure that has a zero-sized array at the end, along
+>> with memory for some number of elements for that array. For example:
+>>
+>> struct foo {
+>>     int stuff;
+>>     struct boo entry[];
+>> };
+>>
+>> size = sizeof(struct foo) + count * sizeof(struct boo);
+>> instance = kzalloc(size, GFP_KERNEL);
+>>
+>> Instead of leaving these open-coded and prone to type mistakes, we can
+>> now use the new struct_size() helper:
+>>
+>> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+>>
+>> Notice that, in this case, variable table_size is not necessary, hence
+>> it is removed.
+>>
+>> This code was detected with the help of Coccinelle.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> Applied this and the smu8 patch.  Thanks!
+> 
+Great!
+
+Thanks, Alex.
+
+--
+Gustavo
