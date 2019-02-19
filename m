@@ -2,58 +2,59 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A45FCC4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:27:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04EA5C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:27:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69CB821736
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:27:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B444F21773
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 15:27:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qjsik3eW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RNxlnxyj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728827AbfBSP1o (ORCPT
+        id S1728926AbfBSP1r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 10:27:44 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:32875 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726110AbfBSP1n (ORCPT
+        Tue, 19 Feb 2019 10:27:47 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46152 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726352AbfBSP1p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 10:27:43 -0500
-Received: by mail-wm1-f68.google.com with SMTP id h22so2524352wmb.0;
-        Tue, 19 Feb 2019 07:27:41 -0800 (PST)
+        Tue, 19 Feb 2019 10:27:45 -0500
+Received: by mail-wr1-f66.google.com with SMTP id i16so14203472wrs.13;
+        Tue, 19 Feb 2019 07:27:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=QRLeOF9sct2PPfTZBOGt3U1G0PtSP4YDwZzbf5CfyMs=;
-        b=qjsik3eWzetZmcOurISZU93jAfURe1xQJ3zFn1INz0b4uqN0WD/DG6piBFWXI5HIOB
-         uHppK7mOw2Ama+bq9uodFNG4GF8b0cVOb0qJ9UJG+c9Pp4f5FfKpipecy0YSJb1D3xqO
-         xXGpkRh56J+mOI29KwoucgpXywq93YadzoZVJYZz6nccUTwM25DwesLO/pxPaxEeeQJ/
-         GnEbIqmqRt4r9Ad0VT/RDd3js22e9pTGifXFXPEs3d9eWYM8Og0/M1Ax8Uxv69wSH3C0
-         YkIt0yTjg5HbIkrN98PUdmPtwexTDvcHxzT/codZO/gEZyLgYH2tTvlCQR2ExjJhskSF
-         sapg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=aLP28lQlfvEaj5P3lTxct6bkK1WmE36USMTehJ7l8S0=;
+        b=RNxlnxyjZtrg+yoazOslRL0f8IqYDEOH6oa6Q9YE0VVpT2JKBSumhyXCv7JTOfIVCJ
+         PMb7RLbw1++BkSYzD0hZTW4WrOK7rRb+1mdxXhiwpli1bmaphZuU9HrhgjRrHUGXMuhh
+         KziJfX4fO5IJVPy+NL0FfxQ6WftWqijXsQZQeYK0T4P34oaNCloUy5VzPVZvNmhpBUqT
+         h47Q3GxpupqK5eK2ltM6Fyo3eU7SGA/0ytwonNDNp8tiJg4kzKwvJbMZonG5fg97ANGE
+         fruzVKQBdo7nTs+4cqxwHvlmVVgIaTySixjUX8llkoxDZRCOnBPkyZQJIHHj3CCViZ3R
+         6KnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=QRLeOF9sct2PPfTZBOGt3U1G0PtSP4YDwZzbf5CfyMs=;
-        b=mmHDhMbFB9F0uu/e8H9IrbBtS2mPazrxKSHBi83Gh6gc1gvbyeH4Jh1lM2YYlfocNl
-         xd/JrCqjxERDhNzRGLBYQU9wJfJuazGoFVpMYlE9/qViezmrrkN9TLOhNB09zgKXlxwc
-         kTpR1Imeby/oMoqchNtErrcshSrKR7wpvg9BuX0Z6vIQOjdbhDymaANOfUifolE1WclT
-         LdCk+P7Y679qrBJNmCofC4r8wvQVp3pPUZZpLT9/4NED7h7AoPN5Cs24Dy2UydzS9Fbu
-         Qi1KOM1yZ2Drr9nKFrMOd7cR/eORF9esChVt2vfG6CNo4inmkqISAfBpSNVanf+/pP4O
-         t7vg==
-X-Gm-Message-State: AHQUAuZIKnKPYY1cBveVcUsKgvsa0bLadulNLeW67OrHtVVJbLG2xUei
-        +S7bqRcnVLw+rmKpujXi+A==
-X-Google-Smtp-Source: AHgI3IYCBMozucS/tB1uFAFJO/YRmnkwcj/jMRFwGecFgakTSDbs/8qoGrBo+Mff86tukJ+gKWq/Ew==
-X-Received: by 2002:a1c:4946:: with SMTP id w67mr3112790wma.20.1550590060817;
-        Tue, 19 Feb 2019 07:27:40 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=aLP28lQlfvEaj5P3lTxct6bkK1WmE36USMTehJ7l8S0=;
+        b=dnAb/ZSrE6sDk4RD33rcBFMxxGhyk7uzFyntHorZka4iYYAmymI2HvZEQScA0Mdnoe
+         EUyknOu8CIUTjQjjCIY8nm0ngG1lgntCLiNwXEF2QAoMWfkwVCMndP+RpzSZ2MvfyvPW
+         2KgcFsHboXyoMTUX5PF0ocnImrV0vW9uD/l32ZjNowDoni4XEP2J4vwY2TWpNR2RtTrb
+         Ql5ADb0aUJvihf5Z9KZpwoHOf7hdYRAIQ8vWSnA5iBZ9Rnzrw4RQ9aSGvmYeO+qdwgxw
+         wgiIsq8mkyISkPeJdsiKA/EFZgc0K/3qAHtGRxsWbcXNX4xLOHi4SRqQ05YbHOoch2G8
+         BX9Q==
+X-Gm-Message-State: AHQUAuYHs2Xxe6YQSsbHKGD2tFAo4ExlH3U7JHGU1/ISJXl2dhKVqORk
+        ci8VIRk1BRWesiQ7VWtwBQ==
+X-Google-Smtp-Source: AHgI3IbjuIduBGr6mwILzL8HCjCozk4cl5g64v4dZ/Lk7Y41wwIt/QjSC9z0rkisQSwGionyCA9OpA==
+X-Received: by 2002:adf:8273:: with SMTP id 106mr21900010wrb.34.1550590062342;
+        Tue, 19 Feb 2019 07:27:42 -0800 (PST)
 Received: from xps-13.homenet.telecomitalia.it (host117-125-dynamic.33-79-r.retail.telecomitalia.it. [79.33.125.117])
-        by smtp.gmail.com with ESMTPSA id v6sm29029503wrd.88.2019.02.19.07.27.39
+        by smtp.gmail.com with ESMTPSA id v6sm29029503wrd.88.2019.02.19.07.27.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 07:27:40 -0800 (PST)
+        Tue, 19 Feb 2019 07:27:41 -0800 (PST)
 From:   Andrea Righi <righi.andrea@gmail.com>
 To:     Josef Bacik <josef@toxicpanda.com>, Tejun Heo <tj@kernel.org>
 Cc:     Li Zefan <lizefan@huawei.com>,
@@ -63,126 +64,313 @@ Cc:     Li Zefan <lizefan@huawei.com>,
         Dennis Zhou <dennis@kernel.org>, cgroups@vger.kernel.org,
         linux-block@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] blkcg: sync() isolation
-Date:   Tue, 19 Feb 2019 16:27:09 +0100
-Message-Id: <20190219152712.9855-1-righi.andrea@gmail.com>
+Subject: [PATCH 1/3] blkcg: prevent priority inversion problem during sync()
+Date:   Tue, 19 Feb 2019 16:27:10 +0100
+Message-Id: <20190219152712.9855-2-righi.andrea@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190219152712.9855-1-righi.andrea@gmail.com>
+References: <20190219152712.9855-1-righi.andrea@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-= Problem =
+Prevent priority inversion problem when a high-priority blkcg issues a
+sync() and it is forced to wait the completion of all the writeback I/O
+generated by any other low-priority blkcg, causing massive latencies to
+processes that shouldn't be I/O-throttled at all.
 
-When sync() is executed from a high-priority cgroup, the process is forced to
-wait the completion of the entire outstanding writeback I/O, even the I/O that
-was originally generated by low-priority cgroups potentially.
+The idea is to save a list of blkcg's that are waiting for writeback:
+every time a sync() is executed the current blkcg is added to the list.
 
-This may cause massive latencies to random processes (even those running in the
-root cgroup) that shouldn't be I/O-throttled at all, similarly to a classic
-priority inversion problem.
+Then, when I/O is throttled, if there's a blkcg waiting for writeback
+different than the current blkcg, no throttling is applied (we can
+probably refine this logic later, i.e., a better policy could be to
+adjust the throttling I/O rate using the blkcg with the highest speed
+from the list of waiters - priority inheritance, kinda).
 
-This topic has been previously discussed here:
-https://patchwork.kernel.org/patch/10804489/
+Signed-off-by: Andrea Righi <righi.andrea@gmail.com>
+---
+ block/blk-cgroup.c               | 73 ++++++++++++++++++++++++++++++++
+ block/blk-throttle.c             | 11 +++--
+ fs/fs-writeback.c                |  5 +++
+ fs/sync.c                        |  8 +++-
+ include/linux/backing-dev-defs.h |  2 +
+ include/linux/blk-cgroup.h       | 23 ++++++++++
+ mm/backing-dev.c                 |  2 +
+ 7 files changed, 120 insertions(+), 4 deletions(-)
 
-[ Thanks to Josef for the suggestions ]
-
-= Solution =
-
-Here's a slightly more detailed description of the solution, as suggested by
-Josef and Tejun (let me know if I misunderstood or missed anything):
-
- - track the submitter of wb work (when issuing sync()) and the cgroup that
-   originally dirtied any inode, then use this information to determine the
-   proper "sync() domain" and decide if the I/O speed needs to be boosted or
-   not in order to prevent priority-inversion problems
-
- - by default when sync() is issued, all the outstanding writeback I/O is
-   boosted to maximum speed to prevent priority inversion problems
-
- - if sync() is issued by the same throttled cgroup that generated the dirty
-   pages, the corresponding writeback I/O is still throttled normally
-
- - add a new flag to cgroups (io.sync_isolation) that would make sync()'ers in
-   that cgroup only be allowed to write out dirty pages that belong to its
-   cgroup
-
-= Test =
-
-Here's a trivial example to trigger the problem:
-
- - create 2 cgroups: cg1 and cg2
-
- # mkdir /sys/fs/cgroup/unified/cg1
- # mkdir /sys/fs/cgroup/unified/cg2
-
- - set an I/O limit of 1MB/s on cg1/io.ma:
-
- # echo "8:0 rbps=1048576 wbps=1048576" > /sys/fs/cgroup/unified/cg1/io.max
-
- - run a write-intensive workload in cg1
-
- # cat /proc/self/cgroup
- 0::/cg1
- # fio --rw=write --bs=1M --size=32M --numjobs=16 --name=writer --time_based --runtime=30
-
- - run sync in cg2 and measure time
-
-== Vanilla kernel ==
-
- # cat /proc/self/cgroup
- 0::/cg2
-
- # time sync
- real	9m32,618s
- user	0m0,000s
- sys	0m0,018s
-
-Ideally "sync" should complete almost immediately, because cg2 is unlimited and
-it's not doing any I/O at all. Instead, the entire system is totally sluggish,
-waiting for the throttled writeback I/O to complete, and it also triggers many
-hung task timeout warnings.
-
-== With this patch set applied and io.sync_isolation=0 (default) ==
-
- # cat /proc/self/cgroup
- 0::/cg2
-
- # time sync
- real	0m2,044s
- user	0m0,009s
- sys	0m0,000s
-
-[ Time range goes from 2s to 4s ]
-
-== With this patch set applied and io.sync_isolation=1 ==
-
- # cat /proc/self/cgroup
- 0::/cg2
-
- # time sync
-
- real	0m0,768s
- user	0m0,001s
- sys	0m0,008s
-
-[ Time range goes from 0.7s to 1.6s ]
-
-Andrea Righi (3):
-  blkcg: prevent priority inversion problem during sync()
-  blkcg: introduce io.sync_isolation
-  blkcg: implement sync() isolation
-
- Documentation/admin-guide/cgroup-v2.rst |   9 +++
- block/blk-cgroup.c                      | 120 ++++++++++++++++++++++++++++++++
- block/blk-throttle.c                    |  48 ++++++++++++-
- fs/fs-writeback.c                       |  57 ++++++++++++++-
- fs/inode.c                              |   1 +
- fs/sync.c                               |   8 ++-
- include/linux/backing-dev-defs.h        |   2 +
- include/linux/blk-cgroup.h              |  52 ++++++++++++++
- include/linux/fs.h                      |   4 ++
- mm/backing-dev.c                        |   2 +
- mm/page-writeback.c                     |   1 +
- 11 files changed, 297 insertions(+), 7 deletions(-)
+diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+index 2bed5725aa03..fb3c39eadf92 100644
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -1351,6 +1351,79 @@ struct cgroup_subsys io_cgrp_subsys = {
+ };
+ EXPORT_SYMBOL_GPL(io_cgrp_subsys);
+ 
++#ifdef CONFIG_CGROUP_WRITEBACK
++/**
++ * blkcg_wb_waiters_on_bdi - check for writeback waiters on a block device
++ * @blkcg: current blkcg cgroup
++ * @bdi: block device to check
++ *
++ * Return true if any other blkcg is waiting for writeback on the target block
++ * device, false otherwise.
++ */
++bool blkcg_wb_waiters_on_bdi(struct blkcg *blkcg, struct backing_dev_info *bdi)
++{
++	struct blkcg *wait_blkcg;
++	bool ret = false;
++
++	if (unlikely(!bdi))
++		return false;
++
++	rcu_read_lock();
++	list_for_each_entry_rcu(wait_blkcg, &bdi->cgwb_waiters, cgwb_wait_node)
++		if (wait_blkcg != blkcg) {
++			ret = true;
++			break;
++		}
++	rcu_read_unlock();
++
++	return ret;
++}
++
++/**
++ * blkcg_start_wb_wait_on_bdi - add current blkcg to writeback waiters list
++ * @bdi: target block device
++ *
++ * Add current blkcg to the list of writeback waiters on target block device.
++ */
++void blkcg_start_wb_wait_on_bdi(struct backing_dev_info *bdi)
++{
++	struct blkcg *blkcg;
++
++	rcu_read_lock();
++	blkcg = blkcg_from_current();
++	if (blkcg) {
++		css_get(&blkcg->css);
++		spin_lock(&bdi->cgwb_waiters_lock);
++		list_add_rcu(&blkcg->cgwb_wait_node, &bdi->cgwb_waiters);
++		spin_unlock(&bdi->cgwb_waiters_lock);
++	}
++	rcu_read_unlock();
++}
++
++/**
++ * blkcg_stop_wb_wait_on_bdi - remove current blkcg from writeback waiters list
++ * @bdi: target block device
++ *
++ * Remove current blkcg from the list of writeback waiters on target block
++ * device.
++ */
++void blkcg_stop_wb_wait_on_bdi(struct backing_dev_info *bdi)
++{
++	struct blkcg *blkcg;
++
++	rcu_read_lock();
++	blkcg = blkcg_from_current();
++	if (blkcg) {
++		spin_lock(&bdi->cgwb_waiters_lock);
++		list_del_rcu(&blkcg->cgwb_wait_node);
++		spin_unlock(&bdi->cgwb_waiters_lock);
++		css_put(&blkcg->css);
++	}
++	rcu_read_unlock();
++	synchronize_rcu();
++}
++#endif
++
+ /**
+  * blkcg_activate_policy - activate a blkcg policy on a request_queue
+  * @q: request_queue of interest
+diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+index 1b97a73d2fb1..da817896cded 100644
+--- a/block/blk-throttle.c
++++ b/block/blk-throttle.c
+@@ -970,9 +970,13 @@ static bool tg_may_dispatch(struct throtl_grp *tg, struct bio *bio,
+ {
+ 	bool rw = bio_data_dir(bio);
+ 	unsigned long bps_wait = 0, iops_wait = 0, max_wait = 0;
++	struct throtl_data *td = tg->td;
++	struct request_queue *q = td->queue;
++	struct backing_dev_info *bdi = q->backing_dev_info;
++	struct blkcg_gq *blkg = tg_to_blkg(tg);
+ 
+ 	/*
+- 	 * Currently whole state machine of group depends on first bio
++	 * Currently whole state machine of group depends on first bio
+ 	 * queued in the group bio list. So one should not be calling
+ 	 * this function with a different bio if there are other bios
+ 	 * queued.
+@@ -981,8 +985,9 @@ static bool tg_may_dispatch(struct throtl_grp *tg, struct bio *bio,
+ 	       bio != throtl_peek_queued(&tg->service_queue.queued[rw]));
+ 
+ 	/* If tg->bps = -1, then BW is unlimited */
+-	if (tg_bps_limit(tg, rw) == U64_MAX &&
+-	    tg_iops_limit(tg, rw) == UINT_MAX) {
++	if (blkcg_wb_waiters_on_bdi(blkg->blkcg, bdi) ||
++	    (tg_bps_limit(tg, rw) == U64_MAX &&
++	    tg_iops_limit(tg, rw) == UINT_MAX)) {
+ 		if (wait)
+ 			*wait = 0;
+ 		return true;
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 36855c1f8daf..77c039a0ec25 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -28,6 +28,7 @@
+ #include <linux/tracepoint.h>
+ #include <linux/device.h>
+ #include <linux/memcontrol.h>
++#include <linux/blk-cgroup.h>
+ #include "internal.h"
+ 
+ /*
+@@ -2446,6 +2447,8 @@ void sync_inodes_sb(struct super_block *sb)
+ 		return;
+ 	WARN_ON(!rwsem_is_locked(&sb->s_umount));
+ 
++	blkcg_start_wb_wait_on_bdi(bdi);
++
+ 	/* protect against inode wb switch, see inode_switch_wbs_work_fn() */
+ 	bdi_down_write_wb_switch_rwsem(bdi);
+ 	bdi_split_work_to_wbs(bdi, &work, false);
+@@ -2453,6 +2456,8 @@ void sync_inodes_sb(struct super_block *sb)
+ 	bdi_up_write_wb_switch_rwsem(bdi);
+ 
+ 	wait_sb_inodes(sb);
++
++	blkcg_stop_wb_wait_on_bdi(bdi);
+ }
+ EXPORT_SYMBOL(sync_inodes_sb);
+ 
+diff --git a/fs/sync.c b/fs/sync.c
+index b54e0541ad89..3958b8f98b85 100644
+--- a/fs/sync.c
++++ b/fs/sync.c
+@@ -16,6 +16,7 @@
+ #include <linux/pagemap.h>
+ #include <linux/quotaops.h>
+ #include <linux/backing-dev.h>
++#include <linux/blk-cgroup.h>
+ #include "internal.h"
+ 
+ #define VALID_FLAGS (SYNC_FILE_RANGE_WAIT_BEFORE|SYNC_FILE_RANGE_WRITE| \
+@@ -76,8 +77,13 @@ static void sync_inodes_one_sb(struct super_block *sb, void *arg)
+ 
+ static void sync_fs_one_sb(struct super_block *sb, void *arg)
+ {
+-	if (!sb_rdonly(sb) && sb->s_op->sync_fs)
++	struct backing_dev_info *bdi = sb->s_bdi;
++
++	if (!sb_rdonly(sb) && sb->s_op->sync_fs) {
++		blkcg_start_wb_wait_on_bdi(bdi);
+ 		sb->s_op->sync_fs(sb, *(int *)arg);
++		blkcg_stop_wb_wait_on_bdi(bdi);
++	}
+ }
+ 
+ static void fdatawrite_one_bdev(struct block_device *bdev, void *arg)
+diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
+index 07e02d6df5ad..095e4dd0427b 100644
+--- a/include/linux/backing-dev-defs.h
++++ b/include/linux/backing-dev-defs.h
+@@ -191,6 +191,8 @@ struct backing_dev_info {
+ 	struct rb_root cgwb_congested_tree; /* their congested states */
+ 	struct mutex cgwb_release_mutex;  /* protect shutdown of wb structs */
+ 	struct rw_semaphore wb_switch_rwsem; /* no cgwb switch while syncing */
++	struct list_head cgwb_waiters; /* list of all waiters for writeback */
++	spinlock_t cgwb_waiters_lock; /* protect cgwb_waiters list */
+ #else
+ 	struct bdi_writeback_congested *wb_congested;
+ #endif
+diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
+index 76c61318fda5..0f7dcb70e922 100644
+--- a/include/linux/blk-cgroup.h
++++ b/include/linux/blk-cgroup.h
+@@ -56,6 +56,7 @@ struct blkcg {
+ 
+ 	struct list_head		all_blkcgs_node;
+ #ifdef CONFIG_CGROUP_WRITEBACK
++	struct list_head		cgwb_wait_node;
+ 	struct list_head		cgwb_list;
+ 	refcount_t			cgwb_refcnt;
+ #endif
+@@ -252,6 +253,12 @@ static inline struct blkcg *css_to_blkcg(struct cgroup_subsys_state *css)
+ 	return css ? container_of(css, struct blkcg, css) : NULL;
+ }
+ 
++static inline struct blkcg *blkcg_from_current(void)
++{
++	WARN_ON_ONCE(!rcu_read_lock_held());
++	return css_to_blkcg(blkcg_css());
++}
++
+ /**
+  * __bio_blkcg - internal, inconsistent version to get blkcg
+  *
+@@ -454,6 +461,10 @@ static inline void blkcg_cgwb_put(struct blkcg *blkcg)
+ 		blkcg_destroy_blkgs(blkcg);
+ }
+ 
++bool blkcg_wb_waiters_on_bdi(struct blkcg *blkcg, struct backing_dev_info *bdi);
++void blkcg_start_wb_wait_on_bdi(struct backing_dev_info *bdi);
++void blkcg_stop_wb_wait_on_bdi(struct backing_dev_info *bdi);
++
+ #else
+ 
+ static inline void blkcg_cgwb_get(struct blkcg *blkcg) { }
+@@ -464,6 +475,14 @@ static inline void blkcg_cgwb_put(struct blkcg *blkcg)
+ 	blkcg_destroy_blkgs(blkcg);
+ }
+ 
++static inline bool
++blkcg_wb_waiters_on_bdi(struct blkcg *blkcg, struct backing_dev_info *bdi)
++{
++	return false;
++}
++static inline void blkcg_start_wb_wait_on_bdi(struct backing_dev_info *bdi) { }
++static inline void blkcg_stop_wb_wait_on_bdi(struct backing_dev_info *bdi) { }
++
+ #endif
+ 
+ /**
+@@ -772,6 +791,7 @@ static inline void blkcg_bio_issue_init(struct bio *bio)
+ static inline bool blkcg_bio_issue_check(struct request_queue *q,
+ 					 struct bio *bio)
+ {
++	struct backing_dev_info *bdi = q->backing_dev_info;
+ 	struct blkcg_gq *blkg;
+ 	bool throtl = false;
+ 
+@@ -788,6 +808,9 @@ static inline bool blkcg_bio_issue_check(struct request_queue *q,
+ 
+ 	blkg = bio->bi_blkg;
+ 
++	if (blkcg_wb_waiters_on_bdi(blkg->blkcg, bdi))
++		bio_set_flag(bio, BIO_THROTTLED);
++
+ 	throtl = blk_throtl_bio(q, blkg, bio);
+ 
+ 	if (!throtl) {
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index 72e6d0c55cfa..8848d26e8bf6 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -686,10 +686,12 @@ static int cgwb_bdi_init(struct backing_dev_info *bdi)
+ {
+ 	int ret;
+ 
++	INIT_LIST_HEAD(&bdi->cgwb_waiters);
+ 	INIT_RADIX_TREE(&bdi->cgwb_tree, GFP_ATOMIC);
+ 	bdi->cgwb_congested_tree = RB_ROOT;
+ 	mutex_init(&bdi->cgwb_release_mutex);
+ 	init_rwsem(&bdi->wb_switch_rwsem);
++	spin_lock_init(&bdi->cgwb_waiters_lock);
+ 
+ 	ret = wb_init(&bdi->wb, bdi, 1, GFP_KERNEL);
+ 	if (!ret) {
+-- 
+2.17.1
 
