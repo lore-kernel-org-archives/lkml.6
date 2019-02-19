@@ -2,122 +2,58 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C08C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:34:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF51EC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:37:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F4EE21773
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:34:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8595221773
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:37:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726314AbfBSDeE (ORCPT
+        id S1725881AbfBSDhW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 22:34:04 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44702 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725841AbfBSDeE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 22:34:04 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 32520C007327;
-        Tue, 19 Feb 2019 03:34:04 +0000 (UTC)
-Received: from redhat.com (ovpn-121-82.rdu2.redhat.com [10.10.121.82])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 831FE5C1B2;
-        Tue, 19 Feb 2019 03:34:00 +0000 (UTC)
-Date:   Mon, 18 Feb 2019 22:33:58 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Andrea Arcangeli <aarcange@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Peter Xu <peterx@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>, kvm@vger.kernel.org
-Subject: Re: [RFC PATCH 0/4] Restore change_pte optimization to its former
- glory
-Message-ID: <20190219033358.GB8311@redhat.com>
-References: <20190131183706.20980-1-jglisse@redhat.com>
- <20190201235738.GA12463@redhat.com>
- <20190211190931.GA3908@redhat.com>
- <20190211200200.GA30128@redhat.com>
- <20190218160411.GA3142@redhat.com>
- <20190218174505.GD30645@redhat.com>
+        Mon, 18 Feb 2019 22:37:22 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3677 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725536AbfBSDhW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 22:37:22 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id EA84B479A94885EC3EAF;
+        Tue, 19 Feb 2019 11:37:19 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Tue, 19 Feb 2019
+ 11:37:09 +0800
+Subject: Re: [PATCH] f2fs: silence VM_WARN_ON_ONCE in mempool_alloc
+To:     Gao Xiang <gaoxiang25@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <miaoxie@huawei.com>
+References: <20190219023152.37863-1-gaoxiang25@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <d4f8e2e1-bb1e-1913-80b2-2b60ab09f3e8@huawei.com>
+Date:   Tue, 19 Feb 2019 11:37:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190218174505.GD30645@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 19 Feb 2019 03:34:04 +0000 (UTC)
+In-Reply-To: <20190219023152.37863-1-gaoxiang25@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 12:45:05PM -0500, Andrea Arcangeli wrote:
-> On Mon, Feb 18, 2019 at 11:04:13AM -0500, Jerome Glisse wrote:
-> > So i run 2 exact same VMs side by side (copy of same COW image) and
-> > built the same kernel tree inside each (that is the only important
-> > workload that exist ;)) but the change_pte did not have any impact:
-> > 
-> > before  mean  {real: 1358.250977, user: 16650.880859, sys: 839.199524, npages: 76855.390625}
-> > before  stdev {real:    6.744010, user:   108.863762, sys:   6.840437, npages:  1868.071899}
-> > after   mean  {real: 1357.833740, user: 16685.849609, sys: 839.646973, npages: 76210.601562}
-> > after   stdev {real:    5.124797, user:    78.469360, sys:   7.009164, npages:  2468.017578}
-> > without mean  {real: 1358.501343, user: 16674.478516, sys: 837.791992, npages: 76225.203125}
-> > without stdev {real:    5.541104, user:    97.998367, sys:   6.715869, npages:  1682.392578}
-> > 
-> > Above is time taken by make inside each VM for all yes config. npages
-> > is the number of page shared reported on the host at the end of the
-> > build.
+On 2019/2/19 10:31, Gao Xiang wrote:
+> Note that __GFP_ZERO is not supported for mempool_alloc,
+> which also documented in the mempool_alloc comments.
 > 
-> Did you set /sys/kernel/mm/ksm/sleep_millisecs to 0?
-> 
-> It would also help to remove the checksum check from mm/ksm.c:
-> 
-> -	if (rmap_item->oldchecksum != checksum) {
-> -		rmap_item->oldchecksum = checksum;
-> -		return;
-> -	}
-> 
-> One way or another, /sys/kernel/mm/ksm/pages_shared and/or
-> pages_sharing need to change significantly to be sure we're exercising
-> the COW/merging code that uses change_pte. KSM is smart enough to
-> merge only not frequently changing pages, and with the default KSM
-> code this probably works too well for a kernel build.
-> 
-> > Should we still restore change_pte() ? It does not hurt, but it does
-> > not seems to help in anyway. Maybe you have a better benchmark i could
-> > run ?
-> 
-> We could also try a microbenchmark based on
-> ltp/testcases/kernel/mem/ksm/ksm02.c that already should trigger a
-> merge flood and a COW flood during its internal processing.
+> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 
-So using that and the checksum test removed there is an improvement,
-roughly 7%~8% on time spends in the kernel:
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-before  mean  {real: 675.460632, user: 857.771423, sys: 215.929657, npages: 4773.066895}
-before  stdev {real:  37.035435, user:   4.395942, sys:   3.976172, npages:  675.352783}
-after   mean  {real: 672.515503, user: 855.817322, sys: 200.902710, npages: 4899.000000}
-after   stdev {real:  37.340954, user:   4.051633, sys:   3.894153, npages:  742.413452}
+Thanks,
 
-I am guessing for kernel build this get lost in the noise and that
-KSM changes do not have that much of an impact. So i will reposting
-the mmu notifier changes shortly in hope to get them in 5.1 and i
-will post the KVM part separatly shortly there after.
-
-If there is any more testing you wish me to do let me know.
-
-Cheers,
-Jérôme
