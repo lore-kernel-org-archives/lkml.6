@@ -2,136 +2,126 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34F50C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C41F0C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:35:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0458820818
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:34:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90BF520818
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:35:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p61e+kcQ"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pbHEzpOT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728404AbfBSKdI (ORCPT
+        id S1728363AbfBSKf0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 05:33:08 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:39030 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727787AbfBSKdH (ORCPT
+        Tue, 19 Feb 2019 05:35:26 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:40840 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbfBSKfZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 05:33:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=xnijaTD9/LTfaSe8x9OwrOkkSMxAqrZQqnN4cMRi0xo=; b=p61e+kcQCih0IRI1ErTzuM4kht
-        Uh20OG4wyZhC/0sjvGGI8snWLIySrUjTH0eXRF/kuCOeStMlOuhb1cSq5ZUzAyLxpXbw/JO+ju5Lq
-        AS8Kd2fO9l4QgNBDTG66PEz0pMue0RJ+fmKzJVgQHWSVupOQejCwbVjeHFej+M1v0RZde+2TEDw09
-        g2iz5RjFLUxXhGzmP1sET6oLXhDe90E3xcZaJrnsXCKaBk87FyxIfTn76CJuyiyg4MKM1nrsWei0z
-        tTlafjMFlfeacNBOmMhsngudoOcFfKjGGkfZefiM4CEZQJrC4sUE55eOIIcbqgIwVpt+yUhrLoseH
-        HP65Z8rw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gw2hp-0006Zi-Je; Tue, 19 Feb 2019 10:32:53 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 84DF6285205A5; Tue, 19 Feb 2019 11:32:48 +0100 (CET)
-Message-Id: <20190219103233.927987010@infradead.org>
-User-Agent: quilt/0.65
-Date:   Tue, 19 Feb 2019 11:32:06 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     will.deacon@arm.com, aneesh.kumar@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, npiggin@gmail.com
-Cc:     linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        linux@armlinux.org.uk, heiko.carstens@de.ibm.com, riel@surriel.com
-Subject: [PATCH v6 18/18] asm-generic/tlb: Remove tlb_table_flush()
-References: <20190219103148.192029670@infradead.org>
+        Tue, 19 Feb 2019 05:35:25 -0500
+Received: by mail-it1-f194.google.com with SMTP id i2so4965113ite.5
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 02:35:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dVMkSZoa7cxW+/Jifvbauk0hPZDlxt4PXjBCgpfObjk=;
+        b=pbHEzpOT1QEmqioT1Fkn/FX2RiGs2HlYAujT5f8bjBCHC4Ib/qqAc5/Yq9Na7R3b0o
+         6FzbvgB5nOPF+dBVxXq75VySvOXgnYUeKaEqCAmduH4dljDXg9rTCTpS5ZNY1mS8XFDm
+         Zp8Ev6udf0TMUBdCm5bsXJgqrhFAEhFmZU2h0LiP+5LC563MfrCi6gbVjUhSuqfN70/M
+         vQrYhSZuRBG1Coqdm9GjU5Uk40fR6Lix8fjqObGSM/8Ny9MMVP5Z1dy/pIXg3hvgFOC9
+         QnMjb8SPvYVJhgYbD6xfjWLrAgfiADulLFcBYpGIkmhzP7q/aDnLv2HrCT4foOfNOuAh
+         lEFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dVMkSZoa7cxW+/Jifvbauk0hPZDlxt4PXjBCgpfObjk=;
+        b=HZqMtwUo1GdeP8o8n9TQX6hQPgYnVpuLvlmpHAv3ObIKTBZDqTtdTJw2XXdzTv4BBd
+         eJjod3D1HQ3H7O+kU0gSwd7bZkNoa9EAueDO/U0E6NbbOtb/pxO30yu8D36CqFBHPO4H
+         bokaPxNzvDNeiKMSFOBoDHuG7R55mjYvhSsTre9g3lItesJx3Ds6hjZViNPSbPiIMU1Y
+         25JQ47vFlyRQLpvPqD8ZiPLUS7cBgKUggK7is4ipY/E471gZFrLI3VWONO+Fu6aDkjX/
+         sb6jXDtjY2+fsBbwUtJu/ulScJwX9gQszCggMJTq5DILQ/J7mu7o++BoM/Qdfraj/t3Y
+         5yaw==
+X-Gm-Message-State: AHQUAuYZVDbKVYlTx+oEFyvfs9I18C2PF0G53eh75obFaqRTgPrTzlRH
+        BniStt8DaZUEnqrxj+ao2YsSENYe6/3I3DQZ2yIx+w==
+X-Google-Smtp-Source: AHgI3IZsjPFyb46JQZlNBDcdTm96xta98AkxHRRE9ibVq6i+iC9Ai0WHn7eNrHNzxP2R/hPlbCcJCiciqCu2cNiBC1A=
+X-Received: by 2002:a24:1947:: with SMTP id b68mr1586794itb.121.1550572524402;
+ Tue, 19 Feb 2019 02:35:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20190215013959.21320-1-natechancellor@gmail.com>
+ <20190215185026.GE15084@fuggles.cambridge.arm.com> <CAKv+Gu-=2C4fBPAKNrkeiOsMG0Fg3jHHGuG2rVZvjtT=0-aDkA@mail.gmail.com>
+ <CAKwvOd=+_pwHStdhfB3bAYEuyMEjJ+T+gyTd9KA7GyNE2wMk7g@mail.gmail.com>
+ <CAKv+Gu-41fhEfJF+pvfCQRqXs4vYPHs77rkJo9=X8Y23QVd6Tw@mail.gmail.com>
+ <CAKwvOdke_HbSrmGO5ThNy4o87G4BhA845QcgZFUTB7m6cBHTDg@mail.gmail.com> <CAKv+Gu-Aj68gXoi9CXLyw96iRychWjqX=XtMCQxcZqOv0jhsLw@mail.gmail.com>
+In-Reply-To: <CAKv+Gu-Aj68gXoi9CXLyw96iRychWjqX=XtMCQxcZqOv0jhsLw@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Tue, 19 Feb 2019 11:35:12 +0100
+Message-ID: <CAKv+Gu_nwKr65zLG0p0dSW4sQtN4dwEkevCMPe5s9U++SaDezg@mail.gmail.com>
+Subject: Re: [PATCH] arm64/neon: Disable -Wincompatible-pointer-types when
+ building with Clang
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are no external users of this API (nor should there be); remove it.
+On Fri, 15 Feb 2019 at 20:45, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>
+> On Fri, 15 Feb 2019 at 20:43, Nick Desaulniers <ndesaulniers@google.com> wrote:
+> >
+> > On Fri, Feb 15, 2019 at 11:28 AM Ard Biesheuvel
+> > <ard.biesheuvel@linaro.org> wrote:
+> > >
+> > > On Fri, 15 Feb 2019 at 20:25, Nick Desaulniers <ndesaulniers@google.com> wrote:
+> > > >
+> > > > On Fri, Feb 15, 2019 at 11:20 AM Ard Biesheuvel
+> > > > <ard.biesheuvel@linaro.org> wrote:
+> > > > > Provided that we stop sending Clang enablement patches to -stable:
+> > > >
+> > > > What does that mean?  We're trying to provide clang support back to
+> > > > 4.4 LTS branches. (so 4.4, 4.9, 4.14, 4.19).
+> > >
+> > > I understand that is what you are attempting, but that does not mean
+> > > it /belongs/ in -stable.
+> > >
+> > > There are rules for stable, and people that track stable kernels (such
+> > > as the distros) should be able to rely on us to only backport bug
+> > > fixes, not linker script changes and other updates that fix issues
+> > > that did not exist when those kernels were released.
+> > >
+> > > It is unclear to me how these clang changes benefit those users.
+> >
+> > If you're referring to
+> > https://www.spinics.net/lists/stable/msg278381.html, that's fair (I
+> > think those were helpful for LLD support on arm64).
+> >
+> > Why didn't you speak up then?  Why is this coming up now?
+>
+> That is just one example, and I failed to realise it at the time.
+>
+> I think the Clang/LLVM work you are doing is very important, but I
+> simply don't think any of it belongs in -stable kernels.
 
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- include/asm-generic/tlb.h |    1 -
- mm/mmu_gather.c           |   34 +++++++++++++++++-----------------
- 2 files changed, 17 insertions(+), 18 deletions(-)
+OK, to clarify my position:
 
---- a/include/asm-generic/tlb.h
-+++ b/include/asm-generic/tlb.h
-@@ -174,7 +174,6 @@ struct mmu_table_batch {
- #define MAX_TABLE_BATCH		\
- 	((PAGE_SIZE - sizeof(struct mmu_table_batch)) / sizeof(void *))
- 
--extern void tlb_table_flush(struct mmu_gather *tlb);
- extern void tlb_remove_table(struct mmu_gather *tlb, void *table);
- 
- #endif
---- a/mm/mmu_gather.c
-+++ b/mm/mmu_gather.c
-@@ -91,22 +91,6 @@ bool __tlb_remove_page_size(struct mmu_g
- 
- #endif /* HAVE_MMU_GATHER_NO_GATHER */
- 
--static void tlb_flush_mmu_free(struct mmu_gather *tlb)
--{
--#ifdef CONFIG_HAVE_RCU_TABLE_FREE
--	tlb_table_flush(tlb);
--#endif
--#ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
--	tlb_batch_pages_flush(tlb);
--#endif
--}
--
--void tlb_flush_mmu(struct mmu_gather *tlb)
--{
--	tlb_flush_mmu_tlbonly(tlb);
--	tlb_flush_mmu_free(tlb);
--}
--
- #ifdef CONFIG_HAVE_RCU_TABLE_FREE
- 
- /*
-@@ -159,7 +143,7 @@ static void tlb_remove_table_rcu(struct
- 	free_page((unsigned long)batch);
- }
- 
--void tlb_table_flush(struct mmu_gather *tlb)
-+static void tlb_table_flush(struct mmu_gather *tlb)
- {
- 	struct mmu_table_batch **batch = &tlb->batch;
- 
-@@ -191,6 +175,22 @@ void tlb_remove_table(struct mmu_gather
- 
- #endif /* CONFIG_HAVE_RCU_TABLE_FREE */
- 
-+static void tlb_flush_mmu_free(struct mmu_gather *tlb)
-+{
-+#ifdef CONFIG_HAVE_RCU_TABLE_FREE
-+	tlb_table_flush(tlb);
-+#endif
-+#ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
-+	tlb_batch_pages_flush(tlb);
-+#endif
-+}
-+
-+void tlb_flush_mmu(struct mmu_gather *tlb)
-+{
-+	tlb_flush_mmu_tlbonly(tlb);
-+	tlb_flush_mmu_free(tlb);
-+}
-+
- /**
-  * tlb_gather_mmu - initialize an mmu_gather structure for page-table tear-down
-  * @tlb: the mmu_gather structure to initialize
+I have no problem whatsoever with taking this patch into v5.x, so
 
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
+but going forward, I will push back on -stable backports for
+Clang/LLVM specific changes, since they are obviously in violation of
+the stable kernel rules.
