@@ -4,91 +4,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8557C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:02:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C6BC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:03:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85B342147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:02:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69D752147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:03:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729699AbfBSRCt (ORCPT
+        id S1729724AbfBSRDC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 12:02:49 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:37909 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfBSRCr (ORCPT
+        Tue, 19 Feb 2019 12:03:02 -0500
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:60907 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727519AbfBSRCM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 12:02:47 -0500
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1N8GhM-1h9Uhq43Oq-014DH7; Tue, 19 Feb 2019 18:02:39 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Mark Brown <broonie@kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kees Cook <keescook@chromium.org>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] media: go7007: avoid clang frame overflow warning with KASAN
-Date:   Tue, 19 Feb 2019 18:01:58 +0100
-Message-Id: <20190219170209.4180739-3-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190219170209.4180739-1-arnd@arndb.de>
-References: <20190219170209.4180739-1-arnd@arndb.de>
+        Tue, 19 Feb 2019 12:02:12 -0500
+X-Originating-IP: 90.53.137.203
+Received: from localhost (alyon-652-1-306-203.w90-53.abo.wanadoo.fr [90.53.137.203])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id BB48F2000D;
+        Tue, 19 Feb 2019 17:02:09 +0000 (UTC)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 3/7] clk: at91: sckc: handle different RC startup time
+Date:   Tue, 19 Feb 2019 18:01:56 +0100
+Message-Id: <20190219170200.3608-4-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190219170200.3608-1-alexandre.belloni@bootlin.com>
+References: <20190219170200.3608-1-alexandre.belloni@bootlin.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:t3/mjdv6wD7/tRWMcKiA8p4QjJ/EUzxVvcV1M/rdrL5rgjq1TlX
- KfM4Vr+jOGWw+vH4oZ7k1IcyafTsF90+y1m/tMfUKBnkDiaa/2yMXP2B9gOm5Fbkd31+KGT
- qyguvIHRu6rqgEIjRJTeXaNL6r+iLIEEEOHgb9HyZi4zPeAOuusvzc+Ph7yE9LUOJ5oFRfG
- FLaHWGwMZkWJgJVrylW8w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:/iscvYMUj2s=:D6jkiQZZlLvU2DbWwLGRka
- s/wTwku8APxSue3R5LdgNBEeW9OYL6Y4YYeXdUUrv01//8VCHSopg3kmQ5VbaPXW6R1VsFk30
- yaxuWQ/zaR4FmTqAtBJvGVgtxiHg6+eBDilyn6p1hHEbwK//Hyj0/fL0Ti+Qh/SR3xf+nqRT5
- qgfmtJ/E7L2OwVyacTkuf+bLU08lZq7dD66X5SX9H5KJzhWnswOhRLCiPwZ2chD6+Jd3HFqJl
- aHWB0GycawCgV+pUkgxAAy5zKfMZEG4saQZfIgYV9AaD5Lgw50A6RkbtCTI+opV/vjcsR4D44
- IEUZoSARl8wUa2+FMGYsb8GJ0jQsrhpJIWJQnt1OIQTtTEiOYR0875WhFWlknhdxYKGBOHFqz
- kAkkUKgiPjtMcZ9SpZg2yhvZBJx2iniRcjoj1v5oGPfXk+RwGuqzjrC6OLwT7pU50fxtGRCE0
- 5fkekKDcFknmCld9FDO9QXfiEgYyJenKRGW/8rpdwUM4bWkAsVqd5my1SiPEP/iNHRbNz/ITB
- TF9IdZHxRKrsrhsASfAZrOB8H8XnLqIrcYeoigkPxNAqwovIft3bVpoCDXbyApuThpQspL4/6
- eKQ3pARJo1MvLbBG4tuHrOjExNiN56U4z15p8iA6YeM/0ZqzH5hoYiWpWwf8ZDyoYjov8+PXR
- 4unNRFjTQpOewaT5x0jWXyPju9yeyirwnzdgpC1/o7ctQ+YYduPIkbiR1peY/OuxC15J9xhjD
- 7JOWeeO02EijN58g1iXmhgBAjGCkQutNxzVTkw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-clang-8 warns about one function here when KASAN is enabled, even
-without the 'asan-stack' option:
+The sama5d3 slow RC oscillator as a different startup time than all the
+previous SoCs. Handle that using its own compatible.
 
-drivers/media/usb/go7007/go7007-fw.c:1551:5: warning: stack frame size of 2656 bytes in function
-
-I have reported this issue in the llvm bugzilla, but to make
-it work with the clang-8 release, a small annotation is still
-needed.
-
-Link: https://bugs.llvm.org/show_bug.cgi?id=38809
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/media/usb/go7007/go7007-fw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/at91/sckc.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/go7007/go7007-fw.c b/drivers/media/usb/go7007/go7007-fw.c
-index 24f5b615dc7a..c7201e93c331 100644
---- a/drivers/media/usb/go7007/go7007-fw.c
-+++ b/drivers/media/usb/go7007/go7007-fw.c
-@@ -1499,7 +1499,7 @@ static int modet_to_package(struct go7007 *go, __le16 *code, int space)
- 	return cnt;
+diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
+index 470aef586f57..e76b1d64e905 100644
+--- a/drivers/clk/at91/sckc.c
++++ b/drivers/clk/at91/sckc.c
+@@ -321,7 +321,8 @@ at91_clk_register_sam9x5_slow(void __iomem *sckcr,
+ 	return hw;
  }
  
--static int do_special(struct go7007 *go, u16 type, __le16 *code, int space,
-+static noinline_for_stack int do_special(struct go7007 *go, u16 type, __le16 *code, int space,
- 			int *framelen)
+-static void __init of_at91sam9x5_sckc_setup(struct device_node *np)
++static void __init at91sam9x5_sckc_register(struct device_node *np,
++					    unsigned int rc_osc_startup_us)
  {
- 	switch (type) {
+ 	const char *parent_names[2] = { "slow_rc_osc", "slow_osc" };
+ 	void __iomem *regbase = of_iomap(np, 0);
+@@ -334,7 +335,7 @@ static void __init of_at91sam9x5_sckc_setup(struct device_node *np)
+ 		return;
+ 
+ 	hw = at91_clk_register_slow_rc_osc(regbase, parent_names[0], 32768,
+-					   50000000, 75);
++					   50000000, rc_osc_startup_us);
+ 	if (IS_ERR(hw))
+ 		return;
+ 
+@@ -371,9 +372,21 @@ static void __init of_at91sam9x5_sckc_setup(struct device_node *np)
+ 	if (child)
+ 		of_clk_add_hw_provider(child, of_clk_hw_simple_get, hw);
+ }
++
++static void __init of_at91sam9x5_sckc_setup(struct device_node *np)
++{
++	at91sam9x5_sckc_register(np, 75);
++}
+ CLK_OF_DECLARE(at91sam9x5_clk_sckc, "atmel,at91sam9x5-sckc",
+ 	       of_at91sam9x5_sckc_setup);
+ 
++static void __init of_sama5d3_sckc_setup(struct device_node *np)
++{
++	at91sam9x5_sckc_register(np, 500);
++}
++CLK_OF_DECLARE(sama5d3_clk_sckc, "atmel,sama5d3-sckc",
++	       of_sama5d3_sckc_setup);
++
+ static int clk_sama5d4_slow_osc_prepare(struct clk_hw *hw)
+ {
+ 	struct clk_sama5d4_slow_osc *osc = to_clk_sama5d4_slow_osc(hw);
 -- 
-2.20.0
+2.20.1
 
