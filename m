@@ -2,207 +2,85 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 903E1C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 12:00:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0C04C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 12:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FFA3208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 12:00:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CC38208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 12:00:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728447AbfBSMAL (ORCPT
+        id S1728450AbfBSMAS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 07:00:11 -0500
-Received: from mga01.intel.com ([192.55.52.88]:38297 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728347AbfBSMAJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 07:00:09 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2019 04:00:06 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,388,1544515200"; 
-   d="scan'208";a="148009350"
-Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 19 Feb 2019 04:00:04 -0800
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Andy Shevchenko <andy@infradead.org>,
-        Hans de Goede <hdegoede@redhat.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] platform/x86: intel_cht_int33fe: Create fwnode for max17047
-Date:   Tue, 19 Feb 2019 14:59:59 +0300
-Message-Id: <20190219115959.55553-3-heikki.krogerus@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190219115959.55553-1-heikki.krogerus@linux.intel.com>
-References: <20190219115959.55553-1-heikki.krogerus@linux.intel.com>
+        Tue, 19 Feb 2019 07:00:18 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3684 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727233AbfBSMAR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 07:00:17 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 4FD92E7ADDC9BCFD9F15;
+        Tue, 19 Feb 2019 20:00:14 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.96) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.408.0; Tue, 19 Feb 2019
+ 20:00:13 +0800
+Subject: Re: [PATCH -next] tpm: change the return type of calc_tpm2_event_size
+ to size_t
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+References: <20190219072618.23048-1-yuehaibing@huawei.com>
+ <20190219085921.GA5609@linux.intel.com>
+ <820d3cf7-03ab-5434-5306-292b41aed860@huawei.com>
+ <20190219103532.GA16707@linux.intel.com>
+CC:     <peterhuewe@gmx.de>, <jgg@ziepe.ca>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>
+From:   YueHaibing <yuehaibing@huawei.com>
+Message-ID: <c5008bcf-bfcd-c567-1d8e-993ff64f2191@huawei.com>
+Date:   Tue, 19 Feb 2019 20:00:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190219103532.GA16707@linux.intel.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Creating a software node for max17047 when ACPI tables don't
-have a device node for it.
+On 2019/2/19 18:35, Jarkko Sakkinen wrote:
+> On Tue, Feb 19, 2019 at 05:15:47PM +0800, YueHaibing wrote:
+>> On 2019/2/19 16:59, Jarkko Sakkinen wrote:
+>>> On Tue, Feb 19, 2019 at 03:26:18PM +0800, YueHaibing wrote:
+>>>> calc_tpm2_event_size return size of the event which type is
+>>>> size_t, If it is an invalid event, returns 0. And all the
+>>>> caller use a size_t variable to check the return value, so
+>>>> no need to convert to the return value type to int.
+>>>>
+>>>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>>>
+>>> I don't see this patch make any value.
+>>
+>> calc_tpm2_event_size return size_t 'size' which derive from u32 'event_field->event_size',
+>>
+>> convert it to int may result in truncation.
+> 
+> Two remarks:
+> 
+> - Your real name is formatted incorrectly. It should be like "Yue Haibig"
+>   as shown in [1].
+> - If there is no actual regression, this change is useless.
 
-While here, moving max17047 handling to its own function.
+Ok, Thank you.
 
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
----
- drivers/platform/x86/intel_cht_int33fe.c | 86 +++++++++++++++---------
- 1 file changed, 53 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/platform/x86/intel_cht_int33fe.c b/drivers/platform/x86/intel_cht_int33fe.c
-index 4857a57cfff5..81721976b00c 100644
---- a/drivers/platform/x86/intel_cht_int33fe.c
-+++ b/drivers/platform/x86/intel_cht_int33fe.c
-@@ -34,6 +34,7 @@ struct cht_int33fe_data {
- 	struct i2c_client *pi3usb30532;
- 	struct fwnode_handle *port_node;
- 	struct fwnode_handle *fusb302_node;
-+	struct fwnode_handle *max17047_node;
- 	/* Contain a list-head must be per device */
- 	struct device_connection connections[4];
- };
-@@ -66,14 +67,6 @@ static int cht_int33fe_check_for_max17047(struct device *dev, void *data)
- 	return 1;
- }
- 
--static struct i2c_client *cht_int33fe_find_max17047(void)
--{
--	struct i2c_client *max17047 = NULL;
--
--	i2c_for_each_dev(&max17047, cht_int33fe_check_for_max17047);
--	return max17047;
--}
--
- static const char * const max17047_suppliers[] = { "bq24190-charger" };
- 
- static const struct property_entry max17047_props[] = {
-@@ -81,6 +74,43 @@ static const struct property_entry max17047_props[] = {
- 	{ }
- };
- 
-+static int
-+cht_int33fe_max17047(struct device *dev, struct cht_int33fe_data *data)
-+{
-+	struct i2c_client *max17047 = NULL;
-+	struct i2c_board_info board_info;
-+	int ret;
-+
-+	i2c_for_each_dev(&max17047, cht_int33fe_check_for_max17047);
-+	if (max17047) {
-+		/* Pre-existing i2c-client for the max17047, add device-props */
-+		ret = device_add_properties(&max17047->dev, max17047_props);
-+		if (ret)
-+			return ret;
-+		/* And re-probe to get the new device-props applied. */
-+		ret = device_reprobe(&max17047->dev);
-+		if (ret)
-+			dev_warn(dev, "Reprobing max17047 error: %d\n", ret);
-+		return 0;
-+	}
-+
-+	data->max17047_node = fwnode_create_software_node(max17047_props, NULL);
-+	if (IS_ERR(data->max17047_node))
-+		return PTR_ERR(data->max17047_node);
-+
-+	memset(&board_info, 0, sizeof(board_info));
-+	strlcpy(board_info.type, "max17047", I2C_NAME_SIZE);
-+	board_info.dev_name = "max17047";
-+	board_info.fwnode = data->max17047_node;
-+	data->max17047 = i2c_acpi_new_device(dev, 1, &board_info);
-+	if (IS_ERR(data->max17047)) {
-+		fwnode_remove_software_node(data->max17047_node);
-+		return PTR_ERR(data->max17047);
-+	}
-+
-+	return 0;
-+}
-+
- static const struct property_entry fusb302_props[] = {
- 	PROPERTY_ENTRY_STRING("linux,extcon-name", "cht_wcove_pwrsrc"),
- 	{ }
-@@ -114,7 +144,6 @@ static int cht_int33fe_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct i2c_board_info board_info;
- 	struct cht_int33fe_data *data;
--	struct i2c_client *max17047;
- 	struct regulator *regulator;
- 	unsigned long long ptyp;
- 	acpi_status status;
-@@ -174,38 +203,25 @@ static int cht_int33fe_probe(struct platform_device *pdev)
- 	if (!data)
- 		return -ENOMEM;
- 
-+	/* Work around BIOS bug, see comment on cht_int33fe_find_max17047 */
-+	ret = cht_int33fe_max17047(dev, data);
-+	if (ret)
-+		return ret;
-+
- 	/* Node for the FUSB302 controller */
- 	data->fusb302_node = fwnode_create_software_node(fusb302_props, NULL);
--	if (IS_ERR(data->fusb302_node))
--		return PTR_ERR(data->fusb302_node);
-+	if (IS_ERR(data->fusb302_node)) {
-+		ret = PTR_ERR(data->fusb302_node);
-+		goto out_remove_max17047_node;
-+	}
- 
- 	/* Node for the connector (FUSB302 is the parent) */
- 	data->port_node = fwnode_create_software_node(usb_connector_props,
- 						      data->fusb302_node);
- 	if (IS_ERR(data->port_node)) {
- 		fwnode_remove_software_node(data->fusb302_node);
--		return PTR_ERR(data->port_node);
--	}
--
--	/* Work around BIOS bug, see comment on cht_int33fe_find_max17047 */
--	max17047 = cht_int33fe_find_max17047();
--	if (max17047) {
--		/* Pre-existing i2c-client for the max17047, add device-props */
--		ret = device_add_properties(&max17047->dev, max17047_props);
--		if (ret)
--			return ret;
--		/* And re-probe to get the new device-props applied. */
--		ret = device_reprobe(&max17047->dev);
--		if (ret)
--			dev_warn(dev, "Reprobing max17047 error: %d\n", ret);
--	} else {
--		memset(&board_info, 0, sizeof(board_info));
--		strlcpy(board_info.type, "max17047", I2C_NAME_SIZE);
--		board_info.dev_name = "max17047";
--		board_info.properties = max17047_props;
--		data->max17047 = i2c_acpi_new_device(dev, 1, &board_info);
--		if (IS_ERR(data->max17047))
--			return PTR_ERR(data->max17047);
-+		ret = PTR_ERR(data->port_node);
-+		goto out_remove_max17047_node;
- 	}
- 
- 	data->connections[0].endpoint[0] = "port0";
-@@ -256,6 +272,9 @@ static int cht_int33fe_probe(struct platform_device *pdev)
- 	fwnode_remove_software_node(data->port_node);
- 	fwnode_remove_software_node(data->fusb302_node);
- 
-+out_remove_max17047_node:
-+	fwnode_remove_software_node(data->max17047_node);
-+
- 	return ret;
- }
- 
-@@ -270,6 +289,7 @@ static int cht_int33fe_remove(struct platform_device *pdev)
- 	device_connections_remove(data->connections);
- 	fwnode_remove_software_node(data->port_node);
- 	fwnode_remove_software_node(data->fusb302_node);
-+	fwnode_remove_software_node(data->max17047_node);
- 
- 	return 0;
- }
--- 
-2.20.1
+> 
+> [1] https://www.kernel.org/doc/html/v4.17/process/submitting-patches.html
+> 
+> /Jarkko
+> 
+> .
+> 
 
