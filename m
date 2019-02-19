@@ -2,345 +2,339 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AF4BC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:55:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE880C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:56:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CE832086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:55:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="cZQNbbaZ"
+	by mail.kernel.org (Postfix) with ESMTP id 6F8372086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:56:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727280AbfBSUzD (ORCPT
+        id S1727928AbfBSUz6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 15:55:03 -0500
-Received: from mail-eopbgr130073.outbound.protection.outlook.com ([40.107.13.73]:34877
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726321AbfBSUzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 15:55:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h6EdJl23+XT3TdZ9PQ3I2i+lKtRFoLM3VJTpNXABfR4=;
- b=cZQNbbaZMTUBcLyy58yqmTRsZiGGA/3cwfcmx0RAOtLiIxIdOLvgkuHd1PkYcInwpWd++zoGc69KtVfQwiKftdvwuKWVJJJiH51yfRNyf5Sr+pNDV3xRESg4aNx4sxxlphgEl2y1RjWUlMrIP3RyOmmMoYE3sleL5N3EAc5srVg=
-Received: from HE1PR05MB4714.eurprd05.prod.outlook.com (20.176.164.15) by
- HE1PR05MB3228.eurprd05.prod.outlook.com (10.170.243.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.19; Tue, 19 Feb 2019 20:54:49 +0000
-Received: from HE1PR05MB4714.eurprd05.prod.outlook.com
- ([fe80::390d:7354:3e09:932e]) by HE1PR05MB4714.eurprd05.prod.outlook.com
- ([fe80::390d:7354:3e09:932e%3]) with mapi id 15.20.1622.018; Tue, 19 Feb 2019
- 20:54:49 +0000
-From:   Shravan Ramani <sramani@mellanox.com>
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-CC:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v1 1/1] gpio: add driver for Mellanox BlueField GPIO
- controller
-Thread-Topic: [PATCH v1 1/1] gpio: add driver for Mellanox BlueField GPIO
- controller
-Thread-Index: AQHUxKyQYod3vcrxO0KGMdtvG31E+aXgjRIAgAcPCzA=
-Date:   Tue, 19 Feb 2019 20:54:49 +0000
-Message-ID: <HE1PR05MB47146900EA8B5FA8ADA0BA1BCE7C0@HE1PR05MB4714.eurprd05.prod.outlook.com>
-References: <db046221591c037713a7e6994798c3b01e1fca20.1550178875.git.sramani@mellanox.com>
- <CAMpxmJXg69ej_NcBoeW805G_5VDx7a-rMmVtQneXK2tL8i9ebw@mail.gmail.com>
-In-Reply-To: <CAMpxmJXg69ej_NcBoeW805G_5VDx7a-rMmVtQneXK2tL8i9ebw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=sramani@mellanox.com; 
-x-originating-ip: [216.156.69.42]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 56f52563-de24-48df-bc75-08d696ac7d07
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:HE1PR05MB3228;
-x-ms-traffictypediagnostic: HE1PR05MB3228:
-x-microsoft-exchange-diagnostics: =?utf-8?B?MTtIRTFQUjA1TUIzMjI4OzIzOnI0eko1NUpzemZFa01CdzU2UnJvdDEzL3Qz?=
- =?utf-8?B?MGVQYTB4NG9vK3Z6dlJ2T0svN0RYOWpEbEN6R015MHNFTkFoMmxHRHJOSmh1?=
- =?utf-8?B?V3RHaFUyRUFtUzBEdWhsbzkwbG9HQ3FZdVo3NkFxWWxHcENtcHo0T0ZxOGpa?=
- =?utf-8?B?T0JUcm8rQnhhWTV0THB5Z0lwNUwzRzhYRXRPNFkzZGk4VHlvSGlHTU1uRk5X?=
- =?utf-8?B?d2FwbnVDOVRJeGFERnJJcXlqRVBNTHZUTHVWUVgxSHZTbFB0b0FFRzZDOVBu?=
- =?utf-8?B?T1BIZGlZQ25iU2dqR1VhT1plQXRycmlvN0J6MUp1TVZvMU45UlgxZ0UrUEhr?=
- =?utf-8?B?RE5yclpQZkhSelZ5Y3Q3SHJpSHRXNHlQK3BQUHhOSFZVZHhGNlh5QnE5M1d0?=
- =?utf-8?B?UDFrQ1pzVnR2aGpseTJHVnNrY2hRYlZNTkRxVjZxOTQwYkxpbTViQzZXQnA4?=
- =?utf-8?B?azIvQmhCVHlMWnZxRlVqZGFjQytmSHJWSDJVenV5eWlwRnlPSnd4SmJNUksv?=
- =?utf-8?B?NG91c3RXcUpPWndEUVhjVi9CL1lULzhjZllEWTFkcEQvbFFHM0xkWXRTcFFm?=
- =?utf-8?B?UzVpUDNyRFp1Q1ltNWRDNGVqS05rNFRLeDNzaHlRY2F2WGVLdWFISTh6bEVp?=
- =?utf-8?B?ZTlFZnNDdVNVYnY2amJlNnU1a2RMVTJselpxdVNHaEJCZTdhTWhjTUF3UXlK?=
- =?utf-8?B?TllVRWJPbWVsREJpUlF0U2hReTRqSHRsYURENkNsTVBlbmtXU1VBZHUzMHI1?=
- =?utf-8?B?djlQMmJ3ODkyZThBY2p0R0hrSGxWNmE3QXc3TTIzR1U1NHN5L0RpYUcySGpm?=
- =?utf-8?B?QTR6MEh1b0ZMOFlKb1hYb1N5VDJYaTMvZUNiREtDMXhrK3ZTa2tWMTdZOER1?=
- =?utf-8?B?TytSNjlPcGpSK3FLcmxSOWxnZ0g4TnpJRlBiWkNNYUdaU0tKRlRHbTJHMDJO?=
- =?utf-8?B?aUptUitKaWJZT201Z2xnL0tONDhtSUJwaEc2STNHeTFOZzNLZlkwOEgvNnBp?=
- =?utf-8?B?VG9ENXJPeCtjaHY2TXZBOXo0VDFCTW8vQ1E0c2lMNEN1ajhsTVdLclVRTmJV?=
- =?utf-8?B?YXpJZEVnRTV3NjcydEZkc2FaaENlMUdaNnZ2ZHloNTJlcnpHa1lIVlRsZ3dY?=
- =?utf-8?B?anRDNm9tbGtveHBMaFZjTjg2cnM3WTlMMXBxNEJEOUNhTzdNc1BTK3UyV293?=
- =?utf-8?B?Y2hxdmZad1RZTUY4MnZlL3duS0ZnUS9JRENEbWlkRDdMNnJlL09mcGw4eFY1?=
- =?utf-8?B?Qmpzb2dRd3IrY2pFUGt3YWRUUjFtdG03VHNVdVh6elNZZnc3U0FOdnZGZEZl?=
- =?utf-8?B?dzBHa3RWeXNVRUtwa0hndmZ2NFJYUEtLWFR4N1lqbG83azVwbDQ4V29yNGJp?=
- =?utf-8?B?UWFBQjUxU3JmWnVKMS9ZZCtJWmlpOGFWYkp2dUZCaW5vR3ZzRDRBZldXWEQ3?=
- =?utf-8?B?WDVWeko0dmVQdXlIWkpUcjhjRnpVOHJjRmJXc292K0tPN2d2TTVGMS8rK3hs?=
- =?utf-8?B?bzZHbXZDRWdWV0Mzc1YyV3pPQXdRM00xUVEvbDdKVU1HblJEb2FvQm9wVUxz?=
- =?utf-8?B?b1BjdVVNL01lSXhZbnRYZmtxZVd0QjN4RGVXa2N6YWYzVEVORmJkODFNUnhQ?=
- =?utf-8?B?MTNhTVZvRTIxK3g5aHNydWNaTFZvNGZhVEd5b04xWlE3SmNtSGxJR3lxQ1RX?=
- =?utf-8?Q?BjvKCAypEQNcVZ4+2W/+LQ6W8PJVxrE5HbIGaXj?=
-x-microsoft-antispam-prvs: <HE1PR05MB3228F2852FA26E96AEBB167DCE7C0@HE1PR05MB3228.eurprd05.prod.outlook.com>
-x-forefront-prvs: 09538D3531
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(366004)(136003)(39860400002)(396003)(199004)(189003)(13464003)(9686003)(229853002)(55016002)(99286004)(6116002)(3846002)(6436002)(68736007)(76176011)(54906003)(2906002)(5660300002)(66066001)(97736004)(478600001)(14444005)(256004)(105586002)(4326008)(81166006)(102836004)(74316002)(6506007)(53546011)(305945005)(53936002)(86362001)(6916009)(11346002)(476003)(106356001)(486006)(81156014)(8936002)(25786009)(446003)(33656002)(7696005)(14454004)(8676002)(186003)(26005)(6246003)(30864003)(316002)(7736002)(71190400001)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR05MB3228;H:HE1PR05MB4714.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: +pSSEobyZFXKra7s/kvP4oxvcmiaKmMZzUGr6EeJBfo5huoozPwAzUcXfTcL/VuOtyby4qSFv7lP2lVpZYR0lSkKwK/yzuwTT5N3PTobvGpdtJTyQIwuGIRcORSObDwu9COTJ492FrvWZuO6KjZ/E3rXsK45vrwRE5e6hTWI+HnnQ3Y4eDqc/x2Iw5QtXW95Je3rN7tjPyx63s67m9/dhwggnPluUDi7p8QxXXYOZt4itLk6vXAfzdJK1lq3C9VMk+36inLWjt+k2cD+Pd1Fh4lRJ0S/aaCvsqGYqi+j0Q8hb/C2LLeh775AZp5vHJr959qQs1byx84L+KBavTGPR8o9p+7Nw6XYrAhlCp6LXLVw2XH/iHRlfhhqIy9FSCkUXxUDheNnUQeuMOy+QgeBI0LbCVGDBhZK92erM+YegVw=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 56f52563-de24-48df-bc75-08d696ac7d07
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2019 20:54:49.3542
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR05MB3228
+        Tue, 19 Feb 2019 15:55:58 -0500
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:50354 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726239AbfBSUz6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 15:55:58 -0500
+Received: from Internal Mail-Server by MTLPINE1 (envelope-from sramani@mellanox.com)
+        with ESMTPS (AES256-SHA encrypted); 19 Feb 2019 22:55:49 +0200
+Received: from farm-0002.mtbu.labs.mlnx (farm-0002.mtbu.labs.mlnx [10.15.2.32])
+        by mtbu-labmailer.labs.mlnx (8.14.4/8.14.4) with ESMTP id x1JKtmEW026535;
+        Tue, 19 Feb 2019 15:55:48 -0500
+Received: (from sramani@localhost)
+        by farm-0002.mtbu.labs.mlnx (8.14.7/8.13.8/Submit) id x1JKtgTM032250;
+        Tue, 19 Feb 2019 15:55:42 -0500
+From:   Shravan Kumar Ramani <sramani@mellanox.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Shravan Kumar Ramani <sramani@mellanox.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/1] gpio: add driver for Mellanox BlueField GPIO controller
+Date:   Tue, 19 Feb 2019 15:55:29 -0500
+Message-Id: <ca55f568da9a5be30700623697f7d398c149cda3.1550608440.git.sramani@mellanox.com>
+X-Mailer: git-send-email 2.1.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VGhhbmsgeW91IGZvciB0aGUgZmVlZGJhY2suIFJlZ2FyZGluZyB0aGUgc3VnZ2VzdGVkIHVzZSBv
-ZiByZWdtYXAgbW1pbywgYWxsIG9mIHRoZSByZWdpc3RlcnMgYmVpbmcgYWNjZXNzZWQgaGVyZSBh
-cmUgNjQtYml0IGFuZCB0aGUgcmVnbWFwX3VwZGF0ZV9iaXRzL3JlZ21hcF9yZWFkL3JlZ21hcF93
-cml0ZSBjYWxscyBhcmVuJ3QgdmVyeSBjb252ZW5pZW50IHRvIHVzZSBpbiB0aGlzIGNhc2UuIEFs
-bCBvdGhlciBjb21tZW50cyBoYXZlIGJlZW4gYWRkcmVzc2VkIGluIHYyLg0KDQpSZWdhcmRzLA0K
-U2hyYXZhbiBLdW1hciBSYW1hbmkNCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206
-IEJhcnRvc3ogR29sYXN6ZXdza2kgPGJnb2xhc3pld3NraUBiYXlsaWJyZS5jb20+IA0KU2VudDog
-RnJpZGF5LCBGZWJydWFyeSAxNSwgMjAxOSAzOjQ4IEFNDQpUbzogU2hyYXZhbiBSYW1hbmkgPHNy
-YW1hbmlAbWVsbGFub3guY29tPg0KQ2M6IExpbnVzIFdhbGxlaWogPGxpbnVzLndhbGxlaWpAbGlu
-YXJvLm9yZz47IGxpbnV4LWdwaW8gPGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3JnPjsgTEtNTCA8
-bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz4NClN1YmplY3Q6IFJlOiBbUEFUQ0ggdjEgMS8x
-XSBncGlvOiBhZGQgZHJpdmVyIGZvciBNZWxsYW5veCBCbHVlRmllbGQgR1BJTyBjb250cm9sbGVy
-DQoNCmN6dy4sIDE0IGx1dCAyMDE5IG8gMjI6MzAgU2hyYXZhbiBLdW1hciBSYW1hbmkgPHNyYW1h
-bmlAbWVsbGFub3guY29tPg0KbmFwaXNhxYIoYSk6DQo+DQo+IFRoaXMgcGF0Y2ggYWRkcyBzdXBw
-b3J0IGZvciB0aGUgR1BJTyBjb250cm9sbGVyIHVzZWQgYnkgTWVsbGFub3ggDQo+IEJsdWVGaWVs
-ZCBTT0NzLg0KPg0KPiBSZXZpZXdlZC1ieTogRGF2aWQgV29vZHMgPGR3b29kc0BtZWxsYW5veC5j
-b20+DQo+IFNpZ25lZC1vZmYtYnk6IFNocmF2YW4gS3VtYXIgUmFtYW5pIDxzcmFtYW5pQG1lbGxh
-bm94LmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL2dwaW8vS2NvbmZpZyAgICAgIHwgICA3ICsrDQo+
-ICBkcml2ZXJzL2dwaW8vTWFrZWZpbGUgICAgIHwgICAxICsNCj4gIGRyaXZlcnMvZ3Bpby9ncGlv
-LW1seGJmLmMgfCAyODcgDQo+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysNCj4gIDMgZmlsZXMgY2hhbmdlZCwgMjk1IGluc2VydGlvbnMoKykNCj4gIGNyZWF0
-ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwaW8vZ3Bpby1tbHhiZi5jDQo+DQo+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwaW8vS2NvbmZpZyBiL2RyaXZlcnMvZ3Bpby9LY29uZmlnIGluZGV4IA0KPiBi
-NWEyODQ1Li4yYmViZTkyIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwaW8vS2NvbmZpZw0KPiAr
-KysgYi9kcml2ZXJzL2dwaW8vS2NvbmZpZw0KPiBAQCAtMTI5Miw2ICsxMjkyLDEzIEBAIGNvbmZp
-ZyBHUElPX01FUlJJRklFTEQNCj4gICAgICAgICBoZWxwDQo+ICAgICAgICAgICBTYXkgWSBoZXJl
-IHRvIHN1cHBvcnQgSW50ZWwgTWVycmlmaWVsZCBHUElPLg0KPg0KPiArY29uZmlnIEdQSU9fTUxY
-QkYNCj4gKyAgICAgICB0cmlzdGF0ZSAiTWVsbGFub3ggQmx1ZUZpZWxkIFNvQyBHUElPIg0KPiAr
-ICAgICAgIGRlcGVuZHMgb24gKE1FTExBTk9YX1BMQVRGT1JNICYmIEFSTTY0ICYmIEFDUEkpIHx8
-IENPTVBJTEVfVEVTVA0KPiArICAgICAgIHNlbGVjdCBHUElPX0dFTkVSSUMNCg0KWW91J3JlIG5v
-dCByZWFsbHkgZGVwZW5kaW5nIG9uIGl0Lg0KDQo+ICsgICAgICAgaGVscA0KPiArICAgICAgICAg
-U2F5IFkgaGVyZSBpZiB5b3Ugd2FudCBHUElPIHN1cHBvcnQgb24gTWVsbGFub3ggQmx1ZUZpZWxk
-IFNvQy4NCj4gKw0KPiAgY29uZmlnIEdQSU9fTUxfSU9IDQo+ICAgICAgICAgdHJpc3RhdGUgIk9L
-SSBTRU1JQ09ORFVDVE9SIE1MNzIxMyBJT0ggR1BJTyBzdXBwb3J0Ig0KPiAgICAgICAgIGRlcGVu
-ZHMgb24gWDg2IHx8IENPTVBJTEVfVEVTVCBkaWZmIC0tZ2l0IA0KPiBhL2RyaXZlcnMvZ3Bpby9N
-YWtlZmlsZSBiL2RyaXZlcnMvZ3Bpby9NYWtlZmlsZSBpbmRleCAzNzYyOGY4Li44ZDU0Mjc5IA0K
-PiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncGlvL01ha2VmaWxlDQo+ICsrKyBiL2RyaXZlcnMv
-Z3Bpby9NYWtlZmlsZQ0KPiBAQCAtODMsNiArODMsNyBAQCBvYmotJChDT05GSUdfR1BJT19NRU5a
-MTI3KSAgICArPSBncGlvLW1lbnoxMjcubw0KPiAgb2JqLSQoQ09ORklHX0dQSU9fTUVSUklGSUVM
-RCkgICs9IGdwaW8tbWVycmlmaWVsZC5vDQo+ICBvYmotJChDT05GSUdfR1BJT19NQzMzODgwKSAg
-ICAgKz0gZ3Bpby1tYzMzODgwLm8NCj4gIG9iai0kKENPTkZJR19HUElPX01DOVMwOERaNjApICAr
-PSBncGlvLW1jOXMwOGR6NjAubw0KPiArb2JqLSQoQ09ORklHX0dQSU9fTUxYQkYpICAgICAgICs9
-IGdwaW8tbWx4YmYubw0KPiAgb2JqLSQoQ09ORklHX0dQSU9fTUxfSU9IKSAgICAgICs9IGdwaW8t
-bWwtaW9oLm8NCj4gIG9iai0kKENPTkZJR19HUElPX01NX0xBTlRJUSkgICArPSBncGlvLW1tLWxh
-bnRpcS5vDQo+ICBvYmotJChDT05GSUdfR1BJT19NT0NLVVApICAgICAgKz0gZ3Bpby1tb2NrdXAu
-bw0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncGlvL2dwaW8tbWx4YmYuYyBiL2RyaXZlcnMvZ3Bp
-by9ncGlvLW1seGJmLmMgbmV3IA0KPiBmaWxlIG1vZGUgMTAwNjQ0IGluZGV4IDAwMDAwMDAuLmU1
-YzUwZGINCj4gLS0tIC9kZXYvbnVsbA0KPiArKysgYi9kcml2ZXJzL2dwaW8vZ3Bpby1tbHhiZi5j
-DQo+IEBAIC0wLDAgKzEsMjg3IEBADQo+ICsvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BM
-LTIuMA0KPiArDQo+ICsjaW5jbHVkZSA8bGludXgvYWNwaS5oPg0KPiArI2luY2x1ZGUgPGxpbnV4
-L2JpdG9wcy5oPg0KPiArI2luY2x1ZGUgPGxpbnV4L2RldmljZS5oPg0KPiArI2luY2x1ZGUgPGxp
-bnV4L2dwaW8vZHJpdmVyLmg+DQo+ICsjaW5jbHVkZSA8bGludXgvaW8uaD4NCj4gKyNpbmNsdWRl
-IDxsaW51eC9pb3BvcnQuaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9rZXJuZWwuaD4NCj4gKyNpbmNs
-dWRlIDxsaW51eC9tb2R1bGUuaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9tb2R1bGVwYXJhbS5oPg0K
-PiArI2luY2x1ZGUgPGxpbnV4L3BpbmN0cmwvY29uc3VtZXIuaD4NCj4gKyNpbmNsdWRlIDxsaW51
-eC9wbGF0Zm9ybV9kZXZpY2UuaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9wbS5oPg0KPiArI2luY2x1
-ZGUgPGxpbnV4L3Jlc291cmNlLmg+DQo+ICsjaW5jbHVkZSA8bGludXgvc3BpbmxvY2suaD4NCj4g
-KyNpbmNsdWRlIDxsaW51eC90eXBlcy5oPg0KPiArI2luY2x1ZGUgPGxpbnV4L3ZlcnNpb24uaD4N
-Cj4gKw0KPiArLyogTnVtYmVyIG9mIHBpbnMgb24gQmx1ZUZpZWxkICovDQo+ICsjZGVmaW5lIE1M
-WEJGX0dQSU9fTlIgNTQNCj4gKw0KPiArLyogUGFkIEVsZWN0cmljYWwgQ29udHJvbHMuICovDQo+
-ICsjZGVmaW5lIEdQSU9fUEFEX0NPTlRST0xfX0ZJUlNUX1dPUkQgMHgwNzAwICNkZWZpbmUgDQo+
-ICtHUElPX1BBRF9DT05UUk9MXzFfX0ZJUlNUX1dPUkQgMHgwNzA4ICNkZWZpbmUgDQo+ICtHUElP
-X1BBRF9DT05UUk9MXzJfX0ZJUlNUX1dPUkQgMHgwNzEwICNkZWZpbmUgDQo+ICtHUElPX1BBRF9D
-T05UUk9MXzNfX0ZJUlNUX1dPUkQgMHgwNzE4DQo+ICsNCj4gKyNkZWZpbmUgR1BJT19QSU5fRElS
-X0kgMHgxMDQwDQo+ICsjZGVmaW5lIEdQSU9fUElOX0RJUl9PIDB4MTA0OA0KPiArI2RlZmluZSBH
-UElPX1BJTl9TVEFURSAweDEwMDANCj4gKyNkZWZpbmUgR1BJT19TQ1JBVENIUEFEIDB4MjANCj4g
-Kw0KPiArI2lmZGVmIENPTkZJR19QTQ0KPiArc3RydWN0IGJsdWVmaWVsZF9jb250ZXh0X3NhdmVf
-cmVncyB7DQo+ICsgICAgICAgdTY0IGdwaW9fc2NyYXRjaHBhZDsNCj4gKyAgICAgICB1NjQgZ3Bp
-b19wYWRfY29udHJvbFtNTFhCRl9HUElPX05SXTsNCj4gKyAgICAgICB1NjQgZ3Bpb19waW5fZGly
-X2k7DQo+ICsgICAgICAgdTY0IGdwaW9fcGluX2Rpcl9vOw0KPiArfTsNCj4gKyNlbmRpZg0KPiAr
-DQo+ICsvKiBEZXZpY2Ugc3RhdGUgc3RydWN0dXJlLiAqLw0KPiArc3RydWN0IGdwaW9fc3RhdGUg
-ew0KPiArICAgICAgIHN0cnVjdCBsaXN0X2hlYWQgbm9kZTsNCg0KV2h5IGRvIHlvdSBuZWVkIHRo
-YXQ/IFlvdSdyZSBub3QgdXNpbmcgaXQgYW55d2hlcmUgQUZBSUNULg0KDQo+ICsgICAgICAgc3Ry
-dWN0IHBsYXRmb3JtX2RldmljZSAqcGRldjsNCg0KWW91J3JlIG5vdCB1c2luZyB0aGlzIGVpdGhl
-ci4NCg0KPiArDQo+ICsgICAgICAgc3RydWN0IGdwaW9fY2hpcCBnYzsNCj4gKw0KPiArICAgICAg
-IC8qIE11c3QgaG9sZCB0aGlzIGxvY2sgdG8gbW9kaWZ5IHNoYXJlZCBkYXRhLiAqLw0KPiArICAg
-ICAgIHNwaW5sb2NrX3QgbG9jazsNCj4gKw0KPiArICAgICAgIC8qIE1lbW9yeSBBZGRyZXNzICov
-DQo+ICsgICAgICAgdm9pZCBfX2lvbWVtICpkY19iYXNlOw0KPiArDQo+ICsjaWZkZWYgQ09ORklH
-X1BNDQo+ICsgICAgICAgc3RydWN0IGJsdWVmaWVsZF9jb250ZXh0X3NhdmVfcmVncyBjc2F2ZV9y
-ZWdzOyAjZW5kaWYgfTsNCj4gKw0KPiArLyogR1BJTyBkcml2ZXIgc2V0IGlucHV0IHBpbnMgKi8N
-Cj4gK3N0YXRpYyBpbnQgZ3Bpb19iZl9zZXRfaW5wdXQoc3RydWN0IGdwaW9fY2hpcCAqY2hpcCwg
-dW5zaWduZWQgaW50IA0KPiArb2Zmc2V0KSB7DQo+ICsgICAgICAgc3RydWN0IGdwaW9fc3RhdGUg
-KmdzID0gZ3Bpb2NoaXBfZ2V0X2RhdGEoY2hpcCk7DQo+ICsgICAgICAgdTY0IGluOw0KPiArICAg
-ICAgIHU2NCBvdXQ7DQo+ICsNCj4gKyAgICAgICBpZiAob2Zmc2V0ID4gTUxYQkZfR1BJT19OUiAt
-IDEpIHsNCj4gKyAgICAgICAgICAgICAgIGRldl9lcnIoY2hpcC0+cGFyZW50LCAiZ3BpbyBpbnB1
-dCBwaW5zOiBJbnZhbGlkIG9mZnNldCAlZFxuIiwNCj4gKyAgICAgICAgICAgICAgICAgICAgICAg
-b2Zmc2V0KTsNCj4gKyAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFMOw0KPiArICAgICAgIH0N
-Cg0KWW91IGRvbid0IG5lZWQgdGhhdCwgdGhlIHN1YnN5c3RlbSBtYWtlcyBzdXJlIHRoaXMgZG9l
-c24ndCBoYXBwZW4uDQpTYW1lIGVsc2V3aGVyZS4NCg0KPiArDQo+ICsgICAgICAgb3V0ID0gcmVh
-ZHEoZ3MtPmRjX2Jhc2UgKyBHUElPX1BJTl9ESVJfTyk7DQo+ICsgICAgICAgaW4gPSByZWFkcShn
-cy0+ZGNfYmFzZSArIEdQSU9fUElOX0RJUl9JKTsNCj4gKw0KPiArICAgICAgIHdyaXRlcShvdXQg
-JiB+QklUKG9mZnNldCksIGdzLT5kY19iYXNlICsgR1BJT19QSU5fRElSX08pOw0KPiArICAgICAg
-IHdyaXRlcShpbiB8IEJJVChvZmZzZXQpLCBncy0+ZGNfYmFzZSArIEdQSU9fUElOX0RJUl9JKTsN
-Cj4gKw0KDQpJZiB5b3UgdXNlZCB0aGUgbW1pbyByZWdtYXAgaW4gdGhpcyBkcml2ZXIgeW91IGNv
-dWxkIGF2b2lkIGJvdGggdGhlIGxvY2tpbmcgKHJlZ21hcCB1c2VzIGEgc3BpbmxvY2sgaWYgZmFz
-dF9pbyBpcyBzZXQgdG8gdHJ1ZSkgYW5kIG1hbnVhbCBiaXQgdXBkYXRpbmcgaGVyZS4gWW91IHdv
-dWxkIGRvIHNvbWV0aGluZyBsaWtlOg0KcmVnbWFwX3VwZGF0ZV9iaXRzKG1hcCwgZ3MtPmRjX2Jh
-c2UgKyBHUElPX1BJTl9ESVJfTywgb3V0ICYgQklUKG9mZnNldCksIH5CSVQob2Zmc2V0KSkuDQoN
-Cj4gKyAgICAgICByZXR1cm4gMDsNCj4gK30NCj4gKw0KPiArLyogR1BJTyBkcml2ZXIgc2V0IG91
-dHB1dCBwaW5zICovDQo+ICtzdGF0aWMgaW50IGdwaW9fYmZfc2V0X291dHB1dChzdHJ1Y3QgZ3Bp
-b19jaGlwICpjaGlwLCB1bnNpZ25lZCBpbnQgDQo+ICtvZmZzZXQpIHsNCj4gKyAgICAgICBzdHJ1
-Y3QgZ3Bpb19zdGF0ZSAqZ3MgPSBncGlvY2hpcF9nZXRfZGF0YShjaGlwKTsNCj4gKyAgICAgICB1
-NjQgaW47DQo+ICsgICAgICAgdTY0IG91dDsNCj4gKw0KPiArICAgICAgIGlmIChvZmZzZXQgPiBN
-TFhCRl9HUElPX05SIC0gMSkgew0KPiArICAgICAgICAgICAgICAgZGV2X2VycihjaGlwLT5wYXJl
-bnQsICJncGlvIG91dHB1dCBwaW5zOiBJbnZhbGlkIG9mZnNldCAlZFxuIiwNCj4gKyAgICAgICAg
-ICAgICAgICAgICAgICAgb2Zmc2V0KTsNCj4gKyAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFM
-Ow0KPiArICAgICAgIH0NCj4gKw0KPiArICAgICAgIG91dCA9IHJlYWRxKGdzLT5kY19iYXNlICsg
-R1BJT19QSU5fRElSX08pOw0KPiArICAgICAgIGluID0gcmVhZHEoZ3MtPmRjX2Jhc2UgKyBHUElP
-X1BJTl9ESVJfSSk7DQo+ICsNCj4gKyAgICAgICB3cml0ZXEob3V0IHwgQklUKG9mZnNldCksIGdz
-LT5kY19iYXNlICsgR1BJT19QSU5fRElSX08pOw0KPiArICAgICAgIHdyaXRlcShpbiAmIH5CSVQo
-b2Zmc2V0KSwgZ3MtPmRjX2Jhc2UgKyBHUElPX1BJTl9ESVJfSSk7DQo+ICsNCj4gKyAgICAgICBy
-ZXR1cm4gMDsNCj4gK30NCj4gKw0KPiArLyogR1BJTyBkcml2ZXIgb3V0cHV0IGRpcmVjdGlvbiAq
-Lw0KPiArc3RhdGljIGludCBncGlvX2JmX3NldF9vdXRwdXRfbG9jayhzdHJ1Y3QgZ3Bpb19jaGlw
-ICpjaGlwLA0KPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGlu
-dCBvZmZzZXQsIGludCB2YWx1ZSkgew0KPiArICAgICAgIHN0cnVjdCBncGlvX3N0YXRlICpncyA9
-IGdwaW9jaGlwX2dldF9kYXRhKGNoaXApOw0KPiArDQo+ICsgICAgICAgc3Bpbl9sb2NrKCZncy0+
-bG9jayk7DQo+ICsgICAgICAgZ3Bpb19iZl9zZXRfb3V0cHV0KGNoaXAsIG9mZnNldCk7DQo+ICsg
-ICAgICAgc3Bpbl91bmxvY2soJmdzLT5sb2NrKTsNCj4gKw0KPiArICAgICAgIHJldHVybiAwOw0K
-PiArfQ0KPiArDQo+ICsvKiBHUElPIGRyaXZlciBpbnB1dCBkaXJlY3Rpb24gKi8NCj4gK3N0YXRp
-YyBpbnQgZ3Bpb19iZl9zZXRfaW5wdXRfbG9jayhzdHJ1Y3QgZ3Bpb19jaGlwICpjaGlwLCB1bnNp
-Z25lZCANCj4gK2ludCBvZmZzZXQpIHsNCj4gKyAgICAgICBzdHJ1Y3QgZ3Bpb19zdGF0ZSAqZ3Mg
-PSBncGlvY2hpcF9nZXRfZGF0YShjaGlwKTsNCj4gKw0KPiArICAgICAgIHNwaW5fbG9jaygmZ3Mt
-PmxvY2spOw0KPiArICAgICAgIGdwaW9fYmZfc2V0X2lucHV0KGNoaXAsIG9mZnNldCk7DQo+ICsg
-ICAgICAgc3Bpbl91bmxvY2soJmdzLT5sb2NrKTsNCj4gKw0KPiArICAgICAgIHJldHVybiAwOw0K
-PiArfQ0KPiArDQo+ICsvKiBHUElPIGRyaXZlciByZWFkIHJvdXRpbmUuICovDQo+ICtzdGF0aWMg
-aW50IGdwaW9fYmZfZ2V0KHN0cnVjdCBncGlvX2NoaXAgKmNoaXAsIHVuc2lnbmVkIGludCBvZmZz
-ZXQpIHsNCj4gKyAgICAgICB1NjQgdmFsdWU7DQo+ICsgICAgICAgc3RydWN0IGdwaW9fc3RhdGUg
-KmdzID0gZ3Bpb2NoaXBfZ2V0X2RhdGEoY2hpcCk7DQo+ICsNCj4gKyAgICAgICB2YWx1ZSA9IHJl
-YWRxKGdzLT5kY19iYXNlICsgR1BJT19QSU5fU1RBVEUpOw0KPiArDQo+ICsgICAgICAgcmV0dXJu
-ICh2YWx1ZSA+PiBvZmZzZXQpICYgMTsNCj4gK30NCj4gKw0KPiArLyogR1BJTyBkcml2ZXIgd3Jp
-dGUgcm91dGluZS4gKi8NCj4gK3N0YXRpYyB2b2lkIGdwaW9fYmZfc2V0KHN0cnVjdCBncGlvX2No
-aXAgKmNoaXAsIHVuc2lnbmVkIGludCBvZmZzZXQsIA0KPiAraW50IHZhbHVlKSB7DQo+ICsgICAg
-ICAgdTY0IGRhdGE7DQo+ICsgICAgICAgc3RydWN0IGdwaW9fc3RhdGUgKmdzID0gZ3Bpb2NoaXBf
-Z2V0X2RhdGEoY2hpcCk7DQo+ICsNCj4gKyAgICAgICBzcGluX2xvY2soJmdzLT5sb2NrKTsNCj4g
-KyAgICAgICBkYXRhID0gcmVhZHEoZ3MtPmRjX2Jhc2UgKyBHUElPX1BJTl9TVEFURSk7DQo+ICsN
-Cj4gKyAgICAgICBpZiAodmFsdWUpDQo+ICsgICAgICAgICAgICAgICBkYXRhIHw9IEJJVChvZmZz
-ZXQpOw0KPiArICAgICAgIGVsc2UNCj4gKyAgICAgICAgICAgICAgIGRhdGEgJj0gfkJJVChvZmZz
-ZXQpOw0KPiArICAgICAgIHdyaXRlcShkYXRhLCBncy0+ZGNfYmFzZSArIEdQSU9fUElOX1NUQVRF
-KTsNCj4gKyAgICAgICBzcGluX3VubG9jaygmZ3MtPmxvY2spOw0KPiArfQ0KPiArDQo+ICsvKiBH
-UElPIGRyaXZlciBpbml0aWFsaXphdGlvbiByb3V0aW5lLiAqLw0KDQpUaGVzZSBjb21tZW50cyBh
-cmUgb2Jzb2xldGUgdG8gbWUuIEV2ZXJ5b25lIGtub3dzIHRoYXQgcHJvYmUsIHNldCwgZ2V0LCBv
-dXRwdXQgYW5kIGlucHV0IGZ1bmN0aW9ucyBkby4gSXQncyBjbGVhciBmcm9tIHRoZWlyIG5hbWVz
-Lg0KDQo+ICtzdGF0aWMgaW50IGdwaW9kcnZfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAq
-cGRldikgew0KPiArICAgICAgIHN0cnVjdCBncGlvX3N0YXRlICpnczsNCj4gKyAgICAgICBzdHJ1
-Y3QgZGV2aWNlICpkZXYgPSAmcGRldi0+ZGV2Ow0KPiArICAgICAgIHN0cnVjdCBncGlvX2NoaXAg
-KmdjOw0KPiArICAgICAgIHN0cnVjdCByZXNvdXJjZSAqZGNfcmVzOw0KPiArICAgICAgIGludCBy
-ZXQ7DQo+ICsNCj4gKyAgICAgICBkY19yZXMgPSBwbGF0Zm9ybV9nZXRfcmVzb3VyY2UocGRldiwg
-SU9SRVNPVVJDRV9NRU0sIDApOw0KPiArICAgICAgIGlmICghZGNfcmVzKQ0KPiArICAgICAgICAg
-ICAgICAgcmV0dXJuIC1FSU5WQUw7DQo+ICsNCj4gKyAgICAgICBpZiAoZGV2bV9yZXF1ZXN0X21l
-bV9yZWdpb24oJnBkZXYtPmRldiwgZGNfcmVzLT5zdGFydCwNCj4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgcmVzb3VyY2Vfc2l6ZShkY19yZXMpLCAiZ3Bpb2RydiIpID09IE5V
-TEwpDQo+ICsgICAgICAgICAgICAgICByZXR1cm4gLUVCVVNZOw0KPiArDQoNClBsZWFzZSB1c2Ug
-ZGV2bV9pb3JlbWFwX3Jlc291cmNlKCkgaGVyZSB0byBzYXZlIHNvbWUgY29kZS4NCg0KPiArICAg
-ICAgIGdzID0gZGV2bV9remFsbG9jKCZwZGV2LT5kZXYsIHNpemVvZihzdHJ1Y3QgZ3Bpb19zdGF0
-ZSksIEdGUF9LRVJORUwpOw0KPiArICAgICAgIGlmICghZ3MpDQo+ICsgICAgICAgICAgICAgICBy
-ZXR1cm4gLUVOT01FTTsNCj4gKw0KPiArICAgICAgIGdzLT5kY19iYXNlID0gZGV2bV9pb3JlbWFw
-KCZwZGV2LT5kZXYsIGRjX3Jlcy0+c3RhcnQsDQo+ICsgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgcmVzb3VyY2Vfc2l6ZShkY19yZXMpKTsNCj4gKyAgICAgICBpZiAoIWdzLT5kY19i
-YXNlKQ0KPiArICAgICAgICAgICAgICAgcmV0dXJuIC1FTk9NRU07DQo+ICsNCj4gKyAgICAgICBn
-YyA9ICZncy0+Z2M7DQo+ICsgICAgICAgZ2MtPmRpcmVjdGlvbl9pbnB1dCA9IGdwaW9fYmZfc2V0
-X2lucHV0X2xvY2s7DQo+ICsgICAgICAgZ2MtPmdldCA9IGdwaW9fYmZfZ2V0Ow0KPiArICAgICAg
-IGdjLT5kaXJlY3Rpb25fb3V0cHV0ID0gZ3Bpb19iZl9zZXRfb3V0cHV0X2xvY2s7DQo+ICsgICAg
-ICAgZ2MtPnNldCA9IGdwaW9fYmZfc2V0Ow0KPiArICAgICAgIGdjLT5sYWJlbCA9IGRldl9uYW1l
-KGRldik7DQo+ICsgICAgICAgZ2MtPnBhcmVudCA9ICZwZGV2LT5kZXY7DQo+ICsgICAgICAgZ2Mt
-Pm93bmVyID0gVEhJU19NT0RVTEU7DQo+ICsgICAgICAgZ2MtPmJhc2UgPSAwOw0KPiArICAgICAg
-IGdjLT5uZ3BpbyA9IE1MWEJGX0dQSU9fTlI7DQo+ICsNCj4gKyAgICAgICByZXQgPSBncGlvY2hp
-cF9hZGRfZGF0YSgmZ3MtPmdjLCBncyk7DQoNCldoeSBub3QgdGhlIHJlc291cmNlIG1hbmFnZWQg
-dmVyc2lvbj8NCg0KPiArICAgICAgIGlmIChyZXQpIHsNCj4gKyAgICAgICAgICAgICAgIGRldl9l
-cnIoJnBkZXYtPmRldiwgIkZhaWxlZCBhZGRpbmcgbWVtb3J5IG1hcHBlZCBncGlvY2hpcFxuIik7
-DQo+ICsgICAgICAgICAgICAgICBnb3RvIGVycjsNCj4gKyAgICAgICB9DQo+ICsNCj4gKyAgICAg
-ICBzcGluX2xvY2tfaW5pdCgmZ3MtPmxvY2spOw0KPiArICAgICAgIHBsYXRmb3JtX3NldF9kcnZk
-YXRhKHBkZXYsIGdzKTsNCj4gKyAgICAgICBkZXZfaW5mbygmcGRldi0+ZGV2LCAicmVnaXN0ZXJl
-ZCBNZWxsYW5veCBCbHVlRmllbGQgR1BJTyIpOw0KPiArICAgICAgIHJldHVybiAwOw0KPiArDQo+
-ICtlcnI6DQo+ICsgICAgICAgZGV2X2VycigmcGRldi0+ZGV2LCAiUHJvYmUsIEZhaWxlZFxuIik7
-DQo+ICsgICAgICAgcmV0dXJuIHJldDsNCj4gK30NCj4gKw0KPiArI2lmZGVmIENPTkZJR19QTQ0K
-PiArLyogR1BJTyBkcml2ZXIgc3VzcGVuZCByb3V0aW5lLiAqLw0KPiArc3RhdGljIGludCBncGlv
-ZHJ2X3N1c3BlbmQoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldiwgcG1fbWVzc2FnZV90IA0K
-PiArc3RhdGUpIHsNCj4gKyAgICAgICBzdHJ1Y3QgZ3Bpb19zdGF0ZSAqZ3MgPSBwbGF0Zm9ybV9n
-ZXRfZHJ2ZGF0YShwZGV2KTsNCj4gKw0KPiArICAgICAgIGdzLT5jc2F2ZV9yZWdzLmdwaW9fc2Ny
-YXRjaHBhZCA9IHJlYWRxKGdzLT5kY19iYXNlICsgR1BJT19TQ1JBVENIUEFEKTsNCj4gKyAgICAg
-ICBncy0+Y3NhdmVfcmVncy5ncGlvX3BhZF9jb250cm9sWzBdID0NCj4gKyAgICAgICAgICAgICAg
-IHJlYWRxKGdzLT5kY19iYXNlICsgR1BJT19QQURfQ09OVFJPTF9fRklSU1RfV09SRCk7DQo+ICsg
-ICAgICAgZ3MtPmNzYXZlX3JlZ3MuZ3Bpb19wYWRfY29udHJvbFsxXSA9DQo+ICsgICAgICAgICAg
-ICAgICByZWFkcShncy0+ZGNfYmFzZSArIEdQSU9fUEFEX0NPTlRST0xfMV9fRklSU1RfV09SRCk7
-DQo+ICsgICAgICAgZ3MtPmNzYXZlX3JlZ3MuZ3Bpb19wYWRfY29udHJvbFsyXSA9DQo+ICsgICAg
-ICAgICAgICAgICByZWFkcShncy0+ZGNfYmFzZSArIEdQSU9fUEFEX0NPTlRST0xfMl9fRklSU1Rf
-V09SRCk7DQo+ICsgICAgICAgZ3MtPmNzYXZlX3JlZ3MuZ3Bpb19wYWRfY29udHJvbFszXSA9DQo+
-ICsgICAgICAgICAgICAgICByZWFkcShncy0+ZGNfYmFzZSArIEdQSU9fUEFEX0NPTlRST0xfM19f
-RklSU1RfV09SRCk7DQo+ICsgICAgICAgZ3MtPmNzYXZlX3JlZ3MuZ3Bpb19waW5fZGlyX2kgPSBy
-ZWFkcShncy0+ZGNfYmFzZSArIEdQSU9fUElOX0RJUl9JKTsNCj4gKyAgICAgICBncy0+Y3NhdmVf
-cmVncy5ncGlvX3Bpbl9kaXJfbyA9IHJlYWRxKGdzLT5kY19iYXNlICsgDQo+ICsgR1BJT19QSU5f
-RElSX08pOw0KPiArDQo+ICsgICAgICAgcmV0dXJuIDA7DQo+ICt9DQo+ICsNCj4gKy8qIEdQSU8g
-ZHJpdmVyIHJlc3VtZSByb3V0aW5lLiAqLw0KPiArc3RhdGljIGludCBncGlvZHJ2X3Jlc3VtZShz
-dHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KSB7DQo+ICsgICAgICAgc3RydWN0IGdwaW9fc3Rh
-dGUgKmdzID0gcGxhdGZvcm1fZ2V0X2RydmRhdGEocGRldik7DQo+ICsNCj4gKyAgICAgICB3cml0
-ZXEoZ3MtPmNzYXZlX3JlZ3MuZ3Bpb19zY3JhdGNocGFkLCBncy0+ZGNfYmFzZSArIEdQSU9fU0NS
-QVRDSFBBRCk7DQo+ICsgICAgICAgd3JpdGVxKGdzLT5jc2F2ZV9yZWdzLmdwaW9fcGFkX2NvbnRy
-b2xbMF0sIGdzLT5kY19iYXNlICsNCj4gKyAgICAgICAgICAgICAgR1BJT19QQURfQ09OVFJPTF9f
-RklSU1RfV09SRCk7DQo+ICsgICAgICAgd3JpdGVxKGdzLT5jc2F2ZV9yZWdzLmdwaW9fcGFkX2Nv
-bnRyb2xbMV0sIGdzLT5kY19iYXNlICsNCj4gKyAgICAgICAgICAgICAgR1BJT19QQURfQ09OVFJP
-TF8xX19GSVJTVF9XT1JEKTsNCj4gKyAgICAgICB3cml0ZXEoZ3MtPmNzYXZlX3JlZ3MuZ3Bpb19w
-YWRfY29udHJvbFsyXSwgZ3MtPmRjX2Jhc2UgKw0KPiArICAgICAgICAgICAgICBHUElPX1BBRF9D
-T05UUk9MXzJfX0ZJUlNUX1dPUkQpOw0KPiArICAgICAgIHdyaXRlcShncy0+Y3NhdmVfcmVncy5n
-cGlvX3BhZF9jb250cm9sWzNdLCBncy0+ZGNfYmFzZSArDQo+ICsgICAgICAgICAgICAgIEdQSU9f
-UEFEX0NPTlRST0xfM19fRklSU1RfV09SRCk7DQo+ICsgICAgICAgd3JpdGVxKGdzLT5jc2F2ZV9y
-ZWdzLmdwaW9fcGluX2Rpcl9pLCBncy0+ZGNfYmFzZSArIEdQSU9fUElOX0RJUl9JKTsNCj4gKyAg
-ICAgICB3cml0ZXEoZ3MtPmNzYXZlX3JlZ3MuZ3Bpb19waW5fZGlyX28sIGdzLT5kY19iYXNlICsg
-DQo+ICsgR1BJT19QSU5fRElSX08pOw0KPiArDQo+ICsgICAgICAgcmV0dXJuIDA7DQo+ICt9DQo+
-ICsjZW5kaWYNCj4gKw0KPiArLyogR1BJTyBkcml2ZXIgZXhpdCByb3V0aW5lLiAqLw0KPiArc3Rh
-dGljIGludCBncGlvZHJ2X3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KSB7DQo+
-ICsgICAgICAgc3RydWN0IGdwaW9fc3RhdGUgKmdzID0gcGxhdGZvcm1fZ2V0X2RydmRhdGEocGRl
-dik7DQo+ICsNCj4gKyAgICAgICBncGlvY2hpcF9yZW1vdmUoJmdzLT5nYyk7DQo+ICsgICAgICAg
-aW91bm1hcChncy0+ZGNfYmFzZSk7DQo+ICsNCj4gKyAgICAgICByZXR1cm4gMDsNCj4gK30NCg0K
-VGhlIGVudGlyZSBmdW5jdGlvbiBpcyB1bm5lY2Vzc2FyeSAtIHVzZSBkZXZtXyB3aGVyZSBwb3Nz
-aWJsZTogYm90aCB3aGVuIG1hcHBpbmcgbWVtb3J5IGFuZCBhZGRpbmcgdGhlIGdwaW8gY2hpcC4N
-Cg0KPiArDQo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGFjcGlfZGV2aWNlX2lkIGdwaW9kcnZfYWNw
-aV9tYXRjaFtdID0gew0KPiArICAgICAgIHsgIk1MTlhCRjAyIiwgMCB9LA0KPiArICAgICAgIHt9
-DQo+ICt9Ow0KPiArTU9EVUxFX0RFVklDRV9UQUJMRShhY3BpLCBncGlvZHJ2X2FjcGlfbWF0Y2gp
-Ow0KPiArDQo+ICtzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RyaXZlciBncGlvZHJ2X2dwaW9fZHJp
-dmVyID0gew0KPiArICAgICAgIC5kcml2ZXIgPSB7DQo+ICsgICAgICAgICAgICAgICAubmFtZSA9
-ICJncGlvZHJ2IiwNCj4gKyAgICAgICAgICAgICAgIC5hY3BpX21hdGNoX3RhYmxlID0gQUNQSV9Q
-VFIoZ3Bpb2Rydl9hY3BpX21hdGNoKSwNCj4gKyAgICAgICB9LA0KPiArICAgICAgIC5wcm9iZSAg
-ICA9IGdwaW9kcnZfcHJvYmUsDQo+ICsgICAgICAgLnJlbW92ZSAgID0gZ3Bpb2Rydl9yZW1vdmUs
-DQo+ICsjaWZkZWYgQ09ORklHX1BNDQo+ICsgICAgICAgLnN1c3BlbmQgID0gZ3Bpb2Rydl9zdXNw
-ZW5kLA0KPiArICAgICAgIC5yZXN1bWUgICA9IGdwaW9kcnZfcmVzdW1lLA0KPiArI2VuZGlmDQo+
-ICt9Ow0KPiArDQo+ICttb2R1bGVfcGxhdGZvcm1fZHJpdmVyKGdwaW9kcnZfZ3Bpb19kcml2ZXIp
-Ow0KPiArDQo+ICtNT0RVTEVfREVTQ1JJUFRJT04oIk1lbGxhbm94IEJsdWVGaWVsZCBHUElPIERy
-aXZlciIpOyANCj4gK01PRFVMRV9BVVRIT1IoIk1lbGxhbm94IFRlY2hub2xvZ2llcyIpOyBNT0RV
-TEVfTElDRU5TRSgiR1BMIik7DQo+IC0tDQo+IDIuMS4yDQo+DQoNCkJlc3QgcmVnYXJkcywNCkJh
-cnRvc3ogR29sYXN6ZXdza2kNCg==
+This patch adds support for the GPIO controller used by Mellanox
+BlueField SOCs.
+
+Reviewed-by: David Woods <dwoods@mellanox.com>
+Signed-off-by: Shravan Kumar Ramani <sramani@mellanox.com>
+---
+ drivers/gpio/Kconfig      |   6 ++
+ drivers/gpio/Makefile     |   1 +
+ drivers/gpio/gpio-mlxbf.c | 246 ++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 253 insertions(+)
+ create mode 100644 drivers/gpio/gpio-mlxbf.c
+
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index b5a2845..c950fe8 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1292,6 +1292,12 @@ config GPIO_MERRIFIELD
+ 	help
+ 	  Say Y here to support Intel Merrifield GPIO.
+ 
++config GPIO_MLXBF
++	tristate "Mellanox BlueField SoC GPIO"
++	depends on (MELLANOX_PLATFORM && ARM64 && ACPI) || COMPILE_TEST
++	help
++	  Say Y here if you want GPIO support on Mellanox BlueField SoC.
++
+ config GPIO_ML_IOH
+ 	tristate "OKI SEMICONDUCTOR ML7213 IOH GPIO support"
+ 	depends on X86 || COMPILE_TEST
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 37628f8..8d54279 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -83,6 +83,7 @@ obj-$(CONFIG_GPIO_MENZ127)	+= gpio-menz127.o
+ obj-$(CONFIG_GPIO_MERRIFIELD)	+= gpio-merrifield.o
+ obj-$(CONFIG_GPIO_MC33880)	+= gpio-mc33880.o
+ obj-$(CONFIG_GPIO_MC9S08DZ60)	+= gpio-mc9s08dz60.o
++obj-$(CONFIG_GPIO_MLXBF)	+= gpio-mlxbf.o
+ obj-$(CONFIG_GPIO_ML_IOH)	+= gpio-ml-ioh.o
+ obj-$(CONFIG_GPIO_MM_LANTIQ)	+= gpio-mm-lantiq.o
+ obj-$(CONFIG_GPIO_MOCKUP)      += gpio-mockup.o
+diff --git a/drivers/gpio/gpio-mlxbf.c b/drivers/gpio/gpio-mlxbf.c
+new file mode 100644
+index 0000000..bf197aa
+--- /dev/null
++++ b/drivers/gpio/gpio-mlxbf.c
+@@ -0,0 +1,246 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/acpi.h>
++#include <linux/bitops.h>
++#include <linux/device.h>
++#include <linux/gpio/driver.h>
++#include <linux/io.h>
++#include <linux/ioport.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/moduleparam.h>
++#include <linux/pinctrl/consumer.h>
++#include <linux/platform_device.h>
++#include <linux/pm.h>
++#include <linux/resource.h>
++#include <linux/spinlock.h>
++#include <linux/types.h>
++#include <linux/version.h>
++
++/* Number of pins on BlueField */
++#define MLXBF_GPIO_NR 54
++
++/* Pad Electrical Controls. */
++#define GPIO_PAD_CONTROL__FIRST_WORD 0x0700
++#define GPIO_PAD_CONTROL_1__FIRST_WORD 0x0708
++#define GPIO_PAD_CONTROL_2__FIRST_WORD 0x0710
++#define GPIO_PAD_CONTROL_3__FIRST_WORD 0x0718
++
++#define GPIO_PIN_DIR_I 0x1040
++#define GPIO_PIN_DIR_O 0x1048
++#define GPIO_PIN_STATE 0x1000
++#define GPIO_SCRATCHPAD 0x20
++
++#ifdef CONFIG_PM
++struct bluefield_context_save_regs {
++	u64 gpio_scratchpad;
++	u64 gpio_pad_control[MLXBF_GPIO_NR];
++	u64 gpio_pin_dir_i;
++	u64 gpio_pin_dir_o;
++};
++#endif
++
++/* Device state structure. */
++struct gpio_state {
++	struct gpio_chip gc;
++
++	/* Must hold this lock to modify shared data. */
++	spinlock_t lock;
++
++	/* Memory Address */
++	void __iomem *dc_base;
++
++#ifdef CONFIG_PM
++	struct bluefield_context_save_regs csave_regs;
++#endif
++};
++
++static int gpio_bf_set_input(struct gpio_chip *chip, unsigned int offset)
++{
++	struct gpio_state *gs = gpiochip_get_data(chip);
++	u64 in;
++	u64 out;
++
++	out = readq(gs->dc_base + GPIO_PIN_DIR_O);
++	in = readq(gs->dc_base + GPIO_PIN_DIR_I);
++
++	writeq(out & ~BIT(offset), gs->dc_base + GPIO_PIN_DIR_O);
++	writeq(in | BIT(offset), gs->dc_base + GPIO_PIN_DIR_I);
++
++	return 0;
++}
++
++static int gpio_bf_set_output(struct gpio_chip *chip, unsigned int offset)
++{
++	struct gpio_state *gs = gpiochip_get_data(chip);
++	u64 in;
++	u64 out;
++
++	out = readq(gs->dc_base + GPIO_PIN_DIR_O);
++	in = readq(gs->dc_base + GPIO_PIN_DIR_I);
++
++	writeq(out | BIT(offset), gs->dc_base + GPIO_PIN_DIR_O);
++	writeq(in & ~BIT(offset), gs->dc_base + GPIO_PIN_DIR_I);
++
++	return 0;
++}
++
++static int gpio_bf_set_output_lock(struct gpio_chip *chip,
++				   unsigned int offset, int value)
++{
++	struct gpio_state *gs = gpiochip_get_data(chip);
++
++	spin_lock(&gs->lock);
++	gpio_bf_set_output(chip, offset);
++	spin_unlock(&gs->lock);
++
++	return 0;
++}
++
++static int gpio_bf_set_input_lock(struct gpio_chip *chip, unsigned int offset)
++{
++	struct gpio_state *gs = gpiochip_get_data(chip);
++
++	spin_lock(&gs->lock);
++	gpio_bf_set_input(chip, offset);
++	spin_unlock(&gs->lock);
++
++	return 0;
++}
++
++static int gpio_bf_get(struct gpio_chip *chip, unsigned int offset)
++{
++	u64 value;
++	struct gpio_state *gs = gpiochip_get_data(chip);
++
++	value = readq(gs->dc_base + GPIO_PIN_STATE);
++
++	return (value >> offset) & 1;
++}
++
++static void gpio_bf_set(struct gpio_chip *chip, unsigned int offset, int value)
++{
++	u64 data;
++	struct gpio_state *gs = gpiochip_get_data(chip);
++
++	spin_lock(&gs->lock);
++	data = readq(gs->dc_base + GPIO_PIN_STATE);
++
++	if (value)
++		data |= BIT(offset);
++	else
++		data &= ~BIT(offset);
++	writeq(data, gs->dc_base + GPIO_PIN_STATE);
++	spin_unlock(&gs->lock);
++}
++
++static int gpiodrv_probe(struct platform_device *pdev)
++{
++	struct gpio_state *gs;
++	struct device *dev = &pdev->dev;
++	struct gpio_chip *gc;
++	struct resource *dc_res;
++	int ret;
++
++	dc_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!dc_res)
++		return -EINVAL;
++
++	gs = devm_kzalloc(&pdev->dev, sizeof(struct gpio_state), GFP_KERNEL);
++	if (!gs)
++		return -ENOMEM;
++
++	gs->dc_base = devm_ioremap_resource(&pdev->dev, dc_res);
++	if (!gs->dc_base)
++		return -ENOMEM;
++
++	gc = &gs->gc;
++	gc->direction_input = gpio_bf_set_input_lock;
++	gc->get = gpio_bf_get;
++	gc->direction_output = gpio_bf_set_output_lock;
++	gc->set = gpio_bf_set;
++	gc->label = dev_name(dev);
++	gc->parent = &pdev->dev;
++	gc->owner = THIS_MODULE;
++	gc->base = 0;
++	gc->ngpio = MLXBF_GPIO_NR;
++
++	ret = devm_gpiochip_add_data(dev, &gs->gc, gs);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed adding memory mapped gpiochip\n");
++		goto err;
++	}
++
++	spin_lock_init(&gs->lock);
++	platform_set_drvdata(pdev, gs);
++	dev_info(&pdev->dev, "registered Mellanox BlueField GPIO");
++	return 0;
++
++err:
++	dev_err(&pdev->dev, "Probe, Failed\n");
++	return ret;
++}
++
++#ifdef CONFIG_PM
++static int gpiodrv_suspend(struct platform_device *pdev, pm_message_t state)
++{
++	struct gpio_state *gs = platform_get_drvdata(pdev);
++
++	gs->csave_regs.gpio_scratchpad = readq(gs->dc_base + GPIO_SCRATCHPAD);
++	gs->csave_regs.gpio_pad_control[0] =
++		readq(gs->dc_base + GPIO_PAD_CONTROL__FIRST_WORD);
++	gs->csave_regs.gpio_pad_control[1] =
++		readq(gs->dc_base + GPIO_PAD_CONTROL_1__FIRST_WORD);
++	gs->csave_regs.gpio_pad_control[2] =
++		readq(gs->dc_base + GPIO_PAD_CONTROL_2__FIRST_WORD);
++	gs->csave_regs.gpio_pad_control[3] =
++		readq(gs->dc_base + GPIO_PAD_CONTROL_3__FIRST_WORD);
++	gs->csave_regs.gpio_pin_dir_i = readq(gs->dc_base + GPIO_PIN_DIR_I);
++	gs->csave_regs.gpio_pin_dir_o = readq(gs->dc_base + GPIO_PIN_DIR_O);
++
++	return 0;
++}
++
++static int gpiodrv_resume(struct platform_device *pdev)
++{
++	struct gpio_state *gs = platform_get_drvdata(pdev);
++
++	writeq(gs->csave_regs.gpio_scratchpad, gs->dc_base + GPIO_SCRATCHPAD);
++	writeq(gs->csave_regs.gpio_pad_control[0], gs->dc_base +
++	       GPIO_PAD_CONTROL__FIRST_WORD);
++	writeq(gs->csave_regs.gpio_pad_control[1], gs->dc_base +
++	       GPIO_PAD_CONTROL_1__FIRST_WORD);
++	writeq(gs->csave_regs.gpio_pad_control[2], gs->dc_base +
++	       GPIO_PAD_CONTROL_2__FIRST_WORD);
++	writeq(gs->csave_regs.gpio_pad_control[3], gs->dc_base +
++	       GPIO_PAD_CONTROL_3__FIRST_WORD);
++	writeq(gs->csave_regs.gpio_pin_dir_i, gs->dc_base + GPIO_PIN_DIR_I);
++	writeq(gs->csave_regs.gpio_pin_dir_o, gs->dc_base + GPIO_PIN_DIR_O);
++
++	return 0;
++}
++#endif
++
++static const struct acpi_device_id gpiodrv_acpi_match[] = {
++	{ "MLNXBF02", 0 },
++	{}
++};
++MODULE_DEVICE_TABLE(acpi, gpiodrv_acpi_match);
++
++static struct platform_driver gpiodrv_gpio_driver = {
++	.driver = {
++		.name = "gpiodrv",
++		.acpi_match_table = ACPI_PTR(gpiodrv_acpi_match),
++	},
++	.probe    = gpiodrv_probe,
++#ifdef CONFIG_PM
++	.suspend  = gpiodrv_suspend,
++	.resume   = gpiodrv_resume,
++#endif
++};
++
++module_platform_driver(gpiodrv_gpio_driver);
++
++MODULE_DESCRIPTION("Mellanox BlueField GPIO Driver");
++MODULE_AUTHOR("Mellanox Technologies");
++MODULE_LICENSE("GPL");
+-- 
+2.1.2
+
