@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F89C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:00:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 677A3C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:00:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 468FE21479
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:00:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BDA321738
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:00:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729679AbfBSUAs (ORCPT
+        id S1729706AbfBSUAw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 15:00:48 -0500
+        Tue, 19 Feb 2019 15:00:52 -0500
 Received: from route-level1.fsdata.se ([89.221.252.216]:49358 "EHLO
         route-level1.fsdata.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729537AbfBSUAo (ORCPT
+        with ESMTP id S1729659AbfBSUAr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 15:00:44 -0500
+        Tue, 19 Feb 2019 15:00:47 -0500
 Received: from DAG01.HMC.local (192.168.46.11) by EDGE01LEVEL1.hmc.local
  (192.168.46.33) with Microsoft SMTP Server (TLS) id 15.0.847.32; Tue, 19 Feb
- 2019 21:00:14 +0100
+ 2019 21:00:18 +0100
 Received: from localhost (94.234.42.81) by DAG01.HMC.local (192.168.46.11)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 19 Feb 2019 21:00:21
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 19 Feb 2019 21:00:25
  +0100
 From:   Mattias Jacobsson <2pi@mok.nu>
 To:     <dvhart@infradead.org>, <andy@infradead.org>
 CC:     <2pi@mok.nu>, <platform-driver-x86@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 6/8] platform/x86: huawei-wmi: use MODULE_DEVICE_TABLE() instead of MODULE_ALIAS()
-Date:   Tue, 19 Feb 2019 20:59:54 +0100
-Message-ID: <9ff0634026ad398bf0338915d9b8c7b5f32066ba.1550603967.git.2pi@mok.nu>
+Subject: [PATCH v4 8/8] platform/x86: wmi-bmof: use MODULE_DEVICE_TABLE() instead of MODULE_ALIAS()
+Date:   Tue, 19 Feb 2019 20:59:56 +0100
+Message-ID: <882a32463f062f7da0f345b7da7b0bd654781485.1550603967.git.2pi@mok.nu>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <cover.1550603967.git.2pi@mok.nu>
 References: <cover.1550603967.git.2pi@mok.nu>
@@ -58,23 +58,22 @@ Change driver to use MODULE_DEVICE_TABLE() instead of MODULE_ALIAS().
 
 Signed-off-by: Mattias Jacobsson <2pi@mok.nu>
 ---
- drivers/platform/x86/huawei-wmi.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/platform/x86/wmi-bmof.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/huawei-wmi.c b/drivers/platform/x86/huawei-wmi.c
-index 59872f87b741..52fcac5b393a 100644
---- a/drivers/platform/x86/huawei-wmi.c
-+++ b/drivers/platform/x86/huawei-wmi.c
-@@ -201,8 +201,7 @@ static struct wmi_driver huawei_wmi_driver = {
+diff --git a/drivers/platform/x86/wmi-bmof.c b/drivers/platform/x86/wmi-bmof.c
+index c4530ba715e8..8751a13134be 100644
+--- a/drivers/platform/x86/wmi-bmof.c
++++ b/drivers/platform/x86/wmi-bmof.c
+@@ -119,7 +119,7 @@ static struct wmi_driver wmi_bmof_driver = {
  
- module_wmi_driver(huawei_wmi_driver);
+ module_wmi_driver(wmi_bmof_driver);
  
--MODULE_ALIAS("wmi:"WMI0_EVENT_GUID);
--MODULE_ALIAS("wmi:"AMW0_EVENT_GUID);
-+MODULE_DEVICE_TABLE(wmi, huawei_wmi_id_table);
- MODULE_AUTHOR("Ayman Bagabas <ayman.bagabas@gmail.com>");
- MODULE_DESCRIPTION("Huawei WMI hotkeys");
- MODULE_LICENSE("GPL v2");
+-MODULE_ALIAS("wmi:" WMI_BMOF_GUID);
++MODULE_DEVICE_TABLE(wmi, wmi_bmof_id_table);
+ MODULE_AUTHOR("Andrew Lutomirski <luto@kernel.org>");
+ MODULE_DESCRIPTION("WMI embedded Binary MOF driver");
+ MODULE_LICENSE("GPL");
 -- 
 2.20.1
 
