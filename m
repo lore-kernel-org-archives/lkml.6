@@ -2,197 +2,150 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE95C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:19:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06577C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:21:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0F3A2147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:19:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDEF621773
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:21:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mNKReiKM"
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="VvxJxgY5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729119AbfBSQTy (ORCPT
+        id S1728716AbfBSQVY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:19:54 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:34738 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726110AbfBSQTx (ORCPT
+        Tue, 19 Feb 2019 11:21:24 -0500
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:34116 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725885AbfBSQVX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:19:53 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1JGJRV7068946;
-        Tue, 19 Feb 2019 10:19:27 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1550593167;
-        bh=jOHJT6UlWarzkLKFO+IUQMq3LQJx+t9vnGb9QzLYNGE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=mNKReiKMsPr1GCPgDNz7PB6+FcgtZfH5chulHPIJdVQHJH0YYEIWqwKCao768O8D1
-         9lWqzJfXVytHmGGfsPmMkBCAqNBeTnJadD7VG4tf+rgfncJ15TjfVLR/y5VlAKnvLq
-         8dUW4S0F7jCPebaypB0SYW7N3+5jiMGqieUyJ+H8=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1JGJRNs080509
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 19 Feb 2019 10:19:27 -0600
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 19
- Feb 2019 10:19:27 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 19 Feb 2019 10:19:27 -0600
-Received: from [172.22.216.198] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1JGJM1E018181;
-        Tue, 19 Feb 2019 10:19:23 -0600
-Subject: Re: [PATCH v5 05/10] dt-bindings: irqchip: Introduce TISCI Interrupt
- router bindings
-To:     Tony Lindgren <tony@atomide.com>
-CC:     <marc.zyngier@arm.com>, Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Device Tree Mailing List <devicetree@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-References: <20190213152620.GS5720@atomide.com>
- <4791de04-63af-4c5e-db9c-47634fcb8dc9@ti.com>
- <20190214154100.GB5720@atomide.com>
- <b4e821b3-f2fb-41d8-eb8c-8f4e8a19f77c@ti.com>
- <20190214174612.GF5720@atomide.com>
- <171e8597-2156-747d-d024-7b4bfc6f9186@ti.com>
- <20190215161629.GK5720@atomide.com>
- <2369739e-3bc8-257a-99e0-db2951c6777d@ti.com>
- <20190218143245.GC15711@atomide.com>
- <84b3ec21-9ce9-b9a8-80a9-75001db43a90@ti.com>
- <20190219153537.GJ15711@atomide.com>
-From:   Lokesh Vutla <lokeshvutla@ti.com>
-Message-ID: <6aa37276-0833-fdf5-575b-c3ca14f776a6@ti.com>
-Date:   Tue, 19 Feb 2019 21:49:21 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <20190219153537.GJ15711@atomide.com>
-Content-Type: text/plain; charset="windows-1252"
+        Tue, 19 Feb 2019 11:21:23 -0500
+X-IronPort-AV: E=Sophos;i="5.58,388,1544511600"; 
+   d="scan'208";a="26536915"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 19 Feb 2019 09:21:19 -0700
+Received: from NAM01-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.106) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Tue, 19 Feb 2019 09:20:44 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TGqL6FeLaQ2cmJ7huUwXshhLLY15qor0L5OcC0hM3tY=;
+ b=VvxJxgY5VlIOc5tG5ozV9gm0BZQa0pwPpNuAwuRPZdB48kUVMU9aeTYumFqb8ptGqlLLvSh+Mw0NHUU5FAhOEhR4QTFSKNcbF4W/kxcybqjTr7/Ap1hqwzB0z7RkxzxFkvX0ND6yqUOqKD+1oUlgoX8Gx2LfDlOaLF6s/K38Ntc=
+Received: from CY4PR11MB1256.namprd11.prod.outlook.com (10.169.252.10) by
+ CY4PR11MB1975.namprd11.prod.outlook.com (10.175.61.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.19; Tue, 19 Feb 2019 16:20:41 +0000
+Received: from CY4PR11MB1256.namprd11.prod.outlook.com
+ ([fe80::d9cc:7741:4930:cda3]) by CY4PR11MB1256.namprd11.prod.outlook.com
+ ([fe80::d9cc:7741:4930:cda3%8]) with mapi id 15.20.1643.014; Tue, 19 Feb 2019
+ 16:20:41 +0000
+From:   <Codrin.Ciubotariu@microchip.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>
+CC:     <dannenberg@ti.com>, <m-stecklein@ti.com>, <afd@ti.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] ASoC: codecs: pcm186x: fix wrong usage of
+ DECLARE_TLV_DB_LINEAR()
+Thread-Topic: [PATCH 1/2] ASoC: codecs: pcm186x: fix wrong usage of
+ DECLARE_TLV_DB_LINEAR()
+Thread-Index: AQHUyG5ckbI47UgWGkCR6aNSYU4cPKXnTTcA
+Date:   Tue, 19 Feb 2019 16:20:41 +0000
+Message-ID: <4de1b52b-70dc-7767-ba16-2d785d36a4c2@microchip.com>
+References: <20190219161518.1331-1-codrin.ciubotariu@microchip.com>
+In-Reply-To: <20190219161518.1331-1-codrin.ciubotariu@microchip.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR0802CA0032.eurprd08.prod.outlook.com
+ (2603:10a6:800:a9::18) To CY4PR11MB1256.namprd11.prod.outlook.com
+ (2603:10b6:903:25::10)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f50c3776-811a-412a-b0e7-08d696863120
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:CY4PR11MB1975;
+x-ms-traffictypediagnostic: CY4PR11MB1975:
+x-microsoft-exchange-diagnostics: =?utf-8?B?MTtDWTRQUjExTUIxOTc1OzIzOkp2N2pRWS9oUjBJQWIzM2ZEVGNQYmJFMkdP?=
+ =?utf-8?B?YmJYQVJoRUIvOXhjajkvUlNTT0xBcFQ2dWE0OHZzUXVpbzFzVXIxeWFWdVBZ?=
+ =?utf-8?B?K3g4TFdyM3M4UDFtWVNtY1RtU2ZEZURleXhOMzFrR2w1MXh6U243dENvQ1hI?=
+ =?utf-8?B?ODh2bmhXWVpxT1p4YlczeVFQUW1wU1psdUxMQTBVQlc3NGM1MFprbTJUb1Ns?=
+ =?utf-8?B?blhFT2hsMGFJUHpvdGpZdkd3bU9NY011akU1L1Vaa0trZXNmQmt4VFllSHNN?=
+ =?utf-8?B?dVlMVWZKWXVQUy9qcXFKalBobTNac3gyU3gyTjc2dlcrVkdOUmdEUW8waldk?=
+ =?utf-8?B?MkhSQjdObm9FK3l4MmgxMTRvNEluTGhGdXdnSnNnUzVjRFdLSjhmUFNubUl3?=
+ =?utf-8?B?TlNIY2xxRnRlenRzV0VSakRZQ0Q4eGNqTldyZ1A4U00zcVA0NC9jMHpqR1VD?=
+ =?utf-8?B?R1FHUW5IbkF0WTE2Q3lZWGFNTTZFZ3p5YVVvQkFQV3RtalArQ3RLM2hINU1T?=
+ =?utf-8?B?KzI4SGxnR3l2VGFieEZJZjFGZEFlU0I0aXVBOFgwVVJZZFpjOUFXU0VURzR5?=
+ =?utf-8?B?OTdZaEZYN1k2bVhxU0c3NXYvalhuc1NJNTMvM0pYdDVRUEgySjVnT2JHaFhm?=
+ =?utf-8?B?aTRtdHhGTEZqWU85NGM1VU5tazZHd2xOWC9jeGw2bW16eEZQUkhiNmo0dEZr?=
+ =?utf-8?B?bkZLRktRWFpaV1ZnWGJGQjJVTEVrRDF6U2lIdlpaSXlxa0VGd2hsSThCTmJh?=
+ =?utf-8?B?TXdLZTJVdlN0WTZidEU2ME9PWis0K2RqZVVQL2RJZEZTRnFmclBLL2twRW51?=
+ =?utf-8?B?cUY0ZWVRSzRPeVhFbDBJd0Y3Qmt3L0JYa3c1cmIwMG5NcEhza0pBandPYk9h?=
+ =?utf-8?B?cnZnM3kzalMxaTkyU2hYQzVQY2Uza0p4SHlYT1RtMVpSaDg5VDFPNUNJcEQv?=
+ =?utf-8?B?VVZSbE5lZWZFemU3NnlLQSttclFYWEpmTDdqOXZyK2VRMWFKYkF6TmF1c0pI?=
+ =?utf-8?B?VU5YZVczUGYyREdiZStMUldBVElWN2xZTzVieGwvTm1uVEVYOG1QREl2NEgv?=
+ =?utf-8?B?SGRQY1l6RThKVU5MVytBZ0dqZ3lieXF0K2QxOVArNU9nZkFNOXFvNGs5VWxC?=
+ =?utf-8?B?TS9sYkFzS0tiT3EwSkw5TEp2V1h4djhYR2FBa3o4WDBHWlVuTGQ5OE1UMHln?=
+ =?utf-8?B?TGZFMENjZXAxVTJRb1VoSm1naVZ6eVR4UWMwdWo0by9tMGNMem5HUkhEMXBa?=
+ =?utf-8?B?aEpCeC9YSUFoUldNTWk0a2NCZndpbzR1UzB0UlM2Z1FoaW1yclQ4Q3FFdVF4?=
+ =?utf-8?B?Z2pJN0xnbTZVZWhJLzlWN3B2ZXF5am9IRHVVRDFCZXNMbWx6S0QxSkRtaWVz?=
+ =?utf-8?B?bW4xY1drd3ovSEx5NVpQdm1mVks0VlQvYzlqT2xZY3VNM0xGVjVUOExQRkdV?=
+ =?utf-8?B?M0Fna20wS1h6ZE1pVFpCOW1YY3JtY3UxYlljNy8xcVdiV2hHOTIyejNSZWlm?=
+ =?utf-8?B?TjNhM29ob3gzbkV1VzNYc090TkxwT2FXNjkzT1hmblZ6ZzdJeXBBK3o4RFFZ?=
+ =?utf-8?B?MkYrOUF1WkU0VzFhZFRyQTlSSWlFYmtPQXN3OXIxYnY0Sy9lU3FoVktqdFNy?=
+ =?utf-8?B?U0RockFtcWJRT3lKOEhteUwrMk81U0g1LzU2RVI2OW9PTnR6Y2dKL1lOSzcr?=
+ =?utf-8?B?V3d3M3ZXY3lzeE5pNlBZclQ1Z1hMdm5NL3lMazhYNmJSMndlOGRjUXpMaEJv?=
+ =?utf-8?B?VXRTN0MwdTd5WG1xRit3a3RRb0VxMDhlLzc0MExlVTZTT2FBaFZLeXFtRjg4?=
+ =?utf-8?Q?uViXNhc6QrVUx?=
+x-microsoft-antispam-prvs: <CY4PR11MB1975169435D9BA75D3431D7BE77C0@CY4PR11MB1975.namprd11.prod.outlook.com>
+x-forefront-prvs: 09538D3531
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(346002)(366004)(136003)(376002)(199004)(189003)(186003)(486006)(14454004)(2616005)(11346002)(2906002)(68736007)(476003)(26005)(446003)(71200400001)(71190400001)(99286004)(52116002)(102836004)(97736004)(386003)(6506007)(6116002)(76176011)(53546011)(3846002)(2501003)(86362001)(478600001)(256004)(36756003)(110136005)(31686004)(81166006)(106356001)(6486002)(8676002)(53936002)(229853002)(316002)(81156014)(6436002)(8936002)(25786009)(6246003)(6346003)(4326008)(7736002)(305945005)(66066001)(72206003)(54906003)(31696002)(6512007)(105586002)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR11MB1975;H:CY4PR11MB1256.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Codrin.Ciubotariu@microchip.com; 
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: K0zvuKO3vKGfhNO6dzPRsYUGJlLqGuBmXHOCOmJCzkWhLZ+yceoaLn/Zn3G9BXfysLsdA8GE3+XFywyR83dVuZPR/X0fVXGwUMc0mMhYgj56OR7/KcON0sEkgYwIwziHIhS6WeiOJ7J+LM2ulWXDqgHAhBqGRqj8t5ChrrgSkoLIcAtn0/BQif5VK77W+n1ovt0NjxcadyO1lj0UMkl4DIfEzcacs7KHLfEar0gpYymZH57i8dHanv+7RdeK+kiSN7i/5xuhuJ0qow6rLPWazQwddd/DDuZb7gN7TaxohS+W4NNN9ekkzEW663r3NSjvHBAjqPh7yTi7yLa0OoK83yuxfgrazCgm4lXMAyLrQlKDq2j7A9J4IXu8Mxnf2ZJX67Q7WGt1SLX1iLKLzGjjHJxzJT61hEDKoaTBHWKJwy8=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <5FDC35D96D134E43A98C54742F680002@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: f50c3776-811a-412a-b0e7-08d696863120
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2019 16:20:39.6359
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR11MB1975
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2/19/2019 9:05 PM, Tony Lindgren wrote:
-> * Lokesh Vutla <lokeshvutla@ti.com> [190219 08:51]:
->> Hi Tony,
->>
->> On 18/02/19 8:02 PM, Tony Lindgren wrote:
->>> * Lokesh Vutla <lokeshvutla@ti.com> [190216 03:30]:
->>>> On 2/15/2019 9:46 PM, Tony Lindgren wrote:
->>>>> The dts node for the interrupt controller should describe a
->>>>> proper Linux device, that is with reg entries and so on.
->>>>
->>>> You are asking to just keep the compatible property :)
->>>
->>> Right, and then I realized this node is missing the standard
->>> reg entry too. And you're saying the registers are not even
->>> accissible from Linux.
->>>
->>> So based on that IMO you should not even have a device tree
->>> node for it at all. You should just have the interrupt
->>
->> Practically lets look at what all I am adding in the DT node. Below is one such
->> example:
->>
->> main_intr: interrupt-controller0 {
->> 	compatible = "ti,sci-intr";
->> 	interrupt-controller;
->> 	interrupt-parent = <&gic500>;
->> 	#interrupt-cells = <4>;
->> 	ti,sci = <&dmsc>;
->> 	ti,sci-dst-id = <56>;
->> 	ti,sci-rm-range-girq = <0x1>;
->> };
->>
->> The following 4 properties are required at least for probing, to represent the
->> hierarchy and for  interrupt definition:
->> 	compatible = "ti,sci-intr";
->> 	interrupt-controller;
->> 	interrupt-parent = <&gic500>;
->> 	#interrupt-cells = <4>;
->>
->> The remaining 3 properties represents the TISCI interface. Let's go step by step:
->> * ti,sci = <&dmsc> :This is the phandle to the firmware protocol driver using
->> which the messages are sent
->> * ti,sci-dst-id = <56> : This is the TISCI device ID for the parent controller
->> for which your irqs needs to be connected. As I said this cannot be queried from
->> sysfw and this is the input to the messages that are send to sysfw.
-> 
-> Let's not add anything that does not describe hardware to the device
-> tree. This is ID is an invented number used by the firmware.
-> 
->> *  ti,sci-rm-range-girq = <0x1>: This define the ids using which the parent-irq
->> ranges that are allocated to this interrupt router instance can be queried from
->> sysfw.
->> If the above 2 properties are to be added as driver phandle then for every
->> instance of interrupt router in the SoC, a new compatible needs to be created. I
->> don't think this is a desirable solution.
-> 
-> To me it seems that the interrupt router _must_ have proper IO
-> configuration registers available to the Linux running SoC.
-> 
-> Are you sure the interrupt route does not have proper IO
-> configuration registers available for the Linux running SoC?
-> 
-> If the there are not, I'd be surprised how the SoC is designed :)
-> 
-> So assuming it does, you should just use the standard device tree
-> reg property to differentiate between the various interrupt router
-> instances. And then you can have the driver talk to the firmware
-> in a way where the driver instances are separate even if no IO
-> access to these shared registers is done by the Linux running SoC.
-> 
-> But see also the mux comment below.
-> 
->> With this can you tell me how can we not have a device-tree and still support
->> irq allocation?
-> 
-> Using standard dts reg property to differentiate the interrupt
-> router instances. And if the interrupt router is a mux, you should
-> treat it as a mux rather than a chained interrupt controller.
-> 
-> We do have drivers/mux nowadays, not sure if it helps in this case
-> as at least timer interrupts need to be configured very early.
-> 
->> Also, this is not the first time a driver based on a firmware is being added.
->> K2g clock, power and reset drivers are based on this where device ids are being
->> passed from consumers. Similarly arm scpi based drivers are also available.
-> 
-> Having drivers communicate with firmware is quite standard.
-
-yes. How different is this from any of the above mentioned drivers using
-firmware specific ids. Like sci pm domain[1] driver utilizes the same
-device id for enabling any device in the system. Similarly clock
-driver[2] uses the same device ids and clock ids specified by firmware.
-There are more which similarly represents firmware ids from DT.
-
-[1] Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
-[2] Documentation/devicetree/bindings/clock/ti,sci-clk.txt
-
-Thanks and regards,
-Lokesh
-
-> 
-> However, stuffing firmware specific data to the device tree
-> does not describe the hardware and must not be done.
-> 
-> Regards,
-> 
-> Tony
-> 
+T24gMTkuMDIuMjAxOSAxODoxNSwgQ29kcmluIENpdWJvdGFyaXUgLSBNMTk5NDAgd3JvdGU6DQo+
+IEZyb206IENvZHJpbiBDaXVib3Rhcml1IDxjb2RyaW4uY2l1Ym90YXJpdUBtaWNyb2NoaXAuY29t
+Pg0KPiANCj4gQWNjb3JkaW5nIHRvIERTLCB0aGUgZ2FpbiBpcyBiZXR3ZWVuIC0xMiBkQiBhbmQg
+NDAgZEIsIHdpdGggYSAwLjUgZEIgc3RlcC4NCj4gVGVzdGVkIG9uIHBjbTE4NjMuDQo+IA0KPiBT
+aWduZWQtb2ZmLWJ5OiBDb2RyaW4gQ2l1Ym90YXJpdSA8Y29kcmluLmNpdWJvdGFyaXVAbWljcm9j
+aGlwLmNvbT4NCj4gLS0tDQo+ICAgc291bmQvc29jL2NvZGVjcy9wY20xODZ4LmMgfCAzICstLQ0K
+PiAgIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+
+IGRpZmYgLS1naXQgYS9zb3VuZC9zb2MvY29kZWNzL3BjbTE4NnguYyBiL3NvdW5kL3NvYy9jb2Rl
+Y3MvcGNtMTg2eC5jDQo+IGluZGV4IDgwOWI3ZTlmMDNjYS4uNzk0NzI3OTI0M2Y5IDEwMDY0NA0K
+PiAtLS0gYS9zb3VuZC9zb2MvY29kZWNzL3BjbTE4NnguYw0KPiArKysgYi9zb3VuZC9zb2MvY29k
+ZWNzL3BjbTE4NnguYw0KPiBAQCAtNiw3ICs2LDYgQEANCj4gICAgKglBbmRyZWFzIERhbm5lbmJl
+cmcgPGRhbm5lbmJlcmdAdGkuY29tPg0KPiAgICAqCUFuZHJldyBGLiBEYXZpcyA8YWZkQHRpLmNv
+bT4NCj4gICAgKi8NCj4gLQ0KPiAgICNpbmNsdWRlIDxsaW51eC9tb2R1bGUuaD4NCj4gICAjaW5j
+bHVkZSA8bGludXgvbW9kdWxlcGFyYW0uaD4NCj4gICAjaW5jbHVkZSA8bGludXgvaW5pdC5oPg0K
+PiBAQCAtNDIsNyArNDEsNyBAQCBzdHJ1Y3QgcGNtMTg2eF9wcml2IHsNCj4gICAJYm9vbCBpc19t
+YXN0ZXJfbW9kZTsNCj4gICB9Ow0KPiAgIA0KPiAtc3RhdGljIGNvbnN0IERFQ0xBUkVfVExWX0RC
+X1NDQUxFKHBjbTE4NnhfcGdhX3RsdiwgLTEyMDAsIDQwMDAsIDUwKTsNCj4gK3N0YXRpYyBjb25z
+dCBERUNMQVJFX1RMVl9EQl9TQ0FMRShwY20xODZ4X3BnYV90bHYsIC0xMjAwLCA1MCwgMCk7DQo+
+ICAgDQo+ICAgc3RhdGljIGNvbnN0IHN0cnVjdCBzbmRfa2NvbnRyb2xfbmV3IHBjbTE4NjNfc25k
+X2NvbnRyb2xzW10gPSB7DQo+ICAgCVNPQ19ET1VCTEVfUl9TX1RMVigiQURDIENhcHR1cmUgVm9s
+dW1lIiwgUENNMTg2WF9QR0FfVkFMX0NIMV9MLA0KPiANCg0KdGhlIHRpdGxlIGlzIHdyb25nLCB0
+aGVyZSBpcyBubyBERUNMQVJFX1RMVl9EQl9MSU5FQVIoKXByZXNlbnQuIFdpbGwgDQpzZW5kIHYy
+Lg0KDQpCZXN0IHJlZ2FyZHMsDQpDb2RyaW4NCg==
