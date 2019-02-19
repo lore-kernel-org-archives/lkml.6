@@ -2,135 +2,163 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 338C3C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:32:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CFAC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E76422147C
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:32:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FGV93vXC"
+	by mail.kernel.org (Postfix) with ESMTP id D034C2147C
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:34:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728944AbfBSTc4 (ORCPT
+        id S1728423AbfBSTeC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 14:32:56 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:34286 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbfBSTc4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 14:32:56 -0500
-Received: by mail-qt1-f193.google.com with SMTP id w4so24589329qtc.1;
-        Tue, 19 Feb 2019 11:32:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=Pa5SyLYvT8lSMiPEf74ApKPdq55Rw/H7rCnoXk1VjGE=;
-        b=FGV93vXC03JU3RHhdkUbmQeg8cjTSjibnfT3NBJqXa1WDjTuXQffTPvVGAS35ZoTZJ
-         ue/13Y8V7AMAfkM0W71EnXUH0jV/SwbOlr7iESfE4njVyVs/AwFEP2JZZId98pi2CC7H
-         vJTiSTB5D+1mdK3egbVphe9z0EuGI6IYgz0QESuCoJqtbnmM0XqDUeGDaTP8UHJLUHpz
-         f7fKg+hW9MMRmB0Z4g6fyvW+oHv5DHKX6hnnKo31/t+qrgCY3+xLDw1qgiVGlBrr9bF3
-         xH/QByjWYefWNlkpoZGofD9RYOXn2DUDRZgldogqZgfBjxT+mSHbh7NQqcw1KkpuAVFH
-         3DlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=Pa5SyLYvT8lSMiPEf74ApKPdq55Rw/H7rCnoXk1VjGE=;
-        b=CRNLLucg3baEr9WF6OJy6uSMPMMyvoeaHFu/UeZEOuHGsT9/kIA8V2TnAeu0I2ZPUd
-         vkn1c+E9+AWkfPx45wtkoKfa0zRgnMc6RzCvcQ3nWvvAphsN3kY6HA/ED8AdBcJB9RCb
-         eFa60sfukfA+ezZzveBwzcEdXpuB5gEeIdClpBfE5ybz7yq85+X3DcIuyDxYMcaNekHh
-         68ZV8KqkMn9AkB/HdwjI1vX/XsL5W0wzZOQvx93bcix9t0Pt21bguumga1qxXTRlvWhR
-         tqcLHXBUdql6XG7HojhbIXni47YOYjx8Q8nmvcckR04McoJ3vwNs0qfGVB9qXDKLNMFO
-         KGAg==
-X-Gm-Message-State: AHQUAuYbhzppuGGemTDxBpKM1OpdqxjPrA2oirC3c8q8Q5cJAnzdXKWp
-        KdnsYTuBxwDyhHFLFPIlLOhAO2aUwRlsmrP13KA=
-X-Google-Smtp-Source: AHgI3IaVSJQd6qEMElh1aCrtIMTgZy22KzUpcbVajlKu041Mai/6oZg3rDufKBK/IxXYevRJT/A+tPzg8ivdjZ0bzYI=
-X-Received: by 2002:a0c:b590:: with SMTP id g16mr6268620qve.146.1550604774754;
- Tue, 19 Feb 2019 11:32:54 -0800 (PST)
+        Tue, 19 Feb 2019 14:34:02 -0500
+Received: from mga04.intel.com ([192.55.52.120]:7330 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726239AbfBSTeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 14:34:02 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2019 11:34:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,388,1544515200"; 
+   d="scan'208";a="125651311"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga008.fm.intel.com with ESMTP; 19 Feb 2019 11:34:01 -0800
+Received: from [10.254.80.103] (acjohnso-mobl1.amr.corp.intel.com [10.254.80.103])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by linux.intel.com (Postfix) with ESMTPS id E32E858019B;
+        Tue, 19 Feb 2019 11:34:00 -0800 (PST)
+Subject: Re: [PATCH 05/11] x86 topology: export die_siblings
+To:     "Brown, Len" <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+References: <635b2bf8b1151a191cd9299276b75791a818c0c2.1550545163.git.len.brown@intel.com>
+ <0d54a56186fb9be7a8f622a4625a41dc600dd7a4.1550545163.git.len.brown@intel.com>
+ <59e07a24-dc44-c21b-91d4-ea04e8d0653e@linux.intel.com>
+ <1A7043D5F58CCB44A599DFD55ED4C9485C5B75B9@FMSMSX126.amr.corp.intel.com>
+From:   "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <70ea25e2-6538-77ec-8686-40567e8d362b@linux.intel.com>
+Date:   Tue, 19 Feb 2019 14:33:59 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-References: <CAKgEEwsOHqV-PtJnc-5nXAuH3BVitXWt80eoENJa3wZ6vGZDpw@mail.gmail.com>
- <20190219193027.13882-1-jbroadus@gmail.com>
-In-Reply-To: <20190219193027.13882-1-jbroadus@gmail.com>
-From:   Jim Broadus <jbroadus@gmail.com>
-Date:   Tue, 19 Feb 2019 11:32:43 -0800
-Message-ID: <CAKgEEwtTJWTAdYF1FAZC_zMXaPu_fJTqaAiLHQK6_6K63VHEkg@mail.gmail.com>
-Subject: Re: [PATCH] i2c: Allow recovery of the initial IRQ by an I2C client device.
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>, wsa@the-dreams.de,
-        linux-i2c@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1A7043D5F58CCB44A599DFD55ED4C9485C5B75B9@FMSMSX126.amr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Apologies.. This should have been marked v2.
 
-On Tue, Feb 19, 2019 at 11:30 AM Jim Broadus <jbroadus@gmail.com> wrote:
+
+On 2/19/2019 1:43 PM, Brown, Len wrote:
+> Thanks for the comments, Kan,
+> 
+>>> diff --git a/Documentation/cputopology.txt
+>>> b/Documentation/cputopology.txt index 287213b4517b..7dd2ae3df233
+>>> 100644
+>>> --- a/Documentation/cputopology.txt
+>>> +++ b/Documentation/cputopology.txt
+>>> @@ -56,6 +56,16 @@ core_siblings_list:
+>>>    	human-readable list of cpuX's hardware threads within the same
+>>>    	die_id.
+>>>    
+>>> +die_siblings:
+>>> +
+>>> +	internal kernel map of cpuX's hardware threads within the same
+>>> +	physical_package_id.
+>>> +
+>>> +die_siblings_list:
+>>> +
+>>> +	human-readable list of cpuX's hardware threads within the same
+>>> +	physical_package_id.
+>>> +
+>>>    book_siblings:
+>>>    
+>>>    	internal kernel map of cpuX's hardware threads within the same diff
+> 
+>> Could you please update the document regarding to topology_die_cpumask and topology_core_cpumask in Documentation/x86/topology.txt
+>   
+> I agree that the top part of this file, as updated above, should document the external sysfs interface...
+> 
+> I'm less excited about the center of the file trying to document the internal implementation -- as the source code
+> is actually more clear than the document, but here is an update, consistent with the existing file.
+> Let me know if it does not fully address your comment.
 >
-> A previous change allowed I2C client devices to discover new IRQs upon
-> reprobe by clearing the IRQ in i2c_device_remove. However, if an IRQ was
-> assigned in i2c_new_device, that information is lost.
->
-> For example, the touchscreen and trackpad devices on a Dell Inspiron laptop
-> are I2C devices whose IRQs are defined by ACPI extended IRQ types. The
-> client device structures are initialized during an ACPI walk. After
-> removing the i2c_hid device, modprobe fails.
->
-> This change caches the initial IRQ value in i2c_new_device and then resets
-> the client device IRQ to the initial value in i2c_device_remove.
->
-> Fixes: 6f108dd70d30 ("i2c: Clear client->irq in i2c_device_remove")
-> Signed-off-by: Jim Broadus <jbroadus@gmail.com>
+
+Besides the generic document, I think we should update x86 document as 
+well, which is in Documentation/x86/topology.txt.
+
+The definition of topology_core_cpumask has to be changed to per die, right?
+
+diff --git a/Documentation/x86/topology.txt b/Documentation/x86/topology.txt
+index 8107b6c..8698a41 100644
+--- a/Documentation/x86/topology.txt
++++ b/Documentation/x86/topology.txt
+@@ -105,11 +105,16 @@ The topology of a system is described in the units of:
+
+    Thread-related topology information in the kernel:
+
+-  - topology_core_cpumask():
++  - topology_die_cpumask():
+
+      The cpumask contains all online threads in the package to which a 
+thread
+      belongs.
+
++  - topology_core_cpumask():
++
++    The cpumask contains all online threads in the die to which a thread
++    belongs.
++
+      The number of online threads is also printed in /proc/cpuinfo 
+"siblings."
+
+    - topology_sibling_cpumask():
+
+
+Thanks,
+Kan
+
+> Thanks,
+> -Len
 > ---
->  drivers/i2c/i2c-core-base.c | 9 +++++----
->  include/linux/i2c.h         | 1 +
->  2 files changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-> index 28460f6a60cc..af87a16ac3a5 100644
-> --- a/drivers/i2c/i2c-core-base.c
-> +++ b/drivers/i2c/i2c-core-base.c
-> @@ -430,7 +430,7 @@ static int i2c_device_remove(struct device *dev)
->         dev_pm_clear_wake_irq(&client->dev);
->         device_init_wakeup(&client->dev, false);
->
-> -       client->irq = 0;
-> +       client->irq = client->init_irq;
->
->         return status;
->  }
-> @@ -741,10 +741,11 @@ i2c_new_device(struct i2c_adapter *adap, struct i2c_board_info const *info)
->         client->flags = info->flags;
->         client->addr = info->addr;
->
-> -       client->irq = info->irq;
-> -       if (!client->irq)
-> -               client->irq = i2c_dev_irq_from_resources(info->resources,
-> +       client->init_irq = info->irq;
-> +       if (!client->init_irq)
-> +               client->init_irq = i2c_dev_irq_from_resources(info->resources,
->                                                          info->num_resources);
-> +       client->irq = client->init_irq;
->
->         strlcpy(client->name, info->type, sizeof(client->name));
->
-> diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-> index 65b4eaed1d96..7e748648c7d3 100644
-> --- a/include/linux/i2c.h
-> +++ b/include/linux/i2c.h
-> @@ -333,6 +333,7 @@ struct i2c_client {
->         char name[I2C_NAME_SIZE];
->         struct i2c_adapter *adapter;    /* the adapter we sit on        */
->         struct device dev;              /* the device structure         */
-> +       int init_irq;                   /* irq set at initialization    */
->         int irq;                        /* irq issued by device         */
->         struct list_head detected;
->  #if IS_ENABLED(CONFIG_I2C_SLAVE)
-> --
-> 2.20.1
->
+> 
+> diff --git a/Documentation/cputopology.txt b/Documentation/cputopology.txt
+> index 7dd2ae3..f39c759 100644
+> --- a/Documentation/cputopology.txt
+> +++ b/Documentation/cputopology.txt
+> @@ -102,6 +102,7 @@ these macros in include/asm-XXX/topology.h::
+>          #define topology_drawer_id(cpu)
+>          #define topology_sibling_cpumask(cpu)
+>          #define topology_core_cpumask(cpu)
+> +       #define topology_die_cpumask(cpu)
+>          #define topology_book_cpumask(cpu)
+>          #define topology_drawer_cpumask(cpu)
+> 
+> @@ -114,10 +115,11 @@ To be consistent on all architectures, include/linux/topology.h
+>   provides default definitions for any of the above macros that are
+>   not defined by include/asm-XXX/topology.h:
+> 
+> -1) physical_package_id: -1
+> -2) core_id: 0
+> -3) sibling_cpumask: just the given CPU
+> -4) core_cpumask: just the given CPU
+> +1) topology_physical_package_id: -1
+> +2) topology_core_id: 0
+> +3) topology_sibling_cpumask: just the given CPU
+> +4) topology_core_cpumask: just the given CPU
+> +5) topology_die_cpumask: just the given CPU
+> 
+>   For architectures that don't support books (CONFIG_SCHED_BOOK) there are no
+>   default definitions for topology_book_id() and topology_book_cpumask().
+> 
+> 
