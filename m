@@ -2,123 +2,160 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95DDEC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:02:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F283C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:04:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F07A2146F
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:02:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 218432146F
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:04:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728178AbfBSKCR (ORCPT
+        id S1728272AbfBSKEr convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 05:02:17 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:42230 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbfBSKCQ (ORCPT
+        Tue, 19 Feb 2019 05:04:47 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:11523 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727500AbfBSKEn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 05:02:16 -0500
-Received: from 79.184.254.15.ipv4.supernova.orange.pl (79.184.254.15) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id 78b9c2310d98f25a; Tue, 19 Feb 2019 11:02:14 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Ross Lagerwall <ross.lagerwall@citrix.com>,
-        Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-efi@vger.kernel.org, Len Brown <lenb@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Huang Ying <ying.huang@intel.com>
-Subject: Re: [PATCH v2 0/2] Fix crash in cper_estatus_check()
-Date:   Tue, 19 Feb 2019 11:00:49 +0100
-Message-ID: <2534482.fmfRlZkPUo@aspire.rjw.lan>
-In-Reply-To: <20190128100424.30278-1-ross.lagerwall@citrix.com>
-References: <20190128100424.30278-1-ross.lagerwall@citrix.com>
+        Tue, 19 Feb 2019 05:04:43 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1JA31s9015937;
+        Tue, 19 Feb 2019 11:04:36 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2qpc6x7p48-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 19 Feb 2019 11:04:36 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C9DAA3A;
+        Tue, 19 Feb 2019 10:04:34 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AAC0F2796;
+        Tue, 19 Feb 2019 10:04:34 +0000 (GMT)
+Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE2.st.com
+ (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 19 Feb
+ 2019 11:04:33 +0100
+Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
+ SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
+ 15.00.1347.000; Tue, 19 Feb 2019 11:04:33 +0100
+From:   Pascal PAILLET-LME <p.paillet@st.com>
+To:     "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "axel.lin@ingics.com" <axel.lin@ingics.com>
+CC:     Pascal PAILLET-LME <p.paillet@st.com>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: [PATCH 5/8] regulator: stpmic1: Remove support for regulator pull
+ down
+Thread-Topic: [PATCH 5/8] regulator: stpmic1: Remove support for regulator
+ pull down
+Thread-Index: AQHUyDqD+87cpMH+zEiqQTpa1+pPcw==
+Date:   Tue, 19 Feb 2019 10:04:33 +0000
+Message-ID: <1550570647-9555-6-git-send-email-p.paillet@st.com>
+References: <1550570647-9555-1-git-send-email-p.paillet@st.com>
+In-Reply-To: <1550570647-9555-1-git-send-email-p.paillet@st.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.48]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-19_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, January 28, 2019 11:04:22 AM CET Ross Lagerwall wrote:
-> v2 changes:
-> - Address Boris's comments.
-> 
-> ---
-> 
-> I recently encountered a crash in cper_estatus_check() when called by
-> bert_init(). Patches follow to fix the problem. Note that I cannot fully
-> test the patches since the hardware error record on that machine has
-> been cleared.
-> 
-> The crash log:
-> 
-> [  125.666350] BUG: unable to handle kernel paging request at ffffc9004046d02c
-> [  125.666503] PGD 1f6dce067 P4D 1f6dce067 PUD 1e6532067 PMD 1e3d11067 PTE 0
-> [  125.666696] Oops: 0000 [#1] SMP KASAN NOPTI
-> [  125.666837] CPU: 7 PID: 1 Comm: swapper/0 Not tainted 4.19.0+0 #1
-> [  125.666983] Hardware name: Dell Inc. PowerEdge M520/0DW6GX, BIOS 1.8.6 08/30/2013
-> [  125.667171] RIP: e030:cper_estatus_check+0x7e/0xf0
-> [  125.667315] Code: 41 29 c5 48 98 48 01 c3 48 89 d8 4c 29 e0 48 39 e8 7d 4a 48 8d 7b 18 be 04 00 00 00 e8 bb 6f 9f ff 48 8d 7b 14 be 02 00 00 00 <44> 8b 73 18 e8 a9 6f 9f ff 0f b6 4b 15 44 89 ee 66 83 f9 03 19 d2
-> [  125.667554] RSP: e02b:ffff8881e65efce0 EFLAGS: 00010246
-> [  125.667699] RAX: fffff5200808da06 RBX: ffffc9004046d014 RCX: ffffffff8192bf25
-> [  125.667849] RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffffc9004046d028
-> [  125.668009] RBP: 0000000000000700 R08: fffff5200808da06 R09: fffff5200808da06
-> [  125.668207] R10: 0000000000000001 R11: fffff5200808da05 R12: ffffc9004046cc14
-> [  125.668358] R13: 0000000000000300 R14: 00000000000000c0 R15: ffffc9004046cc00
-> [  125.668519] FS:  0000000000000000(0000) GS:ffff8881e77c0000(0000) knlGS:0000000000000000
-> [  125.668698] CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  125.668844] CR2: ffffc9004046d02c CR3: 000000000260c000 CR4: 0000000000042660
-> [  125.668999] Call Trace:
-> [  125.669139]  bert_init+0x21c/0x362
-> [  125.669279]  ? setup_bert_disable+0x12/0x12
-> [  125.669420]  ? pci_get_dev_by_id+0x57/0x70
-> [  125.669560]  ? pci_get_device+0x86/0xc0
-> [  125.669738]  ? pci_create_sysfs_dev_files+0x1a6/0x330
-> [  125.669883]  ? setup_bert_disable+0x12/0x12
-> [  125.670026]  ? set_debug_rodata+0x11/0x11
-> [  125.670166]  ? do_one_initcall+0x8b/0x253
-> [  125.670306]  do_one_initcall+0x8b/0x253
-> [  125.670447]  ? perf_trace_initcall_level+0x250/0x250
-> [  125.670592]  ? __wake_up_common+0x140/0x1d0
-> [  125.670736]  ? kasan_unpoison_shadow+0x30/0x40
-> [  125.670879]  ? kasan_unpoison_shadow+0x30/0x40
-> [  125.671023]  ? set_debug_rodata+0x11/0x11
-> [  125.671164]  kernel_init_freeable+0x269/0x304
-> [  125.671346]  ? rest_init+0xc0/0xc0
-> [  125.671485]  kernel_init+0xf/0x130
-> [  125.671623]  ? rest_init+0xc0/0xc0
-> [  125.671761]  ? rest_init+0xc0/0xc0
-> [  125.671901]  ret_from_fork+0x35/0x40
-> [  125.672063] Modules linked in:
-> [  125.672201] CR2: ffffc9004046d02c
-> [  125.672349] ---[ end trace a17cd87742b2c49e ]---
-> [  125.683693] RIP: e030:cper_estatus_check+0x7e/0xf0
-> [  125.683840] Code: 41 29 c5 48 98 48 01 c3 48 89 d8 4c 29 e0 48 39 e8 7d 4a 48 8d 7b 18 be 04 00 00 00 e8 bb 6f 9f ff 48 8d 7b 14 be 02 00 00 00 <44> 8b 73 18 e8 a9 6f 9f ff 0f b6 4b 15 44 89 ee 66 83 f9 03 19 d2
-> [  125.684103] RSP: e02b:ffff8881e65efce0 EFLAGS: 00010246
-> [  125.684247] RAX: fffff5200808da06 RBX: ffffc9004046d014 RCX: ffffffff8192bf25
-> [  125.684397] RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffffc9004046d028
-> [  125.684548] RBP: 0000000000000700 R08: fffff5200808da06 R09: fffff5200808da06
-> [  125.684699] R10: 0000000000000001 R11: fffff5200808da05 R12: ffffc9004046cc14
-> [  125.684850] R13: 0000000000000300 R14: 00000000000000c0 R15: ffffc9004046cc00
-> [  125.685009] FS:  0000000000000000(0000) GS:ffff8881e77c0000(0000) knlGS:0000000000000000
-> [  125.685224] CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  125.685371] CR2: ffffc9004046d02c CR3: 000000000260c000 CR4: 0000000000042660
-> [  125.685566] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
-> 
-> Thanks,
-> 
-> Ross Lagerwall (2):
->   acpi/apei: Fix possible out-of-bounds access to BERT region
->   efi/cper: Fix possible out-of-bounds access
-> 
->  drivers/acpi/apei/bert.c    | 23 ++++++++++-------------
->  drivers/firmware/efi/cper.c | 13 +++++++++----
->  2 files changed, 19 insertions(+), 17 deletions(-)
-> 
-> 
+Regulator high pull down are enabled by default so remove support in the
+driver.
 
-Boris, any comments here?
+Signed-off-by: pascal paillet <p.paillet@st.com>
+---
+ drivers/regulator/stpmic1_regulator.c | 12 ------------
+ 1 file changed, 12 deletions(-)
 
+diff --git a/drivers/regulator/stpmic1_regulator.c b/drivers/regulator/stpmic1_regulator.c
+index f5c0e58..6970e45 100644
+--- a/drivers/regulator/stpmic1_regulator.c
++++ b/drivers/regulator/stpmic1_regulator.c
+@@ -133,7 +133,6 @@ enum {
+ 	.disable = regulator_disable_regmap,
+ 	.get_voltage_sel = regulator_get_voltage_sel_regmap,
+ 	.set_voltage_sel = regulator_set_voltage_sel_regmap,
+-	.set_pull_down = regulator_set_pull_down_regmap,
+ 	.set_over_current_protection = stpmic1_set_icc,
+ };
+ 
+@@ -145,7 +144,6 @@ enum {
+ 	.disable = regulator_disable_regmap,
+ 	.get_voltage_sel = regulator_get_voltage_sel_regmap,
+ 	.set_voltage_sel = regulator_set_voltage_sel_regmap,
+-	.set_pull_down = regulator_set_pull_down_regmap,
+ 	.get_bypass = regulator_get_bypass_regmap,
+ 	.set_bypass = regulator_set_bypass_regmap,
+ 	.set_over_current_protection = stpmic1_set_icc,
+@@ -155,7 +153,6 @@ enum {
+ 	.is_enabled = regulator_is_enabled_regmap,
+ 	.enable = regulator_enable_regmap,
+ 	.disable = regulator_disable_regmap,
+-	.set_pull_down = regulator_set_pull_down_regmap,
+ 	.set_over_current_protection = stpmic1_set_icc,
+ };
+ 
+@@ -177,7 +174,6 @@ enum {
+ 	.is_enabled = regulator_is_enabled_regmap,
+ 	.enable = regulator_enable_regmap,
+ 	.disable = regulator_disable_regmap,
+-	.set_pull_down = regulator_set_pull_down_regmap,
+ };
+ 
+ static const struct regulator_ops stpmic1_switch_regul_ops = {
+@@ -203,8 +199,6 @@ enum {
+ 	.enable_val = 1, \
+ 	.disable_val = 0, \
+ 	.enable_time = PMIC_ENABLE_TIME_US, \
+-	.pull_down_reg = ids##_PULL_DOWN_REG, \
+-	.pull_down_mask = ids##_PULL_DOWN_MASK, \
+ 	.supply_name = #base, \
+ }
+ 
+@@ -228,8 +222,6 @@ enum {
+ 	.bypass_mask = LDO_BYPASS_MASK, \
+ 	.bypass_val_on = LDO_BYPASS_MASK, \
+ 	.bypass_val_off = 0, \
+-	.pull_down_reg = ids##_PULL_DOWN_REG, \
+-	.pull_down_mask = ids##_PULL_DOWN_MASK, \
+ 	.supply_name = #base, \
+ }
+ 
+@@ -247,8 +239,6 @@ enum {
+ 	.enable_val = 1, \
+ 	.disable_val = 0, \
+ 	.enable_time = PMIC_ENABLE_TIME_US, \
+-	.pull_down_reg = ids##_PULL_DOWN_REG, \
+-	.pull_down_mask = ids##_PULL_DOWN_MASK, \
+ 	.supply_name = #base, \
+ }
+ 
+@@ -288,8 +278,6 @@ enum {
+ 	.enable_val = 1, \
+ 	.disable_val = 0, \
+ 	.enable_time = PMIC_ENABLE_TIME_US, \
+-	.pull_down_reg = ids##_PULL_DOWN_REG, \
+-	.pull_down_mask = ids##_PULL_DOWN_MASK, \
+ 	.supply_name = #base, \
+ }
+ 
+-- 
+1.9.1
