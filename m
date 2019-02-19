@@ -2,100 +2,74 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C49C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:06:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79267C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C50BF2147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:06:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C4D12147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:07:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728660AbfBSNG3 (ORCPT
+        id S1728721AbfBSNHZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 08:06:29 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:52066 "EHLO huawei.com"
+        Tue, 19 Feb 2019 08:07:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51040 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727438AbfBSNG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 08:06:28 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9EBA5E0EDC91A9EF70E1;
-        Tue, 19 Feb 2019 21:06:24 +0800 (CST)
-Received: from huawei.com (100.95.165.100) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Tue, 19 Feb 2019
- 21:06:16 +0800
-From:   He Kuang <hekuang@huawei.com>
-To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
-        <namhyung@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <hekuang@huawei.com>
-Subject: [PATCH] perf report: Don't shadow inlined symbol with different addr range
-Date:   Tue, 19 Feb 2019 21:05:31 +0800
-Message-ID: <20190219130531.15692-1-hekuang@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727246AbfBSNHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 08:07:25 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 074FEAE30;
+        Tue, 19 Feb 2019 13:07:23 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id 5DB8DE00A5; Tue, 19 Feb 2019 14:07:23 +0100 (CET)
+Date:   Tue, 19 Feb 2019 14:07:23 +0100
+From:   Michal Kubecek <mkubecek@suse.cz>
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>
+Cc:     netdev@vger.kernel.org, David Miller <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>, Jiri Pirko <jiri@resnulli.us>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH net-next v3 04/21] ethtool: helper functions for
+ netlink interface
+Message-ID: <20190219130723.GF23151@unicorn.suse.cz>
+References: <cover.1550513384.git.mkubecek@suse.cz>
+ <266b4ea3596de134329f8bbd5d13e282d1d27442.1550513384.git.mkubecek@suse.cz>
+ <20190218121517.4d299f6e@cakuba.netronome.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [100.95.165.100]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190218121517.4d299f6e@cakuba.netronome.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We can't assume inlined symbols with the same name are equal, because
-their address range may be different. This will cause the symbols with
-different addresses be shadowed when adding to the hist entry, and lead
-to ERANGE error when checking the symbol address during sample parse, the
-addr should be within the range of [sym.start, sym.end].
+On Mon, Feb 18, 2019 at 12:15:17PM -0800, Jakub Kicinski wrote:
+> On Mon, 18 Feb 2019 19:21:44 +0100 (CET), Michal Kubecek wrote:
+> > +/* create skb for a reply and fill device identification
+> > + * payload: payload length (without netlink and genetlink header)
+> > + * dev:     device the reply is about (may be null)
+> > + * cmd:     ETHNL_CMD_* command for reply
+> > + * info:    info for the received packet we respond to
+> > + * ehdrp:   place to store payload pointer returned by genlmsg_new()
+> > + * returns: skb or null on error
+> > + */
+> 
+> nit: why not correct kdoc?
 
-The error message is like: "0x36aea60 [0x8]: failed to process type: 68".
+Good point. I'll fix that, together with the other things.
 
-The second parameter of symbol__new() is the length of the fake symbol for
-the inline frame, which is the subtraction of the end and start address of
-base_sym.
+Michal
 
-Signed-off-by: He Kuang <hekuang@huawei.com>
----
- tools/perf/util/sort.c    | 10 ++++++++--
- tools/perf/util/srcline.c |  2 +-
- 2 files changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
-index 6c1a83768eb0..d0334c33da54 100644
---- a/tools/perf/util/sort.c
-+++ b/tools/perf/util/sort.c
-@@ -230,8 +230,14 @@ static int64_t _sort__sym_cmp(struct symbol *sym_l, struct symbol *sym_r)
- 	if (sym_l == sym_r)
- 		return 0;
- 
--	if (sym_l->inlined || sym_r->inlined)
--		return strcmp(sym_l->name, sym_r->name);
-+	if (sym_l->inlined || sym_r->inlined) {
-+		int ret = strcmp(sym_l->name, sym_r->name);
-+
-+		if (ret)
-+			return ret;
-+		if ((sym_l->start <= sym_r->end) && (sym_l->end >= sym_r->start))
-+			return 0;
-+	}
- 
- 	if (sym_l->start != sym_r->start)
- 		return (int64_t)(sym_r->start - sym_l->start);
-diff --git a/tools/perf/util/srcline.c b/tools/perf/util/srcline.c
-index dc86597d0cc4..ccf42c4e83f0 100644
---- a/tools/perf/util/srcline.c
-+++ b/tools/perf/util/srcline.c
-@@ -104,7 +104,7 @@ static struct symbol *new_inline_sym(struct dso *dso,
- 	} else {
- 		/* create a fake symbol for the inline frame */
- 		inline_sym = symbol__new(base_sym ? base_sym->start : 0,
--					 base_sym ? base_sym->end : 0,
-+					 base_sym ? (base_sym->end - base_sym->start) : 0,
- 					 base_sym ? base_sym->binding : 0,
- 					 base_sym ? base_sym->type : 0,
- 					 funcname);
--- 
-2.20.1
-
+> 
+> > +struct sk_buff *ethnl_reply_init(size_t payload, struct net_device *dev, u8 cmd,
+> > +				 u16 dev_attrtype, struct genl_info *info,
+> > +				 void **ehdrp)
+> > +{
+> > +	void *ehdr;
+> > +	struct sk_buff *rskb;
+> 
+> nit: reverse xmas tree
