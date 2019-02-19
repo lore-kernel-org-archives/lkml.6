@@ -7,80 +7,82 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6901C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C5AC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90B0A2146F
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:26:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C42372147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:26:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="BVOauf29"
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="36QOGX2D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729364AbfBSUZ7 (ORCPT
+        id S1729611AbfBSU0N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 15:25:59 -0500
-Received: from mail-eopbgr750082.outbound.protection.outlook.com ([40.107.75.82]:27328
+        Tue, 19 Feb 2019 15:26:13 -0500
+Received: from mail-eopbgr750041.outbound.protection.outlook.com ([40.107.75.41]:46400
         "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726110AbfBSUZ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 15:25:58 -0500
+        id S1726281AbfBSU0M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 15:26:12 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KIe5txGKhhsculu8kBeYs5dWurpDsu7mSdOKTeGK4sk=;
- b=BVOauf29PhWk/34Pbh4WVjMjySR5VU3AmYeQSAvtXKikBpd3TV+Xv1viBzp8gWLnUDeUzAxuVo/gUyeyqK6lSJRVoieW+ixoY1Y3RDXki6cxAFP/hU++dBdGP2rhpi1wunQC7FbgR0TkLUPZo4fcMKHRxse6HumQVTDOhPU1icM=
+ bh=MtIVWpwKOHOG0+RPVlkHWqKUGHwgXuMffejt6al34+4=;
+ b=36QOGX2DHt+5RJmBrL+brfcCMRgjmqEIRBQKeyqPr8giKUtxyqoHn5MmxpR6D0VN15lSi32P8ZHZwtWg9MeSDwnpdjkbPMaj3EI4S1d42vsLZbtdJ1S0bwKfoIT4xCUB9UgwM7GjUtOz9vhCCvtpBvmSFBNV64WnpQdSLxSpHV8=
 Received: from SN6PR12MB2639.namprd12.prod.outlook.com (52.135.103.16) by
- SN6PR12MB2829.namprd12.prod.outlook.com (20.177.250.142) with Microsoft SMTP
+ SN6PR12MB2623.namprd12.prod.outlook.com (52.135.103.12) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.16; Tue, 19 Feb 2019 20:25:52 +0000
+ 15.20.1622.16; Tue, 19 Feb 2019 20:26:09 +0000
 Received: from SN6PR12MB2639.namprd12.prod.outlook.com
  ([fe80::35e5:6f95:dfe:efe]) by SN6PR12MB2639.namprd12.prod.outlook.com
  ([fe80::35e5:6f95:dfe:efe%2]) with mapi id 15.20.1622.018; Tue, 19 Feb 2019
- 20:25:52 +0000
+ 20:26:09 +0000
 From:   "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
 To:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>
 CC:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "bp@alien8.de" <bp@alien8.de>
-Subject: [PATCH 1/5] EDAC/amd64: Add Fam17hMod30h PCI IDs
-Thread-Topic: [PATCH 1/5] EDAC/amd64: Add Fam17hMod30h PCI IDs
-Thread-Index: AQHUyJFO2kTGZslcCUS37hwB/bq0XQ==
-Date:   Tue, 19 Feb 2019 20:25:51 +0000
-Message-ID: <20190219202536.15462-1-Yazen.Ghannam@amd.com>
+Subject: [PATCH 3/5] EDAC/amd64: Recognize x16 Symbol Size
+Thread-Topic: [PATCH 3/5] EDAC/amd64: Recognize x16 Symbol Size
+Thread-Index: AQHUyJFQiE8qczt930CZ7Tvg5kTmBg==
+Date:   Tue, 19 Feb 2019 20:25:54 +0000
+Message-ID: <20190219202536.15462-3-Yazen.Ghannam@amd.com>
+References: <20190219202536.15462-1-Yazen.Ghannam@amd.com>
+In-Reply-To: <20190219202536.15462-1-Yazen.Ghannam@amd.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-clientproxiedby: SN2PR01CA0031.prod.exchangelabs.com (2603:10b6:804:2::41)
  To SN6PR12MB2639.namprd12.prod.outlook.com (2603:10b6:805:6f::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Yazen.Ghannam@amd.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.17.1
 x-originating-ip: [165.204.77.1]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 65777d7b-2344-4398-96ac-08d696a8712c
+x-ms-office365-filtering-correlation-id: 5619cfd4-6e08-4f5a-44ab-08d696a8726b
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:SN6PR12MB2829;
-x-ms-traffictypediagnostic: SN6PR12MB2829:
-x-microsoft-exchange-diagnostics: 1;SN6PR12MB2829;20:DDNFsrba3prPNsOUlP4ZrbZrnxTuRyXq3ZT+f+CFg8iwVMKJ+cnRYZM40uGKYcN3yPj31zqmU9AsmT12aRSR9auKnF96AcLk24o2z9ReOw/RjjJEFIUAs3sVEF+RKqWHbpH7lOdVDDI7Cjf57upwZpysnqQiJLTgdJuKXE6Ib9ZxsAFRFECi2zVh4sK1lDs0VpA5zNnx06+VJbz//tB9FP6SiGOpMhgwhewKDyqUdVExoHFGArZx3bIdQLaZUmXE
-x-microsoft-antispam-prvs: <SN6PR12MB28294A1D7F549268EA23A647F87C0@SN6PR12MB2829.namprd12.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:SN6PR12MB2623;
+x-ms-traffictypediagnostic: SN6PR12MB2623:
+x-microsoft-exchange-diagnostics: 1;SN6PR12MB2623;20:+pHx62R9BduafR+jkH5vrmtkOF3siRiY3f2lIjcTlMr3w70dpODBLXbmnH93q2ftJXBr/ClvwwDmALhzjms5DDKcNVWZ4GGhVrJVNi4lLBLH9LxbVb6INgWyECL8IWpF/M8LRfJqLUpbMDuI/6LVTd1owFDd1nJHfm0/pUnDcxQziM1A0UI1Xa+dw/94tvCidHqouEXAPA33sS8+KqelFKuX6AR8kNl3CTe1x5k82x3jLTY5sV3juNtWtYrH5Cuy
+x-microsoft-antispam-prvs: <SN6PR12MB2623096A817C4A739AE70B14F87C0@SN6PR12MB2623.namprd12.prod.outlook.com>
 x-forefront-prvs: 09538D3531
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(396003)(376002)(39860400002)(346002)(189003)(199004)(36756003)(476003)(68736007)(86362001)(486006)(6486002)(26005)(14454004)(72206003)(478600001)(3846002)(6116002)(6512007)(6346003)(6506007)(102836004)(316002)(2616005)(25786009)(6436002)(6916009)(54906003)(4326008)(186003)(2906002)(5640700003)(5660300002)(386003)(53936002)(2501003)(99286004)(97736004)(305945005)(105586002)(52116002)(1076003)(50226002)(71190400001)(66066001)(8936002)(106356001)(2351001)(81166006)(71200400001)(81156014)(14444005)(8676002)(256004)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2829;H:SN6PR12MB2639.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(396003)(366004)(136003)(376002)(189003)(199004)(2501003)(1076003)(5660300002)(99286004)(52116002)(8936002)(2906002)(36756003)(256004)(6666004)(186003)(76176011)(72206003)(8676002)(3846002)(6116002)(50226002)(81166006)(81156014)(71190400001)(71200400001)(54906003)(2351001)(7736002)(6486002)(106356001)(6512007)(26005)(25786009)(305945005)(446003)(66066001)(386003)(6436002)(6506007)(5640700003)(86362001)(316002)(68736007)(11346002)(102836004)(97736004)(486006)(14454004)(4326008)(478600001)(105586002)(2616005)(476003)(6916009)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2623;H:SN6PR12MB2639.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: amd.com does not designate
  permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Yazen.Ghannam@amd.com; 
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: r+N31OtVaxmVZd9FecFxd48XklsV7sApzeaF9Sl+oWW644pEOgAz4kpGyJjvGu5vdjHzKZn2DDI7q/nPs+cJoP0j0WFxP+2Ngwrp1b5myzkPPkAc1Fw7cnEHNbioI8JcVTydOcxNs/UcnC0N/le/BBskaPprnU+JJFHkWONeGKqSsvDK0yzNZoBSjHSfSmxk6FGH5DFLZVMPMryW81XdihKehlqV9ba6EStQFS1kk8cWJW15tmfEpC3Kh3flXlE+V3+NMZZc51X1wbsRm+w+VX9qDXOlqk66730N5n9uCr0nSDc95H/iLGMUpiIeWjVY44sg1ozrHM+HQx4Y8ofyhxQvOCl74B7uBVyVm2SvRysfEzALSKnnW3pttNQaC3ojlsEKAhlpcWO4hYjmFq37xdBvBHbZS2prk1fIiI/xCe0=
+x-microsoft-antispam-message-info: cAhU/2kMgAjbEqqZXY29dCvB1B8qa1g+q+m7b7bwKMj4Voi0krzhDppJ5t4b+010NQadGsCuq9Pgp7FXmoZatN/6imkv/TdhzgUdQcWQRVUY6NJ+15R1n9Tv7Hml2CE0UpvfELTKkfLtxDbvBKl5B1DkUcocClV2QFHFP7rCqKRGkIbO5rQnT8Of3UXXdQW+d6ZPO0m5OId8anOFgAnrZAsnOBBALFTx7aYJoyrH7MdYtYk21gsWi6H5q7F4S+JL9TGQ/YtxBJjP/sspaPCJ37xNoCh1ee71mmjggWOZ0w8lJKTQzTGHND0irY5DPM//lFMxlG9fQQn1vfaYHJ6AkWsnWYQ8fDXi1u3/U5xPcqTuTI138COSttvvW7IUeFLtBo2Fvc5Cs4fHA7mIzI2KhiyGTqS3Jg1PUafgIjC0VPw=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65777d7b-2344-4398-96ac-08d696a8712c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2019 20:25:50.0561
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5619cfd4-6e08-4f5a-44ab-08d696a8726b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2019 20:25:53.1984
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
 X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2829
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2623
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -88,74 +90,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yazen Ghannam <yazen.ghannam@amd.com>
 
-Add the new Family 17h Model 30h PCI IDs to the AMD64 EDAC module.
+Future AMD systems may support x16 symbol sizes.
 
-This also fixes a probe failure that appeared when some other PCI IDs
-for Fam17hMod30h were added to the AMD NB code.
+Recognize if a system is using x16 symbol size. Also, simplify the print
+statement.
 
-Fixes: be3518a16ef2 (x86/amd_nb: Add PCI device IDs for family 17h, model 3=
-0h)
+Note that a x16 syndrome vector table is not necessary like with x4 or
+x8. This is because systems that support x16 symbol sizes will be SMCA
+systems. In which case, the syndrome can be directly extracted from the
+MCA_SYND[Syndrome] field.
+
 Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
 ---
- drivers/edac/amd64_edac.c | 15 ++++++++++++++-
- drivers/edac/amd64_edac.h |  3 +++
- 2 files changed, 17 insertions(+), 1 deletion(-)
+ drivers/edac/amd64_edac.c | 15 +++++++++------
+ drivers/edac/amd64_edac.h |  2 +-
+ 2 files changed, 10 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
-index 6ea98575a402..9947437d9574 100644
+index 507d824fe45a..bacd2cb22f29 100644
 --- a/drivers/edac/amd64_edac.c
 +++ b/drivers/edac/amd64_edac.c
-@@ -2211,6 +2211,15 @@ static struct amd64_family_type family_types[] =3D {
- 			.dbam_to_cs		=3D f17_base_addr_to_cs_size,
- 		}
- 	},
-+	[F17_M30H_CPUS] =3D {
-+		.ctl_name =3D "F17h_M30h",
-+		.f0_id =3D PCI_DEVICE_ID_AMD_17H_M30H_DF_F0,
-+		.f6_id =3D PCI_DEVICE_ID_AMD_17H_M30H_DF_F6,
-+		.ops =3D {
-+			.early_channel_count	=3D f17_early_channel_count,
-+			.dbam_to_cs		=3D f17_base_addr_to_cs_size,
-+		}
-+	},
- };
+@@ -897,8 +897,7 @@ static void dump_misc_regs(struct amd64_pvt *pvt)
+=20
+ 	edac_dbg(1, "  DramHoleValid: %s\n", dhar_valid(pvt) ? "yes" : "no");
+=20
+-	amd64_info("using %s syndromes.\n",
+-			((pvt->ecc_sym_sz =3D=3D 8) ? "x8" : "x4"));
++	amd64_info("using x%u syndromes.\n", pvt->ecc_sym_sz);
+ }
 =20
  /*
-@@ -3199,7 +3208,11 @@ static struct amd64_family_type *per_family_init(str=
-uct amd64_pvt *pvt)
- 		break;
+@@ -2609,10 +2608,14 @@ static void determine_ecc_sym_sz(struct amd64_pvt *=
+pvt)
 =20
- 	case 0x17:
--		if (pvt->model >=3D 0x10 && pvt->model <=3D 0x2f) {
-+		if (pvt->model >=3D 0x30 && pvt->model <=3D 0x3f) {
-+			fam_type =3D &family_types[F17_M30H_CPUS];
-+			pvt->ops =3D &family_types[F17_M30H_CPUS].ops;
-+			break;
-+		} else if (pvt->model >=3D 0x10 && pvt->model <=3D 0x2f) {
- 			fam_type =3D &family_types[F17_M10H_CPUS];
- 			pvt->ops =3D &family_types[F17_M10H_CPUS].ops;
- 			break;
+ 		for_each_umc(i) {
+ 			/* Check enabled channels only: */
+-			if ((pvt->umc[i].sdp_ctrl & UMC_SDP_INIT) &&
+-			    (pvt->umc[i].ecc_ctrl & BIT(7))) {
+-				pvt->ecc_sym_sz =3D 8;
+-				break;
++			if (pvt->umc[i].sdp_ctrl & UMC_SDP_INIT) {
++				if (pvt->umc[i].ecc_ctrl & BIT(9)) {
++					pvt->ecc_sym_sz =3D 16;
++					break;
++				} else if (pvt->umc[i].ecc_ctrl & BIT(7)) {
++					pvt->ecc_sym_sz =3D 8;
++					break;
++				}
+ 			}
+ 		}
+=20
 diff --git a/drivers/edac/amd64_edac.h b/drivers/edac/amd64_edac.h
-index 4242f8e39c18..de8dbb0b42b5 100644
+index 435450bf8684..6c6ce783208a 100644
 --- a/drivers/edac/amd64_edac.h
 +++ b/drivers/edac/amd64_edac.h
-@@ -117,6 +117,8 @@
- #define PCI_DEVICE_ID_AMD_17H_DF_F6	0x1466
- #define PCI_DEVICE_ID_AMD_17H_M10H_DF_F0 0x15e8
- #define PCI_DEVICE_ID_AMD_17H_M10H_DF_F6 0x15ee
-+#define PCI_DEVICE_ID_AMD_17H_M30H_DF_F0 0x1490
-+#define PCI_DEVICE_ID_AMD_17H_M30H_DF_F6 0x1496
+@@ -364,7 +364,7 @@ struct amd64_pvt {
+ 	u32 dct_sel_hi;		/* DRAM Controller Select High */
+ 	u32 online_spare;	/* On-Line spare Reg */
 =20
- /*
-  * Function 1 - Address Map
-@@ -284,6 +286,7 @@ enum amd_families {
- 	F16_M30H_CPUS,
- 	F17_CPUS,
- 	F17_M10H_CPUS,
-+	F17_M30H_CPUS,
- 	NUM_FAMILIES,
- };
+-	/* x4 or x8 syndromes in use */
++	/* x4, x8, or x16 syndromes in use */
+ 	u8 ecc_sym_sz;
 =20
+ 	/* place to store error injection parameters prior to issue */
 --=20
 2.17.1
 
