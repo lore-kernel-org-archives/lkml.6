@@ -2,126 +2,144 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F8AC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6646BC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:35:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6448D2086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:34:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BDBC2086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:35:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SjwtoSl4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727238AbfBSLea (ORCPT
+        id S1727582AbfBSLf3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 06:34:30 -0500
-Received: from foss.arm.com ([217.140.101.70]:43998 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725772AbfBSLea (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 06:34:30 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91A97EBD;
-        Tue, 19 Feb 2019 03:34:29 -0800 (PST)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 130163F720;
-        Tue, 19 Feb 2019 03:34:26 -0800 (PST)
-Date:   Tue, 19 Feb 2019 11:34:24 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Gregory CLEMENT <gregory.clement@free-electrons.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [RFC PATCH] docs/memory-barriers.txt: Rewrite "KERNEL I/O
- BARRIER EFFECTS" section
-Message-ID: <20190219113424.GB4027@fuggles.cambridge.arm.com>
-References: <20190211172948.3322-1-will.deacon@arm.com>
- <CAK8P3a2Pr2oWYB7QHQMaHRq6H8h9xMwhhyJz5Pu67bVe4GaK9g@mail.gmail.com>
- <20190218162954.GB16713@fuggles.cambridge.arm.com>
- <CAK8P3a1TY9S=zYsdZ5O021p2yYcZhehVuwB3_65dR6x6zbkTYQ@mail.gmail.com>
- <20190218175625.GD16713@fuggles.cambridge.arm.com>
- <CAK8P3a2mjjr94hwj_eXxfyKDKDuA=MogXW7xJygh-X0Hqgf6rg@mail.gmail.com>
- <20190219112747.7db95e58@windsurf.home>
+        Tue, 19 Feb 2019 06:35:29 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:40277 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725772AbfBSLf3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 06:35:29 -0500
+Received: by mail-it1-f193.google.com with SMTP id i2so5320561ite.5
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 03:35:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=q62Kg48ghBbijwcL6qdW6IrFyeQHl6ptcqcFoGHPA58=;
+        b=SjwtoSl4aYbAcaO7SS5Ui6BzSU6U6HCC46Ds0w9EBHnuDtOKN7wD1HfR+V+bFLix9B
+         T3jY1/7NUOXPDZ8sZ1/5nz/g7qk+W0FVKl238/+ZKkSH3k2y0fYqi7WZ1C2B28uzF0tJ
+         /zDdDJcdAW42k1A0j+/sk1v/TSeg9yClehkfX7dQym24TyEIy3kdnUHJtmLZs+zRSSVJ
+         /AzlLveNbWYL50aH7651Z4VCHQSckhXv8Jvb/9pndjjLeBfr9X1izqYAxEF70biWAZwv
+         VBk1J6yVIfWYA8GpcHfKDXcEpJ5SQzwD9Md9fg+vE0vAeFchIOf2JkFF3jErsX7ZsBVB
+         QlFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=q62Kg48ghBbijwcL6qdW6IrFyeQHl6ptcqcFoGHPA58=;
+        b=HazzbVsTYj8j1DKRxd5UIYjtyNeKHkvp2zryXmJ3RwSg8VWAObFFwnlxsspXJbQKSo
+         9mZPB2TE0hEipV/yR3fgj7l2IyFZfvjW5FAtJSpwtrwWTD8VUJjEeoiy5MGdkDO9XnRe
+         P6oSCtA/Vhuuot5E4nFXogQljfam5NT/L8NIwT8rkDUe1Bw8Vum3E8y1VIQIwf+kDViP
+         S1HvqWaTr/1/UrMmEg/VLBr1V/5bLsoipPutdM7nDSVRAR+l8b6yLtD3AlZcrq9haGur
+         ZQ8QIzfAnuRccLqI/+7wanWcn34v6u9msS+r/HHFxuHcuI2SrwkNq1ebrNKGHt7AS1vz
+         KmiQ==
+X-Gm-Message-State: AHQUAuZgyUajWGop4TusPpbjxbc299y6IUqSUL8t3ThPM7pFSJEiW5ie
+        FgWJ3PGQ/c3c/AbbNu2X0BTji0ArbennVXggobDA5w==
+X-Google-Smtp-Source: AHgI3IbhGlAhVvJOxnIGcP9rZGjCooAyEe3AVeJc/1xXXTlEGXKBp5Ayp9Jq4QzlsBYVDHrelb2M8WDN4lFq/Ykqra8=
+X-Received: by 2002:a02:5782:: with SMTP id b2mr15174690jad.2.1550576128089;
+ Tue, 19 Feb 2019 03:35:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190219112747.7db95e58@windsurf.home>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+References: <20190215013959.21320-1-natechancellor@gmail.com>
+ <20190215185026.GE15084@fuggles.cambridge.arm.com> <CAKv+Gu-=2C4fBPAKNrkeiOsMG0Fg3jHHGuG2rVZvjtT=0-aDkA@mail.gmail.com>
+ <CAKwvOd=+_pwHStdhfB3bAYEuyMEjJ+T+gyTd9KA7GyNE2wMk7g@mail.gmail.com>
+ <CAKv+Gu-41fhEfJF+pvfCQRqXs4vYPHs77rkJo9=X8Y23QVd6Tw@mail.gmail.com>
+ <CAKwvOdke_HbSrmGO5ThNy4o87G4BhA845QcgZFUTB7m6cBHTDg@mail.gmail.com>
+ <CAKv+Gu-Aj68gXoi9CXLyw96iRychWjqX=XtMCQxcZqOv0jhsLw@mail.gmail.com>
+ <CAKv+Gu_nwKr65zLG0p0dSW4sQtN4dwEkevCMPe5s9U++SaDezg@mail.gmail.com> <20190219111927.GA17012@kroah.com>
+In-Reply-To: <20190219111927.GA17012@kroah.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Tue, 19 Feb 2019 12:35:16 +0100
+Message-ID: <CAKv+Gu9v3htHyfCZvDU2Qd8vQozbBQVeHyyNsrdrwO2r7ReBwA@mail.gmail.com>
+Subject: Re: [PATCH] arm64/neon: Disable -Wincompatible-pointer-types when
+ building with Clang
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Sandeep Patil <sspatil@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
-
-On Tue, Feb 19, 2019 at 11:27:47AM +0100, Thomas Petazzoni wrote:
-> On Mon, 18 Feb 2019 21:37:25 +0100
-> Arnd Bergmann <arnd@arndb.de> wrote:
-> 
-> > > > I would say we should strengthen the behavior of outX() where possible.
-> > > > I don't know if arm64 actually has a way of doing that, my understanding
-> > > > earlier was that the AXI bus was already posted, so there is not much
-> > > > you can do here to define __io_paw() in a way that will prevent posted
-> > > > writes.  
+On Tue, 19 Feb 2019 at 12:19, Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Tue, Feb 19, 2019 at 11:35:12AM +0100, Ard Biesheuvel wrote:
+> > On Fri, 15 Feb 2019 at 20:45, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
 > > >
-> > > If we could map I/O space using different page table attributes (probably by
-> > > hacking pci_remap_iospace() ?) then we could disable the
-> > > early-write-acknowledge hint and implement __io_paw() as a completion
-> > > barrier, although it would be at the mercy of the system as to whether or
-> > > not that requires a response from the RC.  
-> > 
-> > Ah, it seems we actually do that on 32-bit ARM, at least on one platform,
-> > see 6a02734d420f ("ARM: mvebu: map PCI I/O regions strongly ordered")
-> > and prior commits.
-> 
-> Yes, some Marvell Armada 32-bit platforms have an errata that require
-> the PCI MEM and PCI I/O regions to be mapped strongly ordered.
-> 
-> BTW, this requirement prevents us from using the pci_remap_iospace()
-> API from drivers/pci, because it assumes page attributes of
-> pgprot_device(PAGE_KERNEL). That's why we're still using the
-> ARM-specific pci_ioremap_io() function.
+> > > On Fri, 15 Feb 2019 at 20:43, Nick Desaulniers <ndesaulniers@google.com> wrote:
+> > > >
+> > > > On Fri, Feb 15, 2019 at 11:28 AM Ard Biesheuvel
+> > > > <ard.biesheuvel@linaro.org> wrote:
+> > > > >
+> > > > > On Fri, 15 Feb 2019 at 20:25, Nick Desaulniers <ndesaulniers@google.com> wrote:
+> > > > > >
+> > > > > > On Fri, Feb 15, 2019 at 11:20 AM Ard Biesheuvel
+> > > > > > <ard.biesheuvel@linaro.org> wrote:
+> > > > > > > Provided that we stop sending Clang enablement patches to -stable:
+> > > > > >
+> > > > > > What does that mean?  We're trying to provide clang support back to
+> > > > > > 4.4 LTS branches. (so 4.4, 4.9, 4.14, 4.19).
+> > > > >
+> > > > > I understand that is what you are attempting, but that does not mean
+> > > > > it /belongs/ in -stable.
+> > > > >
+> > > > > There are rules for stable, and people that track stable kernels (such
+> > > > > as the distros) should be able to rely on us to only backport bug
+> > > > > fixes, not linker script changes and other updates that fix issues
+> > > > > that did not exist when those kernels were released.
+> > > > >
+> > > > > It is unclear to me how these clang changes benefit those users.
+> > > >
+> > > > If you're referring to
+> > > > https://www.spinics.net/lists/stable/msg278381.html, that's fair (I
+> > > > think those were helpful for LLD support on arm64).
+> > > >
+> > > > Why didn't you speak up then?  Why is this coming up now?
+> > >
+> > > That is just one example, and I failed to realise it at the time.
+> > >
+> > > I think the Clang/LLVM work you are doing is very important, but I
+> > > simply don't think any of it belongs in -stable kernels.
+> >
+> > OK, to clarify my position:
+> >
+> > I have no problem whatsoever with taking this patch into v5.x, so
+> >
+> > Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> >
+> > but going forward, I will push back on -stable backports for
+> > Clang/LLVM specific changes, since they are obviously in violation of
+> > the stable kernel rules.
+>
+> Getting older kernels to build/run properly on newer compilers is just a
+> part of life for the stable trees.  If you note, we have done a lot of
+> gcc7, then gcc8, and clang patches backported over the years in order to
+> make it possible for people (like me and my testing infrastructure at
+> the least) to keep building these old kernels on newer systems.
+>
+> So while it's not part of the "documented" rules, I do take this type of
+> change, as it does help out a huge population of users and testers.
+>
 
-Ah, I think I vaguely remember that. It was to avoid a hardware deadlock,
-right? In which case, I'd rather consider this use of strongly-ordered
-memory an exceptional case as opposed to a general property of I/O mappings.
-
-> > > I would still prefer to document the weaker semantics as the portable
-> > > interface, unless there are portable drivers relying on this today (which
-> > > would imply that it's widely supported by other architectures).  
-> > 
-> > I don't know of any portable driver that actually relies on it, but
-> > that's mainly because there are very few portable drivers that
-> > use inb()/outb() in the first place. How many of those require
-> > the non-posted behavior I don't know
-> > 
-> > Adding Thomas, Gregory and Russell to Cc, as they were involved
-> > in the discussion that led to the 32-bit change, maybe they are
-> > aware of a specific example.
-> 
-> I'm just arriving in the middle of this thread, and I'm not sure to
-> understand what is the question. If the question is whether PCI I/O is
-> really used in practice, then I've never seen it be used with Marvell
-> platforms (but I'm also not aware of all PCIe devices people are
-> using). I personally have a hacked-up version of the e1000e driver
-> that intentionally does some PCI I/O accesses, that I use as a way to
-> validate that PCI I/O support is minimally working, but that's it.
-
-It was actually even more subtle than that! The question is whether outX()
-is relied upon to be non-posted in portable drivers, because at the moment
-it's typicall posted for arm/arm64 systems, with the exception of the Armada
-erratum above.
-
-Cheers,
-
-Will
+That doesn't make a lot of sense to me, but that is the common
+practice, then I won't object any longer.
