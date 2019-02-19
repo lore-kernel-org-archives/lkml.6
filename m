@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FA8C10F00
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB7FC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21E382177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:16:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BF542177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:17:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="V74Sk8nP"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="dPmv2FfF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728232AbfBSKQx (ORCPT
+        id S1728386AbfBSKQ7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 05:16:53 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42507 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727752AbfBSKQv (ORCPT
+        Tue, 19 Feb 2019 05:16:59 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39431 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728251AbfBSKQ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 05:16:51 -0500
-Received: by mail-pf1-f195.google.com with SMTP id n74so10024199pfi.9
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 02:16:51 -0800 (PST)
+        Tue, 19 Feb 2019 05:16:56 -0500
+Received: by mail-pf1-f193.google.com with SMTP id f132so10033514pfa.6
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 02:16:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Dvm7bD37UxENPIb3CxBZhvUUjAINwkuHpa0t8QKOOyU=;
-        b=V74Sk8nPzpRuIM9hMhWz8A6Pk+kksIHNzegNNBSqj9Xte5idsU/oowu7blb27RyBdV
-         OOzPCwtX+SwTAyrNxp/GqPxoSx6ho3KGl0ROQX/ibt4Q1kyiBeOVUmXmwwH8AV9DfIJC
-         IfDk9k36LN+SMrr9IIWqpMDLhqbSV/4KDTy7g=
+        bh=ybvRK6PwI6dB00OCQbIKqNRM5TMInYmAEtubVRW5xbw=;
+        b=dPmv2FfF8o3VJWuFYMHm2yr1vGewOFGUt1WOtpNyzNtsH1q9DCGodssXcRmMYlfhLG
+         6P5N/7qeIbfOQqp9I296fSDi2yyOTyYDHazAmzdblI5KAeY+kHnb6JXcglqpraddvYq1
+         /5iN9xDrmTrdgQcI6QoBR1HRa7/995yGnwDts=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Dvm7bD37UxENPIb3CxBZhvUUjAINwkuHpa0t8QKOOyU=;
-        b=AFB4pWreQFM5Z1VvhGYp1kolH3n4OX79ENk3YqAbmRqn2JCYKMAgdxesWrd4Rf8gFy
-         x/x95NeIxNFB5FZ9dnWtZmsr/Pk+YPPNq6ASmLE/PpP5DzbXKm+7zelc50zfJC8+e4O7
-         qfsocHShz5kCX8h7x9+JyBjF7pFMYQ4qAUreGj0Y6qKi+w4L2tKqxSZAYWEBSniM4xUD
-         t+kkdxdNoyTBSOrJjUgBebqUUf8FD8MVoFdx28A1QyfSc+F2UtsFGXJ/GdhtPpK1qbg1
-         EYAdoMjDXM+LSHpBMdkJ2bVY4w2x5Ze8jlZ6ZIkDeXD/FeH3IOs3FNu0X3N/PNnwYTIw
-         RyjA==
-X-Gm-Message-State: AHQUAuYqlbIENy9VYeWQlSXiFCsOku3+eWsj8PwQm4TQaRkMXzL90PXZ
-        qB0z3sVQ83BxfGoMemALYRuL7w==
-X-Google-Smtp-Source: AHgI3IbM9/oPdEbZ9Ab4p/1GXgJhLqPQSGkg5xrfvZ47xEe2pkHkw+lYM5n9jg7PAoCE0qXwRoCsIw==
-X-Received: by 2002:a63:1c42:: with SMTP id c2mr22987546pgm.265.1550571410859;
-        Tue, 19 Feb 2019 02:16:50 -0800 (PST)
+        bh=ybvRK6PwI6dB00OCQbIKqNRM5TMInYmAEtubVRW5xbw=;
+        b=PAKjbc6AmpP4NUk60V+USSzgNqHNd6+vaJJGUAXuKnvApLQcJGFBnKQ4dayuShPslP
+         DYHIsR/Ef3XUGDPVO9GcpUT5fTMJGCIGgB+pq1WrenY9klWT0fDmxYabb8dgEneM4TBJ
+         KEef5eErcZBgDBKiGfyUvAsenrXVkeN7BJ3lI3G6Vc1xYqUl1dQNWGeihzPsV3EQP6wz
+         AUtbcFd3JT+MVfGkB/6a8T4lhMmzHmM7oP68dNEH4253hag+7YSoQ4G1TRexqMSwdfnn
+         4IjgsVe5SQQzZO8vPZEcFF9G3RtYzn0v7BVTaF8bwIttq5RgyFxz2y5U0Qj+muUJj1Eu
+         OfiQ==
+X-Gm-Message-State: AHQUAuYzcXFes8sC16NIGjRnsC8Rgef8K0NTXnAhT6bRAKxG483x12JG
+        CkMC4uVZtaZRBpt793pgJHU6fw==
+X-Google-Smtp-Source: AHgI3IbjWyR6rKpPzwgrUebdFkpuronj/o8271Mom9dxP1UQwJo6JkyqBjHsblgJxLYtzxKXgED46g==
+X-Received: by 2002:a63:1a0d:: with SMTP id a13mr23208738pga.202.1550571415942;
+        Tue, 19 Feb 2019 02:16:55 -0800 (PST)
 Received: from localhost.localdomain ([115.97.184.151])
-        by smtp.gmail.com with ESMTPSA id g10sm21324011pgo.64.2019.02.19.02.16.46
+        by smtp.gmail.com with ESMTPSA id g10sm21324011pgo.64.2019.02.19.02.16.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 02:16:50 -0800 (PST)
+        Tue, 19 Feb 2019 02:16:55 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Bastien Nocera <hadess@hadess.net>,
@@ -63,9 +63,9 @@ Cc:     Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org,
         linux-amarula@amarulasolutions.com,
         Michael Trimarchi <michael@amarulasolutions.com>,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v6 2/4] Input: goodix - Add regulators suppot
-Date:   Tue, 19 Feb 2019 15:46:27 +0530
-Message-Id: <20190219101629.15977-3-jagan@amarulasolutions.com>
+Subject: [PATCH v6 3/4] dt-bindings: input: touchscreen: goodix: Add GT5663 compatible
+Date:   Tue, 19 Feb 2019 15:46:28 +0530
+Message-Id: <20190219101629.15977-4-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20190219101629.15977-1-jagan@amarulasolutions.com>
 References: <20190219101629.15977-1-jagan@amarulasolutions.com>
@@ -76,119 +76,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Goodix CTP controllers require AVDD28, VDDIO regulators for power-on
-sequence.
+GT5663 is capacitive touch controller with customized smart
+wakeup gestures, it support chipdata which is similar to
+existing GT1151 and require AVDD28 supply for some boards.
 
-The delay between these regualtor operations as per Power-on Timing
-from datasheet[1] is 0 (T1 >= 0 usec).
-
-So, enable and disable these regulators in proper order using normal
-regulator functions without any delay in between.
-
-[1] GT5663 Datasheet_English_20151106_Rev.01
+Document the compatible for the same.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/input/touchscreen/goodix.c | 58 ++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+ Documentation/devicetree/bindings/input/touchscreen/goodix.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
-index f2d9c2c41885..5f9e755c5bc7 100644
---- a/drivers/input/touchscreen/goodix.c
-+++ b/drivers/input/touchscreen/goodix.c
-@@ -27,6 +27,7 @@
- #include <linux/delay.h>
- #include <linux/irq.h>
- #include <linux/interrupt.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/slab.h>
- #include <linux/acpi.h>
- #include <linux/of.h>
-@@ -47,6 +48,8 @@ struct goodix_ts_data {
- 	struct touchscreen_properties prop;
- 	unsigned int max_touch_num;
- 	unsigned int int_trigger_type;
-+	struct regulator *avdd28;
-+	struct regulator *vddio;
- 	struct gpio_desc *gpiod_int;
- 	struct gpio_desc *gpiod_rst;
- 	u16 id;
-@@ -531,6 +534,24 @@ static int goodix_get_gpio_config(struct goodix_ts_data *ts)
- 		return -EINVAL;
- 	dev = &ts->client->dev;
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
+index b9b8f196dc90..1dcae643427f 100644
+--- a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
++++ b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
+@@ -3,6 +3,7 @@ Device tree bindings for Goodix GT9xx series touchscreen controller
+ Required properties:
  
-+	ts->avdd28 = devm_regulator_get(dev, "AVDD28");
-+	if (IS_ERR(ts->avdd28)) {
-+		error = PTR_ERR(ts->avdd28);
-+		if (error != -EPROBE_DEFER)
-+			dev_err(dev,
-+				"Failed to get AVDD28 regulator: %d\n", error);
-+		return error;
-+	}
-+
-+	ts->vddio = devm_regulator_get(dev, "VDDIO");
-+	if (IS_ERR(ts->vddio)) {
-+		error = PTR_ERR(ts->vddio);
-+		if (error != -EPROBE_DEFER)
-+			dev_err(dev,
-+				"Failed to get VDDIO regulator: %d\n", error);
-+		return error;
-+	}
-+
- 	/* Get the interrupt GPIO pin number */
- 	gpiod = devm_gpiod_get_optional(dev, GOODIX_GPIO_INT_NAME, GPIOD_IN);
- 	if (IS_ERR(gpiod)) {
-@@ -761,6 +782,17 @@ static void goodix_config_cb(const struct firmware *cfg, void *ctx)
- 	complete_all(&ts->firmware_loading_complete);
- }
- 
-+static void goodix_disable_regulator(void *arg)
-+{
-+	struct goodix_ts_data *ts = arg;
-+
-+	if (!IS_ERR(ts->vddio))
-+		regulator_disable(ts->vddio);
-+
-+	if (!IS_ERR(ts->avdd28))
-+		regulator_disable(ts->avdd28);
-+}
-+
- static int goodix_ts_probe(struct i2c_client *client,
- 			   const struct i2c_device_id *id)
- {
-@@ -786,6 +818,32 @@ static int goodix_ts_probe(struct i2c_client *client,
- 	if (error)
- 		return error;
- 
-+	error = devm_add_action_or_reset(&client->dev,
-+					 goodix_disable_regulator, ts);
-+	if (error)
-+		return error;
-+
-+	/* power the controller */
-+	if (!IS_ERR(ts->avdd28)) {
-+		error = regulator_enable(ts->avdd28);
-+		if (error) {
-+			dev_err(&client->dev,
-+				"Failed to enable AVDD28 regulator: %d\n",
-+				error);
-+			return error;
-+		}
-+	}
-+
-+	if (!IS_ERR(ts->vddio)) {
-+		error = regulator_enable(ts->vddio);
-+		if (error) {
-+			dev_err(&client->dev,
-+				"Failed to enable VDDIO regulator: %d\n",
-+				error);
-+			return error;
-+		}
-+	}
-+
- 	if (ts->gpiod_int && ts->gpiod_rst) {
- 		/* reset the controller */
- 		error = goodix_reset(ts);
+  - compatible		: Should be "goodix,gt1151"
++				 or "goodix,gt5663"
+ 				 or "goodix,gt911"
+ 				 or "goodix,gt9110"
+ 				 or "goodix,gt912"
 -- 
 2.18.0.321.gffc6fa0e3
 
