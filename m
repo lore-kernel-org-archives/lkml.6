@@ -2,115 +2,149 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6643C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 02:02:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFFEDC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 02:07:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DF3321773
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 02:02:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76848217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 02:07:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VOTj3BiT"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="hAuIREPF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733209AbfBSCCX (ORCPT
+        id S1726201AbfBSCHc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 21:02:23 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45057 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732614AbfBSCCW (ORCPT
+        Mon, 18 Feb 2019 21:07:32 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:14004 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725766AbfBSCHb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 21:02:22 -0500
-Received: by mail-lf1-f66.google.com with SMTP id h10so13486304lfc.12
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 18:02:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GcnbqpCZV7oZoIeFWkaBpZMqNsVEuoeZic15bWPHp4U=;
-        b=VOTj3BiTqO8tygUakZez2iDk8g9RuLXtjFVQeCcX7KTnF/D27OqHOWwuwUFMD2QlcD
-         11Rf0gu5FxN5P4CdteT9pSTNsToSRwf/MCDYARJfCBJmE+lJGfa0Ae9HxmPfA3EpW0I3
-         lZR1UcEfUhfAOHf6fc9wUSzniBjvQ9tJ51tVApekq09PeMp+8g18ky80uvI+P3SVB1hP
-         ZAwyS63MGFSSCWiAe7IIomG53pj0sovLda17VHiwVfu7wnsQ2ZZjSP2U3E1QO1UT7bE6
-         2FDu6yw2TjZbk4t9hWZD4fAgzgas/w4MG7u0AI4SkrjqBnocjq1M3exv7py/rkTpUQYv
-         tfaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GcnbqpCZV7oZoIeFWkaBpZMqNsVEuoeZic15bWPHp4U=;
-        b=jzX+3G3bTESWUrKIAey/Y4eJhqTzBFQtYv7S40k9ggaRubVTUBbgYC06ixzySep4e+
-         fO0z/INhXCfdqmepFsCwPcjgFhF0v2DHSILtNIZGJljztjSiW4XaNtOoCmVgi2+3AFB3
-         ypjkb/aFQN8D1EA3MMkadl+PVFebHEYoEHomSiG9ojCllYdpGUqBkcG5F6GNa6Pbvftg
-         bFG3vT2drj+7lB2r3OOBkR2eOaI3Ho0K6E4U011GhedjjgQcuILdwzd//BV68f5NomJA
-         wA68gJipNhzBpE1fJDKGA2kjUEwdT/6zxWgZjBZnWQtyAmJcOhDUYxZnJWlb0U4GwxiZ
-         SBTw==
-X-Gm-Message-State: AHQUAuZTun+wD7oFf8kffBYZIHidZYGCxnSyFvDnEBpcHvcoA7eOwO+L
-        F/6Bl0sj+vQFSWDWwS3x9Ljl9p6BERmKCmejaPLWkg==
-X-Google-Smtp-Source: AHgI3IZH5avpCEY957HeWO2K0OrdiPCxvFFUGA0f+RZnJODls9Ap9yN5ArFCNUm5mXEle8zeqL1p3V1d12SGqxIM+Ls=
-X-Received: by 2002:a19:e601:: with SMTP id d1mr16451771lfh.71.1550541740276;
- Mon, 18 Feb 2019 18:02:20 -0800 (PST)
+        Mon, 18 Feb 2019 21:07:31 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c6b64e60000>; Mon, 18 Feb 2019 18:07:34 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 18 Feb 2019 18:07:29 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 18 Feb 2019 18:07:29 -0800
+Received: from [192.168.88.246] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 19 Feb
+ 2019 02:07:27 +0000
+Subject: Re: [PATCH v3 2/4] mfd: max77620: add documentation for backup
+ battery charging
+To:     Rob Herring <robh+dt@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+CC:     Lee Jones <lee.jones@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>
+References: <20190212064353.7451-1-markz@nvidia.com>
+ <20190212064353.7451-3-markz@nvidia.com>
+ <CAL_JsqKiL8A+SBwqLzYa9djWBT1S+2kxUUB4iuKWX7EoqXouCw@mail.gmail.com>
+From:   Mark Zhang <markz@nvidia.com>
+Message-ID: <91d3d8f8-0b96-c442-5674-3eff8209848b@nvidia.com>
+Date:   Tue, 19 Feb 2019 10:07:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <3818909a5d6f956ef30ff25cfc42f7550d062086.1550201284.git.baolin.wang@linaro.org>
- <ad2fbe222ad715b3f7e6e093a7f822743e465f9a.1550201284.git.baolin.wang@linaro.org>
- <20190218200737.GA7091@bogus>
-In-Reply-To: <20190218200737.GA7091@bogus>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Tue, 19 Feb 2019 10:02:08 +0800
-Message-ID: <CAMz4ku+YUfOzWf4gAvicEq6hONK9m54oRxrYX_L6PtDcoV2-ow@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] gpio: sprd: Change to use SoC compatible string
-To:     Rob Herring <robh@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAL_JsqKiL8A+SBwqLzYa9djWBT1S+2kxUUB4iuKWX7EoqXouCw@mail.gmail.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1550542054; bh=u04421xOHlorr7fOQ/enfO8bj267alBHi9ZeDwY2PIY=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=hAuIREPFRbHgc+z7Om7FOiY0oQ09HeNJ6uDF3FsysMkDjoSMdkq499Iti1A4ERGQU
+         /OlDDJ0RPtrDOFpT47Wblxw4A6MT9y6C0d3FCNw76DgwPurGg8znfEnCa8eAyc6XK6
+         6vjx4WFvjSXnqQiSOAQ6mER96xc4V1lD/rO+MCIXRoobVFDgmyCa3hsgapSCm0V0Ri
+         TFXvExj988NK3K6nusH/suNPdnNtdgP0/q1llCfr/HvuuFnjWWRJTXN52qXYY0IdyY
+         n4PVydVUUrzvGHIEnjd9OPmhgchlVqfaOfnoLWptSbPEqLAlT7nsw8wYarK8VYhyxE
+         hdVzzfoehc4UA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Feb 2019 at 04:07, Rob Herring <robh@kernel.org> wrote:
->
-> On Fri, Feb 15, 2019 at 12:55:19PM +0800, Baolin Wang wrote:
-> > Change to use SoC compatible string instead of wildcard string.
-> >
-> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> > ---
-> > Changes from v1:
-> >  - None.
-> > ---
-> >  drivers/gpio/gpio-pmic-eic-sprd.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpio/gpio-pmic-eic-sprd.c b/drivers/gpio/gpio-pmic-eic-sprd.c
-> > index ac573da..24228cf 100644
-> > --- a/drivers/gpio/gpio-pmic-eic-sprd.c
-> > +++ b/drivers/gpio/gpio-pmic-eic-sprd.c
-> > @@ -364,7 +364,7 @@ static int sprd_pmic_eic_probe(struct platform_device *pdev)
-> >  }
-> >
-> >  static const struct of_device_id sprd_pmic_eic_of_match[] = {
-> > -     { .compatible = "sprd,sc27xx-eic", },
-> > +     { .compatible = "sprd,sc2731-eic", },
->
-> You need to keep the old one if you care about backwards compatibility.
-> If you don't then state why in the commit message.
->
+On 2/19/2019 2:06 AM, Rob Herring wrote:
+> On Tue, Feb 12, 2019 at 12:44 AM Mark Zhang <markz@nvidia.com> wrote:
+>>
+>> Adding documentation for 3 new backup battery charging dts
+>> properties:
+>> - maxim,charging-current-microamp
+>> - maxim,charging-voltage-microvolt
+>> - maxim,output-resister-ohms
+> 
+> What's the difference between the 77620 and 77650 as there's patches
+> on the list for the 77650 too. The properties are similar, but seems
+> to be main vs. backup battery charger. We should have common
+> properties for this.
 
-As we discussed before, our dts and drivers development are still in
-progress, and we always recompile and ship device trees at the same
-time as we compile and ship the kernel, so we do not need care about
-backwards compatibility.
+Rob, it's different. The RTC in max77620 is supplied from a backup
+battery and consumes 2.0uA (IBBATT) when no other power sources are
+available. So unlike max77620 battery charging, which provides features
+like:
 
-Yes, I will add the explanation in the commit message. Thanks.
+static enum power_supply_property max77650_charger_properties[] = {
+	POWER_SUPPLY_PROP_STATUS,
+	POWER_SUPPLY_PROP_ONLINE,
+	POWER_SUPPLY_PROP_CHARGE_TYPE
+};
 
--- 
-Baolin Wang
-Best Regards
+For backup battery charging in max77620, what we can do is just setting
+those 3 parameters. We don't know whether it's charging, whether the
+backup battery is online, the percentage of the charging progress, and
+etc. That's why I mentioned before that it's not appropriate to create
+it as a power supply driver.
+
+Mark
+
+> 
+>> Signed-off-by: Mark Zhang <markz@nvidia.com>
+>> ---
+>>  .../devicetree/bindings/mfd/max77620.txt      | 20 +++++++++++++++++++
+>>  1 file changed, 20 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/max77620.txt b/Documentation/devicetree/bindings/mfd/max77620.txt
+>> index 9c16d51cc15b..88825eaf2567 100644
+>> --- a/Documentation/devicetree/bindings/mfd/max77620.txt
+>> +++ b/Documentation/devicetree/bindings/mfd/max77620.txt
+>> @@ -122,6 +122,26 @@ For DT binding details of different sub modules like GPIO, pincontrol,
+>>  regulator, power, please refer respective device-tree binding document
+>>  under their respective sub-system directories.
+>>
+>> +Backup Battery:
+>> +==============
+>> +This sub-node configure charging backup battery of the device. Device has
+>> +support of charging the backup battery. The subnode name is "backup-battery".
+>> +The property for backup-battery child nodes as:
+>> +Presence of this child node will enable the backup battery charging.
+>> +
+>> +Optional properties:
+>> +       -maxim,charging-current-microamp: Charging current setting.
+>> +                       The device supports 50/100/200/400/600/800uA.
+>> +                       If this property is unavailable then it will
+>> +                       charge with 50uA.
+>> +       -maxim,charging-voltage-microvolt: Charging Voltage Limit Setting.
+>> +                       Device supports 2500000/3000000/3300000/350000uV.
+>> +                       Default will be set to 2500mV. The voltage will be roundoff
+>> +                       to nearest lower side if other than above is configured.
+>> +       -maxim,output-resister-ohms: Output resistor on Ohm.
+>> +                       Device supports 100/1000/3000/6000 Ohms.
+>> +                       Default will be set to 1000 Ohm.
+>> +
+>>  Example:
+>>  --------
+>>  #include <dt-bindings/mfd/max77620.h>
+>> --
+>> 2.19.2
+>>
