@@ -2,118 +2,280 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE975C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:04:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E71F6C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:05:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FEDC208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:04:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="k7uJwKfS"
+	by mail.kernel.org (Postfix) with ESMTP id B5A6E21902
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:05:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbfBSLEM (ORCPT
+        id S1727500AbfBSLFt convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 06:04:12 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:38928 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725791AbfBSLEM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 06:04:12 -0500
-Received: from zn.tnic (p200300EC2BCDC800496980E891B65FF8.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:c800:4969:80e8:91b6:5ff8])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C41881EC03D8;
-        Tue, 19 Feb 2019 12:04:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1550574250;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=rtGjmKlG9FpDsdh9ZJ8Y8iEVJxSkU5/owmFsijqBtGY=;
-        b=k7uJwKfS/qVBAXcPfEGBLgv3A66WzfEHKr0s2lHZEeBVWUwoKU8BAMyhWTzqnbNC1YFHzV
-        N8q2OYSmYK8mq72Sub7kdxg8x5iSKQ0zqEaG4Gtr/AAeBuKp7+PfA35pk2ektNQWGwfWNi
-        3piWSP/0DRhK4Xj7VnSJBRznABaS+sU=
-Date:   Tue, 19 Feb 2019 12:04:00 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 14/20] mm: Make hibernate handle unmapped pages
-Message-ID: <20190219110400.GA19514@zn.tnic>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-15-rick.p.edgecombe@intel.com>
+        Tue, 19 Feb 2019 06:05:49 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32896 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725802AbfBSLFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 06:05:49 -0500
+Received: from lhreml704-cah.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id C5AF18FF64327375A5BE;
+        Tue, 19 Feb 2019 11:05:47 +0000 (GMT)
+Received: from LHREML524-MBB.china.huawei.com ([169.254.3.86]) by
+ lhreml704-cah.china.huawei.com ([10.201.108.45]) with mapi id 14.03.0415.000;
+ Tue, 19 Feb 2019 11:05:38 +0000
+From:   Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To:     Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "gkulkarni@marvell.com" <gkulkarni@marvell.com>,
+        "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+        Linuxarm <linuxarm@huawei.com>,
+        "Robert.Richter@cavium.com" <Robert.Richter@cavium.com>,
+        "shankerd@codeaurora.org" <shankerd@codeaurora.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v4] irqchip: gicv3-its: Use NUMA aware memory allocation
+ for    ITS tables
+Thread-Topic: [PATCH v4] irqchip: gicv3-its: Use NUMA aware memory
+ allocation for ITS tables
+Thread-Index: AQHUq+7UvM0tXC+OXEmfnDi46FpoCqXnLgPA
+Date:   Tue, 19 Feb 2019 11:05:38 +0000
+Message-ID: <5FC3163CFD30C246ABAA99954A238FA8392C58BE@lhreml524-mbb.china.huawei.com>
+References: <20190114095019.12336-1-shameerali.kolothum.thodi@huawei.com>
+In-Reply-To: <20190114095019.12336-1-shameerali.kolothum.thodi@huawei.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.47.89.133]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190129003422.9328-15-rick.p.edgecombe@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 04:34:16PM -0800, Rick Edgecombe wrote:
-> For architectures with CONFIG_ARCH_HAS_SET_ALIAS, pages can be unmapped
-> briefly on the directmap, even when CONFIG_DEBUG_PAGEALLOC is not
-> configured. So this changes kernel_map_pages and kernel_page_present to be
+Hi Marc,
 
-s/this changes/change/
+A gentle reminder on this one...
 
-From Documentation/process/submitting-patches.rst:
+Thanks,
+Shameer
 
- "Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
-  instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
-  to do frotz", as if you are giving orders to the codebase to change
-  its behaviour."
-
-Also, please end function names with parentheses.
-
-> defined when CONFIG_ARCH_HAS_SET_ALIAS is defined as well. It also changes
-> places (page_alloc.c) where those functions are assumed to only be
-> implemented when CONFIG_DEBUG_PAGEALLOC is defined.
-
-The commit message doesn't need to say "what" you're doing - that should
-be obvious from the diff below. It should rather say "why" you're doing
-it.
-
-> So now when CONFIG_ARCH_HAS_SET_ALIAS=y, hibernate will handle not present
-> page when saving. Previously this was already done when
-
-pages
-
-> CONFIG_DEBUG_PAGEALLOC was configured. It does not appear to have a big
-> hibernating performance impact.
-
-Comment over safe_copy_page() needs updating I guess.
-
-> Before:
-> [    4.670938] PM: Wrote 171996 kbytes in 0.21 seconds (819.02 MB/s)
+> -----Original Message-----
+> From: Linuxarm [mailto:linuxarm-bounces@huawei.com] On Behalf Of Shameer
+> Kolothum
+> Sent: 14 January 2019 09:50
+> To: marc.zyngier@arm.com; linux-kernel@vger.kernel.org
+> Cc: gkulkarni@marvell.com; suzuki.poulose@arm.com; Linuxarm
+> <linuxarm@huawei.com>; Robert.Richter@cavium.com;
+> shankerd@codeaurora.org; linux-arm-kernel@lists.infradead.org
+> Subject: [PATCH v4] irqchip: gicv3-its: Use NUMA aware memory allocation for
+> ITS tables
 > 
-> After:
-> [    4.504714] PM: Wrote 178932 kbytes in 0.22 seconds (813.32 MB/s)
-
-IINM, that's like 1734 pages more. How am I to understand this number?
-
-Code has called set_alias_nv_noflush() on them and safe_copy_page() now
-maps them one by one to copy them to the hibernation image?
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+> From: Shanker Donthineni <shankerd@codeaurora.org>
+> 
+> The NUMA node information is visible to ITS driver but not being used
+> other than handling hardware errata. ITS/GICR hardware accesses to the
+> local NUMA node is usually quicker than the remote NUMA node. How slow
+> the remote NUMA accesses are depends on the implementation details.
+> 
+> This patch allocates memory for ITS management tables and command
+> queue from the corresponding NUMA node using the appropriate NUMA
+> aware functions. This change improves the performance of the ITS
+> tables read latency on systems where it has more than one ITS block,
+> and with the slower inter node accesses.
+> 
+> Apache Web server benchmarking using ab tool on a HiSilicon D06
+> board with multiple numa mem nodes shows Time per request and
+> Transfer rate improvements of ~3.6% with this patch.
+> 
+> Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+> Signed-off-by: Hanjun Guo <guohanjun@huawei.com>
+> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+> Reviewed-by: Ganapatrao Kulkarni <gkulkarni@marvell.com>
+> ---
+> 
+> This is to revive the patch originally sent by Shanker[1] and
+> to back it up with a benchmark test. Any further testing of
+> this is most welcome.
+> 
+> v3-->v4
+> -Addressed comments on alloc_pages_node() and page_address() usage.
+> -Rebased on 5.0-rc1
+> -Added Ganapatrao's R-by.
+> 
+> v2-->v3
+>  -Addressed comments to use page_address().
+>  -Added Benchmark results to commit log.
+>  -Removed T-by from Ganapatrao for now.
+> 
+> v1-->v2
+>  -Edited commit text.
+>  -Added Ganapatrao's tested-by.
+> 
+> Benchmark test details:
+> --------------------------------
+> Test Setup:
+> -D06 with dimm on node 0(Sock#0) and 3 (Sock#1).
+> -ITS belongs to numa node 0.
+> -Filesystem mounted on a PCIe NVMe based disk.
+> -Apache server installed on D06.
+> -Running ab benchmark test in concurrency mode from a remote m/c
+>  connected to D06 via  hns3(PCIe) n/w port.
+>  "ab -k -c 750 -n 2000000 http://10.202.225.188/"
+> 
+> Test results are avg. of 15 runs.
+> 
+> For 4.20-rc1  Kernel,
+> ----------------------------
+> Time per request(mean, concurrent)  = 0.02753[ms]
+> Transfer Rate = 416501[Kbytes/sec]
+> 
+> For 4.20-rc1 +  this patch,
+> ----------------------------------
+> Time per request(mean, concurrent)  = 0.02653[ms]
+> Transfer Rate = 431954[Kbytes/sec]
+> 
+> % improvement ~3.6%
+> 
+> vmstat shows around 170K-200K interrupts per second.
+> 
+> ~# vmstat 1 -w
+> procs -----------------------memory-- -  -system--
+>  r  b         swpd         free            in
+>  5  0            0     30166724          102794
+>  9  0            0     30141828          171148
+>  5  0            0     30150160          207185
+> 13  0            0     30145924          175691
+> 15  0            0     30140792          145250
+> 13  0            0     30135556          201879
+> 13  0            0     30134864          192391
+> 10  0            0     30133632          168880
+> ....
+> 
+> [1] https://patchwork.kernel.org/patch/9833339/
+> 
+>  drivers/irqchip/irq-gic-v3-its.c | 26 ++++++++++++++++----------
+>  1 file changed, 16 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> index db20e99..5df59ad 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -1737,6 +1737,7 @@ static int its_setup_baser(struct its_node *its,
+> struct its_baser *baser,
+>  	u64 type = GITS_BASER_TYPE(val);
+>  	u64 baser_phys, tmp;
+>  	u32 alloc_pages;
+> +	struct page *page;
+>  	void *base;
+> 
+>  retry_alloc_baser:
+> @@ -1749,10 +1750,11 @@ static int its_setup_baser(struct its_node *its,
+> struct its_baser *baser,
+>  		order = get_order(GITS_BASER_PAGES_MAX * psz);
+>  	}
+> 
+> -	base = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO, order);
+> -	if (!base)
+> +	page = alloc_pages_node(its->numa_node, GFP_KERNEL | __GFP_ZERO,
+> order);
+> +	if (!page)
+>  		return -ENOMEM;
+> 
+> +	base = (void *)page_address(page);
+>  	baser_phys = virt_to_phys(base);
+> 
+>  	/* Check if the physical address of the memory is above 48bits */
+> @@ -2236,7 +2238,8 @@ static struct its_baser *its_get_baser(struct
+> its_node *its, u32 type)
+>  	return NULL;
+>  }
+> 
+> -static bool its_alloc_table_entry(struct its_baser *baser, u32 id)
+> +static bool its_alloc_table_entry(struct its_node *its,
+> +				  struct its_baser *baser, u32 id)
+>  {
+>  	struct page *page;
+>  	u32 esz, idx;
+> @@ -2256,7 +2259,8 @@ static bool its_alloc_table_entry(struct its_baser
+> *baser, u32 id)
+> 
+>  	/* Allocate memory for 2nd level table */
+>  	if (!table[idx]) {
+> -		page = alloc_pages(GFP_KERNEL | __GFP_ZERO,
+> get_order(baser->psz));
+> +		page = alloc_pages_node(its->numa_node, GFP_KERNEL |
+> __GFP_ZERO,
+> +					get_order(baser->psz));
+>  		if (!page)
+>  			return false;
+> 
+> @@ -2287,7 +2291,7 @@ static bool its_alloc_device_table(struct its_node
+> *its, u32 dev_id)
+>  	if (!baser)
+>  		return (ilog2(dev_id) < its->device_ids);
+> 
+> -	return its_alloc_table_entry(baser, dev_id);
+> +	return its_alloc_table_entry(its, baser, dev_id);
+>  }
+> 
+>  static bool its_alloc_vpe_table(u32 vpe_id)
+> @@ -2311,7 +2315,7 @@ static bool its_alloc_vpe_table(u32 vpe_id)
+>  		if (!baser)
+>  			return false;
+> 
+> -		if (!its_alloc_table_entry(baser, vpe_id))
+> +		if (!its_alloc_table_entry(its, baser, vpe_id))
+>  			return false;
+>  	}
+> 
+> @@ -2345,7 +2349,7 @@ static struct its_device *its_create_device(struct
+> its_node *its, u32 dev_id,
+>  	nr_ites = max(2, nvecs);
+>  	sz = nr_ites * its->ite_size;
+>  	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
+> -	itt = kzalloc(sz, GFP_KERNEL);
+> +	itt = kzalloc_node(sz, GFP_KERNEL, its->numa_node);
+>  	if (alloc_lpis) {
+>  		lpi_map = its_lpi_alloc(nvecs, &lpi_base, &nr_lpis);
+>  		if (lpi_map)
+> @@ -3486,6 +3490,7 @@ static int __init its_probe_one(struct resource *res,
+>  	void __iomem *its_base;
+>  	u32 val, ctlr;
+>  	u64 baser, tmp, typer;
+> +	struct page *page;
+>  	int err;
+> 
+>  	its_base = ioremap(res->start, resource_size(res));
+> @@ -3541,12 +3546,13 @@ static int __init its_probe_one(struct resource
+> *res,
+> 
+>  	its->numa_node = numa_node;
+> 
+> -	its->cmd_base = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
+> -						get_order(ITS_CMD_QUEUE_SZ));
+> -	if (!its->cmd_base) {
+> +	page = alloc_pages_node(its->numa_node, GFP_KERNEL | __GFP_ZERO,
+> +				get_order(ITS_CMD_QUEUE_SZ));
+> +	if (!page) {
+>  		err = -ENOMEM;
+>  		goto out_free_its;
+>  	}
+> +	its->cmd_base = (void *)page_address(page);
+>  	its->cmd_write = its->cmd_base;
+>  	its->fwnode_handle = handle;
+>  	its->get_msi_base = its_irq_get_msi_base;
+> --
+> 2.7.4
+> 
+> 
+> _______________________________________________
+> Linuxarm mailing list
+> Linuxarm@huawei.com
+> http://hulk.huawei.com/mailman/listinfo/linuxarm
