@@ -2,101 +2,100 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A39CC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 01:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6851BC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 01:34:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE15A2173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 01:34:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="MRTuwdl5"
+	by mail.kernel.org (Postfix) with ESMTP id 4267F2173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 01:34:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732773AbfBSBeS (ORCPT
+        id S1732806AbfBSBep (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 20:34:18 -0500
-Received: from m12-12.163.com ([220.181.12.12]:38987 "EHLO m12-12.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730247AbfBSBeS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 20:34:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=vJOxl
-        iD3ylQNF+bK3c+e1E/IPoF2RmPsUHSYa4f68G4=; b=MRTuwdl5hca/5724t3b7h
-        Dr4LnqeBtUejGLE3FLMPjrnSDFE6WlxYKdmkKEBXyDrzZ9jcRIA4oPda3nQqtHIk
-        QxTdlSzkMwEIxZtXJ7j0abGg+7jzZXdI7OshAkJaP6+Lzssht9u8AcVH1ngs3FoR
-        ggyP35j3nDDxE0Prw/iT4w=
-Received: from localhost.localdomain (unknown [117.36.119.220])
-        by smtp8 (Coremail) with SMTP id DMCowAC3NM4CXWtcMmt4GQ--.10745S3;
-        Tue, 19 Feb 2019 09:33:55 +0800 (CST)
-From:   Shikai Wang <sxauwsk@163.com>
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Shikai Wang <sxauwsk@163.com>
-Subject: [PATCH v2] i2c: cadence: try reset when master receive arbitration lost
-Date:   Tue, 19 Feb 2019 09:24:47 +0800
-Message-Id: <20190219012447.5900-1-sxauwsk@163.com>
-X-Mailer: git-send-email 2.19.2
+        Mon, 18 Feb 2019 20:34:45 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3775 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730247AbfBSBeo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 20:34:44 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 1DC58134B80DBC91AA33;
+        Tue, 19 Feb 2019 09:34:42 +0800 (CST)
+Received: from [127.0.0.1] (10.142.63.192) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Tue, 19 Feb 2019
+ 09:34:35 +0800
+CC:     <liuyu712@hisilicon.com>, <john.stultz@linaro.org>,
+        <suzhuangluan@hisilicon.com>, <kongfei@hisilicon.com>,
+        <wanghu17@hisilicon.com>, <butao@hisilicon.com>,
+        <chenyao11@huawei.com>, <fangshengzhou@hisilicon.com>,
+        <lipengcheng8@huawei.com>, <songxiaowei@hisilicon.com>,
+        <xuyiping@hisilicon.com>, <xuyoujun4@huawei.com>,
+        <yudongbin@hisilicon.com>, <zangleigang@hisilicon.com>
+Subject: Re: [PATCH v2 00/10] Add support for usb on Hikey960
+To:     Valentin Schneider <valentin.schneider@arm.com>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190218112310.17860-1-chenyu56@huawei.com>
+ <b1aca3d0-547a-51bd-5bff-69652484b6cc@arm.com>
+From:   Chen Yu <chenyu56@huawei.com>
+Message-ID: <5e884818-7afe-e76c-a181-81d3b78f40bf@huawei.com>
+Date:   Tue, 19 Feb 2019 09:34:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: DMCowAC3NM4CXWtcMmt4GQ--.10745S3
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tr1xGw4UZr1DAw17CryUKFg_yoW8Gw1Upa
-        1DG39IkrW0qr4IqFs7Ar17ZF98uwsYga4UKF4Fk34q9F15CrWDtFy3tF95XF4xCry5Xw1a
-        qrZ0y39rG3W2vFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UgTmDUUUUU=
-X-Originating-IP: [117.36.119.220]
-X-CM-SenderInfo: 5v0d34lvn6il2tof0z/1tbiQBRgJlSIZQ4tnwABsW
+In-Reply-To: <b1aca3d0-547a-51bd-5bff-69652484b6cc@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.142.63.192]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the adapter receive arbitration lost error interrupts,
-cdns_i2c_master_xfer return to the caller directly instead of resetting
-the adapter which resulted in the adapter being out of control.
+Hi,
 
-So when driver detect err_status such as arbitration lost,
-then try to repair and fix it.
+On 2019/2/19 1:30, Valentin Schneider wrote:
+> Hi,
+> 
+> On 18/02/2019 11:23, Yu Chen wrote:
+>> The patchset adds support for usb functionality of Hikey960, includes:
+>> - dwc3 driver for Hisilicon Kirin Soc hi3660
+>> - usb driver for HiKey960 board
+>> - some adjustment in dwc3, usb gadget and typec driver
+>> - dts for support usb of HiKey960
+>>
+> 
+> I want to try this out on my HiKey960, but I can't get the USB A ports
+> working (tried USB stick and USB eth adapter).
+> 
+> On top of the arm64 defconfig, I've enabled (with menuconfig):
+> 
+> 	CONFIG_PHY_HI3660_USB
+> 	CONFIG_HISI_HIKEY_USB
+> 
+> Am I missing something? FYI up until now I've carried over Fan Ning's old
+> USB patch-set and that works fine, so I think it might just be a
+> configuration error from my end.
 
-Reviewed-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Signed-off-by: Shikai Wang <sxauwsk@163.com>
----
- drivers/i2c/busses/i2c-cadence.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+This patch set based on Heikki Krogerus's patches.
+Have you applied https://do-db2.lkml.org/lkml/2019/2/13/106 first?
+And these configs should be set to y:
+	CONFIG_TYPEC
+	CONFIG_TYPEC_TCPM
+	CONFIG_TYPEC_TCPCI
+	CONFIG_TYPEC_RT1711H
 
-diff --git a/drivers/i2c/busses/i2c-cadence.c b/drivers/i2c/busses/i2c-cadence.c
-index b13605718291..595b0d56ff1a 100644
---- a/drivers/i2c/busses/i2c-cadence.c
-+++ b/drivers/i2c/busses/i2c-cadence.c
-@@ -548,10 +548,6 @@ static int cdns_i2c_process_msg(struct cdns_i2c *id, struct i2c_msg *msg,
- 	cdns_i2c_writereg(CDNS_I2C_IXR_ALL_INTR_MASK,
- 			  CDNS_I2C_IDR_OFFSET);
- 
--	/* If it is bus arbitration error, try again */
--	if (id->err_status & CDNS_I2C_IXR_ARB_LOST)
--		return -EAGAIN;
--
- 	return 0;
- }
- 
-@@ -624,6 +620,12 @@ static int cdns_i2c_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
- 		if (id->err_status) {
- 			cdns_i2c_master_reset(adap);
- 
-+			/* If it is bus arbitration error, try again */
-+			if (id->err_status & CDNS_I2C_IXR_ARB_LOST) {
-+				ret = -EAGAIN;
-+				goto out;
-+			}
-+
- 			if (id->err_status & CDNS_I2C_IXR_NACK) {
- 				ret = -ENXIO;
- 				goto out;
--- 
-2.19.2
+> 
+> Thanks,
+> Valentin
+> 
+> 
+> 
+> .
+> 
 
+Thanks,
+Yu Chen
 
