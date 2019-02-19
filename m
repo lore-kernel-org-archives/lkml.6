@@ -2,172 +2,111 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7269C4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:02:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B706AC4360F
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:03:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 839BC21773
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:02:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S7Uq0Ju9"
+	by mail.kernel.org (Postfix) with ESMTP id 886FE21738
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:03:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728589AbfBSTCE (ORCPT
+        id S1729193AbfBSTDe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 14:02:04 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39715 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbfBSTCD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 14:02:03 -0500
-Received: by mail-pf1-f193.google.com with SMTP id i20so225840pfo.6
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 11:02:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gtsKzGZqZcEeqCtrlGrKFSS3Xlk4GR0b9j+cV2Z6OlM=;
-        b=S7Uq0Ju9LGIVvcWpuHguWFswOzlT1EJlhWdUHNB3rZVHqNVE8CNd4u2+v6cx/5XMtk
-         dKoIk/LTUylF49758DJaO7zJGwCWZsEJgmBxpavyc2zCWMckA8rNThJ+/qg+Gc/BD6v3
-         BH42RgVnZ402ngYOm7a0RyUEq6+hr1jbhcAMQrFYKCIHLzJnX5orblSKiXVoMchRlPD0
-         mfoUjorp3lOLsyG/68vnjkRWJzpnkKthXVzo5qoKdOOwtG1Idjf16ufMivedjKep05Gq
-         lzeLHXSWCQzwzaqp52fzTGrQ7oPCM65L2qPW1CKzljNHfNLKTNVxK5co44pHM3VQzYCn
-         fRyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gtsKzGZqZcEeqCtrlGrKFSS3Xlk4GR0b9j+cV2Z6OlM=;
-        b=qRQSnth4K4aHNhSmXLJHIXp3suuHVxajnRnpuuCuEsrmitLxlEJk4SskJL0txZn4hm
-         yBefhrqYLC6w5S+x432PPMUxPu1YqBJST5cI7UPq9iTIVG4KrABpgoU+m9eY/uj9j4KL
-         g1chgzx14NrqTquowzj2qHL5HzVMMVnLElim4vAqcnRP2cYLca/y2SJPK/ybOqXb0ejq
-         L0tXvEe+OBs2z1xNVDL3VuyzpqJC/Q+BkIOH1MiBvRBa5ooyo4/Dp6+uOVAa6Izyyn8+
-         A2P+Xplf3JD65vtSU9+AxxMYa7pUntgE5BDImJEQvL+y1NDwKy4g4wkm35ZrCw4GvcJu
-         /9/Q==
-X-Gm-Message-State: AHQUAuaaB+z58AvK2rm5prdlQWZfaZgVKCnhEJOvoz31NKhoq8WX8y6P
-        ZjWr5P64IJwyIzZkLNd0SivZJsLAhKc6bUt6NkB+mw==
-X-Google-Smtp-Source: AHgI3Iaw9XKzZ6dSlNBhxHpitiL5p+wxw8gzwI1SHLaZWKil29RltCemISNvIm3D0lTzkmBFh28EGjEl24VOOZG872k=
-X-Received: by 2002:aa7:8249:: with SMTP id e9mr30849734pfn.93.1550602922228;
- Tue, 19 Feb 2019 11:02:02 -0800 (PST)
+        Tue, 19 Feb 2019 14:03:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54704 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726110AbfBSTDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 14:03:33 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 738C92147C;
+        Tue, 19 Feb 2019 19:03:32 +0000 (UTC)
+Date:   Tue, 19 Feb 2019 14:03:30 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable <stable@vger.kernel.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
+ kernel memory that can fault
+Message-ID: <20190219140330.5dd9e876@gandalf.local.home>
+In-Reply-To: <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
+References: <20190215174712.372898450@goodmis.org>
+        <20190215174945.557218316@goodmis.org>
+        <CAHk-=wjP4bEYCFaKZVG4kLWmYBctyfsW9jjhC91tiTk9WwB8Rg@mail.gmail.com>
+        <20190215171539.4682f0b4@gandalf.local.home>
+        <300C4516-A093-43AE-8707-1C42486807A4@amacapital.net>
+        <20190215191949.04604191@gandalf.local.home>
+        <CAHk-=wgJzNp0R3cVhjBPHTR4X9sOvHdqK4UVFfbsOKQ6L=A_eQ@mail.gmail.com>
+        <CAHk-=wh9XrOykA5J9RQ7zaBio-S_D+1AE+rGnBYWSd==pCXh+w@mail.gmail.com>
+        <20190219111802.1d6dbaa3@gandalf.local.home>
+        <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20190219170209.4180739-1-arnd@arndb.de> <20190219170209.4180739-2-arnd@arndb.de>
-In-Reply-To: <20190219170209.4180739-2-arnd@arndb.de>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 19 Feb 2019 11:01:51 -0800
-Message-ID: <CAKwvOdm2fr6Xh9Tezexq4RGinkJy6P0_L6jQOMoZfArbgmaKJQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] media: vicodec: avoic clang frame size warning
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Dafna Hirschfeld <dafna3@gmail.com>,
-        Tom aan de Wiel <tom.aandewiel@gmail.com>,
-        linux-media@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 9:02 AM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> Clang-9 makes some different inlining decisions compared to gcc, which
-> leads to a warning about a possible stack overflow problem when building
-> with CONFIG_KASAN, including when setting asan-stack=0, which avoids
-> most other frame overflow warnings:
->
-> drivers/media/platform/vicodec/codec-fwht.c:673:12: error: stack frame size of 2224 bytes in function 'encode_plane'
->
-> Manually adding noinline_for_stack annotations in those functions
+On Tue, 19 Feb 2019 10:43:36 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Thanks for the fix! In general, for -Wstack-frame-larger-than=
-warnings, is it possible that these sets of stack frames are already
-too large if entered?  Sure, inlining was a little aggressive, causing
-more stack space use than maybe otherwise necessary at runtime, but
-isn't it also possible that "no inlining" a stack frame can still be a
-problem should the stack frame be entered?  Doesn't the kernel have a
-way of estimating the stack depth for any given frame?  I guess I was
-always curious if the best fix for these kind of warnings was to
-non-stack allocate (kmalloc) certain locally allocated structs, or
-no-inline the function.  Surely there's cases where no-inlining is
-safe, but I was curious if it's still maybe dangerous to enter the
-problematic child most stack frame?
+> On Tue, Feb 19, 2019 at 8:18 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+> >  
+> > > So it would be good to not just say "user or kernel", but actually say
+> > > what *kind* of kernel access it expects.  
+> >
+> > Note, kprobes are a different kind of beast. I've used kprobes to probe
+> > userspace information as well as kernel. Heck, I could see someone
+> > even using kprobes to probe IO memory to check if a device is doing
+> > what they expect it's doing.  
+> 
+> Note that even if that is the case, you _need_ to special "user vs
+> kernel" information.
+> 
+> Because the exact same address might exist in both.
+> 
+> Right now I think that only happens on sparc32, but vendors used to
+> have that issue on x86-32 too (if they had the 4G:4G patches).
 
-> called by encode_plane() or decode_plane() that require a significant
-> amount of kernel stack makes this impossible to happen with any
-> compiler.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/media/platform/vicodec/codec-fwht.c | 18 ++++++++++--------
->  1 file changed, 10 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/media/platform/vicodec/codec-fwht.c b/drivers/media/platform/vicodec/codec-fwht.c
-> index d1d6085da9f1..135d56bcc2c5 100644
-> --- a/drivers/media/platform/vicodec/codec-fwht.c
-> +++ b/drivers/media/platform/vicodec/codec-fwht.c
-> @@ -47,7 +47,7 @@ static const uint8_t zigzag[64] = {
->  };
->
->
-> -static int rlc(const s16 *in, __be16 *output, int blocktype)
-> +static int noinline_for_stack rlc(const s16 *in, __be16 *output, int blocktype)
->  {
->         s16 block[8 * 8];
->         s16 *wp = block;
-> @@ -106,8 +106,8 @@ static int rlc(const s16 *in, __be16 *output, int blocktype)
->   * This function will worst-case increase rlc_in by 65*2 bytes:
->   * one s16 value for the header and 8 * 8 coefficients of type s16.
->   */
-> -static u16 derlc(const __be16 **rlc_in, s16 *dwht_out,
-> -                const __be16 *end_of_input)
-> +static noinline_for_stack u16
-> +derlc(const __be16 **rlc_in, s16 *dwht_out, const __be16 *end_of_input)
->  {
->         /* header */
->         const __be16 *input = *rlc_in;
-> @@ -373,7 +373,8 @@ static void fwht(const u8 *block, s16 *output_block, unsigned int stride,
->   * Furthermore values can be negative... This is just a version that
->   * works with 16 signed data
->   */
-> -static void fwht16(const s16 *block, s16 *output_block, int stride, int intra)
-> +static void noinline_for_stack
-> +fwht16(const s16 *block, s16 *output_block, int stride, int intra)
->  {
->         /* we'll need more than 8 bits for the transformed coefficients */
->         s32 workspace1[8], workspace2[8];
-> @@ -456,7 +457,8 @@ static void fwht16(const s16 *block, s16 *output_block, int stride, int intra)
->         }
->  }
->
-> -static void ifwht(const s16 *block, s16 *output_block, int intra)
-> +static noinline_for_stack void
-> +ifwht(const s16 *block, s16 *output_block, int intra)
->  {
->         /*
->          * we'll need more than 8 bits for the transformed coefficients
-> @@ -604,9 +606,9 @@ static int var_inter(const s16 *old, const s16 *new)
->         return ret;
->  }
->
-> -static int decide_blocktype(const u8 *cur, const u8 *reference,
-> -                           s16 *deltablock, unsigned int stride,
-> -                           unsigned int input_step)
-> +static noinline_for_stack int
-> +decide_blocktype(const u8 *cur, const u8 *reference, s16 *deltablock,
-> +                unsigned int stride, unsigned int input_step)
->  {
->         s16 tmp[64];
->         s16 old[64];
-> --
-> 2.20.0
->
+Hmm, I didn't realize that Linux allowed the same address to be
+different depending on being in kernel or user space (learn something
+new everyday). I guess it makes sense, and even easier with the switch
+of cr3 from user to kernel. And I even knew of 4G:4G, but never used
+it, nor put too much thought about its implementation.
 
+> 
+> > Basically, a kprobe is mostly used for debugging what's happening in a
+> > live kernel, to read any address.  
+> 
+> My point is that "any address" is not sufficient to begin with. You
+> need "kernel or user".
+> 
+> Having a flag for what _kind_ of kernel address is ok might then be
+> required for other cases if they might not be ok with following page
+> tables to IO space..
+> 
 
--- 
-Thanks,
-~Nick Desaulniers
+Good point. Looks like we should add a new flag for kprobe
+trace parameters, that tell kprobes if the address is expected to be
+user or kernel. That would be good regardless of the duplicate
+meanings, as we could use copy_from_user without touching KERNEL_DS, if
+the probe argument specifically states "this is user space". For
+example, when probing do_sys_open, and you want to read what path string
+was passed into the kernel.
+
+Masami, thoughts?
+
+-- Steve
