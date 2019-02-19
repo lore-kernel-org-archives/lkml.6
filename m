@@ -2,163 +2,223 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53850C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98CE6C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1376021903
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:36:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DD3D217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 06:37:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KzJpfRSr"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="o5cvIZot"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727148AbfBSGgb (ORCPT
+        id S1727177AbfBSGg7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 01:36:31 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36507 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbfBSGga (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 01:36:30 -0500
-Received: by mail-pl1-f195.google.com with SMTP id k2so568563plt.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 22:36:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=8OrcYERXqrJhFh4L92Nvocj/Ur13anWIcxP3BthudoM=;
-        b=KzJpfRSrsemzdPFxybgJM85oia55750YXWhLNYoL/iVpGgqD18Q7grv/YHf/NvX+Nt
-         +9ylUHGo/QKQplh8Ii1AfQ9tDBECe2rc0srPD4S0dJIRDtWhRZ/fpXihNGJvxKkWIzCN
-         h4E96Zym3RFzogXvBUOTNPRB7TjVqoXmlIY3D7O4a5RuADcr0w1BGSpNAH3sViA+iIQ8
-         lmWGQPzQt9ahZ9pWYtF020WzGkwz2uuSf7xZlWL/IPoXMfYukTMJYyWujqfsk6dB37/f
-         UY6B0W2K9jtl3C62bT7KmjQv6HgDM4X3hlntt/ERYqKfOlrnRWLSKeRKfwcbBVk9oJO3
-         F8+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=8OrcYERXqrJhFh4L92Nvocj/Ur13anWIcxP3BthudoM=;
-        b=l1XjRcc5J8y8OB0Vo2Rml7q5YvOh5cPlUBNZdhjzJJgAAe/ZgA6Axt4FO+JG4rZiUg
-         YDnnCHZ6RJd83YnZCgW5FMFPwflCa2amj7t7xxssvLSZnCFnxiNDzAdD02XOrSAqPtGt
-         UNaobqOt292kgX30cslrh1UFLUtrBMwN3OmP+p8NqI8YCXZ+usxWh0gX4o+Jtc9hpJVJ
-         SdaZ/pE+wB7RDLhlzZwRXLHJDIu3yvIPCc+2lUG4CERUVDNSv69PNZfGlllJgsmZNTci
-         5QziB79IVRAOOYWr50nN9RXcm87p6GlIT0w/e8eNRQlf1cc/APEyxTd/9sOorq5dXCyY
-         Zh+Q==
-X-Gm-Message-State: AHQUAubPO/MU+4oHL5OJ7ngKp4vyxHnesraEpdI4eUE1NHklF3l1YnEl
-        P7KM3Z/TnrnrwZ+Zfh5PD0Q=
-X-Google-Smtp-Source: AHgI3IYNLcL1Ix0iiu8k6KqZvx26zEfXg8fsRINSu/zyrWQ97Gi7QnxnCVhK8rpX4RketJ3kRZ+MjQ==
-X-Received: by 2002:a17:902:7890:: with SMTP id q16mr7269850pll.63.1550558189767;
-        Mon, 18 Feb 2019 22:36:29 -0800 (PST)
-Received: from vultr.guest ([104.238.181.70])
-        by smtp.gmail.com with ESMTPSA id 86sm32199367pfk.157.2019.02.18.22.36.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Feb 2019 22:36:29 -0800 (PST)
-From:   Changbin Du <changbin.du@gmail.com>
-To:     Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
-Cc:     linux-kernel@vger.kernel.org, Changbin Du <changbin.du@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH] checkpatch: warn on bad commit description in 'Fixes' tag
-Date:   Tue, 19 Feb 2019 06:36:11 +0000
-Message-Id: <20190219063611.19955-1-changbin.du@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 19 Feb 2019 01:36:59 -0500
+Received: from ozlabs.org ([203.11.71.1]:38669 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725772AbfBSGg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 01:36:59 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 443WHD1CT0z9sD4;
+        Tue, 19 Feb 2019 17:36:56 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1550558216;
+        bh=sxFICXCGXsRnO9gq/AzHhqK8kUOhP9bPLvmixGd9Uy0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=o5cvIZotTB8IB9F5bprU7Mb+ByByxDJ9uC4sOILDwxQp54gsvJMvzqlxux2wwHXlM
+         3TZQVaAurKLgxuLguNiR1iPTa//xflANf2seFxz+DoJGsaIopY7jNmrVXJHNW6R8Sg
+         rwDbO9CJ8T+BNsPL5i/YAkYcsgJtb10L4CXfM3UfOWEhJAi7ggfQ4vj5l1MMY0ZXta
+         cYM+Ch8aHh0qKpU9H5R9EzmzlwoTeIXqvPDB6c2eU3qmFD60xDsZO4rCsOVF20XupO
+         wYC5DgD4ZXgLrx8rzP/Tx+K2IOCaGRqt5hfFDBEb0CRaHrZX1ObbOq/SLymQIgeuxF
+         RKJ9oORbNdAOA==
+Date:   Tue, 19 Feb 2019 17:36:54 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hugo Lefeuvre <hle@owl.eu.com>
+Subject: linux-next: build failure after merge of the asm-generic tree
+Message-ID: <20190219173654.47e9bc36@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/erXL9gtqk3srxR_XUm_zKYo"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are some complaints about bad commit description in 'Fixes' tag.
-Most cases are SHA1 should be at least 12 digits long. Let's extend
-the existing check in checkpatch.pl to include commit description of
-'Fixes' tag.
+--Sig_/erXL9gtqk3srxR_XUm_zKYo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reference: https://lkml.org/lkml/2019/2/18/1477
-Signed-off-by: Changbin Du <changbin.du@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- scripts/checkpatch.pl | 34 +++++++++++++++++++++-------------
- 1 file changed, 21 insertions(+), 13 deletions(-)
+Hi Arnd,
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index b737ca9d7204..6f0156778a07 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -2726,11 +2726,11 @@ sub process {
- 		if ($in_commit_log && !$commit_log_possible_stack_dump &&
- 		    $line !~ /^\s*(?:Link|Patchwork|http|https|BugLink):/i &&
- 		    $line !~ /^This reverts commit [0-9a-f]{7,40}/ &&
--		    ($line =~ /\bcommit\s+[0-9a-f]{5,}\b/i ||
-+                   ($line =~ /\b(?:commit|fixes:)\s+[0-9a-f]{5,}\b/i ||
- 		     ($line =~ /(?:\s|^)[0-9a-f]{12,40}(?:[\s"'\(\[]|$)/i &&
- 		      $line !~ /[\<\[][0-9a-f]{12,40}[\>\]]/i &&
- 		      $line !~ /\bfixes:\s*[0-9a-f]{12,40}/i))) {
--			my $init_char = "c";
-+                       my $init_str = "commit";
- 			my $orig_commit = "";
- 			my $short = 1;
- 			my $long = 0;
-@@ -2742,29 +2742,29 @@ sub process {
- 			my $orig_desc = "commit description";
- 			my $description = "";
- 
--			if ($line =~ /\b(c)ommit\s+([0-9a-f]{5,})\b/i) {
--				$init_char = $1;
-+                       if ($line =~ /\b(commit|fixes:)\s+([0-9a-f]{5,})\b/i) {
-+                               $init_str = $1;
- 				$orig_commit = lc($2);
- 			} elsif ($line =~ /\b([0-9a-f]{12,40})\b/i) {
- 				$orig_commit = lc($1);
- 			}
- 
--			$short = 0 if ($line =~ /\bcommit\s+[0-9a-f]{12,40}/i);
--			$long = 1 if ($line =~ /\bcommit\s+[0-9a-f]{41,}/i);
--			$space = 0 if ($line =~ /\bcommit [0-9a-f]/i);
--			$case = 0 if ($line =~ /\b[Cc]ommit\s+[0-9a-f]{5,40}[^A-F]/);
--			if ($line =~ /\bcommit\s+[0-9a-f]{5,}\s+\("([^"]+)"\)/i) {
-+                       $short = 0 if ($orig_commit =~ /\b[0-9a-f]{12,40}/i);
-+                       $long = 1 if ($orig_commit =~ /\b[0-9a-f]{41,}/i);
-+                       $space = 0 if ($line =~ /\b(?:commit|fixes:) [0-9a-f]/i);
-+                       $case = 0 if ($line =~ /\b(?:Commit|commit|Fixes:)\s+[0-9a-f]{5,40}[^A-F]/);
-+                       if ($line =~ /\b(?:commit|fixes:)\s+[0-9a-f]{5,}\s+\("([^"]+)"\)/i) {
- 				$orig_desc = $1;
- 				$hasparens = 1;
--			} elsif ($line =~ /\bcommit\s+[0-9a-f]{5,}\s*$/i &&
-+                       } elsif ($line =~ /\b(?:commit|fixes:)\s+[0-9a-f]{5,}\s*$/i &&
- 				 defined $rawlines[$linenr] &&
- 				 $rawlines[$linenr] =~ /^\s*\("([^"]+)"\)/) {
- 				$orig_desc = $1;
- 				$hasparens = 1;
--			} elsif ($line =~ /\bcommit\s+[0-9a-f]{5,}\s+\("[^"]+$/i &&
-+                       } elsif ($line =~ /\b(?:commit|fixes:)\s+[0-9a-f]{5,}\s+\("[^"]+$/i &&
- 				 defined $rawlines[$linenr] &&
- 				 $rawlines[$linenr] =~ /^\s*[^"]+"\)/) {
--				$line =~ /\bcommit\s+[0-9a-f]{5,}\s+\("([^"]+)$/i;
-+                               $line =~ /\b(?:commit|fixes:)\s+[0-9a-f]{5,}\s+\("([^"]+)$/i;
- 				$orig_desc = $1;
- 				$rawlines[$linenr] =~ /^\s*([^"]+)"\)/;
- 				$orig_desc .= " " . $1;
-@@ -2776,8 +2776,16 @@ sub process {
- 
- 			if (defined($id) &&
- 			   ($short || $long || $space || $case || ($orig_desc ne $description) || !$hasparens)) {
-+                               if (lc $init_str eq lc "commit") {
-+                                       my @chars = split("", $init_str);
-+                                       $init_str = "$chars[0]ommit";
-+                               } else {
-+                                       $init_str = "Fixes:"
-+                               }
-+
- 				ERROR("GIT_COMMIT_ID",
--				      "Please use git commit description style 'commit <12+ chars of sha1> (\"<title line>\")' - ie: '${init_char}ommit $id (\"$description\")'\n" . $herecurr);
-+                                     "Please use git commit description style 'commit/Fixes: <12+ chars of sha1> (\"<title line>\")' - ie: '${init_str} $id (\"$description\")'\n" .
-+                                     $herecurr . "\nThis can be fixed by 'git config --global core.abbrev 12'.\n");
- 			}
- 		}
- 
--- 
-2.17.1
+After merging the asm-generic tree, today's linux-next build (powerpc
+allnoconfig) failed like this:
 
+arch/powerpc/kernel/iomap.c:18:14: error: conflicting types for 'ioread8'
+ unsigned int ioread8(void __iomem *addr)
+              ^~~~~~~
+In file included from arch/powerpc/include/asm/io.h:653,
+                 from include/linux/io.h:25,
+                 from include/linux/irq.h:20,
+                 from arch/powerpc/include/asm/hardirq.h:6,
+                 from include/linux/hardirq.h:9,
+                 from include/linux/interrupt.h:11,
+                 from include/linux/pci.h:32,
+                 from arch/powerpc/kernel/iomap.c:7:
+include/asm-generic/iomap.h:29:21: note: previous declaration of 'ioread8' =
+was here
+ extern unsigned int ioread8(const void __iomem *addr);
+                     ^~~~~~~
+arch/powerpc/kernel/iomap.c:22:14: error: conflicting types for 'ioread16'
+ unsigned int ioread16(void __iomem *addr)
+              ^~~~~~~~
+In file included from arch/powerpc/include/asm/io.h:653,
+                 from include/linux/io.h:25,
+                 from include/linux/irq.h:20,
+                 from arch/powerpc/include/asm/hardirq.h:6,
+                 from include/linux/hardirq.h:9,
+                 from include/linux/interrupt.h:11,
+                 from include/linux/pci.h:32,
+                 from arch/powerpc/kernel/iomap.c:7:
+include/asm-generic/iomap.h:30:21: note: previous declaration of 'ioread16'=
+ was here
+ extern unsigned int ioread16(const void __iomem *addr);
+                     ^~~~~~~~
+arch/powerpc/kernel/iomap.c:26:14: error: conflicting types for 'ioread16be'
+ unsigned int ioread16be(void __iomem *addr)
+              ^~~~~~~~~~
+In file included from arch/powerpc/include/asm/io.h:653,
+                 from include/linux/io.h:25,
+                 from include/linux/irq.h:20,
+                 from arch/powerpc/include/asm/hardirq.h:6,
+                 from include/linux/hardirq.h:9,
+                 from include/linux/interrupt.h:11,
+                 from include/linux/pci.h:32,
+                 from arch/powerpc/kernel/iomap.c:7:
+include/asm-generic/iomap.h:31:21: note: previous declaration of 'ioread16b=
+e' was here
+ extern unsigned int ioread16be(const void __iomem *addr);
+                     ^~~~~~~~~~
+arch/powerpc/kernel/iomap.c:30:14: error: conflicting types for 'ioread32'
+ unsigned int ioread32(void __iomem *addr)
+              ^~~~~~~~
+In file included from arch/powerpc/include/asm/io.h:653,
+                 from include/linux/io.h:25,
+                 from include/linux/irq.h:20,
+                 from arch/powerpc/include/asm/hardirq.h:6,
+                 from include/linux/hardirq.h:9,
+                 from include/linux/interrupt.h:11,
+                 from include/linux/pci.h:32,
+                 from arch/powerpc/kernel/iomap.c:7:
+include/asm-generic/iomap.h:32:21: note: previous declaration of 'ioread32'=
+ was here
+ extern unsigned int ioread32(const void __iomem *addr);
+                     ^~~~~~~~
+arch/powerpc/kernel/iomap.c:34:14: error: conflicting types for 'ioread32be'
+ unsigned int ioread32be(void __iomem *addr)
+              ^~~~~~~~~~
+In file included from arch/powerpc/include/asm/io.h:653,
+                 from include/linux/io.h:25,
+                 from include/linux/irq.h:20,
+                 from arch/powerpc/include/asm/hardirq.h:6,
+                 from include/linux/hardirq.h:9,
+                 from include/linux/interrupt.h:11,
+                 from include/linux/pci.h:32,
+                 from arch/powerpc/kernel/iomap.c:7:
+include/asm-generic/iomap.h:33:21: note: previous declaration of 'ioread32b=
+e' was here
+ extern unsigned int ioread32be(const void __iomem *addr);
+                     ^~~~~~~~~~
+arch/powerpc/kernel/iomap.c:142:6: error: conflicting types for 'ioread8_re=
+p'
+ void ioread8_rep(void __iomem *addr, void *dst, unsigned long count)
+      ^~~~~~~~~~~
+In file included from arch/powerpc/include/asm/io.h:653,
+                 from include/linux/io.h:25,
+                 from include/linux/irq.h:20,
+                 from arch/powerpc/include/asm/hardirq.h:6,
+                 from include/linux/hardirq.h:9,
+                 from include/linux/interrupt.h:11,
+                 from include/linux/pci.h:32,
+                 from arch/powerpc/kernel/iomap.c:7:
+include/asm-generic/iomap.h:82:13: note: previous declaration of 'ioread8_r=
+ep' was here
+ extern void ioread8_rep(const void __iomem *port, void *buf, unsigned long=
+ count);
+             ^~~~~~~~~~~
+arch/powerpc/kernel/iomap.c:146:6: error: conflicting types for 'ioread16_r=
+ep'
+ void ioread16_rep(void __iomem *addr, void *dst, unsigned long count)
+      ^~~~~~~~~~~~
+In file included from arch/powerpc/include/asm/io.h:653,
+                 from include/linux/io.h:25,
+                 from include/linux/irq.h:20,
+                 from arch/powerpc/include/asm/hardirq.h:6,
+                 from include/linux/hardirq.h:9,
+                 from include/linux/interrupt.h:11,
+                 from include/linux/pci.h:32,
+                 from arch/powerpc/kernel/iomap.c:7:
+include/asm-generic/iomap.h:83:13: note: previous declaration of 'ioread16_=
+rep' was here
+ extern void ioread16_rep(const void __iomem *port, void *buf, unsigned lon=
+g count);
+             ^~~~~~~~~~~~
+arch/powerpc/kernel/iomap.c:150:6: error: conflicting types for 'ioread32_r=
+ep'
+ void ioread32_rep(void __iomem *addr, void *dst, unsigned long count)
+      ^~~~~~~~~~~~
+In file included from arch/powerpc/include/asm/io.h:653,
+                 from include/linux/io.h:25,
+                 from include/linux/irq.h:20,
+                 from arch/powerpc/include/asm/hardirq.h:6,
+                 from include/linux/hardirq.h:9,
+                 from include/linux/interrupt.h:11,
+                 from include/linux/pci.h:32,
+                 from arch/powerpc/kernel/iomap.c:7:
+include/asm-generic/iomap.h:84:13: note: previous declaration of 'ioread32_=
+rep' was here
+ extern void ioread32_rep(const void __iomem *port, void *buf, unsigned lon=
+g count);
+             ^~~~~~~~~~~~
+
+Caused by commit
+
+  8e074c243ed3 ("iomap: add missing const to ioread*/iowrite addr arg")
+
+The const qualifiers are also missing in:
+
+arch/parisc/lib/iomap.c
+arch/sh/kernel/iomap.c
+
+I have reverted that commit for today.
+
+BTW, that commit only added the const to the ioread* functions ...
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/erXL9gtqk3srxR_XUm_zKYo
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxrpAYACgkQAVBC80lX
+0Gxx1wf+O0ZHOKq4GG22Nbh/5mbDKPOYSrn6Zu2VPdTzoZxZFR7F7BMdoYv9s4ir
+KrVYUCIFs+2fRr9fV1iD4bQg1ka6kO5TEsE8s89Y+7sruYy8sdblcKKNc4ak14ge
+BfP+2a6n8CHvWanozOAM82+nOJqfD4Itv/pMbyfwGvBymonLUlfJY5NCTDO2QOIw
+Inq9zAZfBH16+56RRtXPwMLIOSGJcXksa/AcYRXZea7Zw/sD1ARILJb5GKX0+rI6
+yFKJq2VFOcT4BrDHUGqlkCYRzR+Mf0M7TaRoV/ilyH45A9a0AUhD79JOUT9QmPSA
+0ry4saWfXKNDvn9WR6pOr1MfdaG6Rw==
+=NwSv
+-----END PGP SIGNATURE-----
+
+--Sig_/erXL9gtqk3srxR_XUm_zKYo--
