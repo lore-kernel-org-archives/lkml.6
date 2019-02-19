@@ -2,477 +2,158 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02900C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A494C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:47:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3DB6208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:44:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2508E208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:47:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="dNe6/mBR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728212AbfBSVoZ (ORCPT
+        id S1729528AbfBSVrN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 16:44:25 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:36066 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726583AbfBSVoZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 16:44:25 -0500
-Received: from localhost ([127.0.0.1] helo=vostro.local)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <john.ogness@linutronix.de>)
-        id 1gwDBR-0000rp-LK; Tue, 19 Feb 2019 22:44:09 +0100
-From:   John Ogness <john.ogness@linutronix.de>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC PATCH v1 05/25] printk-rb: add basic non-blocking reading interface
-References: <20190212143003.48446-1-john.ogness@linutronix.de>
-        <20190212143003.48446-6-john.ogness@linutronix.de>
-        <20190218125407.ljvkuplvaa3zyj6n@pathway.suse.cz>
-Date:   Tue, 19 Feb 2019 22:44:07 +0100
-In-Reply-To: <20190218125407.ljvkuplvaa3zyj6n@pathway.suse.cz> (Petr Mladek's
-        message of "Mon, 18 Feb 2019 13:54:07 +0100")
-Message-ID: <87o977v4go.fsf@linutronix.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+        Tue, 19 Feb 2019 16:47:13 -0500
+Received: from mail-eopbgr720065.outbound.protection.outlook.com ([40.107.72.65]:4320
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725994AbfBSVrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 16:47:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4DdndwGwUNdcEEharK0m7PMkD5s1DlJiMhVaBKQxPLs=;
+ b=dNe6/mBR7L3JL+2XkdDL6HvQLX9fsGEJaqblZudWWt5kQTBy6NJMLndUCux2FHmwZv3T7lcXGcHgH2Dr4f8fKrNpIBvz4ftmqw7VndOr5giOSMe+F1C8EX4W5EAQx9NtfRxBky5MzblAsecLhWYVxW0WZwQ1UtyfrTwrclRlgZg=
+Received: from DM6PR12MB3163.namprd12.prod.outlook.com (20.179.104.150) by
+ DM6PR12MB2905.namprd12.prod.outlook.com (20.179.71.211) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.14; Tue, 19 Feb 2019 21:47:08 +0000
+Received: from DM6PR12MB3163.namprd12.prod.outlook.com
+ ([fe80::2809:46:d708:b9c1]) by DM6PR12MB3163.namprd12.prod.outlook.com
+ ([fe80::2809:46:d708:b9c1%5]) with mapi id 15.20.1622.016; Tue, 19 Feb 2019
+ 21:47:08 +0000
+From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Hans de Goede <hdegoede@redhat.com>
+CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: False positive "do_IRQ: #.55 No irq handler for vector" messages
+ on AMD ryzen based laptops
+Thread-Topic: False positive "do_IRQ: #.55 No irq handler for vector" messages
+ on AMD ryzen based laptops
+Thread-Index: AQHUyGtPvkSDpgAjRUO4lAxcOgUb+aXnm82AgAAMrAA=
+Date:   Tue, 19 Feb 2019 21:47:08 +0000
+Message-ID: <13dbe818-a364-4cd4-3ac4-78bd7e8d28e3@amd.com>
+References: <95e76875-f6b2-cbea-cd74-dc14ee77b2f8@redhat.com>
+ <alpine.DEB.2.21.1902192144390.1644@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1902192144390.1644@nanos.tec.linutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN4PR0501CA0049.namprd05.prod.outlook.com
+ (2603:10b6:803:41::26) To DM6PR12MB3163.namprd12.prod.outlook.com
+ (2603:10b6:5:182::22)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Thomas.Lendacky@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.78.1]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 26fa4873-f205-4c5a-d4d0-08d696b3cbbe
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM6PR12MB2905;
+x-ms-traffictypediagnostic: DM6PR12MB2905:
+x-ms-exchange-purlcount: 1
+x-microsoft-exchange-diagnostics: 1;DM6PR12MB2905;20:u9yRQgIshSgTPIieHVudHX6nayyNsHt5kwRE2IZIhsodwVlE7LLiwcQyas8neByyQRj6q9Rw5aZ+ESwv2gaF9JFy4Vf/VqmCoO1pekfYfks7y9KbKjKe4x2gp9hSxHg5d1zGLpEDOk4NbNERPQPY1vQ979Z8qoOyQQgyeHV9Vffc1eaP0DrSp4VScMzkWQ2F4jTOoNcMPZoq7A6a9DXZdLtHoHz+bHc6yf8lrvIf36PLO9rzSamqqpbt8NuFdQ9K
+x-microsoft-antispam-prvs: <DM6PR12MB29052DA5D38D208C2606C505EC7C0@DM6PR12MB2905.namprd12.prod.outlook.com>
+x-forefront-prvs: 09538D3531
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(136003)(396003)(376002)(346002)(189003)(199004)(11346002)(15650500001)(6436002)(4326008)(446003)(486006)(52116002)(229853002)(2616005)(386003)(186003)(6506007)(6116002)(3846002)(102836004)(53546011)(26005)(476003)(6486002)(5660300002)(106356001)(53936002)(305945005)(66066001)(2906002)(72206003)(105586002)(6246003)(14454004)(31686004)(36756003)(76176011)(478600001)(256004)(14444005)(68736007)(8936002)(7736002)(99286004)(6512007)(81156014)(71200400001)(71190400001)(31696002)(110136005)(25786009)(316002)(54906003)(6306002)(81166006)(86362001)(97736004)(8676002)(966005);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB2905;H:DM6PR12MB3163.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: mdme46+BMS/R7z5nT+5WsYdvBey9VQmkoWWY4gpz6WiN6Q/SlYu9sLpaKPutlFs98h9sWdwVaKW8LuoFjUiOSOH0X/5b99U0nChJpq+lCjPhXO7bX7NFxSNMc657j6T4ZS/eVYRNATIkP+IPamcr0Ln2b+VepoPXZ7KfuUaSovmp8qS7GNcWVKVBogORCxyakB+YFkGv9ficNC5Lj7fY5MfRz/vw5JfqFe8+9lmQlqCTbXr3o+aTS+bBlzD+zURRFyaOuM2tWS5/cECfYwd/ROzqeu9wBvwqAOj6oMM2sJQhktznw3akg3GyFwXcLMyZkEA2Qir8frp0X2xDk/WEP+6PNdKEYWbR67ZR7tYIvyFCxT3d3qRpyy9YM7FzbNoNBxwxm8VgNZ98Ah7Gpk3SZmmzH8rNuKdXrUUF+2/0e+o=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <3C01B40830D2C54491B925E4F60ECA48@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 26fa4873-f205-4c5a-d4d0-08d696b3cbbe
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2019 21:47:07.7054
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2905
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Petr,
-
-Below I make several comments, responding to your questions. But I like
-the new API I believe you are trying to propose. So really only my final
-comments are of particular importance. There I show you what I think
-reader code would look like using your proposed API.
-
-On 2019-02-18, Petr Mladek <pmladek@suse.com> wrote:
->> Add reader iterator static declaration/initializer, dynamic
->> initializer, and functions to iterate and retrieve ring buffer data.
->> 
->> Signed-off-by: John Ogness <john.ogness@linutronix.de>
->> ---
->>  include/linux/printk_ringbuffer.h |  20 ++++
->>  lib/printk_ringbuffer.c           | 190 ++++++++++++++++++++++++++++++++++++++
->>  2 files changed, 210 insertions(+)
->> 
->> diff --git a/include/linux/printk_ringbuffer.h b/include/linux/printk_ringbuffer.h
->> index 1aec9d5666b1..5fdaf632c111 100644
->> --- a/include/linux/printk_ringbuffer.h
->> +++ b/include/linux/printk_ringbuffer.h
->> @@ -43,6 +43,19 @@ static struct prb_cpulock name = {					\
->>  	.irqflags = &_##name##_percpu_irqflags,				\
->>  }
->>  
->> +#define PRB_INIT ((unsigned long)-1)
->> +
->> +#define DECLARE_STATIC_PRINTKRB_ITER(name, rbaddr)			\
->> +static struct prb_iterator name = {					\
->
-> Please, define the macro without static. The static variable
-> should get declared as:
->
-> static DECLARE_PRINTKRB_ITER();
-
-OK.
-
->> +	.rb = rbaddr,							\
->> +	.lpos = PRB_INIT,						\
->> +}
->> +
->> +struct prb_iterator {
->> +	struct printk_ringbuffer *rb;
->> +	unsigned long lpos;
->> +};
->
-> Please, define the structure before it is used (even in macros).
-> It is strange to initialize something that is not yet defined.
-
-Agreed.
-
->>  #define DECLARE_STATIC_PRINTKRB(name, szbits, cpulockptr)		\
->>  static char _##name##_buffer[1 << (szbits)]				\
->>  	__aligned(__alignof__(long));					\
->> @@ -62,6 +75,13 @@ char *prb_reserve(struct prb_handle *h, struct printk_ringbuffer *rb,
->>  		  unsigned int size);
->>  void prb_commit(struct prb_handle *h);
->>  
->> +/* reader interface */
->> +void prb_iter_init(struct prb_iterator *iter, struct printk_ringbuffer *rb,
->> +		   u64 *seq);
->> +void prb_iter_copy(struct prb_iterator *dest, struct prb_iterator *src);
->> +int prb_iter_next(struct prb_iterator *iter, char *buf, int size, u64 *seq);
->> +int prb_iter_data(struct prb_iterator *iter, char *buf, int size, u64 *seq);
->> +
->>  /* utility functions */
->>  void prb_lock(struct prb_cpulock *cpu_lock, unsigned int *cpu_store);
->>  void prb_unlock(struct prb_cpulock *cpu_lock, unsigned int cpu_store);
->> diff --git a/lib/printk_ringbuffer.c b/lib/printk_ringbuffer.c
->> index 90c7f9a9f861..1d1e886a0966 100644
->> --- a/lib/printk_ringbuffer.c
->> +++ b/lib/printk_ringbuffer.c
->> @@ -1,5 +1,7 @@
->>  // SPDX-License-Identifier: GPL-2.0
->>  #include <linux/smp.h>
->> +#include <linux/string.h>
->> +#include <linux/errno.h>
->>  #include <linux/printk_ringbuffer.h>
->>  
->>  #define PRB_SIZE(rb) (1 << rb->size_bits)
->> @@ -8,6 +10,7 @@
->>  #define PRB_WRAPS(rb, lpos) (lpos >> rb->size_bits)
->>  #define PRB_WRAP_LPOS(rb, lpos, xtra) \
->>  	((PRB_WRAPS(rb, lpos) + xtra) << rb->size_bits)
->> +#define PRB_DATA_SIZE(e) (e->size - sizeof(struct prb_entry))
->>  #define PRB_DATA_ALIGN sizeof(long)
->>  
->>  static bool __prb_trylock(struct prb_cpulock *cpu_lock,
->> @@ -247,3 +250,190 @@ char *prb_reserve(struct prb_handle *h, struct printk_ringbuffer *rb,
->>  
->>  	return &h->entry->data[0];
->>  }
->> +
->> +/*
->> + * prb_iter_copy: Copy an iterator.
->> + * @dest: The iterator to copy to.
->> + * @src: The iterator to copy from.
->> + *
->> + * Make a deep copy of an iterator. This is particularly useful for making
->> + * backup copies of an iterator in case a form of rewinding it needed.
->> + *
->> + * It is safe to call this function from any context and state. But
->> + * note that this function is not atomic. Callers should not make copies
->> + * to/from iterators that can be accessed by other tasks/contexts.
->> + */
->> +void prb_iter_copy(struct prb_iterator *dest, struct prb_iterator *src)
->> +{
->> +	memcpy(dest, src, sizeof(*dest));
->> +}
->> +
->> +/*
->> + * prb_iter_init: Initialize an iterator for a ring buffer.
->> + * @iter: The iterator to initialize.
->> + * @rb: A ring buffer to that @iter should iterate.
->> + * @seq: The sequence number of the position preceding the first record.
->> + *       May be NULL.
->> + *
->> + * Initialize an iterator to be used with a specified ring buffer. If @seq
->> + * is non-NULL, it will be set such that prb_iter_next() will provide a
->> + * sequence value of "@seq + 1" if no records were missed.
->> + *
->> + * It is safe to call this function from any context and state.
->> + */
->> +void prb_iter_init(struct prb_iterator *iter, struct printk_ringbuffer *rb,
->> +		   u64 *seq)
->> +{
->> +	memset(iter, 0, sizeof(*iter));
->> +	iter->rb = rb;
->> +	iter->lpos = PRB_INIT;
->> +
->> +	if (!seq)
->> +		return;
->> +
->> +	for (;;) {
->> +		struct prb_iterator tmp_iter;
->> +		int ret;
->> +
->> +		prb_iter_copy(&tmp_iter, iter);
->
-> It looks strange to copy something that has been hardly initialized.
-> I hope that we could do this without a copy, see below.
->
->> +
->> +		ret = prb_iter_next(&tmp_iter, NULL, 0, seq);
->
-> prb_iter_next() and prb_iter_data() are too complex spaghetti
-> code. They do basically the same but they do not share
-> any helper function. The error handling is different
-> which is really confusing. See below.
-
-I don't follow why you think they do basically the same
-thing. prb_iter_next() moves forward to the next entry, then calls
-prb_iter_data() to retrieve the data. prb_iter_data() _is_ the helper
-function.
-
-(I do not intend to defend the ringbuffer API. I am only addressing your
-comment that they do the same thing. I mentioned in the cover letter
-that the API is not pretty. I am thankful on tips to improve it.)
-
->> +		if (ret < 0)
->> +			continue;
->> +
->> +		if (ret == 0)
->> +			*seq = 0;
->> +		else
->> +			(*seq)--;
->
-> The decrement is another suspicious things here.
-
-"seq" represents the last entry that we have seen. If we initialize the
-iterator and then call prb_iter_next(), it is expected that we will see
-the first unseen entry. The caller expects prb_iter_next() to yield a
-seq that is 1 more than what prb_iter_init() set.
-
-The purpose of the interface working this way is to have loops where we
-do not need to call prb_iter_data() for the first entry and
-prb_iter_next() for all other elements. The call order would be:
-
-prb_iter_init();
-while (prb_iter_next()) {
-}
-
-If prb_iter_init() can return a seq value, then the logic to check if
-any entries were missed will verify that seq has incremented by exactly
-1 for each prb_iter_next() call.
-
-
->> +		break;
->
-> Finally, I am confused by the semantic of this function.
-> What is supposed to be the initialized lpos, seq number,
-> please?
-
-lpos (an internal field) is initialized with the PRB_INIT constant so
-mark that the iterator has been initialized but not yet used. This is so
-that the next call to prb_iter_next() will be valid no matter what
-(after which lpos is set to the seq of that returned entry). I did not
-like the idea of iterators becoming invalid before they were even used.
-
-seq (an optional by-reference variable from the caller), if non-NULL,
-will be set with a seq number such that the next call to prb_iter_next()
-will return that value + 1. As mentioned above, these semantics are to
-simplify the init/next loop/logic.
-
-But prb_iter_init() notis is only used for read loops. It is also used,
-for example, by printk to set the clear_seq marker in some cases of
-"dmesg -c". As I've mentioned, the API grew out of printk
-requirements. I am more than happy to simplify this.
-
-> I would expect a function that initializes the iterator
-> either to the first valid entry (tail-one) or
-> to the one defined by the given seq number.
->
-> Well, I think that we need to start with a more low-level functions.
-> IMHO. we need something to read one entry a safe way. Then it will
-> be much easier to live with races in the rest of the code:
->
-> /*
->  * Return valid entry on the given lpos. Data are read
->  * only when the buffer is is not zero.
->  */
-> int prb_get_entry(struct struct printk_ringbuffer *rb,
-> 		    unsigned long lpos,
-> 		    struct prb_entry *entry,
-> 		    unsigned int data_buf_size)
-> {
-> 	/*
-> 	 * Pointer to the ring buffer. The data might get lost
-> 	 * at any time.
-> 	 */
-> 	struct prb_entry *weak_entry;
->
-> 	if (!is_valid(lpos))
-> 		return -EINVAL;
->
-> 	/* Make sure that data are valid for the given valid lpos. */
-> 	smp_rmb();
->
-> 	weak_entry = to_entry(lpos);
-> 	entry->seq = weak_entry->seq;
->
-> 	if (data_buf_size) {
-> 		unsigned int size;
->
-> 		size = min(data_buf_size, weak_entry->size);
-
-weak_entry->size is untrusted data here. The following memcpy could grab
-data beyond the data array. (But we can ignore these details for now. I
-realize you are trying to refactor, not focus on these details.)
-
-> 		memcpy(entry->data, weak_entry->data, size);
-> 		entry->size = size;
-> 	} else {
-> 		entry->size = weak_data->size;
-> 	}
->
-> 	/* Make sure that the copy is done before we check validity. */
-> 	smp_mb();
->
-> 	return is_valid(lpos);
-> }
->
-> Then I would do the support for iterating the following way.
-> First, I would extend the structure:
->
-> struct prb_iterator {
-> 	struct printk_ringbuffer *rb;
-> 	struct prb_entry *entry;
-> 	unsigned int data_buffer_size;
-> 	unsigned long lpos;
-> };
->
-> And do something like:
->
-> void prg_iter_init(struct struct printk_ringbuffer *rb,
-> 		       struct prb_entry *entry,
-> 		       unsigned int data_buffer_size,
-> 		       struct prb_iterator *iter)
-> {
-> 	iter->rb = rb;
-> 	iter->entry = entry;
-> 	iter->data_buffer_size = data_buffer_size;
-> 	lpos = 0UL;
-> }
->
-> Then we could do iterator support the following way:
->
-> /* Start iteration with reading the tail entry. */
-> int prb_iter_tail_entry(struct prb_iterator *iter);
-
-A name like prb_iter_oldest_entry() might simplify things. I really
-don't want the caller to be concerned with heads and tails and which is
-which. That's an implementation detail of the ringbuffer.
-
-> {
-> 	unsigned long tail;
-> 	int ret;
->
-> 	for (;;) {
-> 		tail = atomic_long_read(&rb->tail);
->
-> 		/* Ring buffer is empty? */
-
-The ring buffer is only empty at the beginning (when tail == head). Readers
-are non-consuming, so it is never empty again once an entry is committed.
-
- 		if (unlikely(atomic_long_read(head) == atomic_long_read(tail)))
- 			return -EINVAL;
-
-The check for valid is to make sure the tail we just read hasn't already
-been overtaken by writers. I suppose this could be put into a nested
-loop so that we continue trying again until we get a valid tail.
-
-> 		if (unlikely(!is_valid(tail)))
-> 			return -EINVAL;
->
-> 		ret = prb_get_entry(iter->rb, tail,
-> 				    iter->entry, iter->data_buf_size);
-> 		if (!ret) {
-> 			iter->lpos = tail;
-> 			break;
-> 		}
-> 	}
->
-> 	return 0;
-> }
->
-> unsigned long next_lpos(unsineg long lpos, struct prb_entry *entry)
-> {
-> 	return lpos + sizeof(struct entry) + entry->size;
-
-entry->size already includes sizeof(struct prb_entry) plus alignment
-padding. (Again, not important right now.)
-
-> }
->
-> /* Try to get next entry using a valid iterator */
-> int prb_iter_next_entry(struct prb_iterator *iter)
-> {
-> 	iter->lpos = next_lpos(iter->lpos, iter->etnry);
->
-> 	return prb_get_entry(rb, lpos, entry, data_buf_size;
-> }
->
-> /* Try to get the next entry. Allow to skip lost messages. */
-> int prb_iter_next_valid_entry(struct prb_iterator *iter)
-> {
-> 	int ret;
->
-> 	ret = prb_iter_next_entry(iter);
-> 	if (!ret)
-> 		return 0;
->
-> 	/* Next entry has been lost. Skip to the current tail. */
-> 	return prb_iter_tail_entry(rb, *lpos, entry, data_buf_size);
-
-You return values are geting mixed up here and you are not
-distinguishing between overtaken by writers and hit the end of the
-ringbuffer, but I think what you are trying to write is that
-prb_iter_next_valid_entry() should either return 0 for success or !0 if
-the end of the ringbuffer was hit.
-
-> }
->
->> +static bool is_valid(struct printk_ringbuffer *rb, unsigned long lpos)
->> +{
->> +	unsigned long head, tail;
->> +
->> +	tail = atomic_long_read(&rb->tail);
->> +	head = atomic_long_read(&rb->head);
->> +	head -= tail;
->> +	lpos -= tail;
->> +
->> +	if (lpos >= head)
->> +		return false;
->> +	return true;
->> +}
-
-I am trying to understand what you want the reader code should look
-like. Keep in mind that readers can be overtaken at any moment. They
-also need to track entries they have missed. If I understand your idea,
-it is something like this (trying to keep it as simple as possible):
-
-void print_all_entries(...)
-{
-    char buf[sizeof(struct prb_entry) + DATASIZE + sizeof(long)];
-    struct prb_entry *entry = (struct prb_entry *)&buf[0];
-    struct prb_iterator iter;
-    u64 last_seq;
-
-    prb_iter_init(rb, entry, DATASIZE, &iter);
-    if (prb_iter_oldest_entry(&iter) != 0)
-        return; /* ringbuffer empty */
-
-    for (;;) {
-        do_print_entry(entry);
-        last_seq = entry->seq;
-        if (prb_iter_next_valid_entry(&iter) != 0)
-            break; /* ringbuffer empty */
-        if (entry->seq - last_seq != 1)
-            print("lost %d\n", ((entry->seq - last_seq) + 1));
-    }
-}
-
-I like the idea of the caller passing in a prb_entry struct. That really
-helps to reduce the parameters. And having the functions
-prb_iter_oldest_entry() and prb_iter_next_valid_entry() internally loop
-until they get a valid result also helps so that the reader doesn't have
-to do that. And if the reader doesn't have to track lost entries (for
-example, /dev/kmsg), then it becomes even less code.
-
-> IMPORTANT:
->
-> Please, do not start rewriting the entire patchset after reading this
-> mail. I suggest to take a rest from coding. Just read the feadback,
-> ask if anything is unclear, and let your brain processing it on
-> background.
-
-Thank you for this tip.
-
-John Ogness
+T24gMi8xOS8xOSAzOjAxIFBNLCBUaG9tYXMgR2xlaXhuZXIgd3JvdGU6DQo+IEhhbnMsDQo+IA0K
+PiBPbiBUdWUsIDE5IEZlYiAyMDE5LCBIYW5zIGRlIEdvZWRlIHdyb3RlOg0KPiANCj4gQ2MrOiBB
+Q1BJL0FNRCBmb2xrcw0KPiANCj4+IFZhcmlvdXMgcGVvcGxlIGFyZSByZXBvcnRpbmcgZmFsc2Ug
+cG9zaXRpdmUgImRvX0lSUTogIy41NSBObyBpcnEgaGFuZGxlciBmb3INCj4+IHZlY3RvciINCj4+
+IG1lc3NhZ2VzIG9uIEFNRCByeXplbiBiYXNlZCBsYXB0b3BzLCBzZWUgZS5nLjoNCj4+DQo+PiBo
+dHRwczovL2J1Z3ppbGxhLnJlZGhhdC5jb20vc2hvd19idWcuY2dpP2lkPTE1NTE2MDUNCj4+DQo+
+PiBXaGljaCBjb250YWlucyB0aGlzIGRtZXNnIHNuaXBwZXQ6DQo+Pg0KPj4gRmViIDA3IDIwOjE0
+OjI5IGxvY2FsaG9zdC5sb2NhbGRvbWFpbiBrZXJuZWw6IHNtcDogQnJpbmdpbmcgdXAgc2Vjb25k
+YXJ5IENQVXMNCj4+IC4uLg0KPj4gRmViIDA3IDIwOjE0OjI5IGxvY2FsaG9zdC5sb2NhbGRvbWFp
+biBrZXJuZWw6IHg4NjogQm9vdGluZyBTTVAgY29uZmlndXJhdGlvbjoNCj4+IEZlYiAwNyAyMDox
+NDoyOSBsb2NhbGhvc3QubG9jYWxkb21haW4ga2VybmVsOiAuLi4uIG5vZGUgICMwLCBDUFVzOiAg
+ICAgICMxDQo+PiBGZWIgMDcgMjA6MTQ6MjkgbG9jYWxob3N0LmxvY2FsZG9tYWluIGtlcm5lbDog
+ZG9fSVJROiAxLjU1IE5vIGlycSBoYW5kbGVyIGZvcg0KPj4gdmVjdG9yDQo+PiBGZWIgMDcgMjA6
+MTQ6MjkgbG9jYWxob3N0LmxvY2FsZG9tYWluIGtlcm5lbDogICMyDQo+PiBGZWIgMDcgMjA6MTQ6
+MjkgbG9jYWxob3N0LmxvY2FsZG9tYWluIGtlcm5lbDogZG9fSVJROiAyLjU1IE5vIGlycSBoYW5k
+bGVyIGZvcg0KPj4gdmVjdG9yDQo+PiBGZWIgMDcgMjA6MTQ6MjkgbG9jYWxob3N0LmxvY2FsZG9t
+YWluIGtlcm5lbDogICMzDQo+PiBGZWIgMDcgMjA6MTQ6MjkgbG9jYWxob3N0LmxvY2FsZG9tYWlu
+IGtlcm5lbDogZG9fSVJROiAzLjU1IE5vIGlycSBoYW5kbGVyIGZvcg0KPj4gdmVjdG9yDQo+PiBG
+ZWIgMDcgMjA6MTQ6MjkgbG9jYWxob3N0LmxvY2FsZG9tYWluIGtlcm5lbDogc21wOiBCcm91Z2h0
+IHVwIDEgbm9kZSwgNCBDUFVzDQo+PiBGZWIgMDcgMjA6MTQ6MjkgbG9jYWxob3N0LmxvY2FsZG9t
+YWluIGtlcm5lbDogc21wYm9vdDogTWF4IGxvZ2ljYWwgcGFja2FnZXM6IDENCj4+IEZlYiAwNyAy
+MDoxNDoyOSBsb2NhbGhvc3QubG9jYWxkb21haW4ga2VybmVsOiBzbXBib290OiBUb3RhbCBvZiA0
+IHByb2Nlc3NvcnMNCj4+IGFjdGl2YXRlZCAoMTU5NjguNDkgQm9nb01JUFMpDQo+Pg0KPj4gSXQg
+c2VlbXMgdGhhdCB3ZSBnZXQgYW4gSVJRIGZvciBlYWNoIENQVSBhcyB3ZSBicmluZyBpdCBvbmxp
+bmUsDQo+PiB3aGljaCBmZWVscyB0byBtZSBsaWtlIGl0IGlzIHNvbWUgc29ydGEgZmFsc2UtcG9z
+aXRpdmUuDQo+IA0KPiBTaWdoLCB0aGF0IGxvb2tzIGxpa2UgQklPUyB2YWx1ZSBhZGQgYWdhaW4u
+DQo+IA0KPiBJdCdzIG5vdCBhIGZhbHNlIHBvc2l0aXZlLiBTb21ldGhpbmcgX0lTXyBzZW5kaW5n
+IGEgdmVjdG9yIDU1IHRvIHRoZXNlIENQVXMNCj4gZm9yIHdoYXRldmVyIHJlYXNvbi4NCj4gDQoN
+CkkgcmVtZW1iZXIgc2VlaW5nIHNvbWV0aGluZyBsaWtlIHRoaXMgaW4gdGhlIHBhc3QgYW5kIGl0
+IHR1cm5lZCBvdXQgdG8gYmUNCmEgQklPUyBpc3N1ZS4gIEJJT1Mgd2FzIGVuYWJsaW5nIHRoZSBB
+UHMgdG8gaW50ZXJhY3Qgd2l0aCB0aGUgbGVnYWN5IDgyNTkNCmludGVycnVwdCBjb250cm9sbGVy
+IHdoZW4gb25seSB0aGUgQlNQIHNob3VsZC4gRHVyaW5nIFBPU1QgdGhlIEFQcyB3ZXJlDQpleHBv
+c2VkIHRvIEV4dElOVC9JTlRSIGV2ZW50cyBhcyBhIHJlc3VsdCBvZiB0aGUgbWlzLWNvbmZpZ3Vy
+YXRpb24NCihwcm9iYWJseSBkdWUgdG8gYSBVRUZJIHRpbWVyLXRpY2sgdXNpbmcgdGhlIDgyNTkp
+IGFuZCB0aGlzIGxlZnQgYSBwZW5kaW5nDQpFeHRJTlQvSU5UUiBpbnRlcnJ1cHQgbGF0Y2hlZCBv
+biB0aGUgQVBzLg0KDQpXaGVuIHRoZSBBUHMgd2VyZSBzdGFydGVkIGJ5IHRoZSBPUywgdGhlIGxh
+dGNoZWQgRXh0SU5UL0lOVFIgaW50ZXJydXB0IGlzDQpwcm9jZXNzZWQgc2hvcnRseSBhZnRlciB0
+aGUgT1MgZW5hYmxlcyBpbnRlcnJ1cHRzLiBUaGUgQVAgdGhlbiBxdWVyaWVzIHRoZQ0KODI1OSB0
+byBpZGVudGlmeSB0aGUgdmVjdG9yIG51bWJlciAod2hpY2ggaXMgdGhlIHZhbHVlIG9mIHRoZSA4
+MjU5J3MgSUNXMg0KcmVnaXN0ZXIgKyB0aGUgSVJRIGxldmVsKS4gVGhlIG1hc3RlciA4MjU5J3Mg
+SUNXMiB3YXMgc2V0IHRvIDB4MzAgYW5kLA0Kc2luY2Ugbm8gaW50ZXJydXB0cyBhcmUgYWN0dWFs
+bHkgcGVuZGluZywgdGhlIDgyNTkgd2lsbCByZXNwb25kIHdpdGggSVJRNw0KKHNwdXJpb3VzIGlu
+dGVycnVwdCkgeWllbGRpbmcgYSB2ZWN0b3Igb2YgMHgzNyBvciA1NS4NCg0KVGhlIE9TIHdhcyBu
+b3QgZXhwZWN0aW5nIHZlY3RvciA1NSBhbmQgcHJpbnRlZCB0aGUgbWVzc2FnZS4NCg0KRnJvbSB0
+aGUgSW50ZWwgRGV2ZWxvcGVyJ3MgTWFudWFsOiBWb2wgM2EsIFNlY3Rpb24gMTAuNS4xOg0KIk9u
+bHkgb25lIHByb2Nlc3NvciBpbiB0aGUgc3lzdGVtIHNob3VsZCBoYXZlIGFuIExWVCBlbnRyeSBj
+b25maWd1cmVkIHRvDQp1c2UgdGhlIEV4dElOVCBkZWxpdmVyeSBtb2RlLiINCg0KTm90IHNheWlu
+ZyB0aGlzIGlzIHRoZSBwcm9ibGVtLCBidXQgdmVyeSB3ZWxsIGNvdWxkIGJlLg0KDQpUaGFua3Ms
+DQpUb20NCg0KPj4gSSB0ZW1wb3JhcmlseSBoYXZlIGFjY2VzcyB0byBhIGxvYW5lciBsYXB0b3Ag
+Zm9yIGEgY291cGxlIG9mIHdlZWtzIHdoaWNoIHNob3dzDQo+PiB0aGUgc2FtZSBlcnJvcnMgYW5k
+IEkgd291bGQgbGlrZSB0byBmaXggdGhpcywgYnV0IEkgZG9uJ3QgcmVhbGx5IGtub3cgaG93IHRv
+DQo+PiBmaXggdGhpcy4NCj4gDQo+IENhbiB5b3UgcGxlYXNlIGVuYWJsZSBDT05GSUdfR0VORVJJ
+Q19JUlFfREVCVUdGUyBhbmQgZGlnIGluIHRoZSBmaWxlcyB0aGVyZQ0KPiB3aGV0aGVyIHZlY3Rv
+ciA1NSBpcyB1c2VkIG9uIENQVTAgYW5kIHdoaWNoIGRldmljZSBpcyBhc3NvY2lhdGVkIHRvIHRo
+YXQuDQo+IA0KPiBJIGJldCBpdHMgYSBsZWdhY3kgSVJRIGFuZCBhcyB0aGF0IHNwYWNlIHN0YXJ0
+cyBhdCA0OCAoSVJRMCkgdGhpcyBzaG91bGQgYmUNCj4gSVJROSB3aGljaCBpcyB1c3VhbGx5IC0g
+RFJVTVJPTEwgLSB0aGUgQUNQSSBpbnRlcnJ1cHQuDQo+IA0KPiBUaGUga2VybmVsIGNsZWFybHkg
+c2V0cyB0aGF0IHVwIHRvIGJlIGRlbGl2ZXJlZCB0byBDUFUgMCBvbmx5LCBidXQgSSd2ZQ0KPiBz
+ZWVuIHRoYXQgYmVmb3JlIHRoYXQgdGhlIEJJT1MgdmFsdWUgYWRkIHRoaW5rcyB0aGF0IHRoaXMg
+c2V0dXAgaXMgbm90DQo+IHJlbGV2YW50Lg0KPiANCj4gL21lIGdvZXMgb2ZmIGFuZCBzaW5ncyBM
+QUxBTEENCj4gDQo+PiBOb3RlIGlmIHlvdSB3YW50IEkgY2FuIHNldCB1cCByb290IHNzaC1hY2Nl
+c3MgdG8gdGhlIGxhcHRvcC4NCj4gDQo+IEFzIGEgbGVhc3QgcmVzb3J0LiByb290IHNzaCAtIFNI
+VURERVIgLSBPb29wcyBub3cgSSBzcGlsbGVkIG15IHByZWZlcnJlZA0KPiBwYXNzd29yZCBmb3Ig
+dGhhdCA6KQ0KPiANCj4gVGhhbmtzLA0KPiANCj4gCXRnbHgNCj4gDQo=
