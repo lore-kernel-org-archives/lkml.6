@@ -2,130 +2,189 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81811C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:04:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1137C4360F
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:04:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4763A21738
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:04:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ExGmZZHM"
+	by mail.kernel.org (Postfix) with ESMTP id 7A5EC21738
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:04:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729691AbfBSUES (ORCPT
+        id S1729882AbfBSUEr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 15:04:18 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42093 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbfBSUEP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 15:04:15 -0500
-Received: by mail-pl1-f193.google.com with SMTP id s1so10933339plp.9;
-        Tue, 19 Feb 2019 12:04:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=eOrFyuS90LqtoruGZQ65onq0a4QdxsrTnhK0HpBAldc=;
-        b=ExGmZZHMJkg3u9OTKDoU6CCkSbgS+0X12DwR4A9Kul4Uc9A4dJMK9tC41OY6d5a9Aw
-         aglv0JYk/EC04WF1sZDFpRcUzT920K3kqaF3OTvXmaPgQakA8Lxf0n2CHy2zZFUJOH1P
-         ZdGLnpsVsX9j9xJVJaiWHxNAL1Da9ACaADQVn+kS5txtuer1F5e5fg0ImOotxr7syKmU
-         Zg0PkSB55QlPBaNkBjnM2LtTtjQSOm774p+m3Ru0am6yp72tcDrP8dNiUh8EVoG5Kzj+
-         vb9NJKu5Wj3ED3Ylgy3n7yEiUJxkSN5ebyMQ6EgsjdWnVUp3nYXagfA8Mt6ILQEvTpII
-         RqTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=eOrFyuS90LqtoruGZQ65onq0a4QdxsrTnhK0HpBAldc=;
-        b=aSzH5AEYqb8/XW87xh5xEfvL/Th0J6I6ra5HuAXM12rWK1ewSKnvT4EWQ776QqmybC
-         A+GA/RxBCMbmiGEKWu1JRgbwh+aMUwHE4TgnU+0EgEn/rvEcj+MLcfBUTMZeidt84kVI
-         RiRS8J7zZNcniFY3nqh6WvaoXhVjdQ4+1GSNoC871bv5xBqproCSH7sYlOrwq4ReDNRe
-         UCL4FiFOoVkL/5B55pHbAdI609pJRZeKkScLgObUU6eJQYn37zdMN52pZQSsl93CfYTn
-         3WA/m/AMGn/uyhqpvFzCI8VjSnq48tK9uNwYVX1SJR/iMXsanEgP616w45cdhbLEzUA2
-         t54Q==
-X-Gm-Message-State: AHQUAuad9eI0RglfaETcL+A530+B2vsK0epDnp0PRzIik3JTPuuAHbYh
-        3JUqGk1AaG6ltAZTYtK7eVk=
-X-Google-Smtp-Source: AHgI3Iaok4AZgi6TJpw48i3eaqZf3u11jkTAsAOrUkZ2mXkf+ku18NlCOMapd64px1h1GQ/s2/axCw==
-X-Received: by 2002:a17:902:9a95:: with SMTP id w21mr32430815plp.118.1550606654870;
-        Tue, 19 Feb 2019 12:04:14 -0800 (PST)
-Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id e63sm31519622pfc.47.2019.02.19.12.04.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Feb 2019 12:04:14 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: [PATCH 1/5] PCI: dwc: Make use of IS_ALIGNED()
-Date:   Tue, 19 Feb 2019 12:02:38 -0800
-Message-Id: <20190219200242.17243-2-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190219200242.17243-1-andrew.smirnov@gmail.com>
-References: <20190219200242.17243-1-andrew.smirnov@gmail.com>
+        Tue, 19 Feb 2019 15:04:47 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37978 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726215AbfBSUEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 15:04:46 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 372A081DE0;
+        Tue, 19 Feb 2019 20:04:45 +0000 (UTC)
+Received: from localhost.localdomain.com (ovpn-122-134.rdu2.redhat.com [10.10.122.134])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BA38B6013C;
+        Tue, 19 Feb 2019 20:04:39 +0000 (UTC)
+From:   jglisse@redhat.com
+To:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, Jan Kara <jack@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>, kvm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v5 0/9] mmu notifier provide context informations
+Date:   Tue, 19 Feb 2019 15:04:21 -0500
+Message-Id: <20190219200430.11130-1-jglisse@redhat.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 19 Feb 2019 20:04:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make the intent a bit more clear as well as get rid of explicit
-arithmetic by using IS_ALIGNED() to determine if "addr" is aligned to
-"size". No functional change intended.
+From: Jérôme Glisse <jglisse@redhat.com>
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: linux-imx@nxp.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
----
- drivers/pci/controller/dwc/pcie-designware.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Since last version [4] i added the extra bits needed for the change_pte
+optimization (which is a KSM thing). Here i am not posting users of
+this, they will be posted to the appropriate sub-systems (KVM, GPU,
+RDMA, ...) once this serie get upstream. If you want to look at users
+of this see [5] [6]. If this gets in 5.1 then i will be submitting
+those users for 5.2 (including KVM if KVM folks feel comfortable with
+it).
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-index 93ef8c31fb39..67236379c61a 100644
---- a/drivers/pci/controller/dwc/pcie-designware.c
-+++ b/drivers/pci/controller/dwc/pcie-designware.c
-@@ -22,7 +22,7 @@
- 
- int dw_pcie_read(void __iomem *addr, int size, u32 *val)
- {
--	if ((uintptr_t)addr & (size - 1)) {
-+	if (!IS_ALIGNED((uintptr_t)addr, size)) {
- 		*val = 0;
- 		return PCIBIOS_BAD_REGISTER_NUMBER;
- 	}
-@@ -43,7 +43,7 @@ int dw_pcie_read(void __iomem *addr, int size, u32 *val)
- 
- int dw_pcie_write(void __iomem *addr, int size, u32 val)
- {
--	if ((uintptr_t)addr & (size - 1))
-+	if (!IS_ALIGNED((uintptr_t)addr, size))
- 		return PCIBIOS_BAD_REGISTER_NUMBER;
- 
- 	if (size == 4)
+Note that this serie does not change any behavior for any existing
+code. It just pass down more informations to mmu notifier listener.
+
+The rational for this patchset:
+
+
+CPU page table update can happens for many reasons, not only as a
+result of a syscall (munmap(), mprotect(), mremap(), madvise(), ...)
+but also as a result of kernel activities (memory compression, reclaim,
+migration, ...).
+
+This patch introduce a set of enums that can be associated with each
+of the events triggering a mmu notifier:
+
+    - UNMAP: munmap() or mremap()
+    - CLEAR: page table is cleared (migration, compaction, reclaim, ...)
+    - PROTECTION_VMA: change in access protections for the range
+    - PROTECTION_PAGE: change in access protections for page in the range
+    - SOFT_DIRTY: soft dirtyness tracking
+
+Being able to identify munmap() and mremap() from other reasons why the
+page table is cleared is important to allow user of mmu notifier to
+update their own internal tracking structure accordingly (on munmap or
+mremap it is not longer needed to track range of virtual address as it
+becomes invalid). Without this serie, driver are force to assume that
+every notification is an munmap which triggers useless trashing within
+drivers that associate structure with range of virtual address. Each
+driver is force to free up its tracking structure and then restore it
+on next device page fault. With this serie we can also optimize device
+page table update [5].
+
+More over this can also be use to optimize out some page table updates
+like for KVM where we can update the secondary MMU directly from the
+callback instead of clearing it.
+
+Patches to leverage this serie will be posted separately to each sub-
+system.
+
+Cheers,
+Jérôme
+
+[1] v1 https://lkml.org/lkml/2018/3/23/1049
+[2] v2 https://lkml.org/lkml/2018/12/5/10
+[3] v3 https://lkml.org/lkml/2018/12/13/620
+[4] v4 https://lkml.org/lkml/2019/1/23/838
+[5] patches to use this:
+    https://lkml.org/lkml/2019/1/23/833
+    https://lkml.org/lkml/2019/1/23/834
+    https://lkml.org/lkml/2019/1/23/832
+    https://lkml.org/lkml/2019/1/23/831
+[6] KVM restore change pte optimization
+    https://patchwork.kernel.org/cover/10791179/
+
+Cc: Christian König <christian.koenig@amd.com>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: Felix Kuehling <Felix.Kuehling@amd.com>
+Cc: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ross Zwisler <zwisler@kernel.org>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Christian Koenig <christian.koenig@amd.com>
+Cc: Ralph Campbell <rcampbell@nvidia.com>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: kvm@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-rdma@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>
+
+Jérôme Glisse (9):
+  mm/mmu_notifier: helper to test if a range invalidation is blockable
+  mm/mmu_notifier: convert user range->blockable to helper function
+  mm/mmu_notifier: convert mmu_notifier_range->blockable to a flags
+  mm/mmu_notifier: contextual information for event enums
+  mm/mmu_notifier: contextual information for event triggering
+    invalidation v2
+  mm/mmu_notifier: use correct mmu_notifier events for each invalidation
+  mm/mmu_notifier: pass down vma and reasons why mmu notifier is
+    happening v2
+  mm/mmu_notifier: mmu_notifier_range_update_to_read_only() helper
+  mm/mmu_notifier: set MMU_NOTIFIER_USE_CHANGE_PTE flag where
+    appropriate v2
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c  |  8 +--
+ drivers/gpu/drm/i915/i915_gem_userptr.c |  2 +-
+ drivers/gpu/drm/radeon/radeon_mn.c      |  4 +-
+ drivers/infiniband/core/umem_odp.c      |  5 +-
+ drivers/xen/gntdev.c                    |  6 +-
+ fs/proc/task_mmu.c                      |  3 +-
+ include/linux/mmu_notifier.h            | 93 +++++++++++++++++++++++--
+ kernel/events/uprobes.c                 |  3 +-
+ mm/hmm.c                                |  6 +-
+ mm/huge_memory.c                        | 14 ++--
+ mm/hugetlb.c                            | 12 ++--
+ mm/khugepaged.c                         |  3 +-
+ mm/ksm.c                                |  9 ++-
+ mm/madvise.c                            |  3 +-
+ mm/memory.c                             | 26 ++++---
+ mm/migrate.c                            |  5 +-
+ mm/mmu_notifier.c                       | 12 +++-
+ mm/mprotect.c                           |  4 +-
+ mm/mremap.c                             |  3 +-
+ mm/oom_kill.c                           |  3 +-
+ mm/rmap.c                               |  6 +-
+ virt/kvm/kvm_main.c                     |  3 +-
+ 22 files changed, 180 insertions(+), 53 deletions(-)
+
 -- 
-2.20.1
+2.17.2
 
