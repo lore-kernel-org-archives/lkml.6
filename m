@@ -2,108 +2,130 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B6EDC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D4BC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:31:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 690C42147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:30:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8025621773
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:31:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729343AbfBSRaS (ORCPT
+        id S1729393AbfBSRbP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 12:30:18 -0500
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:15427
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725613AbfBSRaR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 12:30:17 -0500
-X-IronPort-AV: E=Sophos;i="5.58,388,1544482800"; 
-   d="scan'208";a="296689475"
-Received: from vaio-julia.rsr.lip6.fr ([132.227.76.33])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2019 18:30:06 +0100
-Date:   Tue, 19 Feb 2019 18:30:03 +0100 (CET)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Tony Lindgren <tony@atomide.com>
-cc:     Peng Hao <peng.hao2@zte.com.cn>, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        wen.yang99@zte.com.cn
-Subject: Re: [PATCH] arm/mach-omap2/display: fix possible object reference
- leak
-In-Reply-To: <20190219170516.GL15711@atomide.com>
-Message-ID: <alpine.DEB.2.20.1902191824410.27989@hadrien>
-References: <1550071969-86286-1-git-send-email-peng.hao2@zte.com.cn> <20190219170516.GL15711@atomide.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Tue, 19 Feb 2019 12:31:15 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47898 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725613AbfBSRbP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 12:31:15 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C488BEBD;
+        Tue, 19 Feb 2019 09:31:14 -0800 (PST)
+Received: from [10.37.8.220] (unknown [10.37.8.220])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D69C13F720;
+        Tue, 19 Feb 2019 09:31:12 -0800 (PST)
+To:     Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>
+Cc:     xen-devel <xen-devel@lists.xenproject.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Dave P Martin <dave.martin@arm.com>
+From:   Julien Grall <julien.grall@arm.com>
+Subject: xen/evtchn and forced threaded irq
+Message-ID: <5e256d9a-572c-e01e-7706-407f99245b00@arm.com>
+Date:   Tue, 19 Feb 2019 17:31:10 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi all,
+
+I have been looking at using Linux RT in Dom0. Once the guest is started,
+the console is ending to have a lot of warning (see trace below).
+
+After some investigation, this is because the irq handler will now be threaded.
+I can reproduce the same error with the vanilla Linux when passing the option
+'threadirqs' on the command line (the trace below is from 5.0.0-rc7 that has
+not RT support).
+
+FWIW, the interrupt for port 6 is used to for the guest to communicate with
+xenstore.
+
+From my understanding, this is happening because the interrupt handler is now
+run in a thread. So we can have the following happening.
+
+   Interrupt context            |     Interrupt thread
+                                |  
+   receive interrupt port 6     |
+   clear the evtchn port        |
+   set IRQF_RUNTHREAD	        |
+   kick interrupt thread        |
+                                |    clear IRQF_RUNTHREAD
+                                |    call evtchn_interrupt
+   receive interrupt port 6     |
+   clear the evtchn port        |
+   set IRQF_RUNTHREAD           |
+   kick interrupt thread        |
+                                |    disable interrupt port 6
+                                |    evtchn->enabled = false
+                                |    [....]
+                                |
+                                |    *** Handling the second interrupt ***
+                                |    clear IRQF_RUNTHREAD
+                                |    call evtchn_interrupt
+                                |    WARN(...)
+
+I am not entirely sure how to fix this. I have two solutions in mind:
+
+1) Prevent the interrupt handler to be threaded. We would also need to
+switch from spin_lock to raw_spin_lock as the former may sleep on RT-Linux.
+
+2) Remove the warning
+
+None of them are ideals. Do you have an opionion/better suggestion?
+
+[  127.192087] Interrupt for port 6, but apparently not enabled; per-user 0000000078d39c7f
+[  127.200333] WARNING: CPU: 0 PID: 2553 at drivers/xen/evtchn.c:167 evtchn_interrupt+0xfc/0x120
+[  127.208799] Modules linked in:
+[  127.211939] CPU: 0 PID: 2553 Comm: irq/52-evtchn:x Tainted: G        W
+  5.0.0-rc7-00023-g2a3d41623699 #1257
+[  127.222374] Hardware name: ARM Juno development board (r2) (DT)
+[  127.228381] pstate: 40000005 (nZcv daif -PAN -UAO)
+[  127.233256] pc : evtchn_interrupt+0xfc/0x120
+[  127.237607] lr : evtchn_interrupt+0xfc/0x120
+[  127.241952] sp : ffff000012d2bd60
+[  127.245347] x29: ffff000012d2bd60 x28: ffff00001015d608
+[  127.250741] x27: ffff8008b39de400 x26: ffff00001015d330
+[  127.256137] x25: ffff00001015d2d4 x24: 0000000000000001
+[  127.261532] x23: ffff00001015d570 x22: 0000000000000034
+[  127.266926] x21: 0000000000000000 x20: ffff8008b7f02400
+[  127.272322] x19: ffff8008b3aba000 x18: 0000000000000037
+[  127.277717] x17: 0000000000000000 x16: 0000000000000000
+[  127.283112] x15: 00000000fffffff0 x14: 0000000000000000
+[  127.288507] x13: 3030303030207265 x12: 000000000000000c
+[  127.293902] x11: ffff000010ea0a88 x10: 0000000000000000
+[  127.299297] x9 : 00000000fffb9fff x8 : 0000000000000000
+[  127.304701] x7 : 0000000000000001 x6 : ffff8008bac5c240
+[  127.310087] x5 : ffff8008bac5c240 x4 : 0000000000000000
+[  127.315483] x3 : ffff8008bac64708 x2 : ffff8008b39de400
+[  127.320877] x1 : 893ac9b38837b800 x0 : 0000000000000000
+[  127.326272] Call trace:
+[  127.328802]  evtchn_interrupt+0xfc/0x120
+[  127.332804]  irq_forced_thread_fn+0x38/0x98
+[  127.337066]  irq_thread+0x190/0x238
+[  127.340636]  kthread+0x134/0x138
+[  127.343942]  ret_from_fork+0x10/0x1c
+[  127.347593] ---[ end trace 1d3fa385877cc18b ]---
 
 
-On Tue, 19 Feb 2019, Tony Lindgren wrote:
+Cheers,
 
-> Hi,
->
-> Adding devicetree list, Julia, Rob and Tomi to Cc.
->
-> * Peng Hao <peng.hao2@zte.com.cn> [190212 23:11]:
-> > of_find_device_by_node() takes a reference to the struct device
-> > when it finds a match via get_device.When returning error we should
-> > call put_device.
-> >
-> > Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-> > ---
-> >  arch/arm/mach-omap2/display.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/arch/arm/mach-omap2/display.c b/arch/arm/mach-omap2/display.c
-> > index f86b72d..c6aa9ed 100644
-> > --- a/arch/arm/mach-omap2/display.c
-> > +++ b/arch/arm/mach-omap2/display.c
-> > @@ -258,6 +258,7 @@ static int __init omapdss_init_of(void)
-> >  	r = of_platform_populate(node, NULL, NULL, &pdev->dev);
-> >  	if (r) {
-> >  		pr_err("Unable to populate DSS submodule devices\n");
-> > +		put_device(&pdev->dev);
-> >  		return r;
-> >  	}
->
-> In general, if the device tree node is never used afterwards,
-> should this be just:
->
-> 	r = of_platform_populate(node, NULL, NULL, &pdev->dev);
-> 	of_node_put(dev_node);
-
-Are these solving the same problems?  The of_node_put looks clearly
-necessary, whether there is a success or failure.  I'm not familiar with
-put_device.  I see that it does a kobject_put, but I don't know what
-happens because of that.  But it looks like an inconsistency that Peng's
-patch only considers the failure case, while your suggestion happens
-always.
-
-I guess Peng's patch is motivated by a Coccinelle script that Wen Yang
-(also from ZTE) has been working on.  Perhaps there is a need to adjust
-what is suggested by that script.
-
-[Wen Yang added to CC]
-
-julia
-
-> 	if (r) {
-> 		...
-> 	}
->
-> If so, Julia might have a Coccinelle recpipe for it?
->
-> Regards,
->
-> Tony
->
+-- 
+Julien Grall
