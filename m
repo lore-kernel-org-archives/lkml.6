@@ -2,76 +2,88 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A399C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC0D9C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:40:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14B312147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:38:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B2F52086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 11:40:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="csNkuCjU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727315AbfBSLiv (ORCPT
+        id S1727862AbfBSLkp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 06:38:51 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:59234 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725805AbfBSLiv (ORCPT
+        Tue, 19 Feb 2019 06:40:45 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33939 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727048AbfBSLko (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 06:38:51 -0500
-Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gw3jX-0001fG-8N; Tue, 19 Feb 2019 12:38:43 +0100
-Date:   Tue, 19 Feb 2019 12:38:42 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-cc:     "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mingo@redhat.com,
-        catalin.marinas@arm.com, james.morse@arm.com,
-        valentin.schneider@arm.com, brgerst@gmail.com, jpoimboe@redhat.com,
-        luto@kernel.org, bp@alien8.de, dvlasenk@redhat.com,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH] sched/x86: Save [ER]FLAGS on context switch
-In-Reply-To: <20190219094438.GV32534@hirez.programming.kicks-ass.net>
-Message-ID: <alpine.DEB.2.21.1902191238250.1644@nanos.tec.linutronix.de>
-References: <20190213144145.GY32494@hirez.programming.kicks-ass.net> <20190213154532.GQ32534@hirez.programming.kicks-ass.net> <D61C430D-4321-4114-AB85-671A3C7B8EAE@amacapital.net> <20190213222146.GC32494@hirez.programming.kicks-ass.net>
- <D3E1B64D-3E91-4A82-9C3B-92D9EB7326CE@amacapital.net> <20190214101429.GD32494@hirez.programming.kicks-ass.net> <20ABBED1-E505-45F6-8520-FB93786DF9A9@zytor.com> <20190216103044.GR32494@hirez.programming.kicks-ass.net> <9e037d68-75e7-1beb-0c9c-33a7ffeced1b@zytor.com>
- <20190219090409.GW32494@hirez.programming.kicks-ass.net> <20190219094438.GV32534@hirez.programming.kicks-ass.net>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Tue, 19 Feb 2019 06:40:44 -0500
+Received: by mail-pg1-f195.google.com with SMTP id i130so10038025pgd.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 03:40:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=DQZHSSspZBlsenwx5k5O9poRCEoCd4P+xUehuph/A9U=;
+        b=csNkuCjUKGsXUpAI1PL2/U6szs9hyeTkh9euBYymEkdYBep5pyzOlMSkrsjEI4z77S
+         J9Lq9z7Fgr6mS4iG5LpBgJNoLx4I2LTCB7glT/LXhiUptGpYS7uu+TjlsPaLyA45R4tt
+         HPyujdnm7H4RMlSEFT0Bk9G6ctVZo+5R9OWo00gSpf54NSFRR/HRwhqLcgKRivwpXvKy
+         gKGRgH5PfBSd3nyLrZre1Mem8YPMyan0SGoV45KCAFaqxGTf/Zr7a76pP7qIz0qoX8Xg
+         VWbuOYGm7yNLQ9OV8paJNG152aPPts9H/iOsURpkv2uBBrDSDjnzay3FjgyhlEUM4Exu
+         Tq+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=DQZHSSspZBlsenwx5k5O9poRCEoCd4P+xUehuph/A9U=;
+        b=M9zMc8SxKMtcLeVE2WfK9xXQZCG/S+jYjd3CF3jyzGf4TLhOzFoK644rBYB8ivapdp
+         mKnaz+D1JVvz+emSF9YJN+62VrxEvUujGxTyIsYiglDQYoswM6eLmPfPVZZ5iQylWl7T
+         Weaqg6n9Y20t7+hE1hslmPVPi/2RHiQr31HqTuz9ehlaom0QCKYhgHvb8sACUcJj3q0l
+         /Nq9i3eg8BxpUyl9G2uB6d/fgA+6h1B64HoGiPWdYlTdSFRYsOgoE1grdoEEGE4+v89d
+         YZiyJTTh/98NiVWoW5NsyBL0PfggESdWGDkHbknqQPXGogFFO8dNksH559LLWRvdXOWv
+         xnMQ==
+X-Gm-Message-State: AHQUAubFyiJKDanhZ98wMg//x4UG04BWg+IYqFnzvwGciIqLnUq/yT9r
+        QAXJS+UP/jIWEdtZfHzW0IDrJw==
+X-Google-Smtp-Source: AHgI3IZclla3/S38bs8rCfTC1zJTe7P4s7pX6RBtEQGf/r8s4L3fqc0TDfoVZ+3j1ctCuFiW0RaD7w==
+X-Received: by 2002:aa7:83c2:: with SMTP id j2mr28839490pfn.119.1550576444085;
+        Tue, 19 Feb 2019 03:40:44 -0800 (PST)
+Received: from buildserver-90.open-silicon.com ([114.143.65.226])
+        by smtp.googlemail.com with ESMTPSA id t3sm32250678pfa.50.2019.02.19.03.40.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 19 Feb 2019 03:40:43 -0800 (PST)
+From:   Yash Shah <yash.shah@sifive.com>
+To:     palmer@sifive.com, linux-spi@vger.kernel.org,
+        linux-riscv@lists.infradead.org, broonie@kernel.org
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sachin.ghadi@sifive.com, paul.walmsley@sifive.com,
+        Yash Shah <yash.shah@sifive.com>
+Subject: [PATCH 0/2] SPI support for HiFive Unleashed
+Date:   Tue, 19 Feb 2019 17:10:05 +0530
+Message-Id: <1550576407-17778-1-git-send-email-yash.shah@sifive.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Feb 2019, Peter Zijlstra wrote:
+This patch series adds a SPI driver and DT documentation
+for HiFive Unleashed board.
 
-> On Tue, Feb 19, 2019 at 10:04:09AM +0100, Peter Zijlstra wrote:
-> > > Does that make more sense?
-> > 
-> > It appears to me you're going about it backwards.
-> 
-> So how about you do a GCC plugin that verifies limits on code-gen
-> between user_access_begin/user_access_end() ?
-> 
->  - No CALL/RET
->    - implies user_access_end() happens
->    - implies no fentry hooks
->  - No __preempt_count frobbing
->  - No tracepoints
->  - ...
-> 
-> That way you put the burden on the special code, not on the rest of the
-> kernel.
+Yash Shah (2):
+  spi: sifive: Add DT documentation for SiFive SPI controller
+  spi: sifive: Add driver for the SiFive SPI controller
 
-And then you have kprobes ....
+ .../devicetree/bindings/spi/spi-sifive.txt         |  37 ++
+ drivers/spi/Kconfig                                |   6 +
+ drivers/spi/Makefile                               |   1 +
+ drivers/spi/spi-sifive.c                           | 450 +++++++++++++++++++++
+ 4 files changed, 494 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/spi-sifive.txt
+ create mode 100644 drivers/spi/spi-sifive.c
+
+-- 
+1.9.1
+
