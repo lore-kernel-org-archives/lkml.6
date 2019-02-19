@@ -2,137 +2,120 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0E4C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:03:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A791AC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:03:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 529E12177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:03:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77C6B2177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 03:03:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EhEG3ZBd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726074AbfBSDDd (ORCPT
+        id S1726152AbfBSDDw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 22:03:33 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:3809 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725308AbfBSDDd (ORCPT
+        Mon, 18 Feb 2019 22:03:52 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46378 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725308AbfBSDDw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 22:03:33 -0500
-X-UUID: cad6f202ab1049e4832e8dcd40e5834f-20190219
-X-UUID: cad6f202ab1049e4832e8dcd40e5834f-20190219
-Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1068112833; Tue, 19 Feb 2019 11:03:27 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33DR.mediatek.inc
- (172.27.6.106) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 19 Feb
- 2019 11:03:26 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 19 Feb 2019 11:03:25 +0800
-Message-ID: <1550545405.2210.30.camel@mhfsdcap03>
-Subject: Re: [PATCH v2 01/10] dt-bindings: phy: Add support for HiSilicon's
- hi3660 USB PHY
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Chen Yu <chenyu56@huawei.com>
-CC:     Rob Herring <robh@kernel.org>, <liuyu712@hisilicon.com>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <john.stultz@linaro.org>,
-        <suzhuangluan@hisilicon.com>, <kongfei@hisilicon.com>,
-        <wanghu17@hisilicon.com>, <butao@hisilicon.com>,
-        <chenyao11@huawei.com>, <fangshengzhou@hisilicon.com>,
-        <lipengcheng8@huawei.com>, <songxiaowei@hisilicon.com>,
-        <xuyiping@hisilicon.com>, <xuyoujun4@huawei.com>,
-        <yudongbin@hisilicon.com>, <zangleigang@hisilicon.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Binghui Wang" <wangbinghui@hisilicon.com>
-Date:   Tue, 19 Feb 2019 11:03:25 +0800
-In-Reply-To: <a944cd27-f7d5-eece-1ef5-c7dc5dbc311b@huawei.com>
-References: <20190218112310.17860-1-chenyu56@huawei.com>
-         <20190218112310.17860-2-chenyu56@huawei.com> <20190218201824.GA23724@bogus>
-         <a944cd27-f7d5-eece-1ef5-c7dc5dbc311b@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Mon, 18 Feb 2019 22:03:52 -0500
+Received: by mail-pf1-f194.google.com with SMTP id g6so9476181pfh.13
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 19:03:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=AUxYkpUOGVLojnBzMownAJmT4JzMv+qBE9F7iqL0iVA=;
+        b=EhEG3ZBdr5KMPHwlgs8yf6x65xyo7j/jwyEiUjomuC3LRBxryAu3H7JUlwydWQ0UWW
+         S3UVaafT5AflEbLmT4Ey8bQ4aBKBRL+yE57z0BvDyIf7/26nDamfkGGRRtSEw3uJ8I9s
+         QzqXzcvEZkmkjZfDViOrjhaRVUhmY6nWRsvWRS3Ajo40X98mACI5DtIR3cCrylhu8lW0
+         s76omqRGoNgOqhsqFXRP9BVdsQAXvS78nsvb9q86ka3nbO/aIGF9bHRB/+VYcrPn5Nhd
+         Jh0RYJV5n3pdsNtaNItezixpGBHTtV6uBL4JoT0v2UIJJaxTOYmQmH7bLor7IaMp2U6i
+         PYiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AUxYkpUOGVLojnBzMownAJmT4JzMv+qBE9F7iqL0iVA=;
+        b=Me2w5jIXsRrSNxSVi6KrPqdSMyhQNeiif+DUmG/rhHPbcz/nBdUM6h8l1Zcy7CInjf
+         dTHgnQseXr3kKqCju7wXloKZI/JvVTg7fwXBgv51dJ0ylOB4p2M8QgbkTtx9mJflQDmy
+         F3EjI984OpH6SCcYrCfxzHuiO3onjxA7C/1IqEuIhaIw9m0rOxVPX95M5Tl7kJDvJ7Bg
+         u5YvDJgQMNZH1H8s0kVI5173Duatee19UrdLWoWRaLP/TBg8T3ZNMOaBO2oTmdMikjSY
+         uoEiP0d3s9RhWxzrc6D6jMTy6AS3WpXuI1OHUtIDc9f/k1X1Cec3Gm89P7SNX0NxyiTG
+         C+PA==
+X-Gm-Message-State: AHQUAuYzf9deYgncoGSrgOUmZn4OVZDT2Dv/N6/iXhHyGLoAH2GXVBp6
+        h/VzL7tnq0do+pm7tBJbYHs=
+X-Google-Smtp-Source: AHgI3IYFEzvQmV2+NSDG8NO+PzEHwvueCAJyYDiz9a4WXoTm+s5pXsI7ZOxGN57Yj1V/BCwzMCP+kg==
+X-Received: by 2002:a62:bd17:: with SMTP id a23mr26929404pff.233.1550545431216;
+        Mon, 18 Feb 2019 19:03:51 -0800 (PST)
+Received: from localhost ([175.223.35.193])
+        by smtp.gmail.com with ESMTPSA id e20sm18309778pgg.62.2019.02.18.19.03.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Feb 2019 19:03:50 -0800 (PST)
+Date:   Tue, 19 Feb 2019 12:03:46 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 9/9] vsprintf: Avoid confusion between invalid address
+ and value
+Message-ID: <20190219030300.GA640@jagdpanzerIV>
+References: <20190208152310.29531-1-pmladek@suse.com>
+ <20190208152310.29531-10-pmladek@suse.com>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190208152310.29531-10-pmladek@suse.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On Tue, 2019-02-19 at 09:50 +0800, Chen Yu wrote:
-> Hi,
-> 
-> On 2019/2/19 4:18, Rob Herring wrote:
-> > On Mon, Feb 18, 2019 at 07:23:01PM +0800, Yu Chen wrote:
-> >> This patch adds binding documentation for supporting the hi3660 usb
-> >> phy on boards like the HiKey960.
-> >>
-> >> Cc: Rob Herring <robh+dt@kernel.org>
-> >> Cc: Mark Rutland <mark.rutland@arm.com>
-> >> Cc: John Stultz <john.stultz@linaro.org>
-> >> Cc: Binghui Wang <wangbinghui@hisilicon.com>
-> >> Signed-off-by: Yu Chen <chenyu56@huawei.com>
-> >> ---
-> >> v1:
-> >> * Fix some format error as suggested by Rob.
-> >> v2:
-> >> * Change hi3660 usb PHY to hi3660 USB PHY
-> >> ---
-> >> ---
-> >>  .../devicetree/bindings/phy/phy-hi3660-usb3.txt     | 21 +++++++++++++++++++++
-> >>  1 file changed, 21 insertions(+)
-> >>  create mode 100644 Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt b/Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt
-> >> new file mode 100644
-> >> index 000000000000..f9a3d56cfdd2
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt
-> >> @@ -0,0 +1,21 @@
-> >> +Hisilicon hi3660 USB PHY
-> >> +-----------------------
-> >> +
-> >> +Required properties:
-> >> +- compatible: should be "hisilicon,hi3660-usb-phy"
-> >> +- #phy-cells: must be 0
-> >> +- hisilicon,pericrg-syscon: phandle of syscon used to control phy.
-> >> +- hisilicon,pctrl-syscon: phandle of syscon used to control phy.
-> >> +- hisilicon,usb3-otg-bc-syscon: phandle of syscon used to control phy.
-> >> +- hisilicon,eye-diagram-param: parameter set for phy
-> >> +Refer to phy/phy-bindings.txt for the generic PHY binding properties
-> >> +
-> >> +Example:
-> >> +	usb-phy {
-> >> +		compatible = "hisilicon,hi3660-usb-phy";
-> >> +		#phy-cells = <0>;
-> >> +		hisilicon,pericrg-syscon = <&crg_ctrl>;
-> >> +		hisilicon,pctrl-syscon = <&pctrl>;
-> >> +		hisilicon,usb3-otg-bc-syscon = <&usb3_otg_bc>;
-> > 
-> > Are most of the registers within one of these blocks? If so, make this 
-> > node a child of that node.
-> I met a problem when I made this node a child of the syscon node,
-> the driver "phy-hi3660-usb3" was not probed.
-> Do you have any idea about how to make it probed when it is a child node?
-call of_platform_populate() in parent node's driver,
-but I don't know whether it's a standard way
-> > 
-> >> +		hisilicon,eye-diagram-param = <0x22466e4>;
-> >> +	};
-> >> -- 
-> >> 2.15.0-rc2
-> >>
-> > 
-> > .
-> > 
-> 
-> Thanks
-> Yu Chen
-> 
+On (02/08/19 16:23), Petr Mladek wrote:
+[..]
+>  Plain Pointers
+>  --------------
+> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> index 3a95b4d1ca2e..e51cbc2be540 100644
+> --- a/lib/vsprintf.c
+> +++ b/lib/vsprintf.c
+> @@ -1510,7 +1510,7 @@ char *ip_addr_string(char *buf, char *end, const void *ptr,
+>  		case AF_INET6:
+>  			return ip6_addr_string_sa(buf, end, &sa->v6, spec, fmt);
+>  		default:
+> -			return string_nocheck(buf, end, "(invalid address)", spec);
+> +			return string_nocheck(buf, end, "(einval)", spec);
+>  		}}
+
+Hmm... The original code looks "a bit" dangerous.
+
+Suppose, in my driver I want to sprintf() IPv4 address. The longest
+possible address is 3 * 4 (%d%d%d) + 3 bytes (dots) + terminating NULL.
+E.g. 111.111.111.111
+
+So I can allocate a 16-bytes buffer (stack or slab) and accidentally
+do an %piS sprintf() on a corrupted in_addr struct:
+
+		char buf[16];
+		sprintf(buf, "%piS", in_addr);
+
+forcing sprintf() to write "(invalid address)" to a 16-bytes buffer,
+but the thing is - strlen("(invalid address)") > 16.
 
 
+We might want to take this change out of this series.
+
+	-ss
