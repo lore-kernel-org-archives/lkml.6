@@ -2,164 +2,163 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BCA2C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D87BC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36B9020823
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:34:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B35520823
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:34:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="fClR5lfU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729183AbfBSQd6 (ORCPT
+        id S1729299AbfBSQej (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:33:58 -0500
-Received: from gateway36.websitewelcome.com ([192.185.193.12]:24970 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728688AbfBSQd5 (ORCPT
+        Tue, 19 Feb 2019 11:34:39 -0500
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:7443 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728490AbfBSQej (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:33:57 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 8A69D400C8B7C
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 09:48:28 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id w8LCgqjRI2PzOw8LDgJXuJ; Tue, 19 Feb 2019 10:33:55 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=57864 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gw8LC-00406C-HE; Tue, 19 Feb 2019 10:33:54 -0600
-Subject: Re: [PATCH] platform/x86: dell-laptop: Mark expected switch
- fall-throughs
-To:     Darren Hart <dvhart@infradead.org>
-Cc:     Matthew Garrett <mjg59@srcf.ucam.org>,
-        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180705203807.GA10327@embeddedor.com>
- <20181129001533.GA2468@fedora.eng.vmware.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <4d97e602-6de8-4b4f-86a8-39a835c1c699@embeddedor.com>
-Date:   Tue, 19 Feb 2019 10:33:53 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20181129001533.GA2468@fedora.eng.vmware.com>
-Content-Type: text/plain; charset=utf-8
+        Tue, 19 Feb 2019 11:34:39 -0500
+X-IronPort-AV: E=Sophos;i="5.58,388,1544511600"; 
+   d="scan'208";a="24901264"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 19 Feb 2019 09:34:34 -0700
+Received: from NAM05-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.49) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Tue, 19 Feb 2019 09:30:02 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=crtjtMQSrRaTjDy4m7C1xfz537DF4tJ32eUdO2pJXKI=;
+ b=fClR5lfUlnYLRGRVXsIiLg4uehMZNufVtqLpqyy48W2PuZoOjgbO/PX8vKpSiy9B+B9AbRXBQmbjs8QOQ+heUUyK9YcfV0YA4dITPAlNdKMuQv9Na7yOBqiJJDEjJuF8OYrtRTv33VjctQJjL+LIyY4W7lG8BXIQWtA9aH91b94=
+Received: from CY4PR11MB1256.namprd11.prod.outlook.com (10.169.252.10) by
+ CY4PR11MB1749.namprd11.prod.outlook.com (10.175.61.145) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.14; Tue, 19 Feb 2019 16:29:28 +0000
+Received: from CY4PR11MB1256.namprd11.prod.outlook.com
+ ([fe80::d9cc:7741:4930:cda3]) by CY4PR11MB1256.namprd11.prod.outlook.com
+ ([fe80::d9cc:7741:4930:cda3%8]) with mapi id 15.20.1643.014; Tue, 19 Feb 2019
+ 16:29:28 +0000
+From:   <Codrin.Ciubotariu@microchip.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>
+CC:     <dannenberg@ti.com>, <m-stecklein@ti.com>, <afd@ti.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        <Codrin.Ciubotariu@microchip.com>
+Subject: [PATCH v2 2/2] ASoC: codecs: pcm186x: Fix energysense SLEEP bit
+Thread-Topic: [PATCH v2 2/2] ASoC: codecs: pcm186x: Fix energysense SLEEP bit
+Thread-Index: AQHUyHBItzr+dNeZQEqfT8mjpFYo1g==
+Date:   Tue, 19 Feb 2019 16:29:28 +0000
+Message-ID: <20190219162840.7244-2-codrin.ciubotariu@microchip.com>
+References: <20190219162840.7244-1-codrin.ciubotariu@microchip.com>
+In-Reply-To: <20190219162840.7244-1-codrin.ciubotariu@microchip.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gw8LC-00406C-HE
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:57864
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1P195CA0033.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:802:5a::22) To CY4PR11MB1256.namprd11.prod.outlook.com
+ (2603:10b6:903:25::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Codrin.Ciubotariu@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 83ebb59b-2226-4077-6b46-08d696876af8
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:CY4PR11MB1749;
+x-ms-traffictypediagnostic: CY4PR11MB1749:
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;CY4PR11MB1749;23:3SOtkEQ2Z2V53mwqQPzWkFNfBFGMGS+kuX4KZLA?=
+ =?iso-8859-1?Q?gfIILaJTB97k9ny6G0/j7WnEJID6CjY2gq/vxhbFKSIfkIPyBjSWsEVma/?=
+ =?iso-8859-1?Q?HI9g4gMuF1wW7nJE6RPUEMa52wBmVhtfdb7Hr8Z2hoHqCLP5SDLgrqsi+1?=
+ =?iso-8859-1?Q?m+p36G8NYEn9VOSSHd0I8CmQ1oHNRMj81+n33KGR2cw+otuLpuYiflLw49?=
+ =?iso-8859-1?Q?GC9yWiDWcZ/SykIbRGO6AlEsBG6Z11bJIc2Yvusmddd7s21RJV4B7guW+1?=
+ =?iso-8859-1?Q?F37lo/QEkPSUlYunUm43kYw04tIjQp36vVoqeby5cRDta1PNwMsqJWuvvZ?=
+ =?iso-8859-1?Q?s86s401AphNXnLFGMpkYgY/La1+He5LiQNdwXV2zWf4m4DBAJVPvInf+S6?=
+ =?iso-8859-1?Q?gFb1djhv32hk/6KW1GWVdKt8Es3zdYJGPzLVIcnIrIItM1ylIJcOeuinAL?=
+ =?iso-8859-1?Q?UJNo4FuXX+Rj3PwyolGYvR6qn7mgo3WIhYtk6YRM9nGkfz8zeIvUOy3EpM?=
+ =?iso-8859-1?Q?9cdGnVZrSbNYBeyVMURw/GHyTLxPgQGyJQbOTGYYg34rOJx2+3XhM3p1Sg?=
+ =?iso-8859-1?Q?Es2KrB0y7/cBSLAQb+Hji0wGeTEsY7t7qCF4oXli1TGqD5e1Im5HMrnN5x?=
+ =?iso-8859-1?Q?yzPEmEJI6bBEfAifa8E6NgiJncd6OdWdnRgX/UntXWo9eF3rEBsQre3ojC?=
+ =?iso-8859-1?Q?T8lsii1KxUic/tb+cT+oJTytjwrimCaWBv+ZWlp8umy6JXlDo3DAoB8MLo?=
+ =?iso-8859-1?Q?0KNrwOtWJfSCSjLtZjNOk0eGUMlSnyTWKI3bDYkYlpXeYzIjuLBfqrFkaA?=
+ =?iso-8859-1?Q?lb5p6sJ3EpMV32NWKGTZvE9ZEwYwxtl3ZeLUhR6wqsG4EcKfaPrM89VS+8?=
+ =?iso-8859-1?Q?0DBPrWsw9BT0657a9UxuakzHuUEnlQSOIDhTLAN8vHH09l+SaFnscmJJ4d?=
+ =?iso-8859-1?Q?ooShgrZblx6PSYUQW6sJXz+NmCqbJ//eBP3zYJFFQORwdTTXSoenY1MqYw?=
+ =?iso-8859-1?Q?cKHSK3OCZZveLQKRFQmXK2Z7LTVAimgHPU+Jm9aneciSA04xMdgtx3WASK?=
+ =?iso-8859-1?Q?Pr962JJUu3pcSIo+zuT5V1K2Ud8CsV+zbH5n9QNnj5aLSUi/S5wtcwGKrY?=
+ =?iso-8859-1?Q?4xxkhLHbqfaS2/Ti9c3AzQ2XrXhOKII0J7FibM3rvHzon4EnKb/05qtyEX?=
+ =?iso-8859-1?Q?IID3s5uMzdoNAf/rpMJrUpx94LmIZRzAFqyUxTDyFq/rVdZBA7BnsXrYFQ?=
+ =?iso-8859-1?Q?GtelefrtBAdKTiicVXYUVOr5urPBabC6/nJmkVgTO16DzuJh51y3PXcuV6?=
+ =?iso-8859-1?Q?uQ4wiEj9STFLY6FeWTc99e5zu4CbTEVnLyThKfXkCqg/w=3D=3D?=
+x-microsoft-antispam-prvs: <CY4PR11MB174967D741404B3863C61C0BE77C0@CY4PR11MB1749.namprd11.prod.outlook.com>
+x-forefront-prvs: 09538D3531
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(396003)(366004)(136003)(39860400002)(189003)(199004)(8676002)(3846002)(6506007)(8936002)(81166006)(81156014)(386003)(36756003)(50226002)(6436002)(71190400001)(71200400001)(478600001)(6116002)(53936002)(72206003)(1076003)(102836004)(5660300002)(305945005)(6512007)(7736002)(66066001)(6486002)(68736007)(2616005)(476003)(25786009)(76176011)(486006)(106356001)(4326008)(105586002)(52116002)(97736004)(86362001)(14454004)(26005)(256004)(186003)(2501003)(107886003)(2906002)(316002)(54906003)(110136005)(446003)(99286004)(11346002)(197533005);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR11MB1749;H:CY4PR11MB1256.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: xEnY8F7U2S1ultVzx29XJGYrlihn8GIg7DTw21IG4j/BQFQb3dIq4nmH86UOQVUeK1dE4VWzgErQHKR7WoAUpAf0o6WqzUwx/dPKDepOfNXuiO6FjuU0HNbBY0py1kV+Wk7wZkbWw9XVjxNszntzJRPpWehA9NtvSNpZcn4W2VDiUvMKOxmZKXhXPZ5OF4GzEVeu6JfU+GyYWDF2icv4ryWcVZnkBUMVp0pbs5IXSaDYVM2LsorDLMa0UPjtRmMah+msJMCNVJ9gShLxnexSkjbLf/ilV0Dw0efBPlAs9zddobfBG5DQRbVGHn742M1GuGe+KZn87ySeijaU2I679ciXMXsipBWbwowDwuj+CYQX6cei8er3h0XmbCHb9BWTAqNliw5p2AP4Xk78kjLkD384sH/HvYagYC4pR8LTP4w=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 83ebb59b-2226-4077-6b46-08d696876af8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2019 16:29:26.1206
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR11MB1749
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 
+The ADCs are sleeping when the SLEEP bit is set and running when it's
+cleared, so the bit should be inverted.
+Tested on pcm1863.
 
-On 11/28/18 6:15 PM, Darren Hart wrote:
-> On Thu, Jul 05, 2018 at 03:38:07PM -0500, Gustavo A. R. Silva wrote:
->> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->> where we are expecting to fall through.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> 
-> I've applied this patch, but not the acer or sony fall through patches
-> due to the pending questions there. Happy to revisit those as needed,
-> but closing these out of the patch queue.
-> 
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+---
 
-Thanks, Darren.
+Changes in v2:
+ - none;
 
-I'll send separate patches for those that are still pending.  Hopefully,
-I'll get some feedback this time.
+ sound/soc/codecs/pcm186x.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---
-Gustavo
+diff --git a/sound/soc/codecs/pcm186x.c b/sound/soc/codecs/pcm186x.c
+index c36a391fec8a..c5fcc632f670 100644
+--- a/sound/soc/codecs/pcm186x.c
++++ b/sound/soc/codecs/pcm186x.c
+@@ -158,7 +158,7 @@ static const struct snd_soc_dapm_widget pcm1863_dapm_wi=
+dgets[] =3D {
+ 	 * Put the codec into SLEEP mode when not in use, allowing the
+ 	 * Energysense mechanism to operate.
+ 	 */
+-	SND_SOC_DAPM_ADC("ADC", "HiFi Capture", PCM186X_POWER_CTRL, 1,  0),
++	SND_SOC_DAPM_ADC("ADC", "HiFi Capture", PCM186X_POWER_CTRL, 1,  1),
+ };
+=20
+ static const struct snd_soc_dapm_widget pcm1865_dapm_widgets[] =3D {
+@@ -184,8 +184,8 @@ static const struct snd_soc_dapm_widget pcm1865_dapm_wi=
+dgets[] =3D {
+ 	 * Put the codec into SLEEP mode when not in use, allowing the
+ 	 * Energysense mechanism to operate.
+ 	 */
+-	SND_SOC_DAPM_ADC("ADC1", "HiFi Capture 1", PCM186X_POWER_CTRL, 1,  0),
+-	SND_SOC_DAPM_ADC("ADC2", "HiFi Capture 2", PCM186X_POWER_CTRL, 1,  0),
++	SND_SOC_DAPM_ADC("ADC1", "HiFi Capture 1", PCM186X_POWER_CTRL, 1,  1),
++	SND_SOC_DAPM_ADC("ADC2", "HiFi Capture 2", PCM186X_POWER_CTRL, 1,  1),
+ };
+=20
+ static const struct snd_soc_dapm_route pcm1863_dapm_routes[] =3D {
+--=20
+2.17.1
 
->> ---
->>  drivers/platform/x86/dell-laptop.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
->> index f1fa861..1938f11 100644
->> --- a/drivers/platform/x86/dell-laptop.c
->> +++ b/drivers/platform/x86/dell-laptop.c
->> @@ -1565,8 +1565,10 @@ static ssize_t kbd_led_timeout_store(struct device *dev,
->>  		switch (unit) {
->>  		case KBD_TIMEOUT_DAYS:
->>  			value *= 24;
->> +			/* fall through */
->>  		case KBD_TIMEOUT_HOURS:
->>  			value *= 60;
->> +			/* fall through */
->>  		case KBD_TIMEOUT_MINUTES:
->>  			value *= 60;
->>  			unit = KBD_TIMEOUT_SECONDS;
->> -- 
->> 2.7.4
->>
->>
-> 
