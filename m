@@ -2,208 +2,295 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BBE7C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:34:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7E49C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:34:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2DEE20818
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:34:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8988821848
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 04:34:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ds0m1BM2"
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="YA+kICQr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726400AbfBSEeY (ORCPT
+        id S1726601AbfBSEem (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 23:34:24 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:41358 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725770AbfBSEeY (ORCPT
+        Mon, 18 Feb 2019 23:34:42 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:39663 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbfBSEel (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 23:34:24 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1J4YG05071284;
-        Tue, 19 Feb 2019 04:34:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=cS1DH879CcIl+bs6b1wVapY22RVLC7csNXI6tVxFYVA=;
- b=Ds0m1BM2QxOJ1KJN0N2goUBwoMP5EWX5pR1QMMZWCWHcyBitekTTRFXRCiKgxpndQ1Un
- RRAiGkbatWXNAL4DP/KgNlgRq7IATMm1yAyKf0S2YDmzy9DXSro7CSBvWoXesIF+mDHT
- ooieNsOjgRKOiJH07uyN9+0nPTwTJiaNnzIhF691mzfwe6D4JZdcrWv3Dg5p0kbHpEjW
- PJzjEHU9mwz4vq1K06m55ivhHwspKi5kBZrfnQwk6+0fQaumzjYydlj0xEZIc8K5M63n
- uZO4tQZNwtfJ64qTcUNR1UF/SQDl7dBL0NAMMiTkGKoJ2ceP7w+DtmAvr1+JJhTI6F2y Uw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2qpb5r8qn7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Feb 2019 04:34:16 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1J4YADm022085
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Feb 2019 04:34:11 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1J4YAHO025021;
-        Tue, 19 Feb 2019 04:34:10 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 18 Feb 2019 20:34:10 -0800
-Date:   Mon, 18 Feb 2019 20:34:08 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Matej Kupljen <matej.kupljen@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: tmpfs inode leakage when opening file with O_TMP_FILE
-Message-ID: <20190219043408.GG6503@magnolia>
-References: <CAHMF36F4JN44Y-yMnxw36A8cO0yVUQhAkvJDcj_gbWbsuUAA5A@mail.gmail.com>
- <20190214154402.5d204ef2aa109502761ab7a0@linux-foundation.org>
- <20190215002631.GB6474@magnolia>
- <alpine.LSU.2.11.1902150159100.5680@eggly.anvils>
- <alpine.LSU.2.11.1902181945240.1821@eggly.anvils>
+        Mon, 18 Feb 2019 23:34:41 -0500
+Received: by mail-qt1-f195.google.com with SMTP id o6so21721182qtk.6
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 20:34:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1FCE5iC4BBC2eXOp5i6IQ7gQBc6Hx/LSa8ABhtHuGCU=;
+        b=YA+kICQrBmV0PLuxaiOxmorWhb75h4kt+gKZ5Sh6PjIdfKyZjqeHUzx7+oFcLCQIeB
+         dkKwjFaucvxeTVT+hl0vrEDD2TwGxPUrhuM8lY0OyiA0Li515i8LU9lldyvdb0JmwRFp
+         c6kdd4tRKtX8HWyyzqLC8zuFgLilL+oPODNEA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1FCE5iC4BBC2eXOp5i6IQ7gQBc6Hx/LSa8ABhtHuGCU=;
+        b=pPa8TaYsIolWLvkCDNS/gc9kbFZRtfRGk1moTahab4k4Xk+eSD71XHMl4w2WwoeoVp
+         WcA/vQlVzR+PtHkSofZ7ZRh8v0pT0MLgavm2CEE7nrtV0g2Cxs+vAjAXPQL0RQGX0v6F
+         u0GdOdJCzC3triTq7gHC4NtA32+w8lrM6fVnBRsarJygUxR3D5QpQsJy91m5Wj9H3qKM
+         0xmoSKtRN+eFuOeBmyIIIThrqRxmyy9LCJimYTiAt34GKbT66pIIMFtM67bMYy15HqZl
+         i8+141JQrj7woRiMJJAWW/erQwsykRFH1TJb0jDzmLOZX2RlqBQjn4o4TsVGENLIFUzl
+         Isyw==
+X-Gm-Message-State: AHQUAub0jZY7SyOpoBlJLxNTCFzbLr/DF//v02Y8OwMN21yRu5QrcAAM
+        dYvIEpzTjRlM60s2A6Ubopd9oA==
+X-Google-Smtp-Source: AHgI3IbIEXB71RRU4F0E57ZPpEw15kxNZPxOfffBh1cbGliozorDBZzaJ8pPM85NQI2di/ryDPR7CA==
+X-Received: by 2002:ac8:2cd1:: with SMTP id 17mr20832074qtx.299.1550550880201;
+        Mon, 18 Feb 2019 20:34:40 -0800 (PST)
+Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
+        by smtp.gmail.com with ESMTPSA id a3sm8047255qkd.86.2019.02.18.20.34.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Feb 2019 20:34:39 -0800 (PST)
+Date:   Mon, 18 Feb 2019 23:34:38 -0500
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        atish patra <atishp04@gmail.com>,
+        Daniel Colascione <dancol@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Manoj Rao <linux@manojrajarao.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Yonghong Song <yhs@fb.com>
+Subject: Re: [PATCH v2 1/2] Provide in-kernel headers for making it easy to
+ extend the kernel
+Message-ID: <20190219043438.GC201007@google.com>
+References: <20190211143600.15021-1-joel@joelfernandes.org>
+ <20190215031926.ljzluy2cfxp64u6o@ast-mbp>
+ <CAK7LNAThSm1n1B_Ss0gRDZ3H-DWj2bvpZ+6Ui2jEo4Pt9YynEA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.11.1902181945240.1821@eggly.anvils>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9171 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902190034
+In-Reply-To: <CAK7LNAThSm1n1B_Ss0gRDZ3H-DWj2bvpZ+6Ui2jEo4Pt9YynEA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 08:23:20PM -0800, Hugh Dickins wrote:
-> On Fri, 15 Feb 2019, Hugh Dickins wrote:
-> > On Thu, 14 Feb 2019, Darrick J. Wong wrote:
-> > > > On Mon, 11 Feb 2019 15:18:11 +0100 Matej Kupljen <matej.kupljen@gmail.com> wrote:
-> > > > > 
-> > > > > it seems that when opening file on file system that is mounted on
-> > > > > tmpfs with the O_TMPFILE flag and using linkat call after that, it
-> > > > > uses 2 inodes instead of 1.
-> ...
-> > > 
-> > > Heh, tmpfs and its weird behavior where each new link counts as a new
-> > > inode because "each new link needs a new dentry, pinning lowmem, and
-> > > tmpfs dentries cannot be pruned until they are unlinked."
-> > 
-> > That's very much a peculiarity of tmpfs, so agreed: it's what I expect
-> > to be the cause, but I've not actually tracked it through and fixed yet.
-> ...
-> > 
-> > > I /think/ the proper fix is to change shmem_link to decrement ifree only
-> > > if the inode has nonzero nlink, e.g.
-> > > 
-> > > 	/*
-> > > 	 * No ordinary (disk based) filesystem counts links as inodes;
-> > > 	 * but each new link needs a new dentry, pinning lowmem, and
-> > > 	 * tmpfs dentries cannot be pruned until they are unlinked.  If
-> > > 	 * we're linking an O_TMPFILE file into the tmpfs we can skip
-> > > 	 * this because there's still only one link to the inode.
-> > > 	 */
-> > > 	if (inode->i_nlink > 0) {
-> > > 		ret = shmem_reserve_inode(inode->i_sb);
-> > > 		if (ret)
-> > > 			goto out;
-> > > 	}
-> > > 
-> > > Says me who was crawling around poking at O_TMPFILE behavior all morning.
-> > > Not sure if that's right; what happens to the old dentry?
+On Tue, Feb 19, 2019 at 01:14:11PM +0900, Masahiro Yamada wrote:
+> On Fri, Feb 15, 2019 at 11:48 PM Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
+> >
+> > On Mon, Feb 11, 2019 at 09:35:59AM -0500, Joel Fernandes (Google) wrote:
+> > > Introduce in-kernel headers and other artifacts which are made available
+> > > as an archive through proc (/proc/kheaders.txz file).
 > 
-> Not sure what you mean by "what happens to the old dentry?"
-> But certainly the accounting feels a bit like a shell game,
-> and my attempts to explain it have not satisfied even me.
 > 
-> The way I'm finding it helpful to think, is to imagine tmpfs'
-> count of inodes actually to be implemented as a count of dentries.
-> And the 1 for the last remaining goes away in the shmem_free_inode()
-> at the end of shmem_evict_inode().  Does that answer "what happens"?
+> The extension '.txz' is not used in kernel code.
 > 
-> Since applying the patch, I have verified (watching "dentry" and
-> "shmem_inode_cache" in /proc/slabinfo) that doing Matej's sequence
-> repeatedly does not leak any "df -i" nor dentries nor inodes.
 > 
-> > 
-> > I'm relieved to see your "/think/" above and "Not sure" there :)
-> > Me too.  It is so easy to get these counting things wrong, especially
-> > when distributed between the generic and the specific file system.
-> > 
-> > I'm not going to attempt a pronouncement until I've had time to
-> > sink properly into it at the weekend, when I'll follow your guide
-> > and work it through - thanks a lot for getting this far, Darrick.
+> '.tar.xz' is used for 'tarxz-pkg', 'perf-tarxz-src-pkg' etc.
 > 
-> I have now sunk into it, and sure that I agree with your patch,
-> filled out below (I happen to have changed "inode->i_nlink > 0" to
-> "inode->i_nlink" just out of some personal preference at the time).
-> One can argue that it's not technically quite the right place, but
-> it is the place where we can detect the condition without getting
-> into unnecessary further complications, and does the job well enough.
 > 
-> May I change "Suggested-by: Darrick J. Wong <darrick.wong@oracle.com>"
-> to your "Signed-off-by" before sending on to Andrew "From" you?
+> $ git grep  '\.txz'
+> $ git grep  '\.tar\.xz'
+> Documentation/admin-guide/README.rst:     xz -cd linux-4.X.tar.xz | tar xvf -
+> arch/x86/crypto/camellia-aesni-avx-asm_64.S: *
+> http://koti.mbnet.fi/axh/crypto/camellia-BSD-1.2.0-aesni1.tar.xz
+> crypto/testmgr.h: *   https://bench.cr.yp.to/supercop/supercop-20170228.tar.xz
+> crypto/testmgr.h: *   https://bench.cr.yp.to/supercop/supercop-20170228.tar.xz
+> crypto/testmgr.h: *   https://bench.cr.yp.to/supercop/supercop-20170228.tar.xz
+> crypto/testmgr.h: *   https://bench.cr.yp.to/supercop/supercop-20170228.tar.xz
+> crypto/testmgr.h: *   https://bench.cr.yp.to/supercop/supercop-20170228.tar.xz
+> scripts/package/Makefile:       @echo '  perf-tarxz-src-pkg  - Build
+> $(perf-tar).tar.xz source tarball'
+> tools/testing/selftests/gen_kselftest_tar.sh:
+>  ext=".tar.xz"
+> 
+> 
+> 
+> I prefer '.tar.xz' for consistency.
 
-That's fine with me!
+Ok, I will change it to that.
 
-> Thanks!
-> Hugh
+> BTW, have you ever looked at scripts/extract-ikconfig?
 > 
-> [PATCH] tmpfs: fix link accounting when a tmpfile is linked in
+> You added IKHD_ST and IKHD_ED
+> just to mimic kernel/configs.c
 > 
-> tmpfs has a peculiarity of accounting hard links as if they were separate
-> inodes: so that when the number of inodes is limited, as it is by default,
-> a user cannot soak up an unlimited amount of unreclaimable dcache memory
-> just by repeatedly linking a file.
-> 
-> But when v3.11 added O_TMPFILE, and the ability to use linkat() on the fd,
-> we missed accommodating this new case in tmpfs: "df -i" shows that an
-> extra "inode" remains accounted after the file is unlinked and the fd
-> closed and the actual inode evicted.  If a user repeatedly links tmpfiles
-> into a tmpfs, the limit will be hit (ENOSPC) even after they are deleted.
-> 
-> Just skip the extra reservation from shmem_link() in this case: there's
-> a sense in which this first link of a tmpfile is then cheaper than a
-> hard link of another file, but the accounting works out, and there's
-> still good limiting, so no need to do anything more complicated.
-> 
-> Fixes: f4e0c30c191 ("allow the temp files created by open() to be linked to")
-> Reported-by: Matej Kupljen <matej.kupljen@gmail.com>
-> Suggested-by: Darrick J. Wong <darrick.wong@oracle.com>
+> It is currently pointless without the extracting tool,
+> but you might think it is useful to extract headers
+> from vmlinux or the module without mounting procfs.
 
-Or if you prefer:
+I am planing add to extraction support in the future, so I prefer to leave the
+markers as it is for now. Hope that's Ok with you.
 
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
---D
-
-> Signed-off-by: Hugh Dickins <hughd@google.com>
-> ---
+> > > This archive makes
+> > > it possible to build kernel modules, run eBPF programs, and other
+> > > tracing programs that need to extend the kernel for tracing purposes
+> > > without any dependency on the file system having headers and build
+> > > artifacts.
+> > >
+> > > On Android and embedded systems, it is common to switch kernels but not
+> > > have kernel headers available on the file system. Raw kernel headers
+> > > also cannot be copied into the filesystem like they can be on other
+> > > distros, due to licensing and other issues. There's no linux-headers
+> > > package on Android. Further once a different kernel is booted, any
+> > > headers stored on the file system will no longer be useful. By storing
+> > > the headers as a compressed archive within the kernel, we can avoid these
+> > > issues that have been a hindrance for a long time.
+> >
+> > The set looks good to me and since the main use case is building bpf progs
+> > I can route it via bpf-next tree if there are no objections.
+> > Masahiro, could you please ack it?
 > 
->  mm/shmem.c |   10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
 > 
-> --- 5.0-rc7/mm/shmem.c	2019-01-06 19:15:45.764805103 -0800
-> +++ linux/mm/shmem.c	2019-02-18 13:56:48.388032606 -0800
-> @@ -2854,10 +2854,14 @@ static int shmem_link(struct dentry *old
->  	 * No ordinary (disk based) filesystem counts links as inodes;
->  	 * but each new link needs a new dentry, pinning lowmem, and
->  	 * tmpfs dentries cannot be pruned until they are unlinked.
-> +	 * But if an O_TMPFILE file is linked into the tmpfs, the
-> +	 * first link must skip that, to get the accounting right.
->  	 */
-> -	ret = shmem_reserve_inode(inode->i_sb);
-> -	if (ret)
-> -		goto out;
-> +	if (inode->i_nlink) {
-> +		ret = shmem_reserve_inode(inode->i_sb);
-> +		if (ret)
-> +			goto out;
-> +	}
->  
->  	dir->i_size += BOGO_DIRENT_SIZE;
->  	inode->i_ctime = dir->i_ctime = dir->i_mtime = current_time(inode);
+> Honestly, I was not tracking this thread
+> since I did not know I was responsible for this.
+> 
+> 
+> I just started to take a closer look, then immediately got scared.
+> 
+> This version is not mature enough for the merge.
+> First of all, this patch cannot be compiled out-of-tree (O= option).
+
+Oh, ok. This is not how I build the kernel. So I am sorry for missing that. I
+will try this out-of-tree build option and fix it.
+
+
+> I do not know why 0-day bot did not catch this apparent breakage.
+> 
+> 
+> $ make -j8 O=hoge
+> make[1]: Entering directory '/home/masahiro/workspace/bsp/linux/hoge'
+>   GEN     Makefile
+>   Using .. as source for kernel
+>   DESCEND  objtool
+>   CALL    ../scripts/checksyscalls.sh
+>   CHK     include/generated/compile.h
+> make[2]: *** No rule to make target 'Module.symvers', needed by
+> 'kernel/kheaders_data.txz'.  Stop.
+> make[2]: *** Waiting for unfinished jobs....
+> /home/masahiro/workspace/bsp/linux/Makefile:1043: recipe for target
+> 'kernel' failed
+> make[1]: *** [kernel] Error 2
+> make[1]: *** Waiting for unfinished jobs....
+> make[1]: Leaving directory '/home/masahiro/workspace/bsp/linux/hoge'
+> Makefile:152: recipe for target 'sub-make' failed
+> make: *** [sub-make] Error 2
+> 
+> 
+> 
+> 
+> 
+> I was able to compile it in-tree
+> but it makes the incremental build extremely slow.
+> 
+> (Here, the incremental build means
+> "make" without changing any code after the full build.)
+> 
+> 
+> 
+> 
+> Before this patch, "make -j8" took 11 sec on my machine.
+> 
+> real 0m11.777s
+> user 0m16.608s
+> sys 0m5.164s
+> 
+> 
+> 
+> After this patch, x86_64_defconfig + CONFIG_IKHEADERS_PROC=y
+> takes 53 sec for me since kernel/kheaders_data.txz is regenerated
+> every time even when you did not touch any source file.
+
+Hmm, true. Let me know look into that as well..
+
+
+> $ time make -j8
+>   DESCEND  objtool
+>   CALL    scripts/checksyscalls.sh
+>   CHK     include/generated/compile.h
+>   GEN     kernel/kheaders_data.txz
+>   UPD     kernel/kheaders_data.h
+>   CC      kernel/kheaders.o
+>   AR      kernel/built-in.a
+>   GEN     .version
+>   CHK     include/generated/compile.h
+>   UPD     include/generated/compile.h
+>   CC      init/version.o
+>   AR      init/built-in.a
+>   AR      built-in.a
+>   LD      vmlinux.o
+>   MODPOST vmlinux.o
+>   KSYM    .tmp_kallsyms1.o
+>   KSYM    .tmp_kallsyms2.o
+>   LD      vmlinux
+>   SORTEX  vmlinux
+>   SYSMAP  System.map
+>   Building modules, stage 2.
+>   CC      arch/x86/boot/version.o
+>   MODPOST 17 modules
+>   VOFFSET arch/x86/boot/compressed/../voffset.h
+>   OBJCOPY arch/x86/boot/compressed/vmlinux.bin
+>   RELOCS  arch/x86/boot/compressed/vmlinux.relocs
+>   CC      arch/x86/boot/compressed/kaslr.o
+>   GZIP    arch/x86/boot/compressed/vmlinux.bin.gz
+>   CC      arch/x86/boot/compressed/misc.o
+>   MKPIGGY arch/x86/boot/compressed/piggy.S
+>   AS      arch/x86/boot/compressed/piggy.o
+>   LD      arch/x86/boot/compressed/vmlinux
+>   ZOFFSET arch/x86/boot/zoffset.h
+>   OBJCOPY arch/x86/boot/vmlinux.bin
+>   AS      arch/x86/boot/header.o
+>   LD      arch/x86/boot/setup.elf
+>   OBJCOPY arch/x86/boot/setup.bin
+>   BUILD   arch/x86/boot/bzImage
+> Setup is 15612 bytes (padded to 15872 bytes).
+> System is 12673 kB
+> CRC 697aaf88
+> Kernel: arch/x86/boot/bzImage is ready  (#6)
+> 
+> real 0m53.024s
+> user 0m32.076s
+> sys 0m9.296s
+> 
+> 
+> 
+> 
+> Also, I notice $(ARCH) must be fixed to $(SRCARCH),
+> but that is one of minor issues.
+
+Ok.
+
+> We should take time for careful review and test.
+
+Yes, I agree.
+
+> Please give me more time for thorough review.
+
+Sure. Thanks a lot for the feedback provided so far. I will send another
+revision soon with all the suggestions addressed.
+
+thanks,
+
+ - Joel
+
