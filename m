@@ -2,159 +2,152 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82DB8C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A60C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 482622147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:23:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49CFE21773
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:23:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="EoAxEwk0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vVjZ0lDD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729171AbfBSQXd (ORCPT
+        id S1729216AbfBSQXh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:23:33 -0500
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:53649 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726357AbfBSQX2 (ORCPT
+        Tue, 19 Feb 2019 11:23:37 -0500
+Received: from mail-it1-f174.google.com ([209.85.166.174]:53325 "EHLO
+        mail-it1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729176AbfBSQXh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:23:28 -0500
-X-IronPort-AV: E=Sophos;i="5.58,388,1544511600"; 
-   d="scan'208";a="24900744"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 19 Feb 2019 09:23:28 -0700
-Received: from NAM03-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.108) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Tue, 19 Feb 2019 09:15:46 -0700
+        Tue, 19 Feb 2019 11:23:37 -0500
+Received: by mail-it1-f174.google.com with SMTP id x131so7394337itc.3;
+        Tue, 19 Feb 2019 08:23:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JY7GvmbuAaxNBLOEE7xZE1/vfiU3KrxExZBcGNXC7wY=;
- b=EoAxEwk076lks+3ECu0q4AHx48zXw9ixwqhUeB4jUG3lWQdKAVX/3roUwKH3s8yQZUS9Sn0hHT4n4UQp3/3wW9nX93GCX9N5kirHbNnL4bSXvf+q57en+rIpcNUW2PTm11BhGMBjl0IWY/Lb+HAO0G2Lr2Cs710fHav3EF8XD54=
-Received: from CY4PR11MB1256.namprd11.prod.outlook.com (10.169.252.10) by
- CY4PR11MB1894.namprd11.prod.outlook.com (10.175.61.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.19; Tue, 19 Feb 2019 16:15:45 +0000
-Received: from CY4PR11MB1256.namprd11.prod.outlook.com
- ([fe80::d9cc:7741:4930:cda3]) by CY4PR11MB1256.namprd11.prod.outlook.com
- ([fe80::d9cc:7741:4930:cda3%8]) with mapi id 15.20.1643.014; Tue, 19 Feb 2019
- 16:15:45 +0000
-From:   <Codrin.Ciubotariu@microchip.com>
-To:     <lgirdwood@gmail.com>, <broonie@kernel.org>
-CC:     <dannenberg@ti.com>, <m-stecklein@ti.com>, <afd@ti.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <Codrin.Ciubotariu@microchip.com>
-Subject: [PATCH 2/2] ASoC: codecs: pcm186x: Fix energysense SLEEP bit
-Thread-Topic: [PATCH 2/2] ASoC: codecs: pcm186x: Fix energysense SLEEP bit
-Thread-Index: AQHUyG5eWxMaMcb2I023e1WqlUDrqQ==
-Date:   Tue, 19 Feb 2019 16:15:45 +0000
-Message-ID: <20190219161518.1331-2-codrin.ciubotariu@microchip.com>
-References: <20190219161518.1331-1-codrin.ciubotariu@microchip.com>
-In-Reply-To: <20190219161518.1331-1-codrin.ciubotariu@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1P194CA0054.EURP194.PROD.OUTLOOK.COM
- (2603:10a6:803:3c::43) To CY4PR11MB1256.namprd11.prod.outlook.com
- (2603:10b6:903:25::10)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Codrin.Ciubotariu@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 82fd4bd7-ecc1-4b70-df55-08d69685804c
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:CY4PR11MB1894;
-x-ms-traffictypediagnostic: CY4PR11MB1894:
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;CY4PR11MB1894;23:k1OfuaXAuEHisM/3fWO1YfLLsAUVzVFHySwC2IZ?=
- =?iso-8859-1?Q?KTf51qZ6jpORDBSo6ET06m6Ux4LmZFylSTZYBC5lMsJ7JcR59lm7pDiPp5?=
- =?iso-8859-1?Q?h0ak9wLdS/PkT8akuvE2md0Rl0w1EbkJxBTNTWoXkT8YRDgZCiXNTr/gpz?=
- =?iso-8859-1?Q?ChQChN+aMkzqNYQ9f4OMdaD5dAqyVHmk5lIcmEykEsglJlJc3vEl1JTjJX?=
- =?iso-8859-1?Q?GT2PDjK6SviEYYQElanRGn7uuIHq6jkFS1/Dkc+Q/QpK4PUw2fon/zDU0/?=
- =?iso-8859-1?Q?MRkoetJkET/CtiNhtP0hLnDqAbF63BOqYjSulEv/C2ZM/+gnVY5JOmrfVO?=
- =?iso-8859-1?Q?IP4try8Kj6t68ssmEXE25J1Z88Wn3XKzhm5+Ia2oRrgJpuX5cPUez/BuKr?=
- =?iso-8859-1?Q?xnYSmGJvDnu5l+0j23ulUWUmxuaDmh38uwrdXnSuwJIqnBFm4Bna1TFCn5?=
- =?iso-8859-1?Q?YopjckjIj8V7rACex09Usg/gRGd5RXq+RaF4tV5GMT+2lJ6KqQhyZFWvAe?=
- =?iso-8859-1?Q?0BAvTAidRPxIL/fqTVUmRRl21LWIqRRIDOjDCzknNTfcalSKk2klAE0K7N?=
- =?iso-8859-1?Q?vcfAesi1QdNyySwyvnjtouMZXPvF/w+w/IXobU1gLx9ooDXhlPHRFGQmr+?=
- =?iso-8859-1?Q?Vxxf1/IJRp+D4ppex7/K7g/3S/0VxsULIX9o/YqafjHuk1cjg2fCDFDNsq?=
- =?iso-8859-1?Q?+LgAtltlNBPl55fzhLwO+l0it4z3jf9xZjQXDNergzzyOnD/oSSlZMbbVS?=
- =?iso-8859-1?Q?gnj9MU4aq7PilvrXHQJCNxJcgbiVZHXtUUhdUUhsINdCM0ape6IhdfyKaq?=
- =?iso-8859-1?Q?3n0tkAPTSg5BlC1gmvGqacVaOTCdu9a88QcBJSRqWJQeF1onCx64CiIe5d?=
- =?iso-8859-1?Q?MfOWw7J1qSKuBxMc3KLctRbzw72JeN7JAPXL+FdPRanSy6zmssv0sFBowa?=
- =?iso-8859-1?Q?eiHsjD6SHU/l7yj9zqnKwrf1pSq3oseBC8onOFMEw7WnT9Dj1jZxLBNTJz?=
- =?iso-8859-1?Q?hKcr+R70CEXdlBD3lnr+bkl37BOO7GdSBx+uH24uLn9QmchxniEi5foFaS?=
- =?iso-8859-1?Q?/360nlv5ShLyImFDYgpMMzhJg9W2CapKZX5h3eN2sDi9gFv3UP5hSEH8qP?=
- =?iso-8859-1?Q?QNXgKZctJtoCRr9W/Rf2Cz13aK8lGNwpFpHCwzEkw3+V9wZNvj0eUce7mu?=
- =?iso-8859-1?Q?sIkiA2RMT4XAf2uSiz77pk192K/dAwQRz1yPQf3LJmTNStUtBuGOuLLiWK?=
- =?iso-8859-1?Q?dcYbrg00YmgOLmu3AOIh+28QSPXUdUmxYDRgPb2ziiFhmUX3+/mVfB24m6?=
- =?iso-8859-1?Q?zrNYtCh5thOaBgaHZpK6+rKyhESD9nTsu4Rak4Vf7+uwA=3D=3D?=
-x-microsoft-antispam-prvs: <CY4PR11MB18942D91E47D3F173FF942FBE77C0@CY4PR11MB1894.namprd11.prod.outlook.com>
-x-forefront-prvs: 09538D3531
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(39860400002)(366004)(136003)(396003)(189003)(199004)(81156014)(81166006)(2906002)(71190400001)(256004)(86362001)(52116002)(66066001)(5660300002)(14454004)(6486002)(11346002)(97736004)(2501003)(71200400001)(107886003)(446003)(476003)(50226002)(72206003)(4326008)(105586002)(8936002)(8676002)(25786009)(2616005)(106356001)(99286004)(110136005)(76176011)(486006)(6116002)(3846002)(386003)(316002)(305945005)(478600001)(36756003)(26005)(54906003)(68736007)(53936002)(6506007)(1076003)(102836004)(6512007)(186003)(6436002)(7736002)(197533005);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR11MB1894;H:CY4PR11MB1256.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: ajKOrcxpfMye2EKO5iJosr0wF7MC8dlEUEgw1MC7GDNZcELQoiy7RUdnJU3i96tQeZBo7u+H5ExLnPbCluhokqvITzci9sSleIutfeqxz4AuZTPOcEpidn1Qpe2uD4tkj9i0pR3bgByrJrqCPuRy9vMwMB4VLRmNZRR7TEPa+A4qwvflPgq9XGoUdRuesfTJ6uLglURZr6LV7mzOWPZY6xwj6pKRt2KL/Skt0MCZD6uCERHKxJ/nppH8g9/xVf6FrXVrmYt2zqnD+MGY1fW2o7PLS583Fgzz6x9w5BpywAEuInbJLy4BgjNLxWqxO5dU5C68+3jjCaXR3HJ0dtvRlYpNQI6Ys4P0ByFaHGiR5brHkopL6BJRFDOzAJc4R7VST/J5xjnUX0G8YSoTBWsNEGdmboLWX0Xr8/4LNN4BLxQ=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HhMB84E+/47wn1sZt5liOW3BmGymNyzTutVeoGbw3Vo=;
+        b=vVjZ0lDDJgqtzyfmVB7yib6R85CiAjYjRtnpCVCLdS7FOrHOITIlcn6hVMwjymsZ/K
+         4NU4+i7z1jiZFwHYzV+RpTOpKnWOf9+IZkjDwYnSw1HOUwrwzdZtbzZRcHzmVt+KIJ9w
+         vq+gI2bz/QST+mAkZPulDLeC7cD7xNedmHEwHnSSLRoFOW42Os8bwElDlLywStA4Amwz
+         V6shdY3Jqf9HhrmY17Tmn+lSzKromGFM6+GkQ4DX4MUW76D4Z7FNeUnQCxdxf8875Iy+
+         4mmJp+MntD0O9TRvBj+XKDsX1DqiPwJv7THkaCHz1NaxHVuYVN+eklcNLwTkE/n2O8f2
+         l2vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HhMB84E+/47wn1sZt5liOW3BmGymNyzTutVeoGbw3Vo=;
+        b=Rp5NPOlBatopoQGJ8ClT3ji+zXiJLKoGJAk9LLL5LkqxVZ7teTuSsA6Cf8Ce6eE1LJ
+         R4eQK9r4hWo2TmdoNjnslYZ0El8Xf/zJtGZjsrwx4rcTa+pMp239Z4kkkhjXE8YzWLN0
+         /TjPkEwF2w9UeWQyIhhQKmX9NDeWSPkwVbYUaAfdRzywxs8HakQzZvNKbkRGtFoaA1fm
+         bGVwEgauo6TaQqKsM2HmpytvjoDtNAGKOf9hvzImymkdrczelqDeSltGBbNFeIyXmbj9
+         YcKnjku5bWUcjoX5z8di65MHthskRH83puD5f1Z9pMGNaBnHRdiPcxtCcHJR0ZeoSQ0t
+         PSGw==
+X-Gm-Message-State: AHQUAubBeDKpS6yrQujHGvzRkmy0/0MF2cIgN5m3Sxs+ccjnf9ngRTxg
+        XdzvulJfxEHHVSmn5/TEjpBWbNrDWH+Zez3il9E=
+X-Google-Smtp-Source: AHgI3IblktggL12ItFdn5Ak8ePI0Z61Jgx9yLJp7Ywcmmh6JOO2gq8+GfIH2f8c3gS0ZViv9VTdUNS2ZoemULIM4U7E=
+X-Received: by 2002:a6b:e219:: with SMTP id z25mr16246550ioc.116.1550593415664;
+ Tue, 19 Feb 2019 08:23:35 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 82fd4bd7-ecc1-4b70-df55-08d69685804c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2019 16:15:42.9020
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR11MB1894
-X-OriginatorOrg: microchip.com
+References: <20190204201854.2328-1-nitesh@redhat.com> <af4430fd-0a2c-8f35-b767-3f93fc6db270@redhat.com>
+ <20190218114601-mutt-send-email-mst@kernel.org> <44740a29-bb14-e6e6-2992-98d0ae58e994@redhat.com>
+ <CAKgT0UcHv0S1-ZUpAZ9w=GTLRtG8=-cuoT3fa4Ej2A==aky5dg@mail.gmail.com>
+ <a3b64b60-a745-0ac1-574d-e5904c1bf161@redhat.com> <CAKgT0Ue=A16PhUzqziBBzMXdZ_C1H74-qCttwb8iD6tGCxfp6g@mail.gmail.com>
+ <20190219024611.GC24502@redhat.com>
+In-Reply-To: <20190219024611.GC24502@redhat.com>
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+Date:   Tue, 19 Feb 2019 08:23:24 -0800
+Message-ID: <CAKgT0UdjaPy9TSNVGxmkUoxEpbiB84=n+a4MwYGgi_Hps+wQ_w@mail.gmail.com>
+Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
+To:     Andrea Arcangeli <aarcange@redhat.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Nitesh Narayan Lal <nitesh@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
+        pagupta@redhat.com, wei.w.wang@intel.com,
+        Yang Zhang <yang.zhang.wz@gmail.com>,
+        Rik van Riel <riel@surriel.com>, dodgen@google.com,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        dhildenb@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+On Mon, Feb 18, 2019 at 6:46 PM Andrea Arcangeli <aarcange@redhat.com> wrote:
+>
+> Hello,
+>
+> On Mon, Feb 18, 2019 at 03:47:22PM -0800, Alexander Duyck wrote:
+> > essentially fragmented them. I guess hugepaged went through and
+> > started trying to reassemble the huge pages and as a result there have
+> > been apps that ended up consuming more memory than they would have
+> > otherwise since they were using fragments of THP pages after doing an
+> > MADV_DONTNEED on sections of the page.
+>
+> With relatively recent kernels MADV_DONTNEED doesn't necessarily free
+> anything when it's applied to a THP subpage, it only splits the
+> pagetables and queues the THP for deferred splitting. If there's
+> memory pressure a shrinker will be invoked and the queue is scanned
+> and the THPs are physically splitted, but to be reassembled/collapsed
+> after a physical split it requires at least one young pte.
+>
+> If this is particularly problematic for page hinting, this behavior
+> where the MADV_DONTNEED can be undoed by khugepaged (if some subpage is
+> being frequently accessed), can be turned off by setting
+> /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none to
+> 0. Then the THP will only be collapsed if all 512 subpages are mapped
+> (i.e. they've all be re-allocated by the guest).
+>
+> Regardless of the max_ptes_none default, keeping the smaller guest
+> buddy orders as the last target for page hinting should be good for
+> performance.
 
-The ADCs are sleeping when the SLEEP bit is set and running when it's
-cleared, so the bit should be inverted.
-Tested on pcm1863.
+Okay, this is good to know. Thanks.
 
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
----
- sound/soc/codecs/pcm186x.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> > Yeah, no problem. The only thing I don't like about MADV_FREE is that
+> > you have to have memory pressure before the pages really start getting
+> > scrubbed with is both a benefit and a drawback. Basically it defers
+> > the freeing until you are under actual memory pressure so when you hit
+> > that case things start feeling much slower, that and it limits your
+> > allocations since the kernel doesn't recognize the pages as free until
+> > it would have to start trying to push memory to swap.
+>
+> The guest allocation behavior should not be influenced by MADV_FREE vs
+> MADV_DONTNEED, the guest can't see the difference anyway, so why
+> should it limit the allocations?
 
-diff --git a/sound/soc/codecs/pcm186x.c b/sound/soc/codecs/pcm186x.c
-index 7947279243f9..4477d678797f 100644
---- a/sound/soc/codecs/pcm186x.c
-+++ b/sound/soc/codecs/pcm186x.c
-@@ -157,7 +157,7 @@ static const struct snd_soc_dapm_widget pcm1863_dapm_wi=
-dgets[] =3D {
- 	 * Put the codec into SLEEP mode when not in use, allowing the
- 	 * Energysense mechanism to operate.
- 	 */
--	SND_SOC_DAPM_ADC("ADC", "HiFi Capture", PCM186X_POWER_CTRL, 1,  0),
-+	SND_SOC_DAPM_ADC("ADC", "HiFi Capture", PCM186X_POWER_CTRL, 1,  1),
- };
-=20
- static const struct snd_soc_dapm_widget pcm1865_dapm_widgets[] =3D {
-@@ -183,8 +183,8 @@ static const struct snd_soc_dapm_widget pcm1865_dapm_wi=
-dgets[] =3D {
- 	 * Put the codec into SLEEP mode when not in use, allowing the
- 	 * Energysense mechanism to operate.
- 	 */
--	SND_SOC_DAPM_ADC("ADC1", "HiFi Capture 1", PCM186X_POWER_CTRL, 1,  0),
--	SND_SOC_DAPM_ADC("ADC2", "HiFi Capture 2", PCM186X_POWER_CTRL, 1,  0),
-+	SND_SOC_DAPM_ADC("ADC1", "HiFi Capture 1", PCM186X_POWER_CTRL, 1,  1),
-+	SND_SOC_DAPM_ADC("ADC2", "HiFi Capture 2", PCM186X_POWER_CTRL, 1,  1),
- };
-=20
- static const struct snd_soc_dapm_route pcm1863_dapm_routes[] =3D {
---=20
-2.17.1
+Actually I was talking about the host. So if  have a guest that is
+using MADV_FREE what I have to do is create an allocation that would
+force us to have to access swap and that in turn ends up triggering
+the freeing of the pages that were moved to the "Inactive(file)" list
+by the MADV_FREE call.
 
+The only reason it came up is that one of my test systems had a small
+swap so I ended up having to do multiple allocations and frees in swap
+sized increments to free up memory from a large guest that wasn't in
+use.
+
+> The benefit of MADV_FREE should be that when the same guest frees and
+> reallocates an huge amount of RAM (i.e. guest app allocating and
+> freeing lots of RAM in a loop, not so uncommon), there will be no KVM
+> page fault during guest re-allocations. So in absence of memory
+> pressure in the host it should be a major win. Overall it sounds like
+> a good tradeoff compared to MADV_DONTNEED that forcefully invokes MMU
+> notifiers and forces host allocations and KVM page faults in order to
+> reallocate the same RAM in the same guest.
+
+Right, and I do see that behavior.
+
+> When there's memory pressure it's up to the host Linux VM to notice
+> there's plenty of MADV_FREE material to free at zero I/O cost before
+> starting swapping.
+
+Right.
