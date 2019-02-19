@@ -2,79 +2,86 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B69C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:45:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09135C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:46:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0139B20838
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:45:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD25F2083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:46:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727272AbfBSRpz (ORCPT
+        id S1728117AbfBSRqh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 12:45:55 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34724 "EHLO
+        Tue, 19 Feb 2019 12:46:37 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37854 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726425AbfBSRpz (ORCPT
+        by vger.kernel.org with ESMTP id S1725807AbfBSRqg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 12:45:55 -0500
+        Tue, 19 Feb 2019 12:46:36 -0500
 Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1JHhis9070921
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 12:45:53 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qrkhka6jg-1
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1JHhj1c071008
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 12:46:34 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qrkhka6yp-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 12:45:49 -0500
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 12:46:30 -0500
 Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
-        Tue, 19 Feb 2019 17:45:48 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Tue, 19 Feb 2019 17:46:23 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 19 Feb 2019 17:45:46 -0000
+        Tue, 19 Feb 2019 17:46:19 -0000
 Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1JHjjJX48562362
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1JHkIOE28835916
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 19 Feb 2019 17:45:45 GMT
+        Tue, 19 Feb 2019 17:46:18 GMT
 Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 08184AE055;
-        Tue, 19 Feb 2019 17:45:45 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 712E4AE045;
+        Tue, 19 Feb 2019 17:46:18 +0000 (GMT)
 Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A251CAE045;
-        Tue, 19 Feb 2019 17:45:44 +0000 (GMT)
-Received: from oc2783563651 (unknown [9.152.97.246])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 19 Feb 2019 17:45:44 +0000 (GMT)
-Date:   Tue, 19 Feb 2019 18:45:43 +0100
-From:   Halil Pasic <pasic@linux.ibm.com>
-To:     Pierre Morel <pmorel@linux.ibm.com>
-Cc:     borntraeger@de.ibm.com, cohuck@redhat.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        frankja@linux.ibm.com, akrowiak@linux.ibm.com, david@redhat.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        freude@linux.ibm.com
-Subject: Re: [PATCH v2 1/1] s390: vfio_ap: link the vfio_ap devices to the
- vfio_ap bus subsystem
-In-Reply-To: <1550513328-12646-2-git-send-email-pmorel@linux.ibm.com>
-References: <1550513328-12646-1-git-send-email-pmorel@linux.ibm.com>
-        <1550513328-12646-2-git-send-email-pmorel@linux.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+        by IMSVA (Postfix) with ESMTP id F0A7FAE057;
+        Tue, 19 Feb 2019 17:46:14 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.206.228])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 19 Feb 2019 17:46:14 +0000 (GMT)
+Date:   Tue, 19 Feb 2019 19:46:11 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        "labbott@redhat.com" <labbott@redhat.com>,
+        "mhocko@suse.com" <mhocko@suse.com>,
+        "iamjoonsoo.kim@lge.com" <iamjoonsoo.kim@lge.com>,
+        "rppt@linux.vnet.ibm.com" <rppt@linux.vnet.ibm.com>,
+        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "andreyknvl@google.com" <andreyknvl@google.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "van.freenix@gmail.com" <van.freenix@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH] mm/cma: cma_declare_contiguous: correct err handling
+References: <20190214125704.6678-1-peng.fan@nxp.com>
+ <20190214123824.fe95cc2e603f75382490bfb4@linux-foundation.org>
+ <b78470e8-b204-4a7e-f9cc-eff9c609f480@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b78470e8-b204-4a7e-f9cc-eff9c609f480@suse.cz>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-TM-AS-GCONF: 00
-x-cbid: 19021917-0020-0000-0000-00000318B649
+x-cbid: 19021917-0008-0000-0000-000002C26115
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021917-0021-0000-0000-00002169FDB7
-Message-Id: <20190219184543.25391a2b@oc2783563651>
+x-cbparentid: 19021917-0009-0000-0000-0000222E943D
+Message-Id: <20190219174610.GA32749@rapoport-lnx>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-19_11:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1902190129
@@ -83,80 +90,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 18 Feb 2019 19:08:48 +0100
-Pierre Morel <pmorel@linux.ibm.com> wrote:
-
-> Libudev relies on having a subsystem link for non-root devices. To
-> avoid libudev (and potentially other userspace tools) choking on the
-> matrix device let us introduce a vfio_ap bus and with that the vfio_ap
-> bus subsytem, and make the matrix device reside within it.
+On Tue, Feb 19, 2019 at 05:55:33PM +0100, Vlastimil Babka wrote:
+> On 2/14/19 9:38 PM, Andrew Morton wrote:
+> > On Thu, 14 Feb 2019 12:45:51 +0000 Peng Fan <peng.fan@nxp.com> wrote:
+> > 
+> >> In case cma_init_reserved_mem failed, need to free the memblock allocated
+> >> by memblock_reserve or memblock_alloc_range.
+> >>
+> >> ...
+> >>
+> >> --- a/mm/cma.c
+> >> +++ b/mm/cma.c
+> >> @@ -353,12 +353,14 @@ int __init cma_declare_contiguous(phys_addr_t base,
+> >>  
+> >>  	ret = cma_init_reserved_mem(base, size, order_per_bit, name, res_cma);
+> >>  	if (ret)
+> >> -		goto err;
+> >> +		goto free_mem;
+> >>  
+> >>  	pr_info("Reserved %ld MiB at %pa\n", (unsigned long)size / SZ_1M,
+> >>  		&base);
+> >>  	return 0;
+> >>  
+> >> +free_mem:
+> >> +	memblock_free(base, size);
+> >>  err:
+> >>  	pr_err("Failed to reserve %ld MiB\n", (unsigned long)size / SZ_1M);
+> >>  	return ret;
+> > 
+> > This doesn't look right to me.  In the `fixed==true' case we didn't
+> > actually allocate anything and in the `fixed==false' case, the
+> > allocated memory is at `addr', not at `base'.
 > 
-> Doing this we need to suppress the forced link from the matrix device to
-> the vfio_ap driver and we suppress the device_type we do not need
-> anymore.
-> 
-> Since the associated matrix driver is not the vfio_ap driver any more,
-> we have to change the search for the devices on the vfio_ap driver in
-> the function vfio_ap_verify_queue_reserved.
-> 
-> Reported-by: Marc Hartmayer <mhartmay@linux.ibm.com>
-> Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> ---
->  drivers/s390/crypto/vfio_ap_drv.c     | 48 +++++++++++++++++++++++++++++------
->  drivers/s390/crypto/vfio_ap_ops.c     |  4 +--
->  drivers/s390/crypto/vfio_ap_private.h |  1 +
->  3 files changed, 43 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
-> index 31c6c84..8e45559 100644
-> --- a/drivers/s390/crypto/vfio_ap_drv.c
-> +++ b/drivers/s390/crypto/vfio_ap_drv.c
-> @@ -24,10 +24,6 @@ MODULE_LICENSE("GPL v2");
->  
->  static struct ap_driver vfio_ap_drv;
->  
-> -static struct device_type vfio_ap_dev_type = {
-> -	.name = VFIO_AP_DEV_TYPE_NAME,
-> -};
-> -
+> I think it's ok as the fixed==true path has "memblock_reserve()", but
+> better leave this to the memblock maintainer :)
 
-Would have been nice had you mentioned this in the commit message --
-vfio_ap_dev_type was useless. And you should have removed
-the define of VFIO_AP_DEV_TYPE_NAME a couple of lines above this.
+As Peng Fan noted in the other e-mail, fixed==true has memblock_reserve()
+and fixed==false resets base = addr, so this is Ok.
+ 
+> There's also 'kmemleak_ignore_phys(addr)' which should probably be
+> undone (or not called at all) in the failure case. But it seems to be
+> missing from the fixed==true path?
 
->  struct ap_matrix_dev *matrix_dev;
->  
->  /* Only type 10 adapters (CEX4 and later) are supported
-> @@ -62,6 +58,27 @@ static void vfio_ap_matrix_dev_release(struct device *dev)
->  	kfree(matrix_dev);
->  }
->  
-> +static int matrix_bus_match(struct device *dev, struct device_driver *drv)
-> +{
-> +	return 1;
-> +}
-> +
-> +static struct bus_type matrix_bus = {
-> +	.name = "vfio_ap",
-> +	.match = &matrix_bus_match,
-> +};
-> +
-> +static int matrix_probe(struct device *dev)
-> +{
-> +	return 0;
-> +}
-> +
-> +static struct device_driver matrix_driver = {
-> +	.name = "vfio_ap",
-> +	.bus = &matrix_bus,
-> +	.probe = matrix_probe,
-> +};
-> +
+Well, memblock and kmemleak interaction does not seem to have clear
+semantics anyway. memblock_free() calls kmemleak_free_part_phys() which
+does not seem to care about ignored objects.
+As for the fixed==true path, memblock_reserve() does not register the area
+with kmemleak, so there would be no object to free in memblock_free().
+AFAIU, kmemleak simply ignores this.
 
-With the changes suggested by Christian:
+Catalin, can you comment please?
 
-Acked-by: Halil Pasic <pasic@linux.ibm.com>
-
-[..]
+-- 
+Sincerely yours,
+Mike.
 
