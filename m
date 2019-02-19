@@ -2,111 +2,79 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F72BC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:01:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE5E6C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:09:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D6B12086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:01:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94F0B2146F
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 21:09:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbfBSVBw (ORCPT
+        id S1727621AbfBSVJ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 16:01:52 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:35977 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfBSVBw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 16:01:52 -0500
-Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gwCWP-00009n-KW; Tue, 19 Feb 2019 22:01:45 +0100
-Date:   Tue, 19 Feb 2019 22:01:45 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Hans de Goede <hdegoede@redhat.com>
-cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: False positive "do_IRQ: #.55 No irq handler for vector" messages
- on AMD ryzen based laptops
-In-Reply-To: <95e76875-f6b2-cbea-cd74-dc14ee77b2f8@redhat.com>
-Message-ID: <alpine.DEB.2.21.1902192144390.1644@nanos.tec.linutronix.de>
-References: <95e76875-f6b2-cbea-cd74-dc14ee77b2f8@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Tue, 19 Feb 2019 16:09:57 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:44070 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726511AbfBSVJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 16:09:56 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0C46C1A0064;
+        Tue, 19 Feb 2019 22:09:55 +0100 (CET)
+Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C28ED1A011E;
+        Tue, 19 Feb 2019 22:09:54 +0100 (CET)
+Received: from someleo.am.freescale.net (someleo.am.freescale.net [10.81.33.49])
+        by inv1260.us-phx01.nxp.com (Postfix) with ESMTP id EB90340CAF;
+        Tue, 19 Feb 2019 14:09:53 -0700 (MST)
+From:   Li Yang <leoyang.li@nxp.com>
+To:     arm@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        shawnguo@kernel.org
+Subject: [GIT PULL] updates to soc/fsl drivers for v5.1 take3
+Date:   Tue, 19 Feb 2019 15:09:53 -0600
+Message-Id: <20190219210953.1840-1-leoyang.li@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hans,
+Hi arm-soc maintainers,
 
-On Tue, 19 Feb 2019, Hans de Goede wrote:
+Please help to look into the following changes on top of previous
+pull request and merge them if they look good.
 
-Cc+: ACPI/AMD folks
 
-> Various people are reporting false positive "do_IRQ: #.55 No irq handler for
-> vector"
-> messages on AMD ryzen based laptops, see e.g.:
-> 
-> https://bugzilla.redhat.com/show_bug.cgi?id=1551605
-> 
-> Which contains this dmesg snippet:
-> 
-> Feb 07 20:14:29 localhost.localdomain kernel: smp: Bringing up secondary CPUs
-> ...
-> Feb 07 20:14:29 localhost.localdomain kernel: x86: Booting SMP configuration:
-> Feb 07 20:14:29 localhost.localdomain kernel: .... node  #0, CPUs:      #1
-> Feb 07 20:14:29 localhost.localdomain kernel: do_IRQ: 1.55 No irq handler for
-> vector
-> Feb 07 20:14:29 localhost.localdomain kernel:  #2
-> Feb 07 20:14:29 localhost.localdomain kernel: do_IRQ: 2.55 No irq handler for
-> vector
-> Feb 07 20:14:29 localhost.localdomain kernel:  #3
-> Feb 07 20:14:29 localhost.localdomain kernel: do_IRQ: 3.55 No irq handler for
-> vector
-> Feb 07 20:14:29 localhost.localdomain kernel: smp: Brought up 1 node, 4 CPUs
-> Feb 07 20:14:29 localhost.localdomain kernel: smpboot: Max logical packages: 1
-> Feb 07 20:14:29 localhost.localdomain kernel: smpboot: Total of 4 processors
-> activated (15968.49 BogoMIPS)
-> 
-> It seems that we get an IRQ for each CPU as we bring it online,
-> which feels to me like it is some sorta false-positive.
+The following changes since commit 3c0d64e867ed78a782a8a00d3b519396d9c5a2db:
 
-Sigh, that looks like BIOS value add again.
+  soc: fsl: guts: reuse machine name from device tree (2019-01-11 16:08:43 -0600)
 
-It's not a false positive. Something _IS_ sending a vector 55 to these CPUs
-for whatever reason.
+are available in the Git repository at:
 
-> I temporarily have access to a loaner laptop for a couple of weeks which shows
-> the same errors and I would like to fix this, but I don't really know how to
-> fix this.
+  git://git.kernel.org/pub/scm/linux/kernel/git/leo/linux.git tags/soc-fsl-next-v5.1-3
 
-Can you please enable CONFIG_GENERIC_IRQ_DEBUGFS and dig in the files there
-whether vector 55 is used on CPU0 and which device is associated to that.
+for you to fetch changes up to bd3bd3b36df725645036748e58a8c35c8d2cbf91:
 
-I bet its a legacy IRQ and as that space starts at 48 (IRQ0) this should be
-IRQ9 which is usually - DRUMROLL - the ACPI interrupt.
+  soc: fsl: dpio: fix memory leak of a struct qbman on error exit path (2019-02-19 14:59:39 -0600)
 
-The kernel clearly sets that up to be delivered to CPU 0 only, but I've
-seen that before that the BIOS value add thinks that this setup is not
-relevant.
+----------------------------------------------------------------
+NXP/FSL SoC driver updates for v5.1 take3
 
-/me goes off and sings LALALA
+DPIO driver
+- fixed a use after free problem
+- fixed a memory leak on error path
 
-> Note if you want I can set up root ssh-access to the laptop.
+----------------------------------------------------------------
+Colin Ian King (1):
+      soc: fsl: dpio: fix memory leak of a struct qbman on error exit path
 
-As a least resort. root ssh - SHUDDER - Ooops now I spilled my preferred
-password for that :)
+Dan Carpenter (1):
+      soc: fsl: dpio: Use after free in dpaa2_dpio_remove()
 
-Thanks,
-
-	tglx
+ drivers/soc/fsl/dpio/dpio-driver.c  | 2 +-
+ drivers/soc/fsl/dpio/qbman-portal.c | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
