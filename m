@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA9C0C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0CA5C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:02:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DDD92147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:02:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBC5E2183F
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:02:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729562AbfBSRCS (ORCPT
+        id S1729601AbfBSRCV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 12:02:18 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:45055 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729459AbfBSRCN (ORCPT
+        Tue, 19 Feb 2019 12:02:21 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:51231 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729537AbfBSRCT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 12:02:13 -0500
+        Tue, 19 Feb 2019 12:02:19 -0500
 X-Originating-IP: 90.53.137.203
 Received: from localhost (alyon-652-1-306-203.w90-53.abo.wanadoo.fr [90.53.137.203])
         (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 6ADCE1C000A;
-        Tue, 19 Feb 2019 17:02:11 +0000 (UTC)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 766276000D;
+        Tue, 19 Feb 2019 17:02:16 +0000 (UTC)
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -33,13 +33,14 @@ Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 4/7] ARM: dts: at91: at91sam9x5: switch to new sckc bindings
-Date:   Tue, 19 Feb 2019 18:01:57 +0100
-Message-Id: <20190219170200.3608-5-alexandre.belloni@bootlin.com>
+Subject: [PATCH 7/7] ARM: dts: at91: sama5d3: switch to new sckc bindings
+Date:   Tue, 19 Feb 2019 18:02:00 +0100
+Message-Id: <20190219170200.3608-8-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190219170200.3608-1-alexandre.belloni@bootlin.com>
 References: <20190219170200.3608-1-alexandre.belloni@bootlin.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -48,47 +49,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Remove the child nodes of the sckc as they are not necessary anymore.
 
+Also, switch to the new atmel,sama5d3-sckc compatible string to use the
+proper startup time for the RC oscillator (500 µs instead of 75).
+
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- arch/arm/boot/dts/at91sam9x5.dtsi | 23 +++--------------------
- 1 file changed, 3 insertions(+), 20 deletions(-)
+ arch/arm/boot/dts/at91-wb50n.dtsi |  2 +-
+ arch/arm/boot/dts/sama5d3.dtsi    | 27 ++++-----------------------
+ 2 files changed, 5 insertions(+), 24 deletions(-)
 
-diff --git a/arch/arm/boot/dts/at91sam9x5.dtsi b/arch/arm/boot/dts/at91sam9x5.dtsi
-index 07443a387a8f..ff50f49842f4 100644
---- a/arch/arm/boot/dts/at91sam9x5.dtsi
-+++ b/arch/arm/boot/dts/at91sam9x5.dtsi
-@@ -148,28 +148,11 @@
- 				clocks = <&pmc PMC_TYPE_CORE PMC_MCK>;
+diff --git a/arch/arm/boot/dts/at91-wb50n.dtsi b/arch/arm/boot/dts/at91-wb50n.dtsi
+index 85692c8ef2b1..4ed8500a5cb8 100644
+--- a/arch/arm/boot/dts/at91-wb50n.dtsi
++++ b/arch/arm/boot/dts/at91-wb50n.dtsi
+@@ -42,7 +42,7 @@
+ 	clock-frequency = <12000000>;
+ };
+ 
+-&slow_osc {
++&clk32k {
+ 	atmel,osc-bypass;
+ };
+ 
+diff --git a/arch/arm/boot/dts/sama5d3.dtsi b/arch/arm/boot/dts/sama5d3.dtsi
+index 1408fa4a62e4..05f6554d4177 100644
+--- a/arch/arm/boot/dts/sama5d3.dtsi
++++ b/arch/arm/boot/dts/sama5d3.dtsi
+@@ -1370,30 +1370,11 @@
+ 				status = "disabled";
  			};
  
 -			sckc@fffffe50 {
+-				compatible = "atmel,at91sam9x5-sckc";
 +			clk32k: sckc@fffffe50 {
- 				compatible = "atmel,at91sam9x5-sckc";
++				compatible = "atmel,sama5d3-sckc";
  				reg = <0xfffffe50 0x4>;
--
--				slow_osc: slow_osc {
--					compatible = "atmel,at91sam9x5-clk-slow-osc";
--					#clock-cells = <0>;
--					clocks = <&slow_xtal>;
--				};
 -
 -				slow_rc_osc: slow_rc_osc {
 -					compatible = "atmel,at91sam9x5-clk-slow-rc-osc";
 -					#clock-cells = <0>;
 -					clock-frequency = <32768>;
 -					clock-accuracy = <50000000>;
+-					atmel,startup-time-usec = <75>;
 -				};
 -
--				clk32k: slck {
+-				slow_osc: slow_osc {
+-					compatible = "atmel,at91sam9x5-clk-slow-osc";
+-					#clock-cells = <0>;
+-					clocks = <&slow_xtal>;
+-					atmel,startup-time-usec = <1200000>;
+-				};
+-
+-				clk32k: slowck {
 -					compatible = "atmel,at91sam9x5-clk-slow";
 -					#clock-cells = <0>;
--					clocks = <&slow_rc_osc>, <&slow_osc>;
+-					clocks = <&slow_rc_osc &slow_osc>;
 -				};
 +				clocks = <&slow_xtal>;
 +				#clock-cells = <0>;
  			};
  
- 			tcb0: timer@f8008000 {
+ 			rtc@fffffeb0 {
 -- 
 2.20.1
 
