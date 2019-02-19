@@ -2,83 +2,158 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D72EC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 491DAC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:20:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65A0F2177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:20:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550571619;
-	bh=iHyTq3trAhhHUYiZiqBypP90etaOVTP6CPP76yXB7n0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=lh77CWXf0c3KG3AOgTGqc4k2MbF1S+ZAXJpGESaJdheVOD0RJO3huRf0G8H+RuoAc
-	 RTBGhSnNXqVtLRVLVUR8i/hWocuF5s/RhWltWYVBSll/tfqdgbcgAZqSvR+m0vCMdH
-	 9mINEBSnRIgfvvbcfHbzB+mu+yMRJQrCxJoS26kA=
+	by mail.kernel.org (Postfix) with ESMTP id 13961217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 10:20:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZoB+65Ye";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="W8Wpr9XM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728121AbfBSKUS (ORCPT
+        id S1728265AbfBSKU0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 05:20:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35950 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726385AbfBSKUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 05:20:17 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DBC82177E;
-        Tue, 19 Feb 2019 10:20:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550571617;
-        bh=iHyTq3trAhhHUYiZiqBypP90etaOVTP6CPP76yXB7n0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=k51tqvzlhwTXJYjdAl7+9MgTgPOwCAQyvVF+r6iu3ZTjUbaEhPdFjrbx/Gacy1Ax2
-         ohFza3TdNiPUnd/dH4ay1P/GfrERB9FEvlV61zIKaPDnAxaFWCU3X1B3gtO8zzFK4X
-         6CiHvXnBnoMhYab2rkzc2TyXAjIZSwgwZjWeTe3k=
-Date:   Tue, 19 Feb 2019 11:20:10 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Marcin Ciupak <marcin.s.ciupak@gmail.com>
-Cc:     Joe Perches <joe@perches.com>, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH v4] staging: nrf24: add new driver for 2.4GHz radio
- transceiver
-Message-ID: <20190219102010.GA18634@kroah.com>
-References: <20190213194035.n2ldlt7xque5qaps@metis.ciupak.eu>
+        Tue, 19 Feb 2019 05:20:26 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:48278 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728167AbfBSKU0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 05:20:26 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 91441609C3; Tue, 19 Feb 2019 10:20:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550571624;
+        bh=J03gcVqxNPsDDBTSK0dIWV201s18cUHgGf7TLBwBHpc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ZoB+65Yed3sjqIvjl/P4B6BoBol2BF//4wKVM6FlupilrYFUfYMU/E54f/+WNzWWI
+         oamh5iMPjS/OIVphOi/AsFDPv3stj19hW4pPs/+JMStfsMyYfVTS34c2ynGpGlV4j0
+         8Fy9VjBZ67f81iiQbkdx7TniPrSz1Xh4QAY2hIxg=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 7FC3A609F2;
+        Tue, 19 Feb 2019 10:20:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550571623;
+        bh=J03gcVqxNPsDDBTSK0dIWV201s18cUHgGf7TLBwBHpc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=W8Wpr9XMxm9vHwnVukeMdiBR5cRr4U/CFWjqHYXQ0IgjZu1/kD73g4/0prnVZU1KX
+         +ihNbHG98clA0k2ST8/Tia1ymEY1Ua+8prwrTZ1QmoxOmxcA/DW2DIX+1DwRTQVXiU
+         j0KWSNZS+bL5qLEFD6UcfUo6LRJkOwy3y3s+QQms=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190213194035.n2ldlt7xque5qaps@metis.ciupak.eu>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 19 Feb 2019 15:50:23 +0530
+From:   stummala@codeaurora.org
+To:     tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     stummala@codeaurora.org
+Subject: huge fsync latencies for a small file on ext4
+Message-ID: <b1ba05256affe171c2afca6c3aceeb7a@codeaurora.org>
+X-Sender: stummala@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 08:40:35PM +0100, Marcin Ciupak wrote:
-> This patch adds driver for Nordic Semiconductor nRF24L01+ radio
-> transceiver.
-> 
-> Signed-off-by: Marcin Ciupak <marcin.s.ciupak@gmail.com>
-> ---
-> Changes in v2:
->   - add terminating newlines to all logging formats
-> Changes in v3:
->   - patch subject
->   - comments cleanup
->   - goto labels cleanup
->   - scnprintf bugfix
->   - ida_simple_remove bugfix
-> Changes in v4:
->   - fix smatch warnings
+Hi,
 
-What is preventing this from being merged today with the normal
-subsystem for this type of drivers?  Why does this have to go into
-staging?
+I am observing huge fsync latencies for a small file under the below 
+test scenario -
 
-thanks,
+process A -
+Issue async write of 4GB using dd command (say large_file) on /data 
+mounted
+with ext4:
+dd if=/dev/zero of=/data/testfile bs=1M count=4096
 
-greg k-h
+process B -
+In parallel another process wrote a small 4KB data to another file
+(say, small_file) and has issued fsync on this file.
+
+Problem -
+The fsync() on 4KB file, is taking upto ~30sec (worst case latency).
+This is tested on an eMMC based device.
+
+Observations -
+This happens when the small_file and large_file both are part of the 
+same
+committing transaction or when the small_file is part of the running 
+transaction
+while large_file is part of the committing transaction.
+
+During the commit of a transaction which includes large_file, the jbd2 
+thread
+does journal_finish_inode_data_buffers() by calling
+filemap_fdatawait_keep_errors() on the file's inode address space. While 
+this is
+happening, if the writeback thread is running in parallel for the 
+large_file, then
+filemap_fdatawait_keep_errors() could potentially run in a loop of all 
+the
+pages (upto 4GB of data) and also wait for all the file's data to be 
+written
+to the disk in the current transaction context itself. At the time
+of calling journal_finish_inode_data_buffers(), the file size is of only 
+150MB.
+and by the time filemap_fdatawait_keep_errors() returns, the file size 
+is 4GB
+and the page index also points to 4GB file offset in
+__filemap_fdatawait_range(), indicating that is has scanned and waited 
+for writeback
+all the pages upto 4GB and not just 150MB.
+
+Ideally, I think the jbd2 thread should have waited for only the amount 
+of data
+it has submitted as part of the current transaction and not to wait for 
+the
+on-going pages that are getting tagged for writeback in parallel in 
+another context.
+So along these lines, I have tried to use the inode's size at the time 
+of calling
+journal_finish_inode_data_buffers() as below -
+
+diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
+index 2eb55c3..e86cf67 100644
+--- a/fs/jbd2/commit.c
++++ b/fs/jbd2/commit.c
+@@ -261,8 +261,8 @@ static int 
+journal_finish_inode_data_buffers(journal_t *journal,
+                         continue;
+                 jinode->i_flags |= JI_COMMIT_RUNNING;
+                 spin_unlock(&journal->j_list_lock);
+-               err = filemap_fdatawait_keep_errors(
+-                               jinode->i_vfs_inode->i_mapping);
++               err = 
+filemap_fdatawait_range(jinode->i_vfs_inode->i_mapping,
++                               0, 
+i_size_read(jinode->i_vfs_inode->i_mapping->host));
+                 if (!ret)
+                         ret = err;
+                 spin_lock(&journal->j_list_lock);
+
+With this, the fsync latencies for small_file have reduced 
+significantly.
+It took upto max ~5sec (worst case latency).
+
+Although this is seen in a test code, this could potentially impact the
+phone's performance if any application or main UI thread in Android 
+issues
+fsync() in foreground while a large data transfer is going on in another
+context.
+
+Request you to share your thoughts and comments on this issue
+and the fix suggested above.
+
+Thanks,
+Sahitya.
+
+--
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, 
+Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
+Linux Foundation Collaborative Project.
