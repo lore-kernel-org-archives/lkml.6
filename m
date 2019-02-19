@@ -4,27 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4008BC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:02:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D8B0C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:02:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E2682147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:02:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69F1D2147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 17:02:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729531AbfBSRCR (ORCPT
+        id S1729651AbfBSRCi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 12:02:17 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:41097 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726321AbfBSRCQ (ORCPT
+        Tue, 19 Feb 2019 12:02:38 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:38247 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729464AbfBSRCS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 12:02:16 -0500
+        Tue, 19 Feb 2019 12:02:18 -0500
 X-Originating-IP: 90.53.137.203
 Received: from localhost (alyon-652-1-306-203.w90-53.abo.wanadoo.fr [90.53.137.203])
         (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 0C73D1C0018;
-        Tue, 19 Feb 2019 17:02:12 +0000 (UTC)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id A7D4960010;
+        Tue, 19 Feb 2019 17:02:14 +0000 (UTC)
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -33,9 +33,9 @@ Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 5/7] ARM: dts: at91: at91sam9g45: switch to new sckc bindings
-Date:   Tue, 19 Feb 2019 18:01:58 +0100
-Message-Id: <20190219170200.3608-6-alexandre.belloni@bootlin.com>
+Subject: [PATCH 6/7] ARM: dts: at91: at91sam9rl: switch to new sckc bindings
+Date:   Tue, 19 Feb 2019 18:01:59 +0100
+Message-Id: <20190219170200.3608-7-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190219170200.3608-1-alexandre.belloni@bootlin.com>
 References: <20190219170200.3608-1-alexandre.belloni@bootlin.com>
@@ -50,15 +50,15 @@ Remove the child nodes of the sckc as they are not necessary anymore.
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- arch/arm/boot/dts/at91sam9g45.dtsi | 25 +++----------------------
+ arch/arm/boot/dts/at91sam9rl.dtsi | 25 +++----------------------
  1 file changed, 3 insertions(+), 22 deletions(-)
 
-diff --git a/arch/arm/boot/dts/at91sam9g45.dtsi b/arch/arm/boot/dts/at91sam9g45.dtsi
-index d16db1fa7e15..74a011077d54 100644
---- a/arch/arm/boot/dts/at91sam9g45.dtsi
-+++ b/arch/arm/boot/dts/at91sam9g45.dtsi
-@@ -1257,30 +1257,11 @@
- 				};
+diff --git a/arch/arm/boot/dts/at91sam9rl.dtsi b/arch/arm/boot/dts/at91sam9rl.dtsi
+index 3862ff2f26e0..f5f09a30dd3f 100644
+--- a/arch/arm/boot/dts/at91sam9rl.dtsi
++++ b/arch/arm/boot/dts/at91sam9rl.dtsi
+@@ -867,30 +867,11 @@
+ 				status = "disabled";
  			};
  
 -			sckc@fffffd50 {
