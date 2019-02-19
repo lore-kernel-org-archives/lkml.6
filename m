@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3BA9C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB9B0C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:26:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 698412147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:26:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CFBA2146F
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 20:26:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="OsoqGj8D"
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="qb677HHJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729712AbfBSU0S (ORCPT
+        id S1729755AbfBSU0W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 15:26:18 -0500
-Received: from mail-eopbgr790045.outbound.protection.outlook.com ([40.107.79.45]:45346
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        Tue, 19 Feb 2019 15:26:22 -0500
+Received: from mail-eopbgr750053.outbound.protection.outlook.com ([40.107.75.53]:47064
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729626AbfBSU0P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 15:26:15 -0500
+        id S1729411AbfBSU0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 15:26:18 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g7Dj7CFeYv6Pm/QC8x7JqHrOp8uo0ln6/MNqlzTTAaA=;
- b=OsoqGj8DmJIPkhsfrztEv1K2Zt1Zf6iFw3LGAms2RytUkTgWq69jo0skDIq4s1AFr69Pr4HTXP+FJaistHZqdrJa+hFBUtMs43Q7ydviaFQvKnf2Evp6geyJnPQR0rvbl6HlwoEHVsnrE5cZQnmvRfUju9GHfNtd0Y0/5w32zYs=
+ bh=51yNUNU+4Tk37ynYcMmxk69DWY9UseMP269PJgUmZS8=;
+ b=qb677HHJDVyvYftMpli+f7YccuBqs6Xrl/fbj9bZfll8QqbB1N8ZXh+MJB7LqtO97ER/zOQH5PCSrQriQH6/avTxawI32tnyxH6Ti/CxanXrRi92nlNQ8WUJhWr6PuPtaXTOcRQ7zUs5EwmbV+EndpxYsaq0odU0aV8gs83YLB0=
 Received: from SN6PR12MB2639.namprd12.prod.outlook.com (52.135.103.16) by
- SN6PR12MB2845.namprd12.prod.outlook.com (52.135.102.141) with Microsoft SMTP
+ SN6PR12MB2829.namprd12.prod.outlook.com (20.177.250.142) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.14; Tue, 19 Feb 2019 20:26:10 +0000
+ 15.20.1622.16; Tue, 19 Feb 2019 20:25:55 +0000
 Received: from SN6PR12MB2639.namprd12.prod.outlook.com
  ([fe80::35e5:6f95:dfe:efe]) by SN6PR12MB2639.namprd12.prod.outlook.com
  ([fe80::35e5:6f95:dfe:efe%2]) with mapi id 15.20.1622.018; Tue, 19 Feb 2019
- 20:26:10 +0000
+ 20:25:55 +0000
 From:   "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
 To:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>
 CC:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "bp@alien8.de" <bp@alien8.de>
-Subject: [PATCH 4/5] EDAC/amd64: Support more than two Controllers for Chip
- Select handling
-Thread-Topic: [PATCH 4/5] EDAC/amd64: Support more than two Controllers for
- Chip Select handling
-Thread-Index: AQHUyJFZIoXiFFPdbUiWkc9CLBaM1A==
-Date:   Tue, 19 Feb 2019 20:26:09 +0000
-Message-ID: <20190219202536.15462-4-Yazen.Ghannam@amd.com>
+Subject: [PATCH 2/5] EDAC/amd64: Support more than two UMCs
+Thread-Topic: [PATCH 2/5] EDAC/amd64: Support more than two UMCs
+Thread-Index: AQHUyJFP/G99YgnJFEC3ZJUtrH+SeA==
+Date:   Tue, 19 Feb 2019 20:25:53 +0000
+Message-ID: <20190219202536.15462-2-Yazen.Ghannam@amd.com>
 References: <20190219202536.15462-1-Yazen.Ghannam@amd.com>
 In-Reply-To: <20190219202536.15462-1-Yazen.Ghannam@amd.com>
 Accept-Language: en-US
@@ -56,35 +54,35 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-clientproxiedby: SN2PR01CA0031.prod.exchangelabs.com (2603:10b6:804:2::41)
  To SN6PR12MB2639.namprd12.prod.outlook.com (2603:10b6:805:6f::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Yazen.Ghannam@amd.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.17.1
 x-originating-ip: [165.204.77.1]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 979473ae-9172-454a-b15e-08d696a87313
+x-ms-office365-filtering-correlation-id: 1523f2a6-61a0-49d4-5f92-08d696a871d8
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:SN6PR12MB2845;
-x-ms-traffictypediagnostic: SN6PR12MB2845:
-x-microsoft-exchange-diagnostics: 1;SN6PR12MB2845;20:OpWqNA/6YWIVOs9P3P4eMWW9iadpFm2TP/mxJsQN55+HdhuzDZeGFS4G7/6d4zRRXvWNDxhYzO8Y9EN3/AHp13wfQhwP85XNRa5GIQ0CgTew/PDlj0ySHVo9FxE1mIr2+Fkrd+xqj9gUPuFYO/CEUKJdB7+hPoLtWtw3wzwDxJEOYUnBN/EA3DSWvoQ2fff4JLN99st/fjo5N20WAPxHMZILV5kvmGYvsUBnpT49zYt9qVUZiU2XhGm/PQ0UVpVG
-x-microsoft-antispam-prvs: <SN6PR12MB2845D447A87C5ADB3E24D7BEF87C0@SN6PR12MB2845.namprd12.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:SN6PR12MB2829;
+x-ms-traffictypediagnostic: SN6PR12MB2829:
+x-microsoft-exchange-diagnostics: 1;SN6PR12MB2829;20:EEg3dqT3WDcfsumHlXujE7ChIXDa00xSsbD0/DCtAzV2jJS0398H7Ch1Cgcm0SMYpZznmT1PjpoV4Mv5/9X+AjBFBAotyDjoAg0iLsUg5K9ZLhDWacYYf5w/3AQvb4A1mnvV5LHCr4OIjfuGbrLJLQVtJXYDFneZZ775E0Bsh2xsLXyE2ja6bQCwqv+VTFTMeypQBLryOOgT4RYBeJgfd9Aj2VjSzILXvPISVZIPGAPlTqnPKyvXEMdcbAFrfhHF
+x-microsoft-antispam-prvs: <SN6PR12MB2829862E761442762291D2D4F87C0@SN6PR12MB2829.namprd12.prod.outlook.com>
 x-forefront-prvs: 09538D3531
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(376002)(346002)(396003)(39860400002)(199004)(189003)(2351001)(256004)(6506007)(386003)(8676002)(54906003)(5660300002)(4326008)(8936002)(50226002)(14444005)(68736007)(1076003)(97736004)(76176011)(102836004)(2501003)(105586002)(316002)(6116002)(81156014)(86362001)(305945005)(106356001)(7736002)(3846002)(53936002)(52116002)(81166006)(6916009)(6512007)(71190400001)(446003)(36756003)(72206003)(5640700003)(11346002)(14454004)(2906002)(6436002)(2616005)(26005)(476003)(478600001)(66066001)(6486002)(25786009)(186003)(486006)(71200400001)(99286004);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2845;H:SN6PR12MB2639.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(396003)(376002)(39860400002)(346002)(189003)(199004)(36756003)(476003)(68736007)(86362001)(486006)(6486002)(26005)(14454004)(76176011)(72206003)(478600001)(11346002)(3846002)(6116002)(6512007)(446003)(6346003)(6506007)(102836004)(316002)(2616005)(114624004)(25786009)(6436002)(6916009)(54906003)(4326008)(186003)(2906002)(5640700003)(5660300002)(386003)(53936002)(2501003)(99286004)(97736004)(305945005)(105586002)(52116002)(1076003)(50226002)(71190400001)(66066001)(8936002)(106356001)(2351001)(81166006)(71200400001)(81156014)(14444005)(8676002)(256004)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2829;H:SN6PR12MB2639.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: amd.com does not designate
  permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Yazen.Ghannam@amd.com; 
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: lYJCZY7yWVu42j6RT/67lcseHWrtCJbFdGTveLOBgY0LOL4xQ2jMhSWstTudONRkm+1uqiz2j1Ri3yLOTLSjlhGpWsJZzvrE5f37EIDLAhECWfger96tUyXNFyo81HDKmhvt8LVPIhBb7PjL+OrqHobagxE3PHFNNIQcT8E9i/QhyQL8nYziQorTx0QxDKT0zWGmNRIAqUpc2xmcoavd2oXo3zrzvR556/7NoiAmkDx1+H6cLIF4snKOz91lYGYCE5rmXrEeVMa2L6rw2n5Pro3wwIFlZvSHzcyVLQxwxUKjPUp6Vr3WGgeGWCnmgaxQ9P9T/lzDHB857v0pKI4nyjfEPs/o5Lb/96cxi97YqEj0ghpkHfR50vyWQ2gCid22KXkF6jlLrO+5LOAkGCYrtzQcFgoRCnaNsu5L6SZV9L8=
+x-microsoft-antispam-message-info: hO8gyCuS0qrVNV8P3x0ToQjqn3N8oj2Uep9lX+jGWHagUYbafZNMaeI+ag/6Lq7O8ejWXoLt6kLLFxYGyo1kGztqovC5UoVwYsbpkQ5O7nJv7YeU4vfXMYB8dxg7FSiV2fJ9Dw+Qa0cPCFU2+ye1X5ewOVcvauKDB+RW/QwQJmIBu5jfkLfW+iMANCMMqQScJeLv+EzmL3fnmaLZapwf7xS9cdtOGsjY1+bjjWPD5FaidNVcfh3eAmDRTXgFj8Uo8AJEsNJXoDO/y3lFg+pexxF9KWmd6OYvBDd0elYg/iNTMlLGf7GeKaBEiv5uX017YL3Bo0JZy8Qvbl1w0Y2t3TwXgO1kKxJSU6ePnuwF21jSVINAlKS2qz8PPv9GlQFDWZoPTeGS5PxrNRXKtNE9/jeN+fuf8LkofQOz0Ym3hWs=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 979473ae-9172-454a-b15e-08d696a87313
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2019 20:25:54.1471
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1523f2a6-61a0-49d4-5f92-08d696a871d8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2019 20:25:52.0676
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
 X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2845
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2829
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -92,202 +90,201 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yazen Ghannam <yazen.ghannam@amd.com>
 
-The struct chip_select array that's used for saving Chip Select bases
-and masks is fixed at length of two. There should be one struct
-chip_select for each controller, so this array should be increased to
-support systems that may have more than two controllers.
+The first few models of Family 17h all had 2 UMCs per Die, so we treated
+this as a fixed value. However, future systems may have more UMCs per
+Die.
 
-Increase the size of the struct chip_select array to eight, which is the
-largest number of controllers per die currently supported on AMD
-systems.
+Related to this, we were finding the channel number and base address of
+a UMC by matching on fixed, known values. However, a pattern has emerged
+so we no longer need to match on hardcoded values.
 
-Also, carve out the Fam17h+ reading of the bases/masks into a separate
-function. This effectively reverts the original bases/masks reading code
-to pre-Fam17h support.
+Set the number of UMCs at init time based on the Family/Model. Also,
+update the functions that find the channel number and base address of a
+UMC in order to support more than two UMCs.
 
 Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
 ---
- drivers/edac/amd64_edac.c | 113 ++++++++++++++++++++------------------
- drivers/edac/amd64_edac.h |   5 +-
- 2 files changed, 62 insertions(+), 56 deletions(-)
+ drivers/edac/amd64_edac.c | 42 ++++++++++++++++++---------------------
+ drivers/edac/amd64_edac.h | 20 +++++++++++++++----
+ 2 files changed, 35 insertions(+), 27 deletions(-)
 
 diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
-index bacd2cb22f29..656788699c64 100644
+index 9947437d9574..507d824fe45a 100644
 --- a/drivers/edac/amd64_edac.c
 +++ b/drivers/edac/amd64_edac.c
-@@ -911,89 +911,94 @@ static void prep_chip_selects(struct amd64_pvt *pvt)
- 	} else if (pvt->fam =3D=3D 0x15 && pvt->model =3D=3D 0x30) {
- 		pvt->csels[0].b_cnt =3D pvt->csels[1].b_cnt =3D 4;
- 		pvt->csels[0].m_cnt =3D pvt->csels[1].m_cnt =3D 2;
-+	} else if (pvt->fam >=3D 0x17) {
-+		int umc;
-+
-+		for_each_umc(umc) {
-+			pvt->csels[umc].b_cnt =3D 8;
-+			pvt->csels[umc].m_cnt =3D 4;
-+		}
-+
- 	} else {
- 		pvt->csels[0].b_cnt =3D pvt->csels[1].b_cnt =3D 8;
- 		pvt->csels[0].m_cnt =3D pvt->csels[1].m_cnt =3D 4;
- 	}
- }
+@@ -449,6 +449,9 @@ static void get_cs_base_and_mask(struct amd64_pvt *pvt,=
+ int csrow, u8 dct,
+ #define for_each_chip_select_mask(i, dct, pvt) \
+ 	for (i =3D 0; i < pvt->csels[dct].m_cnt; i++)
 =20
-+static void read_umc_base_mask(struct amd64_pvt *pvt)
-+{
-+	int cs, umc;
-+
-+	for_each_umc(umc) {
-+		u32 umc_base_reg =3D get_umc_base(umc) + UMCCH_BASE_ADDR;
-+		u32 umc_mask_reg =3D get_umc_base(umc) + UMCCH_ADDR_MASK;
-+
-+		for_each_chip_select(cs, 0, pvt) {
-+			u32 *base =3D &pvt->csels[umc].csbases[cs];
-+			u32 *mask =3D &pvt->csels[umc].csmasks[cs];
-+
-+			u32 base_reg =3D umc_base_reg + (cs * 4);
-+			u32 mask_reg =3D umc_mask_reg + ((cs >> 1) * 4);
-+
-+			if (!amd_smn_read(pvt->mc_node_id, base_reg, base))
-+				edac_dbg(0, "  DCSB%d[%d]=3D0x%08x reg: 0x%x\n",
-+					 umc, cs, *base, base_reg);
-+
-+			if (!amd_smn_read(pvt->mc_node_id, mask_reg, mask))
-+				edac_dbg(0, "    DCSM%d[%d]=3D0x%08x reg: 0x%x\n",
-+					 umc, cs, *mask, mask_reg);
-+		}
-+	}
-+}
++#define for_each_umc(i) \
++	for (i =3D 0; i < num_umcs; i++)
 +
  /*
-  * Function 2 Offset F10_DCSB0; read in the DCS Base and DCS Mask register=
+  * @input_addr is an InputAddr associated with the node given by mci. Retu=
+rn the
+  * csrow that input_addr maps to, or -1 on failure (no csrow claims input_=
+addr).
+@@ -722,7 +725,7 @@ static unsigned long determine_edac_cap(struct amd64_pv=
+t *pvt)
+ 	if (pvt->umc) {
+ 		u8 i, umc_en_mask =3D 0, dimm_ecc_en_mask =3D 0;
+=20
+-		for (i =3D 0; i < NUM_UMCS; i++) {
++		for_each_umc(i) {
+ 			if (!(pvt->umc[i].sdp_ctrl & UMC_SDP_INIT))
+ 				continue;
+=20
+@@ -811,7 +814,7 @@ static void __dump_misc_regs_df(struct amd64_pvt *pvt)
+ 	struct amd64_umc *umc;
+ 	u32 i, tmp, umc_base;
+=20
+-	for (i =3D 0; i < NUM_UMCS; i++) {
++	for_each_umc(i) {
+ 		umc_base =3D get_umc_base(i);
+ 		umc =3D &pvt->umc[i];
+=20
+@@ -1388,7 +1391,7 @@ static int f17_early_channel_count(struct amd64_pvt *=
+pvt)
+ 	int i, channels =3D 0;
+=20
+ 	/* SDP Control bit 31 (SdpInit) is clear for unused UMC channels */
+-	for (i =3D 0; i < NUM_UMCS; i++)
++	for_each_umc(i)
+ 		channels +=3D !!(pvt->umc[i].sdp_ctrl & UMC_SDP_INIT);
+=20
+ 	amd64_info("MCT channel count: %d\n", channels);
+@@ -2473,18 +2476,14 @@ static inline void decode_bus_error(int node_id, st=
+ruct mce *m)
+  * To find the UMC channel represented by this bank we need to match on it=
 s
+  * instance_id. The instance_id of a bank is held in the lower 32 bits of =
+its
+  * IPID.
++ *
++ * Currently, we can derive the channel number by looking at the 6th byte =
+in
++ * the instance_id. For example, instance_id=3D0xYXXXXX where Y is the cha=
+nnel
++ * number.
   */
- static void read_dct_base_mask(struct amd64_pvt *pvt)
+-static int find_umc_channel(struct amd64_pvt *pvt, struct mce *m)
++static int find_umc_channel(struct mce *m)
  {
--	int base_reg0, base_reg1, mask_reg0, mask_reg1, cs;
-+	int cs;
-=20
- 	prep_chip_selects(pvt);
-=20
--	if (pvt->umc) {
--		base_reg0 =3D get_umc_base(0) + UMCCH_BASE_ADDR;
--		base_reg1 =3D get_umc_base(1) + UMCCH_BASE_ADDR;
--		mask_reg0 =3D get_umc_base(0) + UMCCH_ADDR_MASK;
--		mask_reg1 =3D get_umc_base(1) + UMCCH_ADDR_MASK;
--	} else {
--		base_reg0 =3D DCSB0;
--		base_reg1 =3D DCSB1;
--		mask_reg0 =3D DCSM0;
--		mask_reg1 =3D DCSM1;
--	}
-+	if (pvt->umc)
-+		return read_umc_base_mask(pvt);
-=20
- 	for_each_chip_select(cs, 0, pvt) {
--		int reg0   =3D base_reg0 + (cs * 4);
--		int reg1   =3D base_reg1 + (cs * 4);
-+		int reg0   =3D DCSB0 + (cs * 4);
-+		int reg1   =3D DCSB1 + (cs * 4);
- 		u32 *base0 =3D &pvt->csels[0].csbases[cs];
- 		u32 *base1 =3D &pvt->csels[1].csbases[cs];
-=20
--		if (pvt->umc) {
--			if (!amd_smn_read(pvt->mc_node_id, reg0, base0))
--				edac_dbg(0, "  DCSB0[%d]=3D0x%08x reg: 0x%x\n",
--					 cs, *base0, reg0);
-+		if (!amd64_read_dct_pci_cfg(pvt, 0, reg0, base0))
-+			edac_dbg(0, "  DCSB0[%d]=3D0x%08x reg: F2x%x\n",
-+				 cs, *base0, reg0);
-=20
--			if (!amd_smn_read(pvt->mc_node_id, reg1, base1))
--				edac_dbg(0, "  DCSB1[%d]=3D0x%08x reg: 0x%x\n",
--					 cs, *base1, reg1);
--		} else {
--			if (!amd64_read_dct_pci_cfg(pvt, 0, reg0, base0))
--				edac_dbg(0, "  DCSB0[%d]=3D0x%08x reg: F2x%x\n",
--					 cs, *base0, reg0);
+-	u32 umc_instance_id[] =3D {0x50f00, 0x150f00};
+-	u32 instance_id =3D m->ipid & GENMASK(31, 0);
+-	int i, channel =3D -1;
 -
--			if (pvt->fam =3D=3D 0xf)
--				continue;
-+		if (pvt->fam =3D=3D 0xf)
-+			continue;
-=20
--			if (!amd64_read_dct_pci_cfg(pvt, 1, reg0, base1))
--				edac_dbg(0, "  DCSB1[%d]=3D0x%08x reg: F2x%x\n",
--					 cs, *base1, (pvt->fam =3D=3D 0x10) ? reg1
--								: reg0);
--		}
-+		if (!amd64_read_dct_pci_cfg(pvt, 1, reg0, base1))
-+			edac_dbg(0, "  DCSB1[%d]=3D0x%08x reg: F2x%x\n",
-+				 cs, *base1, (pvt->fam =3D=3D 0x10) ? reg1
-+							: reg0);
- 	}
-=20
- 	for_each_chip_select_mask(cs, 0, pvt) {
--		int reg0   =3D mask_reg0 + (cs * 4);
--		int reg1   =3D mask_reg1 + (cs * 4);
-+		int reg0   =3D DCSM0 + (cs * 4);
-+		int reg1   =3D DCSM1 + (cs * 4);
- 		u32 *mask0 =3D &pvt->csels[0].csmasks[cs];
- 		u32 *mask1 =3D &pvt->csels[1].csmasks[cs];
-=20
--		if (pvt->umc) {
--			if (!amd_smn_read(pvt->mc_node_id, reg0, mask0))
--				edac_dbg(0, "    DCSM0[%d]=3D0x%08x reg: 0x%x\n",
--					 cs, *mask0, reg0);
+-	for (i =3D 0; i < ARRAY_SIZE(umc_instance_id); i++)
+-		if (umc_instance_id[i] =3D=3D instance_id)
+-			channel =3D i;
 -
--			if (!amd_smn_read(pvt->mc_node_id, reg1, mask1))
--				edac_dbg(0, "    DCSM1[%d]=3D0x%08x reg: 0x%x\n",
--					 cs, *mask1, reg1);
--		} else {
--			if (!amd64_read_dct_pci_cfg(pvt, 0, reg0, mask0))
--				edac_dbg(0, "    DCSM0[%d]=3D0x%08x reg: F2x%x\n",
--					 cs, *mask0, reg0);
-+		if (!amd64_read_dct_pci_cfg(pvt, 0, reg0, mask0))
-+			edac_dbg(0, "    DCSM0[%d]=3D0x%08x reg: F2x%x\n",
-+				 cs, *mask0, reg0);
-=20
--			if (pvt->fam =3D=3D 0xf)
--				continue;
-+		if (pvt->fam =3D=3D 0xf)
-+			continue;
-=20
--			if (!amd64_read_dct_pci_cfg(pvt, 1, reg0, mask1))
--				edac_dbg(0, "    DCSM1[%d]=3D0x%08x reg: F2x%x\n",
--					 cs, *mask1, (pvt->fam =3D=3D 0x10) ? reg1
--								: reg0);
--		}
-+		if (!amd64_read_dct_pci_cfg(pvt, 1, reg0, mask1))
-+			edac_dbg(0, "    DCSM1[%d]=3D0x%08x reg: F2x%x\n",
-+				 cs, *mask1, (pvt->fam =3D=3D 0x10) ? reg1
-+							: reg0);
- 	}
+-	return channel;
++	return (m->ipid & GENMASK(31, 0)) >> 20;
  }
 =20
+ static void decode_umc_error(int node_id, struct mce *m)
+@@ -2506,11 +2505,7 @@ static void decode_umc_error(int node_id, struct mce=
+ *m)
+ 	if (m->status & MCI_STATUS_DEFERRED)
+ 		ecc_type =3D 3;
+=20
+-	err.channel =3D find_umc_channel(pvt, m);
+-	if (err.channel < 0) {
+-		err.err_code =3D ERR_CHANNEL;
+-		goto log_error;
+-	}
++	err.channel =3D find_umc_channel(m);
+=20
+ 	if (umc_normaddr_to_sysaddr(m->addr, pvt->mc_node_id, err.channel, &sys_a=
+ddr)) {
+ 		err.err_code =3D ERR_NORM_ADDR;
+@@ -2612,7 +2607,7 @@ static void determine_ecc_sym_sz(struct amd64_pvt *pv=
+t)
+ 	if (pvt->umc) {
+ 		u8 i;
+=20
+-		for (i =3D 0; i < NUM_UMCS; i++) {
++		for_each_umc(i) {
+ 			/* Check enabled channels only: */
+ 			if ((pvt->umc[i].sdp_ctrl & UMC_SDP_INIT) &&
+ 			    (pvt->umc[i].ecc_ctrl & BIT(7))) {
+@@ -2648,7 +2643,7 @@ static void __read_mc_regs_df(struct amd64_pvt *pvt)
+ 	u32 i, umc_base;
+=20
+ 	/* Read registers from each UMC */
+-	for (i =3D 0; i < NUM_UMCS; i++) {
++	for_each_umc(i) {
+=20
+ 		umc_base =3D get_umc_base(i);
+ 		umc =3D &pvt->umc[i];
+@@ -3061,7 +3056,8 @@ static bool ecc_enabled(struct pci_dev *F3, u16 nid)
+ 	if (boot_cpu_data.x86 >=3D 0x17) {
+ 		u8 umc_en_mask =3D 0, ecc_en_mask =3D 0;
+=20
+-		for (i =3D 0; i < NUM_UMCS; i++) {
++		set_num_umcs();
++		for_each_umc(i) {
+ 			u32 base =3D get_umc_base(i);
+=20
+ 			/* Only check enabled UMCs. */
+@@ -3114,7 +3110,7 @@ f17h_determine_edac_ctl_cap(struct mem_ctl_info *mci,=
+ struct amd64_pvt *pvt)
+ {
+ 	u8 i, ecc_en =3D 1, cpk_en =3D 1;
+=20
+-	for (i =3D 0; i < NUM_UMCS; i++) {
++	for_each_umc(i) {
+ 		if (pvt->umc[i].sdp_ctrl & UMC_SDP_INIT) {
+ 			ecc_en &=3D !!(pvt->umc[i].umc_cap_hi & UMC_ECC_ENABLED);
+ 			cpk_en &=3D !!(pvt->umc[i].umc_cap_hi & UMC_ECC_CHIPKILL_CAP);
+@@ -3273,7 +3269,7 @@ static int init_one_instance(unsigned int nid)
+ 		goto err_free;
+=20
+ 	if (pvt->fam >=3D 0x17) {
+-		pvt->umc =3D kcalloc(NUM_UMCS, sizeof(struct amd64_umc), GFP_KERNEL);
++		pvt->umc =3D kcalloc(num_umcs, sizeof(struct amd64_umc), GFP_KERNEL);
+ 		if (!pvt->umc) {
+ 			ret =3D -ENOMEM;
+ 			goto err_free;
 diff --git a/drivers/edac/amd64_edac.h b/drivers/edac/amd64_edac.h
-index 6c6ce783208a..f672ed3325db 100644
+index de8dbb0b42b5..435450bf8684 100644
 --- a/drivers/edac/amd64_edac.h
 +++ b/drivers/edac/amd64_edac.h
-@@ -96,6 +96,7 @@
- /* Hardware limit on ChipSelect rows per MC and processors per system */
- #define NUM_CHIPSELECTS			8
- #define DRAM_RANGES			8
-+#define NUM_CONTROLLERS			8
+@@ -274,8 +274,6 @@
 =20
- #define ON true
- #define OFF false
-@@ -351,8 +352,8 @@ struct amd64_pvt {
- 	u32 dbam0;		/* DRAM Base Address Mapping reg for DCT0 */
- 	u32 dbam1;		/* DRAM Base Address Mapping reg for DCT1 */
+ #define UMC_SDP_INIT			BIT(31)
 =20
--	/* one for each DCT */
--	struct chip_select csels[2];
-+	/* one for each DCT/UMC */
-+	struct chip_select csels[NUM_CONTROLLERS];
+-#define NUM_UMCS			2
+-
+ enum amd_families {
+ 	K8_CPUS =3D 0,
+ 	F10_CPUS,
+@@ -399,8 +397,22 @@ struct err_info {
 =20
- 	/* DRAM base and limit pairs F1x[78,70,68,60,58,50,48,40] */
- 	struct dram_range ranges[DRAM_RANGES];
+ static inline u32 get_umc_base(u8 channel)
+ {
+-	/* ch0: 0x50000, ch1: 0x150000 */
+-	return 0x50000 + (!!channel << 20);
++	/* chY: 0xY50000 */
++	return 0x50000 + (channel << 20);
++}
++
++static u8 num_umcs;
++
++static inline void set_num_umcs(void)
++{
++	u8 model =3D boot_cpu_data.x86_model;
++
++	if (model >=3D 0x30 && model <=3D 0x3f)
++		num_umcs =3D 8;
++	else
++		num_umcs =3D 2;
++
++	edac_dbg(1, "Number of UMCs: %x", num_umcs);
+ }
+=20
+ static inline u64 get_dram_base(struct amd64_pvt *pvt, u8 i)
 --=20
 2.17.1
 
