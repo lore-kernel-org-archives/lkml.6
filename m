@@ -2,104 +2,157 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE2DC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:47:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA76C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A50E621903
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:47:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s8c8/7/F"
+	by mail.kernel.org (Postfix) with ESMTP id ED36221903
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:47:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbfBSIrF (ORCPT
+        id S1727760AbfBSIrS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 03:47:05 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:34493 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725765AbfBSIrE (ORCPT
+        Tue, 19 Feb 2019 03:47:18 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:43317 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725805AbfBSIrS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 03:47:04 -0500
-Received: by mail-vk1-f196.google.com with SMTP id y14so4491061vkd.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 00:47:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=42/ZTfsqTDsYcqN7wt14htZxBiXNFJVnlE2eq0v9/+o=;
-        b=s8c8/7/FqamaVfrbfb7wU5WbWKz6cYKqoA50foBQ65NB1d9088e8TRY+BH1jekA2Cm
-         0bS5LuRysKqc70lnaLz/7CxvKT+q7cQysD+2Ms55TtqT5LEzBdzLqtVzjAnL5dLCLlcN
-         Lggmz1ABlmZzT+1Xr20CGLo3w6Dil2lseAb9maBpCnsFpoHwAnTV+LNn976ecqTi1T/o
-         bUKSoGO9boRokYIjXZi+k3k1pwfg+PJOLenlxEj4CqoZYcuXxIKfXKY3fEIx4vQwgXKb
-         rIVz71OMfnlqAV2wmOqhCp0w11rcfLfCRGsJDxzP4cTwVrBix3DNeDspLZ7yefQss8Y5
-         T/ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=42/ZTfsqTDsYcqN7wt14htZxBiXNFJVnlE2eq0v9/+o=;
-        b=PHu3M0vCVDP8M/mDF2XxoYiq1RUe98SCuOPzDln7QmvWkI2Z31AfmRwSvpxdO0F/4J
-         sQO77U/HHVhvGxk4t8p16XRQh+4yj0E+1KOlxFLxFSmU2LoXkiMsHoyi0HzG+AAEUbmM
-         iwZ3KPgOlF3ayv+ZmBVP8RHBXodECJS7P3KP3ksfANdyT0C1NJ6oP2chKBJSRAAsGlbp
-         HnorJUYeF4qVFyvUOThuLa6nvQ3EfsrELgSf36kDFCbPkfsMW7v+90eEwivm89ITn/BC
-         cKmURh31wRcpSZuy7aPBWBjnSi4I+i16jy7BKxPiYcYYRITVVMPpVXrSKm76zfGvCRu2
-         NbLg==
-X-Gm-Message-State: AHQUAuZEZUn7+0rFNq9MMbO+H6ENJvijrqc5MBjoP+/FXqCFYW1xNsVW
-        yxsaLXYvChuhWexyw2QgIz2yJthkSMuOTZdiqlwl4Q==
-X-Google-Smtp-Source: AHgI3IbkKpDf9HoRvERtWKABXqXuA6iGEqT/avKQmToOZw33QRKo0NF6Hy3OF/pC4sDWrtkxYist6Ueo3gQvvbYEhe4=
-X-Received: by 2002:a1f:d8b:: with SMTP id 133mr5383061vkn.78.1550566023869;
- Tue, 19 Feb 2019 00:47:03 -0800 (PST)
+        Tue, 19 Feb 2019 03:47:18 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1J8fxGX029951;
+        Tue, 19 Feb 2019 09:46:37 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2qpc74y9a8-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 19 Feb 2019 09:46:37 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A743C3A;
+        Tue, 19 Feb 2019 08:46:34 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 451252524;
+        Tue, 19 Feb 2019 08:46:34 +0000 (GMT)
+Received: from [10.48.0.167] (10.75.127.51) by SFHDAG5NODE3.st.com
+ (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 19 Feb
+ 2019 09:46:33 +0100
+Subject: Re: [PATCH v4 3/3] pwm: core: add consumer device link
+To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+CC:     <thierry.reding@gmail.com>, <robh+dt@kernel.org>,
+        <tduszyns@gmail.com>, <mark.rutland@arm.com>,
+        <alexandre.torgue@st.com>, <mcoquelin.stm32@gmail.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <1550139951-25788-1-git-send-email-fabrice.gasnier@st.com>
+ <1550139951-25788-4-git-send-email-fabrice.gasnier@st.com>
+ <20190218172223.lw3e5tn5hzsow6tg@pengutronix.de>
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+Message-ID: <53bc3d80-8732-46be-caef-015998c9ad0e@st.com>
+Date:   Tue, 19 Feb 2019 09:46:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190219070428.15480-1-yuehaibing@huawei.com>
-In-Reply-To: <20190219070428.15480-1-yuehaibing@huawei.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Tue, 19 Feb 2019 14:16:53 +0530
-Message-ID: <CAFA6WYMg9BrownTELgE85AMO-_0VWBH0oJzfnBVXzN+LNNdDYA@mail.gmail.com>
-Subject: Re: [PATCH -next] tee: optee: Fix unsigned comparison with less than zero
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Jens Wiklander <jens.wiklander@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190218172223.lw3e5tn5hzsow6tg@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-19_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Feb 2019 at 12:34, YueHaibing <yuehaibing@huawei.com> wrote:
->
-> The return from the call to tee_client_invoke_func can be a
-> negative error code however this is being assigned to an
-> unsigned variable 'ret' hence the check is always false.
-> Fix this by making 'ret' an int.
->
-> Detected by Coccinelle ("Unsigned expression compared with zero:
-> ret < 0")
->
-> Fixes: c3fa24af9244 ("tee: optee: add TEE bus device enumeration support")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+On 2/18/19 6:22 PM, Uwe Kleine-König wrote:
+> Hello,
+> 
+> On Thu, Feb 14, 2019 at 11:25:51AM +0100, Fabrice Gasnier wrote:
+>> Add a device link between the PWM consumer and the PWM provider. This
+>> enforces the PWM user to get suspended before the PWM provider. It
+>> allows proper synchronization of suspend/resume sequences: the PWM user
+>> is responsible for properly stopping PWM, before the provider gets
+>> suspended: see [1]. Add the device link in:
+>> - of_pwm_get()
+>> - pwm_get()
+>> - devm_*pwm_get() variants
+>> as it requires a reference to the device for the PWM consumer.
+>>
+>> [1] https://lkml.org/lkml/2019/2/5/770
+>>
+>> Suggested-by: Thierry Reding <thierry.reding@gmail.com>
+>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+>> ---
+>> Changes in v4:
+>> - rework error handling following Thierry's comments
+>> - turn/split pr_debug() into dev_err()/pr_warn().
+>>
+>> Changes in v3:
+>> - add struct device to of_get_pwm() arguments to handle device link from
+>>   there as discussed with Uwe.
+>> ---
+>>  drivers/pwm/core.c  | 50 +++++++++++++++++++++++++++++++++++++++++++++++---
+>>  include/linux/pwm.h |  6 ++++--
+>>  2 files changed, 51 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+>> index 1581f6a..64e10a6 100644
+>> --- a/drivers/pwm/core.c
+>> +++ b/drivers/pwm/core.c
+>> @@ -636,8 +636,35 @@ static struct pwm_chip *of_node_to_pwmchip(struct device_node *np)
+>>  	return ERR_PTR(-EPROBE_DEFER);
+>>  }
+>>  
+>> +static struct device_link *pwm_device_link_add(struct device *dev,
+>> +					       struct pwm_device *pwm)
+>> +{
+>> +	struct device_link *dl;
+>> +
+>> +	if (!dev) {
+>> +		/*
+>> +		 * No device for the PWM consumer has been provided. It may
+>> +		 * impact the PM sequence ordering: the PWM supplier may get
+>> +		 * suspended before the consumer.
+>> +		 */
+>> +		pr_warn("no consumer dev, can't create device link to %s\n",
+>> +			dev_name(pwm->chip->dev));
+> 
+> Maybe use dev_warn(pwm->chip->dev, ...) ?
 
-Reviewed-by: Sumit Garg <sumit.garg@linaro.org>
+Hi Uwe,
 
-> ---
->  drivers/tee/optee/device.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/tee/optee/device.c b/drivers/tee/optee/device.c
-> index 5e4938b..1f22376 100644
-> --- a/drivers/tee/optee/device.c
-> +++ b/drivers/tee/optee/device.c
-> @@ -34,7 +34,7 @@ static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
->  static int get_devices(struct tee_context *ctx, u32 session,
->                        struct tee_shm *device_shm, u32 *shm_size)
->  {
-> -       u32 ret = 0;
-> +       int ret = 0;
->         struct tee_ioctl_invoke_arg inv_arg = {0};
->         struct tee_param param[4] = {0};
->
-> --
-> 2.7.0
->
->
+I'm wondering a bit about this: In this case, the caller that doesn't
+provide a struct device *, PWM provider isn't responsible for that. So I
+just hope this wouldn't be miss-leading ?
+
+> 
+>> +		return NULL;
+>> +	}
+>> +
+>> +	dl = device_link_add(dev, pwm->chip->dev, DL_FLAG_AUTOREMOVE_CONSUMER);
+>> +	if (!dl) {
+>> +		dev_err(dev, "failed to create device link to %s\n",
+>> +			dev_name(pwm->chip->dev));
+>> +			return ERR_PTR(-EINVAL);
+> 
+> broken indention.
+
+Oops, I'll fix it.
+
+Thanks,
+Fabrice
+
+> 
+>> +	}
+>> +
+>> +	return dl;
+>> +}
+>> +
+> 
+> Best regards
+> Uwe
+> 
