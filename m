@@ -2,149 +2,81 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A7DC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7418BC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:58:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D690821848
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:58:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B4DLEUO0"
+	by mail.kernel.org (Postfix) with ESMTP id 4D1392146F
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 09:58:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728173AbfBSJ6n (ORCPT
+        id S1728202AbfBSJ6v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 04:58:43 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51603 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727942AbfBSJ63 (ORCPT
+        Tue, 19 Feb 2019 04:58:51 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:60484 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727950AbfBSJ63 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 19 Feb 2019 04:58:29 -0500
-Received: by mail-wm1-f67.google.com with SMTP id n19so1860228wmi.1;
-        Tue, 19 Feb 2019 01:58:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MmokmzNg6WkTR+NygtzuXU+g6jndTuYFkgnanLj3Ipo=;
-        b=B4DLEUO0DFsRBjtKvitDAKr7JA8wB558yyNXOe0AF8OFun32pRzSMXI+4bIjb+58R0
-         x5wU1ZthIDtA8nMbne+AjAJRtu0ANmZg42Eyj72ZTaXcYJoRbGsdoeoWDlls/aCx0Ba9
-         oAQtJWtQeSp/r0MpqLz4DYDbZ1/utmQtltjZzqC2sVdGVYGzz1yPeMZbCyKpuNjYp2y3
-         mxEhe0CR/AYryQ1MgIuHpJy7dPkVECGaTKvC0kud8Bzr2V0u9ibzGLmzGG7zxqmXk9rl
-         GlQ2cM1Vu9PxqGess0cAwQp5fuKnnfJwi6ZfDhA4UPSEhyK4oPndXumFZCW/28fVIatL
-         3L6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=MmokmzNg6WkTR+NygtzuXU+g6jndTuYFkgnanLj3Ipo=;
-        b=I3xs2q4MhAZwA4lILB1JckE6lAJIhn/UKWhnL16bJO+u92CjAYjsvUDD3pL/6SSGbK
-         6xw0zhSI7ZCHl0c79j9oZiYuTzj8P3CtghsHYf+wVQeDtv0iUAp9bL0vWyYgeRu7KOL3
-         4RMnCmHEQLXxody133j12BUBsi2Qgfd8plBfk1lXCrVPlgEIC3V1nqTjcaw5KMarRBzE
-         YcOa4EGH57oCUkRUXmk9U4Fi63e5yYSLy80rU/aUAQ/JmKvaJtSPFxEozbL0Bq43x3EW
-         v5gHgmirt1lvNoEXNHaHx0HzRf+CL1+d68cwwNHQG4ZuJP4FZsykP+26NdrmFozTa0gb
-         uvLA==
-X-Gm-Message-State: AHQUAububSfNhBec0BwGE8usNBjvA+DZokjbecAJLmWKez9gj7fmiJta
-        L+XYQfjboViO63cydr2QaCY=
-X-Google-Smtp-Source: AHgI3IZ8oVD5uxw/MiO3KUSfJZ+7bVrdejE22hlYNUuSdIPuPWie8H43PcjkKNjcapqgcihkv4L1Jg==
-X-Received: by 2002:a05:600c:2159:: with SMTP id v25mr2097620wml.17.1550570307194;
-        Tue, 19 Feb 2019 01:58:27 -0800 (PST)
-Received: from fuji.Parrot.Biz (smtp.parrot.biz. [62.23.167.188])
-        by smtp.gmail.com with ESMTPSA id k20sm31639220wre.41.2019.02.19.01.58.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 01:58:26 -0800 (PST)
-From:   Mathieu Othacehe <m.othacehe@gmail.com>
-To:     thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mathieu Othacehe <m.othacehe@gmail.com>
-Subject: [PATCH v3 3/3] pwm: hibvt: Add hi3559v100 support
-Date:   Tue, 19 Feb 2019 10:58:08 +0100
-Message-Id: <20190219095808.12059-3-m.othacehe@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190219095808.12059-1-m.othacehe@gmail.com>
-References: <20190219095808.12059-1-m.othacehe@gmail.com>
+Received: from 79.184.254.15.ipv4.supernova.orange.pl (79.184.254.15) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
+ id a25239dae484f5e6; Tue, 19 Feb 2019 10:58:27 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc:     "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "lenb@kernel.org" <lenb@kernel.org>
+Subject: Re: [PATCH] ACPI / processor: Set P_LVL{2,3} idle state descriptions
+Date:   Tue, 19 Feb 2019 10:57:02 +0100
+Message-ID: <3670654.07UQUedC4A@aspire.rjw.lan>
+In-Reply-To: <20190218013335.233265-1-Yazen.Ghannam@amd.com>
+References: <20190218013335.233265-1-Yazen.Ghannam@amd.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for hi3559v100-shub-pwm and hisilicon,hi3559v100-pwm
-platforms. They require a special quirk: pwm has to be enabled again
-to force duty_cycle refresh.
+On Monday, February 18, 2019 2:33:49 AM CET Ghannam, Yazen wrote:
+> From: Yazen Ghannam <yazen.ghannam@amd.com>
+> 
+> The ACPI idle driver will fallback to using the legacy P_LVL* SystemIO
+> method of entering C-states if the _CST method is disabled and P_BLK is
+> defined. However, in this case the C2 and C3 states won't have a
+> description set, so the user will see "<null>" when reading the
+> description from sysfs.
+> 
+> Give each of these states a description.
+> 
+> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> ---
+>  drivers/acpi/processor_idle.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
+> index b2131c4ea124..98d4ec5bf450 100644
+> --- a/drivers/acpi/processor_idle.c
+> +++ b/drivers/acpi/processor_idle.c
+> @@ -282,6 +282,13 @@ static int acpi_processor_get_power_info_fadt(struct acpi_processor *pr)
+>  			  pr->power.states[ACPI_STATE_C2].address,
+>  			  pr->power.states[ACPI_STATE_C3].address));
+>  
+> +	snprintf(pr->power.states[ACPI_STATE_C2].desc,
+> +			 ACPI_CX_DESC_LEN, "ACPI P_LVL2 IOPORT 0x%x",
+> +			 pr->power.states[ACPI_STATE_C2].address);
+> +	snprintf(pr->power.states[ACPI_STATE_C3].desc,
+> +			 ACPI_CX_DESC_LEN, "ACPI P_LVL3 IOPORT 0x%x",
+> +			 pr->power.states[ACPI_STATE_C3].address);
+> +
+>  	return 0;
+>  }
+>  
+> 
 
-Signed-off-by: Mathieu Othacehe <m.othacehe@gmail.com>
----
- drivers/pwm/pwm-hibvt.c | 27 ++++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+Applied, thanks!
 
-diff --git a/drivers/pwm/pwm-hibvt.c b/drivers/pwm/pwm-hibvt.c
-index ffc803818c3c..f81c6fcb79be 100644
---- a/drivers/pwm/pwm-hibvt.c
-+++ b/drivers/pwm/pwm-hibvt.c
-@@ -54,6 +54,7 @@ struct hibvt_pwm_chip {
- 
- struct hibvt_pwm_soc {
- 	u32 num_pwms;
-+	bool quirk_force_enable;
- };
- 
- static const struct hibvt_pwm_soc hi3516cv300_soc_info = {
-@@ -64,6 +65,16 @@ static const struct hibvt_pwm_soc hi3519v100_soc_info = {
- 	.num_pwms = 8,
- };
- 
-+static const struct hibvt_pwm_soc hi3559v100_shub_soc_info = {
-+	.num_pwms = 8,
-+	.quirk_force_enable = true,
-+};
-+
-+static const struct hibvt_pwm_soc hi3559v100_soc_info = {
-+	.num_pwms = 2,
-+	.quirk_force_enable = true,
-+};
-+
- static inline struct hibvt_pwm_chip *to_hibvt_pwm_chip(struct pwm_chip *chip)
- {
- 	return container_of(chip, struct hibvt_pwm_chip, chip);
-@@ -152,13 +163,23 @@ static void hibvt_pwm_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
- static int hibvt_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 				struct pwm_state *state)
- {
-+	struct hibvt_pwm_chip *hi_pwm_chip = to_hibvt_pwm_chip(chip);
-+
- 	if (state->polarity != pwm->state.polarity)
- 		hibvt_pwm_set_polarity(chip, pwm, state->polarity);
- 
- 	if (state->period != pwm->state.period ||
--		state->duty_cycle != pwm->state.duty_cycle)
-+	    state->duty_cycle != pwm->state.duty_cycle) {
- 		hibvt_pwm_config(chip, pwm, state->duty_cycle, state->period);
- 
-+		/*
-+		 * Some implementations require the pwm to be enabled
-+		 * once more each time the duty cycle is refreshed.
-+		 */
-+		if (hi_pwm_chip->soc->quirk_force_enable && state->enabled)
-+			hibvt_pwm_enable(chip, pwm);
-+	}
-+
- 	if (state->enabled != pwm->state.enabled) {
- 		if (state->enabled)
- 			hibvt_pwm_enable(chip, pwm);
-@@ -259,6 +280,10 @@ static const struct of_device_id hibvt_pwm_of_match[] = {
- 	  .data = &hi3516cv300_soc_info },
- 	{ .compatible = "hisilicon,hi3519v100-pwm",
- 	  .data = &hi3519v100_soc_info },
-+	{ .compatible = "hisilicon,hi3559v100-shub-pwm",
-+	  .data = &hi3559v100_shub_soc_info },
-+	{ .compatible = "hisilicon,hi3559v100-pwm",
-+	  .data = &hi3559v100_soc_info },
- 	{  }
- };
- MODULE_DEVICE_TABLE(of, hibvt_pwm_of_match);
--- 
-2.17.1
 
