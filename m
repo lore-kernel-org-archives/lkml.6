@@ -6,196 +6,100 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD741C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE2DC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:47:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 673D221903
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:45:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A50E621903
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 08:47:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="q+BZ+2Zx"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s8c8/7/F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbfBSIp1 (ORCPT
+        id S1727693AbfBSIrF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 03:45:27 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:36359 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727011AbfBSIp1 (ORCPT
+        Tue, 19 Feb 2019 03:47:05 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:34493 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725765AbfBSIrE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 03:45:27 -0500
-Received: by mail-it1-f196.google.com with SMTP id h6so4399165itl.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 00:45:26 -0800 (PST)
+        Tue, 19 Feb 2019 03:47:04 -0500
+Received: by mail-vk1-f196.google.com with SMTP id y14so4491061vkd.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 00:47:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=3Tc8CQGbFy9+Ale7tXGzBY1Nuks7rjjNOdLvOBlxEHI=;
-        b=q+BZ+2ZxT3H1m1p+9rUtK/Eorj+iS/DUQ7s2ZLgl7juAO7Xu0iqCYV63hJ+k93p0VB
-         xJJxOINtFZSC8qzkJUf+xYlzJdWmVHtMmNYJVET6xA79q6zCN84rM1W7KW/vgiAcv6bw
-         2ujdygyMqWhonraxfu1VtvFBPaGup8yg9v8hE=
+        bh=42/ZTfsqTDsYcqN7wt14htZxBiXNFJVnlE2eq0v9/+o=;
+        b=s8c8/7/FqamaVfrbfb7wU5WbWKz6cYKqoA50foBQ65NB1d9088e8TRY+BH1jekA2Cm
+         0bS5LuRysKqc70lnaLz/7CxvKT+q7cQysD+2Ms55TtqT5LEzBdzLqtVzjAnL5dLCLlcN
+         Lggmz1ABlmZzT+1Xr20CGLo3w6Dil2lseAb9maBpCnsFpoHwAnTV+LNn976ecqTi1T/o
+         bUKSoGO9boRokYIjXZi+k3k1pwfg+PJOLenlxEj4CqoZYcuXxIKfXKY3fEIx4vQwgXKb
+         rIVz71OMfnlqAV2wmOqhCp0w11rcfLfCRGsJDxzP4cTwVrBix3DNeDspLZ7yefQss8Y5
+         T/ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3Tc8CQGbFy9+Ale7tXGzBY1Nuks7rjjNOdLvOBlxEHI=;
-        b=q+L40WwFNHtzXsAV/5DpMXiaIEGbw2iwDBcdwEva58XgK+1se+L60TCW2rDQtIzzTD
-         eQgPu4Jps5GDqt66AHVzcY6RwcdXn+AsWS419z52z2ftpSnb3nfuBhiW7GOya1rajgD+
-         ZnZD6hJmocMnDoGrlZSlOiFxjyfeBew1KIGEY3aUL24FegQc+OVJJ+2i5QzfxXOwRXG0
-         P0w3b3q7vpCcIGvZ2rrfG7NwzteQCldvjjjDfiFwrSq13RkKUgHOHXfDA+aViU3ZvKs6
-         S+t+NvkF6mxmB9xsh0SasPBh5wNnQHuDDlEykO0a76Es+uGwNjcpTGvOpIv8FQ4PqTIk
-         slyA==
-X-Gm-Message-State: AHQUAuZDNzwjkbiYQeRFlASppq1BZym+EkgzTXfwuheRfiyfetDkJTur
-        tN7PpW934bsBpJWgKZHE2C6QvAdvJTpVEei1xyV5Mw==
-X-Google-Smtp-Source: AHgI3IYmHWhiy6Dy2DpeB/1hgyhMP9QlqCfj8Q0fv6kISSlKJlOm5fJN1Zr0UPs+ePBb/2BUt5cc/RSCYM5Xr+iS5B0=
-X-Received: by 2002:a5d:97c8:: with SMTP id k8mr17473181ios.267.1550565925650;
- Tue, 19 Feb 2019 00:45:25 -0800 (PST)
+        bh=42/ZTfsqTDsYcqN7wt14htZxBiXNFJVnlE2eq0v9/+o=;
+        b=PHu3M0vCVDP8M/mDF2XxoYiq1RUe98SCuOPzDln7QmvWkI2Z31AfmRwSvpxdO0F/4J
+         sQO77U/HHVhvGxk4t8p16XRQh+4yj0E+1KOlxFLxFSmU2LoXkiMsHoyi0HzG+AAEUbmM
+         iwZ3KPgOlF3ayv+ZmBVP8RHBXodECJS7P3KP3ksfANdyT0C1NJ6oP2chKBJSRAAsGlbp
+         HnorJUYeF4qVFyvUOThuLa6nvQ3EfsrELgSf36kDFCbPkfsMW7v+90eEwivm89ITn/BC
+         cKmURh31wRcpSZuy7aPBWBjnSi4I+i16jy7BKxPiYcYYRITVVMPpVXrSKm76zfGvCRu2
+         NbLg==
+X-Gm-Message-State: AHQUAuZEZUn7+0rFNq9MMbO+H6ENJvijrqc5MBjoP+/FXqCFYW1xNsVW
+        yxsaLXYvChuhWexyw2QgIz2yJthkSMuOTZdiqlwl4Q==
+X-Google-Smtp-Source: AHgI3IbkKpDf9HoRvERtWKABXqXuA6iGEqT/avKQmToOZw33QRKo0NF6Hy3OF/pC4sDWrtkxYist6Ueo3gQvvbYEhe4=
+X-Received: by 2002:a1f:d8b:: with SMTP id 133mr5383061vkn.78.1550566023869;
+ Tue, 19 Feb 2019 00:47:03 -0800 (PST)
 MIME-Version: 1.0
-References: <CAL_JsqKTnPVM7Qahy9ejQbPfENpLCdzf5K5uUTcPh8j3EiqWRA@mail.gmail.com>
- <CAMty3ZCyq=tZMt6RC1aYJuEWgYp2zv1LBh+ZUwucE+g4RCoUaQ@mail.gmail.com>
- <CAL_JsqKCw3EV+0_DuMiHh7GRGxv7YogQf-xwp71n9gpc2GzSSQ@mail.gmail.com>
- <CAMty3ZBtoocXBW5A0astyQPh2y7vG7NtbZ_M0BjSeex2etmGsw@mail.gmail.com>
- <CAL_JsqJSMX7E2zQA2O8ofZQPDrm3S6PMCLG1iAQ95P10Pe2yFg@mail.gmail.com>
- <CAMty3ZDMB=pwY8Rxdt3du=90pksBedLo0Pc_-=diqx9-Xndzqg@mail.gmail.com>
- <CAMty3ZDBu2Y9psNu9nrZ=BNVvhpJ2qYn-Qp7MDqdhK9_SrcpNg@mail.gmail.com>
- <20190218071207.GE242714@dtor-ws> <CAMty3ZDbFU-NpWQvkaUWgUiVTabjTZoFWUCUZSPKMA6VuHc+iQ@mail.gmail.com>
- <CAMty3ZBVpNY+JF_vEMs83M29WKQDhzmk7LyL-HHCCA7uD0Y+=g@mail.gmail.com> <20190219081510.GB65896@dtor-ws>
-In-Reply-To: <20190219081510.GB65896@dtor-ws>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Tue, 19 Feb 2019 14:15:14 +0530
-Message-ID: <CAMty3ZCE+zTbDw2O6Ct7_ABfQnJucfhr9zkE9vWZoofJ3XJmtA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: input: touchscreen: goodix: Document
- AVDD28-supply property
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, linux-input@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com
+References: <20190219070428.15480-1-yuehaibing@huawei.com>
+In-Reply-To: <20190219070428.15480-1-yuehaibing@huawei.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Tue, 19 Feb 2019 14:16:53 +0530
+Message-ID: <CAFA6WYMg9BrownTELgE85AMO-_0VWBH0oJzfnBVXzN+LNNdDYA@mail.gmail.com>
+Subject: Re: [PATCH -next] tee: optee: Fix unsigned comparison with less than zero
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Jens Wiklander <jens.wiklander@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 1:45 PM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
+On Tue, 19 Feb 2019 at 12:34, YueHaibing <yuehaibing@huawei.com> wrote:
 >
-> On Tue, Feb 19, 2019 at 01:00:19AM +0530, Jagan Teki wrote:
-> > On Mon, Feb 18, 2019 at 3:03 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > >
-> > > Hi Dmitry,
-> > >
-> > > On Mon, Feb 18, 2019 at 12:42 PM Dmitry Torokhov
-> > > <dmitry.torokhov@gmail.com> wrote:
-> > > >
-> > > > On Sun, Feb 17, 2019 at 02:45:52PM +0530, Jagan Teki wrote:
-> > > > > On Sun, Feb 17, 2019 at 1:21 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > > > > >
-> > > > > > Hi Dmitry and Rob,
-> > > > > >
-> > > > > > On Thu, Feb 14, 2019 at 3:21 AM Rob Herring <robh@kernel.org> wrote:
-> > > > > > >
-> > > > > > > On Tue, Jan 22, 2019 at 7:39 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > > > > > > >
-> > > > > > > > On Mon, Jan 21, 2019 at 9:46 PM Rob Herring <robh@kernel.org> wrote:
-> > > > > > > > >
-> > > > > > > > > On Fri, Jan 18, 2019 at 10:01 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > > > > > > > > >
-> > > > > > > > > > On Wed, Jan 9, 2019 at 7:08 PM Rob Herring <robh@kernel.org> wrote:
-> > > > > > > > > > >
-> > > > > > > > > > > Please CC DT list if you want bindings reviewed.
-> > > > > > > > > >
-> > > > > > > > > > Sorry I forgot.
-> > > > > > > > > >
-> > > > > > > > > > >
-> > > > > > > > > > > On Wed, Jan 9, 2019 at 1:40 AM Dmitry Torokhov
-> > > > > > > > > > > <dmitry.torokhov@gmail.com> wrote:
-> > > > > > > > > > > >
-> > > > > > > > > > > > On Sat, Dec 15, 2018 at 08:47:59PM +0530, Jagan Teki wrote:
-> > > > > > > > > > > > > Most of the Goodix CTP controllers are supply with AVDD28 pin.
-> > > > > > > > > > > > > which need to supply for controllers like GT5663 on some boards
-> > > > > > > > > > > > > to trigger the power.
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > So, document the supply property so-that the require boards
-> > > > > > > > > > > > > that used on GT5663 can enable it via device tree.
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > > > > > > > > > > ---
-> > > > > > > > > > > > >  Documentation/devicetree/bindings/input/touchscreen/goodix.txt | 1 +
-> > > > > > > > > > > > >  1 file changed, 1 insertion(+)
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > diff --git a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-> > > > > > > > > > > > > index f7e95c52f3c7..c4622c983e08 100644
-> > > > > > > > > > > > > --- a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-> > > > > > > > > > > > > +++ b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-> > > > > > > > > > > > > @@ -23,6 +23,7 @@ Optional properties:
-> > > > > > > > > > > > >   - touchscreen-inverted-y  : Y axis is inverted (boolean)
-> > > > > > > > > > > > >   - touchscreen-swapped-x-y : X and Y axis are swapped (boolean)
-> > > > > > > > > > > > >                               (swapping is done after inverting the axis)
-> > > > > > > > > > > > > + - AVDD28-supply     : Analog power supply regulator on AVDD28 pin
-> > > > > > > > > > > >
-> > > > > > > > > > > > I think we normally use lower case in DT bindings and rarely encode
-> > > > > > > > > > > > voltage in the supply name unless we are dealing with several supplies
-> > > > > > > > > > > > of the same kind, but I'll let Ron comment on this.
-> > > > > > > > > > >
-> > > > > > > > > > > Yes on lowercase though there are some exceptions.
-> > > > > > > > > > >
-> > > > > > > > > > > There's also a AVDD22 supply as well as DVDD12 and VDDIO. So we
-> > > > > > > > > > > probably need to keep the voltage, but the binding is incomplete.
-> > > > > > > > > >
-> > > > > > > > > > What is incomplete here? can you please elaborate.
-> > > > > > > > >
-> > > > > > > > > You are missing the 3 other supplies the chip has: AVDD22, DVDD12 and VDDIO.
-> > > > > > > >
-> > > > > > > > Though it has other supplies, only AVDD28 is connected in the Host
-> > > > > > > > interface design similar like 9. Reference Schematic on Page, 23 in
-> > > > > > > > attached manual.
-> > > > > > >
-> > > > > > > That is for a particular board design. It still has other supplies.
-> > > > > > > Just make the binding complete please. You can make them optional. I
-> > > > > > > don't care if the driver supports controlling all the supplies or not
-> > > > > > > (though Dmitry might).
-> > > > > >
-> > > > > > So, Can I make bulk get and enable in all 4 regulators global to
-> > > > > > driver or specific to that chip, in either way the regulators which
-> > > > > > are not used to process via dummy regulators (which we all know).
-> > > > > >
-> > > > > > or regulator which are not using are get via devm_regulator_get_optional.
-> > > > > >
-> > > > > > Any suggestions?
-> > > > >
-> > > > > Just realized to go with bulk calls, please have a look at on v5 [1]
-> > > >
-> > > > I do not believe you can use bulk regulator API here as you need to
-> > > > implement the power up timing scheme mentioned on p. 12 of the spec you
-> > > > referenced earlier. And, because of that timing diagram, I believe if
-> > > > you want to control AVDD supply, you also have to control VDDIO supply
-> > > > as it has to be on only after enabling AVDD.
-> > >
-> > > AVDD here is AVDD28 it' is an out name of pin (mentioned in p. 23). So
-> > > the power scheme goes to enable AVDD28 and then VDDIO does that really
-> > > mean bulk of two regulators?
-> >
-> > The time between these two regulator operations is nearly 0, as per
-> > power scheme diagram T1 >= 0us. I think I can use bulk since there is
-> > no necessity of delay between these two regulator operations.
-> >
-> > What do you think?
+> The return from the call to tee_client_invoke_func can be a
+> negative error code however this is being assigned to an
+> unsigned variable 'ret' hence the check is always false.
+> Fix this by making 'ret' an int.
 >
-> Does the bulk enable provide any guarantees as to the order of
-> operations? If it does not then I think we should ensure that they are
-> powered up/down in the right order.
+> Detected by Coccinelle ("Unsigned expression compared with zero:
+> ret < 0")
+>
+> Fixes: c3fa24af9244 ("tee: optee: add TEE bus device enumeration support")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-At-least I can saw from the log, async enables based on the definition
-of supply arrays. Indeed the regulators with bulk calls enables based
-on the supply array order, this is what I usually think.
+Reviewed-by: Sumit Garg <sumit.garg@linaro.org>
 
-[    3.676483] Goodix-TS 1-005d: 1-005d supply VDDIO not found, using
-dummy regulator
-[    3.693159] regulator_bulk_enable_async: Supply AVDD28
-[    3.693162] regulator_bulk_enable_async: Supply VDDIO
-[    3.806095] Goodix-TS 1-005d: ID 5663, version: 0100
-
-Do we need to go reverse order for power-down? I couldn't see this
-information on the datasheet. If yes then we need to go for normal
-calls.
+> ---
+>  drivers/tee/optee/device.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/tee/optee/device.c b/drivers/tee/optee/device.c
+> index 5e4938b..1f22376 100644
+> --- a/drivers/tee/optee/device.c
+> +++ b/drivers/tee/optee/device.c
+> @@ -34,7 +34,7 @@ static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
+>  static int get_devices(struct tee_context *ctx, u32 session,
+>                        struct tee_shm *device_shm, u32 *shm_size)
+>  {
+> -       u32 ret = 0;
+> +       int ret = 0;
+>         struct tee_ioctl_invoke_arg inv_arg = {0};
+>         struct tee_param param[4] = {0};
+>
+> --
+> 2.7.0
+>
+>
