@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30BA1C4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9825EC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:07:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F22692147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:07:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 664552147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 16:07:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Lxqk8665"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="qzbltHKX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729064AbfBSQHC (ORCPT
+        id S1729147AbfBSQHI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:07:02 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36946 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728060AbfBSQG7 (ORCPT
+        Tue, 19 Feb 2019 11:07:08 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43388 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729027AbfBSQHC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:06:59 -0500
-Received: by mail-wr1-f65.google.com with SMTP id c8so22588925wrs.4
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 08:06:57 -0800 (PST)
+        Tue, 19 Feb 2019 11:07:02 -0500
+Received: by mail-wr1-f66.google.com with SMTP id d17so8168320wre.10
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 08:07:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=T/8pB33KMIJ5zXoSB9u9TfOpy7x+4rvO5Vd6nd9n/qY=;
-        b=Lxqk8665bM0VzvGAQ62nwsFElvlMyPDJd627oEUO9Ezqk0SUdrdorFJizWOp4759m3
-         66tgLbF8MUYmGCXP7DNMEjcXNhFxIk+5v4EUQW7R0LQ7FVyWJXH6kV2kgvFcnymq1hDM
-         gwTO2/18WStArOROg1MbvIl4UKNwaw5f8ML84/HvXixPRfoQfj3g9c+G4uJpqy1HsJnK
-         9KTpxG2q0lBohR+rvWa6rexsoVcr1sjKH4vCt0wGeS3PAex871DKKexM/jklKH8N8Ef4
-         jkS4tzr2QChPfZfxS3Ljl6ynwpJBG26+49Hqms+Fl+1UcFCgmA0f0IVRPl/89AvTby3G
-         NwMA==
+        bh=1WGhX7lh3GClMJMpleuT6xjtmXeQaabY429BNB+za3s=;
+        b=qzbltHKXWbDw/IvHCCnOWfsvc63Iy5VsInYiFsTPn8q9qmSHsobcWtechV/JWEryR4
+         aazjyrbVVJ+TqfvDjM+yKn+7anRUTTpPJW/gCXDgJz4pG5S0kZQUD9ubukXma1kGGnIF
+         3VjIPipTaxPw+Ecv7NJnubJIg7OgaQsOBEob0xgAA4j7IHDL+CB9tFUaJeny7Vhf9UV8
+         hrxAf4hJOX2R4DxiRzUIIJD2+nzJa0R3/do/oC8jrMjv8ZfcEFFRgrax04waUkaR0l+/
+         Ws9fdVulDZXFJVFsuBDBJf1b0sUDrUKx1S4RQHfSr8EK5DdDxaSvJXZrWK20qtII2PrO
+         ncUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=T/8pB33KMIJ5zXoSB9u9TfOpy7x+4rvO5Vd6nd9n/qY=;
-        b=olow3nI85dLwK0Bpi2y6Q1qaLbbQqfwV0ad6KMF1uABAPlGS2wz36fNQtnP9NmEjcb
-         4wT3+UjOfMLl2Akg8+rZCaydTB+x6qW1jOAFeyQzcI9o7pGl7FqvRRl5IVhnNdP0bEXC
-         ZZXI9oxQO+VeikcVG/99d/ZOblLZThwJZY868x1TLoQ6+w7U4N3HU5y+z4McvBTt6XlZ
-         8qA5PBDg4pK6yiu+2xokau0lxkKqoTcV7GHC9T3m0H3+KEvLUKWhHlLVPyrqplhyQgTP
-         sI34PUgPbLHBPH1aZegJmlJLhPUPFWTIL/jaE5M6z/K2qqve+NFeu39tj10W/VVhdTPt
-         /Aqg==
-X-Gm-Message-State: AHQUAuZbeGMKok0sUD39Mjit2IKqDCx83z8nxDCyYwdemZlAdZMJarzg
-        X0RU+06bwJ29tUoQNnH6JCN7Iw==
-X-Google-Smtp-Source: AHgI3IZBdUvC2jfzpcSkpdA7/RXbHqOvqiUkHCs3JINhn5uytsWY7FcAipkREv1DHgyu2igeeqwyGg==
-X-Received: by 2002:a5d:4710:: with SMTP id y16mr6977237wrq.305.1550592416959;
-        Tue, 19 Feb 2019 08:06:56 -0800 (PST)
+        bh=1WGhX7lh3GClMJMpleuT6xjtmXeQaabY429BNB+za3s=;
+        b=lNvoAYNJo8pLVZSyQDwLY9SuLzgZ/uam3UOyRByZfROycEBozrV+J9KkDaa1FfHj5b
+         kIPeGr6bpyZGARmuRvlEAT6piUOWdVNJmN9ukFpno6i4Qxy52+mCtpXeDRtrCkz4cB7w
+         q3b9T1d2Whs6GrS/Ul/dhdFcNYtoxNc8a/qXJ1+dYbW/1IO7jQloXEn9o6e2czdqlDsI
+         2LVIQfK2H4Jpef04Y3gIw3fkPT0fDtzcr5S7ViP6v6DjHJ8MpVLd+Xn93ACITtbYCDB1
+         El6/z3t3gn6h4P1siTLZk7V6uZXVvGwn1cU8lqdzev+j6dT9lpYfhCHa1B07d1F5HUqb
+         V3xA==
+X-Gm-Message-State: AHQUAuZQeG0gK+mtAaPzkn4/6MY7+xcC+GK7UOg9sIM6KxdYeVPJJjmf
+        vNs9aMN0PXDUSlpQJIHyscAiyw==
+X-Google-Smtp-Source: AHgI3IZTzPFtEWcG/JMbQehUxXrSxPMfp50ZuFhnvMgOXrr/Nun1AJsPowYSY7OcgTXGoNouRezYSQ==
+X-Received: by 2002:adf:9083:: with SMTP id i3mr21182664wri.124.1550592419798;
+        Tue, 19 Feb 2019 08:06:59 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id h17sm12161381wrq.17.2019.02.19.08.06.55
+        by smtp.gmail.com with ESMTPSA id h17sm12161381wrq.17.2019.02.19.08.06.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 08:06:56 -0800 (PST)
+        Tue, 19 Feb 2019 08:06:58 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -64,9 +64,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         <u.kleine-koenig@pengutronix.de>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v6 1/7] irq/irq_sim: add irq_set_type() callback
-Date:   Tue, 19 Feb 2019 17:06:44 +0100
-Message-Id: <20190219160650.9614-2-brgl@bgdev.pl>
+Subject: [PATCH v6 3/7] gpio: mockup: implement get_multiple()
+Date:   Tue, 19 Feb 2019 17:06:46 +0100
+Message-Id: <20190219160650.9614-4-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190219160650.9614-1-brgl@bgdev.pl>
 References: <20190219160650.9614-1-brgl@bgdev.pl>
@@ -79,43 +79,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Implement the irq_set_type() callback and call irqd_set_trigger_type()
-internally so that users interested in the configured trigger type can
-later retrieve it using irqd_get_trigger_type(). We only support edge
-trigger types.
+We already support set_multiple(). Implement get_multiple() as well.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- kernel/irq/irq_sim.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/gpio/gpio-mockup.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
-index 98a20e1594ce..b992f88c5613 100644
---- a/kernel/irq/irq_sim.c
-+++ b/kernel/irq/irq_sim.c
-@@ -25,10 +25,22 @@ static void irq_sim_irqunmask(struct irq_data *data)
- 	irq_ctx->enabled = true;
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index b4c1de6acf74..1c945c967f60 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -102,6 +102,22 @@ static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
+ 	return val;
  }
  
-+static int irq_sim_set_type(struct irq_data *data, unsigned int type)
++static int gpio_mockup_get_multiple(struct gpio_chip *gc,
++				    unsigned long *mask, unsigned long *bits)
 +{
-+	/* We only support rising and falling edge trigger types. */
-+	if (type & ~IRQ_TYPE_EDGE_BOTH)
-+		return -EINVAL;
++	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
++	unsigned int bit, val;
 +
-+	irqd_set_trigger_type(data, type);
++	mutex_lock(&chip->lock);
++	for_each_set_bit(bit, mask, gc->ngpio) {
++		val = __gpio_mockup_get(gc, bit);
++		__assign_bit(bit, bits, val);
++	}
++	mutex_unlock(&chip->lock);
 +
 +	return 0;
 +}
 +
- static struct irq_chip irq_sim_irqchip = {
- 	.name		= "irq_sim",
- 	.irq_mask	= irq_sim_irqmask,
- 	.irq_unmask	= irq_sim_irqunmask,
-+	.irq_set_type	= irq_sim_set_type,
- };
- 
- static void irq_sim_handle_irq(struct irq_work *work)
+ static void __gpio_mockup_set(struct gpio_chip *gc,
+ 			      unsigned int offset, int value)
+ {
+@@ -327,6 +343,7 @@ static int gpio_mockup_probe(struct platform_device *pdev)
+ 	gc->parent = dev;
+ 	gc->get = gpio_mockup_get;
+ 	gc->set = gpio_mockup_set;
++	gc->get_multiple = gpio_mockup_get_multiple;
+ 	gc->set_multiple = gpio_mockup_set_multiple;
+ 	gc->direction_output = gpio_mockup_dirout;
+ 	gc->direction_input = gpio_mockup_dirin;
 -- 
 2.20.1
 
