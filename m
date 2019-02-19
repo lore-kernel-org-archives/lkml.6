@@ -2,155 +2,358 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0178FC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 12:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 298D7C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 12:49:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C70FA2146E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 12:48:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF1D4204EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 12:49:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="iDUWRKy5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728777AbfBSMsQ (ORCPT
+        id S1728604AbfBSMtG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 07:48:16 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44952 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726847AbfBSMsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 07:48:14 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1EE0615AB;
-        Tue, 19 Feb 2019 04:48:14 -0800 (PST)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2AE0B3F720;
-        Tue, 19 Feb 2019 04:48:11 -0800 (PST)
-Date:   Tue, 19 Feb 2019 12:48:08 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mingo@redhat.com,
-        catalin.marinas@arm.com, james.morse@arm.com,
-        valentin.schneider@arm.com, brgerst@gmail.com, jpoimboe@redhat.com,
-        luto@kernel.org, bp@alien8.de, dvlasenk@redhat.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de
-Subject: Re: [PATCH] sched/x86: Save [ER]FLAGS on context switch
-Message-ID: <20190219124808.GG8501@fuggles.cambridge.arm.com>
-References: <20190213144145.GY32494@hirez.programming.kicks-ass.net>
- <20190213154532.GQ32534@hirez.programming.kicks-ass.net>
- <D61C430D-4321-4114-AB85-671A3C7B8EAE@amacapital.net>
- <20190213222146.GC32494@hirez.programming.kicks-ass.net>
- <D3E1B64D-3E91-4A82-9C3B-92D9EB7326CE@amacapital.net>
- <20190214101429.GD32494@hirez.programming.kicks-ass.net>
- <20ABBED1-E505-45F6-8520-FB93786DF9A9@zytor.com>
- <20190216103044.GR32494@hirez.programming.kicks-ass.net>
- <9e037d68-75e7-1beb-0c9c-33a7ffeced1b@zytor.com>
- <20190219090409.GW32494@hirez.programming.kicks-ass.net>
+        Tue, 19 Feb 2019 07:49:06 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:53904 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727009AbfBSMtC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 07:49:02 -0500
+Received: from zn.tnic (p200300EC2BCDC80098698729851D3663.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:c800:9869:8729:851d:3663])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 54DF71EC038F;
+        Tue, 19 Feb 2019 13:49:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1550580540;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=MqjVWcBs9b8WoHpqUcdgSfbZ+OOHiEEXKJZ7toKxupY=;
+        b=iDUWRKy5r6wDW969cVJ3LASyyAGHyzgXVuZWlsSE8ST6lK5tMX/W218HDiEKzckI7D3E7X
+        HqloDSJb38GCftx9XsEcUeHVtoVHOUXT4d8VnMl7rVoX9Gal1qtUf0zcfZiBeu4/UHGbM0
+        sWMnSmM3qquRxRVR3M4JtEeyh77jlak=
+Date:   Tue, 19 Feb 2019 13:48:53 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com
+Subject: Re: [PATCH v2 15/20] vmalloc: New flags for safe vfree on special
+ perms
+Message-ID: <20190219124853.GB19514@zn.tnic>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-16-rick.p.edgecombe@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190219090409.GW32494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+In-Reply-To: <20190129003422.9328-16-rick.p.edgecombe@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 10:04:09AM +0100, Peter Zijlstra wrote:
-> On Mon, Feb 18, 2019 at 02:30:21PM -0800, H. Peter Anvin wrote:
-> > On 2/16/19 2:30 AM, Peter Zijlstra wrote:
-> > > On Fri, Feb 15, 2019 at 08:06:56PM -0800, hpa@zytor.com wrote:
-> > >> This implies we invoke schedule -- a restricted operation (consider
-> > >> may_sleep) during execution of STAC-enabled code, but *not* as an
-> > >> exception or interrupt, since those preserve the flags.
-> > > 
-> > > Meet preempt_enable().
-> > 
-> > I believe this falls under "doctor, it hurts when I do that." And it hurts for
-> > very good reasons. See below.
-> 
-> I disagree; the basic rule is that if you're preemptible you must also
-> be able to schedule and vice-versa. These AC regions violate this.
-> 
-> And, like illustrated, it is _very_ easy to get all sorts inside that AC
-> crap.
-> 
-> > >> I have serious concerns about this. This is more or less saying that
-> > >> we have left an unlimited gap and have had AC escape.
-> > > 
-> > > Yes; by allowing normal C in between STAC and CLAC this is so.
-> > > 
-> > >> Does *anyone* see a need to allow this? I got a question at LPC from
-> > >> someone about this, and what they were trying to do once all the
-> > >> layers had been unwound was so far down the wrong track for a root
-> > >> problem that actually has a very simple solution.
-> > > 
-> > > Have you read the rest of the thread?
-> > > 
-> > > All it takes for this to explode is a call to a C function that has
-> > > tracing on it in between the user_access_begin() and user_access_end()
-> > > things. That is a _very_ easy thing to do.
-> > > 
-> > > Heck, GCC is allowed to generate that broken code compiling
-> > > lib/strnlen_user.c; it doesn't _have_ to inline do_strnlen_user (esp.
-> > > with CONFIG_OPTIMIZE_INLINING), and making that a function call would
-> > > get us fentry hooks and ftrace and *BOOM*.
-> > > 
-> > > (Now, of course, its a static function with a single caller, and GCC
-> > > isn't _THAT_ stupid, but it could, if it wanted to)
-> > > 
-> > > Since the bar is _that_ low for mistakes, I figure we'd better fix it.
-> > > 
-> > 
-> > The question is what "fix it" means. 
-> 
-> It means that when we do schedule, the next task doesn't have AC set,
-> and when we schedule back, we'll restore our AC when we had it. Unlike
-> the current situation, where the next task will run with AC set.
-> 
-> IOW, it confines AC to the task context where it was set.
-> 
-> > I'm really concerned about AC escapes,
-> > and everyone else should be, too.
-> 
-> Then _that_ should be asserted.
-> 
-> > For an issue specific to tracing, it would be more appropriate to do the
-> > appropriate things in the tracing entry/exit than in schedule. Otherwise, we
-> > don't want to silently paper over mistakes which could mean that we run a
-> > large portion of the kernel without protection we thought we had.
-> > 
-> > In that sense, calling schedule() with AC set is in fact a great place to have
-> > a WARN() or even BUG(), because such an event really could imply that the
-> > kernel has been security compromised.
-> 
-> It is not specific to tracing, tracing is just one of the most trivial
-> and non-obvious ways to make it go splat.
-> 
-> There's lot of fairly innocent stuff that does preempt_disable() /
-> preempt_enable(). And just a warning in schedule() isn't sufficient,
-> you'd have to actually trigger a reschedule before you know your code is
-> bad.
-> 
-> And like I said; the invariant is: if you're preemptible you can
-> schedule and v.v.
-> 
-> Now, clearly you don't want to mark these whole regions as !preemptible,
-> because then you can also not take faults, but somehow you're not
-> worried about the whole fault handler, but you are worried about the
-> scheduler ?!? How does that work? The fault handler can touch a _ton_
-> more code. Heck, the fault handler can schedule.
-> 
-> So either pre-fault, and run the whole AC crap with preemption disabled
-> and retry, or accept that we have to schedule.
+On Mon, Jan 28, 2019 at 04:34:17PM -0800, Rick Edgecombe wrote:
+> This adds a new flags VM_HAS_SPECIAL_PERMS, for enabling vfree operations
 
-I think you'll still hate this, but could we not disable preemption during
-the uaccess-enabled region, re-enabling it on the fault path after we've
-toggled uaccess off and disable it again when we return back to the
-uaccess-enabled region? Doesn't help with tracing, but it should at least
-handle the common case.
+s/This adds/add/ - you get the idea. :)
 
-Will
+s/flags/flag/
+
+> to immediately clear executable TLB entries to freed pages, and handle
+> freeing memory with special permissions. It also takes care of resetting
+> the direct map permissions for the pages being unmapped. So this flag is
+> useful for any kind of memory with elevated permissions, or where there can
+> be related permissions changes on the directmap. Today this is RO+X and RO
+> memory.
+> 
+> Although this enables directly vfreeing RO memory now, RO memory cannot be
+> freed in an interrupt because the allocation itself is used as a node on
+> deferred free list. So when RO memory needs to be freed in an interrupt
+> the code doing the vfree needs to have its own work queue, as was the case
+> before the deferred vfree list handling was added. Today there is only one
+> case where this happens.
+> 
+> For architectures with set_alias_ implementations this whole operation
+> can be done with one TLB flush when centralized like this. For others with
+> directmap permissions, currently only arm64, a backup method using
+> set_memory functions is used to reset the directmap. When arm64 adds
+> set_alias_ functions, this backup can be removed.
+> 
+> When the TLB is flushed to both remove TLB entries for the vmalloc range
+> mapping and the direct map permissions, the lazy purge operation could be
+> done to try to save a TLB flush later. However today vm_unmap_aliases
+> could flush a TLB range that does not include the directmap. So a helper
+> is added with extra parameters that can allow both the vmalloc address and
+> the direct mapping to be flushed during this operation. The behavior of the
+> normal vm_unmap_aliases function is unchanged.
+> 
+> Suggested-by: Dave Hansen <dave.hansen@intel.com>
+> Suggested-by: Andy Lutomirski <luto@kernel.org>
+> Suggested-by: Will Deacon <will.deacon@arm.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+>  include/linux/vmalloc.h |  13 +++++
+>  mm/vmalloc.c            | 122 +++++++++++++++++++++++++++++++++-------
+>  2 files changed, 116 insertions(+), 19 deletions(-)
+> 
+> diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+> index 398e9c95cd61..9f643f917360 100644
+> --- a/include/linux/vmalloc.h
+> +++ b/include/linux/vmalloc.h
+> @@ -21,6 +21,11 @@ struct notifier_block;		/* in notifier.h */
+>  #define VM_UNINITIALIZED	0x00000020	/* vm_struct is not fully initialized */
+>  #define VM_NO_GUARD		0x00000040      /* don't add guard page */
+>  #define VM_KASAN		0x00000080      /* has allocated kasan shadow memory */
+> +/*
+> + * Memory with VM_HAS_SPECIAL_PERMS cannot be freed in an interrupt or with
+> + * vfree_atomic.
+
+Please end function names with parentheses. You should go over the whole
+patchset - there are a bunch of places.
+
+> + */
+> +#define VM_HAS_SPECIAL_PERMS	0x00000200      /* Reset directmap and flush TLB on unmap */
+
+After 0x00000080 comes 0x00000100. 0x00000010 is free too. What's up?
+
+>  /* bits [20..32] reserved for arch specific ioremap internals */
+>  
+>  /*
+> @@ -135,6 +140,14 @@ extern struct vm_struct *__get_vm_area_caller(unsigned long size,
+>  extern struct vm_struct *remove_vm_area(const void *addr);
+>  extern struct vm_struct *find_vm_area(const void *addr);
+>  
+> +static inline void set_vm_special(void *addr)
+
+You need a different name than "special" for a vm which needs to flush
+and clear mapping perms on removal. VM_RESET_PERMS or whatever is more
+to the point than "special", for example, which could mean a lot of
+things.
+
+> +{
+> +	struct vm_struct *vm = find_vm_area(addr);
+> +
+> +	if (vm)
+> +		vm->flags |= VM_HAS_SPECIAL_PERMS;
+> +}
+> +
+>  extern int map_vm_area(struct vm_struct *area, pgprot_t prot,
+>  			struct page **pages);
+>  #ifdef CONFIG_MMU
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 871e41c55e23..d459b5b9649b 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/interrupt.h>
+>  #include <linux/proc_fs.h>
+>  #include <linux/seq_file.h>
+> +#include <linux/set_memory.h>
+>  #include <linux/debugobjects.h>
+>  #include <linux/kallsyms.h>
+>  #include <linux/list.h>
+> @@ -1055,24 +1056,11 @@ static void vb_free(const void *addr, unsigned long size)
+>  		spin_unlock(&vb->lock);
+>  }
+>  
+> -/**
+> - * vm_unmap_aliases - unmap outstanding lazy aliases in the vmap layer
+> - *
+> - * The vmap/vmalloc layer lazily flushes kernel virtual mappings primarily
+> - * to amortize TLB flushing overheads. What this means is that any page you
+> - * have now, may, in a former life, have been mapped into kernel virtual
+> - * address by the vmap layer and so there might be some CPUs with TLB entries
+> - * still referencing that page (additional to the regular 1:1 kernel mapping).
+> - *
+> - * vm_unmap_aliases flushes all such lazy mappings. After it returns, we can
+> - * be sure that none of the pages we have control over will have any aliases
+> - * from the vmap layer.
+> - */
+> -void vm_unmap_aliases(void)
+> +static void _vm_unmap_aliases(unsigned long start, unsigned long end,
+> +				int must_flush)
+
+Align arguments on the opening brace. There's more places below, pls fix
+them all.
+
+>  {
+> -	unsigned long start = ULONG_MAX, end = 0;
+>  	int cpu;
+> -	int flush = 0;
+> +	int flush = must_flush;
+
+You can't use must_flush directly because...?
+
+gcc produces the same asm here, with or without the local "flush" var.
+
+>  
+>  	if (unlikely(!vmap_initialized))
+>  		return;
+> @@ -1109,6 +1097,27 @@ void vm_unmap_aliases(void)
+>  		flush_tlb_kernel_range(start, end);
+>  	mutex_unlock(&vmap_purge_lock);
+>  }
+> +
+> +/**
+> + * vm_unmap_aliases - unmap outstanding lazy aliases in the vmap layer
+> + *
+> + * The vmap/vmalloc layer lazily flushes kernel virtual mappings primarily
+> + * to amortize TLB flushing overheads. What this means is that any page you
+> + * have now, may, in a former life, have been mapped into kernel virtual
+> + * address by the vmap layer and so there might be some CPUs with TLB entries
+> + * still referencing that page (additional to the regular 1:1 kernel mapping).
+> + *
+> + * vm_unmap_aliases flushes all such lazy mappings. After it returns, we can
+> + * be sure that none of the pages we have control over will have any aliases
+> + * from the vmap layer.
+> + */
+> +void vm_unmap_aliases(void)
+> +{
+> +	unsigned long start = ULONG_MAX, end = 0;
+> +	int must_flush = 0;
+> +
+> +	_vm_unmap_aliases(start, end, must_flush);
+> +}
+>  EXPORT_SYMBOL_GPL(vm_unmap_aliases);
+>  
+>  /**
+> @@ -1494,6 +1503,79 @@ struct vm_struct *remove_vm_area(const void *addr)
+>  	return NULL;
+>  }
+>  
+> +static inline void set_area_alias(const struct vm_struct *area,
+> +			int (*set_alias)(struct page *page))
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < area->nr_pages; i++) {
+> +		unsigned long addr =
+> +			(unsigned long)page_address(area->pages[i]);
+> +
+> +		if (addr)
+> +			set_alias(area->pages[i]);
+
+What's wrong with simply:
+
+        for (i = 0; i < area->nr_pages; i++) {
+                if (page_address(area->pages[i]))
+                        set_alias(area->pages[i]);
+        }
+
+?
+
+> +	}
+> +}
+> +
+> +/* This handles removing and resetting vm mappings related to the vm_struct. */
+
+s/This handles/Handle/
+
+> +static void vm_remove_mappings(struct vm_struct *area, int deallocate_pages)
+> +{
+> +	unsigned long addr = (unsigned long)area->addr;
+> +	unsigned long start = ULONG_MAX, end = 0;
+> +	int special = area->flags & VM_HAS_SPECIAL_PERMS;
+> +	int i;
+> +
+> +	/*
+> +	 * The below block can be removed when all architectures that have
+> +	 * direct map permissions also have set_alias_ implementations. This is
+> +	 * to do resetting on the directmap for any special permissions (today
+> +	 * only X), without leaving a RW+X window.
+> +	 */
+> +	if (special && !IS_ENABLED(CONFIG_ARCH_HAS_SET_ALIAS)) {
+> +		set_memory_nx(addr, area->nr_pages);
+> +		set_memory_rw(addr, area->nr_pages);
+
+That's two not very cheap calls to the underlying worker function, for
+example change_memory_common() on ARM64, instead of calling it once with
+the respective flags. You allude to that in the commit message but you
+might wanna run it by ARM folks first.
+
+> +	}
+> +
+> +	remove_vm_area(area->addr);
+> +
+> +	/* If this is not special memory, we can skip the below. */
+> +	if (!special)
+> +		return;
+> +
+> +	/*
+> +	 * If we are not deallocating pages, we can just do the flush of the VM
+> +	 * area and return.
+> +	 */
+> +	if (!deallocate_pages) {
+> +		vm_unmap_aliases();
+> +		return;
+> +	}
+> +
+> +	/*
+> +	 * If we are here, we need to flush the vm mapping and reset the direct
+> +	 * map.
+> +	 * First find the start and end range of the direct mappings to make
+> +	 * sure the vm_unmap_aliases flush includes the direct map.
+> +	 */
+> +	for (i = 0; i < area->nr_pages; i++) {
+> +		unsigned long addr =
+> +			(unsigned long)page_address(area->pages[i]);
+> +		if (addr) {
+
+		if (page_address(area->pages[i]))
+
+as above.
+
+> +			start = min(addr, start);
+> +			end = max(addr, end);
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * First we set direct map to something not valid so that it won't be
+
+Above comment says "First" too. In general, all those "we" formulations
+do not make the comments as easy to read as when you make them
+impersonal and imperative:
+
+	/*
+	 * Set the direct map to something invalid...
+
+Just like Documentation/process/submitting-patches.rst says:
+
+ "Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
+  instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
+  to do frotz", as if you are giving orders to the codebase to change
+  its behaviour."
+
+you simply order your code to do stuff. :-)
+
+> +	 * cached if there are any accesses after the TLB flush, then we flush
+> +	 * the TLB, and reset the directmap permissions to the default.
+> +	 */
+> +	set_area_alias(area, set_alias_nv_noflush);
+> +	_vm_unmap_aliases(start, end, 1);
+> +	set_area_alias(area, set_alias_default_noflush);
+> +}
+> +
+>  static void __vunmap(const void *addr, int deallocate_pages)
+>  {
+>  	struct vm_struct *area;
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
