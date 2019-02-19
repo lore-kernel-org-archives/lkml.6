@@ -2,170 +2,139 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B6B2C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:51:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D93C5C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:52:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD5E02146F
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:51:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A24E021738
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 19:52:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TF4Qfnkk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727426AbfBSTvJ (ORCPT
+        id S1728231AbfBSTwJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 14:51:09 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50900 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725963AbfBSTvI (ORCPT
+        Tue, 19 Feb 2019 14:52:09 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40897 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbfBSTwJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 14:51:08 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1JJjZQu054798
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 14:51:07 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qrqx3913t-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 14:51:07 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Tue, 19 Feb 2019 19:51:05 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 19 Feb 2019 19:51:01 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1JJoxPi21102746
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 19 Feb 2019 19:50:59 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C4E57AE04D;
-        Tue, 19 Feb 2019 19:50:59 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 12F28AE05D;
-        Tue, 19 Feb 2019 19:50:59 +0000 (GMT)
-Received: from [9.145.25.7] (unknown [9.145.25.7])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 19 Feb 2019 19:50:59 +0000 (GMT)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v3 2/9] s390: ap: kvm: setting a hook for PQAP
- instructions
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     Tony Krowiak <akrowiak@linux.ibm.com>, borntraeger@de.ibm.com,
-        alex.williamson@redhat.com, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        frankja@linux.ibm.com, pasic@linux.ibm.com, david@redhat.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        freude@linux.ibm.com, mimu@linux.ibm.com
-References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
- <1550152269-6317-3-git-send-email-pmorel@linux.ibm.com>
- <4b21f059-1d37-f341-bac7-5b1fe0d06521@linux.ibm.com>
- <ee84fc90-e158-9c36-b56f-67fe7777f683@linux.ibm.com>
- <20190218234235.7d9f547c.cohuck@redhat.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Tue, 19 Feb 2019 20:50:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 19 Feb 2019 14:52:09 -0500
+Received: by mail-wr1-f66.google.com with SMTP id q1so23330011wrp.7
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 11:52:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hwFTKdSwPZtqX0QtMqOoFg3pkIluI2fPczZHfa6feJM=;
+        b=TF4Qfnkk+jXddJZAwjMmQPuXh4SK+qgdsCiMY+MdACqLdDB6vbG83Dd1MNypyTFUod
+         vkQ6tunBIiDGZoEEFhbJ1vbLwT922X2thHwIX2LJ8yMkV+AEqPdIpGmW9r0xNmVRsETi
+         AKmILSheFh8xLQJOFizQzpMz6sMYhe5mIQ2/0ZJ+Ws8POSV0hTjJO3TUVJ6/gjdlxU2r
+         ZfBr5SkSm4ezrjIR5GopcQYEJ6Ctcsk0MsDL85EEsB0kWuoVOQ3WtPjYCljiIM7ig+W6
+         3b2ikXQ/wHe2tOIR6Ozorh9v8SlGbh8R8VZ5J7U4jgoOLGOGxet9xIN+QHSDN5NzKiPv
+         6gjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hwFTKdSwPZtqX0QtMqOoFg3pkIluI2fPczZHfa6feJM=;
+        b=BYEQVHfM7dsXfVMHj/KXQmrXV5u8ivjSdtkeoet5TZQfHQvF6BElCck6PhLOd4fBY9
+         LNF8kLzURLMPH8bIOjzj8IKOPGrV1scP1E/HV1kCy6unlaKZv5h1bOxKzE4P4duDh+4b
+         CDr/d5YO5iw7Hc+riQoBrm9ZIgrNay/olwJTyTlv8h5SVueumfmJrNPzarsU4/pFqkwk
+         uNc1ElOPlric1xuYRge6FehWZvDwVWQ/usIsS/N0oQT1vnbbIohYoho9CFL+nbVHAxKW
+         4QJb/MXfd2Oxu0iOdjo1DtjAVtplWv8pJEE/Uup61rOBT52lw2Am5ytA8qYr02iH36Ig
+         vuag==
+X-Gm-Message-State: AHQUAuYJWeRLGnpPLpPesGe37OsAvpSzzRxAc1/SiESXLJneoDY6Sr4s
+        S1EyfKsfQwMQ/G87BRfu+/FibkacPEwGrdFjtgI/Vg==
+X-Google-Smtp-Source: AHgI3IYNTnseh9Ou5OC1DGL6fW+f3f7UX1x2latowH7BYdoyi57d2WZHTNFfXtnH1pwqBNvVV6GbqjMTLRUDWjjLHBg=
+X-Received: by 2002:a05:6000:1091:: with SMTP id y17mr21139194wrw.317.1550605927320;
+ Tue, 19 Feb 2019 11:52:07 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190218234235.7d9f547c.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021919-0020-0000-0000-00000318BF24
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021919-0021-0000-0000-0000216A06F4
-Message-Id: <74d812c6-bf83-0fb0-8fc3-af1341b0ae3c@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-19_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=544 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902190139
+References: <20190219185509.GA23853@embeddedor>
+In-Reply-To: <20190219185509.GA23853@embeddedor>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Tue, 19 Feb 2019 14:51:53 -0500
+Message-ID: <CADnq5_Nntrq2zdzkwERV3ShCRptifbgVNhKP+xNgtyaWftWDdg@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/powerplay/smu10_hwmgr: use struct_size() in kzalloc()
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/02/2019 23:42, Cornelia Huck wrote:
-> On Mon, 18 Feb 2019 19:29:10 +0100
-> Pierre Morel <pmorel@linux.ibm.com> wrote:
-> 
->> On 15/02/2019 23:02, Tony Krowiak wrote:
->>> On 2/14/19 8:51 AM, Pierre Morel wrote:
-> 
->>>> +/*
->>>> + * handle_pqap: Handling pqap interception
->>>> + * @vcpu: the vcpu having issue the pqap instruction
->>>> + *
->>>> + * This callback only handles PQAP/AQIC instruction and
->>>> + * calls a dedicated callback for this instruction if
->>>> + * a driver did register one in the CRYPTO satellite of the
->>>> + * SIE block.
->>>> + *
->>>> + * Do not change the behavior if, return -EOPNOTSUPP if:
->>>> + * - the hook is not used do not change the behavior.
->>>> + * - AP instructions are not available or not available to the guest
->>>> + * - the instruction is not PQAP with function code indicating
->>>> + *   AQIC do not change the previous behavior.
->>>> + *
->>>> + * For PQAP/AQIC instruction, verify privilege and specifications
->>>> + *
->>>> + * return the value returned by the callback.
->>>> + */
->>>> +static int handle_pqap(struct kvm_vcpu *vcpu)
->>>> +{
->>>> +    uint8_t fc;
->>>> +
->>>> +    /* Verify that the hook callback is registered */
->>>> +    if (!vcpu->kvm->arch.crypto.pqap_hook)
->>>> +        return -EOPNOTSUPP;
->>>> +    /* Verify that the AP instruction are available */
->>>> +    if (!ap_instructions_available())
->>>> +        return -EOPNOTSUPP;
->>>> +    /* Verify that the guest is allowed to use AP instructions */
->>>> +    if (!(vcpu->arch.sie_block->eca & ECA_APIE))
->>>> +        return -EOPNOTSUPP;
->>>> +    /* Verify that the function code is AQIC */
->>>> +    fc = vcpu->run->s.regs.gprs[0] >> 24;
->>>> +    if (fc != 0x03)
->>>> +        return -EOPNOTSUPP;
->>>
->>> This does not belong here. Function code 3 is one of 7 function codes
->>> that can be sent with the PQAP instruction. This belongs in the PQAP
->>> hook code.
->>
->> On one hand, effectively I would prefer to put the code in the VFIO
->> driver code.
->> On the other hand, doing this would lead to export the code for
->> test_kvm_facility() and kvm_s390_inject_program_int() from the kvm-s390.h
->>
->> I choose not to export these functions from the KVM code.
->>
->> Would like opinion from KVM maintainers?
-> 
-> Looking at this (and without access to the specification...), I think
-> the check for problem state makes sense in here (if this applies to all
-> PQAP functions equally, which seems likely). The check for the facility
-> makes more sense in the handler. You can probably still inject the
-> specification exception here if you use a clever return code.
-> 
+On Tue, Feb 19, 2019 at 1:55 PM Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+>
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
+>
+> struct foo {
+>     int stuff;
+>     struct boo entry[];
+> };
+>
+> size = sizeof(struct foo) + count * sizeof(struct boo);
+> instance = kzalloc(size, GFP_KERNEL);
+>
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
+>
+> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+>
+> Notice that, in this case, variable table_size is not necessary, hence
+> it is removed.
+>
+> This code was detected with the help of Coccinelle.
+>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-If there is no objection on exporting the KVM functions... I can do this.
+Applied this and the smu8 patch.  Thanks!
 
-> Another option: Provide a way to register a callback per function code;
-> this allows you to still do the check here and extend it later for
-> other function codes (which will probably be indicated by another
-> facility).
+Alex
 
-I like this option even better.
-
-Regards,
-Pierre
-
-
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
-
+> ---
+>  drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
+> index 5273de3c5b98..0ad8fe4a6277 100644
+> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
+> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
+> @@ -139,12 +139,10 @@ static int smu10_construct_max_power_limits_table(struct pp_hwmgr *hwmgr,
+>  static int smu10_init_dynamic_state_adjustment_rule_settings(
+>                                                         struct pp_hwmgr *hwmgr)
+>  {
+> -       uint32_t table_size =
+> -               sizeof(struct phm_clock_voltage_dependency_table) +
+> -               (7 * sizeof(struct phm_clock_voltage_dependency_record));
+> +       struct phm_clock_voltage_dependency_table *table_clk_vlt;
+>
+> -       struct phm_clock_voltage_dependency_table *table_clk_vlt =
+> -                                       kzalloc(table_size, GFP_KERNEL);
+> +       table_clk_vlt = kzalloc(struct_size(table_clk_vlt, entries, 7),
+> +                               GFP_KERNEL);
+>
+>         if (NULL == table_clk_vlt) {
+>                 pr_err("Can not allocate memory!\n");
+> --
+> 2.20.1
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
