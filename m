@@ -2,86 +2,70 @@ Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D6A1C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:50:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2591CC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:50:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 732882177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:50:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB5B02177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 13:50:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="MkCc7Sif"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728877AbfBSNuD (ORCPT
+        id S1728914AbfBSNuJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 08:50:03 -0500
-Received: from mga14.intel.com ([192.55.52.115]:31783 "EHLO mga14.intel.com"
+        Tue, 19 Feb 2019 08:50:09 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:34480 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726221AbfBSNuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 08:50:03 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2019 05:50:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,388,1544515200"; 
-   d="scan'208";a="123578634"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga007.fm.intel.com with ESMTP; 19 Feb 2019 05:49:58 -0800
-Received: from andy by smile with local (Exim 4.92-RC6)
-        (envelope-from <andy.shevchenko@gmail.com>)
-        id 1gw5mW-00066w-Bp; Tue, 19 Feb 2019 15:49:56 +0200
-Date:   Tue, 19 Feb 2019 15:49:56 +0200
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 8/9] vsprintf: Prevent crash when dereferencing
- invalid pointers
-Message-ID: <20190219134956.GM9224@smile.fi.intel.com>
-References: <20190208152310.29531-1-pmladek@suse.com>
- <20190208152310.29531-9-pmladek@suse.com>
- <20190219033003.GA2284@jagdpanzerIV>
- <CAHp75VfeNvThbue+v1VHK_zxw9N82AkOQZUL=nH6xy21WXX7sg@mail.gmail.com>
- <20190219125115.GA19910@tigerII.localdomain>
+        id S1726221AbfBSNuI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 08:50:08 -0500
+Received: from zn.tnic (p200300EC2BCDC800C58ECA98EDA20EC9.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:c800:c58e:ca98:eda2:ec9])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4A9FB1EC038F;
+        Tue, 19 Feb 2019 14:50:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1550584207;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=hMMsthxUAhA6hTqzqSgLbL2D/neNfkUCSn0Hhx9jDcY=;
+        b=MkCc7SifxX/797iCERsUDd/ZD2asAd7qtFmc1x+gC3gpsmbFAwYY8Q8OQGd/jmtK+tnGE+
+        oB5QJmNYO5IqbDVBR7vP3S4GfYeXX6/2Sd/fPuyQb9Ky9BBJXTotYeUgzrU3DKQTakwRWb
+        XLa60xAtKPy96zZRnIQ9hyQtiIX7R7c=
+Date:   Tue, 19 Feb 2019 14:50:04 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Ross Lagerwall <ross.lagerwall@citrix.com>,
+        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-efi@vger.kernel.org, Len Brown <lenb@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Huang Ying <ying.huang@intel.com>
+Subject: Re: [PATCH v2 0/2] Fix crash in cper_estatus_check()
+Message-ID: <20190219135004.GC19514@zn.tnic>
+References: <20190128100424.30278-1-ross.lagerwall@citrix.com>
+ <2534482.fmfRlZkPUo@aspire.rjw.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190219125115.GA19910@tigerII.localdomain>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <2534482.fmfRlZkPUo@aspire.rjw.lan>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 09:51:15PM +0900, Sergey Senozhatsky wrote:
-> On (02/19/19 13:02), Andy Shevchenko wrote:
-> [..]
-> > And if it's not? You will get in either case incomplete information,
-> > but at least with "(e" (or even "(") you might get a clue that it
-> > errornous conditions.
-> 
-> The thing I'm signaling here is that in some cases we still can
-> crash the kernel; with the difference that invalid dereference
-> can now be a memory corruption. Just saying.
+On Tue, Feb 19, 2019 at 11:00:49AM +0100, Rafael J. Wysocki wrote:
+> Boris, any comments here?
 
-Wouldn't that mean that the culprit in the caller, not in the callee?
+For both:
 
-(As far as I got your another example with badly called sprintf() which may
- overwrite stack, etc).
+Acked-by: Borislav Petkov <bp@suse.de>
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Regards/Gruss,
+    Boris.
 
-
+Good mailing practices for 400: avoid top-posting and trim the reply.
