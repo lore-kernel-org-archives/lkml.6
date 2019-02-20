@@ -2,118 +2,162 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC611C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F573C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:56:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B00532146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:56:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hQQrgG8k"
+	by mail.kernel.org (Postfix) with ESMTP id 7A9D121848
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:56:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726638AbfBTR4V (ORCPT
+        id S1726761AbfBTR43 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 12:56:21 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:42030 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbfBTR4U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 12:56:20 -0500
-Received: by mail-ed1-f66.google.com with SMTP id j89so11250162edb.9;
-        Wed, 20 Feb 2019 09:56:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5EYA/pR4D3Qk39QOsx21H2qfduexaLEFk1otMKvXeq8=;
-        b=hQQrgG8ktq2jf4GihGMLbEOMZN2+p31B1bCi/hdllGgMPpTJ0QhCiHXCuZzyDhm4BS
-         x7s8pxYKHDN8XXq3/heyUju54PHGSV3uZml+0AvgFbFEJS4XoCEIMbwLSbBY7fp8Ord2
-         aIGUD9kZixGrdxs2nkjmS1z/G2jOE/RTkhO3aGvFtaIUlDWIQB+3NvAuyryoZ+ZtfUKG
-         /O0lP/dDyRP/7AR3V02C/7mFqiC63yXcfPOf19N3Tr+k0f9CXHZPJwa4QyoNwwSi0f9l
-         449EAW8B16LphiyxMUbPW3439ElJ8DrXFQUEuSL6PNSBlevQ8IawdjiHvdTOSGvGK/1D
-         RO/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5EYA/pR4D3Qk39QOsx21H2qfduexaLEFk1otMKvXeq8=;
-        b=fuvqn8GqAfKnZfxX5IJJRk/F6gRP8+9bDJcnDWJ/rHIuwsjpETZTm/YEKaMq9bDHUI
-         BVyExAeGKBqDcMRtja7ddNXWtKJ1mCJtLIUS/+ziDKU/LZFlGFMF3Smr0UdVgAcsN6vs
-         HO55Smouie6QOMY1goEfqP9JxEFmoi/2xw0m8f3kZq3fhxPhltbrdhEm69vjLbNSvNrE
-         qUaCObWUgEMoR8P5nXA6SfIImdZEJ3jst+WZfQZdbOwEM5ooSNDKj+juw4fKz+BvpLzI
-         MmavHnU3uB6LKvkgAGUtJ6Skco70KirXUBW12v64VG6knwDaiZzL7Zm2I3MEpcA7adJn
-         vf6w==
-X-Gm-Message-State: AHQUAua5THUJz5h014KI1TGV+qbFNK3SbRxPuE40rSFw3+BWLJK6fsAs
-        tpdiwCw6zVYd3Mhe8qi2xMI=
-X-Google-Smtp-Source: AHgI3Iah9iVG2xNzgadgw2mBDecX7voCsDy3Cw92/M4inuQJDhyBcyKJNJ7MpHxaUX31sYLF7cJY8A==
-X-Received: by 2002:a05:6402:185a:: with SMTP id v26mr28148414edy.163.1550685378393;
-        Wed, 20 Feb 2019 09:56:18 -0800 (PST)
-Received: from archlinux-ryzen ([2a01:4f9:2a:1fae::2])
-        by smtp.gmail.com with ESMTPSA id c5sm6058214edm.36.2019.02.20.09.56.16
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 20 Feb 2019 09:56:17 -0800 (PST)
-Date:   Wed, 20 Feb 2019 10:56:15 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH] iwlwifi: mvm: Use div64_s64 instead of do_div in
- iwl_mvm_debug_range_resp
-Message-ID: <20190220175615.GA1312@archlinux-ryzen>
-References: <20190219182105.19933-1-natechancellor@gmail.com>
- <CAK8P3a1d6Zksdv-Or+paawyn4N0u4EpVw9QgyDGHYvX_1s3JrQ@mail.gmail.com>
+        Wed, 20 Feb 2019 12:56:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49634 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725836AbfBTR42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 12:56:28 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 879FC2146E;
+        Wed, 20 Feb 2019 17:56:26 +0000 (UTC)
+Date:   Wed, 20 Feb 2019 12:56:25 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Tom Zanussi <zanussi@kernel.org>
+Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
+        vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH v15 15/15] tracing: Add hist trigger action 'expected
+ fail' test case
+Message-ID: <20190220125625.77802cac@gandalf.local.home>
+In-Reply-To: <1550684302.2027.6.camel@kernel.org>
+References: <cover.1550100284.git.tom.zanussi@linux.intel.com>
+        <1790bf93e01dbdfa1b4af945f42147d92bd565aa.1550100284.git.tom.zanussi@linux.intel.com>
+        <20190220121748.7aa83459@gandalf.local.home>
+        <1550684302.2027.6.camel@kernel.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1d6Zksdv-Or+paawyn4N0u4EpVw9QgyDGHYvX_1s3JrQ@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 11:51:34AM +0100, Arnd Bergmann wrote:
-> On Tue, Feb 19, 2019 at 7:22 PM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
-> >
-> 
-> > diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c b/drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c
-> > index e9822a3ec373..92b22250eb7d 100644
-> > --- a/drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c
-> > +++ b/drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c
-> > @@ -462,7 +462,7 @@ static void iwl_mvm_debug_range_resp(struct iwl_mvm *mvm, u8 index,
-> >  {
-> >         s64 rtt_avg = res->ftm.rtt_avg * 100;
-> >
-> > -       do_div(rtt_avg, 6666);
-> > +       div64_s64(rtt_avg, 6666);
-> 
-> This is wrong: div64_s64 does not modify its argument like do_div(), but
-> it returns the result instead. You also don't want to divide by a 64-bit
-> value when the second argument is a small constant.
-> 
-> I think the correct way should be
-> 
->        s64 rtt_avg = div_s64(res->ftm.rtt_avg * 100, 6666);
-> 
-> If you know that the value is positive, using unsigned types
-> and div_u64() would be slightly faster.
-> 
->       Arnd
+On Wed, 20 Feb 2019 11:38:22 -0600
+Tom Zanussi <zanussi@kernel.org> wrote:
 
-Thanks for the review and explanation, Arnd.
+> Hi Steve,
+> 
+> On Wed, 2019-02-20 at 12:17 -0500, Steven Rostedt wrote:
+> > On Wed, 13 Feb 2019 17:42:55 -0600
+> > Tom Zanussi <zanussi@kernel.org> wrote:
+> >   
+> > > From: Tom Zanussi <tom.zanussi@linux.intel.com>
+> > > 
+> > > Add a test case verifying that basic action combinations fail as
+> > > expected.
+> > >   
+> > 
+> > Hi Tom,
+> > 
+> > This test appears to fail:
+> > 
+> > # echo 'hist:keys=comm:onmatch(sched.sched_wakeup).save(comm,prio)'  
+> > >> /sys/kernel/debug/tracing/events/sched/sched_waking/trigger  
+> > -bash: echo: write error: Invalid argument
+> > 
+> > # cat /sys/kernel/debug/tracing/events/sched/sched_waking/hist 
+> > 
+> > ERROR: action parsing: Handler doesn't support action: save
+> >   Last command: keys=comm:onmatch(sched.sched_wakeup).save(comm,prio)
+> > 
+> > 
+> > Is the "save" feature implemented here? It's in the README too.
+> > Should
+> > it be removed?
+> >   
+> 
+> The "save" feature is implemented, but it's not currently supported
+> with onmatch(), which is why it fails, and is used in the xfail test,
+> since it's expected to.  So, in this case, the command fails, which
+> means the xfail test actually passed.  ;-)
+> 
+> There are other tests in the inter-event testcases that use save() but
+> with onmax() and onchange(), and they pass.
 
-Luca, could you drop this version so I can resend it?
+So the test needs to pass on failure?
 
-Nathan
+Because, it shouldn't be flagged as a failure in the test suite.
+
+-- Steve
+
+> 
+> Hope that explains things in this case,
+> 
+> Tom
+> 
+> > -- Steve
+> >   
+> > > Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+> > > ---
+> > >  .../inter-event/trigger-action-hist-xfail.tc       | 30
+> > > ++++++++++++++++++++++
+> > >  1 file changed, 30 insertions(+)
+> > >  create mode 100644
+> > > tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-
+> > > action-hist-xfail.tc
+> > > 
+> > > diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-
+> > > event/trigger-action-hist-xfail.tc
+> > > b/tools/testing/selftests/ftrace/test.d/trigger/inter-
+> > > event/trigger-action-hist-xfail.tc
+> > > new file mode 100644
+> > > index 000000000000..1221240f8cf6
+> > > --- /dev/null
+> > > +++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-
+> > > event/trigger-action-hist-xfail.tc
+> > > @@ -0,0 +1,30 @@
+> > > +#!/bin/sh
+> > > +# SPDX-License-Identifier: GPL-2.0
+> > > +# description: event trigger - test inter-event histogram trigger
+> > > expected fail actions
+> > > +
+> > > +fail() { #msg
+> > > +    echo $1
+> > > +    exit_fail
+> > > +}
+> > > +
+> > > +if [ ! -f set_event ]; then
+> > > +    echo "event tracing is not supported"
+> > > +    exit_unsupported
+> > > +fi
+> > > +
+> > > +if [ ! -f snapshot ]; then
+> > > +    echo "snapshot is not supported"
+> > > +    exit_unsupported
+> > > +fi
+> > > +
+> > > +grep -q "snapshot()" README || exit_unsupported # version issue
+> > > +
+> > > +echo "Test expected snapshot action failure"
+> > > +
+> > > +echo 'hist:keys=comm:onmatch(sched.sched_wakeup).snapshot()' >>
+> > > /sys/kernel/debug/tracing/events/sched/sched_waking/trigger &&
+> > > exit_fail
+> > > +
+> > > +echo "Test expected save action failure"
+> > > +
+> > > +echo 'hist:keys=comm:onmatch(sched.sched_wakeup).save(comm,prio)'  
+> > > >> /sys/kernel/debug/tracing/events/sched/sched_waking/trigger &&  
+> > > exit_fail
+> > > +
+> > > +exit_xfail  
+> > 
+> >   
+
