@@ -2,97 +2,98 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD5DC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29168C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:34:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DB9921908
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:33:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB3CF20661
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:33:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="13NPIYWF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728075AbfBTMdF (ORCPT
+        id S1727811AbfBTMd6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 07:33:05 -0500
-Received: from mail-it1-f199.google.com ([209.85.166.199]:38418 "EHLO
-        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726501AbfBTMdE (ORCPT
+        Wed, 20 Feb 2019 07:33:58 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:58684 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726396AbfBTMd5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 07:33:04 -0500
-Received: by mail-it1-f199.google.com with SMTP id r136so10503812ith.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 04:33:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=LE7K7aUJYPsZzqZuSauK5S+BXkIVHxJgNdyyEeOBMmE=;
-        b=QII9ea2y34LdWSHn8P5YESI8Ev1ZFe6bq0PT4GOQEvw9nlvuv8Y1jOjFm5tfIt3m6Y
-         hXZGZyjbCyFxh5NDQCRx/w2upC9Vz2nIUYvYHS6BJEDtHb6Ek7sEMamUPwUfS4ATLHx4
-         P6n+HbaU4HdbQGTOGUBA2NE7ppk0DBMzRxaHOlVGw+i0t3oqGs1G+crjgEDdBK917eK2
-         lbFToyC1EACkLk3bCJBCxfs1CT7Ntlog03uafH++WG8zT23CQxv+gsAV1CG6FjHkvnte
-         ruYkixvPFwAPcMudflHkXBSniV3Xu6WtMrkx1ZPzOzlMRaXR5grLvgOTGRDnfUhlZr/p
-         kRdQ==
-X-Gm-Message-State: AHQUAuZFOcocdIJ5Hxs0nInX+nof0auWxJyHIn/ju8ZpuIL+jA+tzWUg
-        neSqF5LIMcjz4EgQChctpQSzbJs4NemWq0Dqoa5J73aPoas2
-X-Google-Smtp-Source: AHgI3IZfG6iP8BmynGwtpTAYxUafQ0AaQgBTYd7W5Gg6zehoK94hCrRSf87O6NLxobYLckcWwbMT5d4AT3eoaKykN+tW1ikugLsP
+        Wed, 20 Feb 2019 07:33:57 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1KCO2PR058765;
+        Wed, 20 Feb 2019 12:33:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=wVYm6XkyT0OOxIk/A0v5XwxJUzwcVyzxzmVr812M/iA=;
+ b=13NPIYWFejCKD9JD+3Pigj2Bs4VeqZKkqo4OFPjSxys5dn7A9usSllUVrvPFAvCYYTI8
+ 2vM/iVpXtBGfJiHoPG9B8goZa1K/6caLq9hDzx7rWi1ypd19UJz7rytnQmQIHADYzx7r
+ GycWDm3QSI0RvpXHnIevsJUm41yQQRqazuJTG4//vi6s5n6KVmErHMlypgbK9w72N6Dp
+ RvjjOixDTxl1toggq0NRI9j0JAYmOBOk3XLpnxONymY3PkVNgfmcCQIKEo6PHVdzSZ0h
+ nVt7/xGmIxP8TjknhsDCuPeZJDx2hHcU28oGjRckUm5w9Puc5xVQVvM5CaebE15P7Nxq TA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2qpb5rh4pk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Feb 2019 12:33:48 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1KCXlTc007605
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Feb 2019 12:33:47 GMT
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1KCXlN5016134;
+        Wed, 20 Feb 2019 12:33:47 GMT
+Received: from kadam (/197.157.0.53)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 20 Feb 2019 04:33:46 -0800
+Date:   Wed, 20 Feb 2019 15:33:38 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 -next] btrfs: Remove unnecessary casts in
+ btrfs_read_root_item
+Message-ID: <20190220123338.GP17104@kadam>
+References: <20190220030840.188854-1-yuehaibing@huawei.com>
+ <20190220123202.43256-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:914f:: with SMTP id y15mr8028264ioq.18.1550665983970;
- Wed, 20 Feb 2019 04:33:03 -0800 (PST)
-Date:   Wed, 20 Feb 2019 04:33:03 -0800
-In-Reply-To: <000000000000cedfe1058250076c@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000023d3080582528fad@google.com>
-Subject: Re: BUG: assuming atomic context at kernel/seccomp.c:LINE
-From:   syzbot <syzbot+8bf19ee2aa580de7a2a7@syzkaller.appspotmail.com>
-To:     ast@kernel.org, daniel@iogearbox.net, kafai@fb.com,
-        keescook@chromium.org, linux-kernel@vger.kernel.org,
-        luto@amacapital.net, netdev@vger.kernel.org, songliubraving@fb.com,
-        syzkaller-bugs@googlegroups.com, wad@chromium.org, yhs@fb.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190220123202.43256-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9172 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902200090
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+On Wed, Feb 20, 2019 at 12:32:02PM +0000, YueHaibing wrote:
+> There is a messy cast here:
+> 	min_t(int, len, (int)sizeof(*item)));
+> 
+> min_t() should normally cast to unsigned.  It's not possible for
+> "len" to be negative, but if it were then we definitely
+> wouldn't want to pass negatives to read_extent_buffer().  Also there
+> is an extra cast.
+> 
+> This patch shouldn't affect runtime, it's just a clean up.
+> 
+> Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-HEAD commit:    abf446c90405 Add linux-next specific files for 20190220
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=101e7fb0c00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=463cb576ac40e350
-dashboard link: https://syzkaller.appspot.com/bug?extid=8bf19ee2aa580de7a2a7
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11a52778c00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12a1007cc00000
+It wasn't really suggested by me...  But I do think it's the right
+thing.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+8bf19ee2aa580de7a2a7@syzkaller.appspotmail.com
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-BUG: assuming atomic context at kernel/seccomp.c:271
-in_atomic(): 0, irqs_disabled(): 0, pid: 7853, name: syz-executor140
-no locks held by syz-executor140/7853.
-CPU: 1 PID: 7853 Comm: syz-executor140 Not tainted 5.0.0-rc7-next-20190220  
-#39
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  __cant_sleep kernel/sched/core.c:6218 [inline]
-  __cant_sleep.cold+0xa3/0xbb kernel/sched/core.c:6195
-  seccomp_run_filters kernel/seccomp.c:271 [inline]
-  __seccomp_filter+0x12b/0x12b0 kernel/seccomp.c:801
-  __secure_computing+0x101/0x360 kernel/seccomp.c:932
-  syscall_trace_enter+0x5bf/0xe10 arch/x86/entry/common.c:120
-  do_syscall_64+0x479/0x610 arch/x86/entry/common.c:280
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x43ec58
-Code: 00 00 be 3c 00 00 00 eb 19 66 0f 1f 84 00 00 00 00 00 48 89 d7 89 f0  
-0f 05 48 3d 00 f0 ff ff 77 21 f4 48 89 d7 44 89 c0 0f 05 <48> 3d 00 f0 ff  
-ff 76 e0 f7 d8 64 41 89 01 eb d8 0f 1f 84 00 00 00
-RSP: 002b:00007ffc2d0b2f48 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043ec58
-RDX: 0000000000000000 RSI: 0000000
+regards,
+dan carpenter
 
