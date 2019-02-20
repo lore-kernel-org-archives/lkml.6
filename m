@@ -2,140 +2,138 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D75C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:15:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A3EEC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:15:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 995FD20859
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:15:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D23E20859
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:15:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HeSm2bBK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IT4QAHOq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbfBTWPd (ORCPT
+        id S1727379AbfBTWPi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 17:15:33 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39693 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726137AbfBTWPc (ORCPT
+        Wed, 20 Feb 2019 17:15:38 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33186 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726126AbfBTWPi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 17:15:32 -0500
-Received: by mail-ot1-f67.google.com with SMTP id n8so42969873otl.6
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 14:15:32 -0800 (PST)
+        Wed, 20 Feb 2019 17:15:38 -0500
+Received: by mail-pf1-f195.google.com with SMTP id c123so12646688pfb.0;
+        Wed, 20 Feb 2019 14:15:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RB8Tw583ZAzw6QNzNocGv3B8bmRyv78XJQZpsCZofwc=;
-        b=HeSm2bBK/dgQ1JLSmWtkJMCgPJOCCrWcreL0zacqPqTxJJsx8/PLhvATogZQO4n6fg
-         hoSjHsTLekimTCrxt8xm2enfFGD+FVgzpoTzlC/XjD/qkPBYWKu2nxoqwvJch8prk7gM
-         dEsBjr82OsECMDU3XXJhE2PNr6g+cVSmdu9fU=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=JIPebUwrfUQp4/lobhfycIns3KRkR56rOagABg4mSCM=;
+        b=IT4QAHOqN9B5lNm3IJ1Q6dA+tYZgPGLa/s+njUzyaU20PCFZn5eHCwdmN8MpKlbGjs
+         yUgziNaEEC7w2vNEWz1KCX2SJCJeQGgC4BPo68nzNqqVMRIJyM2rNbFEk4VRrqRkLhWl
+         Vo5pIOaO1yYdODf6FGKJ1pW+RBzn5GjNIKzU3lLc7+dFHjIgytYyWjfGF+1CRsA2gQfj
+         bl/R16dGORJ9HL7now3zRUWwOpL/PWkf0SheJAsar5MguqYnYnbtWp3WxN2sMvHp+z4z
+         6QWIV62O7f1KaaC8aagGGMNblXn6qfGxaq4F+oA3JvN05HFY4WKEKMnpIsmSOpKPOtbv
+         SudQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RB8Tw583ZAzw6QNzNocGv3B8bmRyv78XJQZpsCZofwc=;
-        b=d85VbCppwjXAZMP7N1/zC1hA8iCdKQJ+7Ts3rhb6t/u3Dn6nTsr9rmlWNXclOJdm4T
-         2CrQll0zaP6M6rid1f/srLhlNlDzmKWY8pT2eIKfVORSW6qj0RQn1LKyWXpQQfDMh9lJ
-         g/zz+AO2/XLPYznivx0roCrAoO85v5nJ03Zd46BVeVq9kV8F6DKaZQyj4wuWD0iNtajT
-         5o1yZqAg3JkHv+7HvfIHbqBjGKsYHiVcb7gmQ//51zt3X5KZN/z04t6XeWLYKw3luXL/
-         /zAoZbBqMCqQvKcv8TbwhwNoobkjgJwFKos+Gw5lPWxWWIsVBp9wzvp/Tpg6YyBOKneN
-         oGyA==
-X-Gm-Message-State: AHQUAuYHsK3F7r4DnqOZCduds2gi72pCnC+sL8jMJrBvNukp0HtYZa6T
-        ZluRo2Njx9lopiiIeNxkrbtdM0eJhQU=
-X-Google-Smtp-Source: AHgI3IaCMa+e1eCck6YwHnRX4XXMWN4ImmvwHbgtVVaPJDryUixMpvp+xvF2os2S6hf8juP0hKC+Mw==
-X-Received: by 2002:aca:4008:: with SMTP id n8mr7090895oia.161.1550700931533;
-        Wed, 20 Feb 2019 14:15:31 -0800 (PST)
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com. [209.85.210.42])
-        by smtp.gmail.com with ESMTPSA id k16sm8521432otl.58.2019.02.20.14.15.30
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JIPebUwrfUQp4/lobhfycIns3KRkR56rOagABg4mSCM=;
+        b=Jc0MzyKbHJb5FV4qnZ7PuC3NsO6jBa0vYlSbdPRAU+WQDWBVaMKDfrjyJhypiqDwCx
+         sh7hNFM5TRSMExz0TV/Qh9okUUAf1JSviWfrezTYF+OKguA8tTycqpSLlexnD9KKkA7m
+         cxTidjfyGK92QRa9Q0KCsH71cZVHVcmfJVopxSTV2M+jTkh9Vwhfwc2peRM1VneV0DoI
+         PHdf4IZxkLRnTY6rVrxpMMHOXQFr1Tkt744o2zoKEJTZRbVCLZFBf/PETsrhPkNvNHZ6
+         oBS7Ca3UGnh8q2ohjPUx8puLWxCQiFey92z3z8aeukHXyRy2TFL5oFyZwfwCNzy/hSlY
+         1BKg==
+X-Gm-Message-State: AHQUAuaNrZMzrGngqO3j+dNprwHMF0A3zMX4ZoDJVuQhRx35q1g0xDT3
+        dxVV758UTaLYMkatSkb/Wr6jPJhI
+X-Google-Smtp-Source: AHgI3IaFNdYHO6F4cdbiItPo5PAZjXMdkk+Tn/fKRXp92LyuZ5qC0fNOwqF82i/6aFfRRctB26ZXaA==
+X-Received: by 2002:a65:4608:: with SMTP id v8mr31686795pgq.9.1550700937254;
+        Wed, 20 Feb 2019 14:15:37 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id z9sm56779603pfd.99.2019.02.20.14.15.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Feb 2019 14:15:30 -0800 (PST)
-Received: by mail-ot1-f42.google.com with SMTP id v20so11007459otk.7
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 14:15:30 -0800 (PST)
-X-Received: by 2002:a9d:7981:: with SMTP id h1mr16838655otm.80.1550700930123;
- Wed, 20 Feb 2019 14:15:30 -0800 (PST)
-MIME-Version: 1.0
-References: <20190220215826.44366-1-ncrews@chromium.org> <a0cf4649-e06f-aded-55ad-893560c2414a@collabora.com>
-In-Reply-To: <a0cf4649-e06f-aded-55ad-893560c2414a@collabora.com>
-From:   Nick Crews <ncrews@chromium.org>
-Date:   Wed, 20 Feb 2019 15:15:18 -0700
-X-Gmail-Original-Message-ID: <CAHX4x87KP9QsnX-vAwyEs45tXngbiSSq+vrByj01S-LpUdO40g@mail.gmail.com>
-Message-ID: <CAHX4x87KP9QsnX-vAwyEs45tXngbiSSq+vrByj01S-LpUdO40g@mail.gmail.com>
-Subject: Re: [PATCH -next] platform/chrome: Fix off-by-one error in wilco_ec/debugfs.c
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     Benson Leung <bleung@chromium.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Duncan Laurie <dlaurie@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 20 Feb 2019 14:15:36 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     linux-kernel@vger.kernel.org, marc.zyngier@arm.com
+Cc:     Doug Berger <opendmb@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Kevin Cernekee <cernekee@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM BCM7XXX ARM
+        ARCHITECTURE),
+        linux-mips@vger.kernel.org (open list:BROADCOM BMIPS MIPS ARCHITECTURE),
+        linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM7XXX
+        ARM ARCHITECTURE)
+Subject: [PATCH] irqchip: brcmstb-l2: use _irqsave variants in non-interrupt code
+Date:   Wed, 20 Feb 2019 14:15:28 -0800
+Message-Id: <20190220221528.20811-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Enric,
+From: Doug Berger <opendmb@gmail.com>
 
-On Wed, Feb 20, 2019 at 3:06 PM Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
->
-> Hi Nick,
->
-> Thanks for the patch.
->
-> On 20/2/19 22:58, Nick Crews wrote:
-> > Before, in debugfs.c it was possible to supply only the message type,
-> > and not supply any other arguments when sending raw commands. However,
-> > this is never used by the EC, and it led to an underflow error. Now,
-> > just don't allow too short of a command, we will never need
-> > that anyways.
-> >
-> > Fixes: 46c7fd06f8c9 ("platform/chrome: wilco_ec: Add support for raw commands in debugfs")
->
-> As this is -next material I'd like to squash the fix if you don't mind.
+Using the irq_gc_lock/irq_gc_unlock functions in the suspend and
+resume functions creates the opportunity for a deadlock during
+suspend, resume, and shutdown. Using the irq_gc_lock_irqsave/
+irq_gc_unlock_irqrestore variants prevents this possible deadlock.
 
+Signed-off-by: Doug Berger <opendmb@gmail.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/irqchip/irq-brcmstb-l2.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Please do. Fixing something after it's already in the tree was a new
-process for me,
-so I tried to copy other people's examples. Please let me know
-if there's anything else I should do something different next time.
+diff --git a/drivers/irqchip/irq-brcmstb-l2.c b/drivers/irqchip/irq-brcmstb-l2.c
+index 0e65f609352e..83364fedbf0a 100644
+--- a/drivers/irqchip/irq-brcmstb-l2.c
++++ b/drivers/irqchip/irq-brcmstb-l2.c
+@@ -129,8 +129,9 @@ static void brcmstb_l2_intc_suspend(struct irq_data *d)
+ 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+ 	struct irq_chip_type *ct = irq_data_get_chip_type(d);
+ 	struct brcmstb_l2_intc_data *b = gc->private;
++	unsigned long flags;
+ 
+-	irq_gc_lock(gc);
++	irq_gc_lock_irqsave(gc, flags);
+ 	/* Save the current mask */
+ 	b->saved_mask = irq_reg_readl(gc, ct->regs.mask);
+ 
+@@ -139,7 +140,7 @@ static void brcmstb_l2_intc_suspend(struct irq_data *d)
+ 		irq_reg_writel(gc, ~gc->wake_active, ct->regs.disable);
+ 		irq_reg_writel(gc, gc->wake_active, ct->regs.enable);
+ 	}
+-	irq_gc_unlock(gc);
++	irq_gc_unlock_irqrestore(gc, flags);
+ }
+ 
+ static void brcmstb_l2_intc_resume(struct irq_data *d)
+@@ -147,8 +148,9 @@ static void brcmstb_l2_intc_resume(struct irq_data *d)
+ 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+ 	struct irq_chip_type *ct = irq_data_get_chip_type(d);
+ 	struct brcmstb_l2_intc_data *b = gc->private;
++	unsigned long flags;
+ 
+-	irq_gc_lock(gc);
++	irq_gc_lock_irqsave(gc, flags);
+ 	if (ct->chip.irq_ack) {
+ 		/* Clear unmasked non-wakeup interrupts */
+ 		irq_reg_writel(gc, ~b->saved_mask & ~gc->wake_active,
+@@ -158,7 +160,7 @@ static void brcmstb_l2_intc_resume(struct irq_data *d)
+ 	/* Restore the saved mask */
+ 	irq_reg_writel(gc, b->saved_mask, ct->regs.disable);
+ 	irq_reg_writel(gc, ~b->saved_mask, ct->regs.enable);
+-	irq_gc_unlock(gc);
++	irq_gc_unlock_irqrestore(gc, flags);
+ }
+ 
+ static int __init brcmstb_l2_intc_of_init(struct device_node *np,
+-- 
+2.17.1
 
-Nick
-
->
-> -- Enric
->
-> > Signed-off-by: Nick Crews <ncrews@chromium.org>
-> > ---
-> >  drivers/platform/chrome/wilco_ec/debugfs.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/platform/chrome/wilco_ec/debugfs.c b/drivers/platform/chrome/wilco_ec/debugfs.c
-> > index 46ff3b6c46c7..c090db2cd5be 100644
-> > --- a/drivers/platform/chrome/wilco_ec/debugfs.c
-> > +++ b/drivers/platform/chrome/wilco_ec/debugfs.c
-> > @@ -136,8 +136,8 @@ static ssize_t raw_write(struct file *file, const char __user *user_buf,
-> >       ret = parse_hex_sentence(buf, kcount, request_data, TYPE_AND_DATA_SIZE);
-> >       if (ret < 0)
-> >               return ret;
-> > -     /* Need at least two bytes for message type */
-> > -     if (ret < 2)
-> > +     /* Need at least two bytes for message type and one for command */
-> > +     if (ret < 3)
-> >               return -EINVAL;
-> >
-> >       /* Clear response data buffer */
-> > @@ -145,7 +145,7 @@ static ssize_t raw_write(struct file *file, const char __user *user_buf,
-> >
-> >       msg.type = request_data[0] << 8 | request_data[1];
-> >       msg.flags = WILCO_EC_FLAG_RAW;
-> > -     msg.command = ret > 2 ? request_data[2] : 0;
-> > +     msg.command = request_data[2];
-> >       msg.request_data = ret > 3 ? request_data + 3 : 0;
-> >       msg.request_size = ret - 3;
-> >       msg.response_data = debug_info->raw_data;
-> >
