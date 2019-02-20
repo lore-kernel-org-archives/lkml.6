@@ -2,87 +2,94 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90369C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 00:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC63C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 00:21:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 553832147A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 00:19:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550621973;
-	bh=Sc6oHdU6xbT/PCZfsI60kFKgWGYUO1NJoTaj55Z3D7Y=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=bqKfRp40wJ5uSYxtddDeE3JBNMU52A+TNhxPJRG9UsDGjiT5u7U5Vqews7AFp6HKP
-	 /bV+MdCh4mRRXQBqgjWc/8zGqKiflYOb5+DHEMD4yxKngH2mltCmW3DNA9KpQPJOB3
-	 19pvqFqI7tDO+CRqoeLQcM5RMnaafMLeJET2m1ro=
+	by mail.kernel.org (Postfix) with ESMTP id B387220855
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 00:21:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QnAVNjzI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730153AbfBTATb (ORCPT
+        id S1730044AbfBTAVp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 19:19:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52792 "EHLO mail.kernel.org"
+        Tue, 19 Feb 2019 19:21:45 -0500
+Received: from ozlabs.org ([203.11.71.1]:40111 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729011AbfBTATb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 19:19:31 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727476AbfBTAVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 19:21:45 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A95D220855;
-        Wed, 20 Feb 2019 00:19:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550621971;
-        bh=Sc6oHdU6xbT/PCZfsI60kFKgWGYUO1NJoTaj55Z3D7Y=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=tbRuDODpe/DN2sw1fwXceTTkPo4g6sWrO5J43sihC8hkVxY8rzKQviJ07QPkgMQGp
-         y0xce2gO7fqjTNh/EVubGI4j3MwE3j3rt9oR6ZGWN4fruDXoBkW2qWDuDJkSiDxF0k
-         vV5+FLIm4FYi4Fu2Y8ZecMRrHplGhLwKhDsgI5qs=
-Subject: Re: [PATCH 4.9 00/58] 4.9.159-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20190218133508.567416115@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <f6e90e3b-bdd7-f723-ed8e-88adf1d1c22c@kernel.org>
-Date:   Tue, 19 Feb 2019 17:19:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        by ozlabs.org (Postfix) with ESMTPSA id 443yvp6vf5z9s1l;
+        Wed, 20 Feb 2019 11:21:42 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1550622103;
+        bh=E55cyGzZiZAzDzjZXH30KD1LtPcdBnJRmmmpAxmoTFE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=QnAVNjzIYkNFS+RiS/OQL3+pKDn8mUEoaeP0DAvvrPZxd3p+P7I2nLPRw7V3ZNSgQ
+         9QLwhjhPar6ifPq5sQ+FrQ7hAnKBA2P5KI0rCwlzHoCWqdiMUQoxAd1cZTg246SGHX
+         PHZESg/ZoGQSr9HNT9FKdFsW/M5lG0G3KIf3bPV6u0k8wf39q1sphvf/WhzQm4Ixq5
+         MN/AAkSfGD1xrk93c2cW9PBRDMBS924fkxPj/axH1Ql/Ej8cAbI+ZyCAU1g05aW8tn
+         hjTYL7I801Kj+gt9mN7n2pnPFKeTenPQOePuwVmZP8OXodQiHs4PoaMV/pGHoEPFEm
+         GvyYVTZbRtjLg==
+Date:   Wed, 20 Feb 2019 11:21:42 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: please clean up the v4l-dvb-next tree
+Message-ID: <20190220112142.4a58bb6b@canb.auug.org.au>
+In-Reply-To: <20190219211007.4a916a62@coco.lan>
+References: <20190220105703.69c9b582@canb.auug.org.au>
+        <20190219211007.4a916a62@coco.lan>
 MIME-Version: 1.0
-In-Reply-To: <20190218133508.567416115@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/P4qXaA_cA_bBnDlHQ4OI2UH"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/18/19 6:43 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.159 release.
-> There are 58 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed Feb 20 13:34:40 UTC 2019.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.159-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+--Sig_/P4qXaA_cA_bBnDlHQ4OI2UH
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Compiled and booted on my test system. No demesg regressions.
+Hi Mauro,
 
-thanks,
--- Shuah
+On Tue, 19 Feb 2019 21:10:33 -0300 Mauro Carvalho Chehab <mchehab@kernel.or=
+g> wrote:
+>
+> Yeah, it had some branches that got already merged.
+>=20
+> Just updated it to be in sync with v4l-dvb tree.
+>=20
+> Sorry for the mess.
 
+No worries and thanks.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/P4qXaA_cA_bBnDlHQ4OI2UH
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxsnZYACgkQAVBC80lX
+0Gxdfwf/WveTLJFp7akTrDvdO1tqCdHf3+81ptcJm3IQ93yrzBlcMJIl/RD6QMSn
+Ig3AwLVxXTxGeTxAMjOAERNn/V2jlxNmV+tL0eaOst0fK+QayeH+VzDDRn+VaOid
+wtLVG4ktbasMFTDJQ2wVrjHont6wB08165qJ3vUXnjPi8uDGMlFaeXUYAdmNu0pM
+IrqAaWamuQ6RuqR/M6zkVaFyDqojx6PwGznzEJC/NoE7E43OnfU6GTsQ0HfzeRr3
+qtAv+bucSY8bFn4vY8xklfWID2cwHKPm7jxK2xgmGisoIUEeWX9tc8p/hECk76RH
+3hmWhk3OMYSVWuUBWs/pZgcrCezpxA==
+=DaZN
+-----END PGP SIGNATURE-----
+
+--Sig_/P4qXaA_cA_bBnDlHQ4OI2UH--
