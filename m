@@ -2,189 +2,108 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F501C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:18:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B53F6C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:21:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3DCC2147A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:18:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71C7220880
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:21:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="QUbmgaDn"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nfhSet5d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbfBTVSy (ORCPT
+        id S1726749AbfBTVVO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 16:18:54 -0500
-Received: from mail-pg1-f171.google.com ([209.85.215.171]:45645 "EHLO
-        mail-pg1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725869AbfBTVSx (ORCPT
+        Wed, 20 Feb 2019 16:21:14 -0500
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:46676 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbfBTVVO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 16:18:53 -0500
-Received: by mail-pg1-f171.google.com with SMTP id y4so12532553pgc.12
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 13:18:53 -0800 (PST)
+        Wed, 20 Feb 2019 16:21:14 -0500
+Received: by mail-vk1-f195.google.com with SMTP id j68so5836259vke.13
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 13:21:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=352hCjzdtbDQRJN5A6c5OQfIQDAbYMzidJIT37i/htk=;
-        b=QUbmgaDnn4nD+Lqkn4sfbUqWUG2E3vo3XS6UoiuHFOZkU/FVpwyWyRtE5cEa12ts/z
-         LALx232nzfVH0WYkPl6D9yHE6pDY90Lyxu6CUfo9EZxZbh+s/7+5ZCFcS9sFQMLUwR+n
-         ZjsVDnLGQGl4R8TnXvzD1uatYXeqUC3dgf4odjCeYUkzD8mes93w7t92InhioHSTIMVS
-         peqdv5uxk9d4zS6vxBbZuhzBmzhRBsw9VV/LUsvxeUFQuYaY94rpqV7TVz0jbnwGDFEU
-         oSJTNjrXCREteFYSsYcY2XOovShx4UayOAOGubpSb/j7AwitxJpb415MDyDARFC3X1py
-         I5gQ==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TWAc5FCO+cMMQk/gs4xgFG+Nej5qqLnHefYCW6Hd11c=;
+        b=nfhSet5dATw1pr2sDEUbC8LfTm1if2M8Fwaep0FCBW17kBnKlxQrQM1Lji6TiLfFDe
+         XhfNaq97xwAIubmWTeHlVbCSmzNu2jBO7oQ1JCe69c5RJTbXc+aUJMzekcMqPZ+5qLTR
+         Xsu7fFZkQk9Vb91lwB0H1UJvp8TY6ji+Q+QKw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=352hCjzdtbDQRJN5A6c5OQfIQDAbYMzidJIT37i/htk=;
-        b=TwEFy84XL2K/gZcavbRBQRY1/awUkvOE0gVQkw/j5naqE1JR+Wv4da08KOyujc5wcz
-         MRNZUO/WCEEcCPlHqQWbZ1HMjTEnBqOF4cPomWBe72A1g4C2oKnXghonWiG1lqz3OnV5
-         pdsdkk+TROoNiics37hAKePM/eBV1OfkaF8tOWu1GBLNdGyqFHqYO0NYXsV5kkZNQfF8
-         FvGNumGOazphAmbd2QOTqZjvGiotQSeeKkuUMNlbB+I9xEiLPVTl15igSpeyh2/u67vB
-         lfLRU1pSouWgxQUPRWpm6h+5y9AAe03rd9Eu8Nu4Q0e2o/IdnTARNnQxhdvdjAR720c4
-         lqvA==
-X-Gm-Message-State: AHQUAuY1lOUV0isEyHOm/fPhNvouq8vybuj3Gg5eCol0wcTKYb0/+TGV
-        uPmeMDXza0j2WwnFKLFB2TSRCg==
-X-Google-Smtp-Source: AHgI3IYPP/5TJbtCvMtnO72pGlVPSP5xRZy7CC10C4DAv3X6mGc6jXUZbPS3CC5bFLhr67+cxNhnfg==
-X-Received: by 2002:a62:7602:: with SMTP id r2mr36605118pfc.191.1550697532508;
-        Wed, 20 Feb 2019 13:18:52 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id b65sm685298pfm.127.2019.02.20.13.18.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Feb 2019 13:18:51 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gwZGU-0003oJ-Je; Wed, 20 Feb 2019 14:18:50 -0700
-Date:   Wed, 20 Feb 2019 14:18:50 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: xarray reserve/release?
-Message-ID: <20190220211850.GK8429@ziepe.ca>
-References: <20190219235349.GA17351@ziepe.ca>
- <20190220012609.GC12668@bombadil.infradead.org>
- <20190220034627.GA564@ziepe.ca>
- <20190220171414.GI12668@bombadil.infradead.org>
- <20190220174333.GI8429@ziepe.ca>
- <20190220204726.GK12668@bombadil.infradead.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TWAc5FCO+cMMQk/gs4xgFG+Nej5qqLnHefYCW6Hd11c=;
+        b=e0quLSbzKlN+22pa7tXoRDTgO5wTcV5XjVqsRYcRbYxAHOdzuMnKgUFtXeFiGqACMF
+         NDNjO3+55Q+JxBRVhW3BS3im8c7ZAV/CaTxUYiEvhLJGKqvE2dgwE0eHQwcwyO4dzTnA
+         Pbc96Kzs6Vs0RYRkNNz0/b1greV7DPvxJHWgl/M+N67ECXvtfdmXg6OuocnEmr+OANmU
+         48OgsLqbUeff9Ac+A/yJT4fflqxldXmw8YjvT62nbqj9FVjKMX7HeB5st+pLa4H7sfDX
+         EPVqxF7UXb3mhnT9qGjvpUAfXVWVVAktcE8m1xFtgeyIAjJerGg1IcciZBVP29BL4xQF
+         2YVw==
+X-Gm-Message-State: AHQUAuaFQKLRXianPYMrl3f7cVzcvIJIMAaAYl5AZ/10ZxrTNwKKMpJK
+        Fnfr/ASK5PsuQfxRr6Z9mPUI8S3ijUY=
+X-Google-Smtp-Source: AHgI3IZrcidWRe/g2etNW7I/X255oU91BQTSyMPSun6eUIuVCM7cuPh/naMeIXGWHJxkdRalRLXnGw==
+X-Received: by 2002:a1f:210f:: with SMTP id h15mr20273016vkh.6.1550697672722;
+        Wed, 20 Feb 2019 13:21:12 -0800 (PST)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
+        by smtp.gmail.com with ESMTPSA id j4sm13788106vke.0.2019.02.20.13.21.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Feb 2019 13:21:11 -0800 (PST)
+Received: by mail-vs1-f45.google.com with SMTP id u64so14864035vsc.12
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 13:21:11 -0800 (PST)
+X-Received: by 2002:a05:6102:d2:: with SMTP id u18mr11361090vsp.172.1550697670719;
+ Wed, 20 Feb 2019 13:21:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190220204726.GK12668@bombadil.infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190220180934.GA46255@beast> <20190220184859.GA6429@openwall.com>
+In-Reply-To: <20190220184859.GA6429@openwall.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 20 Feb 2019 13:20:58 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jLB=so4r169pq1KF3Kyfh2Kw_t6ZXGavpzVO2sg3=D1tw@mail.gmail.com>
+Message-ID: <CAGXu5jLB=so4r169pq1KF3Kyfh2Kw_t6ZXGavpzVO2sg3=D1tw@mail.gmail.com>
+Subject: Re: [PATCH v2] x86/asm: Pin sensitive CR4 bits
+To:     Solar Designer <solar@openwall.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Jann Horn <jannh@google.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        X86 ML <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 12:47:26PM -0800, Matthew Wilcox wrote:
-> On Wed, Feb 20, 2019 at 10:43:33AM -0700, Jason Gunthorpe wrote:
-> > On Wed, Feb 20, 2019 at 09:14:14AM -0800, Matthew Wilcox wrote:
-> > > > void __xa_release(struct xarray *xa, unsigned long index)
-> > > > {
-> > > > 	XA_STATE(xas, xa, index);
-> > > > 	void *curr;
-> > > > 
-> > > > 	curr = xas_load(&xas);
-> > > > 	if (curr == XA_ZERO_ENTRY)
-> > > > 		xas_store(&xas, NULL);
-> > > > }
-> > > > 
-> > > > ?
-> > > 
-> > > I decided to instead remove the magic from xa_cmpxchg().  I used
-> > > to prohibit any internal entry being passed to the regular API, but
-> > > I recently changed that with 76b4e5299565 ("XArray: Permit storing
-> > > 2-byte-aligned pointers").  Now that we can pass XA_ZERO_ENTRY, I
-> > > think this all makes much more sense.
-> > 
-> > Except that for allocating arrays xa_cmpxchg and xa_store now do
-> > different things with NULL. Not necessarily bad, but if you have this
-> > ABI variation it should be mentioned in the kdoc comment.
-> 
-> I'm worrying about the whole xa_store(... NULL, gfp) situation.  Before
-> I realised I needed to unify the XArray and the IDR (I'd originally
-> intended to have the IDR be a client of the XArray the same way that
-> it was a client of the radix tree), everything was nice and simple.
-> xa_erase() was a synonym for xa_store(... NULL, gfp).  Then the IDR
-> users showed up with their understanding of what storing NULL meant,
-> and now xa_store(NULL) means something different depending what kind of
-> array you have.  This sucks.  I'm tempted to have xa_store(NULL) always
-> transform the NULL into XA_ZERO_ENTRY, but I worry I might break some
-> users without noticing.
+On Wed, Feb 20, 2019 at 10:49 AM Solar Designer <solar@openwall.com> wrote:
+>
+> On Wed, Feb 20, 2019 at 10:09:34AM -0800, Kees Cook wrote:
+> > +     if (WARN_ONCE((val & cr4_pin) != cr4_pin, "cr4 bypass attempt?!\n"))
+> > +             goto again;
+>
+> I think "goto again" is too mild a response given that it occurs after a
+> successful write of a non-pinned value to CR4.  I think it'd allow some
+> exploits to eventually win the race: make their desired use of whatever
+> functionality SMEP, etc. would have prevented - which may be just a few
+> instructions they need to run - before the CR4 value is reverted after
+> "goto again".  I think it's one of those cases where a kernel panic
+> would be more appropriate.
 
-So you will end up with xa_store, xa_insert, xa_alloc doing the
-conversion on store, and xa_cmpxchg not doing it.
+It will not land upstream with a BUG() or panic(). Linus has
+explicitly stated that none of this work can do that until it has
+"baked" in the kernel for a couple years.
 
-I'd excuse xa_alloc/xa_insert, as anyone calling them surely means to
-reserve the entry. The comment for xa_insert even says it does
-this. Great.
+In his defense, anyone sufficiently paranoid can already raise the
+priority of a WARN() into a panic via sysctl kernel.panic_on_warn (and
+kernel.panic_on_oops).
 
-xa_store(NULL) == xa_erase(), sometimes, is weird, IMHO. Two APIs
-would be clearer: xa_store() which always does the XA_ZERO_ENTRY and
-xa_store_erase() which always does xa_erase() if the argument is
-NULL.
+> Also, WARN_ONCE possibly introduces a delay sufficient to realistically
+> win this race on the first try.  If we choose to warn, we should do it
+> after having reverted the CR4 value, not before.
 
-This makes the itent of the call site super clear without having to
-find the xa_init and check the mode.
+Isn't cr4 CPU-local though? Couldn't we turn off interrupts to stop the race?
 
-If this was done then xa_track_free() would only cause the mark to be
-updated, or not, and has no other behavior change.
-
-For completeness xa_cmpxchg() should probably get a similar comment as
-xa_insert():
-
-  If the predicate matches then a NULL entry will do xa_erase() on the
-  index. Otherwise the value is stored.
-
-  When matching the predicate the value NULL only matches unreserved
-  entries. [this more or less matches xa_insert anyhow]
-
-> > This is a bit worrysome though:
-> > 
-> >                 curr = xas_load(&xas);
-> > -               if (curr == XA_ZERO_ENTRY)
-> > -                       curr = NULL;
-> >                 if (curr == old) {
-> > 
-> > It means any cmpxchg user has to care explicitly about the possibility
-> > for true-NULL vs reserved. Seems like a difficult API.
-> 
-> I think the users know, though.  I went through the current users of
-> xa_cmpxchg() and they're not the same users which are using xa_reserve()
-> or xa_alloc().
-
-Reflecting on this more, the use case I was looking at was basically
-
-   // First thread here wins ownership of 'id' and does reserve
-   ret = xa_cmpxchg(xa, id NULL, XA_ZERO_ENTRY)
-   if (ret != NULL)
-       return;
-
-   ...
-
-   // Can't fail
-   xa_store(xa, id, something);
-
-So that actually works better the way you have it.
-
-Can always have another cmpxchg varient if a use comes up.
-
-> > Also I would think !curr is clearer? I assume the point is to not pay
-> > the price of xas_clear_mark if we already know the index stored is
-> > marked?
-> 
-> If you find it clearer, I'll use 'curr'.  They're equal at this point anyway.
-
-Yeah, it brings to mind your table more directly then having to also
-work out that old == curr == xa_load ==> optimizing away unneeded clear
-
-BTW, will you send conversion patches for drivers/infiniband sometime
-soonish? Feel like I know enough about xarray to review them these
-days
-
-Thanks,
-Jason
+-- 
+Kees Cook
