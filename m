@@ -2,105 +2,266 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 760B8C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:18:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC62C4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:21:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 475B721773
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:18:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AC8D21848
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:21:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s8H/4g4D"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="YtO8Ipyy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730509AbfBTFSs (ORCPT
+        id S1726387AbfBTFVa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 00:18:48 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:39631 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726526AbfBTFSJ (ORCPT
+        Wed, 20 Feb 2019 00:21:30 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:6277 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725857AbfBTFVa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 00:18:09 -0500
-Received: by mail-it1-f194.google.com with SMTP id l15so12633925iti.4
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 21:18:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=kCuF4Ez1jv/fQt/zAg0bCPVaYuCDdFgFupuOusf36kg=;
-        b=s8H/4g4Dw4J3EcbeGBRWR7whI1xkayLV9v0W+Ll06oIT0AxkRUj2HDHYwBI1wBXrRy
-         vY2JdVnrLNsik98RhV/eRHPNvLaKiQ7qK0rdP3GILkBIGtpo2Utt2xTwTR69KpB2GC7u
-         6WzYbBo1Ko/bX2Lu+pLh0wR1iDVU6z8R7q0SqhHahr7b+fED1XTNgrH5wTPs9v+VERFS
-         k9pZoQ1wK0tbR7ljw7oLMWauSYv0T1ZE2eudoyN0/wqmH1X5YYH85O7TWqT6bK81bWsm
-         PZqSbRrzApc6sC5IG50091vZnxYM+vgE1VBRJpQKhKbMAnlq3J52oMl9VvXNpaXh4Jfg
-         bXHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=kCuF4Ez1jv/fQt/zAg0bCPVaYuCDdFgFupuOusf36kg=;
-        b=uHzzyq8ulZuhfOBscu77CaSjy/LKdzRbhKpRpzUfrnDO0ItDRYrX46/iKI2AC8Bga1
-         wgo0jv3kWgzsnd88h3KJlomT1qsP4gTf3nntP3TWBpXBdLSAvAW0bIbv4tpI4sdENXbd
-         sm5KKmXE8ev0CIb9g7oB3HQ3W3FcJT5JU7vvlwBVA+as0yuY+xKHmrZAvuxoN/R99FFG
-         7kWeO9cZKqDRwh54mi19+cGGzgcV4xVeNWeRH2xO6zfaSsZYzxoM9C16Ysn88rRj6fal
-         K/S0klZudbFXK0Iq+jC+GlnR/8tQwLSWPzoWuKAOFL8/c4y/v+VHYsafcFqmtBtelBUm
-         S1DQ==
-X-Gm-Message-State: AHQUAuagXUOPVHm6c37b2gN6Ei0DLvukNKs2aF4Uj5wQF8xLFCA/NiyI
-        SRZI8YMhcBGbSIAiP/77fQE=
-X-Google-Smtp-Source: AHgI3IY7TQTTXaQr7Fya3FdxEr+mnYbeU44Tc1DBYedHS3VuRG6exH9H5HvZbnUI4rdJYn2vN37IOA==
-X-Received: by 2002:a6b:b790:: with SMTP id h138mr17398257iof.114.1550639888042;
-        Tue, 19 Feb 2019 21:18:08 -0800 (PST)
-Received: from localhost.localdomain (c-73-242-244-99.hsd1.nm.comcast.net. [73.242.244.99])
-        by smtp.gmail.com with ESMTPSA id k64sm2297550itb.7.2019.02.19.21.18.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 21:18:07 -0800 (PST)
-From:   George Hilliard <thirtythreeforty@gmail.com>
-To:     linux-mips@linux-mips.org
-Cc:     linux-kernel@vger.kernel.org, Neil Brown <neil@brown.name>,
-        George Hilliard <thirtythreeforty@gmail.com>
-Subject: [PATCH 02/10] staging: mt7621-mmc: Remove obsolete comments
-Date:   Tue, 19 Feb 2019 22:17:46 -0700
-Message-Id: <20190220051754.12195-3-thirtythreeforty@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190220051754.12195-1-thirtythreeforty@gmail.com>
-References: <20190220051754.12195-1-thirtythreeforty@gmail.com>
+        Wed, 20 Feb 2019 00:21:30 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c6ce3e00000>; Tue, 19 Feb 2019 21:21:36 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 19 Feb 2019 21:21:28 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 19 Feb 2019 21:21:28 -0800
+Received: from [10.2.165.147] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 20 Feb
+ 2019 05:21:28 +0000
+From:   Zi Yan <ziy@nvidia.com>
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>,
+        Nitin Gupta <nigupta@nvidia.com>,
+        David Nellans <dnellans@nvidia.com>
+Subject: Re: [RFC PATCH 00/31] Generating physically contiguous memory after
+ page allocation
+Date:   Tue, 19 Feb 2019 21:19:05 -0800
+X-Mailer: MailMate (1.12.4r5594)
+Message-ID: <EB22370B-C5FB-435A-A8D0-95159E403B83@nvidia.com>
+In-Reply-To: <5395a183-063f-d409-b957-51a8d02854b2@oracle.com>
+References: <20190215220856.29749-1-zi.yan@sent.com>
+ <f4cf53a3-359b-8c66-ed15-112b3cf0f475@oracle.com>
+ <FDDDB4C8-C5B5-46B0-9682-33AC063F7A46@nvidia.com>
+ <5395a183-063f-d409-b957-51a8d02854b2@oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1550640096; bh=pzmrlv9PbmCU4DKNJH5Ssu7mfhsm6VeIbRHKHMZn3X4=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:X-Mailer:Message-ID:
+         In-Reply-To:References:MIME-Version:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding;
+        b=YtO8Ipyy+8NTyG2lzmvWUunuceEvwma2WSZKDDsfLOlzQBQ4bCiDUlu2qnHB5XtyE
+         9H2+GFzUW4sDlQkBDzuGQMfUxnHCPZI7v+T5x7CTDHRuqXJnq82qtW+r4swTdOjtEr
+         Xe45yFEJp06OXPj5tHOmqnpfMhfOtYvUFqm1TDt0irTvU6g+ixw3wmh5BqSZrJ4FJT
+         GfJa2Hy+CJ1ugwKUZJYAgAj4+VH8x248lZ/4tM4yw8rYzkySj8EEq5GqvhiTmXsabr
+         iPVtqMz4Ak2Foq9+o+99jp15LaWDeZvUioI3k1R8Qy40sYPjHDpUwQcO6DWuXFEQnb
+         Day+FiDQXvUyw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These comments don't contain useful code or alternate implementation
-ideas.  Remove them.
+On 19 Feb 2019, at 19:18, Mike Kravetz wrote:
 
-Signed-off-by: George Hilliard <thirtythreeforty@gmail.com>
----
- drivers/staging/mt7621-mmc/sd.c | 2 --
- 1 file changed, 2 deletions(-)
+> On 2/19/19 6:33 PM, Zi Yan wrote:
+>> On 19 Feb 2019, at 17:42, Mike Kravetz wrote:
+>>
+>>> On 2/15/19 2:08 PM, Zi Yan wrote:
+>>>
+>>> Thanks for working on this issue!
+>>>
+>>> I have not yet had a chance to take a look at the code.  However, I=20
+>>> do have
+>>> some general questions/comments on the approach.
+>>
+>> Thanks for replying. The code is very intrusive and has a lot of=20
+>> hacks, so it is
+>> OK for us to discuss the general idea first. :)
+>>
+>>
+>>>> Patch structure
+>>>> ----
+>>>>
+>>>> The patchset I developed to generate physically contiguous=20
+>>>> memory/arbitrary
+>>>> sized pages merely moves pages around. There are three components=20
+>>>> in this
+>>>> patchset:
+>>>>
+>>>> 1) a new page migration mechanism, called exchange pages, that=20
+>>>> exchanges the
+>>>> content of two in-use pages instead of performing two back-to-back=20
+>>>> page
+>>>> migration. It saves on overheads and avoids page reclaim and memory=20
+>>>> compaction
+>>>> in the page allocation path, although it is not strictly required=20
+>>>> if enough
+>>>> free memory is available in the system.
+>>>>
+>>>> 2) a new mechanism that utilizes both page migration and exchange=20
+>>>> pages to
+>>>> produce physically contiguous memory/arbitrary sized pages without=20
+>>>> allocating
+>>>> any new pages, unlike what khugepaged does. It works on per-VMA=20
+>>>> basis, creating
+>>>> physically contiguous memory out of each VMA, which is virtually=20
+>>>> contiguous.
+>>>> A simple range tree is used to ensure no two VMAs are overlapping=20
+>>>> with each
+>>>> other in the physical address space.
+>>>
+>>> This appears to be a new approach to generating contiguous areas. =20
+>>> Previous
+>>> attempts had relied on finding a contiguous area that can then be=20
+>>> used for
+>>> various purposes including user mappings.  Here, you take an=20
+>>> existing mapping
+>>> and make it contiguous.  [RFC PATCH 04/31] mm: add mem_defrag=20
+>>> functionality
+>>> talks about creating a (VPN, PFN) anchor pair for each vma and then=20
+>>> using
+>>> this pair as the base for creating a contiguous area.
+>>>
+>>> I'm curious, how 'fixed' is the anchor?  As you know, there could be=20
+>>> a
+>>> non-movable page in the PFN range.  As a result, you will not be=20
+>>> able to
+>>> create a contiguous area starting at that PFN.  In such a case, do=20
+>>> we try
+>>> another PFN?  I know this could result in much page shuffling.  I'm=20
+>>> just
+>>> trying to figure out how we satisfy a user who really wants a=20
+>>> contiguous
+>>> area.  Is there some method to keep trying?
+>>
+>> Good question. The anchor is determined on a per-VMA basis, which can=20
+>> be changed
+>> easily,
+>> but in this patchiest, I used a very simple strategy =E2=80=94 making al=
+l=20
+>> VMAs not
+>> overlapping
+>> in the physical address space to get maximum overall contiguity and=20
+>> not changing
+>> anchors
+>> even if non-moveable pages are encountered when generating physically=20
+>> contiguous
+>> pages.
+>>
+>> Basically, first VMA1 in the virtual address space has its anchor as
+>> (VMA1_start_VPN, ZONE_start_PFN),
+>> second VMA1 has its anchor as (VMA2_start_VPN, ZONE_start_PFN +=20
+>> VMA1_size), and
+>> so on.
+>> This makes all VMA not overlapping in physical address space during=20
+>> contiguous
+>> memory
+>> generation. When there is a non-moveable page, the anchor will not be=20
+>> changed,
+>> because
+>> no matter whether we assign a new anchor or not, the contiguous pages=20
+>> stops at
+>> the non-moveable page. If we are trying to get a new anchor, more=20
+>> effort is
+>> needed to
+>> avoid overlapping new anchor with existing contiguous pages. Any=20
+>> overlapping will
+>> nullify the existing contiguous pages.
+>>
+>> To satisfy a user who wants a contiguous area with N pages, the=20
+>> minimal distance
+>> between
+>> any two non-moveable pages should be bigger than N pages in the=20
+>> system memory.
+>> Otherwise,
+>> nothing would work. If there is such an area (PFN1, PFN1+N) in the=20
+>> physical
+>> address space,
+>> you can set the anchor to (VPN_USER, PFN1) and use exchange_pages()=20
+>> to generate
+>> a contiguous
+>> area with N pages. Instead, alloc_contig_pages(PFN1, PFN1+N, =E2=80=A6)=
+=20
+>> could also work,
+>> but
+>> only at page allocation time. It also requires the system has N free=20
+>> pages when
+>> alloc_contig_pages() are migrating the pages in (PFN1, PFN1+N) away,=20
+>> or you need
+>> to swap
+>> pages to make the space.
+>>
+>> Let me know if this makes sense to you.
+>>
+>
+> Yes, that is how I expected the implementation would work.  Thank you.
+>
+> Another high level question.  One of the benefits of this approach is
+> that exchanging pages does not require N free pages as you describe
+> above.  This assumes that the vma which we are trying to make=20
+> contiguous
+> is already populated.  If it is not populated, then you also need to
+> have N free pages.  Correct?  If this is true, then is the expected=20
+> use
+> case to first populate a vma, and then try to make contiguous?  I=20
+> would
+> assume that if it is not populated and a request to make contiguous is
+> given, we should try to allocate/populate the vma with contiguous=20
+> pages
+> at that time?
 
-diff --git a/drivers/staging/mt7621-mmc/sd.c b/drivers/staging/mt7621-mmc/sd.c
-index 4b26ec896a96..1d357b898952 100644
---- a/drivers/staging/mt7621-mmc/sd.c
-+++ b/drivers/staging/mt7621-mmc/sd.c
-@@ -100,7 +100,6 @@ static int cd_active_low = 1;
- struct msdc_hw msdc0_hw = {
- 	.clk_src        = 0,
- 	.flags          = MSDC_CD_PIN_EN | MSDC_REMOVABLE,
--//	.flags          = MSDC_WP_PIN_EN | MSDC_CD_PIN_EN | MSDC_REMOVABLE,
- };
- 
- /* end of +++ */
-@@ -1671,7 +1670,6 @@ static int msdc_drv_probe(struct platform_device *pdev)
- 	host->timeout_clks = DEFAULT_DTOC * 65536;
- 
- 	host->mrq = NULL;
--	//init_MUTEX(&host->sem); /* we don't need to support multiple threads access */
- 
- 	dma_coerce_mask_and_coherent(mmc_dev(mmc), DMA_BIT_MASK(32));
- 
--- 
-2.20.1
+Yes, I assume the pages within the VMA are already populated but not=20
+contiguous yet.
 
+My approach considers memory contiguity as an on-demand resource. In=20
+some phases
+of an application, accelerators or RDMA controllers would=20
+process/transfer data in one
+or more VMAs, at which time contiguous memory can help reduce address=20
+translation
+overheads or lift certain constraints. And different VMAs could be=20
+processed at
+different program phases, thus it might be hard to get contiguous memory=20
+for all
+these VMAs at the allocation time using alloc_contig_pages(). My=20
+approach can
+help get contiguous memory later, when the demand comes.
+
+For some cases, you definitely can use alloc_contig_pages() to give=20
+users
+a contiguous area at page allocation time, if you know the user is going=20
+to use this
+area for accelerator data processing or as a RDMA buffer and the area=20
+size is fixed.
+
+In addition, we can also use khugepaged approach, having a daemon=20
+periodically
+scan VMAs and use alloc_contig_pages() to convert non-contiguous pages=20
+in a VMA
+to contiguous pages, but it would require N free pages during the=20
+conversion.
+
+In sum, my approach complements alloc_contig_pages() and provides more=20
+flexibility.
+It is not trying to replaces alloc_contig_pages().
+
+
+--
+Best Regards,
+Yan Zi
