@@ -2,146 +2,91 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82420C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:04:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE6EC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:04:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5225420C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:04:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AD9F20C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:04:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727106AbfBTKEh convert rfc822-to-8bit (ORCPT
+        id S1727266AbfBTKEn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 05:04:37 -0500
-Received: from mga02.intel.com ([134.134.136.20]:26931 "EHLO mga02.intel.com"
+        Wed, 20 Feb 2019 05:04:43 -0500
+Received: from foss.arm.com ([217.140.101.70]:55078 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726562AbfBTKEh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 05:04:37 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 02:04:36 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,390,1544515200"; 
-   d="scan'208";a="123835466"
-Received: from jlahtine-desk.ger.corp.intel.com (HELO localhost) ([10.252.28.152])
-  by fmsmga007.fm.intel.com with ESMTP; 20 Feb 2019 02:04:33 -0800
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Greg KH <gregkh@linuxfoundation.org>
-From:   Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-In-Reply-To: <20190219071619.GA11016@phenom.ffwll.local>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        dim-tools@lists.freedesktop.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20190219071619.GA11016@phenom.ffwll.local>
-Message-ID: <155065707289.4668.13605429156792074869@jlahtine-desk.ger.corp.intel.com>
-User-Agent: alot/0.7
-Subject: Re: [PULL] topic/mei-hdcp
-Date:   Wed, 20 Feb 2019 12:04:33 +0200
+        id S1726000AbfBTKEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 05:04:42 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B751A78;
+        Wed, 20 Feb 2019 02:04:41 -0800 (PST)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B618C3F575;
+        Wed, 20 Feb 2019 02:04:39 -0800 (PST)
+Date:   Wed, 20 Feb 2019 10:04:36 +0000
+Message-ID: <86va1erd1n.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 2/2] irqchip: Add support for Renesas RZ/N1 GPIO interrupt multiplexer
+In-Reply-To: <TY1PR01MB17696D6C85CE6294B8C75F11F57D0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <20190219155511.28507-1-phil.edworthy@renesas.com>
+        <20190219155511.28507-3-phil.edworthy@renesas.com>
+        <20190219202842.59bc7719@why.wild-wind.fr.eu.org>
+        <TY1PR01MB17696D6C85CE6294B8C75F11F57D0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Daniel Vetter (2019-02-19 09:55:27)
-> Hi all,
+On Wed, 20 Feb 2019 09:07:02 +0000,
+Phil Edworthy <phil.edworthy@renesas.com> wrote:
 > 
-> topic/mei-hdcp-2019-02-19:
-> Prep patches + headers for the mei-hdcp/i915 component interfaces
+> Hi Marc
 > 
-> Also contains the prep work in the component helpers plus adjustements
-> for the snd-hda/i915 component interface.
-> 
-> Plus one small static inline in the drm_hdcp.h header that both i915
-> and mei_hdcp will need.
-> 
-> Joonas, please pull into drm-intel-next-queued so I can apply the i915
-> hdcp patches.
+> On 19 February 2019 20:29 Marc Zyngier wrote:
 
-This is now pulled.
+[...]
 
-Regards, Joonas
+> > > +	for (i = 0; i < MAX_NR_INPUT_IRQS; i++)
+> > > +		irq_create_mapping(priv->irq_domain, i);
+> > 
+> > This should never happen. Mappings should be created from discovering the
+> > interrupt specifiers for devices in the DT, and not eagerly at probe time.
+>
+> The key issue here is that the mappings should not be dynamically
+> allocated.  On the device that has this hardware, there is a Cortex
+> M3 that is likely to use some of these GPIO interrupts.  Maybe it
+> would be better to limit the number of GPIO irqs that Linux can
+> configure dynamically.
 
-> 
-> Greg/Arnd, I think there's two options to get the mei-hdcp patches landed
-> into drivers-misc:
-> - You pull this topic pull and then apply the mei-hdcp patches on top in
->   char-misc-next.
-> - I also pull in char-misc-next to get at 32ea33a04484 ("mei: bus: export
->   to_mei_cl_device for mei client devices drivers") and then apply all the
->   mei-hdcp stuff into a new topic branch.
-> 
-> I think 2nd option would be better, allows us to integration test easier,
-> and we'll have a topic branch in case we need a fixup spanning mei-hdcp
-> and i915. Also would allow me to start merging the patches, since I think
-> it's too late for 5.1.
-> 
-> Cheers, Daniel
-> 
-> The following changes since commit 8834f5600cf3c8db365e18a3d5cac2c2780c81e5:
-> 
->   Linux 5.0-rc5 (2019-02-03 13:48:04 -0800)
-> 
-> are available in the Git repository at:
-> 
->   git://anongit.freedesktop.org/drm/drm-intel tags/topic/mei-hdcp-2019-02-19
-> 
-> for you to fetch changes up to 35c0272502cca0a1b461d310c23aac94a503983d:
-> 
->   drm/audio: declaration of struct device (2019-02-18 20:19:28 +0100)
-> 
-> ----------------------------------------------------------------
-> Prep patches + headers for the mei-hdcp/i915 component interfaces
-> 
-> Also contains the prep work in the component helpers plus adjustements
-> for the snd-hda/i915 component interface.
-> 
-> Plus one small static inline in the drm_hdcp.h header that both i915
-> and mei_hdcp will need.
-> 
-> ----------------------------------------------------------------
-> Daniel Vetter (3):
->       component: Add documentation
->       components: multiple components for a device
->       i915/snd_hdac: I915 subcomponent for the snd_hdac
-> 
-> Ramalingam C (5):
->       drm/i915: enum port definition is moved into i915_drm.h
->       drm/i915: header for i915 - MEI_HDCP interface
->       drm/i915: MEI interface definition
->       drm: helper functions for hdcp2 seq_num to from u32
->       drm/audio: declaration of struct device
-> 
->  Documentation/driver-api/component.rst   |  17 +++
->  Documentation/driver-api/device_link.rst |   3 +
->  Documentation/driver-api/index.rst       |   1 +
->  drivers/base/component.c                 | 206 +++++++++++++++++++++++++++++--
->  drivers/gpu/drm/i915/intel_audio.c       |   4 +-
->  drivers/gpu/drm/i915/intel_display.h     |  16 +--
->  include/drm/drm_audio_component.h        |   1 +
->  include/drm/drm_hdcp.h                   |  18 +++
->  include/drm/i915_component.h             |   5 +
->  include/drm/i915_drm.h                   |  15 +++
->  include/drm/i915_mei_hdcp_interface.h    | 149 ++++++++++++++++++++++
->  include/linux/component.h                |  76 ++++++++++++
->  include/sound/hda_component.h            |   5 +-
->  sound/hda/hdac_component.c               |   4 +-
->  sound/hda/hdac_i915.c                    |   6 +-
->  15 files changed, 493 insertions(+), 33 deletions(-)
->  create mode 100644 Documentation/driver-api/component.rst
->  create mode 100644 include/drm/i915_mei_hdcp_interface.h
-> 
-> -- 
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
+But whatever the M3 is going to use is known statically for a given
+instance of this platform, right? You can always tell from the device
+tree which pins are available for Linux and which are not. Or can't you?
+
+> Looks like I've gone off in the wrong direction yet again.
+
+Nothing we can't help with. If you can explain all the constraints of
+the platform, we can come up with a fairly simple driver. And surely
+LinusW can chime in for the DT part, which seems to need some loving
+too.
+
+Thanks,
+
+	M.
+
+-- 
+Jazz is not dead, it just smell funny.
