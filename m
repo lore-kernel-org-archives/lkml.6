@@ -2,116 +2,101 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D561C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:17:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD3E5C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 545EB2147C
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:17:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550665053;
-	bh=oneBnyUlP9YvWU35HqXsEbn4oXF4ltkqonZuN13WDns=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=EinJsQ3KJJ3raZJf0we88J/SKrI5p/QKVYQoVNrzFMgPQZ8kmmzo8ZYyukN2RY3gQ
-	 YF1KXOuKSwoQzrDl7UeQCmSYnRaQlCsT6kKa/ppevxfAsZuhilM0bewC+zYsgrT5Tf
-	 adKlz0tWIF7E34c4X3v3gSuNoqQjTDyzqBGs82zs=
+	by mail.kernel.org (Postfix) with ESMTP id B7F4D2147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:17:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726667AbfBTMRc (ORCPT
+        id S1727599AbfBTMRw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 07:17:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44620 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725836AbfBTMRb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 07:17:31 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 767A42147A;
-        Wed, 20 Feb 2019 12:17:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550665051;
-        bh=oneBnyUlP9YvWU35HqXsEbn4oXF4ltkqonZuN13WDns=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=dIF6CrnElBK6iAUdHgj9P4hGiEXVQ60Wxgb32bmdTG93L75kQ9l2nmD22HUEBgCxx
-         iQSOr6IhOUXr8ueD0qVU2vydZv6Zq1qC8uFyObvGB5UXBThDHLxwcPMp6MHqJJ6ZfW
-         HWcUGNGaDBU2z9nxQA93ZM3KzYmX89a+yfPXWRG8=
-Date:   Wed, 20 Feb 2019 12:17:26 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] iio: mma8452: mark expected switch fall-through
-Message-ID: <20190220121726.3b10e0ec@archlinux>
-In-Reply-To: <20190211222318.GA21656@embeddedor>
-References: <20190211222318.GA21656@embeddedor>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+        Wed, 20 Feb 2019 07:17:52 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53786 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727371AbfBTMRv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 07:17:51 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1KCAHQW073094
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 07:17:51 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qs6et0ys9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 07:17:50 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 20 Feb 2019 12:17:48 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 20 Feb 2019 12:17:44 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1KCHik425231434
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 20 Feb 2019 12:17:44 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E364111C050;
+        Wed, 20 Feb 2019 12:17:43 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9140811C052;
+        Wed, 20 Feb 2019 12:17:42 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.107.132])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 20 Feb 2019 12:17:42 +0000 (GMT)
+Subject: Re: linux-next: Tree for Feb 20
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Anders Roxell <anders.roxell@linaro.org>
+Cc:     Zhangshaokun <zhangshaokun@hisilicon.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Date:   Wed, 20 Feb 2019 07:17:31 -0500
+In-Reply-To: <CAKv+Gu8G5eWeAdCB28xa=16ANFd2he9WPSztgXYwYRkhPfpEyA@mail.gmail.com>
+References: <20190220184341.73bd2084@canb.auug.org.au>
+         <1114b964-8ff8-5632-64d4-e94a9160b998@hisilicon.com>
+         <20190220095252.GA9089@linux.intel.com>
+         <20190220095806.GB9089@linux.intel.com>
+         <CAKv+Gu8G5eWeAdCB28xa=16ANFd2he9WPSztgXYwYRkhPfpEyA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19022012-0008-0000-0000-000002C2B645
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022012-0009-0000-0000-0000222EEC51
+Message-Id: <1550665051.17768.27.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-20_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=986 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902200089
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 11 Feb 2019 16:23:18 -0600
-"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
 
-> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
->=20
-> This patch fixes the following warning:
->=20
-> drivers/iio/accel/mma8452.c: In function =E2=80=98mma8452_probe=E2=80=99:
-> drivers/iio/accel/mma8452.c:1581:6: warning: this statement may fall thro=
-ugh [-Wimplicit-fallthrough=3D]
->    if (ret =3D=3D data->chip_info->chip_id)
->       ^
-> drivers/iio/accel/mma8452.c:1584:2: note: here
->   default:
->   ^~~~~~~
->=20
-> Warning level 3 was used: -Wimplicit-fallthrough=3D3
->=20
-> Notice that, in this particular case, the code comment is modified
-> in accordance with what GCC is expecting to find.
->=20
-> This patch is part of the ongoing efforts to enable
-> -Wimplicit-fallthrough.
->=20
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-I know Peter probably won't like this, as it doesn't
-read a as well, with the else dropped, but I'm going to take
-it as we have had a lot of bugs caught by this code and this
-is generating a false positive.
+> Fixes for this have already been proposed, and should appear in -next shortly
+> 
+> The EFI one is here
+> https://mail.google.com/mail/u/0/#label/linux-efi/FMfcgxwBVgrQRjglPkWRqRqVclGgVDnB
+> 
+> Not sure about the IMA one, Mimi should be able to comment ...
+    
+I've already commented on the other patch and was expecting to see a
+revised patch.
 
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it.
-
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/accel/mma8452.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/iio/accel/mma8452.c b/drivers/iio/accel/mma8452.c
-> index 302781126bc6..00e100fc845a 100644
-> --- a/drivers/iio/accel/mma8452.c
-> +++ b/drivers/iio/accel/mma8452.c
-> @@ -1580,7 +1580,7 @@ static int mma8452_probe(struct i2c_client *client,
->  	case FXLS8471_DEVICE_ID:
->  		if (ret =3D=3D data->chip_info->chip_id)
->  			break;
-> -		/* else: fall through */
-> +		/* fall through */
->  	default:
->  		ret =3D -ENODEV;
->  		goto disable_regulators;
+Mimi
 
