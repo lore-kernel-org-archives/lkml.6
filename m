@@ -2,95 +2,125 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6626DC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 06:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA738C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 06:10:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EA072147A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 06:10:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550643021;
-	bh=FdfU5UWmFCpOivbjGlVGifcQ1NBmPwtve69/yhrIVYg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=hTxpEm1wIkuzbbbCkagK4skfjMoTASkw24P2Ajo4yFWpGjQ+rj/7fpPlv7mHh1dkm
-	 rcxaVIT9oRcTK4SYZIah3YkXDNCqZQPAkBlmAFrLhtRBHDSoUcKvqDYy/dQSI9gfED
-	 zPnu7rXjN7KJErc+XuK3yxQGaHmXni71+hiMXRuo=
+	by mail.kernel.org (Postfix) with ESMTP id 993172147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 06:10:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="B7WEwee9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbfBTGKS (ORCPT
+        id S1729194AbfBTGKi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 01:10:18 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:33772 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725922AbfBTGKR (ORCPT
+        Wed, 20 Feb 2019 01:10:38 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:51778 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727065AbfBTGKh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 01:10:17 -0500
-Received: by mail-ed1-f67.google.com with SMTP id c55so1118370edb.0;
-        Tue, 19 Feb 2019 22:10:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=L8u77boUVqczyZNaPnGObdhKIJY3Plmdl6iUPLJuvlE=;
-        b=GabgM1SvoeBrTHHPD4SrtmynfbCBvTX4GYZB52XvQQDuxL+BUmIjoFzDZFpaP5A6on
-         W9gs2Rtp6YFOrA90YkoYytxwOU8MJJygn/0ofUcAV+qz2yyoaq0CppKeR2A2pFBQK7Ui
-         l/URjKVdO0FKHzzr/SQTY3ofwbEGS56uq3E6Z7GVehuz3pkiBH7af9Xcfh1Jtd/ZTgfQ
-         VZiX4QbxCUoZHKWrXam4JsiNVxK9sQWmjYTBf4KRQosW9yFhrIuyb+IwyAlrx9GnKXaA
-         TDORFX9q05GmDghcKNRrzPpc1UDKhpjNPmkNd8kxlozQZCfW7qhKDfTew5jRQlbuNPPx
-         r+dQ==
-X-Gm-Message-State: AHQUAuZg+Bmo4D2ZwCl56OiOpVLSddjA4EsDzspwaQd9hwdoKhlSrO42
-        noaIP1VcEJH66DTmySJFVsHy3gAp3yUF5jTQZKk=
-X-Google-Smtp-Source: AHgI3IYrviR1ZX0zn8iUsY0rZEmHjY9wXh7Yss8hXkMnHyc1gOYTZk2POxmDZBA54nHWSdoUHt+BjMGio9qhuS1W/ZE=
-X-Received: by 2002:a17:906:114f:: with SMTP id i15mr18254341eja.29.1550643015769;
- Tue, 19 Feb 2019 22:10:15 -0800 (PST)
+        Wed, 20 Feb 2019 01:10:37 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1K63scO131169;
+        Wed, 20 Feb 2019 06:10:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=YLZUhGdnIjuDG0jFto/b9BMW22OHCoPMpwtQcqPeyp4=;
+ b=B7WEwee9sJS4sdoY/urGMldaPwydADxhtwnmCYemZ+fXH32QxCzyYQZ7oIIfJFYzgRfI
+ 8UYigkwwhHzuSlfSfbyqhnaVWYNk51fbhQZp7gGMFX37r3ffurRf5jzXmnEXSUhXN77C
+ LAG/Iaa3GBF293MRky5gp9Cfq0M1lxISBeVO3heey7bC81UyJjCKUlj8lxI8jtRsDBGa
+ 5uxFhCMkQr8UXY227Fg/PGA9DO32QHYEL9j8GTPULoV7I1+okwK89k6VlI4nkYYYduFe
+ 9mWaslCjmZKJNxy2ms2Iw7l1JJKtYN7os1HhYm/vQzR2Nr7i8whgZLbv0qGXVtYsX/EZ 3A== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2qp9xtyfh4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Feb 2019 06:10:28 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1K6AMr4012565
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Feb 2019 06:10:23 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1K6AMHa009275;
+        Wed, 20 Feb 2019 06:10:22 GMT
+Received: from kadam (/197.157.0.53)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 19 Feb 2019 22:10:21 -0800
+Date:   Wed, 20 Feb 2019 09:10:09 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] btrfs: Fix type conversion in btrfs_read_root_item
+Message-ID: <20190220061009.GN17104@kadam>
+References: <20190220030840.188854-1-yuehaibing@huawei.com>
+ <20190220055621.GM17104@kadam>
 MIME-Version: 1.0
-References: <635b2bf8b1151a191cd9299276b75791a818c0c2.1550545163.git.len.brown@intel.com>
- <07d2908dc72bf964b27380999e1c826587d69136.1550545163.git.len.brown@intel.com> <4b9c3b83-5e45-068f-57fc-5a0e626ff0f3@linux.intel.com>
-In-Reply-To: <4b9c3b83-5e45-068f-57fc-5a0e626ff0f3@linux.intel.com>
-From:   Len Brown <lenb@kernel.org>
-Date:   Wed, 20 Feb 2019 01:10:04 -0500
-Message-ID: <CAJvTdKm+vGmWn=U+MLW1TzxnpAFxAiJRimO=HMArNp3FX1HXYA@mail.gmail.com>
-Subject: Re: [PATCH 03/11] x86 topology: Add CPUID.1F multi-die/package support
-To:     Like Xu <like.xu@linux.intel.com>
-Cc:     X86 ML <x86@kernel.org>, linux-kernel@vger.kernel.org,
-        Len Brown <len.brown@intel.com>, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190220055621.GM17104@kadam>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9172 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902200043
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 9:59 PM Like Xu <like.xu@linux.intel.com> wrote:
+On Wed, Feb 20, 2019 at 08:58:43AM +0300, Dan Carpenter wrote:
+> On Wed, Feb 20, 2019 at 03:08:40AM +0000, YueHaibing wrote:
+> > btrfs_item_size_nr return value is u32, convert it to int may result
+> > in truncation.Also read_extent_buffer expect a unsigned param, so
+> > min_t should use type u32 to compare.
+> > 
+> > Fixes: 8ea05e3a4262 ("Btrfs: introduce subvol uuids and times")
+> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> > ---
+> >  fs/btrfs/root-tree.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/btrfs/root-tree.c b/fs/btrfs/root-tree.c
+> > index 02d1a57af78b..893d12fbfda0 100644
+> > --- a/fs/btrfs/root-tree.c
+> > +++ b/fs/btrfs/root-tree.c
+> > @@ -21,12 +21,12 @@ static void btrfs_read_root_item(struct extent_buffer *eb, int slot,
+> >  				struct btrfs_root_item *item)
+> >  {
+> >  	uuid_le uuid;
+> > -	int len;
+> > +	u32 len;
+> >  	int need_reset = 0;
+> >  
+> >  	len = btrfs_item_size_nr(eb, slot);
+> >  	read_extent_buffer(eb, item, btrfs_item_ptr_offset(eb, slot),
+> > -			min_t(int, len, (int)sizeof(*item)));
+>                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> Yeah, min_t() should normally cast to unsigned and the extra cast is
+> silly.
+> 
 
-> > -/* leaf 0xb sub-leaf types */
-> > +/* extended topology sub-leaf types */
-> >   #define INVALID_TYPE        0
-> >   #define SMT_TYPE    1
-> >   #define CORE_TYPE   2
-> > +#define DIE_TYPE     5
->
-> This patch set is going to export die topology via sysfs
-> while the extended topology sub-leaf type could be one of followings:
-> SMT/Core/Module/Tile/Die according to CPUID.1F from SDM.
->
-> Why not choose to export module/tile topology as well?
+Btw, I shouldn't have had to dig through the patch to find the *real*
+reason you wrote it.  A better description would have said:
 
-Excellent question.  (and thank you for reading the SDM:-)
+    There is a messy cast here:
 
-While it is true that there are shipping products with
-software-visible CPU modules and tiles,
-they shipped before this mechanism was available.  As a result, there
-are currently zero
-products that use this mechanism to enumerate modules and tiles.  If
-future products
-have software-visible modules and tiles, and they choose to use this mechanism,
-we can add support for them.  But I do not advocate adding code to the kernel
-"just in case".
+	min_t(int, len, (int)sizeof(*item)));
 
-In contrast, the need to support multi-die/package products as soon as
-possible is quite clear.
+    min_t() should normally cast to unsigned.  It's not possible for
+    "len" to be negative, but if it were then then we definitely
+    wouldn't want to pass negatives to read_extent_buffer().  Also there
+    is an extra cast.
 
-thanks,
-Len Brown, Intel Open Source Technology Center
+    This patch shouldn't affect runtime, it's just a clean up.
+
+regards,
+dan carpenter
+
