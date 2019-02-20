@@ -2,85 +2,99 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55710C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87CE7C4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:49:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1414021848
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:48:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5969021773
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:49:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550656169;
+	bh=b0/CIC/3g6HjGTT/aSCcFLmZwYcBydbElzyyHpjyemU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=lLP0nwLIs9hEd1V13w4TCTient9DdCjO5Ehf/QO6B6j8FqpeLithNYYZPQnTcDxvT
+	 iV28UnIYLotzkoeyzyleA5iIruuGy/GeYTKFJdvVgjWASgcJXh3DO/u2bqbL0BvdSH
+	 +pZvADmAq4MxDjr3SWKcrgp1I1A/jbYIEOUkVvEM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727143AbfBTJsQ (ORCPT
+        id S1727152AbfBTJt1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 04:48:16 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42788 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725816AbfBTJsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 04:48:16 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B9EFDAFBB;
-        Wed, 20 Feb 2019 09:48:14 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 136A51E0880; Wed, 20 Feb 2019 10:48:13 +0100 (CET)
-Date:   Wed, 20 Feb 2019 10:48:13 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Meelis Roos <mroos@linux.ee>
-Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-alpha@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, linux-block@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: ext4 corruption on alpha with 4.20.0-09062-gd8372ba8ce28
-Message-ID: <20190220094813.GA27474@quack2.suse.cz>
-References: <fb63a4d0-d124-21c8-7395-90b34b57c85a@linux.ee>
- <1c26eab4-3277-9066-5dce-6734ca9abb96@linux.ee>
- <076b8b72-fab0-ea98-f32f-f48949585f9d@linux.ee>
- <20190216174536.GC23000@mit.edu>
- <e175b885-082a-97c1-a0be-999040a06443@linux.ee>
- <20190218120209.GC20919@quack2.suse.cz>
- <4e015688-8633-d1a0-308b-ba2a78600544@linux.ee>
- <20190219132026.GA28293@quack2.suse.cz>
- <20190219144454.GB12668@bombadil.infradead.org>
- <d444f653-9b99-5e9b-3b47-97f824c29b0e@linux.ee>
+        Wed, 20 Feb 2019 04:49:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51062 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726323AbfBTJt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 04:49:27 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B56BC2089F;
+        Wed, 20 Feb 2019 09:49:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550656166;
+        bh=b0/CIC/3g6HjGTT/aSCcFLmZwYcBydbElzyyHpjyemU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=bgEGcttpXfXIZolrISb4fbJrPZvRY2od1JDYtJjVMv8QBxOXuJb0onmtuKuflee08
+         85kozmuBkornmsXSD5fxD+YRKOEDmZhKXtsxfWf1a27zdjdbfv1xyJCqZ2N9gftHtd
+         0yvD1lcF4e0BJEIiuaPAUREfbXe3PwbUKQMOfAzw=
+Date:   Wed, 20 Feb 2019 09:49:21 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Lucas Oshiro <lucasseikioshiro@gmail.com>, knaack.h@gmx.de,
+        lars@metafoo.de, pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com,
+        Anderson Reis <andersonreisrosa@gmail.com>
+Subject: Re: [PATCH 5/5] iio:potentiostat:lmp91000: add '\n' on dev_err
+Message-ID: <20190220094921.6777d6f8@archlinux>
+In-Reply-To: <d5d88a5acc984554240047944cb3071371025085.camel@perches.com>
+References: <20190218172236.7781-1-lucasseikioshiro@gmail.com>
+        <20190218172236.7781-6-lucasseikioshiro@gmail.com>
+        <d5d88a5acc984554240047944cb3071371025085.camel@perches.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d444f653-9b99-5e9b-3b47-97f824c29b0e@linux.ee>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 20-02-19 08:31:05, Meelis Roos wrote:
-> > Could
-> > https://lore.kernel.org/linux-mm/20190219123212.29838-1-larper@axis.com/T/#u
-> > be relevant?
-> 
-> Tried it, still broken.
+On Mon, 18 Feb 2019 13:01:23 -0800
+Joe Perches <joe@perches.com> wrote:
 
-OK, I didn't put too much hope into this patch as you see filesystem
-metadata corruption so icache/dcache coherency issues seemed unlikely.
-Still good that you've tried so that we are sure.
+> On Mon, 2019-02-18 at 14:22 -0300, Lucas Oshiro wrote:
+> > Add missing '\n' at the end of dev_err message on line 215. =20
+> []
+> > diff --git a/drivers/iio/potentiostat/lmp91000.c b/drivers/iio/potentio=
+stat/lmp91000.c =20
+> []
+> > @@ -212,7 +212,7 @@ static int lmp91000_read_config(struct lmp91000_dat=
+a *data)
+> >  	ret =3D of_property_read_u32(np, "ti,tia-gain-ohm", &val);
+> >  	if (ret) {
+> >  		if (!of_property_read_bool(np, "ti,external-tia-resistor")) {
+> > -			dev_err(dev, "no ti,tia-gain-ohm defined");
+> > +			dev_err(dev, "no ti,tia-gain-ohm defined\n"); =20
+>=20
+> Perhaps a copy/paste error as the test is for
+> external-tia-resistor and not tia-gain-ohm
+>=20
+It is an odd construct, but I think this is correct.  What it is actually
+saying is that, given that we don't have an external resistor, we care
+that the tia-gain-ohm isn't set (otherwise it wouldn't matter).
 
-> I wrote:
-> 
-> > But my kernel config had memory compaction (that turned on page migration) and
-> > bounce buffers. I do not remember why I found them necessary but I will try
-> > without them.
-> 
-> First, I found out that both the problematic alphas had memory compaction and
-> page migration and bounce buffers turned on, and working alphas had them off.
-> 
-> Next, turing off these options makes the problematic alphas work.
+=46rom the docs
+  - ti,external-tia-resistor: if the property ti,tia-gain-ohm is not define=
+d this
+    needs to be set to signal that an external resistor value is being used.
 
-OK, thanks for testing! Can you narrow down whether the problem is due to
-CONFIG_BOUNCE or CONFIG_MIGRATION + CONFIG_COMPACTION? These are two
-completely different things so knowing where to look will help. Thanks!
+So, it might be ideal to say that tia-gain-ohm is not defined and we do
+not have an external resistor specified.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+So not wrong, but could be more informative!  So perhaps a follow up patch
+to tidy that up would be good.
+
+Jonathan
+>=20
+
