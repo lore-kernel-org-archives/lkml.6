@@ -2,250 +2,173 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ABD9C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 06:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC26C4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 06:45:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCBC92147A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 06:44:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kuCs+nQ8"
+	by mail.kernel.org (Postfix) with ESMTP id 82D962147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 06:45:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730531AbfBTGo2 (ORCPT
+        id S1730578AbfBTGpF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 01:44:28 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38376 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbfBTGo2 (ORCPT
+        Wed, 20 Feb 2019 01:45:05 -0500
+Received: from mail-it1-f200.google.com ([209.85.166.200]:51133 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727085AbfBTGpF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 01:44:28 -0500
-Received: by mail-pg1-f195.google.com with SMTP id m2so9101639pgl.5;
-        Tue, 19 Feb 2019 22:44:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LODZetcs0AnT93QYQC0UK8k2tg9s5tX3hMm2xNga27I=;
-        b=kuCs+nQ8OpBtGvxxn3MOBEVS0ZXl2jxhX6B7xop63kucnr/h6FRNrWni4/vUjsEFkL
-         cIiISlOypm7kpWLDcoM0QDLRfWtAMbipPeshkasB38UpWyKg8wnIWQKtNAhKClu5DeHc
-         LlHCoiIb095x6B9b0bAkO3WvWDgzQCP3GEX1ts2Qgb8w+MeASdpx/Semtt1qqNYRWWxO
-         txiXo0ObyFyknmeZjeut1sP4UbBU7igHfZy5ut3gmi9oapA64ETjmol+7DCdL+HwNdoa
-         bIjqKPSKMPt7Ga+XmeNpQiT4Sc9xVrDWHoB09N+cUshH2e0kJ0WmGaou5RvS+78wABkX
-         mvOA==
+        Wed, 20 Feb 2019 01:45:05 -0500
+Received: by mail-it1-f200.google.com with SMTP id i63so9128067itb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 22:45:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LODZetcs0AnT93QYQC0UK8k2tg9s5tX3hMm2xNga27I=;
-        b=I+xVRXmWLrxvZzmKaU//R5Np7Ufqe0XTEegLmNTpDfHV/bcjFFgziVlokqJOit+Ej/
-         7CBk3L7jMkytWe5jql0LWBzKE8Dw3qYrVE/leSs/k8sKqyPqajHgOeaG/fUIyGSPwh9L
-         +IGWK0DRynv2lnRXub+yir0gymYAsQAYK9tfhJFzjwAw2KruIHAqrx+K7lShPz4UmLZQ
-         icquJW41Nh9Ka12C3sBQ4DCaMqFAWTHxIAr6WCz9JkcPDrP0ZSeBzsVzuDchnVTBe7X9
-         L6lXpXFktNJHYndmEOleqzGgZte3IGTP5djs9Kp0oViaAIkvJU47bex36a1L3YL3PG/H
-         ImlA==
-X-Gm-Message-State: AHQUAuZMCI7FitygYXMNI4U+vhlMDB10049N6FLhg6l+FLeTqXgX25DY
-        GFIhZXn9NskHA1Afftiu230=
-X-Google-Smtp-Source: AHgI3IaVDLLPrpXPyepLnXpS5y5DLdE5s7gpZiK++Lv+zkzCTtdSXTG08jFKlv0mfXMolajrPrODlA==
-X-Received: by 2002:a63:7444:: with SMTP id e4mr4762824pgn.398.1550645067019;
-        Tue, 19 Feb 2019 22:44:27 -0800 (PST)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id s21sm35375176pfk.133.2019.02.19.22.44.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 22:44:26 -0800 (PST)
-Subject: Re: [RFC v4 08/17] kunit: test: add support for test abort
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     Kees Cook <keescook@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>, shuah@kernel.org,
-        Rob Herring <robh@kernel.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Joe Perches <joe@perches.com>, brakmo@fb.com,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-um@lists.infradead.org, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Knut Omang <knut.omang@oracle.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Amir Goldstein <amir73il@gmail.com>, dan.carpenter@oracle.com,
-        wfg@linux.intel.com
-References: <20190214213729.21702-1-brendanhiggins@google.com>
- <20190214213729.21702-9-brendanhiggins@google.com>
- <da1995fa-a362-dfe6-8184-7fcdf2b923e8@gmail.com>
- <CAFd5g467OV8wTB7zEshgZw8g8=zoq0dLVfwx3wDH-8UA+9GWFA@mail.gmail.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <0124ed28-466c-e954-ddde-495419630a9f@gmail.com>
-Date:   Tue, 19 Feb 2019 22:44:23 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=ecDC1cC+bJoHUcNwtURv9W4PAiZVU3CwRNChTN9AMn0=;
+        b=dg+LrfdJfIrX6LhtNrpJGLRYJYypX+wk6LobQFc+S6W7ZmpnU6LmuWeph8ngxh4VF6
+         LXfqcnZrV0kT0iJfLByfALSf334fcjeQUhUEvbSZz4ahcHTqsHz5kR/1bA/OKkRXP6RK
+         +35Nqrkv0iiW8qG46KoP6EgLynZWcaLYcN/jXNFB9e4MQwMqQNk2jInUCF3yI16engjI
+         Ldp3NzNT2d8qHI4R6MZnWUBrORQBpvgKM0TAwFMrgYNBfp6m/WG3N4Mp/kiVBgrIm0ay
+         Y9xYwlnHq1qqGV9bzvktyJmP0MY2S/Q3KNMokg940HYQdXd3Koj0Lhm2Bd1awp3qCty/
+         44EQ==
+X-Gm-Message-State: AHQUAuaU1XUKU6ZgdGky6X1AnnKEJ5ZTsJMFyBneQ9jJK95Md4iNURk0
+        PMSUIDNjAP0DlHhF9Ul1sCySenlxz0NRljzaM508AZSsbzW+
+X-Google-Smtp-Source: AHgI3IajuZZ5VhrJhoGXCMYfNJy5kNXbVSXfFqXWuJH5LM6WTgzUSMMnwyRV8Bupq3I7CSkoQ0uifHsJgCRT3Wx49ms4A6lA9Piv
 MIME-Version: 1.0
-In-Reply-To: <CAFd5g467OV8wTB7zEshgZw8g8=zoq0dLVfwx3wDH-8UA+9GWFA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a02:9c16:: with SMTP id q22mr19383354jak.13.1550645103855;
+ Tue, 19 Feb 2019 22:45:03 -0800 (PST)
+Date:   Tue, 19 Feb 2019 22:45:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000096952e05824db245@google.com>
+Subject: KASAN: use-after-free Read in h5_reset_rx
+From:   syzbot <syzbot+899a33dc0fa0dbaf06a6@syzkaller.appspotmail.com>
+To:     johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org,
+        linux-kernel@vger.kernel.org, marcel@holtmann.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/19/19 7:39 PM, Brendan Higgins wrote:
-> On Mon, Feb 18, 2019 at 11:52 AM Frank Rowand <frowand.list@gmail.com> wrote:
->>
->> On 2/14/19 1:37 PM, Brendan Higgins wrote:
->>> Add support for aborting/bailing out of test cases. Needed for
->>> implementing assertions.
->>>
->>> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
->>> ---
->>> Changes Since Last Version
->>>  - This patch is new introducing a new cross-architecture way to abort
->>>    out of a test case (needed for KUNIT_ASSERT_*, see next patch for
->>>    details).
->>>  - On a side note, this is not a complete replacement for the UML abort
->>>    mechanism, but covers the majority of necessary functionality. UML
->>>    architecture specific featurs have been dropped from the initial
->>>    patchset.
->>> ---
->>>  include/kunit/test.h |  24 +++++
->>>  kunit/Makefile       |   3 +-
->>>  kunit/test-test.c    | 127 ++++++++++++++++++++++++++
->>>  kunit/test.c         | 208 +++++++++++++++++++++++++++++++++++++++++--
->>>  4 files changed, 353 insertions(+), 9 deletions(-)
->>>  create mode 100644 kunit/test-test.c
->>
->> < snip >
->>
->>> diff --git a/kunit/test.c b/kunit/test.c
->>> index d18c50d5ed671..6e5244642ab07 100644
->>> --- a/kunit/test.c
->>> +++ b/kunit/test.c
->>> @@ -6,9 +6,9 @@
->>>   * Author: Brendan Higgins <brendanhiggins@google.com>
->>>   */
->>>
->>> -#include <linux/sched.h>
->>>  #include <linux/sched/debug.h>
->>> -#include <os.h>
->>> +#include <linux/completion.h>
->>> +#include <linux/kthread.h>
->>>  #include <kunit/test.h>
->>>
->>>  static bool kunit_get_success(struct kunit *test)
->>> @@ -32,6 +32,27 @@ static void kunit_set_success(struct kunit *test, bool success)
->>>       spin_unlock_irqrestore(&test->lock, flags);
->>>  }
->>>
->>> +static bool kunit_get_death_test(struct kunit *test)
->>> +{
->>> +     unsigned long flags;
->>> +     bool death_test;
->>> +
->>> +     spin_lock_irqsave(&test->lock, flags);
->>> +     death_test = test->death_test;
->>> +     spin_unlock_irqrestore(&test->lock, flags);
->>> +
->>> +     return death_test;
->>> +}
->>> +
->>> +static void kunit_set_death_test(struct kunit *test, bool death_test)
->>> +{
->>> +     unsigned long flags;
->>> +
->>> +     spin_lock_irqsave(&test->lock, flags);
->>> +     test->death_test = death_test;
->>> +     spin_unlock_irqrestore(&test->lock, flags);
->>> +}
->>> +
->>>  static int kunit_vprintk_emit(const struct kunit *test,
->>>                             int level,
->>>                             const char *fmt,
->>> @@ -70,13 +91,29 @@ static void kunit_fail(struct kunit *test, struct kunit_stream *stream)
->>>       stream->commit(stream);
->>>  }
->>>
->>> +static void __noreturn kunit_abort(struct kunit *test)
->>> +{
->>> +     kunit_set_death_test(test, true);
->>> +
->>> +     test->try_catch.throw(&test->try_catch);
->>> +
->>> +     /*
->>> +      * Throw could not abort from test.
->>> +      */
->>> +     kunit_err(test, "Throw could not abort from test!");
->>> +     show_stack(NULL, NULL);
->>> +     BUG();
->>
->> kunit_abort() is what will be call as the result of an assert failure.
-> 
-> Yep. Does that need clarified somewhere.
->>
->> BUG(), which is a panic, which is crashing the system is not acceptable
->> in the Linux kernel.  You will just annoy Linus if you submit this.
-> 
-> Sorry, I thought this was an acceptable use case since, a) this should
-> never be compiled in a production kernel, b) we are in a pretty bad,
-> unpredictable state if we get here and keep going. I think you might
-> have said elsewhere that you think "a" is not valid? In any case, I
-> can replace this with a WARN, would that be acceptable?
+Hello,
 
-A WARN may or may not make sense, depending on the context.  It may
-be sufficient to simply report a test failure (as in the old version
-of case (2) below.
+syzbot found the following crash on:
 
-Answers to "a)" and "b)":
+HEAD commit:    7a92eb7cc1dc Add linux-next specific files for 20190215
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=10b2f400c00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b16fd68f18a50133
+dashboard link: https://syzkaller.appspot.com/bug?extid=899a33dc0fa0dbaf06a6
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-a) it might be in a production kernel
+Unfortunately, I don't have any reproducer for this crash yet.
 
-a') it is not acceptable in my development kernel either
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+899a33dc0fa0dbaf06a6@syzkaller.appspotmail.com
 
-b) No.  You don't crash a developer's kernel either unless it is
-required to avoid data corruption.
+Bluetooth: Invalid header checksum
+==================================================================
+BUG: KASAN: use-after-free in h5_reset_rx+0xe0/0x100  
+drivers/bluetooth/hci_h5.c:544
+Read of size 8 at addr ffff88809117be18 by task kworker/u4:4/880
 
-b') And you can not do replacements like:
+CPU: 1 PID: 880 Comm: kworker/u4:4 Not tainted 5.0.0-rc6-next-20190215 #36
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events_unbound flush_to_ldisc
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:132
+  h5_reset_rx+0xe0/0x100 drivers/bluetooth/hci_h5.c:544
+  h5_rx_3wire_hdr+0x2f5/0x3c0 drivers/bluetooth/hci_h5.c:455
+  h5_recv+0x30a/0x4c0 drivers/bluetooth/hci_h5.c:578
+  hci_uart_tty_receive+0x22b/0x530 drivers/bluetooth/hci_ldisc.c:607
+  tty_ldisc_receive_buf+0x164/0x1c0 drivers/tty/tty_buffer.c:465
+  tty_port_default_receive_buf+0x7d/0xb0 drivers/tty/tty_port.c:38
+  receive_buf drivers/tty/tty_buffer.c:481 [inline]
+  flush_to_ldisc+0x228/0x390 drivers/tty/tty_buffer.c:533
+  process_one_work+0x98e/0x1790 kernel/workqueue.c:2267
+  worker_thread+0x98/0xe40 kernel/workqueue.c:2413
+  kthread+0x357/0x430 kernel/kthread.c:253
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
 
-(1) in of_unittest_check_tree_linkage()
+Allocated by task 6242:
+  save_stack+0x45/0xd0 mm/kasan/common.c:75
+  set_track mm/kasan/common.c:87 [inline]
+  __kasan_kmalloc mm/kasan/common.c:497 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:470
+  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:511
+  kmem_cache_alloc_trace+0x151/0x760 mm/slab.c:3615
+  kmalloc include/linux/slab.h:548 [inline]
+  kzalloc include/linux/slab.h:743 [inline]
+  h5_open+0x4e4/0x5f0 drivers/bluetooth/hci_h5.c:222
+  hci_uart_set_proto drivers/bluetooth/hci_ldisc.c:686 [inline]
+  hci_uart_tty_ioctl+0x2d4/0xa70 drivers/bluetooth/hci_ldisc.c:748
+  tty_ioctl+0xac9/0x14d0 drivers/tty/tty_io.c:2664
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0xd6e/0x1390 fs/ioctl.c:696
+  ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
------  old  -----
+Freed by task 6242:
+  save_stack+0x45/0xd0 mm/kasan/common.c:75
+  set_track mm/kasan/common.c:87 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:459
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:467
+  __cache_free mm/slab.c:3491 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3816
+  h5_close+0x11a/0x150 drivers/bluetooth/hci_h5.c:266
+  hci_uart_set_proto drivers/bluetooth/hci_ldisc.c:696 [inline]
+  hci_uart_tty_ioctl+0x839/0xa70 drivers/bluetooth/hci_ldisc.c:748
+  tty_ioctl+0xac9/0x14d0 drivers/tty/tty_io.c:2664
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0xd6e/0x1390 fs/ioctl.c:696
+  ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-        if (!of_root)
-                return;
+The buggy address belongs to the object at ffff88809117bb40
+  which belongs to the cache kmalloc-1k of size 1024
+The buggy address is located 728 bytes inside of
+  1024-byte region [ffff88809117bb40, ffff88809117bf40)
+The buggy address belongs to the page:
+page:ffffea0002445e80 count:1 mapcount:0 mapping:ffff88812c3f0ac0 index:0x0  
+compound_mapcount: 0
+flags: 0x1fffc0000010200(slab|head)
+raw: 01fffc0000010200 ffffea000226a888 ffffea000097a788 ffff88812c3f0ac0
+raw: 0000000000000000 ffff88809117a040 0000000100000007 0000000000000000
+page dumped because: kasan: bad access detected
 
------  new  -----
-
-        KUNIT_ASSERT_NOT_ERR_OR_NULL(test, of_root);
-
-(2) in of_unittest_property_string()
-
------  old  -----
-
-        /* of_property_read_string_index() tests */
-        rc = of_property_read_string_index(np, "string-property", 0, strings);
-        unittest(rc == 0 && !strcmp(strings[0], "foobar"), "of_property_read_string_index() failure; rc=%i\n", rc);
-
------  new  -----
-
-        /* of_property_read_string_index() tests */
-        rc = of_property_read_string_index(np, "string-property", 0, strings);
-        KUNIT_ASSERT_EQ(test, rc, 0);
-        KUNIT_EXPECT_STREQ(test, strings[0], "foobar");
+Memory state around the buggy address:
+  ffff88809117bd00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff88809117bd80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff88809117be00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                             ^
+  ffff88809117be80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff88809117bf00: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+==================================================================
 
 
-If a test fails, that is no reason to abort testing.  The remainder of the unit
-tests can still run.  There may be cascading failures, but that is ok.
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
