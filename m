@@ -2,139 +2,203 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B185C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:05:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10925C10F0B
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:06:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C19D2146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:05:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550678700;
-	bh=TNODcwapPqxUHfshxdDeOHr9xdhiqqns8TC6/oTJLO0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=okxjgHYlOOMPlzn2SE86LlFVkP2/S4I2Dw/+AvCBeLE+qYvyI3C22XKNSf1lvzmIR
-	 T4fKCHRS16hMkUpbj5Vv2sui58EQWfxHd4XI97PKJiCOidU+9TZvkzuryxuN4W09w4
-	 Afni2YUxA4lD8qQCP7cUQozYMTY+bjRDqG21EF2k=
+	by mail.kernel.org (Postfix) with ESMTP id D706F2084D
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:06:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbfBTQE6 (ORCPT
+        id S1726445AbfBTQGD convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 11:04:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37380 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725929AbfBTQE6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 11:04:58 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49BFF2084D;
-        Wed, 20 Feb 2019 16:04:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550678696;
-        bh=TNODcwapPqxUHfshxdDeOHr9xdhiqqns8TC6/oTJLO0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GD2Hw11P8TF/GJf5gacE9LF9pD+ZzEBdBwsU8ae9bpC/CRd6LxBoWxKozXgzctf3c
-         TvwY+Wej925OWh6vuER+DTmORIwniGCtCayLHVs+aKJpNe9KGakyPO3RKHHg3KLVxk
-         xnCCiba2YXQbnN3P2Ch602g2wtAuf4k1z1ajhUZY=
-Date:   Thu, 21 Feb 2019 01:04:53 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
- kernel memory that can fault
-Message-Id: <20190221010453.19538ae7ef2667371dcec34f@kernel.org>
-In-Reply-To: <20190220094926.0ab575b3@gandalf.local.home>
-References: <20190215174712.372898450@goodmis.org>
-        <20190215174945.557218316@goodmis.org>
-        <CAHk-=wjP4bEYCFaKZVG4kLWmYBctyfsW9jjhC91tiTk9WwB8Rg@mail.gmail.com>
-        <20190215171539.4682f0b4@gandalf.local.home>
-        <300C4516-A093-43AE-8707-1C42486807A4@amacapital.net>
-        <20190215191949.04604191@gandalf.local.home>
-        <CAHk-=wgJzNp0R3cVhjBPHTR4X9sOvHdqK4UVFfbsOKQ6L=A_eQ@mail.gmail.com>
-        <CAHk-=wh9XrOykA5J9RQ7zaBio-S_D+1AE+rGnBYWSd==pCXh+w@mail.gmail.com>
-        <20190219111802.1d6dbaa3@gandalf.local.home>
-        <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
-        <20190219140330.5dd9e876@gandalf.local.home>
-        <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
-        <20190220094926.0ab575b3@gandalf.local.home>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 20 Feb 2019 11:06:03 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:43342 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725929AbfBTQGD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 11:06:03 -0500
+Received: by mail-vk1-f196.google.com with SMTP id e131so5596414vkf.10;
+        Wed, 20 Feb 2019 08:06:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=mUGGBw2E5UCFnpMwS6wrLVDhykEro8SfKWCiHW82TOs=;
+        b=mPOSxrGg1Wlagxa6RyjC/IZznSbhB/+9UgbEY+NOHxQf3xkmgD8pAEQJvCqciTfGfY
+         UMouoC/F86cRLsMudeGkcim3+XgHpk1dqOhuSU4ZU+pfeTOgAnlYse+R9cSJtbKQmod3
+         W0fTMhsC39Kx/XuAEAopaHiE6liuDSNUtnUKzo2C8pjbki+V7EW8RF4EHX/CCiUL2z91
+         YNNrjd6r7miDOQBBFdAWGQr1RV8nivfjQaCpoqZSTaGKoeKIdfCsh0/dQzQ45hN3Bl1q
+         C5pUnhT7G89pYdZSRBBawJvGJSToHsUAF1hywdALyMEGVPto1U0i2pkFZ/bNNN13LEXa
+         R8cg==
+X-Gm-Message-State: AHQUAuZibUYnIvp7vDBR+zLjkTnD2HioMzMzPR7jGSAPJ2Dnk881vgIG
+        KBB4soxNwD1ErJ7OPuJDJg2I++LyOW2tl2DymYU=
+X-Google-Smtp-Source: AHgI3IZ++D9ypsHkKFC9v/TvQZru1p5rX1uRHQwoCsaCb+6PK/ZHDKlKjtnBINsaPASl51XcJb7lRSWRmn/30DmF3lY=
+X-Received: by 2002:a1f:a5d3:: with SMTP id o202mr11400778vke.40.1550678761295;
+ Wed, 20 Feb 2019 08:06:01 -0800 (PST)
+MIME-Version: 1.0
+References: <20190220150531.2462-1-geert+renesas@glider.be>
+ <20190220150531.2462-8-geert+renesas@glider.be> <20190220154236.GI3516@pendragon.ideasonboard.com>
+In-Reply-To: <20190220154236.GI3516@pendragon.ideasonboard.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 20 Feb 2019 17:05:49 +0100
+Message-ID: <CAMuHMdW2KR=rbtgxbnhW94VCzehX821TMxoTZGKh8uQZMY80cA@mail.gmail.com>
+Subject: Re: [PATCH 7/7] iommu/ipmmu-vmsa: Add suspend/resume support
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Joerg Roedel <joro@8bytes.org>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Feb 2019 09:49:26 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Hi Laurent,
 
-> On Wed, 20 Feb 2019 17:10:19 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > Let me ensure what you want. So you want to access a "string" in user-space,
-> > not a data structure? In that case, it is very easy to me. It is enough to
-> > add a "ustring" type to kprobe events. For example, do_sys_opsn's path 
-> > variable is one example. That will be +0(+0(%si)):ustring, and fetcher
-> > finally copy the string using strncpy_from_user() instead of 
-> > strncpy_from_unsafe(). (*)
-> 
-> ustring would be good.
+On Wed, Feb 20, 2019 at 4:42 PM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Wed, Feb 20, 2019 at 04:05:31PM +0100, Geert Uytterhoeven wrote:
+> > During PSCI system suspend, R-Car Gen3 SoCs are powered down, and all
+> > IPMMU state is lost.  Hence after s2ram, devices wired behind an IPMMU,
+> > and configured to use it, will see their DMA operations hang.
+> >
+> > To fix this, restore all IPMMU contexts, and re-enable all active
+> > micro-TLBs during system resume.
+> >
+> > To avoid overhead on platforms not needing it, the resume code has a
+> > build time dependency on sleep and PSCI support, and a runtime
+> > dependency on PSCI.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > This patch takes a different approach than the BSP, which implements a
+> > bulk save/restore of all registers during system suspend/resume.
+>
+> I like this approach better too.
 
-OK.
+Thanks ;-)
 
-> 
-> > 
-> > But if you consider to access a field in a data-structure in user space,
-> > it might need some more work (E.g. ioctl's parameter), becase if the __user
-> > pointer to the data structure is on the memory, we have to dereference 
-> > the address inside kernel using probe_kernel_read(), but after getting 
-> > the data strucutre address, we have to dereference the address with copy_from_user().
-> > At this moment, we have no such strong syntax... 
-> > 
-> > To solve that, maybe we need to introduce something like "back reference"
-> > of arguments in the event, e.g.
-> > 
-> > p somewhere user_data=+0(%si) field_val=+8(\user_data):u32:user
-> > 
-> > or
-> > 
-> > p somewhere +0(%si) field_val=+8(\1):u32:user
-> > 
-> > This ":user" additional suffix tells kprobe events to change fetching method 
-> > to fetch the data by copy_from_user().
-> 
-> What about just adding 'u' to the end of the offset? Say you have a
-> data structure in kernel space that has a field in user space you want
-> to reference?
-> 
-> 
-> 	field_val=+8u(+0(%si))
+> > --- a/drivers/iommu/ipmmu-vmsa.c
+> > +++ b/drivers/iommu/ipmmu-vmsa.c
 
-Ah, that looks good :~) thank you for this idea!
+> > @@ -58,6 +62,7 @@ struct ipmmu_vmsa_device {
+> >       spinlock_t lock;                        /* Protects ctx and domains[] */
+> >       DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
+> >       struct ipmmu_vmsa_domain *domains[IPMMU_CTX_MAX];
+> > +     s8 utlb_ctx[IPMMU_UTLB_MAX];
+>
+> How about making this a bitmask instead to save memory ? I would also
+> rename it as utlb_ctx doesn't really carry the meaning of the field,
+> whose purpose is to store whether the µTLB is enabled or disabled.
 
-> 
-> Although, I would say having ways to access current parameters may also
-> be a nice touch ;-)
+This field isn't just a binary flag, but stores the context used for the
+uTLB, so we can map from micro-TLB to context.
+Given there can be 8 contexts, plus the need to indicate unused contexts,
+that means 4 bits/micro-TLB.  So the overhead is just 24 bytes per IPMMU
+instance.
 
-Hehe, OK, let's implement both.
+I considered allocating the array dynamically (by having s8 utlb_ctx[]
+at the end of the structure), but didn't go that route, as the domains[]
+array already uses more memory.
 
-Thanks!
+> > @@ -1158,10 +1166,52 @@ static int ipmmu_remove(struct platform_device *pdev)
+> >       return 0;
+> >  }
+> >
+> > +#if defined(CONFIG_PM_SLEEP) && defined(CONFIG_ARM_PSCI_FW)
+> > +static int ipmmu_resume_noirq(struct device *dev)
+> > +{
+> > +     struct ipmmu_vmsa_device *mmu = dev_get_drvdata(dev);
+> > +     unsigned int i;
+> > +
+> > +     /* This is the best we can do to check for the presence of PSCI */
+> > +     if (!psci_ops.cpu_suspend)
+> > +             return 0;
+>
+> PSCI suspend disabling power to the SoC completely may be a common
+> behaviour on our development boards, but isn't mandated by the PSCI
+> specification if I'm not mistaken. Is there a way to instead detect that
+> power has been lost, perhaps by checking whether a register has been
+> reset to its default value ?
 
-> 
-> -- Steve
+The approach here is the same as in the clk and pinctrl drivers.
 
+I think we could check if the IMCTR registers for allocated domains in root
+IPMMUs are non-zero.  But that's about as expensive as doing the full
+restore, I think.  And it may have to be done for each and every IPMMU
+instance, or do you trust caching for this?
+
+> > +
+> > +     /* Reset root MMU and restore contexts */
+>
+> I think the rest of the code adds a period at the end of sentences in
+> comments.
+
+The balance seems to be just under 50% ;-)
+
+> > +     if (ipmmu_is_root(mmu)) {
+> > +             ipmmu_device_reset(mmu);
+> > +
+> > +             for (i = 0; i < mmu->num_ctx; i++) {
+> > +                     if (!mmu->domains[i])
+> > +                             continue;
+> > +
+> > +                     ipmmu_context_init(mmu->domains[i]);
+> > +             }
+> > +     }
+> > +
+> > +     /* Re-enable active micro-TLBs */
+> > +     for (i = 0; i < mmu->features->num_utlbs; i++) {
+> > +             if (mmu->utlb_ctx[i] == IPMMU_CTX_INVALID)
+> > +                     continue;
+> > +
+> > +             ipmmu_utlb_enable(mmu->root->domains[mmu->utlb_ctx[i]], i);
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static const struct dev_pm_ops ipmmu_pm  = {
+> > +     SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(NULL, ipmmu_resume_noirq)
+> > +};
+> > +#define DEV_PM_OPS   &ipmmu_pm
+> > +#else
+> > +#define DEV_PM_OPS   NULL
+> > +#endif /* CONFIG_PM_SLEEP && CONFIG_ARM_PSCI_FW */
+> > +
+> >  static struct platform_driver ipmmu_driver = {
+> >       .driver = {
+> >               .name = "ipmmu-vmsa",
+> >               .of_match_table = of_match_ptr(ipmmu_of_ids),
+> > +             .pm = DEV_PM_OPS,
+>
+> I would have used conditional compilation here instead of using a
+> DEV_PM_OPS macro, as I think the macro decreases readability (and also
+> given how its generic name could later conflict with something else).
+
+You mean
+
+    #ifdef ...
+    .pm = &ipmmu_pm,
+    #endif
+
+and marking ipmmu_pm __maybe_unused__?
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
