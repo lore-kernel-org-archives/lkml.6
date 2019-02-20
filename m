@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4317C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:38:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D457C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:38:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E24B21B24
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:38:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E37DD21B24
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:38:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbfBTSiN (ORCPT
+        id S1727251AbfBTSiM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 13:38:13 -0500
+        Wed, 20 Feb 2019 13:38:12 -0500
 Received: from mail.kernel.org ([198.145.29.99]:47142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727106AbfBTSiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 13:38:09 -0500
+        id S1726994AbfBTSiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 13:38:07 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A84202195D;
-        Wed, 20 Feb 2019 18:38:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1AB342190C;
+        Wed, 20 Feb 2019 18:38:06 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92-RC5)
         (envelope-from <rostedt@goodmis.org>)
-        id 1gwWkx-0006kZ-Ko; Wed, 20 Feb 2019 13:38:07 -0500
-Message-Id: <20190220183807.483806734@goodmis.org>
+        id 1gwWkv-0006fC-6r; Wed, 20 Feb 2019 13:38:05 -0500
+Message-Id: <20190220183805.098563076@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Wed, 20 Feb 2019 13:37:59 -0500
+Date:   Wed, 20 Feb 2019 13:37:48 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [for-next][PATCH 22/29] tracing: Add hist trigger onchange() handler Documentation
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 11/29] ftrace: Allow enabling of filters via index of
+ available_filter_functions
 References: <20190220183737.034634614@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -44,134 +44,191 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Add Documentation for the hist:onchange($var) handler.
+Enabling of large number of functions by echoing in a large subset of the
+functions in available_filter_functions can take a very long time. The
+process requires testing all functions registered by the function tracer
+(which is in the 10s of thousands), and doing a kallsyms lookup to convert
+the ip address into a name, then comparing that name with the string passed
+in.
 
-Link: http://lkml.kernel.org/r/ab54b7383b265609fda52648a8fbfbd2631a640f.1550100284.git.tom.zanussi@linux.intel.com
+When a function causes the function tracer to crash the system, a binary
+bisect of the available_filter_functions can be done to find the culprit.
+But this requires passing in half of the functions in
+available_filter_functions over and over again, which makes it basically a
+O(n^2) operation. With 40,000 functions, that ends up bing 1,600,000,000
+opertions! And enabling this can take over 20 minutes.
 
-Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+As a quick speed up, if a number is passed into one of the filter files,
+instead of doing a search, it just enables the function at the corresponding
+line of the available_filter_functions file. That is:
+
+ # echo 50 > set_ftrace_filter
+ # cat set_ftrace_filter
+ x86_pmu_commit_txn
+
+ # head -50 available_filter_functions | tail -1
+ x86_pmu_commit_txn
+
+This allows setting of half the available_filter_functions to take place in
+less than a second!
+
+ # time seq 20000 > set_ftrace_filter
+ real    0m0.042s
+ user    0m0.005s
+ sys     0m0.015s
+
+ # wc -l set_ftrace_filter
+ 20000 set_ftrace_filter
+
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- Documentation/trace/histogram.rst | 98 +++++++++++++++++++++++++++++++
- 1 file changed, 98 insertions(+)
+ Documentation/trace/ftrace.rst     | 38 ++++++++++++++++++++++++++++++
+ kernel/trace/ftrace.c              | 30 +++++++++++++++++++++++
+ kernel/trace/trace.h               |  1 +
+ kernel/trace/trace_events_filter.c |  5 ++++
+ 4 files changed, 74 insertions(+)
 
-diff --git a/Documentation/trace/histogram.rst b/Documentation/trace/histogram.rst
-index 353317bc3825..79476c906b1a 100644
---- a/Documentation/trace/histogram.rst
-+++ b/Documentation/trace/histogram.rst
-@@ -1869,6 +1869,7 @@ The available handlers are:
+diff --git a/Documentation/trace/ftrace.rst b/Documentation/trace/ftrace.rst
+index 6ce2763a2a3e..7c5e6d6ab5d1 100644
+--- a/Documentation/trace/ftrace.rst
++++ b/Documentation/trace/ftrace.rst
+@@ -233,6 +233,12 @@ of ftrace. Here is a list of some of the key files:
+ 	This interface also allows for commands to be used. See the
+ 	"Filter commands" section for more details.
  
-   - onmatch(matching.event)    - invoke action on any addition or update
-   - onmax(var)                 - invoke action if var exceeds current max
-+  - onchange(var)              - invoke action if var changes
++	As a speed up, since processing strings can't be quite expensive
++	and requires a check of all functions registered to tracing, instead
++	an index can be written into this file. A number (starting with "1")
++	written will instead select the same corresponding at the line position
++	of the "available_filter_functions" file.
++
+   set_ftrace_notrace:
  
- The available actions are:
+ 	This has an effect opposite to that of
+@@ -2835,6 +2841,38 @@ Produces::
  
-@@ -2140,6 +2141,103 @@ The following commonly-used handler.action pairs are available:
-       <...>-2102  [005] d..4   309.875185: sched_wake_idle_without_ipi: cpu=1
-      <idle>-0     [001] d..3   309.875200: sched_switch: prev_comm=swapper/1 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2103 next_prio=19
+ We can see that there's no more lock or preempt tracing.
  
-+  - onchange(var).save(field,..	.)
++Selecting function filters via index
++------------------------------------
 +
-+    The 'onchange(var).save(field,...)' hist trigger action is invoked
-+    whenever the value of 'var' associated with a histogram entry
-+    changes.
++Because processing of strings is expensive (the address of the function
++needs to be looked up before comparing to the string being passed in),
++an index can be used as well to enable functions. This is useful in the
++case of setting thousands of specific functions at a time. By passing
++in a list of numbers, no string processing will occur. Instead, the function
++at the specific location in the internal array (which corresponds to the
++functions in the "available_filter_functions" file), is selected.
 +
-+    The end result is that the trace event fields specified as the
-+    onchange.save() params will be saved if 'var' changes for that
-+    hist trigger entry.  This allows context from the event that
-+    changed the value to be saved for later reference.  When the
-+    histogram is displayed, additional fields displaying the saved
-+    values will be printed.
++::
 +
-+  - onchange(var).snapshot()
++  # echo 1 > set_ftrace_filter
 +
-+    The 'onchange(var).snapshot()' hist trigger action is invoked
-+    whenever the value of 'var' associated with a histogram entry
-+    changes.
++Will select the first function listed in "available_filter_functions"
 +
-+    The end result is that a global snapshot of the trace buffer will
-+    be saved in the tracing/snapshot file if 'var' changes for any
-+    hist trigger entry.
++::
 +
-+    Note that in this case the changed value is a global variable
-+    associated withe current trace instance.  The key of the specific
-+    trace event that caused the value to change and the global value
-+    itself are displayed, along with a message stating that a snapshot
-+    has been taken and where to find it.  The user can use the key
-+    information displayed to locate the corresponding bucket in the
-+    histogram for even more detail.
++  # head -1 available_filter_functions
++  trace_initcall_finish_cb
 +
-+    As an example the below defines a hist trigger on the tcp_probe
-+    event, keyed on dport.  Whenever a tcp_probe event occurs, the
-+    cwnd field is checked against the current value stored in the
-+    $cwnd variable.  If the value has changed, a snapshot is taken.
-+    As part of the setup, all the scheduler and tcp events are also
-+    enabled, which are the events that will show up in the snapshot
-+    when it is taken at some point:
++  # cat set_ftrace_filter
++  trace_initcall_finish_cb
 +
-+    # echo 1 > /sys/kernel/debug/tracing/events/sched/enable
-+    # echo 1 > /sys/kernel/debug/tracing/events/tcp/enable
++  # head -50 available_filter_functions | tail -1
++  x86_pmu_commit_txn
 +
-+    # echo 'hist:keys=dport:cwnd=snd_cwnd: \
-+            onchange($cwnd).save(snd_wnd,srtt,rcv_wnd): \
-+	    onchange($cwnd).snapshot()' >> \
-+	    /sys/kernel/debug/tracing/events/tcp/tcp_probe/trigger
-+
-+    When the histogram is displayed, for each bucket the tracked value
-+    and the saved values corresponding to that value are displayed
-+    following the rest of the fields.
-+
-+    If a snaphot was taken, there is also a message indicating that,
-+    along with the value and event that triggered the snapshot:
-+
-+    # cat /sys/kernel/debug/tracing/events/tcp/tcp_probe/hist
-+      { dport:       1521 } hitcount:          8
-+	changed:         10  snd_wnd:      35456  srtt:     154262  rcv_wnd:      42112
-+
-+      { dport:         80 } hitcount:         23
-+	changed:         10  snd_wnd:      28960  srtt:      19604  rcv_wnd:      29312
-+
-+      { dport:       9001 } hitcount:        172
-+	changed:         10  snd_wnd:      48384  srtt:     260444  rcv_wnd:      55168
-+
-+      { dport:        443 } hitcount:        211
-+	changed:         10  snd_wnd:      26960  srtt:      17379  rcv_wnd:      28800
-+
-+    Snapshot taken (see tracing/snapshot).  Details:
-+        triggering value { onchange($cwnd) }:         10
-+        triggered by event with key: { dport:         80 }
-+
-+    Totals:
-+        Hits: 414
-+        Entries: 4
-+        Dropped: 0
-+
-+    In the above case, the event that triggered the snapshot has the
-+    key with dport == 80.  If you look at the bucket that has 80 as
-+    the key, you'll find the additional values save()'d along with the
-+    changed value for that bucket, which should be the same as the
-+    global changed value (since that was the same value that triggered
-+    the global snapshot).
-+
-+    And finally, looking at the snapshot data should show at or near
-+    the end the event that triggered the snapshot:
-+
-+    # cat /sys/kernel/debug/tracing/snapshot
-+
-+       gnome-shell-1261  [006] dN.3    49.823113: sched_stat_runtime: comm=gnome-shell pid=1261 runtime=49347 [ns] vruntime=1835730389 [ns]
-+     kworker/u16:4-773   [003] d..3    49.823114: sched_switch: prev_comm=kworker/u16:4 prev_pid=773 prev_prio=120 prev_state=R+ ==> next_comm=kworker/3:2 next_pid=135 next_prio=120
-+       gnome-shell-1261  [006] d..3    49.823114: sched_switch: prev_comm=gnome-shell prev_pid=1261 prev_prio=120 prev_state=R+ ==> next_comm=kworker/6:2 next_pid=387 next_prio=120
-+       kworker/3:2-135   [003] d..3    49.823118: sched_stat_runtime: comm=kworker/3:2 pid=135 runtime=5339 [ns] vruntime=17815800388 [ns]
-+       kworker/6:2-387   [006] d..3    49.823120: sched_stat_runtime: comm=kworker/6:2 pid=387 runtime=9594 [ns] vruntime=14589605367 [ns]
-+       kworker/6:2-387   [006] d..3    49.823122: sched_switch: prev_comm=kworker/6:2 prev_pid=387 prev_prio=120 prev_state=R+ ==> next_comm=gnome-shell next_pid=1261 next_prio=120
-+       kworker/3:2-135   [003] d..3    49.823123: sched_switch: prev_comm=kworker/3:2 prev_pid=135 prev_prio=120 prev_state=T ==> next_comm=swapper/3 next_pid=0 next_prio=120
-+            <idle>-0     [004] ..s7    49.823798: tcp_probe: src=10.0.0.10:54326 dest=23.215.104.193:80 mark=0x0 length=32 snd_nxt=0xe3ae2ff5 snd_una=0xe3ae2ecd snd_cwnd=10 ssthresh=2147483647 snd_wnd=28960 srtt=19604 rcv_wnd=29312
-+
- 3. User space creating a trigger
- --------------------------------
++  # echo 1 50 > set_ftrace_filter
++  # cat set_ftrace_filter
++  trace_initcall_finish_cb
++  x86_pmu_commit_txn
  
+ Dynamic ftrace with the function graph tracer
+ ---------------------------------------------
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index aac7847c0214..fa79323331b2 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -3701,6 +3701,31 @@ enter_record(struct ftrace_hash *hash, struct dyn_ftrace *rec, int clear_filter)
+ 	return ret;
+ }
+ 
++static int
++add_rec_by_index(struct ftrace_hash *hash, struct ftrace_glob *func_g,
++		 int clear_filter)
++{
++	long index = simple_strtoul(func_g->search, NULL, 0);
++	struct ftrace_page *pg;
++	struct dyn_ftrace *rec;
++
++	/* The index starts at 1 */
++	if (--index < 0)
++		return 0;
++
++	do_for_each_ftrace_rec(pg, rec) {
++		if (pg->index <= index) {
++			index -= pg->index;
++			/* this is a double loop, break goes to the next page */
++			break;
++		}
++		rec = &pg->records[index];
++		enter_record(hash, rec, clear_filter);
++		return 1;
++	} while_for_each_ftrace_rec();
++	return 0;
++}
++
+ static int
+ ftrace_match_record(struct dyn_ftrace *rec, struct ftrace_glob *func_g,
+ 		struct ftrace_glob *mod_g, int exclude_mod)
+@@ -3769,6 +3794,11 @@ match_records(struct ftrace_hash *hash, char *func, int len, char *mod)
+ 	if (unlikely(ftrace_disabled))
+ 		goto out_unlock;
+ 
++	if (func_g.type == MATCH_INDEX) {
++		found = add_rec_by_index(hash, &func_g, clear_filter);
++		goto out_unlock;
++	}
++
+ 	do_for_each_ftrace_rec(pg, rec) {
+ 
+ 		if (rec->flags & FTRACE_FL_DISABLED)
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index a34fa5e76abb..ae7df090b93e 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -1459,6 +1459,7 @@ enum regex_type {
+ 	MATCH_MIDDLE_ONLY,
+ 	MATCH_END_ONLY,
+ 	MATCH_GLOB,
++	MATCH_INDEX,
+ };
+ 
+ struct regex {
+diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+index f052ecb085e9..ade606c33231 100644
+--- a/kernel/trace/trace_events_filter.c
++++ b/kernel/trace/trace_events_filter.c
+@@ -825,6 +825,9 @@ enum regex_type filter_parse_regex(char *buff, int len, char **search, int *not)
+ 
+ 	*search = buff;
+ 
++	if (isdigit(buff[0]))
++		return MATCH_INDEX;
++
+ 	for (i = 0; i < len; i++) {
+ 		if (buff[i] == '*') {
+ 			if (!i) {
+@@ -862,6 +865,8 @@ static void filter_build_regex(struct filter_pred *pred)
+ 	}
+ 
+ 	switch (type) {
++	/* MATCH_INDEX should not happen, but if it does, match full */
++	case MATCH_INDEX:
+ 	case MATCH_FULL:
+ 		r->match = regex_match_full;
+ 		break;
 -- 
 2.20.1
 
