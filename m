@@ -2,100 +2,117 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95573C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F3A4C4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:51:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59D882086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:46:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (4096-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b="KsVc6q5a"
+	by mail.kernel.org (Postfix) with ESMTP id D40922075B
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:51:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550703065;
+	bh=0x9MVFXo+Y751qCaJ8GHk3d+/NV5RgOTWGaGMS1ouFA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=kOP7wk2VEDE5ELnWdCe2UpbkzHVS68ba0rbzlTvggJbRADzZVRkbXjG0SjeVKkTyc
+	 ZQDwzPaOoAhz4ahQBMVusC3O70lt9auX5V/FtNSsey8ESanB0x2ajbvKqodvQeoXuG
+	 x7RxvWifdLxTPB5tykBxY+9TQUTjoLf7iz5E//PU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726237AbfBTWqv (ORCPT
+        id S1726317AbfBTWvE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 17:46:51 -0500
-Received: from mx.kolabnow.com ([95.128.36.41]:8640 "EHLO mx.kolabnow.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725847AbfBTWqv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 17:46:51 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by ext-mx-out002.mykolab.com (Postfix) with ESMTP id 918E1398E;
-        Wed, 20 Feb 2019 23:46:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
-        content-transfer-encoding:mime-version:message-id:date:date
-        :subject:subject:from:from:received:received:received; s=
-        dkim20160331; t=1550702807; x=1552517208; bh=BT14RPWUUCvsr+25bL6
-        6MvXX3meb4PexJ4ucdFkRJvw=; b=KsVc6q5a2aBAsTeNixj02lmkYJYRjo6t/MQ
-        R1wEavmkuUHzI65zsDvfsu02QOyYvuLimhNThHYDgygJp3k7Ot7yHUE407zUX+Nn
-        zWe0FkQY2nlWa+QO3cxLbBcRxqkbcQVkxjWYxrhzhDdCF24LXOLqfbo4ntofXvig
-        pPRM9R2RF+IGr6wF4gIUlA1+x7SOkfTeKiFnpsHvdMwdNbEVQ30oZN0mYIK6FlYH
-        Ia1qX3vw4eCfqVGxHv4ogpbiS5qHOUJhK0wDdQC8ZXTKAo5bQUZItuUyDSSZbnz0
-        JiJ73dS4EyPy1O+eOE8uAdNdbx9DNC8Fru3yBkrFJ/VoEBdRE53b88su96/bZpRl
-        GNuLn6na3/WfXyacjlCW6xiesFnJdPpEPK1A4ekkwQlBz0I656L6fUSYmBTLjgaT
-        v2PcFkimyye238sxcxPmgXOiZcStopu9yAiAJRm/Z0z7xdRLacyLFsS7LNFUdTuT
-        mWjbK7eG2nw8ITSxtbT2xmoqhs70Az1XJyXIHpk+Zelj0RPwkTdh9H84AyWNO7gv
-        PEyEC9Kr3SGy3NWEdjfK7/jnq+w+YWqx2LRscQikd3KkW4CYBgFjGOxkpCu0aRvU
-        EdUUye4ylOVTuEl/XxDHZ96PdF28SmZt/QhfsCL4s10MOlmxnR1ZVY8exG2Kf5Vj
-        EJtgLTiI=
-X-Virus-Scanned: amavisd-new at mykolab.com
-Received: from mx.kolabnow.com ([127.0.0.1])
-        by localhost (ext-mx-out002.mykolab.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id hHhqJzoPgOsa; Wed, 20 Feb 2019 23:46:47 +0100 (CET)
-Received: from int-mx001.mykolab.com (unknown [10.9.13.1])
-        by ext-mx-out002.mykolab.com (Postfix) with ESMTPS id 183D5DE4;
-        Wed, 20 Feb 2019 23:46:47 +0100 (CET)
-Received: from ext-subm002.mykolab.com (unknown [10.9.6.2])
-        by int-mx001.mykolab.com (Postfix) with ESMTPS id 957B0226;
-        Wed, 20 Feb 2019 23:46:46 +0100 (CET)
-From:   Federico Vaga <federico.vaga@vaga.pv.it>
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Markus Heiser <markus.heiser@darmarit.de>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Federico Vaga <federico.vaga@vaga.pv.it>
-Subject: [PATCH] doc: fix typos in license-rules.rst
-Date:   Wed, 20 Feb 2019 23:46:09 +0100
-Message-Id: <20190220224609.17721-1-federico.vaga@vaga.pv.it>
+        Wed, 20 Feb 2019 17:51:04 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:38654 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725847AbfBTWvD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 17:51:03 -0500
+Received: by mail-ot1-f65.google.com with SMTP id m1so43141405otf.5;
+        Wed, 20 Feb 2019 14:51:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MXnskfauBnUogXYJgY5dNHOIdo9j55TU67g9oo5oqhM=;
+        b=iY2UUx4XT1XIes809ngeklzqfZgg7VS8kJONQndZkEalSX1I36hQd9WW5K2h2hG9eQ
+         K64z58NYOcyR7jHnFZi9cZF7uvh8PpRlYAmrvjrXmB7O7gNkg8mwKx2bYeES+o7//za5
+         IPgLQ6WqCsqfixVFaJmkGOTD2hr0LZ2QhVwAGCmv++UrNsyxvnV1INi6g6An5R5/pKt+
+         aCC4e6mKDJhEcD0o2gBTo15Jf/OUNbrz0tOE6xwt0V8PlBuX4N6tLVvGywNrKnKZh4qT
+         1QjcXnMcErMnkIW5A1enJHm7feKkNu71QsKrvj+mbsx/0bixoiA7tLuxccMmwgjHggJT
+         MPfw==
+X-Gm-Message-State: AHQUAuZ/MdjdV2utkdyDRVjvBAd4jHTu8BoibtRr9dgehKWgBwuwQ6v7
+        0Pd5gqFRRfFCg+DtpsP8xT0EfhAbeO7T/FmJQ4E=
+X-Google-Smtp-Source: AHgI3IZRPgC4J+d8RrkM9iH9F5Zs+AMlNX5W8aBgKvrqXeUzhgCN/MVSc89/TZNlgaCEVUeLZkRcCiMgaC2iQSwbJBk=
+X-Received: by 2002:aca:ed0f:: with SMTP id l15mr7586917oih.76.1550703062784;
+ Wed, 20 Feb 2019 14:51:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190214171017.9362-1-keith.busch@intel.com> <20190214171017.9362-8-keith.busch@intel.com>
+ <CAJZ5v0gjv0DZvYMTPBLnUmMtu8=g0zFd4x-cpP11Kzv+6XCwUw@mail.gmail.com>
+ <9ab5d6ba-4cb6-a6f1-894d-d79b77c8bc21@intel.com> <CAJZ5v0izS-MBcC3ZsRKK59zWcJOMQ672sRuv_GCVrsYR36Wa8w@mail.gmail.com>
+ <20190220224419.GC5478@localhost.localdomain>
+In-Reply-To: <20190220224419.GC5478@localhost.localdomain>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 20 Feb 2019 23:50:52 +0100
+Message-ID: <CAJZ5v0ji4ReBFf_L14kNbt-eAg79mdQYkYNC8MqbM=4kQa4Agg@mail.gmail.com>
+Subject: Re: [PATCHv6 07/10] acpi/hmat: Register processor domain to its memory
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patches fixes some typos in process/license-rules.rst
+On Wed, Feb 20, 2019 at 11:44 PM Keith Busch <keith.busch@intel.com> wrote:
+>
+> On Wed, Feb 20, 2019 at 11:21:45PM +0100, Rafael J. Wysocki wrote:
+> > On Wed, Feb 20, 2019 at 11:11 PM Dave Hansen <dave.hansen@intel.com> wrote:
+> > > On 2/20/19 2:02 PM, Rafael J. Wysocki wrote:
+> > > >> diff --git a/drivers/acpi/hmat/Kconfig b/drivers/acpi/hmat/Kconfig
+> > > >> index c9637e2e7514..08e972ead159 100644
+> > > >> --- a/drivers/acpi/hmat/Kconfig
+> > > >> +++ b/drivers/acpi/hmat/Kconfig
+> > > >> @@ -2,6 +2,7 @@
+> > > >>  config ACPI_HMAT
+> > > >>         bool "ACPI Heterogeneous Memory Attribute Table Support"
+> > > >>         depends on ACPI_NUMA
+> > > >> +       select HMEM_REPORTING
+> > > > If you want to do this here, I'm not sure that defining HMEM_REPORTING
+> > > > as a user-selectable option is a good idea.  In particular, I don't
+> > > > really think that setting ACPI_HMAT without it makes a lot of sense.
+> > > > Apart from this, the patch looks reasonable to me.
+> > >
+> > > I guess the question is whether we would want to allow folks to consume
+> > > the HMAT inside the kernel while not reporting it out via
+> > > HMEM_REPORTING.  We have some in-kernel users of the HMAT lined up like
+> > > mitigations for memory-side caches.
+> > >
+> > > It's certainly possible that folks would want to consume those
+> > > mitigations without anything in sysfs.  They might not even want or need
+> > > NUMA support itself, for instance.
+> > >
+> > > So, what should we do?
+> > >
+> > > config HMEM_REPORTING
+> > >         bool # no user-visible prompt
+> > >         default y if ACPI_HMAT
+> > >
+> > > So folks can override in their .config, but they don't see a prompt?
+> >
+> > Maybe it would be better to make HMEM_REPORTING do "select ACPI_HMAT if ACPI".
+> >
+> > The mitigations could then do that too if they depend on HMAT and
+> > ACPI_HMAT need not be user-visible at all.
+>
+> That sounds okay, though it would create unreachable code if !ACPI since
+> that's the only user for the new reporting interfaces.
 
-Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
----
- Documentation/process/license-rules.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/process/license-rules.rst b/Documentation/process/license-rules.rst
-index 2bb8c0fc2238..d9798d61fe64 100644
---- a/Documentation/process/license-rules.rst
-+++ b/Documentation/process/license-rules.rst
-@@ -62,7 +62,7 @@ License identifier syntax
- 
-    The SPDX license identifier in kernel files shall be added at the first
-    possible line in a file which can contain a comment.  For the majority
--   or files this is the first line, except for scripts which require the
-+   of files this is the first line, except for scripts which require the
-    '#!PATH_TO_INTERPRETER' in the first line.  For those scripts the SPDX
-    identifier goes into the second line.
- 
-@@ -368,7 +368,7 @@ kernel, can be broken down into:
- 
- 
- All SPDX license identifiers and exceptions must have a corresponding file
--in the LICENSE subdirectories. This is required to allow tool
-+in the LICENSES subdirectories. This is required to allow tool
- verification (e.g. checkpatch.pl) and to have the licenses ready to read
- and extract right from the source, which is recommended by various FOSS
- organizations, e.g. the `FSFE REUSE initiative <https://reuse.software/>`_.
--- 
-2.20.1
-
+Until there are other users of it, you can make HMEM_REPORTING depend
+on ACPI_NUMA and select ACPI_HMAT.
