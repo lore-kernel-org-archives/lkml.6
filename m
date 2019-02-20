@@ -2,136 +2,181 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96339C10F00
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 01:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F307CC4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 01:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ED7D21738
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 01:17:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4CD021738
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 01:20:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vX4S0FZE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730208AbfBTBRu (ORCPT
+        id S1729673AbfBTBUw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 20:17:50 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:36102 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725616AbfBTBRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 20:17:49 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 14EB83D978;
-        Wed, 20 Feb 2019 01:17:48 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-26.pek2.redhat.com [10.72.8.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 86BC461B93;
-        Wed, 20 Feb 2019 01:17:25 +0000 (UTC)
-Date:   Wed, 20 Feb 2019 09:17:20 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Mike Snitzer <snitzer@redhat.com>,
-        linux-mm@kvack.org, dm-devel@redhat.com,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Omar Sandoval <osandov@fb.com>, cluster-devel@redhat.com,
-        linux-ext4@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Gao Xiang <gaoxiang25@huawei.com>, Coly Li <colyli@suse.de>,
-        linux-raid@vger.kernel.org, Bob Peterson <rpeterso@redhat.com>,
-        linux-bcache@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <dchinner@redhat.com>,
-        David Sterba <dsterba@suse.com>, linux-block@vger.kernel.org,
-        Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-Subject: Re: [dm-devel] [PATCH V15 00/18] block: support multi-page bvec
-Message-ID: <20190220011719.GA13035@ming.t460p>
-References: <20190215111324.30129-1-ming.lei@redhat.com>
- <c52b6a8b-d1d4-67ff-f81c-371d09cc6d5b@kernel.dk>
- <1550250855.31902.102.camel@acm.org>
- <20190217131128.GB7296@ming.t460p>
- <1550593699.31902.115.camel@acm.org>
+        Tue, 19 Feb 2019 20:20:52 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:33156 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726214AbfBTBUv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 20:20:51 -0500
+Received: by mail-ot1-f66.google.com with SMTP id i20so37573890otl.0;
+        Tue, 19 Feb 2019 17:20:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=0csvRJO9q2/FaX/o0eEuWXuIPQ1fh/fIC0tbNVmVNFY=;
+        b=vX4S0FZEiZ6zhRlOjEZNXfZ7KpkNT2TAXtdAYVwhS5CLiFK0gDnMguL6fT6pkt+EeW
+         +VqkzSm1taxY8ev+qPvjrFH6yf6xSnRYjrBwpvif3wz+GTHqyfA99hD1AQAri6vTqdEX
+         AqEYUaaSgdTk9rtbLz4kgIIULSEBrrKmwZEYP7b6nBxsA72DtW26qArpLeLgoHlr6qIO
+         syU/uaYmXEIpH2XAuJ946sE4e8yZsl6c/GrvF4wz/Ka1OD59qlRLh75n+qyFX9r0X6vF
+         yII5QXryk3F2xREfz2136R34wuR4Ko7/OuYNNExMMCO0qTjB2Z3vbEOl99RPO6crsvVF
+         Ohsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=0csvRJO9q2/FaX/o0eEuWXuIPQ1fh/fIC0tbNVmVNFY=;
+        b=RzOQgIDNSdeTTctD0VUVbr51PJAT3IAC2nBG8WPCwJ8Mm27mAxgfnZloz9JEoYAjb5
+         9H9CRB7PrOab+tsf/da6b8Ll6/EeikfexVuIrs1pcDUoYPWBK/ZuWG1FQ/Wy5dp79fbE
+         56F5JRG7lETcdmQ7NKsBQHOQLEtm70BXlEzKDULM8W4hX27S1UVgoZs59HoZzeX3WCmc
+         bJXUbQmYMz+TKxTkiekYmV6cl+LMXdg0PRXYIUgoK2+lCMP+IpPirJnGoFhIovdy9eEc
+         7rAJD4zaRHqs69VNw8EsnmkAG80g6wzQsAhHllMsKKKlZsFtSDIPLjxzeIvcRu/nfo9u
+         odlA==
+X-Gm-Message-State: AHQUAuYOkiFRQXHDOYD7R/xrXstVZAkN6uSLnRkAVup4gvsqCEnx6E2q
+        Td/B6HjMnUVbpqxNH7X42W0=
+X-Google-Smtp-Source: AHgI3IZU08WTMWIwwZlfeWAm3wMV40RmxOr3ER9crN5MJvmKZ+s34D9tS5Vz86uJJ3Dy2lOYqodjLg==
+X-Received: by 2002:aca:4d3:: with SMTP id 202mr4217306oie.31.1550625650495;
+        Tue, 19 Feb 2019 17:20:50 -0800 (PST)
+Received: from nuclearis2-1.lan (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
+        by smtp.gmail.com with ESMTPSA id d67sm8000424oig.36.2019.02.19.17.20.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Feb 2019 17:20:50 -0800 (PST)
+From:   Alexandru Gagniuc <mr.nuke.me@gmail.com>
+To:     bhelgaas@google.com
+Cc:     austin_bolen@dell.com, alex_gagniuc@dellteam.com,
+        keith.busch@intel.com, Shyam_Iyer@Dell.com, lukas@wunner.de,
+        okaya@kernel.org, linux-pci@vger.kernel.org,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH RFC v2 1/4] PCI: hotplug: Add support for disabling in-band presence
+Date:   Tue, 19 Feb 2019 19:20:27 -0600
+Message-Id: <20190220012031.10741-2-mr.nuke.me@gmail.com>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20190220012031.10741-1-mr.nuke.me@gmail.com>
+References: <20190220012031.10741-1-mr.nuke.me@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1550593699.31902.115.camel@acm.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 20 Feb 2019 01:17:49 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 08:28:19AM -0800, Bart Van Assche wrote:
-> On Sun, 2019-02-17 at 21:11 +0800, Ming Lei wrote:
-> > The following patch should fix this issue:
-> > 
-> > 
-> > diff --git a/block/blk-merge.c b/block/blk-merge.c
-> > index bed065904677..066b66430523 100644
-> > --- a/block/blk-merge.c
-> > +++ b/block/blk-merge.c
-> > @@ -363,13 +363,15 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
-> >  	struct bio_vec bv, bvprv = { NULL };
-> >  	int prev = 0;
-> >  	unsigned int seg_size, nr_phys_segs;
-> > -	unsigned front_seg_size = bio->bi_seg_front_size;
-> > +	unsigned front_seg_size;
-> >  	struct bio *fbio, *bbio;
-> >  	struct bvec_iter iter;
-> >  
-> >  	if (!bio)
-> >  		return 0;
-> >  
-> > +	front_seg_size = bio->bi_seg_front_size;
-> > +
-> >  	switch (bio_op(bio)) {
-> >  	case REQ_OP_DISCARD:
-> >  	case REQ_OP_SECURE_ERASE:
-> 
-> Hi Ming,
-> 
-> With this patch applied test nvmeof-mp/002 fails as follows:
-> 
-> [  694.700400] kernel BUG at lib/sg_pool.c:103!
-> [  694.705932] invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-> [  694.708297] CPU: 2 PID: 349 Comm: kworker/2:1H Tainted: G    B             5.0.0-rc6-dbg+ #2
-> [  694.711730] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> [  694.715113] Workqueue: kblockd blk_mq_run_work_fn
-> [  694.716894] RIP: 0010:sg_alloc_table_chained+0xe5/0xf0
-> [  694.758222] Call Trace:
-> [  694.759645]  nvme_rdma_queue_rq+0x2aa/0xcc0 [nvme_rdma]
-> [  694.764915]  blk_mq_try_issue_directly+0x2a5/0x4b0
-> [  694.771779]  blk_insert_cloned_request+0x11e/0x1c0
-> [  694.778417]  dm_mq_queue_rq+0x3d1/0x770
-> [  694.793400]  blk_mq_dispatch_rq_list+0x5fc/0xb10
-> [  694.798386]  blk_mq_sched_dispatch_requests+0x2f7/0x300
-> [  694.803180]  __blk_mq_run_hw_queue+0xd6/0x180
-> [  694.808933]  blk_mq_run_work_fn+0x27/0x30
-> [  694.810315]  process_one_work+0x4f1/0xa40
-> [  694.813178]  worker_thread+0x67/0x5b0
-> [  694.814487]  kthread+0x1cf/0x1f0
-> [  694.819134]  ret_from_fork+0x24/0x30
-> 
-> The code in sg_pool.c that triggers the BUG() statement is as follows:
-> 
-> int sg_alloc_table_chained(struct sg_table *table, int nents,
-> 		struct scatterlist *first_chunk)
-> {
-> 	int ret;
-> 
-> 	BUG_ON(!nents);
-> [ ... ]
-> 
-> Bart.
+The presence detect state (PDS) is normally a logical or of in-band
+and out-of-band presence. In PCIe 4.0, there is the option to disable
+in-band presence so that the PDS bit always reflects the state of the
+out-of-band presence.
 
-I can reproduce this issue("kernel BUG at lib/sg_pool.c:103") without mp-bvec patches,
-so looks it isn't the fault of this patchset.
+The recommendation of the PCIe spec is to disable in-band presence
+whenever supported.
 
-Thanks,
-Ming
+Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+---
+ drivers/pci/hotplug/pciehp.h     |  1 +
+ drivers/pci/hotplug/pciehp_hpc.c | 12 +++++++++++-
+ include/linux/pci.h              |  1 +
+ include/uapi/linux/pci_regs.h    |  2 ++
+ 4 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pci/hotplug/pciehp.h b/drivers/pci/hotplug/pciehp.h
+index 506e1d923a1f..6f729ce4a7b9 100644
+--- a/drivers/pci/hotplug/pciehp.h
++++ b/drivers/pci/hotplug/pciehp.h
+@@ -98,6 +98,7 @@ struct controller {
+ 	struct pcie_device *pcie;
+ 
+ 	u32 slot_cap;				/* capabilities and quirks */
++	unsigned int inband_presence_disabled:1;
+ 
+ 	u16 slot_ctrl;				/* control register access */
+ 	struct mutex ctrl_lock;
+diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+index 7dd443aea5a5..f77dc7c38f9a 100644
+--- a/drivers/pci/hotplug/pciehp_hpc.c
++++ b/drivers/pci/hotplug/pciehp_hpc.c
+@@ -824,7 +824,7 @@ static inline void dbg_ctrl(struct controller *ctrl)
+ struct controller *pcie_init(struct pcie_device *dev)
+ {
+ 	struct controller *ctrl;
+-	u32 slot_cap, link_cap;
++	u32 slot_cap, slot_cap2, link_cap;
+ 	u8 poweron;
+ 	struct pci_dev *pdev = dev->port;
+ 	struct pci_bus *subordinate = pdev->subordinate;
+@@ -846,6 +846,9 @@ struct controller *pcie_init(struct pcie_device *dev)
+ 	if (pdev->is_thunderbolt)
+ 		slot_cap |= PCI_EXP_SLTCAP_NCCS;
+ 
++	if (pdev->no_in_band_presence)
++		ctrl->inband_presence_disabled = 1;
++
+ 	ctrl->slot_cap = slot_cap;
+ 	mutex_init(&ctrl->ctrl_lock);
+ 	mutex_init(&ctrl->state_lock);
+@@ -882,6 +885,13 @@ struct controller *pcie_init(struct pcie_device *dev)
+ 		FLAG(link_cap, PCI_EXP_LNKCAP_DLLLARC),
+ 		pdev->broken_cmd_compl ? " (with Cmd Compl erratum)" : "");
+ 
++	pcie_capability_read_dword(pdev, PCI_EXP_SLTCAP2, &slot_cap2);
++	if (slot_cap2 & PCI_EXP_SLTCAP2_IBPD) {
++		pcie_write_cmd_nowait(ctrl, PCI_EXP_SLTCTL_IBPD_DISABLE,
++				      PCI_EXP_SLTCTL_IBPD_DISABLE);
++		ctrl->inband_presence_disabled = 1;
++	}
++
+ 	/*
+ 	 * If empty slot's power status is on, turn power off.  The IRQ isn't
+ 	 * requested yet, so avoid triggering a notification with this command.
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 65f1d8c2f082..9d08cdbca459 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -413,6 +413,7 @@ struct pci_dev {
+ 	unsigned int	non_compliant_bars:1;	/* Broken BARs; ignore them */
+ 	unsigned int	is_probed:1;		/* Device probing in progress */
+ 	unsigned int	link_active_reporting:1;/* Device capable of reporting link active */
++	unsigned int	no_in_band_presence:1;	/* Device does not report in-band presence */
+ 	unsigned int	no_vf_scan:1;		/* Don't scan for VFs after IOV enablement */
+ 	pci_dev_flags_t dev_flags;
+ 	atomic_t	enable_cnt;	/* pci_enable_device has been called */
+diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+index e1e9888c85e6..5423dc476c77 100644
+--- a/include/uapi/linux/pci_regs.h
++++ b/include/uapi/linux/pci_regs.h
+@@ -597,6 +597,7 @@
+ #define  PCI_EXP_SLTCTL_PWR_OFF        0x0400 /* Power Off */
+ #define  PCI_EXP_SLTCTL_EIC	0x0800	/* Electromechanical Interlock Control */
+ #define  PCI_EXP_SLTCTL_DLLSCE	0x1000	/* Data Link Layer State Changed Enable */
++#define  PCI_EXP_SLTCTL_IBPD_DISABLE	0x4000 /* In-band PD disable */
+ #define PCI_EXP_SLTSTA		26	/* Slot Status */
+ #define  PCI_EXP_SLTSTA_ABP	0x0001	/* Attention Button Pressed */
+ #define  PCI_EXP_SLTSTA_PFD	0x0002	/* Power Fault Detected */
+@@ -667,6 +668,7 @@
+ #define PCI_EXP_LNKSTA2		50	/* Link Status 2 */
+ #define PCI_CAP_EXP_ENDPOINT_SIZEOF_V2	52	/* v2 endpoints with link end here */
+ #define PCI_EXP_SLTCAP2		52	/* Slot Capabilities 2 */
++#define  PCI_EXP_SLTCAP2_IBPD	0x0001	/* In-band PD Disable Supported */
+ #define PCI_EXP_SLTCTL2		56	/* Slot Control 2 */
+ #define PCI_EXP_SLTSTA2		58	/* Slot Status 2 */
+ 
+-- 
+2.19.2
+
