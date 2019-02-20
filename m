@@ -2,320 +2,153 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 660A3C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B2EDC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:54:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B75320C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:48:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5851D2183F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:54:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="p5Pf9NdM"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SRD0XwD+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbfBTFsF (ORCPT
+        id S1726971AbfBTFyh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 00:48:05 -0500
-Received: from mail-eopbgr140083.outbound.protection.outlook.com ([40.107.14.83]:2875
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726297AbfBTFsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 00:48:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HuYbhJLKr5r1DYFvRLABnzza9KoH6uMoHeOHgqjYdwQ=;
- b=p5Pf9NdM+7D1prhYqRu0mPoLoMHoGb8BtoPIjjGntvOP1AtdiN9T9g5JlRyFBru5ybRbsfbWWMofkMkR34pD3MhP0Qmxjzu4ovA3E0vz3/ctjliCaivsu569RAnmNrv4bn5DVmJ67fjBEXk0/qYzB3TKezlT6K/na5Ikd1a3KDg=
-Received: from AM6PR04MB4215.eurprd04.prod.outlook.com (52.135.168.141) by
- AM6PR04MB4278.eurprd04.prod.outlook.com (52.135.168.156) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.19; Wed, 20 Feb 2019 05:46:18 +0000
-Received: from AM6PR04MB4215.eurprd04.prod.outlook.com
- ([fe80::e944:6749:3ee6:4e08]) by AM6PR04MB4215.eurprd04.prod.outlook.com
- ([fe80::e944:6749:3ee6:4e08%5]) with mapi id 15.20.1622.020; Wed, 20 Feb 2019
- 05:46:18 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     Anson Huang <anson.huang@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH V3 2/4] firmware: imx: enable imx scu general irq function
-Thread-Topic: [PATCH V3 2/4] firmware: imx: enable imx scu general irq
- function
-Thread-Index: AQHUyAC3FYrF6Xg4T0Ow/94gotmP4KXoLAWw
-Date:   Wed, 20 Feb 2019 05:46:18 +0000
-Message-ID: <AM6PR04MB42155AF83E6DA131886045B8807D0@AM6PR04MB4215.eurprd04.prod.outlook.com>
-References: <1550545569-7197-1-git-send-email-Anson.Huang@nxp.com>
- <1550545569-7197-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1550545569-7197-2-git-send-email-Anson.Huang@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 780d9482-f588-4aad-2811-08d696f6bc88
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB4278;
-x-ms-traffictypediagnostic: AM6PR04MB4278:
-x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;AM6PR04MB4278;23:gugDFMtQMoUjdDwA9WbiqFfvUya7XdFE8YOI3y1Iu?=
- =?us-ascii?Q?4mqbfs1+05y5KwLAlcYBono615+gl8aGFKQZnVVX6BUsY+sdVr69DDDHrDOI?=
- =?us-ascii?Q?Rz0AoyJRHHYNpsBMwgN8zD9PdjA6ZIoKfpzW7e/iGSMGea2RsQ5ZdIOc0NH8?=
- =?us-ascii?Q?gTfgZHi93a/myVc2hPEhC+YKpqahMdtKeldv1J73KjriSXvlfgrCIrRe9NVm?=
- =?us-ascii?Q?t8cgM7KNyG9Y0NYAo2YrDSqZ2o9pjcJixr3vGIwOIkK9Ue1S3wPcTwzHjV20?=
- =?us-ascii?Q?op2mkIDZNFEuCxqPGM/YFacE4xtKhh2RxMeN4bmbFrfKstKkljZRH2ktayak?=
- =?us-ascii?Q?1a0NSLEOI1G8zNBxW8T4jlGibGJJ9o7uXchP7Br5ZvuU9wE/N6ejvKeVrg5l?=
- =?us-ascii?Q?LaSaOJ8eednpRjRydc6oel39Qv0xua2KBW81o2CF6nrU6UGfqGnq9HmclM7s?=
- =?us-ascii?Q?H3HS9QTsxWiEZ9ML9QhjvazC3s2LAgZN+Nx/kFkcbGJmrU6KLga07hjYsscX?=
- =?us-ascii?Q?PH6G56xRZ19CQ6hTd1HDY9rOiHkrMCN8aLF3ypnR21cagjejKTAR0cm+B3rv?=
- =?us-ascii?Q?4xQP84QZCSOVvr1IYd05zVtDE01pOOlosvMWFxT2YAtNlR8D/0Ojq+BaHOFP?=
- =?us-ascii?Q?q3GYxMHtrqcGgvB1kc7WUtu54Gbf+2fSGob6MnCsMd6GxuIz6Z8xQd994sVR?=
- =?us-ascii?Q?/KOkP5J19GqtKSayeAOan6UmW1pfS8sNJzeELv7j4acYK3LP1RE8RVr46WTx?=
- =?us-ascii?Q?rEn+/c8X/oY5HIbosfLEiLkQel4GGfv6eIWgMP7wtNH+74g9zh1OxLsANjgD?=
- =?us-ascii?Q?p0EkTR93PGZmtezQI31VZbjdQ5g++cFeF6QlyxGFj1wc12hd1IGUXQIYF85c?=
- =?us-ascii?Q?OaH9sytyWSsxb7pkQsfqG63UOfa9QVabIbiNlrjFPhAI+iEQBFy19n8W9pYH?=
- =?us-ascii?Q?EYfkS6s1Gi1oY9Q2FBt4cHY34ZgT9AkO/6eFJhZvice+OCxjj6hOpQbeD5JI?=
- =?us-ascii?Q?udix+PU9vEUqO3n2gWRap6tZfzp1DH6YVCXfIbghlv9mi7ns3sp207F1WV4l?=
- =?us-ascii?Q?hFbCOmAS8HHpiX6gg/Ebd40yirWES4ncl/4/G5uXcgwLmzftOM2hXeXIfxnQ?=
- =?us-ascii?Q?eBaD2gBkH6e9e7OF5j1oWZGE7u0/TZuTY5Z05TabaLNBizgIEE5UFawgA49i?=
- =?us-ascii?Q?su846zj2PULT7D9yZmmGUipMX9r7Nn0FxMFHuq8E9DvjhmrUziH7wuecBuOY?=
- =?us-ascii?Q?JIVMJyN0ETAFsRFD4dn5+BdtIeAB73W2H03omizex/1+rYVtry/fl0Q3FXrJ?=
- =?us-ascii?Q?Fspatv1cK6d7pnN9NwOVOo=3D?=
-x-microsoft-antispam-prvs: <AM6PR04MB42780107F33690237C56D957807D0@AM6PR04MB4278.eurprd04.prod.outlook.com>
-x-forefront-prvs: 0954EE4910
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(366004)(396003)(136003)(346002)(39860400002)(199004)(189003)(6436002)(26005)(55016002)(76176011)(7696005)(186003)(2906002)(33656002)(53936002)(14454004)(102836004)(97736004)(2201001)(86362001)(7416002)(110136005)(5660300002)(66066001)(9686003)(6506007)(2501003)(6116002)(99286004)(71200400001)(71190400001)(316002)(3846002)(476003)(256004)(14444005)(68736007)(106356001)(25786009)(446003)(11346002)(229853002)(44832011)(305945005)(4326008)(105586002)(81156014)(478600001)(81166006)(6246003)(8936002)(74316002)(7736002)(8676002)(486006)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4278;H:AM6PR04MB4215.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: yqIZmH54xzThcPTuIh5YuSeNQj9Ehg5ugjmFUQZfeapUlsZCNnhLdDsrPN8t54bZ28EHAnTIedRojJcL7pL65d5uBCA4JYbGwOMm0lwI8GKZ33YoUHN6FIC9bs63hc3sjr3w0J+LGx0gSt0BvHeR/8KIpbd1cQIWNl3yWjr87szXO4vMSq2RseHn+b1zOj51KFszxtBNRTxAXpHzqiKMGOFVNJZG0A2s4LPI4NGi6TyyhJU1vI3wnyLMDI3mjHmSm0QQGkN+qFwBGI+06WNGH8A8rxE8CD3w+A5SvT0nkQCvmjsBSZ8vGMG5kdzRjJHeHyUY1z6wSymqV+Ros7RIdFZl2tBx3qJjrmz4ZtzMofNeBqopt6JVIwUY05HYG9NT/Icd2L3E6QuBmcKgtC1akvzPC9YgL+7a0hRAGeZ0EFQ=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 20 Feb 2019 00:54:37 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:41740 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725922AbfBTFyh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 00:54:37 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1K5sIOZ019096;
+        Tue, 19 Feb 2019 23:54:18 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1550642058;
+        bh=sz7cGng5/KGycFJZzxpMVGsRKEFdiA/HXVdfQSBlvYQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=SRD0XwD+qiZlm16rvhAjKUOTx9ypLmSGQoptxLQGzMoya0EjpLoxx/tiV219uN5//
+         FpSYjHkZ6P1Khsrdaa9nZRT3IQockvxRA/PDkn9V+Ms/qwxjeFvJZE3oRERyTRN2u5
+         rCmfnDsdq67rhc8pyFqNkeT04g0gg6RFOqrxhGuQ=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1K5sIsM099366
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 19 Feb 2019 23:54:18 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 19
+ Feb 2019 23:54:18 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 19 Feb 2019 23:54:17 -0600
+Received: from [172.24.190.117] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1K5sDjN023318;
+        Tue, 19 Feb 2019 23:54:14 -0600
+Subject: Re: [PATCH v5 05/10] dt-bindings: irqchip: Introduce TISCI Interrupt
+ router bindings
+To:     Tony Lindgren <tony@atomide.com>
+CC:     Nishanth Menon <nm@ti.com>,
+        Device Tree Mailing List <devicetree@vger.kernel.org>,
+        <jason@lakedaemon.net>, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        <marc.zyngier@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+        <linux-kernel@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>, <tglx@linutronix.de>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
+References: <b4e821b3-f2fb-41d8-eb8c-8f4e8a19f77c@ti.com>
+ <20190214174612.GF5720@atomide.com>
+ <171e8597-2156-747d-d024-7b4bfc6f9186@ti.com>
+ <20190215161629.GK5720@atomide.com>
+ <2369739e-3bc8-257a-99e0-db2951c6777d@ti.com>
+ <20190218143245.GC15711@atomide.com>
+ <84b3ec21-9ce9-b9a8-80a9-75001db43a90@ti.com>
+ <20190219153537.GJ15711@atomide.com>
+ <6aa37276-0833-fdf5-575b-c3ca14f776a6@ti.com>
+ <20190219171104.GM15711@atomide.com> <20190219175651.GN15711@atomide.com>
+From:   Lokesh Vutla <lokeshvutla@ti.com>
+Message-ID: <884a59a0-81e8-738e-9f26-c2b66ec71af1@ti.com>
+Date:   Wed, 20 Feb 2019 11:23:56 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 780d9482-f588-4aad-2811-08d696f6bc88
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Feb 2019 05:46:18.7413
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4278
+In-Reply-To: <20190219175651.GN15711@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Anson Huang
-> Sent: Tuesday, February 19, 2019 11:11 AM
->=20
-> The System Controller Firmware (SCFW) controls RTC, thermal and WDOG etc.=
-,
-> these resources' interrupt function are managed by SCU. When any IRQ
-> pending, SCU will notify Linux via MU general interrupt channel #3, and L=
-inux
-> kernel needs to call SCU APIs to get IRQ status and notify each module to
-> handle the interrupt.
->=20
-> Since there is no data transmission for SCU IRQ notification, so doorbell=
- mode
-> is used for this MU channel, and SCU driver will use notifier mechanism t=
-o
-> broadcast to every module which registers the SCU block notifier.
->=20
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> No change since V2.
-> ---
->  drivers/firmware/imx/imx-scu.c   | 101
-> +++++++++++++++++++++++++++++++++++++++
->  include/linux/firmware/imx/sci.h |   3 ++
->  2 files changed, 104 insertions(+)
->=20
-> diff --git a/drivers/firmware/imx/imx-scu.c b/drivers/firmware/imx/imx-sc=
-u.c
-> index 2bb1a19..e93bea5 100644
-> --- a/drivers/firmware/imx/imx-scu.c
-> +++ b/drivers/firmware/imx/imx-scu.c
-> @@ -7,6 +7,7 @@
->   *
->   */
->=20
-> +#include <dt-bindings/firmware/imx/rsrc.h>
->  #include <linux/err.h>
->  #include <linux/firmware/imx/types.h>
->  #include <linux/firmware/imx/ipc.h>
-> @@ -21,6 +22,8 @@
->=20
->  #define SCU_MU_CHAN_NUM		8
->  #define MAX_RX_TIMEOUT		(msecs_to_jiffies(30))
-> +#define IMX_SC_IRQ_FUNC_STATUS	2
-> +#define IMX_SC_IRQ_NUM_GROUP	6
->=20
->  struct imx_sc_chan {
->  	struct imx_sc_ipc *sc_ipc;
-> @@ -77,7 +80,23 @@ static int imx_sc_linux_errmap[IMX_SC_ERR_LAST] =3D {
->  	-EIO,	 /* IMX_SC_ERR_FAIL */
->  };
->=20
-> +struct imx_sc_msg_irq_get_status {
-> +	struct imx_sc_rpc_msg hdr;
-> +	union {
-> +		struct {
-> +			u16 resource;
-> +			u8 group;
-> +			u8 reserved;
-> +		} send;
+Hi Tony,
 
-} __packed req
+On 19/02/19 11:26 PM, Tony Lindgren wrote:
+> * Tony Lindgren <tony@atomide.com> [190219 17:11]:
+>> * Lokesh Vutla <lokeshvutla@ti.com> [190219 16:19]:
+>>> yes. How different is this from any of the above mentioned drivers using
+>>> firmware specific ids. Like sci pm domain[1] driver utilizes the same
+>>> device id for enabling any device in the system. Similarly clock
+>>> driver[2] uses the same device ids and clock ids specified by firmware.
+>>> There are more which similarly represents firmware ids from DT.
+>>>
+>>> [1] Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
+>>> [2] Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>>
+>> That's horrible. We really must not use any firmware invented
+>> numbers in the device as they do not describe hardware.
+> 
+> No firmware invented numbers in the device tree I mean naturally.
+> Drivers do whatever they need to do to deal with the firmware.
 
-> +		struct {
-> +			u32 status;
-> +		} receive;
+Let's look at these similar other examples available inside Linux:
 
-resp
+1: ./Documentation/devicetree/bindings/arm/arm,scmi.txt mentions the following:
+- #clock-cells : Should be 1. Contains the Clock ID value used by SCMI commands.
+- #power-domain-cells : Should be 1. Contains the device or the power
+                                        domain ID value used by SCMI commands.
 
-> +	} data;
-> +} __packed;
+2: Documentation/devicetree/bindings/arm/arm,scpi.txt mentions the following:
+- #power-domain-cells : Should be 1. Contains the device or the power
+                             domain ID value used by SCPI commands.
 
-No need __packed anymore
+3: Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
+the firmware specified identifier are defined in the following header files:
+	include/dt-bindings/clock/tegra186-clock.h
+	include/dt-bindings/power/tegra186-powergate.h
+	include/dt-bindings/reset/tegra186-reset.h
 
-> +
->  static struct imx_sc_ipc *imx_sc_ipc_handle;
-> +static struct work_struct imx_sc_general_irq_work; static
-> +BLOCKING_NOTIFIER_HEAD(imx_scu_notifier_chain);
->=20
->  static inline int imx_sc_to_linux_errno(int errno)  { @@ -194,6 +213,86 =
-@@
-> int imx_scu_call_rpc(struct imx_sc_ipc *sc_ipc, void *msg, bool have_resp=
-)  }
-> EXPORT_SYMBOL(imx_scu_call_rpc);
->=20
-> +int imx_scu_register_notifier(struct notifier_block *nb) {
-> +	return blocking_notifier_chain_register(&imx_scu_notifier_chain, nb);
-> +} EXPORT_SYMBOL(imx_scu_register_notifier);
-> +
-> +int imx_scu_unregister_notifier(struct notifier_block *nb) {
-> +	return blocking_notifier_chain_unregister(&imx_scu_notifier_chain,
-> +nb); } EXPORT_SYMBOL(imx_scu_unregister_notifier);
-> +
-> +static int imx_scu_notifier_call_chain(unsigned long status, u8 *group)
-> +{
-> +	return blocking_notifier_call_chain(&imx_scu_notifier_chain,
-> +					    status, (void *)group);
-> +}
-> +
-> +static void imx_scu_general_irq_work_handler(struct work_struct *work)
-> +{
-> +	struct imx_sc_msg_irq_get_status msg;
-> +	struct imx_sc_rpc_msg *hdr =3D &msg.hdr;
-> +	u32 irq_status;
-> +	int ret;
-> +	u8 i;
-> +
-> +	for (i =3D 0; i < IMX_SC_IRQ_NUM_GROUP; i++) {
-> +		hdr->ver =3D IMX_SC_RPC_VERSION;
-> +		hdr->svc =3D IMX_SC_RPC_SVC_IRQ;
-> +		hdr->func =3D IMX_SC_IRQ_FUNC_STATUS;
-> +		hdr->size =3D 2;
-> +
-> +		msg.data.send.resource =3D IMX_SC_R_MU_1A;
+4. Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+mentions the following:
+"Output clocks are registered based on clock information received
+from firmware. Output clocks indexes are mentioned in
+include/dt-bindings/clock/xlnx,zynqmp-clk.h."
 
-Please make sure if it's fixed to MU_1A.
+5. Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt mentions the
+following:
+ - #power-domain-cells:  Must be 1. Contains the Resource ID used by
+                          SCU commands.
+                          See detailed Resource ID list from:
+                          include/dt-bindings/firmware/imx/rsrc.h
+- The clock consumer should specify the desired clock by having the clock
+ID in its "clocks" phandle cell.
+See the full list of clock IDs from: include/dt-bindings/clock/imx8qxp-clock.
 
-> +		msg.data.send.group =3D i;
-> +
-> +		ret =3D imx_scu_call_rpc(imx_sc_ipc_handle, &msg, true);
-> +		if (ret) {
-> +			pr_err("get irq status failed, ret %d\n", ret);
-> +			return;
-> +		}
-> +
-> +		irq_status =3D msg.data.receive.status;
-> +		if (!irq_status)
-> +			continue;
-> +
-> +		imx_scu_notifier_call_chain(irq_status, &i);
-> +	}
-> +}
-> +
-> +static void imx_scu_rxdb_callback(struct mbox_client *c, void *msg) {
-> +	schedule_work(&imx_sc_general_irq_work);
-> +}
-> +
-> +static int imx_scu_enable_general_irq_channel(struct device *dev) {
-> +	struct mbox_client *cl;
-> +	struct mbox_chan *ch;
-> +	int ret =3D 0;
-> +
-> +	cl =3D devm_kzalloc(dev, sizeof(*cl), GFP_KERNEL);
-> +	if (!cl)
-> +		return -ENOMEM;
-> +
-> +	cl->dev =3D dev;
-> +	cl->rx_callback =3D imx_scu_rxdb_callback;
-> +
-> +	/* SCU general IRQ uses general interrupt channel 3 */
-> +	ch =3D mbox_request_channel_byname(cl, "gi3");
-> +	if (IS_ERR(ch)) {
-> +		ret =3D PTR_ERR(ch);
-> +		dev_err(dev, "failed to request mbox chan gi3, ret %d\n", ret);
-> +		return ret;
+6. Documentation/devicetree/bindings/arm/psci.txt have the following properties:
+- cpu_suspend   : Function ID for CPU_SUSPEND operation
+- cpu_off       : Function ID for CPU_OFF operation
+- cpu_on        : Function ID for CPU_ON operation
+- migrate       : Function ID for MIGRATE operation
 
-return PTR_ERR(ch)
+All the above examples uses the firmware identifiers for devices/clocks or for
+other functionalities and use them directly in DT. These are all somewhat
+similar to TI sysfw which runs on a micro-controller and tries to abstract
+certain functionalities from HLOS. There are many more such examples but I
+listed only a few users. The feedback you are providing is not going to work for
+any of the above listed firmware interfaces.
 
-> +	}
-> +
-> +	INIT_WORK(&imx_sc_general_irq_work,
-> imx_scu_general_irq_work_handler);
-> +
-> +	return ret;
-> +}
-> +
->  static int imx_scu_probe(struct platform_device *pdev)  {
->  	struct device *dev =3D &pdev->dev;
-> @@ -246,6 +345,8 @@ static int imx_scu_probe(struct platform_device
-> *pdev)
->=20
->  	imx_sc_ipc_handle =3D sc_ipc;
->=20
-> +	imx_scu_enable_general_irq_channel(dev);
-> +
-
-Check return in case a failure
-
-Regards
-Dong Aisheng
-
->  	dev_info(dev, "NXP i.MX SCU Initialized\n");
->=20
->  	return devm_of_platform_populate(dev); diff --git
-> a/include/linux/firmware/imx/sci.h b/include/linux/firmware/imx/sci.h
-> index ebc5509..9d608db 100644
-> --- a/include/linux/firmware/imx/sci.h
-> +++ b/include/linux/firmware/imx/sci.h
-> @@ -15,4 +15,7 @@
->=20
->  #include <linux/firmware/imx/svc/misc.h>  #include
-> <linux/firmware/imx/svc/pm.h>
-> +
-> +int imx_scu_register_notifier(struct notifier_block *nb); int
-> +imx_scu_unregister_notifier(struct notifier_block *nb);
->  #endif /* _SC_SCI_H */
-> --
-> 2.7.4
-
+Thanks and regards,
+Lokesh
