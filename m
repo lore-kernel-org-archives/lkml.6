@@ -2,101 +2,84 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78FA3C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF47C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:38:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BB9A20880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:37:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C73A120855
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:38:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726878AbfBTPhW (ORCPT
+        id S1727064AbfBTPi6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:37:22 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:57006 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725822AbfBTPhW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:37:22 -0500
-Received: from mail-wr1-f70.google.com ([209.85.221.70])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <juerg.haefliger@canonical.com>)
-        id 1gwTw0-000547-Hh
-        for linux-kernel@vger.kernel.org; Wed, 20 Feb 2019 15:37:20 +0000
-Received: by mail-wr1-f70.google.com with SMTP id l5so10890865wrv.19
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 07:37:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=T/dLcDBD1w25fdavzlLup87+g4lUgNGlzzNmKqv2bRo=;
-        b=iBwVaziyvGIOF1qyocRodFvMZ4H4lLq9rSj61FhW5j+nyJAFCIPk75K5Ap4HxZ19b+
-         rykDjhHtuuP1+hZ5ZRc7z23TOYor9Pv2nV3/7u/d64XB5F5DyrrLYY+rp63OPTPvkjqQ
-         C0WZgaO1k0RsdEhzpPuqEV3RkQCZmGKmBKEf4Oh8XIfnC+8spSmMzsA8tU6gph3Z9Lid
-         qVxtQkVa6jpwHqR6y2mP63THirW/rl7DKiMBa2SL+MR2fgc7niHoWDjh67xdsRcoRT05
-         Ov/iJ5pZAGLmEqDoeSGD6BksLUGfJ4/ua02yaD+MppP1UyF4g/Z6VVS8FIYJUyGjQCrE
-         5cIw==
-X-Gm-Message-State: AHQUAub5Wu/NtX8ggVY4TiL8vK/9Av6q4TyuP8tsOhJbGkDA/P0zb5Lc
-        WZsDnnxyPqaaGRoVhdlY5Y4qz/9u3crrDDqfmAtvWw26+ajljXK3cTIh+osE7243P+BS+KpCfc1
-        Dibg2qpYg1N79K6BBzKFR4QvwFW5SmxS5ELRCBlZT1Q==
-X-Received: by 2002:a1c:f701:: with SMTP id v1mr6824298wmh.153.1550677039908;
-        Wed, 20 Feb 2019 07:37:19 -0800 (PST)
-X-Google-Smtp-Source: AHgI3IZDEIQlJ4kjdC3/uiHqjzX00elvpwh+h/zLk8HfY/U6IrXAdAu/xwDsz8KKXHQHqtIDHmx2Mg==
-X-Received: by 2002:a1c:f701:: with SMTP id v1mr6824281wmh.153.1550677039615;
-        Wed, 20 Feb 2019 07:37:19 -0800 (PST)
-Received: from localhost.localdomain ([194.158.46.138])
-        by smtp.gmail.com with ESMTPSA id t4sm22419655wrb.64.2019.02.20.07.37.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Feb 2019 07:37:18 -0800 (PST)
-From:   Juerg Haefliger <juerg.haefliger@canonical.com>
-X-Google-Original-From: Juerg Haefliger <juergh@canonical.com>
-To:     linux-kernel@vger.kernel.org, rostedt@goodmis.org, mingo@redhat.com
-Cc:     Juerg Haefliger <juergh@canonical.com>
-Subject: [PATCH] selftests/ftrace: Handle the absence of tput
-Date:   Wed, 20 Feb 2019 16:37:06 +0100
-Message-Id: <20190220153706.24686-1-juergh@canonical.com>
-X-Mailer: git-send-email 2.19.1
+        Wed, 20 Feb 2019 10:38:58 -0500
+Received: from mga05.intel.com ([192.55.52.43]:35279 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725822AbfBTPi5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 10:38:57 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 07:38:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,391,1544515200"; 
+   d="scan'208";a="135782951"
+Received: from avandeve-mobl.amr.corp.intel.com (HELO [10.254.102.211]) ([10.254.102.211])
+  by orsmga002.jf.intel.com with ESMTP; 20 Feb 2019 07:38:55 -0800
+Subject: Re: [PATCH v11 2/3] x86,/proc/pid/status: Add AVX-512 usage elapsed
+ time
+To:     David Laight <David.Laight@ACULAB.COM>,
+        'Thomas Gleixner' <tglx@linutronix.de>,
+        "Li, Aubrey" <aubrey.li@linux.intel.com>
+Cc:     "mingo@redhat.com" <mingo@redhat.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
+        "dave.hansen@intel.com" <dave.hansen@intel.com>,
+        "aubrey.li@intel.com" <aubrey.li@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190213023748.6614-1-aubrey.li@linux.intel.com>
+ <20190213023748.6614-2-aubrey.li@linux.intel.com>
+ <alpine.DEB.2.21.1902141212400.1561@nanos.tec.linutronix.de>
+ <85b22e16-fffc-7ebe-2ab1-3b6fe7e036ab@linux.intel.com>
+ <alpine.DEB.2.21.1902161340320.1683@nanos.tec.linutronix.de>
+ <5c6ed8168eb34e0e84245fe01ba477ef@AcuMS.aculab.com>
+From:   Arjan van de Ven <arjan@linux.intel.com>
+Message-ID: <f5ed289f-825b-d0ba-a557-ce797a2c6cd9@linux.intel.com>
+Date:   Wed, 20 Feb 2019 07:38:54 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <5c6ed8168eb34e0e84245fe01ba477ef@AcuMS.aculab.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In environments where tput is not availbale, we get the following
-error
-$ ./ftracetest: 163: [: Illegal number:
-because ncolors is an empty string. Fix that by setting it to 0 if the
-tput command fails.
+On 2/20/2019 7:35 AM, David Laight wrote:
+> From: Sent: 16 February 2019 12:56
+>> To: Li, Aubrey
+> ...
+>> The above experiment just confirms what I said: The numbers are inaccurate
+>> and potentially misleading to a large extent when the AVX using task is not
+>> scheduled out for a longer time.
+> 
+> Not only that, they won't detect programs that use AVX-512 but never
+> context switch with live AVX-512 registers.
 
-Signed-off-by: Juerg Haefliger <juergh@canonical.com>
----
- tools/testing/selftests/ftrace/ftracetest | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
-index 75244db70331..fc755e1b50f1 100755
---- a/tools/testing/selftests/ftrace/ftracetest
-+++ b/tools/testing/selftests/ftrace/ftracetest
-@@ -154,13 +154,13 @@ fi
- 
- # Define text colors
- # Check available colors on the terminal, if any
--ncolors=`tput colors 2>/dev/null`
-+ncolors=`tput colors 2>/dev/null || echo 0`
- color_reset=
- color_red=
- color_green=
- color_blue=
- # If stdout exists and number of colors is eight or more, use them
--if [ -t 1 -a "$ncolors" -a "$ncolors" -ge 8 ]; then
-+if [ -t 1 -a "$ncolors" -ge 8 ]; then
-   color_reset="\e[0m"
-   color_red="\e[31m"
-   color_green="\e[32m"
--- 
-2.19.1
+you are completely correct in stating that this approach is basically sampling
+at a relatively course level and such sampling will give false negatives
 
+the alternative is not sampling, and not knowing anything at all,
+unless you have a better suggestion on how to help find tasks that use avx512
+in a low overhead way
+
+(the typical use case is trying to find workloads that use avx512 to help
+scheduling those workloads in the future in the cloud orchestrator, for example
+to help them favor machines that support avx512 over machines that don't)
