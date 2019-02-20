@@ -2,119 +2,144 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E318C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B6AEC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:07:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA19F20880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:06:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZJQP5bZ0"
+	by mail.kernel.org (Postfix) with ESMTP id 73DB420880
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:07:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727280AbfBTMGX (ORCPT
+        id S1727534AbfBTMHi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 07:06:23 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:35774 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726439AbfBTMGX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 07:06:23 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1KC675b015086;
-        Wed, 20 Feb 2019 06:06:07 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1550664367;
-        bh=ok8PdiiO3baisjOzYji1e6RIYIpWQ5lP1s6gC9dXq5k=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=ZJQP5bZ0zh++y3jBhhZjXhsJ3veiUwa5BJb4aD5EQdmPSX/pDtb3B7zzeJyASn0xH
-         WKFKSViMamdHs9bliwc1xhOKwP9OF55xadayL823Sc0Awy+Ry00e5VNjnTSYfSbI8Q
-         OibWgn15QY3L3Autm54FpnJwxob6XyTANlViUa7I=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1KC6767111899
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 20 Feb 2019 06:06:07 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 20
- Feb 2019 06:06:06 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 20 Feb 2019 06:06:06 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1KC64Jf014076;
-        Wed, 20 Feb 2019 06:06:05 -0600
-Subject: Re: [PATCH 4/4] drm/panel: Add OSD101T2587-53TS driver
-To:     Sam Ravnborg <sam@ravnborg.org>
-CC:     <thierry.reding@gmail.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
-        <devicetree@vger.kernel.org>, <tomi.valkeinen@ti.com>,
-        <robh+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>
-References: <20190215140315.18046-1-peter.ujfalusi@ti.com>
- <20190215140315.18046-5-peter.ujfalusi@ti.com>
- <20190215180759.GA26944@ravnborg.org>
- <fefcd92c-4171-ed86-28d2-4145d409a73d@ti.com>
- <20190220115202.GA18603@ravnborg.org>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <8d973bd7-3e8b-5d37-10c3-347a7328291f@ti.com>
-Date:   Wed, 20 Feb 2019 14:06:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Wed, 20 Feb 2019 07:07:38 -0500
+Received: from unicorn.mansr.com ([81.2.72.234]:44766 "EHLO unicorn.mansr.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726841AbfBTMHh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 07:07:37 -0500
+Received: by unicorn.mansr.com (Postfix, from userid 51770)
+        id 6DC5A15632; Wed, 20 Feb 2019 12:07:36 +0000 (GMT)
+From:   Mans Rullgard <mans@mansr.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ARM: dts: sun7i: add pinctrl for missing uart mux options
+Date:   Wed, 20 Feb 2019 12:07:17 +0000
+Message-Id: <20190220120717.30650-1-mans@mansr.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190216182132.12895-1-mans@mansr.com>
+References: <20190216182132.12895-1-mans@mansr.com>
 MIME-Version: 1.0
-In-Reply-To: <20190220115202.GA18603@ravnborg.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sam,
+This adds pinctrl settings for various missing uart options.
 
-On 20/02/2019 13.52, Sam Ravnborg wrote:
-> Hi Peter.
-> 
-> On Wed, Feb 20, 2019 at 12:39:11PM +0200, Peter Ujfalusi wrote:
->> Hi Sam,
->>
->> On 15/02/2019 20.07, Sam Ravnborg wrote:
->>>> +#include <linux/backlight.h>
->>>> +#include <linux/module.h>
->>>> +#include <linux/of.h>
->>>> +#include <linux/regulator/consumer.h>
->>>> +
->>>> +#include <drm/drmP.h>
->>> Please do not use drmP.h in new drivers - we try to get rid of this file.
->>
->> ...
->>
->>>> +static int osd101t2587_panel_get_modes(struct drm_panel *panel)
->>>> +{
->>>> +	struct osd101t2587_panel *osd101t2587 = to_osd101t2587_panel(panel);
->>>> +	struct drm_display_mode *mode;
->>>> +
->>>> +	mode = drm_mode_duplicate(panel->drm, osd101t2587->default_mode);
->>>> +	if (!mode) {
->>>> +		dev_err(panel->drm->dev, "failed to add mode %ux%ux@%u\n",
->>
->> drm/drmP.h is needed for this dev_err.
-> drmP.h is only a set of include files and forwards today.
-> So you need to figure out what to replace it with.
-> 
-> Often removing drmP.h requires you to add more than one extra include file.
+Signed-off-by: Mans Rullgard <mans@mansr.com>
+---
+Changed in v2:
+- add /omit-if-no-ref/ tags to new nodes
+---
+ arch/arm/boot/dts/sun7i-a20.dtsi | 54 ++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
-Replacing it with
-#include <drm/drm_device.h>
+diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
+index af5b067a5f83..76d0c961f01e 100644
+--- a/arch/arm/boot/dts/sun7i-a20.dtsi
++++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+@@ -944,6 +944,36 @@
+ 				function = "uart0";
+ 			};
+ 
++			/omit-if-no-ref/
++			uart0_pf_pins: uart0-pf-pins {
++				pins = "PF2", "PF4";
++				function = "uart0";
++			};
++
++			/omit-if-no-ref/
++			uart1_pa_pins: uart1-pa-pins {
++				pins = "PA10", "PA11";
++				function = "uart1";
++			};
++
++			/omit-if-no-ref/
++			uart1_cts_rts_pa_pins: uart1-cts-rts-pa-pins {
++				pins = "PA12", "PIA13";
++				function = "uart2";
++			};
++
++			/omit-if-no-ref/
++			uart2_pa_pins: uart2-pa-pins {
++				pins = "PIA2", "PIA3";
++				function = "uart2";
++			};
++
++			/omit-if-no-ref/
++			uart2_cts_rts_pa_pins: uart2-cts-rts-pa-pins {
++				pins = "PA0", "PIA1";
++				function = "uart2";
++			};
++
+ 			uart2_pi_pins: uart2-pi-pins {
+ 				pins = "PI18", "PI19";
+ 				function = "uart2";
+@@ -969,6 +999,12 @@
+ 				function = "uart3";
+ 			};
+ 
++			/omit-if-no-ref/
++			uart3_cts_rts_ph_pins: uart3-cts-rts-ph-pins {
++				pins = "PH2", "PH3";
++				function = "uart3";
++			};
++
+ 			uart4_pg_pins: uart4-pg-pins {
+ 				pins = "PG10", "PG11";
+ 				function = "uart4";
+@@ -979,16 +1015,34 @@
+ 				function = "uart4";
+ 			};
+ 
++			/omit-if-no-ref/
++			uart5_ph_pins: uart5-ph-pins {
++				pins = "PH6", "PH7";
++				function = "uart5";
++			};
++
+ 			uart5_pi_pins: uart5-pi-pins {
+ 				pins = "PI10", "PI11";
+ 				function = "uart5";
+ 			};
+ 
++			/omit-if-no-ref/
++			uart6_pa_pins: uart6-pa-pins {
++				pins = "PA12", "PA13";
++				function = "uart6";
++			};
++
+ 			uart6_pi_pins: uart6-pi-pins {
+ 				pins = "PI12", "PI13";
+ 				function = "uart6";
+ 			};
+ 
++			/omit-if-no-ref/
++			uart7_pa_pins: uart7-pa-pins {
++				pins = "PA14", "PA15";
++				function = "uart7";
++			};
++
+ 			uart7_pi_pins: uart7-pi-pins {
+ 				pins = "PI20", "PI21";
+ 				function = "uart7";
+-- 
+2.20.1
 
-works perfectly.
-
-Thanks,
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
