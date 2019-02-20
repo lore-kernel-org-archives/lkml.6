@@ -3,105 +3,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D4D6C10F0B
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF41C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1009B2146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:49:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A7A92146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:51:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbfBTOt3 (ORCPT
+        id S1726962AbfBTOvd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 09:49:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45712 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726227AbfBTOt3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 09:49:29 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A61C2146E;
-        Wed, 20 Feb 2019 14:49:27 +0000 (UTC)
-Date:   Wed, 20 Feb 2019 09:49:26 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
- kernel memory that can fault
-Message-ID: <20190220094926.0ab575b3@gandalf.local.home>
-In-Reply-To: <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
-References: <20190215174712.372898450@goodmis.org>
-        <20190215174945.557218316@goodmis.org>
-        <CAHk-=wjP4bEYCFaKZVG4kLWmYBctyfsW9jjhC91tiTk9WwB8Rg@mail.gmail.com>
-        <20190215171539.4682f0b4@gandalf.local.home>
-        <300C4516-A093-43AE-8707-1C42486807A4@amacapital.net>
-        <20190215191949.04604191@gandalf.local.home>
-        <CAHk-=wgJzNp0R3cVhjBPHTR4X9sOvHdqK4UVFfbsOKQ6L=A_eQ@mail.gmail.com>
-        <CAHk-=wh9XrOykA5J9RQ7zaBio-S_D+1AE+rGnBYWSd==pCXh+w@mail.gmail.com>
-        <20190219111802.1d6dbaa3@gandalf.local.home>
-        <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
-        <20190219140330.5dd9e876@gandalf.local.home>
-        <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 20 Feb 2019 09:51:33 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:33379 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726271AbfBTOvd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 09:51:33 -0500
+Received: by mail-qk1-f193.google.com with SMTP id x9so2140812qkf.0;
+        Wed, 20 Feb 2019 06:51:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Dtqk10ZgIAHu09454gFXtKTteBCSMlQx5PVXvXfWj2Q=;
+        b=UFD2rgvXMcWpboWgml38qG4xyAWqzYqZn5mqF4T5zRYwJOZp0Rt6DFXvc2bZSk58+h
+         VrOWIjwDJN4je+fl+H4qx3Ah6SHCzHblwfdg+36/hFZkCuxvdltS/Ayj9bnzhklHAtTv
+         zqPPUwKyUsAVbEm8v2McXaqdynLXtAC4OFwK8RDV82r/5HdNCwm2w2D+CiZr9PdTWvqZ
+         3Kobd0iLvS+ZLxvHdF+FJgoHZtFPEyGbU5cmZAs78XFA5fizxvK2YJkNzd2IWrrjsvwL
+         DsK5fWIdbmnT0O3REEqsr+ANYkJmo8Y/JehtnWbWPpqlHOXhfQasVRjkGlBkA1AzLnk+
+         3dBQ==
+X-Gm-Message-State: AHQUAubpcxxxCQ2AtYAoXcEU8prnqKVp1QJnyymJj2RECV9szjiFgfdI
+        ishG+gU10MMySCiH8fZCffraA4Um/PyYbsO4JbTM1w==
+X-Google-Smtp-Source: AHgI3IaGtLgqzHHiPMxcl7KlZ4UnzA8PHRyEPc/SLtb4JkLhgZf0DZhF5Y+0OAff4SWkx253MKsKyJSirX5HN9abzmM=
+X-Received: by 2002:a37:d492:: with SMTP id s18mr23821644qks.343.1550674291702;
+ Wed, 20 Feb 2019 06:51:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20190219214940.391081-1-arnd@arndb.de> <CAAeHK+xSpsu0tNmeq0wKXfT=0HuORnvU+XzLswDzhbtfZVa4Hw@mail.gmail.com>
+In-Reply-To: <CAAeHK+xSpsu0tNmeq0wKXfT=0HuORnvU+XzLswDzhbtfZVa4Hw@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 20 Feb 2019 15:51:14 +0100
+Message-ID: <CAK8P3a1NfHohd1xT7iHK85L2PGnD95RJvwFi-2cWrFpipQzqwg@mail.gmail.com>
+Subject: Re: [PATCH] kasan: turn off asan-stack for clang-8 and earlier
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Mark Brown <broonie@kernel.org>, Qian Cai <cai@lca.pw>,
+        Alexander Potapenko <glider@google.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Christoph Lameter <cl@linux.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Feb 2019 17:10:19 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+On Wed, Feb 20, 2019 at 3:45 PM Andrey Konovalov <andreyknvl@google.com> wrote:
+>
+> On Tue, Feb 19, 2019 at 10:49 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> > Building an arm64 allmodconfig kernel with clang results in over 140 warnings
+> > about overly large stack frames, the worst ones being:
+> >
+> > drivers/gpu/drm/panel/panel-sitronix-st7789v.c:196:12: error: stack frame size of 20224 bytes in function 'st7789v_prepare'
+> > drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td028ttec1.c:196:12: error: stack frame size of 13120 bytes in function 'td028ttec1_panel_enable'
+> > drivers/usb/host/max3421-hcd.c:1395:1: error: stack frame size of 10048 bytes in function 'max3421_spi_thread'
+> > drivers/net/wan/slic_ds26522.c:209:12: error: stack frame size of 9664 bytes in function 'slic_ds26522_probe'
+> > drivers/crypto/ccp/ccp-ops.c:2434:5: error: stack frame size of 8832 bytes in function 'ccp_run_cmd'
+> > drivers/media/dvb-frontends/stv0367.c:1005:12: error: stack frame size of 7840 bytes in function 'stv0367ter_algo'
+> >
+> > None of these happen with gcc today, and almost all of these are the result
+> > of a single known bug in llvm.  Hopefully it will eventually get fixed with the
+> > clang-9 release.
+> >
+> > In the meantime, the best idea I have is to turn off asan-stack for clang-8
+> > and earlier, so we can produce a kernel that is safe to run.
+>
+> Hi Arnd,
+>
+> I don't think it's good to disable KASAN stack instrumentation for the
+> whole kernel by default with clang. It makes more sense to disable
+> stack instrumentation only for these few drivers.
 
-> Let me ensure what you want. So you want to access a "string" in user-space,
-> not a data structure? In that case, it is very easy to me. It is enough to
-> add a "ustring" type to kprobe events. For example, do_sys_opsn's path 
-> variable is one example. That will be +0(+0(%si)):ustring, and fetcher
-> finally copy the string using strncpy_from_user() instead of 
-> strncpy_from_unsafe(). (*)
+Do you mean just the 114 files that we get warnings for in allmodconfig,
+or also those that run into the same bug but stay below the warning limit,
+and the ones that don't warn in allmodconfig but do warn in other
+configurations?
 
-ustring would be good.
+I would have to some more research, but I expect several hundred
+patches before we get to a clean randconfig build with a broken
+compiler.
 
-> 
-> But if you consider to access a field in a data-structure in user space,
-> it might need some more work (E.g. ioctl's parameter), becase if the __user
-> pointer to the data structure is on the memory, we have to dereference 
-> the address inside kernel using probe_kernel_read(), but after getting 
-> the data strucutre address, we have to dereference the address with copy_from_user().
-> At this moment, we have no such strong syntax... 
-> 
-> To solve that, maybe we need to introduce something like "back reference"
-> of arguments in the event, e.g.
-> 
-> p somewhere user_data=+0(%si) field_val=+8(\user_data):u32:user
-> 
-> or
-> 
-> p somewhere +0(%si) field_val=+8(\1):u32:user
-> 
-> This ":user" additional suffix tells kprobe events to change fetching method 
-> to fetch the data by copy_from_user().
-
-What about just adding 'u' to the end of the offset? Say you have a
-data structure in kernel space that has a field in user space you want
-to reference?
-
-
-	field_val=+8u(+0(%si))
-
-Although, I would say having ways to access current parameters may also
-be a nice touch ;-)
-
--- Steve
+     Arnd
