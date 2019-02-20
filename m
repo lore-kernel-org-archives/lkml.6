@@ -2,146 +2,172 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C89CC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:36:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5574FC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:36:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C767820880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:36:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="cYqfrYjV"
+	by mail.kernel.org (Postfix) with ESMTP id 1DADA20880
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:36:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbfBTOgE (ORCPT
+        id S1727156AbfBTOgH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 09:36:04 -0500
-Received: from mail-eopbgr750094.outbound.protection.outlook.com ([40.107.75.94]:52448
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725853AbfBTOgD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 09:36:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ejOHt670Q4VWjRJYeN9j22kjyg2FO4bq+a4AP8yZS1U=;
- b=cYqfrYjVzjRBTwvSr0GzavWJrwm6vnHapyvrw/4jOdqquDYQhEi6YZLLIjvdbeaBtAQ4E/zXBjLqHvXWl9AdeZMOkDWMG2EVR03qf2PRxUMmqfgc4NuXOCpMpxQD9VvqCqrOtZ3+sjh+Nopc0awB2bu3cN6nnB4p9qXAxD/d2Rc=
-Received: from DM5PR2101MB0918.namprd21.prod.outlook.com (52.132.132.163) by
- DM5PR2101MB0936.namprd21.prod.outlook.com (52.132.131.166) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.6; Wed, 20 Feb 2019 14:35:20 +0000
-Received: from DM5PR2101MB0918.namprd21.prod.outlook.com
- ([fe80::ec2d:d32b:e611:553f]) by DM5PR2101MB0918.namprd21.prod.outlook.com
- ([fe80::ec2d:d32b:e611:553f%9]) with mapi id 15.20.1665.006; Wed, 20 Feb 2019
- 14:35:20 +0000
-From:   Michael Kelley <mikelley@microsoft.com>
-To:     kimbrownkd <kimbrownkd@gmail.com>, Long Li <longli@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Dexuan Cui <decui@microsoft.com>
-CC:     KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
-Subject: RE: [PATCH v2 1/2] Drivers: hv: vmbus: Change server monitor_pages
- index to 0
-Thread-Topic: [PATCH v2 1/2] Drivers: hv: vmbus: Change server monitor_pages
- index to 0
-Thread-Index: AQHUyBVPicmAuhkM4ECG0xm+8y+3g6Xowh5Q
-Date:   Wed, 20 Feb 2019 14:35:20 +0000
-Message-ID: <DM5PR2101MB0918DC46656CF89D98B59F96D77D0@DM5PR2101MB0918.namprd21.prod.outlook.com>
-References: <cover.1549619051.git.kimbrownkd@gmail.com>
- <cover.1550549612.git.kimbrownkd@gmail.com>
- <23823f617d325c9e961d2433901e6bba3e7ca5f2.1550549612.git.kimbrownkd@gmail.com>
-In-Reply-To: <23823f617d325c9e961d2433901e6bba3e7ca5f2.1550549612.git.kimbrownkd@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-02-20T14:35:18.7864054Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=69a52286-5f74-4d35-848f-231a6423263b;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-x-originating-ip: [24.22.167.197]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 450a9461-f0b4-4d80-d157-08d69740a430
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:DM5PR2101MB0936;
-x-ms-traffictypediagnostic: DM5PR2101MB0936:
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;DM5PR2101MB0936;23:aY9q5Ft6r/BPd9TjBx8Rm7FW7ayGQGaHKSSQnOf?=
- =?us-ascii?Q?2muwPm1STxxPbfOXWkf9eu8p2ci8+uY6QxbIi1f6dl8epC1InbYTsNPQmPCR?=
- =?us-ascii?Q?95SQXwju/KMOyKZHKq8hXw7FfL90J0n+SIrD6653EgtEFl9+qHyjHGYvbqY+?=
- =?us-ascii?Q?FIBSPgeCQruy0w87InvD7S1FEzzn9CPV4QM/TI70VxvTaXiKQSMRsMNzroTE?=
- =?us-ascii?Q?6L4XOyNDOjGe8zCnCakbQl5+kE6ENITwm9FyYKI1ZJFRtLZRRRJyFxZvBJJ8?=
- =?us-ascii?Q?ZSWTGiU1kDZbqCwAekhOa6Tq7O5vUHYsugdzznLNY5VGH+hQP4k0Pyi1DV/M?=
- =?us-ascii?Q?XXGi+cmEp0vnKCIXB1rAsbYgel5R+4rhdfiQXs/OsLGGlpc0DnOb/9PUE+CU?=
- =?us-ascii?Q?hGzFmtIEezwJrMKVsuB0XVdqybCc8fHy+JqZh+MYItIFxBJxguSmKCZsOLj9?=
- =?us-ascii?Q?rD3IVAwJqaKy2SPgmWdveDp39W/faFbZ7NmYsDmXNfSPGqb3QiGFn5CPU24Z?=
- =?us-ascii?Q?SsEmY6CZUryq/XYvnl/4xHm9ECaEShfvrVZNXWE3dEnTalZQmBcEb5On8yRt?=
- =?us-ascii?Q?aw6SIRhxUIioar2PXbg32VWM2nTEIko61RMFonh9xtijhF5KVBZH5JpO9Pis?=
- =?us-ascii?Q?4Fgf5uIXNOa9+tr2orKUzrVM8KJO5YEO+Ek3EoZvQfS142nXZ/FmkDKdn9JV?=
- =?us-ascii?Q?OE5/kYDixgJ6Ncg1iSEgSSJDXIYxebPktxA7v0Po/+MjO/zKn21U5JwPVydJ?=
- =?us-ascii?Q?j4vuB6J+ePGqSspzv6krxCSsBhXxWxFN5pHkYfFZ5jqGKuokdqF1TMn/sqqX?=
- =?us-ascii?Q?YJ9UlfpS+xuWkxjFj7g1znjC7axfrmQ61/SBYY3Nnjfd+3w+S1cGtu4UF9Ec?=
- =?us-ascii?Q?Qr6hyELrUAQtT8JHjHuZ3CThSKFlIbkhouRSlwReuYD+L+fpeUOQZEMs9Aql?=
- =?us-ascii?Q?VZv6fWvFEDoBXiszH6Ha+qU6B3vXgP3uLGSBROd5kedR8NjqZo791+D+JnbW?=
- =?us-ascii?Q?s+FCDiOvGNQHU+E0vvbZTym5J8/AJ+g2UvU4MNdLVfxN6GY0wZeGFmqCvSY/?=
- =?us-ascii?Q?8aYlDPl7OlsWsUoNxkU+zAZma5j2x9llgfT/wWGEW9azVoBYJoBEMQ5fU6gg?=
- =?us-ascii?Q?rKp4LKgdoKwX25++1FWPGwp4PVWk9b6D0HBxA1XWW2JVWkxBeRhtb9Mt1kd9?=
- =?us-ascii?Q?0SvbEQFW5myW2IimHUdj9GQhSajKqrgNFocwbA8QX/7AZPeyo5zzBB9aETz3?=
- =?us-ascii?Q?vKTcC+s/8OSLRV6J0bhyBOfR70h+EqaZ8nRpujUy8+W5yxH6sgZB2+wlKXBe?=
- =?us-ascii?Q?5ywn1sqlksMj3Zrj86wSxkTx/ynuORsOksvAxtIWO0mjtNrbN3DdgBtou1SP?=
- =?us-ascii?Q?7GMz+VYgMhS9pCWBhFszWt12g4+Wi+0JKeejvXk7Kfbuf93svFMQOLJyigOB?=
- =?us-ascii?Q?05gCz6UDS7Q=3D=3D?=
-x-microsoft-antispam-prvs: <DM5PR2101MB0936D32C9F010A9397D8F317D77D0@DM5PR2101MB0936.namprd21.prod.outlook.com>
-x-forefront-prvs: 0954EE4910
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(366004)(396003)(376002)(346002)(189003)(199004)(3846002)(99286004)(102836004)(22452003)(54906003)(4744005)(6246003)(7736002)(110136005)(8936002)(81156014)(81166006)(26005)(1511001)(74316002)(76176011)(8676002)(6116002)(7696005)(486006)(11346002)(5660300002)(4326008)(446003)(14454004)(6636002)(97736004)(86612001)(25786009)(476003)(10090500001)(316002)(6346003)(2906002)(14444005)(53936002)(256004)(55016002)(68736007)(9686003)(105586002)(6436002)(305945005)(10290500003)(33656002)(8990500004)(86362001)(229853002)(66066001)(71200400001)(106356001)(71190400001)(478600001)(186003)(6506007);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0936;H:DM5PR2101MB0918.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=mikelley@microsoft.com; 
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: qdbYE3dSsJI6Bb35YSJlXSv6tngDYIp6qYrd/m7dHQZFmc8qOs8oO7H/ETf0X3xRa+zVxNcFrEwYlIfqGCHWV0g4TQYoyRZobJkCKtWzkiUHUcxLzRgNyRfmMDy7+AC/GySYu59V4GrELwxeh7V2w58sOOQpGuFZOwaGYPZO/DseXE1gdi44CHoq1mLE6S6RKt+aKuCZfrMvFMBFFjWYP0g8NPsSw15d2ekl/1aUNYiOrhdvVMMnix+B8r9Wu/cMGsPrTOInBVFDRUP5RF0ib31ZmZ8b7iwcp5DJcmPZeAX6JPciar2dqyJHFWlN0axu9yx43nVnINv9Owtk42jt2T6Eqplq7IBnEYLGB+6/dBoTY3UKZAVfs5ZnRIl3r2Wgyn3BtmAj+BPiKBkhpkDvSmakwyTk9PjHMg5iyk4FthY=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 20 Feb 2019 09:36:07 -0500
+Received: from mail-it1-f200.google.com ([209.85.166.200]:56033 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727055AbfBTOgG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 09:36:06 -0500
+Received: by mail-it1-f200.google.com with SMTP id j3so11067603itf.5
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 06:36:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=5/u99sxH4qazgQczBJx2Z6pcYMTUPuEqEF7OZS+2sTY=;
+        b=lNuSYPekZapTKXMKxtNuKl3C4RU95OQO8LSJVbGg/AxSl8qdvdDqE/IIpKEXmJZ2ZO
+         pgn8KMKrrdBZIlY/IzbH3VkcttageDawibQTatAB7DxkGYZ4+PK2yEXeZLyvlYnXLGpR
+         Sc/iEdEaEKCSjhoDwX4iwh2YliKZDIqs99OFxZ9+mrvLZ5dgB+LFUiZGOh5khir/wYZt
+         ODOTY1kqM3otPEscAjqmXtEkgqnC9UXLJvGbyKPVGlOIziieFV/JBRZiIcp6etRF4p39
+         6srfSdMWfzFyYVX9nFT7j8tB+5mAWgZ45BwyXV5Og6do/jijFiJyFLqO5sxDj9C3AOsb
+         U3XA==
+X-Gm-Message-State: AHQUAuZxTkFnkrecr6ssfognytLA6t9n2QxD2tzZuLh4tTrtACJjCETy
+        S+hX73IPGd4rdTu0lRwm0ZQgCOCm2/AMYV/rnemCqzxwR3T2
+X-Google-Smtp-Source: AHgI3IZJav1KEm6pgraeHyWJZ0Zrhuy8VX41tZi1Db4gU4kEMwgzTF6wVGgg8q/a79+mIFpK2PPz9O317Nzl8BzpzlSnjEzMkvD3
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 450a9461-f0b4-4d80-d157-08d69740a430
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Feb 2019 14:35:20.6598
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0936
+X-Received: by 2002:a5d:8c97:: with SMTP id g23mr25515072ion.0.1550673364581;
+ Wed, 20 Feb 2019 06:36:04 -0800 (PST)
+Date:   Wed, 20 Feb 2019 06:36:04 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000f080605825447c6@google.com>
+Subject: general protection fault in xfrmi_decode_session
+From:   syzbot <syzbot+b69368fd933c6c592f4c@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kimberly Brown <kimbrownkd@gmail.com>  Sent: Monday, February 18, 201=
-9 9:38 PM
->=20
-> Change the monitor_pages index in server_monitor_pending_show() to '0'.
-> '0' is the correct monitor_pages index for the server. A comment for the
-> monitor_pages field in the vmbus_connection struct definition indicates
-> that the 1st page is for parent->child notifications. In addition, the
-> server_monitor_latency_show() and server_monitor_conn_id_show()
-> functions use monitor_pages index '0'.
->=20
-> Signed-off-by: Kimberly Brown <kimbrownkd@gmail.com>
-> Acked-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
->  drivers/hv/vmbus_drv.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
+Hello,
 
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+syzbot found the following crash on:
+
+HEAD commit:    abf446c90405 Add linux-next specific files for 20190220
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=175c2248c00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=463cb576ac40e350
+dashboard link: https://syzkaller.appspot.com/bug?extid=b69368fd933c6c592f4c
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14dfb248c00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=133bd26cc00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+b69368fd933c6c592f4c@syzkaller.appspotmail.com
+
+8021q: adding VLAN 0 to HW filter on device batadv0
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 7683 Comm: syz-executor240 Not tainted 5.0.0-rc7-next-20190220  
+#39
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:xs_net include/net/xfrm.h:253 [inline]
+RIP: 0010:xfrmi_decode_session net/xfrm/xfrm_interface.c:82 [inline]
+RIP: 0010:xfrmi_decode_session+0x15c/0x6c0 net/xfrm/xfrm_interface.c:73
+Code: 7c fc 08 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 2e 05 00 00 48 b8 00  
+00 00 00 00 fc ff df 4f 8b 64 fc 08 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 0f  
+85 01 05 00 00 4d 8b 3c 24 e8 91 62 55 fb e8 cc b7
+RSP: 0018:ffff88808870f128 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: ffff888096313e00 RCX: ffffffff860899d3
+RDX: 0000000000000000 RSI: ffffffff86089a10 RDI: ffff8880a0ef4f08
+RBP: ffff88808870f150 R08: ffff88808fc2a300 R09: ffffed1015d05bc8
+R10: ffffed1015d05bc7 R11: ffff8880ae82de3b R12: 0000000000000000
+R13: 0000000000000036 R14: ffff888096313e10 R15: ffffffffffffffff
+FS:  0000000001129880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000002000a000 CR3: 0000000092970000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  __xfrm_policy_check+0x1f8/0x2730 net/xfrm/xfrm_policy.c:3316
+  __xfrm_policy_check2 include/net/xfrm.h:1176 [inline]
+  xfrm_policy_check include/net/xfrm.h:1181 [inline]
+  xfrm4_policy_check include/net/xfrm.h:1186 [inline]
+  vti_input+0x4e3/0x7b0 net/ipv4/ip_vti.c:63
+  vti_rcv+0x10b/0x140 net/ipv4/ip_vti.c:109
+  xfrm4_esp_rcv+0xd8/0x230 net/ipv4/xfrm4_protocol.c:100
+  ip_protocol_deliver_rcu+0x60/0x8e0 net/ipv4/ip_input.c:208
+  ip_local_deliver_finish+0x23b/0x390 net/ipv4/ip_input.c:234
+  NF_HOOK include/linux/netfilter.h:289 [inline]
+  NF_HOOK include/linux/netfilter.h:283 [inline]
+  ip_local_deliver+0x1e9/0x520 net/ipv4/ip_input.c:255
+  dst_input include/net/dst.h:450 [inline]
+  ip_rcv_finish+0x1db/0x2f0 net/ipv4/ip_input.c:414
+  NF_HOOK include/linux/netfilter.h:289 [inline]
+  NF_HOOK include/linux/netfilter.h:283 [inline]
+  ip_rcv+0xe8/0x3f0 net/ipv4/ip_input.c:524
+  __netif_receive_skb_one_core+0x115/0x1a0 net/core/dev.c:4973
+  __netif_receive_skb+0x2c/0x1c0 net/core/dev.c:5083
+  netif_receive_skb_internal+0x117/0x660 net/core/dev.c:5186
+  napi_frags_finish net/core/dev.c:5753 [inline]
+  napi_gro_frags+0xade/0xd10 net/core/dev.c:5827
+  tun_get_user+0x28ae/0x3b20 drivers/net/tun.c:1974
+  tun_chr_write_iter+0xbd/0x160 drivers/net/tun.c:2019
+  call_write_iter include/linux/fs.h:1857 [inline]
+  do_iter_readv_writev+0x5e1/0x8e0 fs/read_write.c:680
+  do_iter_write fs/read_write.c:956 [inline]
+  do_iter_write+0x184/0x610 fs/read_write.c:937
+  vfs_writev+0x1b3/0x2f0 fs/read_write.c:1001
+  do_writev+0xf6/0x290 fs/read_write.c:1036
+  __do_sys_writev fs/read_write.c:1109 [inline]
+  __se_sys_writev fs/read_write.c:1106 [inline]
+  __x64_sys_writev+0x75/0xb0 fs/read_write.c:1106
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x441e50
+Code: 05 48 3d 01 f0 ff ff 0f 83 3d 0f fc ff c3 66 2e 0f 1f 84 00 00 00 00  
+00 66 90 83 3d c1 91 29 00 00 75 14 b8 14 00 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 14 0f fc ff c3 48 83 ec 08 e8 7a 2b 00 00
+RSP: 002b:00007fff989f5108 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
+RAX: ffffffffffffffda RBX: 00007fff989f5150 RCX: 0000000000441e50
+RDX: 0000000000000001 RSI: 00007fff989f5150 RDI: 00000000000000f0
+RBP: 00007fff989f5120 R08: 0000000000000100 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000003
+R13: 0000000000403280 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+---[ end trace 75b9c68f6203bc58 ]---
+RIP: 0010:xs_net include/net/xfrm.h:253 [inline]
+RIP: 0010:xfrmi_decode_session net/xfrm/xfrm_interface.c:82 [inline]
+RIP: 0010:xfrmi_decode_session+0x15c/0x6c0 net/xfrm/xfrm_interface.c:73
+Code: 7c fc 08 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 2e 05 00 00 48 b8 00  
+00 00 00 00 fc ff df 4f 8b 64 fc 08 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 0f  
+85 01 05 00 00 4d 8b 3c 24 e8 91 62 55 fb e8 cc b7
+RSP: 0018:ffff88808870f128 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: ffff888096313e00 RCX: ffffffff860899d3
+RDX: 0000000000000000 RSI: ffffffff86089a10 RDI: ffff8880a0ef4f08
+RBP: ffff88808870f150 R08: ffff88808fc2a300 R09: ffffed1015d05bc8
+R10: ffffed1015d05bc7 R11: ffff8880ae82de3b R12: 0000000000000000
+R13: 0000000000000036 R14: ffff888096313e10 R15: ffffffffffffffff
+FS:  0000000001129880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000002000a000 CR3: 0000000092970000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
