@@ -2,101 +2,95 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01CEFC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C31CCC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C93CD21773
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:18:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CE9C21773
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:18:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mgzKRZfY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726414AbfBTFR7 (ORCPT
+        id S1726506AbfBTFSH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 00:17:59 -0500
-Received: from mx.socionext.com ([202.248.49.38]:45868 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726011AbfBTFR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 00:17:59 -0500
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 20 Feb 2019 14:17:56 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id E031F6117D;
-        Wed, 20 Feb 2019 14:17:56 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Wed, 20 Feb 2019 14:17:56 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id 7D5FB1A04E1;
-        Wed, 20 Feb 2019 14:17:56 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.119.83])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 6B78D121B6C;
-        Wed, 20 Feb 2019 14:17:56 +0900 (JST)
-Subject: Re: [PATCH v2 04/15] ARM: milbeaut: Add basic support for Milbeaut
- m10v SoC
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Takao Orito <orito.takao@socionext.com>,
-        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>
-References: <1549628778-30785-1-git-send-email-sugaya.taichi@socionext.com>
- <CAK8P3a026P7tZpJ7gsZbf_MnJJ0eVv60ggGXYndX9kCDLpNy4Q@mail.gmail.com>
- <7266af3b-aeec-4c29-c96e-ee0d21d3e867@socionext.com>
- <CAK8P3a09+K7ZPBgHs45Z2e_w6DPzXDMPT+DpXBowT0SBu8oCtw@mail.gmail.com>
-From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
-Message-ID: <9979cb94-ce35-56de-df2e-33c10517ed77@socionext.com>
-Date:   Wed, 20 Feb 2019 14:17:55 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Wed, 20 Feb 2019 00:18:07 -0500
+Received: from mail-it1-f181.google.com ([209.85.166.181]:50217 "EHLO
+        mail-it1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725828AbfBTFSG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 00:18:06 -0500
+Received: by mail-it1-f181.google.com with SMTP id m137so12470193ita.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 21:18:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hf+6C6Q2gn8Yl3O4FWNWMNmmdvkyd7bHWyarizMUDJY=;
+        b=mgzKRZfY5RuEkbrYiUCxWDnjszfxyhgfcXL3nAL1gQTrWHJ8m86toa5UUpFUeMB9s5
+         a5NupSp24JWL0XjRpo37I2AUX/YUM/VXByHgNU3c0Ibpeag94HDc2JlqWQ9f0JrbcW9/
+         gXPXEXmgfWCWZFUhQLroy3hA06TUkCie3aYTMTwtMLAqgnClvsvYl7+k3/AnIQCnP15r
+         L86f7gxDOL4gfUKLlhMyajbKNxluxGZFClAhzGMXA5z9TStfaPhT2+1ar8PcZmVDgFqb
+         iZYpRDIV/yXwQ2Z2P6zII7Zqhyb8oPXvjJmr9SmjHOEJaR9nOsZqx06t9+KqGwYXwJd4
+         0iMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hf+6C6Q2gn8Yl3O4FWNWMNmmdvkyd7bHWyarizMUDJY=;
+        b=W3WmqeyV+QVUXIX5iThz5rBCfgbdt5n6zMzXszSqL6wbyuYNPkaCxCWn9DNeFdaLLs
+         ydHWfwLyFVpJVy7kKCNuTxRWkDn+6RxYea/4J9y5153bEjpT3zTCRd+CCL4KctNI4Hrj
+         3rCYL1+Ek1Rjn7F2iNlM/6SsnkmKP0a7NDNTGULa2l3n2zbf2NW8jO9AauP3rXYNmE+2
+         ZD+VuBIj/bgYg7eeRhOZ0RfCQ6G/G4MJhX77pnrDcT5DT4ARCB+7KIeVIV5Q4eZRpIDD
+         Z8RnYqjt/yutOlUaeQGWvHmNpuPtN1ie3GtGBgFpONaOe88Co0dVu91iQWmaIeMJhk2I
+         jfPQ==
+X-Gm-Message-State: AHQUAubTo/Z7lO60yhX6ENy0ddzjhgadRvTztDZ9k/cu91ASGrftQxKp
+        1BHx4lrccU0cR51STBdhPBXfL6C6
+X-Google-Smtp-Source: AHgI3IbnAHcwkI+SemPMnjkj3ZKCW2INSrkQTroKj2nv3zlFNYETxcDa1TTvV3Uy/ulwfcO8Y9CumQ==
+X-Received: by 2002:a02:9b6e:: with SMTP id g43mr18016574jal.9.1550639885692;
+        Tue, 19 Feb 2019 21:18:05 -0800 (PST)
+Received: from localhost.localdomain (c-73-242-244-99.hsd1.nm.comcast.net. [73.242.244.99])
+        by smtp.gmail.com with ESMTPSA id k64sm2297550itb.7.2019.02.19.21.18.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Feb 2019 21:18:04 -0800 (PST)
+From:   George Hilliard <thirtythreeforty@gmail.com>
+To:     linux-mips@linux-mips.org
+Cc:     linux-kernel@vger.kernel.org, Neil Brown <neil@brown.name>
+Subject: mt7621-mmc driver improvements
+Date:   Tue, 19 Feb 2019 22:17:44 -0700
+Message-Id: <20190220051754.12195-1-thirtythreeforty@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a09+K7ZPBgHs45Z2e_w6DPzXDMPT+DpXBowT0SBu8oCtw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This is a series of patches to provide a little TLC for the mt7621-mmc driver.
+My original goal was to get it working on the MT7688, and I have succeeded.  I
+suspect it will now work on any of the MT762x line.  The main change was
+getting the driver to use the pinctrl subsystem instead of hand-jamming the
+pinctrl registers -- the bit offsets were only correct for the MT7621.
 
-On 2019/02/19 18:21, Arnd Bergmann wrote:
-> On Tue, Feb 19, 2019 at 8:12 AM Sugaya, Taichi
-> <sugaya.taichi@socionext.com> wrote:
->> On 2019/02/18 21:15, Arnd Bergmann wrote:
->>> On Fri, Feb 8, 2019 at 1:26 PM Sugaya Taichi
->>> <sugaya.taichi@socionext.com> wrote:
->>
->>>> +static int __init m10v_pm_init(void)
->>>> +{
->>>> +       suspend_set_ops(&m10v_pm_ops);
->>>> +
->>>> +       return 0;
->>>> +}
->>>> +late_initcall(m10v_pm_init);
->>>
->>> This requires a check to ensure you are actually on the right platform,
->>> otherwise you break suspend/resume in a multiplatform kernel running
->>> on anything other than milbeaut.
->>>
->>
->> OK.
->> I think the solution is adding a "if statement with mlbeaut compatible"
->> above suspend_set_ops(&m10v_pm_ops).
-> 
-> Right, you can either use a call to of_machine_is_compatible(),
-> or you add a machine descriptor with OF_MACHINE_START()
-> and use this as the init_late() callback.
-> 
+Because of this change, the driver now expects a pinctrl device reference in
+the mmc controller's device tree node; without it, it will bail out.  This
+could break existing setups that don't specify it because it "just worked" up
+until now.  So currently I just let the old behavior fall away because this is
+a staging driver.  But if this is a problem, the old behavior could be added
+back as a fallback.
 
-Yeah, I will use "of_machine_is_compatible()".
+Beyond that, there are largely code cleanups and a couple other correctness
+fixes that I hope are self-explanatory.  The TODO list is largely unchanged,
+aside from the couple of TODO comments in the code that I have addressed.
+Ultimately, I think this driver could potentially be merged with the "real"
+mtk-mmc driver as the TODO suggests, but someone who is more familiar with the
+IP core will have to do that.  Mediatek documentation (that I can find) is very
+sparse.  Besides, their codebases have begun to diverge.
 
-Thanks,
-Sugaya Taichi
+Feedback welcome!
 
->        Arnd
-> 
 
