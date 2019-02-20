@@ -2,110 +2,110 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1666C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:09:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15BEDC10F0B
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:09:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A34862086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:09:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB7672086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:09:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kCo4N+Gw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbfBTPJl (ORCPT
+        id S1727228AbfBTPJq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:09:41 -0500
-Received: from mga17.intel.com ([192.55.52.151]:44741 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725842AbfBTPJk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:09:40 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 07:09:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,391,1544515200"; 
-   d="scan'208";a="123897088"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga007.fm.intel.com with ESMTP; 20 Feb 2019 07:09:40 -0800
-Received: from [10.125.252.177] (abudanko-mobl.ccr.corp.intel.com [10.125.252.177])
-        by linux.intel.com (Postfix) with ESMTP id D552758028E;
-        Wed, 20 Feb 2019 07:09:37 -0800 (PST)
-Subject: Re: [PATCH v2 3/4] perf record: enable runtime trace compression
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <044ee2be-2e1d-e90f-7317-40083b5e716c@linux.intel.com>
- <5bc6958d-f4bc-d4ea-e5d0-16c5e7b73911@linux.intel.com>
- <20190212130902.GI775@krava>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <d225cd8c-3447-331a-78ac-070c5b9a442d@linux.intel.com>
-Date:   Wed, 20 Feb 2019 18:09:36 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Wed, 20 Feb 2019 10:09:46 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:44917 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbfBTPJp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 10:09:45 -0500
+Received: by mail-ot1-f66.google.com with SMTP id g1so40556321otj.11;
+        Wed, 20 Feb 2019 07:09:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iO4aBbX/wKzyhNfhJOP7W7e9DNyMpQKdyAylvLuFuHI=;
+        b=kCo4N+GwnvrFdgMbJq0D+OAr3/koMldXQmk+tDBMsA+RzR6lwLzFJdzsTBCX7lkXeR
+         5pI/orjVnwhYZ40n1zYIq1/7ZCWqVESp2A9UNH+CY/x+z92eRUZ1yyxUl9UgnUmgxzQs
+         +AAhstCGCYJC2MevOEVb2kzu5tULV/CsuHpCPK0cWL6hIkl8F8r8fTVQ71JxkBoBPnZy
+         AI43hxr0cfyg94yfQvTzTJaHVyjgd4EXjKGBevxDcdj3FMtbKmH+4LU4EyyrFNgcPkeF
+         8dNdB29251cNrdXI8RQut1QZuoz8mK55RdjfP0Y5DpFc4j/WRUdnW1zELqtDlGyVWf1O
+         7Vsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iO4aBbX/wKzyhNfhJOP7W7e9DNyMpQKdyAylvLuFuHI=;
+        b=Mw5P7TM+P4JzjtNkW5tEMTcU//rS/Tm1x5h6PUWi1/hu0vDNohCE9IablNiAGaVnXV
+         B0BWmCaSx4GNwThEWHx8tqhCiaOLm0IdmNPxNnYPXfDxPZ0lcMP9lfQQskcEE+ACDie3
+         nZ051lrBpZaUUsWgit441WeEUNGEGv8E85LhA4vH6dQfTEyWf1BPWhKdkSl+bbpXWljp
+         g1elvzQcVhZBf58WsuKb2gPIFnmF8DA5o5AprGaq/lK5sySCNiXP+acQp4veguuWsH2k
+         ylguMvm9Y/5hWT7SR2RwZltv4rteU6OZTLOdcorgdG6CTtknQYLgBN5VOFoVSTbGGM5R
+         FqOg==
+X-Gm-Message-State: AHQUAubG5PLpETfNiMirNqpgtrhoOuib/Lm/358mxUV0jzjHU+VscKIY
+        zw00jP4u7KFXH2j0IxIh7z43IfcGjxQxX+tWPMg=
+X-Google-Smtp-Source: AHgI3IbOWfHdj6tjckm00wO4IEXDBddJ5CuvIZ/QZ177y3mXzsPYSx8YXVdk9Iqx8bH3lRfjkiYKmFyab5IQtRoncMg=
+X-Received: by 2002:aca:3142:: with SMTP id x63mr5977877oix.92.1550675384326;
+ Wed, 20 Feb 2019 07:09:44 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190212130902.GI775@krava>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <89716a4433cd83aea5f4200359b184b0ee2cc8bd.1549828313.git.bobbyeshleman@gmail.com>
+ <CAGngYiV6zm12XhB6WChSXNndLMSJ3e4NAB=BLq_mrXtWLKEruQ@mail.gmail.com>
+ <20190211212734.01909e62@archlinux> <CAGngYiV_6MzKOSomAWs1znp8ThPRAL-e2CVZfn+ZHZOq8DiD0A@mail.gmail.com>
+ <20190212204730.16864802@archlinux> <CAGngYiVGjPSnVfnJhR+0YJg+qOzMQfJM+Cd9ZRe===9pk1_3pA@mail.gmail.com>
+ <20190218151606.00000d10@huawei.com> <CAGngYiVQLwFxNJcCCH3byL=_p=L_BjMHJ1kCbjR8XkOF2mN3Ew@mail.gmail.com>
+ <20190220123240.77d764ea@archlinux>
+In-Reply-To: <20190220123240.77d764ea@archlinux>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Wed, 20 Feb 2019 10:09:33 -0500
+Message-ID: <CAGngYiXg6wPdsXZNmXJ3Z20xRp+cVrysj97gfEHJAxiaL27oNg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] iio: light: Add driver for ap3216c
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Robert Eshleman <bobbyeshleman@gmail.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-iio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Again thanks for the feedback, Jonathan !
 
-On 12.02.2019 16:09, Jiri Olsa wrote:
-> On Mon, Feb 11, 2019 at 11:23:40PM +0300, Alexey Budankov wrote:
-> 
-> SNIP
-> 
->> +	compress_fn = (record__comp_enabled(rec) ?
->> +		perf_session__zstd_compress : perf_session__zstd_copy);
->> +
->>  	if (record__aio_enabled(rec))
->>  		off = record__aio_get_pos(trace_fd);
->>  
->> @@ -799,11 +805,21 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
->>  				map->flush = MMAP_FLUSH_DEFAULT;
->>  			}
->>  			if (!record__aio_enabled(rec)) {
->> -				if (perf_mmap__push(map, rec, record__pushfn) != 0) {
->> -					if (sync)
->> -						map->flush = flush;
->> -					rc = -1;
->> -					goto out;
->> +				if (!record__comp_enabled(rec)) {
->> +					if (perf_mmap__push(map, rec, record__pushfn) != 0) {
->> +						if (sync)
->> +							map->flush = flush;
->> +						rc = -1;
->> +						goto out;
->> +					}
->> +				} else {
->> +					if (perf_mmap__pack(map, rec, record__pushfn,
->> +							compress_fn, session) != 0) {
->> +						if (sync)
->> +							map->flush = flush;
->> +						rc = -1;
->> +						goto out;
->> +					}
-> 
-> I really dont like this.. the non-compression flow needs to stay untouched
-> 
-> why don't you overload the record__pushfn function for compression
-> processing and stash the data in there?
+On Wed, Feb 20, 2019 at 7:32 AM Jonathan Cameron <jic23@kernel.org> wrote:
+>
+> Looks to me like that happens (I haven't checked that thoroughly) via
+> kernfs_fops_write which takes a mutex - so we have a barrier.
+>
 
-Yes, this becomes complicated and overloading could be an option to simplify it.
+Yes, if there's a mutex in the path somewhere (which sysfs/kernfs appears to
+provide in this case) then we're ok, as the mutex_unlock() should provide
+the barrier which makes the flags visible to the threaded handler.
 
-Thanks,
-Alexey
+If that never changes, we are good. As with regmap_bulk_write(), changing the
+current behaviour may break many drivers. So it's unlikely to change.
 
-> 
-> thanks,
-> jirka
-> 
+>
+> That is a serious - "in theory" circumstance.  The moment we hit any path at
+> all that results in a memory barrier it will see it.  Here its not critical
+> so we can wait.  In this case this is triggered by a userspace write.
+
+I wish this was an "in theory" circumstance ! I've personally been stung by
+this very issue. Code worked great in all tests we could throw at it, but
+failed at the customer, of course.
+
+IMHO it's easy for developers to be lulled into a false sense of security.
+In many/most cases, there'll be a barrier in the 'invisible' supporting code
+somewhere. Or we have to use a lock anyway to protect against concurrent
+inconsistent writes, which also implies a barrier. So when developers forget
+that these visibility limitations even exist, usually nothing bad will happen.
+
+Until it does, and then we get bitten :)
