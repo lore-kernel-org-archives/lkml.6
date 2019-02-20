@@ -2,177 +2,195 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F8EC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:35:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A085EC4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:35:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3060F2084F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:35:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 716C22147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:35:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XDkVLYh7"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FenfkPDA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727313AbfBTPfa (ORCPT
+        id S1727484AbfBTPfk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:35:30 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35594 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725929AbfBTPfa (ORCPT
+        Wed, 20 Feb 2019 10:35:40 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:42176 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725929AbfBTPfj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:35:30 -0500
-Received: by mail-pg1-f194.google.com with SMTP id s198so12054054pgs.2;
-        Wed, 20 Feb 2019 07:35:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WmAAGsSCPamxS6QsYyp6MZrdJ8c46CKOqUNG+Yp75Gc=;
-        b=XDkVLYh7DQl04ReMszpW+QSQAypNERQT268eUtkAnB4PerqFqZkYQZmjTHp6rYKquJ
-         AXN+8rgrL63ZJPUjGJQ9MgIYkM9n5g1EJuOEMXZUyCIAfrhmqLJRLJj8i4lCtnKj5EFy
-         WSHp+rfJau1XAbPSRNM+OV4N8YUcou5gWl7UB8VF5dGPTOOXA9DhWOMP5fMLgXkSV3C2
-         xHNPu635NcFY66QfNcrP7VjLZ5KIM3pn28iWnvWgZaGore4Xf2faAJcTZIlzVAntHD6u
-         d/yp3XEUbWznY1SvUqscfur90mWOFrX6hD1yU6jrMpXNAKXfFvbiLk+dhNbfSKKxKzcw
-         JVYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WmAAGsSCPamxS6QsYyp6MZrdJ8c46CKOqUNG+Yp75Gc=;
-        b=LQ2+Lww+oN60y9mx1ZNLUoUvB74jOSCexMFRC3l9Pihs3Yaqs/JjejorWPHNVh0cC4
-         YXAa75dIUzHlG0NDFMNkp/SouhiH2fGTto7caTOMXxQYnjOjRLQY/lxxqWfzIAJmMzr9
-         z1qFmyx06MX4TmFHw4HcbRmlaHUYb3SypQkRzJBGscfFBhBsH5WspgK4Mq1IAt8Xrncp
-         bz64y4FdLE/FaO013bYpdM27VLKy3Bu+AniEbbfdTIg5J3jELYb1r25xhEPdbC09lDcd
-         U6iZKNYOkMR8M3D9MdoX+Ea1ErCttIVCdpAiTY1bvYEGYZgZ1wvSsevimQOwzBOx1fuK
-         uE/g==
-X-Gm-Message-State: AHQUAuZgeJKKt3Ap1J8rifU43l08ls8kbVDVFh3ZEyGi3xvOQJaQ9D15
-        D0jMo5b9LYkwlRtPe4ve5T0=
-X-Google-Smtp-Source: AHgI3IYoSEIXLXzrTZ3YDQvM2tabI8SX2a7fO4zaTNRLizQd78p/TJK6REQyVo6IyCA3wwC4sVs9Bw==
-X-Received: by 2002:a63:cc15:: with SMTP id x21mr6565927pgf.380.1550676929247;
-        Wed, 20 Feb 2019 07:35:29 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id w4sm40282408pgk.16.2019.02.20.07.35.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Feb 2019 07:35:27 -0800 (PST)
-Subject: Re: [PATCHv3] usb: typec: tps6598x: handle block writes separately
- with plain-I2C adapters
-To:     Nikolaus Voss <nv@vosn.de>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
-References: <20190220110017.BFA344CE86@mail.steuer-voss.de>
- <20190220151138.12332-1-nv@vosn.de>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <8dc1a931-c9f7-a46a-42dc-fdcd2274343b@roeck-us.net>
-Date:   Wed, 20 Feb 2019 07:35:25 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 20 Feb 2019 10:35:39 -0500
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 759AC2D1;
+        Wed, 20 Feb 2019 16:35:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1550676937;
+        bh=wG+g31GiUc4JVZIGRc/sSbALzRZekWDi60DOT4brgOM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FenfkPDAPQEMixguEcfCcYYTF4dzqqa8I7KSreI/xvJDrbdz6rV6E4Teg2eA3DsVr
+         Qcwh62TcEpE5N2LppCtQWHbs7D2Ex5oPLpXsIywU8hMOyMccUXscDmd/vDidI2FAp7
+         RfNzo/b8w+Dpt3/6nh4+J8CzmnLxSKp2NuLR12ys=
+Date:   Wed, 20 Feb 2019 17:35:33 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] iommu/ipmmu-vmsa: Extract hardware context
+ initialization
+Message-ID: <20190220153533.GH3516@pendragon.ideasonboard.com>
+References: <20190220150531.2462-1-geert+renesas@glider.be>
+ <20190220150531.2462-7-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <20190220151138.12332-1-nv@vosn.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190220150531.2462-7-geert+renesas@glider.be>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/20/19 7:11 AM, Nikolaus Voss wrote:
-> From: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+Hi Geert,
+
+Thank you for the patch.
+
+On Wed, Feb 20, 2019 at 04:05:30PM +0100, Geert Uytterhoeven wrote:
+> ipmmu_domain_init_context() takes care of (1) initializing the software
+> domain, and (2) initializing the hardware context for the domain.
 > 
-> Commit 1a2f474d328f handles block _reads_ separately with plain-I2C
-> adapters, but the problem described with regmap-i2c not handling
-> SMBus block transfers (i.e. read and writes) correctly also exists
-> with writes.
+> Extract the code to initialize the hardware context into a new subroutine
+> ipmmu_context_init(), to prepare for later reuse.
 > 
-> As workaround, this patch adds a block write function the same way
-> 1a2f474d328f adds a block read function.
-> 
-> Fixes: 1a2f474d328f ("usb: typec: tps6598x: handle block reads separately with plain-I2C adapters")
-> Fixes: 0a4c005bd171 ("usb: typec: driver for TI TPS6598x USB Power Delivery controllers")
-> Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
-Note that tps6598x_exec_cmd() is only called with in_len == out_len == 0
-and NULL data pointers. It might make sense to simplify the function and
-drop the unused parameters as well as the associated code.
-
-Guenter
-
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
-> v2: fix tps6598x_exec_cmd also
-> v3: use fixed length for stack buffer
-> ---
->   drivers/usb/typec/tps6598x.c | 26 ++++++++++++++++++++------
->   1 file changed, 20 insertions(+), 6 deletions(-)
+>  drivers/iommu/ipmmu-vmsa.c | 91 ++++++++++++++++++++------------------
+>  1 file changed, 48 insertions(+), 43 deletions(-)
 > 
-> diff --git a/drivers/usb/typec/tps6598x.c b/drivers/usb/typec/tps6598x.c
-> index c84c8c189e90..eb8046f87a54 100644
-> --- a/drivers/usb/typec/tps6598x.c
-> +++ b/drivers/usb/typec/tps6598x.c
-> @@ -110,6 +110,20 @@ tps6598x_block_read(struct tps6598x *tps, u8 reg, void *val, size_t len)
->   	return 0;
->   }
->   
-> +static int tps6598x_block_write(struct tps6598x *tps, u8 reg,
-> +				void *val, size_t len)
-> +{
-> +	u8 data[TPS_MAX_LEN + 1];
-> +
-> +	if (!tps->i2c_protocol)
-> +		return regmap_raw_write(tps->regmap, reg, val, len);
-> +
-> +	data[0] = len;
-> +	memcpy(&data[1], val, len);
-> +
-> +	return regmap_raw_write(tps->regmap, reg, data, sizeof(data));
+> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+> index 0a21e734466eb1bd..92a766dd8b459f0c 100644
+> --- a/drivers/iommu/ipmmu-vmsa.c
+> +++ b/drivers/iommu/ipmmu-vmsa.c
+> @@ -404,52 +404,10 @@ static void ipmmu_domain_free_context(struct ipmmu_vmsa_device *mmu,
+>  	spin_unlock_irqrestore(&mmu->lock, flags);
+>  }
+>  
+> -static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
+> +static void ipmmu_context_init(struct ipmmu_vmsa_domain *domain)
+
+ipmmu_context_init() vs. ipmmmu_domain_init_context() is confusing. You
+could call this one ipmmu_domain_setup_context() maybe ?
+
+>  {
+>  	u64 ttbr;
+>  	u32 tmp;
+> -	int ret;
+> -
+> -	/*
+> -	 * Allocate the page table operations.
+> -	 *
+> -	 * VMSA states in section B3.6.3 "Control of Secure or Non-secure memory
+> -	 * access, Long-descriptor format" that the NStable bit being set in a
+> -	 * table descriptor will result in the NStable and NS bits of all child
+> -	 * entries being ignored and considered as being set. The IPMMU seems
+> -	 * not to comply with this, as it generates a secure access page fault
+> -	 * if any of the NStable and NS bits isn't set when running in
+> -	 * non-secure mode.
+> -	 */
+> -	domain->cfg.quirks = IO_PGTABLE_QUIRK_ARM_NS;
+> -	domain->cfg.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K;
+> -	domain->cfg.ias = 32;
+> -	domain->cfg.oas = 40;
+> -	domain->cfg.tlb = &ipmmu_gather_ops;
+> -	domain->io_domain.geometry.aperture_end = DMA_BIT_MASK(32);
+> -	domain->io_domain.geometry.force_aperture = true;
+> -	/*
+> -	 * TODO: Add support for coherent walk through CCI with DVM and remove
+> -	 * cache handling. For now, delegate it to the io-pgtable code.
+> -	 */
+> -	domain->cfg.iommu_dev = domain->mmu->root->dev;
+> -
+> -	/*
+> -	 * Find an unused context.
+> -	 */
+> -	ret = ipmmu_domain_allocate_context(domain->mmu->root, domain);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	domain->context_id = ret;
+> -
+> -	domain->iop = alloc_io_pgtable_ops(ARM_32_LPAE_S1, &domain->cfg,
+> -					   domain);
+> -	if (!domain->iop) {
+> -		ipmmu_domain_free_context(domain->mmu->root,
+> -					  domain->context_id);
+> -		return -EINVAL;
+> -	}
+>  
+>  	/* TTBR0 */
+>  	ttbr = domain->cfg.arm_lpae_s1_cfg.ttbr[0];
+> @@ -495,7 +453,54 @@ static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
+>  	 */
+>  	ipmmu_ctx_write_all(domain, IMCTR,
+>  			    IMCTR_INTEN | IMCTR_FLUSH | IMCTR_MMUEN);
 > +}
 > +
->   static inline int tps6598x_read16(struct tps6598x *tps, u8 reg, u16 *val)
->   {
->   	return tps6598x_block_read(tps, reg, val, sizeof(u16));
-> @@ -127,23 +141,23 @@ static inline int tps6598x_read64(struct tps6598x *tps, u8 reg, u64 *val)
->   
->   static inline int tps6598x_write16(struct tps6598x *tps, u8 reg, u16 val)
->   {
-> -	return regmap_raw_write(tps->regmap, reg, &val, sizeof(u16));
-> +	return tps6598x_block_write(tps, reg, &val, sizeof(u16));
->   }
->   
->   static inline int tps6598x_write32(struct tps6598x *tps, u8 reg, u32 val)
->   {
-> -	return regmap_raw_write(tps->regmap, reg, &val, sizeof(u32));
-> +	return tps6598x_block_write(tps, reg, &val, sizeof(u32));
->   }
->   
->   static inline int tps6598x_write64(struct tps6598x *tps, u8 reg, u64 val)
->   {
-> -	return regmap_raw_write(tps->regmap, reg, &val, sizeof(u64));
-> +	return tps6598x_block_write(tps, reg, &val, sizeof(u64));
->   }
->   
->   static inline int
->   tps6598x_write_4cc(struct tps6598x *tps, u8 reg, const char *val)
->   {
-> -	return regmap_raw_write(tps->regmap, reg, &val, sizeof(u32));
-> +	return tps6598x_block_write(tps, reg, &val, sizeof(u32));
->   }
->   
->   static int tps6598x_read_partner_identity(struct tps6598x *tps)
-> @@ -229,8 +243,8 @@ static int tps6598x_exec_cmd(struct tps6598x *tps, const char *cmd,
->   		return -EBUSY;
->   
->   	if (in_len) {
-> -		ret = regmap_raw_write(tps->regmap, TPS_REG_DATA1,
-> -				       in_data, in_len);
-> +		ret = tps6598x_block_write(tps, TPS_REG_DATA1,
-> +					   in_data, in_len);
->   		if (ret)
->   			return ret;
->   	}
-> 
+> +static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
+> +{
+> +	int ret;
+> +
+> +	/*
+> +	 * Allocate the page table operations.
+> +	 *
+> +	 * VMSA states in section B3.6.3 "Control of Secure or Non-secure memory
+> +	 * access, Long-descriptor format" that the NStable bit being set in a
+> +	 * table descriptor will result in the NStable and NS bits of all child
+> +	 * entries being ignored and considered as being set. The IPMMU seems
+> +	 * not to comply with this, as it generates a secure access page fault
+> +	 * if any of the NStable and NS bits isn't set when running in
+> +	 * non-secure mode.
+> +	 */
+> +	domain->cfg.quirks = IO_PGTABLE_QUIRK_ARM_NS;
+> +	domain->cfg.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K;
+> +	domain->cfg.ias = 32;
+> +	domain->cfg.oas = 40;
+> +	domain->cfg.tlb = &ipmmu_gather_ops;
+> +	domain->io_domain.geometry.aperture_end = DMA_BIT_MASK(32);
+> +	domain->io_domain.geometry.force_aperture = true;
+> +	/*
+> +	 * TODO: Add support for coherent walk through CCI with DVM and remove
+> +	 * cache handling. For now, delegate it to the io-pgtable code.
+> +	 */
+> +	domain->cfg.iommu_dev = domain->mmu->root->dev;
+> +
+> +	/*
+> +	 * Find an unused context.
+> +	 */
+> +	ret = ipmmu_domain_allocate_context(domain->mmu->root, domain);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	domain->context_id = ret;
+> +
+> +	domain->iop = alloc_io_pgtable_ops(ARM_32_LPAE_S1, &domain->cfg,
+> +					   domain);
+> +	if (!domain->iop) {
+> +		ipmmu_domain_free_context(domain->mmu->root,
+> +					  domain->context_id);
+> +		return -EINVAL;
+> +	}
+>  
+> +	ipmmu_context_init(domain);
+>  	return 0;
+>  }
+>  
 
+-- 
+Regards,
+
+Laurent Pinchart
