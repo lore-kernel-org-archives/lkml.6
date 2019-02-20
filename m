@@ -2,144 +2,74 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4219EC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:23:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DED0AC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:24:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2032620880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:23:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B88312086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:24:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbfBTPW7 (ORCPT
+        id S1727146AbfBTPYI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:22:59 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:48522 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1727174AbfBTPW6 (ORCPT
+        Wed, 20 Feb 2019 10:24:08 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:38656 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726019AbfBTPYH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:22:58 -0500
-Received: (qmail 2906 invoked by uid 2102); 20 Feb 2019 10:22:57 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 20 Feb 2019 10:22:57 -0500
-Date:   Wed, 20 Feb 2019 10:22:57 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-cc:     linux-kernel@vger.kernel.org, <linux-arch@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>
-Subject: Re: [RFC PATCH] tools/memory-model: Remove (dep ; rfi) from ppo
-In-Reply-To: <1550617057-4911-1-git-send-email-andrea.parri@amarulasolutions.com>
-Message-ID: <Pine.LNX.4.44L0.1902201020090.1589-100000@iolanthe.rowland.org>
+        Wed, 20 Feb 2019 10:24:07 -0500
+Received: by mail-qk1-f193.google.com with SMTP id p15so2199946qkl.5
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 07:24:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w22eK6a8Js4tltFcVW7TveKwFMK0XS79riyQIh4CZsA=;
+        b=O4mcVFv6VMInEGQmJYswutY1fpDxHsUtaFPoLU8H9dGqdZLGc/sb27XJO+DB31Qmtc
+         P+dB7y0tDfg/89ioRjr785y1nv1p9iz5fr5jK+MKLuSuIpRMqHgx+P57NKb/ZwpKOXcX
+         sKcjtJNWSywSsIB2UIOglO25xalI2mCTxc5TJYhgAVAKXsj4UN8we3V4NhohSSqC162I
+         7beA2z8vcsREVZfjzvrSaiUNJ4d1CZOkUZa3x1wUAdf5ijzYjpT2ma6Ms5CNqwoTfwnB
+         wtx1VXYbABm85XaRvKBP80Z/3NXklp42hYX5+ICPIhMyg/zIiJRUanr89JRpuwYX4nIW
+         FjMA==
+X-Gm-Message-State: AHQUAuaC9kfBTyknz4k/SpL4FflexTlelXZcp6wynGj/klBzMdlEg77W
+        cTkA+BaZboxAIrTLe4ygDSpkcbM3YV/NXILjGSjrzg==
+X-Google-Smtp-Source: AHgI3IYQZvIC+hpNskJMqI20c55HO8h6NwNwjM66GMoOuHES1G8UzV4Vb5IyRewvowztzHU+WCrpqE9JLUJSVVLLIEU=
+X-Received: by 2002:ae9:d8c2:: with SMTP id u185mr24083891qkf.107.1550676246700;
+ Wed, 20 Feb 2019 07:24:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+References: <20190219091520.28990-1-natechancellor@gmail.com> <CAFA6WYP+vinWcM_wkSxaKfmRhG9hSZQSCh7f4WoUBEMWe-htbQ@mail.gmail.com>
+In-Reply-To: <CAFA6WYP+vinWcM_wkSxaKfmRhG9hSZQSCh7f4WoUBEMWe-htbQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 20 Feb 2019 16:23:49 +0100
+Message-ID: <CAK8P3a2C9Vi0UPA29ncjFH89g2MahWDDxvULam2Xj46h3Wh6zg@mail.gmail.com>
+Subject: Re: [PATCH] tee: optee: Initialize some structs using memset instead
+ of braces
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        arm-soc <arm@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Feb 2019, Andrea Parri wrote:
+On Tue, Feb 19, 2019 at 10:50 AM Sumit Garg <sumit.garg@linaro.org> wrote:
+> On Tue, 19 Feb 2019 at 14:45, Nathan Chancellor <natechancellor@gmail.com> wrote:
 
-> Remove this subtle (and, AFAICT, unused) ordering: we can add it back,
-> if necessary, but let us not encourage people to rely on this thing.
-> 
-> For example, the following "exists" clause can be satisfied with this
-> change:
-> 
-> C dep-rfi
-> 
-> { }
-> 
-> P0(int *x, int *y)
-> {
-> 	WRITE_ONCE(*x, 1);
-> 	smp_store_release(y, 1);
-> }
-> 
-> P1(int *x, int *y, int *z)
-> {
-> 	int r0;
-> 	int r1;
-> 	int r2;
-> 
-> 	r0 = READ_ONCE(*y);
-> 	WRITE_ONCE(*z, r0);
-> 	r1 = smp_load_acquire(z);
-> 	r2 = READ_ONCE(*x);
-> }
-> 
-> exists (1:r0=1 /\ 1:r2=0)
-> 
-> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-> Cc: Alan Stern <stern@rowland.harvard.edu>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-> Cc: Luc Maranget <luc.maranget@inria.fr>
-> Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
-> Cc: Akira Yokosawa <akiyks@gmail.com>
-> Cc: Daniel Lustig <dlustig@nvidia.com>
-> ---
->  tools/memory-model/Documentation/explanation.txt | 28 ------------------------
->  tools/memory-model/linux-kernel.cat              |  2 +-
->  2 files changed, 1 insertion(+), 29 deletions(-)
-> 
-> diff --git a/tools/memory-model/Documentation/explanation.txt b/tools/memory-model/Documentation/explanation.txt
-> index 68caa9a976d0c..965e11744d090 100644
-> --- a/tools/memory-model/Documentation/explanation.txt
-> +++ b/tools/memory-model/Documentation/explanation.txt
-> @@ -1019,34 +1019,6 @@ section for more details).  The kernel includes a workaround for this
->  problem when the loads come from READ_ONCE(), and therefore the LKMM
->  includes address dependencies to loads in the ppo relation.
->  
-> -On the other hand, dependencies can indirectly affect the ordering of
-> -two loads.  This happens when there is a dependency from a load to a
-> -store and a second, po-later load reads from that store:
-> -
-> -	R ->dep W ->rfi R',
-> -
-> -where the dep link can be either an address or a data dependency.  In
-> -this situation we know it is possible for the CPU to execute R' before
-> -W, because it can forward the value that W will store to R'.  But it
-> -cannot execute R' before R, because it cannot forward the value before
-> -it knows what that value is, or that W and R' do access the same
-> -location.  However, if there is merely a control dependency between R
-> -and W then the CPU can speculatively forward W to R' before executing
-> -R; if the speculation turns out to be wrong then the CPU merely has to
-> -restart or abandon R'.
-> -
-> -(In theory, a CPU might forward a store to a load when it runs across
-> -an address dependency like this:
-> -
-> -	r1 = READ_ONCE(ptr);
-> -	WRITE_ONCE(*r1, 17);
-> -	r2 = READ_ONCE(*r1);
-> -
-> -because it could tell that the store and the second load access the
-> -same location even before it knows what the location's address is.
-> -However, none of the architectures supported by the Linux kernel do
-> -this.)
-> -
->  Two memory accesses of the same location must always be executed in
->  program order if the second access is a store.  Thus, if we have
+> >
+> > Fixes: c3fa24af9244 ("tee: optee: add TEE bus device enumeration support")
+> > Link: https://github.com/ClangBuiltLinux/linux/issues/370
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+>
+> Reviewed-by: Sumit Garg <sumit.garg@linaro.org>
 
-If we do decide to remove the (dep;rfi) term, I would prefer not to
-erase this discussion from explanation.txt completely.  Instead, we
-should explain that the operational model predicts this ordering but it
-has been left out of the LKMM for practical (not technical) reasons.
+I independently noticed the same bug, so I went ahead and applied Nathan's
+fix with your Reviewed-by tag into the arm/drivers tree.
 
-Alan
-
+      Arnd
