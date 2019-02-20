@@ -2,170 +2,124 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 632B1C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A4BC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:03:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 391EF21841
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:02:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="iLw8G4oA"
+	by mail.kernel.org (Postfix) with ESMTP id 970D620880
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:03:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726166AbfBTSCN (ORCPT
+        id S1726543AbfBTSC6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 13:02:13 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:4393 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725798AbfBTSCM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 13:02:12 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c6d96210000>; Wed, 20 Feb 2019 10:02:09 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 20 Feb 2019 10:02:10 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 20 Feb 2019 10:02:10 -0800
-Received: from [10.21.132.148] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 20 Feb
- 2019 18:02:07 +0000
-Subject: Re: [PATCH V19 5/7] i2c: tegra: Add DMA support
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        <thierry.reding@gmail.com>, <mkarthik@nvidia.com>,
-        <smohammed@nvidia.com>, <talho@nvidia.com>
-CC:     <wsa@the-dreams.de>, <peda@axentia.se>, <digetx@gmail.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>
-References: <1549998408-9137-1-git-send-email-skomatineni@nvidia.com>
- <1549998408-9137-5-git-send-email-skomatineni@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <a98faf49-98f5-7b85-8acd-0fd6a4c8b426@nvidia.com>
-Date:   Wed, 20 Feb 2019 18:02:05 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 20 Feb 2019 13:02:58 -0500
+Received: from mga12.intel.com ([192.55.52.136]:24817 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725798AbfBTSC5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 13:02:57 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 10:02:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,391,1544515200"; 
+   d="scan'208";a="148440466"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga001.fm.intel.com with ESMTP; 20 Feb 2019 10:02:55 -0800
+Date:   Wed, 20 Feb 2019 10:02:56 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Rich Felker <dalias@libc.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        kvm-ppc@vger.kernel.org, kvm@vger.kernel.org,
+        linux-fpga@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-scsi@vger.kernel.org, devel@driverdev.osuosl.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, xen-devel@lists.xenproject.org,
+        devel@lists.orangefs.org, ceph-devel@vger.kernel.org,
+        rds-devel@oss.oracle.com
+Subject: Re: [RESEND PATCH 0/7] Add FOLL_LONGTERM to GUP fast and use it
+Message-ID: <20190220180255.GA12020@iweiny-DESK2.sc.intel.com>
+References: <20190220053040.10831-1-ira.weiny@intel.com>
+ <20190220151930.GB11695@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <1549998408-9137-5-git-send-email-skomatineni@nvidia.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1550685729; bh=4wVmbRuRJSgfCHgUZozfWsc3hk0toOzShuoOku71S3g=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=iLw8G4oADbiHT6Fz181IqBf+txM5pZo4XDemxJOx/VbI+gNPn+RxGCjZbbTlVOGsX
-         gastsvZdNA30rc02zK8snL47WocjTlG3E02yt5hNKom2a6iVhvH3LNQXBHrh5K0ZDc
-         jUCzNIvi/5Y/f4i3oM3lP9MRevrLOIVTDbxHt1N3U+0TKheqCTL6f0TwihttTeTazJ
-         FRDjzPscsdylu+/PE6VffOnCQItIeU+tMSsof7AdQ1nKS68g1krilZhOmzMZocJ6bQ
-         yddottjwg0NT6E8NLXfPFLQlack44DltQpZIxyyHTPwHU52RS/x918quvwo+shzyd+
-         JvjNVh4oUR+2g==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190220151930.GB11695@infradead.org>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 12/02/2019 19:06, Sowjanya Komatineni wrote:
-> This patch adds DMA support for Tegra I2C.
+On Wed, Feb 20, 2019 at 07:19:30AM -0800, Christoph Hellwig wrote:
+> On Tue, Feb 19, 2019 at 09:30:33PM -0800, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > Resending these as I had only 1 minor comment which I believe we have covered
+> > in this series.  I was anticipating these going through the mm tree as they
+> > depend on a cleanup patch there and the IB changes are very minor.  But they
+> > could just as well go through the IB tree.
+> > 
+> > NOTE: This series depends on my clean up patch to remove the write parameter
+> > from gup_fast_permitted()[1]
+> > 
+> > HFI1, qib, and mthca, use get_user_pages_fast() due to it performance
+> > advantages.  These pages can be held for a significant time.  But
+> > get_user_pages_fast() does not protect against mapping of FS DAX pages.
 > 
-> Tegra I2C TX and RX FIFO depth is 8 words. PIO mode is used for
-> transfer size of the max FIFO depth and DMA mode is used for
-> transfer size higher than max FIFO depth to save CPU overhead.
+> This I don't get - if you do lock down long term mappings performance
+> of the actual get_user_pages call shouldn't matter to start with.
 > 
-> PIO mode needs full intervention of CPU to fill or empty FIFO's
-> and also need to service multiple data requests interrupt for the
-> same transaction. This adds delay between data bytes of the same
-> transfer when CPU is fully loaded and some slave devices has
-> internal timeout for no bus activity and stops transaction to
-> avoid bus hang. DMA mode is helpful in such cases.
-> 
-> DMA mode is also helpful for Large transfers during downloading or
-> uploading FW over I2C to some external devices.
-> 
-> Tegra210 and prior Tegra chips use APBDMA driver which is replaced
-> with GPCDMA on Tegra186 and Tegra194.
-> This patch uses has_apb_dma flag in hw_feature to differentiate
-> DMA driver change between Tegra chipset.
-> 
-> APBDMA driver is registered from module-init level and this patch
-> also has a change to register I2C driver at module-init level
-> rather than subsys-init to avoid deferring I2C probe till APBDMA
-> driver is registered.
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> Tested-by: Dmitry Osipenko <digetx@gmail.com>
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> What do I miss?
 
-...
+A couple of points.
 
-> +static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
-> +{
-> +	struct dma_chan *chan;
-> +	u32 *dma_buf;
-> +	dma_addr_t dma_phys;
-> +	int err;
-> +
-> +	if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA) ||
-> +	    !i2c_dev->hw->has_apb_dma) {
-> +		err = -ENODEV;
-> +		goto err_out;
-> +	}
-> +
-> +	chan = dma_request_slave_channel_reason(i2c_dev->dev, "rx");
-> +	if (IS_ERR(chan)) {
-> +		err = PTR_ERR(chan);
-> +		goto err_out;
-> +	}
-> +
-> +	i2c_dev->rx_dma_chan = chan;
-> +
-> +	chan = dma_request_slave_channel_reason(i2c_dev->dev, "tx");
-> +	if (IS_ERR(chan)) {
-> +		err = PTR_ERR(chan);
-> +		goto err_out;
-> +	}
-> +
-> +	i2c_dev->tx_dma_chan = chan;
-> +
-> +	dma_buf = dma_alloc_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
-> +				     &dma_phys, GFP_KERNEL | __GFP_NOWARN);
-> +	if (!dma_buf) {
-> +		dev_err(i2c_dev->dev, "failed to allocate the DMA buffer\n");
-> +		err = -ENOMEM;
-> +		goto err_out;
-> +	}
-> +
-> +	i2c_dev->dma_buf = dma_buf;
-> +	i2c_dev->dma_phys = dma_phys;
-> +	return 0;
-> +
-> +err_out:
-> +	tegra_i2c_release_dma(i2c_dev);
-> +	if (err != -EPROBE_DEFER) {
-> +		dev_err(i2c_dev->dev, "cannot use DMA: %d\n", err);
-> +		dev_err(i2c_dev->dev, "fallbacking to PIO\n");
-> +		return 0;
-> +	}
-I think that the above should be a dev_dbg print or re-worked in someway
-because now for Tegra194 which does not have an APB DMA I see ...
+First "longterm" is a relative thing and at this point is probably a misnomer.
+This is really flagging a pin which is going to be given to hardware and can't
+move.  I've thought of a couple of alternative names but I think we have to
+settle on if we are going to use FL_LAYOUT or something else to solve the
+"longterm" problem.  Then I think we can change the flag to a better name.
 
-[       6.093234] ERR KERN tegra-i2c 31c0000.i2c: cannot use DMA: -19
-[       6.096847] ERR KERN tegra-i2c 31c0000.i2c: falling back to PIO
+Second, It depends on how often you are registering memory.  I have spoken with
+some RDMA users who consider MR in the performance path...  For the overall
+application performance.  I don't have the numbers as the tests for HFI1 were
+done a long time ago.  But there was a significant advantage.  Some of which is
+probably due to the fact that you don't have to hold mmap_sem.
 
-Given that the APB DMA is not supported for Tegra186/Tegra194, there is
-no point in printing these error messages. Now it looks like something
-is wrong but really it is not :-(
+Finally, architecturally I think it would be good for everyone to use *_fast.
+There are patches submitted to the RDMA list which would allow the use of
+*_fast (they reworking the use of mmap_sem) and as soon as they are accepted
+I'll submit a patch to convert the RDMA core as well.  Also to this point
+others are looking to use *_fast.[2]
 
-Cheers
-Jon
+As an asside, Jasons pointed out in my previous submission that *_fast and
+*_unlocked look very much the same.  I agree and I think further cleanup will
+be coming.  But I'm focused on getting the final solution for DAX at the
+moment.
 
--- 
-nvpublic
+Ira
+
