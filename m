@@ -3,220 +3,151 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 813F1C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:59:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57CE1C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:59:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 516B720685
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:59:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31F4E20685
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:59:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727788AbfBTK7O (ORCPT
+        id S1727808AbfBTK7m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 05:59:14 -0500
-Received: from shell.v3.sk ([90.176.6.54]:59847 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727685AbfBTK7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 05:59:04 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 0051D101A60;
-        Wed, 20 Feb 2019 11:59:01 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id KAZnHPdVu9vy; Wed, 20 Feb 2019 11:58:51 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 89265101A64;
-        Wed, 20 Feb 2019 11:58:50 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id Ss00s03L0Fl6; Wed, 20 Feb 2019 11:58:49 +0100 (CET)
-Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id A9C4E101A5C;
-        Wed, 20 Feb 2019 11:58:48 +0100 (CET)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Kalle Valo <kvalo@codeaurora.org>
-Cc:     Steve deRosier <derosier@cal-sierra.com>,
-        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 1/3] libertas_tf: move hardware callbacks to a separate structure
-Date:   Wed, 20 Feb 2019 11:58:38 +0100
-Message-Id: <20190220105840.793525-2-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190220105840.793525-1-lkundrak@v3.sk>
-References: <20190220105840.793525-1-lkundrak@v3.sk>
+        Wed, 20 Feb 2019 05:59:42 -0500
+Received: from mx-rz-3.rrze.uni-erlangen.de ([131.188.11.22]:42164 "EHLO
+        mx-rz-3.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726612AbfBTK7m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 05:59:42 -0500
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx-rz-3.rrze.uni-erlangen.de (Postfix) with ESMTPS id 444F3v20Zpz1yR3;
+        Wed, 20 Feb 2019 11:59:39 +0100 (CET)
+Authentication-Results: mx-rz-3.rrze.uni-erlangen.de; dkim=none
+        reason="no signature"; dkim-adsp=none (unprotected policy);
+        dkim-atps=neutral
+X-Virus-Scanned: amavisd-new at boeck5.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 10.21.3.88
+Received: from fau.de (faustud-010-021-003-088.pool.uni-erlangen.de [10.21.3.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: U2FsdGVkX1/8CY91/8H/yA5l8VtHDkBsyYQxTy09J+I=)
+        by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 444F3s079zz1yFZ;
+        Wed, 20 Feb 2019 11:59:37 +0100 (CET)
+From:   Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+To:     linux-perf-users@vger.kernel.org
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>,
+        linux-kernel@vger.kernel.org, Milian Wolff <milian.wolff@kdab.com>,
+        Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+Subject: [PATCHv2 2/2] perf evsel: add inline functions to sample callchain output
+Date:   Wed, 20 Feb 2019 11:59:13 +0100
+Message-Id: <20190220105913.1321-1-jonas.rabenstein@studium.uni-erlangen.de>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20190220001116.3b3yyndjjmqs3hmm@studium.uni-erlangen.de>
+References: <20190220001116.3b3yyndjjmqs3hmm@studium.uni-erlangen.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We'll need to talk to the firmware to get a hardware address before
-device is registered with ieee80211 subsystem at the end of
-lbtf_add_card(). Hooking the callbacks after that is too late.
+Whenever a callchain shall be printed search for each address whether
+inline information is available and add those symbols to the output
+if symbol_conf.inline_name is enabled.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
 ---
- drivers/net/wireless/marvell/libertas_tf/cmd.c  |  2 +-
- .../net/wireless/marvell/libertas_tf/if_usb.c   | 12 +++++++-----
- .../wireless/marvell/libertas_tf/libertas_tf.h  | 17 +++++++++++------
- drivers/net/wireless/marvell/libertas_tf/main.c | 10 ++++++----
- 4 files changed, 25 insertions(+), 16 deletions(-)
+v2:
+ - fix handling of static binaries
 
-diff --git a/drivers/net/wireless/marvell/libertas_tf/cmd.c b/drivers/net=
-/wireless/marvell/libertas_tf/cmd.c
-index 64b147dd2432..130f578daafd 100644
---- a/drivers/net/wireless/marvell/libertas_tf/cmd.c
-+++ b/drivers/net/wireless/marvell/libertas_tf/cmd.c
-@@ -256,7 +256,7 @@ static void lbtf_submit_command(struct lbtf_private *=
-priv,
- 		     command, le16_to_cpu(cmd->seqnum), cmdsize);
- 	lbtf_deb_hex(LBTF_DEB_CMD, "DNLD_CMD", (void *) cmdnode->cmdbuf, cmdsiz=
-e);
-=20
--	ret =3D priv->hw_host_to_card(priv, MVMS_CMD, (u8 *) cmd, cmdsize);
-+	ret =3D priv->ops->hw_host_to_card(priv, MVMS_CMD, (u8 *)cmd, cmdsize);
- 	spin_unlock_irqrestore(&priv->driver_lock, flags);
-=20
- 	if (ret) {
-diff --git a/drivers/net/wireless/marvell/libertas_tf/if_usb.c b/drivers/=
-net/wireless/marvell/libertas_tf/if_usb.c
-index 6ede6168bd85..7a5a1a85dcf7 100644
---- a/drivers/net/wireless/marvell/libertas_tf/if_usb.c
-+++ b/drivers/net/wireless/marvell/libertas_tf/if_usb.c
-@@ -131,6 +131,12 @@ static void if_usb_fw_timeo(struct timer_list *t)
- 	lbtf_deb_leave(LBTF_DEB_USB);
+ tools/perf/util/evsel_fprintf.c | 55 +++++++++++++++++++++++++++++----
+ 1 file changed, 49 insertions(+), 6 deletions(-)
+
+diff --git a/tools/perf/util/evsel_fprintf.c b/tools/perf/util/evsel_fprintf.c
+index c710f687ddf4..a8d6465af1aa 100644
+--- a/tools/perf/util/evsel_fprintf.c
++++ b/tools/perf/util/evsel_fprintf.c
+@@ -168,6 +168,52 @@ static int __fprintf_callchain_link(u64 ip, struct map *map, struct symbol *symb
+ 	return printed;
  }
-=20
-+static const struct lbtf_ops if_usb_ops =3D {
-+	.hw_host_to_card =3D if_usb_host_to_card,
-+	.hw_prog_firmware =3D if_usb_prog_firmware,
-+	.hw_reset_device =3D if_usb_reset_device,
-+};
+ 
++static int __fprintf_callchain(struct callchain_cursor_node *node, bool first,
++			       int left_alignment, unsigned int print_opts,
++			       FILE *fp)
++{
++	int printed = 0;
++	struct inline_node *inline_node;
++	struct inline_list *ilist;
++	u64 addr;
 +
- /**
-  *  if_usb_probe - sets the configuration values
-  *
-@@ -216,15 +222,11 @@ static int if_usb_probe(struct usb_interface *intf,
- 		goto dealloc;
- 	}
-=20
--	priv =3D lbtf_add_card(cardp, &udev->dev);
-+	priv =3D lbtf_add_card(cardp, &udev->dev, &if_usb_ops);
- 	if (!priv)
- 		goto dealloc;
-=20
- 	cardp->priv =3D priv;
--
--	priv->hw_host_to_card =3D if_usb_host_to_card;
--	priv->hw_prog_firmware =3D if_usb_prog_firmware;
--	priv->hw_reset_device =3D if_usb_reset_device;
- 	cardp->boot2_version =3D udev->descriptor.bcdDevice;
-=20
- 	usb_get_dev(udev);
-diff --git a/drivers/net/wireless/marvell/libertas_tf/libertas_tf.h b/dri=
-vers/net/wireless/marvell/libertas_tf/libertas_tf.h
-index ad77b92d0b41..11d5ff68bc5e 100644
---- a/drivers/net/wireless/marvell/libertas_tf/libertas_tf.h
-+++ b/drivers/net/wireless/marvell/libertas_tf/libertas_tf.h
-@@ -173,10 +173,19 @@ struct channel_range {
-=20
- struct if_usb_card;
-=20
-+struct lbtf_ops {
-+	/** Hardware access */
-+	int (*hw_host_to_card)(struct lbtf_private *priv, u8 type,
-+			       u8 *payload, u16 nb);
-+	int (*hw_prog_firmware)(struct if_usb_card *cardp);
-+	int (*hw_reset_device)(struct if_usb_card *cardp);
-+};
++	if (!symbol_conf.inline_name)
++		goto no_inline;
 +
- /** Private structure for the MV device */
- struct lbtf_private {
- 	void *card;
- 	struct ieee80211_hw *hw;
-+	const struct lbtf_ops *ops;
-=20
- 	/* Command response buffer */
- 	u8 cmd_resp_buff[LBS_UPLD_SIZE];
-@@ -188,11 +197,6 @@ struct lbtf_private {
-=20
- 	struct work_struct cmd_work;
- 	struct work_struct tx_work;
--	/** Hardware access */
--	int (*hw_host_to_card) (struct lbtf_private *priv, u8 type, u8 *payload=
-, u16 nb);
--	int (*hw_prog_firmware) (struct if_usb_card *cardp);
--	int (*hw_reset_device) (struct if_usb_card *cardp);
++	if (!node->map || !node->map->dso)
++		goto no_inline;
++
++	addr = node->map->map_ip(node->map, node->ip);
++	addr = map__rip_2objdump(node->map, addr);
++
++	inline_node = inlines__tree_find(&node->map->dso->inlined_nodes,
++					 addr);
++	if (!inline_node) {
++		inline_node = dso__parse_addr_inlines(node->map->dso,
++						      addr, node->sym);
++		if (!inline_node)
++			goto no_inline;
++		inlines__tree_insert(&node->map->dso->inlined_nodes,
++				     inline_node);
++	}
++
++	list_for_each_entry(ilist, &inline_node->val, list) {
++		printed += __fprintf_callchain_link(node->ip, node->map,
++						    ilist->symbol,
++						    ilist->srcline,
++						    first, left_alignment,
++						    print_opts, fp);
++		first = (first && printed == 0);
++	}
++
++	return printed;
++
++no_inline:
++	return __fprintf_callchain_link(node->ip, node->map, node->sym,
++					NULL, first, left_alignment,
++					print_opts, fp);
++}
++
+ int sample__fprintf_callchain(struct perf_sample *sample, int left_alignment,
+ 			      unsigned int print_opts, struct callchain_cursor *cursor,
+ 			      FILE *fp)
+@@ -183,12 +229,9 @@ int sample__fprintf_callchain(struct perf_sample *sample, int left_alignment,
+ 			if (!node)
+ 				break;
+ 
 -
-=20
- 	/** Wlan adapter data structure*/
- 	/** STATUS variables */
-@@ -486,7 +490,8 @@ void lbtf_cmd_response_rx(struct lbtf_private *priv);
- /* main.c */
- struct chan_freq_power *lbtf_get_region_cfp_table(u8 region,
- 	int *cfp_no);
--struct lbtf_private *lbtf_add_card(void *card, struct device *dmdev);
-+struct lbtf_private *lbtf_add_card(void *card, struct device *dmdev,
-+				   const struct lbtf_ops *ops);
- int lbtf_remove_card(struct lbtf_private *priv);
- int lbtf_start_card(struct lbtf_private *priv);
- int lbtf_rx(struct lbtf_private *priv, struct sk_buff *skb);
-diff --git a/drivers/net/wireless/marvell/libertas_tf/main.c b/drivers/ne=
-t/wireless/marvell/libertas_tf/main.c
-index f048b57043c6..a9c04ca75ccc 100644
---- a/drivers/net/wireless/marvell/libertas_tf/main.c
-+++ b/drivers/net/wireless/marvell/libertas_tf/main.c
-@@ -281,7 +281,7 @@ static void lbtf_tx_work(struct work_struct *work)
- 	BUG_ON(priv->tx_skb);
- 	spin_lock_irq(&priv->driver_lock);
- 	priv->tx_skb =3D skb;
--	err =3D priv->hw_host_to_card(priv, MVMS_DAT, skb->data, skb->len);
-+	err =3D priv->ops->hw_host_to_card(priv, MVMS_DAT, skb->data, skb->len)=
-;
- 	spin_unlock_irq(&priv->driver_lock);
- 	if (err) {
- 		dev_kfree_skb_any(skb);
-@@ -301,7 +301,7 @@ static int lbtf_op_start(struct ieee80211_hw *hw)
-=20
- 	if (!priv->fw_ready)
- 		/* Upload firmware */
--		if (priv->hw_prog_firmware(card))
-+		if (priv->ops->hw_prog_firmware(card))
- 			goto err_prog_firmware;
-=20
- 	/* poke the firmware */
-@@ -322,7 +322,7 @@ static int lbtf_op_start(struct ieee80211_hw *hw)
- 	return 0;
-=20
- err_prog_firmware:
--	priv->hw_reset_device(card);
-+	priv->ops->hw_reset_device(card);
- 	lbtf_deb_leave_args(LBTF_DEB_MACOPS, "error programming fw; ret=3D%d", =
-ret);
- 	return ret;
- }
-@@ -603,7 +603,8 @@ EXPORT_SYMBOL_GPL(lbtf_rx);
-  *
-  *  Returns: pointer to struct lbtf_priv.
-  */
--struct lbtf_private *lbtf_add_card(void *card, struct device *dmdev)
-+struct lbtf_private *lbtf_add_card(void *card, struct device *dmdev,
-+				   const struct lbtf_ops *ops)
- {
- 	struct ieee80211_hw *hw;
- 	struct lbtf_private *priv =3D NULL;
-@@ -620,6 +621,7 @@ struct lbtf_private *lbtf_add_card(void *card, struct=
- device *dmdev)
-=20
- 	priv->hw =3D hw;
- 	priv->card =3D card;
-+	priv->ops =3D ops;
- 	priv->tx_skb =3D NULL;
-=20
- 	hw->queues =3D 1;
---=20
-2.20.1
+-			printed += __fprintf_callchain_link(node->ip, node->map,
+-							    node->sym, NULL,
+-							    (printed == 0),
+-							    left_alignment,
+-							    print_opts, fp);
++			printed += __fprintf_callchain(node, (printed == 0),
++						       left_alignment,
++						       print_opts, fp);
+ 
+ 			/* Add srccode here too? */
+ 			if (symbol_conf.bt_stop_list &&
+-- 
+2.19.2
 
