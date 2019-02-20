@@ -2,190 +2,250 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A5CC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:19:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4653C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:19:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9A012147A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:19:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B48E2146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:19:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="L7GnQZKk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727678AbfBTUTh (ORCPT
+        id S1728134AbfBTUTE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 15:19:37 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54936 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728131AbfBTUTF (ORCPT
+        Wed, 20 Feb 2019 15:19:04 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:34258 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726878AbfBTUSy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 15:19:05 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1KK90KS051674
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 15:19:04 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qscqmaykv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 15:19:03 -0500
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <mwb@linux.vnet.ibm.com>;
-        Wed, 20 Feb 2019 20:19:02 -0000
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 20 Feb 2019 20:18:59 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1KKIw8n7733312
+        Wed, 20 Feb 2019 15:18:54 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1KK8VMo087440;
+        Wed, 20 Feb 2019 20:18:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=nEoaALBLcsNsxHnJFDNeJyCL6A1vZHWL3Ev7hoUXOR8=;
+ b=L7GnQZKkBuiZR6S84VaVdAO/PMf0RxkH2Ijy80O0lmcjcqbkn3ABj626knGXcZaDVUIF
+ BDZWhrJlcEoHOpGhhTwFiolKxI76K9L/u8TuTNtXXnddgsuZUbCMZDdVop3NkH9ofrmZ
+ 6s56Y77lgri2vfCxVvz0a9Dye5kPNQzpcJ+7/517VfOVDd4yOxmFEaxPUbYVY3C4pc94
+ xGbzKEQoKeN4W693bFRat7J9Eqs6C4ISUQgwDNHL6AFYDk7o8HXyVPGhtXBDTQZnhsqA
+ eZJDc/2CZtc9oB5sx3xpxHM+YLbrEsYV8Z5ID7iqZkzZaXRt0LFOc7rBUc+ouprS+exQ Lg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2qp81ec3f4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Feb 2019 20:18:47 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1KKIkdD020684
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Feb 2019 20:18:58 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3825CB2066;
-        Wed, 20 Feb 2019 20:18:58 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6BC4CB205F;
-        Wed, 20 Feb 2019 20:18:57 +0000 (GMT)
-Received: from oc8380061452.ibm.com (unknown [9.85.185.126])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 20 Feb 2019 20:18:57 +0000 (GMT)
-Subject: Re: [PATCH] powerpc/pseries: Fix dn reference error in
- dlpar_cpu_remove_by_index
-To:     Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     Rob Herring <robh@kernel.org>,
-        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Nathan Lynch <nathanl@linux.vnet.ibm.com>,
-        "Juliet M. Kim" <minkim@linux.vnet.ibm.com>
-References: <cc20c5cc-cf8e-d125-cac9-5d1b938a1d86@linux.vnet.ibm.com>
- <a7986146-f09d-6d40-63f9-8e7307fc2609@linux.vnet.ibm.com>
-From:   Michael Bringmann <mwb@linux.vnet.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mwb@linux.vnet.ibm.com; prefer-encrypt=mutual; keydata=
- mQENBFcY7GcBCADzw3en+yzo9ASFGCfldVkIg95SAMPK0myXp2XJYET3zT45uBsX/uj9/2nA
- lBmXXeOSXnPfJ9V3vtiwcfATnWIsVt3tL6n1kqikzH9nXNxZT7MU/7gqzWZngMAWh/GJ9qyg
- DTOZdjsvdUNUWxtiLvBo7y+reA4HjlQhwhYxxvCpXBeRoF0qDWfQ8DkneemqINzDZPwSQ7zY
- t4F5iyN1I9GC5RNK8Y6jiKmm6bDkrrbtXPOtzXKs0J0FqWEIab/u3BDrRP3STDVPdXqViHua
- AjEzthQbGZm0VCxI4a7XjMi99g614/qDcXZCs00GLZ/VYIE8hB9C5Q+l66S60PLjRrxnABEB
- AAG0LU1pY2hhZWwgVy4gQnJpbmdtYW5uIDxtd2JAbGludXgudm5ldC5pYm0uY29tPokBOAQT
- AQIAIgUCVxjsZwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQSEdag3dpuTI0NAf8
- CKYTDKQLgOSjVrU2L5rM4lXaJRmQV6oidD3vIhKSnWRvPq9C29ifRG6ri20prTHAlc0vycgm
- 41HHg0y2vsGgNXGTWC2ObemoZBI7mySXe/7Tq5mD/semGzOp0YWZ7teqrkiSR8Bw0p+LdE7K
- QmT7tpjjvuhrtQ3RRojUYcuy1nWUsc4D+2cxsnZslsx84FUKxPbLagDgZmgBhUw/sUi40s6S
- AkdViVCVS0WANddLIpG0cfdsV0kCae/XdjK3mRK6drFKv1z+QFjvOhc8QIkkxFD0da9w3tJj
- oqnqHFV5gLcHO6/wizPx/NV90y6RngeBORkQiRFWxTXS4Oj9GVI/UrkBDQRXGOxnAQgAmJ5Y
- ikTWrMWPfiveUacETyEhWVl7u8UhZcx3yy2te8O0ay7t9fYcZgIEfQPPVVus89acIXlG3wYL
- DDPvb21OprLxi+ZJ2a0S5we+LcSWN1jByxJlbWBq+/LcMtGAOhNLpysY1gD0Y4UW/eKS+TFZ
- 562qKC3k1dBvnV9JXCgeS1taYFxRdVAn+2DwK3nuyG/DDq/XgJ5BtmyC3MMx8CiW3POj+O+l
- 6SedIeAfZlZ7/xhijx82g93h07VavUQRwMZgZFsqmuxBxVGiav2HB+dNvs3PFB087Pvc9OHe
- qhajPWOP/gNLMmvBvknn1NToM9a8/E8rzcIZXoYs4RggRRYh6wARAQABiQEfBBgBAgAJBQJX
- GOxnAhsMAAoJEEhHWoN3abky+RUH/jE08/r5QzaNKYeVhu0uVbgXu5fsxqr2cAxhf+KuwT3T
- efhEP2alarxzUZdEh4MsG6c+X2NYLbD3cryiXxVx/7kSAJEFQJfA5P06g8NLR25Qpq9BLsN7
- ++dxQ+CLKzSEb1X24hYAJZpOhS8ev3ii+M/XIo+olDBKuTaTgB6elrg3CaxUsVgLBJ+jbRkW
- yQe2S5f/Ja1ThDpSSLLWLiLK/z7+gaqwhnwjQ8Z8Y9D2itJQcj4itHilwImsqwLG7SxzC0NX
- IQ5KaAFYdRcOgwR8VhhkOIVd70ObSZU+E4pTET1WDz4o65xZ89yfose1No0+r5ht/xWOOrh8
- 53/hcWvxHVs=
-Organization: IBM Linux Technology Center
-Date:   Wed, 20 Feb 2019 14:18:56 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Wed, 20 Feb 2019 20:18:46 GMT
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1KKIkfj019110;
+        Wed, 20 Feb 2019 20:18:46 GMT
+Received: from paddy.lan (/94.61.137.133)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 20 Feb 2019 12:18:45 -0800
+From:   Joao Martins <joao.m.martins@oracle.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+Cc:     Ankur Arora <ankur.a.arora@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Joao Martins <joao.m.martins@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>
+Subject: [PATCH RFC 35/39] xen/xenbus: xen_shim_domain() support
+Date:   Wed, 20 Feb 2019 20:16:05 +0000
+Message-Id: <20190220201609.28290-36-joao.m.martins@oracle.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20190220201609.28290-1-joao.m.martins@oracle.com>
+References: <20190220201609.28290-1-joao.m.martins@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <a7986146-f09d-6d40-63f9-8e7307fc2609@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19022020-0052-0000-0000-0000038D72E2
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010633; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000281; SDB=6.01163926; UDB=6.00607770; IPR=6.00944510;
- MB=3.00025671; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-20 20:19:00
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022020-0053-0000-0000-00005FE9E2C1
-Message-Id: <8bc3e665-828f-8247-0778-56d7ee045e53@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-20_15:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902200138
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9173 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902200138
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/19/19 2:03 PM, Tyrel Datwyler wrote:
-> On 02/19/2019 07:46 AM, Michael Bringmann wrote:
->> powerpc/pseries: Fix dn reference error in dlpar_cpu_remove_by_index()
->>
->> A reference to the device node of the CPU to be removed is released
->> upon successful removal of the associated CPU device.  If the call
->> to remove the CPU device fails, dlpar_cpu_remove_by_index() still
->> frees the reference and this leads to miscomparisons and/or
->> addressing errors later on.
->>
->> This problem may be observed when trying to DLPAR 'hot-remove' a CPU
->> from a system that has only a single CPU.  The operation will fail
->> because there is no other CPU to which the kernel operations may be
->> migrated, but the refcount will still be decremented.
->>
->> Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
->>
->>
->> diff --git a/arch/powerpc/platforms/pseries/hotplug-cpu.c b/arch/powerpc/platforms/pseries/hotplug-cpu.c
->> index 97feb6e..9537bb9 100644
->> --- a/arch/powerpc/platforms/pseries/hotplug-cpu.c
->> +++ b/arch/powerpc/platforms/pseries/hotplug-cpu.c
->> @@ -635,7 +635,8 @@ static int dlpar_cpu_remove_by_index(u32 drc_index)
->>  	}
->>
->>  	rc = dlpar_cpu_remove(dn, drc_index);
->> -	of_node_put(dn);
->> +	if (!rc)
->> +		of_node_put(dn);
->>  	return rc;
->>  }
->>
-> 
-> NACK!
-> 
-> The logic here is wrong. Here is the full function.
-> 
-> static int dlpar_cpu_remove_by_index(u32 drc_index)
-> {
->         struct device_node *dn;
->         int rc;
-> 
->         dn = cpu_drc_index_to_dn(drc_index);
->         if (!dn) {
->                 pr_warn("Cannot find CPU (drc index %x) to remove\n",
->                         drc_index);
->                 return -ENODEV;
->         }
-> 
->         rc = dlpar_cpu_remove(dn, drc_index);
->         of_node_put(dn);
->         return rc;
-> }
-> 
-> The call to cpu_drc_index_to_dn() returns a device_node with the reference count
-> incremented. So, regardless of the success or failure of the call to
-> dlpar_cpu_remove() you need to release that reference.
-> 
-> If there is a reference counting issue it is somewhere else.
+From: Ankur Arora <ankur.a.arora@oracle.com>
 
-Okay.  Withdrawn while we look some more.
+Fixup the gnttab unmap_ops (and other data structures) to handle
+host_addr as an OUT parameter from the call to GNTTABOP_map_grant_ref.
 
-> -Tyrel
+Also, allow xenstored to be hosted in XS_LOCAL mode for
+xen_shim_domain() -- this means that it does not need to acquire
+xenstore evtchn and pfn externally.
 
+Co-developed-by: Joao Martins <joao.m.martins@oracle.com>
+Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+---
+ drivers/xen/xenbus/xenbus_client.c       | 23 +++++++++++++++++------
+ drivers/xen/xenbus/xenbus_dev_backend.c  |  4 ++--
+ drivers/xen/xenbus/xenbus_dev_frontend.c |  4 ++--
+ drivers/xen/xenbus/xenbus_probe.c        |  8 ++++----
+ 4 files changed, 25 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/xen/xenbus/xenbus_client.c b/drivers/xen/xenbus/xenbus_client.c
+index ada1c9aa6525..b22149a789d4 100644
+--- a/drivers/xen/xenbus/xenbus_client.c
++++ b/drivers/xen/xenbus/xenbus_client.c
+@@ -487,8 +487,11 @@ static int __xenbus_map_ring(struct xenbus_device *dev,
+ 					 "mapping in shared page %d from domain %d",
+ 					 gnt_refs[i], dev->otherend_id);
+ 			goto fail;
+-		} else
++		} else {
+ 			handles[i] = map[i].handle;
++			if (xen_shim_domain())
++				addrs[i] = map[i].host_addr;
++		}
+ 	}
+ 
+ 	return GNTST_okay;
+@@ -498,7 +501,8 @@ static int __xenbus_map_ring(struct xenbus_device *dev,
+ 		if (handles[i] != INVALID_GRANT_HANDLE) {
+ 			memset(&unmap[j], 0, sizeof(unmap[j]));
+ 			gnttab_set_unmap_op(&unmap[j], (phys_addr_t)addrs[i],
+-					    GNTMAP_host_map, handles[i]);
++					    !xen_shim_domain()?GNTMAP_host_map:0,
++					    handles[i]);
+ 			j++;
+ 		}
+ 	}
+@@ -546,7 +550,7 @@ static int xenbus_map_ring_valloc_hvm(struct xenbus_device *dev,
+ 				      void **vaddr)
+ {
+ 	struct xenbus_map_node *node;
+-	int err;
++	int i, err;
+ 	void *addr;
+ 	bool leaked = false;
+ 	struct map_ring_valloc_hvm info = {
+@@ -572,9 +576,16 @@ static int xenbus_map_ring_valloc_hvm(struct xenbus_device *dev,
+ 			     &info);
+ 
+ 	err = __xenbus_map_ring(dev, gnt_ref, nr_grefs, node->handles,
+-				info.phys_addrs, GNTMAP_host_map, &leaked);
++				info.phys_addrs,
++				!xen_shim_domain() ? GNTMAP_host_map : 0,
++				&leaked);
+ 	node->nr_handles = nr_grefs;
+ 
++	if (xen_shim_domain()) {
++		for (i = 0; i < nr_grefs; i++)
++			node->hvm.pages[i] = virt_to_page(info.phys_addrs[i]);
++	}
++
+ 	if (err)
+ 		goto out_free_ballooned_pages;
+ 
+@@ -882,7 +893,7 @@ int xenbus_unmap_ring(struct xenbus_device *dev,
+ 
+ 	for (i = 0; i < nr_handles; i++)
+ 		gnttab_set_unmap_op(&unmap[i], vaddrs[i],
+-				    GNTMAP_host_map, handles[i]);
++				    !xen_shim_domain()?GNTMAP_host_map:0, handles[i]);
+ 
+ 	if (HYPERVISOR_grant_table_op(GNTTABOP_unmap_grant_ref, unmap, i))
+ 		BUG();
+@@ -926,7 +937,7 @@ static const struct xenbus_ring_ops ring_ops_hvm = {
+ 	.unmap = xenbus_unmap_ring_vfree_hvm,
+ };
+ 
+-void __init xenbus_ring_ops_init(void)
++void xenbus_ring_ops_init(void)
+ {
+ #ifdef CONFIG_XEN_PV
+ 	if (!xen_feature(XENFEAT_auto_translated_physmap))
+diff --git a/drivers/xen/xenbus/xenbus_dev_backend.c b/drivers/xen/xenbus/xenbus_dev_backend.c
+index edba5fecde4d..b605c87bff76 100644
+--- a/drivers/xen/xenbus/xenbus_dev_backend.c
++++ b/drivers/xen/xenbus/xenbus_dev_backend.c
+@@ -119,11 +119,11 @@ static struct miscdevice xenbus_backend_dev = {
+ 	.fops = &xenbus_backend_fops,
+ };
+ 
+-static int __init xenbus_backend_init(void)
++int xenbus_backend_init(void)
+ {
+ 	int err;
+ 
+-	if (!xen_initial_domain())
++	if (!xen_initial_domain() && !xen_shim_domain())
+ 		return -ENODEV;
+ 
+ 	err = misc_register(&xenbus_backend_dev);
+diff --git a/drivers/xen/xenbus/xenbus_dev_frontend.c b/drivers/xen/xenbus/xenbus_dev_frontend.c
+index a4080d04a01c..c6fca6cca6c8 100644
+--- a/drivers/xen/xenbus/xenbus_dev_frontend.c
++++ b/drivers/xen/xenbus/xenbus_dev_frontend.c
+@@ -680,11 +680,11 @@ static struct miscdevice xenbus_dev = {
+ 	.fops = &xen_xenbus_fops,
+ };
+ 
+-static int __init xenbus_frontend_init(void)
++static int xenbus_frontend_init(void)
+ {
+ 	int err;
+ 
+-	if (!xen_domain())
++	if (!xen_domain() && !xen_shim_domain())
+ 		return -ENODEV;
+ 
+ 	err = misc_register(&xenbus_dev);
+diff --git a/drivers/xen/xenbus/xenbus_probe.c b/drivers/xen/xenbus/xenbus_probe.c
+index 2e0ed46b05e7..bbc405cd01ef 100644
+--- a/drivers/xen/xenbus/xenbus_probe.c
++++ b/drivers/xen/xenbus/xenbus_probe.c
+@@ -693,7 +693,7 @@ EXPORT_SYMBOL_GPL(xenbus_probe);
+ 
+ static int __init xenbus_probe_initcall(void)
+ {
+-	if (!xen_domain())
++	if (!xen_domain() && !xen_shim_domain())
+ 		return -ENODEV;
+ 
+ 	if (xen_initial_domain() || xen_hvm_domain())
+@@ -790,7 +790,7 @@ int xenbus_init(void)
+ 	uint64_t v = 0;
+ 	xen_store_domain_type = XS_UNKNOWN;
+ 
+-	if (!xen_domain())
++	if (!xen_domain() && !xen_shim_domain())
+ 		return -ENODEV;
+ 
+ 	xenbus_ring_ops_init();
+@@ -799,7 +799,7 @@ int xenbus_init(void)
+ 		xen_store_domain_type = XS_PV;
+ 	if (xen_hvm_domain())
+ 		xen_store_domain_type = XS_HVM;
+-	if (xen_hvm_domain() && xen_initial_domain())
++	if ((xen_hvm_domain() && xen_initial_domain()) || xen_shim_domain())
+ 		xen_store_domain_type = XS_LOCAL;
+ 	if (xen_pv_domain() && !xen_start_info->store_evtchn)
+ 		xen_store_domain_type = XS_LOCAL;
+@@ -863,7 +863,7 @@ postcore_initcall(xenbus_init);
+ 
+ void xenbus_deinit(void)
+ {
+-	if (!xen_domain())
++	if (!xen_domain() && !xen_shim_domain())
+ 		return;
+ 
+ #ifdef CONFIG_XEN_COMPAT_XENFS
 -- 
-Michael W. Bringmann
-Linux Technology Center
-IBM Corporation
-Tie-Line  363-5196
-External: (512) 286-5196
-Cell:       (512) 466-0650
-mwb@linux.vnet.ibm.com
+2.11.0
 
