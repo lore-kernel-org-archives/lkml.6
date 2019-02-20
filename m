@@ -2,131 +2,75 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E9D7C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98768C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:53:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 273322147A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:52:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66EA52086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:53:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbfBTPwM (ORCPT
+        id S1727416AbfBTPxe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:52:12 -0500
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:57201 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726019AbfBTPwK (ORCPT
+        Wed, 20 Feb 2019 10:53:34 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:39674 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725883AbfBTPxd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:52:10 -0500
-X-Originating-IP: 90.88.23.190
-Received: from localhost.localdomain (aaubervilliers-681-1-81-190.w90-88.abo.wanadoo.fr [90.88.23.190])
-        (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 3DF42FF804;
-        Wed, 20 Feb 2019 15:52:07 +0000 (UTC)
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc:     Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Eben Upton <eben@raspberrypi.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v5 3/3] drm/vc4: Add a debugfs entry to disable/enable the load tracker
-Date:   Wed, 20 Feb 2019 16:51:24 +0100
-Message-Id: <20190220155124.25022-4-paul.kocialkowski@bootlin.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190220155124.25022-1-paul.kocialkowski@bootlin.com>
-References: <20190220155124.25022-1-paul.kocialkowski@bootlin.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 20 Feb 2019 10:53:33 -0500
+X-IronPort-AV: E=Sophos;i="5.58,391,1544454000"; 
+   d="scan'208";a="8394686"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 21 Feb 2019 00:53:31 +0900
+Received: from renesas-VirtualBox.ree.adwin.renesas.com (unknown [10.226.37.56])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 33D1940031CB;
+        Thu, 21 Feb 2019 00:53:29 +0900 (JST)
+From:   Gareth Williams <gareth.williams.jx@renesas.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Gareth Williams <gareth.williams.jx@renesas.com>,
+        devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] i2c: designware: Add support for a bus clock
+Date:   Wed, 20 Feb 2019 15:50:01 +0000
+Message-Id: <1550677803-29716-1-git-send-email-gareth.williams.jx@renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to test whether the load tracker is working as expected, we
-need the ability to compare the commit result with the underrun
-indication. With the load tracker always enabled, commits that are
-expected to trigger an underrun are always rejected, so userspace
-cannot get the actual underrun indication from the hardware.
+The Synopsys I2C Controller has a bus clock that some SoCs require to access
+the registers. This series also details the new clock property in the bindings
+documentation.
 
-Add a debugfs entry to disable/enable the load tracker, so that a DRM
-commit expected to trigger an underrun can go through with the load
-tracker disabled. The underrun indication is then available to
-userspace and can be checked against the commit result with the load
-tracker enabled.
+v3:
+ - busclk renamed to pclk.
+ - Added comment with dw_i2c_dev struct definition describing pclk.
+ - Added enable rollback of first clock if second fails to enable.
+ - Changed clocks and clock-names sections to use term "peripheral clock"
+   (pclk) instead of "bus clock" (busclk) in dt-bindings documentation.
+v2:
+ - Use new devm_clk_get_optional() function as it simplifies handling when
+   the optional clock is not present.
+   
+Phil Edworthy (2):
+  dt: snps,designware-i2c: Add clock bindings documentation
+  i2c: designware: Add support for a bus clock
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Reviewed-by: Eric Anholt <eric@anholt.net>
----
- drivers/gpu/drm/vc4/vc4_debugfs.c | 9 +++++++++
- drivers/gpu/drm/vc4/vc4_drv.h     | 3 +++
- drivers/gpu/drm/vc4/vc4_kms.c     | 9 +++++++++
- 3 files changed, 21 insertions(+)
+ .../devicetree/bindings/i2c/i2c-designware.txt         |  9 +++++++++
+ drivers/i2c/busses/i2c-designware-common.c             | 18 ++++++++++++++++--
+ drivers/i2c/busses/i2c-designware-core.h               |  2 ++
+ drivers/i2c/busses/i2c-designware-platdrv.c            |  5 +++++
+ 4 files changed, 32 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/vc4/vc4_debugfs.c b/drivers/gpu/drm/vc4/vc4_debugfs.c
-index 64021bcba041..59cdad89f844 100644
---- a/drivers/gpu/drm/vc4/vc4_debugfs.c
-+++ b/drivers/gpu/drm/vc4/vc4_debugfs.c
-@@ -36,6 +36,15 @@ static const struct drm_info_list vc4_debugfs_list[] = {
- int
- vc4_debugfs_init(struct drm_minor *minor)
- {
-+	struct vc4_dev *vc4 = to_vc4_dev(minor->dev);
-+	struct dentry *dentry;
-+
-+	dentry = debugfs_create_bool("hvs_load_tracker", S_IRUGO | S_IWUSR,
-+				     minor->debugfs_root,
-+				     &vc4->load_tracker_enabled);
-+	if (!dentry)
-+		return -ENOMEM;
-+
- 	return drm_debugfs_create_files(vc4_debugfs_list, VC4_DEBUGFS_ENTRIES,
- 					minor->debugfs_root, minor);
- }
-diff --git a/drivers/gpu/drm/vc4/vc4_drv.h b/drivers/gpu/drm/vc4/vc4_drv.h
-index bbab084911f3..7a3c093e7443 100644
---- a/drivers/gpu/drm/vc4/vc4_drv.h
-+++ b/drivers/gpu/drm/vc4/vc4_drv.h
-@@ -195,6 +195,9 @@ struct vc4_dev {
- 
- 	int power_refcount;
- 
-+	/* Set to true when the load tracker is active. */
-+	bool load_tracker_enabled;
-+
- 	/* Mutex controlling the power refcount. */
- 	struct mutex power_lock;
- 
-diff --git a/drivers/gpu/drm/vc4/vc4_kms.c b/drivers/gpu/drm/vc4/vc4_kms.c
-index 6e20604573de..5160cad25fce 100644
---- a/drivers/gpu/drm/vc4/vc4_kms.c
-+++ b/drivers/gpu/drm/vc4/vc4_kms.c
-@@ -439,6 +439,10 @@ static int vc4_load_tracker_atomic_check(struct drm_atomic_state *state)
- 		}
- 	}
- 
-+	/* Don't check the load when the tracker is disabled. */
-+	if (!vc4->load_tracker_enabled)
-+		return 0;
-+
- 	/* The absolute limit is 2Gbyte/sec, but let's take a margin to let
- 	 * the system work when other blocks are accessing the memory.
- 	 */
-@@ -511,6 +515,11 @@ int vc4_kms_load(struct drm_device *dev)
- 	struct vc4_load_tracker_state *load_state;
- 	int ret;
- 
-+	/* Start with the load tracker enabled. Can be disabled through the
-+	 * debugfs load_tracker file.
-+	 */
-+	vc4->load_tracker_enabled = true;
-+
- 	sema_init(&vc4->async_modeset, 1);
- 
- 	/* Set support for vblank irq fast disable, before drm_vblank_init() */
 -- 
-2.20.1
+2.7.4
 
