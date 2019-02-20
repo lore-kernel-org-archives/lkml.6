@@ -2,383 +2,186 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29657C10F01
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D80D5C10F01
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:27:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED275206B7
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:26:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A07B72147C
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:27:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="zziY0zpH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbfBTL0f (ORCPT
+        id S1727367AbfBTL1a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 06:26:35 -0500
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:41641 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726347AbfBTL0e (ORCPT
+        Wed, 20 Feb 2019 06:27:30 -0500
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:24262 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbfBTL1a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 06:26:34 -0500
-X-Originating-IP: 109.212.12.126
-Received: from localhost (alyon-652-1-153-126.w109-212.abo.wanadoo.fr [109.212.12.126])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id C267FC0006;
-        Wed, 20 Feb 2019 11:26:30 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 7/7] clk: at91: add sam9x60 pmc driver
-Date:   Wed, 20 Feb 2019 12:26:05 +0100
-Message-Id: <20190220112605.23095-8-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190220112605.23095-1-alexandre.belloni@bootlin.com>
-References: <20190220112605.23095-1-alexandre.belloni@bootlin.com>
+        Wed, 20 Feb 2019 06:27:30 -0500
+X-IronPort-AV: E=Sophos;i="5.58,390,1544511600"; 
+   d="scan'208";a="26588978"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 20 Feb 2019 04:27:29 -0700
+Received: from NAM05-DM3-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.38) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Wed, 20 Feb 2019 04:27:28 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RoaR730PGE2hRUUO+BgMjbxk+CSEy+gPuN8FlFdBo7c=;
+ b=zziY0zpH+mjgbmcq7koUCEMxk9/y/g/iusaO+hJxKCP739a/rUl+qzF2oH14FW7kExXAU3lj8xJdEoHCjuqdN8efI1DdLkmBP1Za1Iuc952qFsn283HMcbUCdD7pi0KT3+ZXD8HbgzDvjE7ZbQWA1WWkzFTPw73W2Rq6iD+gKo8=
+Received: from MWHPR11MB1662.namprd11.prod.outlook.com (10.172.55.15) by
+ MWHPR11MB1808.namprd11.prod.outlook.com (10.175.53.135) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.19; Wed, 20 Feb 2019 11:27:25 +0000
+Received: from MWHPR11MB1662.namprd11.prod.outlook.com
+ ([fe80::b92e:f982:af32:2887]) by MWHPR11MB1662.namprd11.prod.outlook.com
+ ([fe80::b92e:f982:af32:2887%5]) with mapi id 15.20.1622.018; Wed, 20 Feb 2019
+ 11:27:25 +0000
+From:   <Nicolas.Ferre@microchip.com>
+To:     <alexandre.belloni@bootlin.com>, <sboyd@kernel.org>
+CC:     <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: at91: fix masterck name
+Thread-Topic: [PATCH] clk: at91: fix masterck name
+Thread-Index: AQHUv7x/dAWxQXybc0i6K8XkGPakkqXWDXGAgBKRjwA=
+Date:   Wed, 20 Feb 2019 11:27:25 +0000
+Message-ID: <93c2e981-f32e-7d21-d094-786b36eccc70@microchip.com>
+References: <20190208144059.29861-1-alexandre.belloni@bootlin.com>
+ <db6b542f-add1-af4c-e3f1-ce293042f375@microchip.com>
+In-Reply-To: <db6b542f-add1-af4c-e3f1-ce293042f375@microchip.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: LO2P265CA0177.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a::21) To MWHPR11MB1662.namprd11.prod.outlook.com
+ (2603:10b6:301:e::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Nicolas.Ferre@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [195.6.168.232]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e91334c8-07b3-4600-85f4-08d697266387
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:MWHPR11MB1808;
+x-ms-traffictypediagnostic: MWHPR11MB1808:
+x-microsoft-exchange-diagnostics: =?utf-8?B?MTtNV0hQUjExTUIxODA4OzIzOmVZVU5zV1lTU2FQUlZNdjFIK3orRVhNUkh3?=
+ =?utf-8?B?cWtWSHhabFhBVFVNMHA2cW41NUVkamhHN2gyU0lqMDZ3Tlp5aEJkdlk1SUwx?=
+ =?utf-8?B?WnNPMEJzM2ZIMUNuOXZGYlhveTlpdUluZVJkRVRCRFFGdkR5ZEs2bUZEQ3Vp?=
+ =?utf-8?B?c0ppTVIvQWtYdTFpdG9EaCsxV0FTS0FxcEZjUitNeW9nRCtFVUpKM0NvVlov?=
+ =?utf-8?B?RllCeGZKZko5Nm9KVkhuc1ZNZFEwR2RtNUo1NG9UdzVKcTlMQ3ZJU0tLcW1R?=
+ =?utf-8?B?NDJXY1NRcGM0R2NNT2EzVnFFZWJiVWpxS2xYL3FhZjd5S3FXbzJ4bzRuV1FY?=
+ =?utf-8?B?Ujk0T2p4VmlKWDdaNTBLd0VTdzU0anBjTXZUV3AySEJEZWRMRlVTK3hrTEtu?=
+ =?utf-8?B?UlNwS3FyU1poMThQZ1VhSWtOQWZTVzZJVWIxUzZtaDBwb0hrZFgwcXlXdUhl?=
+ =?utf-8?B?YXdSZ3JENFFGUFF5dkVzRVBmWXdNSGNKQVMxTVRsakdyUmp3TEl2My8zb1Vs?=
+ =?utf-8?B?TXVyWWsvMWtXdmRLeTl2NmQ3em5qSDlDcC93VnJ2Z0NsRFRmVGFBcVlvZjNF?=
+ =?utf-8?B?dTlxazZoUHdtTVByVUNJV2JzempjYm5PNFpIbThYQ21vdHNJOUN2d0Z0aDNR?=
+ =?utf-8?B?cTFOblNMc1ZCd0RKVnN5QmxsbTVLRDBab2ZQejNvbEk3azMyRVhFSHYrTkty?=
+ =?utf-8?B?eFhXdmsrTHV5OE9wL0wxMVdlalgwMXFlb1ZNRmxhaFpaOUZRb3IvaFdxK2cv?=
+ =?utf-8?B?L05QZWhvWnd6RXI3N0FCNVJmUVpzNnpVT3hSS1JSNTZUb0o1Uk9OK003UDI4?=
+ =?utf-8?B?aDN6WmQySm93USt4Y2JXc2RPRnJuTHRwMS9hajVSeUlSYVVvM0h2MU5IMFIz?=
+ =?utf-8?B?MnBrYWtuaStxZ3EwUmZEaXl5MmIvaUh3TUpURkhFTlZnTk5SZHhnazA4U0cx?=
+ =?utf-8?B?MS81ejJidkJacmU5V1VYTWZTNktKZnpSNFF2Z01LMFFvTlR0SHE3NHRhcVB6?=
+ =?utf-8?B?MGIwS1pNQVRybUovTm90SDlKakdpS2hmVXFpc1FzYStmM1dxbmNTZElueFd0?=
+ =?utf-8?B?YjVXdHVIY2RWUWZ4Y3NGOGR4VHo0VHArV3RkNGRVeTYvQ2l0SGI5V2sycW4r?=
+ =?utf-8?B?dktjcWw1b05GTzNUR0tVMHJCMWZaV2FTWFliWHFhTnozSFhpRUloWHhvNDVC?=
+ =?utf-8?B?aEF6ckZ3MWthcjg0VnZVamNFaStlaWIyV0tvS25RK1Q0WTAzYlN2Q21UUGRL?=
+ =?utf-8?B?Y1RFYWtHUmtSeDJIaGduOTkrZXZnNkxjdGpKemZkeTRlOWVjRU56ZDV3S3U2?=
+ =?utf-8?B?S0wwTG5LYzBTMDE1ckwvSE9vU3czSHcyUmRoL2JTaFBGTVVmNFJWU0xldW1M?=
+ =?utf-8?B?bDA0ZDljRHYzSnZNZmJrSjdoVG9YZVJoR2IxV0M1NHBtTllLRUQ1Z0VlOVJH?=
+ =?utf-8?B?VEVweUhmSXV2QjF1ZVZxMFNxT2JKY2hBY0YrYTkxRXRsQzkxT0h1aFp1Vml5?=
+ =?utf-8?B?Z0gyTFp2MnJDb2NqTGVYV0REQ1U5aVZCM25IVlN0cXJKU2cvbnBzZFI1ZENy?=
+ =?utf-8?B?REczakovd0NvWmJSZWp1UEVLdXYwcDVEQk5IT2VocGNPZEpsTCtZWEhsT2VW?=
+ =?utf-8?B?bjJRbmxvMkU4Sy9sb1c1K2VBMjBIdUhJUnNNNURwSkxydVZaUk5SN09QV0Rm?=
+ =?utf-8?B?VzZTOEhUUVhpSTBwMzA0eStiTHFpR0VOMkQzNjBwZUFjZjFNb1N4TmYwSWd5?=
+ =?utf-8?B?YVRNdStzUmluYlZQdjVOanZRcGZGQTdTaVpFTHFjd0MzMnNpQWFVNWZNd3RM?=
+ =?utf-8?Q?6jFGnGhdjL9Zd?=
+x-microsoft-antispam-prvs: <MWHPR11MB180804D75948C0DCC31E1A5CE07D0@MWHPR11MB1808.namprd11.prod.outlook.com>
+x-forefront-prvs: 0954EE4910
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(39860400002)(366004)(396003)(346002)(199004)(189003)(71200400001)(8936002)(86362001)(6512007)(54906003)(7736002)(316002)(305945005)(25786009)(99286004)(72206003)(478600001)(68736007)(53936002)(110136005)(81156014)(81166006)(8676002)(5660300002)(71190400001)(76176011)(66066001)(52116002)(6486002)(6436002)(4326008)(256004)(476003)(102836004)(229853002)(26005)(186003)(14444005)(3846002)(2906002)(6116002)(31696002)(6246003)(6506007)(446003)(386003)(486006)(36756003)(31686004)(11346002)(14454004)(105586002)(106356001)(53546011)(97736004)(2616005)(2501003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1808;H:MWHPR11MB1662.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: BEETu+ORMjfFaTpmEOf7vlmbms8ly/bIV2f21VquHQ7EdERCbf4Z4/9jXBFIDvuS58vhZg1Ok5SxAiqg4XHsKyFC2SwO26mGZAXxFGGRTF+23FwWFZn+cKC4SN3iAgQfpm0M7lWkZh4Kqbv+MRdCy0Gq6hY9R9fpsT6x9gSu5RDd2v2pg9Fc6qbP65bTk3EWd9WV3CF6+mmbmxoDoZsZSd4dZI7h/ADeSi1vNaMhbCbh78YLAz1tzNkyEmTyvnK8vS+9bYfpvVLapei2eEdIxigD5cvv1rdwAgbdmKySb2c+SDPpAxORi6UNQCHfYaYl5foDvbKFX2MI9bJLlzrR1HdP/9gqEIN41X5J2ejXzz8+kwirA4VkXXguhVw8D9d5PoJQSx+9r+62c1U8ykeAXB75Je+Mj40ugOPZL1CYiqk=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <119F4639F6E5B543B98F047024A54316@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: e91334c8-07b3-4600-85f4-08d697266387
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Feb 2019 11:27:23.6256
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1808
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a driver for the PMC clocks of the sam9c60.
-
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/clk/at91/Makefile  |   1 +
- drivers/clk/at91/sam9x60.c | 307 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 308 insertions(+)
- create mode 100644 drivers/clk/at91/sam9x60.c
-
-diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
-index 0a30fc8dfcb0..3732241352ce 100644
---- a/drivers/clk/at91/Makefile
-+++ b/drivers/clk/at91/Makefile
-@@ -16,5 +16,6 @@ obj-$(CONFIG_HAVE_AT91_GENERATED_CLK)	+= clk-generated.o
- obj-$(CONFIG_HAVE_AT91_I2S_MUX_CLK)	+= clk-i2s-mux.o
- obj-$(CONFIG_HAVE_AT91_SAM9X60_PLL)	+= clk-sam9x60-pll.o
- obj-$(CONFIG_SOC_AT91SAM9) += at91sam9260.o at91sam9rl.o at91sam9x5.o
-+obj-$(CONFIG_SOC_SAM9X60) += sam9x60.o
- obj-$(CONFIG_SOC_SAMA5D4) += sama5d4.o
- obj-$(CONFIG_SOC_SAMA5D2) += sama5d2.o
-diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
-new file mode 100644
-index 000000000000..22bf51c55bdc
---- /dev/null
-+++ b/drivers/clk/at91/sam9x60.c
-@@ -0,0 +1,307 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/clk-provider.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/slab.h>
-+
-+#include <dt-bindings/clock/at91.h>
-+
-+#include "pmc.h"
-+
-+DEFINE_SPINLOCK(pmc_pll_lock);
-+
-+static const struct clk_master_characteristics mck_characteristics = {
-+	.output = { .min = 140000000, .max = 200000000 },
-+	.divisors = { 1, 2, 4, 3 },
-+	.have_div3_pres = 1,
-+};
-+
-+static const struct clk_master_layout sam9x60_master_layout = {
-+	.mask = 0x373,
-+	.pres_shift = 4,
-+	.offset = 0x28,
-+};
-+
-+static struct clk_range plla_outputs[] = {
-+	{ .min = 300000000, .max = 600000000 },
-+};
-+
-+static const struct clk_pll_characteristics plla_characteristics = {
-+	.input = { .min = 12000000, .max = 48000000 },
-+	.num_output = ARRAY_SIZE(plla_outputs),
-+	.output = plla_outputs,
-+};
-+
-+static struct clk_range upll_outputs[] = {
-+	{ .min = 300000000, .max = 500000000 },
-+};
-+
-+static const struct clk_pll_characteristics upll_characteristics = {
-+	.input = { .min = 12000000, .max = 48000000 },
-+	.num_output = ARRAY_SIZE(upll_outputs),
-+	.output = upll_outputs,
-+	.upll = true,
-+};
-+
-+static const struct clk_programmable_layout sam9x60_programmable_layout = {
-+	.pres_shift = 8,
-+	.css_mask = 0x1f,
-+	.have_slck_mck = 0,
-+};
-+
-+static const struct clk_pcr_layout sam9x60_pcr_layout = {
-+	.offset = 0x88,
-+	.cmd = BIT(31),
-+	.gckcss_mask = GENMASK(12, 8),
-+	.pid_mask = GENMASK(6, 0),
-+};
-+
-+static const struct {
-+	char *n;
-+	char *p;
-+	u8 id;
-+} sam9x60_systemck[] = {
-+	{ .n = "ddrck",  .p = "masterck", .id = 2 },
-+	{ .n = "uhpck",  .p = "usbck",    .id = 6 },
-+	{ .n = "pck0",   .p = "prog0",    .id = 8 },
-+	{ .n = "pck1",   .p = "prog1",    .id = 9 },
-+	{ .n = "qspick", .p = "masterck", .id = 19 },
-+};
-+
-+static const struct {
-+	char *n;
-+	u8 id;
-+} sam9x60_periphck[] = {
-+	{ .n = "pioA_clk",   .id = 2, },
-+	{ .n = "pioB_clk",   .id = 3, },
-+	{ .n = "pioC_clk",   .id = 4, },
-+	{ .n = "flex0_clk",  .id = 5, },
-+	{ .n = "flex1_clk",  .id = 6, },
-+	{ .n = "flex2_clk",  .id = 7, },
-+	{ .n = "flex3_clk",  .id = 8, },
-+	{ .n = "flex6_clk",  .id = 9, },
-+	{ .n = "flex7_clk",  .id = 10, },
-+	{ .n = "flex8_clk",  .id = 11, },
-+	{ .n = "sdmmc0_clk", .id = 12, },
-+	{ .n = "flex4_clk",  .id = 13, },
-+	{ .n = "flex5_clk",  .id = 14, },
-+	{ .n = "flex9_clk",  .id = 15, },
-+	{ .n = "flex10_clk", .id = 16, },
-+	{ .n = "tcb0_clk",   .id = 17, },
-+	{ .n = "pwm_clk",    .id = 18, },
-+	{ .n = "adc_clk",    .id = 19, },
-+	{ .n = "dma0_clk",   .id = 20, },
-+	{ .n = "matrix_clk", .id = 21, },
-+	{ .n = "uhphs_clk",  .id = 22, },
-+	{ .n = "udphs_clk",  .id = 23, },
-+	{ .n = "macb0_clk",  .id = 24, },
-+	{ .n = "lcd_clk",    .id = 25, },
-+	{ .n = "sdmmc1_clk", .id = 26, },
-+	{ .n = "macb1_clk",  .id = 27, },
-+	{ .n = "ssc_clk",    .id = 28, },
-+	{ .n = "can0_clk",   .id = 29, },
-+	{ .n = "can1_clk",   .id = 30, },
-+	{ .n = "flex11_clk", .id = 32, },
-+	{ .n = "flex12_clk", .id = 33, },
-+	{ .n = "i2s_clk",    .id = 34, },
-+	{ .n = "qspi_clk",   .id = 35, },
-+	{ .n = "gfx2d_clk",  .id = 36, },
-+	{ .n = "pit64b_clk", .id = 37, },
-+	{ .n = "trng_clk",   .id = 38, },
-+	{ .n = "aes_clk",    .id = 39, },
-+	{ .n = "tdes_clk",   .id = 40, },
-+	{ .n = "sha_clk",    .id = 41, },
-+	{ .n = "classd_clk", .id = 42, },
-+	{ .n = "isi_clk",    .id = 43, },
-+	{ .n = "pioD_clk",   .id = 44, },
-+	{ .n = "tcb1_clk",   .id = 45, },
-+	{ .n = "dbgu_clk",   .id = 47, },
-+	{ .n = "mpddr_clk",  .id = 49, },
-+};
-+
-+static const struct {
-+	char *n;
-+	u8 id;
-+	struct clk_range r;
-+	bool pll;
-+} sam9x60_gck[] = {
-+	{ .n = "flex0_gclk",  .id = 5, },
-+	{ .n = "flex1_gclk",  .id = 6, },
-+	{ .n = "flex2_gclk",  .id = 7, },
-+	{ .n = "flex3_gclk",  .id = 8, },
-+	{ .n = "flex6_gclk",  .id = 9, },
-+	{ .n = "flex7_gclk",  .id = 10, },
-+	{ .n = "flex8_gclk",  .id = 11, },
-+	{ .n = "sdmmc0_gclk", .id = 12, .r = { .min = 0, .max = 105000000 }, },
-+	{ .n = "flex4_gclk",  .id = 13, },
-+	{ .n = "flex5_gclk",  .id = 14, },
-+	{ .n = "flex9_gclk",  .id = 15, },
-+	{ .n = "flex10_gclk", .id = 16, },
-+	{ .n = "tcb0_gclk",   .id = 17, },
-+	{ .n = "adc_gclk",    .id = 19, },
-+	{ .n = "lcd_gclk",    .id = 25, .r = { .min = 0, .max = 140000000 }, },
-+	{ .n = "sdmmc1_gclk", .id = 26, .r = { .min = 0, .max = 105000000 }, },
-+	{ .n = "flex11_gclk", .id = 32, },
-+	{ .n = "flex12_gclk", .id = 33, },
-+	{ .n = "i2s_gclk",    .id = 34, .r = { .min = 0, .max = 105000000 },
-+		.pll = true, },
-+	{ .n = "pit64b_gclk", .id = 37, },
-+	{ .n = "classd_gclk", .id = 42, .r = { .min = 0, .max = 100000000 },
-+		.pll = true, },
-+	{ .n = "tcb1_gclk",   .id = 45, },
-+	{ .n = "dbgu_gclk",   .id = 47, },
-+};
-+
-+static void __init sam9x60_pmc_setup(struct device_node *np)
-+{
-+	struct clk_range range = CLK_RANGE(0, 0);
-+	const char *td_slck_name, *md_slck_name, *mainxtal_name;
-+	struct pmc_data *sam9x60_pmc;
-+	const char *parent_names[6];
-+	struct regmap *regmap;
-+	struct clk_hw *hw;
-+	int i;
-+	bool bypass;
-+
-+	i = of_property_match_string(np, "clock-names", "td_slck");
-+	if (i < 0)
-+		return;
-+
-+	td_slck_name = of_clk_get_parent_name(np, i);
-+
-+	i = of_property_match_string(np, "clock-names", "md_slck");
-+	if (i < 0)
-+		return;
-+
-+	md_slck_name = of_clk_get_parent_name(np, i);
-+
-+	i = of_property_match_string(np, "clock-names", "main_xtal");
-+	if (i < 0)
-+		return;
-+	mainxtal_name = of_clk_get_parent_name(np, i);
-+
-+	regmap = syscon_node_to_regmap(np);
-+	if (IS_ERR(regmap))
-+		return;
-+
-+	sam9x60_pmc = pmc_data_allocate(PMC_MAIN + 1,
-+					nck(sam9x60_systemck),
-+					nck(sam9x60_periphck),
-+					nck(sam9x60_gck));
-+	if (!sam9x60_pmc)
-+		return;
-+
-+	hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 24000000,
-+					   50000000);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	bypass = of_property_read_bool(np, "atmel,osc-bypass");
-+
-+	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name,
-+					bypass);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	parent_names[0] = "main_rc_osc";
-+	parent_names[1] = "main_osc";
-+	hw = at91_clk_register_sam9x5_main(regmap, "mainck", parent_names, 2);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	sam9x60_pmc->chws[PMC_MAIN] = hw;
-+
-+	hw = sam9x60_clk_register_pll(regmap, &pmc_pll_lock, "pllack",
-+				      "mainck", 0, &plla_characteristics);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	hw = sam9x60_clk_register_pll(regmap, &pmc_pll_lock, "upllck",
-+				      "main_osc", 1, &upll_characteristics);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	sam9x60_pmc->chws[PMC_UTMI] = hw;
-+
-+	parent_names[0] = md_slck_name;
-+	parent_names[1] = "mainck";
-+	parent_names[2] = "pllack";
-+	hw = at91_clk_register_master(regmap, "masterck", 3, parent_names,
-+				      &sam9x60_master_layout,
-+				      &mck_characteristics);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	sam9x60_pmc->chws[PMC_MCK] = hw;
-+
-+	parent_names[0] = "pllack";
-+	parent_names[1] = "upllck";
-+	parent_names[2] = "mainck";
-+	parent_names[3] = "mainck";
-+	hw = sam9x60_clk_register_usb(regmap, "usbck", parent_names, 4);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	parent_names[0] = md_slck_name;
-+	parent_names[1] = td_slck_name;
-+	parent_names[2] = "mainck";
-+	parent_names[3] = "masterck";
-+	parent_names[4] = "pllack";
-+	parent_names[5] = "upllck";
-+	for (i = 0; i < 8; i++) {
-+		char name[6];
-+
-+		snprintf(name, sizeof(name), "prog%d", i);
-+
-+		hw = at91_clk_register_programmable(regmap, name,
-+						    parent_names, 6, i,
-+						    &sam9x60_programmable_layout);
-+		if (IS_ERR(hw))
-+			goto err_free;
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(sam9x60_systemck); i++) {
-+		hw = at91_clk_register_system(regmap, sam9x60_systemck[i].n,
-+					      sam9x60_systemck[i].p,
-+					      sam9x60_systemck[i].id);
-+		if (IS_ERR(hw))
-+			goto err_free;
-+
-+		sam9x60_pmc->shws[sam9x60_systemck[i].id] = hw;
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(sam9x60_periphck); i++) {
-+		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
-+							 &sam9x60_pcr_layout,
-+							 sam9x60_periphck[i].n,
-+							 "masterck",
-+							 sam9x60_periphck[i].id,
-+							 &range);
-+		if (IS_ERR(hw))
-+			goto err_free;
-+
-+		sam9x60_pmc->phws[sam9x60_periphck[i].id] = hw;
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(sam9x60_gck); i++) {
-+		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
-+						 &sam9x60_pcr_layout,
-+						 sam9x60_gck[i].n,
-+						 parent_names, 6,
-+						 sam9x60_gck[i].id,
-+						 sam9x60_gck[i].pll,
-+						 &sam9x60_gck[i].r);
-+		if (IS_ERR(hw))
-+			goto err_free;
-+
-+		sam9x60_pmc->ghws[sam9x60_gck[i].id] = hw;
-+	}
-+
-+	of_clk_add_hw_provider(np, of_clk_hw_pmc_get, sam9x60_pmc);
-+
-+	return;
-+
-+err_free:
-+	pmc_data_free(sam9x60_pmc);
-+}
-+
-+CLK_OF_DECLARE_DRIVER(sam9x60_pmc, "microchip,sam9x60-pmc", sam9x60_pmc_setup);
--- 
-2.20.1
-
+T24gMDgvMDIvMjAxOSBhdCAxNjo1MywgTmljb2xhcy5GZXJyZUBtaWNyb2NoaXAuY29tIHdyb3Rl
+Og0KPiBPbiAwOC8wMi8yMDE5IGF0IDE1OjQwLCBBbGV4YW5kcmUgQmVsbG9uaSB3cm90ZToNCj4+
+IFRoZSBtYXN0ZXIgY2xvY2sgaXMgYWN0dWFsbHkgbmFtZWQgbWFzdGVyY2sgZWFybGllciBpbiB0
+aGUgZHJpdmVyLiBIYXZpbmcNCj4+ICJtY2siIGluIHRoZSBwYXJlbnQgbGlzdCBtZWFucyB0aGF0
+IGl0IGNhbiBuZXZlciBiZSBzZWxlY3RlZC4NCj4+DQo+PiBGaXhlczogMWVhYmRjMmY5ZGQ4ICgi
+Y2xrOiBhdDkxOiBhZGQgYXQ5MXNhbTl4NSBQTUNzIGRyaXZlciIpDQo+PiBGaXhlczogYTIwMzgw
+NzdkZTlhICgiY2xrOiBhdDkxOiBhZGQgc2FtYTVkMiBQTUMgZHJpdmVyIikNCj4+IEZpeGVzOiAw
+ODRiNjk2YmI1MDkgKCJjbGs6IGF0OTE6IGFkZCBzYW1hNWQ0IHBtYyBkcml2ZXIiKQ0KPj4NCj4+
+IFNpZ25lZC1vZmYtYnk6IEFsZXhhbmRyZSBCZWxsb25pIDxhbGV4YW5kcmUuYmVsbG9uaUBib290
+bGluLmNvbT4NCj4gDQo+IEFja2VkLWJ5OiBOaWNvbGFzIEZlcnJlIDxuaWNvbGFzLmZlcnJlQG1p
+Y3JvY2hpcC5jb20+DQoNCisNCkNjOiA8c3RhYmxlQHZnZXIua2VybmVsLm9yZz4gIyB2NC4yMCsN
+Cg0KU3RlcGhlbiAocGluZyksDQoNClRoaXMgcGF0Y2ggdG9nZXRoZXIgd2l0aCB0aGUgb25lIHNl
+bnQgdG9kYXkgIltQQVRDSF0gY2xrOiBhdDkxOiBmaXggDQphdDkxc2FtOXg1IHBlcmlwaGVyYWwg
+Y2xvY2sgbnVtYmVyIiBtYWtlIGEgZ29vZCBzZXQgZm9yIDUuMC1maW5hbCBhcyANCnRoZXkgYmFz
+aWNhbGx5IGFyZSByZWFsIHJlZ3Jlc3Npb25zLg0KVGhpcyBpcyB0cnVlIGV2ZW4gaWYgdGhleSBh
+cHBseSBvbiA0LjIwIGFzIHdlIHdlcmUgdXNpbmcgYW4gb2xkZXIgYmlkaW5nIA0KZGVmaW5pdGlv
+biB1bnRpbCA1LjAtcmMuLi4NCg0KRG8gd2hhdCB5b3UgY2FuLi4uIEFzIGl0J3MgcmVhbGx5IGxh
+dGUsIEkga25vdy4uLg0KDQpCZXN0IHJlZ2FyZHMsDQogICBOaWNvbGFzDQoNCg0KPj4gLS0tDQo+
+PiAgICBkcml2ZXJzL2Nsay9hdDkxL2F0OTFzYW05eDUuYyB8IDIgKy0NCj4+ICAgIGRyaXZlcnMv
+Y2xrL2F0OTEvc2FtYTVkMi5jICAgIHwgNCArKy0tDQo+PiAgICBkcml2ZXJzL2Nsay9hdDkxL3Nh
+bWE1ZDQuYyAgICB8IDIgKy0NCj4+ICAgIDMgZmlsZXMgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCsp
+LCA0IGRlbGV0aW9ucygtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9hdDkxL2F0
+OTFzYW05eDUuYyBiL2RyaXZlcnMvY2xrL2F0OTEvYXQ5MXNhbTl4NS5jDQo+PiBpbmRleCAyZmUy
+MjVhNjk3ZGYuLmQ1NWExNTFjYjdmNSAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvY2xrL2F0OTEv
+YXQ5MXNhbTl4NS5jDQo+PiArKysgYi9kcml2ZXJzL2Nsay9hdDkxL2F0OTFzYW05eDUuYw0KPj4g
+QEAgLTIxMCw3ICsyMTAsNyBAQCBzdGF0aWMgdm9pZCBfX2luaXQgYXQ5MXNhbTl4NV9wbWNfc2V0
+dXAoc3RydWN0IGRldmljZV9ub2RlICpucCwNCj4+ICAgIAlwYXJlbnRfbmFtZXNbMV0gPSAibWFp
+bmNrIjsNCj4+ICAgIAlwYXJlbnRfbmFtZXNbMl0gPSAicGxsYWRpdmNrIjsNCj4+ICAgIAlwYXJl
+bnRfbmFtZXNbM10gPSAidXRtaWNrIjsNCj4+IC0JcGFyZW50X25hbWVzWzRdID0gIm1jayI7DQo+
+PiArCXBhcmVudF9uYW1lc1s0XSA9ICJtYXN0ZXJjayI7DQo+PiAgICAJZm9yIChpID0gMDsgaSA8
+IDI7IGkrKykgew0KPj4gICAgCQljaGFyIG5hbWVbNl07DQo+PiAgICANCj4+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL2Nsay9hdDkxL3NhbWE1ZDIuYyBiL2RyaXZlcnMvY2xrL2F0OTEvc2FtYTVkMi5j
+DQo+PiBpbmRleCBkNjlhZDk2ZmU5ODguLmNkMGVmNzI3NGZkYiAxMDA2NDQNCj4+IC0tLSBhL2Ry
+aXZlcnMvY2xrL2F0OTEvc2FtYTVkMi5jDQo+PiArKysgYi9kcml2ZXJzL2Nsay9hdDkxL3NhbWE1
+ZDIuYw0KPj4gQEAgLTI0MCw3ICsyNDAsNyBAQCBzdGF0aWMgdm9pZCBfX2luaXQgc2FtYTVkMl9w
+bWNfc2V0dXAoc3RydWN0IGRldmljZV9ub2RlICpucCkNCj4+ICAgIAlwYXJlbnRfbmFtZXNbMV0g
+PSAibWFpbmNrIjsNCj4+ICAgIAlwYXJlbnRfbmFtZXNbMl0gPSAicGxsYWRpdmNrIjsNCj4+ICAg
+IAlwYXJlbnRfbmFtZXNbM10gPSAidXRtaWNrIjsNCj4+IC0JcGFyZW50X25hbWVzWzRdID0gIm1j
+ayI7DQo+PiArCXBhcmVudF9uYW1lc1s0XSA9ICJtYXN0ZXJjayI7DQo+PiAgICAJZm9yIChpID0g
+MDsgaSA8IDM7IGkrKykgew0KPj4gICAgCQljaGFyIG5hbWVbNl07DQo+PiAgICANCj4+IEBAIC0y
+OTEsNyArMjkxLDcgQEAgc3RhdGljIHZvaWQgX19pbml0IHNhbWE1ZDJfcG1jX3NldHVwKHN0cnVj
+dCBkZXZpY2Vfbm9kZSAqbnApDQo+PiAgICAJcGFyZW50X25hbWVzWzFdID0gIm1haW5jayI7DQo+
+PiAgICAJcGFyZW50X25hbWVzWzJdID0gInBsbGFkaXZjayI7DQo+PiAgICAJcGFyZW50X25hbWVz
+WzNdID0gInV0bWljayI7DQo+PiAtCXBhcmVudF9uYW1lc1s0XSA9ICJtY2siOw0KPj4gKwlwYXJl
+bnRfbmFtZXNbNF0gPSAibWFzdGVyY2siOw0KPj4gICAgCXBhcmVudF9uYW1lc1s1XSA9ICJhdWRp
+b3BsbF9wbWNjayI7DQo+PiAgICAJZm9yIChpID0gMDsgaSA8IEFSUkFZX1NJWkUoc2FtYTVkMl9n
+Y2spOyBpKyspIHsNCj4+ICAgIAkJaHcgPSBhdDkxX2Nsa19yZWdpc3Rlcl9nZW5lcmF0ZWQocmVn
+bWFwLCAmcG1jX3Bjcl9sb2NrLA0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2F0OTEvc2Ft
+YTVkNC5jIGIvZHJpdmVycy9jbGsvYXQ5MS9zYW1hNWQ0LmMNCj4+IGluZGV4IGUzNThiZTdmNmM4
+ZC4uYjY0NWE5ZDU5Y2RiIDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9jbGsvYXQ5MS9zYW1hNWQ0
+LmMNCj4+ICsrKyBiL2RyaXZlcnMvY2xrL2F0OTEvc2FtYTVkNC5jDQo+PiBAQCAtMjA3LDcgKzIw
+Nyw3IEBAIHN0YXRpYyB2b2lkIF9faW5pdCBzYW1hNWQ0X3BtY19zZXR1cChzdHJ1Y3QgZGV2aWNl
+X25vZGUgKm5wKQ0KPj4gICAgCXBhcmVudF9uYW1lc1sxXSA9ICJtYWluY2siOw0KPj4gICAgCXBh
+cmVudF9uYW1lc1syXSA9ICJwbGxhZGl2Y2siOw0KPj4gICAgCXBhcmVudF9uYW1lc1szXSA9ICJ1
+dG1pY2siOw0KPj4gLQlwYXJlbnRfbmFtZXNbNF0gPSAibWNrIjsNCj4+ICsJcGFyZW50X25hbWVz
+WzRdID0gIm1hc3RlcmNrIjsNCj4+ICAgIAlmb3IgKGkgPSAwOyBpIDwgMzsgaSsrKSB7DQo+PiAg
+ICAJCWNoYXIgbmFtZVs2XTsNCj4+ICAgIA0KPj4NCj4gDQo+IA0KDQoNCi0tIA0KTmljb2xhcyBG
+ZXJyZQ0K
