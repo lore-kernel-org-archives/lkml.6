@@ -2,88 +2,74 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 037F6C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:51:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA432C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:54:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D06F92146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:51:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 784DE2146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:54:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726360AbfBTSu7 convert rfc822-to-8bit (ORCPT
+        id S1726535AbfBTSyP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 13:50:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51396 "EHLO mail.kernel.org"
+        Wed, 20 Feb 2019 13:54:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725798AbfBTSu6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 13:50:58 -0500
+        id S1726074AbfBTSyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 13:54:15 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB36720859;
-        Wed, 20 Feb 2019 18:50:57 +0000 (UTC)
-Date:   Wed, 20 Feb 2019 13:50:56 -0500
+        by mail.kernel.org (Postfix) with ESMTPSA id DD4C720859;
+        Wed, 20 Feb 2019 18:54:13 +0000 (UTC)
+Date:   Wed, 20 Feb 2019 13:54:12 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "zhangyi (F)" <yi.zhang@huawei.com>
-Subject: Re: [for-next][PATCH 13/29] tracing: No need to free iter->trace in
- fail path of tracing_open_pipe()
-Message-ID: <20190220135056.7dfbb673@gandalf.local.home>
-In-Reply-To: <20190220134647.3be6b506@gandalf.local.home>
-References: <20190220183737.034634614@goodmis.org>
-        <20190220183805.422405135@goodmis.org>
-        <20190220134647.3be6b506@gandalf.local.home>
+To:     Tom Zanussi <zanussi@kernel.org>
+Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
+        vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH v15 15/15] tracing: Add hist trigger action 'expected
+ fail' test case
+Message-ID: <20190220135412.52a244e7@gandalf.local.home>
+In-Reply-To: <1550688315.2027.20.camel@kernel.org>
+References: <cover.1550100284.git.tom.zanussi@linux.intel.com>
+        <1790bf93e01dbdfa1b4af945f42147d92bd565aa.1550100284.git.tom.zanussi@linux.intel.com>
+        <20190220121748.7aa83459@gandalf.local.home>
+        <1550684302.2027.6.camel@kernel.org>
+        <20190220125625.77802cac@gandalf.local.home>
+        <1550686231.2027.14.camel@kernel.org>
+        <20190220133316.587f3941@gandalf.local.home>
+        <1550688315.2027.20.camel@kernel.org>
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here's the new patch change log:
+On Wed, 20 Feb 2019 12:45:15 -0600
+Tom Zanussi <zanussi@kernel.org> wrote:
 
-From e7f0c424d0806b05d6f47be9f202b037eb701707 Mon Sep 17 00:00:00 2001
-From: "zhangyi (F)" <yi.zhang@huawei.com>
-Date: Wed, 13 Feb 2019 20:29:06 +0800
-Subject: [PATCH] tracing: Do not free iter->trace in fail path of
- tracing_open_pipe()
+> > OK, so this has nothing to do with your patch set. I've tested
+> > everything else, and I'm ready to finally push my tree to linux-next.
+> > 
+> > I'm thinking that we should get rid of xfail, as it's really
+> > confusing,
+> > and I don't understand its purpose. But that shouldn't stop pushing
+> > your patches.
+> >   
+> 
+> OK, I'm fine with removing it, if it's too confusing.  IIRC Masami
+> suggested it to highlight that not all actions and handlers can be used
+> together, so I guess I'll hold off on a patch removing it until he can
+> chime in...
 
-Commit d716ff71dd12 ("tracing: Remove taking of trace_types_lock in
-pipe files") use the current tracer instead of the copy in
-tracing_open_pipe(), but it forget to remove the freeing sentence in
-the error path.
+Yeah, its a different issue. At the very least, we should change the
+color of XFAIL to green.
 
-There's an error path that can call kfree(iter->trace) after the iter->trace
-was assigned to tr->current_trace, which would be bad to free.
-
-Link: http://lkml.kernel.org/r/1550060946-45984-1-git-send-email-yi.zhang@huawei.com
-
-Cc: stable@vger.kernel.org
-Fixes: d716ff71dd12 ("tracing: Remove taking of trace_types_lock in pipe files")
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/trace.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index c521b7347482..b583ff7656bb 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -5624,7 +5624,6 @@ static int tracing_open_pipe(struct inode *inode, struct file *filp)
- 	return ret;
- 
- fail:
--	kfree(iter->trace);
- 	kfree(iter);
- 	__trace_array_put(tr);
- 	mutex_unlock(&trace_types_lock);
--- 
-2.20.1
-
+-- Steve
