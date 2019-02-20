@@ -2,155 +2,99 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD888C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B410AC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 992AF2086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:57:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 911B32086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:58:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbfBTJ5l (ORCPT
+        id S1727339AbfBTJ6M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 04:57:41 -0500
-Received: from gofer.mess.org ([88.97.38.141]:60925 "EHLO gofer.mess.org"
+        Wed, 20 Feb 2019 04:58:12 -0500
+Received: from mga18.intel.com ([134.134.136.126]:11945 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727039AbfBTJ5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 04:57:41 -0500
-Received: by gofer.mess.org (Postfix, from userid 1000)
-        id 10A226020B; Wed, 20 Feb 2019 09:57:39 +0000 (GMT)
-Date:   Wed, 20 Feb 2019 09:57:38 +0000
-From:   Sean Young <sean@mess.org>
-To:     Jonas Karlman <jonas@kwiboo.se>
-Cc:     "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] [media] rc/keymaps: add keytable for Pine64 IR
- Remote Controller
-Message-ID: <20190220095738.ftshqrhccoa3hvyy@gofer.mess.org>
-References: <20190218215915.2782-1-jonas@kwiboo.se>
- <AM3PR03MB09661A45FEB90FFC3CB44508AC630@AM3PR03MB0966.eurprd03.prod.outlook.com>
+        id S1725816AbfBTJ6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 04:58:11 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 01:58:10 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,390,1544515200"; 
+   d="scan'208";a="276434869"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.169])
+  by orsmga004.jf.intel.com with ESMTP; 20 Feb 2019 01:58:07 -0800
+Date:   Wed, 20 Feb 2019 11:58:06 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Zhangshaokun <zhangshaokun@hisilicon.com>,
+        ard.biesheuvel@linaro.org, zohar@linux.ibm.com
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org
+Subject: Re: linux-next: Tree for Feb 20
+Message-ID: <20190220095806.GB9089@linux.intel.com>
+References: <20190220184341.73bd2084@canb.auug.org.au>
+ <1114b964-8ff8-5632-64d4-e94a9160b998@hisilicon.com>
+ <20190220095252.GA9089@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <AM3PR03MB09661A45FEB90FFC3CB44508AC630@AM3PR03MB0966.eurprd03.prod.outlook.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190220095252.GA9089@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 09:59:36PM +0000, Jonas Karlman wrote:
-> This RC map is based on remote key schema at [1], the mouse button key
-> did not have an obvious target and was mapped to KEY_CONTEXT_MENU.
-
-How about BTN_LEFT ?
-
-Thanks,
-
-Sean
-
+On Wed, Feb 20, 2019 at 11:52:52AM +0200, Jarkko Sakkinen wrote:
+> On Wed, Feb 20, 2019 at 05:11:15PM +0800, Zhangshaokun wrote:
+> > There is a compiler failure on arm64 platform, as follow:
+> > 
+> >   AS      arch/arm64/kvm/hyp.o
+> >   CC      kernel/trace/ring_buffer.o
+> > In file included from security/integrity/ima/ima_fs.c:30:0:
+> > security/integrity/ima/ima.h:176:7: error: redeclaration of enumerator ‘NONE’
+> >   hook(NONE)   \
+> >        ^
+> > security/integrity/ima/ima.h:188:34: note: in definition of macro ‘__ima_hook_enumify’
+> >  #define __ima_hook_enumify(ENUM) ENUM,
+> >                                   ^
+> > security/integrity/ima/ima.h:191:2: note: in expansion of macro ‘__ima_hooks’
+> >   __ima_hooks(__ima_hook_enumify)
+> >   ^
+> > In file included from ./arch/arm64/include/asm/acpi.h:15:0,
+> >                  from ./include/acpi/acpi_io.h:7,
+> >                  from ./include/linux/acpi.h:47,
+> >                  from ./include/linux/tpm.h:26,
+> >                  from security/integrity/ima/ima.h:25,
+> >                  from security/integrity/ima/ima_fs.c:30:
+> > ./include/linux/efi.h:1716:2: note: previous definition of ‘NONE’ was here
+> >   NONE,
+> >   ^
+> > scripts/Makefile.build:276: recipe for target 'security/integrity/ima/ima_fs.o' failed
+> > make[3]: *** [security/integrity/ima/ima_fs.o] Error 1
+> > 
+> > I dug it and it is the commit 901615cb916d ("tpm: move tpm_chip definition to include/linux/tpm.h")
 > 
-> [1] http://files.pine64.org/doc/Pine%20A64%20Schematic/remote-wit-logo.jpg
+> This results from a new include in tpm.h:
 > 
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> ---
->  drivers/media/rc/keymaps/Makefile    |  1 +
->  drivers/media/rc/keymaps/rc-pine64.c | 59 ++++++++++++++++++++++++++++
->  include/media/rc-map.h               |  1 +
->  3 files changed, 61 insertions(+)
->  create mode 100644 drivers/media/rc/keymaps/rc-pine64.c
+>   #include <linux/acpi.h>
 > 
-> diff --git a/drivers/media/rc/keymaps/Makefile b/drivers/media/rc/keymaps/Makefile
-> index 5b1399af6b3a..0ea52f65bb03 100644
-> --- a/drivers/media/rc/keymaps/Makefile
-> +++ b/drivers/media/rc/keymaps/Makefile
-> @@ -76,6 +76,7 @@ obj-$(CONFIG_RC_MAP) += rc-adstech-dvb-t-pci.o \
->  			rc-norwood.o \
->  			rc-npgtech.o \
->  			rc-pctv-sedna.o \
-> +			rc-pine64.o \
->  			rc-pinnacle-color.o \
->  			rc-pinnacle-grey.o \
->  			rc-pinnacle-pctv-hd.o \
-> diff --git a/drivers/media/rc/keymaps/rc-pine64.c b/drivers/media/rc/keymaps/rc-pine64.c
-> new file mode 100644
-> index 000000000000..94e5624f63f4
-> --- /dev/null
-> +++ b/drivers/media/rc/keymaps/rc-pine64.c
-> @@ -0,0 +1,59 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +// Keytable for Pine64 IR Remote Controller
-> +// Copyright (c) 2017 Jonas Karlman
-> +
-> +#include <media/rc-map.h>
-> +#include <linux/module.h>
-> +
-> +static struct rc_map_table pine64[] = {
-> +	{ 0x404000, KEY_NUMERIC_0 },
-> +	{ 0x404001, KEY_NUMERIC_1 },
-> +	{ 0x404002, KEY_NUMERIC_2 },
-> +	{ 0x404003, KEY_NUMERIC_3 },
-> +	{ 0x404004, KEY_NUMERIC_4 },
-> +	{ 0x404005, KEY_NUMERIC_5 },
-> +	{ 0x404006, KEY_NUMERIC_6 },
-> +	{ 0x404007, KEY_NUMERIC_7 },
-> +	{ 0x404008, KEY_NUMERIC_8 },
-> +	{ 0x404009, KEY_NUMERIC_9 },
-> +	{ 0x40400a, KEY_MUTE },
-> +	{ 0x40400b, KEY_UP },
-> +	{ 0x40400c, KEY_BACKSPACE },
-> +	{ 0x40400d, KEY_OK },
-> +	{ 0x40400e, KEY_DOWN },
-> +	{ 0x404010, KEY_LEFT },
-> +	{ 0x404011, KEY_RIGHT },
-> +	{ 0x404017, KEY_VOLUMEDOWN },
-> +	{ 0x404018, KEY_VOLUMEUP },
-> +	{ 0x40401a, KEY_HOME },
-> +	{ 0x40401d, KEY_MENU },
-> +	{ 0x40401f, KEY_WWW },
-> +	{ 0x404045, KEY_BACK },
-> +	{ 0x404047, KEY_CONTEXT_MENU },
-> +	{ 0x40404d, KEY_POWER },
-> +};
-> +
-> +static struct rc_map_list pine64_map = {
-> +	.map = {
-> +		.scan     = pine64,
-> +		.size     = ARRAY_SIZE(pine64),
-> +		.rc_proto = RC_PROTO_NECX,
-> +		.name     = RC_MAP_PINE64,
-> +	}
-> +};
-> +
-> +static int __init init_rc_map_pine64(void)
-> +{
-> +	return rc_map_register(&pine64_map);
-> +}
-> +
-> +static void __exit exit_rc_map_pine64(void)
-> +{
-> +	rc_map_unregister(&pine64_map);
-> +}
-> +
-> +module_init(init_rc_map_pine64)
-> +module_exit(exit_rc_map_pine64)
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_AUTHOR("Jonas Karlman");
-> diff --git a/include/media/rc-map.h b/include/media/rc-map.h
-> index d621acadfbf3..52b554aa784d 100644
-> --- a/include/media/rc-map.h
-> +++ b/include/media/rc-map.h
-> @@ -236,6 +236,7 @@ struct rc_map *rc_map_get(const char *name);
->  #define RC_MAP_NORWOOD                   "rc-norwood"
->  #define RC_MAP_NPGTECH                   "rc-npgtech"
->  #define RC_MAP_PCTV_SEDNA                "rc-pctv-sedna"
-> +#define RC_MAP_PINE64                    "rc-pine64"
->  #define RC_MAP_PINNACLE_COLOR            "rc-pinnacle-color"
->  #define RC_MAP_PINNACLE_GREY             "rc-pinnacle-grey"
->  #define RC_MAP_PINNACLE_PCTV_HD          "rc-pinnacle-pctv-hd"
-> -- 
-> 2.17.1
+> Must be fixed either in include/linux/efi.h or security/integrity/ima.h as
+> those files have a name collision. Makes me wonder why neither has taken
+> care of prefixing the constants properly.
+
+Preferably both subsystems should be fixed with proper 'EFI_' and 'IMA_'
+prefixes. Defining a constant named as NONE in a non-generic subsystem
+(e.g. not part of the core data structures of Linux) and especially
+exporting it to include/linux is not too well considered act.
+
+/Jarkko
