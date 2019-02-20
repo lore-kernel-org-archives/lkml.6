@@ -2,118 +2,92 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 121B2C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF24C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D726920C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:33:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550669630;
-	bh=q+uXsa+PqEQd6PETRf6Wmpahx238+Gu3Bou97z5f0hM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=un4AMUgbRvJwZoseDzYPX5WGDaTIPchrxjWI1JDBgp6+QMZtPEwWb+ffLbgoPL0wW
-	 nm+FlpOuldJ+kpV/s3ZOCKSLF2ZV6/i/DKpPfE+j77HRIB8CGZ5WzVwVtXKc8hKa+g
-	 BiO0UmK1qtmC9Mm4V/QjYsEo6fsnaAIvneSElgsQ=
+	by mail.kernel.org (Postfix) with ESMTP id 669A32147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:37:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728225AbfBTNdt (ORCPT
+        id S1727862AbfBTNhc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 08:33:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47244 "EHLO mail.kernel.org"
+        Wed, 20 Feb 2019 08:37:32 -0500
+Received: from ozlabs.org ([203.11.71.1]:59927 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725826AbfBTNds (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 08:33:48 -0500
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726213AbfBTNhc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 08:37:32 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA88120C01;
-        Wed, 20 Feb 2019 13:33:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550669627;
-        bh=q+uXsa+PqEQd6PETRf6Wmpahx238+Gu3Bou97z5f0hM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=CChcZxGISMK/IavizcfUdxzQE5FUKsOWdW6LmD8RdygyQex3A9aWbl0Rk84FEm8LN
-         vV1HR68pnJlqBI55TuOTEETbL/mb6m4BgtgXzr2vdQ2/jOamCZp/c0ju6qT5JCjdDV
-         EpRnc5ZuwzPKDH8ohAnXIzOzZsY2Xb9hXNcaZCpY=
-Received: by mail-qt1-f176.google.com with SMTP id b8so27073945qtr.9;
-        Wed, 20 Feb 2019 05:33:47 -0800 (PST)
-X-Gm-Message-State: AHQUAub/BlyoIgrJgy4nNhe09upnHa1t7ZLyUYXC9sSG7gFdxbdJ43W2
-        M4tk909a3ZEQSe40YBWG6+faLdnBShJtGyrZBQ==
-X-Google-Smtp-Source: AHgI3IY+piLFFNDJGG5O+6N9zvc3xOFz32YoBd1q2JLclT/yG8io879Da0ELpzXWW287DJoin1NsJ03iynhLCIq3htY=
-X-Received: by 2002:a0c:ecc5:: with SMTP id o5mr26036439qvq.106.1550669626898;
- Wed, 20 Feb 2019 05:33:46 -0800 (PST)
+        by ozlabs.org (Postfix) with ESMTPSA id 444JZ212zBz9s5R;
+        Thu, 21 Feb 2019 00:37:30 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] powerpc: Move page table dump files in a dedicated subdirectory
+In-Reply-To: <913780421c7b73d731bbbe04c215e29667f7c938.1550492751.git.christophe.leroy@c-s.fr>
+References: <913780421c7b73d731bbbe04c215e29667f7c938.1550492751.git.christophe.leroy@c-s.fr>
+Date:   Thu, 21 Feb 2019 00:37:30 +1100
+Message-ID: <87d0nm7f8l.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-References: <1550648622-10541-1-git-send-email-sugaya.taichi@socionext.com>
-In-Reply-To: <1550648622-10541-1-git-send-email-sugaya.taichi@socionext.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 20 Feb 2019 07:33:34 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqK-8iBaF92GpXdoZwBEaT_mQAjO_4URR9iPJqAiy=YW=w@mail.gmail.com>
-Message-ID: <CAL_JsqK-8iBaF92GpXdoZwBEaT_mQAjO_4URR9iPJqAiy=YW=w@mail.gmail.com>
-Subject: Re: [PATCH v3 3/9] dt-bindings: Add documentation for Milbeaut SoCs
-To:     Sugaya Taichi <sugaya.taichi@socionext.com>
-Cc:     devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        soc@kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
-        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 1:43 AM Sugaya Taichi
-<sugaya.taichi@socionext.com> wrote:
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
+
+> This patch moves the files related to page table dump in a
+> dedicated subdirectory.
 >
-> This adds a DT binding documentation for the M10V and its evaluation
-> board.
+> The purpose is to clean a bit arch/powerpc/mm by regrouping
+> multiple files handling a dedicated function.
 >
-> Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 > ---
->  .../bindings/arm/socionext/milbeaut.yaml           | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/socionext/milbeaut.yaml
->
-> diff --git a/Documentation/devicetree/bindings/arm/socionext/milbeaut.yaml b/Documentation/devicetree/bindings/arm/socionext/milbeaut.yaml
-> new file mode 100644
-> index 0000000..522396f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/socionext/milbeaut.yaml
-> @@ -0,0 +1,22 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/arm/milbeaut.yaml#
-> +$schema: http://devicetree.org/meta-schemas/milbeaut.yaml#
+>  arch/powerpc/Kconfig.debug                                   |  4 ----
+>  arch/powerpc/mm/Makefile                                     | 10 +---------
+>  arch/powerpc/mm/ptdump/Makefile                              |  9 +++++++++
+>  arch/powerpc/mm/{ => ptdump}/dump_bats.c                     |  0
+>  arch/powerpc/mm/{ => ptdump}/dump_hashpagetable.c            |  0
+>  arch/powerpc/mm/{ => ptdump}/dump_linuxpagetables-8xx.c      |  0
+>  arch/powerpc/mm/{ => ptdump}/dump_linuxpagetables-book3s64.c |  0
+>  arch/powerpc/mm/{ => ptdump}/dump_linuxpagetables-generic.c  |  0
+>  arch/powerpc/mm/{ => ptdump}/dump_linuxpagetables.c          |  0
+>  arch/powerpc/mm/{ => ptdump}/dump_linuxpagetables.h          |  0
+>  arch/powerpc/mm/{ => ptdump}/dump_sr.c                       |  0
+>  11 files changed, 10 insertions(+), 13 deletions(-)
+>  create mode 100644 arch/powerpc/mm/ptdump/Makefile
+>  rename arch/powerpc/mm/{ => ptdump}/dump_bats.c (100%)
+>  rename arch/powerpc/mm/{ => ptdump}/dump_hashpagetable.c (100%)
+>  rename arch/powerpc/mm/{ => ptdump}/dump_linuxpagetables-8xx.c (100%)
+>  rename arch/powerpc/mm/{ => ptdump}/dump_linuxpagetables-book3s64.c (100%)
+>  rename arch/powerpc/mm/{ => ptdump}/dump_linuxpagetables-generic.c (100%)
+>  rename arch/powerpc/mm/{ => ptdump}/dump_linuxpagetables.c (100%)
+>  rename arch/powerpc/mm/{ => ptdump}/dump_linuxpagetables.h (100%)
+>  rename arch/powerpc/mm/{ => ptdump}/dump_sr.c (100%)
 
-This line is wrong. All DT schema should be:
-http://devicetree.org/meta-schemas/core.yaml#
+I'd like to shorten the file names as well, now that they're namespaced
+in the ptdump directory, how about:
 
-> +
-> +title: Milbeaut platforms device tree bindings
-> +
-> +maintainers:
-> +  - Taichi Sugaya <sugaya.taichi@socionext.com>
-> +  - Takao Orito <orito.takao@socionext.com>
-> +
-> +properties:
-> +  $nodename:
-> +    const: '/'
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - socionext,milbeaut-m10v-evb
-> +          - const: socionext,sc2000a
-> +...
-> --
-> 1.9.1
->
+ arch/powerpc/Kconfig.debug                                             |  4 ----
+ arch/powerpc/mm/Makefile                                               | 10 +---------
+ arch/powerpc/mm/{dump_linuxpagetables-8xx.c => ptdump/8xx.c}           |  2 +-
+ arch/powerpc/mm/ptdump/Makefile                                        |  9 +++++++++
+ arch/powerpc/mm/{dump_bats.c => ptdump/bats.c}                         |  0
+ arch/powerpc/mm/{dump_linuxpagetables-book3s64.c => ptdump/book3s64.c} |  2 +-
+ arch/powerpc/mm/{dump_hashpagetable.c => ptdump/hashpagetable.c}       |  0
+ arch/powerpc/mm/{dump_linuxpagetables.c => ptdump/ptdump.c}            |  2 +-
+ arch/powerpc/mm/{dump_linuxpagetables.h => ptdump/ptdump.h}            |  0
+ arch/powerpc/mm/{dump_sr.c => ptdump/segment_regs.c}                   |  0
+ arch/powerpc/mm/{dump_linuxpagetables-generic.c => ptdump/shared.c}    |  2 +-
+
+
+cheers
