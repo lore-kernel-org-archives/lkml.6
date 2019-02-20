@@ -2,128 +2,137 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BADC8C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A92C10F07
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:29:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D43620859
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:26:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gsOTKs4h"
+	by mail.kernel.org (Postfix) with ESMTP id 0172E2146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:29:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726445AbfBTW0f (ORCPT
+        id S1726304AbfBTW33 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 17:26:35 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:45870 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725804AbfBTW0e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 17:26:34 -0500
-Received: by mail-ua1-f68.google.com with SMTP id e16so8803433uam.12
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 14:26:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sDpL3gmbczax8ALdj7IVEn/cdMFCR2mdLaVqooKyfDU=;
-        b=gsOTKs4hDJpCcYxXFAhd3Mw19bPjFasvElf6Yd9ikqATCYiclmkqOMIuNsxSoWBTPs
-         cvv7KgIQk6dYFFcC6p6vp/e6zA3KSvygM6ZzD1xDWenkLj9Umc2pmNvwwnaR2e9iG5Eh
-         /zlPXUrpCbDsPF9sQP3jSKppTz0LqL6aRU0M0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sDpL3gmbczax8ALdj7IVEn/cdMFCR2mdLaVqooKyfDU=;
-        b=cgA2JCjtL82ODVc7Lu+pwdgNTBx2eiVBJJk9gm5IqQwILGaW+0uEMONvyrFHfZrvUd
-         MxY4QVgAnRuY3Ih6sr1K3cLLX+wy4J82JFiUt8ohAJqaFFaH31/0VFzyIepAKftzSlAN
-         0Wd7DT/6jqe4BgYJ6aRuqmcinlpFW0BG250f3S99WIwVCp5phWlphFAjzWIBzukUeLJp
-         C/XU8llLOLQSil7b+aLIlfxj5HLBKF65mLcdgNL3lliqfm60jgvDw6itBgQ9YCaASCif
-         5hxcnpn/moQj9GKzoRpnD8dtyxvw4+ziFfJGuCPi/PLEB1CEud/qf2rUU7UKqbs7mggS
-         is9Q==
-X-Gm-Message-State: AHQUAub45vSkt3bl9GXPVGv29Rb847CLUGtRmlz57N2mARGh9pshdqGH
-        s/TtGELHNdQvXLbZuNm0ELdpjcJ5VgE=
-X-Google-Smtp-Source: AHgI3IalhHrTS7MmAQEjF9878pHAE4QtWUD0BtsJaXF7cLE09TJboUls8jVFznOTLq+WqLgglYN5BQ==
-X-Received: by 2002:ab0:60c1:: with SMTP id g1mr8367506uam.23.1550701592076;
-        Wed, 20 Feb 2019 14:26:32 -0800 (PST)
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
-        by smtp.gmail.com with ESMTPSA id a68sm17745442vsd.24.2019.02.20.14.26.30
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Feb 2019 14:26:30 -0800 (PST)
-Received: by mail-vs1-f41.google.com with SMTP id m20so14495971vsq.8
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 14:26:30 -0800 (PST)
-X-Received: by 2002:a67:ec81:: with SMTP id h1mr19076075vsp.188.1550701589790;
- Wed, 20 Feb 2019 14:26:29 -0800 (PST)
+        Wed, 20 Feb 2019 17:29:29 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35934 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725804AbfBTW32 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 17:29:28 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1A1E6368E7;
+        Wed, 20 Feb 2019 22:29:28 +0000 (UTC)
+Received: from redhat.com (ovpn-121-220.rdu2.redhat.com [10.10.121.220])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 87C871001DC1;
+        Wed, 20 Feb 2019 22:29:26 +0000 (UTC)
+Date:   Wed, 20 Feb 2019 17:29:24 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Haggai Eran <haggaie@mellanox.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Artemy Kovalyov <artemyko@mellanox.com>,
+        Moni Shoua <monis@mellanox.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Kaike Wan <kaike.wan@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Aviad Yehezkel <aviadye@mellanox.com>
+Subject: Re: [PATCH 1/1] RDMA/odp: convert to use HMM for ODP
+Message-ID: <20190220222924.GE29398@redhat.com>
+References: <20190129165839.4127-1-jglisse@redhat.com>
+ <20190129165839.4127-2-jglisse@redhat.com>
+ <f48ed64f-22fe-c366-6a0e-1433e72b9359@mellanox.com>
+ <20190212161123.GA4629@redhat.com>
+ <20190220222020.GE8415@mellanox.com>
 MIME-Version: 1.0
-References: <20190211181531.GA3238@embeddedor> <CAJKOXPeHp7sKkZ+jXmTXk5GEF_7G5ujfm3Lw==G3T4thfD+F7Q@mail.gmail.com>
- <CAGXu5jLMWrb4Dszv5YSyoGt5Lb3S1oE8EnKsTou7=7Nq1rEEVQ@mail.gmail.com> <155027728836.115909.11546859472583324712@swboyd.mtv.corp.google.com>
-In-Reply-To: <155027728836.115909.11546859472583324712@swboyd.mtv.corp.google.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 20 Feb 2019 14:26:06 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jJPfoYy20WrR5ghaSo88bsA75s-OyA4qt_3Vz0cJST_MQ@mail.gmail.com>
-Message-ID: <CAGXu5jJPfoYy20WrR5ghaSo88bsA75s-OyA4qt_3Vz0cJST_MQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: samsung: s3c2443: Mark expected switch fall-through
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190220222020.GE8415@mellanox.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 20 Feb 2019 22:29:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 4:34 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Kees Cook (2019-02-12 10:57:05)
-> > On Mon, Feb 11, 2019 at 11:41 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > >
-> > > It is just the GCC which has to be fixed not the code. You want to
-> > > adjust the code for specific version of GCC and what if GCC changes
-> > > its warning? For example GCC might require "fall through: "... or any
-> > > other syntax. Another point - what about clang's syntax?
-> >
-> > -Wimplicit-fallthrough=3 is stricter and maps to -Wextra, hence its
-> > choice. GCC's levels were chosen based on the existing linters, static
-> > analyzers, etc. The patterns are unlikely to change (see the gcc
-> > man-page).
-> >
-> > Clang doesn't recognize anything in C mode (hopefully this will be
-> > fixed in the future[1]).
-> >
-> > As long as one of the compilers is able to check this, we'll avoid the
-> > bugs associated with this mis-pattern. Gustavo's efforts here have
-> > found kind of a lot of bugs, so I think it's worth a little churn to
-> > add these (and make minor adjustments to existing comments).
->
-> Just curious, what compilation phase does this check run in? Could we
-> gain a macro like FALLTHRU or even lowercase 'fallthru' that expanded to
-> whatever the compiler wants to see and then there would only be "one
-> way" to do this?  It would alleviate the above concerns, but maybe I'm
-> rehashing something that's already been proposed and rejected.
+On Wed, Feb 20, 2019 at 10:20:27PM +0000, Jason Gunthorpe wrote:
+> On Tue, Feb 12, 2019 at 11:11:24AM -0500, Jerome Glisse wrote:
+> > This is what serialize programming the hw and any concurrent CPU page
+> > table invalidation. This is also one of the thing i want to improve
+> > long term as mlx5_ib_update_xlt() can do memory allocation and i would
+> > like to avoid that ie make mlx5_ib_update_xlt() and its sub-functions
+> > as small and to the points as possible so that they could only fail if
+> > the hardware is in bad state not because of memory allocation issues.
+> 
+> How can the translation table memory consumption be dynamic (ie use
+> tables sized huge pages until the OS breaks into 4k pages) if the
+> tables are pre-allocated?
 
-When this got discussed a while back, the thinking was that since
-we're also dealing with static analyzers (e.g. Coverity) and IDEs that
-literally parse comments in the code, it was most sensible (at least
-for now, prior to there being a formal C "fall through" statement --
-there is for C++ but not yet for C), we'd stick to explicit comments.
-In theory, we will be able to do a tree-wide change to add the C
-statement once it exists.
+The idea is to have HMM handle DMA mapping so from the DMA
+mapping page table (wether you have an IOMMU or not) you
+can build the device page table (leveraging contiguous DMA
+address into huge dma page for the hardware). This can happen
+before calling mlx5_ib_update_xlt(). Then mlx5_ib_update_xlt()
+would only need to program the hardware.
 
-> Of course, I'm happy to merge any of these patches that tweak things so
-> no worries either way.
+> > > 
+> > > > +
+> > > > +static uint64_t odp_hmm_flags[HMM_PFN_FLAG_MAX] = {
+> > > > +	ODP_READ_BIT,	/* HMM_PFN_VALID */
+> > > > +	ODP_WRITE_BIT,	/* HMM_PFN_WRITE */
+> > > > +	ODP_DEVICE_BIT,	/* HMM_PFN_DEVICE_PRIVATE */
+> > > It seems that the mlx5_ib code in this patch currently ignores the 
+> > > ODP_DEVICE_BIT (e.g., in umem_dma_to_mtt). Is that okay? Or is it 
+> > > handled implicitly by the HMM_PFN_SPECIAL case?
+> > 
+> > This is because HMM except a bit for device memory as same API is
+> > use for GPU which have device memory. I can add a comment explaining
+> > that it is not use for ODP but there just to comply with HMM API.
+> > 
+> > > 
+> > > > @@ -327,9 +287,10 @@ void put_per_mm(struct ib_umem_odp *umem_odp)
+> > > >  	up_write(&per_mm->umem_rwsem);
+> > > >  
+> > > >  	WARN_ON(!RB_EMPTY_ROOT(&per_mm->umem_tree.rb_root));
+> > > > -	mmu_notifier_unregister_no_release(&per_mm->mn, per_mm->mm);
+> > > > +	hmm_mirror_unregister(&per_mm->mirror);
+> > > >  	put_pid(per_mm->tgid);
+> > > > -	mmu_notifier_call_srcu(&per_mm->rcu, free_per_mm);
+> > > > +
+> > > > +	kfree(per_mm);
+> > > >  }
+> > > Previously the per_mm struct was released through call srcu, but now it 
+> > > is released immediately. Is it safe? I saw that hmm_mirror_unregister 
+> > > calls mmu_notifier_unregister_no_release, so I don't understand what 
+> > > prevents concurrently running invalidations from accessing the released 
+> > > per_mm struct.
+> > 
+> > Yes it is safe, the hmm struct has its own refcount and mirror holds a
+> > reference on it, the mm struct itself has a reference on the mm
+> > struct.
+> 
+> The issue here is that that hmm_mirror_unregister() must be a strong
+> fence that guarentees no callback is running or will run after
+> return. mmu_notifier_unregister did not provide that.
+> 
+> I think I saw locking in hmm that was doing this..
 
-Thanks! :)
+So pattern is:
+    hmm_mirror_register(mirror);
 
--- 
-Kees Cook
+    // Safe for driver to call within HMM with mirror no matter what
+
+    hmm_mirror_unregister(mirror)
+
+    // Driver must no stop calling within HMM, it would be a use after
+    // free scenario
+
+Cheers,
+Jérôme
