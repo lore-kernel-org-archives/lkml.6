@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CFB4C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 19:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B268C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 19:49:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2315E2146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 19:47:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DF9A2086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 19:49:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726317AbfBTTra (ORCPT
+        id S1726250AbfBTTth (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 14:47:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60414 "EHLO mail.kernel.org"
+        Wed, 20 Feb 2019 14:49:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725798AbfBTTra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 14:47:30 -0500
+        id S1725798AbfBTTtg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 14:49:36 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8619E2086A;
-        Wed, 20 Feb 2019 19:47:29 +0000 (UTC)
-Date:   Wed, 20 Feb 2019 14:47:28 -0500
+        by mail.kernel.org (Postfix) with ESMTPSA id 807062086A;
+        Wed, 20 Feb 2019 19:49:35 +0000 (UTC)
+Date:   Wed, 20 Feb 2019 14:49:34 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     Juerg Haefliger <juerg.haefliger@canonical.com>
 Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
         Juerg Haefliger <juergh@canonical.com>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Shuah Khan <shuahkhan@gmail.com>
-Subject: Re: [PATCH] selftests/ftrace: Handle the absence of tput
-Message-ID: <20190220144728.70c1261c@gandalf.local.home>
-In-Reply-To: <20190220153706.24686-1-juergh@canonical.com>
-References: <20190220153706.24686-1-juergh@canonical.com>
+Subject: Re: [PATCH] selftests/ftrace: Make the coloring POSIX compliant
+Message-ID: <20190220144934.22c52092@gandalf.local.home>
+In-Reply-To: <20190220161333.28109-1-juergh@canonical.com>
+References: <20190220161333.28109-1-juergh@canonical.com>
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -44,46 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Feb 2019 16:37:06 +0100
+On Wed, 20 Feb 2019 17:13:33 +0100
 Juerg Haefliger <juerg.haefliger@canonical.com> wrote:
 
-> In environments where tput is not availbale, we get the following
+> echo -e and \e are not POSIX. Depending on what /bin/sh is, we can get
+> incorrect output like:
 
-				    available
+I'm curious to which shell this is.
 
-> error
-> $ ./ftracetest: 163: [: Illegal number:
-> because ncolors is an empty string. Fix that by setting it to 0 if the
-> tput command fails.
+> $ -e -n [1] Basic trace file check
+> $ -e 	[PASS]
+> 
+> Fix that by using \033 instead of \e and printf.
 > 
 > Signed-off-by: Juerg Haefliger <juergh@canonical.com>
-
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
--- Steve
-
 > ---
->  tools/testing/selftests/ftrace/ftracetest | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  tools/testing/selftests/ftrace/ftracetest | 17 +++++++++++------
+>  1 file changed, 11 insertions(+), 6 deletions(-)
 > 
 > diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
-> index 75244db70331..fc755e1b50f1 100755
+> index fc755e1b50f1..f200898e3e2c 100755
 > --- a/tools/testing/selftests/ftrace/ftracetest
 > +++ b/tools/testing/selftests/ftrace/ftracetest
-> @@ -154,13 +154,13 @@ fi
->  
->  # Define text colors
->  # Check available colors on the terminal, if any
-> -ncolors=`tput colors 2>/dev/null`
-> +ncolors=`tput colors 2>/dev/null || echo 0`
->  color_reset=
->  color_red=
->  color_green=
+> @@ -161,10 +161,10 @@ color_green=
 >  color_blue=
 >  # If stdout exists and number of colors is eight or more, use them
-> -if [ -t 1 -a "$ncolors" -a "$ncolors" -ge 8 ]; then
-> +if [ -t 1 -a "$ncolors" -ge 8 ]; then
->    color_reset="\e[0m"
->    color_red="\e[31m"
->    color_green="\e[32m"
+>  if [ -t 1 -a "$ncolors" -ge 8 ]; then
+> -  color_reset="\e[0m"
+> -  color_red="\e[31m"
+> -  color_green="\e[32m"
+> -  color_blue="\e[34m"
+> +  color_reset="\033[0m"
+> +  color_red="\033[31m"
+> +  color_green="\033[32m"
+> +  color_blue="\033[34m"
+>  fi
+>  
+>  strip_esc() {
+> @@ -173,8 +173,13 @@ strip_esc() {
+>  }
+>  
+>  prlog() { # messages
+> -  echo -e "$@"
+> -  [ "$LOG_FILE" ] && echo -e "$@" | strip_esc >> $LOG_FILE
+> +  newline="\n"
+> +  if [ "$1" = "-n" ] ; then
+> +    newline=
+> +    shift
+> +  fi
+> +  printf "$@$newline"
+> +  [ "$LOG_FILE" ] && printf "$@$newline" | strip_esc >> $LOG_FILE
+>  }
+>  catlog() { #file
+>    cat $1
 
+This should probably be split into two patches, as they are two
+different issues.
+
+-- Steve
