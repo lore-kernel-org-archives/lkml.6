@@ -3,84 +3,116 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B88BC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:23:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C7E0C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:24:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 019012146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:23:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCD842146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:24:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727198AbfBTKXv (ORCPT
+        id S1727351AbfBTKYQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 05:23:51 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:41702 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726470AbfBTKXu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 05:23:50 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gwP2R-0005kS-Qr; Wed, 20 Feb 2019 18:23:39 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gwP2F-00022M-7l; Wed, 20 Feb 2019 18:23:27 +0800
-Date:   Wed, 20 Feb 2019 18:23:27 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        Thomas Graf <tgraf@suug.ch>,
-        syzbot <syzbot+bc5ab0af2dbf3b0ae897@syzkaller.appspotmail.com>,
-        bridge@lists.linux-foundation.org,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: KASAN: use-after-free Read in br_mdb_ip_get
-Message-ID: <20190220102327.lq2zyqups2fso75z@gondor.apana.org.au>
-References: <000000000000862b160580765e94@google.com>
- <3c44c1ff-2790-ec06-35c6-3572b92170c7@cumulusnetworks.com>
- <CACT4Y+ZA8gBURbeZaDtrt5NoqFy8a8W3jyaWbs34Qjic4Bu+DA@mail.gmail.com>
+        Wed, 20 Feb 2019 05:24:16 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49960 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726283AbfBTKYQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 05:24:16 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 33287AE60;
+        Wed, 20 Feb 2019 10:24:15 +0000 (UTC)
+Date:   Wed, 20 Feb 2019 11:24:14 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 8/9] vsprintf: Prevent crash when dereferencing
+ invalid pointers
+Message-ID: <20190220102414.6rlwc77q7flxfjnp@pathway.suse.cz>
+References: <20190208152310.29531-1-pmladek@suse.com>
+ <20190208152310.29531-9-pmladek@suse.com>
+ <20190219033003.GA2284@jagdpanzerIV>
+ <CAHp75VfeNvThbue+v1VHK_zxw9N82AkOQZUL=nH6xy21WXX7sg@mail.gmail.com>
+ <20190219125115.GA19910@tigerII.localdomain>
+ <20190219134956.GM9224@smile.fi.intel.com>
+ <20190219141516.GA15836@tigerII.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACT4Y+ZA8gBURbeZaDtrt5NoqFy8a8W3jyaWbs34Qjic4Bu+DA@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190219141516.GA15836@tigerII.localdomain>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 09:28:36AM +0100, Dmitry Vyukov wrote:
->
-> > Weird, this is the kfree() on the error path of br_multicast_new_group()
-> > when rhashtable_lookup_insert_fast() fails, which means the entry should
-> > not be linked in the rhashtable or the hlist.
-> > All other frees are via kfree_rcu. I'll keep looking..
+On Tue 2019-02-19 23:15:16, Sergey Senozhatsky wrote:
+> On (02/19/19 15:49), Andy Shevchenko wrote:
+> > > On (02/19/19 13:02), Andy Shevchenko wrote:
+> > > [..]
+> > > > And if it's not? You will get in either case incomplete information,
+> > > > but at least with "(e" (or even "(") you might get a clue that it
+> > > > errornous conditions.
+> > > 
+> > > The thing I'm signaling here is that in some cases we still can
+> > > crash the kernel; with the difference that invalid dereference
+> > > can now be a memory corruption. Just saying.
+> > 
+> > Wouldn't that mean that the culprit in the caller, not in the callee?
+> > 
+> > (As far as I got your another example with badly called sprintf() which may
+> >  overwrite stack, etc).
 > 
-> Humm.... +rhashtable.c maintianers
+> ipv4 printout case does not look like a caller bug to me: we expect a 15
+> bytes ipv4 address, allocate a 16 bytes buffer, sprintf() voluntarily
+> writes 18 bytes. This error reporting is a bit of a dangerous practice;
+> next year someone might add another specifier and another
 > 
-> The code in br_multicast_new_group is effectively:
-> 
-> mp = kzalloc(sizeof(*mp), GFP_ATOMIC);
-> err = rhashtable_lookup_insert_fast(&br->mdb_hash_tbl, &mp->rhnode,
-> br_mdb_rht_params);
-> if (err)
->     kfree(mp);
-> 
-> So it looks like rhashtable_lookup_insert_fast both returned an error
-> and left the new object linked in the table. Since it happened only
-> once, it may have something to do with concurrent resizing/shrinking.
+> 	return string(buf, end, "(this data does not look right)", spec);
 
-I've looked through the rhashtable code in question and everything
-looks OK.  So I suspect some earlier corruption has occured to cause
-this anomalous result.  Is it possible to collect earlier alloc/free
-stack traces on the object in question?
+I hope that this would never pass a review.
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> We probably would want to do something about it. For instance, mandating
+> that "(error)" string cannot be larger than 8 bytes can be a good starting
+> point.
+
+All the warnings are printed by string_nocheck(). We could add one
+more variant for printing the warnings, for example:
+
+static int error_string(char **buf, char *end, const char *err_msg,
+			     struct printf_spec spec)
+{
+	/*
+	 * Limit the error message when the buffer size is unknown.
+	 * It is not full proof but it looks like a reasonable
+	 * compromise. The (null) error string never caused a problem.
+	 */
+	if ((end - *buf > INT_MAX / 2) && !spec.precision) {
+		if (spec.field_width)
+			spec.precision = spec.field_width;
+		else
+			spec.precision = 8;
+	}
+
+	*buf = string_nocheck(*buf, end, err_msg, spec);
+		return -EFAULT;
+	}
+
+	return 0;
+}
+
+Well, I am not sure that it is worth it. I guess that "(null)"
+never caused a problem. And all the new error messages have
+8 characters at maximum.
+
+Best Regards,
+Petr
