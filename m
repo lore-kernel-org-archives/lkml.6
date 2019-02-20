@@ -2,141 +2,131 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37234C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:19:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B02B1C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:20:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03C572086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:19:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8015421773
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:20:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oEdOR/SZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbfBTJTv convert rfc822-to-8bit (ORCPT
+        id S1726851AbfBTJUF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 04:19:51 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:42451 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbfBTJTv (ORCPT
+        Wed, 20 Feb 2019 04:20:05 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:36294 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726827AbfBTJUF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 04:19:51 -0500
-Received: by mail-qk1-f195.google.com with SMTP id y140so1544787qkb.9;
-        Wed, 20 Feb 2019 01:19:50 -0800 (PST)
+        Wed, 20 Feb 2019 04:20:05 -0500
+Received: by mail-qt1-f195.google.com with SMTP id p25so26129838qtb.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 01:20:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4B9NzpkAopf8RQY348E3G+2brMdCIhEuSb1SpVc+UIE=;
+        b=oEdOR/SZoZj/dl856c+xdYqakFTJJgoJAZCLewMZxRjObuwwCd5vPCynQ82rbZ+6Z0
+         Ex9MLuIpm3efp8YbJvZBMzmoYDKevzelMaA07KMRmZwVu+t9oOt8ob5oyVh4ppuUs0kC
+         l7T5QWIhT7qP0M7g7GsSrkagPIo2l0JrPBMcFzToDNRiFIlMxbIwRVoL1tq9wct3P/SA
+         TqP1n/XV3Mt+tqGVbuzHhxQbAPbUbbZts6jtRpBJg/ttAzKfOT1HuAMMpHhx5S/xxYE6
+         kZ50dw3PdS+wiJLNILll1VcffMzlQAfXQXhr2pAUcxrn9/2BwRm4/uYMhekY/xkoJ3oy
+         1pKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=7a5F13liLEOhjFNUYGlZ0v2uhiDPuINa7zw+6Y8frSM=;
-        b=iROG2/Q+8u+jln/bsV2NqP2M72yNaCmT1HggXwpZJxTBKGItSv/cxOI0jsKTMZqyvs
-         xmPkVCm9JuUhPPj+3ORuQxMUr39P9EjqqJm/PJEgnfNmCM6ratlecVnZkcMfzF7OquC4
-         vW3+RlqCk6b9mIfYYKriW5KfegrknWJgHi7Leq1hA8jKdQYa3qT/1eS3Mb0Ho31fza94
-         5o22GjcFsapwqhZ8r9YJQaenVuRUhi7rkwnDfAq9ohOwB57FE8aFsylRtHs5lRtGKnJz
-         r3fHgHAFz1U8FUSU/yaVs/E9CM37ZLD4jz8JIHdRkLKY04R8nPoHbPli+CplOl2xmuwB
-         sBtA==
-X-Gm-Message-State: AHQUAuZ5aLLYcfzra9JJDikJOCmgldvd/5fcDXNDVtwWml+UvpBVqNAv
-        DZd0ZQAmg2n7oeulNeqz4xwNrlS9AR0073mMXVg=
-X-Google-Smtp-Source: AHgI3IYa3AJfX3Zj+6sBmh0cqWcQrteyxtF3OTbXY5ZzX36EJSpKWR1pz8RWSp8NxOSPWuhlyqS5kuGwMkRY5zwvzsw=
-X-Received: by 2002:a05:620a:12a5:: with SMTP id x5mr24251989qki.291.1550654390340;
- Wed, 20 Feb 2019 01:19:50 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=4B9NzpkAopf8RQY348E3G+2brMdCIhEuSb1SpVc+UIE=;
+        b=XHiVJe7VSx7pTxw46fgPR+ycJwEAh7jiAeEzzJbXNu9mV0Fezx45cyMMgC4gzp6tJ+
+         1NabPOYf7W8l0zg8sJWF7mSgOcQ+wG477ijmLX1q3ONtHrxxhHLY7pfKMG4S93dn2Y6J
+         rnyzKZ4BOd0D+XxLV4GosbLQLZwgPwiayZlUJeJXLS9rIxFYQGMb3ryXK9fJfjvkUQ7N
+         q3RWjH4rCucrvHtvWT2W2oGKkP7Jy8V3kKab05GKkg8BclAZT72Z8yaIVn1lVYLME/s8
+         cC38u6i98i3wMqJ1qxjat6xUGapm5oH/zpHG/LXM3IedjT7555BOaBbjFQWy/KHcO0nG
+         GipA==
+X-Gm-Message-State: AHQUAub+Ia+64sW+T6pKhyl4FrE/a/tUexLcXyPJpat7VfLMcEsh570X
+        TgU+P45FgMrNKfF9rh1l3bow37UGkftFiO8OCt+hdw==
+X-Google-Smtp-Source: AHgI3IaWir54LynzN1l0XRrqAmLRnZfg5qis+LtTpu7zDxJf7g7Z6mxtpPlC8649SOhVONiKPppsURxk80Y1tMXfPw4=
+X-Received: by 2002:a0c:e942:: with SMTP id n2mr24617900qvo.119.1550654404226;
+ Wed, 20 Feb 2019 01:20:04 -0800 (PST)
 MIME-Version: 1.0
-References: <20190219214940.391081-1-arnd@arndb.de> <1550614664.6911.45.camel@lca.pw>
- <CAKwvOdn+MJxYc+ykvyf-WhEzzDn0zEusjpQuksknnf8bPb=Q6g@mail.gmail.com>
- <CAN=P9pgC8EzawtxMzp6d3AsMPkSpTd0Ry6j+Jn+YgC_XP2Fd_w@mail.gmail.com> <CACT4Y+ZxCs57qkO7n5tYU4v-J6E9MZsT_FLbXwbQ=B5btHTmwQ@mail.gmail.com>
-In-Reply-To: <CACT4Y+ZxCs57qkO7n5tYU4v-J6E9MZsT_FLbXwbQ=B5btHTmwQ@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 20 Feb 2019 10:19:33 +0100
-Message-ID: <CAK8P3a0s7VSHENsygwby1OtQWtYBeNiCdowPkbo55_-TbyhxbA@mail.gmail.com>
-Subject: Re: [PATCH] kasan: turn off asan-stack for clang-8 and earlier
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Kostya Serebryany <kcc@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Qian Cai <cai@lca.pw>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Brown <broonie@kernel.org>,
-        Alexander Potapenko <glider@google.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Evgenii Stepanov <eugenis@google.com>
+References: <cover.1549525708.git.amit.kucheria@linaro.org>
+ <ab6dd34ce0236de12ec1e9984931780c3df643f9.1549525708.git.amit.kucheria@linaro.org>
+ <20190220011718.GD2811@localhost.localdomain>
+In-Reply-To: <20190220011718.GD2811@localhost.localdomain>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Wed, 20 Feb 2019 14:49:53 +0530
+Message-ID: <CAP245DUEbYhMw0WMP713uB34xVO0AF3-u_knpXfjP=858FgO-w@mail.gmail.com>
+Subject: Re: [PATCH v1 13/24] drivers: thermal: tsens: Print IP version
+To:     Eduardo Valentin <edubezval@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Linux PM list <linux-pm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 7:44 AM Dmitry Vyukov <dvyukov@google.com> wrote:
+On Wed, Feb 20, 2019 at 6:47 AM Eduardo Valentin <edubezval@gmail.com> wrote:
 >
-> On Wed, Feb 20, 2019 at 1:34 AM Kostya Serebryany <kcc@google.com> wrote:
+> On Thu, Feb 07, 2019 at 04:19:31PM +0530, Amit Kucheria wrote:
+> > On some TSENS IP, version is stored. Print that version at init.
 > >
-> > On Tue, Feb 19, 2019 at 2:43 PM Nick Desaulniers
-> > <ndesaulniers@google.com> wrote:
-> > >
-> > > + Evgenii, Kostya for KASAN
-> > >
-> > > On Tue, Feb 19, 2019 at 2:17 PM Qian Cai <cai@lca.pw> wrote:
-> > > >
-> > > > On Tue, 2019-02-19 at 22:49 +0100, Arnd Bergmann wrote:
-> > > > > Building an arm64 allmodconfig kernel with clang results in over 140 warnings
-> > > > > about overly large stack frames, the worst ones being:
-> > > > >
-> > > > > drivers/gpu/drm/panel/panel-sitronix-st7789v.c:196:12: error: stack frame size
-> > > > > of 20224 bytes in function 'st7789v_prepare'
-> > > > > drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td028ttec1.c:196:12:
-> > > > > error: stack frame size of 13120 bytes in function 'td028ttec1_panel_enable'
-> > > > > drivers/usb/host/max3421-hcd.c:1395:1: error: stack frame size of 10048 bytes
-> > > > > in function 'max3421_spi_thread'
-> > > > > drivers/net/wan/slic_ds26522.c:209:12: error: stack frame size of 9664 bytes
-> > > > > in function 'slic_ds26522_probe'
-> > > > > drivers/crypto/ccp/ccp-ops.c:2434:5: error: stack frame size of 8832 bytes in
-> > > > > function 'ccp_run_cmd'
-> > > > > drivers/media/dvb-frontends/stv0367.c:1005:12: error: stack frame size of 7840
-> > > > > bytes in function 'stv0367ter_algo'
-> > > > >
-> > > > > None of these happen with gcc today, and almost all of these are the result
-> > > > > of a single known bug in llvm.  Hopefully it will eventually get fixed with
-> > > > > the
-> > > > > clang-9 release.
+> > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> > ---
+> >  drivers/thermal/qcom/tsens-common.c | 23 ++++++++++++++++++++++-
+> >  1 file changed, 22 insertions(+), 1 deletion(-)
 > >
-> > I am not confident we can fix this in clang.
-> > The difference between gcc and clang, AFAICT, is not in the asan
-> > instrumentation, but in inining.
-> > Looking at the reproducer from https://bugs.llvm.org/show_bug.cgi?id=38809#c4,
-> > if I change ltv350qv_write_reg to always inline, gcc also produces a
-> > huge 10K stack frame,
-> > and making it noinline fixes the stack frame for both gcc and clang.
+> > diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
+> > index aae3d71d7eed..39cd5733fd44 100644
+> > --- a/drivers/thermal/qcom/tsens-common.c
+> > +++ b/drivers/thermal/qcom/tsens-common.c
+> > @@ -121,7 +121,7 @@ int __init init_common(struct tsens_priv *priv)
+> >       void __iomem *tm_base, *srot_base;
+> >       struct device *dev = priv->dev;
+> >       struct resource *res;
+> > -     u32 enabled;
+> > +     u32 enabled, maj_ver, min_ver;
+> >       int ret, i, j;
+> >       struct platform_device *op = of_find_device_by_node(priv->dev->of_node);
+> >
+> > @@ -155,6 +155,27 @@ int __init init_common(struct tsens_priv *priv)
+> >       if (IS_ERR(priv->tm_map))
+> >               return PTR_ERR(priv->tm_map);
+> >
+> > +     for (i = 0; i < MAX_REGFIELDS; i++) {
+> > +             priv->rf[i] = NULL;
+> > +     }
+> > +
+> > +     /* alloc regmap_fields in srot_map */
+> > +     if (priv->feat->ver_info) {
+> > +             for (i = 0, j = VER_MAJOR; i < 2; i++, j++) {
+> > +                     priv->rf[j] = devm_regmap_field_alloc(dev, priv->srot_map,
+> > +                                                           priv->fields[j]);
+> > +                     if (IS_ERR(priv->rf[j]))
+> > +                             return PTR_ERR(priv->rf[j]);
+> > +             }
+> > +             ret = regmap_field_read(priv->rf[VER_MAJOR], &maj_ver);
+> > +             if (ret)
+> > +                     return ret;
+> > +             ret = regmap_field_read(priv->rf[VER_MINOR], &min_ver);
+> > +             if (ret)
+> > +                     return ret;
+> > +             dev_info(dev, "version: %d.%d\n", maj_ver, min_ver);
 >
-> Does your gcc have fix for https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715 ?
->
-> For me gcc rejects to inline it:
->
-> gcc version 7.3.0 (Debian 7.3.0-5)
->
-> $ gcc /tmp/test.c -Wframe-larger-than=128 -c -fsanitize=kernel-address
-> -O2 --param asan-stack=1
-> /tmp/test.c:23:13: warning: always_inline function might not be
-> inlinable [-Wattributes]
+> Is this really needed? Printing stuff into kernel log during boot can
+> just add a lot of info that ends up just slowing down things. Besides,
+> if this info is important shouldnt be available somewhere else as the
+> kernel log is a circular buffer and eventually that line will get
+> wrapped up?
 
-I don't see that warning here
-
->  static void ltv350qv_write_reg(void) {
->              ^~~~~~~~~~~~~~~~~~
-> /tmp/test.c: In function ‘ltv350qv_power_on’:
-> /tmp/test.c:57:1: warning: the frame size of 416 bytes is larger than
-> 128 bytes [-Wframe-larger-than=]
->  }
-
-but I also see the small stack size here: https://godbolt.org/z/Uz5Ruv
-
-gcc definitely inlines the function here but only has one copy of
-spi_message and spi_transfer on the stack, while clang inserts
-a call to __asan_report_store8_noabort() and has one copy per
-inlined call to ltv350qv_write_reg().
-
-      Arnd
+Fair point, I'll remove this statement and dump this into debugfs for
+which I'll send a separate series adding debugfs support.
