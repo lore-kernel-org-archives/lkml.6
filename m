@@ -2,109 +2,135 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A44C9C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:08:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3754AC10F01
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:10:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 728F52146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:08:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j3thYfI4"
+	by mail.kernel.org (Postfix) with ESMTP id 0D8352183F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:10:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550650227;
+	bh=sdBSnPGZCdOugb7YD6in1/WyjYmSKxm9lOA3pX/1Qi8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=CnHy/KMSTaZWn0rko9MV3guXPWjVLarA1odV2nsUS4syH290E5E/mRRxKmsFCpRkJ
+	 DNHkbsfKNcm4BBG72dnFHKjx41XYAfcpdcJfQ+YjNdstVEQKJin5D7V7XhU8v9ur2l
+	 Lifhlx7DrwZak7tDEriDNNeT1VC3O64eyXxqp6CM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726191AbfBTIIj (ORCPT
+        id S1726093AbfBTIKZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 03:08:39 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44369 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725825AbfBTIIj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 03:08:39 -0500
-Received: by mail-lf1-f68.google.com with SMTP id g2so16821730lfh.11
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 00:08:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=C2WrDpsl5Tr1zlAUZqdQM9SsZWpB4tZoF1I1ecg6VEo=;
-        b=j3thYfI4C+Fmyjo+gZll1u7x3mfa0YdG8GWexF88oiPS8i8GSpN1GgCG4OK3ug5Zmv
-         saoX5+w13M2ZUMAtjTX/ImmTTEFqgNqrFRL5BoaDXuHuqQbn+fBWjonPwXVw/ZlCcJO8
-         xY8qVN8wXd63jhbrtPOitQ8a92uCAWwmxyIAalc/7Pec+M3dJ+d4tLHWEhL4nsGxqajy
-         fibj12bIUMddi7cCMmrGQz0nKFIK4kRkZSLhidAsbFHEjH0TsAz0/rTBHe/vghovbCpt
-         irxRh3LJnAOlOAXiiTXCGZ6AACuA3WxX91svrz8vjDF1AqVt3sGwwgz/s+vOEaZLqdOL
-         TTiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=C2WrDpsl5Tr1zlAUZqdQM9SsZWpB4tZoF1I1ecg6VEo=;
-        b=Jy0dJO6T0UAfALaprMDoCj2gLMkDxDctWDpeVFDtRT/130lgHUJLSPbvngnmHrqptB
-         trirCMb7mXXrT8NhbTejxAj+GUmN1shWfMfy0z2a3UlryOsNKd59SXMCB8xk8gl6LMAa
-         VejPfveYzx5O99KHveGqggv4pEUVIfa9qIO082Xj8g8K9HQbAd6+9bz3o5Y15CMFRS6S
-         qM08aqDzKhyOocAmbDlRiZWe6kxmcJrXwfghyQ5KtcYFmAsWcNaaERXtgXlHpadzQOxw
-         yMBNCFzIdKuLBjr+RZPhbDLPYWDEAmFNuohpkZEE8K/u6Age6/w9VLKGSE08ZOT1zF7M
-         i3yQ==
-X-Gm-Message-State: AHQUAuay7ca8Itm7LXvQdnRzFIsVyDjaHKDkn5AOjbECTrhCZIoyd/mf
-        CthcJXC2nTJNSmOWPhS5kLVpsiXoF0rfh9wdnKlYDg==
-X-Google-Smtp-Source: AHgI3IajqvB1NxVBGs292Hs07SSB5+ZNLH52KP7YCiBqgTg/rmJP0zsfTadGKGoT3htA6eLsS0xugT8EkzdxWNZI5tk=
-X-Received: by 2002:a19:5611:: with SMTP id k17mr18716886lfb.168.1550650117245;
- Wed, 20 Feb 2019 00:08:37 -0800 (PST)
-MIME-Version: 1.0
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 20 Feb 2019 09:08:25 +0100
-Message-ID: <CACRpkdYMDh-VLBcKsfrCV5wV0vUqGPujztkqTjyZPznJ2APhEQ@mail.gmail.com>
-Subject: [GIT PULL] pin control fixes for v5.0
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 20 Feb 2019 03:10:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38206 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725779AbfBTIKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 03:10:25 -0500
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC4352146E;
+        Wed, 20 Feb 2019 08:10:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550650223;
+        bh=sdBSnPGZCdOugb7YD6in1/WyjYmSKxm9lOA3pX/1Qi8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=d3IXOV9UlcC06vTvHLtGLqTC7MVKY0AXNbeAlIrg6ReBnLvXLwAVyGncEt+siCqe6
+         InxijhSaOMmfim3qxf91z6t7zEw5Sxxwo9rizOPovCjmplwiQSlSpgkQI9uVDMKjlH
+         jAVmS8LW4vNtThmBvH1XXZNHKqHOc2or2kqhMsFc=
+Date:   Wed, 20 Feb 2019 17:10:19 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable <stable@vger.kernel.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
+ kernel memory that can fault
+Message-Id: <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
+In-Reply-To: <20190219140330.5dd9e876@gandalf.local.home>
+References: <20190215174712.372898450@goodmis.org>
+        <20190215174945.557218316@goodmis.org>
+        <CAHk-=wjP4bEYCFaKZVG4kLWmYBctyfsW9jjhC91tiTk9WwB8Rg@mail.gmail.com>
+        <20190215171539.4682f0b4@gandalf.local.home>
+        <300C4516-A093-43AE-8707-1C42486807A4@amacapital.net>
+        <20190215191949.04604191@gandalf.local.home>
+        <CAHk-=wgJzNp0R3cVhjBPHTR4X9sOvHdqK4UVFfbsOKQ6L=A_eQ@mail.gmail.com>
+        <CAHk-=wh9XrOykA5J9RQ7zaBio-S_D+1AE+rGnBYWSd==pCXh+w@mail.gmail.com>
+        <20190219111802.1d6dbaa3@gandalf.local.home>
+        <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
+        <20190219140330.5dd9e876@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Tue, 19 Feb 2019 14:03:30 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-some final pin control fixes (I hope) to round off the v5.0 pin control
-development cycle.
+> > > Basically, a kprobe is mostly used for debugging what's happening in a
+> > > live kernel, to read any address.  
+> > 
+> > My point is that "any address" is not sufficient to begin with. You
+> > need "kernel or user".
+> > 
+> > Having a flag for what _kind_ of kernel address is ok might then be
+> > required for other cases if they might not be ok with following page
+> > tables to IO space..
+> > 
+> 
+> Good point. Looks like we should add a new flag for kprobe
+> trace parameters, that tell kprobes if the address is expected to be
+> user or kernel. That would be good regardless of the duplicate
+> meanings, as we could use copy_from_user without touching KERNEL_DS, if
+> the probe argument specifically states "this is user space". For
+> example, when probing do_sys_open, and you want to read what path string
+> was passed into the kernel.
+> 
+> Masami, thoughts?
 
-Only driver fixes, one for stable.
+Let me ensure what you want. So you want to access a "string" in user-space,
+not a data structure? In that case, it is very easy to me. It is enough to
+add a "ustring" type to kprobe events. For example, do_sys_opsn's path 
+variable is one example. That will be +0(+0(%si)):ustring, and fetcher
+finally copy the string using strncpy_from_user() instead of 
+strncpy_from_unsafe(). (*)
 
-Please pull them in!
+But if you consider to access a field in a data-structure in user space,
+it might need some more work (E.g. ioctl's parameter), becase if the __user
+pointer to the data structure is on the memory, we have to dereference 
+the address inside kernel using probe_kernel_read(), but after getting 
+the data strucutre address, we have to dereference the address with copy_from_user().
+At this moment, we have no such strong syntax... 
 
-Yours,
-Linus Walleij
+To solve that, maybe we need to introduce something like "back reference"
+of arguments in the event, e.g.
+
+p somewhere user_data=+0(%si) field_val=+8(\user_data):u32:user
+
+or
+
+p somewhere +0(%si) field_val=+8(\1):u32:user
+
+This ":user" additional suffix tells kprobe events to change fetching method 
+to fetch the data by copy_from_user().
+
+(*) BTW, there is another concern to use _from_user APIs in kprobe. Are those
+APIs might sleep??
 
 
-The following changes since commit d13937116f1e82bf508a6325111b322c30c85eb9:
+Thank you,
 
-  Linux 5.0-rc6 (2019-02-10 14:42:20 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v5.0-3
-
-for you to fetch changes up to c17abcfa93bf0be5e48bb011607d237ac2bfc839:
-
-  pinctrl: meson: meson8b: fix the sdxc_a data 1..3 pins (2019-02-17
-22:24:32 +0100)
-
-----------------------------------------------------------------
-Pin control fixes for the v5.0 series:
-- Meson8B fixup for the sdc pins
-- Fix SDC tile position for Qualcomm QCS404
-
-----------------------------------------------------------------
-Bjorn Andersson (1):
-      pinctrl: qcom: qcs404: Correct SDC tile
-
-Martin Blumenstingl (1):
-      pinctrl: meson: meson8b: fix the sdxc_a data 1..3 pins
-
- drivers/pinctrl/meson/pinctrl-meson8b.c | 2 +-
- drivers/pinctrl/qcom/pinctrl-qcs404.c   | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
