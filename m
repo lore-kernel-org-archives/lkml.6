@@ -2,182 +2,117 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACEA8C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 07:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC96C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 07:39:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80A6A2147A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 07:31:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1168621773
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 07:38:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D/wsEmqG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726678AbfBTHbY (ORCPT
+        id S1726536AbfBTHi5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 02:31:24 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:58596 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725857AbfBTHbX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 02:31:23 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id BE942D01ED36AF4441CA;
-        Wed, 20 Feb 2019 15:31:19 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.408.0; Wed, 20 Feb 2019
- 15:31:15 +0800
-Subject: Re: [f2fs-dev] [PATCH] f2fs: don't clear CP_QUOTA_NEED_FSCK_FLAG
-From:   Chao Yu <yuchao0@huawei.com>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20190212023343.52215-1-jaegeuk@kernel.org>
- <df77f830-e5dd-5943-d5b0-e21ced3a7df2@huawei.com>
- <20190216045530.GA57019@jaegeuk-macbookpro.roam.corp.google.com>
- <29a4fd24-6340-41df-7199-6e89b70c6341@huawei.com>
- <20190220070855.GA91331@jaegeuk-macbookpro.roam.corp.google.com>
- <c39a995f-9bfd-e68a-7d04-11bd8c0f8e64@huawei.com>
-Message-ID: <7580aa2e-b2eb-a686-a19d-4e82a713944a@huawei.com>
-Date:   Wed, 20 Feb 2019 15:31:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 20 Feb 2019 02:38:57 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:51799 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726220AbfBTHi4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 02:38:56 -0500
+Received: by mail-it1-f195.google.com with SMTP id y184so13107755itc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 23:38:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gtGVXohNM/IP6aQpyRt4JKzW9QednskqOIKnMuthC24=;
+        b=D/wsEmqGiShOS9LKl4SrTx2FRYRMzYyTNx1wXhkswZf0OLkiBMSfomz695OLIc4nCF
+         j2r9F4Ufz7aMh2KUhkersW9iliIqLPHv6PcXU6KDzJb7aRAl8uvalZatcEVXUT9sHexH
+         ckEcXs30s9yzFsa6yOHf2dd9hRwRQz3rcuQdvja/PwfyahIpbWPqrDe5pJXPA4W2h3JD
+         WlpVhP6wXuH/HE5spHgNhIH6YD+e8p80w3PsXS05UBsEe+Z5yOTtyy9kQ1FPNCvtjTW3
+         muAHm6rLLfch3n6L82vkPYaHyaMnCeL+koBOjDI/K7CYLzjGaqdmGYOd5k85GJ2JYDQa
+         aE8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gtGVXohNM/IP6aQpyRt4JKzW9QednskqOIKnMuthC24=;
+        b=AZQzujIX8Qm18bCSyfh/CqI+kB8JeimEKZrH2FFG6WPeWZ28uGtCX60Dh/1ruPHiOB
+         VUht7ncv8+t7zTKGT49yrlJGbA9yNZaZMRWEXXWCD9PMhYi3v+ppf0mT+qgbuhqUaYvG
+         JQ6HBWKsRYO81nvNEMckmf9YZJVdqJExBpd81IEBZs1Q8xxtVjNQR5td3nmW6smYoCPG
+         +xMRVHI7ogCe8CgYbjWioG9ldROooKfbf9MS4ot8L0X/R9rVatO4CjAqB2i59oDPziTQ
+         JwuyPz01tU9fTnmkdkAtvX4lT253z9P6LOkxABuZW2VYEiOVpNRaVDWStPB72U8tkG8Y
+         3ZmA==
+X-Gm-Message-State: AHQUAubSrpPAxNHMSWLqd2zu0A5HwPd1Z6yFOA29TOrQblEY9ERHN3bm
+        yafiiRevv9qYbSCodnqe+bL39Ipmv3rMNjkFAA==
+X-Google-Smtp-Source: AHgI3IZ3lxaXD8y+tWxPk6bG5RJhwIAqEsv9/z2yPNXKCRv4KFyEPKzhJEJwIQSAMW2KdKRb2jX49e460IUX0ukXH04=
+X-Received: by 2002:a02:f5c:: with SMTP id h89mr16270380jad.15.1550648335363;
+ Tue, 19 Feb 2019 23:38:55 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <c39a995f-9bfd-e68a-7d04-11bd8c0f8e64@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+References: <20190125140823.GC27998@zn.tnic> <20190131075907.GB19091@dhcp-128-65.nay.redhat.com>
+ <20190131105732.GC6749@zn.tnic> <20190131222732.GA946@anatevka>
+ <20190131234740.GO6749@zn.tnic> <20190204223016.GB11986@anatevka>
+ <20190205081552.GG21801@zn.tnic> <20190206120804.GC10062@dhcp-128-65.nay.redhat.com>
+ <20190211204816.GB21473@dhcp-128-65.nay.redhat.com> <20190215102458.GD10433@zn.tnic>
+ <20190218014820.GA10711@dhcp-128-65.nay.redhat.com>
+In-Reply-To: <20190218014820.GA10711@dhcp-128-65.nay.redhat.com>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Wed, 20 Feb 2019 15:38:43 +0800
+Message-ID: <CAFgQCTu7pS=f2NgNvUgWaSt0hQ=KOZJXjBxktLi4PBkuXwvDFA@mail.gmail.com>
+Subject: Re: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X
+ consistent with kaslr
+To:     Dave Young <dyoung@redhat.com>
+Cc:     Borislav Petkov <bp@alien8.de>, Baoquan He <bhe@redhat.com>,
+        Jerry Hoemann <jerry.hoemann@hpe.com>, x86@kernel.org,
+        Randy Dunlap <rdunlap@infradead.org>,
+        kexec@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yinghai Lu <yinghai@kernel.org>, vgoyal@redhat.com,
+        iommu@lists.linux-foundation.org, konrad.wilk@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/2/20 15:25, Chao Yu wrote:
-> On 2019/2/20 15:08, Jaegeuk Kim wrote:
->> On 02/18, Chao Yu wrote:
->>> On 2019/2/16 12:55, Jaegeuk Kim wrote:
->>>> On 02/13, Chao Yu wrote:
->>>>> On 2019/2/12 10:33, Jaegeuk Kim wrote:
->>>>>> If we met this once, let fsck.f2fs clear this only.
->>>>>> Note that, this addresses all the subtle fault injection test.
->>>>>>
->>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>> ---
->>>>>>  fs/f2fs/checkpoint.c | 2 --
->>>>>>  1 file changed, 2 deletions(-)
->>>>>>
->>>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->>>>>> index 03fea4efd64b..10a3ada28715 100644
->>>>>> --- a/fs/f2fs/checkpoint.c
->>>>>> +++ b/fs/f2fs/checkpoint.c
->>>>>> @@ -1267,8 +1267,6 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->>>>>>  
->>>>>>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
->>>>>>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>>>>> -	else
->>>>>> -		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>>>>
->>>>> I didn't get it, previously, if we didn't persist all quota file's data in
->>>>> checkpoint, then we will tag CP_QUOTA_NEED_FSCK_FLAG in CP area, but in current
->>>>> checkpoint, we have persisted all quota file's data, quota files are consistent
->>>>> with all other files in filesystem, why we can't remove this NEED_FSCK flag..?
->>>>
->>>> I said it's subtle. So, I guessed 1) set CP_QUOTA_NEED_FSCK_FLAG, 2) clear
->>>
->>> I know it's subtle... and I agreed we can fix it like this in upstream
->>> first, but in our product, it's not rare that we hit the
->>> QUOTA_SKIP_FLUSH(its value is 4) case, later we may encounter long latency
->>> caused by quota repairing of fsck.
->>>
->>>> SBI_QUOTA_SKIP_FLUSH by checkpoint, 3) clear CP_QUOTA_NEED_FSCK_FLAG by another
->>>> checkpoint?
->>>
->>> But later if QUOTA_NEED_REPAIR is set, we will set QUOTA_NEED_FSCK_FLAG
->>> again, right?
->>>
->>> if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
->>> 	__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>>
->>>
->>> So in order to figure out whether this is caused by out-of-order execution
->>> of below assignments:
->>>
->>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
->>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>> 	else
->>> 		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- clear flag later
->>>
->>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
->>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- set flag first
->>>
->>>
->>> Could you have a try:
->>>
->>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR) ||
->>> 			is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
->>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>> 	else
->>> 		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>
->> What does this mean? I'm in doubt we have a missing case where we clear this
-> 
-> Cpu pipeline / compiler can make code out-of-order execution, which means:
-> 
-> a = 1;
-> b = 2;
-> 
-> may actually be executed as the order of:
-> 
-> b = 2;
-> a = 1;
-> 
-> So I doubt that below two line codes can be executed out-of-order:
-> 
-> else
-> 	__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- clear flag later
-> 
-> if ()
-> 	__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- set flag first
-> 
->> flag, CP_QUOTA_NEED_FSCK_FLAG.
-> 
-> Agreed, I've checked each operation in f2fs_quota_operations yesterday, and
-> didn't find any missing places yet...
+On Mon, Feb 18, 2019 at 9:48 AM Dave Young <dyoung@redhat.com> wrote:
+>
+> On 02/15/19 at 11:24am, Borislav Petkov wrote:
+> > On Tue, Feb 12, 2019 at 04:48:16AM +0800, Dave Young wrote:
+> > > Even we make it automatic in kernel, but we have to have some default
+> > > value for swiotlb in case crashkernel can not find a free region under 4G.
+> > > So this default value can not work for every use cases, people need
+> > > manually use crashkernel=,low and crashkernel=,high in case
+> > > crashkernel=X does not work.
+> >
+> > Why would the user need to find swiotlb range? The kernel has all the
+> > information it requires at its finger tips in order to decide properly.
+> >
+> > The user wants a crashkernel range, the kernel tries the low range =>
+> > no workie, then it tries the next range => workie but needs to allocate
+> > swiotlb range so that DMA can happen too. Doh, then the kernel does
+> > allocate that too.
+>
+> It is ideal if kernel can do it automatically, but I'm not sure if
+> kernel can predict the swiotlb reserved size automatically.
+>
+Agreed, I think it is hard to decide the reserved size automatically.
+We do not know the requirement for memory of ZONE_DMA32 at boot time.
+The requirement depends on how many DMA32 devices, and the dynamic
+payload of them.
 
-Oh, I mean the place where set SBI_QUOTA_NEED_REPAIR, I also doubt we
-missed to set the flag.
-
-Thanks,
-
-> 
-> Thanks,
-> 
->>
->>>
->>> Thanks,
->>>
->>>>
->>>>>
->>>>> Thanks,
->>>>>
->>>>>>  
->>>>>>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
->>>>>>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>>>>>
->>>>
->>>> .
->>>>
->>
->> .
->>
-> 
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> .
-> 
-
+> Let's add more people to seek for comments.
+>
+> >
+> > Why would the user need to do anything here?!
+> >
+> > --
+> > Regards/Gruss,
+> >     Boris.
+> >
+> > Good mailing practices for 400: avoid top-posting and trim the reply.
