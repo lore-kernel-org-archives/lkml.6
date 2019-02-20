@@ -2,96 +2,128 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 578B1C10F0B
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B4DC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B17021902
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:52:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DE562146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:53:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727057AbfBTOwd (ORCPT
+        id S1727113AbfBTOxW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 09:52:33 -0500
-Received: from gate.crashing.org ([63.228.1.57]:51260 "EHLO gate.crashing.org"
+        Wed, 20 Feb 2019 09:53:22 -0500
+Received: from mga09.intel.com ([134.134.136.24]:17189 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726194AbfBTOwd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 09:52:33 -0500
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x1KEpYL4023289;
-        Wed, 20 Feb 2019 08:51:34 -0600
-Received: (from segher@localhost)
-        by gate.crashing.org (8.14.1/8.14.1/Submit) id x1KEpPRx023288;
-        Wed, 20 Feb 2019 08:51:25 -0600
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date:   Wed, 20 Feb 2019 08:51:25 -0600
-From:   Segher Boessenkool <segher@kernel.crashing.org>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Balbir Singh <bsingharora@gmail.com>, erhard_f@mailbox.org,
-        jack@suse.cz, linuxppc-dev@ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        aneesh.kumar@linux.vnet.ibm.com
-Subject: Re: [PATCH] powerpc/64s: Fix possible corruption on big endian due to pgd/pud_present()
-Message-ID: <20190220145112.GW14180@gate.crashing.org>
-References: <20190214062339.7139-1-mpe@ellerman.id.au> <20190216105511.GA31125@350D> <20190216142206.GE14180@gate.crashing.org> <20190217062333.GC31125@350D> <87ef86dd9v.fsf@concordia.ellerman.id.au> <20190217215556.GH31125@350D> <87imxhrkdt.fsf@concordia.ellerman.id.au> <20190219201539.GT14180@gate.crashing.org> <87sgwi7lo1.fsf@concordia.ellerman.id.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87sgwi7lo1.fsf@concordia.ellerman.id.au>
-User-Agent: Mutt/1.4.2.3i
+        id S1726219AbfBTOxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 09:53:21 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 06:53:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,391,1544515200"; 
+   d="scan'208";a="148391110"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga001.fm.intel.com with ESMTP; 20 Feb 2019 06:53:21 -0800
+Received: from [10.125.252.177] (abudanko-mobl.ccr.corp.intel.com [10.125.252.177])
+        by linux.intel.com (Postfix) with ESMTP id BBFB258019B;
+        Wed, 20 Feb 2019 06:53:18 -0800 (PST)
+Subject: Re: [PATCH v2 3/4] perf record: enable runtime trace compression
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <044ee2be-2e1d-e90f-7317-40083b5e716c@linux.intel.com>
+ <5bc6958d-f4bc-d4ea-e5d0-16c5e7b73911@linux.intel.com>
+ <20190212130856.GH775@krava>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <c3993c13-3a8d-c56d-5c5a-3a537747d079@linux.intel.com>
+Date:   Wed, 20 Feb 2019 17:53:17 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
+MIME-Version: 1.0
+In-Reply-To: <20190212130856.GH775@krava>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 10:18:38PM +1100, Michael Ellerman wrote:
-> Segher Boessenkool <segher@kernel.crashing.org> writes:
-> > On Mon, Feb 18, 2019 at 11:49:18AM +1100, Michael Ellerman wrote:
-> >> Balbir Singh <bsingharora@gmail.com> writes:
-> >> > Fair enough, my point was that the compiler can help out. I'll see what
-> >> > -Wconversion finds on my local build :)
-> >> 
-> >> I get about 43MB of warnings here :)
-> >
-> > Yes, -Wconversion complains about a lot of things that are idiomatic C.
-> > There is a reason -Wconversion is not in -Wall or -Wextra.
-> 
-> Actually a lot of those go away when I add -Wno-sign-conversion.
-> 
-> And what's left seems mostly reasonable, they all indicate the
-> possibility of a bug I think.
-> 
-> In fact this works and would have caught the bug:
-> 
-> diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
-> index d8c8d7c9df15..3114e3f368e2 100644
-> --- a/arch/powerpc/include/asm/book3s/64/pgtable.h
-> +++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
-> @@ -904,7 +904,12 @@ static inline int pud_none(pud_t pud)
->  
->  static inline int pud_present(pud_t pud)
->  {
-> +	__diag_push();
-> +	__diag_warn(GCC, 8, "-Wconversion", "ulong -> int");
-> +
->  	return !!(pud_raw(pud) & cpu_to_be64(_PAGE_PRESENT));
-> +
-> +	__diag_pop();
->  }
->  
->  extern struct page *pud_page(pud_t pud);
-> 
-> 
-> 
-> Obviously we're not going to instrument every function like that. But we
-> could start instrumenting particular files.
 
-So you want to instrument the functions that you know are buggy, using some
-weird incantations to catch only those errors you already know about?
+On 12.02.2019 16:08, Jiri Olsa wrote:
+> On Mon, Feb 11, 2019 at 11:23:40PM +0300, Alexey Budankov wrote:
+> 
+> SNIP
+> 
+>> @@ -774,6 +775,8 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
+>>  	struct perf_mmap *maps;
+>>  	int trace_fd = rec->data.file.fd;
+>>  	off_t off;
+>> +	struct perf_session *session = rec->session;
+>> +	perf_mmap__compress_fn_t compress_fn;
+>>  
+>>  	if (!evlist)
+>>  		return 0;
+>> @@ -785,6 +788,9 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
+>>  	if (overwrite && evlist->bkw_mmap_state != BKW_MMAP_DATA_PENDING)
+>>  		return 0;
+>>  
+>> +	compress_fn = (record__comp_enabled(rec) ?
+>> +		perf_session__zstd_compress : perf_session__zstd_copy);
+>> +
+> 
+> I don't follow what's the perf_session__zstd_copy function for..?
 
-(I am worried this does not scale, in many dimensions).
+It bridges AIO without compression case.
 
+Thanks,
+Alexey
 
-Segher
+> 
+> for !record__comp_enabled case we seem not to use it
+> and calling the current perf_mmap__push interface
+> 
+> however I dont see point to have this function at all
+> 
+> jirka
+> 
+> 
+>>  	if (record__aio_enabled(rec))
+>>  		off = record__aio_get_pos(trace_fd);
+>>  
+>> @@ -799,11 +805,21 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
+>>  				map->flush = MMAP_FLUSH_DEFAULT;
+>>  			}
+>>  			if (!record__aio_enabled(rec)) {
+>> -				if (perf_mmap__push(map, rec, record__pushfn) != 0) {
+>> -					if (sync)
+>> -						map->flush = flush;
+>> -					rc = -1;
+>> -					goto out;
+>> +				if (!record__comp_enabled(rec)) {
+>> +					if (perf_mmap__push(map, rec, record__pushfn) != 0) {
+>> +						if (sync)
+>> +							map->flush = flush;
+>> +						rc = -1;
+>> +						goto out;
+>> +					}
+>> +				} else {
+>> +					if (perf_mmap__pack(map, rec, record__pushfn,
+>> +							compress_fn, session) != 0) {
+>> +						if (sync)
+>> +							map->flush = flush;
+>> +						rc = -1;
+>> +						goto out;
+>> +					}
+> 
+> SNIP
+> 
