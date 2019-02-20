@@ -2,134 +2,118 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44CABC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:05:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 611A4C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E73921773
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:05:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38BD9208E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:06:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbfBTJFP (ORCPT
+        id S1726681AbfBTJGV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 04:05:15 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34000 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725857AbfBTJFO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 04:05:14 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AD8767E9C8;
-        Wed, 20 Feb 2019 09:05:13 +0000 (UTC)
-Received: from gondolin (dhcp-192-187.str.redhat.com [10.33.192.187])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8BFFA17D3A;
-        Wed, 20 Feb 2019 09:05:06 +0000 (UTC)
-Date:   Wed, 20 Feb 2019 10:05:03 +0100
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.ibm.com>
-Cc:     pmorel@linux.ibm.com, borntraeger@de.ibm.com,
-        alex.williamson@redhat.com, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        frankja@linux.ibm.com, pasic@linux.ibm.com, david@redhat.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        freude@linux.ibm.com, mimu@linux.ibm.com
-Subject: Re: [PATCH v3 1/9] s390: vfio_ap: link the vfio_ap devices to the
- vfio_ap bus subsystem
-Message-ID: <20190220100503.4036e8dd.cohuck@redhat.com>
-In-Reply-To: <f95dec76-ba2e-38b2-64f3-9abe4ca6a501@linux.ibm.com>
-References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
-        <1550152269-6317-2-git-send-email-pmorel@linux.ibm.com>
-        <20190214155441.087d2a68.cohuck@redhat.com>
-        <9403117a-04a6-8f69-2a61-f96d35a59555@linux.ibm.com>
-        <20190214175730.4ab609ae.cohuck@redhat.com>
-        <9200b1f8-874f-ffa7-bef0-19ca570d7ac1@linux.ibm.com>
-        <eac03540-a499-fa0f-1a4a-b5cc99030775@linux.ibm.com>
-        <20190215101118.5417d725.cohuck@redhat.com>
-        <f38c99e6-bb25-9179-e4cd-20ba8482111f@linux.ibm.com>
-        <20190218130147.5ed3edbe.cohuck@redhat.com>
-        <602fd1f8-0ac1-42dc-30fd-ea16bb7bbc99@linux.ibm.com>
-        <20190218175747.53212f95.cohuck@redhat.com>
-        <f95dec76-ba2e-38b2-64f3-9abe4ca6a501@linux.ibm.com>
-Organization: Red Hat GmbH
+        Wed, 20 Feb 2019 04:06:21 -0500
+Received: from relay10.mail.gandi.net ([217.70.178.230]:39073 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725778AbfBTJGV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 04:06:21 -0500
+Received: from localhost (aaubervilliers-681-1-81-190.w90-88.abo.wanadoo.fr [90.88.23.190])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 0DAF2240016;
+        Wed, 20 Feb 2019 09:06:17 +0000 (UTC)
+Date:   Wed, 20 Feb 2019 10:06:17 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Mans Rullgard <mans@mansr.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ARM: dts: sun7i: add pinctrl for missing uart mux options
+Message-ID: <20190220090617.aprfndnidcamwcvy@flea>
+References: <20190216182132.12895-1-mans@mansr.com>
+ <CAGb2v66C6HFKgF8kERfp2UQ5XUyNS0-prgC3sX2iobkz7SjBcw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 20 Feb 2019 09:05:13 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="foh6urmif5xrrhfj"
+Content-Disposition: inline
+In-Reply-To: <CAGb2v66C6HFKgF8kERfp2UQ5XUyNS0-prgC3sX2iobkz7SjBcw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Feb 2019 17:27:05 -0500
-Tony Krowiak <akrowiak@linux.ibm.com> wrote:
 
-> On 2/18/19 11:57 AM, Cornelia Huck wrote:
-> > On Mon, 18 Feb 2019 11:35:45 -0500
-> > Tony Krowiak <akrowiak@linux.ibm.com> wrote:
-> >   
-> >> On 2/18/19 7:01 AM, Cornelia Huck wrote:  
-> >>> On Fri, 15 Feb 2019 16:59:33 -0500
-> >>> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
-> >>>      
-> >>>> On 2/15/19 4:11 AM, Cornelia Huck wrote:  
-> >>>>> On Thu, 14 Feb 2019 13:30:59 -0500
-> >>>>> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
-> >>>>>         
-> >>>>>> On 2/14/19 12:36 PM, Pierre Morel wrote:  
-> >>>>>>> On 14/02/2019 17:57, Cornelia Huck wrote:  
-> >>>      
-> >>>>>>>> (And reading further in the current code, it seems we clear that
-> >>>>>>>> structure _after_ the matrix device had been setup, so how can that
-> >>>>>>>> even work? Where am I confused?)  
-> >>>>>>>
-> >>>>>>> On device_register there were no bus, so the core just do not look for a
-> >>>>>>> driver and this field was nor tested nor overwritten.  
-> >>>>>
-> >>>>> Hm... so has the callback in driver_for_each_device() in
-> >>>>> vfio_ap_verify_queue_reserved() ever been invoked at all? It seems this
-> >>>>> patch fixes more than just libudev issues...  
-> >>>>
-> >>>> It is this patch that rendered the driver_for_each_device() in
-> >>>> vfio_ap_verify_queue_reserved() erroneous. That function gets called
-> >>>> every time an adapter or domain is assigned to the mdev. This patch
-> >>>> introduced the problem with driver_for_each_device().  
-> >>>
-> >>> So, does this function need to be removed or called from another place,
-> >>> then? (It looks like it was dead code before.)  
-> >>
-> >> I don't see why you think it's dead code:
-> >>
-> >> assign_adapter_store  
-> >> ==> vfio_ap_mdev_verify_queues_reserved_for_apid
-> >>       ==> vfio_ap_verify_queue_reserved
-> >>           ==> driver_for_each_device  
-> >>
-> >> The only way that the vfio_ap_verify_queue_reserved - the function that
-> >> calls driver_for_each_device - does not get called is if no bits have
-> >> yet been set in matrix_mdev->matrix.aqm.  
-> > 
-> > What I don't see is how this can be called if no device has been, in
-> > fact, bound to the driver in the driver core...  
-> 
-> Let's start with the fact that one can create an mdev device regardless
-> of whether a queue has been bound to the vfio_ap driver. Once an mdev
-> device is created, one can start assigning adapters, domains and control
-> domains to it. Let's say the admin now attempts to assign an adapter, in
-> which case the assign_adapter_store() function is invoked. After
-> verifying that the APID passed in is a valid adapter number, the
-> vfio_ap_mdev_verify_queues_reserved_for_apid() function is called.
-> This function first checks if any domains have been assigned and if not,
-> calls vfio_ap_verify_queue_reserved(&apid, NULL). It is in this function
-> that the driver_for_each_device() function is called. Since there are
-> no devices bound to the vfio_ap device driver, the callback passed in to
-> the driver_for_each_device() function will never get called, so the
-> vfio_ap_mdev_verify_queues_reserved_for_apid() function will return
-> -EADDRNOTAVAIL. A similar flow will occur if the first assignment is for
-> a domain. The bottom line is, the driver_for_each_device() function is
-> called every time an adapter or domain is assigned.
+--foh6urmif5xrrhfj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Indeed. I just got lost with the various drivers and devices in play
-here :(
+On Wed, Feb 20, 2019 at 04:58:49PM +0800, Chen-Yu Tsai wrote:
+> On Sun, Feb 17, 2019 at 2:21 AM Mans Rullgard <mans@mansr.com> wrote:
+> >
+> > This adds pinctrl settings for various missing uart options.
+> >
+> > Signed-off-by: Mans Rullgard <mans@mansr.com>
+> > ---
+> >  arch/arm/boot/dts/sun7i-a20.dtsi | 45 ++++++++++++++++++++++++++++++++
+> >  1 file changed, 45 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i=
+-a20.dtsi
+> > index af5b067a5f83..2295ff5adf48 100644
+> > --- a/arch/arm/boot/dts/sun7i-a20.dtsi
+> > +++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+> > @@ -944,6 +944,31 @@
+> >                                 function =3D "uart0";
+> >                         };
+> >
+> > +                       uart0_pf_pins: uart0-pf-pins {
+> > +                               pins =3D "PF2", "PF4";
+> > +                               function =3D "uart0";
+> > +                       };
+>=20
+> We've had the policy of not adding pinctrl nodes that aren't used in-tree,
+> to avoid bloating up the blob size. However DTC 1.4.7 introduced the new
+> /omit-if-no-ref/ directive, which would make the compiler discard marked
+> nodes if they aren't referenced.
+>=20
+> So please add this to all the new nodes. It seems to work regardless whet=
+her
+> you add it before or after the label, though having it after the label se=
+ems
+> to make vim syntax highlighting happier.
+
+It also works (both for dtc and vim) if we put it on the previous
+line, so something like:
+
+/omit-if-no-ref/
+uart0_pf_pins: uart0-pf-pins {
+};
+
+And it does have the advantage of keeping the same line width, which
+could get pretty long on some nodes.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--foh6urmif5xrrhfj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXG0YiQAKCRDj7w1vZxhR
+xXzVAP9ijrsG7dQ9ZkgmVB+wYx/3Y8mdnIpj0J1trQGPtzNyiQD/as1MQ3MQA2eo
+/lMgL7JN23+8+YbQ3x8rN3XItEkscAw=
+=rn9g
+-----END PGP SIGNATURE-----
+
+--foh6urmif5xrrhfj--
