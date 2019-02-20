@@ -2,39 +2,39 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D66A0C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D589FC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:09:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0F9C2147A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:09:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B199E2147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:09:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728232AbfBTNJc (ORCPT
+        id S1728208AbfBTNJb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 08:09:32 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:12236 "EHLO
+        Wed, 20 Feb 2019 08:09:31 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:12235 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728029AbfBTNJ1 (ORCPT
+        by vger.kernel.org with ESMTP id S1728041AbfBTNJ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 20 Feb 2019 08:09:27 -0500
 Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1KD6MpZ018722;
-        Wed, 20 Feb 2019 14:09:08 +0100
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1KD6Yfi018759;
+        Wed, 20 Feb 2019 14:09:09 +0100
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2qr6x5s9f9-1
+        by mx07-00178001.pphosted.com with ESMTP id 2qr6x5s9fa-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 20 Feb 2019 14:09:08 +0100
+        Wed, 20 Feb 2019 14:09:09 +0100
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B744231;
-        Wed, 20 Feb 2019 13:09:07 +0000 (GMT)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7F56E34;
+        Wed, 20 Feb 2019 13:09:08 +0000 (GMT)
 Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8AABB2BB4;
-        Wed, 20 Feb 2019 13:09:07 +0000 (GMT)
-Received: from localhost (10.75.127.45) by SFHDAG5NODE3.st.com (10.75.127.15)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 20 Feb 2019 14:09:06
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 487AD2BB6;
+        Wed, 20 Feb 2019 13:09:08 +0000 (GMT)
+Received: from localhost (10.75.127.44) by SFHDAG5NODE3.st.com (10.75.127.15)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 20 Feb 2019 14:09:07
  +0100
 From:   Fabrice Gasnier <fabrice.gasnier@st.com>
 To:     <thierry.reding@gmail.com>
@@ -45,14 +45,16 @@ CC:     <robh+dt@kernel.org>, <u.kleine-koenig@pengutronix.de>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>
-Subject: [PATCH v5 0/3] Add PM support to STM32 LP Timer drivers
-Date:   Wed, 20 Feb 2019 14:07:45 +0100
-Message-ID: <1550668068-9661-1-git-send-email-fabrice.gasnier@st.com>
+Subject: [PATCH v5 1/3] dt-bindings: pwm-stm32-lp: document pinctrl sleep state
+Date:   Wed, 20 Feb 2019 14:07:46 +0100
+Message-ID: <1550668068-9661-2-git-send-email-fabrice.gasnier@st.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1550668068-9661-1-git-send-email-fabrice.gasnier@st.com>
+References: <1550668068-9661-1-git-send-email-fabrice.gasnier@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG7NODE3.st.com (10.75.127.21) To SFHDAG5NODE3.st.com
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG5NODE3.st.com
  (10.75.127.15)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-20_11:,,
  signatures=0
@@ -61,43 +63,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series adds power management support for STM32 LP Timer:
-- PWM driver
-- Document the pinctrl states for sleep mode
+Add documentation for pinctrl sleep state on STM32 LPTimer PWM.
 
-It also adds device link between the PWM consumer and the PWM provider.
-This allows proper sequencing for suspend/resume (e.g. user will likely
-do a pwm_disable() before the PWM provider suspend executes), see [1].
-
-[1] https://lkml.org/lkml/2019/2/5/770
-
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
-Changes in v5:
-- improve a warning message, fix a style issue.
+ Documentation/devicetree/bindings/pwm/pwm-stm32-lp.txt | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Changes in v4:
-- improve error handling when adding the PWM consumer device link.
-
-Changes in v3:
-- Move the device_link_add() call to of_pwm_get() as discussed with Uwe.
-
-Changes in v2:
-- Don't disable PWM channel in PWM provider: rather refuse to suspend
-  and report an error as suggested by Uwe and Thierry.
-- Add patch 3/3 to propose device link addition.
-- No updates for STM32 LP Timer IIO driver. Patches can be send separately.
-
-Fabrice Gasnier (3):
-  dt-bindings: pwm-stm32-lp: document pinctrl sleep state
-  pwm: stm32-lp: Add power management support
-  pwm: core: add consumer device link
-
- .../devicetree/bindings/pwm/pwm-stm32-lp.txt       |  9 ++--
- drivers/pwm/core.c                                 | 50 ++++++++++++++++++++--
- drivers/pwm/pwm-stm32-lp.c                         | 25 +++++++++++
- include/linux/pwm.h                                |  6 ++-
- 4 files changed, 82 insertions(+), 8 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-stm32-lp.txt b/Documentation/devicetree/bindings/pwm/pwm-stm32-lp.txt
+index bd23302..6521bc4 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-stm32-lp.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-stm32-lp.txt
+@@ -11,8 +11,10 @@ Required parameters:
+ 			bindings defined in pwm.txt.
+ 
+ Optional properties:
+-- pinctrl-names: 	Set to "default".
+-- pinctrl-0: 		Phandle pointing to pin configuration node for PWM.
++- pinctrl-names: 	Set to "default". An additional "sleep" state can be
++			defined to set pins in sleep state when in low power.
++- pinctrl-n: 		Phandle(s) pointing to pin configuration node for PWM,
++			respectively for "default" and "sleep" states.
+ 
+ Example:
+ 	timer@40002400 {
+@@ -21,7 +23,8 @@ Example:
+ 		pwm {
+ 			compatible = "st,stm32-pwm-lp";
+ 			#pwm-cells = <3>;
+-			pinctrl-names = "default";
++			pinctrl-names = "default", "sleep";
+ 			pinctrl-0 = <&lppwm1_pins>;
++			pinctrl-1 = <&lppwm1_sleep_pins>;
+ 		};
+ 	};
 -- 
 2.7.4
 
