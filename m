@@ -2,108 +2,222 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B53F6C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:21:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73B90C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:24:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71C7220880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:21:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3605820880
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:24:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nfhSet5d"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="toO/u5Fx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726749AbfBTVVO (ORCPT
+        id S1726389AbfBTVYZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 16:21:14 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:46676 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725798AbfBTVVO (ORCPT
+        Wed, 20 Feb 2019 16:24:25 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45851 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbfBTVYZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 16:21:14 -0500
-Received: by mail-vk1-f195.google.com with SMTP id j68so5836259vke.13
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 13:21:13 -0800 (PST)
+        Wed, 20 Feb 2019 16:24:25 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 32so42665971ota.12
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 13:24:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TWAc5FCO+cMMQk/gs4xgFG+Nej5qqLnHefYCW6Hd11c=;
-        b=nfhSet5dATw1pr2sDEUbC8LfTm1if2M8Fwaep0FCBW17kBnKlxQrQM1Lji6TiLfFDe
-         XhfNaq97xwAIubmWTeHlVbCSmzNu2jBO7oQ1JCe69c5RJTbXc+aUJMzekcMqPZ+5qLTR
-         Xsu7fFZkQk9Vb91lwB0H1UJvp8TY6ji+Q+QKw=
+         :cc:content-transfer-encoding;
+        bh=CX0Ej+C25hnPLucJgZDuVp4EYcT9632ZU7KSmYgM990=;
+        b=toO/u5FxNwFqKBIoCiFcRFJ+6g7uh94mVACddWd4U6EaivSUV4hdNscKcXRzY/D1tJ
+         9sZ/1VJMvWuxDkHkajR36ACZmtpDhUAivYGABCC5CPVNb8oDUcBptRv/hbxuQdMlgqor
+         dO9KwkHTdf9CniMk5AUd9cDCGB7OLvyaLeEbtT3CLu6F0SueOdqFp3wVhgVtzn6/U52S
+         lr8syqQJ7rCNebItSeW/ictyFPrZ20Umnh3YRbVQFXFW7vsBaHvJLIEQvKNR9UlZjkmT
+         DOTlfKXr4OKIoFZa+oOO8pqZFKN43tlqlUytWWkqkgViyRsSaxnhDY8EnuYCmFPv1rJz
+         Hv9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TWAc5FCO+cMMQk/gs4xgFG+Nej5qqLnHefYCW6Hd11c=;
-        b=e0quLSbzKlN+22pa7tXoRDTgO5wTcV5XjVqsRYcRbYxAHOdzuMnKgUFtXeFiGqACMF
-         NDNjO3+55Q+JxBRVhW3BS3im8c7ZAV/CaTxUYiEvhLJGKqvE2dgwE0eHQwcwyO4dzTnA
-         Pbc96Kzs6Vs0RYRkNNz0/b1greV7DPvxJHWgl/M+N67ECXvtfdmXg6OuocnEmr+OANmU
-         48OgsLqbUeff9Ac+A/yJT4fflqxldXmw8YjvT62nbqj9FVjKMX7HeB5st+pLa4H7sfDX
-         EPVqxF7UXb3mhnT9qGjvpUAfXVWVVAktcE8m1xFtgeyIAjJerGg1IcciZBVP29BL4xQF
-         2YVw==
-X-Gm-Message-State: AHQUAuaFQKLRXianPYMrl3f7cVzcvIJIMAaAYl5AZ/10ZxrTNwKKMpJK
-        Fnfr/ASK5PsuQfxRr6Z9mPUI8S3ijUY=
-X-Google-Smtp-Source: AHgI3IZrcidWRe/g2etNW7I/X255oU91BQTSyMPSun6eUIuVCM7cuPh/naMeIXGWHJxkdRalRLXnGw==
-X-Received: by 2002:a1f:210f:: with SMTP id h15mr20273016vkh.6.1550697672722;
-        Wed, 20 Feb 2019 13:21:12 -0800 (PST)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
-        by smtp.gmail.com with ESMTPSA id j4sm13788106vke.0.2019.02.20.13.21.11
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Feb 2019 13:21:11 -0800 (PST)
-Received: by mail-vs1-f45.google.com with SMTP id u64so14864035vsc.12
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 13:21:11 -0800 (PST)
-X-Received: by 2002:a05:6102:d2:: with SMTP id u18mr11361090vsp.172.1550697670719;
- Wed, 20 Feb 2019 13:21:10 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=CX0Ej+C25hnPLucJgZDuVp4EYcT9632ZU7KSmYgM990=;
+        b=eM8sdy1JbWB3ijkrDF6SlPjQ52RGiWt+SBTGzQLLn6KyWhHgU437DTGoO9acUntyKr
+         l2KMJAzLRzFdB8wTxXFQxQoT4R/xMC+U3x1WcYLDIrV15aUtRqGV1cvJZIs31lIjB/G5
+         dRYtfDobMmfXMkt+I6DxMl+aXXzu4p7a+TaS/e/HXAw7KgrkHQ5ST5yZ2LVJQP5SQYpx
+         bYHrRzwLQDJQ4hlz520RaOCypTY1aJI1qE9KSivjT4SZlMAN/MIFuE0UDqd2MmXFTTBF
+         T/B2zRYp/kDGV5tuxlxgm1Ys73PqcDMCafuNV4TNspxoxRD2CqA/CP+/OPRWlGfATSaH
+         HiBg==
+X-Gm-Message-State: AHQUAuaMthNtacdsJQTYmY5yH/03u9NiCgpYhb5Ok22/LLIlz5fyltx3
+        iCHfAOxBsrhD08QreLGjXAnlZWqs9w9dzpHIzng=
+X-Google-Smtp-Source: AHgI3Ib7fvmTpDY4ZrK7UCuksFJ5ZPqtQvFGZ+RWxjMD1vio22OQNbmYqWHPkupgNWmgpSP/Ldl86ZT/B3TTD5ttKKs=
+X-Received: by 2002:aca:75cf:: with SMTP id q198mr7390669oic.125.1550697863672;
+ Wed, 20 Feb 2019 13:24:23 -0800 (PST)
 MIME-Version: 1.0
-References: <20190220180934.GA46255@beast> <20190220184859.GA6429@openwall.com>
-In-Reply-To: <20190220184859.GA6429@openwall.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 20 Feb 2019 13:20:58 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jLB=so4r169pq1KF3Kyfh2Kw_t6ZXGavpzVO2sg3=D1tw@mail.gmail.com>
-Message-ID: <CAGXu5jLB=so4r169pq1KF3Kyfh2Kw_t6ZXGavpzVO2sg3=D1tw@mail.gmail.com>
-Subject: Re: [PATCH v2] x86/asm: Pin sensitive CR4 bits
-To:     Solar Designer <solar@openwall.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Jann Horn <jannh@google.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        X86 ML <x86@kernel.org>
+References: <20190219212441.19391-1-jekhor@gmail.com> <20190219212441.19391-3-jekhor@gmail.com>
+ <19f27109-434d-3e5e-c895-fdec0324572f@redhat.com>
+In-Reply-To: <19f27109-434d-3e5e-c895-fdec0324572f@redhat.com>
+From:   Yauhen Kharuzhy <jekhor@gmail.com>
+Date:   Thu, 21 Feb 2019 00:24:11 +0300
+Message-ID: <CAKWEGV7rOzvyK5GHQc65XvtGd3Pe7Czccro=sjpoH0DbQ+h+Rg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] extcon intel-cht-wc: Enable external charger
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 10:49 AM Solar Designer <solar@openwall.com> wrote:
+=D1=81=D1=80, 20 =D1=84=D0=B5=D0=B2=D1=80. 2019 =D0=B3. =D0=B2 18:53, Hans =
+de Goede <hdegoede@redhat.com>:
 >
-> On Wed, Feb 20, 2019 at 10:09:34AM -0800, Kees Cook wrote:
-> > +     if (WARN_ONCE((val & cr4_pin) != cr4_pin, "cr4 bypass attempt?!\n"))
-> > +             goto again;
+> Hi,
 >
-> I think "goto again" is too mild a response given that it occurs after a
-> successful write of a non-pinned value to CR4.  I think it'd allow some
-> exploits to eventually win the race: make their desired use of whatever
-> functionality SMEP, etc. would have prevented - which may be just a few
-> instructions they need to run - before the CR4 value is reverted after
-> "goto again".  I think it's one of those cases where a kernel panic
-> would be more appropriate.
+> On 2/19/19 10:24 PM, Yauhen Kharuzhy wrote:
+> > In some configuration external charger "#charge enable" signal is
+> > connected to PMIC. Enable it at device probing to allow charging.
+> >
+> > Save CHGRCTRL0 and CHGDISCTR registers at driver probing and restore
+> > them at driver unbind to re-enable hardware charging control if it was
+> > enabled before.
+> >
+> > Tested at Lenovo Yoga Book (YB1-X91L).
+> >
+> > Signed-off-by: Yauhen Kharuzhy <jekhor@gmail.com>
+> > ---
+> >   drivers/extcon/extcon-intel-cht-wc.c | 91 +++++++++++++++++++++++++++=
+-
+> >   1 file changed, 90 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/extcon/extcon-intel-cht-wc.c b/drivers/extcon/extc=
+on-intel-cht-wc.c
+> > index 4f6ba249bc30..ac009929d244 100644
+> > --- a/drivers/extcon/extcon-intel-cht-wc.c
+> > +++ b/drivers/extcon/extcon-intel-cht-wc.c
+> > @@ -57,6 +57,16 @@
+> >   #define CHT_WC_USBSRC_TYPE_OTHER    8
+> >   #define CHT_WC_USBSRC_TYPE_DCP_EXTPHY       9
+> >
+> > +#define CHT_WC_CHGDISCTRL            0x5e2f
+> > +#define CHT_WC_CHGDISCTRL_OUTPUT     BIT(0)
+> > +/* 0 - open drain, 1 - regular output */
+> > +#define CHT_WC_CHGDISCTRL_DRV_OD_DIS BIT(4)
+> > +#define CHT_WC_CHGDISCTRL_MODE_HW    BIT(6)
+> > +
+> > +#define CHT_WC_CHGDISCTRL_CCSM_DIS   0x11
+> > +#define CHT_WC_CHGDISCTRL_CCSM_EN    0x00
+> > +#define CHT_WC_CHGDISCTRL_CCSM_MASK  0x51
+> > +
+>
+> You no longer need the last 3 defines and IMHO keeping them
+> will only confuse the reader of the code, please drop these 3.
 
-It will not land upstream with a BUG() or panic(). Linus has
-explicitly stated that none of this work can do that until it has
-"baked" in the kernel for a couple years.
+My mistake, thanks.
 
-In his defense, anyone sufficiently paranoid can already raise the
-priority of a WARN() into a panic via sysctl kernel.panic_on_warn (and
-kernel.panic_on_oops).
+> > +static int cht_wc_save_initial_state(struct cht_wc_extcon_data *ext)
+> > +{
+> > +     int ret;
+> > +
+> > +     /*
+> > +      * Save the external charger control output state for restoring i=
+t at
+> > +      * driver unbinding
+> > +      */
+> > +     ret =3D regmap_read(ext->regmap, CHT_WC_CHGDISCTRL,
+> > +                       &ext->chgdisctrl_saved);
+> > +     if (ret) {
+> > +             dev_err(ext->dev, "Error reading CHGDISCTRL: %d\n",
+> > +                     ret);
+> > +             return ret;
+> > +     }
+> > +
+> > +     ret =3D regmap_read(ext->regmap, CHT_WC_CHGRCTRL0,
+> > +                       &ext->chgrctrl0_saved);
+> > +     if (ret) {
+> > +             dev_err(ext->dev, "Error reading CHGRCTRL0: %d\n",
+> > +                     ret);
+> > +             return ret;
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int cht_wc_restore_initial_state(struct cht_wc_extcon_data *ext=
+)
+> > +{
+> > +     int ret;
+> > +
+> > +     ret =3D regmap_write(ext->regmap, CHT_WC_CHGDISCTRL,
+> > +                        ext->chgdisctrl_saved);
+> > +     if (ret)
+> > +             dev_err(ext->dev, "Error restoring of CHGDISCTRL reg: %d\=
+n",
+> > +                     ret);
+> > +
+> > +     ret =3D regmap_write(ext->regmap, CHT_WC_CHGRCTRL0,
+> > +                        ext->chgrctrl0_saved);
+> > +     if (ret)
+> > +             dev_err(ext->dev, "Error restoring of CHGRCTRL0 reg: %d\n=
+",
+> > +                     ret);
+> > +
+> > +     return ret;
+> > +}
+> > +
+> >   static int cht_wc_extcon_probe(struct platform_device *pdev)
+> >   {
+> >       struct intel_soc_pmic *pmic =3D dev_get_drvdata(pdev->dev.parent)=
+;
+> > @@ -347,6 +429,8 @@ static int cht_wc_extcon_probe(struct platform_devi=
+ce *pdev)
+> >       if (IS_ERR(ext->edev))
+> >               return PTR_ERR(ext->edev);
+> >
+> > +     cht_wc_save_initial_state(ext);
+> > +
+> >       /*
+> >        * When a host-cable is detected the BIOS enables an external 5v =
+boost
+> >        * converter to power connected devices there are 2 problems with=
+ this:
+> > @@ -365,7 +449,10 @@ static int cht_wc_extcon_probe(struct platform_dev=
+ice *pdev)
+> >       /* Enable sw control */
+> >       ret =3D cht_wc_extcon_sw_control(ext, true);
+> >       if (ret)
+> > -             return ret;
+> > +             goto disable_sw_control;
+> > +
+> > +     /* Disable charging by external battery charger */
+> > +     cht_wc_extcon_enable_charging(ext, false);
+> >
+> >       /* Register extcon device */
+> >       ret =3D devm_extcon_dev_register(ext->dev, ext->edev);
+> > @@ -400,6 +487,7 @@ static int cht_wc_extcon_probe(struct platform_devi=
+ce *pdev)
+> >
+> >   disable_sw_control:
+> >       cht_wc_extcon_sw_control(ext, false);
+> > +     cht_wc_restore_initial_state(ext);
+>
+> The restore_initial_state will clober al changes made by the
+> cht_wc_extcon_sw_control call, so we do not need both. Thinking a bit
+> more about this I think it might be best to drop the state save/restore
+> code and just enable hw-control on exit unconditionally. We cannot be
+> sure that te initial state is sane, so just switching to hw-control on
+> exit seem best and requires less code.  Andy, what is your take on this?
 
-> Also, WARN_ONCE possibly introduces a delay sufficient to realistically
-> win this race on the first try.  If we choose to warn, we should do it
-> after having reverted the CR4 value, not before.
+On the other hand we don't know if HW mode is suitable for given
+hardware configuration.
 
-Isn't cr4 CPU-local though? Couldn't we turn off interrupts to stop the race?
+We can suppose that if existing code with unconditionally switching to
+HW mode didn't cause
+any issues before than we can safely leave this for future discussions
+and add CHGDISCTRL restoring only.
 
--- 
-Kees Cook
+--=20
+Yauhen Kharuzhy
