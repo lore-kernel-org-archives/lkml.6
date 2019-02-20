@@ -2,189 +2,101 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA530C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:37:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E632C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:40:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B6B721773
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:37:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2E892147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:40:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550680814;
+	bh=Y666nKxXhm2en+DQp6xn25DUgCZDiFBHH+YRC+0fH50=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=GdiuSRIdKXPV62mLvJpWLmrH+Iql1UaRV7qlGi/wpWMLSQXd77QzaV8fcjJGV8HEl
+	 agCEgEX3qZJWMRhgn4nWD/6l48yfbq8SBZT/7ACWwhUHuWZH9nUUjkTNTLmd6RpJwQ
+	 +thDffTl00eascVljj7jjOXXaIWF58mOYzIAUAUg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbfBTQhL (ORCPT
+        id S1726462AbfBTQkM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 11:37:11 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49568 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725798AbfBTQhK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 11:37:10 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5C6B418ECA2;
-        Wed, 20 Feb 2019 16:37:09 +0000 (UTC)
-Received: from thinkpad.redhat.com (ovpn-204-241.brq.redhat.com [10.40.204.241])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D6C7967660;
-        Wed, 20 Feb 2019 16:37:04 +0000 (UTC)
-From:   Laurent Vivier <lvivier@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Laurent Vivier <lvivier@redhat.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Borislav Petkov <bp@suse.de>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
-        Michael Bringmann <mwb@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH] sched/topology: fix kernel crash when a CPU is hotplugged in a memoryless node
-Date:   Wed, 20 Feb 2019 17:37:03 +0100
-Message-Id: <20190220163703.4597-1-lvivier@redhat.com>
+        Wed, 20 Feb 2019 11:40:12 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46304 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbfBTQkM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 11:40:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=WCATRz+NDxj7Sc/JJ6H0eVWIi6f6Ucu2gcMtnbqCsEA=; b=I6Khlen0+4jqPzi+jSzkIrrQk
+        qTH1ZraXjxhPpGmNGuMd6F8iBxpQsKvnHaK9u7jyM5stqi+i7bRxjjRaAUjk4wD7/5KEcBddbAYdY
+        dOssfJWX079LJvAqPxMJPW8pukC/gZg6bmp/CWan1vXg8ZRgiOvwuv42fxjBn4dlX2vS0=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gwUui-0005Bn-5P; Wed, 20 Feb 2019 16:40:04 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 61331112882B; Wed, 20 Feb 2019 16:40:03 +0000 (GMT)
+Date:   Wed, 20 Feb 2019 16:40:03 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
+Cc:     J Keerthy <j-keerthy@ti.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] regulator: tps65218.c: fix LS3 issues
+Message-ID: <20190220164003.GC9878@sirena.org.uk>
+References: <1550650552-26013-1-git-send-email-Christian.Hohnstaedt@wago.com>
+ <1550650552-26013-2-git-send-email-Christian.Hohnstaedt@wago.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 20 Feb 2019 16:37:09 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="c3bfwLpm8qysLVxt"
+Content-Disposition: inline
+In-Reply-To: <1550650552-26013-2-git-send-email-Christian.Hohnstaedt@wago.com>
+X-Cookie: Is this TERMINAL fun?
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we hotplug a CPU in a memoryless/cpuless node, the kernel crashes when it
-rebuilds the sched_domains data.
 
-I reproduce this problem on POWER and with a pseries VM, with the following
-QEMU parameters:
+--c3bfwLpm8qysLVxt
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  -machine pseries -enable-kvm -m 8192 \
-  -smp 2,maxcpus=8,sockets=4,cores=2,threads=1 \
-  -numa node,nodeid=0,cpus=0-1,mem=0 \
-  -numa node,nodeid=1,cpus=2-3,mem=8192 \
-  -numa node,nodeid=2,cpus=4-5,mem=0 \
-  -numa node,nodeid=3,cpus=6-7,mem=0
+On Wed, Feb 20, 2019 at 09:15:50AM +0100, Christian Hohnstaedt wrote:
 
-Then I can trigger the crash by hotplugging a CPU on node-id 3:
+> - Fix list of valid LS3 currents from mA to =B5A
+> - Fix selection of min/max microAmps of LS3.
+>   Selecting one of the configured values as max value now really
+>   selects it instead of the next lower one
 
-  (qemu) device_add host-spapr-cpu-core,core-id=7,node-id=3
+This is two separate changes so should have been two separate patches,
+that way things are easier to review since it's clear what change does
+what and if there's a problem with one change the other doesn't need to
+get held up.
 
-    Built 2 zonelists, mobility grouping on.  Total pages: 130162
-    Policy zone: Normal
-    WARNING: workqueue cpumask: online intersect > possible intersect
-    BUG: Kernel NULL pointer dereference at 0x00000400
-    Faulting instruction address: 0xc000000000170edc
-    Oops: Kernel access of bad area, sig: 11 [#1]
-    LE SMP NR_CPUS=2048 NUMA pSeries
-    Modules linked in: ip6t_rpfilter ipt_REJECT nf_reject_ipv4 ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set nfnetlink ebtable_nat ebtable_broute bridge stp llc ip6table_nat nf_nat_ipv6 ip6table_mangle ip6table_security ip6table_raw iptable_nat nf_nat_ipv4 nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 iptable_mangle iptable_security iptable_raw ebtable_filter ebtables ip6table_filter ip6_tables iptable_filter xts vmx_crypto ip_tables xfs libcrc32c virtio_net net_failover failover virtio_blk virtio_pci virtio_ring virtio dm_mirror dm_region_hash dm_log dm_mod
-    CPU: 2 PID: 5661 Comm: kworker/2:0 Not tainted 5.0.0-rc6+ #20
-    Workqueue: events cpuset_hotplug_workfn
-    NIP:  c000000000170edc LR: c000000000170f98 CTR: 0000000000000000
-    REGS: c000000003e931a0 TRAP: 0380   Not tainted  (5.0.0-rc6+)
-    MSR:  8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 22284028  XER: 00000000
-    CFAR: c000000000170f20 IRQMASK: 0
-    GPR00: c000000000170f98 c000000003e93430 c0000000011ac500 c0000001efe22000
-    GPR04: 0000000000000001 0000000000000000 0000000000000000 0000000000000010
-    GPR08: 0000000000000001 0000000000000400 ffffffffffffffff 0000000000000000
-    GPR12: 0000000000008800 c00000003fffd680 c0000001f14b0000 c0000000011e1bf0
-    GPR16: c0000000011e61f4 c0000001efe22200 c0000001efe22020 c0000001fba80000
-    GPR20: c0000001ff567a80 0000000000000001 c000000000e27a80 ffffffffffffe830
-    GPR24: ffffffffffffec30 000000000000102f 000000000000102f c0000001efca1000
-    GPR28: c0000001efca0400 c0000001efe22000 c0000001efe23bff c0000001efe22a00
-    NIP [c000000000170edc] free_sched_groups+0x5c/0xf0
-    LR [c000000000170f98] destroy_sched_domain+0x28/0x90
-    Call Trace:
-    [c000000003e93430] [000000000000102f] 0x102f (unreliable)
-    [c000000003e93470] [c000000000170f98] destroy_sched_domain+0x28/0x90
-    [c000000003e934a0] [c0000000001716e0] cpu_attach_domain+0x100/0x920
-    [c000000003e93600] [c000000000173128] build_sched_domains+0x1228/0x1370
-    [c000000003e93740] [c00000000017429c] partition_sched_domains+0x23c/0x400
-    [c000000003e937e0] [c0000000001f5ec8] rebuild_sched_domains_locked+0x78/0xe0
-    [c000000003e93820] [c0000000001f9ff0] rebuild_sched_domains+0x30/0x50
-    [c000000003e93850] [c0000000001fa1c0] cpuset_hotplug_workfn+0x1b0/0xb70
-    [c000000003e93c80] [c00000000012e5a0] process_one_work+0x1b0/0x480
-    [c000000003e93d20] [c00000000012e8f8] worker_thread+0x88/0x540
-    [c000000003e93db0] [c00000000013714c] kthread+0x15c/0x1a0
-    [c000000003e93e20] [c00000000000b55c] ret_from_kernel_thread+0x5c/0x80
-    Instruction dump:
-    2e240000 f8010010 f821ffc1 409e0014 48000080 7fbdf040 7fdff378 419e0074
-    ebdf0000 4192002c e93f0010 7c0004ac <7d404828> 314affff 7d40492d 40c2fff4
-    ---[ end trace f992c4a7d47d602a ]---
+--c3bfwLpm8qysLVxt
+Content-Type: application/pgp-signature; name="signature.asc"
 
-    Kernel panic - not syncing: Fatal exception
+-----BEGIN PGP SIGNATURE-----
 
-This happens in free_sched_groups() because the linked list of the sched_groups
-is corrupted. Here what happens when we hotplug the CPU:
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxtguIACgkQJNaLcl1U
+h9AF0Qf/fl2EYOJDIhIr5YJ368Jm/dHKVxTRIjwETYMpyWf2QvKsdU4NnUdnxDiB
+PEkmQJA8Z0qy0DTcrd97md6/HpozZMf3G2zY8nZP42URa/V8wn/eXnAIUIHi8Nro
+cI8sL+/1Bk6tl0b/0kcK0uu6m116D77y9ZMGf/nXHBKByePKC7VrnjFH8TPkT7mF
+HT8hT1ePV4u1xiKiazDsRmCN5T057AbmP60H/+PiZnO3ASdYGPgqIFzyIJVmMtbm
+4q2gDdP1abbb8Ia2vF0s2R93/CTXNclHcXpNTHAYhkaT8zycg4vU4cpxoMOYNw6w
+bFUOtyDlKyGgIHMh+aOLG/kFhlEcxA==
+=Toz0
+-----END PGP SIGNATURE-----
 
- - build_sched_groups() builds a sched_groups linked list for sched_domain D1,
-   with only one entry A, refcount=1
-
-   D1: A(ref=1)
-
- - build_sched_groups() builds a sched_groups linked list for sched_domain D2,
-   with the same entry A
-
-   D2: A(ref=2)
-
- - build_sched_groups() builds a sched_groups linked list for sched_domain D3,
-   with the same entry A and a new entry B:
-
-   D3: A(ref=3) -> B(ref=1)
-
- - destroy_sched_domain() is called for D1:
-
-   D1: A(ref=3) -> B(ref=1) and as ref is 1, memory of B is released,
-                                             but A->next always points to B
-
- - destroy_sched_domain() is called for D3:
-
-   D3: A(ref=2) -> B(ref=0)
-
-kernels crashes when it tries to use data inside B, as the memory has been
-corrupted as it has been freed, the linked list (next) is broken too.
-
-This problem appears with commit 051f3ca02e46
-("sched/topology: Introduce NUMA identity node sched domain").
-
-If I compare function calls sequence before and after this commit I can see
-in the the working case that build_overlap_sched_groups() is called instead of
-build_sched_groups() and in this case the reference counters have all the
-same value and the linked list can be correctly unallocated.
-
-The problem happens because patch "sched/topology: Introduce NUMA
-identity node sched domain" has removed the SDTL_OVERLAP flag
-of the first topology level when it has introduced the NODE domain (and thus
-build_sched_groups() is used instead of build_overlap_sched_groups()).
-
-As I don't see any reason (and it is not documented in the involved commit)
-to remove this flag, this patch re-introduces the SDTL_OVERLAP flag for the
-first level. This fixes the problem described above and a CPU can be hotplugged
-again without kernel crash.
-
-Fixes: 051f3ca02e46 ("sched/topology: Introduce NUMA identity node sched domain")
-Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc: Borislav Petkov <bp@suse.de>
-CC: David Gibson <david@gibson.dropbear.id.au>
-CC: Michael Ellerman <mpe@ellerman.id.au>
-CC: Nathan Fontenot <nfont@linux.vnet.ibm.com>
-CC: Michael Bringmann <mwb@linux.vnet.ibm.com>
-CC: linuxppc-dev@lists.ozlabs.org
-Signed-off-by: Laurent Vivier <lvivier@redhat.com>
----
- kernel/sched/topology.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 3f35ba1d8fde..372278605f0d 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1651,6 +1651,7 @@ void sched_init_numa(void)
- 	 */
- 	tl[i++] = (struct sched_domain_topology_level){
- 		.mask = sd_numa_mask,
-+		.flags = SDTL_OVERLAP,
- 		.numa_level = 0,
- 		SD_INIT_NAME(NODE)
- 	};
--- 
-2.20.1
-
+--c3bfwLpm8qysLVxt--
