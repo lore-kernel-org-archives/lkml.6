@@ -2,180 +2,102 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9460FC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:31:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ACB0C4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:31:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 642F420880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:31:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F084D2183F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:31:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="UJg0dHA3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727588AbfBTPbi (ORCPT
+        id S1727671AbfBTPbk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:31:38 -0500
-Received: from mx-ginzinger.sigmacloud.services ([185.154.235.147]:48287 "EHLO
-        mx-ginzinger.sigmacloud.services" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726013AbfBTPbi (ORCPT
+        Wed, 20 Feb 2019 10:31:40 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:42144 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbfBTPbj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:31:38 -0500
-Received: from [31.193.165.228] (port=48458 helo=mx-ginzinger.sigmacloud.services)
-        by mx-ginzinger.sigmacloud.services with esmtps (TLSv1.2:AES256-GCM-SHA384:256)
-        (Exim 4.82_1-5b7a7c0-XX)
-        (envelope-from <Martin.Kepplinger@ginzinger.com>)
-        id 1gwTqJ-0003nP-3A; Wed, 20 Feb 2019 16:31:28 +0100
-Received: from martin-laptop.buero.ginzinger.com (10.10.1.120) by
- exc1.buero.ginzinger.com (10.1.1.204) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1466.3; Wed, 20 Feb 2019 16:31:27 +0100
-X-CTCH-RefID: str=0001.0A0B0211.5C6D72D0.0008,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-From:   Martin Kepplinger <martin.kepplinger@ginzinger.com>
-To:     <gregkh@linuxfoundation.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <jslaby@suse.com>, <corbet@lwn.net>,
-        <richard.genoud@gmail.com>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
-        <linux-serial@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-CC:     <linux-kernel@vger.kernel.org>
-Subject: [PATCH 6/9] serial: sc16is7xx: add support for rs485 RTS delays in microseconds
-Date:   Wed, 20 Feb 2019 16:31:16 +0100
-Message-ID: <20190220153119.4423-1-martin.kepplinger@ginzinger.com>
-X-Mailer: git-send-email 2.20.1
-X-Originating-IP: [10.10.1.120]
-X-ClientProxiedBy: exc1.buero.ginzinger.com (10.1.1.204) To
- exc1.buero.ginzinger.com (10.1.1.204)
-X-EXCLAIMER-MD-ORIGINAL-SUBJECT: [NOSIG][NODISC][PATCH 6/9] serial: sc16is7xx:
- add support for rs485 RTS delays in microseconds
-X-EXCLAIMER-MD-CONFIG: 9dd172f7-de2e-4231-b886-ec11f46e03b3
+        Wed, 20 Feb 2019 10:31:39 -0500
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1E3992D1;
+        Wed, 20 Feb 2019 16:31:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1550676697;
+        bh=JoraJcQ6MqFsIgkh7YJkuacZR5K+y+Q9v1vqMYM9Zjo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UJg0dHA38oxMH01UF9s+L+XcJNji1Fmx4Ngr2zrR9CAT38XURb+snR2AdHEGn7pQS
+         WQPRoaFYqOzRIHdFvOUKhmzLKCjm3ysaZ+p1aEwqVf5GMznizWq4/kBuaux21TLb20
+         r40IFHd8bw6+3gE1mhzPU7CHb9PLimEP4SswlYjA=
+Date:   Wed, 20 Feb 2019 17:31:33 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/7] iommu/ipmmu-vmsa: Make IPMMU_CTX_MAX unsigned
+Message-ID: <20190220153133.GG3516@pendragon.ideasonboard.com>
+References: <20190220150531.2462-1-geert+renesas@glider.be>
+ <20190220150531.2462-5-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----9B43AD67FFC66DA1AF899AD30B8E37ED"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190220150531.2462-5-geert+renesas@glider.be>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an S/MIME signed message
+Hi Geert,
 
-------9B43AD67FFC66DA1AF899AD30B8E37ED
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Thank you for the patch.
 
-Read struct serial_rs485's flag SER_RS485_DELAY_IN_USEC and apply the delay
-accordingly.
+On Wed, Feb 20, 2019 at 04:05:28PM +0100, Geert Uytterhoeven wrote:
+> Make the IPMMU_CTX_MAX constant unsigned, to match the type of
+> ipmmu_features.number_of_contexts.
+> 
+> This allows to use plain min() instead of type-casting min_t().
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
----
- drivers/tty/serial/sc16is7xx.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-index 635178cf3eed..b0e00b9fb177 100644
---- a/drivers/tty/serial/sc16is7xx.c
-+++ b/drivers/tty/serial/sc16is7xx.c
-@@ -743,7 +743,13 @@ static void sc16is7xx_tx_proc(struct kthread_work *ws)
- 	struct uart_port *port = &(to_sc16is7xx_one(ws, tx_work)->port);
- 
- 	if ((port->rs485.flags & SER_RS485_ENABLED) &&
--	    (port->rs485.delay_rts_before_send > 0))
-+	    (port->rs485.delay_rts_before_send > 0) &&
-+	    (port->rs485.flags & SER_RS485_DELAY_IN_USEC))
-+		usleep_range(port->rs485.delay_rts_before_send,
-+			     port->rs485.delay_rts_before_send);
-+	else if ((port->rs485.flags & SER_RS485_ENABLED) &&
-+		 (port->rs485.delay_rts_before_send > 0) &&
-+		 !(port->rs485.flags & SER_RS485_DELAY_IN_USEC))
- 		msleep(port->rs485.delay_rts_before_send);
- 
- 	sc16is7xx_handle_tx(port);
+> ---
+>  drivers/iommu/ipmmu-vmsa.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+> index 4d07c26c97848b65..4e3134a9a52f8d87 100644
+> --- a/drivers/iommu/ipmmu-vmsa.c
+> +++ b/drivers/iommu/ipmmu-vmsa.c
+> @@ -36,7 +36,7 @@
+>  #define arm_iommu_detach_device(...)	do {} while (0)
+>  #endif
+>  
+> -#define IPMMU_CTX_MAX 8
+> +#define IPMMU_CTX_MAX 8U
+>  
+>  struct ipmmu_features {
+>  	bool use_ns_alias_offset;
+> @@ -1060,8 +1060,7 @@ static int ipmmu_probe(struct platform_device *pdev)
+>  	if (mmu->features->use_ns_alias_offset)
+>  		mmu->base += IM_NS_ALIAS_OFFSET;
+>  
+> -	mmu->num_ctx = min_t(unsigned int, IPMMU_CTX_MAX,
+> -			     mmu->features->number_of_contexts);
+> +	mmu->num_ctx = min(IPMMU_CTX_MAX, mmu->features->number_of_contexts);
+>  
+>  	irq = platform_get_irq(pdev, 0);
+>  
+
 -- 
-2.20.1
+Regards,
 
-
-------9B43AD67FFC66DA1AF899AD30B8E37ED
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-
-MIIOHAYJKoZIhvcNAQcCoIIODTCCDgkCAQExDzANBglghkgBZQMEAgEFADALBgkq
-hkiG9w0BBwGgggshMIIF5jCCA86gAwIBAgIQapvhODv/K2ufAdXZuKdSVjANBgkq
-hkiG9w0BAQwFADCBhTELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFu
-Y2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExp
-bWl0ZWQxKzApBgNVBAMTIkNPTU9ETyBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3Jp
-dHkwHhcNMTMwMTEwMDAwMDAwWhcNMjgwMTA5MjM1OTU5WjCBlzELMAkGA1UEBhMC
-R0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9y
-ZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBS
-U0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwggEi
-MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+s55XrCh2dUAWxzgDmNPGGHYh
-UPMleQtMtaDRfTpYPpynMS6n9jR22YRq2tA9NEjk6vW7rN/5sYFLIP1of3l0NKZ6
-fLWfF2VgJ5cijKYy/qlAckY1wgOkUMgzKlWlVJGyK+UlNEQ1/5ErCsHq9x9aU/x1
-KwTdF/LCrT03Rl/FwFrf1XTCwa2QZYL55AqLPikFlgqOtzk06kb2qvGlnHJvijjI
-03BOrNpo+kZGpcHsgyO1/u1OZTaOo8wvEU17VVeP1cHWse9tGKTDyUGg2hJZjrqc
-k39UIm/nKbpDSZ0JsMoIw/JtOOg0JC56VzQgBo7ictReTQE5LFLG3yQK+xS1AgMB
-AAGjggE8MIIBODAfBgNVHSMEGDAWgBS7r34CPfqm8TyEjq3uOJjs2TIy1DAdBgNV
-HQ4EFgQUgq9sjPjF/pZhfOgfPStxSF7Ei8AwDgYDVR0PAQH/BAQDAgGGMBIGA1Ud
-EwEB/wQIMAYBAf8CAQAwEQYDVR0gBAowCDAGBgRVHSAAMEwGA1UdHwRFMEMwQaA/
-oD2GO2h0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNlcnRpZmljYXRp
-b25BdXRob3JpdHkuY3JsMHEGCCsGAQUFBwEBBGUwYzA7BggrBgEFBQcwAoYvaHR0
-cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQWRkVHJ1c3RDQS5jcnQwJAYI
-KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTANBgkqhkiG9w0BAQwF
-AAOCAgEAeFyygSg0TzzuX1bOn5dW7I+iaxf28/ZJCAbU2C81zd9A/tNx4+jsQgwR
-GiHjZrAYayZrrm78hOx7aEpkfNPQIHGG6Fvq3EzWf/Lvx7/hk6zSPwIal9v5IkDc
-ZoFD7f3iT7PdkHJY9B51csvU50rxpEg1OyOT8fk2zvvPBuM4qQNqbGWlnhMpIMwp
-WZT89RY0wpJO+2V6eXEGGHsROs3njeP9DqqqAJaBa4wBeKOdGCWn1/Jp2oY6dyNm
-NppI4ZNMUH4Tam85S1j6E95u4+1Nuru84OrMIzqvISE2HN/56ebTOWlcrurffade
-2022O/tUU1gb4jfWCcyvB8czm12FgX/y/lRjmDbEA08QJNB2729Y+io1IYO3ztve
-BdvUCIYZojTq/OCR6MvnzS6X72HP0PRLRTiOSEmIDsS5N5w/8IW1Hva5hEFy6fDA
-fd9yI+O+IMMAj1KcL/Zo9jzJ16HO5m60ttl1Enk8MQkz/W3JlHaeI5iKFn4UJu1/
-cP2YHXYPiWf2JyBzsLBrGk1II+3yL8aorYew6CQvdVifC3HtwlSam9V1niiCfOBe
-2C12TdKGu05LWIA3ZkFcWJGaNXOZ6Ggyh/TqvXG5v7zmEVDNXFnHn9tFpMpOUvxh
-csjycBtH0dZ0WrNw6gH+HF8TIhCnH3+zzWuDN0Rk6h9KVkfKehIwggUzMIIEG6AD
-AgECAhBNQrEzGzrZ6FVYh1EEYH4+MA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxm
-b3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAe
-Fw0xODA3MTgwMDAwMDBaFw0yMTA3MTcyMzU5NTlaMDAxLjAsBgkqhkiG9w0BCQEW
-H21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDsMC77L0D+2D8I8X5ubnBhADLgU+HtlwMTFt/WJIhc
-kgbvnawYXWrCIpk8F6BJ0R/iFCykPdG7741EmlcHRKOJfhVxjXhwnoGFqnYmurCt
-fvZLR3+mT3FWnVv2RAdrXscXH3BpijqqWabdtTbiTvmcl86Zc6mNlVhYZSbDul/E
-voIGZotGcGIWrgZxN+8MQJQHKb0KHyWlPVPkrjvEfOJHKKLFsBNSnNMR95Ijg3Sp
-h8/8RG490/zRHflGzUlxDSlLyY9YJGzSdDzcFKoYcc4oaaUY5N3uhRna43TLUIQh
-6ybt3DKVz1Pw/ikwYJrOsulJrVr3D8KVHdGxq7HYl7jnAgMBAAGjggHfMIIB2zAf
-BgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQU/GtSUbHg
-14sPDlmo27eQYwtjaS0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYD
-VR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMCMEYGA1UdIAQ/MD0wOwYMKwYBBAGy
-MQECAQMFMCswKQYIKwYBBQUHAgEWHWh0dHBzOi8vc2VjdXJlLmNvbW9kby5uZXQv
-Q1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NP
-TU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmww
-gYsGCCsGAQUFBwEBBH8wfTBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5jb21vZG9j
-YS5jb20vQ09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFp
-bENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuY29tb2RvY2EuY29tMCoG
-A1UdEQQjMCGBH21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wDQYJKoZI
-hvcNAQELBQADggEBAGEuG01K1tt5i3gUdQkYem/KpbJUYBZd43QwmoTa0TGXUiYq
-b+g/TeGG9QQ1yq+73xOr8fu6oT2608C7EiJc6JmjTs485/OZmTqgYkrLfs71F1kB
-3Z59WPf5aoR/pnn5vdfkkoO29V1cKPJR4z+iOG2hOlcK/dXrX8i6mnL5DGIe8l5n
-udUPvIbUhbMavrDd6kwhs0oCjylwdKGlFkCpKMn3HPflfDeHuV9Z8Nrpeq/7+Pm0
-I/fLPkaYlULASJoJCucMYcedY9rmuro9JhV+NuVXaqLIrQPc1vyKFeRuLHh84M6c
-1h1DArdGTykXZUwjXnnHtuOtzjIAzkx2Ns43vEsxggK/MIICuwIBATCBrDCBlzEL
-MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
-BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMT
-NENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1h
-aWwgQ0ECEE1CsTMbOtnoVViHUQRgfj4wDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZI
-hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTkwMjIwMTUzMTM0
-WjAvBgkqhkiG9w0BCQQxIgQgBWf2Xe9b5Znb5LtrvM8d7RGP76c/hxpA4rJcLKWa
-M/EweQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
-CWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
-AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEA
-OJSPXhzn/emKiA7fDc2SRq2wmRvAHNn1MMYxqQLcHTN/0oqHbOvKrUnpWuK6JYUw
-ZgTOpBfG+f2DN82x9IcF7/C22C7zBBqzPtB1iV4OoAMo/eIGRVNnj129L/vj6UjI
-DBC9se3n15en/DQau7RcQ+PshqvgsCZQKfdQ/twOx90tskWI6M4FMqe4UfPRTtLO
-2AtE+/kABqD6zCZiW+VvtiF7fKysXrfiwO9zHehqE9cRzIkY2aF9juQNUuW8XTcj
-u9TkGh9Q2FFs9473KSbKR9w+lZyh5qNqYv7e+V9tLrCKtLAnSGwD2bkCCYrrWukt
-P6nQ3l+kIlmKlhbZjviHYQ==
-
-------9B43AD67FFC66DA1AF899AD30B8E37ED--
-
+Laurent Pinchart
