@@ -2,145 +2,109 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD96C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D8B1C10F07
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:14:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7F6E20859
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:12:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D8A620859
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:14:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OpNHQFA1"
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="uZRKdTAp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727390AbfBTWM0 (ORCPT
+        id S1727008AbfBTWOG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 17:12:26 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:35562 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727238AbfBTWMZ (ORCPT
+        Wed, 20 Feb 2019 17:14:06 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44420 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726126AbfBTWOG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 17:12:25 -0500
-Received: by mail-it1-f193.google.com with SMTP id v72so19640559itc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 14:12:24 -0800 (PST)
+        Wed, 20 Feb 2019 17:14:06 -0500
+Received: by mail-ot1-f68.google.com with SMTP id g1so42873481otj.11
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 14:14:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=tPNGEIDsIfcV4FDJtYuq+z8RJ/zCOWDCU+KMUXAGPNk=;
-        b=OpNHQFA1rrT/NK7QUnAK6GeAy+1WnKngmdbetvRhA4kO8LOcYCaPVJUUK/QOY25rGg
-         cRUf3efe59QxFTYhh8ipHLoOHXXMFmY49mxHojbFlNQWVYaTVJ5ZVmkR9VijOghfTP1s
-         V2yRgwlYjxdqON0Ddoe5i59+UKgv7wLAdlFX1rAd0R9+mmwZCS8r/gzvpnt9lOjuLsga
-         AtZyX2adag/1SIsW5/6QX3f8gWhUw/UvllNI9tar6XNIHuSCQck4V3Lh7l5ewbbqZZSV
-         Ad4EU7F4K4qHSsaTCWn/0pXSHnIWbCCdNf10GFnvlphaON3sTt34XZAJNNlYtcRAolj0
-         i98g==
+        bh=CVjBnSUI6LhspCqy+73O1/b+atYXeJzMReN5ofxv4gU=;
+        b=uZRKdTApkbIvtfeHSNDjyAhSJ4BWOMaxzfeM4Z1KuDX5H9f8P/nNvwKiE+kRHCpWQo
+         Pzzb8KHWZ2VnG/ITfw2dP7KQ7RX5uNV+ZJpXTaDp4yfG3VLORJdVv4AJNzl39NWjy20V
+         bYPkPod9XP5K2AluOq25assvrlESWBmEs+10hqobdZX0Rr0IKEuEZ2TpY+L2qVVDGrtW
+         jLuR5/oylrEgiR/2eMJ9MbgqLWjg6QyWBEpUazDYmiC4jkdLmyjnsKnj6aCCN5Rkd1b/
+         nOCO5ydPM6xlBo0b9rxwC3a+4g2Ut+35mDt3GLBSRGZ2t06FAGm9awZyVSVvFwWAAejA
+         DIwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=tPNGEIDsIfcV4FDJtYuq+z8RJ/zCOWDCU+KMUXAGPNk=;
-        b=FpkaQXSfPZBnLTjEF4+vkJno/w4NozVVzJqmWqGs4tDIDvkJiuj68c9+GXHdoWhpn2
-         SEQlgM4S2PQdo/RX5cz671ysKaYPlv/AExvPl3URKCc+pV8COBL4o74jq6jslZLT/UfT
-         xn5yq5ZuvulpntR35biV6RD8mCyVrax4DsDDavPCxqFt7R1m39Ts+lMawbREL9tAp/l6
-         HIbInAvXz/QZJad4HTXexSVhhk2Lw8LhxYhY3jnvywAP0jmVFv+idG5tTa0dJzy204mo
-         Hbo16hlvhNLwgYLIOnJFCXbZR1Qi6nWO6JuVDnWUSWNdWQOkaVfkga9kiLdP2Ok45UFD
-         q5Kw==
-X-Gm-Message-State: AHQUAuY2DDpVZt/JpjNbzBsu/9WHeg2vLOsn/xFmkVIHWIlQOwix5U+e
-        j5TzmKo6zF2C8qdqH22eAVT0xgdWdqotFJt1KZgO1g==
-X-Google-Smtp-Source: AHgI3IZWzydKb1znGxmIl3DryhOTXl7gVFWAIguI179ETB8UFH2Gffx0ILCjcoTL8rmSTeoKEEwGP11K34oqypr3Lxs=
-X-Received: by 2002:a02:48c6:: with SMTP id p189mr18408837jaa.89.1550700744134;
- Wed, 20 Feb 2019 14:12:24 -0800 (PST)
+        bh=CVjBnSUI6LhspCqy+73O1/b+atYXeJzMReN5ofxv4gU=;
+        b=JedRXGy6WbffTmBSVc6vPQrmJACSL0nbZBQJ9kgYHbkfXROSj+PYWQjRRZlKt5ysdP
+         TEdG5zWDRJjz6F5BB5xC/HqjuTHrc8hHEBYd02QMXm5/NeWlZzM9XghAdDLJNjbXgyzl
+         53RVF3fFhN26QMuIe4bQs2SP4uNsM6W+7Nyl7NebpK/O3C5kA0qdX0SBTlNpKYiRW23c
+         k9KM9ZwPIrvBALShgM8Iv5svjnj2FM/Y32zEXNkMj0apQLoE6RUKcWk30xJhdoEi/Y1d
+         4Eqvwius3Jox6k1h6mN1FCg229eQTPpecKoA++VxRIxqopY48Tpvh5ZB7/b+g9NdU6mo
+         yQ+w==
+X-Gm-Message-State: AHQUAuZvGHKzY59jRx7R5s3aYt1F9wxSWzLAmhH1d9m8aoBVf+g/HTvk
+        qcw8bh07QN/rvnTHBJvtlx+ADlqaLA7C8qOPvF7vpA==
+X-Google-Smtp-Source: AHgI3IY0GyUmAI/F9u0gGK3DKJZ+Md1zuqirUF+1bxatdGk67V7iWwe2Co33YIOqW9sjrBC59CPTREFBBrgJ5hH/5nw=
+X-Received: by 2002:a9d:37b7:: with SMTP id x52mr24320675otb.214.1550700845305;
+ Wed, 20 Feb 2019 14:14:05 -0800 (PST)
 MIME-Version: 1.0
-References: <20190219214940.391081-1-arnd@arndb.de> <CAAeHK+xSpsu0tNmeq0wKXfT=0HuORnvU+XzLswDzhbtfZVa4Hw@mail.gmail.com>
- <CAK8P3a1NfHohd1xT7iHK85L2PGnD95RJvwFi-2cWrFpipQzqwg@mail.gmail.com>
- <b109ad0d-6995-8ca2-5426-7e2627d2032c@virtuozzo.com> <CAK8P3a0tg1WRLK=fs9S+X4TPB7sR55ZsjMbBVX07AtAfguXCsw@mail.gmail.com>
- <CAKwvOd=XrNNb=r3qgsT8O6JNzL4hg4pqfJJFcY2DzA0Ooc=E3w@mail.gmail.com>
- <20190220184408.GG9878@sirena.org.uk> <CAKwvOdne3aE5bUsQF-2C-L2Xezqq9qb=NqF8FA+B7nvqXKAXFA@mail.gmail.com>
- <CAK8P3a1pop4WqWxV=-R4n1Lh3FYG0mb4iJk4=saq6CgzpsPe4A@mail.gmail.com> <CAK8P3a0z7Y-uLgc8pWrdt712ic4R2nLbceg_zTCAC=ctG9LK9Q@mail.gmail.com>
-In-Reply-To: <CAK8P3a0z7Y-uLgc8pWrdt712ic4R2nLbceg_zTCAC=ctG9LK9Q@mail.gmail.com>
-From:   Kostya Serebryany <kcc@google.com>
-Date:   Wed, 20 Feb 2019 14:12:12 -0800
-Message-ID: <CAN=P9pi1J8fORxyp9H4WiEWWDANj0EmFOVGttDMPthUavToHBQ@mail.gmail.com>
-Subject: Re: [PATCH] kasan: turn off asan-stack for clang-8 and earlier
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Mark Brown <broonie@kernel.org>,
-        Evgenii Stepanov <eugenis@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>, Qian Cai <cai@lca.pw>,
-        Alexander Potapenko <glider@google.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Christoph Lameter <cl@linux.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>
+References: <20190214171017.9362-1-keith.busch@intel.com> <20190214171017.9362-8-keith.busch@intel.com>
+ <CAJZ5v0gjv0DZvYMTPBLnUmMtu8=g0zFd4x-cpP11Kzv+6XCwUw@mail.gmail.com> <9ab5d6ba-4cb6-a6f1-894d-d79b77c8bc21@intel.com>
+In-Reply-To: <9ab5d6ba-4cb6-a6f1-894d-d79b77c8bc21@intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 20 Feb 2019 14:13:53 -0800
+Message-ID: <CAPcyv4iP032bqAgCZ8czRXkJ_gXz0H1EVC+ypf6NhKQ65aKczg@mail.gmail.com>
+Subject: Re: [PATCHv6 07/10] acpi/hmat: Register processor domain to its memory
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 1:40 PM Arnd Bergmann <arnd@arndb.de> wrote:
+On Wed, Feb 20, 2019 at 2:11 PM Dave Hansen <dave.hansen@intel.com> wrote:
 >
-> On Wed, Feb 20, 2019 at 10:13 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > In the example in https://bugs.llvm.org/show_bug.cgi?id=38809#c12
-> > (https://godbolt.org/z/ylsGSQ) there is no inlining, yet clang uses
-> > over ten times as much stack space as gcc, for reasons I still
-> > can't explain. My assumption right now is that the underlying bug
-> > causes most of the problems with excessive stack usage in
-> > allmodconfig kernels.
+> On 2/20/19 2:02 PM, Rafael J. Wysocki wrote:
+> >> diff --git a/drivers/acpi/hmat/Kconfig b/drivers/acpi/hmat/Kconfig
+> >> index c9637e2e7514..08e972ead159 100644
+> >> --- a/drivers/acpi/hmat/Kconfig
+> >> +++ b/drivers/acpi/hmat/Kconfig
+> >> @@ -2,6 +2,7 @@
+> >>  config ACPI_HMAT
+> >>         bool "ACPI Heterogeneous Memory Attribute Table Support"
+> >>         depends on ACPI_NUMA
+> >> +       select HMEM_REPORTING
+> > If you want to do this here, I'm not sure that defining HMEM_REPORTING
+> > as a user-selectable option is a good idea.  In particular, I don't
+> > really think that setting ACPI_HMAT without it makes a lot of sense.
+> > Apart from this, the patch looks reasonable to me.
 >
-> Here is an even more minimal example:
+> I guess the question is whether we would want to allow folks to consume
+> the HMAT inside the kernel while not reporting it out via
+> HMEM_REPORTING.  We have some in-kernel users of the HMAT lined up like
+> mitigations for memory-side caches.
 >
-> struct s { int i[5]; } f(void);
-> void g(void) { f(); f();}
-
-On this example I can see some stupidity that clang/asan is doing.
-Let me try fixing it and see if it helps bigger cases.
-Thanks for reducing the case!
-
-This is the input we get in the asan instrumentation:
-
-; Function Attrs: noinline nounwind optnone sanitize_address uwtable
-define dso_local void @g() #0 {
-entry:
-  %tmp = alloca %struct.s, align 4  <<<<<<<<<<<<<<<<<<<<<<<
-  %tmp1 = alloca %struct.s, align 4
-  %0 = bitcast %struct.s* %tmp to i8*
-  call void @llvm.lifetime.start.p0i8(i64 20, i8* %0) #3
-  call void @f(%struct.s* sret %tmp)
-  %1 = bitcast %struct.s* %tmp to i8* <<<<<<<<<<<<<<<<<<<<<
-  call void @llvm.lifetime.end.p0i8(i64 20, i8* %1) #3
-  %2 = bitcast %struct.s* %tmp1 to i8*
-  call void @llvm.lifetime.start.p0i8(i64 20, i8* %2) #3  <<<<<<<<<<<<<
-  call void @f(%struct.s* sret %tmp1)
-  %3 = bitcast %struct.s* %tmp1 to i8*
-  call void @llvm.lifetime.end.p0i8(i64 20, i8* %3) #3
-  ret void
-}
-
-the stack variables are not *really* used, but since they are "used"
-inside the lifetime markers they are not eliminated by asan,
-and so asan instruments them, after which no one can remove them any more...
-
-
-
-
+> It's certainly possible that folks would want to consume those
+> mitigations without anything in sysfs.  They might not even want or need
+> NUMA support itself, for instance.
 >
-> https://godbolt.org/z/d_KWkh
+> So, what should we do?
 >
-> It's clear that clang does /something/ here when asan-stack=1 is
-> set, but I fail to see what it is, or why that is necessary.
+> config HMEM_REPORTING
+>         bool # no user-visible prompt
+>         default y if ACPI_HMAT
 >
-> The output of clang with asan-stack=0 is the expected
-> code, and basically identical to what gcc produces with or
-> without asan-stack.
->
->       Arnd
+> So folks can override in their .config, but they don't see a prompt?
+
+I would add an "&& ACPI_NUMA" to that default as well.
