@@ -2,94 +2,123 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACA3C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE52C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:17:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 342E12075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:07:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30E9E218C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:17:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20150623.gappssmtp.com header.i=@resnulli-us.20150623.gappssmtp.com header.b="hKR3inAU"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JlODJvHf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726574AbfBTUHq (ORCPT
+        id S1726428AbfBTURV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 15:07:46 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41650 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbfBTUHq (ORCPT
+        Wed, 20 Feb 2019 15:17:21 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:34840 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbfBTURV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 15:07:46 -0500
-Received: by mail-wr1-f65.google.com with SMTP id n2so15314971wrw.8
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 12:07:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Rea6NEOgqzng4Th0V+mrQZod7uWvikO4AkjPqlidHIQ=;
-        b=hKR3inAUx/RaQl5XiHJBCQDytc9OL28Dykyn16Q8T3Rrv64sY2hzCiXrSPttw86kSU
-         /nOW/b5aOXzPJaODKcEGOD532MY0ptV1odcRkz5YAqvlikFDucnaHaNnk/6SbqCfOJGQ
-         PWq54rGT3B4LwsgN3UbBHRMD4nQJDaQNm1NpAzlM1awg45wTbaNK5z1uswXh4ZVNjlRN
-         GP4hOhdPFslBf3Q5UDx6a4M87ID9ZD7d+W6xP81jyXJVu/gA3MUuRn1VFjt2YA1oEku4
-         1VBICUchF6uMP/S64zsby7nfwh0yDMubnGj0xRDPr111DlO7CyuZmwwlrIs8U0zrFrV8
-         fMtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Rea6NEOgqzng4Th0V+mrQZod7uWvikO4AkjPqlidHIQ=;
-        b=GUFsoJQgrGFuRZg1ovbbDRT9VYlDHvIj7bOY+SYAgAfC23WfS4HHkOy8ldcKFajb82
-         S4cC4+SMTAD6hb8/+m30YJrHz6Ix0qQWQITlIIpbM+9zIuA9Aq52eZfzYJu6+K3mL6Aw
-         /WU8rIYrryt+tJq1CnRYgtffL0KZMYdD9Z8TT54n9ZfSkVGdJN3eN2Q6jfG/LfxqKiK/
-         5E3wKjv2E50XCXZSDY9km+f0bo+Ut17FFLKHEqq3X7z38c5XD5JJR30aQ++BVMGTF2xC
-         zuM97Y5SJIFICZVL7L+dPAaVVUd6fB5ytwwOrKu3EhfpRrdjMsMJlaRo8Nnkb016tSy/
-         qX0w==
-X-Gm-Message-State: AHQUAuYGT/CVX4l2F0dQ5SXjGnemhEtbS3XB5O3uOupoGXyu3zn4RghH
-        7U/c8LJ9CrI3dVkrNpXbJKZH9g==
-X-Google-Smtp-Source: AHgI3IYPxS8ZcUwAoFbjhBFq4MZO8A313N9Rrq7KfgKy11SFmarOvPJECIqYq8oOTCUs2p7VDiKP8A==
-X-Received: by 2002:a5d:654a:: with SMTP id z10mr22634490wrv.280.1550693264834;
-        Wed, 20 Feb 2019 12:07:44 -0800 (PST)
-Received: from localhost (ip-213-220-234-21.net.upcbroadband.cz. [213.220.234.21])
-        by smtp.gmail.com with ESMTPSA id t9sm15751706wrx.73.2019.02.20.12.07.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Feb 2019 12:07:44 -0800 (PST)
-Date:   Wed, 20 Feb 2019 20:58:11 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     David Miller <davem@davemloft.net>
-Cc:     vkoul@kernel.org, sfr@canb.auug.org.au, netdev@vger.kernel.org,
-        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-        andrew@lunn.ch
-Subject: Re: linux-next: Fixes tag needs some work in the net-next tree
-Message-ID: <20190220195811.GO3080@nanopsycho>
-References: <20190220044055.GD21884@vkoul-mobl>
- <20190219.224813.723564128666927693.davem@davemloft.net>
- <20190220083611.GJ3080@nanopsycho>
- <20190220.110201.2245447687492293995.davem@davemloft.net>
+        Wed, 20 Feb 2019 15:17:21 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1KK9bEb088246;
+        Wed, 20 Feb 2019 20:16:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=Ndvkg+/D0hf5OrbzmK4FZM7exvpdfllBJBc6SNXVjDs=;
+ b=JlODJvHfDFO9wDU6O8Ik5ea3sjo8fA4wa2mCxi9Mtn/xMBfEjH619kIAAlqxOV1Pc1sc
+ BYtrkjN8hMfhqJNcrclZevU6gg++bQ/a+BkFmKTdcvG6tFZ/RH6SMbvtZCd1wnwtCMW+
+ VUsbcxGSFRVZVY+USdj1rGh/AB7M5hS9so5stCJHMvmPoo2FzxuYiESZqcKD2bSA0hXq
+ TysLp0BmdElEjX28+jnOPq1sH0hqX7ON2pfaKhfzdHFglMoAmvhb0Jgmt70Jac5N2ayK
+ 0Yx4MXArOtTvfX5BfwUN8t70UfVEjnKoiPZwghXYXqj1XJzsIXt7fJTU8IPIAItqrgpl Vw== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2qpb5rktkw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Feb 2019 20:16:58 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1KKGvIO002290
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Feb 2019 20:16:57 GMT
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1KKGuos009112;
+        Wed, 20 Feb 2019 20:16:56 GMT
+Received: from paddy.lan (/94.61.137.133)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 20 Feb 2019 12:16:55 -0800
+From:   Joao Martins <joao.m.martins@oracle.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Ankur Arora <ankur.a.arora@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Joao Martins <joao.m.martins@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [PATCH RFC 01/39] KVM: x86: fix Xen hypercall page msr handling
+Date:   Wed, 20 Feb 2019 20:15:31 +0000
+Message-Id: <20190220201609.28290-2-joao.m.martins@oracle.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20190220201609.28290-1-joao.m.martins@oracle.com>
+References: <20190220201609.28290-1-joao.m.martins@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190220.110201.2245447687492293995.davem@davemloft.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9173 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=973 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902200138
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wed, Feb 20, 2019 at 08:02:01PM CET, davem@davemloft.net wrote:
->From: Jiri Pirko <jiri@resnulli.us>
->Date: Wed, 20 Feb 2019 09:36:11 +0100
->
->> Would be good to have some robot checking "Fixes" sanity...
->
->I want to add a script to my trees that locally do it for me but the
+Xen usually places its MSR at 0x4000000 or 0x4000200 depending on
+whether it is running in viridian mode or not. Note that this is not
+ABI guaranteed, so it is possible for Xen to advertise the MSR some
+place else.
 
-When it is in tree, it's already late. The robot has to check
-emails/patchwork.
+Given the way xen_hvm_config() is handled, if the former address is
+selected, this will conflict with HyperV's MSR
+(HV_X64_MSR_GUEST_OS_ID) which uses the same address.
 
+Given that the MSR location is arbitrary, move the xen_hvm_config()
+handling to the top of kvm_set_msr_common() before falling through.
 
->backlog for patch review for me is so huge that I never get to "fun"
->tasks like that....
->
->This has been discussed before too.
+Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+---
+ arch/x86/kvm/x86.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 65e4559eef2f..47360a4b0d42 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -2429,6 +2429,9 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 	u32 msr = msr_info->index;
+ 	u64 data = msr_info->data;
+ 
++	if (msr && (msr == vcpu->kvm->arch.xen_hvm_config.msr))
++		return xen_hvm_config(vcpu, data);
++
+ 	switch (msr) {
+ 	case MSR_AMD64_NB_CFG:
+ 	case MSR_IA32_UCODE_WRITE:
+@@ -2644,8 +2647,6 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 		vcpu->arch.msr_misc_features_enables = data;
+ 		break;
+ 	default:
+-		if (msr && (msr == vcpu->kvm->arch.xen_hvm_config.msr))
+-			return xen_hvm_config(vcpu, data);
+ 		if (kvm_pmu_is_valid_msr(vcpu, msr))
+ 			return kvm_pmu_set_msr(vcpu, msr_info);
+ 		if (!ignore_msrs) {
+-- 
+2.11.0
+
