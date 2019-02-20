@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B09C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6803C10F0B
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:24:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DD6A20880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:23:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9AA62146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:24:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="O+BvS77W"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="DGpw7WP2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbfBTQX1 (ORCPT
+        id S1727215AbfBTQYo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 11:23:27 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.81]:26601 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725822AbfBTQX1 (ORCPT
+        Wed, 20 Feb 2019 11:24:44 -0500
+Received: from mo4-p03-ob.smtp.rzone.de ([85.215.255.102]:33034 "EHLO
+        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbfBTQYo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 11:23:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1550679803;
+        Wed, 20 Feb 2019 11:24:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1550679881;
         s=strato-dkim-0002; d=goldelico.com;
         h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
         X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=O07ZxjVgpuIglyl3pOabgdicnKW+A/xs5dSBikGYWm4=;
-        b=O+BvS77WeKx17fnoBYD2fGUmHSQuIzPV1tPYcGl0almMlh4MBABERtJVX5vEa13YmL
-        kedVe9PK99ZpGUiSBTtf3KdykpflQSXowlUWCEeUHi8MU6ZtFpv/wB/mDsV80eJoDLri
-        1P7l7wu5E9zSWeF5MEz+DEQ2CffnFydcerHwLWaSS24Ft5tl7vVwVK2biXXCASed8IfQ
-        64YzIWkDvdvfUHlYvm1LIKrYOETx9VPlLyQcdTpkr4N6LV80jsIsgZM0xFpYguA7oinX
-        NVR7xwTmfvEVcwTAtWRWVqnW4JZgnCCD4Sbqbf6EgnnCN11PgDOFjkvCh1lAJ1RcNFJc
-        FXrQ==
+        bh=ykBr//Kn+s4BIUETzlQJ/bz5PbKAGheHxikONNh1zhM=;
+        b=DGpw7WP2BbsGpk0pR6pbLOsfoEAqsCsOLsRaHtnPj1yv8WO+iKmZkp/t2iXGDMPLBS
+        XwIb4mYzJydmUNlWxh/tIze05UXTZ4gsTKolIc2WHbZyz/H+pacyFE0RU7SH6MhEQnjg
+        pxyBlmMsNMNGKsypVs+pH6JpFndp32WuopJhRtkxQZV8hI2vz6xgztBEuY1psIwiAwOV
+        d940fvF3oHQQdxpCuh196si2tvK8fD9ET0HDh/LYI5dHwo9iU20MP/M+P0hQpK3kvf5Q
+        Ah8Tz2IKvNThQXYtnAVi7xeMpMDOkileUrd4Tzht50gHOf5ykiyamd+0df4fC5dtIA/n
+        zMEQ==
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj7wpz8NMGH/ztwDXG"
 X-RZG-CLASS-ID: mo00
 Received: from mbp-13-nikolaus.fritz.box
         by smtp.strato.de (RZmta 44.9 DYNA|AUTH)
-        with ESMTPSA id 608499v1KGNLFd2
+        with ESMTPSA id 608499v1KGOdFdI
         (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
         (Client did not present a certificate);
-        Wed, 20 Feb 2019 17:23:21 +0100 (CET)
+        Wed, 20 Feb 2019 17:24:39 +0100 (CET)
 Content-Type: text/plain; charset=us-ascii
 Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH 5/9] iio: accel: bma180: convert to devm
+Subject: Re: [PATCH 9/9] iio: magnetometer: hmc5843: add mount matrix support
 From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20190220161828.0c6fcd8e@archlinux>
-Date:   Wed, 20 Feb 2019 17:23:18 +0100
+In-Reply-To: <20190220161942.703f0c4a@archlinux>
+Date:   Wed, 20 Feb 2019 17:24:39 +0100
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -58,9 +58,9 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
         linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <EF8A39BC-4BA9-4BBE-9AE7-8B0FE4440B13@goldelico.com>
-References: <cover.1550671256.git.hns@goldelico.com> <900f59b94ef2e1b5559b363c0d1af4fefccd0366.1550671256.git.hns@goldelico.com> <20190220161828.0c6fcd8e@archlinux>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A7BB4D99-1792-4BFB-8D9D-F8EFC1D1B692@goldelico.com>
+References: <cover.1550671256.git.hns@goldelico.com> <effcfa7fb13fb8ba2b8b13ab07a6eb86defec77e.1550671256.git.hns@goldelico.com> <20190220161942.703f0c4a@archlinux>
 To:     Jonathan Cameron <jic23@kernel.org>
 X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -68,151 +68,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-> Am 20.02.2019 um 17:18 schrieb Jonathan Cameron <jic23@kernel.org>:
-> 
-> On Wed, 20 Feb 2019 15:00:52 +0100
+> Am 20.02.2019 um 17:19 schrieb Jonathan Cameron <jic23@kernel.org>:
+>=20
+> On Wed, 20 Feb 2019 15:00:56 +0100
 > "H. Nikolaus Schaller" <hns@goldelico.com> wrote:
-> 
->> This simplifies the code a little.
-> It does, but at the cost of introducing potential race conditions.
-> Please don't do this.  See below for why and a suggestion on how
-> to resolve things if you want to make this change safely.
+>=20
+>> This patch allows to read a mount-matrix device tree
+>> property and report to user-space or in-kernel iio
+>> clients.
+>>=20
+>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> The rest of these are all fine, though I suggest considering
+> a local variable rather than the fiddly bit of casting.
 
-Ok, I see. I just was working on that driver and thought that introducing
-devm is a good idea here.
+Ok, fine.
 
-But since it does not improve any function (contrary to the mount-matrix
-patches), let's drop it for the moment.
+I will wait some days for further comments than then
+submit a v2 with all known improvements.
 
 BR and thanks,
 Nikolaus
 
-> 
+>=20
 > Jonathan
->> 
->> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 >> ---
->> drivers/iio/accel/bma180.c | 56 ++++++++++++++------------------------
->> 1 file changed, 21 insertions(+), 35 deletions(-)
->> 
->> diff --git a/drivers/iio/accel/bma180.c b/drivers/iio/accel/bma180.c
->> index 248be67e4f41..3f5ee2d495d3 100644
->> --- a/drivers/iio/accel/bma180.c
->> +++ b/drivers/iio/accel/bma180.c
->> @@ -738,7 +738,7 @@ static int bma180_probe(struct i2c_client *client,
->> 
->> 	ret = data->part_info->chip_config(data);
->> 	if (ret < 0)
->> -		goto err_chip_disable;
->> +		goto err;
->> 
->> 	mutex_init(&data->mutex);
->> 	indio_dev->dev.parent = &client->dev;
->> @@ -748,12 +748,25 @@ static int bma180_probe(struct i2c_client *client,
->> 	indio_dev->modes = INDIO_DIRECT_MODE;
->> 	indio_dev->info = &bma180_info;
->> 
->> +	ret = devm_iio_triggered_buffer_setup(&client->dev, indio_dev, NULL,
->> +			bma180_trigger_handler, NULL);
->> +	if (ret < 0) {
->> +		dev_err(&client->dev, "unable to setup iio triggered buffer\n");
->> +		goto err;
->> +	}
+>> drivers/iio/magnetometer/hmc5843.h      |  1 +
+>> drivers/iio/magnetometer/hmc5843_core.c | 14 ++++++++++++++
+>> 2 files changed, 15 insertions(+)
+>>=20
+>> diff --git a/drivers/iio/magnetometer/hmc5843.h =
+b/drivers/iio/magnetometer/hmc5843.h
+>> index a75224cf99df..e3e22d2508d3 100644
+>> --- a/drivers/iio/magnetometer/hmc5843.h
+>> +++ b/drivers/iio/magnetometer/hmc5843.h
+>> @@ -43,6 +43,7 @@ struct hmc5843_data {
+>> 	struct mutex lock;
+>> 	struct regmap *regmap;
+>> 	const struct hmc5843_chip_info *variant;
+>> +	struct iio_mount_matrix orientation;
+>> 	__be16 buffer[8];
+>> };
+>>=20
+>> diff --git a/drivers/iio/magnetometer/hmc5843_core.c =
+b/drivers/iio/magnetometer/hmc5843_core.c
+>> index ada142fb7aa3..e6b6da70c152 100644
+>> --- a/drivers/iio/magnetometer/hmc5843_core.c
+>> +++ b/drivers/iio/magnetometer/hmc5843_core.c
+>> @@ -237,6 +237,13 @@ int hmc5843_set_measurement_configuration(struct =
+iio_dev *indio_dev,
+>> 	return hmc5843_set_meas_conf(data, meas_conf);
+>> }
+>>=20
+>> +static const struct iio_mount_matrix *
+>> +hmc5843_get_mount_matrix(const struct iio_dev *indio_dev,
+>> +			  const struct iio_chan_spec *chan)
+>> +{
+>> +	return &((struct hmc5843_data =
+*)iio_priv(indio_dev))->orientation;
+>> +}
 >> +
->> +	ret = devm_iio_device_register(&client->dev, indio_dev);
->> +	if (ret < 0) {
->> +		dev_err(&client->dev, "unable to register iio device\n");
->> +		goto err;
->> +	}
+>> static const struct iio_enum hmc5843_meas_conf_enum =3D {
+>> 	.items =3D hmc5843_meas_conf_modes,
+>> 	.num_items =3D ARRAY_SIZE(hmc5843_meas_conf_modes),
+>> @@ -247,6 +254,7 @@ static const struct iio_enum =
+hmc5843_meas_conf_enum =3D {
+>> static const struct iio_chan_spec_ext_info hmc5843_ext_info[] =3D {
+>> 	IIO_ENUM("meas_conf", true, &hmc5843_meas_conf_enum),
+>> 	IIO_ENUM_AVAILABLE("meas_conf", &hmc5843_meas_conf_enum),
+>> +	IIO_MOUNT_MATRIX(IIO_SHARED_BY_DIR, hmc5843_get_mount_matrix),
+>> 	{ },
+>> };
+>>=20
+>> @@ -260,6 +268,7 @@ static const struct iio_enum =
+hmc5983_meas_conf_enum =3D {
+>> static const struct iio_chan_spec_ext_info hmc5983_ext_info[] =3D {
+>> 	IIO_ENUM("meas_conf", true, &hmc5983_meas_conf_enum),
+>> 	IIO_ENUM_AVAILABLE("meas_conf", &hmc5983_meas_conf_enum),
+>> +	IIO_MOUNT_MATRIX(IIO_SHARED_BY_DIR, hmc5843_get_mount_matrix),
+>> 	{ },
+>> };
+>>=20
+>> @@ -635,6 +644,11 @@ int hmc5843_common_probe(struct device *dev, =
+struct regmap *regmap,
+>> 	data->variant =3D &hmc5843_chip_info_tbl[id];
+>> 	mutex_init(&data->lock);
+>>=20
+>> +	ret =3D of_iio_read_mount_matrix(dev, "mount-matrix",
+>> +				&data->orientation);
+>> +	if (ret)
+>> +		return ret;
 >> +
->> 	if (client->irq > 0) {
->> -		data->trig = iio_trigger_alloc("%s-dev%d", indio_dev->name,
->> -			indio_dev->id);
->> +		data->trig = devm_iio_trigger_alloc(&client->dev, "%s-dev%d",
->> +			indio_dev->name, indio_dev->id);
->> 		if (!data->trig) {
->> 			ret = -ENOMEM;
->> -			goto err_chip_disable;
->> +			goto err;
->> 		}
->> 
->> 		ret = devm_request_irq(&client->dev, client->irq,
->> @@ -761,7 +774,7 @@ static int bma180_probe(struct i2c_client *client,
->> 			"bma180_event", data->trig);
->> 		if (ret) {
->> 			dev_err(&client->dev, "unable to request IRQ\n");
->> -			goto err_trigger_free;
->> +			goto err;
->> 		}
->> 
->> 		data->trig->dev.parent = &client->dev;
->> @@ -769,34 +782,14 @@ static int bma180_probe(struct i2c_client *client,
->> 		iio_trigger_set_drvdata(data->trig, indio_dev);
->> 		indio_dev->trig = iio_trigger_get(data->trig);
->> 
->> -		ret = iio_trigger_register(data->trig);
->> +		ret = devm_iio_trigger_register(&client->dev, data->trig);
->> 		if (ret)
->> -			goto err_trigger_free;
->> -	}
->> -
->> -	ret = iio_triggered_buffer_setup(indio_dev, NULL,
->> -			bma180_trigger_handler, NULL);
->> -	if (ret < 0) {
->> -		dev_err(&client->dev, "unable to setup iio triggered buffer\n");
->> -		goto err_trigger_unregister;
->> -	}
->> -
->> -	ret = iio_device_register(indio_dev);
->> -	if (ret < 0) {
->> -		dev_err(&client->dev, "unable to register iio device\n");
->> -		goto err_buffer_cleanup;
->> +			goto err;
->> 	}
->> 
->> 	return 0;
->> 
->> -err_buffer_cleanup:
->> -	iio_triggered_buffer_cleanup(indio_dev);
->> -err_trigger_unregister:
->> -	if (data->trig)
->> -		iio_trigger_unregister(data->trig);
->> -err_trigger_free:
->> -	iio_trigger_free(data->trig);
->> -err_chip_disable:
->> +err:
->> 	data->part_info->chip_disable(data);
->> 
->> 	return ret;
->> @@ -807,13 +800,6 @@ static int bma180_remove(struct i2c_client *client)
->> 	struct iio_dev *indio_dev = i2c_get_clientdata(client);
->> 	struct bma180_data *data = iio_priv(indio_dev);
->> 
->> -	iio_device_unregister(indio_dev);
->> -	iio_triggered_buffer_cleanup(indio_dev);
->> -	if (data->trig) {
->> -		iio_trigger_unregister(data->trig);
->> -		iio_trigger_free(data->trig);
->> -	}
->> -
-> Now we disable the device before removing it's userspace interface.
-> Not a good idea.
-> 
-> Generally I will insist on the remove order always being the precise
-> opposite of probe simply because it is obviously correct.
-> That includes cases which can be simply argued to be fine (not
-> this one which isn't). The reason is readability trumps saving
-> a few lines of code and it's a lot easier to check a probe and
-> remove function against each other if the order is maintained.
-> 
-> Of course, there are ways to do this by making all the unwind
-> managed, but you haven't done this here.
-> devm_add_action_or_reset is handy for this if you want to do it.
-> 
->> 	mutex_lock(&data->mutex);
->> 	data->part_info->chip_disable(data);
->> 	mutex_unlock(&data->mutex);
-> 
+>> 	indio_dev->dev.parent =3D dev;
+>> 	indio_dev->name =3D name;
+>> 	indio_dev->info =3D &hmc5843_info;
+>=20
 
