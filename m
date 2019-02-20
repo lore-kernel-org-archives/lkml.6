@@ -2,73 +2,89 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 186EBC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC662C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:32:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8A1A20C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:30:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85EAE2147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:32:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727972AbfBTNal (ORCPT
+        id S1727885AbfBTNcP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 08:30:41 -0500
-Received: from mga06.intel.com ([134.134.136.31]:36540 "EHLO mga06.intel.com"
+        Wed, 20 Feb 2019 08:32:15 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33668 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725826AbfBTNak (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 08:30:40 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 05:30:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,391,1544515200"; 
-   d="scan'208";a="148370369"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 20 Feb 2019 05:30:37 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 20 Feb 2019 15:30:36 +0200
-Date:   Wed, 20 Feb 2019 15:30:36 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Nikolaus Voss <nv@vosn.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <linux@roeck-us.net>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, nikolaus.voss@loewensteinmedical.de
-Subject: Re: [PATCHv2] usb: typec: tps6598x: handle block writes separately
- with plain-I2C adapters
-Message-ID: <20190220133036.GB5054@kuha.fi.intel.com>
-References: <20180425142209.30745-1-heikki.krogerus@linux.intel.com>
- <20190220110017.BFA344CE86@mail.steuer-voss.de>
- <20190220125731.02E274CFE0@mail.steuer-voss.de>
+        id S1726213AbfBTNcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 08:32:15 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5BF7C2DA996;
+        Wed, 20 Feb 2019 13:32:14 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C62BC2707A;
+        Wed, 20 Feb 2019 13:32:12 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] KEYS: user: Align the payload buffer
+From:   David Howells <dhowells@redhat.com>
+To:     jmorris@namei.org
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>, stable@vger.kernel.org,
+        Eric Biggers <ebiggers@google.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 20 Feb 2019 13:32:11 +0000
+Message-ID: <155066953188.21038.12015964986007814182.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190220125731.02E274CFE0@mail.steuer-voss.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 20 Feb 2019 13:32:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 01:57:30PM +0100, Nikolaus Voss wrote:
-> Commit 1a2f474d328f handles block _reads_ separately with plain-I2C
-> adapters, but the problem described with regmap-i2c not handling
-> SMBus block transfers (i.e. read and writes) correctly also exists
-> with writes.
-> 
-> As workaround, this patch adds a block write function the same way
-> 1a2f474d328f adds a block read function.
-> 
-> Fixes: 1a2f474d328f ("usb: typec: tps6598x: handle block reads separately with plain-I2C adapters")
-> Fixes: 0a4c005bd171 ("usb: typec: driver for TI TPS6598x USB Power Delivery controllers")
-> Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+From: Eric Biggers <ebiggers@google.com>
 
-You are missing a "from" line with address that matches your SoB
-address.
+Align the payload of "user" and "logon" keys so that users of the
+keyrings service can access it as a struct that requires more than
+2-byte alignment.  fscrypt currently does this which results in the read
+of fscrypt_key::size being misaligned as it needs 4-byte alignment.
 
+Align to __alignof__(u64) rather than __alignof__(long) since in the
+future it's conceivable that people would use structs beginning with
+u64, which on some platforms would require more than 'long' alignment.
 
-thanks,
+Reported-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Fixes: 2aa349f6e37c ("[PATCH] Keys: Export user-defined keyring operations")
+Fixes: 88bd6ccdcdd6 ("ext4 crypto: add encryption key management facilities")
+Cc: stable@vger.kernel.org
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Tested-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
--- 
-heikki
+ include/keys/user-type.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/keys/user-type.h b/include/keys/user-type.h
+index e098cbe27db5..12babe991594 100644
+--- a/include/keys/user-type.h
++++ b/include/keys/user-type.h
+@@ -31,7 +31,7 @@
+ struct user_key_payload {
+ 	struct rcu_head	rcu;		/* RCU destructor */
+ 	unsigned short	datalen;	/* length of this data */
+-	char		data[0];	/* actual data */
++	char		data[0] __aligned(__alignof__(u64)); /* actual data */
+ };
+ 
+ extern struct key_type key_type_user;
+
