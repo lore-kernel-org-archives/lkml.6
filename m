@@ -2,94 +2,164 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 843CAC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:36:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91F24C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:38:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E77A2083E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:36:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6723620880
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:38:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550684307;
+	bh=4UuXoCd9eA+34QtQW5LiwBnEFhpo5I7ZEvbgOzvyEvg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
+	b=h8NTEsM6toSKQbfztZWVrN0pY+DuN3YK2F4qnaaEk6/u0nBEoxs55FtzTsntZkSyX
+	 6h+nq+nXZTK5o/1vMGKwJWcXZVIaTpza/2gpN4vw7qgpN7Si7ZHX9q53dZULho7cLT
+	 td5aK9QVHwo79Q6XvfQOYxgF+jT8ehMFR2dlLyfo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726376AbfBTRgF (ORCPT
+        id S1726311AbfBTRi0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 12:36:05 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:43235 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfBTRgF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 12:36:05 -0500
-Received: by mail-qt1-f194.google.com with SMTP id y4so28105731qtc.10;
-        Wed, 20 Feb 2019 09:36:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0SnzvACgLYcBKe4cF5EJzxNgftfLV956VlVSlnRG3No=;
-        b=L/wayxQtqgEKeVqdgIKF5X+pZUjHCad/yy810oIOgjXWFa//V7X6uPir31whXD6+I5
-         dgJ/ILBmOWGFOY0H/K6FuVbf4b+HwovW/Zo7NJq3mcFos+hIs9L81eBxGYT+/DRs6lA3
-         3bLTMBENGln1IIFouQ90uOqc5U6lakaFvKCcXJy05VFAKRQcPYCb95wGdBrcX0ue6TEM
-         sjdESQijwe0No/6Fyq9nTe7jFEwLQVPMhm+N0mbXzq4ZvAP3Bxz2/ONOhN2LE1N4j4j5
-         4qSHsuxOoIdmnBUB2dRe0w55U4Wt4G+AgFe0BLhPlCKJRwpl9spMcOf1mxOVeVMSe2RU
-         zhzQ==
-X-Gm-Message-State: AHQUAubBLAaM+9rDXI6nmcaVBDZp7Z3oUjQc1VkIhjZAPvsI1vPzWYDJ
-        s+AmGUxcKq7WwePRYIVHmWm8d5Vp6sHeoGZ7rZw=
-X-Google-Smtp-Source: AHgI3IbghVuZY0QQrmRyLqeSse1po+Jsjx+46WwY0SNU7tWQdqdlSbHdNvKIpHa0eQlEnmyA5Hfs3AIBpMAwmx7MMf4=
-X-Received: by 2002:ac8:4141:: with SMTP id e1mr26997450qtm.96.1550684163465;
- Wed, 20 Feb 2019 09:36:03 -0800 (PST)
-MIME-Version: 1.0
-References: <20190219214940.391081-1-arnd@arndb.de> <CAAeHK+xSpsu0tNmeq0wKXfT=0HuORnvU+XzLswDzhbtfZVa4Hw@mail.gmail.com>
- <CAK8P3a1NfHohd1xT7iHK85L2PGnD95RJvwFi-2cWrFpipQzqwg@mail.gmail.com> <b109ad0d-6995-8ca2-5426-7e2627d2032c@virtuozzo.com>
-In-Reply-To: <b109ad0d-6995-8ca2-5426-7e2627d2032c@virtuozzo.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 20 Feb 2019 18:35:46 +0100
-Message-ID: <CAK8P3a0tg1WRLK=fs9S+X4TPB7sR55ZsjMbBVX07AtAfguXCsw@mail.gmail.com>
-Subject: Re: [PATCH] kasan: turn off asan-stack for clang-8 and earlier
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc:     Andrey Konovalov <andreyknvl@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Mark Brown <broonie@kernel.org>, Qian Cai <cai@lca.pw>,
-        Alexander Potapenko <glider@google.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Christoph Lameter <cl@linux.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>
+        Wed, 20 Feb 2019 12:38:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40314 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725798AbfBTRiZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 12:38:25 -0500
+Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61C982083E;
+        Wed, 20 Feb 2019 17:38:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550684304;
+        bh=4UuXoCd9eA+34QtQW5LiwBnEFhpo5I7ZEvbgOzvyEvg=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=f71NdnjzaTLAt5qnwzbNlQafL87oA3ITneANdAESaZg+TkjjuVILBV6fzUwAz122L
+         qlysWD8zdAjLblFgyxX8H/O/mIcz0r3gCoINUolflw9xMJNOkZ66Jm1syQt3Oimb7H
+         Rn6HiyQXWMPw2E8+5Ow0+e6nVDFkhxp0RE2NlEQQ=
+Message-ID: <1550684302.2027.6.camel@kernel.org>
+Subject: Re: [PATCH v15 15/15] tracing: Add hist trigger action 'expected
+ fail' test case
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
+        vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Date:   Wed, 20 Feb 2019 11:38:22 -0600
+In-Reply-To: <20190220121748.7aa83459@gandalf.local.home>
+References: <cover.1550100284.git.tom.zanussi@linux.intel.com>
+         <1790bf93e01dbdfa1b4af945f42147d92bd565aa.1550100284.git.tom.zanussi@linux.intel.com>
+         <20190220121748.7aa83459@gandalf.local.home>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 6:00 PM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
-> On 2/20/19 5:51 PM, Arnd Bergmann wrote:
-> > On Wed, Feb 20, 2019 at 3:45 PM Andrey Konovalov <andreyknvl@google.com> wrote:
-> > I would have to some more research, but I expect several hundred
-> > patches before we get to a clean randconfig build with a broken
-> > compiler.
->
-> Manually maintaining asan-stack parameter for the sake of one broken compiler isn't a great idea either.
->
-> Couple alternative suggestions:
->
-> 1) If we can't fix the problem or the cost of fixing is too high, maybe just hide it? Disable -Wframe-larger-then on pre clang-9 compilers.
->
-> 2) Fallback cflags. The idea is to try to compile every the file with "-mllvm -asan-stack=1 -Wframe-larger-than=2048 -Werror" at first,
->  and fallback to "-mllvm -asan-stack=0" if failed. So it would be something similar to $(call cc-option, -mllvm -asan-stack=1 -Wframe-larger-than=2048 -Werror, -mllvm -asan-stack=0)
->  except that "cc-option" tries options only once on some code example while  we need to try options on every file that we actually compile.
->  Honestly, I'm not sure that it's worthy to hack Kbuild engine for that particular use-case.
+Hi Steve,
 
-My original plan was to put this under CONFIG_KASAN_EXTRA to allow you
-to still enable it in older compilers, but you just removed that option ;-)
+On Wed, 2019-02-20 at 12:17 -0500, Steven Rostedt wrote:
+> On Wed, 13 Feb 2019 17:42:55 -0600
+> Tom Zanussi <zanussi@kernel.org> wrote:
+> 
+> > From: Tom Zanussi <tom.zanussi@linux.intel.com>
+> > 
+> > Add a test case verifying that basic action combinations fail as
+> > expected.
+> > 
+> 
+> Hi Tom,
+> 
+> This test appears to fail:
+> 
+> # echo 'hist:keys=comm:onmatch(sched.sched_wakeup).save(comm,prio)'
+> >> /sys/kernel/debug/tracing/events/sched/sched_waking/trigger
+> -bash: echo: write error: Invalid argument
+> 
+> # cat /sys/kernel/debug/tracing/events/sched/sched_waking/hist 
+> 
+> ERROR: action parsing: Handler doesn't support action: save
+>   Last command: keys=comm:onmatch(sched.sched_wakeup).save(comm,prio)
+> 
+> 
+> Is the "save" feature implemented here? It's in the README too.
+> Should
+> it be removed?
+> 
 
-Maybe bringing it back would be a compromise? That way it's hidden from
-all the build testing bots (because of the !CONFIG_COMPILE_TEST dependency),
-but anyone who really wants it can still have the option, and set
-CONFIG_FRAME_WARN
-to whichever value they like.
+The "save" feature is implemented, but it's not currently supported
+with onmatch(), which is why it fails, and is used in the xfail test,
+since it's expected to.  So, in this case, the command fails, which
+means the xfail test actually passed.  ;-)
 
-     Arnd
+There are other tests in the inter-event testcases that use save() but
+with onmax() and onchange(), and they pass.
+
+Hope that explains things in this case,
+
+Tom
+
+> -- Steve
+> 
+> > Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+> > ---
+> >  .../inter-event/trigger-action-hist-xfail.tc       | 30
+> > ++++++++++++++++++++++
+> >  1 file changed, 30 insertions(+)
+> >  create mode 100644
+> > tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-
+> > action-hist-xfail.tc
+> > 
+> > diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-
+> > event/trigger-action-hist-xfail.tc
+> > b/tools/testing/selftests/ftrace/test.d/trigger/inter-
+> > event/trigger-action-hist-xfail.tc
+> > new file mode 100644
+> > index 000000000000..1221240f8cf6
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-
+> > event/trigger-action-hist-xfail.tc
+> > @@ -0,0 +1,30 @@
+> > +#!/bin/sh
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +# description: event trigger - test inter-event histogram trigger
+> > expected fail actions
+> > +
+> > +fail() { #msg
+> > +    echo $1
+> > +    exit_fail
+> > +}
+> > +
+> > +if [ ! -f set_event ]; then
+> > +    echo "event tracing is not supported"
+> > +    exit_unsupported
+> > +fi
+> > +
+> > +if [ ! -f snapshot ]; then
+> > +    echo "snapshot is not supported"
+> > +    exit_unsupported
+> > +fi
+> > +
+> > +grep -q "snapshot()" README || exit_unsupported # version issue
+> > +
+> > +echo "Test expected snapshot action failure"
+> > +
+> > +echo 'hist:keys=comm:onmatch(sched.sched_wakeup).snapshot()' >>
+> > /sys/kernel/debug/tracing/events/sched/sched_waking/trigger &&
+> > exit_fail
+> > +
+> > +echo "Test expected save action failure"
+> > +
+> > +echo 'hist:keys=comm:onmatch(sched.sched_wakeup).save(comm,prio)'
+> > >> /sys/kernel/debug/tracing/events/sched/sched_waking/trigger &&
+> > exit_fail
+> > +
+> > +exit_xfail
+> 
+> 
