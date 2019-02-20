@@ -2,71 +2,101 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0FF5C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D12C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78CDE2190B
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:01:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DB322147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:01:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NhN/UtzT";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NhN/UtzT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728173AbfBTNBI (ORCPT
+        id S1728205AbfBTNBQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 08:01:08 -0500
-Received: from laurent.telenet-ops.be ([195.130.137.89]:34492 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727965AbfBTNA7 (ORCPT
+        Wed, 20 Feb 2019 08:01:16 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:50112 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728176AbfBTNBO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 08:00:59 -0500
-Received: from ramsan ([84.194.111.163])
-        by laurent.telenet-ops.be with bizsmtp
-        id f10x1z0033XaVaC0110xuU; Wed, 20 Feb 2019 14:00:57 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gwRUf-0001TS-2A; Wed, 20 Feb 2019 14:00:57 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gwRUf-0000Do-0H; Wed, 20 Feb 2019 14:00:57 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>, Baoquan He <bhe@redhat.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] iommu: Document iommu_ops.is_attach_deferred()
-Date:   Wed, 20 Feb 2019 14:00:53 +0100
-Message-Id: <20190220130053.784-4-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190220130053.784-1-geert+renesas@glider.be>
-References: <20190220130053.784-1-geert+renesas@glider.be>
+        Wed, 20 Feb 2019 08:01:14 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E80F460716; Wed, 20 Feb 2019 13:01:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550667673;
+        bh=hoSO5XqD8OaR5JQudwk4tpheMFo0FQNoHNbA9yl1ITM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=NhN/UtzT87Z/O50l4xSv7WxE/5h1wukafBn4mSOB95dwHYP6RCw9IxZTmzYDFhGfh
+         JxN4zYhTe79u+CNbTSnwAgvCHCO3C2v4G0xHArVFp8+7eGoR0yJp1rrcIIuwo6iH7z
+         +Vh6qPOkHk8/cfZ759Igv3NaMLlIoH84Kasl3QIw=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 6E56F6034F;
+        Wed, 20 Feb 2019 13:01:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550667673;
+        bh=hoSO5XqD8OaR5JQudwk4tpheMFo0FQNoHNbA9yl1ITM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=NhN/UtzT87Z/O50l4xSv7WxE/5h1wukafBn4mSOB95dwHYP6RCw9IxZTmzYDFhGfh
+         JxN4zYhTe79u+CNbTSnwAgvCHCO3C2v4G0xHArVFp8+7eGoR0yJp1rrcIIuwo6iH7z
+         +Vh6qPOkHk8/cfZ759Igv3NaMLlIoH84Kasl3QIw=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 20 Feb 2019 18:31:13 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Josh Boyer <jwboyer@kernel.org>
+Cc:     Hemantg <hemantg@codeaurora.org>,
+        Linux Firmware <linux-firmware@kernel.org>,
+        BlueZ development <linux-bluetooth@vger.kernel.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        Linux-arm Msm <linux-arm-msm@vger.kernel.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: Firmware files for QCA BT chip wcn3990
+Message-ID: <26af87bceb0a7c355ba90cce863bfd1e@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add missing kerneldoc for iommu_ops.is_attach_deferred().
 
-Fixes: e01d1913b0d08171 ("iommu: Add is_attach_deferred call-back to iommu-ops")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- include/linux/iommu.h | 2 ++
- 1 file changed, 2 insertions(+)
+Hi,
 
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 3ed5d372b090af54..ffbbc7e39ceeba3e 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -184,6 +184,8 @@ struct iommu_resv_region {
-  * @domain_window_enable: Configure and enable a particular window for a domain
-  * @domain_window_disable: Disable a particular window for a domain
-  * @of_xlate: add OF master IDs to iommu grouping
-+ * @is_attach_deferred: Check if domain attach should be deferred from iommu
-+ *                      driver init to device driver init (default no)
-  * @pgsize_bitmap: bitmap of all possible supported page sizes
-  */
- struct iommu_ops {
+The following changes since commit 
+710963fe53ee3f227556d36839df3858daf6e232:
+
+   Merge https://github.com/ajaykuee/linux-firmware (2019-02-13 07:42:20 
+-0500)
+
+are available in the Git repository at:
+
+   https://github.com/bgodavar/qca_bt_wcn3990_fw.git
+
+for you to fetch changes up to f859d9fda9379205c9bcf2eab11fae68891085ee:
+
+   qca: Add firmware files for BT chip wcn3990. (2019-02-20 18:23:46 
++0530)
+
+----------------------------------------------------------------
+Balakrishna Godavarthi (1):
+       qca: Add firmware files for BT chip wcn3990.
+
+  WHENCE           |   2 +
+  qca/NOTICE.txt   | 334 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++--------------------------------------------------------------------------------------------
+  qca/crbtfw21.tlv | Bin 0 -> 177060 bytes
+  qca/crnv21.bin   | Bin 0 -> 4587 bytes
+  4 files changed, 129 insertions(+), 207 deletions(-)
+  create mode 100644 qca/crbtfw21.tlv
+  create mode 100644 qca/crnv21.bin
+
+
 -- 
-2.17.1
-
+Regards
+Balakrishna.
