@@ -2,131 +2,137 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E171CC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:37:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1DAC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:37:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6FD62183E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:37:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 291EF2183E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:37:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vpwfPpyn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730323AbfBTChP (ORCPT
+        id S1730365AbfBTCht (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 21:37:15 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33657 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729110AbfBTChO (ORCPT
+        Tue, 19 Feb 2019 21:37:49 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:39389 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726884AbfBTChk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 21:37:14 -0500
-Received: by mail-pl1-f196.google.com with SMTP id y10so11421095plp.0;
-        Tue, 19 Feb 2019 18:37:14 -0800 (PST)
+        Tue, 19 Feb 2019 21:37:40 -0500
+Received: by mail-ot1-f67.google.com with SMTP id n8so37722509otl.6
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 18:37:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DFzS5b0xWIVmksUnz9sX1T+QW942tq/m/9lMG+5dmn0=;
+        b=vpwfPpynmJcxBMsmstIQGEgVtykgaCMhH2uKhYbbLU88FhzFNESulgslXSaQCGQkvT
+         gee0XZOyKXEYbsxgRrnQYQEWilm2ZjKUtGe1MoPgYmIbE8CVmGjBx0s+xbUgNkLbkEQw
+         RcbyXdbG1qkQge+3yuigLEge/aA8zp+KMP6Ii5RbrWM2as0HbCQswmmTFDuwK51/eQg5
+         iqdRFqQeSo7eb9pAyo4k4c5f8rm8IathWkiTlgWZKWQb6kKEddXiT9UOGoyXJDGHiOHV
+         dusMx20PQuzo/puulRwuJ1E0OUbTt26aJ1a/+iuxvlJrrqjWo6EDlcVmQd6oxnja5X/I
+         tnxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HP9Cnwm5mA4hdRo3xazu5Jsgd6Igy791Y/HWFPQ6N0k=;
-        b=pYuPKR/850BkZDEz1OKzSIrJ1mxKY0R7JuvXWRY6LOE/bM19IzSC39o2ViKqWz2LNX
-         eZeKASqVvPLZ/cSzU5prG6EKQqsTqquYutF+FxzS5EuZLvYBSqZymJVz/se0RtAbc50T
-         snL+MKx+V+qSgnIJx5Zx9ZnGLaJ2LssV9Yzddwrgjy4KK0vNZTy6Jt8bPIuVGQFiu9Gw
-         kDf8xNDyNX61FqcS5SeVOx3aBGuQSyIRsIggmZzSMndl180aseDGmXzmYTt1XVuDH38w
-         FKf26rNZTkazCUKaQ0Q1CW4nR++QbPpSAqN1TrAOAO2uLGEOm9+qM1owjlDw17hTXo3p
-         w6CA==
-X-Gm-Message-State: AHQUAuZbFhXcspwbCqW6gqlXPqxij8QxBc/sFe99C4+t55G6T54LQg7h
-        aPbumFdyMaukiFpVBSWHeQb1mdJ0NEg=
-X-Google-Smtp-Source: AHgI3IbH0x7YpgetqxgAAYLMYUJvhs0DuV+3/g3W/yGDT9cyuGtlfaHN5X8Oy5l+iGTZS0YQ6AYgzQ==
-X-Received: by 2002:a17:902:788d:: with SMTP id q13mr15744256pll.154.1550630233463;
-        Tue, 19 Feb 2019 18:37:13 -0800 (PST)
-Received: from asus.site ([2601:647:4000:5dd1:a41e:80b4:deb3:fb66])
-        by smtp.gmail.com with ESMTPSA id o5sm16857250pfi.118.2019.02.19.18.37.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 18:37:12 -0800 (PST)
-Subject: Re: [dm-devel] [PATCH V15 00/18] block: support multi-page bvec
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Mike Snitzer <snitzer@redhat.com>,
-        linux-mm@kvack.org, dm-devel@redhat.com,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Omar Sandoval <osandov@fb.com>, cluster-devel@redhat.com,
-        linux-ext4@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Gao Xiang <gaoxiang25@huawei.com>, Coly Li <colyli@suse.de>,
-        linux-raid@vger.kernel.org, Bob Peterson <rpeterso@redhat.com>,
-        linux-bcache@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <dchinner@redhat.com>,
-        David Sterba <dsterba@suse.com>, linux-block@vger.kernel.org,
-        Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-References: <20190215111324.30129-1-ming.lei@redhat.com>
- <c52b6a8b-d1d4-67ff-f81c-371d09cc6d5b@kernel.dk>
- <1550250855.31902.102.camel@acm.org> <20190217131128.GB7296@ming.t460p>
- <1550593699.31902.115.camel@acm.org> <20190220011719.GA13035@ming.t460p>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <8253d52d-a77a-b008-1fbd-f2f0a794a022@acm.org>
-Date:   Tue, 19 Feb 2019 18:37:09 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DFzS5b0xWIVmksUnz9sX1T+QW942tq/m/9lMG+5dmn0=;
+        b=r+50hAOAv4k4NaCUFnjwtCMZIQDjpKNMgKhw3NxT20c6iscVX1XyE5FuF9bt1byVG9
+         rjQQ0CPsc29hwIpQyYPx75oD7q8bHlTTecuvvEBDCswIWmygBiju1gV4Uo5F+MFr/kQr
+         6+RMysm6Z+mEi5duA37IIsCvARu9YnMu02lG3hB3kfb++jm8QCqewXjZWk7IEsurmREw
+         LptdSKZjL0Sd1lig9gb2fesW+thvsz0pki3MZbulYbbD/K/VgBV+ZcYFWuPGAJ/b/su1
+         EPv01wkskVj4JF5hOBFCO+2FwbAyG4to/Mqgs6Kz/fGQ7pxRuD8SRKt4KmjRE+fx/7+j
+         kgHA==
+X-Gm-Message-State: AHQUAuaDt5hGYjb1wtjSBBw7tYu/vEeoIoSNL7fvxhfoV+BtEXGEHcIg
+        y9NyD4z8P56P9nyk5gwXI+HBil5qq2tNQS4ZqOtYXA==
+X-Google-Smtp-Source: AHgI3IaNO1zFO9qyR4NpJrv+A0JZ303RSaXeshdUFEIQH1hD+477Xr7Kt6/JYcwVnKPUiAg9mQMMyKCmV1tpnKqFH1U=
+X-Received: by 2002:aca:d607:: with SMTP id n7mr4392950oig.3.1550630259430;
+ Tue, 19 Feb 2019 18:37:39 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190220011719.GA13035@ming.t460p>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190220005449.GA25243@beast>
+In-Reply-To: <20190220005449.GA25243@beast>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 20 Feb 2019 03:37:12 +0100
+Message-ID: <CAG48ez3Kbt7oyH7wyw+d1vwNRD_b5Y+tiCOLofkxyqxcNWs8vw@mail.gmail.com>
+Subject: Re: [PATCH] x86/asm: Pin sensitive CR4 bits
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/19/19 5:17 PM, Ming Lei wrote:
-> On Tue, Feb 19, 2019 at 08:28:19AM -0800, Bart Van Assche wrote:
->> With this patch applied test nvmeof-mp/002 fails as follows:
->>
->> [  694.700400] kernel BUG at lib/sg_pool.c:103!
->> [  694.705932] invalid opcode: 0000 [#1] PREEMPT SMP KASAN
->> [  694.708297] CPU: 2 PID: 349 Comm: kworker/2:1H Tainted: G    B             5.0.0-rc6-dbg+ #2
->> [  694.711730] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
->> [  694.715113] Workqueue: kblockd blk_mq_run_work_fn
->> [  694.716894] RIP: 0010:sg_alloc_table_chained+0xe5/0xf0
->> [  694.758222] Call Trace:
->> [  694.759645]  nvme_rdma_queue_rq+0x2aa/0xcc0 [nvme_rdma]
->> [  694.764915]  blk_mq_try_issue_directly+0x2a5/0x4b0
->> [  694.771779]  blk_insert_cloned_request+0x11e/0x1c0
->> [  694.778417]  dm_mq_queue_rq+0x3d1/0x770
->> [  694.793400]  blk_mq_dispatch_rq_list+0x5fc/0xb10
->> [  694.798386]  blk_mq_sched_dispatch_requests+0x2f7/0x300
->> [  694.803180]  __blk_mq_run_hw_queue+0xd6/0x180
->> [  694.808933]  blk_mq_run_work_fn+0x27/0x30
->> [  694.810315]  process_one_work+0x4f1/0xa40
->> [  694.813178]  worker_thread+0x67/0x5b0
->> [  694.814487]  kthread+0x1cf/0x1f0
->> [  694.819134]  ret_from_fork+0x24/0x30
->>
->> The code in sg_pool.c that triggers the BUG() statement is as follows:
->>
->> int sg_alloc_table_chained(struct sg_table *table, int nents,
->> 		struct scatterlist *first_chunk)
->> {
->> 	int ret;
->>
->> 	BUG_ON(!nents);
->> [ ... ]
->>
->> Bart.
-> 
-> I can reproduce this issue("kernel BUG at lib/sg_pool.c:103") without mp-bvec patches,
-> so looks it isn't the fault of this patchset.
+On Wed, Feb 20, 2019 at 1:55 AM Kees Cook <keescook@chromium.org> wrote:
+> Several recent exploits have used direct calls to the native_write_cr4()
+> function to disable SMEP and SMAP before then continuing their exploits
+> using userspace memory access. This pins bits of cr4 so that they cannot
+> be changed through a common function. This is not intended to be general
+> ROP protection (which would require CFI to defend against properly), but
+> rather a way to avoid trivial direct function calling (or CFI bypassing
+> via a matching function prototype) as seen in:
+>
+> https://googleprojectzero.blogspot.com/2017/05/exploiting-linux-kernel-via-packet.html
+> (https://github.com/xairy/kernel-exploits/tree/master/CVE-2017-7308)
+>
+> The goals of this change:
+>  - pin specific bits (SMEP, SMAP, and UMIP) when writing cr4.
+>  - avoid setting the bits too early (they must become pinned only after
+>    first being used).
+>  - pinning mask needs to be read-only during normal runtime.
+>  - pinning needs to be rechecked after set to avoid jumps into the middle
+>    of the function.
+>
+> Using __ro_after_init on the mask is done so it can't be first disabled
+> with a malicious write. And since it becomes read-only, we must avoid
+> writing to it later (hence the check for bits already having been set
+> instead of unconditionally writing to the mask).
+>
+> The use of volatile is done to force the compiler to perform a full reload
+> of the mask after setting cr4 (to protect against just jumping into the
+> function past where the masking happens; we must check that the mask was
+> applied after we do the set). Due to how this function can be built by the
+> compiler (especially due to the removal of frame pointers), jumping into
+> the middle of the function frequently doesn't require stack manipulation
+> to construct a stack frame (there may only a retq without pops, which is
+> sufficient for use with exploits like timer overwrites mentioned above).
+>
+> For example, without the recheck, the function may appear as:
+>
+>    native_write_cr4:
+>       mov [pin], %rbx
+>       or  %rbx, %rdi
+>    1: mov %rdi, %cr4
+>       retq
+>
+> The masking "or" could be trivially bypassed by just calling to label "1"
+> instead of "native_write_cr4". (CFI will force calls to only be able to
+> call into native_write_cr4, but CFI and CET are uncommon currently.)
+>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+[...]
+>  static inline void native_write_cr4(unsigned long val)
+>  {
+> +again:
+> +       val |= cr4_pin;
+>         asm volatile("mov %0,%%cr4": : "r" (val), "m" (__force_order));
+> +       /*
+> +        * If the MOV above was used directly as a ROP gadget we can
+> +        * notice the lack of pinned bits in "val" and start the function
+> +        * from the beginning to gain the cr4_pin bits for sure.
+> +        */
+> +       if (WARN_ONCE(cr4_pin && (val & cr4_pin) == 0,
 
-Thanks Ming for your feedback.
+Don't you mean `cr4_pin && (val & cr4_pin) != cr4_pin)`?
 
-Jens, I don't see that issue with kernel v5.0-rc6. Does that mean that 
-the sg_pool BUG() is a regression in your for-next branch that predates 
-Ming's multi-page bvec patch series?
-
-Thanks,
-
-Bart.
+> +                     "cr4 pin bypass attempt?!\n"))
+> +               goto again;
+>  }
