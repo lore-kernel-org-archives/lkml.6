@@ -2,119 +2,122 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD916C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 193DFC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:25:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0231206B7
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:24:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D420A206B7
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:25:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BJ0v47rp"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DvVLRNpd";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RBJ0ynFo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbfBTLYw (ORCPT
+        id S1726825AbfBTLZe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 06:24:52 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:35567 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726197AbfBTLYw (ORCPT
+        Wed, 20 Feb 2019 06:25:34 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:50554 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbfBTLZe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 06:24:52 -0500
-Received: by mail-it1-f194.google.com with SMTP id v72so14622645itc.0;
-        Wed, 20 Feb 2019 03:24:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Pej40aTzZudntREJijTOj+YRqKj+1YHrS16H3FeI+r8=;
-        b=BJ0v47rpp3ckMeIuXkx5NOU1uoboEA17K9GolsCpwuiEAUzNsZ30UMQwLymaUmtqpx
-         aTvntCNMuLPZp534rx+gVP894yvpq3XKBCpxT5EypAnI373n476zOdq8bU2gjihaNJzc
-         f+UnGeQO0zvX4wrYjs+r81R16AxRSC8AFjHb67DPKZgEaNDvNn82ufEPoSomOvqlDkxH
-         4AzbL4mGBdrz8FPNNVM6AK4MfmezkKQD8v4Nm736TFk1tFwhwbx27Lcok8lVSFdv5uHx
-         T+I15HeXvKshy0LuPhnHvkF0sffbDZl8M9BGzb9JNxPlulA5NSvdOK/SFhDlXBanNhKg
-         Kekw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Pej40aTzZudntREJijTOj+YRqKj+1YHrS16H3FeI+r8=;
-        b=SFBL99MkhhqtDkdF8vDvvsfWaZr6zKD6YGV7Sjk8AWEBXF5+T1DNtd3cW5Nn3Nal0j
-         w98p0O3eOnRupZLOYSDcQ+OXWJa9ZHAHF1ZqT1XzLoCCjFGqbHMvP3gDKpPcLvF2rsNF
-         ikXqyHRh+VsF69CaDkv8L4mKbX+tpPGDcWpjQZ2ytUUtAThAM80a4AZjOf4YenlW0OeI
-         MjBOr3RHT7mrJDZbKddORxIb268Inlfpkj1ZqQWPkKzLH5SecDzKt1sJlMIS0KbUqjfe
-         f4gi1hK953gtm+134RukapSly+iqPAaE8bnXRlxA3TADsKQBs00w2gI/FSoks9mE+5oG
-         M/6A==
-X-Gm-Message-State: AHQUAuYPGHkS3RU8NJDX3w94C8wGVh+tgfioKMAdVzC7PGw61pGnVU56
-        5qgnSFHugLFwiZVOg7eXD5Em8YqthJxe7L3tg0Y=
-X-Google-Smtp-Source: AHgI3IbADwUQoo5uAayarY9IB14Zs0CD4qdrsBDaJ+oRavNTaPaoIm7P7y74ILTJYTTT0jB99C8Au8VFrdRc9Bt+ZUU=
-X-Received: by 2002:a24:ee8c:: with SMTP id b134mr5711190iti.162.1550661890717;
- Wed, 20 Feb 2019 03:24:50 -0800 (PST)
+        Wed, 20 Feb 2019 06:25:34 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C7F9D601EA; Wed, 20 Feb 2019 11:25:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550661932;
+        bh=h0Vo6ovhZYdyYgbdfk38gIfa4lo+R5R/ObTapMEo7Mw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DvVLRNpdcHMvplI4fV3uBd1AJgTwZ+9/dJ6AOqJOOPUi6QUbCNmvzat/Os0s6c9wG
+         oEGt5mIleCAbROHvJ5eFXWDmf3UtWOn2JJ7tv4yj87wBjqqPDQh5Sc0LblytwyGhFd
+         xn18PpKKUH8s0bTy9Yo7iGRM6OdvtBeqwuQZiAxU=
+Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: bgodavar@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5EFFC60585;
+        Wed, 20 Feb 2019 11:25:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550661931;
+        bh=h0Vo6ovhZYdyYgbdfk38gIfa4lo+R5R/ObTapMEo7Mw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RBJ0ynFo1YbjnZ/fwgcnfoBvMW+cfGPAy6Bwzyo3EfHeXxeS0xOb/Y4ZMZY+5WdkD
+         iesk2OammJpxJgbl21ncs66hfAZOqaNj9vU2wViaZRAII0KRbiWccT54xjSj/n7m3v
+         POYhXvMvdwl8r7iOcKT1sY+zMGU+AP8z5yKl1YlA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5EFFC60585
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com
+Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Subject: [PATCH v1] Bluetooth: hci_qca: Update baudrate change wait time for wcn3990
+Date:   Wed, 20 Feb 2019 16:55:16 +0530
+Message-Id: <20190220112516.19179-1-bgodavar@codeaurora.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190220101017.19587-1-e.velu@criteo.com> <CAJZ5v0i5BVFRKsCVxDwG90vBAuS3QYB=-GkC0pbGLy5DWDXuMg@mail.gmail.com>
- <1d9ff7a8-5f05-6554-d019-9665536aea84@criteo.com> <CAJZ5v0iHh2VC1b90G+bXP0WpBmJ__Ba=yAjjCifkMRmd5xrmuw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0iHh2VC1b90G+bXP0WpBmJ__Ba=yAjjCifkMRmd5xrmuw@mail.gmail.com>
-From:   Erwan Velu <erwanaliasr1@gmail.com>
-Date:   Wed, 20 Feb 2019 12:24:38 +0100
-Message-ID: <CAL2JzuyyFeX6rE3vTASV2gikXp8xB-WtnSo4YazccaxfcE_nQg@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: Report if CPU doesn't report boost technologies
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Erwan Velu <e.velu@criteo.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "open list:CPU FREQUENCY SCALING FRAMEWORK" 
-        <linux-pm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I tried to put the message in a way to stay neutral, not saying if its
-a real error or not.
-Just reporting we were not able to find any boost cap on it.
-Erwan,
+This patch will update the baudrate change request wait time from
+300 ms to 100 ms. When host sends the change baudrate request to
+the controller, controller sets its clock and wait until the
+clocks settle down. Here the Wait time is required for both
+host and controller to be on sync.
 
-Le mer. 20 f=C3=A9vr. 2019 =C3=A0 12:16, Rafael J. Wysocki <rafael@kernel.o=
-rg> a =C3=A9crit :
->
-> On Wed, Feb 20, 2019 at 11:52 AM Erwan Velu <e.velu@criteo.com> wrote:
-> >
-> >
-> > Le 20/02/2019 =C3=A0 11:41, Rafael J. Wysocki a =C3=A9crit :
-> > > On Wed, Feb 20, 2019 at 11:11 AM Erwan Velu <erwanaliasr1@gmail.com> =
-wrote:
-> > >> There is some rare cases where CPB (and possibly IDA) are missing on=
- processors.
-> > >> This is the case fixed by commit f7f3dc00f612 ("x86/cpu/AMD: Fix err=
-atum 1076 (CPB bit)") and following.
-> > >>
-> > >> In such context, the boost status isn't reported by /sys/devices/sys=
-tem/cpu/cpufreq/boost.
-> > > So I'm not really sure why the extra message is needed.  It looks lik=
-e
-> > > this message will always be printed (with debug output enabled) if th=
-e
-> > > current cpufreq driver is acpi-cpufreq and the boost attribute is not
-> > > present in sysfs, which only is the case if CPB/IDA aren't there.
-> > >
-> > > Does it provide any additional information, then?
-> >
-> > When you know and read the code, yes this patch is too obvious.
-> >
-> > As a user when I was troubleshooting why the boost entry was _not_
-> > populated on one CPU and was populated on another.
-> >
-> > Running acpi-cpufreq with dyndbg, I would have found useful to get that
-> > hint.
-> >
-> > So that could helps users that never read that part of the code and
-> > which are tricked into that configuration.
->
-> OK, I see your point.
->
-> I'll queue up the patch, but I guess I'll change the message.
+Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+---
+ drivers/bluetooth/hci_qca.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index 5e03504c4e0c..22f3c983f868 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -59,7 +59,8 @@
+ 
+ #define IBS_WAKE_RETRANS_TIMEOUT_MS	100
+ #define IBS_TX_IDLE_TIMEOUT_MS		2000
+-#define BAUDRATE_SETTLE_TIMEOUT_MS	300
++#define ROME_BD_SETTLE_TIMEOUT_MS	300
++#define WCN3990_BD_SETTLE_TIMEOUT_MS	100
+ #define POWER_PULSE_TRANS_TIMEOUT_MS	100
+ 
+ /* susclk rate */
+@@ -965,8 +966,11 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
+ 	struct hci_uart *hu = hci_get_drvdata(hdev);
+ 	struct qca_data *qca = hu->priv;
+ 	struct sk_buff *skb;
++	struct qca_serdev *qcadev;
++	unsigned int bd_settling_timeout;
+ 	u8 cmd[] = { 0x01, 0x48, 0xFC, 0x01, 0x00 };
+ 
++	qcadev = serdev_device_get_drvdata(hu->serdev);
+ 	if (baudrate > QCA_BAUDRATE_3200000)
+ 		return -EINVAL;
+ 
+@@ -989,8 +993,12 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
+ 	 * controller will come back after they receive this HCI command
+ 	 * then host can communicate with new baudrate to controller
+ 	 */
++	bd_settling_timeout = qcadev->btsoc_type == QCA_WCN3990 ?
++			       WCN3990_BD_SETTLE_TIMEOUT_MS :
++			       ROME_BD_SETTLE_TIMEOUT_MS;
++
+ 	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(msecs_to_jiffies(BAUDRATE_SETTLE_TIMEOUT_MS));
++	schedule_timeout(msecs_to_jiffies(bd_settling_timeout));
+ 	set_current_state(TASK_RUNNING);
+ 
+ 	return 0;
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
