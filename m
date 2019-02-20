@@ -2,89 +2,65 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC662C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:32:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CF5BC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:32:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85EAE2147A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:32:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 666FB20C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:32:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727885AbfBTNcP (ORCPT
+        id S1728061AbfBTNcm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 08:32:15 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:33668 "EHLO mx1.redhat.com"
+        Wed, 20 Feb 2019 08:32:42 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34376 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726213AbfBTNcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 08:32:15 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1725826AbfBTNcm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 08:32:42 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5BF7C2DA996;
-        Wed, 20 Feb 2019 13:32:14 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C62BC2707A;
-        Wed, 20 Feb 2019 13:32:12 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] KEYS: user: Align the payload buffer
-From:   David Howells <dhowells@redhat.com>
-To:     jmorris@namei.org
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>, stable@vger.kernel.org,
-        Eric Biggers <ebiggers@google.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 20 Feb 2019 13:32:11 +0000
-Message-ID: <155066953188.21038.12015964986007814182.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        by mx1.redhat.com (Postfix) with ESMTPS id 4BAA7C049E1F;
+        Wed, 20 Feb 2019 13:32:42 +0000 (UTC)
+Received: from krava (unknown [10.43.17.20])
+        by smtp.corp.redhat.com (Postfix) with SMTP id BEBC55D71A;
+        Wed, 20 Feb 2019 13:32:38 +0000 (UTC)
+Date:   Wed, 20 Feb 2019 14:32:38 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     kan.liang@linux.intel.com, tglx@linutronix.de, acme@kernel.org,
+        mingo@redhat.com, x86@kernel.org, linux-kernel@vger.kernel.org,
+        len.brown@intel.com, namhyung@kernel.org, eranian@google.com,
+        ak@linux.intel.com
+Subject: Re: [PATCH 00/10] perf: Multi-die/package support
+Message-ID: <20190220133238.GC25423@krava>
+References: <1550606411-5313-1-git-send-email-kan.liang@linux.intel.com>
+ <20190220124619.GB25423@krava>
+ <20190220132413.GH32494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 20 Feb 2019 13:32:14 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190220132413.GH32494@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 20 Feb 2019 13:32:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On Wed, Feb 20, 2019 at 02:24:13PM +0100, Peter Zijlstra wrote:
+> On Wed, Feb 20, 2019 at 01:46:19PM +0100, Jiri Olsa wrote:
+> > On Tue, Feb 19, 2019 at 12:00:01PM -0800, kan.liang@linux.intel.com wrote:
+> 
+> > > The code bases on the top of Len's multi-die/package support.
+> > > https://lkml.org/lkml/2019/2/18/1534
+> 
+> > what is based on? I'm getting conflicts when applying
+> > on tip or Arnaldo's perf/core
 
-Align the payload of "user" and "logon" keys so that users of the
-keyrings service can access it as a struct that requires more than
-2-byte alignment.  fscrypt currently does this which results in the read
-of fscrypt_key::size being misaligned as it needs 4-byte alignment.
+ugh, thanks ;-)
 
-Align to __alignof__(u64) rather than __alignof__(long) since in the
-future it's conceivable that people would use structs beginning with
-u64, which on some platforms would require more than 'long' alignment.
-
-Reported-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Fixes: 2aa349f6e37c ("[PATCH] Keys: Export user-defined keyring operations")
-Fixes: 88bd6ccdcdd6 ("ext4 crypto: add encryption key management facilities")
-Cc: stable@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Tested-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- include/keys/user-type.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/keys/user-type.h b/include/keys/user-type.h
-index e098cbe27db5..12babe991594 100644
---- a/include/keys/user-type.h
-+++ b/include/keys/user-type.h
-@@ -31,7 +31,7 @@
- struct user_key_payload {
- 	struct rcu_head	rcu;		/* RCU destructor */
- 	unsigned short	datalen;	/* length of this data */
--	char		data[0];	/* actual data */
-+	char		data[0] __aligned(__alignof__(u64)); /* actual data */
- };
- 
- extern struct key_type key_type_user;
-
+jirka
