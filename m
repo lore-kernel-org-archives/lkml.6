@@ -2,183 +2,196 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65859C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:55:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B48DDC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:55:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D2B22084D
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:55:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BQmy7XZ0"
+	by mail.kernel.org (Postfix) with ESMTP id 837B12084D
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:55:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727083AbfBTQzS (ORCPT
+        id S1727215AbfBTQz1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 11:55:18 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:54936 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725885AbfBTQzS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 11:55:18 -0500
-Received: by mail-it1-f196.google.com with SMTP id f10so16879520ita.4
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 08:55:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yw9oxkD8U5tLzY/OmM/QUF9w4ArXaz3bpdSWOCO7HfE=;
-        b=BQmy7XZ0r5tuwmH8PRQHhUr3bxbxzyiNqC7BiZ9KWUXQJJsOF+HTehD+1hiHt0uZv7
-         8GhLHRVqNN2LhleoK2sN36MQEMY3/pOKPhlt+drC3ejH6IBlth8b9WMoItBbbIT2n8iq
-         W/BQEdfrgnAiqc5/picq65GhYz5KndHMv/XxEMINwTkey/GVE+Q63K9LLGzix3p2x6on
-         dahCL7P8Sox+jjGby4sjacc4g2y2pu+gluxNcyDcvB9y/C6+ayyNkCmE8SxjiM83P7OM
-         l8WIaBAn+LIzrUgNd+oBx3bB82YHLpU+1mmDKDGKY9Af8I+aHVhySWKlIZgvp7VYcM2i
-         60MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yw9oxkD8U5tLzY/OmM/QUF9w4ArXaz3bpdSWOCO7HfE=;
-        b=RY+kasI5BJHuAajgL3jkNoD8vld56q1uLeqn15WG0LqOBX3dHXHc8YFtsR/Ey1fX5M
-         jSWEBxM7zets/CyPd95Q7a6zTVy8fMv+Py5oixMq1sUuVoicYfHivw5dRsesyYVaAB8a
-         B0CWxvklE0w5ur8l4rXTz9mgjajKKSfJTEnD3KW98zWeEirsb7DtMbAFF0trhN0Uvd1t
-         hqEHNJlCYuPulPRzvw4uUr18JXqpnOHYQfGkpz6ABYeAcmrrzNYjdcvPSKVGznlX3r5V
-         ZO2MEfNrYzcs47qI9BLO+jJ3xcDKrkL2eWxUeeJh+SvpMTPnY5Isn89Rm1NiBuRd5t00
-         RzUA==
-X-Gm-Message-State: AHQUAuY/4EFRY37KKv1A1aYAWIgE6zEUYVfk1j3eZ2+eyPkDJHUCED7G
-        3iNg6ZjBHoiRBmzlUbgHLCvlmjoUBorj7QnSZrjPIg==
-X-Google-Smtp-Source: AHgI3IZ82gXWMttRRA1/ESA5hXoSEkuYmsbFU6SHrVLcPWzFZZfWckC8VO+tWt0uGfYOwUnAyVprpBOCgteKHx6l/M8=
-X-Received: by 2002:a5d:834a:: with SMTP id q10mr12031520ior.271.1550681716701;
- Wed, 20 Feb 2019 08:55:16 -0800 (PST)
+        Wed, 20 Feb 2019 11:55:27 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57085 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725885AbfBTQz0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 11:55:26 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 00EE5B2726;
+        Wed, 20 Feb 2019 16:55:25 +0000 (UTC)
+Received: from thinkpad.redhat.com (ovpn-204-241.brq.redhat.com [10.40.204.241])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 69DE55ED52;
+        Wed, 20 Feb 2019 16:55:21 +0000 (UTC)
+From:   Laurent Vivier <lvivier@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Laurent Vivier <lvivier@redhat.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Borislav Petkov <bp@suse.de>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH v2] sched/topology: fix kernel crash when a CPU is hotplugged in a memoryless node
+Date:   Wed, 20 Feb 2019 17:55:20 +0100
+Message-Id: <20190220165520.5241-1-lvivier@redhat.com>
 MIME-Version: 1.0
-References: <000000000000ccb25d0576c17446@google.com>
-In-Reply-To: <000000000000ccb25d0576c17446@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 20 Feb 2019 17:55:05 +0100
-Message-ID: <CACT4Y+Zp9wVsCbAq+HtO+XHz78UcYAwhHs92AiDWtJnVOFS4oQ@mail.gmail.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in tls_push_record
-To:     syzbot <syzbot+942a1909765f0413329b@syzkaller.appspotmail.com>
-Cc:     aviadye@mellanox.com, borisp@mellanox.com, davejwatson@fb.com,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 20 Feb 2019 16:55:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 9:49 AM syzbot
-<syzbot+942a1909765f0413329b@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    739d0def85ca Merge branch 'hv_netvsc-Support-LRO-RSC-in-th..
-> git tree:       net-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13aa179e400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e79b9299baeb2298
-> dashboard link: https://syzkaller.appspot.com/bug?extid=942a1909765f0413329b
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+942a1909765f0413329b@syzkaller.appspotmail.com
->
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in sg_mark_end
-> include/linux/scatterlist.h:195 [inline]
-> BUG: KASAN: slab-out-of-bounds in tls_push_record+0x1243/0x1330
-> net/tls/tls_sw.c:521
-> Read of size 8 at addr ffff8801a4d235f8 by task syz-executor1/7668
+When we hotplug a CPU in a memoryless/cpuless node, the kernel crashes when it
+rebuilds the sched_domains data.
 
-This is probably:
+I reproduce this problem on POWER and with a pseries VM, with the following
+QEMU parameters:
 
-#syz dup: KASAN: out-of-bounds Write in tls_push_record
+  -machine pseries -enable-kvm -m 8192 \
+  -smp 2,maxcpus=8,sockets=4,cores=2,threads=1 \
+  -numa node,nodeid=0,cpus=0-1,mem=0 \
+  -numa node,nodeid=1,cpus=2-3,mem=8192 \
+  -numa node,nodeid=2,cpus=4-5,mem=0 \
+  -numa node,nodeid=3,cpus=6-7,mem=0
 
-> CPU: 1 PID: 7668 Comm: syz-executor1 Not tainted 4.19.0-rc4+ #228
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
->   print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
->   kasan_report_error mm/kasan/report.c:354 [inline]
->   kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
->   __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
->   sg_mark_end include/linux/scatterlist.h:195 [inline]
->   tls_push_record+0x1243/0x1330 net/tls/tls_sw.c:521
->   tls_sw_push_pending_record+0x22/0x30 net/tls/tls_sw.c:558
->   tls_handle_open_record net/tls/tls_main.c:155 [inline]
->   tls_sk_proto_close+0x439/0x750 net/tls/tls_main.c:272
->   inet_release+0x104/0x1f0 net/ipv4/af_inet.c:428
->   inet6_release+0x50/0x70 net/ipv6/af_inet6.c:458
->   __sock_release+0xd7/0x250 net/socket.c:579
->   sock_close+0x19/0x20 net/socket.c:1141
->   __fput+0x385/0xa30 fs/file_table.c:278
->   ____fput+0x15/0x20 fs/file_table.c:309
->   task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
->   tracehook_notify_resume include/linux/tracehook.h:193 [inline]
->   exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
->   prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
->   syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
->   do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x411151
-> Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 34 19 00 00 c3 48
-> 83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48
-> 89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
-> RSP: 002b:00007fff8ba9e200 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-> RAX: 0000000000000000 RBX: 0000000000000005 RCX: 0000000000411151
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000001
-> R10: 00007fff8ba9e130 R11: 0000000000000293 R12: 000000000000000f
-> R13: 0000000000086e3d R14: 0000000000000412 R15: badc0ffeebadface
->
-> Allocated by task 0:
-> (stack is not available)
->
-> Freed by task 0:
-> (stack is not available)
->
-> The buggy address belongs to the object at ffff8801a4d22d80
->   which belongs to the cache kmalloc-2048 of size 2048
-> The buggy address is located 120 bytes to the right of
->   2048-byte region [ffff8801a4d22d80, ffff8801a4d23580)
-> The buggy address belongs to the page:
-> page:ffffea0006934880 count:1 mapcount:0 mapping:ffff8801da800c40 index:0x0
-> compound_mapcount: 0
-> flags: 0x2fffc0000008100(slab|head)
-> raw: 02fffc0000008100 ffffea000717fd08 ffff8801da801948 ffff8801da800c40
-> raw: 0000000000000000 ffff8801a4d22500 0000000100000003 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->   ffff8801a4d23480: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->   ffff8801a4d23500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> > ffff8801a4d23580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->                                                                  ^
->   ffff8801a4d23600: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->   ffff8801a4d23680: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> ==================================================================
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000ccb25d0576c17446%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+Then I can trigger the crash by hotplugging a CPU on node-id 3:
+
+  (qemu) device_add host-spapr-cpu-core,core-id=7,node-id=3
+
+    Built 2 zonelists, mobility grouping on.  Total pages: 130162
+    Policy zone: Normal
+    WARNING: workqueue cpumask: online intersect > possible intersect
+    BUG: Kernel NULL pointer dereference at 0x00000400
+    Faulting instruction address: 0xc000000000170edc
+    Oops: Kernel access of bad area, sig: 11 [#1]
+    LE SMP NR_CPUS=2048 NUMA pSeries
+    Modules linked in: ip6t_rpfilter ipt_REJECT nf_reject_ipv4 ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set nfnetlink ebtable_nat ebtable_broute bridge stp llc ip6table_nat nf_nat_ipv6 ip6table_mangle ip6table_security ip6table_raw iptable_nat nf_nat_ipv4 nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 iptable_mangle iptable_security iptable_raw ebtable_filter ebtables ip6table_filter ip6_tables iptable_filter xts vmx_crypto ip_tables xfs libcrc32c virtio_net net_failover failover virtio_blk virtio_pci virtio_ring virtio dm_mirror dm_region_hash dm_log dm_mod
+    CPU: 2 PID: 5661 Comm: kworker/2:0 Not tainted 5.0.0-rc6+ #20
+    Workqueue: events cpuset_hotplug_workfn
+    NIP:  c000000000170edc LR: c000000000170f98 CTR: 0000000000000000
+    REGS: c000000003e931a0 TRAP: 0380   Not tainted  (5.0.0-rc6+)
+    MSR:  8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 22284028  XER: 00000000
+    CFAR: c000000000170f20 IRQMASK: 0
+    GPR00: c000000000170f98 c000000003e93430 c0000000011ac500 c0000001efe22000
+    GPR04: 0000000000000001 0000000000000000 0000000000000000 0000000000000010
+    GPR08: 0000000000000001 0000000000000400 ffffffffffffffff 0000000000000000
+    GPR12: 0000000000008800 c00000003fffd680 c0000001f14b0000 c0000000011e1bf0
+    GPR16: c0000000011e61f4 c0000001efe22200 c0000001efe22020 c0000001fba80000
+    GPR20: c0000001ff567a80 0000000000000001 c000000000e27a80 ffffffffffffe830
+    GPR24: ffffffffffffec30 000000000000102f 000000000000102f c0000001efca1000
+    GPR28: c0000001efca0400 c0000001efe22000 c0000001efe23bff c0000001efe22a00
+    NIP [c000000000170edc] free_sched_groups+0x5c/0xf0
+    LR [c000000000170f98] destroy_sched_domain+0x28/0x90
+    Call Trace:
+    [c000000003e93430] [000000000000102f] 0x102f (unreliable)
+    [c000000003e93470] [c000000000170f98] destroy_sched_domain+0x28/0x90
+    [c000000003e934a0] [c0000000001716e0] cpu_attach_domain+0x100/0x920
+    [c000000003e93600] [c000000000173128] build_sched_domains+0x1228/0x1370
+    [c000000003e93740] [c00000000017429c] partition_sched_domains+0x23c/0x400
+    [c000000003e937e0] [c0000000001f5ec8] rebuild_sched_domains_locked+0x78/0xe0
+    [c000000003e93820] [c0000000001f9ff0] rebuild_sched_domains+0x30/0x50
+    [c000000003e93850] [c0000000001fa1c0] cpuset_hotplug_workfn+0x1b0/0xb70
+    [c000000003e93c80] [c00000000012e5a0] process_one_work+0x1b0/0x480
+    [c000000003e93d20] [c00000000012e8f8] worker_thread+0x88/0x540
+    [c000000003e93db0] [c00000000013714c] kthread+0x15c/0x1a0
+    [c000000003e93e20] [c00000000000b55c] ret_from_kernel_thread+0x5c/0x80
+    Instruction dump:
+    2e240000 f8010010 f821ffc1 409e0014 48000080 7fbdf040 7fdff378 419e0074
+    ebdf0000 4192002c e93f0010 7c0004ac <7d404828> 314affff 7d40492d 40c2fff4
+    ---[ end trace f992c4a7d47d602a ]---
+
+    Kernel panic - not syncing: Fatal exception
+
+This happens in free_sched_groups() because the linked list of the sched_groups
+is corrupted. Here what happens when we hotplug the CPU:
+
+ - build_sched_groups() builds a sched_groups linked list for sched_domain D1,
+   with only one entry A, refcount=1
+
+   D1: A(ref=1)
+
+ - build_sched_groups() builds a sched_groups linked list for sched_domain D2,
+   with the same entry A
+
+   D2: A(ref=2)
+
+ - build_sched_groups() builds a sched_groups linked list for sched_domain D3,
+   with the same entry A and a new entry B:
+
+   D3: A(ref=3) -> B(ref=1)
+
+ - destroy_sched_domain() is called for D1:
+
+   D1: A(ref=3) -> B(ref=1) and as ref is 1, memory of B is released,
+                                             but A->next always points to B
+
+ - destroy_sched_domain() is called for D3:
+
+   D3: A(ref=2) -> B(ref=0)
+
+kernel crashes when it tries to use data inside B, as the memory has been
+corrupted as it has been freed, the linked list (next) is broken too.
+
+This problem appears with commit 051f3ca02e46
+("sched/topology: Introduce NUMA identity node sched domain").
+
+If I compare function calls sequence before and after this commit I can see
+in the the working case that build_overlap_sched_groups() is called instead of
+build_sched_groups() and in this case the reference counters have all the
+same value and the linked list can be correctly unallocated.
+
+The problem happens because patch "sched/topology: Introduce NUMA
+identity node sched domain" has removed the SDTL_OVERLAP flag
+of the first topology level when it has introduced the NODE domain (and thus
+build_sched_groups() is used instead of build_overlap_sched_groups()).
+
+As I don't see any reason (and it is not documented in the involved commit)
+to remove this flag, this patch re-introduces the SDTL_OVERLAP flag for the
+first level. This fixes the problem described above and a CPU can be hotplugged
+again without kernel crash.
+
+Fixes: 051f3ca02e46 ("sched/topology: Introduce NUMA identity node sched domain")
+Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: David Gibson <david@gibson.dropbear.id.au>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Nathan Fontenot <nfont@linux.vnet.ibm.com>
+Cc: Michael Bringmann <mwb@linux.vnet.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Laurent Vivier <lvivier@redhat.com>
+---
+
+Notes:
+    v2: add scheduler maintainers in the CC: list
+
+ kernel/sched/topology.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 3f35ba1d8fde..372278605f0d 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1651,6 +1651,7 @@ void sched_init_numa(void)
+ 	 */
+ 	tl[i++] = (struct sched_domain_topology_level){
+ 		.mask = sd_numa_mask,
++		.flags = SDTL_OVERLAP,
+ 		.numa_level = 0,
+ 		SD_INIT_NAME(NODE)
+ 	};
+-- 
+2.20.1
+
