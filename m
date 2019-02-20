@@ -2,101 +2,132 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD3E5C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B68F9C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:18:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7F4D2147A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:17:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DD7C2147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:18:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727599AbfBTMRw (ORCPT
+        id S1727636AbfBTMS3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 07:17:52 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53786 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727371AbfBTMRv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 07:17:51 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1KCAHQW073094
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 07:17:51 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qs6et0ys9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 07:17:50 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 20 Feb 2019 12:17:48 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 20 Feb 2019 12:17:44 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1KCHik425231434
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 20 Feb 2019 12:17:44 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E364111C050;
-        Wed, 20 Feb 2019 12:17:43 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9140811C052;
-        Wed, 20 Feb 2019 12:17:42 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.107.132])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 20 Feb 2019 12:17:42 +0000 (GMT)
-Subject: Re: linux-next: Tree for Feb 20
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Anders Roxell <anders.roxell@linaro.org>
-Cc:     Zhangshaokun <zhangshaokun@hisilicon.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Date:   Wed, 20 Feb 2019 07:17:31 -0500
-In-Reply-To: <CAKv+Gu8G5eWeAdCB28xa=16ANFd2he9WPSztgXYwYRkhPfpEyA@mail.gmail.com>
-References: <20190220184341.73bd2084@canb.auug.org.au>
-         <1114b964-8ff8-5632-64d4-e94a9160b998@hisilicon.com>
-         <20190220095252.GA9089@linux.intel.com>
-         <20190220095806.GB9089@linux.intel.com>
-         <CAKv+Gu8G5eWeAdCB28xa=16ANFd2he9WPSztgXYwYRkhPfpEyA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19022012-0008-0000-0000-000002C2B645
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022012-0009-0000-0000-0000222EEC51
-Message-Id: <1550665051.17768.27.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-20_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=986 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902200089
+        Wed, 20 Feb 2019 07:18:29 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41116 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726209AbfBTMS2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 07:18:28 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B55CCAE7F;
+        Wed, 20 Feb 2019 12:18:27 +0000 (UTC)
+Date:   Wed, 20 Feb 2019 13:18:25 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] printk: Pass caller information to log_store().
+Message-ID: <20190220121825.kpqjhdl62x65a6se@pathway.suse.cz>
+References: <1550314773-8607-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1550314773-8607-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-> Fixes for this have already been proposed, and should appear in -next shortly
+On Sat 2019-02-16 19:59:33, Tetsuo Handa wrote:
+> When thread1 called printk() which did not end with '\n', and then thread2
+> called printk() which ends with '\n' before thread1 calls pr_cont(), the
+> partial content saved into "struct cont" is flushed by thread2 despite the
+> partial content was generated by thread1. This leads to confusing output
+> as if the partial content was generated by thread2. Fix this problem by
+> passing correct caller information to log_store().
 > 
-> The EFI one is here
-> https://mail.google.com/mail/u/0/#label/linux-efi/FMfcgxwBVgrQRjglPkWRqRqVclGgVDnB
+> Before:
 > 
-> Not sure about the IMA one, Mimi should be able to comment ...
-    
-I've already commented on the other patch and was expecting to see a
-revised patch.
+>   [ T8533] abcdefghijklm
+>   [ T8533] ABCDEFGHIJKLMNOPQRSTUVWXYZ
+>   [ T8532] nopqrstuvwxyz
+>   [ T8532] abcdefghijklmnopqrstuvwxyz
+>   [ T8533] abcdefghijklm
+>   [ T8533] ABCDEFGHIJKLMNOPQRSTUVWXYZ
+>   [ T8532] nopqrstuvwxyz
+> 
+> After:
+> 
+>   [ T8507] abcdefghijklm
+>   [ T8508] ABCDEFGHIJKLMNOPQRSTUVWXYZ
+>   [ T8507] nopqrstuvwxyz
+>   [ T8507] abcdefghijklmnopqrstuvwxyz
+>   [ T8507] abcdefghijklm
+>   [ T8508] ABCDEFGHIJKLMNOPQRSTUVWXYZ
+>   [ T8507] nopqrstuvwxyz
 
-Mimi
+Great catch!
+ 
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
+The patch looks fine to me:
+
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+
+There are just two cosmetic changes that I might do when pushing
+the patch, see below.
+
+> ---
+>  kernel/printk/printk.c | 39 ++++++++++++++++++++++++---------------
+>  1 file changed, 24 insertions(+), 15 deletions(-)
+> 
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index 33c0359..6547a88 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -1850,13 +1854,16 @@ static bool cont_add(int facility, int level, enum log_flags flags, const char *
+>  
+>  static size_t log_output(int facility, int level, enum log_flags lflags, const char *dict, size_t dictlen, char *text, size_t text_len)
+>  {
+> +	const u32 caller_id = printk_caller_id();
+> +
+>  	/*
+>  	 * If an earlier line was buffered, and we're a continuation
+> -	 * write from the same process, try to add it to the buffer.
+> +	 * write from the same context, try to add it to the buffer.
+>  	 */
+>  	if (cont.len) {
+> -		if (cont.owner == current && (lflags & LOG_CONT)) {
+> -			if (cont_add(facility, level, lflags, text, text_len))
+> +		if (cont.caller_id == caller_id && (lflags & LOG_CONT)) {
+> +			if (cont_add(caller_id, facility, level, lflags, text,
+> +				     text_len))
+
+I think that this is the case when it is better to break the 80-character
+per-line rule.
+
+>  				return text_len;
+>  		}
+>  		/* Otherwise, make sure it's flushed */
+> @@ -1869,12 +1876,14 @@ static size_t log_output(int facility, int level, enum log_flags lflags, const c
+>  
+>  	/* If it doesn't end in a newline, try to buffer the current line */
+>  	if (!(lflags & LOG_NEWLINE)) {
+> -		if (cont_add(facility, level, lflags, text, text_len))
+> +		if (cont_add(caller_id, facility, level, lflags, text,
+> +			     text_len))
+
+Same here.
+
+>  			return text_len;
+>  	}
+>  
+
+Best Regards,
+Petr
