@@ -2,144 +2,105 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B6AEC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4568C4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:10:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73DB420880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:07:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B2E12146F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:10:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550664650;
+	bh=kBLIvt+BwNMZ4NXB6/DD8Fp6ceWVWnGpEWpSzWOwy3o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=TfFlngYzKRNkZTbw/HJXr4j0k357+vleVcYsbG3qCRMYNz5kkrojynb1iPosOFNcW
+	 0BLH4gfWASr6GM5CrDjZ/OXXzgBK9NY1YlT7497Hjepwg4Lvc7HrXbbUnsD0nzOvJ9
+	 5Zinw7XBLKDiZ9sWpMmBdPnXBdb0ua9zQxea4454=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727534AbfBTMHi (ORCPT
+        id S1726846AbfBTMKt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 07:07:38 -0500
-Received: from unicorn.mansr.com ([81.2.72.234]:44766 "EHLO unicorn.mansr.com"
+        Wed, 20 Feb 2019 07:10:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726841AbfBTMHh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 07:07:37 -0500
-Received: by unicorn.mansr.com (Postfix, from userid 51770)
-        id 6DC5A15632; Wed, 20 Feb 2019 12:07:36 +0000 (GMT)
-From:   Mans Rullgard <mans@mansr.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ARM: dts: sun7i: add pinctrl for missing uart mux options
-Date:   Wed, 20 Feb 2019 12:07:17 +0000
-Message-Id: <20190220120717.30650-1-mans@mansr.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190216182132.12895-1-mans@mansr.com>
-References: <20190216182132.12895-1-mans@mansr.com>
+        id S1725812AbfBTMKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 07:10:49 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8B2C20C01;
+        Wed, 20 Feb 2019 12:10:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550664648;
+        bh=kBLIvt+BwNMZ4NXB6/DD8Fp6ceWVWnGpEWpSzWOwy3o=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=n+ow22Bqizka1zeQmAKyFap3i3zFXA6F2YLx5WxRP4MfV13ekD33j7ZVl20gc+/9F
+         9y+ErFSLy1B3C0uGcbHGMpiZXAPdWixn8ze3etaF07UGyYdWONlya8QWIJtbP58sAC
+         8IgiPp3MVeLUCrfstmyFWgHTSxvNOki9WCC+vDvY=
+Date:   Wed, 20 Feb 2019 12:10:42 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Mike Looijmans <mike.looijmans@topic.nl>
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net
+Subject: Re: [PATCH v2] iio/gyro/bmg160: Use millidegrees for temperature
+ scale
+Message-ID: <20190220121042.6459176b@archlinux>
+In-Reply-To: <1550043707-13040-1-git-send-email-mike.looijmans@topic.nl>
+References: <1549981549-19786-1-git-send-email-mike.looijmans@topic.nl>
+        <1550043707-13040-1-git-send-email-mike.looijmans@topic.nl>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds pinctrl settings for various missing uart options.
+On Wed, 13 Feb 2019 08:41:47 +0100
+Mike Looijmans <mike.looijmans@topic.nl> wrote:
 
-Signed-off-by: Mans Rullgard <mans@mansr.com>
----
-Changed in v2:
-- add /omit-if-no-ref/ tags to new nodes
----
- arch/arm/boot/dts/sun7i-a20.dtsi | 54 ++++++++++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
+> Standard unit for temperature is millidegrees Celcius, whereas this driver
+> was reporting in degrees. Fix the scale factor in the driver.
+> 
+> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+Applied to the fixes-togreg branch of iio.git and marked for stable.
 
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index af5b067a5f83..76d0c961f01e 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -944,6 +944,36 @@
- 				function = "uart0";
- 			};
- 
-+			/omit-if-no-ref/
-+			uart0_pf_pins: uart0-pf-pins {
-+				pins = "PF2", "PF4";
-+				function = "uart0";
-+			};
-+
-+			/omit-if-no-ref/
-+			uart1_pa_pins: uart1-pa-pins {
-+				pins = "PA10", "PA11";
-+				function = "uart1";
-+			};
-+
-+			/omit-if-no-ref/
-+			uart1_cts_rts_pa_pins: uart1-cts-rts-pa-pins {
-+				pins = "PA12", "PIA13";
-+				function = "uart2";
-+			};
-+
-+			/omit-if-no-ref/
-+			uart2_pa_pins: uart2-pa-pins {
-+				pins = "PIA2", "PIA3";
-+				function = "uart2";
-+			};
-+
-+			/omit-if-no-ref/
-+			uart2_cts_rts_pa_pins: uart2-cts-rts-pa-pins {
-+				pins = "PA0", "PIA1";
-+				function = "uart2";
-+			};
-+
- 			uart2_pi_pins: uart2-pi-pins {
- 				pins = "PI18", "PI19";
- 				function = "uart2";
-@@ -969,6 +999,12 @@
- 				function = "uart3";
- 			};
- 
-+			/omit-if-no-ref/
-+			uart3_cts_rts_ph_pins: uart3-cts-rts-ph-pins {
-+				pins = "PH2", "PH3";
-+				function = "uart3";
-+			};
-+
- 			uart4_pg_pins: uart4-pg-pins {
- 				pins = "PG10", "PG11";
- 				function = "uart4";
-@@ -979,16 +1015,34 @@
- 				function = "uart4";
- 			};
- 
-+			/omit-if-no-ref/
-+			uart5_ph_pins: uart5-ph-pins {
-+				pins = "PH6", "PH7";
-+				function = "uart5";
-+			};
-+
- 			uart5_pi_pins: uart5-pi-pins {
- 				pins = "PI10", "PI11";
- 				function = "uart5";
- 			};
- 
-+			/omit-if-no-ref/
-+			uart6_pa_pins: uart6-pa-pins {
-+				pins = "PA12", "PA13";
-+				function = "uart6";
-+			};
-+
- 			uart6_pi_pins: uart6-pi-pins {
- 				pins = "PI12", "PI13";
- 				function = "uart6";
- 			};
- 
-+			/omit-if-no-ref/
-+			uart7_pa_pins: uart7-pa-pins {
-+				pins = "PA14", "PA15";
-+				function = "uart7";
-+			};
-+
- 			uart7_pi_pins: uart7-pi-pins {
- 				pins = "PI20", "PI21";
- 				function = "uart7";
--- 
-2.20.1
+Thanks,
+
+Jonathan
+> ---
+> v2: Don't touch val2 when returning IIO_VAL_INT
+>     Only touch val when returning a value
+> 
+>  drivers/iio/gyro/bmg160_core.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iio/gyro/bmg160_core.c b/drivers/iio/gyro/bmg160_core.c
+> index 63ca316..92c07ab 100644
+> --- a/drivers/iio/gyro/bmg160_core.c
+> +++ b/drivers/iio/gyro/bmg160_core.c
+> @@ -582,11 +582,10 @@ static int bmg160_read_raw(struct iio_dev *indio_dev,
+>  	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+>  		return bmg160_get_filter(data, val);
+>  	case IIO_CHAN_INFO_SCALE:
+> -		*val = 0;
+>  		switch (chan->type) {
+>  		case IIO_TEMP:
+> -			*val2 = 500000;
+> -			return IIO_VAL_INT_PLUS_MICRO;
+> +			*val = 500;
+> +			return IIO_VAL_INT;
+>  		case IIO_ANGL_VEL:
+>  		{
+>  			int i;
+> @@ -594,6 +593,7 @@ static int bmg160_read_raw(struct iio_dev *indio_dev,
+>  			for (i = 0; i < ARRAY_SIZE(bmg160_scale_table); ++i) {
+>  				if (bmg160_scale_table[i].dps_range ==
+>  							data->dps_range) {
+> +					*val = 0;
+>  					*val2 = bmg160_scale_table[i].scale;
+>  					return IIO_VAL_INT_PLUS_MICRO;
+>  				}
 
