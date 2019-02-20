@@ -2,126 +2,140 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D72C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:46:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 383D9C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:47:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 945352146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:46:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AC9C2146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:47:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z5/hDxO8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727087AbfBTOqa (ORCPT
+        id S1727146AbfBTOrG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 09:46:30 -0500
-Received: from mga17.intel.com ([192.55.52.151]:43160 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725836AbfBTOq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 09:46:29 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 06:46:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,391,1544515200"; 
-   d="scan'208";a="119419824"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga008.jf.intel.com with ESMTP; 20 Feb 2019 06:46:28 -0800
-Received: from [10.125.252.177] (abudanko-mobl.ccr.corp.intel.com [10.125.252.177])
-        by linux.intel.com (Postfix) with ESMTP id 31C7E58019B;
-        Wed, 20 Feb 2019 06:46:25 -0800 (PST)
-Subject: Re: [PATCH v2 4/4] perf report: support record trace file
- decompression
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <044ee2be-2e1d-e90f-7317-40083b5e716c@linux.intel.com>
- <4f45c930-cf39-76b0-5c56-ee4fb0705fa3@linux.intel.com>
- <20190212130920.GL775@krava>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <9ce9d437-eda5-ac82-7109-dd64d17b4e7f@linux.intel.com>
-Date:   Wed, 20 Feb 2019 17:46:24 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Wed, 20 Feb 2019 09:47:06 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44002 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725836AbfBTOrG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 09:47:06 -0500
+Received: by mail-pf1-f193.google.com with SMTP id q17so12015979pfh.10;
+        Wed, 20 Feb 2019 06:47:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=3dQ6PTUBIGS+KwQyRlyF1SjNK/XkYnHi08EauzmhstQ=;
+        b=Z5/hDxO82U9cMtCJr+nql8aFzoZR1NZMIP7HYay6q3Udh9BHztBspFmDm62osbpdPm
+         hNmjniSGAl3FOgmoJF36V54SeKRvfC4y0pgAyfoH5GP4NO6Q6sHvWSlGMu9izGvNUAUL
+         rmEQmi33dcyYne70PX79fBP9F6Qegioy+FOb5oyXFnAKiAhs2vPelTMs8+vnhZQgFYnE
+         RoKTaaBba17yFU7qyrj2132XZsZo0rnT1g9+xDcLcCqDJZ8SyE/XZpVIteoEchR9kqWA
+         ukapdkEsumExRj98RasqigOAh4FcWmKpCiExKXTTbbw0tFbgkQpcs/Qj6QVWdUJUskh4
+         oUtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=3dQ6PTUBIGS+KwQyRlyF1SjNK/XkYnHi08EauzmhstQ=;
+        b=BJMe9a3A3lik924SHXoswRxVwIhVHkv03naExLmwyD2YAmF/cGTYGiiE3Wf3Rh17wL
+         7ibAoiDmpNQO+QOOZG79bQ0F6C8nQvNdPZ3aifnNfIO8S2huW0kwT9rA5RcT5UnqY+4o
+         0mWJZ1Vjc9EhZYDCM6qsc7ClVlPS1EmdBI+SO0elJd6EQS+hLjVCIbVvv+8l8jf+GM2A
+         NdtF3KZlInMWQS/ltGFhI4Ql5D/VGIKLXbKFhA1wya1ZCVAVT5HMC0d37wXSOMdSbyqb
+         91qbNSJiqaeVBELJoDhslmQGVXFlRfpxWE8ujmsukPu9HgTBk121R/Q4UBtOv/QvjrnM
+         QpDg==
+X-Gm-Message-State: AHQUAuZdUhgHL7LtStdpatREh0z3l8Zx+cJZaiXM6C1soqdrEvkQ4MaG
+        lzIw/uEcB2RUEnYKJNQXHTfcHUdexIM=
+X-Google-Smtp-Source: AHgI3IY2e2zJzzJ1kvyatwljWGLAqUiE4Un3tc39zExi7iFlzzIziVDinHig03/X5YOaWA6s/YNtlw==
+X-Received: by 2002:a63:f648:: with SMTP id u8mr28884574pgj.91.1550674025167;
+        Wed, 20 Feb 2019 06:47:05 -0800 (PST)
+Received: from dhcp-12-139.nay.redhat.com ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id 62sm23360807pgc.61.2019.02.20.06.47.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Feb 2019 06:47:04 -0800 (PST)
+Date:   Wed, 20 Feb 2019 22:46:54 +0800
+From:   Hangbin Liu <liuhangbin@gmail.com>
+To:     Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Cc:     Sebastian Gottschall <s.gottschall@newmedia-net.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Ying Xu <yinxu@redhat.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linus =?iso-8859-1?Q?L=FCssing?= <linus.luessing@c0d3.blue>
+Subject: Re: [PATCH 4.19 01/24] bridge: do not add port to router list when
+ receives query with source 0.0.0.0
+Message-ID: <20190220144653.GJ10051@dhcp-12-139.nay.redhat.com>
+References: <20181102182839.725385066@linuxfoundation.org>
+ <20181102182839.913422845@linuxfoundation.org>
+ <07d315a2-d735-3d8b-686c-9c52acf91bf1@newmedia-net.de>
+ <20190217164809.GA24091@kroah.com>
+ <7978727a-eacc-779c-771f-f4c3013237f3@newmedia-net.de>
+ <0425449f-f6d9-c492-d7c8-ba202db88d26@newmedia-net.de>
+ <962f3d1f-23eb-647c-74cb-b277212299e7@cumulusnetworks.com>
 MIME-Version: 1.0
-In-Reply-To: <20190212130920.GL775@krava>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <962f3d1f-23eb-647c-74cb-b277212299e7@cumulusnetworks.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Feb 20, 2019 at 03:09:21PM +0200, Nikolay Aleksandrov wrote:
+> On 20/02/2019 14:48, Sebastian Gottschall wrote:
+> > *reminder*
+> > 
+> [snip]
+> >>>>>    }
+> >>>>>    static void br_ip4_multicast_query(struct net_bridge *br,
+> >>> Is this also a problem in 4.20?  This patch went into 4.20-rc1, so it
+> >>> has been around for a while with no reported issues that I can find.
+> >>> Any pointers to the reports?
+> >>
+> >> i need to check this. i found this patch in 4.9, 4.14 and 4.4
+> >> the rest was picked up from the mailinglist. according to the git sources of 4.20 and 5.0 the same code is in there as well
+> >>
+> >> i just got the report from users today and was able to reproduce it with iptv streams. just by disabling the code it was working again.
+> >>
+> >> Sebastian
+> >>>
+> >>> thanks,
+> >>>
+> >>> greg k-h
+> >>>
+> >>
+> 
+> Could you please include more details about the setup that's broken ?
+> Note that we were warned[1] of potential breakage from this change
 
-On 12.02.2019 16:09, Jiri Olsa wrote:
-> On Mon, Feb 11, 2019 at 11:25:00PM +0300, Alexey Budankov wrote:
-> 
-> SNIP
-> 
->> +static int perf_session__process_compressed_event(struct perf_session *session,
->> +					union perf_event *event, u64 file_offset)
->> +{
->> +	void *src;
->> +	size_t decomp_size, src_size;
->> +	u64 decomp_last_rem = 0;
->> +	size_t decomp_len = session->header.env.comp_mmap_len;
->> +	struct decomp *decomp, *decomp_last = session->decomp_last;
->> +
->> +	decomp = mmap(NULL, sizeof(struct decomp) + decomp_len, PROT_READ|PROT_WRITE,
->> +		      MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
->> +	if (decomp == MAP_FAILED) {
->> +		pr_err("Couldn't allocate memory for decompression\n");
->> +		return -1;
->> +	}
->> +
->> +	decomp->file_pos = file_offset;
->> +	decomp->head = 0;
->> +
->> +	if (decomp_last) {
->> +		decomp_last_rem = decomp_last->size - decomp_last->head;
->> +		memcpy(decomp->data, &(decomp_last->data[decomp_last->head]), decomp_last_rem);
->> +		decomp->size = decomp_last_rem;
->> +	}
->> +
->> +	src = (void *)event + sizeof(struct compressed_event);
->> +	src_size = event->pack.header.size - sizeof(struct compressed_event);
->> +
->> +	decomp_size = perf_session__zstd_decompress(session, src, src_size,
->> +				&(decomp->data[decomp_last_rem]), decomp_len - decomp_last_rem);
->> +	if (!decomp_size) {
->> +		munmap(decomp, sizeof(struct decomp) + decomp_len);
->> +		pr_err("Couldn't decompress data\n");
->> +		return -1;
->> +	}
->> +
->> +	decomp->size += decomp_size;
->> +
->> +	if (session->decomp == NULL) {
->> +		session->decomp = decomp;
->> +		session->decomp_last = decomp;
->> +	} else {
->> +		session->decomp_last->next = decomp;
->> +		session->decomp_last = decomp;
->> +	}
-> 
-> can this happen? can you process more compressed events
-> before you deliver them in __perf_session__process_decomp_events?
-> 
-> I think I asked similar question in my other email..
+Sorry I missed Linus's reply after Ying Xu replied. I will read it and
+disscuss with Ying Xu.
 
-Answered to that mail.
+> after it went in and regardless of the suggestion from the RFC we'll
+> probably have to revert this patch.
+> 
+> Ying Xu as author of the patch, any thoughts ?
 
-Thanks,
-Alexey
+No, we are also waiting for more details from Sebastian.
+
+Thanks
+Hangbin
 
 > 
-> thanks,
-> jirka
+> Also adding Linus Lüssing to the CC as he was the one who warned against it.
+> Note that the warning was sent as a reply to my breakage fix, but it was intended
+> for the original patch.
+> 
+> Thanks,
+>  Nik
+> 
+> [1] https://www.mail-archive.com/netdev@vger.kernel.org/msg272944.html
 > 
