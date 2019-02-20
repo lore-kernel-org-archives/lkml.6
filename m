@@ -2,70 +2,87 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB76DC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0590CC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F55A2086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:11:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ekObypZW"
+	by mail.kernel.org (Postfix) with ESMTP id D42122086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:11:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726405AbfBTPLD (ORCPT
+        id S1726595AbfBTPLg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:11:03 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:58562 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbfBTPLC (ORCPT
+        Wed, 20 Feb 2019 10:11:36 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:46265 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbfBTPLg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:11:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=QZINleA5fkfgNNqDZd8ggreydPxvq2wWVqc7AgffeKU=; b=ekObypZWDn3nTmFLxMWKGQ2Mm
-        SdVRs7xAkFNT8ZUM6PD3v33gH3TNfWk+OC3s5pGNN2ZpXX50/TIeMXrcGqBHIkZpyJ7cDwNgkBBWL
-        yXFXV8hDkeJu/BFQzVm/lS1MCOMNJOG2YzXGsGmRcbF350YCE1SdyCtpiLBRTAS1LkS3H3EMtzAwx
-        uptz2theWDBT0K5TyKWSeuZQ6lux0rnoto0ON+m6uaplYSQAOm9DyEpNpYKr3H+0GJfKXfkQKOHa3
-        ca99E5mz5r9cuIsqwoYZAj00toKAGoixpXYruTc/XtDD47Mt9sV8WD19z3ibU8JTISqWnt9l54s9R
-        YvTqosd6w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gwTWS-0000n2-Rm; Wed, 20 Feb 2019 15:10:56 +0000
-Date:   Wed, 20 Feb 2019 07:10:56 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-pci@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: [PATCH 6/7] MIPS: SGI-IP27: use generic PCI driver
-Message-ID: <20190220151056.GA29614@infradead.org>
-References: <20190124174728.28812-1-tbogendoerfer@suse.de>
- <20190124174728.28812-7-tbogendoerfer@suse.de>
- <20190128133215.GC744@infradead.org>
- <20190218115807.1a683d2c6824acd4ea78eb11@suse.de>
+        Wed, 20 Feb 2019 10:11:36 -0500
+Received: by mail-qt1-f194.google.com with SMTP id z25so5786678qti.13;
+        Wed, 20 Feb 2019 07:11:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WEEPtxp2Y5ETsK7WypMIxYWNL9klWIeujbQUbiSChoA=;
+        b=j24t8XbTXYW+Pb/a9+rGLglDRVdALn50WzCH0cEkBUNQUxOv3j7hgUOSZ/CyUJAgsV
+         A2lmebYuxNgUwvrk1NW2Oj1ZBFT6iHapR4WCSzUuu4F42hi4oOFzrnFNV4UrwZ5OW3Xr
+         bpufn/DMLRY36sHar2t17+OMDAEtYru845SrRpW9sTZSWcXKYtBXT/lggoxLc4qo844s
+         HhEsZ1pfqJRlMlE3le8nyExYyvNzYJjzg5G383Q4YTg038m/AW0TtuzVBeM8M1LpMjgP
+         5j813fUe0goU/x0yR4SuneXZHkzlrkuNpQOMut4C3FuroAqRFkLEDC8OzXv5BKbwrCuN
+         QUfg==
+X-Gm-Message-State: AHQUAubdIPXd5UBhI2I+MuyDYCjXZpkDRp0tBzlCNY6kP6ndUWYxVtG7
+        o/TsYgfO3NyWyopi50tJDLfL1tPslscl5HCI7VB3/Q==
+X-Google-Smtp-Source: AHgI3IZMvoSZ2OHJb3c4jDm41Od5dyIXeWsOpBdmcvqIcFOSNL+hKjF5qoDXdNpMuOFHuO9pWttlANvGB8Lcotegpr0=
+X-Received: by 2002:ac8:33f1:: with SMTP id d46mr27002924qtb.319.1550675495036;
+ Wed, 20 Feb 2019 07:11:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190218115807.1a683d2c6824acd4ea78eb11@suse.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20190219185214.5544-1-krzk@kernel.org>
+In-Reply-To: <20190219185214.5544-1-krzk@kernel.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 20 Feb 2019 16:11:16 +0100
+Message-ID: <CAK8P3a06-C5TpkSnnvgFTbiXX6FdcOU4RMFVr62YAxm+LEtrbA@mail.gmail.com>
+Subject: Re: [GIT PULL] ARM: dts: exynos: Second pull for v5.1
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 11:58:07AM +0100, Thomas Bogendoerfer wrote:
-> This of course will break SH7786. To fix both cases how about making dma_pfn_offset
+On Tue, Feb 19, 2019 at 7:52 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
-> a signed long ?
+> The following changes since commit ec33745bccc8f336957c751f4153421cc9ef5a54:
+>
+>   ARM: dts: exynos: Fix pinctrl definition for eMMC RTSN line on Odroid X2/U3 (2019-01-25 20:18:10 +0100)
+>
+> are available in the Git repository at:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-5.1-2
+>
+> for you to fetch changes up to 625c731d1b2af487fc6be10b9a505699c045813a:
+>
+>   ARM: dts: exynos: Add support for secondary DAI to Odroid XU4 (2019-02-18 20:52:25 +0100)
+>
+> ----------------------------------------------------------------
+> Samsung DTS ARM changes for v5.1, part 2
+>
+> 1. Enable ADC on Odroid HC1 board.
+> 2. Fix clkout register failure on Exynos3250.
+> 3. Allow using earlycon on Arndale board.
+> 4. Disable ARM PMU on Odroid XU3 Lite because it is locked by Trusted
+>    Firmware.
+> 5. Add support for secondary DAI to Odroid XU3 and XU4 boards.
 
-Yes, making it signed sounds like a good idea.
+
+Pulled into arm/dt, thanks!
+
+      Arnd
