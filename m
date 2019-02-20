@@ -2,128 +2,130 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B4DC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98210C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DE562146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:53:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 751542183F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:55:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbfBTOxW (ORCPT
+        id S1726790AbfBTOzg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 09:53:22 -0500
-Received: from mga09.intel.com ([134.134.136.24]:17189 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726219AbfBTOxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 09:53:21 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 06:53:21 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,391,1544515200"; 
-   d="scan'208";a="148391110"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga001.fm.intel.com with ESMTP; 20 Feb 2019 06:53:21 -0800
-Received: from [10.125.252.177] (abudanko-mobl.ccr.corp.intel.com [10.125.252.177])
-        by linux.intel.com (Postfix) with ESMTP id BBFB258019B;
-        Wed, 20 Feb 2019 06:53:18 -0800 (PST)
-Subject: Re: [PATCH v2 3/4] perf record: enable runtime trace compression
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <044ee2be-2e1d-e90f-7317-40083b5e716c@linux.intel.com>
- <5bc6958d-f4bc-d4ea-e5d0-16c5e7b73911@linux.intel.com>
- <20190212130856.GH775@krava>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <c3993c13-3a8d-c56d-5c5a-3a537747d079@linux.intel.com>
-Date:   Wed, 20 Feb 2019 17:53:17 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Wed, 20 Feb 2019 09:55:36 -0500
+Received: from relay11.mail.gandi.net ([217.70.178.231]:51649 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726458AbfBTOzf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 09:55:35 -0500
+Received: from localhost (unknown [185.94.189.187])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id D6BA5100011;
+        Wed, 20 Feb 2019 14:55:31 +0000 (UTC)
+Date:   Wed, 20 Feb 2019 15:55:31 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Philipp Rossak <embed3d@gmail.com>,
+        Emmanuel Vadot <manu@bidouilliste.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Quentin Schulz <quentin.schulz@bootlin.com>,
+        Icenowy Zheng <icenowy@aosc.io>, linux-iio@vger.kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: Allwinner SID THS calibration data cell representation?
+Message-ID: <20190220145531.xu2t5gklnien7a3i@flea>
+References: <20180830154518.29507-1-embed3d@gmail.com>
+ <20180830154518.29507-28-embed3d@gmail.com>
+ <20180904184623.e4386b8e6b657b1b25e90c09@bidouilliste.com>
+ <55579dd6-625d-e71b-1482-4592dccac665@gmail.com>
+ <20180906115114.inc6dhqhy47obo25@flea>
+ <CAGb2v65p0G83BVODsxxnXmiSCwuuwPFtY2k2ZV1F5xoFKrJjWQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190212130856.GH775@krava>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pfmyvb5oulioawsq"
+Content-Disposition: inline
+In-Reply-To: <CAGb2v65p0G83BVODsxxnXmiSCwuuwPFtY2k2ZV1F5xoFKrJjWQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 12.02.2019 16:08, Jiri Olsa wrote:
-> On Mon, Feb 11, 2019 at 11:23:40PM +0300, Alexey Budankov wrote:
-> 
-> SNIP
-> 
->> @@ -774,6 +775,8 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
->>  	struct perf_mmap *maps;
->>  	int trace_fd = rec->data.file.fd;
->>  	off_t off;
->> +	struct perf_session *session = rec->session;
->> +	perf_mmap__compress_fn_t compress_fn;
->>  
->>  	if (!evlist)
->>  		return 0;
->> @@ -785,6 +788,9 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
->>  	if (overwrite && evlist->bkw_mmap_state != BKW_MMAP_DATA_PENDING)
->>  		return 0;
->>  
->> +	compress_fn = (record__comp_enabled(rec) ?
->> +		perf_session__zstd_compress : perf_session__zstd_copy);
->> +
-> 
-> I don't follow what's the perf_session__zstd_copy function for..?
+--pfmyvb5oulioawsq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It bridges AIO without compression case.
+On Tue, Feb 19, 2019 at 03:54:00PM +0800, Chen-Yu Tsai wrote:
+> Sorry for resurrecting an old discussion, but since someone posted patches
+> for H5 and H6, I thought we should resolve this. I'm working on patches to
+> fix / replace the big-endian issue.
+>=20
+> On Thu, Sep 6, 2018 at 7:51 PM Maxime Ripard <maxime.ripard@bootlin.com> =
+wrote:
+> >
+> > On Thu, Sep 06, 2018 at 01:47:47PM +0200, Philipp Rossak wrote:
+> > > On 04.09.2018 18:46, Emmanuel Vadot wrote:
+> > > > > +                 /* Data cells */
+> > > > > +                 thermal_calibration: calib@234 {
+> > > > > +                         reg =3D <0x234 0x8>;
+> > > > > +                 };
+> > > >   You are declaring 8 bytes of calibration data but to my knowledge=
+ it's
+> > > > only 2 bytes per sensor, so 2 bytes for H3.
+> > > >   Am I missing something ?
+> > > >
+> > > >   Thanks,
+> > >
+> > > Emmanuel you are right, it is 2 bytes per Sensor and should be 2 byte=
+s for
+> > > H3, but the thermal calibration data field is on all chips 64 bit wid=
+e - so
+> > > 8 bytes. So I'm reading here the complete calibration data field.
+> >
+> > Having one cell per channel would make more sense I guess.
+>=20
+> Would it? The 2 32-bit words directly map onto the registers 0x74 / 0x78 =
+in
+> the THS. As far as the SID is concerned, their is just one consumer for t=
+his
+> data, the thermal sensor. How the thermal sensor uses that data is really=
+ not
+> its concern. And the thermal sensor is really just copying the data from =
+the
+> e-fuses into its registers. Nothing more.
+>=20
+> Furthermore, with the register access interface, the e-fuses are read/wri=
+te
+> 32 bits at a time. Seems to me it would make more sense to enforce a 32-b=
+it
+> word size, so cells should be multiples of 32 bits.
 
-Thanks,
-Alexey
+I guess you convinced me :)
 
-> 
-> for !record__comp_enabled case we seem not to use it
-> and calling the current perf_mmap__push interface
-> 
-> however I dont see point to have this function at all
-> 
-> jirka
-> 
-> 
->>  	if (record__aio_enabled(rec))
->>  		off = record__aio_get_pos(trace_fd);
->>  
->> @@ -799,11 +805,21 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
->>  				map->flush = MMAP_FLUSH_DEFAULT;
->>  			}
->>  			if (!record__aio_enabled(rec)) {
->> -				if (perf_mmap__push(map, rec, record__pushfn) != 0) {
->> -					if (sync)
->> -						map->flush = flush;
->> -					rc = -1;
->> -					goto out;
->> +				if (!record__comp_enabled(rec)) {
->> +					if (perf_mmap__push(map, rec, record__pushfn) != 0) {
->> +						if (sync)
->> +							map->flush = flush;
->> +						rc = -1;
->> +						goto out;
->> +					}
->> +				} else {
->> +					if (perf_mmap__pack(map, rec, record__pushfn,
->> +							compress_fn, session) != 0) {
->> +						if (sync)
->> +							map->flush = flush;
->> +						rc = -1;
->> +						goto out;
->> +					}
-> 
-> SNIP
-> 
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--pfmyvb5oulioawsq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXG1qYwAKCRDj7w1vZxhR
+xfquAQDelRqy0KSIwPv4oRKC2HvytiWLK3V5rOiAN3M29yfUdQD8CEnw/bd4nQ8r
+EOdlVk5w/gtOyB8NmF9rMr4XR947xAU=
+=G2bD
+-----END PGP SIGNATURE-----
+
+--pfmyvb5oulioawsq--
