@@ -2,171 +2,169 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B6DC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA762C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:07:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53A2320880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:05:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bZjvRPNU"
+	by mail.kernel.org (Postfix) with ESMTP id BC99F20880
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:07:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726643AbfBTSFp (ORCPT
+        id S1726520AbfBTSHc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 13:05:45 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33317 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725836AbfBTSFp (ORCPT
+        Wed, 20 Feb 2019 13:07:32 -0500
+Received: from gateway30.websitewelcome.com ([192.185.147.85]:41451 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725939AbfBTSHb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 13:05:45 -0500
-Received: by mail-pf1-f195.google.com with SMTP id c123so12299183pfb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 10:05:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=jsN1uex32LO7vi0l5cJ0Ov+raCKWcqCtyJagcC3G0Gk=;
-        b=bZjvRPNU4cBo9W+sn0bb3gvu8Bbz/ghbX4ow1il1Foz+KvRVqCBiH6xUCJrACLN/aD
-         oiZ0MbxDrEVoMfk40l99rOF1rKl/6u8lQU/mnNH3jBd4l81DeCJV0yoBPxyOqBDdQqGW
-         vtO7nBuXJSvgmQ0bfm1e80u1aRtv+ts8bhYXk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jsN1uex32LO7vi0l5cJ0Ov+raCKWcqCtyJagcC3G0Gk=;
-        b=CijbVfVoQCRkSo3kgybrQVE0aJIi7NiDeZyxBrcfh9jAokiCiRzaW8bIaCgtbd/BQ4
-         UsNaFuJPcWXW2P92vnA8HWDfBM26l+dap3H84UEWAd6h+rFp/1F/dt5tN5Qk6pQHlCwq
-         NfdRnre8PeAD9UnS+HnH6CnNpyIuthsU6UJMmUUswKeo8B9vscoDnGmhFu05SpNc6jUB
-         TsDNc+9RYeAxZgsJscmMVrz5NKMimLgnpxShYSCUaJlrx3RD5tz0yOfMwaSErbzO6ERy
-         8EBB8sVWRFTxjpMxL6Ta0eGHOgHAA+fVlGFjh9ilqWl2zF1H5732wH6fhsXvsFVSOakd
-         ovmg==
-X-Gm-Message-State: AHQUAuYeM/59cL9CAcELnEu7Ynt4u+a83DJPurlsw+rv80GvX8X6iOoV
-        PpBgyKrH7RoZUEQGojKbl5niMA==
-X-Google-Smtp-Source: AHgI3IbbrxE8Ks2aR9RLcwPXCHQLIzyZRQTd2MPrXrmnBq4rZT7TBApDmio9u5rwOmJ6GqScqHYaRg==
-X-Received: by 2002:aa7:8508:: with SMTP id v8mr35846174pfn.14.1550685944196;
-        Wed, 20 Feb 2019 10:05:44 -0800 (PST)
-Received: from google.com ([2620:15c:202:1:534:b7c0:a63c:460c])
-        by smtp.gmail.com with ESMTPSA id e2sm32119209pga.92.2019.02.20.10.05.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Feb 2019 10:05:42 -0800 (PST)
-Date:   Wed, 20 Feb 2019 10:05:40 -0800
-From:   Brian Norris <briannorris@chromium.org>
-To:     egranata@chromium.org
-Cc:     hdegoede@redhat.com, mika.westerberg@linux.intel.com,
-        dtor@chromium.org, andy.shevchenko@gmail.com, rafael@kernel.org,
-        gregkh@linuxfoundation.org, enric.balletbo@collabora.com,
-        linux-kernel@vger.kernel.org, gwendal@chromium.org,
-        linux-acpi@vger.kernel.org, andriy.shevchenko@linux.intel.com,
-        egranata@google.com
-Subject: Re: [PATCH v2] driver: platform: Support parsing GpioInt 0 in
- platform_get_irq()
-Message-ID: <20190220180538.GA42642@google.com>
-References: <20190207185917.167829-1-egranata@google.com>
- <20190211190112.209286-1-egranata@chromium.org>
+        Wed, 20 Feb 2019 13:07:31 -0500
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id A033E1029B
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 12:07:30 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id wWHKgwv4BiQerwWHKgAo8S; Wed, 20 Feb 2019 12:07:30 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.119.20] (port=59826 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gwWHJ-00135L-Ia; Wed, 20 Feb 2019 12:07:30 -0600
+Subject: Re: [PATCH] iio: mma8452: mark expected switch fall-through
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+References: <20190211222318.GA21656@embeddedor>
+ <20190220121726.3b10e0ec@archlinux>
+ <5f52a67e-d1b8-4f2f-d6f3-309e6683c02b@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <e612e707-4a54-7b59-e350-139766529316@embeddedor.com>
+Date:   Wed, 20 Feb 2019 12:07:28 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211190112.209286-1-egranata@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <5f52a67e-d1b8-4f2f-d6f3-309e6683c02b@embeddedor.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.119.20
+X-Source-L: No
+X-Exim-ID: 1gwWHJ-00135L-Ia
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:59826
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Mon, Feb 11, 2019 at 11:01:12AM -0800, egranata@chromium.org wrote:
-> From: Enrico Granata <egranata@chromium.org>
-> 
-> ACPI 5 added support for GpioInt resources as a way to provide
-> information about interrupts mediated via a GPIO controller.
-> 
-> Several device buses (e.g. SPI, I2C) have support for retrieving
-> an IRQ specified via this type of resource, and providing it
-> directly to the driver as an IRQ number.
-> 
-> This is not currently done for the platform drivers, as platform_get_irq()
-> does not try to parse GpioInt() resources. This requires drivers to
-> either have to support only one possible IRQ resource, or to have code
-> in place to try both as a failsafe.
-> 
-> While there is a possibility of ambiguity for devices that exposes
-> multiple IRQs, it is easy and feasible to support the common case
-> of devices that only expose one IRQ which would be of either type
-> depending on the underlying system's architecture.
-> 
-> This commit adds support for parsing a GpioInt resource in order
-> to fulfill a request for the index 0 IRQ for a platform device.
-> 
-> Signed-off-by: Enrico Granata <egranata@chromium.org>
-> ---
-> Changes in v2:
->  - only support IRQ index 0
-> 
->  drivers/base/platform.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> index 1c958eb33ef4d..0d3611cd1b3bc 100644
-> --- a/drivers/base/platform.c
-> +++ b/drivers/base/platform.c
-> @@ -127,7 +127,20 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
->  		irqd_set_trigger_type(irqd, r->flags & IORESOURCE_BITS);
->  	}
->  
-> -	return r ? r->start : -ENXIO;
-> +	if (r)
-> +		return r->start;
-> +
-> +	/*
-> +	 * For the index 0 interrupt, allow falling back to GpioInt
-> +	 * resources. While a device could have both Interrupt and GpioInt
-> +	 * resources, making this fallback ambiguous, in many common cases
-> +	 * the device will only expose one IRQ, and this fallback
-> +	 * allows a common code path across either kind of resource.
-> +	 */
-> +	if (num == 0 && has_acpi_companion(&dev->dev))
-> +		return acpi_dev_gpio_irq_get(ACPI_COMPANION(&dev->dev), num);
 
-For ACPI devices, this changes the return code for a missing interrupt
-0 from ENXIO to ENOENT, because acpi_dev_gpio_irq_get() uses ENOENT
-instead of ENXIO. While ENXIO isn't exactly documented as the *specific*
-error code for a missing interrupt in platform_get_irq(), there are
-definitely drivers out there that are looking specifically for ENXIO
-(grepping the tree finds several Rockchip platform drivers and a few
-ethernet drivers at a minimum). And it also incidentally broke some
-usage of the very driver you were trying to support
-(drivers/platform/chrome/cros_ec_lpc.c).
-
-I suspect a good strategy here would be to check
-acpi_dev_gpio_irq_get()'s return codes here with something like:
-
-	if (ret > 0 || ret == -EPROBE_DEFER)
-		return ret;
-	return -ENXIO;
-
-Although, the gpiolib functions embedded in there also can return EIO,
-so maybe something like this is better?
-
-	if (ret == -ENOENT || ret == 0)
-		return -ENXIO;
-	return ret;
-
-I'm kinda unsure what to do with error codes besides PROBE_DEFER or
-"missing", since most users don't really have it in their mind that
-platform_get_irq() can fail with EIO or similar.
-
-Brian
-
-> +
-> +	return -ENXIO;
->  #endif
->  }
->  EXPORT_SYMBOL_GPL(platform_get_irq);
-> -- 
-> 2.20.1.791.gb4d0f1c61a-goog
+On 2/20/19 11:21 AM, Gustavo A. R. Silva wrote:
 > 
+> 
+> On 2/20/19 6:17 AM, Jonathan Cameron wrote:
+>> On Mon, 11 Feb 2019 16:23:18 -0600
+>> "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+>>
+>>> In preparation to enabling -Wimplicit-fallthrough, mark switch
+>>> cases where we are expecting to fall through.
+>>>
+>>> This patch fixes the following warning:
+>>>
+>>> drivers/iio/accel/mma8452.c: In function ‘mma8452_probe’:
+>>> drivers/iio/accel/mma8452.c:1581:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>>    if (ret == data->chip_info->chip_id)
+>>>       ^
+>>> drivers/iio/accel/mma8452.c:1584:2: note: here
+>>>   default:
+>>>   ^~~~~~~
+>>>
+>>> Warning level 3 was used: -Wimplicit-fallthrough=3
+>>>
+>>> Notice that, in this particular case, the code comment is modified
+>>> in accordance with what GCC is expecting to find.
+>>>
+>>> This patch is part of the ongoing efforts to enable
+>>> -Wimplicit-fallthrough.
+>>>
+>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> I know Peter probably won't like this, as it doesn't
+>> read a as well, with the else dropped, but I'm going to take
+>> it as we have had a lot of bugs caught by this code and this
+>> is generating a false positive.
+>>
+>> Applied to the togreg branch of iio.git and pushed out as testing
+>> for the autobuilders to play with it.
+>>
+> 
+> Thanks, Jonathan.
+> 
+
+BTW, Jonathan, I wonder if you can apply this one too:
+
+https://lore.kernel.org/patchwork/patch/996804/
+
+Thanks
+--
+Gustavo
