@@ -7,53 +7,54 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B45C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 01:54:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A29EC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 01:54:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F5F32183E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 01:54:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24DD520823
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 01:54:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="ormvI/gt"
+	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="niDPt5RK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728290AbfBTBx7 (ORCPT
+        id S1729613AbfBTByD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 20:53:59 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35619 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725616AbfBTBx6 (ORCPT
+        Tue, 19 Feb 2019 20:54:03 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42001 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725616AbfBTByB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 20:53:58 -0500
-Received: by mail-pg1-f194.google.com with SMTP id s198so11034738pgs.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 17:53:58 -0800 (PST)
+        Tue, 19 Feb 2019 20:54:01 -0500
+Received: by mail-pg1-f196.google.com with SMTP id b2so5288021pgl.9
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 17:54:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=2MFUyXaNVwUpbVgfsPObSuC5Zgm16FtPxEvkQ9zzhF4=;
-        b=ormvI/gt2LG8HwC3Lmg3uGqicksm5s+2kmaQawDpQz0oybh9wN6+lV10MVGq0LyzVv
-         ZPidlAI+rf7ybQv7L0XzetvvugOM9D3ckEHKpcFJU1bObMuFD24Gcj+NbLiHnQIzJH+n
-         CORqc+Hi9KCgtDoXQTCJ1fPVZuvccWn8PkVLAnfGOgEVFUcXbN8oALstcVv4pQpGVUo4
-         NttRRtag9JgQf94Xq1fLwphDcKnFphTe+JKNH+tmKZf2VesFFbrHX3YvxYKnnhacut98
-         L1JtHFl0r5ev6CGNueoC4k7kTwGUL2UeRDRrkB3YOk9LenaCdki8RaNGkFNRCbLKYers
-         8m+Q==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=7Dlf9v6dnTgQSQXrrmpNU7zWj0OuSqXk5bwXEm/vTKM=;
+        b=niDPt5RKv8ZbcMhCxYaqSE8yuZVdgd6rdTFFsz99JImmzywWov0WoSZP1uuJi0qlhu
+         uU7qaCrkRlzfBBXWYARwRYMnQqAK9dp2+S5gsBhAgzBvL/PsqJwA4pSlZ5prKun0jpNl
+         yC05rKhRcF+6pbtnxpc61kc6Ud094upLqOTR3lXHca05vlhGRDLKCVvi2NIQTwkcalIM
+         hbaTcKBVWYhsvJPja6VCf7IcWzbpyH6TcIRASFhs0E6BrSN+F+hueZg6YNcv97MfJVly
+         /vf0RWsiC40MKYmmqXFRYcgTjXfYig2WzD1ww42r/AwhIVj3gYAuVKRrj8QjDFLMmqYi
+         s9lQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=2MFUyXaNVwUpbVgfsPObSuC5Zgm16FtPxEvkQ9zzhF4=;
-        b=XH6a+wZ09kBN5pfpULtFsm3LFwNYZTwLxEJ+zrUfrDoYTLEqCKVPMG5KZZECgnuieL
-         v77ACkZiH8boOfZEmcLS/rEE1ZqHOimYO/A2jMvM0hXqisqdlT/N/TkYHXNj6id3Z+T6
-         9//k3EP24tBNOsSBlQmtFfKdpAWdRRHpw11Y2W01JDZqvJTq4f5Y9SjGfZyJZV/fI79e
-         zQRom6bh1dD51GWTsFM6PG+xnw8fLUpscxOk5BGEcQJ2r7NC/rTAJpqQkfCcv01xsxTr
-         7SwnSaGSKZxPK5QJzFOfncJ9XsmrTqPNgSvyxKY3PFqwCazBNcBmCszVqKBpIVnrZVdS
-         wt2w==
-X-Gm-Message-State: AHQUAuZtuxUcZttAlBta9j84X07XmomkC7CMmGqTJc00a4P4KaeHZumi
-        5PdN6q9SlHDYT4liIeRZZKIPkA==
-X-Google-Smtp-Source: AHgI3IZYrxQktEckwWbBESYqRrSPMb2l9Q21f65SPubFEw1fys+9gaAjsaOfdJ2TiEwKGlSe7Lr/yA==
-X-Received: by 2002:a63:2013:: with SMTP id g19mr26761862pgg.451.1550627637893;
-        Tue, 19 Feb 2019 17:53:57 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=7Dlf9v6dnTgQSQXrrmpNU7zWj0OuSqXk5bwXEm/vTKM=;
+        b=BExB53OmgKUmCPzo1U7AppajiPSA5ps+cFzivpxAuEyW6NTkpWWC/hrTz/dYKVQg9J
+         /SJ+HHt11Yv6PpDAinPGZLb1MF/dQspwqTY3NXSrwi+y5UKKJ3aCGBDzvg6imdya5x1v
+         eaOQyNG+Zc99/+pAJyr6xr0l8xEvtDHMjvqWN31BPl5gsy/9fFm+X9zGlG+weVo6wRvM
+         Kq3lQdzuDpnJ8HMbm9KoQC4rcOd2U1/ovC2s8sy+KPmwvewXWV0vYogE03wf5QSIZqr6
+         x4fP9mq1DtHHrBm+2hCAaJ5HN4c0RAIGzN0RxC6ObR0Cz99S/2ioUCnDRI3YZuAzOh8j
+         mPow==
+X-Gm-Message-State: AHQUAuavy9Cx4i0w8UCuYaG/KPPWSK6Yz6cbFKSpfME0Ru3pO7utKm/s
+        auQ2fHCBbFndL27hrDG1FgV0Aw==
+X-Google-Smtp-Source: AHgI3IYjagtwbtXhFQGXyWIdh+MqBm0lWMXN6xQeL/T2XJN7DTAjezIzKAqufX6KNaKmcPdJ2Zu/vQ==
+X-Received: by 2002:a63:2bc6:: with SMTP id r189mr26236366pgr.201.1550627640446;
+        Tue, 19 Feb 2019 17:54:00 -0800 (PST)
 Received: from localhost.localdomain (220-133-186-239.HINET-IP.hinet.net. [220.133.186.239])
-        by smtp.gmail.com with ESMTPSA id k7sm5605296pgr.28.2019.02.19.17.53.54
+        by smtp.gmail.com with ESMTPSA id k7sm5605296pgr.28.2019.02.19.17.53.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 17:53:56 -0800 (PST)
+        Tue, 19 Feb 2019 17:53:59 -0800 (PST)
 From:   Axel Lin <axel.lin@ingics.com>
 To:     Mark Brown <broonie@kernel.org>
 Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -61,10 +62,12 @@ Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Laxman Dewangan <ldewangan@nvidia.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
-Subject: [RESEND][PATCH 1/2] regulator: max77620: Add missing .owner field in regulator_desc
-Date:   Wed, 20 Feb 2019 09:53:27 +0800
-Message-Id: <20190220015328.30158-1-axel.lin@ingics.com>
+Subject: [RESEND][PATCH 2/2] regulator: max77650: Add missing .owner field in regulator_desc
+Date:   Wed, 20 Feb 2019 09:53:28 +0800
+Message-Id: <20190220015328.30158-2-axel.lin@ingics.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190220015328.30158-1-axel.lin@ingics.com>
+References: <20190220015328.30158-1-axel.lin@ingics.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -74,31 +77,63 @@ Add missing .owner field in regulator_desc, which is used for refcounting.
 
 Signed-off-by: Axel Lin <axel.lin@ingics.com>
 ---
-This patch was sent on https://lkml.org/lkml/2019/1/30/466
+This patch was sent on https://lkml.org/lkml/2019/1/30/467
 
- drivers/regulator/max77620-regulator.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/regulator/max77650-regulator.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/regulator/max77620-regulator.c b/drivers/regulator/max77620-regulator.c
-index cd93cf53e23c..1607ac673e44 100644
---- a/drivers/regulator/max77620-regulator.c
-+++ b/drivers/regulator/max77620-regulator.c
-@@ -690,6 +690,7 @@ static const struct regulator_ops max77620_regulator_ops = {
- 			.active_discharge_mask = MAX77620_SD_CFG1_ADE_MASK, \
- 			.active_discharge_reg = MAX77620_REG_##_id##_CFG, \
- 			.type = REGULATOR_VOLTAGE,			\
-+			.owner = THIS_MODULE,				\
- 		},							\
- 	}
- 
-@@ -721,6 +722,7 @@ static const struct regulator_ops max77620_regulator_ops = {
- 			.active_discharge_mask = MAX77620_LDO_CFG2_ADE_MASK, \
- 			.active_discharge_reg = MAX77620_REG_##_id##_CFG2, \
- 			.type = REGULATOR_VOLTAGE,			\
-+			.owner = THIS_MODULE,				\
- 		},							\
- 	}
- 
+diff --git a/drivers/regulator/max77650-regulator.c b/drivers/regulator/max77650-regulator.c
+index 5afb91400832..411912d5278b 100644
+--- a/drivers/regulator/max77650-regulator.c
++++ b/drivers/regulator/max77650-regulator.c
+@@ -319,6 +319,7 @@ static struct max77650_regulator_desc max77650_LDO_desc = {
+ 		.active_discharge_reg	= MAX77650_REG_CNFG_LDO_B,
+ 		.enable_time		= 100,
+ 		.type			= REGULATOR_VOLTAGE,
++		.owner			= THIS_MODULE,
+ 	},
+ 	.regA		= MAX77650_REG_CNFG_LDO_A,
+ 	.regB		= MAX77650_REG_CNFG_LDO_B,
+@@ -343,6 +344,7 @@ static struct max77650_regulator_desc max77650_SBB0_desc = {
+ 		.active_discharge_reg	= MAX77650_REG_CNFG_SBB0_B,
+ 		.enable_time		= 100,
+ 		.type			= REGULATOR_VOLTAGE,
++		.owner			= THIS_MODULE,
+ 	},
+ 	.regA		= MAX77650_REG_CNFG_SBB0_A,
+ 	.regB		= MAX77650_REG_CNFG_SBB0_B,
+@@ -367,6 +369,7 @@ static struct max77650_regulator_desc max77650_SBB1_desc = {
+ 		.active_discharge_reg	= MAX77650_REG_CNFG_SBB1_B,
+ 		.enable_time		= 100,
+ 		.type			= REGULATOR_VOLTAGE,
++		.owner			= THIS_MODULE,
+ 	},
+ 	.regA		= MAX77650_REG_CNFG_SBB1_A,
+ 	.regB		= MAX77650_REG_CNFG_SBB1_B,
+@@ -390,6 +393,7 @@ static struct max77650_regulator_desc max77651_SBB1_desc = {
+ 		.active_discharge_reg	= MAX77650_REG_CNFG_SBB1_B,
+ 		.enable_time		= 100,
+ 		.type			= REGULATOR_VOLTAGE,
++		.owner			= THIS_MODULE,
+ 	},
+ 	.regA		= MAX77650_REG_CNFG_SBB1_A,
+ 	.regB		= MAX77650_REG_CNFG_SBB1_B,
+@@ -414,6 +418,7 @@ static struct max77650_regulator_desc max77650_SBB2_desc = {
+ 		.active_discharge_reg	= MAX77650_REG_CNFG_SBB2_B,
+ 		.enable_time		= 100,
+ 		.type			= REGULATOR_VOLTAGE,
++		.owner			= THIS_MODULE,
+ 	},
+ 	.regA		= MAX77650_REG_CNFG_SBB2_A,
+ 	.regB		= MAX77650_REG_CNFG_SBB2_B,
+@@ -438,6 +443,7 @@ static struct max77650_regulator_desc max77651_SBB2_desc = {
+ 		.active_discharge_reg	= MAX77650_REG_CNFG_SBB2_B,
+ 		.enable_time		= 100,
+ 		.type			= REGULATOR_VOLTAGE,
++		.owner			= THIS_MODULE,
+ 	},
+ 	.regA		= MAX77650_REG_CNFG_SBB2_A,
+ 	.regB		= MAX77650_REG_CNFG_SBB2_B,
 -- 
 2.17.1
 
