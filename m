@@ -4,186 +4,163 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	NORMAL_HTTP_TO_IP,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3A09C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:29:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CBB1C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:29:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9E0E2084D
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:29:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 232A021848
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:29:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="NafGVjCh"
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="vgpHlIZ9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbfBTR3Y (ORCPT
+        id S1726975AbfBTR31 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 12:29:24 -0500
+        Wed, 20 Feb 2019 12:29:27 -0500
 Received: from pegase1.c-s.fr ([93.17.236.30]:9390 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726755AbfBTR3V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 12:29:21 -0500
+        id S1726910AbfBTR3Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 12:29:25 -0500
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 444PjT74sWz9v0vs;
-        Wed, 20 Feb 2019 18:29:17 +0100 (CET)
+        by localhost (Postfix) with ESMTP id 444PjZ0mSBz9v0w1;
+        Wed, 20 Feb 2019 18:29:22 +0100 (CET)
 Authentication-Results: localhost; dkim=pass
         reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=NafGVjCh; dkim-adsp=pass;
+        header.d=c-s.fr header.i=@c-s.fr header.b=vgpHlIZ9; dkim-adsp=pass;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id e5XFU_WtJn3o; Wed, 20 Feb 2019 18:29:17 +0100 (CET)
+        with ESMTP id f26EWz6d0acN; Wed, 20 Feb 2019 18:29:22 +0100 (CET)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 444PjT60yyz9v0vr;
-        Wed, 20 Feb 2019 18:29:17 +0100 (CET)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 444PjY6gjFz9v0vr;
+        Wed, 20 Feb 2019 18:29:21 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1550683757; bh=CIDCQplRaPuHh8Jod9JMYw1VsHVW6X2UEb3TMqnZNuo=;
+        t=1550683761; bh=QyluC/3wRlKw8Mq1z/4mj/rTBv2DhqiZpxBqmcvCH1s=;
         h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=NafGVjChAhhEAAYfHgAJ8Zm/JRYpmH6Gu/ywmq9ckr+hTk7GTHGWcgttbhMDo9Oea
-         zLLlD7ADyAEtbNbS+JVzp9ezF4UkB0DW4/NljjIuErfVoeVuDdPCkdRCjcRcF7q/mu
-         LgnbflYn7UGesiJRFiBhgJxr3fV1MBBjP9unGsJA=
+        b=vgpHlIZ9K55GBntCbjW9hsh/IDcPMp4hwlR46/7+sR45ML0frhG2NO2bh6waXTj0/
+         d/zeU8nukor2KmwcN3JDCM1TQNgwdgxnyH/dzcSca8kk4TFJ67NeTt/5wGPCm9pOLR
+         e+vclm9s9vThN/bSFa8JMA4Yc0XNO/klNochBD1E=
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 79B1A8B84F;
-        Wed, 20 Feb 2019 18:29:19 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9812E8B84F;
+        Wed, 20 Feb 2019 18:29:23 +0100 (CET)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 5WTvovwLEXZT; Wed, 20 Feb 2019 18:29:19 +0100 (CET)
+        with ESMTP id VHpqc_v3cpwz; Wed, 20 Feb 2019 18:29:23 +0100 (CET)
 Received: from po16846vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 555448B84A;
-        Wed, 20 Feb 2019 18:29:19 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 755FC8B84A;
+        Wed, 20 Feb 2019 18:29:23 +0100 (CET)
 Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 429CA6E85E; Wed, 20 Feb 2019 17:29:19 +0000 (UTC)
-Message-Id: <64fc65fc099d09f600ca198113fe703933188625.1550648295.git.christophe.leroy@c-s.fr>
+        id 6203C6E85E; Wed, 20 Feb 2019 17:29:23 +0000 (UTC)
+Message-Id: <1b674713d46846cfd884b0dc26898a3dafb32f0d.1550648295.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1550648295.git.christophe.leroy@c-s.fr>
 References: <cover.1550648295.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v3 12/16] powerpc/mm/32s: add setibat() clearibat() and
- update_bats()
+Subject: [PATCH v3 16/16] powerpc/kconfig: make _etext and data areas
+ alignment configurable on 8xx
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>, j.neuschaefer@gmx.net
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Wed, 20 Feb 2019 17:29:19 +0000 (UTC)
+Date:   Wed, 20 Feb 2019 17:29:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-setibat() and clearibat() allows to manipulate IBATs independently
-of DBATs.
+On 8xx, large pages (512kb or 8M) are used to map kernel linear
+memory. Aligning to 8M reduces TLB misses as only 8M pages are used
+in that case. We make 8M the default for data.
 
-update_bats() allows to update bats after init. This is done
-with MMU off.
+This patchs allows the user to do it via Kconfig.
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/book3s/32/mmu-hash.h |  2 ++
- arch/powerpc/kernel/head_32.S                 | 35 +++++++++++++++++++++++++++
- arch/powerpc/mm/ppc_mmu_32.c                  | 32 ++++++++++++++++++++++++
- 3 files changed, 69 insertions(+)
+ arch/powerpc/Kconfig           | 18 +++++++++++++++---
+ arch/powerpc/kernel/head_8xx.S |  4 ++--
+ 2 files changed, 17 insertions(+), 5 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/book3s/32/mmu-hash.h b/arch/powerpc/include/asm/book3s/32/mmu-hash.h
-index 0c261ba2c826..5cb588395fdc 100644
---- a/arch/powerpc/include/asm/book3s/32/mmu-hash.h
-+++ b/arch/powerpc/include/asm/book3s/32/mmu-hash.h
-@@ -92,6 +92,8 @@ typedef struct {
- 	unsigned long vdso_base;
- } mm_context_t;
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index c4d6c97d7699..cf30a8f522b9 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -726,7 +726,8 @@ config THREAD_SHIFT
+ 	  want. Only change this if you know what you are doing.
  
-+void update_bats(void);
-+
- /* patch sites */
- extern s32 patch__hash_page_A0, patch__hash_page_A1, patch__hash_page_A2;
- extern s32 patch__hash_page_B, patch__hash_page_C;
-diff --git a/arch/powerpc/kernel/head_32.S b/arch/powerpc/kernel/head_32.S
-index c2f564690778..91b302b0797f 100644
---- a/arch/powerpc/kernel/head_32.S
-+++ b/arch/powerpc/kernel/head_32.S
-@@ -1104,6 +1104,41 @@ BEGIN_MMU_FTR_SECTION
- END_MMU_FTR_SECTION_IFSET(MMU_FTR_USE_HIGH_BATS)
- 	blr
+ config ETEXT_SHIFT_BOOL
+-	bool "Set custom etext alignment" if STRICT_KERNEL_RWX && PPC_BOOK3S_32
++	bool "Set custom etext alignment" if STRICT_KERNEL_RWX && \
++					     (PPC_BOOK3S_32 || PPC_8xx)
+ 	depends on ADVANCED_OPTIONS
+ 	help
+ 	  This option allows you to set the kernel end of text alignment. When
+@@ -738,6 +739,7 @@ config ETEXT_SHIFT_BOOL
+ config ETEXT_SHIFT
+ 	int "_etext shift" if ETEXT_SHIFT_BOOL
+ 	range 17 28 if STRICT_KERNEL_RWX && PPC_BOOK3S_32
++	range 19 23 if STRICT_KERNEL_RWX && PPC_8xx
+ 	default 17 if STRICT_KERNEL_RWX && PPC_BOOK3S_32
+ 	default 19 if STRICT_KERNEL_RWX && PPC_8xx
+ 	default PPC_PAGE_SHIFT
+@@ -745,8 +747,13 @@ config ETEXT_SHIFT
+ 	  On Book3S 32 (603+), IBATs are used to map kernel text.
+ 	  Smaller is the alignment, greater is the number of necessary IBATs.
  
-+_ENTRY(update_bats)
-+	lis	r4, 1f@h
-+	ori	r4, r4, 1f@l
-+	tophys(r4, r4)
-+	mfmsr	r6
-+	mflr	r7
-+	li	r3, MSR_KERNEL & ~(MSR_IR | MSR_DR)
-+	rlwinm	r0, r6, 0, ~MSR_RI
-+	rlwinm	r0, r0, 0, ~MSR_EE
-+	mtmsr	r0
-+	mtspr	SPRN_SRR0, r4
-+	mtspr	SPRN_SRR1, r3
-+	SYNC
-+	RFI
-+1:	bl	clear_bats
-+	lis	r3, BATS@ha
-+	addi	r3, r3, BATS@l
-+	tophys(r3, r3)
-+	LOAD_BAT(0, r3, r4, r5)
-+	LOAD_BAT(1, r3, r4, r5)
-+	LOAD_BAT(2, r3, r4, r5)
-+	LOAD_BAT(3, r3, r4, r5)
-+BEGIN_MMU_FTR_SECTION
-+	LOAD_BAT(4, r3, r4, r5)
-+	LOAD_BAT(5, r3, r4, r5)
-+	LOAD_BAT(6, r3, r4, r5)
-+	LOAD_BAT(7, r3, r4, r5)
-+END_MMU_FTR_SECTION_IFSET(MMU_FTR_USE_HIGH_BATS)
-+	li	r3, MSR_KERNEL & ~(MSR_IR | MSR_DR | MSR_RI)
-+	mtmsr	r3
-+	mtspr	SPRN_SRR0, r7
-+	mtspr	SPRN_SRR1, r6
-+	SYNC
-+	RFI
++	  On 8xx, large pages (512kb or 8M) are used to map kernel linear
++	  memory. Aligning to 8M reduces TLB misses as only 8M pages are used
++	  in that case.
 +
- flush_tlbs:
- 	lis	r10, 0x40
- 1:	addic.	r10, r10, -0x1000
-diff --git a/arch/powerpc/mm/ppc_mmu_32.c b/arch/powerpc/mm/ppc_mmu_32.c
-index ff8580c6ab11..66f1319e8e20 100644
---- a/arch/powerpc/mm/ppc_mmu_32.c
-+++ b/arch/powerpc/mm/ppc_mmu_32.c
-@@ -106,6 +106,38 @@ static unsigned int block_size(unsigned long base, unsigned long top)
- 	return min3(max_size, 1U << base_shift, 1U << block_shift);
- }
+ config DATA_SHIFT_BOOL
+-	bool "Set custom data alignment" if STRICT_KERNEL_RWX && PPC_BOOK3S_32
++	bool "Set custom data alignment" if STRICT_KERNEL_RWX && \
++					    (PPC_BOOK3S_32 || PPC_8xx)
+ 	depends on ADVANCED_OPTIONS
+ 	help
+ 	  This option allows you to set the kernel data alignment. When
+@@ -759,13 +766,18 @@ config DATA_SHIFT
+ 	int "Data shift" if DATA_SHIFT_BOOL
+ 	default 24 if STRICT_KERNEL_RWX && PPC64
+ 	range 17 28 if STRICT_KERNEL_RWX && PPC_BOOK3S_32
++	range 19 23 if STRICT_KERNEL_RWX && PPC_8xx
+ 	default 22 if STRICT_KERNEL_RWX && PPC_BOOK3S_32
+-	default 19 if STRICT_KERNEL_RWX && PPC_8xx
++	default 23 if STRICT_KERNEL_RWX && PPC_8xx
+ 	default PPC_PAGE_SHIFT
+ 	help
+ 	  On Book3S 32 (603+), DBATs are used to map kernel text and rodata RO.
+ 	  Smaller is the alignment, greater is the number of necessary DBATs.
  
-+/*
-+ * Set up one of the IBAT (block address translation) register pairs.
-+ * The parameters are not checked; in particular size must be a power
-+ * of 2 between 128k and 256M.
-+ * Only for 603+ ...
-+ */
-+static void setibat(int index, unsigned long virt, phys_addr_t phys,
-+		    unsigned int size, pgprot_t prot)
-+{
-+	unsigned int bl = (size >> 17) - 1;
-+	int wimgxpp;
-+	struct ppc_bat *bat = BATS[index];
-+	unsigned long flags = pgprot_val(prot);
++	  On 8xx, large pages (512kb or 8M) are used to map kernel linear
++	  memory. Aligning to 8M reduces TLB misses as only 8M pages are used
++	  in that case.
 +
-+	if (!cpu_has_feature(CPU_FTR_NEED_COHERENT))
-+		flags &= ~_PAGE_COHERENT;
-+
-+	wimgxpp = (flags & _PAGE_COHERENT) | (_PAGE_EXEC ? BPP_RX : BPP_XX);
-+	bat[0].batu = virt | (bl << 2) | 2; /* Vs=1, Vp=0 */
-+	bat[0].batl = BAT_PHYS_ADDR(phys) | wimgxpp;
-+	if (flags & _PAGE_USER)
-+		bat[0].batu |= 1;	/* Vp = 1 */
-+}
-+
-+static void clearibat(int index)
-+{
-+	struct ppc_bat *bat = BATS[index];
-+
-+	bat[0].batu = 0;
-+	bat[0].batl = 0;
-+}
-+
- unsigned long __init mmu_mapin_ram(unsigned long base, unsigned long top)
- {
- 	int idx;
+ config FORCE_MAX_ZONEORDER
+ 	int "Maximum zone order"
+ 	range 8 9 if PPC64 && PPC_64K_PAGES
+diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
+index 01ed8f3c95c8..63f1b7eec3f0 100644
+--- a/arch/powerpc/kernel/head_8xx.S
++++ b/arch/powerpc/kernel/head_8xx.S
+@@ -416,7 +416,7 @@ InstructionTLBMiss:
+ #ifndef CONFIG_PIN_TLB_TEXT
+ ITLBMissLinear:
+ 	mtcr	r11
+-#ifdef CONFIG_STRICT_KERNEL_RWX
++#if defined(CONFIG_STRICT_KERNEL_RWX) && CONFIG_ETEXT_SHIFT < 23
+ 	patch_site	0f, patch__itlbmiss_linmem_top8
+ 
+ 	mfspr	r10, SPRN_SRR0
+@@ -537,7 +537,7 @@ DTLBMissIMMR:
+ DTLBMissLinear:
+ 	mtcr	r11
+ 	rlwinm	r10, r10, 20, 0x0f800000	/* 8xx supports max 256Mb RAM */
+-#ifdef CONFIG_STRICT_KERNEL_RWX
++#if defined(CONFIG_STRICT_KERNEL_RWX) && CONFIG_DATA_SHIFT < 23
+ 	patch_site	0f, patch__dtlbmiss_romem_top8
+ 
+ 0:	subis	r11, r10, (PAGE_OFFSET - 0x80000000)@ha
 -- 
 2.13.3
 
