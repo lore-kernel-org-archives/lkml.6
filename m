@@ -2,130 +2,101 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E43C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:46:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7D1C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:54:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBE2C2146F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:46:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="BJxsv+b4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wsFWPPwd"
+	by mail.kernel.org (Postfix) with ESMTP id D7F072146F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:54:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730189AbfBTCqg (ORCPT
+        id S1729350AbfBTCyN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 21:46:36 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:35681 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725616AbfBTCqf (ORCPT
+        Tue, 19 Feb 2019 21:54:13 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:6933 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726208AbfBTCyM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 21:46:35 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 20FAF233AB;
-        Tue, 19 Feb 2019 21:46:34 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Tue, 19 Feb 2019 21:46:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        YqCbabGzvKCWGS13EUnOLA95VIhsqfmIn0nslossjtk=; b=BJxsv+b4YoQRjux5
-        EFeAe/StoQCwvFdf3CVkcspwiHI8omrukwadCqNMdubj21xp+AvPXot9bP8TW6dG
-        vsBWhzLVk4Pra+n4G+4hywvor3VBovJhJjBPndH2LehOkCpbidcmbGBwagBbiWNd
-        FRyeLR6OuDh1esODhoEeSnDzjaQHHeey6eFmdrrGLAgLWDf8fgTxXOWzqWZpbxe9
-        aWHUuN6iyhmV69msFcM2uMFgYvZXyWdJjIZEPeTDvBdfKh7cwLLZvhM5dYsajqm5
-        /YXSazduDV9HtaAjBc+IxiIehqCPYtpSWaDCNbO6uWyrxwEQAqOdTVPwSUpPJtrD
-        e7MvwQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=YqCbabGzvKCWGS13EUnOLA95VIhsqfmIn0nslossj
-        tk=; b=wsFWPPwd4B/kLjwCxJOwpE7PfKSfJ1xUL+EtjnfaWtupzWeRs/K6cLQSK
-        oJjTWYv/nqUl2Q6BN2g0ABPr7+WjwGK+/EsQuSGZ0UiW8wbyTAEZVThACHHpKh+g
-        vVk9Bg7AbD/ljf5Hqdz0LmVtO75hD9OHNI2G0dg+69nXRS9LtHKnLo8fBKE2U28X
-        fFH92DBYBanVewp6IUvMkJtDIDhSTAc8jKvE7v9gVzYVk1SeE0gfzhY4g5LRLbUV
-        1CyrKho578883F9jVfvOAonTzTUf7UijWCCNmD6a5uL0hMxWlMmAad4D0hFYIKlF
-        U04m/MaanRWbzlrrNWqK/HYM2L6JQ==
-X-ME-Sender: <xms:iL9sXPg-mpLvZXx-9dr1NUx73NrUJj6aVSn1H2PKGGXSZBHX6Z3-Cg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrtdehgdehvdculddtuddrgedtledrtddtmd
-    cutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkffuhffvffgjfhgtofgggfesthejredtredtjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucfkphepuddukedrvddtke
-    drheehrdeknecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidr
-    nhgvthenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:iL9sXHftdWs8pa6mBabBlElwNUyxOp1tNr_jNR43qRhfKHM2LS2bUQ>
-    <xmx:iL9sXCkZLligRfdy8ymOdJYjrYUwte0-qJd46qLQ0oHEM75OVyFHYA>
-    <xmx:iL9sXAtzNNEFu6LkuvTQj_ivt_8fZjcV6LaTikqtG3pFPckO8vFk0g>
-    <xmx:ir9sXGiAPqRXfbpMcFt-YryH_j2kPx57PYup1vdOH_on3V3BGbmFpg>
-Received: from localhost (unknown [118.208.55.8])
-        by mail.messagingengine.com (Postfix) with ESMTPA id E2C3910312;
-        Tue, 19 Feb 2019 21:46:27 -0500 (EST)
-Message-ID: <7923d4aa646fbe4bd71cfb4144f1c96f28cad972.camel@themaw.net>
-Subject: Re: [RFC PATCH 02/27] containers: Implement containers as kernel
- objects
-From:   Ian Kent <raven@themaw.net>
-To:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-        trond.myklebust@hammerspace.com, sfrench@samba.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        rgb@redhat.com, linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, cgroups@vger.kernel.org
-Date:   Wed, 20 Feb 2019 10:46:24 +0800
-In-Reply-To: <155024685321.21651.1504201877881622756.stgit@warthog.procyon.org.uk>
-References: <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
-         <155024685321.21651.1504201877881622756.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 19 Feb 2019 21:54:12 -0500
+X-UUID: 0f66d9f8c5074e0ba703fcc9af5dfac8-20190220
+X-UUID: 0f66d9f8c5074e0ba703fcc9af5dfac8-20190220
+Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <wangyan.wang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 168051475; Wed, 20 Feb 2019 10:54:03 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N1.mediatek.inc
+ (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 20 Feb
+ 2019 10:54:01 +0800
+Received: from mszsdaap41.mediatek.inc (10.16.6.141) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 20 Feb 2019 10:54:00 +0800
+From:   wangyan wang <wangyan.wang@mediatek.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, CK Hu <ck.hu@mediatek.com>
+CC:     wangyan wang <wangyan.wang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        chunhui dai <chunhui.dai@mediatek.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <dri-devel@lists.freedesktop.org>, <srv_heupstream@mediatek.com>
+Subject: [PATCH V5 0/8] make mt7623 clock of hdmi stable
+Date:   Wed, 20 Feb 2019 10:53:49 +0800
+Message-ID: <20190220025357.7354-1-wangyan.wang@mediatek.com>
+X-Mailer: git-send-email 2.14.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-02-15 at 16:07 +0000, David Howells wrote:
-> Implement a kernel container object such that it contains the following
-> things:
-> 
->  (1) Namespaces.
-> 
->  (2) A root directory.
-> 
->  (3) A set of processes, including one designated as the 'init' process.
+From: Wangyan Wang <wangyan.wang@mediatek.com>
 
-Yeah, I think a name other than init needs to be used for this
-process.
+V4 adopt maintainer's suggestion.
+Here is the change list between V4 & V5
+1. add Reviewed-by:CK Hu <ck.hu@mediatek.com>
+in " drm/mediatek: fix the rate ..." commit message.
 
-The problem being that there is no requirement for container
-process 1 to behave in any way like an "init" process is
-expected to behave and that leads to confusion (at least
-it certainly did for me).
+2. describe the reason why mt7623 clock of hdmi 
+is more stable than before.
+the tvdpll should be stable in hdmi normal setting
+to guarantee clock of hdmi stable, but the tvdpll 
+may be changed in original code ,the patch is to
+deal with the problem, you can find more descriptions
+in patch "drm/mediatek:using different flags of clk ...".
 
-Admittedly I haven't yet worked through the series but in the
-light of the comments from James I wanted to chime in (probably
-too early to be useful not having read the series but ...).
 
-I believe what your trying to do here is so badly needed it
-would be great if the needs of James could be met to some
-(as yet undefined) satisfactory extent.
+chunhui dai (8):
+  drm/mediatek: recalculate hdmi phy clock of MT2701 by querying
+    hardware
+  drm/mediatek: move the setting of fixed divider
+  drm/mediatek: using different flags of clk for HDMI phy
+  drm/mediatek: fix the rate and divder of hdmi phy for MT2701
+  clk: mediatek: add MUX_GATE_FLAGS_2
+  clk: mediatek: using CLK_MUX_ROUND_CLOSEST for the clock of dpi1_sel
+  drm/mediatek: using new factor for tvdpll in MT2701
+  drm/mediatek: fix the rate of parent for hdmi phy in MT2701
 
-Would there be any possibility of introducing a concept of
-inactive and active containers where the creation is a two
-(maybe more) step procedure, first the creation of (if you like
-a "true") container that's essentially empty, basically a shell
-(not the program "shell" of course), inert wrt. events and such
-and implement the ability to make the container active by adding
-various things, like processes, to it?
+ drivers/clk/mediatek/clk-mt2701.c              |  4 +-
+ drivers/clk/mediatek/clk-mtk.c                 |  2 +-
+ drivers/clk/mediatek/clk-mtk.h                 | 20 ++++++---
+ drivers/gpu/drm/mediatek/mtk_dpi.c             |  8 ++--
+ drivers/gpu/drm/mediatek/mtk_hdmi_phy.c        | 34 ++++------------
+ drivers/gpu/drm/mediatek/mtk_hdmi_phy.h        |  7 +---
+ drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 56 +++++++++++++++++++++++---
+ drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c | 23 +++++++++++
+ 8 files changed, 102 insertions(+), 52 deletions(-)
 
-Clearly the concepts of inactive and active require a definition
-of what they mean and I don't have that, perhaps a starting point
-could be a container that has a process 1 (which should also require
-a root fs and namespaces) is active otherwise it's considered inactive.
-
-Ian
+-- 
+2.14.1
 
