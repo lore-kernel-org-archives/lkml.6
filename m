@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 611E9C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D09FC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:32:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 364062086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:31:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0C192147C
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:32:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727793AbfBTMbq (ORCPT
+        id S1727962AbfBTMb7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 07:31:46 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:4670 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727383AbfBTMbn (ORCPT
+        Wed, 20 Feb 2019 07:31:59 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:32253 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727684AbfBTMbq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 07:31:43 -0500
-X-UUID: 3b63007c39284641bccdd5adcf67e8a5-20190220
-X-UUID: 3b63007c39284641bccdd5adcf67e8a5-20190220
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        Wed, 20 Feb 2019 07:31:46 -0500
+X-UUID: 761184f6ff5746cc95d0391724651719-20190220
+X-UUID: 761184f6ff5746cc95d0391724651719-20190220
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
         (envelope-from <michael.kao@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1633328183; Wed, 20 Feb 2019 20:31:37 +0800
+        with ESMTP id 714508559; Wed, 20 Feb 2019 20:31:38 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 20 Feb 2019 20:31:35 +0800
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 20 Feb 2019 20:31:36 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
  Transport; Wed, 20 Feb 2019 20:31:35 +0800
@@ -44,15 +44,14 @@ CC:     <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         Michael Kao <michael.kao@mediatek.com>
-Subject: [PATCH v2,1/7] thermal: mediatek: fix register index error
-Date:   Wed, 20 Feb 2019 20:31:27 +0800
-Message-ID: <1550665893-22561-2-git-send-email-michael.kao@mediatek.com>
+Subject: [PATCH v2,2/7] thermal: mediatek: add common index of vts settings.
+Date:   Wed, 20 Feb 2019 20:31:28 +0800
+Message-ID: <1550665893-22561-3-git-send-email-michael.kao@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1550665893-22561-1-git-send-email-michael.kao@mediatek.com>
 References: <1550665893-22561-1-git-send-email-michael.kao@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 591575A619FE216BB06779DD3A56371685AB6E05F5185A35D8CEAD0ACAB0B3DA2000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -61,40 +60,197 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Michael Kao <michael.kao@mediatek.com>
 
-The index of msr and adcpnp should match the sensor
-which belongs to the selected bank in the for loop.
-
-Fixes: b7cf0053738c ("thermal: Add Mediatek thermal driver for mt2701.")
+Each project has different number of vts settings.
+For the MT2701 just have to set three vts, but the
+original code flow add five unnecessary vts.
+Add common index of vts settings for scalablity,
+and reduce the setting of unnecessary vts.
 
 Signed-off-by: Michael Kao <michael.kao@mediatek.com>
 ---
- drivers/thermal/mtk_thermal.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/thermal/mtk_thermal.c | 93 ++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 69 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/thermal/mtk_thermal.c b/drivers/thermal/mtk_thermal.c
-index 0691f26..f646436 100644
+index f646436..07f8ad7 100644
 --- a/drivers/thermal/mtk_thermal.c
 +++ b/drivers/thermal/mtk_thermal.c
-@@ -431,7 +431,8 @@ static int mtk_thermal_bank_temperature(struct mtk_thermal_bank *bank)
- 	u32 raw;
+@@ -112,17 +112,26 @@
+  * MT2701 has 3 sensors and needs 3 VTS calibration data.
+  * MT2712 has 4 sensors and needs 4 VTS calibration data.
+  */
+-#define MT8173_CALIB_BUF0_VALID		BIT(0)
+-#define MT8173_CALIB_BUF1_ADC_GE(x)	(((x) >> 22) & 0x3ff)
+-#define MT8173_CALIB_BUF0_VTS_TS1(x)	(((x) >> 17) & 0x1ff)
+-#define MT8173_CALIB_BUF0_VTS_TS2(x)	(((x) >> 8) & 0x1ff)
+-#define MT8173_CALIB_BUF1_VTS_TS3(x)	(((x) >> 0) & 0x1ff)
+-#define MT8173_CALIB_BUF2_VTS_TS4(x)	(((x) >> 23) & 0x1ff)
+-#define MT8173_CALIB_BUF2_VTS_TSABB(x)	(((x) >> 14) & 0x1ff)
+-#define MT8173_CALIB_BUF0_DEGC_CALI(x)	(((x) >> 1) & 0x3f)
+-#define MT8173_CALIB_BUF0_O_SLOPE(x)	(((x) >> 26) & 0x3f)
+-#define MT8173_CALIB_BUF0_O_SLOPE_SIGN(x)	(((x) >> 7) & 0x1)
+-#define MT8173_CALIB_BUF1_ID(x)	(((x) >> 9) & 0x1)
++#define CALIB_BUF0_VALID		BIT(0)
++#define CALIB_BUF1_ADC_GE(x)		(((x) >> 22) & 0x3ff)
++#define CALIB_BUF0_VTS_TS1(x)		(((x) >> 17) & 0x1ff)
++#define CALIB_BUF0_VTS_TS2(x)		(((x) >> 8) & 0x1ff)
++#define CALIB_BUF1_VTS_TS3(x)		(((x) >> 0) & 0x1ff)
++#define CALIB_BUF2_VTS_TS4(x)		(((x) >> 23) & 0x1ff)
++#define CALIB_BUF2_VTS_TSABB(x)		(((x) >> 14) & 0x1ff)
++#define CALIB_BUF0_DEGC_CALI(x)		(((x) >> 1) & 0x3f)
++#define CALIB_BUF0_O_SLOPE(x)		(((x) >> 26) & 0x3f)
++#define CALIB_BUF0_O_SLOPE_SIGN(x)	(((x) >> 7) & 0x1)
++#define CALIB_BUF1_ID(x)		(((x) >> 9) & 0x1)
++
++enum {
++	VTS1,
++	VTS2,
++	VTS3,
++	VTS4,
++	VTSABB,
++	MAX_NUM_VTS,
++};
  
- 	for (i = 0; i < conf->bank_data[bank->id].num_sensors; i++) {
--		raw = readl(mt->thermal_base + conf->msr[i]);
-+		raw = readl(mt->thermal_base +
-+			    conf->msr[conf->bank_data[bank->id].sensors[i]]);
+ /* MT2701 thermal sensors */
+ #define MT2701_TS1	0
+@@ -175,6 +184,7 @@ struct mtk_thermal_data {
+ 	s32 num_banks;
+ 	s32 num_sensors;
+ 	s32 auxadc_channel;
++	const int *vts_index;
+ 	const int *sensor_mux_values;
+ 	const int *msr;
+ 	const int *adcpnp;
+@@ -194,7 +204,7 @@ struct mtk_thermal {
+ 	s32 adc_ge;
+ 	s32 degc_cali;
+ 	s32 o_slope;
+-	s32 vts[MT8173_NUM_SENSORS];
++	s32 vts[MAX_NUM_VTS];
  
- 		temp = raw_to_mcelsius(mt,
- 				       conf->bank_data[bank->id].sensors[i],
-@@ -568,7 +569,8 @@ static void mtk_thermal_init_bank(struct mtk_thermal *mt, int num,
+ 	const struct mtk_thermal_data *conf;
+ 	struct mtk_thermal_bank banks[];
+@@ -218,6 +228,10 @@ struct mtk_thermal {
  
- 	for (i = 0; i < conf->bank_data[num].num_sensors; i++)
- 		writel(conf->sensor_mux_values[conf->bank_data[num].sensors[i]],
--		       mt->thermal_base + conf->adcpnp[i]);
-+		       mt->thermal_base +
-+		       conf->adcpnp[conf->bank_data[num].sensors[i]]);
+ static const int mt8173_mux_values[MT8173_NUM_SENSORS] = { 0, 1, 2, 3, 16 };
  
- 	writel((1 << conf->bank_data[num].num_sensors) - 1,
- 	       mt->thermal_base + TEMP_MONCTL0);
++static const int mt8173_vts_index[MT8173_NUM_SENSORS] = {
++	VTS1, VTS2, VTS3, VTS4, VTSABB
++};
++
+ /* MT2701 thermal sensor data */
+ static const int mt2701_bank_data[MT2701_NUM_SENSORS] = {
+ 	MT2701_TS1, MT2701_TS2, MT2701_TSABB
+@@ -233,6 +247,10 @@ struct mtk_thermal {
+ 
+ static const int mt2701_mux_values[MT2701_NUM_SENSORS] = { 0, 1, 16 };
+ 
++static const int mt2701_vts_index[MT2701_NUM_SENSORS] = {
++	VTS1, VTS2, VTS3
++};
++
+ /* MT2712 thermal sensor data */
+ static const int mt2712_bank_data[MT2712_NUM_SENSORS] = {
+ 	MT2712_TS1, MT2712_TS2, MT2712_TS3, MT2712_TS4
+@@ -248,11 +266,16 @@ struct mtk_thermal {
+ 
+ static const int mt2712_mux_values[MT2712_NUM_SENSORS] = { 0, 1, 2, 3 };
+ 
++static const int mt2712_vts_index[MT2712_NUM_SENSORS] = {
++	VTS1, VTS2, VTS3, VTS4
++};
++
+ /* MT7622 thermal sensor data */
+ static const int mt7622_bank_data[MT7622_NUM_SENSORS] = { MT7622_TS1, };
+ static const int mt7622_msr[MT7622_NUM_SENSORS_PER_ZONE] = { TEMP_MSR0, };
+ static const int mt7622_adcpnp[MT7622_NUM_SENSORS_PER_ZONE] = { TEMP_ADCPNP0, };
+ static const int mt7622_mux_values[MT7622_NUM_SENSORS] = { 0, };
++static const int mt7622_vts_index[MT7622_NUM_SENSORS] = { VTS1 };
+ 
+ /**
+  * The MT8173 thermal controller has four banks. Each bank can read up to
+@@ -271,6 +294,7 @@ struct mtk_thermal {
+ 	.auxadc_channel = MT8173_TEMP_AUXADC_CHANNEL,
+ 	.num_banks = MT8173_NUM_ZONES,
+ 	.num_sensors = MT8173_NUM_SENSORS,
++	.vts_index = mt8173_vts_index,
+ 	.bank_data = {
+ 		{
+ 			.num_sensors = 2,
+@@ -305,6 +329,7 @@ struct mtk_thermal {
+ 	.auxadc_channel = MT2701_TEMP_AUXADC_CHANNEL,
+ 	.num_banks = 1,
+ 	.num_sensors = MT2701_NUM_SENSORS,
++	.vts_index = mt2701_vts_index,
+ 	.bank_data = {
+ 		{
+ 			.num_sensors = 3,
+@@ -330,6 +355,7 @@ struct mtk_thermal {
+ 	.auxadc_channel = MT2712_TEMP_AUXADC_CHANNEL,
+ 	.num_banks = 1,
+ 	.num_sensors = MT2712_NUM_SENSORS,
++	.vts_index = mt2712_vts_index,
+ 	.bank_data = {
+ 		{
+ 			.num_sensors = 4,
+@@ -349,6 +375,7 @@ struct mtk_thermal {
+ 	.auxadc_channel = MT7622_TEMP_AUXADC_CHANNEL,
+ 	.num_banks = MT7622_NUM_ZONES,
+ 	.num_sensors = MT7622_NUM_SENSORS,
++	.vts_index = mt7622_vts_index,
+ 	.bank_data = {
+ 		{
+ 			.num_sensors = 1,
+@@ -629,19 +656,37 @@ static int mtk_thermal_get_calibration_data(struct device *dev,
+ 		goto out;
+ 	}
+ 
+-	if (buf[0] & MT8173_CALIB_BUF0_VALID) {
+-		mt->adc_ge = MT8173_CALIB_BUF1_ADC_GE(buf[1]);
+-		mt->vts[MT8173_TS1] = MT8173_CALIB_BUF0_VTS_TS1(buf[0]);
+-		mt->vts[MT8173_TS2] = MT8173_CALIB_BUF0_VTS_TS2(buf[0]);
+-		mt->vts[MT8173_TS3] = MT8173_CALIB_BUF1_VTS_TS3(buf[1]);
+-		mt->vts[MT8173_TS4] = MT8173_CALIB_BUF2_VTS_TS4(buf[2]);
+-		mt->vts[MT8173_TSABB] = MT8173_CALIB_BUF2_VTS_TSABB(buf[2]);
+-		mt->degc_cali = MT8173_CALIB_BUF0_DEGC_CALI(buf[0]);
+-		if (MT8173_CALIB_BUF1_ID(buf[1]) &
+-		    MT8173_CALIB_BUF0_O_SLOPE_SIGN(buf[0]))
+-			mt->o_slope = -MT8173_CALIB_BUF0_O_SLOPE(buf[0]);
++	if (buf[0] & CALIB_BUF0_VALID) {
++		mt->adc_ge = CALIB_BUF1_ADC_GE(buf[1]);
++
++		for (i = 0; i < mt->conf->num_sensors; i++) {
++			switch (mt->conf->vts_index[i]) {
++			case VTS1:
++				mt->vts[VTS1] = CALIB_BUF0_VTS_TS1(buf[0]);
++				break;
++			case VTS2:
++				mt->vts[VTS2] = CALIB_BUF0_VTS_TS2(buf[0]);
++				break;
++			case VTS3:
++				mt->vts[VTS3] = CALIB_BUF1_VTS_TS3(buf[1]);
++				break;
++			case VTS4:
++				mt->vts[VTS4] = CALIB_BUF2_VTS_TS4(buf[2]);
++				break;
++			case VTSABB:
++				mt->vts[VTSABB] = CALIB_BUF2_VTS_TSABB(buf[2]);
++				break;
++			default:
++				break;
++			}
++		}
++
++		mt->degc_cali = CALIB_BUF0_DEGC_CALI(buf[0]);
++		if (CALIB_BUF1_ID(buf[1]) &
++		    CALIB_BUF0_O_SLOPE_SIGN(buf[0]))
++			mt->o_slope = -CALIB_BUF0_O_SLOPE(buf[0]);
+ 		else
+-			mt->o_slope = MT8173_CALIB_BUF0_O_SLOPE(buf[0]);
++			mt->o_slope = CALIB_BUF0_O_SLOPE(buf[0]);
+ 	} else {
+ 		dev_info(dev, "Device not calibrated, using default calibration values\n");
+ 	}
 -- 
 1.9.1
 
