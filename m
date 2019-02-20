@@ -2,96 +2,122 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 172FFC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB558C4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:41:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFDE320880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:38:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAA5820880
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:41:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="b+q1Pdcf"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Qw7lFkV8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727034AbfBTUio (ORCPT
+        id S1726819AbfBTUlI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 15:38:44 -0500
-Received: from ozlabs.org ([203.11.71.1]:37309 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726166AbfBTUin (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 15:38:43 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 444Tw13HDZz9s21;
-        Thu, 21 Feb 2019 07:38:41 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1550695121;
-        bh=qIlAy2zURB8dRxbyHDp2p2Oi42J1us7elj7NpBX9qp0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=b+q1Pdcf2WjS4/AdZWAd+jDjef7Qb2kThS7jlsGYMlPBCZDplyRC7Bs7LqsHJtBnV
-         /GF4byD4y5Q2yCRtMTaPXx6EhlJdB67ki/f1o4CMm/x6gB4Dkh4ZZSa40SdFd6/Qfn
-         WiMZs64EntzWfa5HDJkOusNTF0vyUI4UpZRpm9LQ2yPWDLkkJZw0MyXkkJj3fmktN+
-         7/JwbC+K7/wNLitJt1tCN/fyUGN1leqgVt5mj8E4VrGLDL7PXH86FYKqyZyq/E8/Jv
-         l4MIuUbGlpVjjiTGBbekd6jaAI6JFTbHW/2C0pHL/c2yPEA2/qNbmVm0kkWAp05xFe
-         9u1V6lVDG4bkQ==
-Date:   Thu, 21 Feb 2019 07:38:35 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <james.morris@microsoft.com>
-Subject: linux-next: Fixes tag needs some work in Linus' tree
-Message-ID: <20190221073835.7a18f007@canb.auug.org.au>
+        Wed, 20 Feb 2019 15:41:08 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:33716 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbfBTUlH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 15:41:07 -0500
+Received: by mail-ed1-f66.google.com with SMTP id c55so3379430edb.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 12:41:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=S6f5ltKfmmbc/Y9tRkkr1Gep0E2+84qSjXYQazP6FGY=;
+        b=Qw7lFkV8yfgMQI7I1KxGwt8coeYmzppBGjv89An9g4411slsQYPWkWoHK5o6qTaZY8
+         mGVh03kx1JrDV9WJ5hZVsSPFHwCrg7JtjxyRHfwFNCmGCG1aNmrR3BweASg7EduzJRcC
+         ZKEsPQaejvdqcHGTjwANDEGhQqLpqZ3r+9C+k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=S6f5ltKfmmbc/Y9tRkkr1Gep0E2+84qSjXYQazP6FGY=;
+        b=GTorz2qcLSobEZXyhoTDnt5siX/aPRsFRYi7yqYRuuFk7Px7xEATJ4p7i8KZaPocHz
+         8reXL+vhYZAt/DqiYVc3BiXd0E2UigggBKgOCx0w0kWglOA3u7dTnV4O5/fDBtEW+vfw
+         KFe750GL7SNUf0C1JCIV82rzIGhJlrwpNo0DvF2Ai3tQoOOLJDosI1yPxGQAiL47evsK
+         VvxgT+nYE5B35dYv/8z0Ln/wPVy/o4xfwwXhiOgOXXo+vF8iE+/VAUYbvmSQ+Tgh2YfO
+         eVfumcxnMgYjFwzV1GSSyBNr/riM46SnG5ag/efxKBQJzKX6v82uaEf2gSiAjx2zwzfu
+         I+Gg==
+X-Gm-Message-State: AHQUAua2+8LUVUh9pWq1rEQ4Gdo91NcCSCKtBUGoZENKpVvw1zFSQ+Mi
+        jaYtKwp1//j5gz6uSWtsu5EbUw==
+X-Google-Smtp-Source: AHgI3IagqA0mxBGHF+yEfWeC0mj2PH/FOucG9GisitYve7hjX3IsPJmMFQpogapUuhVj9T6XNVqoOw==
+X-Received: by 2002:a17:906:1602:: with SMTP id m2mr13654457ejd.228.1550695265590;
+        Wed, 20 Feb 2019 12:41:05 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id j6sm6087946edd.43.2019.02.20.12.41.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Feb 2019 12:41:04 -0800 (PST)
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+To:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Jan Stancek <jstancek@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, linux-mm@kvack.org
+Subject: [PATCH] mm: Don't let userspace spam allocations warnings
+Date:   Wed, 20 Feb 2019 21:40:58 +0100
+Message-Id: <20190220204058.11676-1-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/n5nf79UKNxZ+c28yIBKyNxN"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/n5nf79UKNxZ+c28yIBKyNxN
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+memdump_user usually gets fed unchecked userspace input. Blasting a
+full backtrace into dmesg every time is a bit excessive - I'm not sure
+on the kernel rule in general, but at least in drm we're trying not to
+let unpriviledge userspace spam the logs freely. Definitely not entire
+warning backtraces.
 
-Hi all,
+It also means more filtering for our CI, because our testsuite
+exercises these corner cases and so hits these a lot.
 
-In commit
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Roman Gushchin <guro@fb.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Jan Stancek <jstancek@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-mm@kvack.org
+---
+ mm/util.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  822ad64d7e46 ("keys: Fix dependency loop between construction record and =
-auth key")
+diff --git a/mm/util.c b/mm/util.c
+index 1ea055138043..379319b1bcfd 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -150,7 +150,7 @@ void *memdup_user(const void __user *src, size_t len)
+ {
+ 	void *p;
+ 
+-	p = kmalloc_track_caller(len, GFP_USER);
++	p = kmalloc_track_caller(len, GFP_USER | __GFP_NOWARN);
+ 	if (!p)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-- 
+2.20.1
 
-Fixes tag
-
-  Fixes: 7ee02a316600 ("keys: Fix dependency loop between construction reco=
-rd and auth key")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/n5nf79UKNxZ+c28yIBKyNxN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxtussACgkQAVBC80lX
-0GxO8AgApex+74qOgOh2047i2KJe/fCQk/X+t9m9uLFdZF/gho78BfoFGTGRkVAv
-aPUqizKZRX/PrYkxWShAdxXbSLXiyhbIDvhtspnOAsGpH2/oWHXRY2N91i++0w+r
-Lso14pXoPRF0svi+E9cTjFWd8hJleuIlTbsKNSdyOkSlrvEqvJwLZKr0eOf55aea
-1PLcY9nbb+jVX0RsNCj6HakxUy3XRSt99h42zrScWdKvoYJk/8hWo5HTtDociGz7
-i16wjhKqZBh8derwrFNJVean4jxDET8yGSGGdsLPiFRL14SXEWXd5BPaj0bUbZOG
-rve+ee5j1WE7mqp3/ODBcLyF8oAJCQ==
-=m1GQ
------END PGP SIGNATURE-----
-
---Sig_/n5nf79UKNxZ+c28yIBKyNxN--
