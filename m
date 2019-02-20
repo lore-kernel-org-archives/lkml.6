@@ -2,109 +2,87 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9B83C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F69C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:23:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C188D2147C
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:18:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC33520880
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:23:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbfBTNSv convert rfc822-to-8bit (ORCPT
+        id S1727665AbfBTNXP convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 08:18:51 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:35931 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725836AbfBTNSu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 08:18:50 -0500
-Received: by mail-qt1-f195.google.com with SMTP id p25so26807672qtb.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 05:18:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=jM9Jw3aefaKq+H2j+be/k/Ar6QLO2mjo2F1yZuiawdI=;
-        b=TttPKO6y3ad80ALpCtbCpOAaHjYTQMPXRwi0L7XaDGVRUWEbKRBPDbDuGRRVRgcPC2
-         a6JtyHNs9aUZAG2X1oIJB4PUozRm2FMgOcjigs1qkpaIOx8uphdZg9IPYim3dAaM4oBU
-         nUCYIJrlkaqru6DzZXFGfdLjGT7SPSkRzFhaRhrS29U+O3bSUH80AmDr4FhRsaE3fQjC
-         P+d86Z9isGAm2Jzado3TSDuHeWuDp144LhmMwyoPWAcictZotWjMZOj56I+W9le7fkQu
-         HgnUoAkTj+x4rBR8LdtqN769Wt6KMEbu/XPHFKY6wXtAP11z5buII83nfHbhKpAV0+nC
-         UFfQ==
-X-Gm-Message-State: AHQUAuYHTo7HKUv23Y0Km3wd+EmE/rnD1Iw/E/tMJUXJ7P0biXS1e6RK
-        Z9iX4rNvmMuOfEACrgTEMv6K1bWzZYGbKbpmcXE=
-X-Google-Smtp-Source: AHgI3IZeqeQugYiEdR6EYrPjJWVBGALk5nTuDudEdlIatk05LGXbg83xZwYiXEtk6t0fLob1vUE/JpR1WUyDSdNevMQ=
-X-Received: by 2002:ac8:237b:: with SMTP id b56mr12817677qtb.343.1550668729035;
- Wed, 20 Feb 2019 05:18:49 -0800 (PST)
+        Wed, 20 Feb 2019 08:23:15 -0500
+Received: from ozlabs.org ([203.11.71.1]:54231 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725869AbfBTNXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 08:23:15 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 444JFX0zLHz9s1B;
+        Thu, 21 Feb 2019 00:23:12 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Jonathan =?utf-8?Q?Neusch?= =?utf-8?Q?=C3=A4fer?= 
+        <j.neuschaefer@gmx.net>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2 00/15] powerpc/32s: Use BATs/LTLBs for STRICT_KERNEL_RWX
+In-Reply-To: <8b072209-c845-20f5-8ff1-27ecd67b5c72@c-s.fr>
+References: <cover.1547132681.git.christophe.leroy@c-s.fr> <20190113181621.GA22334@latitude> <714e78ba-1e92-a856-3dd6-a1fb96ad3785@c-s.fr> <20190113210227.GB22334@latitude> <334b1b02-b652-499c-904e-09e6f7164b8c@c-s.fr> <20190115003353.GD22334@latitude> <b37e3635-9c69-0cfc-1283-25459b394033@c-s.fr> <87fttuz0d3.fsf@concordia.ellerman.id.au> <8b072209-c845-20f5-8ff1-27ecd67b5c72@c-s.fr>
+Date:   Thu, 21 Feb 2019 00:23:09 +1100
+Message-ID: <87ftsi7fwi.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-References: <1550648704-11545-1-git-send-email-sugaya.taichi@socionext.com>
- <CAK8P3a0rwi=uDFYiF50e5HkYoDQUA6_VSWDMiAVeTMaRzeE6oQ@mail.gmail.com>
- <dbe814ed-3cf2-f72e-b7fa-23cf41e9e42b@socionext.com> <CAK8P3a38qgw8LeX=Y_nG53HzjnXjHESekgnJ6jtW_xvd7Zvq-Q@mail.gmail.com>
- <CAA93ih2t34qwVB==LoF2odOCEOd9EE06i3hz0eTuonnXjJCyDw@mail.gmail.com>
-In-Reply-To: <CAA93ih2t34qwVB==LoF2odOCEOd9EE06i3hz0eTuonnXjJCyDw@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 20 Feb 2019 14:18:31 +0100
-Message-ID: <CAK8P3a3DmKjTNXo8ufExaQxEsQX=MAYymeARbEzu8QXsCJFfiA@mail.gmail.com>
-Subject: Re: [PATCH v3 9/9] ARM: configs: Add Milbeaut M10V defconfig
-To:     Masami Hiramatsu <masami.hiramatsu@linaro.org>
-Cc:     "Sugaya, Taichi" <sugaya.taichi@socionext.com>,
-        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>, soc@kernel.org,
-        Takao Orito <orito.takao@socionext.com>,
-        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 2:16 PM Masami Hiramatsu
-<masami.hiramatsu@linaro.org> wrote:
-> 2019年2月20日(水) 21:28 Arnd Bergmann <arnd@arndb.de>:
-> > On Wed, Feb 20, 2019 at 12:27 PM Sugaya, Taichi
-> > <sugaya.taichi@socionext.com> wrote:
-> > > On 2019/02/20 18:28, Arnd Bergmann wrote:
-> > > > On Wed, Feb 20, 2019 at 8:44 AM Sugaya Taichi
-> > > > <sugaya.taichi@socionext.com> wrote:
-> > > >
-> > > >> diff --git a/arch/arm/configs/milbeaut_m10v_defconfig b/arch/arm/configs/milbeaut_m10v_defconfig
-> > > >> new file mode 100644
-> > > >> index 0000000..a263211
-> > > >> --- /dev/null
-> > > >> +++ b/arch/arm/configs/milbeaut_m10v_defconfig
-> > > >> @@ -0,0 +1,175 @@
-> > > >
-> > > > I no longer see anything here that should be turned off, but you
-> > > > might want to run 'make savedefconfig' and use the output of that,
-> > > > to make it easier to keep it up to date.
-> > > >
-> > >
-> > > I got it, I use the output of 'make savedefconfig'.
-> > > One question, is that OK to add some options on it?
-> > >   -Because "CONFIG_ARCH_MILBEAUT" was not listed.
-> >
-> > What I'd do here is to apply all the patches you want to get merged in
-> > the next few releases before running 'savedefconfig' and use the output
-> > of that.
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
+
+> Le 15/01/2019 à 11:22, Michael Ellerman a écrit :
+>> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>>> Le 15/01/2019 à 01:33, Jonathan Neuschäfer a écrit :
+>> ...
+>>>>
+>>>> - patches 7 to 11 fail to build with this error (really a warning, but
+>>>>     arch/powerpc doesn't allow warnings by default):
+>>>>
+>>>> 	  CC      arch/powerpc/mm/ppc_mmu_32.o
+>>>> 	../arch/powerpc/mm/ppc_mmu_32.c:133:13: error: ‘clearibat’ defined but not used [-Werror=unused-function]
+>>>> 	 static void clearibat(int index)
+>>>> 		     ^~~~~~~~~
+>>>> 	../arch/powerpc/mm/ppc_mmu_32.c:115:13: error: ‘setibat’ defined but not used [-Werror=unused-function]
+>>>> 	 static void setibat(int index, unsigned long virt, phys_addr_t phys,
+>>>> 		     ^~~~~~~
+>>>> 	cc1: all warnings being treated as errors
+>>>
+>>> Argh ! I have to squash the patch bringing the new functions with the
+>>> one using them (patch 12). The result is a big messy patch which is more
+>>> difficult to review but that's life.
+>> 
+>> You don't *have* to squash them.
+>> 
+>> We like to preserve bisectability, but it's not a 100% hard requirement.
+>> 
+>> Someone trying to bisect through those patches can always turn off
+>> -Werror with PPC_DISABLE_WERROR. But they probably can just skip them
+>> because they just add new code that's not called yet.
 >
-> Let me check. Would you mean that the defconfig will include all those
-> drivers configs, which will not appear at this moment?
-
-Correct.
-
-> > If you already know that you will need the options, including
-> > them now means you don't have to update the defconfig file
-> > as much in the future.
+> Ok thanks for the note.
 >
-> I just concern that if other subsystem maintainer comments
-> on the config name. Even in that case, can we just update the
-> defconfig with new name?
+>> 
+>> So I won't object if you send them as-is.
+>
+> Good to know. Anyway I think I will at least re-order so that the patch 
+> using the new functions immediatly follows the one adding the functions.
+ 
+Based on that I'm expecting a v3 of this series, right?
 
-Yes, that's easy enough.
-
-      Arnd
+cheers
