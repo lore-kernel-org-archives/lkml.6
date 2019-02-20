@@ -2,135 +2,79 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F58C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:18:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7098DC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:18:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB8D220C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:18:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="SU7z7Wou"
+	by mail.kernel.org (Postfix) with ESMTP id 4A98120675
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:18:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbfBTOSm (ORCPT
+        id S1727055AbfBTOS5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 09:18:42 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39753 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726395AbfBTOSl (ORCPT
+        Wed, 20 Feb 2019 09:18:57 -0500
+Received: from relay10.mail.gandi.net ([217.70.178.230]:33191 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726194AbfBTOS4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 09:18:41 -0500
-Received: by mail-wm1-f68.google.com with SMTP id z84so6619593wmg.4
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 06:18:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HYh/wMOJEjzj4yvU8ZgajL6TKXoZLNw8EN4YdASIjrg=;
-        b=SU7z7Wou59v7qIuzNJjzzoKCPqdcMhzChZ+vYTQ2rxEq71vNRBFSWjPh4erTzQ34u9
-         3Yn8JydmugfvNT7RfPpybaUhO8i2FCif/B4E/4NSmlO/sOzRTbXXJ8yeScFjG0kY4HDi
-         Fhy54cbyEsKIXLO4irgRdGfDDvRXxtXzPHgM3aSYVAXeIJDoxo46NojbhZ1t6pZIVF6y
-         Cd7R+E5CJQmWJFasLWe98siHZNyTKeRTIyAD0syGve3jOuWA49UVErOTklRVwebLu1ge
-         FxxkPdWGpRHK+C2coxSEzRf9pz3Kp+EjFCSYb39krWlClbsX/9qF83vYY9jc+GKAVSbA
-         1vow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HYh/wMOJEjzj4yvU8ZgajL6TKXoZLNw8EN4YdASIjrg=;
-        b=aUABsM34y3pAXf42ldeLlCarFzjgaE3nWd2IAoyM8NI8KbGak0ugl03JEO8WX+VnxB
-         cWWq/QyX4cH78DoKjlYUsykrJkTFa1ZEBrKrzk+JF+h4OVTmW5Ykzo4INgBrnm1Qkhi/
-         RdmgKXkzbMK/6PnJZBSVmAjXY85Hyw8lDd2kdZACpt0bL2FgW/sY/VOIcPO7ucXGkj7O
-         23WlFqbvynZh9gcizSEn9qRIaqSNMKiqqCtjZcItO97sJK2PYNb4f6fjVYvv7oze4R9G
-         DHugg3LvXg4XHao7aRIx3PQuYzbfa5dAMy4QNDzE0fLnfiv6DOeCqMYb/5fbpv1HzPqt
-         k25Q==
-X-Gm-Message-State: AHQUAuZ3EZSWu3DzFYSnUQBOFA9vvkTsIUqNAnzn6LXo2kQNbLDuBy5Y
-        yYkmE71P9EaSmnvAnOsj8nDR8A==
-X-Google-Smtp-Source: AHgI3IYWPXJvfR8Xt5hMzmUpaly+r19Src4me6mRrvf2QgQ9GUgAjPxNtAOMkMnKd8NwD97NB6iT9g==
-X-Received: by 2002:a1c:3842:: with SMTP id f63mr6849753wma.25.1550672319714;
-        Wed, 20 Feb 2019 06:18:39 -0800 (PST)
-Received: from brauner.io ([81.92.17.155])
-        by smtp.gmail.com with ESMTPSA id p16sm33606895wro.25.2019.02.20.06.18.37
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 20 Feb 2019 06:18:39 -0800 (PST)
-Date:   Wed, 20 Feb 2019 15:18:37 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     David Howells <dhowells@redhat.com>, linux-cifs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-api@vger.kernel.org,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-kernel@vger.kernel.org, sfrench@samba.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, trond.myklebust@hammerspace.com
-Subject: Re: [RFC PATCH 00/27] Containers and using authenticated filesystems
-Message-ID: <20190220141715.ukjo5d4ctepahl43@brauner.io>
-References: <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
- <8736ojybw7.fsf@xmission.com>
+        Wed, 20 Feb 2019 09:18:56 -0500
+Received: from localhost (unknown [185.94.189.187])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id E908A240003;
+        Wed, 20 Feb 2019 14:18:53 +0000 (UTC)
+Date:   Wed, 20 Feb 2019 15:18:53 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Mans Rullgard <mans@mansr.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ARM: dts: sun7i: add pinctrl for missing uart mux
+ options
+Message-ID: <20190220141853.mrcfdhv6mfhtbqjv@flea>
+References: <20190216182132.12895-1-mans@mansr.com>
+ <20190220120717.30650-1-mans@mansr.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rq6dlezyfpcqtila"
 Content-Disposition: inline
-In-Reply-To: <8736ojybw7.fsf@xmission.com>
+In-Reply-To: <20190220120717.30650-1-mans@mansr.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 10:35:20AM -0600, Eric W. Biederman wrote:
-> 
-> So you missed the main mailing lists for discussion of this kind of
-> thing, and the maintainer.  So I have reservations about the quality of
-> your due diligence already.
-> 
-> Looking at your description you are introducing a container id.
-> You don't descibe which namespace your contianer id lives in.
-> Without the container id living in a container this breaks
-> nested containers and process migration aka CRIU.
-> 
-> So based on the your description.
-> 
-> Nacked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> 
-> 
-> 
-> David Howells <dhowells@redhat.com> writes:
-> 
-> > Here's a collection of patches that containerises the kernel keys and makes
-> > it possible to separate keys by namespace.  This can be extended to any
-> > filesystem that uses request_key() to obtain the pertinent authentication
-> > token on entry to VFS or socket methods.
 
-/me puts on kernel hat:
-I'm not neccessarily opposed to making containers kernel objects even
-though I have been for quite a while (for brevity I'll use "kcontainers"
-for this). But I think the approach taken here is a little misguided.
-This patchsets pushes the argument that kcontainers are needed because
-of keyrings and authenticated filesystems and is designed around this
-use-case. Imho, that is bound to fall short of requirements and
-use-cases that have been piling up over the years.
-If we want to make kcontainers a thing we need to have a separate
-discussion and a separate patchset that is *solely* concerned with
-creating a kcontainer api. And frankly, that is likely going to take a
-long time.
-At this point containers have become a real "thing" on Linux - like it
-or not. So justifying it to making them in-kernel citizens doesn't need
-the detour over keyrings or something else. We should just discuss
-whether we think that the benefits of kcontainers (e.g. security)
-outweight the costs (e.g. maintenance).
+--rq6dlezyfpcqtila
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-/me puts on runtime maintainer hat:
-One thing that is true is that userspace containers (let's call them
-"ucontainers") as implemented by runtimes today will not go away. We
-have been living with this ad-hoc concept and it's various
-implementations on upstream Linux at least since 2008. And kernels
-without kcontainers will be with us until the end of (Linux)time
-probably. So anyone who thinks that kcontainers will replace ucontainers
-and that'll be it will be thoroughly disappointed in the end.
-It is also very likely that not all use-cases we can currently cover
-with ucontainers can be covered by kcontainers. Now that might be ok but
-if we ever introduce kcontainers through a proper kernel api we will end
-up maintaining ucontainers and kcontainers simultaneously. That's a
-burden we shouldn't underestimate.
+On Wed, Feb 20, 2019 at 12:07:17PM +0000, Mans Rullgard wrote:
+> This adds pinctrl settings for various missing uart options.
+>=20
+> Signed-off-by: Mans Rullgard <mans@mansr.com>
+
+Applied, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--rq6dlezyfpcqtila
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXG1hzQAKCRDj7w1vZxhR
+xf0YAQDrfcoJToPpU4dM4p5TUdQkQGKLgSSQg1bt8p/2cKZvBQD7BPqKYyQKRweF
+vu1PyV0qT7POUUo5ptq9/LF2hBFMaw0=
+=+gW3
+-----END PGP SIGNATURE-----
+
+--rq6dlezyfpcqtila--
