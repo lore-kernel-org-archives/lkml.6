@@ -2,138 +2,154 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A29EC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 01:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 075BDC10F00
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 01:56:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24DD520823
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 01:54:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="niDPt5RK"
+	by mail.kernel.org (Postfix) with ESMTP id D048A20823
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 01:56:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729613AbfBTByD (ORCPT
+        id S1729757AbfBTB40 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 20:54:03 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42001 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725616AbfBTByB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 20:54:01 -0500
-Received: by mail-pg1-f196.google.com with SMTP id b2so5288021pgl.9
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 17:54:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7Dlf9v6dnTgQSQXrrmpNU7zWj0OuSqXk5bwXEm/vTKM=;
-        b=niDPt5RKv8ZbcMhCxYaqSE8yuZVdgd6rdTFFsz99JImmzywWov0WoSZP1uuJi0qlhu
-         uU7qaCrkRlzfBBXWYARwRYMnQqAK9dp2+S5gsBhAgzBvL/PsqJwA4pSlZ5prKun0jpNl
-         yC05rKhRcF+6pbtnxpc61kc6Ud094upLqOTR3lXHca05vlhGRDLKCVvi2NIQTwkcalIM
-         hbaTcKBVWYhsvJPja6VCf7IcWzbpyH6TcIRASFhs0E6BrSN+F+hueZg6YNcv97MfJVly
-         /vf0RWsiC40MKYmmqXFRYcgTjXfYig2WzD1ww42r/AwhIVj3gYAuVKRrj8QjDFLMmqYi
-         s9lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=7Dlf9v6dnTgQSQXrrmpNU7zWj0OuSqXk5bwXEm/vTKM=;
-        b=BExB53OmgKUmCPzo1U7AppajiPSA5ps+cFzivpxAuEyW6NTkpWWC/hrTz/dYKVQg9J
-         /SJ+HHt11Yv6PpDAinPGZLb1MF/dQspwqTY3NXSrwi+y5UKKJ3aCGBDzvg6imdya5x1v
-         eaOQyNG+Zc99/+pAJyr6xr0l8xEvtDHMjvqWN31BPl5gsy/9fFm+X9zGlG+weVo6wRvM
-         Kq3lQdzuDpnJ8HMbm9KoQC4rcOd2U1/ovC2s8sy+KPmwvewXWV0vYogE03wf5QSIZqr6
-         x4fP9mq1DtHHrBm+2hCAaJ5HN4c0RAIGzN0RxC6ObR0Cz99S/2ioUCnDRI3YZuAzOh8j
-         mPow==
-X-Gm-Message-State: AHQUAuavy9Cx4i0w8UCuYaG/KPPWSK6Yz6cbFKSpfME0Ru3pO7utKm/s
-        auQ2fHCBbFndL27hrDG1FgV0Aw==
-X-Google-Smtp-Source: AHgI3IYjagtwbtXhFQGXyWIdh+MqBm0lWMXN6xQeL/T2XJN7DTAjezIzKAqufX6KNaKmcPdJ2Zu/vQ==
-X-Received: by 2002:a63:2bc6:: with SMTP id r189mr26236366pgr.201.1550627640446;
-        Tue, 19 Feb 2019 17:54:00 -0800 (PST)
-Received: from localhost.localdomain (220-133-186-239.HINET-IP.hinet.net. [220.133.186.239])
-        by smtp.gmail.com with ESMTPSA id k7sm5605296pgr.28.2019.02.19.17.53.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 17:53:59 -0800 (PST)
-From:   Axel Lin <axel.lin@ingics.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Mark Zhang <markz@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
-Subject: [RESEND][PATCH 2/2] regulator: max77650: Add missing .owner field in regulator_desc
-Date:   Wed, 20 Feb 2019 09:53:28 +0800
-Message-Id: <20190220015328.30158-2-axel.lin@ingics.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190220015328.30158-1-axel.lin@ingics.com>
-References: <20190220015328.30158-1-axel.lin@ingics.com>
+        Tue, 19 Feb 2019 20:56:26 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53252 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726884AbfBTB40 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 20:56:26 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D1C72B0AB5;
+        Wed, 20 Feb 2019 01:56:25 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 24CAF1001DE2;
+        Wed, 20 Feb 2019 01:56:25 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-nvdimm@lists.01.org, Vishal Verma <vishal.verma@intel.com>,
+        stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] acpi/nfit: Fix bus command validation
+References: <154958385172.3932544.193235520333886200.stgit@dwillia2-desk3.amr.corp.intel.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Tue, 19 Feb 2019 20:56:24 -0500
+In-Reply-To: <154958385172.3932544.193235520333886200.stgit@dwillia2-desk3.amr.corp.intel.com>
+        (Dan Williams's message of "Thu, 07 Feb 2019 15:57:31 -0800")
+Message-ID: <x49lg2bql2v.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 20 Feb 2019 01:56:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add missing .owner field in regulator_desc, which is used for refcounting.
+Dan Williams <dan.j.williams@intel.com> writes:
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
-This patch was sent on https://lkml.org/lkml/2019/1/30/467
+> Commit 11189c1089da "acpi/nfit: Fix command-supported detection" broke
+> ND_CMD_CALL for bus-level commands. The "func = cmd" assumption is only
+> valid for:
+>
+>     ND_CMD_ARS_CAP
+>     ND_CMD_ARS_START
+>     ND_CMD_ARS_STATUS
+>     ND_CMD_CLEAR_ERROR
+>
+> The function number otherwise needs to be pulled from the command
+> payload for:
+>
+>     NFIT_CMD_TRANSLATE_SPA
+>     NFIT_CMD_ARS_INJECT_SET
+>     NFIT_CMD_ARS_INJECT_CLEAR
+>     NFIT_CMD_ARS_INJECT_GET
+>
+> Update cmd_to_func() for the bus case and call it in the common path.
+>
+> Fixes: 11189c1089da ("acpi/nfit: Fix command-supported detection")
+> Cc: <stable@vger.kernel.org>
+> Cc: Vishal Verma <vishal.verma@intel.com>
+> Reported-by: Grzegorz Burzynski <grzegorz.burzynski@intel.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 
- drivers/regulator/max77650-regulator.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Tricky code path, eh?
 
-diff --git a/drivers/regulator/max77650-regulator.c b/drivers/regulator/max77650-regulator.c
-index 5afb91400832..411912d5278b 100644
---- a/drivers/regulator/max77650-regulator.c
-+++ b/drivers/regulator/max77650-regulator.c
-@@ -319,6 +319,7 @@ static struct max77650_regulator_desc max77650_LDO_desc = {
- 		.active_discharge_reg	= MAX77650_REG_CNFG_LDO_B,
- 		.enable_time		= 100,
- 		.type			= REGULATOR_VOLTAGE,
-+		.owner			= THIS_MODULE,
- 	},
- 	.regA		= MAX77650_REG_CNFG_LDO_A,
- 	.regB		= MAX77650_REG_CNFG_LDO_B,
-@@ -343,6 +344,7 @@ static struct max77650_regulator_desc max77650_SBB0_desc = {
- 		.active_discharge_reg	= MAX77650_REG_CNFG_SBB0_B,
- 		.enable_time		= 100,
- 		.type			= REGULATOR_VOLTAGE,
-+		.owner			= THIS_MODULE,
- 	},
- 	.regA		= MAX77650_REG_CNFG_SBB0_A,
- 	.regB		= MAX77650_REG_CNFG_SBB0_B,
-@@ -367,6 +369,7 @@ static struct max77650_regulator_desc max77650_SBB1_desc = {
- 		.active_discharge_reg	= MAX77650_REG_CNFG_SBB1_B,
- 		.enable_time		= 100,
- 		.type			= REGULATOR_VOLTAGE,
-+		.owner			= THIS_MODULE,
- 	},
- 	.regA		= MAX77650_REG_CNFG_SBB1_A,
- 	.regB		= MAX77650_REG_CNFG_SBB1_B,
-@@ -390,6 +393,7 @@ static struct max77650_regulator_desc max77651_SBB1_desc = {
- 		.active_discharge_reg	= MAX77650_REG_CNFG_SBB1_B,
- 		.enable_time		= 100,
- 		.type			= REGULATOR_VOLTAGE,
-+		.owner			= THIS_MODULE,
- 	},
- 	.regA		= MAX77650_REG_CNFG_SBB1_A,
- 	.regB		= MAX77650_REG_CNFG_SBB1_B,
-@@ -414,6 +418,7 @@ static struct max77650_regulator_desc max77650_SBB2_desc = {
- 		.active_discharge_reg	= MAX77650_REG_CNFG_SBB2_B,
- 		.enable_time		= 100,
- 		.type			= REGULATOR_VOLTAGE,
-+		.owner			= THIS_MODULE,
- 	},
- 	.regA		= MAX77650_REG_CNFG_SBB2_A,
- 	.regB		= MAX77650_REG_CNFG_SBB2_B,
-@@ -438,6 +443,7 @@ static struct max77650_regulator_desc max77651_SBB2_desc = {
- 		.active_discharge_reg	= MAX77650_REG_CNFG_SBB2_B,
- 		.enable_time		= 100,
- 		.type			= REGULATOR_VOLTAGE,
-+		.owner			= THIS_MODULE,
- 	},
- 	.regA		= MAX77650_REG_CNFG_SBB2_A,
- 	.regB		= MAX77650_REG_CNFG_SBB2_B,
--- 
-2.17.1
+Tested-by: Jeff Moyer <jmoyer@redhat.com>
 
+-Jeff
+
+> ---
+>  drivers/acpi/nfit/core.c |   22 ++++++++++++----------
+>  1 file changed, 12 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+> index e18ade5d74e9..c34c595d6bb0 100644
+> --- a/drivers/acpi/nfit/core.c
+> +++ b/drivers/acpi/nfit/core.c
+> @@ -415,7 +415,7 @@ static int cmd_to_func(struct nfit_mem *nfit_mem, unsigned int cmd,
+>  	if (call_pkg) {
+>  		int i;
+>  
+> -		if (nfit_mem->family != call_pkg->nd_family)
+> +		if (nfit_mem && nfit_mem->family != call_pkg->nd_family)
+>  			return -ENOTTY;
+>  
+>  		for (i = 0; i < ARRAY_SIZE(call_pkg->nd_reserved2); i++)
+> @@ -424,6 +424,10 @@ static int cmd_to_func(struct nfit_mem *nfit_mem, unsigned int cmd,
+>  		return call_pkg->nd_command;
+>  	}
+>  
+> +	/* In the !call_pkg case, bus commands == bus functions */
+> +	if (!nfit_mem)
+> +		return cmd;
+> +
+>  	/* Linux ND commands == NVDIMM_FAMILY_INTEL function numbers */
+>  	if (nfit_mem->family == NVDIMM_FAMILY_INTEL)
+>  		return cmd;
+> @@ -454,17 +458,18 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
+>  	if (cmd_rc)
+>  		*cmd_rc = -EINVAL;
+>  
+> +	if (cmd == ND_CMD_CALL)
+> +		call_pkg = buf;
+> +	func = cmd_to_func(nfit_mem, cmd, call_pkg);
+> +	if (func < 0)
+> +		return func;
+> +
+>  	if (nvdimm) {
+>  		struct acpi_device *adev = nfit_mem->adev;
+>  
+>  		if (!adev)
+>  			return -ENOTTY;
+>  
+> -		if (cmd == ND_CMD_CALL)
+> -			call_pkg = buf;
+> -		func = cmd_to_func(nfit_mem, cmd, call_pkg);
+> -		if (func < 0)
+> -			return func;
+>  		dimm_name = nvdimm_name(nvdimm);
+>  		cmd_name = nvdimm_cmd_name(cmd);
+>  		cmd_mask = nvdimm_cmd_mask(nvdimm);
+> @@ -475,12 +480,9 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
+>  	} else {
+>  		struct acpi_device *adev = to_acpi_dev(acpi_desc);
+>  
+> -		func = cmd;
+>  		cmd_name = nvdimm_bus_cmd_name(cmd);
+>  		cmd_mask = nd_desc->cmd_mask;
+> -		dsm_mask = cmd_mask;
+> -		if (cmd == ND_CMD_CALL)
+> -			dsm_mask = nd_desc->bus_dsm_mask;
+> +		dsm_mask = nd_desc->bus_dsm_mask;
+>  		desc = nd_cmd_bus_desc(cmd);
+>  		guid = to_nfit_uuid(NFIT_DEV_BUS);
+>  		handle = adev->handle;
+>
+> _______________________________________________
+> Linux-nvdimm mailing list
+> Linux-nvdimm@lists.01.org
+> https://lists.01.org/mailman/listinfo/linux-nvdimm
