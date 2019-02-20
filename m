@@ -2,98 +2,134 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B248C10F01
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:05:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44CABC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:05:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EBC921773
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:05:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550653500;
-	bh=KK3tdbxk1eqQpwZ/Kd+GJUcnaptpL6USf15JxHOhjNU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=WgDkCARXswYZyBn2+G9tw+MKjnBYt3q/9JPYloeVpCt+EhEdmHWplsKAeAZAJtwm3
-	 h4KtyPndZP4xk+SiE5ydoLpbReaT23K02pjvhZOliH6jZ4sTSA2bGdXSrzXvVzXqr2
-	 d56HQoPP5QQIxk1+zpAasL5VfQKEqzsE9LevidU0=
+	by mail.kernel.org (Postfix) with ESMTP id 1E73921773
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:05:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726467AbfBTJE7 (ORCPT
+        id S1726627AbfBTJFP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 04:04:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45540 "EHLO mail.kernel.org"
+        Wed, 20 Feb 2019 04:05:15 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34000 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725857AbfBTJE6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 04:04:58 -0500
-Received: from localhost (unknown [195.134.171.12])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725857AbfBTJFO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 04:05:14 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CC3A208E4;
-        Wed, 20 Feb 2019 09:04:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550653498;
-        bh=KK3tdbxk1eqQpwZ/Kd+GJUcnaptpL6USf15JxHOhjNU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hvzWN8xsXf39BI52vX6jUTV0FWAAy2vHvhspSX6YA/u1twPDDhilpDLL6IkPukirS
-         eQV7j8Beq8CfAhEv4oPfK2ZONZOLCDZzkZoctWRLltBQvY1cfFSk/vuQi1Y38Q1yb7
-         awOjQPxxBhAL9TosFbbDqBJUCp4vCZ2dmLg/Azcg=
-Date:   Wed, 20 Feb 2019 10:04:53 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.20 00/92] 4.20.11-stable review
-Message-ID: <20190220090453.GA29215@kroah.com>
-References: <20190218133454.668268457@linuxfoundation.org>
- <1ed0095f-ae1a-f57d-8005-38603ab460b5@roeck-us.net>
+        by mx1.redhat.com (Postfix) with ESMTPS id AD8767E9C8;
+        Wed, 20 Feb 2019 09:05:13 +0000 (UTC)
+Received: from gondolin (dhcp-192-187.str.redhat.com [10.33.192.187])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8BFFA17D3A;
+        Wed, 20 Feb 2019 09:05:06 +0000 (UTC)
+Date:   Wed, 20 Feb 2019 10:05:03 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Tony Krowiak <akrowiak@linux.ibm.com>
+Cc:     pmorel@linux.ibm.com, borntraeger@de.ibm.com,
+        alex.williamson@redhat.com, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        frankja@linux.ibm.com, pasic@linux.ibm.com, david@redhat.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        freude@linux.ibm.com, mimu@linux.ibm.com
+Subject: Re: [PATCH v3 1/9] s390: vfio_ap: link the vfio_ap devices to the
+ vfio_ap bus subsystem
+Message-ID: <20190220100503.4036e8dd.cohuck@redhat.com>
+In-Reply-To: <f95dec76-ba2e-38b2-64f3-9abe4ca6a501@linux.ibm.com>
+References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
+        <1550152269-6317-2-git-send-email-pmorel@linux.ibm.com>
+        <20190214155441.087d2a68.cohuck@redhat.com>
+        <9403117a-04a6-8f69-2a61-f96d35a59555@linux.ibm.com>
+        <20190214175730.4ab609ae.cohuck@redhat.com>
+        <9200b1f8-874f-ffa7-bef0-19ca570d7ac1@linux.ibm.com>
+        <eac03540-a499-fa0f-1a4a-b5cc99030775@linux.ibm.com>
+        <20190215101118.5417d725.cohuck@redhat.com>
+        <f38c99e6-bb25-9179-e4cd-20ba8482111f@linux.ibm.com>
+        <20190218130147.5ed3edbe.cohuck@redhat.com>
+        <602fd1f8-0ac1-42dc-30fd-ea16bb7bbc99@linux.ibm.com>
+        <20190218175747.53212f95.cohuck@redhat.com>
+        <f95dec76-ba2e-38b2-64f3-9abe4ca6a501@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1ed0095f-ae1a-f57d-8005-38603ab460b5@roeck-us.net>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 20 Feb 2019 09:05:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 09:39:11AM -0800, Guenter Roeck wrote:
-> On 2/18/19 5:42 AM, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.20.11 release.
-> > There are 92 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed Feb 20 13:34:25 UTC 2019.
-> > Anything received after that time might be too late.
-> > 
-> 
-> Build results:
-> 	total: 159 pass: 156 fail: 3
-> Failed builds:
-> 	csky:defconfig
-> 	csky:allnoconfig
-> 	csky:tinyconfig
-> Qemu test results:
-> 	total: 343 pass: 343 fail: 0
-> 
-> 
-> Building csky:defconfig ... failed
-> --------------
-> Error log:
-> mm/memory.c: In function ‘__pte_alloc’:
-> mm/memory.c:406:18: error: too many arguments to function ‘pte_alloc_one’
-> 
-> Commit d6caf1d0d553 ("csky: fixup compile error with pte_alloc")
-> (upstream patch 2a60aa14a9a) needs to be removed; the offending patch
-> is not in v4.20.y.
-> 
-> The automatic scripts seem to be a bit too aggressive.
+On Tue, 19 Feb 2019 17:27:05 -0500
+Tony Krowiak <akrowiak@linux.ibm.com> wrote:
 
-Thanks for finding this.  I'll drop it before I do the release.  And
-thanks for testing all of these and letting me know.
+> On 2/18/19 11:57 AM, Cornelia Huck wrote:
+> > On Mon, 18 Feb 2019 11:35:45 -0500
+> > Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+> >   
+> >> On 2/18/19 7:01 AM, Cornelia Huck wrote:  
+> >>> On Fri, 15 Feb 2019 16:59:33 -0500
+> >>> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+> >>>      
+> >>>> On 2/15/19 4:11 AM, Cornelia Huck wrote:  
+> >>>>> On Thu, 14 Feb 2019 13:30:59 -0500
+> >>>>> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+> >>>>>         
+> >>>>>> On 2/14/19 12:36 PM, Pierre Morel wrote:  
+> >>>>>>> On 14/02/2019 17:57, Cornelia Huck wrote:  
+> >>>      
+> >>>>>>>> (And reading further in the current code, it seems we clear that
+> >>>>>>>> structure _after_ the matrix device had been setup, so how can that
+> >>>>>>>> even work? Where am I confused?)  
+> >>>>>>>
+> >>>>>>> On device_register there were no bus, so the core just do not look for a
+> >>>>>>> driver and this field was nor tested nor overwritten.  
+> >>>>>
+> >>>>> Hm... so has the callback in driver_for_each_device() in
+> >>>>> vfio_ap_verify_queue_reserved() ever been invoked at all? It seems this
+> >>>>> patch fixes more than just libudev issues...  
+> >>>>
+> >>>> It is this patch that rendered the driver_for_each_device() in
+> >>>> vfio_ap_verify_queue_reserved() erroneous. That function gets called
+> >>>> every time an adapter or domain is assigned to the mdev. This patch
+> >>>> introduced the problem with driver_for_each_device().  
+> >>>
+> >>> So, does this function need to be removed or called from another place,
+> >>> then? (It looks like it was dead code before.)  
+> >>
+> >> I don't see why you think it's dead code:
+> >>
+> >> assign_adapter_store  
+> >> ==> vfio_ap_mdev_verify_queues_reserved_for_apid
+> >>       ==> vfio_ap_verify_queue_reserved
+> >>           ==> driver_for_each_device  
+> >>
+> >> The only way that the vfio_ap_verify_queue_reserved - the function that
+> >> calls driver_for_each_device - does not get called is if no bits have
+> >> yet been set in matrix_mdev->matrix.aqm.  
+> > 
+> > What I don't see is how this can be called if no device has been, in
+> > fact, bound to the driver in the driver core...  
+> 
+> Let's start with the fact that one can create an mdev device regardless
+> of whether a queue has been bound to the vfio_ap driver. Once an mdev
+> device is created, one can start assigning adapters, domains and control
+> domains to it. Let's say the admin now attempts to assign an adapter, in
+> which case the assign_adapter_store() function is invoked. After
+> verifying that the APID passed in is a valid adapter number, the
+> vfio_ap_mdev_verify_queues_reserved_for_apid() function is called.
+> This function first checks if any domains have been assigned and if not,
+> calls vfio_ap_verify_queue_reserved(&apid, NULL). It is in this function
+> that the driver_for_each_device() function is called. Since there are
+> no devices bound to the vfio_ap device driver, the callback passed in to
+> the driver_for_each_device() function will never get called, so the
+> vfio_ap_mdev_verify_queues_reserved_for_apid() function will return
+> -EADDRNOTAVAIL. A similar flow will occur if the first assignment is for
+> a domain. The bottom line is, the driver_for_each_device() function is
+> called every time an adapter or domain is assigned.
 
-greg k-h
+Indeed. I just got lost with the various drivers and devices in play
+here :(
