@@ -2,102 +2,93 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07D9DC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5085C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:22:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDA9B2086A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:21:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WIGucUyB"
+	by mail.kernel.org (Postfix) with ESMTP id BFA0B2086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:22:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727529AbfBTPU7 (ORCPT
+        id S1726738AbfBTPWE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:20:59 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37016 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbfBTPU5 (ORCPT
+        Wed, 20 Feb 2019 10:22:04 -0500
+Received: from mail.steuer-voss.de ([85.183.69.95]:34342 "EHLO
+        mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726275AbfBTPWD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:20:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=EFeifr+GfaKqX300Um+mjNzD3Rm1S0esXSt0B9w2YGY=; b=WIGucUyBjsGVWuL2jvGEP36J7
-        wAIM66Nws+XW3bCRdl88lmFalND8Uqloj60hjuL97/UwAqCvwAh/q71HAghQoAiJxUBKDV4NeFs+P
-        HVl2PIkFym1snOkp7H0Bh7Iwy3HNth61esVAhkupONHYlLPFOyNBcP6ioDPUrT9m8HmSlz0Cy7brW
-        T3CThrxzbkECUC+LLP/75uJ0vWxiD0QDLR28VwL+hwhNu5iUxu99KR6fznvbiQWa2uKqaDKSSWHwd
-        5uLNPR4nLxuoKU8lEnZ+ly+ElHLeYkLQbpv5lMqHn24WHv224i/dDaYfT4EtkA5c0+hIF01oAUZ5T
-        N7tedkzRQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gwTek-00048O-OH; Wed, 20 Feb 2019 15:19:30 +0000
-Date:   Wed, 20 Feb 2019 07:19:30 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     ira.weiny@intel.com
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Rich Felker <dalias@libc.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-mips@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, kvm@vger.kernel.org,
-        linux-fpga@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-scsi@vger.kernel.org, devel@driverdev.osuosl.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, xen-devel@lists.xenproject.org,
-        devel@lists.orangefs.org, ceph-devel@vger.kernel.org,
-        rds-devel@oss.oracle.com
-Subject: Re: [RESEND PATCH 0/7] Add FOLL_LONGTERM to GUP fast and use it
-Message-ID: <20190220151930.GB11695@infradead.org>
-References: <20190220053040.10831-1-ira.weiny@intel.com>
+        Wed, 20 Feb 2019 10:22:03 -0500
+X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
+Received: by mail.steuer-voss.de (Postfix, from userid 1000)
+        id 93ED44D09B; Wed, 20 Feb 2019 16:22:00 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.steuer-voss.de (Postfix) with ESMTP id 8D92E4D098;
+        Wed, 20 Feb 2019 16:22:00 +0100 (CET)
+Date:   Wed, 20 Feb 2019 16:22:00 +0100 (CET)
+From:   Nikolaus Voss <nv@vosn.de>
+X-X-Sender: nv@fox.voss.local
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2] usb: typec: tps6598x: handle block writes separately
+ with plain-I2C adapters
+In-Reply-To: <20190220150227.GA17103@kroah.com>
+Message-ID: <alpine.DEB.2.20.1902201618090.8597@fox.voss.local>
+References: <20180425142209.30745-1-heikki.krogerus@linux.intel.com> <20190220110017.BFA344CE86@mail.steuer-voss.de> <20190220125731.02E274CFE0@mail.steuer-voss.de> <20190220150227.GA17103@kroah.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190220053040.10831-1-ira.weiny@intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 09:30:33PM -0800, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
-> 
-> Resending these as I had only 1 minor comment which I believe we have covered
-> in this series.  I was anticipating these going through the mm tree as they
-> depend on a cleanup patch there and the IB changes are very minor.  But they
-> could just as well go through the IB tree.
-> 
-> NOTE: This series depends on my clean up patch to remove the write parameter
-> from gup_fast_permitted()[1]
-> 
-> HFI1, qib, and mthca, use get_user_pages_fast() due to it performance
-> advantages.  These pages can be held for a significant time.  But
-> get_user_pages_fast() does not protect against mapping of FS DAX pages.
+On Wed, 20 Feb 2019, Greg Kroah-Hartman wrote:
+> On Wed, Feb 20, 2019 at 01:57:30PM +0100, Nikolaus Voss wrote:
+>> Commit 1a2f474d328f handles block _reads_ separately with plain-I2C
+>> adapters, but the problem described with regmap-i2c not handling
+>> SMBus block transfers (i.e. read and writes) correctly also exists
+>> with writes.
+>>
+>> As workaround, this patch adds a block write function the same way
+>> 1a2f474d328f adds a block read function.
+>>
+>> Fixes: 1a2f474d328f ("usb: typec: tps6598x: handle block reads separately with plain-I2C adapters")
+>> Fixes: 0a4c005bd171 ("usb: typec: driver for TI TPS6598x USB Power Delivery controllers")
+>> Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+>> ---
+>
+> As was pointed out, you have to have a From: that matches a
+> signed-off-by somewhere here.  If your company email systems is horrid
+> and can not handle patches, then put the correct from: line as the first
+> line of the commit message as the documentation says and all will be
+> good.
+>
+>
+>
+>> v2: fix tps6598x_exec_cmd also
+>> ---
+>>  drivers/usb/typec/tps6598x.c | 26 ++++++++++++++++++++------
+>>  1 file changed, 20 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/usb/typec/tps6598x.c b/drivers/usb/typec/tps6598x.c
+>> index c84c8c189e90..c54b73fb2a2f 100644
+>> --- a/drivers/usb/typec/tps6598x.c
+>> +++ b/drivers/usb/typec/tps6598x.c
+>> @@ -110,6 +110,20 @@ tps6598x_block_read(struct tps6598x *tps, u8 reg, void *val, size_t len)
+>>  	return 0;
+>>  }
+>>
+>> +static int tps6598x_block_write(struct tps6598x *tps, u8 reg,
+>> +				void *val, size_t len)
+>> +{
+>> +	u8 data[len + 1];
+>
+> I thought the build system now warned when you did this :(
 
-This I don't get - if you do lock down long term mappings performance
-of the actual get_user_pages call shouldn't matter to start with.
+I must admit I'm developing on 4.19 stable series, so no warnings...
 
-What do I miss?
+Nikolaus
