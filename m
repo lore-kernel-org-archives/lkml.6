@@ -2,203 +2,227 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87CFDC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 06:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11C20C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 06:54:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DA992147A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 06:54:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDDEB2147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 06:54:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="UJyOOrK4"
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="kgjXfZTr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730551AbfBTGyD (ORCPT
+        id S1730589AbfBTGyF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Feb 2019 01:54:05 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:59379 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725890AbfBTGyD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 20 Feb 2019 01:54:03 -0500
-Received: from mail-eopbgr40062.outbound.protection.outlook.com ([40.107.4.62]:56736
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726210AbfBTGyC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 01:54:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x7vvJpUc8AzJ2+iBl+Ug3+Ov8umi01/juNghnVDL2U0=;
- b=UJyOOrK4FfnO5tIj1oiJjcpgf2YCrzXA6AH1W7gn6kWRHLf1vgjy8dgX7yBEtBnhcrI3T20yjvjf5Y56Wx9cJFksCg1INpmWahphGtM+xsi1AvaunA09yhoOqj4iRT3xkPOL2po2lvMJnTyTVPxuO2XRYwrvXheAuoOscj4SN0o=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3883.eurprd04.prod.outlook.com (52.134.71.25) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.19; Wed, 20 Feb 2019 06:53:58 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::14e8:6d2e:fe21:4fd5]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::14e8:6d2e:fe21:4fd5%3]) with mapi id 15.20.1601.023; Wed, 20 Feb 2019
- 06:53:58 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "rui.zhang@intel.com" <rui.zhang@intel.com>,
-        "edubezval@gmail.com" <edubezval@gmail.com>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
-        Andy Gross <andy.gross@linaro.org>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "jagan@amarulasolutions.com" <jagan@amarulasolutions.com>,
-        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
-        "marc.w.gonzalez@free.fr" <marc.w.gonzalez@free.fr>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: [PATCH V7 4/4] arm64: dts: imx: add i.MX8QXP thermal support
-Thread-Topic: [PATCH V7 4/4] arm64: dts: imx: add i.MX8QXP thermal support
-Thread-Index: AQHUyOkNAaRgvbqSq0aZKEZTC700Lg==
-Date:   Wed, 20 Feb 2019 06:53:58 +0000
-Message-ID: <1550645332-2907-4-git-send-email-Anson.Huang@nxp.com>
-References: <1550645332-2907-1-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1550645332-2907-1-git-send-email-Anson.Huang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK2PR04CA0050.apcprd04.prod.outlook.com
- (2603:1096:202:14::18) To DB3PR0402MB3916.eurprd04.prod.outlook.com
- (2603:10a6:8:10::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e27d52e2-2d34-4a52-5121-08d697002fe2
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3883;
-x-ms-traffictypediagnostic: DB3PR0402MB3883:
-x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;DB3PR0402MB3883;23:raHSPdV4Pv12RvAHwYMnJnzKrnt2hc9PA8q6N?=
- =?iso-8859-1?Q?dDlMnRuQpefO+KJgvbPdEbTAnLkwevuOaJL08oTS5CKyfqH4zx0+BRlY27?=
- =?iso-8859-1?Q?kjxR4o0+dbX3dFx+5T9wdyNKJ7rbwz2/Zf5ujF65nUofoB5IPhJXLb3ppd?=
- =?iso-8859-1?Q?FCLB+WV94KLIOm80P92S36OsVenCx7Ib7Po7LLVamtvgcKWFcp+CswAw5m?=
- =?iso-8859-1?Q?NQA6QorwSWkx9ASInPHu8vGOHxEqfNoy7JZnv1SpvZOQgNbgEV7YDNaOMx?=
- =?iso-8859-1?Q?XYxtQuHLI870piyDRopliB10QHuL/EcWKv5V19QldMCTdnE5AnS/ee4MUJ?=
- =?iso-8859-1?Q?IhHM1pFPYN79Tq7h00/yUKAUwYQKGUBwm7u/92H9x6+hriEJdw8+8xDunA?=
- =?iso-8859-1?Q?o62pFj4i+/TiLh0AUVYlagqpaXTmhaNyG1fvQCVLeN4daRAIeNmjqG0pWQ?=
- =?iso-8859-1?Q?Q2JQ0845juk/1a/a+AoDQUpUYvu4CarGCzuYAJj+baOclWN9loTfdUwWve?=
- =?iso-8859-1?Q?tQuaiyj4F441d+I/1Im7YPOBJTLLZHwifMELw3qnI/aDafj671r7Y2lxf+?=
- =?iso-8859-1?Q?YtrBsJE6LDwAfpz9s5KtGjy8tS2iUrnzuHPYYm/NS0jcLuM+ivIpFtKnT/?=
- =?iso-8859-1?Q?fE5SsDXY4O5280Lvl9J+oEjUBmeFqoUYC1xrzbPekM7MCAHvLb46ian0gO?=
- =?iso-8859-1?Q?TVryxryN+TQB1xu495lvFY0Tzl6y0gGobiwq9l3vE65D5QzVMtmFbCQaks?=
- =?iso-8859-1?Q?wJDy2IY0RJbQq22Ou7vM5GFoOADM2BGIjExEt5FkQ8bF2iNJlKttyITQzH?=
- =?iso-8859-1?Q?fr7z44BNgyZnIzXgbHvPaKokhSu4ZBX5N6n0KUDueGKGnNvx/U3Pgbc7br?=
- =?iso-8859-1?Q?sbCo2QAC/HM9xldMS1CChPHWnxscWHzVS/Fcu7R9UbH3zEZJFFT5XJCh2Q?=
- =?iso-8859-1?Q?ZDFN43zsUlwRqk6CJv1UGrdp5UtWF/8vRBKjvJZr9nkVBYtZGdhknOR0cZ?=
- =?iso-8859-1?Q?8JT8XVr7Ku/Mgh7ejsObb7gHnZYB3THjX4LBOdhpwlhd9EcV6erKf5bOwW?=
- =?iso-8859-1?Q?ULxjXtTRp4uZjOdGCXdC5mGyvW6xdKmGVl90wF5XRckJdS1jjX2JnuFQZf?=
- =?iso-8859-1?Q?O830xQ/mOjYwkrPEnhDPRFdcAPQ8bQWPcEA5WceiLKrnnEdKWR+JJmRmDH?=
- =?iso-8859-1?Q?5MBJ1dZweeNp7wGNweNH2rj/rQfazVpLo6hr+MeUHDro1XwC+mvVE3RbOW?=
- =?iso-8859-1?Q?EoSrNpyUxRxyUBjzu6y3bM8se5RZq3g/ETgCA/nnTM1pAHu9HH1vw/izqz?=
- =?iso-8859-1?Q?DHK7qb8t1vw2wPVEktgGwvGAK?=
-x-microsoft-antispam-prvs: <DB3PR0402MB38832259DE1375621247322FF57D0@DB3PR0402MB3883.eurprd04.prod.outlook.com>
-x-forefront-prvs: 0954EE4910
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(366004)(346002)(396003)(376002)(199004)(189003)(81156014)(2906002)(81166006)(386003)(105586002)(50226002)(2201001)(2501003)(8936002)(5660300002)(102836004)(106356001)(8676002)(6506007)(476003)(2616005)(99286004)(86362001)(4326008)(52116002)(25786009)(3846002)(11346002)(6116002)(446003)(71190400001)(71200400001)(110136005)(486006)(76176011)(316002)(68736007)(6512007)(6436002)(256004)(14444005)(53936002)(7736002)(478600001)(66066001)(97736004)(186003)(14454004)(6486002)(26005)(305945005)(7416002)(36756003)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3883;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: voU1rMjrX0Pq62dMzV0zcMBD2HzZ4smKpB1/fOD7hP9X8wr4TeDeMlvAwpeApVZxdbeg1ekRqUEspfFOSh8YJ/loosk6DilAD9rZv9k+Ai5Sx9qfHRZ/AFgXtnS9e5vrZgrmxf33Ejtnct88QqV8+HAWjRig3lY90JhCIVgPG3L3OgOKIi/cZB1u6Rp1V2n3QSiI5uCCEHE4pdoEU68iufFEtv/E7AGSG/4mJKJ5atsZP+CLD2oln+Me+d3yLwfm+lXfu/LMMAkILuhsA6rVdb+uKKpjxT9Z4eiGEdDpPhBqt6R9q88AowHuBOv2zL6YhE+LCr7OKBC6GBg6u0Hkvep1k2W6mUvg42OaCsULqhje+1O6gjCw54pBk6Q+U0ZGVQIC2nCCBhtC4UbzA5/Ln9mtUNZuVBZIflsSS79X08E=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 4447cS3j0Fz9v53Q;
+        Wed, 20 Feb 2019 07:54:00 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=kgjXfZTr; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id Bn2hm_V4Hql1; Wed, 20 Feb 2019 07:54:00 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 4447cS2BDZz9v53N;
+        Wed, 20 Feb 2019 07:54:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1550645640; bh=vxoI0RcYtC3aywU0hjBdLsVZ9iagCn2zflhQcvueewE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=kgjXfZTriyD091KKYcaNbPDr9XjTc4I6qvOMVE4BIC2jJtWgpmUqzDO03aI6ArHdB
+         +HJTYCWYN+jxTbvbv3dGFTmQEE5arWnweLyBZK6sa2kRfXyXz9DG9eNAAz8vEfZdPW
+         kTQHlkIDhB0W2AlGlM2VZ3hZlEgMQ7Z0mx1kTg74=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 17B078B802;
+        Wed, 20 Feb 2019 07:54:01 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id rrIoQFRD8MwM; Wed, 20 Feb 2019 07:54:00 +0100 (CET)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id CF43B8B74F;
+        Wed, 20 Feb 2019 07:54:00 +0100 (CET)
+Subject: Re: [PATCH v2] powerpc/prom_init: add __init markers to all functions
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>
+References: <1550641996-21937-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <cc7ebb9b-90ac-e1ea-5057-cfcae6e772b8@c-s.fr>
+Date:   Wed, 20 Feb 2019 07:54:00 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e27d52e2-2d34-4a52-5121-08d697002fe2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Feb 2019 06:53:49.5580
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3883
+In-Reply-To: <1550641996-21937-1-git-send-email-yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add i.MX8QXP CPU thermal zone support.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-Changes since V6:
-	- add fallback compatible string "fsl,imx-sc-thermal" according to i.MX SC=
- thermal driver
-	  update.
----
- arch/arm64/boot/dts/freescale/imx8qxp.dtsi | 28 ++++++++++++++++++++++++++=
-++
- 1 file changed, 28 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi b/arch/arm64/boot/d=
-ts/freescale/imx8qxp.dtsi
-index 4c3dd95..24b03d6 100644
---- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-@@ -10,6 +10,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/pinctrl/pads-imx8qxp.h>
-+#include <dt-bindings/thermal/thermal.h>
-=20
- / {
- 	interrupt-parent =3D <&gic>;
-@@ -116,6 +117,12 @@
- 		rtc: rtc {
- 			compatible =3D "fsl,imx8qxp-sc-rtc";
- 		};
-+
-+		tsens: thermal-sensor {
-+			compatible =3D "fsl,imx8qxp-sc-thermal", "fsl,imx-sc-thermal";
-+			tsens-num =3D <1>;
-+			#thermal-sensor-cells =3D <1>;
-+		};
- 	};
-=20
- 	timer {
-@@ -443,4 +450,25 @@
- 			power-domains =3D <&pd IMX_SC_R_GPIO_7>;
- 		};
- 	};
-+
-+	thermal_zones: thermal-zones {
-+		cpu-thermal0 {
-+			polling-delay-passive =3D <250>;
-+			polling-delay =3D <2000>;
-+			thermal-sensors =3D <&tsens 0>;
-+			imx,sensor-resource-id =3D <355>;
-+			trips {
-+				cpu_alert0: trip0 {
-+					temperature =3D <107000>;
-+					hysteresis =3D <2000>;
-+					type =3D "passive";
-+				};
-+				cpu_crit0: trip1 {
-+					temperature =3D <127000>;
-+					hysteresis =3D <2000>;
-+					type =3D "critical";
-+				};
-+			};
-+		};
-+	};
- };
---=20
-2.7.4
+Le 20/02/2019 à 06:53, Masahiro Yamada a écrit :
+> It is fragile to rely on the compiler's optimization to avoid the
+> section mismatch. Some functions may not be necessarily inlined
+> when the compiler's inlining heuristic changes.
+> 
+> Add __init markers consistently.
+> 
+> As for prom_getprop() and prom_getproplen(), they are marked as
+> 'inline', so inlining is guaranteed because PowerPC never enables
+> CONFIG_OPTIMIZE_INLINING. However, it would be better to leave the
+> inlining decision to the compiler. I replaced 'inline' with __init.
+> I added __maybe_unused to prom_getproplen() because it is currently
+> relying on the side-effect of 'inline'; GCC does not report
+> -Wunused-function warnings for functions with 'inline' marker.
 
+__maybe_unused is really a bad trick that should be avoided, as it hides 
+unused functions.
+
+Why is it a problem to keep prom_getproplen() as 'static inline' ? Most 
+small helpers are defined that way. Usually they are in an included 
+header file, but what's really the problem with having it here directly ?
+
+Christophe
+
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
+> Changes in v2:
+>    - Add __maybe_unsed to prom_getproplen()
+>    - Add __init to enter_prom() as well
+> 
+>   arch/powerpc/kernel/prom_init.c | 29 +++++++++++++++--------------
+>   1 file changed, 15 insertions(+), 14 deletions(-)
+> 
+> diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
+> index f33ff41..1bad0ac 100644
+> --- a/arch/powerpc/kernel/prom_init.c
+> +++ b/arch/powerpc/kernel/prom_init.c
+> @@ -138,9 +138,9 @@ extern void __start(unsigned long r3, unsigned long r4, unsigned long r5,
+>   		    unsigned long r9);
+>   
+>   #ifdef CONFIG_PPC64
+> -extern int enter_prom(struct prom_args *args, unsigned long entry);
+> +extern int __init enter_prom(struct prom_args *args, unsigned long entry);
+>   #else
+> -static inline int enter_prom(struct prom_args *args, unsigned long entry)
+> +static int __init enter_prom(struct prom_args *args, unsigned long entry)
+>   {
+>   	return ((int (*)(struct prom_args *))entry)(args);
+>   }
+> @@ -501,19 +501,20 @@ static int __init prom_next_node(phandle *nodep)
+>   	}
+>   }
+>   
+> -static inline int prom_getprop(phandle node, const char *pname,
+> +static int __init prom_getprop(phandle node, const char *pname,
+>   			       void *value, size_t valuelen)
+>   {
+>   	return call_prom("getprop", 4, 1, node, ADDR(pname),
+>   			 (u32)(unsigned long) value, (u32) valuelen);
+>   }
+>   
+> -static inline int prom_getproplen(phandle node, const char *pname)
+> +static int __init __maybe_unused prom_getproplen(phandle node,
+> +						 const char *pname)
+>   {
+>   	return call_prom("getproplen", 2, 1, node, ADDR(pname));
+>   }
+>   
+> -static void add_string(char **str, const char *q)
+> +static void __init add_string(char **str, const char *q)
+>   {
+>   	char *p = *str;
+>   
+> @@ -523,7 +524,7 @@ static void add_string(char **str, const char *q)
+>   	*str = p;
+>   }
+>   
+> -static char *tohex(unsigned int x)
+> +static char __init *tohex(unsigned int x)
+>   {
+>   	static const char digits[] __initconst = "0123456789abcdef";
+>   	static char result[9] __prombss;
+> @@ -570,7 +571,7 @@ static int __init prom_setprop(phandle node, const char *nodename,
+>   #define islower(c)	('a' <= (c) && (c) <= 'z')
+>   #define toupper(c)	(islower(c) ? ((c) - 'a' + 'A') : (c))
+>   
+> -static unsigned long prom_strtoul(const char *cp, const char **endp)
+> +static unsigned long __init prom_strtoul(const char *cp, const char **endp)
+>   {
+>   	unsigned long result = 0, base = 10, value;
+>   
+> @@ -595,7 +596,7 @@ static unsigned long prom_strtoul(const char *cp, const char **endp)
+>   	return result;
+>   }
+>   
+> -static unsigned long prom_memparse(const char *ptr, const char **retptr)
+> +static unsigned long __init prom_memparse(const char *ptr, const char **retptr)
+>   {
+>   	unsigned long ret = prom_strtoul(ptr, retptr);
+>   	int shift = 0;
+> @@ -2924,7 +2925,7 @@ static void __init fixup_device_tree_pasemi(void)
+>   	prom_setprop(iob, name, "device_type", "isa", sizeof("isa"));
+>   }
+>   #else	/* !CONFIG_PPC_PASEMI_NEMO */
+> -static inline void fixup_device_tree_pasemi(void) { }
+> +static void __init fixup_device_tree_pasemi(void) { }
+>   #endif
+>   
+>   static void __init fixup_device_tree(void)
+> @@ -2986,15 +2987,15 @@ static void __init prom_check_initrd(unsigned long r3, unsigned long r4)
+>   
+>   #ifdef CONFIG_PPC64
+>   #ifdef CONFIG_RELOCATABLE
+> -static void reloc_toc(void)
+> +static void __init reloc_toc(void)
+>   {
+>   }
+>   
+> -static void unreloc_toc(void)
+> +static void __init unreloc_toc(void)
+>   {
+>   }
+>   #else
+> -static void __reloc_toc(unsigned long offset, unsigned long nr_entries)
+> +static void __init __reloc_toc(unsigned long offset, unsigned long nr_entries)
+>   {
+>   	unsigned long i;
+>   	unsigned long *toc_entry;
+> @@ -3008,7 +3009,7 @@ static void __reloc_toc(unsigned long offset, unsigned long nr_entries)
+>   	}
+>   }
+>   
+> -static void reloc_toc(void)
+> +static void __init reloc_toc(void)
+>   {
+>   	unsigned long offset = reloc_offset();
+>   	unsigned long nr_entries =
+> @@ -3019,7 +3020,7 @@ static void reloc_toc(void)
+>   	mb();
+>   }
+>   
+> -static void unreloc_toc(void)
+> +static void __init unreloc_toc(void)
+>   {
+>   	unsigned long offset = reloc_offset();
+>   	unsigned long nr_entries =
+> 
