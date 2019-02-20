@@ -2,136 +2,210 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F10CCC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4842CC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C71652089F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:46:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 170462089F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:47:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727034AbfBTJqo (ORCPT
+        id S1727061AbfBTJre (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 04:46:44 -0500
-Received: from mgwym02.jp.fujitsu.com ([211.128.242.41]:47453 "EHLO
-        mgwym02.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbfBTJqo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 04:46:44 -0500
-Received: from yto-m1.gw.nic.fujitsu.com (unknown [192.168.229.100]) by mgwym02.jp.fujitsu.com with smtp
-         id 2552_f23a_0aec060d_4551_4ae7_a4e5_e5f45beb343e;
-        Wed, 20 Feb 2019 18:46:36 +0900
-Received: from g01jpfmpwkw02.exch.g01.fujitsu.local (g01jpfmpwkw02.exch.g01.fujitsu.local [10.0.193.56])
-        by yto-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id BB29E40C7D21
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 18:46:35 +0900 (JST)
-Received: from G01JPEXCHKW17.g01.fujitsu.local (G01JPEXCHKW17.g01.fujitsu.local [10.0.194.56])
-        by g01jpfmpwkw02.exch.g01.fujitsu.local (Postfix) with ESMTP id 57033328708;
-        Wed, 20 Feb 2019 18:46:34 +0900 (JST)
-Received: from localhost (10.17.204.234) by G01JPEXCHKW17.g01.fujitsu.local
- (10.0.194.56) with Microsoft SMTP Server id 14.3.408.0; Wed, 20 Feb 2019
- 18:46:33 +0900
-X-SecurityPolicyCheck: OK by SHieldMailChecker v2.5.2
-X-SHieldMailCheckerPolicyVersion: FJ-ISEC-20170217-enc
-X-SHieldMailCheckerMailID: f6fcba2ed9eb4e9bb20547a14cb14f60
-Date:   Wed, 20 Feb 2019 18:46:11 +0900
-From:   Takao Indoh <indou.takao@fujitsu.com>
-To:     "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>
-CC:     Keith Busch <keith.busch@intel.com>,
-        Takao Indoh <indou.takao@jp.fujitsu.com>,
-        "sagi@grimberg.me" <sagi@grimberg.me>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "axboe@fb.com" <axboe@fb.com>, "hch@lst.de" <hch@lst.de>
-Subject: Re: [PATCH] nvme: Enable acceleration feature of A64FX processor
-Message-ID: <20190220094610.GB3559@esprimo>
-References: <20190201124615.16107-1-indou.takao@jp.fujitsu.com>
- <20190201145414.GA22199@localhost.localdomain>
- <20190205124757.GA28465@esprimo>
- <20190205143905.GG22199@localhost.localdomain>
- <AT5PR8401MB1169E9738C0A4754D0190F2FAB670@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
+        Wed, 20 Feb 2019 04:47:34 -0500
+Received: from ozlabs.org ([203.11.71.1]:55371 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725816AbfBTJre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 04:47:34 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 444CSc24jVz9s70;
+        Wed, 20 Feb 2019 20:47:25 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Petr Mladek <pmladek@suse.com>
+Cc:     linuxppc-dev@ozlabs.org, akpm@linux-foundation.org, tj@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        dyoung@redhat.com, sergey.senozhatsky@gmail.com,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v3 1/7] dump_stack: Support adding to the dump stack arch description
+In-Reply-To: <20190219233925.GA5648@andrea>
+References: <20190207124635.3885-1-mpe@ellerman.id.au> <20190211125035.GA1562@andrea> <20190211143859.dd2lkccxod3f2fwn@pathway.suse.cz> <20190219233925.GA5648@andrea>
+Date:   Wed, 20 Feb 2019 20:47:25 +1100
+Message-ID: <87va1e7pw2.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <AT5PR8401MB1169E9738C0A4754D0190F2FAB670@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SecurityPolicyCheck-GC: OK by FENCE-Mail
-X-TM-AS-GCONF: 00
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 08:44:48PM +0000, Elliott, Robert (Persistent Memory) wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Linux-nvme [mailto:linux-nvme-bounces@lists.infradead.org] On Behalf Of Keith Busch
-> > Sent: Tuesday, February 5, 2019 8:39 AM
-> > To: Takao Indoh <indou.takao@fujitsu.com>
-> > Cc: Takao Indoh <indou.takao@jp.fujitsu.com>; sagi@grimberg.me; linux-kernel@vger.kernel.org; linux-
-> > nvme@lists.infradead.org; axboe@fb.com; hch@lst.de
-> > Subject: Re: [PATCH] nvme: Enable acceleration feature of A64FX processor
-> > 
-> > On Tue, Feb 05, 2019 at 09:56:05PM +0900, Takao Indoh wrote:
-> > > On Fri, Feb 01, 2019 at 07:54:14AM -0700, Keith Busch wrote:
-> > > > On Fri, Feb 01, 2019 at 09:46:15PM +0900, Takao Indoh wrote:
-> > > > > From: Takao Indoh <indou.takao@fujitsu.com>
-> > > > >
-> > > > > Fujitsu A64FX processor has a feature to accelerate data transfer of
-> > > > > internal bus by relaxed ordering. It is enabled when the bit 56 of dma
-> > > > > address is set to 1.
-> > > >
-> > > > Wait, what? RO is a standard PCIe TLP attribute. Why would we need this?
-> > >
-> > > I should have explained this patch more carefully.
-> > >
-> > > Standard PCIe devices can use Relaxed Ordering (RO) by setting Attr
-> > > field in the TLP header, however, this mechanism cannot be utilized if
-> > > the device does not support RO feature. Fujitsu A64FX processor has an
-> > > alternate feature to enable RO in its Root Port by setting the bit 56 of
-> > > DMA address. This mechanism enables to utilize RO feature even if the
-> > > device does not support standard PCIe RO.
-> > 
-> > I think you're better of just purchasing devices that support the
-> > capability per spec rather than with a non-standard work around.
-> > 
-> 
-> The PCIe and NVMe specifications dosn't standardize a way to tell the device
-> when to use RO, which leads to system workarounds like this.
-> 
-> The Enable Relaxed Ordering bit defined by PCIe tells the device when it
-> cannot use RO, but doesn't advise when it should or shall use RO.
-> 
-> For SCSI Express (SOP+PQI), we were going to allow specifying these
-> on a per-command basis:
-> * TLP attributes (No Snoop, Relaxed Ordering, ID-based Ordering)
-> * TLP processing hints (Processing Hints and Steering Tags)
-> 
-> to be used by the data transfers for the command. In some systems, one
-> setting per queue or per device might suffice. Transactions to the
-> queues and doorbells require stronger ordering.
-> 
-> For this workaround:
-> * making an extra pass through the SGL to set the address bit is 
-> inefficient; it should be done as the SGL is created.
+Andrea Parri <andrea.parri@amarulasolutions.com> writes:
+> On Mon, Feb 11, 2019 at 03:38:59PM +0100, Petr Mladek wrote:
+>> On Mon 2019-02-11 13:50:35, Andrea Parri wrote:
+>> > On Thu, Feb 07, 2019 at 11:46:29PM +1100, Michael Ellerman wrote:
+>> > > Arch code can set a "dump stack arch description string" which is
+>> > > displayed with oops output to describe the hardware platform.
+>> > > 
+>> > > It is useful to initialise this as early as possible, so that an early
+>> > > oops will have the hardware description.
+>> > > 
+>> > > However in practice we discover the hardware platform in stages, so it
+>> > > would be useful to be able to incrementally fill in the hardware
+>> > > description as we discover it.
+>> > > 
+>> > > This patch adds that ability, by creating dump_stack_add_arch_desc().
+>> > > 
+>> > > If there is no existing string it behaves exactly like
+>> > > dump_stack_set_arch_desc(). However if there is an existing string it
+>> > > appends to it, with a leading space.
+>> > > 
+>> > > This makes it easy to call it multiple times from different parts of the
+>> > > code and get a reasonable looking result.
+>> > > 
+>> > > Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+>> > > ---
+>> > >  include/linux/printk.h |  5 ++++
+>> > >  lib/dump_stack.c       | 58 ++++++++++++++++++++++++++++++++++++++++++
+>> > >  2 files changed, 63 insertions(+)
+>> > > 
+>> > > v3: No change, just widened Cc list.
+>> > > 
+>> > > v2: Add a smp_wmb() and comment.
+>> > > 
+>> > > v1 is here for reference https://lore.kernel.org/lkml/1430824337-15339-1-git-send-email-mpe@ellerman.id.au/
+>> > > 
+>> > > I'll take this series via the powerpc tree if no one minds?
+>> > > 
+>> > > 
+>> > > diff --git a/include/linux/printk.h b/include/linux/printk.h
+>> > > index 77740a506ebb..d5fb4f960271 100644
+>> > > --- a/include/linux/printk.h
+>> > > +++ b/include/linux/printk.h
+>> > > @@ -198,6 +198,7 @@ u32 log_buf_len_get(void);
+>> > >  void log_buf_vmcoreinfo_setup(void);
+>> > >  void __init setup_log_buf(int early);
+>> > >  __printf(1, 2) void dump_stack_set_arch_desc(const char *fmt, ...);
+>> > > +__printf(1, 2) void dump_stack_add_arch_desc(const char *fmt, ...);
+>> > >  void dump_stack_print_info(const char *log_lvl);
+>> > >  void show_regs_print_info(const char *log_lvl);
+>> > >  extern asmlinkage void dump_stack(void) __cold;
+>> > > @@ -256,6 +257,10 @@ static inline __printf(1, 2) void dump_stack_set_arch_desc(const char *fmt, ...)
+>> > >  {
+>> > >  }
+>> > >  
+>> > > +static inline __printf(1, 2) void dump_stack_add_arch_desc(const char *fmt, ...)
+>> > > +{
+>> > > +}
+>> > > +
+>> > >  static inline void dump_stack_print_info(const char *log_lvl)
+>> > >  {
+>> > >  }
+>> > > diff --git a/lib/dump_stack.c b/lib/dump_stack.c
+>> > > index 5cff72f18c4a..69b710ff92b5 100644
+>> > > --- a/lib/dump_stack.c
+>> > > +++ b/lib/dump_stack.c
+>> > > @@ -35,6 +35,64 @@ void __init dump_stack_set_arch_desc(const char *fmt, ...)
+>> > >  	va_end(args);
+>> > >  }
+>> > >  
+>> > > +/**
+>> > > + * dump_stack_add_arch_desc - add arch-specific info to show with task dumps
+>> > > + * @fmt: printf-style format string
+>> > > + * @...: arguments for the format string
+>> > > + *
+>> > > + * See dump_stack_set_arch_desc() for why you'd want to use this.
+>> > > + *
+>> > > + * This version adds to any existing string already created with either
+>> > > + * dump_stack_set_arch_desc() or dump_stack_add_arch_desc(). If there is an
+>> > > + * existing string a space will be prepended to the passed string.
+>> > > + */
+>> > > +void __init dump_stack_add_arch_desc(const char *fmt, ...)
+>> > > +{
+>> > > +	va_list args;
+>> > > +	int pos, len;
+>> > > +	char *p;
+>> > > +
+>> > > +	/*
+>> > > +	 * If there's an existing string we snprintf() past the end of it, and
+>> > > +	 * then turn the terminating NULL of the existing string into a space
+>> > > +	 * to create one string separated by a space.
+>> > > +	 *
+>> > > +	 * If there's no existing string we just snprintf() to the buffer, like
+>> > > +	 * dump_stack_set_arch_desc(), but without calling it because we'd need
+>> > > +	 * a varargs version.
+>> > > +	 */
+>> > > +	len = strnlen(dump_stack_arch_desc_str, sizeof(dump_stack_arch_desc_str));
+>> > > +	pos = len;
+>> > > +
+>> > > +	if (len)
+>> > > +		pos++;
+>> > > +
+>> > > +	if (pos >= sizeof(dump_stack_arch_desc_str))
+>> > > +		return; /* Ran out of space */
+>> > > +
+>> > > +	p = &dump_stack_arch_desc_str[pos];
+>> > > +
+>> > > +	va_start(args, fmt);
+>> > > +	vsnprintf(p, sizeof(dump_stack_arch_desc_str) - pos, fmt, args);
+>> > > +	va_end(args);
+>> > > +
+>> > > +	if (len) {
+>> > > +		/*
+>> > > +		 * Order the stores above in vsnprintf() vs the store of the
+>> > > +		 * space below which joins the two strings. Note this doesn't
+>> > > +		 * make the code truly race free because there is no barrier on
+>> > > +		 * the read side. ie. Another CPU might load the uninitialised
+>> > > +		 * tail of the buffer first and then the space below (rather
+>> > > +		 * than the NULL that was there previously), and so print the
+>> > > +		 * uninitialised tail. But the whole string lives in BSS so in
+>> > > +		 * practice it should just see NULLs.
+>> > 
+>> > The comment doesn't say _why_ we need to order these stores: IOW, what
+>> > will or can go wrong without this order?  This isn't clear to me.
+>> >
+>> > Another good practice when adding smp_*-constructs (as discussed, e.g.,
+>> > at KS'18) is to indicate the matching construct/synch. mechanism.
+>> 
+>> Yes, one barrier without a counter-part is suspicious.
+>
+> As is this silence...,
+>
+> Michael, what happened to this patch? did you submit a new version?
 
-Thanks for your comment, do you mean this should be done in
-nvme_pci_setup_sgls()/nvme_pci_setup_prps()?
+No, I'm just busy, it's the merge window next week :)
 
-> * why doesn't it support PRP Lists?
+I thought the comment was pretty clear, if the stores are observed out
+of order we might print the uninitialised tail.
 
-This patch does not support PRP because PRP is used for small data and
-we cannot get enough performance improvement by this feature. But I can
-support PRP to improve performance of the device which is compliant with
-NVMe Spec 1.0 or does not support SGL.
+And the barrier on the read side would need to be in printk somewhere,
+which is obviously unpleasant.
 
-> * how does this interact with an iommu, if there is one? Must the 
-> address with bit 56 also be granted permission, or is that
-> stripped off before any iommu comparisons?
+>> If the parallel access is really needed then we could define the
+>> current length as atomic_t and use:
+>> 
+>> 	+ atomic_cmpxchg() to reserve the space for the string
+>> 	+ %*s to limit the printed length
+>> 
+>> In the worst case, we would print an incomplete string.
+>> See below for a sample code.
+>
+> Seems worth exploring, IMO; but I'd like to first hear _clear about
+> the _intended semantics (before digging into alternatives)...
 
-The latter. A bit 56 is cleared in Root Port before pass it to iommu.
+It is not my intention to support concurrent updates of the string. The
+idea is you setup the string early in boot.
 
-Thanks,
-Takao Indoh
+The concern with a concurrent reader is simply that the string is dumped
+in the panic path, and you never really know when you're going to panic.
+Even if you only write to the string before doing SMP bringup you might
+still have another CPU go rogue and panic before then.
+
+But I probably should have just not added the barrier, it's over
+paranoid and will almost certainly never matter in practice.
+
+cheers
