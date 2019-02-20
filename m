@@ -2,102 +2,117 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44BE3C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC45C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:02:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1308321848
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:01:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F2A92146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:02:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="D297cP5P"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5B8F++n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbfBTRBm (ORCPT
+        id S1726888AbfBTRCB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 12:01:42 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:40661 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725801AbfBTRBm (ORCPT
+        Wed, 20 Feb 2019 12:02:01 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34583 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbfBTRCA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 12:01:42 -0500
-Received: by mail-vs1-f67.google.com with SMTP id z18so14383562vso.7
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 09:01:41 -0800 (PST)
+        Wed, 20 Feb 2019 12:02:00 -0500
+Received: by mail-lj1-f194.google.com with SMTP id l5so18030358lje.1;
+        Wed, 20 Feb 2019 09:01:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6tfb0VQ2uqwGh7AJzB5rNzREqve7ug8niy6IMgboCNw=;
-        b=D297cP5P7G7cmQTUvFHbVpaPmk75LjlCeb6W499YBk4Z0UqNbOMlsdcVJWrX4/GR7e
-         S/eEipKVINIWtvc0oNvl/oFsxilOm+WcutWKPBUEHzHN/Z4o20e56p70qPlrqhZoqUQJ
-         bB1AKoKxVyUTWRMuvYFZk9+TP4/aKqwrZt+1k=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=lYAS/tJV+XlVv40JuDpW9eWz8mulCBkbrP397zDqNso=;
+        b=C5B8F++nvta5oFaLo9qXS/QpTUWvhDr+VdaqgZStAYJgwfuBZpL3cT3MW+Ze8nCtyu
+         tDz/FKKTq4GFHHUrCiOmVnCDrsltV5VQXCy7Por+RYfb1TGngQ1HfcjFSm6XYDlKoMUG
+         1Nnn1JwafXqUgUXtsd8fIoP2Weu7XbofFbYBuatXJHJjtoc4yZRsa/q6i//lBlQMtFwa
+         /jm2hPwAQXgIPX9ZbJA1PZB2VhNfuOpMSqpQPjNxf6jH7CpTqXSdoDkb9DiCxpX8/VoN
+         rNRjgKSGBXHSABo6NVy16TBWZMEi3Suau0/LL5lPiOSoKlbrAdVzsvPSsh/z/u++JLPa
+         CG+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6tfb0VQ2uqwGh7AJzB5rNzREqve7ug8niy6IMgboCNw=;
-        b=L9yY2ZMBQw5GcblkhYqkrEu99kYVRc7KkWYRVwhOoVKlF6VFx8DVQw1UHWPEXyKtJQ
-         gpKP6rAdLGS2G1EHCFF1QwosTctCeeygy1jGrbbLoX75KOHlE783g+JASIyF5z2+g9R/
-         JiaDmU685bJlqosDBT1jQfSECUWiaVXljF4LqIMgpe1mcY0wfLJ5E3lF5WfQV239Xl6p
-         ZpHFW3+acf2SMHuevnpCZnrYLBpkyyTL7wUMjnODxGc0z2/KKKxr+Ivju3MClMDg/9Ta
-         n42yjbY4Xi+RHfh4S864cWfatrgoae6oO2XI47Zx5MA8CePQGxiPlucmYOuM8GlwEZXF
-         Qagw==
-X-Gm-Message-State: AHQUAuZjmiMB3HqFEuiOGhPxKZqN1c4QERBdZUYenpUo2OVSPAuwjjbe
-        xg1mebHu4CovRlzvPyPJ5I1klDlr70w=
-X-Google-Smtp-Source: AHgI3IYLOR91ljor9C53+VLvIZUHbv1TiPaFv6PDkvZF5RMcKMFHtu7xsvQvafUer0jU1ZtDLKV+VQ==
-X-Received: by 2002:a67:fe85:: with SMTP id b5mr8776125vsr.42.1550682100692;
-        Wed, 20 Feb 2019 09:01:40 -0800 (PST)
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com. [209.85.221.170])
-        by smtp.gmail.com with ESMTPSA id u6sm2168566vsj.28.2019.02.20.09.01.39
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lYAS/tJV+XlVv40JuDpW9eWz8mulCBkbrP397zDqNso=;
+        b=hNu+8QYHbnS2isWJnyBLLjf0HUhQGg+JUL9KAV83pQgm36OH62IKBGm+wkb0dthAJw
+         350FC+ALa+YE1wvlEihd2jBbcdu2DMgP5YPOEQ89XqgIjDuLmtDDsLEX2Ak8RXvuC9l4
+         b4GiOzAUKbKAgQHpj2BLNFblI6Bsd8q71NIeoiwhOVnLPXBDGE1wtsrrpsCVs563rJt0
+         1iRP95w5iWa1zq+TAXt6rreGRAkUR9zEY9+VFJV26HbWCJQ/08IvofCBm+cAsvnNnCXY
+         y24FzskBsmltiRFtt29EY6G+gco70LQiBNBxAqZh8ssi0xmCDzusS1+nJjEXEcbJME+f
+         cwkQ==
+X-Gm-Message-State: AHQUAuaaY+jd76VN+bStSSpL8v5hbtw4Xhy9uJjsIN3YHORAJpOJrNJ9
+        5eY8SGoW0FPtvVDQ0ralMiRxE9ds
+X-Google-Smtp-Source: AHgI3Ib8eCvEIBx7U37Xvtz1rzN+RoX6fp/NtmBf6AqQkHkNrMat20XWQVo1wehQYJV9ivG0bmPGvw==
+X-Received: by 2002:a2e:9595:: with SMTP id w21-v6mr20843352ljh.194.1550682117887;
+        Wed, 20 Feb 2019 09:01:57 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id 8sm5345390ljs.42.2019.02.20.09.01.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Feb 2019 09:01:40 -0800 (PST)
-Received: by mail-vk1-f170.google.com with SMTP id l136so5670527vke.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 09:01:39 -0800 (PST)
-X-Received: by 2002:a1f:9695:: with SMTP id y143mr18517349vkd.13.1550682099076;
- Wed, 20 Feb 2019 09:01:39 -0800 (PST)
+        Wed, 20 Feb 2019 09:01:57 -0800 (PST)
+Subject: Re: [PATCH v4 0/8] Support Trusted Foundations firmware on Tegra30
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Robert Yang <decatf@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190218001726.16785-1-digetx@gmail.com>
+ <c6d761cf-370c-c4f7-931b-d2333e02f2dc@gmail.com>
+ <20190220163614.GA11116@qmqm.qmqm.pl>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <ba276a8f-57fb-4565-817a-6f7ee4175d41@gmail.com>
+Date:   Wed, 20 Feb 2019 20:01:55 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-References: <20190220005449.GA25243@beast> <20190220081451.GA2254@light.dominikbrodowski.net>
-In-Reply-To: <20190220081451.GA2254@light.dominikbrodowski.net>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 20 Feb 2019 09:01:27 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jKPtL4oSa_7QJEXVc++idNNH9GA1Y=z3tQrorRTs0fnsA@mail.gmail.com>
-Message-ID: <CAGXu5jKPtL4oSa_7QJEXVc++idNNH9GA1Y=z3tQrorRTs0fnsA@mail.gmail.com>
-Subject: Re: [PATCH] x86/asm: Pin sensitive CR4 bits
-To:     Dominik Brodowski <linux@dominikbrodowski.net>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        X86 ML <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190220163614.GA11116@qmqm.qmqm.pl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 12:15 AM Dominik Brodowski
-<linux@dominikbrodowski.net> wrote:
->
-> On Tue, Feb 19, 2019 at 04:54:49PM -0800, Kees Cook wrote:
-> > diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-> > index cb28e98a0659..7e0ea4470f8e 100644
-> > --- a/arch/x86/kernel/cpu/common.c
-> > +++ b/arch/x86/kernel/cpu/common.c
-> > @@ -312,10 +312,16 @@ static __init int setup_disable_smep(char *arg)
-> >  }
-> >  __setup("nosmep", setup_disable_smep);
-> >
-> > +volatile unsigned long cr4_pin __ro_after_init;
-> > +EXPORT_SYMBOL_GPL(cr4_pin);
->
-> Where is this export needed?
+20.02.2019 19:36, Michał Mirosław пишет:
+> On Wed, Feb 20, 2019 at 04:30:20PM +0300, Dmitry Osipenko wrote:
+>> 18.02.2019 3:17, Dmitry Osipenko пишет:
+>>> Hello,
+>>>
+>>> This patchset adds support for the Trusted Foundations firmware on
+>>> NVIDIA Tegra30. Pretty much all of Tegra30 consumer devices have that
+>>> firmware and upstream kernel can't boot on those devices without the
+>>> firmware support.
+>>
+>> Hello Michał,
+>>
+>> Will be awesome if you could test the series on yours TF300T and report back, thanks in advance!
+> 
+> I think I will be able to look into this during the weekend. Which
+> kernel tree do you suggest as base?
 
-I use it in lkdtm (which I was going to land through the drivers tree,
-but I haven't sent to Greg):
+Either linux-next (preferably) or the mainline v5.0 will be fine, there were no much changes for the last year in the code that this patchset touches. You could also try the grate-kernel [0] which has some extra patches that were not submitted to upstream yet, please try it if you'll experience some problems.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=kspp/x86/cr4
+[0] https://github.com/grate-driver/linux/commits/master
 
--- 
-Kees Cook
+Please test the following:
+
+1) Kernel boots fine with all 4 CPU cores up and running.
+
+2) LP2 CPU idling works. Test it by disabling the secondary cores:
+
+# echo 0 | tee /sys/devices/system/cpu/cpu[1-3]/online
+
+3) LP1 suspend-resume works. Make sure that "nvidia,suspend-mode" is set to "1" in the PMC device-tree node and that the other relevant properties are set up correctly (copy the values from TF300T downstream kernel). Test it by running this command (multiple times):
+
+# rtcwake -m mem -s 1
+
