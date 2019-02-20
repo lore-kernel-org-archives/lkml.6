@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D503CC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDEDDC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:21:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A7122146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:21:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A58F32147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:21:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZqLyANRg"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OQ58Zx6c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727869AbfBTUVc (ORCPT
+        id S1726976AbfBTURY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 15:21:32 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:60974 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727192AbfBTURb (ORCPT
+        Wed, 20 Feb 2019 15:17:24 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:51706 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbfBTURW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 15:17:31 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1KK95Wd088088;
-        Wed, 20 Feb 2019 20:17:17 GMT
+        Wed, 20 Feb 2019 15:17:22 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1KK8jqE081895;
+        Wed, 20 Feb 2019 20:17:09 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=l7fb/dXFfaQBZgqf9ui2KpVrBMWCvGVoCEVnuwIloQc=;
- b=ZqLyANRgYj0arQDEs4AfnZcFy6M1QcRyNS3X58r54VNyflHV/wcHNPQu4a14VRpw0vei
- i2d8cWodYI+6PsHzc2m4HzXOGVk3Z50+9ihnLhFinYntlMAAWBPVbHo5hfWx+QAH4DCo
- ea9cNRb9Jc6zoPCpGEB4bPn03s+dTc7qHS0OARPvTS75LEjOsFbuDzRA1U5J2bjHDFRv
- 0VI411AbSZx9ddrU3frJHkgL/QdeHZJys+LJQaCN3RtVfw9Hp8H96/HxSJ4PKjDsqfNU
- wRsPPh/VFhub7g960D+ouSOn1JMpOdTRUS8K26c0FHEHcdq4XeS3t746U3o94Pa5J4Pg 8g== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2qp81ec382-1
+ bh=eN8fngoVKN0x/zeZw68QC5D2VC0C4AAVlV6ydxu23m8=;
+ b=OQ58Zx6cJjilb2OJveOO0gSbbGMIhsRp06cWHLJMujdfmQPw0Il6ZXE1dZjoW08/UH4z
+ npH0YlJUy9hLPAmJWjcNpCnst3s9Hs2oqcJ4my5yqS4b5qhImLQmMMf2IE/EfRWhhxIp
+ FrttRAkiUYTIw/ns/dV1mmeEwSN0Wvc8Ucw0VNueVlHojHK/WielVfLJEFS8k8TwD0dV
+ QkBpSy223mhOk8kL6m435lMvCeSV2SqmwO+1pzvbnmfROaVh2S9Clj5AEL5i7wVFLdSp
+ 8zfcmL+JFn5IJ38WJ93feTENjYs+Ohjo3Mbczb6P1eiGxmxZBPbsUjHTjVDnyw5rGymN tA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2qp9xu3xe7-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Feb 2019 20:17:17 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1KKHGra015952
+        Wed, 20 Feb 2019 20:17:09 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1KKH35K020565
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Feb 2019 20:17:16 GMT
+        Wed, 20 Feb 2019 20:17:03 GMT
 Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1KKHGMi009307;
-        Wed, 20 Feb 2019 20:17:16 GMT
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1KKH3vo018072;
+        Wed, 20 Feb 2019 20:17:03 GMT
 Received: from paddy.lan (/94.61.137.133)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 20 Feb 2019 12:17:15 -0800
+        with ESMTP ; Wed, 20 Feb 2019 12:17:02 -0800
 From:   Joao Martins <joao.m.martins@oracle.com>
 To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Ankur Arora <ankur.a.arora@oracle.com>,
@@ -59,9 +59,9 @@ Cc:     Ankur Arora <ankur.a.arora@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: [PATCH RFC 07/39] KVM: x86/xen: register vcpu time info region
-Date:   Wed, 20 Feb 2019 20:15:37 +0000
-Message-Id: <20190220201609.28290-8-joao.m.martins@oracle.com>
+Subject: [PATCH RFC 03/39] KVM: x86/xen: register shared_info page
+Date:   Wed, 20 Feb 2019 20:15:33 +0000
+Message-Id: <20190220201609.28290-4-joao.m.martins@oracle.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190220201609.28290-1-joao.m.martins@oracle.com>
 References: <20190220201609.28290-1-joao.m.martins@oracle.com>
@@ -70,7 +70,7 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9173 signatures=668683
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
  lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
  definitions=main-1902200138
@@ -79,147 +79,193 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow the Xen emulated guest the ability to register secondary
-vcpu time information. On Xen guests this is used in order to be
-mapped to userspace and hence allow vdso gettimeofday to work.
 
-In doing so, move kvm_xen_set_pvclock_page() logic to
-kvm_xen_update_vcpu_time() and have the former a top-level
-function which updates primary vcpu time info (in struct vcpu_info)
-and secondary one.
+We add a new ioctl, XEN_HVM_SHARED_INFO, to allow hypervisor
+to know where the guest's shared info page is.
 
 Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
 ---
- arch/x86/include/asm/kvm_host.h |  2 ++
- arch/x86/kvm/xen.c              | 45 ++++++++++++++++++++++++++++++-----------
- include/uapi/linux/kvm.h        |  1 +
- 3 files changed, 36 insertions(+), 12 deletions(-)
+ arch/x86/include/asm/kvm_host.h |  3 +++
+ arch/x86/kvm/x86.c              | 21 +++++++++++++++
+ arch/x86/kvm/xen.c              | 60 +++++++++++++++++++++++++++++++++++++++++
+ arch/x86/kvm/xen.h              |  4 +++
+ include/uapi/linux/kvm.h        | 15 +++++++++++
+ 5 files changed, 103 insertions(+)
 
 diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 96f65ba4b3c0..f39d50dd8f40 100644
+index 0f469ce439c0..befc0e37f162 100644
 --- a/arch/x86/include/asm/kvm_host.h
 +++ b/arch/x86/include/asm/kvm_host.h
-@@ -539,6 +539,8 @@ struct kvm_vcpu_xen {
- 	struct kvm_xen_exit exit;
- 	gpa_t vcpu_info_addr;
- 	struct vcpu_info *vcpu_info;
-+	gpa_t pv_time_addr;
-+	struct pvclock_vcpu_time_info *pv_time;
+@@ -843,6 +843,9 @@ struct kvm_hv {
+ /* Xen emulation context */
+ struct kvm_xen {
+ 	u64 xen_hypercall;
++
++	gfn_t shinfo_addr;
++	struct shared_info *shinfo;
  };
  
- struct kvm_vcpu_arch {
+ enum kvm_irqchip_mode {
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index be8def385e3f..1eda96304180 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4793,6 +4793,26 @@ long kvm_arch_vm_ioctl(struct file *filp,
+ 		r = 0;
+ 		break;
+ 	}
++	case KVM_XEN_HVM_GET_ATTR: {
++		struct kvm_xen_hvm_attr xha;
++
++		r = -EFAULT;
++		if (copy_from_user(&xha, argp, sizeof(xha)))
++			goto out;
++		r = kvm_xen_hvm_get_attr(kvm, &xha);
++		if (copy_to_user(argp, &xha, sizeof(xha)))
++			goto out;
++		break;
++	}
++	case KVM_XEN_HVM_SET_ATTR: {
++		struct kvm_xen_hvm_attr xha;
++
++		r = -EFAULT;
++		if (copy_from_user(&xha, argp, sizeof(xha)))
++			goto out;
++		r = kvm_xen_hvm_set_attr(kvm, &xha);
++		break;
++	}
+ 	case KVM_SET_CLOCK: {
+ 		struct kvm_clock_data user_ns;
+ 		u64 now_ns;
+@@ -9279,6 +9299,7 @@ void kvm_arch_destroy_vm(struct kvm *kvm)
+ 	kvm_mmu_uninit_vm(kvm);
+ 	kvm_page_track_cleanup(kvm);
+ 	kvm_hv_destroy_vm(kvm);
++	kvm_xen_destroy_vm(kvm);
+ }
+ 
+ void kvm_arch_free_memslot(struct kvm *kvm, struct kvm_memory_slot *free,
 diff --git a/arch/x86/kvm/xen.c b/arch/x86/kvm/xen.c
-index 36d6dd0ea4b8..77d1153386bc 100644
+index 76f0e4b812d2..4df223bd3cd7 100644
 --- a/arch/x86/kvm/xen.c
 +++ b/arch/x86/kvm/xen.c
-@@ -25,6 +25,11 @@ static void set_vcpu_attr(struct kvm_vcpu *v, u16 type, gpa_t gpa, void *addr)
- 		vcpu_xen->vcpu_info = addr;
- 		kvm_xen_setup_pvclock_page(v);
- 		break;
-+	case KVM_XEN_ATTR_TYPE_VCPU_TIME_INFO:
-+		vcpu_xen->pv_time_addr = gpa;
-+		vcpu_xen->pv_time = addr;
-+		kvm_xen_setup_pvclock_page(v);
-+		break;
- 	default:
- 		break;
- 	}
-@@ -37,6 +42,8 @@ static gpa_t get_vcpu_attr(struct kvm_vcpu *v, u16 type)
- 	switch (type) {
- 	case KVM_XEN_ATTR_TYPE_VCPU_INFO:
- 		return vcpu_xen->vcpu_info_addr;
-+	case KVM_XEN_ATTR_TYPE_VCPU_TIME_INFO:
-+		return vcpu_xen->pv_time_addr;
- 	default:
- 		return 0;
- 	}
-@@ -83,20 +90,10 @@ static void *xen_vcpu_info(struct kvm_vcpu *v)
- 	return hva + offset;
- }
+@@ -11,9 +11,61 @@
+ #include <linux/kvm_host.h>
  
--void kvm_xen_setup_pvclock_page(struct kvm_vcpu *v)
-+static void kvm_xen_update_vcpu_time(struct kvm_vcpu *v,
-+				 struct pvclock_vcpu_time_info *guest_hv_clock)
- {
- 	struct kvm_vcpu_arch *vcpu = &v->arch;
--	struct pvclock_vcpu_time_info *guest_hv_clock;
--	void *hva = xen_vcpu_info(v);
--	unsigned int offset;
--
--	if (!hva)
--		return;
--
--	offset = offsetof(struct vcpu_info, time);
--
--	guest_hv_clock = (struct pvclock_vcpu_time_info *)
--		(hva + offset);
+ #include <trace/events/kvm.h>
++#include <xen/interface/xen.h>
  
- 	BUILD_BUG_ON(offsetof(struct pvclock_vcpu_time_info, version) != 0);
+ #include "trace.h"
  
-@@ -127,6 +124,26 @@ void kvm_xen_setup_pvclock_page(struct kvm_vcpu *v)
- 	guest_hv_clock->version = vcpu->hv_clock.version;
- }
- 
-+void kvm_xen_setup_pvclock_page(struct kvm_vcpu *v)
++static int kvm_xen_shared_info_init(struct kvm *kvm, gfn_t gfn)
 +{
-+	struct kvm_vcpu_xen *vcpu_xen = vcpu_to_xen_vcpu(v);
-+	struct pvclock_vcpu_time_info *guest_hv_clock;
-+	void *hva = xen_vcpu_info(v);
-+	unsigned int offset;
++	struct shared_info *shared_info;
++	struct page *page;
 +
-+	offset = offsetof(struct vcpu_info, time);
-+	guest_hv_clock = (struct pvclock_vcpu_time_info *) (hva + offset);
++	page = gfn_to_page(kvm, gfn);
++	if (is_error_page(page))
++		return -EINVAL;
 +
-+	if (likely(hva))
-+		kvm_xen_update_vcpu_time(v, guest_hv_clock);
++	kvm->arch.xen.shinfo_addr = gfn;
 +
-+	/* Update secondary pvclock region if registered */
-+	if (vcpu_xen->pv_time_addr) {
-+		guest_hv_clock = vcpu_xen->pv_time;
-+		kvm_xen_update_vcpu_time(v, guest_hv_clock);
-+	}
++	shared_info = page_to_virt(page);
++	memset(shared_info, 0, sizeof(struct shared_info));
++	kvm->arch.xen.shinfo = shared_info;
++	return 0;
 +}
 +
- int kvm_xen_hvm_set_attr(struct kvm *kvm, struct kvm_xen_hvm_attr *data)
++int kvm_xen_hvm_set_attr(struct kvm *kvm, struct kvm_xen_hvm_attr *data)
++{
++	int r = -ENOENT;
++
++	switch (data->type) {
++	case KVM_XEN_ATTR_TYPE_SHARED_INFO: {
++		gfn_t gfn = data->u.shared_info.gfn;
++
++		r = kvm_xen_shared_info_init(kvm, gfn);
++		break;
++	}
++	default:
++		break;
++	}
++
++	return r;
++}
++
++int kvm_xen_hvm_get_attr(struct kvm *kvm, struct kvm_xen_hvm_attr *data)
++{
++	int r = -ENOENT;
++
++	switch (data->type) {
++	case KVM_XEN_ATTR_TYPE_SHARED_INFO: {
++		data->u.shared_info.gfn = kvm->arch.xen.shinfo_addr;
++		break;
++	}
++	default:
++		break;
++	}
++
++	return r;
++}
++
+ bool kvm_xen_hypercall_enabled(struct kvm *kvm)
  {
- 	int r = -ENOENT;
-@@ -138,6 +155,7 @@ int kvm_xen_hvm_set_attr(struct kvm *kvm, struct kvm_xen_hvm_attr *data)
- 		r = kvm_xen_shared_info_init(kvm, gfn);
- 		break;
- 	}
-+	case KVM_XEN_ATTR_TYPE_VCPU_TIME_INFO:
- 	case KVM_XEN_ATTR_TYPE_VCPU_INFO: {
- 		gpa_t gpa = data->u.vcpu_attr.gpa;
- 		struct kvm_vcpu *v;
-@@ -173,6 +191,7 @@ int kvm_xen_hvm_get_attr(struct kvm *kvm, struct kvm_xen_hvm_attr *data)
- 		data->u.shared_info.gfn = kvm->arch.xen.shinfo_addr;
- 		break;
- 	}
-+	case KVM_XEN_ATTR_TYPE_VCPU_TIME_INFO:
- 	case KVM_XEN_ATTR_TYPE_VCPU_INFO: {
- 		struct kvm_vcpu *v;
+ 	return READ_ONCE(kvm->arch.xen.xen_hypercall);
+@@ -77,3 +129,11 @@ int kvm_xen_hypercall(struct kvm_vcpu *vcpu)
  
-@@ -261,6 +280,8 @@ void kvm_xen_vcpu_uninit(struct kvm_vcpu *vcpu)
- 
- 	if (vcpu_xen->vcpu_info)
- 		put_page(virt_to_page(vcpu_xen->vcpu_info));
-+	if (vcpu_xen->pv_time)
-+		put_page(virt_to_page(vcpu_xen->pv_time));
+ 	return 0;
  }
++
++void kvm_xen_destroy_vm(struct kvm *kvm)
++{
++	struct kvm_xen *xen = &kvm->arch.xen;
++
++	if (xen->shinfo)
++		put_page(virt_to_page(xen->shinfo));
++}
+diff --git a/arch/x86/kvm/xen.h b/arch/x86/kvm/xen.h
+index a2ae079c3ef3..bb38edf383fe 100644
+--- a/arch/x86/kvm/xen.h
++++ b/arch/x86/kvm/xen.h
+@@ -3,8 +3,12 @@
+ #ifndef __ARCH_X86_KVM_XEN_H__
+ #define __ARCH_X86_KVM_XEN_H__
  
- void kvm_xen_destroy_vm(struct kvm *kvm)
++int kvm_xen_hvm_set_attr(struct kvm *kvm, struct kvm_xen_hvm_attr *data);
++int kvm_xen_hvm_get_attr(struct kvm *kvm, struct kvm_xen_hvm_attr *data);
+ bool kvm_xen_hypercall_enabled(struct kvm *kvm);
+ bool kvm_xen_hypercall_set(struct kvm *kvm);
+ int kvm_xen_hypercall(struct kvm_vcpu *vcpu);
+ 
++void kvm_xen_destroy_vm(struct kvm *kvm);
++
+ #endif
 diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 782f497a0fdd..8296c3a2434f 100644
+index d07520c216a1..de2168d235af 100644
 --- a/include/uapi/linux/kvm.h
 +++ b/include/uapi/linux/kvm.h
-@@ -1474,6 +1474,7 @@ struct kvm_xen_hvm_attr {
+@@ -1455,6 +1455,21 @@ struct kvm_enc_region {
+ /* Available with KVM_CAP_HYPERV_CPUID */
+ #define KVM_GET_SUPPORTED_HV_CPUID _IOWR(KVMIO, 0xc1, struct kvm_cpuid2)
  
- #define KVM_XEN_ATTR_TYPE_SHARED_INFO       0x0
- #define KVM_XEN_ATTR_TYPE_VCPU_INFO         0x1
-+#define KVM_XEN_ATTR_TYPE_VCPU_TIME_INFO    0x2
- 
++#define KVM_XEN_HVM_GET_ATTR        _IOWR(KVMIO,  0xc2, struct kvm_xen_hvm_attr)
++#define KVM_XEN_HVM_SET_ATTR        _IOW(KVMIO,  0xc3, struct kvm_xen_hvm_attr)
++
++struct kvm_xen_hvm_attr {
++	__u16 type;
++
++	union {
++		struct {
++			__u64 gfn;
++		} shared_info;
++	} u;
++};
++
++#define KVM_XEN_ATTR_TYPE_SHARED_INFO       0x0
++
  /* Secure Encrypted Virtualization command */
  enum sev_cmd_id {
+ 	/* Guest initialization commands */
 -- 
 2.11.0
 
