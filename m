@@ -2,110 +2,175 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EC55C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:35:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC28C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:35:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66D5E20C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:35:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550662501;
-	bh=G36ZHd7D9eHLnW6qGl3mA5qqZ+q+yuZZlm92mdHzJSs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=unXZ+926heX+ktvQO5ShyWzv1M3siTRe0NJyZ15K6OhMUHFqxXdilB9LZ56yOIopR
-	 bKg10e/kEBGiGEYCyPVwZFM+UMLOeDv+3ZdOrEkD0nJdMlxR/OKS8W8PFdBDS9+gnW
-	 fETjumlp1qHUFZ/q8MEY+kvSN6fmfcbOIL6fvHp8=
+	by mail.kernel.org (Postfix) with ESMTP id C4AC020851
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:35:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s+GlPal0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727037AbfBTLfA (ORCPT
+        id S1727219AbfBTLfN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 06:35:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37112 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725885AbfBTLe7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 06:34:59 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0149020851;
-        Wed, 20 Feb 2019 11:34:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550662498;
-        bh=G36ZHd7D9eHLnW6qGl3mA5qqZ+q+yuZZlm92mdHzJSs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=a4+rH3AX4vVLSlvYOc4HwGEF12N0bxhim4Auu7a07x45oRiNkPtbQj6hlYgUi9DV4
-         Fawd2q/6RZvzxn7usVE9362UIO5wmJyr9OCR3c8zavAwuiftY06Xn+w3A9yQt5fnia
-         86bVbz2I23vZWnGak7lRkurd+K998832Y0J7fmow=
-Date:   Wed, 20 Feb 2019 11:34:53 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Martin Kelly <mkelly@xevo.com>
-Cc:     Mathieu Othacehe <m.othacehe@gmail.com>,
-        "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iio: trigger: Print an error if there is no available
- irq
-Message-ID: <20190220113453.22d8fcd2@archlinux>
-In-Reply-To: <cd3cf791-e035-d06c-ea1b-4415a93ea7a2@xevo.com>
-References: <20190213131752.646-1-m.othacehe@gmail.com>
-        <cd3cf791-e035-d06c-ea1b-4415a93ea7a2@xevo.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 20 Feb 2019 06:35:13 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33655 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726535AbfBTLfN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 06:35:13 -0500
+Received: by mail-wr1-f66.google.com with SMTP id i12so25641243wrw.0;
+        Wed, 20 Feb 2019 03:35:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=134+tCMDWqvyLKFxQMs23/byxLcIpJQj2h/KnwWi4rc=;
+        b=s+GlPal0HlzvtPTW1F0OqKS+JnjTOt2XX517uAcGfaPDrNIZx/D/NRJZiZCps6RU0V
+         9RT6Eb5FDjbOFGuZuFNds608QF56v/IPoqo5kSpfzSt54GvXpG9YYVc+UdZmZbt/8IBE
+         ubC2wEYrKuIcuxcFzOvp0IbMBfAwpitXX2oNUl1jRz5Vkx6Fq0xEo+D0cx4bMOPqGw74
+         5ug2zcSm7MKvgOTlTGwsxBKATGVmMsSQxeCMAia5UCT3oIPj26TNqrnOHjEgPmnrugOx
+         sVNDCGExpkQ9CoE5ZVxVDIE4qUrYBrQ+2BLA63ZBEb9yasYGIl8aizwSQ0Y4zBfVoyMc
+         m4BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=134+tCMDWqvyLKFxQMs23/byxLcIpJQj2h/KnwWi4rc=;
+        b=jCLlybX1YKWFfC8GA9ptpRFhjAO/2+cD2kwS8r6fNlsov0B/pmP4LLm5KhEIZOu9v1
+         NQ6GBeV2nbsTZAPujvsb3QTvBN5LWgGscn76+jZxwV3m4zHOhwVZB0kSePSammq/JbBc
+         nAL4wJ5fTRd8cAATMS+T1FXPCALwHr7cXMCx9nAHmcNPrPTIItAQW1klEb3bXwSsG+I+
+         1jByCyDoKESh2+0IOkO+1Bvfzp82JOPlBmFZC41FHpz5dmT31AO9R5t+XDQnULzJvyAr
+         FYH5rtRxp2xdfX/AlIvtWkt1IDiqcnoeSSzgU5RIHdCl6h6m7XphtZUewE9Z2PCD+z9D
+         9RJw==
+X-Gm-Message-State: AHQUAuZrrHCNSS6twpT2TB1SpZYUxwSzIEHQo/4NE2BsJJh4MG+xZ3gB
+        z//Qsx4oLkY8BIwqOp2ti+k=
+X-Google-Smtp-Source: AHgI3IaB20AbHkvC53VEi8ynVnvYvnIBO8KXdKEAj44hQBDyoCWX8s2EJvW+NCzrFufvSvLAvWM0pg==
+X-Received: by 2002:a5d:5504:: with SMTP id b4mr21094536wrv.291.1550662510864;
+        Wed, 20 Feb 2019 03:35:10 -0800 (PST)
+Received: from localhost (pD9E51D2D.dip0.t-ipconnect.de. [217.229.29.45])
+        by smtp.gmail.com with ESMTPSA id u15sm6249271wmu.17.2019.02.20.03.35.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Feb 2019 03:35:09 -0800 (PST)
+Date:   Wed, 20 Feb 2019 12:35:08 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        liwei213@huawei.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, guodong.xu@linaro.org,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        amit.kucheria@linaro.org, john.stultz@linaro.org,
+        linux-arm-kernel@lists.infradead.org,
+        Wei Xu <xuwei5@hisilicon.com>, linux-next@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] arm64: dts: hisilicon: hi3670: Add UFS controller
+ support
+Message-ID: <20190220113508.GB7498@ulmo>
+References: <20190105072859.9134-1-manivannan.sadhasivam@linaro.org>
+ <20190105072859.9134-3-manivannan.sadhasivam@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="s2ZSL+KKDSLx8OML"
+Content-Disposition: inline
+In-Reply-To: <20190105072859.9134-3-manivannan.sadhasivam@linaro.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 13 Feb 2019 22:19:16 +0000
-Martin Kelly <mkelly@xevo.com> wrote:
 
-> On 2/13/19 5:17 AM, Mathieu Othacehe wrote:
-> > If there are more trigger consumers than
-> > CONFIG_IIO_CONSUMERS_PER_TRIGGER, iio_trigger_attach_poll_func will
-> > silently fail. Add an error message to inform the user that
-> > CONFIG_IIO_CONSUMERS_PER_TRIGGER limit might be exceeded.
-> > 
-> > Signed-off-by: Mathieu Othacehe <m.othacehe@gmail.com>
-> > ---
-> >   drivers/iio/industrialio-trigger.c | 6 +++++-
-> >   1 file changed, 5 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/iio/industrialio-trigger.c b/drivers/iio/industrialio-trigger.c
-> > index ce66699c7fcc..801986c21467 100644
-> > --- a/drivers/iio/industrialio-trigger.c
-> > +++ b/drivers/iio/industrialio-trigger.c
-> > @@ -254,8 +254,12 @@ static int iio_trigger_attach_poll_func(struct iio_trigger *trig,
-> >   
-> >   	/* Get irq number */
-> >   	pf->irq = iio_trigger_get_irq(trig);
-> > -	if (pf->irq < 0)
-> > +	if (pf->irq < 0) {
-> > +		pr_err("Could not find an available irq for trigger %s, "
-> > +			"CONFIG_IIO_CONSUMERS_PER_TRIGGER limit "
-> > +			"might be exceeded\n", trig->name);
-> >   		goto out_put_module;
-> > +	}
-> >   
-> >   	/* Request irq */
-> >   	ret = request_threaded_irq(pf->irq, pf->h, pf->thread,
-> >   
-> 
-> This seems useful! I think it would be good to print the value of 
-> CONFIG_IIO_CONSUMERS_PER_TRIGGER too. Also, it appears this is 
-> triggering a checkpatch warning:
-> 
-> WARNING: quoted string split across lines
-Agreed, with both comments.  Sensible change though. I'll admit
-I'm a bit embarrassed that I wrote it without that warning in the
-first place :(
+--s2ZSL+KKDSLx8OML
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
+On Sat, Jan 05, 2019 at 12:58:58PM +0530, Manivannan Sadhasivam wrote:
+> Add UFS controller support for HiSilicon HI3670 SoC.
+>=20
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  arch/arm64/boot/dts/hisilicon/hi3670.dtsi | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
 
-Jonathan
+Hi Martin,
 
+it looks like you picked this up into the SCSI tree (perhaps
+inadvertently). It's been causing linux-next to fail to build since
+Monday (next-20190218) because it references a phandle (&crg_rst)
+that's not available.
+
+There's a patch on the mailing lists to add that, but I think at this
+point it'd be better if you could drop this from the SCSI tree and we
+let the HiSilicon maintainers deal with the dependency in their tree.
+
+Cc'ing Wei and linux-next.
+
+Thierry
+
+>=20
+> diff --git a/arch/arm64/boot/dts/hisilicon/hi3670.dtsi b/arch/arm64/boot/=
+dts/hisilicon/hi3670.dtsi
+> index 6ccdf5040ffd..285219dd657f 100644
+> --- a/arch/arm64/boot/dts/hisilicon/hi3670.dtsi
+> +++ b/arch/arm64/boot/dts/hisilicon/hi3670.dtsi
+> @@ -654,6 +654,24 @@
+>  			clock-names =3D "apb_pclk";
+>  		};
+> =20
+> +		/* UFS */
+> +		ufs: ufs@ff3c0000 {
+> +			compatible =3D "hisilicon,hi3670-ufs", "jedec,ufs-2.1";
+> +			/* 0: HCI standard */
+> +			/* 1: UFS SYS CTRL */
+> +			reg =3D <0x0 0xff3c0000 0x0 0x1000>,
+> +				<0x0 0xff3e0000 0x0 0x1000>;
+> +			interrupt-parent =3D <&gic>;
+> +			interrupts =3D <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks =3D <&crg_ctrl HI3670_CLK_GATE_UFSIO_REF>,
+> +				<&crg_ctrl HI3670_CLK_GATE_UFS_SUBSYS>;
+> +			clock-names =3D "ref_clk", "phy_clk";
+> +			freq-table-hz =3D <0 0>, <0 0>;
+> +			/* offset: 0x84; bit: 12 */
+> +			resets =3D <&crg_rst 0x84 12>;
+> +			reset-names =3D "rst";
+> +		};
+> +
+>  		/* SD */
+>  		dwmmc1: dwmmc1@ff37f000 {
+>  			compatible =3D "hisilicon,hi3670-dw-mshc";
+> --=20
+> 2.17.1
+>=20
+>=20
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--s2ZSL+KKDSLx8OML
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxtO2gACgkQ3SOs138+
+s6EQ4A/+IUN1SE3WaCK5xyaflGB+s9Z2NlJHtFZjA849/vp6tdyveL7I9ngv1n7i
++zwaR089y/jpfWvnbRl50/RTyyxHbyayXeG3PqU8zyE56TYdCcpmwPBxELOzkyQr
+GERB7gcYZgl8r0g69Fc2I6bS0El9NLWBD6uhuvbBFV8Emy1+M2fF0JNvUmQTrmHL
+q/IwCUDkr17jSH/dYan1rGMKmyPQ5v3uRC/nVqgnc8jYKBTMKkZ3M9oEqbK7Wr2r
+Fgri+YPa0PkJ0A0hhBxP2nEslmStWuJ6EQfUYI2veFxMGS/xnTjlWg1qnWuiyh5+
+/UYcSGiYYfmoAOPOyrJez9Gn70Phnk4GVujIKrWtY7LjWbQbZE6tpQwjeMhfesMm
+IBE40J0OIPifoM9ve8sKwL5jHKI8nUvGS80wCFaC00/MzNIkL8V13uZgkLhZwV/M
+9r4JHJs1XHbrBXNdiYnJGW/i9Ct9tFiIGi92rnuR/yAhlXUhkFEPqxEb1ZmupTwY
+xB6BagYolo44WWdPm0MgNn7WEFjSu7dhWcAHRalV9MQYMhYuSYD6Sdej1PktvhdR
+uYK9U32xsnsDVH/ZLwkDL/SkdMfUeVX4/0HZG70jJv8Tzji0BsBioHRpPomy5Rsn
+FJmf52KkS3RWgw9MCwXU5Jqh98cbQqZBE6ooTY2f+h8aOarTY/c=
+=JXaV
+-----END PGP SIGNATURE-----
+
+--s2ZSL+KKDSLx8OML--
