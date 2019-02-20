@@ -2,193 +2,151 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37ED8C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:46:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F6EC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:47:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FFA821841
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:46:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAD192089F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:47:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OaMy5pf4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726921AbfBTUqi (ORCPT
+        id S1727055AbfBTUrA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 15:46:38 -0500
-Received: from foss.arm.com ([217.140.101.70]:34836 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725989AbfBTUqh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 15:46:37 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 57BE9EBD;
-        Wed, 20 Feb 2019 12:46:37 -0800 (PST)
-Received: from [10.37.8.123] (unknown [10.37.8.123])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4702D3F5C1;
-        Wed, 20 Feb 2019 12:46:35 -0800 (PST)
-Subject: Re: xen/evtchn and forced threaded irq
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Dave P Martin <dave.martin@arm.com>,
-        Andrew Cooper <Andrew.Cooper3@citrix.com>,
-        Jan Beulich <JBeulich@suse.com>
-References: <5e256d9a-572c-e01e-7706-407f99245b00@arm.com>
- <20190220000209.GA4091@localhost.localdomain>
- <a872d480-9f1b-6cd7-e507-ac4fcdf705af@arm.com>
- <21214d47-9c68-e6bf-007a-4047cc2b02f9@oracle.com>
- <8f7445d7-fa50-f3e9-44f5-cc2aebd020f4@arm.com>
- <15bc52cb-82d8-4d2c-e5a8-c6ae8de90276@oracle.com>
-From:   Julien Grall <julien.grall@arm.com>
-Message-ID: <5df8888a-4a29-fccd-bac2-a9c170244029@arm.com>
-Date:   Wed, 20 Feb 2019 20:46:33 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 20 Feb 2019 15:47:00 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33413 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725881AbfBTUrA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 15:47:00 -0500
+Received: by mail-wr1-f68.google.com with SMTP id i12so27662510wrw.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 12:46:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=j5vcakdDl8387Tu318xfj3WMU/t7dPLIuJoaP/jo6GQ=;
+        b=OaMy5pf4ce/mBWFme4xXThCQ3aufaK8E5P3letJ/QBnUY/TAhclICns2DisohHWJgZ
+         Wv5DzX72nKZdhOEDXTcLlADMURJnBzNF7KzczAswoVvs9Qp9mtr5IjuUh/JnjUWMCAiZ
+         4BgfKCNoYIIpHECcXZX6yf2VGu0tudHKUH9hyRP5TjXLVjY5WRmW0YQqmivad4/lseg6
+         bdouH0UOnn1n5UZvVRD12lDBFqaMpmFa50JqA1qlXhESyDpVJ2+ItqORf372TOQo8zUX
+         PxWqI6Z2+y5nIn1PSxnRIgb0Vgj4NEfg7eHAJRl3wiL6I9q3jMTr5zua097shOSs6gp+
+         t/uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=j5vcakdDl8387Tu318xfj3WMU/t7dPLIuJoaP/jo6GQ=;
+        b=HVxGP6XsWOblKne+ApOY2k/emhkxraJKnbMGd48pcaktTWaYe23Q2C8HmXRpZ0gJn8
+         kyvfMnRMkr4OYSnIHoFKpYMC2h7p54f8iBjKBVaM/k3k7ium6pUyGAlV58DZcjg0esed
+         tTnkdHut6zsHXaKQreUNpoFaMywf6wHQ+M1icKv6M1vhXDV5DWEAKqluzskb2O+2fIdJ
+         F+WsoRO3fWY0GUhaSsUeObqTE+qMYORDuNgCruB3cwg+Vc+U3Ngep3pZDnkPNskw7Muj
+         f51ql0Sjvg4wjbFsGULtBZUrISZONlWw3aKA9LFMinEvjEJy+IigxQYSZa/HXxJRwgcq
+         IgJw==
+X-Gm-Message-State: AHQUAuaJOjDD5SEVjIB7fQIDugzQQUCVYn+z5MOYFIpfShq3G4MsrKQa
+        HIzlp+B+jR6DnYuBfCzzhKg=
+X-Google-Smtp-Source: AHgI3IZ23fxihTkEle1m6IpDPY8Zj4oxScTSqAqztu58OQe9bjiu5M9wl2a52dwrqHkTC1KOJs2CQA==
+X-Received: by 2002:adf:ba84:: with SMTP id p4mr26088739wrg.156.1550695618161;
+        Wed, 20 Feb 2019 12:46:58 -0800 (PST)
+Received: from localhost.localdomain ([46.216.128.67])
+        by smtp.gmail.com with ESMTPSA id c186sm9656791wmf.34.2019.02.20.12.46.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Feb 2019 12:46:57 -0800 (PST)
+Received: from [127.0.0.1] (helo=jeknote.loshitsa1.net)
+        by localhost.localdomain with esmtp (Exim 4.92-RC4)
+        (envelope-from <jekhor@gmail.com>)
+        id 1gwYlb-0006qQ-DU; Wed, 20 Feb 2019 23:46:55 +0300
+Date:   Wed, 20 Feb 2019 23:46:55 +0300
+From:   Yauhen Kharuzhy <jekhor@gmail.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v2 1/2] extcon-intel-cht-wc: Make charger detection
+ co-existed with OTG host mode
+Message-ID: <20190220204655.GB23567@jeknote.loshitsa1.net>
+References: <20190219212441.19391-1-jekhor@gmail.com>
+ <20190219212441.19391-2-jekhor@gmail.com>
+ <20190220124206.GP9224@smile.fi.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <15bc52cb-82d8-4d2c-e5a8-c6ae8de90276@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190220124206.GP9224@smile.fi.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(+ Andrew and Jan for feedback on the event channel interrupt)
-
-Hi Boris,
-
-Thank you for the your feedback.
-
-On 2/20/19 8:04 PM, Boris Ostrovsky wrote:
-> On 2/20/19 1:05 PM, Julien Grall wrote:
->> Hi,
->>
->> On 20/02/2019 17:07, Boris Ostrovsky wrote:
->>> On 2/20/19 9:15 AM, Julien Grall wrote:
->>>> Hi Boris,
->>>>
->>>> Thank you for your answer.
->>>>
->>>> On 20/02/2019 00:02, Boris Ostrovsky wrote:
->>>>> On Tue, Feb 19, 2019 at 05:31:10PM +0000, Julien Grall wrote:
->>>>>> Hi all,
->>>>>>
->>>>>> I have been looking at using Linux RT in Dom0. Once the guest is
->>>>>> started,
->>>>>> the console is ending to have a lot of warning (see trace below).
->>>>>>
->>>>>> After some investigation, this is because the irq handler will now
->>>>>> be threaded.
->>>>>> I can reproduce the same error with the vanilla Linux when passing
->>>>>> the option
->>>>>> 'threadirqs' on the command line (the trace below is from 5.0.0-rc7
->>>>>> that has
->>>>>> not RT support).
->>>>>>
->>>>>> FWIW, the interrupt for port 6 is used to for the guest to
->>>>>> communicate with
->>>>>> xenstore.
->>>>>>
->>>>>>    From my understanding, this is happening because the interrupt
->>>>>> handler is now
->>>>>> run in a thread. So we can have the following happening.
->>>>>>
->>>>>>       Interrupt context            |     Interrupt thread
->>>>>>                                    |
->>>>>>       receive interrupt port 6     |
->>>>>>       clear the evtchn port        |
->>>>>>       set IRQF_RUNTHREAD            |
->>>>>>       kick interrupt thread        |
->>>>>>                                    |    clear IRQF_RUNTHREAD
->>>>>>                                    |    call evtchn_interrupt
->>>>>>       receive interrupt port 6     |
->>>>>>       clear the evtchn port        |
->>>>>>       set IRQF_RUNTHREAD           |
->>>>>>       kick interrupt thread        |
->>>>>>                                    |    disable interrupt port 6
->>>>>>                                    |    evtchn->enabled = false
->>>>>>                                    |    [....]
->>>>>>                                    |
->>>>>>                                    |    *** Handling the second
->>>>>> interrupt ***
->>>>>>                                    |    clear IRQF_RUNTHREAD
->>>>>>                                    |    call evtchn_interrupt
->>>>>>                                    |    WARN(...)
->>>>>>
->>>>>> I am not entirely sure how to fix this. I have two solutions in mind:
->>>>>>
->>>>>> 1) Prevent the interrupt handler to be threaded. We would also
->>>>>> need to
->>>>>> switch from spin_lock to raw_spin_lock as the former may sleep on
->>>>>> RT-Linux.
->>>>>>
->>>>>> 2) Remove the warning
->>>>>
->>>>> I think access to evtchn->enabled is racy so (with or without the
->>>>> warning) we can't use it reliably.
->>>>
->>>> Thinking about it, it would not be the only issue. The ring is sized
->>>> to contain only one instance of the same event. So if you receive
->>>> twice the event, you may overflow the ring.
->>>
->>> Hm... That's another argument in favor of "unthreading" the handler.
->>
->> I first thought it would be possible to unthread it. However,
->> wake_up_interruptible is using a spin_lock. On RT spin_lock can sleep,
->> so this cannot be used in an interrupt context.
->>
->> So I think "unthreading" the handler is not an option here.
+On Wed, Feb 20, 2019 at 02:42:06PM +0200, Andy Shevchenko wrote:
+> On Wed, Feb 20, 2019 at 12:24:40AM +0300, Yauhen Kharuzhy wrote:
+> > Whiskey Cove Cherry Trail PMIC requires disabling OTG host mode before
+> > of charger detection procedure. Do this by manipulationg of CHGRCTRL1
+> > register.
+> > 
+> > Source: APCI DSDT code of Lenovo Yoga Book YB1-X91L and open-sourced
+> > Intel's drivers.
 > 
-> That sounds like a different problem. I.e. there are two issues:
-> * threaded interrupts don't work properly (races, ring overflow)
-> * evtchn_interrupt() (threaded or not) has spin_lock(), which is not
-> going to work for RT
-
-I am afraid that's not correct, you can use spin_lock() in threaded 
-interrupt handler.
-
-> The first can be fixed by using non-threaded handlers.
-
-The two are somewhat related, if you use a non-threaded handler then you 
-are not going to help the RT case.
-
-In general, the unthreaded solution should be used in the last resort.
-
->>
->>>
->>>>
->>>>>
->>>>> Another alternative could be to queue the irq if !evtchn->enabled and
->>>>> handle it in evtchn_write() (which is where irq is supposed to be
->>>>> re-enabled).
->>>> What do you mean by queue? Is it queueing in the ring?
->>>
->>>
->>> No, I was thinking about having a new structure for deferred interrupts.
->>
->> Hmmm, I am not entirely sure what would be the structure here. Could
->> you expand your thinking?
+> Some minor comments below.
 > 
-> Some sort of a FIFO that stores {irq, data} tuple. It could obviously be
-> implemented as a ring but not necessarily as Xen shared ring (if that's
-> what you were referring to).
+> Otherwise,
+> 
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> > -#define CHT_WC_CHGRCTRL1		0x5e17
+> > +#define CHT_WC_CHGRCTRL1			0x5e17
+> 
+> Not related change?
 
-The underlying question is what happen if you miss an interrupt. Is it 
-going to be ok? If no, then we have to record everything and can't 
-kill/send an error to the user app because it is not its fault.
+just alignment, yes.
 
-This means a FIFO would not be a viable. How do you size it? Static (i.e 
-pre-defined) size is not going to be possible because you don't know how 
-many interrupt you are going to receive before the thread handler runs. 
-You can't make it grow dynamically as it make become quite big for the 
-same reason.
+> 
+> > +#define CHT_WC_CHGRCTRL1_DBPEN_MASK		BIT(7)
+> 
+> Drop the _MASK, it's one bit anyway.
+OK.
 
-Discussing with my team, a solution that came up would be to introduce 
-one atomic field per event to record the number of event received. I 
-will explore that solution tomorrow.
+> 
+> > +#define CHT_WC_CHGRCTRL1_OTGMODE		BIT(6)
+> > +#define CHT_WC_CHGRCTRL1_FTEMP_EVENT		BIT(5)
+> > +#define CHT_WC_CHGRCTRL1_FUSB_INLMT_1500	BIT(4)
+> > +#define CHT_WC_CHGRCTRL1_FUSB_INLMT_900		BIT(3)
+> > +#define CHT_WC_CHGRCTRL1_FUSB_INLMT_500		BIT(2)
+> > +#define CHT_WC_CHGRCTRL1_FUSB_INLMT_150		BIT(1)
+> > +#define CHT_WC_CHGRCTRL1_FUSB_INLMT_100		BIT(0)
+> 
+> I think better to keep ascending order.
 
-Cheers,
+OK.
+
+> 
+> > +static void cht_wc_extcon_set_otgmode(struct cht_wc_extcon_data *ext,
+> > +				      bool enable)
+> > +{
+> > +	unsigned int chgrctrl1;
+> > +	int ret;
+> > +
+> > +	ret = regmap_read(ext->regmap, CHT_WC_CHGRCTRL1, &chgrctrl1);
+> > +	if (ret) {
+> > +		dev_err(ext->dev, "Error reading CHGRCTRL1 reg: %d\n", ret);
+> > +		return;
+> > +	}
+> > +
+> > +	if (enable)
+> > +		chgrctrl1 |= CHT_WC_CHGRCTRL1_OTGMODE;
+> > +	else
+> > +		chgrctrl1 &= ~(CHT_WC_CHGRCTRL1_OTGMODE);
+> 
+> Redundant parens.
+
+Hmm... Why I didn't use regmap_update_bits() here... I will simplify this
+piece with it.
+
+Thanks!
 
 -- 
-Julien Grall
+Yauhen Kharuzhy
