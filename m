@@ -2,99 +2,126 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 278F8C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 07:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8E3C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 07:52:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0258E2183F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 07:48:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FB872083B
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 07:52:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726017AbfBTHsB (ORCPT
+        id S1725941AbfBTHwe convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 02:48:01 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54155 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725819AbfBTHsB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 02:48:01 -0500
-Received: by mail-wm1-f68.google.com with SMTP id e74so4915226wmg.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 23:48:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mMMDihoOxx8auqqxwzKnxdWtX+ynPEcI5yhKxVPfzYo=;
-        b=MUIf2/Wxqe94cosFbVC4DHF7mj9s6YJYrRqfWL2hE58lLUNvboYNoTtdVliQ30jhiD
-         3wBps20ZVw341cuNrIPhDIEkFwcD4dN5A5a4QfPoSfhr5NRh/3dsi0FYIF0dJDWiH6v8
-         3Ro6QzBR7BlnVoX4oL2ftw7ox/5w/nnKFehxO5jSvmfd6Wpjge7gJk6NkABG0UChkxa9
-         kt2gk7opeXQXNX7PAEraZL/K9yOypYraJtaIpcac5lxa6OBysA4Ls0fTOo8y/zc21Maz
-         ARhUsa41bXg+ZLM65xf+xE9FNfRlNAwqCpWyAPpDChrphHTKwsXHrQYF9u396IA5My9G
-         l3Sg==
-X-Gm-Message-State: AHQUAubCb0N1KOH6nayDGQqJq+BBZCoarL7bodw9N1I1GwwO3PiWTBo8
-        RafOgjfd5JFtm0PMbtfKf9vuDg==
-X-Google-Smtp-Source: AHgI3IZjZXb91A+ELotyzyyE9XSLRWoy0E+Av7CAPVM29BAQmPs+eSO7MA1lPKE4ukl6rd9oMEhdhw==
-X-Received: by 2002:a1c:1c4:: with SMTP id 187mr5927055wmb.6.1550648879392;
-        Tue, 19 Feb 2019 23:47:59 -0800 (PST)
-Received: from localhost.localdomain ([151.15.254.225])
-        by smtp.gmail.com with ESMTPSA id b3sm9962891wme.27.2019.02.19.23.47.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Feb 2019 23:47:58 -0800 (PST)
-Date:   Wed, 20 Feb 2019 08:47:51 +0100
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     tglx@linutronix.de, linux-rt-users@vger.kernel.org,
-        peterz@infradead.org, linux-kernel@vger.kernel.org,
-        bristot@redhat.com, williams@redhat.com
-Subject: Re: [RFC PATCH RT 0/2] Add PINNED_HARD mode to hrtimers
-Message-ID: <20190220074751.GJ21785@localhost.localdomain>
-References: <20190214133716.10187-1-juri.lelli@redhat.com>
- <20190219171905.qrpr5uurayfqbehp@linutronix.de>
+        Wed, 20 Feb 2019 02:52:34 -0500
+Received: from mail-oln040092067051.outbound.protection.outlook.com ([40.92.67.51]:35232
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725777AbfBTHwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 02:52:34 -0500
+Received: from AM5EUR02FT048.eop-EUR02.prod.protection.outlook.com
+ (10.152.8.52) by AM5EUR02HT014.eop-EUR02.prod.protection.outlook.com
+ (10.152.8.91) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1580.10; Wed, 20 Feb
+ 2019 07:52:31 +0000
+Received: from AM3PR03MB0966.eurprd03.prod.outlook.com (10.152.8.51) by
+ AM5EUR02FT048.mail.protection.outlook.com (10.152.9.215) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1580.10 via Frontend Transport; Wed, 20 Feb 2019 07:52:31 +0000
+Received: from AM3PR03MB0966.eurprd03.prod.outlook.com
+ ([fe80::8011:1f4d:3804:e5f3]) by AM3PR03MB0966.eurprd03.prod.outlook.com
+ ([fe80::8011:1f4d:3804:e5f3%10]) with mapi id 15.20.1643.014; Wed, 20 Feb
+ 2019 07:52:31 +0000
+From:   Jonas Karlman <jonas@kwiboo.se>
+To:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>
+CC:     Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Sean Paul <seanpaul@chromium.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        "Heiko Stuebner" <heiko@sntech.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jonas Karlman <jonas@kwiboo.se>
+Subject: [PATCH] drm: bridge: dw-hdmi: Fix overflow workaround for Rockchip
+ SoCs
+Thread-Topic: [PATCH] drm: bridge: dw-hdmi: Fix overflow workaround for
+ Rockchip SoCs
+Thread-Index: AQHUyPE7zdLEuuqPkEW4bxazWr4x9g==
+Date:   Wed, 20 Feb 2019 07:52:31 +0000
+Message-ID: <AM3PR03MB0966818FAAAE6192FF4ED11AAC7D0@AM3PR03MB0966.eurprd03.prod.outlook.com>
+Accept-Language: sv-SE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM5PR0701CA0024.eurprd07.prod.outlook.com
+ (2603:10a6:203:51::34) To AM3PR03MB0966.eurprd03.prod.outlook.com
+ (2a01:111:e400:884c::23)
+x-incomingtopheadermarker: OriginalChecksum:D3EED088A0B4B703399759ED71D3D448A3AA5BDB746913DDE8D5AAE1D070CCDE;UpperCasedChecksum:1C9DA61C68196F2282915394E45E1E2722BE52A976D93F7CFE526274684C6424;SizeAsReceived:8788;Count:62
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-tmn:  [uYInlPeSPVjbqg1kRsDhOq3UNNQTLVPR]
+x-microsoft-original-message-id: <20190220075215.26157-1-jonas@kwiboo.se>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 62
+x-eopattributedmessage: 0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031324274)(2017031322404)(2017031323274)(1601125500)(1603101475)(1701031045);SRVR:AM5EUR02HT014;
+x-ms-traffictypediagnostic: AM5EUR02HT014:
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:AM5EUR02HT014;BCL:0;PCL:0;RULEID:;SRVR:AM5EUR02HT014;
+x-microsoft-antispam-message-info: xBb/WP6IjV40emBWlrskTSAwQYmatJCrF3hGvZ1pYiXMnN8YaFQzeLWis94SVc8Q
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190219171905.qrpr5uurayfqbehp@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 54485d23-c432-40fe-8436-6091d627118c
+X-MS-Exchange-CrossTenant-Network-Message-Id: f31910c0-3b0d-44a7-b5da-08d697085d52
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 54485d23-c432-40fe-8436-6091d627118c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Feb 2019 07:52:29.7325
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5EUR02HT014
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/02/19 18:19, Sebastian Andrzej Siewior wrote:
-> On 2019-02-14 14:37:14 [+0100], Juri Lelli wrote:
-> > Hi,
-> Hi,
-> 
-> > Now, I'm sending this and an RFC, as I'm wondering if the first behavior
-> > is actually what we want, and it is not odd at all for reasons that are
-> > not evident to me at the moment. In this case this posting might also
-> > function as a question: why we need things to work as they are today?
-> 
-> There is /proc/sys/kernel/timer_migration which should disable this but
-> I think you know that already.
-> 
-> So this is a NO_HZ feature. Basically try to move all the timers to a
-> designated CPU so all others can deep idle while one CPU does the work.
-> Ideally you have no timer which is pending / will expire if you go idle.
-> And then, once the timer fires the housekeeping CPU does the work so
-> chances are that the CPU, that programmed the timer, may remain idle.
+The Rockchip RK3288 SoC (v2.00a) and RK3328/RK3399 SoCs (v2.11a) have
+also been identified as needing this workaround with a single iteration.
 
-Right.
+Fixes: be41fc55f1aa ("drm: bridge: dw-hdmi: Handle overflow workaround based on device version")
+Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+---
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> In this case you prepare the wakeup and then wake the CPU anyway. There
-> should be no downside to this unless the housekeeping CPU is busy and in
-> irq-off regions which would increase the latency. Also in case of
-> 	cyclictest -d0
-> 
-> the one CPU would have to process all timers. So the latency will be
-> worse compared to every CPU does its own wakeup. And on RT you probably
-> do not want to do deep idle anyway.
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index 64c3cf027518..14223c0ee784 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -1655,6 +1655,8 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
+ 	 * iteration for others.
+ 	 * The Amlogic Meson GX SoCs (v2.01a) have been identified as needing
+ 	 * the workaround with a single iteration.
++	 * The Rockchip RK3288 SoC (v2.00a) and RK3328/RK3399 SoCs (v2.11a) have
++	 * been identified as needing the workaround with a single iteration.
+ 	 */
+ 
+ 	switch (hdmi->version) {
+@@ -1663,7 +1665,9 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
+ 		break;
+ 	case 0x131a:
+ 	case 0x132a:
++	case 0x200a:
+ 	case 0x201a:
++	case 0x211a:
+ 	case 0x212a:
+ 		count = 1;
+ 		break;
+-- 
+2.17.1
 
-Mmm, right. But, still very much dependent on the workload, I understand
-you are saying? So, no one size fits all solution.
-
-Thanks,
-
-- Juri
