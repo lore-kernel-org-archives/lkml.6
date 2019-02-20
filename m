@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABBB9C10F01
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A25C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:01:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8508420880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:01:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68D4920880
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:01:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbfBTOBS (ORCPT
+        id S1726900AbfBTOBa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 09:01:18 -0500
-Received: from mo4-p03-ob.smtp.rzone.de ([81.169.146.172]:29386 "EHLO
+        Wed, 20 Feb 2019 09:01:30 -0500
+Received: from mo4-p03-ob.smtp.rzone.de ([85.215.255.103]:31748 "EHLO
         mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726467AbfBTOBH (ORCPT
+        with ESMTP id S1726479AbfBTOBG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 09:01:07 -0500
+        Wed, 20 Feb 2019 09:01:06 -0500
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2M0OzzrKQ=="
 X-RZG-CLASS-ID: mo00
 Received: from iMac.fritz.box
         by smtp.strato.de (RZmta 44.9 DYNA|AUTH)
-        with ESMTPSA id 608499v1KE10EqX
+        with ESMTPSA id 608499v1KE11Eqa
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
         (Client did not present a certificate);
-        Wed, 20 Feb 2019 15:01:00 +0100 (CET)
+        Wed, 20 Feb 2019 15:01:01 +0100 (CET)
 From:   "H. Nikolaus Schaller" <hns@goldelico.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Jonathan Cameron <jic23@kernel.org>,
@@ -42,9 +42,9 @@ Cc:     letux-kernel@openphoenux.org, Hartmut Knaack <knaack.h@gmx.de>,
         Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
         linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 5/9] iio: accel: bma180: convert to devm
-Date:   Wed, 20 Feb 2019 15:00:52 +0100
-Message-Id: <900f59b94ef2e1b5559b363c0d1af4fefccd0366.1550671256.git.hns@goldelico.com>
+Subject: [PATCH 8/9] iio: magnetometer: bmc150: add mount matrix support
+Date:   Wed, 20 Feb 2019 15:00:55 +0100
+Message-Id: <2600653840b79a9817b68c17b47ef9b043137d20.1550671256.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <cover.1550671256.git.hns@goldelico.com>
 References: <cover.1550671256.git.hns@goldelico.com>
@@ -55,116 +55,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This simplifies the code a little.
+This patch allows to read a mount-matrix device tree
+property and report to user-space or in-kernel iio
+clients.
 
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- drivers/iio/accel/bma180.c | 56 ++++++++++++++------------------------
- 1 file changed, 21 insertions(+), 35 deletions(-)
+ drivers/iio/magnetometer/bmc150_magn.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/drivers/iio/accel/bma180.c b/drivers/iio/accel/bma180.c
-index 248be67e4f41..3f5ee2d495d3 100644
---- a/drivers/iio/accel/bma180.c
-+++ b/drivers/iio/accel/bma180.c
-@@ -738,7 +738,7 @@ static int bma180_probe(struct i2c_client *client,
+diff --git a/drivers/iio/magnetometer/bmc150_magn.c b/drivers/iio/magnetometer/bmc150_magn.c
+index d91cb845e3d6..48e3a16432b4 100644
+--- a/drivers/iio/magnetometer/bmc150_magn.c
++++ b/drivers/iio/magnetometer/bmc150_magn.c
+@@ -143,6 +143,7 @@ struct bmc150_magn_data {
+ 	 */
+ 	struct mutex mutex;
+ 	struct regmap *regmap;
++	struct iio_mount_matrix orientation;
+ 	/* 4 x 32 bits for x, y z, 4 bytes align, 64 bits timestamp */
+ 	s32 buffer[6];
+ 	struct iio_trigger *dready_trig;
+@@ -612,6 +613,18 @@ static ssize_t bmc150_magn_show_samp_freq_avail(struct device *dev,
+ 	return len;
+ }
  
- 	ret = data->part_info->chip_config(data);
- 	if (ret < 0)
--		goto err_chip_disable;
-+		goto err;
- 
- 	mutex_init(&data->mutex);
- 	indio_dev->dev.parent = &client->dev;
-@@ -748,12 +748,25 @@ static int bma180_probe(struct i2c_client *client,
- 	indio_dev->modes = INDIO_DIRECT_MODE;
- 	indio_dev->info = &bma180_info;
- 
-+	ret = devm_iio_triggered_buffer_setup(&client->dev, indio_dev, NULL,
-+			bma180_trigger_handler, NULL);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "unable to setup iio triggered buffer\n");
-+		goto err;
-+	}
++static const struct iio_mount_matrix *
++bmc150_magn_get_mount_matrix(const struct iio_dev *indio_dev,
++			      const struct iio_chan_spec *chan)
++{
++	return &((struct bmc150_magn_data *)iio_priv(indio_dev))->orientation;
++}
 +
-+	ret = devm_iio_device_register(&client->dev, indio_dev);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "unable to register iio device\n");
-+		goto err;
-+	}
++static const struct iio_chan_spec_ext_info bmc150_magn_ext_info[] = {
++	IIO_MOUNT_MATRIX(IIO_SHARED_BY_DIR, bmc150_magn_get_mount_matrix),
++	{ },
++};
 +
- 	if (client->irq > 0) {
--		data->trig = iio_trigger_alloc("%s-dev%d", indio_dev->name,
--			indio_dev->id);
-+		data->trig = devm_iio_trigger_alloc(&client->dev, "%s-dev%d",
-+			indio_dev->name, indio_dev->id);
- 		if (!data->trig) {
- 			ret = -ENOMEM;
--			goto err_chip_disable;
-+			goto err;
- 		}
+ static IIO_DEV_ATTR_SAMP_FREQ_AVAIL(bmc150_magn_show_samp_freq_avail);
  
- 		ret = devm_request_irq(&client->dev, client->irq,
-@@ -761,7 +774,7 @@ static int bma180_probe(struct i2c_client *client,
- 			"bma180_event", data->trig);
- 		if (ret) {
- 			dev_err(&client->dev, "unable to request IRQ\n");
--			goto err_trigger_free;
-+			goto err;
- 		}
+ static struct attribute *bmc150_magn_attributes[] = {
+@@ -638,6 +651,7 @@ static const struct attribute_group bmc150_magn_attrs_group = {
+ 		.storagebits = 32,					\
+ 		.endianness = IIO_LE					\
+ 	},								\
++	.ext_info = bmc150_magn_ext_info,				\
+ }
  
- 		data->trig->dev.parent = &client->dev;
-@@ -769,34 +782,14 @@ static int bma180_probe(struct i2c_client *client,
- 		iio_trigger_set_drvdata(data->trig, indio_dev);
- 		indio_dev->trig = iio_trigger_get(data->trig);
+ static const struct iio_chan_spec bmc150_magn_channels[] = {
+@@ -861,6 +875,11 @@ int bmc150_magn_probe(struct device *dev, struct regmap *regmap,
+ 	data->irq = irq;
+ 	data->dev = dev;
  
--		ret = iio_trigger_register(data->trig);
-+		ret = devm_iio_trigger_register(&client->dev, data->trig);
- 		if (ret)
--			goto err_trigger_free;
--	}
--
--	ret = iio_triggered_buffer_setup(indio_dev, NULL,
--			bma180_trigger_handler, NULL);
--	if (ret < 0) {
--		dev_err(&client->dev, "unable to setup iio triggered buffer\n");
--		goto err_trigger_unregister;
--	}
--
--	ret = iio_device_register(indio_dev);
--	if (ret < 0) {
--		dev_err(&client->dev, "unable to register iio device\n");
--		goto err_buffer_cleanup;
-+			goto err;
- 	}
++	ret = of_iio_read_mount_matrix(dev, "mount-matrix",
++				&data->orientation);
++	if (ret)
++		return ret;
++
+ 	if (!name && ACPI_HANDLE(dev))
+ 		name = bmc150_magn_match_acpi_device(dev);
  
- 	return 0;
- 
--err_buffer_cleanup:
--	iio_triggered_buffer_cleanup(indio_dev);
--err_trigger_unregister:
--	if (data->trig)
--		iio_trigger_unregister(data->trig);
--err_trigger_free:
--	iio_trigger_free(data->trig);
--err_chip_disable:
-+err:
- 	data->part_info->chip_disable(data);
- 
- 	return ret;
-@@ -807,13 +800,6 @@ static int bma180_remove(struct i2c_client *client)
- 	struct iio_dev *indio_dev = i2c_get_clientdata(client);
- 	struct bma180_data *data = iio_priv(indio_dev);
- 
--	iio_device_unregister(indio_dev);
--	iio_triggered_buffer_cleanup(indio_dev);
--	if (data->trig) {
--		iio_trigger_unregister(data->trig);
--		iio_trigger_free(data->trig);
--	}
--
- 	mutex_lock(&data->mutex);
- 	data->part_info->chip_disable(data);
- 	mutex_unlock(&data->mutex);
 -- 
 2.19.1
 
