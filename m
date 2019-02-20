@@ -2,130 +2,78 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEBF3C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 954D6C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:25:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEACC20880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:25:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LXL8g+vH"
+	by mail.kernel.org (Postfix) with ESMTP id 63A0B2086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:25:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727442AbfBTPZM (ORCPT
+        id S1727500AbfBTPZW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:25:12 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:42076 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726019AbfBTPZL (ORCPT
+        Wed, 20 Feb 2019 10:25:22 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:38785 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727107AbfBTPZU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:25:11 -0500
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id B792F2D1;
-        Wed, 20 Feb 2019 16:25:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1550676309;
-        bh=0TJgsLFgG2RQpD7sXwK5x2fdqgOVzse8WJ7zf1h5eF0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LXL8g+vHEKactp5pc2PjLcS1MJTnj8L9Eg32PMIFUUk4yjchPHAh4Iw79WM8mWiyO
-         0HgLxYorSd1/L1doPb04/445ISd2YYU//BJ77pOT9R38idaSB+lcYh3OjBEqBtEy2t
-         yk0UZKZHFYC8XhdPbX5PC4ef+UgrYgoyjNtyJwps=
-Date:   Wed, 20 Feb 2019 17:25:05 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] iommu/ipmmu-vmsa: Link IOMMUs and devices in sysfs
-Message-ID: <20190220152505.GD3516@pendragon.ideasonboard.com>
-References: <20190220150531.2462-1-geert+renesas@glider.be>
- <20190220150531.2462-2-geert+renesas@glider.be>
+        Wed, 20 Feb 2019 10:25:20 -0500
+Received: by mail-qk1-f196.google.com with SMTP id p15so2202783qkl.5;
+        Wed, 20 Feb 2019 07:25:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PHFmPCfpFDSLjmOxBT4coUCppxIzjU/lbJI0xUw0R9k=;
+        b=Ic2IL+1SdYlpZtfe9XdgYqxiLlXJgpGS9tRzzheoDcJtFscMkDXJ5Omsui6Geo8BnW
+         OonygHNgRtzEADr/uWxqWWSkQ3jda17nvZ0oNvRwpm11hPNG3JWipUTQ3U5YyR51ZDad
+         steuSNFC/Ojxalm6Kkmmx50IoeVsyByfJqwC7DkBXqm0gG+M0Qpb4UsY5n40MZMGMJeL
+         40vPBsHBtP3gDdtCSfwP11AOv8i088hEXzyBhCeC7puthwaSlYJSbzCNWr7j0MrAYR/K
+         l+CdfYnQxI0RwAEgnRcjE545i55H7wmRy8G+LKXJsSXHEyWCG6LyZwWQpIneVfz0txVt
+         P2Zw==
+X-Gm-Message-State: AHQUAuZHhA7sGRS74LxJWNwKeqUB6hI2lxsuDULtrut/b86SlcOSOiBh
+        MbmzbxdLPVoPr/DHzl1ZEILnEEHewzAIBia+/S1H8w==
+X-Google-Smtp-Source: AHgI3IY36PuceNa8RAnsxICV6zr3k5FR0qqd++BZ2TYtG76Hx5vtZ4NQ4ZJTlX0hEqpCEetdp4pEAlOVVd8cvzxYDvQ=
+X-Received: by 2002:a37:7cf:: with SMTP id 198mr25294675qkh.173.1550676319414;
+ Wed, 20 Feb 2019 07:25:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190220150531.2462-2-geert+renesas@glider.be>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190219032240.22935-1-natechancellor@gmail.com> <CAFA6WYNS3JckLR3=EzhbbO9G-emjXnQTGAzY2j8QoAJsteamSg@mail.gmail.com>
+In-Reply-To: <CAFA6WYNS3JckLR3=EzhbbO9G-emjXnQTGAzY2j8QoAJsteamSg@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 20 Feb 2019 16:25:03 +0100
+Message-ID: <CAK8P3a11ZVxc803z2iRUiE3Q6oBYa4dVvFC343LyVLHHKT=gSg@mail.gmail.com>
+Subject: Re: [PATCH] hwrng: optee: Initialize some structs using memset
+ instead of braces
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+On Tue, Feb 19, 2019 at 6:11 AM Sumit Garg <sumit.garg@linaro.org> wrote:
+> On Tue, 19 Feb 2019 at 08:52, Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
 
-Thank you for the patch.
+> >
+> > Fixes: 5fe8b1cc6a03 ("hwrng: add OP-TEE based rng driver")
+> > Link: https://github.com/ClangBuiltLinux/linux/issues/369
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+>
+> Reviewed-by: Sumit Garg <sumit.garg@linaro.org>
+>
 
-On Wed, Feb 20, 2019 at 04:05:25PM +0100, Geert Uytterhoeven wrote:
-> As of commit 7af9a5fdb9e0ca33 ("iommu/ipmmu-vmsa: Use
-> iommu_device_sysfs_add()/remove()"), IOMMU devices show up under
-> /sys/class/iommus/, but their "devices" subdirectories are empty.
-> Likewise, devices tied to an IOMMU do not have an "iommu" backlink.
-> 
-> Make sure all links are created, on both arm32 and arm64.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Applied this one as well to arm/drivers, thanks for the fixes!
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  drivers/iommu/ipmmu-vmsa.c | 24 +++++++++++++++++-------
->  1 file changed, 17 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-> index 9a380c10655e182d..9f2b781e20a0eba6 100644
-> --- a/drivers/iommu/ipmmu-vmsa.c
-> +++ b/drivers/iommu/ipmmu-vmsa.c
-> @@ -885,27 +885,37 @@ static int ipmmu_init_arm_mapping(struct device *dev)
->  
->  static int ipmmu_add_device(struct device *dev)
->  {
-> +	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
->  	struct iommu_group *group;
-> +	int ret;
->  
->  	/*
->  	 * Only let through devices that have been verified in xlate()
->  	 */
-> -	if (!to_ipmmu(dev))
-> +	if (!mmu)
->  		return -ENODEV;
->  
-> -	if (IS_ENABLED(CONFIG_ARM) && !IS_ENABLED(CONFIG_IOMMU_DMA))
-> -		return ipmmu_init_arm_mapping(dev);
-> +	if (IS_ENABLED(CONFIG_ARM) && !IS_ENABLED(CONFIG_IOMMU_DMA)) {
-> +		ret = ipmmu_init_arm_mapping(dev);
-> +		if (ret)
-> +			return ret;
-> +	} else {
-> +		group = iommu_group_get_for_dev(dev);
-> +		if (IS_ERR(group))
-> +			return PTR_ERR(group);
->  
-> -	group = iommu_group_get_for_dev(dev);
-> -	if (IS_ERR(group))
-> -		return PTR_ERR(group);
-> +		iommu_group_put(group);
-> +	}
->  
-> -	iommu_group_put(group);
-> +	iommu_device_link(&mmu->iommu, dev);
->  	return 0;
->  }
->  
->  static void ipmmu_remove_device(struct device *dev)
->  {
-> +	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
-> +
-> +	iommu_device_unlink(&mmu->iommu, dev);
->  	arm_iommu_detach_device(dev);
->  	iommu_group_remove_device(dev);
->  }
-
--- 
-Regards,
-
-Laurent Pinchart
+      Arnd
