@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 129FCC4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBA40C10F0B
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D68D320880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:28:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A375A2183F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:29:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726437AbfBTP2T (ORCPT
+        id S1727280AbfBTP3I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:28:19 -0500
-Received: from mx-ginzinger.sigmacloud.services ([185.154.235.147]:48210 "EHLO
+        Wed, 20 Feb 2019 10:29:08 -0500
+Received: from mx-ginzinger.sigmacloud.services ([185.154.235.147]:48231 "EHLO
         mx-ginzinger.sigmacloud.services" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727284AbfBTP2T (ORCPT
+        by vger.kernel.org with ESMTP id S1726013AbfBTP3H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:28:19 -0500
-Received: from [31.193.165.228] (port=40473 helo=mx-ginzinger.sigmacloud.services)
+        Wed, 20 Feb 2019 10:29:07 -0500
+Received: from [31.193.165.228] (port=61585 helo=mx-ginzinger.sigmacloud.services)
         by mx-ginzinger.sigmacloud.services with esmtps (TLSv1.2:AES256-GCM-SHA384:256)
         (Exim 4.82_1-5b7a7c0-XX)
         (envelope-from <Martin.Kepplinger@ginzinger.com>)
-        id 1gwTmv-0003bQ-0a; Wed, 20 Feb 2019 16:27:57 +0100
+        id 1gwTmu-0003bP-2H; Wed, 20 Feb 2019 16:27:56 +0100
 Received: from martin-laptop.buero.ginzinger.com (10.10.1.120) by
  exc1.buero.ginzinger.com (10.1.1.204) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.1.1466.3; Wed, 20 Feb 2019 16:27:56 +0100
-X-CTCH-RefID: str=0001.0A0B020A.5C6D71FD.0021,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+X-CTCH-RefID: str=0001.0A0B020A.5C6D71FC.0081,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
 From:   Martin Kepplinger <martin.kepplinger@ginzinger.com>
 To:     <gregkh@linuxfoundation.org>, <robh+dt@kernel.org>,
         <mark.rutland@arm.com>, <jslaby@suse.com>, <corbet@lwn.net>,
@@ -40,20 +40,20 @@ To:     <gregkh@linuxfoundation.org>, <robh+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-stm32@st-md-mailman.stormreply.com>
 CC:     <linux-kernel@vger.kernel.org>
-Subject: [PATCH 5/9] serial: omap-serial: add support for rs485 RTS delays in microseconds
-Date:   Wed, 20 Feb 2019 16:27:27 +0100
-Message-ID: <20190220152731.4051-5-martin.kepplinger@ginzinger.com>
+Subject: [PATCH 4/9] serial: 8250: add support for rs485 RTS delays in microseconds
+Date:   Wed, 20 Feb 2019 16:27:26 +0100
+Message-ID: <20190220152731.4051-4-martin.kepplinger@ginzinger.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190220152731.4051-1-martin.kepplinger@ginzinger.com>
 References: <20190220152731.4051-1-martin.kepplinger@ginzinger.com>
 X-Originating-IP: [10.10.1.120]
 X-ClientProxiedBy: exc1.buero.ginzinger.com (10.1.1.204) To
  exc1.buero.ginzinger.com (10.1.1.204)
-X-EXCLAIMER-MD-ORIGINAL-SUBJECT: [NOSIG][NODISC][PATCH 5/9] serial:
- omap-serial: add support for rs485 RTS delays in microseconds
+X-EXCLAIMER-MD-ORIGINAL-SUBJECT: [NOSIG][NODISC][PATCH 4/9] serial: 8250: add
+ support for rs485 RTS delays in microseconds
 X-EXCLAIMER-MD-CONFIG: 9dd172f7-de2e-4231-b886-ec11f46e03b3
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----D0169E5C45AF5223496F140D7C16D638"
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----8A7DD9D1880E800A8812A739F6C552DE"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,7 +61,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 This is an S/MIME signed message
 
-------D0169E5C45AF5223496F140D7C16D638
+------8A7DD9D1880E800A8812A739F6C552DE
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -71,64 +71,89 @@ accordingly.
 
 Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
 ---
- drivers/tty/serial/omap-serial.c | 25 +++++++++++++++++++++----
- 1 file changed, 21 insertions(+), 4 deletions(-)
+ drivers/tty/serial/8250/8250_omap.c | 13 +++++++++++--
+ drivers/tty/serial/8250/8250_port.c | 25 +++++++++++++++++++++----
+ 2 files changed, 32 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/tty/serial/omap-serial.c b/drivers/tty/serial/omap-serial.c
-index 6420ae581a80..adcd75ce5112 100644
---- a/drivers/tty/serial/omap-serial.c
-+++ b/drivers/tty/serial/omap-serial.c
-@@ -310,7 +310,11 @@ static void serial_omap_stop_tx(struct uart_port *port)
- 			res = (port->rs485.flags & SER_RS485_RTS_AFTER_SEND) ?
- 				1 : 0;
- 			if (gpio_get_value(up->rts_gpio) != res) {
--				if (port->rs485.delay_rts_after_send > 0)
-+				if (port->rs485.delay_rts_after_send > 0 &&
-+				    port->rs485.flags & SER_RS485_DELAY_IN_USEC)
-+					udelay(
-+					port->rs485.delay_rts_after_send);
-+				else if (port->rs485.delay_rts_after_send > 0)
- 					mdelay(
- 					port->rs485.delay_rts_after_send);
- 				gpio_set_value(up->rts_gpio, res);
-@@ -420,7 +424,11 @@ static void serial_omap_start_tx(struct uart_port *port)
- 		res = (port->rs485.flags & SER_RS485_RTS_ON_SEND) ? 1 : 0;
- 		if (gpio_get_value(up->rts_gpio) != res) {
- 			gpio_set_value(up->rts_gpio, res);
--			if (port->rs485.delay_rts_before_send > 0)
-+			if (port->rs485.delay_rts_before_send > 0 &&
-+			    port->rs485.flags & SER_RS485_DELAY_IN_USEC)
-+				udelay(port->rs485.delay_rts_before_send);
-+			else if (port->rs485.delay_rts_before_send > 0 &&
-+				 !(port->rs485.flags & SER_RS485_DELAY_IN_USEC)
- 				mdelay(port->rs485.delay_rts_before_send);
- 		}
- 	}
-@@ -1407,8 +1415,17 @@ serial_omap_config_rs485(struct uart_port *port, struct serial_rs485 *rs485)
- 	serial_out(up, UART_IER, 0);
+diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+index 0a8316632d75..cbce43ac60b1 100644
+--- a/drivers/tty/serial/8250/8250_omap.c
++++ b/drivers/tty/serial/8250/8250_omap.c
+@@ -720,8 +720,17 @@ static int omap_8250_rs485_config(struct uart_port *port,
+ 	struct uart_8250_port *up = up_to_u8250p(port);
  
  	/* Clamp the delays to [0, 100ms] */
 -	rs485->delay_rts_before_send = min(rs485->delay_rts_before_send, 100U);
 -	rs485->delay_rts_after_send  = min(rs485->delay_rts_after_send, 100U);
-+	if (port->rs485.flags & SER_RS485_DELAY_IN_USEC) {
++	if (rs485->flags & SER_RS485_DELAY_IN_USEC) {
 +		rs485->delay_rts_before_send = min(rs485->delay_rts_before_send,
 +						   100000U);
 +		rs485->delay_rts_after_send  = min(rs485->delay_rts_after_send,
 +						   100000U);
 +	} else {
 +		rs485->delay_rts_before_send = min(rs485->delay_rts_before_send,
-+						   100);
++						   100U);
 +		rs485->delay_rts_after_send  = min(rs485->delay_rts_after_send,
 +						   100U);
 +	}
  
- 	/* store new config */
  	port->rs485 = *rs485;
+ 
+diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
+index d2f3310abe54..0cee4aa8323d 100644
+--- a/drivers/tty/serial/8250/8250_port.c
++++ b/drivers/tty/serial/8250/8250_port.c
+@@ -1483,6 +1483,15 @@ static void start_hrtimer_ms(struct hrtimer *hrt, unsigned long msec)
+ 	hrtimer_start(hrt, t, HRTIMER_MODE_REL);
+ }
+ 
++static void start_hrtimer_us(struct hrtimer *hrt, unsigned long usec)
++{
++	long sec = usec / 1000000;
++	long nsec = (usec % 1000000) * 1000000000;
++	ktime_t t = ktime_set(sec, nsec);
++
++	hrtimer_start(hrt, t, HRTIMER_MODE_REL);
++}
++
+ static void __stop_tx_rs485(struct uart_8250_port *p)
+ {
+ 	struct uart_8250_em485 *em485 = p->em485;
+@@ -1493,8 +1502,12 @@ static void __stop_tx_rs485(struct uart_8250_port *p)
+ 	 */
+ 	if (p->port.rs485.delay_rts_after_send > 0) {
+ 		em485->active_timer = &em485->stop_tx_timer;
+-		start_hrtimer_ms(&em485->stop_tx_timer,
+-				   p->port.rs485.delay_rts_after_send);
++		if (p->port.rs485.flags & SER_RS485_DELAY_IN_USEC)
++			start_hrtimer_us(&em485->stop_tx_timer,
++					 p->port.rs485.delay_rts_after_send);
++		else
++			start_hrtimer_ms(&em485->stop_tx_timer,
++					 p->port.rs485.delay_rts_after_send);
+ 	} else {
+ 		__do_stop_tx_rs485(p);
+ 	}
+@@ -1600,8 +1613,12 @@ static inline void start_tx_rs485(struct uart_port *port)
+ 
+ 		if (up->port.rs485.delay_rts_before_send > 0) {
+ 			em485->active_timer = &em485->start_tx_timer;
+-			start_hrtimer_ms(&em485->start_tx_timer,
+-					 up->port.rs485.delay_rts_before_send);
++			if (up->port.rs485.flags & SER_RS485_DELAY_IN_USEC)
++				start_hrtimer_us(&em485->start_tx_timer,
++					up->port.rs485.delay_rts_before_send);
++			else
++				start_hrtimer_ms(&em485->start_tx_timer,
++					up->port.rs485.delay_rts_before_send);
+ 			return;
+ 		}
+ 	}
 -- 
 2.20.1
 
 
-------D0169E5C45AF5223496F140D7C16D638
+------8A7DD9D1880E800A8812A739F6C552DE
 Content-Type: application/x-pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -198,17 +223,17 @@ MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
 BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMT
 NENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1h
 aWwgQ0ECEE1CsTMbOtnoVViHUQRgfj4wDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZI
-hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTkwMjIwMTUyODEy
-WjAvBgkqhkiG9w0BCQQxIgQg570FavXu3hMCYzYb4yIQ9IrAWVYZ0NU24SrhpZ2H
-GLoweQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
+hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTkwMjIwMTUyODA4
+WjAvBgkqhkiG9w0BCQQxIgQg6qKJB1LBYz5Di2PAhyjctmBfmz2D7BZ16Nsa//m7
+egEweQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
 CWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
 AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEA
-2BQNKajiWO1xl/8XCTJUdaTYq4GVrJhYTv9A7qoIXItyAwyD6EH6monaaGQW4e5u
-eFFXGPkua0J64gAMPfog9T5gmohW20y4v53jsdQxj6l3YjAi05OGAj+EC0TqcTrQ
-pwmqzykpMvMoUy1pbZ9o50V9CNKqcLQUOroHSax6FNXDS6XeLOQH2xJzYB2tjx4O
-cqiacYUbFpVJD3aFOqj4PtEqxK6+8iPAvkm/3DuLbanoQ1sUquU5eRev0G0klwxQ
-mH9SG8YOXbv4DQC8EogKoimlLouQHU3nh4uugvlGTucdgz4E7dAS/KxmVkuRTAsl
-lFqEnKqC7PlVVfPmiJU2UA==
+D6cuAOr5I5JrqcDjdYyTLlmSyD8IlMjHpMA+pkNsYPSPWpFGlDbGm18/gl41zrvd
+cS0co7Rx/YBPt1HMmPx7ZzknOuK4C4CPGCYheNqaWbr96EWaGqf7w504JjodbPOd
+c7gitavEqp2qYHgF/h8AFAqNK9wjpuUwn/BepAZN9IVZRJXvg/lzl17s7ANSb7ea
+c38Wyg20gVj2fKJUQqj7JQGDBdny/z3VqoQhizfHEFE44LFhZZUevhNzUe1aRIr9
+zH0NvFNWZOTBUpZ2MsXnj20QPJSYVsDjMGqGAZQgyjjh4AcTt5x77x1aVX4mN9/r
+a7mMQMAM8eEe8aYvJOZbTA==
 
-------D0169E5C45AF5223496F140D7C16D638--
+------8A7DD9D1880E800A8812A739F6C552DE--
 
