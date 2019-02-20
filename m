@@ -2,91 +2,130 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9547DC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E43C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:46:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E9A12146F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:42:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBE2C2146F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:46:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="hwrnC/0z"
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="BJxsv+b4";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wsFWPPwd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730344AbfBTCm4 (ORCPT
+        id S1730189AbfBTCqg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 21:42:56 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:40629 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbfBTCmz (ORCPT
+        Tue, 19 Feb 2019 21:46:36 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:35681 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725616AbfBTCqf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 21:42:55 -0500
-Received: by mail-qt1-f195.google.com with SMTP id j36so25707312qta.7
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 18:42:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=2N6hzQ59Ndqu8ZvIp+meiLzMTcx+eYDLzewIvKUgIVI=;
-        b=hwrnC/0z/0Z8Z8BkAuyH2D39XQoTnYR+/GLjZvYefCHo1e360AohAfY7sXVwomUCM4
-         1E0HyLMRM3PTDcXMa9wfZvI0tUxn/LHhEMafb97i+xxvK4etNGQPhXm/zjl3iDzBK5Lm
-         PKRbScuiE8rwHAL7EKPlTvSvv3VZ5Q7Ilukackk8X/1ihxG6yiQGl8QwLa493t8CMMB7
-         yqMUwrX9c7dkIFKdQPk/259eufIZMxreK9j/A7tQdYwRkZ7TwfhXON1tD7kmThjCZtsM
-         uWwWw3iLYyMFbvblxK9hNyU6qP2lUfN64zQ9HeucAgE2oLqCwUPbIW0Btmmj//qIrhWF
-         QwiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=2N6hzQ59Ndqu8ZvIp+meiLzMTcx+eYDLzewIvKUgIVI=;
-        b=CIGcDouMxwGSHp+sxWFGC1pt331/ahKvZvKJSX0wV/xJpDojn28KE8ZcBCPx2gMQqf
-         GRerBHIZzplhjRWnTDfFpBeiAYaJEpFUc5ICiXAQtRfRJVzBeVS/dSyx0ohzrChL+iwf
-         mdNLzDmOdZSRRRZe71TqAuh/Cv5bElyDPTVG8h3bRnLVJMqutHzQUhrv3Z+JlRpPo89t
-         JvHhN4FcTUDBJF/yvy2TpHRoO+0bCeMOmiKn/o1PFOMiGOLKeOtImpfhITIE9468+Y0e
-         0cLeDvY6lZdCFItbH5fCldMQD7DWk9xBVuInKgRf/3oD36nfRm+mDsqiZkd2AZcOnxwk
-         HndQ==
-X-Gm-Message-State: AHQUAuYsDcEC/41VlKefLs5p1LsH9ETE8hN4t6mU6+YkR8sIzT+oO063
-        upSUvI8KrA5v3HDSmoiflSOn/g==
-X-Google-Smtp-Source: AHgI3IbaJzwNh6tSXoTix6Jd7DlgE+2J1gFCYGH+uyQBjivn4zVPYyc6kC9WtK3PD+yJunCbrsSFgQ==
-X-Received: by 2002:ac8:2585:: with SMTP id e5mr25312192qte.233.1550630574709;
-        Tue, 19 Feb 2019 18:42:54 -0800 (PST)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id 24sm7514148qtu.17.2019.02.19.18.42.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Feb 2019 18:42:54 -0800 (PST)
-Date:   Tue, 19 Feb 2019 18:42:46 -0800
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Michal Kubecek <mkubecek@suse.cz>
-Cc:     netdev@vger.kernel.org, David Miller <davem@davemloft.net>,
-        Andrew Lunn <andrew@lunn.ch>, Jiri Pirko <jiri@resnulli.us>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH net-next v3 08/21] ethtool: generic handlers for GET
- requests
-Message-ID: <20190219184246.276f94ce@cakuba.netronome.com>
-In-Reply-To: <99e5e578d2a554bb2bfd9ee04984ff54f8320b43.1550513384.git.mkubecek@suse.cz>
-References: <cover.1550513384.git.mkubecek@suse.cz>
-        <99e5e578d2a554bb2bfd9ee04984ff54f8320b43.1550513384.git.mkubecek@suse.cz>
-Organization: Netronome Systems, Ltd.
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 19 Feb 2019 21:46:35 -0500
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id 20FAF233AB;
+        Tue, 19 Feb 2019 21:46:34 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Tue, 19 Feb 2019 21:46:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
+        YqCbabGzvKCWGS13EUnOLA95VIhsqfmIn0nslossjtk=; b=BJxsv+b4YoQRjux5
+        EFeAe/StoQCwvFdf3CVkcspwiHI8omrukwadCqNMdubj21xp+AvPXot9bP8TW6dG
+        vsBWhzLVk4Pra+n4G+4hywvor3VBovJhJjBPndH2LehOkCpbidcmbGBwagBbiWNd
+        FRyeLR6OuDh1esODhoEeSnDzjaQHHeey6eFmdrrGLAgLWDf8fgTxXOWzqWZpbxe9
+        aWHUuN6iyhmV69msFcM2uMFgYvZXyWdJjIZEPeTDvBdfKh7cwLLZvhM5dYsajqm5
+        /YXSazduDV9HtaAjBc+IxiIehqCPYtpSWaDCNbO6uWyrxwEQAqOdTVPwSUpPJtrD
+        e7MvwQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=YqCbabGzvKCWGS13EUnOLA95VIhsqfmIn0nslossj
+        tk=; b=wsFWPPwd4B/kLjwCxJOwpE7PfKSfJ1xUL+EtjnfaWtupzWeRs/K6cLQSK
+        oJjTWYv/nqUl2Q6BN2g0ABPr7+WjwGK+/EsQuSGZ0UiW8wbyTAEZVThACHHpKh+g
+        vVk9Bg7AbD/ljf5Hqdz0LmVtO75hD9OHNI2G0dg+69nXRS9LtHKnLo8fBKE2U28X
+        fFH92DBYBanVewp6IUvMkJtDIDhSTAc8jKvE7v9gVzYVk1SeE0gfzhY4g5LRLbUV
+        1CyrKho578883F9jVfvOAonTzTUf7UijWCCNmD6a5uL0hMxWlMmAad4D0hFYIKlF
+        U04m/MaanRWbzlrrNWqK/HYM2L6JQ==
+X-ME-Sender: <xms:iL9sXPg-mpLvZXx-9dr1NUx73NrUJj6aVSn1H2PKGGXSZBHX6Z3-Cg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrtdehgdehvdculddtuddrgedtledrtddtmd
+    cutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtofgggfesthejredtredtjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucfkphepuddukedrvddtke
+    drheehrdeknecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidr
+    nhgvthenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:iL9sXHftdWs8pa6mBabBlElwNUyxOp1tNr_jNR43qRhfKHM2LS2bUQ>
+    <xmx:iL9sXCkZLligRfdy8ymOdJYjrYUwte0-qJd46qLQ0oHEM75OVyFHYA>
+    <xmx:iL9sXAtzNNEFu6LkuvTQj_ivt_8fZjcV6LaTikqtG3pFPckO8vFk0g>
+    <xmx:ir9sXGiAPqRXfbpMcFt-YryH_j2kPx57PYup1vdOH_on3V3BGbmFpg>
+Received: from localhost (unknown [118.208.55.8])
+        by mail.messagingengine.com (Postfix) with ESMTPA id E2C3910312;
+        Tue, 19 Feb 2019 21:46:27 -0500 (EST)
+Message-ID: <7923d4aa646fbe4bd71cfb4144f1c96f28cad972.camel@themaw.net>
+Subject: Re: [RFC PATCH 02/27] containers: Implement containers as kernel
+ objects
+From:   Ian Kent <raven@themaw.net>
+To:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        trond.myklebust@hammerspace.com, sfrench@samba.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        rgb@redhat.com, linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, cgroups@vger.kernel.org
+Date:   Wed, 20 Feb 2019 10:46:24 +0800
+In-Reply-To: <155024685321.21651.1504201877881622756.stgit@warthog.procyon.org.uk>
+References: <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
+         <155024685321.21651.1504201877881622756.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 18 Feb 2019 19:22:04 +0100 (CET), Michal Kubecek wrote:
-> +static struct common_req_info *alloc_get_data(const struct get_request_ops *ops)
+On Fri, 2019-02-15 at 16:07 +0000, David Howells wrote:
+> Implement a kernel container object such that it contains the following
+> things:
+> 
+>  (1) Namespaces.
+> 
+>  (2) A root directory.
+> 
+>  (3) A set of processes, including one designated as the 'init' process.
 
-nit: IMHO prefixing all structures and functions with a common phrase
-     (ethnl) makes the code easier to navigate.
+Yeah, I think a name other than init needs to be used for this
+process.
 
-> +{
-> +	struct common_req_info *req_info = kmalloc(ops->data_size, GFP_KERNEL);
-> +
-> +	if (!req_info)
-> +		return NULL;
+The problem being that there is no requirement for container
+process 1 to behave in any way like an "init" process is
+expected to behave and that leads to confusion (at least
+it certainly did for me).
 
-nit: please avoid calling complex functions inline, especially if the
-     result has to be error checked
+Admittedly I haven't yet worked through the series but in the
+light of the comments from James I wanted to chime in (probably
+too early to be useful not having read the series but ...).
+
+I believe what your trying to do here is so badly needed it
+would be great if the needs of James could be met to some
+(as yet undefined) satisfactory extent.
+
+Would there be any possibility of introducing a concept of
+inactive and active containers where the creation is a two
+(maybe more) step procedure, first the creation of (if you like
+a "true") container that's essentially empty, basically a shell
+(not the program "shell" of course), inert wrt. events and such
+and implement the ability to make the container active by adding
+various things, like processes, to it?
+
+Clearly the concepts of inactive and active require a definition
+of what they mean and I don't have that, perhaps a starting point
+could be a container that has a process 1 (which should also require
+a root fs and namespaces) is active otherwise it's considered inactive.
+
+Ian
+
