@@ -2,71 +2,91 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 013A1C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD4E8C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:52:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF25020880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:51:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A77EC20859
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:52:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726092AbfBTNvH (ORCPT
+        id S1726210AbfBTNwC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 08:51:07 -0500
-Received: from mga03.intel.com ([134.134.136.65]:46179 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725844AbfBTNvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 08:51:07 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 05:51:06 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,391,1544515200"; 
-   d="scan'208";a="123878540"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga007.fm.intel.com with ESMTP; 20 Feb 2019 05:51:02 -0800
-Received: from andy by smile with local (Exim 4.92-RC6)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gwSH7-0004OX-W9; Wed, 20 Feb 2019 15:51:01 +0200
-Date:   Wed, 20 Feb 2019 15:51:01 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Yury Norov <yury.norov@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Yury Norov <ynorov@marvell.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] lib/test_bitmap: switch test_bitmap_parselist to
- ktime_get()
-Message-ID: <20190220135101.GU9224@smile.fi.intel.com>
-References: <20190220083705.14050-1-ynorov@marvell.com>
- <20190220083705.14050-5-ynorov@marvell.com>
+        Wed, 20 Feb 2019 08:52:02 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:55517 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726017AbfBTNwA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 08:52:00 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id uk-mta-3-bPYqFGAfPcihNxlGMAzATg-1;
+ Wed, 20 Feb 2019 13:51:57 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 20 Feb 2019 13:52:40 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 20 Feb 2019 13:52:40 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'David Howells' <dhowells@redhat.com>,
+        "jmorris@namei.org" <jmorris@namei.org>
+CC:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] KEYS: user: Align the payload buffer
+Thread-Topic: [PATCH] KEYS: user: Align the payload buffer
+Thread-Index: AQHUySDST0ZEr/LQC0mQ8ti2hSdKCKXotDKQ
+Date:   Wed, 20 Feb 2019 13:52:40 +0000
+Message-ID: <6bf441ffc1a54d06ad27ed01c6d06a58@AcuMS.aculab.com>
+References: <155066953188.21038.12015964986007814182.stgit@warthog.procyon.org.uk>
+In-Reply-To: <155066953188.21038.12015964986007814182.stgit@warthog.procyon.org.uk>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190220083705.14050-5-ynorov@marvell.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MC-Unique: bPYqFGAfPcihNxlGMAzATg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 11:37:03AM +0300, Yury Norov wrote:
-> test_bitmap_parselist currently uses get_cycles which is not
-> implemented on some platforms, so use ktime_get() instead.
-
-This sounds like a fix that should go first in the series.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+RnJvbTogRGF2aWQgSG93ZWxscw0KPiBTZW50OiAyMCBGZWJydWFyeSAyMDE5IDEzOjMyDQo+IA0K
+PiBGcm9tOiBFcmljIEJpZ2dlcnMgPGViaWdnZXJzQGdvb2dsZS5jb20+DQo+IA0KPiBBbGlnbiB0
+aGUgcGF5bG9hZCBvZiAidXNlciIgYW5kICJsb2dvbiIga2V5cyBzbyB0aGF0IHVzZXJzIG9mIHRo
+ZQ0KPiBrZXlyaW5ncyBzZXJ2aWNlIGNhbiBhY2Nlc3MgaXQgYXMgYSBzdHJ1Y3QgdGhhdCByZXF1
+aXJlcyBtb3JlIHRoYW4NCj4gMi1ieXRlIGFsaWdubWVudC4gIGZzY3J5cHQgY3VycmVudGx5IGRv
+ZXMgdGhpcyB3aGljaCByZXN1bHRzIGluIHRoZSByZWFkDQo+IG9mIGZzY3J5cHRfa2V5OjpzaXpl
+IGJlaW5nIG1pc2FsaWduZWQgYXMgaXQgbmVlZHMgNC1ieXRlIGFsaWdubWVudC4NCj4gDQo+IEFs
+aWduIHRvIF9fYWxpZ25vZl9fKHU2NCkgcmF0aGVyIHRoYW4gX19hbGlnbm9mX18obG9uZykgc2lu
+Y2UgaW4gdGhlDQo+IGZ1dHVyZSBpdCdzIGNvbmNlaXZhYmxlIHRoYXQgcGVvcGxlIHdvdWxkIHVz
+ZSBzdHJ1Y3RzIGJlZ2lubmluZyB3aXRoDQo+IHU2NCwgd2hpY2ggb24gc29tZSBwbGF0Zm9ybXMg
+d291bGQgcmVxdWlyZSBtb3JlIHRoYW4gJ2xvbmcnIGFsaWdubWVudC4NCi4uLg0KPiAgaW5jbHVk
+ZS9rZXlzL3VzZXItdHlwZS5oIHwgICAgMiArLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0
+aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9rZXlzL3Vz
+ZXItdHlwZS5oIGIvaW5jbHVkZS9rZXlzL3VzZXItdHlwZS5oDQo+IGluZGV4IGUwOThjYmUyN2Ri
+NS4uMTJiYWJlOTkxNTk0IDEwMDY0NA0KPiAtLS0gYS9pbmNsdWRlL2tleXMvdXNlci10eXBlLmgN
+Cj4gKysrIGIvaW5jbHVkZS9rZXlzL3VzZXItdHlwZS5oDQo+IEBAIC0zMSw3ICszMSw3IEBADQo+
+ICBzdHJ1Y3QgdXNlcl9rZXlfcGF5bG9hZCB7DQo+ICAJc3RydWN0IHJjdV9oZWFkCXJjdTsJCS8q
+IFJDVSBkZXN0cnVjdG9yICovDQo+ICAJdW5zaWduZWQgc2hvcnQJZGF0YWxlbjsJLyogbGVuZ3Ro
+IG9mIHRoaXMgZGF0YSAqLw0KPiAtCWNoYXIJCWRhdGFbMF07CS8qIGFjdHVhbCBkYXRhICovDQo+
+ICsJY2hhcgkJZGF0YVswXSBfX2FsaWduZWQoX19hbGlnbm9mX18odTY0KSk7IC8qIGFjdHVhbCBk
+YXRhICovDQo+ICB9Ow0KDQpJJ2QgbWFrZSB0aGUgJ2RhdGFsZW4nIGZpZWxkICd1bnNpZ25lZCBp
+bnQnIGF0IHRoZSBzYW1lIHRpbWUuDQpJdCB3aWxsIHVzZSBzb21lIG9mIHRoZSBob2xlIHlvdSd2
+ZSBtYWRlIGFuZCBnZW5lcmF0ZSBiZXR0ZXINCmNvZGUgb24gbW9zdCBhcmNoZXMuDQoNCglEYXZp
+ZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQg
+RmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4
+NiAoV2FsZXMpDQo=
 
