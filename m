@@ -5,66 +5,90 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 196CEC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D430EC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9EA320C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:54:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3F5E20C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:54:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbfBTKyK (ORCPT
+        id S1727729AbfBTKy2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 05:54:10 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:42101 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726317AbfBTKyJ (ORCPT
+        Wed, 20 Feb 2019 05:54:28 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:50755 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726317AbfBTKy2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 05:54:09 -0500
-Received: from fsav101.sakura.ne.jp (fsav101.sakura.ne.jp [27.133.134.228])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1KAqmng017000;
-        Wed, 20 Feb 2019 19:52:48 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav101.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp);
- Wed, 20 Feb 2019 19:52:48 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x1KAqhoc016965
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Wed, 20 Feb 2019 19:52:48 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: possible deadlock in console_unlock
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        syzbot <syzbot+43e93968b964e369db0b@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        syzkaller-bugs@googlegroups.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <00000000000087008b056df8fbb3@google.com>
- <20180607051019.GA10406@jagdpanzerIV>
- <20180607110034.qrkencwsr4stv6xp@pathway.suse.cz>
- <20180607140100.GA398@tigerII.localdomain>
- <20180608081855.ctqakvwmg27aydby@pathway.suse.cz>
- <20180615083804.GB8964@jagdpanzerIV>
- <20180619080412.zkdanx6bmq5qm3dz@pathway.suse.cz>
- <20180619080812.GC405@jagdpanzerIV>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <beaa0c78-362d-c4b7-d381-1e74c302c439@I-love.SAKURA.ne.jp>
-Date:   Wed, 20 Feb 2019 19:52:45 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Wed, 20 Feb 2019 05:54:28 -0500
+X-Originating-IP: 90.88.23.190
+Received: from bootlin.com (aaubervilliers-681-1-81-190.w90-88.abo.wanadoo.fr [90.88.23.190])
+        (Authenticated sender: maxime.chevallier@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 2F59B4001E;
+        Wed, 20 Feb 2019 10:54:22 +0000 (UTC)
+Date:   Wed, 20 Feb 2019 11:54:21 +0100
+From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        mw@semihalf.com
+Subject: Re: [PATCH net-next v2 07/10] net: phy: marvell10g: Add support for
+ 2.5GBASET
+Message-ID: <20190220115421.588aa5d9@bootlin.com>
+In-Reply-To: <20190207234824.dhynfaglfxllxhei@shell.armlinux.org.uk>
+References: <20190207094939.27369-1-maxime.chevallier@bootlin.com>
+        <20190207094939.27369-8-maxime.chevallier@bootlin.com>
+        <20190207234824.dhynfaglfxllxhei@shell.armlinux.org.uk>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180619080812.GC405@jagdpanzerIV>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FTR, this topic seems to be moved to
-https://lkml.kernel.org/r/ebc01f4f-5b1d-4f8a-1d0d-463d5218ee45@huawei.com .
+Hello Russell,
+
+On Thu, 7 Feb 2019 23:48:24 +0000
+Russell King - ARM Linux admin <linux@armlinux.org.uk> wrote:
+
+>On Thu, Feb 07, 2019 at 10:49:36AM +0100, Maxime Chevallier wrote:
+>> The Marvell Alaska family of PHYs supports 2.5GBaseT and 5GBaseT modes,
+>> as defined in the 802.3bz specification.
+>> 
+>> When the link partner requests a 2.5GBASET link, the PHY will
+>> reconfigure it's MII interface to 2500BASEX.
+>> 
+>> At 5G, the PHY will reconfigure it's interface to 5GBASE-R, but this
+>> mode isn't supported by any MAC for now.
+>> 
+>> This was tested with :
+>>  - The 88X3310, which is on the MacchiatoBin  
+>
+>Hi Maxime,
+>
+>Looking deeper at this, I think we actually need an additional patch at
+>the beginning of your series.
+>
+>The default AN advertisement in 7.32 is 0x1181 - which includes the
+>2.5G and 5G modes.  We need to clear these bits, so that when the 10G
+>mode disabled via ethtool, we do not switch to 2.5G or 5G speed (both
+>of which are not currently reported as supported.)  Such a patch needs
+>backporting to stable kernels.
+
+Good catch. The issue seems fixed by Andrew's patch :
+3de97f3c6308 ("net: phy: marvell10g: use genphy_c45_an_config_aneg")
+
+However, the fix should indeed be backported to the -stable trees, I've
+been able to repdocude this on 4.20. I'll take care of sending a patch
+to -net for that.
+
+Thanks for reporting this,
+
+Maxime
+
