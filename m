@@ -2,88 +2,83 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4104FC10F01
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 638CAC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:41:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10E7C21773
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:41:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550655711;
-	bh=ByzLbcUcmSF3faEyYikSKFWJ858JBmNi+gUQLh8XMn0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=2WkzHt1ClVzUF44L8MzXLBTAXiKGPPBdH6aX1TfbaTi8pHguErCijymZmwU1+VL0p
-	 iqKsxIFSFfIAYJ9d2y/Qe7fTl/4Od5NwwE1zThm/5oXKJmhYtoLNK/iIhK8PEgeopY
-	 FFD5SiOfG/mVyVqHyATJ2WSJUv29PlYJBu6N9sug=
+	by mail.kernel.org (Postfix) with ESMTP id 33FE521773
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:41:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="twHREtIo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbfBTJlt (ORCPT
+        id S1727003AbfBTJl5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 04:41:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44282 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726000AbfBTJlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 04:41:49 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80B432089F;
-        Wed, 20 Feb 2019 09:41:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550655708;
-        bh=ByzLbcUcmSF3faEyYikSKFWJ858JBmNi+gUQLh8XMn0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=k7a9BBvleNSL4T7JuNjNLgoi4p3xYsIRgoawPlm08ODqsVE/abSOHGr90IU23oGnc
-         WM/1Q7xGl464CRiHEtPHeDyu+6hwN26+oXN047Prbsb9irOf9s1eeoRXI4iAN07afY
-         dcnfC7uUcT8vVU1u7c+Eao/yBpKKZ2RKlcrYCQg4=
-Date:   Wed, 20 Feb 2019 09:41:40 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Lucas Oshiro <lucasseikioshiro@gmail.com>
-Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-usp@googlegroups.com, matt.ranostay@konsulko.com
-Subject: Re: [PATCH 0/5] iio:potentiostat:lmp91000: Adjust codestyle, and
- minor cleanup changes
-Message-ID: <20190220094140.0f2ad613@archlinux>
-In-Reply-To: <20190218172236.7781-1-lucasseikioshiro@gmail.com>
-References: <20190218172236.7781-1-lucasseikioshiro@gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 20 Feb 2019 04:41:57 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44141 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726000AbfBTJl5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 04:41:57 -0500
+Received: by mail-lj1-f193.google.com with SMTP id q128so20159731ljb.11
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 01:41:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=coW99miv52Oebix0UpxqugpmQqA6e89avvbbbDjxFyE=;
+        b=twHREtIo4ImtaX/cgoO1GofFO3Mv3V2td0STXWoNTH6MfzJgQFY1EgUoEc/E6YRf3A
+         +oy7QZLbd/8YXVqodIsf+MkfoLauf6jDvStSd5HQRPVCSJxYZvbzg+AMjka1MD5fLpBH
+         1AZe0Pbx0ACYsLs54ZY3G2H30cmSvb4LQwstsxPnR5+Wt8ijIR8bTLeZ9T4qIVKt5ucG
+         Wn4oCz6FOrAlpQvHaoz7URC1OJtPjHFQx+KqaGdDGKFDQ5Q7Gd0jJ4F6pXMsLr0m56ui
+         vcEvC1KM8fwcdqRHMa7EN4BvcIe24hYo4D4gmxmE73fwX5vIEZdOLSgF4ZlEB+IhYvk1
+         fxwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=coW99miv52Oebix0UpxqugpmQqA6e89avvbbbDjxFyE=;
+        b=QjNjpr16hUXihsBPq5MvtJ/uLFLy/LFEPEjIVQ51kEhMPxfvS/ids7kau1h6Q+NWvI
+         D9xTVf0skFuAckehUas9gTFsw3tTEcndzuvccjpHJwr/G4lzzDqD/BA1l/H7tAXkdr8L
+         MoW1XWWTAOZpdsCbbYppa723oHA0vmA9l8jKer/pFHbujCsuLrsJ/nWhWEvscHXHYs7C
+         hpfL4BFg4J/drmGCNlJA4oWHJ+gCpyOznu/foT7yYpE2dBlaEbEqFVBl6ZAP5e9j0jtU
+         3zjY10kllulbBd2XAE+rA0xsq8PAtjKXE0Cv0qtmdV68Ubhg6s4/4rkvxIXE3lo2nP8P
+         IJ1A==
+X-Gm-Message-State: AHQUAubJSCaSct4K3ytgBAwJ4if3jn1rNYF7ZzVAZVYfL87+8dlupHpc
+        UedqTyUxX1dRIivDSW1JHlqnZtTX/wTY1NM3iCWG5Q==
+X-Google-Smtp-Source: AHgI3IbUqbLT+SRx4BO45Bm00sPCeH8GZZhxXBS14tqNdIXqzSEl8UfNJ21vroYjYvAFj9IW9ozMDa4HJ8otsw1IF8k=
+X-Received: by 2002:a2e:6109:: with SMTP id v9-v6mr19804106ljb.126.1550655715094;
+ Wed, 20 Feb 2019 01:41:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <1550163266-19975-1-git-send-email-alexandre.torgue@st.com>
+In-Reply-To: <1550163266-19975-1-git-send-email-alexandre.torgue@st.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 20 Feb 2019 10:41:43 +0100
+Message-ID: <CACRpkdbaBzRZTea4nmm8b-wt9iUipPLaY1MbaAKEPxoY+HFVjA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] pinctrl STM32 updates
+To:     Alexandre Torgue <alexandre.torgue@st.com>
+Cc:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 18 Feb 2019 14:22:31 -0300
-Lucas Oshiro <lucasseikioshiro@gmail.com> wrote:
+On Thu, Feb 14, 2019 at 5:54 PM Alexandre Torgue
+<alexandre.torgue@st.com> wrote:
 
-> Hi,
-> 
-> We solved some checkpath.el CHECKs and WARNINGs. We also inverted the arms of
-> an if statement, in order to make the code smaller as the else statement was
-> supressed. We added a missing '\n' on a dev_err message.
+> Please find 2 updates for STM32 pinctrl driver:
+>
+>  -Fix a memory leak issue present since the beginning of the driver.
+>  -Handle error case when a hwspinlock can't get locked.
 
-Please try to identify the original author.  Matt is still definitely
-about, and he is obviously likely to be able to provide the most detailed
-review of changes to this driver.
+Patches applied for v5.1.
 
-Thanks,
-
-Jonathan
-
-> 
-> Lucas Oshiro (5):
->   iio:potentiostat:lmp91000: remove unnecessary parentheses
->   iio:potentiostat:lmp91000: insert braces around if arms
->   iio:potentiostat:lmp91000: reduce line width and remove blank line
->   iio:potentiostat:lmp91000: invert if statement
->   iio:potentiostat:lmp91000: add '\n' on dev_err
-> 
->  drivers/iio/potentiostat/lmp91000.c | 14 ++++++--------
->  1 file changed, 6 insertions(+), 8 deletions(-)
-> 
-
+Yours,
+Linus Walleij
