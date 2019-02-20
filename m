@@ -2,227 +2,94 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D42C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:05:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25283C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0071C20859
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:05:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00E6D20859
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:05:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbfBTPFe convert rfc822-to-8bit (ORCPT
+        id S1727083AbfBTPFi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:05:34 -0500
-Received: from poy.remlab.net ([94.23.215.26]:48688 "EHLO
-        ns207790.ip-94-23-215.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725822AbfBTPFe (ORCPT
+        Wed, 20 Feb 2019 10:05:38 -0500
+Received: from xavier.telenet-ops.be ([195.130.132.52]:35272 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725822AbfBTPFg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:05:34 -0500
-X-Greylist: delayed 453 seconds by postgrey-1.27 at vger.kernel.org; Wed, 20 Feb 2019 10:05:32 EST
-Received: from basile.remlab.net (dbfyyyyy6f5dmhghlbr-t-3.rev.dnainternet.fi [IPv6:2001:14ba:900:0:1a26:46a3:14c9:bbf])
-        (Authenticated sender: remi)
-        by ns207790.ip-94-23-215.eu (Postfix) with ESMTPSA id BD5435FB77;
-        Wed, 20 Feb 2019 15:57:55 +0100 (CET)
-From:   =?ISO-8859-1?Q?R=E9mi?= Denis-Courmont <remi@remlab.net>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Remi Denis-Courmont <courmisch@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] phonet: fix building with clang
-Date:   Wed, 20 Feb 2019 16:57:52 +0200
-Message-ID: <6656190.X2GkZW0IFN@basile.remlab.net>
-Organization: Remlab
-In-Reply-To: <20190219215359.391543-1-arnd@arndb.de>
-References: <20190219215359.391543-1-arnd@arndb.de>
+        Wed, 20 Feb 2019 10:05:36 -0500
+Received: from ramsan ([84.194.111.163])
+        by xavier.telenet-ops.be with bizsmtp
+        id f35a1z00d3XaVaC0135bmH; Wed, 20 Feb 2019 16:05:35 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gwTRG-0002I7-S9; Wed, 20 Feb 2019 16:05:34 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gwTRG-0000eh-Pe; Wed, 20 Feb 2019 16:05:34 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Joerg Roedel <joro@8bytes.org>,
+        Magnus Damm <damm+renesas@opensource.se>
+Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/7] iommu/ipmmu-vmsa: Suspend/resume support and assorted cleanups
+Date:   Wed, 20 Feb 2019 16:05:24 +0100
+Message-Id: <20190220150531.2462-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le tiistaina 19. helmikuuta 2019, 23.53.50 EET Arnd Bergmann a écrit :
-> clang warns about overflowing the data[] member in the struct pnpipehdr:
-> 
-> net/phonet/pep.c:295:8: warning: array index 4 is past the end of the array
-> (which contains 1 element) [-Warray-bounds] if (hdr->data[4] ==
-> PEP_IND_READY)
->                             ^         ~
-> include/net/phonet/pep.h:66:3: note: array 'data' declared here
->                 u8              data[1];
-> 
-> Using a flexible array member at the end of the struct avoids the
-> warning, but since we cannot have a flexible array member inside
-> of the union, each index now has to be moved back by one, which
-> makes it a little uglier.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+	Hi Jörg, Magnus,
 
-Acked-by: Rémi Denis-Courmont <remi@remlab.net>
+On R-Car Gen3 systems with PSCI, PSCI may power down the SoC during
+system suspend, thus losing all IOMMU state.  Hence after s2ram, devices
+behind an IPMMU (e.g. SATA), and configured to use it, will fail to
+complete their I/O operations.
 
-> ---
->  include/net/phonet/pep.h |  5 +++--
->  net/phonet/pep.c         | 32 ++++++++++++++++----------------
->  2 files changed, 19 insertions(+), 18 deletions(-)
-> 
-> diff --git a/include/net/phonet/pep.h b/include/net/phonet/pep.h
-> index b669fe6dbc3b..98f31c7ea23d 100644
-> --- a/include/net/phonet/pep.h
-> +++ b/include/net/phonet/pep.h
-> @@ -63,10 +63,11 @@ struct pnpipehdr {
->  		u8		state_after_reset;	/* reset request */
->  		u8		error_code;		/* any response */
->  		u8		pep_type;		/* status indication */
-> -		u8		data[1];
-> +		u8		data0;			/* anything else */
->  	};
-> +	u8			data[];
->  };
-> -#define other_pep_type		data[1]
-> +#define other_pep_type		data[0]
-> 
->  static inline struct pnpipehdr *pnp_hdr(struct sk_buff *skb)
->  {
-> diff --git a/net/phonet/pep.c b/net/phonet/pep.c
-> index 9fc76b19cd3c..db3473540303 100644
-> --- a/net/phonet/pep.c
-> +++ b/net/phonet/pep.c
-> @@ -132,7 +132,7 @@ static int pep_indicate(struct sock *sk, u8 id, u8 code,
-> ph->utid = 0;
->  	ph->message_id = id;
->  	ph->pipe_handle = pn->pipe_handle;
-> -	ph->data[0] = code;
-> +	ph->error_code = code;
->  	return pn_skb_send(sk, skb, NULL);
->  }
-> 
-> @@ -153,7 +153,7 @@ static int pipe_handler_request(struct sock *sk, u8 id,
-> u8 code, ph->utid = id; /* whatever */
->  	ph->message_id = id;
->  	ph->pipe_handle = pn->pipe_handle;
-> -	ph->data[0] = code;
-> +	ph->error_code = code;
->  	return pn_skb_send(sk, skb, NULL);
->  }
-> 
-> @@ -208,7 +208,7 @@ static int pep_ctrlreq_error(struct sock *sk, struct
-> sk_buff *oskb, u8 code, struct pnpipehdr *ph;
->  	struct sockaddr_pn dst;
->  	u8 data[4] = {
-> -		oph->data[0], /* PEP type */
-> +		oph->pep_type, /* PEP type */
->  		code, /* error code, at an unusual offset */
->  		PAD, PAD,
->  	};
-> @@ -221,7 +221,7 @@ static int pep_ctrlreq_error(struct sock *sk, struct
-> sk_buff *oskb, u8 code, ph->utid = oph->utid;
->  	ph->message_id = PNS_PEP_CTRL_RESP;
->  	ph->pipe_handle = oph->pipe_handle;
-> -	ph->data[0] = oph->data[1]; /* CTRL id */
-> +	ph->data0 = oph->data[0]; /* CTRL id */
-> 
->  	pn_skb_get_src_sockaddr(oskb, &dst);
->  	return pn_skb_send(sk, skb, &dst);
-> @@ -272,17 +272,17 @@ static int pipe_rcv_status(struct sock *sk, struct
-> sk_buff *skb) return -EINVAL;
-> 
->  	hdr = pnp_hdr(skb);
-> -	if (hdr->data[0] != PN_PEP_TYPE_COMMON) {
-> +	if (hdr->pep_type != PN_PEP_TYPE_COMMON) {
->  		net_dbg_ratelimited("Phonet unknown PEP type: %u\n",
-> -				    (unsigned int)hdr->data[0]);
-> +				    (unsigned int)hdr->pep_type);
->  		return -EOPNOTSUPP;
->  	}
-> 
-> -	switch (hdr->data[1]) {
-> +	switch (hdr->data[0]) {
->  	case PN_PEP_IND_FLOW_CONTROL:
->  		switch (pn->tx_fc) {
->  		case PN_LEGACY_FLOW_CONTROL:
-> -			switch (hdr->data[4]) {
-> +			switch (hdr->data[3]) {
->  			case PEP_IND_BUSY:
->  				atomic_set(&pn->tx_credits, 0);
->  				break;
-> @@ -292,7 +292,7 @@ static int pipe_rcv_status(struct sock *sk, struct
-> sk_buff *skb) }
->  			break;
->  		case PN_ONE_CREDIT_FLOW_CONTROL:
-> -			if (hdr->data[4] == PEP_IND_READY)
-> +			if (hdr->data[3] == PEP_IND_READY)
->  				atomic_set(&pn->tx_credits, wake = 1);
->  			break;
->  		}
-> @@ -301,12 +301,12 @@ static int pipe_rcv_status(struct sock *sk, struct
-> sk_buff *skb) case PN_PEP_IND_ID_MCFC_GRANT_CREDITS:
->  		if (pn->tx_fc != PN_MULTI_CREDIT_FLOW_CONTROL)
->  			break;
-> -		atomic_add(wake = hdr->data[4], &pn->tx_credits);
-> +		atomic_add(wake = hdr->data[3], &pn->tx_credits);
->  		break;
-> 
->  	default:
->  		net_dbg_ratelimited("Phonet unknown PEP indication: %u\n",
-> -				    (unsigned int)hdr->data[1]);
-> +				    (unsigned int)hdr->data[0]);
->  		return -EOPNOTSUPP;
->  	}
->  	if (wake)
-> @@ -318,7 +318,7 @@ static int pipe_rcv_created(struct sock *sk, struct
-> sk_buff *skb) {
->  	struct pep_sock *pn = pep_sk(sk);
->  	struct pnpipehdr *hdr = pnp_hdr(skb);
-> -	u8 n_sb = hdr->data[0];
-> +	u8 n_sb = hdr->data0;
-> 
->  	pn->rx_fc = pn->tx_fc = PN_LEGACY_FLOW_CONTROL;
->  	__skb_pull(skb, sizeof(*hdr));
-> @@ -506,7 +506,7 @@ static int pep_connresp_rcv(struct sock *sk, struct
-> sk_buff *skb) return -ECONNREFUSED;
-> 
->  	/* Parse sub-blocks */
-> -	n_sb = hdr->data[4];
-> +	n_sb = hdr->data[3];
->  	while (n_sb > 0) {
->  		u8 type, buf[6], len = sizeof(buf);
->  		const u8 *data = pep_get_sb(skb, &type, &len, buf);
-> @@ -739,7 +739,7 @@ static int pipe_do_remove(struct sock *sk)
->  	ph->utid = 0;
->  	ph->message_id = PNS_PIPE_REMOVE_REQ;
->  	ph->pipe_handle = pn->pipe_handle;
-> -	ph->data[0] = PAD;
-> +	ph->data0 = PAD;
->  	return pn_skb_send(sk, skb, NULL);
->  }
-> 
-> @@ -817,7 +817,7 @@ static struct sock *pep_sock_accept(struct sock *sk, int
-> flags, int *errp, peer_type = hdr->other_pep_type << 8;
-> 
->  	/* Parse sub-blocks (options) */
-> -	n_sb = hdr->data[4];
-> +	n_sb = hdr->data[3];
->  	while (n_sb > 0) {
->  		u8 type, buf[1], len = sizeof(buf);
->  		const u8 *data = pep_get_sb(skb, &type, &len, buf);
-> @@ -1109,7 +1109,7 @@ static int pipe_skb_send(struct sock *sk, struct
-> sk_buff *skb) ph->utid = 0;
->  	if (pn->aligned) {
->  		ph->message_id = PNS_PIPE_ALIGNED_DATA;
-> -		ph->data[0] = 0; /* padding */
-> +		ph->data0 = 0; /* padding */
->  	} else
->  		ph->message_id = PNS_PIPE_DATA;
->  	ph->pipe_handle = pn->pipe_handle;
+This patch series adds suspend/resume support to the Renesas IPMMU-VMSA
+IOMMU driver, and performs some smaller cleanups and fixes during the
+process.  Most patches are fairly independent, except for patch 7/7,
+which depends on patches 5/7 and 6/7.
 
+This has been tested on Salvator-XS with R-Car H3 ES2.0, with IPMMU
+suport for SATA enabled.  To play safe, the resume operation has also
+been tested on R-Car M2-W, where it is currently not enabled due to the
+absence of PSCI in the firmware.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (7):
+  iommu/ipmmu-vmsa: Link IOMMUs and devices in sysfs
+  iommu/ipmmu-vmsa: Call ipmmu_ctx_write_root() instead of open coding
+  iommu/ipmmu-vmsa: Prepare to handle 40-bit error addresses
+  iommu/ipmmu-vmsa: Make IPMMU_CTX_MAX unsigned
+  iommu/ipmmu-vmsa: Move num_utlbs to SoC-specific features
+  iommu/ipmmu-vmsa: Extract hardware context initialization
+  iommu/ipmmu-vmsa: Add suspend/resume support
+
+ drivers/iommu/ipmmu-vmsa.c | 194 +++++++++++++++++++++++++------------
+ 1 file changed, 131 insertions(+), 63 deletions(-)
 
 -- 
-レミ・デニ-クールモン
-http://www.remlab.net/
+2.17.1
 
+Gr{oetje,eeting}s,
 
+						Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
