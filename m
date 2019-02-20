@@ -3,44 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BDAC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:39:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97235C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:39:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B67A42146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:39:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A9402146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:39:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbfBTSjo (ORCPT
+        id S1727838AbfBTSjy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 13:39:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47084 "EHLO mail.kernel.org"
+        Wed, 20 Feb 2019 13:39:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726995AbfBTSiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 13:38:07 -0500
+        id S1726953AbfBTSiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 13:38:06 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C5D321924;
-        Wed, 20 Feb 2019 18:38:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FC94218C3;
+        Wed, 20 Feb 2019 18:38:05 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92-RC5)
         (envelope-from <rostedt@goodmis.org>)
-        id 1gwWkv-0006fg-C2; Wed, 20 Feb 2019 13:38:05 -0500
-Message-Id: <20190220183805.262334648@goodmis.org>
+        id 1gwWku-0006dC-0G; Wed, 20 Feb 2019 13:38:04 -0500
+Message-Id: <20190220183803.890956792@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Wed, 20 Feb 2019 13:37:49 -0500
+Date:   Wed, 20 Feb 2019 13:37:44 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        David Windsor <dwindsor@gmail.com>,
-        Hans Liljestrand <ishkamiel@gmail.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Elena Reshetova <elena.reshetova@intel.com>
-Subject: [for-next][PATCH 12/29] uprobes: convert uprobe.ref to refcount_t
+        Changbin Du <changbin.du@gmail.com>
+Subject: [for-next][PATCH 07/29] tracing/doc: Add latency tracer funcgraph example
 References: <20190220183737.034634614@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -49,96 +44,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Elena Reshetova <elena.reshetova@intel.com>
+From: Changbin Du <changbin.du@gmail.com>
 
-atomic_t variables are currently used to implement reference
-counters with the following properties:
- - counter is initialized to 1 using atomic_set()
- - a resource is freed upon counter reaching zero
- - once counter reaches zero, its further
-   increments aren't allowed
- - counter schema uses basic atomic operations
-   (set, inc, inc_not_zero, dec_and_test, etc.)
+This add an example about how to use funcgraph with latency tracers.
 
-Such atomic variables should be converted to a newly provided
-refcount_t type and API that prevents accidental counter overflows
-and underflows. This is important since overflows and underflows
-can lead to use-after-free situation and be exploitable.
+Link: http://lkml.kernel.org/r/20190101154614.8887-6-changbin.du@gmail.com
 
-The variable uprobe.ref is used as pure reference counter.
-Convert it to refcount_t and fix up the operations.
-
-**Important note for maintainers:
-
-Some functions from refcount_t API defined in lib/refcount.c
-have different memory ordering guarantees than their atomic
-counterparts.
-The full comparison can be seen in
-https://lkml.org/lkml/2017/11/15/57 and it is hopefully soon
-in state to be merged to the documentation tree.
-Normally the differences should not matter since refcount_t provides
-enough guarantees to satisfy the refcounting use cases, but in
-some rare cases it might matter.
-Please double check that you don't have some undocumented
-memory guarantees for this variable usage.
-
-For the uprobe.ref it might make a difference
-in following places:
- - put_uprobe(): decrement in refcount_dec_and_test() only
-   provides RELEASE ordering and control dependency on success
-   vs. fully ordered atomic counterpart
-
-Link: http://lkml.kernel.org/r/1547637627-29526-1-git-send-email-elena.reshetova@intel.com
-
-Suggested-by: Kees Cook <keescook@chromium.org>
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-Reviewed-by: David Windsor <dwindsor@gmail.com>
-Reviewed-by: Hans Liljestrand <ishkamiel@gmail.com>
-Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
+Signed-off-by: Changbin Du <changbin.du@gmail.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/events/uprobes.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ Documentation/trace/ftrace.rst | 51 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 8aef47ee7bfa..0a8bf7a4fc5e 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -66,7 +66,7 @@ static struct percpu_rw_semaphore dup_mmap_sem;
+diff --git a/Documentation/trace/ftrace.rst b/Documentation/trace/ftrace.rst
+index 0131df7f5968..6ce2763a2a3e 100644
+--- a/Documentation/trace/ftrace.rst
++++ b/Documentation/trace/ftrace.rst
+@@ -1396,6 +1396,57 @@ enabling function tracing, we incur an added overhead. This
+ overhead may extend the latency times. But nevertheless, this
+ trace has provided some very helpful debugging information.
  
- struct uprobe {
- 	struct rb_node		rb_node;	/* node in the rb tree */
--	atomic_t		ref;
-+	refcount_t		ref;
- 	struct rw_semaphore	register_rwsem;
- 	struct rw_semaphore	consumer_rwsem;
- 	struct list_head	pending_list;
-@@ -560,13 +560,13 @@ set_orig_insn(struct arch_uprobe *auprobe, struct mm_struct *mm, unsigned long v
++If we prefer function graph output instead of function, we can set
++display-graph option::
++ with echo 1 > options/display-graph
++
++  # tracer: irqsoff
++  #
++  # irqsoff latency trace v1.1.5 on 4.20.0-rc6+
++  # --------------------------------------------------------------------
++  # latency: 3751 us, #274/274, CPU#0 | (M:desktop VP:0, KP:0, SP:0 HP:0 #P:4)
++  #    -----------------
++  #    | task: bash-1507 (uid:0 nice:0 policy:0 rt_prio:0)
++  #    -----------------
++  #  => started at: free_debug_processing
++  #  => ended at:   return_to_handler
++  #
++  #
++  #                                       _-----=> irqs-off
++  #                                      / _----=> need-resched
++  #                                     | / _---=> hardirq/softirq
++  #                                     || / _--=> preempt-depth
++  #                                     ||| /
++  #   REL TIME      CPU  TASK/PID       ||||     DURATION                  FUNCTION CALLS
++  #      |          |     |    |        ||||      |   |                     |   |   |   |
++          0 us |   0)   bash-1507    |  d... |   0.000 us    |  _raw_spin_lock_irqsave();
++          0 us |   0)   bash-1507    |  d..1 |   0.378 us    |    do_raw_spin_trylock();
++          1 us |   0)   bash-1507    |  d..2 |               |    set_track() {
++          2 us |   0)   bash-1507    |  d..2 |               |      save_stack_trace() {
++          2 us |   0)   bash-1507    |  d..2 |               |        __save_stack_trace() {
++          3 us |   0)   bash-1507    |  d..2 |               |          __unwind_start() {
++          3 us |   0)   bash-1507    |  d..2 |               |            get_stack_info() {
++          3 us |   0)   bash-1507    |  d..2 |   0.351 us    |              in_task_stack();
++          4 us |   0)   bash-1507    |  d..2 |   1.107 us    |            }
++  [...]
++       3750 us |   0)   bash-1507    |  d..1 |   0.516 us    |      do_raw_spin_unlock();
++       3750 us |   0)   bash-1507    |  d..1 |   0.000 us    |  _raw_spin_unlock_irqrestore();
++       3764 us |   0)   bash-1507    |  d..1 |   0.000 us    |  tracer_hardirqs_on();
++      bash-1507    0d..1 3792us : <stack trace>
++   => free_debug_processing
++   => __slab_free
++   => kmem_cache_free
++   => vm_area_free
++   => remove_vma
++   => exit_mmap
++   => mmput
++   => flush_old_exec
++   => load_elf_binary
++   => search_binary_handler
++   => __do_execve_file.isra.32
++   => __x64_sys_execve
++   => do_syscall_64
++   => entry_SYSCALL_64_after_hwframe
  
- static struct uprobe *get_uprobe(struct uprobe *uprobe)
- {
--	atomic_inc(&uprobe->ref);
-+	refcount_inc(&uprobe->ref);
- 	return uprobe;
- }
- 
- static void put_uprobe(struct uprobe *uprobe)
- {
--	if (atomic_dec_and_test(&uprobe->ref)) {
-+	if (refcount_dec_and_test(&uprobe->ref)) {
- 		/*
- 		 * If application munmap(exec_vma) before uprobe_unregister()
- 		 * gets called, we don't get a chance to remove uprobe from
-@@ -657,7 +657,7 @@ static struct uprobe *__insert_uprobe(struct uprobe *uprobe)
- 	rb_link_node(&uprobe->rb_node, parent, p);
- 	rb_insert_color(&uprobe->rb_node, &uprobes_tree);
- 	/* get access + creation ref */
--	atomic_set(&uprobe->ref, 2);
-+	refcount_set(&uprobe->ref, 2);
- 
- 	return u;
- }
+ preemptoff
+ ----------
 -- 
 2.20.1
 
