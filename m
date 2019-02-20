@@ -5,57 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2221C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:37:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA90DC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72A3F21773
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:37:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CC3920685
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:37:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K769gt+o"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OE/VJWup"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726526AbfBTIh2 (ORCPT
+        id S1726586AbfBTIhd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 03:37:28 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:44279 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726427AbfBTIhY (ORCPT
+        Wed, 20 Feb 2019 03:37:33 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38393 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726486AbfBTIh1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 03:37:24 -0500
-Received: by mail-lf1-f67.google.com with SMTP id g2so16881004lfh.11
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 00:37:23 -0800 (PST)
+        Wed, 20 Feb 2019 03:37:27 -0500
+Received: by mail-lj1-f196.google.com with SMTP id j19so19256641ljg.5
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 00:37:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=23+V50N6WAn/6uQttan8JvUAP338C9/jI8+NG3yi1Us=;
-        b=K769gt+oYF4pZZc7mr61J1c6tumHP65tnvF2QGrNKqlnSvuXGB36KtOzD6RzIU0GkN
-         IXZmM1s/lXZ3tisHJBa5V5nTalWncNKDBGKtKViYCgTWJ/BSgwF1q+5YSNRKBfdFNgWn
-         HKBqXbGWY9BYmmxk6uhUMSzHYFW3gmQUZUBTW/eNQEOd6hzmdHcEYtaYZZvEwYAABnT2
-         +eXPYvjEaP6AL47g/AOF8TKNgX3SdNomeuvNmpc/lq9+OBzksMJzNeHnSERG5c4NCnyK
-         CvkUegDa1Hwk27u/MQBqbJqbwM3wLW0cpBl/0NeS+2VOT7S41lkk/bTUWAvpvb+BoEfn
-         bHMA==
+        bh=5PHclHZKSkpOVEQ71tOTWZyHKtx1aXyaZkJRRxxKNEY=;
+        b=OE/VJWupM6QrjhRXdG/R3xwWUhdIsisEvXyQbOSQSt+MZ5Klo4Ap2ORf1d8Cz0f449
+         NzqumUEcPRcwtS2VPMnNvFtYg1+ra0zuzw07n3AMg4tfaPqsy6H9Zu6kcRzoOlgtQI91
+         zqhbIE/hpGNF7JkN3pMGdxkAmFw+waL6Q+UWe/eLRya2fJM8OLBaz30W9xHBkUON1gJX
+         Ex2ycuKtHDFTHvlr8POu5NvGepwpZnXbngJW0SDfjTKKsq6kAiad8LWAdbWenT+FquPN
+         9oWH3T1FbL6qdIj5OPGw77KazbFanNwotZILj9lpzYwlUYELJYXoVmrov4mJmcc6EHFi
+         TeTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=23+V50N6WAn/6uQttan8JvUAP338C9/jI8+NG3yi1Us=;
-        b=uS4Uh7Q4CwyQgP2XTAz2O5vARLOd/cgAsWM7+qT8Ao5nIGDt7DO/CZ7sk0EIIM1IOs
-         AGSudrDa+Q4M2LU+yCzyFxRC15lmnBRCU6K4qWonp2GDb+oNYhDZcqH7nWe/DthytvTc
-         HmsTEHZtbToY5PJ//nCRFdZ/ms98nYW3D5/oSw8XERupUWKDn+fARN5uD14atfHW6eOc
-         SvAXAMc98ih7QLRG9CyQWIiCb49Imu0/cT0Y2MpfWHSBJT2BrYHefeSpLEPThw8RBVP5
-         j/odzyibNLIDd2SQTzgy4Y05Aw5PsFDSxhf04cmUQOy6mbCnEz+RY8gSixVNe1rarBFr
-         eLDQ==
-X-Gm-Message-State: AHQUAuZJqAhwzIaubvp20jJ+kslydMA7qP0GIzZmgEGjSQcjQSASAbBi
-        daIaYBrQKlbK8/0VfAPKm4Q=
-X-Google-Smtp-Source: AHgI3IZXXPn/L8GVlcBuCV2fYc29lC0n5QuJP0vqc/eldjERcC9gZ3eaN4CHkDCO/oKUidD5YfCCyA==
-X-Received: by 2002:a19:5504:: with SMTP id n4mr20280768lfe.43.1550651842316;
-        Wed, 20 Feb 2019 00:37:22 -0800 (PST)
+        bh=5PHclHZKSkpOVEQ71tOTWZyHKtx1aXyaZkJRRxxKNEY=;
+        b=h9jLwB+9n+dUEj0DrEhRuRpQQmA9XfE6W9vnXtQUESMrKkxQD1Yafar8rqS8jN5Xhy
+         ueQRdXc7j0XqFYCKB+7ghij+OXvA/mM7ECzW4vmugEBwNUugzZAcAYmTzwM/MR+jAqLy
+         3bWm3bOhjKP4KoXAumLu2nJ9g9DVkO72rOZl49mkIlPz0VfVNQ1fcWXbS3tbijjoluzC
+         JTdTKjjNiSKB7L+5G2iW59xefsXNjPMX0Q1NjecfwyKd882ZyIci8jckqLV0i9KK6hV/
+         4BC2NBqvY8AROtUPJLY/kwPsjOXPwqGdpbixhCNkE/YBj6A2i9rWl+ul4UKgvnCKSOsO
+         3oyg==
+X-Gm-Message-State: AHQUAuZkMNAr1GTnz6RPIVGYDW4PUA7e4KwlQd3JS3k9DyoFJWuxZmYV
+        RcaXD8QCKAzoTkXlsuoa9sg=
+X-Google-Smtp-Source: AHgI3Ib2MLT/K3gadPy4a6oCQ6xURtNQlrmuYPORq6G8dVmLpUt4dolb4ahSHC9IE+YO3Pil8o/KPg==
+X-Received: by 2002:a2e:9204:: with SMTP id k4mr2620189ljg.0.1550651844712;
+        Wed, 20 Feb 2019 00:37:24 -0800 (PST)
 Received: from localhost ([188.162.52.148])
-        by smtp.gmail.com with ESMTPSA id l16sm4971302lfh.58.2019.02.20.00.37.21
+        by smtp.gmail.com with ESMTPSA id b14sm860911lji.25.2019.02.20.00.37.23
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Feb 2019 00:37:21 -0800 (PST)
+        Wed, 20 Feb 2019 00:37:24 -0800 (PST)
 From:   Yury Norov <yury.norov@gmail.com>
 X-Google-Original-From: Yury Norov <ynorov@marvell.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
@@ -69,9 +68,9 @@ To:     Andrew Morton <akpm@linux-foundation.org>,
         Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 Cc:     Yury Norov <ynorov@marvell.com>, linux-kernel@vger.kernel.org,
         Yury Norov <yury.norov@gmail.com>
-Subject: [PATCH 5/6] lib/test_bitmap: add testcases for bitmap_parselist
-Date:   Wed, 20 Feb 2019 11:37:04 +0300
-Message-Id: <20190220083705.14050-6-ynorov@marvell.com>
+Subject: [PATCH 6/6] lib/test_bitmap: add tests for bitmap_parselist_user
+Date:   Wed, 20 Feb 2019 11:37:05 +0300
+Message-Id: <20190220083705.14050-7-ynorov@marvell.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190220083705.14050-1-ynorov@marvell.com>
 References: <20190220083705.14050-1-ynorov@marvell.com>
@@ -80,62 +79,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add tests for non-number character, empty regions, integer overflow.
+Propagate existing bitmap_parselist() tests to bitmap_parselist_user().
 
 Signed-off-by: Yury Norov <ynorov@marvell.com>
 ---
- lib/test_bitmap.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ lib/test_bitmap.c | 46 ++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 36 insertions(+), 10 deletions(-)
 
 diff --git a/lib/test_bitmap.c b/lib/test_bitmap.c
-index b06e0fd3811b..709424a788ee 100644
+index 709424a788ee..d4ecac0da160 100644
 --- a/lib/test_bitmap.c
 +++ b/lib/test_bitmap.c
-@@ -224,7 +224,8 @@ static const unsigned long exp[] __initconst = {
- 	BITMAP_FROM_U64(0xffffffff),
- 	BITMAP_FROM_U64(0xfffffffe),
- 	BITMAP_FROM_U64(0x3333333311111111ULL),
--	BITMAP_FROM_U64(0xffffffff77777777ULL)
-+	BITMAP_FROM_U64(0xffffffff77777777ULL),
-+	BITMAP_FROM_U64(0),
+@@ -11,6 +11,7 @@
+ #include <linux/printk.h>
+ #include <linux/slab.h>
+ #include <linux/string.h>
++#include <linux/uaccess.h>
+ 
+ static unsigned total_tests __initdata;
+ static unsigned failed_tests __initdata;
+@@ -278,39 +279,63 @@ static const struct test_bitmap_parselist parselist_tests[] __initconst = {
+ 	{-EINVAL, "0-\n", NULL, 8, 0},
  };
  
- static const unsigned long exp2[] __initconst = {
-@@ -247,19 +248,34 @@ static const struct test_bitmap_parselist parselist_tests[] __initconst = {
- 	{0, "1-31:4/4",			&exp[9 * step], 32, 0},
- 	{0, "0-31:1/4,32-63:2/4",	&exp[10 * step], 64, 0},
- 	{0, "0-31:3/4,32-63:4/4",	&exp[11 * step], 64, 0},
-+	{0, "  ,,  0-31:3/4  ,, 32-63:4/4  ,,  ",	&exp[11 * step], 64, 0},
+-static void __init test_bitmap_parselist(void)
++static void __init __test_bitmap_parselist(int is_user)
+ {
+ 	int i;
+ 	int err;
+ 	ktime_t time;
+ 	DECLARE_BITMAP(bmap, 2048);
++	char *mode = is_user ? "_user"  : "";
  
- 	{0, "0-31:1/4,32-63:2/4,64-95:3/4,96-127:4/4",	exp2, 128, 0},
+ 	for (i = 0; i < ARRAY_SIZE(parselist_tests); i++) {
+ #define ptest parselist_tests[i]
  
- 	{0, "0-2047:128/256", NULL, 2048, PARSE_TIME},
- 
-+	{0, "",				&exp[12], 8, 0},
-+	{0, "\n",			&exp[12], 8, 0},
-+	{0, ",,  ,,  , ,  ,",		&exp[12], 8, 0},
-+	{0, " ,  ,,  , ,   ",		&exp[12], 8, 0},
-+	{0, " ,  ,,  , ,   \n",		&exp[12], 8, 0},
+-		time = ktime_get();
+-		err = bitmap_parselist(ptest.in, bmap, ptest.nbits);
+-		time = ktime_get() - time;
++		if (is_user) {
++			mm_segment_t orig_fs = get_fs();
++			size_t len = strlen(ptest.in);
 +
- 	{-EINVAL, "-1",	NULL, 8, 0},
- 	{-EINVAL, "-0",	NULL, 8, 0},
- 	{-EINVAL, "10-1", NULL, 8, 0},
- 	{-EINVAL, "0-31:", NULL, 8, 0},
- 	{-EINVAL, "0-31:0", NULL, 8, 0},
-+	{-EINVAL, "0-31:0/", NULL, 8, 0},
- 	{-EINVAL, "0-31:0/0", NULL, 8, 0},
- 	{-EINVAL, "0-31:1/0", NULL, 8, 0},
- 	{-EINVAL, "0-31:10/1", NULL, 8, 0},
-+	{-EOVERFLOW, "0-98765432123456789:10/1", NULL, 8, 0},
-+
-+	{-EINVAL, "a-31", NULL, 8, 0},
-+	{-EINVAL, "0-a1", NULL, 8, 0},
-+	{-EINVAL, "a-31:10/1", NULL, 8, 0},
-+	{-EINVAL, "0-31:a/1", NULL, 8, 0},
-+	{-EINVAL, "0-\n", NULL, 8, 0},
- };
++			set_fs(KERNEL_DS);
++			time = ktime_get();
++			err = bitmap_parselist_user(ptest.in, len,
++						    bmap, ptest.nbits);
++			time = ktime_get() - time;
++			set_fs(orig_fs);
++		} else {
++			time = ktime_get();
++			err = bitmap_parselist(ptest.in, bmap, ptest.nbits);
++			time = ktime_get() - time;
++		}
  
- static void __init test_bitmap_parselist(void)
+ 		if (err != ptest.errno) {
+-			pr_err("test %d: input is %s, errno is %d, expected %d\n",
+-					i, ptest.in, err, ptest.errno);
++			pr_err("parselist%s: %d: input is %s, errno is %d, expected %d\n",
++					mode, i, ptest.in, err, ptest.errno);
+ 			continue;
+ 		}
+ 
+ 		if (!err && ptest.expected
+ 			 && !__bitmap_equal(bmap, ptest.expected, ptest.nbits)) {
+-			pr_err("test %d: input is %s, result is 0x%lx, expected 0x%lx\n",
+-					i, ptest.in, bmap[0], *ptest.expected);
++			pr_err("parselist%s: %d: input is %s, result is 0x%lx, expected 0x%lx\n",
++					mode, i, ptest.in, bmap[0],
++					*ptest.expected);
+ 			continue;
+ 		}
+ 
+ 		if (ptest.flags & PARSE_TIME)
+-			pr_err("test %d: input is '%s' OK, Time: %llu\n",
+-					i, ptest.in, time);
++			pr_err("parselist%s: %d: input is '%s' OK, Time: %llu\n",
++					mode, i, ptest.in, time);
+ 	}
+ }
+ 
++static void __init test_bitmap_parselist(void)
++{
++	__test_bitmap_parselist(0);
++}
++
++static void __init test_bitmap_parselist_user(void)
++{
++	__test_bitmap_parselist(1);
++}
++
+ #define EXP_BYTES	(sizeof(exp) * 8)
+ 
+ static void __init test_bitmap_arr32(void)
+@@ -383,6 +408,7 @@ static int __init test_bitmap_init(void)
+ 	test_copy();
+ 	test_bitmap_arr32();
+ 	test_bitmap_parselist();
++	test_bitmap_parselist_user();
+ 	test_mem_optimisations();
+ 
+ 	if (failed_tests == 0)
 -- 
 2.17.1
 
