@@ -2,80 +2,125 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E13F4C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 06:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 243DEC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 06:57:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B05512147A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 06:55:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550645746;
-	bh=WL0oUnJzLH6dyJIpkFuqyeo/UYoGOnl53nHG9dHMXqA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Y6hotBlSAuLUJrKONgsFrG6fMgMkORPrwKHis8jfNzilb8d+mGwNUWBMjNI+PP79U
-	 Z8YWGDz0rea2jfTVnCLCDXy2NzUWRRGRuGruAhAlOJq9W2Qb3aO6XmdUcGnVnBAlDW
-	 hsQlTseKa4w3Y4+KKxJ1eDZCAGwseM3U77G5I6b8=
+	by mail.kernel.org (Postfix) with ESMTP id E6DAE2087B
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 06:57:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="OcCZh083"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730488AbfBTGzp (ORCPT
+        id S1728757AbfBTG5s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 01:55:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55202 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726210AbfBTGzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 01:55:44 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 046EC2147A;
-        Wed, 20 Feb 2019 06:55:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550645744;
-        bh=WL0oUnJzLH6dyJIpkFuqyeo/UYoGOnl53nHG9dHMXqA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wdDRTjJpEqnCQjiUimNFcq+HxhlQ6gakLRCTB4T21WuavLqp4ezBztXSJkm8d8kiM
-         uSbAqOSqpRY2qyVgkgVzk52tujOZh2yJ/w/YOE9tnB/uKzoInqOHxqraF+FXZqW7C7
-         XnhOJtnDSzmsCOrS4dxoHRIGENGjHdIgxer3kiRQ=
-Date:   Wed, 20 Feb 2019 07:55:41 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Vaishali Thakkar <vaishali.thakkar@linaro.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rafael@kernel.org, bjorn.andersson@linaro.org, vkoul@kernel.org
-Subject: Re: [PATCH v2 5/5] base: soc: Export soc_device_register/unregister
- APIs
-Message-ID: <20190220065541.GA8860@kroah.com>
-References: <20190220045946.7452-1-vaishali.thakkar@linaro.org>
+        Wed, 20 Feb 2019 01:57:48 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35517 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbfBTG5s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 01:57:48 -0500
+Received: by mail-lj1-f194.google.com with SMTP id j13-v6so19866077ljc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 22:57:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ncoDYnqxH3gs9Sc4jdqZc699sEVY31p6X34ojqSqzzM=;
+        b=OcCZh083AzJ6sYc48woP23gRRbpaNKLC68TAdlArP77RO3+mrjVrj/iw4ZpWg3rNV3
+         29swcTzY/zTMAOqxs45u579zp81oWJDiOwSJh6tom9D/tAOgnuzVSLlkcuqb8zkvn041
+         kOisgtVcvn0D2ldK2m99xkgmKknYygp1QYdTxOKnNijCZ/APmJ7hGFeM3e3VsCDdMErt
+         wx0sR0iBJ+9HphZXJkooMsrO2GYHiQuoD7D0L5Nb1CAmiVGw+uEgE5SHW+LeT4H60qrm
+         snbkENIP97Ktg8O/dDr3jUbp95t4Oa9ezjlJLisfHr/j4+wT/VqcxY16IMT2kuOtYSUn
+         LRcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ncoDYnqxH3gs9Sc4jdqZc699sEVY31p6X34ojqSqzzM=;
+        b=Q9pv6u6kjCxvCAkFuG771drZ3/b4EapAlKqOEKMw+RHl1d2YbBmBo0tOH8Z70m08kY
+         HAbngU2BxSIyYtWDKN2aXRfbqzXmWblS1bG3B73kMM3JXjfmKCObcCKzujEQR99u3ERG
+         hhy8+NpuxgM1yDCFYqR4LisBVpubeeo1V+k36joBL+NhJaOzdprZ4vqzCClaK+1pAMJK
+         EdkhYgpbGJ3Y3MUsWNwz9HqUrAvC97q4vet9gn0s/g5Db17XsZXdPBdLBR9cBLh5/ls1
+         M0cY37NsLBBjiTkZ3shxWilC1sBpv7ARxm4dfJwrJpnjeyxFg2k8YwOxvDwXh626G8tS
+         Gcdw==
+X-Gm-Message-State: AHQUAuYfXynYOcdbGjOeohuKi+tPixsqXSkIv6kf9eHHCpOjOL0HEG43
+        YQFYg8BHyyNdidxgAiaDanN+AehyZA4nO/Zwm0t4
+X-Google-Smtp-Source: AHgI3IYNFpwogVRQTUBcod7un1tdomwmO6KB9Kx4d3EN4057kTMV12Wev9+tRhU4ylfg5rpiF1lmm8LPwJmAQFU2rTo=
+X-Received: by 2002:a2e:2419:: with SMTP id k25mr8500519ljk.38.1550645865873;
+ Tue, 19 Feb 2019 22:57:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190220045946.7452-1-vaishali.thakkar@linaro.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <1550432358.2809.21.camel@HansenPartnership.com>
+ <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
+ <155024685321.21651.1504201877881622756.stgit@warthog.procyon.org.uk>
+ <19562.1550617574@warthog.procyon.org.uk> <1550629220.11684.3.camel@HansenPartnership.com>
+ <054c1e762d28306abd4db9c42fb1c5f4261332fd.camel@themaw.net> <1550634367.11684.6.camel@HansenPartnership.com>
+In-Reply-To: <1550634367.11684.6.camel@HansenPartnership.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 20 Feb 2019 01:57:34 -0500
+Message-ID: <CAHC9VhQga+bSVEyKbAtfxDsV9RqK5Hv6h-cbs4ArQ3KedxvgpQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 02/27] containers: Implement containers as kernel objects
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>,
+        keyrings@vger.kernel.org, trond.myklebust@hammerspace.com,
+        sfrench@samba.org, linux-security-module@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, rgb@redhat.com,
+        linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 10:29:46AM +0530, Vaishali Thakkar wrote:
-> From: Vinod Koul <vkoul@kernel.org>
-> 
-> Qcom Socinfo driver can be built as a module, so
-> export these two APIs.
-> 
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> Signed-off-by: Vaishali Thakkar <vaishali.thakkar@linaro.org>
-> ---
-> Changes since v1:
-> 	- None
+On Tue, Feb 19, 2019 at 10:46 PM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+> On Wed, 2019-02-20 at 11:04 +0800, Ian Kent wrote:
+> > On Tue, 2019-02-19 at 18:20 -0800, James Bottomley wrote:
+> > > On Tue, 2019-02-19 at 23:06 +0000, David Howells wrote:
+> > > > James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+> > > >
+> > > > > I thought we got agreement years ago that containers don't
+> > > > > exist in Linux as a single entity: they're currently a
+> > > > > collection of cgroups and namespaces some of which may and some
+> > > > > of which may not be local to the entity the orchestration
+> > > > > system thinks of as a "container".
+> > > >
+> > > > I wasn't party to that agreement and don't feel particularly
+> > > > bound by it.
+> > >
+> > > That's not at all relevant, is it?  The point is we have widespread
+> > > uses of namespaces and cgroups that span containers today meaning
+> > > that a "container id" becomes a problematic concept.  What we
+> > > finally got to with the audit people was an unmodifiable label
+> > > which the orchestration system can set ... can't you just use that?
+> >
+> > Sorry James, I fail to see how assigning an id to a collection of
+> > objects constitutes a problem or how that could restrict the way a
+> > container is used.
+>
+> Rather than rehash the whole argument again, what's the reason you
+> can't use the audit label?  It seems to do what you want in a way that
+> doesn't cause problems.  If you can just use it there's little point
+> arguing over what is effectively a moot issue.
 
-This is fixing a build breakage introduced by an earlier patch.  Please
-rearange the patches so that breakage never happens.
+Ignoring for a moment whether or not the audit container ID is
+applicable here, one of the things I've been focused on with the audit
+container ID work is trying to make it difficult for other subsystems
+to use it.  I've taken this stance not because I don't think something
+like a container ID would be useful outside the audit subsystem, but
+rather because I'm afraid of how it might be abused by other
+subsystems and that abuse might threaten the existence of the audit
+container ID.
 
-Also, any chance you can properly "thread" your patches so they all show
-up together?  git send-email does this automatically...
+If there is a willingness to implement a general kernel container ID
+that behaves similarly to how the audit container ID is envisioned,
+I'd much rather do that then implement something which is audit
+specific.
 
-thanks,
-
-greg k-h
+-- 
+paul moore
+www.paul-moore.com
