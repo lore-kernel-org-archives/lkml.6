@@ -2,123 +2,133 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3BF1C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:09:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA290C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:09:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7407E2147C
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:09:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cumulusnetworks.com header.i=@cumulusnetworks.com header.b="J/Ylsb72"
+	by mail.kernel.org (Postfix) with ESMTP id 82A222147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:09:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728137AbfBTNJ0 (ORCPT
+        id S1728176AbfBTNJ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 08:09:26 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45422 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726455AbfBTNJZ (ORCPT
+        Wed, 20 Feb 2019 08:09:29 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:4377 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728047AbfBTNJ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 08:09:25 -0500
-Received: by mail-wr1-f65.google.com with SMTP id w17so25846563wrn.12
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 05:09:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cumulusnetworks.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KIBRzC6nTwsgZsllJXcWpYUI1qjPsYTUFcYp1DPsGgg=;
-        b=J/Ylsb72SWz+3+XX3OKv78JNIFsHj3LT41oOIFm8yY1xhWUeM9gv+wUfuDUP8idmLK
-         mUUW/2QNTjxEHEuwBcRAYgAiUNkNmzH9hzQ7QmzDlFNUYunR0+moIVpsKPcq8RvYdFyP
-         g1loGcQWuKWZRmgPxyOmaAt7MM5ftMSynJEco=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KIBRzC6nTwsgZsllJXcWpYUI1qjPsYTUFcYp1DPsGgg=;
-        b=cLLOvCWxAbU1dKVYOs4Q9grZ+2T10BHHP363vnEtv0yt+bVlMvTGnbSeIcLZJyd/WR
-         Q4DMEN4g3ZHmdkBtZv2kkj9ZSf+m9I7YFZF2l4gsg2nVd/lqwZbW2ehaoOQjX4b7F/+9
-         yVcEDyda9/lYQ32oU8fWsPz0O+0r7E22w37EEF6Ofsl4QDiS31tN334wOtQgT7j5Wyi5
-         +rk7x6VJDJYp8Y1QiERcWLDUbdfbtt9h238DonnExLcPxSLXx/XCgt+WGS0lodvbNH7x
-         I1W1vH3RJOw66gZKy3PmCkEmV86M5vXzBMc/tBc8aOcaOs5c438QtuXkOmAO7hnq6Mhn
-         EDNQ==
-X-Gm-Message-State: AHQUAubAt++qA0mQZx5cNSCHZ+UlkRKkCoye4hejH1CSyarOzP2HDNZM
-        13f2PZXNRjMRCpahBmwKBuw87w==
-X-Google-Smtp-Source: AHgI3Iaa4idPeSMe13nU5ox5H/56egp7QpygTvZs0G6f1rBnafbkMNEGQVU6igYpGlDlYMR1YpcIhQ==
-X-Received: by 2002:a5d:6641:: with SMTP id f1mr25190287wrw.279.1550668163803;
-        Wed, 20 Feb 2019 05:09:23 -0800 (PST)
-Received: from [192.168.0.107] (79-100-158-105.ip.btc-net.bg. [79.100.158.105])
-        by smtp.gmail.com with ESMTPSA id d24sm60634790wrb.47.2019.02.20.05.09.22
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Feb 2019 05:09:22 -0800 (PST)
-Subject: Re: [PATCH 4.19 01/24] bridge: do not add port to router list when
- receives query with source 0.0.0.0
-To:     Sebastian Gottschall <s.gottschall@newmedia-net.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Ying Xu <yinxu@redhat.com>, Hangbin Liu <liuhangbin@gmail.com>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        =?UTF-8?Q?Linus_L=c3=bcssing?= <linus.luessing@c0d3.blue>
-References: <20181102182839.725385066@linuxfoundation.org>
- <20181102182839.913422845@linuxfoundation.org>
- <07d315a2-d735-3d8b-686c-9c52acf91bf1@newmedia-net.de>
- <20190217164809.GA24091@kroah.com>
- <7978727a-eacc-779c-771f-f4c3013237f3@newmedia-net.de>
- <0425449f-f6d9-c492-d7c8-ba202db88d26@newmedia-net.de>
-From:   Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Message-ID: <962f3d1f-23eb-647c-74cb-b277212299e7@cumulusnetworks.com>
-Date:   Wed, 20 Feb 2019 15:09:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 20 Feb 2019 08:09:27 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1KD6P7V019598;
+        Wed, 20 Feb 2019 14:09:10 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2qpc6kwn65-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 20 Feb 2019 14:09:10 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 42DC431;
+        Wed, 20 Feb 2019 13:09:09 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 27AD32BB4;
+        Wed, 20 Feb 2019 13:09:09 +0000 (GMT)
+Received: from localhost (10.75.127.44) by SFHDAG5NODE3.st.com (10.75.127.15)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 20 Feb 2019 14:09:08
+ +0100
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+To:     <thierry.reding@gmail.com>
+CC:     <robh+dt@kernel.org>, <u.kleine-koenig@pengutronix.de>,
+        <tduszyns@gmail.com>, <mark.rutland@arm.com>,
+        <alexandre.torgue@st.com>, <mcoquelin.stm32@gmail.com>,
+        <fabrice.gasnier@st.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: [PATCH v5 2/3] pwm: stm32-lp: Add power management support
+Date:   Wed, 20 Feb 2019 14:07:47 +0100
+Message-ID: <1550668068-9661-3-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1550668068-9661-1-git-send-email-fabrice.gasnier@st.com>
+References: <1550668068-9661-1-git-send-email-fabrice.gasnier@st.com>
 MIME-Version: 1.0
-In-Reply-To: <0425449f-f6d9-c492-d7c8-ba202db88d26@newmedia-net.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG3NODE1.st.com (10.75.127.7) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-20_11:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/02/2019 14:48, Sebastian Gottschall wrote:
-> *reminder*
-> 
-[snip]
->>>>>    }
->>>>>    static void br_ip4_multicast_query(struct net_bridge *br,
->>> Is this also a problem in 4.20?  This patch went into 4.20-rc1, so it
->>> has been around for a while with no reported issues that I can find.
->>> Any pointers to the reports?
->>
->> i need to check this. i found this patch in 4.9, 4.14 and 4.4
->> the rest was picked up from the mailinglist. according to the git sources of 4.20 and 5.0 the same code is in there as well
->>
->> i just got the report from users today and was able to reproduce it with iptv streams. just by disabling the code it was working again.
->>
->> Sebastian
->>>
->>> thanks,
->>>
->>> greg k-h
->>>
->>
+Add suspend/resume PM sleep ops. When going to low power, enforce the PWM
+channel isn't active. Let the PWM consumers disable it during their own
+suspend sequence. Only perform a check here, and handle the pinctrl states.
+See [1].
+[1] https://lkml.org/lkml/2019/2/5/770
 
-Could you please include more details about the setup that's broken ?
-Note that we were warned[1] of potential breakage from this change
-after it went in and regardless of the suggestion from the RFC we'll
-probably have to revert this patch.
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+---
+Changes in v2:
+- Don't disable PWM channel: let the PWM user disable it. Refuse to
+  suspend in case it's been left enabled.
+- Drop the ifdefs, use __maybe_unused instead.
+---
+ drivers/pwm/pwm-stm32-lp.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-Ying Xu as author of the patch, any thoughts ?
-
-Also adding Linus Lüssing to the CC as he was the one who warned against it.
-Note that the warning was sent as a reply to my breakage fix, but it was intended
-for the original patch.
-
-Thanks,
- Nik
-
-[1] https://www.mail-archive.com/netdev@vger.kernel.org/msg272944.html
+diff --git a/drivers/pwm/pwm-stm32-lp.c b/drivers/pwm/pwm-stm32-lp.c
+index 0059b24c..2211a64 100644
+--- a/drivers/pwm/pwm-stm32-lp.c
++++ b/drivers/pwm/pwm-stm32-lp.c
+@@ -13,6 +13,7 @@
+ #include <linux/mfd/stm32-lptimer.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
++#include <linux/pinctrl/consumer.h>
+ #include <linux/platform_device.h>
+ #include <linux/pwm.h>
+ 
+@@ -223,6 +224,29 @@ static int stm32_pwm_lp_remove(struct platform_device *pdev)
+ 	return pwmchip_remove(&priv->chip);
+ }
+ 
++static int __maybe_unused stm32_pwm_lp_suspend(struct device *dev)
++{
++	struct stm32_pwm_lp *priv = dev_get_drvdata(dev);
++	struct pwm_state state;
++
++	pwm_get_state(&priv->chip.pwms[0], &state);
++	if (state.enabled) {
++		dev_err(dev, "The consumer didn't stop us (%s)\n",
++			priv->chip.pwms[0].label);
++		return -EBUSY;
++	}
++
++	return pinctrl_pm_select_sleep_state(dev);
++}
++
++static int __maybe_unused stm32_pwm_lp_resume(struct device *dev)
++{
++	return pinctrl_pm_select_default_state(dev);
++}
++
++static SIMPLE_DEV_PM_OPS(stm32_pwm_lp_pm_ops, stm32_pwm_lp_suspend,
++			 stm32_pwm_lp_resume);
++
+ static const struct of_device_id stm32_pwm_lp_of_match[] = {
+ 	{ .compatible = "st,stm32-pwm-lp", },
+ 	{},
+@@ -235,6 +259,7 @@ static struct platform_driver stm32_pwm_lp_driver = {
+ 	.driver	= {
+ 		.name = "stm32-pwm-lp",
+ 		.of_match_table = of_match_ptr(stm32_pwm_lp_of_match),
++		.pm = &stm32_pwm_lp_pm_ops,
+ 	},
+ };
+ module_platform_driver(stm32_pwm_lp_driver);
+-- 
+2.7.4
 
