@@ -4,119 +4,289 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 844DFC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19614C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:17:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DB592070B
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:16:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D112A2070B
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:17:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726440AbfBTIQo (ORCPT
+        id S1726479AbfBTIQ7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 03:16:44 -0500
-Received: from mail1.bemta26.messagelabs.com ([85.158.142.117]:51654 "EHLO
-        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725779AbfBTIQU (ORCPT
+        Wed, 20 Feb 2019 03:16:59 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:57925 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725779AbfBTIQ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 03:16:20 -0500
-Received: from [85.158.142.194] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-6.bemta.az-b.eu-central-1.aws.symcld.net id CC/BD-16347-0DC0D6C5; Wed, 20 Feb 2019 08:16:16 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBKsWRWlGSWpSXmKPExsVy8+3OTbrneXJ
-  jDLonWlhMffiEzWL+kXOsFqe2NzFZfLvSwWRxedccNovZS/pZLJZev8hk0br3CLvF/iteDpwe
-  a+atYfT49nUSi8fOWXfZPTat6mTzOH5jO5PH501yAWxRrJl5SfkVCawZWxb1sBSs5aq4+u8gY
-  wPja44uRi4OIYGnjBIbJp5k72LkAHIqJF7PCOli5ORgE7CS2L1mMQuILSKgIPGh6R4bSD2zwA
-  QmiTOHD7KCJISBit5eOcIC0ssioCpxczcfSJhXwFfi447dTCC2hICcxM1zncwgNqeAn8SkSWf
-  AbCGgmmv9v9gh6gUlTs58AraLWUBTonX7b3YIW16ieetsqHotCaC72SFmKki07JzHBmHHSXz+
-  3cIEcoIEUO/pZUkQYXuJ6e+vMkPYhhLfZ31jgbDNJd7emMwIYdtIHPrbCjXGVOL7kSusExjFZ
-  yG5aBaSi2YhuWgBI/MqRsukosz0jJLcxMwcXUMDA11DQ2NdU11DExO9xCrdJL3UUt3k1LySok
-  SgrF5iebFecWVuck6KXl5qySZGYIynFLJO2MG4ZHn6IUZJDiYlUd6yGzkxQnxJ+SmVGYnFGfF
-  FpTmpxYcYZTg4lCR49bhzY4QEi1LTUyvSMnOAyQYmLcHBoyTCe5YLKM1bXJCYW5yZDpE6xago
-  Jc4rygqUEABJZJTmwbXBEtwlRlkpYV5GBgYGIZ6C1KLczBJU+VeM4hyMSsK8TMxAU3gy80rgp
-  r8CWswEtHjW/2yQxSWJCCmpBsbyj0oXDMNvOLI4fDzNsdmhpeNr5QHz1+qPH9+ybPpQqjjhTn
-  Kpas4mBs97zX+vF4o1eJhVqU8J511pWvu67V32960+v83PvP2w/lhhtbr8FNYdUjqOL7NCT5X
-  sXRP2zDbX9fAX4bSA/L0+59/csX+Zle/p/FqXOXxNuOnT/5qHS/4sZN7Uv0qJpTgj0VCLuag4
-  EQC2zEcGawMAAA==
-X-Env-Sender: Christian.Hohnstaedt@wago.com
-X-Msg-Ref: server-28.tower-239.messagelabs.com!1550650575!1443181!2
-X-Originating-IP: [217.237.185.178]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.31.5; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 1497 invoked from network); 20 Feb 2019 08:16:15 -0000
-Received: from unknown (HELO mail.wago.com) (217.237.185.178)
-  by server-28.tower-239.messagelabs.com with AES256-GCM-SHA384 encrypted SMTP; 20 Feb 2019 08:16:15 -0000
-Received: from lc010965.wago.local (10.1.101.136) by SVEX01013.wago.local
- (10.1.103.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1531.3; Wed, 20 Feb
- 2019 09:16:14 +0100
-Received: by lc010965.wago.local (Postfix, from userid 11100404)
-        id D15F017002D8; Wed, 20 Feb 2019 09:16:14 +0100 (CET)
-From:   Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
-To:     J Keerthy <j-keerthy@ti.com>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tony Lindgren <tony@atomide.com>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/3] regulator: tps65218.c: fix LS3 issues
-Date:   Wed, 20 Feb 2019 09:15:50 +0100
-Message-ID: <1550650552-26013-2-git-send-email-Christian.Hohnstaedt@wago.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1550650552-26013-1-git-send-email-Christian.Hohnstaedt@wago.com>
-References: <1550650552-26013-1-git-send-email-Christian.Hohnstaedt@wago.com>
+        Wed, 20 Feb 2019 03:16:58 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1gwN3k-0005VC-85; Wed, 20 Feb 2019 09:16:52 +0100
+Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1gwN3i-0008ML-Tz; Wed, 20 Feb 2019 09:16:50 +0100
+Date:   Wed, 20 Feb 2019 09:16:50 +0100
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Aisheng Dong <aisheng.dong@nxp.com>
+Cc:     Anson Huang <anson.huang@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH] dt-bindings: imx: update scu resource id headfile
+Message-ID: <20190220081650.cu3yzausx55jefb6@pengutronix.de>
+References: <1550566601-11497-1-git-send-email-Anson.Huang@nxp.com>
+ <20190219125211.2pg2bqxner4klcb5@pengutronix.de>
+ <DB3PR0402MB3916AF3AA0283DB22DF61E2FF57C0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <20190219144808.qqpaubjcsb4huoml@pengutronix.de>
+ <DB3PR0402MB39160A56E168ED20410674D7F57C0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <AM6PR04MB42152D05E62753E760741160807D0@AM6PR04MB4215.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.1.101.136]
-X-ClientProxiedBy: SVEX01013.wago.local (10.1.103.231) To SVEX01013.wago.local
- (10.1.103.231)
-X-KSE-ServerInfo: SVEX01013.wago.local, 9
-X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 20.02.2019 07:25:00
-X-KSE-BulkMessagesFiltering-Scan-Result: protection disabled
-X-PP-Proceessed: 0e6009ac-ccf0-4540-927c-32c649c0c00d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM6PR04MB42152D05E62753E760741160807D0@AM6PR04MB4215.eurprd04.prod.outlook.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 08:40:43 up 32 days, 12:22, 38 users,  load average: 0.12, 0.04,
+ 0.01
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-- Fix list of valid LS3 currents from mA to µA
-- Fix selection of min/max microAmps of LS3.
-  Selecting one of the configured values as max value now really
-  selects it instead of the next lower one
+On 19-02-20 03:38, Aisheng Dong wrote:
+> [...]
+> 
+> > > I don't like droping some ID's (e.g. IMX_SC_R_DC_0_CAPTURE0) by mark
+> > > them as unused or even worse give them a other meaning. IMHO the
+> > > scu-api should be stable since day 1 and the ID's should only be extended.
+> > > Marking ID's as deprecated is much better than moving them around.
+> > 
+> > I agree the SCU APIs should be stable since day 1 and the ID should ONLY be
+> > extended, but that is the best cases, the reality is, there are different
+> > SoCs/Revision, some revisions may remove the resources ID defined in
+> > pre-coded SCU firmware, like the IMX_SC_R_DC_0_CAPTURE0 etc., so SCU APIs
+> > removes them after real silicon arrived, now latest SCU firmware marks them
+> > as UNUSED, they could be replaced by some other new resources in later new
+> > SoC, I am NOT sure, but if it happens, this resource ID table should be updated
+> > anyway, leaving the out-of-date resource ID table there will have issues, since it
+> > is NOT sync with SCU firmware.
+> > 
+> > So how to resolve such issue? We hope the SCU firmware should be stable
+> > since day 1, but the truth is NOT, could be still some updates but NOT very
+> > often. And I believe the updates will NOT break old kernel version.
 
-Signed-off-by: Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
----
- drivers/regulator/tps65218-regulator.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Hi Anson,
 
-diff --git a/drivers/regulator/tps65218-regulator.c b/drivers/regulator/tps65218-regulator.c
-index 6209bee..5dd559e 100644
---- a/drivers/regulator/tps65218-regulator.c
-+++ b/drivers/regulator/tps65218-regulator.c
-@@ -188,7 +188,8 @@ static struct regulator_ops tps65218_ldo1_dcdc34_ops = {
- 	.set_suspend_disable	= tps65218_pmic_set_suspend_disable,
- };
- 
--static const int ls3_currents[] = { 100, 200, 500, 1000 };
-+static const int ls3_currents[] = { 100000, 200000, 500000, 1000000 };
-+
- 
- static int tps65218_pmic_set_input_current_lim(struct regulator_dev *dev,
- 					       int lim_uA)
-@@ -214,7 +215,7 @@ static int tps65218_pmic_set_current_limit(struct regulator_dev *dev,
- 	unsigned int num_currents = ARRAY_SIZE(ls3_currents);
- 	struct tps65218 *tps = rdev_get_drvdata(dev);
- 
--	while (index < num_currents && ls3_currents[index] < max_uA)
-+	while (index < num_currents && ls3_currents[index] <= max_uA)
- 		index++;
- 
- 	index--;
+Please don't mix the dt-bindings and the kernel related stuff.
+Unfortunately the bindings are within the kernel repo which in fact is
+great for us kernel developer but the bindings are also used in other
+projects such as barebox or other kernels (don't know the BSD guys). So
+you can't ensure that your change will break something. Please keep that
+in mind.
+
+IMHO solving that issue should be done by the scu firmware. I tought the
+scu is a cortex-m4 with a bunch of embedded flash and ram (I don't know
+that much about the scu since it is closed/black-boxed). Why do you
+don't use a translation table within the scu? As I said earlier I don't
+like the redefinition of ID's since they are now part of the dt-bindings.
+The bindings can store up to 32bit values which is a large number ;)
+IMHO wasting some ID's in favour of stability is a better solution.
+
+Regards,
+Marco
+
+> > 
+> 
+> Please double check with SCU firmware owner what the removed ID are used before?
+> Any side effect if removing them.
+> 
+> And please also check if the combability can be maintained via IMX_SC_RPC_VERSION?
+> 
+> Regards
+> Dong Aisheng
+> 
+> > Anson.
+> > 
+> > >
+> > > Regards,
+> > > Marco
+> > >
+> > > >
+> > > > Anson.
+> > > >
+> > > > >
+> > > > > Regards,
+> > > > > Marco
+> > > > >
+> > > > > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> > > > > > ---
+> > > > > >  include/dt-bindings/firmware/imx/rsrc.h | 39
+> > > > > > +++++++++++++++++++--------------
+> > > > > >  1 file changed, 22 insertions(+), 17 deletions(-)
+> > > > > >
+> > > > > > diff --git a/include/dt-bindings/firmware/imx/rsrc.h
+> > > > > > b/include/dt-bindings/firmware/imx/rsrc.h
+> > > > > > index 4481f2d..ad747a8 100644
+> > > > > > --- a/include/dt-bindings/firmware/imx/rsrc.h
+> > > > > > +++ b/include/dt-bindings/firmware/imx/rsrc.h
+> > > > > > @@ -36,15 +36,15 @@
+> > > > > >  #define IMX_SC_R_DC_0_BLIT1		20
+> > > > > >  #define IMX_SC_R_DC_0_BLIT2		21
+> > > > > >  #define IMX_SC_R_DC_0_BLIT_OUT		22
+> > > > > > -#define IMX_SC_R_DC_0_CAPTURE0		23
+> > > > > > -#define IMX_SC_R_DC_0_CAPTURE1		24
+> > > > > > +#define IMX_SC_R_PERF			23
+> > > > > > +#define IMX_SC_R_UNUSED5		24
+> > > > > >  #define IMX_SC_R_DC_0_WARP		25
+> > > > > > -#define IMX_SC_R_DC_0_INTEGRAL0		26
+> > > > > > -#define IMX_SC_R_DC_0_INTEGRAL1		27
+> > > > > > +#define IMX_SC_R_UNUSED7		26
+> > > > > > +#define IMX_SC_R_UNUSED8		27
+> > > > > >  #define IMX_SC_R_DC_0_VIDEO0		28
+> > > > > >  #define IMX_SC_R_DC_0_VIDEO1		29
+> > > > > >  #define IMX_SC_R_DC_0_FRAC0		30
+> > > > > > -#define IMX_SC_R_DC_0_FRAC1		31
+> > > > > > +#define IMX_SC_R_UNUSED6		31
+> > > > > >  #define IMX_SC_R_DC_0			32
+> > > > > >  #define IMX_SC_R_GPU_2_PID0		33
+> > > > > >  #define IMX_SC_R_DC_0_PLL_0		34
+> > > > > > @@ -53,17 +53,17 @@
+> > > > > >  #define IMX_SC_R_DC_1_BLIT1		37
+> > > > > >  #define IMX_SC_R_DC_1_BLIT2		38
+> > > > > >  #define IMX_SC_R_DC_1_BLIT_OUT		39
+> > > > > > -#define IMX_SC_R_DC_1_CAPTURE0		40
+> > > > > > -#define IMX_SC_R_DC_1_CAPTURE1		41
+> > > > > > +#define IMX_SC_R_UNUSED9		40
+> > > > > > +#define IMX_SC_R_UNUSED10		41
+> > > > > >  #define IMX_SC_R_DC_1_WARP		42
+> > > > > > -#define IMX_SC_R_DC_1_INTEGRAL0		43
+> > > > > > -#define IMX_SC_R_DC_1_INTEGRAL1		44
+> > > > > > +#define IMX_SC_R_UNUSED11		43
+> > > > > > +#define IMX_SC_R_UNUSED12		44
+> > > > > >  #define IMX_SC_R_DC_1_VIDEO0		45
+> > > > > >  #define IMX_SC_R_DC_1_VIDEO1		46
+> > > > > >  #define IMX_SC_R_DC_1_FRAC0		47
+> > > > > > -#define IMX_SC_R_DC_1_FRAC1		48
+> > > > > > +#define IMX_SC_R_UNUSED13		48
+> > > > > >  #define IMX_SC_R_DC_1			49
+> > > > > > -#define IMX_SC_R_GPU_3_PID0		50
+> > > > > > +#define IMX_SC_R_UNUSED14		50
+> > > > > >  #define IMX_SC_R_DC_1_PLL_0		51
+> > > > > >  #define IMX_SC_R_DC_1_PLL_1		52
+> > > > > >  #define IMX_SC_R_SPI_0			53
+> > > > > > @@ -303,8 +303,8 @@
+> > > > > >  #define IMX_SC_R_M4_0_UART		287
+> > > > > >  #define IMX_SC_R_M4_0_I2C		288
+> > > > > >  #define IMX_SC_R_M4_0_INTMUX		289
+> > > > > > -#define IMX_SC_R_M4_0_SIM		290
+> > > > > > -#define IMX_SC_R_M4_0_WDOG		291
+> > > > > > +#define IMX_SC_R_UNUSED15		290
+> > > > > > +#define IMX_SC_R_UNUSED16		291
+> > > > > >  #define IMX_SC_R_M4_0_MU_0B		292
+> > > > > >  #define IMX_SC_R_M4_0_MU_0A0		293
+> > > > > >  #define IMX_SC_R_M4_0_MU_0A1		294
+> > > > > > @@ -323,8 +323,8 @@
+> > > > > >  #define IMX_SC_R_M4_1_UART		307
+> > > > > >  #define IMX_SC_R_M4_1_I2C		308
+> > > > > >  #define IMX_SC_R_M4_1_INTMUX		309
+> > > > > > -#define IMX_SC_R_M4_1_SIM		310
+> > > > > > -#define IMX_SC_R_M4_1_WDOG		311
+> > > > > > +#define IMX_SC_R_UNUSED17		310
+> > > > > > +#define IMX_SC_R_UNUSED18		311
+> > > > > >  #define IMX_SC_R_M4_1_MU_0B		312
+> > > > > >  #define IMX_SC_R_M4_1_MU_0A0		313
+> > > > > >  #define IMX_SC_R_M4_1_MU_0A1		314
+> > > > > > @@ -337,7 +337,7 @@
+> > > > > >  #define IMX_SC_R_IRQSTR_SCU2		321
+> > > > > >  #define IMX_SC_R_IRQSTR_DSP		322
+> > > > > >  #define IMX_SC_R_ELCDIF_PLL		323
+> > > > > > -#define IMX_SC_R_UNUSED6		324
+> > > > > > +#define IMX_SC_R_OCRAM			324
+> > > > > >  #define IMX_SC_R_AUDIO_PLL_0		325
+> > > > > >  #define IMX_SC_R_PI_0			326
+> > > > > >  #define IMX_SC_R_PI_0_PWM_0		327
+> > > > > > @@ -554,6 +554,11 @@
+> > > > > >  #define IMX_SC_R_VPU_MU_3		538
+> > > > > >  #define IMX_SC_R_VPU_ENC_1		539
+> > > > > >  #define IMX_SC_R_VPU			540
+> > > > > > -#define IMX_SC_R_LAST			541
+> > > > > > +#define IMX_SC_R_DMA_5_CH0		541
+> > > > > > +#define IMX_SC_R_DMA_5_CH1		542
+> > > > > > +#define IMX_SC_R_DMA_5_CH2		543
+> > > > > > +#define IMX_SC_R_DMA_5_CH3		544
+> > > > > > +#define IMX_SC_R_ATTESTATION		545
+> > > > > > +#define IMX_SC_R_LAST			546
+> > > > > >
+> > > > > >  #endif /* __DT_BINDINGS_RSCRC_IMX_H */
+> > > > > > --
+> > > > > > 2.7.4
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > >
+> > > > > --
+> > > > > Pengutronix e.K.                           |
+> > |
+> > > > > Industrial Linux Solutions                 |
+> > > > >
+> > > https://emea01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fww
+> > > > >
+> > > w.pengutronix.de%2F&amp;data=02%7C01%7Canson.huang%40nxp.com%7
+> > > > >
+> > >
+> > Cfe709ac17a164d82c7d508d6966915fb%7C686ea1d3bc2b4c6fa92cd99c5c30
+> > 1
+> > > > >
+> > >
+> > 635%7C0%7C0%7C636861775412076730&amp;sdata=05ZzPf2%2BQF10JXLLs
+> > > > > OPqDdqTi00BWXNHxmMOsQ1z0yI%3D&amp;reserved=0  | Peiner Str.
+> > 6-8,
+> > > > > 31137 Hildesheim, Germany | Phone: +49-5121-206917-0
+> > > |
+> > > > > Amtsgericht Hildesheim, HRA 2686           | Fax:
+> > +49-5121-206917-5555 |
+> > >
+> > > --
+> > > Pengutronix e.K.                           |
+> > |
+> > > Industrial Linux Solutions                 |
+> > > https://emea01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fww
+> > > w.pengutronix.de%2F&amp;data=02%7C01%7Canson.huang%40nxp.com%7
+> > >
+> > Cd5d39730435e4b06549c08d696794904%7C686ea1d3bc2b4c6fa92cd99c5c
+> > 30
+> > >
+> > 1635%7C0%7C0%7C636861845015130502&amp;sdata=tQYrNl5lzIRRNVBCji6
+> > A
+> > > sPREOnIfDgdPWgAnsWyCErg%3D&amp;reserved=0  |
+> > > Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0
+> > |
+> > > Amtsgericht Hildesheim, HRA 2686           | Fax:
+> > +49-5121-206917-5555 |
+> 
+
 -- 
-2.7.4
-
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
