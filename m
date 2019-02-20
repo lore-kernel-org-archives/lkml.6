@@ -2,86 +2,77 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 653ADC4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 384A3C4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:24:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2440E21738
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:20:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Hx/2U7zh"
+	by mail.kernel.org (Postfix) with ESMTP id 05457206BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:24:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729803AbfBTCUX (ORCPT
+        id S1729625AbfBTCYJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 21:20:23 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:45226 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726235AbfBTCUX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 21:20:23 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 5C7498EE235;
-        Tue, 19 Feb 2019 18:20:22 -0800 (PST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id s9oNZuQAem3F; Tue, 19 Feb 2019 18:20:22 -0800 (PST)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 7A7E28EE21A;
-        Tue, 19 Feb 2019 18:20:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1550629221;
-        bh=Sv05kO616trax6QX+MKM8GQoT95dBmrnAy9m8tcgS+U=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Hx/2U7zh6bPP50kPafInPt5h8xpRnWpTE6DK1PBZw4PWDDrBwQMwyUajynAGYxcPd
-         KxEkrdu1tD2aCxGQTLl5dxmVgEuC21bt3yFrqUir4ZIl6XB9G3miFn/zIFccie3Gox
-         TX7lmNgsPT0d1ornz8fKEze4OEViFT4q5xX4Y0UA=
-Message-ID: <1550629220.11684.3.camel@HansenPartnership.com>
-Subject: Re: [RFC PATCH 02/27] containers: Implement containers as kernel
- objects
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     keyrings@vger.kernel.org, trond.myklebust@hammerspace.com,
-        sfrench@samba.org, linux-security-module@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, rgb@redhat.com,
-        linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, cgroups@vger.kernel.org
-Date:   Tue, 19 Feb 2019 18:20:20 -0800
-In-Reply-To: <19562.1550617574@warthog.procyon.org.uk>
-References: <1550432358.2809.21.camel@HansenPartnership.com>
-         <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
-         <155024685321.21651.1504201877881622756.stgit@warthog.procyon.org.uk>
-         <19562.1550617574@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 19 Feb 2019 21:24:09 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:44910 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726235AbfBTCYI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 21:24:08 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 6695CBF141CF32E60072;
+        Wed, 20 Feb 2019 10:24:06 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.408.0; Wed, 20 Feb 2019
+ 10:23:14 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <peterhuewe@gmx.de>, <jarkko.sakkinen@linux.intel.com>,
+        <jgg@ziepe.ca>, <arnd@arndb.de>, <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH v2 -next] tpm: Fix the type of the return value in calc_tpm2_event_size()
+Date:   Wed, 20 Feb 2019 10:23:00 +0800
+Message-ID: <20190220022300.25888-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-02-19 at 23:06 +0000, David Howells wrote:
-> James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
-> 
-> > I thought we got agreement years ago that containers don't exist in
-> > Linux as a single entity: they're currently a collection of cgroups
-> > and namespaces some of which may and some of which may not be local
-> > to the entity the orchestration system thinks of as a "container".
-> 
-> I wasn't party to that agreement and don't feel particularly bound by
-> it.
+calc_tpm2_event_size() has an invalid signature because
+it returns a 'size_t' where as its signature says that
+it returns 'int'.
 
-That's not at all relevant, is it?  The point is we have widespread
-uses of namespaces and cgroups that span containers today meaning that
-a "container id" becomes a problematic concept.  What we finally got to
-with the audit people was an unmodifiable label which the orchestration
-system can set ... can't you just use that?
+Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware event log")
+Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: modify patch title and commit message as Jarkko suggested
+---
+ drivers/char/tpm/eventlog/tpm2.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-James
+diff --git a/drivers/char/tpm/eventlog/tpm2.c b/drivers/char/tpm/eventlog/tpm2.c
+index d8b7713..f824563 100644
+--- a/drivers/char/tpm/eventlog/tpm2.c
++++ b/drivers/char/tpm/eventlog/tpm2.c
+@@ -37,8 +37,8 @@
+  *
+  * Returns size of the event. If it is an invalid event, returns 0.
+  */
+-static int calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
+-				struct tcg_pcr_event *event_header)
++static size_t calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
++				   struct tcg_pcr_event *event_header)
+ {
+ 	struct tcg_efi_specid_event_head *efispecid;
+ 	struct tcg_event_field *event_field;
+-- 
+2.7.0
+
 
