@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF17C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:18:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85DB2C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:18:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7591E21848
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:18:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 519632146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:18:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="T6t+61v9"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fkNNkExh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727745AbfBTUSG (ORCPT
+        id S1727775AbfBTUSK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 15:18:06 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:33222 "EHLO
+        Wed, 20 Feb 2019 15:18:10 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:33442 "EHLO
         aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727660AbfBTUR7 (ORCPT
+        with ESMTP id S1727622AbfBTUSJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 15:17:59 -0500
+        Wed, 20 Feb 2019 15:18:09 -0500
 Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1KK8VDJ087434;
-        Wed, 20 Feb 2019 20:17:45 GMT
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1KK8VnE087431;
+        Wed, 20 Feb 2019 20:18:02 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=iMKfAofvTA0lJaBbYGohbYbz6+eKYt5uJa2e5hpVk2Q=;
- b=T6t+61v9WlponIdHDeeGEW/SrwSmAPkFXqwbI1ktwHI/k/jCuwnN7Nfmg7njzwLedDRt
- geW003NOn/utXdzsUgbVOeodnYHFi8qzBXwnQ9OpolOkAH2A3IaQ84Yw4H7hKmekVnQB
- tkWabO4WpJ8SRNxwVYK/SejHAVjRg0ka98MM7YNwZSPOCTbdVAetf4MeE/vjDsZ9Rn36
- TxZ3ox4z3InKAzwzlaVzvnRjOS9emxupfRsNwyl0hDdeMEitJqhGW0eOA/Xuw8KRQMvU
- i8sE9Oww+fPQuzXZIEELOypKtD1nOP36WhfwY4MOO7aUpktmPASrq/RC8KRzu7J//Zv6 0A== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2qp81ec3a7-1
+ bh=Q7ek5QGqUVAsNrW8yhTeyoULt5uKOYECFtZLQ9l/1ho=;
+ b=fkNNkExhVsWOCn+cW2Vbb1Z1v8D4qYjbf8P+te0V44dWN4Y0hLDXs1/d3mLjVYtofmmD
+ CQjjw4g6xYExMumH484CoTDUMSomlsUplIYUFUDafOCSKlu1R+VgNdczG+BBw7bmlqAB
+ L1ilXPc6z91hd9Li9rE3PCIAgQwLl1OKuTroxfrUNdaMW6eKDwgk2lQ/dJ5fDzEPt55M
+ uuQ2eT29Gsy0yTF0rlJO0coPgCSTAW2mVetS7UCnbdAWHLqvaRLMss143y0cLQ9pPHXU
+ /7EN3cUIIe6jn3Pbe/Rl99WP74EnCFT+riUfEuKhpXIRA94lxJAlkhfXWI6RoVnIZhQu JA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2qp81ec3by-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Feb 2019 20:17:45 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1KKHikT022432
+        Wed, 20 Feb 2019 20:18:01 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1KKHtvi027093
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Feb 2019 20:17:45 GMT
+        Wed, 20 Feb 2019 20:17:55 GMT
 Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1KKHia2009656;
-        Wed, 20 Feb 2019 20:17:44 GMT
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1KKHtjM015587;
+        Wed, 20 Feb 2019 20:17:55 GMT
 Received: from paddy.lan (/94.61.137.133)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 20 Feb 2019 12:17:44 -0800
+        with ESMTP ; Wed, 20 Feb 2019 12:17:54 -0800
 From:   Joao Martins <joao.m.martins@oracle.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org
 Cc:     Ankur Arora <ankur.a.arora@oracle.com>,
         Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         Joao Martins <joao.m.martins@oracle.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: [PATCH RFC 16/39] KVM: x86: declare Xen HVM evtchn offload capability
-Date:   Wed, 20 Feb 2019 20:15:46 +0000
-Message-Id: <20190220201609.28290-17-joao.m.martins@oracle.com>
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>
+Subject: [PATCH RFC 19/39] xen/xenbus: xenbus uninit support
+Date:   Wed, 20 Feb 2019 20:15:49 +0000
+Message-Id: <20190220201609.28290-20-joao.m.martins@oracle.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190220201609.28290-1-joao.m.martins@oracle.com>
 References: <20190220201609.28290-1-joao.m.martins@oracle.com>
@@ -70,8 +70,8 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9173 signatures=668683
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=726 adultscore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
  definitions=main-1902200138
 Sender: linux-kernel-owner@vger.kernel.org
@@ -79,72 +79,200 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add new capability for event channel support in hypervisor.
+This allows reinitialization of xenbus which is useful for
+xen_shim_domain() support. Cleaning xenbus state means cancelling
+pending watch events, and deleting all watches, closing xenstore event
+channel and finally stopping xenbus/xenwatch kthreads alongside
+unregistering /proc/xen.
 
 Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
 ---
- Documentation/virtual/kvm/api.txt | 9 +++++++++
- arch/x86/kvm/x86.c                | 1 +
- include/uapi/linux/kvm.h          | 3 +++
- 3 files changed, 13 insertions(+)
+ drivers/xen/xenbus/xenbus.h        |  2 ++
+ drivers/xen/xenbus/xenbus_client.c |  5 ++++
+ drivers/xen/xenbus/xenbus_probe.c  | 51 +++++++++++++++++++++++++++++++++++---
+ drivers/xen/xenbus/xenbus_xs.c     | 38 ++++++++++++++++++++++++++++
+ 4 files changed, 93 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
-index c3a1402b76bf..36d9386415fa 100644
---- a/Documentation/virtual/kvm/api.txt
-+++ b/Documentation/virtual/kvm/api.txt
-@@ -5037,3 +5037,12 @@ Architectures: x86
+diff --git a/drivers/xen/xenbus/xenbus.h b/drivers/xen/xenbus/xenbus.h
+index 092981171df1..e0e586d81d48 100644
+--- a/drivers/xen/xenbus/xenbus.h
++++ b/drivers/xen/xenbus/xenbus.h
+@@ -96,6 +96,7 @@ extern wait_queue_head_t xb_waitq;
+ extern struct mutex xb_write_mutex;
  
- This capability indicates that KVM supports Xen HVM guests.
- This includes KVM_IRQ_ROUTING_XEN_EVTCHN as well.
+ int xs_init(void);
++void xs_deinit(void);
+ int xb_init_comms(void);
+ void xb_deinit_comms(void);
+ int xs_watch_msg(struct xs_watch_event *event);
+@@ -129,6 +130,7 @@ int xenbus_read_otherend_details(struct xenbus_device *xendev,
+ 				 char *id_node, char *path_node);
+ 
+ void xenbus_ring_ops_init(void);
++void xenbus_ring_ops_deinit(void);
+ 
+ int xenbus_dev_request_and_reply(struct xsd_sockmsg *msg, void *par);
+ void xenbus_dev_queue_reply(struct xb_req_data *req);
+diff --git a/drivers/xen/xenbus/xenbus_client.c b/drivers/xen/xenbus/xenbus_client.c
+index e17ca8156171..ada1c9aa6525 100644
+--- a/drivers/xen/xenbus/xenbus_client.c
++++ b/drivers/xen/xenbus/xenbus_client.c
+@@ -935,3 +935,8 @@ void __init xenbus_ring_ops_init(void)
+ #endif
+ 		ring_ops = &ring_ops_hvm;
+ }
 +
-+8.23 KVM_CAP_XEN_HVM_EVTCHN
++void xenbus_ring_ops_deinit(void)
++{
++	ring_ops = NULL;
++}
+diff --git a/drivers/xen/xenbus/xenbus_probe.c b/drivers/xen/xenbus/xenbus_probe.c
+index 5b471889d723..2e0ed46b05e7 100644
+--- a/drivers/xen/xenbus/xenbus_probe.c
++++ b/drivers/xen/xenbus/xenbus_probe.c
+@@ -741,6 +741,21 @@ static int __init xenstored_local_init(void)
+ 	return err;
+ }
+ 
++static void xenstored_local_deinit(void)
++{
++	struct evtchn_close close;
++	void *page = NULL;
 +
-+Architectures: x86
++	page = gfn_to_virt(xen_store_gfn);
++	free_page((unsigned long)page);
 +
-+This capability indicates KVM's support for the event channel offload.
-+Implies support for KVM_IRQ_ROUTING_XEN_EVTCHN irq routing, and
-+for attribute KVM_XEN_ATTR_TYPE_EVTCHN in KVM_XEN_HVM_GET_ATTR or
-+KVM_XEN_HVM_SET_ATTR.
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index e29cefd2dc6a..b1d9045d7989 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -3010,6 +3010,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 	case KVM_CAP_SET_IDENTITY_MAP_ADDR:
- 	case KVM_CAP_XEN_HVM:
- 	case KVM_CAP_XEN_HVM_GUEST:
-+	case KVM_CAP_XEN_HVM_EVTCHN:
- 	case KVM_CAP_VCPU_EVENTS:
- 	case KVM_CAP_HYPERV:
- 	case KVM_CAP_HYPERV_VAPIC:
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 4eae47a0ef63..1b3ecce5f92e 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -1004,6 +1004,7 @@ struct kvm_ppc_resize_hpt {
- #define KVM_CAP_MANUAL_DIRTY_LOG_PROTECT 166
- #define KVM_CAP_HYPERV_CPUID 167
- #define KVM_CAP_XEN_HVM_GUEST 168
-+#define KVM_CAP_XEN_HVM_EVTCHN 169
++	close.port = xen_store_evtchn;
++
++	HYPERVISOR_event_channel_op(EVTCHNOP_close, &close);
++
++	xen_store_evtchn = 0;
++}
++
+ static int xenbus_resume_cb(struct notifier_block *nb,
+ 			    unsigned long action, void *data)
+ {
+@@ -765,7 +780,11 @@ static struct notifier_block xenbus_resume_nb = {
+ 	.notifier_call = xenbus_resume_cb,
+ };
  
- #ifdef KVM_CAP_IRQ_ROUTING
+-static int __init xenbus_init(void)
++#ifdef CONFIG_XEN_COMPAT_XENFS
++struct proc_dir_entry *xen_procfs;
++#endif
++
++int xenbus_init(void)
+ {
+ 	int err = 0;
+ 	uint64_t v = 0;
+@@ -833,13 +852,39 @@ static int __init xenbus_init(void)
+ 	 * Create xenfs mountpoint in /proc for compatibility with
+ 	 * utilities that expect to find "xenbus" under "/proc/xen".
+ 	 */
+-	proc_create_mount_point("xen");
++	xen_procfs = proc_create_mount_point("xen");
+ #endif
  
-@@ -1046,6 +1047,7 @@ struct kvm_irq_routing_xen_evtchn {
- #define KVM_IRQ_ROUTING_MSI 2
- #define KVM_IRQ_ROUTING_S390_ADAPTER 3
- #define KVM_IRQ_ROUTING_HV_SINT 4
-+/* Available with KVM_CAP_XEN_HVM_EVTCHN */
- #define KVM_IRQ_ROUTING_XEN_EVTCHN 5
+ out_error:
+ 	return err;
+ }
+-
++EXPORT_SYMBOL_GPL(xenbus_init);
+ postcore_initcall(xenbus_init);
  
- struct kvm_irq_routing_entry {
-@@ -1506,6 +1508,7 @@ struct kvm_xen_hvm_attr {
- #define KVM_XEN_ATTR_TYPE_VCPU_INFO         0x1
- #define KVM_XEN_ATTR_TYPE_VCPU_TIME_INFO    0x2
- #define KVM_XEN_ATTR_TYPE_VCPU_RUNSTATE     0x3
-+/* Available with KVM_CAP_XEN_HVM_EVTCHN */
- #define KVM_XEN_ATTR_TYPE_EVTCHN            0x4
++void xenbus_deinit(void)
++{
++	if (!xen_domain())
++		return;
++
++#ifdef CONFIG_XEN_COMPAT_XENFS
++	proc_remove(xen_procfs);
++	xen_procfs = NULL;
++#endif
++
++	xs_deinit();
++	xenstored_ready = 0;
++
++	switch (xen_store_domain_type) {
++	case XS_LOCAL:
++		xenstored_local_deinit();
++		xen_store_interface = NULL;
++		break;
++	default:
++		pr_warn("Xenstore state unknown\n");
++		break;
++	}
++	xenbus_ring_ops_deinit();
++}
++EXPORT_SYMBOL_GPL(xenbus_deinit);
++
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/xen/xenbus/xenbus_xs.c b/drivers/xen/xenbus/xenbus_xs.c
+index 49a3874ae6bb..bd6db3703972 100644
+--- a/drivers/xen/xenbus/xenbus_xs.c
++++ b/drivers/xen/xenbus/xenbus_xs.c
+@@ -866,6 +866,7 @@ static int xenwatch_thread(void *unused)
  
- /* Secure Encrypted Virtualization command */
+ 	for (;;) {
+ 		wait_event_interruptible(watch_events_waitq,
++					 kthread_should_stop() ||
+ 					 !list_empty(&watch_events));
+ 
+ 		if (kthread_should_stop())
+@@ -917,6 +918,8 @@ static struct notifier_block xs_reboot_nb = {
+ 	.notifier_call = xs_reboot_notify,
+ };
+ 
++static struct task_struct *xenwatch_task;
++
+ int xs_init(void)
+ {
+ 	int err;
+@@ -932,9 +935,44 @@ int xs_init(void)
+ 	task = kthread_run(xenwatch_thread, NULL, "xenwatch");
+ 	if (IS_ERR(task))
+ 		return PTR_ERR(task);
++	xenwatch_task = task;
+ 
+ 	/* shutdown watches for kexec boot */
+ 	xs_reset_watches();
+ 
+ 	return 0;
+ }
++
++void cancel_watches(void)
++{
++	struct xs_watch_event *event, *tmp;
++
++	/* Cancel pending watch events. */
++	spin_lock(&watch_events_lock);
++	list_for_each_entry_safe(event, tmp, &watch_events, list) {
++		list_del(&event->list);
++		kfree(event);
++	}
++	spin_unlock(&watch_events_lock);
++}
++
++void delete_watches(void)
++{
++	struct xenbus_watch *watch, *tmp;
++
++	spin_lock(&watches_lock);
++	list_for_each_entry_safe(watch, tmp, &watches, list) {
++		list_del(&watch->list);
++	}
++	spin_unlock(&watches_lock);
++}
++
++void xs_deinit(void)
++{
++	kthread_stop(xenwatch_task);
++	xenwatch_task = NULL;
++	xb_deinit_comms();
++	unregister_reboot_notifier(&xs_reboot_nb);
++	cancel_watches();
++	delete_watches();
++}
 -- 
 2.11.0
 
