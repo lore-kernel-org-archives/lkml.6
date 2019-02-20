@@ -3,37 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF8AC4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:50:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9483C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:50:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40A212089F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:50:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2EEE21841
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:50:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbfBTUui (ORCPT
+        id S1726986AbfBTUuv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 15:50:38 -0500
-Received: from namei.org ([65.99.196.166]:53318 "EHLO namei.org"
+        Wed, 20 Feb 2019 15:50:51 -0500
+Received: from namei.org ([65.99.196.166]:53332 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725869AbfBTUuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 15:50:37 -0500
+        id S1725869AbfBTUuv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 15:50:51 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x1KKnVDP001538;
-        Wed, 20 Feb 2019 20:49:31 GMT
-Date:   Thu, 21 Feb 2019 07:49:31 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id x1KKoV9w001602;
+        Wed, 20 Feb 2019 20:50:31 GMT
+Date:   Thu, 21 Feb 2019 07:50:31 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: [PATCH] MAINTAINERS: add linux-security-module mailing list to
- TPM drivers
-In-Reply-To: <20190220150445.GA4794@linux.intel.com>
-Message-ID: <alpine.LRH.2.21.1902210747510.1411@namei.org>
-References: <20190220035846.6272-1-jsnitsel@redhat.com> <20190220070413.GB23027@linux.intel.com> <20190220140357.5vbepgmexso3jc6d@cantor> <20190220150445.GA4794@linux.intel.com>
+To:     David Howells <dhowells@redhat.com>
+cc:     David Laight <David.Laight@ACULAB.COM>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] KEYS: user: Align the payload buffer
+In-Reply-To: <16012.1550671795@warthog.procyon.org.uk>
+Message-ID: <alpine.LRH.2.21.1902210750180.1411@namei.org>
+References: <6bf441ffc1a54d06ad27ed01c6d06a58@AcuMS.aculab.com> <155066953188.21038.12015964986007814182.stgit@warthog.procyon.org.uk> <16012.1550671795@warthog.procyon.org.uk>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -42,27 +45,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Feb 2019, Jarkko Sakkinen wrote:
+On Wed, 20 Feb 2019, David Howells wrote:
 
-> > being cc'd to linux-security-module? Looking back at
-> > recent patches, it looked like it was a general request.
-> > If it is, I'll be more likely to remember if get_maintainers.pl
-> > brings it up. :)
+> David Laight <David.Laight@ACULAB.COM> wrote:
 > 
-> I'm all open here. Not sure which practices apply to IMA. I kind of tend
-> to dilate to question does it make sense to CC to LSM for two reasons:
+> > I'd make the 'datalen' field 'unsigned int' at the same time.
+> > It will use some of the hole you've made and generate better
+> > code on most arches.
 > 
-> 1. I think the original reason was that tpmdd mailing list was small.
-> Now with the new linux-integrity mailing list up and running there is
-> more eyes looking at the code. And more importantly the people are
-> subscribed who use TPM for something, like IMA developers.
-> 2. I don't remember ever reading within the time that I've been
-> maintaining even a single comment from anyone that works with LSM's. The
-> value of CC'ing there is not very significant, which means that most of
-> the time the TPM traffic is just noise on that list.
+> Most arches?  I though most, if not all, arches had a load-word instruction.
+> 
+> Do you want to send me a patch for that?  I'd rather not alter this patch at
+> this point.  I can pass the additional patch to James for the next merge
+> window.
 
-Sounds about right, there used to be more security folk on LSM and not as 
-many on the TPM list, but the new integrity list works well for TPM now.
+Should this first one go into -rc?
 
 
 -- 
