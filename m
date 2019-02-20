@@ -2,117 +2,121 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76A6EC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D7BC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:06:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4371F2146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:05:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pm1ABLiq"
+	by mail.kernel.org (Postfix) with ESMTP id 7F94D2146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:06:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbfBTOFd (ORCPT
+        id S1726738AbfBTOGP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 09:05:33 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:36971 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726092AbfBTOFc (ORCPT
+        Wed, 20 Feb 2019 09:06:15 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45063 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726516AbfBTOGP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 09:05:32 -0500
-Received: by mail-it1-f195.google.com with SMTP id z124so15678987itc.2;
-        Wed, 20 Feb 2019 06:05:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vnywmEJQ5bqQfLzt5vAo/SeZGb+fbCTVsFOC8aD5U+k=;
-        b=Pm1ABLiqKzTgx4IqWkAR+p4uEpDoZhOJdfBeEz8k4TkLnUzPyjEmPYO/4G+62Pb7dR
-         IyNzcoA9tC1VVdWHYx8EdRfkeccn0X0ayaINcDrAacAZDJeytRsJN7noU/3mhSdNwOh0
-         oQ4JtvFviLpqOs7/3REZExZgYlRRjx6vUNRMAJF+lu5UiNDM60ReG5AmXUf0BSHkrQPk
-         yRo6BDGlmezfSAEN0gz/nm4TVBmcEyF739tUN7S/68uQjq3Z5ZiwBJ6+xWe9NUcvdymJ
-         O3epdF6UpwQ6g52rJwvFFcJTKKx9R9R+FFAY9h3lTOdL4FGkCGDl86hfRJOAuzea1+sk
-         qLdQ==
+        Wed, 20 Feb 2019 09:06:15 -0500
+Received: by mail-wr1-f68.google.com with SMTP id w17so26064520wrn.12
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 06:06:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vnywmEJQ5bqQfLzt5vAo/SeZGb+fbCTVsFOC8aD5U+k=;
-        b=VaL9eWbBmVXIMD7MkUB/3hVyodaeuEkoPq6puNI41uZA7T4ubS9iQsy22gTJQo9FKp
-         6VrZMXZG41moGCSdGW59POsKATssrFZbblxN9Zrart1W2fRUgRXTDbNOFBWGzZxuurE3
-         YevkTxrv3v0JhkJVlQk0RsVjsMQqTaX2RHDgBgsTU0YwSpFwZnpHdg5vwCHTxwk+SCfb
-         ir9uyRZ9pNrG28zuO4+saRIvkv7r0rSta/87j9wo3bYPiQRSUVlnhPfw/BHgu90CA+h9
-         hqZoQzF0JZeIIvTaegQqJnuJqBWJAyvK6Z8hiN4Mc+AJxigMCO0KPBks+opbHUbtTGF4
-         BjNQ==
-X-Gm-Message-State: AHQUAuY45AKnBVm4YwM9qcaiZ6BFMdjiJn/ilyzMsygbP2e+pzKg1N4V
-        c3ote5TwmCo7qMmMJdLf5UnCaBC5IA8FmfZhk9Y=
-X-Google-Smtp-Source: AHgI3IbJeMnsMeF+/G16AeQOjBWzNw3gOKSEJSQa+9nd2GBfJ8AgKXKSiVFKRLJnpkEGeR0pTNflF93XZ0kCWVBwe2k=
-X-Received: by 2002:a6b:7108:: with SMTP id q8mr19381004iog.7.1550671531649;
- Wed, 20 Feb 2019 06:05:31 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version:content-transfer-encoding;
+        bh=QhdKxjSHt8fRpu216w3QldRhS7amvwsLlM5e+FTFDU8=;
+        b=BmX4lND+7cszI7xsN5noFZWu4YHbpHZiu8/n9s5DWzcEUns1lLNqA/+EN4b5m6HgfH
+         b2Edo7zDfWgCzIZRBqjIy1m3I3Wxo91VW511h5RpY8s0OIXe01RJbHCIAm08mV/b5MIx
+         BwZVg7ZxnnnLnRa9mKu69Ti4X/E5JeyJLlPvWOII0doYZbJh1qChhIigQV9h1jHQpDdV
+         ihN9T4ioK1wv/hfFBrqQJfpzFMAZ82ExlskfyvGp8PP5VoEhWEOGCQAvkeRXdxWZn8wS
+         6m2RmmlhBTSt5SMyzdPdfOhveK10ijOG7hrHaVRKvRuTHKR7WTALwF8Y3iABaIvszwCs
+         6QGw==
+X-Gm-Message-State: AHQUAubUCsPBrRny+8OtpVc/3vN2YOvAPCcpHGgPIoj9S40+4noo691H
+        e00tBzP1+E8cF2rYuk82s0HV4hxUzY4=
+X-Google-Smtp-Source: AHgI3IasjM4bGw+7tm8q18LnFRCqdyd8HhkUYFd/PfRRvenxYStYKbAZeOK3TrAbdVsaPXscX29NrA==
+X-Received: by 2002:adf:f805:: with SMTP id s5mr24810599wrp.234.1550671572978;
+        Wed, 20 Feb 2019 06:06:12 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id w23sm5660078wmc.38.2019.02.20.06.06.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Feb 2019 06:06:11 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Yu Zhang <yu.c.zhang@linux.intel.com>, kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: MMU: record maximum physical address width in kvm_mmu_extended_role
+In-Reply-To: <1548950963-18414-1-git-send-email-yu.c.zhang@linux.intel.com>
+References: <1548950963-18414-1-git-send-email-yu.c.zhang@linux.intel.com>
+Date:   Wed, 20 Feb 2019 15:06:10 +0100
+Message-ID: <878syatuzx.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-References: <20190217162316.14111-1-tiny.windzz@gmail.com> <20190217162316.14111-3-tiny.windzz@gmail.com>
- <20190218084931.fdut6d4cgwkwvihx@flea>
-In-Reply-To: <20190218084931.fdut6d4cgwkwvihx@flea>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Wed, 20 Feb 2019 22:05:10 +0800
-Message-ID: <CAEExFWuAwUzXwjTiekGsjxY0Jop5_tYVgLj5gi9+Kqq=aFyT4w@mail.gmail.com>
-Subject: Re: [PATCH 2/5] nvmem: sunxi-sid: add support for H5's SID controller
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Srini Kandagatla <srinivas.kandagatla@linaro.org>,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI Maxime and ChenYu,
+Yu Zhang <yu.c.zhang@linux.intel.com> writes:
 
-On Mon, Feb 18, 2019 at 4:49 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> Previously, commit 7dcd57552008 ("x86/kvm/mmu: check if tdp/shadow
+> MMU reconfiguration is needed") offered some optimization to avoid
+> the unnecessary reconfiguration. Yet one scenario is broken - when
+> cpuid changes VM's maximum physical address width, reconfiguration
+> is needed to reset the reserved bits.  Also, the TDP may need to
+> reset its shadow_root_level when this value is changed.
 >
-> On Sun, Feb 17, 2019 at 11:23:13AM -0500, Yangtao Li wrote:
-> > Add support for H5's SID controller.
-> >
-> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> > ---
-> >  drivers/nvmem/sunxi_sid.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/drivers/nvmem/sunxi_sid.c b/drivers/nvmem/sunxi_sid.c
-> > index 570a2e354f30..036029e90921 100644
-> > --- a/drivers/nvmem/sunxi_sid.c
-> > +++ b/drivers/nvmem/sunxi_sid.c
-> > @@ -219,11 +219,17 @@ static const struct sunxi_sid_cfg sun50i_a64_cfg = {
-> >       .size = 0x100,
-> >  };
-> >
-> > +static const struct sunxi_sid_cfg sun50i_h5_cfg = {
-> > +     .value_offset = 0x200,
-> > +     .size = 0x100,
-> > +};
+> To fix this, a new field, maxphyaddr, is introduced in the extended
+> role structure to keep track of the configured guest physical address
+> width.
 >
-> IIRC, there was an endianness issue on the newer SoCs, with the driver
-> converting the data from big endian to little endian, while it's
-> actually stored little endian in the SID.
+> Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> ---
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: "Radim Krčmář" <rkrcmar@redhat.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  arch/x86/include/asm/kvm_host.h | 1 +
+>  arch/x86/kvm/mmu.c              | 1 +
+>  2 files changed, 2 insertions(+)
 >
-> Have you checked the SID content?
-It seems that data by hexdump /sys/bus/nvmem/devices/sunxi_sid/nvmem or
-by md command in uboot , the data is different in some soc.
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 4660ce9..be87f71 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -299,6 +299,7 @@ struct kvm_mmu_memory_cache {
+>  		unsigned int cr4_smap:1;
+>  		unsigned int cr4_smep:1;
+>  		unsigned int cr4_la57:1;
+> +		unsigned int maxphyaddr:6;
+>  	};
+>  };
+>  
+> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+> index ce770b4..2b74505 100644
+> --- a/arch/x86/kvm/mmu.c
+> +++ b/arch/x86/kvm/mmu.c
+> @@ -4769,6 +4769,7 @@ static union kvm_mmu_extended_role kvm_calc_mmu_role_ext(struct kvm_vcpu *vcpu)
+>  	ext.cr4_pse = !!is_pse(vcpu);
+>  	ext.cr4_pke = !!kvm_read_cr4_bits(vcpu, X86_CR4_PKE);
+>  	ext.cr4_la57 = !!kvm_read_cr4_bits(vcpu, X86_CR4_LA57);
+> +	ext.maxphyaddr = cpuid_maxphyaddr(vcpu);
+>  
+>  	ext.valid = 1;
 
-Sorry, I replied a bit late.
-Any suggestions to solve it?
+It seems that we can now drop 'valid' from role_ext as maxphyaddr can't
+be 0.
 
-Yangtao
->
-> Maxime
->
-> --
-> Maxime Ripard, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+
+-- 
+Vitaly
