@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC38C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62EB5C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:18:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B745E2183F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:18:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FB0F21773
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:18:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XlFf6Q6k"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QkB8vv3R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727381AbfBTFSW (ORCPT
+        id S1727034AbfBTFSV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 00:18:22 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:51858 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726771AbfBTFSR (ORCPT
+        Wed, 20 Feb 2019 00:18:21 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:55605 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726842AbfBTFSS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 00:18:17 -0500
-Received: by mail-it1-f195.google.com with SMTP id y184so12455870itc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 21:18:16 -0800 (PST)
+        Wed, 20 Feb 2019 00:18:18 -0500
+Received: by mail-it1-f193.google.com with SMTP id z131so12413194itf.5
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 21:18:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5ciqk+uqFKrZqpMKGAg0DrYJPsR1EGm9FFygAIm8kVM=;
-        b=XlFf6Q6kjzhVOBbxdhhjDTI+WyLMOP276wWY4epiLHVfTlMUpvT3tgzzK+8LgQ9nG3
-         ld/pnfsNvHe47WqMhGVxWQdaJBUmPF3JW+/4WjXfQb127uQm2NSx3KLvt9U9FgNJADPk
-         +HHSu0GWhCbehK6KE6O4tJOMwIB9VbSGU/qeTEVEkYQMRYGiO3JC8QMDBIA6tEFxN1e1
-         lcfZ8qXpNbxEVcEiQEf/TcS3YS0lglTDTeyB/RtjF8lO7IlwyU5UNYYK+KzN36MTa+Ha
-         BrGLtTNDXVEbtAG+7QfZXGFHzyzo4tC2f0zec3dDAptXlGKgHNIrgP3mGDuARRHGF7e4
-         uSdA==
+        bh=y5MGMTJN26WOckax2yCwvZuIyv8nIc7OLqZndI8AqWw=;
+        b=QkB8vv3RRB59LJzg3CVBrU4NwlIraLoRq2cuXUtTXSbc+K9jJke0Sxm2sgkmfDjh+9
+         /T1pc5hjLafClsdO9uw0D6u4DLV4TXnP9ZS9su3cIWpnn2megQOLal5d90/EeYpaKv9H
+         H+hrzPQpnw3Uhfn4bD6AQGjwGctPnq6Y3bepc88NdTRB51Oz3wcFArri3e/0nHVhJwIt
+         Vt8ZB/fOOCFRGYdQB2AC/U2yH9X5dcANhYgw1Bhy5JVpDnSi8uS/JqABWa0FObqRUvqc
+         G1PdrYSUYdygoRKTuZfL+SF/GVAuK20cp0gdQJK4FeUQ6rMOPdI1IgY8+bqfOldO1kQz
+         162w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5ciqk+uqFKrZqpMKGAg0DrYJPsR1EGm9FFygAIm8kVM=;
-        b=Mom4L2JRviIO9hQ8vo8wWho5yn8tDWGtqKz4rl9ED8OkiRyTxb1Yz9TOjtIaxc3/Yb
-         pJsSH/eKgrGuQ7bmiaF+rpap9OsyKTKjgb74ZYBaOxff/5U0We01Z86BPrz0+tOhCeT2
-         zGRg2evIC9J0WIVRwOXXRwKD2CYjG5j9rerhuhga5WrQSv8TRc1YTV6eA6XTN/enQfFy
-         i2exUyo0G67X6CiuefpZtPyemLri+GK8OY1tXo1xSt20d4oNJmFF8nzyV2wkFCUqrDrm
-         zo6pqm8CU/i/9sG2ROTxlW+dw+Em2qQuCvTZsn85g5lVgFrIrUOrYiTVU4F3tdGPGQ0E
-         Labg==
-X-Gm-Message-State: AHQUAuY8ouwM/hu++MCycmPbbjFxb5eGmHeP4O/RDvtBrGUhMY7zm/+l
-        CMnnvp3nbtXZfnZr+oUxLj36LEfwnc0=
-X-Google-Smtp-Source: AHgI3Ibxa5PLLnL2qg692p1i/0AAQI6Wi04myl5offbAPFS3GOsigAQZfjslDUScKwb9+Iot+nWiwA==
-X-Received: by 2002:a02:4fc1:: with SMTP id r62mr17814026jad.55.1550639896070;
-        Tue, 19 Feb 2019 21:18:16 -0800 (PST)
+        bh=y5MGMTJN26WOckax2yCwvZuIyv8nIc7OLqZndI8AqWw=;
+        b=dYMXElUI26GJENd1ThalmsHWVFZtvOld/VX9DcnqgAcq2HUmg5Reyl8u7gDSnCL6+e
+         7CPz6LAssf8PxBrKcLq/fSwof+AK+KzUsffGwzAw3V8AZuX5cz7SMl4OENacACJz+kMV
+         qYmvpLYhIDIZ2AP58KYda1WI9jqmQrhgZu7I+QW3uhCetz1luBwxjSiNgrhnqlNBIi/N
+         8G6ph8j8IVDyASzeP7FGEir3OauDrsiJ28Ho9MTeeaPNvQL6OWuKpmioraS1ook7wvvO
+         AXF9xzDKH/LcH5tD8pUdwe1Z7tmk9VnIDNrbseisPJIOiwBNlJfil7bhJuDQGm2twjji
+         9pFQ==
+X-Gm-Message-State: AHQUAua0V0zYl4I1G69vGav0KXFuD1LuSHBFk/nIpYaRdbJXD3b2xYnK
+        uozF8RIyStxyNdcWPnBcu995q0Xdrrk=
+X-Google-Smtp-Source: AHgI3Ia1UrxODbT/8+GzznHEtrX3+Brj7zsxsghnN/oq3KMXvsywP8rteefvEWLsLsEsiUAFzpxOrA==
+X-Received: by 2002:a5d:824e:: with SMTP id n14mr18477619ioo.16.1550639897377;
+        Tue, 19 Feb 2019 21:18:17 -0800 (PST)
 Received: from localhost.localdomain (c-73-242-244-99.hsd1.nm.comcast.net. [73.242.244.99])
-        by smtp.gmail.com with ESMTPSA id k64sm2297550itb.7.2019.02.19.21.18.15
+        by smtp.gmail.com with ESMTPSA id k64sm2297550itb.7.2019.02.19.21.18.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 21:18:15 -0800 (PST)
+        Tue, 19 Feb 2019 21:18:16 -0800 (PST)
 From:   George Hilliard <thirtythreeforty@gmail.com>
 To:     linux-mips@linux-mips.org
 Cc:     linux-kernel@vger.kernel.org, Neil Brown <neil@brown.name>,
         George Hilliard <thirtythreeforty@gmail.com>
-Subject: [PATCH 09/10] staging: mt7621-mmc: Remove redundant host->mmc->f_max write
-Date:   Tue, 19 Feb 2019 22:17:53 -0700
-Message-Id: <20190220051754.12195-10-thirtythreeforty@gmail.com>
+Subject: [PATCH 10/10] staging: mt7621-mmc: Immediately notify mmc layer of card change detection
+Date:   Tue, 19 Feb 2019 22:17:54 -0700
+Message-Id: <20190220051754.12195-11-thirtythreeforty@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190220051754.12195-1-thirtythreeforty@gmail.com>
 References: <20190220051754.12195-1-thirtythreeforty@gmail.com>
@@ -73,24 +73,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is set once during initialization and never changed.  Don't bother
-setting it again in the interrupt handler.
+There is no need to delay notifying the mmc layer.  Schedule the delayed
+work to run immediately.
 
 Signed-off-by: George Hilliard <thirtythreeforty@gmail.com>
 ---
- drivers/staging/mt7621-mmc/sd.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/staging/mt7621-mmc/sd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/staging/mt7621-mmc/sd.c b/drivers/staging/mt7621-mmc/sd.c
-index 736e1d23b391..472318a979cb 100644
+index 472318a979cb..0a7f8384edf8 100644
 --- a/drivers/staging/mt7621-mmc/sd.c
 +++ b/drivers/staging/mt7621-mmc/sd.c
-@@ -210,7 +210,6 @@ static void msdc_tasklet_card(struct work_struct *work)
- 	host->card_inserted = inserted;
- 
- 	if (!host->suspend) {
--		host->mmc->f_max = HOST_MAX_MCLK;
- 		mmc_detect_change(host->mmc, msecs_to_jiffies(20));
+@@ -1355,7 +1355,7 @@ static irqreturn_t msdc_irq(int irq, void *dev_id)
+ 	if (intsts & MSDC_INT_CDSC) {
+ 		if (host->mmc->caps & MMC_CAP_NEEDS_POLL)
+ 			return IRQ_HANDLED;
+-		schedule_delayed_work(&host->card_delaywork, HZ);
++		schedule_delayed_work(&host->card_delaywork, 0);
+ 		/* tuning when plug card ? */
  	}
  
 -- 
