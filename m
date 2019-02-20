@@ -2,113 +2,85 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51011C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 04:24:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2979C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 04:38:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15A082075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 04:24:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="GTdHyPEb"
+	by mail.kernel.org (Postfix) with ESMTP id 9F64421773
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 04:38:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729180AbfBTEYF (ORCPT
+        id S1730339AbfBTEii (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 23:24:05 -0500
-Received: from conuserg-07.nifty.com ([210.131.2.74]:26323 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727035AbfBTEYF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 23:24:05 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id x1K4NxgV027325;
-        Wed, 20 Feb 2019 13:23:59 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x1K4NxgV027325
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1550636640;
-        bh=CalrtVHXcO2JrNtJtgEYVmX+OuO2Eqf+H4VMUdwBRg0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=GTdHyPEbaX4qaOEI5AcPNYxHOxrzYQZ9KmTu4UXc9sHIzHDzJZ0HCfAliKQzrtQ77
-         PAh9lqUfJeN7RJOswBMZzC5YivWaoZq1zexg4Uoq+Te2gr89kIcPv54PQXwstCfNu1
-         DrZikJavjw9ywWIV21zcFkWqOAgHmh9xcCVgt3JVJqGmQT4xGSjnqNV64dpP7ybG7t
-         qkUtEqgY3x8/XE82orhylu4aKKLn3mEKjDNZ/mTmAGqP2qXLutGhAfYhoBlkWbgltv
-         jgSZ6x2vxpFollL03blrQEK+i/GNKtjpyrjsrwOWvp8oaZNamrIYAxy1gZSj13uDJv
-         FkW8G2yoE33bA==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] kbuild: refactor cc-cross-prefix implementation
-Date:   Wed, 20 Feb 2019 13:23:56 +0900
-Message-Id: <1550636636-25367-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 19 Feb 2019 23:38:38 -0500
+Received: from foss.arm.com ([217.140.101.70]:52290 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726952AbfBTEih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 23:38:37 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 35A33A78;
+        Tue, 19 Feb 2019 20:38:37 -0800 (PST)
+Received: from [10.162.40.115] (p8cg001049571a15.blr.arm.com [10.162.40.115])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 49C113F720;
+        Tue, 19 Feb 2019 20:38:33 -0800 (PST)
+Subject: Re: [RFC PATCH 01/31] mm: migrate: Add exchange_pages to exchange two
+ lists of pages.
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Zi Yan <ziy@nvidia.com>, Vlastimil Babka <vbabka@suse.cz>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>,
+        Nitin Gupta <nigupta@nvidia.com>,
+        David Nellans <dnellans@nvidia.com>
+References: <20190215220856.29749-1-zi.yan@sent.com>
+ <20190215220856.29749-2-zi.yan@sent.com>
+ <20190217112943.GP12668@bombadil.infradead.org>
+ <65A1FFA0-531C-4078-9704-3F44819C3C07@nvidia.com>
+ <2630a452-8c53-f109-1748-36b98076c86e@suse.cz>
+ <53690FCD-B0BA-4619-8DF1-B9D721EE1208@nvidia.com>
+ <20190218175224.GT12668@bombadil.infradead.org>
+ <C84D2490-B6C6-4C7C-870F-945E31719728@nvidia.com>
+ <1ce6ae99-4865-df62-5f20-cb07ebb95327@arm.com>
+ <20190219125619.GA12668@bombadil.infradead.org>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <749d5674-9e85-1fe9-4a3b-1d6ad06948b4@arm.com>
+Date:   Wed, 20 Feb 2019 10:08:36 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20190219125619.GA12668@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- - $(word 1, <text>) is equivalent to $(firstword, <text>)
 
- - hardcode "gcc" instead of $(CC)
 
- - minimize the shell script part
+On 02/19/2019 06:26 PM, Matthew Wilcox wrote:
+> On Tue, Feb 19, 2019 at 01:12:07PM +0530, Anshuman Khandual wrote:
+>> But the location of this temp page matters as well because you would like to
+>> saturate the inter node interface. It needs to be either of the nodes where
+>> the source or destination page belongs. Any other node would generate two
+>> internode copy process which is not what you intend here I guess.
+> That makes no sense.  It should be allocated on the local node of the CPU
+> performing the copy.  If the CPU is in node A, the destination is in node B
+> and the source is in node C, then you're doing 4k worth of reads from node C,
+> 4k worth of reads from node B, 4k worth of writes to node C followed by
+> 4k worth of writes to node B.  Eventually the 4k of dirty cachelines on
+> node A will be written back from cache to the local memory (... or not,
+> if that page gets reused for some other purpose first).
+> 
+> If you allocate the page on node B or node C, that's an extra 4k of writes
+> to be sent across the inter-node link.
 
-A little more notes since $(filter-out -%, ...) is not clear.
-
-arch/mips/Makefile passes prefixes depending on the configuration.
-
-CROSS_COMPILE := $(call cc-cross-prefix, $(tool-archpref)-linux- \
-    $(tool-archpref)-linux-gnu- $(tool-archpref)-unknown-linux-gnu-)
-
-In the Kconfig stage (e.g. when you run 'make defconfig'), neither
-CONFIG_32BIT nor CONFIG_64BIT is defined. So, $(tool-archpref) is
-empty. As a result, "-linux -linux-gnu- -unknown-linux-gnu" is passed
-into cc-cross-prefix. The command 'which' assumes arguments starting
-with a hyphen as command options, then emits the following messages:
-
-  Illegal option -l
-  Illegal option -l
-  Illegal option -u
-
-I think it is wrong to define CROSS_COMPILE depending on the CONFIG
-options since you need to feed $(CC) to Kconfig, but it is how MIPS
-Makefile currently works. Anyway, it would not hurt to filter-out
-invalid strings beforehand.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- scripts/Kbuild.include | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
-index d93250b..c1e15a4 100644
---- a/scripts/Kbuild.include
-+++ b/scripts/Kbuild.include
-@@ -71,14 +71,10 @@ endef
- 
- # cc-cross-prefix
- # Usage: CROSS_COMPILE := $(call cc-cross-prefix, m68k-linux-gnu- m68k-linux-)
--# Return first prefix where a prefix$(CC) is found in PATH.
--# If no $(CC) found in PATH with listed prefixes return nothing
--cc-cross-prefix =  \
--	$(word 1, $(foreach c,$(1),                                   \
--		$(shell set -e;                                       \
--		if (which $(strip $(c))$(CC)) > /dev/null 2>&1 ; then \
--			echo $(c);                                    \
--		fi)))
-+# Return first <prefix> where a <prefix>gcc is found in PATH.
-+# If no gcc found in PATH with listed prefixes return nothing
-+cc-cross-prefix = $(firstword $(foreach c, $(filter-out -%, $(1)), \
-+					$(if $(shell which $(c)gcc), $(c))))
- 
- # output directory for tests below
- TMPOUT := $(if $(KBUILD_EXTMOD),$(firstword $(KBUILD_EXTMOD))/)
--- 
-2.7.4
-
+Thats right there will be an extra remote write. My assumption was that the CPU
+performing the copy belongs to either node B or node C.
