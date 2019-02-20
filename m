@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD4CFC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:39:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF8A2C4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:39:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8A482084D
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:39:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B36EE2084D
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:39:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbfBTSjA (ORCPT
+        id S1727683AbfBTSjB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 13:39:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47036 "EHLO mail.kernel.org"
+        Wed, 20 Feb 2019 13:39:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726311AbfBTSiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727037AbfBTSiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 20 Feb 2019 13:38:08 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1881C21B25;
-        Wed, 20 Feb 2019 18:38:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DAB02196F;
+        Wed, 20 Feb 2019 18:38:07 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92-RC5)
         (envelope-from <rostedt@goodmis.org>)
-        id 1gwWkx-0006jZ-7P; Wed, 20 Feb 2019 13:38:07 -0500
-Message-Id: <20190220183807.108498852@goodmis.org>
+        id 1gwWkw-0006ib-LA; Wed, 20 Feb 2019 13:38:06 -0500
+Message-Id: <20190220183806.549718341@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Wed, 20 Feb 2019 13:37:57 -0500
+Date:   Wed, 20 Feb 2019 13:37:55 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [for-next][PATCH 20/29] tracing: Add hist trigger snapshot() action Documentation
+Subject: [for-next][PATCH 18/29] tracing: Add conditional snapshot
 References: <20190220183737.034634614@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -46,144 +46,434 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Add Documentation for the hist:handlerXXX($var).snapshot() action.
+Currently, tracing snapshots are context-free - they capture the ring
+buffer contents at the time the tracing_snapshot() function was
+invoked, and nothing else.  Additionally, they're always taken
+unconditionally - the calling code can decide whether or not to take a
+snapshot, but the data used to make that decision is kept separately
+from the snapshot itself.
 
-Link: http://lkml.kernel.org/r/445861d7822cd4b6aeaea1cecfcdbda466502148.1550100284.git.tom.zanussi@linux.intel.com
+This change adds the ability to associate with each trace instance
+some user data, along with an 'update' function that can use that data
+to determine whether or not to actually take a snapshot.  The update
+function can then update that data along with any other state (as part
+of the data presumably), if warranted.
+
+Because snapshots are 'global' per-instance, only one user can enable
+and use a conditional snapshot for any given trace instance.  To
+enable a conditional snapshot (see details in the function and data
+structure comments), the user calls tracing_snapshot_cond_enable().
+Similarly, to disable a conditional snapshot and free it up for other
+users, tracing_snapshot_cond_disable() should be called.
+
+To actually initiate a conditional snapshot, tracing_snapshot_cond()
+should be called.  tracing_snapshot_cond() will invoke the update()
+callback, allowing the user to decide whether or not to actually take
+the snapshot and update the user-defined data associated with the
+snapshot.  If the callback returns 'true', tracing_snapshot_cond()
+will then actually take the snapshot and return.
+
+This scheme allows for flexibility in snapshot implementations - for
+example, by implementing slightly different update() callbacks,
+snapshots can be taken in situations where the user is only interested
+in taking a snapshot when a new maximum in hit versus when a value
+changes in any way at all.  Future patches will demonstrate both
+cases.
+
+Link: http://lkml.kernel.org/r/1bea07828d5fd6864a585f83b1eed47ce097eb45.1550100284.git.tom.zanussi@linux.intel.com
 
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- Documentation/trace/histogram.rst | 110 ++++++++++++++++++++++++++++++
- 1 file changed, 110 insertions(+)
+ kernel/trace/trace.c              | 192 +++++++++++++++++++++++++++++-
+ kernel/trace/trace.h              |  56 ++++++++-
+ kernel/trace/trace_sched_wakeup.c |   2 +-
+ 3 files changed, 244 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/trace/histogram.rst b/Documentation/trace/histogram.rst
-index 63e522107e59..353317bc3825 100644
---- a/Documentation/trace/histogram.rst
-+++ b/Documentation/trace/histogram.rst
-@@ -1874,6 +1874,7 @@ The available actions are:
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index b477926ac3bc..9f4d56f74b46 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -894,7 +894,7 @@ int __trace_bputs(unsigned long ip, const char *str)
+ EXPORT_SYMBOL_GPL(__trace_bputs);
  
-   - <synthetic_event_name>(param list)         - generate synthetic event
-   - save(field,...)                            - save current event fields
-+  - snapshot()                                 - snapshot the trace buffer
+ #ifdef CONFIG_TRACER_SNAPSHOT
+-void tracing_snapshot_instance(struct trace_array *tr)
++void tracing_snapshot_instance_cond(struct trace_array *tr, void *cond_data)
+ {
+ 	struct tracer *tracer = tr->current_trace;
+ 	unsigned long flags;
+@@ -920,10 +920,15 @@ void tracing_snapshot_instance(struct trace_array *tr)
+ 	}
  
- The following commonly-used handler.action pairs are available:
+ 	local_irq_save(flags);
+-	update_max_tr(tr, current, smp_processor_id());
++	update_max_tr(tr, current, smp_processor_id(), cond_data);
+ 	local_irq_restore(flags);
+ }
  
-@@ -2030,6 +2031,115 @@ The following commonly-used handler.action pairs are available:
-             Entries: 2
-             Dropped: 0
++void tracing_snapshot_instance(struct trace_array *tr)
++{
++	tracing_snapshot_instance_cond(tr, NULL);
++}
++
+ /**
+  * tracing_snapshot - take a snapshot of the current buffer.
+  *
+@@ -946,6 +951,54 @@ void tracing_snapshot(void)
+ }
+ EXPORT_SYMBOL_GPL(tracing_snapshot);
  
-+  - onmax(var).snapshot()
++/**
++ * tracing_snapshot_cond - conditionally take a snapshot of the current buffer.
++ * @tr:		The tracing instance to snapshot
++ * @cond_data:	The data to be tested conditionally, and possibly saved
++ *
++ * This is the same as tracing_snapshot() except that the snapshot is
++ * conditional - the snapshot will only happen if the
++ * cond_snapshot.update() implementation receiving the cond_data
++ * returns true, which means that the trace array's cond_snapshot
++ * update() operation used the cond_data to determine whether the
++ * snapshot should be taken, and if it was, presumably saved it along
++ * with the snapshot.
++ */
++void tracing_snapshot_cond(struct trace_array *tr, void *cond_data)
++{
++	tracing_snapshot_instance_cond(tr, cond_data);
++}
++EXPORT_SYMBOL_GPL(tracing_snapshot_cond);
 +
-+    The 'onmax(var).snapshot()' hist trigger action is invoked
-+    whenever the value of 'var' associated with a histogram entry
-+    exceeds the current maximum contained in that variable.
++/**
++ * tracing_snapshot_cond_data - get the user data associated with a snapshot
++ * @tr:		The tracing instance
++ *
++ * When the user enables a conditional snapshot using
++ * tracing_snapshot_cond_enable(), the user-defined cond_data is saved
++ * with the snapshot.  This accessor is used to retrieve it.
++ *
++ * Should not be called from cond_snapshot.update(), since it takes
++ * the tr->max_lock lock, which the code calling
++ * cond_snapshot.update() has already done.
++ *
++ * Returns the cond_data associated with the trace array's snapshot.
++ */
++void *tracing_cond_snapshot_data(struct trace_array *tr)
++{
++	void *cond_data = NULL;
 +
-+    The end result is that a global snapshot of the trace buffer will
-+    be saved in the tracing/snapshot file if 'var' exceeds the current
-+    maximum for any hist trigger entry.
++	arch_spin_lock(&tr->max_lock);
 +
-+    Note that in this case the maximum is a global maximum for the
-+    current trace instance, which is the maximum across all buckets of
-+    the histogram.  The key of the specific trace event that caused
-+    the global maximum and the global maximum itself are displayed,
-+    along with a message stating that a snapshot has been taken and
-+    where to find it.  The user can use the key information displayed
-+    to locate the corresponding bucket in the histogram for even more
-+    detail.
++	if (tr->cond_snapshot)
++		cond_data = tr->cond_snapshot->cond_data;
 +
-+    As an example the below defines a couple of hist triggers, one for
-+    sched_waking and another for sched_switch, keyed on pid.  Whenever
-+    a sched_waking event occurs, the timestamp is saved in the entry
-+    corresponding to the current pid, and when the scheduler switches
-+    back to that pid, the timestamp difference is calculated.  If the
-+    resulting latency, stored in wakeup_lat, exceeds the current
-+    maximum latency, a snapshot is taken.  As part of the setup, all
-+    the scheduler events are also enabled, which are the events that
-+    will show up in the snapshot when it is taken at some point:
++	arch_spin_unlock(&tr->max_lock);
 +
-+    # echo 1 > /sys/kernel/debug/tracing/events/sched/enable
++	return cond_data;
++}
++EXPORT_SYMBOL_GPL(tracing_cond_snapshot_data);
 +
-+    # echo 'hist:keys=pid:ts0=common_timestamp.usecs \
-+            if comm=="cyclictest"' >> \
-+            /sys/kernel/debug/tracing/events/sched/sched_waking/trigger
+ static int resize_buffer_duplicate_size(struct trace_buffer *trace_buf,
+ 					struct trace_buffer *size_buf, int cpu_id);
+ static void set_buffer_entries(struct trace_buffer *buf, unsigned long val);
+@@ -1025,12 +1078,103 @@ void tracing_snapshot_alloc(void)
+ 	tracing_snapshot();
+ }
+ EXPORT_SYMBOL_GPL(tracing_snapshot_alloc);
 +
-+    # echo 'hist:keys=next_pid:wakeup_lat=common_timestamp.usecs-$ts0: \
-+            onmax($wakeup_lat).save(next_prio,next_comm,prev_pid,prev_prio, \
-+	    prev_comm):onmax($wakeup_lat).snapshot() \
-+	    if next_comm=="cyclictest"' >> \
-+	    /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
++/**
++ * tracing_snapshot_cond_enable - enable conditional snapshot for an instance
++ * @tr:		The tracing instance
++ * @cond_data:	User data to associate with the snapshot
++ * @update:	Implementation of the cond_snapshot update function
++ *
++ * Check whether the conditional snapshot for the given instance has
++ * already been enabled, or if the current tracer is already using a
++ * snapshot; if so, return -EBUSY, else create a cond_snapshot and
++ * save the cond_data and update function inside.
++ *
++ * Returns 0 if successful, error otherwise.
++ */
++int tracing_snapshot_cond_enable(struct trace_array *tr, void *cond_data,
++				 cond_update_fn_t update)
++{
++	struct cond_snapshot *cond_snapshot;
++	int ret = 0;
 +
-+    When the histogram is displayed, for each bucket the max value
-+    and the saved values corresponding to the max are displayed
-+    following the rest of the fields.
++	cond_snapshot = kzalloc(sizeof(*cond_snapshot), GFP_KERNEL);
++	if (!cond_snapshot)
++		return -ENOMEM;
 +
-+    If a snaphot was taken, there is also a message indicating that,
-+    along with the value and event that triggered the global maximum:
++	cond_snapshot->cond_data = cond_data;
++	cond_snapshot->update = update;
 +
-+    # cat /sys/kernel/debug/tracing/events/sched/sched_switch/hist
-+      { next_pid:       2101 } hitcount:        200
-+	max:         52  next_prio:        120  next_comm: cyclictest \
-+        prev_pid:          0  prev_prio:        120  prev_comm: swapper/6
++	mutex_lock(&trace_types_lock);
 +
-+      { next_pid:       2103 } hitcount:       1326
-+	max:        572  next_prio:         19  next_comm: cyclictest \
-+        prev_pid:          0  prev_prio:        120  prev_comm: swapper/1
++	ret = tracing_alloc_snapshot_instance(tr);
++	if (ret)
++		goto fail_unlock;
 +
-+      { next_pid:       2102 } hitcount:       1982 \
-+	max:         74  next_prio:         19  next_comm: cyclictest \
-+        prev_pid:          0  prev_prio:        120  prev_comm: swapper/5
++	if (tr->current_trace->use_max_tr) {
++		ret = -EBUSY;
++		goto fail_unlock;
++	}
 +
-+    Snapshot taken (see tracing/snapshot).  Details:
-+	triggering value { onmax($wakeup_lat) }:        572	\
-+	triggered by event with key: { next_pid:       2103 }
++	if (tr->cond_snapshot) {
++		ret = -EBUSY;
++		goto fail_unlock;
++	}
 +
-+    Totals:
-+        Hits: 3508
-+        Entries: 3
-+        Dropped: 0
++	arch_spin_lock(&tr->max_lock);
++	tr->cond_snapshot = cond_snapshot;
++	arch_spin_unlock(&tr->max_lock);
 +
-+    In the above case, the event that triggered the global maximum has
-+    the key with next_pid == 2103.  If you look at the bucket that has
-+    2103 as the key, you'll find the additional values save()'d along
-+    with the local maximum for that bucket, which should be the same
-+    as the global maximum (since that was the same value that
-+    triggered the global snapshot).
++	mutex_unlock(&trace_types_lock);
 +
-+    And finally, looking at the snapshot data should show at or near
-+    the end the event that triggered the snapshot (in this case you
-+    can verify the timestamps between the sched_waking and
-+    sched_switch events, which should match the time displayed in the
-+    global maximum):
++	return ret;
 +
-+    # cat /sys/kernel/debug/tracing/snapshot
++ fail_unlock:
++	mutex_unlock(&trace_types_lock);
++	kfree(cond_snapshot);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(tracing_snapshot_cond_enable);
 +
-+     <...>-2103  [005] d..3   309.873125: sched_switch: prev_comm=cyclictest prev_pid=2103 prev_prio=19 prev_state=D ==> next_comm=swapper/5 next_pid=0 next_prio=120
-+     <idle>-0     [005] d.h3   309.873611: sched_waking: comm=cyclictest pid=2102 prio=19 target_cpu=005
-+     <idle>-0     [005] dNh4   309.873613: sched_wakeup: comm=cyclictest pid=2102 prio=19 target_cpu=005
-+     <idle>-0     [005] d..3   309.873616: sched_switch: prev_comm=swapper/5 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2102 next_prio=19
-+     <...>-2102  [005] d..3   309.873625: sched_switch: prev_comm=cyclictest prev_pid=2102 prev_prio=19 prev_state=D ==> next_comm=swapper/5 next_pid=0 next_prio=120
-+     <idle>-0     [005] d.h3   309.874624: sched_waking: comm=cyclictest pid=2102 prio=19 target_cpu=005
-+     <idle>-0     [005] dNh4   309.874626: sched_wakeup: comm=cyclictest pid=2102 prio=19 target_cpu=005
-+     <idle>-0     [005] dNh3   309.874628: sched_waking: comm=cyclictest pid=2103 prio=19 target_cpu=005
-+     <idle>-0     [005] dNh4   309.874630: sched_wakeup: comm=cyclictest pid=2103 prio=19 target_cpu=005
-+     <idle>-0     [005] d..3   309.874633: sched_switch: prev_comm=swapper/5 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2102 next_prio=19
-+     <idle>-0     [004] d.h3   309.874757: sched_waking: comm=gnome-terminal- pid=1699 prio=120 target_cpu=004
-+     <idle>-0     [004] dNh4   309.874762: sched_wakeup: comm=gnome-terminal- pid=1699 prio=120 target_cpu=004
-+     <idle>-0     [004] d..3   309.874766: sched_switch: prev_comm=swapper/4 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=gnome-terminal- next_pid=1699 next_prio=120
-+ gnome-terminal--1699  [004] d.h2   309.874941: sched_stat_runtime: comm=gnome-terminal- pid=1699 runtime=180706 [ns] vruntime=1126870572 [ns]
-+     <idle>-0     [003] d.s4   309.874956: sched_waking: comm=rcu_sched pid=9 prio=120 target_cpu=007
-+     <idle>-0     [003] d.s5   309.874960: sched_wake_idle_without_ipi: cpu=7
-+     <idle>-0     [003] d.s5   309.874961: sched_wakeup: comm=rcu_sched pid=9 prio=120 target_cpu=007
-+     <idle>-0     [007] d..3   309.874963: sched_switch: prev_comm=swapper/7 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=rcu_sched next_pid=9 next_prio=120
-+  rcu_sched-9     [007] d..3   309.874973: sched_stat_runtime: comm=rcu_sched pid=9 runtime=13646 [ns] vruntime=22531430286 [ns]
-+  rcu_sched-9     [007] d..3   309.874978: sched_switch: prev_comm=rcu_sched prev_pid=9 prev_prio=120 prev_state=R+ ==> next_comm=swapper/7 next_pid=0 next_prio=120
-+      <...>-2102  [005] d..4   309.874994: sched_migrate_task: comm=cyclictest pid=2103 prio=19 orig_cpu=5 dest_cpu=1
-+      <...>-2102  [005] d..4   309.875185: sched_wake_idle_without_ipi: cpu=1
-+     <idle>-0     [001] d..3   309.875200: sched_switch: prev_comm=swapper/1 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2103 next_prio=19
++/**
++ * tracing_snapshot_cond_disable - disable conditional snapshot for an instance
++ * @tr:		The tracing instance
++ *
++ * Check whether the conditional snapshot for the given instance is
++ * enabled; if so, free the cond_snapshot associated with it,
++ * otherwise return -EINVAL.
++ *
++ * Returns 0 if successful, error otherwise.
++ */
++int tracing_snapshot_cond_disable(struct trace_array *tr)
++{
++	int ret = 0;
 +
- 3. User space creating a trigger
- --------------------------------
++	arch_spin_lock(&tr->max_lock);
++
++	if (!tr->cond_snapshot)
++		ret = -EINVAL;
++	else {
++		kfree(tr->cond_snapshot);
++		tr->cond_snapshot = NULL;
++	}
++
++	arch_spin_unlock(&tr->max_lock);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(tracing_snapshot_cond_disable);
+ #else
+ void tracing_snapshot(void)
+ {
+ 	WARN_ONCE(1, "Snapshot feature not enabled, but internal snapshot used");
+ }
+ EXPORT_SYMBOL_GPL(tracing_snapshot);
++void tracing_snapshot_cond(struct trace_array *tr, void *cond_data)
++{
++	WARN_ONCE(1, "Snapshot feature not enabled, but internal conditional snapshot used");
++}
++EXPORT_SYMBOL_GPL(tracing_snapshot_cond);
+ int tracing_alloc_snapshot(void)
+ {
+ 	WARN_ONCE(1, "Snapshot feature not enabled, but snapshot allocation used");
+@@ -1043,6 +1187,21 @@ void tracing_snapshot_alloc(void)
+ 	tracing_snapshot();
+ }
+ EXPORT_SYMBOL_GPL(tracing_snapshot_alloc);
++void *tracing_cond_snapshot_data(struct trace_array *tr)
++{
++	return NULL;
++}
++EXPORT_SYMBOL_GPL(tracing_cond_snapshot_data);
++int tracing_snapshot_cond_enable(struct trace_array *tr, void *cond_data, cond_update_fn_t update)
++{
++	return -ENODEV;
++}
++EXPORT_SYMBOL_GPL(tracing_snapshot_cond_enable);
++int tracing_snapshot_cond_disable(struct trace_array *tr)
++{
++	return false;
++}
++EXPORT_SYMBOL_GPL(tracing_snapshot_cond_disable);
+ #endif /* CONFIG_TRACER_SNAPSHOT */
  
+ void tracer_tracing_off(struct trace_array *tr)
+@@ -1354,12 +1513,14 @@ __update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
+  * @tr: tracer
+  * @tsk: the task with the latency
+  * @cpu: The cpu that initiated the trace.
++ * @cond_data: User data associated with a conditional snapshot
+  *
+  * Flip the buffers between the @tr and the max_tr and record information
+  * about which task was the cause of this latency.
+  */
+ void
+-update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
++update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu,
++	      void *cond_data)
+ {
+ 	if (tr->stop_count)
+ 		return;
+@@ -1380,9 +1541,15 @@ update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
+ 	else
+ 		ring_buffer_record_off(tr->max_buffer.buffer);
+ 
++#ifdef CONFIG_TRACER_SNAPSHOT
++	if (tr->cond_snapshot && !tr->cond_snapshot->update(tr, cond_data))
++		goto out_unlock;
++#endif
+ 	swap(tr->trace_buffer.buffer, tr->max_buffer.buffer);
+ 
+ 	__update_max_tr(tr, tsk, cpu);
++
++ out_unlock:
+ 	arch_spin_unlock(&tr->max_lock);
+ }
+ 
+@@ -5396,6 +5563,16 @@ static int tracing_set_tracer(struct trace_array *tr, const char *buf)
+ 	if (t == tr->current_trace)
+ 		goto out;
+ 
++#ifdef CONFIG_TRACER_SNAPSHOT
++	if (t->use_max_tr) {
++		arch_spin_lock(&tr->max_lock);
++		if (tr->cond_snapshot)
++			ret = -EBUSY;
++		arch_spin_unlock(&tr->max_lock);
++		if (ret)
++			goto out;
++	}
++#endif
+ 	/* Some tracers won't work on kernel command line */
+ 	if (system_state < SYSTEM_RUNNING && t->noboot) {
+ 		pr_warn("Tracer '%s' is not allowed on command line, ignored\n",
+@@ -6477,6 +6654,13 @@ tracing_snapshot_write(struct file *filp, const char __user *ubuf, size_t cnt,
+ 		goto out;
+ 	}
+ 
++	arch_spin_lock(&tr->max_lock);
++	if (tr->cond_snapshot)
++		ret = -EBUSY;
++	arch_spin_unlock(&tr->max_lock);
++	if (ret)
++		goto out;
++
+ 	switch (val) {
+ 	case 0:
+ 		if (iter->cpu_file != RING_BUFFER_ALL_CPUS) {
+@@ -6502,7 +6686,7 @@ tracing_snapshot_write(struct file *filp, const char __user *ubuf, size_t cnt,
+ 		local_irq_disable();
+ 		/* Now, we're going to swap */
+ 		if (iter->cpu_file == RING_BUFFER_ALL_CPUS)
+-			update_max_tr(tr, current, smp_processor_id());
++			update_max_tr(tr, current, smp_processor_id(), NULL);
+ 		else
+ 			update_max_tr_single(tr, current, iter->cpu_file);
+ 		local_irq_enable();
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index ae7df090b93e..d80cee49e0eb 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -194,6 +194,51 @@ struct trace_pid_list {
+ 	unsigned long			*pids;
+ };
+ 
++typedef bool (*cond_update_fn_t)(struct trace_array *tr, void *cond_data);
++
++/**
++ * struct cond_snapshot - conditional snapshot data and callback
++ *
++ * The cond_snapshot structure encapsulates a callback function and
++ * data associated with the snapshot for a given tracing instance.
++ *
++ * When a snapshot is taken conditionally, by invoking
++ * tracing_snapshot_cond(tr, cond_data), the cond_data passed in is
++ * passed in turn to the cond_snapshot.update() function.  That data
++ * can be compared by the update() implementation with the cond_data
++ * contained wihin the struct cond_snapshot instance associated with
++ * the trace_array.  Because the tr->max_lock is held throughout the
++ * update() call, the update() function can directly retrieve the
++ * cond_snapshot and cond_data associated with the per-instance
++ * snapshot associated with the trace_array.
++ *
++ * The cond_snapshot.update() implementation can save data to be
++ * associated with the snapshot if it decides to, and returns 'true'
++ * in that case, or it returns 'false' if the conditional snapshot
++ * shouldn't be taken.
++ *
++ * The cond_snapshot instance is created and associated with the
++ * user-defined cond_data by tracing_cond_snapshot_enable().
++ * Likewise, the cond_snapshot instance is destroyed and is no longer
++ * associated with the trace instance by
++ * tracing_cond_snapshot_disable().
++ *
++ * The method below is required.
++ *
++ * @update: When a conditional snapshot is invoked, the update()
++ *	callback function is invoked with the tr->max_lock held.  The
++ *	update() implementation signals whether or not to actually
++ *	take the snapshot, by returning 'true' if so, 'false' if no
++ *	snapshot should be taken.  Because the max_lock is held for
++ *	the duration of update(), the implementation is safe to
++ *	directly retrieven and save any implementation data it needs
++ *	to in association with the snapshot.
++ */
++struct cond_snapshot {
++	void				*cond_data;
++	cond_update_fn_t		update;
++};
++
+ /*
+  * The trace array - an array of per-CPU trace arrays. This is the
+  * highest level data structure that individual tracers deal with.
+@@ -277,6 +322,9 @@ struct trace_array {
+ #endif
+ 	int			time_stamp_abs_ref;
+ 	struct list_head	hist_vars;
++#ifdef CONFIG_TRACER_SNAPSHOT
++	struct cond_snapshot	*cond_snapshot;
++#endif
+ };
+ 
+ enum {
+@@ -727,7 +775,8 @@ int trace_pid_write(struct trace_pid_list *filtered_pids,
+ 		    const char __user *ubuf, size_t cnt);
+ 
+ #ifdef CONFIG_TRACER_MAX_TRACE
+-void update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu);
++void update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu,
++		   void *cond_data);
+ void update_max_tr_single(struct trace_array *tr,
+ 			  struct task_struct *tsk, int cpu);
+ #endif /* CONFIG_TRACER_MAX_TRACE */
+@@ -1810,6 +1859,11 @@ static inline bool event_command_needs_rec(struct event_command *cmd_ops)
+ extern int trace_event_enable_disable(struct trace_event_file *file,
+ 				      int enable, int soft_disable);
+ extern int tracing_alloc_snapshot(void);
++extern void tracing_snapshot_cond(struct trace_array *tr, void *cond_data);
++extern int tracing_snapshot_cond_enable(struct trace_array *tr, void *cond_data, cond_update_fn_t update);
++
++extern int tracing_snapshot_cond_disable(struct trace_array *tr);
++extern void *tracing_cond_snapshot_data(struct trace_array *tr);
+ 
+ extern const char *__start___trace_bprintk_fmt[];
+ extern const char *__stop___trace_bprintk_fmt[];
+diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
+index f4fe7d1781e9..743b2b520d34 100644
+--- a/kernel/trace/trace_sched_wakeup.c
++++ b/kernel/trace/trace_sched_wakeup.c
+@@ -486,7 +486,7 @@ probe_wakeup_sched_switch(void *ignore, bool preempt,
+ 
+ 	if (likely(!is_tracing_stopped())) {
+ 		wakeup_trace->max_latency = delta;
+-		update_max_tr(wakeup_trace, wakeup_task, wakeup_cpu);
++		update_max_tr(wakeup_trace, wakeup_task, wakeup_cpu, NULL);
+ 	}
+ 
+ out_unlock:
 -- 
 2.20.1
 
