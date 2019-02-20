@@ -2,94 +2,103 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E55C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D16C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:47:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3BEF2075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:38:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B21C320C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:47:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Wagt6AOm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d7UwG7JX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbfBTFia (ORCPT
+        id S1726825AbfBTFrb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 00:38:30 -0500
-Received: from ozlabs.org ([203.11.71.1]:44501 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726297AbfBTFia (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 00:38:30 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 4445xG5L1Hz9s3l;
-        Wed, 20 Feb 2019 16:38:26 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1550641107;
-        bh=MpZODxUKNz/O+5twQR9cXpPOY0gsLWlWaW3hxqwyc7I=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Wagt6AOmnY4i2ZFJrdLQ/tWI8jevlMX8UWrFBNKSS6UM2pgk5x8LnuqXIRwvc91Jq
-         oq9AzocN66W2NIdhrPPJpRsXR4MfrU4Vl9FJGz/n/E2QpTDAgGyLSMPhzkSN3MwSZ6
-         m6OKqSsfzIYsQ4Aq+oXRMrXKRB+3C1q9P4lraOAqy2n5ALtVJbwMy22hQZaUQ5lnU4
-         3rGRh11JVVRv24YIbLEUWpZqYhsKg728VhaPgxd4SabJCa7m8Awva9C0TLRyMl6EM1
-         qdtlmkCE0NNwlbZwekAIRDkJFWcnpJ2vJQ/2+yVa0joC630LEH2wOFjWYG/uazEkY7
-         yIJTk64bJbtlw==
-Date:   Wed, 20 Feb 2019 16:38:20 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>
-Subject: Re: linux-next: Fixes tag needs some work in the net-next tree
-Message-ID: <20190220163820.774431ca@canb.auug.org.au>
-In-Reply-To: <20190220044055.GD21884@vkoul-mobl>
-References: <20190220093136.73779781@canb.auug.org.au>
-        <20190220044055.GD21884@vkoul-mobl>
+        Wed, 20 Feb 2019 00:47:31 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45433 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbfBTFra (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 00:47:30 -0500
+Received: by mail-pf1-f195.google.com with SMTP id v21so8355571pfm.12;
+        Tue, 19 Feb 2019 21:47:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nFOWIgn7JkUI+78AqNNYseRdqciD+uz9YgwkRaKp/1M=;
+        b=d7UwG7JXiYoyA5tfWWOr/7GV5e/TitN4G9xwughJin4aI3qm8mg9qKh+sWkGtvqCXs
+         TVyYwpa8EDAMpf06EBRFe/4B1l8dvH4HK8LRsV29rX0Wo0jYEfZKGPyyq7IxHi4lvI2x
+         pTWE/4yNLRDW1nqL4PT7haE2d+DIW68TJLTi66PuMD3KtQVjsRT1iVEn+rvq/b70wBX5
+         ZJf3Mi/XvIKKCt3XOmNSO2XGNg73DLYMaRVpV4ZuTHsZ4AKYDUdPNp2bui3bXHXKyWt7
+         PL9sjkT+hu6OmIDCsJ9e/1Hp9uSaIUTEbU+bOvKylvsX4hiBRBqkUXYgCqz0Txd8R1uO
+         HMsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nFOWIgn7JkUI+78AqNNYseRdqciD+uz9YgwkRaKp/1M=;
+        b=sjpd3x39MZg36RJXupbtMh396XlVrHgWMVLk0ToH7ACZ56vmnrFPfFfEGexoqF6reD
+         3uxw8dvfKVtG2YD69PrKFOy6onwg879ps+7CoL+XTF7lW8JLvbvc3pjb6hCkjJJ166L9
+         EeMP9iayj+9HKlDyGuBuT9nnVfUZsyM8ur1mlyhy1Sbpp7tGitCdVgFivq2qL/bW/RW2
+         92zGqNIhkZVDgzeACyfgY6JfQBm/MatS5wfnKrvH5NqbEeC/VhJGKxPxPGox8y6RXjgX
+         htqoLJA6IoiftWooHlX2jiHraGHynUKN11dY01kQ0H+bIW62Jryu9T+iNPjSV/bAaPsY
+         1OmA==
+X-Gm-Message-State: AHQUAuaOU04KftAiSoKHDNoMkjcgI3CID0gYi5TMszgdRM0w3pDV3umn
+        YjlsCPQyvDYuDWuDjGPHHZQ5ne5AlTg=
+X-Google-Smtp-Source: AHgI3IZNKIW+tfl07K9lullBzchiZ39GJpSrprbgG4z8Nbhn4IiJyMmaW7EERYzj/vre5SOf/9Upxw==
+X-Received: by 2002:a62:3a92:: with SMTP id v18mr33482219pfj.43.1550641649506;
+        Tue, 19 Feb 2019 21:47:29 -0800 (PST)
+Received: from localhost.localdomain (2001-b011-1004-3ad8-944c-6988-1c44-7cab.dynamic-ip6.hinet.net. [2001:b011:1004:3ad8:944c:6988:1c44:7cab])
+        by smtp.gmail.com with ESMTPSA id n27sm35494256pfb.8.2019.02.19.21.47.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Feb 2019 21:47:28 -0800 (PST)
+From:   David Chen <david0813@gmail.com>
+To:     linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     davem@davemloft.net, hayeswang@realtek.com,
+        mario.limonciello@dell.com, bigeasy@linutronix.de,
+        edumazet@google.com, jslaby@suse.cz, f.fainelli@gmail.com,
+        david.chen7@dell.com, kai.heng.feng@canonical.com,
+        zhongjiang@huawei.com
+Subject: [PATCH] r8152: Fix an error on RTL8153-BD MAC Address Passthrough support
+Date:   Wed, 20 Feb 2019 13:47:19 +0800
+Message-Id: <20190220054719.7280-1-david0813@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/kgVUH+B2SSgFUjFKH/vJ3cF"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/kgVUH+B2SSgFUjFKH/vJ3cF
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: David Chen <david.chen7@dell.com>
 
-Hi Vinod,
+RTL8153-BD is used in Dell DA300 type-C dongle.
+Added RTL8153-BD support to activate MAC address pass through on DA300.
+Apply correction on previously submitted patch in net.git tree.
 
-On Wed, 20 Feb 2019 10:10:55 +0530 Vinod Koul <vkoul@kernel.org> wrote:
->
-> Dave would you like to drop this and me sending updated patch or
-> something else..
+Signed-off-by: David Chen <david.chen7@dell.com>
+---
+ drivers/net/usb/r8152.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Dave doesn't rebase/reset net-next, so we will just have to use this as
-a learning experience :-)
+diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
+index ada6baf8847a..86c8c64fbb0f 100644
+--- a/drivers/net/usb/r8152.c
++++ b/drivers/net/usb/r8152.c
+@@ -1179,7 +1179,7 @@ static int vendor_mac_passthru_addr_read(struct r8152 *tp, struct sockaddr *sa)
+ 	} else {
+ 		/* test for RTL8153-BND and RTL8153-BD */
+ 		ocp_data = ocp_read_byte(tp, MCU_TYPE_USB, USB_MISC_1);
+-		if ((ocp_data & BND_MASK) == 0 && (ocp_data & BD_MASK)) {
++		if ((ocp_data & BND_MASK) == 0 && (ocp_data & BD_MASK) == 0) {
+ 			netif_dbg(tp, probe, tp->netdev,
+ 				  "Invalid variant for MAC pass through\n");
+ 			return -ENODEV;
+-- 
+2.19.1
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/kgVUH+B2SSgFUjFKH/vJ3cF
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxs58wACgkQAVBC80lX
-0Gzz3wf+Kv6THMe+E7Wk4ruhrTkG62ktSsCYuDMMgiq5n64nlfb478g3Z/IPbwbg
-zU1q/p5tEYK2PE4RJXwbAKKOyAm/On2bCzKgtfgooZgLN5a0ZuHGdtBprtNZbZVE
-uTPISA4hkbb3v1Vw9hC4EeLMTPjcZMXhlQwcRIjyM7Ely1G+d85RWr9tLgAqnc+Q
-kRVqm5WTVHFrugeu+VgKp/WG5EzDZF414cCj/NjZu5q8XBSvpTfgsSHycSV01tdh
-OPMGoaPPXT3x3yCkHZa0wh5GlQwFG8MN/2KO37cOV/23eVB0FVvHaV9b9k4Xj/w7
-1PghHIFfy2IAKhlL68CNjadEdY6x9A==
-=pyTG
------END PGP SIGNATURE-----
-
---Sig_/kgVUH+B2SSgFUjFKH/vJ3cF--
