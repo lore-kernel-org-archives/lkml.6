@@ -2,127 +2,127 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A1FC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D7CC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:27:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B18F92086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:26:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3197120C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:27:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="G2WBdU6b"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JKFcFsRv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbfBTN0M (ORCPT
+        id S1727682AbfBTN10 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 08:26:12 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36328 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726172AbfBTN0K (ORCPT
+        Wed, 20 Feb 2019 08:27:26 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:55970 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725836AbfBTN10 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 08:26:10 -0500
-Received: by mail-wm1-f68.google.com with SMTP id j125so6436647wmj.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 05:26:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=1JQam90U+6VOjJbiYx8tejOxAiXSTEoSs7kyr8I+VFw=;
-        b=G2WBdU6bGnmGuvbpVAav4fL6NRioQgwohfgDFrrieMWMGgiT+Jg2vi/v+wWiXYMufa
-         4C1z5B/kF1sYh8GGIpAUWVY3b1agcNyixvWIq+JhskHVIuW7yJ6fnSBNTMd7SACwp6c6
-         D5ym2SUwCzj3JGI1bT2y5ybho+t8WhjNiRbfPTmIkZDcaJJbNUnS8w20ABrrBda45vql
-         bYYzTY2aqeCiQVx2yaPV4BAnsPqAzOIbmJ9/+lqUtx5liYzsWHjmXK9y7gyR6J3AaJW8
-         ujJ9vA/ycJlGuIWTk5meRwRknAxakE24vWEny5SsX+tUF8OK0w/eexPTrtZ9qv5UWABM
-         hRww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=1JQam90U+6VOjJbiYx8tejOxAiXSTEoSs7kyr8I+VFw=;
-        b=R1Tu3zpp0pYzQkSonKDiTSn0Xez+vJ2B4NF2gY+2YYAVgLABdptsH/wVV6dv9gFiSf
-         jpbdwlg4XfbyqAEBIjJ7homNg9ezItA623SIfww6ZnfTv5ITAhGpqxrnFQUiSDU7eTwK
-         PZfXueGZYJtG+k848ixXvRkNfQ4ah+xeVZYiQbX5rShBBoG67S00escjnMiNHbdTvs+R
-         WqmakaGR1FpcgQi7sjsi4FawDYin2U8KnUSM8eXi/raF0INu5nyb9G3RRiE61BNRjZre
-         Oz5+3rv5dI1EFfhFwSL3E3k6NE3ti96ZvKvTYgxKPoV4Yifjn6xeKMHe2xqWg1OfoAHN
-         62pQ==
-X-Gm-Message-State: AHQUAuZRr9sJ0BBGgj4mm09OS4KCiXn0nhfzEY7ryIQGd0Tv7c+Q/fL3
-        8kPe2CU2xXryo+CtW9G4bqQQgQ==
-X-Google-Smtp-Source: AHgI3IbSRhSOCjOsYRy3P9yFqZXDL9xDOkY/2Z80pS6vYHEU364Y1PNIbuHS54Q+XWmcs0PYU/Sing==
-X-Received: by 2002:a7b:c0c3:: with SMTP id s3mr6369747wmh.141.1550669167512;
-        Wed, 20 Feb 2019 05:26:07 -0800 (PST)
-Received: from brauner.io ([81.92.17.155])
-        by smtp.gmail.com with ESMTPSA id j124sm5816696wmb.48.2019.02.20.05.26.04
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 20 Feb 2019 05:26:06 -0800 (PST)
-Date:   Wed, 20 Feb 2019 14:26:02 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     Ian Kent <raven@themaw.net>
-Cc:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-        trond.myklebust@hammerspace.com, sfrench@samba.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [RFC PATCH 02/27] containers: Implement containers as kernel
- objects
-Message-ID: <20190220132600.c5ahsmnoihdrcqeq@brauner.io>
-References: <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
- <155024685321.21651.1504201877881622756.stgit@warthog.procyon.org.uk>
- <7923d4aa646fbe4bd71cfb4144f1c96f28cad972.camel@themaw.net>
+        Wed, 20 Feb 2019 08:27:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=4U1igPLjHCCxpklUARe0aNSziVmOKa+VLvdGbtr3la8=; b=JKFcFsRvbcKtaLFkGNIdaX7HH
+        gkYaxoQOSMgXlYbYsfKEyuokQ4iblw3xCZ4Sf7bqnYFU2a+h1iga6fDhojf4wjwrEM7ceoBSEFXJe
+        9OBv7PWfUufc16qjiT6L1P5yIwuBMWX+A3ltOsdH8seWKSLunTfRki07OU7lKwoks8WqrLPxKQ2Y9
+        /ZslphZz5e+VXpzBbRlAfi30LYX2zkfnoZELLOJunUfSGeZV4O3Mf9MQtRrxSmw6Hbmyf9LOd9wyc
+        fnQ5j0UcZIRptZuzTcs0yGAP4TSH6wN2S4ZlOFjtUIaybPgE+3DPqMT2LPEZWN+8TvUpP13VP5GFN
+        NiMr15B5Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gwRu7-0005fN-OI; Wed, 20 Feb 2019 13:27:15 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 490DD20094FD6; Wed, 20 Feb 2019 14:27:14 +0100 (CET)
+Date:   Wed, 20 Feb 2019 14:27:14 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>
+Subject: Re: [RFC PATCH] tools/memory-model: Remove (dep ; rfi) from ppo
+Message-ID: <20190220132714.GI32494@hirez.programming.kicks-ass.net>
+References: <1550617057-4911-1-git-send-email-andrea.parri@amarulasolutions.com>
+ <20190220020117.GD11787@linux.ibm.com>
+ <20190220092604.GD32494@hirez.programming.kicks-ass.net>
+ <20190220131456.GA3215@andrea>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7923d4aa646fbe4bd71cfb4144f1c96f28cad972.camel@themaw.net>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190220131456.GA3215@andrea>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 10:46:24AM +0800, Ian Kent wrote:
-> On Fri, 2019-02-15 at 16:07 +0000, David Howells wrote:
-> > Implement a kernel container object such that it contains the following
-> > things:
+On Wed, Feb 20, 2019 at 02:14:56PM +0100, Andrea Parri wrote:
+> On Wed, Feb 20, 2019 at 10:26:04AM +0100, Peter Zijlstra wrote:
+> > On Tue, Feb 19, 2019 at 06:01:17PM -0800, Paul E. McKenney wrote:
+> > > On Tue, Feb 19, 2019 at 11:57:37PM +0100, Andrea Parri wrote:
+> > > > Remove this subtle (and, AFAICT, unused) ordering: we can add it back,
+> > > > if necessary, but let us not encourage people to rely on this thing.
+> > > > 
+> > > > For example, the following "exists" clause can be satisfied with this
+> > > > change:
+> > > > 
+> > > > C dep-rfi
+> > > > 
+> > > > { }
+> > > > 
+> > > > P0(int *x, int *y)
+> > > > {
+> > > > 	WRITE_ONCE(*x, 1);
+> > > > 	smp_store_release(y, 1);
+> > > > }
+> > > > 
+> > > > P1(int *x, int *y, int *z)
+> > > > {
+> > > > 	int r0;
+> > > > 	int r1;
+> > > > 	int r2;
+> > > > 
+> > > > 	r0 = READ_ONCE(*y);
+> > > > 	WRITE_ONCE(*z, r0);
+> > > > 	r1 = smp_load_acquire(z);
+> > > > 	r2 = READ_ONCE(*x);
+> > > > }
+> > > > 
+> > > > exists (1:r0=1 /\ 1:r2=0)
+> > > 
+> > > Any objections?  If I don't hear any in a couple days, I will apply this.
 > > 
-> >  (1) Namespaces.
-> > 
-> >  (2) A root directory.
-> > 
-> >  (3) A set of processes, including one designated as the 'init' process.
+> > IIUC you cannot build hardware that allows the above, so why would we
+> > allow it?
 > 
-> Yeah, I think a name other than init needs to be used for this
-> process.
+> The change/simplification was mainly intended as precautionary measure
+> (hence the "we can add it back, ..."): I do agree that it shouldn't be
+> possible to realize the above state; OTOH, you really don't need to be
+> too "creative" to imagine possible mis-uses/mis-interpretations of the
+> (dep ; rfi) term ("forget" ONCEs, trick herd7 with "false dependencies"
+> or simply wrongly assume that control dependencies are part this "dep",
+> what else? ...).  So, no, I'm not that fond to this term; why should I
+> be?  or you are simply suggesting to expand the changelog?
 > 
-> The problem being that there is no requirement for container
-> process 1 to behave in any way like an "init" process is
-> expected to behave and that leads to confusion (at least
-> it certainly did for me).
+> I should probably also remark that "such a simplification" wouldn't be
+> a first time for the LKMM and, in fact, for the ppo term itself:
+> 
+>   https://mirrors.edge.kernel.org/pub/linux/kernel/people/paulmck/LWNLinuxMM/WeakModel.html#Preserved%20Program%20Order
 
-If you look at the documentation for pid namespaces(7) you can see that
-the pid 1 inside a pid namespace is expected to behave like an init
-process:
--  "The  first  process created in a new namespace [...] has  the PID 1,
-   and is the "init" process for the namespace (see init(1))."
-- "[...] child process that is orphaned within the namespace will be
-  reparented to this process rather than init(1) [...]"
-- "If the "init" process of a PID namespace terminates, the kernel
-  terminates all of the processes in the  namespace  via a SIGKILL
-  signal. This behavior reflects the fact that the "init" process is
-  essential for the cor‐ rect operation of a PID namespace."
-- "Only signals for which the "init" process has established a signal
-  handler can be sent to the  "init" process by other members of the
-  PID namespace."
-- "[...] the reboot(2) system call causes a signal to be sent to the
-  namespace "init" process."
+I'm completely failing to understand any of that.
 
-This is one of the reasons why all major current container runtimes
-finally after years of failing to realize this run a stub init process
-that mimicks a dumb init. Sure, you get away with not having an init
-that behaves like an init but this is inherently broken or at least
-against the way pid namespaces were designed.
+What I do object to is a model that's weaker than any possible sane
+hardware.
