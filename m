@@ -2,155 +2,213 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A54C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:17:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A07F2C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:18:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D8B02086A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:17:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 629892086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:18:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iBh2ccvg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726655AbfBTJRX (ORCPT
+        id S1726714AbfBTJSp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 04:17:23 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:12735 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725816AbfBTJRX (ORCPT
+        Wed, 20 Feb 2019 04:18:45 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:45761 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbfBTJSo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 04:17:23 -0500
-X-UUID: 8467bad73e5f4c428da23767aa6d3c4f-20190220
-X-UUID: 8467bad73e5f4c428da23767aa6d3c4f-20190220
-Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <yong.wu@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 2023570188; Wed, 20 Feb 2019 17:17:17 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31N2.mediatek.inc
- (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 20 Feb
- 2019 17:17:16 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 20 Feb 2019 17:17:15 +0800
-Message-ID: <1550654235.26244.10.camel@mhfsdcap03>
-Subject: Re: [PATCH v6 21/22] iommu/mediatek: Fix iova_to_phys PA start for
- 4GB mode
-From:   Yong Wu <yong.wu@mediatek.com>
-To:     Evan Green <evgreen@chromium.org>
-CC:     <youlin.pei@mediatek.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        <srv_heupstream@mediatek.com>, Joerg Roedel <joro@8bytes.org>,
-        Will Deacon <will.deacon@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Tomasz Figa <tfiga@google.com>,
-        <iommu@lists.linux-foundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <yingjoe.chen@mediatek.com>, <anan.sun@mediatek.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Wed, 20 Feb 2019 17:17:15 +0800
-In-Reply-To: <CAE=gft783rOUubODiFHxa9NKeUJxGk4FCeguDsyoqrUxsGDEsQ@mail.gmail.com>
-References: <1550394300-17420-1-git-send-email-yong.wu@mediatek.com>
-         <1550394300-17420-22-git-send-email-yong.wu@mediatek.com>
-         <CAE=gft783rOUubODiFHxa9NKeUJxGk4FCeguDsyoqrUxsGDEsQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Wed, 20 Feb 2019 04:18:44 -0500
+Received: by mail-qk1-f194.google.com with SMTP id v139so1528365qkb.12
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 01:18:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aDbcccDbYW214rw2VMd5CZdvwhmnQLjONdFvmfgd2jI=;
+        b=iBh2ccvgkNjyQlnxDZhhSDRiscPVSf14I/rVs/29ajGqQLhklh+OFud7jaDVYGDQlx
+         W/Qo5unTPuwsBG9G/PjMPEW9Z+Jf16UoJbBcGE10ZVLKT6sPh4NMQl3HOKvTu1qXNjDi
+         +lHP73EV1n8CWDIkKpz9FuOkyGHwAQoswQW5/oaMlf5kRLbaaefDDE+uLaEdyuQDg7MG
+         //6XHgKIUd7cwgu8++ZKwaxlD5bCYbRxDghgu1zJpg+41T98mdk7XVBTdLXqNRdpOVtm
+         gqLTNrpSKlL03YB9EOy/2uwIXDAj23y1VYYrlwXOfUkwSu7CmWN5Lz7evUJnobzSNNup
+         LLOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aDbcccDbYW214rw2VMd5CZdvwhmnQLjONdFvmfgd2jI=;
+        b=Zfcukw12+0edYoUze8RAEyKLq0aRhrjVOnIKkDgp8WULv4sDC6rufyuO1e1/CEvwQD
+         zxXzZ8skDfRnpjwJAKeHUdhTofQpKe3m3vGpzVp0HvURY7X7VGbTNpWruhsLC7BPrSFf
+         8XVzz6w3hIJDRoj9K3PM2k8dn7jAu3s8/1SMveKJw4v9+Y33Y4IcZUF8XCN1ccVtCarK
+         hUwcHjcy0NAN/YGyDmw4Cg96aNFSOZkIoLhLdk7IWUsRfsKareeeJ61fJlts0nte0Zs5
+         iRRwOVA1IxwgvCT3FheDUNO/J96B3Hb0ueXZdx9xVTnpyEtTSmv/TMJp5l/lNYSsv4hX
+         Xycg==
+X-Gm-Message-State: AHQUAuZ6NZDINk5t4zw/OS+c1RHv2SVkYBtX4D/fnp++URMw4nzDIjor
+        HGpnNKLOIY6vYUdBX+5VV97hNEFGvSBERBrcW/Fwdg==
+X-Google-Smtp-Source: AHgI3Iak2z+oB8GkCggvHLnHAf+XeYuffvzUt5v4cyCv8ACW+bezNoRwCZuR8xZ+Z/dVUShphnq2qwigmmUsQYZv8B4=
+X-Received: by 2002:a37:b12:: with SMTP id 18mr4032686qkl.125.1550654322971;
+ Wed, 20 Feb 2019 01:18:42 -0800 (PST)
 MIME-Version: 1.0
-X-MTK:  N
+References: <cover.1550493113.git.amit.kucheria@linaro.org>
+ <51feb49578f6e412eb5e80012dc63eab5532342b.1550493113.git.amit.kucheria@linaro.org>
+ <20190220012456.GG2811@localhost.localdomain>
+In-Reply-To: <20190220012456.GG2811@localhost.localdomain>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Wed, 20 Feb 2019 14:48:31 +0530
+Message-ID: <CAP245DUv+3rMiFFQWGnAv6xgqDt7jJ2m5ioo3ETyQ8iKRef++g@mail.gmail.com>
+Subject: Re: [PATCH v1 04/12] arm64: dts: msm8996: thermal: Add temperature
+ sensors near major peripherals
+To:     Eduardo Valentin <edubezval@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        DTML <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-02-19 at 15:33 -0800, Evan Green wrote:
-> On Sun, Feb 17, 2019 at 1:09 AM Yong Wu <yong.wu@mediatek.com> wrote:
+On Wed, Feb 20, 2019 at 6:55 AM Eduardo Valentin <edubezval@gmail.com> wrote:
+>
+> On Mon, Feb 18, 2019 at 06:05:18PM +0530, Amit Kucheria wrote:
+> > msm8996 has a total of 21 temperature sensors. Populate DT with
+> > information about them.
 > >
-> > In the 4GB mode, the physical address is remapped,
+> > There are 2 sensors on each of the cpus - one on the top, the other
+> > below (we only expose one on the top in DT for now). For the GPU, we
+> > expose both, the one on the top and the one below.
 > >
-> > Here is the detailed remap relationship.
-> > CPU PA         ->    HW PA
-> > 0x4000_0000          0x1_4000_0000 (Add bit32)
-> > 0x8000_0000          0x1_8000_0000 ...
-> > 0xc000_0000          0x1_c000_0000 ...
-> > 0x1_0000_0000        0x1_0000_0000 (No change)
+> > Depending on the version of the silicon, sensor 2 is either placed near
+> > the L3 cache or the venus video decoder. It would've been nice to be
+> > able to be version-specific but we don't have DTs that differentiate the
+> > two versions of silicon yet.
 > >
-> > Thus, we always add bit32 for PA when entering mtk_iommu_map.
-> > But in the iova_to_phys, the CPU don't need this bit32 if the
-> > PA is from 0x1_4000_0000 to 0x1_ffff_ffff.
-> > This patch discards the bit32 in this iova_to_phys in the 4GB mode.
-> >
-> > Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+> > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 > > ---
-> >  drivers/iommu/mtk_iommu.c | 18 ++++++++++++++++++
-> >  1 file changed, 18 insertions(+)
+> >  arch/arm64/boot/dts/qcom/msm8996.dtsi | 98 +++++++++++++++++++++++++++
+> >  1 file changed, 98 insertions(+)
 > >
-> > diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-> > index 0277396..076d333 100644
-> > --- a/drivers/iommu/mtk_iommu.c
-> > +++ b/drivers/iommu/mtk_iommu.c
-> > @@ -119,6 +119,19 @@ struct mtk_iommu_domain {
-> >
-> >  static const struct iommu_ops mtk_iommu_ops;
-> >
-> > +/*
-> > + * In M4U 4GB mode, the physical address is remapped as below:
-> > + *  CPU PA         ->   M4U HW PA
-> > + *  0x4000_0000         0x1_4000_0000 (Add bit32)
-> > + *  0x8000_0000         0x1_8000_0000 ...
-> > + *  0xc000_0000         0x1_c000_0000 ...
-> > + *  0x1_0000_0000       0x1_0000_0000 (No change)
-> > + *
-> > + * Thus, We always add BIT32 in the iommu_map and disable BIT32 if PA is >=
-> > + * 0x1_4000_0000 in the iova_to_phys.
-> > + */
-> > +#define MTK_IOMMU_4GB_MODE_PA_140000000     0x140000000UL
+> > diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> > index ae6e9f0778f0..8e36a39e1386 100644
+> > --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> > @@ -237,6 +237,104 @@
+> >                               };
+> >                       };
+> >               };
 > > +
-> >  static LIST_HEAD(m4ulist);     /* List all the M4U HWs */
-> >
-> >  #define for_each_m4u(data)     list_for_each_entry(data, &m4ulist, list)
-> > @@ -415,6 +428,7 @@ static phys_addr_t mtk_iommu_iova_to_phys(struct iommu_domain *domain,
-> >                                           dma_addr_t iova)
-> >  {
-> >         struct mtk_iommu_domain *dom = to_mtk_domain(domain);
-> > +       struct mtk_iommu_data *data = mtk_iommu_get_m4u_data();
-> >         unsigned long flags;
-> >         phys_addr_t pa;
-> >
-> > @@ -422,6 +436,10 @@ static phys_addr_t mtk_iommu_iova_to_phys(struct iommu_domain *domain,
-> >         pa = dom->iop->iova_to_phys(dom->iop, iova);
-> >         spin_unlock_irqrestore(&dom->pgtlock, flags);
-> >
-> > +       if (data->plat_data->has_4gb_mode && data->dram_is_4gb &&
-> > +           pa >= MTK_IOMMU_4GB_MODE_PA_140000000)
-> > +               pa &= ~BIT_ULL(32);
+> > +             gpu-thermal-top {
+> > +                     polling-delay-passive = <250>;
+> > +                     polling-delay = <1000>;
 > > +
-> 
-> The define doesn't really make it much better, but I guess it doesn't
-> make it worse either. As I was reviewing this I was thinking that this
-> should be rolled into patch 6 "iommu/io-pgtable-arm-v7s: Extend
-> MediaTek 4GB Mode". But I guess this was returning bad PAs since
-> before this series, right? So does this need a Fixes tag?
+> > +                     thermal-sensors = <&tsens1 6>;
+> > +
+> > +                     trips {
+> > +                             gpu1_alert0: trip-point@0 {
+> > +                                     temperature = <75000>;
+> > +                                     hysteresis = <2000>;
+> > +                                     type = "passive";
+>
+> What is the cooling map for this?
 
-Thanks very much for your reviewing so many patches.
+I'm working on it. Will send out an update.
 
-Yes. The issue exist before this series, It was introduced by this
-commit:
-30e2fccf9512 ("iommu/mediatek: Enlarge the validate PA range for 4GB
-mode")
-
-I will send a new version to add this tag.
-
-> -Evan
-> 
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
-
-
+> > +                             };
+> > +
+> > +                             gpu1_crit: gpu_crit {
+> > +                                     temperature = <95000>;
+> > +                                     hysteresis = <2000>;
+> > +                                     type = "critical";
+> > +                             };
+> > +                     };
+> > +             };
+> > +
+> > +             gpu-thermal-bottom {
+> > +                     polling-delay-passive = <250>;
+> > +                     polling-delay = <1000>;
+> > +
+> > +                     thermal-sensors = <&tsens1 7>;
+> > +
+> > +                     trips {
+> > +                             gpu2_alert0: trip-point@0 {
+> > +                                     temperature = <75000>;
+> > +                                     hysteresis = <2000>;
+> > +                                     type = "passive";
+> > +                             };
+> > +
+> > +                             gpu2_crit: gpu_crit {
+> > +                                     temperature = <95000>;
+> > +                                     hysteresis = <2000>;
+> > +                                     type = "critical";
+> > +                             };
+> > +                     };
+> > +             };
+> > +
+> > +             m4m-thermal {
+> > +                     polling-delay-passive = <250>;
+> > +                     polling-delay = <1000>;
+> > +
+> > +                     thermal-sensors = <&tsens0 1>;
+> > +             };
+> > +
+> > +             l3_or_venus-thermal {
+> > +                     polling-delay-passive = <250>;
+> > +                     polling-delay = <1000>;
+> > +
+> > +                     thermal-sensors = <&tsens0 2>;
+> > +             };
+> > +
+> > +             cluster0-l2-thermal {
+> > +                     polling-delay-passive = <250>;
+> > +                     polling-delay = <1000>;
+> > +
+> > +                     thermal-sensors = <&tsens0 7>;
+> > +             };
+> > +
+> > +             cluster1-l2-thermal {
+> > +                     polling-delay-passive = <250>;
+> > +                     polling-delay = <1000>;
+> > +
+> > +                     thermal-sensors = <&tsens0 12>;
+> > +             };
+> > +
+> > +             camera-thermal {
+> > +                     polling-delay-passive = <250>;
+> > +                     polling-delay = <1000>;
+> > +
+> > +                     thermal-sensors = <&tsens1 1>;
+> > +             };
+> > +
+> > +             q6-dsp-thermal {
+> > +                     polling-delay-passive = <250>;
+> > +                     polling-delay = <1000>;
+> > +
+> > +                     thermal-sensors = <&tsens1 2>;
+> > +             };
+> > +
+> > +             mem-thermal {
+> > +                     polling-delay-passive = <250>;
+> > +                     polling-delay = <1000>;
+> > +
+> > +                     thermal-sensors = <&tsens1 3>;
+> > +             };
+> > +
+> > +             modemtx-thermal {
+> > +                     polling-delay-passive = <250>;
+> > +                     polling-delay = <1000>;
+> > +
+> > +                     thermal-sensors = <&tsens1 4>;
+> > +             };
+> >       };
+> >
+> >       timer {
+> > --
+> > 2.17.1
+> >
