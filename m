@@ -2,138 +2,136 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55AA9C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 01:17:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96339C10F00
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 01:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D21521738
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 01:17:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KXGgjemT"
+	by mail.kernel.org (Postfix) with ESMTP id 6ED7D21738
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 01:17:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbfBTBRX (ORCPT
+        id S1730208AbfBTBRu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 20:17:23 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44865 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725616AbfBTBRX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 20:17:23 -0500
-Received: by mail-pg1-f196.google.com with SMTP id y1so10968436pgk.11;
-        Tue, 19 Feb 2019 17:17:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KXiFe4c4tdBC2TbAFxFsyMmT5j8GVM3q9ybo5Xp+Brc=;
-        b=KXGgjemT0NzDUAaH4KaDXIhTDdc2CPIBUgsH0DBUBrhwUoTH7Ne1gJv0WkiUqmyODZ
-         iUZ56BHVgPfPFK2f/UuIdqn3UxlNrmhunzkBFLA8TGw6xLoUFWZhVTlhamAgiWvHKvs4
-         rW6wjib/sJRoIpbyEyMjHbXSIuhPJuh0jojhgbB/d6IrC7XNifJRX9H8zBwRuSkKxlhX
-         zcPuDKjzvNvjJZw++r4KZbC+/tJNl+qIuuhtGZlWTwvLQukd4tGgHuekl33PJE/LflCd
-         wjX5d1dgYPPaRroNObNdWZXawjPpr9NLGQWb295ljfO5mMDAHJaWORsfBRWNk31/3P3x
-         0y/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KXiFe4c4tdBC2TbAFxFsyMmT5j8GVM3q9ybo5Xp+Brc=;
-        b=VHrue/0JE5I4rSjVMk/2BjvECVJr4u5+FEceu7EnTS3OKlMrCleqjo054A4IwzQ57P
-         pB64hLCz2as4fFjg8G2EeV7EdX3u8Iby/qa3n/NpAv/2ENXHIVzEECdAPDflVCqNqmrJ
-         KOg6IqAgiTRX8yUyg0Bz7dO2IMV/Hrgw3AxnwNEcYTozhgtDXwx4w4EcjxWKUXYtawLI
-         /bLCgFEev0RH8MAdpteVifIaabHYYsHMYVJRuqwYJQ5Smlr+0ceea3rD1766BL6/LzP5
-         zuEFRULhjAA5D5GdEc95qOCJKIS8PckloDcEK9q6ZfKRG3qDNMBrPOqfsoaviD7xoAG4
-         3WGw==
-X-Gm-Message-State: AHQUAubf0q0pRdE0kUfOLAM91X2bAxGlq3uhyjbNEiiFy2XgxcmNlNXu
-        T38n9TPRKOLMaFX8zF9OHQpnFv9J
-X-Google-Smtp-Source: AHgI3IaNvAA3mIgCkirvDgN0nPw06UsonQijE6q/8mefaNqfrn0UODwjhB/4C3fB9aLdmkQmgVSI8w==
-X-Received: by 2002:a63:2682:: with SMTP id m124mr25383596pgm.35.1550625442540;
-        Tue, 19 Feb 2019 17:17:22 -0800 (PST)
-Received: from localhost.localdomain ([2601:644:8201:32e0:7256:81ff:febd:926d])
-        by smtp.gmail.com with ESMTPSA id n19sm38865978pfg.67.2019.02.19.17.17.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 17:17:21 -0800 (PST)
-Date:   Tue, 19 Feb 2019 17:17:19 -0800
-From:   Eduardo Valentin <edubezval@gmail.com>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, andy.gross@linaro.org,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v1 13/24] drivers: thermal: tsens: Print IP version
-Message-ID: <20190220011718.GD2811@localhost.localdomain>
-References: <cover.1549525708.git.amit.kucheria@linaro.org>
- <ab6dd34ce0236de12ec1e9984931780c3df643f9.1549525708.git.amit.kucheria@linaro.org>
+        Tue, 19 Feb 2019 20:17:50 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36102 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725616AbfBTBRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 20:17:49 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 14EB83D978;
+        Wed, 20 Feb 2019 01:17:48 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-26.pek2.redhat.com [10.72.8.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 86BC461B93;
+        Wed, 20 Feb 2019 01:17:25 +0000 (UTC)
+Date:   Wed, 20 Feb 2019 09:17:20 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Mike Snitzer <snitzer@redhat.com>,
+        linux-mm@kvack.org, dm-devel@redhat.com,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Omar Sandoval <osandov@fb.com>, cluster-devel@redhat.com,
+        linux-ext4@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Gao Xiang <gaoxiang25@huawei.com>, Coly Li <colyli@suse.de>,
+        linux-raid@vger.kernel.org, Bob Peterson <rpeterso@redhat.com>,
+        linux-bcache@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dave Chinner <dchinner@redhat.com>,
+        David Sterba <dsterba@suse.com>, linux-block@vger.kernel.org,
+        Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [dm-devel] [PATCH V15 00/18] block: support multi-page bvec
+Message-ID: <20190220011719.GA13035@ming.t460p>
+References: <20190215111324.30129-1-ming.lei@redhat.com>
+ <c52b6a8b-d1d4-67ff-f81c-371d09cc6d5b@kernel.dk>
+ <1550250855.31902.102.camel@acm.org>
+ <20190217131128.GB7296@ming.t460p>
+ <1550593699.31902.115.camel@acm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ab6dd34ce0236de12ec1e9984931780c3df643f9.1549525708.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1550593699.31902.115.camel@acm.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 20 Feb 2019 01:17:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 04:19:31PM +0530, Amit Kucheria wrote:
-> On some TSENS IP, version is stored. Print that version at init.
+On Tue, Feb 19, 2019 at 08:28:19AM -0800, Bart Van Assche wrote:
+> On Sun, 2019-02-17 at 21:11 +0800, Ming Lei wrote:
+> > The following patch should fix this issue:
+> > 
+> > 
+> > diff --git a/block/blk-merge.c b/block/blk-merge.c
+> > index bed065904677..066b66430523 100644
+> > --- a/block/blk-merge.c
+> > +++ b/block/blk-merge.c
+> > @@ -363,13 +363,15 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
+> >  	struct bio_vec bv, bvprv = { NULL };
+> >  	int prev = 0;
+> >  	unsigned int seg_size, nr_phys_segs;
+> > -	unsigned front_seg_size = bio->bi_seg_front_size;
+> > +	unsigned front_seg_size;
+> >  	struct bio *fbio, *bbio;
+> >  	struct bvec_iter iter;
+> >  
+> >  	if (!bio)
+> >  		return 0;
+> >  
+> > +	front_seg_size = bio->bi_seg_front_size;
+> > +
+> >  	switch (bio_op(bio)) {
+> >  	case REQ_OP_DISCARD:
+> >  	case REQ_OP_SECURE_ERASE:
 > 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> ---
->  drivers/thermal/qcom/tsens-common.c | 23 ++++++++++++++++++++++-
->  1 file changed, 22 insertions(+), 1 deletion(-)
+> Hi Ming,
 > 
-> diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
-> index aae3d71d7eed..39cd5733fd44 100644
-> --- a/drivers/thermal/qcom/tsens-common.c
-> +++ b/drivers/thermal/qcom/tsens-common.c
-> @@ -121,7 +121,7 @@ int __init init_common(struct tsens_priv *priv)
->  	void __iomem *tm_base, *srot_base;
->  	struct device *dev = priv->dev;
->  	struct resource *res;
-> -	u32 enabled;
-> +	u32 enabled, maj_ver, min_ver;
->  	int ret, i, j;
->  	struct platform_device *op = of_find_device_by_node(priv->dev->of_node);
->  
-> @@ -155,6 +155,27 @@ int __init init_common(struct tsens_priv *priv)
->  	if (IS_ERR(priv->tm_map))
->  		return PTR_ERR(priv->tm_map);
->  
-> +	for (i = 0; i < MAX_REGFIELDS; i++) {
-> +		priv->rf[i] = NULL;
-> +	}
-> +
-> +	/* alloc regmap_fields in srot_map */
-> +	if (priv->feat->ver_info) {
-> +		for (i = 0, j = VER_MAJOR; i < 2; i++, j++) {
-> +			priv->rf[j] = devm_regmap_field_alloc(dev, priv->srot_map,
-> +							      priv->fields[j]);
-> +			if (IS_ERR(priv->rf[j]))
-> +				return PTR_ERR(priv->rf[j]);
-> +		}
-> +		ret = regmap_field_read(priv->rf[VER_MAJOR], &maj_ver);
-> +		if (ret)
-> +			return ret;
-> +		ret = regmap_field_read(priv->rf[VER_MINOR], &min_ver);
-> +		if (ret)
-> +			return ret;
-> +		dev_info(dev, "version: %d.%d\n", maj_ver, min_ver);
+> With this patch applied test nvmeof-mp/002 fails as follows:
+> 
+> [  694.700400] kernel BUG at lib/sg_pool.c:103!
+> [  694.705932] invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+> [  694.708297] CPU: 2 PID: 349 Comm: kworker/2:1H Tainted: G    B             5.0.0-rc6-dbg+ #2
+> [  694.711730] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> [  694.715113] Workqueue: kblockd blk_mq_run_work_fn
+> [  694.716894] RIP: 0010:sg_alloc_table_chained+0xe5/0xf0
+> [  694.758222] Call Trace:
+> [  694.759645]  nvme_rdma_queue_rq+0x2aa/0xcc0 [nvme_rdma]
+> [  694.764915]  blk_mq_try_issue_directly+0x2a5/0x4b0
+> [  694.771779]  blk_insert_cloned_request+0x11e/0x1c0
+> [  694.778417]  dm_mq_queue_rq+0x3d1/0x770
+> [  694.793400]  blk_mq_dispatch_rq_list+0x5fc/0xb10
+> [  694.798386]  blk_mq_sched_dispatch_requests+0x2f7/0x300
+> [  694.803180]  __blk_mq_run_hw_queue+0xd6/0x180
+> [  694.808933]  blk_mq_run_work_fn+0x27/0x30
+> [  694.810315]  process_one_work+0x4f1/0xa40
+> [  694.813178]  worker_thread+0x67/0x5b0
+> [  694.814487]  kthread+0x1cf/0x1f0
+> [  694.819134]  ret_from_fork+0x24/0x30
+> 
+> The code in sg_pool.c that triggers the BUG() statement is as follows:
+> 
+> int sg_alloc_table_chained(struct sg_table *table, int nents,
+> 		struct scatterlist *first_chunk)
+> {
+> 	int ret;
+> 
+> 	BUG_ON(!nents);
+> [ ... ]
+> 
+> Bart.
 
-Is this really needed? Printing stuff into kernel log during boot can
-just add a lot of info that ends up just slowing down things. Besides,
-if this info is important shouldnt be available somewhere else as the
-kernel log is a circular buffer and eventually that line will get
-wrapped up?
+I can reproduce this issue("kernel BUG at lib/sg_pool.c:103") without mp-bvec patches,
+so looks it isn't the fault of this patchset.
 
-> +	}
-> +
->  	priv->rf[TSENS_EN] = devm_regmap_field_alloc(dev, priv->srot_map,
->  						     priv->fields[TSENS_EN]);
->  	if (IS_ERR(priv->rf[TSENS_EN]))
-> -- 
-> 2.17.1
-> 
+Thanks,
+Ming
