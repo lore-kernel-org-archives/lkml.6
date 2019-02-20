@@ -2,113 +2,200 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17EDCC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 867B3C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:18:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E55F520880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:18:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B8652146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:18:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550679518;
+	bh=ASqfysCwL+tC33N/uzRs0kWMrQM+XaI/iaFEtun+8nU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=udP4eP+Oz8chgjqAURWZ32RVKf/L5xXBLub6b25zkX1pGE6V20yrjPX40F+0aQyLL
+	 +KLrsHADJ4Iy3ZQiQ8BAp/6ugGshQ44leFTmA9QAkeDjxcFqEu+o25Kb8Xbiigyya4
+	 1XYQPQlzZrMbJattvPPPSna+bkSuHFgBwDTA+qj0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727106AbfBTQSO (ORCPT
+        id S1727284AbfBTQSg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 11:18:14 -0500
-Received: from muru.com ([72.249.23.125]:39862 "EHLO muru.com"
+        Wed, 20 Feb 2019 11:18:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725801AbfBTQSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 11:18:14 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id EC7AB80E1;
-        Wed, 20 Feb 2019 16:18:22 +0000 (UTC)
-Date:   Wed, 20 Feb 2019 08:18:09 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>, netdev@vger.kernel.org,
-        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 6/6] net: ethernet: ti: cpsw: deprecate cpsw-phy-sel
- driver
-Message-ID: <20190220161809.GR15711@atomide.com>
-References: <1550676319-6440-1-git-send-email-grygorii.strashko@ti.com>
- <1550676319-6440-7-git-send-email-grygorii.strashko@ti.com>
+        id S1725801AbfBTQSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 11:18:36 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF41F20880;
+        Wed, 20 Feb 2019 16:18:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550679514;
+        bh=ASqfysCwL+tC33N/uzRs0kWMrQM+XaI/iaFEtun+8nU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=FbkdnERMaVjd78abn0Mig7QSsFA6tqWzJ61tmk+Ifpk7EeE+qe8Dd6ahm2djqaaFr
+         o1Ia1y0eMOAhhrTbf8uJMbTazPa1yC8qnECi9NNsAFVV922e5RH30tVvy1jqX03B1e
+         YFxw2FBLUAdhy9Tem8JIaEFifKJBjT34ZDOro1vw=
+Date:   Wed, 20 Feb 2019 16:18:28 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Song Qiang <songqiang1304521@gmail.com>,
+        letux-kernel@openphoenux.org, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/9] iio: accel: bma180: convert to devm
+Message-ID: <20190220161828.0c6fcd8e@archlinux>
+In-Reply-To: <900f59b94ef2e1b5559b363c0d1af4fefccd0366.1550671256.git.hns@goldelico.com>
+References: <cover.1550671256.git.hns@goldelico.com>
+        <900f59b94ef2e1b5559b363c0d1af4fefccd0366.1550671256.git.hns@goldelico.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1550676319-6440-7-git-send-email-grygorii.strashko@ti.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, 20 Feb 2019 15:00:52 +0100
+"H. Nikolaus Schaller" <hns@goldelico.com> wrote:
 
-* Grygorii Strashko <grygorii.strashko@ti.com> [190220 15:26]:
-> Deprecate cpsw-phy-sel driver as it's been replaced with new
-> TI phy-gmii-sel PHY driver.
+> This simplifies the code a little.
+It does, but at the cost of introducing potential race conditions.
+Please don't do this.  See below for why and a suggestion on how
+to resolve things if you want to make this change safely.
 
-I'm not going to pick up this one, seems that Dave can merge
-this later on? That is unless Dave wants to ack this one.
-
-Regards,
-
-Tony
-
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Jonathan
+> 
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 > ---
->  drivers/net/ethernet/ti/Kconfig | 6 +++---
->  drivers/net/ethernet/ti/cpsw.h  | 6 ++++++
->  2 files changed, 9 insertions(+), 3 deletions(-)
+>  drivers/iio/accel/bma180.c | 56 ++++++++++++++------------------------
+>  1 file changed, 21 insertions(+), 35 deletions(-)
 > 
-> diff --git a/drivers/net/ethernet/ti/Kconfig b/drivers/net/ethernet/ti/Kconfig
-> index bb126be1eb72..8b21b40a9fe5 100644
-> --- a/drivers/net/ethernet/ti/Kconfig
-> +++ b/drivers/net/ethernet/ti/Kconfig
-> @@ -49,10 +49,11 @@ config TI_DAVINCI_CPDMA
->  	  will be called davinci_cpdma.  This is recommended.
+> diff --git a/drivers/iio/accel/bma180.c b/drivers/iio/accel/bma180.c
+> index 248be67e4f41..3f5ee2d495d3 100644
+> --- a/drivers/iio/accel/bma180.c
+> +++ b/drivers/iio/accel/bma180.c
+> @@ -738,7 +738,7 @@ static int bma180_probe(struct i2c_client *client,
 >  
->  config TI_CPSW_PHY_SEL
-> -	bool
-> +	bool "TI CPSW Phy mode Selection (DEPRECATED)"
-> +	default n
->  	---help---
->  	  This driver supports configuring of the phy mode connected to
-> -	  the CPSW.
-> +	  the CPSW. DEPRECATED: use PHY_TI_GMII_SEL.
+>  	ret = data->part_info->chip_config(data);
+>  	if (ret < 0)
+> -		goto err_chip_disable;
+> +		goto err;
 >  
->  config TI_CPSW_ALE
->  	tristate "TI CPSW ALE Support"
-> @@ -64,7 +65,6 @@ config TI_CPSW
->  	depends on ARCH_DAVINCI || ARCH_OMAP2PLUS || COMPILE_TEST
->  	select TI_DAVINCI_CPDMA
->  	select TI_DAVINCI_MDIO
-> -	select TI_CPSW_PHY_SEL
->  	select TI_CPSW_ALE
->  	select MFD_SYSCON
->  	select REGMAP
-> diff --git a/drivers/net/ethernet/ti/cpsw.h b/drivers/net/ethernet/ti/cpsw.h
-> index cf111db3dc27..907e05fc22e4 100644
-> --- a/drivers/net/ethernet/ti/cpsw.h
-> +++ b/drivers/net/ethernet/ti/cpsw.h
-> @@ -21,7 +21,13 @@
->  			 ((mac)[2] << 16) | ((mac)[3] << 24))
->  #define mac_lo(mac)	(((mac)[4] << 0) | ((mac)[5] << 8))
+>  	mutex_init(&data->mutex);
+>  	indio_dev->dev.parent = &client->dev;
+> @@ -748,12 +748,25 @@ static int bma180_probe(struct i2c_client *client,
+>  	indio_dev->modes = INDIO_DIRECT_MODE;
+>  	indio_dev->info = &bma180_info;
 >  
-> +#if IS_ENABLED(CONFIG_TI_CPSW_PHY_SEL)
->  void cpsw_phy_sel(struct device *dev, phy_interface_t phy_mode, int slave);
-> +#else
-> +static inline
-> +void cpsw_phy_sel(struct device *dev, phy_interface_t phy_mode, int slave)
-> +{}
-> +#endif
->  int ti_cm_get_macid(struct device *dev, int slave, u8 *mac_addr);
+> +	ret = devm_iio_triggered_buffer_setup(&client->dev, indio_dev, NULL,
+> +			bma180_trigger_handler, NULL);
+> +	if (ret < 0) {
+> +		dev_err(&client->dev, "unable to setup iio triggered buffer\n");
+> +		goto err;
+> +	}
+> +
+> +	ret = devm_iio_device_register(&client->dev, indio_dev);
+> +	if (ret < 0) {
+> +		dev_err(&client->dev, "unable to register iio device\n");
+> +		goto err;
+> +	}
+> +
+>  	if (client->irq > 0) {
+> -		data->trig = iio_trigger_alloc("%s-dev%d", indio_dev->name,
+> -			indio_dev->id);
+> +		data->trig = devm_iio_trigger_alloc(&client->dev, "%s-dev%d",
+> +			indio_dev->name, indio_dev->id);
+>  		if (!data->trig) {
+>  			ret = -ENOMEM;
+> -			goto err_chip_disable;
+> +			goto err;
+>  		}
 >  
->  #endif /* __CPSW_H__ */
-> -- 
-> 2.17.1
-> 
+>  		ret = devm_request_irq(&client->dev, client->irq,
+> @@ -761,7 +774,7 @@ static int bma180_probe(struct i2c_client *client,
+>  			"bma180_event", data->trig);
+>  		if (ret) {
+>  			dev_err(&client->dev, "unable to request IRQ\n");
+> -			goto err_trigger_free;
+> +			goto err;
+>  		}
+>  
+>  		data->trig->dev.parent = &client->dev;
+> @@ -769,34 +782,14 @@ static int bma180_probe(struct i2c_client *client,
+>  		iio_trigger_set_drvdata(data->trig, indio_dev);
+>  		indio_dev->trig = iio_trigger_get(data->trig);
+>  
+> -		ret = iio_trigger_register(data->trig);
+> +		ret = devm_iio_trigger_register(&client->dev, data->trig);
+>  		if (ret)
+> -			goto err_trigger_free;
+> -	}
+> -
+> -	ret = iio_triggered_buffer_setup(indio_dev, NULL,
+> -			bma180_trigger_handler, NULL);
+> -	if (ret < 0) {
+> -		dev_err(&client->dev, "unable to setup iio triggered buffer\n");
+> -		goto err_trigger_unregister;
+> -	}
+> -
+> -	ret = iio_device_register(indio_dev);
+> -	if (ret < 0) {
+> -		dev_err(&client->dev, "unable to register iio device\n");
+> -		goto err_buffer_cleanup;
+> +			goto err;
+>  	}
+>  
+>  	return 0;
+>  
+> -err_buffer_cleanup:
+> -	iio_triggered_buffer_cleanup(indio_dev);
+> -err_trigger_unregister:
+> -	if (data->trig)
+> -		iio_trigger_unregister(data->trig);
+> -err_trigger_free:
+> -	iio_trigger_free(data->trig);
+> -err_chip_disable:
+> +err:
+>  	data->part_info->chip_disable(data);
+>  
+>  	return ret;
+> @@ -807,13 +800,6 @@ static int bma180_remove(struct i2c_client *client)
+>  	struct iio_dev *indio_dev = i2c_get_clientdata(client);
+>  	struct bma180_data *data = iio_priv(indio_dev);
+>  
+> -	iio_device_unregister(indio_dev);
+> -	iio_triggered_buffer_cleanup(indio_dev);
+> -	if (data->trig) {
+> -		iio_trigger_unregister(data->trig);
+> -		iio_trigger_free(data->trig);
+> -	}
+> -
+Now we disable the device before removing it's userspace interface.
+Not a good idea.
+
+Generally I will insist on the remove order always being the precise
+opposite of probe simply because it is obviously correct.
+That includes cases which can be simply argued to be fine (not
+this one which isn't). The reason is readability trumps saving
+a few lines of code and it's a lot easier to check a probe and
+remove function against each other if the order is maintained.
+
+Of course, there are ways to do this by making all the unwind
+managed, but you haven't done this here.
+devm_add_action_or_reset is handy for this if you want to do it.
+
+>  	mutex_lock(&data->mutex);
+>  	data->part_info->chip_disable(data);
+>  	mutex_unlock(&data->mutex);
+
