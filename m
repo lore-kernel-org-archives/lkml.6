@@ -2,109 +2,86 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DATE_IN_PAST_03_06,
-	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DA1EC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 653ADC4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:20:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE36F2183E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:16:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2440E21738
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:20:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VHlXNvEu"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Hx/2U7zh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730316AbfBTCQM (ORCPT
+        id S1729803AbfBTCUX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 21:16:12 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:33556 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725616AbfBTCQL (ORCPT
+        Tue, 19 Feb 2019 21:20:23 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:45226 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726235AbfBTCUX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 21:16:11 -0500
-Received: by mail-qt1-f196.google.com with SMTP id z39so25732798qtz.0;
-        Tue, 19 Feb 2019 18:16:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nb+HcHL5nNL955Nd2X2UTE163Svkf9JDL2pHNFXhLkE=;
-        b=VHlXNvEuQAEOrluwp0W3jB1xvWNft5hzopZ5ZEuI1M6K1nWvfmlnP8nPH1aC6oRkpf
-         YVxtX+EKlwge3Gi16KA6Aw0LujaRjO/85KnKt3KFxT9LBn3bQ3fJTjXhyfrJEY6K05FF
-         DnJuXZMjBvIP9E7u1+rWoqYwWiC5WXidNeleKLezndgWZzLPhuJw0LJuxDzgzb1ZDs12
-         40xgafIDPc1UyG23m89XfjeDO1y/BV3oRU700ZJzylRezl6FfMWCowJ49CYAQ7RCObW0
-         +pSJ4SbC1qoPygf1IuMcq81aijSfbCMNfI0PA5gTCcS6H+nrM/DZlpMgSm+GD4VYE01F
-         V3XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nb+HcHL5nNL955Nd2X2UTE163Svkf9JDL2pHNFXhLkE=;
-        b=QH5Js6gfnvXRSkgMV07RdQnDgUCOJ9bHVanq/wTi6P5QNeVtHxmdTYLUov7ybur7dA
-         Om4ECJ0mHcUxny7jqi8WF0mm2phEMxJ4qvXcFe4T0gMHAy1SplcWvipiYmtjmB2cRKft
-         ITbbZDHVc+4yrGO97niyTx1SZ+0MJaPdyVjaoifaIN7cS8VvHzmGhNIWnffRaF7buixK
-         1MuSb/nRWivRGQIsB6QP6nC+Xqtrh4SLfGgkYGFV7eNQL3Kg7xeAJcCxhKo7Sm1cd8+Z
-         YjjNnhyfHAGVzEFe2YVKrl91UdBjhAfFxLzIG5+qFQ6l72n4s96AenFg4TuSo4C8S08D
-         pMYw==
-X-Gm-Message-State: AHQUAubVlWXTxir6gpNOn7+4JzbsNQfafRzwnvJoLjekKbvbHAfJvDyU
-        PQ4heg9ftTHI7Dpr53NVBg==
-X-Google-Smtp-Source: AHgI3IYW9ryYP/SZxRQndVdEfNyF3fYQV6b7DKPyOM6KZ7Hh6cqaCjfiehSk+ebhSIU+iHZ2+t3q3A==
-X-Received: by 2002:a0c:c48f:: with SMTP id u15mr21853873qvi.154.1550628970709;
-        Tue, 19 Feb 2019 18:16:10 -0800 (PST)
-Received: from localhost.localdomain (modemcable148.230-83-70.mc.videotron.ca. [70.83.230.148])
-        by smtp.gmail.com with ESMTPSA id d55sm11000075qtb.93.2019.02.19.18.16.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 18:16:09 -0800 (PST)
-From:   Keyur Patel <iamkeyur96@gmail.com>
-X-Google-Original-From: Keyur Patel
-Cc:     Keyur Patel <iamkeyur96@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Oliver Neukum <oneukum@suse.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: core: Replace  hardcoded check with inline function from usb.h
-Date:   Tue, 19 Feb 2019 16:15:50 -0500
-Message-Id: <20190219211558.20809-1-iamkeyur96@gmail.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+        Tue, 19 Feb 2019 21:20:23 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 5C7498EE235;
+        Tue, 19 Feb 2019 18:20:22 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id s9oNZuQAem3F; Tue, 19 Feb 2019 18:20:22 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 7A7E28EE21A;
+        Tue, 19 Feb 2019 18:20:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1550629221;
+        bh=Sv05kO616trax6QX+MKM8GQoT95dBmrnAy9m8tcgS+U=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Hx/2U7zh6bPP50kPafInPt5h8xpRnWpTE6DK1PBZw4PWDDrBwQMwyUajynAGYxcPd
+         KxEkrdu1tD2aCxGQTLl5dxmVgEuC21bt3yFrqUir4ZIl6XB9G3miFn/zIFccie3Gox
+         TX7lmNgsPT0d1ornz8fKEze4OEViFT4q5xX4Y0UA=
+Message-ID: <1550629220.11684.3.camel@HansenPartnership.com>
+Subject: Re: [RFC PATCH 02/27] containers: Implement containers as kernel
+ objects
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     keyrings@vger.kernel.org, trond.myklebust@hammerspace.com,
+        sfrench@samba.org, linux-security-module@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, rgb@redhat.com,
+        linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, cgroups@vger.kernel.org
+Date:   Tue, 19 Feb 2019 18:20:20 -0800
+In-Reply-To: <19562.1550617574@warthog.procyon.org.uk>
+References: <1550432358.2809.21.camel@HansenPartnership.com>
+         <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
+         <155024685321.21651.1504201877881622756.stgit@warthog.procyon.org.uk>
+         <19562.1550617574@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Keyur Patel <iamkeyur96@gmail.com>
+On Tue, 2019-02-19 at 23:06 +0000, David Howells wrote:
+> James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+> 
+> > I thought we got agreement years ago that containers don't exist in
+> > Linux as a single entity: they're currently a collection of cgroups
+> > and namespaces some of which may and some of which may not be local
+> > to the entity the orchestration system thinks of as a "container".
+> 
+> I wasn't party to that agreement and don't feel particularly bound by
+> it.
 
-Expression (urb->transfer_flags & URB_DIR_MASK) == URB_DIR_IN can be
-replaced by usb_urb_dir_in(struct urb *urb) from usb.h for better
-readability.
+That's not at all relevant, is it?  The point is we have widespread
+uses of namespaces and cgroups that span containers today meaning that
+a "container id" becomes a problematic concept.  What we finally got to
+with the audit people was an unmodifiable label which the orchestration
+system can set ... can't you just use that?
 
-Signed-off-by: Keyur Patel <iamkeyur96@gmail.com>
----
- drivers/usb/core/devio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
-index d65566341dd1..29e2ff055e6e 100644
---- a/drivers/usb/core/devio.c
-+++ b/drivers/usb/core/devio.c
-@@ -604,7 +604,7 @@ static void async_completed(struct urb *urb)
- 	snoop(&urb->dev->dev, "urb complete\n");
- 	snoop_urb(urb->dev, as->userurb, urb->pipe, urb->actual_length,
- 			as->status, COMPLETE, NULL, 0);
--	if ((urb->transfer_flags & URB_DIR_MASK) == URB_DIR_IN)
-+	if (usb_urb_dir_in(urb))
- 		snoop_urb_data(urb, urb->actual_length);
- 
- 	if (as->status < 0 && as->bulk_addr && as->status != -ECONNRESET &&
--- 
-2.20.1
+James
 
