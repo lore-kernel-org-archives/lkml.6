@@ -6,24 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04264C10F01
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29657C10F01
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:26:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB64C206C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:26:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED275206B7
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:26:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727168AbfBTL0X (ORCPT
+        id S1727334AbfBTL0f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 06:26:23 -0500
-Received: from relay10.mail.gandi.net ([217.70.178.230]:39489 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726197AbfBTL0W (ORCPT
+        Wed, 20 Feb 2019 06:26:35 -0500
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:41641 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726347AbfBTL0e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 06:26:22 -0500
+        Wed, 20 Feb 2019 06:26:34 -0500
+X-Originating-IP: 109.212.12.126
 Received: from localhost (alyon-652-1-153-126.w109-212.abo.wanadoo.fr [109.212.12.126])
         (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 00B49240004;
-        Wed, 20 Feb 2019 11:26:17 +0000 (UTC)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id C267FC0006;
+        Wed, 20 Feb 2019 11:26:30 +0000 (UTC)
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -32,9 +33,9 @@ Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 2/7] clk: at91: allow configuring generated PCR layout
-Date:   Wed, 20 Feb 2019 12:26:00 +0100
-Message-Id: <20190220112605.23095-3-alexandre.belloni@bootlin.com>
+Subject: [PATCH 7/7] clk: at91: add sam9x60 pmc driver
+Date:   Wed, 20 Feb 2019 12:26:05 +0100
+Message-Id: <20190220112605.23095-8-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190220112605.23095-1-alexandre.belloni@bootlin.com>
 References: <20190220112605.23095-1-alexandre.belloni@bootlin.com>
@@ -45,182 +46,339 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PCR register layout for GCLKCSS is changing for the future SoCs, allow
-configuring it.
+Add a driver for the PMC clocks of the sam9c60.
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/clk/at91/clk-generated.c | 48 +++++++++++++++++---------------
- drivers/clk/at91/dt-compat.c     |  3 +-
- drivers/clk/at91/pmc.h           |  1 +
- drivers/clk/at91/sama5d2.c       |  1 +
- include/linux/clk/at91_pmc.h     |  7 +----
- 5 files changed, 30 insertions(+), 30 deletions(-)
+ drivers/clk/at91/Makefile  |   1 +
+ drivers/clk/at91/sam9x60.c | 307 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 308 insertions(+)
+ create mode 100644 drivers/clk/at91/sam9x60.c
 
-diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-index 66e7f7baf958..5f18847965c1 100644
---- a/drivers/clk/at91/clk-generated.c
-+++ b/drivers/clk/at91/clk-generated.c
-@@ -11,6 +11,7 @@
-  *
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/clk-provider.h>
- #include <linux/clkdev.h>
- #include <linux/clk/at91_pmc.h>
-@@ -31,6 +32,7 @@ struct clk_generated {
- 	spinlock_t *lock;
- 	u32 id;
- 	u32 gckdiv;
-+	const struct clk_pcr_layout *layout;
- 	u8 parent_id;
- 	bool audio_pll_allowed;
- };
-@@ -47,14 +49,14 @@ static int clk_generated_enable(struct clk_hw *hw)
- 		 __func__, gck->gckdiv, gck->parent_id);
- 
- 	spin_lock_irqsave(gck->lock, flags);
--	regmap_write(gck->regmap, AT91_PMC_PCR,
--		     (gck->id & AT91_PMC_PCR_PID_MASK));
--	regmap_update_bits(gck->regmap, AT91_PMC_PCR,
--			   AT91_PMC_PCR_GCKDIV_MASK | AT91_PMC_PCR_GCKCSS_MASK |
--			   AT91_PMC_PCR_CMD | AT91_PMC_PCR_GCKEN,
--			   AT91_PMC_PCR_GCKCSS(gck->parent_id) |
--			   AT91_PMC_PCR_CMD |
--			   AT91_PMC_PCR_GCKDIV(gck->gckdiv) |
-+	regmap_write(gck->regmap, gck->layout->offset,
-+		     (gck->id & gck->layout->pid_mask));
-+	regmap_update_bits(gck->regmap, gck->layout->offset,
-+			   AT91_PMC_PCR_GCKDIV_MASK | gck->layout->gckcss_mask |
-+			   gck->layout->cmd | AT91_PMC_PCR_GCKEN,
-+			   field_prep(gck->layout->gckcss_mask, gck->parent_id) |
-+			   gck->layout->cmd |
-+			   FIELD_PREP(AT91_PMC_PCR_GCKDIV_MASK, gck->gckdiv) |
- 			   AT91_PMC_PCR_GCKEN);
- 	spin_unlock_irqrestore(gck->lock, flags);
- 	return 0;
-@@ -66,11 +68,11 @@ static void clk_generated_disable(struct clk_hw *hw)
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(gck->lock, flags);
--	regmap_write(gck->regmap, AT91_PMC_PCR,
--		     (gck->id & AT91_PMC_PCR_PID_MASK));
--	regmap_update_bits(gck->regmap, AT91_PMC_PCR,
--			   AT91_PMC_PCR_CMD | AT91_PMC_PCR_GCKEN,
--			   AT91_PMC_PCR_CMD);
-+	regmap_write(gck->regmap, gck->layout->offset,
-+		     (gck->id & gck->layout->pid_mask));
-+	regmap_update_bits(gck->regmap, gck->layout->offset,
-+			   gck->layout->cmd | AT91_PMC_PCR_GCKEN,
-+			   gck->layout->cmd);
- 	spin_unlock_irqrestore(gck->lock, flags);
- }
- 
-@@ -81,9 +83,9 @@ static int clk_generated_is_enabled(struct clk_hw *hw)
- 	unsigned int status;
- 
- 	spin_lock_irqsave(gck->lock, flags);
--	regmap_write(gck->regmap, AT91_PMC_PCR,
--		     (gck->id & AT91_PMC_PCR_PID_MASK));
--	regmap_read(gck->regmap, AT91_PMC_PCR, &status);
-+	regmap_write(gck->regmap, gck->layout->offset,
-+		     (gck->id & gck->layout->pid_mask));
-+	regmap_read(gck->regmap, gck->layout->offset, &status);
- 	spin_unlock_irqrestore(gck->lock, flags);
- 
- 	return status & AT91_PMC_PCR_GCKEN ? 1 : 0;
-@@ -259,19 +261,18 @@ static void clk_generated_startup(struct clk_generated *gck)
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(gck->lock, flags);
--	regmap_write(gck->regmap, AT91_PMC_PCR,
--		     (gck->id & AT91_PMC_PCR_PID_MASK));
--	regmap_read(gck->regmap, AT91_PMC_PCR, &tmp);
-+	regmap_write(gck->regmap, gck->layout->offset,
-+		     (gck->id & gck->layout->pid_mask));
-+	regmap_read(gck->regmap, gck->layout->offset, &tmp);
- 	spin_unlock_irqrestore(gck->lock, flags);
- 
--	gck->parent_id = (tmp & AT91_PMC_PCR_GCKCSS_MASK)
--					>> AT91_PMC_PCR_GCKCSS_OFFSET;
--	gck->gckdiv = (tmp & AT91_PMC_PCR_GCKDIV_MASK)
--					>> AT91_PMC_PCR_GCKDIV_OFFSET;
-+	gck->parent_id = field_get(gck->layout->gckcss_mask, tmp);
-+	gck->gckdiv = FIELD_GET(AT91_PMC_PCR_GCKDIV_MASK, tmp);
- }
- 
- struct clk_hw * __init
- at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
-+			    const struct clk_pcr_layout *layout,
- 			    const char *name, const char **parent_names,
- 			    u8 num_parents, u8 id, bool pll_audio,
- 			    const struct clk_range *range)
-@@ -298,6 +299,7 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
- 	gck->lock = lock;
- 	gck->range = *range;
- 	gck->audio_pll_allowed = pll_audio;
-+	gck->layout = layout;
- 
- 	clk_generated_startup(gck);
- 	hw = &gck->hw;
-diff --git a/drivers/clk/at91/dt-compat.c b/drivers/clk/at91/dt-compat.c
-index aa09072f36db..aa1754eac59f 100644
---- a/drivers/clk/at91/dt-compat.c
-+++ b/drivers/clk/at91/dt-compat.c
-@@ -154,7 +154,8 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
- 		     id == GCK_ID_CLASSD))
- 			pll_audio = true;
- 
--		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock, name,
+diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
+index 0a30fc8dfcb0..3732241352ce 100644
+--- a/drivers/clk/at91/Makefile
++++ b/drivers/clk/at91/Makefile
+@@ -16,5 +16,6 @@ obj-$(CONFIG_HAVE_AT91_GENERATED_CLK)	+= clk-generated.o
+ obj-$(CONFIG_HAVE_AT91_I2S_MUX_CLK)	+= clk-i2s-mux.o
+ obj-$(CONFIG_HAVE_AT91_SAM9X60_PLL)	+= clk-sam9x60-pll.o
+ obj-$(CONFIG_SOC_AT91SAM9) += at91sam9260.o at91sam9rl.o at91sam9x5.o
++obj-$(CONFIG_SOC_SAM9X60) += sam9x60.o
+ obj-$(CONFIG_SOC_SAMA5D4) += sama5d4.o
+ obj-$(CONFIG_SOC_SAMA5D2) += sama5d2.o
+diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
+new file mode 100644
+index 000000000000..22bf51c55bdc
+--- /dev/null
++++ b/drivers/clk/at91/sam9x60.c
+@@ -0,0 +1,307 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/clk-provider.h>
++#include <linux/mfd/syscon.h>
++#include <linux/slab.h>
++
++#include <dt-bindings/clock/at91.h>
++
++#include "pmc.h"
++
++DEFINE_SPINLOCK(pmc_pll_lock);
++
++static const struct clk_master_characteristics mck_characteristics = {
++	.output = { .min = 140000000, .max = 200000000 },
++	.divisors = { 1, 2, 4, 3 },
++	.have_div3_pres = 1,
++};
++
++static const struct clk_master_layout sam9x60_master_layout = {
++	.mask = 0x373,
++	.pres_shift = 4,
++	.offset = 0x28,
++};
++
++static struct clk_range plla_outputs[] = {
++	{ .min = 300000000, .max = 600000000 },
++};
++
++static const struct clk_pll_characteristics plla_characteristics = {
++	.input = { .min = 12000000, .max = 48000000 },
++	.num_output = ARRAY_SIZE(plla_outputs),
++	.output = plla_outputs,
++};
++
++static struct clk_range upll_outputs[] = {
++	{ .min = 300000000, .max = 500000000 },
++};
++
++static const struct clk_pll_characteristics upll_characteristics = {
++	.input = { .min = 12000000, .max = 48000000 },
++	.num_output = ARRAY_SIZE(upll_outputs),
++	.output = upll_outputs,
++	.upll = true,
++};
++
++static const struct clk_programmable_layout sam9x60_programmable_layout = {
++	.pres_shift = 8,
++	.css_mask = 0x1f,
++	.have_slck_mck = 0,
++};
++
++static const struct clk_pcr_layout sam9x60_pcr_layout = {
++	.offset = 0x88,
++	.cmd = BIT(31),
++	.gckcss_mask = GENMASK(12, 8),
++	.pid_mask = GENMASK(6, 0),
++};
++
++static const struct {
++	char *n;
++	char *p;
++	u8 id;
++} sam9x60_systemck[] = {
++	{ .n = "ddrck",  .p = "masterck", .id = 2 },
++	{ .n = "uhpck",  .p = "usbck",    .id = 6 },
++	{ .n = "pck0",   .p = "prog0",    .id = 8 },
++	{ .n = "pck1",   .p = "prog1",    .id = 9 },
++	{ .n = "qspick", .p = "masterck", .id = 19 },
++};
++
++static const struct {
++	char *n;
++	u8 id;
++} sam9x60_periphck[] = {
++	{ .n = "pioA_clk",   .id = 2, },
++	{ .n = "pioB_clk",   .id = 3, },
++	{ .n = "pioC_clk",   .id = 4, },
++	{ .n = "flex0_clk",  .id = 5, },
++	{ .n = "flex1_clk",  .id = 6, },
++	{ .n = "flex2_clk",  .id = 7, },
++	{ .n = "flex3_clk",  .id = 8, },
++	{ .n = "flex6_clk",  .id = 9, },
++	{ .n = "flex7_clk",  .id = 10, },
++	{ .n = "flex8_clk",  .id = 11, },
++	{ .n = "sdmmc0_clk", .id = 12, },
++	{ .n = "flex4_clk",  .id = 13, },
++	{ .n = "flex5_clk",  .id = 14, },
++	{ .n = "flex9_clk",  .id = 15, },
++	{ .n = "flex10_clk", .id = 16, },
++	{ .n = "tcb0_clk",   .id = 17, },
++	{ .n = "pwm_clk",    .id = 18, },
++	{ .n = "adc_clk",    .id = 19, },
++	{ .n = "dma0_clk",   .id = 20, },
++	{ .n = "matrix_clk", .id = 21, },
++	{ .n = "uhphs_clk",  .id = 22, },
++	{ .n = "udphs_clk",  .id = 23, },
++	{ .n = "macb0_clk",  .id = 24, },
++	{ .n = "lcd_clk",    .id = 25, },
++	{ .n = "sdmmc1_clk", .id = 26, },
++	{ .n = "macb1_clk",  .id = 27, },
++	{ .n = "ssc_clk",    .id = 28, },
++	{ .n = "can0_clk",   .id = 29, },
++	{ .n = "can1_clk",   .id = 30, },
++	{ .n = "flex11_clk", .id = 32, },
++	{ .n = "flex12_clk", .id = 33, },
++	{ .n = "i2s_clk",    .id = 34, },
++	{ .n = "qspi_clk",   .id = 35, },
++	{ .n = "gfx2d_clk",  .id = 36, },
++	{ .n = "pit64b_clk", .id = 37, },
++	{ .n = "trng_clk",   .id = 38, },
++	{ .n = "aes_clk",    .id = 39, },
++	{ .n = "tdes_clk",   .id = 40, },
++	{ .n = "sha_clk",    .id = 41, },
++	{ .n = "classd_clk", .id = 42, },
++	{ .n = "isi_clk",    .id = 43, },
++	{ .n = "pioD_clk",   .id = 44, },
++	{ .n = "tcb1_clk",   .id = 45, },
++	{ .n = "dbgu_clk",   .id = 47, },
++	{ .n = "mpddr_clk",  .id = 49, },
++};
++
++static const struct {
++	char *n;
++	u8 id;
++	struct clk_range r;
++	bool pll;
++} sam9x60_gck[] = {
++	{ .n = "flex0_gclk",  .id = 5, },
++	{ .n = "flex1_gclk",  .id = 6, },
++	{ .n = "flex2_gclk",  .id = 7, },
++	{ .n = "flex3_gclk",  .id = 8, },
++	{ .n = "flex6_gclk",  .id = 9, },
++	{ .n = "flex7_gclk",  .id = 10, },
++	{ .n = "flex8_gclk",  .id = 11, },
++	{ .n = "sdmmc0_gclk", .id = 12, .r = { .min = 0, .max = 105000000 }, },
++	{ .n = "flex4_gclk",  .id = 13, },
++	{ .n = "flex5_gclk",  .id = 14, },
++	{ .n = "flex9_gclk",  .id = 15, },
++	{ .n = "flex10_gclk", .id = 16, },
++	{ .n = "tcb0_gclk",   .id = 17, },
++	{ .n = "adc_gclk",    .id = 19, },
++	{ .n = "lcd_gclk",    .id = 25, .r = { .min = 0, .max = 140000000 }, },
++	{ .n = "sdmmc1_gclk", .id = 26, .r = { .min = 0, .max = 105000000 }, },
++	{ .n = "flex11_gclk", .id = 32, },
++	{ .n = "flex12_gclk", .id = 33, },
++	{ .n = "i2s_gclk",    .id = 34, .r = { .min = 0, .max = 105000000 },
++		.pll = true, },
++	{ .n = "pit64b_gclk", .id = 37, },
++	{ .n = "classd_gclk", .id = 42, .r = { .min = 0, .max = 100000000 },
++		.pll = true, },
++	{ .n = "tcb1_gclk",   .id = 45, },
++	{ .n = "dbgu_gclk",   .id = 47, },
++};
++
++static void __init sam9x60_pmc_setup(struct device_node *np)
++{
++	struct clk_range range = CLK_RANGE(0, 0);
++	const char *td_slck_name, *md_slck_name, *mainxtal_name;
++	struct pmc_data *sam9x60_pmc;
++	const char *parent_names[6];
++	struct regmap *regmap;
++	struct clk_hw *hw;
++	int i;
++	bool bypass;
++
++	i = of_property_match_string(np, "clock-names", "td_slck");
++	if (i < 0)
++		return;
++
++	td_slck_name = of_clk_get_parent_name(np, i);
++
++	i = of_property_match_string(np, "clock-names", "md_slck");
++	if (i < 0)
++		return;
++
++	md_slck_name = of_clk_get_parent_name(np, i);
++
++	i = of_property_match_string(np, "clock-names", "main_xtal");
++	if (i < 0)
++		return;
++	mainxtal_name = of_clk_get_parent_name(np, i);
++
++	regmap = syscon_node_to_regmap(np);
++	if (IS_ERR(regmap))
++		return;
++
++	sam9x60_pmc = pmc_data_allocate(PMC_MAIN + 1,
++					nck(sam9x60_systemck),
++					nck(sam9x60_periphck),
++					nck(sam9x60_gck));
++	if (!sam9x60_pmc)
++		return;
++
++	hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 24000000,
++					   50000000);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	bypass = of_property_read_bool(np, "atmel,osc-bypass");
++
++	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name,
++					bypass);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	parent_names[0] = "main_rc_osc";
++	parent_names[1] = "main_osc";
++	hw = at91_clk_register_sam9x5_main(regmap, "mainck", parent_names, 2);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	sam9x60_pmc->chws[PMC_MAIN] = hw;
++
++	hw = sam9x60_clk_register_pll(regmap, &pmc_pll_lock, "pllack",
++				      "mainck", 0, &plla_characteristics);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	hw = sam9x60_clk_register_pll(regmap, &pmc_pll_lock, "upllck",
++				      "main_osc", 1, &upll_characteristics);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	sam9x60_pmc->chws[PMC_UTMI] = hw;
++
++	parent_names[0] = md_slck_name;
++	parent_names[1] = "mainck";
++	parent_names[2] = "pllack";
++	hw = at91_clk_register_master(regmap, "masterck", 3, parent_names,
++				      &sam9x60_master_layout,
++				      &mck_characteristics);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	sam9x60_pmc->chws[PMC_MCK] = hw;
++
++	parent_names[0] = "pllack";
++	parent_names[1] = "upllck";
++	parent_names[2] = "mainck";
++	parent_names[3] = "mainck";
++	hw = sam9x60_clk_register_usb(regmap, "usbck", parent_names, 4);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	parent_names[0] = md_slck_name;
++	parent_names[1] = td_slck_name;
++	parent_names[2] = "mainck";
++	parent_names[3] = "masterck";
++	parent_names[4] = "pllack";
++	parent_names[5] = "upllck";
++	for (i = 0; i < 8; i++) {
++		char name[6];
++
++		snprintf(name, sizeof(name), "prog%d", i);
++
++		hw = at91_clk_register_programmable(regmap, name,
++						    parent_names, 6, i,
++						    &sam9x60_programmable_layout);
++		if (IS_ERR(hw))
++			goto err_free;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(sam9x60_systemck); i++) {
++		hw = at91_clk_register_system(regmap, sam9x60_systemck[i].n,
++					      sam9x60_systemck[i].p,
++					      sam9x60_systemck[i].id);
++		if (IS_ERR(hw))
++			goto err_free;
++
++		sam9x60_pmc->shws[sam9x60_systemck[i].id] = hw;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(sam9x60_periphck); i++) {
++		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
++							 &sam9x60_pcr_layout,
++							 sam9x60_periphck[i].n,
++							 "masterck",
++							 sam9x60_periphck[i].id,
++							 &range);
++		if (IS_ERR(hw))
++			goto err_free;
++
++		sam9x60_pmc->phws[sam9x60_periphck[i].id] = hw;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(sam9x60_gck); i++) {
 +		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
-+						 &dt_pcr_layout, name,
- 						 parent_names, num_parents,
- 						 id, pll_audio, &range);
- 		if (IS_ERR(hw))
-diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index 616c04588093..4027306b904c 100644
---- a/drivers/clk/at91/pmc.h
-+++ b/drivers/clk/at91/pmc.h
-@@ -116,6 +116,7 @@ at91_clk_register_audio_pll_pmc(struct regmap *regmap, const char *name,
- 
- struct clk_hw * __init
- at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
-+			    const struct clk_pcr_layout *layout,
- 			    const char *name, const char **parent_names,
- 			    u8 num_parents, u8 id, bool pll_audio,
- 			    const struct clk_range *range);
-diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
-index f3f1ce2013d4..8f301a517b9d 100644
---- a/drivers/clk/at91/sama5d2.c
-+++ b/drivers/clk/at91/sama5d2.c
-@@ -304,6 +304,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
- 	parent_names[5] = "audiopll_pmcck";
- 	for (i = 0; i < ARRAY_SIZE(sama5d2_gck); i++) {
- 		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
-+						 &sama5d2_pcr_layout,
- 						 sama5d2_gck[i].n,
- 						 parent_names, 6,
- 						 sama5d2_gck[i].id,
-diff --git a/include/linux/clk/at91_pmc.h b/include/linux/clk/at91_pmc.h
-index b97b8dcbffe6..31f00ebf1315 100644
---- a/include/linux/clk/at91_pmc.h
-+++ b/include/linux/clk/at91_pmc.h
-@@ -187,13 +187,8 @@
- 
- #define AT91_PMC_PCR		0x10c			/* Peripheral Control Register [some SAM9 and SAMA5] */
- #define		AT91_PMC_PCR_PID_MASK		0x3f
--#define		AT91_PMC_PCR_GCKCSS_OFFSET	8
--#define		AT91_PMC_PCR_GCKCSS_MASK	(0x7  << AT91_PMC_PCR_GCKCSS_OFFSET)
--#define		AT91_PMC_PCR_GCKCSS(n)		((n)  << AT91_PMC_PCR_GCKCSS_OFFSET)	/* GCK Clock Source Selection */
- #define		AT91_PMC_PCR_CMD		(0x1  <<  12)				/* Command (read=0, write=1) */
--#define		AT91_PMC_PCR_GCKDIV_OFFSET	20
--#define		AT91_PMC_PCR_GCKDIV_MASK	(0xff  << AT91_PMC_PCR_GCKDIV_OFFSET)
--#define		AT91_PMC_PCR_GCKDIV(n)		((n)  << AT91_PMC_PCR_GCKDIV_OFFSET)	/* Generated Clock Divisor Value */
-+#define		AT91_PMC_PCR_GCKDIV_MASK	GENMASK(27, 20)
- #define		AT91_PMC_PCR_EN			(0x1  <<  28)				/* Enable */
- #define		AT91_PMC_PCR_GCKEN		(0x1  <<  29)				/* GCK Enable */
- 
++						 &sam9x60_pcr_layout,
++						 sam9x60_gck[i].n,
++						 parent_names, 6,
++						 sam9x60_gck[i].id,
++						 sam9x60_gck[i].pll,
++						 &sam9x60_gck[i].r);
++		if (IS_ERR(hw))
++			goto err_free;
++
++		sam9x60_pmc->ghws[sam9x60_gck[i].id] = hw;
++	}
++
++	of_clk_add_hw_provider(np, of_clk_hw_pmc_get, sam9x60_pmc);
++
++	return;
++
++err_free:
++	pmc_data_free(sam9x60_pmc);
++}
++
++CLK_OF_DECLARE_DRIVER(sam9x60_pmc, "microchip,sam9x60-pmc", sam9x60_pmc_setup);
 -- 
 2.20.1
 
