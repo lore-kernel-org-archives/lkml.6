@@ -2,105 +2,120 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC235C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:02:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE8EC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:03:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AB6620685
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:02:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GuvqglkF"
+	by mail.kernel.org (Postfix) with ESMTP id 0555020685
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:02:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbfBTLCD (ORCPT
+        id S1727662AbfBTLC6 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 06:02:03 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:40178 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726370AbfBTLCD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 06:02:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=GYhJeV+fLV9/dIUemPOV49aBd2YkkdKMheInEI2nw1s=; b=GuvqglkFSWsUrlL8ZB6LGtJGf
-        l8QEQUoQyXiYwdI8fqrIcfMwTKZHCzV+sqj326Q93QbuOGnb1sXOllr0uAB5ugvhwrB52X5k3MS6T
-        fqkIwlwRL3HTseC14GnR84aVO42LzNgte9bEcg9krQuDxPvWb4fGNjDipgfRtOA1twceluG2rSsO2
-        j6rjFPTbCKwKZM4akzORehve5h9jTSAHFcWwS6g8eMtosmQuhaK/KZczo4AtMRdCi1fTrPYx2FT0i
-        pQMUsD2rUVcJZmVj+nu+StvOkM7JQJ4cmZtCLFVUvM6vF/CNg2HolI24+LfhDAQQDEipAFzm12noi
-        Dxd59YSyA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gwPda-0008Mn-Kl; Wed, 20 Feb 2019 11:02:02 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id EE6C5202BC402; Wed, 20 Feb 2019 12:02:00 +0100 (CET)
-Date:   Wed, 20 Feb 2019 12:02:00 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Len Brown <lenb@kernel.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Zhang Rui <rui.zhang@intel.com>,
-        Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 08/11] powercap/intel_rapl: Support multi-die/package
-Message-ID: <20190220110200.GD17969@hirez.programming.kicks-ass.net>
-References: <635b2bf8b1151a191cd9299276b75791a818c0c2.1550545163.git.len.brown@intel.com>
- <3349c9e551eecbfe849320c0e938daf4e0126734.1550545163.git.len.brown@intel.com>
+        Wed, 20 Feb 2019 06:02:58 -0500
+Received: from unicorn.mansr.com ([81.2.72.234]:44296 "EHLO unicorn.mansr.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726370AbfBTLC5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 06:02:57 -0500
+Received: by unicorn.mansr.com (Postfix, from userid 51770)
+        id CA65415632; Wed, 20 Feb 2019 11:02:56 +0000 (GMT)
+From:   =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] platform: set of_node in platform_device_register_full()
+References: <20190216164512.9525-1-mans@mansr.com>
+        <CAJZ5v0iZHfU=mE3JGcKqbswGGert7CvpKPkVE1s+-X1zXKJiEw@mail.gmail.com>
+        <yw1xk1hxxss8.fsf@mansr.com>
+        <CAJZ5v0gG5Rau71YrmUL8V7EpZjHQNOzLpEJHCJjXdgaDm4TrSw@mail.gmail.com>
+        <yw1x7eduyc6p.fsf@mansr.com>
+        <CAJZ5v0gMD27Wa3+iuwSoZGpStsVgShWP=SkY69EjrDy2SrftYA@mail.gmail.com>
+Date:   Wed, 20 Feb 2019 11:02:56 +0000
+In-Reply-To: <CAJZ5v0gMD27Wa3+iuwSoZGpStsVgShWP=SkY69EjrDy2SrftYA@mail.gmail.com>
+        (Rafael J. Wysocki's message of "Wed, 20 Feb 2019 11:51:01 +0100")
+Message-ID: <yw1xy36awwm7.fsf@mansr.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3349c9e551eecbfe849320c0e938daf4e0126734.1550545163.git.len.brown@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 10:40:10PM -0500, Len Brown wrote:
-> From: Zhang Rui <rui.zhang@intel.com>
-> 
-> On the new dual-die/package systems, the RAPL MSR becomes die-scope.
-> Thus instead of one powercap device per physical package, now there
-> should be one powercap device for each unique die on these systems.
-> 
-> This patch introduces intel_rapl driver support for new
-> dual-die/package systems.
-> 
-> On the hardwares that do not have multi-die, topology_unique_die_id()
-> equals topology_physical_package_id(), thus there is no functional change.
-> 
-> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
-> Signed-off-by: Len Brown <len.brown@intel.com>
-> Cc: linux-pm@vger.kernel.org
-> Signed-off-by: Len Brown <len.brown@intel.com>
-> ---
->  drivers/powercap/intel_rapl.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/powercap/intel_rapl.c b/drivers/powercap/intel_rapl.c
-> index 6057d9695fed..e004707283da 100644
-> --- a/drivers/powercap/intel_rapl.c
-> +++ b/drivers/powercap/intel_rapl.c
-> @@ -266,7 +266,7 @@ static struct rapl_domain *platform_rapl_domain; /* Platform (PSys) domain */
->  /* caller to ensure CPU hotplug lock is held */
->  static struct rapl_package *rapl_find_package(int cpu)
->  {
-> -	int id = topology_physical_package_id(cpu);
-> +	int id = topology_unique_die_id(cpu);
->  	struct rapl_package *rp;
->  
->  	list_for_each_entry(rp, &rapl_packages, plist) {
-> @@ -1457,7 +1457,7 @@ static void rapl_remove_package(struct rapl_package *rp)
->  /* called from CPU hotplug notifier, hotplug lock held */
->  static struct rapl_package *rapl_add_package(int cpu)
->  {
-> -	int id = topology_physical_package_id(cpu);
-> +	int id = topology_unique_die_id(cpu);
->  	struct rapl_package *rp;
->  	int ret;
+"Rafael J. Wysocki" <rafael@kernel.org> writes:
 
-And now your new function names are misnomers.
+> On Wed, Feb 20, 2019 at 11:41 AM Måns Rullgård <mans@mansr.com> wrote:
+>>
+>> "Rafael J. Wysocki" <rafael@kernel.org> writes:
+>>
+>> > On Mon, Feb 18, 2019 at 12:10 PM Måns Rullgård <mans@mansr.com> wrote:
+>> >>
+>> >> "Rafael J. Wysocki" <rafael@kernel.org> writes:
+>> >>
+>> >> > On Sat, Feb 16, 2019 at 5:50 PM Mans Rullgard <mans@mansr.com> wrote:
+>> >> >>
+>> >> >> If the provided fwnode is an OF node, set dev.of_node as well.
+>> >> >>
+>> >> >> Signed-off-by: Mans Rullgard <mans@mansr.com>
+>> >> >> ---
+>> >> >>  drivers/base/platform.c | 1 +
+>> >> >>  1 file changed, 1 insertion(+)
+>> >> >>
+>> >> >> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+>> >> >> index dff82a3c2caa..853a1d0e5845 100644
+>> >> >> --- a/drivers/base/platform.c
+>> >> >> +++ b/drivers/base/platform.c
+>> >> >> @@ -512,6 +512,7 @@ struct platform_device *platform_device_register_full(
+>> >> >>
+>> >> >>         pdev->dev.parent = pdevinfo->parent;
+>> >> >>         pdev->dev.fwnode = pdevinfo->fwnode;
+>> >> >> +       pdev->dev.of_node = of_node_get(to_of_node(pdev->dev.fwnode));
+>> >> >
+>> >> > of_node_get() generally does a kobject_get() on the node's kobject, so
+>> >> > when is that reference dropped?  Or if it doesn't need to be dropped
+>> >> > at all, why is this the case?
+>> >>
+>> >> platform_device_release() calls of_device_node_put().
+>> >
+>> > Yes, it does, but this is the reference that's already acquired for
+>> > devices added while parsing DT, isn't it?
+>> >
+>> > Your change adds an extra reference AFAICS.
+>> >
+>> > Also, why is this patch needed?
+>>
+>> Some drivers are just shims that create extra "glue" devices with the DT
+>> device as parent and have the real driver bind to these.  In other
+>> cases, the same real driver matches the DT node directly.  When a glue
+>> device is used, it needs to get a reference to the original DT node in
+>> order for the main driver to access properties and child nodes.
+>>
+>> Right now, my problem is that the suxi-musb driver creates such a glue
+>> device for the musb core driver to bind to without setting of_node.
+>> This means devices attached to this USB interface don't get associated
+>> with DT nodes, if present, the way they do with EHCI.
+>
+> You really should describe problems that you want to address in patch
+> changelogs.  This helps a lot to understand the motivation for the
+> changes.
+
+Do you want me to send a new patch with the above explanation in the
+commit message?
+
+>> The sunxi-musb driver uses platform_device_register_full(), so this
+>> seemed like the easiest way to let it set of_node of the new device.
+>> Since this creates a second reference to the same node, of_node_get()
+>> is required.
+>
+> But what about devices that already have of_node set at this point?
+>
+> Maybe check if of_node is NULL before trying to set it?
+
+It's a brand new device allocated a few lines above.  of_node has to be
+null here.
+
+-- 
+Måns Rullgård
