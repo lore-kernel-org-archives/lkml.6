@@ -2,79 +2,91 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36510C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD9FC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:18:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10593206BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:15:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46C43206BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:18:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbfBTPPp (ORCPT
+        id S1726627AbfBTPSL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:15:45 -0500
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:43883 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725804AbfBTPPp (ORCPT
+        Wed, 20 Feb 2019 10:18:11 -0500
+Received: from mail.steuer-voss.de ([85.183.69.95]:34232 "EHLO
+        mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725804AbfBTPSL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:15:45 -0500
-X-Originating-IP: 185.94.189.187
-Received: from localhost (unknown [185.94.189.187])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 9DD4760010;
-        Wed, 20 Feb 2019 15:15:42 +0000 (UTC)
-Date:   Wed, 20 Feb 2019 16:15:42 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Mans Rullgard <mans@mansr.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] ARM: dts: sun7i: add /omit-if-no-ref/ tags to pin
- group nodes
-Message-ID: <20190220151542.dy2tdhw6cy5cn447@flea>
-References: <20190220142536.21051-1-mans@mansr.com>
- <20190220142536.21051-3-mans@mansr.com>
+        Wed, 20 Feb 2019 10:18:11 -0500
+X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
+Received: by mail.steuer-voss.de (Postfix, from userid 1000)
+        id E4FCE4D065; Wed, 20 Feb 2019 16:18:04 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.steuer-voss.de (Postfix) with ESMTP id E0A4C4D05B;
+        Wed, 20 Feb 2019 16:18:04 +0100 (CET)
+Date:   Wed, 20 Feb 2019 16:18:04 +0100 (CET)
+From:   Nikolaus Voss <nv@vosn.de>
+X-X-Sender: nv@fox.voss.local
+To:     Guenter Roeck <linux@roeck-us.net>
+cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2] usb: typec: tps6598x: handle block writes separately
+ with plain-I2C adapters
+In-Reply-To: <be1f988c-5b2f-91cf-d210-1e28c09f106f@roeck-us.net>
+Message-ID: <alpine.DEB.2.20.1902201616290.8597@fox.voss.local>
+References: <20180425142209.30745-1-heikki.krogerus@linux.intel.com> <20190220110017.BFA344CE86@mail.steuer-voss.de> <20190220125731.02E274CFE0@mail.steuer-voss.de> <be1f988c-5b2f-91cf-d210-1e28c09f106f@roeck-us.net>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ltjeimt6pxkykty5"
-Content-Disposition: inline
-In-Reply-To: <20190220142536.21051-3-mans@mansr.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 20 Feb 2019, Guenter Roeck wrote:
+> On 2/20/19 4:57 AM, Nikolaus Voss wrote:
+>> Commit 1a2f474d328f handles block _reads_ separately with plain-I2C
+>> adapters, but the problem described with regmap-i2c not handling
+>> SMBus block transfers (i.e. read and writes) correctly also exists
+>> with writes.
+>> 
+>> As workaround, this patch adds a block write function the same way
+>> 1a2f474d328f adds a block read function.
+>> 
+>> Fixes: 1a2f474d328f ("usb: typec: tps6598x: handle block reads separately 
+>> with plain-I2C adapters")
+>> Fixes: 0a4c005bd171 ("usb: typec: driver for TI TPS6598x USB Power Delivery 
+>> controllers")
+>> Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+>> ---
+>> v2: fix tps6598x_exec_cmd also
+>> ---
+>>   drivers/usb/typec/tps6598x.c | 26 ++++++++++++++++++++------
+>>   1 file changed, 20 insertions(+), 6 deletions(-)
+>> 
+>> diff --git a/drivers/usb/typec/tps6598x.c b/drivers/usb/typec/tps6598x.c
+>> index c84c8c189e90..c54b73fb2a2f 100644
+>> --- a/drivers/usb/typec/tps6598x.c
+>> +++ b/drivers/usb/typec/tps6598x.c
+>> @@ -110,6 +110,20 @@ tps6598x_block_read(struct tps6598x *tps, u8 reg, void 
+>> *val, size_t len)
+>>   	return 0;
+>>   }
+>>   +static int tps6598x_block_write(struct tps6598x *tps, u8 reg,
+>> +				void *val, size_t len)
+>> +{
+>> +	u8 data[len + 1];
+>> +
+>
+> You should use TPS_MAX_LEN + 1 here to avoid the variable length array.
+> See upstream commit 0bb95f80a38f8 ("Makefile: Globally enable VLA warning")
+> and 8d361fa2c29dc ("usb: typec: tps6598x: Remove VLA usage"). Not sure if
+> the WARN_ON introduced by 8d361fa2c29dc is really needed; I dislike
+> unnecessary runtime checks.
 
---ltjeimt6pxkykty5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for the pointer, I fixed this...
 
-On Wed, Feb 20, 2019 at 02:25:36PM +0000, Mans Rullgard wrote:
-> Since only one alternative at a time is used, and some functions may not
-> be used at all, this cuts down the size of the board dtb files a bit.
->=20
-> Signed-off-by: Mans Rullgard <mans@mansr.com>
-
-Applied all three, thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---ltjeimt6pxkykty5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXG1vHQAKCRDj7w1vZxhR
-xfpiAP9iVGo/0QxZrPmzUGNSLgkjVMj9DM6NeQ7RbTYZwtQz4wEAr+RWmjKQyocX
-s8L2GhyvS60EBT5vsQL7ON8h0fUJ6wU=
-=pYmc
------END PGP SIGNATURE-----
-
---ltjeimt6pxkykty5--
+Nikolaus
