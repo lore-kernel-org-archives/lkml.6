@@ -2,112 +2,163 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D46AC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:09:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75DDEC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:10:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DEC520859
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:09:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CIiH7otv"
+	by mail.kernel.org (Postfix) with ESMTP id 418C420859
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:10:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726213AbfBTXJy (ORCPT
+        id S1726428AbfBTXJ7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 18:09:54 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:50432 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbfBTXJy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 18:09:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=bAGeGQdbTQcThkbLqat/4p15AtaqYmAUjW3rFUStPds=; b=CIiH7otvk8l4exqvhiMF3WtDtP
-        iZFJBCIOV5stoUAIW4rFsnk/hpMjiL0ygh4UGi93GX0vu05koksWPfL+d0EbvSxIOe9lu+IUFwbjx
-        482+Ydm3BOVMiedUIOjC864F1Y/iYmXXJtpg74KUbWlxYQN7bPKwJIbYHMSynjwYtRch/MypRDPP4
-        AeYS8Ky1OEmsNqno5C3aqgr3cUT5eCqGc7mR0JhX6ZNXBAr7bxzd6AN0rldOpECFoo2bwCz5hXXzN
-        Y1v31ri2CpUJq9YJPPrSohYKzVvDDxi+1HVo1M6uqiw/S6FZ88IyHXetCRFigM112r8Yupe92/Ubg
-        b5gA/Dbg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gwazl-000449-Hy; Wed, 20 Feb 2019 23:09:41 +0000
-Subject: Re: [PATCH -next] platform/chrome: Fix Kconfig dependencies for
- wilco_ec
-To:     Nick Crews <ncrews@chromium.org>, bleung@chromium.org,
-        enric.balletbo@collabora.com
-Cc:     linux-kernel@vger.kernel.org, dlaurie@chromium.org,
-        sfr@canb.auug.org.au
-References: <20190220221128.48476-1-ncrews@chromium.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <420e6e26-6270-e577-6bbc-3ebe884168b5@infradead.org>
-Date:   Wed, 20 Feb 2019 15:09:36 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 20 Feb 2019 18:09:59 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53072 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725939AbfBTXJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 18:09:58 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 486483091740;
+        Wed, 20 Feb 2019 23:09:57 +0000 (UTC)
+Received: from redhat.com (ovpn-120-249.rdu2.redhat.com [10.10.120.249])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5DC145D9D2;
+        Wed, 20 Feb 2019 23:09:56 +0000 (UTC)
+Date:   Wed, 20 Feb 2019 18:09:54 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ralph Campbell <rcampbell@nvidia.com>
+Subject: Re: [PATCH 10/10] mm/hmm: add helpers for driver to safely take the
+ mmap_sem
+Message-ID: <20190220230954.GA11325@redhat.com>
+References: <20190129165428.3931-1-jglisse@redhat.com>
+ <20190129165428.3931-11-jglisse@redhat.com>
+ <16e62992-c937-6b05-ae37-a287294c0005@nvidia.com>
+ <20190220221933.GB29398@redhat.com>
+ <41888fd2-6154-4f85-7949-7a59c434d047@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20190220221128.48476-1-ncrews@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <41888fd2-6154-4f85-7949-7a59c434d047@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 20 Feb 2019 23:09:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/20/19 2:11 PM, Nick Crews wrote:
-> In the initial version of the Wilco EC Driver, the
-> dependency order was wrong. It before was possible to
-> select CONFIG_WILCO_EC and CONFIG_CROS_EC_LPC without
-> having CONFIG_CROS_EC_LPC_MEC. This was wrong, since
-> WILCO_EC depends upon CONFIG CROS_EC_LPC_MEC, not the
-> other way around.
+On Wed, Feb 20, 2019 at 02:40:20PM -0800, John Hubbard wrote:
+> On 2/20/19 2:19 PM, Jerome Glisse wrote:
+> > On Wed, Feb 20, 2019 at 01:59:13PM -0800, John Hubbard wrote:
+> > > On 1/29/19 8:54 AM, jglisse@redhat.com wrote:
+> > > > From: Jérôme Glisse <jglisse@redhat.com>
+> > > > 
+> > > > The device driver context which holds reference to mirror and thus to
+> > > > core hmm struct might outlive the mm against which it was created. To
+> > > > avoid every driver to check for that case provide an helper that check
+> > > > if mm is still alive and take the mmap_sem in read mode if so. If the
+> > > > mm have been destroy (mmu_notifier release call back did happen) then
+> > > > we return -EINVAL so that calling code knows that it is trying to do
+> > > > something against a mm that is no longer valid.
+> > > > 
+> > > > Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+> > > > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > > > Cc: Ralph Campbell <rcampbell@nvidia.com>
+> > > > Cc: John Hubbard <jhubbard@nvidia.com>
+> > > > ---
+> > > >    include/linux/hmm.h | 50 ++++++++++++++++++++++++++++++++++++++++++---
+> > > >    1 file changed, 47 insertions(+), 3 deletions(-)
+> > > > 
+> > > > diff --git a/include/linux/hmm.h b/include/linux/hmm.h
+> > > > index b3850297352f..4a1454e3efba 100644
+> > > > --- a/include/linux/hmm.h
+> > > > +++ b/include/linux/hmm.h
+> > > > @@ -438,6 +438,50 @@ struct hmm_mirror {
+> > > >    int hmm_mirror_register(struct hmm_mirror *mirror, struct mm_struct *mm);
+> > > >    void hmm_mirror_unregister(struct hmm_mirror *mirror);
+> > > > +/*
+> > > > + * hmm_mirror_mm_down_read() - lock the mmap_sem in read mode
+> > > > + * @mirror: the HMM mm mirror for which we want to lock the mmap_sem
+> > > > + * Returns: -EINVAL if the mm is dead, 0 otherwise (lock taken).
+> > > > + *
+> > > > + * The device driver context which holds reference to mirror and thus to core
+> > > > + * hmm struct might outlive the mm against which it was created. To avoid every
+> > > > + * driver to check for that case provide an helper that check if mm is still
+> > > > + * alive and take the mmap_sem in read mode if so. If the mm have been destroy
+> > > > + * (mmu_notifier release call back did happen) then we return -EINVAL so that
+> > > > + * calling code knows that it is trying to do something against a mm that is
+> > > > + * no longer valid.
+> > > > + */
+> > > 
+> > > Hi Jerome,
+> > > 
+> > > Are you thinking that, throughout the HMM API, there is a problem that
+> > > the mm may have gone away, and so driver code needs to be littered with
+> > > checks to ensure that mm is non-NULL? If so, why doesn't HMM take a
+> > > reference on mm->count?
+> > > 
+> > > This solution here cannot work. I think you'd need refcounting in order
+> > > to avoid this kind of problem. Just doing a check will always be open to
+> > > races (see below).
+> > > 
+> > > 
+> > > > +static inline int hmm_mirror_mm_down_read(struct hmm_mirror *mirror)
+> > > > +{
+> > > > +	struct mm_struct *mm;
+> > > > +
+> > > > +	/* Sanity check ... */
+> > > > +	if (!mirror || !mirror->hmm)
+> > > > +		return -EINVAL;
+> > > > +	/*
+> > > > +	 * Before trying to take the mmap_sem make sure the mm is still
+> > > > +	 * alive as device driver context might outlive the mm lifetime.
+> > > > +	 *
+> > > > +	 * FIXME: should we also check for mm that outlive its owning
+> > > > +	 * task ?
+> > > > +	 */
+> > > > +	mm = READ_ONCE(mirror->hmm->mm);
+> > > > +	if (mirror->hmm->dead || !mm)
+> > > > +		return -EINVAL;
+> > > > +
+> > > 
+> > > Nothing really prevents mirror->hmm->mm from changing to NULL right here.
+> > 
+> > This is really just to catch driver mistake, if driver does not call
+> > hmm_mirror_unregister() then the !mm will never be true ie the
+> > mirror->hmm->mm can not go NULL until the last reference to hmm_mirror
+> > is gone.
 > 
-> Fixes: 1733c32834e5d1 ("platform/chrome: Add new driver for Wilco EC")
-> Signed-off-by: Nick Crews <ncrews@chromium.org>
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
-
-Thanks.
-
-> ---
->  drivers/platform/chrome/Kconfig          | 2 +-
->  drivers/platform/chrome/wilco_ec/Kconfig | 3 +--
->  2 files changed, 2 insertions(+), 3 deletions(-)
+> In that case, then this again seems unnecessary, and in fact undesirable.
+> If the driver code has a bug, then let's let the backtrace from a NULL
+> dereference just happen, loud and clear.
 > 
-> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
-> index 462eb9dfa4f2..b69561050868 100644
-> --- a/drivers/platform/chrome/Kconfig
-> +++ b/drivers/platform/chrome/Kconfig
-> @@ -95,7 +95,7 @@ config CROS_EC_LPC
->  
->  config CROS_EC_LPC_MEC
->  	bool "ChromeOS Embedded Controller LPC Microchip EC (MEC) variant"
-> -	depends on CROS_EC_LPC || WILCO_EC
-> +	depends on CROS_EC_LPC
->  	default n
->  	help
->  	  If you say Y here, a variant LPC protocol for the Microchip EC
-> diff --git a/drivers/platform/chrome/wilco_ec/Kconfig b/drivers/platform/chrome/wilco_ec/Kconfig
-> index 20945a301ec6..c6bc4e8f3062 100644
-> --- a/drivers/platform/chrome/wilco_ec/Kconfig
-> +++ b/drivers/platform/chrome/wilco_ec/Kconfig
-> @@ -1,7 +1,6 @@
->  config WILCO_EC
->  	tristate "ChromeOS Wilco Embedded Controller"
-> -	depends on ACPI && X86
-> -	select CROS_EC_LPC_MEC
-> +	depends on ACPI && X86 && CROS_EC_LPC_MEC
->  	help
->  	  If you say Y here, you get support for talking to the ChromeOS
->  	  Wilco EC over an eSPI bus. This uses a simple byte-level protocol
+> This patch, at best, hides bugs. And it adds code that should simply be
+> unnecessary, so I don't like it. :)  Let's make it go away.
 > 
+> > 
+> > > 
+> > > > +	down_read(&mm->mmap_sem);
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > 
+> > > ...maybe better to just drop this patch from the series, until we see a
+> > > pattern of uses in the calling code.
+> > 
+> > It use by nouveau now.
+> 
+> Maybe you'd have to remove that use case in a couple steps, depending on the
+> order that patches are going in.
 
+Well all that is needed is removing if (mirror->hmm->dead || !mm) return -EINVAL;
+from functions so it does not have any ordering conflict with anything really.
 
--- 
-~Randy
+Cheers,
+Jérôme
