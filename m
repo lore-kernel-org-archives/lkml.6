@@ -2,102 +2,79 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB8BC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11FD8C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:41:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C62642147A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:41:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D41012147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:41:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550659285;
+	bh=z8UuGjINIH1IhIjdrJ86cBQfZd/xl4M5arcq5RFDrw8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=kHY6YEwHKBTrxj9WW11nxtN4L+wfCTcsoX8ilcZQKgaGWvnyHSPEsIEkqQ7V2TEnQ
+	 9wNC8X7Yj90zTXLpfXKSVSgtUCFB2C7JgoE2/FqxaRI86gNW7cMwmsScWWpytRJnEA
+	 ecN2hmfWSptGisDzjpxEvcWhj4F4tlvvC27tgudw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727545AbfBTKlU convert rfc822-to-8bit (ORCPT
+        id S1727580AbfBTKlY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 05:41:20 -0500
-Received: from unicorn.mansr.com ([81.2.72.234]:44098 "EHLO unicorn.mansr.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726209AbfBTKlU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 05:41:20 -0500
-Received: by unicorn.mansr.com (Postfix, from userid 51770)
-        id 9B1B815637; Wed, 20 Feb 2019 10:41:18 +0000 (GMT)
-From:   =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] platform: set of_node in platform_device_register_full()
-References: <20190216164512.9525-1-mans@mansr.com>
-        <CAJZ5v0iZHfU=mE3JGcKqbswGGert7CvpKPkVE1s+-X1zXKJiEw@mail.gmail.com>
-        <yw1xk1hxxss8.fsf@mansr.com>
-        <CAJZ5v0gG5Rau71YrmUL8V7EpZjHQNOzLpEJHCJjXdgaDm4TrSw@mail.gmail.com>
-Date:   Wed, 20 Feb 2019 10:41:18 +0000
-In-Reply-To: <CAJZ5v0gG5Rau71YrmUL8V7EpZjHQNOzLpEJHCJjXdgaDm4TrSw@mail.gmail.com>
-        (Rafael J. Wysocki's message of "Wed, 20 Feb 2019 10:50:43 +0100")
-Message-ID: <yw1x7eduyc6p.fsf@mansr.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Wed, 20 Feb 2019 05:41:24 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37330 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726209AbfBTKlX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 05:41:23 -0500
+Received: by mail-ot1-f66.google.com with SMTP id b3so39368992otp.4;
+        Wed, 20 Feb 2019 02:41:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nY68LkdjJ3/JOmcpfiPJR1n+ChChInaf/c1v8eXK99A=;
+        b=Uf/NRPYXYv81TZwT2sEa23ZXI0WN1at4SiuDnHVcaXs/bRmyMkVAh1r31CaNLAk+V8
+         5VibGcffsE7wU1xR7Ps1tw5OmkCfq6MwNBoQ+HLNGyfljAW4L85kjFbaKYTMi3cl/iK9
+         HfBBV7H9rcdjDS2R1Sd9yFJSlZmJj14JKYMwkLupJRUrDdQK5CexjUbm61Khib/oPFZJ
+         f73Xg2kfFHonnif+i5Rux+isVeNcn5yILDXRY/B51WVLdVRgI+zf0fc4VnTe4CihBvP5
+         pSS6cM6a4BY7DA3BLgsORuxDEhSag9f2OsKSyu8XPXXqCgbWYc63KnsIR1Ry+lOa58ID
+         e3IQ==
+X-Gm-Message-State: AHQUAua+JxbYCivuGUaMXINhw5AWUTeuCrbRl7mX8LXetS3/0JC3XIjm
+        R/E9rL1yD1FZbc03DwJa3/r6brToYk9kHd5Ael4=
+X-Google-Smtp-Source: AHgI3IbBR661esWaVatBL8SaslH7ODDEmYwTAyx9fYYHVm4r/EeR9ut4Z9O5UJV0N3+XUKi6ZCHzFWc//1VlKb/b56I=
+X-Received: by 2002:aca:ed0f:: with SMTP id l15mr5560023oih.76.1550659282889;
+ Wed, 20 Feb 2019 02:41:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
+References: <20190220101017.19587-1-e.velu@criteo.com>
+In-Reply-To: <20190220101017.19587-1-e.velu@criteo.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 20 Feb 2019 11:41:11 +0100
+Message-ID: <CAJZ5v0i5BVFRKsCVxDwG90vBAuS3QYB=-GkC0pbGLy5DWDXuMg@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: Report if CPU doesn't report boost technologies
+To:     Erwan Velu <erwanaliasr1@gmail.com>
+Cc:     Erwan Velu <e.velu@criteo.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "open list:CPU FREQUENCY SCALING FRAMEWORK" 
+        <linux-pm@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Rafael J. Wysocki" <rafael@kernel.org> writes:
-
-> On Mon, Feb 18, 2019 at 12:10 PM Måns Rullgård <mans@mansr.com> wrote:
->>
->> "Rafael J. Wysocki" <rafael@kernel.org> writes:
->>
->> > On Sat, Feb 16, 2019 at 5:50 PM Mans Rullgard <mans@mansr.com> wrote:
->> >>
->> >> If the provided fwnode is an OF node, set dev.of_node as well.
->> >>
->> >> Signed-off-by: Mans Rullgard <mans@mansr.com>
->> >> ---
->> >>  drivers/base/platform.c | 1 +
->> >>  1 file changed, 1 insertion(+)
->> >>
->> >> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
->> >> index dff82a3c2caa..853a1d0e5845 100644
->> >> --- a/drivers/base/platform.c
->> >> +++ b/drivers/base/platform.c
->> >> @@ -512,6 +512,7 @@ struct platform_device *platform_device_register_full(
->> >>
->> >>         pdev->dev.parent = pdevinfo->parent;
->> >>         pdev->dev.fwnode = pdevinfo->fwnode;
->> >> +       pdev->dev.of_node = of_node_get(to_of_node(pdev->dev.fwnode));
->> >
->> > of_node_get() generally does a kobject_get() on the node's kobject, so
->> > when is that reference dropped?  Or if it doesn't need to be dropped
->> > at all, why is this the case?
->>
->> platform_device_release() calls of_device_node_put().
+On Wed, Feb 20, 2019 at 11:11 AM Erwan Velu <erwanaliasr1@gmail.com> wrote:
 >
-> Yes, it does, but this is the reference that's already acquired for
-> devices added while parsing DT, isn't it?
+> There is some rare cases where CPB (and possibly IDA) are missing on processors.
+> This is the case fixed by commit f7f3dc00f612 ("x86/cpu/AMD: Fix erratum 1076 (CPB bit)") and following.
 >
-> Your change adds an extra reference AFAICS.
->
-> Also, why is this patch needed?
+> In such context, the boost status isn't reported by /sys/devices/system/cpu/cpufreq/boost.
 
-Some drivers are just shims that create extra "glue" devices with the DT
-device as parent and have the real driver bind to these.  In other
-cases, the same real driver matches the DT node directly.  When a glue
-device is used, it needs to get a reference to the original DT node in
-order for the main driver to access properties and child nodes.
+So I'm not really sure why the extra message is needed.  It looks like
+this message will always be printed (with debug output enabled) if the
+current cpufreq driver is acpi-cpufreq and the boost attribute is not
+present in sysfs, which only is the case if CPB/IDA aren't there.
 
-Right now, my problem is that the suxi-musb driver creates such a glue
-device for the musb core driver to bind to without setting of_node.
-This means devices attached to this USB interface don't get associated
-with DT nodes, if present, the way they do with EHCI.
-
-The sunxi-musb driver uses platform_device_register_full(), so this
-seemed like the easiest way to let it set of_node of the new device.
-Since this creates a second reference to the same node, of_node_get()
-is required.
-
-If you'd prefer solving this in some other way, please tell me how.
-
--- 
-Måns Rullgård
+Does it provide any additional information, then?
