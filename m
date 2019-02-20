@@ -2,99 +2,134 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B0ACC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD511C10F07
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:32:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D740A214AF
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:31:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dAvIOGZI"
+	by mail.kernel.org (Postfix) with ESMTP id 93A0B2146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:32:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726213AbfBTXbX (ORCPT
+        id S1726620AbfBTXcP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 18:31:23 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:34763 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725804AbfBTXbW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 18:31:22 -0500
-Received: by mail-vk1-f193.google.com with SMTP id k64so470845vke.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 15:31:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9Geu6kIrLpNT7LHalwzVTG5ZGD8OIATzIgsMLCJNtbM=;
-        b=dAvIOGZI7j8SE4aR7yOduckZGBNNEqTv+i+KAt0XfRFWDa+lt0RBaW2VNX77WzJf24
-         ZAImDouNJVsVrAyEyOt+geyw8qmpuRfbEX/Y+VScoKjFLjspEjh6MKsXITs8dkadwZ5E
-         wa0BbhXPm7OIsxAKy19GZ2Gi05Sbu/KKLokcQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9Geu6kIrLpNT7LHalwzVTG5ZGD8OIATzIgsMLCJNtbM=;
-        b=O9o27sUK++tCpZsEmwU6+/ebTVLIS3sRekfVwYNZS8/WHe6ozM5tC9dAxLmPiTasDw
-         Eao0lMRVukF0t5itS/KN2AmBzq8Xqhk7Y0VMC9V7sgkoozJ3FFHjVpDH/EXaxi7ZslKD
-         pbLQ6h35UjiQTALcPF1zYmYAeFIHVYnHZkUrh6E5k6e62ND5d3gFmvc5bxMp42YXIPTO
-         ZUCIwrZhS83XTCk2gLDaG5p6jF1a+bb1q/0+1U73FVk21RwWyE1kJwdig2znmDHPScqg
-         QTd6HlSLjltWLr6JBjM27MlGifJesImhKhj+lSC9TqoTU5ovgms+RF0Atmj54jWYF10R
-         gKTw==
-X-Gm-Message-State: AHQUAuZzXli17+XPpOyIyWVCVecDrPye4m6lPHWOnpZVgYgyUtiaWSIm
-        e6/NJZ+yhVv/y7eGqAFeXqLNZoNBbbw=
-X-Google-Smtp-Source: AHgI3Ia4CI3stm9lRFlSsqNOZH9nlixz0AckBOtfp8qS3WQD2r3K9IX5/xbeuiMnuJqaCusSxnvpkg==
-X-Received: by 2002:a1f:fc0e:: with SMTP id a14mr20117972vki.91.1550705481617;
-        Wed, 20 Feb 2019 15:31:21 -0800 (PST)
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com. [209.85.221.176])
-        by smtp.gmail.com with ESMTPSA id z70sm3395838vsc.15.2019.02.20.15.31.20
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Feb 2019 15:31:21 -0800 (PST)
-Received: by mail-vk1-f176.google.com with SMTP id b6so4826373vkf.8
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 15:31:20 -0800 (PST)
-X-Received: by 2002:a1f:998d:: with SMTP id b135mr20648842vke.44.1550705478925;
- Wed, 20 Feb 2019 15:31:18 -0800 (PST)
+        Wed, 20 Feb 2019 18:32:15 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34842 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725804AbfBTXcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 18:32:15 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C43AF30832DC;
+        Wed, 20 Feb 2019 23:32:14 +0000 (UTC)
+Received: from [IPv6:::1] (ovpn04.gateway.prod.ext.phx2.redhat.com [10.5.9.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 508921A837;
+        Wed, 20 Feb 2019 23:32:14 +0000 (UTC)
+From:   Eric Sandeen <sandeen@redhat.com>
+Subject: [PATCH] sysctl: Fix proc_do_large_bitmap for large input buffers
+To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        fsdevel <linux-fsdevel@vger.kernel.org>, netdev@vger.kernel.org
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Message-ID: <53be40fc-6ec4-c714-a64e-f69c96f7058f@redhat.com>
+Date:   Wed, 20 Feb 2019 17:32:13 -0600
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <20190218232308.11241-1-tobin@kernel.org>
-In-Reply-To: <20190218232308.11241-1-tobin@kernel.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 20 Feb 2019 15:31:07 -0800
-X-Gmail-Original-Message-ID: <CAGXu5j+gHMCjxMr3k0UNBcsT6DYuALtpROxazf7YVX=SUja_cQ@mail.gmail.com>
-Message-ID: <CAGXu5j+gHMCjxMr3k0UNBcsT6DYuALtpROxazf7YVX=SUja_cQ@mail.gmail.com>
-Subject: Re: [PATCH 0/6] lib: Add safe string funtions
-To:     "Tobin C. Harding" <tobin@kernel.org>
-Cc:     Shuah Khan <shuah@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 20 Feb 2019 23:32:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 3:24 PM Tobin C. Harding <tobin@kernel.org> wrote:
-> During your talk at LCA you mentioned that we could do with a couple
-> more safe string functions.  One to zero the tail of the destination
-> buffer after call to strscpy() and also the self explanatory
-> strscpy_from_user().
+Today, proc_do_large_bitmap() truncates a large write input buffer
+to PAGE_SIZE - 1, which may result in misparsed numbers at the
+(truncated) end of the buffer.  Further, it fails to notify the caller
+that the buffer was truncated, so it doesn't get called iteratively
+to finish the entire input buffer.
 
-Thanks for jumping in with this! :)
+Tell the caller if there's more work to do by adding the skipped
+amount back to left/*lenp before returning.
 
-> I couldn't work out if this is a false positive or not?  Does the new
-> config option CONFIG_TEST_STRING need more documentation?  I don't see
-> where extra docs should be added and it seems self explanatory as is.
+To fix the misparsing, reset the position if we have completely
+consumed a truncated buffer (or if just one char is left, which
+may be a "-" in a range), and ask the caller to come back for
+more.
 
-Usually this just means the help string in Kconfig is "too short".
-Sometimes this is a false positive -- really up to you if you think it
-needs more. :)
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+---
 
-On to individual patches...
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index ba4d9e85feb8..970a96659809 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -3089,9 +3089,13 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
+ 
+ 	if (write) {
+ 		char *kbuf, *p;
++		size_t skipped = 0;
+ 
+-		if (left > PAGE_SIZE - 1)
++		if (left > PAGE_SIZE - 1) {
+ 			left = PAGE_SIZE - 1;
++			/* How much of the buffer we'll skip this pass */
++			skipped = *lenp - left;
++		}
+ 
+ 		p = kbuf = memdup_user_nul(buffer, left);
+ 		if (IS_ERR(kbuf))
+@@ -3108,9 +3112,22 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
+ 		while (!err && left) {
+ 			unsigned long val_a, val_b;
+ 			bool neg;
++			size_t saved_left;
+ 
++			/* In case we stop parsing mid-number, we can reset */
++			saved_left = left;
+ 			err = proc_get_long(&p, &left, &val_a, &neg, tr_a,
+ 					     sizeof(tr_a), &c);
++			/*
++			 * If we consumed the entirety of a truncated buffer or
++			 * only one char is left (may be a "-"), then stop here,
++			 * reset, & come back for more.
++			 */
++			if ((left <= 1) && skipped) {
++				left = saved_left;
++				break;
++			}
++
+ 			if (err)
+ 				break;
+ 			if (val_a >= bitmap_len || neg) {
+@@ -3128,6 +3145,15 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
+ 				err = proc_get_long(&p, &left, &val_b,
+ 						     &neg, tr_b, sizeof(tr_b),
+ 						     &c);
++				/*
++				 * If we consumed all of a truncated buffer or
++				 * then stop here, reset, & come back for more.
++				 */
++				if (!left && skipped) {
++					left = saved_left;
++					break;
++				}
++
+ 				if (err)
+ 					break;
+ 				if (val_b >= bitmap_len || neg ||
+@@ -3146,6 +3172,7 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
+ 			proc_skip_char(&p, &left, '\n');
+ 		}
+ 		kfree(kbuf);
++		left += skipped;
+ 	} else {
+ 		unsigned long bit_a, bit_b = 0;
+ 
 
--- 
-Kees Cook
+
