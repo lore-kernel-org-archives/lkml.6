@@ -2,99 +2,92 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B410AC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43EB7C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:58:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 911B32086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:58:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F8402086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:58:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rdj4uTyX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbfBTJ6M (ORCPT
+        id S1727284AbfBTJ6n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 04:58:12 -0500
-Received: from mga18.intel.com ([134.134.136.126]:11945 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725816AbfBTJ6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 04:58:11 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 01:58:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,390,1544515200"; 
-   d="scan'208";a="276434869"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.169])
-  by orsmga004.jf.intel.com with ESMTP; 20 Feb 2019 01:58:07 -0800
-Date:   Wed, 20 Feb 2019 11:58:06 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Zhangshaokun <zhangshaokun@hisilicon.com>,
-        ard.biesheuvel@linaro.org, zohar@linux.ibm.com
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org
-Subject: Re: linux-next: Tree for Feb 20
-Message-ID: <20190220095806.GB9089@linux.intel.com>
-References: <20190220184341.73bd2084@canb.auug.org.au>
- <1114b964-8ff8-5632-64d4-e94a9160b998@hisilicon.com>
- <20190220095252.GA9089@linux.intel.com>
+        Wed, 20 Feb 2019 04:58:43 -0500
+Received: from mail-lf1-f53.google.com ([209.85.167.53]:45846 "EHLO
+        mail-lf1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726886AbfBTJ6m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 04:58:42 -0500
+Received: by mail-lf1-f53.google.com with SMTP id h10so16876866lfc.12
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 01:58:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=25wOCjJuLtCHKhw7aXSAdHD0XpH35Ob94NTaArnIrjI=;
+        b=Rdj4uTyXoyV9Ez5+S4H7v9STzB2YDrEzRwrYds7JCCQUec68bvVRw/i4DD3m3aMVu4
+         Bp26wgHc7v02vGktYDx4EEPauDJo17nE9ILVBZEc+6m93AoE8wQaA+tROuKnMpNiC3dI
+         CkJig9qTsM+gruY+1L0fTnNdNOrEWJy7xLzMi9mTvHjVvIXDjfMN3Lenk0fIYCFhTDkV
+         fq0ipuZoNhqmA9CR8gc5XmeMj8AW5THAoMA6xN2ERZvcv4EZ+9EHeB+iULbM+7pJ0qGg
+         TcQZH/TytZm20icA7egl+fGWUWClSzRTJMWU12x9UM7ggcjcIkMs9mFT0tf+f7MMQm3z
+         pKsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=25wOCjJuLtCHKhw7aXSAdHD0XpH35Ob94NTaArnIrjI=;
+        b=P84VWwb0hpjILEQo2f+7MvC9vEtdBAwuF/cpk18Ov4Kab5PROO7POI1dNTXUn1j1GE
+         Nre+i4Of1GPfrvti8gWz2lZVOpF9+B6j6sITYddilVUrq2UjGchpJ+AFYFC0I1PdBUCw
+         0LO2nOy+pbdCvwygOFja4nM3WTv2nop6mpFhFbWg8cy5vNQIOn8y9gToVFNuOzOgqyvX
+         9Mxr2Ro9Du2FC3Kmeq6l90c2wJUoEvgOV3t2rbXreBN5s/2OfOV6d/h8ZTYvFAUI1psB
+         wygCIGA7IYh/acDF4SIRLNz2xGgp/IfwX6FgMOx2xgSjSQzWl8PhcmB7Pz0DLBmeaBgH
+         o85w==
+X-Gm-Message-State: AHQUAub/tb0aq9eZER6/aB7hGOboSy65RMikmRFzgJXbao01ZC3lsOq2
+        FkuGqg/ELiCnfmdwirLsNJ5uLqSFAx0FbgBXEWueKQ==
+X-Google-Smtp-Source: AHgI3IZUlcwYBF4m+Aj6SHSyY8f9t1MpBEzBqb0FGuMfH86C3J0MIhkbJZyxOnVd6XV1dYieuNKnvPkiXrp0meKiJNI=
+X-Received: by 2002:a19:7b0e:: with SMTP id w14mr19597096lfc.8.1550656720529;
+ Wed, 20 Feb 2019 01:58:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190220095252.GA9089@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1550091448-28578-1-git-send-email-info@metux.net>
+ <1550181897-2596-1-git-send-email-info@metux.net> <CAHp75VfgzGQ7O-AjwQ1R=OZTiRwxRx_q9Yo1MOVjko7D-Wz14w@mail.gmail.com>
+In-Reply-To: <CAHp75VfgzGQ7O-AjwQ1R=OZTiRwxRx_q9Yo1MOVjko7D-Wz14w@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 20 Feb 2019 10:58:29 +0100
+Message-ID: <CACRpkdbSU1R0ZXyPfDrcnd0CYw+mjnPk4pVgbBnWZt-ibdfYaA@mail.gmail.com>
+Subject: Re: APUv2/v3 board support V3
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 11:52:52AM +0200, Jarkko Sakkinen wrote:
-> On Wed, Feb 20, 2019 at 05:11:15PM +0800, Zhangshaokun wrote:
-> > There is a compiler failure on arm64 platform, as follow:
-> > 
-> >   AS      arch/arm64/kvm/hyp.o
-> >   CC      kernel/trace/ring_buffer.o
-> > In file included from security/integrity/ima/ima_fs.c:30:0:
-> > security/integrity/ima/ima.h:176:7: error: redeclaration of enumerator ‘NONE’
-> >   hook(NONE)   \
-> >        ^
-> > security/integrity/ima/ima.h:188:34: note: in definition of macro ‘__ima_hook_enumify’
-> >  #define __ima_hook_enumify(ENUM) ENUM,
-> >                                   ^
-> > security/integrity/ima/ima.h:191:2: note: in expansion of macro ‘__ima_hooks’
-> >   __ima_hooks(__ima_hook_enumify)
-> >   ^
-> > In file included from ./arch/arm64/include/asm/acpi.h:15:0,
-> >                  from ./include/acpi/acpi_io.h:7,
-> >                  from ./include/linux/acpi.h:47,
-> >                  from ./include/linux/tpm.h:26,
-> >                  from security/integrity/ima/ima.h:25,
-> >                  from security/integrity/ima/ima_fs.c:30:
-> > ./include/linux/efi.h:1716:2: note: previous definition of ‘NONE’ was here
-> >   NONE,
-> >   ^
-> > scripts/Makefile.build:276: recipe for target 'security/integrity/ima/ima_fs.o' failed
-> > make[3]: *** [security/integrity/ima/ima_fs.o] Error 1
-> > 
-> > I dug it and it is the commit 901615cb916d ("tpm: move tpm_chip definition to include/linux/tpm.h")
-> 
-> This results from a new include in tpm.h:
-> 
->   #include <linux/acpi.h>
-> 
-> Must be fixed either in include/linux/efi.h or security/integrity/ima.h as
-> those files have a name collision. Makes me wonder why neither has taken
-> care of prefixing the constants properly.
+On Fri, Feb 15, 2019 at 7:16 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> On Fri, Feb 15, 2019 at 12:05 AM Enrico Weigelt, metux IT consult
 
-Preferably both subsystems should be fixed with proper 'EFI_' and 'IMA_'
-prefixes. Defining a constant named as NONE in a non-generic subsystem
-(e.g. not part of the core data structures of Linux) and especially
-exporting it to include/linux is not too well considered act.
+> Linus, this one looks good enough, though some style minors can be addressed:
+> - redundant parens (and actually I prefer to see x = readl(); x |=
+> ...; writel(); in three lines)
+> - useless blank lines
+> - style of parameters where one per line (it's not needed in this drivers)
+>
+> In any case, FWIW,
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-/Jarkko
+OK Enrico can you include Andy's Review tag when you respin, fix
+the spinlock issue I pointed out and send out as v4 and I'll apply
+it.
+
+Yours,
+Linus Walleij
