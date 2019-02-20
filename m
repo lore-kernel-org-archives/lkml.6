@@ -6,37 +6,41 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 497DAC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:39:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BDAC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:39:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DF6E2146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:39:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B67A42146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:39:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727831AbfBTSjq (ORCPT
+        id S1727809AbfBTSjo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 13:39:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47036 "EHLO mail.kernel.org"
+        Wed, 20 Feb 2019 13:39:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727004AbfBTSiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 13:38:06 -0500
+        id S1726995AbfBTSiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 13:38:07 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61D8821934;
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C5D321924;
         Wed, 20 Feb 2019 18:38:06 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92-RC5)
         (envelope-from <rostedt@goodmis.org>)
-        id 1gwWkv-0006gA-HQ; Wed, 20 Feb 2019 13:38:05 -0500
-Message-Id: <20190220183805.422405135@goodmis.org>
+        id 1gwWkv-0006fg-C2; Wed, 20 Feb 2019 13:38:05 -0500
+Message-Id: <20190220183805.262334648@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Wed, 20 Feb 2019 13:37:50 -0500
+Date:   Wed, 20 Feb 2019 13:37:49 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        "zhangyi (F)" <yi.zhang@huawei.com>
-Subject: [for-next][PATCH 13/29] tracing: No need to free iter->trace in fail path of
- tracing_open_pipe()
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        David Windsor <dwindsor@gmail.com>,
+        Hans Liljestrand <ishkamiel@gmail.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Elena Reshetova <elena.reshetova@intel.com>
+Subject: [for-next][PATCH 12/29] uprobes: convert uprobe.ref to refcount_t
 References: <20190220183737.034634614@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -45,37 +49,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "zhangyi (F)" <yi.zhang@huawei.com>
+From: Elena Reshetova <elena.reshetova@intel.com>
 
-Commit d716ff71dd12 ("tracing: Remove taking of trace_types_lock in
-pipe files") use the current tracer instead of the copy in
-tracing_open_pipe(), but it forget to remove the freeing sentence in
-the error path.
+atomic_t variables are currently used to implement reference
+counters with the following properties:
+ - counter is initialized to 1 using atomic_set()
+ - a resource is freed upon counter reaching zero
+ - once counter reaches zero, its further
+   increments aren't allowed
+ - counter schema uses basic atomic operations
+   (set, inc, inc_not_zero, dec_and_test, etc.)
 
-[ Note, this is harmless because kfree(NULL) is allowed and iter is
-  allocated with kzalloc() making iter->trace = NULL -- S. Rostedt ]
+Such atomic variables should be converted to a newly provided
+refcount_t type and API that prevents accidental counter overflows
+and underflows. This is important since overflows and underflows
+can lead to use-after-free situation and be exploitable.
 
-Link: http://lkml.kernel.org/r/1550060946-45984-1-git-send-email-yi.zhang@huawei.com
+The variable uprobe.ref is used as pure reference counter.
+Convert it to refcount_t and fix up the operations.
 
-Fixes: d716ff71dd12 ("tracing: Remove taking of trace_types_lock in pipe files")
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
+**Important note for maintainers:
+
+Some functions from refcount_t API defined in lib/refcount.c
+have different memory ordering guarantees than their atomic
+counterparts.
+The full comparison can be seen in
+https://lkml.org/lkml/2017/11/15/57 and it is hopefully soon
+in state to be merged to the documentation tree.
+Normally the differences should not matter since refcount_t provides
+enough guarantees to satisfy the refcounting use cases, but in
+some rare cases it might matter.
+Please double check that you don't have some undocumented
+memory guarantees for this variable usage.
+
+For the uprobe.ref it might make a difference
+in following places:
+ - put_uprobe(): decrement in refcount_dec_and_test() only
+   provides RELEASE ordering and control dependency on success
+   vs. fully ordered atomic counterpart
+
+Link: http://lkml.kernel.org/r/1547637627-29526-1-git-send-email-elena.reshetova@intel.com
+
+Suggested-by: Kees Cook <keescook@chromium.org>
+Acked-by: Oleg Nesterov <oleg@redhat.com>
+Reviewed-by: David Windsor <dwindsor@gmail.com>
+Reviewed-by: Hans Liljestrand <ishkamiel@gmail.com>
+Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/trace.c | 1 -
- 1 file changed, 1 deletion(-)
+ kernel/events/uprobes.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index c521b7347482..b583ff7656bb 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -5624,7 +5624,6 @@ static int tracing_open_pipe(struct inode *inode, struct file *filp)
- 	return ret;
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 8aef47ee7bfa..0a8bf7a4fc5e 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -66,7 +66,7 @@ static struct percpu_rw_semaphore dup_mmap_sem;
  
- fail:
--	kfree(iter->trace);
- 	kfree(iter);
- 	__trace_array_put(tr);
- 	mutex_unlock(&trace_types_lock);
+ struct uprobe {
+ 	struct rb_node		rb_node;	/* node in the rb tree */
+-	atomic_t		ref;
++	refcount_t		ref;
+ 	struct rw_semaphore	register_rwsem;
+ 	struct rw_semaphore	consumer_rwsem;
+ 	struct list_head	pending_list;
+@@ -560,13 +560,13 @@ set_orig_insn(struct arch_uprobe *auprobe, struct mm_struct *mm, unsigned long v
+ 
+ static struct uprobe *get_uprobe(struct uprobe *uprobe)
+ {
+-	atomic_inc(&uprobe->ref);
++	refcount_inc(&uprobe->ref);
+ 	return uprobe;
+ }
+ 
+ static void put_uprobe(struct uprobe *uprobe)
+ {
+-	if (atomic_dec_and_test(&uprobe->ref)) {
++	if (refcount_dec_and_test(&uprobe->ref)) {
+ 		/*
+ 		 * If application munmap(exec_vma) before uprobe_unregister()
+ 		 * gets called, we don't get a chance to remove uprobe from
+@@ -657,7 +657,7 @@ static struct uprobe *__insert_uprobe(struct uprobe *uprobe)
+ 	rb_link_node(&uprobe->rb_node, parent, p);
+ 	rb_insert_color(&uprobe->rb_node, &uprobes_tree);
+ 	/* get access + creation ref */
+-	atomic_set(&uprobe->ref, 2);
++	refcount_set(&uprobe->ref, 2);
+ 
+ 	return u;
+ }
 -- 
 2.20.1
 
