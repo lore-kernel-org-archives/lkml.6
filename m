@@ -2,110 +2,90 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD6DC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E9E0C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E2B92146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:59:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mvd53L3S"
+	by mail.kernel.org (Postfix) with ESMTP id 16F102146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:01:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726323AbfBTU7h (ORCPT
+        id S1726845AbfBTVBb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 15:59:37 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:55044 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbfBTU7g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 15:59:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=505CT9UNmxyARcL8WDsjWWFZGxSMsAWXHGodR+SfaFU=; b=mvd53L3SwTot4baVjZ7KafeGd
-        MLeivB6+Fcx1ohUT8HV5k7jKY2wRrPFdkNN8xC6iiVH4XtlhUC4VYee0diAXvOoLEy1IUQCiBrR5C
-        nHaTdwPVPJ3ifyZ/f7pWmI7J51bRK+wcRLEFVNRjmqo+ZRmw4i6uL9oF7kGFxLJa5zUITjEvV2lUq
-        OwjZz+QUNpLIVhH7AyHrXkPn7yzkLTJp7/ct5699s5Lmb+7dlnIdSL4f7BVwVMk4oQ28Kcr4oYaFs
-        zMt3jZFZXhvamkPIrKpOUvT8EI2h1hPbfPphdtdsLhUxyF1lXp0Na2UfN0kzOhvdO/E1+RwSiuTVv
-        mtyh1dtNA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gwYxm-00036R-7C; Wed, 20 Feb 2019 20:59:30 +0000
-Date:   Wed, 20 Feb 2019 12:59:30 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Yu Zhao <yuzhao@google.com>
-Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Jun Yao <yaojun8558363@gmail.com>,
-        Laura Abbott <labbott@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 1/3] arm64: mm: use appropriate ctors for page tables
-Message-ID: <20190220205930.GL12668@bombadil.infradead.org>
-References: <20190214211642.2200-1-yuzhao@google.com>
- <20190218231319.178224-1-yuzhao@google.com>
- <863acc9a-53fb-86ad-4521-828ee8d9c222@arm.com>
- <20190219053205.GA124985@google.com>
- <8f9b0bfb-b787-fa3e-7322-73a56a618aa8@arm.com>
- <20190219222828.GA68281@google.com>
- <f7e4db43-b836-4ac2-1aea-922be585d8b1@arm.com>
- <20190220202244.GA80497@google.com>
+        Wed, 20 Feb 2019 16:01:31 -0500
+Received: from muru.com ([72.249.23.125]:39948 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726013AbfBTVBb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 16:01:31 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id BF71C80E1;
+        Wed, 20 Feb 2019 21:01:40 +0000 (UTC)
+Date:   Wed, 20 Feb 2019 13:01:27 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     David Miller <davem@davemloft.net>
+Cc:     grygorii.strashko@ti.com, kishon@ti.com, robh+dt@kernel.org,
+        netdev@vger.kernel.org, nsekhar@ti.com,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 6/6] net: ethernet: ti: cpsw: deprecate cpsw-phy-sel
+ driver
+Message-ID: <20190220210127.GU15711@atomide.com>
+References: <1550676319-6440-7-git-send-email-grygorii.strashko@ti.com>
+ <20190220.112244.1206973642383679896.davem@davemloft.net>
+ <20190220203326.GT15711@atomide.com>
+ <20190220.124155.2226787912266109280.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190220202244.GA80497@google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20190220.124155.2226787912266109280.davem@davemloft.net>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 01:22:44PM -0700, Yu Zhao wrote:
-> On Wed, Feb 20, 2019 at 03:57:59PM +0530, Anshuman Khandual wrote:
-> > Using pgtable_pmd_page_ctor() during PMD level pgtable page allocation
-> > as suggested in the patch breaks pmd_alloc_one() changes as per the
-> > previous proposal. Hence we all would need some agreement here.
+* David Miller <davem@davemloft.net> [190220 20:42]:
+> From: Tony Lindgren <tony@atomide.com>
+> Date: Wed, 20 Feb 2019 12:33:26 -0800
+> 
+> > * David Miller <davem@davemloft.net> [190220 19:23]:
+> >> From: Grygorii Strashko <grygorii.strashko@ti.com>
+> >> Date: Wed, 20 Feb 2019 17:25:19 +0200
+> >> 
+> >> > Deprecate cpsw-phy-sel driver as it's been replaced with new
+> >> > TI phy-gmii-sel PHY driver.
+> >> > 
+> >> > Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> >> 
+> >> Acked-by: David S. Miller <davem@davemloft.net>
 > > 
-> > https://www.spinics.net/lists/arm-kernel/msg701960.html
+> > Thanks for the ack, but actually I'd prefer you to pick
+> > this patch at some future date. I suggest Grygorii just
+> > repost this one after v5.1-rc1.
 > 
-> A proposal that requires all page tables to go through a same set of
-> ctors on all archs is not only inefficient (for kernel page tables)
-> but also infeasible (for arches use kmem for page tables). I've
-> explained this clearly.
-> 
-> The generalized page table functions must recognize the differences
-> on different levels and between user and kernel page tables, and
-> provide unified api that is capable of handling the differences.
+> It's so much easier if you group this with those DT changes, they
+> logically belong together as well and it helps someone reading
+> the changes in the tree also if they are side by side.
 
-The two architectures I'm aware of (s390 and power) which use sub-page
-allocations for page tables do so by allocating entire pages and then
-implementing their own allocators.  It shouldn't be a huge problem to
-use a ctor for the pages.  We can probably even implement a dtor for them.
+I agree that a group of patches should go together in
+most cases.
 
-Oh, another corner-case I've just remembered is x86-32's PAE with four
-8-byte entries in the PGD.  That should also go away and be replaced
-with a shared implementation of sub-page allocations which can also be
-marked as PageTable.
+> Why don't you want to integrate this with them?
 
-Ideally PTEs, PMDs, etc, etc would all be accounted to the individual
-processes causing them to be allocated.  This isn't really feasible
-with the x86 PGD; by definition there's only one per process.  I'm OK
-with failing to account this 32-byte allocation to the task though.
-So maybe the pgd_cache can remain separate from the hypothetical unified
-ppc/s390 code.
+Because the arm-soc tree wants dts changes separately in
+general. The dts changes are considered firmware describing
+hardware. And it makes it possible to split the arm-soc pile
+of patches into multiple pull requests. In theory there
+should be no dependency between dts changes and driver
+changes, but in reality that's not always the case :)
 
+What I can do is set up a separate branch with just this
+patch on top of the dts changes that the arm-soc guys can
+then merge towards the end of the merge cycle. If that
+works for you, let me know and I'll do it.
+
+Regards,
+
+Tony
