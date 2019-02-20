@@ -2,109 +2,183 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0AD3C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63AE9C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:39:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD1DD20685
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:37:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28A1220859
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:39:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a3lonrAS"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ARAHHHbo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbfBTIhS (ORCPT
+        id S1726395AbfBTIjq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 03:37:18 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:40823 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725846AbfBTIhO (ORCPT
+        Wed, 20 Feb 2019 03:39:46 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:9312 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725885AbfBTIjp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 03:37:14 -0500
-Received: by mail-lf1-f65.google.com with SMTP id t14so16926261lfk.7
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 00:37:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tBj//QOlOyjUJzu3wlOuk95ckvdPlbdm8RVV0pjJRDw=;
-        b=a3lonrAS40uoTQfSOuKHsMVc5OKd5ZbWNpSazXSzDxqigEzJ4AOoe8kmhPgfVNLtxy
-         Ifq7ZJ1Ie9sKFCdhn0h8lw5znN5TEzGd50gxlrtMbVO1adoAd2ypqsrwFjLzHX91Ukww
-         HsklqLKaCWtBRa9mmzc2EdN60hV8Sf4fd5s4hr9x/4mGvkOPBEJoklXVvNrleSEhDkyC
-         yH4KnO4BhkchQCBEh9ZLl/TI5neexA+u2xSTeJ8IB/M+Ur+GZdnQkhpTTy5E70Us2kvH
-         9HRKn7kxhaKBlzfU+XVIHYMQv2k1TiCU8XMY3tpXCD86VmJpkk0uhUP8eQUk2+EEr/wY
-         d8Yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=tBj//QOlOyjUJzu3wlOuk95ckvdPlbdm8RVV0pjJRDw=;
-        b=h1cgwtM6spKRmW7yuYoYypA48iMYewybXTZJgBAdM9lNFYf5mGSlGBAmOdKSKwzgDM
-         PdG/3BBW0YpkKpFRla1vWSbxJT7IaDrAnvtLafoIW/oITnpnXky8Ep0IQrglxJCllgpN
-         i/ooxLeaeqjAKqXz3ZNdk5gqJmsGC9ees7JV5yXf4JyoUotb6UWIW/x0oQPgTAwO6xO0
-         GWGwY83jpNitU78pSsBMvqlIYX1wTsHzUoPFVRAq4s5ZHCEf9l/7OU7D6tuwoQPmxbvi
-         HodgvE7B68oM/e+CJplkRRQ/Yf5/UufT1/F23YSAIG235wbojD8l8hTc9WBJJpvTSrhf
-         7EGg==
-X-Gm-Message-State: AHQUAua7GAcT6Ex+QcW+s95dJYJIvDJjEPJCXWUqtPmUjaU2n2AkdbDm
-        099VrWXmfZFbXkxctKG/5KM=
-X-Google-Smtp-Source: AHgI3IZtrOvjkaaWQpsLCMsnmjDD7fBtXfY5IV4YeJ93T3EUZujbBMJGGWBlKLZ4/nUK1s87YnPeyg==
-X-Received: by 2002:a19:c116:: with SMTP id r22mr19504519lff.32.1550651833049;
-        Wed, 20 Feb 2019 00:37:13 -0800 (PST)
-Received: from localhost ([188.162.52.148])
-        by smtp.gmail.com with ESMTPSA id k124sm1115781lfg.95.2019.02.20.00.37.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Feb 2019 00:37:12 -0800 (PST)
-From:   Yury Norov <yury.norov@gmail.com>
-X-Google-Original-From: Yury Norov <ynorov@marvell.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     Yury Norov <ynorov@marvell.com>, linux-kernel@vger.kernel.org,
-        Yury Norov <yury.norov@gmail.com>
-Subject: [PATCH 1/6] bitmap_parselist: don't calculate length of the input string
-Date:   Wed, 20 Feb 2019 11:37:00 +0300
-Message-Id: <20190220083705.14050-2-ynorov@marvell.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190220083705.14050-1-ynorov@marvell.com>
-References: <20190220083705.14050-1-ynorov@marvell.com>
+        Wed, 20 Feb 2019 03:39:45 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c6d12550000>; Wed, 20 Feb 2019 00:39:49 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 20 Feb 2019 00:39:43 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 20 Feb 2019 00:39:43 -0800
+Received: from [10.19.225.182] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 20 Feb
+ 2019 08:39:40 +0000
+Subject: Re: [PATCH v1 01/12] of: Add bindings of thermtrip for Tegra soctherm
+To:     Eduardo Valentin <edubezval@gmail.com>
+CC:     Rob Herring <robh@kernel.org>, <thierry.reding@gmail.com>,
+        <daniel.lezcano@linaro.org>, <linux-tegra@vger.kernel.org>,
+        <rui.zhang@intel.com>, <srikars@nvidia.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1545118484-23641-1-git-send-email-wni@nvidia.com>
+ <1545118484-23641-3-git-send-email-wni@nvidia.com>
+ <20181227230630.GA3659@bogus>
+ <1441d2d1-acfa-7b8d-5ed8-c2ca257df05d@nvidia.com>
+ <20190220012212.GE2811@localhost.localdomain>
+From:   Wei Ni <wni@nvidia.com>
+Message-ID: <f963a6b9-e25e-6eab-1dfa-da94144c7ab6@nvidia.com>
+Date:   Wed, 20 Feb 2019 16:39:38 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190220012212.GE2811@localhost.localdomain>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1550651989; bh=E07eKxmE6VsmQHM/VJAcJZSS/T7rf8EpBoxCL1ND+sE=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=ARAHHHboO88stvQfijo+Aui0ZIejz6Qu8hb7Q1K547WC+nyZ5Z6XXfLn6DWfKZpv7
+         H211vrFgd4HL4jv218cfA/UbqQs6h22K8Jb1epSZde0uN4vfmwuhgp1hlGaavU1agC
+         ig5xLWNxLXhVQlC/L7sxS9nJ52z9OzXyOPt/IjdbDc1fTMAZG+XleP4K/zKG5O267h
+         QFQodaGnmuPyN6ZVISoQSEIbWaWjcSEGJNZiF6Z7ZxRGRNoH0rabrjTain0o/Iv+OO
+         IlZSJh9D48cq0m7WCPS6LGKtSq0a+el8B57e8RuB4OEynFj3cv9oadOphBdjTDSwz0
+         ctX7SOeW3f9bQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-bitmap_parselist() calculates length of the input string before passing
-it to the __bitmap_parselist(). But the end-of-line condition is checked
-for every character in __bitmap_parselist() anyway. So doing it in wrapper
-is a simple waste of time.
 
-Signed-off-by: Yury Norov <ynorov@marvell.com>
----
- lib/bitmap.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/lib/bitmap.c b/lib/bitmap.c
-index 98872e9025da..ad1fb7e6ad0e 100644
---- a/lib/bitmap.c
-+++ b/lib/bitmap.c
-@@ -614,10 +614,7 @@ static int __bitmap_parselist(const char *buf, unsigned int buflen,
- 
- int bitmap_parselist(const char *bp, unsigned long *maskp, int nmaskbits)
- {
--	char *nl  = strchrnul(bp, '\n');
--	int len = nl - bp;
--
--	return __bitmap_parselist(bp, len, 0, maskp, nmaskbits);
-+	return __bitmap_parselist(bp, UINT_MAX, 0, maskp, nmaskbits);
- }
- EXPORT_SYMBOL(bitmap_parselist);
- 
--- 
-2.17.1
+On 20/2/2019 9:22 AM, Eduardo Valentin wrote:
+> On Fri, Dec 28, 2018 at 11:28:42AM +0800, Wei Ni wrote:
+>>
+>>
+>> On 28/12/2018 7:06 AM, Rob Herring wrote:
+>>> On Tue, Dec 18, 2018 at 03:34:33PM +0800, Wei Ni wrote:
+>>>> Add optional property "nvidia,thermtrips".
+>>>> If present, these trips will be used as HW shutdown trips,
+>>>> and critical trips will be used as SW shutdown trips.
+>>>>
+>>>> Signed-off-by: Wei Ni <wni@nvidia.com>
+>>>> ---
+>>>>  .../bindings/thermal/nvidia,tegra124-soctherm.txt    | 20 +++++++++++++++++---
+>>>>  1 file changed, 17 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
+>>>> index b6c0ae53d4dc..ab66d6feab4b 100644
+>>>> --- a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
+>>>> +++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
+>>>> @@ -55,10 +55,21 @@ Required properties :
+>>>>        - #cooling-cells: Should be 1. This cooling device only support on/off state.
+>>>>          See ./thermal.txt for a description of this property.
+>>>>  
+>>>> +Optional properties:
+>>>> +- nvidia,thermtrips : When present, this property specifies the temperature at
+>>>> +  which the soctherm hardware will assert the thermal trigger signal to the
+>>>> +  Power Management IC, which can be configured to reset or shutdown the device.
+>>>> +  It is an array of pairs where each pair represents a tsensor id followed by a
+>>>> +  temperature in milli Celcius. In the absence of this property the critical
+>>>> +  trip point will be used for thermtrip temperature.
+>>>> +
+>>>>  Note:
+>>>> -- the "critical" type trip points will be set to SOC_THERM hardware as the
+>>>> -shut down temperature. Once the temperature of this thermal zone is higher
+>>>> -than it, the system will be shutdown or reset by hardware.
+>>>> +- the "critical" type trip points will be used to set the temperature at which
+>>>> +the SOC_THERM hardware will assert a thermal trigger if the "nvidia,thermtrips"
+>>>> +property is missing. When the thermtrips property is present, the breach of a
+>>>> +critical trip point is reported back to the thermal framework to implement
+>>>> +software shutdown.
+>>>
+>>> This hardly seems like a NVidia specific concept. A h/w shutdown 
+>>> temperature... Come up with something common.
+>>
+>> Hi Rob,
+>> In current thermal framework, it doesn't support to set h/w shutdown
+>> trips, the "critical" trip is used for s/w shutdown. I noticed that in
+>> rockchip-thermal driver, it also used "rockchip,hw-tshut-temp" to set
+>> h/w shutdown temperature.
+> 
+> Why a critical trip point cannot be used for your hw shutdown too?
 
+Hi Eduardo,
+The thermal framework handle the critical type trip point in
+handle_critical_trips(), it will call orderly_poweroff to shutdown
+system gracefully.
+"
+        if (trip_type == THERMAL_TRIP_CRITICAL) {
+...
+                if (!power_off_triggered) {
+                        /*
+                         * Queue a backup emergency shutdown in the event of
+                         * orderly_poweroff failure
+                         */
+                        thermal_emergency_poweroff();
+                        orderly_poweroff(true);
+                        power_off_triggered = true;
+                }
+"
+And in this change, we added a new property to handle hw shutdown for
+Tegra. When trigger the hw shutdown trip point, the hw will cut the
+power to poweroff directly. If the temperature is raised very quickly,
+the hardware can shutdown system before s/w shutdown.
+
+Thanks.
+Wei.
+
+> 
+>>
+>>>
+>>> Also, we already have a temperature table. Why do we need temperatures 
+>>> in 2 places.
+>>
+>> Sorry, what do you mean temperature table? Do you mean the trip nodes?
+>>
+>> Thanks.
+>> Wei.
+>>
+>>>
+>>>> +
+>>>>  - the "hot" type trip points will be set to SOC_THERM hardware as the throttle
+>>>>  temperature. Once the the temperature of this thermal zone is higher
+>>>>  than it, it will trigger the HW throttle event.
+>>>> @@ -79,6 +90,9 @@ Example :
+>>>>  
+>>>>  		#thermal-sensor-cells = <1>;
+>>>>  
+>>>> +		nvidia,thermtrips = <TEGRA124_SOCTHERM_SENSOR_CPU 102500
+>>>> +				     TEGRA124_SOCTHERM_SENSOR_GPU 103000>;
+>>>> +
+>>>>  		throttle-cfgs {
+>>>>  			/*
+>>>>  			 * When the "heavy" cooling device triggered,
+>>>> -- 
+>>>> 2.7.4
+>>>>
