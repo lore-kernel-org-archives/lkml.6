@@ -2,171 +2,102 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4688C10F01
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:38:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7356C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:38:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B81D12086A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:38:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550659081;
-	bh=4oQAHDsz6TOQEMW1QciWam049QEYozb7FKG0h72ICb4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=GV0O601GxWAw0TX7VyS/mm+JDqJnqPholZ+lD2aHWNHHTo/gZgS0CbFCBen21Bflu
-	 9RrWXgr3NAVJNxIoz+nX3/PDa4fznR6Lt6SxOG+SbKRaVcNhAOVnLChLPBc9nICcWa
-	 SE5jgSjVVBH0ndAti2YM7SpPYxhOwyLkeFyGFmNY=
+	by mail.kernel.org (Postfix) with ESMTP id 6C79420700
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:38:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xPiBaCkX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbfBTKiA (ORCPT
+        id S1727497AbfBTKix (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 05:38:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52984 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726209AbfBTKiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 05:38:00 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B83C520700;
-        Wed, 20 Feb 2019 10:37:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550659078;
-        bh=4oQAHDsz6TOQEMW1QciWam049QEYozb7FKG0h72ICb4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=TH7FuhhUu9zQSQostfrk0KqyAXjaVBFnUwKxg2af8JpZhAaK91ws6VGtL/g72b3jc
-         MlLNZqMa2Oym9SBttq/Ay4xECH/UAYUfgZgQJjSk89TulCtS3CD7ZabbgMz8mwS19V
-         wcaTJzEjUDEeAAdC4bTljhI6ADBwB0m878L3t7LQ=
-Date:   Wed, 20 Feb 2019 10:37:53 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Stefan Popa <stefan.popa@analog.com>
-Cc:     <robh+dt@kernel.org>, <Michael.Hennerich@analog.com>,
-        <knaack.h@gmx.de>, <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>
-Subject: Re: [PATCH 4/6] iio: imu: adis16480: Treat temperature scale in a
- generic way
-Message-ID: <20190220103753.0b64f5cc@archlinux>
-In-Reply-To: <1550596338-24220-5-git-send-email-stefan.popa@analog.com>
-References: <1550596338-24220-1-git-send-email-stefan.popa@analog.com>
-        <1550596338-24220-5-git-send-email-stefan.popa@analog.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 20 Feb 2019 05:38:53 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:35546 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726209AbfBTKix (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 05:38:53 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1KAciEU020161;
+        Wed, 20 Feb 2019 04:38:44 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1550659124;
+        bh=VxbV4lIfH8O+URkt7IRt0vUHSPgS+YYb7pt/OABM/7k=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=xPiBaCkXPAHks2jVWQCnj/WAHK5255lhiJYyH+lN4EzNyNCHJVQnYoY1VrBe9dlpf
+         YEwbce8UWUlESXmNP20hLLjZpB3rzixK9E66aV/qmoWHl0z5cUQ0e05sn5+9z7USpa
+         YvZLUUa52GV6j3zSQmPMMwnpp0YTIuZs9suuq+Js=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1KAciLC004610
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 20 Feb 2019 04:38:44 -0600
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 20
+ Feb 2019 04:38:43 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 20 Feb 2019 04:38:43 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1KAcfX4030312;
+        Wed, 20 Feb 2019 04:38:41 -0600
+Subject: Re: [PATCH 4/4] drm/panel: Add OSD101T2587-53TS driver
+To:     Sam Ravnborg <sam@ravnborg.org>
+CC:     <thierry.reding@gmail.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <devicetree@vger.kernel.org>, <tomi.valkeinen@ti.com>,
+        <robh+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+References: <20190215140315.18046-1-peter.ujfalusi@ti.com>
+ <20190215140315.18046-5-peter.ujfalusi@ti.com>
+ <20190215180759.GA26944@ravnborg.org>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <fefcd92c-4171-ed86-28d2-4145d409a73d@ti.com>
+Date:   Wed, 20 Feb 2019 12:39:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20190215180759.GA26944@ravnborg.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Feb 2019 19:12:16 +0200
-Stefan Popa <stefan.popa@analog.com> wrote:
+Hi Sam,
 
-> All supported devices provide internal temperature measurement from -40 C
-> to +85 C, with +25 C representing value 0x00.
-> 
-> This patch treats the temperature scale in a generic way, similar to the
-> accelerometer and gyroscope scales. So far, there are no temperature max
-> scale differences between the supported devices. However, devices that
-> will make use of this feature will be added in the future.
-> 
-> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+On 15/02/2019 20.07, Sam Ravnborg wrote:
+>> +#include <linux/backlight.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/regulator/consumer.h>
+>> +
+>> +#include <drm/drmP.h>
+> Please do not use drmP.h in new drivers - we try to get rid of this file.
 
+...
 
-Given the datasheet (well 16480 anyway as I'm lazy and only checked that
-one) give the scale directly in deg C / LSB, why not just provide directly?
-For 16480 it is 0.00565.
+>> +static int osd101t2587_panel_get_modes(struct drm_panel *panel)
+>> +{
+>> +	struct osd101t2587_panel *osd101t2587 = to_osd101t2587_panel(panel);
+>> +	struct drm_display_mode *mode;
+>> +
+>> +	mode = drm_mode_duplicate(panel->drm, osd101t2587->default_mode);
+>> +	if (!mode) {
+>> +		dev_err(panel->drm->dev, "failed to add mode %ux%ux@%u\n",
 
-For the other channel types it also gives them this way so we could change
-them all over, but probably best not to touch something that is 'working' :)
+drm/drmP.h is needed for this dev_err.
 
-Jonathan
+Regards,
+- Péter
 
-> ---
->  drivers/iio/imu/adis16480.c | 22 +++++++++++++++++++---
->  1 file changed, 19 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/iio/imu/adis16480.c b/drivers/iio/imu/adis16480.c
-> index 7ae71f4..cc53825 100644
-> --- a/drivers/iio/imu/adis16480.c
-> +++ b/drivers/iio/imu/adis16480.c
-> @@ -124,6 +124,7 @@ struct adis16480_chip_info {
->  	unsigned int gyro_max_scale;
->  	unsigned int accel_max_val;
->  	unsigned int accel_max_scale;
-> +	unsigned int temp_max_scale;
->  };
->  
->  enum adis16480_int_pin {
-> @@ -530,6 +531,7 @@ static int adis16480_read_raw(struct iio_dev *indio_dev,
->  	const struct iio_chan_spec *chan, int *val, int *val2, long info)
->  {
->  	struct adis16480 *st = iio_priv(indio_dev);
-> +	unsigned int temp, scale;
->  
->  	switch (info) {
->  	case IIO_CHAN_INFO_RAW:
-> @@ -549,8 +551,15 @@ static int adis16480_read_raw(struct iio_dev *indio_dev,
->  			*val2 = 100; /* 0.0001 gauss */
->  			return IIO_VAL_INT_PLUS_MICRO;
->  		case IIO_TEMP:
-> -			*val = 5;
-> -			*val2 = 650000; /* 5.65 milli degree Celsius */
-> +			/*
-> +			 * +85 degrees Celsius = temp_max_scale
-> +			 * +25 degrees Celsius = 0
-> +			 * LSB, 25 degrees Celsius  = 60 / temp_max_scale
-> +			 */
-> +			scale = DIV_ROUND_CLOSEST_ULL(60 * 1000000LL,
-> +					st->chip_info->temp_max_scale);
-> +			*val = scale / 1000;
-> +			*val2 = (scale % 1000) * 1000;
->  			return IIO_VAL_INT_PLUS_MICRO;
->  		case IIO_PRESSURE:
->  			*val = 0;
-> @@ -561,7 +570,10 @@ static int adis16480_read_raw(struct iio_dev *indio_dev,
->  		}
->  	case IIO_CHAN_INFO_OFFSET:
->  		/* Only the temperature channel has a offset */
-> -		*val = 4425; /* 25 degree Celsius = 0x0000 */
-> +		temp = 25 * 1000000LL; /* 25 degree Celsius = 0x0000 */
-> +		scale = DIV_ROUND_CLOSEST_ULL(60 * 1000000LL,
-> +				st->chip_info->temp_max_scale);
-> +		*val = DIV_ROUND_CLOSEST_ULL(temp, scale);
->  		return IIO_VAL_INT;
->  	case IIO_CHAN_INFO_CALIBBIAS:
->  		return adis16480_get_calibbias(indio_dev, chan, val);
-> @@ -717,6 +729,7 @@ static const struct adis16480_chip_info adis16480_chip_info[] = {
->  		.gyro_max_scale = 300,
->  		.accel_max_val = IIO_M_S_2_TO_G(21973),
->  		.accel_max_scale = 18,
-> +		.temp_max_scale = 10619,
->  	},
->  	[ADIS16480] = {
->  		.channels = adis16480_channels,
-> @@ -725,6 +738,7 @@ static const struct adis16480_chip_info adis16480_chip_info[] = {
->  		.gyro_max_scale = 450,
->  		.accel_max_val = IIO_M_S_2_TO_G(12500),
->  		.accel_max_scale = 10,
-> +		.temp_max_scale = 10619,
->  	},
->  	[ADIS16485] = {
->  		.channels = adis16485_channels,
-> @@ -733,6 +747,7 @@ static const struct adis16480_chip_info adis16480_chip_info[] = {
->  		.gyro_max_scale = 450,
->  		.accel_max_val = IIO_M_S_2_TO_G(20000),
->  		.accel_max_scale = 5,
-> +		.temp_max_scale = 10619,
->  	},
->  	[ADIS16488] = {
->  		.channels = adis16480_channels,
-> @@ -741,6 +756,7 @@ static const struct adis16480_chip_info adis16480_chip_info[] = {
->  		.gyro_max_scale = 450,
->  		.accel_max_val = IIO_M_S_2_TO_G(22500),
->  		.accel_max_scale = 18,
-> +		.temp_max_scale = 10619,
->  	},
->  };
->  
-
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
