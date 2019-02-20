@@ -2,108 +2,72 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC6B7C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 105A2C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:07:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACD9120859
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:06:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE01020859
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:07:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727367AbfBTPGG (ORCPT
+        id S1726557AbfBTPHR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:06:06 -0500
-Received: from andre.telenet-ops.be ([195.130.132.53]:43120 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbfBTPFh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:05:37 -0500
-Received: from ramsan ([84.194.111.163])
-        by andre.telenet-ops.be with bizsmtp
-        id f35b1z00S3XaVaC0135bpP; Wed, 20 Feb 2019 16:05:35 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gwTRH-0002IN-LI; Wed, 20 Feb 2019 16:05:35 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gwTRH-0000ew-Jf; Wed, 20 Feb 2019 16:05:35 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Joerg Roedel <joro@8bytes.org>,
-        Magnus Damm <damm+renesas@opensource.se>
-Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/7] iommu/ipmmu-vmsa: Move num_utlbs to SoC-specific features
-Date:   Wed, 20 Feb 2019 16:05:29 +0100
-Message-Id: <20190220150531.2462-6-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190220150531.2462-1-geert+renesas@glider.be>
-References: <20190220150531.2462-1-geert+renesas@glider.be>
+        Wed, 20 Feb 2019 10:07:17 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59424 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726074AbfBTPHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 10:07:17 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9F0FE15AB;
+        Wed, 20 Feb 2019 07:07:16 -0800 (PST)
+Received: from why.wild-wind.fr.eu.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A6DFB3F5C1;
+        Wed, 20 Feb 2019 07:07:15 -0800 (PST)
+Date:   Wed, 20 Feb 2019 15:07:11 +0000
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 09/10] genirq/irqdomain: fall back to default domain
+ when creating hierarchy domain
+Message-ID: <20190220150711.6ef87b61@why.wild-wind.fr.eu.org>
+In-Reply-To: <20190220160015.22fad67d70a762746bd49c4b@suse.de>
+References: <20190219155728.19163-1-tbogendoerfer@suse.de>
+        <20190219155728.19163-10-tbogendoerfer@suse.de>
+        <20190219162716.04b0a54b@why.wild-wind.fr.eu.org>
+        <20190219174829.26576a5b6bf62cd99adf294a@suse.de>
+        <20190220091537.4cf01191@why.wild-wind.fr.eu.org>
+        <20190220160015.22fad67d70a762746bd49c4b@suse.de>
+Organization: ARM Ltd
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The maximum number of micro-TLBs per IPMMU instance is not fixed, but
-depends on the SoC type.  Hence move it from struct ipmmu_vmsa_device to
-struct ipmmu_features, and set up the correct value for both R-Car Gen2
-and Gen3 SoCs.
+On Wed, 20 Feb 2019 16:00:15 +0100
+Thomas Bogendoerfer <tbogendoerfer@suse.de> wrote:
 
-Note that currently no code uses this value.
+> On Wed, 20 Feb 2019 09:15:37 +0000
+> Marc Zyngier <marc.zyngier@arm.com> wrote:
+> 
+> > Well, short of doing the above, I'd rather have something in the common
+> > code that allows the default domain to be retrieved. How about the
+> > patch below?  
+> 
+> Works for me:-) Thank you.
+> 
+> Are you going to submit it for v5.1 ?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/iommu/ipmmu-vmsa.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Yup, now queued. I plan to send a PR tomorrow (still waiting on a few
+dangling patches).
 
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 4e3134a9a52f8d87..0a21e734466eb1bd 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -42,6 +42,7 @@ struct ipmmu_features {
- 	bool use_ns_alias_offset;
- 	bool has_cache_leaf_nodes;
- 	unsigned int number_of_contexts;
-+	unsigned int num_utlbs;
- 	bool setup_imbuscr;
- 	bool twobit_imttbcr_sl0;
- 	bool reserved_context;
-@@ -53,7 +54,6 @@ struct ipmmu_vmsa_device {
- 	struct iommu_device iommu;
- 	struct ipmmu_vmsa_device *root;
- 	const struct ipmmu_features *features;
--	unsigned int num_utlbs;
- 	unsigned int num_ctx;
- 	spinlock_t lock;			/* Protects ctx and domains[] */
- 	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
-@@ -972,6 +972,7 @@ static const struct ipmmu_features ipmmu_features_default = {
- 	.use_ns_alias_offset = true,
- 	.has_cache_leaf_nodes = false,
- 	.number_of_contexts = 1, /* software only tested with one context */
-+	.num_utlbs = 32,
- 	.setup_imbuscr = true,
- 	.twobit_imttbcr_sl0 = false,
- 	.reserved_context = false,
-@@ -981,6 +982,7 @@ static const struct ipmmu_features ipmmu_features_rcar_gen3 = {
- 	.use_ns_alias_offset = false,
- 	.has_cache_leaf_nodes = true,
- 	.number_of_contexts = 8,
-+	.num_utlbs = 48,
- 	.setup_imbuscr = false,
- 	.twobit_imttbcr_sl0 = true,
- 	.reserved_context = true,
-@@ -1033,7 +1035,6 @@ static int ipmmu_probe(struct platform_device *pdev)
- 	}
- 
- 	mmu->dev = &pdev->dev;
--	mmu->num_utlbs = 48;
- 	spin_lock_init(&mmu->lock);
- 	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
- 	mmu->features = of_device_get_match_data(&pdev->dev);
+Thanks,
+
+	M.
 -- 
-2.17.1
-
+Without deviation from the norm, progress is not possible.
