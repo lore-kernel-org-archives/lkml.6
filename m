@@ -2,64 +2,112 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B24E4C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:43:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8495C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 845172146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:43:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CB882089F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:45:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550699138;
+	bh=tYzmQ+rvgmVXljQGVzkjxngpoYpjn9oGpeXS69Zk4ak=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=JB5MxLuGD+SoWe61/Qm7qWm9LuvYapN6+GCVL8ixLW/29Is4owhvKsmxUMkQp+9C4
+	 B3rFrgpk7yf1gVzE1/QzoJNr64DxZj79O/FYYL7uzeRnmkBpJNVNpi2LSRGFK8V0dz
+	 1/xD7QwRre0vgCbhrUVzQ9Ey0/whKE+3drlqKgwE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbfBTVnt (ORCPT
+        id S1727196AbfBTVph (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 16:43:49 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46732 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725869AbfBTVns (ORCPT
+        Wed, 20 Feb 2019 16:45:37 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:36454 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725869AbfBTVpg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 16:43:48 -0500
-Received: from X1 (unknown [104.133.8.102])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 91C742B01;
-        Wed, 20 Feb 2019 21:43:47 +0000 (UTC)
-Date:   Wed, 20 Feb 2019 13:43:45 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     "Kani, Toshi" <toshi.kani@hpe.com>
-Cc:     "yuehaibing@huawei.com" <yuehaibing@huawei.com>,
-        "cpandya@codeaurora.org" <cpandya@codeaurora.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
+        Wed, 20 Feb 2019 16:45:36 -0500
+Received: by mail-ot1-f68.google.com with SMTP id v62so33985791otb.3;
+        Wed, 20 Feb 2019 13:45:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HtWqwxrh7CslkxN6+sxq7HIdQgCE7jo4WinV+vjvvVc=;
+        b=BLi0witLL2yCLXgRQIkue0sEzQ6Y5hgLxBikOLH8Q7+VP0atKx2XIlEaY6H7141oxW
+         A7+dQNdSQ4ii4oV1uow0N8a0osVj1KJspPvzxWmUJozgPVupFoHezP7cmAd11wz36q63
+         bB5ZIWP2GVAUIqFJHnRqy+OluO7if7JpCLgi52Sgkut1Jvnive6pVrd1+OiK2evMaRvx
+         NmYxJpjJE7O3KS1YOvfxjUONUuZdqHTEXwuiR7EqWrcsZkY4g17Pyg2sZ+okmuJ4yRMR
+         D3TSAOoIinbPNxC5Rn8j4djH3XN9+k3RB7XIp/UNE+0/nA9JTjRVgiRNX2tdeZthhdmb
+         ypZw==
+X-Gm-Message-State: AHQUAuZMCsmC3teuqNgTEQD8QV5p4UR4gQoakHBxQSfQFrhu3GN89ZGB
+        uVgzi2eTl39jncVp7M3kbBFEDn24PXybzQLYdrQ=
+X-Google-Smtp-Source: AHgI3IZB+rNteCcsqZ+I6GP8S63zS9+BHIlj2gY9ds9UTtpgPjfyey7BWo+bEAkVEi7eG1PQgNY7xa9LSJp4R636LxA=
+X-Received: by 2002:a9d:7547:: with SMTP id b7mr6352238otl.244.1550699135895;
+ Wed, 20 Feb 2019 13:45:35 -0800 (PST)
+MIME-Version: 1.0
+References: <20190206154214.576-1-harry.pan@intel.com> <20190214111543.22137-1-harry.pan@intel.com>
+ <2819109.DzhZvocLkm@aspire.rjw.lan> <cf6926800899354808143bd48b4f943629c8cbe7.camel@intel.com>
+In-Reply-To: <cf6926800899354808143bd48b4f943629c8cbe7.camel@intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 20 Feb 2019 22:45:24 +0100
+Message-ID: <CAJZ5v0gmFz8aK5_+0a36RwEiPScU=Z8BhD8pR50V1GRcmbXFgA@mail.gmail.com>
+Subject: Re: [PATCH v3] PM / suspend: measure the time of filesystem syncing
+To:     "Pan, Harry" <harry.pan@intel.com>
+Cc:     "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "Brown, Len" <len.brown@intel.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH -next] mm: fix set but not used warning
-Message-Id: <20190220134345.e39094996c111be4ffa0c976@linux-foundation.org>
-In-Reply-To: <7425c8905127ddd078500d4c14a2147bd00422a0.camel@hpe.com>
-References: <20190218135743.131904-1-yuehaibing@huawei.com>
-        <7425c8905127ddd078500d4c14a2147bd00422a0.camel@hpe.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        "gs0622@gmail.com" <gs0622@gmail.com>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Feb 2019 18:28:30 +0000 "Kani, Toshi" <toshi.kani@hpe.com> wrote:
+On Wed, Feb 20, 2019 at 5:44 PM Pan, Harry <harry.pan@intel.com> wrote:
+>
+> Thanks for comments.
+>
+> > > +   if (!IS_ENABLED(CONFIG_SUSPEND_SKIP_SYNC)) {
+> > > +           ktime_t start;
+> > > +           unsigned int elapsed_msecs;
+> > > +
+> > > +           trace_suspend_resume(TPS("sync_filesystems"), 0, true);
+> > > +           pr_info("Syncing filesystems ... ");
+> > > +           start = ktime_get();
+> > > +           ksys_sync();
+> > > +           elapsed_msecs = ktime_to_ms(ktime_sub(ktime_get(),
+> > > start));
+> > > +           pr_cont("(elapsed %d.%03d seconds) done.\n",
+> > > +                   elapsed_msecs / MSEC_PER_SEC,
+> > > +                   elapsed_msecs % MSEC_PER_SEC);
+> >
+> > One more nit.
+> >
+> > Since you are printing the sync time anyway, there is a little sense
+> > to
+> > split the message using pr_cont() that may be messed up with by any
+> > intervening messages, so why don't you just print a one-line
+> > pr_info("Filesystems sync: %d.%03d seconds\n", ...) message?
+> >
+> Yes, I agree.
+> In practical, I did see intervening messages (between pr_info and
+> pr_cont) when it came to long sync in kernel.
+> I was hesitated in this considering not fully understanding the
+> backdrop of split messages using pr_info() then pr_cont().
+>
+> > Also, if you change it here, I guess it would be consistent to make
+> > an analogous change for hibernation.
+>
+> One potential last-mile need your wisdom, which is about the switch
+> case of SNAPSHOT_FREEZE of the userspace interface you wrote.
+> I am yet to touch it, nor understand how to validate it.
 
-> On Mon, 2019-02-18 at 13:57 +0000, YueHaibing wrote:
-> > Fixes gcc '-Wunused-but-set-variable' warning:
-> > 
-> > lib/ioremap.c: In function 'ioremap_page_range':
-> > lib/ioremap.c:203:16: warning:
-> >  variable 'start' set but not used [-Wunused-but-set-variable]
-> > 
-> > flush_cache_vmap may no need param, so add __maybe_unused fix this warning.
-> 
-> I think flush_cache_vmap should have a proper prototype with
-> __maybe_unused for its args.  But, there are so many arch-specific
-> definitions at glace, and I am not sure how manageable such change is,
-> though...
+Why don't you add a "sync" helper function in main.c with the timing
+and message that will be called from hibernate.c, user.c and suspend.c
+(in the last one conditional on
+!IS_ENABLED(CONFIG_SUSPEND_SKIP_SYNC))?
 
-This is one of the reasons why things like flush_cache_vmap() should
-be implemented as static inline C functions, not as macros.  
+That would reduce some code duplication nicely.
