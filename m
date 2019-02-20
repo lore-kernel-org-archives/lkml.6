@@ -2,88 +2,107 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7244DC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 03:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B599C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 03:04:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C87421738
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 03:01:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66F7421738
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 03:04:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="GxymP3jd"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DJbCgyA4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730386AbfBTDA6 (ORCPT
+        id S1730238AbfBTDEJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 22:00:58 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:38230 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727576AbfBTDA6 (ORCPT
+        Tue, 19 Feb 2019 22:04:09 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36518 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727576AbfBTDEG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 22:00:58 -0500
-Received: by mail-qk1-f195.google.com with SMTP id p15so1064073qkl.5
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 19:00:57 -0800 (PST)
+        Tue, 19 Feb 2019 22:04:06 -0500
+Received: by mail-lf1-f66.google.com with SMTP id q11so16407590lfd.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 19:04:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=juX1wN76JP94B/uHGj0u1Ad0DYR0Ddi6aWyIbgfKSxw=;
-        b=GxymP3jdrGjPk+sfYHPqDVIcIx0onxqNTj6n/0OlNf6JAuXQes2k7Sr+2TU7g22vV6
-         0RN0q94XJwBKjPHT8jPgTKjhKnzXgXRwLgQyMW/W99mufJN4lNRswNGDcKfVBagpiARa
-         AP3GVeprDmksaNq+3MhsFtNq3JKQy9q5AcPZE+olELYluoZO/h4DC3oaosalUMeKkGmK
-         V9Syd9+TJq6WQrzm/iRHA03w3lMNU26Riuk2frMNec+LWHactJqlWtj8S10mYQyDt0Ab
-         M6qTmVc1ovPIZ9WwTa9JVZKEtyJvjQ0tqZ5ev+pl34wtDsvA854+PFwftjyO/v1lLw/q
-         1PhQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UhxZlFeYUb4G5lDIEjealo23e9D8ONoUZ/+0YBaV8hs=;
+        b=DJbCgyA4qwnINIHE60zPRs789mbwnwkxLqw1GrDKuGGcvjMa4rc6Y5gWU91hEfGdwE
+         fWhon3sqNdt+bQ1aa4DayVcOUbS1Sw1WTSnUcUaj+eSald6InzkAOC275XXULbUp2GjT
+         tmvmVbzfDOqBNX9AIdhEmZQDEpmsdE+mFCVJUcS1RYdxbNv6Wgy1AMlXSDLPD+f3H0zp
+         vv5zpwiMs1NBeLr0bS5XioLkdOxc7hs30dF4/+d7tvXzUCen1YfS2idjSLV/jb6ffJY/
+         uL0Ue1V88gJNKOVuZ/XHNbDsc88D+SilY6O4GHNkoM8j9WyJ/7/u0RJx5GEaDV+2UHmE
+         ZjWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=juX1wN76JP94B/uHGj0u1Ad0DYR0Ddi6aWyIbgfKSxw=;
-        b=EFWNijkKYONED1pr2W75tYVbZB7WUM+ahwhl9QPbKfLt4THXGbSNSRwConVrvsUuqh
-         vH/A5uEcOGTA5sY/0Q06vUswyNYm4s0H2Nqtm7rDoMOYMIyMIM1Kw0V9udk1gfHi/EFu
-         bFb1tNt8SzkaohJ5/+gNho7u7C5boI6KcNS+nKgCzhHkPPbe+yhLdnfzkj5C9B1Iqfn7
-         G1ezVAUNvWDiNbUpf2ygRYlB+cmGeiOb1dDMJKExnGcy0iV/O9S5HicdHITyeNGbiF/y
-         738YfNXlJTqJDfqNmnj4wD9qoh0xK+FrFp+6IX7YjHBXZ31kp3Mc/olOo5+nm5KgBMKx
-         zzVA==
-X-Gm-Message-State: AHQUAuaBi1dgb+wS+6JXFvbeXrTiaOEtSebB7t2ljifvMREeKdan6CAQ
-        22D3KYkUWR7V5bAOOZzRbw1O8Q==
-X-Google-Smtp-Source: AHgI3IYhwqGp1qTspf2ZvhDfwEPSpMOjoEZWbONu/Qax0bpZrM+mObTxMI3b2lVsZSzwv7sHlCs44w==
-X-Received: by 2002:ae9:e203:: with SMTP id c3mr22705458qkc.270.1550631657241;
-        Tue, 19 Feb 2019 19:00:57 -0800 (PST)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id 55sm8914249qtq.25.2019.02.19.19.00.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Feb 2019 19:00:57 -0800 (PST)
-Date:   Tue, 19 Feb 2019 19:00:48 -0800
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Michal Kubecek <mkubecek@suse.cz>
-Cc:     netdev@vger.kernel.org, David Miller <davem@davemloft.net>,
-        Andrew Lunn <andrew@lunn.ch>, Jiri Pirko <jiri@resnulli.us>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH net-next v3 13/21] ethtool: provide timestamping
- information in GET_INFO request
-Message-ID: <20190219190048.1c8a4482@cakuba.netronome.com>
-In-Reply-To: <790ee93d90931278b6e4fc51da712aadfcb8ec90.1550513384.git.mkubecek@suse.cz>
-References: <cover.1550513384.git.mkubecek@suse.cz>
-        <790ee93d90931278b6e4fc51da712aadfcb8ec90.1550513384.git.mkubecek@suse.cz>
-Organization: Netronome Systems, Ltd.
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UhxZlFeYUb4G5lDIEjealo23e9D8ONoUZ/+0YBaV8hs=;
+        b=KcuCB3T/sXyd1JUyJTkRx5e2XNE1pllWz4wiFggCupIHho+km0SAZpzOtHTvEBOONX
+         G/K+h/G5v27qhwqlOj6NGADACXGkFIQDqBczfxFuGLNDv6IngHr5LDvBHVdfOS4dpCKG
+         N72F4xaLhQcP6T8MDka0jVjv8H/X9TxtXqMcL6uBay3rFOo73uKcv9xfZVM04+v6aN1y
+         jpM13+E+YMA47pmDhFgeUdYPnEJYil/cILHSdCwvUneU4uUg0ehZH5RiKU+WWQugCOnw
+         rslqsHageHsPtq7sKyriUqlOZyQY31Op5jrPATgoV2fwU6iBvYib3esturMnMd0Y0aaJ
+         TTOA==
+X-Gm-Message-State: AHQUAuZSkav0k2kWOWBHJBt7D4jI3Al+qVqKxe7nuc87BiRBpsl/MxFs
+        nDoUtRRJrG4NjkYerHqnWUN/WJ34IuHWaVIIsLMaHw==
+X-Google-Smtp-Source: AHgI3IYrGdWA86kVugXeDWK64GRWScHPiQuFtJnmjRK8eEhl686kGwxlScIdEOYxZBGPTPh4ShWcf8QcCAZbgQ64qE8=
+X-Received: by 2002:a19:6e0b:: with SMTP id j11mr4084417lfc.124.1550631843464;
+ Tue, 19 Feb 2019 19:04:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20190220113729.49f28f73@canb.auug.org.au> <CAADnVQK3qg2k67LRiOqDmFnELrFOD1dLkrNbAvbMyu6xGpjBLw@mail.gmail.com>
+ <791e9e85-411e-385b-302f-4a4224f76286@iogearbox.net>
+In-Reply-To: <791e9e85-411e-385b-302f-4a4224f76286@iogearbox.net>
+From:   Stanislav Fomichev <sdf@google.com>
+Date:   Tue, 19 Feb 2019 19:03:51 -0800
+Message-ID: <CAKH8qBtqcx+qXKpq-xNq6_MeciJghppszSF-vHfp0UKsESkcOA@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the bpf tree
+To:     Daniel Borkmann <daniel@iogearbox.net>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 18 Feb 2019 19:22:29 +0100 (CET), Michal Kubecek wrote:
-> Add timestamping information as provided by ETHTOOL_GET_TS_INFO ioctl
-> command in GET_INFO reply if ETH_INFO_IM_TSINFO flag is set in the request.
-> 
-> Add constants for counts of HWTSTAMP_TX_* and HWTSTAM_FILTER_* constants
-> and provide symbolic names for timestamping related values so that they can
-> be retrieved in GET_STRSET and GET_INFO requests.
+On Tue, Feb 19, 2019 at 5:07 PM Daniel Borkmann <daniel@iogearbox.net> wrote:
+>
+> On 02/20/2019 01:41 AM, Alexei Starovoitov wrote:
+> > On Tue, Feb 19, 2019 at 4:37 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >>
+> >> Hi all,
+> >>
+> >> Today's linux-next merge of the net-next tree got a conflict in:
+> >>
+> >>   tools/testing/selftests/bpf/test_progs.c
+> >>
+> >> between commit:
+> >>
+> >>   f6be4d16039b ("selftests/bpf: make sure signal interrupts BPF_PROG_TEST_RUN")
+> >
+> > Ouch. Thanks for the heads up.
+> >
+> > Daniel,
+> > should we drop this one from bpf tree ?
+> > I don't think it's strictly necessary.
+>
+> Yeah no objections, lets move the selftest one over to bpf-next and
+> have it properly integrated. I think test_progs might potentially need
+> further topic-split aside from kernel progs like we did in test_verifier.
+Do you want me to follow up with a clean rebased bpf-next sefltest patch?
+Or you'll take care of it yourself?
 
-What's the reason for providing the symbolic names?
-
-> Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+> >> from the bpf tree and commits:
+> >>
+> >>   bf0f0fd93945 ("selftests/bpf: add simple BPF_PROG_TEST_RUN examples for flow dissector")
+> >>   ab963beb9f5d ("selftests/bpf: add bpf_spin_lock C test")
+> >>   ba72a7b4badb ("selftests/bpf: test for BPF_F_LOCK")
