@@ -6,326 +6,108 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D770C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:06:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D46AC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:09:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F29A921848
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:06:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DEC520859
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:09:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=schinagl.nl header.i=@schinagl.nl header.b="CBTsoBxm"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CIiH7otv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbfBTXGo (ORCPT
+        id S1726213AbfBTXJy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 18:06:44 -0500
-Received: from 7of9.schinagl.nl ([62.251.20.244]:40958 "EHLO 7of9.schinagl.nl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725989AbfBTXGn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 18:06:43 -0500
-X-Greylist: delayed 548 seconds by postgrey-1.27 at vger.kernel.org; Wed, 20 Feb 2019 18:06:43 EST
-Received: from [10.193.209.67] (unknown [89.200.5.13])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by 7of9.schinagl.nl (Postfix) with ESMTPSA id B72DBB3AA09;
-        Wed, 20 Feb 2019 23:57:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=schinagl.nl; s=7of9;
-        t=1550703452; bh=Pzj2MRTHFh7GY6rYGrmiRrvAq3D3Q0PndMXvQvAnzn0=;
-        h=Date:In-Reply-To:References:Subject:To:CC:From;
-        b=CBTsoBxmeaJWW+i7999pAcWpMA+EpocPi86UDpGoMMwu/iIElWi2Rjle/wzcaUeA8
-         B6M2c3ykHi8liBg2710f7cDl3CGkfq73aegkyewCW3kCOhdA3yxL3KZye1P0DI3cHb
-         OqxmQI+u3yr3WJW4yvrVx4E6KYnntFJcbzgjB0BM=
-Date:   Wed, 20 Feb 2019 22:38:23 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20190220165013.12774-1-axel.lin@ingics.com>
-References: <20190220165013.12774-1-axel.lin@ingics.com>
+        Wed, 20 Feb 2019 18:09:54 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:50432 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbfBTXJy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 18:09:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=bAGeGQdbTQcThkbLqat/4p15AtaqYmAUjW3rFUStPds=; b=CIiH7otvk8l4exqvhiMF3WtDtP
+        iZFJBCIOV5stoUAIW4rFsnk/hpMjiL0ygh4UGi93GX0vu05koksWPfL+d0EbvSxIOe9lu+IUFwbjx
+        482+Ydm3BOVMiedUIOjC864F1Y/iYmXXJtpg74KUbWlxYQN7bPKwJIbYHMSynjwYtRch/MypRDPP4
+        AeYS8Ky1OEmsNqno5C3aqgr3cUT5eCqGc7mR0JhX6ZNXBAr7bxzd6AN0rldOpECFoo2bwCz5hXXzN
+        Y1v31ri2CpUJq9YJPPrSohYKzVvDDxi+1HVo1M6uqiw/S6FZ88IyHXetCRFigM112r8Yupe92/Ubg
+        b5gA/Dbg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gwazl-000449-Hy; Wed, 20 Feb 2019 23:09:41 +0000
+Subject: Re: [PATCH -next] platform/chrome: Fix Kconfig dependencies for
+ wilco_ec
+To:     Nick Crews <ncrews@chromium.org>, bleung@chromium.org,
+        enric.balletbo@collabora.com
+Cc:     linux-kernel@vger.kernel.org, dlaurie@chromium.org,
+        sfr@canb.auug.org.au
+References: <20190220221128.48476-1-ncrews@chromium.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <420e6e26-6270-e577-6bbc-3ebe884168b5@infradead.org>
+Date:   Wed, 20 Feb 2019 15:09:36 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] regulator: axp20x: Get rid of AXP20X_xxx_START/END/STEPS defines
-To:     Axel Lin <axel.lin@ingics.com>, Mark Brown <broonie@kernel.org>
-CC:     Chen-Yu Tsai <wens@csie.org>, Priit Laes <plaes@plaes.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org
-From:   Olliver Schinagl <oliver@schinagl.nl>
-Message-ID: <24E35288-677D-4223-B94A-52A4F37792A8@schinagl.nl>
+In-Reply-To: <20190220221128.48476-1-ncrews@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Axel,
+On 2/20/19 2:11 PM, Nick Crews wrote:
+> In the initial version of the Wilco EC Driver, the
+> dependency order was wrong. It before was possible to
+> select CONFIG_WILCO_EC and CONFIG_CROS_EC_LPC without
+> having CONFIG_CROS_EC_LPC_MEC. This was wrong, since
+> WILCO_EC depends upon CONFIG CROS_EC_LPC_MEC, not the
+> other way around.
+> 
+> Fixes: 1733c32834e5d1 ("platform/chrome: Add new driver for Wilco EC")
+> Signed-off-by: Nick Crews <ncrews@chromium.org>
 
-On February 20, 2019 5:50:13 PM GMT+01:00, Axel Lin <axel=2Elin@ingics=2Ec=
-om> wrote:
->The AXP20X_xxx_START/END/STEPS defines make the code hard to read and
->very hard to check the linear range settings because it needs to check
->the defines one-by-one=2E
->The original code without the defines is very good in readability
->as the meaning of each field of REGULATOR_LINEAR_RANGE is clear=2E
->So I suggest to get rid of AXP20X_xxx_START/END/STEPS defines=2E
-Are you suggesting that magic values and hex numbers are more readable?
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
 
-Maybe you can explain what your problem is, as it appears you are trying t=
-o debug something?
+Thanks.
 
->
->Signed-off-by: Axel Lin <axel=2Elin@ingics=2Ecom>
->---
-> drivers/regulator/axp20x-regulator=2Ec | 176 +++------------------------
-> 1 file changed, 19 insertions(+), 157 deletions(-)
->
->diff --git a/drivers/regulator/axp20x-regulator=2Ec
->b/drivers/regulator/axp20x-regulator=2Ec
->index fba8f58ab769=2E=2E46b5de53d1a3 100644
->--- a/drivers/regulator/axp20x-regulator=2Ec
->+++ b/drivers/regulator/axp20x-regulator=2Ec
->@@ -64,26 +64,6 @@
-> #define AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN_MASK		BIT_MASK(3)
-> #define AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN		BIT(3)
->=20
->-#define AXP20X_LDO4_V_OUT_1250mV_START	0x0
->-#define AXP20X_LDO4_V_OUT_1250mV_STEPS	0
->-#define AXP20X_LDO4_V_OUT_1250mV_END	\
->-	(AXP20X_LDO4_V_OUT_1250mV_START + AXP20X_LDO4_V_OUT_1250mV_STEPS)
->-#define AXP20X_LDO4_V_OUT_1300mV_START	0x1
->-#define AXP20X_LDO4_V_OUT_1300mV_STEPS	7
->-#define AXP20X_LDO4_V_OUT_1300mV_END	\
->-	(AXP20X_LDO4_V_OUT_1300mV_START + AXP20X_LDO4_V_OUT_1300mV_STEPS)
->-#define AXP20X_LDO4_V_OUT_2500mV_START	0x9
->-#define AXP20X_LDO4_V_OUT_2500mV_STEPS	0
->-#define AXP20X_LDO4_V_OUT_2500mV_END	\
->-	(AXP20X_LDO4_V_OUT_2500mV_START + AXP20X_LDO4_V_OUT_2500mV_STEPS)
->-#define AXP20X_LDO4_V_OUT_2700mV_START	0xa
->-#define AXP20X_LDO4_V_OUT_2700mV_STEPS	1
->-#define AXP20X_LDO4_V_OUT_2700mV_END	\
->-	(AXP20X_LDO4_V_OUT_2700mV_START + AXP20X_LDO4_V_OUT_2700mV_STEPS)
->-#define AXP20X_LDO4_V_OUT_3000mV_START	0xc
->-#define AXP20X_LDO4_V_OUT_3000mV_STEPS	3
->-#define AXP20X_LDO4_V_OUT_3000mV_END	\
->-	(AXP20X_LDO4_V_OUT_3000mV_START + AXP20X_LDO4_V_OUT_3000mV_STEPS)
-> #define AXP20X_LDO4_V_OUT_NUM_VOLTAGES	16
->=20
-> #define AXP22X_IO_ENABLED		0x03
->@@ -156,44 +136,9 @@
-> #define AXP803_DCDC23_POLYPHASE_DUAL	BIT(6)
-> #define AXP803_DCDC56_POLYPHASE_DUAL	BIT(5)
->=20
->-#define AXP803_DCDC234_500mV_START	0x00
->-#define AXP803_DCDC234_500mV_STEPS	70
->-#define AXP803_DCDC234_500mV_END	\
->-	(AXP803_DCDC234_500mV_START + AXP803_DCDC234_500mV_STEPS)
->-#define AXP803_DCDC234_1220mV_START	0x47
->-#define AXP803_DCDC234_1220mV_STEPS	4
->-#define AXP803_DCDC234_1220mV_END	\
->-	(AXP803_DCDC234_1220mV_START + AXP803_DCDC234_1220mV_STEPS)
-> #define AXP803_DCDC234_NUM_VOLTAGES	76
->-
->-#define AXP803_DCDC5_800mV_START	0x00
->-#define AXP803_DCDC5_800mV_STEPS	32
->-#define AXP803_DCDC5_800mV_END		\
->-	(AXP803_DCDC5_800mV_START + AXP803_DCDC5_800mV_STEPS)
->-#define AXP803_DCDC5_1140mV_START	0x21
->-#define AXP803_DCDC5_1140mV_STEPS	35
->-#define AXP803_DCDC5_1140mV_END		\
->-	(AXP803_DCDC5_1140mV_START + AXP803_DCDC5_1140mV_STEPS)
-> #define AXP803_DCDC5_NUM_VOLTAGES	68
->-
->-#define AXP803_DCDC6_600mV_START	0x00
->-#define AXP803_DCDC6_600mV_STEPS	50
->-#define AXP803_DCDC6_600mV_END		\
->-	(AXP803_DCDC6_600mV_START + AXP803_DCDC6_600mV_STEPS)
->-#define AXP803_DCDC6_1120mV_START	0x33
->-#define AXP803_DCDC6_1120mV_STEPS	14
->-#define AXP803_DCDC6_1120mV_END		\
->-	(AXP803_DCDC6_1120mV_START + AXP803_DCDC6_1120mV_STEPS)
-> #define AXP803_DCDC6_NUM_VOLTAGES	72
->-
->-#define AXP803_DLDO2_700mV_START	0x00
->-#define AXP803_DLDO2_700mV_STEPS	26
->-#define AXP803_DLDO2_700mV_END		\
->-	(AXP803_DLDO2_700mV_START + AXP803_DLDO2_700mV_STEPS)
->-#define AXP803_DLDO2_3400mV_START	0x1b
->-#define AXP803_DLDO2_3400mV_STEPS	4
->-#define AXP803_DLDO2_3400mV_END		\
->-	(AXP803_DLDO2_3400mV_START + AXP803_DLDO2_3400mV_STEPS)
-> #define AXP803_DLDO2_NUM_VOLTAGES	32
->=20
-> #define AXP806_DCDCA_V_CTRL_MASK	GENMASK(6, 0)
->@@ -235,34 +180,8 @@
->=20
-> #define AXP806_DCDCDE_POLYPHASE_DUAL	BIT(5)
->=20
->-#define AXP806_DCDCA_600mV_START	0x00
->-#define AXP806_DCDCA_600mV_STEPS	50
->-#define AXP806_DCDCA_600mV_END		\
->-	(AXP806_DCDCA_600mV_START + AXP806_DCDCA_600mV_STEPS)
->-#define AXP806_DCDCA_1120mV_START	0x33
->-#define AXP806_DCDCA_1120mV_STEPS	14
->-#define AXP806_DCDCA_1120mV_END		\
->-	(AXP806_DCDCA_1120mV_START + AXP806_DCDCA_1120mV_STEPS)
-> #define AXP806_DCDCA_NUM_VOLTAGES	72
->-
->-#define AXP806_DCDCD_600mV_START	0x00
->-#define AXP806_DCDCD_600mV_STEPS	45
->-#define AXP806_DCDCD_600mV_END		\
->-	(AXP806_DCDCD_600mV_START + AXP806_DCDCD_600mV_STEPS)
->-#define AXP806_DCDCD_1600mV_START	0x2e
->-#define AXP806_DCDCD_1600mV_STEPS	17
->-#define AXP806_DCDCD_1600mV_END		\
->-	(AXP806_DCDCD_1600mV_START + AXP806_DCDCD_1600mV_STEPS)
-> #define AXP806_DCDCD_NUM_VOLTAGES	64
->-
->-#define AXP809_DCDC4_600mV_START	0x00
->-#define AXP809_DCDC4_600mV_STEPS	47
->-#define AXP809_DCDC4_600mV_END		\
->-	(AXP809_DCDC4_600mV_START + AXP809_DCDC4_600mV_STEPS)
->-#define AXP809_DCDC4_1800mV_START	0x30
->-#define AXP809_DCDC4_1800mV_STEPS	8
->-#define AXP809_DCDC4_1800mV_END		\
->-	(AXP809_DCDC4_1800mV_START + AXP809_DCDC4_1800mV_STEPS)
-> #define AXP809_DCDC4_NUM_VOLTAGES	57
->=20
-> #define AXP813_DCDC7_V_OUT_MASK		GENMASK(6, 0)
->@@ -517,26 +436,11 @@ static const struct regulator_ops axp20x_ops_sw =3D
->{
-> };
->=20
-> static const struct regulator_linear_range axp20x_ldo4_ranges[] =3D {
->-	REGULATOR_LINEAR_RANGE(1250000,
->-			       AXP20X_LDO4_V_OUT_1250mV_START,
->-			       AXP20X_LDO4_V_OUT_1250mV_END,
->-			       0),
->-	REGULATOR_LINEAR_RANGE(1300000,
->-			       AXP20X_LDO4_V_OUT_1300mV_START,
->-			       AXP20X_LDO4_V_OUT_1300mV_END,
->-			       100000),
->-	REGULATOR_LINEAR_RANGE(2500000,
->-			       AXP20X_LDO4_V_OUT_2500mV_START,
->-			       AXP20X_LDO4_V_OUT_2500mV_END,
->-			       0),
->-	REGULATOR_LINEAR_RANGE(2700000,
->-			       AXP20X_LDO4_V_OUT_2700mV_START,
->-			       AXP20X_LDO4_V_OUT_2700mV_END,
->-			       100000),
->-	REGULATOR_LINEAR_RANGE(3000000,
->-			       AXP20X_LDO4_V_OUT_3000mV_START,
->-			       AXP20X_LDO4_V_OUT_3000mV_END,
->-			       100000),
->+	REGULATOR_LINEAR_RANGE(1250000, 0x0, 0x0, 0),
->+	REGULATOR_LINEAR_RANGE(1300000, 0x1, 0x8, 100000),
->+	REGULATOR_LINEAR_RANGE(2500000, 0x9, 0x9, 0),
->+	REGULATOR_LINEAR_RANGE(2700000, 0xa, 0xb, 100000),
->+	REGULATOR_LINEAR_RANGE(3000000, 0xc, 0xf, 100000),
-> };
->=20
-> static const struct regulator_desc axp20x_regulators[] =3D {
->@@ -645,48 +549,24 @@ static const struct regulator_desc
->axp22x_drivevbus_regulator =3D {
->=20
-> /* DCDC ranges shared with AXP813 */
-> static const struct regulator_linear_range axp803_dcdc234_ranges[] =3D {
->-	REGULATOR_LINEAR_RANGE(500000,
->-			       AXP803_DCDC234_500mV_START,
->-			       AXP803_DCDC234_500mV_END,
->-			       10000),
->-	REGULATOR_LINEAR_RANGE(1220000,
->-			       AXP803_DCDC234_1220mV_START,
->-			       AXP803_DCDC234_1220mV_END,
->-			       20000),
->+	REGULATOR_LINEAR_RANGE(500000, 0x0, 0x46, 10000),
->+	REGULATOR_LINEAR_RANGE(1220000, 0x47, 0x4b, 20000),
-> };
->=20
-> static const struct regulator_linear_range axp803_dcdc5_ranges[] =3D {
->-	REGULATOR_LINEAR_RANGE(800000,
->-			       AXP803_DCDC5_800mV_START,
->-			       AXP803_DCDC5_800mV_END,
->-			       10000),
->-	REGULATOR_LINEAR_RANGE(1140000,
->-			       AXP803_DCDC5_1140mV_START,
->-			       AXP803_DCDC5_1140mV_END,
->-			       20000),
->+	REGULATOR_LINEAR_RANGE(800000, 0x0, 0x20, 10000),
->+	REGULATOR_LINEAR_RANGE(1140000, 0x21, 0x44, 20000),
-> };
->=20
-> static const struct regulator_linear_range axp803_dcdc6_ranges[] =3D {
->-	REGULATOR_LINEAR_RANGE(600000,
->-			       AXP803_DCDC6_600mV_START,
->-			       AXP803_DCDC6_600mV_END,
->-			       10000),
->-	REGULATOR_LINEAR_RANGE(1120000,
->-			       AXP803_DCDC6_1120mV_START,
->-			       AXP803_DCDC6_1120mV_END,
->-			       20000),
->+	REGULATOR_LINEAR_RANGE(600000, 0x0, 0x32, 10000),
->+	REGULATOR_LINEAR_RANGE(1120000, 0x33, 0x47, 20000),
-> };
->=20
-> /* AXP806's CLDO2 and AXP809's DLDO1 share the same range */
-> static const struct regulator_linear_range axp803_dldo2_ranges[] =3D {
->-	REGULATOR_LINEAR_RANGE(700000,
->-			       AXP803_DLDO2_700mV_START,
->-			       AXP803_DLDO2_700mV_END,
->-			       100000),
->-	REGULATOR_LINEAR_RANGE(3400000,
->-			       AXP803_DLDO2_3400mV_START,
->-			       AXP803_DLDO2_3400mV_END,
->-			       200000),
->+	REGULATOR_LINEAR_RANGE(700000, 0x0, 0x1a, 100000),
->+	REGULATOR_LINEAR_RANGE(3400000, 0x1b, 0x1f, 200000),
-> };
->=20
-> static const struct regulator_desc axp803_regulators[] =3D {
->@@ -765,25 +645,13 @@ static const struct regulator_desc
->axp803_regulators[] =3D {
-> };
->=20
-> static const struct regulator_linear_range axp806_dcdca_ranges[] =3D {
->-	REGULATOR_LINEAR_RANGE(600000,
->-			       AXP806_DCDCA_600mV_START,
->-			       AXP806_DCDCA_600mV_END,
->-			       10000),
->-	REGULATOR_LINEAR_RANGE(1120000,
->-			       AXP806_DCDCA_1120mV_START,
->-			       AXP806_DCDCA_1120mV_END,
->-			       20000),
->+	REGULATOR_LINEAR_RANGE(600000, 0x0, 0x32, 10000),
->+	REGULATOR_LINEAR_RANGE(1120000, 0x33, 0x47, 20000),
-> };
->=20
-> static const struct regulator_linear_range axp806_dcdcd_ranges[] =3D {
->-	REGULATOR_LINEAR_RANGE(600000,
->-			       AXP806_DCDCD_600mV_START,
->-			       AXP806_DCDCD_600mV_END,
->-			       20000),
->-	REGULATOR_LINEAR_RANGE(1600000,
->-			       AXP806_DCDCD_600mV_START,
->-			       AXP806_DCDCD_600mV_END,
->-			       100000),
->+	REGULATOR_LINEAR_RANGE(600000, 0x0, 0x2d, 20000),
->+	REGULATOR_LINEAR_RANGE(1600000, 0x2e, 0x3f, 100000),
-> };
->=20
-> static const struct regulator_desc axp806_regulators[] =3D {
->@@ -841,14 +709,8 @@ static const struct regulator_desc
->axp806_regulators[] =3D {
-> };
->=20
-> static const struct regulator_linear_range axp809_dcdc4_ranges[] =3D {
->-	REGULATOR_LINEAR_RANGE(600000,
->-			       AXP809_DCDC4_600mV_START,
->-			       AXP809_DCDC4_600mV_END,
->-			       20000),
->-	REGULATOR_LINEAR_RANGE(1800000,
->-			       AXP809_DCDC4_1800mV_START,
->-			       AXP809_DCDC4_1800mV_END,
->-			       100000),
->+	REGULATOR_LINEAR_RANGE(600000, 0x0, 0x2f, 20000),
->+	REGULATOR_LINEAR_RANGE(1800000, 0x30, 0x38, 100000),
-> };
->=20
-> static const struct regulator_desc axp809_regulators[] =3D {
+> ---
+>  drivers/platform/chrome/Kconfig          | 2 +-
+>  drivers/platform/chrome/wilco_ec/Kconfig | 3 +--
+>  2 files changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+> index 462eb9dfa4f2..b69561050868 100644
+> --- a/drivers/platform/chrome/Kconfig
+> +++ b/drivers/platform/chrome/Kconfig
+> @@ -95,7 +95,7 @@ config CROS_EC_LPC
+>  
+>  config CROS_EC_LPC_MEC
+>  	bool "ChromeOS Embedded Controller LPC Microchip EC (MEC) variant"
+> -	depends on CROS_EC_LPC || WILCO_EC
+> +	depends on CROS_EC_LPC
+>  	default n
+>  	help
+>  	  If you say Y here, a variant LPC protocol for the Microchip EC
+> diff --git a/drivers/platform/chrome/wilco_ec/Kconfig b/drivers/platform/chrome/wilco_ec/Kconfig
+> index 20945a301ec6..c6bc4e8f3062 100644
+> --- a/drivers/platform/chrome/wilco_ec/Kconfig
+> +++ b/drivers/platform/chrome/wilco_ec/Kconfig
+> @@ -1,7 +1,6 @@
+>  config WILCO_EC
+>  	tristate "ChromeOS Wilco Embedded Controller"
+> -	depends on ACPI && X86
+> -	select CROS_EC_LPC_MEC
+> +	depends on ACPI && X86 && CROS_EC_LPC_MEC
+>  	help
+>  	  If you say Y here, you get support for talking to the ChromeOS
+>  	  Wilco EC over an eSPI bus. This uses a simple byte-level protocol
+> 
 
---=20
-Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
+
+-- 
+~Randy
