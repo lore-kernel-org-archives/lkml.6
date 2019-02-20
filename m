@@ -2,110 +2,100 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41784C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD8CC10F0B
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:00:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1245C2075B
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:55:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DBFF2147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:00:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mV6Rb6ng"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="mahU/fAm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbfBTPze (ORCPT
+        id S1726224AbfBTQAp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:55:34 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41992 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727483AbfBTPzd (ORCPT
+        Wed, 20 Feb 2019 11:00:45 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37532 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbfBTQAp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:55:33 -0500
-Received: by mail-pg1-f195.google.com with SMTP id b2so6330887pgl.9;
-        Wed, 20 Feb 2019 07:55:33 -0800 (PST)
+        Wed, 20 Feb 2019 11:00:45 -0500
+Received: by mail-pl1-f193.google.com with SMTP id q3so5050369pll.4
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 08:00:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uhag2rwNKK70aMLN2VRSNw9sWHXiG/SkFqYLW8IOrws=;
-        b=mV6Rb6ngVmbSCb3mrN43OFqczcc+bKJulcyUzLWHGXr6MBfmHSh/nHCgAmH7Apq4P7
-         dI405dZUu1nQkEpPLpPrhmBYnkUH6hxyBtV0tq54y1ZMNwB86S2IpWMgNRbA2aKLUsO8
-         RrY6hNzXu9wKpI1MxYG//sZmO6YWuKLiC1H6+HHNMYEeyhH/ZhvbaR9npG+q9DXYmSjE
-         dDtZhuCOV7be/YUmUOpufMVZRL2dFVJyA7DWp/wF5jOaWdGrT2QaJkzH44o6FtPOcaEa
-         0y6Uw2qRZugkvVEabJSudVmW3j642YNs65rbwnGFp4IHM757WvOTE6Q3YYnR5hzDLUgO
-         e3hA==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RY11cIriJiQSAMxw9Y+OKRZpU3gInWMmnwtnKL7ESTo=;
+        b=mahU/fAmVgFJMmY1HOrY8vlYPp1BtdCssDMXjzZqDddjWiIGNhISThFMZb2monQuv6
+         bXnuK6ZOOo05OLlTz/LGTn6MqZHSeOly4OOujYAp81eVrR91l/HLIJC9Mhen/L+pbUc3
+         TeGKiMYx/cXTTfaWE8c5v0WGPBWI5TdvrpoWBBjxCaRuVkb0ivPAKKcVbarh0pmIDlSa
+         CakG2PtkATIpnfM3L5dbPvxQ8EPWhl9g15J53gJ8zxGarf6Ih7eu1VMyYAoTeslmrCFZ
+         Rz6r0X0CBd6IsrA2AX9hOHYK0lp1R0QNaRotXa1nZxbTFX69Sd5wGjB4fsOopaHIohzs
+         oXAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uhag2rwNKK70aMLN2VRSNw9sWHXiG/SkFqYLW8IOrws=;
-        b=VpK1BYpxs3TFxCX+/w0hfqA92qSWc9dy3jJaAjyfnyi7I4cXe+IIJca5hr13RTn3YM
-         zQWvsaixiEvyvcXfe8FhGKmU9o5plHkBo8zOnU3cOaHSbyfM7IHpdq3JCvldAfjTpiQq
-         LWB6gfJQaIB1w6NY3HXvCoee1PqWise1ic8OSQZ+Y2quuam/KIPst4VZyCWs0pBdaGaK
-         rNfHmcFSnvWFvanBPE8rPiKMgjJgBmX3FN/FbSpIjiVFS48WcnCag5yvQBqafNWcmh90
-         Cs8VvoCW8OhGybql5/JfxvdcM+OPDTdiliAJJIej9MJZuUE1aNJ69pDn4dbyFvoqQg6k
-         xJiA==
-X-Gm-Message-State: AHQUAuaLkvOIxbbuAXfu14tiP/QxgEz1zTs0SndbZaa5UiePOzIla6Kb
-        Lu4ncPAhg53I46fgo5L07Rt4wGsqsX8h76Qih+I=
-X-Google-Smtp-Source: AHgI3IaVwLd5l7QyqECs9wTsAn7AlH5iwFgCx6vWEbQ520mdDCA+EWlWpFDUgfpOLmpv0nDUeab7uXpApgmgumI1TMU=
-X-Received: by 2002:aa7:82d5:: with SMTP id f21mr35468186pfn.50.1550678133060;
- Wed, 20 Feb 2019 07:55:33 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RY11cIriJiQSAMxw9Y+OKRZpU3gInWMmnwtnKL7ESTo=;
+        b=VNLWxksz93BXqrHE4lqC6qcxO6HSBPQaqYn6Ir5VofRdZbebwyuUuv+/44CfJ3pCld
+         iSvOLTyLVZoHbb0xWmznLQcrHOIj0SN9TQU2l4QmbWPhiqsAIfDix8h8ufm1LgviLma4
+         G/YEYeM9WUEmRHGMgoKrYPLzCOGjY2VBMbtoaI2vnIliwAzqCw4vgSanOWiP1sXxnSE6
+         hKm56hx6Dy3xRLQHKczOZbGWRKiCB4iKQ/tLhAzspmiW1Yp1YJoDmnwUYBn6q1fP22qW
+         QZpXCzLusjJe8YeqQEX6mm4+SM+7Oyp95urYomtCg9qkfU8JaRqbRZq9tX4D/MGKnz1y
+         Ko/A==
+X-Gm-Message-State: AHQUAuYoyg9Wy7Gh+mmkb+UDPnCWuZ6al8RGUhpA5h7DAzQZLyc6tuPJ
+        zm3UnvKR6NbtClVZ1B/JzPAvyw==
+X-Google-Smtp-Source: AHgI3IZrMSSAdOlqKlcGRid3pAKHrrIxikBSsRqtAHc7I/ueTGAhyQslkMGqf53BI49555BCCocLpw==
+X-Received: by 2002:a17:902:7c98:: with SMTP id y24mr19525405pll.191.1550678444132;
+        Wed, 20 Feb 2019 08:00:44 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id l2sm6129849pgj.64.2019.02.20.08.00.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Feb 2019 08:00:43 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gwUIc-0007vb-PL; Wed, 20 Feb 2019 09:00:42 -0700
+Date:   Wed, 20 Feb 2019 09:00:42 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     YueHaibing <yuehaibing@huawei.com>, peterhuewe@gmx.de,
+        arnd@arndb.de, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 -next] tpm: Fix the type of the return value in
+ calc_tpm2_event_size()
+Message-ID: <20190220160042.GD8429@ziepe.ca>
+References: <20190220022300.25888-1-yuehaibing@huawei.com>
+ <20190220063159.GA23027@linux.intel.com>
 MIME-Version: 1.0
-References: <20190219115959.55553-1-heikki.krogerus@linux.intel.com> <20190219115959.55553-2-heikki.krogerus@linux.intel.com>
-In-Reply-To: <20190219115959.55553-2-heikki.krogerus@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 20 Feb 2019 17:55:21 +0200
-Message-ID: <CAHp75VcoqwP5VrOW60XtQHLAO1KOmc_Kyn-KQsZC-tsiwpQq3A@mail.gmail.com>
-Subject: Re: [PATCH 1/2] platform/x86: intel_cht_int33fe: Provide fwnode for
- the USB connector
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     Andy Shevchenko <andy@infradead.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190220063159.GA23027@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 2:00 PM Heikki Krogerus
-<heikki.krogerus@linux.intel.com> wrote:
->
-> In ACPI, and now also in DT, the USB connectors usually have
-> their own device nodes. In case of USB Type-C, those
-> connector (port) nodes are child nodes of the controller or
-> PHY device, in our case the fusb302. The software fwnodes
-> allow us to create a similar child node for fusb302 that
-> represents the connector also on Intel CHT.
->
-> This makes it possible replace the fusb302 specific device
-> properties which were deprecated with the common USB
-> connector properties that tcpm.c is able to use directly.
+On Wed, Feb 20, 2019 at 08:31:59AM +0200, Jarkko Sakkinen wrote:
+> On Wed, Feb 20, 2019 at 10:23:00AM +0800, YueHaibing wrote:
+> > calc_tpm2_event_size() has an invalid signature because
+> > it returns a 'size_t' where as its signature says that
+> > it returns 'int'.
+> > 
+> > Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware event log")
+> > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> 
+> Two remarks:
+> 
+> - git config user.name "Yue Haibing"
+> - "Cc: stable@vger.kernel.org" before the fixes tag.
 
+'Theoretical' bug fixes are not suitable for stable
 
-
-> +       /* Node for the FUSB302 controller */
-> +       data->fusb302_node = fwnode_create_software_node(fusb302_props, NULL);
-> +       if (IS_ERR(data->fusb302_node))
-> +               return PTR_ERR(data->fusb302_node);
-> +
-> +       /* Node for the connector (FUSB302 is the parent) */
-> +       data->port_node = fwnode_create_software_node(usb_connector_props,
-> +                                                     data->fusb302_node);
-> +       if (IS_ERR(data->port_node)) {
-
-> +               fwnode_remove_software_node(data->fusb302_node);
-
-Sounds like a candidate for
-devm_fwnode_create_software_node()
-
-> +               return PTR_ERR(data->port_node);
-> +       }
-
--- 
-With Best Regards,
-Andy Shevchenko
+Jason
