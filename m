@@ -2,84 +2,132 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF47C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:38:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D41FBC10F0B
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:42:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C73A120855
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:38:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D5FB2086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:42:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbfBTPi6 (ORCPT
+        id S1726285AbfBTPm3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:38:58 -0500
-Received: from mga05.intel.com ([192.55.52.43]:35279 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725822AbfBTPi5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:38:57 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 07:38:57 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,391,1544515200"; 
-   d="scan'208";a="135782951"
-Received: from avandeve-mobl.amr.corp.intel.com (HELO [10.254.102.211]) ([10.254.102.211])
-  by orsmga002.jf.intel.com with ESMTP; 20 Feb 2019 07:38:55 -0800
-Subject: Re: [PATCH v11 2/3] x86,/proc/pid/status: Add AVX-512 usage elapsed
- time
-To:     David Laight <David.Laight@ACULAB.COM>,
-        'Thomas Gleixner' <tglx@linutronix.de>,
-        "Li, Aubrey" <aubrey.li@linux.intel.com>
-Cc:     "mingo@redhat.com" <mingo@redhat.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
-        "dave.hansen@intel.com" <dave.hansen@intel.com>,
-        "aubrey.li@intel.com" <aubrey.li@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190213023748.6614-1-aubrey.li@linux.intel.com>
- <20190213023748.6614-2-aubrey.li@linux.intel.com>
- <alpine.DEB.2.21.1902141212400.1561@nanos.tec.linutronix.de>
- <85b22e16-fffc-7ebe-2ab1-3b6fe7e036ab@linux.intel.com>
- <alpine.DEB.2.21.1902161340320.1683@nanos.tec.linutronix.de>
- <5c6ed8168eb34e0e84245fe01ba477ef@AcuMS.aculab.com>
-From:   Arjan van de Ven <arjan@linux.intel.com>
-Message-ID: <f5ed289f-825b-d0ba-a557-ce797a2c6cd9@linux.intel.com>
-Date:   Wed, 20 Feb 2019 07:38:54 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Wed, 20 Feb 2019 10:42:29 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:44158 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725822AbfBTPm3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 10:42:29 -0500
+Received: by mail-vs1-f65.google.com with SMTP id r201so14178893vsc.11;
+        Wed, 20 Feb 2019 07:42:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zQfSrSQYfYUqGoyytm7wx+3kzkjNa93b77XBbf1Zuyw=;
+        b=lXYVhjhfpQqKtYp7k0zMpH0NnIFXz5A/RcZCPtQi7+z1Iz8jynG56qjfMvwZ6zy9KQ
+         xkI2SU6qfVRqXI4rLSt1IoASIsWSI2dfYRWzwAUsGcEUcKwQA7tC/s8QOv/c4lHl1UQ5
+         LuFXi4/wkXQbIYR18qGE/TB40ZEvgbgPqapi4oUwF+zdBosKpCM4vtzk6nwK2Nyp7Bkm
+         7WpKxmgjfQX4gull9W/Fg8bxYlEgCophXILuiUxN08OzJ1Xnq2Mg7pxl3OucKTYNo8J3
+         6UsoQmC+PB/1+q/NMU05qUGS8tpnwtjb3m5Z9OMNh7pO5sWnd0vLOJp7QOU05HQoN0hI
+         Ln0w==
+X-Gm-Message-State: AHQUAuaKMnn5GJ8ZIhq0wXb3Ab9mVcPGUXiPbsMRo1O9jtCa5m2d3li+
+        ZqAYWLDW8cmdAMR9mNc7qzjJyrIvyUJBYFdOrpTe4pRS
+X-Google-Smtp-Source: AHgI3IZwqlpHCv3pdsNrKF21K3hFnc7CVrgreKS1aZbeJRgG6r3iXDNEgzeZFfU/16pOFMCrRNLS2zz81dVB0Vn8UGU=
+X-Received: by 2002:a67:8588:: with SMTP id h130mr3894664vsd.11.1550677348007;
+ Wed, 20 Feb 2019 07:42:28 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <5c6ed8168eb34e0e84245fe01ba477ef@AcuMS.aculab.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190220150531.2462-1-geert+renesas@glider.be>
+ <20190220150531.2462-4-geert+renesas@glider.be> <20190220153057.GF3516@pendragon.ideasonboard.com>
+In-Reply-To: <20190220153057.GF3516@pendragon.ideasonboard.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 20 Feb 2019 16:42:15 +0100
+Message-ID: <CAMuHMdWkQ918Y61tMJbHEu29AGLEyNwbvZbSBB-RRH7YYUNRcA@mail.gmail.com>
+Subject: Re: [PATCH 3/7] iommu/ipmmu-vmsa: Prepare to handle 40-bit error addresses
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Joerg Roedel <joro@8bytes.org>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/20/2019 7:35 AM, David Laight wrote:
-> From: Sent: 16 February 2019 12:56
->> To: Li, Aubrey
-> ...
->> The above experiment just confirms what I said: The numbers are inaccurate
->> and potentially misleading to a large extent when the AVX using task is not
->> scheduled out for a longer time.
-> 
-> Not only that, they won't detect programs that use AVX-512 but never
-> context switch with live AVX-512 registers.
+Hi Laurent,
 
+On Wed, Feb 20, 2019 at 4:31 PM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Wed, Feb 20, 2019 at 04:05:27PM +0100, Geert Uytterhoeven wrote:
+> > On R-Car Gen3, the faulting virtual address is a 40-bit address, and
+> > comprised of two registers.  Read the upper address part, and combine
+> > both parts, when running on a 64-bit system.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > Apart from this, the driver doesn't support 40-bit IOVA addresses yet.
+> > ---
+> >  drivers/iommu/ipmmu-vmsa.c | 16 ++++++++++------
+> >  1 file changed, 10 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+> > index ac70cb967ff821c6..4d07c26c97848b65 100644
+> > --- a/drivers/iommu/ipmmu-vmsa.c
+> > +++ b/drivers/iommu/ipmmu-vmsa.c
+> > @@ -186,7 +186,9 @@ static struct ipmmu_vmsa_device *to_ipmmu(struct device *dev)
+> >  #define IMMAIR_ATTR_IDX_WBRWA                1
+> >  #define IMMAIR_ATTR_IDX_DEV          2
+> >
+> > -#define IMEAR                                0x0030
+> > +#define IMEAR                                0x0030  /* R-Car Gen2 */
+> > +#define IMELAR                               IMEAR   /* R-Car Gen3 */
+>
+> I would have defined that as a single macro.
 
-you are completely correct in stating that this approach is basically sampling
-at a relatively course level and such sampling will give false negatives
+Fair enough.
 
-the alternative is not sampling, and not knowing anything at all,
-unless you have a better suggestion on how to help find tasks that use avx512
-in a low overhead way
+> > +#define IMEUAR                               0x0034  /* R-Car Gen3 */
+> >
+> >  #define IMPCTR                               0x0200
+> >  #define IMPSTR                               0x0208
+> > @@ -521,14 +523,16 @@ static irqreturn_t ipmmu_domain_irq(struct ipmmu_vmsa_domain *domain)
+> >  {
+> >       const u32 err_mask = IMSTR_MHIT | IMSTR_ABORT | IMSTR_PF | IMSTR_TF;
+> >       struct ipmmu_vmsa_device *mmu = domain->mmu;
+> > +     unsigned long iova;
+>
+> Isn't there a more appropriate type, such as dma_addr_t possibly ?
 
-(the typical use case is trying to find workloads that use avx512 to help
-scheduling those workloads in the future in the cloud orchestrator, for example
-to help them favor machines that support avx512 over machines that don't)
+Good question! Thanks for opening the can of worms ;-)
+
+I used "unsigned long", as that's what the "iova" parameter of
+report_iommu_fault() (called in this function) takes.
+
+However, dma_addr_t would probably be a better choice.
+
+Note that most iommu_ops methods take unsigned long, except for
+.iova_to_phys(), which takes dma_addr_t.
+Also, all io_pgtable_ops methods take unsigned long, including
+.iova_to_phys().
+
+The latter is interesting, as several IOMMU drivers forward the iova
+received in their iommu_ops.iova_to_phys() methods to
+io_pgtable_ops.iova_to_phys(), thus truncating the value on e.g. arm32
+with LPAE.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
