@@ -2,95 +2,76 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB0FAC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB5FC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D1F72086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:35:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QF5YQi+l"
+	by mail.kernel.org (Postfix) with ESMTP id E5CEC2086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:37:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbfBTVfJ (ORCPT
+        id S1727219AbfBTVg7 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 16:35:09 -0500
-Received: from mail-it1-f201.google.com ([209.85.166.201]:42569 "EHLO
-        mail-it1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726070AbfBTVfI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 16:35:08 -0500
-Received: by mail-it1-f201.google.com with SMTP id j127so11085437itj.7
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 13:35:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=OXyCSDz8Enqud3cO2LvvNEFBuYyIKW4lu57aGkX8Qks=;
-        b=QF5YQi+lyz3S2F3WmepcCstzOtCUTMjYABX7XE4bks4wO0ofNXKzivLQU1ti4cqwYq
-         YgETxQRrHqwjW4njIZOiam6be6cGXMfO9F+CilH51RE19xErGzE+AkigBRvJKLennQCw
-         kk/lrOVIVNQjx84Cr5zy3KPGrnvL2dzBBVps4w232e9I63vFjX946L3yxjLoWyohvccp
-         vRQe9STD7F8vlxrbuH61743VOMcwqHyBl2LXpcHUXEDSIRjakY8jnM56iWXP7HA40+Sp
-         lEN24NWo9rM3goqqSWooU+VSqo0NZZMYGlLZ77m7kJ1wiRUYibTOqOFMeW+muw0pTQrU
-         UNOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=OXyCSDz8Enqud3cO2LvvNEFBuYyIKW4lu57aGkX8Qks=;
-        b=rlXXkahm9pPzeZ/Bpd8GKvlNWQJqZ3H29Haznmkid5xFavx/WD1apMl/zYIaD3GClm
-         4CL5yfzonXQpoiJa01QecZQxSqTYW6/8WlqhuOHzlchln33XPPBSgCF/nFliXHUlrjTy
-         znKL344ZvJWNr73jXaaf9glWlD5SQqmOR1eyHH32o/QtDs/EzKRWhziQN5A4Rsj7JTH2
-         97LFYzM8q/SaZ0TNz8t8UUk63JW0yapjiIaN2ox863+SMB6u4QRkwWIjJ3rgn7upmSsn
-         l+8GYPJfpdElSDqWQXc0nIlWIlZ9QUlEl2yeVT9/JgCCb2TewI7svwV4JKOaV4vpW5tP
-         on3A==
-X-Gm-Message-State: AHQUAuaaKqez+N/oRBL7zhxc63RUBfXMGqPvGOHu9OS0NJVvHKdazszf
-        t2Y6dvVgf4lAy/APn+C0HQscPpW1fg==
-X-Google-Smtp-Source: AHgI3IYRU+i08VyArFmdRrCtGKs7syI/9DTrKV8QxT8jV7m7thX0zFntp9gJ/KSp+kGiex8W2keey7P74A==
-X-Received: by 2002:a24:1303:: with SMTP id 3mr1534061itz.40.1550698507926;
- Wed, 20 Feb 2019 13:35:07 -0800 (PST)
-Date:   Wed, 20 Feb 2019 22:34:54 +0100
-Message-Id: <20190220213454.244600-1-jannh@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
-Subject: [PATCH net] net: socket: add check for negative optlen in compat setsockopt
-From:   Jann Horn <jannh@google.com>
-To:     "David S. Miller" <davem@davemloft.net>, jannh@google.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 20 Feb 2019 16:36:59 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57900 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726070AbfBTVg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 16:36:59 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0445A309B6E1;
+        Wed, 20 Feb 2019 21:36:59 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AD8525D6AA;
+        Wed, 20 Feb 2019 21:36:57 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20190221073835.7a18f007@canb.auug.org.au>
+References: <20190221073835.7a18f007@canb.auug.org.au>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     dhowells@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        James Morris <james.morris@microsoft.com>
+Subject: Re: linux-next: Fixes tag needs some work in Linus' tree
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <28430.1550698616.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Wed, 20 Feb 2019 21:36:56 +0000
+Message-ID: <28431.1550698616@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 20 Feb 2019 21:36:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__sys_setsockopt() already checks for `optlen < 0`. Add an equivalent check
-to the compat path for robustness. This has to be `> INT_MAX` instead of
-`< 0` because the signedness of `optlen` is different here.
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Signed-off-by: Jann Horn <jannh@google.com>
----
- net/compat.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+> In commit
+> 
+>   822ad64d7e46 ("keys: Fix dependency loop between construction record and auth key")
+> 
+> Fixes tag
+> 
+>   Fixes: 7ee02a316600 ("keys: Fix dependency loop between construction record and auth key")
+> 
+> has these problem(s):
+> 
+>   - Target SHA1 does not exist
 
-diff --git a/net/compat.c b/net/compat.c
-index 959d1c51826d..3d348198004f 100644
---- a/net/compat.c
-+++ b/net/compat.c
-@@ -388,8 +388,12 @@ static int __compat_sys_setsockopt(int fd, int level, int optname,
- 				   char __user *optval, unsigned int optlen)
- {
- 	int err;
--	struct socket *sock = sockfd_lookup(fd, &err);
-+	struct socket *sock;
-+
-+	if (optlen > INT_MAX)
-+		return -EINVAL;
- 
-+	sock = sockfd_lookup(fd, &err);
- 	if (sock) {
- 		err = security_socket_setsockopt(sock, level, optname);
- 		if (err) {
--- 
-2.21.0.rc0.258.g878e2cd30e-goog
+Oops.  I guess I pasted in the wrong commit details.
 
+	commit 76181c134f87479fa13bf2548ddf2999055d34d4
+	KEYS: Make request_key() and co fundamentally asynchronous
+
+should've been it.
+
+David
