@@ -2,303 +2,184 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A07C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:18:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B17C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:19:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F45A20880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:18:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EBCB20859
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:19:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="jJytOFgR"
+	dkim=pass (2048-bit key) header.d=herbertland-com.20150623.gappssmtp.com header.i=@herbertland-com.20150623.gappssmtp.com header.b="1/IE7Mqb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbfBTQSx (ORCPT
+        id S1727574AbfBTQTE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 11:18:53 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.80]:34123 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725801AbfBTQSx (ORCPT
+        Wed, 20 Feb 2019 11:19:04 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:34894 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725877AbfBTQTE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 11:18:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1550679529;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=u6N/SgiboUGhCZbiRP8QCeF89OEYpgiNlI0SOpkjfSY=;
-        b=jJytOFgRWYTfi1NlVNq+I3t5sa42Hy03gktapub8wZJ/sq/7eOo+eSRn29qZs5jNr8
-        zlUhrweZTUjrYn+uvwa/k48yS7PbxQ6qB02fLWkuQ1O02mEJo5v/onR2UBQpUI9d1Xdq
-        Y2H+ncLrhb/PrLlQolR+aqxVJXjF0VWF7ttoa7k4UyCQrz9CtPQYzNw1wsIxP2LZJjXY
-        /HopNmr9yDfZQvZkdbpNKmbvmxA7cECkIXijeRwKRiFsgb0P6d+mClsuFUln7qXfOC4L
-        qcnLhhKzDH+nxZYJSfh81lbQp4nvccNsqiJYv+3CdNC8xVkTkWuHLnd+QzM5nLYjhV3g
-        KnaQ==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj7wpz8NMGH/ztwDXG"
-X-RZG-CLASS-ID: mo00
-Received: from mbp-13-nikolaus.fritz.box
-        by smtp.strato.de (RZmta 44.9 DYNA|AUTH)
-        with ESMTPSA id 608499v1KGIgFbg
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 20 Feb 2019 17:18:42 +0100 (CET)
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH 1/9] iio: document bindings for mounting matrices
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20190220161017.35f2f3a4@archlinux>
-Date:   Wed, 20 Feb 2019 17:18:41 +0100
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Song Qiang <songqiang1304521@gmail.com>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Gregor Boirie <gregor.boirie@parrot.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Samu Onkalo <samu.onkalo@intel.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <49606C25-608D-4F77-8038-E2C7A11B861D@goldelico.com>
-References: <cover.1550671256.git.hns@goldelico.com> <a1fcef308d9193cac33cda2420b6df5000cfc9c7.1550671256.git.hns@goldelico.com> <20190220161017.35f2f3a4@archlinux>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-X-Mailer: Apple Mail (2.3124)
+        Wed, 20 Feb 2019 11:19:04 -0500
+Received: by mail-qt1-f195.google.com with SMTP id p48so27836499qtk.2
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 08:19:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=herbertland-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mAs7V9lXIE9K2qInJaJNOkns2i39lzC9uSxJQ8sa40g=;
+        b=1/IE7MqbL7uwTpF2M11GSjbRitE5Lrmn5gWs89HYyKafME/A7vFFSAu81/7VV9kLNl
+         BpxqD26rh0XMF4gYg3JgfSuC637+xzF10QF+LG0YgHhX76aaAdEYZYrg2Iq1JWrLFfmH
+         6P1YWqHjL8AJwk6jdE3kTaxc4hNTtEDYe8XAxZHMowRid6V7X5OSeSVej7pzcfl5Xf0F
+         Y3ldzkNML0mlx0N5yW2dytm88H5PqOunIZKaopwZVtmdxH3INCQumKNjMVoaeTaLd9re
+         9HDObIK+ga+hauJ/dB3p1O4Dg+ezStuwkWbi+OLciD60nm5SndVoiSRhdi7O6n1YgaI2
+         enNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mAs7V9lXIE9K2qInJaJNOkns2i39lzC9uSxJQ8sa40g=;
+        b=gzxZIPaEVCKQRDzIcmqziqQ82RAKRk/QwbfR8fr74WuiLIaY+kY9PREqLRsIkjOZPw
+         aRrP9dw4UK6vjU6FTCuhcP7U68FgQPePWALiwqKBu7o4N0nWkZg99bsQ5GcvC+6/FXok
+         axRrCF2tCK09JHOtst7SO1WSjO8lpdJCKEkWaUZR6MA7og+uNcGdCE3SJ7If1Hz69RUX
+         8k0CMu7/xWgTyRXs9lWroKNuVhb0z1KhG8UjgMD/oaEWn9zIip+4zpgx5i4zIuEZQzLg
+         pRGhy1L86LpMT2h4YzEOQQvTV3SRevteoim3dS106COx4Wfw3zVlIdiCXwCogYRv+GfP
+         Nitw==
+X-Gm-Message-State: AHQUAua0x9XIXFn6N1sM1k2xtVaw5/2joXWl2OaIqrJ6OHX1wDdrq/9k
+        WT9YGQ8O+qogAbsQbKyMfM6NQOIqS6JM5ZFQCOR7nA==
+X-Google-Smtp-Source: AHgI3IYdbXAAqySGfywIJjCYFCaSRh5AhQGd93FtpA4Z3zouaE+Q7znDpbYtaWW20Z8ZgmlcqNTLGsl2vRWSjpb1Xss=
+X-Received: by 2002:ac8:1bf7:: with SMTP id m52mr28436100qtk.200.1550679542750;
+ Wed, 20 Feb 2019 08:19:02 -0800 (PST)
+MIME-Version: 1.0
+References: <20180917.184502.447385458615284933.davem@davemloft.net>
+ <20180918015723.GA26300@nautica> <20181031025657.GA17861@nautica>
+ <20190215010029.GA10899@nautica> <CALx6S35HBKgtYkFde_AhCMPRtZfcVYfCYf=mLKjWSLLAfhMHyQ@mail.gmail.com>
+ <20190215015705.GA17974@nautica> <CALx6S37MZadJ=PaAd+SSv9hxSX9kFTmTUtijPGA39JCx3PYq1Q@mail.gmail.com>
+ <20190215033102.GA3099@nautica> <CAPDqMeoJ7CCo1eGNBp_-crkxfVt_4f=XQqhEo7kmyCN-hf_EWQ@mail.gmail.com>
+ <20190215045214.GA13123@nautica> <20190220041151.GA13520@nautica>
+In-Reply-To: <20190220041151.GA13520@nautica>
+From:   Tom Herbert <tom@herbertland.com>
+Date:   Wed, 20 Feb 2019 08:18:51 -0800
+Message-ID: <CALx6S35jPN+E7-A4JK9ypAETophtKrJzjd9HPmXowU7RMS=bcA@mail.gmail.com>
+Subject: Re: [PATCH v2] kcm: remove any offset before parsing messages
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     Tom Herbert <tom@quantonium.net>,
+        David Miller <davem@davemloft.net>,
+        Doron Roberts-Kedes <doronrk@fb.com>,
+        Dave Watson <davejwatson@fb.com>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Feb 19, 2019 at 8:12 PM Dominique Martinet
+<asmadeus@codewreck.org> wrote:
+>
+> Dominique Martinet wrote on Fri, Feb 15, 2019:
+> > With all that said I guess my patch should work correctly then, I'll try
+> > to find some time to check the error does come back up the tcp socket in
+> > my reproducer but I have no reason to believe it doesn't.
+>
+> Ok, so I can confirm this part - the 'csock' does come back up with
+> POLLERR if the parse function returns ENOMEM in the current code.
+>
+Good.
 
-> Am 20.02.2019 um 17:10 schrieb Jonathan Cameron <jic23@kernel.org>:
->=20
-> On Wed, 20 Feb 2019 15:00:48 +0100
-> "H. Nikolaus Schaller" <hns@goldelico.com> wrote:
->=20
->> From: Linus Walleij <linus.walleij@linaro.org>
->>=20
->> The mounting matrix for sensors was introduced in
->> commit dfc57732ad38 ("iio:core: mounting matrix support")
->>=20
->> However the device tree bindings are very terse and since this is
->> a widely applicable property, we need a proper binding for it
->> that the other bindings can reference. This will also be useful
->> for other operating systems and sensor engineering at large.
->>=20
->> I think all 3D sensors should support it, the current situation
->> is probably that the mounting information is confined in magic
->> userspace components rather than using the mounting matrix, which
->> is not good for portability and reuse.
->>=20
->> Cc: Gregor Boirie <gregor.boirie@parrot.com>
->> Cc: Sebastian Reichel <sre@kernel.org>
->> Cc: Samu Onkalo <samu.onkalo@intel.com>
->> Cc: devicetree@vger.kernel.org
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> Hmm. I looked back and seems there were still some outstanding =
-questions
-> on this last time around.
->=20
-> =
-https://lore.kernel.org/linux-iio/a6d866f2-ee20-282b-def0-f65de2177aee@ker=
-nel.org/
->=20
-> Particularly hard as ever to define the magnetic planes when near the
-> magnetic poles when in 3D.
->=20
-> That needs cleaning up ideally before we apply this.
+> It also comes back up with POLLERR when the remote side closes the
+> connection, which is expected, but I'm having a very hard time
+> understanding how an application is supposed to deal with these
+> POLLERR after having read the documentation and a bit of
+> experimentation.
+> I'm not sure how much it would matter for real life (if the other end
+> closes the connection most servers would not care about what they said
+> just before closing, but I can imagine some clients doing that in real
+> life e.g. a POST request they don't care if it succeeds or not)...
+> My test program works like this:
+>  - client connects, sends 10k messages and close()s the socket
+>  - server loops recving and close()s after 10k messages; it used to be
+> recvmsg() directly but it's now using poll then recvmsg.
+>
+>
+> When the client closes the socket, some messages are obviously still "in
+> flight", and the server will recv a POLLERR notification on the csock at
+> some point with many messages left.
+> The documentation says to unattach the csock when you get POLLER. If I
+> do that, the kcm socket will no longer give me any message, so all the
+> messages still in flight at the time are lost.
 
-Agreed. I already placed my proposal for improvement on top of that,
-but I did not try to solve the magnetic planes issue.
+So basically it sounds like you're interested in supporting TCP
+connections that are half closed. I believe that the error in half
+closed is EPIPE, so if the TCP socket returns that it can be ignored
+and the socket can continue being attached and used to send data.
 
-Maybe Linus could squeeze the patches and edit a new one that solves
-all issues.
+Another possibility is to add some linger semantics to an attached
+socket. For instance, a large message might be sent so that part of
+the messge is queued in TCP and part is queued in the KCM socket.
+Unattach would probably break that message. We probably want to linger
+option similar to SO_LINGER (or maybe just use the option on the TCP
+socket) that means don't complete the detach until any message being
+transmitted on the lower socket has been queued.
+>
+> If I just ignore the csock like I used to, all the messages do come just
+> fine, but as said previously on a real error this will just make recvmsg
+> or the polling hang forever and I see no way to distinguish a "real"
+> error vs. a connection shut down from the remote side with data left in
+> the pipe.
+> I thought of checking POLLERR on csock and POLLIN not set on kcmsock,
+> but even that seems to happen fairly regularily - the kcm sock hasn't
+> been filled up, it's still reading from the csock.
+>
+>
+> On the other hand, checking POLLIN on the csock does say there is still
+> data left, so I know there is data left on the csock, but this is also
+> the case on a real error (e.g. if parser returns -ENOMEM)
+> ... And this made me try to read from the csock after detaching it and I
+> can resume manual tcp parsing for a few messages until read() fails with
+> EPROTO ?! and I cannot seem to be able to get anything out of attaching
+> it back to kcm (for e.g. an ENOMEM error that was transient)...
+>
+>
+>
+> I'm honestly not sure how the POLLERR notification mechanism works but I
+> think it would be much easier to use KCM if we could somehow delay that
+> error until KCM is done feeding from the csock (when netparser really
+> stops reading from it like on real error, e.g. abort callback maybe?)
+> I think it's fine if the csock is closed before the kcm sock message is
+> read, but we should not lose messages like this.
 
-What I am most interested at the moment is to get an unambigous
-description for accelerometers first. The otehr topic was that I
-did not clearly see how the matrix is applied to the raw values
-(one could do row index first or column index first).
+Sounds like linger semantics is needed then.
 
-BR and thanks,
-Nikolaus
+>
+>
+>
+> > I'd like to see some retry on ENOMEM before this is merged though, so
+> > while I'm there I'll resend this with a second patch doing that
+> > retry,.. I think just not setting strp->interrupted and not reporting
+> > the error up might be enough? Will have to try either way.
+>
+> I also tried playing with that without much success.
+> I had assumed just not calling strp_parser_err() (which calls the
+> abort_parser cb) would be enough, eventually calling strp_start_timer()
+> like the !len case, but no can do.
 
->=20
-> Jonathan
->=20
->> ---
->> .../devicetree/bindings/iio/mount-matrix.txt  | 108 =
-++++++++++++++++++
->> 1 file changed, 108 insertions(+)
->> create mode 100644 =
-Documentation/devicetree/bindings/iio/mount-matrix.txt
->>=20
->> diff --git a/Documentation/devicetree/bindings/iio/mount-matrix.txt =
-b/Documentation/devicetree/bindings/iio/mount-matrix.txt
->> new file mode 100644
->> index 000000000000..a3714727f739
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/iio/mount-matrix.txt
->> @@ -0,0 +1,108 @@
->> +Mounting matrix
->> +
->> +The mounting matrix is a device tree property used to orient any IIO =
-device
->> +that produce three-dimensional data in relation to the world where =
-it is
->> +deployed.
->> +
->> +The purpose of the mounting matrix is to translate the sensor frame =
-of
->> +reference into the device frame of reference using a translation =
-matrix as
->> +defined in linear algebra.
->> +
->> +The typical usecase is that where a component has an internal =
-representation
->> +of the (x,y,z) triplets, such as different registers to read these =
-coordinates,
->> +and thus implying that the component should be mounted in a certain =
-orientation
->> +relative to some specific device frame of reference.
->> +
->> +For example a device with some kind of screen, where the user is =
-supposed to
->> +interact with the environment using an accelerometer, gyroscope or =
-magnetometer
->> +mounted on the same chassis as this screen, will likely take the =
-screen as
->> +reference to (x,y,z) orientation, with (x,y) corresponding to these =
-axes on the
->> +screen and (z) being depth, the axis perpendicular to the screen.
->> +
->> +For a screen you probably want (x) coordinates to go from negative =
-on the left
->> +to positive on the right and (z) depth to be negative under the =
-screen and
->> +positive in front of it, toward the face of the user.
->> +
->> +A sensor can be mounted in any angle along the axes relative to the =
-frame of
->> +reference. This means that the sensor may be flipped upside-down, =
-left-right,
->> +or tilted at any angle relative to the frame of reference.
->> +
->> +Another frame of reference is how the device with its sensor relates =
-to the
->> +external world, the environment where the device is deployed. =
-Usually the data
->> +from the sensor is used to figure out how the device is oriented =
-with respect
->> +to this world. When using the mounting matrix, the sensor and device =
-orientation
->> +becomes identical and we can focus on the data as it relates to the =
-surrounding
->> +world.
->> +
->> +Device-to-world examples for some three-dimensional sensor types:
->> +
->> +- Accelerometers have their world frame of reference toward the =
-center of
->> +  gravity, usually to the core of the planet. A reading of the =
-(x,y,z) values
->> +  from the sensor will give a projection of the gravity vector =
-through the
->> +  device relative to the center of the planet, i.e. relative to its =
-surface at
->> +  this point. Up and down in the world relative to the device frame =
-of
->> +  reference can thus be determined. and users would likely expect a =
-value of
->> +  9.81 m/s^2 upwards along the (z) axis, i.e. out of the screen when =
-the device
->> +  is held with its screen flat on the planets surface and 0 on the =
-other axes,
->> +  as the gravity vector is projected 1:1 onto the sensors (z)-axis.
->> +
->> +- Magnetometers (compasses) have their world frame of reference =
-relative to the
->> +  geomagnetic field. The system orientation vis-a-vis the world is =
-defined with
->> +  respect to the local earth geomagnetic reference frame where (y) =
-is in the
->> +  ground plane and positive towards magnetic North, (x) is in the =
-ground plane,
->> +  perpendicular to the North axis and positive towards the East and =
-(z) is
->> +  perpendicular to the ground plane and positive upwards.
->> +
->> +- Gyroscopes detects the movement relative the device itself. The =
-angular
->> +  velocity is defined as orthogonal to the plane of rotation, so if =
-you put the
->> +  device on a flat surface and spin it around the z axis (such as =
-rotating a
->> +  device with a screen lying flat on a table), you should get a =
-negative value
->> +  along the (z) axis if rotated clockwise, and a positive value if =
-rotated
->> +  counter-clockwise according to the right-hand rule.
->> +
->> +So unless the sensor is ideally mounted, we need a means to indicate =
-the
->> +relative orientation of any given sensor of this type with respect =
-to the
->> +frame of reference.
->> +
->> +To achieve this, use the device tree property "mount-matrix" for the =
-sensor.
->> +This supplies a 3x3 rotation matrix in the strict linear algebraic =
-sense,
->> +to orient the senor axes relative to a desired point of reference. =
-This means
->> +the resulting values from the sensor, after scaling to proper units, =
-should be
->> +multiplied by this matrix to give the proper vectors values in =
-three-dimensional
->> +space, relative to the device or world point of reference.
->> +
->> +For more information, consult:
->> +https://en.wikipedia.org/wiki/Rotation_matrix
->> +
->> +The mounting matrix has the layout:
->> +
->> + (x0, y0, z0)
->> + (x1, y1, z1)
->> + (x2, y2, z3)
->> +
->> +And it is represented as an array of strings containing the real =
-values for
->> +producing the transformation matrix. The real values use a decimal =
-point and
->> +a minus (-) to indicate a negative value.
->> +
->> +Examples:
->> +
->> +Identity matrix (nothing happens to the coordinates, which means the =
-device was
->> +mechanically mounted in an ideal way and we need no transformation):
->> +
->> +mount-matrix =3D "1", "0", "0",
->> +               "0", "1", "0",
->> +               "0", "0", "1";
->> +
->> +The sensor is mounted 30 degrees (Pi/6 radians) tilted along the X =
-axis, so we
->> +compensate by performing a -30 degrees rotation around the X axis:
->> +
->> +mount-matrix =3D "1", "0", "0",
->> +               "0", "0.866", "0.5",
->> +               "0", "-0.5", "0.866";
->> +
->> +The sensor is flipped 180 degrees (Pi radians) around the Z axis, =
-i.e. mounted
->> +upside-down:
->> +
->> +mount-matrix =3D "0.998", "0.054", "0",
->> +               "-0.054", "0.998", "0",
->> +               "0", "0", "1";
->=20
+I think you need to ignore the ENOMEM and have a timer or other
+callback to retry the operation in the future.
 
+> With that said, returning 0 from the parse function also raises POLLERR
+> on the csock and hangs netparser, so things aren't that simple...
+
+Can you point to where this is happening. If the parse_msg callback
+returns 0 that is suppose to indicate that more bytes are needed.
+
+>
+
+>
+> I could use a bit of help again.
+>
+> Thanks,
+> --
+> Dominique
