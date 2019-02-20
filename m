@@ -2,161 +2,93 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE6ADC4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA4E5C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:14:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D1F821773
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:03:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="BnApq3GT"
+	by mail.kernel.org (Postfix) with ESMTP id A6A7F21738
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:14:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728815AbfBTCDZ (ORCPT
+        id S1728753AbfBTCOE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 21:03:25 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44091 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726262AbfBTCDY (ORCPT
+        Tue, 19 Feb 2019 21:14:04 -0500
+Received: from lucky1.263xmail.com ([211.157.147.131]:47324 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725616AbfBTCOD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 21:03:24 -0500
-Received: by mail-qt1-f194.google.com with SMTP id n32so25584563qte.11
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 18:03:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=00qWdP9yJCrrDj9GrrSLCkpLfkNqrzhgL2CKjBjnWLM=;
-        b=BnApq3GTgw/vvlNZI7FNmBPS6n5zAgj8+gng584kXntro/o/4d3yK/K1GqbqVIt5J/
-         4dWgdLiVcGX04J3Ahj3NTbNr+rHgqyAzlabCxSIQT/CkYh+bVSz/4yVO/Fp3PkXsJKOG
-         lvbeMslDs67sZ4FOicVtbp5NovgZvgW/FPKuinmAHSB2qR1RfyYfdjZhGe3En70tnO4P
-         AjSWgHZcvLShMZhQfyqEbDcA8LB5l9B+VYPsnF89Z4Q9y3zS4cxChtuEr8uUB0hwmr2m
-         eoirL4T/QlY8a2eOzNlWp3c2SM88Mgs875pIXRiz+pGPCSKQb9NH+lWQ6zB0WJdqeyWH
-         Ks5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=00qWdP9yJCrrDj9GrrSLCkpLfkNqrzhgL2CKjBjnWLM=;
-        b=E3oFDmjc32qSDZy9l2Lb8AaRjZZYZYGQTokR8Fql/5bdxwD4AuNuCKWubYTcOiHJc0
-         +DC/Wj0tf5+8YaTK823o1W9qxDW+wS04EFgIP1S+um36X//3UzZegL3aViPCqoN6zfQd
-         2UhgtdBHv5XgdAI0DjacWcTYGw5DOlWNls6aqXshjoJgccVnc7fTNW+l7zLfVYnAnyHO
-         Lu1zKWSMyi2ImfXpRtYw2qR5ITyG/Sl6sDtxcfP3RQ1iHIOzYe8jtqREM3b7wCCsPh2X
-         gxXJp08GhPLlRewy0x9XPl2LYJt4TsmuCYYAtk+My+w6UwwKbUMfqHhZj3bIuT0KHgVt
-         VeRA==
-X-Gm-Message-State: AHQUAuaW0F2TKbRjBvUgFPGt5+i9ol/XGAWgrv9aP+FUR7dWNaJ9Iy9H
-        1V+w01vsHEXX2cic2cUce5g4xQ==
-X-Google-Smtp-Source: AHgI3IbqioLYY6MZWt0VLZUZEcVvkIibUz03IZ0UH5ZlE5Bt0+S3R13iIIe2HPiShH2SvsrYq5SbzA==
-X-Received: by 2002:ac8:3fd4:: with SMTP id v20mr24404066qtk.188.1550628203480;
-        Tue, 19 Feb 2019 18:03:23 -0800 (PST)
-Received: from ovpn-120-150.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id f29sm13571153qte.11.2019.02.19.18.03.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 18:03:23 -0800 (PST)
-From:   Qian Cai <cai@lca.pw>
-To:     akpm@linux-foundation.org, cl@linux.com, penberg@kernel.org,
-        rientjes@google.com, iamjoonsoo.kim@lge.com
-Cc:     andreyknvl@google.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
-Subject: [PATCH] slub: fix a crash with SLUB_DEBUG + KASAN_SW_TAGS
-Date:   Tue, 19 Feb 2019 21:02:51 -0500
-Message-Id: <20190220020251.82039-1-cai@lca.pw>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+        Tue, 19 Feb 2019 21:14:03 -0500
+X-Greylist: delayed 436 seconds by postgrey-1.27 at vger.kernel.org; Tue, 19 Feb 2019 21:14:02 EST
+Received: from shawn.lin?rock-chips.com (unknown [192.168.167.224])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 773D95A66;
+        Wed, 20 Feb 2019 10:06:43 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from [172.16.12.37] (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P2315T140013062825728S1550628401673389_;
+        Wed, 20 Feb 2019 10:06:42 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <b97b291e2684d941d9f3d8b3ab642bdc>
+X-RL-SENDER: shawn.lin@rock-chips.com
+X-SENDER: lintao@rock-chips.com
+X-LOGIN-NAME: shawn.lin@rock-chips.com
+X-FST-TO: robh+dt@kernel.org
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Cc:     shawn.lin@rock-chips.com, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, robh+dt@kernel.org
+Subject: =?UTF-8?Q?Re=3a_=5bPATCH=5d_ARM=3a_dts=3a_rockchip=3a_remove_disabl?=
+ =?UTF-8?B?ZS13cCBmcm9tIHJ2MTEwOC1lbGdpbi1yMSBlbW1jIG5vZGXjgJDor7fms6jmhI8=?=
+ =?UTF-8?B?77yM6YKu5Lu255SxbGludXgtcm9ja2NoaXAtYm91bmNlcytzaGF3bi5saW49cm9j?=
+ =?UTF-8?B?ay1jaGlwcy5jb21AbGlzdHMuaW5mcmFkZWFkLm9yZ+S7o+WPkeOAkQ==?=
+To:     Johan Jonker <jbx6244@gmail.com>, heiko@sntech.de
+References: <20190219130317.2817-1-jbx6244@gmail.com>
+From:   Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <a8251244-44e5-0423-16cf-de035a760248@rock-chips.com>
+Date:   Wed, 20 Feb 2019 10:06:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
+MIME-Version: 1.0
+In-Reply-To: <20190219130317.2817-1-jbx6244@gmail.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In process_slab(), "p = get_freepointer()" could return a tagged
-pointer, but "addr = page_address()" always return a native pointer. As
-the result, slab_index() is messed up here,
+On 2019/2/19 21:03, Johan Jonker wrote:
+> The mmc.txt didn't explicitly say disable-wp is for SD card slot only,
+> but that is what it was designed for in the first place.
+> Remove all disable-wp from emmc or sdio controllers.
+> 
+> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> ---
+>   arch/arm/boot/dts/rv1108-elgin-r1.dts | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/rv1108-elgin-r1.dts b/arch/arm/boot/dts/rv1108-elgin-r1.dts
+> index 1c4507b..b1db924 100644
+> --- a/arch/arm/boot/dts/rv1108-elgin-r1.dts
+> +++ b/arch/arm/boot/dts/rv1108-elgin-r1.dts
+> @@ -37,7 +37,6 @@
+>   &emmc {
+>   	bus-width = <8>;
+>   	cap-mmc-highspeed;
+> -	disable-wp;
 
-return (p - addr) / s->size;
+Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-All other callers of slab_index() have the same situation where "addr"
-is from page_address(), so just need to untag "p".
+>   	no-sd;
+>   	no-sdio;
+>   	non-removable;
+> 
 
- # cat /sys/kernel/slab/hugetlbfs_inode_cache/alloc_calls
-
-[18868.759419] Unable to handle kernel paging request at virtual address 2bff808aa4856d48
-[18868.767341] Mem abort info:
-[18868.770133]   ESR = 0x96000007
-[18868.773187]   Exception class = DABT (current EL), IL = 32 bits
-[18868.779103]   SET = 0, FnV = 0
-[18868.782155]   EA = 0, S1PTW = 0
-[18868.785292] Data abort info:
-[18868.788170]   ISV = 0, ISS = 0x00000007
-[18868.792003]   CM = 0, WnR = 0
-[18868.794973] swapper pgtable: 64k pages, 48-bit VAs, pgdp = 0000000002498338
-[18868.801932] [2bff808aa4856d48] pgd=00000097fcfd0003, pud=00000097fcfd0003, pmd=00000097fca30003, pte=00e8008b24850712
-[18868.812597] Internal error: Oops: 96000007 [#1] SMP
-[18868.835088] CPU: 3 PID: 79210 Comm: read_all Tainted: G             L    5.0.0-rc7+ #84
-[18868.843087] Hardware name: HPE Apollo 70             /C01_APACHE_MB         , BIOS L50_5.13_1.0.6 07/10/2018
-[18868.852915] pstate: 00400089 (nzcv daIf +PAN -UAO)
-[18868.857710] pc : get_map+0x78/0xec
-[18868.861109] lr : get_map+0xa0/0xec
-[18868.864505] sp : aeff808989e3f8e0
-[18868.867816] x29: aeff808989e3f940 x28: ffff800826200000
-[18868.873128] x27: ffff100012d47000 x26: 9700000000002500
-[18868.878440] x25: 0000000000000001 x24: 52ff8008200131f8
-[18868.883753] x23: 52ff8008200130a0 x22: 52ff800820013098
-[18868.889065] x21: ffff800826200000 x20: ffff100013172ba0
-[18868.894377] x19: 2bff808a8971bc00 x18: ffff1000148f5538
-[18868.899690] x17: 000000000000001b x16: 00000000000000ff
-[18868.905002] x15: ffff1000148f5000 x14: 00000000000000d2
-[18868.910314] x13: 0000000000000001 x12: 0000000000000000
-[18868.915626] x11: 0000000020000002 x10: 2bff808aa4856d48
-[18868.920937] x9 : 0000020000000000 x8 : 68ff80082620ebb0
-[18868.926249] x7 : 0000000000000000 x6 : ffff1000105da1dc
-[18868.931561] x5 : 0000000000000000 x4 : 0000000000000000
-[18868.936872] x3 : 0000000000000010 x2 : 2bff808a8971bc00
-[18868.942184] x1 : ffff7fe002098800 x0 : ffff80082620ceb0
-[18868.947499] Process read_all (pid: 79210, stack limit = 0x00000000f65b9361)
-[18868.954454] Call trace:
-[18868.956899]  get_map+0x78/0xec
-[18868.959952]  process_slab+0x7c/0x47c
-[18868.963526]  list_locations+0xb0/0x3c8
-[18868.967273]  alloc_calls_show+0x34/0x40
-[18868.971107]  slab_attr_show+0x34/0x48
-[18868.974768]  sysfs_kf_seq_show+0x2e4/0x570
-[18868.978864]  kernfs_seq_show+0x12c/0x1a0
-[18868.982786]  seq_read+0x48c/0xf84
-[18868.986099]  kernfs_fop_read+0xd4/0x448
-[18868.989935]  __vfs_read+0x94/0x5d4
-[18868.993334]  vfs_read+0xcc/0x194
-[18868.996560]  ksys_read+0x6c/0xe8
-[18868.999786]  __arm64_sys_read+0x68/0xb0
-[18869.003622]  el0_svc_handler+0x230/0x3bc
-[18869.007544]  el0_svc+0x8/0xc
-[18869.010428] Code: d3467d2a 9ac92329 8b0a0e6a f9800151 (c85f7d4b)
-[18869.016742] ---[ end trace a383a9a44ff13176 ]---
-[18869.021356] Kernel panic - not syncing: Fatal exception
-[18869.026705] SMP: stopping secondary CPUs
-[18870.254279] SMP: failed to stop secondary CPUs 1-7,32,40,127
-[18870.259942] Kernel Offset: disabled
-[18870.263434] CPU features: 0x002,20000c18
-[18870.267358] Memory Limit: none
-[18870.270725] ---[ end Kernel panic - not syncing: Fatal exception ]---
-
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- mm/slub.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/slub.c b/mm/slub.c
-index 4a61959e1887..289c22f1b0c4 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -311,7 +311,7 @@ static inline void set_freepointer(struct kmem_cache *s, void *object, void *fp)
- /* Determine object index from a given position */
- static inline unsigned int slab_index(void *p, struct kmem_cache *s, void *addr)
- {
--	return (p - addr) / s->size;
-+	return (kasan_reset_tag(p) - addr) / s->size;
- }
- 
- static inline unsigned int order_objects(unsigned int order, unsigned int size)
--- 
-2.17.2 (Apple Git-113)
 
