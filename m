@@ -2,236 +2,208 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60136C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:53:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B30D9C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:57:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26BCD20665
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:53:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 761822087B
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:57:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="meL1aP8D"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HbQWcShO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbfBTXx6 (ORCPT
+        id S1726462AbfBTX5f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 18:53:58 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33139 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbfBTXxo (ORCPT
+        Wed, 20 Feb 2019 18:57:35 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:39504 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbfBTX5e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 18:53:44 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c123so12760063pfb.0;
-        Wed, 20 Feb 2019 15:53:44 -0800 (PST)
+        Wed, 20 Feb 2019 18:57:34 -0500
+Received: by mail-ua1-f66.google.com with SMTP id s15so8876917uap.6
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 15:57:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=TUNgXugUPdi2D5irskH/ROTRx7A7lur86DBNUjDfACA=;
-        b=meL1aP8DPfFLV3WVQVb2mm/9mve39BnBwa71YAp1f6/E/tgz5JrI620unkeoCyqMyk
-         xRGpSfnsur1Pzszdhz8JfG601TnEpcOpSZBlM5Aa8dklkLiq6GVXFs8QyQkBw6sKnmDP
-         JQwaO/jXZNMXBVVRx12jwgwBspMx0h6K9raxMo+sOrwzQ8luhATk9ZNlMjDXnMV9ZtkM
-         maL+lK8b5QOV2DqnZQYa7m1m2Pgu+3aIdExQXBRfhfFwgfm2mjgGzQRTH21/WWb96XdO
-         Hs9Nix1gDK1fsBRCYgLy1Xc2wNyMPeJJIZsU3Tz+Fi+DQpxeBkXk1f8zU3V6W4nmcdrw
-         huYg==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JZmmUlKjHxR4UKqMoWrDSh0DK5yZUqQpuDVKkn9cnLE=;
+        b=HbQWcShOBn2vxn8VbJBXSZSVMQ7AJq7SQP+lmiJEMyUnRtwQ81xSXq8nNxrbwyz87s
+         I4Lrx9vPL8wtecUzOh1rDu6YOGx2RRTGJ7hVUfMdFUIfl/GdLHZKnz2JCeoxc3YKWPKb
+         bY/qDZaDoalYyP2M9TQxnFolaGgAU9VO8k9FQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=TUNgXugUPdi2D5irskH/ROTRx7A7lur86DBNUjDfACA=;
-        b=MhBG8bIxMyY9uCSi6xmrJmSkB7QM8k0jFgwdAXKKK2hxwdpU0V/CuQiyJdBG+9AGQx
-         83BIZe092L4EDURa013T24oXVNsHGfy6a1OH0Fub9oaR3OsqSvAxH9ody44HsOecEHjR
-         N73w3Vz1F8yiTM45nL+kSM/suzMyul+3k6xQei2NE2QaVXbFeB21h2zgDP/DbQ6F8Hzi
-         jf28t9Jyla/SNOZ1SZ3hMWt++Kp2mw3fZBYo4IK5wLzkhPrUdmnL0YaMoa4FEvkSw/Br
-         LjOCRpuHEE3FKW2FaR82sYG2v9xtEDHmCdePSbOAwa2Ur+NOZN2EYxbGiHQIvRT2yYuf
-         wDBA==
-X-Gm-Message-State: AHQUAuajniPACdJizHP0NxLT2wsR5dD0ur/8TDQYRPDnhJNTIdonKqjb
-        HdS9GJcCrppwF9tKhhWI+6vrQhde
-X-Google-Smtp-Source: AHgI3IZ8Ar7YPr8oTgyORntEG0F9FtMxmsNQo1HGown3LmdTVBSAL9XfbMwAldlMNFsQPZo71pjfiw==
-X-Received: by 2002:a63:c64f:: with SMTP id x15mr30992227pgg.16.1550706823403;
-        Wed, 20 Feb 2019 15:53:43 -0800 (PST)
-Received: from majic.sklembedded.com (c-73-202-231-77.hsd1.ca.comcast.net. [73.202.231.77])
-        by smtp.googlemail.com with ESMTPSA id v15sm25530158pgf.75.2019.02.20.15.53.42
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JZmmUlKjHxR4UKqMoWrDSh0DK5yZUqQpuDVKkn9cnLE=;
+        b=M2sELUjJ9rgEtVVj1o6D/bneuK2DHfkIV9qNk3L6PHkhJC4vA9p58X5Jya+n4nNqTP
+         USO4Fg4Wr9TEHRkXlUA6+ragjdacb/Wmqg9GzDOCdkcOima2xlioOxIFPnJKTNkSyMsi
+         YRpihDKn78h/dyA/kgP0v9ek7R1FXvkJSrTcnyCMtLKqTh9291xhLyF3FW3p4WLjoq3k
+         bZmAdSmiRE2i3debuv7bRROycgF6/d78AqTXuyYazPt9A7BHnmHclfwRDDxJFgtDg/ZU
+         L+XKqcf084ysjw1H4IMXcAxcIIRuNm649IYTB0STyMyC2kFgEWec9NwX99/uTD5LGWon
+         pXgw==
+X-Gm-Message-State: AHQUAubolaVdnXCWdTr8DVIt+dF9sSFJyHpkJuqY8y8sykTFKm3nhM05
+        Ek4wpD2jGEy8SsST0CVhM0Td2Fhllwk=
+X-Google-Smtp-Source: AHgI3Iby2MLzEWoWX/D6Kcv9ULJKJBVXfIcHvUcT9oN6cnXkVjg6oWq8GPrCh3tTH0NGjWcpj2PECg==
+X-Received: by 2002:ab0:6007:: with SMTP id j7mr18691342ual.40.1550707052775;
+        Wed, 20 Feb 2019 15:57:32 -0800 (PST)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id z18sm2280163vsj.7.2019.02.20.15.57.31
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Feb 2019 15:53:42 -0800 (PST)
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-To:     linux-media@vger.kernel.org
-Cc:     Steve Longerbeam <slongerbeam@gmail.com>, stable@vger.kernel.org,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Wed, 20 Feb 2019 15:57:31 -0800 (PST)
+Received: by mail-vs1-f43.google.com with SMTP id e10so15149677vsp.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 15:57:31 -0800 (PST)
+X-Received: by 2002:a67:c00a:: with SMTP id v10mr20825264vsi.66.1550707050777;
+ Wed, 20 Feb 2019 15:57:30 -0800 (PST)
+MIME-Version: 1.0
+References: <20190218232308.11241-1-tobin@kernel.org> <20190218232308.11241-2-tobin@kernel.org>
+In-Reply-To: <20190218232308.11241-2-tobin@kernel.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 20 Feb 2019 15:57:18 -0800
+X-Gmail-Original-Message-ID: <CAGXu5j+ZbNu=6W2Srzbo7aYJZDcR_rRsEbVMOdcKdQXEGs1ZBw@mail.gmail.com>
+Message-ID: <CAGXu5j+ZbNu=6W2Srzbo7aYJZDcR_rRsEbVMOdcKdQXEGs1ZBw@mail.gmail.com>
+Subject: Re: [PATCH 1/6] lib/string: Enable string selftesting
+To:     "Tobin C. Harding" <tobin@kernel.org>
+Cc:     Shuah Khan <shuah@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 3/4] media: imx: Rename functions that add IPU-internal subdevs
-Date:   Wed, 20 Feb 2019 15:53:31 -0800
-Message-Id: <20190220235332.15984-4-slongerbeam@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190220235332.15984-1-slongerbeam@gmail.com>
-References: <20190220235332.15984-1-slongerbeam@gmail.com>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For the functions that add and remove the internal IPU subdevice
-descriptors, rename them to make clear they are the subdevs internal
-to the IPU. Also rename the platform data structure for the internal
-IPU subdevices. No functional changes.
+On Mon, Feb 18, 2019 at 3:24 PM Tobin C. Harding <tobin@kernel.org> wrote:
+>
+> Currently we have a test module but it is not tied into the kselftest
+> infrastructure.  In preparation for adding string manipulation functions
+> and testing we should enable kselftest to utilize the test module.
+>
+> Enable string testing via kselftest infrastructure.
+>
+> Signed-off-by: Tobin C. Harding <tobin@kernel.org>
+> ---
+>  lib/Kconfig.debug                     | 14 ++++++++++++++
+>  lib/Makefile                          |  2 +-
+>  lib/test_string.c                     |  4 ++--
+>  tools/testing/selftests/lib/Makefile  |  2 +-
+>  tools/testing/selftests/lib/config    |  1 +
+>  tools/testing/selftests/lib/string.sh | 19 +++++++++++++++++++
+>  6 files changed, 38 insertions(+), 4 deletions(-)
+>  create mode 100755 tools/testing/selftests/lib/string.sh
+>
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index d4df5b24d75e..0dca64c1d8a4 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -1802,8 +1802,22 @@ config ASYNC_RAID6_TEST
+>  config TEST_HEXDUMP
+>         tristate "Test functions located in the hexdump module at runtime"
+>
+> +config TEST_STRING
+> +       tristate "Perform selftest on string manipulation functions"
+> +       default n
+> +       help
+> +        Enable this option to test string manipulation functions.
+> +       Currently this only tests memset_{16,32,64}.
+> +
+> +       If unsure, say N.
+> +
+>  config TEST_STRING_HELPERS
+>         tristate "Test functions located in the string_helpers module at runtime"
+> +       default n
+> +       help
+> +        Enable this option to unit test code in lib/string_helpers.c
+> +
+> +        If unsure, say N.
+>
+>  config TEST_KSTRTOX
+>         tristate "Test kstrto*() family of functions at runtime"
+> diff --git a/lib/Makefile b/lib/Makefile
+> index e1b59da71418..9c30e1fee27f 100644
+> --- a/lib/Makefile
+> +++ b/lib/Makefile
+> @@ -39,7 +39,7 @@ obj-y += bcd.o div64.o sort.o parser.o debug_locks.o random32.o \
+>          bsearch.o find_bit.o llist.o memweight.o kfifo.o \
+>          percpu-refcount.o rhashtable.o reciprocal_div.o \
+>          once.o refcount.o usercopy.o errseq.o bucket_locks.o
+> -obj-$(CONFIG_STRING_SELFTEST) += test_string.o
+> +obj-$(CONFIG_TEST_STRING) += test_string.o
 
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: stable@vger.kernel.org
----
- drivers/staging/media/imx/imx-ic-common.c         |  2 +-
- drivers/staging/media/imx/imx-media-dev.c         |  8 ++++----
- drivers/staging/media/imx/imx-media-internal-sd.c | 12 ++++++------
- drivers/staging/media/imx/imx-media-vdic.c        |  2 +-
- drivers/staging/media/imx/imx-media.h             |  6 +++---
- 5 files changed, 15 insertions(+), 15 deletions(-)
+This patch should remove 'config STRING_SELFTEST' from lib/Kconfig too.
 
-diff --git a/drivers/staging/media/imx/imx-ic-common.c b/drivers/staging/media/imx/imx-ic-common.c
-index 765919487a73..90a926891eb9 100644
---- a/drivers/staging/media/imx/imx-ic-common.c
-+++ b/drivers/staging/media/imx/imx-ic-common.c
-@@ -26,7 +26,7 @@ static struct imx_ic_ops *ic_ops[IC_NUM_OPS] = {
- 
- static int imx_ic_probe(struct platform_device *pdev)
- {
--	struct imx_media_internal_sd_platformdata *pdata;
-+	struct imx_media_ipu_internal_sd_pdata *pdata;
- 	struct imx_ic_priv *priv;
- 	int ret;
- 
-diff --git a/drivers/staging/media/imx/imx-media-dev.c b/drivers/staging/media/imx/imx-media-dev.c
-index 28a3d23aad5b..fc35508d9396 100644
---- a/drivers/staging/media/imx/imx-media-dev.c
-+++ b/drivers/staging/media/imx/imx-media-dev.c
-@@ -477,10 +477,10 @@ static int imx_media_probe(struct platform_device *pdev)
- 		goto cleanup;
- 	}
- 
--	ret = imx_media_add_internal_subdevs(imxmd);
-+	ret = imx_media_add_ipu_internal_subdevs(imxmd);
- 	if (ret) {
- 		v4l2_err(&imxmd->v4l2_dev,
--			 "add_internal_subdevs failed with %d\n", ret);
-+			 "add_ipu_internal_subdevs failed with %d\n", ret);
- 		goto cleanup;
- 	}
- 
-@@ -491,7 +491,7 @@ static int imx_media_probe(struct platform_device *pdev)
- 	return 0;
- 
- del_int:
--	imx_media_remove_internal_subdevs(imxmd);
-+	imx_media_remove_ipu_internal_subdevs(imxmd);
- cleanup:
- 	v4l2_async_notifier_cleanup(&imxmd->notifier);
- 	v4l2_device_unregister(&imxmd->v4l2_dev);
-@@ -508,7 +508,7 @@ static int imx_media_remove(struct platform_device *pdev)
- 	v4l2_info(&imxmd->v4l2_dev, "Removing imx-media\n");
- 
- 	v4l2_async_notifier_unregister(&imxmd->notifier);
--	imx_media_remove_internal_subdevs(imxmd);
-+	imx_media_remove_ipu_internal_subdevs(imxmd);
- 	v4l2_async_notifier_cleanup(&imxmd->notifier);
- 	media_device_unregister(&imxmd->md);
- 	v4l2_device_unregister(&imxmd->v4l2_dev);
-diff --git a/drivers/staging/media/imx/imx-media-internal-sd.c b/drivers/staging/media/imx/imx-media-internal-sd.c
-index 5e10d95e5529..e620f4adb755 100644
---- a/drivers/staging/media/imx/imx-media-internal-sd.c
-+++ b/drivers/staging/media/imx/imx-media-internal-sd.c
-@@ -1,7 +1,7 @@
- /*
-  * Media driver for Freescale i.MX5/6 SOC
-  *
-- * Adds the internal subdevices and the media links between them.
-+ * Adds the IPU internal subdevices and the media links between them.
-  *
-  * Copyright (c) 2016 Mentor Graphics Inc.
-  *
-@@ -192,7 +192,7 @@ static struct v4l2_subdev *find_sink(struct imx_media_dev *imxmd,
- 
- 	/*
- 	 * retrieve IPU id from subdev name, note: can't get this from
--	 * struct imx_media_internal_sd_platformdata because if src is
-+	 * struct imx_media_ipu_internal_sd_pdata because if src is
- 	 * a CSI, it has different struct ipu_client_platformdata which
- 	 * does not contain IPU id.
- 	 */
-@@ -270,7 +270,7 @@ static int add_internal_subdev(struct imx_media_dev *imxmd,
- 			       const struct internal_subdev *isd,
- 			       int ipu_id)
- {
--	struct imx_media_internal_sd_platformdata pdata;
-+	struct imx_media_ipu_internal_sd_pdata pdata;
- 	struct platform_device_info pdevinfo = {};
- 	struct platform_device *pdev;
- 
-@@ -328,7 +328,7 @@ static int add_ipu_internal_subdevs(struct imx_media_dev *imxmd, int ipu_id)
- 	return 0;
- }
- 
--int imx_media_add_internal_subdevs(struct imx_media_dev *imxmd)
-+int imx_media_add_ipu_internal_subdevs(struct imx_media_dev *imxmd)
- {
- 	int ret;
- 
-@@ -343,11 +343,11 @@ int imx_media_add_internal_subdevs(struct imx_media_dev *imxmd)
- 	return 0;
- 
- remove:
--	imx_media_remove_internal_subdevs(imxmd);
-+	imx_media_remove_ipu_internal_subdevs(imxmd);
- 	return ret;
- }
- 
--void imx_media_remove_internal_subdevs(struct imx_media_dev *imxmd)
-+void imx_media_remove_ipu_internal_subdevs(struct imx_media_dev *imxmd)
- {
- 	struct imx_media_async_subdev *imxasd;
- 	struct v4l2_async_subdev *asd;
-diff --git a/drivers/staging/media/imx/imx-media-vdic.c b/drivers/staging/media/imx/imx-media-vdic.c
-index 2808662e2597..8a9af4688fd4 100644
---- a/drivers/staging/media/imx/imx-media-vdic.c
-+++ b/drivers/staging/media/imx/imx-media-vdic.c
-@@ -934,7 +934,7 @@ static const struct v4l2_subdev_internal_ops vdic_internal_ops = {
- 
- static int imx_vdic_probe(struct platform_device *pdev)
- {
--	struct imx_media_internal_sd_platformdata *pdata;
-+	struct imx_media_ipu_internal_sd_pdata *pdata;
- 	struct vdic_priv *priv;
- 	int ret;
- 
-diff --git a/drivers/staging/media/imx/imx-media.h b/drivers/staging/media/imx/imx-media.h
-index ae964c8d5be1..ccbfc4438c85 100644
---- a/drivers/staging/media/imx/imx-media.h
-+++ b/drivers/staging/media/imx/imx-media.h
-@@ -115,7 +115,7 @@ struct imx_media_pad_vdev {
- 	struct list_head list;
- };
- 
--struct imx_media_internal_sd_platformdata {
-+struct imx_media_ipu_internal_sd_pdata {
- 	char sd_name[V4L2_SUBDEV_NAME_SIZE];
- 	u32 grp_id;
- 	int ipu_id;
-@@ -252,10 +252,10 @@ struct imx_media_fim *imx_media_fim_init(struct v4l2_subdev *sd);
- void imx_media_fim_free(struct imx_media_fim *fim);
- 
- /* imx-media-internal-sd.c */
--int imx_media_add_internal_subdevs(struct imx_media_dev *imxmd);
-+int imx_media_add_ipu_internal_subdevs(struct imx_media_dev *imxmd);
- int imx_media_create_ipu_internal_links(struct imx_media_dev *imxmd,
- 					struct v4l2_subdev *sd);
--void imx_media_remove_internal_subdevs(struct imx_media_dev *imxmd);
-+void imx_media_remove_ipu_internal_subdevs(struct imx_media_dev *imxmd);
- 
- /* imx-media-of.c */
- int imx_media_add_of_subdevs(struct imx_media_dev *dev,
+> diff --git a/tools/testing/selftests/lib/Makefile b/tools/testing/selftests/lib/Makefile
+> index 70d5711e3ac8..2ee4559b277e 100644
+> --- a/tools/testing/selftests/lib/Makefile
+> +++ b/tools/testing/selftests/lib/Makefile
+> @@ -3,6 +3,6 @@
+>  # No binaries, but make sure arg-less "make" doesn't trigger "run_tests"
+>  all:
+>
+> -TEST_PROGS := printf.sh bitmap.sh prime_numbers.sh
+> +TEST_PROGS := printf.sh bitmap.sh prime_numbers.sh string.sh
+>
+>  include ../lib.mk
+> diff --git a/tools/testing/selftests/lib/config b/tools/testing/selftests/lib/config
+> index 126933bcc950..2032402ad409 100644
+> --- a/tools/testing/selftests/lib/config
+> +++ b/tools/testing/selftests/lib/config
+> @@ -1,3 +1,4 @@
+>  CONFIG_TEST_PRINTF=m
+>  CONFIG_TEST_BITMAP=m
+> +CONFIG_TEST_STRING=m
+>  CONFIG_PRIME_NUMBERS=m
+> diff --git a/tools/testing/selftests/lib/string.sh b/tools/testing/selftests/lib/string.sh
+> new file mode 100755
+> index 000000000000..99024b6f3a6a
+> --- /dev/null
+> +++ b/tools/testing/selftests/lib/string.sh
+> @@ -0,0 +1,19 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Runs string manipulation tests using test_string kernel module
+> +
+> +# Kselftest framework requirement - SKIP code is 4.
+> +ksft_skip=4
+> +
+> +if ! /sbin/modprobe -q -n test_string; then
+> +       echo "string: module test_string is not found [SKIP]"
+> +       exit $ksft_skip
+> +fi
+> +
+> +if /sbin/modprobe -q test_string; then
+> +       /sbin/modprobe -q -r test_string
+> +       echo "string: ok"
+> +else
+> +       echo "string: [FAIL]"
+> +       exit 1
+> +fi
+> --
+> 2.20.1
+>
+
+You mentioned "redundant scripts" here. You might want to refactor
+first, and have a common tool that does the core testing, and then
+have the scripts doing one line each:
+
+i.e.:
+
+#!/bin/bash
+exec./test_module.sh prime_numbers selftest=65536
+
+with "test_module.sh" doing all the rest.
+
+I bet there are other test_*.ko tests we could wire up too, and this
+refactor will make that much easier. And actually, maybe we should
+just have a single test running that just reads the "config" file for
+the list of test modules, and runs them with the correct output format
+to show which are skipped, etc.
+
 -- 
-2.17.1
-
+Kees Cook
