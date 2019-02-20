@@ -2,148 +2,330 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88939C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:06:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D770C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:06:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E94820859
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:06:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F29A921848
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:06:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="wpSqLqV2"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=schinagl.nl header.i=@schinagl.nl header.b="CBTsoBxm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbfBTXG3 (ORCPT
+        id S1726363AbfBTXGo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 18:06:29 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:54030 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725804AbfBTXG3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 18:06:29 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1KN4MnG032340;
-        Wed, 20 Feb 2019 23:06:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=XhTrjB4aur+YZVGJ3nVLns1sUOWJt7RR9HqnQuBC4VA=;
- b=wpSqLqV2pEPG5TUB3USVf4diH3TLpsW0djWbXMjyf32YtuqWan4K3sr15lBRa73Zlt9Y
- VfEjRwynqH0bViFZ/Q3kd9f2U+WaeuBgyeuKC4vTRZ/AV4t7x5LM+PzV5LVwJnb/Muwk
- otEQV4eqy5w8+sqfPxXJO2ZuUQKLtiLuO+Hf0ZLrkjQxa8UIrdft1IHcQASgZJcqZsv5
- xcruyyr3ypSnbkUigAtSMqGKDSESDc02dtRZfRwpyoG5ilutwwmV0qA3oIa7oGkaTjby
- foHuyiDLwH8zrqGqwKz7Bs8rAdt3fXkla1p9rpdQrxLPiPlKaxeY+0eiMwQpEPW7HXbf jg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2qp9xu4qna-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Feb 2019 23:06:26 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1KN6PhZ023820
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Feb 2019 23:06:25 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1KN6P90000812;
-        Wed, 20 Feb 2019 23:06:25 GMT
-Received: from ubuette (/75.80.107.76)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 20 Feb 2019 15:06:24 -0800
-Date:   Wed, 20 Feb 2019 15:06:22 -0800
-From:   Larry Bassel <larry.bassel@oracle.com>
-To:     linux-nvdimm@lists.01.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: question about page tables in DAX/FS/PMEM case
-Message-ID: <20190220230622.GI19341@ubuette>
+        Wed, 20 Feb 2019 18:06:44 -0500
+Received: from 7of9.schinagl.nl ([62.251.20.244]:40958 "EHLO 7of9.schinagl.nl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725989AbfBTXGn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 18:06:43 -0500
+X-Greylist: delayed 548 seconds by postgrey-1.27 at vger.kernel.org; Wed, 20 Feb 2019 18:06:43 EST
+Received: from [10.193.209.67] (unknown [89.200.5.13])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by 7of9.schinagl.nl (Postfix) with ESMTPSA id B72DBB3AA09;
+        Wed, 20 Feb 2019 23:57:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=schinagl.nl; s=7of9;
+        t=1550703452; bh=Pzj2MRTHFh7GY6rYGrmiRrvAq3D3Q0PndMXvQvAnzn0=;
+        h=Date:In-Reply-To:References:Subject:To:CC:From;
+        b=CBTsoBxmeaJWW+i7999pAcWpMA+EpocPi86UDpGoMMwu/iIElWi2Rjle/wzcaUeA8
+         B6M2c3ykHi8liBg2710f7cDl3CGkfq73aegkyewCW3kCOhdA3yxL3KZye1P0DI3cHb
+         OqxmQI+u3yr3WJW4yvrVx4E6KYnntFJcbzgjB0BM=
+Date:   Wed, 20 Feb 2019 22:38:23 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20190220165013.12774-1-axel.lin@ingics.com>
+References: <20190220165013.12774-1-axel.lin@ingics.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9173 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1031
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=790 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902200155
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] regulator: axp20x: Get rid of AXP20X_xxx_START/END/STEPS defines
+To:     Axel Lin <axel.lin@ingics.com>, Mark Brown <broonie@kernel.org>
+CC:     Chen-Yu Tsai <wens@csie.org>, Priit Laes <plaes@plaes.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org
+From:   Olliver Schinagl <oliver@schinagl.nl>
+Message-ID: <24E35288-677D-4223-B94A-52A4F37792A8@schinagl.nl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I'm working on sharing page tables in the DAX/XFS/PMEM/PMD case.
+Hey Axel,
 
-If multiple processes would use the identical page of PMDs corresponding
-to a 1 GiB address range of DAX/XFS/PMEM/PMDs, presumably one can instead
-of populating a new PUD, just atomically increment a refcount and point
-to the same PUD in the next level above.
+On February 20, 2019 5:50:13 PM GMT+01:00, Axel Lin <axel=2Elin@ingics=2Ec=
+om> wrote:
+>The AXP20X_xxx_START/END/STEPS defines make the code hard to read and
+>very hard to check the linear range settings because it needs to check
+>the defines one-by-one=2E
+>The original code without the defines is very good in readability
+>as the meaning of each field of REGULATOR_LINEAR_RANGE is clear=2E
+>So I suggest to get rid of AXP20X_xxx_START/END/STEPS defines=2E
+Are you suggesting that magic values and hex numbers are more readable?
 
-i.e.
+Maybe you can explain what your problem is, as it appears you are trying t=
+o debug something?
 
-OLD:
-process 1:
-VA -> levels of page tables -> PUD1 -> page of PMDs1
-process 2:
-VA -> levels of page tables -> PUD2 -> page of PMDs2
+>
+>Signed-off-by: Axel Lin <axel=2Elin@ingics=2Ecom>
+>---
+> drivers/regulator/axp20x-regulator=2Ec | 176 +++------------------------
+> 1 file changed, 19 insertions(+), 157 deletions(-)
+>
+>diff --git a/drivers/regulator/axp20x-regulator=2Ec
+>b/drivers/regulator/axp20x-regulator=2Ec
+>index fba8f58ab769=2E=2E46b5de53d1a3 100644
+>--- a/drivers/regulator/axp20x-regulator=2Ec
+>+++ b/drivers/regulator/axp20x-regulator=2Ec
+>@@ -64,26 +64,6 @@
+> #define AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN_MASK		BIT_MASK(3)
+> #define AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN		BIT(3)
+>=20
+>-#define AXP20X_LDO4_V_OUT_1250mV_START	0x0
+>-#define AXP20X_LDO4_V_OUT_1250mV_STEPS	0
+>-#define AXP20X_LDO4_V_OUT_1250mV_END	\
+>-	(AXP20X_LDO4_V_OUT_1250mV_START + AXP20X_LDO4_V_OUT_1250mV_STEPS)
+>-#define AXP20X_LDO4_V_OUT_1300mV_START	0x1
+>-#define AXP20X_LDO4_V_OUT_1300mV_STEPS	7
+>-#define AXP20X_LDO4_V_OUT_1300mV_END	\
+>-	(AXP20X_LDO4_V_OUT_1300mV_START + AXP20X_LDO4_V_OUT_1300mV_STEPS)
+>-#define AXP20X_LDO4_V_OUT_2500mV_START	0x9
+>-#define AXP20X_LDO4_V_OUT_2500mV_STEPS	0
+>-#define AXP20X_LDO4_V_OUT_2500mV_END	\
+>-	(AXP20X_LDO4_V_OUT_2500mV_START + AXP20X_LDO4_V_OUT_2500mV_STEPS)
+>-#define AXP20X_LDO4_V_OUT_2700mV_START	0xa
+>-#define AXP20X_LDO4_V_OUT_2700mV_STEPS	1
+>-#define AXP20X_LDO4_V_OUT_2700mV_END	\
+>-	(AXP20X_LDO4_V_OUT_2700mV_START + AXP20X_LDO4_V_OUT_2700mV_STEPS)
+>-#define AXP20X_LDO4_V_OUT_3000mV_START	0xc
+>-#define AXP20X_LDO4_V_OUT_3000mV_STEPS	3
+>-#define AXP20X_LDO4_V_OUT_3000mV_END	\
+>-	(AXP20X_LDO4_V_OUT_3000mV_START + AXP20X_LDO4_V_OUT_3000mV_STEPS)
+> #define AXP20X_LDO4_V_OUT_NUM_VOLTAGES	16
+>=20
+> #define AXP22X_IO_ENABLED		0x03
+>@@ -156,44 +136,9 @@
+> #define AXP803_DCDC23_POLYPHASE_DUAL	BIT(6)
+> #define AXP803_DCDC56_POLYPHASE_DUAL	BIT(5)
+>=20
+>-#define AXP803_DCDC234_500mV_START	0x00
+>-#define AXP803_DCDC234_500mV_STEPS	70
+>-#define AXP803_DCDC234_500mV_END	\
+>-	(AXP803_DCDC234_500mV_START + AXP803_DCDC234_500mV_STEPS)
+>-#define AXP803_DCDC234_1220mV_START	0x47
+>-#define AXP803_DCDC234_1220mV_STEPS	4
+>-#define AXP803_DCDC234_1220mV_END	\
+>-	(AXP803_DCDC234_1220mV_START + AXP803_DCDC234_1220mV_STEPS)
+> #define AXP803_DCDC234_NUM_VOLTAGES	76
+>-
+>-#define AXP803_DCDC5_800mV_START	0x00
+>-#define AXP803_DCDC5_800mV_STEPS	32
+>-#define AXP803_DCDC5_800mV_END		\
+>-	(AXP803_DCDC5_800mV_START + AXP803_DCDC5_800mV_STEPS)
+>-#define AXP803_DCDC5_1140mV_START	0x21
+>-#define AXP803_DCDC5_1140mV_STEPS	35
+>-#define AXP803_DCDC5_1140mV_END		\
+>-	(AXP803_DCDC5_1140mV_START + AXP803_DCDC5_1140mV_STEPS)
+> #define AXP803_DCDC5_NUM_VOLTAGES	68
+>-
+>-#define AXP803_DCDC6_600mV_START	0x00
+>-#define AXP803_DCDC6_600mV_STEPS	50
+>-#define AXP803_DCDC6_600mV_END		\
+>-	(AXP803_DCDC6_600mV_START + AXP803_DCDC6_600mV_STEPS)
+>-#define AXP803_DCDC6_1120mV_START	0x33
+>-#define AXP803_DCDC6_1120mV_STEPS	14
+>-#define AXP803_DCDC6_1120mV_END		\
+>-	(AXP803_DCDC6_1120mV_START + AXP803_DCDC6_1120mV_STEPS)
+> #define AXP803_DCDC6_NUM_VOLTAGES	72
+>-
+>-#define AXP803_DLDO2_700mV_START	0x00
+>-#define AXP803_DLDO2_700mV_STEPS	26
+>-#define AXP803_DLDO2_700mV_END		\
+>-	(AXP803_DLDO2_700mV_START + AXP803_DLDO2_700mV_STEPS)
+>-#define AXP803_DLDO2_3400mV_START	0x1b
+>-#define AXP803_DLDO2_3400mV_STEPS	4
+>-#define AXP803_DLDO2_3400mV_END		\
+>-	(AXP803_DLDO2_3400mV_START + AXP803_DLDO2_3400mV_STEPS)
+> #define AXP803_DLDO2_NUM_VOLTAGES	32
+>=20
+> #define AXP806_DCDCA_V_CTRL_MASK	GENMASK(6, 0)
+>@@ -235,34 +180,8 @@
+>=20
+> #define AXP806_DCDCDE_POLYPHASE_DUAL	BIT(5)
+>=20
+>-#define AXP806_DCDCA_600mV_START	0x00
+>-#define AXP806_DCDCA_600mV_STEPS	50
+>-#define AXP806_DCDCA_600mV_END		\
+>-	(AXP806_DCDCA_600mV_START + AXP806_DCDCA_600mV_STEPS)
+>-#define AXP806_DCDCA_1120mV_START	0x33
+>-#define AXP806_DCDCA_1120mV_STEPS	14
+>-#define AXP806_DCDCA_1120mV_END		\
+>-	(AXP806_DCDCA_1120mV_START + AXP806_DCDCA_1120mV_STEPS)
+> #define AXP806_DCDCA_NUM_VOLTAGES	72
+>-
+>-#define AXP806_DCDCD_600mV_START	0x00
+>-#define AXP806_DCDCD_600mV_STEPS	45
+>-#define AXP806_DCDCD_600mV_END		\
+>-	(AXP806_DCDCD_600mV_START + AXP806_DCDCD_600mV_STEPS)
+>-#define AXP806_DCDCD_1600mV_START	0x2e
+>-#define AXP806_DCDCD_1600mV_STEPS	17
+>-#define AXP806_DCDCD_1600mV_END		\
+>-	(AXP806_DCDCD_1600mV_START + AXP806_DCDCD_1600mV_STEPS)
+> #define AXP806_DCDCD_NUM_VOLTAGES	64
+>-
+>-#define AXP809_DCDC4_600mV_START	0x00
+>-#define AXP809_DCDC4_600mV_STEPS	47
+>-#define AXP809_DCDC4_600mV_END		\
+>-	(AXP809_DCDC4_600mV_START + AXP809_DCDC4_600mV_STEPS)
+>-#define AXP809_DCDC4_1800mV_START	0x30
+>-#define AXP809_DCDC4_1800mV_STEPS	8
+>-#define AXP809_DCDC4_1800mV_END		\
+>-	(AXP809_DCDC4_1800mV_START + AXP809_DCDC4_1800mV_STEPS)
+> #define AXP809_DCDC4_NUM_VOLTAGES	57
+>=20
+> #define AXP813_DCDC7_V_OUT_MASK		GENMASK(6, 0)
+>@@ -517,26 +436,11 @@ static const struct regulator_ops axp20x_ops_sw =3D
+>{
+> };
+>=20
+> static const struct regulator_linear_range axp20x_ldo4_ranges[] =3D {
+>-	REGULATOR_LINEAR_RANGE(1250000,
+>-			       AXP20X_LDO4_V_OUT_1250mV_START,
+>-			       AXP20X_LDO4_V_OUT_1250mV_END,
+>-			       0),
+>-	REGULATOR_LINEAR_RANGE(1300000,
+>-			       AXP20X_LDO4_V_OUT_1300mV_START,
+>-			       AXP20X_LDO4_V_OUT_1300mV_END,
+>-			       100000),
+>-	REGULATOR_LINEAR_RANGE(2500000,
+>-			       AXP20X_LDO4_V_OUT_2500mV_START,
+>-			       AXP20X_LDO4_V_OUT_2500mV_END,
+>-			       0),
+>-	REGULATOR_LINEAR_RANGE(2700000,
+>-			       AXP20X_LDO4_V_OUT_2700mV_START,
+>-			       AXP20X_LDO4_V_OUT_2700mV_END,
+>-			       100000),
+>-	REGULATOR_LINEAR_RANGE(3000000,
+>-			       AXP20X_LDO4_V_OUT_3000mV_START,
+>-			       AXP20X_LDO4_V_OUT_3000mV_END,
+>-			       100000),
+>+	REGULATOR_LINEAR_RANGE(1250000, 0x0, 0x0, 0),
+>+	REGULATOR_LINEAR_RANGE(1300000, 0x1, 0x8, 100000),
+>+	REGULATOR_LINEAR_RANGE(2500000, 0x9, 0x9, 0),
+>+	REGULATOR_LINEAR_RANGE(2700000, 0xa, 0xb, 100000),
+>+	REGULATOR_LINEAR_RANGE(3000000, 0xc, 0xf, 100000),
+> };
+>=20
+> static const struct regulator_desc axp20x_regulators[] =3D {
+>@@ -645,48 +549,24 @@ static const struct regulator_desc
+>axp22x_drivevbus_regulator =3D {
+>=20
+> /* DCDC ranges shared with AXP813 */
+> static const struct regulator_linear_range axp803_dcdc234_ranges[] =3D {
+>-	REGULATOR_LINEAR_RANGE(500000,
+>-			       AXP803_DCDC234_500mV_START,
+>-			       AXP803_DCDC234_500mV_END,
+>-			       10000),
+>-	REGULATOR_LINEAR_RANGE(1220000,
+>-			       AXP803_DCDC234_1220mV_START,
+>-			       AXP803_DCDC234_1220mV_END,
+>-			       20000),
+>+	REGULATOR_LINEAR_RANGE(500000, 0x0, 0x46, 10000),
+>+	REGULATOR_LINEAR_RANGE(1220000, 0x47, 0x4b, 20000),
+> };
+>=20
+> static const struct regulator_linear_range axp803_dcdc5_ranges[] =3D {
+>-	REGULATOR_LINEAR_RANGE(800000,
+>-			       AXP803_DCDC5_800mV_START,
+>-			       AXP803_DCDC5_800mV_END,
+>-			       10000),
+>-	REGULATOR_LINEAR_RANGE(1140000,
+>-			       AXP803_DCDC5_1140mV_START,
+>-			       AXP803_DCDC5_1140mV_END,
+>-			       20000),
+>+	REGULATOR_LINEAR_RANGE(800000, 0x0, 0x20, 10000),
+>+	REGULATOR_LINEAR_RANGE(1140000, 0x21, 0x44, 20000),
+> };
+>=20
+> static const struct regulator_linear_range axp803_dcdc6_ranges[] =3D {
+>-	REGULATOR_LINEAR_RANGE(600000,
+>-			       AXP803_DCDC6_600mV_START,
+>-			       AXP803_DCDC6_600mV_END,
+>-			       10000),
+>-	REGULATOR_LINEAR_RANGE(1120000,
+>-			       AXP803_DCDC6_1120mV_START,
+>-			       AXP803_DCDC6_1120mV_END,
+>-			       20000),
+>+	REGULATOR_LINEAR_RANGE(600000, 0x0, 0x32, 10000),
+>+	REGULATOR_LINEAR_RANGE(1120000, 0x33, 0x47, 20000),
+> };
+>=20
+> /* AXP806's CLDO2 and AXP809's DLDO1 share the same range */
+> static const struct regulator_linear_range axp803_dldo2_ranges[] =3D {
+>-	REGULATOR_LINEAR_RANGE(700000,
+>-			       AXP803_DLDO2_700mV_START,
+>-			       AXP803_DLDO2_700mV_END,
+>-			       100000),
+>-	REGULATOR_LINEAR_RANGE(3400000,
+>-			       AXP803_DLDO2_3400mV_START,
+>-			       AXP803_DLDO2_3400mV_END,
+>-			       200000),
+>+	REGULATOR_LINEAR_RANGE(700000, 0x0, 0x1a, 100000),
+>+	REGULATOR_LINEAR_RANGE(3400000, 0x1b, 0x1f, 200000),
+> };
+>=20
+> static const struct regulator_desc axp803_regulators[] =3D {
+>@@ -765,25 +645,13 @@ static const struct regulator_desc
+>axp803_regulators[] =3D {
+> };
+>=20
+> static const struct regulator_linear_range axp806_dcdca_ranges[] =3D {
+>-	REGULATOR_LINEAR_RANGE(600000,
+>-			       AXP806_DCDCA_600mV_START,
+>-			       AXP806_DCDCA_600mV_END,
+>-			       10000),
+>-	REGULATOR_LINEAR_RANGE(1120000,
+>-			       AXP806_DCDCA_1120mV_START,
+>-			       AXP806_DCDCA_1120mV_END,
+>-			       20000),
+>+	REGULATOR_LINEAR_RANGE(600000, 0x0, 0x32, 10000),
+>+	REGULATOR_LINEAR_RANGE(1120000, 0x33, 0x47, 20000),
+> };
+>=20
+> static const struct regulator_linear_range axp806_dcdcd_ranges[] =3D {
+>-	REGULATOR_LINEAR_RANGE(600000,
+>-			       AXP806_DCDCD_600mV_START,
+>-			       AXP806_DCDCD_600mV_END,
+>-			       20000),
+>-	REGULATOR_LINEAR_RANGE(1600000,
+>-			       AXP806_DCDCD_600mV_START,
+>-			       AXP806_DCDCD_600mV_END,
+>-			       100000),
+>+	REGULATOR_LINEAR_RANGE(600000, 0x0, 0x2d, 20000),
+>+	REGULATOR_LINEAR_RANGE(1600000, 0x2e, 0x3f, 100000),
+> };
+>=20
+> static const struct regulator_desc axp806_regulators[] =3D {
+>@@ -841,14 +709,8 @@ static const struct regulator_desc
+>axp806_regulators[] =3D {
+> };
+>=20
+> static const struct regulator_linear_range axp809_dcdc4_ranges[] =3D {
+>-	REGULATOR_LINEAR_RANGE(600000,
+>-			       AXP809_DCDC4_600mV_START,
+>-			       AXP809_DCDC4_600mV_END,
+>-			       20000),
+>-	REGULATOR_LINEAR_RANGE(1800000,
+>-			       AXP809_DCDC4_1800mV_START,
+>-			       AXP809_DCDC4_1800mV_END,
+>-			       100000),
+>+	REGULATOR_LINEAR_RANGE(600000, 0x0, 0x2f, 20000),
+>+	REGULATOR_LINEAR_RANGE(1800000, 0x30, 0x38, 100000),
+> };
+>=20
+> static const struct regulator_desc axp809_regulators[] =3D {
 
-NEW:
-process 1:
-VA -> levels of page tables -> PUD1 -> page of PMDs1
-process 2:
-VA -> levels of page tables -> PUD1 -> page of PMDs1 (refcount 2)
-
-There are several cases to consider:
-
-1. New mapping
-OLD:
-make a new PUD, populate the associated page of PMDs
-(at least partially) with PMD entries.
-NEW:
-same
-
-2. Mapping by a process same (same VA->PA and size and protections, etc.)
-as one that already exists
-OLD:
-make a new PUD, populate the associated page of PMDs
-(at least partially) with PMD entries.
-NEW:
-use same PUD, increase refcount (potentially even if this mapping is private
-in which case there may eventually be a copy-on-write -- see #5 below)
-
-3. Unmapping of a mapping which is the same as that from another process
-OLD:
-destroy the process's copy of mapping, free PUD, etc.
-NEW:
-decrease refcount, only if now 0 do we destroy mapping, etc.
-
-4. Unmapping of a mapping which is unique (refcount 1)
-OLD:
-destroy the process's copy of mapping, free PUD, etc.
-NEW:
-same
-
-5. Mapping was private (but same as another process), process writes
-OLD:
-break the PMD into PTEs, destroy PMD mapping, free PUD, etc..
-NEW:
-decrease refcount, only if now 0 do we destroy mapping, etc.
-we still break the PMD into PTEs.
-
-If I have a mmap of a DAX/FS/PMEM file and I take
-a page (either pte or PMD sized) fault on access to this file,
-the page table(s) are set up in dax_iomap_fault() in fs/dax.c (correct?).
-
-If the process later munmaps this file or exits but there are still
-other users of the shared page of PMDs, I would need to
-detect that this has happened and act accordingly (#3 above)
-
-Where will these page table entries be torn down?
-In the same code where any other page table is torn down?
-If this is the case, what would the cleanest way of telling that these
-page tables (PMDs, etc.) correspond to a DAX/FS/PMEM mapping
-(look at the physical address pointed to?) so that
-I could do the right thing here.
-
-I understand that I may have missed something obvious here.
-
-Thanks.
-
-Larry
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
