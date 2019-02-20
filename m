@@ -2,203 +2,98 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10925C10F0B
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC6FC10F0B
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:07:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D706F2084D
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:06:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 311BF2195D
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:07:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="DpzX2uJT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726445AbfBTQGD convert rfc822-to-8bit (ORCPT
+        id S1726688AbfBTQHO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 11:06:03 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:43342 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725929AbfBTQGD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 11:06:03 -0500
-Received: by mail-vk1-f196.google.com with SMTP id e131so5596414vkf.10;
-        Wed, 20 Feb 2019 08:06:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=mUGGBw2E5UCFnpMwS6wrLVDhykEro8SfKWCiHW82TOs=;
-        b=mPOSxrGg1Wlagxa6RyjC/IZznSbhB/+9UgbEY+NOHxQf3xkmgD8pAEQJvCqciTfGfY
-         UMouoC/F86cRLsMudeGkcim3+XgHpk1dqOhuSU4ZU+pfeTOgAnlYse+R9cSJtbKQmod3
-         W0fTMhsC39Kx/XuAEAopaHiE6liuDSNUtnUKzo2C8pjbki+V7EW8RF4EHX/CCiUL2z91
-         YNNrjd6r7miDOQBBFdAWGQr1RV8nivfjQaCpoqZSTaGKoeKIdfCsh0/dQzQ45hN3Bl1q
-         C5pUnhT7G89pYdZSRBBawJvGJSToHsUAF1hywdALyMEGVPto1U0i2pkFZ/bNNN13LEXa
-         R8cg==
-X-Gm-Message-State: AHQUAuZibUYnIvp7vDBR+zLjkTnD2HioMzMzPR7jGSAPJ2Dnk881vgIG
-        KBB4soxNwD1ErJ7OPuJDJg2I++LyOW2tl2DymYU=
-X-Google-Smtp-Source: AHgI3IZ++D9ypsHkKFC9v/TvQZru1p5rX1uRHQwoCsaCb+6PK/ZHDKlKjtnBINsaPASl51XcJb7lRSWRmn/30DmF3lY=
-X-Received: by 2002:a1f:a5d3:: with SMTP id o202mr11400778vke.40.1550678761295;
- Wed, 20 Feb 2019 08:06:01 -0800 (PST)
+        Wed, 20 Feb 2019 11:07:14 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:52530 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725801AbfBTQHN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 11:07:13 -0500
+Received: from zn.tnic (p200300EC2BCB85008CB41DEE22243FB8.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:8500:8cb4:1dee:2224:3fb8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C8BA21EC0375;
+        Wed, 20 Feb 2019 17:07:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1550678832;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=FuWrqm3gYIKjPp/OIyk2H5wvXxskQnamgQncl/lDD4g=;
+        b=DpzX2uJTFznTEjpd31L8k3uyQMoAFpgLU8lA/Ya7UBoOQFWC3YY0qJMXIrWh/pC9+7Ao3v
+        xNXOsGv4+u6RVMGexsvnSWvr0Gy7c4a+HqE/yjbSxMrnMBiumPNvRFdjGCMHIEn+E9kH2A
+        F76Uq/Q0Uqj7Fuhk1zu9rh3uVNQkHlg=
+Date:   Wed, 20 Feb 2019 17:07:03 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "nadav.amit@gmail.com" <nadav.amit@gmail.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux_dti@icloud.com" <linux_dti@icloud.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2 14/20] mm: Make hibernate handle unmapped pages
+Message-ID: <20190220160703.GD3447@zn.tnic>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-15-rick.p.edgecombe@intel.com>
+ <20190219110400.GA19514@zn.tnic>
+ <07ea2a4a9f1771f7bad82ad8fe5ee9483b79d115.camel@intel.com>
 MIME-Version: 1.0
-References: <20190220150531.2462-1-geert+renesas@glider.be>
- <20190220150531.2462-8-geert+renesas@glider.be> <20190220154236.GI3516@pendragon.ideasonboard.com>
-In-Reply-To: <20190220154236.GI3516@pendragon.ideasonboard.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 20 Feb 2019 17:05:49 +0100
-Message-ID: <CAMuHMdW2KR=rbtgxbnhW94VCzehX821TMxoTZGKh8uQZMY80cA@mail.gmail.com>
-Subject: Re: [PATCH 7/7] iommu/ipmmu-vmsa: Add suspend/resume support
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Joerg Roedel <joro@8bytes.org>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <07ea2a4a9f1771f7bad82ad8fe5ee9483b79d115.camel@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
+On Tue, Feb 19, 2019 at 09:28:55PM +0000, Edgecombe, Rick P wrote:
+> These are from logs hibernate generates. The concern was that hibernate could be
+> slightly slower because of the checking of whether the pages are mapped. The
+> bandwidth number can be used to compare, 819.02->813.32 MB/s. Some randomness
+> must have resulted in different amounts of memory used between tests. I can just
+> remove the log lines and include the bandwidth numbers.
 
-On Wed, Feb 20, 2019 at 4:42 PM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Wed, Feb 20, 2019 at 04:05:31PM +0100, Geert Uytterhoeven wrote:
-> > During PSCI system suspend, R-Car Gen3 SoCs are powered down, and all
-> > IPMMU state is lost.  Hence after s2ram, devices wired behind an IPMMU,
-> > and configured to use it, will see their DMA operations hang.
-> >
-> > To fix this, restore all IPMMU contexts, and re-enable all active
-> > micro-TLBs during system resume.
-> >
-> > To avoid overhead on platforms not needing it, the resume code has a
-> > build time dependency on sleep and PSCI support, and a runtime
-> > dependency on PSCI.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > This patch takes a different approach than the BSP, which implements a
-> > bulk save/restore of all registers during system suspend/resume.
->
-> I like this approach better too.
+Nah, I'm just trying to get an idea of the slowdown it would cause. I'm
+thinking these pages are, as you call them "special" so they should not
+be a huge chunk of all the system's pages, even if it is a machine with
+a lot of memory so I guess it ain't that bad. We should keep an eye on
+it though... :-)
 
-Thanks ;-)
-
-> > --- a/drivers/iommu/ipmmu-vmsa.c
-> > +++ b/drivers/iommu/ipmmu-vmsa.c
-
-> > @@ -58,6 +62,7 @@ struct ipmmu_vmsa_device {
-> >       spinlock_t lock;                        /* Protects ctx and domains[] */
-> >       DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
-> >       struct ipmmu_vmsa_domain *domains[IPMMU_CTX_MAX];
-> > +     s8 utlb_ctx[IPMMU_UTLB_MAX];
->
-> How about making this a bitmask instead to save memory ? I would also
-> rename it as utlb_ctx doesn't really carry the meaning of the field,
-> whose purpose is to store whether the µTLB is enabled or disabled.
-
-This field isn't just a binary flag, but stores the context used for the
-uTLB, so we can map from micro-TLB to context.
-Given there can be 8 contexts, plus the need to indicate unused contexts,
-that means 4 bits/micro-TLB.  So the overhead is just 24 bytes per IPMMU
-instance.
-
-I considered allocating the array dynamically (by having s8 utlb_ctx[]
-at the end of the structure), but didn't go that route, as the domains[]
-array already uses more memory.
-
-> > @@ -1158,10 +1166,52 @@ static int ipmmu_remove(struct platform_device *pdev)
-> >       return 0;
-> >  }
-> >
-> > +#if defined(CONFIG_PM_SLEEP) && defined(CONFIG_ARM_PSCI_FW)
-> > +static int ipmmu_resume_noirq(struct device *dev)
-> > +{
-> > +     struct ipmmu_vmsa_device *mmu = dev_get_drvdata(dev);
-> > +     unsigned int i;
-> > +
-> > +     /* This is the best we can do to check for the presence of PSCI */
-> > +     if (!psci_ops.cpu_suspend)
-> > +             return 0;
->
-> PSCI suspend disabling power to the SoC completely may be a common
-> behaviour on our development boards, but isn't mandated by the PSCI
-> specification if I'm not mistaken. Is there a way to instead detect that
-> power has been lost, perhaps by checking whether a register has been
-> reset to its default value ?
-
-The approach here is the same as in the clk and pinctrl drivers.
-
-I think we could check if the IMCTR registers for allocated domains in root
-IPMMUs are non-zero.  But that's about as expensive as doing the full
-restore, I think.  And it may have to be done for each and every IPMMU
-instance, or do you trust caching for this?
-
-> > +
-> > +     /* Reset root MMU and restore contexts */
->
-> I think the rest of the code adds a period at the end of sentences in
-> comments.
-
-The balance seems to be just under 50% ;-)
-
-> > +     if (ipmmu_is_root(mmu)) {
-> > +             ipmmu_device_reset(mmu);
-> > +
-> > +             for (i = 0; i < mmu->num_ctx; i++) {
-> > +                     if (!mmu->domains[i])
-> > +                             continue;
-> > +
-> > +                     ipmmu_context_init(mmu->domains[i]);
-> > +             }
-> > +     }
-> > +
-> > +     /* Re-enable active micro-TLBs */
-> > +     for (i = 0; i < mmu->features->num_utlbs; i++) {
-> > +             if (mmu->utlb_ctx[i] == IPMMU_CTX_INVALID)
-> > +                     continue;
-> > +
-> > +             ipmmu_utlb_enable(mmu->root->domains[mmu->utlb_ctx[i]], i);
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static const struct dev_pm_ops ipmmu_pm  = {
-> > +     SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(NULL, ipmmu_resume_noirq)
-> > +};
-> > +#define DEV_PM_OPS   &ipmmu_pm
-> > +#else
-> > +#define DEV_PM_OPS   NULL
-> > +#endif /* CONFIG_PM_SLEEP && CONFIG_ARM_PSCI_FW */
-> > +
-> >  static struct platform_driver ipmmu_driver = {
-> >       .driver = {
-> >               .name = "ipmmu-vmsa",
-> >               .of_match_table = of_match_ptr(ipmmu_of_ids),
-> > +             .pm = DEV_PM_OPS,
->
-> I would have used conditional compilation here instead of using a
-> DEV_PM_OPS macro, as I think the macro decreases readability (and also
-> given how its generic name could later conflict with something else).
-
-You mean
-
-    #ifdef ...
-    .pm = &ipmmu_pm,
-    #endif
-
-and marking ipmmu_pm __maybe_unused__?
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Thx.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Regards/Gruss,
+    Boris.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Good mailing practices for 400: avoid top-posting and trim the reply.
