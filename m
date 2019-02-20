@@ -2,87 +2,93 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D245C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80261C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:23:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D3E921902
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:22:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C32F2183F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:23:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550654588;
+	bh=WzvN77styY+QDxWRPE6fM5E9A3Wu/gPUT2Fl8XWptZs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=NsiVz6f07g6iSXu5ihket5sCytsnO7+d/3FdI+QcFTYKFisMMbboA1yXk/ulKK1rE
+	 8D0FiDQ4lV/PS3pXsE8RKm5bOpKo4yhmQtagrPHwMz0dGsIXpABe4AhiSay52qiIfG
+	 Iz3CqKSF9Myiew4PIyUW9YfgS/ZCXLeMHSR/NWRs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726772AbfBTJW4 (ORCPT
+        id S1726924AbfBTJXG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 04:22:56 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48834 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725989AbfBTJW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 04:22:56 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4B2CAC3A6D;
-        Wed, 20 Feb 2019 09:22:56 +0000 (UTC)
-Received: from gondolin (dhcp-192-187.str.redhat.com [10.33.192.187])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1E33F5D6B6;
-        Wed, 20 Feb 2019 09:22:54 +0000 (UTC)
-Date:   Wed, 20 Feb 2019 10:22:52 +0100
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] s390/setup: fix early warning messages
-Message-ID: <20190220102252.43dd10a4.cohuck@redhat.com>
-In-Reply-To: <eca82ff3-bc07-ee2f-b67a-91425fe1ace0@roeck-us.net>
-References: <20190218154640.GA27699@roeck-us.net>
-        <20190218180146.79930fe6@mschwideX1>
-        <20190218182106.61b10ee4@mschwideX1>
-        <20190218191655.103c81ca.cohuck@redhat.com>
-        <05e78442-07e1-9783-965f-b3d64a2c5e99@roeck-us.net>
-        <20190218233021.368bb475.cohuck@redhat.com>
-        <eca82ff3-bc07-ee2f-b67a-91425fe1ace0@roeck-us.net>
-Organization: Red Hat GmbH
+        Wed, 20 Feb 2019 04:23:06 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42610 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725957AbfBTJXG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 04:23:06 -0500
+Received: by mail-lj1-f194.google.com with SMTP id d14so8988553ljl.9;
+        Wed, 20 Feb 2019 01:23:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3f9RbvU+MyiOonrYpIf5VWXPQgi423S3M5basbahIyw=;
+        b=YsILp6tn1iFmsE2cLyJe1kaZIGlef9YJ7oohNzs60ieJb7F0+SbJV0ZLNT+LQX8c02
+         P4TSkeidW+MwUPpSuvVc+7cjrMbg9kiOxoyy7gMCHpe4/pt8574uIIvHg6ufUtMuS4hi
+         SAm6A5JbS3I6rXHLvPF7zu7Pm0PT6yhHiiMeLOqJo3PCYIcqni6x1wgAtsKh9CazeoHg
+         +Zhe9wlNxtwrUtd/73pmQFG0XO1jddQSCqfB22ySwRAbWGTlFaEHZJbLXYmK/j/h5gZd
+         4zIySg1jzBowdJ+8slCpKP4KVb3BlwTWM9PClZ/kwm7t8TmIUyU+sgJpn1vMkSS3q/eC
+         zmgQ==
+X-Gm-Message-State: AHQUAubNFrnfdfdUdbDc+xgZn2EpzFflhkmjHT346Ng+1k4ijTLoz7FJ
+        5/Fo6EnAP3Ex39Pdh0XrTes=
+X-Google-Smtp-Source: AHgI3IYAvSLnJrWlbBvHumfRBWKMZUPsQnnn8aRFxpw1V2BxaW9W/RbpopJj6Sqa+QOyw2btlOV1HA==
+X-Received: by 2002:a2e:2d11:: with SMTP id t17-v6mr19999563ljt.159.1550654583634;
+        Wed, 20 Feb 2019 01:23:03 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id l72sm5282904lfg.75.2019.02.20.01.23.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Feb 2019 01:23:02 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gwO5p-0003jE-0K; Wed, 20 Feb 2019 10:23:05 +0100
+Date:   Wed, 20 Feb 2019 10:23:04 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Karoly Pados <pados@pados.hu>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Loic Poulain <loic.poulain@linaro.org>
+Subject: Re: [PATCH v2] USB: serial: cp210x: Fix GPIO in autosuspend
+Message-ID: <20190220092304.GG4072@localhost>
+References: <20190217175901.3986-1-pados@pados.hu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 20 Feb 2019 09:22:56 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190217175901.3986-1-pados@pados.hu>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Feb 2019 10:47:38 -0800
-Guenter Roeck <linux@roeck-us.net> wrote:
-
-> Hi Cornelia,
+On Sun, Feb 17, 2019 at 06:59:01PM +0100, Karoly Pados wrote:
+> Current GPIO code in cp210x fails to take USB autosuspend into account,
+> making it practically impossible to use GPIOs with autosuspend enabled
+> without user configuration. Fix this like for ftdi_sio in a previous patch.
+> Tested on a CP2102N.
 > 
-> On 2/18/19 2:30 PM, Cornelia Huck wrote:
-> 
-> >> What is your qemu command line ?  
-> > 
-> > Ignoring any additional devices:
-> > 
-> > s390x-softmmu/qemu-system-s390x -M s390-ccw-virtio,accel=tcg -cpu max  -m 1024 -nographic -device virtio-scsi-ccw,id=scsi0,devno=fe.0.0001 -drive file=/home/cohuck/vm-images/vm1.qcow2,format=qcow2,if=none,id=drive-scsi0-0-0-0 -device scsi-hd,bus=scsi0.0,channel=0,scsi-id=0,lun=0,drive=drive-scsi0-0-0-0,id=scsi0-0-0-0,bootindex=1 -sandbox on -kernel ~/git/linux/arch/s390/boot/bzImage -append "root=/dev/sda3"
-> >   
-> 
-> Is "accel=tcg" and "-cpu max" expected to make any difference ? CPU consumption
-> on my system seems to be identical to the default (no -M or -cpu on command line).
-> This is with qemu 3.1.
+> Signed-off-by: Karoly Pados <pados@pados.hu>
+> ---
+> Changelog:
+> - v2: Restrict new autopm calls to GPIO paths.
+>       Always check result of usb_autopm_get.
+>       Rebased to current usb_serial upstream.
 
-If you're not running on a s390x, QEMU will pick tcg even if not
-specified (as it needs to emulate anyway), so that should not make any
-difference. The 'max' cpu model was is not yet available with 3.1
-(merged in the current development cycle); it will not make much
-difference in practice (a few more cpu features are currently provided
-with it over the default 'qemu' cpu model).
+Thanks for the v2. Now applied after removing the unmotivated white
+space change.
 
-As I'm testing various combinations (tcg vs. kvm on an s390x host,
-different cpu models) when I'm queuing patches, my command line is not
-necessarily exactly the same every time (this was just the one I
-happened to be testing the kernel patch with). If you simply want to be
-able to boot a test kernel on a non-s390x host, relying on the default
-accelerator (tcg) and the default cpu model (qemu) being picked should
-be completely fine.
+I also added a Fixes and CC-stable tag as this seems annoying enough to
+warrant a backport even if autosuspend was never actually supported.
+
+Johan
