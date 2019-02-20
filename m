@@ -2,62 +2,40 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 193DFC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:25:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34641C10F01
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:26:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D420A206B7
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:25:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DvVLRNpd";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RBJ0ynFo"
+	by mail.kernel.org (Postfix) with ESMTP id 044E4206B7
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:26:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbfBTLZe (ORCPT
+        id S1727017AbfBTL0Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 06:25:34 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:50554 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726197AbfBTLZe (ORCPT
+        Wed, 20 Feb 2019 06:26:16 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:55789 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbfBTL0P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 06:25:34 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C7F9D601EA; Wed, 20 Feb 2019 11:25:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550661932;
-        bh=h0Vo6ovhZYdyYgbdfk38gIfa4lo+R5R/ObTapMEo7Mw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=DvVLRNpdcHMvplI4fV3uBd1AJgTwZ+9/dJ6AOqJOOPUi6QUbCNmvzat/Os0s6c9wG
-         oEGt5mIleCAbROHvJ5eFXWDmf3UtWOn2JJ7tv4yj87wBjqqPDQh5Sc0LblytwyGhFd
-         xn18PpKKUH8s0bTy9Yo7iGRM6OdvtBeqwuQZiAxU=
-Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: bgodavar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5EFFC60585;
-        Wed, 20 Feb 2019 11:25:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550661931;
-        bh=h0Vo6ovhZYdyYgbdfk38gIfa4lo+R5R/ObTapMEo7Mw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=RBJ0ynFo1YbjnZ/fwgcnfoBvMW+cfGPAy6Bwzyo3EfHeXxeS0xOb/Y4ZMZY+5WdkD
-         iesk2OammJpxJgbl21ncs66hfAZOqaNj9vU2wViaZRAII0KRbiWccT54xjSj/n7m3v
-         POYhXvMvdwl8r7iOcKT1sY+zMGU+AP8z5yKl1YlA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5EFFC60585
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com
-Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Subject: [PATCH v1] Bluetooth: hci_qca: Update baudrate change wait time for wcn3990
-Date:   Wed, 20 Feb 2019 16:55:16 +0530
-Message-Id: <20190220112516.19179-1-bgodavar@codeaurora.org>
+        Wed, 20 Feb 2019 06:26:15 -0500
+X-Originating-IP: 109.212.12.126
+Received: from localhost (alyon-652-1-153-126.w109-212.abo.wanadoo.fr [109.212.12.126])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 5D5374000A;
+        Wed, 20 Feb 2019 11:26:12 +0000 (UTC)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 0/7] clk: at91: add sam9x60 pmc clock support
+Date:   Wed, 20 Feb 2019 12:25:58 +0100
+Message-Id: <20190220112605.23095-1-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -66,58 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch will update the baudrate change request wait time from
-300 ms to 100 ms. When host sends the change baudrate request to
-the controller, controller sets its clock and wait until the
-clocks settle down. Here the Wait time is required for both
-host and controller to be on sync.
+This series add support for the sam9x60 clocks handled by the PMC.
 
-Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
----
- drivers/bluetooth/hci_qca.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+The first four patches are preparatory patches to handle register layout
+and offset differences. Then, a driver for the new interface for PLLs is
+added and the final patch is the driver for the sam9x60 PMC.
 
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index 5e03504c4e0c..22f3c983f868 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -59,7 +59,8 @@
- 
- #define IBS_WAKE_RETRANS_TIMEOUT_MS	100
- #define IBS_TX_IDLE_TIMEOUT_MS		2000
--#define BAUDRATE_SETTLE_TIMEOUT_MS	300
-+#define ROME_BD_SETTLE_TIMEOUT_MS	300
-+#define WCN3990_BD_SETTLE_TIMEOUT_MS	100
- #define POWER_PULSE_TRANS_TIMEOUT_MS	100
- 
- /* susclk rate */
-@@ -965,8 +966,11 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
- 	struct hci_uart *hu = hci_get_drvdata(hdev);
- 	struct qca_data *qca = hu->priv;
- 	struct sk_buff *skb;
-+	struct qca_serdev *qcadev;
-+	unsigned int bd_settling_timeout;
- 	u8 cmd[] = { 0x01, 0x48, 0xFC, 0x01, 0x00 };
- 
-+	qcadev = serdev_device_get_drvdata(hu->serdev);
- 	if (baudrate > QCA_BAUDRATE_3200000)
- 		return -EINVAL;
- 
-@@ -989,8 +993,12 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
- 	 * controller will come back after they receive this HCI command
- 	 * then host can communicate with new baudrate to controller
- 	 */
-+	bd_settling_timeout = qcadev->btsoc_type == QCA_WCN3990 ?
-+			       WCN3990_BD_SETTLE_TIMEOUT_MS :
-+			       ROME_BD_SETTLE_TIMEOUT_MS;
-+
- 	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(msecs_to_jiffies(BAUDRATE_SETTLE_TIMEOUT_MS));
-+	schedule_timeout(msecs_to_jiffies(bd_settling_timeout));
- 	set_current_state(TASK_RUNNING);
- 
- 	return 0;
+Alexandre Belloni (7):
+  clk: at91: allow configuring peripheral PCR layout
+  clk: at91: allow configuring generated PCR layout
+  clk: at91: usb: Add sam9x60 support
+  clk: at91: master: Add sam9x60 support
+  clk: at91: add sam9x60 PLL driver
+  dt-bindings: clk: at91: add bindings for SAM9X60 pmc
+  clk: at91: add sam9x60 pmc driver
+
+ .../devicetree/bindings/clock/at91-clock.txt  |   3 +-
+ drivers/clk/at91/Makefile                     |   2 +
+ drivers/clk/at91/at91sam9x5.c                 |   9 +
+ drivers/clk/at91/clk-generated.c              |  48 +--
+ drivers/clk/at91/clk-master.c                 |   8 +-
+ drivers/clk/at91/clk-peripheral.c             |  46 +--
+ drivers/clk/at91/clk-sam9x60-pll.c            | 329 ++++++++++++++++++
+ drivers/clk/at91/clk-usb.c                    |  33 +-
+ drivers/clk/at91/dt-compat.c                  |  12 +-
+ drivers/clk/at91/pmc.h                        |  23 ++
+ drivers/clk/at91/sam9x60.c                    | 307 ++++++++++++++++
+ drivers/clk/at91/sama5d2.c                    |  10 +
+ drivers/clk/at91/sama5d4.c                    |   8 +
+ include/linux/clk/at91_pmc.h                  |  12 +-
+ 14 files changed, 785 insertions(+), 65 deletions(-)
+ create mode 100644 drivers/clk/at91/clk-sam9x60-pll.c
+ create mode 100644 drivers/clk/at91/sam9x60.c
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.20.1
 
