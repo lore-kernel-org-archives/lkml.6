@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3068C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88614C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:21:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9133C2146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:20:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 471F32146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:21:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ELSXDtZN"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hgZxKqZ3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbfBTUUs (ORCPT
+        id S1728022AbfBTUVK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 15:20:48 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:52916 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727869AbfBTUSa (ORCPT
+        Wed, 20 Feb 2019 15:21:10 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:35362 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727401AbfBTURv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 15:18:30 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1KK8VMH081701;
-        Wed, 20 Feb 2019 20:18:16 GMT
+        Wed, 20 Feb 2019 15:17:51 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1KK8fJJ087627;
+        Wed, 20 Feb 2019 20:17:36 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=gQUPRbLoYWg0zdbNGHXgdQYJld3Oxus6PO4cvvWfLpw=;
- b=ELSXDtZNmmpI2AO7jtWQjgd+ax/0DCR4WA4LOFBi/appqSDAzNqe3A48BpjIoobJGdoq
- 9RlCnewbM46W+kT+NBFO2QpJy/AfIovF83BzDld/hZD1JS6b7BK9ZzI8jxkyFlXKB1Ih
- fwR9/Rju4gVmFw1zxBB+oC9Pr3RAQznuKOP6HoEXgdMX2edOXZtFUwtUWRI4gJKbolaF
- 1etmvRKW6uDliB8//ABYA0XJ6fo1PoymKZj0n7/NcZ9TZVEqQCrMGROndEtC5uyPY2Do
- 6n1sxAaVUjLM3aPuVWK97D8mSE2oFU4rXWXnY8W3/o7kSexDlR5FFlsLLOhCBpUlqPcI 1g== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2qp9xu3xm2-1
+ bh=WA5tVmPGiyTbR+w8aie+g3q7493Oumr1VfMgf/HFYL4=;
+ b=hgZxKqZ3ohnMpGS0b2ik2rt1//i4DoVo9WbHgxahyBRo4Ios5OHO5eGO9a6CtcxmHDWA
+ 1qaxnTOWFw1+YRrLvQFlkO81CjI5W+Wfl8waR6UCogQbqPeZdw35pGC8hzEhfbNuCsVx
+ yPcTcx+Afa6GJxW3wqmU+tTkNXdY3nybW+FUyLxXyL5ISQHuidBb0c9v+4GurGONV7as
+ yjOg4AfvNq3CE1Dp25HNSoEoXC1n7227sA3pyiIOGdmv0t1jS6vreQ60W+0V54O/coql
+ PfpAVIUgNCasblXo3g+Vswuvp1EFP7RVBCfyKtfxeFxsOhAIYI8hhmQvi3pjxv0Z3iHd kQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2qpb5rktqg-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Feb 2019 20:18:16 +0000
+        Wed, 20 Feb 2019 20:17:36 +0000
 Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1KKIAN8006676
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1KKHZJv026107
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Feb 2019 20:18:10 GMT
+        Wed, 20 Feb 2019 20:17:36 GMT
 Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1KKIABW009924;
-        Wed, 20 Feb 2019 20:18:10 GMT
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1KKHZXl009502;
+        Wed, 20 Feb 2019 20:17:35 GMT
 Received: from paddy.lan (/94.61.137.133)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 20 Feb 2019 12:18:09 -0800
+        with ESMTP ; Wed, 20 Feb 2019 12:17:35 -0800
 From:   Joao Martins <joao.m.martins@oracle.com>
 To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Ankur Arora <ankur.a.arora@oracle.com>,
@@ -59,9 +59,9 @@ Cc:     Ankur Arora <ankur.a.arora@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: [PATCH RFC 24/39] KVM: x86/xen: backend hypercall support
-Date:   Wed, 20 Feb 2019 20:15:54 +0000
-Message-Id: <20190220201609.28290-25-joao.m.martins@oracle.com>
+Subject: [PATCH RFC 13/39] KVM: x86/xen: handle PV timers oneshot mode
+Date:   Wed, 20 Feb 2019 20:15:43 +0000
+Message-Id: <20190220201609.28290-14-joao.m.martins@oracle.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190220201609.28290-1-joao.m.martins@oracle.com>
 References: <20190220201609.28290-1-joao.m.martins@oracle.com>
@@ -70,7 +70,7 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9173 signatures=668683
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
  lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
  definitions=main-1902200138
@@ -79,228 +79,252 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ankur Arora <ankur.a.arora@oracle.com>
+If the guest has offloaded the timer virq, handle the following
+hypercalls for programming the timer:
 
-Ordinarily a Xen backend domain would do hypercalls via int 0x81 (or
-vmcall) to enter a lower ring of execution. This is done via a
-hypercall_page which contains call stubs corresponding to each
-hypercall.
+    VCPUOP_set_singleshot_timer
+    VCPUOP_stop_singleshot_timer
+    set_timer_op(timestamp_ns)
 
-For Xen backend driver support, however, we would like to do Xen
-hypercalls in the same ring. To that end we point the hypercall_page to
-a kvm owned text page which just does a local call (to
-kvm_xen_host_hcall().)
+The event channel corresponding to the timer virq is then used to inject
+events once timer deadlines are met. For now we back the PV timer with
+hrtimer.
 
-Note, that this is different from hypercalls handled in
-kvm_xen_hypercall(), because the latter refers to domU hypercalls (so
-there is an actual drop in execution ring) while there isn't in
-kvm_xen_host_hcall().
-
-Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
 Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
 ---
- arch/x86/include/asm/kvm_host.h |  3 ++
- arch/x86/kvm/Makefile           |  2 +-
- arch/x86/kvm/xen-asm.S          | 66 +++++++++++++++++++++++++++++++++++++++
- arch/x86/kvm/xen.c              | 68 +++++++++++++++++++++++++++++++++++++++++
- arch/x86/kvm/xen.h              |  4 +++
- 5 files changed, 142 insertions(+), 1 deletion(-)
- create mode 100644 arch/x86/kvm/xen-asm.S
+ arch/x86/include/asm/kvm_host.h |   2 +
+ arch/x86/kvm/irq.c              |  11 ++-
+ arch/x86/kvm/x86.c              |   4 +
+ arch/x86/kvm/xen.c              | 185 +++++++++++++++++++++++++++++++++++++++-
+ arch/x86/kvm/xen.h              |   6 ++
+ 5 files changed, 202 insertions(+), 6 deletions(-)
 
 diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 70bb7339ddd4..55609e919e14 100644
+index 92b76127eb43..7fcc81dbb688 100644
 --- a/arch/x86/include/asm/kvm_host.h
 +++ b/arch/x86/include/asm/kvm_host.h
-@@ -1669,4 +1669,7 @@ static inline int kvm_cpu_get_apicid(int mps_cpu)
- #define put_smstate(type, buf, offset, val)                      \
- 	*(type *)((buf) + (offset) - 0x7e00) = val
+@@ -552,6 +552,8 @@ struct kvm_vcpu_xen {
+ 	struct kvm_xen_callback cb;
+ #define KVM_XEN_NR_VIRQS 24
+ 	unsigned int virq_to_port[KVM_XEN_NR_VIRQS];
++	struct hrtimer timer;
++	atomic_t timer_pending;
+ };
  
-+void kvm_xen_register_lcall(struct kvm_xen *shim);
-+void kvm_xen_unregister_lcall(void);
+ struct kvm_vcpu_arch {
+diff --git a/arch/x86/kvm/irq.c b/arch/x86/kvm/irq.c
+index cdb1dbfcc9b1..936c31ae019a 100644
+--- a/arch/x86/kvm/irq.c
++++ b/arch/x86/kvm/irq.c
+@@ -34,10 +34,14 @@
+  */
+ int kvm_cpu_has_pending_timer(struct kvm_vcpu *vcpu)
+ {
++	int r = 0;
 +
- #endif /* _ASM_X86_KVM_HOST_H */
-diff --git a/arch/x86/kvm/Makefile b/arch/x86/kvm/Makefile
-index 2b46c93c9380..c1eaabbd0a54 100644
---- a/arch/x86/kvm/Makefile
-+++ b/arch/x86/kvm/Makefile
-@@ -10,7 +10,7 @@ kvm-$(CONFIG_KVM_ASYNC_PF)	+= $(KVM)/async_pf.o
+ 	if (lapic_in_kernel(vcpu))
+-		return apic_has_pending_timer(vcpu);
++		r = apic_has_pending_timer(vcpu);
++	if (kvm_xen_timer_enabled(vcpu))
++		r += kvm_xen_has_pending_timer(vcpu);
  
- kvm-y			+= x86.o mmu.o emulate.o i8259.o irq.o lapic.o \
- 			   i8254.o ioapic.o irq_comm.o cpuid.o pmu.o mtrr.o \
--			   hyperv.o xen.o page_track.o debugfs.o
-+			   hyperv.o xen-asm.o xen.o page_track.o debugfs.o
+-	return 0;
++	return r;
+ }
+ EXPORT_SYMBOL(kvm_cpu_has_pending_timer);
  
- kvm-intel-y		+= vmx/vmx.o vmx/vmenter.o vmx/pmu_intel.o vmx/vmcs12.o vmx/evmcs.o vmx/nested.o
- kvm-amd-y		+= svm.o pmu_amd.o
-diff --git a/arch/x86/kvm/xen-asm.S b/arch/x86/kvm/xen-asm.S
-new file mode 100644
-index 000000000000..10559fcfbe38
---- /dev/null
-+++ b/arch/x86/kvm/xen-asm.S
-@@ -0,0 +1,66 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2019 Oracle and/or its affiliates. All rights reserved. */
-+#include <linux/linkage.h>
-+#include <asm/asm.h>
-+#include <asm/frame.h>
-+#include <asm/page_types.h>
-+#include <asm/unwind_hints.h>
-+#include <xen/interface/xen.h>
-+#include <xen/interface/xen-mca.h>
-+#include <asm/xen/interface.h>
+@@ -172,6 +176,8 @@ void kvm_inject_pending_timer_irqs(struct kvm_vcpu *vcpu)
+ {
+ 	if (lapic_in_kernel(vcpu))
+ 		kvm_inject_apic_timer_irqs(vcpu);
++	if (kvm_xen_timer_enabled(vcpu))
++		kvm_xen_inject_timer_irqs(vcpu);
+ }
+ EXPORT_SYMBOL_GPL(kvm_inject_pending_timer_irqs);
+ 
+@@ -179,4 +185,5 @@ void __kvm_migrate_timers(struct kvm_vcpu *vcpu)
+ {
+ 	__kvm_migrate_apic_timer(vcpu);
+ 	__kvm_migrate_pit_timer(vcpu);
++	__kvm_migrate_xen_timer(vcpu);
+ }
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 76bd23113ccd..e29cefd2dc6a 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -9115,6 +9115,7 @@ int kvm_arch_vcpu_init(struct kvm_vcpu *vcpu)
+ 	vcpu->arch.preempted_in_kernel = false;
+ 
+ 	kvm_hv_vcpu_init(vcpu);
++	kvm_xen_vcpu_init(vcpu);
+ 
+ 	return 0;
+ 
+@@ -9566,6 +9567,9 @@ static inline bool kvm_vcpu_has_events(struct kvm_vcpu *vcpu)
+ 	if (kvm_hv_has_stimer_pending(vcpu))
+ 		return true;
+ 
++	if (kvm_xen_has_pending_timer(vcpu))
++		return true;
 +
-+	.balign PAGE_SIZE
-+ENTRY(kvm_xen_hypercall_page)
-+	hcall=0
-+	.rept (PAGE_SIZE / 32)
-+		FRAME_BEGIN
-+		push %rcx	/* Push call clobbered registers */
-+		push %r9
-+		push %r11
-+		mov $hcall, %rax
-+
-+		call kvm_xen_host_hcall
-+		pop %r11
-+		pop %r9
-+		pop %rcx
-+
-+		FRAME_END
-+		ret
-+		.balign 32
-+		hcall = hcall + 1
-+	.endr
-+/*
-+ * Hypercall symbols are used for unwinding the stack, so we give them names
-+ * prefixed with kvm_xen_ (Xen hypercalls have symbols prefixed with xen_.)
-+ */
-+#define HYPERCALL(n) \
-+  .equ kvm_xen_hypercall_##n, kvm_xen_hypercall_page + __HYPERVISOR_##n * 32; \
-+  .type kvm_xen_hypercall_##n, @function;				      \
-+  .size kvm_xen_hypercall_##n, 32
-+#include <asm/xen-hypercalls.h>
-+#undef HYPERCALL
-+END(kvm_xen_hypercall_page)
-+
-+/*
-+ * Some call stubs generated above do not have associated symbols. Generate
-+ * bogus symbols for those hypercall blocks to stop objtool from complaining
-+ * about unreachable code.
-+ */
-+.altmacro
-+.macro hypercall_missing N
-+       .equ kvm_xen_hypercall_missing_\N, kvm_xen_hypercall_page + \N * 32;
-+       .type kvm_xen_hypercall_missing_\N, @function;
-+       .size kvm_xen_hypercall_missing_\N, 32;
-+.endm
-+
-+.macro hypercalls_missing N count=1
-+       .set n,\N
-+       .rept \count
-+               hypercall_missing %n
-+               .set n,n+1
-+       .endr
-+.endm
-+
-+hypercalls_missing 11 1
-+hypercalls_missing 42 6
-+hypercalls_missing 56 72
+ 	return false;
+ }
+ 
 diff --git a/arch/x86/kvm/xen.c b/arch/x86/kvm/xen.c
-index 7266d27db210..645cd22ab4e7 100644
+index 42c1fe01600d..ec40cb1de6b6 100644
 --- a/arch/x86/kvm/xen.c
 +++ b/arch/x86/kvm/xen.c
-@@ -12,6 +12,7 @@
- #include <linux/kvm_host.h>
- #include <linux/eventfd.h>
- #include <linux/sched/stat.h>
-+#include <linux/linkage.h>
+@@ -32,6 +32,7 @@ struct evtchnfd {
+ 	};
+ };
  
- #include <trace/events/kvm.h>
- #include <xen/interface/xen.h>
-@@ -19,6 +20,10 @@
- #include <xen/interface/event_channel.h>
- #include <xen/interface/grant_table.h>
- #include <xen/interface/sched.h>
-+#include <xen/interface/version.h>
-+#include <xen/xen.h>
-+#include <xen/features.h>
-+#include <asm/xen/hypercall.h>
- 
- #include "trace.h"
- 
-@@ -43,6 +48,7 @@ struct evtchnfd {
- static int kvm_xen_evtchn_send(struct kvm_vcpu *vcpu, int port);
++static int kvm_xen_evtchn_send(struct kvm_vcpu *vcpu, int port);
  static void *xen_vcpu_info(struct kvm_vcpu *v);
- static void kvm_xen_gnttab_free(struct kvm_xen *xen);
-+static int shim_hypercall(u64 code, u64 a0, u64 a1, u64 a2, u64 a3, u64 a4);
  
- #define XEN_DOMID_MIN	1
- #define XEN_DOMID_MAX	(DOMID_FIRST_RESERVED - 1)
-@@ -50,6 +56,9 @@ static void kvm_xen_gnttab_free(struct kvm_xen *xen);
- static rwlock_t domid_lock;
- static struct idr domid_to_kvm;
- 
-+static struct hypercall_entry *hypercall_page_save;
-+static struct kvm_xen *xen_shim __read_mostly;
-+
- static int kvm_xen_domid_init(struct kvm *kvm, bool any, domid_t domid)
- {
- 	u16 min = XEN_DOMID_MIN, max = XEN_DOMID_MAX;
-@@ -1271,3 +1280,62 @@ int kvm_vm_ioctl_xen_gnttab(struct kvm *kvm, struct kvm_xen_gnttab *op)
- 
- 	return r;
+ int kvm_xen_has_interrupt(struct kvm_vcpu *vcpu)
+@@ -101,6 +102,91 @@ static void kvm_xen_evtchnfd_upcall(struct kvm_vcpu *vcpu, struct evtchnfd *e)
+ 	kvm_xen_do_upcall(vcpu->kvm, e->vcpu, vx->cb.via, vx->cb.vector, 0);
  }
-+
-+asmlinkage int kvm_xen_host_hcall(void)
+ 
++int kvm_xen_has_pending_timer(struct kvm_vcpu *vcpu)
 +{
-+	register unsigned long a0 asm(__HYPERCALL_RETREG);
-+	register unsigned long a1 asm(__HYPERCALL_ARG1REG);
-+	register unsigned long a2 asm(__HYPERCALL_ARG2REG);
-+	register unsigned long a3 asm(__HYPERCALL_ARG3REG);
-+	register unsigned long a4 asm(__HYPERCALL_ARG4REG);
-+	register unsigned long a5 asm(__HYPERCALL_ARG5REG);
-+	int ret;
++	struct kvm_vcpu_xen *vcpu_xen = vcpu_to_xen_vcpu(vcpu);
 +
-+	preempt_disable();
-+	ret = shim_hypercall(a0, a1, a2, a3, a4, a5);
-+	preempt_enable();
++	if (kvm_xen_hypercall_enabled(vcpu->kvm) && kvm_xen_timer_enabled(vcpu))
++		return atomic_read(&vcpu_xen->timer_pending);
 +
-+	return ret;
-+}
-+
-+void kvm_xen_register_lcall(struct kvm_xen *shim)
-+{
-+	hypercall_page_save = hypercall_page;
-+	hypercall_page = kvm_xen_hypercall_page;
-+	xen_shim = shim;
-+}
-+EXPORT_SYMBOL_GPL(kvm_xen_register_lcall);
-+
-+void kvm_xen_unregister_lcall(void)
-+{
-+	hypercall_page = hypercall_page_save;
-+	hypercall_page_save = NULL;
-+}
-+EXPORT_SYMBOL_GPL(kvm_xen_unregister_lcall);
-+
-+static int shim_hcall_version(int op, struct xen_feature_info *fi)
-+{
-+	if (op != XENVER_get_features || !fi || fi->submap_idx != 0)
-+		return -EINVAL;
-+
-+	/*
-+	 * We need a limited set of features for a pseudo dom0.
-+	 */
-+	fi->submap = (1U << XENFEAT_auto_translated_physmap);
 +	return 0;
 +}
 +
-+static int shim_hypercall(u64 code, u64 a0, u64 a1, u64 a2, u64 a3, u64 a4)
++void kvm_xen_inject_timer_irqs(struct kvm_vcpu *vcpu)
 +{
-+	int ret = -ENOSYS;
++	struct kvm_vcpu_xen *vcpu_xen = vcpu_to_xen_vcpu(vcpu);
 +
-+	switch (code) {
-+	case __HYPERVISOR_xen_version:
-+		ret = shim_hcall_version((int)a0, (void *)a1);
++	if (atomic_read(&vcpu_xen->timer_pending) > 0) {
++		kvm_xen_evtchn_send(vcpu, vcpu_xen->virq_to_port[VIRQ_TIMER]);
++
++		atomic_set(&vcpu_xen->timer_pending, 0);
++	}
++}
++
++static enum hrtimer_restart xen_timer_callback(struct hrtimer *timer)
++{
++	struct kvm_vcpu_xen *vcpu_xen =
++		container_of(timer, struct kvm_vcpu_xen, timer);
++	struct kvm_vcpu *vcpu = xen_vcpu_to_vcpu(vcpu_xen);
++	struct swait_queue_head *wq = &vcpu->wq;
++
++	if (atomic_read(&vcpu_xen->timer_pending))
++		return HRTIMER_NORESTART;
++
++	atomic_inc(&vcpu_xen->timer_pending);
++	kvm_set_pending_timer(vcpu);
++
++	if (swait_active(wq))
++		swake_up_one(wq);
++
++	return HRTIMER_NORESTART;
++}
++
++void __kvm_migrate_xen_timer(struct kvm_vcpu *vcpu)
++{
++	struct hrtimer *timer;
++
++	if (!kvm_xen_timer_enabled(vcpu))
++		return;
++
++	timer = &vcpu->arch.xen.timer;
++	if (hrtimer_cancel(timer))
++		hrtimer_start_expires(timer, HRTIMER_MODE_ABS_PINNED);
++}
++
++static void kvm_xen_start_timer(struct kvm_vcpu *vcpu, u64 delta_ns)
++{
++	struct kvm_vcpu_xen *vcpu_xen = vcpu_to_xen_vcpu(vcpu);
++	struct hrtimer *timer = &vcpu_xen->timer;
++	ktime_t ktime_now;
++
++	atomic_set(&vcpu_xen->timer_pending, 0);
++	ktime_now = ktime_get();
++	hrtimer_start(timer, ktime_add_ns(ktime_now, delta_ns),
++		      HRTIMER_MODE_ABS_PINNED);
++}
++
++static void kvm_xen_stop_timer(struct kvm_vcpu *vcpu)
++{
++	struct kvm_vcpu_xen *vcpu_xen = vcpu_to_xen_vcpu(vcpu);
++
++	hrtimer_cancel(&vcpu_xen->timer);
++}
++
++void kvm_xen_init_timer(struct kvm_vcpu *vcpu)
++{
++	struct kvm_vcpu_xen *vcpu_xen = vcpu_to_xen_vcpu(vcpu);
++
++	hrtimer_init(&vcpu_xen->timer, CLOCK_MONOTONIC,
++		     HRTIMER_MODE_ABS_PINNED);
++	vcpu_xen->timer.function = xen_timer_callback;
++}
++
++bool kvm_xen_timer_enabled(struct kvm_vcpu *vcpu)
++{
++	return !!vcpu->arch.xen.virq_to_port[VIRQ_TIMER];
++}
++
+ void kvm_xen_set_virq(struct kvm *kvm, struct evtchnfd *evt)
+ {
+ 	int virq = evt->virq.type;
+@@ -111,6 +197,9 @@ void kvm_xen_set_virq(struct kvm *kvm, struct evtchnfd *evt)
+ 	if (!vcpu)
+ 		return;
+ 
++	if (virq == VIRQ_TIMER)
++		kvm_xen_init_timer(vcpu);
++
+ 	vcpu_xen = vcpu_to_xen_vcpu(vcpu);
+ 	vcpu_xen->virq_to_port[virq] = evt->port;
+ }
+@@ -514,6 +603,71 @@ static int kvm_xen_hcall_evtchn_send(struct kvm_vcpu *vcpu, int cmd, u64 param)
+ 	return kvm_xen_evtchn_send(vcpu, send.port);
+ }
+ 
++static int kvm_xen_hcall_vcpu_op(struct kvm_vcpu *vcpu, int cmd, int vcpu_id,
++				 u64 param)
++{
++	struct vcpu_set_singleshot_timer oneshot;
++	int ret = -EINVAL;
++	long delta;
++	gpa_t gpa;
++	int idx;
++
++	/* Only process timer ops with commands 6 to 9 */
++	if (cmd < VCPUOP_set_periodic_timer ||
++	    cmd > VCPUOP_stop_singleshot_timer)
++		return ret;
++
++	if (!kvm_xen_timer_enabled(vcpu))
++		return ret;
++
++	idx = srcu_read_lock(&vcpu->kvm->srcu);
++	gpa = kvm_mmu_gva_to_gpa_system(vcpu, param, NULL);
++	srcu_read_unlock(&vcpu->kvm->srcu, idx);
++
++	if (!gpa)
++		return ret;
++
++	switch (cmd) {
++	case VCPUOP_set_singleshot_timer:
++		if (kvm_vcpu_read_guest(vcpu, gpa, &oneshot,
++					sizeof(oneshot)))
++			return -EFAULT;
++
++		delta = oneshot.timeout_abs_ns - get_kvmclock_ns(vcpu->kvm);
++		kvm_xen_start_timer(vcpu, delta);
++		ret = 0;
++		break;
++	case VCPUOP_stop_singleshot_timer:
++		kvm_xen_stop_timer(vcpu);
++		ret = 0;
 +		break;
 +	default:
 +		break;
@@ -308,24 +332,97 @@ index 7266d27db210..645cd22ab4e7 100644
 +
 +	return ret;
 +}
++
++static int kvm_xen_hcall_set_timer_op(struct kvm_vcpu *vcpu, uint64_t timeout)
++{
++	ktime_t ktime_now = ktime_get();
++	long delta = timeout - get_kvmclock_ns(vcpu->kvm);
++
++	if (!kvm_xen_timer_enabled(vcpu))
++		return -EINVAL;
++
++	if (timeout == 0) {
++		kvm_xen_stop_timer(vcpu);
++	} else if (unlikely(timeout < ktime_now) ||
++		   ((uint32_t) (delta >> 50) != 0)) {
++		kvm_xen_start_timer(vcpu, 50000000);
++	} else {
++		kvm_xen_start_timer(vcpu, delta);
++	}
++
++	return 0;
++}
++
+ int kvm_xen_hypercall(struct kvm_vcpu *vcpu)
+ {
+ 	bool longmode;
+@@ -546,10 +700,20 @@ int kvm_xen_hypercall(struct kvm_vcpu *vcpu)
+ 	case __HYPERVISOR_event_channel_op:
+ 		r = kvm_xen_hcall_evtchn_send(vcpu, params[0],
+ 					      params[1]);
+-		if (!r) {
+-			kvm_xen_hypercall_set_result(vcpu, r);
+-			return kvm_skip_emulated_instruction(vcpu);
+-		}
++		if (!r)
++			goto hcall_success;
++		break;
++	case __HYPERVISOR_vcpu_op:
++		r = kvm_xen_hcall_vcpu_op(vcpu, params[0], params[1],
++					  params[2]);
++		if (!r)
++			goto hcall_success;
++		break;
++	case __HYPERVISOR_set_timer_op:
++		r = kvm_xen_hcall_set_timer_op(vcpu, params[0]);
++		if (!r)
++			goto hcall_success;
++		break;
+ 	/* fallthrough */
+ 	default:
+ 		break;
+@@ -567,6 +731,14 @@ int kvm_xen_hypercall(struct kvm_vcpu *vcpu)
+ 		kvm_xen_hypercall_complete_userspace;
+ 
+ 	return 0;
++
++hcall_success:
++	kvm_xen_hypercall_set_result(vcpu, r);
++	return kvm_skip_emulated_instruction(vcpu);
++}
++
++void kvm_xen_vcpu_init(struct kvm_vcpu *vcpu)
++{
+ }
+ 
+ void kvm_xen_vcpu_uninit(struct kvm_vcpu *vcpu)
+@@ -579,6 +751,11 @@ void kvm_xen_vcpu_uninit(struct kvm_vcpu *vcpu)
+ 		put_page(virt_to_page(vcpu_xen->pv_time));
+ 	if (vcpu_xen->steal_time)
+ 		put_page(virt_to_page(vcpu_xen->steal_time));
++
++	if (!kvm_xen_timer_enabled(vcpu))
++		return;
++
++	kvm_xen_stop_timer(vcpu);
+ }
+ 
+ void kvm_xen_init_vm(struct kvm *kvm)
 diff --git a/arch/x86/kvm/xen.h b/arch/x86/kvm/xen.h
-index 08ad4e1259df..9fa7c3dd111a 100644
+index 8f26625564c8..f82b8b5b3345 100644
 --- a/arch/x86/kvm/xen.h
 +++ b/arch/x86/kvm/xen.h
-@@ -3,6 +3,8 @@
- #ifndef __ARCH_X86_KVM_XEN_H__
- #define __ARCH_X86_KVM_XEN_H__
+@@ -37,6 +37,12 @@ int kvm_xen_setup_evtchn(struct kvm *kvm,
+ void kvm_xen_init_vm(struct kvm *kvm);
+ void kvm_xen_destroy_vm(struct kvm *kvm);
+ int kvm_vm_ioctl_xen_eventfd(struct kvm *kvm, struct kvm_xen_eventfd *args);
++void kvm_xen_vcpu_init(struct kvm_vcpu *vcpu);
+ void kvm_xen_vcpu_uninit(struct kvm_vcpu *vcpu);
  
-+#include <asm/xen/hypercall.h>
-+
- static inline struct kvm_vcpu_xen *vcpu_to_xen_vcpu(struct kvm_vcpu *vcpu)
- {
- 	return &vcpu->arch.xen;
-@@ -48,4 +50,6 @@ int kvm_xen_has_pending_timer(struct kvm_vcpu *vcpu);
- void kvm_xen_inject_timer_irqs(struct kvm_vcpu *vcpu);
- bool kvm_xen_timer_enabled(struct kvm_vcpu *vcpu);
- 
-+extern struct hypercall_entry kvm_xen_hypercall_page[128];
++void __kvm_migrate_xen_timer(struct kvm_vcpu *vcpu);
++int kvm_xen_has_pending_timer(struct kvm_vcpu *vcpu);
++void kvm_xen_inject_timer_irqs(struct kvm_vcpu *vcpu);
++bool kvm_xen_timer_enabled(struct kvm_vcpu *vcpu);
 +
  #endif
 -- 
