@@ -2,216 +2,103 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B59C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B032C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:30:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 494F22070B
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:30:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 621572070B
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:30:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726993AbfBTJaY (ORCPT
+        id S1727027AbfBTJag (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 04:30:24 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:46446 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfBTJaX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 04:30:23 -0500
-Received: from 79.184.254.15.ipv4.supernova.orange.pl (79.184.254.15) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id b7aadfd03c05837c; Wed, 20 Feb 2019 10:30:21 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
+        Wed, 20 Feb 2019 04:30:36 -0500
+Received: from mga11.intel.com ([192.55.52.93]:11074 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725832AbfBTJaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 04:30:35 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 01:30:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,390,1544515200"; 
+   d="asc'?scan'208";a="145749931"
+Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.175])
+  by fmsmga004.fm.intel.com with ESMTP; 20 Feb 2019 01:30:32 -0800
+From:   Felipe Balbi <felipe.balbi@linux.intel.com>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Mathias Nyman <mathias.nyman@intel.com>
+Cc:     oneukum@suse.com, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jisheng Zhang <jszhang@marvell.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Joshua Frkuska <joshua_frkuska@mentor.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v3] drivers: base: add support to skip power management in device/driver model
-Date:   Wed, 20 Feb 2019 10:28:54 +0100
-Message-ID: <10705554.0uAQcsTWG8@aspire.rjw.lan>
-In-Reply-To: <20190214182910.20600-1-sudeep.holla@arm.com>
-References: <20190214182910.20600-1-sudeep.holla@arm.com>
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: xhci: add Immediate Data Transfer support
+In-Reply-To: <20190219162945.22889-1-nsaenzjulienne@suse.de>
+References: <20190219162945.22889-1-nsaenzjulienne@suse.de>
+Date:   Wed, 20 Feb 2019 11:30:28 +0200
+Message-ID: <87ftsidcy3.fsf@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, February 14, 2019 7:29:10 PM CET Sudeep Holla wrote:
-> All device objects in the driver model contain fields that control the
-> handling of various power management activities. However, it's not
-> always useful. There are few instances where pseudo devices are added
-> to the model just to take advantage of many other features like
-> kobjects, udev events, and so on. One such example is cpu devices and
-> their caches.
-> 
-> The sysfs for the cpu caches are managed by adding devices with cpu
-> as the parent in cpu_device_create() when secondary cpu is brought
-> online. Generally when the secondary CPUs are hotplugged back in as part
-> of resume from suspend-to-ram, we call cpu_device_create() from the cpu
-> hotplug state machine while the cpu device associated with that CPU is
-> not yet ready to be resumed as the device_resume() call happens bit
-> later. It's not really needed to set the flag is_prepared for cpu
-> devices as they are mostly pseudo device and hotplug framework deals
-> with state machine and not managed through the cpu device.
-> 
-> This often results in annoying warning when resuming:
-> Enabling non-boot CPUs ...
-> CPU1: Booted secondary processor
->  cache: parent cpu1 should not be sleeping
-> CPU1 is up
-> CPU2: Booted secondary processor
->  cache: parent cpu2 should not be sleeping
-> CPU2 is up
-> .... and so on.
-> 
-> So in order to fix these kind of errors, we could just completely avoid
-> doing any power management related initialisations and operations if
-> they are not used by these devices.
-> 
-> Lets add no_pm_required flags to indicate that the device doesn't
-> require any sort of pm activities and all of them can be completely
-> skipped. We can use the same flag to also avoid adding not used *power*
-> sysfs entries for these devices. For now, lets use this for cpu cache
-> devices.
-> 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
->  drivers/base/cpu.c         |  1 +
->  drivers/base/power/main.c  |  7 +++++++
->  drivers/base/power/sysfs.c |  6 ++++++
->  include/linux/device.h     | 10 ++++++++++
->  include/linux/pm.h         |  1 +
->  5 files changed, 25 insertions(+)
-> 
-> v2->v3:
-> 	- renamed no_pm_required to no_pm
-> 	- fixed the wrong comment in device_pm_add
-> 	- add missing check in dpm_sysfs_remove reported by Eugeniu
-> 	- added Ulf's reviewed-by tag
-> 
-> v1->v2:
-> 	- dropped setting the flag for cpu devices, for now just cpu caches
-> 	  will make use of this new flag.
-> 
-> RFC->v1:
-> 	- dropped the idea of adding cpu hotplug callback to deal just
-> 	  with cpu devices, instead add a new flag in the device pm_info
-> 	  structure
-> 
-> [RFC] : https://marc.info/?l=linux-pm&m=154842896407904&w=2
-> [v1] : https://marc.info/?l=linux-pm&m=154946578717730&w=2
-> [v2] : https://marc.info/?l=linux-pm&m=155005931507485&w=2
-> 
-> diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-> index eb9443d5bae1..6ce93a52bf3f 100644
-> --- a/drivers/base/cpu.c
-> +++ b/drivers/base/cpu.c
-> @@ -427,6 +427,7 @@ __cpu_device_create(struct device *parent, void *drvdata,
->  	dev->parent = parent;
->  	dev->groups = groups;
->  	dev->release = device_create_release;
-> +	device_set_pm_not_required(dev);
->  	dev_set_drvdata(dev, drvdata);
-> 
->  	retval = kobject_set_name_vargs(&dev->kobj, fmt, args);
-> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> index 0992e67e862b..6a473004abe6 100644
-> --- a/drivers/base/power/main.c
-> +++ b/drivers/base/power/main.c
-> @@ -124,6 +124,10 @@ void device_pm_unlock(void)
->   */
->  void device_pm_add(struct device *dev)
->  {
-> +	/* Skip pm setup/initialisation */
-> +	if (device_pm_not_required(dev))
-> +		return;
-> +
->  	pr_debug("PM: Adding info for %s:%s\n",
->  		 dev->bus ? dev->bus->name : "No Bus", dev_name(dev));
->  	device_pm_check_callbacks(dev);
-> @@ -142,6 +146,9 @@ void device_pm_add(struct device *dev)
->   */
->  void device_pm_remove(struct device *dev)
->  {
-> +	if (device_pm_not_required(dev))
-> +		return;
-> +
->  	pr_debug("PM: Removing info for %s:%s\n",
->  		 dev->bus ? dev->bus->name : "No Bus", dev_name(dev));
->  	complete_all(&dev->power.completion);
-> diff --git a/drivers/base/power/sysfs.c b/drivers/base/power/sysfs.c
-> index d713738ce796..5e8d4867c4da 100644
-> --- a/drivers/base/power/sysfs.c
-> +++ b/drivers/base/power/sysfs.c
-> @@ -648,6 +648,10 @@ int dpm_sysfs_add(struct device *dev)
->  {
->  	int rc;
-> 
-> +	/* No need to create pm sysfs if explicitly disabled */
-> +	if (device_pm_not_required(dev))
-> +		return 0;
-> +
->  	rc = sysfs_create_group(&dev->kobj, &pm_attr_group);
->  	if (rc)
->  		return rc;
-> @@ -727,6 +731,8 @@ void rpm_sysfs_remove(struct device *dev)
-> 
->  void dpm_sysfs_remove(struct device *dev)
->  {
-> +	if (device_pm_not_required(dev))
-> +		return;
->  	sysfs_unmerge_group(&dev->kobj, &pm_qos_latency_tolerance_attr_group);
->  	dev_pm_qos_constraints_destroy(dev);
->  	rpm_sysfs_remove(dev);
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index 6cb4640b6160..53028636fe39 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -1165,6 +1165,16 @@ static inline bool device_async_suspend_enabled(struct device *dev)
->  	return !!dev->power.async_suspend;
->  }
-> 
-> +static inline bool device_pm_not_required(struct device *dev)
-> +{
-> +	return dev->power.no_pm;
-> +}
-> +
-> +static inline void device_set_pm_not_required(struct device *dev)
-> +{
-> +	dev->power.no_pm = true;
-> +}
-> +
->  static inline void dev_pm_syscore_device(struct device *dev, bool val)
->  {
->  #ifdef CONFIG_PM_SLEEP
-> diff --git a/include/linux/pm.h b/include/linux/pm.h
-> index 0bd9de116826..8869ce7b5fa6 100644
-> --- a/include/linux/pm.h
-> +++ b/include/linux/pm.h
-> @@ -592,6 +592,7 @@ struct dev_pm_info {
->  	bool			is_suspended:1;	/* Ditto */
->  	bool			is_noirq_suspended:1;
->  	bool			is_late_suspended:1;
-> +	bool			no_pm:1;
->  	bool			early_init:1;	/* Owned by the PM core */
->  	bool			direct_complete:1;	/* Owned by the PM core */
->  	u32			driver_flags;
-> --
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks!
+Nicolas Saenz Julienne <nsaenzjulienne@suse.de> writes:
 
+> Immediate data transfers (IDT) allow the HCD to copy small chunks of
+> data (up to 8bytes) directly into its output transfer TRBs. This avoids
+> the somewhat expensive DMA mappings that are performed by default on
+> most URBs submissions.
+>
+> In the case an URB was suitable for IDT. The data is directly copied
+> into the "Data Buffer Pointer" region of the TRB and the IDT flag is
+> set. Instead of triggering memory accesses the HC will use the data
+> directly.
+>
+> The implementation could cover all kind of output endpoints. Yet
+> Isochronous endpoints are bypassed as I was unable to find one that
+> matched IDT's constraints. As we try to bypass the default DMA mappings
+> on URB buffers we'd need to find a Isochronous device with an
+> urb->transfer_buffer_length <=3D 8 bytes.
+>
+> The implementation takes into account that the 8 byte buffers provided
+> by the URB will never cross a 64KB boundary.
+>
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+
+This looks good to my eyes.
+
+Reviewed-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlxtHjQACgkQzL64meEa
+mQZV1w/+IWvj6mmAZihLtdfVlQUdk0NlgtBLeQhRjQY/p8hjFVukOqwxfxbwDD2b
+0Ft0HQFq8kZ3RY7Y4jjlcv6ubnU/XC7ctl89r7ovbqohcOpkbBhVzqMUEfW5tWhD
++oNuaWjDUkxFo5fLB8HJo2d9wtrXRooXgdYBbYUiGXzkgt8Hjq7CJAIkqWgoKX0B
+NaQNIfbhvRjrtV7ASmOlSGG7nrbyARUwySzOC2rJeQ1iuwPONJTTcd87nUf+1om9
+0/2BI9p3tBZsXbcqD6blZzOKXuC/vChx6Hn9PhCnkOS7VaqUr5ZSecqwS2NlHWx7
+kjpebnSEMKslEsbZwhlV1NcyphU5+g3mbQC36HtGvZaqVyE06TBJH1CzzDU/ZgRi
++OOfl9VRUI4aAhXQ5QgTV6N+qFLGK+v7XSYWcHZ0+ps8DMYTE4/Q5P8bYkodbt45
+dz1VP1chJJGTCAKhxQfq+P1Pkr+5+pNdKaX+Y+FmZWm7CmVbndhh1VOO8uLBSn3G
+dystvflcoTg2ZpLAqXRgQFWqWUFArQsreDNJqKQjjTX/+valPl+Mo5wTutg0QQ3i
+fBRDa9fMqidDN2FDhWDBSyk8YEgQknykqiRBOWzLUKSoQduvOHqcX8TwQKMASaqk
+kPpjj8Vc4roluTLZwXf2A8IQX+0CabvAXOB0VyzCdS+fWLPVcb4=
+=Hceh
+-----END PGP SIGNATURE-----
+--=-=-=--
