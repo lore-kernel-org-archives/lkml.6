@@ -2,171 +2,219 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8782C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A0DC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:52:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6D3121848
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:51:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0949A2147C
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:52:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GjRfl25Y"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H5MFkkrc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728127AbfBTMvs (ORCPT
+        id S1728135AbfBTMwH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 07:51:48 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43525 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727954AbfBTMvr (ORCPT
+        Wed, 20 Feb 2019 07:52:07 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:39912 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727409AbfBTMwG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 07:51:47 -0500
-Received: by mail-pl1-f196.google.com with SMTP id m10so2528423plt.10
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 04:51:47 -0800 (PST)
+        Wed, 20 Feb 2019 07:52:06 -0500
+Received: by mail-it1-f193.google.com with SMTP id l15so15096620iti.4
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 04:52:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=jOha2KzOEG9V/5MhHyFHoO8NfVaaMb6gXtQiy42AI/0=;
-        b=GjRfl25YkgcRLEXe2itWYLfzPzTxs08hcR2Qmw44KjntlvEoAwIwp81DJAniCTc2H4
-         SGaGwFBPZNYJumyF7PNb77CtPzGyzc7ighyw9svK/z6zTlU7mQt0+34TIYmnlA+Tz7pe
-         R4GUI6A65GhV4ClBuye6S71XRYq3VElnJdPWIc4R5Lfelous94NShkjsmESscPBGJGFl
-         tUJqn4WvEGsOnxn/vXnd+YRQYlvqBDzU9eU/WDrhg9SxmPv+3wOIW54edCZHxZfC7eTN
-         iViF5SvBsDRbwyPCpD0mw6ArwPnvuOg0zVyO7pwKwWlGfcvsppj9ljS2Ga/6e87iwG3b
-         D5QA==
+        bh=0OShJ4IKPAZAJ1bKiE/tE2b7iqayfrWeOVFDf6LYzjg=;
+        b=H5MFkkrcBxtFGXzmeHE0xTfEKwy3Obb8KqNDiQfH6fHzwV0B/T6BI0Bu7PQlCr91KS
+         nkxH3y3/wVNmdVY7jGF54QCYJPA8/2WLwpZz6LOF12z13J3oYdNH3qr8rMPEV6BZ6KW+
+         oQdzNXLOCoaJrYwXu5CUya40sBtV/Cfy0FINPR6xud9Ul401wBY3oiyDeO86RtooFUtF
+         NgQuaRpQaD377zOUizUMGcxr/CSvZ33TGdLvUAwCY7Pf5UnVOK/elXP99lxRkk7fQIW0
+         ecAEHud9UqGNUB2w9tzJ5SYczMY4rNTET8Pz9xBZ3u2DZCGIt0beO10d/1kCSSlQrZVW
+         kCrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=jOha2KzOEG9V/5MhHyFHoO8NfVaaMb6gXtQiy42AI/0=;
-        b=gxBzI6i7bK8HOaz8X7h0Y/w/CfyCNA5AOFkem32yO3XY0jh4XPmEBeE9Cg9kbOI6Y/
-         Sl+lhqDO1tc6h88XNLzyzq1xD8h2Ib59DIWksZ+1D5Q76zRiYstVpRKxWmYtzpJhMQKg
-         VdMZKHALu6qIwOsGsP2zg2B4cnshSGBBMTYZRgc3Gr5zTRpv75UgyAckMZo3W96N2fbT
-         TrL1+i6G4OplzdvBwXVUbqwYODL8gasNQ3FpRqEp4FnGYpv4o4KhtaYm97Gnxl8giguI
-         wFsDryRDOWvyyInSOjNgmdpgLCXa4ZUgY1ttNC0d31UWfE6uVYoRa31UyDltvCwbUPS4
-         +X5g==
-X-Gm-Message-State: AHQUAuY5GdaKTRJb8oRGy43Eju0PqZY6up0qo+ab2eaVOdqE1KWNSv/J
-        kcdmdmvDlTBGO1OAIBQ2I387p2Hl89xQ41a6ZpgLNg==
-X-Google-Smtp-Source: AHgI3IbgBiZcT1uJ/i5w0+lv8WT7ZfgAXnH3sWorFq2ayrFGES6yl3f3n35c0/JaXpKBMpIC+JiNPz3lMp/VQioBaho=
-X-Received: by 2002:a17:902:4124:: with SMTP id e33mr36570627pld.236.1550667106551;
- Wed, 20 Feb 2019 04:51:46 -0800 (PST)
+        bh=0OShJ4IKPAZAJ1bKiE/tE2b7iqayfrWeOVFDf6LYzjg=;
+        b=ZwjF3Q7SL8fP2eRxCfzmYZuJNQepQ5utErbSRE8OqxBVsmVj5whhAwwHbB+VQOEA1D
+         NNYOV6izyGe8sl7ljUuT7Qks+dDEwQFxFBnzGmCmBVXR4mQNnr3OAG2f0ZBZG3DdsM0q
+         M/eiMCgBwdWer6ENhcBwcuaKvFqN2AyVoFJx3uYme95QmKKg3XfSbzRE74BQDbfrpDl2
+         n3fLh6FOEDPFLabEH/yBcb/sE8ejOQ5QepZ/fssVKBsRpDFdwsM429L/n4KBVS+z2/Ju
+         VnfhVjNdtxJsN3LsaSvUTxN0OBKWQ8Iaf5XE/tpDKNtvoytjzEpC0gFI8Y2z6LPYd8Ol
+         iQhg==
+X-Gm-Message-State: AHQUAua02V/XLAOtxhh3tA7+oFrb21CTDMDHUbJe+prd9ohvsgNMnwb2
+        N1cnd2BEPVBzVRLrB1a3rp0b6YPczRXHJGg6og==
+X-Google-Smtp-Source: AHgI3IZAOmlQfzrbWqY7ZUNAeEMdg9V83SYT2Oi/8/4y2NGZbSmsJzjCAhv68QTNhwb96B+K5v0hNwUcKPDCjfumRm8=
+X-Received: by 2002:a6b:1583:: with SMTP id 125mr19483027iov.102.1550667125498;
+ Wed, 20 Feb 2019 04:52:05 -0800 (PST)
 MIME-Version: 1.0
-References: <20190220020251.82039-1-cai@lca.pw>
-In-Reply-To: <20190220020251.82039-1-cai@lca.pw>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Wed, 20 Feb 2019 13:51:35 +0100
-Message-ID: <CAAeHK+wp=UtzoNzcnmnef_uMpEMSeXBgKYOJz7V_tZXs-RK+kQ@mail.gmail.com>
-Subject: Re: [PATCH] slub: fix a crash with SLUB_DEBUG + KASAN_SW_TAGS
-To:     Qian Cai <cai@lca.pw>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20190131105732.GC6749@zn.tnic> <20190131222732.GA946@anatevka>
+ <20190131234740.GO6749@zn.tnic> <20190204223016.GB11986@anatevka>
+ <20190205081552.GG21801@zn.tnic> <20190206120804.GC10062@dhcp-128-65.nay.redhat.com>
+ <20190211204816.GB21473@dhcp-128-65.nay.redhat.com> <20190215102458.GD10433@zn.tnic>
+ <20190218014820.GA10711@dhcp-128-65.nay.redhat.com> <20190220083241.GA3447@zn.tnic>
+ <20190220094146.GA8597@dhcp-128-65.nay.redhat.com>
+In-Reply-To: <20190220094146.GA8597@dhcp-128-65.nay.redhat.com>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Wed, 20 Feb 2019 20:51:53 +0800
+Message-ID: <CAFgQCTsZ_ZYJf7BGQZwVtthRzySrvaA+tFjmB3TJDC-=idGXjg@mail.gmail.com>
+Subject: Re: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X
+ consistent with kaslr
+To:     Dave Young <dyoung@redhat.com>
+Cc:     Borislav Petkov <bp@alien8.de>, Baoquan He <bhe@redhat.com>,
+        Jerry Hoemann <jerry.hoemann@hpe.com>, x86@kernel.org,
+        Randy Dunlap <rdunlap@infradead.org>,
+        kexec@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yinghai Lu <yinghai@kernel.org>, vgoyal@redhat.com,
+        iommu@lists.linux-foundation.org, konrad.wilk@oracle.com,
+        Joerg Roedel <jroedel@suse.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 3:03 AM Qian Cai <cai@lca.pw> wrote:
+On Wed, Feb 20, 2019 at 5:41 PM Dave Young <dyoung@redhat.com> wrote:
 >
-> In process_slab(), "p = get_freepointer()" could return a tagged
-> pointer, but "addr = page_address()" always return a native pointer. As
-> the result, slab_index() is messed up here,
->
-> return (p - addr) / s->size;
->
-> All other callers of slab_index() have the same situation where "addr"
-> is from page_address(), so just need to untag "p".
->
->  # cat /sys/kernel/slab/hugetlbfs_inode_cache/alloc_calls
->
-> [18868.759419] Unable to handle kernel paging request at virtual address 2bff808aa4856d48
-> [18868.767341] Mem abort info:
-> [18868.770133]   ESR = 0x96000007
-> [18868.773187]   Exception class = DABT (current EL), IL = 32 bits
-> [18868.779103]   SET = 0, FnV = 0
-> [18868.782155]   EA = 0, S1PTW = 0
-> [18868.785292] Data abort info:
-> [18868.788170]   ISV = 0, ISS = 0x00000007
-> [18868.792003]   CM = 0, WnR = 0
-> [18868.794973] swapper pgtable: 64k pages, 48-bit VAs, pgdp = 0000000002498338
-> [18868.801932] [2bff808aa4856d48] pgd=00000097fcfd0003, pud=00000097fcfd0003, pmd=00000097fca30003, pte=00e8008b24850712
-> [18868.812597] Internal error: Oops: 96000007 [#1] SMP
-> [18868.835088] CPU: 3 PID: 79210 Comm: read_all Tainted: G             L    5.0.0-rc7+ #84
-> [18868.843087] Hardware name: HPE Apollo 70             /C01_APACHE_MB         , BIOS L50_5.13_1.0.6 07/10/2018
-> [18868.852915] pstate: 00400089 (nzcv daIf +PAN -UAO)
-> [18868.857710] pc : get_map+0x78/0xec
-> [18868.861109] lr : get_map+0xa0/0xec
-> [18868.864505] sp : aeff808989e3f8e0
-> [18868.867816] x29: aeff808989e3f940 x28: ffff800826200000
-> [18868.873128] x27: ffff100012d47000 x26: 9700000000002500
-> [18868.878440] x25: 0000000000000001 x24: 52ff8008200131f8
-> [18868.883753] x23: 52ff8008200130a0 x22: 52ff800820013098
-> [18868.889065] x21: ffff800826200000 x20: ffff100013172ba0
-> [18868.894377] x19: 2bff808a8971bc00 x18: ffff1000148f5538
-> [18868.899690] x17: 000000000000001b x16: 00000000000000ff
-> [18868.905002] x15: ffff1000148f5000 x14: 00000000000000d2
-> [18868.910314] x13: 0000000000000001 x12: 0000000000000000
-> [18868.915626] x11: 0000000020000002 x10: 2bff808aa4856d48
-> [18868.920937] x9 : 0000020000000000 x8 : 68ff80082620ebb0
-> [18868.926249] x7 : 0000000000000000 x6 : ffff1000105da1dc
-> [18868.931561] x5 : 0000000000000000 x4 : 0000000000000000
-> [18868.936872] x3 : 0000000000000010 x2 : 2bff808a8971bc00
-> [18868.942184] x1 : ffff7fe002098800 x0 : ffff80082620ceb0
-> [18868.947499] Process read_all (pid: 79210, stack limit = 0x00000000f65b9361)
-> [18868.954454] Call trace:
-> [18868.956899]  get_map+0x78/0xec
-> [18868.959952]  process_slab+0x7c/0x47c
-> [18868.963526]  list_locations+0xb0/0x3c8
-> [18868.967273]  alloc_calls_show+0x34/0x40
-> [18868.971107]  slab_attr_show+0x34/0x48
-> [18868.974768]  sysfs_kf_seq_show+0x2e4/0x570
-> [18868.978864]  kernfs_seq_show+0x12c/0x1a0
-> [18868.982786]  seq_read+0x48c/0xf84
-> [18868.986099]  kernfs_fop_read+0xd4/0x448
-> [18868.989935]  __vfs_read+0x94/0x5d4
-> [18868.993334]  vfs_read+0xcc/0x194
-> [18868.996560]  ksys_read+0x6c/0xe8
-> [18868.999786]  __arm64_sys_read+0x68/0xb0
-> [18869.003622]  el0_svc_handler+0x230/0x3bc
-> [18869.007544]  el0_svc+0x8/0xc
-> [18869.010428] Code: d3467d2a 9ac92329 8b0a0e6a f9800151 (c85f7d4b)
-> [18869.016742] ---[ end trace a383a9a44ff13176 ]---
-> [18869.021356] Kernel panic - not syncing: Fatal exception
-> [18869.026705] SMP: stopping secondary CPUs
-> [18870.254279] SMP: failed to stop secondary CPUs 1-7,32,40,127
-> [18870.259942] Kernel Offset: disabled
-> [18870.263434] CPU features: 0x002,20000c18
-> [18870.267358] Memory Limit: none
-> [18870.270725] ---[ end Kernel panic - not syncing: Fatal exception ]---
->
-> Signed-off-by: Qian Cai <cai@lca.pw>
+> On 02/20/19 at 09:32am, Borislav Petkov wrote:
+> > On Mon, Feb 18, 2019 at 09:48:20AM +0800, Dave Young wrote:
+> > > It is ideal if kernel can do it automatically, but I'm not sure if
+> > > kernel can predict the swiotlb reserved size automatically.
+> >
+> > Do you see how even more absurd this gets?
+> >
+> > If the kernel cannot know the swiotlb reserved size automatically, how
+> > is the normal user even supposed to know?!
+> >
+I think swiotlb is bounce-buffer, if we enlarge it, we can get better
+performance. Default size should be enough for platform to work. But
+in case of reserving low memory for crashkernel, things are different.
+The reserve low memory = swiotlb_size_or_default() + DMA32 memory for
+devices. And the 2nd item in the right of the equation varies, based
+on machine type and dynamic payload
 
-Reviewed-by: Andrey Konovalov <andreyknvl@google.com>
+> > I see swiotlb_size_or_default() so we have a sane default which we fall
+> > back to. Now where's the problem with that?
+>
+> Good question, I expect some answer from people who know more about the
+> background.  It would be good to have some actual test results, Pingfan
+> is trying to do some tests.
+>
+Not following the idea, I do not think the following test result can
+tell much. (We need various type of machine to get a final result.)
+I do a quick test on "HPE ProLiant DL380 Gen10/ProLiant DL380 Gen10",
+command line "crashkernel=180M,high crashkernel=64M,low" can work for
+the 2nd kernel. Although it complained some memory shortage issue:
+[    7.655591] fbcon: mgadrmfb (fb0) is primary device
+[    7.655639] Console: switching to colour frame buffer device 128x48
+[    7.660609] systemd-udevd: page allocation failure: order:0, mode:0x280d4
+[    7.660611] CPU: 0 PID: 180 Comm: systemd-udevd Not tainted
+3.10.0-957.el7.x86_64 #1
+[    7.660612] Hardware name: HPE ProLiant DL380 Gen10/ProLiant DL380
+Gen10, BIOS U30 06/20/2018
+[    7.660612] Call Trace:
+[    7.660621]  [<ffffffff81761dc1>] dump_stack+0x19/0x1b
+[    7.660625]  [<ffffffff811bc830>] warn_alloc_failed+0x110/0x180
+[    7.660628]  [<ffffffff8175d3ce>] __alloc_pages_slowpath+0x6b6/0x724
+[    7.660631]  [<ffffffff811c0e95>] __alloc_pages_nodemask+0x405/0x420
+[    7.660633]  [<ffffffff8120dcf8>] alloc_pages_current+0x98/0x110
+[    7.660638]  [<ffffffffc00c8622>] ttm_pool_populate+0x3d2/0x4b0 [ttm]
+[    7.660641]  [<ffffffffc00bf1cd>] ttm_tt_populate+0x7d/0x90 [ttm]
+[    7.660644]  [<ffffffffc00c3c74>] ttm_bo_kmap+0x124/0x240 [ttm]
+[    7.660648]  [<ffffffff810cecbf>] ? __wake_up_sync_key+0x4f/0x60
+[    7.660650]  [<ffffffffc012677e>] mga_dirty_update+0x25e/0x310 [mgag200]
+[    7.660653]  [<ffffffffc012685f>] mga_imageblit+0x2f/0x40 [mgag200]
+[    7.660657]  [<ffffffff813f97ca>] soft_cursor+0x1ba/0x260
+[    7.660659]  [<ffffffff813f8f53>] bit_cursor+0x663/0x6a0
+[    7.660662]  [<ffffffff81098739>] ? console_trylock+0x19/0x70
+[    7.660664]  [<ffffffff813f514d>] fbcon_cursor+0x13d/0x1c0
+[    7.660665]  [<ffffffff813f88f0>] ? bit_clear+0x120/0x120
+[    7.660668]  [<ffffffff8146af2e>] hide_cursor+0x2e/0xa0
+[    7.660669]  [<ffffffff8146d4e8>] redraw_screen+0x188/0x270
+[    7.660671]  [<ffffffff8146e086>] do_bind_con_driver+0x316/0x340
+[    7.660672]  [<ffffffff8146e5e9>] do_take_over_console+0x49/0x60
+[    7.660674]  [<ffffffff813f24c3>] do_fbcon_takeover+0x63/0xd0
+[    7.660675]  [<ffffffff813f808d>] fbcon_event_notify+0x61d/0x730
+[    7.660678]  [<ffffffff8176fb0f>] notifier_call_chain+0x4f/0x70
+[    7.660681]  [<ffffffff810c7f6d>] __blocking_notifier_call_chain+0x4d/0x70
+[    7.660683]  [<ffffffff810c7fa6>] blocking_notifier_call_chain+0x16/0x20
+[    7.660684]  [<ffffffff813e8b9b>] fb_notifier_call_chain+0x1b/0x20
+[    7.660686]  [<ffffffff813e9e46>] register_framebuffer+0x1f6/0x340
+[    7.660690]  [<ffffffffc01027e2>]
+__drm_fb_helper_initial_config_and_unlock+0x252/0x3e0 [drm_kms_helper]
+[    7.660694]  [<ffffffffc01029ae>]
+drm_fb_helper_initial_config+0x3e/0x50 [drm_kms_helper]
+[    7.660697]  [<ffffffffc01269d3>] mgag200_fbdev_init+0xe3/0x100 [mgag200]
+[    7.660699]  [<ffffffffc01254f4>] mgag200_modeset_init+0x154/0x1d0 [mgag200]
+[    7.660701]  [<ffffffffc012157d>] mgag200_driver_load+0x41d/0x5b0 [mgag200]
+[    7.660708]  [<ffffffffc005ba4f>] drm_dev_register+0x15f/0x1f0 [drm]
+[    7.660711]  [<ffffffff813c3518>] ? pci_enable_device_flags+0xe8/0x140
+[    7.660718]  [<ffffffffc005d0da>] drm_get_pci_dev+0x8a/0x1a0 [drm]
+[    7.660720]  [<ffffffffc012626b>] mga_pci_probe+0x9b/0xc0 [mgag200]
+[    7.660722]  [<ffffffff813c4aca>] local_pci_probe+0x4a/0xb0
+[    7.660723]  [<ffffffff813c6209>] pci_device_probe+0x109/0x160
+[    7.660726]  [<ffffffff814a8285>] driver_probe_device+0xc5/0x3e0
+[    7.660727]  [<ffffffff814a8683>] __driver_attach+0x93/0xa0
+[    7.660728]  [<ffffffff814a85f0>] ? __device_attach+0x50/0x50
+[    7.660730]  [<ffffffff814a5e25>] bus_for_each_dev+0x75/0xc0
+[    7.660731]  [<ffffffff814a7bfe>] driver_attach+0x1e/0x20
+[    7.660733]  [<ffffffff814a76a0>] bus_add_driver+0x200/0x2d0
+[    7.660734]  [<ffffffff814a8d14>] driver_register+0x64/0xf0
+[    7.660735]  [<ffffffff813c5a45>] __pci_register_driver+0xa5/0xc0
+[    7.660737]  [<ffffffffc012d000>] ? 0xffffffffc012cfff
+[    7.660739]  [<ffffffffc012d039>] mgag200_init+0x39/0x1000 [mgag200]
+[    7.660742]  [<ffffffff8100210a>] do_one_initcall+0xba/0x240
+[    7.660745]  [<ffffffff81118f8c>] load_module+0x272c/0x2bc0
+[    7.660748]  [<ffffffff813a3030>] ? ddebug_proc_write+0x100/0x100
+[    7.660750]  [<ffffffff8111950f>] SyS_init_module+0xef/0x140
+[    7.660752]  [<ffffffff81774ddb>] system_call_fastpath+0x22/0x27
+[    7.660753] Mem-Info:
+[    7.660756] active_anon:3364 inactive_anon:6661 isolated_anon:0
+[    7.660756]  active_file:0 inactive_file:0 isolated_file:0
+[    7.660756]  unevictable:0 dirty:0 writeback:0 unstable:0
+[    7.660756]  slab_reclaimable:1492 slab_unreclaimable:3116
+[    7.660756]  mapped:1223 shmem:8449 pagetables:179 bounce:0
+[    7.660756]  free:20626 free_pcp:0 free_cma:0
+[    7.660761] Node 0 DMA free:0kB min:4kB low:4kB high:4kB
+active_anon:0kB inactive_anon:0kB active_file:0kB inactive_file:0kB
+unevictable:0kB isolated(anon):0kB isolated(file):0kB present:564kB
+managed:448kB mlocked:0kB dirty:0kB writeback:0kB mapped:0kB shmem:0kB
+slab_reclaimable:0kB slab_unreclaimable:0kB kernel_stack:0kB
+pagetables:0kB unstable:0kB bounce:0kB free_pcp:0kB local_pcp:0kB
+free_cma:0kB writeback_tmp:0kB pages_scanned:0 all_unreclaimable? yes
+[    7.660762] lowmem_reserve[]: 0 0 152 152
+[    7.660766] Node 0 DMA32 free:0kB min:0kB low:0kB high:0kB
+active_anon:0kB inactive_anon:0kB active_file:0kB inactive_file:0kB
+unevictable:0kB isolated(anon):0kB isolated(file):0kB present:65536kB
+managed:0kB mlocked:0kB dirty:0kB writeback:0kB mapped:0kB shmem:0kB
+slab_reclaimable:0kB slab_unreclaimable:0kB kernel_stack:0kB
+pagetables:0kB unstable:0kB bounce:0kB free_pcp:0kB local_pcp:0kB
+free_cma:0kB writeback_tmp:0kB pages_scanned:0 all_unreclaimable? yes
+[    7.660767] lowmem_reserve[]: 0 0 152 152
+[    7.660771] Node 0 Normal free:82504kB min:1572kB low:1964kB
+high:2356kB active_anon:13456kB inactive_anon:26644kB active_file:0kB
+inactive_file:0kB unevictable:0kB isolated(anon):0kB
+isolated(file):0kB present:183740kB managed:158716kB mlocked:0kB
+dirty:0kB writeback:0kB mapped:4892kB shmem:33796kB
+slab_reclaimable:5968kB slab_unreclaimable:12464kB kernel_stack:784kB
+pagetables:716kB unstable:0kB bounce:0kB free_pcp:[    8.722693]
+Microsemi PQI Driver (v1.1.4-115)
 
-> ---
->  mm/slub.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+
+> Previously Joerg posted below patch, maybe he has some idea. Joerg?
 >
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 4a61959e1887..289c22f1b0c4 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -311,7 +311,7 @@ static inline void set_freepointer(struct kmem_cache *s, void *object, void *fp)
->  /* Determine object index from a given position */
->  static inline unsigned int slab_index(void *p, struct kmem_cache *s, void *addr)
->  {
-> -       return (p - addr) / s->size;
-> +       return (kasan_reset_tag(p) - addr) / s->size;
->  }
+> commit 94fb9334182284e8e7e4bcb9125c25dc33af19d4
+> Author: Joerg Roedel <jroedel@suse.de>
+> Date:   Wed Jun 10 17:49:42 2015 +0200
 >
->  static inline unsigned int order_objects(unsigned int order, unsigned int size)
-> --
-> 2.17.2 (Apple Git-113)
+>     x86/crash: Allocate enough low memory when crashkernel=high
 >
+> Thanks
+> Dave
