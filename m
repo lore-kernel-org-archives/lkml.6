@@ -2,195 +2,110 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81D08C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42FDFC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:59:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE4D520C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:55:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C3462147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:59:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Wkh8KTR3"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AxmdwJZj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727599AbfBTFzd (ORCPT
+        id S1727017AbfBTF7W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 00:55:33 -0500
-Received: from conuserg-10.nifty.com ([210.131.2.77]:18196 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725922AbfBTFzc (ORCPT
+        Wed, 20 Feb 2019 00:59:22 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:57486 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726297AbfBTF7W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 00:55:32 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id x1K5rbF9021052;
-        Wed, 20 Feb 2019 14:53:38 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x1K5rbF9021052
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1550642018;
-        bh=M9T99UD7d0hG0vhJOF+MhvleX4gWWftcBUcvHrbExrw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Wkh8KTR3owREVecRkKrn50Mam++XF80LAp39ZjTRkhlzqNGAiyCMqHczdI2bL3rJi
-         0kl2nAQet4prRct9b6AznLb/2Z5dClM+OB6nXJqX6TWybWu5yq+sNTgP3z8N7ogX3w
-         9xur7FRN8AyGTtzw2Ttz1hgL4l6ImSAFVrSqvaTu3zsQ2Qr5/ePAZO5IKBm537x2rb
-         yKfFp80lWpooExjl69T01RQoBzgMJHt/giQc3J6MB2PYxMExejgOPf/q6lcWhzevDB
-         NiPil3up4Y1RaG/PbHZaNEBQfyxmop18n9j9FPCXTkWEszxnyN7iY4YOP7xsKNVI+L
-         DEFvHlotK6w6g==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Subject: [PATCH v2] powerpc/prom_init: add __init markers to all functions
-Date:   Wed, 20 Feb 2019 14:53:16 +0900
-Message-Id: <1550641996-21937-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 20 Feb 2019 00:59:22 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1K5sIaC129828;
+        Wed, 20 Feb 2019 05:59:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=tBTbh1I7Q6ylkvAv/4yzta1F99KS0lfuIFkAnPJhw44=;
+ b=AxmdwJZjD7KZfifcgKdOnIzYA9AFZKqMOPO5lwC7gZA25IDTUhMxEGM8rCpkCKsYGrAN
+ m+JAOhQMIr7o+GSk/ZAgM0emXtxmxp8a1INIy+Vv/MIzEfds258i07DLRu44i3SDfo9U
+ 9vMoQcAHMSeLJdOBhybpm+eLeSHlon33RWZmwa99Xfda2jyXJEwV5l1AGI5KWZC0+KW5
+ vtURs5mK0nM63L/4h5K99GKGx+3UXO1fX2E6XIMbnVPMNMz+14vb1RSoiYlNsAAYZzEB
+ Z6L4AzrQW7o3nGr7uZFB8KwGE1SVSXUX+fMOf15Qx2AFMBFqdbmvMahlU7t+CDBQxPrr mw== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2qp81e7jxt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Feb 2019 05:59:10 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1K5x5Qh018623
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Feb 2019 05:59:05 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1K5x3jd026136;
+        Wed, 20 Feb 2019 05:59:04 GMT
+Received: from kadam (/197.157.0.53)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 19 Feb 2019 21:59:03 -0800
+Date:   Wed, 20 Feb 2019 08:58:43 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] btrfs: Fix type conversion in btrfs_read_root_item
+Message-ID: <20190220055621.GM17104@kadam>
+References: <20190220030840.188854-1-yuehaibing@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190220030840.188854-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9172 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902200042
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is fragile to rely on the compiler's optimization to avoid the
-section mismatch. Some functions may not be necessarily inlined
-when the compiler's inlining heuristic changes.
+On Wed, Feb 20, 2019 at 03:08:40AM +0000, YueHaibing wrote:
+> btrfs_item_size_nr return value is u32, convert it to int may result
+> in truncation.Also read_extent_buffer expect a unsigned param, so
+> min_t should use type u32 to compare.
+> 
+> Fixes: 8ea05e3a4262 ("Btrfs: introduce subvol uuids and times")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  fs/btrfs/root-tree.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/btrfs/root-tree.c b/fs/btrfs/root-tree.c
+> index 02d1a57af78b..893d12fbfda0 100644
+> --- a/fs/btrfs/root-tree.c
+> +++ b/fs/btrfs/root-tree.c
+> @@ -21,12 +21,12 @@ static void btrfs_read_root_item(struct extent_buffer *eb, int slot,
+>  				struct btrfs_root_item *item)
+>  {
+>  	uuid_le uuid;
+> -	int len;
+> +	u32 len;
+>  	int need_reset = 0;
+>  
+>  	len = btrfs_item_size_nr(eb, slot);
+>  	read_extent_buffer(eb, item, btrfs_item_ptr_offset(eb, slot),
+> -			min_t(int, len, (int)sizeof(*item)));
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Yeah, min_t() should normally cast to unsigned and the extra cast is
+silly.
 
-Add __init markers consistently.
+> +			   min_t(u32, len, sizeof(*item)));
 
-As for prom_getprop() and prom_getproplen(), they are marked as
-'inline', so inlining is guaranteed because PowerPC never enables
-CONFIG_OPTIMIZE_INLINING. However, it would be better to leave the
-inlining decision to the compiler. I replaced 'inline' with __init.
-I added __maybe_unused to prom_getproplen() because it is currently
-relying on the side-effect of 'inline'; GCC does not report
--Wunused-function warnings for functions with 'inline' marker.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
-Changes in v2:
-  - Add __maybe_unsed to prom_getproplen()
-  - Add __init to enter_prom() as well
-
- arch/powerpc/kernel/prom_init.c | 29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
-
-diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
-index f33ff41..1bad0ac 100644
---- a/arch/powerpc/kernel/prom_init.c
-+++ b/arch/powerpc/kernel/prom_init.c
-@@ -138,9 +138,9 @@ extern void __start(unsigned long r3, unsigned long r4, unsigned long r5,
- 		    unsigned long r9);
- 
- #ifdef CONFIG_PPC64
--extern int enter_prom(struct prom_args *args, unsigned long entry);
-+extern int __init enter_prom(struct prom_args *args, unsigned long entry);
- #else
--static inline int enter_prom(struct prom_args *args, unsigned long entry)
-+static int __init enter_prom(struct prom_args *args, unsigned long entry)
- {
- 	return ((int (*)(struct prom_args *))entry)(args);
- }
-@@ -501,19 +501,20 @@ static int __init prom_next_node(phandle *nodep)
- 	}
- }
- 
--static inline int prom_getprop(phandle node, const char *pname,
-+static int __init prom_getprop(phandle node, const char *pname,
- 			       void *value, size_t valuelen)
- {
- 	return call_prom("getprop", 4, 1, node, ADDR(pname),
- 			 (u32)(unsigned long) value, (u32) valuelen);
- }
- 
--static inline int prom_getproplen(phandle node, const char *pname)
-+static int __init __maybe_unused prom_getproplen(phandle node,
-+						 const char *pname)
- {
- 	return call_prom("getproplen", 2, 1, node, ADDR(pname));
- }
- 
--static void add_string(char **str, const char *q)
-+static void __init add_string(char **str, const char *q)
- {
- 	char *p = *str;
- 
-@@ -523,7 +524,7 @@ static void add_string(char **str, const char *q)
- 	*str = p;
- }
- 
--static char *tohex(unsigned int x)
-+static char __init *tohex(unsigned int x)
- {
- 	static const char digits[] __initconst = "0123456789abcdef";
- 	static char result[9] __prombss;
-@@ -570,7 +571,7 @@ static int __init prom_setprop(phandle node, const char *nodename,
- #define islower(c)	('a' <= (c) && (c) <= 'z')
- #define toupper(c)	(islower(c) ? ((c) - 'a' + 'A') : (c))
- 
--static unsigned long prom_strtoul(const char *cp, const char **endp)
-+static unsigned long __init prom_strtoul(const char *cp, const char **endp)
- {
- 	unsigned long result = 0, base = 10, value;
- 
-@@ -595,7 +596,7 @@ static unsigned long prom_strtoul(const char *cp, const char **endp)
- 	return result;
- }
- 
--static unsigned long prom_memparse(const char *ptr, const char **retptr)
-+static unsigned long __init prom_memparse(const char *ptr, const char **retptr)
- {
- 	unsigned long ret = prom_strtoul(ptr, retptr);
- 	int shift = 0;
-@@ -2924,7 +2925,7 @@ static void __init fixup_device_tree_pasemi(void)
- 	prom_setprop(iob, name, "device_type", "isa", sizeof("isa"));
- }
- #else	/* !CONFIG_PPC_PASEMI_NEMO */
--static inline void fixup_device_tree_pasemi(void) { }
-+static void __init fixup_device_tree_pasemi(void) { }
- #endif
- 
- static void __init fixup_device_tree(void)
-@@ -2986,15 +2987,15 @@ static void __init prom_check_initrd(unsigned long r3, unsigned long r4)
- 
- #ifdef CONFIG_PPC64
- #ifdef CONFIG_RELOCATABLE
--static void reloc_toc(void)
-+static void __init reloc_toc(void)
- {
- }
- 
--static void unreloc_toc(void)
-+static void __init unreloc_toc(void)
- {
- }
- #else
--static void __reloc_toc(unsigned long offset, unsigned long nr_entries)
-+static void __init __reloc_toc(unsigned long offset, unsigned long nr_entries)
- {
- 	unsigned long i;
- 	unsigned long *toc_entry;
-@@ -3008,7 +3009,7 @@ static void __reloc_toc(unsigned long offset, unsigned long nr_entries)
- 	}
- }
- 
--static void reloc_toc(void)
-+static void __init reloc_toc(void)
- {
- 	unsigned long offset = reloc_offset();
- 	unsigned long nr_entries =
-@@ -3019,7 +3020,7 @@ static void reloc_toc(void)
- 	mb();
- }
- 
--static void unreloc_toc(void)
-+static void __init unreloc_toc(void)
- {
- 	unsigned long offset = reloc_offset();
- 	unsigned long nr_entries =
--- 
-2.7.4
+regards,
+dan carpenter
 
