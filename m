@@ -3,97 +3,131 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A63EEC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:56:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB7CC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:57:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8379B218C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:56:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 551EE20880
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:57:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbfBTR4m (ORCPT
+        id S1726671AbfBTR5H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 12:56:42 -0500
-Received: from anholt.net ([50.246.234.109]:50962 "EHLO anholt.net"
+        Wed, 20 Feb 2019 12:57:07 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37900 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725836AbfBTR4m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 12:56:42 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id ACDD010A2D1A;
-        Wed, 20 Feb 2019 09:56:41 -0800 (PST)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id M9rWLoXElLSb; Wed, 20 Feb 2019 09:56:40 -0800 (PST)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 9ABDC10A047F;
-        Wed, 20 Feb 2019 09:56:40 -0800 (PST)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 2CFC62FE464C; Wed, 20 Feb 2019 09:56:40 -0800 (PST)
-From:   Eric Anholt <eric@anholt.net>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Eben Upton <eben@raspberrypi.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: Re: [PATCH v5 0/3] drm/vc4: Add a load tracker
-In-Reply-To: <20190220155124.25022-1-paul.kocialkowski@bootlin.com>
-References: <20190220155124.25022-1-paul.kocialkowski@bootlin.com>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date:   Wed, 20 Feb 2019 09:56:39 -0800
-Message-ID: <87sgwie42w.fsf@anholt.net>
+        id S1725836AbfBTR5H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 12:57:07 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 37D3FC0EA42B;
+        Wed, 20 Feb 2019 17:57:06 +0000 (UTC)
+Received: from [10.40.204.241] (ovpn-204-241.brq.redhat.com [10.40.204.241])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7BF7F1A835;
+        Wed, 20 Feb 2019 17:57:02 +0000 (UTC)
+Subject: Re: [PATCH v2] sched/topology: fix kernel crash when a CPU is
+ hotplugged in a memoryless node
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Borislav Petkov <bp@suse.de>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, Ingo Molnar <mingo@redhat.com>
+References: <20190220165520.5241-1-lvivier@redhat.com>
+ <20190220170841.GM32494@hirez.programming.kicks-ass.net>
+From:   Laurent Vivier <lvivier@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=lvivier@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <11997145-4718-ed17-6085-54be18bf85ba@redhat.com>
+Date:   Wed, 20 Feb 2019 18:57:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+In-Reply-To: <20190220170841.GM32494@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 20 Feb 2019 17:57:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+On 20/02/2019 18:08, Peter Zijlstra wrote:
+> On Wed, Feb 20, 2019 at 05:55:20PM +0100, Laurent Vivier wrote:
+>> index 3f35ba1d8fde..372278605f0d 100644
+>> --- a/kernel/sched/topology.c
+>> +++ b/kernel/sched/topology.c
+>> @@ -1651,6 +1651,7 @@ void sched_init_numa(void)
+>>  	 */
+>>  	tl[i++] = (struct sched_domain_topology_level){
+>>  		.mask = sd_numa_mask,
+>> +		.flags = SDTL_OVERLAP,
+> 
+> This makes no sense what so ever. The numa identify node should not have
+> overlap with other domains.
+> 
+> Are you sure this is not because of the utterly broken powerpc nonsense
+> where they move CPUs between nodes?
 
-Paul Kocialkowski <paul.kocialkowski@bootlin.com> writes:
+No, I'm not sure. This why I've Cc: powerpc folks. My conclusion is only
+based on the before/after changes.
 
-> Hi,
->
-> Here is a fourth iteration of the VC4 load tracking series, which was
-> initially developed by Boris Brezillon and that I have now taken over.
->
-> This new iteration takes in account comments from v3 and comes with a
-> new approach for avoiding underrun reports when reconfiguring the
-> pipeline. It is now based on detection instead of delaying the underrun
-> interrupt unmasking.
->
-> It can be tested with a dedicated IGT GPU Tools series:
->   VC4 load tracker testing
+I've tested some patches from powerpc ML, but they don't fix this problem:
+  powerpc/numa: Perform full re-add of CPU for PRRN/VPHN topology update
+  powerpc/pseries: Perform full re-add of CPU for topology update
+post-migration
 
-Series is:
+So the only reason I can see to have a corrupted sched_group list is the
+sched_domain_span() fonction doesn't return a correct cpumask for the
+domain once a new CPU is added.
 
-Reviewed-by: Eric Anholt <eric@anholt.net>
-
-Thanks for persisting on this!
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlxtlNcACgkQtdYpNtH8
-nujvWQ//cu0E43ojWue48mNWFOrvuzYjQJF7H/6lfK4bxR/lbdu0vfUCX44XX/gp
-fPnwcDbdmwa0yFVGHqoevI94znUa3PCAu98byBihBbOe/YDFbl0zMwtioN+yVykr
-aHJtN3TzDzhOiLwTyRuy/d7dE0yLiECk2VLJ6nEbI/sRyL8je0E+NJhdB7Foc2IZ
-EEacN51CHXz9Un/4oBTVkXsTqBpiGX4LyGudgPbCuIXzv3hFjOgIrZcW0HCQsekk
-vLopVaV9uKJfIeTY+41zmRL8L1CRAxkRYQ5XpBU2TJVgl3OdixzaORU8XQjxI5yq
-ASpmYTdSx7femM8w3QjlXJVeW/c12VecA+tpj/32WGHS5kSJi6N3tBkzxhBRUtCk
-0ndJI10UD+k7dOUMmUz39bVm8/kG94cNcezNgvikX9/EiqY43/NyX7X9O/0bjYy9
-GSj3WG0wSVe5yiBikt2fnuUhKUEF9ZrNMo+5voOTN5JdWYo2nEImSWv6L8WXmMqX
-TDLBo1lsliG4Q6N4hQubwPHf8a1QgE1H78HCybGqYp4DuZY00FHxtYJMA0nJ/bLv
-Ep6iuMiiSLaWibkzOuKo9YEpbubjytUOjnVAo9go56rjcwH+iFkEBVy8bNap48t2
-3vLn7MXx/thNXhZfnEcN+/huNi5+KhpWYg/5Qb43FjDLXocxTHU=
-=U8fK
------END PGP SIGNATURE-----
---=-=-=--
+Thanks,
+Laurent
