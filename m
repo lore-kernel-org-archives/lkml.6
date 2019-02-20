@@ -2,92 +2,315 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F03A5C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0684C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:07:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD7022089F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:06:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF1662089F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:07:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbfBTWG5 (ORCPT
+        id S1727389AbfBTWH3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 17:06:57 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:49766 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725826AbfBTWG5 (ORCPT
+        Wed, 20 Feb 2019 17:07:29 -0500
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:58085 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726070AbfBTWH2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 17:06:57 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 77306264026
-Subject: Re: [PATCH -next] platform/chrome: Fix off-by-one error in
- wilco_ec/debugfs.c
-To:     Nick Crews <ncrews@chromium.org>, bleung@chromium.org
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        dan.carpenter@oracle.com, dlaurie@chromium.org
-References: <20190220215826.44366-1-ncrews@chromium.org>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <a0cf4649-e06f-aded-55ad-893560c2414a@collabora.com>
-Date:   Wed, 20 Feb 2019 23:06:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <20190220215826.44366-1-ncrews@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Wed, 20 Feb 2019 17:07:28 -0500
+Received: from Internal Mail-Server by MTLPINE1 (envelope-from sramani@mellanox.com)
+        with ESMTPS (AES256-SHA encrypted); 21 Feb 2019 00:00:59 +0200
+Received: from farm-0002.mtbu.labs.mlnx (farm-0002.mtbu.labs.mlnx [10.15.2.32])
+        by mtbu-labmailer.labs.mlnx (8.14.4/8.14.4) with ESMTP id x1KM0wiC002294;
+        Wed, 20 Feb 2019 17:00:58 -0500
+Received: (from sramani@localhost)
+        by farm-0002.mtbu.labs.mlnx (8.14.7/8.13.8/Submit) id x1KM0txR012897;
+        Wed, 20 Feb 2019 17:00:55 -0500
+From:   Shravan Kumar Ramani <sramani@mellanox.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Shravan Kumar Ramani <sramani@mellanox.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/1] gpio: add driver for Mellanox BlueField GPIO controller
+Date:   Wed, 20 Feb 2019 17:00:49 -0500
+Message-Id: <f6452e87ce2e1709e99b8f99cef1c49f0abfae0b.1550699918.git.sramani@mellanox.com>
+X-Mailer: git-send-email 2.1.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nick,
+This patch adds support for the GPIO controller used by Mellanox
+BlueField SOCs.
 
-Thanks for the patch.
+Reviewed-by: David Woods <dwoods@mellanox.com>
+Signed-off-by: Shravan Kumar Ramani <sramani@mellanox.com>
+---
+ drivers/gpio/Kconfig      |   6 ++
+ drivers/gpio/Makefile     |   1 +
+ drivers/gpio/gpio-mlxbf.c | 222 ++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 229 insertions(+)
+ create mode 100644 drivers/gpio/gpio-mlxbf.c
 
-On 20/2/19 22:58, Nick Crews wrote:
-> Before, in debugfs.c it was possible to supply only the message type,
-> and not supply any other arguments when sending raw commands. However,
-> this is never used by the EC, and it led to an underflow error. Now,
-> just don't allow too short of a command, we will never need
-> that anyways.
-> 
-> Fixes: 46c7fd06f8c9 ("platform/chrome: wilco_ec: Add support for raw commands in debugfs")
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index b5a2845..c950fe8 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1292,6 +1292,12 @@ config GPIO_MERRIFIELD
+ 	help
+ 	  Say Y here to support Intel Merrifield GPIO.
+ 
++config GPIO_MLXBF
++	tristate "Mellanox BlueField SoC GPIO"
++	depends on (MELLANOX_PLATFORM && ARM64 && ACPI) || COMPILE_TEST
++	help
++	  Say Y here if you want GPIO support on Mellanox BlueField SoC.
++
+ config GPIO_ML_IOH
+ 	tristate "OKI SEMICONDUCTOR ML7213 IOH GPIO support"
+ 	depends on X86 || COMPILE_TEST
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 37628f8..8d54279 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -83,6 +83,7 @@ obj-$(CONFIG_GPIO_MENZ127)	+= gpio-menz127.o
+ obj-$(CONFIG_GPIO_MERRIFIELD)	+= gpio-merrifield.o
+ obj-$(CONFIG_GPIO_MC33880)	+= gpio-mc33880.o
+ obj-$(CONFIG_GPIO_MC9S08DZ60)	+= gpio-mc9s08dz60.o
++obj-$(CONFIG_GPIO_MLXBF)	+= gpio-mlxbf.o
+ obj-$(CONFIG_GPIO_ML_IOH)	+= gpio-ml-ioh.o
+ obj-$(CONFIG_GPIO_MM_LANTIQ)	+= gpio-mm-lantiq.o
+ obj-$(CONFIG_GPIO_MOCKUP)      += gpio-mockup.o
+diff --git a/drivers/gpio/gpio-mlxbf.c b/drivers/gpio/gpio-mlxbf.c
+new file mode 100644
+index 0000000..c0f21f4
+--- /dev/null
++++ b/drivers/gpio/gpio-mlxbf.c
+@@ -0,0 +1,222 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/acpi.h>
++#include <linux/bitops.h>
++#include <linux/device.h>
++#include <linux/gpio/driver.h>
++#include <linux/io.h>
++#include <linux/ioport.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/pm.h>
++#include <linux/resource.h>
++#include <linux/spinlock.h>
++#include <linux/types.h>
++#include <linux/version.h>
++
++/* Number of pins on BlueField */
++#define MLXBF_GPIO_NR 54
++
++/* Pad Electrical Controls. */
++#define MLXBF_GPIO_PAD_CONTROL__FIRST_WORD 0x0700
++#define MLXBF_GPIO_PAD_CONTROL_1__FIRST_WORD 0x0708
++#define MLXBF_GPIO_PAD_CONTROL_2__FIRST_WORD 0x0710
++#define MLXBF_GPIO_PAD_CONTROL_3__FIRST_WORD 0x0718
++
++#define MLXBF_GPIO_PIN_DIR_I 0x1040
++#define MLXBF_GPIO_PIN_DIR_O 0x1048
++#define MLXBF_GPIO_PIN_STATE 0x1000
++#define MLXBF_GPIO_SCRATCHPAD 0x20
++
++#ifdef CONFIG_PM
++struct mlxbf_gpio_context_save_regs {
++	u64 scratchpad;
++	u64 pad_control[MLXBF_GPIO_NR];
++	u64 pin_dir_i;
++	u64 pin_dir_o;
++};
++#endif
++
++/* Device state structure. */
++struct mlxbf_gpio_state {
++	struct gpio_chip gc;
++
++	/* Must hold this lock to modify shared data. */
++	spinlock_t lock;
++
++	/* Memory Address */
++	void __iomem *dc_base;
++
++#ifdef CONFIG_PM
++	struct mlxbf_gpio_context_save_regs csave_regs;
++#endif
++};
++
++static int mlxbf_gpio_set_input(struct gpio_chip *chip, unsigned int offset)
++{
++	struct mlxbf_gpio_state *gs = gpiochip_get_data(chip);
++	u64 in;
++	u64 out;
++
++	out = readq(gs->dc_base + MLXBF_GPIO_PIN_DIR_O);
++	in = readq(gs->dc_base + MLXBF_GPIO_PIN_DIR_I);
++
++	spin_lock(&gs->lock);
++	writeq(out & ~BIT(offset), gs->dc_base + MLXBF_GPIO_PIN_DIR_O);
++	writeq(in | BIT(offset), gs->dc_base + MLXBF_GPIO_PIN_DIR_I);
++	spin_unlock(&gs->lock);
++
++	return 0;
++}
++
++static int mlxbf_gpio_set_output(struct gpio_chip *chip, unsigned int offset,
++				 int value)
++{
++	struct mlxbf_gpio_state *gs = gpiochip_get_data(chip);
++	u64 in;
++	u64 out;
++
++	out = readq(gs->dc_base + MLXBF_GPIO_PIN_DIR_O);
++	in = readq(gs->dc_base + MLXBF_GPIO_PIN_DIR_I);
++
++	spin_lock(&gs->lock);
++	writeq(out | BIT(offset), gs->dc_base + MLXBF_GPIO_PIN_DIR_O);
++	writeq(in & ~BIT(offset), gs->dc_base + MLXBF_GPIO_PIN_DIR_I);
++	spin_unlock(&gs->lock);
++
++	return 0;
++}
++
++static int mlxbf_gpio_get(struct gpio_chip *chip, unsigned int offset)
++{
++	u64 value;
++	struct mlxbf_gpio_state *gs = gpiochip_get_data(chip);
++
++	spin_lock(&gs->lock);
++	value = readq(gs->dc_base + MLXBF_GPIO_PIN_STATE);
++	spin_unlock(&gs->lock);
++
++	return (value >> offset) & 1;
++}
++
++static void mlxbf_gpio_set(struct gpio_chip *chip, unsigned int offset,
++			   int value)
++{
++	u64 data;
++	struct mlxbf_gpio_state *gs = gpiochip_get_data(chip);
++
++	spin_lock(&gs->lock);
++	data = readq(gs->dc_base + MLXBF_GPIO_PIN_STATE);
++
++	if (value)
++		data |= BIT(offset);
++	else
++		data &= ~BIT(offset);
++	writeq(data, gs->dc_base + MLXBF_GPIO_PIN_STATE);
++	spin_unlock(&gs->lock);
++}
++
++static int mlxbf_gpio_probe(struct platform_device *pdev)
++{
++	struct mlxbf_gpio_state *gs;
++	struct device *dev = &pdev->dev;
++	struct gpio_chip *gc;
++	struct resource *dc_res;
++	int ret;
++
++	gs = devm_kzalloc(&pdev->dev, sizeof(*gs), GFP_KERNEL);
++	if (!gs)
++		return -ENOMEM;
++
++	dc_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	gs->dc_base = devm_ioremap_resource(&pdev->dev, dc_res);
++	if (IS_ERR(gs->dc_base))
++		return PTR_ERR(gs->dc_base);
++
++	gc = &gs->gc;
++	gc->direction_input = mlxbf_gpio_set_input;
++	gc->direction_output = mlxbf_gpio_set_output;
++	gc->get = mlxbf_gpio_get;
++	gc->set = mlxbf_gpio_set;
++	gc->label = dev_name(dev);
++	gc->parent = &pdev->dev;
++	gc->owner = THIS_MODULE;
++	gc->base = -1;
++	gc->ngpio = MLXBF_GPIO_NR;
++
++	ret = devm_gpiochip_add_data(dev, &gs->gc, gs);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed adding memory mapped gpiochip\n");
++		return ret;
++	}
++
++	spin_lock_init(&gs->lock);
++	platform_set_drvdata(pdev, gs);
++	dev_info(&pdev->dev, "registered Mellanox BlueField GPIO");
++	return 0;
++}
++
++#ifdef CONFIG_PM
++static int mlxbf_gpio_suspend(struct platform_device *pdev, pm_message_t state)
++{
++	struct mlxbf_gpio_state *gs = platform_get_drvdata(pdev);
++
++	gs->csave_regs.scratchpad = readq(gs->dc_base + MLXBF_GPIO_SCRATCHPAD);
++	gs->csave_regs.pad_control[0] =
++		readq(gs->dc_base + MLXBF_GPIO_PAD_CONTROL__FIRST_WORD);
++	gs->csave_regs.pad_control[1] =
++		readq(gs->dc_base + MLXBF_GPIO_PAD_CONTROL_1__FIRST_WORD);
++	gs->csave_regs.pad_control[2] =
++		readq(gs->dc_base + MLXBF_GPIO_PAD_CONTROL_2__FIRST_WORD);
++	gs->csave_regs.pad_control[3] =
++		readq(gs->dc_base + MLXBF_GPIO_PAD_CONTROL_3__FIRST_WORD);
++	gs->csave_regs.pin_dir_i = readq(gs->dc_base + MLXBF_GPIO_PIN_DIR_I);
++	gs->csave_regs.pin_dir_o = readq(gs->dc_base + MLXBF_GPIO_PIN_DIR_O);
++
++	return 0;
++}
++
++static int mlxbf_gpio_resume(struct platform_device *pdev)
++{
++	struct mlxbf_gpio_state *gs = platform_get_drvdata(pdev);
++
++	writeq(gs->csave_regs.scratchpad, gs->dc_base + MLXBF_GPIO_SCRATCHPAD);
++	writeq(gs->csave_regs.pad_control[0],
++	       gs->dc_base + MLXBF_GPIO_PAD_CONTROL__FIRST_WORD);
++	writeq(gs->csave_regs.pad_control[1],
++	       gs->dc_base + MLXBF_GPIO_PAD_CONTROL_1__FIRST_WORD);
++	writeq(gs->csave_regs.pad_control[2],
++	       gs->dc_base + MLXBF_GPIO_PAD_CONTROL_2__FIRST_WORD);
++	writeq(gs->csave_regs.pad_control[3],
++	       gs->dc_base + MLXBF_GPIO_PAD_CONTROL_3__FIRST_WORD);
++	writeq(gs->csave_regs.pin_dir_i, gs->dc_base + MLXBF_GPIO_PIN_DIR_I);
++	writeq(gs->csave_regs.pin_dir_o, gs->dc_base + MLXBF_GPIO_PIN_DIR_O);
++
++	return 0;
++}
++#endif
++
++static const struct acpi_device_id mlxbf_gpio_acpi_match[] = {
++	{ "MLNXBF02", 0 },
++	{}
++};
++MODULE_DEVICE_TABLE(acpi, mlxbf_gpio_acpi_match);
++
++static struct platform_driver mlxbf_gpio_driver = {
++	.driver = {
++		.name = "mlxbf_gpio",
++		.acpi_match_table = ACPI_PTR(mlxbf_gpio_acpi_match),
++	},
++	.probe    = mlxbf_gpio_probe,
++#ifdef CONFIG_PM
++	.suspend  = mlxbf_gpio_suspend,
++	.resume   = mlxbf_gpio_resume,
++#endif
++};
++
++module_platform_driver(mlxbf_gpio_driver);
++
++MODULE_DESCRIPTION("Mellanox BlueField GPIO Driver");
++MODULE_AUTHOR("Mellanox Technologies");
++MODULE_LICENSE("GPL");
+-- 
+2.1.2
 
-As this is -next material I'd like to squash the fix if you don't mind.
-
--- Enric
-
-> Signed-off-by: Nick Crews <ncrews@chromium.org>
-> ---
->  drivers/platform/chrome/wilco_ec/debugfs.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/platform/chrome/wilco_ec/debugfs.c b/drivers/platform/chrome/wilco_ec/debugfs.c
-> index 46ff3b6c46c7..c090db2cd5be 100644
-> --- a/drivers/platform/chrome/wilco_ec/debugfs.c
-> +++ b/drivers/platform/chrome/wilco_ec/debugfs.c
-> @@ -136,8 +136,8 @@ static ssize_t raw_write(struct file *file, const char __user *user_buf,
->  	ret = parse_hex_sentence(buf, kcount, request_data, TYPE_AND_DATA_SIZE);
->  	if (ret < 0)
->  		return ret;
-> -	/* Need at least two bytes for message type */
-> -	if (ret < 2)
-> +	/* Need at least two bytes for message type and one for command */
-> +	if (ret < 3)
->  		return -EINVAL;
->  
->  	/* Clear response data buffer */
-> @@ -145,7 +145,7 @@ static ssize_t raw_write(struct file *file, const char __user *user_buf,
->  
->  	msg.type = request_data[0] << 8 | request_data[1];
->  	msg.flags = WILCO_EC_FLAG_RAW;
-> -	msg.command = ret > 2 ? request_data[2] : 0;
-> +	msg.command = request_data[2];
->  	msg.request_data = ret > 3 ? request_data + 3 : 0;
->  	msg.request_size = ret - 3;
->  	msg.response_data = debug_info->raw_data;
-> 
