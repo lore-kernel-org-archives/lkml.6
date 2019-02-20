@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9853AC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:01:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D2EBC4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:01:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72DC320880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:01:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A9D12146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:01:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbfBTOBC (ORCPT
+        id S1726573AbfBTOBF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 09:01:02 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.82]:25224 "EHLO
+        Wed, 20 Feb 2019 09:01:05 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.171]:27000 "EHLO
         mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726227AbfBTOBC (ORCPT
+        with ESMTP id S1726030AbfBTOBD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 09:01:02 -0500
+        Wed, 20 Feb 2019 09:01:03 -0500
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2M0OzzrKQ=="
 X-RZG-CLASS-ID: mo00
 Received: from iMac.fritz.box
         by smtp.strato.de (RZmta 44.9 DYNA|AUTH)
-        with ESMTPSA id 608499v1KE0xEqW
+        with ESMTPSA id 608499v1KE0xEqV
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
         (Client did not present a certificate);
         Wed, 20 Feb 2019 15:00:59 +0100 (CET)
@@ -42,9 +42,9 @@ Cc:     letux-kernel@openphoenux.org, Hartmut Knaack <knaack.h@gmx.de>,
         Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
         linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 4/9] iio: accel: bma180: add mount matrix support
-Date:   Wed, 20 Feb 2019 15:00:51 +0100
-Message-Id: <445e2cafb4c741859219830bc1204bb3cb87f152.1550671256.git.hns@goldelico.com>
+Subject: [PATCH 3/9] iio: accel: bmc150: add mount matrix support
+Date:   Wed, 20 Feb 2019 15:00:50 +0100
+Message-Id: <71ef51037525ae6324bc22e933c00a514d518b31.1550671256.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <cover.1550671256.git.hns@goldelico.com>
 References: <cover.1550671256.git.hns@goldelico.com>
@@ -61,55 +61,60 @@ clients.
 
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- drivers/iio/accel/bma180.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/iio/accel/bmc150-accel-core.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/drivers/iio/accel/bma180.c b/drivers/iio/accel/bma180.c
-index cb9765a3de60..248be67e4f41 100644
---- a/drivers/iio/accel/bma180.c
-+++ b/drivers/iio/accel/bma180.c
-@@ -116,6 +116,7 @@ struct bma180_data {
- 	struct i2c_client *client;
- 	struct iio_trigger *trig;
- 	const struct bma180_part_info *part_info;
+diff --git a/drivers/iio/accel/bmc150-accel-core.c b/drivers/iio/accel/bmc150-accel-core.c
+index 383c802eb5b8..9178846cfddc 100644
+--- a/drivers/iio/accel/bmc150-accel-core.c
++++ b/drivers/iio/accel/bmc150-accel-core.c
+@@ -204,6 +204,7 @@ struct bmc150_accel_data {
+ 	int ev_enable_state;
+ 	int64_t timestamp, old_timestamp; /* Only used in hw fifo mode. */
+ 	const struct bmc150_accel_chip_info *chip_info;
 +	struct iio_mount_matrix orientation;
- 	struct mutex mutex;
- 	bool sleep_state;
- 	int scale;
-@@ -561,6 +562,13 @@ static int bma180_set_power_mode(struct iio_dev *indio_dev,
- 	return ret;
+ };
+ 
+ static const struct {
+@@ -796,6 +797,18 @@ static ssize_t bmc150_accel_get_fifo_state(struct device *dev,
+ 	return sprintf(buf, "%d\n", state);
  }
  
 +static const struct iio_mount_matrix *
-+bma180_accel_get_mount_matrix(const struct iio_dev *indio_dev,
++bmc150_accel_get_mount_matrix(const struct iio_dev *indio_dev,
 +				const struct iio_chan_spec *chan)
 +{
-+	return &((struct bma180_data *)iio_priv(indio_dev))->orientation;
++	return &((struct bmc150_accel_data *)iio_priv(indio_dev))->orientation;
 +}
 +
- static const struct iio_enum bma180_power_mode_enum = {
- 	.items = bma180_power_modes,
- 	.num_items = ARRAY_SIZE(bma180_power_modes),
-@@ -571,6 +579,7 @@ static const struct iio_enum bma180_power_mode_enum = {
- static const struct iio_chan_spec_ext_info bma180_ext_info[] = {
- 	IIO_ENUM("power_mode", true, &bma180_power_mode_enum),
- 	IIO_ENUM_AVAILABLE("power_mode", &bma180_power_mode_enum),
-+	IIO_MOUNT_MATRIX(IIO_SHARED_BY_DIR, bma180_accel_get_mount_matrix),
- 	{ },
- };
++static const struct iio_chan_spec_ext_info bmc150_accel_ext_info[] = {
++	IIO_MOUNT_MATRIX(IIO_SHARED_BY_DIR, bmc150_accel_get_mount_matrix),
++	{ },
++};
++
+ static IIO_CONST_ATTR(hwfifo_watermark_min, "1");
+ static IIO_CONST_ATTR(hwfifo_watermark_max,
+ 		      __stringify(BMC150_ACCEL_FIFO_LENGTH));
+@@ -978,6 +991,7 @@ static const struct iio_event_spec bmc150_accel_event = {
+ 		.shift = 16 - (bits),					\
+ 		.endianness = IIO_LE,					\
+ 	},								\
++	.ext_info = bmc150_accel_ext_info,				\
+ 	.event_spec = &bmc150_accel_event,				\
+ 	.num_event_specs = 1						\
+ }
+@@ -1555,6 +1569,11 @@ int bmc150_accel_core_probe(struct device *dev, struct regmap *regmap, int irq,
  
-@@ -722,6 +731,11 @@ static int bma180_probe(struct i2c_client *client,
- 		chip = id->driver_data;
- 	data->part_info = &bma180_part_info[chip];
+ 	data->regmap = regmap;
  
-+	ret = of_iio_read_mount_matrix(&client->dev, "mount-matrix",
-+				&data->orientation);
++	ret = of_iio_read_mount_matrix(dev, "mount-matrix",
++				       &data->orientation);
 +	if (ret)
 +		return ret;
 +
- 	ret = data->part_info->chip_config(data);
+ 	ret = bmc150_accel_chip_init(data);
  	if (ret < 0)
- 		goto err_chip_disable;
+ 		return ret;
 -- 
 2.19.1
 
