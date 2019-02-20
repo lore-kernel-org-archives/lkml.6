@@ -2,143 +2,91 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ABBBC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:26:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC26C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:34:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3EEC2075B
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:26:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26EA72147C
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:34:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YxT48tE1"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="aUZj46IR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbfBTQ0x (ORCPT
+        id S1726638AbfBTQeJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 11:26:53 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:37753 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726183AbfBTQ0x (ORCPT
+        Wed, 20 Feb 2019 11:34:09 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39034 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726352AbfBTQeI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 11:26:53 -0500
-Received: by mail-qt1-f195.google.com with SMTP id a48so27851084qtb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 08:26:52 -0800 (PST)
+        Wed, 20 Feb 2019 11:34:08 -0500
+Received: by mail-pg1-f194.google.com with SMTP id r11so12111441pgp.6
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 08:34:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eozX9FP7k9coPJlrRTh06AeTbiW+jXWRV5fsGGgST9g=;
-        b=YxT48tE1HsY6La1HstaM8C55H9xwQEH/uhsOSnowvBOgRChQvtSdzJdUWkFuXu6HmJ
-         Kmoq2EnwwM+szkFoFDMKM9oCQa62ejBn5YiK6fGRyGKzeEK5noxlmi/gh1cIJ8at5nrr
-         gpqx9BSKwfhDHh1s7sdrqD85YxWBh8m/PLxJRjJCPoYRCEisRaLC/31jpxTf5kVjNyzG
-         s9Hb8HJ3qhk9s4ev/Ceyu06Evx46XSNDVoyrOMCo1bwTpxWB8qW0icsAelO10KdlAYzk
-         lD2Rc4FAUlQne51LyZsp0AZ7TF5ewQPyi0z30RhR+Td7w0DDZo78e2crcLMHsla6rnif
-         GTVA==
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=3BWkOhTkkswDxf0FP7V9XAIUNHK7O40ffyu257dAaTY=;
+        b=aUZj46IRGnkuSkRUWj0nYxAonh1J6EkNT/y4rr1tH8pGk5NypxqYTuQGiYsPsE3XRv
+         Xiy6pRLJSj5/nQb7W0v+t8CUqDDWUmxp4rXtpYRfEzdFihPrjgp/Vk3Lgn2SD0wr890M
+         GMKL8YWs5Rh5PN6aofXra2UQZdazKe/2M+n6I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eozX9FP7k9coPJlrRTh06AeTbiW+jXWRV5fsGGgST9g=;
-        b=aienl+OFQYXCJn15uclqmzZH/n2PDjwHX1C9dVz8FCFo7775iS7e66RaPpYAoraBP/
-         BVRWxETGP5oqdZlyUk0FBpz0K2USlHslzlk1nfjnyBUb5UX6E8zCPFH+Q5SnxvaJBVL7
-         VJyOwVHCcmBKIcJPzt8V/F2cGGsF/XuYO59xFntyiEwwK3xgofqCk0/WC+92+LIVUYQR
-         gEKCWSY8CxKdK7/znocMcjVqrPyxdxSEjpADpnRfyTLCmBuTrLqQWYuqfFZYfTkjU6fP
-         MONjdHhFH1d3WphX3BpSBQuaIuDMkh0lgX3z3LmCkHGgqS8p/XY+u295OQqxKQqPTvfv
-         pHAw==
-X-Gm-Message-State: AHQUAua+OyNfSBUbh10MDvKUsM3M+YuOPOryJw2IRclwZIjxUU7/abLP
-        JBRL8Gyf9EzqKreUK4txlw+0pjmNRHm733c9smcfJA==
-X-Google-Smtp-Source: AHgI3IamgebrUZ0MqQEo3Q3h+CVE+cDu0cNp7nKiHxkjvSrTwXQHIrz5DoeNZrtvDb7VZVIwoAbkLDP+q1+WMDpA0Jw=
-X-Received: by 2002:ac8:35eb:: with SMTP id l40mr8426232qtb.207.1550680011986;
- Wed, 20 Feb 2019 08:26:51 -0800 (PST)
-MIME-Version: 1.0
-References: <5919a74b74f466e803e07f70136517119dcd4560.1550661235.git.viresh.kumar@linaro.org>
-In-Reply-To: <5919a74b74f466e803e07f70136517119dcd4560.1550661235.git.viresh.kumar@linaro.org>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Wed, 20 Feb 2019 21:56:40 +0530
-Message-ID: <CAP245DWuJTXfAc3QyqXjePqy32GHQsEqHbuSvjiS4EE3-TV1PA@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: kyro: Reduce frame-size of qcom_cpufreq_kryo_probe()
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Rafael Wysocki <rjw@rjwysocki.net>, Ilia Lin <ilia.lin@kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=3BWkOhTkkswDxf0FP7V9XAIUNHK7O40ffyu257dAaTY=;
+        b=I77moh6QzV+GzVPEd8bfywHxW/iMVqr9wkPfG1WMoHvSR7PtLJ05xEIJYolYxgReKm
+         1NewPMtLc5lKPeJBl9sIQMOlbsiuQVm4jS2MlU/Tc6SGe4JlLMDh4O1RJNnhrI9kyDee
+         yOJX2lRSaBn1CnMG5q65Pm6Q6dnRjiXYyswJm4cLf2oqjTj71lX7mIR8dhTM6f/Q1JOz
+         RbIHTKv+4YuFVOCu8txNo6+4dqYlxmb2lNSPSOEugA9k83xs2KsTzBIUBq16WG40fM9V
+         1Hg6l1C+DTuHwz4ect+/LL5azWMoJhNlUNUaIKdNBIROtKyE6g4fiNagkJFQ5a8G5+ZF
+         Yelg==
+X-Gm-Message-State: AHQUAuZQOXat62MRDROLLzR5xkCYso/g89fcpSac3FdfeGm0bq4/SFrD
+        GV7ajp+yhmNgJfDDr403SnOaig==
+X-Google-Smtp-Source: AHgI3IYSJLYMwme1v91novIPjbuXRyKVN3exUtRlX5MVCQx7Vp2iq0J0P/Zkr5gUTDZGSw0ZY2F9Zw==
+X-Received: by 2002:a62:9917:: with SMTP id d23mr36693549pfe.88.1550680447687;
+        Wed, 20 Feb 2019 08:34:07 -0800 (PST)
+Received: from mannams-OptiPlex-7010.dhcp.broadcom.net ([192.19.234.250])
+        by smtp.gmail.com with ESMTPSA id t10sm26556717pfa.151.2019.02.20.08.34.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 20 Feb 2019 08:34:06 -0800 (PST)
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>
+Cc:     bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Srinath Mannam <srinath.mannam@broadcom.com>
+Subject: [PATCH v3 0/2] Add IPROC PCIe new features
+Date:   Wed, 20 Feb 2019 22:03:53 +0530
+Message-Id: <1550680435-9706-1-git-send-email-srinath.mannam@broadcom.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 4:44 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> With the introduction of commit 846a415bf440 ("arm64: default NR_CPUS to
-> 256"), we have started getting following compilation warning:
->
-> qcom-cpufreq-kryo.c:168:1: warning: the frame size of 2160 bytes is larger than 2048 bytes [-Wframe-larger-than=]
->
-> Fix that by dynamically allocating opp_tables and freeing it later.
->
-> Compile tested only.
->
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/cpufreq/qcom-cpufreq-kryo.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
-> index 1c8583cc06a2..6888cb6db2ef 100644
-> --- a/drivers/cpufreq/qcom-cpufreq-kryo.c
-> +++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
-> @@ -75,7 +75,7 @@ static enum _msm8996_version qcom_cpufreq_kryo_get_msm_id(void)
->
->  static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
->  {
-> -       struct opp_table *opp_tables[NR_CPUS] = {0};
-> +       struct opp_table **opp_tables;
->         enum _msm8996_version msm8996_version;
->         struct nvmem_cell *speedbin_nvmem;
->         struct device_node *np;
-> @@ -133,6 +133,10 @@ static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
->         }
->         kfree(speedbin);
->
-> +       opp_tables = kcalloc(num_possible_cpus(), sizeof(*opp_tables), GFP_KERNEL);
-> +       if (!opp_tables)
-> +               return -ENOMEM;
-> +
+This patch set extends support of new IPROC PCIe host controller features
+ - Add CRS check using controller register status flags
+ - Add outbound window mapping configuration for 32-bit I/O region
 
-Perhaps add a comment above that that actual opp_table is allocated in
-the loop below because of dev_pm_opp_set_supported_hw?
+This patch set is based on Linux-5.0-rc2.
 
-I was staring at this for a few minutes wondering why you needed this
-kcalloc before I realised that opp_tables (missed the 's') is a
-temporary array of pointers. :-)
+Changes from v2:
+  - Based on Lorenzo Pieralisi comments, commit logs are expanded.
 
-Otherwise,
+Changes from v1:
+  - Addressed Bjorn Helgaas comments.
+  - Removed set order mode patch from patchset.
 
-Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+Srinath Mannam (2):
+  PCI: iproc: Add CRS check in config read
+  PCI: iproc: Add outbound configuration for 32-bit I/O region
 
->         for_each_possible_cpu(cpu) {
->                 cpu_dev = get_cpu_device(cpu);
->                 if (NULL == cpu_dev) {
-> @@ -149,6 +153,8 @@ static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
->                 }
->         }
->
-> +       kfree(opp_tables);
-> +
->         cpufreq_dt_pdev = platform_device_register_simple("cpufreq-dt", -1,
->                                                           NULL, 0);
->         if (!IS_ERR(cpufreq_dt_pdev))
-> @@ -163,6 +169,7 @@ static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
->                         break;
->                 dev_pm_opp_put_supported_hw(opp_tables[cpu]);
->         }
-> +       kfree(opp_tables);
->
->         return ret;
->  }
-> --
-> 2.21.0.rc0.269.g1a574e7a288b
->
+ drivers/pci/controller/pcie-iproc.c | 44 +++++++++++++++++++++++++++++++++----
+ 1 file changed, 40 insertions(+), 4 deletions(-)
+
+-- 
+2.7.4
+
