@@ -2,89 +2,122 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED85C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:51:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4035C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:52:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E26592147C
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:51:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5E662147C
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:52:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JdZkluLz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727629AbfBTKvw (ORCPT
+        id S1727646AbfBTKwT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 05:51:52 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:45281 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726317AbfBTKvw (ORCPT
+        Wed, 20 Feb 2019 05:52:19 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52387 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726317AbfBTKwS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 05:51:52 -0500
-Received: by mail-qk1-f196.google.com with SMTP id v139so1647117qkb.12;
-        Wed, 20 Feb 2019 02:51:51 -0800 (PST)
+        Wed, 20 Feb 2019 05:52:18 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m1so6145797wml.2;
+        Wed, 20 Feb 2019 02:52:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lYnBEEmpFBDz1hV5pZ2bsdS3p6zU1mRjCvzLhQfwBdU=;
+        b=JdZkluLz++Mx1C8JiA/Y2HkZRRrTukTquhr1Bc06g67MGdllzRv3YMEEw4PaAxmG87
+         6v50islDKr6LIYHEvsb1vHlOPhKZPPedQmHNJhBVMFkKM6oouKGHCX/flTCxLyo5/flS
+         z5zxh0ILplOBybnUXjZ8yn3BxwvX/iYECqw2lrRxk/JOydZmQchxQR6APeOwaHBlSJ1v
+         f4/xjvmGsyHIUfEO5kLpSKrgTTvEa9/sseCa6orotADkdQf5SUQ5TNg2a1Qu5zq4qQMV
+         hopl1QXwCGK1S/QueLT1P4LGfxCCjmcb8OPvB4qPcSbq9XyiuoNlB3PP2L6CfdCKtXr1
+         H2kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HbDijqYd6VcGTjPEbGlnYQ5VNZqSZ9FTKXSy74dKt3Y=;
-        b=E826gvrpL4E/w6ZwMXtTLeEpRMr6Xp/6fZwN1QD24OM9t4Mi6UE/CUgiBsQrp7cvPv
-         lEILB03T03kUD/VmwDKQz5TbVbsl0i7K52zY+Pg/JRm1UX25MP6xJgmuiRGRR2ygYaTU
-         OtrmB89b3WcgEYiamDIfffUbC4Gv9xTlaGhzLm0SoGIJAqdP9nn4vFcvGR/fTRRw5Nry
-         xYQkposszndh8kkI+fvtYeO7kDqDDNoTpyZ1hx6Hi2Y1eZWAm+VIfEuM5nVq+kfpvdJD
-         1s1Z+STMXeBEGt5y/kfbMWSNuDidqBtVJoJGD+OgipmTKUBWdPvwC4NLvUGBLbqaWZdp
-         dOGQ==
-X-Gm-Message-State: AHQUAua3KdSzpHYEs2i/qcSinG+O2reARebbj2B8iLC9DlzPDWAyrUMA
-        8xsJumB4+8RGkJkvzszqwILKipP1B2/cr/pvuvY=
-X-Google-Smtp-Source: AHgI3IbG25UwycjW5eDbZn7BhId3DVZSHrLpQvTau5C8rR6BfYWypsTdmtn4n3G7181xutvguKWUXkkA4wr/ClOsT1c=
-X-Received: by 2002:ae9:d8c2:: with SMTP id u185mr23165623qkf.107.1550659911265;
- Wed, 20 Feb 2019 02:51:51 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lYnBEEmpFBDz1hV5pZ2bsdS3p6zU1mRjCvzLhQfwBdU=;
+        b=H/fTGdbQ4/Kfko+XtHL//bwWW6PKKaANAhiRSBbbIU46sEqO3NhXK8TYZ8r8O/ULNI
+         ziROzx3BnVlZg9QyQqN/7AMMzZU3Hqm0CVVKTMZ4J0jpeaxX4Tdv91HFj4PjpJbs1gng
+         6T3BGCX9W/5Xg22B/JzR8eGHG34/OA0jb8bUIIG/l5/Yy8D0g6AjeHNb2rzWLvB2WUlC
+         PJlIVWZc3OljTPWv6FLPK66o8j9Ri68BG1yXA4z0IjuJxXylWonhZYGJJZx1ukvIIgkS
+         NRk61SgXfbPr6NI8YccGFz6nTKa2zZnjYaf5oYGLHETPrDsw+ciSvd1KnPgxTaGSZL+W
+         NyUA==
+X-Gm-Message-State: AHQUAuZz5G3I9omtQRSr6NVELKUp7uiDfs/+I6JOPrEr6A9VdJ+BlYU9
+        K6ZLj6WIMy99Dwa4SfK/imw=
+X-Google-Smtp-Source: AHgI3Ib8tZOBhlpIHsUcatq1jFAnz6U4iN8Qjx/XBkj5nLUAi+WZZlM9GaBryPbNj5VL+diTxEtjoQ==
+X-Received: by 2002:a1c:6789:: with SMTP id b131mr6172877wmc.22.1550659935752;
+        Wed, 20 Feb 2019 02:52:15 -0800 (PST)
+Received: from localhost (pD9E51D2D.dip0.t-ipconnect.de. [217.229.29.45])
+        by smtp.gmail.com with ESMTPSA id 12sm10391904wme.25.2019.02.20.02.52.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Feb 2019 02:52:15 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Marek Vasut <marek.vasut@gmail.com>, linux-gpio@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] gpio: of: Restrict enable-gpio quirk to regulator-gpio
+Date:   Wed, 20 Feb 2019 11:52:14 +0100
+Message-Id: <20190220105214.26618-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190219182105.19933-1-natechancellor@gmail.com>
-In-Reply-To: <20190219182105.19933-1-natechancellor@gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 20 Feb 2019 11:51:34 +0100
-Message-ID: <CAK8P3a1d6Zksdv-Or+paawyn4N0u4EpVw9QgyDGHYvX_1s3JrQ@mail.gmail.com>
-Subject: Re: [PATCH] iwlwifi: mvm: Use div64_s64 instead of do_div in iwl_mvm_debug_range_resp
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 7:22 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
+From: Thierry Reding <treding@nvidia.com>
 
-> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c b/drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c
-> index e9822a3ec373..92b22250eb7d 100644
-> --- a/drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c
-> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c
-> @@ -462,7 +462,7 @@ static void iwl_mvm_debug_range_resp(struct iwl_mvm *mvm, u8 index,
->  {
->         s64 rtt_avg = res->ftm.rtt_avg * 100;
->
-> -       do_div(rtt_avg, 6666);
-> +       div64_s64(rtt_avg, 6666);
+Commit 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only to
+enable-gpios") breaks the device tree ABI specified in the device tree
+bindings for fixed regulators (compatible "regulator-fixed"). According
+to these bindings the polarity of the GPIO is exclusively controlled by
+the presence or absence of the enable-active-high property. As such the
+polarity quirk implemented in of_gpio_flags_quirks() must be applied to
+the GPIO specified for fixed regulators.
 
-This is wrong: div64_s64 does not modify its argument like do_div(), but
-it returns the result instead. You also don't want to divide by a 64-bit
-value when the second argument is a small constant.
+However, commit 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only
+to enable-gpios") restricted the quirk to the enable-gpios property for
+fixed regulators as well, whereas according to the commit message itself
+it should only apply to "regulator-gpio" compatible device tree nodes.
 
-I think the correct way should be
+Fix this by actually implementing what the offending commit intended,
+which is to ensure that the quirk is applied to the GPIO specified by
+the "enable-gpio" property for the "regulator-gpio" bindings only.
 
-       s64 rtt_avg = div_s64(res->ftm.rtt_avg * 100, 6666);
+This fixes a regression on Jetson TX1 where the fixed regulator for the
+HDMI +5V pin relies on the flags quirk for the proper polarity.
 
-If you know that the value is positive, using unsigned types
-and div_u64() would be slightly faster.
+Fixes: 0e7d6f940164 ("gpio: of: Apply regulator-gpio quirk only to enable-gpios")
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpio/gpiolib-of.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-      Arnd
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 1b4c741e0635..bddfc6102a50 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -84,10 +84,10 @@ static void of_gpio_flags_quirks(struct device_node *np,
+ 	 * Note that active low is the default.
+ 	 */
+ 	if (IS_ENABLED(CONFIG_REGULATOR) &&
+-	    !strcmp(propname, "enable-gpio") &&
+ 	    (of_device_is_compatible(np, "regulator-fixed") ||
+ 	     of_device_is_compatible(np, "reg-fixed-voltage") ||
+-	     of_device_is_compatible(np, "regulator-gpio"))) {
++	     (of_device_is_compatible(np, "regulator-gpio") &&
++	      strcmp(propname, "enable-gpio") == 0))) {
+ 		/*
+ 		 * The regulator GPIO handles are specified such that the
+ 		 * presence or absence of "enable-active-high" solely controls
+-- 
+2.20.1
+
