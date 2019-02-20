@@ -2,88 +2,128 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC700C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BADC8C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:26:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82D2220859
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:22:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D43620859
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:26:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gsOTKs4h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbfBTWW5 (ORCPT
+        id S1726445AbfBTW0f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 17:22:57 -0500
-Received: from smtprelay0065.hostedemail.com ([216.40.44.65]:37355 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725804AbfBTWW4 (ORCPT
+        Wed, 20 Feb 2019 17:26:35 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:45870 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725804AbfBTW0e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 17:22:56 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 1F41618224D6E;
-        Wed, 20 Feb 2019 22:22:55 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: girls60_365b2667a3c4d
-X-Filterd-Recvd-Size: 2648
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf10.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 20 Feb 2019 22:22:53 +0000 (UTC)
-Message-ID: <68f8ea8165f4a87cd1c99c14f2d1cc3ecdd54ed3.camel@perches.com>
-Subject: Re: [PATCH 5/5] iio:potentiostat:lmp91000: add '\n' on dev_err
-From:   Joe Perches <joe@perches.com>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Lucas Oshiro <lucasseikioshiro@gmail.com>, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com,
-        Anderson Reis <andersonreisrosa@gmail.com>
-Date:   Wed, 20 Feb 2019 14:22:52 -0800
-In-Reply-To: <20190220094921.6777d6f8@archlinux>
-References: <20190218172236.7781-1-lucasseikioshiro@gmail.com>
-         <20190218172236.7781-6-lucasseikioshiro@gmail.com>
-         <d5d88a5acc984554240047944cb3071371025085.camel@perches.com>
-         <20190220094921.6777d6f8@archlinux>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 20 Feb 2019 17:26:34 -0500
+Received: by mail-ua1-f68.google.com with SMTP id e16so8803433uam.12
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 14:26:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sDpL3gmbczax8ALdj7IVEn/cdMFCR2mdLaVqooKyfDU=;
+        b=gsOTKs4hDJpCcYxXFAhd3Mw19bPjFasvElf6Yd9ikqATCYiclmkqOMIuNsxSoWBTPs
+         cvv7KgIQk6dYFFcC6p6vp/e6zA3KSvygM6ZzD1xDWenkLj9Umc2pmNvwwnaR2e9iG5Eh
+         /zlPXUrpCbDsPF9sQP3jSKppTz0LqL6aRU0M0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sDpL3gmbczax8ALdj7IVEn/cdMFCR2mdLaVqooKyfDU=;
+        b=cgA2JCjtL82ODVc7Lu+pwdgNTBx2eiVBJJk9gm5IqQwILGaW+0uEMONvyrFHfZrvUd
+         MxY4QVgAnRuY3Ih6sr1K3cLLX+wy4J82JFiUt8ohAJqaFFaH31/0VFzyIepAKftzSlAN
+         0Wd7DT/6jqe4BgYJ6aRuqmcinlpFW0BG250f3S99WIwVCp5phWlphFAjzWIBzukUeLJp
+         C/XU8llLOLQSil7b+aLIlfxj5HLBKF65mLcdgNL3lliqfm60jgvDw6itBgQ9YCaASCif
+         5hxcnpn/moQj9GKzoRpnD8dtyxvw4+ziFfJGuCPi/PLEB1CEud/qf2rUU7UKqbs7mggS
+         is9Q==
+X-Gm-Message-State: AHQUAub45vSkt3bl9GXPVGv29Rb847CLUGtRmlz57N2mARGh9pshdqGH
+        s/TtGELHNdQvXLbZuNm0ELdpjcJ5VgE=
+X-Google-Smtp-Source: AHgI3IalhHrTS7MmAQEjF9878pHAE4QtWUD0BtsJaXF7cLE09TJboUls8jVFznOTLq+WqLgglYN5BQ==
+X-Received: by 2002:ab0:60c1:: with SMTP id g1mr8367506uam.23.1550701592076;
+        Wed, 20 Feb 2019 14:26:32 -0800 (PST)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
+        by smtp.gmail.com with ESMTPSA id a68sm17745442vsd.24.2019.02.20.14.26.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Feb 2019 14:26:30 -0800 (PST)
+Received: by mail-vs1-f41.google.com with SMTP id m20so14495971vsq.8
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 14:26:30 -0800 (PST)
+X-Received: by 2002:a67:ec81:: with SMTP id h1mr19076075vsp.188.1550701589790;
+ Wed, 20 Feb 2019 14:26:29 -0800 (PST)
+MIME-Version: 1.0
+References: <20190211181531.GA3238@embeddedor> <CAJKOXPeHp7sKkZ+jXmTXk5GEF_7G5ujfm3Lw==G3T4thfD+F7Q@mail.gmail.com>
+ <CAGXu5jLMWrb4Dszv5YSyoGt5Lb3S1oE8EnKsTou7=7Nq1rEEVQ@mail.gmail.com> <155027728836.115909.11546859472583324712@swboyd.mtv.corp.google.com>
+In-Reply-To: <155027728836.115909.11546859472583324712@swboyd.mtv.corp.google.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 20 Feb 2019 14:26:06 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jJPfoYy20WrR5ghaSo88bsA75s-OyA4qt_3Vz0cJST_MQ@mail.gmail.com>
+Message-ID: <CAGXu5jJPfoYy20WrR5ghaSo88bsA75s-OyA4qt_3Vz0cJST_MQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: samsung: s3c2443: Mark expected switch fall-through
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-02-20 at 09:49 +0000, Jonathan Cameron wrote:
-> On Mon, 18 Feb 2019 13:01:23 -0800 Joe Perches <joe@perches.com> wrote:
-> > On Mon, 2019-02-18 at 14:22 -0300, Lucas Oshiro wrote:
-> > > Add missing '\n' at the end of dev_err message on line 215.  
-> > []
-> > > diff --git a/drivers/iio/potentiostat/lmp91000.c b/drivers/iio/potentiostat/lmp91000.c  
-> > []
-> > > @@ -212,7 +212,7 @@ static int lmp91000_read_config(struct lmp91000_data *data)
-> > >  	ret = of_property_read_u32(np, "ti,tia-gain-ohm", &val);
-> > >  	if (ret) {
-> > >  		if (!of_property_read_bool(np, "ti,external-tia-resistor")) {
-> > > -			dev_err(dev, "no ti,tia-gain-ohm defined");
-> > > +			dev_err(dev, "no ti,tia-gain-ohm defined\n");  
-> > 
-> > Perhaps a copy/paste error as the test is for
-> > external-tia-resistor and not tia-gain-ohm
-> > 
-> It is an odd construct, but I think this is correct.  What it is actually
-> saying is that, given that we don't have an external resistor, we care
-> that the tia-gain-ohm isn't set (otherwise it wouldn't matter).
-> 
-> From the docs
->   - ti,external-tia-resistor: if the property ti,tia-gain-ohm is not defined this
->     needs to be set to signal that an external resistor value is being used.
-> 
-> So, it might be ideal to say that tia-gain-ohm is not defined and we do
-> not have an external resistor specified.
-> 
-> So not wrong, but could be more informative!  So perhaps a follow up patch
-> to tidy that up would be good.
+On Fri, Feb 15, 2019 at 4:34 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Kees Cook (2019-02-12 10:57:05)
+> > On Mon, Feb 11, 2019 at 11:41 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > >
+> > > It is just the GCC which has to be fixed not the code. You want to
+> > > adjust the code for specific version of GCC and what if GCC changes
+> > > its warning? For example GCC might require "fall through: "... or any
+> > > other syntax. Another point - what about clang's syntax?
+> >
+> > -Wimplicit-fallthrough=3 is stricter and maps to -Wextra, hence its
+> > choice. GCC's levels were chosen based on the existing linters, static
+> > analyzers, etc. The patterns are unlikely to change (see the gcc
+> > man-page).
+> >
+> > Clang doesn't recognize anything in C mode (hopefully this will be
+> > fixed in the future[1]).
+> >
+> > As long as one of the compilers is able to check this, we'll avoid the
+> > bugs associated with this mis-pattern. Gustavo's efforts here have
+> > found kind of a lot of bugs, so I think it's worth a little churn to
+> > add these (and make minor adjustments to existing comments).
+>
+> Just curious, what compilation phase does this check run in? Could we
+> gain a macro like FALLTHRU or even lowercase 'fallthru' that expanded to
+> whatever the compiler wants to see and then there would only be "one
+> way" to do this?  It would alleviate the above concerns, but maybe I'm
+> rehashing something that's already been proposed and rejected.
 
-Then thanks in advance for doing that.
-cheers, Joe
+When this got discussed a while back, the thinking was that since
+we're also dealing with static analyzers (e.g. Coverity) and IDEs that
+literally parse comments in the code, it was most sensible (at least
+for now, prior to there being a formal C "fall through" statement --
+there is for C++ but not yet for C), we'd stick to explicit comments.
+In theory, we will be able to do a tree-wide change to add the C
+statement once it exists.
 
+> Of course, I'm happy to merge any of these patches that tweak things so
+> no worries either way.
+
+Thanks! :)
+
+-- 
+Kees Cook
