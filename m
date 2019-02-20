@@ -2,168 +2,127 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E0DDC10F07
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0911C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:11:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E34EF21841
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:10:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550682603;
-	bh=OAFAiPYOdfY9WOwvpDt3atX4+fpl2D3WkVuOFhyZKFc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=rsEDyYZ6gNF+Qtn2G736eTWErQBHDNKb1gdZLh6AJnCVVugo+e4UiWDXeZiPv9ANa
-	 xXcn9arJKur7Puk8mcyF23wUuGK+nKUk62/bvMJhbWy2lp8zTnxNqvw4ZfuygMM+sW
-	 PIy6qhD0/a42o4NovkJ4BNEw+A1PmyXQPiKiInmg=
+	by mail.kernel.org (Postfix) with ESMTP id 7E0732146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:11:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="DsNtbxUO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726412AbfBTRKB (ORCPT
+        id S1726497AbfBTRLT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 12:10:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49380 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725806AbfBTRKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 12:10:01 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B9D12146E;
-        Wed, 20 Feb 2019 17:09:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550682600;
-        bh=OAFAiPYOdfY9WOwvpDt3atX4+fpl2D3WkVuOFhyZKFc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=aysJ6Us5neCeHdlHypxxdHxIoA2KAlXWwuUgr81AlUI8zvyNM9NsBhCxwod6O55Lx
-         JvV1zyXPOQG83RCx5X7IE/sIpbuuvSSRVnCueSWL9ZnJf0ZKIwiV0rR1IX/+SdEXpP
-         UTc99Euq+yKn/0Q71ePktP6FAvph8iaon4hO2p18=
-Date:   Wed, 20 Feb 2019 17:09:53 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Song Qiang <songqiang1304521@gmail.com>,
-        letux-kernel@openphoenux.org, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/9] iio: accel: bmc150: add mount matrix support
-Message-ID: <20190220170953.0200e256@archlinux>
-In-Reply-To: <4C07F0C8-3149-4DEA-B108-39F2CC04ED88@goldelico.com>
-References: <cover.1550671256.git.hns@goldelico.com>
-        <71ef51037525ae6324bc22e933c00a514d518b31.1550671256.git.hns@goldelico.com>
-        <20190220161444.78f34a61@archlinux>
-        <4C07F0C8-3149-4DEA-B108-39F2CC04ED88@goldelico.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 20 Feb 2019 12:11:19 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:43382 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726078AbfBTRLR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 12:11:17 -0500
+Received: by mail-ot1-f66.google.com with SMTP id n71so41352214ota.10
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 09:11:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=esoiL0zRtkoIhqgz3+K0ShHM1vB/8CWMDhEUxTj3zO8=;
+        b=DsNtbxUOFXRcfEJV/wQJbgi+JWS95dNFGDJsZ/1pY4dVso9tuVVCjpQ2d6uaaLGJ/s
+         xC6O9wTZJa4JePZGL/fzsZOConbkuiDLz396BNr/G85R5dlagGnJWHMqFgOfb8v4/EUC
+         h2oS5vGE5ZS15vMWDdwmrLoRQVzz4TuqF50YQP+Fun+Wj9J4VOlxWBrDib1Ky0bJP2Tk
+         2QZGpAQJRSUVSN777DDltdhBhxrC7b8rvBqyBuxQ/3xnXUkBzww2aeMTyUtxuyX1IkH7
+         2tBBLXRjEZtYkstTNfwgNlmcFkBJs4sqfvZt9CIh0cqPhvSMEqr8BmcBWoVmpwdDepGb
+         wokg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=esoiL0zRtkoIhqgz3+K0ShHM1vB/8CWMDhEUxTj3zO8=;
+        b=EYUubAFlJ5X92DZVt17xTX7pstHQlLpx1K+nVvzGmHF/zEC1xfKKsfDfWqSA9O2i8q
+         mWxt/VKY0UHO6Ex4is/NDCW16uaaNvoU4tK9gkh7p9TAcNFt2ge2Iyr9d9+tSms7lhxR
+         XTDKsjyLwuN2SWp0Y7yX063E06rnfymisCweJwKZIi1uc4gPiu0QpwfBsB6QqNduEq+3
+         xSdU3XojTNBu+wlRvBTOKhON5msWlpaVZcvT3l3XkULSw/otgKnC0Gb4Ye0aRbODYBjX
+         0BBqGcK9jIYVX+tc5vC14/3qDj+wKwyiUUjpqD37IHQByjV4yPbgworQCCuVv/gxwXRz
+         UHiA==
+X-Gm-Message-State: AHQUAubD3KmaPSbwwCEW01u8E4BOzP/glQlpDAvEIQkG0elWFpwCwuoV
+        CzBczaTPG9xYx6GwpmRakQTxJ1VtzD0KD1H8mPJG9w==
+X-Google-Smtp-Source: AHgI3IaS4np5V2h8jLeUf4cneoR8yS2mouKyycJRlxa5aO3I0yZtK48KSmZn2Am/GHwvXfD87znE2lMG09f2gEnia6Q=
+X-Received: by 2002:a9d:7554:: with SMTP id b20mr20879590otl.32.1550682675815;
+ Wed, 20 Feb 2019 09:11:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <155000668075.348031.9371497273408112600.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <155000668075.348031.9371497273408112600.stgit@dwillia2-desk3.amr.corp.intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 20 Feb 2019 09:11:04 -0800
+Message-ID: <CAPcyv4j9uEn9j=Y0Vo3oQJaXo-d-Xf=2-=0ucufhcXWeYOb0Yg@mail.gmail.com>
+Subject: Re: [PATCH 0/7] libnvdimm/pfn: Fix section-alignment padding
+To:     linux-nvdimm <linux-nvdimm@lists.01.org>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        stable <stable@vger.kernel.org>, Jan Kara <jack@suse.cz>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Feb 2019 17:20:29 +0100
-"H. Nikolaus Schaller" <hns@goldelico.com> wrote:
+On Tue, Feb 12, 2019 at 1:37 PM Dan Williams <dan.j.williams@intel.com> wrote:
+>
+> Lately Linux has encountered platforms that collide Persistent Memory
+> regions between each other, specifically cases where ->start_pad needed
+> to be non-zero. This lead to commit ae86cbfef381 "libnvdimm, pfn: Pad
+> pfn namespaces relative to other regions". That commit allowed
+> namespaces to be mapped with devm_memremap_pages(). However dax
+> operations on those configurations currently fail if attempted within the
+> ->start_pad range because pmem_device->data_offset was still relative to
+> raw resource base not relative to the section aligned resource range
+> mapped by devm_memremap_pages().
+>
+> Luckily __bdev_dax_supported() caught these failures and simply disabled
+> dax. However, to fix this situation a non-backwards compatible change
+> needs to be made to the interpretation of the nd_pfn info-block.
+> ->start_pad needs to be accounted in ->map.map_offset (formerly
+> ->data_offset), and ->map.map_base (formerly ->phys_addr) needs to be
+> adjusted to the section aligned resource base used to establish
+> ->map.map formerly (formerly ->virt_addr).
+>
+> See patch 7 "libnvdimm/pfn: Fix 'start_pad' implementation" for more
+> details, and the ndctl patch series "Improve support + testing for
+> labels + info-blocks" for the corresponding regression test.
 
-> > Am 20.02.2019 um 17:14 schrieb Jonathan Cameron <jic23@kernel.org>:
-> > 
-> > On Wed, 20 Feb 2019 15:00:50 +0100
-> > "H. Nikolaus Schaller" <hns@goldelico.com> wrote:
-> >   
-> >> This patch allows to read a mount-matrix device tree
-> >> property and report to user-space or in-kernel iio
-> >> clients.
-> >> 
-> >> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>  
-> > This will clash with Andy's current patch, but I'll fix that up if
-> > needed. Otherwise, one trivial suggestion inline.  
-> 
-> Ok, thanks!
-> 
-> > 
-> > Jonathan
-> >   
-> >> ---
-> >> drivers/iio/accel/bmc150-accel-core.c | 19 +++++++++++++++++++
-> >> 1 file changed, 19 insertions(+)
-> >> 
-> >> diff --git a/drivers/iio/accel/bmc150-accel-core.c b/drivers/iio/accel/bmc150-accel-core.c
-> >> index 383c802eb5b8..9178846cfddc 100644
-> >> --- a/drivers/iio/accel/bmc150-accel-core.c
-> >> +++ b/drivers/iio/accel/bmc150-accel-core.c
-> >> @@ -204,6 +204,7 @@ struct bmc150_accel_data {
-> >> 	int ev_enable_state;
-> >> 	int64_t timestamp, old_timestamp; /* Only used in hw fifo mode. */
-> >> 	const struct bmc150_accel_chip_info *chip_info;
-> >> +	struct iio_mount_matrix orientation;
-> >> };
-> >> 
-> >> static const struct {
-> >> @@ -796,6 +797,18 @@ static ssize_t bmc150_accel_get_fifo_state(struct device *dev,
-> >> 	return sprintf(buf, "%d\n", state);
-> >> }
-> >> 
-> >> +static const struct iio_mount_matrix *
-> >> +bmc150_accel_get_mount_matrix(const struct iio_dev *indio_dev,
-> >> +				const struct iio_chan_spec *chan)
-> >> +{
-> >> +	return &((struct bmc150_accel_data *)iio_priv(indio_dev))->orientation;  
-> > 
-> > I would use a local variable as that casting is less than simple to parse
-> > to my eyes anyway!  
-> 
-> Yes, Andy already suggested that. I just happend to pick one of the only two bad examples
-> from all iio drivers as template...
-> 
-> drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-> drivers/iio/magnetometer/ak8975.c
+Hello valued reviewers, can I plead for a sanity check of at least
+"libnvdimm/pfn: Introduce super-block minimum version requirements"
+and "libnvdimm/pfn: Fix 'start_pad' implementation"? In particular
+Jeff / Johannes this has end user / distro impact in that users may
+lose access to namespaces that are upgraded to v1.3 info-blocks and
+then boot an old kernel. I did not see a way around that sharp edge.
 
-If you like, feel free to send patches to tidy those up as well!
-Then no one else can be unlucky on the same thing in future.
-
-Jonathan
-
-> 
-> >   
-> >> +}
-> >> +
-> >> +static const struct iio_chan_spec_ext_info bmc150_accel_ext_info[] = {
-> >> +	IIO_MOUNT_MATRIX(IIO_SHARED_BY_DIR, bmc150_accel_get_mount_matrix),
-> >> +	{ },
-> >> +};
-> >> +
-> >> static IIO_CONST_ATTR(hwfifo_watermark_min, "1");
-> >> static IIO_CONST_ATTR(hwfifo_watermark_max,
-> >> 		      __stringify(BMC150_ACCEL_FIFO_LENGTH));
-> >> @@ -978,6 +991,7 @@ static const struct iio_event_spec bmc150_accel_event = {
-> >> 		.shift = 16 - (bits),					\
-> >> 		.endianness = IIO_LE,					\
-> >> 	},								\
-> >> +	.ext_info = bmc150_accel_ext_info,				\
-> >> 	.event_spec = &bmc150_accel_event,				\
-> >> 	.num_event_specs = 1						\
-> >> }
-> >> @@ -1555,6 +1569,11 @@ int bmc150_accel_core_probe(struct device *dev, struct regmap *regmap, int irq,
-> >> 
-> >> 	data->regmap = regmap;
-> >> 
-> >> +	ret = of_iio_read_mount_matrix(dev, "mount-matrix",
-> >> +				       &data->orientation);
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> 	ret = bmc150_accel_chip_init(data);
-> >> 	if (ret < 0)
-> >> 		return ret;  
-> >   
-> 
-> BR and thanks,
-> Nikolaus
-> 
-
+> ---
+>
+> Dan Williams (7):
+>       libnvdimm/pfn: Account for PAGE_SIZE > info-block-size in nd_pfn_init()
+>       libnvdimm/pmem: Honor force_raw for legacy pmem regions
+>       dax: Check the end of the block-device capacity with dax_direct_access()
+>       libnvdimm/pfn: Introduce super-block minimum version requirements
+>       libnvdimm/pfn: Remove dax_label_reserve
+>       libnvdimm/pfn: Introduce 'struct pfn_map_info'
+>       libnvdimm/pfn: Fix 'start_pad' implementation
+>
+>
+>  drivers/dax/pmem.c              |    9 +-
+>  drivers/dax/super.c             |   39 ++++++--
+>  drivers/nvdimm/namespace_devs.c |    4 +
+>  drivers/nvdimm/nd.h             |   15 +++
+>  drivers/nvdimm/pfn.h            |    4 +
+>  drivers/nvdimm/pfn_devs.c       |  181 ++++++++++++++++++++++++++++-----------
+>  drivers/nvdimm/pmem.c           |  111 +++++++++++-------------
+>  drivers/nvdimm/pmem.h           |   12 ---
+>  tools/testing/nvdimm/pmem-dax.c |   15 ++-
+>  9 files changed, 244 insertions(+), 146 deletions(-)
