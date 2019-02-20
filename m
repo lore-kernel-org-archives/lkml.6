@@ -2,115 +2,101 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C137C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EDF6C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:59:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30A8D208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:58:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB29F208E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:59:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726400AbfBTI6T (ORCPT
+        id S1726521AbfBTI7E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 03:58:19 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50690 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725846AbfBTI6S (ORCPT
+        Wed, 20 Feb 2019 03:59:04 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:35442 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725846AbfBTI7D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 03:58:18 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1K8n6Ze126240
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 03:58:17 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qs1ys56wj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 03:58:17 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Wed, 20 Feb 2019 08:58:15 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 20 Feb 2019 08:58:12 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1K8wAth20971634
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 20 Feb 2019 08:58:10 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A34A311C054;
-        Wed, 20 Feb 2019 08:58:10 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6E09811C050;
-        Wed, 20 Feb 2019 08:58:10 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.29])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 20 Feb 2019 08:58:10 +0000 (GMT)
-Date:   Wed, 20 Feb 2019 09:58:09 +0100
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Laura Abbott <labbott@redhat.com>
-Cc:     Andreas Krebbel <krebbel@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] s390/jump_label: Correct asm contraint
-References: <20190123125513.20210-1-labbott@redhat.com>
- <20190123132401.GG3424@osiris>
- <898d52cc-fa76-0888-429f-27446190653b@redhat.com>
- <20190205124349.GA10167@osiris>
- <541cdc96-7ce0-de6a-0f8b-778ee826a378@redhat.com>
+        Wed, 20 Feb 2019 03:59:03 -0500
+Received: by mail-ed1-f65.google.com with SMTP id g19so10211347edp.2;
+        Wed, 20 Feb 2019 00:59:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rAdoxIJZWnnE6eiIWpkNn6CLgQlgSDug3I3b8dKQXHU=;
+        b=YKqIoOu+aaAfUruJWezJKvNU2TindIrXkyMKTUkhi+qchTrm9oGo1mQtp+dE9PKz64
+         KJvH5lb40hX4eT9KxfABSSHm4bsjVjdfdL0QA1aPsV3xoKIwumvgoRGZ0wTmSkQJ3kpL
+         qsm6DCM0bf2KL81N19MapCn+ddSiPAgaw3jMZVpbuDBjk5sOhKXhdehLpuN3nASo6iWp
+         RGMih07b1OYcr4kDlMh4zyEESDMWkHKxbTq8+s/UDeTaChhTOfUguv183zNRxN+qWlVX
+         m2LaM9IXNzUX7p1m2sjjpP6FTSPjlxKq+ki0fUClQSVcuVJOTHqJGJYZ8IshOSKoG6AC
+         DjOA==
+X-Gm-Message-State: AHQUAuaBK+eupniC8eB4HhZOMbVz72l0ZyzlunUF/e9QLkwmb671cGJs
+        ri4YykUoxD8hjAPOLtMH6LxONCdSO9w=
+X-Google-Smtp-Source: AHgI3IbsPHN9nziP4JaG2pyjwddyJNMO9sAQMtielzc288iuZrWFz5Fguy8RB70T+mqHGRupT9CJOQ==
+X-Received: by 2002:a50:ad4b:: with SMTP id z11mr26228348edc.157.1550653141490;
+        Wed, 20 Feb 2019 00:59:01 -0800 (PST)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com. [209.85.221.43])
+        by smtp.gmail.com with ESMTPSA id f6sm864749eja.33.2019.02.20.00.59.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Feb 2019 00:59:00 -0800 (PST)
+Received: by mail-wr1-f43.google.com with SMTP id l5so23933192wrw.6;
+        Wed, 20 Feb 2019 00:59:00 -0800 (PST)
+X-Received: by 2002:a5d:66c1:: with SMTP id k1mr9498091wrw.120.1550653140186;
+ Wed, 20 Feb 2019 00:59:00 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <541cdc96-7ce0-de6a-0f8b-778ee826a378@redhat.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19022008-4275-0000-0000-00000311AB20
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022008-4276-0000-0000-0000381FDA01
-Message-Id: <20190220085809.GC3992@osiris>
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-20_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902200065
+References: <20190216182132.12895-1-mans@mansr.com>
+In-Reply-To: <20190216182132.12895-1-mans@mansr.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 20 Feb 2019 16:58:49 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66C6HFKgF8kERfp2UQ5XUyNS0-prgC3sX2iobkz7SjBcw@mail.gmail.com>
+Message-ID: <CAGb2v66C6HFKgF8kERfp2UQ5XUyNS0-prgC3sX2iobkz7SjBcw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: sun7i: add pinctrl for missing uart mux options
+To:     Mans Rullgard <mans@mansr.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 09, 2019 at 12:34:20PM -0800, Laura Abbott wrote:
-> On 2/5/19 12:43 PM, Heiko Carstens wrote:
-> >On Tue, Jan 29, 2019 at 08:25:58AM +0100, Laura Abbott wrote:
-> >>On 1/23/19 5:24 AM, Heiko Carstens wrote:
-> >>>On Wed, Jan 23, 2019 at 01:55:13PM +0100, Laura Abbott wrote:
-> >>>>There's a build failure with gcc9:
-> >>>>
-> >>>>  ./arch/s390/include/asm/jump_label.h: Assembler messages:
-> >>>>  ./arch/s390/include/asm/jump_label.h:23: Error: bad expression
-> >>>>  ./arch/s390/include/asm/jump_label.h:23: Error: junk at end of line, first unrecognized character is `r'
-> >>>>  make[1]: *** [scripts/Makefile.build:277: init/main.o] Error 1
-> >...
-> >>I've had to turn off s390 in Fedora until this gets fixed :(
-> >
-> >Laura, the patch below should fix this (temporarily). If possible,
-> >could you give it a try? It seems to work for me.
-> >
-> >Subject: [PATCH] s390: disable section anchors
-> Tested-by: Laura Abbott <labbott@redhat.com><
+On Sun, Feb 17, 2019 at 2:21 AM Mans Rullgard <mans@mansr.com> wrote:
+>
+> This adds pinctrl settings for various missing uart options.
+>
+> Signed-off-by: Mans Rullgard <mans@mansr.com>
+> ---
+>  arch/arm/boot/dts/sun7i-a20.dtsi | 45 ++++++++++++++++++++++++++++++++
+>  1 file changed, 45 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
+> index af5b067a5f83..2295ff5adf48 100644
+> --- a/arch/arm/boot/dts/sun7i-a20.dtsi
+> +++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+> @@ -944,6 +944,31 @@
+>                                 function = "uart0";
+>                         };
+>
+> +                       uart0_pf_pins: uart0-pf-pins {
+> +                               pins = "PF2", "PF4";
+> +                               function = "uart0";
+> +                       };
 
-The patch won't be used. In the meantime Ilya provided a gcc 9 and
-kernel patch which should fix this. The kernel patch is available here
-https://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git/commit/?h=features&id=146448524bddbf6dfc62de31957e428de001cbda
-and will go upstream during the next merge window.
+We've had the policy of not adding pinctrl nodes that aren't used in-tree,
+to avoid bloating up the blob size. However DTC 1.4.7 introduced the new
+/omit-if-no-ref/ directive, which would make the compiler discard marked
+nodes if they aren't referenced.
 
-Note: this obviously also requires to update the gcc 9 version in
-Fedora, so it contains Ilya's patch, to be able to compile the kernel.
+So please add this to all the new nodes. It seems to work regardless whether
+you add it before or after the label, though having it after the label seems
+to make vim syntax highlighting happier.
 
-Thanks,
-Heiko
-
+Regards
+ChenYu
