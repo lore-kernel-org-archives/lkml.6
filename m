@@ -2,75 +2,93 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46ED9C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 082F6C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 207E120C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:27:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C67DF20C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:30:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UaUSPDt+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728167AbfBTN1f (ORCPT
+        id S1727581AbfBTNac (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 08:27:35 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:47262 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725836AbfBTN1f (ORCPT
+        Wed, 20 Feb 2019 08:30:32 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:41749 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725826AbfBTNab (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 08:27:35 -0500
-X-IronPort-AV: E=Sophos;i="5.58,391,1544454000"; 
-   d="scan'208";a="8389304"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 20 Feb 2019 22:27:33 +0900
-Received: from renesas-VirtualBox.ree.adwin.renesas.com (unknown [10.226.37.56])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5E4B040C46FE;
-        Wed, 20 Feb 2019 22:27:30 +0900 (JST)
-From:   Gareth Williams <gareth.williams.jx@renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Gareth Williams <gareth.williams.jx@renesas.com>,
-        devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/2] i2c: designware: Add support for a bus clock
-Date:   Wed, 20 Feb 2019 13:25:46 +0000
-Message-Id: <1550669148-6027-1-git-send-email-gareth.williams.jx@renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 20 Feb 2019 08:30:31 -0500
+Received: by mail-pl1-f195.google.com with SMTP id y5so6672006plk.8;
+        Wed, 20 Feb 2019 05:30:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=qy04mKzoL16kaKUgEkcr5rBVmxccfjZptBeFKXDuxX4=;
+        b=UaUSPDt+CASC9nvRx3/L8wM8jaGF3+vSR1u9JOLeXeISX4poVGcXMA4pU6hpQHIGoG
+         eeVDfM0G1r06KcRHYQpz9Cq23JiXyOfGeis+/mRiKwxUmIEURCrDWGqzzBVLJy+jBAyg
+         h0SzKCCkUx/1zgPV5ZWEIDiwp2ZGpqxo0Eoy1/+y0xcTV8gfhYUxvpWX2mpZGa3937bB
+         0E7jA2MBqQ6blq6lxUI+uvS30Q36ze6Mn050xeqF6uMhdwvvdaYMHmKThgCu66DU/wXI
+         XERLT+A/+qPq8bp4JiSHUxlDiX8cbPvYunnNJGQdJd2AhcWXxChuyqlav8plB7tLjfaj
+         otXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qy04mKzoL16kaKUgEkcr5rBVmxccfjZptBeFKXDuxX4=;
+        b=BKN5ssfqmFSgzOldGq4vchnAVJsvn9AYvF9b4ovOD/YYrgWYOeHJ8zN3dAkCfxDmuk
+         TahqyvLwXPpHdNXkvKnE67Mo7qSGkfXGCFEaTxN+99pxWTzH3V3Bdc5p2SfMhW5/4Zi+
+         kujwU9X0xPyAtkid0qAeU3FECgsODMzNONXxtRVvQZvX/AZN5M5iuAXHovMeDgd6lwEG
+         F73LgjYBR1Jb9u50fd5ssM5aiFnZM1TIK/1QBWmiU9zgonfUTMC9bSgL6gmejNR3qeoY
+         Qyjt9ZMMJBNMdCszpIiFiACyDNgPh1y8gfpzR3wpJoXXvQAvpQGAUiakRViRCbcYjKA5
+         /kFg==
+X-Gm-Message-State: AHQUAub+LUbbUq1obUts90AILrM1zuijMuFdFczZMdxjdQmoodjX0nLT
+        D/TJUfCs3l1+tAc1jFJAdC9r5ok4
+X-Google-Smtp-Source: AHgI3IZj3eHY4pAV2P5YuTvM/dcJBqwavtz+ELmWQVqm0o+LMl5vt/kCbCYoevuFuZLpN/veR/vTfw==
+X-Received: by 2002:a17:902:e90b:: with SMTP id cs11mr14674338plb.197.1550669430801;
+        Wed, 20 Feb 2019 05:30:30 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id h3sm4447539pgv.38.2019.02.20.05.30.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Feb 2019 05:30:29 -0800 (PST)
+Subject: Re: [PATCH v4 0/8] Support Trusted Foundations firmware on Tegra30
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Robert Yang <decatf@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190218001726.16785-1-digetx@gmail.com>
+Message-ID: <c6d761cf-370c-c4f7-931b-d2333e02f2dc@gmail.com>
+Date:   Wed, 20 Feb 2019 16:30:20 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
+MIME-Version: 1.0
+In-Reply-To: <20190218001726.16785-1-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Synopsys I2C Controller has a bus clock that some SoCs require to access
-the registers. This series also details the new clock property in the bindings
-documentation.
+18.02.2019 3:17, Dmitry Osipenko пишет:
+> Hello,
+> 
+> This patchset adds support for the Trusted Foundations firmware on
+> NVIDIA Tegra30. Pretty much all of Tegra30 consumer devices have that
+> firmware and upstream kernel can't boot on those devices without the
+> firmware support.
 
-v3:
- - busclk renamed to pclk.
- - Added comment with dw_i2c_dev struct definition describing pclk.
- - Added enable rollback of first clock if second fails to enable.
- - Changed clocks and clock-names sections to use term "peripheral clock"
-   (pclk) instead of "bus clock" (busclk) in dt-bindings documentation.
-v2:
- - Use new devm_clk_get_optional() function as it simplifies handling when
-   the optional clock is not present.
+Hello Michał,
 
-Phil Edworthy (2):
-  dt: snps,designware-i2c: Add clock bindings documentation
-  i2c: designware: Add support for a bus clock
-
- .../devicetree/bindings/i2c/i2c-designware.txt         |  9 +++++++++
- drivers/i2c/busses/i2c-designware-common.c             | 18 ++++++++++++++++--
- drivers/i2c/busses/i2c-designware-core.h               |  2 ++
- drivers/i2c/busses/i2c-designware-platdrv.c            |  5 +++++
- 4 files changed, 32 insertions(+), 2 deletions(-)
-
--- 
-2.7.4
-
+Will be awesome if you could test the series on yours TF300T and report back, thanks in advance!
