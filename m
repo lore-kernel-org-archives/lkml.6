@@ -2,81 +2,79 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75723C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36510C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:15:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F1D0206BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:14:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10593206BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:15:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbfBTPOl (ORCPT
+        id S1726787AbfBTPPp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:14:41 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44974 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725804AbfBTPOl (ORCPT
+        Wed, 20 Feb 2019 10:15:45 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:43883 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725804AbfBTPPp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:14:41 -0500
-Received: by mail-qt1-f194.google.com with SMTP id d2so1866084qti.11
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 07:14:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BQRnv0vrIQNIvYtV8Fbol+CbnW4W74tpn1ESfd8zZg8=;
-        b=Qfhtqz/pTRslaxX6swWiUZrIpdxui3zUDW7lT+85me4qarbNBfzj6xn5YwNWpjt2Ct
-         t4sQwnL/0N8FMB7EY1zzOIG7bOHyCO1Xx00Aox6zwzGegQCHBgMMnfZZBTRPZhzalNg0
-         6gTonwHwReAGOMTFWNF+dwY4vwXp2PVguwgE3D1/Ot1bVijRQOZHC0ACb4p7lq7x05ED
-         2RdgK1xS9ZLON63k869/nbOhkxGyYLrEROJv50AqAAHWiKqJpAtzqftkDSCzgmddNkIO
-         D941iq1E2DBQ8BMtpu+LZVaFtnzBTf8oOVG0EYP7iUED3tgpAbh1zfuI7mofcJfemMmg
-         x8PA==
-X-Gm-Message-State: AHQUAuaJ9h3ZHS9gRO0geTGcpd0kWqm07TKE9IAyxVg1400Ackie+ByI
-        g9HZJswPcMla7id2/MTwNq5X/1P1GrGt3pZ9vVd32Q==
-X-Google-Smtp-Source: AHgI3Ibrg5qiTE3LPSw67wXgNpL6BlWxaKTfPW8KXgJ6fVxLNFUkBEAL72nEcEyqxVcwrQDRJgO4KYqFAU94GBZEv6o=
-X-Received: by 2002:a0c:d791:: with SMTP id z17mr25652734qvi.149.1550675680142;
- Wed, 20 Feb 2019 07:14:40 -0800 (PST)
+        Wed, 20 Feb 2019 10:15:45 -0500
+X-Originating-IP: 185.94.189.187
+Received: from localhost (unknown [185.94.189.187])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 9DD4760010;
+        Wed, 20 Feb 2019 15:15:42 +0000 (UTC)
+Date:   Wed, 20 Feb 2019 16:15:42 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Mans Rullgard <mans@mansr.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] ARM: dts: sun7i: add /omit-if-no-ref/ tags to pin
+ group nodes
+Message-ID: <20190220151542.dy2tdhw6cy5cn447@flea>
+References: <20190220142536.21051-1-mans@mansr.com>
+ <20190220142536.21051-3-mans@mansr.com>
 MIME-Version: 1.0
-References: <20190219210953.1840-1-leoyang.li@nxp.com>
-In-Reply-To: <20190219210953.1840-1-leoyang.li@nxp.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 20 Feb 2019 16:14:22 +0100
-Message-ID: <CAK8P3a2O+x_tRHWs9SNeEMkLhf-XpunifkNiEa76GCN2_NeanA@mail.gmail.com>
-Subject: Re: [GIT PULL] updates to soc/fsl drivers for v5.1 take3
-To:     Li Yang <leoyang.li@nxp.com>
-Cc:     arm-soc <arm@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ltjeimt6pxkykty5"
+Content-Disposition: inline
+In-Reply-To: <20190220142536.21051-3-mans@mansr.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 10:09 PM Li Yang <leoyang.li@nxp.com> wrote:
-> The following changes since commit 3c0d64e867ed78a782a8a00d3b519396d9c5a2db:
->
->   soc: fsl: guts: reuse machine name from device tree (2019-01-11 16:08:43 -0600)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/leo/linux.git tags/soc-fsl-next-v5.1-3
->
-> for you to fetch changes up to bd3bd3b36df725645036748e58a8c35c8d2cbf91:
->
->   soc: fsl: dpio: fix memory leak of a struct qbman on error exit path (2019-02-19 14:59:39 -0600)
->
-> ----------------------------------------------------------------
-> NXP/FSL SoC driver updates for v5.1 take3
->
-> DPIO driver
-> - fixed a use after free problem
-> - fixed a memory leak on error path
 
-Pulled into arm/drivers, thanks!
+--ltjeimt6pxkykty5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-     Arnd
+On Wed, Feb 20, 2019 at 02:25:36PM +0000, Mans Rullgard wrote:
+> Since only one alternative at a time is used, and some functions may not
+> be used at all, this cuts down the size of the board dtb files a bit.
+>=20
+> Signed-off-by: Mans Rullgard <mans@mansr.com>
+
+Applied all three, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--ltjeimt6pxkykty5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXG1vHQAKCRDj7w1vZxhR
+xfpiAP9iVGo/0QxZrPmzUGNSLgkjVMj9DM6NeQ7RbTYZwtQz4wEAr+RWmjKQyocX
+s8L2GhyvS60EBT5vsQL7ON8h0fUJ6wU=
+=pYmc
+-----END PGP SIGNATURE-----
+
+--ltjeimt6pxkykty5--
