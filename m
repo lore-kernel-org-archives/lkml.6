@@ -2,79 +2,258 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11FD8C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D128C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:42:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D41012147A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:41:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550659285;
-	bh=z8UuGjINIH1IhIjdrJ86cBQfZd/xl4M5arcq5RFDrw8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=kHY6YEwHKBTrxj9WW11nxtN4L+wfCTcsoX8ilcZQKgaGWvnyHSPEsIEkqQ7V2TEnQ
-	 9wNC8X7Yj90zTXLpfXKSVSgtUCFB2C7JgoE2/FqxaRI86gNW7cMwmsScWWpytRJnEA
-	 ecN2hmfWSptGisDzjpxEvcWhj4F4tlvvC27tgudw=
+	by mail.kernel.org (Postfix) with ESMTP id F25E920C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:42:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727580AbfBTKlY (ORCPT
+        id S1727500AbfBTKmu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 05:41:24 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:37330 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726209AbfBTKlX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 05:41:23 -0500
-Received: by mail-ot1-f66.google.com with SMTP id b3so39368992otp.4;
-        Wed, 20 Feb 2019 02:41:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nY68LkdjJ3/JOmcpfiPJR1n+ChChInaf/c1v8eXK99A=;
-        b=Uf/NRPYXYv81TZwT2sEa23ZXI0WN1at4SiuDnHVcaXs/bRmyMkVAh1r31CaNLAk+V8
-         5VibGcffsE7wU1xR7Ps1tw5OmkCfq6MwNBoQ+HLNGyfljAW4L85kjFbaKYTMi3cl/iK9
-         HfBBV7H9rcdjDS2R1Sd9yFJSlZmJj14JKYMwkLupJRUrDdQK5CexjUbm61Khib/oPFZJ
-         f73Xg2kfFHonnif+i5Rux+isVeNcn5yILDXRY/B51WVLdVRgI+zf0fc4VnTe4CihBvP5
-         pSS6cM6a4BY7DA3BLgsORuxDEhSag9f2OsKSyu8XPXXqCgbWYc63KnsIR1Ry+lOa58ID
-         e3IQ==
-X-Gm-Message-State: AHQUAua+JxbYCivuGUaMXINhw5AWUTeuCrbRl7mX8LXetS3/0JC3XIjm
-        R/E9rL1yD1FZbc03DwJa3/r6brToYk9kHd5Ael4=
-X-Google-Smtp-Source: AHgI3IbBR661esWaVatBL8SaslH7ODDEmYwTAyx9fYYHVm4r/EeR9ut4Z9O5UJV0N3+XUKi6ZCHzFWc//1VlKb/b56I=
-X-Received: by 2002:aca:ed0f:: with SMTP id l15mr5560023oih.76.1550659282889;
- Wed, 20 Feb 2019 02:41:22 -0800 (PST)
-MIME-Version: 1.0
-References: <20190220101017.19587-1-e.velu@criteo.com>
-In-Reply-To: <20190220101017.19587-1-e.velu@criteo.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 20 Feb 2019 11:41:11 +0100
-Message-ID: <CAJZ5v0i5BVFRKsCVxDwG90vBAuS3QYB=-GkC0pbGLy5DWDXuMg@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: Report if CPU doesn't report boost technologies
-To:     Erwan Velu <erwanaliasr1@gmail.com>
-Cc:     Erwan Velu <e.velu@criteo.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "open list:CPU FREQUENCY SCALING FRAMEWORK" 
-        <linux-pm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 20 Feb 2019 05:42:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52506 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726209AbfBTKmu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 05:42:50 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0E065AFDA;
+        Wed, 20 Feb 2019 10:42:47 +0000 (UTC)
+Date:   Wed, 20 Feb 2019 11:42:46 +0100
+Message-ID: <s5hef82hhax.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] sound fixes for 5.0
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 11:11 AM Erwan Velu <erwanaliasr1@gmail.com> wrote:
->
-> There is some rare cases where CPB (and possibly IDA) are missing on processors.
-> This is the case fixed by commit f7f3dc00f612 ("x86/cpu/AMD: Fix erratum 1076 (CPB bit)") and following.
->
-> In such context, the boost status isn't reported by /sys/devices/system/cpu/cpufreq/boost.
+Linus,
 
-So I'm not really sure why the extra message is needed.  It looks like
-this message will always be printed (with debug output enabled) if the
-current cpufreq driver is acpi-cpufreq and the boost attribute is not
-present in sysfs, which only is the case if CPB/IDA aren't there.
+please pull sound fixes for v5.0 from:
 
-Does it provide any additional information, then?
+  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-5.0
+
+The topmost commit is 268836649c07e0d38866006b5e94294b5bbc9806
+
+----------------------------------------------------------------
+
+sound fixes for 5.0
+
+Here are a few last-minute fixes for 5.0.  The most significant one
+is the OF-node refcount fix for ASoC simple-card, which could be
+triggered on many boards.  Another fix for ASoC core is for the
+error handling in topology, while others are device-specific fixes
+for Samsung and HD-audio.
+
+----------------------------------------------------------------
+
+Bard liao (1):
+      ASoC: topology: free created components in tplg load error
+
+Hui Wang (1):
+      ALSA: hda/realtek: Disable PC beep in passthrough on alc285
+
+Jeremy Soller (1):
+      ALSA: hda/realtek - Headset microphone and internal speaker support for System76 oryp5
+
+Kuninori Morimoto (1):
+      ASoC: simple-card: fixup refcount_t underflow
+
+Sylwester Nawrocki (1):
+      ASoC: samsung: i2s: Fix prescaler setting for the secondary DAI
+
+---
+ sound/pci/hda/patch_realtek.c   | 42 ++++++++++++++++++++++++++++++++++++++++-
+ sound/soc/generic/simple-card.c |  2 +-
+ sound/soc/samsung/i2s.c         |  8 +++++++-
+ sound/soc/soc-topology.c        |  8 +++++++-
+ 4 files changed, 56 insertions(+), 4 deletions(-)
+
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 6df758adff84..1ffa36e987b4 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -1855,6 +1855,8 @@ enum {
+ 	ALC887_FIXUP_BASS_CHMAP,
+ 	ALC1220_FIXUP_GB_DUAL_CODECS,
+ 	ALC1220_FIXUP_CLEVO_P950,
++	ALC1220_FIXUP_SYSTEM76_ORYP5,
++	ALC1220_FIXUP_SYSTEM76_ORYP5_PINS,
+ };
+ 
+ static void alc889_fixup_coef(struct hda_codec *codec,
+@@ -2056,6 +2058,17 @@ static void alc1220_fixup_clevo_p950(struct hda_codec *codec,
+ 	snd_hda_override_conn_list(codec, 0x1b, 1, conn1);
+ }
+ 
++static void alc_fixup_headset_mode_no_hp_mic(struct hda_codec *codec,
++				const struct hda_fixup *fix, int action);
++
++static void alc1220_fixup_system76_oryp5(struct hda_codec *codec,
++				     const struct hda_fixup *fix,
++				     int action)
++{
++	alc1220_fixup_clevo_p950(codec, fix, action);
++	alc_fixup_headset_mode_no_hp_mic(codec, fix, action);
++}
++
+ static const struct hda_fixup alc882_fixups[] = {
+ 	[ALC882_FIXUP_ABIT_AW9D_MAX] = {
+ 		.type = HDA_FIXUP_PINS,
+@@ -2300,6 +2313,19 @@ static const struct hda_fixup alc882_fixups[] = {
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = alc1220_fixup_clevo_p950,
+ 	},
++	[ALC1220_FIXUP_SYSTEM76_ORYP5] = {
++		.type = HDA_FIXUP_FUNC,
++		.v.func = alc1220_fixup_system76_oryp5,
++	},
++	[ALC1220_FIXUP_SYSTEM76_ORYP5_PINS] = {
++		.type = HDA_FIXUP_PINS,
++		.v.pins = (const struct hda_pintbl[]) {
++			{ 0x19, 0x01a1913c }, /* use as headset mic, without its own jack detect */
++			{}
++		},
++		.chained = true,
++		.chain_id = ALC1220_FIXUP_SYSTEM76_ORYP5,
++	},
+ };
+ 
+ static const struct snd_pci_quirk alc882_fixup_tbl[] = {
+@@ -2376,6 +2402,8 @@ static const struct snd_pci_quirk alc882_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x1558, 0x9501, "Clevo P950HR", ALC1220_FIXUP_CLEVO_P950),
+ 	SND_PCI_QUIRK(0x1558, 0x95e1, "Clevo P95xER", ALC1220_FIXUP_CLEVO_P950),
+ 	SND_PCI_QUIRK(0x1558, 0x95e2, "Clevo P950ER", ALC1220_FIXUP_CLEVO_P950),
++	SND_PCI_QUIRK(0x1558, 0x96e1, "System76 Oryx Pro (oryp5)", ALC1220_FIXUP_SYSTEM76_ORYP5_PINS),
++	SND_PCI_QUIRK(0x1558, 0x97e1, "System76 Oryx Pro (oryp5)", ALC1220_FIXUP_SYSTEM76_ORYP5_PINS),
+ 	SND_PCI_QUIRK_VENDOR(0x1558, "Clevo laptop", ALC882_FIXUP_EAPD),
+ 	SND_PCI_QUIRK(0x161f, 0x2054, "Medion laptop", ALC883_FIXUP_EAPD),
+ 	SND_PCI_QUIRK(0x17aa, 0x3a0d, "Lenovo Y530", ALC882_FIXUP_LENOVO_Y530),
+@@ -5632,6 +5660,7 @@ enum {
+ 	ALC294_FIXUP_ASUS_SPK,
+ 	ALC225_FIXUP_HEADSET_JACK,
+ 	ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE,
++	ALC285_FIXUP_LENOVO_PC_BEEP_IN_NOISE,
+ };
+ 
+ static const struct hda_fixup alc269_fixups[] = {
+@@ -6587,6 +6616,17 @@ static const struct hda_fixup alc269_fixups[] = {
+ 		.chained = true,
+ 		.chain_id = ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC
+ 	},
++	[ALC285_FIXUP_LENOVO_PC_BEEP_IN_NOISE] = {
++		.type = HDA_FIXUP_VERBS,
++		.v.verbs = (const struct hda_verb[]) {
++			/* Disable PCBEEP-IN passthrough */
++			{ 0x20, AC_VERB_SET_COEF_INDEX, 0x36 },
++			{ 0x20, AC_VERB_SET_PROC_COEF, 0x57d7 },
++			{ }
++		},
++		.chained = true,
++		.chain_id = ALC285_FIXUP_LENOVO_HEADPHONE_NOISE
++	},
+ };
+ 
+ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+@@ -7272,7 +7312,7 @@ static const struct snd_hda_pin_quirk alc269_pin_fixup_tbl[] = {
+ 		{0x12, 0x90a60130},
+ 		{0x19, 0x03a11020},
+ 		{0x21, 0x0321101f}),
+-	SND_HDA_PIN_QUIRK(0x10ec0285, 0x17aa, "Lenovo", ALC285_FIXUP_LENOVO_HEADPHONE_NOISE,
++	SND_HDA_PIN_QUIRK(0x10ec0285, 0x17aa, "Lenovo", ALC285_FIXUP_LENOVO_PC_BEEP_IN_NOISE,
+ 		{0x12, 0x90a60130},
+ 		{0x14, 0x90170110},
+ 		{0x19, 0x04a11040},
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index 37e001cf9cd1..3fe34417ec89 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -462,7 +462,7 @@ static int asoc_simple_card_parse_of(struct simple_card_data *priv)
+ 	conf_idx	= 0;
+ 	node = of_get_child_by_name(top, PREFIX "dai-link");
+ 	if (!node) {
+-		node = dev->of_node;
++		node = of_node_get(top);
+ 		loop = 0;
+ 	}
+ 
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index ce00fe2f6aae..d4bde4834ce5 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -604,6 +604,7 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
+ 	unsigned int fmt)
+ {
+ 	struct i2s_dai *i2s = to_info(dai);
++	struct i2s_dai *other = get_other_dai(i2s);
+ 	int lrp_shift, sdf_shift, sdf_mask, lrp_rlow, mod_slave;
+ 	u32 mod, tmp = 0;
+ 	unsigned long flags;
+@@ -661,7 +662,8 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
+ 		 * CLK_I2S_RCLK_SRC clock is not exposed so we ensure any
+ 		 * clock configuration assigned in DT is not overwritten.
+ 		 */
+-		if (i2s->rclk_srcrate == 0 && i2s->clk_data.clks == NULL)
++		if (i2s->rclk_srcrate == 0 && i2s->clk_data.clks == NULL &&
++		    other->clk_data.clks == NULL)
+ 			i2s_set_sysclk(dai, SAMSUNG_I2S_RCLKSRC_0,
+ 							0, SND_SOC_CLOCK_IN);
+ 		break;
+@@ -699,6 +701,7 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
+ 	struct snd_pcm_hw_params *params, struct snd_soc_dai *dai)
+ {
+ 	struct i2s_dai *i2s = to_info(dai);
++	struct i2s_dai *other = get_other_dai(i2s);
+ 	u32 mod, mask = 0, val = 0;
+ 	struct clk *rclksrc;
+ 	unsigned long flags;
+@@ -784,6 +787,9 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
+ 	i2s->frmclk = params_rate(params);
+ 
+ 	rclksrc = i2s->clk_table[CLK_I2S_RCLK_SRC];
++	if (!rclksrc || IS_ERR(rclksrc))
++		rclksrc = other->clk_table[CLK_I2S_RCLK_SRC];
++
+ 	if (rclksrc && !IS_ERR(rclksrc))
+ 		i2s->rclk_srcrate = clk_get_rate(rclksrc);
+ 
+diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
+index fc79ec6927e3..731b963b6995 100644
+--- a/sound/soc/soc-topology.c
++++ b/sound/soc/soc-topology.c
+@@ -2487,6 +2487,7 @@ int snd_soc_tplg_component_load(struct snd_soc_component *comp,
+ 	struct snd_soc_tplg_ops *ops, const struct firmware *fw, u32 id)
+ {
+ 	struct soc_tplg tplg;
++	int ret;
+ 
+ 	/* setup parsing context */
+ 	memset(&tplg, 0, sizeof(tplg));
+@@ -2500,7 +2501,12 @@ int snd_soc_tplg_component_load(struct snd_soc_component *comp,
+ 	tplg.bytes_ext_ops = ops->bytes_ext_ops;
+ 	tplg.bytes_ext_ops_count = ops->bytes_ext_ops_count;
+ 
+-	return soc_tplg_load(&tplg);
++	ret = soc_tplg_load(&tplg);
++	/* free the created components if fail to load topology */
++	if (ret)
++		snd_soc_tplg_component_remove(comp, SND_SOC_TPLG_INDEX_ALL);
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(snd_soc_tplg_component_load);
+ 
