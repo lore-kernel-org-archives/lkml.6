@@ -2,87 +2,74 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45E28C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04660C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:30:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1291B2086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:28:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550665718;
-	bh=mfsZDQk8uGS4o9iV0tY56bUfiu/3sEpKNb/88axqmVA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hKWbfuYXdJaNqdIuQ6PW6nnL7EeAeBh6UW3Gd4DhbN9s60nm81XL5LF2y2TUvvAvX
-	 LbtSZpZfv1L9kSiM2lHmHTqdg+Kx25vnyA/9FEZp69Sdt4nSQ1r7fDuK2T+Orge6D3
-	 3pJH82ijsZcBrlhko4zLp+h58GTW1G3Kwin+5af8=
+	by mail.kernel.org (Postfix) with ESMTP id CC9B72086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:30:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727921AbfBTM2g (ORCPT
+        id S1727255AbfBTMa4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 07:28:36 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35824 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726396AbfBTM2F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 07:28:05 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 01240356E5;
-        Wed, 20 Feb 2019 12:28:05 +0000 (UTC)
-Received: from krava.brq.redhat.com (unknown [10.43.17.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 52684600C0;
-        Wed, 20 Feb 2019 12:28:03 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH 1/6] perf tools: Don't report zero period samples for slave events
-Date:   Wed, 20 Feb 2019 13:27:55 +0100
-Message-Id: <20190220122800.864-2-jolsa@kernel.org>
-In-Reply-To: <20190220122800.864-1-jolsa@kernel.org>
-References: <20190220122800.864-1-jolsa@kernel.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 20 Feb 2019 12:28:05 +0000 (UTC)
+        Wed, 20 Feb 2019 07:30:56 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:46361 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725812AbfBTMa4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 07:30:56 -0500
+Received: by mail-qt1-f195.google.com with SMTP id z25so5148331qti.13;
+        Wed, 20 Feb 2019 04:30:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5yoWMNmw6z+cpbLzoGJad+5c02l6ZFuam/3NvFBUuMQ=;
+        b=Cwian7Mwzfyx9YZxdvC5c+rx53uwbIndTynKqrg74Rv+A2I5SnpGfhjkTIzgbXMzOB
+         fyTCTDrjQ/fN9PpYKkGK/nWBAP3n5KlszC+L2MxldlB8A38pKNZgdMja3eABUagSCC7T
+         ZduwZR4NAMUfUOjzLxckRTKg/Rc9VUNFHWOWG/O55P5ZMk8rTPlc8Ju8CiqawdVXw5b8
+         bVXbx4KzSVObm5Aj0pXDTSbA02vMZ8oAKuuzfmtz7fbK6E0UbwL3ld/uIDUDuQk0D4Rm
+         rcgw2wC3DI5/OvDLikJks62FIquRXHeB7wcPUeWqgf8QHZgMIFkUVbn4+Pz/cGUjN+Mb
+         fLgA==
+X-Gm-Message-State: AHQUAuZ9dwqRUCmljVRSI+1HSA2pxjq1gXqBY02tlMedSPlU+h/ZE6VM
+        d48fl0ysDqb54SaliCIymbUZcT6XlQDQFWSQuWYYuw==
+X-Google-Smtp-Source: AHgI3IbMJxG9R4EGTw54AuzJRKB6dP/CBcWXly2F9POoetMaWgZqtU4a0ibAXcoQC2eqSxJjjtfrwfALm4zUpzYvu/M=
+X-Received: by 2002:ac8:2c34:: with SMTP id d49mr27103194qta.152.1550665855029;
+ Wed, 20 Feb 2019 04:30:55 -0800 (PST)
+MIME-Version: 1.0
+References: <5919a74b74f466e803e07f70136517119dcd4560.1550661235.git.viresh.kumar@linaro.org>
+In-Reply-To: <5919a74b74f466e803e07f70136517119dcd4560.1550661235.git.viresh.kumar@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 20 Feb 2019 13:30:38 +0100
+Message-ID: <CAK8P3a3Qkrx75K6sTQqhn0MZmOQ5O6x-FRH_2MkCkZf2OehZfQ@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: kyro: Reduce frame-size of qcom_cpufreq_kryo_probe()
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Rafael Wysocki <rjw@rjwysocki.net>, Ilia Lin <ilia.lin@kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's no reason to deliver sample for zero period.
-It means there was no value for slave event since its
-last group leader sample.
+On Wed, Feb 20, 2019 at 12:14 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> With the introduction of commit 846a415bf440 ("arm64: default NR_CPUS to
+> 256"), we have started getting following compilation warning:
+>
+> qcom-cpufreq-kryo.c:168:1: warning: the frame size of 2160 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>
+> Fix that by dynamically allocating opp_tables and freeing it later.
+>
+> Compile tested only.
+>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Link: http://lkml.kernel.org/n/tip-d5he0papol5dhwvfq33ess1p@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/util/session.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Looks good to me, thanks for the fix!
 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 18fb9c8cbf9c..c764bbc91009 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1202,6 +1202,13 @@ static int deliver_sample_value(struct perf_evlist *evlist,
- 		return 0;
- 	}
- 
-+	/*
-+	 * There's no reason to deliver sample
-+	 * for zero period, bail out.
-+	 */
-+	if (!sample->period)
-+		return 0;
-+
- 	return tool->sample(tool, event, sample, sid->evsel, machine);
- }
- 
--- 
-2.17.2
-
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
