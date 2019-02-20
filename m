@@ -2,97 +2,133 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B54C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:59:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 270D8C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:00:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E773220880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:59:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550671191;
-	bh=Ud5jdsFYmSg0ZW5/m31OCJLPGcn72YaVm0ChgdxLfuA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=cRhaKo2FCA7yoFOBrNut0PJSU2nAp76IG0CKw+K8/qYdyVBC2N6/6bcbrboCGY4L7
-	 dzQ+eVI0JIwR5+Bu2t41Qvee+H+KjIuk4ZtZ+FM62JrUNQXf2hBLllUOghLIHgZkYd
-	 EA8G4NVlAaqRC7J63UMN5lZbVczxvuu7syaVDaZM=
+	by mail.kernel.org (Postfix) with ESMTP id BA30E20880
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:00:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="oJ1ysyAB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726310AbfBTN7t (ORCPT
+        id S1726382AbfBTOAx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 08:59:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43206 "EHLO mail.kernel.org"
+        Wed, 20 Feb 2019 09:00:53 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:14161 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725822AbfBTN7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 08:59:48 -0500
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 97B922183F;
-        Wed, 20 Feb 2019 13:59:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550671187;
-        bh=Ud5jdsFYmSg0ZW5/m31OCJLPGcn72YaVm0ChgdxLfuA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=E+BuyOCEFRhGhXZyV470muEmYhe5q47bUMt/wF2Gi/QHUvt1f/Mo+U/D91fkrRxqE
-         Jr0A0dMoinHAeFemKJ72cpSwwjytmhlhchJh/hjeSekN0acuit8cHajFvKuBRwpXt5
-         ASt4zIi9ifC0ipzXk/3r9I1D08x6+isaqYC8qExE=
-Received: by mail-lf1-f46.google.com with SMTP id v7so17663170lfd.2;
-        Wed, 20 Feb 2019 05:59:47 -0800 (PST)
-X-Gm-Message-State: AHQUAuZHXSejx/hnLPBC7mARNOOMnCeQ3ogysBZy/fI1xrmQTBlGGJBv
-        UhZ935LXWgEK73l0GdqRR+2lEhSj+pSMeVu9QBE=
-X-Google-Smtp-Source: AHgI3IY+0B2iQKWk2fzKTKhsS0W87BddOqWyWa+1UJI1wXIbSLKWgt6UG1/re8aFf1EkDVQycKchEv0fWqzpwMY/IYE=
-X-Received: by 2002:a19:d83:: with SMTP id 125mr19889468lfn.159.1550671185658;
- Wed, 20 Feb 2019 05:59:45 -0800 (PST)
+        id S1725822AbfBTOAx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 09:00:53 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 444K4y27Bxz9v1sm;
+        Wed, 20 Feb 2019 15:00:50 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=oJ1ysyAB; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id vsIyKQq7uP3j; Wed, 20 Feb 2019 15:00:50 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 444K4y0wDRz9tytY;
+        Wed, 20 Feb 2019 15:00:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1550671250; bh=l2Kfp0ntAhfmzSV1LpY3r8+PYSArHohnOEgSuMVpmA4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=oJ1ysyABl+p02mEI3bIVPajP7S6a2g/5eC0d5JxBoYEY1cTHUPDwYQvF0UTuN43xJ
+         GU1rb55DKciQP5D8kbJokJkMGvbW2/MbisxQPa94h4vIJ6YljJjuHC0bDy2+c4l7tS
+         4zO7BSxQedOlj+mEAecfq2hsPYkb6JLORWfhxR2k=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7C1958B83A;
+        Wed, 20 Feb 2019 15:00:51 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id GhqVACHw-eFX; Wed, 20 Feb 2019 15:00:51 +0100 (CET)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 371C78B812;
+        Wed, 20 Feb 2019 15:00:51 +0100 (CET)
+Subject: Re: [PATCH] powerpc: Move page table dump files in a dedicated
+ subdirectory
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <913780421c7b73d731bbbe04c215e29667f7c938.1550492751.git.christophe.leroy@c-s.fr>
+ <87d0nm7f8l.fsf@concordia.ellerman.id.au>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <0f371616-0ab6-fe96-852a-323159c58572@c-s.fr>
+Date:   Wed, 20 Feb 2019 15:00:49 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-References: <20190219130337.21353-1-stuart@menefy.org>
-In-Reply-To: <20190219130337.21353-1-stuart@menefy.org>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 20 Feb 2019 14:59:34 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPediHZqN3MRMYUaQT_jKyvb_20fxZm8paV1AVysWHScsQ@mail.gmail.com>
-Message-ID: <CAJKOXPediHZqN3MRMYUaQT_jKyvb_20fxZm8paV1AVysWHScsQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] Devicetree updates for Exynos 5260
-To:     Stuart Menefy <stuart.menefy@mathembedded.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <87d0nm7f8l.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Feb 2019 at 14:03, Stuart Menefy
-<stuart.menefy@mathembedded.com> wrote:
->
-> These four patches are stand alone updates for the Exynos 5260 device
-> tree, which do not depend on any other code changes. They either
-> fix issues or add functionality which is already available
-> on other Exynos devices. They were previously posted as version 1
-> of the larger patch series "Resuscitate Exynos 5260 support"
-> https://www.spinics.net/lists/linux-samsung-soc/#65035
-> which was only posted to the samsung-soc mailing list.
->
-> Changes since v1:
-> - Removed from larger patch set for easier review
-> - Applied reviewer comments to patch 2/4 "Add high speed I2C ports
->   for exynos5260"
-> - Expanded patch comments
->
-> Stuart Menefy (4):
->   ARM: dts: exynos: Use bustop PLL as the source for MMC clocks on
->     Exynos5260
->   ARM: dts: exynos: Add high speed I2C ports for exynos5260
->   ARM: dts: exynos: Add interrupts for dedicated EINTs on Exynos5260
->   ARM: dts: exynos: Fix interrupt for shared EINTs on Exynos5260
 
-Thanks for the changes. All look fine to me but it is too late to pick
-them up in this cycle. I will take them after merge window.
 
-Best regards,
-Krzysztof
+Le 20/02/2019 à 14:37, Michael Ellerman a écrit :
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> 
+>> This patch moves the files related to page table dump in a
+>> dedicated subdirectory.
+>>
+>> The purpose is to clean a bit arch/powerpc/mm by regrouping
+>> multiple files handling a dedicated function.
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>>   arch/powerpc/Kconfig.debug                                   |  4 ----
+>>   arch/powerpc/mm/Makefile                                     | 10 +---------
+>>   arch/powerpc/mm/ptdump/Makefile                              |  9 +++++++++
+>>   arch/powerpc/mm/{ => ptdump}/dump_bats.c                     |  0
+>>   arch/powerpc/mm/{ => ptdump}/dump_hashpagetable.c            |  0
+>>   arch/powerpc/mm/{ => ptdump}/dump_linuxpagetables-8xx.c      |  0
+>>   arch/powerpc/mm/{ => ptdump}/dump_linuxpagetables-book3s64.c |  0
+>>   arch/powerpc/mm/{ => ptdump}/dump_linuxpagetables-generic.c  |  0
+>>   arch/powerpc/mm/{ => ptdump}/dump_linuxpagetables.c          |  0
+>>   arch/powerpc/mm/{ => ptdump}/dump_linuxpagetables.h          |  0
+>>   arch/powerpc/mm/{ => ptdump}/dump_sr.c                       |  0
+>>   11 files changed, 10 insertions(+), 13 deletions(-)
+>>   create mode 100644 arch/powerpc/mm/ptdump/Makefile
+>>   rename arch/powerpc/mm/{ => ptdump}/dump_bats.c (100%)
+>>   rename arch/powerpc/mm/{ => ptdump}/dump_hashpagetable.c (100%)
+>>   rename arch/powerpc/mm/{ => ptdump}/dump_linuxpagetables-8xx.c (100%)
+>>   rename arch/powerpc/mm/{ => ptdump}/dump_linuxpagetables-book3s64.c (100%)
+>>   rename arch/powerpc/mm/{ => ptdump}/dump_linuxpagetables-generic.c (100%)
+>>   rename arch/powerpc/mm/{ => ptdump}/dump_linuxpagetables.c (100%)
+>>   rename arch/powerpc/mm/{ => ptdump}/dump_linuxpagetables.h (100%)
+>>   rename arch/powerpc/mm/{ => ptdump}/dump_sr.c (100%)
+> 
+> I'd like to shorten the file names as well, now that they're namespaced
+> in the ptdump directory, how about:
+> 
+>   arch/powerpc/Kconfig.debug                                             |  4 ----
+>   arch/powerpc/mm/Makefile                                               | 10 +---------
+>   arch/powerpc/mm/{dump_linuxpagetables-8xx.c => ptdump/8xx.c}           |  2 +-
+>   arch/powerpc/mm/ptdump/Makefile                                        |  9 +++++++++
+>   arch/powerpc/mm/{dump_bats.c => ptdump/bats.c}                         |  0
+>   arch/powerpc/mm/{dump_linuxpagetables-book3s64.c => ptdump/book3s64.c} |  2 +-
+>   arch/powerpc/mm/{dump_hashpagetable.c => ptdump/hashpagetable.c}       |  0
+>   arch/powerpc/mm/{dump_linuxpagetables.c => ptdump/ptdump.c}            |  2 +-
+>   arch/powerpc/mm/{dump_linuxpagetables.h => ptdump/ptdump.h}            |  0
+>   arch/powerpc/mm/{dump_sr.c => ptdump/segment_regs.c}                   |  0
+>   arch/powerpc/mm/{dump_linuxpagetables-generic.c => ptdump/shared.c}    |  2 +-
+
+Yes good idea. Do you want a v2 or will you do it ?
+
+Christophe
+
+> 
+> 
+> cheers
+> 
