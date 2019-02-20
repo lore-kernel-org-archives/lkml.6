@@ -2,221 +2,171 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC0B6C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:51:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8782C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:51:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CA4F20C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:51:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6D3121848
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:51:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GjRfl25Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728021AbfBTMvT convert rfc822-to-8bit (ORCPT
+        id S1728127AbfBTMvs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 07:51:19 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41272 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727879AbfBTMvT (ORCPT
+        Wed, 20 Feb 2019 07:51:48 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:43525 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727954AbfBTMvr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 07:51:19 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1KCjHY0119166
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 07:51:18 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qs6etaaqx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 07:51:17 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
-        Wed, 20 Feb 2019 12:51:15 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 20 Feb 2019 12:51:12 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1KCpA8r48562428
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 20 Feb 2019 12:51:10 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 817C542041;
-        Wed, 20 Feb 2019 12:51:10 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2503142045;
-        Wed, 20 Feb 2019 12:51:10 +0000 (GMT)
-Received: from oc2783563651 (unknown [9.152.98.235])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 20 Feb 2019 12:51:10 +0000 (GMT)
-Date:   Wed, 20 Feb 2019 13:51:08 +0100
-From:   Halil Pasic <pasic@linux.ibm.com>
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     Pierre Morel <pmorel@linux.ibm.com>,
-        Tony Krowiak <akrowiak@linux.ibm.com>, borntraeger@de.ibm.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        frankja@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, freude@linux.ibm.com
-Subject: Re: [PATCH v2 1/1] s390: vfio_ap: link the vfio_ap devices to the
- vfio_ap bus subsystem
-In-Reply-To: <20190220102731.4fca4f91.cohuck@redhat.com>
-References: <1550513328-12646-1-git-send-email-pmorel@linux.ibm.com>
-        <1550513328-12646-2-git-send-email-pmorel@linux.ibm.com>
-        <8e6853ba-12ed-a4f3-1263-0e15f715b644@linux.ibm.com>
-        <6cc5b478-4678-9a82-b902-cc9aed22becf@linux.ibm.com>
-        <20190220102731.4fca4f91.cohuck@redhat.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+        Wed, 20 Feb 2019 07:51:47 -0500
+Received: by mail-pl1-f196.google.com with SMTP id m10so2528423plt.10
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 04:51:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jOha2KzOEG9V/5MhHyFHoO8NfVaaMb6gXtQiy42AI/0=;
+        b=GjRfl25YkgcRLEXe2itWYLfzPzTxs08hcR2Qmw44KjntlvEoAwIwp81DJAniCTc2H4
+         SGaGwFBPZNYJumyF7PNb77CtPzGyzc7ighyw9svK/z6zTlU7mQt0+34TIYmnlA+Tz7pe
+         R4GUI6A65GhV4ClBuye6S71XRYq3VElnJdPWIc4R5Lfelous94NShkjsmESscPBGJGFl
+         tUJqn4WvEGsOnxn/vXnd+YRQYlvqBDzU9eU/WDrhg9SxmPv+3wOIW54edCZHxZfC7eTN
+         iViF5SvBsDRbwyPCpD0mw6ArwPnvuOg0zVyO7pwKwWlGfcvsppj9ljS2Ga/6e87iwG3b
+         D5QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jOha2KzOEG9V/5MhHyFHoO8NfVaaMb6gXtQiy42AI/0=;
+        b=gxBzI6i7bK8HOaz8X7h0Y/w/CfyCNA5AOFkem32yO3XY0jh4XPmEBeE9Cg9kbOI6Y/
+         Sl+lhqDO1tc6h88XNLzyzq1xD8h2Ib59DIWksZ+1D5Q76zRiYstVpRKxWmYtzpJhMQKg
+         VdMZKHALu6qIwOsGsP2zg2B4cnshSGBBMTYZRgc3Gr5zTRpv75UgyAckMZo3W96N2fbT
+         TrL1+i6G4OplzdvBwXVUbqwYODL8gasNQ3FpRqEp4FnGYpv4o4KhtaYm97Gnxl8giguI
+         wFsDryRDOWvyyInSOjNgmdpgLCXa4ZUgY1ttNC0d31UWfE6uVYoRa31UyDltvCwbUPS4
+         +X5g==
+X-Gm-Message-State: AHQUAuY5GdaKTRJb8oRGy43Eju0PqZY6up0qo+ab2eaVOdqE1KWNSv/J
+        kcdmdmvDlTBGO1OAIBQ2I387p2Hl89xQ41a6ZpgLNg==
+X-Google-Smtp-Source: AHgI3IbgBiZcT1uJ/i5w0+lv8WT7ZfgAXnH3sWorFq2ayrFGES6yl3f3n35c0/JaXpKBMpIC+JiNPz3lMp/VQioBaho=
+X-Received: by 2002:a17:902:4124:: with SMTP id e33mr36570627pld.236.1550667106551;
+ Wed, 20 Feb 2019 04:51:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 19022012-4275-0000-0000-00000311C378
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022012-4276-0000-0000-0000381FF356
-Message-Id: <20190220135108.49f8f891@oc2783563651>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-20_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902200093
+References: <20190220020251.82039-1-cai@lca.pw>
+In-Reply-To: <20190220020251.82039-1-cai@lca.pw>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Wed, 20 Feb 2019 13:51:35 +0100
+Message-ID: <CAAeHK+wp=UtzoNzcnmnef_uMpEMSeXBgKYOJz7V_tZXs-RK+kQ@mail.gmail.com>
+Subject: Re: [PATCH] slub: fix a crash with SLUB_DEBUG + KASAN_SW_TAGS
+To:     Qian Cai <cai@lca.pw>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Feb 2019 10:27:31 +0100
-Cornelia Huck <cohuck@redhat.com> wrote:
+On Wed, Feb 20, 2019 at 3:03 AM Qian Cai <cai@lca.pw> wrote:
+>
+> In process_slab(), "p = get_freepointer()" could return a tagged
+> pointer, but "addr = page_address()" always return a native pointer. As
+> the result, slab_index() is messed up here,
+>
+> return (p - addr) / s->size;
+>
+> All other callers of slab_index() have the same situation where "addr"
+> is from page_address(), so just need to untag "p".
+>
+>  # cat /sys/kernel/slab/hugetlbfs_inode_cache/alloc_calls
+>
+> [18868.759419] Unable to handle kernel paging request at virtual address 2bff808aa4856d48
+> [18868.767341] Mem abort info:
+> [18868.770133]   ESR = 0x96000007
+> [18868.773187]   Exception class = DABT (current EL), IL = 32 bits
+> [18868.779103]   SET = 0, FnV = 0
+> [18868.782155]   EA = 0, S1PTW = 0
+> [18868.785292] Data abort info:
+> [18868.788170]   ISV = 0, ISS = 0x00000007
+> [18868.792003]   CM = 0, WnR = 0
+> [18868.794973] swapper pgtable: 64k pages, 48-bit VAs, pgdp = 0000000002498338
+> [18868.801932] [2bff808aa4856d48] pgd=00000097fcfd0003, pud=00000097fcfd0003, pmd=00000097fca30003, pte=00e8008b24850712
+> [18868.812597] Internal error: Oops: 96000007 [#1] SMP
+> [18868.835088] CPU: 3 PID: 79210 Comm: read_all Tainted: G             L    5.0.0-rc7+ #84
+> [18868.843087] Hardware name: HPE Apollo 70             /C01_APACHE_MB         , BIOS L50_5.13_1.0.6 07/10/2018
+> [18868.852915] pstate: 00400089 (nzcv daIf +PAN -UAO)
+> [18868.857710] pc : get_map+0x78/0xec
+> [18868.861109] lr : get_map+0xa0/0xec
+> [18868.864505] sp : aeff808989e3f8e0
+> [18868.867816] x29: aeff808989e3f940 x28: ffff800826200000
+> [18868.873128] x27: ffff100012d47000 x26: 9700000000002500
+> [18868.878440] x25: 0000000000000001 x24: 52ff8008200131f8
+> [18868.883753] x23: 52ff8008200130a0 x22: 52ff800820013098
+> [18868.889065] x21: ffff800826200000 x20: ffff100013172ba0
+> [18868.894377] x19: 2bff808a8971bc00 x18: ffff1000148f5538
+> [18868.899690] x17: 000000000000001b x16: 00000000000000ff
+> [18868.905002] x15: ffff1000148f5000 x14: 00000000000000d2
+> [18868.910314] x13: 0000000000000001 x12: 0000000000000000
+> [18868.915626] x11: 0000000020000002 x10: 2bff808aa4856d48
+> [18868.920937] x9 : 0000020000000000 x8 : 68ff80082620ebb0
+> [18868.926249] x7 : 0000000000000000 x6 : ffff1000105da1dc
+> [18868.931561] x5 : 0000000000000000 x4 : 0000000000000000
+> [18868.936872] x3 : 0000000000000010 x2 : 2bff808a8971bc00
+> [18868.942184] x1 : ffff7fe002098800 x0 : ffff80082620ceb0
+> [18868.947499] Process read_all (pid: 79210, stack limit = 0x00000000f65b9361)
+> [18868.954454] Call trace:
+> [18868.956899]  get_map+0x78/0xec
+> [18868.959952]  process_slab+0x7c/0x47c
+> [18868.963526]  list_locations+0xb0/0x3c8
+> [18868.967273]  alloc_calls_show+0x34/0x40
+> [18868.971107]  slab_attr_show+0x34/0x48
+> [18868.974768]  sysfs_kf_seq_show+0x2e4/0x570
+> [18868.978864]  kernfs_seq_show+0x12c/0x1a0
+> [18868.982786]  seq_read+0x48c/0xf84
+> [18868.986099]  kernfs_fop_read+0xd4/0x448
+> [18868.989935]  __vfs_read+0x94/0x5d4
+> [18868.993334]  vfs_read+0xcc/0x194
+> [18868.996560]  ksys_read+0x6c/0xe8
+> [18868.999786]  __arm64_sys_read+0x68/0xb0
+> [18869.003622]  el0_svc_handler+0x230/0x3bc
+> [18869.007544]  el0_svc+0x8/0xc
+> [18869.010428] Code: d3467d2a 9ac92329 8b0a0e6a f9800151 (c85f7d4b)
+> [18869.016742] ---[ end trace a383a9a44ff13176 ]---
+> [18869.021356] Kernel panic - not syncing: Fatal exception
+> [18869.026705] SMP: stopping secondary CPUs
+> [18870.254279] SMP: failed to stop secondary CPUs 1-7,32,40,127
+> [18870.259942] Kernel Offset: disabled
+> [18870.263434] CPU features: 0x002,20000c18
+> [18870.267358] Memory Limit: none
+> [18870.270725] ---[ end Kernel panic - not syncing: Fatal exception ]---
+>
+> Signed-off-by: Qian Cai <cai@lca.pw>
 
-> On Tue, 19 Feb 2019 22:31:17 +0100
-> Pierre Morel <pmorel@linux.ibm.com> wrote:
-> 
-> > On 19/02/2019 19:52, Tony Krowiak wrote:
-> > > On 2/18/19 1:08 PM, Pierre Morel wrote:  
-> > >> Libudev relies on having a subsystem link for non-root devices. To
-> > >> avoid libudev (and potentially other userspace tools) choking on the
-> > >> matrix device let us introduce a vfio_ap bus and with that the vfio_ap
-> > >> bus subsytem, and make the matrix device reside within it.
-> > >>
-> > >> Doing this we need to suppress the forced link from the matrix device to
-> > >> the vfio_ap driver and we suppress the device_type we do not need
-> > >> anymore.
-> > >>
-> > >> Since the associated matrix driver is not the vfio_ap driver any more,
-> > >> we have to change the search for the devices on the vfio_ap driver in
-> > >> the function vfio_ap_verify_queue_reserved.
-> > >>
-> > >> Reported-by: Marc Hartmayer <mhartmay@linux.ibm.com>
-> > >> Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> > >> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> > >> ---
-> > >>   drivers/s390/crypto/vfio_ap_drv.c     | 48 
-> > >> +++++++++++++++++++++++++++++------
-> > >>   drivers/s390/crypto/vfio_ap_ops.c     |  4 +--
-> > >>   drivers/s390/crypto/vfio_ap_private.h |  1 +
-> > >>   3 files changed, 43 insertions(+), 10 deletions(-)
-> > >>
-> > >> diff --git a/drivers/s390/crypto/vfio_ap_drv.c 
-> > >> b/drivers/s390/crypto/vfio_ap_drv.c
-> > >> index 31c6c84..8e45559 100644
-> > >> --- a/drivers/s390/crypto/vfio_ap_drv.c
-> > >> +++ b/drivers/s390/crypto/vfio_ap_drv.c
-> > >> @@ -24,10 +24,6 @@ MODULE_LICENSE("GPL v2");
-> > >>   static struct ap_driver vfio_ap_drv;
-> > >> -static struct device_type vfio_ap_dev_type = {
-> > >> -    .name = VFIO_AP_DEV_TYPE_NAME,
-> > >> -};
-> > >> -
-> > >>   struct ap_matrix_dev *matrix_dev;
-> > >>   /* Only type 10 adapters (CEX4 and later) are supported
-> > >> @@ -62,6 +58,27 @@ static void vfio_ap_matrix_dev_release(struct 
-> > >> device *dev)
-> > >>       kfree(matrix_dev);
-> > >>   }
-> > >> +static int matrix_bus_match(struct device *dev, struct device_driver 
-> > >> *drv)
-> > >> +{
-> > >> +    return 1;  
-> > > 
-> > > I think we should verify the following:
-> > > 
-> > > * dev == matrix_dev->device
-> > > * drv == &matrix_driver
-> > > 
-> > > The model employed is for the matrix device to be a singleton, so I
-> > > think we should verify that the matrix device and driver defined herein
-> > > ought to be the only possible choices for a match. Of course, doing so
-> > > will require some restructuring of this patch.  
-> > 
-> > I think Conny already answered this question.
-> 
-> Not quite :), but I don't think we need any magic in there, as there's
-> only one device and only one driver on that bus. No need to make this
-> more complicated.
-> 
+Reviewed-by: Andrey Konovalov <andreyknvl@google.com>
 
-
-I agree, no need to complicate this any further.
-
-> > 
-> > >   
-> > >> +}
-> > >> +
-> > >> +static struct bus_type matrix_bus = {
-> > >> +    .name = "vfio_ap",
-> > >> +    .match = &matrix_bus_match,
-> > >> +};
-> > >> +
-> > >> +static int matrix_probe(struct device *dev)
-> > >> +{
-> > >> +    return 0;
-> > >> +}
-> > >> +
-> > >> +static struct device_driver matrix_driver = {
-> > >> +    .name = "vfio_ap",  
-> > > 
-> > > This is the same name used for the original device driver. I think
-> > > this driver ought to have a different name to avoid confusion.
-> > > How about vfio_ap_matrix or some other name to differentiate the
-> > > two.  
-> > 
-> > I would like too, but changing this will change the path to the mediated 
-> > device supported type.
-> 
-> Yes, we don't want to change that.
-> 
-
-Nod.
-
-> > 
-> > 
-> > >   
-> > >> +    .bus = &matrix_bus,
-> > >> +    .probe = matrix_probe,  
-> > > 
-> > > I would add:
-> > >      .suppress_bind_attrs = true;
-> > > 
-> > > This will remove the sysfs bind/unbind interfaces. Since there is only
-> > > one matrix device and it's lifecycle is controlled herein, there is no
-> > > sense in allowing a root user to bind/unbind it.
-> > >   
-> > 
-> > OTOH bind/unbind has no impact.
-> > If no one else ask for this I will not change what has already been 
-> > reviewed by Conny and Christian.
-> 
-> As we only have one driver, it does not really make sense anyway.
-> 
-
-I see this as a reason to suppress_bind_attrs. It is much easier than to
-think about what should happen when one unbinds the matrix device from
-the vfio_ap driver on the vfio_ap bus. With the code as is it seems to
-just keep working as if nothing happened.
-And /sys/devices/vfio_ap/matrix/mdev_supported_types/ referencing the
-name of the driver that is already gone sounds a bit weird.
-
-Regards,
-Halil
-
+> ---
+>  mm/slub.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 4a61959e1887..289c22f1b0c4 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -311,7 +311,7 @@ static inline void set_freepointer(struct kmem_cache *s, void *object, void *fp)
+>  /* Determine object index from a given position */
+>  static inline unsigned int slab_index(void *p, struct kmem_cache *s, void *addr)
+>  {
+> -       return (p - addr) / s->size;
+> +       return (kasan_reset_tag(p) - addr) / s->size;
+>  }
+>
+>  static inline unsigned int order_objects(unsigned int order, unsigned int size)
+> --
+> 2.17.2 (Apple Git-113)
+>
