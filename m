@@ -2,71 +2,127 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3FB0C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:24:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A1FC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:26:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A2242086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:24:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B18F92086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:26:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uxp46Zhi"
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="G2WBdU6b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727894AbfBTNYV (ORCPT
+        id S1728132AbfBTN0M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 08:24:21 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:55736 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725869AbfBTNYV (ORCPT
+        Wed, 20 Feb 2019 08:26:12 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36328 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726172AbfBTN0K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 08:24:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=4ocQSy5oqQzner+zXlaSW1R3YCqwknCWGq4qyHzoTQY=; b=uxp46Zhiz+FDkdnp21ZrObAvp
-        XB0GkS1QxT9AatC9D8o0SoF8dy41QHV8uz1/xnoMSCVnC2ti8L5F+vJ78pheCwslpkUG1L4RQ6Qli
-        Cf2raQthQ6Bq3AnDUregsi1OB8ExrcENZp5pTh0Yi9/9FOqoh9p5sCnAqOEPIVx5xvequ9KtAh6Ge
-        ri7UKg1TzPv6F7DoUb81L/xYqmRSalEGAXE78QkjVHfddd/ObKs74cj/ejsROL/J4Jc+ScIux7JYA
-        MoVO0I5RIakgIRwqTUxctvB7WTF371XWxAGJP112kP/cQHefI0f5mPL/9uND+U2UgQTRFY3Xfva86
-        i24kh2/zA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gwRrE-0004Ft-Fo; Wed, 20 Feb 2019 13:24:16 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B84DC20094FD6; Wed, 20 Feb 2019 14:24:13 +0100 (CET)
-Date:   Wed, 20 Feb 2019 14:24:13 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     kan.liang@linux.intel.com, tglx@linutronix.de, acme@kernel.org,
-        mingo@redhat.com, x86@kernel.org, linux-kernel@vger.kernel.org,
-        len.brown@intel.com, namhyung@kernel.org, eranian@google.com,
-        ak@linux.intel.com
-Subject: Re: [PATCH 00/10] perf: Multi-die/package support
-Message-ID: <20190220132413.GH32494@hirez.programming.kicks-ass.net>
-References: <1550606411-5313-1-git-send-email-kan.liang@linux.intel.com>
- <20190220124619.GB25423@krava>
+        Wed, 20 Feb 2019 08:26:10 -0500
+Received: by mail-wm1-f68.google.com with SMTP id j125so6436647wmj.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 05:26:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=1JQam90U+6VOjJbiYx8tejOxAiXSTEoSs7kyr8I+VFw=;
+        b=G2WBdU6bGnmGuvbpVAav4fL6NRioQgwohfgDFrrieMWMGgiT+Jg2vi/v+wWiXYMufa
+         4C1z5B/kF1sYh8GGIpAUWVY3b1agcNyixvWIq+JhskHVIuW7yJ6fnSBNTMd7SACwp6c6
+         D5ym2SUwCzj3JGI1bT2y5ybho+t8WhjNiRbfPTmIkZDcaJJbNUnS8w20ABrrBda45vql
+         bYYzTY2aqeCiQVx2yaPV4BAnsPqAzOIbmJ9/+lqUtx5liYzsWHjmXK9y7gyR6J3AaJW8
+         ujJ9vA/ycJlGuIWTk5meRwRknAxakE24vWEny5SsX+tUF8OK0w/eexPTrtZ9qv5UWABM
+         hRww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=1JQam90U+6VOjJbiYx8tejOxAiXSTEoSs7kyr8I+VFw=;
+        b=R1Tu3zpp0pYzQkSonKDiTSn0Xez+vJ2B4NF2gY+2YYAVgLABdptsH/wVV6dv9gFiSf
+         jpbdwlg4XfbyqAEBIjJ7homNg9ezItA623SIfww6ZnfTv5ITAhGpqxrnFQUiSDU7eTwK
+         PZfXueGZYJtG+k848ixXvRkNfQ4ah+xeVZYiQbX5rShBBoG67S00escjnMiNHbdTvs+R
+         WqmakaGR1FpcgQi7sjsi4FawDYin2U8KnUSM8eXi/raF0INu5nyb9G3RRiE61BNRjZre
+         Oz5+3rv5dI1EFfhFwSL3E3k6NE3ti96ZvKvTYgxKPoV4Yifjn6xeKMHe2xqWg1OfoAHN
+         62pQ==
+X-Gm-Message-State: AHQUAuZRr9sJ0BBGgj4mm09OS4KCiXn0nhfzEY7ryIQGd0Tv7c+Q/fL3
+        8kPe2CU2xXryo+CtW9G4bqQQgQ==
+X-Google-Smtp-Source: AHgI3IbSRhSOCjOsYRy3P9yFqZXDL9xDOkY/2Z80pS6vYHEU364Y1PNIbuHS54Q+XWmcs0PYU/Sing==
+X-Received: by 2002:a7b:c0c3:: with SMTP id s3mr6369747wmh.141.1550669167512;
+        Wed, 20 Feb 2019 05:26:07 -0800 (PST)
+Received: from brauner.io ([81.92.17.155])
+        by smtp.gmail.com with ESMTPSA id j124sm5816696wmb.48.2019.02.20.05.26.04
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 20 Feb 2019 05:26:06 -0800 (PST)
+Date:   Wed, 20 Feb 2019 14:26:02 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     Ian Kent <raven@themaw.net>
+Cc:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        trond.myklebust@hammerspace.com, sfrench@samba.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [RFC PATCH 02/27] containers: Implement containers as kernel
+ objects
+Message-ID: <20190220132600.c5ahsmnoihdrcqeq@brauner.io>
+References: <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
+ <155024685321.21651.1504201877881622756.stgit@warthog.procyon.org.uk>
+ <7923d4aa646fbe4bd71cfb4144f1c96f28cad972.camel@themaw.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190220124619.GB25423@krava>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7923d4aa646fbe4bd71cfb4144f1c96f28cad972.camel@themaw.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 01:46:19PM +0100, Jiri Olsa wrote:
-> On Tue, Feb 19, 2019 at 12:00:01PM -0800, kan.liang@linux.intel.com wrote:
+On Wed, Feb 20, 2019 at 10:46:24AM +0800, Ian Kent wrote:
+> On Fri, 2019-02-15 at 16:07 +0000, David Howells wrote:
+> > Implement a kernel container object such that it contains the following
+> > things:
+> > 
+> >  (1) Namespaces.
+> > 
+> >  (2) A root directory.
+> > 
+> >  (3) A set of processes, including one designated as the 'init' process.
+> 
+> Yeah, I think a name other than init needs to be used for this
+> process.
+> 
+> The problem being that there is no requirement for container
+> process 1 to behave in any way like an "init" process is
+> expected to behave and that leads to confusion (at least
+> it certainly did for me).
 
-> > The code bases on the top of Len's multi-die/package support.
-> > https://lkml.org/lkml/2019/2/18/1534
+If you look at the documentation for pid namespaces(7) you can see that
+the pid 1 inside a pid namespace is expected to behave like an init
+process:
+-  "The  first  process created in a new namespace [...] has  the PID 1,
+   and is the "init" process for the namespace (see init(1))."
+- "[...] child process that is orphaned within the namespace will be
+  reparented to this process rather than init(1) [...]"
+- "If the "init" process of a PID namespace terminates, the kernel
+  terminates all of the processes in the  namespace  via a SIGKILL
+  signal. This behavior reflects the fact that the "init" process is
+  essential for the cor‐ rect operation of a PID namespace."
+- "Only signals for which the "init" process has established a signal
+  handler can be sent to the  "init" process by other members of the
+  PID namespace."
+- "[...] the reboot(2) system call causes a signal to be sent to the
+  namespace "init" process."
 
-> what is based on? I'm getting conflicts when applying
-> on tip or Arnaldo's perf/core
-
-
+This is one of the reasons why all major current container runtimes
+finally after years of failing to realize this run a stub init process
+that mimicks a dumb init. Sure, you get away with not having an init
+that behaves like an init but this is inherently broken or at least
+against the way pid namespaces were designed.
