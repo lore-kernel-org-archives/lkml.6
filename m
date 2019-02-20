@@ -2,127 +2,110 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0911C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 555AEC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:14:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E0732146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:11:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 211052083E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:14:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="DsNtbxUO"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u+q3bcWZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbfBTRLT (ORCPT
+        id S1726137AbfBTROP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 12:11:19 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:43382 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726078AbfBTRLR (ORCPT
+        Wed, 20 Feb 2019 12:14:15 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:38512 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbfBTROP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 12:11:17 -0500
-Received: by mail-ot1-f66.google.com with SMTP id n71so41352214ota.10
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 09:11:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=esoiL0zRtkoIhqgz3+K0ShHM1vB/8CWMDhEUxTj3zO8=;
-        b=DsNtbxUOFXRcfEJV/wQJbgi+JWS95dNFGDJsZ/1pY4dVso9tuVVCjpQ2d6uaaLGJ/s
-         xC6O9wTZJa4JePZGL/fzsZOConbkuiDLz396BNr/G85R5dlagGnJWHMqFgOfb8v4/EUC
-         h2oS5vGE5ZS15vMWDdwmrLoRQVzz4TuqF50YQP+Fun+Wj9J4VOlxWBrDib1Ky0bJP2Tk
-         2QZGpAQJRSUVSN777DDltdhBhxrC7b8rvBqyBuxQ/3xnXUkBzww2aeMTyUtxuyX1IkH7
-         2tBBLXRjEZtYkstTNfwgNlmcFkBJs4sqfvZt9CIh0cqPhvSMEqr8BmcBWoVmpwdDepGb
-         wokg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=esoiL0zRtkoIhqgz3+K0ShHM1vB/8CWMDhEUxTj3zO8=;
-        b=EYUubAFlJ5X92DZVt17xTX7pstHQlLpx1K+nVvzGmHF/zEC1xfKKsfDfWqSA9O2i8q
-         mWxt/VKY0UHO6Ex4is/NDCW16uaaNvoU4tK9gkh7p9TAcNFt2ge2Iyr9d9+tSms7lhxR
-         XTDKsjyLwuN2SWp0Y7yX063E06rnfymisCweJwKZIi1uc4gPiu0QpwfBsB6QqNduEq+3
-         xSdU3XojTNBu+wlRvBTOKhON5msWlpaVZcvT3l3XkULSw/otgKnC0Gb4Ye0aRbODYBjX
-         0BBqGcK9jIYVX+tc5vC14/3qDj+wKwyiUUjpqD37IHQByjV4yPbgworQCCuVv/gxwXRz
-         UHiA==
-X-Gm-Message-State: AHQUAubD3KmaPSbwwCEW01u8E4BOzP/glQlpDAvEIQkG0elWFpwCwuoV
-        CzBczaTPG9xYx6GwpmRakQTxJ1VtzD0KD1H8mPJG9w==
-X-Google-Smtp-Source: AHgI3IaS4np5V2h8jLeUf4cneoR8yS2mouKyycJRlxa5aO3I0yZtK48KSmZn2Am/GHwvXfD87znE2lMG09f2gEnia6Q=
-X-Received: by 2002:a9d:7554:: with SMTP id b20mr20879590otl.32.1550682675815;
- Wed, 20 Feb 2019 09:11:15 -0800 (PST)
+        Wed, 20 Feb 2019 12:14:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ybVo9mGI4HcbmJmi4sYFGwNG8PnToYqv+B//dtrnd0k=; b=u+q3bcWZqoFyyEBH7Jt+zUx2a
+        qvLvjHnUyLm2xx15gFX468kAVrCmBS33zmulu5b4X9MITJCBg2Xq3S4lg1ZUCNMky4sy/Vx+SsjA5
+        HkEdfl91iPqXAUwqgIZP15MKQ69JoGXoACJJdZtt4gmkk163Qd//AbblJZ1iiplZ54NSAxBic7d1t
+        3c7mSVxRc3NrVjDtOao6R9bWhVP/Z3OIBiuLs5HPOBb8f97HZU5PJ5mH6myjadWhTbULEP1eTJMmu
+        uK2trkvhe5r8E73fyu9WxJk6AizWSwvUWNmT+2FmYFVlf0DzaF77nbZomimL2Vtmln7Or4Jb9IX0l
+        jZkAFIv6w==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gwVRm-0005Og-90; Wed, 20 Feb 2019 17:14:14 +0000
+Date:   Wed, 20 Feb 2019 09:14:14 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: xarray reserve/release?
+Message-ID: <20190220171414.GI12668@bombadil.infradead.org>
+References: <20190219235349.GA17351@ziepe.ca>
+ <20190220012609.GC12668@bombadil.infradead.org>
+ <20190220034627.GA564@ziepe.ca>
 MIME-Version: 1.0
-References: <155000668075.348031.9371497273408112600.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <155000668075.348031.9371497273408112600.stgit@dwillia2-desk3.amr.corp.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 20 Feb 2019 09:11:04 -0800
-Message-ID: <CAPcyv4j9uEn9j=Y0Vo3oQJaXo-d-Xf=2-=0ucufhcXWeYOb0Yg@mail.gmail.com>
-Subject: Re: [PATCH 0/7] libnvdimm/pfn: Fix section-alignment padding
-To:     linux-nvdimm <linux-nvdimm@lists.01.org>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        stable <stable@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190220034627.GA564@ziepe.ca>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 1:37 PM Dan Williams <dan.j.williams@intel.com> wrote:
->
-> Lately Linux has encountered platforms that collide Persistent Memory
-> regions between each other, specifically cases where ->start_pad needed
-> to be non-zero. This lead to commit ae86cbfef381 "libnvdimm, pfn: Pad
-> pfn namespaces relative to other regions". That commit allowed
-> namespaces to be mapped with devm_memremap_pages(). However dax
-> operations on those configurations currently fail if attempted within the
-> ->start_pad range because pmem_device->data_offset was still relative to
-> raw resource base not relative to the section aligned resource range
-> mapped by devm_memremap_pages().
->
-> Luckily __bdev_dax_supported() caught these failures and simply disabled
-> dax. However, to fix this situation a non-backwards compatible change
-> needs to be made to the interpretation of the nd_pfn info-block.
-> ->start_pad needs to be accounted in ->map.map_offset (formerly
-> ->data_offset), and ->map.map_base (formerly ->phys_addr) needs to be
-> adjusted to the section aligned resource base used to establish
-> ->map.map formerly (formerly ->virt_addr).
->
-> See patch 7 "libnvdimm/pfn: Fix 'start_pad' implementation" for more
-> details, and the ndctl patch series "Improve support + testing for
-> labels + info-blocks" for the corresponding regression test.
+On Tue, Feb 19, 2019 at 08:46:27PM -0700, Jason Gunthorpe wrote:
+> On Tue, Feb 19, 2019 at 05:26:09PM -0800, Matthew Wilcox wrote:
+> > On Tue, Feb 19, 2019 at 04:53:49PM -0700, Jason Gunthorpe wrote:
+> > > Hey Matt,
+> > > 
+> > > Did you intend that xa_release doesn't work on allocating arrays:
+> > 
+> > That surprises me.  I'll take a look in the morning.
+> 
+> I think the issue is that this:
+> 
+> static inline void xa_release(struct xarray *xa, unsigned long index)
+> {
+> 	xa_cmpxchg(xa, index, NULL, NULL, 0);
+> 
+> relies on the NULL actually being xas_store(NULL), but cmpxchg
+> transforms it into xas_store(XA_ZERO_ENTRY) when allocating..
 
-Hello valued reviewers, can I plead for a sanity check of at least
-"libnvdimm/pfn: Introduce super-block minimum version requirements"
-and "libnvdimm/pfn: Fix 'start_pad' implementation"? In particular
-Jeff / Johannes this has end user / distro impact in that users may
-lose access to namespaces that are upgraded to v1.3 info-blocks and
-then boot an old kernel. I did not see a way around that sharp edge.
+Yes, you're right.
 
-> ---
->
-> Dan Williams (7):
->       libnvdimm/pfn: Account for PAGE_SIZE > info-block-size in nd_pfn_init()
->       libnvdimm/pmem: Honor force_raw for legacy pmem regions
->       dax: Check the end of the block-device capacity with dax_direct_access()
->       libnvdimm/pfn: Introduce super-block minimum version requirements
->       libnvdimm/pfn: Remove dax_label_reserve
->       libnvdimm/pfn: Introduce 'struct pfn_map_info'
->       libnvdimm/pfn: Fix 'start_pad' implementation
->
->
->  drivers/dax/pmem.c              |    9 +-
->  drivers/dax/super.c             |   39 ++++++--
->  drivers/nvdimm/namespace_devs.c |    4 +
->  drivers/nvdimm/nd.h             |   15 +++
->  drivers/nvdimm/pfn.h            |    4 +
->  drivers/nvdimm/pfn_devs.c       |  181 ++++++++++++++++++++++++++++-----------
->  drivers/nvdimm/pmem.c           |  111 +++++++++++-------------
->  drivers/nvdimm/pmem.h           |   12 ---
->  tools/testing/nvdimm/pmem-dax.c |   15 ++-
->  9 files changed, 244 insertions(+), 146 deletions(-)
+> So xa_reserve(), xa_release() and xa_cmpxchg() all do the same thing
+> for allocating arrays.
+> 
+> Perhaps this:
+> 
+> void __xa_release(struct xarray *xa, unsigned long index)
+> {
+> 	XA_STATE(xas, xa, index);
+> 	void *curr;
+> 
+> 	curr = xas_load(&xas);
+> 	if (curr == XA_ZERO_ENTRY)
+> 		xas_store(&xas, NULL);
+> }
+> 
+> ?
+
+I decided to instead remove the magic from xa_cmpxchg().  I used
+to prohibit any internal entry being passed to the regular API, but
+I recently changed that with 76b4e5299565 ("XArray: Permit storing
+2-byte-aligned pointers").  Now that we can pass XA_ZERO_ENTRY, I
+think this all makes much more sense.
+
+> Also, I wonder if xa_reserve() is better written as as
+> 
+>        xa_cmpxchg(xa, index, NULL, XA_ZERO_ENTRY)
+> 
+> Bit clearer what is going on..
+
+Yes, I agree.  I've pushed a couple of new commits to
+http://git.infradead.org/users/willy/linux-dax.git/shortlog/refs/heads/xarray
+
+which should fix your problem, and implement this optimisation.
+Thanks for the report!
