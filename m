@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4DE7C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:34:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADEA0C4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:34:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71EB020700
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:34:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75A8E20700
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 10:34:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="O8paX0Oy"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="JbO5IoLH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727573AbfBTKeo (ORCPT
+        id S1727598AbfBTKes (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 05:34:44 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37425 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727556AbfBTKem (ORCPT
+        Wed, 20 Feb 2019 05:34:48 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:34014 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727556AbfBTKep (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 05:34:42 -0500
-Received: by mail-pf1-f196.google.com with SMTP id s22so11724600pfh.4
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 02:34:41 -0800 (PST)
+        Wed, 20 Feb 2019 05:34:45 -0500
+Received: by mail-pl1-f195.google.com with SMTP id d15so4871554plr.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 02:34:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=broadcom.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0RveQRD9URzWd4qjbJayYZASyjdndqpp7pmrxR1r4B0=;
-        b=O8paX0Oy89p+wpeogteGveW8tF0Wgxu2T4uMkzdc8f2Bixri/DtiRkahXo+6sYdIBm
-         jWtJ5bo5wGJ/pfUITaAxBR+2fzUGC/GFvNb9zmRv9YyxFwURsz03o/nB2WEyfZ/2TMQ1
-         rvfXW+LZCqbKivU9drkRhiiNwTnffRsVBI624=
+        bh=+u7d9XYBQNeSXVdel6GJuhH8wUXXfIM6H4iGo0fZ/ak=;
+        b=JbO5IoLHdiHtdsWfamBh7Tvxqe0XwvEvppak4WN9PRe+d9TqLvsaudzy1PTBrQEmPm
+         ihqMOzjkuG07qK1Po7//nKilbRqgxFElENokKJWp8IfQzmxf4fr3RKoU0+i33PgZtR8K
+         IuZJnVDRvuBVl2T91zVn1Zly3i8mmFEuiBm5M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=0RveQRD9URzWd4qjbJayYZASyjdndqpp7pmrxR1r4B0=;
-        b=XdibjiIA/2+Yutg6M8TkYmE6KyqRuloENcm16kaBBRtWPzE/aPrva5ixI3xXPa1cPz
-         sxKVsjsmzGdya5QCtGVc8s8V3W+cp/hntBr5fHVijhIk3BtbRj7Cng330DrA+tTS63q4
-         Qc0aRaH0SfYyPaTRl8jW2G74URz1embIUZRpK2utFND5TLJLEHkh35qwjJgaa916d+6B
-         Q0BGsYomQf3vxDMu9UWMSpOZb5Mz6aL4h4f6XVm49ibM0tRIsHKXw/c/f/2qkSAc7so1
-         aOvxgIcAtGzRO7cERAgwSJKBUiRq0M3zY48/SFHGnKYTtgfszJKgL8WNjju1peW8Sdot
-         8mLg==
-X-Gm-Message-State: AHQUAub1n0UgTfhJSTEdgS7BIaPDf69JM00qBcqPaSQZL1Jy9+JakUIQ
-        bh7blrnZCVvQNBXQyXcW0gfBwQ==
-X-Google-Smtp-Source: AHgI3IYe9FeUgw0k6eNlpjyAvGfZIkgFIJksedSm+5RK5X3wxUFvvL9Bgt3it4ffnOcwCSRBQhPYIQ==
-X-Received: by 2002:a62:1382:: with SMTP id 2mr30058237pft.157.1550658881150;
-        Wed, 20 Feb 2019 02:34:41 -0800 (PST)
+        bh=+u7d9XYBQNeSXVdel6GJuhH8wUXXfIM6H4iGo0fZ/ak=;
+        b=WcJ6IOc/kEdx/xorK83eWYmx8cEWfsfRTgm/vW6CD+m5WKq1VifhqTKGasPT5HJbO2
+         YPyZmezBfDBNKY2d6xjICmRex82fsWKHorzS1ow/gUCRhrvPx+Yx+6mWp+NWIiMPtgWh
+         DdNenarm3wEYG1j+ro5XxzG1fuvDzCgKZXp92mmad9hUegisNKiDEzX3IW9+R2iCSlgd
+         zJfJP5yOVzcwKwzqlPfbHFOe5PvrzB5kHhXZT3pLXTFbGNbK8NiR8HWpRE5txlUADUqm
+         ml0M5uS6BabQI8+TcKihb6WvMqAaPQn49+BLxPRePcpVQ4NRKEns9E+SM1rRkPrntB1M
+         krIw==
+X-Gm-Message-State: AHQUAuaXsynld3INmHb1SU2QRb1LpQmVWPajuaarf1UDCUK/riK9f9dB
+        o/2+lG7NUgxcViMKEHWUq0bv7GRV8VM=
+X-Google-Smtp-Source: AHgI3IYnkllIu0k9VReVP2lyD0vtx6DGRQCPAXBNnhytZ6vSFBfd5rPVscCr1KaPjjocDjFfNdxOAg==
+X-Received: by 2002:a17:902:f64:: with SMTP id 91mr35960517ply.132.1550658884685;
+        Wed, 20 Feb 2019 02:34:44 -0800 (PST)
 Received: from mannams-OptiPlex-7010.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id i71sm57426796pfi.170.2019.02.20.02.34.38
+        by smtp.gmail.com with ESMTPSA id i71sm57426796pfi.170.2019.02.20.02.34.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 20 Feb 2019 02:34:40 -0800 (PST)
+        Wed, 20 Feb 2019 02:34:43 -0800 (PST)
 From:   Srinath Mannam <srinath.mannam@broadcom.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -61,9 +61,9 @@ Cc:     Tejun Heo <tj@kernel.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         Srinath Mannam <srinath.mannam@broadcom.com>
-Subject: [PATCH v4 2/3] phy: sr-usb: Add Stingray USB PHY driver
-Date:   Wed, 20 Feb 2019 16:04:01 +0530
-Message-Id: <1550658842-19167-3-git-send-email-srinath.mannam@broadcom.com>
+Subject: [PATCH v4 3/3] arm64: dts: Add USB DT nodes for Stingray SoC
+Date:   Wed, 20 Feb 2019 16:04:02 +0530
+Message-Id: <1550658842-19167-4-git-send-email-srinath.mannam@broadcom.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1550658842-19167-1-git-send-email-srinath.mannam@broadcom.com>
 References: <1550658842-19167-1-git-send-email-srinath.mannam@broadcom.com>
@@ -72,431 +72,148 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-USB PHY driver supports two versions of stingray USB PHYs
- - Version 1 is a combo PHY contains one SS and one HS PHYs.
- - Version 2 is a single HS PHY.
+Add DT nodes for
+  - Two xHCI host controllers
+  - Two BDC Broadcom USB device controller
+  - Five USB PHY controllers
 
-These two PHY versons support both Generic xHCI host controller driver
-and BDC Broadcom device controller driver.
+[xHCI0]      [BDC0]            [xHCI1]            [BDC1]
+   |           |                  |                 |
+  ---------------               -----------------------
+   |           |                 |         |         |
+[SS-PHY0]   [HS-PHY0]        [SS-PHY1] [HS-PHY2] [HS-PHY1]
+
+[SS-PHY0/HS-PHY0] and [SS-PHY1/HS-PHY1] are combo PHYs has one SS and
+one HS PHYs. [HS-PHY2] is a single HS PHY.
+
+xHCI use SS-PHY to detect SS devices and HS-PHY to detect HS/FS/LS
+devices. BDC use SS-PHY in SS mode and HS-PHY in HS mode.
+
+xHCI0 port1 is SS-PHY0, port2 is HS-PHY0.
+xHCI1 port1 is SS-PHY1, port2 is HS-PHY2 and port3 is HS-PHY1.
 
 Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
 Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 Reviewed-by: Scott Branden <scott.branden@broadcom.com>
 ---
- drivers/phy/broadcom/Kconfig          |  11 +
- drivers/phy/broadcom/Makefile         |   1 +
- drivers/phy/broadcom/phy-bcm-sr-usb.c | 371 ++++++++++++++++++++++++++++++++++
- 3 files changed, 383 insertions(+)
- create mode 100644 drivers/phy/broadcom/phy-bcm-sr-usb.c
+ .../boot/dts/broadcom/stingray/stingray-usb.dtsi   | 95 ++++++++++++++++++++++
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi |  1 +
+ 2 files changed, 96 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi
 
-diff --git a/drivers/phy/broadcom/Kconfig b/drivers/phy/broadcom/Kconfig
-index aa917a6..f30f481 100644
---- a/drivers/phy/broadcom/Kconfig
-+++ b/drivers/phy/broadcom/Kconfig
-@@ -10,6 +10,17 @@ config PHY_CYGNUS_PCIE
- 	  Enable this to support the Broadcom Cygnus PCIe PHY.
- 	  If unsure, say N.
- 
-+config PHY_BCM_SR_USB
-+	tristate "Broadcom Stingray USB PHY driver"
-+	depends on OF && (ARCH_BCM_IPROC || COMPILE_TEST)
-+	select GENERIC_PHY
-+	default ARCH_BCM_IPROC
-+	help
-+	  Enable this to support the Broadcom Stingray USB PHY
-+	  driver. It supports all versions of Superspeed and
-+	  Highspeed PHYs.
-+	  If unsure, say N.
-+
- config BCM_KONA_USB2_PHY
- 	tristate "Broadcom Kona USB2 PHY Driver"
- 	depends on HAS_IOMEM
-diff --git a/drivers/phy/broadcom/Makefile b/drivers/phy/broadcom/Makefile
-index 0f60184..f453c7d 100644
---- a/drivers/phy/broadcom/Makefile
-+++ b/drivers/phy/broadcom/Makefile
-@@ -11,3 +11,4 @@ obj-$(CONFIG_PHY_BRCM_USB)		+= phy-brcm-usb-dvr.o
- phy-brcm-usb-dvr-objs := phy-brcm-usb.o phy-brcm-usb-init.o
- 
- obj-$(CONFIG_PHY_BCM_SR_PCIE)		+= phy-bcm-sr-pcie.o
-+obj-$(CONFIG_PHY_BCM_SR_USB)		+= phy-bcm-sr-usb.o
-diff --git a/drivers/phy/broadcom/phy-bcm-sr-usb.c b/drivers/phy/broadcom/phy-bcm-sr-usb.c
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi
 new file mode 100644
-index 0000000..3b70d28
+index 0000000..c0748ee
 --- /dev/null
-+++ b/drivers/phy/broadcom/phy-bcm-sr-usb.c
-@@ -0,0 +1,371 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray-usb.dtsi
+@@ -0,0 +1,95 @@
++// SPDX-License-Identifier: (GPL-2.0 or BSD-3-Clause)
 +/*
-+ * Copyright (C) 2016-2018 Broadcom
++ *Copyright(c) 2018 Broadcom
 + */
-+
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/phy/phy.h>
-+#include <linux/platform_device.h>
-+
-+enum bcm_usb_phy_version {
-+	BCM_SR_USB_COMBO_PHY,
-+	BCM_SR_USB_HS_PHY,
-+};
-+
-+enum bcm_usb_phy_reg {
-+	PLL_NDIV_FRAC,
-+	PLL_NDIV_INT,
-+	PLL_CTRL,
-+	PHY_CTRL,
-+	PHY_PLL_CTRL,
-+};
-+
-+/* USB PHY registers */
-+
-+static const u8 bcm_usb_combo_phy_ss[] = {
-+	[PLL_CTRL]		= 0x18,
-+	[PHY_CTRL]		= 0x14,
-+};
-+
-+static const u8 bcm_usb_combo_phy_hs[] = {
-+	[PLL_NDIV_FRAC]	= 0x04,
-+	[PLL_NDIV_INT]	= 0x08,
-+	[PLL_CTRL]	= 0x0c,
-+	[PHY_CTRL]	= 0x10,
-+};
-+
-+#define HSPLL_NDIV_INT_VAL	0x13
-+#define HSPLL_NDIV_FRAC_VAL	0x1005
-+
-+static const u8 bcm_usb_hs_phy[] = {
-+	[PLL_NDIV_FRAC]	= 0x0,
-+	[PLL_NDIV_INT]	= 0x4,
-+	[PLL_CTRL]	= 0x8,
-+	[PHY_CTRL]	= 0xc,
-+};
-+
-+enum pll_ctrl_bits {
-+	PLL_RESETB,
-+	SSPLL_SUSPEND_EN,
-+	PLL_SEQ_START,
-+	PLL_LOCK,
-+	PLL_PDIV,
-+};
-+
-+static const u8 u3pll_ctrl[] = {
-+	[PLL_RESETB]		= 0,
-+	[SSPLL_SUSPEND_EN]	= 1,
-+	[PLL_SEQ_START]		= 2,
-+	[PLL_LOCK]		= 3,
-+};
-+
-+#define HSPLL_PDIV_MASK		0xF
-+#define HSPLL_PDIV_VAL		0x1
-+
-+static const u8 u2pll_ctrl[] = {
-+	[PLL_PDIV]	= 1,
-+	[PLL_RESETB]	= 5,
-+	[PLL_LOCK]	= 6,
-+};
-+
-+enum bcm_usb_phy_ctrl_bits {
-+	CORERDY,
-+	AFE_LDO_PWRDWNB,
-+	AFE_PLL_PWRDWNB,
-+	AFE_BG_PWRDWNB,
-+	PHY_ISO,
-+	PHY_RESETB,
-+	PHY_PCTL,
-+};
-+
-+#define PHY_PCTL_MASK	0xffff
-+/*
-+ * 0x0806 of PCTL_VAL has below bits set
-+ * BIT-8 : refclk divider 1
-+ * BIT-3:2: device mode; mode is not effect
-+ * BIT-1: soft reset active low
-+ */
-+#define HSPHY_PCTL_VAL	0x0806
-+#define SSPHY_PCTL_VAL	0x0006
-+
-+static const u8 u3phy_ctrl[] = {
-+	[PHY_RESETB]	= 1,
-+	[PHY_PCTL]	= 2,
-+};
-+
-+static const u8 u2phy_ctrl[] = {
-+	[CORERDY]		= 0,
-+	[AFE_LDO_PWRDWNB]	= 1,
-+	[AFE_PLL_PWRDWNB]	= 2,
-+	[AFE_BG_PWRDWNB]	= 3,
-+	[PHY_ISO]		= 4,
-+	[PHY_RESETB]		= 5,
-+	[PHY_PCTL]		= 6,
-+};
-+
-+struct bcm_usb_phy_cfg {
-+	uint32_t type;
-+	uint32_t version;
-+	void __iomem *regs;
-+	struct phy *phy;
-+	const u8 *offset;
-+};
-+
-+#define PLL_LOCK_RETRY_COUNT	1000
-+
-+enum bcm_usb_phy_type {
-+	USB_HS_PHY,
-+	USB_SS_PHY,
-+};
-+
-+static inline void bcm_usb_reg32_clrbits(void __iomem *addr, uint32_t clear)
-+{
-+	writel(readl(addr) & ~clear, addr);
-+}
-+
-+static inline void bcm_usb_reg32_setbits(void __iomem *addr, uint32_t set)
-+{
-+	writel(readl(addr) | set, addr);
-+}
-+
-+static int bcm_usb_pll_lock_check(void __iomem *addr, u32 bit)
-+{
-+	int retry;
-+	u32 rd_data;
-+
-+	retry = PLL_LOCK_RETRY_COUNT;
-+	do {
-+		rd_data = readl(addr);
-+		if (rd_data & bit)
-+			return 0;
-+		udelay(1);
-+	} while (--retry > 0);
-+
-+	pr_err("%s: FAIL\n", __func__);
-+	return -ETIMEDOUT;
-+}
-+
-+static int bcm_usb_ss_phy_init(struct bcm_usb_phy_cfg *phy_cfg)
-+{
-+	int ret = 0;
-+	void __iomem *regs = phy_cfg->regs;
-+	const u8 *offset;
-+	u32 rd_data;
-+
-+	offset = phy_cfg->offset;
-+
-+	/* Set pctl with mode and soft reset */
-+	rd_data = readl(regs + offset[PHY_CTRL]);
-+	rd_data &= ~(PHY_PCTL_MASK << u3phy_ctrl[PHY_PCTL]);
-+	rd_data |= (SSPHY_PCTL_VAL << u3phy_ctrl[PHY_PCTL]);
-+	writel(rd_data, regs + offset[PHY_CTRL]);
-+
-+	bcm_usb_reg32_clrbits(regs + offset[PLL_CTRL],
-+			      BIT(u3pll_ctrl[SSPLL_SUSPEND_EN]));
-+	bcm_usb_reg32_setbits(regs + offset[PLL_CTRL],
-+			      BIT(u3pll_ctrl[PLL_SEQ_START]));
-+	bcm_usb_reg32_setbits(regs + offset[PLL_CTRL],
-+			      BIT(u3pll_ctrl[PLL_RESETB]));
-+
-+	/* Maximum timeout for PLL reset done */
-+	msleep(30);
-+
-+	ret = bcm_usb_pll_lock_check(regs + offset[PLL_CTRL],
-+				     BIT(u3pll_ctrl[PLL_LOCK]));
-+
-+	return ret;
-+}
-+
-+static int bcm_usb_hs_phy_init(struct bcm_usb_phy_cfg *phy_cfg)
-+{
-+	int ret = 0;
-+	void __iomem *regs = phy_cfg->regs;
-+	const u8 *offset;
-+	u32 rd_data;
-+
-+	offset = phy_cfg->offset;
-+
-+	writel(HSPLL_NDIV_INT_VAL, regs + offset[PLL_NDIV_INT]);
-+	writel(HSPLL_NDIV_FRAC_VAL, regs + offset[PLL_NDIV_FRAC]);
-+
-+	rd_data = readl(regs + offset[PLL_CTRL]);
-+	rd_data &= ~(HSPLL_PDIV_MASK << u2pll_ctrl[PLL_PDIV]);
-+	rd_data |= (HSPLL_PDIV_VAL << u2pll_ctrl[PLL_PDIV]);
-+	writel(rd_data, regs + offset[PLL_CTRL]);
-+
-+	/* Set Core Ready high */
-+	bcm_usb_reg32_setbits(regs + offset[PHY_CTRL],
-+			      BIT(u2phy_ctrl[CORERDY]));
-+
-+	/* Maximum timeout for Core Ready done */
-+	msleep(30);
-+
-+	bcm_usb_reg32_setbits(regs + offset[PLL_CTRL],
-+			      BIT(u2pll_ctrl[PLL_RESETB]));
-+	bcm_usb_reg32_setbits(regs + offset[PHY_CTRL],
-+			      BIT(u2phy_ctrl[PHY_RESETB]));
-+
-+
-+	rd_data = readl(regs + offset[PHY_CTRL]);
-+	rd_data &= ~(PHY_PCTL_MASK << u2phy_ctrl[PHY_PCTL]);
-+	rd_data |= (HSPHY_PCTL_VAL << u2phy_ctrl[PHY_PCTL]);
-+	writel(rd_data, regs + offset[PHY_CTRL]);
-+
-+	/* Maximum timeout for PLL reset done */
-+	msleep(30);
-+
-+	ret = bcm_usb_pll_lock_check(regs + offset[PLL_CTRL],
-+				     BIT(u2pll_ctrl[PLL_LOCK]));
-+
-+	return ret;
-+}
-+
-+static int bcm_usb_phy_reset(struct phy *phy)
-+{
-+	struct bcm_usb_phy_cfg *phy_cfg = phy_get_drvdata(phy);
-+	void __iomem *regs = phy_cfg->regs;
-+	const u8 *offset;
-+
-+	offset = phy_cfg->offset;
-+
-+	if (phy_cfg->type == USB_HS_PHY) {
-+		bcm_usb_reg32_clrbits(regs + offset[PHY_CTRL],
-+				      BIT(u2phy_ctrl[CORERDY]));
-+		bcm_usb_reg32_setbits(regs + offset[PHY_CTRL],
-+				      BIT(u2phy_ctrl[CORERDY]));
-+	}
-+
-+	return 0;
-+}
-+
-+static int bcm_usb_phy_init(struct phy *phy)
-+{
-+	struct bcm_usb_phy_cfg *phy_cfg = phy_get_drvdata(phy);
-+	int ret = -EINVAL;
-+
-+	if (phy_cfg->type == USB_SS_PHY)
-+		ret = bcm_usb_ss_phy_init(phy_cfg);
-+	else if (phy_cfg->type == USB_HS_PHY)
-+		ret = bcm_usb_hs_phy_init(phy_cfg);
-+
-+	return ret;
-+}
-+
-+static struct phy_ops sr_phy_ops = {
-+	.init		= bcm_usb_phy_init,
-+	.reset		= bcm_usb_phy_reset,
-+	.owner		= THIS_MODULE,
-+};
-+
-+static int bcm_usb_phy_create(struct device *dev, struct device_node *node,
-+			     void __iomem *regs, uint32_t version)
-+{
-+	struct bcm_usb_phy_cfg *phy_cfg;
-+
-+	phy_cfg = devm_kzalloc(dev, sizeof(struct bcm_usb_phy_cfg), GFP_KERNEL);
-+	if (!phy_cfg)
-+		return -ENOMEM;
-+
-+	phy_cfg->regs = regs;
-+	phy_cfg->version = version;
-+
-+	if (phy_cfg->version == BCM_SR_USB_COMBO_PHY) {
-+		unsigned int id;
-+
-+		if (of_property_read_u32(node, "reg", &id)) {
-+			dev_err(dev, "missing reg property in node %s\n",
-+				node->name);
-+			return -EINVAL;
-+		}
-+
-+		if (id == 0) {
-+			phy_cfg->offset = bcm_usb_combo_phy_hs;
-+			phy_cfg->type = USB_HS_PHY;
-+		} else if (id == 1) {
-+			phy_cfg->offset = bcm_usb_combo_phy_ss;
-+			phy_cfg->type = USB_SS_PHY;
-+		} else {
-+			return -ENODEV;
-+		}
-+	} else if (phy_cfg->version == BCM_SR_USB_HS_PHY) {
-+		phy_cfg->offset = bcm_usb_hs_phy;
-+		phy_cfg->type = USB_HS_PHY;
-+	}
-+
-+	phy_cfg->phy = devm_phy_create(dev, node, &sr_phy_ops);
-+	if (IS_ERR(phy_cfg->phy))
-+		return PTR_ERR(phy_cfg->phy);
-+
-+	phy_set_drvdata(phy_cfg->phy, phy_cfg);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id bcm_usb_phy_of_match[] = {
-+	{
-+		.compatible = "brcm,sr-usb-combo-phy",
-+		.data = (void *)BCM_SR_USB_COMBO_PHY,
-+	},
-+	{
-+		.compatible = "brcm,sr-usb-hs-phy",
-+		.data = (void *)BCM_SR_USB_HS_PHY,
-+	},
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(of, bcm_usb_phy_of_match);
-+
-+static int bcm_usb_phy_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *dn = dev->of_node, *child;
-+	const struct of_device_id *of_id;
-+	struct resource *res;
-+	void __iomem *regs;
-+	int ret;
-+	enum bcm_usb_phy_version version;
-+	struct phy_provider *phy_provider;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	regs = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(regs))
-+		return PTR_ERR(regs);
-+
-+	of_id = of_match_node(bcm_usb_phy_of_match, dn);
-+	if (of_id)
-+		version = (enum bcm_usb_phy_version)of_id->data;
-+	else
-+		return -ENODEV;
-+
-+	if (of_get_child_count(dn) == 0) {
-+		ret = bcm_usb_phy_create(dev, dn, regs, version);
-+		if (ret)
-+			return ret;
-+	} else {
-+		for_each_available_child_of_node(dn, child) {
-+			ret = bcm_usb_phy_create(dev, child, regs, version);
-+			if (ret) {
-+				of_node_put(child);
-+				return ret;
-+			}
-+		}
-+	}
-+	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-+
-+	return PTR_ERR_OR_ZERO(phy_provider);
-+}
-+
-+static struct platform_driver bcm_usb_phy_driver = {
-+	.driver = {
-+		.name = "phy-bcm-sr-usb",
-+		.of_match_table = bcm_usb_phy_of_match,
-+	},
-+	.probe = bcm_usb_phy_probe,
-+};
-+module_platform_driver(bcm_usb_phy_driver);
-+
-+MODULE_AUTHOR("Broadcom");
-+MODULE_DESCRIPTION("Broadcom stingray USB Phy driver");
-+MODULE_LICENSE("GPL v2");
++	usb {
++		compatible = "simple-bus";
++		dma-ranges;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x0 0x68500000 0x00400000>;
++
++		usbphy0: usb-phy@0 {
++			compatible = "brcm,sr-usb-combo-phy";
++			reg = <0x00000000 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++
++			usb0_phy0: phy@0 {
++				reg = <0>;
++				#phy-cells = <0>;
++			};
++			usb0_phy1: phy@1 {
++				reg = <1>;
++				#phy-cells = <0>;
++			};
++
++		};
++
++		xhci0: usb@1000 {
++			compatible = "generic-xhci";
++			reg = <0x00001000 0x1000>;
++			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
++			phys = <&usb0_phy1>, <&usb0_phy0>;
++			phy-names = "phy0", "phy1";
++			dma-coherent;
++			status = "disabled";
++		};
++
++		bdc0: usb@2000 {
++			compatible = "brcm,bdc-v0.16";
++			reg = <0x00002000 0x1000>;
++			interrupts = <GIC_SPI 259 IRQ_TYPE_LEVEL_HIGH>;
++			phys = <&usb0_phy1>, <&usb0_phy0>;
++			phy-names = "phy0", "phy1";
++			dma-coherent;
++			status = "disabled";
++		};
++
++		usbphy1: usb-phy@10000 {
++			compatible = "brcm,sr-usb-combo-phy";
++			reg = <0x00010000 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++
++			usb1_phy0: phy@0 {
++				reg = <0>;
++				#phy-cells = <0>;
++			};
++			usb1_phy1: phy@1 {
++				reg = <1>;
++				#phy-cells = <0>;
++			};
++		};
++
++		usbphy2: usb-phy@20000 {
++			compatible = "brcm,sr-usb-hs-phy";
++			reg = <0x00020000 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			#phy-cells = <0>;
++			status = "disabled";
++		};
++
++		xhci1: usb@11000 {
++			compatible = "generic-xhci";
++			reg = <0x00011000 0x1000>;
++			interrupts = <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
++			phys = <&usb1_phy1>, <&usbphy2>, <&usb1_phy0>;
++			phy-names = "phy0", "phy1", "phy2";
++			dma-coherent;
++			status = "disabled";
++		};
++
++		bdc1: usb@21000 {
++			compatible = "brcm,bdc-v0.16";
++			reg = <0x00021000 0x1000>;
++			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
++			phys = <&usbphy2>;
++			phy-names = "phy0";
++			dma-coherent;
++			status = "disabled";
++		};
++	};
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index cfeaa85..21dbb12 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -287,6 +287,7 @@
+ 	#include "stingray-fs4.dtsi"
+ 	#include "stingray-sata.dtsi"
+ 	#include "stingray-pcie.dtsi"
++	#include "stingray-usb.dtsi"
+ 
+ 	hsls {
+ 		compatible = "simple-bus";
 -- 
 2.7.4
 
