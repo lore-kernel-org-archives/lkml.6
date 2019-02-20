@@ -2,152 +2,111 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C171EC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E46C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:45:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8935D2146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:42:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D2442183F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:45:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="c9V5t7rr"
+	dkim=pass (2048-bit key) header.d=resnulli-us.20150623.gappssmtp.com header.i=@resnulli-us.20150623.gappssmtp.com header.b="elh6EbWY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbfBTImW (ORCPT
+        id S1726371AbfBTIpr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 03:42:22 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:9849 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725885AbfBTImW (ORCPT
+        Wed, 20 Feb 2019 03:45:47 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44583 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725961AbfBTIpr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 03:42:22 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c6d12ec0000>; Wed, 20 Feb 2019 00:42:20 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 20 Feb 2019 00:42:21 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 20 Feb 2019 00:42:21 -0800
-Received: from [10.19.225.182] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 20 Feb
- 2019 08:42:19 +0000
-Subject: Re: [PATCH v7 0/3] Fixes for Tegra soctherm
-To:     Zhang Rui <rui.zhang@intel.com>, <daniel.lezcano@linaro.org>,
-        <edubezval@gmail.com>
-CC:     <thierry.reding@gmail.com>, <linux-tegra@vger.kernel.org>,
-        <srikars@nvidia.com>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-References: <1546510369-28491-1-git-send-email-wni@nvidia.com>
- <28d197f9-9b72-78ad-0769-7514d329b3c4@nvidia.com>
- <1c0af72c-b8d5-9b2d-7bc1-86a2ae85c819@nvidia.com>
- <df2493f3-4bbd-65d1-1205-073a30729a89@nvidia.com>
- <1550628841.3372.1.camel@intel.com>
-From:   Wei Ni <wni@nvidia.com>
-Message-ID: <99723bba-61f9-ae2e-b3c0-408e021b2a97@nvidia.com>
-Date:   Wed, 20 Feb 2019 16:42:16 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 20 Feb 2019 03:45:47 -0500
+Received: by mail-wr1-f67.google.com with SMTP id w2so10368977wrt.11
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 00:45:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nmrK6pHyAp3hQBbeF0u9w1vlK8e/A6MyHfzojf4oy6w=;
+        b=elh6EbWYhoI3xngSLeyYCIhVU5V0jktsdmFA2wHVOT5dY2RBp/mYyA11Mj86PO+TlU
+         H1tOOkb9EQea/NtySkcRvDjOUy8jiFzURrfXWzhuZJIMo68sNHjJ6esd2mLachvWQXXr
+         zjmH8Kaq8IsUn8QNYgAYkuIX1a+FD0mP9CEphMA1UXyBmUpjdl12rF54KS6lxNVXBCEN
+         d8KWl04CnweygryRmhDEx+ZoiduQ0PuLfTfkttzIbAX103UbFc/6K3NlefeczZVszIdc
+         YaEdPlVGr4s+8ioN/7EjHnILnelhAjNp8HDUU7QmGk7uC/ey5fdzAM7yI8qUqGuOgfv/
+         DfMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nmrK6pHyAp3hQBbeF0u9w1vlK8e/A6MyHfzojf4oy6w=;
+        b=a25TrTjLFLJyuw7fiOwBeQ4bCvWSuvarXjj1JSjb0JIiX9LtpQ+h1EjLFtPKwoKVs9
+         4BzwTsZhUxvVGHqovJLfNUB6v9Pfk4Evct3LiPSrIUI6Ihs2xcGZPgECJmDVoD57fD3a
+         KCbslhNkyYfuQVXairtnyNQ5SaUUUt8BMojJGbzqSpwH1au3dLx8M9NXnwReBcaooO0q
+         RDbCHrMNRmz7z6AtY5Q72Od29QuY+AXeXeyp8w0OdWAFzOvrb4cAwhYeK6iOVPajzTC7
+         1nhiD1XHhdqOlr+ftExizaX4j4Qx7pyo+LH9tcrnn460I3vemRSJj/LFJKgvZZ3ISXQw
+         O77Q==
+X-Gm-Message-State: AHQUAuZYZrkwdhZ0BuqhnEHu2KGNgVepN4lc5j/AHQvAAR/oL8/Xqmh5
+        Y7sGAN3svQLaSFalqWK0Tz+iOg==
+X-Google-Smtp-Source: AHgI3IZ8guFEpBPDpvdVin8XQowVVuNSNMsHQgQjiy47uicnTxXLmDhdX7hLxHtySZbgr6rhuDoP2A==
+X-Received: by 2002:adf:c704:: with SMTP id k4mr24986743wrg.142.1550652345626;
+        Wed, 20 Feb 2019 00:45:45 -0800 (PST)
+Received: from localhost (ip-213-220-234-21.net.upcbroadband.cz. [213.220.234.21])
+        by smtp.gmail.com with ESMTPSA id f134sm6497222wme.31.2019.02.20.00.45.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Feb 2019 00:45:45 -0800 (PST)
+Date:   Wed, 20 Feb 2019 09:36:11 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     David Miller <davem@davemloft.net>
+Cc:     vkoul@kernel.org, sfr@canb.auug.org.au, netdev@vger.kernel.org,
+        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andrew@lunn.ch
+Subject: Re: linux-next: Fixes tag needs some work in the net-next tree
+Message-ID: <20190220083611.GJ3080@nanopsycho>
+References: <20190220093136.73779781@canb.auug.org.au>
+ <20190220044055.GD21884@vkoul-mobl>
+ <20190219.224813.723564128666927693.davem@davemloft.net>
 MIME-Version: 1.0
-In-Reply-To: <1550628841.3372.1.camel@intel.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1550652140; bh=RFgq633Qr2gPzNvG7eZsC6l6s3krJNswHsXUUuLkHXM=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=c9V5t7rr6JP2Zbb/XkXHMXoxFUtCTaJQ98p3DM99KBlah7lWIBE0xKM2L3dc8Xu/a
-         /pZmT0G2KS/xZV+0BgHpfKUBF1q0DKLHRrzsBjDaOcUN/1CUcMa83IUOo7tpLYjdos
-         my5IfRGRZXx0rKZwDVIuG5iGCs3aDL6DSyHbMIdj9ZjwyxFbvqPLK5bPG9UybK4T9W
-         wBLx93x/oOdwIyTWtSxvkMvLi0+bTqiVRmKVSzX5m8K9PACBzjwDu+a57yzxUOa/4h
-         xERiqMspbDIuhl4SEfCG0gWg0wCbtCgTqk1A7xQvMOCDU1grE0+q68TbwWQ4gykEO7
-         Y6snMKEO6BVsA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190219.224813.723564128666927693.davem@davemloft.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Wed, Feb 20, 2019 at 07:48:13AM CET, davem@davemloft.net wrote:
+>From: Vinod Koul <vkoul@kernel.org>
+>Date: Wed, 20 Feb 2019 10:10:55 +0530
+>
+>> On 20-02-19, 09:31, Stephen Rothwell wrote:
+>>> Hi all,
+>>> 
+>>> In commit
+>>> 
+>>>   a968b5e9d587 ("net: dsa: qca8k: Enable delay for RGMII_ID mode")
+>>> 
+>>> Fixes tag
+>>> 
+>>>   Fixes: 40269aa9f40a ("net: dsa: qca8k: disable delay for RGMII mode")
+>>> 
+>>> has these problem(s):
+>>> 
+>>>   - Target SHA1 does not exist
+>>> 
+>>> Did you mean:
+>>> 
+>>>   Fixes: 5ecdd77c61c8 ("net: dsa: qca8k: disable delay for RGMII mode")
+>> 
+>> Yes looks like I messed up the commit id.. Not sure why :(
+>> 
+>> Dave would you like to drop this and me sending updated patch or
+>> something else..
+>> 
+>> Sorry about the miss
+>
+>Doesn't work that way, something in my tree is there forever.
 
+Would be good to have some robot checking "Fixes" sanity...
 
-On 20/2/2019 10:14 AM, Zhang Rui wrote:
-> On =E4=B8=80, 2019-02-18 at 15:59 +0800, Wei Ni wrote:
->> Rui,
->> Will you take this serial?
->>
-> it is already in my tree.
-> I missed -rc6, thus I will queue them for 5.1-rc1.
-
-Thanks.
-I updated v8 patch per Daniel Lezcano's comment.
-Please check it.
-
-Wei.
-
->=20
-> thanks,
-> rui
->=20
->> Thanks.
->> Wei.
->>
->> On 21/1/2019 5:17 PM, Wei Ni wrote:
->>>
->>> Does there have any comments?
->>>
->>> Thanks.
->>> Wei.
->>>
->>> On 11/1/2019 10:20 AM, Wei Ni wrote:
->>>>
->>>> Hi Eduardo,
->>>> Do you have any more comments, will you take this serial?
->>>>
->>>> Thanks.
->>>> Wei.
->>>>
->>>> On 3/1/2019 6:12 PM, Wei Ni wrote:
->>>>>
->>>>> This series fixed some issues for Tegra soctherm,
->>>>> and add get_trend().
->>>>>
->>>>> Main changes from v6:
->>>>> 1. Per Eduardo's comment, we can remove the change:
->>>>> "thermal: tegra: parse sensor id before sensor register"
->>>>>
->>>>> Main changes from v5:
->>>>> 1. Move the get_trend() patch https://lkml.org/lkml/2018/11/20/
->>>>> 643
->>>>> into this serial.
->>>>>
->>>>> Main changes from v4:
->>>>> 1. fixed for the parsing sensor id.
->>>>> 2. keep warning for missing critical trips.
->>>>>
->>>>> Main changes from v3:
->>>>> 1. updated codes for parsing sensor id, per Thierry's comments
->>>>>
->>>>> Main changes from v2:
->>>>> 1. add codes to parse sensor id to avoid registration
->>>>> failure.
->>>>>
->>>>> Main changes from v1:
->>>>> 1. Acked by Thierry Reding <treding@nvidia.com> for the patch
->>>>> "thermal: tegra: fix memory allocation".
->>>>> 2. Print out the sensor name when register failed.
->>>>> 2. Remove patch "thermal: tegra: fix coverity defect"
->>>>>
->>>>> Wei Ni (3):
->>>>> =C2=A0 thermal: tegra: remove unnecessary warnings
->>>>> =C2=A0 thermal: tegra: fix memory allocation
->>>>> =C2=A0 thermal: tegra: add get_trend ops
->>>>>
->>>>> =C2=A0drivers/thermal/tegra/soctherm.c | 40
->>>>> +++++++++++++++++++++++++++++++++++++---
->>>>> =C2=A01 file changed, 37 insertions(+), 3 deletions(-)
->>>>>
