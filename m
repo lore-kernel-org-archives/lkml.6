@@ -2,93 +2,86 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80261C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:23:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F038C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:24:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C32F2183F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:23:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550654588;
-	bh=WzvN77styY+QDxWRPE6fM5E9A3Wu/gPUT2Fl8XWptZs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=NsiVz6f07g6iSXu5ihket5sCytsnO7+d/3FdI+QcFTYKFisMMbboA1yXk/ulKK1rE
-	 8D0FiDQ4lV/PS3pXsE8RKm5bOpKo4yhmQtagrPHwMz0dGsIXpABe4AhiSay52qiIfG
-	 Iz3CqKSF9Myiew4PIyUW9YfgS/ZCXLeMHSR/NWRs=
+	by mail.kernel.org (Postfix) with ESMTP id 6A06A2086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:24:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726924AbfBTJXG (ORCPT
+        id S1726783AbfBTJY2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 04:23:06 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42610 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725957AbfBTJXG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 04:23:06 -0500
-Received: by mail-lj1-f194.google.com with SMTP id d14so8988553ljl.9;
-        Wed, 20 Feb 2019 01:23:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3f9RbvU+MyiOonrYpIf5VWXPQgi423S3M5basbahIyw=;
-        b=YsILp6tn1iFmsE2cLyJe1kaZIGlef9YJ7oohNzs60ieJb7F0+SbJV0ZLNT+LQX8c02
-         P4TSkeidW+MwUPpSuvVc+7cjrMbg9kiOxoyy7gMCHpe4/pt8574uIIvHg6ufUtMuS4hi
-         SAm6A5JbS3I6rXHLvPF7zu7Pm0PT6yhHiiMeLOqJo3PCYIcqni6x1wgAtsKh9CazeoHg
-         +Zhe9wlNxtwrUtd/73pmQFG0XO1jddQSCqfB22ySwRAbWGTlFaEHZJbLXYmK/j/h5gZd
-         4zIySg1jzBowdJ+8slCpKP4KVb3BlwTWM9PClZ/kwm7t8TmIUyU+sgJpn1vMkSS3q/eC
-         zmgQ==
-X-Gm-Message-State: AHQUAubNFrnfdfdUdbDc+xgZn2EpzFflhkmjHT346Ng+1k4ijTLoz7FJ
-        5/Fo6EnAP3Ex39Pdh0XrTes=
-X-Google-Smtp-Source: AHgI3IYAvSLnJrWlbBvHumfRBWKMZUPsQnnn8aRFxpw1V2BxaW9W/RbpopJj6Sqa+QOyw2btlOV1HA==
-X-Received: by 2002:a2e:2d11:: with SMTP id t17-v6mr19999563ljt.159.1550654583634;
-        Wed, 20 Feb 2019 01:23:03 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id l72sm5282904lfg.75.2019.02.20.01.23.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Feb 2019 01:23:02 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gwO5p-0003jE-0K; Wed, 20 Feb 2019 10:23:05 +0100
-Date:   Wed, 20 Feb 2019 10:23:04 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Karoly Pados <pados@pados.hu>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Loic Poulain <loic.poulain@linaro.org>
-Subject: Re: [PATCH v2] USB: serial: cp210x: Fix GPIO in autosuspend
-Message-ID: <20190220092304.GG4072@localhost>
-References: <20190217175901.3986-1-pados@pados.hu>
+        Wed, 20 Feb 2019 04:24:28 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38424 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725816AbfBTJY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 04:24:28 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 030B6AFBB;
+        Wed, 20 Feb 2019 09:24:27 +0000 (UTC)
+Date:   Wed, 20 Feb 2019 10:24:25 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 9/9] vsprintf: Avoid confusion between invalid address
+ and value
+Message-ID: <20190220092425.zgwbvbskpd6zss7r@pathway.suse.cz>
+References: <20190208152310.29531-1-pmladek@suse.com>
+ <20190208152310.29531-10-pmladek@suse.com>
+ <20190219030300.GA640@jagdpanzerIV>
+ <CAHp75Vckf_aJqpK75-7xmN-u3aVs8nUrAOWiRzSLP5Gh3uHUEQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190217175901.3986-1-pados@pados.hu>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <CAHp75Vckf_aJqpK75-7xmN-u3aVs8nUrAOWiRzSLP5Gh3uHUEQ@mail.gmail.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 17, 2019 at 06:59:01PM +0100, Karoly Pados wrote:
-> Current GPIO code in cp210x fails to take USB autosuspend into account,
-> making it practically impossible to use GPIOs with autosuspend enabled
-> without user configuration. Fix this like for ftdi_sio in a previous patch.
-> Tested on a CP2102N.
+On Tue 2019-02-19 13:06:17, Andy Shevchenko wrote:
+> On Tue, Feb 19, 2019 at 5:07 AM Sergey Senozhatsky
+> <sergey.senozhatsky.work@gmail.com> wrote:
 > 
-> Signed-off-by: Karoly Pados <pados@pados.hu>
-> ---
-> Changelog:
-> - v2: Restrict new autopm calls to GPIO paths.
->       Always check result of usb_autopm_get.
->       Rebased to current usb_serial upstream.
+> > Suppose, in my driver I want to sprintf() IPv4 address. The longest
+> > possible address is 3 * 4 (%d%d%d) + 3 bytes (dots) + terminating NULL.
+> > E.g. 111.111.111.111
+> >
+> > forcing sprintf() to write "(invalid address)" to a 16-bytes buffer,
+> > but the thing is - strlen("(invalid address)") > 16.
 
-Thanks for the v2. Now applied after removing the unmotivated white
-space change.
+Good catch!
 
-I also added a Fixes and CC-stable tag as this seems annoying enough to
-warrant a backport even if autosuspend was never actually supported.
+> It would print as many characters as buffer allows. In your case above
+> the use of sprintf() is a bit fragile.
 
-Johan
+Heh, I do not see it used anywhere in the code. Only "%pi6" is used
+in a real code and always a safe way.
+
+> But yes, the error messages should not be longer than 8 / 16 bytes
+> depending on 32- or 64-bit build we have.
+
+Well, better be on the safe side. I'll move it at the beginning
+of the patchset.
+
+Best Regards,
+Petr
+
+PS: I am a bit busy with some other things. I'll send v7 later.
+I think that it is a material for 5.2. This patchset would deserve
+some testing in linux-next and we are already too close to
+the 5.1 merge window.
