@@ -2,153 +2,123 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBBB4C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B241BC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7FBC2070B
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:24:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7065C21773
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:28:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ywc+TnJd"
+	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="Llk5tyc0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730200AbfBTCYN (ORCPT
+        id S1729962AbfBTC2L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 21:24:13 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:47061 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726235AbfBTCYM (ORCPT
+        Tue, 19 Feb 2019 21:28:11 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:43066 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726262AbfBTC2K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 21:24:12 -0500
-Received: by mail-ot1-f67.google.com with SMTP id c18so16099594otl.13
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 18:24:12 -0800 (PST)
+        Tue, 19 Feb 2019 21:28:10 -0500
+Received: by mail-qt1-f196.google.com with SMTP id y4so25658038qtc.10
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 18:28:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=p+6hijqYPu402zQKk7EroqYgTIOuvbxJ8rrPDvz84Yc=;
-        b=Ywc+TnJdRagr+5KkSdvVBkKWB31o+8T2vCbJaTJ+o8owoan9WJ4lOyYM565mv2rM+6
-         qjjb/VMayAyKTSB0NejMWlw+D6Rip4Du9dtsIv39aKG2Mw0oxP/zuCjbrJtw5uq7ehw6
-         4E3uHLilip57LxyejMpdq4hzr/VQ6EeLPerXhp8d162qu5PxRMau7Jb0DdruyqGbu0SY
-         YBYKrXiiXlM86X5IvZTUSFP2dm7ZqCWdbNlTGmZbZvqO/N2jqJpH1x5mczF/7diTmZ9h
-         Wvdu6U5K6jlO66E3NbUeBRCf8Pscs5hqm5X/ztJmhJns+3N+kVoJlU1aIBJ+LViFPWnf
-         0gdA==
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=WjA6FPPMzuddTL3efvTcfL0GfcJxPYSY+upQUeouhQg=;
+        b=Llk5tyc0vDgOETbv1OKN48hQwpk8NMlEz2VElPe5mylB6Fl8CLx3NQTUCi3NcwuukN
+         xhmhvtyR5Y4D0Q77CHFm/NISIAKMYFza/1y5K/zZbmv/tT4tYmsQZDgvXKtU0YrJiBZ+
+         ytdtuR+SsG5HySEw9FLO5om/ojuwFXRivVnk3AJfUrjfn57kYSGwR5nuX/tu79IAIlio
+         MhiSmGBP7YoCzjubfxwabX/cpQQuX6MBnimtu+vsAwwD/x2BOM/AqONMTaXlds4m/Ocb
+         bn0vgtoNNQcdrdtqtRvcCH2qSUtgap43HjjPl8M0ueNWh+1HuI/1o93kJBLFOvjRfF3J
+         +b9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=p+6hijqYPu402zQKk7EroqYgTIOuvbxJ8rrPDvz84Yc=;
-        b=feMOwoLdtOV9brPyDn9u4RBcxmL1kMgH0ER6uPxth+KLldzApDrVjCtERLz5CzTvk0
-         iiDcvGJiLR4Knl8mTB+nsGCTgRqo1Aomy5UBJIOF8NGvNRN7r7Bbbc1NURfLV9i/gklD
-         kUGFcEVapUg1q7FxcpLOGOx4DQBPdV5JQsumDuh1tybgLWD24fpzY8s9+3gagIMrs1ih
-         LA7Te1fT78X5SAN+ZABAFzKoq74JmXu1rVIk0RCgmItmiTGtSflfhSypjOIzQO58et8J
-         nI9VzgcwLeFyAN01S2uPkvpQGUoMXtknn24OCA3NjJEP0RGXepaY3tWbbVzgYJEg8xHv
-         2lQA==
-X-Gm-Message-State: AHQUAub44RiC2BDHlbOCLNoaKbLvLCqW9gpoxllbUqp1tZlI1//JT4Ot
-        v3DJofQLt/mNCSLaFPr0pKlAasPVcyo9guX5sQtRtw==
-X-Google-Smtp-Source: AHgI3IaI608LbAYup3kGIO3U00pPOGrg5ms7H0H32JPTzxjWvUxBPgSKFQAjWLixoQFLDbRoQsqGhbDN9acMU1ksSgQ=
-X-Received: by 2002:aca:c6d5:: with SMTP id w204mr4531258oif.137.1550629451771;
- Tue, 19 Feb 2019 18:24:11 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=WjA6FPPMzuddTL3efvTcfL0GfcJxPYSY+upQUeouhQg=;
+        b=qLnHe3xvUV/QRHzLHC+95307nGXaWMBEQ6emEurqaWTjcfWVRyks72BgSX9x6nN/SY
+         HIrIS6wRDTG+m3rYlJsUkRByHi544HV24lC5tzH50MiqAiMbJEEpdCt6Fkt+OiRm374P
+         mVXIqDYOkoBIvBuqNW8sdaFXUfBrreMw1XNdPOoWGAInWSLfyC01u/CQat7/5LxQ6eI/
+         b+bbDOkIBkbNXajGxXy0J8B3jmhLM5IqJHmEMXxd9GZRmBy7RqlZLgzZE7MqyHKs7doN
+         RKrgHDyKFzuqiSUr/z7kG2gBvVUfQP1a/k/GCzd1Pj3KyXhiIbibM+GG+4MR39Od4+MU
+         A2Fw==
+X-Gm-Message-State: AHQUAubC4APS27kakdrZRRvBRl4TbxA70WF5JkxFQzvZNXny71pXHF8M
+        +b5B7AeRgPf8yGFI7H5oEnz+5Q==
+X-Google-Smtp-Source: AHgI3Ia3Y84XzEJp/3oJyTHG47gqFx1mvlPsWZzNVEGvLt1X5DpPHDW9TsHrNOxsSrmEPiVJYaK3dQ==
+X-Received: by 2002:ac8:554d:: with SMTP id o13mr25535448qtr.105.1550629689288;
+        Tue, 19 Feb 2019 18:28:09 -0800 (PST)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id o135sm9899294qka.47.2019.02.19.18.28.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Feb 2019 18:28:09 -0800 (PST)
+Date:   Tue, 19 Feb 2019 18:27:59 -0800
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Michal Kubecek <mkubecek@suse.cz>
+Cc:     netdev@vger.kernel.org, David Miller <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>, Jiri Pirko <jiri@resnulli.us>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH net-next v3 05/21] ethtool: netlink bitset handling
+Message-ID: <20190219182759.0abf08ae@cakuba.netronome.com>
+In-Reply-To: <5f70eb8055a26f60f2282d7c1d193619a96c40a1.1550513384.git.mkubecek@suse.cz>
+References: <cover.1550513384.git.mkubecek@suse.cz>
+        <5f70eb8055a26f60f2282d7c1d193619a96c40a1.1550513384.git.mkubecek@suse.cz>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-References: <20190214213729.21702-1-brendanhiggins@google.com>
- <20190214213729.21702-16-brendanhiggins@google.com> <cda7c8db-a6d0-6a93-5c33-9ccf32dfd29a@gmail.com>
-In-Reply-To: <cda7c8db-a6d0-6a93-5c33-9ccf32dfd29a@gmail.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Tue, 19 Feb 2019 18:24:00 -0800
-Message-ID: <CAFd5g44OYSEnX4+d6S-j8mR8=7u8mHjgU10Zy_BPbed0u+56ew@mail.gmail.com>
-Subject: Re: [RFC v4 15/17] of: unittest: migrate tests to run on KUnit
-To:     Frank Rowand <frowand.list@gmail.com>
-Cc:     Kees Cook <keescook@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>, shuah@kernel.org,
-        Rob Herring <robh@kernel.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Joe Perches <joe@perches.com>, brakmo@fb.com,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-um@lists.infradead.org, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Knut Omang <knut.omang@oracle.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        amir73il@gmail.com, dan.carpenter@oracle.com, wfg@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 4:24 PM Frank Rowand <frowand.list@gmail.com> wrote:
->
-> On 2/14/19 1:37 PM, Brendan Higgins wrote:
-> > Migrate tests without any cleanup, or modifying test logic in anyway to
-> > run under KUnit using the KUnit expectation and assertion API.
-> >
-> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> > ---
-> >  drivers/of/Kconfig    |    1 +
-> >  drivers/of/unittest.c | 1310 +++++++++++++++++++++--------------------
-> >  2 files changed, 671 insertions(+), 640 deletions(-)
-> >
-> > diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
-> > index ad3fcad4d75b8..f309399deac20 100644
-> > --- a/drivers/of/Kconfig
-> > +++ b/drivers/of/Kconfig
-> > @@ -15,6 +15,7 @@ if OF
-> >  config OF_UNITTEST
-> >       bool "Device Tree runtime unit tests"
-> >       depends on !SPARC
-> > +     depends on KUNIT
-> >       select IRQ_DOMAIN
-> >       select OF_EARLY_FLATTREE
-> >       select OF_RESOLVE
-> > diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
->
-> These comments are from applying the patches to 5.0-rc3.
->
-> The final hunk of this patch fails to apply because it depends upon
->
->    [PATCH v1 0/1] of: unittest: unflatten device tree on UML when testing.
->
+On Mon, 18 Feb 2019 19:21:49 +0100 (CET), Michal Kubecek wrote:
+> +		else if (is_u32)
+> +			bitmap_from_arr32(val, bitmap, nbits);
+> +		else
+> +			bitmap_copy(val, bitmap, nbits);
+> +		nla_for_each_nested(bit_attr, tb[ETHA_BITSET_BITS], rem) {
+> +			*err = ethnl_update_bit(val, mask, nbits, bit_attr,
+> +						is_list, names, legacy, info);
+> +			if (*err < 0)
+> +				goto out_free;
+> +		}
+> +		if (bitmask)
+> +			__bitmap_to_any(bitmask, mask, nbits, is_u32);
+> +	} else {
+> +		unsigned int change_words = DIV_ROUND_UP(change_bits, 32);
+> +
+> +		*err = 0;
+> +		if (change_bits == 0 && tb[ETHA_BITSET_MASK])
+> +			goto out_free;
+> +		*err = -EINVAL;
+> +		if (!tb[ETHA_BITSET_VALUE])
+> +			goto out_free;
 
-Whoops, I probably should have made a note of that in the commit
-description or cover letter, sorry.
+!tb[ETHA_BITSET_BITS] && !tb[ETHA_BITSET_VALUE] is already rejected
+above.
 
-> If I apply that patch then I can apply patches 15 through 17.
->
-> If I apply patches 1 through 14 and boot the uml kernel then the devicetree
-> unittest result is:
->
->   ### dt-test ### FAIL of_unittest_overlay_high_level():2372 overlay_base_root not initialized
->   ### dt-test ### end of unittest - 219 passed, 1 failed
->
-> This is as expected from your previous reports, and is fixed after
-> applying
->
->    [PATCH v1 0/1] of: unittest: unflatten device tree on UML when testing.
->
-> with the devicetree unittest result of:
->
->    ### dt-test ### end of unittest - 224 passed, 0 failed
->
-> After adding patch 15, there are a lot of "unittest internal error" messages.
-
-Yeah, I meant to ask you about that. I thought it was due to a change
-you made, but after further examination, just now, I found it was my
-fault. Sorry for not mentioning that anywhere. I will fix it in v5.
-
-Thanks!
+> +		if (nla_len(tb[ETHA_BITSET_VALUE]) < change_words * sizeof(u32))
+> +			goto out_free;
+> +		if (tb[ETHA_BITSET_MASK] &&
+> +		    nla_len(tb[ETHA_BITSET_MASK]) < change_words * sizeof(u32))
+> +			goto out_free;
+> +
+> +		bitmap_from_arr32(val, nla_data(tb[ETHA_BITSET_VALUE]),
+> +				  change_bits);
+> +		if (tb[ETHA_BITSET_MASK])
+> +			bitmap_from_arr32(mask, nla_data(tb[ETHA_BITSET_MASK]),
+> +					  change_bits);
+> +		else
+> +			bitmap_fill(mask, nbits);
+> +
+> +		if (nbits < change_bits) {
+> +			unsigned int idx = find_next_bit(mask, max_bits, nbits);
+> +
+> +			*err = -EINVAL;
+> +			if (idx < max_bits)
+> +				goto out_free;
+> +		}
