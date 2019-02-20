@@ -2,90 +2,227 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D10C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:04:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D42C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8091420859
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:04:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0071C20859
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 15:05:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726354AbfBTPEu (ORCPT
+        id S1726766AbfBTPFe convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:04:50 -0500
-Received: from mga05.intel.com ([192.55.52.43]:32849 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725822AbfBTPEu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:04:50 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 07:04:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,391,1544515200"; 
-   d="scan'208";a="148394532"
-Received: from vanderss-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.177])
-  by fmsmga001.fm.intel.com with ESMTP; 20 Feb 2019 07:04:46 -0800
-Date:   Wed, 20 Feb 2019 17:04:45 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     jmorris@namei.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: [PATCH] MAINTAINERS: add linux-security-module mailing list to
- TPM drivers
-Message-ID: <20190220150445.GA4794@linux.intel.com>
-References: <20190220035846.6272-1-jsnitsel@redhat.com>
- <20190220070413.GB23027@linux.intel.com>
- <20190220140357.5vbepgmexso3jc6d@cantor>
+        Wed, 20 Feb 2019 10:05:34 -0500
+Received: from poy.remlab.net ([94.23.215.26]:48688 "EHLO
+        ns207790.ip-94-23-215.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725822AbfBTPFe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 10:05:34 -0500
+X-Greylist: delayed 453 seconds by postgrey-1.27 at vger.kernel.org; Wed, 20 Feb 2019 10:05:32 EST
+Received: from basile.remlab.net (dbfyyyyy6f5dmhghlbr-t-3.rev.dnainternet.fi [IPv6:2001:14ba:900:0:1a26:46a3:14c9:bbf])
+        (Authenticated sender: remi)
+        by ns207790.ip-94-23-215.eu (Postfix) with ESMTPSA id BD5435FB77;
+        Wed, 20 Feb 2019 15:57:55 +0100 (CET)
+From:   =?ISO-8859-1?Q?R=E9mi?= Denis-Courmont <remi@remlab.net>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Remi Denis-Courmont <courmisch@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] phonet: fix building with clang
+Date:   Wed, 20 Feb 2019 16:57:52 +0200
+Message-ID: <6656190.X2GkZW0IFN@basile.remlab.net>
+Organization: Remlab
+In-Reply-To: <20190219215359.391543-1-arnd@arndb.de>
+References: <20190219215359.391543-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190220140357.5vbepgmexso3jc6d@cantor>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 07:03:57AM -0700, Jerry Snitselaar wrote:
-> On Wed Feb 20 19, Jarkko Sakkinen wrote:
-> > On Tue, Feb 19, 2019 at 08:58:46PM -0700, Jerry Snitselaar wrote:
-> > > I've seen requests to add linux-security-module to tpm patch
-> > > submissions a couple of times recently, so just add the list
-> > > to MAINTAINERS so get_maintainers.pl will mention it.
-> > > 
-> > > Cc: Peter Huewe <peterhuewe@gmx.de>
-> > > Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> > > Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> > 
-> > I guess James should say something about this.
-> > 
-> > /Jarkko
+Le tiistaina 19. helmikuuta 2019, 23.53.50 EET Arnd Bergmann a écrit :
+> clang warns about overflowing the data[] member in the struct pnpipehdr:
 > 
-> Sorry, I meant to add James as well.
+> net/phonet/pep.c:295:8: warning: array index 4 is past the end of the array
+> (which contains 1 element) [-Warray-bounds] if (hdr->data[4] ==
+> PEP_IND_READY)
+>                             ^         ~
+> include/net/phonet/pep.h:66:3: note: array 'data' declared here
+>                 u8              data[1];
 > 
-> Maybe this isn't needed. Do you only want certain patches
-> being cc'd to linux-security-module? Looking back at
-> recent patches, it looked like it was a general request.
-> If it is, I'll be more likely to remember if get_maintainers.pl
-> brings it up. :)
+> Using a flexible array member at the end of the struct avoids the
+> warning, but since we cannot have a flexible array member inside
+> of the union, each index now has to be moved back by one, which
+> makes it a little uglier.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-I'm all open here. Not sure which practices apply to IMA. I kind of tend
-to dilate to question does it make sense to CC to LSM for two reasons:
+Acked-by: Rémi Denis-Courmont <remi@remlab.net>
 
-1. I think the original reason was that tpmdd mailing list was small.
-Now with the new linux-integrity mailing list up and running there is
-more eyes looking at the code. And more importantly the people are
-subscribed who use TPM for something, like IMA developers.
-2. I don't remember ever reading within the time that I've been
-maintaining even a single comment from anyone that works with LSM's. The
-value of CC'ing there is not very significant, which means that most of
-the time the TPM traffic is just noise on that list.
+> ---
+>  include/net/phonet/pep.h |  5 +++--
+>  net/phonet/pep.c         | 32 ++++++++++++++++----------------
+>  2 files changed, 19 insertions(+), 18 deletions(-)
+> 
+> diff --git a/include/net/phonet/pep.h b/include/net/phonet/pep.h
+> index b669fe6dbc3b..98f31c7ea23d 100644
+> --- a/include/net/phonet/pep.h
+> +++ b/include/net/phonet/pep.h
+> @@ -63,10 +63,11 @@ struct pnpipehdr {
+>  		u8		state_after_reset;	/* reset request */
+>  		u8		error_code;		/* any response */
+>  		u8		pep_type;		/* status indication */
+> -		u8		data[1];
+> +		u8		data0;			/* anything else */
+>  	};
+> +	u8			data[];
+>  };
+> -#define other_pep_type		data[1]
+> +#define other_pep_type		data[0]
+> 
+>  static inline struct pnpipehdr *pnp_hdr(struct sk_buff *skb)
+>  {
+> diff --git a/net/phonet/pep.c b/net/phonet/pep.c
+> index 9fc76b19cd3c..db3473540303 100644
+> --- a/net/phonet/pep.c
+> +++ b/net/phonet/pep.c
+> @@ -132,7 +132,7 @@ static int pep_indicate(struct sock *sk, u8 id, u8 code,
+> ph->utid = 0;
+>  	ph->message_id = id;
+>  	ph->pipe_handle = pn->pipe_handle;
+> -	ph->data[0] = code;
+> +	ph->error_code = code;
+>  	return pn_skb_send(sk, skb, NULL);
+>  }
+> 
+> @@ -153,7 +153,7 @@ static int pipe_handler_request(struct sock *sk, u8 id,
+> u8 code, ph->utid = id; /* whatever */
+>  	ph->message_id = id;
+>  	ph->pipe_handle = pn->pipe_handle;
+> -	ph->data[0] = code;
+> +	ph->error_code = code;
+>  	return pn_skb_send(sk, skb, NULL);
+>  }
+> 
+> @@ -208,7 +208,7 @@ static int pep_ctrlreq_error(struct sock *sk, struct
+> sk_buff *oskb, u8 code, struct pnpipehdr *ph;
+>  	struct sockaddr_pn dst;
+>  	u8 data[4] = {
+> -		oph->data[0], /* PEP type */
+> +		oph->pep_type, /* PEP type */
+>  		code, /* error code, at an unusual offset */
+>  		PAD, PAD,
+>  	};
+> @@ -221,7 +221,7 @@ static int pep_ctrlreq_error(struct sock *sk, struct
+> sk_buff *oskb, u8 code, ph->utid = oph->utid;
+>  	ph->message_id = PNS_PEP_CTRL_RESP;
+>  	ph->pipe_handle = oph->pipe_handle;
+> -	ph->data[0] = oph->data[1]; /* CTRL id */
+> +	ph->data0 = oph->data[0]; /* CTRL id */
+> 
+>  	pn_skb_get_src_sockaddr(oskb, &dst);
+>  	return pn_skb_send(sk, skb, &dst);
+> @@ -272,17 +272,17 @@ static int pipe_rcv_status(struct sock *sk, struct
+> sk_buff *skb) return -EINVAL;
+> 
+>  	hdr = pnp_hdr(skb);
+> -	if (hdr->data[0] != PN_PEP_TYPE_COMMON) {
+> +	if (hdr->pep_type != PN_PEP_TYPE_COMMON) {
+>  		net_dbg_ratelimited("Phonet unknown PEP type: %u\n",
+> -				    (unsigned int)hdr->data[0]);
+> +				    (unsigned int)hdr->pep_type);
+>  		return -EOPNOTSUPP;
+>  	}
+> 
+> -	switch (hdr->data[1]) {
+> +	switch (hdr->data[0]) {
+>  	case PN_PEP_IND_FLOW_CONTROL:
+>  		switch (pn->tx_fc) {
+>  		case PN_LEGACY_FLOW_CONTROL:
+> -			switch (hdr->data[4]) {
+> +			switch (hdr->data[3]) {
+>  			case PEP_IND_BUSY:
+>  				atomic_set(&pn->tx_credits, 0);
+>  				break;
+> @@ -292,7 +292,7 @@ static int pipe_rcv_status(struct sock *sk, struct
+> sk_buff *skb) }
+>  			break;
+>  		case PN_ONE_CREDIT_FLOW_CONTROL:
+> -			if (hdr->data[4] == PEP_IND_READY)
+> +			if (hdr->data[3] == PEP_IND_READY)
+>  				atomic_set(&pn->tx_credits, wake = 1);
+>  			break;
+>  		}
+> @@ -301,12 +301,12 @@ static int pipe_rcv_status(struct sock *sk, struct
+> sk_buff *skb) case PN_PEP_IND_ID_MCFC_GRANT_CREDITS:
+>  		if (pn->tx_fc != PN_MULTI_CREDIT_FLOW_CONTROL)
+>  			break;
+> -		atomic_add(wake = hdr->data[4], &pn->tx_credits);
+> +		atomic_add(wake = hdr->data[3], &pn->tx_credits);
+>  		break;
+> 
+>  	default:
+>  		net_dbg_ratelimited("Phonet unknown PEP indication: %u\n",
+> -				    (unsigned int)hdr->data[1]);
+> +				    (unsigned int)hdr->data[0]);
+>  		return -EOPNOTSUPP;
+>  	}
+>  	if (wake)
+> @@ -318,7 +318,7 @@ static int pipe_rcv_created(struct sock *sk, struct
+> sk_buff *skb) {
+>  	struct pep_sock *pn = pep_sk(sk);
+>  	struct pnpipehdr *hdr = pnp_hdr(skb);
+> -	u8 n_sb = hdr->data[0];
+> +	u8 n_sb = hdr->data0;
+> 
+>  	pn->rx_fc = pn->tx_fc = PN_LEGACY_FLOW_CONTROL;
+>  	__skb_pull(skb, sizeof(*hdr));
+> @@ -506,7 +506,7 @@ static int pep_connresp_rcv(struct sock *sk, struct
+> sk_buff *skb) return -ECONNREFUSED;
+> 
+>  	/* Parse sub-blocks */
+> -	n_sb = hdr->data[4];
+> +	n_sb = hdr->data[3];
+>  	while (n_sb > 0) {
+>  		u8 type, buf[6], len = sizeof(buf);
+>  		const u8 *data = pep_get_sb(skb, &type, &len, buf);
+> @@ -739,7 +739,7 @@ static int pipe_do_remove(struct sock *sk)
+>  	ph->utid = 0;
+>  	ph->message_id = PNS_PIPE_REMOVE_REQ;
+>  	ph->pipe_handle = pn->pipe_handle;
+> -	ph->data[0] = PAD;
+> +	ph->data0 = PAD;
+>  	return pn_skb_send(sk, skb, NULL);
+>  }
+> 
+> @@ -817,7 +817,7 @@ static struct sock *pep_sock_accept(struct sock *sk, int
+> flags, int *errp, peer_type = hdr->other_pep_type << 8;
+> 
+>  	/* Parse sub-blocks (options) */
+> -	n_sb = hdr->data[4];
+> +	n_sb = hdr->data[3];
+>  	while (n_sb > 0) {
+>  		u8 type, buf[1], len = sizeof(buf);
+>  		const u8 *data = pep_get_sb(skb, &type, &len, buf);
+> @@ -1109,7 +1109,7 @@ static int pipe_skb_send(struct sock *sk, struct
+> sk_buff *skb) ph->utid = 0;
+>  	if (pn->aligned) {
+>  		ph->message_id = PNS_PIPE_ALIGNED_DATA;
+> -		ph->data[0] = 0; /* padding */
+> +		ph->data0 = 0; /* padding */
+>  	} else
+>  		ph->message_id = PNS_PIPE_DATA;
+>  	ph->pipe_handle = pn->pipe_handle;
 
-/Jarkko
+
+-- 
+レミ・デニ-クールモン
+http://www.remlab.net/
+
+
+
