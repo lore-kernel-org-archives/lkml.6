@@ -7,64 +7,67 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5FAFC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 00:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5698CC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 00:05:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 788E721738
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 00:05:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E9D421738
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 00:05:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iveaGDog"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ykiv9GsJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730139AbfBTAFm (ORCPT
+        id S1730227AbfBTAF4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 19:05:42 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38857 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730062AbfBTAFk (ORCPT
+        Tue, 19 Feb 2019 19:05:56 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34118 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730129AbfBTAFm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 19:05:40 -0500
-Received: by mail-pl1-f194.google.com with SMTP id e5so11225915plb.5;
-        Tue, 19 Feb 2019 16:05:39 -0800 (PST)
+        Tue, 19 Feb 2019 19:05:42 -0500
+Received: by mail-pl1-f196.google.com with SMTP id d15so4081624plr.1;
+        Tue, 19 Feb 2019 16:05:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=YMJ6Z/OI+JwxOvQ/XgxaTgw9XsPGx3EOUms81JPt9UA=;
-        b=iveaGDogIOgbGfnhozf96pLKX2ZZKTeoy5C6+l/I3uCjGR+qkmQDoSXLK6F3+pSwPB
-         2Y8BOyJLVcEOb2QGUTc2jmE8mL9v99zuYNNo4j2PDT8rj1HSdJl8A+Rvkw+1wTOM4QY4
-         4R0t9ugIHa6fbMUcLUH/tg+JZ47woGure0PxUyld8ZM3UNsI3dKSvxzc0xy9oI9eqjIz
-         mx83Iohq2hAY2dp6apj5QsuuuQnhPNTpFMW4dGvWYKKcT9e/J3D4rpDtqMmQpm2NQoy7
-         FF6CsZk0jVbKvTTA6Otk6H2c8b2nitrI61P98b7Cm3SIfJ+GANdgrM/TgY90fnv59xU+
-         w66w==
+        bh=MCRXi36yVo7k0lloMC2BZbkExKJ5Vx5y+atdUDoFkhY=;
+        b=Ykiv9GsJnsnhTjlDGshLf+G45bzzUpth0L5sUukXrKZ3WEalKzh0nHjUihEEhx8DNl
+         TW29qRu294ijE+xoJsR6OuvdOyBNHjVuhFSfyXj7Ok+edkRTaeMixAzUDvKRC1uBTmvx
+         DUf3OO3SsmFRAL7mGVjog+GFuDrxDH+UJZzp5M7vtohuGR/5Udl2rJ8bF/hPbxvm1iRZ
+         xUspHS32mFO2sSSKekW9nrczvyGNtN3KP9WrtRsa4EbigJUGuYplziZC1+0logaIvgKO
+         rc1EADDQr3q13HWuE3tCLm6LQvVa1iny/ra/ncFJDtizmgcmZYUyE9ZaFhDuekLWUN3g
+         3YIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=YMJ6Z/OI+JwxOvQ/XgxaTgw9XsPGx3EOUms81JPt9UA=;
-        b=j9xlsdFI07V1QGI9KcPxHO7NQXVA31W3VsDkAsKkDN4hE/LPAJ85QmweI6OAjcr94t
-         bV6fdN/xGPPssTmSRn2CFvg2Q2zCtPpNjuEXtqS2oFLcG0ZwM5pR7lx8FYNPx/6yFC+L
-         xYM1Z+YbzsKKUFupXhdBIHKqj3Ec644S76pTJRYeT2hJmc27kBz8BDOGk/LIR+EX2Nv6
-         qmN1/bT8ZWLu4xYCsW4uWaTxYE2U9hFWQJOuDn4ub4rKSiAsmbEXSJm8BYRtq5mWG2qx
-         yzys6kvfEZ9wGQgQmYlyHMoBoesErtYRyeLjU0G7vwDuDmdf0MTGbQgVf2v6THx9RNHc
-         9PWw==
-X-Gm-Message-State: AHQUAubs1NoTGiYItZG/UKuFkmnpW2hk/rcnkm5uhFLBuhDbeEVilyLm
-        cQIv00Mczh5Ob35EJ0xrjIxx8BKt
-X-Google-Smtp-Source: AHgI3IYHzz//jCFUJhXPyHiKH5eiMCkyatxt0LFpOuFJ0DXLcfDJzeCvYQTMHeUtx262coMUB8Xo9g==
-X-Received: by 2002:a17:902:780a:: with SMTP id p10mr34399164pll.54.1550621138398;
-        Tue, 19 Feb 2019 16:05:38 -0800 (PST)
+        bh=MCRXi36yVo7k0lloMC2BZbkExKJ5Vx5y+atdUDoFkhY=;
+        b=oGfmSOyEK5QNuGPH/ROcmyA+ED9DQ8BUE6qba/8wgGpYk9tLNmXTZlrZrR3jghYXc/
+         +S4eI6oEvbo5aawTjjd32XbkpE3uTaIM9Opra2aUpTfOFo19RI8SV90Ewax+INgVZ+lt
+         6bXFcB5PqqI7sed7lQJzNbVKMf9Mep/39iSrn4FEkK7OZELXAc8Wq0wsyAwH5NDfoHHj
+         jvSNjR25azarWt/q2l5M+YDyhfVLV49UlatVH4s/3sC9afp48sX6pKHwDn+YulV169ql
+         uZ79QDIidu49911z+Ffs6lGKasUYyutbeGDLVJc1rlItSAxKFVRdcZu4VSi66wC4hwg1
+         K0lw==
+X-Gm-Message-State: AHQUAubYeQPKxqmTgrrNLI/kcTdaYyw+4RHcC+VAg7D4tQQiuqCYNvvI
+        1owZX/TM8oU2OOpfacNPaEOAQEtJ
+X-Google-Smtp-Source: AHgI3IY21KkUfpPobyxHsy4aHMJoxd4QcUoSQSHna70t4H+Zv+urHcJW0oDEPVFf+4xGNXS4TbyPlQ==
+X-Received: by 2002:a17:902:b60c:: with SMTP id b12mr11826669pls.261.1550621141554;
+        Tue, 19 Feb 2019 16:05:41 -0800 (PST)
 Received: from majic.sklembedded.com (c-73-202-231-77.hsd1.ca.comcast.net. [73.202.231.77])
-        by smtp.googlemail.com with ESMTPSA id f14sm19159083pgv.23.2019.02.19.16.05.37
+        by smtp.googlemail.com with ESMTPSA id f14sm19159083pgv.23.2019.02.19.16.05.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 16:05:37 -0800 (PST)
+        Tue, 19 Feb 2019 16:05:40 -0800 (PST)
 From:   Steve Longerbeam <slongerbeam@gmail.com>
 To:     linux-media@vger.kernel.org
 Cc:     Tim Harvey <tharvey@gateworks.com>,
         Steve Longerbeam <slongerbeam@gmail.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR FREESCALE
-        IMX), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v5 4/7] gpu: ipu-v3: ipu-ic: Add support for Rec.709 encoding
-Date:   Tue, 19 Feb 2019 16:05:18 -0800
-Message-Id: <20190220000521.31130-5-slongerbeam@gmail.com>
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rui Miguel Silva <rmfrfs@gmail.com>,
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v5 6/7] media: imx: Try colorimetry at both sink and source pads
+Date:   Tue, 19 Feb 2019 16:05:20 -0800
+Message-Id: <20190220000521.31130-7-slongerbeam@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190220000521.31130-1-slongerbeam@gmail.com>
 References: <20190220000521.31130-1-slongerbeam@gmail.com>
@@ -73,190 +76,304 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for Rec.709 encoding and inverse encoding.
+The colorimetry parameters need to be tested at both sink and source
+pads. Specifically, for prpencvf, the IC only supports RGB full-range
+quantization at input and output.
 
-The determination of the CSC coefficients based on the input/output
-colorspace parameters are moved to a new function calc_csc_coeffs().
+Fix this by cleaning up imx_media_fill_default_mbus_fields(), renaming
+to imx_media_try_colorimetry(), and call it at both sink and source
+pad try_fmt's. The unrelated check for uninitialized field value is
+moved out to appropriate places in each subdev try_fmt.
 
-Reported-by: Tim Harvey <tharvey@gateworks.com>
 Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
 ---
-Changes in v5:
-- moved API changes to a previous patch.
-- moved CSC coeff calc to new function calc_csc_coeffs().
-Changes in v4:
-- fix compile error.
-Chnges in v3:
-- none.
-Changes in v2:
-- only return "Unsupported YCbCr encoding" error if inf != outf,
-  since if inf == outf, the identity matrix can be used. Reported
-  by Tim Harvey.
----
- drivers/gpu/ipu-v3/ipu-ic.c | 120 ++++++++++++++++++++++++++++--------
- 1 file changed, 94 insertions(+), 26 deletions(-)
+ drivers/staging/media/imx/imx-ic-prp.c      |  6 +-
+ drivers/staging/media/imx/imx-ic-prpencvf.c |  8 +--
+ drivers/staging/media/imx/imx-media-csi.c   | 19 +++---
+ drivers/staging/media/imx/imx-media-utils.c | 68 +++++++++++----------
+ drivers/staging/media/imx/imx-media-vdic.c  |  5 +-
+ drivers/staging/media/imx/imx-media.h       |  5 +-
+ drivers/staging/media/imx/imx7-media-csi.c  |  8 +--
+ 7 files changed, 62 insertions(+), 57 deletions(-)
 
-diff --git a/drivers/gpu/ipu-v3/ipu-ic.c b/drivers/gpu/ipu-v3/ipu-ic.c
-index 02043f23f411..012ea2239e97 100644
---- a/drivers/gpu/ipu-v3/ipu-ic.c
-+++ b/drivers/gpu/ipu-v3/ipu-ic.c
-@@ -214,6 +214,23 @@ static const struct ic_encode_coeff ic_encode_identity = {
- 	.scale = 2,
- };
+diff --git a/drivers/staging/media/imx/imx-ic-prp.c b/drivers/staging/media/imx/imx-ic-prp.c
+index 3d43cdcb4bb9..8010ee706164 100644
+--- a/drivers/staging/media/imx/imx-ic-prp.c
++++ b/drivers/staging/media/imx/imx-ic-prp.c
+@@ -197,8 +197,8 @@ static int prp_set_fmt(struct v4l2_subdev *sd,
+ 			sdformat->format.code = cc->codes[0];
+ 		}
  
-+/*
-+ * REC.709 encoding from RGB full range to YUV full range:
-+ *
-+ * Y =  .2126 * R + .7152 * G + .0722 * B
-+ * U = -.1146 * R - .3854 * G + .5000 * B + 128
-+ * V =  .5000 * R - .4542 * G - .0458 * B + 128
-+ */
-+static const struct ic_encode_coeff ic_encode_rgb2ycbcr_709 = {
-+	.coeff = {
-+		{  54, 183,  19 },
-+		{ 483, 413, 128 },
-+		{ 128, 396, 500 },
-+	},
-+	.offset = { 0, 512, 512 },
-+	.scale = 1,
-+};
-+
- /*
-  * Inverse BT.601 encoding from YUV full range to RGB full range:
-  *
-@@ -237,28 +254,42 @@ static const struct ic_encode_coeff ic_encode_ycbcr2rgb_601 = {
- 	.scale = 2,
- };
- 
--static int init_csc(struct ipu_ic *ic,
--		    const struct ipu_ic_colorspace *in,
--		    const struct ipu_ic_colorspace *out,
--		    int csc_index)
-+/*
-+ * Inverse REC.709 encoding from YUV full range to RGB full range:
-+ *
-+ * R = 1. * Y +      0 * (Cb - 128) + 1.5748 * (Cr - 128)
-+ * G = 1. * Y -  .1873 * (Cb - 128) -  .4681 * (Cr - 128)
-+ * B = 1. * Y + 1.8556 * (Cb - 128) +      0 * (Cr - 128)
-+ *
-+ * equivalently (factoring out the offsets):
-+ *
-+ * R = 1. * Y  +      0 * Cb + 1.5748 * Cr - 201.574
-+ * G = 1. * Y  -  .1873 * Cb -  .4681 * Cr +  83.891
-+ * B = 1. * Y  + 1.8556 * Cb +      0 * Cr - 237.517
-+ */
-+static const struct ic_encode_coeff ic_encode_ycbcr2rgb_709 = {
-+	.coeff = {
-+		{  128,   0, 202 },
-+		{  128, 488, 452 },
-+		{  128, 238,   0 },
-+	},
-+	.offset = { -403, 168, -475 },
-+	.scale = 2,
-+};
-+
-+static int calc_csc_coeffs(struct ipu_ic_priv *priv,
-+			   struct ic_encode_coeff *coeff_out,
-+			   const struct ipu_ic_colorspace *in,
-+			   const struct ipu_ic_colorspace *out)
- {
--	struct ipu_ic_priv *priv = ic->priv;
--	const struct ic_encode_coeff *coeff;
--	u32 __iomem *base;
--	const u16 (*c)[3];
--	const u16 *a;
--	u32 param;
-+	const struct ic_encode_coeff *encode_coeff;
-+	bool inverse_encode;
- 
- 	if (in->colorspace != out->colorspace) {
- 		dev_err(priv->ipu->dev, "Cannot convert colorspaces\n");
- 		return -ENOTSUPP;
+-		imx_media_fill_default_mbus_fields(&sdformat->format, infmt,
+-						   true);
++		if (sdformat->format.field == V4L2_FIELD_ANY)
++			sdformat->format.field = V4L2_FIELD_NONE;
+ 		break;
+ 	case PRP_SRC_PAD_PRPENC:
+ 	case PRP_SRC_PAD_PRPVF:
+@@ -207,6 +207,8 @@ static int prp_set_fmt(struct v4l2_subdev *sd,
+ 		break;
  	}
  
--	if (out->enc != V4L2_YCBCR_ENC_601) {
--		dev_err(priv->ipu->dev, "Only BT.601 encoding supported\n");
--		return -ENOTSUPP;
--	}
--
- 	if ((in->cs == IPUV3_COLORSPACE_YUV &&
- 	     in->quant != V4L2_QUANTIZATION_FULL_RANGE) ||
- 	    (out->cs == IPUV3_COLORSPACE_YUV &&
-@@ -275,26 +306,63 @@ static int init_csc(struct ipu_ic *ic,
- 		return -ENOTSUPP;
- 	}
- 
-+	if (in->cs == out->cs) {
-+		*coeff_out = ic_encode_identity;
++	imx_media_try_colorimetry(&sdformat->format, true);
 +
-+		return 0;
+ 	fmt = __prp_get_fmt(priv, cfg, sdformat->pad, sdformat->which);
+ 	*fmt = sdformat->format;
+ out:
+diff --git a/drivers/staging/media/imx/imx-ic-prpencvf.c b/drivers/staging/media/imx/imx-ic-prpencvf.c
+index 10f2c7684727..b1886a4e362e 100644
+--- a/drivers/staging/media/imx/imx-ic-prpencvf.c
++++ b/drivers/staging/media/imx/imx-ic-prpencvf.c
+@@ -899,8 +899,6 @@ static void prp_try_fmt(struct prp_priv *priv,
+ 		/* propagate colorimetry from sink */
+ 		sdformat->format.colorspace = infmt->colorspace;
+ 		sdformat->format.xfer_func = infmt->xfer_func;
+-		sdformat->format.quantization = infmt->quantization;
+-		sdformat->format.ycbcr_enc = infmt->ycbcr_enc;
+ 	} else {
+ 		v4l_bound_align_image(&sdformat->format.width,
+ 				      MIN_W_SINK, MAX_W_SINK, W_ALIGN_SINK,
+@@ -908,9 +906,11 @@ static void prp_try_fmt(struct prp_priv *priv,
+ 				      MIN_H_SINK, MAX_H_SINK, H_ALIGN_SINK,
+ 				      S_ALIGN);
+ 
+-		imx_media_fill_default_mbus_fields(&sdformat->format, infmt,
+-						   true);
++		if (sdformat->format.field == V4L2_FIELD_ANY)
++			sdformat->format.field = V4L2_FIELD_NONE;
+ 	}
++
++	imx_media_try_colorimetry(&sdformat->format, true);
+ }
+ 
+ static int prp_set_fmt(struct v4l2_subdev *sd,
+diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
+index 3b7517348666..cc3e0086b08a 100644
+--- a/drivers/staging/media/imx/imx-media-csi.c
++++ b/drivers/staging/media/imx/imx-media-csi.c
+@@ -1369,9 +1369,15 @@ static void csi_try_field(struct csi_priv *priv,
+ 	struct v4l2_mbus_framefmt *infmt =
+ 		__csi_get_fmt(priv, cfg, CSI_SINK_PAD, sdformat->which);
+ 
+-	/* no restrictions on sink pad field type */
+-	if (sdformat->pad == CSI_SINK_PAD)
++	/*
++	 * no restrictions on sink pad field type except must
++	 * be initialized.
++	 */
++	if (sdformat->pad == CSI_SINK_PAD) {
++		if (sdformat->format.field == V4L2_FIELD_ANY)
++			sdformat->format.field = V4L2_FIELD_NONE;
+ 		return;
 +	}
+ 
+ 	switch (infmt->field) {
+ 	case V4L2_FIELD_SEQ_TB:
+@@ -1449,8 +1455,6 @@ static void csi_try_fmt(struct csi_priv *priv,
+ 		/* propagate colorimetry from sink */
+ 		sdformat->format.colorspace = infmt->colorspace;
+ 		sdformat->format.xfer_func = infmt->xfer_func;
+-		sdformat->format.quantization = infmt->quantization;
+-		sdformat->format.ycbcr_enc = infmt->ycbcr_enc;
+ 
+ 		break;
+ 	case CSI_SINK_PAD:
+@@ -1470,10 +1474,6 @@ static void csi_try_fmt(struct csi_priv *priv,
+ 
+ 		csi_try_field(priv, cfg, sdformat);
+ 
+-		imx_media_fill_default_mbus_fields(
+-			&sdformat->format, infmt,
+-			priv->active_output_pad == CSI_SRC_PAD_DIRECT);
+-
+ 		/* Reset crop and compose rectangles */
+ 		crop->left = 0;
+ 		crop->top = 0;
+@@ -1489,6 +1489,9 @@ static void csi_try_fmt(struct csi_priv *priv,
+ 
+ 		break;
+ 	}
 +
-+	inverse_encode = (in->cs == IPUV3_COLORSPACE_YUV);
-+
-+	switch (out->enc) {
-+	case V4L2_YCBCR_ENC_601:
-+		encode_coeff = inverse_encode ?
-+			&ic_encode_ycbcr2rgb_601 : &ic_encode_rgb2ycbcr_601;
-+		break;
-+	case V4L2_YCBCR_ENC_709:
-+		encode_coeff = inverse_encode ?
-+			&ic_encode_ycbcr2rgb_709 : &ic_encode_rgb2ycbcr_709;
++	imx_media_try_colorimetry(&sdformat->format,
++			priv->active_output_pad == CSI_SRC_PAD_DIRECT);
+ }
+ 
+ static int csi_set_fmt(struct v4l2_subdev *sd,
+diff --git a/drivers/staging/media/imx/imx-media-utils.c b/drivers/staging/media/imx/imx-media-utils.c
+index 1c63a2765a81..aa7d4be77a7e 100644
+--- a/drivers/staging/media/imx/imx-media-utils.c
++++ b/drivers/staging/media/imx/imx-media-utils.c
+@@ -515,21 +515,19 @@ int imx_media_init_cfg(struct v4l2_subdev *sd,
+ EXPORT_SYMBOL_GPL(imx_media_init_cfg);
+ 
+ /*
+- * Check whether the field and colorimetry parameters in tryfmt are
+- * uninitialized, and if so fill them with the values from fmt,
+- * or if tryfmt->colorspace has been initialized, all the default
+- * colorimetry params can be derived from tryfmt->colorspace.
++ * Default the colorspace in tryfmt to SRGB if set to an unsupported
++ * colorspace or not initialized. Then set the remaining colorimetry
++ * parameters based on the colorspace if they are uninitialized.
+  *
+  * tryfmt->code must be set on entry.
+  *
+  * If this format is destined to be routed through the Image Converter,
+- * quantization and Y`CbCr encoding must be fixed. The IC expects and
+- * produces fixed quantization and Y`CbCr encoding at its input and output
+- * (full range for RGB, limited range for YUV, and V4L2_YCBCR_ENC_601).
++ * quantization and Y`CbCr encoding must be fixed. The IC supports only
++ * full-range quantization for RGB at its input and output, and only
++ * BT.601 Y`CbCr encoding.
+  */
+-void imx_media_fill_default_mbus_fields(struct v4l2_mbus_framefmt *tryfmt,
+-					struct v4l2_mbus_framefmt *fmt,
+-					bool ic_route)
++void imx_media_try_colorimetry(struct v4l2_mbus_framefmt *tryfmt,
++			       bool ic_route)
+ {
+ 	const struct imx_media_pixfmt *cc;
+ 	bool is_rgb = false;
+@@ -537,28 +535,41 @@ void imx_media_fill_default_mbus_fields(struct v4l2_mbus_framefmt *tryfmt,
+ 	cc = imx_media_find_mbus_format(tryfmt->code, CS_SEL_ANY, true);
+ 	if (!cc)
+ 		cc = imx_media_find_ipu_format(tryfmt->code, CS_SEL_ANY);
+-	if (cc && cc->cs != IPUV3_COLORSPACE_YUV)
++	if (cc && cc->cs == IPUV3_COLORSPACE_RGB)
+ 		is_rgb = true;
+ 
+-	/* fill field if necessary */
+-	if (tryfmt->field == V4L2_FIELD_ANY)
+-		tryfmt->field = fmt->field;
++	switch (tryfmt->colorspace) {
++	case V4L2_COLORSPACE_SMPTE170M:
++	case V4L2_COLORSPACE_REC709:
++	case V4L2_COLORSPACE_JPEG:
++	case V4L2_COLORSPACE_SRGB:
++	case V4L2_COLORSPACE_BT2020:
++	case V4L2_COLORSPACE_OPRGB:
++	case V4L2_COLORSPACE_DCI_P3:
++	case V4L2_COLORSPACE_RAW:
 +		break;
 +	default:
-+		dev_err(priv->ipu->dev, "Unsupported YCbCr encoding\n");
-+		return -ENOTSUPP;
++		tryfmt->colorspace = V4L2_COLORSPACE_SRGB;
++		break;
 +	}
 +
-+	*coeff_out = *encode_coeff;
++	if (tryfmt->xfer_func == V4L2_XFER_FUNC_DEFAULT) {
++		tryfmt->xfer_func =
++			V4L2_MAP_XFER_FUNC_DEFAULT(tryfmt->colorspace);
++	}
 +
-+	return 0;
-+}
-+
-+static int init_csc(struct ipu_ic *ic,
-+		    const struct ipu_ic_colorspace *in,
-+		    const struct ipu_ic_colorspace *out,
-+		    int csc_index)
-+{
-+	struct ipu_ic_priv *priv = ic->priv;
-+	struct ic_encode_coeff coeff;
-+	u32 __iomem *base;
-+	const u16 (*c)[3];
-+	const u16 *a;
-+	u32 param;
-+	int ret;
-+
-+	ret = calc_csc_coeffs(priv, &coeff, in, out);
-+	if (ret)
-+		return ret;
-+
- 	base = (u32 __iomem *)
- 		(priv->tpmem_base + ic->reg->tpmem_csc[csc_index]);
++	if (ic_route) {
++		if (is_rgb ||
++		    tryfmt->quantization == V4L2_QUANTIZATION_DEFAULT)
++			tryfmt->quantization = V4L2_QUANTIZATION_FULL_RANGE;
  
--	if (in->cs == out->cs)
--		coeff = &ic_encode_identity;
--	else if (in->cs == IPUV3_COLORSPACE_YUV)
--		coeff = &ic_encode_ycbcr2rgb_601;
--	else
--		coeff = &ic_encode_rgb2ycbcr_601;
+-	/* fill colorimetry if necessary */
+-	if (tryfmt->colorspace == V4L2_COLORSPACE_DEFAULT) {
+-		tryfmt->colorspace = fmt->colorspace;
+-		tryfmt->xfer_func = fmt->xfer_func;
+-		tryfmt->ycbcr_enc = fmt->ycbcr_enc;
+-		tryfmt->quantization = fmt->quantization;
++		tryfmt->ycbcr_enc = V4L2_YCBCR_ENC_601;
+ 	} else {
+-		if (tryfmt->xfer_func == V4L2_XFER_FUNC_DEFAULT) {
+-			tryfmt->xfer_func =
+-				V4L2_MAP_XFER_FUNC_DEFAULT(tryfmt->colorspace);
+-		}
+ 		if (tryfmt->ycbcr_enc == V4L2_YCBCR_ENC_DEFAULT) {
+ 			tryfmt->ycbcr_enc =
+ 				V4L2_MAP_YCBCR_ENC_DEFAULT(tryfmt->colorspace);
+ 		}
++
+ 		if (tryfmt->quantization == V4L2_QUANTIZATION_DEFAULT) {
+ 			tryfmt->quantization =
+ 				V4L2_MAP_QUANTIZATION_DEFAULT(
+@@ -566,15 +577,8 @@ void imx_media_fill_default_mbus_fields(struct v4l2_mbus_framefmt *tryfmt,
+ 					tryfmt->ycbcr_enc);
+ 		}
+ 	}
 -
- 	/* Cast to unsigned */
--	c = (const u16 (*)[3])coeff->coeff;
--	a = (const u16 *)coeff->offset;
-+	c = (const u16 (*)[3])coeff.coeff;
-+	a = (const u16 *)coeff.offset;
+-	if (ic_route) {
+-		tryfmt->quantization = is_rgb ?
+-			V4L2_QUANTIZATION_FULL_RANGE :
+-			V4L2_QUANTIZATION_LIM_RANGE;
+-		tryfmt->ycbcr_enc = V4L2_YCBCR_ENC_601;
+-	}
+ }
+-EXPORT_SYMBOL_GPL(imx_media_fill_default_mbus_fields);
++EXPORT_SYMBOL_GPL(imx_media_try_colorimetry);
  
- 	param = ((a[0] & 0x1f) << 27) | ((c[0][0] & 0x1ff) << 18) |
- 		((c[1][1] & 0x1ff) << 9) | (c[2][2] & 0x1ff);
- 	writel(param, base++);
+ int imx_media_mbus_fmt_to_pix_fmt(struct v4l2_pix_format *pix,
+ 				  struct v4l2_rect *compose,
+diff --git a/drivers/staging/media/imx/imx-media-vdic.c b/drivers/staging/media/imx/imx-media-vdic.c
+index 2808662e2597..a285619afa0f 100644
+--- a/drivers/staging/media/imx/imx-media-vdic.c
++++ b/drivers/staging/media/imx/imx-media-vdic.c
+@@ -615,14 +615,13 @@ static void vdic_try_fmt(struct vdic_priv *priv,
+ 				      &sdformat->format.height,
+ 				      MIN_H, MAX_H_VDIC, H_ALIGN, S_ALIGN);
  
--	param = ((a[0] & 0x1fe0) >> 5) | (coeff->scale << 8) |
--		(coeff->sat << 10);
-+	param = ((a[0] & 0x1fe0) >> 5) | (coeff.scale << 8) |
-+		(coeff.sat << 10);
- 	writel(param, base++);
+-		imx_media_fill_default_mbus_fields(&sdformat->format, infmt,
+-						   true);
+-
+ 		/* input must be interlaced! Choose SEQ_TB if not */
+ 		if (!V4L2_FIELD_HAS_BOTH(sdformat->format.field))
+ 			sdformat->format.field = V4L2_FIELD_SEQ_TB;
+ 		break;
+ 	}
++
++	imx_media_try_colorimetry(&sdformat->format, true);
+ }
  
- 	param = ((a[1] & 0x1f) << 27) | ((c[0][1] & 0x1ff) << 18) |
+ static int vdic_set_fmt(struct v4l2_subdev *sd,
+diff --git a/drivers/staging/media/imx/imx-media.h b/drivers/staging/media/imx/imx-media.h
+index ae964c8d5be1..48c8996d394c 100644
+--- a/drivers/staging/media/imx/imx-media.h
++++ b/drivers/staging/media/imx/imx-media.h
+@@ -176,9 +176,8 @@ int imx_media_init_mbus_fmt(struct v4l2_mbus_framefmt *mbus,
+ 			    const struct imx_media_pixfmt **cc);
+ int imx_media_init_cfg(struct v4l2_subdev *sd,
+ 		       struct v4l2_subdev_pad_config *cfg);
+-void imx_media_fill_default_mbus_fields(struct v4l2_mbus_framefmt *tryfmt,
+-					struct v4l2_mbus_framefmt *fmt,
+-					bool ic_route);
++void imx_media_try_colorimetry(struct v4l2_mbus_framefmt *tryfmt,
++			       bool ic_route);
+ int imx_media_mbus_fmt_to_pix_fmt(struct v4l2_pix_format *pix,
+ 				  struct v4l2_rect *compose,
+ 				  const struct v4l2_mbus_framefmt *mbus,
+diff --git a/drivers/staging/media/imx/imx7-media-csi.c b/drivers/staging/media/imx/imx7-media-csi.c
+index 3fba7c27c0ec..6e626c10a5f1 100644
+--- a/drivers/staging/media/imx/imx7-media-csi.c
++++ b/drivers/staging/media/imx/imx7-media-csi.c
+@@ -1003,8 +1003,6 @@ static int imx7_csi_try_fmt(struct imx7_csi *csi,
+ 
+ 		sdformat->format.colorspace = in_fmt->colorspace;
+ 		sdformat->format.xfer_func = in_fmt->xfer_func;
+-		sdformat->format.quantization = in_fmt->quantization;
+-		sdformat->format.ycbcr_enc = in_fmt->ycbcr_enc;
+ 		break;
+ 	case IMX7_CSI_PAD_SINK:
+ 		*cc = imx_media_find_mbus_format(sdformat->format.code,
+@@ -1015,14 +1013,14 @@ static int imx7_csi_try_fmt(struct imx7_csi *csi,
+ 							 false);
+ 			sdformat->format.code = (*cc)->codes[0];
+ 		}
+-
+-		imx_media_fill_default_mbus_fields(&sdformat->format, in_fmt,
+-						   false);
+ 		break;
+ 	default:
+ 		return -EINVAL;
+ 		break;
+ 	}
++
++	imx_media_try_colorimetry(&sdformat->format, false);
++
+ 	return 0;
+ }
+ 
 -- 
 2.17.1
 
