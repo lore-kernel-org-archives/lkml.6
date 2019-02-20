@@ -3,63 +3,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3995DC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:37:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B116EC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:38:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CE5E20880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:37:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AA3E2086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:38:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727280AbfBTVhc (ORCPT
+        id S1727315AbfBTViI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 16:37:32 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57968 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726070AbfBTVhc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 16:37:32 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F360B30603BF;
-        Wed, 20 Feb 2019 21:37:31 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 264345D6AA;
-        Wed, 20 Feb 2019 21:37:29 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <alpine.LRH.2.21.1902210750180.1411@namei.org>
-References: <alpine.LRH.2.21.1902210750180.1411@namei.org> <6bf441ffc1a54d06ad27ed01c6d06a58@AcuMS.aculab.com> <155066953188.21038.12015964986007814182.stgit@warthog.procyon.org.uk> <16012.1550671795@warthog.procyon.org.uk>
-To:     James Morris <jmorris@namei.org>
-Cc:     dhowells@redhat.com, David Laight <David.Laight@ACULAB.COM>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] KEYS: user: Align the payload buffer
+        Wed, 20 Feb 2019 16:38:08 -0500
+Received: from wp260.webpack.hosteurope.de ([80.237.133.29]:44288 "EHLO
+        wp260.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726070AbfBTViH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 16:38:07 -0500
+X-Greylist: delayed 996 seconds by postgrey-1.27 at vger.kernel.org; Wed, 20 Feb 2019 16:38:06 EST
+Received: from p508bc6f1.dip0.t-ipconnect.de ([80.139.198.241] helo=vega.skynet.aixah.de); authenticated
+        by wp260.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id 1gwZJ3-0006cU-4I; Wed, 20 Feb 2019 22:21:29 +0100
+Received: from vega.skynet.aixah.de (localhost [IPv6:::1])
+        by vega.skynet.aixah.de (Postfix) with ESMTP id B2781260020;
+        Wed, 20 Feb 2019 22:21:28 +0100 (CET)
+Date:   Wed, 20 Feb 2019 22:21:18 +0100
+From:   Luis Ressel <aranea@aixah.de>
+To:     linuxppc-dev@lists.ozlab.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: make modules_prepare doesn't build arch/powerpc/lib/crtsavres.o
+Message-ID: <20190220222118.1e15c0f9@vega.skynet.aixah.de>
+X-Mailer: Claws Mail 3.17.2 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <28468.1550698649.1@warthog.procyon.org.uk>
-Date:   Wed, 20 Feb 2019 21:37:29 +0000
-Message-ID: <28469.1550698649@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 20 Feb 2019 21:37:32 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ boundary="Sig_/BsA+yXbZSXgfZIbEUlii.id"; protocol="application/pgp-signature"
+X-bounce-key: webpack.hosteurope.de;aranea@aixah.de;1550698686;34d75ac8;
+X-HE-SMSGID: 1gwZJ3-0006cU-4I
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-James Morris <jmorris@namei.org> wrote:
+--Sig_/BsA+yXbZSXgfZIbEUlii.id
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Should this first one go into -rc?
+Hello,
 
-Yes please.
+as documented in the top-level Makefile, "make modules_prepare" is
+supposed to get a pristine kernel tree into a state that's suitable to
+build out-of-tree modules. However, this is not the case for the
+powerpc arch, since all modules are linked against
+arch/powerpc/lib/crtsavres.o on ppc32 (and ppc64 if binutils is too
+old).
 
-David
+A similar problem applies to "make clean" -- it is supposed to retain
+all files which are neccessary for module building, but the global
+"find . -name '*.o' -delete" it performs drops crtsavres.o.
+
+--=20
+Regards,
+Luis Ressel
+
+Please CC me when replying; I'm not subscribed to the kernel MLs.
+
+--Sig_/BsA+yXbZSXgfZIbEUlii.id
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEbPzLt4vriSGj7oj2YKkwapaNrTgFAlxtxM4ACgkQYKkwapaN
+rTgsGQ/9GlNxBW7O1TUeVmrwniofcHNG2xvz9eO6156Y8t7fp1QoMUnjyvo+12J1
+FDfyL3K2PH+rwBPFnUV6Yg9+JlM2jG3BkUvX5FxfEi/scIyGpJO38Mvta5bhoJjf
+OVa3ZhNZ6xNAGebS9COaSsNH/7pjG7PICrTyI3yvsNNd8BEAtCuWFQpPiLkmBvqj
+vfIgnWCyg35HaTVO0MVC2UJP6YTV8ntcvo5AM2379YkJZWwDSSvxLHbNv8HFyXLs
+TB8LnKdu8wWufOBERY2KbmDXkySQx1QFd6aLPxA6v+/DyRInsFTeCESQZXFzevGi
+kq21ORVF/LZd4b+BmnH2h+sXSIUkVxK645h9hsuin9yQinHDf9pYAxcvlrXvuxsI
+GXW+1P9krX72YLPcLeitROr5ZKqbpBoh/fGdVO3B5+0eT9p/EaRgntd989SZzROa
+uqWDJLu9NPy1WhVEhbIBL3BtG9KyQCOI7c51RMZhHIViewvOJavxevTn6VPl8JBy
+SytLJYH0tTK2id6RsZh6Z40skGu25xYRvAITWevF4BcbIQj6e/NBDyXWnn6GJwTs
+/fpf4CBifEDBDewikhWf2q0MzEJeWDaJuaW978MosQp8uSuxcw/0eD2ADhoJmuqO
+D1vSCCMWKJNw0E1N3i30zeLLN9Jgumh/Akbh5leZGNTPHXX6hL0=
+=PSYQ
+-----END PGP SIGNATURE-----
+
+--Sig_/BsA+yXbZSXgfZIbEUlii.id--
