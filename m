@@ -2,154 +2,119 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC54C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD8BC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:20:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8116F20838
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:19:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9E9E20838
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:20:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Nhqu5q/K"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbfBTSTz (ORCPT
+        id S1726950AbfBTSUz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 13:19:55 -0500
-Received: from anholt.net ([50.246.234.109]:51128 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726692AbfBTSTy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 13:19:54 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 0E9FA10A2D1A;
-        Wed, 20 Feb 2019 10:19:54 -0800 (PST)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id jxe_TzASgCCA; Wed, 20 Feb 2019 10:19:52 -0800 (PST)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id D677810A047F;
-        Wed, 20 Feb 2019 10:19:51 -0800 (PST)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 643B82FE464D; Wed, 20 Feb 2019 10:19:51 -0800 (PST)
-From:   Eric Anholt <eric@anholt.net>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>
-Subject: [PATCH v2 2/2] soc: bcm: bcm2835-pm: Fix error paths of initialization.
-Date:   Wed, 20 Feb 2019 10:19:51 -0800
-Message-Id: <20190220181951.12670-2-eric@anholt.net>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190220181951.12670-1-eric@anholt.net>
-References: <20190220181951.12670-1-eric@anholt.net>
+        Wed, 20 Feb 2019 13:20:55 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:45280 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726602AbfBTSUz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 13:20:55 -0500
+Received: by mail-vs1-f67.google.com with SMTP id u64so14515079vsc.12
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 10:20:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VUU1T+vuYO12a2cKI5zt86WTM2zYaN6mxHhWTPZosm0=;
+        b=Nhqu5q/KXoMlA03l4AfDe0kVGindGn0EpAZPZt5hGT3Ata1iMGpt2VlYz8d1xxXQ6d
+         KJtmdOwfhECihW/nHnUAfJPAQVDQMw2+P9dj5hbyRoCVpwsiiDiTXoHQKPrmYKQTgL29
+         gKxdz941pGWMN4xMdanXlLJPdI9Jx/faG9veE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VUU1T+vuYO12a2cKI5zt86WTM2zYaN6mxHhWTPZosm0=;
+        b=tM0mS6LdsucDOSKcn3s5jRz9hiA4bf0G/lDpi5TfuEDqH9EAJjhTFzZ1PMWFt0zrNw
+         uFZ5U/P+ZG1t/5Z/hrUc40X5QNDjEu866RwasLA3r6HHZQag0zgYZvThzL/io01hvIMw
+         H9X+bLIxNT6XTTj/TyS+t0UIKGuEpKd+sRdHZZHaeJisNITfNl88DKZ1OAXBAa4uO3Lk
+         UqL5Ra+VDIaDrteqG6BfUydxehch2CG6Km/bSkT/CxST1nDLptfehLtHt5s5xF5B4V4R
+         yGhZzlih4pl7ILaSC7tUfIoCh/Tu68sqIsNyYhhjfVtQ131v/yooH5jGU8maJvAhPeX0
+         VItg==
+X-Gm-Message-State: AHQUAuaGiXKwvDyrXqvy0fjdsXtUc+8XDwgZMs2JbVTV6PCAzrKYTqAR
+        7A+2oUba4ov1szJ51vQKEUj3XVukHaE=
+X-Google-Smtp-Source: AHgI3IZg7gUbl0nwTEhD58EFZljD21Jzg895Hdg6MazLK8dbNPpAnd4V69hRDQwCr6KVaougcFLWYg==
+X-Received: by 2002:a67:db89:: with SMTP id f9mr13175403vsk.227.1550686853260;
+        Wed, 20 Feb 2019 10:20:53 -0800 (PST)
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
+        by smtp.gmail.com with ESMTPSA id j4sm13167616vke.0.2019.02.20.10.20.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Feb 2019 10:20:52 -0800 (PST)
+Received: by mail-vs1-f44.google.com with SMTP id e10so14579489vsp.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 10:20:52 -0800 (PST)
+X-Received: by 2002:a67:6f44:: with SMTP id k65mr17619777vsc.222.1550686851781;
+ Wed, 20 Feb 2019 10:20:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181008172332.GA29816@embeddedor.com>
+In-Reply-To: <20181008172332.GA29816@embeddedor.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 20 Feb 2019 10:20:39 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jLsQ_Uc4kp=md2SrOERopjZmnQK_fAsru4MQUqEHRvEeA@mail.gmail.com>
+Message-ID: <CAGXu5jLsQ_Uc4kp=md2SrOERopjZmnQK_fAsru4MQUqEHRvEeA@mail.gmail.com>
+Subject: Re: [PATCH] iio: cros_ec_accel_legacy: Mark expected switch fall-throughs
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The clock driver may probe after ours and so we need to pass the
--EPROBE_DEFER out.  Fix the other error path while we're here.
+On Mon, Oct 8, 2018 at 10:24 AM Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+>
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
+>
+> Addresses-Coverity-ID: 1397962 ("Missing break in switch")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/iio/accel/cros_ec_accel_legacy.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/iio/accel/cros_ec_accel_legacy.c b/drivers/iio/accel/cros_ec_accel_legacy.c
+> index 063e89e..d609654 100644
+> --- a/drivers/iio/accel/cros_ec_accel_legacy.c
+> +++ b/drivers/iio/accel/cros_ec_accel_legacy.c
+> @@ -385,8 +385,10 @@ static int cros_ec_accel_legacy_probe(struct platform_device *pdev)
+>                 switch (i) {
+>                 case X:
+>                         ec_accel_channels[X].scan_index = Y;
+> +                       /* fall through */
+>                 case Y:
+>                         ec_accel_channels[Y].scan_index = X;
+> +                       /* fall through */
+>                 case Z:
+>                         ec_accel_channels[Z].scan_index = Z;
+>                 }
 
-v2: Use dom->name instead of dom->gov as the flag for initialized
-    domains, since we aren't setting up a governor.  Make sure to
-    clear ->clk when no clk is present in the DT.
+Shouldn't these actually be "break;"s ? It seems like the loop is
+stepping through X, Y, and Z. The _result_ is accidentally the same:
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Fixes: 670c672608a1 ("soc: bcm: bcm2835-pm: Add support for power domains under a new binding.")
----
- drivers/soc/bcm/bcm2835-power.c | 35 ++++++++++++++++++++++++++++-----
- 1 file changed, 30 insertions(+), 5 deletions(-)
+X: set X, Y, and Z
+Y: set Y and Z
+Z: set Z
 
-diff --git a/drivers/soc/bcm/bcm2835-power.c b/drivers/soc/bcm/bcm2835-power.c
-index 4a1b99b773c0..241c4ed80899 100644
---- a/drivers/soc/bcm/bcm2835-power.c
-+++ b/drivers/soc/bcm/bcm2835-power.c
-@@ -485,7 +485,7 @@ static int bcm2835_power_pd_power_off(struct generic_pm_domain *domain)
- 	}
- }
- 
--static void
-+static int
- bcm2835_init_power_domain(struct bcm2835_power *power,
- 			  int pd_xlate_index, const char *name)
- {
-@@ -493,6 +493,17 @@ bcm2835_init_power_domain(struct bcm2835_power *power,
- 	struct bcm2835_power_domain *dom = &power->domains[pd_xlate_index];
- 
- 	dom->clk = devm_clk_get(dev->parent, name);
-+	if (IS_ERR(dom->clk)) {
-+		int ret = PTR_ERR(dom->clk);
-+
-+		if (ret == -EPROBE_DEFER)
-+			return ret;
-+
-+		/* Some domains don't have a clk, so make sure that we
-+		 * don't deref an error pointer later.
-+		 */
-+		dom->clk = NULL;
-+	}
- 
- 	dom->base.name = name;
- 	dom->base.power_on = bcm2835_power_pd_power_on;
-@@ -505,6 +516,8 @@ bcm2835_init_power_domain(struct bcm2835_power *power,
- 	pm_genpd_init(&dom->base, NULL, true);
- 
- 	power->pd_xlate.domains[pd_xlate_index] = &dom->base;
-+
-+	return 0;
- }
- 
- /** bcm2835_reset_reset - Resets a block that has a reset line in the
-@@ -602,7 +615,7 @@ static int bcm2835_power_probe(struct platform_device *pdev)
- 		{ BCM2835_POWER_DOMAIN_IMAGE_PERI, BCM2835_POWER_DOMAIN_CAM0 },
- 		{ BCM2835_POWER_DOMAIN_IMAGE_PERI, BCM2835_POWER_DOMAIN_CAM1 },
- 	};
--	int ret, i;
-+	int ret = 0, i;
- 	u32 id;
- 
- 	power = devm_kzalloc(dev, sizeof(*power), GFP_KERNEL);
-@@ -629,8 +642,11 @@ static int bcm2835_power_probe(struct platform_device *pdev)
- 
- 	power->pd_xlate.num_domains = ARRAY_SIZE(power_domain_names);
- 
--	for (i = 0; i < ARRAY_SIZE(power_domain_names); i++)
--		bcm2835_init_power_domain(power, i, power_domain_names[i]);
-+	for (i = 0; i < ARRAY_SIZE(power_domain_names); i++) {
-+		ret = bcm2835_init_power_domain(power, i, power_domain_names[i]);
-+		if (ret)
-+			goto fail;
-+	}
- 
- 	for (i = 0; i < ARRAY_SIZE(domain_deps); i++) {
- 		pm_genpd_add_subdomain(&power->domains[domain_deps[i].parent].base,
-@@ -644,12 +660,21 @@ static int bcm2835_power_probe(struct platform_device *pdev)
- 
- 	ret = devm_reset_controller_register(dev, &power->reset);
- 	if (ret)
--		return ret;
-+		goto fail;
- 
- 	of_genpd_add_provider_onecell(dev->parent->of_node, &power->pd_xlate);
- 
- 	dev_info(dev, "Broadcom BCM2835 power domains driver");
- 	return 0;
-+
-+fail:
-+	for (i = 0; i < ARRAY_SIZE(power_domain_names); i++) {
-+		struct generic_pm_domain *dom = &power->domains[i].base;
-+
-+		if (dom->name)
-+			pm_genpd_remove(dom);
-+	}
-+	return ret;
- }
- 
- static int bcm2835_power_remove(struct platform_device *pdev)
+result: X, Y, and Z are set correctly. But the code is technically wrong.
+
+
 -- 
-2.20.1
-
+Kees Cook
