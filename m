@@ -2,137 +2,205 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17217C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08EE6C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:15:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC0A5208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:11:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C69FC2086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:15:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbfBTJL2 (ORCPT
+        id S1726485AbfBTJPn convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 04:11:28 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3704 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725813AbfBTJL1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 04:11:27 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 221D4B543D1DCBC7F114;
-        Wed, 20 Feb 2019 17:11:25 +0800 (CST)
-Received: from [127.0.0.1] (10.74.221.148) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Wed, 20 Feb 2019
- 17:11:15 +0800
-Subject: Re: linux-next: Tree for Feb 20
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-References: <20190220184341.73bd2084@canb.auug.org.au>
-CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From:   Zhangshaokun <zhangshaokun@hisilicon.com>
-Message-ID: <1114b964-8ff8-5632-64d4-e94a9160b998@hisilicon.com>
-Date:   Wed, 20 Feb 2019 17:11:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.1
+        Wed, 20 Feb 2019 04:15:43 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54530 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725816AbfBTJPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 04:15:42 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 661B4EBD;
+        Wed, 20 Feb 2019 01:15:42 -0800 (PST)
+Received: from why.wild-wind.fr.eu.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D9D53F720;
+        Wed, 20 Feb 2019 01:15:41 -0800 (PST)
+Date:   Wed, 20 Feb 2019 09:15:37 +0000
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 09/10] genirq/irqdomain: fall back to default domain
+ when creating hierarchy domain
+Message-ID: <20190220091537.4cf01191@why.wild-wind.fr.eu.org>
+In-Reply-To: <20190219174829.26576a5b6bf62cd99adf294a@suse.de>
+References: <20190219155728.19163-1-tbogendoerfer@suse.de>
+        <20190219155728.19163-10-tbogendoerfer@suse.de>
+        <20190219162716.04b0a54b@why.wild-wind.fr.eu.org>
+        <20190219174829.26576a5b6bf62cd99adf294a@suse.de>
+Organization: ARM Ltd
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20190220184341.73bd2084@canb.auug.org.au>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.74.221.148]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a compiler failure on arm64 platform, as follow:
+On Tue, 19 Feb 2019 17:48:29 +0100
+Thomas Bogendoerfer <tbogendoerfer@suse.de> wrote:
 
-  AS      arch/arm64/kvm/hyp.o
-  CC      kernel/trace/ring_buffer.o
-In file included from security/integrity/ima/ima_fs.c:30:0:
-security/integrity/ima/ima.h:176:7: error: redeclaration of enumerator ‘NONE’
-  hook(NONE)   \
-       ^
-security/integrity/ima/ima.h:188:34: note: in definition of macro ‘__ima_hook_enumify’
- #define __ima_hook_enumify(ENUM) ENUM,
-                                  ^
-security/integrity/ima/ima.h:191:2: note: in expansion of macro ‘__ima_hooks’
-  __ima_hooks(__ima_hook_enumify)
-  ^
-In file included from ./arch/arm64/include/asm/acpi.h:15:0,
-                 from ./include/acpi/acpi_io.h:7,
-                 from ./include/linux/acpi.h:47,
-                 from ./include/linux/tpm.h:26,
-                 from security/integrity/ima/ima.h:25,
-                 from security/integrity/ima/ima_fs.c:30:
-./include/linux/efi.h:1716:2: note: previous definition of ‘NONE’ was here
-  NONE,
-  ^
-scripts/Makefile.build:276: recipe for target 'security/integrity/ima/ima_fs.o' failed
-make[3]: *** [security/integrity/ima/ima_fs.o] Error 1
+> On Tue, 19 Feb 2019 16:27:16 +0000
+> Marc Zyngier <marc.zyngier@arm.com> wrote:
+> 
+> > On Tue, 19 Feb 2019 16:57:23 +0100
+> > Thomas Bogendoerfer <tbogendoerfer@suse.de> wrote:
+> > 
+> > Hi Thomas,
+> >   
+> > > When creating hierarchy domains use irq_default_domain as parent, if no
+> > > parent was given by the caller. This avoids adding helper code for
+> > > querying the underlying platform irq domain.
+> > > 
+> > > Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+> > > ---
+> > >  kernel/irq/irqdomain.c | 5 ++++-
+> > >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+> > > index 8b0be4bd6565..617c482d0778 100644
+> > > --- a/kernel/irq/irqdomain.c
+> > > +++ b/kernel/irq/irqdomain.c
+> > > @@ -1021,7 +1021,10 @@ struct irq_domain *irq_domain_create_hierarchy(struct irq_domain *parent,
+> > >  	else
+> > >  		domain = irq_domain_create_tree(fwnode, ops, host_data);
+> > >  	if (domain) {
+> > > -		domain->parent = parent;
+> > > +		if (parent)
+> > > +			domain->parent = parent;
+> > > +		else
+> > > +			domain->parent = irq_default_domain;
+> > >  		domain->flags |= flags;
+> > >  	}
+> > >    
+> > 
+> > I'm really not keen on this. The whole "default domain" made sense at a
+> > distant point in time (when irqdomains were new and platform code was
+> > blissfully ignoring it), but it really looks like a sore spot in the
+> > hierarchy code, which assumes that you always know what you're building
+> > your hierarchy on top of.
+> > 
+> > It also create a small issue in the sense that you can create a root
+> > domain using irq_domain_create_hierarchy() by passing NULL as the
+> > parent. With this patch, the new domain now points to the default one,
+> > with unexpected consequences.
+> > 
+> > So let's come back to first principles: How comes you can't obtain the
+> > parent domain at creation time? Because I'd rather give you a way to
+> > retrieve it instead if this.  
+> 
+> the bridge irq domain could be stacked on different underlying irq domains
+> for different platforms (HUB is IP27, HEART for IP30 and BEDROCK for IP35).
+> And my idea was to set a irq default domain in the IP27/IP30/IP35 platform
+> code so that bridge code will pick up the correct underlying irq domain.
+> As there is no device tree I haven't found an already implemented other way.
 
-I dug it and it is the commit 901615cb916d ("tpm: move tpm_chip definition to include/linux/tpm.h")
+Ah, right. We have ways to solve this kind of problem without DT
+(cough... ACPI cough...), but this requires the bridge code to at least
+know *something* about the underlying domain (see the use of struct
+fwnode in the ACPI IORT code, and the way it uses the routing
+informations to build and retrieve fwnodes that are used to match
+irq domains).
+
+Do you have such firmware tables that could be used to store sideband
+data and allow the bridge code to retrieve the corresponding pointer? I
+appreciate this could be quite a lot of work for a platform that has
+little future...
+
+> Right now I have two idea to solve my problem without this patch:
+> 
+> - implement a SGI specific helper for getting the underlying irq domain
+> - use a helper function to read irq_default_domain
+> 
+> What do you prefer ? Or do you see something else ?
+
+Well, short of doing the above, I'd rather have something in the common
+code that allows the default domain to be retrieved. How about the
+patch below?
 
 Thanks,
-Shaokun
 
-On 2019/2/20 15:43, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20190219:
-> 
-> The asm-generic tree lost its build failure.
-> 
-> The v4l-dvb tree lost its build failure.
-> 
-> The net-next tree gained a conflict against the bpf tree.
-> 
-> The kvm tree still had its build failure so I used a supplied patch.
-> 
-> The akpm-current tree gained a build failure due to an interaction with
-> the drm tree for which I applied a merge fix patch.
-> 
-> Non-merge commits (relative to Linus' tree): 8846
->  9249 files changed, 416125 insertions(+), 220692 deletions(-)
-> 
-> ----------------------------------------------------------------------------
-> 
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> (patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-> are tracking the linux-next tree using git, you should not use "git pull"
-> to do so as that will try to merge the new linux-next release with the
-> old one.  You should use "git fetch" and checkout or reset to the new
-> master.
-> 
-> You can see which trees have been included by looking in the Next/Trees
-> file in the source.  There are also quilt-import.log and merge.log
-> files in the Next directory.  Between each merge, the tree was built
-> with a ppc64_defconfig for powerpc, an allmodconfig for x86_64, a
-> multi_v7_defconfig for arm and a native build of tools/perf. After
-> the final fixups (if any), I do an x86_64 modules_install followed by
-> builds for x86_64 allnoconfig, powerpc allnoconfig (32 and 64 bit),
-> ppc44x_defconfig, allyesconfig and pseries_le_defconfig and i386, sparc
-> and sparc64 defconfig. And finally, a simple boot test of the powerpc
-> pseries_le_defconfig kernel in qemu (with and without kvm enabled).
-> 
-> Below is a summary of the state of the merge.
-> 
-> I am currently merging 296 trees (counting Linus' and 69 trees of bug
-> fix patches pending for the current merge release).
-> 
-> Stats about the size of the tree over time can be seen at
-> http://neuling.org/linux-next-size.html .
-> 
-> Status of my local build tests will be at
-> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-> advice about cross compilers/configs that work, we are always open to add
-> more builds.
-> 
-> Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-> Gortmaker for triage and bug fixes.
-> 
+	M.
 
+From 3a9e44941c203ef2ed659838f218a0203c963828 Mon Sep 17 00:00:00 2001
+From: Marc Zyngier <marc.zyngier@arm.com>
+Date: Wed, 20 Feb 2019 08:59:23 +0000
+Subject: [PATCH] irqdomain: Allow the default irq domain to be retrieved
+
+The default irq domain allows legacy code to create irqdomain
+mappings without having to track the domain it is allocating
+from. Setting the default domain is a one shot, fire and forget
+operation, and no effort was made to be able to retrieve this
+information at a later point in time.
+
+Newer irqdomain APIs (the hierarchical stuff) relies on both
+the irqchip code to track the irqdomain it is allocating from,
+as well as some form of firmware abstraction to easily identify
+which piece of HW maps to which irq domain (DT, ACPI).
+
+For systems without such firmware (or legacy platform that are
+getting dragged into the 21st century), things are a bit harder.
+For these cases (and these cases only!), let's provide a way
+to retrieve the default domain, allowing the use of the v2 API
+without having to resort to platform-specific hacks.
+
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+---
+ include/linux/irqdomain.h |  1 +
+ kernel/irq/irqdomain.c    | 14 ++++++++++++++
+ 2 files changed, 15 insertions(+)
+
+diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+index 35965f41d7be..d2130dc7c0e6 100644
+--- a/include/linux/irqdomain.h
++++ b/include/linux/irqdomain.h
+@@ -265,6 +265,7 @@ extern struct irq_domain *irq_find_matching_fwspec(struct irq_fwspec *fwspec,
+ 						   enum irq_domain_bus_token bus_token);
+ extern bool irq_domain_check_msi_remap(void);
+ extern void irq_set_default_host(struct irq_domain *host);
++extern struct irq_domain *irq_get_default_host(void);
+ extern int irq_domain_alloc_descs(int virq, unsigned int nr_irqs,
+ 				  irq_hw_number_t hwirq, int node,
+ 				  const struct irq_affinity_desc *affinity);
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index 8b0be4bd6565..80818764643d 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -458,6 +458,20 @@ void irq_set_default_host(struct irq_domain *domain)
+ }
+ EXPORT_SYMBOL_GPL(irq_set_default_host);
+ 
++/**
++ * irq_get_default_host() - Retrieve the "default" irq domain
++ *
++ * Returns: the default domain, if any.
++ *
++ * Modern code should never use this. This should only be used on
++ * systems that cannot implement a firmware->fwnode mapping (which
++ * both DT and ACPI provide).
++ */
++struct irq_domain *irq_get_default_host(void)
++{
++	return irq_default_domain;
++}
++
+ static void irq_domain_clear_mapping(struct irq_domain *domain,
+ 				     irq_hw_number_t hwirq)
+ {
+-- 
+2.20.1
+
+
+-- 
+Without deviation from the norm, progress is not possible.
