@@ -2,100 +2,106 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 616B3C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:14:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D7BC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:14:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ED312075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:14:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D6162075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:14:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbfBTOO2 (ORCPT
+        id S1726846AbfBTOOo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 09:14:28 -0500
-Received: from mga03.intel.com ([134.134.136.65]:47660 "EHLO mga03.intel.com"
+        Wed, 20 Feb 2019 09:14:44 -0500
+Received: from mga11.intel.com ([192.55.52.93]:28163 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726030AbfBTOO2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 09:14:28 -0500
-X-Amp-Result: UNSCANNABLE
+        id S1726030AbfBTOOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 09:14:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 06:14:27 -0800
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 06:14:43 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,391,1544515200"; 
-   d="scan'208";a="148382001"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 20 Feb 2019 06:14:24 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 20 Feb 2019 16:14:23 +0200
-Date:   Wed, 20 Feb 2019 16:14:23 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Nikolaus Voss <nv@vosn.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <linux@roeck-us.net>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2] usb: typec: tps6598x: handle block writes separately
- with plain-I2C adapters
-Message-ID: <20190220141423.GC5054@kuha.fi.intel.com>
-References: <20180425142209.30745-1-heikki.krogerus@linux.intel.com>
- <20190220110017.BFA344CE86@mail.steuer-voss.de>
- <20190220125731.02E274CFE0@mail.steuer-voss.de>
- <20190220133036.GB5054@kuha.fi.intel.com>
- <alpine.DEB.2.20.1902201434200.6572@fox.voss.local>
+   d="scan'208";a="119410561"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga008.jf.intel.com with ESMTP; 20 Feb 2019 06:14:43 -0800
+Received: from [10.125.252.177] (abudanko-mobl.ccr.corp.intel.com [10.125.252.177])
+        by linux.intel.com (Postfix) with ESMTP id B49C058028E;
+        Wed, 20 Feb 2019 06:14:40 -0800 (PST)
+Subject: Re: [PATCH v2 2/4] perf record: implement -z=<level> and
+ --mmap-flush=<thres> options
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <044ee2be-2e1d-e90f-7317-40083b5e716c@linux.intel.com>
+ <2d676199-bfe0-d8e0-442e-41280046f819@linux.intel.com>
+ <20190212130946.GQ775@krava>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <dcda8374-9bf4-8989-40b5-75b080b26a12@linux.intel.com>
+Date:   Wed, 20 Feb 2019 17:14:39 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1902201434200.6572@fox.voss.local>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190212130946.GQ775@krava>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 02:38:47PM +0100, Nikolaus Voss wrote:
-> On Wed, 20 Feb 2019, Heikki Krogerus wrote:
-> > On Wed, Feb 20, 2019 at 01:57:30PM +0100, Nikolaus Voss wrote:
-> > > Commit 1a2f474d328f handles block _reads_ separately with plain-I2C
-> > > adapters, but the problem described with regmap-i2c not handling
-> > > SMBus block transfers (i.e. read and writes) correctly also exists
-> > > with writes.
-> > > 
-> > > As workaround, this patch adds a block write function the same way
-> > > 1a2f474d328f adds a block read function.
-> > > 
-> > > Fixes: 1a2f474d328f ("usb: typec: tps6598x: handle block reads separately with plain-I2C adapters")
-> > > Fixes: 0a4c005bd171 ("usb: typec: driver for TI TPS6598x USB Power Delivery controllers")
-> > > Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
-> > 
-> > You are missing a "from" line with address that matches your SoB
-> > address.
+
+On 12.02.2019 16:09, Jiri Olsa wrote:
+> On Mon, Feb 11, 2019 at 11:22:38PM +0300, Alexey Budankov wrote:
 > 
-> That's because I currently cannot send patch mails from my company account
-> as our MTA breaks diffs.
+> SNIP
+> 
+>> @@ -1147,6 +1193,10 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+>>  	fd = perf_data__fd(data);
+>>  	rec->session = session;
+>>  
+>> +	rec->opts.comp_level = 0;
+>> +	session->header.env.comp_level = rec->opts.comp_level;
+>> +	session->header.env.comp_type = PERF_COMP_NONE;
+>> +
+>>  	record__init_features(rec);
+>>  
+>>  	if (rec->opts.use_clockid && rec->opts.clockid_res_ns)
+>> @@ -1176,6 +1226,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+>>  		err = -1;
+>>  		goto out_child;
+>>  	}
+>> +	session->header.env.comp_mmap_len = session->evlist->mmap_len;
+> 
+> so the comp_mmap_len is the max length of the compressed packet?
 
-I understand, but you can have a separate "From line" in your patch,
-i.e. you send the patch using one address, and have an extra "From
-line" (outside of the mail header) with another address.
+comp_mmap_len is the size of buffer to encompass one compressed chunk 
+of data after its decompression.
 
-That other From line will be interpreted as the author address, and
-it should match your SoB address.
+> 
+> any idea if this value might have some impact on the processing speed?
 
+It increases memory consumption at the loading and processing stages.
 
-Try something like this in a branch where this patch is the HEAD:
+> 
+> I see you mentioned the size reduction, could you also meassure
+> the record overhead?
 
-        % export MY_COMMIT=$(git show -s --pretty=%h HEAD)
-        % git reset HEAD^
-        % GIT_COMMITTER_IDENT='Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>' \
-          GIT_AUTHOR_IDENT='Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>' \
-          git commit -a -C $MY_COMMIT
+Let's get back to this after the code review.
 
-Then:
+Thanks,
+Alexey
 
-        % git format-patch HEAD^
-        % git send-email ...
-
-thanks,
-
--- 
-heikki
+> 
+> thanks,
+> jirka
+> 
