@@ -2,105 +2,177 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4568C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:10:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31CCBC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B2E12146F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:10:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550664650;
-	bh=kBLIvt+BwNMZ4NXB6/DD8Fp6ceWVWnGpEWpSzWOwy3o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=TfFlngYzKRNkZTbw/HJXr4j0k357+vleVcYsbG3qCRMYNz5kkrojynb1iPosOFNcW
-	 0BLH4gfWASr6GM5CrDjZ/OXXzgBK9NY1YlT7497Hjepwg4Lvc7HrXbbUnsD0nzOvJ9
-	 5Zinw7XBLKDiZ9sWpMmBdPnXBdb0ua9zQxea4454=
+	by mail.kernel.org (Postfix) with ESMTP id 000B420C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:11:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbfBTMKt (ORCPT
+        id S1727254AbfBTML0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 07:10:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58468 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725812AbfBTMKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 07:10:49 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8B2C20C01;
-        Wed, 20 Feb 2019 12:10:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550664648;
-        bh=kBLIvt+BwNMZ4NXB6/DD8Fp6ceWVWnGpEWpSzWOwy3o=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=n+ow22Bqizka1zeQmAKyFap3i3zFXA6F2YLx5WxRP4MfV13ekD33j7ZVl20gc+/9F
-         9y+ErFSLy1B3C0uGcbHGMpiZXAPdWixn8ze3etaF07UGyYdWONlya8QWIJtbP58sAC
-         8IgiPp3MVeLUCrfstmyFWgHTSxvNOki9WCC+vDvY=
-Date:   Wed, 20 Feb 2019 12:10:42 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Mike Looijmans <mike.looijmans@topic.nl>
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net
-Subject: Re: [PATCH v2] iio/gyro/bmg160: Use millidegrees for temperature
- scale
-Message-ID: <20190220121042.6459176b@archlinux>
-In-Reply-To: <1550043707-13040-1-git-send-email-mike.looijmans@topic.nl>
-References: <1549981549-19786-1-git-send-email-mike.looijmans@topic.nl>
-        <1550043707-13040-1-git-send-email-mike.looijmans@topic.nl>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 20 Feb 2019 07:11:26 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:44993 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725812AbfBTMLZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 07:11:25 -0500
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=localhost)
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gwQiZ-0006zf-GY; Wed, 20 Feb 2019 13:11:15 +0100
+Message-ID: <a55e0643bb2acd522145c74ec0e8b74a16b718f8.camel@pengutronix.de>
+Subject: Re: [PATCH] dt-bindings: imx: update scu resource id headfile
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Aisheng Dong <aisheng.dong@nxp.com>,
+        Marco Felsch <m.felsch@pengutronix.de>
+Cc:     Anson Huang <anson.huang@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Date:   Wed, 20 Feb 2019 13:11:13 +0100
+In-Reply-To: <AM6PR04MB4215D9FE015E9251425B0FFC807D0@AM6PR04MB4215.eurprd04.prod.outlook.com>
+References: <1550566601-11497-1-git-send-email-Anson.Huang@nxp.com>
+         <20190219125211.2pg2bqxner4klcb5@pengutronix.de>
+         <DB3PR0402MB3916AF3AA0283DB22DF61E2FF57C0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+         <20190219144808.qqpaubjcsb4huoml@pengutronix.de>
+         <DB3PR0402MB39160A56E168ED20410674D7F57C0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+         <AM6PR04MB42152D05E62753E760741160807D0@AM6PR04MB4215.eurprd04.prod.outlook.com>
+         <20190220081650.cu3yzausx55jefb6@pengutronix.de>
+         <AM6PR04MB4215014B734F71D409D617A5807D0@AM6PR04MB4215.eurprd04.prod.outlook.com>
+         <20190220105249.u2hcvk6ut3cycvqs@pengutronix.de>
+         <AM6PR04MB4215D9FE015E9251425B0FFC807D0@AM6PR04MB4215.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 13 Feb 2019 08:41:47 +0100
-Mike Looijmans <mike.looijmans@topic.nl> wrote:
-
-> Standard unit for temperature is millidegrees Celcius, whereas this driver
-> was reporting in degrees. Fix the scale factor in the driver.
+Am Mittwoch, den 20.02.2019, 11:21 +0000 schrieb Aisheng Dong:
+> Hi Marco,
 > 
-> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
-Applied to the fixes-togreg branch of iio.git and marked for stable.
-
-Thanks,
-
-Jonathan
-> ---
-> v2: Don't touch val2 when returning IIO_VAL_INT
->     Only touch val when returning a value
+> > From: Marco Felsch [mailto:m.felsch@pengutronix.de]
+> > Sent: Wednesday, February 20, 2019 6:53 PM
+> > 
+> > Hi Aisheng,
+> > 
+> > On 19-02-20 09:49, Aisheng Dong wrote:
+> > > > From: Marco Felsch [mailto:m.felsch@pengutronix.de]
+> > > > Sent: Wednesday, February 20, 2019 4:17 PM On 19-02-20 03:38,
+> > > > Aisheng Dong wrote:
+> > > > > [...]
+> > > > > 
+> > > > > > > I don't like droping some ID's (e.g. IMX_SC_R_DC_0_CAPTURE0)
+> > > > > > > by mark them as unused or even worse give them a other
+> > > > > > > meaning. IMHO the scu-api should be stable since day 1 and the
+> > > > > > > ID's should only be
+> > > > extended.
+> > > > > > > Marking ID's as deprecated is much better than moving them around.
+> > > > > > 
+> > > > > > I agree the SCU APIs should be stable since day 1 and the ID
+> > > > > > should ONLY be extended, but that is the best cases, the reality
+> > > > > > is, there are different SoCs/Revision, some revisions may remove
+> > > > > > the resources ID defined in pre-coded SCU firmware, like the
+> > > > > > IMX_SC_R_DC_0_CAPTURE0 etc., so SCU APIs removes them after real
+> > > > > > silicon arrived, now latest SCU firmware marks them as UNUSED,
+> > > > > > they could be replaced by some other new resources in later new
+> > > > > > SoC, I am NOT sure, but if it happens, this resource ID table
+> > > > > > should be updated anyway, leaving the out-of-date resource ID
+> > > > > > table there will have
+> > > > issues, since it is NOT sync with SCU firmware.
+> > > > > > So how to resolve such issue? We hope the SCU firmware should be
+> > > > > > stable since day 1, but the truth is NOT, could be still some
+> > > > > > updates but NOT very often. And I believe the updates will NOT
+> > > > > > break old
+> > > > kernel version.
+> > > > 
+> > > > Hi Anson,
+> > > > 
+> > > > Please don't mix the dt-bindings and the kernel related stuff.
+> > > > Unfortunately the bindings are within the kernel repo which in fact
+> > > > is great for us kernel developer but the bindings are also used in
+> > > > other projects such as barebox or other kernels (don't know the BSD
+> > > > guys). So you can't ensure that your change will break something. Please
+> > keep that in mind.
+> > > > IMHO solving that issue should be done by the scu firmware. I tought
+> > > > the scu is a cortex-m4 with a bunch of embedded flash and ram (I
+> > > > don't know that much about the scu since it is closed/black-boxed).
+> > > > Why do you don't use a translation table within the scu? As I said
+> > > > earlier I don't like the redefinition of ID's since they are now part of the
+> > dt-bindings.
+> > > > The bindings can store up to 32bit values which is a large number ;)
+> > > > IMHO wasting some ID's in favour of stability is a better solution.
+> > > > 
+> > > 
+> > > As far as I know, those remove resource IDs are pre-defined and has
+> > > never been used and won't be used anymore by SC firmware. (Anson can
+> > > double check it) So I think it's safe to remove them or mark them as
+> > deprecated.
+> > 
+> > I think marking them as deprecated by a commentar is better than redefining
+> > bits to be unused. As I said the bindings not only linux related they are used in
+> > other projects too.
+> > 
 > 
->  drivers/iio/gyro/bmg160_core.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> For other projects, the result is same because SC firmware does not support those
+> Resource IDs.
 > 
-> diff --git a/drivers/iio/gyro/bmg160_core.c b/drivers/iio/gyro/bmg160_core.c
-> index 63ca316..92c07ab 100644
-> --- a/drivers/iio/gyro/bmg160_core.c
-> +++ b/drivers/iio/gyro/bmg160_core.c
-> @@ -582,11 +582,10 @@ static int bmg160_read_raw(struct iio_dev *indio_dev,
->  	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
->  		return bmg160_get_filter(data, val);
->  	case IIO_CHAN_INFO_SCALE:
-> -		*val = 0;
->  		switch (chan->type) {
->  		case IIO_TEMP:
-> -			*val2 = 500000;
-> -			return IIO_VAL_INT_PLUS_MICRO;
-> +			*val = 500;
-> +			return IIO_VAL_INT;
->  		case IIO_ANGL_VEL:
->  		{
->  			int i;
-> @@ -594,6 +593,7 @@ static int bmg160_read_raw(struct iio_dev *indio_dev,
->  			for (i = 0; i < ARRAY_SIZE(bmg160_scale_table); ++i) {
->  				if (bmg160_scale_table[i].dps_range ==
->  							data->dps_range) {
-> +					*val = 0;
->  					*val2 = bmg160_scale_table[i].scale;
->  					return IIO_VAL_INT_PLUS_MICRO;
->  				}
+> > > Personally I may prefer to remove them as they never worked to avoid
+> > > confusing, especially at this early stage for mx8.
+> > 
+> > So why they are there if they never worked? Wouldn't it a better approach to
+> > start with a basic and working ID file and extend this rather than adding id's
+> > because maybe the will work.. 
+> 
+> Ideally yes, but may be hard in reality.
+> 
+> SC firmware code usually is developed quite early before silicon comes.
+> But the real chip may changes, e.g. removed or added something.
+> 
+> AFAIK those resource IDs removed have never worked in SC firmware,
+> and they're likely to come out of pre-silicon definition. But chip changes
+> later.
+> 
+> > Sorry but this seems wrong to me too.
+> > I know the approach from driver development, adding a driver specific *_reg.h
+> > file and later figuring out that those bits won't work as aspected. As I said this
+> > will be driver and only linux related so we can change them as many times as
+> > we want. But in your case we are talking about dt-bindings and this approach
+> > won't work.
+> 
+> I would agree with you if those resource IDs have worked before.
+> But they never worked.
+> Should we keep a thing never worked in device tree just because
+> It makes us look like keeping compatibility?
+> 
+> If that, I'd rather removing them to avoid confusing in the future. Life is long, right?
+> I don't want people to bother with those unmeaning things anymore when they
+> look at it.
+
+Removing things is totally fine if they have never worked. Re-using the
+now "free" IDs is what is problematic. Only ever use previously unused
+IDs when introducing new stuff into the SCU firmware. This is something
+you need to communicate quite clearly with the SCU firmware developers.
+
+Regards,
+Lucas
 
