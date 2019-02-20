@@ -2,151 +2,250 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEEE3C10F01
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 06:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ABD9C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 06:44:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB8BE21773
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 06:44:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCBC92147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 06:44:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LIIKbwrB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kuCs+nQ8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730368AbfBTGoQ (ORCPT
+        id S1730531AbfBTGo2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 01:44:16 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:38372 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbfBTGoP (ORCPT
+        Wed, 20 Feb 2019 01:44:28 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38376 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbfBTGo2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 01:44:15 -0500
-Received: by mail-it1-f194.google.com with SMTP id l66so13015346itg.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 22:44:14 -0800 (PST)
+        Wed, 20 Feb 2019 01:44:28 -0500
+Received: by mail-pg1-f195.google.com with SMTP id m2so9101639pgl.5;
+        Tue, 19 Feb 2019 22:44:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=HLS63h4TrNfAqG+nGDB8waFurXViTBz03UP/mAXHk3A=;
-        b=LIIKbwrBukjgBVt3K8pRF01xjEzpmoi0tc+7Crv5egys0r39YW3i8Oy3bn32KKKh2Q
-         LtSyrrsrg3CUdZcWdK3rpsAPYqGljti8Bxr9M1bnLYv4G6yOQz38MvYVHK5/2s1wIt4j
-         y1HKQLmvf9PZfRT7+e8NZr8swMO16rt0XOOGGRR8kEGklixQMbiPrfMTHW2Zgqk6p51t
-         GK48pRgfIMLg23RdWuJ1P6tLXLl2Z4VtwASjjFw7k3/zU2lAeHw6ZyHaPekqBc7afw6o
-         lNv3JLZAZ+qTDN7n9rbJFpP8pbYIZu4tQItzMTqKn2WuouXqJtq+lZ+X8phqL5FSLW1l
-         c7YQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LODZetcs0AnT93QYQC0UK8k2tg9s5tX3hMm2xNga27I=;
+        b=kuCs+nQ8OpBtGvxxn3MOBEVS0ZXl2jxhX6B7xop63kucnr/h6FRNrWni4/vUjsEFkL
+         cIiISlOypm7kpWLDcoM0QDLRfWtAMbipPeshkasB38UpWyKg8wnIWQKtNAhKClu5DeHc
+         LlHCoiIb095x6B9b0bAkO3WvWDgzQCP3GEX1ts2Qgb8w+MeASdpx/Semtt1qqNYRWWxO
+         txiXo0ObyFyknmeZjeut1sP4UbBU7igHfZy5ut3gmi9oapA64ETjmol+7DCdL+HwNdoa
+         bIjqKPSKMPt7Ga+XmeNpQiT4Sc9xVrDWHoB09N+cUshH2e0kJ0WmGaou5RvS+78wABkX
+         mvOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=HLS63h4TrNfAqG+nGDB8waFurXViTBz03UP/mAXHk3A=;
-        b=nN+G85l6Tx02AmmNGqqJojBvfIbYmz8M8FR/aCgFF6Xx3semahiCc21Quz5NWYN3Ix
-         lEjITBLwceGafSgC3oehFn1rRWXCfPEjvt6XqGMFNw+fLmKzNiSs3tr8NbJWdvRLAjT0
-         40vvQdYVKa9Pq6dcw0no6LJh0OYn+G1knSjfsxhYf1yJu1M8Pl+ZjoPN0ShwnidA+nhT
-         Q/BTVZSKG3qULNBMTdaYiacvUD6tUhgoi262sIHNeYQZe/2LQGZyOptJIOAsELC9bF0r
-         jB3GTaLSi9kzZh+H0bHpTpCqQdZv9mQFAWemNjM5/0VM/lJjiiMFS0byVZD4lds7axWa
-         N4yw==
-X-Gm-Message-State: AHQUAuZw0TGzn5vMzVTbPle4fQChEzZ+PONFM/mVKsWQKGIHf6SA00Sb
-        43ao9acKP3bui8oahiBk8eye4FBVhLPaUQ+X0ZRA5Q==
-X-Google-Smtp-Source: AHgI3IbWMmRXi7UB7YkhoSO5k2+TLjdZr4wgCtMItk2dkwv6JJnkfhPC1aZ07rsx8JAXh1s6pS5DAUQuF+0dc0v62jI=
-X-Received: by 2002:a6b:6b18:: with SMTP id g24mr16685706ioc.282.1550645054065;
- Tue, 19 Feb 2019 22:44:14 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LODZetcs0AnT93QYQC0UK8k2tg9s5tX3hMm2xNga27I=;
+        b=I+xVRXmWLrxvZzmKaU//R5Np7Ufqe0XTEegLmNTpDfHV/bcjFFgziVlokqJOit+Ej/
+         7CBk3L7jMkytWe5jql0LWBzKE8Dw3qYrVE/leSs/k8sKqyPqajHgOeaG/fUIyGSPwh9L
+         +IGWK0DRynv2lnRXub+yir0gymYAsQAYK9tfhJFzjwAw2KruIHAqrx+K7lShPz4UmLZQ
+         icquJW41Nh9Ka12C3sBQ4DCaMqFAWTHxIAr6WCz9JkcPDrP0ZSeBzsVzuDchnVTBe7X9
+         L6lXpXFktNJHYndmEOleqzGgZte3IGTP5djs9Kp0oViaAIkvJU47bex36a1L3YL3PG/H
+         ImlA==
+X-Gm-Message-State: AHQUAuZMCI7FitygYXMNI4U+vhlMDB10049N6FLhg6l+FLeTqXgX25DY
+        GFIhZXn9NskHA1Afftiu230=
+X-Google-Smtp-Source: AHgI3IaVDLLPrpXPyepLnXpS5y5DLdE5s7gpZiK++Lv+zkzCTtdSXTG08jFKlv0mfXMolajrPrODlA==
+X-Received: by 2002:a63:7444:: with SMTP id e4mr4762824pgn.398.1550645067019;
+        Tue, 19 Feb 2019 22:44:27 -0800 (PST)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id s21sm35375176pfk.133.2019.02.19.22.44.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Feb 2019 22:44:26 -0800 (PST)
+Subject: Re: [RFC v4 08/17] kunit: test: add support for test abort
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     Kees Cook <keescook@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>, shuah@kernel.org,
+        Rob Herring <robh@kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Joe Perches <joe@perches.com>, brakmo@fb.com,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-um@lists.infradead.org, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Knut Omang <knut.omang@oracle.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Amir Goldstein <amir73il@gmail.com>, dan.carpenter@oracle.com,
+        wfg@linux.intel.com
+References: <20190214213729.21702-1-brendanhiggins@google.com>
+ <20190214213729.21702-9-brendanhiggins@google.com>
+ <da1995fa-a362-dfe6-8184-7fcdf2b923e8@gmail.com>
+ <CAFd5g467OV8wTB7zEshgZw8g8=zoq0dLVfwx3wDH-8UA+9GWFA@mail.gmail.com>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <0124ed28-466c-e954-ddde-495419630a9f@gmail.com>
+Date:   Tue, 19 Feb 2019 22:44:23 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20190219214940.391081-1-arnd@arndb.de> <1550614664.6911.45.camel@lca.pw>
- <CAKwvOdn+MJxYc+ykvyf-WhEzzDn0zEusjpQuksknnf8bPb=Q6g@mail.gmail.com> <CAN=P9pgC8EzawtxMzp6d3AsMPkSpTd0Ry6j+Jn+YgC_XP2Fd_w@mail.gmail.com>
-In-Reply-To: <CAN=P9pgC8EzawtxMzp6d3AsMPkSpTd0Ry6j+Jn+YgC_XP2Fd_w@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 20 Feb 2019 07:44:02 +0100
-Message-ID: <CACT4Y+ZxCs57qkO7n5tYU4v-J6E9MZsT_FLbXwbQ=B5btHTmwQ@mail.gmail.com>
-Subject: Re: [PATCH] kasan: turn off asan-stack for clang-8 and earlier
-To:     Kostya Serebryany <kcc@google.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>, Qian Cai <cai@lca.pw>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Brown <broonie@kernel.org>,
-        Alexander Potapenko <glider@google.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Evgenii Stepanov <eugenis@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAFd5g467OV8wTB7zEshgZw8g8=zoq0dLVfwx3wDH-8UA+9GWFA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 1:34 AM Kostya Serebryany <kcc@google.com> wrote:
->
-> On Tue, Feb 19, 2019 at 2:43 PM Nick Desaulniers
-> <ndesaulniers@google.com> wrote:
-> >
-> > + Evgenii, Kostya for KASAN
-> >
-> > On Tue, Feb 19, 2019 at 2:17 PM Qian Cai <cai@lca.pw> wrote:
-> > >
-> > > On Tue, 2019-02-19 at 22:49 +0100, Arnd Bergmann wrote:
-> > > > Building an arm64 allmodconfig kernel with clang results in over 14=
-0 warnings
-> > > > about overly large stack frames, the worst ones being:
-> > > >
-> > > > drivers/gpu/drm/panel/panel-sitronix-st7789v.c:196:12: error: stack=
- frame size
-> > > > of 20224 bytes in function 'st7789v_prepare'
-> > > > drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td028ttec1.c:19=
-6:12:
-> > > > error: stack frame size of 13120 bytes in function 'td028ttec1_pane=
-l_enable'
-> > > > drivers/usb/host/max3421-hcd.c:1395:1: error: stack frame size of 1=
-0048 bytes
-> > > > in function 'max3421_spi_thread'
-> > > > drivers/net/wan/slic_ds26522.c:209:12: error: stack frame size of 9=
-664 bytes
-> > > > in function 'slic_ds26522_probe'
-> > > > drivers/crypto/ccp/ccp-ops.c:2434:5: error: stack frame size of 883=
-2 bytes in
-> > > > function 'ccp_run_cmd'
-> > > > drivers/media/dvb-frontends/stv0367.c:1005:12: error: stack frame s=
-ize of 7840
-> > > > bytes in function 'stv0367ter_algo'
-> > > >
-> > > > None of these happen with gcc today, and almost all of these are th=
-e result
-> > > > of a single known bug in llvm.  Hopefully it will eventually get fi=
-xed with
-> > > > the
-> > > > clang-9 release.
->
-> I am not confident we can fix this in clang.
-> The difference between gcc and clang, AFAICT, is not in the asan
-> instrumentation, but in inining.
-> Looking at the reproducer from https://bugs.llvm.org/show_bug.cgi?id=3D38=
-809#c4,
-> if I change ltv350qv_write_reg to always inline, gcc also produces a
-> huge 10K stack frame,
-> and making it noinline fixes the stack frame for both gcc and clang.
+On 2/19/19 7:39 PM, Brendan Higgins wrote:
+> On Mon, Feb 18, 2019 at 11:52 AM Frank Rowand <frowand.list@gmail.com> wrote:
+>>
+>> On 2/14/19 1:37 PM, Brendan Higgins wrote:
+>>> Add support for aborting/bailing out of test cases. Needed for
+>>> implementing assertions.
+>>>
+>>> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+>>> ---
+>>> Changes Since Last Version
+>>>  - This patch is new introducing a new cross-architecture way to abort
+>>>    out of a test case (needed for KUNIT_ASSERT_*, see next patch for
+>>>    details).
+>>>  - On a side note, this is not a complete replacement for the UML abort
+>>>    mechanism, but covers the majority of necessary functionality. UML
+>>>    architecture specific featurs have been dropped from the initial
+>>>    patchset.
+>>> ---
+>>>  include/kunit/test.h |  24 +++++
+>>>  kunit/Makefile       |   3 +-
+>>>  kunit/test-test.c    | 127 ++++++++++++++++++++++++++
+>>>  kunit/test.c         | 208 +++++++++++++++++++++++++++++++++++++++++--
+>>>  4 files changed, 353 insertions(+), 9 deletions(-)
+>>>  create mode 100644 kunit/test-test.c
+>>
+>> < snip >
+>>
+>>> diff --git a/kunit/test.c b/kunit/test.c
+>>> index d18c50d5ed671..6e5244642ab07 100644
+>>> --- a/kunit/test.c
+>>> +++ b/kunit/test.c
+>>> @@ -6,9 +6,9 @@
+>>>   * Author: Brendan Higgins <brendanhiggins@google.com>
+>>>   */
+>>>
+>>> -#include <linux/sched.h>
+>>>  #include <linux/sched/debug.h>
+>>> -#include <os.h>
+>>> +#include <linux/completion.h>
+>>> +#include <linux/kthread.h>
+>>>  #include <kunit/test.h>
+>>>
+>>>  static bool kunit_get_success(struct kunit *test)
+>>> @@ -32,6 +32,27 @@ static void kunit_set_success(struct kunit *test, bool success)
+>>>       spin_unlock_irqrestore(&test->lock, flags);
+>>>  }
+>>>
+>>> +static bool kunit_get_death_test(struct kunit *test)
+>>> +{
+>>> +     unsigned long flags;
+>>> +     bool death_test;
+>>> +
+>>> +     spin_lock_irqsave(&test->lock, flags);
+>>> +     death_test = test->death_test;
+>>> +     spin_unlock_irqrestore(&test->lock, flags);
+>>> +
+>>> +     return death_test;
+>>> +}
+>>> +
+>>> +static void kunit_set_death_test(struct kunit *test, bool death_test)
+>>> +{
+>>> +     unsigned long flags;
+>>> +
+>>> +     spin_lock_irqsave(&test->lock, flags);
+>>> +     test->death_test = death_test;
+>>> +     spin_unlock_irqrestore(&test->lock, flags);
+>>> +}
+>>> +
+>>>  static int kunit_vprintk_emit(const struct kunit *test,
+>>>                             int level,
+>>>                             const char *fmt,
+>>> @@ -70,13 +91,29 @@ static void kunit_fail(struct kunit *test, struct kunit_stream *stream)
+>>>       stream->commit(stream);
+>>>  }
+>>>
+>>> +static void __noreturn kunit_abort(struct kunit *test)
+>>> +{
+>>> +     kunit_set_death_test(test, true);
+>>> +
+>>> +     test->try_catch.throw(&test->try_catch);
+>>> +
+>>> +     /*
+>>> +      * Throw could not abort from test.
+>>> +      */
+>>> +     kunit_err(test, "Throw could not abort from test!");
+>>> +     show_stack(NULL, NULL);
+>>> +     BUG();
+>>
+>> kunit_abort() is what will be call as the result of an assert failure.
+> 
+> Yep. Does that need clarified somewhere.
+>>
+>> BUG(), which is a panic, which is crashing the system is not acceptable
+>> in the Linux kernel.  You will just annoy Linus if you submit this.
+> 
+> Sorry, I thought this was an acceptable use case since, a) this should
+> never be compiled in a production kernel, b) we are in a pretty bad,
+> unpredictable state if we get here and keep going. I think you might
+> have said elsewhere that you think "a" is not valid? In any case, I
+> can replace this with a WARN, would that be acceptable?
 
-Does your gcc have fix for https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D8=
-1715 ?
+A WARN may or may not make sense, depending on the context.  It may
+be sufficient to simply report a test failure (as in the old version
+of case (2) below.
 
-For me gcc rejects to inline it:
+Answers to "a)" and "b)":
 
-gcc version 7.3.0 (Debian 7.3.0-5)
+a) it might be in a production kernel
 
-$ gcc /tmp/test.c -Wframe-larger-than=3D128 -c -fsanitize=3Dkernel-address
--O2 --param asan-stack=3D1
-/tmp/test.c:23:13: warning: always_inline function might not be
-inlinable [-Wattributes]
- static void ltv350qv_write_reg(void) {
-             ^~~~~~~~~~~~~~~~~~
-/tmp/test.c: In function =E2=80=98ltv350qv_power_on=E2=80=99:
-/tmp/test.c:57:1: warning: the frame size of 416 bytes is larger than
-128 bytes [-Wframe-larger-than=3D]
- }
- ^
+a') it is not acceptable in my development kernel either
+
+b) No.  You don't crash a developer's kernel either unless it is
+required to avoid data corruption.
+
+b') And you can not do replacements like:
+
+(1) in of_unittest_check_tree_linkage()
+
+-----  old  -----
+
+        if (!of_root)
+                return;
+
+-----  new  -----
+
+        KUNIT_ASSERT_NOT_ERR_OR_NULL(test, of_root);
+
+(2) in of_unittest_property_string()
+
+-----  old  -----
+
+        /* of_property_read_string_index() tests */
+        rc = of_property_read_string_index(np, "string-property", 0, strings);
+        unittest(rc == 0 && !strcmp(strings[0], "foobar"), "of_property_read_string_index() failure; rc=%i\n", rc);
+
+-----  new  -----
+
+        /* of_property_read_string_index() tests */
+        rc = of_property_read_string_index(np, "string-property", 0, strings);
+        KUNIT_ASSERT_EQ(test, rc, 0);
+        KUNIT_EXPECT_STREQ(test, strings[0], "foobar");
+
+
+If a test fails, that is no reason to abort testing.  The remainder of the unit
+tests can still run.  There may be cascading failures, but that is ok.
