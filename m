@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D2EBC4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:01:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4760EC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A9D12146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:01:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 258242146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:01:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726573AbfBTOBF (ORCPT
+        id S1726633AbfBTOBI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 09:01:05 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.171]:27000 "EHLO
+        Wed, 20 Feb 2019 09:01:08 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.170]:22868 "EHLO
         mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726030AbfBTOBD (ORCPT
+        with ESMTP id S1725822AbfBTOBE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 09:01:03 -0500
+        Wed, 20 Feb 2019 09:01:04 -0500
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2M0OzzrKQ=="
 X-RZG-CLASS-ID: mo00
 Received: from iMac.fritz.box
         by smtp.strato.de (RZmta 44.9 DYNA|AUTH)
-        with ESMTPSA id 608499v1KE0xEqV
+        with ESMTPSA id 608499v1KE0wEqU
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
         (Client did not present a certificate);
-        Wed, 20 Feb 2019 15:00:59 +0100 (CET)
+        Wed, 20 Feb 2019 15:00:58 +0100 (CET)
 From:   "H. Nikolaus Schaller" <hns@goldelico.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Jonathan Cameron <jic23@kernel.org>,
@@ -42,9 +42,9 @@ Cc:     letux-kernel@openphoenux.org, Hartmut Knaack <knaack.h@gmx.de>,
         Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
         linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/9] iio: accel: bmc150: add mount matrix support
-Date:   Wed, 20 Feb 2019 15:00:50 +0100
-Message-Id: <71ef51037525ae6324bc22e933c00a514d518b31.1550671256.git.hns@goldelico.com>
+Subject: [PATCH 2/9] iio: bindings: clarifications for mount-matrix bindings
+Date:   Wed, 20 Feb 2019 15:00:49 +0100
+Message-Id: <aec7d48bcb514e37604be901f210c98ec1a52c02.1550671256.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <cover.1550671256.git.hns@goldelico.com>
 References: <cover.1550671256.git.hns@goldelico.com>
@@ -55,66 +55,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch allows to read a mount-matrix device tree
-property and report to user-space or in-kernel iio
-clients.
+This adds some clarifications and drawings to make the
+orientation of the X/Y/Z axis more clear and better
+prescribe how the values of the matrix are intended to
+be used.
 
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- drivers/iio/accel/bmc150-accel-core.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ .../devicetree/bindings/iio/mount-matrix.txt  | 60 ++++++++++++++++++-
+ 1 file changed, 57 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/iio/accel/bmc150-accel-core.c b/drivers/iio/accel/bmc150-accel-core.c
-index 383c802eb5b8..9178846cfddc 100644
---- a/drivers/iio/accel/bmc150-accel-core.c
-+++ b/drivers/iio/accel/bmc150-accel-core.c
-@@ -204,6 +204,7 @@ struct bmc150_accel_data {
- 	int ev_enable_state;
- 	int64_t timestamp, old_timestamp; /* Only used in hw fifo mode. */
- 	const struct bmc150_accel_chip_info *chip_info;
-+	struct iio_mount_matrix orientation;
- };
+diff --git a/Documentation/devicetree/bindings/iio/mount-matrix.txt b/Documentation/devicetree/bindings/iio/mount-matrix.txt
+index a3714727f739..003279fd735b 100644
+--- a/Documentation/devicetree/bindings/iio/mount-matrix.txt
++++ b/Documentation/devicetree/bindings/iio/mount-matrix.txt
+@@ -23,6 +23,8 @@ For a screen you probably want (x) coordinates to go from negative on the left
+ to positive on the right and (z) depth to be negative under the screen and
+ positive in front of it, toward the face of the user.
  
- static const struct {
-@@ -796,6 +797,18 @@ static ssize_t bmc150_accel_get_fifo_state(struct device *dev,
- 	return sprintf(buf, "%d\n", state);
- }
- 
-+static const struct iio_mount_matrix *
-+bmc150_accel_get_mount_matrix(const struct iio_dev *indio_dev,
-+				const struct iio_chan_spec *chan)
-+{
-+	return &((struct bmc150_accel_data *)iio_priv(indio_dev))->orientation;
-+}
++??? whatabout y-axis orientation - bottop-up or top-down?
 +
-+static const struct iio_chan_spec_ext_info bmc150_accel_ext_info[] = {
-+	IIO_MOUNT_MATRIX(IIO_SHARED_BY_DIR, bmc150_accel_get_mount_matrix),
-+	{ },
-+};
-+
- static IIO_CONST_ATTR(hwfifo_watermark_min, "1");
- static IIO_CONST_ATTR(hwfifo_watermark_max,
- 		      __stringify(BMC150_ACCEL_FIFO_LENGTH));
-@@ -978,6 +991,7 @@ static const struct iio_event_spec bmc150_accel_event = {
- 		.shift = 16 - (bits),					\
- 		.endianness = IIO_LE,					\
- 	},								\
-+	.ext_info = bmc150_accel_ext_info,				\
- 	.event_spec = &bmc150_accel_event,				\
- 	.num_event_specs = 1						\
- }
-@@ -1555,6 +1569,11 @@ int bmc150_accel_core_probe(struct device *dev, struct regmap *regmap, int irq,
+ A sensor can be mounted in any angle along the axes relative to the frame of
+ reference. This means that the sensor may be flipped upside-down, left-right,
+ or tilted at any angle relative to the frame of reference.
+@@ -46,6 +48,20 @@ Device-to-world examples for some three-dimensional sensor types:
+   is held with its screen flat on the planets surface and 0 on the other axes,
+   as the gravity vector is projected 1:1 onto the sensors (z)-axis.
  
- 	data->regmap = regmap;
- 
-+	ret = of_iio_read_mount_matrix(dev, "mount-matrix",
-+				       &data->orientation);
-+	if (ret)
-+		return ret;
 +
- 	ret = bmc150_accel_chip_init(data);
- 	if (ret < 0)
- 		return ret;
++     (---------)
++     !         !           y: +g
++     !         !             ^
++     !         !             !
++     !         !
++     !         !  x; -g <- z: +g  -> x: +g
++     ! 1  2  3 !
++     ! 4  5  6 !             !
++     ! 7  8  9 !             v
++     ! *  0  # !           y: -g
++     (---------)
++
++
+ - Magnetometers (compasses) have their world frame of reference relative to the
+   geomagnetic field. The system orientation vis-a-vis the world is defined with
+   respect to the local earth geomagnetic reference frame where (y) is in the
+@@ -53,6 +69,22 @@ Device-to-world examples for some three-dimensional sensor types:
+   perpendicular to the North axis and positive towards the East and (z) is
+   perpendicular to the ground plane and positive upwards.
+ 
++
++     ^^^ North: y > 0
++
++     (---------)
++     !         !
++     !         !
++     !         !
++     !         !  >
++     !         !  > North: x > 0
++     ! 1  2  3 !  >
++     ! 4  5  6 !
++     ! 7  8  9 !
++     ! *  0  # !
++     (---------)
++
++
+ - Gyroscopes detects the movement relative the device itself. The angular
+   velocity is defined as orthogonal to the plane of rotation, so if you put the
+   device on a flat surface and spin it around the z axis (such as rotating a
+@@ -60,6 +92,20 @@ Device-to-world examples for some three-dimensional sensor types:
+   along the (z) axis if rotated clockwise, and a positive value if rotated
+   counter-clockwise according to the right-hand rule.
+ 
++
++     (---------)     y > 0
++     !         !     v---\
++     !         !
++     !         !
++     !         !      <--\
++     !         !         ! z > 0
++     ! 1  2  3 !       --/
++     ! 4  5  6 !
++     ! 7  8  9 !
++     ! *  0  # !
++     (---------)
++
++
+ So unless the sensor is ideally mounted, we need a means to indicate the
+ relative orientation of any given sensor of this type with respect to the
+ frame of reference.
+@@ -76,9 +122,15 @@ https://en.wikipedia.org/wiki/Rotation_matrix
+ 
+ The mounting matrix has the layout:
+ 
+- (x0, y0, z0)
+- (x1, y1, z1)
+- (x2, y2, z3)
++ (mxx, myx, mzx)
++ (mxy, myy, mzy)
++ (mxz, myz, mzz)
++
++Values are intended to be multiplied as:
++
++  x' = mxx * x + myx * y + mzx * z
++  y' = mxy * x + myy * y + mzy * z
++  z' = mxz * x + myz * y + mzz * z
+ 
+ And it is represented as an array of strings containing the real values for
+ producing the transformation matrix. The real values use a decimal point and
+@@ -106,3 +158,5 @@ upside-down:
+ mount-matrix = "0.998", "0.054", "0",
+                "-0.054", "0.998", "0",
+                "0", "0", "1";
++
++??? does not match "180 degrees" - factors indicate ca. 3 degrees compensation
 -- 
 2.19.1
 
