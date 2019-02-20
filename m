@@ -2,129 +2,133 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E678C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01EA7C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:18:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19FB920880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:13:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C122520880
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:18:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kK3PVyyX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbfBTVNl (ORCPT
+        id S1726643AbfBTVSi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 16:13:41 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:43136 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725798AbfBTVNl (ORCPT
+        Wed, 20 Feb 2019 16:18:38 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40750 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725869AbfBTVSh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 16:13:41 -0500
-Received: by mail-qt1-f193.google.com with SMTP id y4so28990644qtc.10;
-        Wed, 20 Feb 2019 13:13:40 -0800 (PST)
+        Wed, 20 Feb 2019 16:18:37 -0500
+Received: by mail-wr1-f66.google.com with SMTP id q1so27663582wrp.7
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 13:18:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding:user-agent;
+        bh=OS7hLu22rv7ygoytKqf9NhPYJbA9/ds/CFjit/n58QA=;
+        b=kK3PVyyXWfZ6auaxYXdTjfcqVxa7xeZMJ9z57CkBrq6ED1lzDGelggdhOc7tHPHWXj
+         WbmNjS0Qp0UaBTr+aZvRzQm9LJi3xDIvpHQ1ilUKgBhFb6AcTZ0rpVxgNat6YapGx6wQ
+         ochQJVL61qCd933iHMAlw1qc0EzLD3NU1Ky4D/B3vtHByYr4hJ2LULK6w0Z0KkDtC7Em
+         Zjes9icCYLrQ7qSloNbKabcx2MLtKIX3XChC0kBkmG6S2Yupr2eTHWLuNv7hXQKAi6YN
+         e2ig54xks+/sesegZuILmi7m3ALWUr5wZ7SYZDqFe1RalJrGmPtp37Ab4lVFC2Y+80hA
+         giOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xYAM8803DgMBsb+plIT908312TQzSVQLnERb5Qtg750=;
-        b=XjUOsRuxe8B1+rOcfoJGFXb1vZmTNNqDa+HABT0DZk65GhLT5q5EQXNQb1WFaXTuYe
-         pw2dHDfsEmmOj1O1uaSKiNSIEcpGaYE37C5tBvXeD5q050kwB5H+uXguvDtRqXxGqJun
-         MNDlPhZp2WpQJlS1+HsXTj6IYiYbkU233z0vORs12jhNkMcUTFZdYK17kk8kK++1/xH6
-         dlJgpjQOXN3qkLPAmWb4WhS2XSGgJWyxYQ42N5bwmkgRDxjc2naJZ3RRAVrP2uTtAWdd
-         em5LNzOA67emRRS4wBekWxEPSvIiAB0YGmxKQWlMuCB+OmfgmnHMTma5ezWvVXHh2jAR
-         u/Kw==
-X-Gm-Message-State: AHQUAuaFl/x+uaP7l4T1nUUAVkhWhg4XEO2EjzxcCVDLaOieGYONu4CT
-        Ga5lNpLWSKBU9FR2R7oObybra+jcBi7q4JnkW4I=
-X-Google-Smtp-Source: AHgI3IbvvWfrxSH/Cv41CJi7HaZ7Ih38IWIFoQv0x80kdcuA+g7UUJqZn6OaGDz4NupwvzyCVdKJeoIciycCe78pZH4=
-X-Received: by 2002:ac8:2c34:: with SMTP id d49mr29107490qta.152.1550697219940;
- Wed, 20 Feb 2019 13:13:39 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding:user-agent;
+        bh=OS7hLu22rv7ygoytKqf9NhPYJbA9/ds/CFjit/n58QA=;
+        b=rRI2jyssUi7hf2OL7hqaxF518dWMm8JHn0GszWHA8Zv0TOAtPPUntBvNhjNOnS9Z+O
+         KTbhADwRXWrbeiaj05XF9jrymCmbUfarSaphGF182qPDP8fBq/wK9cffIOqP0J1Kfrpr
+         LOLmv2R4GEK8QProNK4K0uipuR9d8cr9L1TOZEFGJRnFKcpfY5w3zB51eHS3Gtwn5YVA
+         zg0z0V8erItcK8c7Rqrr0R5ukvZAFCY+3FyGLyfSVl1/FNt5pjIYj6YNPyAQNYSPsex8
+         VLIrfoGyUHbRI80heppDxwhS3G23NwhCaabEj3jrjkaPIjaSWBZgbrmRoMeUtMt7DRwh
+         3HcA==
+X-Gm-Message-State: AHQUAubX4/OE/uWawZTM3vuEFQOLxLQcvnEv7bXiWU7N+CPOvPTOoDNY
+        EBRr4JYD++aPo5roouN6ijcRTD/5
+X-Google-Smtp-Source: AHgI3IZoRWnukzU381EHBqAJvC6GDtFgsRewa8fySEJyXCIOhzEG7i2cQEETf2Oz9Fma9GgBSZzHvw==
+X-Received: by 2002:a5d:4f86:: with SMTP id d6mr21226499wru.89.1550697515647;
+        Wed, 20 Feb 2019 13:18:35 -0800 (PST)
+Received: from localhost (etr91-1-88-171-250-234.fbx.proxad.net. [88.171.250.234])
+        by smtp.gmail.com with ESMTPSA id o8sm8578831wma.1.2019.02.20.13.18.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Feb 2019 13:18:34 -0800 (PST)
+Date:   Wed, 20 Feb 2019 22:18:34 +0100
+From:   =?utf-8?B?QXVyw6lsaWVu?= Cedeyn <aurelien.cedeyn@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, akpm@linux-foundation.org, corbet@lwn.net,
+        gregkh@linuxfoundation.org
+Subject: [PATCH] scripts/spdxcheck.py: fix C++ comment style detection
+Message-ID: <9b8ba571688ec58361a502dc93693b2bfb1752dc.1550692590.git.aurelien.cedeyn@gmail.com>
 MIME-Version: 1.0
-References: <20190219214940.391081-1-arnd@arndb.de> <CAAeHK+xSpsu0tNmeq0wKXfT=0HuORnvU+XzLswDzhbtfZVa4Hw@mail.gmail.com>
- <CAK8P3a1NfHohd1xT7iHK85L2PGnD95RJvwFi-2cWrFpipQzqwg@mail.gmail.com>
- <b109ad0d-6995-8ca2-5426-7e2627d2032c@virtuozzo.com> <CAK8P3a0tg1WRLK=fs9S+X4TPB7sR55ZsjMbBVX07AtAfguXCsw@mail.gmail.com>
- <CAKwvOd=XrNNb=r3qgsT8O6JNzL4hg4pqfJJFcY2DzA0Ooc=E3w@mail.gmail.com>
- <20190220184408.GG9878@sirena.org.uk> <CAKwvOdne3aE5bUsQF-2C-L2Xezqq9qb=NqF8FA+B7nvqXKAXFA@mail.gmail.com>
-In-Reply-To: <CAKwvOdne3aE5bUsQF-2C-L2Xezqq9qb=NqF8FA+B7nvqXKAXFA@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 20 Feb 2019 22:13:22 +0100
-Message-ID: <CAK8P3a1pop4WqWxV=-R4n1Lh3FYG0mb4iJk4=saq6CgzpsPe4A@mail.gmail.com>
-Subject: Re: [PATCH] kasan: turn off asan-stack for clang-8 and earlier
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgenii Stepanov <eugenis@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>, Qian Cai <cai@lca.pw>,
-        Alexander Potapenko <glider@google.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Christoph Lameter <cl@linux.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 9:02 PM Nick Desaulniers
-<ndesaulniers@google.com> wrote:
->
-> On Wed, Feb 20, 2019 at 10:44 AM Mark Brown <broonie@kernel.org> wrote:
-> >
-> > On Wed, Feb 20, 2019 at 10:07:36AM -0800, Nick Desaulniers wrote:
-> >
-> > > I like Evgenii's idea:
-> > > https://bugs.llvm.org/show_bug.cgi?id=38809#c10
-> >
-> > That's a suggestion to tune the inlining heuristics.
->
-> Yes; but it will also improve KASAN (if feasible).
+With the last commit to support the SuperH boot code files, we have the
+following regression:
 
-From my experiments that I cited in the bug report, very few cases
-seem to actually be the result of different inlining decisions, and those
-that are tend to be kernel bugs (e.g. in drivers/scsi/bfa/bfa_fcs_lport.c
-clang reports a larger stack than gcc because it combines two functions
-that individually use 800 bytes each, but if one calls the other, we
-use even more stack than the combined function).
+$ ./scripts/checkpatch.pl -f <(echo '/* SPDX-License-Identifier: MIT */')
+WARNING: 'SPDX-License-Identifier: MIT */' is not supported in LICENSES/..
++/* SPDX-License-Identifier: MIT */
 
-In the example in https://bugs.llvm.org/show_bug.cgi?id=38809#c12
-(https://godbolt.org/z/ylsGSQ) there is no inlining, yet clang uses
-over ten times as much stack space as gcc, for reasons I still
-can't explain. My assumption right now is that the underlying bug
-causes most of the problems with excessive stack usage in
-allmodconfig kernels.
+total: 0 errors, 1 warnings, 1 lines checked
 
-> > > While I myself share Arnd's goal of driving compiler warnings to zero,
-> > > in general I'd prefer not to disable warning-producing-features or
-> > > disable warnings outright for cases where we have some ideas of
-> > > changes we can make to the compiler.  There's probably a list now of
-> > > false warnings produced by old versions of Clang from bugs in Clang
-> > > that we fixed.  I'm not interested in additionally trying to work
-> > > around those somehow in kernel sources.
-> >
-> > We do have infrastructure in the kernel for managing warnings based on
-> > compiler version (Arnd was looking at some improvements to that IIRC),
-> > if we've got a kernel that builds with a given compiler it's worth
-> > looking at tuning what we do with that compiler.  If newer versions of
-> > the compiler work better or have new options we can turn things on for
-> > them.
->
-> so maybe something like (pseudocode):
-> if kasan && clang && clang_version < 9:
->   disable -Wframe-larger-than=
->
-> If you overrun the stack with KASAN, a warning would be nice, but
-> you'll hopefully find out the hard way at runtime.  And that doesn't
-> require up to 114 Makefile changes, which would be kind of obnoxious
-> for this papercut.
+NOTE: For some of the reported defects, checkpatch may be able to
+mechanically convert to the typical style using --fix or --fix-inplace.
 
-That would mean that build testing allmodconfig with clang would
-ignore all the interesting stack overflow bugs that happen in real
-user systems without KASAN.
+/dev/fd/63 has style problems, please review.
 
-       Arnd
+NOTE: If any of the errors are false positives, please report
+      them to the maintainer, see CHECKPATCH in MAINTAINERS.
+
+This is not obvious, but spdxcheck.py is launched in checkpatch.pl with :
+    ...
+    } elsif ($rawline =~ /(SPDX-License-Identifier: .*)/) {
+        my $spdx_license = $1;
+        if (!is_SPDX_License_valid($spdx_license)) {
+            WARN("SPDX_LICENSE_TAG",
+                 "'$spdx_license' is not supported in LICENSES/...\n" . \
+                 $herecurr);
+        }
+    ...
+    sub is_SPDX_License_valid {
+        my ($license) = @_;
+        ...
+        my $status = `cd "$root_path"; echo "$license" |
+                      python scripts/spdxcheck.py -`;
+        ...
+    }
+
+The first chars before 'SPDX-License-Identifier:' are ignored.
+This commit fixes this regression.
+
+Fixes:959b49687838 (scripts/spdxcheck.py: Handle special quotation mark comments)
+Signed-off-by:Aurélien Cedeyn <aurelien.cedeyn@gmail.com>
+---
+ scripts/spdxcheck.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/spdxcheck.py b/scripts/spdxcheck.py
+index 3fb020c..4fe392e 100755
+--- a/scripts/spdxcheck.py
++++ b/scripts/spdxcheck.py
+@@ -177,7 +177,7 @@ class id_parser(object):
+                     continue
+                 expr = line.split(':')[1].strip()
+                 # Remove trailing comment closure
+-                if line.startswith('/*'):
++                if line.strip().endswith('*/'):
+                     expr = expr.rstrip('*/').strip()
+                 # Special case for SH magic boot code files
+                 if line.startswith('LIST \"'):
+-- 
+2.7.4
