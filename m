@@ -2,228 +2,174 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0258BC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E61BC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:20:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C07D52146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:20:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="F8H07j44"
+	by mail.kernel.org (Postfix) with ESMTP id 43A7A2147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:20:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725847AbfBTUUX (ORCPT
+        id S1728284AbfBTUU3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 15:20:23 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:54704 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727717AbfBTUUU (ORCPT
+        Wed, 20 Feb 2019 15:20:29 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:35857 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725881AbfBTUU1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 15:20:20 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1KK98rL082386;
-        Wed, 20 Feb 2019 20:18:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=jPor7XctkGZCsqvXc242v28Xv2yJ7KWqcRDiRETXPRI=;
- b=F8H07j44UR1tdSp9IX24yuzkWPkmOz7N1HefA6nBH2ZGm0d/i5epC0lBYdUHGt3ufw1F
- CE6uD+ubucHMlnQwjhdTI9MHKcgb0aDCiZW3NG9vS1FE3WFxi6wE8BITz8fjwQU1unbH
- /mFjA/OD2BIyscqlvV1nfjG4Ck28RNljs339RqQUaKcZomkhtl8WthEwf7NZYGjS/0jw
- viANzo+l5MwQKLEZMrQSza7IzGGqPiUn6FEfFkW06HIPzObL3axqkEaPeYmr43zooBBB
- gTJF1PuXjEwAqRpSFuFvN6WiMG6Xp6QUND9uoRzEDo01qD1nDt6NiePgL/ybzle3DnfK rQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2qp9xu3xp7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Feb 2019 20:18:50 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1KKInTQ008317
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Feb 2019 20:18:49 GMT
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1KKInBo012477;
-        Wed, 20 Feb 2019 20:18:49 GMT
-Received: from paddy.lan (/94.61.137.133)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 20 Feb 2019 12:18:48 -0800
-From:   Joao Martins <joao.m.martins@oracle.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Cc:     Ankur Arora <ankur.a.arora@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>
-Subject: [PATCH RFC 36/39] drivers/xen: xen_shim_domain() support
-Date:   Wed, 20 Feb 2019 20:16:06 +0000
-Message-Id: <20190220201609.28290-37-joao.m.martins@oracle.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190220201609.28290-1-joao.m.martins@oracle.com>
-References: <20190220201609.28290-1-joao.m.martins@oracle.com>
+        Wed, 20 Feb 2019 15:20:27 -0500
+Received: from mail-wr1-f69.google.com ([209.85.221.69])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <juerg.haefliger@canonical.com>)
+        id 1gwYLw-0001My-Jt
+        for linux-kernel@vger.kernel.org; Wed, 20 Feb 2019 20:20:24 +0000
+Received: by mail-wr1-f69.google.com with SMTP id v8so10892192wrt.18
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 12:20:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version;
+        bh=l5qv4p38mlg0Pt1NxYLmxEmIvzrMPdeXm4Z7ZTwG0xg=;
+        b=nbBvBV/7MCBzy3SgSn5rwLY2ZKwogVCBmm29FegkjOVWMCTULyzommweuXN+0Vtr83
+         f57x+cm61Yht1P5HToWLgZ8rkggFzA1cSqsWcm3IaZdyjBsZ3NrxTVKPCIi9mr4MFV7J
+         1Ru13rJFowLKdSlnwGXOmN/AQbAqWvG2Mmn9Vbd15nqBi/SyPSlAXcXULtYaWkKfNKe2
+         lnbciRANl7u/ewTZVfDczlNy7EZBM6OfA4HmMDDJ+1LX4xp95M8To7w0Y9uC1Jv/9gJ7
+         UaAX+9wO79JzhbvzmKE4WpqsScqwffNj/KM0H7UjfvA47/XHk3ojj9TzLQGNP1y+Zy9b
+         kERQ==
+X-Gm-Message-State: AHQUAuYn3bu+Y8gZVfGYH2qrCRtPFdMowfRsRUT8iUYlbwDMV+lugjxe
+        ddU1am0z/bC5KezoPcKaWKLDPpoTIEbmlrspPJJvtkmetaW3XdJ+HLzr8w5XwbOBJTC33ieHNSj
+        CkuiSEKejvzMd9DL6RlCyNP3P8hoaP08YS1FwaN6c0g==
+X-Received: by 2002:a1c:6505:: with SMTP id z5mr8291874wmb.7.1550694024218;
+        Wed, 20 Feb 2019 12:20:24 -0800 (PST)
+X-Google-Smtp-Source: AHgI3Ia0eb8G4fWdsMLyqr01oJGhqJkvcJRghVC2HD4N51dOtLOyFv4m+nh4mzIsuBuvDfaz53yrSA==
+X-Received: by 2002:a1c:6505:: with SMTP id z5mr8291860wmb.7.1550694023932;
+        Wed, 20 Feb 2019 12:20:23 -0800 (PST)
+Received: from smeagol ([194.204.107.10])
+        by smtp.gmail.com with ESMTPSA id u8sm11137923wrp.55.2019.02.20.12.20.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Feb 2019 12:20:23 -0800 (PST)
+From:   Juerg Haefliger <juerg.haefliger@canonical.com>
+X-Google-Original-From: Juerg Haefliger <juergh@canonical.com>
+Date:   Wed, 20 Feb 2019 21:20:20 +0100
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Juerg Haefliger <juerg.haefliger@canonical.com>,
+        linux-kernel@vger.kernel.org, mingo@redhat.com,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Shuah Khan <shuahkhan@gmail.com>
+Subject: Re: [PATCH] selftests/ftrace: Make the coloring POSIX compliant
+Message-ID: <20190220211922.051fd2fc@smeagol>
+In-Reply-To: <20190220144934.22c52092@gandalf.local.home>
+References: <20190220161333.28109-1-juergh@canonical.com>
+        <20190220144934.22c52092@gandalf.local.home>
+Organization: Canonical Ltd
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9173 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=994 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902200138
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ boundary="Sig_/H/zuKEUJfZm4ZmD4h5YCl3P"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable /dev/xen/{gntdev,evtchn} and /proc/xen/ for xen_shim_domain().
+--Sig_/H/zuKEUJfZm4ZmD4h5YCl3P
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-These interfaces will be used by xenstored to initialize its
-event channel port and the kva used to communicate with the
-xenbus driver.
+On Wed, 20 Feb 2019 14:49:34 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
----
- drivers/xen/evtchn.c           | 4 +++-
- drivers/xen/privcmd.c          | 5 ++++-
- drivers/xen/xenbus/xenbus_xs.c | 2 +-
- drivers/xen/xenfs/super.c      | 7 ++++---
- drivers/xen/xenfs/xensyms.c    | 4 ++++
- 5 files changed, 16 insertions(+), 6 deletions(-)
+> On Wed, 20 Feb 2019 17:13:33 +0100
+> Juerg Haefliger <juerg.haefliger@canonical.com> wrote:
+>=20
+> > echo -e and \e are not POSIX. Depending on what /bin/sh is, we can get
+> > incorrect output like: =20
+>=20
+> I'm curious to which shell this is.
 
-diff --git a/drivers/xen/evtchn.c b/drivers/xen/evtchn.c
-index 6d1a5e58968f..367390eb5883 100644
---- a/drivers/xen/evtchn.c
-+++ b/drivers/xen/evtchn.c
-@@ -708,13 +708,14 @@ static int __init evtchn_init(void)
- {
- 	int err;
- 
--	if (!xen_domain())
-+	if (!xen_domain() && !xen_shim_domain_get())
- 		return -ENODEV;
- 
- 	/* Create '/dev/xen/evtchn'. */
- 	err = misc_register(&evtchn_miscdev);
- 	if (err != 0) {
- 		pr_err("Could not register /dev/xen/evtchn\n");
-+		xen_shim_domain_put();
- 		return err;
- 	}
- 
-@@ -726,6 +727,7 @@ static int __init evtchn_init(void)
- static void __exit evtchn_cleanup(void)
- {
- 	misc_deregister(&evtchn_miscdev);
-+	xen_shim_domain_put();
- }
- 
- module_init(evtchn_init);
-diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
-index b24ddac1604b..a063ad5c8260 100644
---- a/drivers/xen/privcmd.c
-+++ b/drivers/xen/privcmd.c
-@@ -999,12 +999,13 @@ static int __init privcmd_init(void)
- {
- 	int err;
- 
--	if (!xen_domain())
-+	if (!xen_domain() && !xen_shim_domain_get())
- 		return -ENODEV;
- 
- 	err = misc_register(&privcmd_dev);
- 	if (err != 0) {
- 		pr_err("Could not register Xen privcmd device\n");
-+		xen_shim_domain_put();
- 		return err;
- 	}
- 
-@@ -1012,6 +1013,7 @@ static int __init privcmd_init(void)
- 	if (err != 0) {
- 		pr_err("Could not register Xen hypercall-buf device\n");
- 		misc_deregister(&privcmd_dev);
-+		xen_shim_domain_put();
- 		return err;
- 	}
- 
-@@ -1022,6 +1024,7 @@ static void __exit privcmd_exit(void)
- {
- 	misc_deregister(&privcmd_dev);
- 	misc_deregister(&xen_privcmdbuf_dev);
-+	xen_shim_domain_put();
- }
- 
- module_init(privcmd_init);
-diff --git a/drivers/xen/xenbus/xenbus_xs.c b/drivers/xen/xenbus/xenbus_xs.c
-index bd6db3703972..062c0a5fa415 100644
---- a/drivers/xen/xenbus/xenbus_xs.c
-+++ b/drivers/xen/xenbus/xenbus_xs.c
-@@ -735,7 +735,7 @@ static void xs_reset_watches(void)
- {
- 	int err;
- 
--	if (!xen_hvm_domain() || xen_initial_domain())
-+	if (!xen_hvm_domain() || xen_initial_domain() || xen_shim_domain())
- 		return;
- 
- 	if (xen_strict_xenbus_quirk())
-diff --git a/drivers/xen/xenfs/super.c b/drivers/xen/xenfs/super.c
-index 71ddfb4cf61c..2ef326645880 100644
---- a/drivers/xen/xenfs/super.c
-+++ b/drivers/xen/xenfs/super.c
-@@ -64,7 +64,8 @@ static int xenfs_fill_super(struct super_block *sb, void *data, int silent)
- 	};
- 
- 	return simple_fill_super(sb, XENFS_SUPER_MAGIC,
--			xen_initial_domain() ? xenfs_init_files : xenfs_files);
-+			xen_initial_domain() || xen_shim_domain() ?
-+				xenfs_init_files : xenfs_files);
- }
- 
- static struct dentry *xenfs_mount(struct file_system_type *fs_type,
-@@ -84,7 +85,7 @@ MODULE_ALIAS_FS("xenfs");
- 
- static int __init xenfs_init(void)
- {
--	if (xen_domain())
-+	if (xen_domain() || xen_shim_domain())
- 		return register_filesystem(&xenfs_type);
- 
- 	return 0;
-@@ -92,7 +93,7 @@ static int __init xenfs_init(void)
- 
- static void __exit xenfs_exit(void)
- {
--	if (xen_domain())
-+	if (xen_domain() || xen_shim_domain())
- 		unregister_filesystem(&xenfs_type);
- }
- 
-diff --git a/drivers/xen/xenfs/xensyms.c b/drivers/xen/xenfs/xensyms.c
-index c6c73a33c44d..79bccb53d344 100644
---- a/drivers/xen/xenfs/xensyms.c
-+++ b/drivers/xen/xenfs/xensyms.c
-@@ -8,6 +8,7 @@
- #include <xen/interface/platform.h>
- #include <asm/xen/hypercall.h>
- #include <xen/xen-ops.h>
-+#include <xen/xen.h>
- #include "xenfs.h"
- 
- 
-@@ -114,6 +115,9 @@ static int xensyms_open(struct inode *inode, struct file *file)
- 	struct xensyms *xs;
- 	int ret;
- 
-+	if (xen_shim_domain())
-+		return -EINVAL;
-+
- 	ret = seq_open_private(file, &xensyms_seq_ops,
- 			       sizeof(struct xensyms));
- 	if (ret)
--- 
-2.11.0
+Quite frankly I don't know but that's the output we get when we run it in
+Jenkins. I'll try to find out.
 
+
+> > $ -e -n [1] Basic trace file check
+> > $ -e 	[PASS]
+> >=20
+> > Fix that by using \033 instead of \e and printf.
+> >=20
+> > Signed-off-by: Juerg Haefliger <juergh@canonical.com>
+> > ---
+> >  tools/testing/selftests/ftrace/ftracetest | 17 +++++++++++------
+> >  1 file changed, 11 insertions(+), 6 deletions(-)
+> >=20
+> > diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/=
+selftests/ftrace/ftracetest
+> > index fc755e1b50f1..f200898e3e2c 100755
+> > --- a/tools/testing/selftests/ftrace/ftracetest
+> > +++ b/tools/testing/selftests/ftrace/ftracetest
+> > @@ -161,10 +161,10 @@ color_green=3D
+> >  color_blue=3D
+> >  # If stdout exists and number of colors is eight or more, use them
+> >  if [ -t 1 -a "$ncolors" -ge 8 ]; then
+> > -  color_reset=3D"\e[0m"
+> > -  color_red=3D"\e[31m"
+> > -  color_green=3D"\e[32m"
+> > -  color_blue=3D"\e[34m"
+> > +  color_reset=3D"\033[0m"
+> > +  color_red=3D"\033[31m"
+> > +  color_green=3D"\033[32m"
+> > +  color_blue=3D"\033[34m"
+> >  fi
+> > =20
+> >  strip_esc() {
+> > @@ -173,8 +173,13 @@ strip_esc() {
+> >  }
+> > =20
+> >  prlog() { # messages
+> > -  echo -e "$@"
+> > -  [ "$LOG_FILE" ] && echo -e "$@" | strip_esc >> $LOG_FILE
+> > +  newline=3D"\n"
+> > +  if [ "$1" =3D "-n" ] ; then
+> > +    newline=3D
+> > +    shift
+> > +  fi
+> > +  printf "$@$newline"
+> > +  [ "$LOG_FILE" ] && printf "$@$newline" | strip_esc >> $LOG_FILE
+> >  }
+> >  catlog() { #file
+> >    cat $1 =20
+>=20
+> This should probably be split into two patches, as they are two
+> different issues.
+
+Will do.
+
+...Juerg
+
+=20
+> -- Steve
+
+
+--Sig_/H/zuKEUJfZm4ZmD4h5YCl3P
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEhZfU96IuprviLdeLD9OLCQumQrcFAlxttoQACgkQD9OLCQum
+Qrd29g//RC9maNvP185owF2eUIdK4SBUMgsnMeSZCUpAuHCy57LacQlYevTz0/Vu
+clkqXE7o4Gw8kYQ0vRHkletGpem/66qFdcOmYD35ky1havMJ4m5VCwgahyIHUIpm
+o12YonRQHz9lWcYtWWRtaxaBergkr991dk7foa5+hsAWJla00xrCd57JZ1aRzZ1Y
+CMR4v3NTnppgl5ihgoqnWZ0V3TOtGEB6bTnPLbb7ArV4Q5R9QIwu8ojY44QmHMlF
+bkctzf5GuecHGv1CExQFPe9izVKDgZoGY4xMWEoDlPVJ58zPZI9/iwizMte6JegN
+FoEBMiPgTE9yv1e3XtlDHRyQFNK2PeaT+T2jABm1NzOkWLbjaGxWipnNc/swIZ7I
+g3tW6HtIq5yFtlIHFrFp1qzihzLyjIjVyjmelOnreLHE1wAqFqeY6uZ0x9qj7zPO
+DxZV3/QJfjretWyUdgiFgW/3BXc0Z2ElmKgy5mhrmqdjw0InvpOVWFfSwt7D5IL2
+42ige5VD8RpJhJoJ7yjC1akt67v2jazxulV4eTZgrSrOCJWXjo6i81CeTRyO0GPu
+ZlVtkPWrNzCgOiYS6xyA9MZHt3rl9cGEAOIvSPK+sTgtk8IzD1wITKEnNQxwbH/e
+dP08/VBh52awO2S4plmj2/cQM3j+1gsL261LwKRX8+oY213fxlo=
+=BCNl
+-----END PGP SIGNATURE-----
+
+--Sig_/H/zuKEUJfZm4ZmD4h5YCl3P--
