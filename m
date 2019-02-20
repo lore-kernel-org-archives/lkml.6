@@ -2,291 +2,109 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C4CC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:07:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A44C9C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:08:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26C6E2146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:07:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 728F52146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:08:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j3thYfI4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbfBTIH1 (ORCPT
+        id S1726191AbfBTIIj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 03:07:27 -0500
-Received: from lilium.sigma-star.at ([109.75.188.150]:51786 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725813AbfBTIH1 (ORCPT
+        Wed, 20 Feb 2019 03:08:39 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44369 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725825AbfBTIIj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 03:07:27 -0500
-X-Greylist: delayed 353 seconds by postgrey-1.27 at vger.kernel.org; Wed, 20 Feb 2019 03:07:24 EST
-Received: from localhost (localhost [127.0.0.1])
-        by lilium.sigma-star.at (Postfix) with ESMTP id 72AB31802C9AE;
-        Wed, 20 Feb 2019 09:01:30 +0100 (CET)
-From:   Richard Weinberger <richard@sigma-star.at>
-To:     yuyufen <yuyufen@huawei.com>, dwmw2@infradead.org
-Cc:     richard.weinberger@gmail.com, linux-mtd@lists.infradead.org,
-        Joakim.Tjernlund@infinera.com, houtao1@huawei.com,
-        viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] jffs2: safely remove obsolete dirent from the f->dents list
-Date:   Wed, 20 Feb 2019 09:01:24 +0100
-Message-ID: <8000531.srAqeQn4W0@blindfold>
-In-Reply-To: <d2697496-c7db-94a1-4292-03625b47cf63@huawei.com>
-References: <20190123072249.103847-1-yuyufen@huawei.com> <d2697496-c7db-94a1-4292-03625b47cf63@huawei.com>
+        Wed, 20 Feb 2019 03:08:39 -0500
+Received: by mail-lf1-f68.google.com with SMTP id g2so16821730lfh.11
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 00:08:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=C2WrDpsl5Tr1zlAUZqdQM9SsZWpB4tZoF1I1ecg6VEo=;
+        b=j3thYfI4C+Fmyjo+gZll1u7x3mfa0YdG8GWexF88oiPS8i8GSpN1GgCG4OK3ug5Zmv
+         saoX5+w13M2ZUMAtjTX/ImmTTEFqgNqrFRL5BoaDXuHuqQbn+fBWjonPwXVw/ZlCcJO8
+         xY8qVN8wXd63jhbrtPOitQ8a92uCAWwmxyIAalc/7Pec+M3dJ+d4tLHWEhL4nsGxqajy
+         fibj12bIUMddi7cCMmrGQz0nKFIK4kRkZSLhidAsbFHEjH0TsAz0/rTBHe/vghovbCpt
+         irxRh3LJnAOlOAXiiTXCGZ6AACuA3WxX91svrz8vjDF1AqVt3sGwwgz/s+vOEaZLqdOL
+         TTiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=C2WrDpsl5Tr1zlAUZqdQM9SsZWpB4tZoF1I1ecg6VEo=;
+        b=Jy0dJO6T0UAfALaprMDoCj2gLMkDxDctWDpeVFDtRT/130lgHUJLSPbvngnmHrqptB
+         trirCMb7mXXrT8NhbTejxAj+GUmN1shWfMfy0z2a3UlryOsNKd59SXMCB8xk8gl6LMAa
+         VejPfveYzx5O99KHveGqggv4pEUVIfa9qIO082Xj8g8K9HQbAd6+9bz3o5Y15CMFRS6S
+         qM08aqDzKhyOocAmbDlRiZWe6kxmcJrXwfghyQ5KtcYFmAsWcNaaERXtgXlHpadzQOxw
+         yMBNCFzIdKuLBjr+RZPhbDLPYWDEAmFNuohpkZEE8K/u6Age6/w9VLKGSE08ZOT1zF7M
+         i3yQ==
+X-Gm-Message-State: AHQUAuay7ca8Itm7LXvQdnRzFIsVyDjaHKDkn5AOjbECTrhCZIoyd/mf
+        CthcJXC2nTJNSmOWPhS5kLVpsiXoF0rfh9wdnKlYDg==
+X-Google-Smtp-Source: AHgI3IajqvB1NxVBGs292Hs07SSB5+ZNLH52KP7YCiBqgTg/rmJP0zsfTadGKGoT3htA6eLsS0xugT8EkzdxWNZI5tk=
+X-Received: by 2002:a19:5611:: with SMTP id k17mr18716886lfb.168.1550650117245;
+ Wed, 20 Feb 2019 00:08:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 20 Feb 2019 09:08:25 +0100
+Message-ID: <CACRpkdYMDh-VLBcKsfrCV5wV0vUqGPujztkqTjyZPznJ2APhEQ@mail.gmail.com>
+Subject: [GIT PULL] pin control fixes for v5.0
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Samstag, 16. Februar 2019, 09:53:35 CET schrieb yuyufen:
-> ping?
+Hi Linus,
 
-Sorry for the delay.
+some final pin control fixes (I hope) to round off the v5.0 pin control
+development cycle.
 
-I didn't forget (completely) about this one.
-The thing is, I don't really maintain jffs2 but I will collect and test patches
-for the upcoming merge window and carry them via my ubifs tree. 
+Only driver fixes, one for stable.
 
-David, I hope I have by end of the week a list with potential patches ready
-such that you can have a final look and veto what you don't like. :-)
+Please pull them in!
 
-Thanks,
-//richard
-> 
-> On 2019/1/23 15:22, Yufen Yu wrote:
-> > We may delete a bunch of directory entries, operating such as:
-> > getdents(), unlink(), getdents()..., until the end of the directory.
-> > jffs2 handles f_pos on the directory merely as the position on the
-> > f->dents list. So, the next getdents() may skip some entries
-> > before f_pos, if we remove some entries from the list between two
-> > getdents(), resulting in some entries of the directory cannot be deleted.
-> >
-> > Commit 15953580e79b is introduced to resolve this bug by not
-> > removing delete entries from the list immediately.
-> >
-> > However, when CONFIG_JFFS2_SUMMARY is not set, it can cause the
-> > following issues:
-> >
-> > * 'deletion' dirents is always in the f->dents list, wasting memory
-> >      resource. For example:
-> >          There is a file named 'file1'. Then we rename it:
-> >          mv file1 file2;
-> >          mv file2 file3;
-> >          ...
-> >          mv file99999 file1000000
-> >
-> >      All of file1~file1000000 dirents always in the f->dents list.
-> >
-> > * Though, the list we're traversing is already ordered by CRC,
-> > it could waste much CPU time when the list is very long.
-> >
-> > To fix, we define two variables in struct jffs2_inode_info: nr_dir_opening,
-> > obsolete_count, and two new functions: jffs2_dir_open(), jffs2_dir_release().
-> >
-> > When open a directory, jffs2_dir_open() will increase nr_dir_opening,
-> > which will be decreased by jffs2_dir_release(). if the value is 0,
-> > it means nobody open the dir and nobody in getdents()/seek() semantics.
-> > Thus, we can remove all obsolete dirent from the list.
-> >
-> > When delete a file, jffs2_do_unlink() can remove the dirent directly if
-> > nobody open the directory(i.e. nr_dir_opending == 0). Otherwise, it just
-> > increase obsolete_count, denoting obsolete dirent count of the list.
-> >
-> > Fixes: 15953580e79b ("[JFFS2] Improve getdents vs. f_pos handling on NOR flash.")
-> > Signed-off-by: Yufen Yu <yuyufen@huawei.com>
-> > ---
-> >   fs/jffs2/dir.c             | 49 ++++++++++++++++++++++++++++++++++++++++++++++
-> >   fs/jffs2/jffs2_fs_i.h      |  7 +++++++
-> >   fs/jffs2/super.c           |  4 ++++
-> >   fs/jffs2/write.c           | 30 +++++++++++++++++++---------
-> >   include/uapi/linux/jffs2.h |  4 ++++
-> >   5 files changed, 85 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/fs/jffs2/dir.c b/fs/jffs2/dir.c
-> > index f20cff1194bb..aed872dcd0ca 100644
-> > --- a/fs/jffs2/dir.c
-> > +++ b/fs/jffs2/dir.c
-> > @@ -37,6 +37,8 @@ static int jffs2_mknod (struct inode *,struct dentry *,umode_t,dev_t);
-> >   static int jffs2_rename (struct inode *, struct dentry *,
-> >   			 struct inode *, struct dentry *,
-> >   			 unsigned int);
-> > +static int jffs2_dir_release (struct inode *, struct file *);
-> > +static int jffs2_dir_open (struct inode *, struct file *);
-> >   
-> >   const struct file_operations jffs2_dir_operations =
-> >   {
-> > @@ -45,6 +47,8 @@ const struct file_operations jffs2_dir_operations =
-> >   	.unlocked_ioctl=jffs2_ioctl,
-> >   	.fsync =	jffs2_fsync,
-> >   	.llseek =	generic_file_llseek,
-> > +	.open =		jffs2_dir_open,
-> > +	.release =	jffs2_dir_release,
-> >   };
-> >   
-> >   
-> > @@ -865,3 +869,48 @@ static int jffs2_rename (struct inode *old_dir_i, struct dentry *old_dentry,
-> >   	return 0;
-> >   }
-> >   
-> > +static int jffs2_dir_open(struct inode *dir_i, struct file *filp)
-> > +{
-> > +#ifndef CONFIG_JFFS2_SUMMARY
-> > +	struct jffs2_inode_info *dir_f = JFFS2_INODE_INFO(dir_i);
-> > +	atomic_inc(&dir_f->nr_dir_opening);
-> > +#endif
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int jffs2_dir_release(struct inode *dir_i, struct file *filp)
-> > +{
-> > +#ifndef CONFIG_JFFS2_SUMMARY
-> > +	struct jffs2_inode_info *dir_f = JFFS2_INODE_INFO(dir_i);
-> > +
-> > +	BUG_ON(atomic_read(&dir_f->nr_dir_opening) <= 0);
-> > +
-> > +	mutex_lock(&dir_f->sem);
-> > +	/* jffs2_dir_open may increase nr_dir_opening after
-> > +	 * atomic_dec_and_test() returning true.
-> > +	 * However, it cannot traverse the list until hold
-> > +	 * mutex dir_f->sem lock, so that we can go on
-> > +	 * removing.*/
-> > +	if (atomic_dec_and_test(&dir_f->nr_dir_opening) &&
-> > +			dir_f->obsolete_count > JFFS2_OBS_DIRENT_LIMIT) {
-> > +		struct jffs2_full_dirent **prev = &dir_f->dents;
-> > +
-> > +		/* remove all obsolete dirent from the list, which
-> > +		 * can save memory space and reduce CPU time for
-> > +		 * traverse the list */
-> > +		while(*prev) {
-> > +			if ((*prev)->raw == NULL && (*prev)->ino == 0) {
-> > +				struct jffs2_full_dirent *this = *prev;
-> > +				*prev = this->next;
-> > +				jffs2_free_full_dirent(this);
-> > +			} else
-> > +				prev = &((*prev)->next);
-> > +		}
-> > +		dir_f->obsolete_count = 0;
-> > +	}
-> > +	mutex_unlock(&dir_f->sem);
-> > +#endif
-> > +
-> > +	return 0;
-> > +}
-> > diff --git a/fs/jffs2/jffs2_fs_i.h b/fs/jffs2/jffs2_fs_i.h
-> > index 2e4a86763c07..a4da25d16cb4 100644
-> > --- a/fs/jffs2/jffs2_fs_i.h
-> > +++ b/fs/jffs2/jffs2_fs_i.h
-> > @@ -50,6 +50,13 @@ struct jffs2_inode_info {
-> >   
-> >   	uint16_t flags;
-> >   	uint8_t usercompr;
-> > +
-> > +	/* obsolete dirent count in the list of 'dents' */
-> > +	uint8_t  obsolete_count;
-> > +
-> > +	/* Directory open refcount */
-> > +	atomic_t nr_dir_opening;
-> > +
-> >   	struct inode vfs_inode;
-> >   };
-> >   
-> > diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
-> > index 87bdf0f4cba1..bf181b0ade9c 100644
-> > --- a/fs/jffs2/super.c
-> > +++ b/fs/jffs2/super.c
-> > @@ -41,6 +41,10 @@ static struct inode *jffs2_alloc_inode(struct super_block *sb)
-> >   	f = kmem_cache_alloc(jffs2_inode_cachep, GFP_KERNEL);
-> >   	if (!f)
-> >   		return NULL;
-> > +
-> > +	atomic_set(&f->nr_dir_opening, 0);
-> > +	f->obsolete_count = 0;
-> > +
-> >   	return &f->vfs_inode;
-> >   }
-> >   
-> > diff --git a/fs/jffs2/write.c b/fs/jffs2/write.c
-> > index cda9a361368e..780b4fd9af51 100644
-> > --- a/fs/jffs2/write.c
-> > +++ b/fs/jffs2/write.c
-> > @@ -600,29 +600,41 @@ int jffs2_do_unlink(struct jffs2_sb_info *c, struct jffs2_inode_info *dir_f,
-> >   	} else {
-> >   		uint32_t nhash = full_name_hash(NULL, name, namelen);
-> >   
-> > -		fd = dir_f->dents;
-> > +		struct jffs2_full_dirent **prev = &dir_f->dents;
-> > +
-> >   		/* We don't actually want to reserve any space, but we do
-> >   		   want to be holding the alloc_sem when we write to flash */
-> >   		mutex_lock(&c->alloc_sem);
-> >   		mutex_lock(&dir_f->sem);
-> >   
-> > -		for (fd = dir_f->dents; fd; fd = fd->next) {
-> > -			if (fd->nhash == nhash &&
-> > -			    !memcmp(fd->name, name, namelen) &&
-> > -			    !fd->name[namelen]) {
-> > +		while((*prev) && (*prev)->nhash <= nhash) {
-> > +			if ((*prev)->nhash == nhash &&
-> > +			    !memcmp((*prev)->name, name, namelen) &&
-> > +			    !(*prev)->name[namelen]) {
-> >   
-> > +				fd = *prev;
-> >   				jffs2_dbg(1, "Marking old dirent node (ino #%u) @%08x obsolete\n",
-> >   					  fd->ino, ref_offset(fd->raw));
-> >   				jffs2_mark_node_obsolete(c, fd->raw);
-> > -				/* We don't want to remove it from the list immediately,
-> > -				   because that screws up getdents()/seek() semantics even
-> > -				   more than they're screwed already. Turn it into a
-> > -				   node-less deletion dirent instead -- a placeholder */
-> >   				fd->raw = NULL;
-> >   				fd->ino = 0;
-> > +
-> > +				/* if nr_dir_openning is 0, we think nobody open the dir, and
-> > +				 * nobody being in getdents()/seek() semantics. Thus, we can
-> > +				 * safely remove this obsolete dirent from the list. Otherwise,
-> > +				 * we just increase obsolete_count, and finally delete it in
-> > +				 * jffs2_dir_release() */
-> > +				if (atomic_read(&dir_f->nr_dir_opening) == 0) {
-> > +					*prev = fd->next;
-> > +					jffs2_free_full_dirent(fd);
-> > +				} else
-> > +					dir_f->obsolete_count++;
-> > +
-> >   				break;
-> >   			}
-> > +			prev = &((*prev)->next);
-> >   		}
-> > +
-> >   		mutex_unlock(&dir_f->sem);
-> >   	}
-> >   
-> > diff --git a/include/uapi/linux/jffs2.h b/include/uapi/linux/jffs2.h
-> > index a18b719f49d4..dff3ac2d6b0c 100644
-> > --- a/include/uapi/linux/jffs2.h
-> > +++ b/include/uapi/linux/jffs2.h
-> > @@ -35,6 +35,10 @@
-> >   */
-> >   #define JFFS2_MAX_NAME_LEN 254
-> >   
-> > +/* The obsolete dirent of dents list limit. When the number over
-> > + * this limit, we can remove the obsoleted dents. */
-> > +#define JFFS2_OBS_DIRENT_LIMIT 64
-> > +
-> >   /* How small can we sensibly write nodes? */
-> >   #define JFFS2_MIN_DATA_LEN 128
-> >   
-> 
-> 
-> 
+Yours,
+Linus Walleij
 
 
--- 
-sigma star gmbh - Eduard-Bodem-Gasse 6 - 6020 Innsbruck - Austria
-ATU66964118 - FN 374287y
+The following changes since commit d13937116f1e82bf508a6325111b322c30c85eb9:
 
+  Linux 5.0-rc6 (2019-02-10 14:42:20 -0800)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v5.0-3
+
+for you to fetch changes up to c17abcfa93bf0be5e48bb011607d237ac2bfc839:
+
+  pinctrl: meson: meson8b: fix the sdxc_a data 1..3 pins (2019-02-17
+22:24:32 +0100)
+
+----------------------------------------------------------------
+Pin control fixes for the v5.0 series:
+- Meson8B fixup for the sdc pins
+- Fix SDC tile position for Qualcomm QCS404
+
+----------------------------------------------------------------
+Bjorn Andersson (1):
+      pinctrl: qcom: qcs404: Correct SDC tile
+
+Martin Blumenstingl (1):
+      pinctrl: meson: meson8b: fix the sdxc_a data 1..3 pins
+
+ drivers/pinctrl/meson/pinctrl-meson8b.c | 2 +-
+ drivers/pinctrl/qcom/pinctrl-qcs404.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
