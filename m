@@ -2,91 +2,65 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7A25C10F01
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 07:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26EC4C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 07:04:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C2B821773
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 07:01:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="G+5tK/0M"
+	by mail.kernel.org (Postfix) with ESMTP id EF0D92087B
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 07:04:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727184AbfBTHBI (ORCPT
+        id S1726574AbfBTHET (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 02:01:08 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45319 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbfBTHBI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 02:01:08 -0500
-Received: by mail-lj1-f196.google.com with SMTP id s5-v6so19772872ljd.12
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 23:01:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7n3R0LFJo2U7VhZo2UnoL8uJHngbkUminPwgfsqPKDo=;
-        b=G+5tK/0MzLY46/Py/4V9aGTSfZ+YQfTTLAMVS4TC58uZMxoDqJ6QjISPNm9vxxZsnE
-         oGDkmh5cV4YOHygpL350Z22maHptXHAuVWxg3YDMYHi3VB+Cyi41H+tCOmVzN8ZhlCB/
-         GW+ju7jTGNaLIe3Aj9RiScx6wWGlsDE+G5V1TvgNM83JanhEBeylL9/5ctDtkuEh4uv2
-         MuzFf9oC64CZRU36vt+T7ZZVpIJWGRa/UzbUf6MD8ofxYrPasIukccjLma8Pu0mIgQ8W
-         IQgsPeFsRudZL/QzUH5+Atpjdd42xzBgHPLpigQGy0t+t6SGVG92UZ0uH1l3Ats9VEyU
-         7tUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7n3R0LFJo2U7VhZo2UnoL8uJHngbkUminPwgfsqPKDo=;
-        b=c1/FyULdQfKpqi2Z1nXoHdo+zPjB6UDstjzEWtdpDefDq4ZXukydMjVLxYrQCNTBEN
-         WjJljj54yAz2rrpDyZw0pE7pUVh79WVj+birbbb6io/RGjERjqesVmNTIW9yHbi1kpk6
-         hD5+1jf5tlWZIBykUD9otd7xpHK0SufEmyZg+yzP9FKEBSP06uRvcbJkVpHxfTW8qMqX
-         xZuo/2gzBHITrNOESzCM/HHmO3x2PJCiYUP/sh617b+NXSqLdLxODMwpNTfsbnYI7RRl
-         FHJ/lDIFSOmmpkz5UCS/0LZhO9ahlgmyM1R0kb+aQDM1q4tXROpTqqQ9rqBa57nl6Gph
-         y42g==
-X-Gm-Message-State: AHQUAubfZRPxEuCegk6yxOt8KuqnfjFugrze6274Buc4PO+7iS+oiJiu
-        5IW9GpPFUKhourK2EAvU9ZRfNi+KNlxtqRzRhBlU
-X-Google-Smtp-Source: AHgI3IaHO0iAVCrCLitFJ+Mt0v4Frblbu3fm1miPdhBeFL4cgYgEd2Ytz37yGjWDdBAEdE6kQNdX5UmRujc3Rh8Ce1A=
-X-Received: by 2002:a2e:9d17:: with SMTP id t23-v6mr19395612lji.57.1550646065640;
- Tue, 19 Feb 2019 23:01:05 -0800 (PST)
+        Wed, 20 Feb 2019 02:04:19 -0500
+Received: from mga05.intel.com ([192.55.52.43]:2586 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725869AbfBTHET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 02:04:19 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2019 23:04:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,388,1544515200"; 
+   d="scan'208";a="145715860"
+Received: from ncanderx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.148])
+  by fmsmga004.fm.intel.com with ESMTP; 19 Feb 2019 23:04:15 -0800
+Date:   Wed, 20 Feb 2019 09:04:13 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Jerry Snitselaar <jsnitsel@redhat.com>, jmorris@namei.org
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH] MAINTAINERS: add linux-security-module mailing list to
+ TPM drivers
+Message-ID: <20190220070413.GB23027@linux.intel.com>
+References: <20190220035846.6272-1-jsnitsel@redhat.com>
 MIME-Version: 1.0
-References: <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
- <8736ojybw7.fsf@xmission.com> <22055.1550619729@warthog.procyon.org.uk>
-In-Reply-To: <22055.1550619729@warthog.procyon.org.uk>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 20 Feb 2019 02:00:54 -0500
-Message-ID: <CAHC9VhTaZ4Gnx_NvoTBTtcrQZppL1_mKM03miOCE2KUBR8z5Sg@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/27] Containers and using authenticated filesystems
-To:     David Howells <dhowells@redhat.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        keyrings@vger.kernel.org, trond.myklebust@hammerspace.com,
-        sfrench@samba.org, linux-security-module@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, rgb@redhat.com,
-        linux-kernel@vger.kernel.org,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-api@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190220035846.6272-1-jsnitsel@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 6:42 PM David Howells <dhowells@redhat.com> wrote:
-> Eric W. Biederman <ebiederm@xmission.com> wrote:
+On Tue, Feb 19, 2019 at 08:58:46PM -0700, Jerry Snitselaar wrote:
+> I've seen requests to add linux-security-module to tpm patch
+> submissions a couple of times recently, so just add the list
+> to MAINTAINERS so get_maintainers.pl will mention it.
+> 
+> Cc: Peter Huewe <peterhuewe@gmx.de>
+> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
 
-...
+I guess James should say something about this.
 
-> > Looking at your description you are introducing a container id.
->
-> Yes.  For audit logging, which was why I cc'd Richard.
-
-Not to pile on, but it is more important to CC the audit mailing list.
-You can obviously still CC Richard, but you should send it to the
-entire mailing list.
-
--- 
-paul moore
-www.paul-moore.com
+/Jarkko
