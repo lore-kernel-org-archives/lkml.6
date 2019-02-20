@@ -2,121 +2,129 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 486B7C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 01:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A44C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 01:42:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16C632147A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 01:34:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E0E02086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 01:42:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tPDBxjvt"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IHdcvjdI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbfBTBeP (ORCPT
+        id S1727921AbfBTBma (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 20:34:15 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:44848 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725616AbfBTBeP (ORCPT
+        Tue, 19 Feb 2019 20:42:30 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:59690 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725616AbfBTBm3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 20:34:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1tAqdid0dLS7Uqj/ZT3iQjsj5gFP8H4lhjwYoOd3tjo=; b=tPDBxjvtVUCfWCxX6JMzeUZDz
-        M3g0/kndODQoBmQv2ethLKSb7isuUZg/DxvrD4F8vrc7H3/Ic5fnSXRkPCYsoGH/q5ZXO4Gi7tPWY
-        Ju/GXhTHMDLvFvd1ua54GQM57qa9yYiFLC25Ek6k43xo5QpktgljL3YLqaXKbIsepk8sN8CXqKiAO
-        ghqaPUPEwoTYW3T4YnYkJhb/ylne6bG60oidMua0Ym3ZAmoFOo5HmxOsubPJoYgqXvQrvNaiqpnUy
-        8sqWBpy5sqexPDA33FA0vfbZL6HDig5EN+I+7+6+Tq+KwYwYsnODJKVUoGm2VVu49y7hSyPOmUrWR
-        P84gvn93A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gwGlz-00048r-IW; Wed, 20 Feb 2019 01:34:07 +0000
-Date:   Tue, 19 Feb 2019 17:34:07 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     Yu Zhao <yuzhao@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Tue, 19 Feb 2019 20:42:29 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1K1Xjau141214;
+        Wed, 20 Feb 2019 01:42:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=0kOON4EnOwgFd0nBOr2SneFrcTGpZMhp+rI8Q4PUR0o=;
+ b=IHdcvjdI/ehzMXEfZavx9gwhNkuvl87I9k2GIL7JVPUw4UMeP0D/AyAkQJJhwraNHCyz
+ boUUKk8D/XCcGCq8ndBPQEIECblP5NXR1+R3HC24CdoxzECIXYle66gpRY6UGcCSgg4U
+ epd+T7deoS2iuqItmstTRakjmU55CyzqNR96oh2JVX3WeCkE6PjFn4doCrMn72hjI4AH
+ LLTpRJ1H2jxTYcVIF6Cd9Ki9rS9POxgOpdkZFRIMqZEo5ddDKHQfkXBgLEbDV9NwdT5P
+ yrGSEyCIdz3O4BWdUFPDKVBAr0GQcHTkNIeLagmX0MheHacCc+ZqWHliIt1Slwimx5ME xw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2qp9xtxs80-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Feb 2019 01:42:17 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1K1gG0u027959
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Feb 2019 01:42:16 GMT
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1K1gFvl024234;
+        Wed, 20 Feb 2019 01:42:16 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 19 Feb 2019 17:42:15 -0800
+Subject: Re: [RFC PATCH 00/31] Generating physically contiguous memory after
+ page allocation
+To:     ziy@nvidia.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Nick Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Jun Yao <yaojun8558363@gmail.com>,
-        Laura Abbott <labbott@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 1/3] arm64: mm: use appropriate ctors for page tables
-Message-ID: <20190220013407.GD12668@bombadil.infradead.org>
-References: <20190214211642.2200-1-yuzhao@google.com>
- <20190218231319.178224-1-yuzhao@google.com>
- <863acc9a-53fb-86ad-4521-828ee8d9c222@arm.com>
- <20190219053205.GA124985@google.com>
- <8f9b0bfb-b787-fa3e-7322-73a56a618aa8@arm.com>
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>,
+        Nitin Gupta <nigupta@nvidia.com>,
+        David Nellans <dnellans@nvidia.com>
+References: <20190215220856.29749-1-zi.yan@sent.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <f4cf53a3-359b-8c66-ed15-112b3cf0f475@oracle.com>
+Date:   Tue, 19 Feb 2019 17:42:14 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8f9b0bfb-b787-fa3e-7322-73a56a618aa8@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20190215220856.29749-1-zi.yan@sent.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9172 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=917 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902200009
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 11:47:12AM +0530, Anshuman Khandual wrote:
-> + Matthew Wilcox
-> On 02/19/2019 11:02 AM, Yu Zhao wrote:
-> > On Tue, Feb 19, 2019 at 09:51:01AM +0530, Anshuman Khandual wrote:
-> >>
-> >>
-> >> On 02/19/2019 04:43 AM, Yu Zhao wrote:
-> >>> For pte page, use pgtable_page_ctor(); for pmd page, use
-> >>> pgtable_pmd_page_ctor() if not folded; and for the rest (pud,
-> >>> p4d and pgd), don't use any.
-> >> pgtable_page_ctor()/dtor() is not optional for any level page table page
-> >> as it determines the struct page state and zone statistics.
-> > 
-> > This is not true. pgtable_page_ctor() is only meant for user pte
-> > page. The name isn't perfect (we named it this way before we had
-> > split pmd page table lock, and never bothered to change it).
-> > 
-> > The commit cccd843f54be ("mm: mark pages in use for page tables")
+On 2/15/19 2:08 PM, Zi Yan wrote:
 
-Where did you get that commit ID from?  In Linus' tree, it's
-1d40a5ea01d53251c23c7be541d3f4a656cfc537
+Thanks for working on this issue!
 
-> > clearly states so:
-> >   Note that only pages currently accounted as NR_PAGETABLES are
-> >   tracked as PageTable; this does not include pgd/p4d/pud/pmd pages.
+I have not yet had a chance to take a look at the code.  However, I do have
+some general questions/comments on the approach.
+
+> Patch structure 
+> ---- 
 > 
-> I think the commit is the following one and it does say so. But what is
-> the rationale of tagging only PTE page as PageTable and updating the zone
-> stat but not doing so for higher level page table pages ? Are not they
-> used as page table pages ? Should not they count towards NR_PAGETABLE ?
+> The patchset I developed to generate physically contiguous memory/arbitrary
+> sized pages merely moves pages around. There are three components in this
+> patchset:
 > 
-> 1d40a5ea01d53251c ("mm: mark pages in use for page tables")
-
-I think they should all be accounted towards NR_PAGETABLE and marked
-as being PageTable.  Somebody needs to make the case for that and
-send the patches.  That patch even says that there should be follow-up
-patches to do that.  I've been a little busy and haven't got back to it.
-I thought you said you were going to do it.
-
-> pgtable_page_ctor/dtor() use across arch is not consistent and there is a need
-> for generalization which has been already acknowledged earlier. But for now we
-> can atleast fix this on arm64.
+> 1) a new page migration mechanism, called exchange pages, that exchanges the
+> content of two in-use pages instead of performing two back-to-back page
+> migration. It saves on overheads and avoids page reclaim and memory compaction
+> in the page allocation path, although it is not strictly required if enough
+> free memory is available in the system.
 > 
-> https://lore.kernel.org/lkml/1547619692-7946-1-git-send-email-anshuman.khandual@arm.com/
+> 2) a new mechanism that utilizes both page migration and exchange pages to
+> produce physically contiguous memory/arbitrary sized pages without allocating
+> any new pages, unlike what khugepaged does. It works on per-VMA basis, creating
+> physically contiguous memory out of each VMA, which is virtually contiguous.
+> A simple range tree is used to ensure no two VMAs are overlapping with each
+> other in the physical address space.
 
-... were you not listening when you were told that was completely
-inadequate?
+This appears to be a new approach to generating contiguous areas.  Previous
+attempts had relied on finding a contiguous area that can then be used for
+various purposes including user mappings.  Here, you take an existing mapping
+and make it contiguous.  [RFC PATCH 04/31] mm: add mem_defrag functionality
+talks about creating a (VPN, PFN) anchor pair for each vma and then using
+this pair as the base for creating a contiguous area.
 
+I'm curious, how 'fixed' is the anchor?  As you know, there could be a
+non-movable page in the PFN range.  As a result, you will not be able to
+create a contiguous area starting at that PFN.  In such a case, do we try
+another PFN?  I know this could result in much page shuffling.  I'm just
+trying to figure out how we satisfy a user who really wants a contiguous
+area.  Is there some method to keep trying?
+
+My apologies if this is addressed in the code.  This was just one of the
+first thoughts that came to mine when giving the series a quick look.
+-- 
+Mike Kravetz
