@@ -2,144 +2,118 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BABBFC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:45:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 545FCC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:46:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BD332183F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:45:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X6HuAhFz"
+	by mail.kernel.org (Postfix) with ESMTP id 2E8E720C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 12:46:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728015AbfBTMps (ORCPT
+        id S1728053AbfBTMqY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 07:45:48 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:34950 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727773AbfBTMpj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 07:45:39 -0500
-Received: by mail-wm1-f67.google.com with SMTP id y15so6320157wma.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 04:45:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=fQB33hyusb/Aumyn6Q8kWmHk/TEqVmhId57aQJXdZ/s=;
-        b=X6HuAhFzVyDsIJPV/pL41HvGaDjlO0vTjXr2OZYAtADiu/Lz72YRfW1+XD9Kdt1DGo
-         ghaPVtBevuMsjzRo5NRUgcGyU1fFMsSNZ/LRvovoxzUvGIVFHnqrcxEMrJ6T5B5iZY2S
-         hGCTxP/7qnF8GV1WG/B+RacmVNJAHrbTmi3UPnWjdWHBHjUZ6cNdUqkGBBhFTJW+I22Q
-         wnNLhzebb6NpoY+sHoNkDH45qrl5ETQMktoHEyMw9VhTZCXBjQONgHOi9gp8rEUMp9w7
-         4CzMQhjHcfURWYGvo2aRaj1na8HB27pSa4QKQO39LnpskYbUWfDhfVukRRSU3jECiRUP
-         qDPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=fQB33hyusb/Aumyn6Q8kWmHk/TEqVmhId57aQJXdZ/s=;
-        b=Q8LPaBwVPtBiXtksWi6wKraiwGRODFe4j68oQNITOU6XbTyz57CFXG2yhAphBjvUhl
-         cjJj9Mx45aQvoDavKZregQigmtLL0GnVghxrNjA5ctwKFCmuZWnone5DY/4eMfdGBtGG
-         qTPj1snwse71Mw26yQAWj6S7Bb65H+hKuaWbmpnuoxKVoN6vky5FuxMseY8x1P8z9XPh
-         Cg816Zlqsl8d+Skk5aKHcPLOl0mH5M+YzqSJYWaSOvaPVV+7y/qH9Gw5hP6vj128Zew7
-         BTf3DlcJYXq1FMuW1HO+bhsjHEV5xaKiNr01hFmyIzwmEyP/KLYk++EOH46nISroQ/KO
-         jzLw==
-X-Gm-Message-State: AHQUAuYVDzNeRLzGCaq6jFXc0R1UimGhWLONgkvV3SxfAj5h9Xdghaux
-        +QrGWDwyrlOyUU85QZUIXKnReA==
-X-Google-Smtp-Source: AHgI3IabI55h01GTJOovj1LFUoTaAv7IadDL/Z17sRBOfQGy3+UYf/86H6vdZ96ggIYEFKXQhNkZ0g==
-X-Received: by 2002:a1c:5581:: with SMTP id j123mr6011804wmb.10.1550666737166;
-        Wed, 20 Feb 2019 04:45:37 -0800 (PST)
-Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:13:8ce:d7fa:9f4c:492])
-        by smtp.gmail.com with ESMTPSA id f196sm6378889wme.36.2019.02.20.04.45.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Feb 2019 04:45:35 -0800 (PST)
-From:   Andrey Konovalov <andreyknvl@google.com>
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kasan-dev@googlegroups.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     Qian Cai <cai@lca.pw>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH 3/4] kasan, slab: make freelist stored without tags
-Date:   Wed, 20 Feb 2019 13:45:28 +0100
-Message-Id: <dfb53b44a4d00de3879a05a9f04c1f55e584f7a1.1550602886.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
-In-Reply-To: <9c4c3ce5ccfb894c7fe66d91de7c1da2787b4da4.1550602886.git.andreyknvl@google.com>
-References: <9c4c3ce5ccfb894c7fe66d91de7c1da2787b4da4.1550602886.git.andreyknvl@google.com>
+        Wed, 20 Feb 2019 07:46:24 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56100 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726414AbfBTMqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 07:46:24 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6D9BB81E09;
+        Wed, 20 Feb 2019 12:46:22 +0000 (UTC)
+Received: from krava (unknown [10.43.17.20])
+        by smtp.corp.redhat.com (Postfix) with SMTP id E6AC461B95;
+        Wed, 20 Feb 2019 12:46:19 +0000 (UTC)
+Date:   Wed, 20 Feb 2019 13:46:19 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     kan.liang@linux.intel.com
+Cc:     peterz@infradead.org, tglx@linutronix.de, acme@kernel.org,
+        mingo@redhat.com, x86@kernel.org, linux-kernel@vger.kernel.org,
+        len.brown@intel.com, namhyung@kernel.org, eranian@google.com,
+        ak@linux.intel.com
+Subject: Re: [PATCH 00/10] perf: Multi-die/package support
+Message-ID: <20190220124619.GB25423@krava>
+References: <1550606411-5313-1-git-send-email-kan.liang@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1550606411-5313-1-git-send-email-kan.liang@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 20 Feb 2019 12:46:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Similarly to 680c37ae ("kasan, slub: move kasan_poison_slab hook before
-page_address"), move kasan_poison_slab() before alloc_slabmgmt(), which
-calls page_address(), to make page_address() return value to be
-non-tagged. This, combined with calling kasan_reset_tag() for off-slab
-slab management object, leads to freelist being stored non-tagged.
+On Tue, Feb 19, 2019 at 12:00:01PM -0800, kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
+> 
+> Add Linux perf support for multi-die/package. The first product with
+> multi-die is Xeon Cascade Lake-AP (CLX-AP).
+> The code bases on the top of Len's multi-die/package support.
+> https://lkml.org/lkml/2019/2/18/1534
+> 
+> Patch 1-4: They are generic codes for previous platforms.
+> Perf supports miscellaneous modules, e.g cstate, RAPL and uncore.
+> Their counters have the same scope of effect (per package).
+> But they maintain their own scope information independently.
+> It's very useful to abstract several common topology related codes
+> for these modules to reduce the code redundancy, especially when
+> adding counters with new scope.
+> 
+> Patch 5-8: Support die scope counters on CLX-AP for uncore, RAPL
+> and cstate.
+> 
+> Patch 9-10: Support per-die aggregation for perf stat and header.
+> 
+> Kan Liang (10):
+>   perf/x86/intel: Introduce a concept "domain" as the scope of counters
+>   perf/x86/intel/cstate: Apply "domain" for cstate
+>   perf/x86/intel/uncore: Apply "domain" for uncore
+>   perf/x86/intel/rapl: Apply "domain" for RAPL
+>   perf/x86/intel/domain: Add new domain type for die
+>   perf/x86/intel/uncore: Support die scope counters on CLX-AP
+>   perf/x86/intel/rapl: Support die scope counters on CLX-AP
+>   perf/x86/intel/cstate: Support die scope counters on CLX-AP
+>   perf header: Add die information in cpu topology
+>   perf stat: Support per-die aggregation
 
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- mm/slab.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+hi,
+what is based on? I'm getting conflicts when applying
+on tip or Arnaldo's perf/core
 
-diff --git a/mm/slab.c b/mm/slab.c
-index c84458281a88..4ad95fcb1686 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -2359,7 +2359,7 @@ static void *alloc_slabmgmt(struct kmem_cache *cachep,
- 	void *freelist;
- 	void *addr = page_address(page);
- 
--	page->s_mem = kasan_reset_tag(addr) + colour_off;
-+	page->s_mem = addr + colour_off;
- 	page->active = 0;
- 
- 	if (OBJFREELIST_SLAB(cachep))
-@@ -2368,6 +2368,7 @@ static void *alloc_slabmgmt(struct kmem_cache *cachep,
- 		/* Slab management obj is off-slab. */
- 		freelist = kmem_cache_alloc_node(cachep->freelist_cache,
- 					      local_flags, nodeid);
-+		freelist = kasan_reset_tag(freelist);
- 		if (!freelist)
- 			return NULL;
- 	} else {
-@@ -2681,6 +2682,13 @@ static struct page *cache_grow_begin(struct kmem_cache *cachep,
- 
- 	offset *= cachep->colour_off;
- 
-+	/*
-+	 * Call kasan_poison_slab() before calling alloc_slabmgmt(), so
-+	 * page_address() in the latter returns a non-tagged pointer,
-+	 * as it should be for slab pages.
-+	 */
-+	kasan_poison_slab(page);
-+
- 	/* Get slab management. */
- 	freelist = alloc_slabmgmt(cachep, page, offset,
- 			local_flags & ~GFP_CONSTRAINT_MASK, page_node);
-@@ -2689,7 +2697,6 @@ static struct page *cache_grow_begin(struct kmem_cache *cachep,
- 
- 	slab_map_pages(cachep, page, freelist);
- 
--	kasan_poison_slab(page);
- 	cache_init_objs(cachep, page);
- 
- 	if (gfpflags_allow_blocking(local_flags))
--- 
-2.21.0.rc0.258.g878e2cd30e-goog
+thanks,
+jirka
 
+> 
+>  arch/x86/events/Makefile                           |   2 +-
+>  arch/x86/events/domain.c                           |  81 +++++
+>  arch/x86/events/domain.h                           |  26 ++
+>  arch/x86/events/intel/cstate.c                     | 364 ++++++++++++---------
+>  arch/x86/events/intel/rapl.c                       | 333 ++++++++++++++-----
+>  arch/x86/events/intel/uncore.c                     | 247 +++++++++-----
+>  arch/x86/events/intel/uncore.h                     |   9 +-
+>  arch/x86/events/intel/uncore_snbep.c               |   2 +-
+>  tools/perf/Documentation/perf-stat.txt             |  10 +
+>  tools/perf/Documentation/perf.data-file-format.txt |   9 +-
+>  tools/perf/builtin-stat.c                          |  73 ++++-
+>  tools/perf/util/cpumap.c                           |  55 +++-
+>  tools/perf/util/cpumap.h                           |  10 +-
+>  tools/perf/util/env.c                              |   1 +
+>  tools/perf/util/env.h                              |   3 +
+>  tools/perf/util/header.c                           | 185 ++++++++++-
+>  tools/perf/util/stat-display.c                     |  24 +-
+>  tools/perf/util/stat-shadow.c                      |   1 +
+>  tools/perf/util/stat.c                             |   1 +
+>  tools/perf/util/stat.h                             |   1 +
+>  20 files changed, 1082 insertions(+), 355 deletions(-)
+>  create mode 100644 arch/x86/events/domain.c
+>  create mode 100644 arch/x86/events/domain.h
+> 
+> -- 
+> 2.7.4
+> 
