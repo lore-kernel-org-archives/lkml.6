@@ -3,69 +3,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EE31C10F0B
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:09:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72749C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:10:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E38B2146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:09:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 410B52183F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:10:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbfBTOJ6 (ORCPT
+        id S1726414AbfBTOKu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 09:09:58 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51463 "EHLO mx1.redhat.com"
+        Wed, 20 Feb 2019 09:10:50 -0500
+Received: from foss.arm.com ([217.140.101.70]:58368 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726361AbfBTOJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 09:09:57 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 76A3C81250;
-        Wed, 20 Feb 2019 14:09:57 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E1A1317B15;
-        Wed, 20 Feb 2019 14:09:55 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <6bf441ffc1a54d06ad27ed01c6d06a58@AcuMS.aculab.com>
-References: <6bf441ffc1a54d06ad27ed01c6d06a58@AcuMS.aculab.com> <155066953188.21038.12015964986007814182.stgit@warthog.procyon.org.uk>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     dhowells@redhat.com, "jmorris@namei.org" <jmorris@namei.org>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] KEYS: user: Align the payload buffer
+        id S1726013AbfBTOKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 09:10:50 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 35BEAEBD;
+        Wed, 20 Feb 2019 06:10:50 -0800 (PST)
+Received: from [10.1.196.69] (e112269-lin.cambridge.arm.com [10.1.196.69])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5E0F83F690;
+        Wed, 20 Feb 2019 06:10:47 -0800 (PST)
+Subject: Re: [PATCH 06/13] mm: pagewalk: Add 'depth' parameter to pte_hole
+To:     William Kucharski <william.kucharski@oracle.com>
+Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        James Morse <james.morse@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org
+References: <20190215170235.23360-1-steven.price@arm.com>
+ <20190215170235.23360-7-steven.price@arm.com>
+ <52690905-1755-46BD-940B-1EE4CEA5F795@oracle.com>
+From:   Steven Price <steven.price@arm.com>
+Message-ID: <76ce9f9b-eb0d-6ad5-9f57-ff3a8fa6b074@arm.com>
+Date:   Wed, 20 Feb 2019 14:10:45 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <16011.1550671795.1@warthog.procyon.org.uk>
-Date:   Wed, 20 Feb 2019 14:09:55 +0000
-Message-ID: <16012.1550671795@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 20 Feb 2019 14:09:57 +0000 (UTC)
+In-Reply-To: <52690905-1755-46BD-940B-1EE4CEA5F795@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Laight <David.Laight@ACULAB.COM> wrote:
+On 20/02/2019 11:35, William Kucharski wrote:
+> 
+> 
+>> On Feb 15, 2019, at 10:02 AM, Steven Price <Steven.Price@arm.com> wrote:
+>>
+>> The pte_hole() callback is called at multiple levels of the page tables.
+>> Code dumping the kernel page tables needs to know what at what depth
+>> the missing entry is. Add this is an extra parameter to pte_hole().
+>> When the depth isn't know (e.g. processing a vma) then -1 is passed.
+>>
+>> Note that depth starts at 0 for a PGD so that PUD/PMD/PTE retain their
+>> natural numbers as levels 2/3/4.
+> 
+> Nit: Could you add a comment noting this for anyone wondering how to
+> calculate the level numbers in the future?
 
-> I'd make the 'datalen' field 'unsigned int' at the same time.
-> It will use some of the hole you've made and generate better
-> code on most arches.
+Good point! I'll expand the comment in the header file.
 
-Most arches?  I though most, if not all, arches had a load-word instruction.
+Thanks,
 
-Do you want to send me a patch for that?  I'd rather not alter this patch at
-this point.  I can pass the additional patch to James for the next merge
-window.
-
-David
+Steve
