@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA8BC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E9DC10F01
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:12:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FE702147C
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:12:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4ED921848
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:12:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="g9GXnWbV"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="A2WsQ99n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbfBTLMx (ORCPT
+        id S1727806AbfBTLMy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 06:12:53 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51581 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725812AbfBTLMu (ORCPT
+        Wed, 20 Feb 2019 06:12:54 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:34154 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726209AbfBTLMw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 06:12:50 -0500
-Received: by mail-wm1-f68.google.com with SMTP id n19so6162418wmi.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 03:12:49 -0800 (PST)
+        Wed, 20 Feb 2019 06:12:52 -0500
+Received: by mail-wm1-f66.google.com with SMTP id y185so4453240wmd.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 03:12:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/Bf5dwgVrtAeYPaTQyE6LLHmqh5tStzzBNVA9ZQP9F0=;
-        b=g9GXnWbVWDFrhUXPyCPVZ2tnLmjtyPd6kUlcFNSZtTIIwu7R5KAnk2FMK+34sSSNtb
-         uv7rsFMBHENrr6DCc7EANsfez/b4ajevXz5a2RFlu8+Rb3M2sZBKSHgi2scBNbWBClfN
-         +qxt05bIDU+F596abgw6rZG/uSuw/ckvuGT6FwXjcorWeSrw4i4QrKQRicaStbS5WRXQ
-         ldlote89rbWpuBtB2pTM8PVJ/i1xecugXB4n3ooADHJFZB3yLMuET4ACBfD7dDolWlXq
-         NfUMUWTm3bcffcOkXFQGa1IDfbFC07xnwgkiYG1HAv+d8/4c08jxUnAi8bFz9aBJPLyn
-         OL8g==
+        bh=1lfqJzHdcjA20Q30XeL0tcyEj0lgU0X5EuBNLTHV4pc=;
+        b=A2WsQ99nTNxk2DvdpKBcLgTQ6phol5QkP5nDsbzEu1AfRT3Lb4D6+M50rFaG+uW63M
+         j+hVQ4QSL7Q1pRbvkpJN/IWLiUN5kFVOMAnyBl1ECjUFiwIwEHGWv2Abbv5tzzxfGRId
+         d47Kb+lBLKZIP76G1z/2Lyhs63l65H9OH2I08oeSfMmp62CnuJrESzVIx1V2DyvAl1+m
+         +bYgyv9/ExQYpG7RRew+C9jzL4/QxEHlAeR7jun+FLZ6htOqroxdQGkOTl2arBUtnbVZ
+         nqyJT34uUvvhuPJEmkMZ95ha3VmE0r85rFRUykx2GCZy54zKhpvEkN5ijF+HU/ZuWXs7
+         bUig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/Bf5dwgVrtAeYPaTQyE6LLHmqh5tStzzBNVA9ZQP9F0=;
-        b=Fr3Ab2v9Lsmsi7MfR+juVOLajS+UmfjZcLuGr8wHCbJYbneKbuTTTlp0gu5vPs3MJb
-         gDzcYrioyY6UKfWEPYWE9Ee/Ri3khVD3+4EC1Cm0Wnt+3PBv/dxHatXCCsP3PBUj81QR
-         AoEedZ3wmY7CaAWYG7y52jvLRcBAXv6nAuIQLnY7AkhfwFMcuYEyaTpc1MyPTYJQ4+HY
-         4xtTlm0NpMUDwAgmHA1FmjlDE7szodYiyUZ6oI9aTXiO3Dma0BgdoJOa6tNVta1AP1YO
-         4LOZOsxM0so3R9Iv0sbhvCmTRrNn1nelt4/CY4gk9Q9glr+f9TUz98oa+OzS8s33bi0z
-         8YQw==
-X-Gm-Message-State: AHQUAuamhDUgmTK5Jr+FT82iWK7FWltPDDxhFWopYGOIs88s5tYfDVB+
-        2W7TnPOpWKWNJ7P1QIFNMMKbNw==
-X-Google-Smtp-Source: AHgI3Ib/ALjnRI3t38JISI8vEaaurxG7wz7YBEXLiLD0eiuJy3OK/VZ3UyuxyGC+Tap3bsBtIqZQpA==
-X-Received: by 2002:a1c:a9d0:: with SMTP id s199mr6180316wme.142.1550661168549;
-        Wed, 20 Feb 2019 03:12:48 -0800 (PST)
+        bh=1lfqJzHdcjA20Q30XeL0tcyEj0lgU0X5EuBNLTHV4pc=;
+        b=Ij9XsujhWn3hyxukgZ+xK4pYRJ2+y5U6SytiCLb5DJf0I8Ogk9K+rh6whNd7G9fWG7
+         Jx/GLxQaMaIiZyTb6BQ3taE0EQwHqwCtQVezGiFaNWdLTN4nhcikKpLUT1tfHy3VKLiH
+         a83GYkvxqXqt0RPBtOnoTAjgMz6ukvIm83UZxc3/bh8nTE6XbhLIsTQ35iukRVeewtlq
+         lzvenUvmxfpRiCgX/6H0RB+TpEU4ml88vDQXUITCsH9V3Tdgt0g+Xudyhtlf42Xu+lZH
+         mdshPK+RST3/IMohHmMHSXCgZvvuAdcEIHmUCfY+NW39U+qs3k/vbUYouEEzO+9aMk7N
+         nKkA==
+X-Gm-Message-State: AHQUAubHWXiYssgwGBO2GdTqT9F1mmUdWP3/wH3e74I5ZkE8cL1t5ZtU
+        S0H9jwC9mvNT1IL4YE9VObTqIA==
+X-Google-Smtp-Source: AHgI3IbDAqZ3ugDZeFPszLr/bYipvH7gDKtGdO7ryf/W4BSUHYVfTgawMy/7Lk7xOviDBqT6PVbsRA==
+X-Received: by 2002:a1c:cb86:: with SMTP id b128mr6125906wmg.46.1550661169996;
+        Wed, 20 Feb 2019 03:12:49 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id c18sm22969770wre.32.2019.02.20.03.12.47
+        by smtp.gmail.com with ESMTPSA id c18sm22969770wre.32.2019.02.20.03.12.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Feb 2019 03:12:47 -0800 (PST)
+        Wed, 20 Feb 2019 03:12:49 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J . Wysocki" <rafael@kernel.org>,
@@ -64,9 +64,9 @@ To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 1/2] drivers: provide devm_platform_ioremap_resource()
-Date:   Wed, 20 Feb 2019 12:12:39 +0100
-Message-Id: <20190220111240.10041-2-brgl@bgdev.pl>
+Subject: [PATCH v2 2/2] gpio: davinci: use devm_platform_ioremap_resource()
+Date:   Wed, 20 Feb 2019 12:12:40 +0100
+Message-Id: <20190220111240.10041-3-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190220111240.10041-1-brgl@bgdev.pl>
 References: <20190220111240.10041-1-brgl@bgdev.pl>
@@ -79,63 +79,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-There are currently 1200+ instances of using platform_get_resource()
-and devm_ioremap_resource() together in the kernel tree.
-
-This patch wraps these two calls in a single helper. Thanks to that
-we don't have to declare a local variable for struct resource * and can
-omit the redundant argument for resource type. We also have one
-function call less.
+Use the new helper that wraps the calls to platform_get_resource() and
+devm_ioremap_resource() together.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/base/platform.c         | 18 ++++++++++++++++++
- include/linux/platform_device.h |  3 +++
- 2 files changed, 21 insertions(+)
+ drivers/gpio/gpio-davinci.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 1c958eb33ef4..f82691e1c26c 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -79,6 +79,24 @@ struct resource *platform_get_resource(struct platform_device *dev,
- }
- EXPORT_SYMBOL_GPL(platform_get_resource);
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index bdb29e51b417..188b8e5c8e67 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -198,7 +198,6 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	struct davinci_gpio_controller *chips;
+ 	struct davinci_gpio_platform_data *pdata;
+ 	struct device *dev = &pdev->dev;
+-	struct resource *res;
  
-+/**
-+ * devm_platform_ioremap_resource - call devm_ioremap_resource() for a platform
-+ *				    device
-+ *
-+ * @pdev: platform device to use both for memory resource lookup as well as
-+ *        resource managemend
-+ * @index: resource index
-+ */
-+void __iomem *devm_platform_ioremap_resource(struct platform_device *pdev,
-+					     unsigned int index)
-+{
-+	struct resource *res;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, index);
-+	return devm_ioremap_resource(&pdev->dev, res);
-+}
-+EXPORT_SYMBOL_GPL(devm_platform_ioremap_resource);
-+
- /**
-  * platform_get_irq - get an IRQ for a device
-  * @dev: platform device
-diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
-index c7c081dc6034..b126b73ed8ef 100644
---- a/include/linux/platform_device.h
-+++ b/include/linux/platform_device.h
-@@ -52,6 +52,9 @@ extern struct device platform_bus;
- extern void arch_setup_pdev_archdata(struct platform_device *);
- extern struct resource *platform_get_resource(struct platform_device *,
- 					      unsigned int, unsigned int);
-+extern void __iomem *
-+devm_platform_ioremap_resource(struct platform_device *pdev,
-+			       unsigned int index);
- extern int platform_get_irq(struct platform_device *, unsigned int);
- extern int platform_irq_count(struct platform_device *);
- extern struct resource *platform_get_resource_byname(struct platform_device *,
+ 	pdata = davinci_gpio_get_pdata(pdev);
+ 	if (!pdata) {
+@@ -236,8 +235,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	if (!chips)
+ 		return -ENOMEM;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	gpio_base = devm_ioremap_resource(dev, res);
++	gpio_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(gpio_base))
+ 		return PTR_ERR(gpio_base);
+ 
 -- 
 2.20.1
 
