@@ -2,315 +2,110 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0684C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD15C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:09:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF1662089F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:07:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD7392084D
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 22:09:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727389AbfBTWH3 (ORCPT
+        id S1727023AbfBTWJJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 17:07:29 -0500
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:58085 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726070AbfBTWH2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 17:07:28 -0500
-Received: from Internal Mail-Server by MTLPINE1 (envelope-from sramani@mellanox.com)
-        with ESMTPS (AES256-SHA encrypted); 21 Feb 2019 00:00:59 +0200
-Received: from farm-0002.mtbu.labs.mlnx (farm-0002.mtbu.labs.mlnx [10.15.2.32])
-        by mtbu-labmailer.labs.mlnx (8.14.4/8.14.4) with ESMTP id x1KM0wiC002294;
-        Wed, 20 Feb 2019 17:00:58 -0500
-Received: (from sramani@localhost)
-        by farm-0002.mtbu.labs.mlnx (8.14.7/8.13.8/Submit) id x1KM0txR012897;
-        Wed, 20 Feb 2019 17:00:55 -0500
-From:   Shravan Kumar Ramani <sramani@mellanox.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Shravan Kumar Ramani <sramani@mellanox.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/1] gpio: add driver for Mellanox BlueField GPIO controller
-Date:   Wed, 20 Feb 2019 17:00:49 -0500
-Message-Id: <f6452e87ce2e1709e99b8f99cef1c49f0abfae0b.1550699918.git.sramani@mellanox.com>
-X-Mailer: git-send-email 2.1.2
+        Wed, 20 Feb 2019 17:09:09 -0500
+Received: from mga17.intel.com ([192.55.52.151]:8996 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726120AbfBTWJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 17:09:08 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 14:09:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,392,1544515200"; 
+   d="scan'208";a="276594184"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga004.jf.intel.com with ESMTP; 20 Feb 2019 14:09:08 -0800
+Subject: [PATCH] device-dax: Add a 'target_node' attribute
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     linux-nvdimm@lists.01.org
+Cc:     Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 20 Feb 2019 13:56:30 -0800
+Message-ID: <155069979014.1936094.2387722425017107280.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for the GPIO controller used by Mellanox
-BlueField SOCs.
+The target-node attribute is the Linux numa-node that a device-dax
+instance may create when it is online. Prior to being online the
+device's 'numa_node' property reflects the closest online cpu node which
+is the typical expectation of a device 'numa_node'. Once it is online it
+becomes its own distinct numa node, i.e. 'target_node'.
 
-Reviewed-by: David Woods <dwoods@mellanox.com>
-Signed-off-by: Shravan Kumar Ramani <sramani@mellanox.com>
+Export the 'target_node' property to give userspace tooling the ability
+to predict the effective numa-node from a device-dax instance configured
+to provide 'System RAM' capacity.
+
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Reported-by: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- drivers/gpio/Kconfig      |   6 ++
- drivers/gpio/Makefile     |   1 +
- drivers/gpio/gpio-mlxbf.c | 222 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 229 insertions(+)
- create mode 100644 drivers/gpio/gpio-mlxbf.c
+ drivers/dax/bus.c |   28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index b5a2845..c950fe8 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1292,6 +1292,12 @@ config GPIO_MERRIFIELD
- 	help
- 	  Say Y here to support Intel Merrifield GPIO.
+diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
+index a410154d75fb..28c3324271ac 100644
+--- a/drivers/dax/bus.c
++++ b/drivers/dax/bus.c
+@@ -279,13 +279,41 @@ static ssize_t size_show(struct device *dev,
+ }
+ static DEVICE_ATTR_RO(size);
  
-+config GPIO_MLXBF
-+	tristate "Mellanox BlueField SoC GPIO"
-+	depends on (MELLANOX_PLATFORM && ARM64 && ACPI) || COMPILE_TEST
-+	help
-+	  Say Y here if you want GPIO support on Mellanox BlueField SoC.
-+
- config GPIO_ML_IOH
- 	tristate "OKI SEMICONDUCTOR ML7213 IOH GPIO support"
- 	depends on X86 || COMPILE_TEST
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 37628f8..8d54279 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -83,6 +83,7 @@ obj-$(CONFIG_GPIO_MENZ127)	+= gpio-menz127.o
- obj-$(CONFIG_GPIO_MERRIFIELD)	+= gpio-merrifield.o
- obj-$(CONFIG_GPIO_MC33880)	+= gpio-mc33880.o
- obj-$(CONFIG_GPIO_MC9S08DZ60)	+= gpio-mc9s08dz60.o
-+obj-$(CONFIG_GPIO_MLXBF)	+= gpio-mlxbf.o
- obj-$(CONFIG_GPIO_ML_IOH)	+= gpio-ml-ioh.o
- obj-$(CONFIG_GPIO_MM_LANTIQ)	+= gpio-mm-lantiq.o
- obj-$(CONFIG_GPIO_MOCKUP)      += gpio-mockup.o
-diff --git a/drivers/gpio/gpio-mlxbf.c b/drivers/gpio/gpio-mlxbf.c
-new file mode 100644
-index 0000000..c0f21f4
---- /dev/null
-+++ b/drivers/gpio/gpio-mlxbf.c
-@@ -0,0 +1,222 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/acpi.h>
-+#include <linux/bitops.h>
-+#include <linux/device.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/io.h>
-+#include <linux/ioport.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm.h>
-+#include <linux/resource.h>
-+#include <linux/spinlock.h>
-+#include <linux/types.h>
-+#include <linux/version.h>
-+
-+/* Number of pins on BlueField */
-+#define MLXBF_GPIO_NR 54
-+
-+/* Pad Electrical Controls. */
-+#define MLXBF_GPIO_PAD_CONTROL__FIRST_WORD 0x0700
-+#define MLXBF_GPIO_PAD_CONTROL_1__FIRST_WORD 0x0708
-+#define MLXBF_GPIO_PAD_CONTROL_2__FIRST_WORD 0x0710
-+#define MLXBF_GPIO_PAD_CONTROL_3__FIRST_WORD 0x0718
-+
-+#define MLXBF_GPIO_PIN_DIR_I 0x1040
-+#define MLXBF_GPIO_PIN_DIR_O 0x1048
-+#define MLXBF_GPIO_PIN_STATE 0x1000
-+#define MLXBF_GPIO_SCRATCHPAD 0x20
-+
-+#ifdef CONFIG_PM
-+struct mlxbf_gpio_context_save_regs {
-+	u64 scratchpad;
-+	u64 pad_control[MLXBF_GPIO_NR];
-+	u64 pin_dir_i;
-+	u64 pin_dir_o;
-+};
-+#endif
-+
-+/* Device state structure. */
-+struct mlxbf_gpio_state {
-+	struct gpio_chip gc;
-+
-+	/* Must hold this lock to modify shared data. */
-+	spinlock_t lock;
-+
-+	/* Memory Address */
-+	void __iomem *dc_base;
-+
-+#ifdef CONFIG_PM
-+	struct mlxbf_gpio_context_save_regs csave_regs;
-+#endif
-+};
-+
-+static int mlxbf_gpio_set_input(struct gpio_chip *chip, unsigned int offset)
++static int dev_dax_target_node(struct dev_dax *dev_dax)
 +{
-+	struct mlxbf_gpio_state *gs = gpiochip_get_data(chip);
-+	u64 in;
-+	u64 out;
++	struct dax_region *dax_region = dev_dax->region;
 +
-+	out = readq(gs->dc_base + MLXBF_GPIO_PIN_DIR_O);
-+	in = readq(gs->dc_base + MLXBF_GPIO_PIN_DIR_I);
-+
-+	spin_lock(&gs->lock);
-+	writeq(out & ~BIT(offset), gs->dc_base + MLXBF_GPIO_PIN_DIR_O);
-+	writeq(in | BIT(offset), gs->dc_base + MLXBF_GPIO_PIN_DIR_I);
-+	spin_unlock(&gs->lock);
-+
-+	return 0;
++	return dax_region->target_node;
 +}
 +
-+static int mlxbf_gpio_set_output(struct gpio_chip *chip, unsigned int offset,
-+				 int value)
++static ssize_t target_node_show(struct device *dev,
++		struct device_attribute *attr, char *buf)
 +{
-+	struct mlxbf_gpio_state *gs = gpiochip_get_data(chip);
-+	u64 in;
-+	u64 out;
++	struct dev_dax *dev_dax = to_dev_dax(dev);
 +
-+	out = readq(gs->dc_base + MLXBF_GPIO_PIN_DIR_O);
-+	in = readq(gs->dc_base + MLXBF_GPIO_PIN_DIR_I);
++	return sprintf(buf, "%d\n", dev_dax_target_node(dev_dax));
++}
++static DEVICE_ATTR_RO(target_node);
 +
-+	spin_lock(&gs->lock);
-+	writeq(out | BIT(offset), gs->dc_base + MLXBF_GPIO_PIN_DIR_O);
-+	writeq(in & ~BIT(offset), gs->dc_base + MLXBF_GPIO_PIN_DIR_I);
-+	spin_unlock(&gs->lock);
++static umode_t dev_dax_visible(struct kobject *kobj, struct attribute *a, int n)
++{
++	struct device *dev = container_of(kobj, struct device, kobj);
++	struct dev_dax *dev_dax = to_dev_dax(dev);
 +
-+	return 0;
++	if (a == &dev_attr_target_node.attr && dev_dax_target_node(dev_dax) < 0)
++		return 0;
++	return a->mode;
 +}
 +
-+static int mlxbf_gpio_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	u64 value;
-+	struct mlxbf_gpio_state *gs = gpiochip_get_data(chip);
-+
-+	spin_lock(&gs->lock);
-+	value = readq(gs->dc_base + MLXBF_GPIO_PIN_STATE);
-+	spin_unlock(&gs->lock);
-+
-+	return (value >> offset) & 1;
-+}
-+
-+static void mlxbf_gpio_set(struct gpio_chip *chip, unsigned int offset,
-+			   int value)
-+{
-+	u64 data;
-+	struct mlxbf_gpio_state *gs = gpiochip_get_data(chip);
-+
-+	spin_lock(&gs->lock);
-+	data = readq(gs->dc_base + MLXBF_GPIO_PIN_STATE);
-+
-+	if (value)
-+		data |= BIT(offset);
-+	else
-+		data &= ~BIT(offset);
-+	writeq(data, gs->dc_base + MLXBF_GPIO_PIN_STATE);
-+	spin_unlock(&gs->lock);
-+}
-+
-+static int mlxbf_gpio_probe(struct platform_device *pdev)
-+{
-+	struct mlxbf_gpio_state *gs;
-+	struct device *dev = &pdev->dev;
-+	struct gpio_chip *gc;
-+	struct resource *dc_res;
-+	int ret;
-+
-+	gs = devm_kzalloc(&pdev->dev, sizeof(*gs), GFP_KERNEL);
-+	if (!gs)
-+		return -ENOMEM;
-+
-+	dc_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	gs->dc_base = devm_ioremap_resource(&pdev->dev, dc_res);
-+	if (IS_ERR(gs->dc_base))
-+		return PTR_ERR(gs->dc_base);
-+
-+	gc = &gs->gc;
-+	gc->direction_input = mlxbf_gpio_set_input;
-+	gc->direction_output = mlxbf_gpio_set_output;
-+	gc->get = mlxbf_gpio_get;
-+	gc->set = mlxbf_gpio_set;
-+	gc->label = dev_name(dev);
-+	gc->parent = &pdev->dev;
-+	gc->owner = THIS_MODULE;
-+	gc->base = -1;
-+	gc->ngpio = MLXBF_GPIO_NR;
-+
-+	ret = devm_gpiochip_add_data(dev, &gs->gc, gs);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed adding memory mapped gpiochip\n");
-+		return ret;
-+	}
-+
-+	spin_lock_init(&gs->lock);
-+	platform_set_drvdata(pdev, gs);
-+	dev_info(&pdev->dev, "registered Mellanox BlueField GPIO");
-+	return 0;
-+}
-+
-+#ifdef CONFIG_PM
-+static int mlxbf_gpio_suspend(struct platform_device *pdev, pm_message_t state)
-+{
-+	struct mlxbf_gpio_state *gs = platform_get_drvdata(pdev);
-+
-+	gs->csave_regs.scratchpad = readq(gs->dc_base + MLXBF_GPIO_SCRATCHPAD);
-+	gs->csave_regs.pad_control[0] =
-+		readq(gs->dc_base + MLXBF_GPIO_PAD_CONTROL__FIRST_WORD);
-+	gs->csave_regs.pad_control[1] =
-+		readq(gs->dc_base + MLXBF_GPIO_PAD_CONTROL_1__FIRST_WORD);
-+	gs->csave_regs.pad_control[2] =
-+		readq(gs->dc_base + MLXBF_GPIO_PAD_CONTROL_2__FIRST_WORD);
-+	gs->csave_regs.pad_control[3] =
-+		readq(gs->dc_base + MLXBF_GPIO_PAD_CONTROL_3__FIRST_WORD);
-+	gs->csave_regs.pin_dir_i = readq(gs->dc_base + MLXBF_GPIO_PIN_DIR_I);
-+	gs->csave_regs.pin_dir_o = readq(gs->dc_base + MLXBF_GPIO_PIN_DIR_O);
-+
-+	return 0;
-+}
-+
-+static int mlxbf_gpio_resume(struct platform_device *pdev)
-+{
-+	struct mlxbf_gpio_state *gs = platform_get_drvdata(pdev);
-+
-+	writeq(gs->csave_regs.scratchpad, gs->dc_base + MLXBF_GPIO_SCRATCHPAD);
-+	writeq(gs->csave_regs.pad_control[0],
-+	       gs->dc_base + MLXBF_GPIO_PAD_CONTROL__FIRST_WORD);
-+	writeq(gs->csave_regs.pad_control[1],
-+	       gs->dc_base + MLXBF_GPIO_PAD_CONTROL_1__FIRST_WORD);
-+	writeq(gs->csave_regs.pad_control[2],
-+	       gs->dc_base + MLXBF_GPIO_PAD_CONTROL_2__FIRST_WORD);
-+	writeq(gs->csave_regs.pad_control[3],
-+	       gs->dc_base + MLXBF_GPIO_PAD_CONTROL_3__FIRST_WORD);
-+	writeq(gs->csave_regs.pin_dir_i, gs->dc_base + MLXBF_GPIO_PIN_DIR_I);
-+	writeq(gs->csave_regs.pin_dir_o, gs->dc_base + MLXBF_GPIO_PIN_DIR_O);
-+
-+	return 0;
-+}
-+#endif
-+
-+static const struct acpi_device_id mlxbf_gpio_acpi_match[] = {
-+	{ "MLNXBF02", 0 },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(acpi, mlxbf_gpio_acpi_match);
-+
-+static struct platform_driver mlxbf_gpio_driver = {
-+	.driver = {
-+		.name = "mlxbf_gpio",
-+		.acpi_match_table = ACPI_PTR(mlxbf_gpio_acpi_match),
-+	},
-+	.probe    = mlxbf_gpio_probe,
-+#ifdef CONFIG_PM
-+	.suspend  = mlxbf_gpio_suspend,
-+	.resume   = mlxbf_gpio_resume,
-+#endif
-+};
-+
-+module_platform_driver(mlxbf_gpio_driver);
-+
-+MODULE_DESCRIPTION("Mellanox BlueField GPIO Driver");
-+MODULE_AUTHOR("Mellanox Technologies");
-+MODULE_LICENSE("GPL");
--- 
-2.1.2
+ static struct attribute *dev_dax_attributes[] = {
+ 	&dev_attr_size.attr,
++	&dev_attr_target_node.attr,
+ 	NULL,
+ };
+ 
+ static const struct attribute_group dev_dax_attribute_group = {
+ 	.attrs = dev_dax_attributes,
++	.is_visible = dev_dax_visible,
+ };
+ 
+ static const struct attribute_group *dax_attribute_groups[] = {
 
