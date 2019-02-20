@@ -2,194 +2,153 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A98C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:09:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24190C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:09:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26CEE20645
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:09:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="H8792qCT"
+	by mail.kernel.org (Postfix) with ESMTP id EC9A221841
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:09:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbfBTSJh (ORCPT
+        id S1726876AbfBTSJt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 13:09:37 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46650 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726078AbfBTSJh (ORCPT
+        Wed, 20 Feb 2019 13:09:49 -0500
+Received: from gateway22.websitewelcome.com ([192.185.46.187]:49750 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726078AbfBTSJs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 13:09:37 -0500
-Received: by mail-pf1-f195.google.com with SMTP id g6so12272064pfh.13
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 10:09:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=3zRdEL3mrQi6BTMqUM38gIfO1gQ/S5BNofYyNhfXEJk=;
-        b=H8792qCTtFdcjAADs2L4QV6NOpEh8gEMiK/RLDcUpPmgf6TBkmmQVwewtsYDEXLDbG
-         brHvHNunZQcJfCC6RbjM5ACzvtlJNJc/jlBPENiISsNTnlKFCyn3P2MM6ik77u0UJ0Yp
-         a+tcFn3ezWwNWDDt0Mk/kcPVP/xRTSjZbJ2c4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=3zRdEL3mrQi6BTMqUM38gIfO1gQ/S5BNofYyNhfXEJk=;
-        b=k0vaukJmiDuWbzUM3ak5YitAV0t0QI+2k55vTWrdKzSqC3mNN3COR0n7ll4sLJeVa3
-         SPBZQqOVxRzn050puhLz66eEqGDgAOprc5n32svlv6UrESq6TwjwClvM6rTkCO3c1wvF
-         51EIWKRFDqa+mCEPuTnrXdSCRybYMMHzzXdbJQo6abSXymHg+pyrlRZ3tTvqjQYbAf7W
-         c1pubByrBtDHmjb+W4IvoVB0hkuuyuwpgpYTxguvd9DNggjQ66TxTGnfr8q0/INOt6d/
-         OPDy5Pri0jN8bbNL9O9CcOv2HlfKfHV2yfrTgFG5d8mL3RFGlcm0QzoVelZpJCRIDLpu
-         xneA==
-X-Gm-Message-State: AHQUAuYAwlLP50Id7XnfbdOJdBIc0lcVpq6Nf4bqHNLgVyNZzbuglOLo
-        6/5VA4LG0y/HoiWr7Qk5ba/ArA==
-X-Google-Smtp-Source: AHgI3IY3bS6c53ienlkeLVhdUHsaTUVEml+YfuLwWeq7/TB8w1M1WLqZsIz9UPr/Z7/OBOCDsWTDxw==
-X-Received: by 2002:a62:b242:: with SMTP id x63mr24257848pfe.4.1550686176132;
-        Wed, 20 Feb 2019 10:09:36 -0800 (PST)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id a5sm21557313pgv.12.2019.02.20.10.09.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Feb 2019 10:09:35 -0800 (PST)
-Date:   Wed, 20 Feb 2019 10:09:34 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jann Horn <jannh@google.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        x86@kernel.org
-Subject: [PATCH v2] x86/asm: Pin sensitive CR4 bits
-Message-ID: <20190220180934.GA46255@beast>
+        Wed, 20 Feb 2019 13:09:48 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id BFF0CBD0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 12:09:47 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id wWJXg291RYTGMwWJXgKKFG; Wed, 20 Feb 2019 12:09:47 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.119.20] (port=60130 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gwWJX-0014OO-Bf; Wed, 20 Feb 2019 12:09:47 -0600
+Subject: Re: [PATCH] crypto: ccree - fix missing break in switch statement
+To:     Gilad Ben-Yossef <gilad@benyossef.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+References: <20190211183131.GA19193@embeddedor>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <0aef6fed-8bea-a2bb-3342-0a48e53fdb2e@embeddedor.com>
+Date:   Wed, 20 Feb 2019 12:09:46 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <20190211183131.GA19193@embeddedor>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.119.20
+X-Source-L: No
+X-Exim-ID: 1gwWJX-0014OO-Bf
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:60130
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 12
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Several recent exploits have used direct calls to the native_write_cr4()
-function to disable SMEP and SMAP before then continuing their exploits
-using userspace memory access. This pins bits of cr4 so that they cannot
-be changed through a common function. This is not intended to be general
-ROP protection (which would require CFI to defend against properly), but
-rather a way to avoid trivial direct function calling (or CFI bypassing
-via a matching function prototype) as seen in:
+Hi all,
 
-https://googleprojectzero.blogspot.com/2017/05/exploiting-linux-kernel-via-packet.html
-(https://github.com/xairy/kernel-exploits/tree/master/CVE-2017-7308)
+Friendly ping:
 
-The goals of this change:
- - pin specific bits (SMEP, SMAP, and UMIP) when writing cr4.
- - avoid setting the bits too early (they must become pinned only after
-   first being used).
- - pinning mask needs to be read-only during normal runtime.
- - pinning needs to be rechecked after set to avoid jumps into the middle
-   of the function.
+Who can take this?
 
-Using __ro_after_init on the mask is done so it can't be first disabled
-with a malicious write. And since it becomes read-only, we must avoid
-writing to it later (hence the check for bits already having been set
-instead of unconditionally writing to the mask).
+Thanks
+--
+Gustavo
 
-The use of volatile is done to force the compiler to perform a full reload
-of the mask after setting cr4 (to protect against just jumping into the
-function past where the masking happens; we must check that the mask was
-applied after we do the set). Due to how this function can be built by the
-compiler (especially due to the removal of frame pointers), jumping into
-the middle of the function frequently doesn't require stack manipulation
-to construct a stack frame (there may only a retq without pops, which is
-sufficient for use with exploits like timer overwrites mentioned above).
-
-For example, without the recheck, the function may appear as:
-
-   native_write_cr4:
-      mov [pin], %rbx
-      or  %rbx, %rdi
-   1: mov %rdi, %cr4
-      retq
-
-The masking "or" could be trivially bypassed by just calling to label "1"
-instead of "native_write_cr4". (CFI will force calls to only be able to
-call into native_write_cr4, but CFI and CET are uncommon currently.)
-
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
-v2: fix think-o in cr4_pin recheck (Jann Horn)
----
- arch/x86/include/asm/special_insns.h | 11 +++++++++++
- arch/x86/kernel/cpu/common.c         | 12 +++++++++++-
- 2 files changed, 22 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
-index 43c029cdc3fe..4c26004ed5d4 100644
---- a/arch/x86/include/asm/special_insns.h
-+++ b/arch/x86/include/asm/special_insns.h
-@@ -72,9 +72,20 @@ static inline unsigned long native_read_cr4(void)
- 	return val;
- }
- 
-+extern volatile unsigned long cr4_pin;
-+
- static inline void native_write_cr4(unsigned long val)
- {
-+again:
-+	val |= cr4_pin;
- 	asm volatile("mov %0,%%cr4": : "r" (val), "m" (__force_order));
-+	/*
-+	 * If the MOV above was used directly as a ROP gadget we can
-+	 * notice the lack of pinned bits in "val" and start the function
-+	 * from the beginning to gain the cr4_pin bits for sure.
-+	 */
-+	if (WARN_ONCE((val & cr4_pin) != cr4_pin, "cr4 bypass attempt?!\n"))
-+		goto again;
- }
- 
- #ifdef CONFIG_X86_64
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index cb28e98a0659..7e0ea4470f8e 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -312,10 +312,16 @@ static __init int setup_disable_smep(char *arg)
- }
- __setup("nosmep", setup_disable_smep);
- 
-+volatile unsigned long cr4_pin __ro_after_init;
-+EXPORT_SYMBOL_GPL(cr4_pin);
-+
- static __always_inline void setup_smep(struct cpuinfo_x86 *c)
- {
--	if (cpu_has(c, X86_FEATURE_SMEP))
-+	if (cpu_has(c, X86_FEATURE_SMEP)) {
-+		if (!(cr4_pin & X86_CR4_SMEP))
-+			cr4_pin |= X86_CR4_SMEP;
- 		cr4_set_bits(X86_CR4_SMEP);
-+	}
- }
- 
- static __init int setup_disable_smap(char *arg)
-@@ -334,6 +340,8 @@ static __always_inline void setup_smap(struct cpuinfo_x86 *c)
- 
- 	if (cpu_has(c, X86_FEATURE_SMAP)) {
- #ifdef CONFIG_X86_SMAP
-+		if (!(cr4_pin & X86_CR4_SMAP))
-+			cr4_pin |= X86_CR4_SMAP;
- 		cr4_set_bits(X86_CR4_SMAP);
- #else
- 		cr4_clear_bits(X86_CR4_SMAP);
-@@ -351,6 +359,8 @@ static __always_inline void setup_umip(struct cpuinfo_x86 *c)
- 	if (!cpu_has(c, X86_FEATURE_UMIP))
- 		goto out;
- 
-+	if (!(cr4_pin & X86_CR4_UMIP))
-+		cr4_pin |= X86_CR4_UMIP;
- 	cr4_set_bits(X86_CR4_UMIP);
- 
- 	pr_info_once("x86/cpu: User Mode Instruction Prevention (UMIP) activated\n");
--- 
-2.17.1
-
-
--- 
-Kees Cook
+On 2/11/19 12:31 PM, Gustavo A. R. Silva wrote:
+> Add missing break statement in order to prevent the code from falling
+> through to case S_DIN_to_DES.
+> 
+> This bug was found thanks to the ongoing efforts to enable
+> -Wimplicit-fallthrough.
+> 
+> Fixes: 63ee04c8b491 ("crypto: ccree - add skcipher support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/crypto/ccree/cc_cipher.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/crypto/ccree/cc_cipher.c b/drivers/crypto/ccree/cc_cipher.c
+> index 5e3361a363b5..d9c17078517b 100644
+> --- a/drivers/crypto/ccree/cc_cipher.c
+> +++ b/drivers/crypto/ccree/cc_cipher.c
+> @@ -80,6 +80,7 @@ static int validate_keys_sizes(struct cc_cipher_ctx *ctx_p, u32 size)
+>  		default:
+>  			break;
+>  		}
+> +		break;
+>  	case S_DIN_to_DES:
+>  		if (size == DES3_EDE_KEY_SIZE || size == DES_KEY_SIZE)
+>  			return 0;
+> 
