@@ -2,178 +2,290 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0866DC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 687F1C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:50:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 965AF21773
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:49:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cBnDvfer"
+	by mail.kernel.org (Postfix) with ESMTP id 309E52147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:50:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726445AbfBTItO (ORCPT
+        id S1726458AbfBTIu5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 03:49:14 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34161 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725861AbfBTItO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 03:49:14 -0500
-Received: by mail-wm1-f65.google.com with SMTP id y185so4154678wmd.1;
-        Wed, 20 Feb 2019 00:49:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XKxlfV+uXDkDdNFyyEqQqiY3VwxD/VDqhzLD0qKOAnk=;
-        b=cBnDvferaUn1V012620RQQfls5rwDYbheYtjUtQwpnlJzEfQE4DXVPhcoQS+BHwM3f
-         dw/ddxrX7qYNbXUAenoYIQ8D2qDC/M5uGdC4Mqi/hQbcbK+7vOxhtkaVHHltKAJQj9g3
-         g7t+JSCtfJzIeZ4F93AjZgRvN+PmHDuXmpBQfXk4hevsSRm8oXT04W1Btqr8zSj02Gm9
-         HAAYKiIqGMIVg7Owsiopbe6kQiIG74K1pugkZSIzcVuDmMp1R7TcMHtZwIKkYb//g2Kq
-         NnDekHo4LO85YfV2reMycfYwDr6cTfun71ZOid8anUJSr3aI5+n6c1clIzvUjcyMP/kM
-         v+8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XKxlfV+uXDkDdNFyyEqQqiY3VwxD/VDqhzLD0qKOAnk=;
-        b=gQAxZmfoFjM/ne3oT1ikaf2ZwERbxjvaLX7hLQ/cbVcA1PAo4z6Vt6SzLszaHGBLvq
-         HCenFYhFTftvCWn9rQhd5sXRhPEou3+SKMOmj7FIx8YHlVCzPrncd0mI14Wp17ig8cfr
-         1Fi+Uegef06OjfV56CpVxehhAr/UA2igU9DqpigD0mIKQTSivug15TR0OPMtwdM6fMgp
-         WC87ODx/XHkLIXSgOjZHLzQ0v7iSuj88wbPXMwHA6/J2tNQ6SyVDo2eI5FpTH3cMokpw
-         R8YEia28ZpRLcAEP6H7iQ/thVxsSvdlGKq2XMrKahCEbc9Ok28oCxDs6ruqXt3O2SFiz
-         Vtdg==
-X-Gm-Message-State: AHQUAuarJ/Qm/sby9hp1EnpNf3tnhqd5J2Jr4krhxj4+xEbUMI5o4ATZ
-        IGPum0aMgEuR7hFp3k4AMSs=
-X-Google-Smtp-Source: AHgI3IYOfb86jVPN9tF+64pKPWhE/aqiI1LkBQrz3LtMJOeZwKwjSk9GvyBwuxI4LN9CY+2nLoBYbA==
-X-Received: by 2002:a1c:9cce:: with SMTP id f197mr5727908wme.135.1550652551135;
-        Wed, 20 Feb 2019 00:49:11 -0800 (PST)
-Received: from localhost (pD9E51D2D.dip0.t-ipconnect.de. [217.229.29.45])
-        by smtp.gmail.com with ESMTPSA id r6sm6677467wrx.48.2019.02.20.00.49.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Feb 2019 00:49:10 -0800 (PST)
-Date:   Wed, 20 Feb 2019 09:49:08 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] reset: Don't WARN if trying to get a used reset control
-Message-ID: <20190220084908.GA21299@ulmo>
-References: <1548849808.3939.7.camel@pengutronix.de>
- <20190201140025.GB12829@ulmo>
- <1549389941.3929.14.camel@pengutronix.de>
- <20190205221300.GA1372@mithrandir>
- <1549448885.3338.4.camel@pengutronix.de>
- <20190206113849.GA21676@ulmo>
- <1549464390.3338.8.camel@pengutronix.de>
- <20190206160023.GA23805@ulmo>
- <1549476724.3338.10.camel@pengutronix.de>
- <20190207082751.GA29438@ulmo>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="EVF5PPMfhYS0aIcm"
-Content-Disposition: inline
-In-Reply-To: <20190207082751.GA29438@ulmo>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        Wed, 20 Feb 2019 03:50:57 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:43686 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725861AbfBTIu4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 03:50:56 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 968C8200309;
+        Wed, 20 Feb 2019 09:50:54 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C1299200145;
+        Wed, 20 Feb 2019 09:50:51 +0100 (CET)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 3136B402C9;
+        Wed, 20 Feb 2019 16:50:48 +0800 (SGT)
+From:   Alison Wang <alison.wang@nxp.com>
+To:     shawnguo@kernel.org, leoyang.li@nxp.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     alison.wang@nxp.com
+Subject: [PATCH v2] arm64: dts: ls1028a: Add Audio DT nodes
+Date:   Wed, 20 Feb 2019 16:44:57 +0800
+Message-Id: <20190220084457.31357-1-alison.wang@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch adds Audio DT nodes for LS1028ARDB and LS1028AQDS boards.
 
---EVF5PPMfhYS0aIcm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Alison Wang <alison.wang@nxp.com>
+---
+Changes in v2:
+ - Modify some nodes' names.
+ - Use GIC_SPI and IRQ_TYPE_LEVEL_HIGH.
 
-On Thu, Feb 07, 2019 at 09:27:51AM +0100, Thierry Reding wrote:
-> On Wed, Feb 06, 2019 at 07:12:04PM +0100, Philipp Zabel wrote:
-> > On Wed, 2019-02-06 at 17:00 +0100, Thierry Reding wrote:
-> [...]
-> > > That way we operate on the same reset control, but we wouldn't need to
-> > > iterate over all existing reset controls in order to determine whether
-> > > we can acquire or not.
-> >=20
-> > How could we decide in reset_control_assert whether the provided rstc is
-> > allowed to change the reset line if both rstc handles point to the same
-> > struct reset_control?
->=20
-> The idea was that acquire/release would basically act as lock/unlock for
-> the reset control. So consumers would always have to call acquire()
-> before assert()/deassert()/reset() and they would be allowed to continue
-> only if acquire() returns success. Of course that's something you can
-> only enforce during code review, but that's pretty much the same as with
-> any type of locking.
->=20
-> So basically the idea is that if a consumers acquire() call succeeds,
-> the acquired flag gets set on the reset control and that consumer
-> becomes the only user allowed to modify the reset control. Any other
-> consumers would call acquire() and fail because the acquired is already
-> true.
->=20
-> But what you proposed works for me. We can always find constructive ways
-> to optimize this later if we need or want to.
->=20
-> Another possibility would be to keep an additional, separate list of the
-> temporarily exclusive resets so that only that list would have to be
-> iterated to find the ones that are relevant.
->=20
-> > > >  			if (WARN_ON(!rstc->shared || !shared))
-> > > >  				return ERR_PTR(-EBUSY);
-> > >=20
-> > > With the above I think we could just extend this list of conditions w=
-ith
-> > >=20
-> > > 	|| acquired
-> > >=20
-> > > and things should work the same. Or perhaps I'm missing something.
-> > >
-> > > Other than that this really looks like a very nice solution.
-> >=20
-> > Well, apart from the API function names...
-> > devm_reset_control_get_optional_exclusive_released(dev, "id");
-> > would be a mouthful.
->=20
-> Yeah, the combinations are somewhat awkward. However, I would expect the
-> temporarily exclusive resets to be required in most cases, so that would
-> at least make the name a little shorter.
+ arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts |   62 ++++++++++++++++++++
+ arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts |   63 +++++++++++++++++++++
+ arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi    |   57 +++++++++++++++++++
+ 3 files changed, 182 insertions(+), 0 deletions(-)
 
-Quick update: I finally had a bit of time to look at this and I've got
-something that works. There were a couple of minor issues with the patch
-and I had to extend support for acquire/release to reset arrays for this
-particular use-case, but overall it seems to be working pretty well.
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
+index 14c79f4..b359068 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
+@@ -32,6 +32,49 @@
+ 		device_type = "memory";
+ 		reg = <0x0 0x80000000 0x1 0x00000000>;
+ 	};
++
++	sys_mclk: clock-mclk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <25000000>;
++	};
++
++	reg_1p8v: regulator-1p8v {
++		compatible = "regulator-fixed";
++		regulator-name = "1P8V";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-always-on;
++	};
++
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,format = "i2s";
++		simple-audio-card,widgets =
++			"Microphone", "Microphone Jack",
++			"Headphone", "Headphone Jack",
++			"Speaker", "Speaker Ext",
++			"Line", "Line In Jack";
++		simple-audio-card,routing =
++			"MIC_IN", "Microphone Jack",
++			"Microphone Jack", "Mic Bias",
++			"LINE_IN", "Line In Jack",
++			"Headphone Jack", "HP_OUT",
++			"Speaker Ext", "LINE_OUT";
++
++		simple-audio-card,cpu {
++			sound-dai = <&sai1>;
++			frame-master;
++			bitclock-master;
++		};
++
++		simple-audio-card,codec {
++			sound-dai = <&sgtl5000>;
++			frame-master;
++			bitclock-master;
++			system-clock-frequency = <25000000>;
++		};
++	};
+ };
+ 
+ &duart0 {
+@@ -89,5 +132,24 @@
+ 				reg = <0x57>;
+ 			};
+ 		};
++
++		i2c@5 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x5>;
++
++			sgtl5000: audio-codec@a {
++				#sound-dai-cells = <0>;
++				compatible = "fsl,sgtl5000";
++				reg = <0xa>;
++				VDDA-supply = <&reg_1p8v>;
++				VDDIO-supply = <&reg_1p8v>;
++				clocks = <&sys_mclk>;
++			};
++		};
+ 	};
+ };
++
++&sai1 {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
+index fdeb417..50ca51a 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
+@@ -28,6 +28,49 @@
+ 		device_type = "memory";
+ 		reg = <0x0 0x80000000 0x1 0x0000000>;
+ 	};
++
++	sys_mclk: clock-mclk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <25000000>;
++	};
++
++	reg_1p8v: regulator-1p8v {
++		compatible = "regulator-fixed";
++		regulator-name = "1P8V";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-always-on;
++	};
++
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,format = "i2s";
++		simple-audio-card,widgets =
++			"Microphone", "Microphone Jack",
++			"Headphone", "Headphone Jack",
++			"Speaker", "Speaker Ext",
++			"Line", "Line In Jack";
++		simple-audio-card,routing =
++			"MIC_IN", "Microphone Jack",
++			"Microphone Jack", "Mic Bias",
++			"LINE_IN", "Line In Jack",
++			"Headphone Jack", "HP_OUT",
++			"Speaker Ext", "LINE_OUT";
++
++		simple-audio-card,cpu {
++			sound-dai = <&sai4>;
++			frame-master;
++			bitclock-master;
++		};
++
++		simple-audio-card,codec {
++			sound-dai = <&sgtl5000>;
++			frame-master;
++			bitclock-master;
++			system-clock-frequency = <25000000>;
++		};
++	};
+ };
+ 
+ &i2c0 {
+@@ -39,6 +82,22 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
++		i2c@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x1>;
++
++			sgtl5000: audio-codec@a {
++				#sound-dai-cells = <0>;
++				compatible = "fsl,sgtl5000";
++				reg = <0xa>;
++				VDDA-supply = <&reg_1p8v>;
++				VDDIO-supply = <&reg_1p8v>;
++				clocks = <&sys_mclk>;
++				sclk-strength = <3>;
++			};
++		};
++
+ 		i2c@2 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -71,3 +130,7 @@
+ &duart1 {
+ 	status = "okay";
+ };
++
++&sai4 {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+index a8cf92a..de590ec 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+@@ -335,5 +335,62 @@
+ 				     <GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
++
++		edma0: dma-controller@22c0000 {
++			#dma-cells = <2>;
++			compatible = "fsl,vf610-edma";
++			reg = <0x0 0x22c0000 0x0 0x10000>,
++			      <0x0 0x22d0000 0x0 0x10000>,
++			      <0x0 0x22e0000 0x0 0x10000>;
++			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "edma-tx", "edma-err";
++			dma-channels = <32>;
++			clock-names = "dmamux0", "dmamux1";
++			clocks = <&clockgen 4 1>,
++				 <&clockgen 4 1>;
++		};
++
++		sai1: audio-controller@f100000 {
++			#sound-dai-cells = <0>;
++			compatible = "fsl,vf610-sai";
++			reg = <0x0 0xf100000 0x0 0x10000>;
++			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clockgen 4 1>, <&clockgen 4 1>,
++				 <&clockgen 4 1>, <&clockgen 4 1>;
++			clock-names = "bus", "mclk1", "mclk2", "mclk3";
++			dma-names = "tx", "rx";
++			dmas = <&edma0 1 4>,
++			       <&edma0 1 3>;
++			status = "disabled";
++		};
++
++		sai2: audio-controller@f110000 {
++			#sound-dai-cells = <0>;
++			compatible = "fsl,vf610-sai";
++			reg = <0x0 0xf110000 0x0 0x10000>;
++			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clockgen 4 1>, <&clockgen 4 1>,
++				 <&clockgen 4 1>, <&clockgen 4 1>;
++			clock-names = "bus", "mclk1", "mclk2", "mclk3";
++			dma-names = "tx", "rx";
++			dmas = <&edma0 1 6>,
++			       <&edma0 1 5>;
++			status = "disabled";
++		};
++
++		sai4: audio-controller@f130000 {
++			#sound-dai-cells = <0>;
++			compatible = "fsl,vf610-sai";
++			reg = <0x0 0xf130000 0x0 0x10000>;
++			interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clockgen 4 1>, <&clockgen 4 1>,
++				 <&clockgen 4 1>, <&clockgen 4 1>;
++			clock-names = "bus", "mclk1", "mclk2", "mclk3";
++			dma-names = "tx", "rx";
++			dmas = <&edma0 1 10>,
++			       <&edma0 1 9>;
++			status = "disabled";
++		};
+ 	};
+ };
+-- 
+1.7.1
 
-I'll clean up the patches that I have and then send out for review. It's
-unfortunately going to be a bit of a mess staging these changes since
-they are spread over three different subsystems and I think there can be
-subtle failures between the PMC and SOR patches, so perhaps it'd be best
-to apply those to one tree, or maybe even squash the changes into a
-single commit to avoid any surprises.
-
-Thierry
-
---EVF5PPMfhYS0aIcm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxtFIEACgkQ3SOs138+
-s6H9EA/9FxY10esYYvhZTftxJATt89nBbxmjmWuk4f82O6/vmoJCVHL+eaxh1cFf
-4z3W56tmppyzjsnXEXVJUlk/HeYrSyeYEy6smkIbf1INHbLRab9gQJUOxTRV7sv4
-2vKVFkcClfEO0fu8pB/SgRKlhVIWdQSqjkK9s+yCEHAbF8DoaynRVfXUc7UJboUc
-kFJbYkNTYR4RLHl3eEUudApEWMzJZFyVtXixZrtVjrICoMlMcQz6QKDnaFjGmirf
-EmKRzfjY0+gUai/YuvS7xkxywY2/VMPN9L5RGTBmEvyCOEQcZCu5DPWq34HwMwen
-hoBIXtBAOHWB5mqrdx3VbgveZA0d3SVnQq44brUFCc2/OAyLGtxvTASZZMxXimkp
-YT0GPddHWSnBwqOv1RlM1XrmlcZZ/uf03vq1QbTLZk8K+wpn0uBEpi9ofxNmCElb
-fkbmVTcXcQVpEiC3qrhIcHvPHbIoduvXTrMUKf1HFDkuD8+3mnoWZ76RszUBH8Uz
-DcIP8gOhBcapdFzBT+T5yBQOEzZqF9q45ShuCZWRbuMofu/pocmLLwhvmJ5R1yxq
-K6GBOdWUmECps9x3PJ8cIEH1qlzFVe+TqQlu0L3NP88tK5vw8iKMyoEpDWpybFJ2
-2sg+s46e3NGgdmvY6FG7rtOKm54N/zaZdVUhu7sIa0e1YVXkX/c=
-=/U/s
------END PGP SIGNATURE-----
-
---EVF5PPMfhYS0aIcm--
