@@ -2,108 +2,104 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6422EC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF9BAC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:57:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BB5920880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:56:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1F3E2183F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:57:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726279AbfBTN4k convert rfc822-to-8bit (ORCPT
+        id S1726330AbfBTN5D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 08:56:40 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44591 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725877AbfBTN4j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 08:56:39 -0500
-Received: by mail-wr1-f66.google.com with SMTP id w2so11466590wrt.11;
-        Wed, 20 Feb 2019 05:56:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=mr2SnelbiJUUghAwbgCBMha1QF1gvL4tCn0WX03/2GA=;
-        b=c5rZNLnVt6LfLRYOfcOrOm6MxzdtrINd5c1oMBBfRQ+Yupr66jAipt0L833bZTJwM4
-         1acgfRiWCyzES20rltkPkhVdrO8eUGo2sW+JQ0N7QiX+3UFau78FzG7Racw+++Bx0tbz
-         wE0eUM7S3rzYi2zFGDT/MSM0eifZi4JWVZyxEVvgikDZ6dY3XhLTkJWv95F1KtFlwm5W
-         guGUr0gCYhBDc3Bw1Uz0isWpcnaAEgd9NgMyTMYJg6J3s0j2MuAKV8l2lYB90yXHxYCt
-         g445BELx6SyW/7OX9/09e0byJBNj6TKFg/DgyC/56ijOah9tJAS0+QYJCbuwwJbCDh3B
-         Ioiw==
-X-Gm-Message-State: AHQUAuaWnF6pSg2itfHZ7BsmYmh2mkRBqvZqUNbr07SknEFT3Ag0gdrG
-        h/ntXBioHh1Z/vu81gRRFSbSkn3cKNyWgM1QkB4=
-X-Google-Smtp-Source: AHgI3IYBtbJJWNE6Xq/xTWlMIowgeujfUGTLg6tdqk/fmeF5vWf3j/so314W4MCUDohhZ1t8o2GPd4SqoPmlpNSeMKQ=
-X-Received: by 2002:a5d:49cf:: with SMTP id t15mr23193693wrs.94.1550670997475;
- Wed, 20 Feb 2019 05:56:37 -0800 (PST)
+        Wed, 20 Feb 2019 08:57:03 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58138 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725877AbfBTN5C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 08:57:02 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4327DEBD;
+        Wed, 20 Feb 2019 05:57:02 -0800 (PST)
+Received: from [10.1.196.69] (e112269-lin.cambridge.arm.com [10.1.196.69])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 42E883F690;
+        Wed, 20 Feb 2019 05:56:59 -0800 (PST)
+Subject: Re: [PATCH 03/13] mm: Add generic p?d_large() macros
+To:     "Liang, Kan" <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        James Morse <james.morse@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, kirill@shutemov.name,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org
+References: <20190215170235.23360-1-steven.price@arm.com>
+ <20190215170235.23360-4-steven.price@arm.com>
+ <20190218113134.GU32477@hirez.programming.kicks-ass.net>
+ <aad21496-a86b-ca91-70b7-0c23ea6fefd3@arm.com>
+ <8a74c111-b099-8d18-5fb0-422909a1367a@linux.intel.com>
+From:   Steven Price <steven.price@arm.com>
+Message-ID: <f8bdd4b9-e078-c1fc-9b15-1ed7a844e673@arm.com>
+Date:   Wed, 20 Feb 2019 13:56:57 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <20190216151826.11584-1-tiny.windzz@gmail.com> <CGME20190216152219epcas4p3ec89de91f9e158da7cc7cfeefb6e113e@epcas4p3.samsung.com>
- <20190216151826.11584-2-tiny.windzz@gmail.com> <9e7f9e6d-3b53-35f2-e945-13895385af31@samsung.com>
-In-Reply-To: <9e7f9e6d-3b53-35f2-e945-13895385af31@samsung.com>
-Reply-To: myungjoo.ham@gmail.com
-From:   MyungJoo Ham <myungjoo.ham@samsung.com>
-Date:   Wed, 20 Feb 2019 22:55:59 +0900
-Message-ID: <CAJ0PZbQ808ztVzWyq_cTAD5o276y-t+0Lih2a5jOv05585VTEg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] PM / devfreq: rk3399_dmc: remove unneeded semicolon
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     Yangtao Li <tiny.windzz@gmail.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-rockchip@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <8a74c111-b099-8d18-5fb0-422909a1367a@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 10:09 AM Chanwoo Choi <cw00.choi@samsung.com> wrote:
->
-> Hi,
->
-> On 19. 2. 17. 오전 12:18, Yangtao Li wrote:
-> > The semicolon is unneeded, so remove it.
-> >
-> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> > ---
-> >  drivers/devfreq/rk3399_dmc.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc.c
-> > index e795ad2b3f6b..a228dad2bee4 100644
-> > --- a/drivers/devfreq/rk3399_dmc.c
-> > +++ b/drivers/devfreq/rk3399_dmc.c
-> > @@ -322,7 +322,7 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
-> >
-> >               dev_err(dev, "Cannot get the clk dmc_clk\n");
-> >               return PTR_ERR(data->dmc_clk);
-> > -     };
-> > +     }
-> >
-> >       data->edev = devfreq_event_get_edev_by_phandle(dev, 0);
-> >       if (IS_ERR(data->edev))
-> >
->
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+On 19/02/2019 03:44, Liang, Kan wrote:
+> 
+> 
+> On 2/18/2019 9:19 AM, Steven Price wrote:
+>> On 18/02/2019 11:31, Peter Zijlstra wrote:
+>>> On Fri, Feb 15, 2019 at 05:02:24PM +0000, Steven Price wrote:
+>>>> From: James Morse <james.morse@arm.com>
+>>>>
+>>>> Exposing the pud/pgd levels of the page tables to walk_page_range()
+>>>> means
+>>>> we may come across the exotic large mappings that come with large areas
+>>>> of contiguous memory (such as the kernel's linear map).
+>>>>
+>>>> For architectures that don't provide p?d_large() macros, provided a
+>>>> does nothing default.
+>>>
+>>> Kan was going to fix that for all archs I think..
+>>
+> 
+> Yes, I'm still working on a generic function to retrieve page size.
+> The generic p?d_large() issue has been fixed. However, I found that the
+> pgd_page() is not generic either. I'm still working on it.
+> I will update you on the other thread when all issues are fixed.
+> 
+> 
+> 
+>> The latest series I can find from Kan is still x86 specific. I'm happy
+>> to rebase onto something else if Kan has an implementation already
+>> (please point me in the right direction). Otherwise Kan is obviously
+>> free to base on these changes.
+>>
+> 
+> My implementation is similar as yours. I'm happy to re-base on your
+> changes.
+> 
+> Could you please also add a generic p4d_large()?
 
-Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Sure, I'll include that in the next posting.
 
-Merged.
+Thanks,
 
->
-> --
-> Best Regards,
-> Chanwoo Choi
-> Samsung Electronics
-
-
--- 
-MyungJoo Ham, Ph.D.
-S/W Center, Samsung Electronics
+Steve
