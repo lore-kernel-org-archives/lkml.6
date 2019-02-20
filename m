@@ -1,85 +1,172 @@
-Return-Path: <SRS0=K7k5=Q2=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED424C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA1DC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 00:03:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEC2D21736
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Feb 2019 23:57:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7969921738
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 00:03:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dmBVNcJ+"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="EOL+ZWfG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730152AbfBSX5J (ORCPT
+        id S1729406AbfBTADg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 18:57:09 -0500
-Received: from ozlabs.org ([203.11.71.1]:43995 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730118AbfBSX5H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 18:57:07 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 443yMN3dCsz9s1l;
-        Wed, 20 Feb 2019 10:57:04 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1550620624;
-        bh=fO0Hv5pjtorZ4bePQ7efDbT53GCSntslqtTBLEPq5SU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=dmBVNcJ+N4WYCpkxvy/5CGaCstM+kenc6tTxVSntE8w05q9XHIJ4X+XDrz+hS9rRG
-         XI/aFjGWt4hx7JGbSPsRRYL4/4WzpddpwTtsrJ56gN4n4ls1UrtxyHt6+HsZYZcMnm
-         mhbY3faHXAiQI1O+z1LUiCh+gJIGHi4oZsZk26UQvCSWkvg1ZTD/ZCY5Fcv3bvgfHd
-         fE4jxzJ4RpqIic2djur679yLmtRdDxIfPnRdIb4Ieh73sQw3zId/yKCyNuvYKMhPQU
-         A88NWQUh+jv7iHtDdndrPmyNmVcpIdg1nFG3fSsZcV/rKHIrLO1CDpa3t6Jy1BBOU6
-         C1TPSCtBKpBxQ==
-Date:   Wed, 20 Feb 2019 10:57:03 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: please clean up the v4l-dvb-next tree
-Message-ID: <20190220105703.69c9b582@canb.auug.org.au>
+        Tue, 19 Feb 2019 19:03:36 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:40852 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbfBTADg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Feb 2019 19:03:36 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1JNx1GW082842;
+        Wed, 20 Feb 2019 00:02:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=gfATYa55n+jW6sujzmXKFVyH/9xKyPiskuX1RgL782I=;
+ b=EOL+ZWfG14CC1fIBhsKRlmFe+3jozjdbeuDOJ9Jan5dsfWb7hAj0T98SlddYlbTVe0dl
+ 0+LHU/wgEpD+5fZPfRSS9cUyoUcYKfbG1dbEPl2WzFYGAiZRkUC85YlACzAp9jjfF8Fg
+ mzkQ0Xg5LYm9sPYisAKElC+Y/bHjfZTxYOIQdL8SunhvixnYiQ7aIziYZFdqceUD56cH
+ VixZvCMWR8/wASCKcwkje8MDL+KbQW1FWviXdwnxqpG4RVrGtBQKAFagZIZgchah5bPn
+ yjnVcJZDecr57VwrxqjN4/H/wF+0Uw8/jZjnA9oOc50d+DEoeHGNWDZ0tMq8MIbuSXxA 3Q== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2qp81e6ptp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Feb 2019 00:02:26 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1K02JUv001440
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Feb 2019 00:02:19 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1K02HXF029677;
+        Wed, 20 Feb 2019 00:02:17 GMT
+Received: from localhost.localdomain (/108.49.136.197)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 19 Feb 2019 16:02:16 -0800
+Date:   Tue, 19 Feb 2019 19:02:10 -0500
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+To:     Julien Grall <julien.grall@arm.com>
+Cc:     Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Dave P Martin <dave.martin@arm.com>
+Subject: Re: xen/evtchn and forced threaded irq
+Message-ID: <20190220000209.GA4091@localhost.localdomain>
+References: <5e256d9a-572c-e01e-7706-407f99245b00@arm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/K_B8T43XAryDoJ6zl_PUVi6"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5e256d9a-572c-e01e-7706-407f99245b00@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9172 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=946 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902190162
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/K_B8T43XAryDoJ6zl_PUVi6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Feb 19, 2019 at 05:31:10PM +0000, Julien Grall wrote:
+> Hi all,
+> 
+> I have been looking at using Linux RT in Dom0. Once the guest is started,
+> the console is ending to have a lot of warning (see trace below).
+> 
+> After some investigation, this is because the irq handler will now be threaded.
+> I can reproduce the same error with the vanilla Linux when passing the option
+> 'threadirqs' on the command line (the trace below is from 5.0.0-rc7 that has
+> not RT support).
+> 
+> FWIW, the interrupt for port 6 is used to for the guest to communicate with
+> xenstore.
+> 
+> From my understanding, this is happening because the interrupt handler is now
+> run in a thread. So we can have the following happening.
+> 
+>    Interrupt context            |     Interrupt thread
+>                                 |  
+>    receive interrupt port 6     |
+>    clear the evtchn port        |
+>    set IRQF_RUNTHREAD	        |
+>    kick interrupt thread        |
+>                                 |    clear IRQF_RUNTHREAD
+>                                 |    call evtchn_interrupt
+>    receive interrupt port 6     |
+>    clear the evtchn port        |
+>    set IRQF_RUNTHREAD           |
+>    kick interrupt thread        |
+>                                 |    disable interrupt port 6
+>                                 |    evtchn->enabled = false
+>                                 |    [....]
+>                                 |
+>                                 |    *** Handling the second interrupt ***
+>                                 |    clear IRQF_RUNTHREAD
+>                                 |    call evtchn_interrupt
+>                                 |    WARN(...)
+> 
+> I am not entirely sure how to fix this. I have two solutions in mind:
+> 
+> 1) Prevent the interrupt handler to be threaded. We would also need to
+> switch from spin_lock to raw_spin_lock as the former may sleep on RT-Linux.
+> 
+> 2) Remove the warning
 
-Hi Mauro,
+I think access to evtchn->enabled is racy so (with or without the warning) we can't use it reliably.
 
-It seems most (if not all) of the commits in the v4l-dvb-next tree are
-also in the v4l-dvb tree and are now causing lots of conflicts when I
-merge them both.  Please clean it up.
+Another alternative could be to queue the irq if !evtchn->enabled and handle it in evtchn_write() (which is where irq is supposed to be re-enabled).
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/K_B8T43XAryDoJ6zl_PUVi6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+-boris
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxsl88ACgkQAVBC80lX
-0GxaMwf6A+gpGs2vkgWY9iBnIVQ2FudZoKz6zhpOWx/ZAebtqUTkrCzR6IjDZ5FV
-n2zR3FDylV7IiOEZHtMqhqbK9emb4f3AGE9tYWUZYuqJ1nle2Ru9WYrbBoBU7Lo/
-efdrNSAZ72YLt3o9pDOi1+t28/RKvEKPa26u+pqW1RKv8QKHFKve7eJ8MkoWHdTJ
-V2EukCXvICW5PEjgk3czzMx3HvxL9P55TL19dvpxlex0vfcspiIhqqjgy7HBi2KX
-xH8dMebs4VjdvPnbnhKTbFFcCENA2L5IfSLerU4U2xd+bWcbtY9I9TOP1ATn9PjY
-S2fArRS+WCscvez8KxL959LdU2Zwqg==
-=+aMG
------END PGP SIGNATURE-----
-
---Sig_/K_B8T43XAryDoJ6zl_PUVi6--
+> 
+> None of them are ideals. Do you have an opionion/better suggestion?
+> 
+> [  127.192087] Interrupt for port 6, but apparently not enabled; per-user 0000000078d39c7f
+> [  127.200333] WARNING: CPU: 0 PID: 2553 at drivers/xen/evtchn.c:167 evtchn_interrupt+0xfc/0x120
+> [  127.208799] Modules linked in:
+> [  127.211939] CPU: 0 PID: 2553 Comm: irq/52-evtchn:x Tainted: G        W
+>   5.0.0-rc7-00023-g2a3d41623699 #1257
+> [  127.222374] Hardware name: ARM Juno development board (r2) (DT)
+> [  127.228381] pstate: 40000005 (nZcv daif -PAN -UAO)
+> [  127.233256] pc : evtchn_interrupt+0xfc/0x120
+> [  127.237607] lr : evtchn_interrupt+0xfc/0x120
+> [  127.241952] sp : ffff000012d2bd60
+> [  127.245347] x29: ffff000012d2bd60 x28: ffff00001015d608
+> [  127.250741] x27: ffff8008b39de400 x26: ffff00001015d330
+> [  127.256137] x25: ffff00001015d2d4 x24: 0000000000000001
+> [  127.261532] x23: ffff00001015d570 x22: 0000000000000034
+> [  127.266926] x21: 0000000000000000 x20: ffff8008b7f02400
+> [  127.272322] x19: ffff8008b3aba000 x18: 0000000000000037
+> [  127.277717] x17: 0000000000000000 x16: 0000000000000000
+> [  127.283112] x15: 00000000fffffff0 x14: 0000000000000000
+> [  127.288507] x13: 3030303030207265 x12: 000000000000000c
+> [  127.293902] x11: ffff000010ea0a88 x10: 0000000000000000
+> [  127.299297] x9 : 00000000fffb9fff x8 : 0000000000000000
+> [  127.304701] x7 : 0000000000000001 x6 : ffff8008bac5c240
+> [  127.310087] x5 : ffff8008bac5c240 x4 : 0000000000000000
+> [  127.315483] x3 : ffff8008bac64708 x2 : ffff8008b39de400
+> [  127.320877] x1 : 893ac9b38837b800 x0 : 0000000000000000
+> [  127.326272] Call trace:
+> [  127.328802]  evtchn_interrupt+0xfc/0x120
+> [  127.332804]  irq_forced_thread_fn+0x38/0x98
+> [  127.337066]  irq_thread+0x190/0x238
+> [  127.340636]  kthread+0x134/0x138
+> [  127.343942]  ret_from_fork+0x10/0x1c
+> [  127.347593] ---[ end trace 1d3fa385877cc18b ]---
+> 
+> 
+> Cheers,
+> 
+> -- 
+> Julien Grall
