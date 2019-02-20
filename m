@@ -2,130 +2,88 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B71E0C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C659C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:55:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D8A72146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:53:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550685200;
-	bh=RIMtymAtZQvd2KZJ1FVovSktVXHLsPr83vMhKPIcgq4=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=xx55xJcfniaSuK5+6hmITaVsXrmuXWbIYe+zWhf4YrJeyCu2TSVmJWoMhBrnrkniP
-	 hSVMtl6p9JBGp2wG9pHww0j4kWhTMFaQ0Cx2FXivnKfmcXiujv0Y5Hhby2h+NScpTA
-	 kO0pvolNhH7SM2K6JonI9B3Tk5YZJX+usl79AhGI=
+	by mail.kernel.org (Postfix) with ESMTP id 68B362146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 17:55:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gf/X0SDj";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IMR17jAs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbfBTRxT (ORCPT
+        id S1726279AbfBTRzN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 12:53:19 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55920 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726710AbfBTRxE (ORCPT
+        Wed, 20 Feb 2019 12:55:13 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:38068 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbfBTRzN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 12:53:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=H0vsAsiH3d63vhZThEQs0eJR3EOC0EDZLIgUw3nIEHc=; b=nSCi7SuKn0Gy
-        yuJ1Fp0cgR+mysWydMtLsUEhJXqCKkiYoOLSgpaRP0WNNM7mEa3fNR6tnmaxAy3vD+llSFcCkIMtg
-        abExskl4m7cQOC5l8VUrCmISJd3I4QkXDrRp8U8LtbCVOdbETWIqGsHACtTBFk0Sk9F41wLhSjDME
-        TtKxk=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gwW3K-0005Sh-8V; Wed, 20 Feb 2019 17:53:02 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 98A95112882C; Wed, 20 Feb 2019 17:53:01 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: tps65218.c: fix LS3 issues" to the regulator tree
-In-Reply-To: 
-X-Patchwork-Hint: ignore
-Message-Id: <20190220175301.98A95112882C@debutante.sirena.org.uk>
-Date:   Wed, 20 Feb 2019 17:53:01 +0000 (GMT)
+        Wed, 20 Feb 2019 12:55:13 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 00096607EF; Wed, 20 Feb 2019 17:55:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550685312;
+        bh=UqEBRIbMVQm4tbU2J6O5QAmaQ3yjOoXT0Qy96nXxc6A=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=gf/X0SDjrDJYPIZokEJrGzpYUXbK3nNQNal8xrkXKW16pMc8AGFFkTOPHGtnkbhTT
+         GxVSUm85zKM6RMOJkzAwfpXotPzOzRGMmTjRl7SgLjtW69jvOtCx28SZ9a8sOxLfpY
+         7/Od9Ol4SPevGxU95JClci+NMmK3ee5YXiPYMUBk=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3ED536075A;
+        Wed, 20 Feb 2019 17:55:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550685311;
+        bh=UqEBRIbMVQm4tbU2J6O5QAmaQ3yjOoXT0Qy96nXxc6A=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=IMR17jAsQz7OrZHUqftq3WGDvRcJF3/y26nAnBkjNInMJLaOkirxRjqjkJbYHIvaz
+         3WFgUZAOCskS8KAJMQaFLvbncGw33LJ/xNR8b43YhtAVx8A5pRPtJRdc+ihknSAoND
+         YbIc6AiAHUbiGRABsxo7DG0vlhGeVuiP9SGL0c1Y=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3ED536075A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH][next] rtlwifi: rtl8192ce: fix typo,
+ "PairwiseENcAlgorithm" -> "PairwiseEncAlgorithm"
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20190220092727.17119-1-colin.king@canonical.com>
+References: <20190220092727.17119-1-colin.king@canonical.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Ping-Ke Shih <pkshih@realtek.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20190220175512.00096607EF@smtp.codeaurora.org>
+Date:   Wed, 20 Feb 2019 17:55:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Colin King <colin.king@canonical.com> wrote:
 
-   regulator: tps65218.c: fix LS3 issues
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is an uppercase 'N' that should be a lowercase 'n', fix this.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-has been applied to the regulator tree at
+Patch applied to wireless-drivers-next.git, thanks.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+0421dd4167ec rtlwifi: rtl8192ce: fix typo, "PairwiseENcAlgorithm" -> "PairwiseEncAlgorithm"
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 71a64ba2031f4b67769618b9e35389906026130d Mon Sep 17 00:00:00 2001
-From: Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
-Date: Wed, 20 Feb 2019 09:15:50 +0100
-Subject: [PATCH] regulator: tps65218.c: fix LS3 issues
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-- Fix list of valid LS3 currents from mA to µA
-- Fix selection of min/max microAmps of LS3.
-  Selecting one of the configured values as max value now really
-  selects it instead of the next lower one
-
-Signed-off-by: Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/tps65218-regulator.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/regulator/tps65218-regulator.c b/drivers/regulator/tps65218-regulator.c
-index 6209beee1018..5dd559eabc81 100644
---- a/drivers/regulator/tps65218-regulator.c
-+++ b/drivers/regulator/tps65218-regulator.c
-@@ -188,7 +188,8 @@ static struct regulator_ops tps65218_ldo1_dcdc34_ops = {
- 	.set_suspend_disable	= tps65218_pmic_set_suspend_disable,
- };
- 
--static const int ls3_currents[] = { 100, 200, 500, 1000 };
-+static const int ls3_currents[] = { 100000, 200000, 500000, 1000000 };
-+
- 
- static int tps65218_pmic_set_input_current_lim(struct regulator_dev *dev,
- 					       int lim_uA)
-@@ -214,7 +215,7 @@ static int tps65218_pmic_set_current_limit(struct regulator_dev *dev,
- 	unsigned int num_currents = ARRAY_SIZE(ls3_currents);
- 	struct tps65218 *tps = rdev_get_drvdata(dev);
- 
--	while (index < num_currents && ls3_currents[index] < max_uA)
-+	while (index < num_currents && ls3_currents[index] <= max_uA)
- 		index++;
- 
- 	index--;
 -- 
-2.20.1
+https://patchwork.kernel.org/patch/10821751/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
