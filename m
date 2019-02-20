@@ -6,167 +6,136 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D34C0C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6671C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:18:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD7B22089F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:18:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A84FB20818
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:18:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726648AbfBTSR7 (ORCPT
+        id S1726613AbfBTSS5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 13:17:59 -0500
-Received: from gateway33.websitewelcome.com ([192.185.146.85]:44508 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726126AbfBTSR7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 13:17:59 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 44300D6DBE
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 12:12:46 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id wWMQgx2XkiQerwWMQgAvZE; Wed, 20 Feb 2019 12:12:46 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=60146 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gwWMP-0016Cn-Un; Wed, 20 Feb 2019 12:12:46 -0600
-Subject: Re: [PATCH] intel_th: Mark expected switch fall-throughs
-To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-References: <20190212214302.GA23708@embeddedor>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <6da79f27-68ec-6f94-92e3-4b66a822731f@embeddedor.com>
-Date:   Wed, 20 Feb 2019 12:12:43 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 20 Feb 2019 13:18:57 -0500
+Received: from anholt.net ([50.246.234.109]:51082 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726078AbfBTSS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 13:18:57 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 11B7310A2D1A;
+        Wed, 20 Feb 2019 10:18:57 -0800 (PST)
+X-Virus-Scanned: Debian amavisd-new at anholt.net
+Received: from anholt.net ([127.0.0.1])
+        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id twHIuxoTdFbx; Wed, 20 Feb 2019 10:18:55 -0800 (PST)
+Received: from eliezer.anholt.net (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id B737310A047F;
+        Wed, 20 Feb 2019 10:18:55 -0800 (PST)
+Received: by eliezer.anholt.net (Postfix, from userid 1000)
+        id 27B912FE464C; Wed, 20 Feb 2019 10:18:55 -0800 (PST)
+From:   Eric Anholt <eric@anholt.net>
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH 2/2] soc: bcm: bcm2835-pm: Fix error paths of initialization.
+In-Reply-To: <cfe72e6c-4419-9d8a-184b-b0928ab69e11@gmail.com>
+References: <20190213003324.15224-1-eric@anholt.net> <20190213003324.15224-2-eric@anholt.net> <648bbc3e-6690-9b05-cae5-bf81edbec74a@i2se.com> <87tvh7v8yd.fsf@anholt.net> <1278623750.602548.1550097191567@email.ionos.de> <cfe72e6c-4419-9d8a-184b-b0928ab69e11@gmail.com>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date:   Wed, 20 Feb 2019 10:18:54 -0800
+Message-ID: <87va1e492p.fsf@anholt.net>
 MIME-Version: 1.0
-In-Reply-To: <20190212214302.GA23708@embeddedor>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gwWMP-0016Cn-Un
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:60146
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 15
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Friendly ping:
+Florian Fainelli <f.fainelli@gmail.com> writes:
 
-Who can take this?
+> On 2/13/19 2:33 PM, Stefan Wahren wrote:
+>>=20
+>>> Eric Anholt <eric@anholt.net> hat am 13. Februar 2019 um 19:28 geschrie=
+ben:
+>>>
+>>>
+>>> Stefan Wahren <stefan.wahren@i2se.com> writes:
+>>>
+>>>> Hi Eric,
+>>>>
+>>>> Am 13.02.19 um 01:33 schrieb Eric Anholt:
+>>>>> The clock driver may probe after ours and so we need to pass the
+>>>>> -EPROBE_DEFER out.  Fix the other error path while we're here.
+>>>>>
+>>>>> Signed-off-by: Eric Anholt <eric@anholt.net>
+>>>>> Fixes: 670c672608a1 ("soc: bcm: bcm2835-pm: Add support for power dom=
+ains under a new binding.")
+>>>>> ---
+>>>>>  drivers/soc/bcm/bcm2835-power.c | 30 +++++++++++++++++++++++++-----
+>>>>>  1 file changed, 25 insertions(+), 5 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/soc/bcm/bcm2835-power.c b/drivers/soc/bcm/bcm283=
+5-power.c
+>>>>> index 4a1b99b773c0..11f9469423f7 100644
+>>>>> --- a/drivers/soc/bcm/bcm2835-power.c
+>>>>> +++ b/drivers/soc/bcm/bcm2835-power.c
+>>>>> @@ -485,7 +485,7 @@ static int bcm2835_power_pd_power_off(struct gene=
+ric_pm_domain *domain)
+>>>>>  	}
+>>>>>  }
+>>>>>=20=20
+>>>>> -static void
+>>>>> +static int
+>>>>>  bcm2835_init_power_domain(struct bcm2835_power *power,
+>>>>>  			  int pd_xlate_index, const char *name)
+>>>>>  {
+>>>>> @@ -493,6 +493,12 @@ bcm2835_init_power_domain(struct bcm2835_power *=
+power,
+>>>>>  	struct bcm2835_power_domain *dom =3D &power->domains[pd_xlate_index=
+];
+>>>>>=20=20
+>>>>>  	dom->clk =3D devm_clk_get(dev->parent, name);
+>>>>> +	if (IS_ERR(dom->clk)) {
+>>>>> +		int ret =3D PTR_ERR(dom->clk);
+>>>>> +
+>>>>> +		if (ret =3D=3D -EPROBE_DEFER)
+>>>>> +			return ret;
+>>>> is it safe to proceed in the other error cases?
+>>>> Even it would be more consistent with clk_prepare_enable() to print an
+>>>> error here.
+>>>
+>>> Yes, not all domains have a clk, so we want to ignore the other error.
+>>=20
+>> But shouldn't we set dom->clk to NULL instead of keeping the error
+>> pointer? AFAIK clk_prepare_enable is aware of NULL instead of error
+>> pointer.
+>
+> If the clock is really optional, then yes, this should be the way to go.
 
-Thanks
---
-Gustavo
+Sigh, error pointers.  Fixed, sending a v2.
 
-On 2/12/19 3:43 PM, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
-> 
-> This patch fixes the following warnings:
-> 
-> drivers/hwtracing/intel_th/sth.c: In function ‘sth_stm_packet’:
-> drivers/hwtracing/intel_th/sth.c:86:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    reg += 4;
->    ~~~~^~~~
-> drivers/hwtracing/intel_th/sth.c:87:2: note: here
->   case STP_PACKET_XSYNC:
->   ^~~~
-> drivers/hwtracing/intel_th/sth.c:88:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    reg += 8;
->    ~~~~^~~~
-> drivers/hwtracing/intel_th/sth.c:89:2: note: here
->   case STP_PACKET_TRIG:
->   ^~~~
-> 
-> Warning level 3 was used: -Wimplicit-fallthrough=3
-> 
-> This patch is part of the ongoing efforts to enable
-> -Wimplicit-fallthrough.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/hwtracing/intel_th/sth.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/hwtracing/intel_th/sth.c b/drivers/hwtracing/intel_th/sth.c
-> index 4b7ae47789d2..3a1f4e650378 100644
-> --- a/drivers/hwtracing/intel_th/sth.c
-> +++ b/drivers/hwtracing/intel_th/sth.c
-> @@ -84,8 +84,12 @@ static ssize_t notrace sth_stm_packet(struct stm_data *stm_data,
->  	/* Global packets (GERR, XSYNC, TRIG) are sent with register writes */
->  	case STP_PACKET_GERR:
->  		reg += 4;
-> +		/* fall through */
-> +
->  	case STP_PACKET_XSYNC:
->  		reg += 8;
-> +		/* fall through */
-> +
->  	case STP_PACKET_TRIG:
->  		if (flags & STP_PACKET_TIMESTAMPED)
->  			reg += 4;
-> 
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlxtmg4ACgkQtdYpNtH8
+nugrsQ/6AnksEI2djGnvqEdVo5nnWAMKLPElVVqFFDLpApiEGwaMjFjMWZ9EhwMk
+cv7LZ9er+jxz8w0uyXxe2e5gzCcbF/5h7zPwUO6J4Rq9IvH0mfTaoWCY594vNroK
+NIPSuzrPkThUYetnkItoNiWs02gfeImh/DeLSFs1lJD+uSpyzQa3YAXjKELeII9G
+TE/EnWw5kFPLiGNdUJMyQ/il9FitX4Kou6Vk09VvwMc3wIDwgepCkBXekULskcSI
+j3Hr4KSApMVH/R8efEW44FEoxHPf8rDCZ9PgBzk/hLTO1UW8hQOEadq4+Y+yFa+Z
+8LuoBHQaHbmHewOgYGtymAF3R/k/WfsrSwbQ0ENqPjMYK+qPqyMqTQlvRJRJYxjG
+PnPdEChXCUQBFRdbLrqWY9ngvDE06EZ50P9CpYqSB7EpiXJL8K7ffXGarC2HWD1S
+Vz8t/lqCpu1n1ZNTygIIHYk5VPyxInbTz0MQrauTzYd6MbjwMM3jUq99+wMlnDW7
+iiIlwgsiNE27dhACBWx5R9pcJq5ySoOJ33L493pdhkOeMUtRqwnnyozJ2ijiCpZC
+cacYDR86xGVOhCDxTCQc+VgiOSjlPrloVz4wPZsFpIt3iQpM25x3KOr3t821sQc4
+EeFdBQKG+Q6VvXxyvfD/AHdPZ9k3h9/LdULQhGDuO+Yuma1l5vQ=
+=YqZL
+-----END PGP SIGNATURE-----
+--=-=-=--
