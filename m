@@ -2,131 +2,87 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B02B1C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:20:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D245C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:22:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8015421773
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:20:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oEdOR/SZ"
+	by mail.kernel.org (Postfix) with ESMTP id 3D3E921902
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:22:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbfBTJUF (ORCPT
+        id S1726772AbfBTJW4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 04:20:05 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:36294 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726827AbfBTJUF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 04:20:05 -0500
-Received: by mail-qt1-f195.google.com with SMTP id p25so26129838qtb.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 01:20:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4B9NzpkAopf8RQY348E3G+2brMdCIhEuSb1SpVc+UIE=;
-        b=oEdOR/SZoZj/dl856c+xdYqakFTJJgoJAZCLewMZxRjObuwwCd5vPCynQ82rbZ+6Z0
-         Ex9MLuIpm3efp8YbJvZBMzmoYDKevzelMaA07KMRmZwVu+t9oOt8ob5oyVh4ppuUs0kC
-         l7T5QWIhT7qP0M7g7GsSrkagPIo2l0JrPBMcFzToDNRiFIlMxbIwRVoL1tq9wct3P/SA
-         TqP1n/XV3Mt+tqGVbuzHhxQbAPbUbbZts6jtRpBJg/ttAzKfOT1HuAMMpHhx5S/xxYE6
-         kZ50dw3PdS+wiJLNILll1VcffMzlQAfXQXhr2pAUcxrn9/2BwRm4/uYMhekY/xkoJ3oy
-         1pKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4B9NzpkAopf8RQY348E3G+2brMdCIhEuSb1SpVc+UIE=;
-        b=XHiVJe7VSx7pTxw46fgPR+ycJwEAh7jiAeEzzJbXNu9mV0Fezx45cyMMgC4gzp6tJ+
-         1NabPOYf7W8l0zg8sJWF7mSgOcQ+wG477ijmLX1q3ONtHrxxhHLY7pfKMG4S93dn2Y6J
-         rnyzKZ4BOd0D+XxLV4GosbLQLZwgPwiayZlUJeJXLS9rIxFYQGMb3ryXK9fJfjvkUQ7N
-         q3RWjH4rCucrvHtvWT2W2oGKkP7Jy8V3kKab05GKkg8BclAZT72Z8yaIVn1lVYLME/s8
-         cC38u6i98i3wMqJ1qxjat6xUGapm5oH/zpHG/LXM3IedjT7555BOaBbjFQWy/KHcO0nG
-         GipA==
-X-Gm-Message-State: AHQUAub+Ia+64sW+T6pKhyl4FrE/a/tUexLcXyPJpat7VfLMcEsh570X
-        TgU+P45FgMrNKfF9rh1l3bow37UGkftFiO8OCt+hdw==
-X-Google-Smtp-Source: AHgI3IaWir54LynzN1l0XRrqAmLRnZfg5qis+LtTpu7zDxJf7g7Z6mxtpPlC8649SOhVONiKPppsURxk80Y1tMXfPw4=
-X-Received: by 2002:a0c:e942:: with SMTP id n2mr24617900qvo.119.1550654404226;
- Wed, 20 Feb 2019 01:20:04 -0800 (PST)
+        Wed, 20 Feb 2019 04:22:56 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48834 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725989AbfBTJW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 04:22:56 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4B2CAC3A6D;
+        Wed, 20 Feb 2019 09:22:56 +0000 (UTC)
+Received: from gondolin (dhcp-192-187.str.redhat.com [10.33.192.187])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1E33F5D6B6;
+        Wed, 20 Feb 2019 09:22:54 +0000 (UTC)
+Date:   Wed, 20 Feb 2019 10:22:52 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] s390/setup: fix early warning messages
+Message-ID: <20190220102252.43dd10a4.cohuck@redhat.com>
+In-Reply-To: <eca82ff3-bc07-ee2f-b67a-91425fe1ace0@roeck-us.net>
+References: <20190218154640.GA27699@roeck-us.net>
+        <20190218180146.79930fe6@mschwideX1>
+        <20190218182106.61b10ee4@mschwideX1>
+        <20190218191655.103c81ca.cohuck@redhat.com>
+        <05e78442-07e1-9783-965f-b3d64a2c5e99@roeck-us.net>
+        <20190218233021.368bb475.cohuck@redhat.com>
+        <eca82ff3-bc07-ee2f-b67a-91425fe1ace0@roeck-us.net>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-References: <cover.1549525708.git.amit.kucheria@linaro.org>
- <ab6dd34ce0236de12ec1e9984931780c3df643f9.1549525708.git.amit.kucheria@linaro.org>
- <20190220011718.GD2811@localhost.localdomain>
-In-Reply-To: <20190220011718.GD2811@localhost.localdomain>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Wed, 20 Feb 2019 14:49:53 +0530
-Message-ID: <CAP245DUEbYhMw0WMP713uB34xVO0AF3-u_knpXfjP=858FgO-w@mail.gmail.com>
-Subject: Re: [PATCH v1 13/24] drivers: thermal: tsens: Print IP version
-To:     Eduardo Valentin <edubezval@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 20 Feb 2019 09:22:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 6:47 AM Eduardo Valentin <edubezval@gmail.com> wrote:
->
-> On Thu, Feb 07, 2019 at 04:19:31PM +0530, Amit Kucheria wrote:
-> > On some TSENS IP, version is stored. Print that version at init.
-> >
-> > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> > ---
-> >  drivers/thermal/qcom/tsens-common.c | 23 ++++++++++++++++++++++-
-> >  1 file changed, 22 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
-> > index aae3d71d7eed..39cd5733fd44 100644
-> > --- a/drivers/thermal/qcom/tsens-common.c
-> > +++ b/drivers/thermal/qcom/tsens-common.c
-> > @@ -121,7 +121,7 @@ int __init init_common(struct tsens_priv *priv)
-> >       void __iomem *tm_base, *srot_base;
-> >       struct device *dev = priv->dev;
-> >       struct resource *res;
-> > -     u32 enabled;
-> > +     u32 enabled, maj_ver, min_ver;
-> >       int ret, i, j;
-> >       struct platform_device *op = of_find_device_by_node(priv->dev->of_node);
-> >
-> > @@ -155,6 +155,27 @@ int __init init_common(struct tsens_priv *priv)
-> >       if (IS_ERR(priv->tm_map))
-> >               return PTR_ERR(priv->tm_map);
-> >
-> > +     for (i = 0; i < MAX_REGFIELDS; i++) {
-> > +             priv->rf[i] = NULL;
-> > +     }
-> > +
-> > +     /* alloc regmap_fields in srot_map */
-> > +     if (priv->feat->ver_info) {
-> > +             for (i = 0, j = VER_MAJOR; i < 2; i++, j++) {
-> > +                     priv->rf[j] = devm_regmap_field_alloc(dev, priv->srot_map,
-> > +                                                           priv->fields[j]);
-> > +                     if (IS_ERR(priv->rf[j]))
-> > +                             return PTR_ERR(priv->rf[j]);
-> > +             }
-> > +             ret = regmap_field_read(priv->rf[VER_MAJOR], &maj_ver);
-> > +             if (ret)
-> > +                     return ret;
-> > +             ret = regmap_field_read(priv->rf[VER_MINOR], &min_ver);
-> > +             if (ret)
-> > +                     return ret;
-> > +             dev_info(dev, "version: %d.%d\n", maj_ver, min_ver);
->
-> Is this really needed? Printing stuff into kernel log during boot can
-> just add a lot of info that ends up just slowing down things. Besides,
-> if this info is important shouldnt be available somewhere else as the
-> kernel log is a circular buffer and eventually that line will get
-> wrapped up?
+On Tue, 19 Feb 2019 10:47:38 -0800
+Guenter Roeck <linux@roeck-us.net> wrote:
 
-Fair point, I'll remove this statement and dump this into debugfs for
-which I'll send a separate series adding debugfs support.
+> Hi Cornelia,
+> 
+> On 2/18/19 2:30 PM, Cornelia Huck wrote:
+> 
+> >> What is your qemu command line ?  
+> > 
+> > Ignoring any additional devices:
+> > 
+> > s390x-softmmu/qemu-system-s390x -M s390-ccw-virtio,accel=tcg -cpu max  -m 1024 -nographic -device virtio-scsi-ccw,id=scsi0,devno=fe.0.0001 -drive file=/home/cohuck/vm-images/vm1.qcow2,format=qcow2,if=none,id=drive-scsi0-0-0-0 -device scsi-hd,bus=scsi0.0,channel=0,scsi-id=0,lun=0,drive=drive-scsi0-0-0-0,id=scsi0-0-0-0,bootindex=1 -sandbox on -kernel ~/git/linux/arch/s390/boot/bzImage -append "root=/dev/sda3"
+> >   
+> 
+> Is "accel=tcg" and "-cpu max" expected to make any difference ? CPU consumption
+> on my system seems to be identical to the default (no -M or -cpu on command line).
+> This is with qemu 3.1.
+
+If you're not running on a s390x, QEMU will pick tcg even if not
+specified (as it needs to emulate anyway), so that should not make any
+difference. The 'max' cpu model was is not yet available with 3.1
+(merged in the current development cycle); it will not make much
+difference in practice (a few more cpu features are currently provided
+with it over the default 'qemu' cpu model).
+
+As I'm testing various combinations (tcg vs. kvm on an s390x host,
+different cpu models) when I'm queuing patches, my command line is not
+necessarily exactly the same every time (this was just the one I
+happened to be testing the kernel patch with). If you simply want to be
+able to boot a test kernel on a non-s390x host, relying on the default
+accelerator (tcg) and the default cpu model (qemu) being picked should
+be completely fine.
