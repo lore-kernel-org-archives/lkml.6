@@ -2,127 +2,92 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B04DC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B23A1C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:48:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 150722146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:48:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E92921848
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:48:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727385AbfBTOsG (ORCPT
+        id S1727409AbfBTOsL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 09:48:06 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59222 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726285AbfBTOsF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 09:48:05 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C2FA15AB;
+        Wed, 20 Feb 2019 09:48:11 -0500
+Received: from mga03.intel.com ([134.134.136.65]:49825 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726285AbfBTOsH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 09:48:07 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 06:48:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,391,1544515200"; 
+   d="scan'208";a="276493339"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga004.jf.intel.com with ESMTP; 20 Feb 2019 06:48:07 -0800
+Received: from [10.125.252.177] (abudanko-mobl.ccr.corp.intel.com [10.125.252.177])
+        by linux.intel.com (Postfix) with ESMTP id C99D858019B;
         Wed, 20 Feb 2019 06:48:04 -0800 (PST)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 312643F5C1;
-        Wed, 20 Feb 2019 06:47:59 -0800 (PST)
-Date:   Wed, 20 Feb 2019 14:47:56 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
+Subject: Re: [PATCH v2 4/4] perf report: support record trace file
+ decompression
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        uclinux-h8-devel@lists.sourceforge.jp,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
-        linux-arch@vger.kernel.org, x86@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-Subject: Re: [PATCH v4 2/3] locking/rwsem: Remove rwsem-spinlock.c & use
- rwsem-xadd.c for all archs
-Message-ID: <20190220144756.GK7523@fuggles.cambridge.arm.com>
-References: <1550095217-12047-1-git-send-email-longman@redhat.com>
- <1550095217-12047-3-git-send-email-longman@redhat.com>
+        Peter Zijlstra <peterz@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <044ee2be-2e1d-e90f-7317-40083b5e716c@linux.intel.com>
+ <4f45c930-cf39-76b0-5c56-ee4fb0705fa3@linux.intel.com>
+ <20190212130914.GK775@krava>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <92aa09eb-6679-c4d6-5d5d-2fa0cf0af8a1@linux.intel.com>
+Date:   Wed, 20 Feb 2019 17:48:03 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1550095217-12047-3-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+In-Reply-To: <20190212130914.GK775@krava>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 05:00:16PM -0500, Waiman Long wrote:
-> Currently, we have two different implementation of rwsem:
->  1) CONFIG_RWSEM_GENERIC_SPINLOCK (rwsem-spinlock.c)
->  2) CONFIG_RWSEM_XCHGADD_ALGORITHM (rwsem-xadd.c)
-> 
-> As we are going to use a single generic implementation for rwsem-xadd.c
-> and no architecture-specific code will be needed, there is no point
-> in keeping two different implementations of rwsem. In most cases, the
-> performance of rwsem-spinlock.c will be worse. It also doesn't get all
-> the performance tuning and optimizations that had been implemented in
-> rwsem-xadd.c over the years.
-> 
-> For simplication, we are going to remove rwsem-spinlock.c and make all
-> architectures use a single implementation of rwsem - rwsem-xadd.c.
-> 
-> All references to RWSEM_GENERIC_SPINLOCK and RWSEM_XCHGADD_ALGORITHM
-> in the code are removed.
-> 
-> Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  arch/alpha/Kconfig              |   7 -
->  arch/arc/Kconfig                |   3 -
->  arch/arm/Kconfig                |   4 -
->  arch/arm64/Kconfig              |   3 -
->  arch/c6x/Kconfig                |   3 -
->  arch/csky/Kconfig               |   3 -
->  arch/h8300/Kconfig              |   3 -
->  arch/hexagon/Kconfig            |   6 -
->  arch/ia64/Kconfig               |   4 -
->  arch/m68k/Kconfig               |   7 -
->  arch/microblaze/Kconfig         |   6 -
->  arch/mips/Kconfig               |   7 -
->  arch/nds32/Kconfig              |   3 -
->  arch/nios2/Kconfig              |   3 -
->  arch/openrisc/Kconfig           |   6 -
->  arch/parisc/Kconfig             |   6 -
->  arch/powerpc/Kconfig            |   7 -
->  arch/riscv/Kconfig              |   3 -
->  arch/s390/Kconfig               |   6 -
->  arch/sh/Kconfig                 |   6 -
->  arch/sparc/Kconfig              |   8 -
->  arch/unicore32/Kconfig          |   6 -
->  arch/x86/Kconfig                |   3 -
->  arch/x86/um/Kconfig             |   6 -
->  arch/xtensa/Kconfig             |   3 -
->  include/linux/rwsem-spinlock.h  |  47 ------
->  include/linux/rwsem.h           |   5 -
->  kernel/Kconfig.locks            |   2 +-
->  kernel/locking/Makefile         |   4 +-
->  kernel/locking/rwsem-spinlock.c | 339 ----------------------------------------
->  kernel/locking/rwsem.h          |   3 -
->  31 files changed, 2 insertions(+), 520 deletions(-)
->  delete mode 100644 include/linux/rwsem-spinlock.h
->  delete mode 100644 kernel/locking/rwsem-spinlock.c
 
-Another nice cleanup, and it looks like the optimistic spinning in the xadd
-implementation is predicated on ARCH_SUPPORTS_ATOMIC_RMW, so we're all good
-there too.
+On 12.02.2019 16:09, Jiri Olsa wrote:
+> On Mon, Feb 11, 2019 at 11:25:00PM +0300, Alexey Budankov wrote:
+>>
+>> PERF_RECORD_COMPRESSED records are decompressed from trace file into
+>> a linked list of mmaped memory regions using streaming Zstandard API.
+>> After that the regions are loaded fetching uncompressed events. When
+>> dumping raw trace (e.g., perf report -D --header) file offsets of
+>> events from compressed records are set to zero.
+>>
+>> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+>> ---
+>> Changes in v2:
+>> - moved compression/decompression code to session layer
+> 
+> could you please add some automated test for this?
+> 
+> I think it could be part of the sample synthesize test 
+> or even new script test under tests/shell.. or anything
+> else really.. just to see that we have some clean
+> interface for this that we can test
 
-Acked-by: Will Deacon <will.deacon@arm.com>
+This is possible. Let's complete the code review first.
 
-Will
+Thanks,
+Alexey
+
+> 
+> thanks,
+> jirka
+> 
