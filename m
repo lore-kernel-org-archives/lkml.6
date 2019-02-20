@@ -2,100 +2,226 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92B03C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E350C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:10:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6877020645
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:09:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="WbT9qddU"
+	by mail.kernel.org (Postfix) with ESMTP id C7F2521841
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 18:10:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550686237;
+	bh=GHsZHLmyDHMv4mrj0dNfeLtgYZlkHLxyFF37RFFg+ss=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
+	b=nRL4qIqA0IHASiAOPUmHFIA/g9qaatrOl7uZweSOBqVEwvzz0mGBU0kqzIoeJqh7I
+	 VfO8NpVOsMRYBBj2IK+nB9i+JSHcv8b6l7mSrthNUB2XP6/DBV1GBUQKq6ROTyjZbD
+	 tRDy2NxDdvAefbv18mbPz7CTgdb0UGcguO4kLMsw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726921AbfBTSJ4 (ORCPT
+        id S1726964AbfBTSKg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 13:09:56 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:39494 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726078AbfBTSJz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 13:09:55 -0500
-Received: by mail-qt1-f195.google.com with SMTP id o6so28274417qtk.6
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 10:09:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1cWhkqKwfVl97PNcjmjtwuG+Olh/UWCMwWrW24lQqxM=;
-        b=WbT9qddUPijPvnGLexnd0oc3f3xnZ7u9gZIsN6pODW5a9+CxWzPF/nFpiPu3kJ/wpm
-         9wx++wrlscUDwEX2iOrkOs7mnW9bP+GndwayOmMPArQIO4RMUpSyZu9/uojnop8O/4/P
-         Nf3v82PWxZkpO980hO8TH/4Eqjc7y3xCZJ2AY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1cWhkqKwfVl97PNcjmjtwuG+Olh/UWCMwWrW24lQqxM=;
-        b=S6lcW7YlXawi/USZpSnuDCjbDn2lvvXHhsiY1s5LRnWAPEFPJPHZov0tUX/PTNodos
-         xZwlXXwnJ8bLIb6TaI11E+oROK24GzNJJI/XEDy1ds2Ng12ldLmLGvtygmz5jCtw0gyJ
-         g1u+XFQV+3UOS3pjhuAL0s5XIuMgwkBQxi6tlfPsOVbY88WomZY7VfmGvyievcS8jORh
-         /YRjuBP46tSLQvIBJv6pI6EOifQMUrkdVrtSfmWKWJMEjRvfYk9CM8MWKrEFrKRq/+c9
-         xgg6+G97vkJw8SaGnEsDToho0LjwWV+YoNp0nzu3rLaV8mZofzCcoXf9yXoRFVU7RGOK
-         Q93Q==
-X-Gm-Message-State: AHQUAuZgtAejKYXaP/KGLn8YdF3X2E+JkeZgepYPfd52q+2yq+OgIsz/
-        XrlJ6IQg2B4f2XGQYdwRmu/orA==
-X-Google-Smtp-Source: AHgI3IZ27RUnaOjU+KMm0fqd88cEd0GXvVfhBcyzjVldiBZp2tj0TppMxcaKGX0vvlDfKxkNCQtccQ==
-X-Received: by 2002:ac8:2fd1:: with SMTP id m17mr3623322qta.301.1550686194620;
-        Wed, 20 Feb 2019 10:09:54 -0800 (PST)
-Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
-        by smtp.gmail.com with ESMTPSA id z41sm14068619qtz.5.2019.02.20.10.09.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Feb 2019 10:09:53 -0800 (PST)
-Date:   Wed, 20 Feb 2019 13:09:52 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, rcu@vger.kernel.org
-Subject: Re: [RFC 0/5] RCU fixes for rcu_assign_pointer usage
-Message-ID: <20190220180952.GB97771@google.com>
-References: <20190220040827.136184-1-joel@joelfernandes.org>
- <CAEXW_YRasK=os37QxCwoAY+DXKVD3bBTvR4qH3jaSJB3rP5a-Q@mail.gmail.com>
- <20190220164242.GN11787@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190220164242.GN11787@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 20 Feb 2019 13:10:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35018 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726019AbfBTSKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 13:10:35 -0500
+Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0418420645;
+        Wed, 20 Feb 2019 18:10:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550686233;
+        bh=GHsZHLmyDHMv4mrj0dNfeLtgYZlkHLxyFF37RFFg+ss=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=NrID8ZlwDDCBTdDmt7pywVN+jXe2CrZ/Rq3hsCq41lKWn/yYwbnIf2HhVLpDugWIy
+         KuGSxAQ0n/U4Us5QLhrvUGkgzyAybyIlpTV6PNoc7MTxmKMETg6dMkYTDciUPwg/Nw
+         4mQVECFrDD6TBwDhVKTuO2AMtA+bLW3YhFEAOxg8=
+Message-ID: <1550686231.2027.14.camel@kernel.org>
+Subject: Re: [PATCH v15 15/15] tracing: Add hist trigger action 'expected
+ fail' test case
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
+        vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Date:   Wed, 20 Feb 2019 12:10:31 -0600
+In-Reply-To: <20190220125625.77802cac@gandalf.local.home>
+References: <cover.1550100284.git.tom.zanussi@linux.intel.com>
+         <1790bf93e01dbdfa1b4af945f42147d92bd565aa.1550100284.git.tom.zanussi@linux.intel.com>
+         <20190220121748.7aa83459@gandalf.local.home>
+         <1550684302.2027.6.camel@kernel.org>
+         <20190220125625.77802cac@gandalf.local.home>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 08:42:43AM -0800, Paul E. McKenney wrote:
-> On Tue, Feb 19, 2019 at 08:11:36PM -0800, Joel Fernandes wrote:
-> > On Tue, Feb 19, 2019 at 8:08 PM Joel Fernandes (Google)
-> > <joel@joelfernandes.org> wrote:
-> > >
-> > > These patches fix various RCU API usage issues found due to sparse errors as a
-> > > result of the recent check to add rcu_check_sparse() to rcu_assign_pointer().
-> > >
-> > > This is very early RFC stage, and is only build tested. I am also only sending
-> > > to the RCU group for initial review before sending to LKML. Thanks for any feedback!
-> > >
-> > > There are still more usages that cause errors such as rbtree which I am
-> > > looking into.
+Hi Steve,
+
+On Wed, 2019-02-20 at 12:56 -0500, Steven Rostedt wrote:
+> On Wed, 20 Feb 2019 11:38:22 -0600
+> Tom Zanussi <zanussi@kernel.org> wrote:
+> 
+> > Hi Steve,
 > > 
-> > Looks like it got sent to LKML anyway, ;-) That's Ok since it is
-> > prefixed as RFC.
+> > On Wed, 2019-02-20 at 12:17 -0500, Steven Rostedt wrote:
+> > > On Wed, 13 Feb 2019 17:42:55 -0600
+> > > Tom Zanussi <zanussi@kernel.org> wrote:
+> > >   
+> > > > From: Tom Zanussi <tom.zanussi@linux.intel.com>
+> > > > 
+> > > > Add a test case verifying that basic action combinations fail
+> > > > as
+> > > > expected.
+> > > >   
+> > > 
+> > > Hi Tom,
+> > > 
+> > > This test appears to fail:
+> > > 
+> > > # echo
+> > > 'hist:keys=comm:onmatch(sched.sched_wakeup).save(comm,prio)'  
+> > > > > /sys/kernel/debug/tracing/events/sched/sched_waking/trigger  
+> > > 
+> > > -bash: echo: write error: Invalid argument
+> > > 
+> > > # cat /sys/kernel/debug/tracing/events/sched/sched_waking/hist 
+> > > 
+> > > ERROR: action parsing: Handler doesn't support action: save
+> > >   Last command:
+> > > keys=comm:onmatch(sched.sched_wakeup).save(comm,prio)
+> > > 
+> > > 
+> > > Is the "save" feature implemented here? It's in the README too.
+> > > Should
+> > > it be removed?
+> > >   
+> > 
+> > The "save" feature is implemented, but it's not currently supported
+> > with onmatch(), which is why it fails, and is used in the xfail
+> > test,
+> > since it's expected to.  So, in this case, the command fails, which
+> > means the xfail test actually passed.  ;-)
+> > 
+> > There are other tests in the inter-event testcases that use save()
+> > but
+> > with onmax() and onchange(), and they pass.
 > 
-> As is only right and proper.  ;-)
+> So the test needs to pass on failure?
 > 
-> I don't see an immediate problem with them, but it would be good to get
-> the relevant developers and maintainers on CC for the next version.  I
-> cannot claim to know that code very well.
+> Because, it shouldn't be flagged as a failure in the test suite.
+> 
 
-Definitely will CC them next time, sorry about that. I'll stop being so shy
-but I have some scars that are still healing ;-)
+As far as I understand it (there's no other case of an xfail test in
+the testsuite, so nothing similar to compare it to), the test output is
+ correct - here we get the expected fail, XFAIL, and not a FAIL as any
+test, xfail or normal, that failed would produce:
 
- - Joel
+tools/testing/selftests/ftrace# ./ftracetest test.d/trigger/
+=== Ftrace unit tests ===
+[1] event trigger - test inter-event histogram trigger expected fail actions
+[XFAIL]
+[2] event trigger - test extended error support
+[PASS]
 
+And here the summary shows none failed, while we did have one expected
+xfail, but that's what was expected, and not a failure:
+
+# of passed:  31
+# of failed:  0
+# of unresolved:  0
+# of untested:  0
+# of unsupported:  0
+# of xfailed:  1
+# of undefined(test bug):  0
+
+If that's not correct, I'll fix it but at this point I'm not sure what
+the output should be if not that.
+
+Thanks,
+
+Tom
+
+> -- Steve
+> 
+> > 
+> > Hope that explains things in this case,
+> > 
+> > Tom
+> > 
+> > > -- Steve
+> > >   
+> > > > Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+> > > > ---
+> > > >  .../inter-event/trigger-action-hist-xfail.tc       | 30
+> > > > ++++++++++++++++++++++
+> > > >  1 file changed, 30 insertions(+)
+> > > >  create mode 100644
+> > > > tools/testing/selftests/ftrace/test.d/trigger/inter-
+> > > > event/trigger-
+> > > > action-hist-xfail.tc
+> > > > 
+> > > > diff --git
+> > > > a/tools/testing/selftests/ftrace/test.d/trigger/inter-
+> > > > event/trigger-action-hist-xfail.tc
+> > > > b/tools/testing/selftests/ftrace/test.d/trigger/inter-
+> > > > event/trigger-action-hist-xfail.tc
+> > > > new file mode 100644
+> > > > index 000000000000..1221240f8cf6
+> > > > --- /dev/null
+> > > > +++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-
+> > > > event/trigger-action-hist-xfail.tc
+> > > > @@ -0,0 +1,30 @@
+> > > > +#!/bin/sh
+> > > > +# SPDX-License-Identifier: GPL-2.0
+> > > > +# description: event trigger - test inter-event histogram
+> > > > trigger
+> > > > expected fail actions
+> > > > +
+> > > > +fail() { #msg
+> > > > +    echo $1
+> > > > +    exit_fail
+> > > > +}
+> > > > +
+> > > > +if [ ! -f set_event ]; then
+> > > > +    echo "event tracing is not supported"
+> > > > +    exit_unsupported
+> > > > +fi
+> > > > +
+> > > > +if [ ! -f snapshot ]; then
+> > > > +    echo "snapshot is not supported"
+> > > > +    exit_unsupported
+> > > > +fi
+> > > > +
+> > > > +grep -q "snapshot()" README || exit_unsupported # version
+> > > > issue
+> > > > +
+> > > > +echo "Test expected snapshot action failure"
+> > > > +
+> > > > +echo 'hist:keys=comm:onmatch(sched.sched_wakeup).snapshot()'
+> > > > >>
+> > > > /sys/kernel/debug/tracing/events/sched/sched_waking/trigger &&
+> > > > exit_fail
+> > > > +
+> > > > +echo "Test expected save action failure"
+> > > > +
+> > > > +echo
+> > > > 'hist:keys=comm:onmatch(sched.sched_wakeup).save(comm,prio)'  
+> > > > > > /sys/kernel/debug/tracing/events/sched/sched_waking/trigger
+> > > > > > &&  
+> > > > 
+> > > > exit_fail
+> > > > +
+> > > > +exit_xfail  
+> > > 
+> > >   
+> 
+> 
