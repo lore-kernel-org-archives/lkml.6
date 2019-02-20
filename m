@@ -4,34 +4,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB01C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A35BC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D1E12196F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:54:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F33E92183E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 02:54:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730318AbfBTCyU (ORCPT
+        id S1730375AbfBTCyY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Feb 2019 21:54:20 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:29835 "EHLO
+        Tue, 19 Feb 2019 21:54:24 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:50218 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725916AbfBTCyS (ORCPT
+        with ESMTP id S1730280AbfBTCyX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Feb 2019 21:54:18 -0500
-X-UUID: ef25cb04a54446cd8269031dcfc965ac-20190220
-X-UUID: ef25cb04a54446cd8269031dcfc965ac-20190220
-Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        Tue, 19 Feb 2019 21:54:23 -0500
+X-UUID: d839a6ff59d24d92bdc2660765f1d667-20190220
+X-UUID: d839a6ff59d24d92bdc2660765f1d667-20190220
+Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
         (envelope-from <wangyan.wang@mediatek.com>)
         (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 139721804; Wed, 20 Feb 2019 10:54:10 +0800
+        with ESMTP id 859865132; Wed, 20 Feb 2019 10:54:17 +0800
 Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N2.mediatek.inc
  (172.27.4.76) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 20 Feb
- 2019 10:54:08 +0800
+ 2019 10:54:16 +0800
 Received: from mszsdaap41.mediatek.inc (10.16.6.141) by MTKCAS36.mediatek.inc
  (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 20 Feb 2019 10:54:07 +0800
+ Transport; Wed, 20 Feb 2019 10:54:15 +0800
 From:   wangyan wang <wangyan.wang@mediatek.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, CK Hu <ck.hu@mediatek.com>
@@ -48,9 +48,9 @@ CC:     wangyan wang <wangyan.wang@mediatek.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <dri-devel@lists.freedesktop.org>, <srv_heupstream@mediatek.com>
-Subject: [PATCH V5 2/8] drm/mediatek: move the setting of fixed divider
-Date:   Wed, 20 Feb 2019 10:53:51 +0800
-Message-ID: <20190220025357.7354-3-wangyan.wang@mediatek.com>
+Subject: [PATCH V5 5/8] clk: mediatek: add MUX_GATE_FLAGS_2
+Date:   Wed, 20 Feb 2019 10:53:54 +0800
+Message-ID: <20190220025357.7354-6-wangyan.wang@mediatek.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20190220025357.7354-1-wangyan.wang@mediatek.com>
 References: <20190220025357.7354-1-wangyan.wang@mediatek.com>
@@ -64,63 +64,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: chunhui dai <chunhui.dai@mediatek.com>
 
-move the setting of fixed divider from enable/disable
-to the function of setting rate.
-
-the patch is for hdmi pll divider, the divder should
-be configured before clock calculation to ensure the
-clock is right.
+Add MUX_GATE_FLAGS_2 for the clock which needs to set two falgs.
+Such as some mux need to set the flags of "CLK_MUX_ROUND_CLOSEST".
 
 Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
 Signed-off-by: wangyan wang <wangyan.wang@mediatek.com>
 ---
- drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/clk/mediatek/clk-mtk.c |  2 +-
+ drivers/clk/mediatek/clk-mtk.h | 20 ++++++++++++++------
+ 2 files changed, 15 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-index b25c9dfc432a..b26fb7dbdb28 100644
---- a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-+++ b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-@@ -79,7 +79,6 @@ static int mtk_hdmi_pll_prepare(struct clk_hw *hw)
- 	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SLDO_MASK);
- 	usleep_range(80, 100);
- 	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_MBIAS_LPF_EN);
--	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV);
- 	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SER_MASK);
- 	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_PRED_MASK);
- 	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_DRV_MASK);
-@@ -94,7 +93,6 @@ static void mtk_hdmi_pll_unprepare(struct clk_hw *hw)
- 	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_DRV_MASK);
- 	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_PRED_MASK);
- 	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SER_MASK);
--	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV);
- 	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_MBIAS_LPF_EN);
- 	usleep_range(80, 100);
- 	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SLDO_MASK);
-@@ -123,6 +121,7 @@ static int mtk_hdmi_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+index 9c0ae4278a94..2ed996404804 100644
+--- a/drivers/clk/mediatek/clk-mtk.c
++++ b/drivers/clk/mediatek/clk-mtk.c
+@@ -167,7 +167,7 @@ struct clk *mtk_clk_register_composite(const struct mtk_composite *mc,
+ 		mux->mask = BIT(mc->mux_width) - 1;
+ 		mux->shift = mc->mux_shift;
+ 		mux->lock = lock;
+-
++		mux->flags = mc->mux_flags;
+ 		mux_hw = &mux->hw;
+ 		mux_ops = &clk_mux_ops;
  
- 	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON6, RG_HTPLL_PREDIV_MASK);
- 	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON6, RG_HTPLL_POSDIV_MASK);
-+	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV);
- 	mtk_hdmi_phy_mask(hdmi_phy, HDMI_CON6, (0x1 << RG_HTPLL_IC),
- 			  RG_HTPLL_IC_MASK);
- 	mtk_hdmi_phy_mask(hdmi_phy, HDMI_CON6, (0x1 << RG_HTPLL_IR),
-@@ -209,7 +208,6 @@ static void mtk_hdmi_phy_enable_tmds(struct mtk_hdmi_phy *hdmi_phy)
- 	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SLDO_MASK);
- 	usleep_range(80, 100);
- 	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_MBIAS_LPF_EN);
--	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV);
- 	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SER_MASK);
- 	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_PRED_MASK);
- 	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_DRV_MASK);
-@@ -221,7 +219,6 @@ static void mtk_hdmi_phy_disable_tmds(struct mtk_hdmi_phy *hdmi_phy)
- 	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_DRV_MASK);
- 	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_PRED_MASK);
- 	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SER_MASK);
--	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV);
- 	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_MBIAS_LPF_EN);
- 	usleep_range(80, 100);
- 	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SLDO_MASK);
+diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+index f83c2bbb677e..4b88d196d52f 100644
+--- a/drivers/clk/mediatek/clk-mtk.h
++++ b/drivers/clk/mediatek/clk-mtk.h
+@@ -81,15 +81,13 @@ struct mtk_composite {
+ 	signed char divider_shift;
+ 	signed char divider_width;
+ 
++	unsigned char mux_flags;
++
+ 	signed char num_parents;
+ };
+ 
+-/*
+- * In case the rate change propagation to parent clocks is undesirable,
+- * this macro allows to specify the clock flags manually.
+- */
+-#define MUX_GATE_FLAGS(_id, _name, _parents, _reg, _shift, _width,	\
+-			_gate, _flags) {				\
++#define MUX_GATE_FLAGS_2(_id, _name, _parents, _reg, _shift,		\
++				_width, _gate, _flags, _muxflags) {	\
+ 		.id = _id,						\
+ 		.name = _name,						\
+ 		.mux_reg = _reg,					\
+@@ -101,8 +99,18 @@ struct mtk_composite {
+ 		.parent_names = _parents,				\
+ 		.num_parents = ARRAY_SIZE(_parents),			\
+ 		.flags = _flags,					\
++		.mux_flags = _muxflags,					\
+ 	}
+ 
++/*
++ * In case the rate change propagation to parent clocks is undesirable,
++ * this macro allows to specify the clock flags manually.
++ */
++#define MUX_GATE_FLAGS(_id, _name, _parents, _reg, _shift, _width,	\
++			_gate, _flags)					\
++		MUX_GATE_FLAGS_2(_id, _name, _parents, _reg,		\
++					_shift, _width, _gate, _flags, 0)
++
+ /*
+  * Unless necessary, all MUX_GATE clocks propagate rate changes to their
+  * parent clock by default.
 -- 
 2.14.1
 
