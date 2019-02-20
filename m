@@ -2,165 +2,167 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3548C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:53:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F011C10F07
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:59:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD42C20859
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:53:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB4CB2086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 21:59:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="di04P1Ys"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726953AbfBTVxH (ORCPT
+        id S1726883AbfBTV71 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 16:53:07 -0500
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:47250 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725869AbfBTVxH (ORCPT
+        Wed, 20 Feb 2019 16:59:27 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:16182 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725869AbfBTV70 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 16:53:07 -0500
-X-IronPort-AV: E=Sophos;i="5.58,392,1544482800"; 
-   d="scan'208";a="370232574"
-Received: from 91-160-5-165.subs.proxad.net (HELO [192.168.44.23]) ([91.160.5.165])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/AES128-SHA; 20 Feb 2019 22:52:40 +0100
-Subject: Re: [PATCH 05/11] x86 topology: export die_siblings
-To:     Len Brown <lenb@kernel.org>, x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
-        linux-doc@vger.kernel.org
-References: <635b2bf8b1151a191cd9299276b75791a818c0c2.1550545163.git.len.brown@intel.com>
- <0d54a56186fb9be7a8f622a4625a41dc600dd7a4.1550545163.git.len.brown@intel.com>
-From:   Brice Goglin <Brice.Goglin@inria.fr>
-Openpgp: preference=signencrypt
-Autocrypt: addr=Brice.Goglin@inria.fr; prefer-encrypt=mutual; keydata=
- mQINBFNg91oBEADMfOyfz9iilNPe1Yy3pheXLf5O/Vpr+gFJoXcjA80bMeSWBf4on8Mt5Fg/
- jpVuNBhii0Zyq4Lip1I2ve+WQjfL3ixYQqvNRLgfw/FL0gNHSOe9dVFo0ol0lT+vu3AXOVmh
- AM4IrsOp2Tmt+w89Oyvu+xwHW54CJX3kXp4c7COz79A6OhbMEPQUreerTavSvYpH5pLY55WX
- qOSdjmlXD45yobQbMg9rFBy1BECrj4DJSpym/zJMFVnyC5yAq2RdPFRyvYfS0c491adD/iw9
- eFZY1XWj+WqLSW8zEejdl78npWOucfin7eAKvov5Bqa1MLGS/2ojVMHXJN0qpStpKcueV5Px
- igX8i4O4pPT10xCXZ7R6KIGUe1FE0N7MLErLvBF6AjMyiFHix9rBG0pWADgCQUUFjc8YBKng
- nwIKl39uSpk5W5rXbZ9nF3Gp/uigTBNVvaLO4PIDw9J3svHQwCB31COsUWS1QhoLMIQPdUkk
- GarScanm8i37Ut9G+nB4nLeDRYpPIVBFXFD/DROIEfLqOXNbGwOjDd5RWuzA0TNzJSeOkH/0
- qYr3gywjiE81zALO3UeDj8TaPAv3Dmu7SoI86Bl7qm6UOnSL7KQxZWuMTlU3BF3d+0Ly0qxv
- k1XRPrL58IyoHIgAVom0uUnLkRKHczdhGDpNzsQDJaO71EPp8QARAQABtCRCcmljZSBHb2ds
- aW4gPEJyaWNlLkdvZ2xpbkBpbnJpYS5mcj6JAjgEEwECACIFAlNg+aMCGwMGCwkIBwMCBhUI
- AgkKCwQWAgMBAh4BAheAAAoJEESRkPMjWr076RoQAJhJ1q5+wlHIf+YvM0N1V1hQyf+aL35+
- BPqxlyw4H65eMWIN/63yWhcxrLwNCdgY1WDWGoiW8KVCCHwJAmrXukFvXjsvShLQJavWRgKH
- eea12T9XtLc6qY/DEi2/rZvjOCKsMjnc1CYW71jbofaQP6lJsmC+RPWrnL/kjZyVrVrg7/Jo
- GemLmi/Ny7nLAOt6uL0MC/Mwld14Yud57Qz6VTDGSOvpNacbkJtcCwL3KZDBfSDnZtSbeclY
- srXoMnFXEJJjKJ6kcJrZDYPrNPkgFpSId/WKJ5pZBoRsKH/w2OdxwtXKCYHksMCiI4+4fVFD
- WlmVNYzW8ZKXjAstLh+xGABkLVXs+0WjvC67iTZBXTmbYJ5eodv8U0dCIR/dxjK9wxVKbIr2
- D+UVbGlfqUuh1zzL68YsOg3L0Xc6TQglKVl6RxX87fCU8ycIs9pMbXeRDoJohflo8NUDpljm
- zqGlZxBjvb40p37ReJ+VfjWqAvVh+6JLaMpeva/2K1Nvr9O/DOkSRNetrd86PslrIwz8yP4l
- FaeG0dUwdRdnToNz6E8lbTVOwximW+nwEqOZUs1pQNKDejruN7Xnorr7wVBfp6zZmFCcmlw9
- 8pSMV3p85wg6nqJnBkQNTzlljycBvZLVvqc6hPOSXpXf5tjkuUVWgtbCc8TDEQFx8Phkgda6
- K1LNuQINBFNg91oBEADp3vwjw8tQBnNfYJNJMs6AXC8PXB5uApT1pJ0fioaXvifPNL6gzsGt
- AF53aLeqB7UXuByHr8Bmsz7BvwA06XfXXdyLQP+8Oz3ZnUpw5inDIzLpRbUuAjI+IjUtguIK
- AkU1rZNdCXMOqEwCaomRitwaiX9H7yiDTKCUaqx8yAuAQWactWDdyFii2FA7IwVlD/GBqMWV
- weZsMfeWgPumKB3jyElm1RpkzULrtKbu7MToMH2fmWqBtTkRptABkY7VEd8qENKJBZKJGisk
- Fk6ylp8VzZdwbAtEDDTGK00Vg4PZGiIGbQo8mBqbc63DY+MdyUEksTTu2gTcqZMm/unQUJA8
- xB4JrTAyljo/peIt6lsQa4+/eVolfKL1t1C3DY8f4wMoqnZORagnWA2oHsLsYKvcnqzA0QtY
- IIb1S1YatV+MNMFf3HuN7xr/jWlfdt59quXiOHU3qxIzXJo/OfC3mwNW4zQWJkG233UOf6YE
- rmrSaTIBTIWF8CxGY9iXPaJGNYSUa6R/VJS09EWeZgRz9Gk3h5AyDrdo5RFN9HNwOj41o0cj
- eLDF69092Lg5p5isuOqsrlPi5imHKcDtrXS7LacUI6H0c8onWoH9LuW99WznEtFgPJg++TAv
- f9M2x57Gzl+/nYTB5/Kpl1qdPPC91zUipiKbnF5f8bQpol0WC+ovmQARAQABiQIfBBgBAgAJ
- BQJTYPdaAhsMAAoJEESRkPMjWr074+0P/iEcN27dx3oBTzoeGEBhZUVQRZ7w4A61H/vW8oO8
- IPkZv9kFr5pCfIonmHEbBlg6yfjeHXwF5SF2ywWRKkRsFHpaFWywxqk9HWXu8cGR1pFsrwC3
- EdossuVbEFNmhjHvcAo11nJ7JFzPTEnlPjE6OY9tEDwl+kp1WvyXqNk9bosaX8ivikhmhB47
- 7BA3Kv8uUE7UL6p7CBdqumaOFISi1we5PYE4P/6YcyhQ9Z2wH6ad2PpwAFNBwxSu+xCrVmaD
- skAwknf6UVPN3bt67sFAaVgotepx6SPhBuH4OSOxVHMDDLMu7W7pJjnSKzMcAyXmdjON05Sz
- SaILwfceByvHAnvcFh2pXK9U4E/SyWZDJEcGRRt79akzZxls52stJK/2Tsr0vKtZVAwogiaK
- uSp+m6BRQcVVhTo/Kq3E0tSnsTHFeIO6QFHKJCJv4FRE3Dmtz15lueihUBowsq9Hk+u3UiLo
- SmrMAZ6KgA4SQxB2p8/M53kNJl92HHc9nc//aCQDi1R71NyhtSx+6PyivoBkuaKYs+S4pHmt
- sFE+5+pkUNROtm4ExLen4N4OL6Kq85mWGf2f6hd+OWtn8we1mADjDtdnDHuv+3E3cacFJPP/
- wFV94ZhqvW4QcyBWcRNFA5roa7vcnu/MsCcBoheR0UdYsOnJoEpSZswvC/BGqJTkA2sf
-Message-ID: <ceb7549e-6ccb-c6c7-241c-36c6e5c30770@inria.fr>
-Date:   Wed, 20 Feb 2019 22:52:40 +0100
+        Wed, 20 Feb 2019 16:59:26 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c6dcdc20001>; Wed, 20 Feb 2019 13:59:30 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 20 Feb 2019 13:59:24 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 20 Feb 2019 13:59:24 -0800
+Received: from [10.2.169.124] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 20 Feb
+ 2019 21:59:24 +0000
+Subject: Re: [PATCH 10/10] mm/hmm: add helpers for driver to safely take the
+ mmap_sem
+To:     <jglisse@redhat.com>, <linux-mm@kvack.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ralph Campbell <rcampbell@nvidia.com>
+References: <20190129165428.3931-1-jglisse@redhat.com>
+ <20190129165428.3931-11-jglisse@redhat.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <16e62992-c937-6b05-ae37-a287294c0005@nvidia.com>
+Date:   Wed, 20 Feb 2019 13:59:13 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <0d54a56186fb9be7a8f622a4625a41dc600dd7a4.1550545163.git.len.brown@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190129165428.3931-11-jglisse@redhat.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1550699970; bh=2CWmRVjAKuFpLeN7gIy+VKg38JlKc0LpsSsqnsgT/i8=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=di04P1YswP5l7urY6V2cWhoJKcacLXFf0VSLnRkmKEubu1ncXJCg3DvvXm6Bcv3ZT
+         spPxgxSn7FTu5EbskxETXpUSQCSGbOaMvHkDsuVZsLwoJD5xR/vx7T7Al6sSrqu7bV
+         CvZy4VrWDJFbYVWz4R7IoY7Pivsk4y+bFxTeqoA1XH416J4+qrz8AUWzu9hWhhCkSa
+         6jX3118IpjWSBZIxIG9Y/IYU+cYV3bxCGTh/lqf+cQHtHupO7cBl9Nk5tXw9+sV2I6
+         PNN7g1r88FMJQUTZr39mjf2edLDcSi5/SP78PAfD0jGsPACFtBh6g017U6QZTJHqaZ
+         ADDuQatFhzE0Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le 19/02/2019 à 04:40, Len Brown a écrit :
-> From: Len Brown <len.brown@intel.com>
->
-> like core_siblings, except it shows which die are in the same package.
->
-> This is needed for lscpu(1) to correctly display die topology.
->
-> Signed-off-by: Len Brown <len.brown@intel.com>
-> Cc: linux-doc@vger.kernel.org
-> Signed-off-by: Len Brown <len.brown@intel.com>
+On 1/29/19 8:54 AM, jglisse@redhat.com wrote:
+> From: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+>=20
+> The device driver context which holds reference to mirror and thus to
+> core hmm struct might outlive the mm against which it was created. To
+> avoid every driver to check for that case provide an helper that check
+> if mm is still alive and take the mmap_sem in read mode if so. If the
+> mm have been destroy (mmu_notifier release call back did happen) then
+> we return -EINVAL so that calling code knows that it is trying to do
+> something against a mm that is no longer valid.
+>=20
+> Signed-off-by: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Ralph Campbell <rcampbell@nvidia.com>
+> Cc: John Hubbard <jhubbard@nvidia.com>
 > ---
->  Documentation/cputopology.txt   | 10 ++++++++++
->  arch/x86/include/asm/smp.h      |  1 +
->  arch/x86/include/asm/topology.h |  1 +
->  arch/x86/kernel/smpboot.c       | 20 ++++++++++++++++++++
->  arch/x86/xen/smp_pv.c           |  1 +
->  drivers/base/topology.c         |  6 ++++++
->  include/linux/topology.h        |  3 +++
->  7 files changed, 42 insertions(+)
->
-> diff --git a/Documentation/cputopology.txt b/Documentation/cputopology.txt
-> index 287213b4517b..7dd2ae3df233 100644
-> --- a/Documentation/cputopology.txt
-> +++ b/Documentation/cputopology.txt
-> @@ -56,6 +56,16 @@ core_siblings_list:
->  	human-readable list of cpuX's hardware threads within the same
->  	die_id.
->  
-> +die_siblings:
+>   include/linux/hmm.h | 50 ++++++++++++++++++++++++++++++++++++++++++---
+>   1 file changed, 47 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/include/linux/hmm.h b/include/linux/hmm.h
+> index b3850297352f..4a1454e3efba 100644
+> --- a/include/linux/hmm.h
+> +++ b/include/linux/hmm.h
+> @@ -438,6 +438,50 @@ struct hmm_mirror {
+>   int hmm_mirror_register(struct hmm_mirror *mirror, struct mm_struct *mm=
+);
+>   void hmm_mirror_unregister(struct hmm_mirror *mirror);
+>  =20
+> +/*
+> + * hmm_mirror_mm_down_read() - lock the mmap_sem in read mode
+> + * @mirror: the HMM mm mirror for which we want to lock the mmap_sem
+> + * Returns: -EINVAL if the mm is dead, 0 otherwise (lock taken).
+> + *
+> + * The device driver context which holds reference to mirror and thus to=
+ core
+> + * hmm struct might outlive the mm against which it was created. To avoi=
+d every
+> + * driver to check for that case provide an helper that check if mm is s=
+till
+> + * alive and take the mmap_sem in read mode if so. If the mm have been d=
+estroy
+> + * (mmu_notifier release call back did happen) then we return -EINVAL so=
+ that
+> + * calling code knows that it is trying to do something against a mm tha=
+t is
+> + * no longer valid.
+> + */
+
+Hi Jerome,
+
+Are you thinking that, throughout the HMM API, there is a problem that
+the mm may have gone away, and so driver code needs to be littered with
+checks to ensure that mm is non-NULL? If so, why doesn't HMM take a
+reference on mm->count?
+
+This solution here cannot work. I think you'd need refcounting in order
+to avoid this kind of problem. Just doing a check will always be open to
+races (see below).
+
+
+> +static inline int hmm_mirror_mm_down_read(struct hmm_mirror *mirror)
+> +{
+> +	struct mm_struct *mm;
 > +
-> +	internal kernel map of cpuX's hardware threads within the same
-> +	physical_package_id.
+> +	/* Sanity check ... */
+> +	if (!mirror || !mirror->hmm)
+> +		return -EINVAL;
+> +	/*
+> +	 * Before trying to take the mmap_sem make sure the mm is still
+> +	 * alive as device driver context might outlive the mm lifetime.
+> +	 *
+> +	 * FIXME: should we also check for mm that outlive its owning
+> +	 * task ?
+> +	 */
+> +	mm =3D READ_ONCE(mirror->hmm->mm);
+> +	if (mirror->hmm->dead || !mm)
+> +		return -EINVAL;
 > +
-> +die_siblings_list:
+
+Nothing really prevents mirror->hmm->mm from changing to NULL right here.
+
+> +	down_read(&mm->mmap_sem);
+> +	return 0;
+> +}
 > +
-> +	human-readable list of cpuX's hardware threads within the same
-> +	physical_package_id.
-> +
 
+...maybe better to just drop this patch from the series, until we see a
+pattern of uses in the calling code.
 
-Hello Len,
-
-Patches #4 and #5 are changing the meaning the core_siblings (in the
-past, it always returned all threads in the entire package). All
-existing user-space tools will see each die as a separate package until
-they are updated to read die_siblings too. It only matters for multi-die
-CPUs when running a recent kernel with an old userspace tool, but it may
-still be consider as a sysfs ABI change.
-
-Worse, things will break again if you ever add tile_siblings for
-CPUID.1f "Tiles". User-space will suddenly see 2 dies of 2 cores instead
-1 die of 2 tiles of 2 cores.
-
-I understand that this isn't easy to fix. But I want to make sure people
-are aware of the meaning of this change.
-
-The proper way to avoid this is to stop having file foo_siblings refer
-to "the container of foo" instead of "foo itself" (because that
-container changes when you add intermediate levels). Rename sysfs files
-like below, and you don't get any breakage anymore when adding
-intermediate levels:
-
-thread_siblings -> core_threads (can we do sysfs alias or symlink to
-keep the old name?)
-
-core_siblings -> die_threads
-
-die_siblings -> package_threads (needs an alias too)
-
-The documentation would also be much easier to read since "die_threads"
-is obviously "human-readable list of cpuX's hardware threads within the
-same die_id". And no need to modify the doc anymore when adding levels :)
-
-Brice
-
+thanks,
+--=20
+John Hubbard
+NVIDIA
 
