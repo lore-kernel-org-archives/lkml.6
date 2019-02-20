@@ -2,110 +2,136 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 186ACC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F10CCC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:46:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCE3A2089F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:46:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gEc3d10N"
+	by mail.kernel.org (Postfix) with ESMTP id C71652089F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 09:46:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbfBTJp7 (ORCPT
+        id S1727034AbfBTJqo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 04:45:59 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39884 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726142AbfBTJp7 (ORCPT
+        Wed, 20 Feb 2019 04:46:44 -0500
+Received: from mgwym02.jp.fujitsu.com ([211.128.242.41]:47453 "EHLO
+        mgwym02.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725816AbfBTJqo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 04:45:59 -0500
-Received: by mail-lj1-f193.google.com with SMTP id g80so20216891ljg.6
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 01:45:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ekov2nfU/3oV445InqreP8lt16tkHw13TkSeZkK2qF4=;
-        b=gEc3d10NEwAaalnQxB0sD5MModnZPQXXi7S+HwwRRcSq8ESZZERX0EPRfpyBR1+PzT
-         mg7BMR9JGyjQeJRt5+3SDJHb1iLu2EL51jUu89V7iW0OoAVCHmU8kAxzI+3SQF6u2TRU
-         YKKtrwKynfHxORmfCq4EjvPxdyBpq35ZZrg5hrq7NKljv7HNX9knzndZdDyHp7E6FWWb
-         Ux1HCrFo9uZWx+QvLMBFJGrKfYbh9a6h9aI1QP0lNgGAxIYKm/LVuMYHmmAIWpzcgEbv
-         is1lZY5hJbB3fAwjmOZhB8uBd34S/1230nEuT1twZL9zvY3+bT60j/CfO9xCRkIh5qW1
-         TKYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ekov2nfU/3oV445InqreP8lt16tkHw13TkSeZkK2qF4=;
-        b=g5i8C2QgUBc/cpys0N6pVJZ6sb24YanTNzh/ina5vvBH0kuymjHEflgexoUwJHPQWu
-         7pbVJjPKYh0oASdjD4DPZFqXDFBgokfomI5+xiknIEWJ3Ng06WdImWm/uxtypHddOusN
-         XfXg5EYK4O0wR/06/KNwb51w8a8w8RKWb9yxVWTmhlwT7CjP6r3ViG5jl6WtF3+3bDEK
-         MMkmR39M2xyxUhT0wZL2e+x9JteyKp2Etws5evP/s5Zw/P7HERGh6B3+1T4BRiUgs7MQ
-         fWCmMeHJ08PH+qKAY9EzQxx90G03r4liOORxpFvy7EYUajmanoF+w/T49DuYhwReg9tW
-         43SA==
-X-Gm-Message-State: AHQUAuYNlClNeA0bNMiXNcm4uop27RR3GsN25HGfDPpepMTsDYKUNASg
-        g5q7a3DwgM041oYSQLLMdQEYdEcwFa7EDIdxGs9YFw==
-X-Google-Smtp-Source: AHgI3IZ//j6PXS3GVqYXuR99SO6k8uOhk5KMTch2eaTH8Zr5yemkCqcPcXpYm4JXtjWwvAduA0PNCaujdMJZv+OOouo=
-X-Received: by 2002:a2e:6109:: with SMTP id v9-v6mr19814440ljb.126.1550655957122;
- Wed, 20 Feb 2019 01:45:57 -0800 (PST)
+        Wed, 20 Feb 2019 04:46:44 -0500
+Received: from yto-m1.gw.nic.fujitsu.com (unknown [192.168.229.100]) by mgwym02.jp.fujitsu.com with smtp
+         id 2552_f23a_0aec060d_4551_4ae7_a4e5_e5f45beb343e;
+        Wed, 20 Feb 2019 18:46:36 +0900
+Received: from g01jpfmpwkw02.exch.g01.fujitsu.local (g01jpfmpwkw02.exch.g01.fujitsu.local [10.0.193.56])
+        by yto-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id BB29E40C7D21
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 18:46:35 +0900 (JST)
+Received: from G01JPEXCHKW17.g01.fujitsu.local (G01JPEXCHKW17.g01.fujitsu.local [10.0.194.56])
+        by g01jpfmpwkw02.exch.g01.fujitsu.local (Postfix) with ESMTP id 57033328708;
+        Wed, 20 Feb 2019 18:46:34 +0900 (JST)
+Received: from localhost (10.17.204.234) by G01JPEXCHKW17.g01.fujitsu.local
+ (10.0.194.56) with Microsoft SMTP Server id 14.3.408.0; Wed, 20 Feb 2019
+ 18:46:33 +0900
+X-SecurityPolicyCheck: OK by SHieldMailChecker v2.5.2
+X-SHieldMailCheckerPolicyVersion: FJ-ISEC-20170217-enc
+X-SHieldMailCheckerMailID: f6fcba2ed9eb4e9bb20547a14cb14f60
+Date:   Wed, 20 Feb 2019 18:46:11 +0900
+From:   Takao Indoh <indou.takao@fujitsu.com>
+To:     "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>
+CC:     Keith Busch <keith.busch@intel.com>,
+        Takao Indoh <indou.takao@jp.fujitsu.com>,
+        "sagi@grimberg.me" <sagi@grimberg.me>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "axboe@fb.com" <axboe@fb.com>, "hch@lst.de" <hch@lst.de>
+Subject: Re: [PATCH] nvme: Enable acceleration feature of A64FX processor
+Message-ID: <20190220094610.GB3559@esprimo>
+References: <20190201124615.16107-1-indou.takao@jp.fujitsu.com>
+ <20190201145414.GA22199@localhost.localdomain>
+ <20190205124757.GA28465@esprimo>
+ <20190205143905.GG22199@localhost.localdomain>
+ <AT5PR8401MB1169E9738C0A4754D0190F2FAB670@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-References: <1550091448-28578-1-git-send-email-info@metux.net>
- <1550181897-2596-1-git-send-email-info@metux.net> <1550181897-2596-2-git-send-email-info@metux.net>
-In-Reply-To: <1550181897-2596-2-git-send-email-info@metux.net>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 20 Feb 2019 10:45:45 +0100
-Message-ID: <CACRpkdYM6An1gEvw=Kw52WfAEr176oHoUBKquXtjaSvwrMbWrQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] gpio: AMD G-Series PCH gpio driver
-To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        platform-driver-x86 <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <AT5PR8401MB1169E9738C0A4754D0190F2FAB670@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SecurityPolicyCheck-GC: OK by FENCE-Mail
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 11:05 PM Enrico Weigelt, metux IT consult
-<info@metux.net> wrote:
+On Thu, Feb 14, 2019 at 08:44:48PM +0000, Elliott, Robert (Persistent Memory) wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Linux-nvme [mailto:linux-nvme-bounces@lists.infradead.org] On Behalf Of Keith Busch
+> > Sent: Tuesday, February 5, 2019 8:39 AM
+> > To: Takao Indoh <indou.takao@fujitsu.com>
+> > Cc: Takao Indoh <indou.takao@jp.fujitsu.com>; sagi@grimberg.me; linux-kernel@vger.kernel.org; linux-
+> > nvme@lists.infradead.org; axboe@fb.com; hch@lst.de
+> > Subject: Re: [PATCH] nvme: Enable acceleration feature of A64FX processor
+> > 
+> > On Tue, Feb 05, 2019 at 09:56:05PM +0900, Takao Indoh wrote:
+> > > On Fri, Feb 01, 2019 at 07:54:14AM -0700, Keith Busch wrote:
+> > > > On Fri, Feb 01, 2019 at 09:46:15PM +0900, Takao Indoh wrote:
+> > > > > From: Takao Indoh <indou.takao@fujitsu.com>
+> > > > >
+> > > > > Fujitsu A64FX processor has a feature to accelerate data transfer of
+> > > > > internal bus by relaxed ordering. It is enabled when the bit 56 of dma
+> > > > > address is set to 1.
+> > > >
+> > > > Wait, what? RO is a standard PCIe TLP attribute. Why would we need this?
+> > >
+> > > I should have explained this patch more carefully.
+> > >
+> > > Standard PCIe devices can use Relaxed Ordering (RO) by setting Attr
+> > > field in the TLP header, however, this mechanism cannot be utilized if
+> > > the device does not support RO feature. Fujitsu A64FX processor has an
+> > > alternate feature to enable RO in its Root Port by setting the bit 56 of
+> > > DMA address. This mechanism enables to utilize RO feature even if the
+> > > device does not support standard PCIe RO.
+> > 
+> > I think you're better of just purchasing devices that support the
+> > capability per spec rather than with a non-standard work around.
+> > 
+> 
+> The PCIe and NVMe specifications dosn't standardize a way to tell the device
+> when to use RO, which leads to system workarounds like this.
+> 
+> The Enable Relaxed Ordering bit defined by PCIe tells the device when it
+> cannot use RO, but doesn't advise when it should or shall use RO.
+> 
+> For SCSI Express (SOP+PQI), we were going to allow specifying these
+> on a per-command basis:
+> * TLP attributes (No Snoop, Relaxed Ordering, ID-based Ordering)
+> * TLP processing hints (Processing Hints and Steering Tags)
+> 
+> to be used by the data transfers for the command. In some systems, one
+> setting per queue or per device might suffice. Transactions to the
+> queues and doorbells require stronger ordering.
+> 
+> For this workaround:
+> * making an extra pass through the SGL to set the address bit is 
+> inefficient; it should be done as the SGL is created.
 
-> GPIO platform driver for the AMD G-series PCH (eg. on GX-412TC)
->
-> This driver doesn't registers itself automatically, as it needs to
-> be provided with platform specific configuration, provided by some
-> board driver setup code.
->
-> Didn't implement oftree probing yet, as it's rarely found on x86.
->
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linus.walleij@linaro.org
-> Cc: bgolaszewski@baylibre.com
-> Cc: dvhart@infradead.org
-> Cc: andy@infradead.org
-> Cc: platform-driver-x86@vger.kernel.org
->
-> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+Thanks for your comment, do you mean this should be done in
+nvme_pci_setup_sgls()/nvme_pci_setup_prps()?
 
-(...)
-> +config GPIO_AMD_FCH
-> +       tristate "GPIO support for AMD Fusion Controller Hub (G-series SOCs)"
-> +       select GPIO_GENERIC
+> * why doesn't it support PRP Lists?
 
-Now I see that you do this
+This patch does not support PRP because PRP is used for small data and
+we cannot get enough performance improvement by this feature. But I can
+support PRP to improve performance of the device which is compliant with
+NVMe Spec 1.0 or does not support SGL.
 
-> +       spin_lock_irqsave(&priv->gc.bgpio_lock, flags);
-(...)
-> +       spin_unlock_irqrestore(&priv->gc.bgpio_lock, flags);
+> * how does this interact with an iommu, if there is one? Must the 
+> address with bit 56 also be granted permission, or is that
+> stripped off before any iommu comparisons?
 
-Only to get that spinlock.
+The latter. A bit 56 is cleared in Root Port before pass it to iommu.
 
-That's not what GPIO_GENERIC is for, just put a spinlock in your
-local state container struct amd_fch_gpio_priv instead.
-
-Yours,
-Linus Walleij
+Thanks,
+Takao Indoh
