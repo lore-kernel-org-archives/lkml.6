@@ -2,67 +2,132 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C8E3C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:24:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88158C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:28:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25ACB21773
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:24:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5590F2147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:28:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Z9tOmuxL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726552AbfBTFYm (ORCPT
+        id S1726526AbfBTF2D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 00:24:42 -0500
-Received: from relay1.mentorg.com ([192.94.38.131]:53058 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbfBTFYl (ORCPT
+        Wed, 20 Feb 2019 00:28:03 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:57300 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726082AbfBTF2D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 00:24:41 -0500
-Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gwKN1-0005VJ-KB from Jiada_Wang@mentor.com ; Tue, 19 Feb 2019 21:24:35 -0800
-Received: from jiwang-OptiPlex-980.tokyo.mentorg.com (147.34.91.1) by
- svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Tue, 19 Feb 2019 21:24:32 -0800
-From:   Jiada Wang <jiada_wang@mentor.com>
-To:     <horms@verge.net.au>, <magnus.damm@gmail.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <kuninori.morimoto.gx@renesas.com>
-CC:     <linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <jiada_wang@mentor.com>
-Subject: [PATCH v1 0/2] rsnd: dts: change to use extended audio dmac register
-Date:   Wed, 20 Feb 2019 14:24:33 +0900
-Message-ID: <20190220052435.20508-1-jiada_wang@mentor.com>
-X-Mailer: git-send-email 2.19.2
+        Wed, 20 Feb 2019 00:28:03 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1K5Nqdn107694;
+        Wed, 20 Feb 2019 05:27:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=HEt47EOnYKZ4MXWE/vYh02pa3+mUHK/A4nFJgOZDUAM=;
+ b=Z9tOmuxLWUCmkmrJFR9VF5Ybr4S4jGecXjdNM/mdvR8AHFAm53oBJicYJfPBeSZWCVLS
+ /xBRM1NhX0pkAs97n4S/yYBaBy70hxhSqAhC+/yNehQ2SdXQFJCSab29/wA1DYk35hic
+ ikjY3QwuuOqiNWqEtRZWITuCpqt2ewTiZWd8ZenBd6rV7pLQ/I6YaVCF9/HmV+Y0k2F8
+ Ili+FDRhfmUBe1GnX3nD+FJ+UUGEr2dq7hJ+K2L3ETm7l9fI5SCrxBwFG/x9sNVCZKL9
+ y3KZ/JBvj/CcbLXU4ZQKqQOalxs1WSZCWTBP2vxmpeB+5OToShcM5i3uFQcXdIkueBfa Cw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2qp81e7g12-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Feb 2019 05:27:50 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1K5Rnp9026050
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Feb 2019 05:27:49 GMT
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1K5Rm9x015235;
+        Wed, 20 Feb 2019 05:27:49 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 19 Feb 2019 21:27:48 -0800
+Subject: Re: [RFC PATCH 00/31] Generating physically contiguous memory after
+ page allocation
+To:     Zi Yan <ziy@nvidia.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>,
+        Nitin Gupta <nigupta@nvidia.com>,
+        David Nellans <dnellans@nvidia.com>
+References: <20190215220856.29749-1-zi.yan@sent.com>
+ <f4cf53a3-359b-8c66-ed15-112b3cf0f475@oracle.com>
+ <FDDDB4C8-C5B5-46B0-9682-33AC063F7A46@nvidia.com>
+ <5395a183-063f-d409-b957-51a8d02854b2@oracle.com>
+ <EB22370B-C5FB-435A-A8D0-95159E403B83@nvidia.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <a92b785c-b6c9-146c-428b-b5b6f527d28c@oracle.com>
+Date:   Tue, 19 Feb 2019 21:27:47 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ClientProxiedBy: svr-orw-mbx-04.mgc.mentorg.com (147.34.90.204) To
- svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
+In-Reply-To: <EB22370B-C5FB-435A-A8D0-95159E403B83@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9172 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902200037
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to user reference manual for R-CAR H3 and M3-W SoCs,
-in order to access busif4 ~ busif7, extended audio dmac registers
-(PDMASAREn, PDMADAREn, PDMACHCREn)
-need to be used, rather than basic audio dmac registers
-(PDMASARn, PDMADARn, PDMACHCRn)
+On 2/19/19 9:19 PM, Zi Yan wrote:
+> On 19 Feb 2019, at 19:18, Mike Kravetz wrote:
+>> Another high level question.  One of the benefits of this approach is
+>> that exchanging pages does not require N free pages as you describe
+>> above.  This assumes that the vma which we are trying to make contiguous
+>> is already populated.  If it is not populated, then you also need to
+>> have N free pages.  Correct?  If this is true, then is the expected use
+>> case to first populate a vma, and then try to make contiguous?  I would
+>> assume that if it is not populated and a request to make contiguous is
+>> given, we should try to allocate/populate the vma with contiguous pages
+>> at that time?
+> 
+> Yes, I assume the pages within the VMA are already populated but not contiguous
+> yet.
+> 
+> My approach considers memory contiguity as an on-demand resource. In some phases
+> of an application, accelerators or RDMA controllers would process/transfer data
+> in one
+> or more VMAs, at which time contiguous memory can help reduce address translation
+> overheads or lift certain constraints. And different VMAs could be processed at
+> different program phases, thus it might be hard to get contiguous memory for all
+> these VMAs at the allocation time using alloc_contig_pages(). My approach can
+> help get contiguous memory later, when the demand comes.
+> 
+> For some cases, you definitely can use alloc_contig_pages() to give users
+> a contiguous area at page allocation time, if you know the user is going to use
+> this
+> area for accelerator data processing or as a RDMA buffer and the area size is
+> fixed.
+> 
+> In addition, we can also use khugepaged approach, having a daemon periodically
+> scan VMAs and use alloc_contig_pages() to convert non-contiguous pages in a VMA
+> to contiguous pages, but it would require N free pages during the conversion.
+> 
+> In sum, my approach complements alloc_contig_pages() and provides more flexibility.
+> It is not trying to replaces alloc_contig_pages().
 
-This patch set updates H3 (= r8a7795) and M3-W (= r8a7796) 
-to use extended audio dmac registers
-
-Jiada Wang (2):
-  arm64: dts: renesas: r8a7795: use extended audio dmac register
-  arm64: dts: renesas: r8a7796: use extended audio dmac register
-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 +-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Thank you for the explanation.  That makes sense.  I have mostly been
+thinking about contiguous memory from an allocation perspective and did
+not really consider other use cases.
 
 -- 
-2.19.2
-
+Mike Kravetz
