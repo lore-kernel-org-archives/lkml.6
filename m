@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 710C0C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:18:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC38C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:18:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40B4821773
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:18:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B745E2183F
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 05:18:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZBziC1/g"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XlFf6Q6k"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726888AbfBTFSS (ORCPT
+        id S1727381AbfBTFSW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 00:18:18 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:53682 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726687AbfBTFSP (ORCPT
+        Wed, 20 Feb 2019 00:18:22 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:51858 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726771AbfBTFSR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 00:18:15 -0500
-Received: by mail-it1-f196.google.com with SMTP id x131so12432800itc.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 21:18:14 -0800 (PST)
+        Wed, 20 Feb 2019 00:18:17 -0500
+Received: by mail-it1-f195.google.com with SMTP id y184so12455870itc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Feb 2019 21:18:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Wowct3K4dPgXXojBuflSXWxnwjNKq9pFZQYObBOGVPY=;
-        b=ZBziC1/glnjFoqs0CBX0q8trfAhqGB5rGedmZ0pVBX6kwzp2TW5xwhOEpZrZtABD+Y
-         UDC3UmnhgbwyYJU8xyQGtM94sUx59pvd5eIlOBL/zeNMMEvgfe9+E8fuEK8XR2UH+wjR
-         SwPH0pEVv4TS/t84DlNXBONuj4QXkJaF63ypO1f8+pvMEITHWRDQKRlj2Qnl2tJtF+22
-         /feVHaorX4yq6+2eGZrIALlWR7fSH9141WnkxOd0QzZcUdD4M9LUSfbmFnKARYnKmiH9
-         v6jnYXpZMfPt+Oqkb1eTzhGNLqO56Jms1/YM+tXahfxeoWs/JbTR1fHlE+DWTvtZdcEE
-         asQw==
+        bh=5ciqk+uqFKrZqpMKGAg0DrYJPsR1EGm9FFygAIm8kVM=;
+        b=XlFf6Q6kjzhVOBbxdhhjDTI+WyLMOP276wWY4epiLHVfTlMUpvT3tgzzK+8LgQ9nG3
+         ld/pnfsNvHe47WqMhGVxWQdaJBUmPF3JW+/4WjXfQb127uQm2NSx3KLvt9U9FgNJADPk
+         +HHSu0GWhCbehK6KE6O4tJOMwIB9VbSGU/qeTEVEkYQMRYGiO3JC8QMDBIA6tEFxN1e1
+         lcfZ8qXpNbxEVcEiQEf/TcS3YS0lglTDTeyB/RtjF8lO7IlwyU5UNYYK+KzN36MTa+Ha
+         BrGLtTNDXVEbtAG+7QfZXGFHzyzo4tC2f0zec3dDAptXlGKgHNIrgP3mGDuARRHGF7e4
+         uSdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Wowct3K4dPgXXojBuflSXWxnwjNKq9pFZQYObBOGVPY=;
-        b=NJvt5lIh4GA+gzuwOmScy7HMPCPxCBJDptVEd58dTID068RZI3rTdowpOi5zLB2MOq
-         WiEyVby0OlhJH/YaZbh1KKZLasK7sEJqDAPDpH90Ob8bQ8yWDAd+yI3LRPWjKbm5LKvh
-         GJHQNJNZv1X7fLdCY7l5Kd8RpYG/6t7WoZIqlUEuapIUocqiT/ZCgsSDzcZrPnAlc9Vi
-         QZkOnt5d1dOQGri3wfiLJq1IpFdCELbQGkJDGQ+RTzEFppVTHyCwAO8fpAjLg5mONY4r
-         6lw6krG+GqYHg8RS79lIIYQns0nBLikaF+TD2BVZyxz4RxLkiCulfiMXisBi+Ozm2eYT
-         x56Q==
-X-Gm-Message-State: AHQUAuac8zoGELLcb7uqHqRSB/qxYsOHB24iFN+ZXu+h6GehfNTQ4e3B
-        CJxyVpyYFWyoHhCnoLFSzFM=
-X-Google-Smtp-Source: AHgI3IYtQpxVhJDWANTlyPEpuy8wd3jT69S7Tx4OZoxg6UZDkFBxRAWPnITpt9u3OtXXdjA9a/GQDA==
-X-Received: by 2002:a24:a81:: with SMTP id 123mr4379680itw.43.1550639893900;
-        Tue, 19 Feb 2019 21:18:13 -0800 (PST)
+        bh=5ciqk+uqFKrZqpMKGAg0DrYJPsR1EGm9FFygAIm8kVM=;
+        b=Mom4L2JRviIO9hQ8vo8wWho5yn8tDWGtqKz4rl9ED8OkiRyTxb1Yz9TOjtIaxc3/Yb
+         pJsSH/eKgrGuQ7bmiaF+rpap9OsyKTKjgb74ZYBaOxff/5U0We01Z86BPrz0+tOhCeT2
+         zGRg2evIC9J0WIVRwOXXRwKD2CYjG5j9rerhuhga5WrQSv8TRc1YTV6eA6XTN/enQfFy
+         i2exUyo0G67X6CiuefpZtPyemLri+GK8OY1tXo1xSt20d4oNJmFF8nzyV2wkFCUqrDrm
+         zo6pqm8CU/i/9sG2ROTxlW+dw+Em2qQuCvTZsn85g5lVgFrIrUOrYiTVU4F3tdGPGQ0E
+         Labg==
+X-Gm-Message-State: AHQUAuY8ouwM/hu++MCycmPbbjFxb5eGmHeP4O/RDvtBrGUhMY7zm/+l
+        CMnnvp3nbtXZfnZr+oUxLj36LEfwnc0=
+X-Google-Smtp-Source: AHgI3Ibxa5PLLnL2qg692p1i/0AAQI6Wi04myl5offbAPFS3GOsigAQZfjslDUScKwb9+Iot+nWiwA==
+X-Received: by 2002:a02:4fc1:: with SMTP id r62mr17814026jad.55.1550639896070;
+        Tue, 19 Feb 2019 21:18:16 -0800 (PST)
 Received: from localhost.localdomain (c-73-242-244-99.hsd1.nm.comcast.net. [73.242.244.99])
-        by smtp.gmail.com with ESMTPSA id k64sm2297550itb.7.2019.02.19.21.18.12
+        by smtp.gmail.com with ESMTPSA id k64sm2297550itb.7.2019.02.19.21.18.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 21:18:13 -0800 (PST)
+        Tue, 19 Feb 2019 21:18:15 -0800 (PST)
 From:   George Hilliard <thirtythreeforty@gmail.com>
 To:     linux-mips@linux-mips.org
 Cc:     linux-kernel@vger.kernel.org, Neil Brown <neil@brown.name>,
         George Hilliard <thirtythreeforty@gmail.com>
-Subject: [PATCH 07/10] staging: mt7621-mmc: Initialize completions a single time during probe
-Date:   Tue, 19 Feb 2019 22:17:51 -0700
-Message-Id: <20190220051754.12195-8-thirtythreeforty@gmail.com>
+Subject: [PATCH 09/10] staging: mt7621-mmc: Remove redundant host->mmc->f_max write
+Date:   Tue, 19 Feb 2019 22:17:53 -0700
+Message-Id: <20190220051754.12195-10-thirtythreeforty@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190220051754.12195-1-thirtythreeforty@gmail.com>
 References: <20190220051754.12195-1-thirtythreeforty@gmail.com>
@@ -73,74 +73,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The module was initializing completions whenever it was going to wait on
-them, and not when the completion was allocated.  This is incorrect
-according to the completion docs:
-
-    Calling init_completion() on the same completion object twice is
-    most likely a bug [...]
-
-Re-initialization is also unnecessary because the module never uses
-complete_all().  Fix this by only ever initializing the completion a
-single time.
+This is set once during initialization and never changed.  Don't bother
+setting it again in the interrupt handler.
 
 Signed-off-by: George Hilliard <thirtythreeforty@gmail.com>
 ---
- drivers/staging/mt7621-mmc/sd.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/staging/mt7621-mmc/sd.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/drivers/staging/mt7621-mmc/sd.c b/drivers/staging/mt7621-mmc/sd.c
-index f12f9d6611c9..942c0d63d710 100644
+index 736e1d23b391..472318a979cb 100644
 --- a/drivers/staging/mt7621-mmc/sd.c
 +++ b/drivers/staging/mt7621-mmc/sd.c
-@@ -468,7 +468,9 @@ static unsigned int msdc_command_start(struct msdc_host   *host,
- 	host->cmd     = cmd;
- 	host->cmd_rsp = resp;
+@@ -210,7 +210,6 @@ static void msdc_tasklet_card(struct work_struct *work)
+ 	host->card_inserted = inserted;
  
--	init_completion(&host->cmd_done);
-+	// The completion should have been consumed by the previous command
-+	// response handler, because the mmc requests should be serialized
-+	BUG_ON(completion_done(&host->cmd_done));
- 
- 	sdr_set_bits(host->base + MSDC_INTEN, wints);
- 	sdc_send_cmd(rawcmd, cmd->arg);
-@@ -490,7 +492,6 @@ static unsigned int msdc_command_resp(struct msdc_host   *host,
- 		    MSDC_INT_ACMD19_DONE;
- 
- 	BUG_ON(in_interrupt());
--	//init_completion(&host->cmd_done);
- 	//sdr_set_bits(host->base + MSDC_INTEN, wints);
- 
- 	spin_unlock(&host->lock);
-@@ -674,7 +675,10 @@ static int msdc_do_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 		//msdc_clr_fifo(host);  /* no need */
- 
- 		msdc_dma_on();  /* enable DMA mode first!! */
--		init_completion(&host->xfer_done);
-+
-+		// The completion should have been consumed by the previous xfer
-+		// response handler, because the mmc requests should be serialized
-+		BUG_ON(completion_done(&host->xfer_done));
- 
- 		/* start the command first*/
- 		if (msdc_command_start(host, cmd, CMD_TIMEOUT) != 0)
-@@ -693,7 +697,6 @@ static int msdc_do_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 		/* for read, the data coming too fast, then CRC error
- 		 *  start DMA no business with CRC.
- 		 */
--		//init_completion(&host->xfer_done);
- 		msdc_dma_start(host);
- 
- 		spin_unlock(&host->lock);
-@@ -1708,6 +1711,8 @@ static int msdc_drv_probe(struct platform_device *pdev)
+ 	if (!host->suspend) {
+-		host->mmc->f_max = HOST_MAX_MCLK;
+ 		mmc_detect_change(host->mmc, msecs_to_jiffies(20));
  	}
- 	msdc_init_gpd_bd(host, &host->dma);
  
-+	init_completion(&host->cmd_done);
-+	init_completion(&host->xfer_done);
- 	INIT_DELAYED_WORK(&host->card_delaywork, msdc_tasklet_card);
- 	spin_lock_init(&host->lock);
- 	msdc_init_hw(host);
 -- 
 2.20.1
 
