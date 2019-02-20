@@ -4,57 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33039C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7960AC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:01:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0363821848
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:00:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C6A021848
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:01:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550678458;
-	bh=F1Q/P7DdfLeKP0Nrg+92DFsHJ1eg75+UzrWNUXlnLHw=;
+	s=default; t=1550678495;
+	bh=VA11CboM5qkJIYXUl341o3u+2dd0EkwKSbMV09NscyY=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=F92rAUo4UPA4WsO3prQxedBD6Ba7OwZngK/n5kzrMy8AL/kwv+cSW4QpS2cIpuy2q
-	 JLEeoB9gkf7LinSNGITKJoLwCCJjIpom4IhdUxZHB5xjm5z3gzfCSj61rbgnCDNteZ
-	 D8LTL55BuvmX8g8vuan1n34uLGP7LYtX+Qj3qVlI=
+	b=XaStWqjl9bKeQONceItRqOsM/kBH6CxDejRXt308486w30tOBtjM0b5VfsXU4xh6S
+	 McCGmjmQ2YGspfb93SzZA4PmF52BBN1BOXUiL2hh3w45Q+jZqlXVH1fAVSyfS6npty
+	 5xR2JyxbRoKKwxO0FAwPaS8rpzOxqympwbM5b4rg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbfBTQA4 (ORCPT
+        id S1726460AbfBTQBd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 11:00:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60874 "EHLO mail.kernel.org"
+        Wed, 20 Feb 2019 11:01:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726275AbfBTQAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 11:00:55 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        id S1726060AbfBTQBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 11:01:33 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E09062147A;
-        Wed, 20 Feb 2019 16:00:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E66A2147A;
+        Wed, 20 Feb 2019 16:01:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550678454;
-        bh=F1Q/P7DdfLeKP0Nrg+92DFsHJ1eg75+UzrWNUXlnLHw=;
+        s=default; t=1550678492;
+        bh=VA11CboM5qkJIYXUl341o3u+2dd0EkwKSbMV09NscyY=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=bRnWv6vnSU03hzz6lvmR09E6Y/DdNOR4MDD5s3i86IgGVe4HAp6sjkWAwVQlzYsMk
-         zDrTP7V6gSBsb4Decns344yge1MVx57liCO8rCLiZ+61UJtRK/r1v/bXtpzvQReOdz
-         h1qEk274GKLB0/7kLn8G7yY/m9M+bDP0spcHal4c=
-Date:   Thu, 21 Feb 2019 01:00:52 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Jann Horn <jannh@google.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Song Liu <songliubraving@fb.com>
-Subject: Re: [PATCH] perf/core: use strndup_user() instead of buggy
- open-coded version
-Message-Id: <20190221010052.4da503e3c4252d46620c8276@kernel.org>
-In-Reply-To: <CAG48ez20Hipk2VWjXmbWmC+LVqywAcGOF_Wq-ooO-dLh+EadaQ@mail.gmail.com>
-References: <20190218220723.176737-1-jannh@google.com>
-        <20190219204502.d0c4f95d1cda533990d96cd9@kernel.org>
-        <20190219235122.b9f8c6c47392a27131526018@kernel.org>
-        <CAG48ez20Hipk2VWjXmbWmC+LVqywAcGOF_Wq-ooO-dLh+EadaQ@mail.gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
+        b=Ic3UeBuo4USauXxARH5ELp+4A6W5Gqjr3vsS/FQ0mhPrAAYjqfKXm7XYXdpNlgp7N
+         bgHfCswhGft4dJw6rD2ovkDdkp6+kJCpK4mFGfYyiCT7fYlyJ4JqZQidmoWR/bygXc
+         Bl2g+lbG0YNN3gVsfgUJcsmBqpJoH6n8EwA+TAeQ=
+Date:   Wed, 20 Feb 2019 16:01:26 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Guenter Roeck <groeck@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        Lars-Peter Clausen <lars@metafoo.de>, kernel@collabora.com,
+        Hartmut Knaack <knaack.h@gmx.de>
+Subject: Re: [PATCH] iio: cros_ec: Fix gyro scale calculation
+Message-ID: <20190220160126.12568f92@archlinux>
+In-Reply-To: <20190220150300.3302-1-enric.balletbo@collabora.com>
+References: <20190220150300.3302-1-enric.balletbo@collabora.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,76 +61,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jann,
+On Wed, 20 Feb 2019 16:03:00 +0100
+Enric Balletbo i Serra <enric.balletbo@collabora.com> wrote:
 
-On Wed, 20 Feb 2019 16:19:10 +0100
-Jann Horn <jannh@google.com> wrote:
-
-> On Tue, Feb 19, 2019 at 3:51 PM Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > On Tue, 19 Feb 2019 20:45:02 +0900
-> > Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> >
-> > > On Mon, 18 Feb 2019 23:07:23 +0100
-> > > Jann Horn <jannh@google.com> wrote:
-> > >
-> > > > The first version of this method was missing the check for
-> > > > `ret == PATH_MAX`; then such a check was added, but it didn't call kfree()
-> > > > on error, so there was still a small memory leak in the error case.
-> > > > Fix it by using strndup_user() instead of open-coding it.
-> > > >
-> > >
-> > > This looks good to me.
-> > >
-> > > Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-> >
-> > BTW, I think it should note that if the string is longer than PATH_MAX.
-> > caller will receive -EINVAL instead of -E2BIG with this fix.
+> From: Gwendal Grignou <gwendal@chromium.org>
 > 
-> Oh, whoops, I hadn't noticed that.
+> Calculation was copied from IIO_DEGREE_TO_RAD, but offset added to avoid
+> rounding error is wrong. It should be only half of the divider.
 > 
-> Do you want me to just add a note to the changelog, or do I have to
-> work around this in the code?
+> Fixes: c14dca07a31d ("iio: cros_ec_sensors: add ChromeOS EC Contiguous Sensors driver")
+> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-I think work around will be good if this goes to stable, since I guess
-this return code may go to user space.
+This one is kind of interesting. See below.
 
-Thank you,
-
+> ---
 > 
-> > > > Fixes: 0eadcc7a7bc0 ("perf/core: Fix perf_uprobe_init()")
-> > > > Signed-off-by: Jann Horn <jannh@google.com>
-> > > > ---
-> > > > compile-tested only
-> > > >
-> > > >  kernel/trace/trace_event_perf.c | 14 +++++---------
-> > > >  1 file changed, 5 insertions(+), 9 deletions(-)
-> > > >
-> > > > diff --git a/kernel/trace/trace_event_perf.c b/kernel/trace/trace_event_perf.c
-> > > > index 76217bbef815..c744b02081c3 100644
-> > > > --- a/kernel/trace/trace_event_perf.c
-> > > > +++ b/kernel/trace/trace_event_perf.c
-> > > > @@ -299,15 +299,11 @@ int perf_uprobe_init(struct perf_event *p_event,
-> > > >
-> > > >     if (!p_event->attr.uprobe_path)
-> > > >             return -EINVAL;
-> > > > -   path = kzalloc(PATH_MAX, GFP_KERNEL);
-> > > > -   if (!path)
-> > > > -           return -ENOMEM;
-> > > > -   ret = strncpy_from_user(
-> > > > -           path, u64_to_user_ptr(p_event->attr.uprobe_path), PATH_MAX);
-> > > > -   if (ret == PATH_MAX)
-> > > > -           return -E2BIG;
-> > > > -   if (ret < 0)
-> > > > -           goto out;
-> > > > +
-> > > > +   path = strndup_user(u64_to_user_ptr(p_event->attr.uprobe_path),
-> > > > +                       PATH_MAX);
-> > > > +   if (IS_ERR(path))
-> > > > +           return PTR_ERR(path);
-> > > >     if (path[0] == '\0') {
-> > > >             ret = -EINVAL;
-> > > >             goto out;
+>  drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
+> index 89cb0066a6e0..600942af9f9c 100644
+> --- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
+> +++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
+> @@ -103,7 +103,7 @@ static int cros_ec_sensors_read(struct iio_dev *indio_dev,
+>  			 * Do not use IIO_DEGREE_TO_RAD to avoid precision
+>  			 * loss. Round to the nearest integer.
+>  			 */
+> -			*val = div_s64(val64 * 314159 + 9000000ULL, 1000);
+> +			*val = div_s64(val64 * 314159 + 500ULL, 1000);
+That is only one of two divides going on.  Firstly we divide by 1000 here,
+then we provide it in fractional form which means that the actual value you get
+from sysfs etc is 
+val/val2.  It's this one we are protecting against rounding error on I guess.
+Now this is even less obviously because it's not 18000 either, but 
+18000 * 2^CROS_EC_SENSOR_BITS.
 
+Which ultimately means neither answer is correct. Hmm.
+Not totally sure what the right answer actually is..
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Jonathan
+
+>  			*val2 = 18000 << (CROS_EC_SENSOR_BITS - 1);
+>  			ret = IIO_VAL_FRACTIONAL;
+>  			break;
+
