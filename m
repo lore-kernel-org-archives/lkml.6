@@ -2,157 +2,143 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45980C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:26:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ABBBC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 190F32146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:26:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3EEC2075B
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:26:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="Wekbfpxx"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YxT48tE1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726904AbfBTQ0i (ORCPT
+        id S1727284AbfBTQ0x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 11:26:38 -0500
-Received: from mo4-p03-ob.smtp.rzone.de ([81.169.146.175]:25222 "EHLO
-        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725806AbfBTQ0i (ORCPT
+        Wed, 20 Feb 2019 11:26:53 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:37753 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726183AbfBTQ0x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 11:26:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1550679995;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=38npVTSk79CYr/muKAs9IwN6DMdJ6DzoI417b2xdfK0=;
-        b=Wekbfpxxhl1B7PeOoeNlZM5yC841m61bnyKOdYgSkqf8Op4ej9BgP7bytDlvQ5NXrJ
-        XUkMzq6IHIfoUOwXiC5eye2TIFIgYVzgIM0tdr7KOENt8b5yKecRfPfM/b2FXD7e/RgE
-        8iGJEq1gbCbKgEzBDS3bovbCwMJpTdPbz4AoCFCH0zOGw9Hv/tZ3NNumSsrlDSHW9tzD
-        F1SpuNFJHpob0M490wMvNMLxCX5PPdInFXxKfxKV0cmdvHwcTp4CqFcaghnRSs0LOMrj
-        quH0K5BBM6Zo0JQLFM8RnVXaxuu4GX+ZRFCN3F6u4RbY0vQZJTQHIM6MaoRTeYMvHiHQ
-        QJYw==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj7wpz8NMGH/ztwDXG"
-X-RZG-CLASS-ID: mo00
-Received: from mbp-13-nikolaus.fritz.box
-        by smtp.strato.de (RZmta 44.9 DYNA|AUTH)
-        with ESMTPSA id 608499v1KGQYFdn
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 20 Feb 2019 17:26:34 +0100 (CET)
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH 0/9] iio mount matrix - revitalize missing bindings documentation and provide code for bmc150, bmg160, bma180, itg3200, hmc584x
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20190220161303.GY9224@smile.fi.intel.com>
-Date:   Wed, 20 Feb 2019 17:26:33 +0100
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Song Qiang <songqiang1304521@gmail.com>,
-        letux-kernel@openphoenux.org, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <3A9E6DFC-1A81-4503-9A92-547944BBDFC1@goldelico.com>
-References: <cover.1550671256.git.hns@goldelico.com> <20190220161303.GY9224@smile.fi.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-X-Mailer: Apple Mail (2.3124)
+        Wed, 20 Feb 2019 11:26:53 -0500
+Received: by mail-qt1-f195.google.com with SMTP id a48so27851084qtb.4
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 08:26:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eozX9FP7k9coPJlrRTh06AeTbiW+jXWRV5fsGGgST9g=;
+        b=YxT48tE1HsY6La1HstaM8C55H9xwQEH/uhsOSnowvBOgRChQvtSdzJdUWkFuXu6HmJ
+         Kmoq2EnwwM+szkFoFDMKM9oCQa62ejBn5YiK6fGRyGKzeEK5noxlmi/gh1cIJ8at5nrr
+         gpqx9BSKwfhDHh1s7sdrqD85YxWBh8m/PLxJRjJCPoYRCEisRaLC/31jpxTf5kVjNyzG
+         s9Hb8HJ3qhk9s4ev/Ceyu06Evx46XSNDVoyrOMCo1bwTpxWB8qW0icsAelO10KdlAYzk
+         lD2Rc4FAUlQne51LyZsp0AZ7TF5ewQPyi0z30RhR+Td7w0DDZo78e2crcLMHsla6rnif
+         GTVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eozX9FP7k9coPJlrRTh06AeTbiW+jXWRV5fsGGgST9g=;
+        b=aienl+OFQYXCJn15uclqmzZH/n2PDjwHX1C9dVz8FCFo7775iS7e66RaPpYAoraBP/
+         BVRWxETGP5oqdZlyUk0FBpz0K2USlHslzlk1nfjnyBUb5UX6E8zCPFH+Q5SnxvaJBVL7
+         VJyOwVHCcmBKIcJPzt8V/F2cGGsF/XuYO59xFntyiEwwK3xgofqCk0/WC+92+LIVUYQR
+         gEKCWSY8CxKdK7/znocMcjVqrPyxdxSEjpADpnRfyTLCmBuTrLqQWYuqfFZYfTkjU6fP
+         MONjdHhFH1d3WphX3BpSBQuaIuDMkh0lgX3z3LmCkHGgqS8p/XY+u295OQqxKQqPTvfv
+         pHAw==
+X-Gm-Message-State: AHQUAua+OyNfSBUbh10MDvKUsM3M+YuOPOryJw2IRclwZIjxUU7/abLP
+        JBRL8Gyf9EzqKreUK4txlw+0pjmNRHm733c9smcfJA==
+X-Google-Smtp-Source: AHgI3IamgebrUZ0MqQEo3Q3h+CVE+cDu0cNp7nKiHxkjvSrTwXQHIrz5DoeNZrtvDb7VZVIwoAbkLDP+q1+WMDpA0Jw=
+X-Received: by 2002:ac8:35eb:: with SMTP id l40mr8426232qtb.207.1550680011986;
+ Wed, 20 Feb 2019 08:26:51 -0800 (PST)
+MIME-Version: 1.0
+References: <5919a74b74f466e803e07f70136517119dcd4560.1550661235.git.viresh.kumar@linaro.org>
+In-Reply-To: <5919a74b74f466e803e07f70136517119dcd4560.1550661235.git.viresh.kumar@linaro.org>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Wed, 20 Feb 2019 21:56:40 +0530
+Message-ID: <CAP245DWuJTXfAc3QyqXjePqy32GHQsEqHbuSvjiS4EE3-TV1PA@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: kyro: Reduce frame-size of qcom_cpufreq_kryo_probe()
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Rafael Wysocki <rjw@rjwysocki.net>, Ilia Lin <ilia.lin@kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
+On Wed, Feb 20, 2019 at 4:44 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> With the introduction of commit 846a415bf440 ("arm64: default NR_CPUS to
+> 256"), we have started getting following compilation warning:
+>
+> qcom-cpufreq-kryo.c:168:1: warning: the frame size of 2160 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>
+> Fix that by dynamically allocating opp_tables and freeing it later.
+>
+> Compile tested only.
+>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+>  drivers/cpufreq/qcom-cpufreq-kryo.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
+> index 1c8583cc06a2..6888cb6db2ef 100644
+> --- a/drivers/cpufreq/qcom-cpufreq-kryo.c
+> +++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
+> @@ -75,7 +75,7 @@ static enum _msm8996_version qcom_cpufreq_kryo_get_msm_id(void)
+>
+>  static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
+>  {
+> -       struct opp_table *opp_tables[NR_CPUS] = {0};
+> +       struct opp_table **opp_tables;
+>         enum _msm8996_version msm8996_version;
+>         struct nvmem_cell *speedbin_nvmem;
+>         struct device_node *np;
+> @@ -133,6 +133,10 @@ static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
+>         }
+>         kfree(speedbin);
+>
+> +       opp_tables = kcalloc(num_possible_cpus(), sizeof(*opp_tables), GFP_KERNEL);
+> +       if (!opp_tables)
+> +               return -ENOMEM;
+> +
 
-> Am 20.02.2019 um 17:13 schrieb Andy Shevchenko =
-<andriy.shevchenko@linux.intel.com>:
->=20
-> On Wed, Feb 20, 2019 at 03:00:47PM +0100, H. Nikolaus Schaller wrote:
->> This patch series adds the mount-matrix to several iio sensor drivers
->> used in handheld devices.
->>=20
->> The mount-matrix translates the quite arbitrary orientation of the =
-sensor
->> on some printed circuit board to user-tangible orientation in =
-handheld
->> devices that relates to typical screen orientation.
->>=20
->> There was a bindings documentation by Linus Walleij but the patch
->> did not make it into mainline. Therefore I resend it here.
->>=20
->> Next I have added some clarifications (at least I hope it clarifies)
->> in a second patch.
->>=20
->> Finally, the patch set implements the hooks for the mount matrix
->> in several iio drivers: bmc150, bma180, bmg160, itg3200, hmc5843.
->> This includes also one patch for the bma180 to convert it to devm =
-API.
->>=20
->> We use them in different variants of the omap3-gta04 so a separate
->> patch set will provide device tree additions for them.
->=20
-> Thanks for the patch, overall good stuff there.
-> Couple of things, though:
-> - address my comments (consider them against entire series)
-> - check my patch I sent today to support this from ACPI
->=20
-> I wouldn't like to spread more drivers use specific of_foo_bar stuff =
-where it's
-> easily to support everything (note: device_property_* calls supports =
-software
-> fw nodes as well).
->=20
-> Perhaps, you may incorporate my patch into your nice series.
+Perhaps add a comment above that that actual opp_table is allocated in
+the loop below because of dev_pm_opp_set_supported_hw?
 
-Ok, that looks like a good proposal which avoids compile issues right
-from beginning of v2.
+I was staring at this for a few minutes wondering why you needed this
+kcalloc before I realised that opp_tables (missed the 's') is a
+temporary array of pointers. :-)
 
-BR and thanks,
-Nikolaus
+Otherwise,
 
->=20
->>=20
->>=20
->> H. Nikolaus Schaller (8):
->>  iio: bindings: clarifications for mount-matrix bindings
->>  iio: accel: bmc150: add mount matrix support
->>  iio: accel: bma180: add mount matrix support
->>  iio: accel: bma180: convert to devm
->>  iio: gyro: bmg160: add mount matrix support
->>  iio: gyro: itg3200: add mount matrix support
->>  iio: magnetometer: bmc150: add mount matrix support
->>  iio: magnetometer: hmc5843: add mount matrix support
->>=20
->> Linus Walleij (1):
->>  iio: document bindings for mounting matrices
->>=20
->> .../devicetree/bindings/iio/mount-matrix.txt  | 162 =
-++++++++++++++++++
->> drivers/iio/accel/bma180.c                    |  70 ++++----
->> drivers/iio/accel/bmc150-accel-core.c         |  19 ++
->> drivers/iio/gyro/bmg160_core.c                |  19 ++
->> drivers/iio/gyro/itg3200_core.c               |  18 ++
->> drivers/iio/magnetometer/bmc150_magn.c        |  19 ++
->> drivers/iio/magnetometer/hmc5843.h            |   1 +
->> drivers/iio/magnetometer/hmc5843_core.c       |  14 ++
->> include/linux/iio/gyro/itg3200.h              |   1 +
->> 9 files changed, 288 insertions(+), 35 deletions(-)
->> create mode 100644 =
-Documentation/devicetree/bindings/iio/mount-matrix.txt
->>=20
->> --=20
->> 2.19.1
->>=20
->=20
-> --=20
-> With Best Regards,
-> Andy Shevchenko
->=20
->=20
+Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
 
+>         for_each_possible_cpu(cpu) {
+>                 cpu_dev = get_cpu_device(cpu);
+>                 if (NULL == cpu_dev) {
+> @@ -149,6 +153,8 @@ static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
+>                 }
+>         }
+>
+> +       kfree(opp_tables);
+> +
+>         cpufreq_dt_pdev = platform_device_register_simple("cpufreq-dt", -1,
+>                                                           NULL, 0);
+>         if (!IS_ERR(cpufreq_dt_pdev))
+> @@ -163,6 +169,7 @@ static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
+>                         break;
+>                 dev_pm_opp_put_supported_hw(opp_tables[cpu]);
+>         }
+> +       kfree(opp_tables);
+>
+>         return ret;
+>  }
+> --
+> 2.21.0.rc0.269.g1a574e7a288b
+>
