@@ -2,177 +2,191 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9850C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:57:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE5FDC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:59:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC1C02146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:57:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4DCF2146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 16:59:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Kxi65kUm"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fwObxk/L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbfBTQ5p (ORCPT
+        id S1726536AbfBTQ7m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 11:57:45 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:37030 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725801AbfBTQ5o (ORCPT
+        Wed, 20 Feb 2019 11:59:42 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:35404 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725801AbfBTQ7m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 11:57:44 -0500
-Received: by mail-it1-f193.google.com with SMTP id z124so17209952itc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 08:57:43 -0800 (PST)
+        Wed, 20 Feb 2019 11:59:42 -0500
+Received: by mail-it1-f194.google.com with SMTP id v72so17234610itc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 08:59:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=AeFUJWAPX0cp3TlR/Bl/I/BN8/f1s/bZd9Fwz0Uko6M=;
-        b=Kxi65kUm9MafI1pEoaykhaba+/3zBLeS32CM2kzf6eo5GPJa0hGV9MY0i51E+pGeM0
-         tWtEZIrwI0yGcYrBIng+k0Ow36WrbLwsVLgkeOznCbVOTIBFSY0896NkLQ75X6BxVh0T
-         8kdBQsPQq4Q9YGIKLIPN18hZMbPQxMfYkYzK0SnX/f2axFIcOHPhqi0DlbTiPgqMtavQ
-         /TwqrxagFE4dkRfiOYgXoaktcnPmcL0QbDh5eUV3RnsymqNT4qIZmodHgOv5D1aY4MRt
-         n4C0h82jj0QjWFy8zehPo9el4Jcj6s808j2mIpojj+u+zXWdoB1ceXogdczxPNDonTW7
-         FchQ==
+        bh=/LKiqnY+Wf5w5kBEzDhmcpjY+O5UFkwnj/wQuGBSvvI=;
+        b=fwObxk/LiekEEziu+wg9lZ61nwxV5nhhdEUGLx/1OT27VkaX7EWLf0ajffGt3kL7oU
+         9JHyGhiPwWzhZWPL59iP+OVtALmNk6KvVWxAS1WFCzspAQve1xwAlKea6NhL2WHiwGg/
+         PK67iUTcfnFFujjAWIcK1urh9LYKfBUK7Y7dq/M/lcAqqEAly2Or58cnVB1WjtHRVdBV
+         pNzIBrLt7B4xmK2d0wY7RB87SD/ON6CxZposAXvYGH0vdmDWT/fAP4FdZY+hk0q32Q36
+         TNMu3TvaH+Qig+Pn0p/a6ibcqHgcYsvDCsE62nX3zT16AKRnchVjmLc9I3FaW4mnZwDl
+         pGQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=AeFUJWAPX0cp3TlR/Bl/I/BN8/f1s/bZd9Fwz0Uko6M=;
-        b=lDXqyKh/dRBayJ4xP/L+kaVB5vp0BmCkRAg83UBtLN/zTxMFdBbJjAXWxLm4kAiqqe
-         1SfqxMlUtE4FKwTekxNoNdhOQOOtmYyMfJG5M1LhVYx1Q6aLH6HM4xMmLSLzu1gIKPbz
-         97KYNQRO516Xkt0ctp/b2y+zWNHUEywyiY+Qsp9uhmUjcIq3Jjc+TGn8BRXn8tSgtI4y
-         5cv0lRWBJeM+LvbH/dx1fOWnaqcQ6k3LFtdf8FJEWC3Bn4HJ4LlOIhtM7wOm6xT3zjHs
-         1PUWzcEI+xwAIwma7aMPYJoNzzhHO6XFmhWGbfX0Yn3ZGDu/btQuSV+scvyyAQxSdx1U
-         2e/g==
-X-Gm-Message-State: AHQUAubQJY5uJojn2z/DTqlqEqTmw5DFhvrDSUgcY2y8XHpkhe/qdNrW
-        zQeGhIPdJxSLUjfG03NF1AEYwAjN3k2joXftsSZ2lg==
-X-Google-Smtp-Source: AHgI3IZ6g4dt1xBOPc6PQalN29VM2uFMQGI1jRzXpyfUMIrVSzuVyr1GfpgflBhgzZhTddmbDkbugcrQjH8gWrmj7c4=
-X-Received: by 2002:a24:7351:: with SMTP id y78mr5948931itb.12.1550681863149;
- Wed, 20 Feb 2019 08:57:43 -0800 (PST)
+        bh=/LKiqnY+Wf5w5kBEzDhmcpjY+O5UFkwnj/wQuGBSvvI=;
+        b=YX0OvEqSNCCHMs3fhzVAIIPyo2OGNBHylVSamMszbJSUC5XmaW0jlbtEXOYugWgL/0
+         dNH7xEOPBO5g/ib21BBjyptTrjdhdt5uMXyBtrbZ3Wx435+Ycc1yxmeWLpCeK45nj/y4
+         4EwCUA5QzihCnKHIM0x39yAfcxvVAURCrQaWBEwZl4eWw57m9e9bsnkQAFqa5mZnPknq
+         QiMMTLKWTeTsalN68ZW0crHXtv1DCGH7TW5qK9ZfW6HKf12gBLjpSiWg/rW+8OcdNJKR
+         vcMLemxmXSjCtmx1LauaMdj1lzS4twMSR7n7iX5KBE7nJ1K86gRYYg3pZti8xJ0STLOU
+         mGQg==
+X-Gm-Message-State: AHQUAuaipaeSt6IcajDgJ9FSNO8pQZBoPIQfgCuDcZR4MXVJwoHQ8o+c
+        8qK8orizQ9myYo8ikyntTrVIpConsZ5AlV93k+l1TQ==
+X-Google-Smtp-Source: AHgI3IZqwkIjsBSBQs39GJUwldcHlAxN1WtZbvR9T/rMgykFOOElS0j+kjaO13twFMxitgZt9YixGojg3xQBDwYCo0Y=
+X-Received: by 2002:a05:660c:3ce:: with SMTP id c14mr2810275itl.166.1550681980393;
+ Wed, 20 Feb 2019 08:59:40 -0800 (PST)
 MIME-Version: 1.0
-References: <000000000000739dd40575ac7d07@google.com>
-In-Reply-To: <000000000000739dd40575ac7d07@google.com>
+References: <0000000000009972a10574003ef3@google.com>
+In-Reply-To: <0000000000009972a10574003ef3@google.com>
 From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 20 Feb 2019 17:57:32 +0100
-Message-ID: <CACT4Y+Z=Ad+MoOS=puUGQkHQjdCejNYaN99jnmxW__xp5Uwj=w@mail.gmail.com>
-Subject: Re: general protection fault in lockref_get
-To:     syzbot <syzbot+5dc733a19636067b82fd@syzkaller.appspotmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
+Date:   Wed, 20 Feb 2019 17:59:29 +0100
+Message-ID: <CACT4Y+aTK06kKnOc9E6DK+sDZeejD4qk-YhfuBDhcKijDYk63g@mail.gmail.com>
+Subject: Re: BUG: corrupted list in vmx_vcpu_load
+To:     syzbot <syzbot+bba49d73fe3404646a7b@syzkaller.appspotmail.com>
+Cc:     "H. Peter Anvin" <hpa@zytor.com>, KVM list <kvm@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
         syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
+        Thomas Gleixner <tglx@linutronix.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 3:23 PM syzbot
-<syzbot+5dc733a19636067b82fd@syzkaller.appspotmail.com> wrote:
+On Wed, Aug 22, 2018 at 8:28 AM syzbot
+<syzbot+bba49d73fe3404646a7b@syzkaller.appspotmail.com> wrote:
 >
 > Hello,
 >
 > syzbot found the following crash on:
 >
-> HEAD commit:    7c1b097f27bf Add linux-next specific files for 20180912
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1333df01400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=5980033172920ec0
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5dc733a19636067b82fd
+> HEAD commit:    0214f46b3a03 Merge branch 'siginfo-linus' of git://git.ker..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11bc9c2e400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=214e4990bd49329f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=bba49d73fe3404646a7b
 > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 >
 > Unfortunately, I don't have any reproducer for this crash yet.
 >
 > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+5dc733a19636067b82fd@syzkaller.appspotmail.com
+> Reported-by: syzbot+bba49d73fe3404646a7b@syzkaller.appspotmail.com
 >
-> random: sshd: uninitialized urandom read (32 bytes read)
-> random: sshd: uninitialized urandom read (32 bytes read)
-> random: cc1: uninitialized urandom read (8 bytes read)
-> kasan: CONFIG_KASAN_INLINE enabled
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 1 PID: 5580 Comm: syz-executor0 Not tainted 4.19.0-rc3-next-20180912+
-> #72
+> kvm [9433]: vcpu0, guest rIP: 0x20e disabled perfctr wrmsr: 0x187 data
+> 0x60000000800
+> list_add corruption. next->prev should be prev (ffff8801db01d130), but was
+> dead000000000200. (next=ffff8801947fdaa0).
+> ------------[ cut here ]------------
+> kernel BUG at lib/list_debug.c:25!
+> invalid opcode: 0000 [#1] SMP KASAN
+> CPU: 0 PID: 9519 Comm: syz-executor2 Not tainted 4.18.0+ #201
 > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
 > Google 01/01/2011
-> RIP: 0010:__lock_acquire+0x237/0x4ec0 kernel/locking/lockdep.c:3291
+> RIP: 0010:__list_add_valid.cold.0+0xf/0x25 lib/list_debug.c:23
+> Code: e8 93 f5 5b fe e9 68 ff ff ff e8 89 f5 5b fe eb c9 4c 89 e7 e8 7f f5
+> 5b fe eb 97 48 89 d9 48 c7 c7 e0 9b 3a 87 e8 32 d8 03 fe <0f> 0b 48 89 f1
+> 48 c7 c7 a0 9c 3a 87 48 89 de e8 1e d8 03 fe 0f 0b
+> RSP: 0018:ffff88018f9bf058 EFLAGS: 00010082
+> RAX: 0000000000000075 RBX: ffff8801947fdaa0 RCX: ffffc9000200d000
+> RDX: 0000000000000000 RSI: ffffffff8163a441 RDI: 0000000000000001
+> RBP: ffff88018f9bf070 R08: ffff880196e3a2c0 R09: ffffed003b605008
+> R10: ffffed003b605008 R11: ffff8801db028047 R12: ffff8801947fdaa0
+> R13: ffff8801947f8300 R14: ffff8801947fdaa0 R15: ffff8801db01d130
+> FS:  00007ff35b75e700(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fcb6c09b000 CR3: 00000001ca309000 CR4: 00000000001426f0
+> Call Trace:
+>   __list_add include/linux/list.h:60 [inline]
+>   list_add include/linux/list.h:79 [inline]
+>   vmx_vcpu_load+0x205/0xfe0 arch/x86/kvm/vmx.c:3061
 
 Let's do:
 
-#syz dup: BUG: spinlock bad magic in lockref_get
+#syz dup: KASAN: use-after-free Read in vmx_vcpu_load
 
-Both in the same function and appeared exactly at the same time, but
-the other one has a reproducer:
-https://syzkaller.appspot.com/bug?id=59881761edbba4b3f7511eea9fe539c90a87f13c
+Both are in the same function and appeared roughly at the same time.
 
-> Code: 28 00 00 00 0f 85 aa 33 00 00 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f
-> 5d c3 48 b8 00 00 00 00 00 fc ff df 4c 89 ea 48 c1 ea 03 <80> 3c 02 00 0f
-> 85 6d 35 00 00 49 81 7d 00 20 90 9e 8a 0f 84 54 ff
-> RSP: 0018:ffff8801d36ff430 EFLAGS: 00010006
-> RAX: dffffc0000000000 RBX: 1ffff1003a6dff03 RCX: 0000000000000000
-> RDX: 0000000140000014 RSI: 0000000000000000 RDI: ffffffff89722928
-> RBP: ffff8801d36ff7c0 R08: 0000000000000001 R09: 0000000000000001
-> R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000000
-> R13: 0000000a000000a0 R14: ffff8801b9cde100 R15: 0000000000000000
-> FS:  0000000000db8940(0000) GS:ffff8801dad00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000482e00 CR3: 00000001b9d4f000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3901
->   __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
->   _raw_spin_lock+0x2d/0x40 kernel/locking/spinlock.c:144
->   lockref_get+0x15/0x50 include/linux/spinlock.h:329
->   dget include/linux/dcache.h:322 [inline]
->   mqueue_get_tree+0x101/0x2e0 ipc/mqueue.c:362
->   vfs_get_tree+0x1cb/0x5c0 fs/super.c:1787
->   mq_create_mount+0xe3/0x190 ipc/mqueue.c:415
->   mq_init_ns+0x15a/0x210 ipc/mqueue.c:1621
->   create_ipc_ns ipc/namespace.c:58 [inline]
->   copy_ipcs+0x3d2/0x580 ipc/namespace.c:84
->   create_new_namespaces+0x376/0x900 kernel/nsproxy.c:87
->   unshare_nsproxy_namespaces+0xc3/0x1f0 kernel/nsproxy.c:206
->   ksys_unshare+0x79c/0x10b0 kernel/fork.c:2535
->   __do_sys_unshare kernel/fork.c:2603 [inline]
->   __se_sys_unshare kernel/fork.c:2601 [inline]
->   __x64_sys_unshare+0x31/0x40 kernel/fork.c:2601
+
+>   kvm_arch_vcpu_load+0x22b/0x940 arch/x86/kvm/x86.c:3106
+>   kvm_sched_in+0x82/0xa0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3970
+>   __fire_sched_in_preempt_notifiers kernel/sched/core.c:2481 [inline]
+>   fire_sched_in_preempt_notifiers kernel/sched/core.c:2487 [inline]
+>   finish_task_switch+0x50d/0x870 kernel/sched/core.c:2679
+>   context_switch kernel/sched/core.c:2828 [inline]
+>   __schedule+0x884/0x1df0 kernel/sched/core.c:3473
+>   preempt_schedule_common+0x22/0x60 kernel/sched/core.c:3597
+>   _cond_resched+0x1d/0x30 kernel/sched/core.c:4963
+>   slab_pre_alloc_hook mm/slab.h:421 [inline]
+>   slab_alloc mm/slab.c:3378 [inline]
+>   kmem_cache_alloc+0x292/0x710 mm/slab.c:3552
+>   alloc_inode+0xb2/0x190 fs/inode.c:212
+>   new_inode_pseudo+0x71/0x1a0 fs/inode.c:903
+>   new_inode+0x1c/0x40 fs/inode.c:932
+>   debugfs_get_inode+0x19/0x120 fs/debugfs/inode.c:37
+>   __debugfs_create_file+0xb5/0x400 fs/debugfs/inode.c:352
+>   debugfs_create_file+0x57/0x70 fs/debugfs/inode.c:399
+>   kvm_create_vm_debugfs arch/x86/kvm/../../../virt/kvm/kvm_main.c:615
+> [inline]
+>   kvm_dev_ioctl_create_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:3209
+> [inline]
+>   kvm_dev_ioctl+0xbf5/0x1b10 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3236
+>   vfs_ioctl fs/ioctl.c:46 [inline]
+>   file_ioctl fs/ioctl.c:500 [inline]
+>   do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:684
+>   ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+>   __do_sys_ioctl fs/ioctl.c:708 [inline]
+>   __se_sys_ioctl fs/ioctl.c:706 [inline]
+>   __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
 >   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
 >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x459d87
-> Code: 00 00 00 b8 63 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 3d 8a fb ff c3
-> 66 2e 0f 1f 84 00 00 00 00 00 66 90 b8 10 01 00 00 0f 05 <48> 3d 01 f0 ff
-> ff 0f 83 1d 8a fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007ffcccf0eee8 EFLAGS: 00000246 ORIG_RAX: 0000000000000110
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459d87
-> RDX: 0000000000000000 RSI: 00007ffcccf0eef0 RDI: 0000000008000000
-> RBP: 0000000000930b28 R08: 0000000000000000 R09: 0000000000000018
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000010
-> R13: 0000000000412cc0 R14: 0000000000000000 R15: 0000000000000000
+> RIP: 0033:0x457089
+> Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007ff35b75dc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00007ff35b75e6d4 RCX: 0000000000457089
+> RDX: 0000000000000000 RSI: 000000000000ae01 RDI: 0000000000000006
+> RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+> R13: 00000000004ce9b8 R14: 00000000004c50d7 R15: 0000000000000000
 > Modules linked in:
-> ---[ end trace 404378fbbfe9896c ]---
-> RIP: 0010:__lock_acquire+0x237/0x4ec0 kernel/locking/lockdep.c:3291
-> Code: 28 00 00 00 0f 85 aa 33 00 00 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f
-> 5d c3 48 b8 00 00 00 00 00 fc ff df 4c 89 ea 48 c1 ea 03 <80> 3c 02 00 0f
-> 85 6d 35 00 00 49 81 7d 00 20 90 9e 8a 0f 84 54 ff
-> RSP: 0018:ffff8801d36ff430 EFLAGS: 00010006
-> RAX: dffffc0000000000 RBX: 1ffff1003a6dff03 RCX: 0000000000000000
-> RDX: 0000000140000014 RSI: 0000000000000000 RDI: ffffffff89722928
-> RBP: ffff8801d36ff7c0 R08: 0000000000000001 R09: 0000000000000001
-> R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000000
-> R13: 0000000a000000a0 R14: ffff8801b9cde100 R15: 0000000000000000
-> FS:  0000000000db8940(0000) GS:ffff8801dad00000(0000) knlGS:0000000000000000
+> Dumping ftrace buffer:
+>     (ftrace buffer empty)
+> ---[ end trace a4f093c8080a0418 ]---
+> RIP: 0010:__list_add_valid.cold.0+0xf/0x25 lib/list_debug.c:23
+> Code: e8 93 f5 5b fe e9 68 ff ff ff e8 89 f5 5b fe eb c9 4c 89 e7 e8 7f f5
+> 5b fe eb 97 48 89 d9 48 c7 c7 e0 9b 3a 87 e8 32 d8 03 fe <0f> 0b 48 89 f1
+> 48 c7 c7 a0 9c 3a 87 48 89 de e8 1e d8 03 fe 0f 0b
+> RSP: 0018:ffff88018f9bf058 EFLAGS: 00010082
+> RAX: 0000000000000075 RBX: ffff8801947fdaa0 RCX: ffffc9000200d000
+> RDX: 0000000000000000 RSI: ffffffff8163a441 RDI: 0000000000000001
+> RBP: ffff88018f9bf070 R08: ffff880196e3a2c0 R09: ffffed003b605008
+> R10: ffffed003b605008 R11: ffff8801db028047 R12: ffff8801947fdaa0
+> R13: ffff8801947f8300 R14: ffff8801947fdaa0 R15: ffff8801db01d130
+> FS:  00007ff35b75e700(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
 > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000482e00 CR3: 00000001b9d4f000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> CR2: 00007fcb6c09b000 CR3: 00000001ca309000 CR4: 00000000001426f0
 >
 >
 > ---
@@ -187,5 +201,5 @@ https://syzkaller.appspot.com/bug?id=59881761edbba4b3f7511eea9fe539c90a87f13c
 > --
 > You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
 > To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000739dd40575ac7d07%40google.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/0000000000009972a10574003ef3%40google.com.
 > For more options, visit https://groups.google.com/d/optout.
