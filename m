@@ -2,53 +2,54 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60191C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CADA8C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:17:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E6652147A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:17:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CECD218FD
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:17:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="APBXlS8P"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IeY3iumG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727275AbfBTURd (ORCPT
+        id S1727369AbfBTURi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 15:17:33 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:60890 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbfBTUR1 (ORCPT
+        Wed, 20 Feb 2019 15:17:38 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:51976 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727263AbfBTURe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 15:17:27 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1KK95Wa088088;
-        Wed, 20 Feb 2019 20:17:00 GMT
+        Wed, 20 Feb 2019 15:17:34 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1KK8Xht081717;
+        Wed, 20 Feb 2019 20:17:20 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type :
- content-transfer-encoding; s=corp-2018-07-02;
- bh=pffK+Le697AXpCX5r1dpNPWwhi9QEZtzB5OYbGD69mM=;
- b=APBXlS8Pc3BJLn7RTbHnebcHzMbJbjzz5uPJNOzW7EWT8gdAUO/jjoewlphU9EdMX08N
- p5b7PLrIu71uZ5URaNYLdwHl5AMSvptmzTXi7aanlmKgIRTvBw835cLT3Cw1ZJo5AvBO
- lGzrXbVZAqrRfNWplwR6XzvitYobxE51w779WRqoGEFvBKUCTfGB8tkS8GK/U4og+x6t
- /TAhRHT962osWhFze/f+lnL4a0uqvRoHdE1M2ysUSfnEMQQeDf0CZStptwatOWwolmGQ
- 3X8CdhZvpfhdPgf+yRiXSoOpLn3ARSExdi7iIrnjU5rkaL17aBkidjAhjVOo6Xwf7gZ5 /A== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2qp81ec36q-1
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=mdHWAv+RFA17VCCI7IU4ksER0LZyfmkASS+wZz/Vd28=;
+ b=IeY3iumGqJMHu1u0Dgpp70e6hjbnzUO87NWuFoujPczT/YPGp7LyH1sZXWLjBuiiHhCJ
+ o1JuyVRPdk0j/c8ez9dL/881mDuZiX+E6PUG3o6zze7s1A/plGo2cIol3U2Cq4bno9sN
+ CjjMylzEoFYgVoQw3ELwpo/BOPvhHZgc4+jUi9YdayvVMm8dCuZljkn4Vicx5AME2hdd
+ QdVafRCPaSauXTYXRq+C88DEjFxi16j156kCgOp5l21uLMWkeg9Vwj3UjzySinRiVVN3
+ yqdCde4bxHIZ1YvGwNAXgMaeAkmYz46YDv+/efmk9jn08pHIW5LWLT21qDCz/pyCub3w Hw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2qp9xu3xf1-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Feb 2019 20:16:59 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1KKGr94019808
+        Wed, 20 Feb 2019 20:17:20 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1KKHJr3025389
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Feb 2019 20:16:54 GMT
+        Wed, 20 Feb 2019 20:17:20 GMT
 Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1KKGqD7015069;
-        Wed, 20 Feb 2019 20:16:52 GMT
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1KKHJPi011792;
+        Wed, 20 Feb 2019 20:17:19 GMT
 Received: from paddy.lan (/94.61.137.133)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 20 Feb 2019 12:16:52 -0800
+        with ESMTP ; Wed, 20 Feb 2019 12:17:19 -0800
 From:   Joao Martins <joao.m.martins@oracle.com>
 To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Ankur Arora <ankur.a.arora@oracle.com>,
@@ -58,20 +59,19 @@ Cc:     Ankur Arora <ankur.a.arora@oracle.com>,
         =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel@lists.xenproject.org
-Subject: [PATCH RFC 00/39] x86/KVM: Xen HVM guest support
-Date:   Wed, 20 Feb 2019 20:15:30 +0000
-Message-Id: <20190220201609.28290-1-joao.m.martins@oracle.com>
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [PATCH RFC 08/39] KVM: x86/xen: register steal clock
+Date:   Wed, 20 Feb 2019 20:15:38 +0000
+Message-Id: <20190220201609.28290-9-joao.m.martins@oracle.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20190220201609.28290-1-joao.m.martins@oracle.com>
+References: <20190220201609.28290-1-joao.m.martins@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9173 signatures=668683
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
  lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
  definitions=main-1902200138
@@ -80,203 +80,194 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey,
+Allow emulator to register vcpu runstates which allow Xen guests
+to use that for steal clock. The 'preempted' state of KVM steal clock
+equates to 'runnable' state, 'running' has similar meanings for both and
+'offline' is used when system admin needs to bring vcpu offline or
+hotplug.
 
-Presented herewith a series that allows KVM to boot Xen x86 HVM guests (with their
-respective frontends and backends). On the hypervisor side, the approach is to keep
-the implementation similar to how HyperV was done on x86 KVM. On the backend driver
-side, the intent is to reuse Xen support.
+Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+---
+ arch/x86/include/asm/kvm_host.h |  2 ++
+ arch/x86/kvm/x86.c              | 10 ++++++++
+ arch/x86/kvm/xen.c              | 51 +++++++++++++++++++++++++++++++++++++++++
+ arch/x86/kvm/xen.h              |  2 ++
+ include/uapi/linux/kvm.h        |  1 +
+ 5 files changed, 66 insertions(+)
 
-Note that this is an RFC so there are bugs and room for improvement. The intent
-is to get overall feedback before proceeding further.
-
-Running Xen guests on KVM, enables the following use-cases:
-
- * Run unmodified Xen HVM images;
-
- * Facilitate development/testing of Xen guests and Xen PV drivers;
-
-There has been a similar proposal in the past with Xenner, albeit this work
-has the following advantages over it:
-
- * Allows use of existing Xen PV drivers such as block, net etc, both as
- frontends and backends;
-
- * Xen tooling will see the same UABI as on Xen. This means things like
- xenstored, xenstore-list, xenstore-read run unmodified. Optionally,
- userspace VMM can emulate xenstore operations;
-
- This work is divided in two parts:
-
- 1. Xen HVM ABI support (patches 1 - 16)
-
- Support the necessary mechanisms to allow HVM guests to
- boot *without* PV frontends exposed to the guest.
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index f39d50dd8f40..9d388ba0a05c 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -541,6 +541,8 @@ struct kvm_vcpu_xen {
+ 	struct vcpu_info *vcpu_info;
+ 	gpa_t pv_time_addr;
+ 	struct pvclock_vcpu_time_info *pv_time;
++	gpa_t steal_time_addr;
++	struct vcpu_runstate_info *steal_time;
+ };
  
- We start by intercepting hypercalls made by the guest, followed
- by event channel IPIs/VIRQs (for PV IPI, timers, spinlocks),
- pvclock and steal clock.
-
-	Ankur Arora (1):
-	      KVM: x86/xen: support upcall vector
-
-	Boris Ostrovsky (1):
-	      KVM: x86/xen: handle PV spinlocks slowpath
-
-	Joao Martins (14):
-	      KVM: x86: fix Xen hypercall page msr handling
-	      KVM: x86/xen: intercept xen hypercalls if enabled
-	      KVM: x86/xen: register shared_info page
-	      KVM: x86/xen: setup pvclock updates
-	      KVM: x86/xen: update wallclock region
-	      KVM: x86/xen: register vcpu info
-	      KVM: x86/xen: register vcpu time info region
-	      KVM: x86/xen: register steal clock
-	      KVM: x86: declare Xen HVM guest capability
-	      KVM: x86/xen: evtchn signaling via eventfd
-	      KVM: x86/xen: store virq when assigning evtchn
-	      KVM: x86/xen: handle PV timers oneshot mode
-	      KVM: x86/xen: handle PV IPI vcpu yield
-	      KVM: x86: declare Xen HVM evtchn offload capability
-	 
-	 Documentation/virtual/kvm/api.txt |   23 ++
-	 arch/x86/include/asm/kvm_host.h   |   46 ++++
-	 arch/x86/kvm/Makefile             |    2 +-
-	 arch/x86/kvm/irq.c                |   25 ++-
-	 arch/x86/kvm/irq_comm.c           |   11 +
-	 arch/x86/kvm/trace.h              |   33 +++
-	 arch/x86/kvm/x86.c                |   60 +++++-
-	 arch/x86/kvm/x86.h                |    1 +
-	 arch/x86/kvm/xen.c                | 1025 +++++++++++++++++++++++++++++
-	 arch/x86/kvm/xen.h                |   48 +++++
-	 include/linux/kvm_host.h          |   24 +++
-	 include/uapi/linux/kvm.h          |   73 ++++++-
-	 12 files changed, 1361 insertions(+), 10 deletions(-)
-
-
- 2. PV Driver support (patches 17 - 39)
-
- We start by redirecting hypercalls from the backend to routines
- which emulate the behaviour that PV backends expect i.e. grant
- table and interdomain events. Next, we add support for late
- initialization of xenbus, followed by implementing
- frontend/backend communication mechanisms (i.e. grant tables and
- interdomain event channels). Finally, introduce xen-shim.ko,
- which will setup a limited Xen environment. This uses the added
- functionality of Xen specific shared memory (grant tables) and
- notifications (event channels).
-
- Note that patch 19 is useful to Xen on its own.
-
-	 Ankur Arora (11):
-	      x86/xen: export vcpu_info and shared_info
-	      x86/xen: make hypercall_page generic
-	      KVM: x86/xen: backend hypercall support
-	      KVM: x86/xen: grant map support
-	      KVM: x86/xen: grant unmap support
-	      KVM: x86/xen: interdomain evtchn support
-	      KVM: x86/xen: evtchn unmask support
-	      KVM: x86/xen: add additional evtchn ops
-	      xen-shim: introduce shim domain driver
-	      xen/gntdev: xen_shim_domain() support
-	      xen/xenbus: xen_shim_domain() support
-
-	Joao Martins (12):
-	      xen/xenbus: xenbus uninit support
-	      xen-blkback: module_exit support
-	      KVM: x86/xen: domid allocation
-	      KVM: x86/xen: grant table init
-	      KVM: x86/xen: grant table grow support
-	      KVM: x86/xen: grant copy support
-	      xen/balloon: xen_shim_domain() support
-	      xen/grant-table: xen_shim_domain() support
-	      drivers/xen: xen_shim_domain() support
-	      xen-netback: xen_shim_domain() support
-	      xen-blkback: xen_shim_domain() support
-	      KVM: x86: declare Xen HVM Dom0 capability
-
-	[See the entire series diffstat at the end]
-
-There are additional Qemu patches to take advantage of this (and
-they are available here[0][1]). An example on how you could run it would be:
-
-$ ./x86_64-softmmu/qemu-system-x86_64 -nodefaults -serial mon:stdio \
-  -machine xenfv,accel=kvm \
-  -cpu host,-kvm,+xen,xen-major-version=4,xen-minor-version=4,+xen-vapic,+xen-pvclock \
-  -kernel /path/to/kernel -m 16G -smp 16,sockets=1,cores=16,threads=1,maxcpus=16 \
-  -append "earlyprintk=ttyS0 console=tty0 console=ttyS0" \
-  -device xen-platform -device usb-ehci -device usb-tablet,bus=usb-bus.0 -vnc :0 -k pt \
-  -netdev type=tap,id=net1,ifname=vif1.0,script=qemu-ifup \
-  -device xen-nic,netdev=net1,mac=52:54:00:12:34:56,backendtype=vif,backend=0 \
-  -drive file=/path/to/image.img,format=raw,id=legacy,if=ide \
-  -blockdev file,node-name=drive,filename=/path/to/image.img,locking=off \
-  -device xen-disk,vdev=xvda,drive=drive,backendtype=vbd
-
-Naturally other options are still at your disposal (e.g. booting with q35
-platform, or with virtio, etc).
-
-Thoughts? 
-
-Cheers,
-	Joao
-
-[0] https://www.github.com/jpemartins/qemu xen-shim-rfc
-[1] https://www.github.com/jpemartins/linux xen-shim-rfc
-
- Documentation/virtual/kvm/api.txt        |   33 +
- arch/x86/include/asm/kvm_host.h          |   88 ++
- arch/x86/include/asm/xen/hypercall.h     |   12 +-
- arch/x86/kvm/Kconfig                     |   10 +
- arch/x86/kvm/Makefile                    |    3 +-
- arch/x86/kvm/irq.c                       |   25 +-
- arch/x86/kvm/irq_comm.c                  |   11 +
- arch/x86/kvm/trace.h                     |   33 +
- arch/x86/kvm/x86.c                       |   66 +-
- arch/x86/kvm/x86.h                       |    1 +
- arch/x86/kvm/xen-asm.S                   |   66 +
- arch/x86/kvm/xen-shim.c                  |  138 ++
- arch/x86/kvm/xen.c                       | 2262 ++++++++++++++++++++++++++++++
- arch/x86/kvm/xen.h                       |   55 +
- arch/x86/xen/enlighten.c                 |   49 +
- arch/x86/xen/enlighten_hvm.c             |    3 +-
- arch/x86/xen/enlighten_pv.c              |    1 +
- arch/x86/xen/enlighten_pvh.c             |    3 +-
- arch/x86/xen/xen-asm_32.S                |    2 +-
- arch/x86/xen/xen-asm_64.S                |    2 +-
- arch/x86/xen/xen-head.S                  |    8 +-
- drivers/block/xen-blkback/blkback.c      |   27 +-
- drivers/block/xen-blkback/common.h       |    2 +
- drivers/block/xen-blkback/xenbus.c       |   19 +-
- drivers/net/xen-netback/netback.c        |   25 +-
- drivers/xen/balloon.c                    |   15 +-
- drivers/xen/events/events_2l.c           |    4 +-
- drivers/xen/events/events_base.c         |    6 +-
- drivers/xen/events/events_fifo.c         |    2 +-
- drivers/xen/evtchn.c                     |    4 +-
- drivers/xen/features.c                   |    1 +
- drivers/xen/gntdev.c                     |   10 +-
- drivers/xen/grant-table.c                |   15 +-
- drivers/xen/privcmd.c                    |    5 +-
- drivers/xen/xenbus/xenbus.h              |    2 +
- drivers/xen/xenbus/xenbus_client.c       |   28 +-
- drivers/xen/xenbus/xenbus_dev_backend.c  |    4 +-
- drivers/xen/xenbus/xenbus_dev_frontend.c |    6 +-
- drivers/xen/xenbus/xenbus_probe.c        |   57 +-
- drivers/xen/xenbus/xenbus_xs.c           |   40 +-
- drivers/xen/xenfs/super.c                |    7 +-
- drivers/xen/xenfs/xensyms.c              |    4 +
- include/linux/kvm_host.h                 |   24 +
- include/uapi/linux/kvm.h                 |  104 +-
- include/xen/balloon.h                    |    7 +
- include/xen/xen-ops.h                    |    2 +-
- include/xen/xen.h                        |    5 +
- include/xen/xenbus.h                     |    3 +
- 48 files changed, 3232 insertions(+), 67 deletions(-)
- create mode 100644 arch/x86/kvm/xen-asm.S
- create mode 100644 arch/x86/kvm/xen-shim.c
- create mode 100644 arch/x86/kvm/xen.c
- create mode 100644 arch/x86/kvm/xen.h
-
+ struct kvm_vcpu_arch {
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 3ce97860e6ee..888598fdf543 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -2389,6 +2389,11 @@ static void kvm_vcpu_flush_tlb(struct kvm_vcpu *vcpu, bool invalidate_gpa)
+ 
+ static void record_steal_time(struct kvm_vcpu *vcpu)
+ {
++	if (vcpu->arch.xen.steal_time_addr) {
++		kvm_xen_setup_runstate_page(vcpu);
++		return;
++	}
++
+ 	if (!(vcpu->arch.st.msr_val & KVM_MSR_ENABLED))
+ 		return;
+ 
+@@ -3251,6 +3256,11 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+ 
+ static void kvm_steal_time_set_preempted(struct kvm_vcpu *vcpu)
+ {
++	if (vcpu->arch.xen.steal_time_addr) {
++		kvm_xen_runstate_set_preempted(vcpu);
++		return;
++	}
++
+ 	if (!(vcpu->arch.st.msr_val & KVM_MSR_ENABLED))
+ 		return;
+ 
+diff --git a/arch/x86/kvm/xen.c b/arch/x86/kvm/xen.c
+index 77d1153386bc..4fdc4c71245a 100644
+--- a/arch/x86/kvm/xen.c
++++ b/arch/x86/kvm/xen.c
+@@ -9,9 +9,11 @@
+ #include "xen.h"
+ 
+ #include <linux/kvm_host.h>
++#include <linux/sched/stat.h>
+ 
+ #include <trace/events/kvm.h>
+ #include <xen/interface/xen.h>
++#include <xen/interface/vcpu.h>
+ 
+ #include "trace.h"
+ 
+@@ -30,6 +32,11 @@ static void set_vcpu_attr(struct kvm_vcpu *v, u16 type, gpa_t gpa, void *addr)
+ 		vcpu_xen->pv_time = addr;
+ 		kvm_xen_setup_pvclock_page(v);
+ 		break;
++	case KVM_XEN_ATTR_TYPE_VCPU_RUNSTATE:
++		vcpu_xen->steal_time_addr = gpa;
++		vcpu_xen->steal_time = addr;
++		kvm_xen_setup_runstate_page(v);
++		break;
+ 	default:
+ 		break;
+ 	}
+@@ -44,6 +51,8 @@ static gpa_t get_vcpu_attr(struct kvm_vcpu *v, u16 type)
+ 		return vcpu_xen->vcpu_info_addr;
+ 	case KVM_XEN_ATTR_TYPE_VCPU_TIME_INFO:
+ 		return vcpu_xen->pv_time_addr;
++	case KVM_XEN_ATTR_TYPE_VCPU_RUNSTATE:
++		return vcpu_xen->steal_time_addr;
+ 	default:
+ 		return 0;
+ 	}
+@@ -124,6 +133,41 @@ static void kvm_xen_update_vcpu_time(struct kvm_vcpu *v,
+ 	guest_hv_clock->version = vcpu->hv_clock.version;
+ }
+ 
++void kvm_xen_runstate_set_preempted(struct kvm_vcpu *vcpu)
++{
++	struct kvm_vcpu_xen *vcpu_xen = vcpu_to_xen_vcpu(vcpu);
++	int state = RUNSTATE_runnable;
++
++	vcpu->arch.st.steal.preempted = KVM_VCPU_PREEMPTED;
++
++	vcpu_xen->steal_time->state = state;
++}
++
++void kvm_xen_setup_runstate_page(struct kvm_vcpu *vcpu)
++{
++	struct kvm_vcpu_xen *vcpu_xen = vcpu_to_xen_vcpu(vcpu);
++	struct vcpu_runstate_info runstate;
++
++	runstate = *vcpu_xen->steal_time;
++
++	runstate.state_entry_time += 1;
++	runstate.state_entry_time |= XEN_RUNSTATE_UPDATE;
++	vcpu_xen->steal_time->state_entry_time = runstate.state_entry_time;
++	smp_wmb();
++
++	vcpu->arch.st.steal.steal += current->sched_info.run_delay -
++		vcpu->arch.st.last_steal;
++	vcpu->arch.st.last_steal = current->sched_info.run_delay;
++
++	runstate.state = RUNSTATE_running;
++	runstate.time[RUNSTATE_runnable] = vcpu->arch.st.steal.steal;
++	*vcpu_xen->steal_time = runstate;
++
++	runstate.state_entry_time &= ~XEN_RUNSTATE_UPDATE;
++	vcpu_xen->steal_time->state_entry_time = runstate.state_entry_time;
++	smp_wmb();
++}
++
+ void kvm_xen_setup_pvclock_page(struct kvm_vcpu *v)
+ {
+ 	struct kvm_vcpu_xen *vcpu_xen = vcpu_to_xen_vcpu(v);
+@@ -155,6 +199,10 @@ int kvm_xen_hvm_set_attr(struct kvm *kvm, struct kvm_xen_hvm_attr *data)
+ 		r = kvm_xen_shared_info_init(kvm, gfn);
+ 		break;
+ 	}
++	case KVM_XEN_ATTR_TYPE_VCPU_RUNSTATE:
++		if (unlikely(!sched_info_on()))
++			return -ENOTSUPP;
++	/* fallthrough */
+ 	case KVM_XEN_ATTR_TYPE_VCPU_TIME_INFO:
+ 	case KVM_XEN_ATTR_TYPE_VCPU_INFO: {
+ 		gpa_t gpa = data->u.vcpu_attr.gpa;
+@@ -191,6 +239,7 @@ int kvm_xen_hvm_get_attr(struct kvm *kvm, struct kvm_xen_hvm_attr *data)
+ 		data->u.shared_info.gfn = kvm->arch.xen.shinfo_addr;
+ 		break;
+ 	}
++	case KVM_XEN_ATTR_TYPE_VCPU_RUNSTATE:
+ 	case KVM_XEN_ATTR_TYPE_VCPU_TIME_INFO:
+ 	case KVM_XEN_ATTR_TYPE_VCPU_INFO: {
+ 		struct kvm_vcpu *v;
+@@ -282,6 +331,8 @@ void kvm_xen_vcpu_uninit(struct kvm_vcpu *vcpu)
+ 		put_page(virt_to_page(vcpu_xen->vcpu_info));
+ 	if (vcpu_xen->pv_time)
+ 		put_page(virt_to_page(vcpu_xen->pv_time));
++	if (vcpu_xen->steal_time)
++		put_page(virt_to_page(vcpu_xen->steal_time));
+ }
+ 
+ void kvm_xen_destroy_vm(struct kvm *kvm)
+diff --git a/arch/x86/kvm/xen.h b/arch/x86/kvm/xen.h
+index 10ebd0b7a25e..2feef68ee80f 100644
+--- a/arch/x86/kvm/xen.h
++++ b/arch/x86/kvm/xen.h
+@@ -17,6 +17,8 @@ static inline struct kvm_vcpu *xen_vcpu_to_vcpu(struct kvm_vcpu_xen *xen_vcpu)
+ }
+ 
+ void kvm_xen_setup_pvclock_page(struct kvm_vcpu *vcpu);
++void kvm_xen_setup_runstate_page(struct kvm_vcpu *vcpu);
++void kvm_xen_runstate_set_preempted(struct kvm_vcpu *vcpu);
+ int kvm_xen_hvm_set_attr(struct kvm *kvm, struct kvm_xen_hvm_attr *data);
+ int kvm_xen_hvm_get_attr(struct kvm *kvm, struct kvm_xen_hvm_attr *data);
+ bool kvm_xen_hypercall_enabled(struct kvm *kvm);
+diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+index 8296c3a2434f..b91e57d9e6d3 100644
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@ -1475,6 +1475,7 @@ struct kvm_xen_hvm_attr {
+ #define KVM_XEN_ATTR_TYPE_SHARED_INFO       0x0
+ #define KVM_XEN_ATTR_TYPE_VCPU_INFO         0x1
+ #define KVM_XEN_ATTR_TYPE_VCPU_TIME_INFO    0x2
++#define KVM_XEN_ATTR_TYPE_VCPU_RUNSTATE     0x3
+ 
+ /* Secure Encrypted Virtualization command */
+ enum sev_cmd_id {
 -- 
 2.11.0
 
