@@ -2,163 +2,106 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75DDEC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B01C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:10:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 418C420859
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:10:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2565920859
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 23:10:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="hs0Q3crx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726428AbfBTXJ7 (ORCPT
+        id S1726574AbfBTXKq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 18:09:59 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53072 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725939AbfBTXJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 18:09:58 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 486483091740;
-        Wed, 20 Feb 2019 23:09:57 +0000 (UTC)
-Received: from redhat.com (ovpn-120-249.rdu2.redhat.com [10.10.120.249])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5DC145D9D2;
-        Wed, 20 Feb 2019 23:09:56 +0000 (UTC)
-Date:   Wed, 20 Feb 2019 18:09:54 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ralph Campbell <rcampbell@nvidia.com>
-Subject: Re: [PATCH 10/10] mm/hmm: add helpers for driver to safely take the
- mmap_sem
-Message-ID: <20190220230954.GA11325@redhat.com>
-References: <20190129165428.3931-1-jglisse@redhat.com>
- <20190129165428.3931-11-jglisse@redhat.com>
- <16e62992-c937-6b05-ae37-a287294c0005@nvidia.com>
- <20190220221933.GB29398@redhat.com>
- <41888fd2-6154-4f85-7949-7a59c434d047@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+        Wed, 20 Feb 2019 18:10:46 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39723 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbfBTXKq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 18:10:46 -0500
+Received: by mail-pf1-f195.google.com with SMTP id i20so2272056pfo.6
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 15:10:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CEdCyOWbKcLtC5JegEnnCbD6vAdSZWTAOlx9ez5RsEo=;
+        b=hs0Q3crx85jAuaboXoAfBCXLlaZ2XgRXSvU7zPEMzwLmjRYTBW/JlOqLERYs0lvntZ
+         zJHiv5hTiOK5Tp6N4+rB8OrL0B56riRmjdbCZFkwWIj6PYyqP7i4nFQcCnmt7Vr5gFcm
+         wqxl6xzcvXPHQKaYiIf8e6GEYkXQnMhQQPtLr+xX/bBVy+F0hEzSHrsOS3zFjvzvldzc
+         +NyexT2IkImQRa9Ccr3bQEQGBN8ZmMkmJ6OorjtzdO5S1DAA7f0GVdG/JJ1a5DQs5P0H
+         HVGjZV9ZqTnLexJzt7mc0hHGZq6dxD8JwBp7dezbTQdPsrTc0naUTZ75tFtQswJI0sLY
+         c4Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=CEdCyOWbKcLtC5JegEnnCbD6vAdSZWTAOlx9ez5RsEo=;
+        b=KIbkg+p7pqwOGPySHgMQy0hjJb936zjW7jYsLy0PvHXGOu99uvUCvLxKloqC8HIc0N
+         sq5w2VTmzBiB3HwCu2H/R3eP37++Kf1sb3a0eizQXKkZb6aVNiRJA/GihRcE9kGgvrBO
+         K2zD1vTCvg8YkXvxmhZYjU4Rn/VXR7yXADVNMvUQOLEbpwOu0o+Lf6dhKfEVtKzQgCmN
+         /yoDR82LGlk5qmnxOpVBcnJl/kpWPmiD3Z1WxbgRn8meCcbEzYUDO2CO0FsPT9l4I+FW
+         UY6pxfQ+Mg+iIWqEbdxzYQeP9EYyTfzJzo74YiT1zOu4hyBqxfZYPDu5NrKcc7ZdAsYm
+         8mDQ==
+X-Gm-Message-State: AHQUAuY7SiXH4c7uZboYe//MiiICaL2cLF/xmCXHDCkK3AwhjgIV1DOb
+        PyxWrhPdkuGqXL4UcvdnKPqXSQ==
+X-Google-Smtp-Source: AHgI3IYUuhb0X1Nn4sk1iCXf/q3fN0Di5NSbh9/zQS1q5a+hsa8jzyTW1bvxMSrPazQnTB/bNDVAow==
+X-Received: by 2002:a63:5362:: with SMTP id t34mr34738216pgl.81.1550704245143;
+        Wed, 20 Feb 2019 15:10:45 -0800 (PST)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id w128sm27919858pfw.79.2019.02.20.15.10.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Feb 2019 15:10:44 -0800 (PST)
+Date:   Wed, 20 Feb 2019 15:10:44 -0800 (PST)
+X-Google-Original-Date: Wed, 20 Feb 2019 15:10:06 PST (-0800)
+Subject:     Re: [PATCH 4/6] lib/test_bitmap: switch test_bitmap_parselist to ktime_get()
+In-Reply-To: <20190220142048.GA20929@yury-thinkpad>
+CC:     andriy.shevchenko@linux.intel.com, yury.norov@gmail.com,
+        akpm@linux-foundation.org, Arnd Bergmann <arnd@arndb.de>,
+        dmitry.torokhov@gmail.com, keescook@chromium.org,
+        willy@infradead.org, mpe@ellerman.id.au, linux@rasmusvillemoes.dk,
+        penguin-kernel@I-love.SAKURA.ne.jp, linux-kernel@vger.kernel.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     yury.norov@gmail.com
+Message-ID: <mhng-e872dce6-2abe-467b-b1c1-82a59d4c93e2@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <41888fd2-6154-4f85-7949-7a59c434d047@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 20 Feb 2019 23:09:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 02:40:20PM -0800, John Hubbard wrote:
-> On 2/20/19 2:19 PM, Jerome Glisse wrote:
-> > On Wed, Feb 20, 2019 at 01:59:13PM -0800, John Hubbard wrote:
-> > > On 1/29/19 8:54 AM, jglisse@redhat.com wrote:
-> > > > From: Jérôme Glisse <jglisse@redhat.com>
-> > > > 
-> > > > The device driver context which holds reference to mirror and thus to
-> > > > core hmm struct might outlive the mm against which it was created. To
-> > > > avoid every driver to check for that case provide an helper that check
-> > > > if mm is still alive and take the mmap_sem in read mode if so. If the
-> > > > mm have been destroy (mmu_notifier release call back did happen) then
-> > > > we return -EINVAL so that calling code knows that it is trying to do
-> > > > something against a mm that is no longer valid.
-> > > > 
-> > > > Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-> > > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > > Cc: Ralph Campbell <rcampbell@nvidia.com>
-> > > > Cc: John Hubbard <jhubbard@nvidia.com>
-> > > > ---
-> > > >    include/linux/hmm.h | 50 ++++++++++++++++++++++++++++++++++++++++++---
-> > > >    1 file changed, 47 insertions(+), 3 deletions(-)
-> > > > 
-> > > > diff --git a/include/linux/hmm.h b/include/linux/hmm.h
-> > > > index b3850297352f..4a1454e3efba 100644
-> > > > --- a/include/linux/hmm.h
-> > > > +++ b/include/linux/hmm.h
-> > > > @@ -438,6 +438,50 @@ struct hmm_mirror {
-> > > >    int hmm_mirror_register(struct hmm_mirror *mirror, struct mm_struct *mm);
-> > > >    void hmm_mirror_unregister(struct hmm_mirror *mirror);
-> > > > +/*
-> > > > + * hmm_mirror_mm_down_read() - lock the mmap_sem in read mode
-> > > > + * @mirror: the HMM mm mirror for which we want to lock the mmap_sem
-> > > > + * Returns: -EINVAL if the mm is dead, 0 otherwise (lock taken).
-> > > > + *
-> > > > + * The device driver context which holds reference to mirror and thus to core
-> > > > + * hmm struct might outlive the mm against which it was created. To avoid every
-> > > > + * driver to check for that case provide an helper that check if mm is still
-> > > > + * alive and take the mmap_sem in read mode if so. If the mm have been destroy
-> > > > + * (mmu_notifier release call back did happen) then we return -EINVAL so that
-> > > > + * calling code knows that it is trying to do something against a mm that is
-> > > > + * no longer valid.
-> > > > + */
-> > > 
-> > > Hi Jerome,
-> > > 
-> > > Are you thinking that, throughout the HMM API, there is a problem that
-> > > the mm may have gone away, and so driver code needs to be littered with
-> > > checks to ensure that mm is non-NULL? If so, why doesn't HMM take a
-> > > reference on mm->count?
-> > > 
-> > > This solution here cannot work. I think you'd need refcounting in order
-> > > to avoid this kind of problem. Just doing a check will always be open to
-> > > races (see below).
-> > > 
-> > > 
-> > > > +static inline int hmm_mirror_mm_down_read(struct hmm_mirror *mirror)
-> > > > +{
-> > > > +	struct mm_struct *mm;
-> > > > +
-> > > > +	/* Sanity check ... */
-> > > > +	if (!mirror || !mirror->hmm)
-> > > > +		return -EINVAL;
-> > > > +	/*
-> > > > +	 * Before trying to take the mmap_sem make sure the mm is still
-> > > > +	 * alive as device driver context might outlive the mm lifetime.
-> > > > +	 *
-> > > > +	 * FIXME: should we also check for mm that outlive its owning
-> > > > +	 * task ?
-> > > > +	 */
-> > > > +	mm = READ_ONCE(mirror->hmm->mm);
-> > > > +	if (mirror->hmm->dead || !mm)
-> > > > +		return -EINVAL;
-> > > > +
-> > > 
-> > > Nothing really prevents mirror->hmm->mm from changing to NULL right here.
-> > 
-> > This is really just to catch driver mistake, if driver does not call
-> > hmm_mirror_unregister() then the !mm will never be true ie the
-> > mirror->hmm->mm can not go NULL until the last reference to hmm_mirror
-> > is gone.
-> 
-> In that case, then this again seems unnecessary, and in fact undesirable.
-> If the driver code has a bug, then let's let the backtrace from a NULL
-> dereference just happen, loud and clear.
-> 
-> This patch, at best, hides bugs. And it adds code that should simply be
-> unnecessary, so I don't like it. :)  Let's make it go away.
-> 
-> > 
-> > > 
-> > > > +	down_read(&mm->mmap_sem);
-> > > > +	return 0;
-> > > > +}
-> > > > +
-> > > 
-> > > ...maybe better to just drop this patch from the series, until we see a
-> > > pattern of uses in the calling code.
-> > 
-> > It use by nouveau now.
-> 
-> Maybe you'd have to remove that use case in a couple steps, depending on the
-> order that patches are going in.
+On Wed, 20 Feb 2019 06:20:48 PST (-0800), yury.norov@gmail.com wrote:
+> On Wed, Feb 20, 2019 at 03:52:36PM +0200, Andy Shevchenko wrote:
+>> On Wed, Feb 20, 2019 at 03:51:01PM +0200, Andy Shevchenko wrote:
+>> > On Wed, Feb 20, 2019 at 11:37:03AM +0300, Yury Norov wrote:
+>> > > test_bitmap_parselist currently uses get_cycles which is not
+>> > > implemented on some platforms, so use ktime_get() instead.
+>> >
+>> > This sounds like a fix that should go first in the series.
+>>
+>> Ah, okay, it's already first for test module.
+>> Perhaps Fixes tag and actually one or more examples of such architectures?
+>
+> Hi Andy, thanks for your time on it.
+>
+> Only arm, arm64, openrisc, riscv and sparc64 #define get_cycles.
+> So IIUC, others take stub from include/asm-generic/timex.h.
 
-Well all that is needed is removing if (mirror->hmm->dead || !mm) return -EINVAL;
-from functions so it does not have any ordering conflict with anything really.
+Should we (RISC-V) be doing something else?  It seems odd to be in such a 
+minority here, but we do have a ISA-mandated timer so the get_cycles() 
+implementation is super easy.
 
-Cheers,
-Jérôme
+> sparc32, xtensa, m68k, um, and in some cases x86, mips and nios2
+> provide zero-stubs explicitly.
+>
+> Yury
+>
+>> --
+>> With Best Regards,
+>> Andy Shevchenko
+>>
