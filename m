@@ -2,147 +2,190 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E9CAC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A5CC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6ECA2146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:19:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RyJv7v5K"
+	by mail.kernel.org (Postfix) with ESMTP id B9A012147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 20:19:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727508AbfBTUTX (ORCPT
+        id S1727678AbfBTUTh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 15:19:23 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:34694 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726613AbfBTUTV (ORCPT
+        Wed, 20 Feb 2019 15:19:37 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54936 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728131AbfBTUTF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 15:19:21 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1KK8e4C087617;
-        Wed, 20 Feb 2019 20:18:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=vahAq3kKddmSkfjcBh53XGqFljJf1oYQypzdVmOyw0Y=;
- b=RyJv7v5K27ef8U03dFrDBbsDxmmO4aIGNBOtI81x2cmx/7TVwwNKoBlZd5brgZA4MTLO
- m17CZsghn/1QSkk+la1M9cfqqGmLGGpo720hasLol/xOPGIFe9inMW28EwUHD/4ppYVk
- NNq67Usy+Gff+2eC/GMNXir30+4EO+ycoRKAZ79gidUi0Ki+ZqzQwqx/qR1fRInSiOAC
- dQN11OuM585EIR+JDDh2WWkVDeqc5zEsV5thOjgpvCDR99ogNQi5TRS0aSaWITeO+ILF
- QkJplgMyVc1q0fPDEKHkAvvxt0p6Y04IstT2mZbtrGm1F7qkmO4AD0ZX0hSc7uZCirBA uw== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2qp81ec3fc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Feb 2019 20:18:50 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1KKIidk020563
+        Wed, 20 Feb 2019 15:19:05 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1KK90KS051674
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 15:19:04 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qscqmaykv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 15:19:03 -0500
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mwb@linux.vnet.ibm.com>;
+        Wed, 20 Feb 2019 20:19:02 -0000
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 20 Feb 2019 20:18:59 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1KKIw8n7733312
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Feb 2019 20:18:44 GMT
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1KKIhYb015978;
-        Wed, 20 Feb 2019 20:18:43 GMT
-Received: from paddy.lan (/94.61.137.133)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 20 Feb 2019 12:18:43 -0800
-From:   Joao Martins <joao.m.martins@oracle.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Cc:     Ankur Arora <ankur.a.arora@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>
-Subject: [PATCH RFC 34/39] xen/gntdev: xen_shim_domain() support
-Date:   Wed, 20 Feb 2019 20:16:04 +0000
-Message-Id: <20190220201609.28290-35-joao.m.martins@oracle.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190220201609.28290-1-joao.m.martins@oracle.com>
-References: <20190220201609.28290-1-joao.m.martins@oracle.com>
+        Wed, 20 Feb 2019 20:18:58 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3825CB2066;
+        Wed, 20 Feb 2019 20:18:58 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6BC4CB205F;
+        Wed, 20 Feb 2019 20:18:57 +0000 (GMT)
+Received: from oc8380061452.ibm.com (unknown [9.85.185.126])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 20 Feb 2019 20:18:57 +0000 (GMT)
+Subject: Re: [PATCH] powerpc/pseries: Fix dn reference error in
+ dlpar_cpu_remove_by_index
+To:     Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc:     Rob Herring <robh@kernel.org>,
+        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Nathan Lynch <nathanl@linux.vnet.ibm.com>,
+        "Juliet M. Kim" <minkim@linux.vnet.ibm.com>
+References: <cc20c5cc-cf8e-d125-cac9-5d1b938a1d86@linux.vnet.ibm.com>
+ <a7986146-f09d-6d40-63f9-8e7307fc2609@linux.vnet.ibm.com>
+From:   Michael Bringmann <mwb@linux.vnet.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mwb@linux.vnet.ibm.com; prefer-encrypt=mutual; keydata=
+ mQENBFcY7GcBCADzw3en+yzo9ASFGCfldVkIg95SAMPK0myXp2XJYET3zT45uBsX/uj9/2nA
+ lBmXXeOSXnPfJ9V3vtiwcfATnWIsVt3tL6n1kqikzH9nXNxZT7MU/7gqzWZngMAWh/GJ9qyg
+ DTOZdjsvdUNUWxtiLvBo7y+reA4HjlQhwhYxxvCpXBeRoF0qDWfQ8DkneemqINzDZPwSQ7zY
+ t4F5iyN1I9GC5RNK8Y6jiKmm6bDkrrbtXPOtzXKs0J0FqWEIab/u3BDrRP3STDVPdXqViHua
+ AjEzthQbGZm0VCxI4a7XjMi99g614/qDcXZCs00GLZ/VYIE8hB9C5Q+l66S60PLjRrxnABEB
+ AAG0LU1pY2hhZWwgVy4gQnJpbmdtYW5uIDxtd2JAbGludXgudm5ldC5pYm0uY29tPokBOAQT
+ AQIAIgUCVxjsZwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQSEdag3dpuTI0NAf8
+ CKYTDKQLgOSjVrU2L5rM4lXaJRmQV6oidD3vIhKSnWRvPq9C29ifRG6ri20prTHAlc0vycgm
+ 41HHg0y2vsGgNXGTWC2ObemoZBI7mySXe/7Tq5mD/semGzOp0YWZ7teqrkiSR8Bw0p+LdE7K
+ QmT7tpjjvuhrtQ3RRojUYcuy1nWUsc4D+2cxsnZslsx84FUKxPbLagDgZmgBhUw/sUi40s6S
+ AkdViVCVS0WANddLIpG0cfdsV0kCae/XdjK3mRK6drFKv1z+QFjvOhc8QIkkxFD0da9w3tJj
+ oqnqHFV5gLcHO6/wizPx/NV90y6RngeBORkQiRFWxTXS4Oj9GVI/UrkBDQRXGOxnAQgAmJ5Y
+ ikTWrMWPfiveUacETyEhWVl7u8UhZcx3yy2te8O0ay7t9fYcZgIEfQPPVVus89acIXlG3wYL
+ DDPvb21OprLxi+ZJ2a0S5we+LcSWN1jByxJlbWBq+/LcMtGAOhNLpysY1gD0Y4UW/eKS+TFZ
+ 562qKC3k1dBvnV9JXCgeS1taYFxRdVAn+2DwK3nuyG/DDq/XgJ5BtmyC3MMx8CiW3POj+O+l
+ 6SedIeAfZlZ7/xhijx82g93h07VavUQRwMZgZFsqmuxBxVGiav2HB+dNvs3PFB087Pvc9OHe
+ qhajPWOP/gNLMmvBvknn1NToM9a8/E8rzcIZXoYs4RggRRYh6wARAQABiQEfBBgBAgAJBQJX
+ GOxnAhsMAAoJEEhHWoN3abky+RUH/jE08/r5QzaNKYeVhu0uVbgXu5fsxqr2cAxhf+KuwT3T
+ efhEP2alarxzUZdEh4MsG6c+X2NYLbD3cryiXxVx/7kSAJEFQJfA5P06g8NLR25Qpq9BLsN7
+ ++dxQ+CLKzSEb1X24hYAJZpOhS8ev3ii+M/XIo+olDBKuTaTgB6elrg3CaxUsVgLBJ+jbRkW
+ yQe2S5f/Ja1ThDpSSLLWLiLK/z7+gaqwhnwjQ8Z8Y9D2itJQcj4itHilwImsqwLG7SxzC0NX
+ IQ5KaAFYdRcOgwR8VhhkOIVd70ObSZU+E4pTET1WDz4o65xZ89yfose1No0+r5ht/xWOOrh8
+ 53/hcWvxHVs=
+Organization: IBM Linux Technology Center
+Date:   Wed, 20 Feb 2019 14:18:56 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9173 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=758 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902200138
+In-Reply-To: <a7986146-f09d-6d40-63f9-8e7307fc2609@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19022020-0052-0000-0000-0000038D72E2
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010633; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000281; SDB=6.01163926; UDB=6.00607770; IPR=6.00944510;
+ MB=3.00025671; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-20 20:19:00
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022020-0053-0000-0000-00005FE9E2C1
+Message-Id: <8bc3e665-828f-8247-0778-56d7ee045e53@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-20_15:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902200138
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ankur Arora <ankur.a.arora@oracle.com>
+On 2/19/19 2:03 PM, Tyrel Datwyler wrote:
+> On 02/19/2019 07:46 AM, Michael Bringmann wrote:
+>> powerpc/pseries: Fix dn reference error in dlpar_cpu_remove_by_index()
+>>
+>> A reference to the device node of the CPU to be removed is released
+>> upon successful removal of the associated CPU device.  If the call
+>> to remove the CPU device fails, dlpar_cpu_remove_by_index() still
+>> frees the reference and this leads to miscomparisons and/or
+>> addressing errors later on.
+>>
+>> This problem may be observed when trying to DLPAR 'hot-remove' a CPU
+>> from a system that has only a single CPU.  The operation will fail
+>> because there is no other CPU to which the kernel operations may be
+>> migrated, but the refcount will still be decremented.
+>>
+>> Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
+>>
+>>
+>> diff --git a/arch/powerpc/platforms/pseries/hotplug-cpu.c b/arch/powerpc/platforms/pseries/hotplug-cpu.c
+>> index 97feb6e..9537bb9 100644
+>> --- a/arch/powerpc/platforms/pseries/hotplug-cpu.c
+>> +++ b/arch/powerpc/platforms/pseries/hotplug-cpu.c
+>> @@ -635,7 +635,8 @@ static int dlpar_cpu_remove_by_index(u32 drc_index)
+>>  	}
+>>
+>>  	rc = dlpar_cpu_remove(dn, drc_index);
+>> -	of_node_put(dn);
+>> +	if (!rc)
+>> +		of_node_put(dn);
+>>  	return rc;
+>>  }
+>>
+> 
+> NACK!
+> 
+> The logic here is wrong. Here is the full function.
+> 
+> static int dlpar_cpu_remove_by_index(u32 drc_index)
+> {
+>         struct device_node *dn;
+>         int rc;
+> 
+>         dn = cpu_drc_index_to_dn(drc_index);
+>         if (!dn) {
+>                 pr_warn("Cannot find CPU (drc index %x) to remove\n",
+>                         drc_index);
+>                 return -ENODEV;
+>         }
+> 
+>         rc = dlpar_cpu_remove(dn, drc_index);
+>         of_node_put(dn);
+>         return rc;
+> }
+> 
+> The call to cpu_drc_index_to_dn() returns a device_node with the reference count
+> incremented. So, regardless of the success or failure of the call to
+> dlpar_cpu_remove() you need to release that reference.
+> 
+> If there is a reference counting issue it is somewhere else.
 
-GNTTABOP_map_grant_ref treats host_addr as an OUT parameter for
-xen_shim_domaim().
+Okay.  Withdrawn while we look some more.
 
-Accordingly it's updated in struct gnttab_unmap_grant_ref before it gets
-used via GNTTABOP_unmap_grant_ref.
+> -Tyrel
 
-Co-developed-by: Joao Martins <joao.m.martins@oracle.com>
-Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
-Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
----
- drivers/xen/gntdev.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
-index 5efc5eee9544..8540a51f7597 100644
---- a/drivers/xen/gntdev.c
-+++ b/drivers/xen/gntdev.c
-@@ -351,6 +351,8 @@ int gntdev_map_grant_pages(struct gntdev_grant_map *map)
- 		}
- 
- 		map->unmap_ops[i].handle = map->map_ops[i].handle;
-+		if (xen_shim_domain())
-+			map->unmap_ops[i].host_addr = map->map_ops[i].host_addr;
- 		if (use_ptemod)
- 			map->kunmap_ops[i].handle = map->kmap_ops[i].handle;
- #ifdef CONFIG_XEN_GRANT_DMA_ALLOC
-@@ -1122,7 +1124,9 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
- 				(map->flags & GNTMAP_readonly))
- 			goto out_unlock_put;
- 	} else {
--		map->flags = GNTMAP_host_map;
-+		map->flags = 0;
-+		if (!xen_shim_domain())
-+			map->flags = GNTMAP_host_map;
- 		if (!(vma->vm_flags & VM_WRITE))
- 			map->flags |= GNTMAP_readonly;
- 	}
-@@ -1207,7 +1211,7 @@ static int __init gntdev_init(void)
- {
- 	int err;
- 
--	if (!xen_domain())
-+	if (!xen_domain() && !xen_shim_domain_get())
- 		return -ENODEV;
- 
- 	use_ptemod = !xen_feature(XENFEAT_auto_translated_physmap);
-@@ -1215,6 +1219,7 @@ static int __init gntdev_init(void)
- 	err = misc_register(&gntdev_miscdev);
- 	if (err != 0) {
- 		pr_err("Could not register gntdev device\n");
-+		xen_shim_domain_put();
- 		return err;
- 	}
- 	return 0;
-@@ -1223,6 +1228,7 @@ static int __init gntdev_init(void)
- static void __exit gntdev_exit(void)
- {
- 	misc_deregister(&gntdev_miscdev);
-+	xen_shim_domain_put();
- }
- 
- module_init(gntdev_init);
 -- 
-2.11.0
+Michael W. Bringmann
+Linux Technology Center
+IBM Corporation
+Tie-Line  363-5196
+External: (512) 286-5196
+Cell:       (512) 466-0650
+mwb@linux.vnet.ibm.com
 
