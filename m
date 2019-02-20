@@ -2,111 +2,100 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E46C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:45:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2C89C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:48:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D2442183F
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:45:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1D402146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 08:48:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20150623.gappssmtp.com header.i=@resnulli-us.20150623.gappssmtp.com header.b="elh6EbWY"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mqThqVkD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726371AbfBTIpr (ORCPT
+        id S1726380AbfBTIsj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 03:45:47 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44583 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725961AbfBTIpr (ORCPT
+        Wed, 20 Feb 2019 03:48:39 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:52472 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725961AbfBTIsi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 03:45:47 -0500
-Received: by mail-wr1-f67.google.com with SMTP id w2so10368977wrt.11
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 00:45:46 -0800 (PST)
+        Wed, 20 Feb 2019 03:48:38 -0500
+Received: by mail-it1-f195.google.com with SMTP id r11so13490310itc.2
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 00:48:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=nmrK6pHyAp3hQBbeF0u9w1vlK8e/A6MyHfzojf4oy6w=;
-        b=elh6EbWYhoI3xngSLeyYCIhVU5V0jktsdmFA2wHVOT5dY2RBp/mYyA11Mj86PO+TlU
-         H1tOOkb9EQea/NtySkcRvDjOUy8jiFzURrfXWzhuZJIMo68sNHjJ6esd2mLachvWQXXr
-         zjmH8Kaq8IsUn8QNYgAYkuIX1a+FD0mP9CEphMA1UXyBmUpjdl12rF54KS6lxNVXBCEN
-         d8KWl04CnweygryRmhDEx+ZoiduQ0PuLfTfkttzIbAX103UbFc/6K3NlefeczZVszIdc
-         YaEdPlVGr4s+8ioN/7EjHnILnelhAjNp8HDUU7QmGk7uC/ey5fdzAM7yI8qUqGuOgfv/
-         DfMg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qNv2M4P5hK8vgl+eEJHQlpufyDv1dYpTyKt+009n7Uw=;
+        b=mqThqVkDspJaz5CY5k2iqD8S1pFo/0Ti1z1sv+zIE/SGBgsYvx52W8qastq4wlde7m
+         cikr+OQxHtsnh7fKdI2AJtpbEfIThOBkhDY7iX7vN4AyfB1vdouIymnrlMy0BTGmBZy/
+         Nf0qWtdg12knaEymlwAgdpcNVPjuKvnEK3V1bQ3lLr2BQTRt0WakJi63ITvujbHNJIB8
+         gjwCnh1FqIPLcKANSgKa+czMLwx3X4JbDDa8znGXnD4Z2NsPdasca0yPb27+/dZWQpLm
+         mauKeYzMBbgDn2eSe+gFbn7Hb87xXb4vjDQ5x7G6WWWGBgZ3AUkUrxwWI4WWrkacVxgz
+         1g9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nmrK6pHyAp3hQBbeF0u9w1vlK8e/A6MyHfzojf4oy6w=;
-        b=a25TrTjLFLJyuw7fiOwBeQ4bCvWSuvarXjj1JSjb0JIiX9LtpQ+h1EjLFtPKwoKVs9
-         4BzwTsZhUxvVGHqovJLfNUB6v9Pfk4Evct3LiPSrIUI6Ihs2xcGZPgECJmDVoD57fD3a
-         KCbslhNkyYfuQVXairtnyNQ5SaUUUt8BMojJGbzqSpwH1au3dLx8M9NXnwReBcaooO0q
-         RDbCHrMNRmz7z6AtY5Q72Od29QuY+AXeXeyp8w0OdWAFzOvrb4cAwhYeK6iOVPajzTC7
-         1nhiD1XHhdqOlr+ftExizaX4j4Qx7pyo+LH9tcrnn460I3vemRSJj/LFJKgvZZ3ISXQw
-         O77Q==
-X-Gm-Message-State: AHQUAuZYZrkwdhZ0BuqhnEHu2KGNgVepN4lc5j/AHQvAAR/oL8/Xqmh5
-        Y7sGAN3svQLaSFalqWK0Tz+iOg==
-X-Google-Smtp-Source: AHgI3IZ8guFEpBPDpvdVin8XQowVVuNSNMsHQgQjiy47uicnTxXLmDhdX7hLxHtySZbgr6rhuDoP2A==
-X-Received: by 2002:adf:c704:: with SMTP id k4mr24986743wrg.142.1550652345626;
-        Wed, 20 Feb 2019 00:45:45 -0800 (PST)
-Received: from localhost (ip-213-220-234-21.net.upcbroadband.cz. [213.220.234.21])
-        by smtp.gmail.com with ESMTPSA id f134sm6497222wme.31.2019.02.20.00.45.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Feb 2019 00:45:45 -0800 (PST)
-Date:   Wed, 20 Feb 2019 09:36:11 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     David Miller <davem@davemloft.net>
-Cc:     vkoul@kernel.org, sfr@canb.auug.org.au, netdev@vger.kernel.org,
-        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-        andrew@lunn.ch
-Subject: Re: linux-next: Fixes tag needs some work in the net-next tree
-Message-ID: <20190220083611.GJ3080@nanopsycho>
-References: <20190220093136.73779781@canb.auug.org.au>
- <20190220044055.GD21884@vkoul-mobl>
- <20190219.224813.723564128666927693.davem@davemloft.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qNv2M4P5hK8vgl+eEJHQlpufyDv1dYpTyKt+009n7Uw=;
+        b=tcGAWGp8zYCN59/0J8w6u8r4e/LlVAnUxJF+ZLrnpfaJMvPKdA4rPcA9LuUu0P9Rev
+         IxIPSj7Q1WilcVtkql/HX2eUY1ZxjcEOW5/zRmX/pUPsqPxRqaql+8vT1iGMNFzuCQ6H
+         6t2z5Rp9wf4TGdU/BDLfa21Jfn4BAPsdSvyUN8O2NE26oZySJsHWiSf9OSm6gQiVJIl3
+         vj5fAtHyGC45IdkkHj2fQU5/eDicQTUs3uBQDpz2pWUI+m+ItqSDSYK+j5xPn5Z/ljh2
+         768kO8kUC9UyKt1Xn0+7KhcgIWmHeAMz4kaUQbduycRvSNIlsugx8J1NWp03Wjx0uOqE
+         NpIg==
+X-Gm-Message-State: AHQUAubC5kTwzOBOFMZA2PBwpzc4E8lfOX1ldaZUig8K7LL19K5QEy2b
+        4FXaGJ7hiGJlYtKVx0NJt2dSoB2WhavP4z/DjADmSQ==
+X-Google-Smtp-Source: AHgI3IYv/DIoBrv+G3AUYclKLXmS8iLMb6iKWzvgdJfeJ22yOOi2PHT6E8ijaHvfp0g6HADCq4BjxSZTQZf+g+L85sQ=
+X-Received: by 2002:a24:d4c1:: with SMTP id x184mr4308688itg.174.1550652517943;
+ Wed, 20 Feb 2019 00:48:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190219.224813.723564128666927693.davem@davemloft.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190220045946.7452-1-vaishali.thakkar@linaro.org> <20190220065541.GA8860@kroah.com>
+In-Reply-To: <20190220065541.GA8860@kroah.com>
+From:   Vaishali Thakkar <vaishali.thakkar@linaro.org>
+Date:   Wed, 20 Feb 2019 14:18:27 +0530
+Message-ID: <CANNG1HXOjyENGocm6qyhoS7Os8AU00e+2_HhqJ_8r7sXQkHOPw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] base: soc: Export soc_device_register/unregister APIs
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rafael@kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wed, Feb 20, 2019 at 07:48:13AM CET, davem@davemloft.net wrote:
->From: Vinod Koul <vkoul@kernel.org>
->Date: Wed, 20 Feb 2019 10:10:55 +0530
+On Wed, 20 Feb 2019 at 12:25, Greg KH <gregkh@linuxfoundation.org> wrote:
 >
->> On 20-02-19, 09:31, Stephen Rothwell wrote:
->>> Hi all,
->>> 
->>> In commit
->>> 
->>>   a968b5e9d587 ("net: dsa: qca8k: Enable delay for RGMII_ID mode")
->>> 
->>> Fixes tag
->>> 
->>>   Fixes: 40269aa9f40a ("net: dsa: qca8k: disable delay for RGMII mode")
->>> 
->>> has these problem(s):
->>> 
->>>   - Target SHA1 does not exist
->>> 
->>> Did you mean:
->>> 
->>>   Fixes: 5ecdd77c61c8 ("net: dsa: qca8k: disable delay for RGMII mode")
->> 
->> Yes looks like I messed up the commit id.. Not sure why :(
->> 
->> Dave would you like to drop this and me sending updated patch or
->> something else..
->> 
->> Sorry about the miss
+> On Wed, Feb 20, 2019 at 10:29:46AM +0530, Vaishali Thakkar wrote:
+> > From: Vinod Koul <vkoul@kernel.org>
+> >
+> > Qcom Socinfo driver can be built as a module, so
+> > export these two APIs.
+> >
+> > Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> > Signed-off-by: Vaishali Thakkar <vaishali.thakkar@linaro.org>
+> > ---
+> > Changes since v1:
+> >       - None
 >
->Doesn't work that way, something in my tree is there forever.
+> This is fixing a build breakage introduced by an earlier patch.  Please
+> rearange the patches so that breakage never happens.
 
-Would be good to have some robot checking "Fixes" sanity...
+Ok, yes. I'll put it as patch two [before adding socinfo driver].
 
+> Also, any chance you can properly "thread" your patches so they all show
+> up together?  git send-email does this automatically...
+
+I'm using send-email only but I was sending it one by one. I believe
+that's the reason why didn't come as a thread. I'll fix that in next version
+too.
+
+> thanks,
+>
+> greg k-h
