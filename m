@@ -2,109 +2,97 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96571C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B54C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:59:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7287E2146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:58:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E773220880
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 13:59:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550671191;
+	bh=Ud5jdsFYmSg0ZW5/m31OCJLPGcn72YaVm0ChgdxLfuA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=cRhaKo2FCA7yoFOBrNut0PJSU2nAp76IG0CKw+K8/qYdyVBC2N6/6bcbrboCGY4L7
+	 dzQ+eVI0JIwR5+Bu2t41Qvee+H+KjIuk4ZtZ+FM62JrUNQXf2hBLllUOghLIHgZkYd
+	 EA8G4NVlAaqRC7J63UMN5lZbVczxvuu7syaVDaZM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbfBTN63 convert rfc822-to-8bit (ORCPT
+        id S1726310AbfBTN7t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 08:58:29 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44799 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbfBTN63 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 08:58:29 -0500
-Received: by mail-wr1-f65.google.com with SMTP id w2so11473442wrt.11;
-        Wed, 20 Feb 2019 05:58:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=9gWmZamgsA69HolfNaaWEg8e9mDbjUxOCkA1kE6tmlw=;
-        b=JwLQUWRUeE0AfMoI5BLp+OZ/NTc8bK62fXyqWugeHk5BPIgpbqt9zDwOjuwctJ41wZ
-         YKdlWq202xDLLgqJ8SgmgPVorwTiQ3vojOPn6SGBLr3Gpr/1fu/QOBUJ+b3BLQLmtMjS
-         W9IodLMuySnCzuegSU1D77QzgR9/Pawh6U89hPsMrflqxMIHT4O4E4EDOUsbc5T7FpJ7
-         DYAZRrTjKXpZESFWcw5UJOandZK6G9PhYSF3E+Cbsmu9BP8k0qEV7c4kH9jOkIDOhddR
-         aZLAG8VvbFDxkfnB2Wg89zxtPneAA9pbPCp0G5Mb9dG5T4Lb9Vgk/0blXHzr9I72AETY
-         RxsQ==
-X-Gm-Message-State: AHQUAuY0ZWz18FzofVyYJnDL8oFGNskSOgpccESEsCLKLdYbcBYbGWZE
-        dmxiRvCvLCUW+ihQjYzUNHdAgdMVWZdMSOQPSCQ=
-X-Google-Smtp-Source: AHgI3Iat7/JFbIEG3jubX1hdHuYXOBePGIB2MNcS2gCDAizWlmp4cvnDlUS5xTQEYFyWDvYEAscp1uqyZkNB7AFdOg0=
-X-Received: by 2002:a5d:6252:: with SMTP id m18mr6387918wrv.199.1550671107581;
- Wed, 20 Feb 2019 05:58:27 -0800 (PST)
+        Wed, 20 Feb 2019 08:59:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43206 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725822AbfBTN7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 08:59:48 -0500
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97B922183F;
+        Wed, 20 Feb 2019 13:59:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550671187;
+        bh=Ud5jdsFYmSg0ZW5/m31OCJLPGcn72YaVm0ChgdxLfuA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=E+BuyOCEFRhGhXZyV470muEmYhe5q47bUMt/wF2Gi/QHUvt1f/Mo+U/D91fkrRxqE
+         Jr0A0dMoinHAeFemKJ72cpSwwjytmhlhchJh/hjeSekN0acuit8cHajFvKuBRwpXt5
+         ASt4zIi9ifC0ipzXk/3r9I1D08x6+isaqYC8qExE=
+Received: by mail-lf1-f46.google.com with SMTP id v7so17663170lfd.2;
+        Wed, 20 Feb 2019 05:59:47 -0800 (PST)
+X-Gm-Message-State: AHQUAuZHXSejx/hnLPBC7mARNOOMnCeQ3ogysBZy/fI1xrmQTBlGGJBv
+        UhZ935LXWgEK73l0GdqRR+2lEhSj+pSMeVu9QBE=
+X-Google-Smtp-Source: AHgI3IY+0B2iQKWk2fzKTKhsS0W87BddOqWyWa+1UJI1wXIbSLKWgt6UG1/re8aFf1EkDVQycKchEv0fWqzpwMY/IYE=
+X-Received: by 2002:a19:d83:: with SMTP id 125mr19889468lfn.159.1550671185658;
+ Wed, 20 Feb 2019 05:59:45 -0800 (PST)
 MIME-Version: 1.0
-References: <20190216151826.11584-1-tiny.windzz@gmail.com> <CGME20190216152000epcas1p216810769e13852c4b92896348657b6d6@epcas1p2.samsung.com>
- <20190216151826.11584-3-tiny.windzz@gmail.com> <47edbfaa-2c2d-04d3-cf24-8368f723c6fa@samsung.com>
-In-Reply-To: <47edbfaa-2c2d-04d3-cf24-8368f723c6fa@samsung.com>
-Reply-To: myungjoo.ham@gmail.com
-From:   MyungJoo Ham <myungjoo.ham@samsung.com>
-Date:   Wed, 20 Feb 2019 22:57:49 +0900
-Message-ID: <CAJ0PZbQORXei7y2RkSTF8SQJCya=d13x9n0DBYpNby-rSccUMg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] PM / devfreq: rockchip-dfi: remove unneeded semicolon
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     Yangtao Li <tiny.windzz@gmail.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-rockchip@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org
+References: <20190219130337.21353-1-stuart@menefy.org>
+In-Reply-To: <20190219130337.21353-1-stuart@menefy.org>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 20 Feb 2019 14:59:34 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPediHZqN3MRMYUaQT_jKyvb_20fxZm8paV1AVysWHScsQ@mail.gmail.com>
+Message-ID: <CAJKOXPediHZqN3MRMYUaQT_jKyvb_20fxZm8paV1AVysWHScsQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] Devicetree updates for Exynos 5260
+To:     Stuart Menefy <stuart.menefy@mathembedded.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 9:41 AM Chanwoo Choi <cw00.choi@samsung.com> wrote:
+On Tue, 19 Feb 2019 at 14:03, Stuart Menefy
+<stuart.menefy@mathembedded.com> wrote:
 >
-> Hi,
+> These four patches are stand alone updates for the Exynos 5260 device
+> tree, which do not depend on any other code changes. They either
+> fix issues or add functionality which is already available
+> on other Exynos devices. They were previously posted as version 1
+> of the larger patch series "Resuscitate Exynos 5260 support"
+> https://www.spinics.net/lists/linux-samsung-soc/#65035
+> which was only posted to the samsung-soc mailing list.
 >
-> On 19. 2. 17. 오전 12:18, Yangtao Li wrote:
-> > The semicolon is unneeded, so remove it.
-> >
-> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> > ---
-> >  drivers/devfreq/event/rockchip-dfi.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/devfreq/event/rockchip-dfi.c b/drivers/devfreq/event/rockchip-dfi.c
-> > index 22b113363ffc..fcbf76ebf55d 100644
-> > --- a/drivers/devfreq/event/rockchip-dfi.c
-> > +++ b/drivers/devfreq/event/rockchip-dfi.c
-> > @@ -211,7 +211,7 @@ static int rockchip_dfi_probe(struct platform_device *pdev)
-> >       if (IS_ERR(data->clk)) {
-> >               dev_err(dev, "Cannot get the clk dmc_clk\n");
-> >               return PTR_ERR(data->clk);
-> > -     };
-> > +     }
-> >
-> >       /* try to find the optional reference to the pmu syscon */
-> >       node = of_parse_phandle(np, "rockchip,pmu", 0);
-> >
+> Changes since v1:
+> - Removed from larger patch set for easier review
+> - Applied reviewer comments to patch 2/4 "Add high speed I2C ports
+>   for exynos5260"
+> - Expanded patch comments
 >
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Stuart Menefy (4):
+>   ARM: dts: exynos: Use bustop PLL as the source for MMC clocks on
+>     Exynos5260
+>   ARM: dts: exynos: Add high speed I2C ports for exynos5260
+>   ARM: dts: exynos: Add interrupts for dedicated EINTs on Exynos5260
+>   ARM: dts: exynos: Fix interrupt for shared EINTs on Exynos5260
 
-Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Thanks for the changes. All look fine to me but it is too late to pick
+them up in this cycle. I will take them after merge window.
 
-Merged. Thanks.
-
->
-> --
-> Best Regards,
-> Chanwoo Choi
-> Samsung Electronics
-
-
-
--- 
-MyungJoo Ham, Ph.D.
-S/W Center, Samsung Electronics
+Best regards,
+Krzysztof
