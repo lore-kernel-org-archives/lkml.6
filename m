@@ -5,42 +5,53 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A25C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D75C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:15:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3FC920880
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:15:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0E1D2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 14:15:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbfBTOPD (ORCPT
+        id S1726937AbfBTOPU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 09:15:03 -0500
-Received: from foss.arm.com ([217.140.101.70]:58456 "EHLO foss.arm.com"
+        Wed, 20 Feb 2019 09:15:20 -0500
+Received: from mga18.intel.com ([134.134.136.126]:27621 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726030AbfBTOPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 09:15:02 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 84AF1EBD;
-        Wed, 20 Feb 2019 06:15:02 -0800 (PST)
-Received: from [10.1.196.50] (e108454-lin.cambridge.arm.com [10.1.196.50])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 74E5F3F690;
-        Wed, 20 Feb 2019 06:15:01 -0800 (PST)
-Subject: Re: xen/evtchn and forced threaded irq
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Dave P Martin <dave.martin@arm.com>
-References: <5e256d9a-572c-e01e-7706-407f99245b00@arm.com>
- <20190220000209.GA4091@localhost.localdomain>
-From:   Julien Grall <julien.grall@arm.com>
-Message-ID: <a872d480-9f1b-6cd7-e507-ac4fcdf705af@arm.com>
-Date:   Wed, 20 Feb 2019 14:15:00 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        id S1726030AbfBTOPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 09:15:19 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 06:15:19 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,391,1544515200"; 
+   d="scan'208";a="145813486"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga004.fm.intel.com with ESMTP; 20 Feb 2019 06:15:16 -0800
+Received: from [10.125.252.177] (abudanko-mobl.ccr.corp.intel.com [10.125.252.177])
+        by linux.intel.com (Postfix) with ESMTP id 584CB58019B;
+        Wed, 20 Feb 2019 06:15:14 -0800 (PST)
+Subject: Re: [PATCH v2 2/4] perf record: implement -z=<level> and
+ --mmap-flush=<thres> options
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <044ee2be-2e1d-e90f-7317-40083b5e716c@linux.intel.com>
+ <2d676199-bfe0-d8e0-442e-41280046f819@linux.intel.com>
+ <20190212130828.GD775@krava>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <39a1cf8d-2496-72f6-c3a4-a4abb8008689@linux.intel.com>
+Date:   Wed, 20 Feb 2019 17:15:13 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <20190220000209.GA4091@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20190212130828.GD775@krava>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -48,68 +59,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
 
-Thank you for your answer.
-
-On 20/02/2019 00:02, Boris Ostrovsky wrote:
-> On Tue, Feb 19, 2019 at 05:31:10PM +0000, Julien Grall wrote:
->> Hi all,
->>
->> I have been looking at using Linux RT in Dom0. Once the guest is started,
->> the console is ending to have a lot of warning (see trace below).
->>
->> After some investigation, this is because the irq handler will now be threaded.
->> I can reproduce the same error with the vanilla Linux when passing the option
->> 'threadirqs' on the command line (the trace below is from 5.0.0-rc7 that has
->> not RT support).
->>
->> FWIW, the interrupt for port 6 is used to for the guest to communicate with
->> xenstore.
->>
->>  From my understanding, this is happening because the interrupt handler is now
->> run in a thread. So we can have the following happening.
->>
->>     Interrupt context            |     Interrupt thread
->>                                  |
->>     receive interrupt port 6     |
->>     clear the evtchn port        |
->>     set IRQF_RUNTHREAD	        |
->>     kick interrupt thread        |
->>                                  |    clear IRQF_RUNTHREAD
->>                                  |    call evtchn_interrupt
->>     receive interrupt port 6     |
->>     clear the evtchn port        |
->>     set IRQF_RUNTHREAD           |
->>     kick interrupt thread        |
->>                                  |    disable interrupt port 6
->>                                  |    evtchn->enabled = false
->>                                  |    [....]
->>                                  |
->>                                  |    *** Handling the second interrupt ***
->>                                  |    clear IRQF_RUNTHREAD
->>                                  |    call evtchn_interrupt
->>                                  |    WARN(...)
->>
->> I am not entirely sure how to fix this. I have two solutions in mind:
->>
->> 1) Prevent the interrupt handler to be threaded. We would also need to
->> switch from spin_lock to raw_spin_lock as the former may sleep on RT-Linux.
->>
->> 2) Remove the warning
+On 12.02.2019 16:08, Jiri Olsa wrote:
+> On Mon, Feb 11, 2019 at 11:22:38PM +0300, Alexey Budankov wrote:
 > 
-> I think access to evtchn->enabled is racy so (with or without the warning) we can't use it reliably.
+> SNIP
+> 
+>> -	if (rec->opts.nr_cblocks > nr_cblocks_max)
+>> -		rec->opts.nr_cblocks = nr_cblocks_max;
+>> -	if (verbose > 0)
+>> -		pr_info("nr_cblocks: %d\n", rec->opts.nr_cblocks);
+>> +	if (rec->opts.comp_level > 22)
+>> +		rec->opts.comp_level = 0;
+>> +	if (record__comp_enabled(rec) && !rec->opts.nr_cblocks) {
+>> +		 /*
+>> +		  * Allocate aio.data[0] buffer for compression.
+>> +		  */
+>> +		rec->opts.nr_cblocks = -1;
+>> +	}
+> 
+> I assume you're using aio.data[0] as a buffer for non-aio case
+> as compression buffer.. if that's the case, please dont do that
+> and use separate buffer for that
 
-Thinking about it, it would not be the only issue. The ring is sized to contain 
-only one instance of the same event. So if you receive twice the event, you may 
-overflow the ring.
+Do you want it to be one more field in the mmap struct or 
+aio related fields still could be reworked?
+
+Thanks,
+Alexey
 
 > 
-> Another alternative could be to queue the irq if !evtchn->enabled and handle it in evtchn_write() (which is where irq is supposed to be re-enabled).
-What do you mean by queue? Is it queueing in the ring? If so, wouldn't it be 
-racy as described above?
-
-Cheers,
-
--- 
-Julien Grall
+> jirka
+> 
