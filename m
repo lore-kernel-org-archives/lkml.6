@@ -2,152 +2,137 @@ Return-Path: <SRS0=sczE=Q3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF34EC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27B2AC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EBC420851
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:29:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB5EF20851
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Feb 2019 11:33:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HYTfXEaP"
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="oSB+ZW61"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbfBTL3i (ORCPT
+        id S1726684AbfBTLdR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 06:29:38 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42454 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726455AbfBTL3h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 06:29:37 -0500
-Received: by mail-lj1-f195.google.com with SMTP id d14so9303240ljl.9
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 03:29:35 -0800 (PST)
+        Wed, 20 Feb 2019 06:33:17 -0500
+Received: from mail-eopbgr1410124.outbound.protection.outlook.com ([40.107.141.124]:21945
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726360AbfBTLdQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 06:33:16 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0ekYov34e3h7u4UagIP+Zwo8KjjfYo+mnO834hleTZ4=;
-        b=HYTfXEaPkaICjJnZ4jr8pRdKYfpJNSFMHI8bCK02hqnq5Ibjj4ZZGTU7D4fXTqJzXS
-         U5kXaWRwI28r8buinjdqah6lA6jNn2yJU74clGfzkZnViqBKQ45qcvctt20YxUx6cxIm
-         s3T5Wc+fci5nTIZdZ4vurnByMBEDoihIfwGDsTf8r7NjcVvr52M3yagkQugubIdiq6Ky
-         yfa6ownOi8PUg1lQSUfBfEEsEf8yaa/eheO/9JrIMY000UiwP7WOTzP2SE7sU4/z8Wfy
-         giO+nbJr2fM+sctHb7T4UvqhlodCx51nMMkzx/2fE7RwS300qN2ehJGh2Cxs1+ZK3YGS
-         AWug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0ekYov34e3h7u4UagIP+Zwo8KjjfYo+mnO834hleTZ4=;
-        b=sw2sgc5CDLo/QZ/mx5weKdWCTxfkp2r0cvWjK+YiBh+mD13FZr75WmXA21bVR+HpO7
-         PWnOIVn3DSjp/kh56+9/iqpFKlokaZPwpA23SgmHQYehrRLP3BJKNn2nq74hkhlAni1e
-         i6WE1dw4Ga4+K/L7HIfbt/HDd/oU9Uc3azKTpuwzdV6kW2JXyr3JbjrScfD9Gv8zCBRM
-         L0IeBZKdmISbFzzCL7C9shUq30LlzJiVjSDJKu0r5qNZoE8Wze123t8pt6BZxpnCwPPY
-         rW6UkyfoRCxjJWHaQJmLQoxaEd5zaNlPjz438hBDc2w4hfTBC7lYtGen3ykZJ5ILHO7d
-         eCwA==
-X-Gm-Message-State: AHQUAubdzhZsfD5zV4QiEeiLKlcXNG7YX0VjD2+OrnO6XpAtw4l0JqG1
-        xs0bJN/rJ6+70AHrhiBR1jPmTp+c0P7LUBqIMhky6g==
-X-Google-Smtp-Source: AHgI3IZ6DunjBMJqeQTlyzBj4lmU5s4I2BoY2Tz1fFIKZr5d7bdtC1aCzA+7qgcnorplKV0zkhifYj1JTb48/zDEs7k=
-X-Received: by 2002:a2e:81c7:: with SMTP id s7mr20131487ljg.146.1550662174696;
- Wed, 20 Feb 2019 03:29:34 -0800 (PST)
-MIME-Version: 1.0
-References: <a9718ae1e97a5911f47874fe23c00ef297d7fed8.1548158832.git.baolin.wang@linaro.org>
- <CAK8P3a2zkhrZLMi5KZ5=fGJCt85dad3_pZC0o7GqcwJkk4es9w@mail.gmail.com>
- <CAMz4ku+PR4bHtcPu2uT2f974+FWJVi8Tp3WzmuqE1TS-M-QawQ@mail.gmail.com>
- <CAMz4kuLEut0LqZ4bSAGJDufE8xHr6DgZ3Z1RCLQ10q_k6MUesw@mail.gmail.com>
- <CAK8P3a1Zq6XjymG3sAaHGeNRxU5UXPfJPbi0A9s47cTVK7vC3g@mail.gmail.com>
- <CAMz4kuL=B53xLk4SFbrwWeUhp4P9zbUfOmXgftQCEjVSwOnD5A@mail.gmail.com>
- <CAK8P3a03rPjWQvGrDupoTAywVmjCZdpSJpqW9Sv=NVPR2uwZeQ@mail.gmail.com>
- <CAMz4kuKnVppCB0-9LVgq8bya6=iWPhMcrHL_N53QfiU5Kn9YAA@mail.gmail.com>
- <CAMuHMdWPZGYpvANL_V=YszPWjtTA+ZnU6GVDmn188LC=eC005Q@mail.gmail.com>
- <CAMz4ku+yzwaww5o06tz9-8n99UfiVh6d5UB2L12RYMpTow6K3w@mail.gmail.com>
- <20190219122027.GA21884@vkoul-mobl> <CAMz4kuK89AyL6PA2dRF1t=tR6-fKXKp+x3oi+cKDqSqi08xv0Q@mail.gmail.com>
- <CAK8P3a0z4YSr2BCnM91gBNduhODmx25fF7y6_wgsc_u3i_5YEg@mail.gmail.com>
-In-Reply-To: <CAK8P3a0z4YSr2BCnM91gBNduhODmx25fF7y6_wgsc_u3i_5YEg@mail.gmail.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Wed, 20 Feb 2019 19:29:23 +0800
-Message-ID: <CAMz4kuLZH2dt5JTB1uYcLkm4EG_Av=7mnAj51s-J1-6E8+R5CA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: dmaengine: Add one new cell to present
- hardware slave id
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Vinod Koul <vkoul@kernel.org>,
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6G9qisA95YL6yM0O/NBczs3hvbvxLiM3YwmlODlQVs4=;
+ b=oSB+ZW61BZjI35vxbBoEHbFTatGQiF+poUka7qnSRg/NUAUN3NVpo4jfVWvCjYy6n1hFJKycsPicfUYGVXRsZi4GgARgWJbrMXGVFSbWlwb2E5s2B1A4pDK6k4YJr9/B5QubL+AKzMfktUu1qoIKH6QlevF7U5qZXH5D+W+Tq6I=
+Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com (52.133.163.146) by
+ TY1PR01MB1563.jpnprd01.prod.outlook.com (52.133.162.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.20; Wed, 20 Feb 2019 11:33:12 +0000
+Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com
+ ([fe80::4cc6:14ba:d8cd:4107]) by TY1PR01MB1769.jpnprd01.prod.outlook.com
+ ([fe80::4cc6:14ba:d8cd:4107%2]) with mapi id 15.20.1622.020; Wed, 20 Feb 2019
+ 11:33:12 +0000
+From:   Phil Edworthy <phil.edworthy@renesas.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+CC:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Olof Johansson <olof@lixom.net>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Lyra Zhang <zhang.lyra@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        DTML <devicetree@vger.kernel.org>, arm-soc <arm@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dmaengine@vger.kernel.org, eric.long@unisoc.com,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: RE: [PATCH v4 2/2] irqchip: Add support for Renesas RZ/N1 GPIO
+ interrupt multiplexer
+Thread-Topic: [PATCH v4 2/2] irqchip: Add support for Renesas RZ/N1 GPIO
+ interrupt multiplexer
+Thread-Index: AQHUyGuWxb9ZURok+kaTr7Tx2RFLP6XnkpEAgADP5VCAABQQAIAAFVzA
+Date:   Wed, 20 Feb 2019 11:33:12 +0000
+Message-ID: <TY1PR01MB1769C8ADD97861A57577853AF57D0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <20190219155511.28507-1-phil.edworthy@renesas.com>
+        <20190219155511.28507-3-phil.edworthy@renesas.com>
+        <20190219202842.59bc7719@why.wild-wind.fr.eu.org>
+        <TY1PR01MB17696D6C85CE6294B8C75F11F57D0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <86va1erd1n.wl-marc.zyngier@arm.com>
+In-Reply-To: <86va1erd1n.wl-marc.zyngier@arm.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=phil.edworthy@renesas.com; 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 79e98c61-3ca6-4a43-a87b-08d697273251
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1563;
+x-ms-traffictypediagnostic: TY1PR01MB1563:
+x-microsoft-exchange-diagnostics: 1;TY1PR01MB1563;20:coiu6uczEfE2uDQIW4v1U6mkKTb1CemFdzPFVLrRPmKBrKi4Ecq+Bq9O11BHJ7/qxlyvZnfFrzokQSXjflcR66TaOsCyaOk++kh1M402YMTt2Em8lzm2FPzd3POsFqTXa3q4Pxaj0qrp+D6sWtUqIyxU1Gpo9F+eJI+K9R4TPw8=
+x-microsoft-antispam-prvs: <TY1PR01MB1563AAD8EEEBB58C988FE80BF57D0@TY1PR01MB1563.jpnprd01.prod.outlook.com>
+x-forefront-prvs: 0954EE4910
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(346002)(376002)(396003)(366004)(199004)(189003)(316002)(4326008)(25786009)(9686003)(55016002)(11346002)(6436002)(3846002)(71190400001)(305945005)(68736007)(54906003)(2906002)(6246003)(229853002)(6116002)(33656002)(71200400001)(93886005)(99286004)(7696005)(76176011)(53936002)(44832011)(7736002)(53546011)(8936002)(14444005)(66066001)(256004)(102836004)(486006)(6506007)(26005)(6916009)(74316002)(81166006)(446003)(5660300002)(97736004)(478600001)(186003)(8676002)(86362001)(106356001)(105586002)(81156014)(476003)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1563;H:TY1PR01MB1769.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: m8zrWmjEL4X8V3RzpMPn5qPMiFNY2+mojOztXmTyHvAmXzV9N6yue9RHsyQA33GwYMq7HaLzkGW+al6+73wOJJ2AvMcsBGfn12dtWppNexC351mbhtCWSg/MYH4vcjVL/4ZhWO8XwKrCZ4N/cmfiqg2Cj2K3f3KUYlAs3RvNKCj+MF5p39WZOJ++GvQ35vHjFzFkhnRSgSCI1geAy0HCXJq7qL6o4VUxQZRAnm5mQKQqP2XIY1ugm4j6mH+lPxaNqBMKXJMdeQW9YxvIccQNcQPlMVUBBFhmxZAjGK9+MYLVqPZu1ZjWSDp6AJJnkkBgeCVa68N/wjDufR2dyGNKlKrxGU9tgc9Fb/VyZGfwkw5WY+IZyykD6TZtjbVlHc+pT4gQ46P9jvi5udIyX7epeoYBmule10uSANAsi9ecd8E=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 79e98c61-3ca6-4a43-a87b-08d697273251
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Feb 2019 11:33:12.2354
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1563
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Feb 2019 at 17:08, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Wed, Feb 20, 2019 at 4:13 AM Baolin Wang <baolin.wang@linaro.org> wrote:
-> > On Tue, 19 Feb 2019 at 20:20, Vinod Koul <vkoul@kernel.org> wrote:
-> > > On 19-02-19, 17:49, Baolin Wang wrote:
-> > > > On Tue, 19 Feb 2019 at 17:30, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > > > On Tue, Feb 19, 2019 at 4:15 AM Baolin Wang <baolin.wang@linaro.org> wrote:
-> > > > > > On Mon, 18 Feb 2019 at 20:23, Arnd Bergmann <arnd@arndb.de> wrote:
-> > > > > > > On Mon, Feb 18, 2019 at 11:52 AM Baolin Wang <baolin.wang@linaro.org> wrote:
-> > > > > > > > On Mon, 18 Feb 2019 at 18:31, Arnd Bergmann <arnd@arndb.de> wrote:
-> > > > > > > I did understand the need for a slave-id, I was instead wondering about
-> > > > > > > the channel-id number. On many SoCs, all channels are equal, and you
-> > > > > > > just have to pick one of those with the right capabilities for a particular
-> > > > > > > slave.
-> > > > > >
-> > > > > > Yes, all channels are equal. We just set a unique slave id for the
-> > > > > > channel for a particular slave. For example, the SPI slave can use
-> > > > > > channel 10 for tx transfer by setting slave id 11, or it also can use
-> > > > > > channel 9 for tx transfer by setting same slave id 11.
-> > > > >
-> > > > > So the channel selection is software policy, not hardware description, and
-> > > > > thus doesn't belong in DT?
-> > > > >
-> > > > > Can't the DMA engine driver allocate channels dynamically, removing the
-> > > > > need to specify this in DT?
-> > > >
-> > > > In theory we can do as you suggested. But we still want to
-> > > > manage/assign the DMA channel resources manually for one SoC, we can
-> > > > make sure some important DMA slaves (such as audio)  can request a DMA
-> > > > channel at runtime firstly, another benefit is that it is easy to
-> > > > debug since we can easily know which channel is assigned for this
-> > > > slave.
+Hi Marc,
+
+On 20 February 2019 10:05 Marc Zyngier wrote:
+> On Wed, 20 Feb 2019 09:07:02 +0000, Phil Edworthy wrote:
+> > On 19 February 2019 20:29 Marc Zyngier wrote:
+>=20
+> [...]
+>=20
+> > > > +	for (i =3D 0; i < MAX_NR_INPUT_IRQS; i++)
+> > > > +		irq_create_mapping(priv->irq_domain, i);
 > > >
-> > > Are  you suggesting that you have more users than channels available?
+> > > This should never happen. Mappings should be created from discovering
+> the
+> > > interrupt specifiers for devices in the DT, and not eagerly at probe =
+time.
 > >
-> > Until now we have not met this issue, but we can not make sure if this
-> > can happen in future. Moreover DMA channel resources are belonging to
-> > the DMA engine's hardware resources, I think it should be described in
-> > DT like many other drivers did.
->
-> As far as I can tell, most platforms do not describe the assignment
-> of resources in DT for dma engines, the numbers in there are meant to
-> describe whatever is fixed, and most platforms should do it that way.
->
-> The naming is sometimes a bit confusing, as a dma request line
-> assignment can be called a slave-id or a channel-id depending whose
-> documentation you read. The drivers/dma/virt-dma.c implementation
-> is used in some cases to represent request numbers as virtual
-> channels, so a dmaengine driver can allow one dma_request_chan()
-> per slave, and then assign the hardware channels dynamically
-> while doing a transfer, rather than having a fixed channel assignment
-> when we first ask for a channel.
+> > The key issue here is that the mappings should not be dynamically
+> > allocated.  On the device that has this hardware, there is a Cortex
+> > M3 that is likely to use some of these GPIO interrupts.  Maybe it
+> > would be better to limit the number of GPIO irqs that Linux can
+> > configure dynamically.
+>=20
+> But whatever the M3 is going to use is known statically for a given
+> instance of this platform, right? You can always tell from the device
+> tree which pins are available for Linux and which are not. Or can't you?
+Yes, you can tell what pins are available to Linux. You can't tell how
+many pins have been setup as GPIO irqs for use by the M3 though.
+I suppose the DT could describe the M3 as well, though I can imagine
+that could get complicated. I've not seen a DT that covers different
+cores running different software, esp. when the M3 firmware doesn't
+use DT.
+I was thinking that the DT could have a prop to tell this driver what
+GPIO irqs are already in use.
+=20
+> > Looks like I've gone off in the wrong direction yet again.
+>=20
+> Nothing we can't help with. If you can explain all the constraints of
+> the platform, we can come up with a fairly simple driver. And surely
+> LinusW can chime in for the DT part, which seems to need some loving
+> too.
+Many thanks, I need some help here!
 
-Okay, sounds reasonable to me, and I think no issues will happen if we
-assign channels dynamically after some slave usages' investigation.
-
-I will remove channel id from DT in next version. Thanks for all your help.
-
--- 
-Baolin Wang
-Best Regards
+Phil
