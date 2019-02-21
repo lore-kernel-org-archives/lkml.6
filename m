@@ -2,110 +2,112 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3493AC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C04C1C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:29:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F003720818
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:28:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="sdLe5Ces"
+	by mail.kernel.org (Postfix) with ESMTP id 9A2B120818
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:29:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbfBUQ2m (ORCPT
+        id S1727740AbfBUQ3C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 11:28:42 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37698 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbfBUQ2m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 11:28:42 -0500
-Received: by mail-pl1-f195.google.com with SMTP id q3so7038706pll.4
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 08:28:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=fsXbxFn1053YWraWQi+gYikoNqyvp3tdWnPT3zClaqk=;
-        b=sdLe5CesQ9owobXpWOPfLZl3QBk0L3TooAJQVi0U0YivnJbPWZh4tRfrDCGn6hQcn3
-         Rvrk9KsLgo+a1MEHjfd80DmkKuZEupP3Qk656dIPBHxKnhmcnO1Ln0SI+u/8rav8/Y4Q
-         72cdLfs2zphbQ6lMr0BD6aI5iHMLV8ijgmTBsysawCcBbhNLz3C5J4ZWBtwYWQ72b4lO
-         pv+iOT9UpWt7vJpuXSPb00U7xajSt3zBamnarPyes8ZzXdswZvXIpaNpUT7NSynxGPcW
-         oITuVEGFBLtxu2PzKVlPg9Rf715DeBzivGg8GRMZWnZbsnnGlUN4wi52u5mrD1g5Gwtf
-         epoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=fsXbxFn1053YWraWQi+gYikoNqyvp3tdWnPT3zClaqk=;
-        b=NQ4q0/aVWa8bZGzPOhodsh60JRI7EBZQaLJKOklmkvFP2kg4ivhCEM2iIu175XK3+K
-         bBEr4TJs8Pws9LFudZctKkRqKbl1aH8cD1my3s9psCrxO0FGXcYlaOFoNCIOEGc9nhA7
-         8SuhYWz7eb97M3ux6bmBUZOjfVcHXEvlIe50VbPt5XgRCBov1CdY9PEZst/mxSmIidFJ
-         AcEjiofrmQqCdvGSy6Kb31OJmkw4HSqxfeNJeb/x8wi7QLCRX5NoxCvBM2RdzIyvs2FZ
-         bGMXsVzR92r7wS4egMDi5zbNaZrSbDAPvKDNq1yBIvnyMpN2lO4rre2zhXEd/T0+pZdj
-         1oRQ==
-X-Gm-Message-State: AHQUAubc4cEWxLgiqj/TXncLznRra9QjInYJwKIVeeDv1XsEEL/ylpZg
-        doVlUG2b5RPGNQoifYUAgsJGwA==
-X-Google-Smtp-Source: AHgI3IbZUUjJQv1uQ4ITCQ1rRYKa5VPYuqg4wArA5uWomMmrxNDPH18Nh/RAkVmNly4s+mRXSaVJ+g==
-X-Received: by 2002:a17:902:76c7:: with SMTP id j7mr10661504plt.121.1550766521372;
-        Thu, 21 Feb 2019 08:28:41 -0800 (PST)
-Received: from localhost.localdomain (220-133-186-239.HINET-IP.hinet.net. [220.133.186.239])
-        by smtp.gmail.com with ESMTPSA id x23sm51926582pfe.0.2019.02.21.08.28.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Feb 2019 08:28:40 -0800 (PST)
-From:   Axel Lin <axel.lin@ingics.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Henry Chen <henryc.chen@mediatek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] regulator: mt6311: Use linear instead of linear range for mt6311_buck_ops
-Date:   Fri, 22 Feb 2019 00:28:31 +0800
-Message-Id: <20190221162831.11693-1-axel.lin@ingics.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 21 Feb 2019 11:29:02 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35060 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726074AbfBUQ3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 11:29:01 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A6A8D30A56BB;
+        Thu, 21 Feb 2019 16:29:01 +0000 (UTC)
+Received: from krava (ovpn-204-108.brq.redhat.com [10.40.204.108])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 69D6E1001DD3;
+        Thu, 21 Feb 2019 16:28:59 +0000 (UTC)
+Date:   Thu, 21 Feb 2019 17:28:58 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+Cc:     linux-perf-users@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf hist: fix memory leak if histogram entry is reused
+Message-ID: <20190221162858.GA3940@krava>
+References: <20190221122306.1511-1-jonas.rabenstein@studium.uni-erlangen.de>
+ <20190221123909.GG10990@krava>
+ <20190221135320.io7egcwajehfrdd5@studium.uni-erlangen.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190221135320.io7egcwajehfrdd5@studium.uni-erlangen.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 21 Feb 2019 16:29:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current code already set .min_uV and .uV_step fields and it actually can
-use regulator_list_voltage_linear.
-So remove buck_volt_range and use regulator_list_voltage_linear instead.
+On Thu, Feb 21, 2019 at 02:53:20PM +0100, Jonas Rabenstein wrote:
+> On Thu, Feb 21, 2019 at 01:39:09PM +0100, Jiri Olsa wrote:
+> > On Thu, Feb 21, 2019 at 01:23:06PM +0100, Jonas Rabenstein wrote:
+> > > In __hists__add_entry the srcline of the addr_location is duplicated
+> > > for the hist_entry. If hists__findnew_entry returns an already existing
+> > > hist_entry the srcline has to be freed again as no further reference to
+> > > that duplicated srcline would exists anymore.
+> > > 
+> > > Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+> > > ---
+> > >  tools/perf/util/hist.c | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > > 
+> > > diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
+> > > index 8aad8330e392..25b8dbdbbe87 100644
+> > > --- a/tools/perf/util/hist.c
+> > > +++ b/tools/perf/util/hist.c
+> > > @@ -623,6 +623,9 @@ __hists__add_entry(struct hists *hists,
+> > >  		.ops = ops,
+> > >  	}, *he = hists__findnew_entry(hists, &entry, al, sample_self);
+> > >  
+> > > +	if (he && he->srcline != entry.srcline)
+> > > +		free(entry.srcline);
+> > > +
+> > >  	if (!hists->has_callchains && he && he->callchain_size != 0)
+> > >  		hists->has_callchains = true;
+> > >  	return he;
+> > 
+> > nice, do we have similar issue in here?
+> > 
+> > jirka
+> > 
+> > 
+> > ---
+> > diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
+> > index 216388003dea..e65e6822c848 100644
+> > --- a/tools/perf/util/hist.c
+> > +++ b/tools/perf/util/hist.c
+> > @@ -966,7 +966,7 @@ iter_add_next_cumulative_entry(struct hist_entry_iter *iter,
+> >  			.map = al->map,
+> >  			.sym = al->sym,
+> >  		},
+> > -		.srcline = al->srcline ? strdup(al->srcline) : NULL,
+> > +		.srcline = al->srcline,
+> While this shouldn't leak the memory, we may end up with an al->srcline
+> to get free afterwards while still having a reference on it within the
+> hist_entry... Also I could not find where/how the hist_entry is freed up
+> so we may get an double free if both of al and he clean the srcline.
+> Of course, with your solution we could spare the useless strdup/free if
+> we find an hist_entry (which should be the typical case for hotspots..).
+> Taking a deeper look thus should be beneficial - but I do not have the
+> time for that right now because I'm still working on the inline-symbol
+> integration which is more important for me...
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/regulator/mt6311-regulator.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ok, I'll check it 
 
-diff --git a/drivers/regulator/mt6311-regulator.c b/drivers/regulator/mt6311-regulator.c
-index 0495716fd35f..01d69f43d2b0 100644
---- a/drivers/regulator/mt6311-regulator.c
-+++ b/drivers/regulator/mt6311-regulator.c
-@@ -38,13 +38,9 @@ static const struct regmap_config mt6311_regmap_config = {
- #define MT6311_MAX_UV		1393750
- #define MT6311_STEP_UV		6250
- 
--static const struct regulator_linear_range buck_volt_range[] = {
--	REGULATOR_LINEAR_RANGE(MT6311_MIN_UV, 0, 0x7f, MT6311_STEP_UV),
--};
--
- static const struct regulator_ops mt6311_buck_ops = {
--	.list_voltage = regulator_list_voltage_linear_range,
--	.map_voltage = regulator_map_voltage_linear_range,
-+	.list_voltage = regulator_list_voltage_linear,
-+	.map_voltage = regulator_map_voltage_linear,
- 	.set_voltage_sel = regulator_set_voltage_sel_regmap,
- 	.get_voltage_sel = regulator_get_voltage_sel_regmap,
- 	.set_voltage_time_sel = regulator_set_voltage_time_sel,
-@@ -71,8 +67,6 @@ static const struct regulator_ops mt6311_ldo_ops = {
- 	.min_uV = MT6311_MIN_UV,\
- 	.uV_step = MT6311_STEP_UV,\
- 	.owner = THIS_MODULE,\
--	.linear_ranges = buck_volt_range, \
--	.n_linear_ranges = ARRAY_SIZE(buck_volt_range), \
- 	.enable_reg = MT6311_VDVFS11_CON9,\
- 	.enable_mask = MT6311_PMIC_VDVFS11_EN_MASK,\
- 	.vsel_reg = MT6311_VDVFS11_CON12,\
--- 
-2.17.1
-
+jirka
