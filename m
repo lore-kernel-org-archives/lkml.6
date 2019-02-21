@@ -3,33 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B20D0C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1472C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:18:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FC7A2083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:18:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98ACF2084D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:18:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728686AbfBURSi (ORCPT
+        id S1728707AbfBURSl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 12:18:38 -0500
-Received: from mx-ginzinger.sigmacloud.services ([185.154.235.147]:55548 "EHLO
+        Thu, 21 Feb 2019 12:18:41 -0500
+Received: from mx-ginzinger.sigmacloud.services ([185.154.235.147]:55575 "EHLO
         mx-ginzinger.sigmacloud.services" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728574AbfBURSh (ORCPT
+        by vger.kernel.org with ESMTP id S1728610AbfBURSi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 12:18:37 -0500
-Received: from [31.193.165.228] (port=5985 helo=mx-ginzinger.sigmacloud.services)
+        Thu, 21 Feb 2019 12:18:38 -0500
+Received: from [31.193.165.228] (port=45893 helo=mx-ginzinger.sigmacloud.services)
         by mx-ginzinger.sigmacloud.services with esmtps (TLSv1.2:AES256-GCM-SHA384:256)
         (Exim 4.82_1-5b7a7c0-XX)
         (envelope-from <Martin.Kepplinger@ginzinger.com>)
-        id 1gwrzI-00028r-2f; Thu, 21 Feb 2019 18:18:20 +0100
+        id 1gwrzJ-00028u-15; Thu, 21 Feb 2019 18:18:21 +0100
 Received: from martin-laptop.buero.ginzinger.com (10.10.1.120) by
  exc1.buero.ginzinger.com (10.1.1.204) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.1.1466.3; Thu, 21 Feb 2019 18:18:20 +0100
-X-CTCH-RefID: str=0001.0A0B020F.5C6EDD5C.006A,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+X-CTCH-RefID: str=0001.0A0B020F.5C6EDD5D.0031,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
 From:   Martin Kepplinger <martin.kepplinger@ginzinger.com>
 To:     <gregkh@linuxfoundation.org>, <robh+dt@kernel.org>,
         <mark.rutland@arm.com>, <jslaby@suse.com>, <corbet@lwn.net>,
@@ -41,20 +41,20 @@ To:     <gregkh@linuxfoundation.org>, <robh+dt@kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>
 CC:     <linux-kernel@vger.kernel.org>,
         Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Subject: [PATCH v2 3/9] serial: core: add rs485-rts-delay-us devicetree property for RS485
-Date:   Thu, 21 Feb 2019 18:17:52 +0100
-Message-ID: <20190221171758.10322-3-martin.kepplinger@ginzinger.com>
+Subject: [PATCH v2 4/9] serial: 8250: add support for rs485 RTS delays in microseconds
+Date:   Thu, 21 Feb 2019 18:17:53 +0100
+Message-ID: <20190221171758.10322-4-martin.kepplinger@ginzinger.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221171758.10322-1-martin.kepplinger@ginzinger.com>
 References: <20190221171758.10322-1-martin.kepplinger@ginzinger.com>
 X-Originating-IP: [10.10.1.120]
 X-ClientProxiedBy: exc1.buero.ginzinger.com (10.1.1.204) To
  exc1.buero.ginzinger.com (10.1.1.204)
-X-EXCLAIMER-MD-ORIGINAL-SUBJECT: [NOSIG][NODISC][PATCH v2 3/9] serial: core:
- add rs485-rts-delay-us devicetree property for RS485
+X-EXCLAIMER-MD-ORIGINAL-SUBJECT: [NOSIG][NODISC][PATCH v2 4/9] serial: 8250:
+ add support for rs485 RTS delays in microseconds
 X-EXCLAIMER-MD-CONFIG: 9dd172f7-de2e-4231-b886-ec11f46e03b3
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----3DBD1F31B6509AA155215A088A5181A9"
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----C45CEF8B5FEA450B760BAB86166ED0C2"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,61 +62,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 This is an S/MIME signed message
 
-------3DBD1F31B6509AA155215A088A5181A9
+------C45CEF8B5FEA450B760BAB86166ED0C2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-struct serial_rs485 now optionally holds the rts delay values in
-microseconds. Users can set these delays in their devicetree descriptions,
-so this adds the microseconds-option with the "rs485-rts-delay-us" boolean
-property.
+Read struct serial_rs485's flag SER_RS485_DELAY_IN_USEC and apply the delay
+accordingly.
 
 Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
 ---
- Documentation/devicetree/bindings/serial/rs485.txt |  1 +
- drivers/tty/serial/serial_core.c                   | 11 +++++++++++
- 2 files changed, 12 insertions(+)
+ drivers/tty/serial/8250/8250_omap.c | 13 +++++++++++--
+ drivers/tty/serial/8250/8250_port.c | 25 +++++++++++++++++++++----
+ 2 files changed, 32 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/serial/rs485.txt b/Documentation/devicetree/bindings/serial/rs485.txt
-index b92592dff6dd..77396c62b383 100644
---- a/Documentation/devicetree/bindings/serial/rs485.txt
-+++ b/Documentation/devicetree/bindings/serial/rs485.txt
-@@ -12,6 +12,7 @@ Optional properties:
-   * b is the delay between end of data sent and rts signal in milliseconds
-       it corresponds to the delay after sending data and actual release of the line.
-   If this property is not specified, <0 0> is assumed.
-+- rs485-rts-delay-us: the same as rs485-rts-delay, but in microseconds.
- - rs485-rts-active-low: drive RTS low when sending (default is high).
- - linux,rs485-enabled-at-boot-time: empty property telling to enable the rs485
-   feature at boot time. It can be disabled later with proper ioctl.
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index 556f50aa1b58..4fb265b2c0fe 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -3097,6 +3097,17 @@ void uart_get_rs485_mode(struct device *dev, struct serial_rs485 *rs485conf)
- 		rs485conf->delay_rts_after_send = 0;
- 	}
+diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+index 0a8316632d75..cbce43ac60b1 100644
+--- a/drivers/tty/serial/8250/8250_omap.c
++++ b/drivers/tty/serial/8250/8250_omap.c
+@@ -720,8 +720,17 @@ static int omap_8250_rs485_config(struct uart_port *port,
+ 	struct uart_8250_port *up = up_to_u8250p(port);
  
-+	ret = device_property_read_u32_array(dev, "rs485-rts-delay-us",
-+					     rs485_delay, 2);
-+	if (!ret) {
-+		rs485conf->delay_rts_before_send = rs485_delay[0];
-+		rs485conf->delay_rts_after_send = rs485_delay[1];
-+		rs485conf->flags |= SER_RS485_DELAY_IN_USEC;
+ 	/* Clamp the delays to [0, 100ms] */
+-	rs485->delay_rts_before_send = min(rs485->delay_rts_before_send, 100U);
+-	rs485->delay_rts_after_send  = min(rs485->delay_rts_after_send, 100U);
++	if (rs485->flags & SER_RS485_DELAY_IN_USEC) {
++		rs485->delay_rts_before_send = min(rs485->delay_rts_before_send,
++						   100000U);
++		rs485->delay_rts_after_send  = min(rs485->delay_rts_after_send,
++						   100000U);
 +	} else {
-+		rs485conf->delay_rts_before_send = 0;
-+		rs485conf->delay_rts_after_send = 0;
++		rs485->delay_rts_before_send = min(rs485->delay_rts_before_send,
++						   100U);
++		rs485->delay_rts_after_send  = min(rs485->delay_rts_after_send,
++						   100U);
 +	}
+ 
+ 	port->rs485 = *rs485;
+ 
+diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
+index d2f3310abe54..0cee4aa8323d 100644
+--- a/drivers/tty/serial/8250/8250_port.c
++++ b/drivers/tty/serial/8250/8250_port.c
+@@ -1483,6 +1483,15 @@ static void start_hrtimer_ms(struct hrtimer *hrt, unsigned long msec)
+ 	hrtimer_start(hrt, t, HRTIMER_MODE_REL);
+ }
+ 
++static void start_hrtimer_us(struct hrtimer *hrt, unsigned long usec)
++{
++	long sec = usec / 1000000;
++	long nsec = (usec % 1000000) * 1000000000;
++	ktime_t t = ktime_set(sec, nsec);
 +
- 	/*
- 	 * Clear full-duplex and enabled flags, set RTS polarity to active high
- 	 * to get to a defined state with the following properties:
++	hrtimer_start(hrt, t, HRTIMER_MODE_REL);
++}
++
+ static void __stop_tx_rs485(struct uart_8250_port *p)
+ {
+ 	struct uart_8250_em485 *em485 = p->em485;
+@@ -1493,8 +1502,12 @@ static void __stop_tx_rs485(struct uart_8250_port *p)
+ 	 */
+ 	if (p->port.rs485.delay_rts_after_send > 0) {
+ 		em485->active_timer = &em485->stop_tx_timer;
+-		start_hrtimer_ms(&em485->stop_tx_timer,
+-				   p->port.rs485.delay_rts_after_send);
++		if (p->port.rs485.flags & SER_RS485_DELAY_IN_USEC)
++			start_hrtimer_us(&em485->stop_tx_timer,
++					 p->port.rs485.delay_rts_after_send);
++		else
++			start_hrtimer_ms(&em485->stop_tx_timer,
++					 p->port.rs485.delay_rts_after_send);
+ 	} else {
+ 		__do_stop_tx_rs485(p);
+ 	}
+@@ -1600,8 +1613,12 @@ static inline void start_tx_rs485(struct uart_port *port)
+ 
+ 		if (up->port.rs485.delay_rts_before_send > 0) {
+ 			em485->active_timer = &em485->start_tx_timer;
+-			start_hrtimer_ms(&em485->start_tx_timer,
+-					 up->port.rs485.delay_rts_before_send);
++			if (up->port.rs485.flags & SER_RS485_DELAY_IN_USEC)
++				start_hrtimer_us(&em485->start_tx_timer,
++					up->port.rs485.delay_rts_before_send);
++			else
++				start_hrtimer_ms(&em485->start_tx_timer,
++					up->port.rs485.delay_rts_before_send);
+ 			return;
+ 		}
+ 	}
 -- 
 2.20.1
 
 
-------3DBD1F31B6509AA155215A088A5181A9
+------C45CEF8B5FEA450B760BAB86166ED0C2
 Content-Type: application/x-pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -186,17 +224,17 @@ MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
 BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMT
 NENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1h
 aWwgQ0ECEE1CsTMbOtnoVViHUQRgfj4wDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZI
-hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTkwMjIxMTcxODMw
-WjAvBgkqhkiG9w0BCQQxIgQg73sx3CPGt/3zjQFocscZyEWWejqNO7+fPyc5q/rv
-3BEweQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
+hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTkwMjIxMTcxODM1
+WjAvBgkqhkiG9w0BCQQxIgQg6qKJB1LBYz5Di2PAhyjctmBfmz2D7BZ16Nsa//m7
+egEweQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
 CWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
 AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEA
-YmsXxvDA1LvmO0o3R2tXyg//tXPTdLJZICJFK7/RVlsRmc3IWX2QmnmoAt1ORskj
-mQz1dIRzWmAXfzhmkJYQeig/lqannn+cTEGwTEjdHoNpcrfzZcMl6Uy8jvRimWnG
-Rsy2tLzmJgX08CyGIPtEz7QQiJ5WneztWcgsJpYjysAO0SmDwkQz3DOS2tQJGBp2
-gpAWIohZS4wVLHgEglCs60VPCqebX9TvHGt+5gb616/4Y2WnlSVocnFol5xZfQT6
-PSZpgouvy9nxG+feLh4qSqj7NwrdK6tUcxRWimMIh6wu8ddzpMdZcZqGBascEFQ9
-hvJF/aX72Om9UQulgAIuoQ==
+pjcbpRX/FmT0M9I3AliDciA9MskX/mFEMvEgW4NCb4O7cbaFf/aSB36yEirUI3MM
+CEF954CPyuWm6/Ux62B4k5U13r4tNJy05C40S4UIB2wdVnWOlTVjx8CM8d5zGseD
+kKuYDrl9AEnaWo1a4cblbTgMZljZo97bgmrBFs9GfNGkxYTiI/kKzHlOVqVX2NS2
+FyyDUScsEfWHIguRvqcZ3U6OTlw/ninhfKjccsZCNzzQvPdEa5zBTsi2KuCI0Q8S
+aD0r+khm5Anbg/kPvBCW243qsTH9ZJineX7SPIQngFJNkKsR/SSRyLYeUBkrPRf4
+vUPHjLmXX0OJbW5/oA8n0Q==
 
-------3DBD1F31B6509AA155215A088A5181A9--
+------C45CEF8B5FEA450B760BAB86166ED0C2--
 
