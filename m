@@ -4,64 +4,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1DE3C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:12:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C4BC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:13:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F074F206A3
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:12:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13DB7206A3
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:13:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=4sigma.it header.i=@4sigma.it header.b="frgPMng4"
+	dkim=pass (1024-bit key) header.d=4sigma.it header.i=@4sigma.it header.b="QUQr1CTi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbfBUXMa (ORCPT
+        id S1727180AbfBUXNU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 18:12:30 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35150 "EHLO
+        Thu, 21 Feb 2019 18:13:20 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35209 "EHLO
         mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726123AbfBUXMa (ORCPT
+        with ESMTP id S1726146AbfBUXNR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 18:12:30 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t18so344333wrx.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 15:12:28 -0800 (PST)
+        Thu, 21 Feb 2019 18:13:17 -0500
+Received: by mail-wr1-f65.google.com with SMTP id t18so345969wrx.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 15:13:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=4sigma.it; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=UBvT747HcZAlE2Jn/xPLTuKslB0UyLXMGwpB3AeXbhQ=;
-        b=frgPMng40gfEzqGiOGWv+GgH6UupZHlHL1YunYeygKT/0sRx8phbmgmwxl9PIVAGxd
-         ZQkaBgsvXaciVzvCu/B84Fpl9llNyBjiSptQRHthjwLE39Mm8C84RnCxz5Us8ywglWIp
-         dGtfaEfuIf6GqEax3sJR9CWUeaeqTy61gfFYA=
+        bh=qtJLFBXgkYdI/h6OpEbdGjMWc1iqyJYezad5IMGHUs0=;
+        b=QUQr1CTiQz/wn4QX2q46U63jvxZvqc0ODSsIMrQRU0QW7sSKm+pDVhlBX5100VIo5/
+         iwF9A0CdUTPLsOogGJlmojT2ebuBqKJT6y91llkn4fp9qcpXo4/zRItsO8cnfUb+2nwg
+         iVU/f9qD28DneH7TbUYV/+3c1rOhH1Hy4RXes=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=UBvT747HcZAlE2Jn/xPLTuKslB0UyLXMGwpB3AeXbhQ=;
-        b=DY/Ai0nrMAHgVRiNE+TP0X6nOk9Ppmc8MwjnpdtV1iK44KfVfrOUWSg7w5qFLW3TWT
-         2eJ/fvz+gQbiY9nhD/I671tdyzpzV0HjAOfvRGXSpayUJ9Wu5zA0FRtJNY60/3MOErN0
-         o7MomrFvntDFIh8Pmbx95SIu9JYRXMNsTGDQMBznDo8eQG6AeroodbMTUTbSu+8oBB47
-         4y4THaxO7hfqKu2PX80loLMWHdz6w27n/KnIKk5/f/kSRsx1CBrVHCxB8/6aWyN4Lbfw
-         V6pgj/f/t+hzRvJicX2Va7lnT6cJt6rqy2xl37ujO6fU+dNwW/pKJycFSKDXU+eQFp5x
-         PKgw==
-X-Gm-Message-State: AHQUAuaszL7plDPGUTp4cRjx+BuHR36gvxGDVBY4ttGmvmTCdu/wNsvz
-        Wbgn+zul4EMWjJZRvOq+EZQdSQ==
-X-Google-Smtp-Source: AHgI3IbUUG7L1msRvm/r6EgoivDt+Z26qhFm5FXJ4DbHyQygo/XSeHPM9CWJbCyacOwzW5TIIW3ebQ==
-X-Received: by 2002:adf:ec10:: with SMTP id x16mr618705wrn.171.1550790748058;
-        Thu, 21 Feb 2019 15:12:28 -0800 (PST)
+        bh=qtJLFBXgkYdI/h6OpEbdGjMWc1iqyJYezad5IMGHUs0=;
+        b=NnJuRDtKDbvAIHm5HuBVfFp9T06GSBf91ZgcdZnHpR2awKXwO2VF5MpQHi4YiIgpMR
+         rOSy/RUbIIGM1e2XvAgItVHnrPm6gDqSzkBOkbxREAImWmq3nvhEAv1KFilssNf5t/qa
+         jo2YJkizSffGcr+1P5RtcbYCLr/Z7GhqQGKQEF+93wH9FvGphg5Ofluv2SAQQ6zXrkej
+         br7lwUBXphkneAExXiGzicF886UKDUdrOYx5CHhquBfotFB8P9oJpuoD+pFg7sp9Y7kH
+         gaO4xv4GAkmY3LuWfZAbGHlrmHCXe00DZHC+vrysn63aOko/MGCIfb3lEe3M0kICfqx1
+         dCew==
+X-Gm-Message-State: AHQUAubliXMX6a9kHlWrKWGgl1v/gFDTgXq+PlU10aenZyVVlIuuBGlm
+        JAIwLTOZ9aHBMT9xHIuNLjdmBA==
+X-Google-Smtp-Source: AHgI3IY7mT0sBYWrazgq7Q+AUwdUjpvxDh/i2fHqI+OleshXAnRa3sMPgNShvQu0hT+qOrF2GgAJQQ==
+X-Received: by 2002:a5d:5504:: with SMTP id b4mr571750wrv.291.1550790795261;
+        Thu, 21 Feb 2019 15:13:15 -0800 (PST)
 Received: from localhost.localdomain (host121-71-dynamic.24-79-r.retail.telecomitalia.it. [79.24.71.121])
-        by smtp.googlemail.com with ESMTPSA id f10sm133258wmb.35.2019.02.21.15.12.26
+        by smtp.googlemail.com with ESMTPSA id i13sm144959wrm.86.2019.02.21.15.13.14
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Feb 2019 15:12:27 -0800 (PST)
+        Thu, 21 Feb 2019 15:13:14 -0800 (PST)
 From:   Andrea Greco <a.greco@4sigma.it>
 X-Google-Original-From: Andrea Greco <andrea.greco.gapmilano@gmail.com>
 To:     johannes.berg@intel.com
 Cc:     Andrea Greco <a.greco@4sigma.it>,
-        Johannes Berg <johannes@sipsolutions.net>,
+        QCA ath9k Development <ath9k-devel@qca.qualcomm.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         "David S. Miller" <davem@davemloft.net>,
         linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] nl80211: Allow change CW to Ad-Hock network
-Date:   Fri, 22 Feb 2019 00:11:47 +0100
-Message-Id: <20190221231147.6141-1-andrea.greco.gapmilano@gmail.com>
+Subject: [PATCH 2/2] ath9K: debugfs: Fix SPUR-DOWN field
+Date:   Fri, 22 Feb 2019 00:12:57 +0100
+Message-Id: <20190221231257.6221-1-andrea.greco.gapmilano@gmail.com>
 X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -70,27 +71,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andrea Greco <a.greco@4sigma.it>
 
-Add net-link support for change CW in Ad-Hock network
+SPUR DOWN field return spurup inside of spurdown
 
 Signed-off-by: Andrea Greco <a.greco@4sigma.it>
 ---
- net/wireless/nl80211.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath9k/debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index d91a408db113..4fcc63fa4380 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -2731,7 +2731,8 @@ static int nl80211_set_wiphy(struct sk_buff *skb, struct genl_info *info)
- 			return -EINVAL;
- 
- 		if (netdev->ieee80211_ptr->iftype != NL80211_IFTYPE_AP &&
--		    netdev->ieee80211_ptr->iftype != NL80211_IFTYPE_P2P_GO)
-+		    netdev->ieee80211_ptr->iftype != NL80211_IFTYPE_P2P_GO &&
-+		    netdev->ieee80211_ptr->iftype != NL80211_IFTYPE_ADHOC)
- 			return -EINVAL;
- 
- 		if (!netif_running(netdev))
+diff --git a/drivers/net/wireless/ath/ath9k/debug.c b/drivers/net/wireless/ath/ath9k/debug.c
+index 4399e9ad058f..d4a2cdf9212c 100644
+--- a/drivers/net/wireless/ath/ath9k/debug.c
++++ b/drivers/net/wireless/ath/ath9k/debug.c
+@@ -148,7 +148,7 @@ static ssize_t read_file_ani(struct file *file, char __user *user_buf,
+ 		{ "OFDM LEVEL", ah->ani.ofdmNoiseImmunityLevel },
+ 		{ "CCK LEVEL", ah->ani.cckNoiseImmunityLevel },
+ 		{ "SPUR UP", ah->stats.ast_ani_spurup },
+-		{ "SPUR DOWN", ah->stats.ast_ani_spurup },
++		{ "SPUR DOWN", ah->stats.ast_ani_spurdown },
+ 		{ "OFDM WS-DET ON", ah->stats.ast_ani_ofdmon },
+ 		{ "OFDM WS-DET OFF", ah->stats.ast_ani_ofdmoff },
+ 		{ "MRC-CCK ON", ah->stats.ast_ani_ccklow },
 -- 
 2.17.2
 
