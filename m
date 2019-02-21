@@ -2,140 +2,152 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14EE7C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:34:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB023C00319
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:36:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6E862077B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:34:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DVXoGJxf"
+	by mail.kernel.org (Postfix) with ESMTP id B5D4C2083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:36:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726428AbfBUTev (ORCPT
+        id S1726429AbfBUTg2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 14:34:51 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:32957 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbfBUTev (ORCPT
+        Thu, 21 Feb 2019 14:36:28 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47094 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725932AbfBUTg1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 14:34:51 -0500
-Received: by mail-pl1-f196.google.com with SMTP id y10so14665697plp.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 11:34:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=8wHmyEQWcYmfGuxqF9at/FtBIGcS67/2bcgFa6BHBtw=;
-        b=DVXoGJxf+pwEAbGu2VxoD5GGWWtYKdUCcTqK3mY3A/+rfWZN85VnmTN6Z5PRbvoZkE
-         kOsyG4VJEUt6YoMH4bYsMKWKdBK3oKzxNHexxDKJTyxFVhob45dNjGNpXk8Nr27mOnkH
-         LFZvKPbxhXqb4AKMR9FRsiRN0pTUVS5TOyMUM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=8wHmyEQWcYmfGuxqF9at/FtBIGcS67/2bcgFa6BHBtw=;
-        b=Ha6dyK/E6RkQ72F8ZZ7bWQeqn5Dgw+Xmqx6Qu6CfLriyBRxY50LKKDhQ8R+RIygHGv
-         g/G/YVUMg8EH5XfbXyjH0NGd3hKwyoFy7/xjxaFrG7e6Yqyrj3XFx08+0xFt0kH3af1r
-         uHVjFRQ46pTapiW37wxDXXEgvOvztHN+H62GsggSCHwoQtZ5du3ykTWBLKpd4IosWkuj
-         doQGgJzWTK2C7Aecpq9xK+gNexyMfnTKx0nnvbAZlGfNYMry9BMPZew92WzLQ65trqj6
-         le4u863xh6LqRnjpboBN8dogJIddfwkoWGbporNI8ARZR+KBJkWrLpympB5fBWfIMdHH
-         GiQg==
-X-Gm-Message-State: AHQUAubpfLQFE729xKnjkF4eyE/cN4oBkFVK+uwq4lr7Je4ACNC1vr+z
-        Zv4SBAc1D/1J476y9DRY7RFHrw==
-X-Google-Smtp-Source: AHgI3IYRH9xeguWlRd8zbzRZVjocQ9i+QJimFuhUK4oeJZDhxxc+HPEDIvQd2CFu8Rg7MK8m8RrG+w==
-X-Received: by 2002:a17:902:2de4:: with SMTP id p91mr153608plb.215.1550777690549;
-        Thu, 21 Feb 2019 11:34:50 -0800 (PST)
-Received: from egranata0.mtv.corp.google.com ([2620:15c:202:1:e209:54cf:7c16:6776])
-        by smtp.gmail.com with ESMTPSA id k26sm37982389pfb.87.2019.02.21.11.34.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Feb 2019 11:34:49 -0800 (PST)
-From:   egranata@chromium.org
-To:     gwendal@chromium.org, briannorris@chromium.org,
-        hdegoede@redhat.com, mika.westerberg@linux.intel.com,
-        dtor@chromium.org, andy.shevchenko@gmail.com, rafael@kernel.org,
-        gregkh@linuxfoundation.org, enric.balletbo@collabora.com,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        andriy.shevchenko@linux.intel.com
-Cc:     egranata@google.com, Enrico Granata <egranata@chromium.org>
-Subject: [PATCH v3] driver: platform: Support parsing GpioInt 0 in platform_get_irq()
-Date:   Thu, 21 Feb 2019 11:34:29 -0800
-Message-Id: <20190221193429.161300-1-egranata@chromium.org>
-X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
-In-Reply-To: <20190220180538.GA42642@google.com>
-References: <20190220180538.GA42642@google.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 21 Feb 2019 14:36:27 -0500
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E44E33B90;
+        Thu, 21 Feb 2019 19:36:25 +0000 (UTC)
+Date:   Thu, 21 Feb 2019 11:36:24 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     syzbot <syzbot+ca95b2b7aef9e7cbd6ab@syzkaller.appspotmail.com>
+Cc:     amir73il@gmail.com, darrick.wong@oracle.com, david@fromorbit.com,
+        hannes@cmpxchg.org, hughd@google.com, jrdr.linux@gmail.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org,
+        Jan Kara <jack@suse.cz>
+Subject: Re: BUG: unable to handle kernel NULL pointer dereference in
+ __generic_file_write_iter
+Message-Id: <20190221113624.284fe267e73752639186a563@linux-foundation.org>
+In-Reply-To: <0000000000001aab8b0582689e11@google.com>
+References: <0000000000001aab8b0582689e11@google.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Enrico Granata <egranata@chromium.org>
+On Thu, 21 Feb 2019 06:52:04 -0800 syzbot <syzbot+ca95b2b7aef9e7cbd6ab@syzkaller.appspotmail.com> wrote:
 
-ACPI 5 added support for GpioInt resources as a way to provide
-information about interrupts mediated via a GPIO controller.
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    4aa9fc2a435a Revert "mm, memory_hotplug: initialize struct..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1101382f400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=4fceea9e2d99ac20
+> dashboard link: https://syzkaller.appspot.com/bug?extid=ca95b2b7aef9e7cbd6ab
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> 
+> Unfortunately, I don't have any reproducer for this crash yet.
 
-Several device buses (e.g. SPI, I2C) have support for retrieving
-an IRQ specified via this type of resource, and providing it
-directly to the driver as an IRQ number.
+Not understanding.  That seems to be saying that we got a NULL pointer
+deref in __generic_file_write_iter() at
 
-This is not currently done for the platform drivers, as platform_get_irq()
-does not try to parse GpioInt() resources. This requires drivers to
-either have to support only one possible IRQ resource, or to have code
-in place to try both as a failsafe.
+                written = generic_perform_write(file, from, iocb->ki_pos);
 
-While there is a possibility of ambiguity for devices that exposes
-multiple IRQs, it is easy and feasible to support the common case
-of devices that only expose one IRQ which would be of either type
-depending on the underlying system's architecture.
+which isn't possible.
 
-This commit adds support for parsing a GpioInt resource in order
-to fulfill a request for the index 0 IRQ for a platform device.
+I'm not seeing recent changes in there which could have caused this.  Help.
 
-Signed-off-by: Enrico Granata <egranata@chromium.org>
----
-Changes in v3:
- - ensured that -ENOENT return from acpi_dev_gpio_irq_get is not propagated
-   upwards, as some drivers expect platform_get_irq to return either a valid
-   IRQ or -ENXIO and will break otherwise
 
- drivers/base/platform.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 1c958eb33ef4d..afd8b916303e4 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -127,7 +127,24 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
- 		irqd_set_trigger_type(irqd, r->flags & IORESOURCE_BITS);
- 	}
- 
--	return r ? r->start : -ENXIO;
-+	if (r)
-+		return r->start;
-+
-+	/*
-+	 * For the index 0 interrupt, allow falling back to GpioInt
-+	 * resources. While a device could have both Interrupt and GpioInt
-+	 * resources, making this fallback ambiguous, in many common cases
-+	 * the device will only expose one IRQ, and this fallback
-+	 * allows a common code path across either kind of resource.
-+	 */
-+	if (num == 0 && has_acpi_companion(&dev->dev)) {
-+		int ret = acpi_dev_gpio_irq_get(ACPI_COMPANION(&dev->dev), num);
-+
-+		if (ret > 0 || ret == -EPROBE_DEFER)
-+			return ret;
-+	}
-+
-+	return -ENXIO;
- #endif
- }
- EXPORT_SYMBOL_GPL(platform_get_irq);
--- 
-2.21.0.rc0.258.g878e2cd30e-goog
-
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+ca95b2b7aef9e7cbd6ab@syzkaller.appspotmail.com
+> 
+> BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+> #PF error: [INSTR]
+> PGD a7ea0067 P4D a7ea0067 PUD 81535067 PMD 0
+> Oops: 0010 [#1] PREEMPT SMP KASAN
+> CPU: 0 PID: 15924 Comm: syz-executor0 Not tainted 5.0.0-rc4+ #50
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+> Google 01/01/2011
+> RIP: 0010:          (null)
+> Code: Bad RIP value.
+> RSP: 0018:ffff88804c3d7858 EFLAGS: 00010246
+> RAX: 0000000000000000 RBX: ffffffff885aeb60 RCX: 000000000000005b
+> RDX: 0000000000000000 RSI: ffff88807ec22930 RDI: ffff8880a59bdcc0
+> RBP: ffff88804c3d79b8 R08: 0000000000000000 R09: ffff88804c3d7910
+> R10: ffff8880835ca200 R11: 0000000000000000 R12: 000000000000005b
+> R13: ffff88804c3d7c98 R14: dffffc0000000000 R15: 0000000000000000
+> FS:  00007f3456db4700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: ffffffffffffffd6 CR3: 00000000814ac000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   __generic_file_write_iter+0x25e/0x630 mm/filemap.c:3333
+>   ext4_file_write_iter+0x37a/0x1410 fs/ext4/file.c:266
+>   call_write_iter include/linux/fs.h:1862 [inline]
+>   new_sync_write fs/read_write.c:474 [inline]
+>   __vfs_write+0x764/0xb40 fs/read_write.c:487
+>   vfs_write+0x20c/0x580 fs/read_write.c:549
+>   ksys_write+0x105/0x260 fs/read_write.c:598
+>   __do_sys_write fs/read_write.c:610 [inline]
+>   __se_sys_write fs/read_write.c:607 [inline]
+>   __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+>   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x458089
+> Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+> ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007f3456db3c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000458089
+> RDX: 000000000000005b RSI: 0000000020000240 RDI: 0000000000000003
+> RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f3456db46d4
+> R13: 00000000004c7450 R14: 00000000004dce68 R15: 00000000ffffffff
+> Modules linked in:
+> CR2: 0000000000000000
+> ---[ end trace 5cac9d2c75a59916 ]---
+> kobject: 'loop5' (000000004426a409): kobject_uevent_env
+> RIP: 0010:          (null)
+> Code: Bad RIP value.
+> RSP: 0018:ffff88804c3d7858 EFLAGS: 00010246
+> RAX: 0000000000000000 RBX: ffffffff885aeb60 RCX: 000000000000005b
+> kobject: 'loop5' (000000004426a409): fill_kobj_path: path  
+> = '/devices/virtual/block/loop5'
+> RDX: 0000000000000000 RSI: ffff88807ec22930 RDI: ffff8880a59bdcc0
+> kobject: 'loop2' (00000000b82e0c58): kobject_uevent_env
+> kobject: 'loop2' (00000000b82e0c58): fill_kobj_path: path  
+> = '/devices/virtual/block/loop2'
+> RBP: ffff88804c3d79b8 R08: 0000000000000000 R09: ffff88804c3d7910
+> R10: ffff8880835ca200 R11: 0000000000000000 R12: 000000000000005b
+> R13: ffff88804c3d7c98 R14: dffffc0000000000 R15: 0000000000000000
+> kobject: 'loop5' (000000004426a409): kobject_uevent_env
+> FS:  00007f3456db4700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+> kobject: 'loop5' (000000004426a409): fill_kobj_path: path  
+> = '/devices/virtual/block/loop5'
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00000000022029a0 CR3: 00000000814ac000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> 
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+> syzbot.
