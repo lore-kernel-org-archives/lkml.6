@@ -2,175 +2,219 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B60BC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD524C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:19:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 587B52080F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:18:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD0742083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:19:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728810AbfBURS4 (ORCPT
+        id S1728819AbfBURT3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 12:18:56 -0500
-Received: from mx-ginzinger.sigmacloud.services ([185.154.235.147]:55626 "EHLO
-        mx-ginzinger.sigmacloud.services" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728753AbfBURSy (ORCPT
+        Thu, 21 Feb 2019 12:19:29 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:34070 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbfBURT2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 12:18:54 -0500
-Received: from [31.193.165.228] (port=37887 helo=mx-ginzinger.sigmacloud.services)
-        by mx-ginzinger.sigmacloud.services with esmtps (TLSv1.2:AES256-GCM-SHA384:256)
-        (Exim 4.82_1-5b7a7c0-XX)
-        (envelope-from <Martin.Kepplinger@ginzinger.com>)
-        id 1gwrzL-00029L-2q; Thu, 21 Feb 2019 18:18:23 +0100
-Received: from martin-laptop.buero.ginzinger.com (10.10.1.120) by
- exc1.buero.ginzinger.com (10.1.1.204) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1466.3; Thu, 21 Feb 2019 18:18:23 +0100
-X-CTCH-RefID: str=0001.0A0B020F.5C6EDD5F.0093,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-From:   Martin Kepplinger <martin.kepplinger@ginzinger.com>
-To:     <gregkh@linuxfoundation.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <jslaby@suse.com>, <corbet@lwn.net>,
-        <richard.genoud@gmail.com>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
-        <linux-serial@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Subject: [PATCH v2 9/9] serial: st32-usart: set SER_RS485_DELAY_IN_USEC accordingly
-Date:   Thu, 21 Feb 2019 18:17:58 +0100
-Message-ID: <20190221171758.10322-9-martin.kepplinger@ginzinger.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190221171758.10322-1-martin.kepplinger@ginzinger.com>
-References: <20190221171758.10322-1-martin.kepplinger@ginzinger.com>
-X-Originating-IP: [10.10.1.120]
-X-ClientProxiedBy: exc1.buero.ginzinger.com (10.1.1.204) To
- exc1.buero.ginzinger.com (10.1.1.204)
-X-EXCLAIMER-MD-ORIGINAL-SUBJECT: [NOSIG][NODISC][PATCH v2 9/9] serial:
- st32-usart: set SER_RS485_DELAY_IN_USEC accordingly
-X-EXCLAIMER-MD-CONFIG: 9dd172f7-de2e-4231-b886-ec11f46e03b3
+        Thu, 21 Feb 2019 12:19:28 -0500
+Received: by mail-qt1-f195.google.com with SMTP id w4so32426734qtc.1;
+        Thu, 21 Feb 2019 09:19:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8nzwk3rzcY9MLEY2IUQCKGUZSKUHlXsRyoZICIt+3Ik=;
+        b=eoBpsrnISMrfKCfjs5LjZIt4rCUS5vOkkuOaqM9y50XIykbIXZh6kCs5ZJMbjVAECl
+         460qhUg1GZJQRvqLz4v9p8XeASu4HjXi1LkkLEee79BJhD9UG5rnV4yDSILEIIYddpqD
+         P4ut4GldzBbw7A51jl6LIxxegbq/VO6+2gASLp1VLi+gZIpdDkIeketO2zdiSnBJ0B9l
+         hXqb4sJZAyT4ve4qlYwRqlmlxCqn/qJIhRWx7tEB2ESSRZPrPE0a8b7GAPOe/V7r9UDT
+         lB1CLTzQ1jkyahFX/mv/s7Jniz5DOdHXWrPafGKPVwVriYyzras/jp0FFKCXyu+o7uLp
+         QMoA==
+X-Gm-Message-State: AHQUAub9T+ZkYP9wzDaKLVV92YhynZx6860tyo8/sc3pG5OS+gXEgqD1
+        TScbAauH9R7kJPfBJR+tbTQaB1HYieZEizBT2EE=
+X-Google-Smtp-Source: AHgI3IbOr0E66wrlgvii3XrfMGfkcqix/Wu7xjQwycpQQhgXO7NwuoOHi0CcoENPF/xrenh45xPZeCZjAQzo0zIiNi8=
+X-Received: by 2002:a0c:98c8:: with SMTP id g8mr31373384qvd.161.1550769566726;
+ Thu, 21 Feb 2019 09:19:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----F7AE14D43A445C3EC7AE780450C1E7D2"
+References: <20190219214940.391081-1-arnd@arndb.de> <CAAeHK+xSpsu0tNmeq0wKXfT=0HuORnvU+XzLswDzhbtfZVa4Hw@mail.gmail.com>
+ <CAK8P3a1NfHohd1xT7iHK85L2PGnD95RJvwFi-2cWrFpipQzqwg@mail.gmail.com>
+ <b109ad0d-6995-8ca2-5426-7e2627d2032c@virtuozzo.com> <CAK8P3a0tg1WRLK=fs9S+X4TPB7sR55ZsjMbBVX07AtAfguXCsw@mail.gmail.com>
+ <CAKwvOd=XrNNb=r3qgsT8O6JNzL4hg4pqfJJFcY2DzA0Ooc=E3w@mail.gmail.com>
+ <20190220184408.GG9878@sirena.org.uk> <CAKwvOdne3aE5bUsQF-2C-L2Xezqq9qb=NqF8FA+B7nvqXKAXFA@mail.gmail.com>
+ <CAK8P3a1pop4WqWxV=-R4n1Lh3FYG0mb4iJk4=saq6CgzpsPe4A@mail.gmail.com>
+ <CAK8P3a0z7Y-uLgc8pWrdt712ic4R2nLbceg_zTCAC=ctG9LK9Q@mail.gmail.com>
+ <CAN=P9pi1J8fORxyp9H4WiEWWDANj0EmFOVGttDMPthUavToHBQ@mail.gmail.com> <CAN=P9pi08jaq0jbFcDssBfw0QrX7AnJfgwCvP5zO0Zf6atFEag@mail.gmail.com>
+In-Reply-To: <CAN=P9pi08jaq0jbFcDssBfw0QrX7AnJfgwCvP5zO0Zf6atFEag@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 21 Feb 2019 18:19:09 +0100
+Message-ID: <CAK8P3a019PTgJfaZ47MABgtT7ZL+i=UHHjQZ-FovTDsDe8Bt9A@mail.gmail.com>
+Subject: Re: [PATCH] kasan: turn off asan-stack for clang-8 and earlier
+To:     Kostya Serebryany <kcc@google.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Mark Brown <broonie@kernel.org>,
+        Evgenii Stepanov <eugenis@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>, Qian Cai <cai@lca.pw>,
+        Alexander Potapenko <glider@google.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Christoph Lameter <cl@linux.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an S/MIME signed message
+On Thu, Feb 21, 2019 at 12:47 AM Kostya Serebryany <kcc@google.com> wrote:
+>
+> On Wed, Feb 20, 2019 at 2:12 PM Kostya Serebryany <kcc@google.com> wrote:
+> >
+> > On Wed, Feb 20, 2019 at 1:40 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > >
+> > > On Wed, Feb 20, 2019 at 10:13 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > >
+> > > > In the example in https://bugs.llvm.org/show_bug.cgi?id=38809#c12
+> > > > (https://godbolt.org/z/ylsGSQ) there is no inlining, yet clang uses
+> > > > over ten times as much stack space as gcc, for reasons I still
+> > > > can't explain. My assumption right now is that the underlying bug
+> > > > causes most of the problems with excessive stack usage in
+> > > > allmodconfig kernels.
+> > >
+> > > Here is an even more minimal example:
+> > >
+> > > struct s { int i[5]; } f(void);
+> > > void g(void) { f(); f();}
+> >
+> > On this example I can see some stupidity that clang/asan is doing.
+> > Let me try fixing it and see if it helps bigger cases.
+> > Thanks for reducing the case!
+> >
+> > This is the input we get in the asan instrumentation:
+> >
+> > ; Function Attrs: noinline nounwind optnone sanitize_address uwtable
+> > define dso_local void @g() #0 {
+> > entry:
+> >   %tmp = alloca %struct.s, align 4  <<<<<<<<<<<<<<<<<<<<<<<
+> >   %tmp1 = alloca %struct.s, align 4
+> >   %0 = bitcast %struct.s* %tmp to i8*
+> >   call void @llvm.lifetime.start.p0i8(i64 20, i8* %0) #3
+> >   call void @f(%struct.s* sret %tmp)
+> >   %1 = bitcast %struct.s* %tmp to i8* <<<<<<<<<<<<<<<<<<<<<
+> >   call void @llvm.lifetime.end.p0i8(i64 20, i8* %1) #3
+> >   %2 = bitcast %struct.s* %tmp1 to i8*
+> >   call void @llvm.lifetime.start.p0i8(i64 20, i8* %2) #3  <<<<<<<<<<<<<
+> >   call void @f(%struct.s* sret %tmp1)
+> >   %3 = bitcast %struct.s* %tmp1 to i8*
+> >   call void @llvm.lifetime.end.p0i8(i64 20, i8* %3) #3
+> >   ret void
+> > }
+>
+> Err.. taking my words back.
+> These allocas *are* used other then in lifetime markers, since they
+> are passed to f() as 'sret'.
 
-------F7AE14D43A445C3EC7AE780450C1E7D2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Thanks a lot for the analysis!
 
-Unset SER_RS485_DELAY_IN_USEC for userspace to get correct settings.
+> And we can not drop instrumentation for such allocas. Example:
+>
+> static volatile int zero = 0;
+> typedef struct {
+>   int ar[5];
+> } S;
+> S foo() {
+>   S s;
+>   s.ar[zero + 6] = 42;
+>   return s;
+> }
+> int main(int argc, char **argv) {
+>   S s = foo();
+>   return s.ar[argc];
+> }
+>
+> % clang -g  -O1  -fsanitize=address  sret.c && ./a.out
+>
+> ==5822==ERROR: AddressSanitizer: stack-buffer-overflow on address
+> 0x7ffcad027f78 at pc 0x0000004f878d bp 0x7ffcad027f20 sp
+> 0x7ffcad027f18
+> WRITE of size 4 at 0x7ffcad027f78 thread T0
+>     #0 0x4f878c in foo sret.c:7:18
+>     #1 0x4f8838 in main sret.c:11:9
+> Address 0x7ffcad027f78 is located in stack of thread T0 at offset 56 in frame
+>     #0 0x4f879f in main sret.c:10
+>
+>   This frame has 1 object(s):
+>     [32, 52) 's' (line 11) <== Memory access at offset 56 overflows
+> this variable
+>
+> Here we have a struct return that needs to be instrumented inside main
+> so that a buffer overflow in foo() is detected.
 
-Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
----
- drivers/tty/serial/stm32-usart.c | 1 +
- 1 file changed, 1 insertion(+)
+I tried reproducing this with gcc. The example you list above
+will generate very similar code on gcc. However, if I change main() to
+not assign the return value of foo() to a local variable, I get a trivial
+main main function without sanitizer code, but foo() still detects the
+overflow:
 
-diff --git a/drivers/tty/serial/stm32-usart.c b/drivers/tty/serial/stm32-usart.c
-index e8d7a7bb4339..4daf5fc71644 100644
---- a/drivers/tty/serial/stm32-usart.c
-+++ b/drivers/tty/serial/stm32-usart.c
-@@ -112,6 +112,7 @@ static int stm32_config_rs485(struct uart_port *port,
- 
- 	port->rs485 = *rs485conf;
- 
-+	rs485conf->flags &= ~SER_RS485_DELAY_IN_USEC;
- 	rs485conf->flags |= SER_RS485_RX_DURING_TX;
- 
- 	if (rs485conf->flags & SER_RS485_ENABLED) {
--- 
-2.20.1
+=================================================================
+==3442660==ERROR: AddressSanitizer: stack-buffer-overflow on address
+0x7fff5682bd58 at pc 0x0000004009c3 bp 0x7fff5682bd10 sp
+0x7fff5682bd00
+WRITE of size 4 at 0x7fff5682bd58 thread T0
+    #0 0x4009c2 in foo (/tmp/a.out+0x4009c2)
+    #1 0x4009dd in main (/tmp/a.out+0x4009dd)
+    #2 0x7fc6f0ce482f in __libc_start_main
+(/lib/x86_64-linux-gnu/libc.so.6+0x2082f)
+    #3 0x400808 in _start (/tmp/a.out+0x400808)
 
+Address 0x7fff5682bd58 is located in stack of thread T0 at offset 56 in frame
+    #0 0x4008c6 in foo (/tmp/a.out+0x4008c6)
 
-------F7AE14D43A445C3EC7AE780450C1E7D2
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
+  This frame has 1 object(s):
+    [32, 52) 's' <== Memory access at offset 56 overflows this variable
+HINT: this may be a false positive if your program uses some custom
+stack unwind mechanism or swapcontext
+      (longjmp and C++ exceptions *are* supported)
+SUMMARY: AddressSanitizer: stack-buffer-overflow (/tmp/a.out+0x4009c2) in foo
 
-MIIOHAYJKoZIhvcNAQcCoIIODTCCDgkCAQExDzANBglghkgBZQMEAgEFADALBgkq
-hkiG9w0BBwGgggshMIIF5jCCA86gAwIBAgIQapvhODv/K2ufAdXZuKdSVjANBgkq
-hkiG9w0BAQwFADCBhTELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFu
-Y2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExp
-bWl0ZWQxKzApBgNVBAMTIkNPTU9ETyBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3Jp
-dHkwHhcNMTMwMTEwMDAwMDAwWhcNMjgwMTA5MjM1OTU5WjCBlzELMAkGA1UEBhMC
-R0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9y
-ZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBS
-U0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwggEi
-MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+s55XrCh2dUAWxzgDmNPGGHYh
-UPMleQtMtaDRfTpYPpynMS6n9jR22YRq2tA9NEjk6vW7rN/5sYFLIP1of3l0NKZ6
-fLWfF2VgJ5cijKYy/qlAckY1wgOkUMgzKlWlVJGyK+UlNEQ1/5ErCsHq9x9aU/x1
-KwTdF/LCrT03Rl/FwFrf1XTCwa2QZYL55AqLPikFlgqOtzk06kb2qvGlnHJvijjI
-03BOrNpo+kZGpcHsgyO1/u1OZTaOo8wvEU17VVeP1cHWse9tGKTDyUGg2hJZjrqc
-k39UIm/nKbpDSZ0JsMoIw/JtOOg0JC56VzQgBo7ictReTQE5LFLG3yQK+xS1AgMB
-AAGjggE8MIIBODAfBgNVHSMEGDAWgBS7r34CPfqm8TyEjq3uOJjs2TIy1DAdBgNV
-HQ4EFgQUgq9sjPjF/pZhfOgfPStxSF7Ei8AwDgYDVR0PAQH/BAQDAgGGMBIGA1Ud
-EwEB/wQIMAYBAf8CAQAwEQYDVR0gBAowCDAGBgRVHSAAMEwGA1UdHwRFMEMwQaA/
-oD2GO2h0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNlcnRpZmljYXRp
-b25BdXRob3JpdHkuY3JsMHEGCCsGAQUFBwEBBGUwYzA7BggrBgEFBQcwAoYvaHR0
-cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQWRkVHJ1c3RDQS5jcnQwJAYI
-KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTANBgkqhkiG9w0BAQwF
-AAOCAgEAeFyygSg0TzzuX1bOn5dW7I+iaxf28/ZJCAbU2C81zd9A/tNx4+jsQgwR
-GiHjZrAYayZrrm78hOx7aEpkfNPQIHGG6Fvq3EzWf/Lvx7/hk6zSPwIal9v5IkDc
-ZoFD7f3iT7PdkHJY9B51csvU50rxpEg1OyOT8fk2zvvPBuM4qQNqbGWlnhMpIMwp
-WZT89RY0wpJO+2V6eXEGGHsROs3njeP9DqqqAJaBa4wBeKOdGCWn1/Jp2oY6dyNm
-NppI4ZNMUH4Tam85S1j6E95u4+1Nuru84OrMIzqvISE2HN/56ebTOWlcrurffade
-2022O/tUU1gb4jfWCcyvB8czm12FgX/y/lRjmDbEA08QJNB2729Y+io1IYO3ztve
-BdvUCIYZojTq/OCR6MvnzS6X72HP0PRLRTiOSEmIDsS5N5w/8IW1Hva5hEFy6fDA
-fd9yI+O+IMMAj1KcL/Zo9jzJ16HO5m60ttl1Enk8MQkz/W3JlHaeI5iKFn4UJu1/
-cP2YHXYPiWf2JyBzsLBrGk1II+3yL8aorYew6CQvdVifC3HtwlSam9V1niiCfOBe
-2C12TdKGu05LWIA3ZkFcWJGaNXOZ6Ggyh/TqvXG5v7zmEVDNXFnHn9tFpMpOUvxh
-csjycBtH0dZ0WrNw6gH+HF8TIhCnH3+zzWuDN0Rk6h9KVkfKehIwggUzMIIEG6AD
-AgECAhBNQrEzGzrZ6FVYh1EEYH4+MA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxm
-b3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAe
-Fw0xODA3MTgwMDAwMDBaFw0yMTA3MTcyMzU5NTlaMDAxLjAsBgkqhkiG9w0BCQEW
-H21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDsMC77L0D+2D8I8X5ubnBhADLgU+HtlwMTFt/WJIhc
-kgbvnawYXWrCIpk8F6BJ0R/iFCykPdG7741EmlcHRKOJfhVxjXhwnoGFqnYmurCt
-fvZLR3+mT3FWnVv2RAdrXscXH3BpijqqWabdtTbiTvmcl86Zc6mNlVhYZSbDul/E
-voIGZotGcGIWrgZxN+8MQJQHKb0KHyWlPVPkrjvEfOJHKKLFsBNSnNMR95Ijg3Sp
-h8/8RG490/zRHflGzUlxDSlLyY9YJGzSdDzcFKoYcc4oaaUY5N3uhRna43TLUIQh
-6ybt3DKVz1Pw/ikwYJrOsulJrVr3D8KVHdGxq7HYl7jnAgMBAAGjggHfMIIB2zAf
-BgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQU/GtSUbHg
-14sPDlmo27eQYwtjaS0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYD
-VR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMCMEYGA1UdIAQ/MD0wOwYMKwYBBAGy
-MQECAQMFMCswKQYIKwYBBQUHAgEWHWh0dHBzOi8vc2VjdXJlLmNvbW9kby5uZXQv
-Q1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NP
-TU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmww
-gYsGCCsGAQUFBwEBBH8wfTBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5jb21vZG9j
-YS5jb20vQ09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFp
-bENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuY29tb2RvY2EuY29tMCoG
-A1UdEQQjMCGBH21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wDQYJKoZI
-hvcNAQELBQADggEBAGEuG01K1tt5i3gUdQkYem/KpbJUYBZd43QwmoTa0TGXUiYq
-b+g/TeGG9QQ1yq+73xOr8fu6oT2608C7EiJc6JmjTs485/OZmTqgYkrLfs71F1kB
-3Z59WPf5aoR/pnn5vdfkkoO29V1cKPJR4z+iOG2hOlcK/dXrX8i6mnL5DGIe8l5n
-udUPvIbUhbMavrDd6kwhs0oCjylwdKGlFkCpKMn3HPflfDeHuV9Z8Nrpeq/7+Pm0
-I/fLPkaYlULASJoJCucMYcedY9rmuro9JhV+NuVXaqLIrQPc1vyKFeRuLHh84M6c
-1h1DArdGTykXZUwjXnnHtuOtzjIAzkx2Ns43vEsxggK/MIICuwIBATCBrDCBlzEL
-MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
-BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMT
-NENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1h
-aWwgQ0ECEE1CsTMbOtnoVViHUQRgfj4wDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZI
-hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTkwMjIxMTcxODQ4
-WjAvBgkqhkiG9w0BCQQxIgQgggA5I3grN5NFmfc0thFV1EijyCH+lRivMIuzsEI0
-s6wweQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
-CWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
-AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEA
-OJWi5OCTHmWdVgBB4QDN628up/noAaGdBnkaXdT7ZCAPh0qxKhQFwO1NT7vYcoxY
-SoQ8LUVh630mxPeKXebm7dr+3XBs1S1yMPWJiSLhhT1dW7I1bKAIAyQNe2HJwdOV
-o/9nFbs0KctjTsdIPteFwxT16FTDrKy3y3Aae8/bwuilwMKgxC2Mc4RfObgkb7CE
-0IUWoguwA4ahkNJUmyHA5z3GTLnJPlS+4904w3QFdqKVGhM964TKgjXgLtYZiASc
-MnivSS/G63HiTVQecsVaviv9qzUopEJCNgd8VIM2/dr7IXQECGYLd2WFiWGGv8m4
-K2Uq/kQIT2tEr36HveaeOw==
+The other difference is that with gcc, we only get one copy of each stack
+variable even when it adds code from asan-stack to check it, while clang
+generally creates one copy per instance when asan-stack=1 is set
+(but doesn't otherwise).
 
-------F7AE14D43A445C3EC7AE780450C1E7D2--
+> Now, I am also not confident that the reduced case reflects the real problem.
 
+No, it probably doesn't, but it seems vaguely related. This is a problem
+of using creduce, it sometimes reduces the test cases too much and
+runs into a different symptom.
+
+The case we frequently see in the kernel is probably more like
+
+void extf(long *);
+static inline __attribute__((always_inline)) void f(void)
+{
+    long i = 7;
+    extg(&i);
+}
+int main(void)
+{
+     f();
+     f();
+}
+
+https://godbolt.org/z/ReEQLo
+
+Here, both gcc and clang add sanitizing for 'i', but clang has multiple
+copies, while gcc only has one. This happens for both scalars and
+structs, and inline functions as well as open-coded blocks or macros
+with the same code in them. Using the inline function for illustration
+above since that is the most common way it appears in the kernel.
+
+      Arnd
