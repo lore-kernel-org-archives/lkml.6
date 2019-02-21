@@ -2,259 +2,216 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29393C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6228CC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:46:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0603207E0
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:44:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 195B52083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:46:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="kvR70Btw";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="KcDSTjXi"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oYzZnayj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbfBUWoI (ORCPT
+        id S1726381AbfBUWqv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 17:44:08 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:47054 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726035AbfBUWoI (ORCPT
+        Thu, 21 Feb 2019 17:46:51 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:42658 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725891AbfBUWqv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 17:44:08 -0500
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x1LMZPSf021726;
-        Thu, 21 Feb 2019 14:44:03 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=s1MXrnL7uro4t+iPYg88is8usA52Zxw7e4MQw6xasYI=;
- b=kvR70Btw4jDwGqhIxSBGtEY4vY6Al1KzBWqYlfq4/Bh1QXqIq4tFyLGzV2eP9YCQ46Z8
- IeAnPfZb6Xj1ivS0hWIYku+9EaKn2ue1OcnsMYc/c/dKgORYloQoFoHl1bfnCVdmOqVS
- 2HKEMyaeP6AsZnlTqt9FpDmumN974MIjgGc= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by m0089730.ppops.net with ESMTP id 2qt1nsrqcf-5
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 21 Feb 2019 14:44:03 -0800
-Received: from prn-hub05.TheFacebook.com (2620:10d:c081:35::129) by
- prn-hub03.TheFacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Thu, 21 Feb 2019 14:44:00 -0800
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.29) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Thu, 21 Feb 2019 14:44:00 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s1MXrnL7uro4t+iPYg88is8usA52Zxw7e4MQw6xasYI=;
- b=KcDSTjXiyjQt9Bzi85eyqnLxqrNM73i5dE12E+HHY7RI7fmYUJ2WlNVnNP8XfZ2is9XmViGVpFvOp78uIZP0GQQU99JrFdppnwZ+ZtaWLEhVyep19RkHsTvvsR2uP1dIwYGMLLfNidZzK0XBF5gSGDMZ1/16H7pkwkYf0pD5Uwo=
-Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.156.24) by
- BYAPR15MB2599.namprd15.prod.outlook.com (20.179.155.160) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.20; Thu, 21 Feb 2019 22:43:58 +0000
-Received: from BYAPR15MB2631.namprd15.prod.outlook.com
- ([fe80::ecc7:1a8c:289f:df92]) by BYAPR15MB2631.namprd15.prod.outlook.com
- ([fe80::ecc7:1a8c:289f:df92%3]) with mapi id 15.20.1643.016; Thu, 21 Feb 2019
- 22:43:58 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     Oleg Nesterov <oleg@redhat.com>
-CC:     Roman Gushchin <guroan@gmail.com>, Tejun Heo <tj@kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 0/7] freezer for cgroup v2
-Thread-Topic: [PATCH v8 0/7] freezer for cgroup v2
-Thread-Index: AQHUyJ7qFcEHOqSfLUmXX0Bn+RgIf6XownUA///1igCAAbv5AIAAaKOA
-Date:   Thu, 21 Feb 2019 22:43:58 +0000
-Message-ID: <20190221224352.GA24252@tower.DHCP.thefacebook.com>
-References: <20190219220252.4906-1-guro@fb.com>
- <20190220143748.GA9477@redhat.com>
- <20190220220020.GA16335@castle.DHCP.thefacebook.com>
- <20190221162923.GA26064@redhat.com>
-In-Reply-To: <20190221162923.GA26064@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR01CA0053.prod.exchangelabs.com (2603:10b6:a03:94::30)
- To BYAPR15MB2631.namprd15.prod.outlook.com (2603:10b6:a03:152::24)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:200::6:b358]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: bff3a483-cdad-4642-b32b-08d6984e110a
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:BYAPR15MB2599;
-x-ms-traffictypediagnostic: BYAPR15MB2599:
-x-microsoft-exchange-diagnostics: 1;BYAPR15MB2599;20:bKhb06VDFllUVVIue4k9xusWbDFmUPE/A7hFw3fDxSht0z8S/OJU10ilR6wLxW4/OGN9seQwB1rUFlqXQ2DHtbts0csJWklIpdOBBxgmjJbc5E0CoKjNdIQ5y3hlTggu7jCQxyv+Ew89cfSwjvRpxWWqZzTxhcxPrtaF6jVAafM=
-x-microsoft-antispam-prvs: <BYAPR15MB2599E6171E17E943109F671BBE7E0@BYAPR15MB2599.namprd15.prod.outlook.com>
-x-forefront-prvs: 09555FB1AD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(366004)(136003)(39860400002)(396003)(189003)(199004)(97736004)(6246003)(86362001)(186003)(9686003)(102836004)(76176011)(229853002)(81156014)(8676002)(71200400001)(6512007)(106356001)(316002)(7736002)(52116002)(99286004)(6486002)(2906002)(305945005)(53936002)(8936002)(6436002)(33896004)(81166006)(71190400001)(25786009)(33656002)(54906003)(386003)(446003)(93886005)(46003)(11346002)(14454004)(1076003)(6116002)(4326008)(6916009)(476003)(256004)(6506007)(486006)(14444005)(105586002)(5660300002)(68736007)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2599;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: u76gwcJpYfTsxjHz6NIy8uCNKI7+ffKRfFuFHAGLW5Ad4I6N5yluUkh1XQqlth2gev3mdDPkPijs1xOZvLwivAQcVxkgRic9AKYUg9dqo8/bWXNhwoFkzoim9dWH02y+AKXaS3p0fsVZHghkJ9RNyvbkZJtfifrmiBJMYO9YbXsYxgTIQ3FazCZs1hAmGHhKBVrKfcp3pU0FuwnZov7SBg6oH4wuWVRey+GDJXpoNZ56ERhtJTnB0CF0ytRHXO5rwilg9XnWHPl8qd8/DjUyPA8DDZbkXhCq/8Gd/yvabI2gWWo/Jq6k0bQoDlgG9mYXpbhchggOrJkL9n+kYo6m3LDNyTfG2ZNTSv42j7guCzFhckwHvDfhaW6kijwO6bBBl84BGRUtw5rCoTnTsXUxXdCvTeWnnuzkS9E3TydfpVE=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <5A383B398F6CA64290A21DCCD68EC6D3@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Thu, 21 Feb 2019 17:46:51 -0500
+Received: by mail-vk1-f196.google.com with SMTP id j195so64406vkj.9
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 14:46:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mTnRRjoYWAeIrW4nG0F0qs23GoESzwxGka8JRAoUEdw=;
+        b=oYzZnayjUnx6jRYUpYzWU9wO/p9JFyevxUqJIP0KoCDFd5v4M3kbxJZ9O9+9u1ibn3
+         VaLR0oHZwb5vnN5DVV3sFi2uJF64YBPNzwwSj1pMkU7W7LNisLK1On6xJmLWn8wmoJIi
+         6FEG4GVNukdfk/SL9lXh4FOdb6s8heeDpt/p4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mTnRRjoYWAeIrW4nG0F0qs23GoESzwxGka8JRAoUEdw=;
+        b=UoI/4nbVWKPpl/kIgHAjJZDx+6vK73loZVIXP81JxthDrbDwPwwtdbhBOXa9a+Erbd
+         ItcyslLwfRYnthjdNlxWxuf9/UjJQHNq4TgYcmp1pPB6l2VIMZt5v0yAZjTuRzeX28rS
+         W5keu99PjPIBfxbWOAC/pZbuAlBvzs35xa2SmfhjXTSWBezNenueqyD7IT2lpz05WYZO
+         Mpd1oX7VArv/mEwu6mmDa6BNeAFjLH8z/t3Hde5ov70Cr5ZGios0fhV/np+VFaUoKHpw
+         BtqMVA0cAY7kmTr9tOnqYupbs9S56fHcVvOT5rL5i2C+FjtVuoDJVTH1godOzhoV5KtW
+         SIJw==
+X-Gm-Message-State: AHQUAuaq43BVLaQtEBy2qaWA+7sWSCZH3qRwXVNKE7ffUjF3iuyAFdI9
+        m9MfVG4EqXRi7/Ye5qOC+8fG3NICM9o=
+X-Google-Smtp-Source: AHgI3IZRHILaAImfiX+iXHGpYjR9ycdZPXl8fl4mmM+p65sdat6Ic/Hy/dLX8GBTkwo3I6OPFCpt9g==
+X-Received: by 2002:ac5:c30b:: with SMTP id j11mr637021vkk.46.1550789209161;
+        Thu, 21 Feb 2019 14:46:49 -0800 (PST)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id v197sm40650vkd.28.2019.02.21.14.46.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Feb 2019 14:46:48 -0800 (PST)
+Received: by mail-ua1-f42.google.com with SMTP id q17so282467uam.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 14:46:48 -0800 (PST)
+X-Received: by 2002:ab0:74cb:: with SMTP id f11mr567242uaq.14.1550789207533;
+ Thu, 21 Feb 2019 14:46:47 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: bff3a483-cdad-4642-b32b-08d6984e110a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2019 22:43:57.6786
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2599
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-21_14:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+References: <20190221203310.20706-1-aaro.koskinen@iki.fi>
+In-Reply-To: <20190221203310.20706-1-aaro.koskinen@iki.fi>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 21 Feb 2019 14:46:36 -0800
+X-Gmail-Original-Message-ID: <CAGXu5j+AeYKMTxCm7YRwyq7Kd9EXKtKUZRO+g8knxouK7Ce2jg@mail.gmail.com>
+Message-ID: <CAGXu5j+AeYKMTxCm7YRwyq7Kd9EXKtKUZRO+g8knxouK7Ce2jg@mail.gmail.com>
+Subject: Re: [RESEND PATCH v2] panic/reboot: allow specifying reboot_mode for
+ panic only
+To:     Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Aaro Koskinen <aaro.koskinen@nokia.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 05:29:24PM +0100, Oleg Nesterov wrote:
-> On 02/20, Roman Gushchin wrote:
-> >
-> > On Wed, Feb 20, 2019 at 03:37:48PM +0100, Oleg Nesterov wrote:
-> > >
-> > > I tried to not argue with intent, but to be honest I am more and more
-> > > sceptical... Lets forget about ptrace for the moment.
-> > >
-> > > Once again, why do we want a killable freezer?
-> > >
-> > > If a user wants to kill a frozen task from CGRP_FROZEN cgroup he can =
-simply
-> > >
-> > > 	1. send SIGKILL to that task
-> > >
-> > > 	2. migrate it to the root cgroup.
-> > >
-> > > why this doesn't / can't work?
-> >
-> > It does work, but it doesn't look as a nice interface to take into
-> > the cgroup v2 world.
-> >
-> > It just not clear, why killing a frozen task requires some cgroup-level
-> > operations? It doesn't add anything except some additional complexity
-> > to the userspace.
->=20
-> Yes.
->=20
-> But to me this is a reasonable trade-off because this way we do not add
-> additional complexity to the kernel.
->=20
-> Actually, "killable" is not that difficult afaics. "ptraceable" looks mor=
-e
-> problematic to me. Again, user-space can do
->=20
-> 	1. PTRACE_SEIZE
-> 	2. move the tracee to the root cgroup
-> 	3. do anything with the tracee
-> 	4. move it back
->=20
-> > Generally speaking, any process hanging in D-state
-> > for a long time isn't the nicest object from the userspace's point of v=
-iew.
->=20
-> Roman, this is unfair comparison ;)
+On Thu, Feb 21, 2019 at 12:33 PM Aaro Koskinen <aaro.koskinen@iki.fi> wrote:
+>
+> From: Aaro Koskinen <aaro.koskinen@nokia.com>
+>
+> Allow specifying reboot_mode for panic only. This is needed on systems
+> where ramoops is used to store panic logs, and user wants to use warm
+> reset to preserve those, while still having cold reset on normal reboots.
+>
+> Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
+> ---
+>
+>         v2: Use REBOOT_UNDEFINED instead of -1
+>
+>         v1: https://marc.info/?t=154957416600005&r=1&w=2
+>
+>  .../admin-guide/kernel-parameters.txt         |  4 +++-
+>  include/linux/reboot.h                        |  2 ++
+>  kernel/panic.c                                |  2 ++
+>  kernel/reboot.c                               | 20 ++++++++++++++-----
+>  4 files changed, 22 insertions(+), 6 deletions(-)
+>
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 858b6c0b9a15..5705b4689565 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -3949,7 +3949,9 @@
+>                                 [[,]s[mp]#### \
+>                                 [[,]b[ios] | a[cpi] | k[bd] | t[riple] | e[fi] | p[ci]] \
+>                                 [[,]f[orce]
+> -                       Where reboot_mode is one of warm (soft) or cold (hard) or gpio,
+> +                       Where reboot_mode is one of warm (soft) or cold (hard) or gpio
+> +                                       (prefix with 'panic_' to set mode for panic
+> +                                       reboot only),
+>                               reboot_type is one of bios, acpi, kbd, triple, efi, or pci,
+>                               reboot_force is either force or not specified,
+>                               reboot_cpu is s[mp]#### with #### being the processor
+> diff --git a/include/linux/reboot.h b/include/linux/reboot.h
+> index e63799a6e895..1c4c8a47e2de 100644
+> --- a/include/linux/reboot.h
+> +++ b/include/linux/reboot.h
+> @@ -19,8 +19,10 @@ enum reboot_mode {
+>         REBOOT_HARD,
+>         REBOOT_SOFT,
+>         REBOOT_GPIO,
+> +       REBOOT_UNDEFINED = -1,
 
-Why not? This is exactly the point, with v1 freezer you get a task in D sta=
-te,
-which isn't manageable by userspace without some actions with sysfs.
+I would expect this before REBOOT_COLD (numerically ordered).
 
->=20
-> > Exactly as a SIGSTOPped process can be killed without sending SIGCONT,
-> > why a frozen task would require some additional operations?
->=20
-> this too,
->=20
-> > And I'm not talking about the case, when the process which is sending
-> > SIGKILL has no write access to cgroupfs.
->=20
-> True.
->=20
-> But there is another case. If admin wants to freeze a cgroup then it is n=
-ot
-> clear why a user which can send SIGKILL to a frozen process should wake i=
-t up.
+>  };
+>  extern enum reboot_mode reboot_mode;
+> +extern enum reboot_mode panic_reboot_mode;
+>
+>  enum reboot_type {
+>         BOOT_TRIPLE     = 't',
+> diff --git a/kernel/panic.c b/kernel/panic.c
+> index f121e6ba7e11..a0d839f883b7 100644
+> --- a/kernel/panic.c
+> +++ b/kernel/panic.c
+> @@ -306,6 +306,8 @@ void panic(const char *fmt, ...)
+>                  * shutting down.  But if there is a chance of
+>                  * rebooting the system it will be rebooted.
+>                  */
+> +               if (panic_reboot_mode != REBOOT_UNDEFINED)
+> +                       reboot_mode = panic_reboot_mode;
+>                 emergency_restart();
+>         }
+>  #ifdef __sparc__
+> diff --git a/kernel/reboot.c b/kernel/reboot.c
+> index e1b79b6a2735..b9e79e8c7226 100644
+> --- a/kernel/reboot.c
+> +++ b/kernel/reboot.c
+> @@ -31,6 +31,7 @@ EXPORT_SYMBOL(cad_pid);
+>  #define DEFAULT_REBOOT_MODE
+>  #endif
+>  enum reboot_mode reboot_mode DEFAULT_REBOOT_MODE;
+> +enum reboot_mode panic_reboot_mode = REBOOT_UNDEFINED;
+>
+>  /*
+>   * This variable is used privately to keep track of whether or not
+> @@ -519,6 +520,8 @@ EXPORT_SYMBOL_GPL(orderly_reboot);
+>  static int __init reboot_setup(char *str)
+>  {
+>         for (;;) {
+> +               enum reboot_mode *mode;
+> +
+>                 /*
+>                  * Having anything passed on the command line via
+>                  * reboot= will cause us to disable DMI checking
+> @@ -526,17 +529,24 @@ static int __init reboot_setup(char *str)
+>                  */
+>                 reboot_default = 0;
+>
+> +               if (!strncmp(str, "panic_", 6)) {
+> +                       mode = &panic_reboot_mode;
+> +                       str += 6;
+> +               } else {
+> +                       mode = &reboot_mode;
+> +               }
+> +
+>                 switch (*str) {
+>                 case 'w':
+> -                       reboot_mode = REBOOT_WARM;
+> +                       *mode = REBOOT_WARM;
+>                         break;
+>
+>                 case 'c':
+> -                       reboot_mode = REBOOT_COLD;
+> +                       *mode = REBOOT_COLD;
+>                         break;
+>
+>                 case 'h':
+> -                       reboot_mode = REBOOT_HARD;
+> +                       *mode = REBOOT_HARD;
+>                         break;
+>
+>                 case 's':
+> @@ -553,11 +563,11 @@ static int __init reboot_setup(char *str)
+>                                 if (rc)
+>                                         return rc;
+>                         } else
+> -                               reboot_mode = REBOOT_SOFT;
+> +                               *mode = REBOOT_SOFT;
+>                         break;
+>                 }
+>                 case 'g':
+> -                       reboot_mode = REBOOT_GPIO;
+> +                       *mode = REBOOT_GPIO;
+>                         break;
+>
+>                 case 'b':
+> --
+> 2.17.0
+>
 
-But it will woken up only for a short moment. And the cgroup will remain fr=
-ozen
-in a sense that belonging processes do not consume CPU.
-Actually, a signal can be useful: for example, if it was the last process,
-the container management software might want to delete the cgroup.
+Everything else looks good, though!
 
->=20
-> -------------------------------------------------------------------------=
------
-> Again, it is not that I hate the idea of killable/ptraceable freezer. Jus=
-t I
-> personally think it's not worth the trouble. Perhaps I am wrong, but so f=
-ar
-> I do not see a good implementation...
->=20
-> And, apart from reading/writing the registers, what can ptrace do with a =
-frozen
-> tracee? This doesn't look like a "must have" feature to me.
-
-I think the minimal requirement is that the tracing application should not =
-hang
-and wait for tracee to be unfrozen.
-So, imagine you're trying to debug an application in production with gdb,
-and occasionally gdb just hangs because some cluster management stuff froze
-the tracee's cgroup. Not the best user experience.
-
->=20
-> At least, may I ask you again to make (if possible) a separate patch whic=
-h adds
-> the ability to kill/ptrace?
-
-I'll try, but not sure if it can make the code easier for review.
-It looks like this ability defines the implementation.
-
-> -------------------------------------------------------------------------=
------
->=20
-> > > Why I am starting to argue... The ability to kill a frozen task compl=
-icates
-> > > the code, and since cgroup_enter_stopped() (in this version at least)=
- doesn't
-> > > properly interacts with freezable_schedule() leads to other problems.
-> > >
-> > > From 7/7:
-> > >
-> > > 	+  cgroup.freeze
-> > > 	+	A read-write single value file which exists on non-root cgroups.
-> > > 	+	Allowed values are "0" and "1". The default is "0".
-> > > 	+
-> > > 	+	Writing "1" to the file causes freezing of the cgroup and all
-> > > 	+	descendant cgroups. This means that all belonging processes will
-> > > 	+	be stopped and will not run until the cgroup will be explicitly
-> > > 	+	unfrozen. Freezing of the cgroup may take some time;
-> > >                                                  ^^^^^^^^^^^^^^^^^^
-> > > it may take infinite time.
-> > >
-> > > Just suppose that a task does vfork() and this races with cgroup_do_f=
-reeze(true).
-> > > If the new child notices JOBCTL_TRAP_FREEZE before exit/exec the cgro=
-up will be
-> > > never frozen.
-> >
-> > Hm, why? cgroup_update_frozen() called from cgroup_post_fork() should b=
-ring
-> > the cgroup into the frozen state. If it's not true (I'm missing some ra=
-ce here),
-> > it's a bug, but I don't see why it's not possible in general.
->=20
-> A task P calls vfork() and creates the new child C. Now, how can the pare=
-nt P
-> (which sleeps in TASK_KILLABLE) call cgroup_enter_stopped() ? It can't un=
-til C
-> exits or execs. C can't exit or exec because it is frozen.
-
-Got it. I'll address it in the next version.
-
-Thanks!
+-- 
+Kees Cook
