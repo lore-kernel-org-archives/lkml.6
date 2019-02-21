@@ -7,48 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9373AC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:47:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8FDFC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:47:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54A3220700
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:47:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 864CB20700
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:47:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550760470;
-	bh=jf8rqTZ7eDTxnVjslXmrwZFaIrOui4gga27j9JNhJXA=;
+	s=default; t=1550760477;
+	bh=2Bhg3PGlLaGtv0jg6ntpbtKhn4Xap50YjG+BNdMgrR0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WPjPcxooKPCkPtRCVLaYbVIDSiTLcFNxBWGEsw5pom+J1WFFidVLp30hIw5zZaeUu
-	 QyRAy68xdaQc4TbPb910PD9gafHyCG+by3Bi9zHBl0W3lzz64kFByl/oYgixM6tCb1
-	 sT3OppWbvBMwa6nq7dF2xC6zFO3w7HfHVo+TfJL4=
+	b=hoTqv+fgSipwFdBvWcIRsRTuSNIdXDIyBO1aBvCSzBgLiOpzwDo4J0hutt4Vzh0GS
+	 bImO5yERegDvyRXfDh4+/o5vt8vQBLX/L23YFQtvGXoepQFPyFxlnUYaFhhYP7VRM5
+	 OSXLFMJerAae2ggDnFnXQ4NFm62yNe/UVLG1FpF8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728907AbfBUOrs (ORCPT
+        id S1729206AbfBUOkx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:47:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35760 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:40:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728751AbfBUOk6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:40:58 -0500
+        id S1728665AbfBUOks (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:40:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06B792085A;
-        Thu, 21 Feb 2019 14:40:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54E922086A;
+        Thu, 21 Feb 2019 14:40:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550760057;
-        bh=jf8rqTZ7eDTxnVjslXmrwZFaIrOui4gga27j9JNhJXA=;
+        s=default; t=1550760047;
+        bh=2Bhg3PGlLaGtv0jg6ntpbtKhn4Xap50YjG+BNdMgrR0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zRwWQIx+miytjyop1tOrB+t6nSmGafz3KSKEspqh0pO4n0FeZWWE4WddJiuDww5Ob
-         6BrvGgofVbqnK0R+VE8wOn35usGyXqjna498a5AYBfPt8/7EDDRXRO4qWEyI/6bUiN
-         J8Mo41cxd6nlvE0Vc7k7lakRwODsCSqYaV7vC12Y=
+        b=B0XIP3tQ9CV8Zi5ZkBwp6N0RrnJRvUQ623zFsO3tqr/pIdbvYmPoEO4+QEZ4z4GtL
+         GNqiHzGAzyOCgMgnZPHdk7D6h29k5egyPKck3NRNzlBHZbXFohxBYs74Yb+vwi6e8m
+         uwesBh1fXcr/xxp8tNOnIzSZLKg+38tHfVrophUE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        stable@vger.kernel.org, Jose Abreu <joabreu@synopsys.com>,
+        Joao Pinto <jpinto@synopsys.com>,
         "David S. Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 13/30] sky2: Increase D3 delay again
-Date:   Thu, 21 Feb 2019 15:35:55 +0100
-Message-Id: <20190221125251.251700308@linuxfoundation.org>
+Subject: [PATCH 4.19 10/30] net: stmmac: Fix a race in EEE enable callback
+Date:   Thu, 21 Feb 2019 15:35:52 +0100
+Message-Id: <20190221125251.092809367@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125250.543158526@linuxfoundation.org>
 References: <20190221125250.543158526@linuxfoundation.org>
@@ -67,35 +69,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1765f5dcd00963e33f1b8a4e0f34061fbc0e2f7f ]
+[ Upstream commit 8a7493e58ad688eb23b81e45461c5d314f4402f1 ]
 
-Another platform requires even longer delay to make the device work
-correctly after S3.
+We are saving the status of EEE even before we try to enable it. This
+leads to a race with XMIT function that tries to arm EEE timer before we
+set it up.
 
-So increase the delay to 300ms.
+Fix this by only saving the EEE parameters after all operations are
+performed with success.
 
-BugLink: https://bugs.launchpad.net/bugs/1798921
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Fixes: d765955d2ae0 ("stmmac: add the Energy Efficient Ethernet support")
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/marvell/sky2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../ethernet/stmicro/stmmac/stmmac_ethtool.c  | 22 ++++++++++---------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/sky2.c b/drivers/net/ethernet/marvell/sky2.c
-index 697d9b374f5e1..ae2f35039343b 100644
---- a/drivers/net/ethernet/marvell/sky2.c
-+++ b/drivers/net/ethernet/marvell/sky2.c
-@@ -5087,7 +5087,7 @@ static int sky2_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	INIT_WORK(&hw->restart_work, sky2_restart);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
+index 5710864fa8090..9caf79ba5ef16 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
+@@ -692,25 +692,27 @@ static int stmmac_ethtool_op_set_eee(struct net_device *dev,
+ 				     struct ethtool_eee *edata)
+ {
+ 	struct stmmac_priv *priv = netdev_priv(dev);
++	int ret;
  
- 	pci_set_drvdata(pdev, hw);
--	pdev->d3_delay = 200;
-+	pdev->d3_delay = 300;
+-	priv->eee_enabled = edata->eee_enabled;
+-
+-	if (!priv->eee_enabled)
++	if (!edata->eee_enabled) {
+ 		stmmac_disable_eee_mode(priv);
+-	else {
++	} else {
+ 		/* We are asking for enabling the EEE but it is safe
+ 		 * to verify all by invoking the eee_init function.
+ 		 * In case of failure it will return an error.
+ 		 */
+-		priv->eee_enabled = stmmac_eee_init(priv);
+-		if (!priv->eee_enabled)
++		edata->eee_enabled = stmmac_eee_init(priv);
++		if (!edata->eee_enabled)
+ 			return -EOPNOTSUPP;
+-
+-		/* Do not change tx_lpi_timer in case of failure */
+-		priv->tx_lpi_timer = edata->tx_lpi_timer;
+ 	}
  
- 	return 0;
+-	return phy_ethtool_set_eee(dev->phydev, edata);
++	ret = phy_ethtool_set_eee(dev->phydev, edata);
++	if (ret)
++		return ret;
++
++	priv->eee_enabled = edata->eee_enabled;
++	priv->tx_lpi_timer = edata->tx_lpi_timer;
++	return 0;
+ }
  
+ static u32 stmmac_usec2riwt(u32 usec, struct stmmac_priv *priv)
 -- 
 2.19.1
 
