@@ -2,188 +2,109 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E108FC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 05:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C9D5C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 05:15:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3DF12086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 05:10:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BF2C2148D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 05:15:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s2jS7BMF"
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="qI8wWvTY";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="6VSgiS0y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726123AbfBUFKJ (ORCPT
+        id S1725978AbfBUFP0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 00:10:09 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38753 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725648AbfBUFKI (ORCPT
+        Thu, 21 Feb 2019 00:15:26 -0500
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:41761 "EHLO
+        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725385AbfBUFPZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 00:10:08 -0500
-Received: by mail-ed1-f67.google.com with SMTP id h58so21955160edb.5;
-        Wed, 20 Feb 2019 21:10:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xE8W9LVF2KPosTohb44I4pOeYk2w8oyKayatVhb3LyE=;
-        b=s2jS7BMF5EPyu0Pl4wOfm0WAun1ZYig7TD7WSDPoSUH1ggswHsduE06WdvpUotfD1/
-         h1ei1jOS7ICJPTsk4tg+WZIoficzbrH6IPTb3pOma7Lm2bel342FB0ygz1mZZF/eHhvf
-         UlwGX00MskQyLDQcZGsQMic4pLEvc/SFxjxr79RBZ3EvQFgJ3cmSud65/cVzYRT3Bqwm
-         9sJQ+EGwhRlVZrbtz0oMv7muiJgpRWGOwAKEfuL6/eNppH232ltGafbWbLSIUf/dzMB8
-         38Hed/NYUfa4txuScX1BPldAnRZQNZuC5bV4shKUVf3CH4+R0/ywR0k0x1U8+ZZQj5BL
-         yvCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xE8W9LVF2KPosTohb44I4pOeYk2w8oyKayatVhb3LyE=;
-        b=MM5Z+BbcZy65ckjRDkDdiAY8kIW3qNVDNuCC4gpHf+Rl5krRO4j9R6BQxgf7D8q3i2
-         9SJA+4DuFD2iY2CdIA0flxtpHUQHVfH4we+8bVHiMmfHVaXMPT8yIqQA9nCtTiR/91zZ
-         s6NXMtq5VMrDtpe/o3UKU5WHNxAP2Y+ROAn09/CKYXuvlJiY+Iyh/qWXaDkNpInyzH4/
-         UjfJLMnTbQ+QUi3naMwWHgWDbiu1k41IAmTogukn7Tbvy1aSdMUwGULN5OZ/U0a0u9JP
-         VcOgVVfDioLvgR9W/j511CUPh7GOlB8uOolK1YHA+NeRsjt3cK/7ZZYCvQ16KF/nyUD7
-         EtLg==
-X-Gm-Message-State: AHQUAuatn3rHPMMuHFmk9M9FQ78pxtUvK4LnXMzVniT3fkhLJmzlagud
-        SF5veEnR6GIUkch0ou9f/rs=
-X-Google-Smtp-Source: AHgI3Ibu4Si1mxsGjwBKbkvS3TVYjInFAqZm4jYVY7PouWeD/etizFDFFhNTXOln26ZD1e+FSIsdzg==
-X-Received: by 2002:aa7:c70c:: with SMTP id i12mr17959018edq.36.1550725805739;
-        Wed, 20 Feb 2019 21:10:05 -0800 (PST)
-Received: from archlinux-ryzen ([2a01:4f9:2a:1fae::2])
-        by smtp.gmail.com with ESMTPSA id v15sm437819edl.40.2019.02.20.21.10.04
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 20 Feb 2019 21:10:04 -0800 (PST)
-Date:   Wed, 20 Feb 2019 22:10:02 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org,
-        Michal Marek <michal.lkml@markovi.net>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH] kbuild: compute false-positive -Wmaybe-uninitialized
- cases in Kconfig
-Message-ID: <20190221051002.GA31595@archlinux-ryzen>
-References: <1550722418-9189-1-git-send-email-yamada.masahiro@socionext.com>
+        Thu, 21 Feb 2019 00:15:25 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id CC29216F9;
+        Thu, 21 Feb 2019 00:15:21 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Thu, 21 Feb 2019 00:15:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=K2Z5aAuAXuH4fT8iGliRn3Jx9rW
+        /M1Y97uTsEqo6FxQ=; b=qI8wWvTYtBjOKSnlkAzqXg5p5Eanzg7Epn1NIoMYVj0
+        7icvtWCyCd/6ZT47b9YigeBc/hVxc7+FrJErX6O6fEqRvsov9VuOJRG7b5OPuNuo
+        Ftojjp1Wm34F72o6S2yH4yna6vFi92KW4wE/eMynrYfcCS+sdp4Q9KLEzgGWbZDz
+        Cfm7DeJhLumWcPnZkfbLKYUNbqJ8Iag43pB4MVGXhRp2+Fgt9ToPrdwXCbee3OjT
+        TCMcTxUKE1FceKvEWDFJR0MyWg2YZRsXoKiP1LAMmdQaXq1Hhg/6lNitDOYsmNx2
+        Fo6wgcRmA/YufQOMQ4R9787JLl7MaKLnjolmhLBNlFQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=K2Z5aA
+        uAXuH4fT8iGliRn3Jx9rW/M1Y97uTsEqo6FxQ=; b=6VSgiS0yZV34yhf/ddZS66
+        Eu4zqmIE2btgWd0RYszjfBPzpABAfc02GRPrRt8tk34rp0czBV3Fx1frGtzRW6q3
+        4RLz7v0ei7WPZsmVRDBta4xtofWOdMitNzymZNnXC2lfDJHhFlJviBjLDIZTgPpD
+        a9lkAnuv+uYlOcJ8NZhsQ5KujlQ5/9eCG+qBiea4oEW0xK28ojOi5ig0PfmZofUE
+        bwuwMWi1ROCwMtgD34nhC34oq+ciOC1ni/qasKEUBnZLloi0rAyQLZ7MfQTEo7EI
+        nmw+E7ivWP1QU+A/jCHzSZALV9wBwWVPG/INQEAMhJslCsndptaLLSJL6880rlIA
+        ==
+X-ME-Sender: <xms:6DNuXMxJQ92xpQqUkVyXCH8U-ELbMFdvJ_UNv2cg-fecTzeInwhFLA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrtdejgdekvdculddtuddrgedtledrtddtmd
+    cutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    gfrhhlucfvnfffucdlfedtmdenucfjughrpeffhffvuffkfhggtggujgfofgesthdtredt
+    ofervdenucfhrhhomhepfdfvohgsihhnucevrdcujfgrrhguihhnghdfuceomhgvsehtoh
+    gsihhnrdgttgeqnecukfhppeduvddurdeggedrvdefledrudeggeenucfrrghrrghmpehm
+    rghilhhfrhhomhepmhgvsehtohgsihhnrdgttgenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:6DNuXINq-p203OFkgLF8S0lzay1WDsdsrQ7pgUCiaG-KPFpRzhJI-w>
+    <xmx:6DNuXFgVux8DOPfRHeVAJjJnGBZpLttdWXt_XWbMqdk32Ym97laGig>
+    <xmx:6DNuXA-E2KmZVH2mo6xtX-WsTgCSEZGlmG6FfcH1J0j-XgM6qoum_g>
+    <xmx:6TNuXHWu_-x27PpLMt4zCH-NEFnHWM9YbLEkYaY6JBCbQNgtFbjj3A>
+Received: from localhost (ppp121-44-239-144.bras2.syd2.internode.on.net [121.44.239.144])
+        by mail.messagingengine.com (Postfix) with ESMTPA id DA61DE461F;
+        Thu, 21 Feb 2019 00:15:18 -0500 (EST)
+Date:   Thu, 21 Feb 2019 16:15:00 +1100
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     "Tobin C. Harding" <tobin@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/6] lib: Add safe string funtions
+Message-ID: <20190221051500.GB11758@eros.localdomain>
+References: <20190218232308.11241-1-tobin@kernel.org>
+ <CAGXu5j+gHMCjxMr3k0UNBcsT6DYuALtpROxazf7YVX=SUja_cQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1550722418-9189-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <CAGXu5j+gHMCjxMr3k0UNBcsT6DYuALtpROxazf7YVX=SUja_cQ@mail.gmail.com>
+X-Mailer: Mutt 1.11.3 (2019-02-01)
 User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 01:13:38PM +0900, Masahiro Yamada wrote:
-> Since -Wmaybe-uninitialized was introduced by GCC 4.7, we have patched
-> various false positives:
+On Wed, Feb 20, 2019 at 03:31:07PM -0800, Kees Cook wrote:
+> On Mon, Feb 18, 2019 at 3:24 PM Tobin C. Harding <tobin@kernel.org> wrote:
+> > During your talk at LCA you mentioned that we could do with a couple
+> > more safe string functions.  One to zero the tail of the destination
+> > buffer after call to strscpy() and also the self explanatory
+> > strscpy_from_user().
 > 
->  - commit e74fc973b6e5 ("Turn off -Wmaybe-uninitialized when building
->    with -Os") turned off this option for -Os.
-> 
->  - commit 815eb71e7149 ("Kbuild: disable 'maybe-uninitialized' warning
->    for CONFIG_PROFILE_ALL_BRANCHES") turned off this option for
->    CONFIG_PROFILE_ALL_BRANCHES
-> 
->  - commit a76bcf557ef4 ("Kbuild: enable -Wmaybe-uninitialized warning
->    for "make W=1"") turned off this option for GCC < 4.9
->    Arnd provided more explanation in https://lkml.org/lkml/2017/3/14/903
-> 
-> I think this looks better by shifting the logic from Makefile to Kconfig.
-> 
+> Thanks for jumping in with this! :)
 
-I agree!
+Good to be working with you again.
 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > I couldn't work out if this is a false positive or not?  Does the new
+> > config option CONFIG_TEST_STRING need more documentation?  I don't see
+> > where extra docs should be added and it seems self explanatory as is.
+> 
+> Usually this just means the help string in Kconfig is "too short".
+> Sometimes this is a false positive -- really up to you if you think it
+> needs more. :)
 
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-
-> ---
-> 
->  Makefile             | 10 +++-------
->  init/Kconfig         | 17 +++++++++++++++++
->  kernel/trace/Kconfig |  1 +
->  3 files changed, 21 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Makefile b/Makefile
-> index 1bb0535..b21aa2e3 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -656,17 +656,13 @@ KBUILD_CFLAGS	+= $(call cc-disable-warning, int-in-bool-context)
->  
->  ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
->  KBUILD_CFLAGS	+= $(call cc-option,-Oz,-Os)
-> -KBUILD_CFLAGS	+= $(call cc-disable-warning,maybe-uninitialized,)
-> -else
-> -ifdef CONFIG_PROFILE_ALL_BRANCHES
-> -KBUILD_CFLAGS	+= -O2 $(call cc-disable-warning,maybe-uninitialized,)
->  else
->  KBUILD_CFLAGS   += -O2
->  endif
-> -endif
->  
-> -KBUILD_CFLAGS += $(call cc-ifversion, -lt, 0409, \
-> -			$(call cc-disable-warning,maybe-uninitialized,))
-> +ifdef CONFIG_CC_DISABLE_WARN_MAYBE_UNINITIALIZED
-> +KBUILD_CFLAGS   += -Wno-maybe-uninitialized
-> +endif
->  
->  # Tell gcc to never replace conditional load with a non-conditional one
->  KBUILD_CFLAGS	+= $(call cc-option,--param=allow-store-data-races=0)
-> diff --git a/init/Kconfig b/init/Kconfig
-> index c9386a3..1f05a88 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -26,6 +26,22 @@ config CLANG_VERSION
->  config CC_HAS_ASM_GOTO
->  	def_bool $(success,$(srctree)/scripts/gcc-goto.sh $(CC))
->  
-> +config CC_HAS_WARN_MAYBE_UNINITIALIZED
-> +	def_bool $(cc-option,-Wmaybe-uninitialized)
-> +	help
-> +	  GCC >= 4.7 supports this option.
-> +
-> +config CC_DISABLE_WARN_MAYBE_UNINITIALIZED
-> +	bool
-> +	depends on CC_HAS_WARN_MAYBE_UNINITIALIZED
-> +	default CC_IS_GCC && GCC_VERSION < 40900  # unreliable for GCC < 4.9
-> +	help
-> +	  GCC's -Wmaybe-uninitialized is not reliable by definition.
-> +	  Lots of false positive warnings are produced in some cases.
-> +
-> +	  If this option is enabled, -Wno-maybe-uninitialzed is passed
-> +	  to the compiler to suppress maybe-uninitialized warnings.
-> +
->  config CONSTRUCTORS
->  	bool
->  	depends on !UML
-> @@ -1113,6 +1129,7 @@ config CC_OPTIMIZE_FOR_PERFORMANCE
->  
->  config CC_OPTIMIZE_FOR_SIZE
->  	bool "Optimize for size"
-> +	imply CC_DISABLE_WARN_MAYBE_UNINITIALIZED  # avoid false positives
->  	help
->  	  Enabling this option will pass "-Os" instead of "-O2" to
->  	  your compiler resulting in a smaller kernel.
-> diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-> index fa8b1fe..8bd1d6d 100644
-> --- a/kernel/trace/Kconfig
-> +++ b/kernel/trace/Kconfig
-> @@ -370,6 +370,7 @@ config PROFILE_ANNOTATED_BRANCHES
->  config PROFILE_ALL_BRANCHES
->  	bool "Profile all if conditionals" if !FORTIFY_SOURCE
->  	select TRACE_BRANCH_PROFILING
-> +	imply CC_DISABLE_WARN_MAYBE_UNINITIALIZED  # avoid false positives
->  	help
->  	  This tracer profiles all branch conditions. Every if ()
->  	  taken in the kernel is recorded whether it hit or miss.
-> -- 
-> 2.7.4
-> 
+Cool, thanks.
