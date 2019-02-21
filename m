@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4268C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADEEEC4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:51:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B05EE2147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:51:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D18F20880
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:51:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="deoJ9Bx0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VSEZSr/o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728219AbfBULvt (ORCPT
+        id S1728189AbfBULvp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 06:51:49 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40694 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728172AbfBULvn (ORCPT
+        Thu, 21 Feb 2019 06:51:45 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36267 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728159AbfBULvm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 06:51:43 -0500
-Received: by mail-wm1-f67.google.com with SMTP id t15so9490606wmi.5
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 03:51:42 -0800 (PST)
+        Thu, 21 Feb 2019 06:51:42 -0500
+Received: by mail-wr1-f65.google.com with SMTP id o17so29711987wrw.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 03:51:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=PMnF/ZR1+W37CuRkf80c+T3BI7KnPXSLVpAkjcBAFTY=;
-        b=deoJ9Bx0+y/dAFIhzbt+rybytuLydl3/MOYMEpio43iRFoP7HZxiWZVJBIta1mhb+n
-         MJvECXNIO3FoVx3gahEEzZPmCtyH+1bpNG1gA0TPjm/GCYNikag4j6bdkmI+GDinO3JD
-         kL/U2mDm36+nISQjbq+dv48s6+8OuKD/8OTYHC7KCmGKMWTFhayprzHsrpfW5td3OXGe
-         B82axxPPHI+JT/Vbec8+R/N6pDAOb9UX5y22OyS8HljDfdlBwFFtEdIJKsFMSK80YwMH
-         px6mGW3cS1jd2Y3UCWqbgD2XtO5lnI5JfZ0qr6orKTlZ6Slm6aBKqdHwOc/0hsJxIUCK
-         NCkg==
+        bh=3M5x03OILQJphj2NS2SE7omfFqWizQ+eC7zxXoZQNAU=;
+        b=VSEZSr/oVJibIX+y7N0J6vx5iSlrBCdp2C91KkctQbV+NBRnbu0vE1EvN1fmMBMm8R
+         Pg97u06AoKr9Jlre5VsKtiVPiYb5KbBcNQQBaK4gMi/mXNk6xNsCHuqC7FkqWDtV0HGx
+         tR33DYug1BUNyIFM2gmW/LYYzCZUiJSpgZrFelFN9d8MGDC4sQB7Avm6YSd4yRHBIThw
+         PZJziCbqsVEZyON0rvfsd+VwC7kcrEkvvIrcWT2YNANgzdleR3NQU5ObPUcmYaj7VVIz
+         S1uwo5cDRYDNRsXIo4gs76Qv3v4z9nEraDva95yCrs0Jetk4XNIuMok3hUItJ52ceRTN
+         bpFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=PMnF/ZR1+W37CuRkf80c+T3BI7KnPXSLVpAkjcBAFTY=;
-        b=ngvN01vzoJioZh1KzBgUZXJq4oUIlxJOmXVvtlbZH/KhRPbfGLVRTFujrQC0VDeaUJ
-         GfVMJiEqr/mStcIGED5vhaAWIF7KuEg+V7aB5vPMA+SaunAAdOr0110wErWW7zwy/ZUb
-         qh9SwLfa6ZiRfBpDDLs1u+z4NICu6bP8lAwbWwx+KzL1WY318gXb0M60L9sB2bVMBmEk
-         ds8ma7r6vrNB6gxTcNPf70HZAb2ON6KWDQVQ7kTfO6wbmiFOMYCwFeiuhRm30Wb50x37
-         +k9xfWMAOsnE2qFRT+JN8X8dTmSl/ZYyKGk24lIXtfpSbdK4I02kFoYXUDVPivq6i4gr
-         I48A==
-X-Gm-Message-State: AHQUAubxPK5drYqMW0KzFA2IjvNCg2qAo3U+NiICiqPcfevLtAw82Grh
-        lAyKFGg8sLPsqJUIFesK2nw=
-X-Google-Smtp-Source: AHgI3IYTDKRx+T5HA4Sb7f7xHWKMWYpQGC5wYu8FpjMlwdXLBbp7Hdv3o6PIgkQ8kKojN4z4AcMLww==
-X-Received: by 2002:a1c:c5cb:: with SMTP id v194mr5145647wmf.150.1550749901510;
-        Thu, 21 Feb 2019 03:51:41 -0800 (PST)
-Received: from localhost.localdomain (ip5f5abba0.dynamic.kabel-deutschland.de. [95.90.187.160])
-        by smtp.gmail.com with ESMTPSA id j5sm15092849wrw.59.2019.02.21.03.51.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        bh=3M5x03OILQJphj2NS2SE7omfFqWizQ+eC7zxXoZQNAU=;
+        b=pUCZqATAjzLbFWErY9jashn32veZrqc94COQuY6ubXQZEwsltpbXGIl0BHhPC8+NF8
+         GWBM0oQXu3iJn2DryDTuUU9mUtHy7eYOCKbYks0dlqJORG9MKAyY7BONy6RB1igZUoW3
+         hOTxnhx0y4ClZjYQhENe6yX/MBE08u8K48L1QA9p/I/VNJBvoL9TOooZi9i/UuTpPyCa
+         TeyQA5n3Wzb2yGaJHpWPVEeb3PrqK1rZJnHVXVLkwR2dxtWK8dpZY/TjVreGDk//iPzA
+         dYOZqyhpTcFdVEgGrXSxxsqV6WG9ZnIRorY6grEUa9ByFwrQZZxnhge9ySg1F4cTXKLp
+         /uPg==
+X-Gm-Message-State: AHQUAuYqOFccnUQLrOWfulcDX7avDH+bYq3/qM8NPxJS5lnwnCMjL1mB
+        l8yvjA3KUPGWPlyUKUX8C4kq5vPA8vU=
+X-Google-Smtp-Source: AHgI3IZcZVztQP1pJDef0zOgMSrUdQ66YCOHngqSCejcwUOe5QDYbsK0yxtX+77S7ttC0Psenmrc8w==
+X-Received: by 2002:adf:e548:: with SMTP id z8mr29252631wrm.52.1550749900313;
         Thu, 21 Feb 2019 03:51:40 -0800 (PST)
+Received: from localhost.localdomain (ip5f5abba0.dynamic.kabel-deutschland.de. [95.90.187.160])
+        by smtp.gmail.com with ESMTPSA id j5sm15092849wrw.59.2019.02.21.03.51.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Feb 2019 03:51:39 -0800 (PST)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 6/6] staging: rtl8188eu: cleanup comparsions to NULL in rtl8188eu_xmit.c
-Date:   Thu, 21 Feb 2019 12:50:57 +0100
-Message-Id: <20190221115057.31207-6-straube.linux@gmail.com>
+Subject: [PATCH 5/6] staging: rtl8188eu: add spaces around '*' in rtl8188e_cmd.c
+Date:   Thu, 21 Feb 2019 12:50:56 +0100
+Message-Id: <20190221115057.31207-5-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221115057.31207-1-straube.linux@gmail.com>
 References: <20190221115057.31207-1-straube.linux@gmail.com>
@@ -74,34 +74,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use !x instead of x == NULL. Reported by checkpatch.
+Add spaces around '*' to follow kernel coding style.
+Reported by checkpatch.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c b/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c
-index a72e069269b8..9e5f23392d58 100644
---- a/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c
-+++ b/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c
-@@ -440,14 +440,14 @@ bool rtl8188eu_xmitframe_complete(struct adapter *adapt,
- 	RT_TRACE(_module_rtl8192c_xmit_c_, _drv_info_, ("+xmitframe_complete\n"));
+diff --git a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
+index dcc2445a8988..47352f210c0b 100644
+--- a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
++++ b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
+@@ -475,7 +475,7 @@ static void SetFwRsvdPagePkt(struct adapter *adapt, bool bDLFinished)
+ 	PageNum += PageNeed;
+ 	adapt->HalData->FwRsvdPageStartOffset = PageNum;
  
- 	pxmitbuf = rtw_alloc_xmitbuf(pxmitpriv);
--	if (pxmitbuf == NULL)
-+	if (!pxmitbuf)
- 		return false;
+-	BufIndex += PageNeed*128;
++	BufIndex += PageNeed * 128;
  
- 	/* 3 1. pick up first frame */
- 	rtw_free_xmitframe(pxmitpriv, pxmitframe);
+ 	/* 3 (2) ps-poll *1 page */
+ 	RsvdPageLoc.LocPsPoll = PageNum;
+@@ -485,7 +485,7 @@ static void SetFwRsvdPagePkt(struct adapter *adapt, bool bDLFinished)
+ 	PageNeed = (u8)PageNum_128(TxDescLen + PSPollLength);
+ 	PageNum += PageNeed;
  
- 	pxmitframe = rtw_dequeue_xframe(pxmitpriv, pxmitpriv->hwxmits, pxmitpriv->hwxmit_entry);
--	if (pxmitframe == NULL) {
-+	if (!pxmitframe) {
- 		/*  no more xmit frame, release xmit buffer */
- 		rtw_free_xmitbuf(pxmitpriv, pxmitbuf);
- 		return false;
+-	BufIndex += PageNeed*128;
++	BufIndex += PageNeed * 128;
+ 
+ 	/* 3 (3) null data * 1 page */
+ 	RsvdPageLoc.LocNullData = PageNum;
+@@ -495,7 +495,7 @@ static void SetFwRsvdPagePkt(struct adapter *adapt, bool bDLFinished)
+ 	PageNeed = (u8)PageNum_128(TxDescLen + NullDataLength);
+ 	PageNum += PageNeed;
+ 
+-	BufIndex += PageNeed*128;
++	BufIndex += PageNeed * 128;
+ 
+ 	/* 3 (4) probe response * 1page */
+ 	RsvdPageLoc.LocProbeRsp = PageNum;
+@@ -505,7 +505,7 @@ static void SetFwRsvdPagePkt(struct adapter *adapt, bool bDLFinished)
+ 	PageNeed = (u8)PageNum_128(TxDescLen + ProbeRspLength);
+ 	PageNum += PageNeed;
+ 
+-	BufIndex += PageNeed*128;
++	BufIndex += PageNeed * 128;
+ 
+ 	/* 3 (5) Qos null data */
+ 	RsvdPageLoc.LocQosNull = PageNum;
 -- 
 2.20.1
 
