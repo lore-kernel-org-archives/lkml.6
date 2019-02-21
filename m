@@ -4,53 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17BA7C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8EDC4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:18:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D128B2084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:18:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40F722084F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:18:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="CQO2NL9j"
+	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="M5Jl1rD/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728052AbfBUNSa (ORCPT
+        id S1728063AbfBUNSw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 08:18:30 -0500
-Received: from mail-eopbgr690076.outbound.protection.outlook.com ([40.107.69.76]:45455
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        Thu, 21 Feb 2019 08:18:52 -0500
+Received: from mail-eopbgr750072.outbound.protection.outlook.com ([40.107.75.72]:26351
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725920AbfBUNS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 08:18:29 -0500
+        id S1725831AbfBUNSv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 08:18:51 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=analog.onmicrosoft.com; s=selector1-analog-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cd6H88cue4xQ5ULy4n5p8/myF0JpGwcb9KGsvanppis=;
- b=CQO2NL9jBD3oLGvdLNBz37PybE2THYWH9F0Uw2sZBrWe66McF9AS0f+fDBh0YXaMZ4xZ4Twufc1z6wHCn7dB+jsOwUQC8pFazJAO4mEA8bPbJHDqt+D2utH1Q9eemRJw82mLDnezeRLh0TCXICOL3rTCnNGoa87joCMAktGOjT4=
-Received: from DM5PR03CA0043.namprd03.prod.outlook.com (2603:10b6:4:3b::32) by
- BYAPR03MB3512.namprd03.prod.outlook.com (2603:10b6:a02:aa::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.16; Thu, 21 Feb 2019 13:18:24 +0000
-Received: from SN1NAM02FT020.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::203) by DM5PR03CA0043.outlook.office365.com
- (2603:10b6:4:3b::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1643.16 via Frontend
- Transport; Thu, 21 Feb 2019 13:18:24 +0000
+ bh=lC4qCLSqMp5fYwwWpJSc42mfKLO7Qvye4BVVS39Nqck=;
+ b=M5Jl1rD/wchmBD4VT4MvEURzv0+R3tdxQKwngpXVOlQnRHgyVKUezlaEqgLzu+8cfCJR5OTbK5XDzz9ZyoQpOJEfT/VfQYJ/aT4YN87Ked33rPf3CDYooqiWO2sJSzDylK5/hZ4cK+3V5IDWNrJLmEQ89cnwsHVD/TqHf+zqHso=
+Received: from MWHPR03CA0044.namprd03.prod.outlook.com (2603:10b6:301:3b::33)
+ by BN7PR03MB3747.namprd03.prod.outlook.com (2603:10b6:408:23::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1643.15; Thu, 21 Feb
+ 2019 13:17:08 +0000
+Received: from SN1NAM02FT043.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::206) by MWHPR03CA0044.outlook.office365.com
+ (2603:10b6:301:3b::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1622.16 via Frontend
+ Transport; Thu, 21 Feb 2019 13:17:08 +0000
+Authentication-Results: spf=pass (sender IP is 137.71.25.55)
+ smtp.mailfrom=analog.com; gmx.de; dkim=none (message not signed)
+ header.d=none;gmx.de; dmarc=bestguesspass action=none header.from=analog.com;
 Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
  137.71.25.55 as permitted sender) receiver=protection.outlook.com;
  client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
 Received: from nwd2mta1.analog.com (137.71.25.55) by
- SN1NAM02FT020.mail.protection.outlook.com (10.152.72.139) with Microsoft SMTP
+ SN1NAM02FT043.mail.protection.outlook.com (10.152.72.184) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1643.11
- via Frontend Transport; Thu, 21 Feb 2019 13:18:20 +0000
+ via Frontend Transport; Thu, 21 Feb 2019 13:17:04 +0000
 Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id x1LDIJdo003781
+        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id x1LDH0VO003392
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Thu, 21 Feb 2019 05:18:19 -0800
+        Thu, 21 Feb 2019 05:17:00 -0800
 Received: from linux.ad.analog.com (10.50.1.179) by NWD2HUBCAS7.ad.analog.com
  (10.64.69.107) with Microsoft SMTP Server id 14.3.408.0; Thu, 21 Feb 2019
- 08:18:19 -0500
+ 08:16:59 -0500
 From:   Stefan Popa <stefan.popa@analog.com>
 To:     <jic23@kernel.org>, <robh+dt@kernel.org>
 CC:     Stefan Popa <stefan.popa@analog.com>,
@@ -58,9 +62,9 @@ CC:     Stefan Popa <stefan.popa@analog.com>,
         <lars@metafoo.de>, <pmeerw@pmeerw.net>,
         <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
         <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v2 4/5] iio: imu: adis16480: Add support for ADIS1649x family of devices
-Date:   Thu, 21 Feb 2019 15:15:05 +0200
-Message-ID: <1550754906-24640-5-git-send-email-stefan.popa@analog.com>
+Subject: [PATCH v2 1/5] iio: imu: adis16480: Add support for configurable drdy indicator
+Date:   Thu, 21 Feb 2019 15:15:02 +0200
+Message-ID: <1550754906-24640-2-git-send-email-stefan.popa@analog.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1550754906-24640-1-git-send-email-stefan.popa@analog.com>
 References: <1550754906-24640-1-git-send-email-stefan.popa@analog.com>
@@ -69,180 +73,216 @@ Content-Type: text/plain
 X-ADIRoutedOnPrem: True
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(376002)(39860400002)(396003)(346002)(2980300002)(3190300001)(189003)(199004)(48376002)(186003)(77096007)(6346003)(50466002)(26005)(5660300002)(54906003)(106002)(36756003)(110136005)(6306002)(76176011)(16586007)(316002)(7696005)(51416003)(8676002)(4326008)(478600001)(116002)(126002)(486006)(2616005)(47776003)(72206003)(966005)(44832011)(476003)(356004)(6666004)(2906002)(246002)(106466001)(426003)(336012)(446003)(305945005)(11346002)(50226002)(8936002)(7636002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR03MB3512;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;MX:1;A:1;
+X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(346002)(136003)(376002)(396003)(2980300002)(3190300001)(189003)(199004)(36756003)(26005)(186003)(8676002)(47776003)(77096007)(336012)(16586007)(48376002)(2906002)(7636002)(305945005)(8936002)(316002)(50466002)(4326008)(106466001)(54906003)(110136005)(50226002)(106002)(44832011)(76176011)(51416003)(72206003)(126002)(7696005)(116002)(476003)(486006)(5660300002)(478600001)(246002)(356004)(6666004)(2616005)(11346002)(426003)(446003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR03MB3747;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;MX:1;A:1;
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6f35f4c3-653b-4515-164f-08d697ff0ed2
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4608103)(4709054)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:BYAPR03MB3512;
-X-MS-TrafficTypeDiagnostic: BYAPR03MB3512:
-X-MS-Exchange-PUrlCount: 2
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR03MB3512;20:dXtop8whFYSfwtBGLPDxpuCI+E5sA3varyvZ8XOLvyzx0/UiL4sIBibqVBCwPeASOSHM1WZT3gX0/FVrZIU/0lOpzDZ9xmYBQIBEb7Vfzld6Y7APZeZkhGghQJWAwmoGlgGcil34s5pQIKk87NNpFqgerblmnnXbh3JOpCZYU/E7MNhbZS3RxZtJqjX+kBeGQ0EGO2Stt1N1mZIdT2u23pe6pGV9FOMQEHqicFgAzBEY2yuIAgMk/gEkbVvRUZNQ27brcty+lArhPPkY3WKT+O/c6+FqSJzSzUteimbUKmTmpO1Mfo3tuuLOB75attCrBJecNZJkHTCII3vionB67iqDgayjuWMDV8P93n7jRlGccK6xdu+zsw8WIq7MOcLYqXNrq99ofoW0qu1JDbc20eECYWZfuHSewrrFbiDIVDZGlagW7ilWeXtxOiSZLFK2Gd5HD62SwnzmKuSTn+Ltp6yna2pM48XYMqgYbFTpRv/Wqmh9NpJccpWJor4QNUXT
-X-Microsoft-Antispam-PRVS: <BYAPR03MB35122AAE364BEC9CDBB924C29D7E0@BYAPR03MB3512.namprd03.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 696ee9c0-9f0f-476d-66c1-08d697fee14e
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4608103)(4709054)(2017052603328)(7153060);SRVR:BN7PR03MB3747;
+X-MS-TrafficTypeDiagnostic: BN7PR03MB3747:
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR03MB3747;20:taVVnXT4JtXMTeFzTSxE71ROKp2qCifJMQ6OEYN2grM/Kj7OzsyI2NcDBVsnsimOTrp6CcEdbdDNMdOxu6v8gQYLX1RZvzS+i+FhenQijTKZumQ4PrsrOi59Ipd0Y7/5sNV1SrC4V6giKW4TLqmHRib659NNj7Wc/7fpdLRE2lVuI/xaZAHwwmNvdJ5e+XAaj/uzdeAqdZVNTB/cZ/eBO9vCfxsGyimEhM05IkDfF1C8VhMhhRCE4fZ+k0KzNreYZgXOYkkYDX2KMT9X+4FpYt3suNjFYG10Y7hp2ZvG+cRSxUqTYCS1ur99iuSTtiMvFOSFmA9F+U1pqzug9dy5RT61v8IoOVLVeoF/nX6XbT/voghh6bthROqT7E/XD1WRbWYMq3ANLAIZcJM99HgmB5gXgWjyb2isKtRZjSPTHTxCPZ6uFNquHDdU9X3a2r8uZAnrw4nqxwJ1oZfVXyNcBiNsRKk+tAmJKvL/oUqg+uVO06wGHCr3KIiREbRmMB8z
+X-Microsoft-Antispam-PRVS: <BN7PR03MB37477AB3F19409AE14E6FF259D7E0@BN7PR03MB3747.namprd03.prod.outlook.com>
 X-Forefront-PRVS: 09555FB1AD
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR03MB3512;23:aB/vI96zP+bj/SNXtzHg9A2CxaDWP5VpVSekjjyUI?=
- =?us-ascii?Q?jJn1csW+Dcq01W3jzqSojto9RMqMla2vQ1Q1/ZhkhUQ+Jpl9LsiV37mgok34?=
- =?us-ascii?Q?FTM22e6ajVjnXt4pSzm/3Uy3q3+XxeDEYceSLgYQxGhT7y7WR/ebnNsaX8xc?=
- =?us-ascii?Q?Cu83hsSWgKPWf0v3/XdusHIITAvSAunGR/02ZeKnqOb5UtBsQ+/8uIZMq3nS?=
- =?us-ascii?Q?hi8NXgISei72b2IjA64BbfI+RqBjLIs/y7T/LUc/niDvrnZ5wAUFdCBKKsnP?=
- =?us-ascii?Q?AU/N9WVDORSj2SeeoXEs98DWch7/Dc2N9223xw8PcfsOnbrHH1jEDuBXi856?=
- =?us-ascii?Q?bMwsNStWHP3QUw33005QUzZa43FoR1AIbv25yNJg/pmMfiIEIbEchE9cQh5G?=
- =?us-ascii?Q?8rXxrGOSW47J7T69wCOooGji2CMQ0rcgzsNhuejNoxfj/a7iNdKMC5z3UsaY?=
- =?us-ascii?Q?lT5DMSGIWZpoK5UPBc+gf2HNzm1AxAWQORj22MkUK7hM7GeVvKsg94lEv16a?=
- =?us-ascii?Q?l2O3VIHil9DDxBDB6MbfFYTz+KZrk0UPyXoeOYA/fUOTcr9SozCKN2eR0idj?=
- =?us-ascii?Q?vAl9ZJyQJUolwFZZO6u4nCsmc+cM4m4X7WBOEsN6IPMKAliaHW8tMXtLfKNF?=
- =?us-ascii?Q?0tvnLZgVzj5WjotpcpGnHJnRvapXfK97C1u/28m8iXejZcy+e4mfX77SRUI/?=
- =?us-ascii?Q?tatlHamAUn5zCw+ICTZElwk7OLrXz9gTnzqZb5YT+AuYynxZcHJy8lNIZktM?=
- =?us-ascii?Q?orcwKO12c3mbi6k3dUbairZKWiVWSkfG4JJVRtS1zXt4dCcHD6QvHNpyNmFi?=
- =?us-ascii?Q?TEknvOgQv0ESjx+Nit02KsNo37Ndu7Mebno/V5NzdBo/8e6B958LZMRLgfOk?=
- =?us-ascii?Q?/jC/Ugo3QlKrUsknA4qISATi4lzwhmQ3hY014pXluxGX7GsDI5UrewMJE7Jz?=
- =?us-ascii?Q?E2uE/PYsHpErPvb47MkCV4Quvehkq/l1+Wrb9PH3OlJNaYrd0sZs6vcqUt/1?=
- =?us-ascii?Q?MEzFPa5EXffwup6Al2AdK6FlzqEosbT9G7vK4g59NCqP9IkrEDNREotEKBNc?=
- =?us-ascii?Q?MYbOUQYBvGYFjwRHg94sRcRGlTLHZ8hLXVucvuXljtRF3a5d99MlNbFpt6Lp?=
- =?us-ascii?Q?agQRCxnFLE=3D?=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN7PR03MB3747;23:REV9/eOGcADj8OrhHk4hJul+UYbbHGf7Ukf9ilTnn?=
+ =?us-ascii?Q?PRsWRvWrWoIj0L8r4na21LMXtJoBM0wPMGsnJv16JlKmAKfUdXp4sySPmqQt?=
+ =?us-ascii?Q?9EnUP25xlfhInf77YHCyXK0scYVv2wEU6ceYEgplHFdrzjRJQ2AdVDA1ef4f?=
+ =?us-ascii?Q?T5TEvdwIzyJvMukycjaBxQ9Kz+sFrr0X6yG7LYZ1KPbDDLWqhWVUuRCJEwfU?=
+ =?us-ascii?Q?pMlkoA+niCT05OF44rzxyYqZ/7AOk3hBUbxVt8W/N7akwpmVRIpmwPs6lA4O?=
+ =?us-ascii?Q?IzItV+VFLNVC5Jg2ceFkdvYbu6iqZrnpBiE6Hx/+g2dbEAReDyWMV1a2MW5k?=
+ =?us-ascii?Q?JISiEPfaS86/C/DCHFUqQW8v2evLe+mC4pMX69jxuRBrs4v0CTjh2IJHx2Y9?=
+ =?us-ascii?Q?8ltFACbLuXv9t/mNsP+dW19nltw8g7KIqK4OVAN6B/0jv2WmdFNC/ErFVq3W?=
+ =?us-ascii?Q?cdiPlblEQ5MvpT+f6gljhbqXnamj9AVVurorlYQEzAmaKRgb07phB2c6GNF6?=
+ =?us-ascii?Q?+ULowWXHAOKL+YYKxrR0ITIn0c5Cfhkrf18HOeyeVbb8tRtDDbjscOUdRgco?=
+ =?us-ascii?Q?lIzyC4dbRB5srUNlDaPhmB5Sn4KyhZZosOyi6SOaepcZbsP1aG/8AV+XIfsH?=
+ =?us-ascii?Q?gTTVenedA1dsLcAuICCo3rmiHJ7vKPjbCUL3VVzznRzPeeF3EEYIwZkUNH17?=
+ =?us-ascii?Q?AbXoLLBJnc6dZ+BLbgLCoR7Q29Ddkf02r1cTyuQ0bluD3B6/567eaAMyFjuH?=
+ =?us-ascii?Q?EPJ6NMZpcBiP0D64fWSn8Q8M7vrx4X15bVtprHRqMLnu8UOIsz19iJngc72L?=
+ =?us-ascii?Q?aoV2BJI/9mqetebA2jXCCfa15Fnh3gJx3vXz+XekrsyqX0gun/0uJj8J+05+?=
+ =?us-ascii?Q?HBWC56NVjW/f84EdgbCpVCBls2HDTWxj1F7W5tmZypBfmTYzkswxufxp+QbO?=
+ =?us-ascii?Q?pEJQEag/kjoreENCiL8G9FtvyfRxOpnJqrzuIX/SB1zxTOt5L8+G22kB5Msy?=
+ =?us-ascii?Q?aXoj0Sd/Z5a/1mRFD+BmtUvEiwt8ETEkCBCt2XOh8hA3RlN2vXgBml4PyMaP?=
+ =?us-ascii?Q?TaBOjU=3D?=
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: We4h3VCB7tyTS8GBEObDL476V5gxnNyDJduSGNN+OmNBRfLbXwP34BzPN9S+kzCU/6yPzEgqWvj8cp8f027PJVGjFMPH9tsCHuRTBVqUAlQp1W8iBGnGWs9IuU7iTlqpPCfXML9QDdFji6P6KtMzX6J5hnJNGPvWkiayR2HSXu9Zec/yu81XI+/QOyyXSQSIgaR5H7q2c1ZbZYG1kzY2/hyD8EOdgzocFwGt0SkA2CuUzI2nOYfOxuwTYpkXdJqASUqihOin2HSgpB9eS0bWU3iE3gYnKFp4yPWBVsMsXijcbcUPdwOBzdYv3hfbJKiWqQ81oyTBOcHCtIwyZfKy/+6WGcGn2atR0RLt/QaImZtptqFjR66dNPkbBLPWuwsYjgTVMK+OQuwe+CZT9KLvIdx2he6Kyf/EyoHMSo2b0c8=
+X-Microsoft-Antispam-Message-Info: YamX6PEPOiyQAmJLt/9GzQKmjfVrSHCKDA0RNZr9mS1MIh3I1zTMPGtuwFx6FCLN0ZydkJA/mnO21TOkWySRsvPcJQXf10P8UaT1xCtHp6qZxX5GNqglYeokXp9XDTeTQ5NH6yBLc4KCqawsUpo5uYOpe/dND96e6jV7Xrf84nnpPA6+MA1QPNCWay1S9d7YUk/AkraI3tbf3ucYkgSRc/YjGCsdAB3ihJ0CiQoZftHVCBiACSboCuGW15bIVWnaM5AUmPK+q2gtj0QErfJ3vmsVjL3HBARyNKWmxtCuyGd2EsZjGvOmiaxfBwY7vld4psznbOnPGe5e8jv3bVthyJR3tTfx0t+NqAmbR4lUCQgRhbm6oNEL8iqyg1u3jncJQR7RaFD9BCjYvPiemRxkwIY7tn8aMtLmAL6hBMagbeo=
 X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2019 13:18:20.5730
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2019 13:17:04.2404
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6f35f4c3-653b-4515-164f-08d697ff0ed2
+X-MS-Exchange-CrossTenant-Network-Message-Id: 696ee9c0-9f0f-476d-66c1-08d697fee14e
 X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR03MB3512
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR03MB3747
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ADIS16495 and ADIS16497 are inertial systems that include a triaxis
-gyroscope and a triaxis accelerometer. The serial peripheral interface
-(SPI) provide a simple interface for data collection and configuration
-control. The devices are similar to ADIS16475, ADIS16480, ADIS16485 and
-ADIS16488, the main differences are related to range and scale factors.
+The FNCTIO_CTRL register provides configuration control for each I/O pin
+(DIO1, DIO2, DIO3 and DIO4).
 
-The temperature data scale is 0.00565 C/LSB for ADIS16475 and ADIS1648x
-devices, while for ADIS1649x 0.0125 C/LSB.
+This patch adds the option to configure each DIOx pin as data ready
+indicator with positive or negative polarity by reading the 'interrupts'
+and 'interrupt-names' properties from the devicetree. The
+'interrupt-names' property is optional, if it is not specified, then the
+DIO1 pin is used as default data ready signal.
 
-Another difference is that ADIS1649x devices support different gyroscope
-measurement ranges which are dependent on the dash number (-1, -2, -3),
-see Table 24 in the ADIS16495 datasheet. However, the ADIS16497
-gyroscopes have the same scale as ADIS16495.
-
-Furthermore, ADIS16495 devices support the acceleration maximum range of
-8g, while ADIS16497 devices go up to 40g.
-
-Datasheets:
-Link: https://www.analog.com/media/en/technical-documentation/data-sheets/adis16495.pdf
-Link: https://www.analog.com/media/en/technical-documentation/data-sheets/adis16497.pdf
+Although the factory default assigns DIO2 as data ready signal, in the
+versions previous this patch, DIO1 pin was used. We should leave this
+configuration as is, since some devices might be expecting the interrupt
+on the wrong physical pin.
 
 Signed-off-by: Stefan Popa <stefan.popa@analog.com>
 ---
- drivers/iio/imu/adis16480.c | 72 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
+ drivers/iio/imu/adis16480.c | 97 ++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 95 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/iio/imu/adis16480.c b/drivers/iio/imu/adis16480.c
-index 5a2864a..313936c 100644
+index a27fe20..98a23ac 100644
 --- a/drivers/iio/imu/adis16480.c
 +++ b/drivers/iio/imu/adis16480.c
-@@ -710,6 +710,12 @@ enum adis16480_variant {
- 	ADIS16480,
- 	ADIS16485,
- 	ADIS16488,
-+	ADIS16495_1,
-+	ADIS16495_2,
-+	ADIS16495_3,
-+	ADIS16497_1,
-+	ADIS16497_2,
-+	ADIS16497_3,
+@@ -9,6 +9,8 @@
+  *
+  */
+ 
++#include <linux/bitfield.h>
++#include <linux/of_irq.h>
+ #include <linux/interrupt.h>
+ #include <linux/delay.h>
+ #include <linux/mutex.h>
+@@ -107,6 +109,14 @@
+ #define ADIS16480_FIR_COEF_C(x)			ADIS16480_FIR_COEF(0x09, (x))
+ #define ADIS16480_FIR_COEF_D(x)			ADIS16480_FIR_COEF(0x0B, (x))
+ 
++/* ADIS16480_REG_FNCTIO_CTRL */
++#define ADIS16480_DRDY_SEL_MSK		GENMASK(1, 0)
++#define ADIS16480_DRDY_SEL(x)		FIELD_PREP(ADIS16480_DRDY_SEL_MSK, x)
++#define ADIS16480_DRDY_POL_MSK		BIT(2)
++#define ADIS16480_DRDY_POL(x)		FIELD_PREP(ADIS16480_DRDY_POL_MSK, x)
++#define ADIS16480_DRDY_EN_MSK		BIT(3)
++#define ADIS16480_DRDY_EN(x)		FIELD_PREP(ADIS16480_DRDY_EN_MSK, x)
++
+ struct adis16480_chip_info {
+ 	unsigned int num_channels;
+ 	const struct iio_chan_spec *channels;
+@@ -116,12 +126,26 @@ struct adis16480_chip_info {
+ 	unsigned int accel_max_scale;
  };
  
- static const struct adis16480_chip_info adis16480_chip_info[] = {
-@@ -754,6 +760,60 @@ static const struct adis16480_chip_info adis16480_chip_info[] = {
- 		.accel_max_scale = 18,
- 		.temp_scale = 5650, /* 5.65 milli degree Celsius */
- 	},
-+	[ADIS16495_1] = {
-+		.channels = adis16485_channels,
-+		.num_channels = ARRAY_SIZE(adis16485_channels),
-+		.gyro_max_val = IIO_RAD_TO_DEGREE(20000),
-+		.gyro_max_scale = 125,
-+		.accel_max_val = IIO_M_S_2_TO_G(32000),
-+		.accel_max_scale = 8,
-+		.temp_scale = 12500, /* 12.5 milli degree Celsius */
-+	},
-+	[ADIS16495_2] = {
-+		.channels = adis16485_channels,
-+		.num_channels = ARRAY_SIZE(adis16485_channels),
-+		.gyro_max_val = IIO_RAD_TO_DEGREE(18000),
-+		.gyro_max_scale = 450,
-+		.accel_max_val = IIO_M_S_2_TO_G(32000),
-+		.accel_max_scale = 8,
-+		.temp_scale = 12500, /* 12.5 milli degree Celsius */
-+	},
-+	[ADIS16495_3] = {
-+		.channels = adis16485_channels,
-+		.num_channels = ARRAY_SIZE(adis16485_channels),
-+		.gyro_max_val = IIO_RAD_TO_DEGREE(20000),
-+		.gyro_max_scale = 2000,
-+		.accel_max_val = IIO_M_S_2_TO_G(32000),
-+		.accel_max_scale = 8,
-+		.temp_scale = 12500, /* 12.5 milli degree Celsius */
-+	},
-+	[ADIS16497_1] = {
-+		.channels = adis16485_channels,
-+		.num_channels = ARRAY_SIZE(adis16485_channels),
-+		.gyro_max_val = IIO_RAD_TO_DEGREE(20000),
-+		.gyro_max_scale = 125,
-+		.accel_max_val = IIO_M_S_2_TO_G(32000),
-+		.accel_max_scale = 40,
-+		.temp_scale = 12500, /* 12.5 milli degree Celsius */
-+	},
-+	[ADIS16497_2] = {
-+		.channels = adis16485_channels,
-+		.num_channels = ARRAY_SIZE(adis16485_channels),
-+		.gyro_max_val = IIO_RAD_TO_DEGREE(18000),
-+		.gyro_max_scale = 450,
-+		.accel_max_val = IIO_M_S_2_TO_G(32000),
-+		.accel_max_scale = 40,
-+		.temp_scale = 12500, /* 12.5 milli degree Celsius */
-+	},
-+	[ADIS16497_3] = {
-+		.channels = adis16485_channels,
-+		.num_channels = ARRAY_SIZE(adis16485_channels),
-+		.gyro_max_val = IIO_RAD_TO_DEGREE(20000),
-+		.gyro_max_scale = 2000,
-+		.accel_max_val = IIO_M_S_2_TO_G(32000),
-+		.accel_max_scale = 40,
-+		.temp_scale = 12500, /* 12.5 milli degree Celsius */
-+	},
++enum adis16480_int_pin {
++	ADIS16480_PIN_DIO1,
++	ADIS16480_PIN_DIO2,
++	ADIS16480_PIN_DIO3,
++	ADIS16480_PIN_DIO4
++};
++
+ struct adis16480 {
+ 	const struct adis16480_chip_info *chip_info;
+ 
+ 	struct adis adis;
  };
  
- static const struct iio_info adis16480_info = {
-@@ -999,6 +1059,12 @@ static const struct spi_device_id adis16480_ids[] = {
- 	{ "adis16480", ADIS16480 },
- 	{ "adis16485", ADIS16485 },
- 	{ "adis16488", ADIS16488 },
-+	{ "adis16495-1", ADIS16495_1 },
-+	{ "adis16495-2", ADIS16495_2 },
-+	{ "adis16495-3", ADIS16495_3 },
-+	{ "adis16497-1", ADIS16497_1 },
-+	{ "adis16497-2", ADIS16497_2 },
-+	{ "adis16497-3", ADIS16497_3 },
- 	{ }
++static const char * const adis16480_int_pin_names[4] = {
++	[ADIS16480_PIN_DIO1] = "DIO1",
++	[ADIS16480_PIN_DIO2] = "DIO2",
++	[ADIS16480_PIN_DIO3] = "DIO3",
++	[ADIS16480_PIN_DIO4] = "DIO4",
++};
++
+ #ifdef CONFIG_DEBUG_FS
+ 
+ static ssize_t adis16480_show_firmware_revision(struct file *file,
+@@ -741,8 +765,17 @@ static int adis16480_stop_device(struct iio_dev *indio_dev)
+ 
+ static int adis16480_enable_irq(struct adis *adis, bool enable)
+ {
+-	return adis_write_reg_16(adis, ADIS16480_REG_FNCTIO_CTRL,
+-		enable ? BIT(3) : 0);
++	uint16_t val;
++	int ret;
++
++	ret = adis_read_reg_16(adis, ADIS16480_REG_FNCTIO_CTRL, &val);
++	if (ret < 0)
++		return ret;
++
++	val &= ~ADIS16480_DRDY_EN_MSK;
++	val |= ADIS16480_DRDY_EN(enable);
++
++	return adis_write_reg_16(adis, ADIS16480_REG_FNCTIO_CTRL, val);
+ }
+ 
+ static int adis16480_initial_setup(struct iio_dev *indio_dev)
+@@ -826,6 +859,62 @@ static const struct adis_data adis16480_data = {
+ 	.enable_irq = adis16480_enable_irq,
  };
- MODULE_DEVICE_TABLE(spi, adis16480_ids);
-@@ -1008,6 +1074,12 @@ static const struct of_device_id adis16480_of_match[] = {
- 	{ .compatible = "adi,adis16480" },
- 	{ .compatible = "adi,adis16485" },
- 	{ .compatible = "adi,adis16488" },
-+	{ .compatible = "adi,adis16495-1" },
-+	{ .compatible = "adi,adis16495-2" },
-+	{ .compatible = "adi,adis16495-3" },
-+	{ .compatible = "adi,adis16497-1" },
-+	{ .compatible = "adi,adis16497-2" },
-+	{ .compatible = "adi,adis16497-3" },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, adis16480_of_match);
+ 
++static int adis16480_config_irq_pin(struct device_node *of_node,
++				    struct adis16480 *st)
++{
++	struct irq_data *desc;
++	enum adis16480_int_pin pin;
++	unsigned int irq_type;
++	uint16_t val;
++	int i, irq = 0;
++
++	desc = irq_get_irq_data(st->adis.spi->irq);
++	if (!desc) {
++		dev_err(&st->adis.spi->dev, "Could not find IRQ %d\n", irq);
++		return -EINVAL;
++	}
++
++	/* Disable data ready since the default after reset is on */
++	val = ADIS16480_DRDY_EN(0);
++
++	/*
++	 * Get the interrupt from the devicetre by reading the interrupt-names
++	 * property. If it is not specified, use DIO1 pin as default.
++	 * According to the datasheet, the factory default assigns DIO2 as data
++	 * ready signal. However, in the previous versions of the driver, DIO1
++	 * pin was used. So, we should leave it as is since some devices might
++	 * be expecting the interrupt on the wrong physical pin.
++	 */
++	pin = ADIS16480_PIN_DIO1;
++	for (i = 0; i < ARRAY_SIZE(adis16480_int_pin_names); i++) {
++		irq = of_irq_get_byname(of_node, adis16480_int_pin_names[i]);
++		if (irq > 0) {
++			pin = i;
++			break;
++		}
++	}
++
++	val |= ADIS16480_DRDY_SEL(pin);
++
++	/*
++	 * Get the interrupt line behaviour. The data ready polarity can be
++	 * configured as positive or negative, corresponding to
++	 * IRQF_TRIGGER_RISING or IRQF_TRIGGER_FALLING respectively.
++	 */
++	irq_type = irqd_get_trigger_type(desc);
++	if (irq_type == IRQF_TRIGGER_RISING) { /* Default */
++		val |= ADIS16480_DRDY_POL(1);
++	} else if (irq_type == IRQF_TRIGGER_FALLING) {
++		val |= ADIS16480_DRDY_POL(0);
++	} else {
++		dev_err(&st->adis.spi->dev,
++			"Invalid interrupt type 0x%x specified\n", irq_type);
++		return -EINVAL;
++	}
++	/* Write the data ready configuration to the FNCTIO_CTRL register */
++	return adis_write_reg_16(&st->adis, ADIS16480_REG_FNCTIO_CTRL, val);
++}
++
+ static int adis16480_probe(struct spi_device *spi)
+ {
+ 	const struct spi_device_id *id = spi_get_device_id(spi);
+@@ -853,6 +942,10 @@ static int adis16480_probe(struct spi_device *spi)
+ 	if (ret)
+ 		return ret;
+ 
++	ret = adis16480_config_irq_pin(spi->dev.of_node, st);
++	if (ret)
++		return ret;
++
+ 	ret = adis_setup_buffer_and_trigger(&st->adis, indio_dev, NULL);
+ 	if (ret)
+ 		return ret;
 -- 
 2.7.4
 
