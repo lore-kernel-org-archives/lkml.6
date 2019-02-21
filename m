@@ -2,54 +2,56 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF270C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE73C00319
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4C962084F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CDE52084F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550759839;
-	bh=TSslYbhB7qXT8P+vvktdTYgCJIQWavn+MCUxZNUZSKM=;
+	s=default; t=1550759844;
+	bh=kkJzxKYZrE+q3S7+uQ/qRhpDlT9j+pq1GRG3koGBJbk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WGrHLwmtZignWIy0ZToJkzjjPylqEGO/K4zDNXZMtyrrwqTCwoURV/MhRPNcSj9tC
-	 M0OXfJ6PkYJCshUHsX22DzuAIr+iRVInYNY8X2pcrmiwDAKRGPop2ofSx94Gm19P+A
-	 pSgTIvwZ8y6k4e2MpRQWaSQ0MHAjvDOz3TksySD4=
+	b=EtPamWt7MBRTI5y+6cqAoppIx7n0YhTjuIlZ+pN+Rp2kpgA8QTL2XsPMv0jNk5cLA
+	 VzWSZM1aV+HTBGSRiLKmsUsD/iLASR/gpGIfJYcTEJIGFeANvMtM+UsVKiXnVDkf17
+	 e3zwth9VmPyfh6sQ3TqBI2o/Ni/Y47def/aD1/Ik=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728349AbfBUOhS (ORCPT
+        id S1728380AbfBUOhX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:37:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58374 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:37:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727594AbfBUOhQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:37:16 -0500
+        id S1728356AbfBUOhW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:37:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E697F2075C;
-        Thu, 21 Feb 2019 14:37:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E48302084D;
+        Thu, 21 Feb 2019 14:37:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550759835;
-        bh=TSslYbhB7qXT8P+vvktdTYgCJIQWavn+MCUxZNUZSKM=;
+        s=default; t=1550759841;
+        bh=kkJzxKYZrE+q3S7+uQ/qRhpDlT9j+pq1GRG3koGBJbk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NxogYABAtUXrz/E0IlPSWHOl3d11DXzmGAqI5x2zr9v8kqxQtn7zaWe0HxVvCSuYK
-         FrgAN8CpbEPTDTltRz2+vAchTrHAzAXBoQ4hIC5eIhqsIV2FqLkAfU7b4pJ3XjFRsT
-         0pquTo6tmMcXEEyjJYX+drIMl57vY7AdPRpHjdJg=
+        b=Ntre7ErZv3UvfObehpPuaLYWfx1+v7cnNPOM24R55wSvl1qcDCet0luxP8EPKmCfO
+         Bqix+jGieLO1j9Kklrv3Wp/ThfMbXh8kDMTRIak/75SVfRXRX22oBu6dDMa6jzG8BH
+         4Zyp9q+ZBUdJU2b5tEZWWRPbccptPEDkecJC0G/s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 3.18 09/13] hwmon: (lm80) Fix missing unlock on error in set_fan_div()
-Date:   Thu, 21 Feb 2019 15:35:40 +0100
-Message-Id: <20190221125241.076737759@linuxfoundation.org>
+        stable@vger.kernel.org, Zhiqiang Liu <liuzhiqiang26@huawei.com>,
+        Wenhao Zhang <zhangwenhao8@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 01/20] net: fix IPv6 prefix route residue
+Date:   Thu, 21 Feb 2019 15:35:31 +0100
+Message-Id: <20190221141946.820305647@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190221125240.091472334@linuxfoundation.org>
-References: <20190221125240.091472334@linuxfoundation.org>
+In-Reply-To: <20190221141946.772985220@linuxfoundation.org>
+References: <20190221141946.772985220@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -61,39 +63,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+[ Upstream commit e75913c93f7cd5f338ab373c34c93a655bd309cb ]
 
-commit 07bd14ccc3049f9c0147a91a4227a571f981601a upstream.
+Follow those steps:
+ # ip addr add 2001:123::1/32 dev eth0
+ # ip addr add 2001:123:456::2/64 dev eth0
+ # ip addr del 2001:123::1/32 dev eth0
+ # ip addr del 2001:123:456::2/64 dev eth0
+and then prefix route of 2001:123::1/32 will still exist.
 
-Add the missing unlock before return from function set_fan_div()
-in the error handling case.
+This is because ipv6_prefix_equal in check_cleanup_prefix_route
+func does not check whether two IPv6 addresses have the same
+prefix length. If the prefix of one address starts with another
+shorter address prefix, even though their prefix lengths are
+different, the return value of ipv6_prefix_equal is true.
 
-Fixes: c9c63915519b ("hwmon: (lm80) fix a missing check of the status of SMBus read")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Here I add a check of whether two addresses have the same prefix
+to decide whether their prefixes are equal.
 
+Fixes: 5b84efecb7d9 ("ipv6 addrconf: don't cleanup prefix route for IFA_F_NOPREFIXROUTE")
+Signed-off-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Reported-by: Wenhao Zhang <zhangwenhao8@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/lm80.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/ipv6/addrconf.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/hwmon/lm80.c
-+++ b/drivers/hwmon/lm80.c
-@@ -393,8 +393,10 @@ static ssize_t set_fan_div(struct device
- 	}
- 
- 	rv = lm80_read_value(client, LM80_REG_FANDIV);
--	if (rv < 0)
-+	if (rv < 0) {
-+		mutex_unlock(&data->update_lock);
- 		return rv;
-+	}
- 	reg = (rv & ~(3 << (2 * (nr + 1))))
- 	    | (data->fan_div[nr] << (2 * (nr + 1)));
- 	lm80_write_value(client, LM80_REG_FANDIV, reg);
+diff --git a/net/ipv6/addrconf.c b/net/ipv6/addrconf.c
+index 4dde1e0e7d379..086cdf9f05013 100644
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@ -1043,7 +1043,8 @@ check_cleanup_prefix_route(struct inet6_ifaddr *ifp, unsigned long *expires)
+ 	list_for_each_entry(ifa, &idev->addr_list, if_list) {
+ 		if (ifa == ifp)
+ 			continue;
+-		if (!ipv6_prefix_equal(&ifa->addr, &ifp->addr,
++		if (ifa->prefix_len != ifp->prefix_len ||
++		    !ipv6_prefix_equal(&ifa->addr, &ifp->addr,
+ 				       ifp->prefix_len))
+ 			continue;
+ 		if (ifa->flags & (IFA_F_PERMANENT | IFA_F_NOPREFIXROUTE))
+-- 
+2.19.1
+
 
 
