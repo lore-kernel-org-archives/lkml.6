@@ -2,65 +2,90 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B08AC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21CEAC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:54:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6EB92081B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:50:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAF162081B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:54:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726488AbfBUTun (ORCPT
+        id S1726529AbfBUTya (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 14:50:43 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:56981 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726250AbfBUTum (ORCPT
+        Thu, 21 Feb 2019 14:54:30 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48292 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725932AbfBUTya (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 14:50:42 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gwuMe-0002g1-ET; Thu, 21 Feb 2019 20:50:36 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gwuMd-0002iq-I0; Thu, 21 Feb 2019 20:50:35 +0100
-Date:   Thu, 21 Feb 2019 20:50:35 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Mathieu Othacehe <m.othacehe@gmail.com>
-Cc:     thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] pwm: hibvt: Use individual struct per of-data.
-Message-ID: <20190221195035.jduvbbxn4t46qken@pengutronix.de>
-References: <20190219095808.12059-1-m.othacehe@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190219095808.12059-1-m.othacehe@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Thu, 21 Feb 2019 14:54:30 -0500
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6D1F64355;
+        Thu, 21 Feb 2019 19:54:29 +0000 (UTC)
+Date:   Thu, 21 Feb 2019 11:54:26 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 2/2] test_firmware: silence underflow warning in
+ test_dev_config_update_u8()
+Message-Id: <20190221115426.f616100906d989eda93d66dc@linux-foundation.org>
+In-Reply-To: <20190221191855.GB1737@kadam>
+References: <20190221183700.GA1737@kadam>
+        <20190221183826.GA30993@kadam>
+        <20190221105458.409d1968961962079c54b815@linux-foundation.org>
+        <20190221191855.GB1737@kadam>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 10:58:06AM +0100, Mathieu Othacehe wrote:
-> Split pwm-soc array in one struct per soc and point to the
-> corresponding on in of-data.
+On Thu, 21 Feb 2019 22:18:56 +0300 Dan Carpenter <dan.carpenter@oracle.com> wrote:
+
+> On Thu, Feb 21, 2019 at 10:54:58AM -0800, Andrew Morton wrote:
+> > On Thu, 21 Feb 2019 21:38:26 +0300 Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> > 
+> > > We put an upper bound on "new" but we don't check for negatives.
+> > 
+> > U8_MAX has unsigned type, so `if (new > U8_MAX)' does check for negative.
+> > 
 > 
-> Signed-off-by: Mathieu Othacehe <m.othacehe@gmail.com>
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> No, doesn't work in this case.
+> 
+> #define U8_MAX          ((u8)~0U)
+> 
+> It would need to unsigned long for the type promotion to prevent
+> negatives, but it starts as unsigned int, then unsigned char, which is
+> type promoted to int.
+
+OK.
+
+> It would be more clear to just write it as:
+> 
+> #define U8_MAX 0xff
+
+That doesn't work either.  Tricky.
 
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+#include <stdio.h>
+
+typedef unsigned char u8;
+
+#define U8_MAX 0xff
+
+int main(int argc, char *argv[])
+{
+	long new;
+
+	new = -20;
+
+	if (new > U8_MAX)
+		printf("over\n");
+}
+
