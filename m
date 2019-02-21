@@ -2,161 +2,88 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E2A4C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:46:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1849DC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:47:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB81E20880
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:46:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="FjD1S8nT"
+	by mail.kernel.org (Postfix) with ESMTP id E375320880
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:47:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727385AbfBUJqC (ORCPT
+        id S1726755AbfBUJrw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 04:46:02 -0500
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:46026 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726184AbfBUJqB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 04:46:01 -0500
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id x1L9jfZ4022371;
-        Thu, 21 Feb 2019 18:45:42 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x1L9jfZ4022371
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1550742342;
-        bh=so8YRwrlzTAABjqEXNVpXlQbU9Iw1PZU81wAYHPdP5E=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=FjD1S8nTB5O5dlVMlzt4yZ3XDOObDlLrQQ8J7Kt8FEL2LXPlIGxn735ZvwUu8zI46
-         QWaR9FZGiK01cQ0uH+VdUSOXI9YfvKRsY8zcHezYB7GcrRX7vApjPtEK0p1KtsH0Sq
-         0W4K/MrpIIyB0DbrhJ1ua86htq0J0r+7DT7IQ4Aqfp6EsD2Uh6KJYTQdR2xrkh8Ekr
-         8xQ2i8iTq5PrljFHWdN1bMfFCt7ugx+4ykEapd/YlOpF5ttN9F8xodUaJk6VjHHEoC
-         ibt1KO9FemRETiYbnbatdTT5jUrZ7AtnUAwgKImtZ4KKyBcHK7peyvkU60rk3fwLRY
-         MhSMChut/TgqQ==
-X-Nifty-SrcIP: [209.85.217.43]
-Received: by mail-vs1-f43.google.com with SMTP id z18so15794391vso.7;
-        Thu, 21 Feb 2019 01:45:42 -0800 (PST)
-X-Gm-Message-State: AHQUAuYI7bfU4IBEwSx1lDEKnfdXQ13w121DzB/z+M0fmTGdfajjqRzm
-        qniDoUFGkYhcw1ZT9NPrvxjpnXi1R36r3rkl1xU=
-X-Google-Smtp-Source: AHgI3IYK6KoCi4MYk5zuuHWTcpuDRCs578CnEO1TwEaCGfdyBa96K39fb155vzfJzFCraXPl+z+Gj2NJYZWB1ReZMOQ=
-X-Received: by 2002:a67:7f43:: with SMTP id a64mr20763607vsd.155.1550742341393;
- Thu, 21 Feb 2019 01:45:41 -0800 (PST)
+        Thu, 21 Feb 2019 04:47:52 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38352 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725978AbfBUJrw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 04:47:52 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E3E0281DF4;
+        Thu, 21 Feb 2019 09:47:51 +0000 (UTC)
+Received: from krava (unknown [10.43.17.20])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 46C4960851;
+        Thu, 21 Feb 2019 09:47:50 +0000 (UTC)
+Date:   Thu, 21 Feb 2019 10:47:49 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/4] perf record: implement -z=<level> and
+ --mmap-flush=<thres> options
+Message-ID: <20190221094749.GC10990@krava>
+References: <044ee2be-2e1d-e90f-7317-40083b5e716c@linux.intel.com>
+ <2d676199-bfe0-d8e0-442e-41280046f819@linux.intel.com>
+ <20190212130828.GD775@krava>
+ <39a1cf8d-2496-72f6-c3a4-a4abb8008689@linux.intel.com>
 MIME-Version: 1.0
-References: <1550722418-9189-1-git-send-email-yamada.masahiro@socionext.com> <CAK8P3a2V+AYbXZC6zG6iJzOM3HugcB3Odx74jzVzSK4mfQ1Ftw@mail.gmail.com>
-In-Reply-To: <CAK8P3a2V+AYbXZC6zG6iJzOM3HugcB3Odx74jzVzSK4mfQ1Ftw@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 21 Feb 2019 18:45:05 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ5RvSvUA+nXePfQRgEeoFZH0nHGsV-4g2Sv0XoqynDgA@mail.gmail.com>
-Message-ID: <CAK7LNAQ5RvSvUA+nXePfQRgEeoFZH0nHGsV-4g2Sv0XoqynDgA@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: compute false-positive -Wmaybe-uninitialized
- cases in Kconfig
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Ingo Molnar <mingo@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <39a1cf8d-2496-72f6-c3a4-a4abb8008689@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 21 Feb 2019 09:47:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 6:23 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Thu, Feb 21, 2019 at 5:14 AM Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
-> >
-> > Since -Wmaybe-uninitialized was introduced by GCC 4.7, we have patched
-> > various false positives:
-> >
-> >  - commit e74fc973b6e5 ("Turn off -Wmaybe-uninitialized when building
-> >    with -Os") turned off this option for -Os.
-> >
-> >  - commit 815eb71e7149 ("Kbuild: disable 'maybe-uninitialized' warning
-> >    for CONFIG_PROFILE_ALL_BRANCHES") turned off this option for
-> >    CONFIG_PROFILE_ALL_BRANCHES
-> >
-> >  - commit a76bcf557ef4 ("Kbuild: enable -Wmaybe-uninitialized warning
-> >    for "make W=1"") turned off this option for GCC < 4.9
-> >    Arnd provided more explanation in https://lkml.org/lkml/2017/3/14/903
-> >
-> > I think this looks better by shifting the logic from Makefile to Kconfig.
-> >
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->
-> I like how this cleans up the logic and documents it better.
-> I've had my own plans to move this (and most other conditional warning
-> options) into a header file using the KBUILD_WARN() infrastructure, but
-> never got around to doing that. I still think that's what we want eventually,
-> but in the meantime your patch seems fine as well.
->
-> Also, I see that your patch keeps the existing logic, which is good,
-> but we may want to refine this a little afterwards:
->
-> - we may want to turn off -Wuninitialized for gcc-4.6 and gcc-4.7
->   instead of turning off -Wmaybe-uninitialized as we do in the later
->   compilers.
+On Wed, Feb 20, 2019 at 05:15:13PM +0300, Alexey Budankov wrote:
+> 
+> On 12.02.2019 16:08, Jiri Olsa wrote:
+> > On Mon, Feb 11, 2019 at 11:22:38PM +0300, Alexey Budankov wrote:
+> > 
+> > SNIP
+> > 
+> >> -	if (rec->opts.nr_cblocks > nr_cblocks_max)
+> >> -		rec->opts.nr_cblocks = nr_cblocks_max;
+> >> -	if (verbose > 0)
+> >> -		pr_info("nr_cblocks: %d\n", rec->opts.nr_cblocks);
+> >> +	if (rec->opts.comp_level > 22)
+> >> +		rec->opts.comp_level = 0;
+> >> +	if (record__comp_enabled(rec) && !rec->opts.nr_cblocks) {
+> >> +		 /*
+> >> +		  * Allocate aio.data[0] buffer for compression.
+> >> +		  */
+> >> +		rec->opts.nr_cblocks = -1;
+> >> +	}
+> > 
+> > I assume you're using aio.data[0] as a buffer for non-aio case
+> > as compression buffer.. if that's the case, please dont do that
+> > and use separate buffer for that
+> 
+> Do you want it to be one more field in the mmap struct or 
+> aio related fields still could be reworked?
 
-Ah, right.
+I dont like it to use aio buffers if it's generic feature,
+so please add new pointer for the needed buffer
 
-I can do that if it is worthwhile.
-
-But, I'd rather want to raise the minimum compiler version
-than taking care of old compilers.
-(We will do it eventually.)
-
-
-> - the proposed CC_OPTIMIZE_FOR_DEBUGGING may need the
->   same workaround as CC_OPTIMZE_FOR_SIZE.
-
-
-I know this.
-
-First, my patch took care of CC_OPTIMIZE_FOR_DEBUGGING as well.
-But, CC_OPTIMIZE_FOR_DEBUGGING was rejected.
-(https://patchwork.kernel.org/patch/10744541/)
-
-So, I dropped this.
-
-
-> - For clang, we may want to /not/ turn off -Wmaybe-uninitialized
->   in all cases. I haven't tried build with with 'clang -Oz
->   -Wmaybe-uninitialized', but if the number of false positives is small
->   enough, we could decide to just leave that on.
-
-
-Does clang recognize -Wmaybe-uninitialized?
-
-I am using Clang I built a few days ago.
-
-
-masahiro@pug:~$ clang --version
-clang version 9.0.0 (http://llvm.org/git/clang.git
-b492883ea31e2046d5725126318911465bc1374f)
-(http://llvm.org/git/llvm.git
-03a15eec9ef44798cd5c57b4ed6a63e62b2c1db6)
-Target: x86_64-unknown-linux-gnu
-Thread model: posix
-InstalledDir: /home/masahiro/toolchains/clang-latest/bin
-
-masahiro@pug:~$ clang -x c /dev/null  -Wmaybe-uninitialized -c -o  /dev/null
-warning: unknown warning option '-Wmaybe-uninitialized'; did you mean
-      '-Wuninitialized'? [-Wunknown-warning-option]
-1 warning generated.
-
-
-
-
->       Arnd
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+jirka
