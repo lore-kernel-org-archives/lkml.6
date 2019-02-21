@@ -2,167 +2,90 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC57C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68AA8C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:23:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD11E20818
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:22:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29D0420818
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:23:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550737393;
+	bh=k886G0coLwNJLzQEYcUJRYBE1YXiO5YzJdHHYlJnHgs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=agmjSrHUcXLmezkRRAg8hv3mb/IZ79LLOX8ACw9lbn4seoyGwtu1moUbNZiixhGFv
+	 yjE7LWfWWF5gI8Uav7HO2l9Q6QMUs3ZvSrzzitvVoQai32/A1KjPE8RMFa8UsAu116
+	 Vue0ZJZ9cEFO0qfcycZy7ETCezTD6VTZ1EUfDhhE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbfBUIWv (ORCPT
+        id S1727497AbfBUIXL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 03:22:51 -0500
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:39241 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbfBUIWu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 03:22:50 -0500
-X-Originating-IP: 90.88.23.190
-Received: from aptenodytes (aaubervilliers-681-1-81-190.w90-88.abo.wanadoo.fr [90.88.23.190])
-        (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id CC31CC000C;
-        Thu, 21 Feb 2019 08:22:47 +0000 (UTC)
-Message-ID: <3ed330798d31d01fdfbd40571d016a108c9c5040.camel@bootlin.com>
-Subject: Re: [PATCH v3] usb: chipidea: Grab the (legacy) USB PHY by phandle
- first
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Peter Chen <peter.chen@nxp.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Date:   Thu, 21 Feb 2019 09:22:47 +0100
-In-Reply-To: <VI1PR04MB53278AE9AB6C14DA2AB96F6A8B7E0@VI1PR04MB5327.eurprd04.prod.outlook.com>
-References: <20190215162225.19284-1-paul.kocialkowski@bootlin.com>
-         <VI1PR04MB53274C03CD18C3D3ADB767408B630@VI1PR04MB5327.eurprd04.prod.outlook.com>
-         <c80ee02db4a22d15a24281384ae561462593684f.camel@bootlin.com>
-         <VI1PR04MB53278AE9AB6C14DA2AB96F6A8B7E0@VI1PR04MB5327.eurprd04.prod.outlook.com>
-Organization: Bootlin
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 
+        Thu, 21 Feb 2019 03:23:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40940 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725891AbfBUIXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 03:23:11 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 49AE2AD95;
+        Thu, 21 Feb 2019 08:23:10 +0000 (UTC)
+Date:   Thu, 21 Feb 2019 09:23:09 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Yue Hu <zbestahu@gmail.com>
+Cc:     akpm@linux-foundation.org, rientjes@google.com, joe@perches.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        huyue2@yulong.com, Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] mm/cma_debug: Check for null tmp in cma_debugfs_add_one()
+Message-ID: <20190221082309.GG4525@dhcp22.suse.cz>
+References: <20190221040130.8940-1-zbestahu@gmail.com>
+ <20190221040130.8940-2-zbestahu@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190221040130.8940-2-zbestahu@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Thu, 2019-02-21 at 03:29 +0000, Peter Chen wrote:
->  
-> > On Mon, 2019-02-18 at 03:04 +0000, Peter Chen wrote:
-> > > > According to the chipidea driver bindings, the USB PHY is specified via the
-> > "phys"
-> > > > phandle node. However, this only takes effect for USB PHYs that use
-> > > > the common PHY framework. For legacy USB PHYs, a simple lookup based
-> > > > on the USB PHY type is done instead.
-> > > > 
-> > > > This does not play out well when more than one USB PHY is
-> > > > registered, since the first registered PHY matching the type will
-> > > > always be returned regardless of what the driver was bound to.
-> > > > 
-> > > > Fix this by looking up the PHY based on the "phys" phandle node.
-> > > > Although generic PHYs are rather matched by their "phys-name" and not the
-> > "phys"
-> > > > phandle directly, there is no helper for similar lookup on legacy
-> > > > PHYs and it's probably not worth the effort to add it.
-> > > > 
-> > > > When no legacy USB PHY is found by phandle, fallback to grabbing any
-> > > > registered
-> > > > USB2 PHY. This ensures backward compatibility if some users were
-> > > > actually relying on this mechanism.
-> > > > 
-> > > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > > > ---
-> > > > Changes since v2:
-> > > > * Fixed typos in commit message.
-> > > > 
-> > > > Changes since v1:
-> > > > * Only consider legacy USB PHY error for fallback as suggested;
-> > > > * Checked against EPROBE_DEFER before entering fallback.
-> > > > 
-> > > >  drivers/usb/chipidea/core.c | 9 ++++++++-
-> > > >  1 file changed, 8 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/usb/chipidea/core.c
-> > > > b/drivers/usb/chipidea/core.c index 7bfcbb23c2a4..016e4004fe9d
-> > > > 100644
-> > > > --- a/drivers/usb/chipidea/core.c
-> > > > +++ b/drivers/usb/chipidea/core.c
-> > > > @@ -954,8 +954,15 @@ static int ci_hdrc_probe(struct platform_device *pdev)
-> > > >  	} else if (ci->platdata->usb_phy) {
-> > > >  		ci->usb_phy = ci->platdata->usb_phy;
-> > > >  	} else {
-> > > > +		ci->usb_phy = devm_usb_get_phy_by_phandle(dev->parent, "phys",
-> > > > +							  0);
-> > > >  		ci->phy = devm_phy_get(dev->parent, "usb-phy");
-> > > > -		ci->usb_phy = devm_usb_get_phy(dev->parent,
-> > > > USB_PHY_TYPE_USB2);
-> > > > +
-> > > > +		/* Fallback to grabbing any registered USB2 PHY */
-> > > > +		if (IS_ERR(ci->usb_phy) &&
-> > > > +		    PTR_ERR(ci->usb_phy) != -EPROBE_DEFER)
-> > > > +			ci->usb_phy = devm_usb_get_phy(dev->parent,
-> > > > +						       USB_PHY_TYPE_USB2);
-> > > > 
-> > > 
-> > > I think you may need to do above if ci->phy is error, and not the error is -
-> > EPROBE_DEFER.
-> > 
-> > As Thomas pointed out during the review of v1, the initial flow is to try and get both
-> > ci->usb_phy and ci->phy and let the code use ci->phy in priority later.
-> > 
+On Thu 21-02-19 12:01:30, Yue Hu wrote:
+> From: Yue Hu <huyue2@yulong.com>
 > 
-> If there is a generic PHY node under USB controller, and there is a USB PHY
-> at other sides, both ci->phy and ci->usb_phy are valid, I original thought it is
-> the problem you met.
+> If debugfs_create_dir() failed, the following debugfs_create_file()
+> will be meanless since it depends on non-NULL tmp dentry and it will
+> only waste CPU resource.
 
-Right, this is not the problem we are having. The problem is that
-legacy USB PHYs are not grabbed from device-tree. Instead, they are
-currently matched with their type in the list of registered USB PHYs,
-making it impossible to use 2 distinct USB PHYs this way.
+The file will be created in the debugfs root. But, more importantly.
+Greg (CCed now) is working on removing the failure paths because he
+believes they do not really matter for debugfs and they make code more
+ugly. More importantly a check for NULL is not correct because you
+get ERR_PTR after recent changes IIRC.
 
-> Since you are trying to fix the legacy USB PHY grab issue, I hope you could consider
-> the generic PHY as well.
+> 
+> Signed-off-by: Yue Hu <huyue2@yulong.com>
+> ---
+>  mm/cma_debug.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/mm/cma_debug.c b/mm/cma_debug.c
+> index 2c2c869..3e9d984 100644
+> --- a/mm/cma_debug.c
+> +++ b/mm/cma_debug.c
+> @@ -169,6 +169,8 @@ static void cma_debugfs_add_one(struct cma *cma, struct dentry *root_dentry)
+>  	scnprintf(name, sizeof(name), "cma-%s", cma->name);
+>  
+>  	tmp = debugfs_create_dir(name, root_dentry);
+> +	if (!tmp)
+> +		return;
+>  
+>  	debugfs_create_file("alloc", 0200, tmp, cma, &cma_alloc_fops);
+>  	debugfs_create_file("free", 0200, tmp, cma, &cma_free_fops);
+> -- 
+> 1.9.1
+> 
 
-What do you have in mind about generic PHYs? Everything already works
-as expected with them.
-
-Cheers,
-
-Paul
-
-> > This change attempts to keep this flow intact. The EPROBE_DEFER check is in
-> > case the initial ci->usb_phy is valid but deferred: we don't want to overwrite it by
-> > calling devm_usb_get_phy which might return an actual error and result in losing
-> > the EPROBE_DEFER information.
-> > 
-> > Does that make sense to you?
-> > 
-> > Cheers,
-> > 
-> > Paul
-> > 
-> > > Peter
-> > > 
-> > > >  		/* if both generic PHY and USB PHY layers aren't enabled */
-> > > >  		if (PTR_ERR(ci->phy) == -ENOSYS &&
-> > > > --
-> > > > 2.20.1
-> > --
-> > Paul Kocialkowski, Bootlin
-> > Embedded Linux and kernel engineering
-> > https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fbootlin.com
-> > &amp;data=02%7C01%7Cpeter.chen%40nxp.com%7Cadca65357daa4fe678dc08d
-> > 6957b9c49%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C6368607554
-> > 66805805&amp;sdata=c%2FdLqUhFxe1yz7lrqUoXZCvINiq1rdKJmMAuaH6Fr1k%3
-> > D&amp;reserved=0
 -- 
-Paul Kocialkowski, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
-
+Michal Hocko
+SUSE Labs
