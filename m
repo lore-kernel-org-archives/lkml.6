@@ -2,362 +2,371 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D64A1C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23321C00319
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:24:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B84E20836
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:22:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC2D22077B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:24:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727902AbfBUQWv (ORCPT
+        id S1727859AbfBUQYW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 11:22:51 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38638 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725943AbfBUQWv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 11:22:51 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5ACF1B640;
-        Thu, 21 Feb 2019 16:22:49 +0000 (UTC)
-Date:   Thu, 21 Feb 2019 17:22:48 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC PATCH v1 05/25] printk-rb: add basic non-blocking reading
- interface
-Message-ID: <20190221162248.6zgrbjdh67srnlhd@pathway.suse.cz>
-References: <20190212143003.48446-1-john.ogness@linutronix.de>
- <20190212143003.48446-6-john.ogness@linutronix.de>
- <20190218125407.ljvkuplvaa3zyj6n@pathway.suse.cz>
- <87o977v4go.fsf@linutronix.de>
+        Thu, 21 Feb 2019 11:24:22 -0500
+Received: from foss.arm.com ([217.140.101.70]:47504 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726458AbfBUQYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 11:24:22 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 48E7BA78;
+        Thu, 21 Feb 2019 08:24:21 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5A8BB3F690;
+        Thu, 21 Feb 2019 08:24:19 -0800 (PST)
+Date:   Thu, 21 Feb 2019 16:24:14 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>, marc.zyngier@arm.com
+Cc:     Murali Karicheri <m-karicheri2@ti.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/9] PCI: keystone: Convert to using hierarchy domain
+ for legacy interrupts
+Message-ID: <20190221162413.GA5815@e107981-ln.cambridge.arm.com>
+References: <20190221101518.22604-1-kishon@ti.com>
+ <20190221101518.22604-4-kishon@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87o977v4go.fsf@linutronix.de>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20190221101518.22604-4-kishon@ti.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2019-02-19 22:44:07, John Ogness wrote:
-> Hi Petr,
+On Thu, Feb 21, 2019 at 03:45:12PM +0530, Kishon Vijay Abraham I wrote:
+> K2G provides separate IRQ lines for each of the four legacy interrupts.
+> Model this using hierarchy domain instead of linear domain with chained
+> IRQ handler.
 > 
-> Below I make several comments, responding to your questions. But I like
-> the new API I believe you are trying to propose. So really only my final
-> comments are of particular importance. There I show you what I think
-> reader code would look like using your proposed API.
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  drivers/pci/controller/dwc/pci-keystone.c | 205 +++++++++++++---------
+>  1 file changed, 118 insertions(+), 87 deletions(-)
+
+Hi Kishon,
+
+I CC'ed Marc because you are actually re-writing an interrupt controller
+driver so I would be happier to merge this refactoring if Marc can have
+a look and he is satisfied with it - more so because most of the code can
+be reused by other host bridge drivers with similar behaviour.
+
+I will have a look too, unfortunately it is becoming a bit tight for
+v5.1 but let's see how it goes.
+
+Thanks,
+Lorenzo
+
+> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+> index 47f0dcf638f2..7f1648453f54 100644
+> --- a/drivers/pci/controller/dwc/pci-keystone.c
+> +++ b/drivers/pci/controller/dwc/pci-keystone.c
+> @@ -61,6 +61,7 @@
+>  
+>  #define IRQ_STATUS(n)			(0x184 + ((n) << 4))
+>  #define IRQ_ENABLE_SET(n)		(0x188 + ((n) << 4))
+> +#define IRQ_ENABLE_CLR(n)		(0x18C + ((n) << 4))
+>  #define INTx_EN				BIT(0)
+>  
+>  #define ERR_IRQ_STATUS			0x1c4
+> @@ -87,7 +88,6 @@ struct keystone_pcie {
+>  	struct dw_pcie		*pci;
+>  	/* PCI Device ID */
+>  	u32			device_id;
+> -	int			legacy_host_irqs[PCI_NUM_INTX];
+>  	struct			device_node *legacy_intc_np;
+>  
+>  	int			msi_host_irqs[MAX_MSI_HOST_IRQS];
+> @@ -96,7 +96,6 @@ struct keystone_pcie {
+>  	struct phy		**phy;
+>  	struct device_link	**link;
+>  	struct			device_node *msi_intc_np;
+> -	struct irq_domain	*legacy_irq_domain;
+>  	struct device_node	*np;
+>  
+>  	int error_irq;
+> @@ -199,26 +198,6 @@ static int ks_pcie_msi_host_init(struct pcie_port *pp)
+>  	return dw_pcie_allocate_domains(pp);
+>  }
+>  
+> -static void ks_pcie_handle_legacy_irq(struct keystone_pcie *ks_pcie,
+> -				      int offset)
+> -{
+> -	struct dw_pcie *pci = ks_pcie->pci;
+> -	struct device *dev = pci->dev;
+> -	u32 pending;
+> -	int virq;
+> -
+> -	pending = ks_pcie_app_readl(ks_pcie, IRQ_STATUS(offset));
+> -
+> -	if (BIT(0) & pending) {
+> -		virq = irq_linear_revmap(ks_pcie->legacy_irq_domain, offset);
+> -		dev_dbg(dev, ": irq: irq_offset %d, virq %d\n", offset, virq);
+> -		generic_handle_irq(virq);
+> -	}
+> -
+> -	/* EOI the INTx interrupt */
+> -	ks_pcie_app_writel(ks_pcie, IRQ_EOI, offset);
+> -}
+> -
+>  static void ks_pcie_enable_error_irq(struct keystone_pcie *ks_pcie)
+>  {
+>  	ks_pcie_app_writel(ks_pcie, ERR_IRQ_ENABLE_SET, ERR_IRQ_ALL);
+> @@ -256,39 +235,117 @@ static irqreturn_t ks_pcie_handle_error_irq(struct keystone_pcie *ks_pcie)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> -static void ks_pcie_ack_legacy_irq(struct irq_data *d)
+> +void ks_pcie_irq_eoi(struct irq_data *data)
+>  {
+> +	struct keystone_pcie *ks_pcie = irq_data_get_irq_chip_data(data);
+> +	irq_hw_number_t hwirq = data->hwirq;
+> +
+> +	ks_pcie_app_writel(ks_pcie, IRQ_EOI, hwirq);
+> +	irq_chip_eoi_parent(data);
+>  }
+>  
+> -static void ks_pcie_mask_legacy_irq(struct irq_data *d)
+> +void ks_pcie_irq_enable(struct irq_data *data)
+>  {
+> +	struct keystone_pcie *ks_pcie = irq_data_get_irq_chip_data(data);
+> +	irq_hw_number_t hwirq = data->hwirq;
+> +
+> +	ks_pcie_app_writel(ks_pcie, IRQ_ENABLE_SET(hwirq), INTx_EN);
+> +	irq_chip_enable_parent(data);
+>  }
+>  
+> -static void ks_pcie_unmask_legacy_irq(struct irq_data *d)
+> +void ks_pcie_irq_disable(struct irq_data *data)
+>  {
+> +	struct keystone_pcie *ks_pcie = irq_data_get_irq_chip_data(data);
+> +	irq_hw_number_t hwirq = data->hwirq;
+> +
+> +	ks_pcie_app_writel(ks_pcie, IRQ_ENABLE_CLR(hwirq), INTx_EN);
+> +	irq_chip_disable_parent(data);
+>  }
+>  
+>  static struct irq_chip ks_pcie_legacy_irq_chip = {
+> -	.name = "Keystone-PCI-Legacy-IRQ",
+> -	.irq_ack = ks_pcie_ack_legacy_irq,
+> -	.irq_mask = ks_pcie_mask_legacy_irq,
+> -	.irq_unmask = ks_pcie_unmask_legacy_irq,
+> +	.name			= "Keystone-PCI-Legacy-IRQ",
+> +	.irq_enable		= ks_pcie_irq_enable,
+> +	.irq_disable		= ks_pcie_irq_disable,
+> +	.irq_eoi		= ks_pcie_irq_eoi,
+> +	.irq_mask		= irq_chip_mask_parent,
+> +	.irq_unmask		= irq_chip_unmask_parent,
+> +	.irq_retrigger		= irq_chip_retrigger_hierarchy,
+> +	.irq_set_type		= irq_chip_set_type_parent,
+> +	.irq_set_affinity	= irq_chip_set_affinity_parent,
+>  };
+>  
+> -static int ks_pcie_init_legacy_irq_map(struct irq_domain *d,
+> -				       unsigned int irq,
+> -				       irq_hw_number_t hw_irq)
+> +static int ks_pcie_legacy_irq_domain_alloc(struct irq_domain *domain,
+> +					   unsigned int virq,
+> +					   unsigned int nr_irqs, void *data)
+>  {
+> -	irq_set_chip_and_handler(irq, &ks_pcie_legacy_irq_chip,
+> -				 handle_level_irq);
+> -	irq_set_chip_data(irq, d->host_data);
+> +	struct keystone_pcie *ks_pcie = domain->host_data;
+> +	struct device_node *np = ks_pcie->legacy_intc_np;
+> +	struct irq_fwspec parent_fwspec, *fwspec = data;
+> +	struct of_phandle_args out_irq;
+> +	int ret, i;
+> +
+> +	if (nr_irqs != 1)
+> +		return -EINVAL;
+> +
+> +	ret = of_irq_parse_one(np, fwspec->param[0], &out_irq);
+> +	if (ret < 0) {
+> +		pr_err("Failed to parse interrupt node\n");
+> +		return ret;
+> +	}
+> +
+> +	parent_fwspec.fwnode = &out_irq.np->fwnode;
+> +	parent_fwspec.param_count = out_irq.args_count;
+> +
+> +	for (i = 0; i < out_irq.args_count; i++)
+> +		parent_fwspec.param[i] = out_irq.args[i];
+> +
+> +	ret = irq_domain_alloc_irqs_parent(domain, virq, 1, &parent_fwspec);
+> +	if (ret < 0) {
+> +		pr_err("Failed to allocate parent irq %u: %d\n",
+> +		       parent_fwspec.param[0], ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = irq_domain_set_hwirq_and_chip(domain, virq, fwspec->param[0],
+> +					    &ks_pcie_legacy_irq_chip, ks_pcie);
+> +	if (ret < 0) {
+> +		pr_err("Failed to set hwirq and chip\n");
+> +		goto err_set_hwirq_and_chip;
+> +	}
+>  
+>  	return 0;
+> +
+> +err_set_hwirq_and_chip:
+> +	irq_domain_free_irqs_parent(domain, virq, 1);
+> +
+> +	return ret;
+> +}
+> +
+> +static int ks_pcie_irq_domain_translate(struct irq_domain *domain,
+> +					struct irq_fwspec *fwspec,
+> +					unsigned long *hwirq,
+> +					unsigned int *type)
+> +{
+> +	if (is_of_node(fwspec->fwnode)) {
+> +		if (fwspec->param_count != 2)
+> +			return -EINVAL;
+> +
+> +		if (fwspec->param[0] >= PCI_NUM_INTX)
+> +			return -EINVAL;
+> +
+> +		*hwirq = fwspec->param[0];
+> +		*type = fwspec->param[1];
+> +
+> +		return 0;
+> +	}
+> +
+> +	return -EINVAL;
+>  }
+>  
+>  static const struct irq_domain_ops ks_pcie_legacy_irq_domain_ops = {
+> -	.map = ks_pcie_init_legacy_irq_map,
+> -	.xlate = irq_domain_xlate_onetwocell,
+> +	.alloc		= ks_pcie_legacy_irq_domain_alloc,
+> +	.free		= irq_domain_free_irqs_common,
+> +	.translate	= ks_pcie_irq_domain_translate,
+>  };
+>  
+>  /**
+> @@ -572,35 +629,6 @@ static void ks_pcie_msi_irq_handler(struct irq_desc *desc)
+>  	chained_irq_exit(chip, desc);
+>  }
+>  
+> -/**
+> - * ks_pcie_legacy_irq_handler() - Handle legacy interrupt
+> - * @irq: IRQ line for legacy interrupts
+> - * @desc: Pointer to irq descriptor
+> - *
+> - * Traverse through pending legacy interrupts and invoke handler for each. Also
+> - * takes care of interrupt controller level mask/ack operation.
+> - */
+> -static void ks_pcie_legacy_irq_handler(struct irq_desc *desc)
+> -{
+> -	unsigned int irq = irq_desc_get_irq(desc);
+> -	struct keystone_pcie *ks_pcie = irq_desc_get_handler_data(desc);
+> -	struct dw_pcie *pci = ks_pcie->pci;
+> -	struct device *dev = pci->dev;
+> -	u32 irq_offset = irq - ks_pcie->legacy_host_irqs[0];
+> -	struct irq_chip *chip = irq_desc_get_chip(desc);
+> -
+> -	dev_dbg(dev, ": Handling legacy irq %d\n", irq);
+> -
+> -	/*
+> -	 * The chained irq handler installation would have replaced normal
+> -	 * interrupt driver handler so we need to take care of mask/unmask and
+> -	 * ack operation.
+> -	 */
+> -	chained_irq_enter(chip, desc);
+> -	ks_pcie_handle_legacy_irq(ks_pcie, irq_offset);
+> -	chained_irq_exit(chip, desc);
+> -}
+> -
+>  static int ks_pcie_config_msi_irq(struct keystone_pcie *ks_pcie)
+>  {
+>  	struct device *dev = ks_pcie->pci->dev;
+> @@ -655,14 +683,33 @@ static int ks_pcie_config_legacy_irq(struct keystone_pcie *ks_pcie)
+>  	struct device *dev = ks_pcie->pci->dev;
+>  	struct irq_domain *legacy_irq_domain;
+>  	struct device_node *np = ks_pcie->np;
+> +	struct irq_domain *parent_domain;
+> +	struct device_node *parent_node;
+>  	struct device_node *intc_np;
+> -	int irq_count, irq, ret = 0, i;
+> +	int irq_count, ret = 0;
+>  
+>  	intc_np = of_get_child_by_name(np, "legacy-interrupt-controller");
+>  	if (!intc_np) {
+>  		dev_warn(dev, "legacy-interrupt-controller node is absent\n");
+>  		return -EINVAL;
+>  	}
+> +	ks_pcie->legacy_intc_np = intc_np;
+> +
+> +	parent_node = of_irq_find_parent(intc_np);
+> +	if (!parent_node) {
+> +		dev_err(dev, "unable to obtain parent node\n");
+> +		ret = -ENXIO;
+> +		goto err;
+> +	}
+> +
+> +	parent_domain = irq_find_host(parent_node);
+> +	if (!parent_domain) {
+> +		dev_err(dev, "unable to obtain parent domain\n");
+> +		ret = -ENXIO;
+> +		goto err;
+> +	}
+> +
+> +	of_node_put(parent_node);
+>  
+>  	irq_count = of_irq_count(intc_np);
+>  	if (!irq_count) {
+> @@ -671,31 +718,15 @@ static int ks_pcie_config_legacy_irq(struct keystone_pcie *ks_pcie)
+>  		goto err;
+>  	}
+>  
+> -	for (i = 0; i < irq_count; i++) {
+> -		irq = irq_of_parse_and_map(intc_np, i);
+> -		if (!irq) {
+> -			ret = -EINVAL;
+> -			goto err;
+> -		}
+> -		ks_pcie->legacy_host_irqs[i] = irq;
+> -
+> -		irq_set_chained_handler_and_data(irq,
+> -						 ks_pcie_legacy_irq_handler,
+> -						 ks_pcie);
+> -	}
+> -
+>  	legacy_irq_domain =
+> -		irq_domain_add_linear(intc_np, PCI_NUM_INTX,
+> -				      &ks_pcie_legacy_irq_domain_ops, NULL);
+> +		irq_domain_add_hierarchy(parent_domain, 0, PCI_NUM_INTX,
+> +					 intc_np,
+> +					 &ks_pcie_legacy_irq_domain_ops,
+> +					 ks_pcie);
+>  	if (!legacy_irq_domain) {
+>  		dev_err(dev, "Failed to add irq domain for legacy irqs\n");
+>  		ret = -EINVAL;
+> -		goto err;
+>  	}
+> -	ks_pcie->legacy_irq_domain = legacy_irq_domain;
+> -
+> -	for (i = 0; i < PCI_NUM_INTX; i++)
+> -		ks_pcie_app_writel(ks_pcie, IRQ_ENABLE_SET(i), INTx_EN);
+>  
+>  err:
+>  	of_node_put(intc_np);
+> -- 
+> 2.17.1
 > 
-> On 2019-02-18, Petr Mladek <pmladek@suse.com> wrote:
-> >> + * prb_iter_init: Initialize an iterator for a ring buffer.
-> >> + * @iter: The iterator to initialize.
-> >> + * @rb: A ring buffer to that @iter should iterate.
-> >> + * @seq: The sequence number of the position preceding the first record.
-> >> + *       May be NULL.
-> >> + *
-> >> + * Initialize an iterator to be used with a specified ring buffer. If @seq
-> >> + * is non-NULL, it will be set such that prb_iter_next() will provide a
-> >> + * sequence value of "@seq + 1" if no records were missed.
-> >> + *
-> >> + * It is safe to call this function from any context and state.
-> >> + */
-> >> +void prb_iter_init(struct prb_iterator *iter, struct printk_ringbuffer *rb,
-> >> +		   u64 *seq)
-> >> +{
-> >> +	memset(iter, 0, sizeof(*iter));
-> >> +	iter->rb = rb;
-> >> +	iter->lpos = PRB_INIT;
-> >> +
-> >> +	if (!seq)
-> >> +		return;
-> >> +
-> >> +	for (;;) {
-> >> +		struct prb_iterator tmp_iter;
-> >> +		int ret;
-> >> +
-> >> +		prb_iter_copy(&tmp_iter, iter);
-> >
-> > It looks strange to copy something that has been hardly initialized.
-> > I hope that we could do this without a copy, see below.
-> >
-> >> +
-> >> +		ret = prb_iter_next(&tmp_iter, NULL, 0, seq);
-> >
-> > prb_iter_next() and prb_iter_data() are too complex spaghetti
-> > code. They do basically the same but they do not share
-> > any helper function. The error handling is different
-> > which is really confusing. See below.
-> 
-> I don't follow why you think they do basically the same
-> thing. prb_iter_next() moves forward to the next entry, then calls
-> prb_iter_data() to retrieve the data. prb_iter_data() _is_ the helper
-> function.
-
-Ah, I missed the prb_iter_data() call in prb_iter_next(). I have to
-admit that I did not have a courage to check them carefully. Both
-functions looked like a compact maze of to_entry(), is_valid,
-smp_rmb() calls ;-)
-
-I got only the basic idea and started thinking about how
-to achieve the same an easier to understand way.
-
-> > Well, I think that we need to start with a more low-level functions.
-> > IMHO. we need something to read one entry a safe way. Then it will
-> > be much easier to live with races in the rest of the code:
-> >
-> > /*
-> >  * Return valid entry on the given lpos. Data are read
-> >  * only when the buffer is is not zero.
-> >  */
-> > int prb_get_entry(struct struct printk_ringbuffer *rb,
-> > 		    unsigned long lpos,
-> > 		    struct prb_entry *entry,
-> > 		    unsigned int data_buf_size)
-> > {
-> > 	/*
-> > 	 * Pointer to the ring buffer. The data might get lost
-> > 	 * at any time.
-> > 	 */
-> > 	struct prb_entry *weak_entry;
-> >
-> > 	if (!is_valid(lpos))
-> > 		return -EINVAL;
-> >
-> > 	/* Make sure that data are valid for the given valid lpos. */
-> > 	smp_rmb();
-> >
-> > 	weak_entry = to_entry(lpos);
-> > 	entry->seq = weak_entry->seq;
-> >
-> > 	if (data_buf_size) {
-> > 		unsigned int size;
-> >
-> > 		size = min(data_buf_size, weak_entry->size);
-> 
-> weak_entry->size is untrusted data here. The following memcpy could grab
-> data beyond the data array. (But we can ignore these details for now. I
-> realize you are trying to refactor, not focus on these details.)
-
-Great catch! Yes, we would need to check the overflow here.
-
-> > 		memcpy(entry->data, weak_entry->data, size);
-> > 		entry->size = size;
-> > 	} else {
-> > 		entry->size = weak_data->size;
-> > 	}
-> >
-> > 	/* Make sure that the copy is done before we check validity. */
-> > 	smp_mb();
-> >
-> > 	return is_valid(lpos);
-> > }
-> >
-> > Then I would do the support for iterating the following way.
-> > First, I would extend the structure:
-> >
-> > struct prb_iterator {
-> > 	struct printk_ringbuffer *rb;
-> > 	struct prb_entry *entry;
-> > 	unsigned int data_buffer_size;
-> > 	unsigned long lpos;
-> > };
-> >
-> > And do something like:
-> >
-> > void prg_iter_init(struct struct printk_ringbuffer *rb,
-> > 		       struct prb_entry *entry,
-> > 		       unsigned int data_buffer_size,
-> > 		       struct prb_iterator *iter)
-> > {
-> > 	iter->rb = rb;
-> > 	iter->entry = entry;
-> > 	iter->data_buffer_size = data_buffer_size;
-> > 	lpos = 0UL;
-> > }
-> >
-> > Then we could do iterator support the following way:
-> >
-> > /* Start iteration with reading the tail entry. */
-> > int prb_iter_tail_entry(struct prb_iterator *iter);
-> 
-> A name like prb_iter_oldest_entry() might simplify things. I really
-> don't want the caller to be concerned with heads and tails and which is
-> which. That's an implementation detail of the ringbuffer.
-
-Makes sense.
-
-> > {
-> > 	unsigned long tail;
-> > 	int ret;
-> >
-> > 	for (;;) {
-> > 		tail = atomic_long_read(&rb->tail);
-> >
-> > 		/* Ring buffer is empty? */
-> 
-> The ring buffer is only empty at the beginning (when tail == head). Readers
-> are non-consuming, so it is never empty again once an entry is committed.
-
->  		if (unlikely(atomic_long_read(head) == atomic_long_read(tail)))
->  			return -EINVAL;
-
-Yes, this is a check for empty buffer. And yes, it can be done
-outside the cycle.
-
-> The check for valid is to make sure the tail we just read hasn't already
-> been overtaken by writers. I suppose this could be put into a nested
-> loop so that we continue trying again until we get a valid tail.
->
-> > 		if (unlikely(!is_valid(tail)))
-> > 			return -EINVAL;
-
-Heh, I wanted to add check for the empty buffer (the comment was correct).
-But I added is_valid() check instead.
-
-We could remove it. It is hidden in prb_get_entry(). The for-cycle
-will get repeated when it fails.
-
-> >
-> > 		ret = prb_get_entry(iter->rb, tail,
-> > 				    iter->entry, iter->data_buf_size);
-> > 		if (!ret) {
-> > 			iter->lpos = tail;
-> > 			break;
-> > 		}
-> > 	}
-> >
-> > 	return 0;
-> > }
-> >
-> > unsigned long next_lpos(unsineg long lpos, struct prb_entry *entry)
-> > {
-> > 	return lpos + sizeof(struct entry) + entry->size;
-> 
-> entry->size already includes sizeof(struct prb_entry) plus alignment
-> padding. (Again, not important right now.)
-
-I see. I have missed it.
-
-> > }
-> >
-> > /* Try to get next entry using a valid iterator */
-> > int prb_iter_next_entry(struct prb_iterator *iter)
-> > {
-> > 	iter->lpos = next_lpos(iter->lpos, iter->etnry);
-> >
-> > 	return prb_get_entry(rb, lpos, entry, data_buf_size;
-> > }
-> >
-> > /* Try to get the next entry. Allow to skip lost messages. */
-> > int prb_iter_next_valid_entry(struct prb_iterator *iter)
-> > {
-> > 	int ret;
-> >
-> > 	ret = prb_iter_next_entry(iter);
-> > 	if (!ret)
-> > 		return 0;
-> >
-> > 	/* Next entry has been lost. Skip to the current tail. */
-> > 	return prb_iter_tail_entry(rb, *lpos, entry, data_buf_size);
-> 
-> You return values are geting mixed up here and you are not
-> distinguishing between overtaken by writers and hit the end of the
-> ringbuffer, but I think what you are trying to write is that
-> prb_iter_next_valid_entry() should either return 0 for success or !0 if
-> the end of the ringbuffer was hit.
-
-The -1,0,1 return values were hard to follow. It might get improved
-by using -EINVAL,0,-EAGAIN or so. But I hope that the two return
-values are even better and will be enough.
-
-First, I proposed two functions to distinguish the two situations:
-
-	prb_iter_next_entry() - fails when the next entry gets
-				overtaken or at the end of the buffer
-	prb_iter_next_valid_entry() - fails only at the end of the buffer
-
-Second, the lost messages might get counted by comparing seq numbers.
-You actually used this in the sample code below.
-
-
-> > }
-> >
-> >> +static bool is_valid(struct printk_ringbuffer *rb, unsigned long lpos)
-> >> +{
-> >> +	unsigned long head, tail;
-> >> +
-> >> +	tail = atomic_long_read(&rb->tail);
-> >> +	head = atomic_long_read(&rb->head);
-> >> +	head -= tail;
-> >> +	lpos -= tail;
-> >> +
-> >> +	if (lpos >= head)
-> >> +		return false;
-> >> +	return true;
-> >> +}
-> 
-> I am trying to understand what you want the reader code should look
-> like. Keep in mind that readers can be overtaken at any moment. They
-> also need to track entries they have missed. If I understand your idea,
-> it is something like this (trying to keep it as simple as possible):
-> 
-> void print_all_entries(...)
-> {
->     char buf[sizeof(struct prb_entry) + DATASIZE + sizeof(long)];
->     struct prb_entry *entry = (struct prb_entry *)&buf[0];
->     struct prb_iterator iter;
->     u64 last_seq;
-> 
->     prb_iter_init(rb, entry, DATASIZE, &iter);
->     if (prb_iter_oldest_entry(&iter) != 0)
->         return; /* ringbuffer empty */
-> 
->     for (;;) {
->         do_print_entry(entry);
->         last_seq = entry->seq;
->         if (prb_iter_next_valid_entry(&iter) != 0)
->             break; /* ringbuffer empty */
->         if (entry->seq - last_seq != 1)
->             print("lost %d\n", ((entry->seq - last_seq) + 1));
->     }
-> }
-
-Yes, this was my idea.
-
-I wonder if we might allow to omit prb_iter_oldest_entry() call.
-In fact, prb_iter_next_valid_entry() restarts from the oldest
-entry when the expected one gets lost. But it might cause more
-harm than good. I need to see it in the various existing use cases.
-
-Anyway, the data_buf_size parameter is supposed to allow reading only
-the metadata. This is useful in situations where you just need
-to find which entries would fit into the given buffer. For example,
-the first loop in syslog_print_all().
-
-> I like the idea of the caller passing in a prb_entry struct. That really
-> helps to reduce the parameters. And having the functions
-> prb_iter_oldest_entry() and prb_iter_next_valid_entry() internally loop
-> until they get a valid result also helps so that the reader doesn't have
-> to do that. And if the reader doesn't have to track lost entries (for
-> example, /dev/kmsg), then it becomes even less code.
-
-I am glad to read this.
-
-Best Regards,
-Petr
