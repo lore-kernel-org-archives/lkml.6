@@ -6,71 +6,72 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E125DC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:35:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B00C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:37:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B98322148D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:35:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE7742085A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:37:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbfBUMfz (ORCPT
+        id S1727113AbfBUMhj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 07:35:55 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53401 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbfBUMfy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 07:35:54 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gwnZu-00033h-7E; Thu, 21 Feb 2019 12:35:50 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Amitkumar Karwar <amitkarwar@gmail.com>,
-        Siva Rebbagondla <siva8118@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] rsi: fix missing null pointer check from a failed ieee80211_probereq_get call
-Date:   Thu, 21 Feb 2019 12:35:49 +0000
-Message-Id: <20190221123549.7294-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Thu, 21 Feb 2019 07:37:39 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:52910 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725385AbfBUMhj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 07:37:39 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id CF613E4DF1B7B5361BDD;
+        Thu, 21 Feb 2019 20:37:30 +0800 (CST)
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 21 Feb 2019 20:37:21 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix encrypted page memory leak
+Date:   Thu, 21 Feb 2019 20:37:14 +0800
+Message-ID: <20190221123714.47172-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+For IPU path of f2fs_do_write_data_page(), in its error path, we
+need to release encrypted page and fscrypt context, otherwise it
+will cause memory leak.
 
-The call to ieee80211_probereq_get can return NULL if a skb allocation
-fails, so add a null pointer check and free an earlier skb on the error
-exit return path.
-
-Fixes: 7fdcb8e12660 ("rsi: add support for hardware scan offload")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- drivers/net/wireless/rsi/rsi_91x_mgmt.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/f2fs/data.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/rsi/rsi_91x_mgmt.c b/drivers/net/wireless/rsi/rsi_91x_mgmt.c
-index 8c17842ac507..844f2fac298f 100644
---- a/drivers/net/wireless/rsi/rsi_91x_mgmt.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_mgmt.c
-@@ -1726,6 +1726,10 @@ int rsi_send_bgscan_probe_req(struct rsi_common *common,
- 
- 	probereq_skb = ieee80211_probereq_get(common->priv->hw, vif->addr, ssid,
- 					      ssid_len, scan_req->ie_len);
-+	if (!probereq_skb) {
-+		dev_kfree_skb(skb);
-+		return -ENOMEM;
-+	}
- 
- 	memcpy(&skb->data[frame_len], probereq_skb->data, probereq_skb->len);
- 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index e099babf85bd..b0d1e946e141 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1860,8 +1860,13 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+ 		if (fio->need_lock == LOCK_REQ)
+ 			f2fs_unlock_op(fio->sbi);
+ 		err = f2fs_inplace_write_data(fio);
+-		if (err && PageWriteback(page))
+-			end_page_writeback(page);
++		if (err) {
++			if (f2fs_encrypted_file(inode))
++				fscrypt_pullback_bio_page(&fio->encrypted_page,
++									true);
++			if (PageWriteback(page))
++				end_page_writeback(page);
++		}
+ 		trace_f2fs_do_write_data_page(fio->page, IPU);
+ 		set_inode_flag(inode, FI_UPDATE_WRITE);
+ 		return err;
 -- 
-2.20.1
+2.18.0.rc1
 
