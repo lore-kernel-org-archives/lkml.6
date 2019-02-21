@@ -2,235 +2,186 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C00C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82457C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CCD32075A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:49:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52D2620700
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:49:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550760570;
-	bh=V0mC/EL4Ulp7NOGKFdT9hVX84a/9Pgb3W9CVN3SM+wg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Csxx8AgwwAex34TPjxpRRvCUg9vBkehFQs8Wuf28gRkDmpGe9hz6GG7Ojf2TGKYGp
-	 pFofth3ryL4owKlb2SlTe2/kV6pY/nsSg9umskHyvBbCCJlaAkLeQ7uZQ1ZcB4XWEI
-	 1RseyglDY1F1aADcoj0hcxMvegoIiAGpxmVChEpU=
+	s=default; t=1550760588;
+	bh=1ma0lphpT2J3uEaLgguqgvkCLqji2p4FmmxAre/MsIs=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=vF+bo2KQaax0EOronJnpQrQOoMTH3+UJLdyuO+/JHRPE/LwnL8Q3DqGYZ7SWZIR5K
+	 vBPjcvVBKMHiIuN+iUF06dQEVnETv41qVf8T4e90VPoOw2zSOcReQirSqoteC0lLt6
+	 JtJXrwGyOnVu1Y4FYjonWBhVmEwTQLVfIsODiM4k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728887AbfBUOj2 (ORCPT
+        id S1728823AbfBUOtr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:39:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33230 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:49:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728407AbfBUOjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:39:22 -0500
+        id S1728339AbfBUOjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:39:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E80A72084D;
-        Thu, 21 Feb 2019 14:39:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55F032080D;
+        Thu, 21 Feb 2019 14:39:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550759960;
-        bh=V0mC/EL4Ulp7NOGKFdT9hVX84a/9Pgb3W9CVN3SM+wg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rbyK0lGRd75yxxyT0+AOSuHbZj8pc4pToXEE5GxNNUGaaWZ5xg6+IWBeDEbhKg635
-         AfegxNFjZs4aqNy+c2t73Q4/GmvGR92KXLxsge8mMbcclFEFJUPdzXX3ew/aYOFuLm
-         RwOEc+wqAEGj62aLEsLjoSdUAPkFIqOSEhGMWh/4=
+        s=default; t=1550759947;
+        bh=1ma0lphpT2J3uEaLgguqgvkCLqji2p4FmmxAre/MsIs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=tIkZ61JujWl3F+ZjGcBI9wUdn3SWgO8EkiUAM680MlUHOrzifZUC9TatFFqTR9fMr
+         sonxvN6Mk84FFQte13UPMa34Xk51LsP3zXBbhVdhszjYMaYsGNKxOboRxiWuLbz1cm
+         JSpjaubc0nEBqVbXSa9EUm23NraSnqFAVqEWgZ1Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 19/20] mISDN: fix a race in dev_expire_timer()
-Date:   Thu, 21 Feb 2019 15:35:57 +0100
-Message-Id: <20190221125244.170216397@linuxfoundation.org>
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.9 00/20] 4.9.160-stable review
+Date:   Thu, 21 Feb 2019 15:35:38 +0100
+Message-Id: <20190221125242.153179182@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190221125242.153179182@linuxfoundation.org>
-References: <20190221125242.153179182@linuxfoundation.org>
+MIME-Version: 1.0
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.160-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.9.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.9.160-rc1
+X-KernelTest-Deadline: 2019-02-23T12:52+00:00
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+This is the start of the stable review cycle for the 4.9.160 release.
+There are 20 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-------------------
+Responses should be made by Sat Feb 23 12:52:16 UTC 2019.
+Anything received after that time might be too late.
 
-From: Eric Dumazet <edumazet@google.com>
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.160-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+and the diffstat can be found below.
 
-commit bdcc5bc25548ef6b08e2e43937148f907c212292 upstream.
+thanks,
 
-Since mISDN_close() uses dev->pending to iterate over active
-timers, there is a chance that one timer got removed from the
-->pending list in dev_expire_timer() but that the thread
-has not called yet wake_up_interruptible()
+greg k-h
 
-So mISDN_close() could miss this and free dev before
-completion of at least one dev_expire_timer()
+-------------
+Pseudo-Shortlog of commits:
 
-syzbot was able to catch this race :
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.9.160-rc1
 
-BUG: KASAN: use-after-free in register_lock_class+0x140c/0x1bf0 kernel/locking/lockdep.c:827
-Write of size 8 at addr ffff88809fc18948 by task syz-executor1/24769
+Eric Dumazet <edumazet@google.com>
+    ax25: fix possible use-after-free
 
-CPU: 1 PID: 24769 Comm: syz-executor1 Not tainted 5.0.0-rc5 #60
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x172/0x1f0 lib/dump_stack.c:113
- print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
- kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
- __asan_report_store8_noabort+0x17/0x20 mm/kasan/generic_report.c:140
- register_lock_class+0x140c/0x1bf0 kernel/locking/lockdep.c:827
- __lock_acquire+0x11f/0x4700 kernel/locking/lockdep.c:3224
- lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:3841
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0x95/0xcd kernel/locking/spinlock.c:152
- __wake_up_common_lock+0xc7/0x190 kernel/sched/wait.c:120
- __wake_up+0xe/0x10 kernel/sched/wait.c:145
- dev_expire_timer+0xe4/0x3b0 drivers/isdn/mISDN/timerdev.c:174
- call_timer_fn+0x190/0x720 kernel/time/timer.c:1325
-protocol 88fb is buggy, dev hsr_slave_0
-protocol 88fb is buggy, dev hsr_slave_1
- expire_timers kernel/time/timer.c:1362 [inline]
- __run_timers kernel/time/timer.c:1681 [inline]
- __run_timers kernel/time/timer.c:1649 [inline]
- run_timer_softirq+0x652/0x1700 kernel/time/timer.c:1694
- __do_softirq+0x266/0x95a kernel/softirq.c:292
- invoke_softirq kernel/softirq.c:373 [inline]
- irq_exit+0x180/0x1d0 kernel/softirq.c:413
- exiting_irq arch/x86/include/asm/apic.h:536 [inline]
- smp_apic_timer_interrupt+0x14a/0x570 arch/x86/kernel/apic/apic.c:1062
- apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
- </IRQ>
-RIP: 0010:__sanitizer_cov_trace_pc+0x26/0x50 kernel/kcov.c:101
-Code: 90 90 90 90 55 48 89 e5 48 8b 75 08 65 48 8b 04 25 40 ee 01 00 65 8b 15 98 12 92 7e 81 e2 00 01 1f 00 75 2b 8b 90 d8 12 00 00 <83> fa 02 75 20 48 8b 88 e0 12 00 00 8b 80 dc 12 00 00 48 8b 11 48
-RSP: 0018:ffff8880589b7a60 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-RAX: ffff888087ce25c0 RBX: 0000000000000001 RCX: ffffffff818f8ca3
-RDX: 0000000000000000 RSI: ffffffff818f8b48 RDI: 0000000000000001
-RBP: ffff8880589b7a60 R08: ffff888087ce25c0 R09: ffffed1015d25bd0
-R10: ffffed1015d25bcf R11: ffff8880ae92de7b R12: ffffea0001ae4680
-R13: ffffea0001ae4688 R14: 0000000000000000 R15: ffffea0001b41648
- PageIdle include/linux/page-flags.h:398 [inline]
- page_is_idle include/linux/page_idle.h:29 [inline]
- mark_page_accessed+0x618/0x1140 mm/swap.c:398
- touch_buffer fs/buffer.c:59 [inline]
- __find_get_block+0x312/0xcc0 fs/buffer.c:1298
- sb_find_get_block include/linux/buffer_head.h:338 [inline]
- recently_deleted fs/ext4/ialloc.c:682 [inline]
- find_inode_bit.isra.0+0x202/0x510 fs/ext4/ialloc.c:722
- __ext4_new_inode+0x14ad/0x52c0 fs/ext4/ialloc.c:914
- ext4_symlink+0x3f8/0xbe0 fs/ext4/namei.c:3096
- vfs_symlink fs/namei.c:4126 [inline]
- vfs_symlink+0x378/0x5d0 fs/namei.c:4112
- do_symlinkat+0x22b/0x290 fs/namei.c:4153
- __do_sys_symlink fs/namei.c:4172 [inline]
- __se_sys_symlink fs/namei.c:4170 [inline]
- __x64_sys_symlink+0x59/0x80 fs/namei.c:4170
- do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457b67
-Code: 0f 1f 00 b8 5c 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 6d bb fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 b8 58 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 4d bb fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fff045ce0f8 EFLAGS: 00000202 ORIG_RAX: 0000000000000058
-RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 0000000000457b67
-RDX: 00007fff045ce173 RSI: 00000000004bd63f RDI: 00007fff045ce160
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000013
-R10: 0000000000000075 R11: 0000000000000202 R12: 0000000000000000
-R13: 0000000000000001 R14: 000000000000029b R15: 0000000000000001
+Eric Dumazet <edumazet@google.com>
+    mISDN: fix a race in dev_expire_timer()
 
-Allocated by task 24763:
- save_stack+0x45/0xd0 mm/kasan/common.c:73
- set_track mm/kasan/common.c:85 [inline]
- __kasan_kmalloc mm/kasan/common.c:496 [inline]
- __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
- kasan_kmalloc+0x9/0x10 mm/kasan/common.c:504
- kmem_cache_alloc_trace+0x151/0x760 mm/slab.c:3609
- kmalloc include/linux/slab.h:545 [inline]
- mISDN_open+0x9a/0x270 drivers/isdn/mISDN/timerdev.c:59
- misc_open+0x398/0x4c0 drivers/char/misc.c:141
- chrdev_open+0x247/0x6b0 fs/char_dev.c:417
- do_dentry_open+0x47d/0x1130 fs/open.c:771
- vfs_open+0xa0/0xd0 fs/open.c:880
- do_last fs/namei.c:3418 [inline]
- path_openat+0x10d7/0x4690 fs/namei.c:3534
- do_filp_open+0x1a1/0x280 fs/namei.c:3564
- do_sys_open+0x3fe/0x5d0 fs/open.c:1063
- __do_sys_openat fs/open.c:1090 [inline]
- __se_sys_openat fs/open.c:1084 [inline]
- __x64_sys_openat+0x9d/0x100 fs/open.c:1084
- do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Eric Dumazet <edumazet@google.com>
+    net/x25: do not hold the cpu too long in x25_new_lci()
 
-Freed by task 24762:
- save_stack+0x45/0xd0 mm/kasan/common.c:73
- set_track mm/kasan/common.c:85 [inline]
- __kasan_slab_free+0x102/0x150 mm/kasan/common.c:458
- kasan_slab_free+0xe/0x10 mm/kasan/common.c:466
- __cache_free mm/slab.c:3487 [inline]
- kfree+0xcf/0x230 mm/slab.c:3806
- mISDN_close+0x2a1/0x390 drivers/isdn/mISDN/timerdev.c:97
- __fput+0x2df/0x8d0 fs/file_table.c:278
- ____fput+0x16/0x20 fs/file_table.c:309
- task_work_run+0x14a/0x1c0 kernel/task_work.c:113
- tracehook_notify_resume include/linux/tracehook.h:188 [inline]
- exit_to_usermode_loop+0x273/0x2c0 arch/x86/entry/common.c:166
- prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
- syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
- do_syscall_64+0x52d/0x610 arch/x86/entry/common.c:293
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Qu Wenruo <quwenruo@cn.fujitsu.com>
+    btrfs: Remove false alert when fiemap range is smaller than on-disk extent
 
-The buggy address belongs to the object at ffff88809fc18900
- which belongs to the cache kmalloc-192 of size 192
-The buggy address is located 72 bytes inside of
- 192-byte region [ffff88809fc18900, ffff88809fc189c0)
-The buggy address belongs to the page:
-page:ffffea00027f0600 count:1 mapcount:0 mapping:ffff88812c3f0040 index:0xffff88809fc18000
-flags: 0x1fffc0000000200(slab)
-raw: 01fffc0000000200 ffffea000269f648 ffffea00029f7408 ffff88812c3f0040
-raw: ffff88809fc18000 ffff88809fc18000 000000010000000b 0000000000000000
-page dumped because: kasan: bad access detected
+Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+    net: ipv4: use a dedicated counter for icmp_v4 redirect packets
 
-Memory state around the buggy address:
- ffff88809fc18800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff88809fc18880: 00 fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff88809fc18900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                              ^
- ffff88809fc18980: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
- ffff88809fc18a00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+Jose Abreu <jose.abreu@synopsys.com>
+    net: stmmac: Fix a race in EEE enable callback
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Karsten Keil <isdn@linux-pingi.de>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Eric Dumazet <edumazet@google.com>
+    vxlan: test dev->flags & IFF_UP before calling netif_rx()
 
----
- drivers/isdn/mISDN/timerdev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Eric Dumazet <edumazet@google.com>
+    tcp: clear icsk_backoff in tcp_write_queue_purge()
 
---- a/drivers/isdn/mISDN/timerdev.c
-+++ b/drivers/isdn/mISDN/timerdev.c
-@@ -168,8 +168,8 @@ dev_expire_timer(unsigned long data)
- 	spin_lock_irqsave(&timer->dev->lock, flags);
- 	if (timer->id >= 0)
- 		list_move_tail(&timer->list, &timer->dev->expired);
--	spin_unlock_irqrestore(&timer->dev->lock, flags);
- 	wake_up_interruptible(&timer->dev->wait);
-+	spin_unlock_irqrestore(&timer->dev->lock, flags);
- }
- 
- static int
+Alexander Duyck <alexander.h.duyck@linux.intel.com>
+    net: Do not allocate page fragments that are not skb aligned
+
+Eric Dumazet <edumazet@google.com>
+    tcp: tcp_v4_err() should be more careful
+
+David S. Miller <davem@davemloft.net>
+    net: Add header for usage of fls64()
+
+Jason Wang <jasowang@redhat.com>
+    vhost: correctly check the return value of translate_desc() in log_used()
+
+Kai-Heng Feng <kai.heng.feng@canonical.com>
+    sky2: Increase D3 delay again
+
+Willem de Bruijn <willemb@google.com>
+    net: validate untrusted gso packets without csum offload
+
+Alexandre Torgue <alexandre.torgue@st.com>
+    net: stmmac: handle endianness in dwmac4_get_timestamp
+
+Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+    net: phy: xgmiitorgmii: Support generic PHY status read
+
+Hauke Mehrtens <hauke.mehrtens@intel.com>
+    net: Fix for_each_netdev_feature on Big endian
+
+Wei Yongjun <weiyongjun1@huawei.com>
+    hwmon: (lm80) Fix missing unlock on error in set_fan_div()
+
+Paolo Abeni <pabeni@redhat.com>
+    vsock: cope with memory allocation failure at socket creation time
+
+Zhiqiang Liu <liuzhiqiang26@huawei.com>
+    net: fix IPv6 prefix route residue
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |  4 ++--
+ drivers/hwmon/lm80.c                               |  4 +++-
+ drivers/isdn/mISDN/timerdev.c                      |  2 +-
+ drivers/net/ethernet/marvell/sky2.c                |  2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c |  9 ++++---
+ .../net/ethernet/stmicro/stmmac/stmmac_ethtool.c   | 22 +++++++++--------
+ drivers/net/phy/xilinx_gmii2rgmii.c                |  5 +++-
+ drivers/net/vxlan.c                                | 13 ++++++++--
+ drivers/vhost/vhost.c                              |  2 +-
+ fs/btrfs/extent_io.c                               | 28 ++++++++++------------
+ include/linux/netdev_features.h                    | 24 +++++++++++++++++--
+ include/linux/skbuff.h                             |  2 +-
+ include/linux/virtio_net.h                         |  9 +++++++
+ include/net/ax25.h                                 | 12 ++++++++++
+ include/net/inetpeer.h                             |  1 +
+ include/net/tcp.h                                  |  1 +
+ net/ax25/ax25_ip.c                                 |  4 ++--
+ net/ax25/ax25_route.c                              | 19 +++++++--------
+ net/core/dev.c                                     |  4 ++--
+ net/core/skbuff.c                                  |  4 ++++
+ net/ipv4/inetpeer.c                                |  1 +
+ net/ipv4/route.c                                   |  7 ++++--
+ net/ipv4/tcp.c                                     |  1 -
+ net/ipv4/tcp_ipv4.c                                |  7 +++---
+ net/ipv6/addrconf.c                                |  3 ++-
+ net/vmw_vsock/vmci_transport.c                     |  4 ++++
+ net/x25/af_x25.c                                   |  6 ++---
+ 27 files changed, 133 insertions(+), 67 deletions(-)
 
 
