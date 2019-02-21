@@ -2,230 +2,111 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7913C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:07:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89BA2C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:07:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AF0F2084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:07:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RUDc7BY4"
+	by mail.kernel.org (Postfix) with ESMTP id 612102084D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:07:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728577AbfBUQHS (ORCPT
+        id S1728614AbfBUQHV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 11:07:18 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:41748 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728491AbfBUQHP (ORCPT
+        Thu, 21 Feb 2019 11:07:21 -0500
+Received: from mx-rz-3.rrze.uni-erlangen.de ([131.188.11.22]:36750 "EHLO
+        mx-rz-3.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725845AbfBUQHR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 11:07:15 -0500
-Received: by mail-oi1-f196.google.com with SMTP id e7so1798929oia.8
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 08:07:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QWG5p27+JzjB7F+ey5vSTlefbh8uy7ID+L63MG0iO4E=;
-        b=RUDc7BY4sTc2GEShKeN+I/XTH+9TuL2X6UqwZd2T0why159Le4xaKGys1kfbXXcOhE
-         fQDWpIRKoH5YeqP+59Klib6W8CUfIor/+O9VL4yLh4CtG34uHCqhdZBl2U8PwhH5Y0bX
-         Hj3qJtQa8V/am6fVxgs51ZItbkINdZkNN4WXkQQKjIvFcE9jKg808RceOkIkBpX4IHGU
-         QiTZtmHBTSljFh3+UFWXvUagrIeSrog/kM9fCsncEBfuOUnubaWLdPDNHEX6fX+9Fg3Y
-         gBQxEkau60PC8LaUvzD+2cW7ZVigvB81ImTR08KpjiES2bJMAFwighR9Py8lqw+uX7x5
-         anYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QWG5p27+JzjB7F+ey5vSTlefbh8uy7ID+L63MG0iO4E=;
-        b=qb4g1U+thHJa1RVaiYuYwZuF9BhqMA0R8RTgJt5nDhKdixCI2K9gkHztZGfAcoLMOE
-         wiy5rydKl9ScQSQodeHP7zpgGmbx7FymOX/xDkz1dHWTUHAyGY0zroBRoYPNc12/1B0E
-         DfFyz1k2m/AXBjvH+IC2buv7DS4cwzbjLSmggX9JAMV7fWnMXM4VraEamNMy7o0li0vw
-         68V4jtwCqfx3VJDunvygkOgF+uf7eaTRzoy2jkJxUijy6rGtaJ2cxpx2Q5+p4JPV6fPj
-         ahDshThUI+E4RDCuqJpexm2CaU4FX9xrTPtZySRG8hlEJWYv+erB3LNO6efkx8d6bgHt
-         SEsQ==
-X-Gm-Message-State: AHQUAuYaSqPJXL6Me7dbTBCqperTgq3fXbaIoUJMWKUov8tvSkF8rmYG
-        N3Q3Dr157x/5k9Xn3OAt0GWe6clQASw8gQXY3qDsGg==
-X-Google-Smtp-Source: AHgI3IYOJkzOXZZVk4ghZICMYugWhUJi0KIkslkLgu+mfjv7kR2Uvf53xRheVzr4EbhbEm98OJI9qWHsBRJe6y1LWw8=
-X-Received: by 2002:aca:e886:: with SMTP id f128mr10126503oih.68.1550765234120;
- Thu, 21 Feb 2019 08:07:14 -0800 (PST)
-MIME-Version: 1.0
-References: <20190218232308.11241-1-tobin@kernel.org> <20190218232308.11241-6-tobin@kernel.org>
- <CAG48ez0utQJjoJW69OwGiuH1EQtcD939-5u71ruD_1nr0eJK0g@mail.gmail.com>
- <CAGXu5jKeS3bkTSXEw2nsjrWoqhbkDZD4C=PdYTHMtM0GNk6tSg@mail.gmail.com>
- <20190221052435.GF11758@eros.localdomain> <CAGXu5j+Mf2D5LgkEmps7VVBhmNGt=49y4caP1y1E0OBURJEeXQ@mail.gmail.com>
-In-Reply-To: <CAGXu5j+Mf2D5LgkEmps7VVBhmNGt=49y4caP1y1E0OBURJEeXQ@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 21 Feb 2019 17:06:47 +0100
-Message-ID: <CAG48ez0LjS5piXnx5924VbZQxEOwKeiAFmLEQChDNGAK65yfVg@mail.gmail.com>
-Subject: Re: [PATCH 5/6] lib: Fix function documentation for strncpy_from_user
-To:     Kees Cook <keescook@chromium.org>
-Cc:     "Tobin C. Harding" <me@tobin.cc>,
-        "Tobin C. Harding" <tobin@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
+        Thu, 21 Feb 2019 11:07:17 -0500
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx-rz-3.rrze.uni-erlangen.de (Postfix) with ESMTPS id 444zrM23BLz1xsG;
+        Thu, 21 Feb 2019 17:07:15 +0100 (CET)
+Authentication-Results: mx-rz-3.rrze.uni-erlangen.de; dkim=none
+        reason="no signature"; dkim-adsp=none (unprotected policy);
+        dkim-atps=neutral
+X-Virus-Scanned: amavisd-new at boeck1.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 10.21.5.153
+Received: from fau.de (faustud-010-021-005-153.pool.uni-erlangen.de [10.21.5.153])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: U2FsdGVkX19Oltf4og8Jup/A9kX/V4gmm9GS6dBr66U=)
+        by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 444zrJ5NLhz20Wd;
+        Thu, 21 Feb 2019 17:07:12 +0100 (CET)
+From:   Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+To:     linux-perf-users@vger.kernel.org
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Content-Type: text/plain; charset="UTF-8"
+        Andi Kleen <ak@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Kim Phillips <kim.phillips@arm.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Milian Wolff <milian.wolff@kdab.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Gardner <rob.gardner@oracle.com>,
+        Sandipan Das <sandipan@linux.ibm.com>,
+        linux-kernel@vger.kernel.org,
+        Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+Subject: [PATCH 2/3] perf machine: use map__inlines in append_inlines
+Date:   Thu, 21 Feb 2019 17:06:51 +0100
+Message-Id: <20190221160652.1788-3-jonas.rabenstein@studium.uni-erlangen.de>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20190221160652.1788-1-jonas.rabenstein@studium.uni-erlangen.de>
+References: <20190221160652.1788-1-jonas.rabenstein@studium.uni-erlangen.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 7:02 AM Kees Cook <keescook@chromium.org> wrote:
-> On Wed, Feb 20, 2019 at 9:25 PM Tobin C. Harding <me@tobin.cc> wrote:
-> >
-> > On Wed, Feb 20, 2019 at 05:05:10PM -0800, Kees Cook wrote:
-> > > So, generally speaking, I'd love to split all strncpy* uses into
-> > > strscpy_zero() (when expecting to do str->str copies), and some new
-> > > function, named like mempadstr() or str2mem() that copies a str to a
-> > > __nonstring char array, with trailing padding, if there is space. Then
-> > > there is no more mixing the two cases and botching things.
->
-> I should use "converts" instead of "copies" above, just to drive the
-> point home. :)
->
-> >
-> > Oh cool, treewide changes, I'm down with that.  So to v2 I'll add
-> > str2mem() and then attack the tree as suggested.  What could possibly go
-> > wrong :)?
->
-> Some clear documentation needs to be written for str2mem() to really
-> help people understand what a "non string" character array is
-> (especially given that it LOOKS like it has NUL termination -- when in
-> fact it's just "padding").
->
-> The tree-wide changes will likely take a while (and don't need to be
-> part of this series unless you want to find a couple good examples)
-> since we have to do them case-by-case: it's not always obvious when
-> it's actually a non-string, so getting help from maintainers here will
-> be needed. (And maybe some kind of flow chart added to
-> Documentation/process/deprecated.rst for how to stop using strncpy()
-> and strlcpy().)
+The previous patch provides a generic way to lookup the root node of the
+inlined symbols for a specific address. Reuse that implementation
+instead of a duplicated version of the required steps.
 
-Wild brainstorming ahead...
+Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+---
+ tools/perf/util/machine.c | 15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
 
-Such non-string character arrays are usually fixed-size, right? We
-could use struct types around such character arrays to hide the actual
-characters (so that people don't accidentally use them with C string
-APIs), and enforce that the length is passed around as part of the
-type... something like:
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 143f7057d581..dce29c21e4ea 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -2330,23 +2330,12 @@ static int append_inlines(struct callchain_cursor *cursor,
+ {
+ 	struct inline_node *inline_node;
+ 	struct inline_list *ilist;
+-	u64 addr;
+ 	int ret = 1;
+ 
+-	if (!symbol_conf.inline_name || !map || !sym)
++	inline_node = map__inlines(map, ip, sym);
++	if (!inline_node)
+ 		return ret;
+ 
+-	addr = map__map_ip(map, ip);
+-	addr = map__rip_2objdump(map, addr);
+-
+-	inline_node = inlines__tree_find(&map->dso->inlined_nodes, addr);
+-	if (!inline_node) {
+-		inline_node = dso__parse_addr_inlines(map->dso, addr, sym);
+-		if (!inline_node)
+-			return ret;
+-		inlines__tree_insert(&map->dso->inlined_nodes, inline_node);
+-	}
+-
+ 	list_for_each_entry(ilist, &inline_node->val, list) {
+ 		ret = callchain_cursor_append(cursor, ip, map,
+ 					      ilist->symbol, false,
+-- 
+2.19.2
 
-#define char_array(len) struct { char __ca_data[len]; }
-#define __CA_UNWRAP(captr) (captr)->__ca_data, sizeof((captr)->__ca_data)
-
-void __str2ca(char *dst, size_t dst_len, char *src) {
-  size_t src_len = strlen(src);
-  if (WARN_ON(src_len > dst_len)) {
-    // or whatever else we think is the safest way to deal with this
-    // without crashing, if BUG() is not an option.
-    memset(dst, 0, dst_len);
-    return;
-  }
-  memcpy(dst, src, src_len);
-  memset(dst + src_len, 0, dst_len - src_len);
-}
-#define str2ca(dst, src) __str2ca(__CA_UNWRAP(dst), (src))
-
-static inline void __ca2ca(char *dst, size_t dst_len, char *src,
-size_t src_len) {
-  BUILD_BUG_ON(dst_len < src_len);
-  memcpy(dst, src, src_len);
-  if (src_len != dst_len) {
-    memset(dst + src_len, 0, dst_len - src_len);
-  }
-}
-#define ca2ca(dst, src) __ca2ca(__CA_UNWRAP(dst), __CA_UNWRAP(src))
-
-
-And if you want to do direct assignments instead of using helpers, you
-make a typedef like this (since just assigning between two equivalent
-structs doesn't work):
-
-typedef char_array(20) blah_name;
-blah_name global_name;
-int main(int argc, char **argv) {
-  blah_name local_name;
-  str2ca(&local_name, argv[1]);
-  global_name = local_name;
-}
-
-You'd also have to use a typedef like this if you want to pass
-references to other functions.
-
-
-Something like this would also be neat for classic C strings in some
-situations - if you can put bounds in the types, or (if the string is
-dynamically-sized) in the struct, you don't need to messily pass
-around bounds for things like snprint() and so on.
-
-> What I can't quite figure out yet is how to find a way for sfr to flag
-> newly added users of strcpy, strncpy, and strlcpy. We might need to
-> bring back __deprecated, but hide it behind a W=linux-next flag or
-> something crazy. Stephen, in your builds you're already injecting
-> -Wimplicit-fallthrough: do you do W=1 or anything like that? If not, I
-> think we need some W= setting for your linux-next builds that generate
-> the maintainer-nag warnings...
->
-> -Kees
->
-> P.S. Here's C string API Rant (I just had to get this out, please feel
-> free to ignore):
->
-> strcpy returns dest ... which is already known, so it's a meaningless
-> return value.
->
-> strncpy returns dest (still meaningless)
-
-Weeeell... it kinda makes sense if you're trying to micro-optimize the
-amount of stack spills. If you write code like this:
-
-char *a = malloc(10);
-a = strcpy(a, other_string);
-return a;
-
-... then the compiler doesn't have to shove `a` in one of the
-callee-saved registers or spill it to the stack around the strcpy().
-Plus, it might allow tail-call optimizations in some cases.
-
-> strlcpy returns strlen(src) ... the length we WOULD have copied. Why
-> would we care about that? I'm operating on dest. Were there callers
-> that needed to both copy part of src and learn how long it was at the
-> same time?
-
-You could use it to optimistically attempt a copy in a fastpath, and
-then fall back to a reallocation if that failed.
-
-> strscpy returns -E2BIG or non-NUL bytes copied: yay, a return about
-> what actually happened from the operation!
->
-> ... snprintf returns what it WOULD have written, much like strlcpy
-> above. At least snprintf has an excuse: it can be used to calculate an
-> allocation size (called with a NULL dest and 0 size) ... but shouldn't
-> "how big is this format string going to be?" be a separate function? I
-> wonder if we can kill all kernel uses of snprintf too (after
-> introducing a "how big would it be?" function and switching all other
-> callers over to scnprintf)...
->
-> So scnprintf() does the right thing (count of non-NUL bytes copied out).
-
-That seems kinda suboptimal. Wouldn't you ideally want to bail out
-with an error, or at least do a WARN(), if you're trying to format a
-string that doesn't fit into its destination? Like, for example, if
-you're assembling a path, and the path doesn't fit into a buffer, and
-so you just use half of it, you might end up in a very different place
-from where you intended to go.
-
-> So now our safe(r?) string API versions use different letters to show
-> they're safe: "s" in strcpy and "cn" in sprintf. /me cries forever.
