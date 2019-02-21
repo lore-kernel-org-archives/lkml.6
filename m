@@ -2,104 +2,176 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41581C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A95DC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:51:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F22720855
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:50:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=newmedia-net.de header.i=@newmedia-net.de header.b="tUpydRvh"
+	by mail.kernel.org (Postfix) with ESMTP id 57E7420855
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:51:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727846AbfBUMuo (ORCPT
+        id S1727866AbfBUMve (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 07:50:44 -0500
-Received: from webmail.newmedia-net.de ([185.84.6.166]:38662 "EHLO
-        webmail.newmedia-net.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725891AbfBUMun (ORCPT
+        Thu, 21 Feb 2019 07:51:34 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57536 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726755AbfBUMve (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 07:50:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=newmedia-net.de; s=mikd;
-        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=zpRRwKjdCn2OaV0fvycbutp0DI4dW4xVbXdDrWDn8Kg=;
-        b=tUpydRvh7l87Ccqpt4fS6B6EpzSfB3vg2U3J0pRPrSetHdp7ki9ZzuBsRkJcNdVD0g5a4Hu4Jh8VeeA3t+VY8llICwC8g746T7TiVwTggHXUy924hj9h71C8fjtDA3ag1H4npl7npAAhi6rb2tWB3TmAFUORVPGcFEO0dZakjJ0=;
-Subject: Re: [PATCH 4.19 01/24] bridge: do not add port to router list when
- receives query with source 0.0.0.0
-To:     Hangbin Liu <liuhangbin@gmail.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Ying Xu <yinxu@redhat.com>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        =?UTF-8?Q?Linus_L=c3=bcssing?= <linus.luessing@c0d3.blue>
-References: <20181102182839.725385066@linuxfoundation.org>
- <20181102182839.913422845@linuxfoundation.org>
- <07d315a2-d735-3d8b-686c-9c52acf91bf1@newmedia-net.de>
- <20190217164809.GA24091@kroah.com>
- <7978727a-eacc-779c-771f-f4c3013237f3@newmedia-net.de>
- <0425449f-f6d9-c492-d7c8-ba202db88d26@newmedia-net.de>
- <962f3d1f-23eb-647c-74cb-b277212299e7@cumulusnetworks.com>
- <20190220144653.GJ10051@dhcp-12-139.nay.redhat.com>
-From:   Sebastian Gottschall <s.gottschall@newmedia-net.de>
-Message-ID: <1e412bab-fb07-4b44-eb42-5a74bec12453@newmedia-net.de>
-Date:   Thu, 21 Feb 2019 13:50:33 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Thu, 21 Feb 2019 07:51:34 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1LCnuCD100101
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 07:51:33 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qsupw1pbj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 07:51:33 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Thu, 21 Feb 2019 12:51:30 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 21 Feb 2019 12:51:27 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1LCpP9V10813566
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Feb 2019 12:51:25 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 92E4C4C046;
+        Thu, 21 Feb 2019 12:51:25 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1DD124C04A;
+        Thu, 21 Feb 2019 12:51:25 +0000 (GMT)
+Received: from [9.152.224.140] (unknown [9.152.224.140])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 21 Feb 2019 12:51:25 +0000 (GMT)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v2 1/1] s390: vfio_ap: link the vfio_ap devices to the
+ vfio_ap bus subsystem
+To:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Cc:     Tony Krowiak <akrowiak@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        frankja@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com
+References: <1550513328-12646-1-git-send-email-pmorel@linux.ibm.com>
+ <1550513328-12646-2-git-send-email-pmorel@linux.ibm.com>
+ <8e6853ba-12ed-a4f3-1263-0e15f715b644@linux.ibm.com>
+ <6cc5b478-4678-9a82-b902-cc9aed22becf@linux.ibm.com>
+ <20190220102731.4fca4f91.cohuck@redhat.com>
+ <20190220135108.49f8f891@oc2783563651>
+ <fd574b7b-7c2f-eeea-1d53-caadcd2fed48@linux.ibm.com>
+ <d2eb352c-274b-5c1d-0c3c-33e13eff2c88@de.ibm.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Thu, 21 Feb 2019 13:51:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190220144653.GJ10051@dhcp-12-139.nay.redhat.com>
+In-Reply-To: <d2eb352c-274b-5c1d-0c3c-33e13eff2c88@de.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Received:  from [212.111.244.1] (helo=[172.29.0.186])
-        by webmail.newmedia-net.de with esmtpsa (TLSv1:AES128-SHA:128)
-        (Exim 4.72)
-        (envelope-from <s.gottschall@newmedia-net.de>)
-        id 1gwnoF-0003mn-Jp; Thu, 21 Feb 2019 13:50:39 +0100
+X-TM-AS-GCONF: 00
+x-cbid: 19022112-0008-0000-0000-000002C331B3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022112-0009-0000-0000-0000222F6CA0
+Message-Id: <d9158e3f-e2c2-bb65-c9e9-a342fa2518d7@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-21_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902210095
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Am 20.02.2019 um 15:46 schrieb Hangbin Liu:
->> Could you please include more details about the setup that's broken ?
->> Note that we were warned[1] of potential breakage from this change
-> Sorry I missed Linus's reply after Ying Xu replied. I will read it and
-> disscuss with Ying Xu.
->
->> after it went in and regardless of the suggestion from the RFC we'll
->> probably have to revert this patch.
+On 21/02/2019 13:35, Christian Borntraeger wrote:
+> 
+> 
+> On 21.02.2019 13:10, Pierre Morel wrote:
+>> On 20/02/2019 13:51, Halil Pasic wrote:
+>>> On Wed, 20 Feb 2019 10:27:31 +0100
+>>> Cornelia Huck <cohuck@redhat.com> wrote:
+>>>
+>>>> On Tue, 19 Feb 2019 22:31:17 +0100
+>>>> Pierre Morel <pmorel@linux.ibm.com> wrote:
+>>>>
+>>>>> On 19/02/2019 19:52, Tony Krowiak wrote:
+>>>>>> On 2/18/19 1:08 PM, Pierre Morel wrote:
+>>>>>>> Libudev relies on having a subsystem link for non-root devices. To
 >>
->> Ying Xu as author of the patch, any thoughts ?
-> No, we are also waiting for more details from Sebastian.
-
-the test scenario is the following. one of my testers of the dd-wrt 
-firmware is using a iptv stream from the france isp "orange".
-he just bridged the iptv vlan interface which has no ip (the isp doesnt 
-provide a ip configuration here) to a bridge and played with igmp 
-snooping to avoid flooding of all ports within the same bridge.
-he found out that this setting simply does not work with the current 
-kernel, but does
-if this patch has been removed. we used kernel 4.4 in the test scenario. 
-all latest revision.
-i was able to reproduce the same problem on kernel 4.9 and 4.14 on a 
-different device using a german isp based iptv stream. same effect. 
-after reverting the problematic code it worked again.
-
-Sebastian
-
->
-> Thanks
-> Hangbin
->
->> Also adding Linus Lüssing to the CC as he was the one who warned against it.
->> Note that the warning was sent as a reply to my breakage fix, but it was intended
->> for the original patch.
+>> ...snip...
 >>
->> Thanks,
->>   Nik
+>>>>>>> +
+>>>>>>> +static struct device_driver matrix_driver = {
+>>>>>>> +    .name = "vfio_ap",
+>>>>>>
+>>>>>> This is the same name used for the original device driver. I think
+>>>>>> this driver ought to have a different name to avoid confusion.
+>>>>>> How about vfio_ap_matrix or some other name to differentiate the
+>>>>>> two.
+>>>>>
+>>>>> I would like too, but changing this will change the path to the mediated
+>>>>> device supported type.
+>>>>
+>>>> Yes, we don't want to change that.
+>>>>
+>>>
+>>> Nod.
 >>
->> [1] https://www.mail-archive.com/netdev@vger.kernel.org/msg272944.html
+>> However if I cannot change the driver name, I can change the bus name to matrix.
+>> At least one less "vfio_ap" name
 >>
+>>>
+>>>>>
+>>>>>
+>>>>>>    
+>>>>>>> +    .bus = &matrix_bus,
+>>>>>>> +    .probe = matrix_probe,
+>>>>>>
+>>>>>> I would add:
+>>>>>>        .suppress_bind_attrs = true;
+>>>>>>
+>>>>>> This will remove the sysfs bind/unbind interfaces. Since there is only
+>>>>>> one matrix device and it's lifecycle is controlled herein, there is no
+>>>>>> sense in allowing a root user to bind/unbind it.
+>>>>>>     
+>>>>>
+>>>>> OTOH bind/unbind has no impact.
+>>>>> If no one else ask for this I will not change what has already been
+>>>>> reviewed by Conny and Christian.
+>>>>
+>>>> As we only have one driver, it does not really make sense anyway.
+>>>>
+>>>
+>>> I see this as a reason to suppress_bind_attrs. It is much easier than to
+>>> think about what should happen when one unbinds the matrix device from
+>>> the vfio_ap driver on the vfio_ap bus. With the code as is it seems to
+>>> just keep working as if nothing happened.
+>>> And /sys/devices/vfio_ap/matrix/mdev_supported_types/ referencing the
+>>> name of the driver that is already gone sounds a bit weird.
+>>>
+>>> Regards,
+>>> Halil
+>>>
+>>
+>> If there is no objection I will do this,
+>> It seems more logical to me too.
+> 
+> Go ahead and send this as v3?
+> 
+
+OK
+CC stable ?
+
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
+
