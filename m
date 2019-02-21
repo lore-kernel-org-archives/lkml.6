@@ -2,138 +2,122 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20906C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B12F0C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:16:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF9F42084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:12:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88AC32084D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:16:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727929AbfBUNMv (ORCPT
+        id S1726476AbfBUNQc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 08:12:51 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46890 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725385AbfBUNMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 08:12:51 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9E5B2356EA;
-        Thu, 21 Feb 2019 13:12:50 +0000 (UTC)
-Received: from prarit.khw1.lab.eng.bos.redhat.com (prarit-guest.khw1.lab.eng.bos.redhat.com [10.16.200.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7721060C44;
-        Thu, 21 Feb 2019 13:12:27 +0000 (UTC)
-From:   Prarit Bhargava <prarit@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Prarit Bhargava <prarit@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        x86@kernel.org, linux-doc@vger.kernel.org
-Subject: [PATCH] x86/fpu: Parse comma separated list passed in clearcpuid
-Date:   Thu, 21 Feb 2019 08:12:25 -0500
-Message-Id: <20190221131225.22063-1-prarit@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 21 Feb 2019 13:12:50 +0000 (UTC)
+        Thu, 21 Feb 2019 08:16:32 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:35520 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725823AbfBUNQb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 08:16:31 -0500
+Received: by mail-qk1-f193.google.com with SMTP id z13so2889428qki.2;
+        Thu, 21 Feb 2019 05:16:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rLopUsnzhXentzxeWdCfrvh5YpA4RQgyMPyE1+Fepnw=;
+        b=DsR6zg9JPGC1IfLMnY3z98WES5hahnhdUr1H2hqQZoTewmYjoyGqkjcdt/6r4wl71M
+         C5/CoJ8KZGhTaZQwEjretoszJuzyNFuCUz/cdzEycYXIT+To8RLjnbh9yBOoG3S0R/1y
+         2RjiWllCLkgtnxfzLaMG3zyY5AV3eW7jHuXdUfN8g+lS/ATVvx3ES29mjehOxhSGWgWH
+         yrw+uarZE9qH1DT5wZGfxMulAQBXXY5YAxUHsMHuS1rkTsk+FfkSEXmzgl1ZpkZgjDBh
+         n60v+kmm0AxrNXHAYj/V8ba+Y/wgEeQoop8iuqnu+inqP2oagCYOVht+T4JawPQBNL9s
+         NCRQ==
+X-Gm-Message-State: AHQUAubKUiTIvQSK9jD3USgXIg6U5BJ9iUwO4HsQyPk/7nmT3QuoZVp5
+        BwXdSUIZqA/QvegCNKN841ZPvsRNP+UNoXnPgUk=
+X-Google-Smtp-Source: AHgI3Iat1RkYqKtgTdV1SVwmP0IPf6xYzP45OqGjczRTwanF9KEOgaF2H3oMdCgJe+gjtsnKUNep78y56fPf1Ac7lhg=
+X-Received: by 2002:ae9:dec2:: with SMTP id s185mr1288820qkf.107.1550754990317;
+ Thu, 21 Feb 2019 05:16:30 -0800 (PST)
+MIME-Version: 1.0
+References: <1550722418-9189-1-git-send-email-yamada.masahiro@socionext.com>
+ <CAK8P3a2V+AYbXZC6zG6iJzOM3HugcB3Odx74jzVzSK4mfQ1Ftw@mail.gmail.com> <CAK7LNAQ5RvSvUA+nXePfQRgEeoFZH0nHGsV-4g2Sv0XoqynDgA@mail.gmail.com>
+In-Reply-To: <CAK7LNAQ5RvSvUA+nXePfQRgEeoFZH0nHGsV-4g2Sv0XoqynDgA@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 21 Feb 2019 14:16:13 +0100
+Message-ID: <CAK8P3a1aef+rqxtfj5CJr_roZHysUAm3p9BHMTQO9OvtNhGJcg@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: compute false-positive -Wmaybe-uninitialized
+ cases in Kconfig
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Ingo Molnar <mingo@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Users cannot disable multiple CPU features with the kernel parameter
-clearcpuid=.  For example, "clearcpuid=154 clearcpuid=227" only disables
-CPUID bit 154.
+On Thu, Feb 21, 2019 at 10:45 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> On Thu, Feb 21, 2019 at 6:23 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Thu, Feb 21, 2019 at 5:14 AM Masahiro Yamada
+> > <yamada.masahiro@socionext.com> wrote:
+> >
+> > I like how this cleans up the logic and documents it better.
+> > I've had my own plans to move this (and most other conditional warning
+> > options) into a header file using the KBUILD_WARN() infrastructure, but
+> > never got around to doing that. I still think that's what we want eventually,
+> > but in the meantime your patch seems fine as well.
+> >
+> > Also, I see that your patch keeps the existing logic, which is good,
+> > but we may want to refine this a little afterwards:
+> >
+> > - we may want to turn off -Wuninitialized for gcc-4.6 and gcc-4.7
+> >   instead of turning off -Wmaybe-uninitialized as we do in the later
+> >   compilers.
+>
+> Ah, right.
+>
+> I can do that if it is worthwhile.
+>
+> But, I'd rather want to raise the minimum compiler version
+> than taking care of old compilers.
+> (We will do it eventually.)
 
-Previous to commit 0c2a3913d6f5 ("x86/fpu: Parse clearcpuid= as early XSAVE
-argument") it was possible to pass multiple clearcpuid options as kernel
-parameters using individual entries.  With the new code it isn't easy to
-replicate exactly that behaviour but a comma separated list can be easily
-implemented, eg) "clearcpuid=154,227"
+I was hoping that with gcc-4.6 being the minimum version, we could
+actually get all supported compilers to produce clean builds on
+all configurations, possibly at the cost of just turning off all
+unreliable warning options on older compilers.
 
-Make the clearcpuid parse a comma-separated list of values instead of only
-a single value.
+I don't mind regularly raising the minimum version, but I would
+also wait several years before I'd consider gcc-4.9 a good
+choice for the minimum, and all older versions have problems
+here.
 
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: x86@kernel.org
-Cc: linux-doc@vger.kernel.org
----
- .../admin-guide/kernel-parameters.txt         | 10 ++++----
- arch/x86/kernel/fpu/init.c                    | 25 ++++++++++++++-----
- 2 files changed, 24 insertions(+), 11 deletions(-)
+> Does clang recognize -Wmaybe-uninitialized?
+>
+> I am using Clang I built a few days ago.
+>
+>
+> masahiro@pug:~$ clang --version
+> clang version 9.0.0 (http://llvm.org/git/clang.git
+> b492883ea31e2046d5725126318911465bc1374f)
+> (http://llvm.org/git/llvm.git
+> 03a15eec9ef44798cd5c57b4ed6a63e62b2c1db6)
+> Target: x86_64-unknown-linux-gnu
+> Thread model: posix
+> InstalledDir: /home/masahiro/toolchains/clang-latest/bin
+>
+> masahiro@pug:~$ clang -x c /dev/null  -Wmaybe-uninitialized -c -o  /dev/null
+> warning: unknown warning option '-Wmaybe-uninitialized'; did you mean
+>       '-Wuninitialized'? [-Wunknown-warning-option]
+> 1 warning generated.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 858b6c0b9a15..0084fb0a0781 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -559,11 +559,11 @@
- 			systems.
- 
- 	clearcpuid=BITNUM [X86]
--			Disable CPUID feature X for the kernel. See
--			arch/x86/include/asm/cpufeatures.h for the valid bit
--			numbers. Note the Linux specific bits are not necessarily
--			stable over kernel options, but the vendor specific
--			ones should be.
-+			Disable the comma-separated list of CPUID features for
-+			the kernel. See arch/x86/include/asm/cpufeatures.h for
-+			the valid bit numbers. Note the Linux specific bits
-+			are not necessarily stable over kernel options, but
-+			the vendor specific ones should be.
- 			Also note that user programs calling CPUID directly
- 			or using the feature without checking anything
- 			will still see it. This just prevents it from
-diff --git a/arch/x86/kernel/fpu/init.c b/arch/x86/kernel/fpu/init.c
-index 6abd83572b01..14bb3ab769d2 100644
---- a/arch/x86/kernel/fpu/init.c
-+++ b/arch/x86/kernel/fpu/init.c
-@@ -251,7 +251,8 @@ static void __init fpu__init_parse_early_param(void)
- {
- 	char arg[32];
- 	char *argptr = arg;
--	int bit;
-+	char *argptrend;
-+	int bit, i, ret;
- 
- 	if (cmdline_find_option_bool(boot_command_line, "no387"))
- 		setup_clear_cpu_cap(X86_FEATURE_FPU);
-@@ -272,11 +273,23 @@ static void __init fpu__init_parse_early_param(void)
- 		setup_clear_cpu_cap(X86_FEATURE_XSAVES);
- 
- 	if (cmdline_find_option(boot_command_line, "clearcpuid", arg,
--				sizeof(arg)) &&
--	    get_option(&argptr, &bit) &&
--	    bit >= 0 &&
--	    bit < NCAPINTS * 32)
--		setup_clear_cpu_cap(bit);
-+				sizeof(arg))) {
-+		argptrend = argptr + strlen(argptr) - 1;
-+		for (i = 0; i < (argptrend - argptr); i++)
-+			if (arg[i] == ',')
-+				arg[i] = '\0';
-+		while (argptr < argptrend) {
-+			ret = kstrtoint(argptr, 10, &bit);
-+			if (!ret && (bit >= 0 && bit < NCAPINTS * 32))
-+				setup_clear_cpu_cap(bit);
-+			else {
-+				pr_warn("x86/fpu: clearcpuid invalid entry %s\n",
-+					arg);
-+				return;
-+			}
-+			argptr += strlen(argptr) + 1;
-+		}
-+	}
- }
- 
- /*
--- 
-2.17.2
+Ah, that's right. I also see -Wconditional-uninitialized and
+-Wsometimes-uninitialized, but they are something different again.
 
+       Arnd
