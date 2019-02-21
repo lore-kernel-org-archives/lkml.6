@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A154BC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:46:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F93C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:46:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67E5120700
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:46:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD6D02075A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:46:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550760401;
-	bh=OkUHjYJpF8bhoKcJ4/uQCcRQfGXYUVAvzGjt2mwmvow=;
+	s=default; t=1550760410;
+	bh=6x53GYUD1rvE59EsM0A2ftvL/xob4Jx913z/K/YbogM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pgTjJ0m+NB0iUAkJQU9DdhXedngjhtG2op0Rzspvsid8J5vmi84UeUXBE075cnH8N
-	 MO44Cq2GPo6iGAr1ObwxVqvpAmNRk7jxi9uNUlqA7e9X7mj0eqbd+oHTs4K3tpa6ab
-	 zdzuIIg9MjgLK2ipXfpyT60XCAvj6N+6WXbD+DOs=
+	b=ma5e+TP3GmYoUchvCuXomuF841FsKyztu/Y8QqhOUcTDwM7ArRkPRfSJaM1txoB2h
+	 Q59NU/okXMGGvoXdhkI+HBiELNq8beZ3NvWJQ0GuwAOe2cldi7qALxXKnMDu4IcTl+
+	 gAJ2mDT6r9+Nsz53aA3YR7+UCgAvEXab5a4pIA6s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728935AbfBUOlw (ORCPT
+        id S1729413AbfBUOqr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:41:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37066 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:46:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725866AbfBUOls (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:41:48 -0500
+        id S1728878AbfBUOlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:41:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B7A82084F;
-        Thu, 21 Feb 2019 14:41:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA9D02084F;
+        Thu, 21 Feb 2019 14:41:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550760107;
-        bh=OkUHjYJpF8bhoKcJ4/uQCcRQfGXYUVAvzGjt2mwmvow=;
+        s=default; t=1550760101;
+        bh=6x53GYUD1rvE59EsM0A2ftvL/xob4Jx913z/K/YbogM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tItv+lL5ZmjUwG6MRt+5D0s9wlHVjxX6g3j9HPr4ja7iuI+qq+7lF0yn+Jg1vzGHq
-         vLo44TllO1dm1YLUn95N/QO9+pmxakXvBV7p/3/HkStUiGK3NMhGyvjJ7EXg3N0G0L
-         ZW+gL1m7rfHaKfMyQ52qhdM5SOb2q4bwnPN8n8WM=
+        b=sHl3iY7JEBkRq7k8HfhsFKVlG+mtXDLSus5oLgAMBzYIltmZ2F/h58ip/0niRbPmj
+         wngQ8sUYVT3RW6HHPEpNYY0NQKlSmjpLkguyBLCBRKJDEkmWI2D3/s1Ip5QhRZfK6G
+         xPV8p7W7wU949n7WOs6kmxvftL/BG8L9o+Jp+Wig=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Andrew Hendry <andrew.hendry@gmail.com>,
-        linux-x25@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 28/30] net/x25: do not hold the cpu too long in x25_new_lci()
-Date:   Thu, 21 Feb 2019 15:36:10 +0100
-Message-Id: <20190221125252.188194265@linuxfoundation.org>
+        stable@vger.kernel.org, Scott Mayhew <smayhew@redhat.com>,
+        "J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 4.19 26/30] sunrpc: fix 4 more call sites that were using stack memory with a scatterlist
+Date:   Thu, 21 Feb 2019 15:36:08 +0100
+Message-Id: <20190221125252.059068465@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125250.543158526@linuxfoundation.org>
 References: <20190221125250.543158526@linuxfoundation.org>
@@ -66,158 +64,167 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Scott Mayhew <smayhew@redhat.com>
 
-commit cf657d22ee1f0e887326a92169f2e28dc932fd10 upstream.
+commit e7afe6c1d486b516ed586dcc10b3e7e3e85a9c2b upstream.
 
-Due to quadratic behavior of x25_new_lci(), syzbot was able
-to trigger an rcu stall.
+While trying to reproduce a reported kernel panic on arm64, I discovered
+that AUTH_GSS basically doesn't work at all with older enctypes on arm64
+systems with CONFIG_VMAP_STACK enabled.  It turns out there still a few
+places using stack memory with scatterlists, causing krb5_encrypt() and
+krb5_decrypt() to produce incorrect results (or a BUG if CONFIG_DEBUG_SG
+is enabled).
 
-Fix this by not blocking BH for the whole duration of
-the function, and inserting a reschedule point when possible.
+Tested with cthon on v4.0/v4.1/v4.2 with krb5/krb5i/krb5p using
+des3-cbc-sha1 and arcfour-hmac-md5.
 
-If we care enough, using a bitmap could get rid of the quadratic
-behavior.
-
-syzbot report :
-
-rcu: INFO: rcu_preempt self-detected stall on CPU
-rcu:    0-...!: (10500 ticks this GP) idle=4fa/1/0x4000000000000002 softirq=283376/283376 fqs=0
-rcu:     (t=10501 jiffies g=383105 q=136)
-rcu: rcu_preempt kthread starved for 10502 jiffies! g383105 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402 ->cpu=0
-rcu: RCU grace-period kthread stack dump:
-rcu_preempt     I28928    10      2 0x80000000
-Call Trace:
- context_switch kernel/sched/core.c:2844 [inline]
- __schedule+0x817/0x1cc0 kernel/sched/core.c:3485
- schedule+0x92/0x180 kernel/sched/core.c:3529
- schedule_timeout+0x4db/0xfd0 kernel/time/timer.c:1803
- rcu_gp_fqs_loop kernel/rcu/tree.c:1948 [inline]
- rcu_gp_kthread+0x956/0x17a0 kernel/rcu/tree.c:2105
- kthread+0x357/0x430 kernel/kthread.c:246
- ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-NMI backtrace for cpu 0
-CPU: 0 PID: 8759 Comm: syz-executor2 Not tainted 5.0.0-rc4+ #51
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x172/0x1f0 lib/dump_stack.c:113
- nmi_cpu_backtrace.cold+0x63/0xa4 lib/nmi_backtrace.c:101
- nmi_trigger_cpumask_backtrace+0x1be/0x236 lib/nmi_backtrace.c:62
- arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
- trigger_single_cpu_backtrace include/linux/nmi.h:164 [inline]
- rcu_dump_cpu_stacks+0x183/0x1cf kernel/rcu/tree.c:1211
- print_cpu_stall kernel/rcu/tree.c:1348 [inline]
- check_cpu_stall kernel/rcu/tree.c:1422 [inline]
- rcu_pending kernel/rcu/tree.c:3018 [inline]
- rcu_check_callbacks.cold+0x500/0xa4a kernel/rcu/tree.c:2521
- update_process_times+0x32/0x80 kernel/time/timer.c:1635
- tick_sched_handle+0xa2/0x190 kernel/time/tick-sched.c:161
- tick_sched_timer+0x47/0x130 kernel/time/tick-sched.c:1271
- __run_hrtimer kernel/time/hrtimer.c:1389 [inline]
- __hrtimer_run_queues+0x33e/0xde0 kernel/time/hrtimer.c:1451
- hrtimer_interrupt+0x314/0x770 kernel/time/hrtimer.c:1509
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1035 [inline]
- smp_apic_timer_interrupt+0x120/0x570 arch/x86/kernel/apic/apic.c:1060
- apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
- </IRQ>
-RIP: 0010:__read_once_size include/linux/compiler.h:193 [inline]
-RIP: 0010:queued_write_lock_slowpath+0x13e/0x290 kernel/locking/qrwlock.c:86
-Code: 00 00 fc ff df 4c 8d 2c 01 41 83 c7 03 41 0f b6 45 00 41 38 c7 7c 08 84 c0 0f 85 0c 01 00 00 8b 03 3d 00 01 00 00 74 1a f3 90 <41> 0f b6 55 00 41 38 d7 7c eb 84 d2 74 e7 48 89 df e8 6c 0f 4f 00
-RSP: 0018:ffff88805f117bd8 EFLAGS: 00000206 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000000300 RBX: ffffffff89413ba0 RCX: 1ffffffff1282774
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffffffff89413ba0
-RBP: ffff88805f117c70 R08: 1ffffffff1282774 R09: fffffbfff1282775
-R10: fffffbfff1282774 R11: ffffffff89413ba3 R12: 00000000000000ff
-R13: fffffbfff1282774 R14: 1ffff1100be22f7d R15: 0000000000000003
- queued_write_lock include/asm-generic/qrwlock.h:104 [inline]
- do_raw_write_lock+0x1d6/0x290 kernel/locking/spinlock_debug.c:203
- __raw_write_lock_bh include/linux/rwlock_api_smp.h:204 [inline]
- _raw_write_lock_bh+0x3b/0x50 kernel/locking/spinlock.c:312
- x25_insert_socket+0x21/0xe0 net/x25/af_x25.c:267
- x25_bind+0x273/0x340 net/x25/af_x25.c:705
- __sys_bind+0x23f/0x290 net/socket.c:1505
- __do_sys_bind net/socket.c:1516 [inline]
- __se_sys_bind net/socket.c:1514 [inline]
- __x64_sys_bind+0x73/0xb0 net/socket.c:1514
- do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457e39
-Code: ad b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fafccd0dc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000031
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457e39
-RDX: 0000000000000012 RSI: 0000000020000240 RDI: 0000000000000004
-RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fafccd0e6d4
-R13: 00000000004bdf8b R14: 00000000004ce4b8 R15: 00000000ffffffff
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 PID: 8752 Comm: syz-executor4 Not tainted 5.0.0-rc4+ #51
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__x25_find_socket+0x78/0x120 net/x25/af_x25.c:328
-Code: 89 f8 48 c1 e8 03 80 3c 18 00 0f 85 a6 00 00 00 4d 8b 64 24 68 4d 85 e4 74 7f e8 03 97 3d fb 49 83 ec 68 74 74 e8 f8 96 3d fb <49> 8d bc 24 88 04 00 00 48 89 f8 48 c1 e8 03 0f b6 04 18 84 c0 74
-RSP: 0018:ffff8880639efc58 EFLAGS: 00000246
-RAX: 0000000000040000 RBX: dffffc0000000000 RCX: ffffc9000e677000
-RDX: 0000000000040000 RSI: ffffffff863244b8 RDI: ffff88806a764628
-RBP: ffff8880639efc80 R08: ffff8880a80d05c0 R09: fffffbfff1282775
-R10: fffffbfff1282774 R11: ffffffff89413ba3 R12: ffff88806a7645c0
-R13: 0000000000000001 R14: ffff88809f29ac00 R15: 0000000000000000
-FS:  00007fe8d0c58700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b32823000 CR3: 00000000672eb000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- x25_new_lci net/x25/af_x25.c:357 [inline]
- x25_connect+0x374/0xdf0 net/x25/af_x25.c:786
- __sys_connect+0x266/0x330 net/socket.c:1686
- __do_sys_connect net/socket.c:1697 [inline]
- __se_sys_connect net/socket.c:1694 [inline]
- __x64_sys_connect+0x73/0xb0 net/socket.c:1694
- do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457e39
-Code: ad b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fe8d0c57c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457e39
-RDX: 0000000000000012 RSI: 0000000020000200 RDI: 0000000000000004
-RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fe8d0c586d4
-R13: 00000000004be378 R14: 00000000004ceb00 R15: 00000000ffffffff
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Andrew Hendry <andrew.hendry@gmail.com>
-Cc: linux-x25@vger.kernel.org
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Scott Mayhew <smayhew@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/x25/af_x25.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ net/sunrpc/auth_gss/gss_krb5_seqnum.c |   49 ++++++++++++++++++++++++++--------
+ 1 file changed, 38 insertions(+), 11 deletions(-)
 
---- a/net/x25/af_x25.c
-+++ b/net/x25/af_x25.c
-@@ -352,17 +352,15 @@ static unsigned int x25_new_lci(struct x
- 	unsigned int lci = 1;
- 	struct sock *sk;
+--- a/net/sunrpc/auth_gss/gss_krb5_seqnum.c
++++ b/net/sunrpc/auth_gss/gss_krb5_seqnum.c
+@@ -44,7 +44,7 @@ krb5_make_rc4_seq_num(struct krb5_ctx *k
+ 		      unsigned char *cksum, unsigned char *buf)
+ {
+ 	struct crypto_skcipher *cipher;
+-	unsigned char plain[8];
++	unsigned char *plain;
+ 	s32 code;
  
--	read_lock_bh(&x25_list_lock);
--
--	while ((sk = __x25_find_socket(lci, nb)) != NULL) {
-+	while ((sk = x25_find_socket(lci, nb)) != NULL) {
- 		sock_put(sk);
- 		if (++lci == 4096) {
- 			lci = 0;
- 			break;
- 		}
-+		cond_resched();
- 	}
+ 	dprintk("RPC:       %s:\n", __func__);
+@@ -53,6 +53,10 @@ krb5_make_rc4_seq_num(struct krb5_ctx *k
+ 	if (IS_ERR(cipher))
+ 		return PTR_ERR(cipher);
  
--	read_unlock_bh(&x25_list_lock);
- 	return lci;
++	plain = kmalloc(8, GFP_NOFS);
++	if (!plain)
++		return -ENOMEM;
++
+ 	plain[0] = (unsigned char) ((seqnum >> 24) & 0xff);
+ 	plain[1] = (unsigned char) ((seqnum >> 16) & 0xff);
+ 	plain[2] = (unsigned char) ((seqnum >> 8) & 0xff);
+@@ -69,6 +73,7 @@ krb5_make_rc4_seq_num(struct krb5_ctx *k
+ 	code = krb5_encrypt(cipher, cksum, plain, buf, 8);
+ out:
+ 	crypto_free_skcipher(cipher);
++	kfree(plain);
+ 	return code;
+ }
+ s32
+@@ -78,12 +83,17 @@ krb5_make_seq_num(struct krb5_ctx *kctx,
+ 		u32 seqnum,
+ 		unsigned char *cksum, unsigned char *buf)
+ {
+-	unsigned char plain[8];
++	unsigned char *plain;
++	s32 code;
+ 
+ 	if (kctx->enctype == ENCTYPE_ARCFOUR_HMAC)
+ 		return krb5_make_rc4_seq_num(kctx, direction, seqnum,
+ 					     cksum, buf);
+ 
++	plain = kmalloc(8, GFP_NOFS);
++	if (!plain)
++		return -ENOMEM;
++
+ 	plain[0] = (unsigned char) (seqnum & 0xff);
+ 	plain[1] = (unsigned char) ((seqnum >> 8) & 0xff);
+ 	plain[2] = (unsigned char) ((seqnum >> 16) & 0xff);
+@@ -94,7 +104,9 @@ krb5_make_seq_num(struct krb5_ctx *kctx,
+ 	plain[6] = direction;
+ 	plain[7] = direction;
+ 
+-	return krb5_encrypt(key, cksum, plain, buf, 8);
++	code = krb5_encrypt(key, cksum, plain, buf, 8);
++	kfree(plain);
++	return code;
  }
  
+ static s32
+@@ -102,7 +114,7 @@ krb5_get_rc4_seq_num(struct krb5_ctx *kc
+ 		     unsigned char *buf, int *direction, s32 *seqnum)
+ {
+ 	struct crypto_skcipher *cipher;
+-	unsigned char plain[8];
++	unsigned char *plain;
+ 	s32 code;
+ 
+ 	dprintk("RPC:       %s:\n", __func__);
+@@ -115,20 +127,28 @@ krb5_get_rc4_seq_num(struct krb5_ctx *kc
+ 	if (code)
+ 		goto out;
+ 
++	plain = kmalloc(8, GFP_NOFS);
++	if (!plain) {
++		code = -ENOMEM;
++		goto out;
++	}
++
+ 	code = krb5_decrypt(cipher, cksum, buf, plain, 8);
+ 	if (code)
+-		goto out;
++		goto out_plain;
+ 
+ 	if ((plain[4] != plain[5]) || (plain[4] != plain[6])
+ 				   || (plain[4] != plain[7])) {
+ 		code = (s32)KG_BAD_SEQ;
+-		goto out;
++		goto out_plain;
+ 	}
+ 
+ 	*direction = plain[4];
+ 
+ 	*seqnum = ((plain[0] << 24) | (plain[1] << 16) |
+ 					(plain[2] << 8) | (plain[3]));
++out_plain:
++	kfree(plain);
+ out:
+ 	crypto_free_skcipher(cipher);
+ 	return code;
+@@ -141,26 +161,33 @@ krb5_get_seq_num(struct krb5_ctx *kctx,
+ 	       int *direction, u32 *seqnum)
+ {
+ 	s32 code;
+-	unsigned char plain[8];
+ 	struct crypto_skcipher *key = kctx->seq;
++	unsigned char *plain;
+ 
+ 	dprintk("RPC:       krb5_get_seq_num:\n");
+ 
+ 	if (kctx->enctype == ENCTYPE_ARCFOUR_HMAC)
+ 		return krb5_get_rc4_seq_num(kctx, cksum, buf,
+ 					    direction, seqnum);
++	plain = kmalloc(8, GFP_NOFS);
++	if (!plain)
++		return -ENOMEM;
+ 
+ 	if ((code = krb5_decrypt(key, cksum, buf, plain, 8)))
+-		return code;
++		goto out;
+ 
+ 	if ((plain[4] != plain[5]) || (plain[4] != plain[6]) ||
+-	    (plain[4] != plain[7]))
+-		return (s32)KG_BAD_SEQ;
++	    (plain[4] != plain[7])) {
++		code = (s32)KG_BAD_SEQ;
++		goto out;
++	}
+ 
+ 	*direction = plain[4];
+ 
+ 	*seqnum = ((plain[0]) |
+ 		   (plain[1] << 8) | (plain[2] << 16) | (plain[3] << 24));
+ 
+-	return 0;
++out:
++	kfree(plain);
++	return code;
+ }
 
 
