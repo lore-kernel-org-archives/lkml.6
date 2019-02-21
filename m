@@ -2,125 +2,153 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA25C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 21:25:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00464C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 21:26:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 052CB2070B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 21:25:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="aiRzGUhQ"
+	by mail.kernel.org (Postfix) with ESMTP id C0A382070B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 21:26:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726183AbfBUVZE (ORCPT
+        id S1726647AbfBUV00 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 16:25:04 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:13617 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725943AbfBUVZE (ORCPT
+        Thu, 21 Feb 2019 16:26:26 -0500
+Received: from gateway30.websitewelcome.com ([50.116.127.1]:23696 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726241AbfBUV0Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 16:25:04 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c6f17370001>; Thu, 21 Feb 2019 13:25:11 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 21 Feb 2019 13:25:03 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 21 Feb 2019 13:25:03 -0800
-Received: from [10.2.161.21] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 21 Feb
- 2019 21:25:02 +0000
-From:   Zi Yan <ziy@nvidia.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        Nitin Gupta <nigupta@nvidia.com>,
-        David Nellans <dnellans@nvidia.com>
-Subject: Re: [RFC PATCH 01/31] mm: migrate: Add exchange_pages to exchange two
- lists of pages.
-Date:   Thu, 21 Feb 2019 13:25:02 -0800
-X-Mailer: MailMate (1.12.4r5609)
-Message-ID: <3AE8BFB7-139B-4312-A0A7-50759BA63362@nvidia.com>
-In-Reply-To: <20190221211038.GC5201@redhat.com>
-References: <20190215220856.29749-1-zi.yan@sent.com>
- <20190215220856.29749-2-zi.yan@sent.com> <20190221211038.GC5201@redhat.com>
+        Thu, 21 Feb 2019 16:26:25 -0500
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id EE9CA3360D
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 15:26:23 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id wvrLge8OY2PzOwvrLg6JDv; Thu, 21 Feb 2019 15:26:23 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.119.20] (port=38070 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gwvrL-003xM6-Fm; Thu, 21 Feb 2019 15:26:23 -0600
+Subject: Re: [PATCH] IB/hfi1: Add missing break in switch statement
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Kaike Wan <kaike.wan@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+References: <20190221010233.GA29228@embeddedor>
+ <20190221210902.GA25062@ziepe.ca>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <c23934c8-94ed-e93c-9fe4-54eeed1586c4@embeddedor.com>
+Date:   Thu, 21 Feb 2019 15:26:22 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1550784311; bh=VW57buSV9PMYWQz48J9UmJOo0JrnTIg+0Kl1EdES2N4=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:X-Mailer:Message-ID:
-         In-Reply-To:References:MIME-Version:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type;
-        b=aiRzGUhQbpIFpXcfTrDEvOdfujPjXdkqyIBrV2OOqD30hq7BtgcxDRplyHtdWxmEf
-         GdH2+JEL7ChdJIcp93Lw3Pqh3N0pX+3ls7McbewYwG5qKA3rbOw5AWaTL4z2jRy40D
-         0EA5MBqL28BWjuStftJrRJ2vlg5Z3WAV3rPUd0ZAca2NZQL1XqzUOEpjJt0gzzKpIX
-         18BIX4Tstk2+k6fkGpPoIH1Ih1PjjsuNKL5tTm7mUBQGKx7NXi+MqVxetD0Xuk2Y/2
-         AMG8UrHvuOHFEoHSr6xzMBxL+yMxHj5LkhdrLk4WM432oYLe5M3kt7k0PB/L+M95W4
-         DLmq9PENyuWOQ==
+In-Reply-To: <20190221210902.GA25062@ziepe.ca>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.119.20
+X-Source-L: No
+X-Exim-ID: 1gwvrL-003xM6-Fm
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:38070
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21 Feb 2019, at 13:10, Jerome Glisse wrote:
 
-> On Fri, Feb 15, 2019 at 02:08:26PM -0800, Zi Yan wrote:
->> From: Zi Yan <ziy@nvidia.com>
+
+On 2/21/19 3:09 PM, Jason Gunthorpe wrote:
+> On Wed, Feb 20, 2019 at 07:02:33PM -0600, Gustavo A. R. Silva wrote:
+>> Fix the following warning by adding a missing break:
 >>
->> In stead of using two migrate_pages(), a single exchange_pages() would
->> be sufficient and without allocating new pages.
->
-> So i believe it would be better to arrange the code differently instead
-> of having one function that special case combination, define function for
-> each one ie:
->     exchange_anon_to_share()
->     exchange_anon_to_anon()
->     exchange_share_to_share()
->
-> Then you could define function to test if a page is in correct states:
->     can_exchange_anon_page() // return true if page can be exchange
->     can_exchange_share_page()
->
-> In fact both of this function can be factor out as common helpers with the
-> existing migrate code within migrate.c This way we would have one place
-> only where we need to handle all the special casing, test and exceptions.
->
-> Other than that i could not spot anything obviously wrong but i did not
-> spent enough time to check everything. Re-architecturing the code like
-> i propose above would make this a lot easier to review i believe.
->
+>> drivers/infiniband/hw/hfi1/tid_rdma.c: In function ‘hfi1_tid_rdma_wqe_interlock’:
+>> drivers/infiniband/hw/hfi1/tid_rdma.c:3251:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>    switch (prev->wr.opcode) {
+>>    ^~~~~~
+>> drivers/infiniband/hw/hfi1/tid_rdma.c:3259:2: note: here
+>>   case IB_WR_RDMA_READ:
+>>   ^~~~
+>>
+>> Warning level 3 was used: -Wimplicit-fallthrough=3
+>>
+>> This patch is part of the ongoing efforts to enable
+>> -Wimplicit-fallthrough.
+>>
+>> Fixes: c6c231175ccd ("IB/hfi1: Add interlock between TID RDMA WRITE and other requests")
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> Reviewed-by: Kaike Wan <Kaike.wan@intel.com>
+>> --
+>>  drivers/infiniband/hw/hfi1/tid_rdma.c | 1 +
+>>  1 file changed, 1 insertion(+)
+> 
+> Applied to for-next, thanks
+> 
 
-Thank you for reviewing the patch. Your suggestions are very helpful.
-I will restructure the code to help people review it.
+Great. :)
 
-
->> +	from_page_count = page_count(from_page);
->> +	from_map_count = page_mapcount(from_page);
->> +	to_page_count = page_count(to_page);
->> +	to_map_count = page_mapcount(to_page);
->> +	from_flags = from_page->flags;
->> +	to_flags = to_page->flags;
->> +	from_mapping = from_page->mapping;
->> +	to_mapping = to_page->mapping;
->> +	from_index = from_page->index;
->> +	to_index = to_page->index;
->
-> Those are not use anywhere ...
-
-Will remove them. Thanks.
+Thank you both, Kaike and Jason.
 
 --
-Best Regards,
-Yan Zi
+Gustavo
