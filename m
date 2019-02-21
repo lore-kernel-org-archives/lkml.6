@@ -2,205 +2,163 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6574BC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:46:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CED2C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:54:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33F1B2086A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:46:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0672B2147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:54:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550721243;
+	bh=1AhAnlvD4N5kI//xf6oJXdEFYqCubX4gcaVFnS7Q4jc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=LczAsyS8on8qTeiPlmtYVziIlGbVFUTFvqusqg7vOYEKK3hYpdrXwN7xCD/IN4Tdw
+	 MkUfa2gU/XSjVAVhJWB2vNNNtVDejwtskHu5ZmMI7lVsH0I+UD8xdgfKE4ppP6Eyyq
+	 Hcfh15vOgD+9aoFRwMgni+EE4bmIquOZdZ8usjKw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727134AbfBUDqj (ORCPT
+        id S1726573AbfBUDyB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 22:46:39 -0500
-Received: from mga03.intel.com ([134.134.136.65]:35386 "EHLO mga03.intel.com"
+        Wed, 20 Feb 2019 22:54:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726016AbfBUDqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 22:46:39 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 19:46:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,393,1544515200"; 
-   d="scan'208";a="116569851"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by orsmga007.jf.intel.com with ESMTP; 20 Feb 2019 19:46:35 -0800
-Date:   Thu, 21 Feb 2019 11:46:12 +0800
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wei Yang <richardw.yang@linux.intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, lkp@01.org,
-        "Huang, Ying" <ying.huang@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [LKP] [driver core] 570d020012: will-it-scale.per_thread_ops
- -12.2% regression
-Message-ID: <20190221034612.GA15147@richard>
-Reply-To: Wei Yang <richardw.yang@linux.intel.com>
-References: <20190218075442.GI29177@shao2-debian>
- <20190219005945.GA16734@richard>
- <20190219121904.GA24103@kroah.com>
- <20190221031049.GE28258@shao2-debian>
+        id S1726016AbfBUDyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 22:54:00 -0500
+Received: from localhost (lfbn-1-18527-45.w90-101.abo.wanadoo.fr [90.101.69.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D895B20851;
+        Thu, 21 Feb 2019 03:53:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550721239;
+        bh=1AhAnlvD4N5kI//xf6oJXdEFYqCubX4gcaVFnS7Q4jc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GrBdkMZI8ajYV85QnCrH50t0t0QEiPaLjtDCR0/yvjICp9qt9nR3gzjKGxtueY8Qb
+         E4gIQowyH/BM/ScbOMmCBSSL1CpcF0f1B2+lHXzNZtECnTdF6X+ewf7kgrHA7IV2xj
+         sWSlKcZ/yMyQ35OxQ2okKIEOCHv05QTtvU9L444c=
+Date:   Thu, 21 Feb 2019 04:53:56 +0100
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: [PATCH 05/32] locking/lockdep: Prepare valid_state() to handle
+ plain masks
+Message-ID: <20190221035354.GA22364@lenoir>
+References: <20190212171423.8308-1-frederic@kernel.org>
+ <20190212171423.8308-6-frederic@kernel.org>
+ <CAHk-=whhGQuMuuBkLBKGL3kM+8j3+TC_xt+QKFCs1qNySBv3-A@mail.gmail.com>
+ <20190213151648.GD8524@lenoir>
+ <CAHk-=wh9q2o+oJtzuaZFPxXWrcKiO-bRBGBePfnLx6nPS+aiCA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190221031049.GE28258@shao2-debian>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAHk-=wh9q2o+oJtzuaZFPxXWrcKiO-bRBGBePfnLx6nPS+aiCA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 11:10:49AM +0800, kernel test robot wrote:
->On Tue, Feb 19, 2019 at 01:19:04PM +0100, Greg Kroah-Hartman wrote:
->> On Tue, Feb 19, 2019 at 08:59:45AM +0800, Wei Yang wrote:
->> > On Mon, Feb 18, 2019 at 03:54:42PM +0800, kernel test robot wrote:
->> > >Greeting,
->> > >
->> > >FYI, we noticed a -12.2% regression of will-it-scale.per_thread_ops due to commit:
->> > >
->> > >
->> > >commit: 570d0200123fb4f809aa2f6226e93a458d664d70 ("driver core: move device->knode_class to device_private")
->> > >https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
->> > >
->> > 
->> > This is interesting.
->> > 
->> > I didn't expect the move of this field will impact the performance.
->> > 
->> > The reason is struct device is a hotter memory than device->device_private?
->> > 
->> > >in testcase: will-it-scale
->> > >on test machine: 288 threads Knights Mill with 80G memory
->> > >with following parameters:
->> > >
->> > >	nr_task: 100%
->> > >	mode: thread
->> > >	test: unlink2
->> > >	cpufreq_governor: performance
->> > >
->> > >test-description: Will It Scale takes a testcase and runs it from 1 through to n parallel copies to see if the testcase will scale. It builds both a process and threads based test in order to see any differences between the two.
->> > >test-url: https://github.com/antonblanchard/will-it-scale
->> > >
->> > >In addition to that, the commit also has significant impact on the following tests:
->> > >
->> > >+------------------+---------------------------------------------------------------+
->> > >| testcase: change | will-it-scale: will-it-scale.per_thread_ops -29.9% regression |
->> > >| test machine     | 288 threads Knights Mill with 80G memory                      |
->> > >| test parameters  | cpufreq_governor=performance                                  |
->> > >|                  | mode=thread                                                   |
->> > >|                  | nr_task=100%                                                  |
->> > >|                  | test=signal1                                                  |
->> 
->> Ok, I'm going to blame your testing system, or something here, and not
->> the above patch.
->> 
->> All this test does is call raise(3).  That does not touch the driver
->> core at all.
->> 
->> > >+------------------+---------------------------------------------------------------+
->> > >| testcase: change | will-it-scale: will-it-scale.per_thread_ops -16.5% regression |
->> > >| test machine     | 288 threads Knights Mill with 80G memory                      |
->> > >| test parameters  | cpufreq_governor=performance                                  |
->> > >|                  | mode=thread                                                   |
->> > >|                  | nr_task=100%                                                  |
->> > >|                  | test=open1                                                    |
->> > >+------------------+---------------------------------------------------------------+
->> 
->> Same here, open1 just calls open/close a lot.  No driver core
->> interaction at all there either.
->> 
->> So are you _sure_ this is the offending patch?
->
->Hi Greg,
->
->We did an experiment, recovered the layout of struct device. and we
->found the regression is gone. I guess the regession is not from the
->patch but related to the struct layout.
->
->
->tests: 1
->testcase/path_params/tbox_group/run: will-it-scale/performance-thread-100%-unlink2/lkp-knm01
->
->570d0200123fb4f8  a36dc70b810afe9183de2ea18f  
->----------------  --------------------------  
->         %stddev      change         %stddev
->             \          |                \  
->    237096              14%     270789        will-it-scale.workload
->       823              14%        939        will-it-scale.per_thread_ops
->
-
-Do you have the comparison between a36dc70b810afe9183de2ea18f and the one
-before 570d020012?
-
->
->tests: 1
->testcase/path_params/tbox_group/run: will-it-scale/performance-thread-100%-signal1/lkp-knm01
->
->570d0200123fb4f8  a36dc70b810afe9183de2ea18f  
->----------------  --------------------------  
->         %stddev      change         %stddev
->             \          |                \  
->     93.51 ±  3%        48%     138.53 ±  3%  will-it-scale.time.user_time
->       186              40%        261        will-it-scale.per_thread_ops
->     53909              40%      75507        will-it-scale.workload
->
->
->tests: 1
->testcase/path_params/tbox_group/run: will-it-scale/performance-thread-100%-open1/lkp-knm01
->
->570d0200123fb4f8  a36dc70b810afe9183de2ea18f  
->----------------  --------------------------  
->         %stddev      change         %stddev
->             \          |                \  
->    447722              22%     546258 ± 10%  will-it-scale.time.involuntary_context_switches
->    226995              19%     269751        will-it-scale.workload
->       787              19%        936        will-it-scale.per_thread_ops
->
->
->
->commit a36dc70b810afe9183de2ea18faa4c0939c139ac
->Author: 0day robot <lkp@intel.com>
->Date:   Wed Feb 20 14:21:19 2019 +0800
->
->    backfile klist_node in struct device for debugging
->    
->    Signed-off-by: 0day robot <lkp@intel.com>
->
->diff --git a/include/linux/device.h b/include/linux/device.h
->index d0e452fd0bff2..31666cb72b3ba 100644
->--- a/include/linux/device.h
->+++ b/include/linux/device.h
->@@ -1035,6 +1035,7 @@ struct device {
-> 	spinlock_t		devres_lock;
-> 	struct list_head	devres_head;
+On Wed, Feb 13, 2019 at 11:47:13AM -0800, Linus Torvalds wrote:
+> On Wed, Feb 13, 2019 at 7:16 AM Frederic Weisbecker <frederic@kernel.org> wrote:
+> > >
+> > > If "vectors" only has the high hit set, you end up with "fs" having
+> > > the value "64".
+> > >
+> > > And then "vectors >>= fs" is undefined and won't actually do anything
+> > > at all on x86.
+> >
+> > Oh! ok didn't know that...
 > 
->+	struct klist_node       knode_class_test_by_rongc;
-> 	struct class		*class;
-> 	const struct attribute_group **groups;	/* optional groups */
+> So in general, shift counts >= width of the type (or negative) are undefined.
+> 
+> They can sometimes happen to work (that's the "undefined" part ;), but
+> it's not reliable or portable.
+> 
+> It's why you occasionally see things like
+> 
+> drivers/block/sx8.c:
+>         tmp             = (blk_rq_pos(rq) >> 16) >> 16;
+> 
+> to get the upper 32 bits of the value. It is written with that odd
+> double shift, rather than being written as ">> 32". That way it works
+> even if the sector type happens to be 32-bit (and the compiler will
+> just end up turning it into a zero if it's an unsigned 32-bit type
+> since it's compile-time obvious).
 
-Hmm... because this is not properly aligned?
+Ok, I see.
 
-struct klist_node {
-	void			*n_klist;	/* never access directly */
-	struct list_head	n_node;
-	struct kref		n_ref;
-};
+> 
+> > I see, perhaps I should use for_each_set_bit() that should take care about those
+> > details?
+> 
+> That would _work_, but don't do that. "for_each_set_bit()" works on
+> bitmaps in memory, and is slow for a simple word case. In addition to
+> being slow, it uses the Linux tradition of working on bitmaps that are
+> comprised of "unsigned long". So it has byte order issues too.
+> 
+> So for_each_set_bit() is useful when you have real arrays of bits and
+> are using the "set_bit()" etc interfaces.
 
-Except struct kref has one "int" type, others are pointers.
+Yeah I suspected some overhead.
 
-But... I am still confused.
+> 
+> When you're actually working on just a single variable, your "__ffs()"
+> model works fine, you just need to be careful to _not_ do the "+1" and
+> then use it for shifts.
+> 
+> Also, it actually turns out that if you want to be really clever, you
+> can play tricks if you don't care about the exact bit *number*.
+> 
+> For example, this expression:
+> 
+>        v =  a & (a-1);
+> 
+> will remove the lowest bit set from 'a' very cheaply. So what you can
+> do is something like this:
+> 
+>     void for_each_bit_in_mask(u64 mask)
+>     {
+>         while (mask) {
+>                 u64 newmask = mask & (mask-1);
+>                 u64 onebit = mask ^ newmask;
+>                 mask = newmask;
+>                 do_something_with(onebit);
+>         }
+>     }
+> 
+> to do some operation on each bit set, and quite efficiently and
+> without any undefined behavior or expensive shifts.
+> 
+> But the above trick does require that you are happy to just see the
+> bit *mask*, not the bit *number*. I'm not sure any of your cases match
+> that.
 
->
->Best Regards,
->Rong Chen
+Nice, I couldn't resist introducing such a headache in my set ;-) unfortunately
+I indeed need the bit number itself most of the time. 
 
--- 
-Wei Yang
-Help you, Help me
+So following your 1st advice, I should rather do something along the lines of:
+
+   nr = 0;
+   while (mask) {
+       fs = __ffs64(mask);
+       mask >>= fs;
+       mask >>= 1;
+       nr += fs + 1;
+       process_bit_nr(nr - 1);
+   }
+
+And define a for_each_lock_usage_bit(usage_mask) on top of it.
+
+Thanks a lot!
