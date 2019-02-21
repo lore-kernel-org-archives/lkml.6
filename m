@@ -2,53 +2,52 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NORMAL_HTTP_TO_IP,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B65C5C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:42:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 200D9C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:42:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7141D2084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:42:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E52A92084F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:42:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550760121;
-	bh=yghbZ2Kx3HzQtZ/O3Gim6sTgOpFFsbCUYkgelgXmwgw=;
+	s=default; t=1550760126;
+	bh=Ow9XJ6yc7gtOR7XwdU/Ffd+r/OOBPwdwpeS9xdaLS0I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pP/b0MF627OFOeyXvaXfLzxc2dSVtEugKzSQLp0MNG/lo2oB9wE3HrYQIb+OrW42K
-	 4CWFB/sKN8MNUcs+kvobP3+2deAzVwUZnjTtaK9lKea+UGrJmUN5MX87BL6ZdxXOgE
-	 cKWFi5P73zcYGjYXMXRTptpKCH3IDXdiHEiVXyZc=
+	b=CZNGiKLqUiWZGGqJ1oojRm0xXLbZTXDVXRo8tyFEFYGgJJ1Rp7okYKvhTzB+V4ya9
+	 4hzXeRkcYxkmT0kxBVi39rak+YiI5ibAyac+OwALzB+GGYnzbt5ePVTxwAosncrA+I
+	 i11ImOUljjgqxf5nYQ4xq/MwN3d/fyJn19gye6vw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729448AbfBUOl7 (ORCPT
+        id S1729458AbfBUOmE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:41:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37280 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:42:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729428AbfBUOl6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:41:58 -0500
+        id S1728968AbfBUOmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:42:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD7C020838;
-        Thu, 21 Feb 2019 14:41:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 682502080D;
+        Thu, 21 Feb 2019 14:42:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550760117;
-        bh=yghbZ2Kx3HzQtZ/O3Gim6sTgOpFFsbCUYkgelgXmwgw=;
+        s=default; t=1550760120;
+        bh=Ow9XJ6yc7gtOR7XwdU/Ffd+r/OOBPwdwpeS9xdaLS0I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AE2D2gSB86GUy5zoZyO4zF8cnbPtr+4i5AzRTWQ/kM10+mEt27RwI54NPF31aIOmD
-         +4JUrlcxAiL7ug+P25CqdOmw1On4lJHiYhVhifH1Nnbv7myPTUi5sccQ2Qbgpesfar
-         0ldw4ss3p7f/h+Q/hRU6nEPUTCv3+gftkfpxE8Ks=
+        b=g4KJb0P+GmRJ+v7Cr6mgjZzohDzLCX9qfg8iUD66Yyh0y7Wlp5WUYT7e0GrjdM6gb
+         l26yORHM7WxQTPXoiqNTRttclaplwaicPIwDBizR/YURV0goTUDGnYNKrXYfguDa/A
+         eq/+2EduM8QzccVkf97WUadRP5+FJ79torInny8w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 30/30] ax25: fix possible use-after-free
-Date:   Thu, 21 Feb 2019 15:36:12 +0100
-Message-Id: <20190221125252.313295824@linuxfoundation.org>
+        stable@vger.kernel.org, Mao Wenan <maowenan@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 04/30] net: crypto set sk to NULL when af_alg_release.
+Date:   Thu, 21 Feb 2019 15:35:46 +0100
+Message-Id: <20190221125250.780432734@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125250.543158526@linuxfoundation.org>
 References: <20190221125250.543158526@linuxfoundation.org>
@@ -67,248 +66,124 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+[ Upstream commit 9060cb719e61b685ec0102574e10337fa5f445ea ]
 
-commit 63530aba7826a0f8e129874df9c4d264f9db3f9e upstream.
+KASAN has found use-after-free in sockfs_setattr.
+The existed commit 6d8c50dcb029 ("socket: close race condition between sock_close()
+and sockfs_setattr()") is to fix this simillar issue, but it seems to ignore
+that crypto module forgets to set the sk to NULL after af_alg_release.
 
-syzbot found that ax25 routes where not properly protected
-against concurrent use [1].
+KASAN report details as below:
+BUG: KASAN: use-after-free in sockfs_setattr+0x120/0x150
+Write of size 4 at addr ffff88837b956128 by task syz-executor0/4186
 
-In this particular report the bug happened while
-copying ax25->digipeat.
-
-Fix this problem by making sure we call ax25_get_route()
-while ax25_route_lock is held, so that no modification
-could happen while using the route.
-
-The current two ax25_get_route() callers do not sleep,
-so this change should be fine.
-
-Once we do that, ax25_get_route() no longer needs to
-grab a reference on the found route.
-
-[1]
-ax25_connect(): syz-executor0 uses autobind, please contact jreuter@yaina.de
-BUG: KASAN: use-after-free in memcpy include/linux/string.h:352 [inline]
-BUG: KASAN: use-after-free in kmemdup+0x42/0x60 mm/util.c:113
-Read of size 66 at addr ffff888066641a80 by task syz-executor2/531
-
-ax25_connect(): syz-executor0 uses autobind, please contact jreuter@yaina.de
-CPU: 1 PID: 531 Comm: syz-executor2 Not tainted 5.0.0-rc2+ #10
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+CPU: 2 PID: 4186 Comm: syz-executor0 Not tainted xxx + #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+1.10.2-1ubuntu1 04/01/2014
 Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
- print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
- kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
- check_memory_region_inline mm/kasan/generic.c:185 [inline]
- check_memory_region+0x123/0x190 mm/kasan/generic.c:191
- memcpy+0x24/0x50 mm/kasan/common.c:130
- memcpy include/linux/string.h:352 [inline]
- kmemdup+0x42/0x60 mm/util.c:113
- kmemdup include/linux/string.h:425 [inline]
- ax25_rt_autobind+0x25d/0x750 net/ax25/ax25_route.c:424
- ax25_connect.cold+0x30/0xa4 net/ax25/af_ax25.c:1224
- __sys_connect+0x357/0x490 net/socket.c:1664
- __do_sys_connect net/socket.c:1675 [inline]
- __se_sys_connect net/socket.c:1672 [inline]
- __x64_sys_connect+0x73/0xb0 net/socket.c:1672
- do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+ dump_stack+0xca/0x13e
+ print_address_description+0x79/0x330
+ ? vprintk_func+0x5e/0xf0
+ kasan_report+0x18a/0x2e0
+ ? sockfs_setattr+0x120/0x150
+ sockfs_setattr+0x120/0x150
+ ? sock_register+0x2d0/0x2d0
+ notify_change+0x90c/0xd40
+ ? chown_common+0x2ef/0x510
+ chown_common+0x2ef/0x510
+ ? chmod_common+0x3b0/0x3b0
+ ? __lock_is_held+0xbc/0x160
+ ? __sb_start_write+0x13d/0x2b0
+ ? __mnt_want_write+0x19a/0x250
+ do_fchownat+0x15c/0x190
+ ? __ia32_sys_chmod+0x80/0x80
+ ? trace_hardirqs_on_thunk+0x1a/0x1c
+ __x64_sys_fchownat+0xbf/0x160
+ ? lockdep_hardirqs_on+0x39a/0x5e0
+ do_syscall_64+0xc8/0x580
  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x458099
-Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f870ee22c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000458099
-RDX: 0000000000000048 RSI: 0000000020000080 RDI: 0000000000000005
-RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
-ax25_connect(): syz-executor4 uses autobind, please contact jreuter@yaina.de
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f870ee236d4
-R13: 00000000004be48e R14: 00000000004ce9a8 R15: 00000000ffffffff
+RIP: 0033:0x462589
+Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89
+f7 48 89 d6 48 89
+ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3
+48 c7 c1 bc ff ff
+ff f7 d8 64 89 01 48
+RSP: 002b:00007fb4b2c83c58 EFLAGS: 00000246 ORIG_RAX: 0000000000000104
+RAX: ffffffffffffffda RBX: 000000000072bfa0 RCX: 0000000000462589
+RDX: 0000000000000000 RSI: 00000000200000c0 RDI: 0000000000000007
+RBP: 0000000000000005 R08: 0000000000001000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb4b2c846bc
+R13: 00000000004bc733 R14: 00000000006f5138 R15: 00000000ffffffff
 
-Allocated by task 526:
- save_stack+0x45/0xd0 mm/kasan/common.c:73
- set_track mm/kasan/common.c:85 [inline]
- __kasan_kmalloc mm/kasan/common.c:496 [inline]
- __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
- kasan_kmalloc+0x9/0x10 mm/kasan/common.c:504
-ax25_connect(): syz-executor5 uses autobind, please contact jreuter@yaina.de
- kmem_cache_alloc_trace+0x151/0x760 mm/slab.c:3609
- kmalloc include/linux/slab.h:545 [inline]
- ax25_rt_add net/ax25/ax25_route.c:95 [inline]
- ax25_rt_ioctl+0x3b9/0x1270 net/ax25/ax25_route.c:233
- ax25_ioctl+0x322/0x10b0 net/ax25/af_ax25.c:1763
- sock_do_ioctl+0xe2/0x400 net/socket.c:950
- sock_ioctl+0x32f/0x6c0 net/socket.c:1074
- vfs_ioctl fs/ioctl.c:46 [inline]
- file_ioctl fs/ioctl.c:509 [inline]
- do_vfs_ioctl+0x107b/0x17d0 fs/ioctl.c:696
- ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
- __do_sys_ioctl fs/ioctl.c:720 [inline]
- __se_sys_ioctl fs/ioctl.c:718 [inline]
- __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
- do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+Allocated by task 4185:
+ kasan_kmalloc+0xa0/0xd0
+ __kmalloc+0x14a/0x350
+ sk_prot_alloc+0xf6/0x290
+ sk_alloc+0x3d/0xc00
+ af_alg_accept+0x9e/0x670
+ hash_accept+0x4a3/0x650
+ __sys_accept4+0x306/0x5c0
+ __x64_sys_accept4+0x98/0x100
+ do_syscall_64+0xc8/0x580
  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-ax25_connect(): syz-executor5 uses autobind, please contact jreuter@yaina.de
-Freed by task 550:
- save_stack+0x45/0xd0 mm/kasan/common.c:73
- set_track mm/kasan/common.c:85 [inline]
- __kasan_slab_free+0x102/0x150 mm/kasan/common.c:458
- kasan_slab_free+0xe/0x10 mm/kasan/common.c:466
- __cache_free mm/slab.c:3487 [inline]
- kfree+0xcf/0x230 mm/slab.c:3806
- ax25_rt_add net/ax25/ax25_route.c:92 [inline]
- ax25_rt_ioctl+0x304/0x1270 net/ax25/ax25_route.c:233
- ax25_ioctl+0x322/0x10b0 net/ax25/af_ax25.c:1763
- sock_do_ioctl+0xe2/0x400 net/socket.c:950
- sock_ioctl+0x32f/0x6c0 net/socket.c:1074
- vfs_ioctl fs/ioctl.c:46 [inline]
- file_ioctl fs/ioctl.c:509 [inline]
- do_vfs_ioctl+0x107b/0x17d0 fs/ioctl.c:696
- ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
- __do_sys_ioctl fs/ioctl.c:720 [inline]
- __se_sys_ioctl fs/ioctl.c:718 [inline]
- __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
- do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+Freed by task 4184:
+ __kasan_slab_free+0x12e/0x180
+ kfree+0xeb/0x2f0
+ __sk_destruct+0x4e6/0x6a0
+ sk_destruct+0x48/0x70
+ __sk_free+0xa9/0x270
+ sk_free+0x2a/0x30
+ af_alg_release+0x5c/0x70
+ __sock_release+0xd3/0x280
+ sock_close+0x1a/0x20
+ __fput+0x27f/0x7f0
+ task_work_run+0x136/0x1b0
+ exit_to_usermode_loop+0x1a7/0x1d0
+ do_syscall_64+0x461/0x580
  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-The buggy address belongs to the object at ffff888066641a80
- which belongs to the cache kmalloc-96 of size 96
-The buggy address is located 0 bytes inside of
- 96-byte region [ffff888066641a80, ffff888066641ae0)
-The buggy address belongs to the page:
-page:ffffea0001999040 count:1 mapcount:0 mapping:ffff88812c3f04c0 index:0x0
-flags: 0x1fffc0000000200(slab)
-ax25_connect(): syz-executor4 uses autobind, please contact jreuter@yaina.de
-raw: 01fffc0000000200 ffffea0001817948 ffffea0002341dc8 ffff88812c3f04c0
-raw: 0000000000000000 ffff888066641000 0000000100000020 0000000000000000
-page dumped because: kasan: bad access detected
+Syzkaller reproducer:
+r0 = perf_event_open(&(0x7f0000000000)={0x0, 0x70, 0x0, 0x0, 0x0, 0x0,
+0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, @perf_config_ext}, 0x0, 0x0,
+0xffffffffffffffff, 0x0)
+r1 = socket$alg(0x26, 0x5, 0x0)
+getrusage(0x0, 0x0)
+bind(r1, &(0x7f00000001c0)=@alg={0x26, 'hash\x00', 0x0, 0x0,
+'sha256-ssse3\x00'}, 0x80)
+r2 = accept(r1, 0x0, 0x0)
+r3 = accept4$unix(r2, 0x0, 0x0, 0x0)
+r4 = dup3(r3, r0, 0x0)
+fchownat(r4, &(0x7f00000000c0)='\x00', 0x0, 0x0, 0x1000)
 
-Memory state around the buggy address:
- ffff888066641980: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
- ffff888066641a00: 00 00 00 00 00 00 00 00 02 fc fc fc fc fc fc fc
->ffff888066641a80: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-                   ^
- ffff888066641b00: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
- ffff888066641b80: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Reported-by: syzbot <syzkaller@googlegroups.com>
+Fixes: 6d8c50dcb029 ("socket: close race condition between sock_close() and sockfs_setattr()")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/net/ax25.h    |   12 ++++++++++++
- net/ax25/ax25_ip.c    |    4 ++--
- net/ax25/ax25_route.c |   19 ++++++++-----------
- 3 files changed, 22 insertions(+), 13 deletions(-)
+ crypto/af_alg.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/include/net/ax25.h
-+++ b/include/net/ax25.h
-@@ -201,6 +201,18 @@ static inline void ax25_hold_route(ax25_
+diff --git a/crypto/af_alg.c b/crypto/af_alg.c
+index 17eb09d222ff4..ec78a04eb136e 100644
+--- a/crypto/af_alg.c
++++ b/crypto/af_alg.c
+@@ -122,8 +122,10 @@ static void alg_do_release(const struct af_alg_type *type, void *private)
  
- void __ax25_put_route(ax25_route *ax25_rt);
- 
-+extern rwlock_t ax25_route_lock;
-+
-+static inline void ax25_route_lock_use(void)
-+{
-+	read_lock(&ax25_route_lock);
-+}
-+
-+static inline void ax25_route_lock_unuse(void)
-+{
-+	read_unlock(&ax25_route_lock);
-+}
-+
- static inline void ax25_put_route(ax25_route *ax25_rt)
+ int af_alg_release(struct socket *sock)
  {
- 	if (refcount_dec_and_test(&ax25_rt->refcount))
---- a/net/ax25/ax25_ip.c
-+++ b/net/ax25/ax25_ip.c
-@@ -114,6 +114,7 @@ netdev_tx_t ax25_ip_xmit(struct sk_buff
- 	dst = (ax25_address *)(bp + 1);
- 	src = (ax25_address *)(bp + 8);
- 
-+	ax25_route_lock_use();
- 	route = ax25_get_route(dst, NULL);
- 	if (route) {
- 		digipeat = route->digipeat;
-@@ -206,9 +207,8 @@ netdev_tx_t ax25_ip_xmit(struct sk_buff
- 	ax25_queue_xmit(skb, dev);
- 
- put:
--	if (route)
--		ax25_put_route(route);
- 
-+	ax25_route_lock_unuse();
- 	return NETDEV_TX_OK;
- }
- 
---- a/net/ax25/ax25_route.c
-+++ b/net/ax25/ax25_route.c
-@@ -40,7 +40,7 @@
- #include <linux/export.h>
- 
- static ax25_route *ax25_route_list;
--static DEFINE_RWLOCK(ax25_route_lock);
-+DEFINE_RWLOCK(ax25_route_lock);
- 
- void ax25_rt_device_down(struct net_device *dev)
- {
-@@ -335,6 +335,7 @@ const struct seq_operations ax25_rt_seqo
-  *	Find AX.25 route
-  *
-  *	Only routes with a reference count of zero can be destroyed.
-+ *	Must be called with ax25_route_lock read locked.
-  */
- ax25_route *ax25_get_route(ax25_address *addr, struct net_device *dev)
- {
-@@ -342,7 +343,6 @@ ax25_route *ax25_get_route(ax25_address
- 	ax25_route *ax25_def_rt = NULL;
- 	ax25_route *ax25_rt;
- 
--	read_lock(&ax25_route_lock);
- 	/*
- 	 *	Bind to the physical interface we heard them on, or the default
- 	 *	route if none is found;
-@@ -365,11 +365,6 @@ ax25_route *ax25_get_route(ax25_address
- 	if (ax25_spe_rt != NULL)
- 		ax25_rt = ax25_spe_rt;
- 
--	if (ax25_rt != NULL)
--		ax25_hold_route(ax25_rt);
--
--	read_unlock(&ax25_route_lock);
--
- 	return ax25_rt;
- }
- 
-@@ -400,9 +395,12 @@ int ax25_rt_autobind(ax25_cb *ax25, ax25
- 	ax25_route *ax25_rt;
- 	int err = 0;
- 
--	if ((ax25_rt = ax25_get_route(addr, NULL)) == NULL)
-+	ax25_route_lock_use();
-+	ax25_rt = ax25_get_route(addr, NULL);
-+	if (!ax25_rt) {
-+		ax25_route_lock_unuse();
- 		return -EHOSTUNREACH;
--
+-	if (sock->sk)
++	if (sock->sk) {
+ 		sock_put(sock->sk);
++		sock->sk = NULL;
 +	}
- 	if ((ax25->ax25_dev = ax25_dev_ax25dev(ax25_rt->dev)) == NULL) {
- 		err = -EHOSTUNREACH;
- 		goto put;
-@@ -437,8 +435,7 @@ int ax25_rt_autobind(ax25_cb *ax25, ax25
- 	}
- 
- put:
--	ax25_put_route(ax25_rt);
--
-+	ax25_route_lock_unuse();
- 	return err;
+ 	return 0;
  }
- 
+ EXPORT_SYMBOL_GPL(af_alg_release);
+-- 
+2.19.1
+
 
 
