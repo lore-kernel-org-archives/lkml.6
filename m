@@ -2,145 +2,130 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BADC4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:53:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3457EC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:53:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E6CE2148D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:53:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E3A820880
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:53:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728308AbfBULxA (ORCPT
+        id S1728059AbfBULxM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 06:53:00 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:45657 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727814AbfBULup (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 06:50:45 -0500
-Received: from localhost ([127.0.0.1] helo=flow.W.breakpoint.cc)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gwmsA-0001RC-KD; Thu, 21 Feb 2019 12:50:38 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Borislav Petkov <bp@suse.de>
-Subject: [PATCH 10/22] x86/fpu: Make __raw_xsave_addr() use feature number instead of mask
-Date:   Thu, 21 Feb 2019 12:50:08 +0100
-Message-Id: <20190221115020.12385-11-bigeasy@linutronix.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190221115020.12385-1-bigeasy@linutronix.de>
-References: <20190221115020.12385-1-bigeasy@linutronix.de>
+        Thu, 21 Feb 2019 06:53:12 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42772 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727792AbfBULun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 06:50:43 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0667580D;
+        Thu, 21 Feb 2019 03:50:43 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6C0E73F5C1;
+        Thu, 21 Feb 2019 03:50:40 -0800 (PST)
+Date:   Thu, 21 Feb 2019 11:50:34 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Amit Daniel Kachhap <amit.kachhap@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        kvmarm@lists.cs.columbia.edu,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>
+Subject: Re: [PATCH v6 1/6] arm64/kvm: preserve host HCR_EL2 value
+Message-ID: <20190221115034.GA33673@lakrids.cambridge.arm.com>
+References: <1550568271-5319-1-git-send-email-amit.kachhap@arm.com>
+ <1550568271-5319-2-git-send-email-amit.kachhap@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1550568271-5319-2-git-send-email-amit.kachhap@arm.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most users of __raw_xsave_addr() use a feature number, shift it to a
-mask and then __raw_xsave_addr() shifts it back to the feature number.
+Hi,
 
-Make __raw_xsave_addr() use the feature number as an argument.
+On Tue, Feb 19, 2019 at 02:54:26PM +0530, Amit Daniel Kachhap wrote:
+> From: Mark Rutland <mark.rutland@arm.com>
+> 
+> When restoring HCR_EL2 for the host, KVM uses HCR_HOST_VHE_FLAGS, which
+> is a constant value. This works today, as the host HCR_EL2 value is
+> always the same, but this will get in the way of supporting extensions
+> that require HCR_EL2 bits to be set conditionally for the host.
+> 
+> To allow such features to work without KVM having to explicitly handle
+> every possible host feature combination, this patch has KVM save/restore
+> for the host HCR when switching to/from a guest HCR. The saving of the
+> register is done once during cpu hypervisor initialization state and is
+> just restored after switch from guest.
+> 
+> For fetching HCR_EL2 during kvm initialisation, a hyp call is made using
+> kvm_call_hyp and is helpful in NHVE case.
+> 
+> For the hyp TLB maintenance code, __tlb_switch_to_host_vhe() is updated
+> to toggle the TGE bit with a RMW sequence, as we already do in
+> __tlb_switch_to_guest_vhe().
+> 
+> The value of hcr_el2 is now stored in struct kvm_cpu_context as both host
+> and guest can now use this field in a common way.
+> 
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> [Added __cpu_copy_hyp_conf, hcr_el2 field in struct kvm_cpu_context]
+> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: kvmarm@lists.cs.columbia.edu
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
----
- arch/x86/kernel/fpu/xstate.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+[...]
 
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index 914d9886c6ee8..0e759a032c1c7 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -805,20 +805,18 @@ void fpu__resume_cpu(void)
- }
- 
- /*
-- * Given an xstate feature mask, calculate where in the xsave
-+ * Given an xstate feature nr, calculate where in the xsave
-  * buffer the state is.  Callers should ensure that the buffer
-  * is valid.
-  */
--static void *__raw_xsave_addr(struct xregs_state *xsave, int xstate_feature_mask)
-+static void *__raw_xsave_addr(struct xregs_state *xsave, int xfeature_nr)
- {
--	int feature_nr = fls64(xstate_feature_mask) - 1;
--
--	if (!xfeature_enabled(feature_nr)) {
-+	if (!xfeature_enabled(xfeature_nr)) {
- 		WARN_ON_FPU(1);
- 		return NULL;
- 	}
- 
--	return (void *)xsave + xstate_comp_offsets[feature_nr];
-+	return (void *)xsave + xstate_comp_offsets[xfeature_nr];
- }
- /*
-  * Given the xsave area and a state inside, this function returns the
-@@ -840,6 +838,7 @@ static void *__raw_xsave_addr(struct xregs_state *xsave, int xstate_feature_mask
-  */
- void *get_xsave_addr(struct xregs_state *xsave, int xstate_feature)
- {
-+	int xfeature_nr;
- 	/*
- 	 * Do we even *have* xsave state?
- 	 */
-@@ -867,7 +866,8 @@ void *get_xsave_addr(struct xregs_state *xsave, int xstate_feature)
- 	if (!(xsave->header.xfeatures & xstate_feature))
- 		return NULL;
- 
--	return __raw_xsave_addr(xsave, xstate_feature);
-+	xfeature_nr = fls64(xstate_feature) - 1;
-+	return __raw_xsave_addr(xsave, xfeature_nr);
- }
- EXPORT_SYMBOL_GPL(get_xsave_addr);
- 
-@@ -1014,7 +1014,7 @@ int copy_xstate_to_kernel(void *kbuf, struct xregs_state *xsave, unsigned int of
- 		 * Copy only in-use xstates:
- 		 */
- 		if ((header.xfeatures >> i) & 1) {
--			void *src = __raw_xsave_addr(xsave, 1 << i);
-+			void *src = __raw_xsave_addr(xsave, i);
- 
- 			offset = xstate_offsets[i];
- 			size = xstate_sizes[i];
-@@ -1100,7 +1100,7 @@ int copy_xstate_to_user(void __user *ubuf, struct xregs_state *xsave, unsigned i
- 		 * Copy only in-use xstates:
- 		 */
- 		if ((header.xfeatures >> i) & 1) {
--			void *src = __raw_xsave_addr(xsave, 1 << i);
-+			void *src = __raw_xsave_addr(xsave, i);
- 
- 			offset = xstate_offsets[i];
- 			size = xstate_sizes[i];
-@@ -1157,7 +1157,7 @@ int copy_kernel_to_xstate(struct xregs_state *xsave, const void *kbuf)
- 		u64 mask = ((u64)1 << i);
- 
- 		if (hdr.xfeatures & mask) {
--			void *dst = __raw_xsave_addr(xsave, 1 << i);
-+			void *dst = __raw_xsave_addr(xsave, i);
- 
- 			offset = xstate_offsets[i];
- 			size = xstate_sizes[i];
-@@ -1211,7 +1211,7 @@ int copy_user_to_xstate(struct xregs_state *xsave, const void __user *ubuf)
- 		u64 mask = ((u64)1 << i);
- 
- 		if (hdr.xfeatures & mask) {
--			void *dst = __raw_xsave_addr(xsave, 1 << i);
-+			void *dst = __raw_xsave_addr(xsave, i);
- 
- 			offset = xstate_offsets[i];
- 			size = xstate_sizes[i];
--- 
-2.20.1
+> +/**
+> + * __cpu_copy_hyp_conf - copy the boot hyp configuration registers
+> + *
+> + * It is called once per-cpu during CPU hyp initialisation.
+> + */
+> +static inline void __cpu_copy_hyp_conf(void)
 
+I think this would be better named as something like:
+
+  cpu_init_host_ctxt()
+
+... as that makes it a bit clearer as to what is being initialized.
+
+[...]
+
+> +/**
+> + * __kvm_populate_host_regs - Stores host register values
+> + *
+> + * This function acts as a function handler parameter for kvm_call_hyp and
+> + * may be called from EL1 exception level to fetch the register value.
+> + */
+> +void __hyp_text __kvm_populate_host_regs(void)
+> +{
+> +	struct kvm_cpu_context *host_ctxt;
+> +
+> +	if (has_vhe())
+> +		host_ctxt = this_cpu_ptr(&kvm_host_cpu_state);
+> +	else
+> +		host_ctxt = __hyp_this_cpu_ptr(kvm_host_cpu_state);
+
+Do we need the has_vhe() check here?
+
+Can't we always do:
+
+	host_ctxt = __hyp_this_cpu_ptr(kvm_host_cpu_state);
+
+... regardless of VHE? Or is that broken for VHE somehow?
+
+Thanks,
+Mark.
