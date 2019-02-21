@@ -2,170 +2,180 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F2D0C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 02:55:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1996CC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:10:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 797AB2086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 02:55:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD4D72086A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:10:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726955AbfBUCzw (ORCPT
+        id S1726938AbfBUDKf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 21:55:52 -0500
-Received: from www1102.sakura.ne.jp ([219.94.129.142]:25709 "EHLO
-        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbfBUCzv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 21:55:51 -0500
-Received: from fsav110.sakura.ne.jp (fsav110.sakura.ne.jp [27.133.134.237])
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1L2tYsm069056;
-        Thu, 21 Feb 2019 11:55:35 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-Received: from www1102.sakura.ne.jp (219.94.129.142)
- by fsav110.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp);
- Thu, 21 Feb 2019 11:55:34 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp)
-Received: from [192.168.1.2] (119.104.232.153.ap.dti.ne.jp [153.232.104.119])
-        (authenticated bits=0)
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x1L2tYhk069049
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Thu, 21 Feb 2019 11:55:34 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-Subject: Re: [PATCH v2] clk: fractional-divider: check parent rate only if
- flag is set
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190210153806.24201-1-katsuhiro@katsuster.net>
-From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Message-ID: <4d168495-ade8-bea0-997a-e28feb38c8ee@katsuster.net>
-Date:   Thu, 21 Feb 2019 11:55:34 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Wed, 20 Feb 2019 22:10:35 -0500
+Received: from mga06.intel.com ([134.134.136.31]:22151 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726152AbfBUDKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 22:10:35 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 19:10:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,393,1544515200"; 
+   d="scan'208";a="135939133"
+Received: from shao2-debian.sh.intel.com (HELO localhost) ([10.239.13.107])
+  by orsmga002.jf.intel.com with ESMTP; 20 Feb 2019 19:10:32 -0800
+Date:   Thu, 21 Feb 2019 11:10:49 +0800
+From:   kernel test robot <rong.a.chen@intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, lkp@01.org,
+        "Huang, Ying" <ying.huang@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [LKP] [driver core] 570d020012: will-it-scale.per_thread_ops
+ -12.2% regression
+Message-ID: <20190221031049.GE28258@shao2-debian>
+References: <20190218075442.GI29177@shao2-debian>
+ <20190219005945.GA16734@richard>
+ <20190219121904.GA24103@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20190210153806.24201-1-katsuhiro@katsuster.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190219121904.GA24103@kroah.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ping...
+On Tue, Feb 19, 2019 at 01:19:04PM +0100, Greg Kroah-Hartman wrote:
+> On Tue, Feb 19, 2019 at 08:59:45AM +0800, Wei Yang wrote:
+> > On Mon, Feb 18, 2019 at 03:54:42PM +0800, kernel test robot wrote:
+> > >Greeting,
+> > >
+> > >FYI, we noticed a -12.2% regression of will-it-scale.per_thread_ops due to commit:
+> > >
+> > >
+> > >commit: 570d0200123fb4f809aa2f6226e93a458d664d70 ("driver core: move device->knode_class to device_private")
+> > >https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> > >
+> > 
+> > This is interesting.
+> > 
+> > I didn't expect the move of this field will impact the performance.
+> > 
+> > The reason is struct device is a hotter memory than device->device_private?
+> > 
+> > >in testcase: will-it-scale
+> > >on test machine: 288 threads Knights Mill with 80G memory
+> > >with following parameters:
+> > >
+> > >	nr_task: 100%
+> > >	mode: thread
+> > >	test: unlink2
+> > >	cpufreq_governor: performance
+> > >
+> > >test-description: Will It Scale takes a testcase and runs it from 1 through to n parallel copies to see if the testcase will scale. It builds both a process and threads based test in order to see any differences between the two.
+> > >test-url: https://github.com/antonblanchard/will-it-scale
+> > >
+> > >In addition to that, the commit also has significant impact on the following tests:
+> > >
+> > >+------------------+---------------------------------------------------------------+
+> > >| testcase: change | will-it-scale: will-it-scale.per_thread_ops -29.9% regression |
+> > >| test machine     | 288 threads Knights Mill with 80G memory                      |
+> > >| test parameters  | cpufreq_governor=performance                                  |
+> > >|                  | mode=thread                                                   |
+> > >|                  | nr_task=100%                                                  |
+> > >|                  | test=signal1                                                  |
+> 
+> Ok, I'm going to blame your testing system, or something here, and not
+> the above patch.
+> 
+> All this test does is call raise(3).  That does not touch the driver
+> core at all.
+> 
+> > >+------------------+---------------------------------------------------------------+
+> > >| testcase: change | will-it-scale: will-it-scale.per_thread_ops -16.5% regression |
+> > >| test machine     | 288 threads Knights Mill with 80G memory                      |
+> > >| test parameters  | cpufreq_governor=performance                                  |
+> > >|                  | mode=thread                                                   |
+> > >|                  | nr_task=100%                                                  |
+> > >|                  | test=open1                                                    |
+> > >+------------------+---------------------------------------------------------------+
+> 
+> Same here, open1 just calls open/close a lot.  No driver core
+> interaction at all there either.
+> 
+> So are you _sure_ this is the offending patch?
 
-On 2019/02/11 0:38, Katsuhiro Suzuki wrote:
-> Custom approximation of fractional-divider may not need parent clock
-> rate checking. For example Rockchip SoCs work fine using grand parent
-> clock rate even if target rate is greater than parent.
-> 
-> This patch checks parent clock rate only if CLK_SET_RATE_PARENT flag
-> is set.
-> 
-> For detailed example, clock tree of Rockchip I2S audio hardware.
->    - Clock rate of CPLL is 1.2GHz, GPLL is 491.52MHz.
->    - i2s1_div is integer divider can divide N (N is 1~128).
->      Input clock is CPLL or GPLL. Initial divider value is N = 1.
->      Ex) PLL = CPLL, N = 10, i2s1_div output rate is
->        CPLL / 10 = 1.2GHz / 10 = 120MHz
->    - i2s1_frac is fractional divider can divide input to x/y, x and
->      y are 16bit integer.
-> 
-> CPLL --> | selector | ---> i2s1_div -+--> | selector | --> I2S1 MCLK
-> GPLL --> |          | ,--------------'    |          |
->                        `--> i2s1_frac ---> |          |
-> 
-> Clock mux system try to choose suitable one from i2s1_div and
-> i2s1_frac for master clock (MCLK) of I2S1.
-> 
-> Bad scenario as follows:
->    - Try to set MCLK to 8.192MHz (32kHz audio replay)
->      Candidate setting is
->      - i2s1_div: GPLL / 60 = 8.192MHz
->      i2s1_div candidate is exactly same as target clock rate, so mux
->      choose this clock source. i2s1_div output rate is changed
->      491.52MHz -> 8.192MHz
-> 
->    - After that try to set to 11.2896MHz (44.1kHz audio replay)
->      Candidate settings are
->      - i2s1_div : CPLL / 107 = 11.214945MHz
->      - i2s1_frac: i2s1_div   = 8.192MHz
->        This is because clk_fd_round_rate() thinks target rate
->        (11.2896MHz) is higher than parent rate (i2s1_div = 8.192MHz)
->        and returns parent clock rate.
-> 
-> Above is current upstreamed behavior. Clock mux system choose
-> i2s1_div, but this clock rate is not acceptable for I2S driver, so
-> users cannot replay audio.
-> 
-> Expected behavior is:
->    - Try to set master clock to 11.2896MHz (44.1kHz audio replay)
->      Candidate settings are
->      - i2s1_div : CPLL / 107          = 11.214945MHz
->      - i2s1_frac: i2s1_div * 147/6400 = 11.2896MHz
->                   Change i2s1_div to GPLL / 1 = 491.52MHz at same
->                   time.
-> 
-> If apply this commit, clk_fd_round_rate() calls custom approximate
-> function of Rockchip even if target rate is higher than parent.
-> Custom function changes both grand parent (i2s1_div) and parent
-> (i2s_frac) settings at same time. Clock mux system can choose
-> i2s1_frac and audio works fine.
-> 
-> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-> ---
->   drivers/clk/clk-fractional-divider.c | 2 +-
->   drivers/clk/clk.c                    | 8 ++++++++
->   include/linux/clk-provider.h         | 1 +
->   3 files changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-> index 545dceec0bbf..fdfe2e423d15 100644
-> --- a/drivers/clk/clk-fractional-divider.c
-> +++ b/drivers/clk/clk-fractional-divider.c
-> @@ -79,7 +79,7 @@ static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
->   	unsigned long m, n;
->   	u64 ret;
->   
-> -	if (!rate || rate >= *parent_rate)
-> +	if (!rate || (!clk_hw_can_set_rate_parent(hw) && rate >= *parent_rate))
->   		return *parent_rate;
->   
->   	if (fd->approximation)
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index d2477a5058ac..070c0cb29ee8 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -518,6 +518,14 @@ void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
->   }
->   EXPORT_SYMBOL_GPL(clk_hw_set_rate_range);
->   
-> +bool clk_hw_can_set_rate_parent(struct clk_hw *hw)
-> +{
-> +	unsigned long flags = clk_hw_get_flags(hw);
-> +
-> +	return flags & CLK_SET_RATE_PARENT;
-> +}
-> +EXPORT_SYMBOL_GPL(clk_hw_can_set_rate_parent);
-> +
->   /*
->    * Helper for finding best parent to provide a given frequency. This can be used
->    * directly as a determine_rate callback (e.g. for a mux), or from a more
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index e443fa9fa859..693a51937ded 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -808,6 +808,7 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
->   void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent);
->   void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
->   			   unsigned long max_rate);
-> +bool clk_hw_can_set_rate_parent(struct clk_hw *hw);
->   
->   static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
->   {
-> 
+Hi Greg,
 
+We did an experiment, recovered the layout of struct device. and we
+found the regression is gone. I guess the regession is not from the
+patch but related to the struct layout.
+
+
+tests: 1
+testcase/path_params/tbox_group/run: will-it-scale/performance-thread-100%-unlink2/lkp-knm01
+
+570d0200123fb4f8  a36dc70b810afe9183de2ea18f  
+----------------  --------------------------  
+         %stddev      change         %stddev
+             \          |                \  
+    237096              14%     270789        will-it-scale.workload
+       823              14%        939        will-it-scale.per_thread_ops
+
+
+tests: 1
+testcase/path_params/tbox_group/run: will-it-scale/performance-thread-100%-signal1/lkp-knm01
+
+570d0200123fb4f8  a36dc70b810afe9183de2ea18f  
+----------------  --------------------------  
+         %stddev      change         %stddev
+             \          |                \  
+     93.51 ±  3%        48%     138.53 ±  3%  will-it-scale.time.user_time
+       186              40%        261        will-it-scale.per_thread_ops
+     53909              40%      75507        will-it-scale.workload
+
+
+tests: 1
+testcase/path_params/tbox_group/run: will-it-scale/performance-thread-100%-open1/lkp-knm01
+
+570d0200123fb4f8  a36dc70b810afe9183de2ea18f  
+----------------  --------------------------  
+         %stddev      change         %stddev
+             \          |                \  
+    447722              22%     546258 ± 10%  will-it-scale.time.involuntary_context_switches
+    226995              19%     269751        will-it-scale.workload
+       787              19%        936        will-it-scale.per_thread_ops
+
+
+
+commit a36dc70b810afe9183de2ea18faa4c0939c139ac
+Author: 0day robot <lkp@intel.com>
+Date:   Wed Feb 20 14:21:19 2019 +0800
+
+    backfile klist_node in struct device for debugging
+    
+    Signed-off-by: 0day robot <lkp@intel.com>
+
+diff --git a/include/linux/device.h b/include/linux/device.h
+index d0e452fd0bff2..31666cb72b3ba 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -1035,6 +1035,7 @@ struct device {
+ 	spinlock_t		devres_lock;
+ 	struct list_head	devres_head;
+ 
++	struct klist_node       knode_class_test_by_rongc;
+ 	struct class		*class;
+ 	const struct attribute_group **groups;	/* optional groups */
+
+Best Regards,
+Rong Chen
