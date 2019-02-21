@@ -2,110 +2,123 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92083C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:52:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B820C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:53:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A41A214AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:52:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEFCC20880
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:53:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lFOKjWte"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726628AbfBUIw2 (ORCPT
+        id S1726903AbfBUIxh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 03:52:28 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45758 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725785AbfBUIw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 03:52:28 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 75239AF7B;
-        Thu, 21 Feb 2019 08:52:26 +0000 (UTC)
-Subject: Re: [Xen-devel] xen/evtchn and forced threaded irq
-To:     Julien Grall <julien.grall@gmail.com>,
-        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>
-Cc:     Stefano Stabellini <sstabellini@kernel.org>,
-        Andrew Cooper <Andrew.Cooper3@citrix.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Julien Grall <julien.grall@arm.com>,
-        Jan Beulich <JBeulich@suse.com>,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Dave P Martin <dave.martin@arm.com>
-References: <5e256d9a-572c-e01e-7706-407f99245b00@arm.com>
- <20190220000209.GA4091@localhost.localdomain>
- <a872d480-9f1b-6cd7-e507-ac4fcdf705af@arm.com>
- <21214d47-9c68-e6bf-007a-4047cc2b02f9@oracle.com>
- <8f7445d7-fa50-f3e9-44f5-cc2aebd020f4@arm.com>
- <15bc52cb-82d8-4d2c-e5a8-c6ae8de90276@oracle.com>
- <5df8888a-4a29-fccd-bac2-a9c170244029@arm.com>
- <1574a7fe-a5ac-4bc2-d3f0-967d8d01e5f1@oracle.com>
- <1100e6b1-6fa8-06f0-8ecc-b0699a2ce5f4@arm.com>
- <20190221080752.zy2qlzb4vi7tbu3p@Air-de-Roger>
- <CAF3u54Ct7nBjoLw9Vzb=aZVu=N5Ccp5_k6GxLo_ZSA=YCsco6A@mail.gmail.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <def7a5d4-0eaf-f883-655a-5c089adbf9c9@suse.com>
-Date:   Thu, 21 Feb 2019 09:52:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Thu, 21 Feb 2019 03:53:37 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46372 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726354AbfBUIxg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 03:53:36 -0500
+Received: by mail-lj1-f194.google.com with SMTP id v16so23256202ljg.13
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 00:53:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yGx0zil6yj1oC8ODCBCtzEQX/NhRvGXa2b8pEHdk1gA=;
+        b=lFOKjWteRFOgtiQf50M8NxaZ55EHY9sVIXlwAbZcIyevZ/E2x5jWloSXpTcFLR0C0v
+         srat2zbdFHSq1VIy/3dJF4FXyZ8QNXjAtstWuDXjaxzgA04YSA9sphtMGZVcrDj/g2/b
+         GoSCGfKBZCpyfaI2G6RNSFV18ra5SDwcpwpcD1fRd7kOggeLIYaq6c0/y5/BGjKluKY1
+         TToOLSJYWIfU8MjgxvCwaMfD/hIaLbYV+Goq/LnGqzH1luttTNfDILTvIKt2/D+BBaHU
+         gUCwwGUnh19V7ej/jP3M/Qdy0Lle/MJDxcC+XHXvYSgpZGITkzwTOke6nvnqiJ1TJFSN
+         UBQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yGx0zil6yj1oC8ODCBCtzEQX/NhRvGXa2b8pEHdk1gA=;
+        b=DnpraME0nccoP339UwB89t9CWcQ2UnOaF6hIj2wGnBJ+u+b32B4me6oiqDY2JiWhbW
+         36Cc5rcTkVIu0SUUO6aNPIR6JQJgEO2OtjICnU3gHL6x2XaHStFEceC7FwQ9rmqcCrrE
+         +C+PLERRldKCX+HRumvL+YlIXo8WMMKGFNgQCv8iopEFUV3jHjfg7AOtzBEg2GzxIh1C
+         RD08Ygj0ox1xAzokkyRoXxQ7aydN+ssLHZwue1HxyC73VPglrbyqa5VlNlsfROjs7JVR
+         QYv/wF4NylGAQ11Ce67ph2ds/R8yf38Q4aTMEtLdoKuA2JePbMKeKoP4oUc8I/QM76MX
+         Kvpw==
+X-Gm-Message-State: AHQUAuYk3h15zHwchDGE4EMmj8FLU2sPNy1AzqZ5pECDx+BsXastsNmk
+        ng2c5sbEKEMhr4NIfqldDis=
+X-Google-Smtp-Source: AHgI3Ibp0C0952O0jpOKzEzl1nV9ZgM8k64eiX7Zgujsf7sCD3h/+s6hH+VZ6BFfeHSX8j4hBapN+g==
+X-Received: by 2002:a2e:2d11:: with SMTP id t17-v6mr23215205ljt.159.1550739214373;
+        Thu, 21 Feb 2019 00:53:34 -0800 (PST)
+Received: from localhost ([188.162.52.7])
+        by smtp.gmail.com with ESMTPSA id d70sm6062852lfe.14.2019.02.21.00.53.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 21 Feb 2019 00:53:33 -0800 (PST)
+From:   Yury Norov <yury.norov@gmail.com>
+X-Google-Original-From: Yury Norov <ynorov@marvell.com>
+Date:   Thu, 21 Feb 2019 11:53:31 +0300
+To:     Palmer Dabbelt <palmer@sifive.com>
+Cc:     yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
+        akpm@linux-foundation.org, Arnd Bergmann <arnd@arndb.de>,
+        dmitry.torokhov@gmail.com, keescook@chromium.org,
+        willy@infradead.org, mpe@ellerman.id.au, linux@rasmusvillemoes.dk,
+        penguin-kernel@I-love.SAKURA.ne.jp, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] lib/test_bitmap: switch test_bitmap_parselist to
+ ktime_get()
+Message-ID: <20190221085331.GA2666@yury-thinkpad>
+References: <20190220142048.GA20929@yury-thinkpad>
+ <mhng-e872dce6-2abe-467b-b1c1-82a59d4c93e2@palmer-si-x1c4>
 MIME-Version: 1.0
-In-Reply-To: <CAF3u54Ct7nBjoLw9Vzb=aZVu=N5Ccp5_k6GxLo_ZSA=YCsco6A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mhng-e872dce6-2abe-467b-b1c1-82a59d4c93e2@palmer-si-x1c4>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/02/2019 09:38, Julien Grall wrote:
-> Hi Roger,
+On Wed, Feb 20, 2019 at 03:10:44PM -0800, Palmer Dabbelt wrote:
+> On Wed, 20 Feb 2019 06:20:48 PST (-0800), yury.norov@gmail.com wrote:
+> > On Wed, Feb 20, 2019 at 03:52:36PM +0200, Andy Shevchenko wrote:
+> > > On Wed, Feb 20, 2019 at 03:51:01PM +0200, Andy Shevchenko wrote:
+> > > > On Wed, Feb 20, 2019 at 11:37:03AM +0300, Yury Norov wrote:
+> > > > > test_bitmap_parselist currently uses get_cycles which is not
+> > > > > implemented on some platforms, so use ktime_get() instead.
+> > > >
+> > > > This sounds like a fix that should go first in the series.
+> > > 
+> > > Ah, okay, it's already first for test module.
+> > > Perhaps Fixes tag and actually one or more examples of such architectures?
+> > 
+> > Hi Andy, thanks for your time on it.
+> > 
+> > Only arm, arm64, openrisc, riscv and sparc64 #define get_cycles.
+> > So IIUC, others take stub from include/asm-generic/timex.h.
 > 
-> On Thu, 21 Feb 2019, 08:08 Roger Pau Monné, <roger.pau@citrix.com
-> <mailto:roger.pau@citrix.com>> wrote:
-> 
->     FWIW, you can also mask the interrupt while waiting for the thread to
->     execute the interrupt handler. Ie:
-> 
-> 
-> Thank you for providing steps, however where would the masking be done?
-> By the irqchip or a custom solution?
+> Should we (RISC-V) be doing something else?  It seems odd to be in such a
+> minority here, but we do have a ISA-mandated timer so the get_cycles()
+> implementation is super easy.
 
-I'd go the irqchip route. This would be the least intrusive change
-without the need for handling RT in a special way.
+I think you are completely fine because you are one of those who
+implement get_cycles().
 
+get_cycles() is the problem for those who use it in generic code
+because their code surprisingly gets broken on some machines while
+works OK on others. This is not a problem of any specific arch.
 
-Juergen
+For long term, we should inspect the non-arch code and replace 
+get_cycles() with ktime_get() where appropriate, and avoid
+introducing new get_cycles() uses.
+ 
+> > sparc32, xtensa, m68k, um, and in some cases x86, mips and nios2
+> > provide zero-stubs explicitly.
+> > 
+> > Yury
+> > 
+> > > --
+> > > With Best Regards,
+> > > Andy Shevchenko
+> > > 
