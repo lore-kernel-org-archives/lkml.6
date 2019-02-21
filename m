@@ -2,112 +2,104 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A02C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01094C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:24:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D8032083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:24:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2F912083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:24:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nK2f9r7U";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="goLAsUJP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728310AbfBUPX6 (ORCPT
+        id S1728333AbfBUPYG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 10:23:58 -0500
-Received: from gateway32.websitewelcome.com ([192.185.145.187]:30510 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727253AbfBUPX4 (ORCPT
+        Thu, 21 Feb 2019 10:24:06 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:52980 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727253AbfBUPYF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 10:23:56 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 17901373C2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 09:23:56 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id wqCagm7bD4FKpwqCag55Fz; Thu, 21 Feb 2019 09:23:56 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=36914 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gwqCY-000O2X-3h; Thu, 21 Feb 2019 09:23:55 -0600
-Date:   Thu, 21 Feb 2019 09:23:53 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>
-Cc:     linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] libnvdimm, region: use struct_size() in kzalloc()
-Message-ID: <20190221152353.GA14585@embeddedor>
+        Thu, 21 Feb 2019 10:24:05 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 7CAB460A0B; Thu, 21 Feb 2019 15:24:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550762644;
+        bh=3fAzblEObj//tJoORp3OSn6zUJxccH9Vo0EQqE0yltY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nK2f9r7UeiJXJmoNFnpWoIVIUK7xX3lS+Ig5HdfJ5DQoAvamxLYMW7uvKYEeAQxLB
+         dc5s0R1S09w5Re9sbdfNHuqRtj6fQZKzQsyaElxZO/49ZC8X9YKI+biTl6yx3SVtFb
+         T7a4KWjsYUPE1fqvAWGY4rgIc+T5SIxpB0pA/8Xk=
+Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 70B83609F2;
+        Thu, 21 Feb 2019 15:24:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550762643;
+        bh=3fAzblEObj//tJoORp3OSn6zUJxccH9Vo0EQqE0yltY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=goLAsUJP2HHUM8OzPokNcvWnYOnzRhfDGpbMbjLG9XZdLmvPnDfFk1QXSKDOMWYxk
+         xdYX+EEc3yObb/CHj6PFGgBBR6g0Mod0I4Uv73foXIl/18l05fend4dWS1lR+rOTPu
+         nJu1vmwpH1G5nHN8XNuNRLizu0do1pZIP6g1/j/M=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 70B83609F2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Thu, 21 Feb 2019 08:24:02 -0700
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        sboyd@kernel.org, evgreen@chromium.org, dianders@chromium.org,
+        mka@chromium.org, Maulik Shah <mkshah@codeaurora.org>
+Subject: Re: [PATCH v1 2/2] drivers: soc: qcom: rpmh-rsc: Correct check for
+ slot number
+Message-ID: <20190221152402.GB17102@codeaurora.org>
+References: <20190221124036.30535-1-rplsssn@codeaurora.org>
+ <20190221124036.30535-3-rplsssn@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gwqCY-000O2X-3h
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.119.20]:36914
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20190221124036.30535-3-rplsssn@codeaurora.org>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
-
-struct foo {
-    int stuff;
-    struct boo entry[];
-};
-
-instance = kzalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
-
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
-
-instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/nvdimm/region_devs.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
-index e2818f94f292..d36cb5df9683 100644
---- a/drivers/nvdimm/region_devs.c
-+++ b/drivers/nvdimm/region_devs.c
-@@ -1020,10 +1020,9 @@ static struct nd_region *nd_region_create(struct nvdimm_bus *nvdimm_bus,
- 		}
- 		region_buf = ndbr;
- 	} else {
--		nd_region = kzalloc(sizeof(struct nd_region)
--				+ sizeof(struct nd_mapping)
--				* ndr_desc->num_mappings,
--				GFP_KERNEL);
-+		nd_region = kzalloc(struct_size(nd_region, mapping,
-+				    ndr_desc->num_mappings),
-+				    GFP_KERNEL);
- 		region_buf = nd_region;
- 	}
- 
--- 
-2.20.1
-
+On Thu, Feb 21 2019 at 05:42 -0700, Raju P.L.S.S.S.N wrote:
+>From: Maulik Shah <mkshah@codeaurora.org>
+>
+>The return index value from bitmap_find_next_zero_area can be higher
+>than available slot. So correct the check to return error in such case.
+>
+>Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
+>Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
+Reviewed-by: Lina Iyer <ilina@codeaurora.org>
+>---
+> drivers/soc/qcom/rpmh-rsc.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+>index 10b3102298c7..3ff3bebd4d71 100644
+>--- a/drivers/soc/qcom/rpmh-rsc.c
+>+++ b/drivers/soc/qcom/rpmh-rsc.c
+>@@ -491,7 +491,7 @@ static int find_slots(struct tcs_group *tcs, const struct tcs_request *msg,
+> 	do {
+> 		slot = bitmap_find_next_zero_area(tcs->slots, MAX_TCS_SLOTS,
+> 						  i, msg->num_cmds, 0);
+>-		if (slot == tcs->num_tcs * tcs->ncpt)
+>+		if (slot >= tcs->num_tcs * tcs->ncpt)
+> 			return -ENOMEM;
+> 		i += tcs->ncpt;
+> 	} while (slot + msg->num_cmds - 1 >= i);
+>--
+>QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+>of the Code Aurora Forum, hosted by The Linux Foundation.
+>
