@@ -2,77 +2,134 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F78C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C439C4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:42:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE08720842
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:41:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 712A020880
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:42:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbfBUIls (ORCPT
+        id S1727330AbfBUIm3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 03:41:48 -0500
-Received: from mail.steuer-voss.de ([85.183.69.95]:46390 "EHLO
-        mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726354AbfBUIlr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 03:41:47 -0500
-X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
-Received: by mail.steuer-voss.de (Postfix, from userid 1000)
-        id 689274CFC0; Thu, 21 Feb 2019 09:41:44 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.steuer-voss.de (Postfix) with ESMTP id 675994CFBD;
-        Thu, 21 Feb 2019 09:41:44 +0100 (CET)
-Date:   Thu, 21 Feb 2019 09:41:44 +0100 (CET)
-From:   Nikolaus Voss <nv@vosn.de>
-X-X-Sender: nv@fox.voss.local
-To:     Guenter Roeck <linux@roeck-us.net>
-cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv3] usb: typec: tps6598x: handle block writes separately
- with plain-I2C adapters
-In-Reply-To: <8dc1a931-c9f7-a46a-42dc-fdcd2274343b@roeck-us.net>
-Message-ID: <alpine.DEB.2.20.1902210938420.18662@fox.voss.local>
-References: <20190220110017.BFA344CE86@mail.steuer-voss.de> <20190220151138.12332-1-nv@vosn.de> <8dc1a931-c9f7-a46a-42dc-fdcd2274343b@roeck-us.net>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Thu, 21 Feb 2019 03:42:29 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:49732 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725932AbfBUIm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 03:42:28 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 1AE5BE13EC11C587C568;
+        Thu, 21 Feb 2019 16:42:24 +0800 (CST)
+Received: from [127.0.0.1] (10.74.221.148) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Thu, 21 Feb 2019
+ 16:42:16 +0800
+Subject: Re: linux-next: Tree for Feb 20
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20190220184341.73bd2084@canb.auug.org.au>
+ <1114b964-8ff8-5632-64d4-e94a9160b998@hisilicon.com>
+ <20190220095252.GA9089@linux.intel.com>
+ <20190220095806.GB9089@linux.intel.com>
+ <CAKv+Gu8G5eWeAdCB28xa=16ANFd2he9WPSztgXYwYRkhPfpEyA@mail.gmail.com>
+ <aaac08b0-6366-7b63-d6a7-eea6630ce169@hisilicon.com>
+ <CAMuHMdWfbPHv6WBMm7uDdPhbEB-m+bOcYzzYpRe4BfcSNR2pcQ@mail.gmail.com>
+CC:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "Stephen Rothwell" <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+From:   Zhangshaokun <zhangshaokun@hisilicon.com>
+Message-ID: <52ff1782-98e8-71fb-873e-f75610d200c2@hisilicon.com>
+Date:   Thu, 21 Feb 2019 16:42:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+In-Reply-To: <CAMuHMdWfbPHv6WBMm7uDdPhbEB-m+bOcYzzYpRe4BfcSNR2pcQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.74.221.148]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guenther,
+Hi Geert,
 
-On Wed, 20 Feb 2019, Guenter Roeck wrote:
-> On 2/20/19 7:11 AM, Nikolaus Voss wrote:
->> From: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
->> 
->> Commit 1a2f474d328f handles block _reads_ separately with plain-I2C
->> adapters, but the problem described with regmap-i2c not handling
->> SMBus block transfers (i.e. read and writes) correctly also exists
->> with writes.
->> 
->> As workaround, this patch adds a block write function the same way
->> 1a2f474d328f adds a block read function.
->> 
->> Fixes: 1a2f474d328f ("usb: typec: tps6598x: handle block reads separately 
->> with plain-I2C adapters")
->> Fixes: 0a4c005bd171 ("usb: typec: driver for TI TPS6598x USB Power Delivery 
->> controllers")
->> Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
->
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
->
-> Note that tps6598x_exec_cmd() is only called with in_len == out_len == 0
-> and NULL data pointers.
+On 2019/2/21 16:03, Geert Uytterhoeven wrote:
+> Hi Shaokun,
+> 
+> On Thu, Feb 21, 2019 at 1:45 AM Zhangshaokun <zhangshaokun@hisilicon.com> wrote:
+>> On 2019/2/20 18:05, Ard Biesheuvel wrote:
+>>> On Wed, 20 Feb 2019 at 10:58, Jarkko Sakkinen
+>>> <jarkko.sakkinen@linux.intel.com> wrote:
+>>>>
+>>>> On Wed, Feb 20, 2019 at 11:52:52AM +0200, Jarkko Sakkinen wrote:
+>>>>> On Wed, Feb 20, 2019 at 05:11:15PM +0800, Zhangshaokun wrote:
+>>>>>> There is a compiler failure on arm64 platform, as follow:
+>>>>>>
+>>>>>>   AS      arch/arm64/kvm/hyp.o
+>>>>>>   CC      kernel/trace/ring_buffer.o
+>>>>>> In file included from security/integrity/ima/ima_fs.c:30:0:
+>>>>>> security/integrity/ima/ima.h:176:7: error: redeclaration of enumerator ‘NONE’
+>>>>>>   hook(NONE)   \
+>>>>>>        ^
+>>>>>> security/integrity/ima/ima.h:188:34: note: in definition of macro ‘__ima_hook_enumify’
+>>>>>>  #define __ima_hook_enumify(ENUM) ENUM,
+>>>>>>                                   ^
+>>>>>> security/integrity/ima/ima.h:191:2: note: in expansion of macro ‘__ima_hooks’
+>>>>>>   __ima_hooks(__ima_hook_enumify)
+>>>>>>   ^
+>>>>>> In file included from ./arch/arm64/include/asm/acpi.h:15:0,
+>>>>>>                  from ./include/acpi/acpi_io.h:7,
+>>>>>>                  from ./include/linux/acpi.h:47,
+>>>>>>                  from ./include/linux/tpm.h:26,
+>>>>>>                  from security/integrity/ima/ima.h:25,
+>>>>>>                  from security/integrity/ima/ima_fs.c:30:
+>>>>>> ./include/linux/efi.h:1716:2: note: previous definition of ‘NONE’ was here
+>>>>>>   NONE,
+>>>>>>   ^
+>>>>>> scripts/Makefile.build:276: recipe for target 'security/integrity/ima/ima_fs.o' failed
+>>>>>> make[3]: *** [security/integrity/ima/ima_fs.o] Error 1
+>>>>>>
+>>>>>> I dug it and it is the commit 901615cb916d ("tpm: move tpm_chip definition to include/linux/tpm.h")
+>>>>>
+>>>>> This results from a new include in tpm.h:
+>>>>>
+>>>>>   #include <linux/acpi.h>
+>>>>>
+>>>>> Must be fixed either in include/linux/efi.h or security/integrity/ima.h as
+>>>>> those files have a name collision. Makes me wonder why neither has taken
+>>>>> care of prefixing the constants properly.
+>>>>
+>>>> Preferably both subsystems should be fixed with proper 'EFI_' and 'IMA_'
+>>>> prefixes. Defining a constant named as NONE in a non-generic subsystem
+>>>> (e.g. not part of the core data structures of Linux) and especially
+>>>> exporting it to include/linux is not too well considered act.
+>>>>
+>>>
+>>> Fixes for this have already been proposed, and should appear in -next shortly
+>>>
+>>> The EFI one is here
+>>> https://mail.google.com/mail/u/0/#label/linux-efi/FMfcgxwBVgrQRjglPkWRqRqVclGgVDnB
+>>>
+>>
+>> Because of no privilege, the website is denied for me. Anyway, it's nice to have been fixed.
+> 
+> Looks like Ard posted a link to a label in his personal gmail mailbox?
+> 
 
-That's probably why I didn't notice I missed patching tps6598x_exec_cmd() 
-in spite of running and testing the driver for half a year ;-).
+Hmm, it seems that, my bad understanding.
 
-Thanks,
-Nikolaus
+Thanks your reply.
+
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+
