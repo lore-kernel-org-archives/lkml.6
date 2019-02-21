@@ -2,101 +2,139 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-13.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A5B0C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:32:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6334C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:33:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 366602080D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:32:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B00142084D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:33:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728097AbfBURcp (ORCPT
+        id S1728465AbfBURdJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 12:32:45 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43928 "EHLO mx1.redhat.com"
+        Thu, 21 Feb 2019 12:33:09 -0500
+Received: from mga17.intel.com ([192.55.52.151]:3486 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725831AbfBURcp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 12:32:45 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1D71E308FE63;
-        Thu, 21 Feb 2019 17:32:45 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.236])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 797251001DC5;
-        Thu, 21 Feb 2019 17:32:39 +0000 (UTC)
-Date:   Thu, 21 Feb 2019 12:32:37 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v2 11/26] mm: merge parameters for change_protection()
-Message-ID: <20190221173237.GK2813@redhat.com>
-References: <20190212025632.28946-1-peterx@redhat.com>
- <20190212025632.28946-12-peterx@redhat.com>
+        id S1725823AbfBURdI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 12:33:08 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 09:33:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,396,1544515200"; 
+   d="scan'208";a="135310383"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.181])
+  by FMSMGA003.fm.intel.com with ESMTP; 21 Feb 2019 09:33:07 -0800
+Date:   Thu, 21 Feb 2019 09:33:07 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Jann Horn <jannh@google.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
+        x86@kernel.org
+Subject: Re: [PATCH v2] x86/asm: Pin sensitive CR4 bits
+Message-ID: <20190221173307.GB7019@linux.intel.com>
+References: <20190220180934.GA46255@beast>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190212025632.28946-12-peterx@redhat.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 21 Feb 2019 17:32:45 +0000 (UTC)
+In-Reply-To: <20190220180934.GA46255@beast>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 10:56:17AM +0800, Peter Xu wrote:
-> change_protection() was used by either the NUMA or mprotect() code,
-> there's one parameter for each of the callers (dirty_accountable and
-> prot_numa).  Further, these parameters are passed along the calls:
+On Wed, Feb 20, 2019 at 10:09:34AM -0800, Kees Cook wrote:
+> Several recent exploits have used direct calls to the native_write_cr4()
+> function to disable SMEP and SMAP before then continuing their exploits
+> using userspace memory access. This pins bits of cr4 so that they cannot
+> be changed through a common function. This is not intended to be general
+> ROP protection (which would require CFI to defend against properly), but
+> rather a way to avoid trivial direct function calling (or CFI bypassing
+> via a matching function prototype) as seen in:
 > 
->   - change_protection_range()
->   - change_p4d_range()
->   - change_pud_range()
->   - change_pmd_range()
->   - ...
+> https://googleprojectzero.blogspot.com/2017/05/exploiting-linux-kernel-via-packet.html
+> (https://github.com/xairy/kernel-exploits/tree/master/CVE-2017-7308)
 > 
-> Now we introduce a flag for change_protect() and all these helpers to
-> replace these parameters.  Then we can avoid passing multiple parameters
-> multiple times along the way.
+> The goals of this change:
+>  - pin specific bits (SMEP, SMAP, and UMIP) when writing cr4.
+>  - avoid setting the bits too early (they must become pinned only after
+>    first being used).
+>  - pinning mask needs to be read-only during normal runtime.
+>  - pinning needs to be rechecked after set to avoid jumps into the middle
+>    of the function.
 > 
-> More importantly, it'll greatly simplify the work if we want to
-> introduce any new parameters to change_protection().  In the follow up
-> patches, a new parameter for userfaultfd write protection will be
-> introduced.
+> Using __ro_after_init on the mask is done so it can't be first disabled
+> with a malicious write. And since it becomes read-only, we must avoid
+> writing to it later (hence the check for bits already having been set
+> instead of unconditionally writing to the mask).
 > 
-> No functional change at all.
+> The use of volatile is done to force the compiler to perform a full reload
+> of the mask after setting cr4 (to protect against just jumping into the
+> function past where the masking happens; we must check that the mask was
+> applied after we do the set). Due to how this function can be built by the
+> compiler (especially due to the removal of frame pointers), jumping into
+> the middle of the function frequently doesn't require stack manipulation
+> to construct a stack frame (there may only a retq without pops, which is
+> sufficient for use with exploits like timer overwrites mentioned above).
 > 
-> Signed-off-by: Peter Xu <peterx@redhat.com>
-
-It would have been nice if this was a coccinelle patch, easier to
-review.
-
-Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
-
+> For example, without the recheck, the function may appear as:
+> 
+>    native_write_cr4:
+>       mov [pin], %rbx
+>       or  %rbx, %rdi
+>    1: mov %rdi, %cr4
+>       retq
+> 
+> The masking "or" could be trivially bypassed by just calling to label "1"
+> instead of "native_write_cr4". (CFI will force calls to only be able to
+> call into native_write_cr4, but CFI and CET are uncommon currently.)
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 > ---
->  include/linux/huge_mm.h |  2 +-
->  include/linux/mm.h      | 14 +++++++++++++-
->  mm/huge_memory.c        |  3 ++-
->  mm/mempolicy.c          |  2 +-
->  mm/mprotect.c           | 29 ++++++++++++++++-------------
->  5 files changed, 33 insertions(+), 17 deletions(-)
+> v2: fix think-o in cr4_pin recheck (Jann Horn)
+> ---
+>  arch/x86/include/asm/special_insns.h | 11 +++++++++++
+>  arch/x86/kernel/cpu/common.c         | 12 +++++++++++-
+>  2 files changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
+> index 43c029cdc3fe..4c26004ed5d4 100644
+> --- a/arch/x86/include/asm/special_insns.h
+> +++ b/arch/x86/include/asm/special_insns.h
+> @@ -72,9 +72,20 @@ static inline unsigned long native_read_cr4(void)
+>  	return val;
+>  }
+>  
+> +extern volatile unsigned long cr4_pin;
+> +
+>  static inline void native_write_cr4(unsigned long val)
+>  {
+> +again:
+> +	val |= cr4_pin;
+>  	asm volatile("mov %0,%%cr4": : "r" (val), "m" (__force_order));
+> +	/*
+> +	 * If the MOV above was used directly as a ROP gadget we can
+> +	 * notice the lack of pinned bits in "val" and start the function
+> +	 * from the beginning to gain the cr4_pin bits for sure.
+> +	 */
+> +	if (WARN_ONCE((val & cr4_pin) != cr4_pin, "cr4 bypass attempt?!\n"))
 
-[...]
+Printing what bits diverged would be helpful in the unlikely event that the
+WARN_ONCE triggers.  "cr4 bypass attempt" is probably only meaningful to
+people that are already familiar with the code, e.g.:
+
+	if (WARN_ONCE((val & cr4_pin) != cr4_pin,
+	    "Attempt to unpin cr4 bits: %lx, cr4 bypass attack?!", ~val & cr4_pin))
+
+
+> +		goto again;
+>  }
+>  
+>  #ifdef CONFIG_X86_64
