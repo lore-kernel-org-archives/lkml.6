@@ -2,123 +2,102 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B820C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:53:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F234C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEFCC20880
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:53:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lFOKjWte"
+	by mail.kernel.org (Postfix) with ESMTP id 2690B214AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:54:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbfBUIxh (ORCPT
+        id S1727324AbfBUIyI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 03:53:37 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46372 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726354AbfBUIxg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 03:53:36 -0500
-Received: by mail-lj1-f194.google.com with SMTP id v16so23256202ljg.13
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 00:53:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yGx0zil6yj1oC8ODCBCtzEQX/NhRvGXa2b8pEHdk1gA=;
-        b=lFOKjWteRFOgtiQf50M8NxaZ55EHY9sVIXlwAbZcIyevZ/E2x5jWloSXpTcFLR0C0v
-         srat2zbdFHSq1VIy/3dJF4FXyZ8QNXjAtstWuDXjaxzgA04YSA9sphtMGZVcrDj/g2/b
-         GoSCGfKBZCpyfaI2G6RNSFV18ra5SDwcpwpcD1fRd7kOggeLIYaq6c0/y5/BGjKluKY1
-         TToOLSJYWIfU8MjgxvCwaMfD/hIaLbYV+Goq/LnGqzH1luttTNfDILTvIKt2/D+BBaHU
-         gUCwwGUnh19V7ej/jP3M/Qdy0Lle/MJDxcC+XHXvYSgpZGITkzwTOke6nvnqiJ1TJFSN
-         UBQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yGx0zil6yj1oC8ODCBCtzEQX/NhRvGXa2b8pEHdk1gA=;
-        b=DnpraME0nccoP339UwB89t9CWcQ2UnOaF6hIj2wGnBJ+u+b32B4me6oiqDY2JiWhbW
-         36Cc5rcTkVIu0SUUO6aNPIR6JQJgEO2OtjICnU3gHL6x2XaHStFEceC7FwQ9rmqcCrrE
-         +C+PLERRldKCX+HRumvL+YlIXo8WMMKGFNgQCv8iopEFUV3jHjfg7AOtzBEg2GzxIh1C
-         RD08Ygj0ox1xAzokkyRoXxQ7aydN+ssLHZwue1HxyC73VPglrbyqa5VlNlsfROjs7JVR
-         QYv/wF4NylGAQ11Ce67ph2ds/R8yf38Q4aTMEtLdoKuA2JePbMKeKoP4oUc8I/QM76MX
-         Kvpw==
-X-Gm-Message-State: AHQUAuYk3h15zHwchDGE4EMmj8FLU2sPNy1AzqZ5pECDx+BsXastsNmk
-        ng2c5sbEKEMhr4NIfqldDis=
-X-Google-Smtp-Source: AHgI3Ibp0C0952O0jpOKzEzl1nV9ZgM8k64eiX7Zgujsf7sCD3h/+s6hH+VZ6BFfeHSX8j4hBapN+g==
-X-Received: by 2002:a2e:2d11:: with SMTP id t17-v6mr23215205ljt.159.1550739214373;
-        Thu, 21 Feb 2019 00:53:34 -0800 (PST)
-Received: from localhost ([188.162.52.7])
-        by smtp.gmail.com with ESMTPSA id d70sm6062852lfe.14.2019.02.21.00.53.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Feb 2019 00:53:33 -0800 (PST)
-From:   Yury Norov <yury.norov@gmail.com>
-X-Google-Original-From: Yury Norov <ynorov@marvell.com>
-Date:   Thu, 21 Feb 2019 11:53:31 +0300
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
-        akpm@linux-foundation.org, Arnd Bergmann <arnd@arndb.de>,
-        dmitry.torokhov@gmail.com, keescook@chromium.org,
-        willy@infradead.org, mpe@ellerman.id.au, linux@rasmusvillemoes.dk,
-        penguin-kernel@I-love.SAKURA.ne.jp, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] lib/test_bitmap: switch test_bitmap_parselist to
- ktime_get()
-Message-ID: <20190221085331.GA2666@yury-thinkpad>
-References: <20190220142048.GA20929@yury-thinkpad>
- <mhng-e872dce6-2abe-467b-b1c1-82a59d4c93e2@palmer-si-x1c4>
+        Thu, 21 Feb 2019 03:54:08 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4244 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726354AbfBUIyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 03:54:08 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id E324495B190FBFD9B5F5;
+        Thu, 21 Feb 2019 16:53:58 +0800 (CST)
+Received: from [127.0.0.1] (10.177.96.203) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Thu, 21 Feb 2019
+ 16:53:56 +0800
+Subject: Re: [RFC PATCH] scsi: fix oops in scsi_uninit_cmd()
+To:     Christoph Hellwig <hch@infradead.org>,
+        Bart Van Assche <bvanassche@acm.org>
+CC:     <martin.petersen@oracle.com>, <jejb@linux.vnet.ibm.com>,
+        Jens Axboe <axboe@kernel.dk>, <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <hare@suse.com>,
+        <dan.j.williams@intel.com>, <jthumshirn@suse.de>,
+        Steffen Maier <maier@linux.ibm.com>
+References: <20190219072743.13606-1-yanaijie@huawei.com>
+ <1550595388.31902.133.camel@acm.org> <20190220151836.GA11695@infradead.org>
+From:   Jason Yan <yanaijie@huawei.com>
+Message-ID: <10ea95ec-e259-3511-44c4-58e4d255eb9f@huawei.com>
+Date:   Thu, 21 Feb 2019 16:53:54 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <mhng-e872dce6-2abe-467b-b1c1-82a59d4c93e2@palmer-si-x1c4>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190220151836.GA11695@infradead.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.96.203]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 03:10:44PM -0800, Palmer Dabbelt wrote:
-> On Wed, 20 Feb 2019 06:20:48 PST (-0800), yury.norov@gmail.com wrote:
-> > On Wed, Feb 20, 2019 at 03:52:36PM +0200, Andy Shevchenko wrote:
-> > > On Wed, Feb 20, 2019 at 03:51:01PM +0200, Andy Shevchenko wrote:
-> > > > On Wed, Feb 20, 2019 at 11:37:03AM +0300, Yury Norov wrote:
-> > > > > test_bitmap_parselist currently uses get_cycles which is not
-> > > > > implemented on some platforms, so use ktime_get() instead.
-> > > >
-> > > > This sounds like a fix that should go first in the series.
-> > > 
-> > > Ah, okay, it's already first for test module.
-> > > Perhaps Fixes tag and actually one or more examples of such architectures?
-> > 
-> > Hi Andy, thanks for your time on it.
-> > 
-> > Only arm, arm64, openrisc, riscv and sparc64 #define get_cycles.
-> > So IIUC, others take stub from include/asm-generic/timex.h.
+Hi, Christoph
+
+On 2019/2/20 23:18, Christoph Hellwig wrote:
+> [fullquote removed, please follow proper mail etiquette]
 > 
-> Should we (RISC-V) be doing something else?  It seems odd to be in such a
-> minority here, but we do have a ISA-mandated timer so the get_cycles()
-> implementation is super easy.
+> On Tue, Feb 19, 2019 at 08:56:28AM -0800, Bart Van Assche wrote:
+>> regression in the SCSI sd driver due to the switch from the legacy block
+>> layer to scsi-mq. The above patch introduces two atomic operations in the
+>> hot path and hence would introduce a performance regression. I think this
+>> can be avoided by making sure that sd_uninit_command() gets called before
+>> the request tag is freed. What changes would be required to make the block
+>> layer core call sd_uninit_command() before the request tag is freed? Would
+>> introducing prep_rq_fn and unprep_rq_fn callbacks in struct blk_mq_ops and
+>> making sure that the SCSI core sets these callback function pointers
+>> appropriately be sufficient? Would such a change allow to simplify the NVMe
+>> initiator driver? Are there any alternatives to this approach that are more
+>> elegant?
+> 
+> Additional indirect calls in the I/O fast path is something I'd rather
+> avoid.  But I don't fully understand the problem yet - where do
+> we release a disk reference from blk_update_request?  
 
-I think you are completely fine because you are one of those who
-implement get_cycles().
+When userspace close the fd after blk_update_request() and before
+scsi_mq_uninit_cmd(), a disk reference will be released. It is not the
+blk_update_request() directly released it.
 
-get_cycles() is the problem for those who use it in generic code
-because their code surprisingly gets broken on some machines while
-works OK on others. This is not a problem of any specific arch.
+close
+    ->sd_release
+       ->scsi_disk_put
+         ->scsi_disk_release
+           ->disk->private_data = NULL;
 
-For long term, we should inspect the non-arch code and replace 
-get_cycles() with ktime_get() where appropriate, and avoid
-introducing new get_cycles() uses.
- 
-> > sparc32, xtensa, m68k, um, and in some cases x86, mips and nios2
-> > provide zero-stubs explicitly.
-> > 
-> > Yury
-> > 
-> > > --
-> > > With Best Regards,
-> > > Andy Shevchenko
-> > > 
+The userspace can close the fd because blk_update_request() returned the
+last IO , the userspace application does not have to stuck on read() or
+write(). The window is very small, but it can be reproduce every day
+in our testcases. So I'm very curious why. One possible explanation is
+that we enabled kernel preempt(CONFIG_PREEMPT).
+
+And why can't
+> we move that release to __blk_mq_end_request?
+> 
+>>
+>> Thanks,
+>>
+>> Bart.
+> ---end quoted text---
+> 
+> .
+> 
+
