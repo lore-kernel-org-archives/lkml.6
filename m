@@ -2,163 +2,189 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0084C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:54:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C2FC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:56:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 870AA20700
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:54:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC87E2075A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:56:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ycon2hl3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728082AbfBUOyE (ORCPT
+        id S1727611AbfBUO4q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:54:04 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:42365 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726969AbfBUOyE (ORCPT
+        Thu, 21 Feb 2019 09:56:46 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40001 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbfBUO4p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:54:04 -0500
-Received: by mail-io1-f70.google.com with SMTP id f10so1581880ioj.9
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 06:54:03 -0800 (PST)
+        Thu, 21 Feb 2019 09:56:45 -0500
+Received: by mail-wr1-f65.google.com with SMTP id q1so30777011wrp.7
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 06:56:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=f4QPyLw7DhRZfGIHwG3TqBHT9onIr8H9EZ1us2ZyZuY=;
+        b=Ycon2hl3zVQ4VtLp7RPIBLG8Ahj0gS+1MXFLixe0BfsxISShuEt0xF+pddbV7Pt/+/
+         FJFSsYqC5q7m/lrMuzNGzHQHYxhiTQLxDnzE7U68uFBarD+GqRzqXDl7Xovi4QDsxdBf
+         /4D3bJk7PKF3r/37roWYAlvTVXefcZXrobE6isuPavMrp0kVE/0lx1aBjNFPDvJUPwzv
+         ELYFb5HxZjg9ZUvNyBhLX7z5rm6Z37fRSuVX5vLnXFbUCMFXgPpC/Vd9PXL06oePVFxB
+         KW3ve+zUXk6u1h9F++2PzKyF6C1ezZcHGRlOOyMvk+JiYqQVIfCcN98fpMxjEuRbc2qm
+         UBWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=7Mfsl0pOD7hijo3ZX4ghJMDojQUtTjQ9H7NHgnJ1oy4=;
-        b=ZmdYRqpQ8NOeDRfhjMf+7iLPfh1QE7vzokG3lAaW+bv6mmqQswEbjXk91x5ZxysOg3
-         Ao2cqn4gAg4wPQEk0tP+HCKP6U2Jcp93AXw4qcdhXyhCHiS6L0J4fsjQGFECIgeihDRg
-         8rbzi1eMh1JFFiO+XwlHqcALzW9IwYxZCc8CIZR8fjnmNhbfbMc9b1EHv8q3Dh3XExW/
-         wjGGQsDBhaHSUDPrXX+GFNwPSHARJkUeuZp1ILCP3If9Q9p918BGwtZu10xoufy7m0qY
-         TY5uC2URizxMaEe7DgpezP/+rTsZFWSCiCQL8Lfyi/dyQA9w69Wm73/AwJJBdsgovNgM
-         tzoQ==
-X-Gm-Message-State: AHQUAua0Z+LqWNVNvOfaqky7OfVi2ZLltLvEDMD25Vxz3lH6wm7YQehL
-        ilpsEjEvHVDVu4ey8i9HQVM316uVlCq+qtPUMR0VW2hrZZiD
-X-Google-Smtp-Source: AHgI3IaG2GGb/XtG97Xtk1Ic9BdhhWzHcYhhzZkGYIZrgyL23DgzHb3F5T32OW1fEWOiMi+RFdhdYEUKpUpP7+bRnG9GoHU0HDsC
-MIME-Version: 1.0
-X-Received: by 2002:a5d:8b47:: with SMTP id c7mr1864621iot.21.1550760843370;
- Thu, 21 Feb 2019 06:54:03 -0800 (PST)
-Date:   Thu, 21 Feb 2019 06:54:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000336578058268a553@google.com>
-Subject: general protection fault in relay_switch_subbuf
-From:   syzbot <syzbot+8e789999f280ccd6930f@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, ebiggers@google.com,
-        jrdr.linux@gmail.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, rientjes@google.com,
-        syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=f4QPyLw7DhRZfGIHwG3TqBHT9onIr8H9EZ1us2ZyZuY=;
+        b=b4nxL7ant6lyGAly4ltaPF7OWoJW4GLPpWd95qBsKs6NA400h8L1+pg+VlMTjFSbDP
+         L/YeUw0HX5/EmkF/gT+xv4ZQ+p+Jp6x0IFNYfknUrhnWRC4bqXasfpbRE+OX5nX4PaDz
+         Ve55/XITkNXGub845pYLc4TtGdfFQnrRJf4Sa1xU7F4oodBYzOUnZkcHyTHH702XGWmy
+         69d8W86HI4QokR9tHTyzdZ41bgTLeam5X8fPxMP6TMN0s30S3Ke1rDWLylmS7/xkKqdS
+         gTtLffJMaJ+1wlOkLLhhVN0S80bI/gTUZsQuHZwxeXnPbC8gO78fh6JwafRS1G1aEOWm
+         OT5Q==
+X-Gm-Message-State: AHQUAuaVecOob8YVh2D4kwso3LTNiA7xekn3v9gnyU1sTnIGn7qs51FR
+        4V/Y/yy3Wu6DFQ/x13Az3kvjPQ==
+X-Google-Smtp-Source: AHgI3IZPyyKiY+OXr+Zs0yoeAfKEiozHPfPytBblgujLUpeTEAesIUQTevJXkBlqQtvi83fkNC+E+w==
+X-Received: by 2002:adf:9167:: with SMTP id j94mr30344442wrj.106.1550761003712;
+        Thu, 21 Feb 2019 06:56:43 -0800 (PST)
+Received: from clegane.local (222.51.92.92.rev.sfr.net. [92.92.51.222])
+        by smtp.gmail.com with ESMTPSA id k2sm6309181wmj.45.2019.02.21.06.56.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Feb 2019 06:56:43 -0800 (PST)
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     rjw@rjwysocki.net
+Cc:     ulf.hansson@linaro.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] cpuidle: Add a predict callback for the governors
+Date:   Thu, 21 Feb 2019 15:56:31 +0100
+Message-Id: <20190221145631.26356-1-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Predicting the next event on the current CPU is implemented in the
+idle state selection function, thus the selection logic and the
+prediction are tied together and it is hard to decorrelate both.
 
-syzbot found the following crash on:
+The following change introduces the cpuidle function to give the
+opportunity to the governor to store the guess estimate of the
+different source of wakeup and then reuse them in the selection
+process. Consequently we end up with two separate operations clearly
+identified.
 
-HEAD commit:    c04e2a780caf Merge tag 'fsnotify_for_v5.0-rc4' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=133424c0c00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=505743eba4e4f68
-dashboard link: https://syzkaller.appspot.com/bug?extid=8e789999f280ccd6930f
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+As the next events are stored in the cpuidle device structure it is
+easy to propagate them in the different governor callbacks.
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+8e789999f280ccd6930f@syzkaller.appspotmail.com
-
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 11600 Comm: syz-executor2 Not tainted 5.0.0-rc3+ #42
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:relay_switch_subbuf+0x27a/0xad0 kernel/relay.c:753
-Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 e2 07 00 00 48 b8 00 00 00 00  
-00 fc ff df 48 8b 4b 58 48 8d 79 50 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
-85 c9 07 00 00 48 ba 00 00 00 00 00 fc ff df 49 8b
-RSP: 0018:ffff88805e3ef790 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: ffff88804bc7db40 RCX: 0000000000000000
-RDX: 000000000000000a RSI: ffffffff8182d552 RDI: 0000000000000050
-RBP: ffff88805e3ef850 R08: ffff8880637f0600 R09: fffffbfff133b0b1
-R10: ffff88805e3ef850 R11: ffffffff899d8587 R12: 0000000000000000
-R13: ffff8880a7e05e00 R14: 0000000000000000 R15: 0000000000000000
-FS:  00007f1fdbddd700(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000a50489 CR3: 00000000943a0000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  relay_flush kernel/relay.c:881 [inline]
-  relay_flush+0x1c4/0x280 kernel/relay.c:865
-  __blk_trace_startstop.isra.0+0x28b/0x8b0 kernel/trace/blktrace.c:668
-  blk_trace_ioctl+0x1c6/0x300 kernel/trace/blktrace.c:727
-  blkdev_ioctl+0x141/0x2120 block/ioctl.c:591
-  block_ioctl+0xee/0x130 fs/block_dev.c:1914
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:509 [inline]
-  do_vfs_ioctl+0x107b/0x17d0 fs/ioctl.c:696
-  ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
-  __do_sys_ioctl fs/ioctl.c:720 [inline]
-  __se_sys_ioctl fs/ioctl.c:718 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
-  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x458099
-Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f1fdbddcc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000458099
-RDX: 0000000000000000 RSI: 0000000000001275 RDI: 0000000000000005
-RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f1fdbddd6d4
-R13: 00000000004bf595 R14: 00000000004d0e88 R15: 00000000ffffffff
-Modules linked in:
-kobject: 'loop4' (000000005903bd4d): kobject_uevent_env
-kobject: 'loop4' (000000005903bd4d): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
----[ end trace d4380d594e5099d1 ]---
-RIP: 0010:relay_switch_subbuf+0x27a/0xad0 kernel/relay.c:753
-Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 e2 07 00 00 48 b8 00 00 00 00  
-00 fc ff df 48 8b 4b 58 48 8d 79 50 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
-85 c9 07 00 00 48 ba 00 00 00 00 00 fc ff df 49 8b
-kobject: 'loop0' (0000000083b22ec7): kobject_uevent_env
-kobject: 'loop0' (0000000083b22ec7): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-Unknown ioctl 19304
-kobject: 'loop3' (0000000050016e38): kobject_uevent_env
-RSP: 0018:ffff88805e3ef790 EFLAGS: 00010206
-kobject: 'loop3' (0000000050016e38): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-RAX: dffffc0000000000 RBX: ffff88804bc7db40 RCX: 0000000000000000
-kobject: 'loop1' (000000002962ffee): kobject_uevent_env
-kobject: 'loop1' (000000002962ffee): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-RDX: 000000000000000a RSI: ffffffff8182d552 RDI: 0000000000000050
-kobject: 'loop4' (000000005903bd4d): kobject_uevent_env
-kobject: 'loop4' (000000005903bd4d): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-RBP: ffff88805e3ef850 R08: ffff8880637f0600 R09: fffffbfff133b0b1
-kobject: 'loop4' (000000005903bd4d): kobject_uevent_env
-R10: ffff88805e3ef850 R11: ffffffff899d8587 R12: 0000000000000000
-kobject: 'loop4' (000000005903bd4d): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-R13: ffff8880a7e05e00 R14: 0000000000000000 R15: 0000000000000000
-FS:  00007f1fdbddd700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000625208 CR3: 00000000943a0000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/cpuidle/cpuidle.c | 16 ++++++++++++++++
+ include/linux/cpuidle.h   | 16 +++++++++++++++-
+ kernel/sched/idle.c       |  5 +++++
+ 3 files changed, 36 insertions(+), 1 deletion(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
+index 7f108309e871..fc6976bd702b 100644
+--- a/drivers/cpuidle/cpuidle.c
++++ b/drivers/cpuidle/cpuidle.c
+@@ -296,6 +296,22 @@ int cpuidle_enter_state(struct cpuidle_device *dev, struct cpuidle_driver *drv,
+ 	return entered_state;
+ }
+ 
++/**
++ * cpuidle_predict - guess estimate the next events on the current CPU
++ *
++ * @drv: the cpuidle driver
++ * @dev: the cpuidle device
++ *
++ * Returns 0 on success, < 0 in case of error. The error code depends on
++ * the governor.
++ */
++int cpuidle_predict(struct cpuidle_driver *drv, struct cpuidle_device *dev)
++{
++	if (cpuidle_curr_governor->predict)
++		return cpuidle_curr_governor->predict(drv, dev);
++	return 0;
++}
++
+ /**
+  * cpuidle_select - ask the cpuidle framework to choose an idle state
+  *
+diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
+index 3b39472324a3..8aba8b0a952d 100644
+--- a/include/linux/cpuidle.h
++++ b/include/linux/cpuidle.h
+@@ -77,6 +77,13 @@ struct cpuidle_device_kobj;
+ struct cpuidle_state_kobj;
+ struct cpuidle_driver_kobj;
+ 
++struct cpuidle_predict {
++	ktime_t next_hrtimer;
++	ktime_t next_timer;
++	ktime_t next_irq;
++	ktime_t next_resched;
++};
++
+ struct cpuidle_device {
+ 	unsigned int		registered:1;
+ 	unsigned int		enabled:1;
+@@ -89,6 +96,7 @@ struct cpuidle_device {
+ 	struct cpuidle_state_kobj *kobjs[CPUIDLE_STATE_MAX];
+ 	struct cpuidle_driver_kobj *kobj_driver;
+ 	struct cpuidle_device_kobj *kobj_dev;
++	struct cpuidle_predict predict;
+ 	struct list_head 	device_list;
+ 
+ #ifdef CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED
+@@ -124,7 +132,8 @@ struct cpuidle_driver {
+ extern void disable_cpuidle(void);
+ extern bool cpuidle_not_available(struct cpuidle_driver *drv,
+ 				  struct cpuidle_device *dev);
+-
++extern int cpuidle_predict(struct cpuidle_driver *drv,
++			   struct cpuidle_device *dev);
+ extern int cpuidle_select(struct cpuidle_driver *drv,
+ 			  struct cpuidle_device *dev,
+ 			  bool *stop_tick);
+@@ -158,6 +167,9 @@ static inline void disable_cpuidle(void) { }
+ static inline bool cpuidle_not_available(struct cpuidle_driver *drv,
+ 					 struct cpuidle_device *dev)
+ {return true; }
++static inline int cpuidle_predict(struct cpuidle_driver *drv,
++				  struct cpuidle_device *dev)
++{return 0; }
+ static inline int cpuidle_select(struct cpuidle_driver *drv,
+ 				 struct cpuidle_device *dev, bool *stop_tick)
+ {return -ENODEV; }
+@@ -241,6 +253,8 @@ struct cpuidle_governor {
+ 	void (*disable)		(struct cpuidle_driver *drv,
+ 					struct cpuidle_device *dev);
+ 
++	int  (*predict)		(struct cpuidle_driver *drv,
++ 					struct cpuidle_device *dev);
+ 	int  (*select)		(struct cpuidle_driver *drv,
+ 					struct cpuidle_device *dev,
+ 					bool *stop_tick);
+diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
+index f5516bae0c1b..e0e9a81cfec3 100644
+--- a/kernel/sched/idle.c
++++ b/kernel/sched/idle.c
+@@ -185,6 +185,11 @@ static void cpuidle_idle_call(void)
+ 	} else {
+ 		bool stop_tick = true;
+ 
++		/*
++		 * Guess estimate the next events on the current CPU
++		 */
++		cpuidle_predict(drv, dev);
++
+ 		/*
+ 		 * Ask the cpuidle framework to choose a convenient idle state.
+ 		 */
+-- 
+2.17.1
+
