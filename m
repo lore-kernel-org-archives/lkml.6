@@ -2,122 +2,142 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8CEC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BCF8C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:09:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8690E2086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:08:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF3312086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:09:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="q0w+laaM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ir3kaq5O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726648AbfBUBI4 (ORCPT
+        id S1726862AbfBUBJ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 20:08:56 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:42902 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726090AbfBUBI4 (ORCPT
+        Wed, 20 Feb 2019 20:09:28 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34854 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726090AbfBUBJ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 20:08:56 -0500
-Received: by mail-qt1-f195.google.com with SMTP id b8so29621348qtr.9
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 17:08:55 -0800 (PST)
+        Wed, 20 Feb 2019 20:09:27 -0500
+Received: by mail-pl1-f193.google.com with SMTP id p19so1984838plo.2;
+        Wed, 20 Feb 2019 17:09:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=LgKFH1mGi8c00OC5CaAghfF2/QymbWXD9Kas2gMOlVs=;
-        b=q0w+laaMsCEL6A/1PgH9jnG3QJWlLo2ITG/6YD8f0I8tidgiTjb55RhFpOgRi5d4Q/
-         eT9p0ByZyVxZfv+gJfoIPxKRY1D3YUzfPd9P0i1XuFuHzN6qL78Y8YB8pTqoJk8sSCFB
-         aNJ1VrSsuADQOKM6i0dWqp9tzeIjPUnu4UhZphutYwoL2kCZ5D5Go01kask6o1Qlbm6S
-         92c0Np3OLeAvbBn04jFr9TyDxZK0IJ/LoKwIm8IC9Xatgs22GmUb/ZE1Hg2zFESqfxQx
-         YjccqC3vaWYYeRe3XaKN2Ix+KtN7e1QU5/sAPaJnh1iUBm1GI/brMx1IMJg9fO1bD+Ry
-         ovsw==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XazLWlV0OGpxiqeWsTijGEnFhzyXIMqtdbgnm6gIsFM=;
+        b=Ir3kaq5OJ38gwHc9MbQ93aEeS78o9Jb4ne68ygRM17PEd63kJOo+HfHEWvo2v6rFiJ
+         KNYERTWt52IYRarCIpcC1mVk1oyBJSudCfe/mrer7nGIXxOQfMaIBZgPLS5E0qfkrTuR
+         Ufcc+iHE+jP6nCO9LsKxSD5q7SBg9FiHsm2wuwXwH1rl5CqFTnOIsTsRYhJM99KY7ViM
+         RDtd512mwClfGkHF+cFrWtS4roAOGZlMoAUDdXJCtPTQKqqgDUvg55Iz6UpGom9V5/tM
+         rYjA6mpl3jFJNGylRInO0RX6Q8KhsMw2lnhEeJib7zATI8G10gN3XcdVfuDdZ2ooSgqO
+         Krag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=LgKFH1mGi8c00OC5CaAghfF2/QymbWXD9Kas2gMOlVs=;
-        b=t7V74mQqodDKw1qYBDuHNXmF70DmckR8S8uVn9TOXUipUFGa+tv93CAFd5i8AuX7ww
-         uOZJ+7rvownyOZMY/IbsJLj5aqxNA5Od3PT1puvJuD+WnDkYTUlINliiWSontpmYe+rH
-         QBiSICGuu+B1uBRIxrWy5xCTUWg8HZA+XCV/AVcC2BzWvhkl8UQjFnmZBYx5nRmDJKHb
-         qHt/9ZRuHgt0p6Wqc+KZCK6g4jK7NXNGJAIA1LXZ0INXoObWksuWwBgSChumYKdEj1CM
-         3Tf1USovWtT1pYNd23zhGMk3ei4IphW+/xa9GA7PPg7dxql0i5+KJk5kaKaxXupsj8o8
-         uoPw==
-X-Gm-Message-State: AHQUAub8B/aUtQxCjIyAAr7ro5S0UiduuwfS0HUFz+KQ/HrJNRZo6iK7
-        Eo323Gq0xS7UwSk/5DuBK9IgqZUz/4o=
-X-Google-Smtp-Source: AHgI3IYy3raoHx+Iskr/hYqAnmynUTEF231M3/+3RbDjlKaPoI058zx9Wua90jyIaG1/0a69PKV0dQ==
-X-Received: by 2002:ac8:35f8:: with SMTP id l53mr30259475qtb.15.1550711335043;
-        Wed, 20 Feb 2019 17:08:55 -0800 (PST)
-Received: from ovpn-120-150.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id q184sm10504681qkb.23.2019.02.20.17.08.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Feb 2019 17:08:54 -0800 (PST)
-From:   Qian Cai <cai@lca.pw>
-To:     akpm@linux-foundation.org
-Cc:     dave@stgolabs.net, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
-Subject: [PATCH -next] mm/debug: use lx% for atomic64_read() on ppc64le
-Date:   Wed, 20 Feb 2019 20:08:19 -0500
-Message-Id: <20190221010819.92039-1-cai@lca.pw>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XazLWlV0OGpxiqeWsTijGEnFhzyXIMqtdbgnm6gIsFM=;
+        b=tQD+ULYz3cCSfjmpAWczOy06LwI645/UfJoHcL8Z3wmFPfCRn9wTNR+7d/aqvpVY8Z
+         VOtoy+DS1U9IfoBh0LdBfDNKOvcRfz31HXaHOGXocNFqfckbf7V5YtBoqMRQkCACwBwz
+         q4xMoaE2RMjc14AlobwUVWCsdDk9WG+MeOkUg+QKtd9KttqT6/OKc37ZqZn8X3MvsN6w
+         sT/fevD+Vi6dLpHk/IrD5wY2GSvp+eCq/goYKDaS9/f5u7AaqA+k6VE1/2AHpYSMuyFs
+         DMdOchW5j1CZqG0LaBorNaUQqnLhDkcz4QGx8b1trpVOXiWXxkvXLwpHujkumYN5cxzV
+         51Xg==
+X-Gm-Message-State: AHQUAuYZsRn4/OPB4riM8r26HObgyIC7ZRHoyVBB/EX+Qhutk+qs8T10
+        4hhpSSrfAEfNaE3cOkf8APk=
+X-Google-Smtp-Source: AHgI3IZYhlTQw7CzP9sWgh7rfxqpLNlgl3p6nVnERXteNg31B4yHe6oKSgrg84EyP7emiFpwT7JXKQ==
+X-Received: by 2002:a17:902:9a95:: with SMTP id w21mr39384222plp.118.1550711366749;
+        Wed, 20 Feb 2019 17:09:26 -0800 (PST)
+Received: from icarus ([2001:268:c0a3:577d:c70:4af9:86e2:2])
+        by smtp.gmail.com with ESMTPSA id d23sm26808746pfn.180.2019.02.20.17.09.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Feb 2019 17:09:25 -0800 (PST)
+Date:   Thu, 21 Feb 2019 10:09:54 +0900
+From:   William Breathitt Gray <vilhelm.gray@gmail.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Patrick Havelange <patrick.havelange@essensium.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Esben Haabendal <esben@haabendal.dk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pwm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 5/8] iio/counter: add FlexTimer Module Quadrature decoder
+ counter driver
+Message-ID: <20190221010931.GA3471@icarus>
+References: <20190218140321.19166-1-patrick.havelange@essensium.com>
+ <20190218140321.19166-5-patrick.havelange@essensium.com>
+ <20190220164154.00547a77@archlinux>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190220164154.00547a77@archlinux>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-atomic64_read() on ppc64le returns "long int" while "long long" seems on
-all other arches, so deal the special case for ppc64le.
+On Wed, Feb 20, 2019 at 04:41:54PM +0000, Jonathan Cameron wrote:
+> On Mon, 18 Feb 2019 15:03:18 +0100
+> Patrick Havelange <patrick.havelange@essensium.com> wrote:
+> 
+> > This driver exposes the counter for the quadrature decoder of the
+> > FlexTimer Module, present in the LS1021A soc.
+> > 
+> > Signed-off-by: Patrick Havelange <patrick.havelange@essensium.com>
+> > Reviewed-by: Esben Haabendal <esben@haabendal.dk>
+> Given you cc'd William, I'm guessing you know about the counter
+> subsystem effort.  I would really rather not take any drivers
+> into IIO if we have any hope of getting that upstreamed soon
+> (which I personally think we do and should!).  The reason is
+> we end up having to maintain old ABI just because someone might be using
+> it and it makes the drivers very messy.
+> 
+> I'll review as is though as may be there are some elements that will
+> cross over.
+> 
+> Comments inline.  William: Looks like a straight forward conversion if
+> it makes sense to get this lined up as part of your initial submission?
+> You have quite a few drivers so I wouldn't have said it needs to be there
+> at the start, but good to have it soon after.
+> 
+> Jonathan
 
-In file included from ./include/linux/printk.h:7,
-                 from ./include/linux/kernel.h:15,
-                 from mm/debug.c:9:
-mm/debug.c: In function 'dump_mm':
-./include/linux/kern_levels.h:5:18: warning: format '%llx' expects
-argument of type 'long long unsigned int', but argument 19 has type
-'long int' [-Wformat=]
- #define KERN_SOH "\001"  /* ASCII Start Of Header */
-                  ^~~~~~
-./include/linux/kern_levels.h:8:20: note: in expansion of macro
-'KERN_SOH'
- #define KERN_EMERG KERN_SOH "0" /* system is unusable */
-                    ^~~~~~~~
-./include/linux/printk.h:297:9: note: in expansion of macro 'KERN_EMERG'
-  printk(KERN_EMERG pr_fmt(fmt), ##__VA_ARGS__)
-         ^~~~~~~~~~
-mm/debug.c:133:2: note: in expansion of macro 'pr_emerg'
-  pr_emerg("mm %px mmap %px seqnum %llu task_size %lu\n"
-  ^~~~~~~~
-mm/debug.c:140:17: note: format string is defined here
-   "pinned_vm %llx data_vm %lx exec_vm %lx stack_vm %lx\n"
-              ~~~^
-              %lx
+I agree, we should try to merge this as part of Counter subsystem
+introduction rather than as another IIO Counter driver. As we determined
+when adding support for the STM32 timers, the existing IIO Counter API
+is fundamentally unsuitable for representing counter devices. So
+regardless of how a new Counter API is merged, the existing IIO Counter
+API must be deprecated.
 
-Fixes: 70f8a3ca68d3 ("mm: make mm->pinned_vm an atomic64 counter")
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- mm/debug.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Patrick, I apologize for the confusion this has caused. Would you be
+able to convert this driver to use the proposed Counter subsystem API
+from this patchset that I believe you encountered before:
+https://marc.info/?l=linux-arm-kernel&m=153229982404051
 
-diff --git a/mm/debug.c b/mm/debug.c
-index c0b31b6c3877..e4ec3d68833e 100644
---- a/mm/debug.c
-+++ b/mm/debug.c
-@@ -137,7 +137,12 @@ void dump_mm(const struct mm_struct *mm)
- 		"mmap_base %lu mmap_legacy_base %lu highest_vm_end %lu\n"
- 		"pgd %px mm_users %d mm_count %d pgtables_bytes %lu map_count %d\n"
- 		"hiwater_rss %lx hiwater_vm %lx total_vm %lx locked_vm %lx\n"
--		"pinned_vm %llx data_vm %lx exec_vm %lx stack_vm %lx\n"
-+#ifdef __powerpc64__
-+		"pinned_vm %lx "
-+#else
-+		"pinned_vm %llx "
-+#endif
-+		"data_vm %lx exec_vm %lx stack_vm %lx\n"
- 		"start_code %lx end_code %lx start_data %lx end_data %lx\n"
- 		"start_brk %lx brk %lx start_stack %lx\n"
- 		"arg_start %lx arg_end %lx env_start %lx env_end %lx\n"
--- 
-2.17.2 (Apple Git-113)
+Although it was last updated in October, I believe you should be able to
+rebase that Counter subsystem introduction patchset cleanly on top of
+the IIO tree (if there are any merge conflicts send me an email). Take a
+look at the generic-counter.rst file under the Documentation/driver-api/
+directory for an overview of the API; the counter drivers under the
+drivers/counter/ directory also make good references.
 
+If you have any difficulties understanding the API, or any other
+troubles, don't hesitate to ask. Hopefully, I've made the documentation
+clear enough to make the conversion of this driver quick and easy -- and
+if not, then it's something I need to fix, so let me know. :-)
+
+William Breathitt Gray
