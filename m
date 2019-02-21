@@ -4,50 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C91C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:42:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48BA1C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:42:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F8BC2084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:42:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17E3A20838
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:42:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550760129;
-	bh=UGjHxQl91BrqvAnr+D/CQMlqyYC5hyuhK15V0xuduV8=;
+	s=default; t=1550760134;
+	bh=Izgsj4otg4HpIwXcLut662g2yH/9iA3IfoZq9BOInz0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=K/X43hp5TBLLKwDVyT8ljbQmomOXBHcniPDs8znouSatlVsQp2I/zEzcb+FIzofMM
-	 wF+F6wlrEK1Olhd0xuSBufNu/JS0nwSl6DB1SywgPi1W0kE9XIrjxYbF2MEd/rNa96
-	 u1A7kAvC4B7H6aRnB1oWQpYShSHUzNP791cQpEpc=
+	b=z6UZY5XEtJnwkj3qjvqB1Z6h+nHPiFlU3CEMcCV546glfYNxjmUX3MPKI2dozrUay
+	 PH+YZGAFJKcP9zRnq5f7FgLaxNYOksOkHSv7jr0WQiXaEbWayuLzTXJ7Hp+niDAnrX
+	 LJrt8yCBUT8KZq0BQQCdF8abAU9a3ltD/vKLKkjk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729472AbfBUOmH (ORCPT
+        id S1728758AbfBUOmM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:42:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37440 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:42:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729451AbfBUOmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:42:04 -0500
+        id S1729035AbfBUOmK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:42:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37EB22084F;
-        Thu, 21 Feb 2019 14:42:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3ADBC2075A;
+        Thu, 21 Feb 2019 14:42:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550760123;
-        bh=UGjHxQl91BrqvAnr+D/CQMlqyYC5hyuhK15V0xuduV8=;
+        s=default; t=1550760129;
+        bh=Izgsj4otg4HpIwXcLut662g2yH/9iA3IfoZq9BOInz0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L2r9H8eqCORoWiI38F5aNSslQZnjLg7KR7j51vYUUPJ25UcYQbI0vkK5t6gpinwXw
-         bTFv5orTym37Oprdue6DXcFnEsYGAzqrXx41TqB+XLPhy/eyEOzrlxserru3vs0xtP
-         YTHkvtAtACEuLnN+GpiV3+E8qT3ffKWRJq6Xzxkk=
+        b=BWbooGToGsTb81/3NwgRNUQJ8yBh5Jh/Ig3wD2Cy4wK9guMOt8/g9PUJR2Ul0QiMz
+         cg9hTrGAKO+FqGC8cdaWBKGGNvpHia4djy8Bmyqo86I1SK9C7k0Exa8X9/vLAj149q
+         VEbMWRp+St9x4xwsofrEBJ9htMFEqunoT8exkFJ0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hauke Mehrtens <hauke.mehrtens@intel.com>,
+        stable@vger.kernel.org,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        Greg Rose <gvrose8192@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 05/30] net: Fix for_each_netdev_feature on Big endian
-Date:   Thu, 21 Feb 2019 15:35:47 +0100
-Message-Id: <20190221125250.828915039@linuxfoundation.org>
+Subject: [PATCH 4.19 07/30] net: ip6_gre: initialize erspan_ver just for erspan tunnels
+Date:   Thu, 21 Feb 2019 15:35:49 +0100
+Message-Id: <20190221125250.934685008@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125250.543158526@linuxfoundation.org>
 References: <20190221125250.543158526@linuxfoundation.org>
@@ -66,91 +68,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3b89ea9c5902acccdbbdec307c85edd1bf52515e ]
+[ Upstream commit 4974d5f678abb34401558559d47e2ea3d1c15cba ]
 
-The features attribute is of type u64 and stored in the native endianes on
-the system. The for_each_set_bit() macro takes a pointer to a 32 bit array
-and goes over the bits in this area. On little Endian systems this also
-works with an u64 as the most significant bit is on the highest address,
-but on big endian the words are swapped. When we expect bit 15 here we get
-bit 47 (15 + 32).
+After commit c706863bc890 ("net: ip6_gre: always reports o_key to
+userspace"), ip6gre and ip6gretap tunnels started reporting TUNNEL_KEY
+output flag even if it is not configured.
+ip6gre_fill_info checks erspan_ver value to add TUNNEL_KEY for
+erspan tunnels, however in commit 84581bdae9587 ("erspan: set
+erspan_ver to 1 by default when adding an erspan dev")
+erspan_ver is initialized to 1 even for ip6gre or ip6gretap
+Fix the issue moving erspan_ver initialization in a dedicated routine
 
-This patch converts it more or less to its own for_each_set_bit()
-implementation which works on 64 bit integers directly. This is then
-completely in host endianness and should work like expected.
-
-Fixes: fd867d51f ("net/core: generic support for disabling netdev features down stack")
-Signed-off-by: Hauke Mehrtens <hauke.mehrtens@intel.com>
+Fixes: c706863bc890 ("net: ip6_gre: always reports o_key to userspace")
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Reviewed-by: Greg Rose <gvrose8192@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/netdev_features.h | 23 +++++++++++++++++++++--
- net/core/dev.c                  |  4 ++--
- 2 files changed, 23 insertions(+), 4 deletions(-)
+ net/ipv6/ip6_gre.c | 34 ++++++++++++++++++++--------------
+ 1 file changed, 20 insertions(+), 14 deletions(-)
 
-diff --git a/include/linux/netdev_features.h b/include/linux/netdev_features.h
-index 2b2a6dce16301..fce28562bed29 100644
---- a/include/linux/netdev_features.h
-+++ b/include/linux/netdev_features.h
-@@ -11,6 +11,7 @@
- #define _LINUX_NETDEV_FEATURES_H
+diff --git a/net/ipv6/ip6_gre.c b/net/ipv6/ip6_gre.c
+index be04877b3827b..faed98dab9137 100644
+--- a/net/ipv6/ip6_gre.c
++++ b/net/ipv6/ip6_gre.c
+@@ -1735,6 +1735,24 @@ static int ip6erspan_tap_validate(struct nlattr *tb[], struct nlattr *data[],
+ 	return 0;
+ }
  
- #include <linux/types.h>
-+#include <asm/byteorder.h>
- 
- typedef u64 netdev_features_t;
- 
-@@ -154,8 +155,26 @@ enum {
- #define NETIF_F_HW_TLS_TX	__NETIF_F(HW_TLS_TX)
- #define NETIF_F_HW_TLS_RX	__NETIF_F(HW_TLS_RX)
- 
--#define for_each_netdev_feature(mask_addr, bit)	\
--	for_each_set_bit(bit, (unsigned long *)mask_addr, NETDEV_FEATURE_COUNT)
-+/* Finds the next feature with the highest number of the range of start till 0.
-+ */
-+static inline int find_next_netdev_feature(u64 feature, unsigned long start)
++static void ip6erspan_set_version(struct nlattr *data[],
++				  struct __ip6_tnl_parm *parms)
 +{
-+	/* like BITMAP_LAST_WORD_MASK() for u64
-+	 * this sets the most significant 64 - start to 0.
-+	 */
-+	feature &= ~0ULL >> (-start & ((sizeof(feature) * 8) - 1));
++	parms->erspan_ver = 1;
++	if (data[IFLA_GRE_ERSPAN_VER])
++		parms->erspan_ver = nla_get_u8(data[IFLA_GRE_ERSPAN_VER]);
 +
-+	return fls64(feature) - 1;
++	if (parms->erspan_ver == 1) {
++		if (data[IFLA_GRE_ERSPAN_INDEX])
++			parms->index = nla_get_u32(data[IFLA_GRE_ERSPAN_INDEX]);
++	} else if (parms->erspan_ver == 2) {
++		if (data[IFLA_GRE_ERSPAN_DIR])
++			parms->dir = nla_get_u8(data[IFLA_GRE_ERSPAN_DIR]);
++		if (data[IFLA_GRE_ERSPAN_HWID])
++			parms->hwid = nla_get_u16(data[IFLA_GRE_ERSPAN_HWID]);
++	}
 +}
 +
-+/* This goes for the MSB to the LSB through the set feature bits,
-+ * mask_addr should be a u64 and bit an int
-+ */
-+#define for_each_netdev_feature(mask_addr, bit)				\
-+	for ((bit) = find_next_netdev_feature((mask_addr),		\
-+					      NETDEV_FEATURE_COUNT);	\
-+	     (bit) >= 0;						\
-+	     (bit) = find_next_netdev_feature((mask_addr), (bit) - 1))
+ static void ip6gre_netlink_parms(struct nlattr *data[],
+ 				struct __ip6_tnl_parm *parms)
+ {
+@@ -1783,20 +1801,6 @@ static void ip6gre_netlink_parms(struct nlattr *data[],
  
- /* Features valid for ethtool to change */
- /* = all defined minus driver/device-class-related */
-diff --git a/net/core/dev.c b/net/core/dev.c
-index af097ca9cb4fb..5c8c0a572ee9c 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -8039,7 +8039,7 @@ static netdev_features_t netdev_sync_upper_features(struct net_device *lower,
- 	netdev_features_t feature;
- 	int feature_bit;
+ 	if (data[IFLA_GRE_COLLECT_METADATA])
+ 		parms->collect_md = true;
+-
+-	parms->erspan_ver = 1;
+-	if (data[IFLA_GRE_ERSPAN_VER])
+-		parms->erspan_ver = nla_get_u8(data[IFLA_GRE_ERSPAN_VER]);
+-
+-	if (parms->erspan_ver == 1) {
+-		if (data[IFLA_GRE_ERSPAN_INDEX])
+-			parms->index = nla_get_u32(data[IFLA_GRE_ERSPAN_INDEX]);
+-	} else if (parms->erspan_ver == 2) {
+-		if (data[IFLA_GRE_ERSPAN_DIR])
+-			parms->dir = nla_get_u8(data[IFLA_GRE_ERSPAN_DIR]);
+-		if (data[IFLA_GRE_ERSPAN_HWID])
+-			parms->hwid = nla_get_u16(data[IFLA_GRE_ERSPAN_HWID]);
+-	}
+ }
  
--	for_each_netdev_feature(&upper_disables, feature_bit) {
-+	for_each_netdev_feature(upper_disables, feature_bit) {
- 		feature = __NETIF_F_BIT(feature_bit);
- 		if (!(upper->wanted_features & feature)
- 		    && (features & feature)) {
-@@ -8059,7 +8059,7 @@ static void netdev_sync_lower_features(struct net_device *upper,
- 	netdev_features_t feature;
- 	int feature_bit;
+ static int ip6gre_tap_init(struct net_device *dev)
+@@ -2225,6 +2229,7 @@ static int ip6erspan_newlink(struct net *src_net, struct net_device *dev,
+ 	int err;
  
--	for_each_netdev_feature(&upper_disables, feature_bit) {
-+	for_each_netdev_feature(upper_disables, feature_bit) {
- 		feature = __NETIF_F_BIT(feature_bit);
- 		if (!(features & feature) && (lower->features & feature)) {
- 			netdev_dbg(upper, "Disabling feature %pNF on lower dev %s.\n",
+ 	ip6gre_netlink_parms(data, &nt->parms);
++	ip6erspan_set_version(data, &nt->parms);
+ 	ign = net_generic(net, ip6gre_net_id);
+ 
+ 	if (nt->parms.collect_md) {
+@@ -2270,6 +2275,7 @@ static int ip6erspan_changelink(struct net_device *dev, struct nlattr *tb[],
+ 	if (IS_ERR(t))
+ 		return PTR_ERR(t);
+ 
++	ip6erspan_set_version(data, &p);
+ 	ip6gre_tunnel_unlink_md(ign, t);
+ 	ip6gre_tunnel_unlink(ign, t);
+ 	ip6erspan_tnl_change(t, &p, !tb[IFLA_MTU]);
 -- 
 2.19.1
 
