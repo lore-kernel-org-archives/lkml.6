@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 119D3C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8879C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D59222075C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 757CB2084D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550759822;
-	bh=hd2lSV/Lb2BOVyodMarextK4mj86DMntOLRSnYvLBqI=;
+	s=default; t=1550759826;
+	bh=dQj84cxP4yEPgRgapyUfFZ8OSdptRwI1uUldvuBi3Lw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jcuxabgo8zgjHA1gh+3PZ2gIiXNzheHoVfLmsn7OJbfK2uCMuihswICQQ4glj7msk
-	 ow/rDe/St7MQlPCpav19XioRpBL6B7z1K/3xBwR+pIz405zurQsJm2ldtS9jHlbItI
-	 PdwGl5MqqSU6lexjla6Edxh1bc1DnwEgBAKib0SI=
+	b=xMY8bJ3CjyysHhZ5ACvgNWZDqzqwTCXuSrYZR8jSsUEOFKj9b4qJ+vOIb94qbSQLY
+	 C0dJ1w0pUUOhhBFCBOYnbb4JJyQuOhx/soLClsCTihmHckA0GEetf9/B+IyG9qELsp
+	 IC3d0HBZvPYv0Wfmy82vuiVwoiwT9VrEFUMKGNjU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728266AbfBUOhB (ORCPT
+        id S1728289AbfBUOhE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:37:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57982 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:37:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728172AbfBUOhA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:37:00 -0500
+        id S1728172AbfBUOhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:37:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 552A12075C;
-        Thu, 21 Feb 2019 14:36:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D48A20838;
+        Thu, 21 Feb 2019 14:37:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550759819;
-        bh=hd2lSV/Lb2BOVyodMarextK4mj86DMntOLRSnYvLBqI=;
+        s=default; t=1550759822;
+        bh=dQj84cxP4yEPgRgapyUfFZ8OSdptRwI1uUldvuBi3Lw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sUH6Y7CLkAFviDJJWUr5s4xD5MZ+IbsbUMGX4jPZ7LAooCdW2/xZK39srtWF8maOT
-         89tUhduFMI6qvEYYRoe5K/u7T0sHkUuT520HHn4XLruCkRfJJKrg2N5PFCdsUL1vqe
-         fdco6+mPoaHep1de3plOCorgj/9fK7Hh06YzDBk4=
+        b=uymdKz4BvTW7JX0HT4/KJqqhY/IVwxX3NTHkk5hZaBHmEfbLjf3FPqYJ+T7TLbqH7
+         48I5kLruXl1RpHrMJa+nSum12Re/gyPRMDXdTUfCp3zN1PtQ7coVY1wcTQ7PblzWCK
+         UadBQK5/OMcsLLMokW5wB4q4UAcfK8GKM/iM/2MQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        soukjin bae <soukjin.bae@samsung.com>,
-        Neal Cardwell <ncardwell@google.com>,
+        Petr Machata <petrm@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Stefano Brivio <sbrivio@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 04/13] tcp: clear icsk_backoff in tcp_write_queue_purge()
-Date:   Thu, 21 Feb 2019 15:35:35 +0100
-Message-Id: <20190221125240.484240814@linuxfoundation.org>
+Subject: [PATCH 3.18 05/13] vxlan: test dev->flags & IFF_UP before calling netif_rx()
+Date:   Thu, 21 Feb 2019 15:35:36 +0100
+Message-Id: <20190221125240.564054848@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125240.091472334@linuxfoundation.org>
 References: <20190221125240.091472334@linuxfoundation.org>
@@ -69,50 +70,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 04c03114be82194d4a4858d41dba8e286ad1787c ]
+[ Upstream commit 4179cb5a4c924cd233eaadd081882425bc98f44e ]
 
-soukjin bae reported a crash in tcp_v4_err() handling
-ICMP_DEST_UNREACH after tcp_write_queue_head(sk)
-returned a NULL pointer.
+netif_rx() must be called under a strict contract.
 
-Current logic should have prevented this :
+At device dismantle phase, core networking clears IFF_UP
+and flush_all_backlogs() is called after rcu grace period
+to make sure no incoming packet might be in a cpu backlog
+and still referencing the device.
 
-  if (seq != tp->snd_una  || !icsk->icsk_retransmits ||
-      !icsk->icsk_backoff || fastopen)
-      break;
+Most drivers call netif_rx() from their interrupt handler,
+and since the interrupts are disabled at device dismantle,
+netif_rx() does not have to check dev->flags & IFF_UP
 
-Problem is the write queue might have been purged
-and icsk_backoff has not been cleared.
+Virtual drivers do not have this guarantee, and must
+therefore make the check themselves.
 
+Otherwise we risk use-after-free and/or crashes.
+
+Note this patch also fixes a small issue that came
+with commit ce6502a8f957 ("vxlan: fix a use after free
+in vxlan_encap_bypass"), since the dev->stats.rx_dropped
+change was done on the wrong device.
+
+Fixes: d342894c5d2f ("vxlan: virtual extensible lan")
+Fixes: ce6502a8f957 ("vxlan: fix a use after free in vxlan_encap_bypass")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: soukjin bae <soukjin.bae@samsung.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
+Cc: Petr Machata <petrm@mellanox.com>
+Cc: Ido Schimmel <idosch@mellanox.com>
+Cc: Roopa Prabhu <roopa@cumulusnetworks.com>
+Cc: Stefano Brivio <sbrivio@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/tcp.h |    1 +
- net/ipv4/tcp.c    |    1 -
- 2 files changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/vxlan.c |   13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -1379,6 +1379,7 @@ static inline void tcp_write_queue_purge
- 		sk_wmem_free_skb(sk, skb);
- 	sk_mem_reclaim(sk);
- 	tcp_clear_all_retrans_hints(tcp_sk(sk));
-+	inet_csk(sk)->icsk_backoff = 0;
+--- a/drivers/net/vxlan.c
++++ b/drivers/net/vxlan.c
+@@ -1665,7 +1665,7 @@ static void vxlan_encap_bypass(struct sk
+ 	struct pcpu_sw_netstats *tx_stats, *rx_stats;
+ 	union vxlan_addr loopback;
+ 	union vxlan_addr *remote_ip = &dst_vxlan->default_dst.remote_ip;
+-	struct net_device *dev = skb->dev;
++	struct net_device *dev;
+ 	int len = skb->len;
+ 
+ 	tx_stats = this_cpu_ptr(src_vxlan->dev->tstats);
+@@ -1685,8 +1685,15 @@ static void vxlan_encap_bypass(struct sk
+ #endif
+ 	}
+ 
++	rcu_read_lock();
++	dev = skb->dev;
++	if (unlikely(!(dev->flags & IFF_UP))) {
++		kfree_skb(skb);
++		goto drop;
++	}
++
+ 	if (dst_vxlan->flags & VXLAN_F_LEARN)
+-		vxlan_snoop(skb->dev, &loopback, eth_hdr(skb)->h_source);
++		vxlan_snoop(dev, &loopback, eth_hdr(skb)->h_source);
+ 
+ 	u64_stats_update_begin(&tx_stats->syncp);
+ 	tx_stats->tx_packets++;
+@@ -1699,8 +1706,10 @@ static void vxlan_encap_bypass(struct sk
+ 		rx_stats->rx_bytes += len;
+ 		u64_stats_update_end(&rx_stats->syncp);
+ 	} else {
++drop:
+ 		dev->stats.rx_dropped++;
+ 	}
++	rcu_read_unlock();
  }
  
- static inline struct sk_buff *tcp_write_queue_head(const struct sock *sk)
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -2258,7 +2258,6 @@ int tcp_disconnect(struct sock *sk, int
- 	tp->srtt_us = 0;
- 	if ((tp->write_seq += tp->max_window + 2) == 0)
- 		tp->write_seq = 1;
--	icsk->icsk_backoff = 0;
- 	tp->snd_cwnd = 2;
- 	icsk->icsk_probes_out = 0;
- 	tp->packets_out = 0;
+ static void vxlan_xmit_one(struct sk_buff *skb, struct net_device *dev,
 
 
