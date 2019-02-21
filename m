@@ -2,130 +2,126 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C82EFC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2212C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:44:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A16702084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:44:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80BBF2084D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:44:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550760271;
+	bh=rbkDiwapLHWoxx0UlJdRTiViksY+z1n9VzMDEZecZc0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=BpauFtCAdk/GfyPiGdCeYQZm5yBlXDyWwP7v0JUqUMKlQjhBhTeFoUAUcdCsokQ6O
+	 RgV5BhZ99crCR+SIUOieSvN2wrqDESKkcJdiL2aD+FfdO4SkYWR+WwwMqlnS8YUmga
+	 rHKSLNRIwSd0IQSCyl/TrwC8LdMSynu8uBgetHLc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729479AbfBUOoY (ORCPT
+        id S1729870AbfBUOoa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:44:24 -0500
-Received: from mail-it1-f197.google.com ([209.85.166.197]:41550 "EHLO
-        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729827AbfBUOoE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:44:04 -0500
-Received: by mail-it1-f197.google.com with SMTP id q184so15683005itd.6
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 06:44:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Ka1LfNYrMGwk9ee+N1Vo76fA+wItesHIaTwt/Apjta8=;
-        b=kOI+lte90TfReRLX5Ypt9hu0xRqAgPcxdTMUUH7LHCVwEYufOlI9+K8H45zII03M2+
-         1NgmQPrI9rIRTvJxlTvtqSjB/lkLTerx71WKRIIw0bWLOuX8m2+DM+SuUBOm3qtyRlJA
-         lxEQN2H3xQnaWYOOQTUIguQnGzf7lPEf1BClBMAl2/Tvnx+oI8LKaxDk5GrsU8S+PdYG
-         H0/qpa7ySL4PdLcyTJXKHyY78J880bguttepswZEc4aMKPjF0xBDrOS68b4UHvYepqPZ
-         YApjA99f4kkYmceu5pzquQeHpBLwvZ5oUq2ULezF4xURlg++xZP3GJ1thic7XqRg4YXO
-         kLGw==
-X-Gm-Message-State: AHQUAubtH119cMhuqdGxK6TAZ6FB6QJnHnmCe1hehyPY1k0dKWmpwG7x
-        uLCFBXbrXbKesnVgQAkLy/gM5eFofxkudm1J7OeGw66KROQG
-X-Google-Smtp-Source: AHgI3IZ9weZbif3KbgtO1QaBazEm+cxJ8sNajAAYfTbEVD3Jv3YTXhu1NKZGpJRk5wI15NkZLfPYP1ghUWkHvZ2jNzS3GjRBWswl
+        Thu, 21 Feb 2019 09:44:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40138 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728528AbfBUOoC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:44:02 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 573AB20700;
+        Thu, 21 Feb 2019 14:44:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550760241;
+        bh=rbkDiwapLHWoxx0UlJdRTiViksY+z1n9VzMDEZecZc0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mmqzliE6q7cJCHPqJOze4XolspWOlkJaRIXWr9eHDmP/TfTuFvGvKmk2DctVvy5TA
+         rPgOV9GFHgRapgN0gqGG/1Q7vadw4oiY9+c2K26biBJ7rBpQvFdhOxYHgIDhlj6yVL
+         xG+1l5uUHfeubz4luniAcXAE7OqEaWUSTtGvgPc0=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 06/32] mlxsw: __mlxsw_sp_port_headroom_set(): Fix a use of local variable
+Date:   Thu, 21 Feb 2019 15:35:54 +0100
+Message-Id: <20190221125251.212920390@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190221125250.855065214@linuxfoundation.org>
+References: <20190221125250.855065214@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-X-Received: by 2002:a5d:914f:: with SMTP id y15mr12331802ioq.18.1550760243382;
- Thu, 21 Feb 2019 06:44:03 -0800 (PST)
-Date:   Thu, 21 Feb 2019 06:44:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007056430582688164@google.com>
-Subject: WARNING in cleanup_mnt
-From:   syzbot <syzbot+3f12aa66b747ba56fcae@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-syzbot found the following crash on:
+------------------
 
-HEAD commit:    48b161983ae5 Merge tag 'xarray-5.0-rc3' of git://git.infra..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10cc68ef400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=505743eba4e4f68
-dashboard link: https://syzkaller.appspot.com/bug?extid=3f12aa66b747ba56fcae
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+[ Upstream commit 289460404f6947ef1c38e67d680be9a84161250b ]
 
-Unfortunately, I don't have any reproducer for this crash yet.
+The function-local variable "delay" enters the loop interpreted as delay
+in bits. However, inside the loop it gets overwritten by the result of
+mlxsw_sp_pg_buf_delay_get(), and thus leaves the loop as quantity in
+cells. Thus on second and further loop iterations, the headroom for a
+given priority is configured with a wrong size.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+3f12aa66b747ba56fcae@syzkaller.appspotmail.com
+Fix by introducing a loop-local variable, delay_cells. Rename thres to
+thres_cells for consistency.
 
-Enabling of bearer <udp:syz0> rejected, already enabled
-WARNING: CPU: 0 PID: 17831 at fs/namespace.c:1091 cleanup_mnt+0x118/0x160  
-fs/namespace.c:1091
-Kernel panic - not syncing: panic_on_warn set ...
-Enabling of bearer <udp:syz0> rejected, already enabled
-CPU: 0 PID: 17831 Comm: kworker/0:1 Not tainted 5.0.0-rc3+ #37
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: events proc_cleanup_work
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
-  panic+0x2cb/0x65c kernel/panic.c:214
-kobject: 'loop4' (00000000cd062423): kobject_uevent_env
-  __warn.cold+0x20/0x48 kernel/panic.c:571
-  report_bug+0x263/0x2b0 lib/bug.c:186
-kobject: 'loop4' (00000000cd062423): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  fixup_bug arch/x86/kernel/traps.c:173 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
-  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
-RIP: 0010:cleanup_mnt+0x118/0x160 fs/namespace.c:1091
-Code: 1c 01 00 00 48 c7 c7 c0 c9 a5 89 e8 12 4e 11 06 48 8d 7b 38 48 c7 c6  
-a0 0f db 81 e8 e2 77 91 ff 5b 41 5c 5d c3 e8 a8 dc a6 ff <0f> 0b e9 0e ff  
-ff ff e8 9c dc a6 ff 48 89 df e8 94 fe 06 00 e9 31
-RSP: 0018:ffff8880586b7888 EFLAGS: 00010293
-RAX: ffff88809f4b4140 RBX: ffff8880909c3a00 RCX: ffffffff81db2334
-RDX: 0000000000000000 RSI: ffffffff81db2428 RDI: 0000000000000005
-RBP: ffff8880586b7898 R08: ffff88809f4b4140 R09: fffffbfff13024e6
-R10: fffffbfff13024e5 R11: ffffffff8981272b R12: 00000000000000fc
-R13: 0000000000004000 R14: dffffc0000000000 R15: ffff8880909c3a30
-  mntput_no_expire fs/namespace.c:1175 [inline]
-  mntput_no_expire+0x866/0xbd0 fs/namespace.c:1117
-kobject: 'loop2' (00000000d5abe9f2): kobject_uevent_env
-kobject: 'loop2' (00000000d5abe9f2): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-  mntput fs/namespace.c:1185 [inline]
-  create_mnt_ns fs/namespace.c:3005 [inline]
-  kern_unmount+0xbd/0xf0 fs/namespace.c:2995
-  pid_ns_release_proc+0x37/0x41 fs/proc/root.c:224
-  proc_cleanup_work+0x19/0x20 kernel/pid_namespace.c:64
-Enabling of bearer <udp:syz0> rejected, already enabled
-  process_one_work+0xd0c/0x1ce0 kernel/workqueue.c:2153
-Enabling of bearer <udp:syz0> rejected, already enabled
-  worker_thread+0x143/0x14a0 kernel/workqueue.c:2296
-  kthread+0x357/0x430 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
+Fixes: f417f04da589 ("mlxsw: spectrum: Refactor port buffer configuration")
+Signed-off-by: Petr Machata <petrm@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/net/ethernet/mellanox/mlxsw/spectrum.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+index 8f1180fff9551..280173b489624 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+@@ -845,8 +845,9 @@ int __mlxsw_sp_port_headroom_set(struct mlxsw_sp_port *mlxsw_sp_port, int mtu,
+ 	for (i = 0; i < IEEE_8021QAZ_MAX_TCS; i++) {
+ 		bool configure = false;
+ 		bool pfc = false;
++		u16 thres_cells;
++		u16 delay_cells;
+ 		bool lossy;
+-		u16 thres;
+ 
+ 		for (j = 0; j < IEEE_8021QAZ_MAX_TCS; j++) {
+ 			if (prio_tc[j] == i) {
+@@ -860,10 +861,11 @@ int __mlxsw_sp_port_headroom_set(struct mlxsw_sp_port *mlxsw_sp_port, int mtu,
+ 			continue;
+ 
+ 		lossy = !(pfc || pause_en);
+-		thres = mlxsw_sp_pg_buf_threshold_get(mlxsw_sp, mtu);
+-		delay = mlxsw_sp_pg_buf_delay_get(mlxsw_sp, mtu, delay, pfc,
+-						  pause_en);
+-		mlxsw_sp_pg_buf_pack(pbmc_pl, i, thres + delay, thres, lossy);
++		thres_cells = mlxsw_sp_pg_buf_threshold_get(mlxsw_sp, mtu);
++		delay_cells = mlxsw_sp_pg_buf_delay_get(mlxsw_sp, mtu, delay,
++							pfc, pause_en);
++		mlxsw_sp_pg_buf_pack(pbmc_pl, i, thres_cells + delay_cells,
++				     thres_cells, lossy);
+ 	}
+ 
+ 	return mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(pbmc), pbmc_pl);
+-- 
+2.19.1
+
+
+
