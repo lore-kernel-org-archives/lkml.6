@@ -2,149 +2,143 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0F26C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:42:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7781C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:42:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 655B22086A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:42:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=MicronCorp.onmicrosoft.com header.i=@MicronCorp.onmicrosoft.com header.b="eSU/iHcL"
+	by mail.kernel.org (Postfix) with ESMTP id BD4692086A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:42:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbfBUKmF (ORCPT
+        id S1726287AbfBUKmc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 05:42:05 -0500
-Received: from mailout.micron.com ([137.201.242.129]:14514 "EHLO
-        mailout.micron.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbfBUKmF (ORCPT
+        Thu, 21 Feb 2019 05:42:32 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37628 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725823AbfBUKmb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 05:42:05 -0500
-Received: from mail.micron.com (boexchangeum.micron.com [137.201.21.209])
-        by mailout.micron.com (8.14.4/8.14.6) with ESMTP id x1LAfaA6028750;
-        Thu, 21 Feb 2019 03:41:36 -0700
-Received: from bowex17e.micron.com (137.201.21.213) by bowex17a.micron.com
- (137.201.21.209) with Microsoft SMTP Server (TLS) id 15.0.1365.1; Thu, 21 Feb
- 2019 03:41:36 -0700
-Received: from NAM02-BL2-obe.outbound.protection.outlook.com (137.201.20.7) by
- bowex17e.micron.com (137.201.21.213) with Microsoft SMTP Server (TLS) id
- 15.0.1365.1 via Frontend Transport; Thu, 21 Feb 2019 03:41:36 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=MicronCorp.onmicrosoft.com; s=selector1-micron-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1vvLVxi3yAWa/MW6aN8aFy45a+kqCegpF2Ol75yOHTM=;
- b=eSU/iHcLiK+HqnURKZq0Bv2MyzT8fQxrP1qbg2QiEwsN6yMdfCpGbmeCeq89HvGDsfFupCW3HVoDu1JrAznubyE1C9YQbwPLPyY5XTgV8W6u7N7SbOS+YrWOe77/twRik92uz9KGUvdFZ1okNkYoU4kIV6VezS82KpeiGMCts4Q=
-Received: from BYAPR08MB4533.namprd08.prod.outlook.com (52.135.234.15) by
- BYAPR08MB5493.namprd08.prod.outlook.com (20.178.48.90) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.19; Thu, 21 Feb 2019 10:41:34 +0000
-Received: from BYAPR08MB4533.namprd08.prod.outlook.com
- ([fe80::911c:eb84:5e0d:c669]) by BYAPR08MB4533.namprd08.prod.outlook.com
- ([fe80::911c:eb84:5e0d:c669%3]) with mapi id 15.20.1643.016; Thu, 21 Feb 2019
- 10:41:34 +0000
-From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
-To:     Vignesh R <vigneshr@ti.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>
-Subject: RE: [EXT] [PATCH v6 2/2] mtd: spi-nor: cadence-quadspi: Add support
- for Octal SPI controller
-Thread-Topic: [EXT] [PATCH v6 2/2] mtd: spi-nor: cadence-quadspi: Add support
- for Octal SPI controller
-Thread-Index: AQHUwq5RYJ1TJnt3OUGbuG3DxMNL2aXqHBqg
-Date:   Thu, 21 Feb 2019 10:41:33 +0000
-Message-ID: <BYAPR08MB453362F4253ADA149D05315FDB7E0@BYAPR08MB4533.namprd08.prod.outlook.com>
-References: <20190212083809.6534-1-vigneshr@ti.com>
- <20190212083809.6534-3-vigneshr@ti.com>
-In-Reply-To: <20190212083809.6534-3-vigneshr@ti.com>
-Accept-Language: en-150, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=beanhuo@micron.com; 
-x-originating-ip: [165.225.81.40]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 8d67ad6c-a2b9-4f02-c4ee-08d697e92617
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:BYAPR08MB5493;
-x-ms-traffictypediagnostic: BYAPR08MB5493:|BYAPR08MB5493:
-x-ms-exchange-purlcount: 1
-x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;BYAPR08MB5493;23:anmj4Gqj1V4v9QUeP7rgf2E3vnJAjRcHCOHarYoSu?=
- =?us-ascii?Q?t85Bp0bKszIa2hR139k0QbTxAaWHN5sdovuwEkzJWRtvH0j6ji/hI6VKVT0P?=
- =?us-ascii?Q?MCpix63cvMqpmbhov8YQBEIRWkC9Gv7K+hH7Tk6CHHCcnAYPrNJuglQEbrJu?=
- =?us-ascii?Q?TeGx7GEcShOQbzdrc+qjhjtJh7irHpmOKksP8nHr6G7NesK6OwXwSqMZrmYi?=
- =?us-ascii?Q?6bqJT/dMrY0IleheWzgpcXzYUTPGnZ5aU7ncXekR5WqT+YMHwXpdVJfbLb9n?=
- =?us-ascii?Q?ji64YnNr1ggbPLLjX69wD6NN8Uv3fsVq3CEfEQrNkPDBe7RRY3VidJCxb48C?=
- =?us-ascii?Q?1FSYFP/9f0yl/sgLWZ/R2ceO9+r58XfFonPwZEHzFX4SjnhRxboEnXeAUau5?=
- =?us-ascii?Q?tJu9nwyaOn1oVm5f3aOd/bwJAQMHU6WdUxsBHHcGalLXXNTAhk9PExxYHiqV?=
- =?us-ascii?Q?8M1h13OaqgBFODWeKPUybSoAWZb1sKak+4YndSTiiinMVoXY6bNlkXs7cB+J?=
- =?us-ascii?Q?5Hux2PanO47KEtSkyo4TkNqwwFky6NszgD3lRggtigBzU+TnR4Wk95rxL5R0?=
- =?us-ascii?Q?cfOpLokkbLqbO606HTJH+lifLAIXLpVzi4fNogs5JALxFf4AGSQe+ZOz0nCn?=
- =?us-ascii?Q?OyJ/iIFdcZ8+uIzFUQKqGTWnkqY53qkvsCao0Ei+OMHp69VmqdsgpmQTzO9A?=
- =?us-ascii?Q?r+b41U3AJRwbmS9AXZzKBzWNMmlMGXxXdJIFgmKL07yJnFtA82I3apCYDXDU?=
- =?us-ascii?Q?zwrWh2M2ukDpnhnTKyMHw8+9wiBfokaSIvgRQjk9KDFGCO9t7NSvbVmSrcnt?=
- =?us-ascii?Q?rmS/rQLF9+Frs8820A2xNwPDPg2pPMKrLJR+ubiGlzu7pwoANy51C740HQKq?=
- =?us-ascii?Q?+j1vXddgO20F/40VOtP+UMMyX2Z8bNkOHM+7irTNsyGdmOxpHYpCK6NGQS3i?=
- =?us-ascii?Q?AhzCYSeISvlvr77OO9PhEwrzx6XMceNr6MzV/x7bq9zmGxk1kl8K8IT2rCaw?=
- =?us-ascii?Q?OJS/3y32YC63T+NpEaVlzru2cC1FSoTqyunfb+y/v+pb08TkWq8qK/lFAn3x?=
- =?us-ascii?Q?gEu7mW1t3xscMPU0liSiyOCvmcMHz8FGfwfBzoGOkpXEG58NXxYd9dL1BEgR?=
- =?us-ascii?Q?gzYX3Jdyl38ALKRvBn9Qd5eum3E5h+Xzu2WDxhOb343RRME/xZTO713hruXa?=
- =?us-ascii?Q?ASMMQzVAXDU9Lyjvksy6QPD9NESft/zPA+Tt7kudRe6qRVU0uXxrFhhja8ZO?=
- =?us-ascii?Q?7O5wJ9Vv6/2rwKKXJm5nsLPN9UW7OYAwzBjh7RS?=
-x-microsoft-antispam-prvs: <BYAPR08MB5493DE6BEADDD7350A3FE91BDB7E0@BYAPR08MB5493.namprd08.prod.outlook.com>
-x-forefront-prvs: 09555FB1AD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(346002)(396003)(376002)(39860400002)(199004)(189003)(110136005)(86362001)(7736002)(74316002)(26005)(99286004)(11346002)(2906002)(102836004)(486006)(54906003)(6116002)(316002)(476003)(81156014)(8936002)(81166006)(25786009)(4326008)(8676002)(305945005)(446003)(76176011)(7696005)(33656002)(55016002)(105586002)(256004)(106356001)(53936002)(55236004)(6246003)(186003)(5660300002)(68736007)(4744005)(9686003)(478600001)(6306002)(229853002)(71200400001)(71190400001)(3846002)(97736004)(14454004)(66066001)(2501003)(6506007)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR08MB5493;H:BYAPR08MB4533.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: micron.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 7+uEW2YZiRMVNtpOTDgppal68y7jxnTw+mbbGZCU46Wk9bkkfnif7jE4jHmzkwh38vnVK2av3plftTQxN2MtTioz4cC+cX8HY0sBU7+1loRdMYpuY8Y0axFTUk9F6Pzy4gPCv4UK7781Y7M0ZEkp8m70Wg0CCIhx34IBlk1nbMtwtSU4aDFH4hDwB+B4iQWLCfwv4wmWRdQjN4q0gW/5P9YBQ9PJrHZvZMIeBAJAByRw4Sz6jF2gZV9wKdpgVts8i000V8KO6Wwpkde8bqA3OWAbsW4zf+te15JKHoFdxWUV6NykNoXCSBKeHV8i4Nw1UdxfQFKCT/2BwQ/3XJU/0M/tJ2lGbmom+DJwnciUgEq+emqhUI/DXP8fsVljByrUq9MYm0SAeyiugpX3i4q0QH5qO3KpBU1v6sO35YbOorM=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 21 Feb 2019 05:42:31 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1LAeAn8151091
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 05:42:30 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qsssxt0mq-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 05:42:29 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <freude@linux.ibm.com>;
+        Thu, 21 Feb 2019 10:42:28 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 21 Feb 2019 10:42:26 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1LAgO3c21168144
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Feb 2019 10:42:24 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9D61E52050;
+        Thu, 21 Feb 2019 10:42:24 +0000 (GMT)
+Received: from [10.0.2.15] (unknown [9.152.224.114])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 4416752054;
+        Thu, 21 Feb 2019 10:42:24 +0000 (GMT)
+Subject: Re: [PATCH] zcrypt: handle AP Info notification from CHSC SEI command
+To:     Sebastian Ott <sebott@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        oberpar@linux.ibm.com, pmorel@linux.ibm.com, pasic@linux.ibm.com,
+        cohuck@redhat.com
+References: <1548870526-30595-1-git-send-email-akrowiak@linux.ibm.com>
+ <alpine.LFD.2.21.1901301912380.2372@schleppi>
+From:   Harald Freudenberger <freude@linux.ibm.com>
+Date:   Thu, 21 Feb 2019 11:42:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8d67ad6c-a2b9-4f02-c4ee-08d697e92617
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2019 10:41:34.0018
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR08MB5493
-X-OriginatorOrg: micron.com
-X-TM-AS-Product-Ver: SMEX-12.0.0.1782-8.200.1013-24444.005
-X-TM-AS-Result: No--1.971100-0.000000-31
-X-TM-AS-MatchedID: 150567-139010-704318-703529-704171-708060-702020-702898-7
-        80016-700648-710970-701249-139704-700047-148004-148007-148020-148050-10019-
-        20020-41000-42000-42003-63
-X-TM-AS-User-Approved-Sender: Yes
-X-TM-AS-User-Blocked-Sender: No
-X-MT-CheckInternalSenderRule: True
-X-Scanned-By: MIMEDefang 2.78 on 137.201.82.98
+In-Reply-To: <alpine.LFD.2.21.1901301912380.2372@schleppi>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 19022110-0028-0000-0000-0000034B3DE9
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022110-0029-0000-0000-0000240981EA
+Message-Id: <d0e1ef87-8fc7-ea13-3dba-6abf1a28a446@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-21_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902210079
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Vignesh
-
+On 30.01.19 19:32, Sebastian Ott wrote:
+> On Wed, 30 Jan 2019, Tony Krowiak wrote:
+>> +#if IS_ENABLED(CONFIG_ZCRYPT)
+>> +void ap_bus_cfg_chg(void);
+>> +#else
+>> +#error "no CONFIG_ZCRYPT"
+>    ^
+> I don't think that's the right thing to do here.
 >
->Cadence OSPI controller IP supports Octal IO (x8 IO lines), It also has an
->integrated PHY. IP register layout is very similar to existing QSPI IP exc=
-ept for
->additional bits to support Octal and Octal DDR mode. Therefore, extend
->current driver to support Octal mode. Only Octal SDR read (1-1-8)mode is
->supported for now.
-
-Does this your Cadence OSPI controller support 8-8-8 IO mode, if yes,
-Why not directly enable 8-8-8 mode?=20
-
->Tested with mt35xu512aba Octal flash on TI's AM654 EVM.
 >
->Signed-off-by: Vignesh R <vigneshr@ti.com>
->______________________________________________________
->Linux MTD discussion mailing list
->http://lists.infradead.org/mailman/listinfo/linux-mtd/
+>> +++ b/drivers/s390/cio/chsc.h
+>> @@ -9,6 +9,7 @@
+>>  #include <asm/chsc.h>
+>>  #include <asm/schid.h>
+>>  #include <asm/qdio.h>
+>> +#include <asm/ap.h>
+> This should be moved to chsc.c
+>
+>
+>> +++ b/drivers/s390/crypto/ap_bus.c
+>> @@ -35,6 +35,7 @@
+>>  #include <linux/mod_devicetable.h>
+>>  #include <linux/debugfs.h>
+>>  #include <linux/ctype.h>
+>> +#include <asm/crw.h>
+> This is not needed here.
+>
+>
+>>  /*
+>> +* A config change has happened, Force an ap bus rescan.
+>> +*/
+>> +void ap_bus_cfg_chg(void)
+>> +{
+>> +	AP_DBF(DBF_INFO, "%s config change, forcing bus rescan\n", __func__);
+>> +
+>> +	ap_bus_force_rescan();
+>> +}
+>> +EXPORT_SYMBOL(ap_bus_cfg_chg);
+> There is no need for the export symbol - you don't call that function
+> from module code.
+That's what I have learned now: You don't need to export a symbol
+as long as the symbol is only called in static code parts of the kernel.
+But you need to export it when it is intended to be used by code
+which sits in a kernel module. So now the big question:
+How does a provider of a function in the kernel know, if the caller is in static
+code or in module code ? And ... maybe this may even change over
+the time. So my recommendation is to always export the symbol with
+the EXPORT_SYMBOL macro. This way you don't need to change the
+code providing a function when the caller code changes or additional
+code uses the symbol.
+
+Other opinions ?
+
+
+> As an unrelated question, just to be sure: ap_bus.c is compiled as
+> built-in even with ZCRYPT=m, right?
+>
+> Reviewed-by: Sebastian Ott <sebott@linux.ibm.com>
+>
+> Regards,
+> Sebastian
+
