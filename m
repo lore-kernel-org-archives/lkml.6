@@ -2,102 +2,118 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F234C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA8F0C00319
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:54:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2690B214AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4ECC21734
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:54:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727324AbfBUIyI (ORCPT
+        id S1727426AbfBUIya (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 03:54:08 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4244 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726354AbfBUIyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 03:54:08 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id E324495B190FBFD9B5F5;
-        Thu, 21 Feb 2019 16:53:58 +0800 (CST)
-Received: from [127.0.0.1] (10.177.96.203) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Thu, 21 Feb 2019
- 16:53:56 +0800
-Subject: Re: [RFC PATCH] scsi: fix oops in scsi_uninit_cmd()
-To:     Christoph Hellwig <hch@infradead.org>,
-        Bart Van Assche <bvanassche@acm.org>
-CC:     <martin.petersen@oracle.com>, <jejb@linux.vnet.ibm.com>,
-        Jens Axboe <axboe@kernel.dk>, <linux-scsi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <hare@suse.com>,
-        <dan.j.williams@intel.com>, <jthumshirn@suse.de>,
-        Steffen Maier <maier@linux.ibm.com>
-References: <20190219072743.13606-1-yanaijie@huawei.com>
- <1550595388.31902.133.camel@acm.org> <20190220151836.GA11695@infradead.org>
-From:   Jason Yan <yanaijie@huawei.com>
-Message-ID: <10ea95ec-e259-3511-44c4-58e4d255eb9f@huawei.com>
-Date:   Thu, 21 Feb 2019 16:53:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <20190220151836.GA11695@infradead.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.96.203]
-X-CFilter-Loop: Reflected
+        Thu, 21 Feb 2019 03:54:30 -0500
+Received: from smtp.nue.novell.com ([195.135.221.5]:48224 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726151AbfBUIya (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Thu, 21 Feb 2019 03:54:30 -0500
+Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Thu, 21 Feb 2019 09:54:28 +0100
+Received: from d104.suse.de (nwb-a10-snat.microfocus.com [10.120.13.202])
+        by emea4-mta.ukb.novell.com with ESMTP (NOT encrypted); Thu, 21 Feb 2019 08:54:18 +0000
+From:   Oscar Salvador <osalvador@suse.de>
+To:     linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        hughd@google.com, kirill@shutemov.name, vbabka@suse.cz,
+        joel@joelfernandes.org, jglisse@redhat.com,
+        yang.shi@linux.alibaba.com, mgorman@techsingularity.net,
+        Oscar Salvador <osalvador@suse.de>
+Subject: [RFC PATCH] mm,mremap: Bail out earlier in mremap_to under map pressure
+Date:   Thu, 21 Feb 2019 09:54:06 +0100
+Message-Id: <20190221085406.10852-1-osalvador@suse.de>
+X-Mailer: git-send-email 2.13.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Christoph
+When using mremap() syscall in addition to MREMAP_FIXED flag,
+mremap() calls mremap_to() which does the following:
 
-On 2019/2/20 23:18, Christoph Hellwig wrote:
-> [fullquote removed, please follow proper mail etiquette]
-> 
-> On Tue, Feb 19, 2019 at 08:56:28AM -0800, Bart Van Assche wrote:
->> regression in the SCSI sd driver due to the switch from the legacy block
->> layer to scsi-mq. The above patch introduces two atomic operations in the
->> hot path and hence would introduce a performance regression. I think this
->> can be avoided by making sure that sd_uninit_command() gets called before
->> the request tag is freed. What changes would be required to make the block
->> layer core call sd_uninit_command() before the request tag is freed? Would
->> introducing prep_rq_fn and unprep_rq_fn callbacks in struct blk_mq_ops and
->> making sure that the SCSI core sets these callback function pointers
->> appropriately be sufficient? Would such a change allow to simplify the NVMe
->> initiator driver? Are there any alternatives to this approach that are more
->> elegant?
-> 
-> Additional indirect calls in the I/O fast path is something I'd rather
-> avoid.  But I don't fully understand the problem yet - where do
-> we release a disk reference from blk_update_request?  
+1) unmaps the destination region where we are going to move the map
+2) If the new region is going to be smaller, we unmap the last part
+   of the old region
 
-When userspace close the fd after blk_update_request() and before
-scsi_mq_uninit_cmd(), a disk reference will be released. It is not the
-blk_update_request() directly released it.
+Then, we will eventually call move_vma() to do the actual move.
 
-close
-    ->sd_release
-       ->scsi_disk_put
-         ->scsi_disk_release
-           ->disk->private_data = NULL;
+move_vma() checks whether we are at least 4 maps below max_map_count
+before going further, otherwise it bails out with -ENOMEM.
+The problem is that we might have already unmapped the vma's in steps
+1) and 2), so it is not possible for userspace to figure out the state
+of the vma's after it gets -ENOMEM, and it gets tricky for userspace
+to clean up properly on error path.
 
-The userspace can close the fd because blk_update_request() returned the
-last IO , the userspace application does not have to stuck on read() or
-write(). The window is very small, but it can be reproduce every day
-in our testcases. So I'm very curious why. One possible explanation is
-that we enabled kernel preempt(CONFIG_PREEMPT).
+While it is true that we can return -ENOMEM for more reasons
+(e.g: see may_expand_vm() or move_page_tables()), I think that we can
+avoid this scenario in concret if we check early in mremap_to() if the
+operation has high chances to succeed map-wise.
 
-And why can't
-> we move that release to __blk_mq_end_request?
-> 
->>
->> Thanks,
->>
->> Bart.
-> ---end quoted text---
-> 
-> .
-> 
+Should not be that the case, we can bail out before we even try to unmap
+anything, so we make sure the vma's are left untouched in case we are likely
+to be short of maps.
+
+The thumb-rule now is to rely on the worst-scenario case we can have.
+That is when both vma's (old region and new region) are going to be split
+in 3, so we get two more maps to the ones we already hold (one per each).
+If current map count + 2 maps still leads us to 4 maps below the threshold,
+we are going to pass the check in move_vma().
+
+Of course, this is not free, as it might generate false positives when it is
+true that we are tight map-wise, but the unmap operation can release several
+vma's leading us to a good state.
+
+Because of that I am sending this as a RFC.
+Another approach was also investigated [1], but it may be too much hassle
+for what it brings.
+
+[1] https://lore.kernel.org/lkml/20190219155320.tkfkwvqk53tfdojt@d104.suse.de/
+
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+---
+ mm/mremap.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/mm/mremap.c b/mm/mremap.c
+index 3320616ed93f..e3edef6b7a12 100644
+--- a/mm/mremap.c
++++ b/mm/mremap.c
+@@ -516,6 +516,23 @@ static unsigned long mremap_to(unsigned long addr, unsigned long old_len,
+ 	if (addr + old_len > new_addr && new_addr + new_len > addr)
+ 		goto out;
+ 
++	/*
++	 * move_vma() need us to stay 4 maps below the threshold, otherwise
++	 * it will bail out at the very beginning.
++	 * That is a problem if we have already unmaped the regions here
++	 * (new_addr, and old_addr), because userspace will not know the
++	 * state of the vma's after it gets -ENOMEM.
++	 * So, to avoid such scenario we can pre-compute if the whole
++	 * operation has high chances to success map-wise.
++	 * Worst-scenario case is when both vma's (new_addr and old_addr) get
++	 * split in 3 before unmaping it.
++	 * That means 2 more maps (1 for each) to the ones we already hold.
++	 * Check whether current map count plus 2 still leads us to 4 maps below
++	 * the threshold, otherwise return -ENOMEM here to be more safe.
++	 */
++	if ((mm->map_count + 2) >= sysctl_max_map_count - 3)
++		return -ENOMEM;
++
+ 	ret = do_munmap(mm, new_addr, new_len, uf_unmap_early);
+ 	if (ret)
+ 		goto out;
+-- 
+2.13.7
 
