@@ -2,165 +2,114 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32971C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17926C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:46:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEB5920700
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:45:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D472720700
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:46:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550760363;
+	bh=t9c/+klgdWa3yFwhN5gQ3ScZkG4Nc68qnKKigt3ezu8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=zTDFBbF7DTD03pv9INL7cv1YkjKv+nO1PdALhK/dJJenq6hva8t3oVxFq1bsLqWMm
+	 FPIhJcxB8zCbuGx+W5snY6PQwfUX84cehvyqmUAuOb3tG26vdfPqkaL723ABjU2lrs
+	 gyFQ1m7TrFN2u9IAMwycM7KsiMNGsa+GMReLxLhY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729498AbfBUOpw (ORCPT
+        id S1729555AbfBUOqC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:45:52 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:43448 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729079AbfBUOm3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:42:29 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A70D04A11D00089B324D;
-        Thu, 21 Feb 2019 22:42:25 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.408.0; Thu, 21 Feb 2019
- 22:42:16 +0800
-From:   Yue Haibing <yuehaibing@huawei.com>
-To:     <andrew@lunn.ch>, <f.fainelli@gmail.com>, <hkallweit1@gmail.com>,
-        <davem@davemloft.net>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] mdio_bus: Fix use-after-free on device_register fails
-Date:   Thu, 21 Feb 2019 22:42:01 +0800
-Message-ID: <20190221144201.11488-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Thu, 21 Feb 2019 09:46:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37950 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728538AbfBUOm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:42:26 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 726EF2075A;
+        Thu, 21 Feb 2019 14:42:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550760146;
+        bh=t9c/+klgdWa3yFwhN5gQ3ScZkG4Nc68qnKKigt3ezu8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=tfbRpXwkWipeGoXaugz2AX8Rhj5FNSuZLgd7w86oqKWAx5pIL94qXOQiWqIlE8Q9J
+         ST5IodloiqSph7CacXcCFeGbwdxbVWNDHphk97y7xgGybRWJK7SrRCMrEdcLoWcVCY
+         jC/Jy8nVCDZi9OQA7Z24+k/elVrQClHEZ8PjTBgg=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Zhiqiang Liu <liuzhiqiang26@huawei.com>,
+        Wenhao Zhang <zhangwenhao8@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 02/32] net: fix IPv6 prefix route residue
+Date:   Thu, 21 Feb 2019 15:35:50 +0100
+Message-Id: <20190221125250.994975504@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190221125250.855065214@linuxfoundation.org>
+References: <20190221125250.855065214@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-KASAN has found use-after-free in fixed_mdio_bus_init,
-commit 0c692d07842a ("drivers/net/phy/mdio_bus.c: call
-put_device on device_register() failure") call put_device()
-while device_register() fails,give up the last reference
-to the device and allow mdiobus_release to be executed
-,kfreeing the bus. However in most drives, mdiobus_free
-be called to free the bus while mdiobus_register fails.
-use-after-free occurs when access bus again, this patch
-revert it to let mdiobus_free free the bus.
+------------------
 
-KASAN report details as below:
+[ Upstream commit e75913c93f7cd5f338ab373c34c93a655bd309cb ]
 
-BUG: KASAN: use-after-free in mdiobus_free+0x85/0x90 drivers/net/phy/mdio_bus.c:482
-Read of size 4 at addr ffff8881dc824d78 by task syz-executor.0/3524
+Follow those steps:
+ # ip addr add 2001:123::1/32 dev eth0
+ # ip addr add 2001:123:456::2/64 dev eth0
+ # ip addr del 2001:123::1/32 dev eth0
+ # ip addr del 2001:123:456::2/64 dev eth0
+and then prefix route of 2001:123::1/32 will still exist.
 
-CPU: 1 PID: 3524 Comm: syz-executor.0 Not tainted 5.0.0-rc7+ #45
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0xfa/0x1ce lib/dump_stack.c:113
- print_address_description+0x65/0x270 mm/kasan/report.c:187
- kasan_report+0x149/0x18d mm/kasan/report.c:317
- mdiobus_free+0x85/0x90 drivers/net/phy/mdio_bus.c:482
- fixed_mdio_bus_init+0x283/0x1000 [fixed_phy]
- ? 0xffffffffc0e40000
- ? 0xffffffffc0e40000
- ? 0xffffffffc0e40000
- do_one_initcall+0xfa/0x5ca init/main.c:887
- do_init_module+0x204/0x5f6 kernel/module.c:3460
- load_module+0x66b2/0x8570 kernel/module.c:3808
- __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
- do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x462e99
-Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f6215c19c58 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-RAX: ffffffffffffffda RBX: 000000000073bf00 RCX: 0000000000462e99
-RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000003
-RBP: 00007f6215c19c70 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6215c1a6bc
-R13: 00000000004bcefb R14: 00000000006f7030 R15: 0000000000000004
+This is because ipv6_prefix_equal in check_cleanup_prefix_route
+func does not check whether two IPv6 addresses have the same
+prefix length. If the prefix of one address starts with another
+shorter address prefix, even though their prefix lengths are
+different, the return value of ipv6_prefix_equal is true.
 
-Allocated by task 3524:
- set_track mm/kasan/common.c:85 [inline]
- __kasan_kmalloc.constprop.3+0xa0/0xd0 mm/kasan/common.c:496
- kmalloc include/linux/slab.h:545 [inline]
- kzalloc include/linux/slab.h:740 [inline]
- mdiobus_alloc_size+0x54/0x1b0 drivers/net/phy/mdio_bus.c:143
- fixed_mdio_bus_init+0x163/0x1000 [fixed_phy]
- do_one_initcall+0xfa/0x5ca init/main.c:887
- do_init_module+0x204/0x5f6 kernel/module.c:3460
- load_module+0x66b2/0x8570 kernel/module.c:3808
- __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
- do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Here I add a check of whether two addresses have the same prefix
+to decide whether their prefixes are equal.
 
-Freed by task 3524:
- set_track mm/kasan/common.c:85 [inline]
- __kasan_slab_free+0x130/0x180 mm/kasan/common.c:458
- slab_free_hook mm/slub.c:1409 [inline]
- slab_free_freelist_hook mm/slub.c:1436 [inline]
- slab_free mm/slub.c:2986 [inline]
- kfree+0xe1/0x270 mm/slub.c:3938
- device_release+0x78/0x200 drivers/base/core.c:919
- kobject_cleanup lib/kobject.c:662 [inline]
- kobject_release lib/kobject.c:691 [inline]
- kref_put include/linux/kref.h:67 [inline]
- kobject_put+0x146/0x240 lib/kobject.c:708
- put_device+0x1c/0x30 drivers/base/core.c:2060
- __mdiobus_register+0x483/0x560 drivers/net/phy/mdio_bus.c:382
- fixed_mdio_bus_init+0x26b/0x1000 [fixed_phy]
- do_one_initcall+0xfa/0x5ca init/main.c:887
- do_init_module+0x204/0x5f6 kernel/module.c:3460
- load_module+0x66b2/0x8570 kernel/module.c:3808
- __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
- do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8881dc824c80
- which belongs to the cache kmalloc-2k of size 2048
-The buggy address is located 248 bytes inside of
- 2048-byte region [ffff8881dc824c80, ffff8881dc825480)
-The buggy address belongs to the page:
-page:ffffea0007720800 count:1 mapcount:0 mapping:ffff8881f6c02800 index:0x0 compound_mapcount: 0
-flags: 0x2fffc0000010200(slab|head)
-raw: 02fffc0000010200 0000000000000000 0000000500000001 ffff8881f6c02800
-raw: 0000000000000000 00000000800f000f 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff8881dc824c00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff8881dc824c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff8881dc824d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                                ^
- ffff8881dc824d80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8881dc824e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-
-Fixes: 0c692d07842a ("drivers/net/phy/mdio_bus.c: call put_device on device_register() failure")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: 5b84efecb7d9 ("ipv6 addrconf: don't cleanup prefix route for IFA_F_NOPREFIXROUTE")
+Signed-off-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Reported-by: Wenhao Zhang <zhangwenhao8@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/mdio_bus.c | 1 -
- 1 file changed, 1 deletion(-)
+ net/ipv6/addrconf.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
-index debc74c..4be4cc0 100644
---- a/drivers/net/phy/mdio_bus.c
-+++ b/drivers/net/phy/mdio_bus.c
-@@ -373,7 +373,6 @@ int __mdiobus_register(struct mii_bus *bus, struct module *owner)
- 	err = device_register(&bus->dev);
- 	if (err) {
- 		pr_err("mii_bus %s failed to register\n", bus->id);
--		put_device(&bus->dev);
- 		return -EINVAL;
- 	}
- 
+diff --git a/net/ipv6/addrconf.c b/net/ipv6/addrconf.c
+index d2b597674d603..9fa51ab01ac40 100644
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@ -1165,7 +1165,8 @@ check_cleanup_prefix_route(struct inet6_ifaddr *ifp, unsigned long *expires)
+ 	list_for_each_entry(ifa, &idev->addr_list, if_list) {
+ 		if (ifa == ifp)
+ 			continue;
+-		if (!ipv6_prefix_equal(&ifa->addr, &ifp->addr,
++		if (ifa->prefix_len != ifp->prefix_len ||
++		    !ipv6_prefix_equal(&ifa->addr, &ifp->addr,
+ 				       ifp->prefix_len))
+ 			continue;
+ 		if (ifa->flags & (IFA_F_PERMANENT | IFA_F_NOPREFIXROUTE))
 -- 
-2.7.4
+2.19.1
+
 
 
