@@ -3,27 +3,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A882DC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7207FC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82EE92148D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:51:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A49020880
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:51:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728142AbfBULv2 (ORCPT
+        id S1728001AbfBULu6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 06:51:28 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:45730 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727996AbfBULu6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 21 Feb 2019 06:50:58 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:45690 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727897AbfBULuu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 06:50:50 -0500
 Received: from localhost ([127.0.0.1] helo=flow.W.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1gwmsO-0001RC-Id; Thu, 21 Feb 2019 12:50:53 +0100
+        id 1gwmsG-0001RC-G6; Thu, 21 Feb 2019 12:50:44 +0100
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -33,9 +33,9 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         Rik van Riel <riel@surriel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 19/22] x86/fpu: Inline copy_user_to_fpregs_zeroing()
-Date:   Thu, 21 Feb 2019 12:50:17 +0100
-Message-Id: <20190221115020.12385-20-bigeasy@linutronix.de>
+Subject: [PATCH 14/22] x86/fpu: Eager switch PKRU state
+Date:   Thu, 21 Feb 2019 12:50:12 +0100
+Message-Id: <20190221115020.12385-15-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221115020.12385-1-bigeasy@linutronix.de>
 References: <20190221115020.12385-1-bigeasy@linutronix.de>
@@ -46,78 +46,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Start refactoring __fpu__restore_sig() by inlining
-copy_user_to_fpregs_zeroing().
+From: Rik van Riel <riel@surriel.com>
 
+While most of a task's FPU state is only needed in user space, the
+protection keys need to be in place immediately after a context switch.
+
+The reason is that any access to userspace memory while running in
+kernel mode also need to abide by the memory permissions specified in
+the protection keys.
+
+The "eager switch" is a preparation for loading the FPU state on return
+to userland. Instead of decoupling PKRU state from xstate I update PKRU
+within xstate on write operations by the kernel.
+
+The read/write_pkru() is moved to another header file so it can easily
+accessed from pgtable.h and fpu/internal.h.
+
+For user tasks we should always get the PKRU from the xsave area and it
+should not change anything because the PKRU value was loaded as part of
+FPU restore.
+For kernel kernel threads we now will have the default "allow
+everything" written.  Before this commit the kernel thread would end up
+with a random value which it inherited from the previous user task.
+
+Signed-off-by: Rik van Riel <riel@surriel.com>
+[bigeasy: save pkru to xstate, no cache, don't use __raw_xsave_addr()]
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/x86/kernel/fpu/signal.c | 42 ++++++++++++++++--------------------
- 1 file changed, 19 insertions(+), 23 deletions(-)
+ arch/x86/include/asm/fpu/internal.h | 20 ++++++++++++++++++--
+ arch/x86/include/asm/fpu/xstate.h   |  1 +
+ 2 files changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index 97ea6909ede1f..5a467a381245c 100644
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -220,28 +220,6 @@ sanitize_restored_xstate(union fpregs_state *state,
- 	}
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index 67e4805bccb6f..05f6fce62e9f1 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -562,8 +562,24 @@ switch_fpu_prepare(struct fpu *old_fpu, int cpu)
+  */
+ static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
+ {
+-	if (static_cpu_has(X86_FEATURE_FPU))
+-		__fpregs_load_activate(new_fpu, cpu);
++	struct pkru_state *pk;
++	u32 pkru_val = 0;
++
++	if (!static_cpu_has(X86_FEATURE_FPU))
++		return;
++
++	__fpregs_load_activate(new_fpu, cpu);
++
++	if (!cpu_feature_enabled(X86_FEATURE_OSPKE))
++		return;
++
++	if (current->mm) {
++		pk = get_xsave_addr(&new_fpu->state.xsave, XFEATURE_PKRU);
++		WARN_ON_ONCE(!pk);
++		if (pk)
++			pkru_val = pk->pkru;
++	}
++	__write_pkru(pkru_val);
  }
  
--/*
-- * Restore the extended state if present. Otherwise, restore the FP/SSE state.
-- */
--static inline int copy_user_to_fpregs_zeroing(void __user *buf, u64 xbv, int fx_only)
--{
--	if (use_xsave()) {
--		if ((unsigned long)buf % 64 || fx_only) {
--			u64 init_bv = xfeatures_mask & ~XFEATURE_MASK_FPSSE;
--			copy_kernel_to_xregs(&init_fpstate.xsave, init_bv);
--			return copy_user_to_fxregs(buf);
--		} else {
--			u64 init_bv = xfeatures_mask & ~xbv;
--			if (unlikely(init_bv))
--				copy_kernel_to_xregs(&init_fpstate.xsave, init_bv);
--			return copy_user_to_xregs(buf, xbv);
--		}
--	} else if (use_fxsr()) {
--		return copy_user_to_fxregs(buf);
--	} else
--		return copy_user_to_fregs(buf);
--}
--
- static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
- {
- 	int ia32_fxstate = (buf != buf_fx);
-@@ -319,11 +297,29 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
- 		kfree(tmp);
- 		return err;
- 	} else {
-+		int ret;
-+
- 		/*
- 		 * For 64-bit frames and 32-bit fsave frames, restore the user
- 		 * state to the registers directly (with exceptions handled).
- 		 */
--		if (copy_user_to_fpregs_zeroing(buf_fx, xfeatures, fx_only)) {
-+		if (use_xsave()) {
-+			if ((unsigned long)buf_fx % 64 || fx_only) {
-+				u64 init_bv = xfeatures_mask & ~XFEATURE_MASK_FPSSE;
-+				copy_kernel_to_xregs(&init_fpstate.xsave, init_bv);
-+				ret = copy_user_to_fxregs(buf_fx);
-+			} else {
-+				u64 init_bv = xfeatures_mask & ~xfeatures;
-+				if (unlikely(init_bv))
-+					copy_kernel_to_xregs(&init_fpstate.xsave, init_bv);
-+				ret = copy_user_to_xregs(buf_fx, xfeatures);
-+			}
-+		} else if (use_fxsr()) {
-+			ret = copy_user_to_fxregs(buf_fx);
-+		} else
-+			ret = copy_user_to_fregs(buf_fx);
-+
-+		if (ret) {
- 			fpu__clear(fpu);
- 			return -1;
- 		}
+ /*
+diff --git a/arch/x86/include/asm/fpu/xstate.h b/arch/x86/include/asm/fpu/xstate.h
+index fbe41f808e5d8..4e18a837223ff 100644
+--- a/arch/x86/include/asm/fpu/xstate.h
++++ b/arch/x86/include/asm/fpu/xstate.h
+@@ -5,6 +5,7 @@
+ #include <linux/types.h>
+ #include <asm/processor.h>
+ #include <linux/uaccess.h>
++#include <asm/user.h>
+ 
+ /* Bit 63 of XCR0 is reserved for future expansion */
+ #define XFEATURE_MASK_EXTEND	(~(XFEATURE_MASK_FPSSE | (1ULL << 63)))
 -- 
 2.20.1
 
