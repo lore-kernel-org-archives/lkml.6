@@ -2,80 +2,121 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6700FC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:13:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75AD7C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:14:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 277CA2075A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:13:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550765618;
-	bh=hcQgLtVT0WLXzZgUZ0S1P6PtglEPhS31MxxRzfSCtZ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Wh9/NX7EZOyCZhTW4oxTnOJEDHn3z5goBV0vaX4rTVFHd6XUbfoGXO2PiGn+SSduL
-	 8p34qvnr+txUJbusAgLa/sq026mburJUPKyawIgufW7UlfWZYfSVJ7K2Mytio1nT9Q
-	 YGzWLs5JUwBbFXn5yh90twHZqo4vZ2KACAWVtWMA=
+	by mail.kernel.org (Postfix) with ESMTP id 4C7062084F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:14:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbfBUQNg (ORCPT
+        id S1728208AbfBUQOR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 11:13:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33190 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 11:14:17 -0500
+Received: from relay.sw.ru ([185.231.240.75]:34852 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725831AbfBUQNg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 11:13:36 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54E4B2075A;
-        Thu, 21 Feb 2019 16:13:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550765615;
-        bh=hcQgLtVT0WLXzZgUZ0S1P6PtglEPhS31MxxRzfSCtZ8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bUGBsHa/LzYoXpDuz5ZRW5GhYbCfcP5Z3zuG4M7AaXbYV8oqzQjmrgHVf36r8cjTD
-         liUZHUFhE7+ra92WJrUnmC67vlKFtXszSOMZvu+mk/MQ6yZ6vxx+370FdZ09HS430N
-         gAqls4vqU/XyfL64kJPPKGvmbf3n29+HYyICj5KI=
-Date:   Thu, 21 Feb 2019 17:13:18 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL v1 0/7] stm class/intel_th: Updates for v5.1
-Message-ID: <20190221161318.GC25800@kroah.com>
-References: <20190221155006.76832-1-alexander.shishkin@linux.intel.com>
+        id S1725831AbfBUQOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 11:14:17 -0500
+Received: from [172.16.25.12]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <aryabinin@virtuozzo.com>)
+        id 1gwqzE-0001Ba-1w; Thu, 21 Feb 2019 19:14:12 +0300
+Subject: Re: [PATCH] kasan: turn off asan-stack for clang-8 and earlier
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Andrey Konovalov <andreyknvl@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Mark Brown <broonie@kernel.org>, Qian Cai <cai@lca.pw>,
+        Alexander Potapenko <glider@google.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Christoph Lameter <cl@linux.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>
+References: <20190219214940.391081-1-arnd@arndb.de>
+ <CAAeHK+xSpsu0tNmeq0wKXfT=0HuORnvU+XzLswDzhbtfZVa4Hw@mail.gmail.com>
+ <CAK8P3a1NfHohd1xT7iHK85L2PGnD95RJvwFi-2cWrFpipQzqwg@mail.gmail.com>
+ <b109ad0d-6995-8ca2-5426-7e2627d2032c@virtuozzo.com>
+ <CAK8P3a0tg1WRLK=fs9S+X4TPB7sR55ZsjMbBVX07AtAfguXCsw@mail.gmail.com>
+ <d50cf232-f38e-4060-2742-27ba07e2ae9c@virtuozzo.com>
+ <CAK8P3a0UXcQKgoGYT0gVQynZLpL-ozK6EtA0Q4CaiGYDmxf8ZA@mail.gmail.com>
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <8e29f564-88e1-90b0-948c-d2fb52db29b9@virtuozzo.com>
+Date:   Thu, 21 Feb 2019 19:14:30 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190221155006.76832-1-alexander.shishkin@linux.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <CAK8P3a0UXcQKgoGYT0gVQynZLpL-ozK6EtA0Q4CaiGYDmxf8ZA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 05:49:59PM +0200, Alexander Shishkin wrote:
-> Hi Greg,
-> 
-> Second attempt. Added stable CC and Fixes tags to fixes.
-> 
-> Here are the STM and Intel TH changes that I have for v5.1. Nothing big,
-> a few fixes that are too late for the v5.0 and a few minor cleanups and
-> a documentation update. All sparse/smatch/coccinelle/cppcheck/checkpatch
-> clean as usual, courtesy of aiaiai.
-> Individual patches follow. Please consider pulling or applying. Thanks!
-> 
-> The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
-> 
->   Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/ash/stm.git tags/intel_th-stm-for-greg-20190221
 
-Much better, thanks, pulled and pushed out.
 
-greg k-h
+On 2/21/19 6:19 PM, Arnd Bergmann wrote:
+> On Thu, Feb 21, 2019 at 11:06 AM Andrey Ryabinin
+> <aryabinin@virtuozzo.com> wrote:
+>> On 2/20/19 8:35 PM, Arnd Bergmann wrote:
+>>> On Wed, Feb 20, 2019 at 6:00 PM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
+>>>> On 2/20/19 5:51 PM, Arnd Bergmann wrote:
+> 
+>>> Maybe bringing it back would be a compromise? That way it's hidden from
+>>> all the build testing bots (because of the !CONFIG_COMPILE_TEST dependency),
+>>> but anyone who really wants it can still have the option, and set
+>>> CONFIG_FRAME_WARN
+>>> to whichever value they like.
+>>>
+>>
+>>
+>> I think there is much simpler solution:
+>>
+>> ---
+>>  lib/Kconfig.kasan | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
+>> index 219cddc913ac..6cd035f06cee 100644
+>> --- a/lib/Kconfig.kasan
+>> +++ b/lib/Kconfig.kasan
+>> @@ -105,6 +105,8 @@ endchoice
+>>
+>>  config KASAN_STACK
+>>         int
+>> +       range 0 1
+>> +       prompt "Enable stack instrumentation (unsafe)" if CC_IS_CLANG && (CLANG_VERSION < 90000)
+>>         default 0 if CC_IS_CLANG && (CLANG_VERSION < 90000)
+>>         default 1
+>>         help
+>> --
+>>
+>>
+>> AFAIK, randconfig is not able to randomize int config options, so it will be disabled for build robots,
+>> but users still will be able to enable it.
+> 
+> Right, this will work, but I find it a bit awkward to require users to
+> enter 0 or 1.
+> 
+> My assumption is that build bots turn on CONFIG_COMPILE_TEST, so
+> having a bool option that depends on COMPILE_TEST would be more
+> conventional. We can debate whether it should also depend on
+> CONFIG_EXPERT or not. Something like
+> 
+> config KASAN_STACK
+>          bool "Enable stack instrumentation (unsafe)" if CC_IS_CLANG
+> && !COMPILE_TEST
+>          default CC_IS_GCC || (CLANG_VERSION >= 90000)
+> 
+> And then a simpler Makefile logic (could also be done in Kconfig) to turn
+> that bool symbol into an integer argument for asan-stack=
+> 
+
+Sounds good.
