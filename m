@@ -2,100 +2,159 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC210C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43422C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:35:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB24620842
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:34:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550763263;
-	bh=wwAPMEhYtVcOn5aXGGayEeTVcRs/Bctzi/TedrlPz38=;
-	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
-	b=L0bPgC0Sd3+hr1SimuqK1YJTTkccQT9HFribCz1iHfXuIaM61GBc7pyVIBfGeKgmY
-	 TLi+Mpc9DLzm24HGN3IS+Dw3EB6bvVtP3dfT5MrETMetzB8ZJnj7zUpmsu9nQrZqNr
-	 gvNpe4BOcQIvL5k0DUI2SQkrXDVkaZwNhg9j6AwY=
+	by mail.kernel.org (Postfix) with ESMTP id 0FFF62075A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:35:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DTJf8tGa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728344AbfBUPeW (ORCPT
+        id S1728084AbfBUPf4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 10:34:22 -0500
-Received: from mail-pl1-f171.google.com ([209.85.214.171]:35968 "EHLO
-        mail-pl1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728003AbfBUPeT (ORCPT
+        Thu, 21 Feb 2019 10:35:56 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:45863 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725858AbfBUPf4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 10:34:19 -0500
-Received: by mail-pl1-f171.google.com with SMTP id k2so5000804plt.3;
-        Thu, 21 Feb 2019 07:34:18 -0800 (PST)
+        Thu, 21 Feb 2019 10:35:56 -0500
+Received: by mail-io1-f67.google.com with SMTP id x9so1804550iog.12
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 07:35:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=2KXMvYHbrLkp9bZ90/DNJJ31xiACWMEb2YfDg1AjNDk=;
+        b=DTJf8tGagUfw+mIoRERyJdMLTWTALbdJHRdSKwqirl7IaYnJi0NIRp/tnyEYxFcBp7
+         yxDuUs+ruz4ZxzhmhypbzakuTUqj9mnn4v7ZELW0G8rXQmfh37ADiKbDYfoe6QrrKi8p
+         kM1lCb3ZWt6C1cp5A4tobWIvwZgrLInCC2WvWjPxdo7yC7RRonvcKXvl4cPbvftV0Z3j
+         1iU/97TpGFdtenxe9jLZATit6NtqIFSA0VU2MIq0A4I8ly7LuIgHaFDI4YnnwZSmdO1J
+         a3psm1hq0laz7hI/DnJx69sHS3k5nYwwPl50zHfrJ7YMkWPIQa28wT/XUHFUEXA8Z6pE
+         Jsyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XPqRx3G1zDibY5f11Kqd711bReAyQUyuceYskmJlDgk=;
-        b=RAq/nOTgaUz8QTrQthUrzxjB4+4yBaXNVkFDPTnCRYtdvSNlO3HUoVJev+T7CadpIk
-         /k0zPi5SWDDWVswkJZwoczJqwzVkziqSHYIBn6XfdIATMKr0YY2WLAm8wp3TTrYu+33l
-         OWM9j+RI+mxlqRUv8nJXSoosTYdlfAG+y5gdVw1hAQn39TvEQ2XQO0X4pgI9a0qY5QCC
-         MTxuYWHhPnx1I2YVBO908d1eU8KI3X3oyin18PX5RZUKdFvvcUl6S8/oESZ1ZGrqVnWg
-         U3quDQDj1fUzBrwUtG5nzPj1a5qmiWEMT+BDdgLrIzOvxvlUr8VIde1hrvGHp4F1zHFk
-         TBAw==
-X-Gm-Message-State: AHQUAuajaahaymSALzojtMR+fkbAkPjV2YRpLn/slp2prrvlSkY6uRm7
-        dZnMzhZ3kZgCQuCgSbSnqjc=
-X-Google-Smtp-Source: AHgI3IbQhHLkj+rQEswB+BoVSLMBa9mIIZ3HP92lYutjhoqXwJf0K2FXjHuJFvPPK+SFR0rkJuuRpA==
-X-Received: by 2002:a17:902:9003:: with SMTP id a3mr15817741plp.2.1550763258257;
-        Thu, 21 Feb 2019 07:34:18 -0800 (PST)
-Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
-        by smtp.gmail.com with ESMTPSA id a20sm34713724pfj.5.2019.02.21.07.34.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Feb 2019 07:34:17 -0800 (PST)
-Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Thu, 21 Feb 2019 07:34:15 -0800
-Date:   Thu, 21 Feb 2019 07:34:15 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Steve French <smfrench@gmail.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
-Message-ID: <20190221153415.GL11489@garbanzo.do-not-panic.com>
-References: <CAOQ4uxjMYWJPF8wFF_7J7yy7KCdGd8mZChfQc5GzNDcfqA7UAA@mail.gmail.com>
- <20190213073707.GA2875@kroah.com>
- <CAOQ4uxgQGCSbhppBfhHQmDDXS3TGmgB4m=Vp3nyyWTFiyv6z6g@mail.gmail.com>
- <20190213091803.GA2308@kroah.com>
- <20190213192512.GH69686@sasha-vm>
- <20190213195232.GA10047@kroah.com>
- <1550088875.2871.21.camel@HansenPartnership.com>
- <20190215015020.GJ69686@sasha-vm>
- <1550198902.2802.12.camel@HansenPartnership.com>
- <20190216182835.GF23000@mit.edu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190216182835.GF23000@mit.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=2KXMvYHbrLkp9bZ90/DNJJ31xiACWMEb2YfDg1AjNDk=;
+        b=j0PzrUyvxMF69KD63RyAtAk3/VIi/i0a3y/OteJwYCpLYCYuS7F/cTUUXtPAoElF2W
+         xAzwOimb6tb2ybKmAxmwQfRz9IF5E+bCbMEeNx8p+MGPcwVNBMLIAJYMiCSR2kUplpNY
+         KLmVXJu3rvVuvkHS/DqJUxrlRTRqXjQoCiFYjhrnbnhrXJWoERbT8oWqDwfwYODiiLja
+         8hoqJmIkJFrZEVJkzAhiAoH0C3Qm9bJOyH9qAApEo/CpwP7NHj9bh6F3NcQumdSoEjTj
+         C8Unmu5kpwHGOQfq5h66nt1sb1EgCNPc28N5+K50n/thcKH1Xf1QEkjcYNiXLVbIR4RS
+         RXww==
+X-Gm-Message-State: AHQUAuapngxcFgn32fxusAHziGl3gBAT3LbOe7qJl7mUv62HYMIIfygc
+        yJbB5Ccd8BlWT6FqTISlbJg=
+X-Google-Smtp-Source: AHgI3Ia4DqozQw5D+6B3vkCJ7wo/OiiGtzPtjjUNTHSEqNAH65vYvPDVbruBbX8NW5wcwnjYFXpK7w==
+X-Received: by 2002:a6b:d109:: with SMTP id l9mr25571617iob.108.1550763354739;
+        Thu, 21 Feb 2019 07:35:54 -0800 (PST)
+Received: from svens-asus.arcx.com ([184.94.50.30])
+        by smtp.gmail.com with ESMTPSA id f142sm4474706itc.15.2019.02.21.07.35.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Feb 2019 07:35:54 -0800 (PST)
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
+To:     Timur Tabi <timur@kernel.org>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>
+Cc:     alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Subject: [PATCH] ASoC: fsl_ssi: remove unsupported formats in i2s master mode
+Date:   Thu, 21 Feb 2019 10:35:50 -0500
+Message-Id: <20190221153550.1932-1-TheSven73@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 16, 2019 at 01:28:35PM -0500, Theodore Y. Ts'o wrote:
-> The block/*, loop/* and scsi/* tests in blktests do seem to be in
-> pretty good shape.  The nvme, nvmeof, and srp tests are *definitely*
-> not as mature.
+Quote from the ssi manual:
+"The word length is fixed to 32 in I2S Master mode and
+the WL bits determine the number of bits that will
+contain valid data (out of the 32 transmitted/received
+bits in each channel)."
+(61.8.1.4, page 5138, IMX6DQRM Rev. 3, 07/2015)
 
-Can you say more about this later part. What would you like to see more
-of for nvme tests for instance?
+In other words, in i2s master mode, we always get 32
+physical bits/channel, no matter what.
 
-It sounds like a productive session would include tracking our:
+However, the supported list of formats for this ssi
+contains S8, S16_XX, S18_3XX, and S20_3XX, which have
+8, 16, 24 and 24 physical bits/channel respectively.
+If one of these is selected in i2s master mode, the
+format generated by the ssi will be incorrect.
 
-  a) sour spots
-  b) who's already working on these
-  c) gather volutneers for these sour spots
+Fix by constraining the frame bits in i2s master mode
+to 32 * channels. This will filter out those formats
+that the ssi cannot support.
 
- Luis
+Tested on imx6 with tda998x and sgtl5k codecs.
+
+Cc: Timur Tabi <timur@kernel.org>
+Cc: Nicolin Chen <nicoleotsuka@gmail.com>
+Cc: Xiubo Li <Xiubo.Lee@gmail.com>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>
+Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+---
+ sound/soc/fsl/fsl_ssi.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/sound/soc/fsl/fsl_ssi.c b/sound/soc/fsl/fsl_ssi.c
+index 0a648229e643..3d375f60ecf4 100644
+--- a/sound/soc/fsl/fsl_ssi.c
++++ b/sound/soc/fsl/fsl_ssi.c
+@@ -627,6 +627,28 @@ static void fsl_ssi_setup_ac97(struct fsl_ssi *ssi)
+ 	regmap_write(regs, REG_SSI_SOR, SSI_SOR_WAIT(3));
+ }
+ 
++static int fsl_ssi_hw_rule_i2s_master(struct snd_pcm_hw_params *params,
++				struct snd_pcm_hw_rule *rule)
++{
++	struct snd_interval *it = hw_param_interval(params,
++					SNDRV_PCM_HW_PARAM_FRAME_BITS);
++	struct fsl_ssi *ssi = rule->private;
++	struct snd_interval t;
++
++	if (!fsl_ssi_is_i2s_master(ssi))
++		return 0;
++
++	/*
++	 * In i2s master mode, the ssi always generates 32 physical
++	 * bits/channel. Filter out formats that don't have 32 physical
++	 * bits/channel, they are unsupported.
++	 */
++	memset(&t, 0, sizeof(t));
++	t.min = t.max = params_channels(params) * 32;
++
++	return snd_interval_refine(it, &t);
++}
++
+ static int fsl_ssi_startup(struct snd_pcm_substream *substream,
+ 			   struct snd_soc_dai *dai)
+ {
+@@ -648,6 +670,12 @@ static int fsl_ssi_startup(struct snd_pcm_substream *substream,
+ 		snd_pcm_hw_constraint_step(substream->runtime, 0,
+ 					   SNDRV_PCM_HW_PARAM_PERIOD_SIZE, 2);
+ 
++	snd_pcm_hw_rule_add(substream->runtime, 0,
++			SNDRV_PCM_HW_PARAM_FRAME_BITS,
++			fsl_ssi_hw_rule_i2s_master, ssi,
++			SNDRV_PCM_HW_PARAM_FORMAT, SNDRV_PCM_HW_PARAM_CHANNELS,
++			-1);
++
+ 	return 0;
+ }
+ 
+-- 
+2.17.1
+
