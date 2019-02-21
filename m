@@ -2,153 +2,178 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DD04C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:49:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF49C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:50:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C66620880
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:49:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="tjR3T8yu";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="V4FPsMzB"
+	by mail.kernel.org (Postfix) with ESMTP id 375DB20855
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:50:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbfBULtb (ORCPT
+        id S1727327AbfBULuf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 06:49:31 -0500
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:44341 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725814AbfBULta (ORCPT
+        Thu, 21 Feb 2019 06:50:35 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:45560 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbfBULuf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 06:49:30 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 193F72F89;
-        Thu, 21 Feb 2019 06:49:30 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Thu, 21 Feb 2019 06:49:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=16ukAG8arJNroPlaftBt9brS5BK
-        z+aSbliLB114YW14=; b=tjR3T8yuOdagu2mhKXGJ9thlWMpi+BEZPs7HNvsrOBR
-        Ww8Y/RB47ncZ0wy2pD19KpEarNGZQvq1b4dSsE5Gr4giLUuk8ojpbSqtnf4wjrAF
-        u5Kq3e3FHi7Bcf4q0Fa/9EOnCqlBSt7hfmaVMHCmrV5u09AfcY+ew7XfWIGjFy/s
-        XLQuJBn/3rtb70Qng0/cpmJrG629zcAZUNts/u1ifuHSapq7DaaAoTSNsTeXtQ11
-        xdMhJSpiFX7lQhfuXP9qNCYs28SgZjDxXZpD687K6yFUmugMsSMsyoTCFryNhJRG
-        jarq+z3cPizyxQ3BbIE7rlFNDiexEzExFWWDwsYb2zQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=16ukAG
-        8arJNroPlaftBt9brS5BKz+aSbliLB114YW14=; b=V4FPsMzBTGKbQH6XUi92/1
-        ZAdL3T/o93fEir+REcxv1JTGmu7fsa/r1vRuBNAvm4rVhTvVrM5oH8i8jDSKIdYJ
-        G01XjV7O8ZvSYcaQNMYBqDT04ghc/Z+EFobXiI3mCtQ9mSusRPejbZjo+IWREiHI
-        DQ3Cv5mRzFjeE0b3lZOqxyHxjGR60jFGEzUlcp678rw0hsloXuu53bMwuCuta1MH
-        2B3mfQIB8xzecCwfdHHlHE82lbGTFHnSdvs9IEcXrQajEnAN22iwXX8ic/AazjVS
-        yExjy82y9ANbdyK+txjibsgIqZ7Pj+octCahyL+pwoQCx+urdf9VRTNh7FxmS7/w
-        ==
-X-ME-Sender: <xms:SZBuXBOat3YJ0PiDmWCWiRjBCJ--EOd0e6gK0rJkPzJvq99eO0TNzA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrtdekgdefheculddtuddrgedtledrtddtmd
-    cutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvuffkfhggtggujggfsehttd
-    ertddtredvnecuhfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhm
-    qeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeekfedrkeeirdekledrud
-    dtjeenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmnecu
-    vehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:SZBuXEYfyDdIwt-1itO814RDsg_wZrdtvz9g62CBBmgPs_jdYY52Sg>
-    <xmx:SZBuXACluXX6Y_Rr0cBCMcqyZEXPFA2wdAObMk9NS4bD-5H7BjHzcA>
-    <xmx:SZBuXKEQ21wOCy4DU28fpARU4DdCOgcP9bTmFz9FOexg2KrMGPwDdQ>
-    <xmx:SZBuXA1btjxY_OcUMhpehK3MQCi0wmDMRSWfZbuLgJFqRRa19OAjVA>
-Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id D3EB4E44A8;
-        Thu, 21 Feb 2019 06:49:28 -0500 (EST)
-Date:   Thu, 21 Feb 2019 12:49:26 +0100
-From:   Greg KH <greg@kroah.com>
+        Thu, 21 Feb 2019 06:50:35 -0500
+Received: from localhost ([127.0.0.1] helo=flow.W.breakpoint.cc)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gwms0-0001RC-HY; Thu, 21 Feb 2019 12:50:28 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
-Cc:     logang@deltatee.com, stable-commits@vger.kernel.org
-Subject: Re: Patch "PCI: Fix __initdata issue with "pci=disable_acs_redir"
- parameter" has been added to the 4.20-stable tree
-Message-ID: <20190221114926.GH10737@kroah.com>
-References: <20190221054321.B1287214AF@mail.kernel.org>
+Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: [PATCH v7] x86: load FPU registers on return to userland
+Date:   Thu, 21 Feb 2019 12:49:58 +0100
+Message-Id: <20190221115020.12385-1-bigeasy@linutronix.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190221054321.B1287214AF@mail.kernel.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 12:43:20AM -0500, Sasha Levin wrote:
-> This is a note to let you know that I've just added the patch titled
-> 
->     PCI: Fix __initdata issue with "pci=disable_acs_redir" parameter
-> 
-> to the 4.20-stable tree which can be found at:
->     http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
-> 
-> The filename of the patch is:
->      pci-fix-__initdata-issue-with-pci-disable_acs_redir-.patch
-> and it can be found in the queue-4.20 subdirectory.
-> 
-> If you, or anyone else, feels it should not be added to the stable tree,
-> please let <stable@vger.kernel.org> know about it.
-> 
-> 
-> 
-> commit 44557eb5390967bb678394cfbcef5df39bfa751e
-> Author: Logan Gunthorpe <logang@deltatee.com>
-> Date:   Thu Jan 17 08:46:34 2019 -0600
-> 
->     PCI: Fix __initdata issue with "pci=disable_acs_redir" parameter
->     
->     [ Upstream commit d2fd6e81912a665993b24dcdc1c1384a42a54f7e ]
->     
->     The disable_acs_redir parameter stores a pointer to the string passed to
->     pci_setup().  However, the string passed to PCI setup is actually a
->     temporary copy allocated in static __initdata memory.  After init, once the
->     memory is freed, it is no longer valid to reference this pointer.
->     
->     This bug was noticed in v5.0-rc1 after a change in commit c5eb1190074c
->     ("PCI / PM: Allow runtime PM without callback functions") caused
->     pci_disable_acs_redir() to be called during shutdown which manifested
->     as an unable to handle kernel paging request at:
->     
->       RIP: 0010:pci_enable_acs+0x3f/0x1e0
->       Call Trace:
->          pci_restore_state.part.44+0x159/0x3c0
->          pci_restore_standard_config+0x33/0x40
->          pci_pm_runtime_resume+0x2b/0xd0
->          ? pci_restore_standard_config+0x40/0x40
->          __rpm_callback+0xbc/0x1b0
->          rpm_callback+0x1f/0x70
->          ? pci_restore_standard_config+0x40/0x40
->           rpm_resume+0x4f9/0x710
->          ? pci_conf1_read+0xb6/0xf0
->          ? pci_conf1_write+0xb2/0xe0
->          __pm_runtime_resume+0x47/0x70
->          pci_device_shutdown+0x1e/0x60
->          device_shutdown+0x14a/0x1f0
->          kernel_restart+0xe/0x50
->          __do_sys_reboot+0x1ee/0x210
->          ? __fput+0x144/0x1d0
->          do_writev+0x5e/0xf0
->          ? do_writev+0x5e/0xf0
->          do_syscall_64+0x48/0xf0
->          entry_SYSCALL_64_after_hwframe+0x44/0xa9
->     
->     It was also likely possible to trigger this bug when hotplugging PCI
->     devices.
->     
->     To fix this, instead of storing a pointer, we use kstrdup() to copy the
->     disable_acs_redir_param to its own buffer which will never be freed.
->     
->     Fixes: aaca43fda742 ("PCI: Add "pci=disable_acs_redir=" parameter for peer-to-peer support")
+This is a refurbished series originally started by by Rik van Riel. The
+goal is load the FPU registers on return to userland and not on every
+context switch. By this optimisation we can:
+- avoid loading the registers if the task stays in kernel and does
+  not return to userland
+- make kernel_fpu_begin() cheaper: it only saves the registers on the
+  first invocation. The second invocation does not need save them again.
 
-According to this tag it is needed in 4.19.y as well...
+To access the FPU registers in kernel we need:
+- disable preemption to avoid that the scheduler switches tasks. By
+  doing so it would set TIF_NEED_FPU_LOAD and the FPU registers would be
+  not valid.
+- disable BH because the softirq might use kernel_fpu_begin() and then
+  set TIF_NEED_FPU_LOAD instead loading the FPU registers on completion.
 
-now added there.
+v6…v7:
+Rebased on top of v5.0-rc7 and addressed Borislav Petkov's review.
 
-greg k-h
+v5…v6:
+Rebased on top of v5.0-rc1. Integrated a few fixes which I noticed while
+looking over the patches, dropped the first few patches which were
+already applied.
+
+v4…v5:
+Rebased on top of a fix, noticed a problem with XSAVES and then redid
+the restore on sig return (patch #26 to #28).
+
+I don't like very much the sig save+restore thing that we are doing. It
+has been always like that. I *think* that this is just because we have
+nowhere to stash the FPU state while we are handling the signal. We
+could add another fpu->state for the signal handler and avoid the thing.
+Debian code-search revealed that `criu' is using it (and I didn't
+figure out why). Nothing else (that is packaged in Debian). Maybe we
+could get rid of this and if `criu' would then use a dedicated interface
+for its needs rather the signal interface that happen to do what it
+wants :)
+
+v3…v4:
+It has been suggested to remove the `initialized' member of the struct
+fpu because it should not required be needed with lazy-FPU-restore and
+would make the review easier. This is the first part of the series, the
+second is basically the rebase of the v3 queue. As a result, the
+diffstat became negative (which wasn't the case in previous version) :)
+I tried to incorporate all the review comments that came up, some of
+them were "outdated" after the removal of the `initialized' member. I'm
+sorry should I missed any.
+
+v1…v3:
+v2 was never posted. I followed the idea to completely decouple PKRU
+from xstate. This didn't quite work and made a few things complicated. 
+One obvious required fixup is copy_fpstate_to_sigframe() where the PKRU
+state needs to be fiddled into xstate. This required another
+xfeatures_mask so that the sanity checks were performed and
+xstate_offsets would be computed. Additionally ptrace also reads/sets
+xstate in order to get/set the register and PKRU is one of them. So this
+would need some fiddle, too.
+In v3 I dropped that decouple idea. I also learned that the wrpkru
+instruction is not privileged and so caching it in kernel does not work.
+Instead I keep PKRU in xstate area and load it at context switch time
+while the remaining registers are deferred (until return to userland).
+The offset of PKRU within xstate is enumerated at boot time so why not
+use it.
+
+The following changes since commit a3b22b9f11d9fbc48b0291ea92259a5a810e9438:
+
+  Linux 5.0-rc7 (2019-02-17 18:46:40 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/bigeasy/staging.git x86_fpu_rtu_v7
+
+for you to fetch changes up to c0bd7b2b7b694c71f7b0101c338c0102aef8a91f:
+
+  x86/fpu: Defer FPU state load until return to userspace (2019-02-21 12:29:00 +0100)
+
+----------------------------------------------------------------
+Rik van Riel (5):
+      x86/fpu: Add (__)make_fpregs_active helpers
+      x86/fpu: Eager switch PKRU state
+      x86/fpu: Always store the registers in copy_fpstate_to_sigframe()
+      x86/fpu: Prepare copy_fpstate_to_sigframe() for TIF_NEED_FPU_LOAD
+      x86/fpu: Defer FPU state load until return to userspace
+
+Sebastian Andrzej Siewior (17):
+      x86/fpu: Remove fpu->initialized usage in __fpu__restore_sig()
+      x86/fpu: Remove fpu__restore()
+      x86/fpu: Remove preempt_disable() in fpu__clear()
+      x86/fpu: Always init the `state' in fpu__clear()
+      x86/fpu: Remove fpu->initialized usage in copy_fpstate_to_sigframe()
+      x86/fpu: Don't save fxregs for ia32 frames in copy_fpstate_to_sigframe()
+      x86/fpu: Remove fpu->initialized
+      x86/fpu: Remove user_fpu_begin()
+      x86/fpu: Make __raw_xsave_addr() use feature number instead of mask
+      x86/fpu: Make get_xsave_field_ptr() and get_xsave_addr() use feature number instead of mask
+      x86/fpu: Only write PKRU if it is different from current
+      x86/pkeys: Don't check if PKRU is zero before writting it
+      x86/entry: Add TIF_NEED_FPU_LOAD
+      x86/fpu: Update xstate's PKRU value on write_pkru()
+      x86/fpu: Inline copy_user_to_fpregs_zeroing()
+      x86/fpu: Let __fpu__restore_sig() restore the !32bit+fxsr frame from kernel memory
+      x86/fpu: Merge the two code paths in __fpu__restore_sig()
+
+ Documentation/preempt-locking.txt    |   1 -
+ arch/x86/entry/common.c              |   8 ++
+ arch/x86/ia32/ia32_signal.c          |  17 ++-
+ arch/x86/include/asm/fpu/api.h       |  31 ++++++
+ arch/x86/include/asm/fpu/internal.h  | 163 +++++++++++++----------------
+ arch/x86/include/asm/fpu/signal.h    |   2 +-
+ arch/x86/include/asm/fpu/types.h     |   9 --
+ arch/x86/include/asm/fpu/xstate.h    |   5 +-
+ arch/x86/include/asm/pgtable.h       |  20 +++-
+ arch/x86/include/asm/special_insns.h |   6 ++
+ arch/x86/include/asm/thread_info.h   |   2 +
+ arch/x86/include/asm/trace/fpu.h     |   8 +-
+ arch/x86/kernel/fpu/core.c           | 194 +++++++++++++++++------------------
+ arch/x86/kernel/fpu/init.c           |   2 -
+ arch/x86/kernel/fpu/regset.c         |  24 ++---
+ arch/x86/kernel/fpu/signal.c         | 191 +++++++++++++++-------------------
+ arch/x86/kernel/fpu/xstate.c         |  42 ++++----
+ arch/x86/kernel/process.c            |   2 +-
+ arch/x86/kernel/process_32.c         |  11 +-
+ arch/x86/kernel/process_64.c         |  11 +-
+ arch/x86/kernel/signal.c             |  17 ++-
+ arch/x86/kernel/traps.c              |   2 +-
+ arch/x86/kvm/x86.c                   |  48 +++++----
+ arch/x86/math-emu/fpu_entry.c        |   3 -
+ arch/x86/mm/mpx.c                    |   6 +-
+ arch/x86/mm/pkeys.c                  |  14 +--
+ 26 files changed, 408 insertions(+), 431 deletions(-)
+
+Sebastian
+
