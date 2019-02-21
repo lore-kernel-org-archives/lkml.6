@@ -2,81 +2,128 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC515C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5F1BC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A12922086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:10:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82B3E2077B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:17:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727455AbfBUIKl (ORCPT
+        id S1727095AbfBUIRP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 03:10:41 -0500
-Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:38204 "EHLO
-        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726038AbfBUIKk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 03:10:40 -0500
-Received: from pps.filterd (m0134425.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1L86Yhx003760;
-        Thu, 21 Feb 2019 08:10:38 GMT
-Received: from g4t3426.houston.hpe.com (g4t3426.houston.hpe.com [15.241.140.75])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2qsn8g98me-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 21 Feb 2019 08:10:38 +0000
-Received: from g9t2301.houston.hpecorp.net (g9t2301.houston.hpecorp.net [16.220.97.129])
-        by g4t3426.houston.hpe.com (Postfix) with ESMTP id 847C55C;
-        Thu, 21 Feb 2019 08:10:37 +0000 (UTC)
-Received: from blofly.tw.rdlabs.hpecorp.net (blofly.tw.rdlabs.hpecorp.net [15.119.208.30])
-        by g9t2301.houston.hpecorp.net (Postfix) with ESMTP id 660BF4E;
-        Thu, 21 Feb 2019 08:10:35 +0000 (UTC)
-From:   Matt Hsiao <matt.hsiao@hpe.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     arnd@arndb.de, gregkh@linuxfoundation.org, david.altobelli@hpe.com,
-        mark.rusk@hpe.com, jerry.hoemann@hpe.com,
-        Matt Hsiao <matt.hsiao@hpe.com>
-Subject: [PATCH 4/4] misc: hpilo: Update driver version
-Date:   Thu, 21 Feb 2019 16:04:42 +0800
-Message-Id: <1550736282-25416-5-git-send-email-matt.hsiao@hpe.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1550736282-25416-1-git-send-email-matt.hsiao@hpe.com>
-References: <1550736282-25416-1-git-send-email-matt.hsiao@hpe.com>
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-21_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902210062
+        Thu, 21 Feb 2019 03:17:15 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40102 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726339AbfBUIRO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 03:17:14 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 95CCDAD95;
+        Thu, 21 Feb 2019 08:17:12 +0000 (UTC)
+Subject: Re: xen/evtchn and forced threaded irq
+To:     Julien Grall <julien.grall@arm.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>
+Cc:     xen-devel <xen-devel@lists.xenproject.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Dave P Martin <dave.martin@arm.com>
+References: <5e256d9a-572c-e01e-7706-407f99245b00@arm.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <2c5300a3-ed7f-c1a3-81d3-35adb23bea4c@suse.com>
+Date:   Thu, 21 Feb 2019 09:17:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <5e256d9a-572c-e01e-7706-407f99245b00@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bump version number to reflect recent minor changes.
+On 19/02/2019 18:31, Julien Grall wrote:
+> Hi all,
+> 
+> I have been looking at using Linux RT in Dom0. Once the guest is started,
+> the console is ending to have a lot of warning (see trace below).
+> 
+> After some investigation, this is because the irq handler will now be threaded.
+> I can reproduce the same error with the vanilla Linux when passing the option
+> 'threadirqs' on the command line (the trace below is from 5.0.0-rc7 that has
+> not RT support).
+> 
+> FWIW, the interrupt for port 6 is used to for the guest to communicate with
+> xenstore.
+> 
+> From my understanding, this is happening because the interrupt handler is now
+> run in a thread. So we can have the following happening.
+> 
+>    Interrupt context            |     Interrupt thread
+>                                 |  
+>    receive interrupt port 6     |
+>    clear the evtchn port        |
+>    set IRQF_RUNTHREAD	        |
+>    kick interrupt thread        |
+>                                 |    clear IRQF_RUNTHREAD
+>                                 |    call evtchn_interrupt
+>    receive interrupt port 6     |
+>    clear the evtchn port        |
+>    set IRQF_RUNTHREAD           |
+>    kick interrupt thread        |
+>                                 |    disable interrupt port 6
+>                                 |    evtchn->enabled = false
+>                                 |    [....]
+>                                 |
+>                                 |    *** Handling the second interrupt ***
+>                                 |    clear IRQF_RUNTHREAD
+>                                 |    call evtchn_interrupt
+>                                 |    WARN(...)
+> 
+> I am not entirely sure how to fix this. I have two solutions in mind:
+> 
+> 1) Prevent the interrupt handler to be threaded. We would also need to
+> switch from spin_lock to raw_spin_lock as the former may sleep on RT-Linux.
+> 
+> 2) Remove the warning
 
-Signed-off-by: Matt Hsiao <matt.hsiao@hpe.com>
----
- drivers/misc/hpilo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+3) Split the handler (RT-only?) to a non-threaded part containing
+   everything until the "evtchn->enabled = false" and only then
+   kick the thread doing the rest, including the spin_lock().
 
-diff --git a/drivers/misc/hpilo.c b/drivers/misc/hpilo.c
-index 927309b..4ef6802 100644
---- a/drivers/misc/hpilo.c
-+++ b/drivers/misc/hpilo.c
-@@ -913,7 +913,7 @@ static void __exit ilo_exit(void)
- 	class_destroy(ilo_class);
- }
- 
--MODULE_VERSION("1.5.0");
-+MODULE_VERSION("1.5.1");
- MODULE_ALIAS(ILO_NAME);
- MODULE_DESCRIPTION(ILO_NAME);
- MODULE_AUTHOR("David Altobelli <david.altobelli@hpe.com>");
--- 
-1.8.3.1
-
+Juergen
