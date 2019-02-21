@@ -2,76 +2,89 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D640C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D7CAC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:09:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C97B206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:09:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D87EE20842
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:09:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbfBUPJP (ORCPT
+        id S1728066AbfBUPJT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 10:09:15 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44780 "EHLO mx1.redhat.com"
+        Thu, 21 Feb 2019 10:09:19 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59874 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725858AbfBUPJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 10:09:14 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        id S1725858AbfBUPJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 10:09:18 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4249630821BF;
-        Thu, 21 Feb 2019 15:09:14 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-228.ams2.redhat.com [10.36.116.228])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BA8C65D6A6;
-        Thu, 21 Feb 2019 15:09:13 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 7728A11A9A; Thu, 21 Feb 2019 16:09:12 +0100 (CET)
-Date:   Thu, 21 Feb 2019 16:09:12 +0100
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>
-Cc:     dri-devel@lists.freedesktop.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        "open list:INTEL DRM DRIVERS excluding Poulsbo, Moorestow..." 
-        <intel-gfx@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Sean Paul <sean@poorly.run>
-Subject: Re: [PATCH v2 1/2] drm: move i915_kick_out_vgacon to drm_fb_helper
-Message-ID: <20190221150912.yytlcxxwv7qodaf3@sirius.home.kraxel.org>
-References: <20190221113534.20764-1-kraxel@redhat.com>
- <20190221113534.20764-2-kraxel@redhat.com>
- <64292443-e784-5c15-9e3b-d52afc861991@tronnes.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id 26174C057F46;
+        Thu, 21 Feb 2019 15:09:18 +0000 (UTC)
+Received: from gondolin (dhcp-192-187.str.redhat.com [10.33.192.187])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 958B360BF4;
+        Thu, 21 Feb 2019 15:09:12 +0000 (UTC)
+Date:   Thu, 21 Feb 2019 16:09:10 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Pierre Morel <pmorel@linux.ibm.com>
+Cc:     borntraeger@de.ibm.com, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, frankja@linux.ibm.com,
+        akrowiak@linux.ibm.com, pasic@linux.ibm.com, david@redhat.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        freude@linux.ibm.com
+Subject: Re: [PATCH v3 1/1] s390: vfio_ap: link the vfio_ap devices to the
+ vfio_ap bus subsystem
+Message-ID: <20190221160910.5bf34f04.cohuck@redhat.com>
+In-Reply-To: <1550758494-28227-2-git-send-email-pmorel@linux.ibm.com>
+References: <1550758494-28227-1-git-send-email-pmorel@linux.ibm.com>
+        <1550758494-28227-2-git-send-email-pmorel@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <64292443-e784-5c15-9e3b-d52afc861991@tronnes.org>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 21 Feb 2019 15:09:14 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 21 Feb 2019 15:09:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > +int drm_fb_helper_kick_out_vgacon(void);
-> > +
+On Thu, 21 Feb 2019 15:14:54 +0100
+Pierre Morel <pmorel@linux.ibm.com> wrote:
+
+> Libudev relies on having a subsystem link for non-root devices. To
+> avoid libudev (and potentially other userspace tools) choking on the
+> matrix device let us introduce a matrix bus and with it the matrix
+> bus subsytem. Also make the matrix device reside within the matrix
+> bus.
 > 
-> Don't you need a dummy version as well for this one, like how it's done
-> for the other functions, to cover the case when DRM_FBDEV_EMULATION is
-> not selected?
+> Doing this we remove the forced link from the matrix device to the
+> vfio_ap driver and the device_type we do not need anymore.
+> 
+> Since the associated matrix driver is not the vfio_ap driver any more,
+> we have to change the search for the devices on the vfio_ap driver in
+> the function vfio_ap_verify_queue_reserved.
+> 
+> Fixes: 1fde573413b5 ("s390: vfio-ap: base implementation of VFIO AP device driver")
+> 
+> Cc: stable@vger.kernel.org
+> 
 
-Good question.
+I'd kill the two empty lines.
 
-I guess it makes sense to kick out vgacon even with CONFIG_FB=n.
+> Reported-by: Marc Hartmayer <mhartmay@linux.ibm.com>
+> Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+> Tested-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+> Acked-by: Halil Pasic <pasic@linux.ibm.com>
+> ---
+>  drivers/s390/crypto/vfio_ap_drv.c     | 44 ++++++++++++++++++++++++++++-------
+>  drivers/s390/crypto/vfio_ap_ops.c     |  4 ++--
+>  drivers/s390/crypto/vfio_ap_private.h |  1 +
+>  3 files changed, 38 insertions(+), 11 deletions(-)
 
-But when integrating this into
-drm_fb_helper_remove_conflicting_pci_framebuffers() as suggested by
-Daniel this isn't going to fly ...
-
-cheers,
-  Gerd
-
+Otherwise, still looks good.
