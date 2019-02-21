@@ -2,93 +2,117 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F8DC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:37:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0831FC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:37:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97E942086A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:37:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C82A720880
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:37:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="N1Wp1qaL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726338AbfBUKhp (ORCPT
+        id S1727054AbfBUKhz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 05:37:45 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:59548 "EHLO inva020.nxp.com"
+        Thu, 21 Feb 2019 05:37:55 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:42121 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725814AbfBUKho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 05:37:44 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B426C1A01C6;
-        Thu, 21 Feb 2019 11:37:42 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A7EAA1A015E;
-        Thu, 21 Feb 2019 11:37:42 +0100 (CET)
-Received: from enigma.ea.freescale.net (enigma.ea.freescale.net [10.171.81.110])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 58621205C6;
-        Thu, 21 Feb 2019 11:37:42 +0100 (CET)
-From:   =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>
-To:     Li Yang <leoyang.li@nxp.com>
-Cc:     Yangbo Lu <yangbo.lu@nxp.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] soc: fsl: guts: make fsl_guts_get_svr() static
-Date:   Thu, 21 Feb 2019 12:37:31 +0200
-Message-Id: <20190221103731.28978-1-horia.geanta@nxp.com>
-X-Mailer: git-send-email 2.16.2
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1725814AbfBUKhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 05:37:54 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 444rXH5kvYz9tylR;
+        Thu, 21 Feb 2019 11:37:51 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=N1Wp1qaL; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 38srmDrSOebu; Thu, 21 Feb 2019 11:37:51 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 444rXH4Yr8z9tylQ;
+        Thu, 21 Feb 2019 11:37:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1550745471; bh=gF6qyxoFEoDrWjO1hnj5M32V1KmsTcaENyZvWxSjtLg=;
+        h=From:Subject:To:Cc:Date:From;
+        b=N1Wp1qaLCpBHqcbLqid9ZtOiJC6t3n8EM0U0dVl7Bob3KXX4ZHBXvx9NoIqtlOzxv
+         7QsOnpVyRlCnvPmj69oQADqXvnPajXNAR4rVa3AQhqJUQg+YWT2xI1I0hqc+BIRLFc
+         U+m3DO/W3LDGQmpnEf1Qa32+ik6ErA/Ww0mN35Bo=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id C9B608B852;
+        Thu, 21 Feb 2019 11:37:52 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id dEar_SrDm5n9; Thu, 21 Feb 2019 11:37:52 +0100 (CET)
+Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 987A48B859;
+        Thu, 21 Feb 2019 11:37:52 +0100 (CET)
+Received: by localhost.localdomain (Postfix, from userid 0)
+        id 54A216E856; Thu, 21 Feb 2019 10:37:52 +0000 (UTC)
+Message-Id: <cover.1550745320.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v2 00/10] Optimise TLB miss handlers on 6xx (603/e300)
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Thu, 21 Feb 2019 10:37:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The export of fsl_guts_get_svr() is a left-over, it's currently used
-only internally and users needing SoC information should use the generic
-soc_device infrastructure.
+The main purpose of this series is to optimise the handling of
+TLB misses on the 603/e300.
 
-Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
----
- drivers/soc/fsl/guts.c   | 3 +--
- include/linux/fsl/guts.h | 2 --
- 2 files changed, 1 insertion(+), 4 deletions(-)
+Today the TLB miss handlers are implemented by more or less
+copying the actions performed by the hash page handlers used
+on processors having HASH pagetable.
 
-diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
-index 4f9655087bd7..63f6df86f9e5 100644
---- a/drivers/soc/fsl/guts.c
-+++ b/drivers/soc/fsl/guts.c
-@@ -115,7 +115,7 @@ static const struct fsl_soc_die_attr *fsl_soc_die_match(
- 	return NULL;
- }
- 
--u32 fsl_guts_get_svr(void)
-+static u32 fsl_guts_get_svr(void)
- {
- 	u32 svr = 0;
- 
-@@ -129,7 +129,6 @@ u32 fsl_guts_get_svr(void)
- 
- 	return svr;
- }
--EXPORT_SYMBOL(fsl_guts_get_svr);
- 
- static int fsl_guts_probe(struct platform_device *pdev)
- {
-diff --git a/include/linux/fsl/guts.h b/include/linux/fsl/guts.h
-index 941b11811f85..1fc0edd71c52 100644
---- a/include/linux/fsl/guts.h
-+++ b/include/linux/fsl/guts.h
-@@ -135,8 +135,6 @@ struct ccsr_guts {
- 	u32	srds2cr1;	/* 0x.0f44 - SerDes2 Control Register 0 */
- } __attribute__ ((packed));
- 
--u32 fsl_guts_get_svr(void);
--
- /* Alternate function signal multiplex control */
- #define MPC85xx_PMUXCR_QE(x) (0x8000 >> (x))
- 
+This series brings some simplification.
+
+It also improves TLB misses on all 6xx by storing the PGDIR phys address
+in an SPRG instead of reading it from thread struct.
+
+v2:
+- Added a patch which frees SPRN_SPRG2 by saving RTAS entry stack pointer in
+the thread struct, allowing to use it for storing the PGDIR for all 6xx.
+- Now using SPRN_SPRG2 for storing the PGDIR instead of SPRN_SPRG5. This allows
+the old 6xx having only 4 SPRGs to also get the benefit of this change.
+- Removed the last patch of the series which was reordering the _PAGE_FLAGS bits
+because it fails on hash 6xx. Will be re-added later once fixed.
+
+Christophe Leroy (10):
+  powerpc: simplify BDI switch
+  powerpc/6xx: Don't use SPRN_SPRG2 for storing stack pointer while in
+    RTAS
+  powerpc/6xx: Store PGDIR physical address in a SPRG
+  powerpc/603: use physical address directly in TLB miss handlers.
+  powerpc/hash32: use physical address directly in hash handlers.
+  powerpc/603: Don't handle kernel page TLB misses when not need
+  powerpc/603: Don't handle _PAGE_RW and _PAGE_DIRTY on ITLB misses
+  powerpc/603: let's handle PAGE_DIRTY directly
+  powerpc/603: Don't worry about _PAGE_USER in TLB miss handlers
+  powerpc/603: don't handle PAGE_ACCESSED in TLB miss handlers.
+
+ arch/powerpc/include/asm/mmu.h       |   2 +
+ arch/powerpc/include/asm/processor.h |   3 +
+ arch/powerpc/include/asm/reg.h       |   2 +-
+ arch/powerpc/kernel/asm-offsets.c    |   3 +
+ arch/powerpc/kernel/cpu_setup_6xx.S  |   4 ++
+ arch/powerpc/kernel/entry_32.S       |   5 +-
+ arch/powerpc/kernel/head_32.S        | 111 ++++++++++++++++-------------------
+ arch/powerpc/kernel/head_40x.S       |   5 +-
+ arch/powerpc/kernel/head_8xx.S       |   1 +
+ arch/powerpc/mm/8xx_mmu.c            |   7 +--
+ arch/powerpc/mm/hash_low_32.S        |  65 +++++++++-----------
+ arch/powerpc/mm/ppc_mmu_32.c         |   6 +-
+ 12 files changed, 104 insertions(+), 110 deletions(-)
+
 -- 
-2.16.2
+2.13.3
 
