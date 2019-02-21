@@ -4,50 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBB33C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E673C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:39:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A4662084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:39:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CF032080D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:39:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550759977;
-	bh=llZcv5zpIl5ZO+7Nla5wMEQhNzDUItlpEyLxq8UcymI=;
+	s=default; t=1550759980;
+	bh=VUich4jzqii1URLjDBRR43geCX8ciEhhc/CTjZvUqig=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gDkGBFMk08Npy9kD3XfBjZOAtUbwjZH8bhhS1LG9Z4+Eic8oJpV70vH0ZA8N47Vlj
-	 jlfwf9lzj/7b0H9NwqTl51lsieFxde/KZA0HNxXQ8BXHXSZH3cwT8tyqDFUwTbR706
-	 Z+m651ehaJdo/1fR2A2mmmZPtOZtSfMszUCbkV+4=
+	b=Jw/IOKs4q3CiEHdQADgyU3IpVfBcEFlhQyQpKdwfkx/AABlA79r3vnnWAfGssBu7Z
+	 TOztLkos6g+tzRwemOWlLG3LMMHBbm45c836axUSzx4vRIi8ICD95X8AWk8rfNSRvz
+	 QXpiuPsA8BHpT4YySh7e8Wsfk5qf4Yuw1WccWdZY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728945AbfBUOjg (ORCPT
+        id S1728967AbfBUOjj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:39:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33540 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:39:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728926AbfBUOjd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:39:33 -0500
+        id S1728451AbfBUOjh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:39:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 510A42084F;
-        Thu, 21 Feb 2019 14:39:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E5212080D;
+        Thu, 21 Feb 2019 14:39:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550759972;
-        bh=llZcv5zpIl5ZO+7Nla5wMEQhNzDUItlpEyLxq8UcymI=;
+        s=default; t=1550759976;
+        bh=VUich4jzqii1URLjDBRR43geCX8ciEhhc/CTjZvUqig=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0IGZK+SwbRoFuC5UV02RnW6NT730m6A7TFb8ppPT5RCgw/u7X9zC/ILgyCnvL/UAE
-         Pm931rsGwJAXE8U3HJsNWUTfJ28U/fMxTtTra8qGXYI7CmqYozb+SaDuMG1ssu5U81
-         FaC24FpnxUBOeJFwJ0a5WEd1l6y7A4DZOKDpe0fw=
+        b=MpxxTe6VQgBMz4Q/6damMtafElkXalTcO5P6axQ/CgRVA1N7G8IBILfJLkvN/1CX5
+         XfhqL8NWi7Cxsj2uRVMRsazSBed3yGNEZUPefG9I50XJjtSNf0aitOiMl8w/CCEtvn
+         nbRp7GFy9X1V3/TN+r4k6m1+cr4jM3/7IcGtuySs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 10/23] net: phy: xgmiitorgmii: Support generic PHY status read
-Date:   Thu, 21 Feb 2019 15:35:52 +0100
-Message-Id: <20190221125247.067935248@linuxfoundation.org>
+        stable@vger.kernel.org, Jose Abreu <joabreu@synopsys.com>,
+        Joao Pinto <jpinto@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Subject: [PATCH 4.14 11/23] net: stmmac: Fix a race in EEE enable callback
+Date:   Thu, 21 Feb 2019 15:35:53 +0100
+Message-Id: <20190221125247.156333658@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125246.162644302@linuxfoundation.org>
 References: <20190221125246.162644302@linuxfoundation.org>
@@ -66,38 +68,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+From: Jose Abreu <jose.abreu@synopsys.com>
 
-[ Upstream commit 197f9ab7f08ce4b9ece662f747c3991b2f0fbb57 ]
+[ Upstream commit 8a7493e58ad688eb23b81e45461c5d314f4402f1 ]
 
-Some PHY drivers like the generic one do not provide a read_status
-callback on their own but rely on genphy_read_status being called
-directly.
+We are saving the status of EEE even before we try to enable it. This
+leads to a race with XMIT function that tries to arm EEE timer before we
+set it up.
 
-With the current code, this results in a NULL function pointer call.
-Call genphy_read_status instead when there is no specific callback.
+Fix this by only saving the EEE parameters after all operations are
+performed with success.
 
-Fixes: f411a6160bd4 ("net: phy: Add gmiitorgmii converter support")
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Fixes: d765955d2ae0 ("stmmac: add the Energy Efficient Ethernet support")
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/xilinx_gmii2rgmii.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c |   22 ++++++++++---------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
---- a/drivers/net/phy/xilinx_gmii2rgmii.c
-+++ b/drivers/net/phy/xilinx_gmii2rgmii.c
-@@ -42,7 +42,10 @@ static int xgmiitorgmii_read_status(stru
- 	u16 val = 0;
- 	int err;
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
+@@ -675,25 +675,27 @@ static int stmmac_ethtool_op_set_eee(str
+ 				     struct ethtool_eee *edata)
+ {
+ 	struct stmmac_priv *priv = netdev_priv(dev);
++	int ret;
  
--	err = priv->phy_drv->read_status(phydev);
-+	if (priv->phy_drv->read_status)
-+		err = priv->phy_drv->read_status(phydev);
-+	else
-+		err = genphy_read_status(phydev);
- 	if (err < 0)
- 		return err;
+-	priv->eee_enabled = edata->eee_enabled;
+-
+-	if (!priv->eee_enabled)
++	if (!edata->eee_enabled) {
+ 		stmmac_disable_eee_mode(priv);
+-	else {
++	} else {
+ 		/* We are asking for enabling the EEE but it is safe
+ 		 * to verify all by invoking the eee_init function.
+ 		 * In case of failure it will return an error.
+ 		 */
+-		priv->eee_enabled = stmmac_eee_init(priv);
+-		if (!priv->eee_enabled)
++		edata->eee_enabled = stmmac_eee_init(priv);
++		if (!edata->eee_enabled)
+ 			return -EOPNOTSUPP;
+-
+-		/* Do not change tx_lpi_timer in case of failure */
+-		priv->tx_lpi_timer = edata->tx_lpi_timer;
+ 	}
  
+-	return phy_ethtool_set_eee(dev->phydev, edata);
++	ret = phy_ethtool_set_eee(dev->phydev, edata);
++	if (ret)
++		return ret;
++
++	priv->eee_enabled = edata->eee_enabled;
++	priv->tx_lpi_timer = edata->tx_lpi_timer;
++	return 0;
+ }
+ 
+ static u32 stmmac_usec2riwt(u32 usec, struct stmmac_priv *priv)
 
 
