@@ -8,62 +8,65 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 425CFC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32858C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:26:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1195320842
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:26:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E97B02084F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:26:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="saVlx+jS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZbzA/zCl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728368AbfBUP0L (ORCPT
+        id S1728304AbfBUP0G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 10:26:11 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37389 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728273AbfBUP0H (ORCPT
+        Thu, 21 Feb 2019 10:26:06 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41331 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725858AbfBUP0D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 10:26:07 -0500
-Received: by mail-wr1-f67.google.com with SMTP id c8so30991207wrs.4;
-        Thu, 21 Feb 2019 07:26:06 -0800 (PST)
+        Thu, 21 Feb 2019 10:26:03 -0500
+Received: by mail-wr1-f65.google.com with SMTP id n2so18828627wrw.8;
+        Thu, 21 Feb 2019 07:26:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=QaXaNTZnl4LT0GvNQL4ryRi6cnfcXOGXncEBEL7o+PY=;
-        b=saVlx+jSkeWUsFy1OQY3QUWnrMXEJ/0RcnYvrxtBHDD0XgM7n9q7SRLtBjG0qsNtCW
-         utW746Zc1ZZ92vMwAexqMhLXdYzMkcFoGoctDKOXtIqzK8snilw3MyjfzbT7mLFjNoGO
-         o+ncyf7yZqRInRljrcj5a7tam/0sqgId5g/jzkBN3dijK4qCqVeFfDCsF2dypi+a6XGr
-         voTD5WurPsmeeckESq0PPrkg/ubKmunsKU5b0wlHr4DRJRDjHj69o6tQxq4Q5BlVdgCy
-         E43c2AJtjpk8y7qFm05q8cTPceN19TNHdMW7VfmG8cE+F1RABWxHBgckUbfdkdkDsGpN
-         hWSg==
+        bh=a/kMhZeaVVw1leKshC6LSw8+0RsVdtfnkg3LU9kcxgM=;
+        b=ZbzA/zClhl8m0H+joiR9M1gAFGiE9EzaPIb8Re70ZUssdFul6ZuyD1kDpDFqWZTrLw
+         EqxVvS7y3Oc5PU5jr33iyrOL8GUIw6ww3tvcCQgX1O2ShdLQwJmzj1STSYZyxGTc0E71
+         hdZp8GqzPr8CIVofE9ZlM5dCnjTaUVvincZpGe3R2ylGnzbbfXGpM9VGg/OjGL2Ohv7J
+         L4tIbZFFSAEXMhSNE5TXcP+GRvM7lpIY84H+XRvr1L9C55PqSzvIDzZxZblXggoQnG2U
+         cf+kyQ61vknm7+VcFc3iYOnrlGQDMJ67aOoNqA4nQGs/KTlmlchc5AOnx6iAM+ABJ/wu
+         88xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QaXaNTZnl4LT0GvNQL4ryRi6cnfcXOGXncEBEL7o+PY=;
-        b=SSlQBdRkLqCk7ea3ZvlSNM5YqcjM1bhWP8qmFbfcaXALcW4B1TPSzk+dep4WpzC0rF
-         AtWti9RzDMtk4ATcXZXDZEfyMQpshQvWLhYCc7MwulCzX44Muuiw+shFKGwqRH+ZSwg/
-         nbyuDMkHXn5dgiUCYv6VVbXB01S10n1vkvFYN9KkzaecWJldhl28v2Ika4yzMQRYENKq
-         YdGywqTwC8jsmixP0Ahvg2C/ZYuFKkpIPiQSXn47Jcf9tfIYvH5AJ1m5dTJ+v2V5c68d
-         EGpuoX7nsk+arynOL3NjdtxN0wkAgjTOpe8jIm/tqqckMtBHtUkGD+bkuAzrkemvvwAB
-         IUdw==
-X-Gm-Message-State: AHQUAubT8EeBYzK70omGt0PsyyB+Q65GMHQhpMQKDB5PruqiIhogSB09
-        UKjuMzYAf2Ki9XSYkovRPQ4=
-X-Google-Smtp-Source: AHgI3IZ9goUs/jn1S2BkdCfWELpYNm4Ns8anNTPb3uY2ef7Sb/rudZSEwwDzVCWscNrvlG4Opk+v5Q==
-X-Received: by 2002:a1c:9d92:: with SMTP id g140mr10690726wme.35.1550762765377;
-        Thu, 21 Feb 2019 07:26:05 -0800 (PST)
+        bh=a/kMhZeaVVw1leKshC6LSw8+0RsVdtfnkg3LU9kcxgM=;
+        b=WVQ/F2UqyMdanJCRwS6AjF8ENSvPbdE6RziVdspv40YYjuDixKkDwT+Q0OwPLmdlBn
+         qlAsCfkv5sxB0ugfvITRhKOJnuiXxkqSiBIUsOCSYjZWL6VeMl3b4CfmoXfCxqazEsOy
+         Iz+uu8SUcCJQu2vy6FlkKFssitGfWXW3N+8iN+hVD8TGf/v90Zx2J5ubWl53CIXR+kvP
+         7zDzMKGWhZt6JWcpRdGoTKnWdjwS/kaKO7LpKKMKsARLFHuSVz/jzblnnAgwRqQRziOy
+         ALjrbsS0uTGdQmAGqKKS9Q9HflFIOSZdjzhnV5F5mPivO0GP6VE9PKw49St4L78JnwcG
+         Chmw==
+X-Gm-Message-State: AHQUAubJunI24g3FzxJLSeo1/3FN0Q2Ahk5gLfQNxh55k1bCr/NtFQln
+        hmU36Xqm4mgesaLEv/yqnqU=
+X-Google-Smtp-Source: AHgI3IZvpR+6HqzFnM7Ca+7bPWv5SAy0Dx5lUe+3n1xSMl0ZDhxvoUjtlcDWpj2/Ug7apms79CH8eA==
+X-Received: by 2002:a5d:54cc:: with SMTP id x12mr19665749wrv.323.1550762760655;
+        Thu, 21 Feb 2019 07:26:00 -0800 (PST)
 Received: from localhost (pD9E51D2D.dip0.t-ipconnect.de. [217.229.29.45])
-        by smtp.gmail.com with ESMTPSA id z8sm6943928wmi.28.2019.02.21.07.26.04
+        by smtp.gmail.com with ESMTPSA id d24sm70587132wrb.47.2019.02.21.07.25.59
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Feb 2019 07:26:04 -0800 (PST)
+        Thu, 21 Feb 2019 07:26:00 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Philipp Zabel <p.zabel@pengutronix.de>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] drm/tegra: sor: Implement acquire/release for reset
-Date:   Thu, 21 Feb 2019 16:25:57 +0100
-Message-Id: <20190221152557.8534-5-thierry.reding@gmail.com>
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org
+Subject: [PATCH 2/5] reset: Add acquired flag to of_reset_control_array_get()
+Date:   Thu, 21 Feb 2019 16:25:54 +0100
+Message-Id: <20190221152557.8534-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221152557.8534-1-thierry.reding@gmail.com>
 References: <20190221152557.8534-1-thierry.reding@gmail.com>
@@ -76,83 +79,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-By implementing the acquire/release protocol, the SOR reset can be
-shared with other drivers that also adhere to this protocol, such as the
-PMC driver that uses the same reset as part of the powergate and -ungate
-implementation using generic power domains.
-
-Runtime PM makes sure that the operations are executed in the right
-order, and the reset core has error handling and WARNs in place to make
-sure the acquire/release protocol is followed.
+In order to be able to request an array of reset controls in acquired or
+released mode, add the acquired flag to of_reset_control_array_get() and
+pass the flag to subsequent calls of __of_reset_control_get().
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpu/drm/tegra/sor.c | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ drivers/reset/core.c              |  9 ++++++---
+ drivers/usb/dwc3/dwc3-of-simple.c |  3 ++-
+ include/linux/reset.h             | 14 ++++++++------
+ 3 files changed, 16 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 40057106f5f3..5be5a0817dfe 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -2871,6 +2871,13 @@ static int tegra_sor_init(struct host1x_client *client)
- 	 * kernel is possible.
- 	 */
- 	if (sor->rst) {
-+		err = reset_control_acquire(sor->rst);
-+		if (err < 0) {
-+			dev_err(sor->dev, "failed to acquire SOR reset: %d\n",
-+				err);
-+			return err;
-+		}
-+
- 		err = reset_control_assert(sor->rst);
- 		if (err < 0) {
- 			dev_err(sor->dev, "failed to assert SOR reset: %d\n",
-@@ -2894,6 +2901,8 @@ static int tegra_sor_init(struct host1x_client *client)
- 				err);
- 			return err;
- 		}
-+
-+		reset_control_release(sor->rst);
+diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+index 1e8a42b16f23..f94da91c22af 100644
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -830,12 +830,15 @@ static int of_reset_control_get_count(struct device_node *node)
+  * @np: device node for the device that requests the reset controls array
+  * @shared: whether reset controls are shared or not
+  * @optional: whether it is optional to get the reset controls
++ * @acquired: only one reset control may be acquired for a given controller
++ *            and ID
+  *
+  * Returns pointer to allocated reset_control_array on success or
+  * error on failure
+  */
+ struct reset_control *
+-of_reset_control_array_get(struct device_node *np, bool shared, bool optional)
++of_reset_control_array_get(struct device_node *np, bool shared, bool optional,
++			   bool acquired)
+ {
+ 	struct reset_control_array *resets;
+ 	struct reset_control *rstc;
+@@ -851,7 +854,7 @@ of_reset_control_array_get(struct device_node *np, bool shared, bool optional)
+ 
+ 	for (i = 0; i < num; i++) {
+ 		rstc = __of_reset_control_get(np, NULL, i, shared, optional,
+-					      true);
++					      acquired);
+ 		if (IS_ERR(rstc))
+ 			goto err_rst;
+ 		resets->rstc[i] = rstc;
+@@ -898,7 +901,7 @@ devm_reset_control_array_get(struct device *dev, bool shared, bool optional)
+ 	if (!devres)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	rstc = of_reset_control_array_get(dev->of_node, shared, optional);
++	rstc = of_reset_control_array_get(dev->of_node, shared, optional, true);
+ 	if (IS_ERR(rstc)) {
+ 		devres_free(devres);
+ 		return rstc;
+diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
+index 4c2771c5e727..67ce2037472d 100644
+--- a/drivers/usb/dwc3/dwc3-of-simple.c
++++ b/drivers/usb/dwc3/dwc3-of-simple.c
+@@ -107,7 +107,8 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
+ 		simple->pulse_resets = true;
  	}
  
- 	err = clk_prepare_enable(sor->clk_safe);
-@@ -3331,7 +3340,7 @@ static int tegra_sor_probe(struct platform_device *pdev)
- 		goto remove;
- 	}
+-	simple->resets = of_reset_control_array_get(np, shared_resets, true);
++	simple->resets = of_reset_control_array_get(np, shared_resets, true,
++						    true);
+ 	if (IS_ERR(simple->resets)) {
+ 		ret = PTR_ERR(simple->resets);
+ 		dev_err(dev, "failed to get device resets, err=%d\n", ret);
+diff --git a/include/linux/reset.h b/include/linux/reset.h
+index ea9a8a1ce4b1..a01b32bf51d4 100644
+--- a/include/linux/reset.h
++++ b/include/linux/reset.h
+@@ -32,7 +32,8 @@ struct reset_control *__devm_reset_control_get(struct device *dev,
+ struct reset_control *devm_reset_control_array_get(struct device *dev,
+ 						   bool shared, bool optional);
+ struct reset_control *of_reset_control_array_get(struct device_node *np,
+-						 bool shared, bool optional);
++						 bool shared, bool optional,
++						 bool acquired);
  
--	sor->rst = devm_reset_control_get(&pdev->dev, "sor");
-+	sor->rst = devm_reset_control_get_exclusive_released(&pdev->dev, "sor");
- 	if (IS_ERR(sor->rst)) {
- 		err = PTR_ERR(sor->rst);
+ int reset_control_get_count(struct device *dev);
  
-@@ -3519,6 +3528,8 @@ static int tegra_sor_suspend(struct device *dev)
- 			dev_err(dev, "failed to assert reset: %d\n", err);
- 			return err;
- 		}
-+
-+		reset_control_release(sor->rst);
- 	}
+@@ -107,7 +108,8 @@ devm_reset_control_array_get(struct device *dev, bool shared, bool optional)
+ }
  
- 	usleep_range(1000, 2000);
-@@ -3542,9 +3553,17 @@ static int tegra_sor_resume(struct device *dev)
- 	usleep_range(1000, 2000);
+ static inline struct reset_control *
+-of_reset_control_array_get(struct device_node *np, bool shared, bool optional)
++of_reset_control_array_get(struct device_node *np, bool shared, bool optional,
++			   bool acquired)
+ {
+ 	return optional ? NULL : ERR_PTR(-ENOTSUPP);
+ }
+@@ -465,24 +467,24 @@ devm_reset_control_array_get_optional_shared(struct device *dev)
+ static inline struct reset_control *
+ of_reset_control_array_get_exclusive(struct device_node *node)
+ {
+-	return of_reset_control_array_get(node, false, false);
++	return of_reset_control_array_get(node, false, false, true);
+ }
  
- 	if (sor->rst) {
-+		err = reset_control_acquire(sor->rst);
-+		if (err < 0) {
-+			dev_err(dev, "failed to acquire reset: %d\n", err);
-+			clk_disable_unprepare(sor->clk);
-+			return err;
-+		}
-+
- 		err = reset_control_deassert(sor->rst);
- 		if (err < 0) {
- 			dev_err(dev, "failed to deassert reset: %d\n", err);
-+			reset_control_release(sor->rst);
- 			clk_disable_unprepare(sor->clk);
- 			return err;
- 		}
+ static inline struct reset_control *
+ of_reset_control_array_get_shared(struct device_node *node)
+ {
+-	return of_reset_control_array_get(node, true, false);
++	return of_reset_control_array_get(node, true, false, true);
+ }
+ 
+ static inline struct reset_control *
+ of_reset_control_array_get_optional_exclusive(struct device_node *node)
+ {
+-	return of_reset_control_array_get(node, false, true);
++	return of_reset_control_array_get(node, false, true, true);
+ }
+ 
+ static inline struct reset_control *
+ of_reset_control_array_get_optional_shared(struct device_node *node)
+ {
+-	return of_reset_control_array_get(node, true, true);
++	return of_reset_control_array_get(node, true, true, true);
+ }
+ #endif
 -- 
 2.20.1
 
