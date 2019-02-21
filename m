@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D471FC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:51:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D83FAC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:51:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE6F320818
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:51:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3AEE20818
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:51:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbfBUXvZ (ORCPT
+        id S1727422AbfBUXvc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 18:51:25 -0500
-Received: from mga14.intel.com ([192.55.52.115]:3176 "EHLO mga14.intel.com"
+        Thu, 21 Feb 2019 18:51:32 -0500
+Received: from mga14.intel.com ([192.55.52.115]:3152 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727320AbfBUXvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 18:51:11 -0500
+        id S1727285AbfBUXvK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 18:51:10 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 15:51:11 -0800
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 15:51:09 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,397,1544515200"; 
-   d="scan'208";a="322394963"
+   d="scan'208";a="322394951"
 Received: from linksys13920.jf.intel.com (HELO rpedgeco-DESK5.jf.intel.com) ([10.54.75.11])
-  by fmsmga005.fm.intel.com with ESMTP; 21 Feb 2019 15:51:10 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 21 Feb 2019 15:51:08 -0800
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
@@ -42,10 +42,11 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
         Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v3 19/20] x86/kprobes: Use vmalloc special flag
-Date:   Thu, 21 Feb 2019 15:44:50 -0800
-Message-Id: <20190221234451.17632-20-rick.p.edgecombe@intel.com>
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: [PATCH v3 17/20] bpf: Use vmalloc special flag
+Date:   Thu, 21 Feb 2019 15:44:48 -0800
+Message-Id: <20190221234451.17632-18-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190221234451.17632-1-rick.p.edgecombe@intel.com>
 References: <20190221234451.17632-1-rick.p.edgecombe@intel.com>
@@ -55,40 +56,88 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Use new flag VM_FLUSH_RESET_PERMS for handling freeing of special
-permissioned memory in vmalloc and remove places where memory was set NX
-and RW before freeing which is no longer needed.
+permissioned memory in vmalloc and remove places where memory was set RW
+before freeing which is no longer needed. Don't track if the memory is RO
+anymore because it is now tracked in vmalloc.
 
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/kernel/kprobes/core.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ include/linux/filter.h | 17 +++--------------
+ kernel/bpf/core.c      |  1 -
+ 2 files changed, 3 insertions(+), 15 deletions(-)
 
-diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-index 98c671e89889..8b56935d7b53 100644
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -434,6 +434,7 @@ void *alloc_insn_page(void)
- 	if (!page)
- 		return NULL;
+diff --git a/include/linux/filter.h b/include/linux/filter.h
+index b9f93e62db96..f7b6c8a2e591 100644
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -20,6 +20,7 @@
+ #include <linux/set_memory.h>
+ #include <linux/kallsyms.h>
+ #include <linux/if_vlan.h>
++#include <linux/vmalloc.h>
  
-+	set_vm_flush_reset_perms(page);
- 	/*
- 	 * First make the page read-only, and only then make it executable to
- 	 * prevent it from being W+X in between.
-@@ -452,12 +453,6 @@ void *alloc_insn_page(void)
- /* Recover page to RW mode before releasing it */
- void free_insn_page(void *page)
+ #include <net/sch_generic.h>
+ 
+@@ -483,7 +484,6 @@ struct bpf_prog {
+ 	u16			pages;		/* Number of allocated pages */
+ 	u16			jited:1,	/* Is our filter JIT'ed? */
+ 				jit_requested:1,/* archs need to JIT the prog */
+-				undo_set_mem:1,	/* Passed set_memory_ro() checkpoint */
+ 				gpl_compatible:1, /* Is filter GPL compatible? */
+ 				cb_access:1,	/* Is control block accessed? */
+ 				dst_needed:1,	/* Do we need dst entry? */
+@@ -681,27 +681,17 @@ bpf_ctx_narrow_access_ok(u32 off, u32 size, u32 size_default)
+ 
+ static inline void bpf_prog_lock_ro(struct bpf_prog *fp)
  {
--	/*
--	 * First make the page non-executable, and only then make it writable to
--	 * prevent it from being W+X in between.
--	 */
--	set_memory_nx((unsigned long)page, 1);
--	set_memory_rw((unsigned long)page, 1);
- 	module_memfree(page);
+-	fp->undo_set_mem = 1;
++	set_vm_flush_reset_perms(fp);
+ 	set_memory_ro((unsigned long)fp, fp->pages);
  }
  
+-static inline void bpf_prog_unlock_ro(struct bpf_prog *fp)
+-{
+-	if (fp->undo_set_mem)
+-		set_memory_rw((unsigned long)fp, fp->pages);
+-}
+-
+ static inline void bpf_jit_binary_lock_ro(struct bpf_binary_header *hdr)
+ {
++	set_vm_flush_reset_perms(hdr);
+ 	set_memory_ro((unsigned long)hdr, hdr->pages);
+ 	set_memory_x((unsigned long)hdr, hdr->pages);
+ }
+ 
+-static inline void bpf_jit_binary_unlock_ro(struct bpf_binary_header *hdr)
+-{
+-	set_memory_rw((unsigned long)hdr, hdr->pages);
+-}
+-
+ static inline struct bpf_binary_header *
+ bpf_jit_binary_hdr(const struct bpf_prog *fp)
+ {
+@@ -736,7 +726,6 @@ void __bpf_prog_free(struct bpf_prog *fp);
+ 
+ static inline void bpf_prog_unlock_free(struct bpf_prog *fp)
+ {
+-	bpf_prog_unlock_ro(fp);
+ 	__bpf_prog_free(fp);
+ }
+ 
+diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+index 19c49313c709..465c1c3623e8 100644
+--- a/kernel/bpf/core.c
++++ b/kernel/bpf/core.c
+@@ -804,7 +804,6 @@ void __weak bpf_jit_free(struct bpf_prog *fp)
+ 	if (fp->jited) {
+ 		struct bpf_binary_header *hdr = bpf_jit_binary_hdr(fp);
+ 
+-		bpf_jit_binary_unlock_ro(hdr);
+ 		bpf_jit_binary_free(hdr);
+ 
+ 		WARN_ON_ONCE(!bpf_prog_kallsyms_verify_off(fp));
 -- 
 2.17.1
 
