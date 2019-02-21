@@ -2,136 +2,133 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FF8FC00319
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:04:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3854AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:04:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CCA32086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:04:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0605B214AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:04:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="g3hootrR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbfBUIEH convert rfc822-to-8bit (ORCPT
+        id S1727286AbfBUIEv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 03:04:07 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:44824 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbfBUIEH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 03:04:07 -0500
-Received: by mail-vs1-f65.google.com with SMTP id r201so15619129vsc.11;
-        Thu, 21 Feb 2019 00:04:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=RnKcTm27rROkKZMrhUWWs+Jztu9yzz/K7kE3s9xRNGA=;
-        b=akYSMff7xdaVZmj0HYDcv7418FwPQQOKA+9DfWNAJAzLoQZ+CDih/Ll684yGB/1oWQ
-         40FD5HZdCwh1+aBFRHt4wzIFxfOGKHaxXgMuKdXX7WcoqNtvgBi06YaRV+j5FDLcEJf9
-         NCc37rYA9e4cZuIdm70jAUShOZZpGfnXz4Vi/vABkEP6GMRTflQY1AyhbqJTolDo6piy
-         SJTeSNTcp6nsvLzKK6pqkCwTwOhb2/ZUjzNiRTVeXngq9ueNbeQQF+gzl5b6RQqKn/pl
-         6SXlUf6ToKlktfnlkl73m8/hSMsQWa4tbyaEUlR9cJS3KZ9cL4/C2M59HEbZndHWaIxl
-         m9YA==
-X-Gm-Message-State: AHQUAubtuhoESFZggMuhQYPAt+yK8q/A60zDEvFpV7/zhuTgMJiY5Msx
-        ypfu7fZ/na9zlTzOxt432ByySEltUV4og92cVGM=
-X-Google-Smtp-Source: AHgI3IYC+aTzKDq+KHRtT9UCaG2gOadnobKVXDd1kcKcujrgSh5A1Ebf5pKk68xHqQGUEluGcW+xavSJjfkc/vGsX90=
-X-Received: by 2002:a67:78ce:: with SMTP id t197mr19687673vsc.152.1550736245468;
- Thu, 21 Feb 2019 00:04:05 -0800 (PST)
-MIME-Version: 1.0
-References: <20190220184341.73bd2084@canb.auug.org.au> <1114b964-8ff8-5632-64d4-e94a9160b998@hisilicon.com>
- <20190220095252.GA9089@linux.intel.com> <20190220095806.GB9089@linux.intel.com>
- <CAKv+Gu8G5eWeAdCB28xa=16ANFd2he9WPSztgXYwYRkhPfpEyA@mail.gmail.com> <aaac08b0-6366-7b63-d6a7-eea6630ce169@hisilicon.com>
-In-Reply-To: <aaac08b0-6366-7b63-d6a7-eea6630ce169@hisilicon.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 21 Feb 2019 09:03:52 +0100
-Message-ID: <CAMuHMdWfbPHv6WBMm7uDdPhbEB-m+bOcYzzYpRe4BfcSNR2pcQ@mail.gmail.com>
-Subject: Re: linux-next: Tree for Feb 20
-To:     Zhangshaokun <zhangshaokun@hisilicon.com>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Thu, 21 Feb 2019 03:04:51 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:39333 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725385AbfBUIEv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 03:04:51 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 444n7h1rmjz9vJg2;
+        Thu, 21 Feb 2019 09:04:48 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=g3hootrR; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id ckGBye0dA1xz; Thu, 21 Feb 2019 09:04:48 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 444n7h06bQz9vJg1;
+        Thu, 21 Feb 2019 09:04:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1550736288; bh=fswdFfxNLeZje+Mefe5CPvKUpRrMsJkYWjQMLbBh3XU=;
+        h=From:Subject:To:Cc:Date:From;
+        b=g3hootrRuszjUhJ4ztMYP5/J1VW6aP3847l1+kMKql1coyXn2hm+fB1BbW6f+/GUm
+         J7gp5t1jvVaViIVcTYHPtcjj0EV6z0VQaloiHjU8C+Sd8Y3nXY2vgLcOmkKnLwvT0J
+         MKmwVj+ypL9Vxvaw//0HQiFWshp85tgOjLI1Qz24=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id EF7948B78F;
+        Thu, 21 Feb 2019 09:04:48 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id GvNplbmqy_-v; Thu, 21 Feb 2019 09:04:48 +0100 (CET)
+Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id BC6CA8B75B;
+        Thu, 21 Feb 2019 09:04:48 +0100 (CET)
+Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 80C796E866; Thu, 21 Feb 2019 08:04:48 +0000 (UTC)
+Message-Id: <cover.1550692943.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v4 00/16] powerpc/32: Use BATs/LTLBs for STRICT_KERNEL_RWX
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, j.neuschaefer@gmx.net
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Thu, 21 Feb 2019 08:04:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shaokun,
+The purpose of this serie is to:
+- use BATs with STRICT_KERNEL_RWX on book3s (See patch 13 for details.)
+- use LTLBs with STRICT_KERNEL_RWX on 8xx (See patch 15 for a few details.)
 
-On Thu, Feb 21, 2019 at 1:45 AM Zhangshaokun <zhangshaokun@hisilicon.com> wrote:
-> On 2019/2/20 18:05, Ard Biesheuvel wrote:
-> > On Wed, 20 Feb 2019 at 10:58, Jarkko Sakkinen
-> > <jarkko.sakkinen@linux.intel.com> wrote:
-> >>
-> >> On Wed, Feb 20, 2019 at 11:52:52AM +0200, Jarkko Sakkinen wrote:
-> >>> On Wed, Feb 20, 2019 at 05:11:15PM +0800, Zhangshaokun wrote:
-> >>>> There is a compiler failure on arm64 platform, as follow:
-> >>>>
-> >>>>   AS      arch/arm64/kvm/hyp.o
-> >>>>   CC      kernel/trace/ring_buffer.o
-> >>>> In file included from security/integrity/ima/ima_fs.c:30:0:
-> >>>> security/integrity/ima/ima.h:176:7: error: redeclaration of enumerator ‘NONE’
-> >>>>   hook(NONE)   \
-> >>>>        ^
-> >>>> security/integrity/ima/ima.h:188:34: note: in definition of macro ‘__ima_hook_enumify’
-> >>>>  #define __ima_hook_enumify(ENUM) ENUM,
-> >>>>                                   ^
-> >>>> security/integrity/ima/ima.h:191:2: note: in expansion of macro ‘__ima_hooks’
-> >>>>   __ima_hooks(__ima_hook_enumify)
-> >>>>   ^
-> >>>> In file included from ./arch/arm64/include/asm/acpi.h:15:0,
-> >>>>                  from ./include/acpi/acpi_io.h:7,
-> >>>>                  from ./include/linux/acpi.h:47,
-> >>>>                  from ./include/linux/tpm.h:26,
-> >>>>                  from security/integrity/ima/ima.h:25,
-> >>>>                  from security/integrity/ima/ima_fs.c:30:
-> >>>> ./include/linux/efi.h:1716:2: note: previous definition of ‘NONE’ was here
-> >>>>   NONE,
-> >>>>   ^
-> >>>> scripts/Makefile.build:276: recipe for target 'security/integrity/ima/ima_fs.o' failed
-> >>>> make[3]: *** [security/integrity/ima/ima_fs.o] Error 1
-> >>>>
-> >>>> I dug it and it is the commit 901615cb916d ("tpm: move tpm_chip definition to include/linux/tpm.h")
-> >>>
-> >>> This results from a new include in tpm.h:
-> >>>
-> >>>   #include <linux/acpi.h>
-> >>>
-> >>> Must be fixed either in include/linux/efi.h or security/integrity/ima.h as
-> >>> those files have a name collision. Makes me wonder why neither has taken
-> >>> care of prefixing the constants properly.
-> >>
-> >> Preferably both subsystems should be fixed with proper 'EFI_' and 'IMA_'
-> >> prefixes. Defining a constant named as NONE in a non-generic subsystem
-> >> (e.g. not part of the core data structures of Linux) and especially
-> >> exporting it to include/linux is not too well considered act.
-> >>
-> >
-> > Fixes for this have already been proposed, and should appear in -next shortly
-> >
-> > The EFI one is here
-> > https://mail.google.com/mail/u/0/#label/linux-efi/FMfcgxwBVgrQRjglPkWRqRqVclGgVDnB
-> >
->
-> Because of no privilege, the website is denied for me. Anyway, it's nice to have been fixed.
+v4:
+- Fixed mapin_ram() to only map mem below total_lowmem (patch 4)
+- Fixed sparse warning by making __mmu_mapin_ram static (patch 13)
 
-Looks like Ard posted a link to a label in his personal gmail mailbox?
+v3:
+- Reordered to avoid build failure due to setibat() not being used for several steps in the serie.
+Now the patch using setibat() is next to the one adding setibat().
+- Fixed mmu_mapin_ram() in patch 3 to return base in all cases, thanks Jonathan for the test
+- Fixed build failure on 8xx when CONFIG_PERF_EVENTS is set due to too many instructions in Exception 0x1200
+- Made 8M alignment for data the default on 8xx when STRICT_KERNEL_RWX is selected.
+- Added patch 1 to not set additionnal bat on the wii when requesting nobats. The only purpose of this patch
+is to be backported, as this function is removed later in the series.
 
-Gr{oetje,eeting}s,
+v2:
+- Fix patch 2 (was patch 3 in v1) based on feedback from Jonathan.
+- Added support for 8xx with LTLBs.
+- Added systematic population of pagetables for Abatron BDI.
 
-                        Geert
+Christophe Leroy (16):
+  powerpc/wii: properly disable use of BATs when requested.
+  powerpc/mm/32: add base address to mmu_mapin_ram()
+  powerpc/mm/32s: rework mmu_mapin_ram()
+  powerpc/mm/32s: use generic mmu_mapin_ram() for all blocks.
+  powerpc/32: always populate page tables for Abatron BDI.
+  powerpc/wii: remove wii_mmu_mapin_mem2()
+  powerpc/mm/32s: use _PAGE_EXEC in setbat()
+  powerpc/32: add helper to write into segment registers
+  powerpc/mmu: add is_strict_kernel_rwx() helper
+  powerpc/kconfig: define PAGE_SHIFT inside Kconfig
+  powerpc/kconfig: define CONFIG_DATA_SHIFT and CONFIG_ETEXT_SHIFT
+  powerpc/mm/32s: add setibat() clearibat() and update_bats()
+  powerpc/mm/32s: Use BATs for STRICT_KERNEL_RWX
+  powerpc/kconfig: make _etext and data areas alignment configurable on
+    Book3s 32
+  powerpc/8xx: don't disable large TLBs with CONFIG_STRICT_KERNEL_RWX
+  powerpc/kconfig: make _etext and data areas alignment configurable on
+    8xx
+
+ arch/powerpc/Kconfig                          |  60 +++++++++
+ arch/powerpc/include/asm/book3s/32/mmu-hash.h |   2 +
+ arch/powerpc/include/asm/book3s/32/pgtable.h  |  11 ++
+ arch/powerpc/include/asm/mmu.h                |  11 ++
+ arch/powerpc/include/asm/nohash/32/mmu-8xx.h  |   3 +-
+ arch/powerpc/include/asm/page.h               |  13 +-
+ arch/powerpc/include/asm/reg.h                |   5 +
+ arch/powerpc/kernel/head_32.S                 |  35 +++++
+ arch/powerpc/kernel/head_8xx.S                |  54 ++++++--
+ arch/powerpc/kernel/vmlinux.lds.S             |   9 +-
+ arch/powerpc/mm/40x_mmu.c                     |   2 +-
+ arch/powerpc/mm/44x_mmu.c                     |   2 +-
+ arch/powerpc/mm/8xx_mmu.c                     |  33 ++++-
+ arch/powerpc/mm/fsl_booke_mmu.c               |   2 +-
+ arch/powerpc/mm/init_32.c                     |   6 +-
+ arch/powerpc/mm/mmu_decl.h                    |  10 +-
+ arch/powerpc/mm/pgtable_32.c                  |  42 +++---
+ arch/powerpc/mm/ppc_mmu_32.c                  | 180 ++++++++++++++++++++++----
+ arch/powerpc/platforms/embedded6xx/wii.c      |  24 ----
+ 19 files changed, 393 insertions(+), 111 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.13.3
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
