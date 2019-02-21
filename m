@@ -2,139 +2,166 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56679C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F1A5C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:05:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2635C20836
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:05:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4A4820836
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:05:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dellteam.com header.i=@dellteam.com header.b="0YKFq0AV"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V81rMQ2n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728749AbfBUSFb (ORCPT
+        id S1728787AbfBUSFr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 13:05:31 -0500
-Received: from esa3.dell-outbound.iphmx.com ([68.232.153.94]:3859 "EHLO
-        esa3.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726125AbfBUSF3 (ORCPT
+        Thu, 21 Feb 2019 13:05:47 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36016 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725943AbfBUSFq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 13:05:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dellteam.com; i=@dellteam.com; q=dns/txt; s=smtpout;
-  t=1550772316; x=1582308316;
-  h=cc:from:to:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=gbrTQ7C0FpnadYKKaqwwZcvmqu3BZ8ow4NIgZIaKeIk=;
-  b=0YKFq0AV7yLhY0hgl/oejJMvt4wQC63iI0Z5pofU30Ika8x4VftrnzIJ
-   PRV8r2rd3j/9roWbc6kLdzzQML+Bx3Xv/zUBn5wdXicuOL06wBxP2yKEi
-   FBUDQaG1qNsMGKz8pRGuX0pevVf5fPrJe/wFZCE0+LMPJEjKTu2RRP79C
-   g=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EJAAAj6G5chieV50NkGwEBAQEDAQE?=
- =?us-ascii?q?BBwMBAQGBUgUBAQELAYJZgRQxjHaNA5geFIFnCwEBLIRAg30iNQgNAQMBAQI?=
- =?us-ascii?q?BAQIBAQIQAQEBCgkLCCkvgjoigm8BAQEBAgESFRM/BQsCAQgYHhBXAgQBGhq?=
- =?us-ascii?q?CfoFrCKBEPQJtgQGJBwEBAYFrM4otjEiCFoQjhE4BEgEfhWACjA6XRQkFklE?=
- =?us-ascii?q?hkwuKSZIHAgQCBAUCFIFJAYEbcXCDPYI1jidBgVmMJYEfAYEeAQE?=
-X-IPAS-Result: =?us-ascii?q?A2EJAAAj6G5chieV50NkGwEBAQEDAQEBBwMBAQGBUgUBA?=
- =?us-ascii?q?QELAYJZgRQxjHaNA5geFIFnCwEBLIRAg30iNQgNAQMBAQIBAQIBAQIQAQEBC?=
- =?us-ascii?q?gkLCCkvgjoigm8BAQEBAgESFRM/BQsCAQgYHhBXAgQBGhqCfoFrCKBEPQJtg?=
- =?us-ascii?q?QGJBwEBAYFrM4otjEiCFoQjhE4BEgEfhWACjA6XRQkFklEhkwuKSZIHAgQCB?=
- =?us-ascii?q?AUCFIFJAYEbcXCDPYI1jidBgVmMJYEfAYEeAQE?=
-Received: from mx0a-00154901.pphosted.com ([67.231.149.39])
-  by esa3.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 21 Feb 2019 12:05:13 -0600
-Received: from pps.filterd (m0134746.ppops.net [127.0.0.1])
-        by mx0a-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1LHrkdB029909;
-        Thu, 21 Feb 2019 13:05:25 -0500
-Received: from esa3.dell-outbound2.iphmx.com (esa3.dell-outbound2.iphmx.com [68.232.154.63])
-        by mx0a-00154901.pphosted.com with ESMTP id 2qsyugrd8d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 21 Feb 2019 13:05:25 -0500
-Cc:     <bhelgaas@google.com>, <Austin.Bolen@dell.com>,
-        <keith.busch@intel.com>, <Shyam.Iyer@dell.com>, <okaya@kernel.org>,
-        <linux-pci@vger.kernel.org>, <rafael.j.wysocki@intel.com>,
-        <andy.shevchenko@gmail.com>, <mika.westerberg@linux.intel.com>,
-        <poza@codeaurora.org>, <linux-kernel@vger.kernel.org>
-Received: from ausc60pc101.us.dell.com ([143.166.85.206])
-  by esa3.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 22 Feb 2019 00:05:19 +0600
-X-LoopCount0: from 10.166.134.89
-X-IronPort-AV: E=Sophos;i="5.58,396,1544508000"; 
-   d="scan'208";a="1364793122"
-From:   <Alex_Gagniuc@Dellteam.com>
-To:     <lukas@wunner.de>, <mr.nuke.me@gmail.com>
-Subject: Re: [PATCH RFC v2 1/4] PCI: hotplug: Add support for disabling
- in-band presence
-Thread-Topic: [PATCH RFC v2 1/4] PCI: hotplug: Add support for disabling
- in-band presence
-Thread-Index: AQHUyLqYrzwot6C9Ik6lskQh1EhBRQ==
-Date:   Thu, 21 Feb 2019 18:05:22 +0000
-Message-ID: <842e01310e894fd695b213652efdede7@ausx13mps321.AMER.DELL.COM>
-References: <20190220012031.10741-1-mr.nuke.me@gmail.com>
- <20190220012031.10741-2-mr.nuke.me@gmail.com>
- <20190221071946.poqwdilfijpafhvb@wunner.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [143.166.11.234]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 21 Feb 2019 13:05:46 -0500
+Received: by mail-pg1-f196.google.com with SMTP id r124so14123334pgr.3;
+        Thu, 21 Feb 2019 10:05:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DQGIfQP8nQEV7q98KAz03H9vqLDFTfsvBZRn3KMVxYM=;
+        b=V81rMQ2nFsmEeOPJloy1PnxO1Wh27a+n8X6SyzYvBDyOFdTUIf/S8/y9At3AT8S3B2
+         wXC5hhRxNUnqJGr9I8UzSBXZ6Tqp1gj5g9W7jAqZmPy66roDApYMgoLvCpWvRMDEzdeA
+         c10a4tsfF9Ly3XeuZ8OTkojFxihLP41Y/2T0/b03pyFfSUuJVQUOinEH1PYaBl7exmUd
+         AF0WsEvuC0z+wzunyBGEwwn9emHuKjVyHvrCf/L9JAmeZ0wC3DodhfCZUb5hb/mOakCt
+         JNAgUKJkScQJdd+06+QQ445L6dso/X1wKAc1MKc6akeAg2/v4awPalNc/xWXR66ItBHq
+         /KoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DQGIfQP8nQEV7q98KAz03H9vqLDFTfsvBZRn3KMVxYM=;
+        b=Z18yuWMGUGHJgcNGpnn4qZKIqJGGUYZ9HpbwaUd8j0qVKG2A/3E2KXaenkQG0jjwaK
+         /t3vXje4fyLctVTsiYohH7IbeXzfnZNFHtUyOl10iObQ1YgdJNkGWO2stlLschXA3eET
+         847uLvR1NpoheiVkwsTMov2aQgwyoslHccixn5VH6ZePjPETi8+2b+llyuNjVR4nfaHy
+         op9Rp0qx/Ynp5dFl+uTcg0uk3ng9KMqV/698H6Got66qkQ+nGOOBtv1iNtCMyaFhEIMC
+         tP6bdrGNm5mbFoqqrS80vIrCckzIOXtA33idvfP6o4a34ZDtKfBQTWotZBaOiruC6KwV
+         N8gQ==
+X-Gm-Message-State: AHQUAub8rSHQWoo7Pg30C4uEEXpm1Eb07oYupIOHPoXuR5qbJ5EynDm5
+        ui1gMHts1ga1vhaxrG62fuY=
+X-Google-Smtp-Source: AHgI3IZUTlcJgaOYxPeFCzpK+SAttMW8t+Gh15xswVXLXFrecf/i8mrSkegWEvFwxuNTg51ziSGG8w==
+X-Received: by 2002:a62:b2c3:: with SMTP id z64mr41543263pfl.149.1550772345609;
+        Thu, 21 Feb 2019 10:05:45 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id x8sm19842738pfn.137.2019.02.21.10.05.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Feb 2019 10:05:44 -0800 (PST)
+Date:   Thu, 21 Feb 2019 10:05:43 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bpfilter: remove extra header search paths for
+ bpfilter_umh
+Message-ID: <20190221180543.GB22715@roeck-us.net>
+References: <20190221144257.GA12892@roeck-us.net>
+ <CAK7LNASfiSrULgdG_tcm+m4wmyOjg4ZHYAB9EUgaGrjv=g-Zbg@mail.gmail.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-21_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=617 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902210127
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNASfiSrULgdG_tcm+m4wmyOjg4ZHYAB9EUgaGrjv=g-Zbg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/21/19 1:20 AM, Lukas Wunner wrote:=0A=
-> =0A=
-> [EXTERNAL EMAIL]=0A=
-> =0A=
-> On Tue, Feb 19, 2019 at 07:20:27PM -0600, Alexandru Gagniuc wrote:=0A=
->> @@ -846,6 +846,9 @@ struct controller *pcie_init(struct pcie_device *dev=
-)=0A=
->>   	if (pdev->is_thunderbolt)=0A=
->>   		slot_cap |=3D PCI_EXP_SLTCAP_NCCS;=0A=
->>   =0A=
->> +	if (pdev->no_in_band_presence)=0A=
->> +		ctrl->inband_presence_disabled =3D 1;=0A=
->> +=0A=
->>   	ctrl->slot_cap =3D slot_cap;=0A=
->>   	mutex_init(&ctrl->ctrl_lock);=0A=
->>   	mutex_init(&ctrl->state_lock);=0A=
-> =0A=
-> The above hunk belongs in patch 4.=0A=
-> =0A=
-> =0A=
->> --- a/include/linux/pci.h=0A=
->> +++ b/include/linux/pci.h=0A=
->> @@ -413,6 +413,7 @@ struct pci_dev {=0A=
->>   	unsigned int	non_compliant_bars:1;	/* Broken BARs; ignore them */=0A=
->>   	unsigned int	is_probed:1;		/* Device probing in progress */=0A=
->>   	unsigned int	link_active_reporting:1;/* Device capable of reporting l=
-ink active */=0A=
->> +	unsigned int	no_in_band_presence:1;	/* Device does not report in-band =
-presence */=0A=
->>   	unsigned int	no_vf_scan:1;		/* Don't scan for VFs after IOV enablemen=
-t */=0A=
->>   	pci_dev_flags_t dev_flags;=0A=
->>   	atomic_t	enable_cnt;	/* pci_enable_device has been called */=0A=
-> =0A=
-> Same here.=0A=
-=0A=
-:)=0A=
-=0A=
-> Thanks,=0A=
-> =0A=
-> Lukas=0A=
-> =0A=
-=0A=
+On Fri, Feb 22, 2019 at 12:54:47AM +0900, Masahiro Yamada wrote:
+> On Thu, Feb 21, 2019 at 11:46 PM Guenter Roeck <linux@roeck-us.net> wrote:
+> >
+> > On Thu, Jan 31, 2019 at 12:15:35PM +0900, Masahiro Yamada wrote:
+> > > Currently, the header search paths -Itools/include and
+> > > -Itools/include/uapi are not used. Let's drop the unused code.
+> > >
+> > > We can remove -I. too by fixing up one C file.
+> > >
+> >
+> > This patch reintroduces the problem last fixed with commit ae40832e53c3
+> > ("bpfilter: fix a build err"). Seen (at least) with gcc 7.4.0, 8.2.0.
+> > binutils version is 2.31.1. Reverting this patch fixes the problem.
+> 
+> 
+> Hmm. I cannot reproduce the build error with my gcc,
+> but you are right.
+> 
+Maybe it has less to do with the gcc version and more with how the
+toolchain is built. I see the problem with toolchains generated
+using buildroot.
+
+> 
+> I'd like to get back only
+> 'KBUILD_HOSTCFLAGS += -Itools/include/ -Itools/include/uapi'
+> instead of the full revert.
+> 
+
+That doesn't work for me. I need
+
+KBUILD_HOSTCFLAGS += -I. -Itools/include/uapi
+
+Just don't ask me why.
+
+Guenter
+ 
+> If David is fine with it, I can send a patch with filling commit log.
+> 
+> 
+> 
+> Thanks.
+> 
+> 
+> 
+> > Guenter
+> >
+> > > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > > Signed-off-by: David S. Miller <davem@davemloft.net>
+> > > ---
+> > >  net/bpfilter/Makefile | 1 -
+> > >  net/bpfilter/main.c   | 2 +-
+> > >  2 files changed, 1 insertion(+), 2 deletions(-)
+> > >
+> > > diff --git a/net/bpfilter/Makefile b/net/bpfilter/Makefile
+> > > index 0947ee7f70d5..5d6c7760142d 100644
+> > > --- a/net/bpfilter/Makefile
+> > > +++ b/net/bpfilter/Makefile
+> > > @@ -5,7 +5,6 @@
+> > >
+> > >  hostprogs-y := bpfilter_umh
+> > >  bpfilter_umh-objs := main.o
+> > > -KBUILD_HOSTCFLAGS += -I. -Itools/include/ -Itools/include/uapi
+> > >  HOSTCC := $(CC)
+> > >
+> > >  ifeq ($(CONFIG_BPFILTER_UMH), y)
+> > > diff --git a/net/bpfilter/main.c b/net/bpfilter/main.c
+> > > index 1317f108df8a..61ce8454a88e 100644
+> > > --- a/net/bpfilter/main.c
+> > > +++ b/net/bpfilter/main.c
+> > > @@ -6,7 +6,7 @@
+> > >  #include <sys/socket.h>
+> > >  #include <fcntl.h>
+> > >  #include <unistd.h>
+> > > -#include "include/uapi/linux/bpf.h"
+> > > +#include "../../include/uapi/linux/bpf.h"
+> > >  #include <asm/unistd.h>
+> > >  #include "msgfmt.h"
+> > >
+> > > --
+> > > 2.7.4
+> 
+> 
+> 
+> --
+> Best Regards
+> 
+> Masahiro Yamada
