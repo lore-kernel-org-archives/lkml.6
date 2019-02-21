@@ -2,95 +2,100 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C48C0C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:48:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A21AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:49:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E5542086A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:48:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D49682085A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:49:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbfBUKsl (ORCPT
+        id S1727382AbfBUKth (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 05:48:41 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:55537 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbfBUKsk (ORCPT
+        Thu, 21 Feb 2019 05:49:37 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:52337 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725823AbfBUKtg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 05:48:40 -0500
+        Thu, 21 Feb 2019 05:49:36 -0500
 X-Originating-IP: 90.88.23.190
-Received: from aptenodytes (aaubervilliers-681-1-81-190.w90-88.abo.wanadoo.fr [90.88.23.190])
+Received: from localhost.localdomain (aaubervilliers-681-1-81-190.w90-88.abo.wanadoo.fr [90.88.23.190])
         (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id DC1E9E0019;
-        Thu, 21 Feb 2019 10:48:37 +0000 (UTC)
-Message-ID: <9e2e22ea7c7a8974764d45f2f84c4f599f5aee61.camel@bootlin.com>
-Subject: Re: [PATCH v3] usb: chipidea: Grab the (legacy) USB PHY by phandle
- first
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id C2A9040008;
+        Thu, 21 Feb 2019 10:49:33 +0000 (UTC)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Peter Chen <peter.chen@nxp.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Date:   Thu, 21 Feb 2019 11:48:37 +0100
-In-Reply-To: <VI1PR04MB5327CA438A1EAA5BB99E91188B7E0@VI1PR04MB5327.eurprd04.prod.outlook.com>
-References: <20190215162225.19284-1-paul.kocialkowski@bootlin.com>
-         <VI1PR04MB53274C03CD18C3D3ADB767408B630@VI1PR04MB5327.eurprd04.prod.outlook.com>
-         <c80ee02db4a22d15a24281384ae561462593684f.camel@bootlin.com>
-         <VI1PR04MB53278AE9AB6C14DA2AB96F6A8B7E0@VI1PR04MB5327.eurprd04.prod.outlook.com>
-         <3ed330798d31d01fdfbd40571d016a108c9c5040.camel@bootlin.com>
-         <VI1PR04MB5327C5FCF2BCF404B78A2C6A8B7E0@VI1PR04MB5327.eurprd04.prod.outlook.com>
-         <8fa473aee266f6fdd90c6b90661977982488cb77.camel@bootlin.com>
-         <VI1PR04MB5327CA438A1EAA5BB99E91188B7E0@VI1PR04MB5327.eurprd04.prod.outlook.com>
-Organization: Bootlin
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 
+To:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Peter Chen <Peter.Chen@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: [PATCH v4 1/2] usb: chipidea: Grab the (legacy) USB PHY by phandle first
+Date:   Thu, 21 Feb 2019 11:49:13 +0100
+Message-Id: <20190221104914.32031-1-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+According to the chipidea driver bindings, the USB PHY is specified via
+the "phys" phandle node. However, this only takes effect for USB PHYs
+that use the common PHY framework. For legacy USB PHYs, a simple lookup
+based on the USB PHY type is done instead.
 
-On Thu, 2019-02-21 at 09:30 +0000, Peter Chen wrote:
->  
-> > > Current code w/o your patch, it is possible both ci->phy and
-> > > ci->usb_phy are valid if the USB PHY is not at the device tree, but generic PHY is
-> > at the device tree.
-> > > If you don't want to fix this issue with this patch, it is ok too. We could fix it later.
-> > 
-> > I'm not sure I understand the issue. With my patch, if there is a generic PHY
-> > described in device-tree, then devm_usb_get_phy_by_phandle for legacy PHY will
-> > fail and the code will fallback to devm_usb_get_phy, which is the same behavior as
-> > before.
-> > 
-> 
-> You are right, but this behavior is incorrect since each controller has only one physical
-> USB PHY.
-> 
-> > Is it a problem that we can end up with both a generic and legacy PHY?
-> > I thought this was expected behavior at probe, and the rest of the code will just use
-> > the generic one in priority.
-> > 
-> > Do you want to make it so that only one (generic or legacy) PHY remains after
-> > probe?
-> > 
->  
-> Yes, I just want only one valid, either ci->phy or ci->usb_phy, it makes sense.
+This does not play out well when more than one USB PHY is registered,
+since the first registered PHY matching the type will always be
+returned regardless of what the driver was bound to.
 
-Sounds good to me. I'll send out v4 with this patch and an extra one to
-refactor the PHY selection path and only attempt to get a single PHY.
+Fix this by looking up the PHY based on the "phys" phandle node.
+Although generic PHYs are rather matched by their "phys-name" and not
+the "phys" phandle directly, there is no helper for similar lookup on
+legacy PHYs and it's probably not worth the effort to add it.
 
-Cheers,
+When no legacy USB PHY is found by phandle, fallback to grabbing any
+registered USB2 PHY. This ensures backward compatibility if some users
+were actually relying on this mechanism.
 
-Paul
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+---
+Changes sinve v3:
+* Added extra patch to refactor PHY selection and only keep a single one.
 
+Changes since v2:
+* Fixed typos in commit message.
+
+Changes since v1:
+* Only consider legacy USB PHY error for fallback as suggested;
+* Checked against EPROBE_DEFER before entering fallback.
+
+ drivers/usb/chipidea/core.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/chipidea/core.c b/drivers/usb/chipidea/core.c
+index 7bfcbb23c2a4..016e4004fe9d 100644
+--- a/drivers/usb/chipidea/core.c
++++ b/drivers/usb/chipidea/core.c
+@@ -954,8 +954,15 @@ static int ci_hdrc_probe(struct platform_device *pdev)
+ 	} else if (ci->platdata->usb_phy) {
+ 		ci->usb_phy = ci->platdata->usb_phy;
+ 	} else {
++		ci->usb_phy = devm_usb_get_phy_by_phandle(dev->parent, "phys",
++							  0);
+ 		ci->phy = devm_phy_get(dev->parent, "usb-phy");
+-		ci->usb_phy = devm_usb_get_phy(dev->parent, USB_PHY_TYPE_USB2);
++
++		/* Fallback to grabbing any registered USB2 PHY */
++		if (IS_ERR(ci->usb_phy) &&
++		    PTR_ERR(ci->usb_phy) != -EPROBE_DEFER)
++			ci->usb_phy = devm_usb_get_phy(dev->parent,
++						       USB_PHY_TYPE_USB2);
+ 
+ 		/* if both generic PHY and USB PHY layers aren't enabled */
+ 		if (PTR_ERR(ci->phy) == -ENOSYS &&
 -- 
-Paul Kocialkowski, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+2.20.1
 
