@@ -2,148 +2,127 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4103C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:41:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A31B1C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:42:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8825B2084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:41:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 746682083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:42:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lO4Z6pec"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbfBUQlb (ORCPT
+        id S1728037AbfBUQmE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 11:41:31 -0500
-Received: from mailproxy03.manitu.net ([217.11.48.67]:38848 "EHLO
-        mailproxy03.manitu.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725831AbfBUQla (ORCPT
+        Thu, 21 Feb 2019 11:42:04 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:38380 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725831AbfBUQmE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 11:41:30 -0500
-Received: from [192.168.178.20] (aftr-88-217-180-98.dynamic.mnet-online.de [88.217.180.98])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: wg@grandegger.com)
-        by mailproxy03.manitu.net (Postfix) with ESMTPSA id AFE16D41DB9;
-        Thu, 21 Feb 2019 17:43:59 +0100 (CET)
-Subject: Re: [PATCH v5 0/5] M_CAN Framework re-write
-To:     Dan Murphy <dmurphy@ti.com>, mkl@pengutronix.de,
-        davem@davemloft.net
-Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190214182754.30721-1-dmurphy@ti.com>
- <52148371-16aa-b87a-02f0-9037d5d34988@ti.com>
-From:   Wolfgang Grandegger <wg@grandegger.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=wg@grandegger.com; prefer-encrypt=mutual; keydata=
- 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
- 8QEfHnPzgykCs2DOOQ==
-Message-ID: <43e01edf-9b9a-c68d-ec1a-218a8117f59e@grandegger.com>
-Date:   Thu, 21 Feb 2019 17:41:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 21 Feb 2019 11:42:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=K+2GhtwjVhbgmHQVTJ8KD5yadggXH16mNhTyw8yZvog=; b=lO4Z6pecNqbbm67zklDg5SMXt
+        kZlZA2vTp+uyumU/XijVxCoEaSly9BaX4flnAzQ275qMhizL4sBp39USqzOA/l4Fwv5CuSohk6HhA
+        KqI9wZJfkI0XpqKAtT2meT737SsAuOYIC53ED08A8Pj9v/jPBU5NKNr0+6m1Q8xlqyVLttuE0kxsm
+        PphialuzJkZJEAJUaT08slj53EHqY2fzjimG+5upEkftN0wB62+OIXJN2DkgxwW7DoNukKw3MmvBf
+        O+5zd03IjETxsWpALKAz+iHxEbYgXXx94xxoWNUcZbHJ8pf/xskuAHPZQNZSkFtDrkBbIuhM5grT2
+        UKYF5ecDA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gwrPw-0002iK-RP; Thu, 21 Feb 2019 16:41:49 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3E7172030EE5E; Thu, 21 Feb 2019 17:41:46 +0100 (CET)
+Date:   Thu, 21 Feb 2019 17:41:46 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     mingo@kernel.org, tglx@linutronix.de, pjt@google.com,
+        tim.c.chen@linux.intel.com, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, subhra.mazumdar@oracle.com,
+        fweisbec@gmail.com, keescook@chromium.org, kerrnel@google.com
+Subject: Re: [RFC][PATCH 15/16] sched: Trivial forced-newidle balancer
+Message-ID: <20190221164146.GV32494@hirez.programming.kicks-ass.net>
+References: <20190218165620.383905466@infradead.org>
+ <20190218173514.796920915@infradead.org>
+ <d7a408c0-b86a-da56-5440-d7cb380708c6@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <52148371-16aa-b87a-02f0-9037d5d34988@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d7a408c0-b86a-da56-5440-d7cb380708c6@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dan,
-
-I will have a closer look end of this week!
-
-Wolfgang.
-
-Am 21.02.19 um 17:24 schrieb Dan Murphy:
-> Bump
+On Thu, Feb 21, 2019 at 04:19:46PM +0000, Valentin Schneider wrote:
+> Hi,
 > 
-> On 2/14/19 12:27 PM, Dan Murphy wrote:
->> Hello
->>
->> OK I did not give up on this patch series just got a little preoccupied with
->> some other kernel work.  But here is the update per the comments.
->>
->> It should be understood I broke these out for reviewability.
->> For instance the first patch does not compile on its own as including this
->> patch should not change the current functionality and it pulls all the io-mapped
->> code from the m_can base file to a platfrom file.
->>
->> The next patch "Migrate the m_can code to use the framework"
->> is the change to the kernel for the io-mapped conversion from a flat file to use
->> the framework.  Finally the rename patch just renames the m_can_priv to 
->> m_can_classdev.  I broke this change out specifically for readability of the
->> migration patch per comments on the code.
->>
->> AFAIC the first 3 patches can all be squashed into a single patch.  Or the
->> first 2 patches in the series can be re-arranged but then m_can functionality is
->> affected in the migration patch.
->>
->> Again the first 3 patches here are all just for readability and review purposes.
->>
->> Dan
->>
->> Dan Murphy (5):
->>   can: m_can: Create a m_can platform framework
->>   can: m_can: Migrate the m_can code to use the framework
->>   can: m_can: Rename m_can_priv to m_can_classdev
->>   dt-bindings: can: tcan4x5x: Add DT bindings for TCAN4x5X driver
->>   can: tcan4x5x: Add tcan4x5x driver to the kernel
->>
->>  .../devicetree/bindings/net/can/tcan4x5x.txt  |  37 +
->>  drivers/net/can/m_can/Kconfig                 |  14 +-
->>  drivers/net/can/m_can/Makefile                |   2 +
->>  drivers/net/can/m_can/m_can.c                 | 788 +++++++++---------
->>  drivers/net/can/m_can/m_can.h                 | 159 ++++
->>  drivers/net/can/m_can/m_can_platform.c        | 198 +++++
->>  drivers/net/can/m_can/tcan4x5x.c              | 531 ++++++++++++
->>  7 files changed, 1320 insertions(+), 409 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/net/can/tcan4x5x.txt
->>  create mode 100644 drivers/net/can/m_can/m_can.h
->>  create mode 100644 drivers/net/can/m_can/m_can_platform.c
->>  create mode 100644 drivers/net/can/m_can/tcan4x5x.c
->>
+> On 18/02/2019 16:56, Peter Zijlstra wrote:
+> [...]
+> > +static bool try_steal_cookie(int this, int that)
+> > +{
+> > +	struct rq *dst = cpu_rq(this), *src = cpu_rq(that);
+> > +	struct task_struct *p;
+> > +	unsigned long cookie;
+> > +	bool success = false;
+> > +
+> > +	local_irq_disable();
+> > +	double_rq_lock(dst, src);
+> > +
+> > +	cookie = dst->core->core_cookie;
+> > +	if (!cookie)
+> > +		goto unlock;
+> > +
+> > +	if (dst->curr != dst->idle)
+> > +		goto unlock;
+> > +
+> > +	p = sched_core_find(src, cookie);
+> > +	if (p == src->idle)
+> > +		goto unlock;
+> > +
+> > +	do {
+> > +		if (p == src->core_pick || p == src->curr)
+> > +			goto next;
+> > +
+> > +		if (!cpumask_test_cpu(this, &p->cpus_allowed))
+> > +			goto next;
+> > +
+> > +		if (p->core_occupation > dst->idle->core_occupation)
+> > +			goto next;
+> > +
 > 
+> IIUC, we're trying to find/steal tasks matching the core_cookie from other
+> rqs because dst has been cookie-forced-idle.
 > 
+> If the p we find isn't running, what's the meaning of core_occupation?
+> I would have expected it to be 0, but we don't seem to be clearing it when
+> resetting the state in pick_next_task().
+
+Indeed. We preserve the occupation from the last time around; it's not
+perfect but its better than nothing.
+
+Consider there's two groups; and we just happen to run the other group.
+Then our occopation, being what it was last, is still accurate. When
+next we run, we'll again get that many siblings together.
+
+> If it is running, we prevent the stealing if the core it's on is running
+> more matching tasks than the core of the pulling rq. It feels to me as if
+> that's a balancing tweak to try to cram as many matching tasks as possible
+> in a single core, so to me this reads as "don't steal my tasks if I'm
+> running more than you are, but I will steal tasks from you if I'm given
+> the chance". Is that correct?
+
+Correct, otherwise an SMT4 with 5 tasks could end up ping-ponging the
+one task forever.
+
+Note that a further condition a little up the callchain from here only
+does this stealing if the thread was forced-idle -- ie. it had something
+to run anyway. So under the condition where there simple aren't enough
+tasks to keep all siblings busy, we'll not compact just cause.
