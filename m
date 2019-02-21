@@ -3,107 +3,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87401C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55059C4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51FEF20836
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:28:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22C1420836
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:28:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SCE35DjS"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FqQ6OfqV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfBUW17 (ORCPT
+        id S1727061AbfBUW2J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 17:27:59 -0500
-Received: from ozlabs.org ([203.11.71.1]:37585 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725891AbfBUW17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 17:27:59 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 4458Hd05Pbz9s8m;
-        Fri, 22 Feb 2019 09:27:57 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1550788077;
-        bh=BwxWgQboLjV5OYmx2QFJypOm12VHnn4vyzoPFS3il7k=;
-        h=Date:From:To:Cc:Subject:From;
-        b=SCE35DjSp0aQlontuJf2DVRTYFBXpLZC1QjJdR6Z8W/nMsdXa2C94dARu6s6qcptc
-         953xfiDrydkgmnS2fKQobL+R05Hga3HRJqspzyR9O/rRezjmYUSlg5vUFFlxUAGRLu
-         WNYXUQf3yoR1YIUvv8L7CxHuRHF8Ct1wVqsqNABg8qHK/rk5dO+mTsC8+DM8tdTtSU
-         6mhknrtegfgZ+1+20cs8Zx9jfw64jl8j/oiRO4YmEJeBQU8YdAIPQY1LFT+0gb2fJa
-         TeXs+YgIBRaE7087e1bahwctRMKBO6x7YeXJlIGoT7ojwViEWgEAwPTqxHmST3ROnB
-         zZb4IalxmVYKQ==
-Date:   Fri, 22 Feb 2019 09:27:56 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the powerpc tree with the dma-mapping
- tree
-Message-ID: <20190222092756.242ea484@canb.auug.org.au>
+        Thu, 21 Feb 2019 17:28:09 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35438 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725891AbfBUW2J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 17:28:09 -0500
+Received: by mail-lj1-f193.google.com with SMTP id j13-v6so195676ljc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 14:28:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=s/EKS5FMbbbeu9VTChJy0uSr42jQ2xqiKp/2x/yLQjE=;
+        b=FqQ6OfqVqO7Aa3Kf+089O6MvNAC2xTygh4kf2G/a1Ng2xpGcQQ1Qv7P0ZnhfCF53Vy
+         xOc05g5DKuOxBngvDWogXE8lsz2wXGznza0xMXt3iJzLH2PF9a/27Ex2UyGY8LY+tn2y
+         m8PXT5q/q07Nmmj7b1IRsl+hRSMg0n93p5SRM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=s/EKS5FMbbbeu9VTChJy0uSr42jQ2xqiKp/2x/yLQjE=;
+        b=TVgw1doDmAu8GIVeLmSu2GH0XvJX2lIcvOa/2nGwEsi63VtOshC3vAIWbIr1o9Tnjw
+         HWJ3ODlNazqVqsGzUv7MtAoiHLES93rQTRS/rikzBYw6Z8KOc8h2rsJc/vnn8ld0JAxN
+         ZENp8tJlsdvqG58gBziJyp+/Qnhhweh612MT4eIUu/zqwAPotwEzzOi7qwDxuZPLWJVD
+         NoQd6CjJ9Fl+3Vm+96luBL3eeN2XUyVLpZuXgbHPHgNWkrZkWQgeAB2XadZI04sU+vQD
+         N+g6GXck7ycb6ohBKBCwuDWs3pn1m+KKwRehGG7lyjc/0PqMwt4aQG67z3ecAqb3Gntj
+         fC+g==
+X-Gm-Message-State: AHQUAuY2ANqh7HZfaw2MUL8goLuhc1YjuC0uuQspy1aeHlZzwky5y98K
+        WKaJNrTCbOM0/grgBNEZA4lPnUrB+3A=
+X-Google-Smtp-Source: AHgI3IZtCi6/zpl0+xwj4xNVk6s0rv3hy5TkUvhSylECdMs+Tpthd3zg1MZEMRAfDB4nXqEom6bDHA==
+X-Received: by 2002:a2e:9b15:: with SMTP id u21mr448676lji.82.1550788086680;
+        Thu, 21 Feb 2019 14:28:06 -0800 (PST)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id y15sm40280lje.23.2019.02.21.14.28.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Feb 2019 14:28:05 -0800 (PST)
+Received: by mail-lj1-f179.google.com with SMTP id f24-v6so203656ljk.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 14:28:05 -0800 (PST)
+X-Received: by 2002:a2e:9786:: with SMTP id y6mr386436lji.79.1550788085219;
+ Thu, 21 Feb 2019 14:28:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xSTNhqAJGIWR29=5si.DuMS"; protocol="application/pgp-signature"
+References: <20190221221941.29358-1-daniel@iogearbox.net>
+In-Reply-To: <20190221221941.29358-1-daniel@iogearbox.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 21 Feb 2019 14:27:49 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgNfnC-oe7aJGgNWoTbssc0LPYK6FyR=6LO4_U_dsphbg@mail.gmail.com>
+Message-ID: <CAHk-=wgNfnC-oe7aJGgNWoTbssc0LPYK6FyR=6LO4_U_dsphbg@mail.gmail.com>
+Subject: Re: [PATCH] x86, retpolines: raise limit for generating indirect
+ calls from switch-case
+To:     Daniel Borkmann <daniel@iogearbox.net>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/xSTNhqAJGIWR29=5si.DuMS
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Feb 21, 2019 at 2:20 PM Daniel Borkmann <daniel@iogearbox.net> wrote:
+>
+> In case of gcc, this setting is controlled by case-values-threshold
+> which has an architecture global default that selects 4 or 5 (
 
-Hi all,
+Ack. For retpoline, that's much too low.
 
-Today's linux-next merge of the powerpc tree got a conflict in:
+Patch looks sane, although it would be good to verify just which
+versions of gcc this works for. All versions with retpoline?
 
-  arch/powerpc/kernel/dma.c
-
-between commit:
-
-  cfced786969c ("dma-mapping: remove the default map_resource implementatio=
-n")
-
-from the dma-mapping tree and commit:
-
-  68005b67d15a ("powerpc/dma: use the generic direct mapping bypass")
-
-from the powerpc tree.
-
-I fixed it up (the latter removed the file, so I did that) and can
-carry the fix as necessary. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
-
-
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/xSTNhqAJGIWR29=5si.DuMS
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxvJewACgkQAVBC80lX
-0GxbmQf+NAs/oRsBxAr/Ipe9K32wdO4LWuYjEznzPv53Q8YaK5LpmSFM2xqcQGFX
-8b1/POspGA5KmE4Ua8gNILZmF/h61Lu58nusKMdEg1ju7JwDUjCVcBDOcp0GHGbs
-K6u2z7oLeUH4f/g6cVThWziMoKu/8FQOG/weCUbRDZtUpex0Vndt9niCc+59U/ZV
-kUEernFXFCalXFFTBC+tayDLsh/819/Vq0jEcfZ81vPz7ObWC1Utw+6zerctw8hd
-T6N9demZeNtV3SAN+ecnDxx3VmQOWZ/a3x97md86T/CDCGt0BK7hEfoQzwZHsa+f
-b6UDZ33hX5Icsn9SAiAe5eew62doHg==
-=d8NK
------END PGP SIGNATURE-----
-
---Sig_/xSTNhqAJGIWR29=5si.DuMS--
+                        Linus
