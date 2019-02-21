@@ -2,128 +2,153 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 241FFC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:56:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A8C1C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:57:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0B92214AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:56:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CECDC214AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:57:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="Am1rDWzZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lxxmxxcN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbfBUJ45 (ORCPT
+        id S1727756AbfBUJ5D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 04:56:57 -0500
-Received: from mail-eopbgr40049.outbound.protection.outlook.com ([40.107.4.49]:34880
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725858AbfBUJ44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 04:56:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KeHlHNNrzNPV3mCygDTWlC1E79Iod/vReO19jFONyj4=;
- b=Am1rDWzZMtt1nxSV+I9ec5gSJr3+hQpF3mV7DqdPWd9YHGThUAWr8OZ3Z+oRyxk0zSV6mXmLkKX8pXozuQNkFz2a/H4qFqBWOOYsOTGw2Rp8z540GhSpEI8pMAut06IoXtEJDyD1hpYahlY1G062uYKQcURsVgjjyRPiaE1v3LI=
-Received: from AM6PR05MB5240.eurprd05.prod.outlook.com (20.177.196.214) by
- AM6PR05MB4472.eurprd05.prod.outlook.com (52.135.162.157) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.16; Thu, 21 Feb 2019 09:56:52 +0000
-Received: from AM6PR05MB5240.eurprd05.prod.outlook.com
- ([fe80::3542:889c:3a85:3866]) by AM6PR05MB5240.eurprd05.prod.outlook.com
- ([fe80::3542:889c:3a85:3866%5]) with mapi id 15.20.1643.014; Thu, 21 Feb 2019
- 09:56:52 +0000
-From:   Ido Schimmel <idosch@mellanox.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        "moderated list:ETHERNET BRIDGE" <bridge@lists.linux-foundation.org>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "andrew@lunn.ch" <andrew@lunn.ch>,
-        "vivien.didelot@gmail.com" <vivien.didelot@gmail.com>
-Subject: Re: [PATCH net-next v3 6/8] net: bridge: Stop calling
- switchdev_port_attr_get()
-Thread-Topic: [PATCH net-next v3 6/8] net: bridge: Stop calling
- switchdev_port_attr_get()
-Thread-Index: AQHUyYCj56FRy5i5ukKh+EbCkmc3sqXqBIMA
-Date:   Thu, 21 Feb 2019 09:56:51 +0000
-Message-ID: <20190221095648.GC26289@splinter>
-References: <20190221005826.26317-1-f.fainelli@gmail.com>
- <20190221005826.26317-7-f.fainelli@gmail.com>
-In-Reply-To: <20190221005826.26317-7-f.fainelli@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6PR10CA0040.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:209:80::17) To AM6PR05MB5240.eurprd05.prod.outlook.com
- (2603:10a6:20b:64::22)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=idosch@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [193.47.165.251]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e4ecf87b-87f2-4ea8-32dc-08d697e2e73b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR05MB4472;
-x-ms-traffictypediagnostic: AM6PR05MB4472:
-x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;AM6PR05MB4472;23:OMuGfEtGawpHgEz9ffjr46b+cYLcpBl0Npjc3acjS?=
- =?us-ascii?Q?MIy19SgFiKhwNMkGeUcIxqYdmeGdEYgfFRHiFVWOf0z0oT6P4fb9MG5v0Y3D?=
- =?us-ascii?Q?smr7UjC/y5y98ZBfEIBPn8qtnC2CXjve15pjqTq0PhEGRBhCH2X2XAModMQ/?=
- =?us-ascii?Q?vYTVp2KMQ8lK0MZouysLTdQKhRWvwngYJpVQieWjqK1bnKGC4duYmZod3Rip?=
- =?us-ascii?Q?JJvHQjsHA1ZnhI+MTtTcVU3qivL1UPz+iTT1Cp+1gMBf2iaZLoAI1WZZPjm+?=
- =?us-ascii?Q?7Ud/E1hA7CM8qs5OZ0jgr4YnjtYidw5r0oU/NJQKbNU5kzqTOEAjv2Omsn1p?=
- =?us-ascii?Q?1PQKha71bf4sZhdZJqkL5yYGyskF87v77MkjlkfrnTGL9rRJDfnjrVvQ2gxb?=
- =?us-ascii?Q?hG94GFKZCvU9qv7VaQGqwfSZKc3IsXLAeNSGRZDNMaVecMOzRDPQqDrb5dpS?=
- =?us-ascii?Q?HzbIyWDpaEcY5vgv8c5Tz5WWfOo0uSynZBaFVdjdZm/YYBwElY9rdnVeR+V8?=
- =?us-ascii?Q?shE43gWsD8k4Jak9B+y1eS8QjCcSiBpmmp8Zg60PY38b7Y8JZw7oU5hBw2Vu?=
- =?us-ascii?Q?CWCOVkK7jTuUYA/kOgBw0hftA3+J6twld8JrPKZkj/md5xz6T3ClgoDUr8mz?=
- =?us-ascii?Q?t3d03OXJ3w8VwIkkk2qagIwEAlvOH8qt4GWMLdZ8qLUl9qsOOekA7XmN8ulR?=
- =?us-ascii?Q?Q7AF78ZsoHdPLcCxPSX8RPoqWrYgT5CtFTte/lTGw5cL2qWxCuJPh9QuSkQx?=
- =?us-ascii?Q?FQU6sYE9wQLjvjx4z2+PHnq7usJGUlJzN0FjZZLufBdU38yhVUX2hMZHXRKb?=
- =?us-ascii?Q?o2ci0ggfTjX5PHcYfLydcexK3spxVRz/57UAONbzEBsl5N6VvFzaQCBHLW8M?=
- =?us-ascii?Q?4rqaHpM/rBNM9znBidicItqcGkltNDLOS7P8BSizg/K+uE4y6MN6xc1gGMyB?=
- =?us-ascii?Q?F+29fjrZkBOjF4jjna3H0NDyWOL44rO4OA9VmSxHwgMwkY38pGhxcI+O2jup?=
- =?us-ascii?Q?UUh2BMzsDU0+R0oIMHR/KGSZbtTEpLis/dlUrp4dISOdO1pdCrC+b77i/7wq?=
- =?us-ascii?Q?lFT1z5B/6UyczZLAJl/SOL5Zx5JJdc6GMfuhzDVepPaVVVCRP1gzGCQT+N7V?=
- =?us-ascii?Q?Vw5AiO05/GrqWjd+ZP2PIv6djde4vR0wmfw9uyka4bJMVFC9cE7cwL20ZeSK?=
- =?us-ascii?Q?97vyyVb+CWTysurvl1BxJhl00/gmLrZ1EZBU/CKRCwY9qD36xTyywPAnC5u3?=
- =?us-ascii?Q?nlJ7OwnrA9oOsONEARdy01jkv6zbgDtH5Ny1Aev5bA0ZNNyz4/JbBpBhTLD9?=
- =?us-ascii?Q?0fLImhd650RqKIL9+njLoo=3D?=
-x-microsoft-antispam-prvs: <AM6PR05MB447205EDC5A677BAA8585D47BF7E0@AM6PR05MB4472.eurprd05.prod.outlook.com>
-x-forefront-prvs: 09555FB1AD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(39860400002)(396003)(366004)(376002)(136003)(346002)(199004)(189003)(53936002)(71200400001)(33896004)(6486002)(71190400001)(52116002)(4326008)(1076003)(6436002)(6512007)(76176011)(99286004)(9686003)(66066001)(54906003)(97736004)(14454004)(478600001)(6246003)(33716001)(33656002)(256004)(186003)(316002)(476003)(229853002)(6916009)(5660300002)(486006)(11346002)(6116002)(86362001)(8936002)(68736007)(2906002)(81166006)(81156014)(4744005)(7736002)(446003)(8676002)(25786009)(305945005)(3846002)(106356001)(102836004)(105586002)(26005)(386003)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR05MB4472;H:AM6PR05MB5240.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: tkQUQm01JZlLwbjzT6YIyucIPJ7oUAwfQa3HfMmFzVjIMw/KAHhr77sqdBizkgYm30cShkZ74pWg+LPBiGAVuvVOiyN3ENthYBlgHOhfaiBz2zVjk43EsqYROMtgL01fU5Rq8CMM9TJ84GtGR1fEEsPoNlcMML7gFWQEMgotVyE1WXKdHFPdO6dXN5VfQoiRkLbsZEexj7+g6OLW/A7h1q50tXTz/PYjBhZ7OXlD8IzPaIHGKMg/4URmTywOcTqfsUEvHa150ZSX7jk57FTvqf8hTKMeYoc2eONy+UfGT2ESewWJ7oF6Rtkn7dbf171+lL9Q+ap9BArjohVv8zf1xc1v9HyG76miQinOGorPuucS9p3Z4LgkKF9BBneAWId8rgJ2ko07HC7zbaPPRNmG+I9RJRIoXK4gdwrUCwt7xXM=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <6987CB80C7D91F4FA3DCDAC03AA8EC37@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e4ecf87b-87f2-4ea8-32dc-08d697e2e73b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2019 09:56:51.5802
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB4472
+        Thu, 21 Feb 2019 04:57:03 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43760 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726151AbfBUJ5D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 04:57:03 -0500
+Received: by mail-wr1-f65.google.com with SMTP id d17so14794005wre.10
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 01:57:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=8j2ytOrBalE8dCvMN+q0V+h8lDjSPVFNoh2OR47tXqs=;
+        b=lxxmxxcNq3rhc0A/JukvbAnDPxZm6EmlfBApLSzmidC8OF73OZpdBLb8kVQm1F3nWF
+         bdzaT8Egn2joJ2Er0IT1qgEIoJAXQUfEdkoEFuqQTV1itSZi8OzIDNGxpNLTFvmXnh2h
+         SHfZwcjdg8B158y67PufvMpahlt4kvXSK4eitQyy7sp6xIH16hX1vp/n/+T43ElfAfuh
+         MBm57iz1lbdXcW/ckORSQtkv4UnTouaSLFoIHnt/HGtcHuOe0l2jlHmMra3mJCju+9ZC
+         QV9LaLptIGUXMDYQH5e4sV64YidMh6dDQ0nPqJqskwGMUuG1N06PizE/HqjAGLU4aFm/
+         mnFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8j2ytOrBalE8dCvMN+q0V+h8lDjSPVFNoh2OR47tXqs=;
+        b=AI8MLLIW4OoPDGzEQBjNPOmAbSspHUJzkLq+MLEAeuIIzXL95drcIX3fjLGN5VHOQg
+         u6pIgFBGNQb2+qH2n2r+0CL4dCs1EHUbZgYJlVQuej2sVEQVkVhuyrka52xjQmzfLm7g
+         sW3dV1YSoNmEAFTpZjyC8ZQ9uVTolMywhcSGlVdmbQVhKDjRmhb7SCOZvmtbIpXv0hXW
+         Ij4wksvg4XcgBIoGhpHwtVHFAS62/t4ZT8Q6WbBhQJSZrPJXKCNBJRiaQ52mE5AhhSOO
+         H8/Lm3Vl+tA+OXMizw5MRVR3Ge3xAKqcZEGddKXTylPqtZiZFDGWrKeUHXmtI9FKXs+9
+         zbOQ==
+X-Gm-Message-State: AHQUAuYmwzKVYZGXcSbe4t9WcYi8tCyVT4BMHz2mhauVa9MU3lWFohdQ
+        sobfMXRzy/ES/WY5CNTIa5U=
+X-Google-Smtp-Source: AHgI3IZXDlaslGuaTI0SsddrV0uDE7ASgumy2D7xi9mwWTjxDPV2svecYJtVx/QpIe3OWXozZToY+A==
+X-Received: by 2002:a05:6000:104b:: with SMTP id c11mr26239060wrx.9.1550743020518;
+        Thu, 21 Feb 2019 01:57:00 -0800 (PST)
+Received: from localhost.localdomain ([2001:470:9e39::64])
+        by smtp.gmail.com with ESMTPSA id r6sm8960791wrx.48.2019.02.21.01.56.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Feb 2019 01:56:59 -0800 (PST)
+From:   Jonas Gorski <jonas.gorski@gmail.com>
+To:     linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
+Cc:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH] MIPS: BCM63XX: provide DMA masks for ethernet devices
+Date:   Thu, 21 Feb 2019 10:56:42 +0100
+Message-Id: <20190221095642.26962-1-jonas.gorski@gmail.com>
+X-Mailer: git-send-email 2.13.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 04:58:24PM -0800, Florian Fainelli wrote:
-> Now that all switchdev drivers have been converted to check the
-> SWITCHDEV_ATTR_ID_PORT_PRE_BRIDGE_FLAGS flags and report flags that they
-> do not support accordingly, we can migrate the bridge code to try to set
-> that attribute first, check the results and then do the actual setting.
->=20
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+The switch to the generic dma ops made dma masks mandatory, breaking
+devices having them not set. In case of bcm63xx, it broke ethernet with
+the following warning when trying to up the device:
 
-Reviewed-by: Ido Schimmel <idosch@mellanox.com>
+[    2.633123] ------------[ cut here ]------------
+[    2.637949] WARNING: CPU: 0 PID: 325 at ./include/linux/dma-mapping.h:516 bcm_enetsw_open+0x160/0xbbc
+[    2.647423] Modules linked in: gpio_button_hotplug
+[    2.652361] CPU: 0 PID: 325 Comm: ip Not tainted 4.19.16 #0
+[    2.658080] Stack : 80520000 804cd3ec 00000000 00000000 804ccc00 87085bdc 87d3f9d4 804f9a17
+[    2.666707]         8049cf18 00000145 80a942a0 00000204 80ac0000 10008400 87085b90 eb3d5ab7
+[    2.675325]         00000000 00000000 80ac0000 000022b0 00000000 00000000 00000007 00000000
+[    2.683954]         0000007a 80500000 0013b381 00000000 80000000 00000000 804a1664 80289878
+[    2.692572]         00000009 00000204 80ac0000 00000200 00000002 00000000 00000000 80a90000
+[    2.701191]         ...
+[    2.703701] Call Trace:
+[    2.706244] [<8001f3c8>] show_stack+0x58/0x100
+[    2.710840] [<800336e4>] __warn+0xe4/0x118
+[    2.715049] [<800337d4>] warn_slowpath_null+0x48/0x64
+[    2.720237] [<80289878>] bcm_enetsw_open+0x160/0xbbc
+[    2.725347] [<802d1d4c>] __dev_open+0xf8/0x16c
+[    2.729913] [<802d20cc>] __dev_change_flags+0x100/0x1c4
+[    2.735290] [<802d21b8>] dev_change_flags+0x28/0x70
+[    2.740326] [<803539e0>] devinet_ioctl+0x310/0x7b0
+[    2.745250] [<80355fd8>] inet_ioctl+0x1f8/0x224
+[    2.749939] [<802af290>] sock_ioctl+0x30c/0x488
+[    2.754632] [<80112b34>] do_vfs_ioctl+0x740/0x7dc
+[    2.759459] [<80112c20>] ksys_ioctl+0x50/0x94
+[    2.763955] [<800240b8>] syscall_common+0x34/0x58
+[    2.768782] ---[ end trace fb1a6b14d74e28b6 ]---
+[    2.773544] bcm63xx_enetsw bcm63xx_enetsw.0: cannot allocate rx ring 512
+
+Fix this by adding appropriate DMA masks for the platform devices.
+
+Fixes: f8c55dc6e828 ("MIPS: use generic dma noncoherent ops for simple noncoherent platforms")
+Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+---
+ arch/mips/bcm63xx/dev-enet.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/mips/bcm63xx/dev-enet.c b/arch/mips/bcm63xx/dev-enet.c
+index 07b4c65a88a4..8e73d65f3480 100644
+--- a/arch/mips/bcm63xx/dev-enet.c
++++ b/arch/mips/bcm63xx/dev-enet.c
+@@ -70,6 +70,8 @@ static struct platform_device bcm63xx_enet_shared_device = {
+ 
+ static int shared_device_registered;
+ 
++static u64 enet_dmamask = DMA_BIT_MASK(32);
++
+ static struct resource enet0_res[] = {
+ 	{
+ 		.start		= -1, /* filled at runtime */
+@@ -99,6 +101,8 @@ static struct platform_device bcm63xx_enet0_device = {
+ 	.resource	= enet0_res,
+ 	.dev		= {
+ 		.platform_data = &enet0_pd,
++		.dma_mask = &enet_dmamask,
++		.coherent_dma_mask = DMA_BIT_MASK(32),
+ 	},
+ };
+ 
+@@ -131,6 +135,8 @@ static struct platform_device bcm63xx_enet1_device = {
+ 	.resource	= enet1_res,
+ 	.dev		= {
+ 		.platform_data = &enet1_pd,
++		.dma_mask = &enet_dmamask,
++		.coherent_dma_mask = DMA_BIT_MASK(32),
+ 	},
+ };
+ 
+@@ -157,6 +163,8 @@ static struct platform_device bcm63xx_enetsw_device = {
+ 	.resource	= enetsw_res,
+ 	.dev		= {
+ 		.platform_data = &enetsw_pd,
++		.dma_mask = &enet_dmamask,
++		.coherent_dma_mask = DMA_BIT_MASK(32),
+ 	},
+ };
+ 
+-- 
+2.13.2
+
