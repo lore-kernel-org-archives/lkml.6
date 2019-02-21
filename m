@@ -2,82 +2,125 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76572C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:42:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 722A3C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FE142081B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:42:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550778146;
-	bh=42OHwxo/Z0vC55ri0hh2saipSgXYfDWz1fo/2II09dw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=kIZJEMEX5oJXkAO6WTwJN9DXpu3RgpGA5VWX+HPZcePQTfHZxem0Hn+yezx2u6pTc
-	 ixKu7TG5bylik0QQNqaQfB4UNl0qEOKmauel4eb/Rf4X07XRMx8ra/q6gW0p2TRvjp
-	 NcpVMacUhWPDTyrGec01kdwHYfGA7xT4SmYcCVRQ=
+	by mail.kernel.org (Postfix) with ESMTP id 4E7DC2083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:47:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726478AbfBUTmY (ORCPT
+        id S1726361AbfBUTrQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 14:42:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40066 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726220AbfBUTmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 14:42:23 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4E832081B;
-        Thu, 21 Feb 2019 19:42:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550778143;
-        bh=42OHwxo/Z0vC55ri0hh2saipSgXYfDWz1fo/2II09dw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eJwhFqlbWned0/ioEkqRtZUnLlT1V/u1+T/lNM4Z8G3jJCA7UNbBB7KUhDKeGOf/w
-         NaJUaZno0SpB/+8QEjqnJxsHoH0XSQvzf80mC+hg3PLJFIXWHrdIZk1WePa84PUUj0
-         AzuvL21uCByZPoZ/+HS9LXvQnp8bPrw7IlyQA43U=
-Date:   Thu, 21 Feb 2019 20:42:19 +0100
-From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To:     Vishnu DASA <vdasa@vmware.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Pv-drivers <Pv-drivers@vmware.com>
-Subject: Re: [PATCH] VMCI: Support upto 64-bit PPNs
-Message-ID: <20190221194219.GA2347@kroah.com>
-References: <20190215162738.21334-1-vdasa@vmware.com>
- <20190216195253.GB11061@kroah.com>
- <8C694A7E-488C-42A9-83F8-AA4FB4E57A5A@vmware.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8C694A7E-488C-42A9-83F8-AA4FB4E57A5A@vmware.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        Thu, 21 Feb 2019 14:47:16 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48046 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725932AbfBUTrQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 14:47:16 -0500
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E0D93BD2;
+        Thu, 21 Feb 2019 19:47:15 +0000 (UTC)
+Date:   Thu, 21 Feb 2019 11:47:13 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Michal Hocko <mhocko@kernel.org>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Davidlohr Bueso <dave@stgolabs.net>, stable@vger.kernel.org
+Subject: Re: [PATCH] huegtlbfs: fix races and page leaks during migration
+Message-Id: <20190221114713.ee2a38267f75ef1a2fd6de44@linux-foundation.org>
+In-Reply-To: <7534d322-d782-8ac6-1c8d-a8dc380eb3ab@oracle.com>
+References: <803d2349-8911-0b47-bc5b-4f2c6cc3f928@oracle.com>
+        <20190212221400.3512-1-mike.kravetz@oracle.com>
+        <20190220220910.265bff9a7695540ee4121b80@linux-foundation.org>
+        <7534d322-d782-8ac6-1c8d-a8dc380eb3ab@oracle.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A: Because it messes up the order in which people normally read text.
-Q: Why is top-posting such a bad thing?
-A: Top-posting.
-Q: What is the most annoying thing in e-mail?
+On Thu, 21 Feb 2019 11:11:06 -0800 Mike Kravetz <mike.kravetz@oracle.com> wrote:
 
-A: No.
-Q: Should I include quotations after my reply?
+> 
+> Sorry for the churn.  As I find and fix one issue I seem to discover another.
+> There is still at least one more issue with private pages when COW comes into
+> play.  I continue to work that.  I wanted to send this patch earlier as it
+> is pretty easy to hit the bugs if you try.  If you would prefer another
+> approach, let me know.
+> 
 
-http://daringfireball.net/2007/07/on_top
+No probs, the bug doesn't seem to be causing a lot of bother out there
+and it's cc:stable; there's time to get this right ;)
 
-On Thu, Feb 21, 2019 at 07:26:29PM +0000, Vishnu DASA wrote:
-> Hi Greg,
-> Sounds like a good idea to use the BIT() macro but can I do that in a
-> separate change to cover the entire file (and perhaps other vmci files
-> too)?
+Here's the delta I queued:
 
-Yes, that would be fine.
+--- a/mm/hugetlb.c~huegtlbfs-fix-races-and-page-leaks-during-migration-update
++++ a/mm/hugetlb.c
+@@ -3729,6 +3729,7 @@ static vm_fault_t hugetlb_no_page(struct
+ 	pte_t new_pte;
+ 	spinlock_t *ptl;
+ 	unsigned long haddr = address & huge_page_mask(h);
++	bool new_page = false;
+ 
+ 	/*
+ 	 * Currently, we are forced to kill the process in the event the
+@@ -3790,6 +3791,7 @@ retry:
+ 		}
+ 		clear_huge_page(page, address, pages_per_huge_page(h));
+ 		__SetPageUptodate(page);
++		new_page = true;
+ 
+ 		if (vma->vm_flags & VM_MAYSHARE) {
+ 			int err = huge_add_to_page_cache(page, mapping, idx);
+@@ -3861,8 +3863,9 @@ retry:
+ 
+ 	spin_unlock(ptl);
+ 
+-	/* May already be set if not newly allocated page */
+-	set_page_huge_active(page);
++	/* Make newly allocated pages active */
++	if (new_page)
++		set_page_huge_active(page);
+ 
+ 	unlock_page(page);
+ out:
+--- a/mm/migrate.c~huegtlbfs-fix-races-and-page-leaks-during-migration-update
++++ a/mm/migrate.c
+@@ -1315,6 +1315,16 @@ static int unmap_and_move_huge_page(new_
+ 		lock_page(hpage);
+ 	}
+ 
++	/*
++	 * Check for pages which are in the process of being freed.  Without
++	 * page_mapping() set, hugetlbfs specific move page routine will not
++	 * be called and we could leak usage counts for subpools.
++	 */
++	if (page_private(hpage) && !page_mapping(hpage)) {
++		rc = -EBUSY;
++		goto out_unlock;
++	}
++
+ 	if (PageAnon(hpage))
+ 		anon_vma = page_get_anon_vma(hpage);
+ 
+@@ -1345,6 +1355,7 @@ put_anon:
+ 		put_new_page = NULL;
+ 	}
+ 
++out_unlock:
+ 	unlock_page(hpage);
+ out:
+ 	if (rc != -EAGAIN)
+_
 
-thanks,
 
-greg k-h
