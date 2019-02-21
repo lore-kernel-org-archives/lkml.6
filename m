@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F153C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72CD2C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EB1E2084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:38:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40B512084F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:38:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550759929;
-	bh=MSvEcePaKHMHRAxUB9RmjY27z6mxbEltGZqIhEibSIk=;
+	s=default; t=1550759933;
+	bh=mgAQcAZm0MyIf++1m+PtjaafvjqX0QNgNgFzXmgkils=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bRWglP0cybYXZ0bpfmizyKECUDh0ePq0LD4x9Hdrv9O4ihBvqMgsN6izBfLOeQodN
-	 jrIoeJkW3CpUQTXQOOb1GwOP0xNRJo6X6NJYq87jjqmia5swCe1Tf8tg/nJlcah/6m
-	 mXPApX3ig74GzNaNi6+ciVm5GrMhwsscGWzTQLOo=
+	b=Dg9FUpBb5TWU97IUlI0uVp3oJhSNTphRjSoC3I82YbaX470Y1IAjSeWE7KJK01giF
+	 RjBtArwFINj+Z0k24h7traZgiDwS6i76tWMY1m085Nv1OO5twjqFAHK4r4J43hDCre
+	 h1y3xUa65sBVGuh69+02VH6emiANajCduwLgoOtQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728749AbfBUOir (ORCPT
+        id S1728762AbfBUOiv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:38:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60576 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:38:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728730AbfBUOin (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:38:43 -0500
+        id S1728743AbfBUOir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:38:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6CDBC2075C;
-        Thu, 21 Feb 2019 14:38:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0689D20838;
+        Thu, 21 Feb 2019 14:38:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550759922;
-        bh=MSvEcePaKHMHRAxUB9RmjY27z6mxbEltGZqIhEibSIk=;
+        s=default; t=1550759926;
+        bh=mgAQcAZm0MyIf++1m+PtjaafvjqX0QNgNgFzXmgkils=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cj844EahT6fXFvRLCdogZYzG1B+YrRXJRFrsPF9+rzBIWfsSIzfBTzKgVI8LxyvnM
-         8AfVqOqFUiGghv0bXEHKWwL6uOHTAHKHgkcvTQsdKm6A4cRAbexWuEzMrD8ognbm9N
-         Ol9j/eGPyBN0wM/KBYxjMCbCJh0z9xKuHojvmh0A=
+        b=ald5YDOCmUCVtpZhuw2pHdCjV7Scqd+xDD/TKqBzqBoXT/Vz1XRCT7tHXvQPBr3OF
+         v8kv8MLWQjwmoSABZGXO0FZ0dnFYb7VN51znC10jzZZCJwx59N+S7bBw3XyYCJ2Bzm
+         moI01vFmkNKvAMulkxcBKQAlHszeFl9yqOoIbryY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiumei Mu <xmu@redhat.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Jorgen Hansen <jhansen@vmware.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 02/20] vsock: cope with memory allocation failure at socket creation time
-Date:   Thu, 21 Feb 2019 15:35:40 +0100
-Message-Id: <20190221125242.548927197@linuxfoundation.org>
+Subject: [PATCH 4.9 03/20] hwmon: (lm80) Fix missing unlock on error in set_fan_div()
+Date:   Thu, 21 Feb 2019 15:35:41 +0100
+Message-Id: <20190221125242.696759835@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125242.153179182@linuxfoundation.org>
 References: <20190221125242.153179182@linuxfoundation.org>
@@ -69,41 +66,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 225d9464268599a5b4d094d02ec17808e44c7553 ]
+[ Upstream commit 07bd14ccc3049f9c0147a91a4227a571f981601a ]
 
-In the unlikely event that the kmalloc call in vmci_transport_socket_init()
-fails, we end-up calling vmci_transport_destruct() with a NULL vmci_trans()
-and oopsing.
+Add the missing unlock before return from function set_fan_div()
+in the error handling case.
 
-This change addresses the above explicitly checking for zero vmci_trans()
-at destruction time.
-
-Reported-by: Xiumei Mu <xmu@redhat.com>
-Fixes: d021c344051a ("VSOCK: Introduce VM Sockets")
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
-Reviewed-by: Jorgen Hansen <jhansen@vmware.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: c9c63915519b ("hwmon: (lm80) fix a missing check of the status of SMBus read")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/vmw_vsock/vmci_transport.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/hwmon/lm80.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/net/vmw_vsock/vmci_transport.c b/net/vmw_vsock/vmci_transport.c
-index 008f3424dcbce..102bf9194662c 100644
---- a/net/vmw_vsock/vmci_transport.c
-+++ b/net/vmw_vsock/vmci_transport.c
-@@ -1656,6 +1656,10 @@ static void vmci_transport_cleanup(struct work_struct *work)
+diff --git a/drivers/hwmon/lm80.c b/drivers/hwmon/lm80.c
+index cb6606a0470d1..be60bd5bab783 100644
+--- a/drivers/hwmon/lm80.c
++++ b/drivers/hwmon/lm80.c
+@@ -393,8 +393,10 @@ static ssize_t set_fan_div(struct device *dev, struct device_attribute *attr,
+ 	}
  
- static void vmci_transport_destruct(struct vsock_sock *vsk)
- {
-+	/* transport can be NULL if we hit a failure at init() time */
-+	if (!vmci_trans(vsk))
-+		return;
-+
- 	/* Ensure that the detach callback doesn't use the sk/vsk
- 	 * we are about to destruct.
- 	 */
+ 	rv = lm80_read_value(client, LM80_REG_FANDIV);
+-	if (rv < 0)
++	if (rv < 0) {
++		mutex_unlock(&data->update_lock);
+ 		return rv;
++	}
+ 	reg = (rv & ~(3 << (2 * (nr + 1))))
+ 	    | (data->fan_div[nr] << (2 * (nr + 1)));
+ 	lm80_write_value(client, LM80_REG_FANDIV, reg);
 -- 
 2.19.1
 
