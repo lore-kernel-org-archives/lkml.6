@@ -2,284 +2,129 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5974C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:57:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17103C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:57:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3FE620880
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:57:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D48CD20880
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:57:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="Oi6Vp2dY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727834AbfBUJ5X (ORCPT
+        id S1727883AbfBUJ51 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 04:57:23 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40602 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727210AbfBUJ5V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 04:57:21 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1L9sVLM065102
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 04:57:20 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qss3aj1gn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 04:57:20 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Thu, 21 Feb 2019 09:57:18 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 21 Feb 2019 09:57:15 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1L9vDBl59637988
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Feb 2019 09:57:13 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6B47D4C046;
-        Thu, 21 Feb 2019 09:57:13 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EB2234C040;
-        Thu, 21 Feb 2019 09:57:12 +0000 (GMT)
-Received: from [9.152.224.140] (unknown [9.152.224.140])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 21 Feb 2019 09:57:12 +0000 (GMT)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v2 1/1] s390: vfio_ap: link the vfio_ap devices to the
- vfio_ap bus subsystem
-To:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>
-Cc:     cohuck@redhat.com, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, frankja@linux.ibm.com,
-        akrowiak@linux.ibm.com, pasic@linux.ibm.com, david@redhat.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
-References: <1550513328-12646-1-git-send-email-pmorel@linux.ibm.com>
- <1550513328-12646-2-git-send-email-pmorel@linux.ibm.com>
- <f07b6209-bca2-22fe-310e-1e384c8974d9@linux.ibm.com>
- <3c3a90ca-f7ea-7800-453d-31e6d273e82f@de.ibm.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Thu, 21 Feb 2019 10:57:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <3c3a90ca-f7ea-7800-453d-31e6d273e82f@de.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Thu, 21 Feb 2019 04:57:27 -0500
+Received: from mail-eopbgr40083.outbound.protection.outlook.com ([40.107.4.83]:2489
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725978AbfBUJ5W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 04:57:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z9Zxo8/04s5PWo0X5pqxgfblSWtMI6yu4jJeHLLMm6I=;
+ b=Oi6Vp2dYQR4Y7qEIQOjkKii2moRT7za3Y4esvhbFUiIP+7a5FbDMjXBhT35x7eNNgx1E0hWfixY+g9oNbWIEsPWWxc6/mnu+pGfcMphhKLRjh46ahISmqV80dghcs5KAcKXKg7NpLGp1gt5aJAgWZ+BRDW84mMILsrDwm858IsU=
+Received: from AM6PR05MB5240.eurprd05.prod.outlook.com (20.177.196.214) by
+ AM6PR05MB4472.eurprd05.prod.outlook.com (52.135.162.157) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.16; Thu, 21 Feb 2019 09:57:17 +0000
+Received: from AM6PR05MB5240.eurprd05.prod.outlook.com
+ ([fe80::3542:889c:3a85:3866]) by AM6PR05MB5240.eurprd05.prod.outlook.com
+ ([fe80::3542:889c:3a85:3866%5]) with mapi id 15.20.1643.014; Thu, 21 Feb 2019
+ 09:57:17 +0000
+From:   Ido Schimmel <idosch@mellanox.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        "moderated list:ETHERNET BRIDGE" <bridge@lists.linux-foundation.org>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "vivien.didelot@gmail.com" <vivien.didelot@gmail.com>
+Subject: Re: [PATCH net-next v3 8/8] net: Get rid of switchdev_port_attr_get()
+Thread-Topic: [PATCH net-next v3 8/8] net: Get rid of
+ switchdev_port_attr_get()
+Thread-Index: AQHUyYCpGSJm2vzrck2IBioYWBIHfKXqBKOA
+Date:   Thu, 21 Feb 2019 09:57:17 +0000
+Message-ID: <20190221095715.GD26289@splinter>
+References: <20190221005826.26317-1-f.fainelli@gmail.com>
+ <20190221005826.26317-9-f.fainelli@gmail.com>
+In-Reply-To: <20190221005826.26317-9-f.fainelli@gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19022109-0012-0000-0000-000002F8647D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022109-0013-0000-0000-0000212FF973
-Message-Id: <ba31072d-e085-1f59-b687-4ad39aecf6e9@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-21_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902210073
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM5PR0402CA0009.eurprd04.prod.outlook.com
+ (2603:10a6:203:90::19) To AM6PR05MB5240.eurprd05.prod.outlook.com
+ (2603:10a6:20b:64::22)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=idosch@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [193.47.165.251]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c125f46c-931b-4b3e-1815-08d697e2f690
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR05MB4472;
+x-ms-traffictypediagnostic: AM6PR05MB4472:
+x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;AM6PR05MB4472;23:RKc5aWtU+9o78LaX8sJey9U27hnz23kRDqZYwlTxP?=
+ =?us-ascii?Q?F1zY0qoKxWdPBSbXbZhj8tQQrVglaIfW8BmYOE9mCJr2ode/ppWB4YirQl1m?=
+ =?us-ascii?Q?3TWP+kGIslSE5DGLEMohGlM0Jjle0vB/gPbcnVtNqAqO3iqMkeKCne3FBuTl?=
+ =?us-ascii?Q?wmA7BMmsNcTEdiAEhGbZArwiPRoHbZmWGOnbYftrAs6gWZLuHD1n/VcEk1Eu?=
+ =?us-ascii?Q?HsmniTaeNSPQnV4txppwAtUNtnzNPCs1U5eJZEyEhsUH1mScDNCFGg3cscDr?=
+ =?us-ascii?Q?4KApm3ZRP8Za8HaQNy0jp2JeOYk7XaB2EMOxwDiuDgtyqIQRTtjtlYPa7gDr?=
+ =?us-ascii?Q?l05Hh31jSgsbnrwXyztmmf/1N1anIJ+HfyApsn66lEKOtlgru6cHO4gkq7hh?=
+ =?us-ascii?Q?F7xPfW7utySTZLf2MWmO2q2dipvlpl5rqmZ7NfmhgyPVUaFgGSoPWxzZuixl?=
+ =?us-ascii?Q?eoQ/SvO1dKyh9vUV9L2sRJdpLBo0ItgXLMjYZi2GqTlDcKgpkfIU19A+tC7n?=
+ =?us-ascii?Q?ZWhedygQozEmLzl2Gzk5Sut3UFoTl6GeKjM4SbEhGl0jrr5eHWjnjDkWFjIH?=
+ =?us-ascii?Q?T7xIsYRCVsaOp6W0RcjShWbALbXE9UB/uXcilJgImWruVeYrH9BqLJN0LBBK?=
+ =?us-ascii?Q?fit+SX1SO5XMtWCX1elp3LLdpjiKbyK1mtFjL1BBNq3y6zR2EpcOQIhdcA6Z?=
+ =?us-ascii?Q?H2paeEbS5BMTv7urLFrufBCwxUykHAI01jVFtzvOa6rC8wWP5ctRYiHNsUh+?=
+ =?us-ascii?Q?/u9e6ScEy27tvTp84RuImNIhegUhCUWJbRQcq0t7OxMa/+oQGHRTeYwVyjha?=
+ =?us-ascii?Q?EHgpHfJtycdyTRlJbKLO/Bsei9dAlMOuIGKl/OifO2wcC3+t5OQjaK0tvnLa?=
+ =?us-ascii?Q?bRwmxL5lwjNLNUHnq7RNr6M3zd0QbvCLDSrnWU8PZu62GWyzH1eRyZbXVd1p?=
+ =?us-ascii?Q?y9oI1REH0Z1VHPINteksReji9+9zw8AGmKREpy6IBfP8ar9NULjHzw23Pqxd?=
+ =?us-ascii?Q?2sCQV+0PXYgSfEH07rLml7AgJlR8axIsXtYd2o0ZK6dBGNWB2CnmCuMR+ZxE?=
+ =?us-ascii?Q?D4FDd82U4WtwQOT2hXIKr6u6B+Q/TFLUvPvxiOxDcDrIIGboyEeXVpEAfaRZ?=
+ =?us-ascii?Q?81q6zGGCu4IvmrnQhAHLlB9JOdjpl84c4ghN3cVq1Kgm8nl3Q8KF5rrbk7uI?=
+ =?us-ascii?Q?gqno/4WYOcjPPiM53I89TnagbdSORyndJRq71zHx9bgxu9gYe54F4yaRea01?=
+ =?us-ascii?Q?gxpHUCMSbd0wKcA9MkT48fbhWmRW67TcpurQraXT3A4jcoQd/gDeYH4IvSv2?=
+ =?us-ascii?Q?LNEUJBr+W57V4z5hrF/iJSnd8RWDLhp05YXfGG85YAu?=
+x-microsoft-antispam-prvs: <AM6PR05MB44728F955B2935FBBD664FFFBF7E0@AM6PR05MB4472.eurprd05.prod.outlook.com>
+x-forefront-prvs: 09555FB1AD
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(39860400002)(396003)(366004)(376002)(136003)(346002)(199004)(189003)(53936002)(71200400001)(33896004)(6486002)(71190400001)(52116002)(4326008)(1076003)(6436002)(6512007)(76176011)(99286004)(9686003)(66066001)(54906003)(97736004)(14454004)(478600001)(6246003)(33716001)(33656002)(256004)(186003)(316002)(476003)(229853002)(6916009)(5660300002)(486006)(11346002)(6116002)(86362001)(8936002)(68736007)(2906002)(81166006)(81156014)(4744005)(7736002)(446003)(8676002)(25786009)(305945005)(3846002)(106356001)(102836004)(105586002)(26005)(386003)(6506007)(26583001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR05MB4472;H:AM6PR05MB5240.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: mnBKoQO4q48sRlcEFLh2VWjDYK/kmCmKaGs5/5bScAZyPrB60CFjrpOdanyyLtg/7McNQq6ro05vOxa/AqXVV8PFWRSsbiLsxqpNnS3SqvfPjg3gaTlWPvWF//KPHRpTKPFLeMBGfgh1Mg22MI30zh8OX7cQTVp7tnlRSR3xhfROopUl9Ee5nq8ZtkM23bP8NGPuyh1IJ2tO54Z+6QdQmgEkFKTjhgeRt6m6lzXSOeIKXZhsfa/FwBeILvkv6KDcNYUq1IxBhYqvOBT+gakH/HXsy41Vjcfnr4aRzttmuyLVvHtnPcuN7+/I2VSDVs/ivkgGQ5af9RVAZi32NYpVqauRlv1h7kHpDEugCDTMxxWaV+2CIbT1mZLqTZVcRhgMzr9u7w8oH1/+LVD849Bf4b/7pu286/x8QNj9rLkg+w4=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <F024D7D78F736F4CAE7F412BF6094966@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c125f46c-931b-4b3e-1815-08d697e2f690
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2019 09:57:17.2554
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB4472
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/02/2019 08:37, Christian Borntraeger wrote:
-> 
-> 
-> On 20.02.2019 14:12, Harald Freudenberger wrote:
->> On 18.02.19 19:08, Pierre Morel wrote:
->>> Libudev relies on having a subsystem link for non-root devices. To
->>> avoid libudev (and potentially other userspace tools) choking on the
->>> matrix device let us introduce a vfio_ap bus and with that the vfio_ap
->>> bus subsytem, and make the matrix device reside within it.
->>>
->>> Doing this we need to suppress the forced link from the matrix device to
->>> the vfio_ap driver and we suppress the device_type we do not need
->>> anymore.
->>>
->>> Since the associated matrix driver is not the vfio_ap driver any more,
->>> we have to change the search for the devices on the vfio_ap driver in
->>> the function vfio_ap_verify_queue_reserved.
->>>
->>> Reported-by: Marc Hartmayer <mhartmay@linux.ibm.com>
->>> Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
->>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->>> ---
->>>   drivers/s390/crypto/vfio_ap_drv.c     | 48 +++++++++++++++++++++++++++++------
->>>   drivers/s390/crypto/vfio_ap_ops.c     |  4 +--
->>>   drivers/s390/crypto/vfio_ap_private.h |  1 +
->>>   3 files changed, 43 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
->>> index 31c6c84..8e45559 100644
->>> --- a/drivers/s390/crypto/vfio_ap_drv.c
->>> +++ b/drivers/s390/crypto/vfio_ap_drv.c
->>> @@ -24,10 +24,6 @@ MODULE_LICENSE("GPL v2");
->>>   
->>>   static struct ap_driver vfio_ap_drv;
->>>   
->>> -static struct device_type vfio_ap_dev_type = {
->>> -	.name = VFIO_AP_DEV_TYPE_NAME,
->>> -};
->>> -
->>>   struct ap_matrix_dev *matrix_dev;
->>>   
->>>   /* Only type 10 adapters (CEX4 and later) are supported
->>> @@ -62,6 +58,27 @@ static void vfio_ap_matrix_dev_release(struct device *dev)
->>>   	kfree(matrix_dev);
->>>   }
->>>   
->>> +static int matrix_bus_match(struct device *dev, struct device_driver *drv)
->>> +{
->>> +	return 1;
->>> +}
->>> +
->>> +static struct bus_type matrix_bus = {
->>> +	.name = "vfio_ap",
->>> +	.match = &matrix_bus_match,
->>> +};
->>> +
->>> +static int matrix_probe(struct device *dev)
->>> +{
->>> +	return 0;
->>> +}
->>> +
->>> +static struct device_driver matrix_driver = {
->>> +	.name = "vfio_ap",
->>> +	.bus = &matrix_bus,
->>> +	.probe = matrix_probe,
->>> +};
->>> +
->>>   static int vfio_ap_matrix_dev_create(void)
->>>   {
->>>   	int ret;
->>> @@ -71,6 +88,10 @@ static int vfio_ap_matrix_dev_create(void)
->>>   	if (IS_ERR(root_device))
->>>   		return PTR_ERR(root_device);
->>>   
->>> +	ret = bus_register(&matrix_bus);
->>> +	if (ret)
->>> +		goto bus_register_err;
->>> +
->>>   	matrix_dev = kzalloc(sizeof(*matrix_dev), GFP_KERNEL);
->>>   	if (!matrix_dev) {
->>>   		ret = -ENOMEM;
->>> @@ -87,30 +108,41 @@ static int vfio_ap_matrix_dev_create(void)
->>>   	mutex_init(&matrix_dev->lock);
->>>   	INIT_LIST_HEAD(&matrix_dev->mdev_list);
->>>   
->>> -	matrix_dev->device.type = &vfio_ap_dev_type;
->>>   	dev_set_name(&matrix_dev->device, "%s", VFIO_AP_DEV_NAME);
->>>   	matrix_dev->device.parent = root_device;
->>> +	matrix_dev->device.bus = &matrix_bus;
->>>   	matrix_dev->device.release = vfio_ap_matrix_dev_release;
->>> -	matrix_dev->device.driver = &vfio_ap_drv.driver;
->>> +	matrix_dev->vfio_ap_drv = &vfio_ap_drv;
->>>   
->>>   	ret = device_register(&matrix_dev->device);
->>>   	if (ret)
->>>   		goto matrix_reg_err;
->>>   
->>> +	ret = driver_register(&matrix_driver);
->>> +	if (ret)
->>> +		goto matrix_drv_err;
->>> +
->>>   	return 0;
->>>   
->>> +matrix_drv_err:
->>> +	device_unregister(&matrix_dev->device);
->>>   matrix_reg_err:
->>>   	put_device(&matrix_dev->device);
->>>   matrix_alloc_err:
->>> +	bus_unregister(&matrix_bus);
->>> +bus_register_err:
->>>   	root_device_unregister(root_device);
->>> -
->>>   	return ret;
->>>   }
->>>   
->>>   static void vfio_ap_matrix_dev_destroy(void)
->>>   {
->>> +	struct device *root_device = matrix_dev->device.parent;
->>> +
->>> +	driver_unregister(&matrix_driver);
->>>   	device_unregister(&matrix_dev->device);
->>> -	root_device_unregister(matrix_dev->device.parent);
->>> +	bus_unregister(&matrix_bus);
->>> +	root_device_unregister(root_device);
->>>   }
->>>   
->>>   static int __init vfio_ap_init(void)
->>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
->>> index 272ef42..900b9cf 100644
->>> --- a/drivers/s390/crypto/vfio_ap_ops.c
->>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
->>> @@ -198,8 +198,8 @@ static int vfio_ap_verify_queue_reserved(unsigned long *apid,
->>>   	qres.apqi = apqi;
->>>   	qres.reserved = false;
->>>   
->>> -	ret = driver_for_each_device(matrix_dev->device.driver, NULL, &qres,
->>> -				     vfio_ap_has_queue);
->>> +	ret = driver_for_each_device(&matrix_dev->vfio_ap_drv->driver, NULL,
->>> +				     &qres, vfio_ap_has_queue);
->>>   	if (ret)
->>>   		return ret;
->>>   
->>> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
->>> index 5675492..76b7f98 100644
->>> --- a/drivers/s390/crypto/vfio_ap_private.h
->>> +++ b/drivers/s390/crypto/vfio_ap_private.h
->>> @@ -40,6 +40,7 @@ struct ap_matrix_dev {
->>>   	struct ap_config_info info;
->>>   	struct list_head mdev_list;
->>>   	struct mutex lock;
->>> +	struct ap_driver  *vfio_ap_drv;
->>>   };
->>>   
->>>   extern struct ap_matrix_dev *matrix_dev;
->>
->> You are introducing a new bus just for a user space application which is unable
->> to deal with a device directly attached to the root of devices ? So you are fixing
->> kernel code because of disability of userspace code. Hm, you are switching
->> root cause and effect. However, not my job.
-> 
-> the kernel rule is pretty simple. If userspace breaks due to a kernel change fix the
-> kernel.
-> 
->>
->> Why do you need this dummy bus ? Did you evaluate using a "class" subsystem
->> instead ? This is very common and my assumption is that libudev is able to handle
->> this. I am using a "zcrypt" class for providing additional zcrypt device nodes and
->> this works fine together with udev. I would avoid the introduction and maintenance
->> of bus code at any cost.
-> 
-> The class variant sounds promising. Pierre what do you think?
+On Wed, Feb 20, 2019 at 04:58:26PM -0800, Florian Fainelli wrote:
+> With the bridge no longer calling switchdev_port_attr_get() to obtain
+> the supported bridge port flags from a driver but instead trying to set
+> the bridge port flags directly and relying on driver to reject
+> unsupported configurations, we can effectively get rid of
+> switchdev_port_attr_get() entirely since this was the only place where
+> it was called.
+>=20
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-
-
-AFAIU the device driver model, the struct class is higher level 
-representation of the device used to provide the informations to create 
-devices in /dev.
-The device and the class are associated with the call to device_create 
-which send the event.
-
-However the device passed to device_create must hang on a bus and be 
-managed by a driver.
-
-I do not see the interest of having a class if we do not plan to create 
-a device in /dev.
-We could add one in prevision, but it is not a replacement for the bus.
-
-Regards,
-Pierre
-
-
-
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
-
+Reviewed-by: Ido Schimmel <idosch@mellanox.com>
