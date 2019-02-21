@@ -2,199 +2,158 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3ACC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:09:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D94BDC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:16:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4085220836
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:09:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Q/GfWmS8"
+	by mail.kernel.org (Postfix) with ESMTP id B1B132084F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:16:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728554AbfBUSJu (ORCPT
+        id S1727314AbfBUSQY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 13:09:50 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43749 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725831AbfBUSJu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 13:09:50 -0500
-Received: by mail-pf1-f194.google.com with SMTP id q17so14112931pfh.10
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 10:09:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=d+dzVZFLsB/OYPmQAM+r5sH4pKc+TDvlpX280jiTaDg=;
-        b=Q/GfWmS8+68WWBWhucnvI9GmzIHLcCXpzpj0qj3GmzKy/4IG+zcQxuUk1m9lyarKPz
-         1hQSaQmeRTQHrqzomQGmGToYmbdrgXuz7PmDnmsEKEC4cWAzNStrTKdbVPdlZNW/rxf7
-         zvBivrV32yRvrg6qLqo82OQLzn2WLTj5VziIg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=d+dzVZFLsB/OYPmQAM+r5sH4pKc+TDvlpX280jiTaDg=;
-        b=NBERyNG4kslL+auDoOKYJ204kPN6uquXOVbwXitO7d+ewpYNFaJlgQIMReGT6/hmv2
-         +KmmVZsSJZ5Zr4VVAu0jOr938Oknl+Vvfn9NEhN27D0aP5Tb3Sn/03J4xYiyBVYIOMkF
-         PRE6nY2tgeC8uukQMcDkqBnnMzQsgy8nLiIO7qbCKOhvr9i7nfcz9hIAM9sX4fyZqJQe
-         aH1nHPGRV46ifxqXAicu2wmD7QusFONeKSkLN/dc8DormmsTKVj1otObwnRFS+p6UGtW
-         dgEcABZt0ct0x6ajlQPzWo2gE+UUHVMIAAG/7wMzKAQhBPv3MiNHpCuQUc0hobxQohiK
-         CKMg==
-X-Gm-Message-State: AHQUAubF3PFBhmFfrvZUkpPk+Hb2ShZyy1x2+qAaOeZfQypojENO/+Ro
-        iSR6Kbd86LqwPPazVA+3ImKObQ==
-X-Google-Smtp-Source: AHgI3IY4JTF6n9zWAsKgq0p84s6scZ9EI6XIZVxOKysliPlDpbtuTkRpoa8HpJ68wZf8YOnJrfqa6w==
-X-Received: by 2002:a63:cf01:: with SMTP id j1mr25615233pgg.342.1550772589424;
-        Thu, 21 Feb 2019 10:09:49 -0800 (PST)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id b6sm8490242pfo.27.2019.02.21.10.09.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Feb 2019 10:09:48 -0800 (PST)
-Date:   Thu, 21 Feb 2019 10:09:47 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jann Horn <jannh@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        X86 ML <x86@kernel.org>
-Subject: [PATCH v3] x86/asm: Pin sensitive CR4 bits
-Message-ID: <20190221180947.GA24138@beast>
+        Thu, 21 Feb 2019 13:16:24 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47478 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725831AbfBUSQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 13:16:24 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C4BED3082E8E;
+        Thu, 21 Feb 2019 18:16:23 +0000 (UTC)
+Received: from redhat.com (unknown [10.20.6.236])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6A8711001DC5;
+        Thu, 21 Feb 2019 18:16:21 +0000 (UTC)
+Date:   Thu, 21 Feb 2019 13:16:19 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v2 17/26] userfaultfd: wp: support swap and page migration
+Message-ID: <20190221181619.GQ2813@redhat.com>
+References: <20190212025632.28946-1-peterx@redhat.com>
+ <20190212025632.28946-18-peterx@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20190212025632.28946-18-peterx@redhat.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 21 Feb 2019 18:16:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Several recent exploits have used direct calls to the native_write_cr4()
-function to disable SMEP and SMAP before then continuing their exploits
-using userspace memory access. This pins bits of cr4 so that they cannot
-be changed through a common function. This is not intended to be general
-ROP protection (which would require CFI to defend against properly), but
-rather a way to avoid trivial direct function calling (or CFI bypassing
-via a matching function prototype) as seen in:
+On Tue, Feb 12, 2019 at 10:56:23AM +0800, Peter Xu wrote:
+> For either swap and page migration, we all use the bit 2 of the entry to
+> identify whether this entry is uffd write-protected.  It plays a similar
+> role as the existing soft dirty bit in swap entries but only for keeping
+> the uffd-wp tracking for a specific PTE/PMD.
+> 
+> Something special here is that when we want to recover the uffd-wp bit
+> from a swap/migration entry to the PTE bit we'll also need to take care
+> of the _PAGE_RW bit and make sure it's cleared, otherwise even with the
+> _PAGE_UFFD_WP bit we can't trap it at all.
+> 
+> Note that this patch removed two lines from "userfaultfd: wp: hook
+> userfault handler to write protection fault" where we try to remove the
+> VM_FAULT_WRITE from vmf->flags when uffd-wp is set for the VMA.  This
+> patch will still keep the write flag there.
 
-https://googleprojectzero.blogspot.com/2017/05/exploiting-linux-kernel-via-packet.html
-(https://github.com/xairy/kernel-exploits/tree/master/CVE-2017-7308)
+That part is confusing, you probably want to remove that code from
+previous patch or at least address my comment in the previous patch
+review.
 
-The goals of this change:
- - pin specific bits (SMEP, SMAP, and UMIP) when writing cr4.
- - avoid setting the bits too early (they must become pinned only after
-   first being used).
- - pinning mask needs to be read-only during normal runtime.
- - pinning needs to be rechecked after set to avoid jumps into the middle
-   of the function.
+> 
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+> ---
+>  include/linux/swapops.h | 2 ++
+>  mm/huge_memory.c        | 3 +++
+>  mm/memory.c             | 8 ++++++--
+>  mm/migrate.c            | 7 +++++++
+>  mm/mprotect.c           | 2 ++
+>  mm/rmap.c               | 6 ++++++
+>  6 files changed, 26 insertions(+), 2 deletions(-)
+> 
 
-Using __ro_after_init on the mask is done so it can't be first disabled
-with a malicious write. And since it becomes read-only, we must avoid
-writing to it later (hence the check for bits already having been set
-instead of unconditionally writing to the mask).
+[...]
 
-The use of volatile is done to force the compiler to perform a full reload
-of the mask after setting cr4 (to protect against just jumping into the
-function past where the masking happens; we must check that the mask was
-applied after we do the set). Due to how this function can be built by the
-compiler (especially due to the removal of frame pointers), jumping into
-the middle of the function frequently doesn't require stack manipulation
-to construct a stack frame (there may only a retq without pops, which is
-sufficient for use with exploits like timer overwrites mentioned above).
+> diff --git a/mm/memory.c b/mm/memory.c
+> index c2035539e9fd..7cee990d67cf 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -736,6 +736,8 @@ copy_one_pte(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+>  				pte = swp_entry_to_pte(entry);
+>  				if (pte_swp_soft_dirty(*src_pte))
+>  					pte = pte_swp_mksoft_dirty(pte);
+> +				if (pte_swp_uffd_wp(*src_pte))
+> +					pte = pte_swp_mkuffd_wp(pte);
+>  				set_pte_at(src_mm, addr, src_pte, pte);
+>  			}
+>  		} else if (is_device_private_entry(entry)) {
+> @@ -2815,8 +2817,6 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>  	inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
+>  	dec_mm_counter_fast(vma->vm_mm, MM_SWAPENTS);
+>  	pte = mk_pte(page, vma->vm_page_prot);
+> -	if (userfaultfd_wp(vma))
+> -		vmf->flags &= ~FAULT_FLAG_WRITE;
 
-For example, without the recheck, the function may appear as:
+So this is the confusing part with the previous patch that introduce
+that code. It feels like you should just remove that code entirely
+in the previous patch.
 
-   native_write_cr4:
-      mov [pin], %rbx
-      or  %rbx, %rdi
-   1: mov %rdi, %cr4
-      retq
+>  	if ((vmf->flags & FAULT_FLAG_WRITE) && reuse_swap_page(page, NULL)) {
+>  		pte = maybe_mkwrite(pte_mkdirty(pte), vma);
+>  		vmf->flags &= ~FAULT_FLAG_WRITE;
+> @@ -2826,6 +2826,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>  	flush_icache_page(vma, page);
+>  	if (pte_swp_soft_dirty(vmf->orig_pte))
+>  		pte = pte_mksoft_dirty(pte);
+> +	if (pte_swp_uffd_wp(vmf->orig_pte)) {
+> +		pte = pte_mkuffd_wp(pte);
+> +		pte = pte_wrprotect(pte);
+> +	}
+>  	set_pte_at(vma->vm_mm, vmf->address, vmf->pte, pte);
+>  	arch_do_swap_page(vma->vm_mm, vma, vmf->address, pte, vmf->orig_pte);
+>  	vmf->orig_pte = pte;
 
-The masking "or" could be trivially bypassed by just calling to label "1"
-instead of "native_write_cr4". (CFI will force calls to only be able to
-call into native_write_cr4, but CFI and CET are uncommon currently.)
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index d4fd680be3b0..605ccd1f5c64 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -242,6 +242,11 @@ static bool remove_migration_pte(struct page *page, struct vm_area_struct *vma,
+>  		if (is_write_migration_entry(entry))
+>  			pte = maybe_mkwrite(pte, vma);
+>  
+> +		if (pte_swp_uffd_wp(*pvmw.pte)) {
+> +			pte = pte_mkuffd_wp(pte);
+> +			pte = pte_wrprotect(pte);
+> +		}
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
-v3: improve WARN message (Sean Christopherson)
-v2: fix think-o in cr4_pin recheck (Jann Horn)
----
- arch/x86/include/asm/special_insns.h | 13 +++++++++++++
- arch/x86/kernel/cpu/common.c         | 12 +++++++++++-
- 2 files changed, 24 insertions(+), 1 deletion(-)
+If the page was write protected prior to migration then it should never
+end up as a write migration entry and thus the above should be something
+like:
+		if (is_write_migration_entry(entry)) {
+			pte = maybe_mkwrite(pte, vma);
+		} else if (pte_swp_uffd_wp(*pvmw.pte)) {
+			pte = pte_mkuffd_wp(pte);
+		}
 
-diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
-index 43c029cdc3fe..fabda1400137 100644
---- a/arch/x86/include/asm/special_insns.h
-+++ b/arch/x86/include/asm/special_insns.h
-@@ -72,9 +72,22 @@ static inline unsigned long native_read_cr4(void)
- 	return val;
- }
- 
-+extern volatile unsigned long cr4_pin;
-+
- static inline void native_write_cr4(unsigned long val)
- {
-+again:
-+	val |= cr4_pin;
- 	asm volatile("mov %0,%%cr4": : "r" (val), "m" (__force_order));
-+	/*
-+	 * If the MOV above was used directly as a ROP gadget we can
-+	 * notice the lack of pinned bits in "val" and start the function
-+	 * from the beginning to gain the cr4_pin bits for sure.
-+	 */
-+	if (WARN_ONCE((val & cr4_pin) != cr4_pin,
-+		      "Attempt to unpin cr4 bits: %lx, cr4 bypass attack?!",
-+		      ~val & cr4_pin))
-+		goto again;
- }
- 
- #ifdef CONFIG_X86_64
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index cb28e98a0659..7e0ea4470f8e 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -312,10 +312,16 @@ static __init int setup_disable_smep(char *arg)
- }
- __setup("nosmep", setup_disable_smep);
- 
-+volatile unsigned long cr4_pin __ro_after_init;
-+EXPORT_SYMBOL_GPL(cr4_pin);
-+
- static __always_inline void setup_smep(struct cpuinfo_x86 *c)
- {
--	if (cpu_has(c, X86_FEATURE_SMEP))
-+	if (cpu_has(c, X86_FEATURE_SMEP)) {
-+		if (!(cr4_pin & X86_CR4_SMEP))
-+			cr4_pin |= X86_CR4_SMEP;
- 		cr4_set_bits(X86_CR4_SMEP);
-+	}
- }
- 
- static __init int setup_disable_smap(char *arg)
-@@ -334,6 +340,8 @@ static __always_inline void setup_smap(struct cpuinfo_x86 *c)
- 
- 	if (cpu_has(c, X86_FEATURE_SMAP)) {
- #ifdef CONFIG_X86_SMAP
-+		if (!(cr4_pin & X86_CR4_SMAP))
-+			cr4_pin |= X86_CR4_SMAP;
- 		cr4_set_bits(X86_CR4_SMAP);
- #else
- 		cr4_clear_bits(X86_CR4_SMAP);
-@@ -351,6 +359,8 @@ static __always_inline void setup_umip(struct cpuinfo_x86 *c)
- 	if (!cpu_has(c, X86_FEATURE_UMIP))
- 		goto out;
- 
-+	if (!(cr4_pin & X86_CR4_UMIP))
-+		cr4_pin |= X86_CR4_UMIP;
- 	cr4_set_bits(X86_CR4_UMIP);
- 
- 	pr_info_once("x86/cpu: User Mode Instruction Prevention (UMIP) activated\n");
--- 
-2.17.1
-
-
--- 
-Kees Cook
+[...]
