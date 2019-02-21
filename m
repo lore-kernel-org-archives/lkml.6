@@ -2,76 +2,100 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0607EC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 250FEC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:56:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE6322086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:56:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E25302086A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:56:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IgMAuchu"
+	dkim=pass (2048-bit key) header.d=innovation.ch header.i=@innovation.ch header.b="iWasvqAy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbfBUK4G (ORCPT
+        id S1727595AbfBUK4T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 05:56:06 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:39510 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725831AbfBUK4F (ORCPT
+        Thu, 21 Feb 2019 05:56:19 -0500
+Received: from chill.innovation.ch ([216.218.245.220]:50854 "EHLO
+        chill.innovation.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725858AbfBUK4S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 05:56:05 -0500
-Received: by mail-vk1-f196.google.com with SMTP id i68so2686818vke.6;
-        Thu, 21 Feb 2019 02:56:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=MIWWjE+tpURFmmaOPnMkvbETR+/IeUD8/hjQ9oSTwrQ=;
-        b=IgMAuchuMGqzG9tc6+DxmNVJNB0xIBjXm55Wt//7WXU77b1Y5DykrDMn9nsaANkX+O
-         Oipz0VmNn0fVYWacd/QT4QA5dS09ocOypofmGtRZSIHBn6qlDJJTt92gqf39CmbCEGgY
-         mxTenwNFJCwqKfMeFvesD3A+Pe6T3x/+YlLJw0Cf77jr1P4f4p+VRd5nDwuYYPpfxeEt
-         9AF+2W7eM/IuRBMcyl7ZeXAuWgasvUgnocLfjIdUoWOoLDcW/8ZypZYybVrV6cOyV1yL
-         LbpNomhmxPrsaUhGtfws8GZUCercXJzbwkDbgMj2abAzpp+IONDJpzyy+pVAfZ5C4noE
-         4Nng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=MIWWjE+tpURFmmaOPnMkvbETR+/IeUD8/hjQ9oSTwrQ=;
-        b=IRccyNixUsNz/eEMObMbHQ3J5vZLB/zBfX0ASdQ/CoTSPY6F7pWfZwP0wkmnof+508
-         QgWc8AggWSQ+l+HO/Y8INxo6xeH/xjWeVpJiiGQdMAKu5LdV6CkLZ5iz3k/XTS/9tOtq
-         xWsPf2RG3R208CxE0WGlB+DrEuCQIZDqcV7HEfm1yIJO2KBuAymAwBGDVyn+a47QQE2l
-         Q/u70xxJYvZ4lf+Wfcjc6PGs7xRoyfkDWnosK8V16crIiVJSHDRMdM6opRAYpVW4BOy6
-         x5kbSImvc1rHJ7qocXDdqMDw4/OD23k3kKekPkDkNQB9lcm0GIO/JzOyt5lnO5NEDdVo
-         k5Mw==
-X-Gm-Message-State: AHQUAua5SYI44o8uOwZbmGji1FMMG1RlhCmgvzEOaMGmBSc32BFxOsFU
-        tJKs10OsxAJFihx1V++FDf4jdBN81WagGIVeUdU86rtdbQ==
-X-Google-Smtp-Source: AHgI3Ibrp3SQ0Yv71UBajh0aGQ2cFOmIic6Gvgt9MmkdT/2P/+dfM8Fq1ATUHMzLc7sFJ8bn/VEMqOBqWcWkE1VADvo=
-X-Received: by 2002:a1f:30c6:: with SMTP id w189mr13050270vkw.57.1550746564833;
- Thu, 21 Feb 2019 02:56:04 -0800 (PST)
+        Thu, 21 Feb 2019 05:56:18 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by chill.innovation.ch (Postfix) with ESMTP id 8FC676401CB;
+        Thu, 21 Feb 2019 02:56:17 -0800 (PST)
+X-Virus-Scanned: amavisd-new at 
+Received: from chill.innovation.ch ([127.0.0.1])
+        by localhost (chill.innovation.ch [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id o1mQMtG4FYRI; Thu, 21 Feb 2019 02:56:15 -0800 (PST)
+From:   =?UTF-8?q?Ronald=20Tschal=C3=A4r?= <ronald@innovation.ch>
+DKIM-Filter: OpenDKIM Filter v2.10.3 chill.innovation.ch 59D066400C4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=innovation.ch;
+        s=default; t=1550746575;
+        bh=YMB44jb+0g+nd4Og7l02NGHm++mcOMMfpBshErHT638=;
+        h=From:To:Cc:Subject:Date:From;
+        b=iWasvqAy2bCBFx6Gr9MY868GPHp/GKu0BtIWkzrxVHaOrK3wcmcLWj6v9RUlxlXFk
+         8mBepxHZ4qA3aMtqFiZGrusRsKjDiRLP2T/Ci/i+wswOgXD/9TIDE9r85sodcS3l4Q
+         5BEyp68+wC95TDXUbZDQx2iFez6oZ7jT6BUDCFL+C8oLYOHFAeKKoH5mzIlRX7Dqb4
+         9DNmWk3FrTxxoIJxWH5QUvKbhQNRzETr44kQohgLAO+12EGKZz0X9XJ/yFLhamySvl
+         cTxP2qI/ekD8Ns6QJTjti1PKUX8nLgaNqgqGUGf7vs5hLNY8oGg6HtEJ3x6v5Q8yIt
+         lT9oyGGx/HFDg==
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Henrik Rydberg <rydberg@bitmath.org>
+Cc:     Lukas Wunner <lukas@wunner.de>,
+        Federico Lorenzi <federico@travelground.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] Add Apple SPI keyboard and trackpad driver
+Date:   Thu, 21 Feb 2019 02:56:07 -0800
+Message-Id: <20190221105609.5710-1-ronald@innovation.ch>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-From:   Rundong Ge <rdong.ge@gmail.com>
-Date:   Thu, 21 Feb 2019 18:55:54 +0800
-Message-ID: <CAN1LvyqjHCCNxz30a-SMO3uSBw2WD-Mvn4sR==9SUcJKdqo9vA@mail.gmail.com>
-Subject: m88e6390_config_aneg will always reset the phy
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>, hkallweit1@gmail.com,
-        davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew
+This changeset adds a driver for the SPI keyboard and trackpad on recent
+MacBook's and MacBook Pro's. The driver has seen a fair amount of use
+over the last 2 years (basically anybody running linux on these
+machines), with only relatively small changes in the last year or so.
+For those interested, the driver development has been hosted at
+https://github.com/cb22/macbook12-spi-driver/ (as well as my clone at
+https://github.com/roadrunner2/macbook12-spi-driver/).
 
-Before the "net: phy: marvell: Errata for mv88e6390 internal PHYs",
-phydev will only be soft reset when register value was changed.
-But after this patch, the phydev will always be reset when entering
-the "m88e6390_config_aneg".
-So is there any side effect of this change?
+The first patch is just a placeholder for now and is provided in case
+somebody wants to compile the driver while it's being reviewed here; the
+real patch has been submitted to dri-devel and is being discussed there,
+with the intent/hope that I can get an Ack and permission to merge it
+through the input subsystem tree here as part of this patch series.
 
-Thanks
-Rundong
+Changes in v2:
+  Applied all feedback from review by Andy Shevchenko, including:
+  - reworked logging to use dev_xxx() everywhere
+  - split 16-bit model_id field into 2 8-bit fields
+  - factored out several pieces of code into separate functions
+  - many code style improvements and cleanups
+  - Kconfig dependency fixes
+  The full set of changes (except for the Kconfig) can be viewed at
+  https://github.com/roadrunner2/macbook12-spi-driver/ as individual
+  commits a651bb9..f832caa in the upstreaming-review branch.
+
+Ronald Tschalär (2):
+  drm/bridge: sil_sii8620: depend on INPUT instead of selecting it.
+  Input: add Apple SPI keyboard and trackpad driver.
+
+ drivers/gpu/drm/bridge/Kconfig    |    2 +-
+ drivers/input/keyboard/Kconfig    |   14 +
+ drivers/input/keyboard/Makefile   |    1 +
+ drivers/input/keyboard/applespi.c | 2003 +++++++++++++++++++++++++++++
+ 4 files changed, 2019 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/input/keyboard/applespi.c
+
+-- 
+2.20.1
+
