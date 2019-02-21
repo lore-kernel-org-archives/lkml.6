@@ -2,132 +2,93 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B896C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:06:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE214C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:07:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C02B2085A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:06:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A17A2085A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:07:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eSn0WLhK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727616AbfBUMGy (ORCPT
+        id S1727752AbfBUMHI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 07:06:54 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43212 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725991AbfBUMGy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 07:06:54 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DBAB780D;
-        Thu, 21 Feb 2019 04:06:53 -0800 (PST)
-Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C73C83F5C1;
-        Thu, 21 Feb 2019 04:06:50 -0800 (PST)
-Subject: Re: [PATCH] sched/x86: Save [ER]FLAGS on context switch
-To:     "H. Peter Anvin" <hpa@zytor.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mingo@redhat.com,
-        catalin.marinas@arm.com, james.morse@arm.com,
-        valentin.schneider@arm.com, brgerst@gmail.com, jpoimboe@redhat.com,
-        luto@kernel.org, bp@alien8.de, dvlasenk@redhat.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de
-References: <20190213144145.GY32494@hirez.programming.kicks-ass.net>
- <20190213154532.GQ32534@hirez.programming.kicks-ass.net>
- <D61C430D-4321-4114-AB85-671A3C7B8EAE@amacapital.net>
- <20190213222146.GC32494@hirez.programming.kicks-ass.net>
- <D3E1B64D-3E91-4A82-9C3B-92D9EB7326CE@amacapital.net>
- <20190214101429.GD32494@hirez.programming.kicks-ass.net>
- <20ABBED1-E505-45F6-8520-FB93786DF9A9@zytor.com>
- <20190216103044.GR32494@hirez.programming.kicks-ass.net>
- <9e037d68-75e7-1beb-0c9c-33a7ffeced1b@zytor.com>
- <20190219090409.GW32494@hirez.programming.kicks-ass.net>
- <20190219124808.GG8501@fuggles.cambridge.arm.com>
- <f8e99706-4e3b-68ec-7a3e-6e6dd876ad2f@zytor.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <cb221e71-243d-fdbd-1d18-b175bc88979b@arm.com>
-Date:   Thu, 21 Feb 2019 12:06:49 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 21 Feb 2019 07:07:08 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:37118 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725991AbfBUMHH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 07:07:07 -0500
+Received: by mail-qk1-f196.google.com with SMTP id m9so4082559qkl.4
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 04:07:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZGmORHON7PurEiv4frhU7uddTr3DVhA8QYH5qqWp1T0=;
+        b=eSn0WLhKSErSZPH26vbyhSDhXHZzgzxfGeTqmGNP81ZJCYBoBNSSaQkphOm6ytWJag
+         nylqZ+qtoQK4gzkRGdrDdMmuG03hbLlp0CM184lJSwPAwbxVZvm5VfvZ4I5IaJ5c3SQ9
+         HLYzTYX4mW+ZN/RPaU3BA6+gHbDylPAO7tkQmmCUQI++AqD9uGUBFzkX32fba4yxvJ/4
+         iPHk38Ke69aQvlUvd14z99Bwafs5a2MWk8D9vGmgL4o1QR0j1tqGV+8pnoCXz2MKO13D
+         NdxQ2HX7RHkUoROgaQQ8SFMhQs5mdX2G564OKSodpnpfnXxsoRJAAgKpNCo8IUljnfKO
+         tfJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZGmORHON7PurEiv4frhU7uddTr3DVhA8QYH5qqWp1T0=;
+        b=JaUlBfyn5h7Z6k6F5UXmyWfr2l1b+OgdkiM5Kh7O676fWEQHNiQAvWkmQlk2y3NSF6
+         pjr1ULbhq/8iuOXxHDqFfhc2ZAhg6jqTaVY2vholT0AXVnmaucU75jmuDJJIc+z0tcP0
+         y1/037bv2LnxeX094aeCCdszGZslE31O4mFFvuyXhRrw+YC5KdsipOM3xgLTskvS6Llm
+         fLpoPJik2stSCFpxKx0TRDzGTN6E2iEOHbhuROEoE6V61L6137vlyKylhRfZ5xeFFm/E
+         xsr3vBLdSHyXSJZ9O+xkn1RMvASjNIT1romHfcf7i/s5p8XtVA9p+ICJ0Bbxat8qmhiI
+         FN+g==
+X-Gm-Message-State: AHQUAuZMOxxVrguJpumoln8F08I0yv3361eSE8hT5VXeKNLOtcvST2aV
+        qQwntzkhGPb80CLx0nLFezXK2NGmfcQ6iydMXTo2bQ==
+X-Google-Smtp-Source: AHgI3IYVMsqZtvjgIsvQ48B1zO1yPslUVWwZ4vRJkkXGg5FNR6H18EMhxCajkEe1Bu5nI90faBPOHfd//kP9rE6ie34=
+X-Received: by 2002:a37:d649:: with SMTP id t70mr28833868qki.44.1550750826893;
+ Thu, 21 Feb 2019 04:07:06 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <f8e99706-4e3b-68ec-7a3e-6e6dd876ad2f@zytor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190220111240.10041-1-brgl@bgdev.pl> <20190220111240.10041-2-brgl@bgdev.pl>
+ <20190220111650.GA13077@kroah.com> <CAMRc=MeXPsJCsKAnzUD7Cvhj2gy3pyd6X79e602awv3_Ys6mYA@mail.gmail.com>
+ <20190220121506.GA23933@kroah.com> <CAMRc=Md0sqouS+p2RvW+fwM41eN5=P9Nd7V=gYuqxunfa3j-nA@mail.gmail.com>
+In-Reply-To: <CAMRc=Md0sqouS+p2RvW+fwM41eN5=P9Nd7V=gYuqxunfa3j-nA@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 21 Feb 2019 13:06:54 +0100
+Message-ID: <CACRpkdauvLkMs6HQiuuBy9ACVB+zmYY6W8FqmdUUQFrYZcHjaQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] drivers: provide devm_platform_ioremap_resource()
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
+        Keerthy <j-keerthy@ti.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 21, 2019 at 10:53 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
+> > > Should this go through the driver-core tree?
+> >
+> > No need, put it through the tree for patch 2/2.
+> >
+> > thanks,
+> >
+> > greg k-h
+>
+> Linus,
+>
+> can you take the two patches for v5.1?
 
-On 20/02/2019 22:55, H. Peter Anvin wrote:
-> On 2/19/19 4:48 AM, Will Deacon wrote:
->>
->> I think you'll still hate this, but could we not disable preemption during
->> the uaccess-enabled region, re-enabling it on the fault path after we've
->> toggled uaccess off and disable it again when we return back to the
->> uaccess-enabled region? Doesn't help with tracing, but it should at least
->> handle the common case.
->>
-> 
-> There is a worse problem with this, I still realize: this would mean blocking
-> preemption across what could possibly be a *very* large copy_from_user(), for
-> example.
-> 
+Yup both merged to the GPIO tree, thanks!
 
-Yes, that's a good point. And I guess a userspace program could forcibly
-trigger the kernel into a large copy_from/to_user(), knowingly disabling
-preemption.
-
-I don't know how bad this could get.
-
-> Exceptions *have* to handle this; there is no way around it. Perhaps the
-> scheduler isn't the right place to put these kinds of asserts, either.
-> 
-
-Maybe I'm misunderstanding what you mean with "Exceptions *have* to
-handle this". Isn't the fact that the AC/PAN flags gets saved on
-exception entry and set back to "user accesses disabled" already
-handling it? Or are you referring to something else?
-
-So far my understanding is that the exception/interrupt case is fine.
-The worrying case is what gets called in the user access regions
-(schedule(), preempt_enable(), tracing...).
-
-Did I get lost somewhere?
-
-> Now, __fentry__ is kind of a special beast; in some ways it is an "exception
-> implemented as a function call"; on x86 one could even consider using an INT
-> instruction in order to reduce the NOP footprint in the unarmed case.  Nor is
-> __fentry__ a C function; it has far more of an exception-like ABI.
-> *Regardless* of what else we do, I believe __fentry__ ought to
-> save/disable/restore AC, just like an exception does.
-> 
-
-That does make sense to me. However it doesn't solve the issue of
-calling (or preventing to call) some function that rescheds.
-
-
-> The idea of using s/a gcc plugin/objtool/ for this isn't really a bad idea.
-> Obviously the general problem is undecidable :) but the enforcement of some
-> simple, fairly draconian rules ("as tight as possible, but no tighter")
-> shouldn't be a huge problem.
-> 
-> An actual gcc plugin -- which would probably be quite complex -- could make
-> gcc itself aware of user space accesses and be able to rearrange them to
-> minimize STAC/CLAC and avoid kernel-space accesses inside those brackets.
-> 
-
-Not sure I get this. The data that is retrieved from/stored user space
-is generally obtained from/saved into kernel-space address. And when you
-start the user_access_begin() it means you plan on doing a bunch of user
-access, so I wouldn't expect to be able to batch everything into registers.
-
-Cheers,
-
--- 
-Julien Thierry
+Yours,
+Linus Walleij
