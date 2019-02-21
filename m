@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5706C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C7DEC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A42F92075C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3872020838
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550759829;
-	bh=bOXycFKqDClHqPv3d4jwPy81nmDjwH/m6BAgjmDVkws=;
+	s=default; t=1550759833;
+	bh=FnJIv6w1qO2hm9ynikRz5rblDwBmT2nWSjbXsfV6tXE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pDJYNSqIq6yItp9dA5Wpo76keueheErOOzSOlQSLKLnw1a9oOcejkkc01m0Vt/iDR
-	 pqFyAmYRri6VI3uiyfDcFsxXHIo/Qj0T3fvAMmobkBs0iL9wxB7TttYGVKwLDeKuv6
-	 h7vLuVbVOb3NK7kWeZ7m/LxvZsLUcTsm3KMpda5k=
+	b=B6MNg6ZvPwdAi7WCYufAknasDaTlABpQKMZ7OXBdIEBV//xxEmDLi5jtKn5Mj1tq+
+	 TiK4qpnh+ND36QrAAXsS0TAnh0LkGh547uwWC+bTfDkmQ1vnpMQoohpopitU4IAp8Z
+	 fcvcA6sooMfZRVfdp7WOCId3hu8V0bNsUJzYiTdA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728306AbfBUOhI (ORCPT
+        id S1728322AbfBUOhM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:37:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58134 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:37:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728291AbfBUOhG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:37:06 -0500
+        id S1728291AbfBUOhJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:37:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD6DC2075C;
-        Thu, 21 Feb 2019 14:37:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E3FD20838;
+        Thu, 21 Feb 2019 14:37:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550759826;
-        bh=bOXycFKqDClHqPv3d4jwPy81nmDjwH/m6BAgjmDVkws=;
+        s=default; t=1550759829;
+        bh=FnJIv6w1qO2hm9ynikRz5rblDwBmT2nWSjbXsfV6tXE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ve9IlKKeYAUyvNtpHU5vwOHNUg3vTTJv9Ng+kdFgF5ZEdKjlYUqPvvHmcZrwF7WMx
-         rJZ480w+Bgw0jxcxocilRDkyvxi2M4XWX2EF6cblYf0lJ5THsbci6znvfCQRjhhPIH
-         BI2u1FpT8ffzf0awFxuoyB3dTGZ77yeulVuF6OHc=
+        b=epd8t6zb4xqxwouQYz4slnkl+Mork8WqYhYZxOLMuU7HpEo3yBlXN71XC96qHLm3e
+         mCy94IIgHO6NbS12F67E/gXdDWIZnldkA8nILo1SdMpXzdGmzCLTA7uwTIbl1x2XPt
+         3rQQJ9KtPgEHv48Vb7DH2ZnXjfwB6hIyLB7QxedE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiumei Mu <xmu@redhat.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Jorgen Hansen <jhansen@vmware.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 06/13] vsock: cope with memory allocation failure at socket creation time
-Date:   Thu, 21 Feb 2019 15:35:37 +0100
-Message-Id: <20190221125240.668361110@linuxfoundation.org>
+        stable@vger.kernel.org, Jose Abreu <joabreu@synopsys.com>,
+        Joao Pinto <jpinto@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Subject: [PATCH 3.18 07/13] net: stmmac: Fix a race in EEE enable callback
+Date:   Thu, 21 Feb 2019 15:35:38 +0100
+Message-Id: <20190221125240.813697003@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125240.091472334@linuxfoundation.org>
 References: <20190221125240.091472334@linuxfoundation.org>
@@ -67,40 +68,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Jose Abreu <jose.abreu@synopsys.com>
 
-[ Upstream commit 225d9464268599a5b4d094d02ec17808e44c7553 ]
+[ Upstream commit 8a7493e58ad688eb23b81e45461c5d314f4402f1 ]
 
-In the unlikely event that the kmalloc call in vmci_transport_socket_init()
-fails, we end-up calling vmci_transport_destruct() with a NULL vmci_trans()
-and oopsing.
+We are saving the status of EEE even before we try to enable it. This
+leads to a race with XMIT function that tries to arm EEE timer before we
+set it up.
 
-This change addresses the above explicitly checking for zero vmci_trans()
-at destruction time.
+Fix this by only saving the EEE parameters after all operations are
+performed with success.
 
-Reported-by: Xiumei Mu <xmu@redhat.com>
-Fixes: d021c344051a ("VSOCK: Introduce VM Sockets")
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
-Reviewed-by: Jorgen Hansen <jhansen@vmware.com>
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Fixes: d765955d2ae0 ("stmmac: add the Energy Efficient Ethernet support")
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/vmw_vsock/vmci_transport.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c |   22 ++++++++++---------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
---- a/net/vmw_vsock/vmci_transport.c
-+++ b/net/vmw_vsock/vmci_transport.c
-@@ -1663,6 +1663,10 @@ static int vmci_transport_socket_init(st
- 
- static void vmci_transport_destruct(struct vsock_sock *vsk)
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
+@@ -614,25 +614,27 @@ static int stmmac_ethtool_op_set_eee(str
+ 				     struct ethtool_eee *edata)
  {
-+	/* transport can be NULL if we hit a failure at init() time */
-+	if (!vmci_trans(vsk))
-+		return;
+ 	struct stmmac_priv *priv = netdev_priv(dev);
++	int ret;
+ 
+-	priv->eee_enabled = edata->eee_enabled;
+-
+-	if (!priv->eee_enabled)
++	if (!edata->eee_enabled) {
+ 		stmmac_disable_eee_mode(priv);
+-	else {
++	} else {
+ 		/* We are asking for enabling the EEE but it is safe
+ 		 * to verify all by invoking the eee_init function.
+ 		 * In case of failure it will return an error.
+ 		 */
+-		priv->eee_enabled = stmmac_eee_init(priv);
+-		if (!priv->eee_enabled)
++		edata->eee_enabled = stmmac_eee_init(priv);
++		if (!edata->eee_enabled)
+ 			return -EOPNOTSUPP;
+-
+-		/* Do not change tx_lpi_timer in case of failure */
+-		priv->tx_lpi_timer = edata->tx_lpi_timer;
+ 	}
+ 
+-	return phy_ethtool_set_eee(priv->phydev, edata);
++	ret = phy_ethtool_set_eee(dev->phydev, edata);
++	if (ret)
++		return ret;
 +
- 	if (vmci_trans(vsk)->attach_sub_id != VMCI_INVALID_ID) {
- 		vmci_event_unsubscribe(vmci_trans(vsk)->attach_sub_id);
- 		vmci_trans(vsk)->attach_sub_id = VMCI_INVALID_ID;
++	priv->eee_enabled = edata->eee_enabled;
++	priv->tx_lpi_timer = edata->tx_lpi_timer;
++	return 0;
+ }
+ 
+ static u32 stmmac_usec2riwt(u32 usec, struct stmmac_priv *priv)
 
 
