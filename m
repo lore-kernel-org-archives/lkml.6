@@ -2,328 +2,327 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD4BC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:18:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86BFEC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:18:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 540E62086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:18:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A5D220880
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:18:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZsRbWAGn";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FEHbmJ5B"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Auys7/qu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbfBUMSq (ORCPT
+        id S1727878AbfBUMSw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 07:18:46 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:49034 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbfBUMSp (ORCPT
+        Thu, 21 Feb 2019 07:18:52 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:33516 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbfBUMSt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 07:18:45 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 04B32608EA; Thu, 21 Feb 2019 12:18:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550751524;
-        bh=ag5jbffPBURqwFzN6r4PVGK9Nh/rEWNzRySoJE7rNsc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZsRbWAGnm3auKxDr3HkCukQGtcsEI4hHKcREgWg8EZXeMwqiEp/b1mKdFVRGdGcCY
-         ZeiRWJfyMXpHyJu8CldCnqKB8gU4R+vzW/Gy2HyCjmafXjk7fkLH3mleUBtIM0c83L
-         uLNaYspSCY4nAMOPtJYJr9UJVYROnQOc3stZ7100=
-Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rplsssn@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 94D2E6074F;
-        Thu, 21 Feb 2019 12:18:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550751521;
-        bh=ag5jbffPBURqwFzN6r4PVGK9Nh/rEWNzRySoJE7rNsc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FEHbmJ5Bf+QfHSmgk1cbfn93cyeENgT1OOUJmSRGJYTxdetF+RJXR5ShqFUZLjCun
-         YlLa11t4OdlBGIvYpPXdIFf9q7PsNNmGF6gjjU2xwhSDtHbBXOIzYxCMsBwn27L8/Q
-         CzCvg394nmHLuV0uC1f/bi2xMBj9AbISu06/6Czg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 94D2E6074F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
-From:   "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-To:     andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        sboyd@kernel.org, evgreen@chromium.org, dianders@chromium.org,
-        mka@chromium.org, ilina@codeaurora.org,
-        "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-Subject: [PATCH RESEND v3 1/3] drivers: qcom: rpmh-rsc: simplify TCS locking
-Date:   Thu, 21 Feb 2019 17:48:25 +0530
-Message-Id: <20190221121827.32427-2-rplsssn@codeaurora.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190221121827.32427-1-rplsssn@codeaurora.org>
-References: <20190221121827.32427-1-rplsssn@codeaurora.org>
+        Thu, 21 Feb 2019 07:18:49 -0500
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3CF8D255;
+        Thu, 21 Feb 2019 13:18:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1550751526;
+        bh=CsV7lB2dzlmOknM6m5cWOORBhapq4+3DdUyNMWJVWPY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Auys7/quCmftGzZphqkw0amGUwM/xVzxLB6HUS0FA91TWUi+9olUmSMtnGZhzTaCp
+         9fTtD05FW9WAJu9i0ZVOrWs0Sk+J6l3zqjqHTbi+lXe/fgrxKSMh+u3iwIsv4VFul9
+         jQCnNRxF7CX+ssJIg79jB1Wll/sAduYEERtEk0/c=
+Date:   Thu, 21 Feb 2019 14:18:41 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Vaishali Thakkar <vaishali.thakkar@linaro.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org,
+        gregkh@linuxfoundation.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rafael@kernel.org,
+        bjorn.andersson@linaro.org, vkoul@kernel.org
+Subject: Re: [PATCH v2 3/5] soc: qcom: socinfo: Expose custom attributes
+Message-ID: <20190221121841.GA32108@pendragon.ideasonboard.com>
+References: <20190220045829.6852-1-vaishali.thakkar@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190220045829.6852-1-vaishali.thakkar@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tcs->lock was introduced to serialize access with in TCS group. But
-even without tcs->lock, drv->lock is serving the same purpose. So
-use single drv->lock.
+Hi Vaishali,
 
-Other optimizations include -
- - Remove locking around clear_bit() in IRQ handler. clear_bit() is
-   atomic.
- - Remove redundant read of TCS registers.
- - Use spin_lock instead of _irq variants as the locks are not held
-   in interrupt context
+Thank you for the patch.
 
-Suggested-by: Lina Iyer <ilina@codeaurora.org>
-Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
----
- drivers/soc/qcom/rpmh-internal.h |  2 --
- drivers/soc/qcom/rpmh-rsc.c      | 37 +++++++++++---------------------
- drivers/soc/qcom/rpmh.c          | 20 +++++++----------
- 3 files changed, 21 insertions(+), 38 deletions(-)
+On Wed, Feb 20, 2019 at 10:28:29AM +0530, Vaishali Thakkar wrote:
+> The Qualcomm socinfo provides a number of additional attributes,
+> add these to the socinfo driver and expose them via debugfs
+> functionality.
 
-diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
-index 8c316b4d36dc..2e3ffcdf220e 100644
---- a/drivers/soc/qcom/rpmh-internal.h
-+++ b/drivers/soc/qcom/rpmh-internal.h
-@@ -28,7 +28,6 @@ struct rsc_drv;
-  * @offset:    start of the TCS group relative to the TCSes in the RSC
-  * @num_tcs:   number of TCSes in this type
-  * @ncpt:      number of commands in each TCS
-- * @lock:      lock for synchronizing this TCS writes
-  * @req:       requests that are sent from the TCS
-  * @cmd_cache: flattened cache of cmds in sleep/wake TCS
-  * @slots:     indicates which of @cmd_addr are occupied
-@@ -40,7 +39,6 @@ struct tcs_group {
- 	u32 offset;
- 	int num_tcs;
- 	int ncpt;
--	spinlock_t lock;
- 	const struct tcs_request *req[MAX_TCS_PER_TYPE];
- 	u32 *cmd_cache;
- 	DECLARE_BITMAP(slots, MAX_TCS_SLOTS);
-diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-index 73d5b9802a29..d6b834eeeb37 100644
---- a/drivers/soc/qcom/rpmh-rsc.c
-+++ b/drivers/soc/qcom/rpmh-rsc.c
-@@ -98,8 +98,7 @@ static void write_tcs_reg_sync(struct rsc_drv *drv, int reg, int tcs_id,
- 
- static bool tcs_is_free(struct rsc_drv *drv, int tcs_id)
- {
--	return !test_bit(tcs_id, drv->tcs_in_use) &&
--	       read_tcs_reg(drv, RSC_DRV_STATUS, tcs_id, 0);
-+	return !test_bit(tcs_id, drv->tcs_in_use);
- }
- 
- static struct tcs_group *get_tcs_of_type(struct rsc_drv *drv, int type)
-@@ -109,29 +108,28 @@ static struct tcs_group *get_tcs_of_type(struct rsc_drv *drv, int type)
- 
- static int tcs_invalidate(struct rsc_drv *drv, int type)
- {
--	int m;
-+	int m, ret = 0;
- 	struct tcs_group *tcs;
- 
- 	tcs = get_tcs_of_type(drv, type);
- 
--	spin_lock(&tcs->lock);
--	if (bitmap_empty(tcs->slots, MAX_TCS_SLOTS)) {
--		spin_unlock(&tcs->lock);
--		return 0;
--	}
-+	spin_lock(&drv->lock);
-+	if (bitmap_empty(tcs->slots, MAX_TCS_SLOTS))
-+		goto done;
- 
- 	for (m = tcs->offset; m < tcs->offset + tcs->num_tcs; m++) {
- 		if (!tcs_is_free(drv, m)) {
--			spin_unlock(&tcs->lock);
--			return -EAGAIN;
-+			ret = -EAGAIN;
-+			goto done;
- 		}
- 		write_tcs_reg_sync(drv, RSC_DRV_CMD_ENABLE, m, 0);
- 		write_tcs_reg_sync(drv, RSC_DRV_CMD_WAIT_FOR_CMPL, m, 0);
- 	}
- 	bitmap_zero(tcs->slots, MAX_TCS_SLOTS);
--	spin_unlock(&tcs->lock);
- 
--	return 0;
-+done:
-+	spin_unlock(&drv->lock);
-+	return ret;
- }
- 
- /**
-@@ -298,9 +296,7 @@ static irqreturn_t tcs_tx_done(int irq, void *p)
- 		write_tcs_reg(drv, RSC_DRV_CMD_ENABLE, i, 0);
- 		write_tcs_reg(drv, RSC_DRV_CMD_WAIT_FOR_CMPL, i, 0);
- 		write_tcs_reg(drv, RSC_DRV_IRQ_CLEAR, 0, BIT(i));
--		spin_lock(&drv->lock);
- 		clear_bit(i, drv->tcs_in_use);
--		spin_unlock(&drv->lock);
- 		if (req)
- 			rpmh_tx_done(req, err);
- 	}
-@@ -383,14 +379,12 @@ static int tcs_write(struct rsc_drv *drv, const struct tcs_request *msg)
- {
- 	struct tcs_group *tcs;
- 	int tcs_id;
--	unsigned long flags;
- 	int ret;
- 
- 	tcs = get_tcs_for_msg(drv, msg);
- 	if (IS_ERR(tcs))
- 		return PTR_ERR(tcs);
- 
--	spin_lock_irqsave(&tcs->lock, flags);
- 	spin_lock(&drv->lock);
- 	/*
- 	 * The h/w does not like if we send a request to the same address,
-@@ -398,14 +392,12 @@ static int tcs_write(struct rsc_drv *drv, const struct tcs_request *msg)
- 	 */
- 	ret = check_for_req_inflight(drv, tcs, msg);
- 	if (ret) {
--		spin_unlock(&drv->lock);
- 		goto done_write;
- 	}
- 
- 	tcs_id = find_free_tcs(tcs);
- 	if (tcs_id < 0) {
- 		ret = tcs_id;
--		spin_unlock(&drv->lock);
- 		goto done_write;
- 	}
- 
-@@ -413,13 +405,12 @@ static int tcs_write(struct rsc_drv *drv, const struct tcs_request *msg)
- 	set_bit(tcs_id, drv->tcs_in_use);
- 	if (msg->state == RPMH_ACTIVE_ONLY_STATE && tcs->type != ACTIVE_TCS)
- 		enable_tcs_irq(drv, tcs_id, true);
--	spin_unlock(&drv->lock);
- 
- 	__tcs_buffer_write(drv, tcs_id, 0, msg);
- 	__tcs_trigger(drv, tcs_id, true);
- 
- done_write:
--	spin_unlock_irqrestore(&tcs->lock, flags);
-+	spin_unlock(&drv->lock);
- 	return ret;
- }
- 
-@@ -517,19 +508,18 @@ static int tcs_ctrl_write(struct rsc_drv *drv, const struct tcs_request *msg)
- {
- 	struct tcs_group *tcs;
- 	int tcs_id = 0, cmd_id = 0;
--	unsigned long flags;
- 	int ret;
- 
- 	tcs = get_tcs_for_msg(drv, msg);
- 	if (IS_ERR(tcs))
- 		return PTR_ERR(tcs);
- 
--	spin_lock_irqsave(&tcs->lock, flags);
-+	spin_lock(&drv->lock);
- 	/* find the TCS id and the command in the TCS to write to */
- 	ret = find_slots(tcs, msg, &tcs_id, &cmd_id);
- 	if (!ret)
- 		__tcs_buffer_write(drv, tcs_id, cmd_id, msg);
--	spin_unlock_irqrestore(&tcs->lock, flags);
-+	spin_unlock(&drv->lock);
- 
- 	return ret;
- }
-@@ -638,7 +628,6 @@ static int rpmh_probe_tcs_config(struct platform_device *pdev,
- 		tcs->type = tcs_cfg[i].type;
- 		tcs->num_tcs = tcs_cfg[i].n;
- 		tcs->ncpt = ncpt;
--		spin_lock_init(&tcs->lock);
- 
- 		if (!tcs->num_tcs || tcs->type == CONTROL_TCS)
- 			continue;
-diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
-index 71a76eaa4b63..297d6cc4e395 100644
---- a/drivers/soc/qcom/rpmh.c
-+++ b/drivers/soc/qcom/rpmh.c
-@@ -117,9 +117,8 @@ static struct cache_req *cache_rpm_request(struct rpmh_ctrlr *ctrlr,
- 					   struct tcs_cmd *cmd)
- {
- 	struct cache_req *req;
--	unsigned long flags;
- 
--	spin_lock_irqsave(&ctrlr->cache_lock, flags);
-+	spin_lock(&ctrlr->cache_lock);
- 	req = __find_req(ctrlr, cmd->addr);
- 	if (req)
- 		goto existing;
-@@ -153,7 +152,7 @@ static struct cache_req *cache_rpm_request(struct rpmh_ctrlr *ctrlr,
- 
- 	ctrlr->dirty = true;
- unlock:
--	spin_unlock_irqrestore(&ctrlr->cache_lock, flags);
-+	spin_unlock(&ctrlr->cache_lock);
- 
- 	return req;
- }
-@@ -283,23 +282,21 @@ EXPORT_SYMBOL(rpmh_write);
- 
- static void cache_batch(struct rpmh_ctrlr *ctrlr, struct batch_cache_req *req)
- {
--	unsigned long flags;
- 
--	spin_lock_irqsave(&ctrlr->cache_lock, flags);
-+	spin_lock(&ctrlr->cache_lock);
- 	list_add_tail(&req->list, &ctrlr->batch_cache);
--	spin_unlock_irqrestore(&ctrlr->cache_lock, flags);
-+	spin_unlock(&ctrlr->cache_lock);
- }
- 
- static int flush_batch(struct rpmh_ctrlr *ctrlr)
- {
- 	struct batch_cache_req *req;
- 	const struct rpmh_request *rpm_msg;
--	unsigned long flags;
- 	int ret = 0;
- 	int i;
- 
- 	/* Send Sleep/Wake requests to the controller, expect no response */
--	spin_lock_irqsave(&ctrlr->cache_lock, flags);
-+	spin_lock(&ctrlr->cache_lock);
- 	list_for_each_entry(req, &ctrlr->batch_cache, list) {
- 		for (i = 0; i < req->count; i++) {
- 			rpm_msg = req->rpm_msgs + i;
-@@ -309,7 +306,7 @@ static int flush_batch(struct rpmh_ctrlr *ctrlr)
- 				break;
- 		}
- 	}
--	spin_unlock_irqrestore(&ctrlr->cache_lock, flags);
-+	spin_unlock(&ctrlr->cache_lock);
- 
- 	return ret;
- }
-@@ -317,13 +314,12 @@ static int flush_batch(struct rpmh_ctrlr *ctrlr)
- static void invalidate_batch(struct rpmh_ctrlr *ctrlr)
- {
- 	struct batch_cache_req *req, *tmp;
--	unsigned long flags;
- 
--	spin_lock_irqsave(&ctrlr->cache_lock, flags);
-+	spin_lock(&ctrlr->cache_lock);
- 	list_for_each_entry_safe(req, tmp, &ctrlr->batch_cache, list)
- 		kfree(req);
- 	INIT_LIST_HEAD(&ctrlr->batch_cache);
--	spin_unlock_irqrestore(&ctrlr->cache_lock, flags);
-+	spin_unlock(&ctrlr->cache_lock);
- }
- 
- /**
+What is the use case for these attributes ? I fear they will be used in
+production systems, and that would require debugfs in production, which
+isn't a good idea. If you need to expose those attributes for anything
+else than debugging then we need a proper API, likely sysfs-based.
+
+> Signed-off-by: Vaishali Thakkar <vaishali.thakkar@linaro.org>
+> ---
+> Changes since v1:
+> 	- Remove unnecessary debugfs dir creation check
+> 	- Align ifdefs to left
+> 	- Fix function signatures for debugfs init/exit
+> ---
+>  drivers/soc/qcom/socinfo.c | 198 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 198 insertions(+)
+> 
+> diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
+> index 02078049fac7..5f4bef216ae1 100644
+> --- a/drivers/soc/qcom/socinfo.c
+> +++ b/drivers/soc/qcom/socinfo.c
+> @@ -4,6 +4,7 @@
+>   * Copyright (c) 2017-2019, Linaro Ltd.
+>   */
+>  
+> +#include <linux/debugfs.h>
+>  #include <linux/err.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+> @@ -29,6 +30,28 @@
+>   */
+>  #define SMEM_HW_SW_BUILD_ID            137
+>  
+> +#ifdef CONFIG_DEBUG_FS
+> +/* pmic model info */
+> +static const char *const pmic_model[] = {
+> +	[0]  = "Unknown PMIC model",
+> +	[9]  = "PM8994",
+> +	[11] = "PM8916",
+> +	[13] = "PM8058",
+> +	[14] = "PM8028",
+> +	[15] = "PM8901",
+> +	[16] = "PM8027",
+> +	[17] = "ISL9519",
+> +	[18] = "PM8921",
+> +	[19] = "PM8018",
+> +	[20] = "PM8015",
+> +	[21] = "PM8014",
+> +	[22] = "PM8821",
+> +	[23] = "PM8038",
+> +	[24] = "PM8922",
+> +	[25] = "PM8917",
+> +};
+> +#endif /* CONFIG_DEBUG_FS */
+> +
+>  /* Socinfo SMEM item structure */
+>  struct socinfo {
+>  	__le32 fmt;
+> @@ -70,6 +93,10 @@ struct socinfo {
+>  struct qcom_socinfo {
+>  	struct soc_device *soc_dev;
+>  	struct soc_device_attribute attr;
+> +#ifdef CONFIG_DEBUG_FS
+> +	struct dentry *dbg_root;
+> +#endif /* CONFIG_DEBUG_FS */
+> +	struct socinfo *socinfo;
+>  };
+>  
+>  struct soc_of_id {
+> @@ -133,6 +160,171 @@ static const char *socinfo_machine(struct device *dev, unsigned int id)
+>  	return NULL;
+>  }
+>  
+> +#ifdef CONFIG_DEBUG_FS
+> +
+> +#define UINT_SHOW(name, attr)						\
+> +static int qcom_show_##name(struct seq_file *seq, void *p)		\
+> +{									\
+> +	struct socinfo *socinfo = seq->private;				\
+> +	seq_printf(seq, "%u\n", le32_to_cpu(socinfo->attr));		\
+> +	return 0;							\
+> +}									\
+> +static int qcom_open_##name(struct inode *inode, struct file *file)	\
+> +{									\
+> +	return single_open(file, qcom_show_##name, inode->i_private);	\
+> +}									\
+> +									\
+> +static const struct file_operations qcom_ ##name## _ops = {		\
+> +	.open = qcom_open_##name,					\
+> +	.read = seq_read,						\
+> +	.llseek = seq_lseek,						\
+> +	.release = single_release,					\
+> +}
+> +
+> +#define DEBUGFS_UINT_ADD(name)						\
+> +	debugfs_create_file(__stringify(name), 0400,			\
+> +			    qcom_socinfo->dbg_root,			\
+> +			    qcom_socinfo->socinfo, &qcom_ ##name## _ops)
+> +
+> +#define HEX_SHOW(name, attr)						\
+> +static int qcom_show_##name(struct seq_file *seq, void *p)		\
+> +{									\
+> +	struct socinfo *socinfo = seq->private;				\
+> +	seq_printf(seq, "0x%x\n", le32_to_cpu(socinfo->attr));		\
+> +	return 0;							\
+> +}									\
+> +static int qcom_open_##name(struct inode *inode, struct file *file)	\
+> +{									\
+> +	return single_open(file, qcom_show_##name, inode->i_private);	\
+> +}									\
+> +									\
+> +static const struct file_operations qcom_ ##name## _ops = {		\
+> +	.open = qcom_open_##name,					\
+> +	.read = seq_read,						\
+> +	.llseek = seq_lseek,						\
+> +	.release = single_release,					\
+> +}
+> +
+> +#define DEBUGFS_HEX_ADD(name)						\
+> +	debugfs_create_file(__stringify(name), 0400,			\
+> +			    qcom_socinfo->dbg_root,			\
+> +			    qcom_socinfo->socinfo, &qcom_ ##name## _ops)
+> +
+> +
+> +#define QCOM_OPEN(name, _func)						\
+> +static int qcom_open_##name(struct inode *inode, struct file *file)	\
+> +{									\
+> +	return single_open(file, _func, inode->i_private);		\
+> +}									\
+> +									\
+> +static const struct file_operations qcom_ ##name## _ops = {		\
+> +	.open = qcom_open_##name,					\
+> +	.read = seq_read,						\
+> +	.llseek = seq_lseek,						\
+> +	.release = single_release,					\
+> +}
+> +
+> +#define DEBUGFS_ADD(name)						\
+> +	debugfs_create_file(__stringify(name), 0400,			\
+> +			    qcom_socinfo->dbg_root,			\
+> +			    qcom_socinfo->socinfo, &qcom_ ##name## _ops)
+> +
+> +
+> +static int qcom_show_build_id(struct seq_file *seq, void *p)
+> +{
+> +	struct socinfo *socinfo = seq->private;
+> +
+> +	seq_printf(seq, "%s\n", socinfo->build_id);
+> +
+> +	return 0;
+> +}
+> +
+> +static int qcom_show_accessory_chip(struct seq_file *seq, void *p)
+> +{
+> +	struct socinfo *socinfo = seq->private;
+> +
+> +	seq_printf(seq, "%d\n", le32_to_cpu(socinfo->accessory_chip));
+> +
+> +	return 0;
+> +}
+> +
+> +static int qcom_show_platform_subtype(struct seq_file *seq, void *p)
+> +{
+> +	struct socinfo *socinfo = seq->private;
+> +	int subtype = le32_to_cpu(socinfo->hw_plat_subtype);
+> +
+> +	if (subtype < 0)
+> +		return -EINVAL;
+> +
+> +	seq_printf(seq, "%u\n", subtype);
+> +
+> +	return 0;
+> +}
+> +
+> +static int qcom_show_pmic_model(struct seq_file *seq, void *p)
+> +{
+> +	struct socinfo *socinfo = seq->private;
+> +	int model = SOCINFO_MINOR(le32_to_cpu(socinfo->pmic_model));
+> +
+> +	if (model < 0)
+> +		return -EINVAL;
+> +
+> +	seq_printf(seq, "%s\n", pmic_model[model]);
+> +
+> +	return 0;
+> +}
+> +
+> +static int qcom_show_pmic_die_revision(struct seq_file *seq, void *p)
+> +{
+> +	struct socinfo *socinfo = seq->private;
+> +
+> +	seq_printf(seq, "%u.%u\n",
+> +		   SOCINFO_MAJOR(le32_to_cpu(socinfo->pmic_die_rev)),
+> +		   SOCINFO_MINOR(le32_to_cpu(socinfo->pmic_die_rev)));
+> +
+> +	return 0;
+> +}
+> +
+> +UINT_SHOW(raw_version, raw_ver);
+> +UINT_SHOW(hardware_platform, hw_plat);
+> +UINT_SHOW(platform_version, plat_ver);
+> +UINT_SHOW(foundry_id, foundry_id);
+> +HEX_SHOW(chip_family, chip_family);
+> +HEX_SHOW(raw_device_family, raw_device_family);
+> +HEX_SHOW(raw_device_number, raw_device_num);
+> +QCOM_OPEN(build_id, qcom_show_build_id);
+> +QCOM_OPEN(accessory_chip, qcom_show_accessory_chip);
+> +QCOM_OPEN(pmic_model, qcom_show_pmic_model);
+> +QCOM_OPEN(platform_subtype, qcom_show_platform_subtype);
+> +QCOM_OPEN(pmic_die_revision, qcom_show_pmic_die_revision);
+> +
+> +static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo)
+> +{
+> +	qcom_socinfo->dbg_root = debugfs_create_dir("qcom_socinfo", NULL);
+> +
+> +	DEBUGFS_UINT_ADD(raw_version);
+> +	DEBUGFS_UINT_ADD(hardware_platform);
+> +	DEBUGFS_UINT_ADD(platform_version);
+> +	DEBUGFS_UINT_ADD(foundry_id);
+> +	DEBUGFS_HEX_ADD(chip_family);
+> +	DEBUGFS_HEX_ADD(raw_device_family);
+> +	DEBUGFS_HEX_ADD(raw_device_number);
+> +	DEBUGFS_ADD(build_id);
+> +	DEBUGFS_ADD(accessory_chip);
+> +	DEBUGFS_ADD(pmic_model);
+> +	DEBUGFS_ADD(platform_subtype);
+> +	DEBUGFS_ADD(pmic_die_revision);
+> +}
+> +
+> +static void socinfo_debugfs_exit(struct qcom_socinfo *qcom_socinfo)
+> +{
+> +	debugfs_remove_recursive(qcom_socinfo->dbg_root);
+> +}
+> +#else
+> +static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo) { return 0; }
+> +static void socinfo_debugfs_exit(struct qcom_socinfo *qcom_socinfo) {  }
+> +#endif /* CONFIG_DEBUG_FS */
+> +
+>  static int qcom_socinfo_probe(struct platform_device *pdev)
+>  {
+>  	struct qcom_socinfo *qs;
+> @@ -165,6 +357,10 @@ static int qcom_socinfo_probe(struct platform_device *pdev)
+>  	if (IS_ERR(qs->soc_dev))
+>  		return PTR_ERR(qs->soc_dev);
+>  
+> +	qs->socinfo = info;
+> +
+> +	socinfo_debugfs_init(qs);
+> +
+>  	/* Feed the soc specific unique data into entropy pool */
+>  	add_device_randomness(info, item_size);
+>  
+> @@ -179,6 +375,8 @@ static int qcom_socinfo_remove(struct platform_device *pdev)
+>  
+>  	soc_device_unregister(qs->soc_dev);
+>  
+> +	socinfo_debugfs_exit(qs);
+> +
+>  	return 0;
+>  }
+> 
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of the Code Aurora Forum, hosted by The Linux Foundation.
+Regards,
 
+Laurent Pinchart
