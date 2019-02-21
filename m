@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E57C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA43C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:26:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF60E21734
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:26:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FAA721841
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:26:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550712369;
-	bh=IkrYyRUzVh3KH8OpInb3S0zghH/LRltVDpwEGySiSrY=;
+	s=default; t=1550712373;
+	bh=o3s02kJI7VLcUJjVWqQLS29hF0TUU4MsbNHgBby0cKk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=B2JJZhJ9gtmBmJxE+A8fEwVneTVGomxQNIpErQ+66DjGCIOkmE2QXHTsOyCWtRLGD
-	 VASXZf11z3be+NSXP7RNYEN/NkE77lvna3akg2nw2cOqBEn7R/AO/pbi+JMceY69Hb
-	 PK+Le9rzjlQ1AWxsyBf0k8MbsUp+SuEHocpvTJgE=
+	b=rIzjQCie9C4o1n5+7zI57KJn9MesvpAOd/6cMBwQxz6B8BjUCydGmjTt0RhVyWl28
+	 9BK7Bunsw0quQf3Q06E/Hf4LNXJ/No+KxLJHSybcHcP1bQjP4da+9GfAIbYJVy6ClK
+	 aY4k8wBEmsCOLmAtnVR5F2pyEfvxF43M9Sd6WxyQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727140AbfBUB0H (ORCPT
+        id S1727200AbfBUB0L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 20:26:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59026 "EHLO mail.kernel.org"
+        Wed, 20 Feb 2019 20:26:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726746AbfBUB0G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 20:26:06 -0500
+        id S1726746AbfBUB0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 20:26:11 -0500
 Received: from quaco.ghostprotocols.net (unknown [189.40.102.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55773214AF;
-        Thu, 21 Feb 2019 01:26:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB0E92146E;
+        Thu, 21 Feb 2019 01:26:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550712366;
-        bh=IkrYyRUzVh3KH8OpInb3S0zghH/LRltVDpwEGySiSrY=;
+        s=default; t=1550712369;
+        bh=o3s02kJI7VLcUJjVWqQLS29hF0TUU4MsbNHgBby0cKk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W7qj8hkt+pD8SB4CJNA6VRJf34pEBDT3IUlSIcak27PtF+b+gOtCYUym7rRdt4S2a
-         B5RdQouUGiAN6i+/sobGm1u1piH+vdqFNcKgBh/PT1UjBAYk8s+yGBWMfpDnmmL/0X
-         RdHBqHPZ+u2K9i2++RoFP5y31PcHY9dZqqfUI3yY=
+        b=eJFkNOKLVB6bfaRYbeij0fWltQ7yGZsFQf4/TB/kUwUCYpYV0teKCc7Jmxyk8LOmB
+         g4jP32PN/gOnlAqmPVF+VCP5skx1brLKRKcanOReqH7uIQTHWCjtXPcqCUX0pMJjyk
+         pPRCJ47ZXqY2jnL7cAtRTdJ3yqnT6gyDPuhP5FjA=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
@@ -47,9 +47,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 02/17] perf header: Fix wrong node write in NUMA_TOPOLOGY feature
-Date:   Wed, 20 Feb 2019 22:25:34 -0300
-Message-Id: <20190221012549.4069-3-acme@kernel.org>
+Subject: [PATCH 03/17] perf tools: Add cpu_topology object
+Date:   Wed, 20 Feb 2019 22:25:35 -0300
+Message-Id: <20190221012549.4069-4-acme@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190221012549.4069-1-acme@kernel.org>
 References: <20190221012549.4069-1-acme@kernel.org>
@@ -62,32 +62,402 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jiri Olsa <jolsa@kernel.org>
 
-We are currently passing the node index instead of the real node number.
+Make struct cpu_topo global and rename it to 'struct cpu_topology', so
+that it can be used from the 'perf record' command in the following
+patches.
+
+Add the following interface functions to load/free cpu topology details:
+
+  struct cpu_topology *cpu_topology__new(void);
+  void cpu_topology__delete(struct cpu_topology *tp);
+
+Move it to a separate source file cputopo.c together with numa related
+object in the following patches.
+
+No functional change, the new interface will be used in upcoming changes.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Acked-by: Namhyung Kim <namhyung@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: fbe96f29ce4b ("perf tools: Make perf.data more self-descriptive (v8)"
-Link: http://lkml.kernel.org/r/20190219095815.15931-2-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20190219095815.15931-3-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/header.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/Build     |   1 +
+ tools/perf/util/cputopo.c | 144 ++++++++++++++++++++++++++++++++++++
+ tools/perf/util/cputopo.h |  17 +++++
+ tools/perf/util/header.c  | 150 +-------------------------------------
+ 4 files changed, 166 insertions(+), 146 deletions(-)
+ create mode 100644 tools/perf/util/cputopo.c
+ create mode 100644 tools/perf/util/cputopo.h
 
+diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+index ca0741c91903..3008d49fa587 100644
+--- a/tools/perf/util/Build
++++ b/tools/perf/util/Build
+@@ -69,6 +69,7 @@ perf-y += hist.o
+ perf-y += util.o
+ perf-y += xyarray.o
+ perf-y += cpumap.o
++perf-y += cputopo.o
+ perf-y += cgroup.o
+ perf-y += target.o
+ perf-y += rblist.o
+diff --git a/tools/perf/util/cputopo.c b/tools/perf/util/cputopo.c
+new file mode 100644
+index 000000000000..84470ed4e707
+--- /dev/null
++++ b/tools/perf/util/cputopo.c
+@@ -0,0 +1,144 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <sys/param.h>
++
++#include "cputopo.h"
++#include "cpumap.h"
++#include "util.h"
++
++
++#define CORE_SIB_FMT \
++	"/sys/devices/system/cpu/cpu%d/topology/core_siblings_list"
++#define THRD_SIB_FMT \
++	"/sys/devices/system/cpu/cpu%d/topology/thread_siblings_list"
++
++static int build_cpu_topology(struct cpu_topology *tp, int cpu)
++{
++	FILE *fp;
++	char filename[MAXPATHLEN];
++	char *buf = NULL, *p;
++	size_t len = 0;
++	ssize_t sret;
++	u32 i = 0;
++	int ret = -1;
++
++	sprintf(filename, CORE_SIB_FMT, cpu);
++	fp = fopen(filename, "r");
++	if (!fp)
++		goto try_threads;
++
++	sret = getline(&buf, &len, fp);
++	fclose(fp);
++	if (sret <= 0)
++		goto try_threads;
++
++	p = strchr(buf, '\n');
++	if (p)
++		*p = '\0';
++
++	for (i = 0; i < tp->core_sib; i++) {
++		if (!strcmp(buf, tp->core_siblings[i]))
++			break;
++	}
++	if (i == tp->core_sib) {
++		tp->core_siblings[i] = buf;
++		tp->core_sib++;
++		buf = NULL;
++		len = 0;
++	}
++	ret = 0;
++
++try_threads:
++	sprintf(filename, THRD_SIB_FMT, cpu);
++	fp = fopen(filename, "r");
++	if (!fp)
++		goto done;
++
++	if (getline(&buf, &len, fp) <= 0)
++		goto done;
++
++	p = strchr(buf, '\n');
++	if (p)
++		*p = '\0';
++
++	for (i = 0; i < tp->thread_sib; i++) {
++		if (!strcmp(buf, tp->thread_siblings[i]))
++			break;
++	}
++	if (i == tp->thread_sib) {
++		tp->thread_siblings[i] = buf;
++		tp->thread_sib++;
++		buf = NULL;
++	}
++	ret = 0;
++done:
++	if (fp)
++		fclose(fp);
++	free(buf);
++	return ret;
++}
++
++void cpu_topology__delete(struct cpu_topology *tp)
++{
++	u32 i;
++
++	if (!tp)
++		return;
++
++	for (i = 0 ; i < tp->core_sib; i++)
++		zfree(&tp->core_siblings[i]);
++
++	for (i = 0 ; i < tp->thread_sib; i++)
++		zfree(&tp->thread_siblings[i]);
++
++	free(tp);
++}
++
++struct cpu_topology *cpu_topology__new(void)
++{
++	struct cpu_topology *tp = NULL;
++	void *addr;
++	u32 nr, i;
++	size_t sz;
++	long ncpus;
++	int ret = -1;
++	struct cpu_map *map;
++
++	ncpus = cpu__max_present_cpu();
++
++	/* build online CPU map */
++	map = cpu_map__new(NULL);
++	if (map == NULL) {
++		pr_debug("failed to get system cpumap\n");
++		return NULL;
++	}
++
++	nr = (u32)(ncpus & UINT_MAX);
++
++	sz = nr * sizeof(char *);
++	addr = calloc(1, sizeof(*tp) + 2 * sz);
++	if (!addr)
++		goto out_free;
++
++	tp = addr;
++	addr += sizeof(*tp);
++	tp->core_siblings = addr;
++	addr += sz;
++	tp->thread_siblings = addr;
++
++	for (i = 0; i < nr; i++) {
++		if (!cpu_map__has(map, i))
++			continue;
++
++		ret = build_cpu_topology(tp, i);
++		if (ret < 0)
++			break;
++	}
++
++out_free:
++	cpu_map__put(map);
++	if (ret) {
++		cpu_topology__delete(tp);
++		tp = NULL;
++	}
++	return tp;
++}
+diff --git a/tools/perf/util/cputopo.h b/tools/perf/util/cputopo.h
+new file mode 100644
+index 000000000000..4b5f4112b6f8
+--- /dev/null
++++ b/tools/perf/util/cputopo.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __PERF_CPUTOPO_H
++#define __PERF_CPUTOPO_H
++
++#include <linux/types.h>
++
++struct cpu_topology {
++	u32	  core_sib;
++	u32	  thread_sib;
++	char	**core_siblings;
++	char	**thread_siblings;
++};
++
++struct cpu_topology *cpu_topology__new(void);
++void cpu_topology__delete(struct cpu_topology *tp);
++
++#endif /* __PERF_CPUTOPO_H */
 diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 61ce197c5362..c66f26ec557a 100644
+index c66f26ec557a..80ac57e6d38f 100644
 --- a/tools/perf/util/header.c
 +++ b/tools/perf/util/header.c
-@@ -879,7 +879,7 @@ static int write_numa_topology(struct feat_fd *ff,
- 		if (ret < 0)
- 			break;
+@@ -39,6 +39,7 @@
+ #include "tool.h"
+ #include "time-utils.h"
+ #include "units.h"
++#include "cputopo.h"
  
--		ret = write_topo_node(ff, i);
-+		ret = write_topo_node(ff, j);
- 		if (ret < 0)
- 			break;
+ #include "sane_ctype.h"
+ 
+@@ -557,158 +558,15 @@ static int write_cmdline(struct feat_fd *ff,
+ 	return 0;
+ }
+ 
+-#define CORE_SIB_FMT \
+-	"/sys/devices/system/cpu/cpu%d/topology/core_siblings_list"
+-#define THRD_SIB_FMT \
+-	"/sys/devices/system/cpu/cpu%d/topology/thread_siblings_list"
+-
+-struct cpu_topo {
+-	u32 core_sib;
+-	u32 thread_sib;
+-	char **core_siblings;
+-	char **thread_siblings;
+-};
+-
+-static int build_cpu_topo(struct cpu_topo *tp, int cpu)
+-{
+-	FILE *fp;
+-	char filename[MAXPATHLEN];
+-	char *buf = NULL, *p;
+-	size_t len = 0;
+-	ssize_t sret;
+-	u32 i = 0;
+-	int ret = -1;
+-
+-	sprintf(filename, CORE_SIB_FMT, cpu);
+-	fp = fopen(filename, "r");
+-	if (!fp)
+-		goto try_threads;
+-
+-	sret = getline(&buf, &len, fp);
+-	fclose(fp);
+-	if (sret <= 0)
+-		goto try_threads;
+-
+-	p = strchr(buf, '\n');
+-	if (p)
+-		*p = '\0';
+-
+-	for (i = 0; i < tp->core_sib; i++) {
+-		if (!strcmp(buf, tp->core_siblings[i]))
+-			break;
+-	}
+-	if (i == tp->core_sib) {
+-		tp->core_siblings[i] = buf;
+-		tp->core_sib++;
+-		buf = NULL;
+-		len = 0;
+-	}
+-	ret = 0;
+-
+-try_threads:
+-	sprintf(filename, THRD_SIB_FMT, cpu);
+-	fp = fopen(filename, "r");
+-	if (!fp)
+-		goto done;
+-
+-	if (getline(&buf, &len, fp) <= 0)
+-		goto done;
+-
+-	p = strchr(buf, '\n');
+-	if (p)
+-		*p = '\0';
+-
+-	for (i = 0; i < tp->thread_sib; i++) {
+-		if (!strcmp(buf, tp->thread_siblings[i]))
+-			break;
+-	}
+-	if (i == tp->thread_sib) {
+-		tp->thread_siblings[i] = buf;
+-		tp->thread_sib++;
+-		buf = NULL;
+-	}
+-	ret = 0;
+-done:
+-	if(fp)
+-		fclose(fp);
+-	free(buf);
+-	return ret;
+-}
+-
+-static void free_cpu_topo(struct cpu_topo *tp)
+-{
+-	u32 i;
+-
+-	if (!tp)
+-		return;
+-
+-	for (i = 0 ; i < tp->core_sib; i++)
+-		zfree(&tp->core_siblings[i]);
+-
+-	for (i = 0 ; i < tp->thread_sib; i++)
+-		zfree(&tp->thread_siblings[i]);
+-
+-	free(tp);
+-}
+-
+-static struct cpu_topo *build_cpu_topology(void)
+-{
+-	struct cpu_topo *tp = NULL;
+-	void *addr;
+-	u32 nr, i;
+-	size_t sz;
+-	long ncpus;
+-	int ret = -1;
+-	struct cpu_map *map;
+-
+-	ncpus = cpu__max_present_cpu();
+-
+-	/* build online CPU map */
+-	map = cpu_map__new(NULL);
+-	if (map == NULL) {
+-		pr_debug("failed to get system cpumap\n");
+-		return NULL;
+-	}
+-
+-	nr = (u32)(ncpus & UINT_MAX);
+-
+-	sz = nr * sizeof(char *);
+-	addr = calloc(1, sizeof(*tp) + 2 * sz);
+-	if (!addr)
+-		goto out_free;
+-
+-	tp = addr;
+-	addr += sizeof(*tp);
+-	tp->core_siblings = addr;
+-	addr += sz;
+-	tp->thread_siblings = addr;
+-
+-	for (i = 0; i < nr; i++) {
+-		if (!cpu_map__has(map, i))
+-			continue;
+-
+-		ret = build_cpu_topo(tp, i);
+-		if (ret < 0)
+-			break;
+-	}
+-
+-out_free:
+-	cpu_map__put(map);
+-	if (ret) {
+-		free_cpu_topo(tp);
+-		tp = NULL;
+-	}
+-	return tp;
+-}
+ 
+ static int write_cpu_topology(struct feat_fd *ff,
+ 			      struct perf_evlist *evlist __maybe_unused)
+ {
+-	struct cpu_topo *tp;
++	struct cpu_topology *tp;
+ 	u32 i;
+ 	int ret, j;
+ 
+-	tp = build_cpu_topology();
++	tp = cpu_topology__new();
+ 	if (!tp)
+ 		return -1;
+ 
+@@ -746,7 +604,7 @@ static int write_cpu_topology(struct feat_fd *ff,
+ 			return ret;
  	}
+ done:
+-	free_cpu_topo(tp);
++	cpu_topology__delete(tp);
+ 	return ret;
+ }
+ 
 -- 
 2.19.1
 
