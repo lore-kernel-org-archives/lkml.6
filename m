@@ -2,52 +2,50 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72CD2C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B3AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:38:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40B512084F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:38:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 056172075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:38:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550759933;
-	bh=mgAQcAZm0MyIf++1m+PtjaafvjqX0QNgNgFzXmgkils=;
+	s=default; t=1550759938;
+	bh=9+PlzBC69/UN8zQhk8XLfxKfDf+m3nHGTMDhtoGAu1s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Dg9FUpBb5TWU97IUlI0uVp3oJhSNTphRjSoC3I82YbaX470Y1IAjSeWE7KJK01giF
-	 RjBtArwFINj+Z0k24h7traZgiDwS6i76tWMY1m085Nv1OO5twjqFAHK4r4J43hDCre
-	 h1y3xUa65sBVGuh69+02VH6emiANajCduwLgoOtQ=
+	b=m/GpG5sbGV/7uu6MUuboJppaN7tTJSXEnSTheqneACP2vkCVW4YRzZ6xni0aa7Gxz
+	 2+7pc6iQe+3m6JYaToE9rt2h0vdajhUa8Wudqe1xz8JqLz6nPW8vdWfxtsLal4kLHu
+	 hoAyCcrSWjmJpT031NaxYCjSk+HOo9y2Ujog1IyM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728762AbfBUOiv (ORCPT
+        id S1728776AbfBUOi4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:38:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60660 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:38:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728743AbfBUOir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:38:47 -0500
+        id S1728273AbfBUOiu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:38:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0689D20838;
-        Thu, 21 Feb 2019 14:38:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C372D2075C;
+        Thu, 21 Feb 2019 14:38:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550759926;
-        bh=mgAQcAZm0MyIf++1m+PtjaafvjqX0QNgNgFzXmgkils=;
+        s=default; t=1550759929;
+        bh=9+PlzBC69/UN8zQhk8XLfxKfDf+m3nHGTMDhtoGAu1s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ald5YDOCmUCVtpZhuw2pHdCjV7Scqd+xDD/TKqBzqBoXT/Vz1XRCT7tHXvQPBr3OF
-         v8kv8MLWQjwmoSABZGXO0FZ0dnFYb7VN51znC10jzZZCJwx59N+S7bBw3XyYCJ2Bzm
-         moI01vFmkNKvAMulkxcBKQAlHszeFl9yqOoIbryY=
+        b=2PTllSARWs6VgTGEpXZaF/VpOpOyV/WGffhunbc4fRrUruNCSW6s5+NktVcUmcGM/
+         S7dpLM3YgD7/gdWI58EGZWk9Dh7Ze+EEVnHwHwtbuEU7WodF9O0ddplz9EXGKjetbm
+         zTRIb2LLzYB51SK1yw5hA/PbxD8xPxLzPPmJ58fw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 03/20] hwmon: (lm80) Fix missing unlock on error in set_fan_div()
-Date:   Thu, 21 Feb 2019 15:35:41 +0100
-Message-Id: <20190221125242.696759835@linuxfoundation.org>
+        stable@vger.kernel.org, Hauke Mehrtens <hauke.mehrtens@intel.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 04/20] net: Fix for_each_netdev_feature on Big endian
+Date:   Thu, 21 Feb 2019 15:35:42 +0100
+Message-Id: <20190221125242.858818453@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125242.153179182@linuxfoundation.org>
 References: <20190221125242.153179182@linuxfoundation.org>
@@ -66,37 +64,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 07bd14ccc3049f9c0147a91a4227a571f981601a ]
+From: Hauke Mehrtens <hauke.mehrtens@intel.com>
 
-Add the missing unlock before return from function set_fan_div()
-in the error handling case.
+[ Upstream commit 3b89ea9c5902acccdbbdec307c85edd1bf52515e ]
 
-Fixes: c9c63915519b ("hwmon: (lm80) fix a missing check of the status of SMBus read")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The features attribute is of type u64 and stored in the native endianes on
+the system. The for_each_set_bit() macro takes a pointer to a 32 bit array
+and goes over the bits in this area. On little Endian systems this also
+works with an u64 as the most significant bit is on the highest address,
+but on big endian the words are swapped. When we expect bit 15 here we get
+bit 47 (15 + 32).
+
+This patch converts it more or less to its own for_each_set_bit()
+implementation which works on 64 bit integers directly. This is then
+completely in host endianness and should work like expected.
+
+Fixes: fd867d51f ("net/core: generic support for disabling netdev features down stack")
+Signed-off-by: Hauke Mehrtens <hauke.mehrtens@intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwmon/lm80.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ include/linux/netdev_features.h |   23 +++++++++++++++++++++--
+ net/core/dev.c                  |    4 ++--
+ 2 files changed, 23 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/hwmon/lm80.c b/drivers/hwmon/lm80.c
-index cb6606a0470d1..be60bd5bab783 100644
---- a/drivers/hwmon/lm80.c
-+++ b/drivers/hwmon/lm80.c
-@@ -393,8 +393,10 @@ static ssize_t set_fan_div(struct device *dev, struct device_attribute *attr,
- 	}
+--- a/include/linux/netdev_features.h
++++ b/include/linux/netdev_features.h
+@@ -11,6 +11,7 @@
+ #define _LINUX_NETDEV_FEATURES_H
  
- 	rv = lm80_read_value(client, LM80_REG_FANDIV);
--	if (rv < 0)
-+	if (rv < 0) {
-+		mutex_unlock(&data->update_lock);
- 		return rv;
-+	}
- 	reg = (rv & ~(3 << (2 * (nr + 1))))
- 	    | (data->fan_div[nr] << (2 * (nr + 1)));
- 	lm80_write_value(client, LM80_REG_FANDIV, reg);
--- 
-2.19.1
-
+ #include <linux/types.h>
++#include <asm/byteorder.h>
+ 
+ typedef u64 netdev_features_t;
+ 
+@@ -137,8 +138,26 @@ enum {
+ #define NETIF_F_BUSY_POLL	__NETIF_F(BUSY_POLL)
+ #define NETIF_F_HW_TC		__NETIF_F(HW_TC)
+ 
+-#define for_each_netdev_feature(mask_addr, bit)	\
+-	for_each_set_bit(bit, (unsigned long *)mask_addr, NETDEV_FEATURE_COUNT)
++/* Finds the next feature with the highest number of the range of start till 0.
++ */
++static inline int find_next_netdev_feature(u64 feature, unsigned long start)
++{
++	/* like BITMAP_LAST_WORD_MASK() for u64
++	 * this sets the most significant 64 - start to 0.
++	 */
++	feature &= ~0ULL >> (-start & ((sizeof(feature) * 8) - 1));
++
++	return fls64(feature) - 1;
++}
++
++/* This goes for the MSB to the LSB through the set feature bits,
++ * mask_addr should be a u64 and bit an int
++ */
++#define for_each_netdev_feature(mask_addr, bit)				\
++	for ((bit) = find_next_netdev_feature((mask_addr),		\
++					      NETDEV_FEATURE_COUNT);	\
++	     (bit) >= 0;						\
++	     (bit) = find_next_netdev_feature((mask_addr), (bit) - 1))
+ 
+ /* Features valid for ethtool to change */
+ /* = all defined minus driver/device-class-related */
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -6909,7 +6909,7 @@ static netdev_features_t netdev_sync_upp
+ 	netdev_features_t feature;
+ 	int feature_bit;
+ 
+-	for_each_netdev_feature(&upper_disables, feature_bit) {
++	for_each_netdev_feature(upper_disables, feature_bit) {
+ 		feature = __NETIF_F_BIT(feature_bit);
+ 		if (!(upper->wanted_features & feature)
+ 		    && (features & feature)) {
+@@ -6929,7 +6929,7 @@ static void netdev_sync_lower_features(s
+ 	netdev_features_t feature;
+ 	int feature_bit;
+ 
+-	for_each_netdev_feature(&upper_disables, feature_bit) {
++	for_each_netdev_feature(upper_disables, feature_bit) {
+ 		feature = __NETIF_F_BIT(feature_bit);
+ 		if (!(features & feature) && (lower->features & feature)) {
+ 			netdev_dbg(upper, "Disabling feature %pNF on lower dev %s.\n",
 
 
