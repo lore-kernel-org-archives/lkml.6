@@ -2,146 +2,138 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA60FC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:42:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2725C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:42:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A487F20880
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:42:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550742154;
-	bh=TsvNBLcnOftsvSMlfWDOrff+Rl4m9ocTFD9DIP04u6U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bOotHuSd4HxEhpWhD7cG4HdBI7O7Ej/PtZWrGzaoxzq8rUEMS1Av43314IpHHwIoo
-	 kpNTAOmpW95co7N0J0F6ebOJiuCKapxstS72wGZ9lY6P0QVu4mM4Bq3o7I3jkWwtwz
-	 v0bGFUmnbIx8Ok954bFG/3JOXkZYkAuOVmVn4FYM=
+	by mail.kernel.org (Postfix) with ESMTP id 7D74F2086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:42:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbfBUJmd (ORCPT
+        id S1727875AbfBUJmg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 04:42:33 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:36188 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727813AbfBUJm3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 04:42:36 -0500
+Received: from smtp.nue.novell.com ([195.135.221.5]:54615 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727812AbfBUJm3 (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
         Thu, 21 Feb 2019 04:42:29 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 151648552E;
-        Thu, 21 Feb 2019 09:42:28 +0000 (UTC)
-Received: from krava.brq.redhat.com (unknown [10.43.17.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C847560BF3;
-        Thu, 21 Feb 2019 09:42:25 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH 16/17] perf record: Add --output-dir option to store data in directory
-Date:   Thu, 21 Feb 2019 10:41:44 +0100
-Message-Id: <20190221094145.9151-17-jolsa@kernel.org>
-In-Reply-To: <20190221094145.9151-1-jolsa@kernel.org>
-References: <20190221094145.9151-1-jolsa@kernel.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 21 Feb 2019 09:42:28 +0000 (UTC)
+Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Thu, 21 Feb 2019 10:42:27 +0100
+Received: from d104.suse.de (nwb-a10-snat.microfocus.com [10.120.13.202])
+        by emea4-mta.ukb.novell.com with ESMTP (NOT encrypted); Thu, 21 Feb 2019 09:42:17 +0000
+From:   Oscar Salvador <osalvador@suse.de>
+To:     linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, mhocko@suse.com, david@redhat.com,
+        mike.kravetz@oracle.com, Oscar Salvador <osalvador@suse.de>
+Subject: [RFC PATCH] mm,memory_hotplug: Unlock 1GB-hugetlb on x86_64
+Date:   Thu, 21 Feb 2019 10:42:12 +0100
+Message-Id: <20190221094212.16906-1-osalvador@suse.de>
+X-Mailer: git-send-email 2.13.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding --output-dir option to mimic -o and --dir options.
-following commands do the same:
+On x86_64, 1GB-hugetlb pages could never be offlined due to the fact
+that hugepage_migration_supported() returned false for PUD_SHIFT.
+So whenever we wanted to offline a memblock containing a gigantic
+hugetlb page, we never got beyond has_unmovable_pages() check.
+This changed with [1], where now we also return true for PUD_SHIFT.
 
-  $ perf record -o perf.dir.data --dir ...
-  $ perf record --output-dir perf.dir.data ...
+After that patch, the check in has_unmovable_pages() and scan_movable_pages()
+returned true, but we still had a final barrier in do_migrate_range():
 
-User cannot use both -o and output-dir together,
-error is displayed.
+if (compound_order(head) > PFN_SECTION_SHIFT) {
+	ret = -EBUSY;
+	break;
+}
 
-Link: http://lkml.kernel.org/n/tip-76ldd2ss6vjvlnjgwy7wxfzt@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+This is not really nice, and we do not really need it.
+It is perfectly possible to migrate a gigantic page as long as another node has
+a spare gigantic page for us.
+In alloc_huge_page_nodemask(), we calculate the __real__ number of free pages,
+and if any, we try to dequeue one from another node.
+
+This all works fine when we do have another node with a spare gigantic page,
+but if that is not the case, alloc_huge_page_nodemask() ends up calling
+alloc_migrate_huge_page() which bails out if the wanted page is gigantic.
+That is mainly because finding a 1GB (or even 16GB on powerpc) contiguous
+memory is quite unlikely when the system has been running for a while.
+
+In that situation, we will keep looping forever because scan_movable_pages()
+will give us the same page and we will fail again because there is no node
+where we can dequeue a gigantic page from.
+This is not nice, and I wish we could differentiate a fatal error from a
+transient error in do_migrate_range()->migrate_pages(), but I do not really
+see a way now.
+
+Anyway, I would tend say that this is the administrator's job, to make sure
+that the system can keep up with the memory to be offlined, so that would mean
+that if we want to use gigantic pages, make sure that the other nodes have at
+least enough gigantic pages to keep up in case we need to offline memory.
+
+Just for the sake of completeness, this is one of the tests done:
+
+ # echo 1 > /sys/devices/system/node/node1/hugepages/hugepages-1048576kB/nr_hugepages
+ # echo 1 > /sys/devices/system/node/node2/hugepages/hugepages-1048576kB/nr_hugepages
+
+ # cat /sys/devices/system/node/node1/hugepages/hugepages-1048576kB/nr_hugepages
+   1
+ # cat /sys/devices/system/node/node1/hugepages/hugepages-1048576kB/free_hugepages
+   1
+
+ # cat /sys/devices/system/node/node2/hugepages/hugepages-1048576kB/nr_hugepages
+   1
+ # cat /sys/devices/system/node/node2/hugepages/hugepages-1048576kB/free_hugepages
+   1
+
+ (hugetlb1gb is a program that maps 1GB region using MAP_HUGE_1GB)
+
+ # numactl -m 1 ./hugetlb1gb
+ # cat /sys/devices/system/node/node1/hugepages/hugepages-1048576kB/free_hugepages
+   0
+ # cat /sys/devices/system/node/node2/hugepages/hugepages-1048576kB/free_hugepages
+   1
+
+ # offline node1 memory
+ # cat /sys/devices/system/node/node2/hugepages/hugepages-1048576kB/free_hugepages
+   0
+
+[1] https://lore.kernel.org/patchwork/patch/998796/
+
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
 ---
- tools/lib/subcmd/parse-options.h         |  4 ++++
- tools/perf/Documentation/perf-record.txt |  3 +++
- tools/perf/builtin-record.c              | 13 +++++++++++--
- 3 files changed, 18 insertions(+), 2 deletions(-)
+ mm/memory_hotplug.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/tools/lib/subcmd/parse-options.h b/tools/lib/subcmd/parse-options.h
-index af9def589863..8a3be77a3346 100644
---- a/tools/lib/subcmd/parse-options.h
-+++ b/tools/lib/subcmd/parse-options.h
-@@ -146,6 +146,10 @@ struct option {
- 	  .value = check_vtype(v, const char **), .argh = (a), .help = (h), \
- 	  .flags = PARSE_OPT_OPTARG, .defval = (intptr_t)(d), \
- 	  .set = check_vtype(os, bool *)}
-+#define OPT_STRING_SET(s, l, v, os, a, h) \
-+	{ .type = OPTION_STRING, .short_name = (s), .long_name = (l), \
-+	  .value = check_vtype(v, const char **), .argh = (a), .help = (h), \
-+	  .set = check_vtype(os, bool *)}
- #define OPT_STRING_NOEMPTY(s, l, v, a, h)   { .type = OPTION_STRING,  .short_name = (s), .long_name = (l), .value = check_vtype(v, const char **), .argh = (a), .help = (h), .flags = PARSE_OPT_NOEMPTY}
- #define OPT_DATE(s, l, v, h) \
- 	{ .type = OPTION_CALLBACK, .short_name = (s), .long_name = (l), .value = (v), .argh = "time", .help = (h), .callback = parse_opt_approxidate_cb }
-diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-index 445b7a4eb130..aac609887fb7 100644
---- a/tools/perf/Documentation/perf-record.txt
-+++ b/tools/perf/Documentation/perf-record.txt
-@@ -527,6 +527,9 @@ Implies --tail-synthesize.
- --dir::
- Store data into directory with one data file for cpu.
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index d5f7afda67db..04f6695b648c 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1337,8 +1337,7 @@ static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
+ 		if (!PageHuge(page))
+ 			continue;
+ 		head = compound_head(page);
+-		if (hugepage_migration_supported(page_hstate(head)) &&
+-		    page_huge_active(head))
++		if (page_huge_active(head))
+ 			return pfn;
+ 		skip = (1 << compound_order(head)) - (page - head);
+ 		pfn += skip - 1;
+@@ -1378,10 +1377,6 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
  
-+--output-dir::
-+Same as --dir option, can't be used together with -o option.
-+
- SEE ALSO
- --------
- linkperf:perf-stat[1], linkperf:perf-list[1]
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 26981be13aa0..115316e94b34 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -80,6 +80,7 @@ struct record {
- 	bool			buildid_all;
- 	bool			timestamp_filename;
- 	bool			timestamp_boundary;
-+	bool			output_is_file;
- 	struct switch_output	switch_output;
- 	unsigned long long	samples;
- 	cpu_set_t		affinity_mask;
-@@ -1921,8 +1922,10 @@ static struct option __record_options[] = {
- 	OPT_STRING('C', "cpu", &record.opts.target.cpu_list, "cpu",
- 		    "list of cpus to monitor"),
- 	OPT_U64('c', "count", &record.opts.user_interval, "event period to sample"),
--	OPT_STRING('o', "output", &record.data.path, "file",
--		    "output file name"),
-+	OPT_STRING_SET('o', "output", &record.data.path, &record.output_is_file,
-+		       "file", "output file name"),
-+	OPT_STRING_SET(0, "output-dir", &record.data.path, &record.data.is_dir,
-+		       "file", "output directory name"),
- 	OPT_BOOLEAN_SET('i', "no-inherit", &record.opts.no_inherit,
- 			&record.opts.no_inherit_set,
- 			"child tasks do not inherit counters"),
-@@ -2101,6 +2104,12 @@ int cmd_record(int argc, const char **argv)
- 			"cgroup monitoring only available in system-wide mode");
- 
- 	}
-+
-+	if (perf_data__is_dir(&rec->data) && record.output_is_file) {
-+		ui__error("cannot use both -o and --output-dir\n");
-+		return -EINVAL;
-+	}
-+
- 	if (rec->opts.record_switch_events &&
- 	    !perf_can_record_switch_events()) {
- 		ui__error("kernel does not support recording context switch events\n");
+ 		if (PageHuge(page)) {
+ 			struct page *head = compound_head(page);
+-			if (compound_order(head) > PFN_SECTION_SHIFT) {
+-				ret = -EBUSY;
+-				break;
+-			}
+ 			pfn = page_to_pfn(head) + (1<<compound_order(head)) - 1;
+ 			isolate_huge_page(head, &source);
+ 			continue;
 -- 
-2.17.2
+2.13.7
 
