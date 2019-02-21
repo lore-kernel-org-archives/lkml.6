@@ -2,281 +2,139 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF41C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EB8AC00319
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F81D2083B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:32:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6923206A3
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:40:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jnx8efQm"
+	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="py+t0rC8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbfBUWb7 (ORCPT
+        id S1726992AbfBUWk4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 17:31:59 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:36662 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbfBUWb6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 17:31:58 -0500
-Received: by mail-ed1-f66.google.com with SMTP id g9so206077eds.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 14:31:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qm0DGyJWXzeOwINDR0bxj4fWh6Bh46UTdYXrFCDW/Bk=;
-        b=Jnx8efQmcNCTCC49xKba0Bp9Iqoe7l2y4MMOqf9qZTcH8faaEWK6UJM+TCHC6pQu3I
-         D+P2d6PmTZ9sXL631sRs9tZzxjBll2NNMz2zXlEP/XJpIqI7kngFuemvnaMk7x37recN
-         cZkPE6J7Q//0wQAEXmTB3DGMzPCNKFsXAgdRvrfgmLDuuHIAUnCzJQfBOCL1uCrIO353
-         xj83l+6+q/ccU3N5inhmfd/3Jc5fSSFQo5+S3GcLmcO5EJnMzbEp13lARj6FOvFH0VEO
-         mYK17ILlsCKGgTfo8fnYUbWSexFnUzHrJkumCwo7TcKlKKVFFhVY9dqt5jNdbAVZL2uf
-         LnsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qm0DGyJWXzeOwINDR0bxj4fWh6Bh46UTdYXrFCDW/Bk=;
-        b=QItNKckN1q07CQJvHjTNVa2+2yRuB0rpELv6LK23FXdIeDVy8n0+J58B0LZfsMI404
-         tnBeOx+MsWxbcSzQPWCKobfxgCCcRbm3HMFN7oQvBaXDLJZ7gyv/sGqaAD3LAeRv+myH
-         yNWOmroLfqIUdQrLP/qUe/ntvF8RXuK7TMVfFQipQFsGTujgs5ja0SxI7NbRpEQQIOUl
-         6BJMFGB3mhcqkq4TVtDL2q/rEOF5dw9D+jf0h4tdkw1a6B0SG/ATkw8pT1hy9SMP1P9X
-         P7Vl00qev4rMjc9tG6JoLk/Yp4HEOXoO34HTJM/AvecUG9rGksdROg4EmMhO1jyYPwmu
-         k2Uw==
-X-Gm-Message-State: AHQUAuaM3+XonJKK/TLjmpd70uO8SIQiCM65DTTo10e2kA5SQJirieyW
-        PAe6OmpGwa7OzSlkiwCNDCI=
-X-Google-Smtp-Source: AHgI3IarnbpNRBwLXM5qCmXkL21SBqRcgBWuAPPhQX0ePE9NEQHKED9LwxuigLaAdAfFeHvJxZFeAg==
-X-Received: by 2002:a50:cf41:: with SMTP id d1mr643556edk.242.1550788316063;
-        Thu, 21 Feb 2019 14:31:56 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a52sm20035edc.74.2019.02.21.14.31.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Feb 2019 14:31:55 -0800 (PST)
-Date:   Thu, 21 Feb 2019 22:31:54 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     Wei Yang <richardw.yang@linux.intel.com>
-Cc:     "Huang, Ying" <ying.huang@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kernel test robot <rong.a.chen@intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, lkp@01.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [LKP] [driver core] 570d020012: will-it-scale.per_thread_ops
- -12.2% regression
-Message-ID: <20190221223154.pg7rlcfvzbqj7h5a@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20190218075442.GI29177@shao2-debian>
- <20190219005945.GA16734@richard>
- <20190219121904.GA24103@kroah.com>
- <20190221031049.GE28258@shao2-debian>
- <20190221071023.GA28637@kroah.com>
- <8736oh1uf5.fsf@yhuang-dev.intel.com>
- <20190221075313.GA4113@richard>
+        Thu, 21 Feb 2019 17:40:56 -0500
+Received: from mail-eopbgr720118.outbound.protection.outlook.com ([40.107.72.118]:4896
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725891AbfBUWkz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 17:40:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=epgFfkDOgNiiv4W5v3UbkpcqZ54Lt+VTxtv+WyeeSj8=;
+ b=py+t0rC8h6OSR/werJWlruaYmwdLX/9Ep92cJTB4BaKNGyDFI7KFgfs3jDvBTBQHEbNgAXAh7ow0yMsUpaklWvyNlKafEUEFKNOF3Xd2PNf4jRJh40T77sJTT1n6as8b82XAJ00j2JN69J7fF4jAXOO43nWq03lcNcVVtLhxsUA=
+Received: from SN6PR13MB2494.namprd13.prod.outlook.com (52.135.95.148) by
+ SN6PR13MB2463.namprd13.prod.outlook.com (52.135.95.31) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.11; Thu, 21 Feb 2019 22:40:52 +0000
+Received: from SN6PR13MB2494.namprd13.prod.outlook.com
+ ([fe80::c1d2:93da:11b5:c4d4]) by SN6PR13MB2494.namprd13.prod.outlook.com
+ ([fe80::c1d2:93da:11b5:c4d4%3]) with mapi id 15.20.1643.012; Thu, 21 Feb 2019
+ 22:40:52 +0000
+From:   Trond Myklebust <trondmy@hammerspace.com>
+To:     "Julia.Lawall@lip6.fr" <Julia.Lawall@lip6.fr>
+CC:     "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH 15/20] NFS: drop useless LIST_HEAD
+Thread-Topic: [PATCH 15/20] NFS: drop useless LIST_HEAD
+Thread-Index: AQHUmqKiOdd7+P3TVEK6hnhFX/CrhaXrN7cA
+Date:   Thu, 21 Feb 2019 22:40:52 +0000
+Message-ID: <81b0b3c72ebb7fc97c3166d945f82ee4184ed657.camel@hammerspace.com>
+References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
+         <1545555435-24576-16-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1545555435-24576-16-git-send-email-Julia.Lawall@lip6.fr>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=trondmy@hammerspace.com; 
+x-originating-ip: [68.40.189.247]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1d46ca4d-9feb-4030-10f0-08d6984da23e
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:SN6PR13MB2463;
+x-ms-traffictypediagnostic: SN6PR13MB2463:
+x-ms-exchange-purlcount: 1
+x-microsoft-exchange-diagnostics: =?utf-8?B?MTtTTjZQUjEzTUIyNDYzOzIzOnh5VmVMZUt6R3RLbU9CQ1MvU0dTdXFLM3FM?=
+ =?utf-8?B?M09GRU5GRkxwaVVvNXQ3eHVTWDdMemlWMHBjbTBwUGZ1NVhRK2JaaXY4enhU?=
+ =?utf-8?B?QzIwdWt1U0ZyZkcrSWw3dG9DdlhuYzc2a1AwY2lmajZMRUI5ZVlBMkhvTW83?=
+ =?utf-8?B?TWdWQ0crVDlhVEUxZHQwbGYyMlJuZGVMNXhwcXdjMXZNazVKb0grdGpIWW1I?=
+ =?utf-8?B?WHIzZllaSWRQb2c1emtFekYvT0RSdXpPbWcrU2cxRE5ya0c2b0Q3L1BVeE84?=
+ =?utf-8?B?aFZtakREdEZNWFBsVTFTcEtDUG9UcjZKTmxlRGsrSnFBWDFaN2ROQm9Jd2hE?=
+ =?utf-8?B?cVhzQ3hXMkpjL2R2RTh0Z2lJdW1DaitzY1FkZ2p1QjBLMk5uMHdjd1g0YWhF?=
+ =?utf-8?B?NlBiZUtRRjN6UFBZYlF0YzVybkVXSlYzdjBFSC9iazduYWhsTll5MFFBd1BD?=
+ =?utf-8?B?Nmtpak14YkpFdHkzbFhKT1FteU5UYkVaRGtmZTc4amNyV2dqbHVJTWRhQk5Z?=
+ =?utf-8?B?YUE1bG5BSTQ1SmlTWVdKNVllYVZXM3Q0UDBpSmY1emJNTU1FM1RtUGF6bjNK?=
+ =?utf-8?B?eG1BdGQraHpzVzNRbU52S1h5WUZ1VHhTYlZ2U3N4aGJydDVLZGJObEM0NXRl?=
+ =?utf-8?B?RzhyaElEQUZmSWd4ODVNQUV5SFdRL2pVRSsydTFUYTgrM0tGaVR0dnhkV28x?=
+ =?utf-8?B?bkhlRDFQQTEzb0swV092VnZFbVVNT2x6eWM4TDZQZ0lpZmUzZTd5VkZYRWdk?=
+ =?utf-8?B?T1RlcnhvSUorZEZJTEhYMlBvNk9WNXRIejJNWEhXOGtSbDZkcTZBeDF6U1hy?=
+ =?utf-8?B?TUVlSWNzYUNnRERCR3pUYWxPZVhmdTBLNEFsKy90OTkySkVaL0lnelp3R1g5?=
+ =?utf-8?B?M3l3YktmdmFwM3RlbDFic2hvaGp6Z2FWNHZJaGl3cnBuYkIzdmFSU2hQT28y?=
+ =?utf-8?B?eFp4YjNzQ0t2emlBVk9ZdUtUQXZxdXJZVktNSllaZElqaWQ5SmZ5L2pMMncr?=
+ =?utf-8?B?TTBsYVBXdlU3aDVOU3BMY3hoclE5T0cvN05TbW9QY3JIeGZZMXZkOXlQTWZn?=
+ =?utf-8?B?Y2x5a2hXODV0NlRha0JBZnI0ZjJhNDdFV0xvTmhMd0xKem5nWldZUGZ0UHlJ?=
+ =?utf-8?B?em1RU1JGWHpNU0FXKzBpeklhdXlGMXF5T3BaaCsvTXptN3htMnV3RFJEbUJB?=
+ =?utf-8?B?cHhjTWhFa2ozTStHZU5YQytPblk4eklRZkN6YWJLMFhJUlhEZXg1YTd0QnRJ?=
+ =?utf-8?B?eEUxYU1YOGZUL2RuRkRTemJjREE0YkhYK1RHUXB2dU9CdURETFF2MVlHNElm?=
+ =?utf-8?B?dUY4RjZBZkUxRmE2SEQwOVg3R1cxcmRKRGVwbExaT2pndVF6YzZzS3Q0YmJs?=
+ =?utf-8?B?elhQeVM1K3Y3Tm4wZDVWK0pSSmV2V0RwbnZIVi84N1BoZzBPTWt0OFkwcDQ5?=
+ =?utf-8?B?c2R4czU5OTNnUGZMWktYQ2dkdFV3RkxTQTNzRTVFd1c4dVRMK0pWOW4xQ20x?=
+ =?utf-8?B?SENiSmlNNWsybk04SXJhblg2WE55N3FBa29udkVRTXFucjJ6VXQ1VUVpQXd2?=
+ =?utf-8?B?S0IxSEJNRUdtUWl0VVlxUWMwZW9JSW11eXlxbzBaVGZ2aEF1Z3ZQa3VFOS9m?=
+ =?utf-8?B?MldpazI3VlRpUGNZcFlvNVpBMzBjaC9nWWZKN2pGTllxRi9kT2VscEczYmdM?=
+ =?utf-8?B?K2RXMmYvd05sQ0doM0VsK3Vjamk3ZkhIdXNjYVpnbzhsNVFLVVpzZ09xbWZP?=
+ =?utf-8?Q?Zi8Sbiqd+9EJC5Zt6Pa8QP3DWBL1Wj6XjZ8XE=3D?=
+x-microsoft-antispam-prvs: <SN6PR13MB2463B118C8320FBE89F9171EB87E0@SN6PR13MB2463.namprd13.prod.outlook.com>
+x-forefront-prvs: 09555FB1AD
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39830400003)(396003)(366004)(346002)(136003)(376002)(199004)(189003)(6306002)(446003)(2501003)(478600001)(11346002)(36756003)(2616005)(99286004)(54906003)(476003)(6486002)(68736007)(6512007)(6436002)(66066001)(186003)(97736004)(71200400001)(4001150100001)(71190400001)(486006)(5660300002)(229853002)(5640700003)(26005)(81166006)(6506007)(86362001)(6246003)(81156014)(4326008)(3846002)(8676002)(25786009)(256004)(6916009)(6116002)(102836004)(53936002)(305945005)(118296001)(316002)(2351001)(14444005)(14454004)(106356001)(105586002)(7736002)(2906002)(8936002)(76176011);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR13MB2463;H:SN6PR13MB2494.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: hammerspace.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 1HCWIUm8jpXPfzcJxvBL/XAuwYQO/8yFIt4RjEL69sms1a4bM6i7gaUQCF5ChZpCbbjsW+ykcgaGjVPPAoe3qFbFfvWE6LE6B0SUHfZYimJTFp2LMXFPNolGgpIbNCI+oep5BiV9bDBKtQtx+DxKdfOMon31jV82rQcNQTLJtAkqhY3UhgRngG41w2ArVbtDaHC81xxqS09wjuMJ2RVygqrBU7Gvh60sHEMVUFh8Q9akxpeV9spXsV+yDHndaGvRf4VDc8tKd+7BLK/Tq8Y4QsC+FDIvqCahAiuyF9l6mv3LsALuJ896yEIi8w15fsgorgVi9d4IFHSuUMN7uPa5nqmlH5uFB5aRWJdUKz7zJFXJ5L6Pe2JI+8sM+hA9x2xVbLarph3nv19AKLK6YEHIuaOS9Eq5kR+QuREp6SRMgwM=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <AD5C7FC5E679694DAAE7A23503C834D4@namprd13.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190221075313.GA4113@richard>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-OriginatorOrg: hammerspace.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1d46ca4d-9feb-4030-10f0-08d6984da23e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2019 22:40:52.0433
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR13MB2463
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 03:53:13PM +0800, Wei Yang wrote:
->On Thu, Feb 21, 2019 at 03:18:22PM +0800, Huang, Ying wrote:
->>Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
->>
->>> On Thu, Feb 21, 2019 at 11:10:49AM +0800, kernel test robot wrote:
->>>> On Tue, Feb 19, 2019 at 01:19:04PM +0100, Greg Kroah-Hartman wrote:
->>>> > On Tue, Feb 19, 2019 at 08:59:45AM +0800, Wei Yang wrote:
->>>> > > On Mon, Feb 18, 2019 at 03:54:42PM +0800, kernel test robot wrote:
->>>> > > >Greeting,
->>>> > > >
->>>> > > >FYI, we noticed a -12.2% regression of will-it-scale.per_thread_ops due to commit:
->>>> > > >
->>>> > > >
->>>> > > >commit: 570d0200123fb4f809aa2f6226e93a458d664d70 ("driver core: move device->knode_class to device_private")
->>>> > > >https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
->>>> > > >
->>>> > > 
->>>> > > This is interesting.
->>>> > > 
->>>> > > I didn't expect the move of this field will impact the performance.
->>>> > > 
->>>> > > The reason is struct device is a hotter memory than device->device_private?
->>>> > > 
->>>> > > >in testcase: will-it-scale
->>>> > > >on test machine: 288 threads Knights Mill with 80G memory
->>>> > > >with following parameters:
->>>> > > >
->>>> > > >	nr_task: 100%
->>>> > > >	mode: thread
->>>> > > >	test: unlink2
->>>> > > >	cpufreq_governor: performance
->>>> > > >
->>>> > > >test-description: Will It Scale takes a testcase and runs it from 1 through to n parallel copies to see if the testcase will scale. It builds both a process and threads based test in order to see any differences between the two.
->>>> > > >test-url: https://github.com/antonblanchard/will-it-scale
->>>> > > >
->>>> > > >In addition to that, the commit also has significant impact on the following tests:
->>>> > > >
->>>> > > >+------------------+---------------------------------------------------------------+
->>>> > > >| testcase: change | will-it-scale: will-it-scale.per_thread_ops -29.9% regression |
->>>> > > >| test machine     | 288 threads Knights Mill with 80G memory                      |
->>>> > > >| test parameters  | cpufreq_governor=performance                                  |
->>>> > > >|                  | mode=thread                                                   |
->>>> > > >|                  | nr_task=100%                                                  |
->>>> > > >|                  | test=signal1                                                  |
->>>> > 
->>>> > Ok, I'm going to blame your testing system, or something here, and not
->>>> > the above patch.
->>>> > 
->>>> > All this test does is call raise(3).  That does not touch the driver
->>>> > core at all.
->>>> > 
->>>> > > >+------------------+---------------------------------------------------------------+
->>>> > > >| testcase: change | will-it-scale: will-it-scale.per_thread_ops -16.5% regression |
->>>> > > >| test machine     | 288 threads Knights Mill with 80G memory                      |
->>>> > > >| test parameters  | cpufreq_governor=performance                                  |
->>>> > > >|                  | mode=thread                                                   |
->>>> > > >|                  | nr_task=100%                                                  |
->>>> > > >|                  | test=open1                                                    |
->>>> > > >+------------------+---------------------------------------------------------------+
->>>> > 
->>>> > Same here, open1 just calls open/close a lot.  No driver core
->>>> > interaction at all there either.
->>>> > 
->>>> > So are you _sure_ this is the offending patch?
->>>> 
->>>> Hi Greg,
->>>> 
->>>> We did an experiment, recovered the layout of struct device. and we
->>>> found the regression is gone. I guess the regession is not from the
->>>> patch but related to the struct layout.
->>>> 
->>>> 
->>>> tests: 1
->>>> testcase/path_params/tbox_group/run: will-it-scale/performance-thread-100%-unlink2/lkp-knm01
->>>> 
->>>> 570d0200123fb4f8  a36dc70b810afe9183de2ea18f  
->>>> ----------------  --------------------------  
->>>>          %stddev      change         %stddev
->>>>              \          |                \  
->>>>     237096              14%     270789        will-it-scale.workload
->>>>        823              14%        939        will-it-scale.per_thread_ops
->>>> 
->>>> 
->>>> tests: 1
->>>> testcase/path_params/tbox_group/run: will-it-scale/performance-thread-100%-signal1/lkp-knm01
->>>> 
->>>> 570d0200123fb4f8  a36dc70b810afe9183de2ea18f  
->>>> ----------------  --------------------------  
->>>>          %stddev      change         %stddev
->>>>              \          |                \  
->>>>      93.51   3%        48%     138.53   3%  will-it-scale.time.user_time
->>>>        186              40%        261        will-it-scale.per_thread_ops
->>>>      53909              40%      75507        will-it-scale.workload
->>>> 
->>>> 
->>>> tests: 1
->>>> testcase/path_params/tbox_group/run: will-it-scale/performance-thread-100%-open1/lkp-knm01
->>>> 
->>>> 570d0200123fb4f8  a36dc70b810afe9183de2ea18f  
->>>> ----------------  --------------------------  
->>>>          %stddev      change         %stddev
->>>>              \          |                \  
->>>>     447722              22%     546258  10%  will-it-scale.time.involuntary_context_switches
->>>>     226995              19%     269751        will-it-scale.workload
->>>>        787              19%        936        will-it-scale.per_thread_ops
->>>> 
->>>> 
->>>> 
->>>> commit a36dc70b810afe9183de2ea18faa4c0939c139ac
->>>> Author: 0day robot <lkp@intel.com>
->>>> Date:   Wed Feb 20 14:21:19 2019 +0800
->>>> 
->>>>     backfile klist_node in struct device for debugging
->>>>     
->>>>     Signed-off-by: 0day robot <lkp@intel.com>
->>>> 
->>>> diff --git a/include/linux/device.h b/include/linux/device.h
->>>> index d0e452fd0bff2..31666cb72b3ba 100644
->>>> --- a/include/linux/device.h
->>>> +++ b/include/linux/device.h
->>>> @@ -1035,6 +1035,7 @@ struct device {
->>>>  	spinlock_t		devres_lock;
->>>>  	struct list_head	devres_head;
->>>>  
->>>> +	struct klist_node       knode_class_test_by_rongc;
->>>>  	struct class		*class;
->>>>  	const struct attribute_group **groups;	/* optional groups */
->>>
->>> While this is fun to worry about alignment and structure size of 'struct
->>> device' I find it odd given that the syscalls and userspace load of
->>> those test programs have nothing to do with 'struct device' at all.
->>>
->>> So I can work on fixing up the alignment of struct device, as that's a
->>> nice thing to do for systems with 30k of these in memory, but that
->>> shouldn't affect a workload of a constant string of signal calls.
->>
->>Hi, Greg,
->>
->>I don't think this is an issues of struct device.  As you said, struct
->>device isn't access much during test.  Struct device may share slab page
->>with some other data structures (signal related, or fd related (as in
->>some other test cases)), so that the alignment of these data structures
->>are affected, so caused the performance regression.
->>
->
->I didn't get the point here neither.
->
->slab allocator ask memory from page allocator Page by Page and split the page
->into pre-defined size. For example, 128B, 512B... Just as shown in
->/proc/slabinfo. 
->
->Per my understanding, each struct device / device_private will sits in its own
->aligned space. struct device would sits in 1K slab and struct device_private
->would sits in 256B slab, both before and after this patch if I am correct.
->
-
-As Greg mentioned, device is embedded in other structure. My analysis
-here is not correct. The change in size of device, may affect the size
-of struct who wraps device.
-
-In case this struct is allocated by kmem_cache, this may affect the
-number of objects allocated each time, or even the number of pages
-allocated each time.
-
-This means with this patch may affect the system in the following two
-aspects:
-
-    * the times for struct allocation
-    * the order of page it asks from page allocator
-
-One place we may take a look is the /proc/slabinfo. To see whether the
-change in size of device affect kmem_cach objects.
-
-Hmm... while as Greg mentioned, those cases will not involve struct
-device allocation. So the above aspects may not take effect?
-
->Hmm... I am just curious about how this alignment is affected. Maybe I lost
->some point?
->
->>Best Regards,
->>Huang, Ying
->>
->>> thanks,
->>>
->>> greg k-h
->
->-- 
->Wei Yang
->Help you, Help me
-
--- 
-Wei Yang
-Help you, Help me
+T24gU3VuLCAyMDE4LTEyLTIzIGF0IDA5OjU3ICswMTAwLCBKdWxpYSBMYXdhbGwgd3JvdGU6DQo+
+IERyb3AgTElTVF9IRUFEIHdoZXJlIHRoZSB2YXJpYWJsZSBpdCBkZWNsYXJlcyBoYXMgbmV2ZXIN
+Cj4gYmVlbiB1c2VkLg0KPiANCj4gVGhlIHNlbWFudGljIHBhdGNoIHRoYXQgZml4ZXMgdGhpcyBw
+cm9ibGVtIGlzIGFzIGZvbGxvd3M6DQo+IChodHRwOi8vY29jY2luZWxsZS5saXA2LmZyLykNCj4g
+DQo+IC8vIDxzbXBsPg0KPiBAQA0KPiBpZGVudGlmaWVyIHg7DQo+IEBADQo+IC0gTElTVF9IRUFE
+KHgpOw0KPiAgIC4uLiB3aGVuICE9IHgNCj4gLy8gPC9zbXBsPg0KPiANCj4gRml4ZXM6IDBlMjAx
+NjJlZDFlOSAoIk5GU3Y0LjEgVXNlIE1EUyBhdXRoIGZsYXZvciBmb3IgZGF0YSBzZXJ2ZXINCj4g
+Y29ubmVjdGlvbiIpDQo+IFNpZ25lZC1vZmYtYnk6IEp1bGlhIExhd2FsbCA8SnVsaWEuTGF3YWxs
+QGxpcDYuZnI+DQo+IA0KPiAtLS0NCj4gU3VjY2Vzc2Z1bGx5IDAtZGF5IHRlc3RlZCBvbiAxNTEg
+Y29uZmlndXJhdGlvbnMuDQo+IA0KPiAgZnMvbmZzL25mczRjbGllbnQuYyB8ICAgIDEgLQ0KPiAg
+MSBmaWxlIGNoYW5nZWQsIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9mcy9uZnMv
+bmZzNGNsaWVudC5jIGIvZnMvbmZzL25mczRjbGllbnQuYw0KPiBpbmRleCAyNTQ4NDA1ZGExZjcu
+LjczNWMxMDU2YTkxYyAxMDA2NDQNCj4gLS0tIGEvZnMvbmZzL25mczRjbGllbnQuYw0KPiArKysg
+Yi9mcy9uZnMvbmZzNGNsaWVudC5jDQo+IEBAIC0xNDUsNyArMTQ1LDYgQEAgc3RhdGljIHZvaWQN
+Cj4gIG5mczRfc2h1dGRvd25fZHNfY2xpZW50cyhzdHJ1Y3QgbmZzX2NsaWVudCAqY2xwKQ0KPiAg
+ew0KPiAgCXN0cnVjdCBuZnM0X2RzX3NlcnZlciAqZHNzOw0KPiAtCUxJU1RfSEVBRChzaHV0ZG93
+bl9saXN0KTsNCj4gIA0KPiAgCXdoaWxlICghbGlzdF9lbXB0eSgmY2xwLT5jbF9kc19jbGllbnRz
+KSkgew0KPiAgCQlkc3MgPSBsaXN0X2VudHJ5KGNscC0+Y2xfZHNfY2xpZW50cy5uZXh0LA0KPiAN
+Cg0KVGhhbmtzIEp1bGlhISBBcHBsaWVkIHRvIG15IGxpbnV4LW5leHQgYnJhbmNoIGZvciBpbmNs
+dXNpb24gaW4gdGhlIDUuMQ0KbWVyZ2Ugd2luZG93Lg0KDQotLSANClRyb25kIE15a2xlYnVzdA0K
+TGludXggTkZTIGNsaWVudCBtYWludGFpbmVyLCBIYW1tZXJzcGFjZQ0KdHJvbmQubXlrbGVidXN0
+QGhhbW1lcnNwYWNlLmNvbQ0KDQoNCg==
