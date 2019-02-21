@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB8AC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:36:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7F3C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E0452075C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:36:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D0EF2085A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:36:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550759811;
-	bh=/idzvv3ekgKi2dlvHktGNJ9KHL7IqQpW5z0OzE+g90g=;
+	s=default; t=1550759814;
+	bh=1GCdY/eKx0e2etAR974W/CA7e6SlgCySPeMNtY5tATg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VHg+/bTKrx2PrgDT/tYVu18wE74xj64HJ40h5hVc7//VOCHlZ33O4/ANqEYVRaO90
-	 lKTikRQEBTbku4SoQQwMmm7wWY+L30axhirFMFqEAIoLemM2S2axPUfmak9KXqa9ex
-	 C4joXYR+jX3ovhqOo0cpj/dcgi+45JnBzUxxgfzQ=
+	b=smCYsHiw63gw90WXsCKPk35yAy1PqpGG1JZjAdOmhLUK7LxWzkIQsZhjvf3yP4NJr
+	 3gNhSO2x02re+b3HttAnu3LBH2NzBYD0ggjrwBnFjVfSPb1v4i8hoaMLtTZMKasGlq
+	 THcr9XWX27V6FkuHLj1mx8O7fWxUKcye0PRwuAiQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728126AbfBUOgu (ORCPT
+        id S1728153AbfBUOgw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:36:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57654 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:36:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728077AbfBUOgs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:36:48 -0500
+        id S1725385AbfBUOgp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:36:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0701A2084D;
-        Thu, 21 Feb 2019 14:36:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CCB7D2075C;
+        Thu, 21 Feb 2019 14:36:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550759807;
-        bh=/idzvv3ekgKi2dlvHktGNJ9KHL7IqQpW5z0OzE+g90g=;
+        s=default; t=1550759804;
+        bh=1GCdY/eKx0e2etAR974W/CA7e6SlgCySPeMNtY5tATg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H+Jl4N//rmdXTlD88FhiPHpTS9um8hh5421SyxMOJpQnaKmFsQ+UgBWu2Gnj71YZL
-         EKnJiAEu0MMq3pRcWpsgBJoZrCJS4pOpjBmeDb85z1FIvMn9qyhNA/mwWCsPtkP8BS
-         2FMfHhSImcAJcMft5/7krXUkynBjOpiK6CHpTH0I=
+        b=SeVz/pAldAQyVYxVr7gTNkdTLn8D9kv+pDQaDjbgym74Jfd+FO9lRhcORY7mXyyOj
+         0SaVBRB7xHswhlMyNuJxDyeuG+OA/0lM5x4YyWB0wll/4yE29TYxM3/IQMx0Q+WFvM
+         CyYvqvNxY8oAxC8miJyDrwvZqUmSAOD6aqVKrIUI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Karsten Keil <isdn@linux-pingi.de>,
         syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 12/13] mISDN: fix a race in dev_expire_timer()
-Date:   Thu, 21 Feb 2019 15:35:43 +0100
-Message-Id: <20190221125241.541316826@linuxfoundation.org>
+        Andrew Hendry <andrew.hendry@gmail.com>,
+        linux-x25@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 11/13] net/x25: do not hold the cpu too long in x25_new_lci()
+Date:   Thu, 21 Feb 2019 15:35:42 +0100
+Message-Id: <20190221125241.436619838@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125240.091472334@linuxfoundation.org>
 References: <20190221125240.091472334@linuxfoundation.org>
@@ -69,168 +69,156 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Dumazet <edumazet@google.com>
 
-commit bdcc5bc25548ef6b08e2e43937148f907c212292 upstream.
+commit cf657d22ee1f0e887326a92169f2e28dc932fd10 upstream.
 
-Since mISDN_close() uses dev->pending to iterate over active
-timers, there is a chance that one timer got removed from the
-->pending list in dev_expire_timer() but that the thread
-has not called yet wake_up_interruptible()
+Due to quadratic behavior of x25_new_lci(), syzbot was able
+to trigger an rcu stall.
 
-So mISDN_close() could miss this and free dev before
-completion of at least one dev_expire_timer()
+Fix this by not blocking BH for the whole duration of
+the function, and inserting a reschedule point when possible.
 
-syzbot was able to catch this race :
+If we care enough, using a bitmap could get rid of the quadratic
+behavior.
 
-BUG: KASAN: use-after-free in register_lock_class+0x140c/0x1bf0 kernel/locking/lockdep.c:827
-Write of size 8 at addr ffff88809fc18948 by task syz-executor1/24769
+syzbot report :
 
-CPU: 1 PID: 24769 Comm: syz-executor1 Not tainted 5.0.0-rc5 #60
+rcu: INFO: rcu_preempt self-detected stall on CPU
+rcu:    0-...!: (10500 ticks this GP) idle=4fa/1/0x4000000000000002 softirq=283376/283376 fqs=0
+rcu:     (t=10501 jiffies g=383105 q=136)
+rcu: rcu_preempt kthread starved for 10502 jiffies! g383105 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402 ->cpu=0
+rcu: RCU grace-period kthread stack dump:
+rcu_preempt     I28928    10      2 0x80000000
+Call Trace:
+ context_switch kernel/sched/core.c:2844 [inline]
+ __schedule+0x817/0x1cc0 kernel/sched/core.c:3485
+ schedule+0x92/0x180 kernel/sched/core.c:3529
+ schedule_timeout+0x4db/0xfd0 kernel/time/timer.c:1803
+ rcu_gp_fqs_loop kernel/rcu/tree.c:1948 [inline]
+ rcu_gp_kthread+0x956/0x17a0 kernel/rcu/tree.c:2105
+ kthread+0x357/0x430 kernel/kthread.c:246
+ ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+NMI backtrace for cpu 0
+CPU: 0 PID: 8759 Comm: syz-executor2 Not tainted 5.0.0-rc4+ #51
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
 Call Trace:
  <IRQ>
  __dump_stack lib/dump_stack.c:77 [inline]
  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
- print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
- kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
- __asan_report_store8_noabort+0x17/0x20 mm/kasan/generic_report.c:140
- register_lock_class+0x140c/0x1bf0 kernel/locking/lockdep.c:827
- __lock_acquire+0x11f/0x4700 kernel/locking/lockdep.c:3224
- lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:3841
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0x95/0xcd kernel/locking/spinlock.c:152
- __wake_up_common_lock+0xc7/0x190 kernel/sched/wait.c:120
- __wake_up+0xe/0x10 kernel/sched/wait.c:145
- dev_expire_timer+0xe4/0x3b0 drivers/isdn/mISDN/timerdev.c:174
- call_timer_fn+0x190/0x720 kernel/time/timer.c:1325
-protocol 88fb is buggy, dev hsr_slave_0
-protocol 88fb is buggy, dev hsr_slave_1
- expire_timers kernel/time/timer.c:1362 [inline]
- __run_timers kernel/time/timer.c:1681 [inline]
- __run_timers kernel/time/timer.c:1649 [inline]
- run_timer_softirq+0x652/0x1700 kernel/time/timer.c:1694
- __do_softirq+0x266/0x95a kernel/softirq.c:292
- invoke_softirq kernel/softirq.c:373 [inline]
- irq_exit+0x180/0x1d0 kernel/softirq.c:413
- exiting_irq arch/x86/include/asm/apic.h:536 [inline]
- smp_apic_timer_interrupt+0x14a/0x570 arch/x86/kernel/apic/apic.c:1062
+ nmi_cpu_backtrace.cold+0x63/0xa4 lib/nmi_backtrace.c:101
+ nmi_trigger_cpumask_backtrace+0x1be/0x236 lib/nmi_backtrace.c:62
+ arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+ trigger_single_cpu_backtrace include/linux/nmi.h:164 [inline]
+ rcu_dump_cpu_stacks+0x183/0x1cf kernel/rcu/tree.c:1211
+ print_cpu_stall kernel/rcu/tree.c:1348 [inline]
+ check_cpu_stall kernel/rcu/tree.c:1422 [inline]
+ rcu_pending kernel/rcu/tree.c:3018 [inline]
+ rcu_check_callbacks.cold+0x500/0xa4a kernel/rcu/tree.c:2521
+ update_process_times+0x32/0x80 kernel/time/timer.c:1635
+ tick_sched_handle+0xa2/0x190 kernel/time/tick-sched.c:161
+ tick_sched_timer+0x47/0x130 kernel/time/tick-sched.c:1271
+ __run_hrtimer kernel/time/hrtimer.c:1389 [inline]
+ __hrtimer_run_queues+0x33e/0xde0 kernel/time/hrtimer.c:1451
+ hrtimer_interrupt+0x314/0x770 kernel/time/hrtimer.c:1509
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1035 [inline]
+ smp_apic_timer_interrupt+0x120/0x570 arch/x86/kernel/apic/apic.c:1060
  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
  </IRQ>
-RIP: 0010:__sanitizer_cov_trace_pc+0x26/0x50 kernel/kcov.c:101
-Code: 90 90 90 90 55 48 89 e5 48 8b 75 08 65 48 8b 04 25 40 ee 01 00 65 8b 15 98 12 92 7e 81 e2 00 01 1f 00 75 2b 8b 90 d8 12 00 00 <83> fa 02 75 20 48 8b 88 e0 12 00 00 8b 80 dc 12 00 00 48 8b 11 48
-RSP: 0018:ffff8880589b7a60 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-RAX: ffff888087ce25c0 RBX: 0000000000000001 RCX: ffffffff818f8ca3
-RDX: 0000000000000000 RSI: ffffffff818f8b48 RDI: 0000000000000001
-RBP: ffff8880589b7a60 R08: ffff888087ce25c0 R09: ffffed1015d25bd0
-R10: ffffed1015d25bcf R11: ffff8880ae92de7b R12: ffffea0001ae4680
-R13: ffffea0001ae4688 R14: 0000000000000000 R15: ffffea0001b41648
- PageIdle include/linux/page-flags.h:398 [inline]
- page_is_idle include/linux/page_idle.h:29 [inline]
- mark_page_accessed+0x618/0x1140 mm/swap.c:398
- touch_buffer fs/buffer.c:59 [inline]
- __find_get_block+0x312/0xcc0 fs/buffer.c:1298
- sb_find_get_block include/linux/buffer_head.h:338 [inline]
- recently_deleted fs/ext4/ialloc.c:682 [inline]
- find_inode_bit.isra.0+0x202/0x510 fs/ext4/ialloc.c:722
- __ext4_new_inode+0x14ad/0x52c0 fs/ext4/ialloc.c:914
- ext4_symlink+0x3f8/0xbe0 fs/ext4/namei.c:3096
- vfs_symlink fs/namei.c:4126 [inline]
- vfs_symlink+0x378/0x5d0 fs/namei.c:4112
- do_symlinkat+0x22b/0x290 fs/namei.c:4153
- __do_sys_symlink fs/namei.c:4172 [inline]
- __se_sys_symlink fs/namei.c:4170 [inline]
- __x64_sys_symlink+0x59/0x80 fs/namei.c:4170
+RIP: 0010:__read_once_size include/linux/compiler.h:193 [inline]
+RIP: 0010:queued_write_lock_slowpath+0x13e/0x290 kernel/locking/qrwlock.c:86
+Code: 00 00 fc ff df 4c 8d 2c 01 41 83 c7 03 41 0f b6 45 00 41 38 c7 7c 08 84 c0 0f 85 0c 01 00 00 8b 03 3d 00 01 00 00 74 1a f3 90 <41> 0f b6 55 00 41 38 d7 7c eb 84 d2 74 e7 48 89 df e8 6c 0f 4f 00
+RSP: 0018:ffff88805f117bd8 EFLAGS: 00000206 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000000300 RBX: ffffffff89413ba0 RCX: 1ffffffff1282774
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffffffff89413ba0
+RBP: ffff88805f117c70 R08: 1ffffffff1282774 R09: fffffbfff1282775
+R10: fffffbfff1282774 R11: ffffffff89413ba3 R12: 00000000000000ff
+R13: fffffbfff1282774 R14: 1ffff1100be22f7d R15: 0000000000000003
+ queued_write_lock include/asm-generic/qrwlock.h:104 [inline]
+ do_raw_write_lock+0x1d6/0x290 kernel/locking/spinlock_debug.c:203
+ __raw_write_lock_bh include/linux/rwlock_api_smp.h:204 [inline]
+ _raw_write_lock_bh+0x3b/0x50 kernel/locking/spinlock.c:312
+ x25_insert_socket+0x21/0xe0 net/x25/af_x25.c:267
+ x25_bind+0x273/0x340 net/x25/af_x25.c:705
+ __sys_bind+0x23f/0x290 net/socket.c:1505
+ __do_sys_bind net/socket.c:1516 [inline]
+ __se_sys_bind net/socket.c:1514 [inline]
+ __x64_sys_bind+0x73/0xb0 net/socket.c:1514
  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457b67
-Code: 0f 1f 00 b8 5c 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 6d bb fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 b8 58 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 4d bb fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fff045ce0f8 EFLAGS: 00000202 ORIG_RAX: 0000000000000058
-RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 0000000000457b67
-RDX: 00007fff045ce173 RSI: 00000000004bd63f RDI: 00007fff045ce160
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000013
-R10: 0000000000000075 R11: 0000000000000202 R12: 0000000000000000
-R13: 0000000000000001 R14: 000000000000029b R15: 0000000000000001
-
-Allocated by task 24763:
- save_stack+0x45/0xd0 mm/kasan/common.c:73
- set_track mm/kasan/common.c:85 [inline]
- __kasan_kmalloc mm/kasan/common.c:496 [inline]
- __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
- kasan_kmalloc+0x9/0x10 mm/kasan/common.c:504
- kmem_cache_alloc_trace+0x151/0x760 mm/slab.c:3609
- kmalloc include/linux/slab.h:545 [inline]
- mISDN_open+0x9a/0x270 drivers/isdn/mISDN/timerdev.c:59
- misc_open+0x398/0x4c0 drivers/char/misc.c:141
- chrdev_open+0x247/0x6b0 fs/char_dev.c:417
- do_dentry_open+0x47d/0x1130 fs/open.c:771
- vfs_open+0xa0/0xd0 fs/open.c:880
- do_last fs/namei.c:3418 [inline]
- path_openat+0x10d7/0x4690 fs/namei.c:3534
- do_filp_open+0x1a1/0x280 fs/namei.c:3564
- do_sys_open+0x3fe/0x5d0 fs/open.c:1063
- __do_sys_openat fs/open.c:1090 [inline]
- __se_sys_openat fs/open.c:1084 [inline]
- __x64_sys_openat+0x9d/0x100 fs/open.c:1084
+RIP: 0033:0x457e39
+Code: ad b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fafccd0dc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000031
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457e39
+RDX: 0000000000000012 RSI: 0000000020000240 RDI: 0000000000000004
+RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fafccd0e6d4
+R13: 00000000004bdf8b R14: 00000000004ce4b8 R15: 00000000ffffffff
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 8752 Comm: syz-executor4 Not tainted 5.0.0-rc4+ #51
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:__x25_find_socket+0x78/0x120 net/x25/af_x25.c:328
+Code: 89 f8 48 c1 e8 03 80 3c 18 00 0f 85 a6 00 00 00 4d 8b 64 24 68 4d 85 e4 74 7f e8 03 97 3d fb 49 83 ec 68 74 74 e8 f8 96 3d fb <49> 8d bc 24 88 04 00 00 48 89 f8 48 c1 e8 03 0f b6 04 18 84 c0 74
+RSP: 0018:ffff8880639efc58 EFLAGS: 00000246
+RAX: 0000000000040000 RBX: dffffc0000000000 RCX: ffffc9000e677000
+RDX: 0000000000040000 RSI: ffffffff863244b8 RDI: ffff88806a764628
+RBP: ffff8880639efc80 R08: ffff8880a80d05c0 R09: fffffbfff1282775
+R10: fffffbfff1282774 R11: ffffffff89413ba3 R12: ffff88806a7645c0
+R13: 0000000000000001 R14: ffff88809f29ac00 R15: 0000000000000000
+FS:  00007fe8d0c58700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b32823000 CR3: 00000000672eb000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ x25_new_lci net/x25/af_x25.c:357 [inline]
+ x25_connect+0x374/0xdf0 net/x25/af_x25.c:786
+ __sys_connect+0x266/0x330 net/socket.c:1686
+ __do_sys_connect net/socket.c:1697 [inline]
+ __se_sys_connect net/socket.c:1694 [inline]
+ __x64_sys_connect+0x73/0xb0 net/socket.c:1694
  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 24762:
- save_stack+0x45/0xd0 mm/kasan/common.c:73
- set_track mm/kasan/common.c:85 [inline]
- __kasan_slab_free+0x102/0x150 mm/kasan/common.c:458
- kasan_slab_free+0xe/0x10 mm/kasan/common.c:466
- __cache_free mm/slab.c:3487 [inline]
- kfree+0xcf/0x230 mm/slab.c:3806
- mISDN_close+0x2a1/0x390 drivers/isdn/mISDN/timerdev.c:97
- __fput+0x2df/0x8d0 fs/file_table.c:278
- ____fput+0x16/0x20 fs/file_table.c:309
- task_work_run+0x14a/0x1c0 kernel/task_work.c:113
- tracehook_notify_resume include/linux/tracehook.h:188 [inline]
- exit_to_usermode_loop+0x273/0x2c0 arch/x86/entry/common.c:166
- prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
- syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
- do_syscall_64+0x52d/0x610 arch/x86/entry/common.c:293
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff88809fc18900
- which belongs to the cache kmalloc-192 of size 192
-The buggy address is located 72 bytes inside of
- 192-byte region [ffff88809fc18900, ffff88809fc189c0)
-The buggy address belongs to the page:
-page:ffffea00027f0600 count:1 mapcount:0 mapping:ffff88812c3f0040 index:0xffff88809fc18000
-flags: 0x1fffc0000000200(slab)
-raw: 01fffc0000000200 ffffea000269f648 ffffea00029f7408 ffff88812c3f0040
-raw: ffff88809fc18000 ffff88809fc18000 000000010000000b 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff88809fc18800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff88809fc18880: 00 fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff88809fc18900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                              ^
- ffff88809fc18980: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
- ffff88809fc18a00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+RIP: 0033:0x457e39
+Code: ad b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fe8d0c57c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457e39
+RDX: 0000000000000012 RSI: 0000000020000200 RDI: 0000000000000004
+RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fe8d0c586d4
+R13: 00000000004be378 R14: 00000000004ceb00 R15: 00000000ffffffff
 
 Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Karsten Keil <isdn@linux-pingi.de>
 Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Andrew Hendry <andrew.hendry@gmail.com>
+Cc: linux-x25@vger.kernel.org
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/isdn/mISDN/timerdev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/x25/af_x25.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/drivers/isdn/mISDN/timerdev.c
-+++ b/drivers/isdn/mISDN/timerdev.c
-@@ -168,8 +168,8 @@ dev_expire_timer(unsigned long data)
- 	spin_lock_irqsave(&timer->dev->lock, flags);
- 	if (timer->id >= 0)
- 		list_move_tail(&timer->list, &timer->dev->expired);
--	spin_unlock_irqrestore(&timer->dev->lock, flags);
- 	wake_up_interruptible(&timer->dev->wait);
-+	spin_unlock_irqrestore(&timer->dev->lock, flags);
+--- a/net/x25/af_x25.c
++++ b/net/x25/af_x25.c
+@@ -352,17 +352,15 @@ static unsigned int x25_new_lci(struct x
+ 	unsigned int lci = 1;
+ 	struct sock *sk;
+ 
+-	read_lock_bh(&x25_list_lock);
+-
+-	while ((sk = __x25_find_socket(lci, nb)) != NULL) {
++	while ((sk = x25_find_socket(lci, nb)) != NULL) {
+ 		sock_put(sk);
+ 		if (++lci == 4096) {
+ 			lci = 0;
+ 			break;
+ 		}
++		cond_resched();
+ 	}
+ 
+-	read_unlock_bh(&x25_list_lock);
+ 	return lci;
  }
  
- static int
 
 
