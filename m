@@ -2,99 +2,193 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF91DC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:19:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 631D8C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:20:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BECF920836
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:19:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31E3F2084F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:20:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbfBUQTv (ORCPT
+        id S1728243AbfBUQT6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 11:19:51 -0500
-Received: from foss.arm.com ([217.140.101.70]:47406 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725932AbfBUQTv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 11:19:51 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A7D71A78;
-        Thu, 21 Feb 2019 08:19:50 -0800 (PST)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B4F83F690;
-        Thu, 21 Feb 2019 08:19:48 -0800 (PST)
-Subject: Re: [RFC][PATCH 15/16] sched: Trivial forced-newidle balancer
-To:     Peter Zijlstra <peterz@infradead.org>, mingo@kernel.org,
-        tglx@linutronix.de, pjt@google.com, tim.c.chen@linux.intel.com,
-        torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, subhra.mazumdar@oracle.com,
-        fweisbec@gmail.com, keescook@chromium.org, kerrnel@google.com
-References: <20190218165620.383905466@infradead.org>
- <20190218173514.796920915@infradead.org>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <d7a408c0-b86a-da56-5440-d7cb380708c6@arm.com>
-Date:   Thu, 21 Feb 2019 16:19:46 +0000
+        Thu, 21 Feb 2019 11:19:58 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58870 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725932AbfBUQT6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 11:19:58 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1LGJVuZ066926
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 11:19:56 -0500
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qswrndvjh-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 11:19:55 -0500
+Received: from localhost
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Thu, 21 Feb 2019 16:19:54 -0000
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 21 Feb 2019 16:19:52 -0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1LGJlPg23330954
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Feb 2019 16:19:48 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E158DBE051;
+        Thu, 21 Feb 2019 16:19:47 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 58F53BE04F;
+        Thu, 21 Feb 2019 16:19:46 +0000 (GMT)
+Received: from [9.85.140.198] (unknown [9.85.140.198])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 21 Feb 2019 16:19:46 +0000 (GMT)
+Subject: Re: [PATCH v3] zcrypt: handle AP Info notification from CHSC SEI
+ command
+To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, pmorel@linux.vnet.ibm.com,
+        pasic@linux.vnet.ibm.com, akrowiak@linux.vnet.ibm.com,
+        oberpar@linux.ibm.com, sebott@linux.ibm.com
+References: <1550509295-1199-1-git-send-email-akrowiak@linux.ibm.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Thu, 21 Feb 2019 11:19:45 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190218173514.796920915@infradead.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1550509295-1199-1-git-send-email-akrowiak@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19022116-0004-0000-0000-000014E546DC
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010638; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000281; SDB=6.01164323; UDB=6.00608011; IPR=6.00944909;
+ MB=3.00025682; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-21 16:19:54
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022116-0005-0000-0000-00008AAD0800
+Message-Id: <02b26d9b-f4f3-d577-3248-3895d80c882e@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-21_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902210118
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 2/18/19 12:01 PM, Tony Krowiak wrote:
+> The current AP bus implementation periodically polls the AP configuration
+> to detect changes. When the AP configuration is dynamically changed via the
+> SE or an SCLP instruction, the changes will not be reflected to sysfs until
+> the next time the AP configuration is polled. The CHSC architecture
+> provides a Store Event Information (SEI) command to make notification of an
+> AP configuration change. This patch introduces a handler to process
+> notification from the CHSC SEI command by immediately kicking off an AP bus
+> scan-after-event.
 
-On 18/02/2019 16:56, Peter Zijlstra wrote:
-[...]
-> +static bool try_steal_cookie(int this, int that)
+Ping!
+
+> 
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+> Reviewed-by: Sebastian Ott <sebott@linux.ibm.com>
+> Reviewed-by: Harald Freudenberger <FREUDE@de.ibm.com>
+> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+> ---
+>   arch/s390/include/asm/ap.h   | 11 +++++++++++
+>   drivers/s390/cio/chsc.c      | 13 +++++++++++++
+>   drivers/s390/crypto/ap_bus.c | 10 ++++++++++
+>   3 files changed, 34 insertions(+)
+> 
+> diff --git a/arch/s390/include/asm/ap.h b/arch/s390/include/asm/ap.h
+> index 1a6a7092d942..e94a0a28b5eb 100644
+> --- a/arch/s390/include/asm/ap.h
+> +++ b/arch/s390/include/asm/ap.h
+> @@ -360,4 +360,15 @@ static inline struct ap_queue_status ap_dqap(ap_qid_t qid,
+>   	return reg1;
+>   }
+>   
+> +/*
+> + * Interface to tell the AP bus code that a configuration
+> + * change has happened. The bus code should at least do
+> + * an ap bus resource rescan.
+> + */
+> +#if IS_ENABLED(CONFIG_ZCRYPT)
+> +void ap_bus_cfg_chg(void);
+> +#else
+> +static inline void ap_bus_cfg_chg(void){};
+> +#endif
+> +
+>   #endif /* _ASM_S390_AP_H_ */
+> diff --git a/drivers/s390/cio/chsc.c b/drivers/s390/cio/chsc.c
+> index a0baee25134c..eaf4699be2c5 100644
+> --- a/drivers/s390/cio/chsc.c
+> +++ b/drivers/s390/cio/chsc.c
+> @@ -24,6 +24,7 @@
+>   #include <asm/crw.h>
+>   #include <asm/isc.h>
+>   #include <asm/ebcdic.h>
+> +#include <asm/ap.h>
+>   
+>   #include "css.h"
+>   #include "cio.h"
+> @@ -586,6 +587,15 @@ static void chsc_process_sei_scm_avail(struct chsc_sei_nt0_area *sei_area)
+>   			      " failed (rc=%d).\n", ret);
+>   }
+>   
+> +static void chsc_process_sei_ap_cfg_chg(struct chsc_sei_nt0_area *sei_area)
 > +{
-> +	struct rq *dst = cpu_rq(this), *src = cpu_rq(that);
-> +	struct task_struct *p;
-> +	unsigned long cookie;
-> +	bool success = false;
+> +	CIO_CRW_EVENT(3, "chsc: ap config changed\n");
+> +	if (sei_area->rs != 5)
+> +		return;
 > +
-> +	local_irq_disable();
-> +	double_rq_lock(dst, src);
+> +	ap_bus_cfg_chg();
+> +}
 > +
-> +	cookie = dst->core->core_cookie;
-> +	if (!cookie)
-> +		goto unlock;
+>   static void chsc_process_sei_nt2(struct chsc_sei_nt2_area *sei_area)
+>   {
+>   	switch (sei_area->cc) {
+> @@ -612,6 +622,9 @@ static void chsc_process_sei_nt0(struct chsc_sei_nt0_area *sei_area)
+>   	case 2: /* i/o resource accessibility */
+>   		chsc_process_sei_res_acc(sei_area);
+>   		break;
+> +	case 3: /* ap config changed */
+> +		chsc_process_sei_ap_cfg_chg(sei_area);
+> +		break;
+>   	case 7: /* channel-path-availability information */
+>   		chsc_process_sei_chp_avail(sei_area);
+>   		break;
+> diff --git a/drivers/s390/crypto/ap_bus.c b/drivers/s390/crypto/ap_bus.c
+> index 5a699746c357..d0d415954142 100644
+> --- a/drivers/s390/crypto/ap_bus.c
+> +++ b/drivers/s390/crypto/ap_bus.c
+> @@ -861,6 +861,16 @@ void ap_bus_force_rescan(void)
+>   EXPORT_SYMBOL(ap_bus_force_rescan);
+>   
+>   /*
+> +* A config change has happened, force an ap bus rescan.
+> +*/
+> +void ap_bus_cfg_chg(void)
+> +{
+> +	AP_DBF(DBF_INFO, "%s config change, forcing bus rescan\n", __func__);
 > +
-> +	if (dst->curr != dst->idle)
-> +		goto unlock;
+> +	ap_bus_force_rescan();
+> +}
 > +
-> +	p = sched_core_find(src, cookie);
-> +	if (p == src->idle)
-> +		goto unlock;
-> +
-> +	do {
-> +		if (p == src->core_pick || p == src->curr)
-> +			goto next;
-> +
-> +		if (!cpumask_test_cpu(this, &p->cpus_allowed))
-> +			goto next;
-> +
-> +		if (p->core_occupation > dst->idle->core_occupation)
-> +			goto next;
-> +
+> +/*
+>    * hex2bitmap() - parse hex mask string and set bitmap.
+>    * Valid strings are "0x012345678" with at least one valid hex number.
+>    * Rest of the bitmap to the right is padded with 0. No spaces allowed
+> 
 
-IIUC, we're trying to find/steal tasks matching the core_cookie from other
-rqs because dst has been cookie-forced-idle.
-
-If the p we find isn't running, what's the meaning of core_occupation?
-I would have expected it to be 0, but we don't seem to be clearing it when
-resetting the state in pick_next_task().
-
-If it is running, we prevent the stealing if the core it's on is running
-more matching tasks than the core of the pulling rq. It feels to me as if
-that's a balancing tweak to try to cram as many matching tasks as possible
-in a single core, so to me this reads as "don't steal my tasks if I'm
-running more than you are, but I will steal tasks from you if I'm given
-the chance". Is that correct?
-
-[...]
