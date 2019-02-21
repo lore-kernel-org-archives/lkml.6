@@ -2,145 +2,110 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D204AC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:49:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E235C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:50:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A1322083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:49:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CE802084D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:50:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="bOrqz2oE"
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="fYBG4xnl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726443AbfBUQt6 (ORCPT
+        id S1728215AbfBUQu1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 11:49:58 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:42244 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbfBUQt5 (ORCPT
+        Thu, 21 Feb 2019 11:50:27 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:38751 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726621AbfBUQu1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 11:49:57 -0500
-Received: by mail-ed1-f67.google.com with SMTP id j89so14317265edb.9
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 08:49:56 -0800 (PST)
+        Thu, 21 Feb 2019 11:50:27 -0500
+Received: by mail-qk1-f194.google.com with SMTP id p15so4657233qkl.5
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 08:50:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dTS9pwq3iHRUDV7Cxr89LxK3cDhDfWMH8AlxMNhO+Ms=;
-        b=bOrqz2oEtxpfT07pNvJNQYq9PeEfumdWU+E0FQ/yUyeGtOLfncc6V42OsmkHlR/x8W
-         HFUSQDLQQ7d31+59cDRZ57x7vCezkAL79c/qIV/fwMvSkegQcQSwslBXDmhwBkOc9uZ1
-         ysn34jiU7smLuQRKU8MSoQKTWGvcjeH+1kpH0=
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fBBhCoeKpttPaQMOknmmQ2P1Xg+jsnN0CQLcp0wpahw=;
+        b=fYBG4xnlbC5DQ8gkLI0CKlqX7wWFM1sPSV7BJaovKdEVs3oP1soYWFSQj1e/iWmDXo
+         JvPW4QX2V4RQdX+wZg3BQJxNCkvuUw38UEbvVbArN/nlNnp4DRx+2vyXNKa167mJd+Uh
+         32433vQvRhe33BK8rLOFCNTOR1xspVl8eU69c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=dTS9pwq3iHRUDV7Cxr89LxK3cDhDfWMH8AlxMNhO+Ms=;
-        b=NgbzhnKaF0dkxEE98Ir3TKaR/olNPESSVH2K67wSxFZ4Re91QPmGECYMX+xl3KRxvn
-         4mHDSDHhrlGvCHXyOI/ikVzlmWHDvG41ST4w5wJalbzETrnDHxdQc10YTMxgvB8BNfCq
-         5rXKQoad+w6k8no0gnSVgvspdpyP7OEX3EL7BqjvOV73sQKcAVqhKP1kK8AO7oKpPih+
-         CKciSrfH/iKBOAVF0qOqN77xv1KnTBed8GE/n3Cguiz+igtusb961xE9rPa2gBSH2B8L
-         Gur5FQLqtJzhDsbYpH3drHxMSzJUSzjnpryb7RgrNiq/LzA0jCrP8jooAut1OaABJcSG
-         SHhw==
-X-Gm-Message-State: AHQUAub4+pqIiWeB8joZz9yvqECP+2XQd4lDV3Rqp29UfY7q0w04jfBw
-        jVwg/xxem3zpLKk5fV/tBYY3Ww==
-X-Google-Smtp-Source: AHgI3IY1Sgok1id+sYcecZaBsEyy4z2xRMlN0uG91s+hBy5QdvABNjMX6Nzd1SI4gzBorPbt7UX0Ig==
-X-Received: by 2002:a17:906:1611:: with SMTP id m17mr28283930ejd.237.1550767795453;
-        Thu, 21 Feb 2019 08:49:55 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id i14sm4808473ejy.25.2019.02.21.08.49.54
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fBBhCoeKpttPaQMOknmmQ2P1Xg+jsnN0CQLcp0wpahw=;
+        b=h+2OlAPkFNwov6/26MwI6MWN7UpHbdL7Jz+TfcAJcZWuK9BErECHY3yek6NhpFdx9W
+         2tkWlFgI4/ynVMrmCv1OfeOMr5ZgyUy5Ly8DRCDL4Tsub24wZHaDPxYYbA+lLkP4OvxR
+         XCgZtABddUsn+QB7h+9AZcbhsNDWWLbv6GxuuPoIWJzrbEzd4/KLbRex0IkUrBkBq/Ek
+         Inc2y6XeYwuCM34W+cHc1ArQAme6wp5MjppzM2OedGzG5PGoQeQGCCqfuz800JiQDXPY
+         w7MXVzYvMH/5sBey8F7hyQ9X5y5hmOcINDJ5ec3cBS614KZsrL4hoo7BavYn7dyF6Gjx
+         4usg==
+X-Gm-Message-State: AHQUAub11gJfA0iCgo314CsIYCnNJtc2ejex+OUIFc6LMnVTcCfnlMF3
+        XRc+vENYbIUwTvZBM/VAFhhHx+vs8VA=
+X-Google-Smtp-Source: AHgI3IY10uCVkqNnFEIaAC9ZN6b60+ShwGhv+lAmMOyPrkK8XQTnSjgz3Rjob1zmsANREgQhCItNCg==
+X-Received: by 2002:a37:32c7:: with SMTP id y190mr29874301qky.345.1550767825821;
+        Thu, 21 Feb 2019 08:50:25 -0800 (PST)
+Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
+        by smtp.gmail.com with ESMTPSA id v18sm11280949qkj.13.2019.02.21.08.50.22
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Feb 2019 08:49:54 -0800 (PST)
-Date:   Thu, 21 Feb 2019 17:49:52 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Liviu Dudau <liviu.dudau@arm.com>
-Subject: Re: [PATCH] staging/vboxvideo: Another FIXME item
-Message-ID: <20190221164952.GV2665@phenom.ffwll.local>
-Mail-Followup-To: Hans de Goede <hdegoede@redhat.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>, Liviu Dudau <liviu.dudau@arm.com>
-References: <20190221155951.19855-1-daniel.vetter@ffwll.ch>
- <33679003-ce23-2ba0-d8c2-fd8187ecea36@redhat.com>
+        Thu, 21 Feb 2019 08:50:23 -0800 (PST)
+Date:   Thu, 21 Feb 2019 11:50:22 -0500
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, rcu@vger.kernel.org
+Subject: Re: [RFC 0/5] RCU fixes for rcu_assign_pointer usage
+Message-ID: <20190221165022.GA103806@google.com>
+References: <20190220040827.136184-1-joel@joelfernandes.org>
+ <CAEXW_YRasK=os37QxCwoAY+DXKVD3bBTvR4qH3jaSJB3rP5a-Q@mail.gmail.com>
+ <20190220164242.GN11787@linux.ibm.com>
+ <20190220180952.GB97771@google.com>
+ <20190220182820.GO11787@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <33679003-ce23-2ba0-d8c2-fd8187ecea36@redhat.com>
-X-Operating-System: Linux phenom 4.19.0-1-amd64 
+In-Reply-To: <20190220182820.GO11787@linux.ibm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 05:40:05PM +0100, Hans de Goede wrote:
-> Hi,
-> 
-> On 21-02-19 16:59, Daniel Vetter wrote:
-> > Found while grepping around.
+On Wed, Feb 20, 2019 at 10:28:20AM -0800, Paul E. McKenney wrote:
+> On Wed, Feb 20, 2019 at 01:09:52PM -0500, Joel Fernandes wrote:
+> > On Wed, Feb 20, 2019 at 08:42:43AM -0800, Paul E. McKenney wrote:
+> > > On Tue, Feb 19, 2019 at 08:11:36PM -0800, Joel Fernandes wrote:
+> > > > On Tue, Feb 19, 2019 at 8:08 PM Joel Fernandes (Google)
+> > > > <joel@joelfernandes.org> wrote:
+> > > > >
+> > > > > These patches fix various RCU API usage issues found due to sparse errors as a
+> > > > > result of the recent check to add rcu_check_sparse() to rcu_assign_pointer().
+> > > > >
+> > > > > This is very early RFC stage, and is only build tested. I am also only sending
+> > > > > to the RCU group for initial review before sending to LKML. Thanks for any feedback!
+> > > > >
+> > > > > There are still more usages that cause errors such as rbtree which I am
+> > > > > looking into.
+> > > > 
+> > > > Looks like it got sent to LKML anyway, ;-) That's Ok since it is
+> > > > prefixed as RFC.
+> > > 
+> > > As is only right and proper.  ;-)
+> > > 
+> > > I don't see an immediate problem with them, but it would be good to get
+> > > the relevant developers and maintainers on CC for the next version.  I
+> > > cannot claim to know that code very well.
 > > 
-> > Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > Cc: Hans de Goede <hdegoede@redhat.com>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Sam Ravnborg <sam@ravnborg.org>
-> > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > Cc: Liviu Dudau <liviu.dudau@arm.com>
-> > ---
-> >   drivers/staging/vboxvideo/vbox_irq.c | 5 +++++
-> >   1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/drivers/staging/vboxvideo/vbox_irq.c b/drivers/staging/vboxvideo/vbox_irq.c
-> > index 195484713365..89944134ea86 100644
-> > --- a/drivers/staging/vboxvideo/vbox_irq.c
-> > +++ b/drivers/staging/vboxvideo/vbox_irq.c
-> > @@ -123,6 +123,11 @@ static void vbox_update_mode_hints(struct vbox_private *vbox)
-> >   	validate_or_set_position_hints(vbox);
-> >   	drm_modeset_lock_all(dev);
-> > +	/*
-> > +	 * FIXME: this needs to use drm_connector_list_iter and some real
-> > +	 * locking for the actual data it changes, not the deprecated
-> > +	 * drm_modeset_lock_all() shotgun approach.
-> > +	 */
+> > Definitely will CC them next time, sorry about that. I'll stop being so shy
+> > but I have some scars that are still healing ;-)
 > 
-> Question, are the locking expectations from the drm's core pov (for modesetting-drivers)
-> *fully* (and clearly) documented somewhere?
+> If you don't get at least a few scars, you aren't trying hard enough!  ;-)
 
-All the things I've touched the past few years wrt locking should have
-kerneldoc comments explaining the rules. For most drivers you don't need
-much if any locking though, because the core+helpers take care of
-everything. So yeah exists, but spread thinly around everywhere.
+Well said ;-) I noted this as a quote in my "famous quotes list" ;)
 
-Above is probably fine since you don't hotplug connectors and
-modeset_lock_all gives you a good chance you have enough locking.  But
-modeset_lock_all is deprecated for atomic drivers, because it makes it
-unclear what exactly you're protecting against. The usual BKL considered
-harmful reasons. I just noticed that qxl has the same pattern, probably
-similarly grown through fairly long history.
--Daniel
+thanks,
 
-> 
-> Regards,
-> 
-> Hans
-> 
-> 
-> 
-> 
-> >   	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
-> >   		vbox_conn = to_vbox_connector(connector);
-> > 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+ - Joel
