@@ -8,62 +8,62 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8166C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 425CFC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:26:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8B152084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:26:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1195320842
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:26:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dGM/tt4A"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="saVlx+jS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728353AbfBUP0I (ORCPT
+        id S1728368AbfBUP0L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 10:26:08 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42998 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728197AbfBUP0G (ORCPT
+        Thu, 21 Feb 2019 10:26:11 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37389 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728273AbfBUP0H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 10:26:06 -0500
-Received: by mail-wr1-f68.google.com with SMTP id r5so17638032wrg.9;
-        Thu, 21 Feb 2019 07:26:04 -0800 (PST)
+        Thu, 21 Feb 2019 10:26:07 -0500
+Received: by mail-wr1-f67.google.com with SMTP id c8so30991207wrs.4;
+        Thu, 21 Feb 2019 07:26:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0sjfQnYXYiI3H9SALD+ZGbevOhgIf9me4QKE275k6Zw=;
-        b=dGM/tt4A9aNQooAojyjRDirO2w5BTcsIzSabfvoja8JYUALg60Or5hATl4pKLSyW51
-         laJhSQ8lUcVIYDXL3J1yclcLSxWbx0ISozv9IFuVov6Bz3SmH48kapTrZ+QeCpx281tA
-         CZiIIdiOPFWBCMZZviSq6MUviVf6CmHzP6yFRzA1/8gWd3orHkrdp3RnTriDePv0bMmP
-         Vef7XbR7/IhqFTwepVPzh2HKZhlBqZ9bp357HqDp4mWdWw1WPiNHgfi1VMjjYpi/OFN2
-         zU9WyIHfoyB4kRj58mqJrLrErFacJeBXlE6nKPa04QBFLUdNsMHWaalxKtKleCGnI+yf
-         Gr+A==
+        bh=QaXaNTZnl4LT0GvNQL4ryRi6cnfcXOGXncEBEL7o+PY=;
+        b=saVlx+jSkeWUsFy1OQY3QUWnrMXEJ/0RcnYvrxtBHDD0XgM7n9q7SRLtBjG0qsNtCW
+         utW746Zc1ZZ92vMwAexqMhLXdYzMkcFoGoctDKOXtIqzK8snilw3MyjfzbT7mLFjNoGO
+         o+ncyf7yZqRInRljrcj5a7tam/0sqgId5g/jzkBN3dijK4qCqVeFfDCsF2dypi+a6XGr
+         voTD5WurPsmeeckESq0PPrkg/ubKmunsKU5b0wlHr4DRJRDjHj69o6tQxq4Q5BlVdgCy
+         E43c2AJtjpk8y7qFm05q8cTPceN19TNHdMW7VfmG8cE+F1RABWxHBgckUbfdkdkDsGpN
+         hWSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0sjfQnYXYiI3H9SALD+ZGbevOhgIf9me4QKE275k6Zw=;
-        b=LJ1gYwlTeYn71tGrlTV3tZ1wvrNUcM74Rl5dsOs5AJf4iQbB/54gREEtN3XSf5hBZw
-         VADedBqZbrAs/gJt4Mfl8KuS0eunNcWG0Qew/7BmVXDNTcuxqudDaTm2tpU6YMDv1y91
-         ptEOZI4jtieIusucGNB5SE20JEc2ScOWRu4bLY+S281tdLDGQRQvQQ3plbRrCQEExOin
-         GsuFtgrQvHZ/MZlq7ASE7FeIsfPno5K4prbgsaJGEgbknU2oQ649Vzb4sTAxAAy1nn+L
-         htcCev775eldY7RfGLFhVG966mY9OTlwjqFJnGLErJGBo/iMzZitzSGV6Xc3MDTmr+oa
-         eYSw==
-X-Gm-Message-State: AHQUAuY+pyxwjruv3j4FBRAJBjrGyEjyF7iM2xsQAR3tI0Iydxg41H67
-        svK3MMcyp+/qYkcMs6uvn64=
-X-Google-Smtp-Source: AHgI3IbMBw1yJWZsmd3MINZVKFgIEAi/Dst1YBn9771LtrCDtHIRn6nlCigmF9KOgbQ1G2xR3FMExQ==
-X-Received: by 2002:a1c:96c5:: with SMTP id y188mr11081630wmd.103.1550762763649;
-        Thu, 21 Feb 2019 07:26:03 -0800 (PST)
+        bh=QaXaNTZnl4LT0GvNQL4ryRi6cnfcXOGXncEBEL7o+PY=;
+        b=SSlQBdRkLqCk7ea3ZvlSNM5YqcjM1bhWP8qmFbfcaXALcW4B1TPSzk+dep4WpzC0rF
+         AtWti9RzDMtk4ATcXZXDZEfyMQpshQvWLhYCc7MwulCzX44Muuiw+shFKGwqRH+ZSwg/
+         nbyuDMkHXn5dgiUCYv6VVbXB01S10n1vkvFYN9KkzaecWJldhl28v2Ika4yzMQRYENKq
+         YdGywqTwC8jsmixP0Ahvg2C/ZYuFKkpIPiQSXn47Jcf9tfIYvH5AJ1m5dTJ+v2V5c68d
+         EGpuoX7nsk+arynOL3NjdtxN0wkAgjTOpe8jIm/tqqckMtBHtUkGD+bkuAzrkemvvwAB
+         IUdw==
+X-Gm-Message-State: AHQUAubT8EeBYzK70omGt0PsyyB+Q65GMHQhpMQKDB5PruqiIhogSB09
+        UKjuMzYAf2Ki9XSYkovRPQ4=
+X-Google-Smtp-Source: AHgI3IZ9goUs/jn1S2BkdCfWELpYNm4Ns8anNTPb3uY2ef7Sb/rudZSEwwDzVCWscNrvlG4Opk+v5Q==
+X-Received: by 2002:a1c:9d92:: with SMTP id g140mr10690726wme.35.1550762765377;
+        Thu, 21 Feb 2019 07:26:05 -0800 (PST)
 Received: from localhost (pD9E51D2D.dip0.t-ipconnect.de. [217.229.29.45])
-        by smtp.gmail.com with ESMTPSA id u134sm9154227wmf.21.2019.02.21.07.26.02
+        by smtp.gmail.com with ESMTPSA id z8sm6943928wmi.28.2019.02.21.07.26.04
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Feb 2019 07:26:03 -0800 (PST)
+        Thu, 21 Feb 2019 07:26:04 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Philipp Zabel <p.zabel@pengutronix.de>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/5] soc/tegra: pmc: Implement acquire/release for resets
-Date:   Thu, 21 Feb 2019 16:25:56 +0100
-Message-Id: <20190221152557.8534-4-thierry.reding@gmail.com>
+Subject: [PATCH 5/5] drm/tegra: sor: Implement acquire/release for reset
+Date:   Thu, 21 Feb 2019 16:25:57 +0100
+Message-Id: <20190221152557.8534-5-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221152557.8534-1-thierry.reding@gmail.com>
 References: <20190221152557.8534-1-thierry.reding@gmail.com>
@@ -76,96 +76,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-By implementing the acquire/release protocol, the resets can be shared
-with other drivers that also adhere to this protocol. This will be used
-for example by the SOR driver to put hardware into a known good state,
-irrespective of whether or not the power domain can be reset.
+By implementing the acquire/release protocol, the SOR reset can be
+shared with other drivers that also adhere to this protocol, such as the
+PMC driver that uses the same reset as part of the powergate and -ungate
+implementation using generic power domains.
+
+Runtime PM makes sure that the operations are executed in the right
+order, and the reset core has error handling and WARNs in place to make
+sure the acquire/release protocol is followed.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 39 +++++++++++++++++++++++++++++++++------
- 1 file changed, 33 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/tegra/sor.c | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 0df258518693..0c5f79528e5f 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -656,10 +656,15 @@ static int tegra_genpd_power_on(struct generic_pm_domain *domain)
- 	int err;
- 
- 	err = tegra_powergate_power_up(pg, true);
--	if (err)
-+	if (err) {
- 		dev_err(dev, "failed to turn on PM domain %s: %d\n",
- 			pg->genpd.name, err);
-+		goto out;
-+	}
- 
-+	reset_control_release(pg->reset);
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index 40057106f5f3..5be5a0817dfe 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -2871,6 +2871,13 @@ static int tegra_sor_init(struct host1x_client *client)
+ 	 * kernel is possible.
+ 	 */
+ 	if (sor->rst) {
++		err = reset_control_acquire(sor->rst);
++		if (err < 0) {
++			dev_err(sor->dev, "failed to acquire SOR reset: %d\n",
++				err);
++			return err;
++		}
 +
-+out:
- 	return err;
- }
- 
-@@ -669,10 +674,18 @@ static int tegra_genpd_power_off(struct generic_pm_domain *domain)
- 	struct device *dev = pg->pmc->dev;
- 	int err;
- 
-+	err = reset_control_acquire(pg->reset);
-+	if (err < 0) {
-+		pr_err("failed to acquire resets: %d\n", err);
-+		return err;
-+	}
+ 		err = reset_control_assert(sor->rst);
+ 		if (err < 0) {
+ 			dev_err(sor->dev, "failed to assert SOR reset: %d\n",
+@@ -2894,6 +2901,8 @@ static int tegra_sor_init(struct host1x_client *client)
+ 				err);
+ 			return err;
+ 		}
 +
- 	err = tegra_powergate_power_down(pg);
--	if (err)
-+	if (err) {
- 		dev_err(dev, "failed to turn off PM domain %s: %d\n",
- 			pg->genpd.name, err);
-+		reset_control_release(pg->reset);
-+	}
- 
- 	return err;
- }
-@@ -937,20 +950,34 @@ static int tegra_powergate_of_get_resets(struct tegra_powergate *pg,
- 	struct device *dev = pg->pmc->dev;
- 	int err;
- 
--	pg->reset = of_reset_control_array_get_exclusive(np);
-+	pg->reset = of_reset_control_array_get_exclusive_released(np);
- 	if (IS_ERR(pg->reset)) {
- 		err = PTR_ERR(pg->reset);
- 		dev_err(dev, "failed to get device resets: %d\n", err);
- 		return err;
++		reset_control_release(sor->rst);
  	}
  
--	if (off)
-+	err = reset_control_acquire(pg->reset);
-+	if (err < 0) {
-+		pr_err("failed to acquire resets: %d\n", err);
-+		goto out;
-+	}
-+
-+	if (off) {
- 		err = reset_control_assert(pg->reset);
--	else
-+	} else {
- 		err = reset_control_deassert(pg->reset);
-+		if (err < 0)
-+			goto out;
+ 	err = clk_prepare_enable(sor->clk_safe);
+@@ -3331,7 +3340,7 @@ static int tegra_sor_probe(struct platform_device *pdev)
+ 		goto remove;
+ 	}
  
--	if (err)
-+		reset_control_release(pg->reset);
-+	}
-+
-+out:
-+	if (err) {
-+		reset_control_release(pg->reset);
- 		reset_control_put(pg->reset);
-+	}
+-	sor->rst = devm_reset_control_get(&pdev->dev, "sor");
++	sor->rst = devm_reset_control_get_exclusive_released(&pdev->dev, "sor");
+ 	if (IS_ERR(sor->rst)) {
+ 		err = PTR_ERR(sor->rst);
  
- 	return err;
- }
+@@ -3519,6 +3528,8 @@ static int tegra_sor_suspend(struct device *dev)
+ 			dev_err(dev, "failed to assert reset: %d\n", err);
+ 			return err;
+ 		}
++
++		reset_control_release(sor->rst);
+ 	}
+ 
+ 	usleep_range(1000, 2000);
+@@ -3542,9 +3553,17 @@ static int tegra_sor_resume(struct device *dev)
+ 	usleep_range(1000, 2000);
+ 
+ 	if (sor->rst) {
++		err = reset_control_acquire(sor->rst);
++		if (err < 0) {
++			dev_err(dev, "failed to acquire reset: %d\n", err);
++			clk_disable_unprepare(sor->clk);
++			return err;
++		}
++
+ 		err = reset_control_deassert(sor->rst);
+ 		if (err < 0) {
+ 			dev_err(dev, "failed to deassert reset: %d\n", err);
++			reset_control_release(sor->rst);
+ 			clk_disable_unprepare(sor->clk);
+ 			return err;
+ 		}
 -- 
 2.20.1
 
