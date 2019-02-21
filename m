@@ -2,165 +2,121 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 089FEC00319
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:17:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 519CDC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:18:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2CD3214AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:17:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10F4C2148D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:18:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kY1oPhmc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727746AbfBUKRD (ORCPT
+        id S1727526AbfBUKSh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 05:17:03 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52140 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725943AbfBUKRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 05:17:01 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 21746300BBA8;
-        Thu, 21 Feb 2019 10:17:00 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-27.pek2.redhat.com [10.72.8.27])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 980B35C277;
-        Thu, 21 Feb 2019 10:16:24 +0000 (UTC)
-Date:   Thu, 21 Feb 2019 18:16:19 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH V15 14/18] block: enable multipage bvecs
-Message-ID: <20190221101618.GB12448@ming.t460p>
-References: <20190215111324.30129-1-ming.lei@redhat.com>
- <20190215111324.30129-15-ming.lei@redhat.com>
- <CGME20190221084301eucas1p11e8841a62b4b1da3cccca661b6f4c29d@eucas1p1.samsung.com>
- <6c9ae4de-c56f-a2b3-2542-da7d8b95601d@samsung.com>
- <20190221095733.GA12448@ming.t460p>
- <ba39138d-d65b-335d-d709-b95dbde1fd5c@samsung.com>
+        Thu, 21 Feb 2019 05:18:37 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:42036 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726251AbfBUKSg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 05:18:36 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1LAIR21053057;
+        Thu, 21 Feb 2019 04:18:27 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1550744307;
+        bh=XY0f+fTB98q/vGndB90XrPK0wznd+QHF7jVR6uOp1Ls=;
+        h=From:To:CC:Subject:Date;
+        b=kY1oPhmcpsThndV6BEjaQ3rU523QrDPkvrHlgi145y0fGLbRX79tdsxp1cjGYjzSg
+         Skcvdlor2g0OZuEF9pEQQMiBfQr9YI2Ncyt1QH3VLSMt/VmZvKzZh+tmOdnhMlNmhd
+         MHEHha+UXiQ7pg9k1bXJIvFSYBeGTUvUVtIIAIH0=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1LAIR8C052436
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 21 Feb 2019 04:18:27 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 21
+ Feb 2019 04:18:27 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 21 Feb 2019 04:18:27 -0600
+Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1LAIORF022198;
+        Thu, 21 Feb 2019 04:18:24 -0600
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Murali Karicheri <m-karicheri2@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        <linux-pci@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 0/9] PCI: DWC/Keystone: MSI configuration cleanup
+Date:   Thu, 21 Feb 2019 15:45:09 +0530
+Message-ID: <20190221101518.22604-1-kishon@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ba39138d-d65b-335d-d709-b95dbde1fd5c@samsung.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 21 Feb 2019 10:17:01 +0000 (UTC)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 11:08:19AM +0100, Marek Szyprowski wrote:
-> Hi Ming,
-> 
-> On 2019-02-21 10:57, Ming Lei wrote:
-> > On Thu, Feb 21, 2019 at 09:42:59AM +0100, Marek Szyprowski wrote:
-> >> On 2019-02-15 12:13, Ming Lei wrote:
-> >>> This patch pulls the trigger for multi-page bvecs.
-> >>>
-> >>> Reviewed-by: Omar Sandoval <osandov@fb.com>
-> >>> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> >> Since Linux next-20190218 I've observed problems with block layer on one
-> >> of my test devices (Odroid U3 with EXT4 rootfs on SD card). Bisecting
-> >> this issue led me to this change. This is also the first linux-next
-> >> release with this change merged. The issue is fully reproducible and can
-> >> be observed in the following kernel log:
-> >>
-> >> sdhci: Secure Digital Host Controller Interface driver
-> >> sdhci: Copyright(c) Pierre Ossman
-> >> s3c-sdhci 12530000.sdhci: clock source 2: mmc_busclk.2 (100000000 Hz)
-> >> s3c-sdhci 12530000.sdhci: Got CD GPIO
-> >> mmc0: SDHCI controller on samsung-hsmmc [12530000.sdhci] using ADMA
-> >> mmc0: new high speed SDHC card at address aaaa
-> >> mmcblk0: mmc0:aaaa SL16G 14.8 GiB
-> >>
-> >> ...
-> >>
-> >> EXT4-fs (mmcblk0p2): INFO: recovery required on readonly filesystem
-> >> EXT4-fs (mmcblk0p2): write access will be enabled during recovery
-> >> EXT4-fs (mmcblk0p2): recovery complete
-> >> EXT4-fs (mmcblk0p2): mounted filesystem with ordered data mode. Opts: (null)
-> >> VFS: Mounted root (ext4 filesystem) readonly on device 179:2.
-> >> devtmpfs: mounted
-> >> Freeing unused kernel memory: 1024K
-> >> hub 1-3:1.0: USB hub found
-> >> Run /sbin/init as init process
-> >> hub 1-3:1.0: 3 ports detected
-> >> *** stack smashing detected ***: <unknown> terminated
-> >> Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000004
-> >> CPU: 1 PID: 1 Comm: init Not tainted 5.0.0-rc6-next-20190218 #1546
-> >> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> >> [<c01118d0>] (unwind_backtrace) from [<c010d794>] (show_stack+0x10/0x14)
-> >> [<c010d794>] (show_stack) from [<c09ff8a4>] (dump_stack+0x90/0xc8)
-> >> [<c09ff8a4>] (dump_stack) from [<c0125944>] (panic+0xfc/0x304)
-> >> [<c0125944>] (panic) from [<c012bc98>] (do_exit+0xabc/0xc6c)
-> >> [<c012bc98>] (do_exit) from [<c012c100>] (do_group_exit+0x3c/0xbc)
-> >> [<c012c100>] (do_group_exit) from [<c0138908>] (get_signal+0x130/0xbf4)
-> >> [<c0138908>] (get_signal) from [<c010c7a0>] (do_work_pending+0x130/0x618)
-> >> [<c010c7a0>] (do_work_pending) from [<c0101034>]
-> >> (slow_work_pending+0xc/0x20)
-> >> Exception stack(0xe88c3fb0 to 0xe88c3ff8)
-> >> 3fa0:                                     00000000 bea7787c 00000005
-> >> b6e8d0b8
-> >> 3fc0: bea77a18 b6f92010 b6e8d0b8 00000001 b6e8d0c8 00000001 b6e8c000
-> >> bea77b60
-> >> 3fe0: 00000020 bea77998 ffffffff b6d52368 60000050 ffffffff
-> >> CPU3: stopping
-> >>
-> >> I would like to help debugging and fixing this issue, but I don't really
-> >> have idea where to start. Here are some more detailed information about
-> >> my test system:
-> >>
-> >> 1. Board: ARM 32bit Samsung Exynos4412-based Odroid U3 (device tree
-> >> source: arch/arm/boot/dts/exynos4412-odroidu3.dts)
-> >>
-> >> 2. Block device: MMC/SDHCI/SDHCI-S3C with SD card
-> >> (drivers/mmc/host/sdhci-s3c.c driver, sdhci_2 device node in the device
-> >> tree)
-> >>
-> >> 3. Rootfs: Ext4
-> >>
-> >> 4. Kernel config: arch/arm/configs/exynos_defconfig
-> >>
-> >> I can gather more logs if needed, just let me which kernel option to
-> >> enable. Reverting this commit on top of next-20190218 as well as current
-> >> linux-next (tested with next-20190221) fixes this issue and makes the
-> >> system bootable again.
-> > Could you test the patch in following link and see if it can make a difference?
-> >
-> > https://marc.info/?l=linux-aio&m=155070355614541&w=2
-> 
-> I've tested that patch, but it doesn't make any difference on the test
-> system. In the log I see no warning added by it.
+This series tries to address the comments discussed in [1] w.r.t
+removing Keystone specific callbacks defined in dw_pcie_host_ops.
 
-I guess it might be related with memory corruption, could you enable the
-following debug options and post the dmesg log?
+This series also tries to cleanup the Keystone interrupt handling
+part.
 
-CONFIG_DEBUG_STACKOVERFLOW=y
-CONFIG_KASAN=y
+Changes from v3:
+*) Uses hierarchy IRQ domain for legacy interrupts since there is 1:1
+   mapping between legacy interrupt and GIC IRQ.
+   (MSI still depends on the order of IRQs populated in dt).
 
-Thanks,
-Ming
+Changes from v2:
+*) Removed patch that modifies ks_pcie_legacy_irq_handler() to check the
+   IRQ_STATUS of INTA/B/C/D. Lorenzo's comment to create a matrix
+   LinuxIRQ x INTx will be added in AM654x PCIe support series
+*) ks_pcie_legacy_irq_handler() is made to use hwirq to get IRQ offset
+   instead of virq.
+*) default msi_irq_chip is assigned in dw_pcie_host_init() once keystone
+   assigns its msi_irq_chip
+*) Fixed other minor comments from Lorenzo and Bjorn
+
+Changes from v1:
+*) Removed "PCI: keystone: Use "dummy_irq_chip" instead of new irqchip
+for legacy interrupt handling" from the patch series. It should be
+handled differently.
+
+*) Added Gustavo's ACKed by and fixed a commit message.
+
+[1] -> https://patchwork.kernel.org/patch/10681587/
+
+Kishon Vijay Abraham I (9):
+  PCI: keystone: Cleanup interrupt related macros
+  PCI: keystone: Add separate functions for configuring MSI and legacy
+    interrupt
+  PCI: keystone: Convert to using hierarchy domain for legacy interrupts
+  PCI: keystone: Use hwirq to get the MSI IRQ number offset
+  PCI: keystone: Cleanup ks_pcie_msi_irq_handler
+  PCI: dwc: Add support to use non default msi_irq_chip
+  PCI: keystone: Use Keystone specific msi_irq_chip
+  PCI: dwc: Remove Keystone specific dw_pcie_host_ops
+  PCI: dwc: Do not write to MSI control registers if the platform
+    doesn't use it
+
+ drivers/pci/controller/dwc/pci-keystone.c     | 520 ++++++++++--------
+ .../pci/controller/dwc/pcie-designware-host.c |  78 +--
+ drivers/pci/controller/dwc/pcie-designware.h  |   6 +-
+ 3 files changed, 326 insertions(+), 278 deletions(-)
+
+-- 
+2.17.1
+
