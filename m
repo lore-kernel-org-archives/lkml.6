@@ -2,79 +2,74 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77601C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:52:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C6B3C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4579920880
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:52:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB74C20880
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:52:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728255AbfBULw1 (ORCPT
+        id S1728278AbfBULwb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 06:52:27 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:45683 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727872AbfBULut (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 06:50:49 -0500
-Received: from localhost ([127.0.0.1] helo=flow.W.breakpoint.cc)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gwmsF-0001RC-0c; Thu, 21 Feb 2019 12:50:43 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 13/22] x86/pkeys: Don't check if PKRU is zero before writting it
-Date:   Thu, 21 Feb 2019 12:50:11 +0100
-Message-Id: <20190221115020.12385-14-bigeasy@linutronix.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190221115020.12385-1-bigeasy@linutronix.de>
-References: <20190221115020.12385-1-bigeasy@linutronix.de>
+        Thu, 21 Feb 2019 06:52:31 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59534 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725820AbfBULw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 06:52:29 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D7EFD368FF;
+        Thu, 21 Feb 2019 11:52:28 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-228.ams2.redhat.com [10.36.116.228])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 763005D704;
+        Thu, 21 Feb 2019 11:52:28 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id A344711A9A; Thu, 21 Feb 2019 12:52:27 +0100 (CET)
+Date:   Thu, 21 Feb 2019 12:52:27 +0100
+From:   "kraxel@redhat.com" <kraxel@redhat.com>
+To:     Alistair Francis <Alistair.Francis@wdc.com>
+Cc:     "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alistair23@gmail.com" <alistair23@gmail.com>,
+        "david.abdurachmanov@gmail.com" <david.abdurachmanov@gmail.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH] drm/bochs: Fix the ID mismatch error
+Message-ID: <20190221115227.ipwjpn3xm4q7jfg2@sirius.home.kraxel.org>
+References: <20190221003231.31625-1-alistair.francis@wdc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190221003231.31625-1-alistair.francis@wdc.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 21 Feb 2019 11:52:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-write_pkru() checks if the current value is the same as the expected
-value. So instead just checking if the current and new value is zero
-(and skip the write in such a case) we can benefit from that.
+On Thu, Feb 21, 2019 at 12:33:03AM +0000, Alistair Francis wrote:
+> When running RISC-V QEMU with the Bochs device attached via PCIe the
+> probe of the Bochs device fails with:
+>     [drm:bochs_hw_init] *ERROR* ID mismatch
+> 
+> This was introduced by this commit:
+>     7780eb9ce8 bochs: convert to drm_dev_register
+> 
+> To fix the error we ensure that pci_enable_device() is called before
+> bochs_load().
+> 
+> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+> Reported-by: David Abdurachmanov <david.abdurachmanov@gmail.com>
 
-Remove the zero check of PKRU, write_pkru() provides a similar check.
+Pushed to drm-misc-fixes.
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- arch/x86/mm/pkeys.c | 7 -------
- 1 file changed, 7 deletions(-)
-
-diff --git a/arch/x86/mm/pkeys.c b/arch/x86/mm/pkeys.c
-index 05bb9a44eb1c3..50f65fc1b9a3f 100644
---- a/arch/x86/mm/pkeys.c
-+++ b/arch/x86/mm/pkeys.c
-@@ -142,13 +142,6 @@ u32 init_pkru_value = PKRU_AD_KEY( 1) | PKRU_AD_KEY( 2) | PKRU_AD_KEY( 3) |
- void copy_init_pkru_to_fpregs(void)
- {
- 	u32 init_pkru_value_snapshot = READ_ONCE(init_pkru_value);
--	/*
--	 * Any write to PKRU takes it out of the XSAVE 'init
--	 * state' which increases context switch cost.  Avoid
--	 * writing 0 when PKRU was already 0.
--	 */
--	if (!init_pkru_value_snapshot && !read_pkru())
--		return;
- 	/*
- 	 * Override the PKRU state that came from 'init_fpstate'
- 	 * with the baseline from the process.
--- 
-2.20.1
+thanks,
+  Gerd
 
