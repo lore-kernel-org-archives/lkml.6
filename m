@@ -2,126 +2,109 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD6CC00319
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 21:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B85C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 21:09:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76CA82080F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 21:06:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 910A420836
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 21:09:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="NKPNMRo3"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="UuMj1Xtu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726700AbfBUVGY (ORCPT
+        id S1726688AbfBUVJF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 16:06:24 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33118 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726420AbfBUVGX (ORCPT
+        Thu, 21 Feb 2019 16:09:05 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44617 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726172AbfBUVJF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 16:06:23 -0500
-Received: by mail-lf1-f66.google.com with SMTP id q12so40493lfm.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 13:06:22 -0800 (PST)
+        Thu, 21 Feb 2019 16:09:05 -0500
+Received: by mail-pf1-f196.google.com with SMTP id a3so4530336pff.11
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 13:09:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        d=ziepe.ca; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=VaJWYAuyQeiGU3BWEwsARtgeEZnMSVA9riqh9x2CWpM=;
-        b=NKPNMRo3ErcDG4ky/fPBEzQnksX3jp49gQoP5BNMEml3Xa4+q8OBDs7eAYPRL6qIaa
-         YnxzxJBtMWzo0qktAuwG5l6TasJiZlpxVYcujUQeC9ZyBOy31eoJP2BEWav5d6MVOWFT
-         ih1drWY0aq4VUyqJizrEh6aOe04fRSqfb/3/vv8pOVYQ7XigqKstevSLa4l2aF42wYPT
-         KkNfHtJMkZH4omVe/xjOwvs0Oo/DxPn8TwLXZrI3EbTeppnTN0jFJG0j/9bVHyOeAA6v
-         LYgZf4FpipElkeU0YNCJqUuOwJL3/b6ZeZT+gWOK+CkI4MM2RS0pxYuSWRnBJkwbSBGq
-         etsw==
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=TTYmL1H0iu5pPbydjtrAiGnyCf3ukcpdoN96IF3qaBM=;
+        b=UuMj1XtuApSGC7LeTk6i5UXPkP8xnfYrgS3RBS1fp/iuYxebshp5xAVkqZgV3QRA6d
+         9DaqtlnhDMejwjC0BrFux15Fi4df+u0VgzlgcZVwYF47di2b2A8ZMGllg4RPNe+bw/kW
+         d2/4utk1GuRzVzAEcdeWcl6LjfHR2x745oC/VCN2rTuaoQEoP8RP17vd49u8atUvHreu
+         Ux07XttsTQ8xmsZwzo9ICofRkFEUPrNHyoAp8oIL7Wk4JYO89aJpXkK8k5UZuVd7WtF5
+         8tTQbgTzEx5lMGeO4/EwOfG7bip75ru6w3l56iUJh39V87AanqKxXlvVYW68cWYRytSi
+         7CKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VaJWYAuyQeiGU3BWEwsARtgeEZnMSVA9riqh9x2CWpM=;
-        b=D8g9EfKAK2f5W9D550+5NkxK2U8muVQS2JmKSB5aGgva37sLg6mSNUX2wbyrcIb2Wn
-         VWY3s8gjTpYx3P2Sia4N6eZ641OHr9SiunNi8gL+uwbq7W1DXY5+dES+wrfe2WXQ/ybi
-         FioDjs++cRm9Iqq1/Q2BsqLomtTX+rNCYfPeddG5cNuxWqF5h/1KuasGTOrJLqNdovhR
-         zkdxzTXhRaVYeAoZOLEo2zwJSJS793VQfAnlX7lbMoYHWapPAbrBj43QtneTceIesGxD
-         CJsPWWwpCen4JqC/QBWDoDUXaED0jMPnGs2xkO94m08oLGUkOZlXJ6dUshZV2G6AE3Ll
-         9JnA==
-X-Gm-Message-State: AHQUAuZ/J5d/hx/RlNCQ6jHonytQ7xonFS4xXIUcAy3usKqy8lUuxvP5
-        VH9E9kGjMfCoT85AGWlq2C21zg==
-X-Google-Smtp-Source: AHgI3IZPyEOrLA7QJzleHCFDOD1gvwBgGn5TGNiVcau/7k1voltB6KSCgJi+MGXiUxUSeuln6x/iYw==
-X-Received: by 2002:a19:6001:: with SMTP id u1mr317237lfb.56.1550783181385;
-        Thu, 21 Feb 2019 13:06:21 -0800 (PST)
-Received: from kshutemo-mobl1.localdomain (mm-23-232-121-178.mgts.dynamic.pppoe.byfly.by. [178.121.232.23])
-        by smtp.gmail.com with ESMTPSA id z85sm6143768lff.80.2019.02.21.13.06.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Feb 2019 13:06:20 -0800 (PST)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id E14B7301708; Fri, 22 Feb 2019 00:06:18 +0300 (+03)
-Date:   Fri, 22 Feb 2019 00:06:18 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Steven Price <steven.price@arm.com>
-Cc:     Mark Rutland <Mark.Rutland@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        James Morse <james.morse@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        "Liang, Kan" <kan.liang@linux.intel.com>
-Subject: Re: [PATCH v2 03/13] mm: Add generic p?d_large() macros
-Message-ID: <20190221210618.voyfs5cnafpvgedh@kshutemo-mobl1>
-References: <20190221113502.54153-1-steven.price@arm.com>
- <20190221113502.54153-4-steven.price@arm.com>
- <20190221142812.oa53lfnnfmsuh6ys@kshutemo-mobl1>
- <a3076d01-41b3-d59b-e98c-a0fd9ba5d3f5@arm.com>
- <20190221145706.zqwfdoyiirn3lc7y@kshutemo-mobl1>
- <e0c7fc0c-7924-1106-a7a3-fc12136b7b82@arm.com>
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=TTYmL1H0iu5pPbydjtrAiGnyCf3ukcpdoN96IF3qaBM=;
+        b=g7up+XLGT03nXSFky0tkhhRq9a7XosxpwlCMRNORX1zrqKqrZOTAPVea1KuEyMQWl0
+         bZ+stDCzM7nrp9Och3AX+5vFHIn8+iyeDGT5SGstYYKGqGnY++nM7j93QPHMLBw6av6g
+         0Ycu9JMwbbWRL2ytJwxKR/ZpGdUN0hZIlWRooYpXYrMeQtfgXUNd7RyyTUlpHBocJ2Xh
+         fNt10T/mUXziOtD7TfT7A0DZc5B86hNNZ5Ct2CHxYd7doc+RYs95oYRsBrEYao+0dfK3
+         ZI/35sruvXASr0wq5ivcq9ANlgsd96Ppd1ZY5K7qUPVDnCTNmkg3u30tC5erztZl9eUi
+         NfdA==
+X-Gm-Message-State: AHQUAuaWspiJUoNiZTGQ2z9aT2/WdtzLFyDrk8Ff82pHCfbuS6K5C5Qp
+        sVl1on4peQX8+//uuzUTsee1rw==
+X-Google-Smtp-Source: AHgI3IZakJBIHD8xwgkmhKXOXuh95/AGT9KONYpICEgEvmW5Th2cR5ldw93v84OVcuYg37UQcf6B6Q==
+X-Received: by 2002:a62:4641:: with SMTP id t62mr498372pfa.141.1550783344302;
+        Thu, 21 Feb 2019 13:09:04 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id y21sm27365230pfe.57.2019.02.21.13.09.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 21 Feb 2019 13:09:03 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gwvaY-0006Wr-LX; Thu, 21 Feb 2019 14:09:02 -0700
+Date:   Thu, 21 Feb 2019 14:09:02 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Kaike Wan <kaike.wan@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] IB/hfi1: Add missing break in switch statement
+Message-ID: <20190221210902.GA25062@ziepe.ca>
+References: <20190221010233.GA29228@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e0c7fc0c-7924-1106-a7a3-fc12136b7b82@arm.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190221010233.GA29228@embeddedor>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 05:16:46PM +0000, Steven Price wrote:
-> >> Note that in terms of the new page walking code, these new defines are
-> >> only used when walking a page table without a VMA (which isn't currently
-> >> done), so architectures which don't use p?d_large currently will work
-> >> fine with the generic versions. They only need to provide meaningful
-> >> definitions when switching to use the walk-without-a-VMA functionality.
-> > 
-> > How other architectures would know that they need to provide the helpers
-> > to get walk-without-a-VMA functionality? This looks very fragile to me.
+On Wed, Feb 20, 2019 at 07:02:33PM -0600, Gustavo A. R. Silva wrote:
+> Fix the following warning by adding a missing break:
 > 
-> Yes, you've got a good point there. This would apply to the p?d_large
-> macros as well - any arch which (inadvertently) uses the generic version
-> is likely to be fragile/broken.
+> drivers/infiniband/hw/hfi1/tid_rdma.c: In function ‘hfi1_tid_rdma_wqe_interlock’:
+> drivers/infiniband/hw/hfi1/tid_rdma.c:3251:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    switch (prev->wr.opcode) {
+>    ^~~~~~
+> drivers/infiniband/hw/hfi1/tid_rdma.c:3259:2: note: here
+>   case IB_WR_RDMA_READ:
+>   ^~~~
 > 
-> I think probably the best option here is to scrap the generic versions
-> altogether and simply introduce a ARCH_HAS_PXD_LARGE config option which
-> would enable the new functionality to those arches that opt-in. Do you
-> think this would be less fragile?
+> Warning level 3 was used: -Wimplicit-fallthrough=3
+> 
+> This patch is part of the ongoing efforts to enable
+> -Wimplicit-fallthrough.
+> 
+> Fixes: c6c231175ccd ("IB/hfi1: Add interlock between TID RDMA WRITE and other requests")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Reviewed-by: Kaike Wan <Kaike.wan@intel.com>
+> --
+>  drivers/infiniband/hw/hfi1/tid_rdma.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-These helpers are useful beyond pagewalker.
+Applied to for-next, thanks
 
-Can we actually do some grinding and make *all* archs to provide correct
-helpers? Yes, it's tedious, but not that bad.
-
-I think we could provide generic helpers for folded levels in
-<asm-generic/pgtable-nop?d.h> and rest has to be provided by the arch.
-Architectures that support only 2 level paging would need to provide
-pgd_large(), with 3 -- pmd_large() and so on.
-
--- 
- Kirill A. Shutemov
+Jason
