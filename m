@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 622A7C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 02:36:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FDEC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 02:36:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 360D92086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 02:36:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60DE22086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 02:36:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbfBUCgH (ORCPT
+        id S1727042AbfBUCgM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 21:36:07 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3711 "EHLO huawei.com"
+        Wed, 20 Feb 2019 21:36:12 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3712 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726009AbfBUCgG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 21:36:06 -0500
+        id S1726009AbfBUCgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 21:36:11 -0500
 Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 5D51CD577C748C8C80DF;
-        Thu, 21 Feb 2019 10:36:04 +0800 (CST)
+        by Forcepoint Email with ESMTP id 84430925CBD4688F6663;
+        Thu, 21 Feb 2019 10:36:09 +0800 (CST)
 Received: from 138.huawei.com (10.175.124.28) by smtp.huawei.com (10.3.19.207)
- with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 21 Feb 2019 10:35:56
+ with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 21 Feb 2019 10:35:59
  +0800
 From:   Gao Xiang <gaoxiang25@huawei.com>
 To:     Chao Yu <yuchao0@huawei.com>,
@@ -34,10 +34,12 @@ CC:     LKML <linux-kernel@vger.kernel.org>,
         Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
         Fang Wei <fangwei1@huawei.com>,
         Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 1/2] staging: erofs: no need to take page lock in readdir
-Date:   Thu, 21 Feb 2019 10:34:10 +0800
-Message-ID: <20190221023411.2980-1-gaoxiang25@huawei.com>
+Subject: [PATCH 2/2] staging: erofs: switch to ->iterate_shared()
+Date:   Thu, 21 Feb 2019 10:34:11 +0800
+Message-ID: <20190221023411.2980-2-gaoxiang25@huawei.com>
 X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20190221023411.2980-1-gaoxiang25@huawei.com>
+References: <20190221023411.2980-1-gaoxiang25@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.175.124.28]
@@ -47,35 +49,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VFS will take inode_lock for readdir, therefore no need to
-take page lock in readdir at all just as the majority of
-other generic filesystems.
+After commit 6192269444eb ("introduce a parallel variant of ->iterate()"),
+readdir can be done without taking exclusive inode lock of course.
 
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- drivers/staging/erofs/dir.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/staging/erofs/dir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/staging/erofs/dir.c b/drivers/staging/erofs/dir.c
-index e1955703ab8f..8f8ac9675921 100644
+index 8f8ac9675921..829f7b12e0dc 100644
 --- a/drivers/staging/erofs/dir.c
 +++ b/drivers/staging/erofs/dir.c
-@@ -98,7 +98,6 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
- 		if (IS_ERR(dentry_page))
- 			continue;
+@@ -142,6 +142,6 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
+ const struct file_operations erofs_dir_fops = {
+ 	.llseek		= generic_file_llseek,
+ 	.read		= generic_read_dir,
+-	.iterate	= erofs_readdir,
++	.iterate_shared	= erofs_readdir,
+ };
  
--		lock_page(dentry_page);
- 		de = (struct erofs_dirent *)kmap(dentry_page);
- 
- 		nameoff = le16_to_cpu(de->nameoff);
-@@ -128,7 +127,6 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
- skip_this:
- 		kunmap(dentry_page);
- 
--		unlock_page(dentry_page);
- 		put_page(dentry_page);
- 
- 		ctx->pos = blknr_to_addr(i) + ofs;
 -- 
 2.14.4
 
