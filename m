@@ -2,99 +2,82 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D792CC00319
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 04:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC247C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 04:02:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6049214AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 04:01:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A93452086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 04:02:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="slI1ohXT"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u5PLU9XN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727083AbfBUEB4 (ORCPT
+        id S1727210AbfBUECl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 23:01:56 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43405 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726172AbfBUEBy (ORCPT
+        Wed, 20 Feb 2019 23:02:41 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:53286 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726172AbfBUECk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 23:01:54 -0500
-Received: by mail-pf1-f196.google.com with SMTP id q17so13061090pfh.10
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 20:01:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=auu7sPoqnYOjV0cCzT/qrL11WOBRgRd5ITVHRQ8h3zo=;
-        b=slI1ohXTh/xsmYYMHV64QPy2RBdZPwCB45eg01Tz1FkJAN29lre1/lsTzcrkb92T65
-         +wN+B+xAtPBmjvKmPtn8RZnqjZU1Ue/17qeS9TE9kek7EevHqrfDe76Eb21R5bz5wUbq
-         ie9/0tvopdsyVxM1i6bL4K2VIVg8nz2eEBuh0TlcMGrOeRPwtnTCmp4boIdLcZNkGUm1
-         j3Ssg+jLJv20L1pt61eLU00ewLRDe8uQVArMMd0nKuyX0jgDJdXye1k2XN4wXm5lJwAA
-         ha4aLfpajRtPmDrt5dXHzBazCywIZ5Wln5bWPOnvu54k0mTNxoikfb557RYnFDEz0PTA
-         Qc5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=auu7sPoqnYOjV0cCzT/qrL11WOBRgRd5ITVHRQ8h3zo=;
-        b=OrtMWOfUV3hTTJhehr/fJf+JzTXyG2stBR7VmthkwcoIvdydKCPTGk0VzJXSr9hNzV
-         BnXN9obzxHD8lMzHxW8PZxXOsNTpnG8gwQ9cmvsXicW9WpAaGInclGp7apYFleAKsnrw
-         I7zaYC2uk0HugXbusWVV06tn4a++o+u5BPvkx/4VFmMihzGtFc0xr8cJE+JpMUqLW2M4
-         7qMgLOaIa/WGBYV3x864kkaGYF0Bonwrsd+JChhgkh1WAfOtE1DmrvDkHA9KV74Iw1gu
-         jnBMNxMpr8K09A8ElQbVuxbBcw8aCcq4VLReseRa0cljUrHLrxZVf0TE8CvONiBkj+Jo
-         cIvg==
-X-Gm-Message-State: AHQUAuYtFQWI2yLnfAKVcX9QiyL9yJaP5301DTXRmSyprA6Frf/sXTQJ
-        4G8l6pfOGzmkrpe5bWY4Jls=
-X-Google-Smtp-Source: AHgI3IZ4AFFJXmbpIjIrZunHa4CkehfYlISghECHg2aZiI6bpwojNPXg4a6uU19VtC2ztipHnekhVA==
-X-Received: by 2002:a62:a9b:: with SMTP id 27mr38021830pfk.223.1550721714199;
-        Wed, 20 Feb 2019 20:01:54 -0800 (PST)
-Received: from huyue2.ccdomain.com ([218.189.10.173])
-        by smtp.gmail.com with ESMTPSA id e9sm48836730pfb.52.2019.02.20.20.01.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Feb 2019 20:01:53 -0800 (PST)
-From:   Yue Hu <zbestahu@gmail.com>
-To:     akpm@linux-foundation.org, mhocko@suse.com, rientjes@google.com,
-        joe@perches.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org, huyue2@yulong.com
-Subject: [PATCH] mm/cma_debug: Check for null tmp in cma_debugfs_add_one()
-Date:   Thu, 21 Feb 2019 12:01:30 +0800
-Message-Id: <20190221040130.8940-2-zbestahu@gmail.com>
-X-Mailer: git-send-email 2.17.1.windows.2
-In-Reply-To: <20190221040130.8940-1-zbestahu@gmail.com>
-References: <20190221040130.8940-1-zbestahu@gmail.com>
+        Wed, 20 Feb 2019 23:02:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=vsPzHYPJ3SLvu6G+KNCT25YWSC8o4+43mJGgoS6NFW8=; b=u5PLU9XNyuHLYcOEmbUvmF3OuX
+        LYCT1KRjxQpTo2+AVJi67XqU/DR1+R2Hh6h+in3pPXX18ypQDGb9kbnu9GgUih+3DKKc1ddMEuRUn
+        iw8uJ+cqVOazIV+uh9HLoz/GzEqw7RXunY4ZtGNChKopOtZoX/fh0ppyPCRl99bWyRYzUq7zuRNdK
+        /FZxtZlUajnFi6+g/UFd5UvQMnngDCIlC9BGFXwKcJgGQXXdn8iZ88DkJu+S6K5cRx/mwl2fpoypU
+        YZ7ff0RrXZHRF7iMwWz+Cgux8QS+ZfgTD+xANeEiKkWVKueZjUBnw5k9gSKPHF92gfhUciS81elTL
+        /WfskGhA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gwfZD-0005Pk-H3; Thu, 21 Feb 2019 04:02:36 +0000
+To:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Matthew Wilcox <willy@infradead.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] Documentation: fix admin-guide/README.rst minimum gcc version
+ requirement
+Message-ID: <ecb653af-79e5-6233-a7f6-edbb61715d3b@infradead.org>
+Date:   Wed, 20 Feb 2019 20:02:33 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yue Hu <huyue2@yulong.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-If debugfs_create_dir() failed, the following debugfs_create_file()
-will be meanless since it depends on non-NULL tmp dentry and it will
-only waste CPU resource.
+Fix minimum gcc version as specified in Documentation/process/changes.rst.
 
-Signed-off-by: Yue Hu <huyue2@yulong.com>
+Suggested-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 ---
- mm/cma_debug.c | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/admin-guide/README.rst |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/cma_debug.c b/mm/cma_debug.c
-index 2c2c869..3e9d984 100644
---- a/mm/cma_debug.c
-+++ b/mm/cma_debug.c
-@@ -169,6 +169,8 @@ static void cma_debugfs_add_one(struct cma *cma, struct dentry *root_dentry)
- 	scnprintf(name, sizeof(name), "cma-%s", cma->name);
+--- lnx-50-rc7.orig/Documentation/admin-guide/README.rst
++++ lnx-50-rc7/Documentation/admin-guide/README.rst
+@@ -251,7 +251,7 @@ Configuring the kernel
+ Compiling the kernel
+ --------------------
  
- 	tmp = debugfs_create_dir(name, root_dentry);
-+	if (!tmp)
-+		return;
+- - Make sure you have at least gcc 3.2 available.
++ - Make sure you have at least gcc 4.6 available.
+    For more information, refer to :ref:`Documentation/process/changes.rst <changes>`.
  
- 	debugfs_create_file("alloc", 0200, tmp, cma, &cma_alloc_fops);
- 	debugfs_create_file("free", 0200, tmp, cma, &cma_free_fops);
--- 
-1.9.1
+    Please note that you can still run a.out user programs with this kernel.
+
 
