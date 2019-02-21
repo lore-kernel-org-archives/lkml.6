@@ -2,134 +2,107 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D35C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3323C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:52:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DB232148D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:52:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8936C2148D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:52:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550742762;
+	bh=ysQ9j7txDBJHvSpEs1cDZNc7CMsex9K2+XyKuc0KYC8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=TIn2Evoc4qVefwoRdT32M4VoksH0CsQJ85jPabK9yQZqstc8n1q6HFU419JtUXpve
+	 kgP7HHRo5udipKx2bl2+o+lPO69MMbyez/yLTFwqiueboZaoidJdiDVlp50hAduOPp
+	 x6a7SIBOyJn67ZHmh1t09+whVhxEhwJdqcydZgoM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727777AbfBUJvx (ORCPT
+        id S1727851AbfBUJwl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 04:51:53 -0500
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:42951 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727682AbfBUJvu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 04:51:50 -0500
-X-Originating-IP: 90.88.23.190
-Received: from mc-bl-xps13.lan (aaubervilliers-681-1-81-190.w90-88.abo.wanadoo.fr [90.88.23.190])
-        (Authenticated sender: maxime.chevallier@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id A5707C0017;
-        Thu, 21 Feb 2019 09:51:45 +0000 (UTC)
-From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
-To:     davem@davemloft.net
-Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        mw@semihalf.com
-Subject: [PATCH net-next 5/7] net: phy: marvell10g: Force reading of 2.5/5G
-Date:   Thu, 21 Feb 2019 10:51:26 +0100
-Message-Id: <20190221095128.28188-6-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190221095128.28188-1-maxime.chevallier@bootlin.com>
-References: <20190221095128.28188-1-maxime.chevallier@bootlin.com>
+        Thu, 21 Feb 2019 04:52:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51824 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725823AbfBUJwl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 04:52:41 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A41E720880;
+        Thu, 21 Feb 2019 09:52:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550742760;
+        bh=ysQ9j7txDBJHvSpEs1cDZNc7CMsex9K2+XyKuc0KYC8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fDoQdl6nM5Xnie5ZdveVb3iujlPflv85A8LTVF9wU6AXkmAoV0jLm0MW7JZEL6Jxf
+         k6grTcbo7IsDhi1dC6ly9h03cgz7ayaPop2SD/qB0Ze/0vCpE2ZYp4kYwJS+TGSByb
+         v3Hy8enbR3setwyQpyPHHhZqQf4wtnimtGAlowPI=
+Date:   Thu, 21 Feb 2019 10:52:36 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Nikolaus Voss <nv@vosn.de>
+Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2] usb: typec: tps6598x: handle block writes separately
+ with plain-I2C adapters
+Message-ID: <20190221095236.GA26960@kroah.com>
+References: <20180425142209.30745-1-heikki.krogerus@linux.intel.com>
+ <20190220110017.BFA344CE86@mail.steuer-voss.de>
+ <20190220125731.02E274CFE0@mail.steuer-voss.de>
+ <20190220150227.GA17103@kroah.com>
+ <alpine.DEB.2.20.1902201618090.8597@fox.voss.local>
+ <20190220162214.GA2017@kroah.com>
+ <alpine.DEB.2.20.1902210915480.18662@fox.voss.local>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.20.1902210915480.18662@fox.voss.local>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As per 802.3bz, if bit 14 of (1.11) "PMA Extended Abilities" indicates
-whether or not we should read register (1.21) "2.52/5G PMA Extended
-Abilities", which contains information on the support of 2.5GBASET and
-5GBASET.
+On Thu, Feb 21, 2019 at 09:37:33AM +0100, Nikolaus Voss wrote:
+> Hi Greg,
+> 
+> On Wed, 20 Feb 2019, Greg Kroah-Hartman wrote:
+> > On Wed, Feb 20, 2019 at 04:22:00PM +0100, Nikolaus Voss wrote:
+> > > > > v2: fix tps6598x_exec_cmd also
+> > > > > ---
+> > > > >  drivers/usb/typec/tps6598x.c | 26 ++++++++++++++++++++------
+> > > > >  1 file changed, 20 insertions(+), 6 deletions(-)
+> > > > > 
+> > > > > diff --git a/drivers/usb/typec/tps6598x.c b/drivers/usb/typec/tps6598x.c
+> > > > > index c84c8c189e90..c54b73fb2a2f 100644
+> > > > > --- a/drivers/usb/typec/tps6598x.c
+> > > > > +++ b/drivers/usb/typec/tps6598x.c
+> > > > > @@ -110,6 +110,20 @@ tps6598x_block_read(struct tps6598x *tps, u8 reg, void *val, size_t len)
+> > > > >  	return 0;
+> > > > >  }
+> > > > > 
+> > > > > +static int tps6598x_block_write(struct tps6598x *tps, u8 reg,
+> > > > > +				void *val, size_t len)
+> > > > > +{
+> > > > > +	u8 data[len + 1];
+> > > > 
+> > > > I thought the build system now warned when you did this :(
+> > > 
+> > > I must admit I'm developing on 4.19 stable series, so no warnings...
+> > 
+> > Ick, no, you are 6 months behind where the rest of us are :(
+> > 
+> > Always, at the very least, work off of Linus's tree.  For best results,
+> > work off of linux-next.
+> 
+> we are a medical device manufacturer and our prototypes run stable kernels
+> because our main development goal is the patient therapy.
 
-After testing on several variants of PHYS of this family, it appears
-that bit 14 in (1.11) isn't always set when it should be.
+That's great, and fine, but testing on newer kernels is always a good
+idea, that way you are not over a year behind when you have to move to
+the next LTS release :)
 
-PHYs 88X3310 (on MacchiatoBin) and 88E2010 do support 2.5G and 5GBASET,
-but don't have 1.11.14 set. Their register 1.21 is filled with the
-correct values, indicating 2.5G and 5G support.
+thanks,
 
-PHYs 88E2110 do have their 1.11.14 bit set, as it should.
-
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
- drivers/net/phy/marvell10g.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
-
-diff --git a/drivers/net/phy/marvell10g.c b/drivers/net/phy/marvell10g.c
-index 9323bcf15dbd..c48669d50653 100644
---- a/drivers/net/phy/marvell10g.c
-+++ b/drivers/net/phy/marvell10g.c
-@@ -27,6 +27,9 @@
- #include <linux/marvell_phy.h>
- #include <linux/phy.h>
- 
-+#define MV_PHY_ALASKA_NBT_QUIRK_MASK	0xfffffffe
-+#define MV_PHY_ALASKA_NBT_QUIRK_REV	(MARVELL_PHY_ID_88X3310 | 0xa)
-+
- enum {
- 	MV_PCS_BASE_T		= 0x0000,
- 	MV_PCS_BASE_R		= 0x1000,
-@@ -231,6 +234,23 @@ static int mv3310_resume(struct phy_device *phydev)
- 	return mv3310_hwmon_config(phydev, true);
- }
- 
-+/* Some PHYs in the Alaska family such as the 88X3310 and the 88E2010
-+ * don't set bit 14 in PMA Extended Abilities (1.11), although they do
-+ * support 2.5GBASET and 5GBASET. For these models, we can still read their
-+ * 2.5G/5G extended abilities register (1.21). We detect these models based on
-+ * the PMA device identifier, with a mask matching models known to have this
-+ * issue
-+ */
-+static bool mv3310_has_pma_ngbaset_quirk(struct phy_device *phydev)
-+{
-+	if (!(phydev->c45_ids.devices_in_package & MDIO_DEVS_PMAPMD))
-+		return false;
-+
-+	/* Only some revisions of the 88X3310 family PMA seem to be impacted */
-+	return (phydev->c45_ids.device_ids[MDIO_MMD_PMAPMD] &
-+		MV_PHY_ALASKA_NBT_QUIRK_MASK) == MV_PHY_ALASKA_NBT_QUIRK_REV;
-+}
-+
- static int mv3310_config_init(struct phy_device *phydev)
- {
- 	/* Check that the PHY interface type is compatible */
-@@ -261,6 +281,21 @@ static int mv3310_get_features(struct phy_device *phydev)
- 	if (ret)
- 		return ret;
- 
-+	if (mv3310_has_pma_ngbaset_quirk(phydev)) {
-+		val = phy_read_mmd(phydev, MDIO_MMD_PMAPMD,
-+				   MDIO_PMA_NG_EXTABLE);
-+		if (val < 0)
-+			return val;
-+
-+		linkmode_mod_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT,
-+				 phydev->supported,
-+				 val & MDIO_PMA_NG_EXTABLE_2_5GBT);
-+
-+		linkmode_mod_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT,
-+				 phydev->supported,
-+				 val & MDIO_PMA_NG_EXTABLE_5GBT);
-+	}
-+
- 	return 0;
- }
- 
--- 
-2.19.2
-
+greg k-h
