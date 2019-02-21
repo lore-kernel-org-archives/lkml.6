@@ -2,103 +2,187 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35DF0C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD39BC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:03:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0705A2084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:02:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F6522084D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:03:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RYjyleo4"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="aSdt3F/n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727894AbfBUOCG (ORCPT
+        id S1728038AbfBUODN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:02:06 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33809 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725858AbfBUOCG (ORCPT
+        Thu, 21 Feb 2019 09:03:13 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:48498 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725858AbfBUODN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:02:06 -0500
-Received: by mail-pf1-f195.google.com with SMTP id u9so6622711pfn.1;
-        Thu, 21 Feb 2019 06:02:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=k5Schwkk1ah14OotQG7r095bpWgpXc7DDnuwku9sPow=;
-        b=RYjyleo44vgSOKpZ27rFNL0kfrUAMRqzFCfI+cO+20a7B75sJ9gg09ipN4mDoxm+ca
-         NyDB617LZqlWigaNbU2nP04X3yUd5rqBY0JuJx3fHyDsJvhOZoNC3ArINasEPhnSHoZm
-         MP6nWgOsPDi+KJMsVWz7t2hJ+an7WBDLIvbU4yPyHFSOPLHn0qFvlo0qzogX1scHZOM1
-         1SPxZixECxNZ8jtaJPyUSIBBl5jrA/NYCJqisgmLGfTh3ml0652q1Wn+bqxjViCoQOKP
-         SG8CMfEXzBMJtFWFG5vntLVciHRK0wKzTfp7MREB9hRt7A88Cuh1PLxDJpoLUj0/3fSk
-         qP4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=k5Schwkk1ah14OotQG7r095bpWgpXc7DDnuwku9sPow=;
-        b=n3j367idUH3sOD6EEOIiOzzlzBYgBRzcBStPMlhAz1t5lufbMhDIhWtjFl5K5PDzdV
-         fhVLTMSXQMngUomGu/zxiJg7P7PtksBfkVS++mNNxMgf4KkEqQVGikgIJUDVsIgC6EEI
-         Lkyfb1L9zRtSwVVPMyi8Ipp7cHFVbi5HHm0N5U9TgitLOpSDKgtxhIvYKuDIuBbHYuqE
-         HgzZYtknqechjSZwMSoFwodRZnGsYgRGk5/t3002cIfOkqg6xZ0vQF6nStrdu9JcDjBy
-         a/SjHqHvKX8kUb0g9bSphL7S9V4fb63y0P6exzgjeSWxGfMpAyo1bQqsi185RDOlrzsY
-         LV/Q==
-X-Gm-Message-State: AHQUAuYw/xGbCDFBs/zT+bXcgXkmLGmHbV184Ta6QxHMcMDI6+Q+ApkN
-        RKi9AAaUFt3lwvTmkNAQpp5gQD3y
-X-Google-Smtp-Source: AHgI3IaGMSPKx0COprFB9zJpl/VnN6qE5PdAd4c2nAfwXT+t48pvhDtEdGBohAI5lTVTFJvdDoUxVw==
-X-Received: by 2002:a63:d70a:: with SMTP id d10mr34327070pgg.286.1550757724896;
-        Thu, 21 Feb 2019 06:02:04 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id h15sm28148144pgl.43.2019.02.21.06.02.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Feb 2019 06:02:03 -0800 (PST)
-Subject: Re: [PATCH v2] dt-bindings: hwmon: Add missing documentation for lm75
-To:     Jagan Teki <jagan@amarulasolutions.com>,
-        Jean Delvare <jdelvare@suse.com>,
+        Thu, 21 Feb 2019 09:03:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=CrGMWF+zQA+eCZ/zcHrnOfnNSdCwEtuP0uRYXLfWpNI=; b=aSdt3F/nc+5fLJc/TPJkOBWNV
+        hah8Jq1IRkWy9rXCsToywhVmS9X5VFqFJ+Ah8KwVDfY816d4C6MMT7yyNfyZYvZrtvTW/kJGTNQCR
+        DtMGNGlQrninPv7U6WcDAZTg4Z4SIyjm86RlFJheHSht+O5OB+vqqjA9y7nSc7xHq9zdR+gH5yKEK
+        jxMI8WAFY6moXZ/dspBCaMGMAdnd01hlyYQOcic31t9UBnRAR4ece9XLOuUnHnse2IgOFTd2foMq6
+        wyqNqMgXL0WVRb73Wf3ATVUesU0RIBCufP2Qnnnlp/U36k3CHAtX15aq2/RqhFOul/eHqx8RQUSfc
+        VcHePXa3w==;
+Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:54676)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gwowM-00032A-Mu; Thu, 21 Feb 2019 14:03:07 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1gwowH-0001OI-21; Thu, 21 Feb 2019 14:03:01 +0000
+Date:   Thu, 21 Feb 2019 14:03:00 +0000
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Ludovic BARRE <ludovic.barre@st.com>
+Cc:     devicetree@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-hwmon@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20190212113808.3040-1-jagan@amarulasolutions.com>
- <CAMty3ZBaOZoj+xV+e+4BtYdaWA2biwENmngOa9vbbMB=_vbB1w@mail.gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <59969c88-585c-cb7d-3104-8059b78ed2e3@roeck-us.net>
-Date:   Thu, 21 Feb 2019 06:02:01 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        srinivas.kandagatla@linaro.org,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/2] mmc: mmci: add quirk property to add stm32 transfer
+ mode
+Message-ID: <20190221140300.y3tunrvsh3gyig5f@shell.armlinux.org.uk>
+References: <1550743851-13588-1-git-send-email-ludovic.Barre@st.com>
+ <20190221102739.cc37au6elqu6gvfe@shell.armlinux.org.uk>
+ <20190221103049.tspc5igoe6wmt3jd@shell.armlinux.org.uk>
+ <a736b773-d6e6-eb81-90d6-ebeab7b401cb@st.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMty3ZBaOZoj+xV+e+4BtYdaWA2biwENmngOa9vbbMB=_vbB1w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a736b773-d6e6-eb81-90d6-ebeab7b401cb@st.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/20/19 9:22 AM, Jagan Teki wrote:
-> On Tue, Feb 12, 2019 at 5:08 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->>
->> Add missing dt-binding documentation for lm75 hwmon sensor.
->>
->> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->> ---
->> Changes for v2:
->> -  Add all compatible nodes available in lm75.
->>
->>   .../devicetree/bindings/hwmon/lm75.txt        | 37 +++++++++++++++++++
->>   1 file changed, 37 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/hwmon/lm75.txt
+On Thu, Feb 21, 2019 at 02:38:36PM +0100, Ludovic BARRE wrote:
+> hi Russell & Ulf
 > 
-> Any comments on this? It is blocking some dts changes to get merge
-> into Mainline.
+> On 2/21/19 11:30 AM, Russell King - ARM Linux admin wrote:
+> > On Thu, Feb 21, 2019 at 10:27:39AM +0000, Russell King - ARM Linux admin wrote:
+> > > On Thu, Feb 21, 2019 at 11:10:49AM +0100, Ludovic Barre wrote:
+> > > > From: Ludovic Barre <ludovic.barre@st.com>
+> > > > 
+> > > > This patch series introduces a bitmap of hardware quirks that require
+> > > > some special action. This should reduce the number of boolean
+> > > > into variant structure.
+> > > > And adds quirk bit to define sdmmc specific transfer modes.
+> > > 
+> > > Please find some other way to deal with these differences.  As far as
+> > > I'm concerned, introducing a quirk bitmask such as what was done in
+> > > sdhci is a complete disaster and leads to long-term maintanability
+> > > problems.
+> > > 
+> > > We already have a way to deal with variants in mmci.
+> > 
+> > ... to finish what I was saying ...
+> > 
+> > and I think that:
+> > 
+> >          if (variant->blksz_datactrl16)
+> >                  datactrl = variant->datactrl_dpsm_enable | (data->blksz << 16);
+> >          else if (variant->blksz_datactrl4)
+> >                  datactrl = variant->datactrl_dpsm_enable | (data->blksz << 4);
+> >          else
+> >                  datactrl = variant->datactrl_dpsm_enable | blksz_bits << 4;
+> > 
+> > ought to become a variant function call which returns the appropriate
+> > datactrl value.  This would shrink the amount of variant testing in this
+> > path, and also means that going forward we aren't facing an endlessly
+> > increasing number of tests here.
+> 
+> For blksz_datactrl case:
+> We could create an inline function for datactrl16 and blksz_datactrl4
+> which returns the appropriate datactrl value (specific for ux500v2 and
+> qcom). This function could be register in mmci_host_ops structure.
+
+Yes, this is what I'm proposing (except for the "inline" bit which
+seems meaningless if it's called via the mmci_host_ops structure.)
+I'm also proposing that it shouldn't just be the blksz that's
+returned but anything that the variant needs to take account of,
+including the stm transfer mode.
+
+> in mmci_start_data function we could call a common function which call a
+> hook if defined.
+> 
+> int mmci_dblksz(struct mmci_host *host)
+
+As this is returning a register value, "u32" would be more appropriate
+than "int".
+
+> {
+> 	if (host->ops && host->ops->dblksz)
+> 		return host->ops->dblk(host);
+> 
+> 	/* default data block size definition */
+> 	blksz_bits = ffs(data->blksz) - 1;
+> 	return blksz_bits << 4;
+> }
+> 
+> what do you think about it?
+
+I don't see any reason not to make the call unconditional and have every
+variant supply an appropriate function pointer.  IMHO that keeps stuff
+cleaner.
+
+> After, I'm afraid to multiply callback function in mmci_host_ops.
+> 
+> For stm32 transfer mode:
+> ditto, a callback function or I keep a boolean?
+> 
+> BR
+> Ludo
+> 
+> > 
+> > > 
+> > > > 
+> > > > Ludovic Barre (2):
+> > > >    mmc: mmci: introduce a quirks property into variant struct
+> > > >    mmc: mmci: add quirk property to add stm32 transfer mode
+> > > > 
+> > > >   drivers/mmc/host/mmci.c | 11 +++++++++++
+> > > >   drivers/mmc/host/mmci.h |  9 +++++++++
+> > > >   2 files changed, 20 insertions(+)
+> > > > 
+> > > > -- 
+> > > > 2.7.4
+> > > > 
+> > > > 
+> > > > _______________________________________________
+> > > > linux-arm-kernel mailing list
+> > > > linux-arm-kernel@lists.infradead.org
+> > > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> > > > 
+> > > 
+> > > -- 
+> > > RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> > > FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+> > > According to speedtest.net: 11.9Mbps down 500kbps up
+> > > 
+> > > _______________________________________________
+> > > linux-arm-kernel mailing list
+> > > linux-arm-kernel@lists.infradead.org
+> > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> > > 
+> > 
 > 
 
-Waiting for Rob's Ack.
-
-Guenter
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
