@@ -2,266 +2,213 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27BA1C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0DD3C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:08:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF5712086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:07:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E9DB2086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:08:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbfBUIHq (ORCPT
+        id S1727271AbfBUIIG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 03:07:46 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54846 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726038AbfBUIHp (ORCPT
+        Thu, 21 Feb 2019 03:08:06 -0500
+Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:26454 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726260AbfBUIIF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 03:07:45 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1L7wlOU041146
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 03:07:44 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qsr1sgj26-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 03:07:44 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <freude@linux.ibm.com>;
-        Thu, 21 Feb 2019 08:07:41 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 21 Feb 2019 08:07:38 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1L87ak219726446
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Feb 2019 08:07:36 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8292B5206B;
-        Thu, 21 Feb 2019 08:07:35 +0000 (GMT)
-Received: from [10.0.2.15] (unknown [9.152.224.114])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 149C752067;
-        Thu, 21 Feb 2019 08:07:35 +0000 (GMT)
-Subject: Re: [PATCH v2 1/1] s390: vfio_ap: link the vfio_ap devices to the
- vfio_ap bus subsystem
-To:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Pierre Morel <pmorel@linux.ibm.com>
-Cc:     cohuck@redhat.com, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, frankja@linux.ibm.com,
-        akrowiak@linux.ibm.com, pasic@linux.ibm.com, david@redhat.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
-References: <1550513328-12646-1-git-send-email-pmorel@linux.ibm.com>
- <1550513328-12646-2-git-send-email-pmorel@linux.ibm.com>
- <f07b6209-bca2-22fe-310e-1e384c8974d9@linux.ibm.com>
- <3c3a90ca-f7ea-7800-453d-31e6d273e82f@de.ibm.com>
-From:   Harald Freudenberger <freude@linux.ibm.com>
-Date:   Thu, 21 Feb 2019 09:07:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 21 Feb 2019 03:08:05 -0500
+X-IronPort-AV: E=Sophos;i="5.58,394,1544486400"; 
+   d="scan'208";a="86246065"
+Date:   Thu, 21 Feb 2019 09:07:52 +0100
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     Julien Grall <julien.grall@arm.com>
+CC:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Andrew Cooper <Andrew.Cooper3@citrix.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jan Beulich <JBeulich@suse.com>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        Dave P Martin <dave.martin@arm.com>
+Subject: Re: [Xen-devel] xen/evtchn and forced threaded irq
+Message-ID: <20190221080752.zy2qlzb4vi7tbu3p@Air-de-Roger>
+References: <5e256d9a-572c-e01e-7706-407f99245b00@arm.com>
+ <20190220000209.GA4091@localhost.localdomain>
+ <a872d480-9f1b-6cd7-e507-ac4fcdf705af@arm.com>
+ <21214d47-9c68-e6bf-007a-4047cc2b02f9@oracle.com>
+ <8f7445d7-fa50-f3e9-44f5-cc2aebd020f4@arm.com>
+ <15bc52cb-82d8-4d2c-e5a8-c6ae8de90276@oracle.com>
+ <5df8888a-4a29-fccd-bac2-a9c170244029@arm.com>
+ <1574a7fe-a5ac-4bc2-d3f0-967d8d01e5f1@oracle.com>
+ <1100e6b1-6fa8-06f0-8ecc-b0699a2ce5f4@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <3c3a90ca-f7ea-7800-453d-31e6d273e82f@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 19022108-0008-0000-0000-000002C3152A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022108-0009-0000-0000-0000222F4EBC
-Message-Id: <fa7c698f-81f8-957c-a013-cd3e6ef05967@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-21_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902210061
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1100e6b1-6fa8-06f0-8ecc-b0699a2ce5f4@arm.com>
+User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.02.19 08:37, Christian Borntraeger wrote:
->
-> On 20.02.2019 14:12, Harald Freudenberger wrote:
->> On 18.02.19 19:08, Pierre Morel wrote:
->>> Libudev relies on having a subsystem link for non-root devices. To
->>> avoid libudev (and potentially other userspace tools) choking on the
->>> matrix device let us introduce a vfio_ap bus and with that the vfio_ap
->>> bus subsytem, and make the matrix device reside within it.
->>>
->>> Doing this we need to suppress the forced link from the matrix device to
->>> the vfio_ap driver and we suppress the device_type we do not need
->>> anymore.
->>>
->>> Since the associated matrix driver is not the vfio_ap driver any more,
->>> we have to change the search for the devices on the vfio_ap driver in
->>> the function vfio_ap_verify_queue_reserved.
->>>
->>> Reported-by: Marc Hartmayer <mhartmay@linux.ibm.com>
->>> Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
->>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->>> ---
->>>  drivers/s390/crypto/vfio_ap_drv.c     | 48 +++++++++++++++++++++++++++++------
->>>  drivers/s390/crypto/vfio_ap_ops.c     |  4 +--
->>>  drivers/s390/crypto/vfio_ap_private.h |  1 +
->>>  3 files changed, 43 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
->>> index 31c6c84..8e45559 100644
->>> --- a/drivers/s390/crypto/vfio_ap_drv.c
->>> +++ b/drivers/s390/crypto/vfio_ap_drv.c
->>> @@ -24,10 +24,6 @@ MODULE_LICENSE("GPL v2");
->>>  
->>>  static struct ap_driver vfio_ap_drv;
->>>  
->>> -static struct device_type vfio_ap_dev_type = {
->>> -	.name = VFIO_AP_DEV_TYPE_NAME,
->>> -};
->>> -
->>>  struct ap_matrix_dev *matrix_dev;
->>>  
->>>  /* Only type 10 adapters (CEX4 and later) are supported
->>> @@ -62,6 +58,27 @@ static void vfio_ap_matrix_dev_release(struct device *dev)
->>>  	kfree(matrix_dev);
->>>  }
->>>  
->>> +static int matrix_bus_match(struct device *dev, struct device_driver *drv)
->>> +{
->>> +	return 1;
->>> +}
->>> +
->>> +static struct bus_type matrix_bus = {
->>> +	.name = "vfio_ap",
->>> +	.match = &matrix_bus_match,
->>> +};
->>> +
->>> +static int matrix_probe(struct device *dev)
->>> +{
->>> +	return 0;
->>> +}
->>> +
->>> +static struct device_driver matrix_driver = {
->>> +	.name = "vfio_ap",
->>> +	.bus = &matrix_bus,
->>> +	.probe = matrix_probe,
->>> +};
->>> +
->>>  static int vfio_ap_matrix_dev_create(void)
->>>  {
->>>  	int ret;
->>> @@ -71,6 +88,10 @@ static int vfio_ap_matrix_dev_create(void)
->>>  	if (IS_ERR(root_device))
->>>  		return PTR_ERR(root_device);
->>>  
->>> +	ret = bus_register(&matrix_bus);
->>> +	if (ret)
->>> +		goto bus_register_err;
->>> +
->>>  	matrix_dev = kzalloc(sizeof(*matrix_dev), GFP_KERNEL);
->>>  	if (!matrix_dev) {
->>>  		ret = -ENOMEM;
->>> @@ -87,30 +108,41 @@ static int vfio_ap_matrix_dev_create(void)
->>>  	mutex_init(&matrix_dev->lock);
->>>  	INIT_LIST_HEAD(&matrix_dev->mdev_list);
->>>  
->>> -	matrix_dev->device.type = &vfio_ap_dev_type;
->>>  	dev_set_name(&matrix_dev->device, "%s", VFIO_AP_DEV_NAME);
->>>  	matrix_dev->device.parent = root_device;
->>> +	matrix_dev->device.bus = &matrix_bus;
->>>  	matrix_dev->device.release = vfio_ap_matrix_dev_release;
->>> -	matrix_dev->device.driver = &vfio_ap_drv.driver;
->>> +	matrix_dev->vfio_ap_drv = &vfio_ap_drv;
->>>  
->>>  	ret = device_register(&matrix_dev->device);
->>>  	if (ret)
->>>  		goto matrix_reg_err;
->>>  
->>> +	ret = driver_register(&matrix_driver);
->>> +	if (ret)
->>> +		goto matrix_drv_err;
->>> +
->>>  	return 0;
->>>  
->>> +matrix_drv_err:
->>> +	device_unregister(&matrix_dev->device);
->>>  matrix_reg_err:
->>>  	put_device(&matrix_dev->device);
->>>  matrix_alloc_err:
->>> +	bus_unregister(&matrix_bus);
->>> +bus_register_err:
->>>  	root_device_unregister(root_device);
->>> -
->>>  	return ret;
->>>  }
->>>  
->>>  static void vfio_ap_matrix_dev_destroy(void)
->>>  {
->>> +	struct device *root_device = matrix_dev->device.parent;
->>> +
->>> +	driver_unregister(&matrix_driver);
->>>  	device_unregister(&matrix_dev->device);
->>> -	root_device_unregister(matrix_dev->device.parent);
->>> +	bus_unregister(&matrix_bus);
->>> +	root_device_unregister(root_device);
->>>  }
->>>  
->>>  static int __init vfio_ap_init(void)
->>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
->>> index 272ef42..900b9cf 100644
->>> --- a/drivers/s390/crypto/vfio_ap_ops.c
->>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
->>> @@ -198,8 +198,8 @@ static int vfio_ap_verify_queue_reserved(unsigned long *apid,
->>>  	qres.apqi = apqi;
->>>  	qres.reserved = false;
->>>  
->>> -	ret = driver_for_each_device(matrix_dev->device.driver, NULL, &qres,
->>> -				     vfio_ap_has_queue);
->>> +	ret = driver_for_each_device(&matrix_dev->vfio_ap_drv->driver, NULL,
->>> +				     &qres, vfio_ap_has_queue);
->>>  	if (ret)
->>>  		return ret;
->>>  
->>> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
->>> index 5675492..76b7f98 100644
->>> --- a/drivers/s390/crypto/vfio_ap_private.h
->>> +++ b/drivers/s390/crypto/vfio_ap_private.h
->>> @@ -40,6 +40,7 @@ struct ap_matrix_dev {
->>>  	struct ap_config_info info;
->>>  	struct list_head mdev_list;
->>>  	struct mutex lock;
->>> +	struct ap_driver  *vfio_ap_drv;
->>>  };
->>>  
->>>  extern struct ap_matrix_dev *matrix_dev;
->> You are introducing a new bus just for a user space application which is unable
->> to deal with a device directly attached to the root of devices ? So you are fixing
->> kernel code because of disability of userspace code. Hm, you are switching
->> root cause and effect. However, not my job.
-> the kernel rule is pretty simple. If userspace breaks due to a kernel change fix the
-> kernel.
->
->> Why do you need this dummy bus ? Did you evaluate using a "class" subsystem
->> instead ? This is very common and my assumption is that libudev is able to handle
->> this. I am using a "zcrypt" class for providing additional zcrypt device nodes and
->> this works fine together with udev. I would avoid the introduction and maintenance
->> of bus code at any cost.
-> The class variant sounds promising. Pierre what do you think?
-I checked that. My additional zcrypt devices (you can easily create one
-with just echo "blubber" >/sys/class/zcrypt/create) and then have a look
-to the new device entry in sysfs at /sys/devices/virtual/zcrypt/blubber).
-Maybe you need to alloc device numbers for this - I am not sure if it is
-sufficient to device_register() without a device number. However, have
-a look into zcrpyt_api.c zcdn_init() and zcdn_create().
-With a new class, you can also remove the root device needed as an
-anchor for the old and for the bus code.
->> Btw. having a look onto the naming ... the module is named "vfio_ap", the
->> driver is named "vfio_ap", the bus is named "vfio_ap", the root bus device is
->> named "vfio_ap" ... a bunch of vfio_aps naming different things.
->>
->> regards
->> Harald Freudenberger
->>
+On Wed, Feb 20, 2019 at 10:03:57PM +0000, Julien Grall wrote:
+> Hi Boris,
+> 
+> On 2/20/19 9:46 PM, Boris Ostrovsky wrote:
+> > On 2/20/19 3:46 PM, Julien Grall wrote:
+> > > (+ Andrew and Jan for feedback on the event channel interrupt)
+> > > 
+> > > Hi Boris,
+> > > 
+> > > Thank you for the your feedback.
+> > > 
+> > > On 2/20/19 8:04 PM, Boris Ostrovsky wrote:
+> > > > On 2/20/19 1:05 PM, Julien Grall wrote:
+> > > > > Hi,
+> > > > > 
+> > > > > On 20/02/2019 17:07, Boris Ostrovsky wrote:
+> > > > > > On 2/20/19 9:15 AM, Julien Grall wrote:
+> > > > > > > Hi Boris,
+> > > > > > > 
+> > > > > > > Thank you for your answer.
+> > > > > > > 
+> > > > > > > On 20/02/2019 00:02, Boris Ostrovsky wrote:
+> > > > > > > > On Tue, Feb 19, 2019 at 05:31:10PM +0000, Julien Grall wrote:
+> > > > > > > > > Hi all,
+> > > > > > > > > 
+> > > > > > > > > I have been looking at using Linux RT in Dom0. Once the guest is
+> > > > > > > > > started,
+> > > > > > > > > the console is ending to have a lot of warning (see trace below).
+> > > > > > > > > 
+> > > > > > > > > After some investigation, this is because the irq handler will now
+> > > > > > > > > be threaded.
+> > > > > > > > > I can reproduce the same error with the vanilla Linux when passing
+> > > > > > > > > the option
+> > > > > > > > > 'threadirqs' on the command line (the trace below is from 5.0.0-rc7
+> > > > > > > > > that has
+> > > > > > > > > not RT support).
+> > > > > > > > > 
+> > > > > > > > > FWIW, the interrupt for port 6 is used to for the guest to
+> > > > > > > > > communicate with
+> > > > > > > > > xenstore.
+> > > > > > > > > 
+> > > > > > > > >     From my understanding, this is happening because the interrupt
+> > > > > > > > > handler is now
+> > > > > > > > > run in a thread. So we can have the following happening.
+> > > > > > > > > 
+> > > > > > > > >        Interrupt context            |     Interrupt thread
+> > > > > > > > >                                     |
+> > > > > > > > >        receive interrupt port 6     |
+> > > > > > > > >        clear the evtchn port        |
+> > > > > > > > >        set IRQF_RUNTHREAD            |
+> > > > > > > > >        kick interrupt thread        |
+> > > > > > > > >                                     |    clear IRQF_RUNTHREAD
+> > > > > > > > >                                     |    call evtchn_interrupt
+> > > > > > > > >        receive interrupt port 6     |
+> > > > > > > > >        clear the evtchn port        |
+> > > > > > > > >        set IRQF_RUNTHREAD           |
+> > > > > > > > >        kick interrupt thread        |
+> > > > > > > > >                                     |    disable interrupt port 6
+> > > > > > > > >                                     |    evtchn->enabled = false
+> > > > > > > > >                                     |    [....]
+> > > > > > > > >                                     |
+> > > > > > > > >                                     |    *** Handling the second
+> > > > > > > > > interrupt ***
+> > > > > > > > >                                     |    clear IRQF_RUNTHREAD
+> > > > > > > > >                                     |    call evtchn_interrupt
+> > > > > > > > >                                     |    WARN(...)
+> > > > > > > > > 
+> > > > > > > > > I am not entirely sure how to fix this. I have two solutions in
+> > > > > > > > > mind:
+> > > > > > > > > 
+> > > > > > > > > 1) Prevent the interrupt handler to be threaded. We would also
+> > > > > > > > > need to
+> > > > > > > > > switch from spin_lock to raw_spin_lock as the former may sleep on
+> > > > > > > > > RT-Linux.
+> > > > > > > > > 
+> > > > > > > > > 2) Remove the warning
+> > > > > > > > 
+> > > > > > > > I think access to evtchn->enabled is racy so (with or without the
+> > > > > > > > warning) we can't use it reliably.
+> > > > > > > 
+> > > > > > > Thinking about it, it would not be the only issue. The ring is sized
+> > > > > > > to contain only one instance of the same event. So if you receive
+> > > > > > > twice the event, you may overflow the ring.
+> > > > > > 
+> > > > > > Hm... That's another argument in favor of "unthreading" the handler.
+> > > > > 
+> > > > > I first thought it would be possible to unthread it. However,
+> > > > > wake_up_interruptible is using a spin_lock. On RT spin_lock can sleep,
+> > > > > so this cannot be used in an interrupt context.
+> > > > > 
+> > > > > So I think "unthreading" the handler is not an option here.
+> > > > 
+> > > > That sounds like a different problem. I.e. there are two issues:
+> > > > * threaded interrupts don't work properly (races, ring overflow)
+> > > > * evtchn_interrupt() (threaded or not) has spin_lock(), which is not
+> > > > going to work for RT
+> > > 
+> > > I am afraid that's not correct, you can use spin_lock() in threaded
+> > > interrupt handler.
+> > 
+> > In non-RT handler -- yes, but not in an RT one (in fact, isn't this what
+> > you yourself said above?)
+> 
+> In RT-linux, interrupt handlers are threaded by default. So the handler will
+> not run in the interrupt context. Hence, it will be safe to call spin_lock.
+> 
+> However, if you force the handler to not be threaded (IRQF_NO_THREAD), it
+> will run in interrupt context.
+> 
+> > > > > 
+> > > > > > 
+> > > > > > > 
+> > > > > > > > 
+> > > > > > > > Another alternative could be to queue the irq if !evtchn->enabled
+> > > > > > > > and
+> > > > > > > > handle it in evtchn_write() (which is where irq is supposed to be
+> > > > > > > > re-enabled).
+> > > > > > > What do you mean by queue? Is it queueing in the ring?
+> > > > > > 
+> > > > > > 
+> > > > > > No, I was thinking about having a new structure for deferred
+> > > > > > interrupts.
+> > > > > 
+> > > > > Hmmm, I am not entirely sure what would be the structure here. Could
+> > > > > you expand your thinking?
+> > > > 
+> > > > Some sort of a FIFO that stores {irq, data} tuple. It could obviously be
+> > > > implemented as a ring but not necessarily as Xen shared ring (if that's
+> > > > what you were referring to).
+> > > 
+> > > The underlying question is what happen if you miss an interrupt. Is it
+> > > going to be ok?
+> > 
+> > This I am not sure about. I thought yes since we are signaling the
+> > process only once.
+> 
+> I have CCed Andrew and Jan to see if they can help here.
 
+FWIW, you can also mask the interrupt while waiting for the thread to
+execute the interrupt handler. Ie:
+
+1. Interrupt injected
+2. Execute guest event channel callback
+3. Scan for pending interrupts
+4. Mask interrupt
+5. Clear pending field
+6. Queue threaded handler
+7. Go to 3 until all interrupts are drained
+[...]
+8. Execute interrupt handler in thread
+9. Unmask interrupt
+
+That should prevent you from stacking interrupts?
+
+Roger.
