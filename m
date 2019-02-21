@@ -2,91 +2,97 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF35AC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:06:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C71C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:10:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9C402084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:06:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAFE9207E0
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:10:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Oubu607o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbfBUNGw (ORCPT
+        id S1726755AbfBUNKf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 08:06:52 -0500
-Received: from mother.openwall.net ([195.42.179.200]:47404 "HELO
-        mother.openwall.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1725831AbfBUNGw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 08:06:52 -0500
-Received: (qmail 32250 invoked from network); 21 Feb 2019 13:06:49 -0000
-Received: from localhost (HELO pvt.openwall.com) (127.0.0.1)
-  by localhost with SMTP; 21 Feb 2019 13:06:49 -0000
-Received: by pvt.openwall.com (Postfix, from userid 503)
-        id 5E5A8AA7D0; Thu, 21 Feb 2019 14:06:45 +0100 (CET)
-Date:   Thu, 21 Feb 2019 14:06:45 +0100
-From:   Solar Designer <solar@openwall.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Jann Horn <jannh@google.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        X86 ML <x86@kernel.org>
-Subject: Re: [PATCH v2] x86/asm: Pin sensitive CR4 bits
-Message-ID: <20190221130645.GA8281@openwall.com>
-References: <20190220180934.GA46255@beast> <20190220184859.GA6429@openwall.com> <CAGXu5jLB=so4r169pq1KF3Kyfh2Kw_t6ZXGavpzVO2sg3=D1tw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jLB=so4r169pq1KF3Kyfh2Kw_t6ZXGavpzVO2sg3=D1tw@mail.gmail.com>
-User-Agent: Mutt/1.4.2.3i
+        Thu, 21 Feb 2019 08:10:35 -0500
+Received: from ozlabs.org ([203.11.71.1]:46051 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725385AbfBUNKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 08:10:35 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 444vwR6BfTz9s6w;
+        Fri, 22 Feb 2019 00:10:31 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1550754631;
+        bh=VyBi7tizfr5EXlIi1or/xg3sXLrex4CS72pxDiVm7OA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Oubu607okYHQpc3TCa6h7Uq/ZyPhrwrJWtTJ7N26cfX3sNjp8xUtXXWUOnaycowcC
+         NZlyyINvrmVKYVA7F5+uAc32UW5jOan24u+OPJYyS8DkOcGNQoEDFQaudrG9XuO9uO
+         NG6oOyFKheyfAZHTYnLC6EsWk/SHnX5WqmDges9ctv2ogvy5MLOORzw3y4idf4T+vq
+         Pu5q3Ne1KVR6KTqAh9F7b0cCqoAUXQznL37pcgiqEzjAjfzwt8gDkbP0f4PjG2kYXI
+         YRTjFFqGXWXdPYmM59xVFDMR6d0hFBwrPSDE9U9A3ti5L8QP2nAv6JJHJdDb7AKnC3
+         ROqCnK8HtXArg==
+Date:   Fri, 22 Feb 2019 00:10:29 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jian-Hong Pan <jian-hong@endlessm.com>
+Subject: linux-next: Fixes tag needs some work in the sound tree
+Message-ID: <20190222001029.03c14a16@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_//8bgML0XMvcBgnKBnLQAEFd"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 01:20:58PM -0800, Kees Cook wrote:
-> On Wed, Feb 20, 2019 at 10:49 AM Solar Designer <solar@openwall.com> wrote:
-> >
-> > On Wed, Feb 20, 2019 at 10:09:34AM -0800, Kees Cook wrote:
-> > > +     if (WARN_ONCE((val & cr4_pin) != cr4_pin, "cr4 bypass attempt?!\n"))
-> > > +             goto again;
-> >
-> > I think "goto again" is too mild a response given that it occurs after a
-> > successful write of a non-pinned value to CR4.  I think it'd allow some
-> > exploits to eventually win the race: make their desired use of whatever
-> > functionality SMEP, etc. would have prevented - which may be just a few
-> > instructions they need to run - before the CR4 value is reverted after
-> > "goto again".  I think it's one of those cases where a kernel panic
-> > would be more appropriate.
-> 
-> It will not land upstream with a BUG() or panic(). Linus has
-> explicitly stated that none of this work can do that until it has
-> "baked" in the kernel for a couple years.
+--Sig_//8bgML0XMvcBgnKBnLQAEFd
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-OK.
+Hi Takashi,
 
-> In his defense, anyone sufficiently paranoid can already raise the
-> priority of a WARN() into a panic via sysctl kernel.panic_on_warn (and
-> kernel.panic_on_oops).
+In commit
 
-I think there are too many uses of WARN() for anyone sane to enable
-that in production, whereas it'd have made sense to enable it for the
-few security-related uses.
+  de73e99af971 ("ALSA: hda/realtek: Enable audio jacks of ASUS UX362FA with=
+ ALC294")
 
-> > Also, WARN_ONCE possibly introduces a delay sufficient to realistically
-> > win this race on the first try.  If we choose to warn, we should do it
-> > after having reverted the CR4 value, not before.
-> 
-> Isn't cr4 CPU-local though?
+Fixes tag
 
-Good point.  I don't know.  If CR4 is per hardware thread, then the race
-would require an interrupt and would be much harder to win.
+  Fixes: 4e0511067 ("ALSA: hda/realtek: Enable audio jacks of ASUS UX533FD =
+with ALC294")
 
-> Couldn't we turn off interrupts to stop the race?
+has these problem(s):
 
-This won't help.  An attack would skip the code that disables interrupts
-and land right on the MOV instruction.
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
 
-Alexander
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_//8bgML0XMvcBgnKBnLQAEFd
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxuo0UACgkQAVBC80lX
+0Gz8QggAhXz5FXPnGxbAHVD+5ZUAdpzl5Xz0fOhu/d+Vyjhm1HHEmYzOSWblF7fi
+hIBruh0DddGLt2V1j1hTHvBOeWmqM+nxPDiE0HXw7lsAMO5QEVlgaZrCyrCSQbZb
+7rAKPvlFyEPE7QvAxYjMaPnLwOoE8Glys7HZVCdfQvM9vgAQ6qDQa+4sjvDl0/lh
+38rriCe99J3R3FSsHFrCpel9YHnC5bNDTzgw67XxVHZTBR7/+/IoEUadwCTSG17+
+wsYqeitjgpvQeaMHFVhcI2AdI98CZLy9ldrs3oH0MeIwi1Vxj/5arEpIkCLJIBem
+f1OX+JQx/azvrq6xwpmmNuL29zJoLQ==
+=eFle
+-----END PGP SIGNATURE-----
+
+--Sig_//8bgML0XMvcBgnKBnLQAEFd--
