@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B85C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D471FC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:51:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DFEB20818
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:51:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE6F320818
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:51:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727323AbfBUXvL (ORCPT
+        id S1727398AbfBUXvZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 18:51:11 -0500
-Received: from mga14.intel.com ([192.55.52.115]:3167 "EHLO mga14.intel.com"
+        Thu, 21 Feb 2019 18:51:25 -0500
+Received: from mga14.intel.com ([192.55.52.115]:3176 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727275AbfBUXvJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 18:51:09 -0500
+        id S1727320AbfBUXvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 18:51:11 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 15:51:08 -0800
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 15:51:11 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,397,1544515200"; 
-   d="scan'208";a="322394943"
+   d="scan'208";a="322394963"
 Received: from linksys13920.jf.intel.com (HELO rpedgeco-DESK5.jf.intel.com) ([10.54.75.11])
-  by fmsmga005.fm.intel.com with ESMTP; 21 Feb 2019 15:51:07 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 21 Feb 2019 15:51:10 -0800
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
@@ -42,11 +42,10 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
         Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH v3 16/20] modules: Use vmalloc special flag
-Date:   Thu, 21 Feb 2019 15:44:47 -0800
-Message-Id: <20190221234451.17632-17-rick.p.edgecombe@intel.com>
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH v3 19/20] x86/kprobes: Use vmalloc special flag
+Date:   Thu, 21 Feb 2019 15:44:50 -0800
+Message-Id: <20190221234451.17632-20-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190221234451.17632-1-rick.p.edgecombe@intel.com>
 References: <20190221234451.17632-1-rick.p.edgecombe@intel.com>
@@ -55,198 +54,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new flag for handling freeing of special permissioned memory in vmalloc
-and remove places where memory was set RW before freeing which is no longer
-needed.
+Use new flag VM_FLUSH_RESET_PERMS for handling freeing of special
+permissioned memory in vmalloc and remove places where memory was set NX
+and RW before freeing which is no longer needed.
 
-Since freeing of VM_FLUSH_RESET_PERMS memory is not supported in an
-interrupt by vmalloc, the freeing of init sections is moved to a work
-queue. Instead of call_rcu it now uses synchronize_rcu() in the work
-queue.
-
-Lastly, there is now a WARN_ON in module_memfree since it should not be
-called in an interrupt with special memory as is required for
-VM_FLUSH_RESET_PERMS.
-
-Cc: Jessica Yu <jeyu@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- kernel/module.c | 77 +++++++++++++++++++++++++------------------------
- 1 file changed, 39 insertions(+), 38 deletions(-)
+ arch/x86/kernel/kprobes/core.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/kernel/module.c b/kernel/module.c
-index ae1b77da6a20..3b97dfb47afb 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -98,6 +98,10 @@ DEFINE_MUTEX(module_mutex);
- EXPORT_SYMBOL_GPL(module_mutex);
- static LIST_HEAD(modules);
+diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+index 98c671e89889..8b56935d7b53 100644
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -434,6 +434,7 @@ void *alloc_insn_page(void)
+ 	if (!page)
+ 		return NULL;
  
-+/* Work queue for freeing init sections in success case */
-+static struct work_struct init_free_wq;
-+static struct llist_head init_free_list;
-+
- #ifdef CONFIG_MODULES_TREE_LOOKUP
- 
- /*
-@@ -1949,6 +1953,8 @@ void module_enable_ro(const struct module *mod, bool after_init)
- 	if (!rodata_enabled)
- 		return;
- 
-+	set_vm_flush_reset_perms(mod->core_layout.base);
-+	set_vm_flush_reset_perms(mod->init_layout.base);
- 	frob_text(&mod->core_layout, set_memory_ro);
- 	frob_text(&mod->core_layout, set_memory_x);
- 
-@@ -1972,15 +1978,6 @@ static void module_enable_nx(const struct module *mod)
- 	frob_writable_data(&mod->init_layout, set_memory_nx);
- }
- 
--static void module_disable_nx(const struct module *mod)
--{
--	frob_rodata(&mod->core_layout, set_memory_x);
--	frob_ro_after_init(&mod->core_layout, set_memory_x);
--	frob_writable_data(&mod->core_layout, set_memory_x);
--	frob_rodata(&mod->init_layout, set_memory_x);
--	frob_writable_data(&mod->init_layout, set_memory_x);
--}
--
- /* Iterate through all modules and set each module's text as RW */
- void set_all_modules_text_rw(void)
++	set_vm_flush_reset_perms(page);
+ 	/*
+ 	 * First make the page read-only, and only then make it executable to
+ 	 * prevent it from being W+X in between.
+@@ -452,12 +453,6 @@ void *alloc_insn_page(void)
+ /* Recover page to RW mode before releasing it */
+ void free_insn_page(void *page)
  {
-@@ -2024,23 +2021,8 @@ void set_all_modules_text_ro(void)
- 	}
- 	mutex_unlock(&module_mutex);
- }
--
--static void disable_ro_nx(const struct module_layout *layout)
--{
--	if (rodata_enabled) {
--		frob_text(layout, set_memory_rw);
--		frob_rodata(layout, set_memory_rw);
--		frob_ro_after_init(layout, set_memory_rw);
--	}
--	frob_rodata(layout, set_memory_x);
--	frob_ro_after_init(layout, set_memory_x);
--	frob_writable_data(layout, set_memory_x);
--}
--
- #else
--static void disable_ro_nx(const struct module_layout *layout) { }
- static void module_enable_nx(const struct module *mod) { }
--static void module_disable_nx(const struct module *mod) { }
- #endif
- 
- #ifdef CONFIG_LIVEPATCH
-@@ -2120,6 +2102,11 @@ static void free_module_elf(struct module *mod)
- 
- void __weak module_memfree(void *module_region)
- {
-+	/*
-+	 * This memory may be RO, and freeing RO memory in an interrupt is not
-+	 * supported by vmalloc.
-+	 */
-+	WARN_ON(in_interrupt());
- 	vfree(module_region);
+-	/*
+-	 * First make the page non-executable, and only then make it writable to
+-	 * prevent it from being W+X in between.
+-	 */
+-	set_memory_nx((unsigned long)page, 1);
+-	set_memory_rw((unsigned long)page, 1);
+ 	module_memfree(page);
  }
  
-@@ -2171,7 +2158,6 @@ static void free_module(struct module *mod)
- 	mutex_unlock(&module_mutex);
- 
- 	/* This may be empty, but that's OK */
--	disable_ro_nx(&mod->init_layout);
- 	module_arch_freeing_init(mod);
- 	module_memfree(mod->init_layout.base);
- 	kfree(mod->args);
-@@ -2181,7 +2167,6 @@ static void free_module(struct module *mod)
- 	lockdep_free_key_range(mod->core_layout.base, mod->core_layout.size);
- 
- 	/* Finally, free the core (containing the module structure) */
--	disable_ro_nx(&mod->core_layout);
- 	module_memfree(mod->core_layout.base);
- }
- 
-@@ -3424,17 +3409,34 @@ static void do_mod_ctors(struct module *mod)
- 
- /* For freeing module_init on success, in case kallsyms traversing */
- struct mod_initfree {
--	struct rcu_head rcu;
-+	struct llist_node node;
- 	void *module_init;
- };
- 
--static void do_free_init(struct rcu_head *head)
-+static void do_free_init(struct work_struct *w)
- {
--	struct mod_initfree *m = container_of(head, struct mod_initfree, rcu);
--	module_memfree(m->module_init);
--	kfree(m);
-+	struct llist_node *pos, *n, *list;
-+	struct mod_initfree *initfree;
-+
-+	list = llist_del_all(&init_free_list);
-+
-+	synchronize_rcu();
-+
-+	llist_for_each_safe(pos, n, list) {
-+		initfree = container_of(pos, struct mod_initfree, node);
-+		module_memfree(initfree->module_init);
-+		kfree(initfree);
-+	}
- }
- 
-+static int __init modules_wq_init(void)
-+{
-+	INIT_WORK(&init_free_wq, do_free_init);
-+	init_llist_head(&init_free_list);
-+	return 0;
-+}
-+module_init(modules_wq_init);
-+
- /*
-  * This is where the real work happens.
-  *
-@@ -3511,7 +3513,6 @@ static noinline int do_init_module(struct module *mod)
- #endif
- 	module_enable_ro(mod, true);
- 	mod_tree_remove_init(mod);
--	disable_ro_nx(&mod->init_layout);
- 	module_arch_freeing_init(mod);
- 	mod->init_layout.base = NULL;
- 	mod->init_layout.size = 0;
-@@ -3522,14 +3523,18 @@ static noinline int do_init_module(struct module *mod)
- 	 * We want to free module_init, but be aware that kallsyms may be
- 	 * walking this with preempt disabled.  In all the failure paths, we
- 	 * call synchronize_rcu(), but we don't want to slow down the success
--	 * path, so use actual RCU here.
-+	 * path. module_memfree() cannot be called in an interrupt, so do the
-+	 * work and call synchronize_rcu() in a work queue.
-+	 *
- 	 * Note that module_alloc() on most architectures creates W+X page
- 	 * mappings which won't be cleaned up until do_free_init() runs.  Any
- 	 * code such as mark_rodata_ro() which depends on those mappings to
- 	 * be cleaned up needs to sync with the queued work - ie
- 	 * rcu_barrier()
- 	 */
--	call_rcu(&freeinit->rcu, do_free_init);
-+	if (llist_add(&freeinit->node, &init_free_list))
-+		schedule_work(&init_free_wq);
-+
- 	mutex_unlock(&module_mutex);
- 	wake_up_all(&module_wq);
- 
-@@ -3826,10 +3831,6 @@ static int load_module(struct load_info *info, const char __user *uargs,
- 	module_bug_cleanup(mod);
- 	mutex_unlock(&module_mutex);
- 
--	/* we can't deallocate the module until we clear memory protection */
--	module_disable_ro(mod);
--	module_disable_nx(mod);
--
-  ddebug_cleanup:
- 	ftrace_release_mod(mod);
- 	dynamic_debug_remove(mod, info->debug);
 -- 
 2.17.1
 
