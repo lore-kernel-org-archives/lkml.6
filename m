@@ -2,121 +2,130 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75AD7C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:14:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1845EC4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:16:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C7062084F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:14:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4BC62084D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:16:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550765808;
+	bh=6Z60J6V8iIRle+JocqSM9UBFISn6DpwigjnmsrYpiGE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=AiO/lc2i8r9ZJqUh6EecedhBIhZ4u3y6KOBjrBsUhvP4ChdjNQzX2xaPbsWn3oLAf
+	 8YxuLBftkgVVIuPXf8nrBeEWMrlN0y3sy6BdJ2Hz/u0M5fNvmWLg67XkEt8THsLhSO
+	 naBW7BBzPwkodKk7WaxXmXFwaiWkJI3B95YLtojo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728208AbfBUQOR (ORCPT
+        id S1726668AbfBUQQr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 11:14:17 -0500
-Received: from relay.sw.ru ([185.231.240.75]:34852 "EHLO relay.sw.ru"
+        Thu, 21 Feb 2019 11:16:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725831AbfBUQOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 11:14:17 -0500
-Received: from [172.16.25.12]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <aryabinin@virtuozzo.com>)
-        id 1gwqzE-0001Ba-1w; Thu, 21 Feb 2019 19:14:12 +0300
-Subject: Re: [PATCH] kasan: turn off asan-stack for clang-8 and earlier
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Andrey Konovalov <andreyknvl@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
+        id S1725943AbfBUQQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 11:16:47 -0500
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE84C20836;
+        Thu, 21 Feb 2019 16:16:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550765806;
+        bh=6Z60J6V8iIRle+JocqSM9UBFISn6DpwigjnmsrYpiGE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=K6VU9BuY3UUT3bFcrnzUBckAtWv27p1NxOnh8FEGRrcBARkwhxIcFWxQipbw6Bnnj
+         OKFCqAuIhaICGup7zITqfY5IHzDo7px2tzGayMur+AbHtoiugZlc5Adh/E5LXxVgqP
+         +/vHRcqGGruQOc7h0F4IwkKpWOBpE68YOTi8fqGg=
+Date:   Fri, 22 Feb 2019 01:16:43 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Mark Brown <broonie@kernel.org>, Qian Cai <cai@lca.pw>,
-        Alexander Potapenko <glider@google.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Christoph Lameter <cl@linux.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>
-References: <20190219214940.391081-1-arnd@arndb.de>
- <CAAeHK+xSpsu0tNmeq0wKXfT=0HuORnvU+XzLswDzhbtfZVa4Hw@mail.gmail.com>
- <CAK8P3a1NfHohd1xT7iHK85L2PGnD95RJvwFi-2cWrFpipQzqwg@mail.gmail.com>
- <b109ad0d-6995-8ca2-5426-7e2627d2032c@virtuozzo.com>
- <CAK8P3a0tg1WRLK=fs9S+X4TPB7sR55ZsjMbBVX07AtAfguXCsw@mail.gmail.com>
- <d50cf232-f38e-4060-2742-27ba07e2ae9c@virtuozzo.com>
- <CAK8P3a0UXcQKgoGYT0gVQynZLpL-ozK6EtA0Q4CaiGYDmxf8ZA@mail.gmail.com>
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-Message-ID: <8e29f564-88e1-90b0-948c-d2fb52db29b9@virtuozzo.com>
-Date:   Thu, 21 Feb 2019 19:14:30 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
-MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0UXcQKgoGYT0gVQynZLpL-ozK6EtA0Q4CaiGYDmxf8ZA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        stable@vger.kernel.org, Changbin Du <changbin.du@gmail.com>
+Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
+ kernel memory that can fault
+Message-Id: <20190222011643.3e19ade84a3db3e83518648f@kernel.org>
+In-Reply-To: <20190222005812.04c5940c693b14cfdbe6ede7@kernel.org>
+References: <20190215174712.372898450@goodmis.org>
+        <20190215174945.557218316@goodmis.org>
+        <20190221165252.4a9033b3348f30f9d973dbc4@kernel.org>
+        <20190221093625.56afccd2@gandalf.local.home>
+        <20190222005812.04c5940c693b14cfdbe6ede7@kernel.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Steve,
 
+On Fri, 22 Feb 2019 00:58:12 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-On 2/21/19 6:19 PM, Arnd Bergmann wrote:
-> On Thu, Feb 21, 2019 at 11:06 AM Andrey Ryabinin
-> <aryabinin@virtuozzo.com> wrote:
->> On 2/20/19 8:35 PM, Arnd Bergmann wrote:
->>> On Wed, Feb 20, 2019 at 6:00 PM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
->>>> On 2/20/19 5:51 PM, Arnd Bergmann wrote:
+> On Thu, 21 Feb 2019 09:36:25 -0500
+> Steven Rostedt <rostedt@goodmis.org> wrote:
 > 
->>> Maybe bringing it back would be a compromise? That way it's hidden from
->>> all the build testing bots (because of the !CONFIG_COMPILE_TEST dependency),
->>> but anyone who really wants it can still have the option, and set
->>> CONFIG_FRAME_WARN
->>> to whichever value they like.
->>>
->>
->>
->> I think there is much simpler solution:
->>
->> ---
->>  lib/Kconfig.kasan | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
->> index 219cddc913ac..6cd035f06cee 100644
->> --- a/lib/Kconfig.kasan
->> +++ b/lib/Kconfig.kasan
->> @@ -105,6 +105,8 @@ endchoice
->>
->>  config KASAN_STACK
->>         int
->> +       range 0 1
->> +       prompt "Enable stack instrumentation (unsafe)" if CC_IS_CLANG && (CLANG_VERSION < 90000)
->>         default 0 if CC_IS_CLANG && (CLANG_VERSION < 90000)
->>         default 1
->>         help
->> --
->>
->>
->> AFAIK, randconfig is not able to randomize int config options, so it will be disabled for build robots,
->> but users still will be able to enable it.
+> > On Thu, 21 Feb 2019 16:52:52 +0900
+> > Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> > 
+> > > Basically OK to me.
+> > > Could you use probe_kernel_read() in this context, since probe_mem_read() is a
+> > > wrapper function for template code.
+> > > 
+> > > With that change,
+> > > 
+> > > Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > 
+> > This already hit Linus's tree. I was able to reproduce the crash, so I
+> > streamlined it. I should have still pushed more for your ack first.
+> > Sorry about that.
 > 
-> Right, this will work, but I find it a bit awkward to require users to
-> enter 0 or 1.
+> Oh, never mind. That seems urgent issue for kprobe event.
+> Thank you very much for fixing it!
 > 
-> My assumption is that build bots turn on CONFIG_COMPILE_TEST, so
-> having a bool option that depends on COMPILE_TEST would be more
-> conventional. We can debate whether it should also depend on
-> CONFIG_EXPERT or not. Something like
+> > For some reason, I thought the change was in the generic probe code,
+> > and accepted the probe_mem_read(). Anyway, did you want to send a patch
+> > to change it to probe_kernel_read(), for the merge window?
 > 
-> config KASAN_STACK
->          bool "Enable stack instrumentation (unsafe)" if CC_IS_CLANG
-> && !COMPILE_TEST
->          default CC_IS_GCC || (CLANG_VERSION >= 90000)
-> 
-> And then a simpler Makefile logic (could also be done in Kconfig) to turn
-> that bool symbol into an integer argument for asan-stack=
-> 
+> No problem.
 
-Sounds good.
+Oops, I mean No, not yet. but it is a simple and cosmetic patch like below.
+Feel free to merge it to ftrace/core.
+
+---------
+tracing/kprobes: Use probe_kernel_read instead of probe_mem_read
+
+From: Masami Hiramatsu <mhiramat@kernel.org>
+
+Use probe_kernel_read() instead of probe_mem_read() because
+probe_mem_read() is a kind of wrapper for switching memory
+read function between uprobes and kprobes.
+
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ kernel/trace/trace_kprobe.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index 9eaf07f99212..99592c27465e 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -865,7 +865,7 @@ fetch_store_strlen(unsigned long addr)
+ 	u8 c;
+ 
+ 	do {
+-		ret = probe_mem_read(&c, (u8 *)addr + len, 1);
++		ret = probe_kernel_read(&c, (u8 *)addr + len, 1);
+ 		len++;
+ 	} while (c && ret == 0 && len < MAX_STRING_SIZE);
+ 
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
