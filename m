@@ -2,158 +2,348 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DAC3C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF2A9C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:14:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 116B920842
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:14:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CC692083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:14:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="G7HCesDu"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vxrhw+Zh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbfBUWOF (ORCPT
+        id S1726989AbfBUWOJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 17:14:05 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:33780 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726035AbfBUWOF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 17:14:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=79lypCpiuvWoYSkIUbVq6uM+KJF9XuQvk22fm2qvVSk=; b=G7HCesDuyIPuZrMaukKZu/BUXf
-        LNsPl6B6RF7fxptsBjjTt0QOCi3mIuyzVa83CQrcEheAM7HZyrLZpp1reZGphbvH9DGKp3EncJlBs
-        gfFreRcFqAPEcXJp6HhnvjH4bbMsoR7rtFdUMFqH91a9IVTBxapkmmKbs1LC/V9wI4dM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gwwbL-0006xJ-1L; Thu, 21 Feb 2019 23:13:55 +0100
-Date:   Thu, 21 Feb 2019 23:13:54 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Yue Haibing <yuehaibing@huawei.com>
-Cc:     f.fainelli@gmail.com, hkallweit1@gmail.com, davem@davemloft.net,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH] mdio_bus: Fix use-after-free on device_register fails
-Message-ID: <20190221221354.GE5894@lunn.ch>
-References: <20190221144201.11488-1-yuehaibing@huawei.com>
+        Thu, 21 Feb 2019 17:14:09 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:48418 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbfBUWOI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 17:14:08 -0500
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 33081255;
+        Thu, 21 Feb 2019 23:14:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1550787244;
+        bh=PUlX7KVzDkkm3YAHbyDB0OiEtsMPiA6tO/4qL0MAltU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vxrhw+ZhoPfflT9E8gIcnxX78jJQ2puCwrQRgb3cL+SePyju6FzCMAxjdUS0mZAnR
+         gYViu1qbbOR5cDyIQ5jpcvox2g0FH8SvCJ686lTA4lCA4StjiIzVg6kmYFFFyq9D2B
+         5WF/B8326YtbYIp3hbsFB8VojWBrEArXVj8jfb5s=
+Date:   Fri, 22 Feb 2019 00:13:59 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Vaishali Thakkar <vaishali.thakkar@linaro.org>,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        gregkh@linuxfoundation.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rafael@kernel.org, vkoul@kernel.org
+Subject: Re: [PATCH v2 3/5] soc: qcom: socinfo: Expose custom attributes
+Message-ID: <20190221221359.GD3485@pendragon.ideasonboard.com>
+References: <20190220045829.6852-1-vaishali.thakkar@linaro.org>
+ <20190221121841.GA32108@pendragon.ideasonboard.com>
+ <20190221155742.GD2122@tuxbook-pro>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190221144201.11488-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190221155742.GD2122@tuxbook-pro>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 10:42:01PM +0800, Yue Haibing wrote:
-> From: YueHaibing <yuehaibing@huawei.com>
-> 
-> KASAN has found use-after-free in fixed_mdio_bus_init,
-> commit 0c692d07842a ("drivers/net/phy/mdio_bus.c: call
-> put_device on device_register() failure") call put_device()
-> while device_register() fails,give up the last reference
-> to the device and allow mdiobus_release to be executed
-> ,kfreeing the bus. However in most drives, mdiobus_free
-> be called to free the bus while mdiobus_register fails.
-> use-after-free occurs when access bus again, this patch
-> revert it to let mdiobus_free free the bus.
-> 
-> KASAN report details as below:
-> 
-> BUG: KASAN: use-after-free in mdiobus_free+0x85/0x90 drivers/net/phy/mdio_bus.c:482
-> Read of size 4 at addr ffff8881dc824d78 by task syz-executor.0/3524
-> 
-> CPU: 1 PID: 3524 Comm: syz-executor.0 Not tainted 5.0.0-rc7+ #45
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0xfa/0x1ce lib/dump_stack.c:113
->  print_address_description+0x65/0x270 mm/kasan/report.c:187
->  kasan_report+0x149/0x18d mm/kasan/report.c:317
->  mdiobus_free+0x85/0x90 drivers/net/phy/mdio_bus.c:482
->  fixed_mdio_bus_init+0x283/0x1000 [fixed_phy]
->  ? 0xffffffffc0e40000
->  ? 0xffffffffc0e40000
->  ? 0xffffffffc0e40000
->  do_one_initcall+0xfa/0x5ca init/main.c:887
->  do_init_module+0x204/0x5f6 kernel/module.c:3460
->  load_module+0x66b2/0x8570 kernel/module.c:3808
->  __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
->  do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x462e99
-> Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f6215c19c58 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-> RAX: ffffffffffffffda RBX: 000000000073bf00 RCX: 0000000000462e99
-> RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000003
-> RBP: 00007f6215c19c70 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6215c1a6bc
-> R13: 00000000004bcefb R14: 00000000006f7030 R15: 0000000000000004
-> 
-> Allocated by task 3524:
->  set_track mm/kasan/common.c:85 [inline]
->  __kasan_kmalloc.constprop.3+0xa0/0xd0 mm/kasan/common.c:496
->  kmalloc include/linux/slab.h:545 [inline]
->  kzalloc include/linux/slab.h:740 [inline]
->  mdiobus_alloc_size+0x54/0x1b0 drivers/net/phy/mdio_bus.c:143
->  fixed_mdio_bus_init+0x163/0x1000 [fixed_phy]
->  do_one_initcall+0xfa/0x5ca init/main.c:887
->  do_init_module+0x204/0x5f6 kernel/module.c:3460
->  load_module+0x66b2/0x8570 kernel/module.c:3808
->  __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
->  do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> Freed by task 3524:
->  set_track mm/kasan/common.c:85 [inline]
->  __kasan_slab_free+0x130/0x180 mm/kasan/common.c:458
->  slab_free_hook mm/slub.c:1409 [inline]
->  slab_free_freelist_hook mm/slub.c:1436 [inline]
->  slab_free mm/slub.c:2986 [inline]
->  kfree+0xe1/0x270 mm/slub.c:3938
->  device_release+0x78/0x200 drivers/base/core.c:919
->  kobject_cleanup lib/kobject.c:662 [inline]
->  kobject_release lib/kobject.c:691 [inline]
->  kref_put include/linux/kref.h:67 [inline]
->  kobject_put+0x146/0x240 lib/kobject.c:708
->  put_device+0x1c/0x30 drivers/base/core.c:2060
->  __mdiobus_register+0x483/0x560 drivers/net/phy/mdio_bus.c:382
->  fixed_mdio_bus_init+0x26b/0x1000 [fixed_phy]
->  do_one_initcall+0xfa/0x5ca init/main.c:887
->  do_init_module+0x204/0x5f6 kernel/module.c:3460
->  load_module+0x66b2/0x8570 kernel/module.c:3808
->  __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
->  do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> The buggy address belongs to the object at ffff8881dc824c80
->  which belongs to the cache kmalloc-2k of size 2048
-> The buggy address is located 248 bytes inside of
->  2048-byte region [ffff8881dc824c80, ffff8881dc825480)
-> The buggy address belongs to the page:
-> page:ffffea0007720800 count:1 mapcount:0 mapping:ffff8881f6c02800 index:0x0 compound_mapcount: 0
-> flags: 0x2fffc0000010200(slab|head)
-> raw: 02fffc0000010200 0000000000000000 0000000500000001 ffff8881f6c02800
-> raw: 0000000000000000 00000000800f000f 00000001ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
-> 
-> Memory state around the buggy address:
->  ffff8881dc824c00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->  ffff8881dc824c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> >ffff8881dc824d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                                                                 ^
->  ffff8881dc824d80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff8881dc824e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> 
-> Fixes: 0c692d07842a ("drivers/net/phy/mdio_bus.c: call put_device on device_register() failure")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Hi Bjorn,
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+On Thu, Feb 21, 2019 at 07:57:42AM -0800, Bjorn Andersson wrote:
+> On Thu 21 Feb 04:18 PST 2019, Laurent Pinchart wrote:
+> 
+> > Hi Vaishali,
+> > 
+> > Thank you for the patch.
+> > 
+> > On Wed, Feb 20, 2019 at 10:28:29AM +0530, Vaishali Thakkar wrote:
+> > > The Qualcomm socinfo provides a number of additional attributes,
+> > > add these to the socinfo driver and expose them via debugfs
+> > > functionality.
+> > 
+> > What is the use case for these attributes ? I fear they will be used in
+> > production systems, and that would require debugfs in production, which
+> > isn't a good idea. If you need to expose those attributes for anything
+> > else than debugging then we need a proper API, likely sysfs-based.
+> 
+> The use case of these attributes, beyond development/debugging, are
+> unfortunately somewhat unknown and is the reason why they where moved to
+> debugfs from the earlier attempts to upstream this.
+> 
+> I think the production requirements at hand prohibits debugfs to be
+> present, so attributes that are required beyond development/debugging
+> purposes would have to be migrated out to sysfs - but the idea here is
+> that such migration would have come with the missing motivation to add
+> them there today.
 
-    Andrew
+If the use case is just debug/development, would it be enough to print
+this information in the kernel log at boot time ? I may be a bit
+paranoid, but I always worry about API abuse :-(
+
+> > > Signed-off-by: Vaishali Thakkar <vaishali.thakkar@linaro.org>
+> > > ---
+> > > Changes since v1:
+> > > 	- Remove unnecessary debugfs dir creation check
+> > > 	- Align ifdefs to left
+> > > 	- Fix function signatures for debugfs init/exit
+> > > ---
+> > >  drivers/soc/qcom/socinfo.c | 198 +++++++++++++++++++++++++++++++++++++
+> > >  1 file changed, 198 insertions(+)
+> > > 
+> > > diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
+> > > index 02078049fac7..5f4bef216ae1 100644
+> > > --- a/drivers/soc/qcom/socinfo.c
+> > > +++ b/drivers/soc/qcom/socinfo.c
+> > > @@ -4,6 +4,7 @@
+> > >   * Copyright (c) 2017-2019, Linaro Ltd.
+> > >   */
+> > >  
+> > > +#include <linux/debugfs.h>
+> > >  #include <linux/err.h>
+> > >  #include <linux/module.h>
+> > >  #include <linux/platform_device.h>
+> > > @@ -29,6 +30,28 @@
+> > >   */
+> > >  #define SMEM_HW_SW_BUILD_ID            137
+> > >  
+> > > +#ifdef CONFIG_DEBUG_FS
+> > > +/* pmic model info */
+> > > +static const char *const pmic_model[] = {
+> > > +	[0]  = "Unknown PMIC model",
+> > > +	[9]  = "PM8994",
+> > > +	[11] = "PM8916",
+> > > +	[13] = "PM8058",
+> > > +	[14] = "PM8028",
+> > > +	[15] = "PM8901",
+> > > +	[16] = "PM8027",
+> > > +	[17] = "ISL9519",
+> > > +	[18] = "PM8921",
+> > > +	[19] = "PM8018",
+> > > +	[20] = "PM8015",
+> > > +	[21] = "PM8014",
+> > > +	[22] = "PM8821",
+> > > +	[23] = "PM8038",
+> > > +	[24] = "PM8922",
+> > > +	[25] = "PM8917",
+> > > +};
+> > > +#endif /* CONFIG_DEBUG_FS */
+> > > +
+> > >  /* Socinfo SMEM item structure */
+> > >  struct socinfo {
+> > >  	__le32 fmt;
+> > > @@ -70,6 +93,10 @@ struct socinfo {
+> > >  struct qcom_socinfo {
+> > >  	struct soc_device *soc_dev;
+> > >  	struct soc_device_attribute attr;
+> > > +#ifdef CONFIG_DEBUG_FS
+> > > +	struct dentry *dbg_root;
+> > > +#endif /* CONFIG_DEBUG_FS */
+> > > +	struct socinfo *socinfo;
+> > >  };
+> > >  
+> > >  struct soc_of_id {
+> > > @@ -133,6 +160,171 @@ static const char *socinfo_machine(struct device *dev, unsigned int id)
+> > >  	return NULL;
+> > >  }
+> > >  
+> > > +#ifdef CONFIG_DEBUG_FS
+> > > +
+> > > +#define UINT_SHOW(name, attr)						\
+> > > +static int qcom_show_##name(struct seq_file *seq, void *p)		\
+> > > +{									\
+> > > +	struct socinfo *socinfo = seq->private;				\
+> > > +	seq_printf(seq, "%u\n", le32_to_cpu(socinfo->attr));		\
+> > > +	return 0;							\
+> > > +}									\
+> > > +static int qcom_open_##name(struct inode *inode, struct file *file)	\
+> > > +{									\
+> > > +	return single_open(file, qcom_show_##name, inode->i_private);	\
+> > > +}									\
+> > > +									\
+> > > +static const struct file_operations qcom_ ##name## _ops = {		\
+> > > +	.open = qcom_open_##name,					\
+> > > +	.read = seq_read,						\
+> > > +	.llseek = seq_lseek,						\
+> > > +	.release = single_release,					\
+> > > +}
+> > > +
+> > > +#define DEBUGFS_UINT_ADD(name)						\
+> > > +	debugfs_create_file(__stringify(name), 0400,			\
+> > > +			    qcom_socinfo->dbg_root,			\
+> > > +			    qcom_socinfo->socinfo, &qcom_ ##name## _ops)
+> > > +
+> > > +#define HEX_SHOW(name, attr)						\
+> > > +static int qcom_show_##name(struct seq_file *seq, void *p)		\
+> > > +{									\
+> > > +	struct socinfo *socinfo = seq->private;				\
+> > > +	seq_printf(seq, "0x%x\n", le32_to_cpu(socinfo->attr));		\
+> > > +	return 0;							\
+> > > +}									\
+> > > +static int qcom_open_##name(struct inode *inode, struct file *file)	\
+> > > +{									\
+> > > +	return single_open(file, qcom_show_##name, inode->i_private);	\
+> > > +}									\
+> > > +									\
+> > > +static const struct file_operations qcom_ ##name## _ops = {		\
+> > > +	.open = qcom_open_##name,					\
+> > > +	.read = seq_read,						\
+> > > +	.llseek = seq_lseek,						\
+> > > +	.release = single_release,					\
+> > > +}
+> > > +
+> > > +#define DEBUGFS_HEX_ADD(name)						\
+> > > +	debugfs_create_file(__stringify(name), 0400,			\
+> > > +			    qcom_socinfo->dbg_root,			\
+> > > +			    qcom_socinfo->socinfo, &qcom_ ##name## _ops)
+> > > +
+> > > +
+> > > +#define QCOM_OPEN(name, _func)						\
+> > > +static int qcom_open_##name(struct inode *inode, struct file *file)	\
+> > > +{									\
+> > > +	return single_open(file, _func, inode->i_private);		\
+> > > +}									\
+> > > +									\
+> > > +static const struct file_operations qcom_ ##name## _ops = {		\
+> > > +	.open = qcom_open_##name,					\
+> > > +	.read = seq_read,						\
+> > > +	.llseek = seq_lseek,						\
+> > > +	.release = single_release,					\
+> > > +}
+> > > +
+> > > +#define DEBUGFS_ADD(name)						\
+> > > +	debugfs_create_file(__stringify(name), 0400,			\
+> > > +			    qcom_socinfo->dbg_root,			\
+> > > +			    qcom_socinfo->socinfo, &qcom_ ##name## _ops)
+> > > +
+> > > +
+> > > +static int qcom_show_build_id(struct seq_file *seq, void *p)
+> > > +{
+> > > +	struct socinfo *socinfo = seq->private;
+> > > +
+> > > +	seq_printf(seq, "%s\n", socinfo->build_id);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int qcom_show_accessory_chip(struct seq_file *seq, void *p)
+> > > +{
+> > > +	struct socinfo *socinfo = seq->private;
+> > > +
+> > > +	seq_printf(seq, "%d\n", le32_to_cpu(socinfo->accessory_chip));
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int qcom_show_platform_subtype(struct seq_file *seq, void *p)
+> > > +{
+> > > +	struct socinfo *socinfo = seq->private;
+> > > +	int subtype = le32_to_cpu(socinfo->hw_plat_subtype);
+> > > +
+> > > +	if (subtype < 0)
+> > > +		return -EINVAL;
+> > > +
+> > > +	seq_printf(seq, "%u\n", subtype);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int qcom_show_pmic_model(struct seq_file *seq, void *p)
+> > > +{
+> > > +	struct socinfo *socinfo = seq->private;
+> > > +	int model = SOCINFO_MINOR(le32_to_cpu(socinfo->pmic_model));
+> > > +
+> > > +	if (model < 0)
+> > > +		return -EINVAL;
+> > > +
+> > > +	seq_printf(seq, "%s\n", pmic_model[model]);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int qcom_show_pmic_die_revision(struct seq_file *seq, void *p)
+> > > +{
+> > > +	struct socinfo *socinfo = seq->private;
+> > > +
+> > > +	seq_printf(seq, "%u.%u\n",
+> > > +		   SOCINFO_MAJOR(le32_to_cpu(socinfo->pmic_die_rev)),
+> > > +		   SOCINFO_MINOR(le32_to_cpu(socinfo->pmic_die_rev)));
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +UINT_SHOW(raw_version, raw_ver);
+> > > +UINT_SHOW(hardware_platform, hw_plat);
+> > > +UINT_SHOW(platform_version, plat_ver);
+> > > +UINT_SHOW(foundry_id, foundry_id);
+> > > +HEX_SHOW(chip_family, chip_family);
+> > > +HEX_SHOW(raw_device_family, raw_device_family);
+> > > +HEX_SHOW(raw_device_number, raw_device_num);
+> > > +QCOM_OPEN(build_id, qcom_show_build_id);
+> > > +QCOM_OPEN(accessory_chip, qcom_show_accessory_chip);
+> > > +QCOM_OPEN(pmic_model, qcom_show_pmic_model);
+> > > +QCOM_OPEN(platform_subtype, qcom_show_platform_subtype);
+> > > +QCOM_OPEN(pmic_die_revision, qcom_show_pmic_die_revision);
+> > > +
+> > > +static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo)
+> > > +{
+> > > +	qcom_socinfo->dbg_root = debugfs_create_dir("qcom_socinfo", NULL);
+> > > +
+> > > +	DEBUGFS_UINT_ADD(raw_version);
+> > > +	DEBUGFS_UINT_ADD(hardware_platform);
+> > > +	DEBUGFS_UINT_ADD(platform_version);
+> > > +	DEBUGFS_UINT_ADD(foundry_id);
+> > > +	DEBUGFS_HEX_ADD(chip_family);
+> > > +	DEBUGFS_HEX_ADD(raw_device_family);
+> > > +	DEBUGFS_HEX_ADD(raw_device_number);
+> > > +	DEBUGFS_ADD(build_id);
+> > > +	DEBUGFS_ADD(accessory_chip);
+> > > +	DEBUGFS_ADD(pmic_model);
+> > > +	DEBUGFS_ADD(platform_subtype);
+> > > +	DEBUGFS_ADD(pmic_die_revision);
+> > > +}
+> > > +
+> > > +static void socinfo_debugfs_exit(struct qcom_socinfo *qcom_socinfo)
+> > > +{
+> > > +	debugfs_remove_recursive(qcom_socinfo->dbg_root);
+> > > +}
+> > > +#else
+> > > +static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo) { return 0; }
+> > > +static void socinfo_debugfs_exit(struct qcom_socinfo *qcom_socinfo) {  }
+> > > +#endif /* CONFIG_DEBUG_FS */
+> > > +
+> > >  static int qcom_socinfo_probe(struct platform_device *pdev)
+> > >  {
+> > >  	struct qcom_socinfo *qs;
+> > > @@ -165,6 +357,10 @@ static int qcom_socinfo_probe(struct platform_device *pdev)
+> > >  	if (IS_ERR(qs->soc_dev))
+> > >  		return PTR_ERR(qs->soc_dev);
+> > >  
+> > > +	qs->socinfo = info;
+> > > +
+> > > +	socinfo_debugfs_init(qs);
+> > > +
+> > >  	/* Feed the soc specific unique data into entropy pool */
+> > >  	add_device_randomness(info, item_size);
+> > >  
+> > > @@ -179,6 +375,8 @@ static int qcom_socinfo_remove(struct platform_device *pdev)
+> > >  
+> > >  	soc_device_unregister(qs->soc_dev);
+> > >  
+> > > +	socinfo_debugfs_exit(qs);
+> > > +
+> > >  	return 0;
+> > >  }
+> > > 
+
+-- 
+Regards,
+
+Laurent Pinchart
