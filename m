@@ -2,348 +2,143 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF2A9C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:14:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E36C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:14:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CC692083B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:14:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vxrhw+Zh"
+	by mail.kernel.org (Postfix) with ESMTP id 10E002083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:14:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550787286;
+	bh=GDzXP+vewXnT/BOaTfeEpZjSyVo4KGn6DfNms2wc0+A=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=Ef+1+0uXAXo+qZkEWMNdwav3shcq4d17CmwFiXmmlozwux2eZCn9yrV6sSUP7tqhS
+	 QW/abpC7LZ7xCguZZXfmJfMr1DsTG+RbRjlhCmJdZObs4y0e59X3QkWJLq6iv5D6RX
+	 zRmj7k04dDjAcVQbjC4oPHLqUG3/1GkWfrWBExmY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbfBUWOJ (ORCPT
+        id S1727025AbfBUWOo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 17:14:09 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:48418 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbfBUWOI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 17:14:08 -0500
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 33081255;
-        Thu, 21 Feb 2019 23:14:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1550787244;
-        bh=PUlX7KVzDkkm3YAHbyDB0OiEtsMPiA6tO/4qL0MAltU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vxrhw+ZhoPfflT9E8gIcnxX78jJQ2puCwrQRgb3cL+SePyju6FzCMAxjdUS0mZAnR
-         gYViu1qbbOR5cDyIQ5jpcvox2g0FH8SvCJ686lTA4lCA4StjiIzVg6kmYFFFyq9D2B
-         5WF/B8326YtbYIp3hbsFB8VojWBrEArXVj8jfb5s=
-Date:   Fri, 22 Feb 2019 00:13:59 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Vaishali Thakkar <vaishali.thakkar@linaro.org>,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        gregkh@linuxfoundation.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rafael@kernel.org, vkoul@kernel.org
-Subject: Re: [PATCH v2 3/5] soc: qcom: socinfo: Expose custom attributes
-Message-ID: <20190221221359.GD3485@pendragon.ideasonboard.com>
-References: <20190220045829.6852-1-vaishali.thakkar@linaro.org>
- <20190221121841.GA32108@pendragon.ideasonboard.com>
- <20190221155742.GD2122@tuxbook-pro>
+        Thu, 21 Feb 2019 17:14:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46132 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726075AbfBUWOo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 17:14:44 -0500
+Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5034C20818;
+        Thu, 21 Feb 2019 22:14:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550787283;
+        bh=GDzXP+vewXnT/BOaTfeEpZjSyVo4KGn6DfNms2wc0+A=;
+        h=From:To:Cc:Subject:Date:From;
+        b=m1rkYksyangNn476aVbGORvImpfvrRpcLoM4WbhbjBE38KoqNn2ZHxw8Nu0HbfoC9
+         1X5+KdtE3hz/nAY8oz5wV2wkG7qUjrvn97NzAesqw8furxkdgXHrm6+94v6B9iWhUg
+         WnsZWvTCFKe0f0iZWfwqKYYGXWBZHoJnvLPjpbuw=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>
+Cc:     linux-kernel@vger.kernel.org, Mao Wenan <maowenan@huawei.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Lorenzo Colitti <lorenzo@google.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH net] net: socket: set sock->sk to NULL after calling proto_ops::release()
+Date:   Thu, 21 Feb 2019 14:13:56 -0800
+Message-Id: <20190221221356.173485-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190221155742.GD2122@tuxbook-pro>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+From: Eric Biggers <ebiggers@google.com>
 
-On Thu, Feb 21, 2019 at 07:57:42AM -0800, Bjorn Andersson wrote:
-> On Thu 21 Feb 04:18 PST 2019, Laurent Pinchart wrote:
-> 
-> > Hi Vaishali,
-> > 
-> > Thank you for the patch.
-> > 
-> > On Wed, Feb 20, 2019 at 10:28:29AM +0530, Vaishali Thakkar wrote:
-> > > The Qualcomm socinfo provides a number of additional attributes,
-> > > add these to the socinfo driver and expose them via debugfs
-> > > functionality.
-> > 
-> > What is the use case for these attributes ? I fear they will be used in
-> > production systems, and that would require debugfs in production, which
-> > isn't a good idea. If you need to expose those attributes for anything
-> > else than debugging then we need a proper API, likely sysfs-based.
-> 
-> The use case of these attributes, beyond development/debugging, are
-> unfortunately somewhat unknown and is the reason why they where moved to
-> debugfs from the earlier attempts to upstream this.
-> 
-> I think the production requirements at hand prohibits debugfs to be
-> present, so attributes that are required beyond development/debugging
-> purposes would have to be migrated out to sysfs - but the idea here is
-> that such migration would have come with the missing motivation to add
-> them there today.
+Commit 9060cb719e61 ("net: crypto set sk to NULL when af_alg_release.")
+fixed a use-after-free in sockfs_setattr() when an AF_ALG socket is
+closed concurrently with fchownat().  However, it ignored that many
+other proto_ops::release() methods don't set sock->sk to NULL and
+therefore allow the same use-after-free:
 
-If the use case is just debug/development, would it be enough to print
-this information in the kernel log at boot time ? I may be a bit
-paranoid, but I always worry about API abuse :-(
+    - base_sock_release
+    - bnep_sock_release
+    - cmtp_sock_release
+    - data_sock_release
+    - dn_release
+    - hci_sock_release
+    - hidp_sock_release
+    - iucv_sock_release
+    - l2cap_sock_release
+    - llcp_sock_release
+    - llc_ui_release
+    - rawsock_release
+    - rfcomm_sock_release
+    - sco_sock_release
+    - svc_release
+    - vcc_release
+    - x25_release
 
-> > > Signed-off-by: Vaishali Thakkar <vaishali.thakkar@linaro.org>
-> > > ---
-> > > Changes since v1:
-> > > 	- Remove unnecessary debugfs dir creation check
-> > > 	- Align ifdefs to left
-> > > 	- Fix function signatures for debugfs init/exit
-> > > ---
-> > >  drivers/soc/qcom/socinfo.c | 198 +++++++++++++++++++++++++++++++++++++
-> > >  1 file changed, 198 insertions(+)
-> > > 
-> > > diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
-> > > index 02078049fac7..5f4bef216ae1 100644
-> > > --- a/drivers/soc/qcom/socinfo.c
-> > > +++ b/drivers/soc/qcom/socinfo.c
-> > > @@ -4,6 +4,7 @@
-> > >   * Copyright (c) 2017-2019, Linaro Ltd.
-> > >   */
-> > >  
-> > > +#include <linux/debugfs.h>
-> > >  #include <linux/err.h>
-> > >  #include <linux/module.h>
-> > >  #include <linux/platform_device.h>
-> > > @@ -29,6 +30,28 @@
-> > >   */
-> > >  #define SMEM_HW_SW_BUILD_ID            137
-> > >  
-> > > +#ifdef CONFIG_DEBUG_FS
-> > > +/* pmic model info */
-> > > +static const char *const pmic_model[] = {
-> > > +	[0]  = "Unknown PMIC model",
-> > > +	[9]  = "PM8994",
-> > > +	[11] = "PM8916",
-> > > +	[13] = "PM8058",
-> > > +	[14] = "PM8028",
-> > > +	[15] = "PM8901",
-> > > +	[16] = "PM8027",
-> > > +	[17] = "ISL9519",
-> > > +	[18] = "PM8921",
-> > > +	[19] = "PM8018",
-> > > +	[20] = "PM8015",
-> > > +	[21] = "PM8014",
-> > > +	[22] = "PM8821",
-> > > +	[23] = "PM8038",
-> > > +	[24] = "PM8922",
-> > > +	[25] = "PM8917",
-> > > +};
-> > > +#endif /* CONFIG_DEBUG_FS */
-> > > +
-> > >  /* Socinfo SMEM item structure */
-> > >  struct socinfo {
-> > >  	__le32 fmt;
-> > > @@ -70,6 +93,10 @@ struct socinfo {
-> > >  struct qcom_socinfo {
-> > >  	struct soc_device *soc_dev;
-> > >  	struct soc_device_attribute attr;
-> > > +#ifdef CONFIG_DEBUG_FS
-> > > +	struct dentry *dbg_root;
-> > > +#endif /* CONFIG_DEBUG_FS */
-> > > +	struct socinfo *socinfo;
-> > >  };
-> > >  
-> > >  struct soc_of_id {
-> > > @@ -133,6 +160,171 @@ static const char *socinfo_machine(struct device *dev, unsigned int id)
-> > >  	return NULL;
-> > >  }
-> > >  
-> > > +#ifdef CONFIG_DEBUG_FS
-> > > +
-> > > +#define UINT_SHOW(name, attr)						\
-> > > +static int qcom_show_##name(struct seq_file *seq, void *p)		\
-> > > +{									\
-> > > +	struct socinfo *socinfo = seq->private;				\
-> > > +	seq_printf(seq, "%u\n", le32_to_cpu(socinfo->attr));		\
-> > > +	return 0;							\
-> > > +}									\
-> > > +static int qcom_open_##name(struct inode *inode, struct file *file)	\
-> > > +{									\
-> > > +	return single_open(file, qcom_show_##name, inode->i_private);	\
-> > > +}									\
-> > > +									\
-> > > +static const struct file_operations qcom_ ##name## _ops = {		\
-> > > +	.open = qcom_open_##name,					\
-> > > +	.read = seq_read,						\
-> > > +	.llseek = seq_lseek,						\
-> > > +	.release = single_release,					\
-> > > +}
-> > > +
-> > > +#define DEBUGFS_UINT_ADD(name)						\
-> > > +	debugfs_create_file(__stringify(name), 0400,			\
-> > > +			    qcom_socinfo->dbg_root,			\
-> > > +			    qcom_socinfo->socinfo, &qcom_ ##name## _ops)
-> > > +
-> > > +#define HEX_SHOW(name, attr)						\
-> > > +static int qcom_show_##name(struct seq_file *seq, void *p)		\
-> > > +{									\
-> > > +	struct socinfo *socinfo = seq->private;				\
-> > > +	seq_printf(seq, "0x%x\n", le32_to_cpu(socinfo->attr));		\
-> > > +	return 0;							\
-> > > +}									\
-> > > +static int qcom_open_##name(struct inode *inode, struct file *file)	\
-> > > +{									\
-> > > +	return single_open(file, qcom_show_##name, inode->i_private);	\
-> > > +}									\
-> > > +									\
-> > > +static const struct file_operations qcom_ ##name## _ops = {		\
-> > > +	.open = qcom_open_##name,					\
-> > > +	.read = seq_read,						\
-> > > +	.llseek = seq_lseek,						\
-> > > +	.release = single_release,					\
-> > > +}
-> > > +
-> > > +#define DEBUGFS_HEX_ADD(name)						\
-> > > +	debugfs_create_file(__stringify(name), 0400,			\
-> > > +			    qcom_socinfo->dbg_root,			\
-> > > +			    qcom_socinfo->socinfo, &qcom_ ##name## _ops)
-> > > +
-> > > +
-> > > +#define QCOM_OPEN(name, _func)						\
-> > > +static int qcom_open_##name(struct inode *inode, struct file *file)	\
-> > > +{									\
-> > > +	return single_open(file, _func, inode->i_private);		\
-> > > +}									\
-> > > +									\
-> > > +static const struct file_operations qcom_ ##name## _ops = {		\
-> > > +	.open = qcom_open_##name,					\
-> > > +	.read = seq_read,						\
-> > > +	.llseek = seq_lseek,						\
-> > > +	.release = single_release,					\
-> > > +}
-> > > +
-> > > +#define DEBUGFS_ADD(name)						\
-> > > +	debugfs_create_file(__stringify(name), 0400,			\
-> > > +			    qcom_socinfo->dbg_root,			\
-> > > +			    qcom_socinfo->socinfo, &qcom_ ##name## _ops)
-> > > +
-> > > +
-> > > +static int qcom_show_build_id(struct seq_file *seq, void *p)
-> > > +{
-> > > +	struct socinfo *socinfo = seq->private;
-> > > +
-> > > +	seq_printf(seq, "%s\n", socinfo->build_id);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static int qcom_show_accessory_chip(struct seq_file *seq, void *p)
-> > > +{
-> > > +	struct socinfo *socinfo = seq->private;
-> > > +
-> > > +	seq_printf(seq, "%d\n", le32_to_cpu(socinfo->accessory_chip));
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static int qcom_show_platform_subtype(struct seq_file *seq, void *p)
-> > > +{
-> > > +	struct socinfo *socinfo = seq->private;
-> > > +	int subtype = le32_to_cpu(socinfo->hw_plat_subtype);
-> > > +
-> > > +	if (subtype < 0)
-> > > +		return -EINVAL;
-> > > +
-> > > +	seq_printf(seq, "%u\n", subtype);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static int qcom_show_pmic_model(struct seq_file *seq, void *p)
-> > > +{
-> > > +	struct socinfo *socinfo = seq->private;
-> > > +	int model = SOCINFO_MINOR(le32_to_cpu(socinfo->pmic_model));
-> > > +
-> > > +	if (model < 0)
-> > > +		return -EINVAL;
-> > > +
-> > > +	seq_printf(seq, "%s\n", pmic_model[model]);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static int qcom_show_pmic_die_revision(struct seq_file *seq, void *p)
-> > > +{
-> > > +	struct socinfo *socinfo = seq->private;
-> > > +
-> > > +	seq_printf(seq, "%u.%u\n",
-> > > +		   SOCINFO_MAJOR(le32_to_cpu(socinfo->pmic_die_rev)),
-> > > +		   SOCINFO_MINOR(le32_to_cpu(socinfo->pmic_die_rev)));
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +UINT_SHOW(raw_version, raw_ver);
-> > > +UINT_SHOW(hardware_platform, hw_plat);
-> > > +UINT_SHOW(platform_version, plat_ver);
-> > > +UINT_SHOW(foundry_id, foundry_id);
-> > > +HEX_SHOW(chip_family, chip_family);
-> > > +HEX_SHOW(raw_device_family, raw_device_family);
-> > > +HEX_SHOW(raw_device_number, raw_device_num);
-> > > +QCOM_OPEN(build_id, qcom_show_build_id);
-> > > +QCOM_OPEN(accessory_chip, qcom_show_accessory_chip);
-> > > +QCOM_OPEN(pmic_model, qcom_show_pmic_model);
-> > > +QCOM_OPEN(platform_subtype, qcom_show_platform_subtype);
-> > > +QCOM_OPEN(pmic_die_revision, qcom_show_pmic_die_revision);
-> > > +
-> > > +static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo)
-> > > +{
-> > > +	qcom_socinfo->dbg_root = debugfs_create_dir("qcom_socinfo", NULL);
-> > > +
-> > > +	DEBUGFS_UINT_ADD(raw_version);
-> > > +	DEBUGFS_UINT_ADD(hardware_platform);
-> > > +	DEBUGFS_UINT_ADD(platform_version);
-> > > +	DEBUGFS_UINT_ADD(foundry_id);
-> > > +	DEBUGFS_HEX_ADD(chip_family);
-> > > +	DEBUGFS_HEX_ADD(raw_device_family);
-> > > +	DEBUGFS_HEX_ADD(raw_device_number);
-> > > +	DEBUGFS_ADD(build_id);
-> > > +	DEBUGFS_ADD(accessory_chip);
-> > > +	DEBUGFS_ADD(pmic_model);
-> > > +	DEBUGFS_ADD(platform_subtype);
-> > > +	DEBUGFS_ADD(pmic_die_revision);
-> > > +}
-> > > +
-> > > +static void socinfo_debugfs_exit(struct qcom_socinfo *qcom_socinfo)
-> > > +{
-> > > +	debugfs_remove_recursive(qcom_socinfo->dbg_root);
-> > > +}
-> > > +#else
-> > > +static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo) { return 0; }
-> > > +static void socinfo_debugfs_exit(struct qcom_socinfo *qcom_socinfo) {  }
-> > > +#endif /* CONFIG_DEBUG_FS */
-> > > +
-> > >  static int qcom_socinfo_probe(struct platform_device *pdev)
-> > >  {
-> > >  	struct qcom_socinfo *qs;
-> > > @@ -165,6 +357,10 @@ static int qcom_socinfo_probe(struct platform_device *pdev)
-> > >  	if (IS_ERR(qs->soc_dev))
-> > >  		return PTR_ERR(qs->soc_dev);
-> > >  
-> > > +	qs->socinfo = info;
-> > > +
-> > > +	socinfo_debugfs_init(qs);
-> > > +
-> > >  	/* Feed the soc specific unique data into entropy pool */
-> > >  	add_device_randomness(info, item_size);
-> > >  
-> > > @@ -179,6 +375,8 @@ static int qcom_socinfo_remove(struct platform_device *pdev)
-> > >  
-> > >  	soc_device_unregister(qs->soc_dev);
-> > >  
-> > > +	socinfo_debugfs_exit(qs);
-> > > +
-> > >  	return 0;
-> > >  }
-> > > 
+Rather than fixing all these and relying on every socket type to get
+this right forever, just make __sock_release() set sock->sk to NULL
+itself after calling proto_ops::release().
 
+Reproducer that produces the KASAN splat when any of these socket types
+are configured into the kernel:
+
+    #include <pthread.h>
+    #include <stdlib.h>
+    #include <sys/socket.h>
+    #include <unistd.h>
+
+    pthread_t t;
+    volatile int fd;
+
+    void *close_thread(void *arg)
+    {
+        for (;;) {
+            usleep(rand() % 100);
+            close(fd);
+        }
+    }
+
+    int main()
+    {
+        pthread_create(&t, NULL, close_thread, NULL);
+        for (;;) {
+            fd = socket(rand() % 50, rand() % 11, 0);
+            fchownat(fd, "", 1000, 1000, 0x1000);
+            close(fd);
+        }
+    }
+
+Fixes: 86741ec25462 ("net: core: Add a UID field to struct sock.")
+Cc: <stable@vger.kernel.org> # v4.10+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+
+NOTE: I am not an expert in the networking code, so please carefully
+check that I haven't missed some reason why this simple fix won't do.
+
+ net/socket.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/net/socket.c b/net/socket.c
+index d80d87a395ea..320f51b22b19 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -577,6 +577,7 @@ static void __sock_release(struct socket *sock, struct inode *inode)
+ 		if (inode)
+ 			inode_lock(inode);
+ 		sock->ops->release(sock);
++		sock->sk = NULL;
+ 		if (inode)
+ 			inode_unlock(inode);
+ 		sock->ops = NULL;
 -- 
-Regards,
+2.21.0.rc0.258.g878e2cd30e-goog
 
-Laurent Pinchart
