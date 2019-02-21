@@ -2,104 +2,82 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 101C2C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:21:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E986AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:22:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBF94214AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:21:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B95D7214AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:22:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IWw1qKAg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbfBUJVj (ORCPT
+        id S1727653AbfBUJW3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 04:21:39 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:41506 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbfBUJVj (ORCPT
+        Thu, 21 Feb 2019 04:22:29 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:46000 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726339AbfBUJW2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 04:21:39 -0500
-Received: by mail-qt1-f193.google.com with SMTP id v10so30698469qtp.8;
-        Thu, 21 Feb 2019 01:21:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xKZLnTtklFeSV7/EHHY7qCASYJbhIzZUiakAHjMZejo=;
-        b=YAyKDMDnfGq203vOgPQR1nWaexzPgoqXyvUv+6q107OPsvjyRH8gLnl8gF8y3/kCPp
-         zAIV9ukLsPY/a/1z1LcI3NzewZA3Me1+rbBQ2MqmE5cg078yW/ZdAHMV8ZJM34dHTJhE
-         DR5Voyr4Jke4xyAydW4mnja5pdxWUXsq1Rjwbtk2iqCVqfc86UxUR1MoDve+cPS89xql
-         nn2VIVEqX2dHyhhxAPzniwL++7KqGBq55PCGLxeHpS2BAlWD+vK+a+8+thr3ALWYuTvy
-         LeZqY7DfXIPJpd4e71wgsSnQka9EfDEBWpijkwkPPagJFUJT5R3ILoM/bE1OO6M2nLsX
-         CJjQ==
-X-Gm-Message-State: AHQUAubujbTdFgNRoTRlM0ZqayVqbMkuyCWo6HS05H/K6FVAL49Ed8qW
-        rNAMR1Pb5QRNmJO+m62Kr8bzwY3K2XTGAiG0wRI=
-X-Google-Smtp-Source: AHgI3IYN8elqX9P70nrpYCZYLUO6S82MGhTHuJ6q6DUjTR9zzPzwNcfkza2vUZF27M/BDOSAgrrmJytpwe3ijJuqV/E=
-X-Received: by 2002:a0c:d791:: with SMTP id z17mr28574050qvi.149.1550740897910;
- Thu, 21 Feb 2019 01:21:37 -0800 (PST)
+        Thu, 21 Feb 2019 04:22:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=A/k7bLzhrnBjgT6dL0l8NBEApWOmh2MHGEi3b1csrjk=; b=IWw1qKAgnJTCWENPiNp/vDeDJ
+        SY1jC1nzMLG6/JvDuMG59++Is+z1Wkd97ua5O2zsOJC9dQBZYscyV6LOrHZre/3NrDUNFWGstgmXp
+        txRzuVzh/uGAkwsEvnOCn+2VGtHzfsQq4WS9uKSwMnD8+LEoxmFTD36T/f68IquOpQR/HhtRewwzT
+        Y1RHRwuGX9hm7j5k2BKbCTug1i4cEDlXuvyv58U/yBw9v5c9kZpQqOR+RRv9pl+WZfZ5AU+Xkzexn
+        tKVYlxRdKMr+WgCC8GWrcuYAH4XbychIwlxxda/1IouQI99mfeuneuMydVQBmAzJf8clNrF1ybgus
+        19h4sJm8w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gwkYY-0001pX-P0; Thu, 21 Feb 2019 09:22:15 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3F53C2139CDFF; Thu, 21 Feb 2019 10:22:13 +0100 (CET)
+Date:   Thu, 21 Feb 2019 10:22:13 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Tao Xu <tao3.xu@intel.com>, jingqi.liu@intel.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+        H Peter Anvin <hpa@zytor.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v2 1/3] x86/cpufeatures: Enumerate user wait instructions
+Message-ID: <20190221092213.GA32477@hirez.programming.kicks-ass.net>
+References: <1547673522-226408-1-git-send-email-fenghua.yu@intel.com>
+ <1547673522-226408-6-git-send-email-fenghua.yu@intel.com>
+ <CALCETrWCJAzRj7BUBX=O2qdHXucNWz=z0uEQ5asskTbw8CGW5w@mail.gmail.com>
 MIME-Version: 1.0
-References: <1550722418-9189-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1550722418-9189-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 21 Feb 2019 10:21:20 +0100
-Message-ID: <CAK8P3a2V+AYbXZC6zG6iJzOM3HugcB3Odx74jzVzSK4mfQ1Ftw@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: compute false-positive -Wmaybe-uninitialized
- cases in Kconfig
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Ingo Molnar <mingo@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrWCJAzRj7BUBX=O2qdHXucNWz=z0uEQ5asskTbw8CGW5w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 5:14 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> Since -Wmaybe-uninitialized was introduced by GCC 4.7, we have patched
-> various false positives:
->
->  - commit e74fc973b6e5 ("Turn off -Wmaybe-uninitialized when building
->    with -Os") turned off this option for -Os.
->
->  - commit 815eb71e7149 ("Kbuild: disable 'maybe-uninitialized' warning
->    for CONFIG_PROFILE_ALL_BRANCHES") turned off this option for
->    CONFIG_PROFILE_ALL_BRANCHES
->
->  - commit a76bcf557ef4 ("Kbuild: enable -Wmaybe-uninitialized warning
->    for "make W=1"") turned off this option for GCC < 4.9
->    Arnd provided more explanation in https://lkml.org/lkml/2017/3/14/903
->
-> I think this looks better by shifting the logic from Makefile to Kconfig.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+On Wed, Feb 20, 2019 at 10:37:27PM -0800, Andy Lutomirski wrote:
+> On Wed, Feb 20, 2019 at 7:44 PM Tao Xu <tao3.xu@intel.com> wrote:
 
-I like how this cleans up the logic and documents it better.
-I've had my own plans to move this (and most other conditional warning
-options) into a header file using the KBUILD_WARN() infrastructure, but
-never got around to doing that. I still think that's what we want eventually,
-but in the meantime your patch seems fine as well.
+> > +static ssize_t umwait_enable_c0_2_show(struct device *dev,
+> > +                                      struct device_attribute *attr,
+> > +                                      char *buf)
+> > +{
+> > +       return sprintf(buf, "%d\n", umwait_enable_c0_2);
+> 
+> I realize that it's traditional to totally ignore races in sysfs and
+> such, but it's a bad tradition.  Please either READ_ONCE it with a
+> comment or take the mutex.
 
-Also, I see that your patch keeps the existing logic, which is good,
-but we may want to refine this a little afterwards:
-
-- we may want to turn off -Wuninitialized for gcc-4.6 and gcc-4.7
-  instead of turning off -Wmaybe-uninitialized as we do in the later
-  compilers.
-
-- the proposed CC_OPTIMIZE_FOR_DEBUGGING may need the
-  same workaround as CC_OPTIMZE_FOR_SIZE.
-
-- For clang, we may want to /not/ turn off -Wmaybe-uninitialized
-  in all cases. I haven't tried build with with 'clang -Oz
-  -Wmaybe-uninitialized', but if the number of false positives is small
-  enough, we could decide to just leave that on.
-
-      Arnd
+Note that when using READ_ONCE(), the other side must use WRITE_ONCE().
+Mixed usage is not valid.
