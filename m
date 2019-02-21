@@ -2,128 +2,172 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26CFAC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:31:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 456F4C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:35:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC6D42084F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:31:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="RyN8k4dr"
+	by mail.kernel.org (Postfix) with ESMTP id 04C762084F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:35:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726621AbfBUGbk (ORCPT
+        id S1726553AbfBUGfy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 01:31:40 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:6845 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725831AbfBUGbj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 01:31:39 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 444l490nF2z9vJg7;
-        Thu, 21 Feb 2019 07:31:37 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=RyN8k4dr; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id eEPgbHiiq72J; Thu, 21 Feb 2019 07:31:37 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 444l486XKvz9vJg5;
-        Thu, 21 Feb 2019 07:31:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1550730696; bh=/wb2LIDZ0fxbdvU6sID2j7WKHhZiR0KJLlAdpH+QLdQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=RyN8k4drr2Odx8Ttdi9V51UZP8P+lXVhGJZIvdC29WHJoOg8JjAECZjy7Du3id7Ko
-         iF+gvOzyyKaG+BSIDMmO9nP/2x6QSMewSZ+ADrWPPOqmOM9pnjAsQfVhdY8QOVkv/6
-         0aajyJ5jzymwh+O/ayt6LogXvGYBuztdNv6kvREU=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id B7BD08B78F;
-        Thu, 21 Feb 2019 07:31:37 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id TXBC2CR6r9Ia; Thu, 21 Feb 2019 07:31:37 +0100 (CET)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 282A68B75B;
-        Thu, 21 Feb 2019 07:31:37 +0100 (CET)
-Subject: Re: [PATCH v3 00/16] powerpc/32: Use BATs/LTLBs for STRICT_KERNEL_RWX
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, j.neuschaefer@gmx.net
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1550648295.git.christophe.leroy@c-s.fr>
- <87mumpx68h.fsf@concordia.ellerman.id.au>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <82af8805-3e2a-cfb3-9df6-d883b50ff460@c-s.fr>
-Date:   Thu, 21 Feb 2019 07:31:36 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Thu, 21 Feb 2019 01:35:54 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4243 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725823AbfBUGfx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 01:35:53 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 1E9879284D0FAC64FB44;
+        Thu, 21 Feb 2019 14:35:51 +0800 (CST)
+Received: from localhost (10.177.19.219) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Thu, 21 Feb 2019
+ 14:35:44 +0800
+From:   Yang Yingliang <yangyingliang@huawei.com>
+To:     <cminyard@mvista.com>
+CC:     <yangyingliang@huawei.com>, <arnd@arndb.de>,
+        <openipmi-developer@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <honglei5@huawei.com>
+Subject: [PATCH] ipmi_si: fix oops when loading ipmi_si driver
+Date:   Thu, 21 Feb 2019 14:35:41 +0800
+Message-ID: <1550730941-29208-1-git-send-email-yangyingliang@huawei.com>
+X-Mailer: git-send-email 1.9.5.msysgit.1
 MIME-Version: 1.0
-In-Reply-To: <87mumpx68h.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.177.19.219]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When we excute the following commands, we got oops
+modprobe ipmi_si ports=0xffc0e3 type=bt
+
+[  503.305487] ipmi_si: IPMI System Interface driver
+[  503.305489] ipmi_hardcode: probing via hardcoded address
+[  503.305491] ipmi_si: Adding hardcoded-specified bt state machine
+[  503.305494] ipmi_si: Trying hardcoded-specified bt state machine at i/o address 0xffc0e3, slave address 0x0, irq 0
+[  503.337865] ipmi_si ipmi_si.0: bt cap response too short: 3
+[  503.337867] ipmi_si ipmi_si.0: using default values
+[  503.337869] ipmi_si ipmi_si.0: req2rsp=5 secs retries=2
+[  503.421948] ipmi_si ipmi_si.0: IPMI message handler: Found new BMC (man_id: 0x0007db, prod_id: 0x0001, dev_id: 0x01)
+[  503.665959] ipmi_si ipmi_si.0: IPMI bt interface initialized
+[  512.188061] ipmi_si: module verification failed: signature and/or required key missing - tainting kernel
+[  512.190063] ipmi_si: IPMI System Interface driver
+[  512.190065] ipmi_hardcode: probing via hardcoded address
+[  512.190067] ipmi_si: Adding hardcoded-specified bt state machine
+[  512.190070] ipmi_si: Trying hardcoded-specified bt state machine at i/o address 0xffc0e3, slave address 0x0, irq 0
+[  512.201867] ipmi_si ipmi_si.0: bt cap response too short: 3
+[  512.201869] ipmi_si ipmi_si.0: using default values
+[  512.201870] ipmi_si ipmi_si.0: req2rsp=5 secs retries=2
+[  512.269898] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000030
+[  512.269899] Mem abort info:
+[  512.269900]   ESR = 0x96000006
+[  512.269902]   Exception class = DABT (current EL), IL = 32 bits
+[  512.269903]   SET = 0, FnV = 0
+[  512.269904]   EA = 0, S1PTW = 0
+[  512.269905] Data abort info:
+[  512.269906]   ISV = 0, ISS = 0x00000006
+[  512.269908]   CM = 0, WnR = 0
+[  512.269910] user pgtable: 4k pages, 48-bit VAs, pgdp = 000000003f829971
+[  512.269912] [0000000000000030] pgd=0000005f1e7de003, pud=0000005f69728003, pmd=0000000000000000
+[  512.269916] Internal error: Oops: 96000006 [#1] SMP
+[  512.274923] Modules linked in: ipmi_si(E+) nls_utf8 isofs dm_mirror dm_region_hash dm_log dm_mod aes_ce_blk crypto_simd cryptd aes_ce_cipher ghash_ce sha2_ce sha256_arm64 sha1_ce ses hibmc_drm enclosure hisi_sas_v2_hw hisi_sas_main sg sbsa_gwdt ip_tables marvell ixgbe hns_dsaf hns_enet_drv ipmi_devintf mpt3sas ipmi_msghandler hns_mdio hnae mdio [last unloaded: ipmi_si]
+[  512.308100] CPU: 27 PID: 13691 Comm: modprobe Kdump: loaded Tainted: G            E     5.0.0-rc7+ #273
+[  512.317456] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.37 11/21/2017
+[  512.324781] pstate: a0000005 (NzCv daif -PAN -UAO)
+[  512.329643] pc : sysfs_do_create_link_sd.isra.0+0x5c/0x110
+[  512.335204] lr : sysfs_do_create_link_sd.isra.0+0x50/0x110
+[  512.340763] sp : ffff000012a8b8b0
+[  512.344118] x29: ffff000012a8b8b0 x28: ffff805f69bf8818
+[  512.349505] x27: 0000000000000000 x26: 0000000000000000
+[  512.354891] x25: ffff000011840000 x24: ffff805f69248ee0
+[  512.360277] x23: 0000000000000001 x22: ffff000011b0d000
+[  512.365662] x21: ffff00001116e3e0 x20: ffff805f76db7cb0
+[  512.371047] x19: 0000000000000030 x18: ffffffffffffffff
+[  512.376433] x17: 0000000000000000 x16: 0000000000000000
+[  512.381818] x15: ffff00001176d708 x14: 5244006d726f6674
+[  512.387204] x13: 0000000000000040 x12: 0000000000000008
+[  512.392589] x11: 0101010101010101 x10: 7f7f7f7f7f7f7f7f
+[  512.397974] x9 : 716e6573606aff2f x8 : 7f7f7f7f7f7f7f7f
+[  512.403360] x7 : 2d68725e686c6f68 x6 : 0080000000000000
+[  512.408745] x5 : 0000000000000000 x4 : ffff805f08e2d440
+[  512.414131] x3 : ffff000011b0df60 x2 : 0000000000000001
+[  512.419516] x1 : 0000000000000000 x0 : 0000000000000000
+[  512.424902] Process insmod (pid: 13691, stack limit = 0x0000000007e6d9d7)
+[  512.431784] Call trace:
+[  512.434260]  sysfs_do_create_link_sd.isra.0+0x5c/0x110
+[  512.439468]  sysfs_create_link+0x40/0x68
+[  512.443446]  driver_sysfs_add+0x88/0xb8
+[  512.447332]  device_bind_driver+0x20/0x70
+[  512.451392]  __device_attach+0xa0/0x170
+[  512.459409]  device_initial_probe+0x24/0x30
+[  512.467809]  bus_probe_device+0xa0/0xa8
+[  512.475844]  device_add+0x494/0x620
+[  512.483441]  platform_device_add+0x118/0x2a0
+[  512.491638]  try_smi_init+0x6c0/0x11c8 [ipmi_si]
+[  512.500161]  init_ipmi_si+0x13c/0x1f0 [ipmi_si]
+[  512.508342]  do_one_initcall+0x54/0x1f0
+[  512.515668]  do_init_module+0x64/0x1e4
+[  512.522810]  load_module+0x13fc/0x14f8
+[  512.529816]  __se_sys_finit_module+0xa0/0x100
+[  512.537398]  __arm64_sys_finit_module+0x24/0x30
+[  512.545045]  el0_svc_common+0x120/0x148
+[  512.552029]  el0_svc_handler+0x38/0x78
+[  512.558918]  el0_svc+0x8/0xc
+[  512.564960] Code: 942513e5 d503201f d503201f 35000400 (f9400273)
+[  512.574273] ---[ end trace 2a5abdfb7a1edf93 ]---
+[  512.582123] Kernel panic - not syncing: Fatal exception
+[  512.590600] SMP: stopping secondary CPUs
+[  512.597934] Kernel Offset: disabled
+[  512.604635] CPU features: 0x002,21006008
+[  512.611889] Memory Limit: none
+[  512.621495] Starting crashdump kernel...
+[  512.628775] Bye!
+
+Because the target_kobj pointer is null in sysfs_do_create_link_sd().
+The pointer is assigned by new_smi->io.dev->driver->p.
+
+If ipmi_si driver is not registered, new_smi->io.dev->driver->p is null
+and it will be used when try_smi_init() calling platform_device_add().
+Fix this oops by registering the driver before calling platform_device_add().
+
+Fixes: 9d70029edbbf ("ipmi_si: Move platform device handling to another file")
+
+Reported-by: Hong Lei <honglei5@huawei.com>
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+---
+ drivers/char/ipmi/ipmi_si_hardcode.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/char/ipmi/ipmi_si_hardcode.c b/drivers/char/ipmi/ipmi_si_hardcode.c
+index 4876428..2aa1ea9 100644
+--- a/drivers/char/ipmi/ipmi_si_hardcode.c
++++ b/drivers/char/ipmi/ipmi_si_hardcode.c
+@@ -3,6 +3,7 @@
+ #define pr_fmt(fmt) "ipmi_hardcode: " fmt
+ 
+ #include <linux/moduleparam.h>
++#include <linux/platform_device.h>
+ #include "ipmi_si.h"
+ 
+ /*
+@@ -144,5 +145,11 @@ int ipmi_si_hardcode_find_bmc(void)
+ 
+ 		ret = ipmi_si_add_smi(&io);
+ 	}
++
++	if (!ret) {
++		ipmi_platform_driver.driver.bus = &platform_bus_type;
++		ret = driver_register(&ipmi_platform_driver.driver);
++	}
++
+ 	return ret;
+ }
+-- 
+1.8.3.1
 
 
-Le 21/02/2019 à 02:47, Michael Ellerman a écrit :
-> Christophe Leroy <christophe.leroy@c-s.fr> writes:
-> 
->> The purpose of this serie is to:
->> - use BATs with STRICT_KERNEL_RWX on book3s (See patch 13 for details.)
->> - use LTLBs with STRICT_KERNEL_RWX on 8xx (See patch 15 for a few details.)
-> 
-> This doesn't boot qemu-mac99 for me:
-> 
->    spawn ~/src/qemu/ppc-softmmu/qemu-system-ppc -nographic -vga none -M mac99 -m 1G -kernel build/vmlinux -initrd ppc32-initrd.gz -append console=ttyPZ0 init=/bin/sh
->    >> =============================================================
->    >> OpenBIOS 1.1 [Feb 15 2019 10:05]
->    >> Configuration device id QEMU version 1 machine id 1
->    >> CPUs: 1
->    >> Memory: 1024M
->    >> UUID: 00000000-0000-0000-0000-000000000000
->    >> CPU type PowerPC,G4
->    milliseconds isn't unique.
->    Welcome to OpenBIOS v1.1 built on Feb 15 2019 10:05
->    >> [ppc] Kernel already loaded (0x01000000 + 0x00c2c338) (initrd 0x01d2d000 + 0x007e72f0)
->    >> [ppc] Kernel command line: console=ttyPZ0 init=/bin/sh
->    >> switching to new context:
->    OF stdout device is: /pci@f2000000/mac-io@c/escc@13000/ch-a@13020
->    Preparing to boot Linux version 5.0.0-rc2-gcc-8.2.0-00125-g4fcb83ca7936 (michael@ka4) (gcc version 8.2.0 (Buildroot 2018.11-rc2-00003-ga0787e9)) #724 Thu Feb 21 12:03:14 AEDT 2019
->    Detected machine type: 00000400
->    command line:
->    memory layout at init:
->      memory_limit : 00000000 (16 MB aligned)
->      alloc_bottom : 02515000
->      alloc_top    : 30000000
->      alloc_top_hi : 40000000
->      rmo_top      : 30000000
->      ram_top      : 40000000
->    copying OF device tree...
->    Building dt strings...
->    Building dt structure...
->    Device tree strings 0x02516000 -> 0x025150a4
->    Device tree struct  0x02517000 -> 0x3fde7eb0
->    Quiescing Open Firmware ...
->    Booting Linux via __start() @ 0x01000000 ...
->    FAIL! Booting BE pmac32
-> 
-> 
-> That's pmac32 defconfig ish.
-> I haven't had time to debug it further sorry.
-> 
-
-Ok. I boots fine without the '-m 1G'.
-
-I'll find out why.
-
-Christophe
