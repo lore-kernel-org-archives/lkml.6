@@ -3,234 +3,345 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60917C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 366AFC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:53:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2811120823
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:53:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE24720823
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:53:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728414AbfBUPxV (ORCPT
+        id S1728485AbfBUPxo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 10:53:21 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37761 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726443AbfBUPxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 10:53:21 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A8BEE3084298;
-        Thu, 21 Feb 2019 15:53:19 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.236])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6EEF9226FF;
-        Thu, 21 Feb 2019 15:53:13 +0000 (UTC)
-Date:   Thu, 21 Feb 2019 10:53:11 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v2.1 04/26] mm: allow VM_FAULT_RETRY for multiple times
-Message-ID: <20190221155311.GD2813@redhat.com>
-References: <20190212025632.28946-5-peterx@redhat.com>
- <20190221085656.18529-1-peterx@redhat.com>
+        Thu, 21 Feb 2019 10:53:44 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46830 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726443AbfBUPxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 10:53:44 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C7F2CA78;
+        Thu, 21 Feb 2019 07:53:43 -0800 (PST)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D94673F5C1;
+        Thu, 21 Feb 2019 07:53:41 -0800 (PST)
+Date:   Thu, 21 Feb 2019 15:53:39 +0000
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Amit Daniel Kachhap <amit.kachhap@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        kvmarm@lists.cs.columbia.edu,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 3/6] arm64/kvm: context-switch ptrauth registers
+Message-ID: <20190221155339.GX3567@e103592.cambridge.arm.com>
+References: <1550568271-5319-1-git-send-email-amit.kachhap@arm.com>
+ <1550568271-5319-4-git-send-email-amit.kachhap@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190221085656.18529-1-peterx@redhat.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 21 Feb 2019 15:53:20 +0000 (UTC)
+In-Reply-To: <1550568271-5319-4-git-send-email-amit.kachhap@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 04:56:56PM +0800, Peter Xu wrote:
-> The idea comes from a discussion between Linus and Andrea [1].
+On Tue, Feb 19, 2019 at 02:54:28PM +0530, Amit Daniel Kachhap wrote:
+> From: Mark Rutland <mark.rutland@arm.com>
 > 
-> Before this patch we only allow a page fault to retry once.  We
-> achieved this by clearing the FAULT_FLAG_ALLOW_RETRY flag when doing
-> handle_mm_fault() the second time.  This was majorly used to avoid
-> unexpected starvation of the system by looping over forever to handle
-> the page fault on a single page.  However that should hardly happen,
-> and after all for each code path to return a VM_FAULT_RETRY we'll
-> first wait for a condition (during which time we should possibly yield
-> the cpu) to happen before VM_FAULT_RETRY is really returned.
+> When pointer authentication is supported, a guest may wish to use it.
+> This patch adds the necessary KVM infrastructure for this to work, with
+> a semi-lazy context switch of the pointer auth state.
 > 
-> This patch removes the restriction by keeping the
-> FAULT_FLAG_ALLOW_RETRY flag when we receive VM_FAULT_RETRY.  It means
-> that the page fault handler now can retry the page fault for multiple
-> times if necessary without the need to generate another page fault
-> event.  Meanwhile we still keep the FAULT_FLAG_TRIED flag so page
-> fault handler can still identify whether a page fault is the first
-> attempt or not.
+> Pointer authentication feature is only enabled when VHE is built
+> in the kernel and present into CPU implementation so only VHE code
+> paths are modified.
 > 
-> Then we'll have these combinations of fault flags (only considering
-> ALLOW_RETRY flag and TRIED flag):
+> When we schedule a vcpu, we disable guest usage of pointer
+> authentication instructions and accesses to the keys. While these are
+> disabled, we avoid context-switching the keys. When we trap the guest
+> trying to use pointer authentication functionality, we change to eagerly
+> context-switching the keys, and enable the feature. The next time the
+> vcpu is scheduled out/in, we start again. However the host key registers
+> are saved in vcpu load stage as they remain constant for each vcpu
+> schedule.
 > 
->   - ALLOW_RETRY and !TRIED:  this means the page fault allows to
->                              retry, and this is the first try
+> Pointer authentication consists of address authentication and generic
+> authentication, and CPUs in a system might have varied support for
+> either. Where support for either feature is not uniform, it is hidden
+> from guests via ID register emulation, as a result of the cpufeature
+> framework in the host.
 > 
->   - ALLOW_RETRY and TRIED:   this means the page fault allows to
->                              retry, and this is not the first try
+> Unfortunately, address authentication and generic authentication cannot
+> be trapped separately, as the architecture provides a single EL2 trap
+> covering both. If we wish to expose one without the other, we cannot
+> prevent a (badly-written) guest from intermittently using a feature
+> which is not uniformly supported (when scheduled on a physical CPU which
+> supports the relevant feature). Hence, this patch expects both type of
+> authentication to be present in a cpu.
 > 
->   - !ALLOW_RETRY and !TRIED: this means the page fault does not allow
->                              to retry at all
-> 
->   - !ALLOW_RETRY and TRIED:  this is forbidden and should never be used
-> 
-> In existing code we have multiple places that has taken special care
-> of the first condition above by checking against (fault_flags &
-> FAULT_FLAG_ALLOW_RETRY).  This patch introduces a simple helper to
-> detect the first retry of a page fault by checking against
-> both (fault_flags & FAULT_FLAG_ALLOW_RETRY) and !(fault_flag &
-> FAULT_FLAG_TRIED) because now even the 2nd try will have the
-> ALLOW_RETRY set, then use that helper in all existing special paths.
-> One example is in __lock_page_or_retry(), now we'll drop the mmap_sem
-> only in the first attempt of page fault and we'll keep it in follow up
-> retries, so old locking behavior will be retained.
-> 
-> This will be a nice enhancement for current code [2] at the same time
-> a supporting material for the future userfaultfd-writeprotect work,
-> since in that work there will always be an explicit userfault
-> writeprotect retry for protected pages, and if that cannot resolve the
-> page fault (e.g., when userfaultfd-writeprotect is used in conjunction
-> with swapped pages) then we'll possibly need a 3rd retry of the page
-> fault.  It might also benefit other potential users who will have
-> similar requirement like userfault write-protection.
-> 
-> GUP code is not touched yet and will be covered in follow up patch.
-> 
-> Please read the thread below for more information.
-> 
-> [1] https://lkml.org/lkml/2017/11/2/833
-> [2] https://lkml.org/lkml/2018/12/30/64
-
-I have few comments on this one. See below.
-
-
-> 
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Suggested-by: Andrea Arcangeli <aarcange@redhat.com>
-> Signed-off-by: Peter Xu <peterx@redhat.com>
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> [Only VHE, key switch from from assembly, kvm_supports_ptrauth
+> checks, save host key in vcpu_load]
+> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
+> Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: kvmarm@lists.cs.columbia.edu
 > ---
-> 
->  arch/alpha/mm/fault.c           |  2 +-
->  arch/arc/mm/fault.c             |  1 -
->  arch/arm/mm/fault.c             |  3 ---
->  arch/arm64/mm/fault.c           |  5 -----
->  arch/hexagon/mm/vm_fault.c      |  1 -
->  arch/ia64/mm/fault.c            |  1 -
->  arch/m68k/mm/fault.c            |  3 ---
->  arch/microblaze/mm/fault.c      |  1 -
->  arch/mips/mm/fault.c            |  1 -
->  arch/nds32/mm/fault.c           |  1 -
->  arch/nios2/mm/fault.c           |  3 ---
->  arch/openrisc/mm/fault.c        |  1 -
->  arch/parisc/mm/fault.c          |  2 --
->  arch/powerpc/mm/fault.c         |  6 ------
->  arch/riscv/mm/fault.c           |  5 -----
->  arch/s390/mm/fault.c            |  5 +----
->  arch/sh/mm/fault.c              |  1 -
->  arch/sparc/mm/fault_32.c        |  1 -
->  arch/sparc/mm/fault_64.c        |  1 -
->  arch/um/kernel/trap.c           |  1 -
->  arch/unicore32/mm/fault.c       |  6 +-----
->  arch/x86/mm/fault.c             |  2 --
->  arch/xtensa/mm/fault.c          |  1 -
->  drivers/gpu/drm/ttm/ttm_bo_vm.c | 12 +++++++++---
->  include/linux/mm.h              | 12 +++++++++++-
->  mm/filemap.c                    |  2 +-
->  mm/shmem.c                      |  2 +-
->  27 files changed, 25 insertions(+), 57 deletions(-)
-> 
+>  arch/arm/include/asm/kvm_host.h   |   1 +
+>  arch/arm64/include/asm/kvm_host.h |  23 +++++++++
+>  arch/arm64/include/asm/kvm_hyp.h  |   7 +++
+>  arch/arm64/kernel/traps.c         |   1 +
+>  arch/arm64/kvm/handle_exit.c      |  21 +++++---
+>  arch/arm64/kvm/hyp/Makefile       |   1 +
+>  arch/arm64/kvm/hyp/entry.S        |  17 +++++++
+>  arch/arm64/kvm/hyp/ptrauth-sr.c   | 101 ++++++++++++++++++++++++++++++++++++++
+>  arch/arm64/kvm/sys_regs.c         |  37 +++++++++++++-
+>  virt/kvm/arm/arm.c                |   2 +
+>  10 files changed, 201 insertions(+), 10 deletions(-)
+>  create mode 100644 arch/arm64/kvm/hyp/ptrauth-sr.c
 
 [...]
 
-> diff --git a/arch/parisc/mm/fault.c b/arch/parisc/mm/fault.c
-> index 29422eec329d..7d3e96a9a7ab 100644
-> --- a/arch/parisc/mm/fault.c
-> +++ b/arch/parisc/mm/fault.c
-> @@ -327,8 +327,6 @@ void do_page_fault(struct pt_regs *regs, unsigned long code,
->  		else
->  			current->min_flt++;
->  		if (fault & VM_FAULT_RETRY) {
-> -			flags &= ~FAULT_FLAG_ALLOW_RETRY;
-
-Don't you need to also add:
-     flags |= FAULT_FLAG_TRIED;
-
-Like other arch.
-
-
-[...]
-
-> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> index 248ff0a28ecd..d842c3e02a50 100644
-> --- a/arch/x86/mm/fault.c
-> +++ b/arch/x86/mm/fault.c
-> @@ -1483,9 +1483,7 @@ void do_user_addr_fault(struct pt_regs *regs,
->  	if (unlikely(fault & VM_FAULT_RETRY)) {
->  		bool is_user = flags & FAULT_FLAG_USER;
->  
-> -		/* Retry at most once */
->  		if (flags & FAULT_FLAG_ALLOW_RETRY) {
-> -			flags &= ~FAULT_FLAG_ALLOW_RETRY;
->  			flags |= FAULT_FLAG_TRIED;
->  			if (is_user && signal_pending(tsk))
->  				return;
-
-So here you have a change in behavior, it can retry indefinitly for as
-long as they are no signal. Don't you want so test for FAULT_FLAG_TRIED ?
-
-[...]
-
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 80bb6408fe73..4e11c9639f1b 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -341,11 +341,21 @@ extern pgprot_t protection_map[16];
->  #define FAULT_FLAG_ALLOW_RETRY	0x04	/* Retry fault if blocking */
->  #define FAULT_FLAG_RETRY_NOWAIT	0x08	/* Don't drop mmap_sem and wait when retrying */
->  #define FAULT_FLAG_KILLABLE	0x10	/* The fault task is in SIGKILL killable region */
-> -#define FAULT_FLAG_TRIED	0x20	/* Second try */
-> +#define FAULT_FLAG_TRIED	0x20	/* We've tried once */
->  #define FAULT_FLAG_USER		0x40	/* The fault originated in userspace */
->  #define FAULT_FLAG_REMOTE	0x80	/* faulting for non current tsk/mm */
->  #define FAULT_FLAG_INSTRUCTION  0x100	/* The fault was during an instruction fetch */
->  
+> diff --git a/arch/arm64/kvm/hyp/ptrauth-sr.c b/arch/arm64/kvm/hyp/ptrauth-sr.c
+> new file mode 100644
+> index 0000000..528ee6e
+> --- /dev/null
+> +++ b/arch/arm64/kvm/hyp/ptrauth-sr.c
+> @@ -0,0 +1,101 @@
+> +// SPDX-License-Identifier: GPL-2.0
 > +/*
-> + * Returns true if the page fault allows retry and this is the first
-> + * attempt of the fault handling; false otherwise.
+> + * arch/arm64/kvm/hyp/ptrauth-sr.c: Guest/host ptrauth save/restore
+> + *
+> + * Copyright 2018 Arm Limited
+> + * Author: Mark Rutland <mark.rutland@arm.com>
+> + *         Amit Daniel Kachhap <amit.kachhap@arm.com>
 > + */
-
-You should add why it returns false if it is not the first try ie to
-avoid starvation.
-
-> +static inline bool fault_flag_allow_retry_first(unsigned int flags)
+> +#include <linux/compiler.h>
+> +#include <linux/kvm_host.h>
+> +
+> +#include <asm/cpucaps.h>
+> +#include <asm/cpufeature.h>
+> +#include <asm/kvm_asm.h>
+> +#include <asm/kvm_hyp.h>
+> +#include <asm/pointer_auth.h>
+> +
+> +static __always_inline bool __ptrauth_is_enabled(struct kvm_vcpu *vcpu)
 > +{
-> +	return (flags & FAULT_FLAG_ALLOW_RETRY) &&
-> +	    (!(flags & FAULT_FLAG_TRIED));
+> +	return IS_ENABLED(CONFIG_ARM64_PTR_AUTH) &&
+> +			vcpu->arch.ctxt.hcr_el2 & (HCR_API | HCR_APK);
 > +}
 > +
->  #define FAULT_FLAG_TRACE \
->  	{ FAULT_FLAG_WRITE,		"WRITE" }, \
->  	{ FAULT_FLAG_MKWRITE,		"MKWRITE" }, \
+> +#define __ptrauth_save_key(regs, key)						\
+> +({										\
+> +	regs[key ## KEYLO_EL1] = read_sysreg_s(SYS_ ## key ## KEYLO_EL1);	\
+> +	regs[key ## KEYHI_EL1] = read_sysreg_s(SYS_ ## key ## KEYHI_EL1);	\
+> +})
+> +
+> +static __always_inline void __ptrauth_save_state(struct kvm_cpu_context *ctxt)
 
-[...]
+Why __always_inline?
+
+> +{
+> +	__ptrauth_save_key(ctxt->sys_regs, APIA);
+> +	__ptrauth_save_key(ctxt->sys_regs, APIB);
+> +	__ptrauth_save_key(ctxt->sys_regs, APDA);
+> +	__ptrauth_save_key(ctxt->sys_regs, APDB);
+> +	__ptrauth_save_key(ctxt->sys_regs, APGA);
+> +}
+> +
+> +#define __ptrauth_restore_key(regs, key) 					\
+> +({										\
+> +	write_sysreg_s(regs[key ## KEYLO_EL1], SYS_ ## key ## KEYLO_EL1);	\
+> +	write_sysreg_s(regs[key ## KEYHI_EL1], SYS_ ## key ## KEYHI_EL1);	\
+> +})
+> +
+> +static __always_inline void __ptrauth_restore_state(struct kvm_cpu_context *ctxt)
+
+Same here.  I would hope these just need to be marked with the correct
+function attribute to disable ptrauth by the compiler.  I don't see why
+it makes a difference whether it's inline or not.
+
+If the compiler semantics are not sufficiently clear, make it a macro.
+
+(Bikeshedding here, so it you feel this has already been discussed to
+death I'm happy for this to stay as-is.)
+
+> +{
+> +	__ptrauth_restore_key(ctxt->sys_regs, APIA);
+> +	__ptrauth_restore_key(ctxt->sys_regs, APIB);
+> +	__ptrauth_restore_key(ctxt->sys_regs, APDA);
+> +	__ptrauth_restore_key(ctxt->sys_regs, APDB);
+> +	__ptrauth_restore_key(ctxt->sys_regs, APGA);
+> +}
+> +
+> +/**
+> + * This function changes the key so assign Pointer Authentication safe
+> + * GCC attribute if protected by it.
+> + */
+
+(I'd have preferred to keep __noptrauth here and define it do nothing for
+now.  But I'll defer to others on that, since this has already been
+discussed...)
+
+> +void __ptrauth_switch_to_guest(struct kvm_vcpu *vcpu,
+> +				  struct kvm_cpu_context *host_ctxt,
+> +				  struct kvm_cpu_context *guest_ctxt)
+> +{
+> +	if (!__ptrauth_is_enabled(vcpu))
+> +		return;
+> +
+> +	__ptrauth_restore_state(guest_ctxt);
+> +}
+> +
+> +/**
+> + * This function changes the key so assign Pointer Authentication safe
+> + * GCC attribute if protected by it.
+> + */
+> +void __ptrauth_switch_to_host(struct kvm_vcpu *vcpu,
+> +				 struct kvm_cpu_context *guest_ctxt,
+> +				 struct kvm_cpu_context *host_ctxt)
+> +{
+> +	if (!__ptrauth_is_enabled(vcpu))
+> +		return;
+> +
+> +	__ptrauth_save_state(guest_ctxt);
+> +	__ptrauth_restore_state(host_ctxt);
+> +}
+> +
+> +/**
+> + * kvm_arm_vcpu_ptrauth_reset - resets ptrauth for vcpu schedule
+> + *
+> + * @vcpu: The VCPU pointer
+> + *
+> + * This function may be used to disable ptrauth and use it in a lazy context
+> + * via traps. However host key registers are saved here as they dont change
+> + * during host/guest switch.
+> + */
+> +void kvm_arm_vcpu_ptrauth_reset(struct kvm_vcpu *vcpu)
+
+I feel this is not a good name.  It sounds too much like it resets the
+registers as part of vcpu reset, whereas really it's doing something
+completely different.
+
+(Do you reset the regs anywhere btw?  I may have missed it...)
+
+> +{
+> +	struct kvm_cpu_context *host_ctxt;
+> +
+> +	if (kvm_supports_ptrauth()) {
+> +		kvm_arm_vcpu_ptrauth_disable(vcpu);
+> +		host_ctxt = vcpu->arch.host_cpu_context;
+> +		__ptrauth_save_state(host_ctxt);
+> +	}
+> +}
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index a6c9381..12529df 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -986,6 +986,32 @@ static bool access_pmuserenr(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
+>  	{ SYS_DESC(SYS_PMEVTYPERn_EL0(n)),					\
+>  	  access_pmu_evtyper, reset_unknown, (PMEVTYPER0_EL0 + n), }
+>  
+> +
+> +void kvm_arm_vcpu_ptrauth_enable(struct kvm_vcpu *vcpu)
+> +{
+> +	vcpu->arch.ctxt.hcr_el2 |= (HCR_API | HCR_APK);
+
+Pedantic nit: surplus ().
+
+(Although opinions differ, and keeping them looks more symmetric with
+kvm_arm_vcpu_ptrauth_disable() -- either way, the code can stay as-is if
+you prefer.)
+
+> +}
+> +
+> +void kvm_arm_vcpu_ptrauth_disable(struct kvm_vcpu *vcpu)
+> +{
+> +	vcpu->arch.ctxt.hcr_el2 &= ~(HCR_API | HCR_APK);
+> +}
+> +
+> +static bool trap_ptrauth(struct kvm_vcpu *vcpu,
+> +			 struct sys_reg_params *p,
+> +			 const struct sys_reg_desc *rd)
+> +{
+> +	kvm_arm_vcpu_ptrauth_trap(vcpu);
+> +	return false;
+
+Can we ever get here?  Won't PAC traps always be handled via
+handle_exit()?
+
+Or can we also take sysreg access traps when the guest tries to access
+the ptrauth key registers?
+
+(I'm now wondering how this works for SVE.)
+
+> +}
+> +
+> +#define __PTRAUTH_KEY(k)						\
+> +	{ SYS_DESC(SYS_## k), trap_ptrauth, reset_unknown, k }
+> +
+> +#define PTRAUTH_KEY(k)							\
+> +	__PTRAUTH_KEY(k ## KEYLO_EL1),					\
+> +	__PTRAUTH_KEY(k ## KEYHI_EL1)
+> +
+>  static bool access_cntp_tval(struct kvm_vcpu *vcpu,
+>  		struct sys_reg_params *p,
+>  		const struct sys_reg_desc *r)
+> @@ -1045,9 +1071,10 @@ static u64 read_id_reg(struct sys_reg_desc const *r, bool raz)
+>  					 (0xfUL << ID_AA64ISAR1_API_SHIFT) |
+>  					 (0xfUL << ID_AA64ISAR1_GPA_SHIFT) |
+>  					 (0xfUL << ID_AA64ISAR1_GPI_SHIFT);
+> -		if (val & ptrauth_mask)
+> +		if (!kvm_supports_ptrauth()) {
+
+Don't we now always print this when ptrauth is not supported?
+
+Previously we only printed a message in the interesting case, i.e.,
+where the host supports ptrauch but we cannot offer it to the guest.
+
+>  			kvm_debug("ptrauth unsupported for guests, suppressing\n");
+> -		val &= ~ptrauth_mask;
+> +			val &= ~ptrauth_mask;
+> +		}
+>  	} else if (id == SYS_ID_AA64MMFR1_EL1) {
+>  		if (val & (0xfUL << ID_AA64MMFR1_LOR_SHIFT))
+>  			kvm_debug("LORegions unsupported for guests, suppressing\n");
+> @@ -1316,6 +1343,12 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+>  	{ SYS_DESC(SYS_TTBR1_EL1), access_vm_reg, reset_unknown, TTBR1_EL1 },
+>  	{ SYS_DESC(SYS_TCR_EL1), access_vm_reg, reset_val, TCR_EL1, 0 },
+>  
+> +	PTRAUTH_KEY(APIA),
+> +	PTRAUTH_KEY(APIB),
+> +	PTRAUTH_KEY(APDA),
+> +	PTRAUTH_KEY(APDB),
+> +	PTRAUTH_KEY(APGA),
+> +
+>  	{ SYS_DESC(SYS_AFSR0_EL1), access_vm_reg, reset_unknown, AFSR0_EL1 },
+>  	{ SYS_DESC(SYS_AFSR1_EL1), access_vm_reg, reset_unknown, AFSR1_EL1 },
+>  	{ SYS_DESC(SYS_ESR_EL1), access_vm_reg, reset_unknown, ESR_EL1 },
+> diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+> index 2032a66..d7e003f 100644
+> --- a/virt/kvm/arm/arm.c
+> +++ b/virt/kvm/arm/arm.c
+> @@ -388,6 +388,8 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+>  		vcpu_clear_wfe_traps(vcpu);
+>  	else
+>  		vcpu_set_wfe_traps(vcpu);
+> +
+> +	kvm_arm_vcpu_ptrauth_reset(vcpu);
+>  }
+>  
+>  void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
+> -- 
+> 2.7.4
+> 
+> _______________________________________________
+> kvmarm mailing list
+> kvmarm@lists.cs.columbia.edu
+> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
