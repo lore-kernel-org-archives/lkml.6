@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E91BCC00319
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:18:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E2A2C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:18:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA71B2084F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:18:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D3632083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:18:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728749AbfBURSp (ORCPT
+        id S1728774AbfBURSt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 12:18:45 -0500
-Received: from mx-ginzinger.sigmacloud.services ([185.154.235.147]:55586 "EHLO
+        Thu, 21 Feb 2019 12:18:49 -0500
+Received: from mx-ginzinger.sigmacloud.services ([185.154.235.147]:55590 "EHLO
         mx-ginzinger.sigmacloud.services" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728711AbfBURSo (ORCPT
+        by vger.kernel.org with ESMTP id S1728512AbfBURSs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 12:18:44 -0500
-Received: from [31.193.165.228] (port=42442 helo=mx-ginzinger.sigmacloud.services)
+        Thu, 21 Feb 2019 12:18:48 -0500
+Received: from [31.193.165.228] (port=21721 helo=mx-ginzinger.sigmacloud.services)
         by mx-ginzinger.sigmacloud.services with esmtps (TLSv1.2:AES256-GCM-SHA384:256)
         (Exim 4.82_1-5b7a7c0-XX)
         (envelope-from <Martin.Kepplinger@ginzinger.com>)
-        id 1gwrzK-000295-17; Thu, 21 Feb 2019 18:18:22 +0100
+        id 1gwrzK-00029A-2l; Thu, 21 Feb 2019 18:18:22 +0100
 Received: from martin-laptop.buero.ginzinger.com (10.10.1.120) by
  exc1.buero.ginzinger.com (10.1.1.204) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1466.3; Thu, 21 Feb 2019 18:18:21 +0100
-X-CTCH-RefID: str=0001.0A0B020F.5C6EDD5E.0042,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+ 15.1.1466.3; Thu, 21 Feb 2019 18:18:22 +0100
+X-CTCH-RefID: str=0001.0A0B020F.5C6EDD5E.0090,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
 From:   Martin Kepplinger <martin.kepplinger@ginzinger.com>
 To:     <gregkh@linuxfoundation.org>, <robh+dt@kernel.org>,
         <mark.rutland@arm.com>, <jslaby@suse.com>, <corbet@lwn.net>,
@@ -41,20 +41,20 @@ To:     <gregkh@linuxfoundation.org>, <robh+dt@kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>
 CC:     <linux-kernel@vger.kernel.org>,
         Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Subject: [PATCH v2 6/9] serial: sc16is7xx: add support for rs485 RTS delays in microseconds
-Date:   Thu, 21 Feb 2019 18:17:55 +0100
-Message-ID: <20190221171758.10322-6-martin.kepplinger@ginzinger.com>
+Subject: [PATCH v2 7/9] serial: atmel_serial: set SER_RS485_DELAY_IN_USEC accordingly
+Date:   Thu, 21 Feb 2019 18:17:56 +0100
+Message-ID: <20190221171758.10322-7-martin.kepplinger@ginzinger.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221171758.10322-1-martin.kepplinger@ginzinger.com>
 References: <20190221171758.10322-1-martin.kepplinger@ginzinger.com>
 X-Originating-IP: [10.10.1.120]
 X-ClientProxiedBy: exc1.buero.ginzinger.com (10.1.1.204) To
  exc1.buero.ginzinger.com (10.1.1.204)
-X-EXCLAIMER-MD-ORIGINAL-SUBJECT: [NOSIG][NODISC][PATCH v2 6/9] serial:
- sc16is7xx: add support for rs485 RTS delays in microseconds
+X-EXCLAIMER-MD-ORIGINAL-SUBJECT: [NOSIG][NODISC][PATCH v2 7/9] serial:
+ atmel_serial: set SER_RS485_DELAY_IN_USEC accordingly
 X-EXCLAIMER-MD-CONFIG: 9dd172f7-de2e-4231-b886-ec11f46e03b3
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----7339303E4AB4833196C2749502A54056"
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----B18B02D35BCB84620873F37EA9EE2367"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,43 +62,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 This is an S/MIME signed message
 
-------7339303E4AB4833196C2749502A54056
+------B18B02D35BCB84620873F37EA9EE2367
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Read struct serial_rs485's flag SER_RS485_DELAY_IN_USEC and apply the delay
-accordingly.
+Unset the SER_RS485_DELAY_IN_USEC flag during rs485 config for
+userspace to get the correct setting.
 
 Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
 ---
- drivers/tty/serial/sc16is7xx.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/tty/serial/atmel_serial.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-index 635178cf3eed..b0e00b9fb177 100644
---- a/drivers/tty/serial/sc16is7xx.c
-+++ b/drivers/tty/serial/sc16is7xx.c
-@@ -743,7 +743,13 @@ static void sc16is7xx_tx_proc(struct kthread_work *ws)
- 	struct uart_port *port = &(to_sc16is7xx_one(ws, tx_work)->port);
+diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
+index 05147fe24343..36ab1c131d36 100644
+--- a/drivers/tty/serial/atmel_serial.c
++++ b/drivers/tty/serial/atmel_serial.c
+@@ -346,6 +346,9 @@ static int atmel_config_rs485(struct uart_port *port,
  
- 	if ((port->rs485.flags & SER_RS485_ENABLED) &&
--	    (port->rs485.delay_rts_before_send > 0))
-+	    (port->rs485.delay_rts_before_send > 0) &&
-+	    (port->rs485.flags & SER_RS485_DELAY_IN_USEC))
-+		usleep_range(port->rs485.delay_rts_before_send,
-+			     port->rs485.delay_rts_before_send);
-+	else if ((port->rs485.flags & SER_RS485_ENABLED) &&
-+		 (port->rs485.delay_rts_before_send > 0) &&
-+		 !(port->rs485.flags & SER_RS485_DELAY_IN_USEC))
- 		msleep(port->rs485.delay_rts_before_send);
+ 	port->rs485 = *rs485conf;
  
- 	sc16is7xx_handle_tx(port);
++	/* delays are in milliseconds */
++	rs485conf->flags &= ~SER_RS485_DELAY_IN_USEC;
++
+ 	if (rs485conf->flags & SER_RS485_ENABLED) {
+ 		dev_dbg(port->dev, "Setting UART to RS485\n");
+ 		atmel_port->tx_done_mask = ATMEL_US_TXEMPTY;
 -- 
 2.20.1
 
 
-------7339303E4AB4833196C2749502A54056
+------B18B02D35BCB84620873F37EA9EE2367
 Content-Type: application/x-pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -168,17 +163,17 @@ MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
 BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMT
 NENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1h
 aWwgQ0ECEE1CsTMbOtnoVViHUQRgfj4wDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZI
-hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTkwMjIxMTcxODM2
-WjAvBgkqhkiG9w0BCQQxIgQgBWf2Xe9b5Znb5LtrvM8d7RGP76c/hxpA4rJcLKWa
-M/EweQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
+hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTkwMjIxMTcxODQ0
+WjAvBgkqhkiG9w0BCQQxIgQgafwTjV6qN7n2CtHfhs0ArLx6WSNjn7Gz/u4VgaP6
+35cweQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
 CWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
 AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEA
-o3gNZJ9M53EdcqIfXBoTWcx6CBfsHT6IioHUNGppZUFvDZbN7IhnVqiJH5GBG0ch
-cvfpol7Xr1eiuX8F/mZRsTEgjz5sgz/4nDrJxIKTBEIUMYxrcYd0G5LQBNl/P93x
-OgA6usliM88+j5Uze4RdD+5z/L7o1Lf8RXFtUuflUq5ixul6DLj3tLXK0iQTPlcl
-O5/KzzMjuQZdSiKEZzcXNiGaYNS3H6BTxlYLu4cUvHZRGr3wOF5j0hXGs/lAb0nQ
-mQdhDJcT8oNOZuyifqZk8RY1pqBEYdZAYqv7q5dsRvVD5MkBy5SH0Q+SvUceX9dy
-+fozUEoYn/TrH9OSaoMX3A==
+mn6RO3LNKdbiaum9ln0SR/dViWfCFOAmRXCq7ibGYLn/aDAoJQQoQyqVn8nG3TR5
+AhLwPBlZNuwH7zpocmgLBS218bB6RNBrMQ3B4+FrjSptg4AU88cL27F8QdMvt4St
+q1O/a46pS9QjU12VkVyS7MkMS3VZRcRucVxasN5N/3I3x3MUiOmY0Xt3yTksVcAs
+fVIgwXOxBwKGt81MnpQGyk5WdefDcQFN/+KWNJw0RrpPklE+YwyAsAhXcK18Zr4v
+hkNW96b5n+egzVk2ckm3WeEnEAkRO2byYBFNuAF050ovralYvV0dOalDMdCmoqn5
+skyxffdvj9j79I/SD4jVfw==
 
-------7339303E4AB4833196C2749502A54056--
+------B18B02D35BCB84620873F37EA9EE2367--
 
