@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2745C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7395C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E91B2075C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 850522075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550759854;
-	bh=qA9z0f0GzJgDWA9kGJPh3oNiW9V5QPeLt8ebDY15Gr4=;
+	s=default; t=1550759857;
+	bh=nZPNLlLRGbS2TJgncL6URPt4NIcq6idRZVj2qWiXhQU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Bd35E9t7JlsVtVg88B9ICxiGUBu4c6Kepuwgoo+KqgSkoqkteSdfhBSC3f16w+1i2
-	 2MqNdriROzM6L36Et3iqUJ3D757/pCis9HiSHVnl9sKu+ZiWdI2hYwGjqU0kZW2T5o
-	 TgwsLLn2/1eDG0+WIfGUD1dMQdkUjY4z0rF5hYxo=
+	b=s4gKOQZrGKfaICQI6rffpjePtqz4/IU8sYufp+4rb9uMiValdGwSLvlFKROHwtX22
+	 OWXmWPzaOcHpeWZ3rMq/PJ1/kwpjsVz1gRuPCzYCJlTreuQCDSCynn/VRRaO5gNpTE
+	 nCYUITH9Pzw0hyMdzciZCWh3jlNMKX2vacq3KzWM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728429AbfBUOhd (ORCPT
+        id S1728444AbfBUOhg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:37:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58788 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:37:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728356AbfBUOhc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:37:32 -0500
+        id S1725870AbfBUOhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:37:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFF492084D;
-        Thu, 21 Feb 2019 14:37:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7577D2084D;
+        Thu, 21 Feb 2019 14:37:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550759851;
-        bh=qA9z0f0GzJgDWA9kGJPh3oNiW9V5QPeLt8ebDY15Gr4=;
+        s=default; t=1550759854;
+        bh=nZPNLlLRGbS2TJgncL6URPt4NIcq6idRZVj2qWiXhQU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DIOuloeF2rlXQG9IRKVMJb+WLBSgztan9leZx1/PiYFV/IJNSQqGGNb99Le3lTSBD
-         XWZyU+JlTtTTuahSFyLg/g71zEIBjwDDAd+GI/oa3PVBDYW22zWPnR8+FlDUnvufeg
-         pBTqumAzrW6S1R/c1asQHMmfIgAzvEAJoNlVPwSU=
+        b=HgJffcXukiBUrO1tgFQqFnswt38UwMz/lixqHzTmu8e3m6ooTWKgZ/f0C0JuoKfE3
+         rGBSc6NcDXcuUzk4QMt6Ycme4lJRj7L2VhRqkbnpm/AUjP+0IWrMq4fardf/tJQyQt
+         nfALWufEJrU3TmjTDDnqGuuz6Hep6rkMQXxaCrrQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 12/20] net: ipv4: use a dedicated counter for icmp_v4 redirect packets
-Date:   Thu, 21 Feb 2019 15:35:42 +0100
-Message-Id: <20190221141947.124105601@linuxfoundation.org>
+        stable@vger.kernel.org, chenzefeng <chenzefeng2@huawei.com>,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH 4.4 13/20] [PATCH] x86: livepatch: Treat R_X86_64_PLT32 as R_X86_64_PC32
+Date:   Thu, 21 Feb 2019 15:35:43 +0100
+Message-Id: <20190221141947.151506933@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221141946.772985220@linuxfoundation.org>
 References: <20190221141946.772985220@linuxfoundation.org>
@@ -66,86 +65,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Signed-off-by: chenzefeng <chenzefeng2@huawei.com>
 
-[ Upstream commit c09551c6ff7fe16a79a42133bcecba5fc2fc3291 ]
+On x86-64, for 32-bit PC-relacive branches, we can generate PLT32
+relocation, instead of PC32 relocation. and R_X86_64_PLT32 can be
+treated the same as R_X86_64_PC32 since linux kernel doesn't use PLT.
 
-According to the algorithm described in the comment block at the
-beginning of ip_rt_send_redirect, the host should try to send
-'ip_rt_redirect_number' ICMP redirect packets with an exponential
-backoff and then stop sending them at all assuming that the destination
-ignores redirects.
-If the device has previously sent some ICMP error packets that are
-rate-limited (e.g TTL expired) and continues to receive traffic,
-the redirect packets will never be transmitted. This happens since
-peer->rate_tokens will be typically greater than 'ip_rt_redirect_number'
-and so it will never be reset even if the redirect silence timeout
-(ip_rt_redirect_silence) has elapsed without receiving any packet
-requiring redirects.
+commit b21ebf2fb4cd ("x86: Treat R_X86_64_PLT32 as R_X86_64_PC32") been
+fixed for the module loading, but not fixed for livepatch relocation,
+which will fail to load livepatch with the error message as follow:
+relocation failed for symbol <symbol name> at <symbol address>
 
-Fix it by using a dedicated counter for the number of ICMP redirect
-packets that has been sent by the host
+This issue only effacted the kernel version from 4.0 to 4.6, becauce the
+function klp_write_module_reloc is introduced by: commit b700e7f03df5
+("livepatch: kernel: add support for live patching") and deleted by:
+commit 425595a7fc20 ("livepatch: reuse module loader code to write
+relocations")
 
-I have not been able to identify a given commit that introduced the
-issue since ip_rt_send_redirect implements the same rate-limiting
-algorithm from commit 1da177e4c3f4 ("Linux-2.6.12-rc2")
-
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: chenzefeng <chenzefeng2@huawei.com>
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/inetpeer.h |    1 +
- net/ipv4/inetpeer.c    |    1 +
- net/ipv4/route.c       |    7 +++++--
- 3 files changed, 7 insertions(+), 2 deletions(-)
+ arch/x86/kernel/livepatch.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/include/net/inetpeer.h
-+++ b/include/net/inetpeer.h
-@@ -40,6 +40,7 @@ struct inet_peer {
- 
- 	u32			metrics[RTAX_MAX];
- 	u32			rate_tokens;	/* rate limiting for ICMP */
-+	u32			n_redirects;
- 	unsigned long		rate_last;
- 	union {
- 		struct list_head	gc_list;
---- a/net/ipv4/inetpeer.c
-+++ b/net/ipv4/inetpeer.c
-@@ -448,6 +448,7 @@ relookup:
- 		atomic_set(&p->rid, 0);
- 		p->metrics[RTAX_LOCK-1] = INETPEER_METRICS_NEW;
- 		p->rate_tokens = 0;
-+		p->n_redirects = 0;
- 		/* 60*HZ is arbitrary, but chosen enough high so that the first
- 		 * calculation of tokens is at its maximum.
- 		 */
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -876,13 +876,15 @@ void ip_rt_send_redirect(struct sk_buff
- 	/* No redirected packets during ip_rt_redirect_silence;
- 	 * reset the algorithm.
- 	 */
--	if (time_after(jiffies, peer->rate_last + ip_rt_redirect_silence))
-+	if (time_after(jiffies, peer->rate_last + ip_rt_redirect_silence)) {
- 		peer->rate_tokens = 0;
-+		peer->n_redirects = 0;
-+	}
- 
- 	/* Too many ignored redirects; do not send anything
- 	 * set dst.rate_last to the last seen redirected packet.
- 	 */
--	if (peer->rate_tokens >= ip_rt_redirect_number) {
-+	if (peer->n_redirects >= ip_rt_redirect_number) {
- 		peer->rate_last = jiffies;
- 		goto out_put_peer;
- 	}
-@@ -899,6 +901,7 @@ void ip_rt_send_redirect(struct sk_buff
- 		icmp_send(skb, ICMP_REDIRECT, ICMP_REDIR_HOST, gw);
- 		peer->rate_last = jiffies;
- 		++peer->rate_tokens;
-+		++peer->n_redirects;
- #ifdef CONFIG_IP_ROUTE_VERBOSE
- 		if (log_martians &&
- 		    peer->rate_tokens == ip_rt_redirect_number)
+--- a/arch/x86/kernel/livepatch.c
++++ b/arch/x86/kernel/livepatch.c
+@@ -58,6 +58,7 @@ int klp_write_module_reloc(struct module
+ 		val = (s32)value;
+ 		break;
+ 	case R_X86_64_PC32:
++	case R_X86_64_PLT32:
+ 		val = (u32)(value - loc);
+ 		break;
+ 	default:
 
 
