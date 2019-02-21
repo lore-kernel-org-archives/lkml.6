@@ -2,251 +2,198 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43113C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01E17C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:38:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8F5E2084F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:37:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550731064;
-	bh=fj23SnDguJJuL6/3QRFcEN6zGzu4fXzbDigy+0oXpyE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=oBP0uyfq2Fq3k6NdtBZncriVR/GZIpu9m60i+9YFOOBTdsShHr1SNtVkV2qxAlIuX
-	 E8gMJZHcJVZp9XgawM+P8FlU/IulRJybh7BroNKJt5QMfiv+AcDdmk8lbhgKfM5gEF
-	 NL17KNTLeFIOIiAKyUc3lpDKydgFL0O9eAbykDBw=
+	by mail.kernel.org (Postfix) with ESMTP id B90C021734
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:38:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="lXy2vKnl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbfBUGhm (ORCPT
+        id S1726744AbfBUGit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 01:37:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58304 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725891AbfBUGhm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 01:37:42 -0500
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 469312084F
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 06:37:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550731060;
-        bh=fj23SnDguJJuL6/3QRFcEN6zGzu4fXzbDigy+0oXpyE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=meztQji3RQfq+lK4opehfij9oGMp95blwCSrKoyzzoCwPUEB/nqrQouOi0R1pwFqv
-         wPC0NbuP2CJ7bHtUb+RNUK8SEDSuJ03jXoylLvFVy1XIYRIiaGkib2kculmkFw+/5q
-         4H8t/eRCKuA6sXzXlQhcG4+8NB6WZNiVGoaOky4A=
-Received: by mail-wr1-f53.google.com with SMTP id r5so15261839wrg.9
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 22:37:40 -0800 (PST)
-X-Gm-Message-State: AHQUAua5gL4v+ZdWbeEKAJq8uAGP3tK2pOLTk5u6RPKRdMh2vQChjsZC
-        7Z/vtaRt/80dHTj6YRdOL9g/6gwxBlJxbA1vl1cuBQ==
-X-Google-Smtp-Source: AHgI3Ib3TYdZ39jE2kUQLvn20qF96UXmkGoGu40Ne3MkAWrk/QI/NEKKtzytfWVwC4UU+d4+rtuq1v0leMmqgLPIdPE=
-X-Received: by 2002:adf:9dc4:: with SMTP id q4mr12052540wre.330.1550731058747;
- Wed, 20 Feb 2019 22:37:38 -0800 (PST)
+        Thu, 21 Feb 2019 01:38:49 -0500
+Received: from mail-eopbgr50052.outbound.protection.outlook.com ([40.107.5.52]:48404
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725932AbfBUGis (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 01:38:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5uIf5/BCzdYmNrHTzX4wEXj81QQkIXzS9ewzSz75O6k=;
+ b=lXy2vKnl1VdGBgtxULcHtz0XLVv1wCrVgvZCfWBW9OWvocHX5Gr/ofUlBdqTT2J08RNwGmKjyKiw3Pw0pquKHybVbmEl1//tEJpQb0inC6OwnEuzsd7101tXaWfMmIA6DQ1W26fofL0hfEucji8d9gR/cLgC+wIwr5EJgy+xSM0=
+Received: from AM6PR0402MB3911.eurprd04.prod.outlook.com (52.133.30.10) by
+ AM6PR0402MB3863.eurprd04.prod.outlook.com (52.133.29.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.18; Thu, 21 Feb 2019 06:38:30 +0000
+Received: from AM6PR0402MB3911.eurprd04.prod.outlook.com
+ ([fe80::6c94:4ad8:e9f3:cf1]) by AM6PR0402MB3911.eurprd04.prod.outlook.com
+ ([fe80::6c94:4ad8:e9f3:cf1%4]) with mapi id 15.20.1622.018; Thu, 21 Feb 2019
+ 06:38:30 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "rui.zhang@intel.com" <rui.zhang@intel.com>,
+        "edubezval@gmail.com" <edubezval@gmail.com>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "jagan@amarulasolutions.com" <jagan@amarulasolutions.com>,
+        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
+        "marc.w.gonzalez@free.fr" <marc.w.gonzalez@free.fr>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH V8 1/4] dt-bindings: fsl: scu: add thermal binding
+Thread-Topic: [PATCH V8 1/4] dt-bindings: fsl: scu: add thermal binding
+Thread-Index: AQHUybAPUmnoI6Ce/UqIMDTlZO/oOg==
+Date:   Thu, 21 Feb 2019 06:38:30 +0000
+Message-ID: <1550730831-14995-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR03CA0069.apcprd03.prod.outlook.com
+ (2603:1096:203:52::33) To AM6PR0402MB3911.eurprd04.prod.outlook.com
+ (2603:10a6:209:1c::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: a0567e44-a19b-49de-e90d-08d697c73148
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3863;
+x-ms-traffictypediagnostic: AM6PR0402MB3863:
+x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;AM6PR0402MB3863;23:mMtUhZy1XLYnwGPhlj836SUdvyQtOiiYt3nxC?=
+ =?iso-8859-1?Q?ZTvIU9bhg/IT1gLElBEbWbD569LcjkQNrN37rBmq1IZ2AJPRJB1FHje3j1?=
+ =?iso-8859-1?Q?w7/qx6tD0g0QlimyUm9NX4MRCP0GqKUUOuxucGtRhS8RnLzCOm/x6fLCAt?=
+ =?iso-8859-1?Q?r47NFbCR/tGBAkjnuqqcp6iSvkETzm55gtVfqNBy3riHnnhMu1JEmlZI8s?=
+ =?iso-8859-1?Q?yQk3MwSq3xzzJunoXFkEsJp63AOWvOKoyHSk8hiJO2+jruaj4l+AL7x6zD?=
+ =?iso-8859-1?Q?bQUo42JsN/Qq1i2QPgOm1ZjCzXdjlEZrhJUfDMlfETJ70eYS/fGvqIc58C?=
+ =?iso-8859-1?Q?/scdgi2L9MaiZptqU86ybslnB+KMqIbK8CSIHKDgkPSNKeX/EoUdNmiJhE?=
+ =?iso-8859-1?Q?d5v1iQ2QrzsiKAIhW9CY0K3TEpUKbO7Ng9YfvQGLb0vMGZB8XGmgLXBnpn?=
+ =?iso-8859-1?Q?1t0SpZ021MAjY+w5//bkEn5+1nxlxnMxAMzRHKkz89ZYPo/ICMO9JgZkdH?=
+ =?iso-8859-1?Q?SOGhpjlHeZiYIii4/RAzRCCe7qNQUn7nquiuNT3txzc7PKH7MMSIx+m/hc?=
+ =?iso-8859-1?Q?82J2QvjqNdw4zxSW9W///VKar0jQ+TXozL+TA/gkKa8Eg0BhHkf4YB2jKr?=
+ =?iso-8859-1?Q?Dgp2Ef4e7+j/Psk6J6y29tU5wJ/UBoooOy4CmdMKcLnst3dIUe0itoHq0L?=
+ =?iso-8859-1?Q?BK19EbxfFSD2NPniVrBV+/xhhs7RX1cioPsWE6liLAjHAZ1Q7GmoMNSPPC?=
+ =?iso-8859-1?Q?5Dm8QSj9apoQeHKizOsm12dk0iwk/yQeW0clHChcExz+d2+aOKcdM6lNaR?=
+ =?iso-8859-1?Q?iVBCYS8PpEgjDRbZaQ8fGiOwDV5ld/UZk8Ffx7zlv10OryGlHJe8VO5+3F?=
+ =?iso-8859-1?Q?6LaQcOqTZDRxceD+ZABN1sdhcqrFe3hmNZBLR6wHOrUlvXMwfw7pdhsBVi?=
+ =?iso-8859-1?Q?hBRB9VQBVF8FhjfX5mNNuw5knU0Io+jv5OcLuvdiDnRy5tzAcnKa4OtKRL?=
+ =?iso-8859-1?Q?fnfvHgRPI/hhVtDkypeUKrGid4hCCj/s/mqyFwGRMxKIyeVEBsAZUkluQM?=
+ =?iso-8859-1?Q?5LX0JJxUIyMgI/Y5YMxMIo0tZHs3pg87CZRVPrmDpuoe53cLqTd1FNVRIj?=
+ =?iso-8859-1?Q?7MJabccGSaaSCSxy0UL8TTY4JTP/iu5MWPDkbsKjqrtMZcR1ynGKVfDEjF?=
+ =?iso-8859-1?Q?ZkiUYmKqYSDBnQzPvsrBlBjib7RWmSup3aKVxc6munRaO52BaKYx6XZueW?=
+ =?iso-8859-1?Q?sskc4VYqMzytF8AGUV9eDS4d2csPdpezfCJXigh2w=3D=3D?=
+x-microsoft-antispam-prvs: <AM6PR0402MB3863ABD56A061F954F6CDD16F57E0@AM6PR0402MB3863.eurprd04.prod.outlook.com>
+x-forefront-prvs: 09555FB1AD
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(136003)(376002)(346002)(396003)(199004)(189003)(478600001)(71200400001)(5660300002)(6486002)(97736004)(6512007)(2906002)(86362001)(36756003)(66066001)(2201001)(71190400001)(53936002)(4326008)(486006)(25786009)(68736007)(305945005)(14454004)(6436002)(316002)(386003)(8676002)(6116002)(3846002)(110136005)(186003)(7736002)(2616005)(26005)(256004)(81166006)(102836004)(50226002)(7416002)(14444005)(476003)(2501003)(81156014)(8936002)(6506007)(52116002)(106356001)(99286004)(105586002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3863;H:AM6PR0402MB3911.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: wEEgAq0a6i5lalWkd4zfvsrl0Nvjkan9wEsBkxI7YFJHqOzRB1BKDXoE/NmvQptva6mzFcvey+OsPMV3HWFzZmtiTgDn0nFnrtfWPYWaIxS96Zu6HlFPANStojCC9HrS1u+GLI7jq2O2Iu6sNuD88QaWrUv1wz7S+dYksII5DtUfbtYyy7d4EZYbFpL84G53zb8LwDxafd8jxokpweKQme41jMxjYk6ABD5FJ39tTfPPrSTQi+Tj03HdqY6c9oY2i2dt68QamQKWZXuB2l12l1f5Qic5q6xEiYvJ7dVBDWUxUE1x9La5AuQJmjz9c7Vd/BMSNjubjqo8zIlV6u9oKVsASO872msEZ0VwnCYvwNtY7GcmI1AR7iqKiT/t/KfUIl2BSzxeEeEGGbBXR3hcGLfUedzOA0MFNdeWZB/VJgw=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <1547673522-226408-1-git-send-email-fenghua.yu@intel.com> <1547673522-226408-6-git-send-email-fenghua.yu@intel.com>
-In-Reply-To: <1547673522-226408-6-git-send-email-fenghua.yu@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 20 Feb 2019 22:37:27 -0800
-X-Gmail-Original-Message-ID: <CALCETrWCJAzRj7BUBX=O2qdHXucNWz=z0uEQ5asskTbw8CGW5w@mail.gmail.com>
-Message-ID: <CALCETrWCJAzRj7BUBX=O2qdHXucNWz=z0uEQ5asskTbw8CGW5w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] x86/cpufeatures: Enumerate user wait instructions
-To:     Tao Xu <tao3.xu@intel.com>
-Cc:     jingqi.liu@intel.com, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        H Peter Anvin <hpa@zytor.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a0567e44-a19b-49de-e90d-08d697c73148
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2019 06:38:21.8202
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3863
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 7:44 PM Tao Xu <tao3.xu@intel.com> wrote:
->
-> From: Fenghua Yu <fenghua.yu@intel.com>
+NXP i.MX8QXP is an ARMv8 SoC with a Cortex-M4 core inside as
+system controller, the system controller is in charge of system
+power, clock and thermal sensors etc. management, Linux kernel
+has to communicate with system controller via MU (message unit)
+IPC to get temperature from thermal sensors, this patch adds
+binding doc for i.MX system controller thermal driver.
 
->
-> From patchwork Wed Jan 16 21:18:41 2019
-> Content-Type: text/plain; charset="utf-8"
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+Changes since V7:
+        - remove unused property "tsens-num";
+        - improve the compatible description;
+        - update examples according to latest dts file.
+---
+ .../devicetree/bindings/arm/freescale/fsl,scu.txt     | 19 +++++++++++++++=
+++++
+ 1 file changed, 19 insertions(+)
 
-[snipped more stuff like this]
+diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt b/=
+Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+index 72d481c..d89147e 100644
+--- a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
++++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+@@ -122,6 +122,19 @@ RTC bindings based on SCU Message Protocol
+ Required properties:
+ - compatible: should be "fsl,imx8qxp-sc-rtc";
+=20
++Thermal bindings based on SCU Message Protocol
++------------------------------------------------------------
++
++Required properties:
++- compatible:			Should be :
++				  "fsl,imx8qxp-sc-thermal"
++				followed by "fsl,imx-sc-thermal";
++
++- #thermal-sensor-cells:	See Documentation/devicetree/bindings/thermal/the=
+rmal.txt
++				for a description.
++
++- imx,sensor-resource-id: 	Property array to specify each thermal zone's s=
+ensor resource ID.
++
+ Example (imx8qxp):
+ -------------
+ lsio_mu1: mailbox@5d1c0000 {
+@@ -168,6 +181,12 @@ firmware {
+ 		rtc: rtc {
+ 			compatible =3D "fsl,imx8qxp-sc-rtc";
+ 		};
++
++		tsens: thermal-sensor {
++			compatible =3D "fsl,imx8qxp-sc-thermal", "fsl,imx-sc-thermal";
++			#thermal-sensor-cells =3D <0>;
++			imx,sensor-resource-id =3D <IMX_SC_R_SYSTEM>;
++		};
+ 	};
+ };
+=20
+--=20
+2.7.4
 
-What happened here?
-
-> +/* Return value that will be used to set umwait control MSR */
-> +static inline u32 umwait_control_val(void)
-> +{
-> +       /*
-> +        * Enable or disable C0.2 (bit 0) based on global setting on all CPUs.
-> +        * When bit 0 is 1, C0.2 is disabled. Otherwise, C0.2 is enabled.
-> +        * So value in bit 0 is opposite of umwait_enable_c0_2.
-> +        */
-> +       return ~umwait_enable_c0_2 & UMWAIT_CONTROL_C02_MASK;
-> +}
-
-This function is horribly named.  How about something like
-umwait_compute_msr_value() or something liek that?  Also, what
-happened to the maximum wait time?
-
-> +
-> +static ssize_t umwait_enable_c0_2_show(struct device *dev,
-> +                                      struct device_attribute *attr,
-> +                                      char *buf)
-> +{
-> +       return sprintf(buf, "%d\n", umwait_enable_c0_2);
-
-I realize that it's traditional to totally ignore races in sysfs and
-such, but it's a bad tradition.  Please either READ_ONCE it with a
-comment or take the mutex.
-
-> +static ssize_t umwait_enable_c0_2_store(struct device *dev,
-> +                                       struct device_attribute *attr,
-> +                                       const char *buf, size_t count)
-> +{
-> +       int enable_c0_2, cpu, ret;
-> +       u32 msr_val;
-> +
-> +       ret = kstrtou32(buf, 10, &enable_c0_2);
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (enable_c0_2 != 1 && enable_c0_2 != 0)
-> +               return -EINVAL;
-
-How about if (enable_c0_2 > 1)?
-
-> +
-> +       mutex_lock(&umwait_lock);
-> +
-> +       umwait_enable_c0_2 = enable_c0_2;
-> +       msr_val = umwait_control_val();
-> +       get_online_cpus();
-> +       /* All CPUs have same umwait control setting */
-> +       for_each_online_cpu(cpu)
-> +               wrmsr_on_cpu(cpu, MSR_IA32_UMWAIT_CONTROL, msr_val, 0);
-> +       put_online_cpus();
-> +
-> +       mutex_unlock(&umwait_lock);
-
-Please factor this thing out into a helper like
-umwait_update_all_cpus().  That helper can assert that the lock is
-held.
-
-> +/* Set up umwait control MSR on this CPU using the current global setting. */
-> +static int umwait_cpu_online(unsigned int cpu)
-> +{
-> +       u32 msr_val;
-> +
-> +       mutex_lock(&umwait_lock);
-> +
-> +       msr_val = umwait_control_val();
-> +       wrmsr(MSR_IA32_UMWAIT_CONTROL, msr_val, 0);
-> +
-> +       mutex_unlock(&umwait_lock);
-> +
-> +       return 0;
-> +}
-> +
-> +static int __init umwait_init(void)
-> +{
-> +       struct device *dev;
-> +       int ret;
-> +
-> +       if (!boot_cpu_has(X86_FEATURE_WAITPKG))
-> +               return -ENODEV;
-> +
-> +       /* Add CPU global user wait interface to control umwait. */
-> +       dev = cpu_subsys.dev_root;
-> +       ret = sysfs_create_group(&dev->kobj, &umwait_attr_group);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "umwait/intel:online",
-> +                               umwait_cpu_online, NULL);
-
-This hotplug notifier thing is awful.  Thomas, do we have a function
-that gets called every time a CPU is brought up (via BSP boot, AP
-boot, hotplug, hibernation resume, etc) where we can just put all
-these things?  cpu_init() is almost appropriate, except that it's
-called at somewhat erratic times (quite different for BSP and AP IIRC)
-and it's not called AFAICT during hibernation restore.  I suppose we
-could add a new thing that is called by cpu_init() and
-restore_processor_state().
-
-Also, surely you should actually write the MSR in this function, too.
-
->
->  static int umwait_enable_c0_2 = 1; /* 0: disable C0.2. 1: enable C0.2. */
-> +static u32 umwait_max_time; /* In TSC-quanta. Only bits [31:2] are used. */
-
-I still think the default should be some reasonable nonzero value.  It
-should be long enough that we get decent C0.2 residency and short
-enough that UMWAIT never gives the impression that it is anything
-other than a fancy way to save a bit of power and SMT resources when
-spinning.  I don't want to see a situation where some library uses
-UMWAIT under the expectation that it genuinely waits for an event,
-appears to work well on bare metal on an otherwise idle system, and
-falls apart when it's run in a VM guest or with other software
-running.  IOW, programs more or less must be written to expect many
-spurious wakeups, so I think we should pick a default value so that
-there are essentially always many spurious wakeups.
-
-As a guess, I think that the default wait time should be well under 1
-ms but at least 20x the C0.2 entry+exit latency.
-
---Andy
->  static ssize_t umwait_enable_c0_2_show(struct device *dev,
-> @@ -61,8 +63,46 @@ static ssize_t umwait_enable_c0_2_store(struct device *dev,
->
->  static DEVICE_ATTR_RW(umwait_enable_c0_2);
->
-> +static ssize_t umwait_max_time_show(struct device *kobj,
-> +                                   struct device_attribute *attr, char *buf)
-> +{
-> +       return sprintf(buf, "%u\n", umwait_max_time);
-> +}
-> +
-> +static ssize_t umwait_max_time_store(struct device *kobj,
-> +                                    struct device_attribute *attr,
-> +                                    const char *buf, size_t count)
-> +{
-> +       u32 msr_val, max_time;
-> +       int cpu, ret;
-> +
-> +       ret = kstrtou32(buf, 10, &max_time);
-> +       if (ret)
-> +               return ret;
-> +
-> +       mutex_lock(&umwait_lock);
-> +
-> +       /* Only get max time value from bits [31:2] */
-> +       max_time &= UMWAIT_CONTROL_MAX_TIME_MASK;
-> +       /* Update the max time value in memory */
-> +       umwait_max_time = max_time;
-> +       msr_val = umwait_control_val();
-> +       get_online_cpus();
-> +       /* All CPUs have same umwait max time */
-> +       for_each_online_cpu(cpu)
-> +               wrmsr_on_cpu(cpu, MSR_IA32_UMWAIT_CONTROL, msr_val, 0);
-> +       put_online_cpus();
-> +
-> +       mutex_unlock(&umwait_lock);
-> +
-> +       return count;
-> +}
-> +
-> +static DEVICE_ATTR_RW(umwait_max_time);
-> +
->  static struct attribute *umwait_attrs[] = {
->         &dev_attr_umwait_enable_c0_2.attr,
-> +       &dev_attr_umwait_max_time.attr,
->         NULL
->  };
->
