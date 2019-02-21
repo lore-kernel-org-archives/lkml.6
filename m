@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9337C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 576A0C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:52:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A6C720818
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:52:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 326702083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:52:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbfBUXwU (ORCPT
+        id S1727574AbfBUXwW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 18:52:20 -0500
-Received: from mga14.intel.com ([192.55.52.115]:3139 "EHLO mga14.intel.com"
+        Thu, 21 Feb 2019 18:52:22 -0500
+Received: from mga14.intel.com ([192.55.52.115]:3149 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726980AbfBUXvA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727037AbfBUXvA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 21 Feb 2019 18:51:00 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 15:50:58 -0800
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 15:50:59 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,397,1544515200"; 
-   d="scan'208";a="322394832"
+   d="scan'208";a="322394837"
 Received: from linksys13920.jf.intel.com (HELO rpedgeco-DESK5.jf.intel.com) ([10.54.75.11])
-  by fmsmga005.fm.intel.com with ESMTP; 21 Feb 2019 15:50:57 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 21 Feb 2019 15:50:58 -0800
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
@@ -42,13 +42,10 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
         Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v3 06/20] x86/alternative: Use temporary mm for text poking
-Date:   Thu, 21 Feb 2019 15:44:37 -0800
-Message-Id: <20190221234451.17632-7-rick.p.edgecombe@intel.com>
+Subject: [PATCH v3 07/20] x86/kgdb: Avoid redundant comparison of patched code
+Date:   Thu, 21 Feb 2019 15:44:38 -0800
+Message-Id: <20190221234451.17632-8-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190221234451.17632-1-rick.p.edgecombe@intel.com>
 References: <20190221234451.17632-1-rick.p.edgecombe@intel.com>
@@ -59,199 +56,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nadav Amit <namit@vmware.com>
 
-text_poke() can potentially compromise security as it sets temporary
-PTEs in the fixmap. These PTEs might be used to rewrite the kernel code
-from other cores accidentally or maliciously, if an attacker gains the
-ability to write onto kernel memory.
+text_poke() already ensures that the written value is the correct one
+and fails if that is not the case. There is no need for an additional
+comparison. Remove it.
 
-Moreover, since remote TLBs are not flushed after the temporary PTEs are
-removed, the time-window in which the code is writable is not limited if
-the fixmap PTEs - maliciously or accidentally - are cached in the TLB.
-To address these potential security hazards, use a temporary mm for
-patching the code.
-
-Finally, text_poke() is also not conservative enough when mapping pages,
-as it always tries to map 2 pages, even when a single one is sufficient.
-So try to be more conservative, and do not map more than needed.
-
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/include/asm/fixmap.h |   2 -
- arch/x86/kernel/alternative.c | 108 +++++++++++++++++++++++++++-------
- arch/x86/xen/mmu_pv.c         |   2 -
- 3 files changed, 86 insertions(+), 26 deletions(-)
+ arch/x86/kernel/kgdb.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
-diff --git a/arch/x86/include/asm/fixmap.h b/arch/x86/include/asm/fixmap.h
-index 50ba74a34a37..9da8cccdf3fb 100644
---- a/arch/x86/include/asm/fixmap.h
-+++ b/arch/x86/include/asm/fixmap.h
-@@ -103,8 +103,6 @@ enum fixed_addresses {
- #ifdef CONFIG_PARAVIRT
- 	FIX_PARAVIRT_BOOTMAP,
- #endif
--	FIX_TEXT_POKE1,	/* reserve 2 pages for text_poke() */
--	FIX_TEXT_POKE0, /* first page is last, because allocation is backward */
- #ifdef	CONFIG_X86_INTEL_MID
- 	FIX_LNW_VRTC,
- #endif
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index ae05fbb50171..cfe5bfe06f9d 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -11,6 +11,7 @@
- #include <linux/stop_machine.h>
- #include <linux/slab.h>
- #include <linux/kdebug.h>
-+#include <linux/mmu_context.h>
- #include <asm/text-patching.h>
- #include <asm/alternative.h>
- #include <asm/sections.h>
-@@ -683,41 +684,104 @@ __ro_after_init unsigned long poking_addr;
- 
- static void *__text_poke(void *addr, const void *opcode, size_t len)
+diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
+index 1461544cba8b..057af9187a04 100644
+--- a/arch/x86/kernel/kgdb.c
++++ b/arch/x86/kernel/kgdb.c
+@@ -746,7 +746,6 @@ void kgdb_arch_set_pc(struct pt_regs *regs, unsigned long ip)
+ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
  {
-+	bool cross_page_boundary = offset_in_page(addr) + len > PAGE_SIZE;
-+	struct page *pages[2] = {NULL};
-+	temp_mm_state_t prev;
- 	unsigned long flags;
--	char *vaddr;
--	struct page *pages[2];
--	int i;
-+	pte_t pte, *ptep;
-+	spinlock_t *ptl;
-+	pgprot_t pgprot;
+ 	int err;
+-	char opc[BREAK_INSTR_SIZE];
  
+ 	bpt->type = BP_BREAKPOINT;
+ 	err = probe_kernel_read(bpt->saved_instr, (char *)bpt->bpt_addr,
+@@ -765,11 +764,6 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
+ 		return -EBUSY;
+ 	text_poke_kgdb((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
+ 		       BREAK_INSTR_SIZE);
+-	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+-	if (err)
+-		return err;
+-	if (memcmp(opc, arch_kgdb_ops.gdb_bpt_instr, BREAK_INSTR_SIZE))
+-		return -EINVAL;
+ 	bpt->type = BP_POKE_BREAKPOINT;
+ 
+ 	return err;
+@@ -777,9 +771,6 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
+ 
+ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
+ {
+-	int err;
+-	char opc[BREAK_INSTR_SIZE];
+-
+ 	if (bpt->type != BP_POKE_BREAKPOINT)
+ 		goto knl_write;
  	/*
--	 * While boot memory allocator is runnig we cannot use struct
--	 * pages as they are not yet initialized.
-+	 * While boot memory allocator is running we cannot use struct pages as
-+	 * they are not yet initialized. There is no way to recover.
- 	 */
- 	BUG_ON(!after_bootmem);
+@@ -790,10 +781,7 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
+ 		goto knl_write;
+ 	text_poke_kgdb((void *)bpt->bpt_addr, bpt->saved_instr,
+ 		       BREAK_INSTR_SIZE);
+-	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+-	if (err || memcmp(opc, bpt->saved_instr, BREAK_INSTR_SIZE))
+-		goto knl_write;
+-	return err;
++	return 0;
  
- 	if (!core_kernel_text((unsigned long)addr)) {
- 		pages[0] = vmalloc_to_page(addr);
--		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
-+		if (cross_page_boundary)
-+			pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
- 	} else {
- 		pages[0] = virt_to_page(addr);
- 		WARN_ON(!PageReserved(pages[0]));
--		pages[1] = virt_to_page(addr + PAGE_SIZE);
-+		if (cross_page_boundary)
-+			pages[1] = virt_to_page(addr + PAGE_SIZE);
- 	}
--	BUG_ON(!pages[0]);
-+	/*
-+	 * If something went wrong, crash and burn since recovery paths are not
-+	 * implemented.
-+	 */
-+	BUG_ON(!pages[0] || (cross_page_boundary && !pages[1]));
-+
- 	local_irq_save(flags);
--	set_fixmap(FIX_TEXT_POKE0, page_to_phys(pages[0]));
--	if (pages[1])
--		set_fixmap(FIX_TEXT_POKE1, page_to_phys(pages[1]));
--	vaddr = (char *)fix_to_virt(FIX_TEXT_POKE0);
--	memcpy(&vaddr[(unsigned long)addr & ~PAGE_MASK], opcode, len);
--	clear_fixmap(FIX_TEXT_POKE0);
--	if (pages[1])
--		clear_fixmap(FIX_TEXT_POKE1);
--	local_flush_tlb();
--	sync_core();
--	/* Could also do a CLFLUSH here to speed up CPU recovery; but
--	   that causes hangs on some VIA CPUs. */
--	for (i = 0; i < len; i++)
--		BUG_ON(((char *)addr)[i] != ((char *)opcode)[i]);
-+
-+	/*
-+	 * Map the page without the global bit, as TLB flushing is done with
-+	 * flush_tlb_mm_range(), which is intended for non-global PTEs.
-+	 */
-+	pgprot = __pgprot(pgprot_val(PAGE_KERNEL) & ~_PAGE_GLOBAL);
-+
-+	/*
-+	 * The lock is not really needed, but this allows to avoid open-coding.
-+	 */
-+	ptep = get_locked_pte(poking_mm, poking_addr, &ptl);
-+
-+	/*
-+	 * This must not fail; preallocated in poking_init().
-+	 */
-+	VM_BUG_ON(!ptep);
-+
-+	pte = mk_pte(pages[0], pgprot);
-+	set_pte_at(poking_mm, poking_addr, ptep, pte);
-+
-+	if (cross_page_boundary) {
-+		pte = mk_pte(pages[1], pgprot);
-+		set_pte_at(poking_mm, poking_addr + PAGE_SIZE, ptep + 1, pte);
-+	}
-+
-+	/*
-+	 * Loading the temporary mm behaves as a compiler barrier, which
-+	 * guarantees that the PTE will be set at the time memcpy() is done.
-+	 */
-+	prev = use_temporary_mm(poking_mm);
-+
-+	kasan_disable_current();
-+	memcpy((u8 *)poking_addr + offset_in_page(addr), opcode, len);
-+	kasan_enable_current();
-+
-+	/*
-+	 * Ensure that the PTE is only cleared after the instructions of memcpy
-+	 * were issued by using a compiler barrier.
-+	 */
-+	barrier();
-+
-+	pte_clear(poking_mm, poking_addr, ptep);
-+	if (cross_page_boundary)
-+		pte_clear(poking_mm, poking_addr + PAGE_SIZE, ptep + 1);
-+
-+	/*
-+	 * Loading the previous page-table hierarchy requires a serializing
-+	 * instruction that already allows the core to see the updated version.
-+	 * Xen-PV is assumed to serialize execution in a similar manner.
-+	 */
-+	unuse_temporary_mm(prev);
-+
-+	/*
-+	 * Flushing the TLB might involve IPIs, which would require enabled
-+	 * IRQs, but not if the mm is not used, as it is in this point.
-+	 */
-+	flush_tlb_mm_range(poking_mm, poking_addr, poking_addr +
-+			   (cross_page_boundary ? 2 : 1) * PAGE_SIZE,
-+			   PAGE_SHIFT, false);
-+
-+	/*
-+	 * If the text does not match what we just wrote then something is
-+	 * fundamentally screwy; there's nothing we can really do about that.
-+	 */
-+	BUG_ON(memcmp(addr, opcode, len));
-+
-+	pte_unmap_unlock(ptep, ptl);
- 	local_irq_restore(flags);
- 	return addr;
- }
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index 0f4fe206dcc2..82b181fcefe5 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -2319,8 +2319,6 @@ static void xen_set_fixmap(unsigned idx, phys_addr_t phys, pgprot_t prot)
- #elif defined(CONFIG_X86_VSYSCALL_EMULATION)
- 	case VSYSCALL_PAGE:
- #endif
--	case FIX_TEXT_POKE0:
--	case FIX_TEXT_POKE1:
- 		/* All local page mappings */
- 		pte = pfn_pte(phys, prot);
- 		break;
+ knl_write:
+ 	return probe_kernel_write((char *)bpt->bpt_addr,
 -- 
 2.17.1
 
