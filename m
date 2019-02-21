@@ -2,131 +2,148 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F6AC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D990DC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:25:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A25B2086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:22:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5A362086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:25:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K1pyr4O4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726560AbfBUGWL (ORCPT
+        id S1726589AbfBUGZ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 01:22:11 -0500
-Received: from ozlabs.org ([203.11.71.1]:54469 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725823AbfBUGWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 01:22:10 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 444ks844Xyz9s6w;
-        Thu, 21 Feb 2019 17:22:04 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Will Deacon <will.deacon@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-arch <linux-arch@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Tony Luck <tony.luck@intel.com>, paulus@samba.org
-Subject: Re: [RFC PATCH] docs/memory-barriers.txt: Rewrite "KERNEL I/O BARRIER EFFECTS" section
-In-Reply-To: <20190219161334.GA28803@fuggles.cambridge.arm.com>
-References: <20190211172948.3322-1-will.deacon@arm.com> <CAHk-=wiP42aqBApAUJbLAB43u5ips9ArgLxXn5L1r74bowxdow@mail.gmail.com> <20190213172047.GH6346@brain-police> <CAHk-=wigYDMPnoFRC9eBystt0gi6n1yQtAyuEqVg6x+5znOk6A@mail.gmail.com> <20190218165007.GC16713@fuggles.cambridge.arm.com> <20190219161334.GA28803@fuggles.cambridge.arm.com>
-Date:   Thu, 21 Feb 2019 17:22:03 +1100
-Message-ID: <87k1htwtis.fsf@concordia.ellerman.id.au>
+        Thu, 21 Feb 2019 01:25:56 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:44563 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725648AbfBUGZz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 01:25:55 -0500
+Received: by mail-qk1-f195.google.com with SMTP id r21so3612230qkl.11;
+        Wed, 20 Feb 2019 22:25:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=7xMYSM2aOe6bSPqc/45ReqpRuLE1CcWNfUMtbsqiRfY=;
+        b=K1pyr4O4Lurjy/nxlGbpfORCbQCH2xI+AEVdpUDlGKerJ9NatgLXamL5mrdXXOCmEe
+         K1fWwyLYrAKuKNzA6BZWDttGBhRcCt93Mnn+4JRBVtsnYNFjflfEvQQM3J3fgoZnfTYZ
+         VQbI8MuzTiE+R2su8ZBrcpMaVt3xGOymw6y1unrQGqrRMboOZMyUB5rg2VqpLUGyehVR
+         ZOEZNilC2vWe0d7mBWLu7jfxYFt/PbGHWEWi7FnOwVs4IevYt9R/297Wo/99nRA4FbTq
+         U0FlwhHTNabtaXTM6q2Nhqk7uno+7i3w6Vtz+ta5twvm3iUj4apw3qbx1TKQgdGeJvSx
+         aXvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=7xMYSM2aOe6bSPqc/45ReqpRuLE1CcWNfUMtbsqiRfY=;
+        b=f7H41J6xtYm6xilsBMvZ5t+W4CK7kypYeNx+SGcaQkhpPegPAQ7zuwKTMD4QImCM1b
+         4aAyOMSUCxOOIQm0jltad/Xg27T1/y61BdfFZEFTFHz4X26RVVrAgjGa8RuooqOvCRJe
+         iSVu1ZJdM/QFTIYqClOSVB7M86vTuHqB8PBfT8eRhaFOTfChHFy+1GsuW8eOyAPm8z3+
+         cL7h0x4pq5ABDnyJfWrM4kS6x0UJa5jzxYVWTVePxkLYnPuO6n2o6zFBOUpeVJ1t0GI5
+         Wud5q5h2qMWmUwQfIiwk6f/HJ4VuA3b/ayscV3TV7waaH9CyCObeHc2poCkb8QP6broT
+         7u3g==
+X-Gm-Message-State: AHQUAuaGhKmZq+mxAB3XN+aHhJOsTONv4C6OXxfy6chL8d+oL+r3qTyQ
+        XDY6Q6EELh7VwAX3lmHyogvfK9YTehkIlnMxDKw=
+X-Google-Smtp-Source: AHgI3IY11kIeB14F6g5Zkj2WULhJ5vYGwicmpr+RKgnJBe8c4QR8dXQy9byUNNZQL5W+TOE7tVew5TeNFSIlvPUyE7E=
+X-Received: by 2002:a37:4707:: with SMTP id u7mr27283384qka.296.1550730354152;
+ Wed, 20 Feb 2019 22:25:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <e7b709a2b040af7faa81b0aa2c3a125aed628a82.1525964383.git.joe@perches.com>
+ <tip-1de392f5d5e803663abbd8ed084233f154152bcd@git.kernel.org>
+ <20180517182659.GB27807@pd.tnic> <a341a36ed75712b6c624a14aa694843ee1ef948e.camel@perches.com>
+In-Reply-To: <a341a36ed75712b6c624a14aa694843ee1ef948e.camel@perches.com>
+Reply-To: bjorn@helgaas.com
+From:   Bjorn Helgaas <bjorn.helgaas@gmail.com>
+Date:   Wed, 20 Feb 2019 22:25:42 -0800
+Message-ID: <CABhMZUWmJpux98nN65UBkY4LvjUO5P4Y60ytAe+ze70gQUVf1A@mail.gmail.com>
+Subject: Re: [tip:x86/cleanups] x86: Remove pr_fmt duplicate logging prefixes
+To:     Joe Perches <joe@perches.com>
+Cc:     Borislav Petkov <bp@alien8.de>, mingo@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        linux-tip-commits@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Will Deacon <will.deacon@arm.com> writes:
-> [+more ppc folks]
+On Thu, May 17, 2018 at 11:45 AM Joe Perches <joe@perches.com> wrote:
 >
-> On Mon, Feb 18, 2019 at 04:50:12PM +0000, Will Deacon wrote:
->> On Wed, Feb 13, 2019 at 10:27:09AM -0800, Linus Torvalds wrote:
->> > Note that even if mmiowb() is expensive (and I don't think that's
->> > actually even the case on ia64), you can - and probably should - do
->> > what PowerPC does.
->> > 
->> > Doing an IO barrier on PowerPC is insanely expensive, but they solve
->> > that simply track the whole "have I done any IO" manually. It's not
->> > even that expensive, it just uses a percpu flag.
->> > 
->> > (Admittedly, PowerPC makes it less obvious that it's a percpu variable
->> > because it's actually in the special "paca" region that is like a
->> > hyper-local percpu area).
+> On Thu, 2018-05-17 at 20:27 +0200, Borislav Petkov wrote:
+> > On Sun, May 13, 2018 at 12:27:45PM -0700, tip-bot for Joe Perches wrote:
+> > > Commit-ID:  1de392f5d5e803663abbd8ed084233f154152bcd
+> > > Gitweb:     https://git.kernel.org/tip/1de392f5d5e803663abbd8ed084233f154152bcd
+> > > Author:     Joe Perches <joe@perches.com>
+> > > AuthorDate: Thu, 10 May 2018 08:45:30 -0700
+> > > Committer:  Thomas Gleixner <tglx@linutronix.de>
+> > > CommitDate: Sun, 13 May 2018 21:25:18 +0200
+> > >
+> > > x86: Remove pr_fmt duplicate logging prefixes
+> > >
+> > > Converting pr_fmt from a default simple #define to use KBUILD_MODNAME
+> > > added some duplicate prefixes.
+> > >
+> > > Remove the duplicate prefixes.
+> []
+> > Maybe I'm missing something but this dropped the prefixes now
+> > completely:
+> >
+> > -e820: BIOS-provided physical RAM map:
+> > +BIOS-provided physical RAM map:
+> >
+> > -e820: last_pfn = 0x43f000 max_arch_pfn = 0x400000000
+> > +last_pfn = 0x43f000 max_arch_pfn = 0x400000000
+> >
+> > -e820: last_pfn = 0x9d000 max_arch_pfn = 0x400000000
+> > +last_pfn = 0x9d000 max_arch_pfn = 0x400000000
+> >
+> > ...
+> >
+> > I don't think that was the intention.
 >
-> [...]
+> Hi Borislav
 >
->> > But we *could* first just do the mmiowb() unconditionally in the ia64
->> > unlocking code, and then see if anybody notices?
->> 
->> I'll hack this up as a starting point. We can always try to be clever later
->> on if it's deemed necessary.
+> It wasn't and isn't the intention.
 >
-> Ok, so I started hacking this up in core code with the percpu flag (since
-> riscv apparently needs it), but I've now realised that I don't understand
-> how the PowerPC trick works after all. Consider the following:
+> This is a patch _series_, and all of the patches
+> from 4-18 depend on patch 3 which converts the
+> generic define in include/linux/printk.h
 >
-> 	spin_lock(&foo);	// io_sync = 0
-> 	outb(42, port);		// io_sync = 1
-> 	spin_lock(&bar);	// io_sync = 0
-> 	...
-> 	spin_unlock(&bar);
-> 	spin_unlock(&foo);
+> from
+>         #define pr_fmt(fmt) fmt
+> to
+>         #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 >
-> The inner lock could even happen in an irq afaict, but we'll end up skipping
-> the mmiowb()/sync because the io_sync flag is unconditionally cleared by
-> spin_lock(). Fixing this is complicated by the fact that I/O writes can be
-> performed in preemptible context with no locks held, so we can end up
-> spuriously setting the io_sync flag for arbitrary CPUs, hence the desire
-> to clear it in spin_lock().
->
-> If the paca entry was more than a byte, we could probably track that a
-> spinlock is held and then avoid clearing the flag prematurely, but I have
-> a feeling that I'm missing something. Anybody know how this is supposed to
-> work?
+> Perhaps a better option, which could be done in
+> a v2 of the series, is to add a temporary
+> #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> to each file modified in patches 4-18 and then
+> allow the follow-on script described in the 0/18
+> cover letter to remove those #defines
 
-I don't think you're missing anything :/
+Was there ever a v2?  What I see from 1de392f5d5e8 ("x86: Remove
+pr_fmt duplicate logging prefixes") is exactly what Borislav noted.
 
-Having two flags like you suggest could work. Or you could just make the
-flag into a nesting counter.
+For example, https://bugzilla.kernel.org/attachment.cgi?id=281007 is a
+v4.20 dmesg log from
+https://bugzilla.kernel.org/show_bug.cgi?id=202511 .  That bug also
+has a v4.17 dmesg log
+(https://bugzilla.kernel.org/attachment.cgi?id=281011).  Comparing
+them shows:
 
-Or do you just remove the clearing from spin_lock()? 
+-Linux version 4.17.19-gentoo (root@survivor) (gcc version 7.3.0
+(Gentoo 7.3.0-r3 p1.4)) #2 SMP Sat Sep 22 09:53:01 EDT 2018
++Linux version 4.20.6-gentoo (root@survivor) (gcc version 7.3.0
+(Gentoo 7.3.0-r3 p1.4)) #1 SMP Tue Feb 5 09:46:51 EST 2019
+...
+-e820: BIOS-provided physical RAM map:
++BIOS-provided physical RAM map:
 
-That gets you:
+Not a big deal as far as I'm concerned, but it is a minor annoyance.
 
- 	spin_lock(&foo);
- 	outb(42, port);		// io_sync = 1
- 	spin_lock(&bar);
- 	...
- 	spin_unlock(&bar);	// mb(); io_sync = 0
- 	spin_unlock(&foo);
-
-
-And I/O outside of the lock case:
-
- 	outb(42, port);		// io_sync = 1
-
- 	spin_lock(&bar);
- 	...
- 	spin_unlock(&bar);	// mb(); io_sync = 0
-
-
-Extra barriers are not ideal, but the odd spurious mb() might be
-preferable to doing another compare and branch or increment in every
-spin_lock()?
-
-cheers
+Bjorn
