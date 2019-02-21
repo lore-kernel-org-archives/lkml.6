@@ -2,151 +2,165 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD78CC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 20:30:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D3BC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 20:33:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ED332081B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 20:30:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (4096-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b="HHFOU6Fm"
+	by mail.kernel.org (Postfix) with ESMTP id EDBEA2081B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 20:33:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbfBUUaf (ORCPT
+        id S1726199AbfBUUdj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 15:30:35 -0500
-Received: from mx.kolabnow.com ([95.128.36.41]:28528 "EHLO mx.kolabnow.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725866AbfBUUad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 15:30:33 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by ext-mx-out002.mykolab.com (Postfix) with ESMTP id 29542F87;
-        Thu, 21 Feb 2019 21:30:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
-        content-transfer-encoding:content-type:content-type:mime-version
-        :references:in-reply-to:message-id:date:date:subject:subject
-        :from:from:received:received:received; s=dkim20160331; t=
-        1550781030; x=1552595431; bh=4Fil7S3rxLkb6iSxt8dE1yoZYF+gUBuL+gX
-        +VPDsKRc=; b=HHFOU6FmCZm4q5YQfDnoqsIFuHUlCpuwE6jXKWOMeNm+q5gMF4x
-        9XzW1cPiqzLbqhuyHKChkE0QVepUbVpOf3MYtWdvNWGgCNp0+5+PENYW57M+QMaZ
-        pjd30QQ6Gq8JIQOyuRoc8ZVlSJLwbXtKwrqLR2ViYUH5zMCpmHzKwBprQh/3SU4N
-        lD4WhsSMZEL10ePw04SUKTb7e488NNfq1PSZw6vCb2s931DFiGQGjWDRYoZQ6sVm
-        WXfVfvMi1fopugblDnOzWmf/jB6USpn2eb5C8h9icHE7au3p87X1pk8gNADf9vZR
-        1luL75eR3upZ2o1+o2CTmJsfVZlpf3ALKYQo02EcYMdNfsqwr+f1f+rmhPwnQI6v
-        qLg7eOfewkacfBnakT4Ydbc3tkCYf9mBYM2iMouWK1KIes0uQlmK8b5uDDVm25n/
-        x9VJNr/DCn1yuSOf3/YyR4Erkfk/KF75IdbtSySBQzfJlJNlALP99mNZXDug26CT
-        /wLHksE0JmhVrK9NU9vZrTyq09BMl1tAmuP2eJyFmoH1mfXJttXR+fyu29Wb7nhq
-        pS5jp2lf/lFGnjOTP+YXt52QTBBf6emj7g4iD5Qm4We2UHiTulzpTglgTScH4IU0
-        PzVCUgpA5UdERjRGjvrt7LgsGTjurncncZYp2RN5UF8SEXRnId6d6b8A=
-X-Virus-Scanned: amavisd-new at mykolab.com
-Received: from mx.kolabnow.com ([127.0.0.1])
-        by localhost (ext-mx-out002.mykolab.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Mx46i5R0eAYe; Thu, 21 Feb 2019 21:30:30 +0100 (CET)
-Received: from int-mx002.mykolab.com (unknown [10.9.13.2])
-        by ext-mx-out002.mykolab.com (Postfix) with ESMTPS id 1A02B179;
-        Thu, 21 Feb 2019 21:30:30 +0100 (CET)
-Received: from ext-subm002.mykolab.com (unknown [10.9.6.2])
-        by int-mx002.mykolab.com (Postfix) with ESMTPS id 3591925F5;
-        Thu, 21 Feb 2019 21:30:28 +0100 (CET)
-From:   Federico Vaga <federico.vaga@vaga.pv.it>
-To:     Jonathan Corbet <corbet@lwn.net>, Harry Wei <harryxiyou@gmail.com>,
-        Alessia Mantegazza <amantegazza@vaga.pv.it>,
-        SeongJae Park <sj38.park@gmail.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel@zh-kernel.org,
-        Federico Vaga <federico.vaga@vaga.pv.it>
-Subject: [PATCH v2 2/2] doc: process: complete removal of info about -git patches
-Date:   Thu, 21 Feb 2019 21:30:00 +0100
-Message-Id: <20190221203000.10194-2-federico.vaga@vaga.pv.it>
-In-Reply-To: <20190221203000.10194-1-federico.vaga@vaga.pv.it>
-References: <20190221203000.10194-1-federico.vaga@vaga.pv.it>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Thu, 21 Feb 2019 15:33:39 -0500
+Received: from emh07.mail.saunalahti.fi ([62.142.5.117]:48002 "EHLO
+        emh07.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbfBUUdj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 15:33:39 -0500
+Received: from localhost.localdomain (85-76-65-82-nat.elisa-mobile.fi [85.76.65.82])
+        by emh07.mail.saunalahti.fi (Postfix) with ESMTP id D32C7B0023;
+        Thu, 21 Feb 2019 22:33:35 +0200 (EET)
+From:   Aaro Koskinen <aaro.koskinen@iki.fi>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
+Cc:     Aaro Koskinen <aaro.koskinen@nokia.com>
+Subject: [RESEND PATCH v2] panic/reboot: allow specifying reboot_mode for panic only
+Date:   Thu, 21 Feb 2019 22:33:10 +0200
+Message-Id: <20190221203310.20706-1-aaro.koskinen@iki.fi>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following patch forgot to remove a reference to the -git
-patches
+From: Aaro Koskinen <aaro.koskinen@nokia.com>
 
-commit 2c71d305caf9 ("docs: process: Remove outdated info about -git patches")
+Allow specifying reboot_mode for panic only. This is needed on systems
+where ramoops is used to store panic logs, and user wants to use warm
+reset to preserve those, while still having cold reset on normal reboots.
 
-This patch complete the removal and update all translations
-
-Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
+Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
 ---
- Documentation/process/howto.rst                    | 1 -
- Documentation/translations/it_IT/process/howto.rst | 1 -
- Documentation/translations/ja_JP/howto.rst         | 1 -
- Documentation/translations/ko_KR/howto.rst         | 1 -
- Documentation/translations/zh_CN/HOWTO             | 1 -
- 5 files changed, 5 deletions(-)
 
-diff --git a/Documentation/process/howto.rst b/Documentation/process/howto.rst
-index bdd2eda81a1c..80488a5e6738 100644
---- a/Documentation/process/howto.rst
-+++ b/Documentation/process/howto.rst
-@@ -237,7 +237,6 @@ branches.  These different branches are:
+	v2: Use REBOOT_UNDEFINED instead of -1
+
+	v1: https://marc.info/?t=154957416600005&r=1&w=2
+
+ .../admin-guide/kernel-parameters.txt         |  4 +++-
+ include/linux/reboot.h                        |  2 ++
+ kernel/panic.c                                |  2 ++
+ kernel/reboot.c                               | 20 ++++++++++++++-----
+ 4 files changed, 22 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 858b6c0b9a15..5705b4689565 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3949,7 +3949,9 @@
+ 				[[,]s[mp]#### \
+ 				[[,]b[ios] | a[cpi] | k[bd] | t[riple] | e[fi] | p[ci]] \
+ 				[[,]f[orce]
+-			Where reboot_mode is one of warm (soft) or cold (hard) or gpio,
++			Where reboot_mode is one of warm (soft) or cold (hard) or gpio
++					(prefix with 'panic_' to set mode for panic
++					reboot only),
+ 			      reboot_type is one of bios, acpi, kbd, triple, efi, or pci,
+ 			      reboot_force is either force or not specified,
+ 			      reboot_cpu is s[mp]#### with #### being the processor
+diff --git a/include/linux/reboot.h b/include/linux/reboot.h
+index e63799a6e895..1c4c8a47e2de 100644
+--- a/include/linux/reboot.h
++++ b/include/linux/reboot.h
+@@ -19,8 +19,10 @@ enum reboot_mode {
+ 	REBOOT_HARD,
+ 	REBOOT_SOFT,
+ 	REBOOT_GPIO,
++	REBOOT_UNDEFINED = -1,
+ };
+ extern enum reboot_mode reboot_mode;
++extern enum reboot_mode panic_reboot_mode;
  
-   - main 4.x kernel tree
-   - 4.x.y -stable kernel tree
--  - 4.x -git kernel patches
-   - subsystem specific kernel trees and patches
-   - the 4.x -next kernel tree for integration tests
+ enum reboot_type {
+ 	BOOT_TRIPLE	= 't',
+diff --git a/kernel/panic.c b/kernel/panic.c
+index f121e6ba7e11..a0d839f883b7 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -306,6 +306,8 @@ void panic(const char *fmt, ...)
+ 		 * shutting down.  But if there is a chance of
+ 		 * rebooting the system it will be rebooted.
+ 		 */
++		if (panic_reboot_mode != REBOOT_UNDEFINED)
++			reboot_mode = panic_reboot_mode;
+ 		emergency_restart();
+ 	}
+ #ifdef __sparc__
+diff --git a/kernel/reboot.c b/kernel/reboot.c
+index e1b79b6a2735..b9e79e8c7226 100644
+--- a/kernel/reboot.c
++++ b/kernel/reboot.c
+@@ -31,6 +31,7 @@ EXPORT_SYMBOL(cad_pid);
+ #define DEFAULT_REBOOT_MODE
+ #endif
+ enum reboot_mode reboot_mode DEFAULT_REBOOT_MODE;
++enum reboot_mode panic_reboot_mode = REBOOT_UNDEFINED;
  
-diff --git a/Documentation/translations/it_IT/process/howto.rst b/Documentation/translations/it_IT/process/howto.rst
-index 15199aa5b4df..9903ac7c566b 100644
---- a/Documentation/translations/it_IT/process/howto.rst
-+++ b/Documentation/translations/it_IT/process/howto.rst
-@@ -244,7 +244,6 @@ e di molti altri rami per specifici sottosistemi. Questi rami sono:
+ /*
+  * This variable is used privately to keep track of whether or not
+@@ -519,6 +520,8 @@ EXPORT_SYMBOL_GPL(orderly_reboot);
+ static int __init reboot_setup(char *str)
+ {
+ 	for (;;) {
++		enum reboot_mode *mode;
++
+ 		/*
+ 		 * Having anything passed on the command line via
+ 		 * reboot= will cause us to disable DMI checking
+@@ -526,17 +529,24 @@ static int __init reboot_setup(char *str)
+ 		 */
+ 		reboot_default = 0;
  
-   - I sorgenti kernel 4.x
-   - I sorgenti stabili del kernel 4.x.y -stable
--  - Le modifiche in 4.x -git
-   - Sorgenti dei sottosistemi del kernel e le loro modifiche
-   - Il kernel 4.x -next per test d'integrazione
++		if (!strncmp(str, "panic_", 6)) {
++			mode = &panic_reboot_mode;
++			str += 6;
++		} else {
++			mode = &reboot_mode;
++		}
++
+ 		switch (*str) {
+ 		case 'w':
+-			reboot_mode = REBOOT_WARM;
++			*mode = REBOOT_WARM;
+ 			break;
  
-diff --git a/Documentation/translations/ja_JP/howto.rst b/Documentation/translations/ja_JP/howto.rst
-index 4fbf40552728..2621b770a745 100644
---- a/Documentation/translations/ja_JP/howto.rst
-+++ b/Documentation/translations/ja_JP/howto.rst
-@@ -256,7 +256,6 @@ Linux カーネルの開発プロセスは現在幾つかの異なるメイン
+ 		case 'c':
+-			reboot_mode = REBOOT_COLD;
++			*mode = REBOOT_COLD;
+ 			break;
  
-   - メインの 4.x カーネルツリー
-   - 4.x.y -stable カーネルツリー
--  - 4.x -git カーネルパッチ
-   - サブシステム毎のカーネルツリーとパッチ
-   - 統合テストのための 4.x -next カーネルツリー
+ 		case 'h':
+-			reboot_mode = REBOOT_HARD;
++			*mode = REBOOT_HARD;
+ 			break;
  
-diff --git a/Documentation/translations/ko_KR/howto.rst b/Documentation/translations/ko_KR/howto.rst
-index d8acf255ac5f..bcd63731b80a 100644
---- a/Documentation/translations/ko_KR/howto.rst
-+++ b/Documentation/translations/ko_KR/howto.rst
-@@ -242,7 +242,6 @@ ReST 마크업을 사용하는 문서들은 Documentation/output 에 생성된
+ 		case 's':
+@@ -553,11 +563,11 @@ static int __init reboot_setup(char *str)
+ 				if (rc)
+ 					return rc;
+ 			} else
+-				reboot_mode = REBOOT_SOFT;
++				*mode = REBOOT_SOFT;
+ 			break;
+ 		}
+ 		case 'g':
+-			reboot_mode = REBOOT_GPIO;
++			*mode = REBOOT_GPIO;
+ 			break;
  
-   - main 4.x 커널 트리
-   - 4.x.y - 안정된 커널 트리
--  - 4.x -git 커널 패치들
-   - 서브시스템을 위한 커널 트리들과 패치들
-   - 4.x - 통합 테스트를 위한 next 커널 트리
- 
-diff --git a/Documentation/translations/zh_CN/HOWTO b/Documentation/translations/zh_CN/HOWTO
-index 8e7dee80a087..7a00a8a4eb15 100644
---- a/Documentation/translations/zh_CN/HOWTO
-+++ b/Documentation/translations/zh_CN/HOWTO
-@@ -192,7 +192,6 @@ Linux内核代码中包含有大量的文档。这些文档对于学习如何与
- 些分支包括：
-   - 2.6.x主内核源码树
-   - 2.6.x.y -stable内核源码树
--  - 2.6.x -git内核补丁集
-   - 2.6.x -mm内核补丁集
-   - 子系统相关的内核源码树和补丁集
- 
+ 		case 'b':
 -- 
-2.20.1
+2.17.0
 
