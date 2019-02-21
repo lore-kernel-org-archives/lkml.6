@@ -4,123 +4,121 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE6AC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACE0C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:19:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A96920855
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:19:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3617220836
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:19:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="kqwV69ye"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jbaKRvdm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728005AbfBUKTH (ORCPT
+        id S1728030AbfBUKTL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 05:19:07 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:11597 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727988AbfBUKTF (ORCPT
+        Thu, 21 Feb 2019 05:19:11 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:48220 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727988AbfBUKTI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 05:19:05 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c6e7b170000>; Thu, 21 Feb 2019 02:19:03 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 21 Feb 2019 02:19:04 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 21 Feb 2019 02:19:04 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 21 Feb
- 2019 10:18:55 +0000
-Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 21 Feb
- 2019 10:18:55 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Thu, 21 Feb 2019 10:18:55 +0000
-Received: from niwei-ubuntu.nvidia.com (Not Verified[10.19.225.182]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c6e7b0d0000>; Thu, 21 Feb 2019 02:18:55 -0800
-From:   Wei Ni <wni@nvidia.com>
-To:     <daniel.lezcano@linaro.org>, <edubezval@gmail.com>,
-        <robh@kernel.org>
-CC:     <thierry.reding@gmail.com>, <linux-tegra@vger.kernel.org>,
-        <rui.zhang@intel.com>, <srikars@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Wei Ni <wni@nvidia.com>
-Subject: [PATCH v2 01/12] of: Add bindings of thermtrip for Tegra soctherm
-Date:   Thu, 21 Feb 2019 18:18:36 +0800
-Message-ID: <1550744327-4677-2-git-send-email-wni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1550744327-4677-1-git-send-email-wni@nvidia.com>
-References: <1550744327-4677-1-git-send-email-wni@nvidia.com>
-X-NVConfidentiality: public
+        Thu, 21 Feb 2019 05:19:08 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1LAIrq5124823;
+        Thu, 21 Feb 2019 04:18:53 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1550744333;
+        bh=fAqNlTR7cMaMsca9ZKERwJ2A9RfxaY/X8QU7ZLjB4i0=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=jbaKRvdmqUw6TDoHPxTqG/H9ocfOLO2+o7X4dtEGQ4zUpgt6FOv3rNSfjG4uShxEv
+         Sc9JIiNMtIRGWaWB94v26nkLqZjjM0I6rcsBa8RyXnAiLKXkIOTaaSV1xhfwNN4Zzs
+         td6Yv5mllm2/nr1POmVbkDdSxApBPDFmJOkgvefU=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1LAIrMc052999
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 21 Feb 2019 04:18:53 -0600
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 21
+ Feb 2019 04:18:53 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 21 Feb 2019 04:18:53 -0600
+Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1LAIORO022198;
+        Thu, 21 Feb 2019 04:18:50 -0600
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Murali Karicheri <m-karicheri2@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        <linux-pci@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 9/9] PCI: dwc: Do not write to MSI control registers if the platform doesn't use it
+Date:   Thu, 21 Feb 2019 15:45:18 +0530
+Message-ID: <20190221101518.22604-10-kishon@ti.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190221101518.22604-1-kishon@ti.com>
+References: <20190221101518.22604-1-kishon@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1550744343; bh=nNHCTHyDZVdi5MybDDVW0/CDd/jc8GMicoETAORekNE=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=kqwV69yeeCTqXQatJ/YyaaaN77gdZGcU5dAHR+0ggzeDpeK/DNSuE676b5IpUTRCA
-         N3mGwq2jvvgE5E4VXxhyqgPYDNxn/qDI+3VzIFq08PHAZa5ibcGBbcpAlAfQUwGkDm
-         U+AEi1MHGnfYS3DcMTOhwMIqzrwv6pmwnlCX0mfiBg86htFqV5aPcrKuDa0J5U6m3u
-         ltjomH8iRa96GDqXzr1c3k5Y3g5nI0D5sE16myb7GrEz2odvIOmOwP6ka1d4ljIxmP
-         ySxM48YGrm8twkoT+sHpuZHfjAWaiYAq5b+2Z6Go+xRZLBFf8tbrTC2AuKKH9gR2Lh
-         73wx0ZhKoYjNQ==
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add optional property "nvidia,thermtrips".
-If present, these trips will be used as HW shutdown trips,
-and critical trips will be used as SW shutdown trips.
+Platforms which populate msi_host_init, has it's own MSI controller
+logic. Writing to MSI control registers on platforms which doesn't use
+Designware's MSI controller logic might have side effects. To
+be safe, do not write to MSI control registers if the platform uses
+it's own MSI controller logic instead of Designware's MSI controller
+logic.
 
-Signed-off-by: Wei Ni <wni@nvidia.com>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- .../bindings/thermal/nvidia,tegra124-soctherm.txt    | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+ .../pci/controller/dwc/pcie-designware-host.c | 24 ++++++++++---------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
-index b6c0ae53d4dc..ab66d6feab4b 100644
---- a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
-+++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
-@@ -55,10 +55,21 @@ Required properties :
-       - #cooling-cells: Should be 1. This cooling device only support on/off state.
-         See ./thermal.txt for a description of this property.
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index 781735f06dea..2bc2fd582124 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -641,17 +641,19 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
  
-+Optional properties:
-+- nvidia,thermtrips : When present, this property specifies the temperature at
-+  which the soctherm hardware will assert the thermal trigger signal to the
-+  Power Management IC, which can be configured to reset or shutdown the device.
-+  It is an array of pairs where each pair represents a tsensor id followed by a
-+  temperature in milli Celcius. In the absence of this property the critical
-+  trip point will be used for thermtrip temperature.
-+
- Note:
--- the "critical" type trip points will be set to SOC_THERM hardware as the
--shut down temperature. Once the temperature of this thermal zone is higher
--than it, the system will be shutdown or reset by hardware.
-+- the "critical" type trip points will be used to set the temperature at which
-+the SOC_THERM hardware will assert a thermal trigger if the "nvidia,thermtrips"
-+property is missing. When the thermtrips property is present, the breach of a
-+critical trip point is reported back to the thermal framework to implement
-+software shutdown.
-+
- - the "hot" type trip points will be set to SOC_THERM hardware as the throttle
- temperature. Once the the temperature of this thermal zone is higher
- than it, it will trigger the HW throttle event.
-@@ -79,6 +90,9 @@ Example :
+ 	dw_pcie_setup(pci);
  
- 		#thermal-sensor-cells = <1>;
- 
-+		nvidia,thermtrips = <TEGRA124_SOCTHERM_SENSOR_CPU 102500
-+				     TEGRA124_SOCTHERM_SENSOR_GPU 103000>;
+-	num_ctrls = pp->num_vectors / MAX_MSI_IRQS_PER_CTRL;
+-
+-	/* Initialize IRQ Status array */
+-	for (ctrl = 0; ctrl < num_ctrls; ctrl++) {
+-		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_MASK +
+-					(ctrl * MSI_REG_CTRL_BLOCK_SIZE),
+-				    4, ~0);
+-		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_ENABLE +
+-					(ctrl * MSI_REG_CTRL_BLOCK_SIZE),
+-				    4, ~0);
+-		pp->irq_status[ctrl] = 0;
++	if (!pp->ops->msi_host_init) {
++		num_ctrls = pp->num_vectors / MAX_MSI_IRQS_PER_CTRL;
 +
- 		throttle-cfgs {
- 			/*
- 			 * When the "heavy" cooling device triggered,
++		/* Initialize IRQ Status array */
++		for (ctrl = 0; ctrl < num_ctrls; ctrl++) {
++			dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_MASK +
++					    (ctrl * MSI_REG_CTRL_BLOCK_SIZE),
++					    4, ~0);
++			dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_ENABLE +
++					    (ctrl * MSI_REG_CTRL_BLOCK_SIZE),
++					    4, ~0);
++			pp->irq_status[ctrl] = 0;
++		}
+ 	}
+ 
+ 	/* Setup RC BARs */
 -- 
-2.7.4
+2.17.1
 
