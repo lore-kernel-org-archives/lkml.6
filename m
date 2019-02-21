@@ -2,148 +2,136 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC6BCC00319
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:03:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FF8FC00319
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:04:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B25792086A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:03:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CCA32086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:04:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbfBUIDo (ORCPT
+        id S1727112AbfBUIEH convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 03:03:44 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:51248 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbfBUIDo (ORCPT
+        Thu, 21 Feb 2019 03:04:07 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:44824 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbfBUIEH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 03:03:44 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id C8D3027D486
-Subject: Re: [PATCH] iio: cros_ec_accel_legacy: Refactor code in
- cros_ec_accel_legacy_probe
-To:     Kees Cook <keescook@chromium.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>, linux-iio@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Gwendal Grignou <gwendal@chromium.org>
-References: <20190221020633.GA4195@embeddedor>
- <CAGXu5jK1fKaSSfHP1dGFyKVjRM7APvqdOhHNjZnN=+An950J1A@mail.gmail.com>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <946ab58e-ad7e-4815-4dd3-42aeaa3f4299@collabora.com>
-Date:   Thu, 21 Feb 2019 09:03:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Thu, 21 Feb 2019 03:04:07 -0500
+Received: by mail-vs1-f65.google.com with SMTP id r201so15619129vsc.11;
+        Thu, 21 Feb 2019 00:04:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=RnKcTm27rROkKZMrhUWWs+Jztu9yzz/K7kE3s9xRNGA=;
+        b=akYSMff7xdaVZmj0HYDcv7418FwPQQOKA+9DfWNAJAzLoQZ+CDih/Ll684yGB/1oWQ
+         40FD5HZdCwh1+aBFRHt4wzIFxfOGKHaxXgMuKdXX7WcoqNtvgBi06YaRV+j5FDLcEJf9
+         NCc37rYA9e4cZuIdm70jAUShOZZpGfnXz4Vi/vABkEP6GMRTflQY1AyhbqJTolDo6piy
+         SJTeSNTcp6nsvLzKK6pqkCwTwOhb2/ZUjzNiRTVeXngq9ueNbeQQF+gzl5b6RQqKn/pl
+         6SXlUf6ToKlktfnlkl73m8/hSMsQWa4tbyaEUlR9cJS3KZ9cL4/C2M59HEbZndHWaIxl
+         m9YA==
+X-Gm-Message-State: AHQUAubtuhoESFZggMuhQYPAt+yK8q/A60zDEvFpV7/zhuTgMJiY5Msx
+        ypfu7fZ/na9zlTzOxt432ByySEltUV4og92cVGM=
+X-Google-Smtp-Source: AHgI3IYC+aTzKDq+KHRtT9UCaG2gOadnobKVXDd1kcKcujrgSh5A1Ebf5pKk68xHqQGUEluGcW+xavSJjfkc/vGsX90=
+X-Received: by 2002:a67:78ce:: with SMTP id t197mr19687673vsc.152.1550736245468;
+ Thu, 21 Feb 2019 00:04:05 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jK1fKaSSfHP1dGFyKVjRM7APvqdOhHNjZnN=+An950J1A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+References: <20190220184341.73bd2084@canb.auug.org.au> <1114b964-8ff8-5632-64d4-e94a9160b998@hisilicon.com>
+ <20190220095252.GA9089@linux.intel.com> <20190220095806.GB9089@linux.intel.com>
+ <CAKv+Gu8G5eWeAdCB28xa=16ANFd2he9WPSztgXYwYRkhPfpEyA@mail.gmail.com> <aaac08b0-6366-7b63-d6a7-eea6630ce169@hisilicon.com>
+In-Reply-To: <aaac08b0-6366-7b63-d6a7-eea6630ce169@hisilicon.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 21 Feb 2019 09:03:52 +0100
+Message-ID: <CAMuHMdWfbPHv6WBMm7uDdPhbEB-m+bOcYzzYpRe4BfcSNR2pcQ@mail.gmail.com>
+Subject: Re: linux-next: Tree for Feb 20
+To:     Zhangshaokun <zhangshaokun@hisilicon.com>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Shaokun,
 
+On Thu, Feb 21, 2019 at 1:45 AM Zhangshaokun <zhangshaokun@hisilicon.com> wrote:
+> On 2019/2/20 18:05, Ard Biesheuvel wrote:
+> > On Wed, 20 Feb 2019 at 10:58, Jarkko Sakkinen
+> > <jarkko.sakkinen@linux.intel.com> wrote:
+> >>
+> >> On Wed, Feb 20, 2019 at 11:52:52AM +0200, Jarkko Sakkinen wrote:
+> >>> On Wed, Feb 20, 2019 at 05:11:15PM +0800, Zhangshaokun wrote:
+> >>>> There is a compiler failure on arm64 platform, as follow:
+> >>>>
+> >>>>   AS      arch/arm64/kvm/hyp.o
+> >>>>   CC      kernel/trace/ring_buffer.o
+> >>>> In file included from security/integrity/ima/ima_fs.c:30:0:
+> >>>> security/integrity/ima/ima.h:176:7: error: redeclaration of enumerator ‘NONE’
+> >>>>   hook(NONE)   \
+> >>>>        ^
+> >>>> security/integrity/ima/ima.h:188:34: note: in definition of macro ‘__ima_hook_enumify’
+> >>>>  #define __ima_hook_enumify(ENUM) ENUM,
+> >>>>                                   ^
+> >>>> security/integrity/ima/ima.h:191:2: note: in expansion of macro ‘__ima_hooks’
+> >>>>   __ima_hooks(__ima_hook_enumify)
+> >>>>   ^
+> >>>> In file included from ./arch/arm64/include/asm/acpi.h:15:0,
+> >>>>                  from ./include/acpi/acpi_io.h:7,
+> >>>>                  from ./include/linux/acpi.h:47,
+> >>>>                  from ./include/linux/tpm.h:26,
+> >>>>                  from security/integrity/ima/ima.h:25,
+> >>>>                  from security/integrity/ima/ima_fs.c:30:
+> >>>> ./include/linux/efi.h:1716:2: note: previous definition of ‘NONE’ was here
+> >>>>   NONE,
+> >>>>   ^
+> >>>> scripts/Makefile.build:276: recipe for target 'security/integrity/ima/ima_fs.o' failed
+> >>>> make[3]: *** [security/integrity/ima/ima_fs.o] Error 1
+> >>>>
+> >>>> I dug it and it is the commit 901615cb916d ("tpm: move tpm_chip definition to include/linux/tpm.h")
+> >>>
+> >>> This results from a new include in tpm.h:
+> >>>
+> >>>   #include <linux/acpi.h>
+> >>>
+> >>> Must be fixed either in include/linux/efi.h or security/integrity/ima.h as
+> >>> those files have a name collision. Makes me wonder why neither has taken
+> >>> care of prefixing the constants properly.
+> >>
+> >> Preferably both subsystems should be fixed with proper 'EFI_' and 'IMA_'
+> >> prefixes. Defining a constant named as NONE in a non-generic subsystem
+> >> (e.g. not part of the core data structures of Linux) and especially
+> >> exporting it to include/linux is not too well considered act.
+> >>
+> >
+> > Fixes for this have already been proposed, and should appear in -next shortly
+> >
+> > The EFI one is here
+> > https://mail.google.com/mail/u/0/#label/linux-efi/FMfcgxwBVgrQRjglPkWRqRqVclGgVDnB
+> >
+>
+> Because of no privilege, the website is denied for me. Anyway, it's nice to have been fixed.
 
-On 21/2/19 8:00, Kees Cook wrote:
-> On Wed, Feb 20, 2019 at 6:06 PM Gustavo A. R. Silva
-> <gustavo@embeddedor.com> wrote:
->>
->> Refactor some code in order to fix both the technical implementation
->> and the following warnings:
->>
->> drivers/iio/accel/cros_ec_accel_legacy.c: In function ‘cros_ec_accel_legacy_probe’:
->> drivers/iio/accel/cros_ec_accel_legacy.c:387:36: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>     ec_accel_channels[X].scan_index = Y;
->>     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
->> drivers/iio/accel/cros_ec_accel_legacy.c:388:3: note: here
->>    case Y:
->>    ^~~~
->> drivers/iio/accel/cros_ec_accel_legacy.c:389:36: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>     ec_accel_channels[Y].scan_index = X;
->>     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
->> drivers/iio/accel/cros_ec_accel_legacy.c:390:3: note: here
->>    case Z:
->>    ^~~~
->>
->> Notice that neither the for loop nor the switch statement is needed.
->> Also, "state->sign[Y] = 1" should be unconditional.
->>
->> This patch is part of the ongoing efforts to enable
->> -Wimplicit-fallthrough.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> 
-> Acked-by: Kees Cook <keescook@chromium.org>
-> 
+Looks like Ard posted a link to a label in his personal gmail mailbox?
 
-Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Gr{oetje,eeting}s,
 
-Thanks,
- Enric
+                        Geert
 
-> -Kees
-> 
->> ---
->>  drivers/iio/accel/cros_ec_accel_legacy.c | 27 +++++++++++-------------
->>  1 file changed, 12 insertions(+), 15 deletions(-)
->>
->> diff --git a/drivers/iio/accel/cros_ec_accel_legacy.c b/drivers/iio/accel/cros_ec_accel_legacy.c
->> index 063e89eff791..021f9f5cd3bb 100644
->> --- a/drivers/iio/accel/cros_ec_accel_legacy.c
->> +++ b/drivers/iio/accel/cros_ec_accel_legacy.c
->> @@ -353,7 +353,7 @@ static int cros_ec_accel_legacy_probe(struct platform_device *pdev)
->>         struct cros_ec_sensor_platform *sensor_platform = dev_get_platdata(dev);
->>         struct iio_dev *indio_dev;
->>         struct cros_ec_accel_legacy_state *state;
->> -       int ret, i;
->> +       int ret;
->>
->>         if (!ec || !ec->ec_dev) {
->>                 dev_warn(&pdev->dev, "No EC device found.\n");
->> @@ -381,20 +381,17 @@ static int cros_ec_accel_legacy_probe(struct platform_device *pdev)
->>          * Present the channel using HTML5 standard:
->>          * need to invert X and Y and invert some lid axis.
->>          */
->> -       for (i = X ; i < MAX_AXIS; i++) {
->> -               switch (i) {
->> -               case X:
->> -                       ec_accel_channels[X].scan_index = Y;
->> -               case Y:
->> -                       ec_accel_channels[Y].scan_index = X;
->> -               case Z:
->> -                       ec_accel_channels[Z].scan_index = Z;
->> -               }
->> -               if (state->sensor_num == MOTIONSENSE_LOC_LID && i != Y)
->> -                       state->sign[i] = -1;
->> -               else
->> -                       state->sign[i] = 1;
->> -       }
->> +       ec_accel_channels[X].scan_index = Y;
->> +       ec_accel_channels[Y].scan_index = X;
->> +       ec_accel_channels[Z].scan_index = Z;
->> +
->> +       state->sign[Y] = 1;
->> +
->> +       if (state->sensor_num == MOTIONSENSE_LOC_LID)
->> +               state->sign[X] = state->sign[Z] = -1;
->> +       else
->> +               state->sign[X] = state->sign[Z] = 1;
->> +
->>         indio_dev->num_channels = ARRAY_SIZE(ec_accel_channels);
->>         indio_dev->dev.parent = &pdev->dev;
->>         indio_dev->info = &cros_ec_accel_legacy_info;
->> --
->> 2.20.1
->>
-> 
-> 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
