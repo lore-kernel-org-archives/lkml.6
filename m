@@ -2,140 +2,89 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C22DBC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:49:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E66C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:51:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99D5320665
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:49:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACA5A20880
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:51:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727482AbfBUJtJ (ORCPT
+        id S1727437AbfBUJvh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 04:49:09 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47706 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726729AbfBUJtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 04:49:09 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B55F8C057F2C;
-        Thu, 21 Feb 2019 09:49:08 +0000 (UTC)
-Received: from krava (unknown [10.43.17.20])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 0F53B60BE6;
-        Thu, 21 Feb 2019 09:49:06 +0000 (UTC)
-Date:   Thu, 21 Feb 2019 10:49:06 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/4] perf record: implement -z=<level> and
- --mmap-flush=<thres> options
-Message-ID: <20190221094906.GD10990@krava>
-References: <044ee2be-2e1d-e90f-7317-40083b5e716c@linux.intel.com>
- <2d676199-bfe0-d8e0-442e-41280046f819@linux.intel.com>
- <20190212130822.GC775@krava>
- <d3b3ccaf-c8d2-03f7-580e-f3318b1650d2@linux.intel.com>
+        Thu, 21 Feb 2019 04:51:37 -0500
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:57949 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725814AbfBUJvg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 04:51:36 -0500
+X-Originating-IP: 90.88.23.190
+Received: from mc-bl-xps13.lan (aaubervilliers-681-1-81-190.w90-88.abo.wanadoo.fr [90.88.23.190])
+        (Authenticated sender: maxime.chevallier@bootlin.com)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id EB7F7C0006;
+        Thu, 21 Feb 2019 09:51:30 +0000 (UTC)
+From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
+To:     davem@davemloft.net
+Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        mw@semihalf.com
+Subject: [PATCH net-next 0/7] net: phy: marvell10g: Add 2.5GBaseT
+Date:   Thu, 21 Feb 2019 10:51:21 +0100
+Message-Id: <20190221095128.28188-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d3b3ccaf-c8d2-03f7-580e-f3318b1650d2@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 21 Feb 2019 09:49:08 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 06:24:30PM +0300, Alexey Budankov wrote:
-> 
-> On 12.02.2019 16:08, Jiri Olsa wrote:
-> > On Mon, Feb 11, 2019 at 11:22:38PM +0300, Alexey Budankov wrote:
-> > 
-> > SNIP
-> > 
-> >> +static int perf_mmap__aio_mmap_blocks(struct perf_mmap *map);
-> >> +
-> >>  static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
-> >>  {
-> >> -	int delta_max, i, prio, ret;
-> >> +	int i, ret = 0, init_blocks = 1;
-> >>  
-> >>  	map->aio.nr_cblocks = mp->nr_cblocks;
-> >> +	if (map->aio.nr_cblocks == -1) {
-> >> +		map->aio.nr_cblocks = 1;
-> >> +		init_blocks = 0;
-> >> +	}
-> >> +
-> >>  	if (map->aio.nr_cblocks) {
-> >> -		map->aio.aiocb = calloc(map->aio.nr_cblocks, sizeof(struct aiocb *));
-> >> -		if (!map->aio.aiocb) {
-> >> -			pr_debug2("failed to allocate aiocb for data buffer, error %m\n");
-> >> -			return -1;
-> >> -		}
-> >> -		map->aio.cblocks = calloc(map->aio.nr_cblocks, sizeof(struct aiocb));
-> >> -		if (!map->aio.cblocks) {
-> >> -			pr_debug2("failed to allocate cblocks for data buffer, error %m\n");
-> >> -			return -1;
-> >> -		}
-> >>  		map->aio.data = calloc(map->aio.nr_cblocks, sizeof(void *));
-> >>  		if (!map->aio.data) {
-> >>  			pr_debug2("failed to allocate data buffer, error %m\n");
-> >>  			return -1;
-> >>  		}
-> >> -		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
-> >>  		for (i = 0; i < map->aio.nr_cblocks; ++i) {
-> >>  			ret = perf_mmap__aio_alloc(map, i);
-> >>  			if (ret == -1) {
-> >> @@ -251,29 +245,16 @@ static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
-> >>  			ret = perf_mmap__aio_bind(map, i, map->cpu, mp->affinity);
-> >>  			if (ret == -1)
-> >>  				return -1;
-> >> -			/*
-> >> -			 * Use cblock.aio_fildes value different from -1
-> >> -			 * to denote started aio write operation on the
-> >> -			 * cblock so it requires explicit record__aio_sync()
-> >> -			 * call prior the cblock may be reused again.
-> >> -			 */
-> >> -			map->aio.cblocks[i].aio_fildes = -1;
-> >> -			/*
-> >> -			 * Allocate cblocks with priority delta to have
-> >> -			 * faster aio write system calls because queued requests
-> >> -			 * are kept in separate per-prio queues and adding
-> >> -			 * a new request will iterate thru shorter per-prio
-> >> -			 * list. Blocks with numbers higher than
-> >> -			 *  _SC_AIO_PRIO_DELTA_MAX go with priority 0.
-> >> -			 */
-> >> -			prio = delta_max - i;
-> >> -			map->aio.cblocks[i].aio_reqprio = prio >= 0 ? prio : 0;
-> >>  		}
-> >> +		if (init_blocks)
-> >> +			ret = perf_mmap__aio_mmap_blocks(map);
-> >>  	}
-> >>  
-> >> -	return 0;
-> >> +	return ret;
-> >>  }
-> > 
-> > SNIP
-> > 
-> > it seems like little refactoring happened in here (up and down) for
-> > aio code, which is not explained and I'm unable to follow it.. please
-> > separate this in simple change
-> 
-> AIO buffers management has been taken out of HAVE_AIO_SUPPORT define
-> to be used for compression in case of serial streaming. It will be 
-> revisited after other issues are addressed.
+This series adds the missing bits necessary to fully support 2.5GBaseT
+in the Marvell Alaska PHYs.
 
-as I said earlier, please separate this from aio
+The main points for that support are :
 
-jirka
+ - Making use of the .get_features call, recently introduced by Heiner
+   and Andrew, that allows having a fully populated list of supported
+   modes, including 2500BaseT.  
+
+ - Configuring the MII to 2500BaseX when establishing a link at 2.5G
+
+ - Adding a small quirk to take into account the fact that some PHYs in
+   the family won't report the correct supported abilities
+
+The rest of the series consists of small cosmetic improvements such as
+using the correct helper to set a linkmode bit and adding macros for the
+PHY ids.
+
+We also add support for the 88E2110 PHY, which doesn't require the
+quirk, and support for 2500BaseT in the PPv2 driver, in order to have a
+fully working setup on the MacchiatoBin board.
+
+Maxime Chevallier (7):
+  net: phy: marvell10g: Use get_features to get the PHY abilities
+  net: phy: marvell10g: Use linkmode_set_bit helper instead of __set_bit
+  net: phy: marvell10g: Use 2500BASEX when using 2.5GBASET
+  net: phy: marvell10g: Use a #define for 88X3310 family id
+  net: phy: marvell10g: Force reading of 2.5/5G
+  net: mvpp2: Add 2.5GBaseT support
+  net: phy: marvell10g: add support for the 88x2110 PHY
+
+ .../net/ethernet/marvell/mvpp2/mvpp2_main.c   |  1 +
+ drivers/net/phy/marvell10g.c                  | 92 ++++++++++++++++---
+ include/linux/marvell_phy.h                   |  2 +
+ 3 files changed, 81 insertions(+), 14 deletions(-)
+
+-- 
+2.19.2
+
