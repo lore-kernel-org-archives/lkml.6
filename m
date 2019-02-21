@@ -2,159 +2,112 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43422C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4115BC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:38:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FFF62075A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:35:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DTJf8tGa"
+	by mail.kernel.org (Postfix) with ESMTP id 0E3132084D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:38:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728084AbfBUPf4 (ORCPT
+        id S1728027AbfBUPiC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 10:35:56 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:45863 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725858AbfBUPf4 (ORCPT
+        Thu, 21 Feb 2019 10:38:02 -0500
+Received: from www62.your-server.de ([213.133.104.62]:38864 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725858AbfBUPiB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 10:35:56 -0500
-Received: by mail-io1-f67.google.com with SMTP id x9so1804550iog.12
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 07:35:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=2KXMvYHbrLkp9bZ90/DNJJ31xiACWMEb2YfDg1AjNDk=;
-        b=DTJf8tGagUfw+mIoRERyJdMLTWTALbdJHRdSKwqirl7IaYnJi0NIRp/tnyEYxFcBp7
-         yxDuUs+ruz4ZxzhmhypbzakuTUqj9mnn4v7ZELW0G8rXQmfh37ADiKbDYfoe6QrrKi8p
-         kM1lCb3ZWt6C1cp5A4tobWIvwZgrLInCC2WvWjPxdo7yC7RRonvcKXvl4cPbvftV0Z3j
-         1iU/97TpGFdtenxe9jLZATit6NtqIFSA0VU2MIq0A4I8ly7LuIgHaFDI4YnnwZSmdO1J
-         a3psm1hq0laz7hI/DnJx69sHS3k5nYwwPl50zHfrJ7YMkWPIQa28wT/XUHFUEXA8Z6pE
-         Jsyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=2KXMvYHbrLkp9bZ90/DNJJ31xiACWMEb2YfDg1AjNDk=;
-        b=j0PzrUyvxMF69KD63RyAtAk3/VIi/i0a3y/OteJwYCpLYCYuS7F/cTUUXtPAoElF2W
-         xAzwOimb6tb2ybKmAxmwQfRz9IF5E+bCbMEeNx8p+MGPcwVNBMLIAJYMiCSR2kUplpNY
-         KLmVXJu3rvVuvkHS/DqJUxrlRTRqXjQoCiFYjhrnbnhrXJWoERbT8oWqDwfwYODiiLja
-         8hoqJmIkJFrZEVJkzAhiAoH0C3Qm9bJOyH9qAApEo/CpwP7NHj9bh6F3NcQumdSoEjTj
-         C8Unmu5kpwHGOQfq5h66nt1sb1EgCNPc28N5+K50n/thcKH1Xf1QEkjcYNiXLVbIR4RS
-         RXww==
-X-Gm-Message-State: AHQUAuapngxcFgn32fxusAHziGl3gBAT3LbOe7qJl7mUv62HYMIIfygc
-        yJbB5Ccd8BlWT6FqTISlbJg=
-X-Google-Smtp-Source: AHgI3Ia4DqozQw5D+6B3vkCJ7wo/OiiGtzPtjjUNTHSEqNAH65vYvPDVbruBbX8NW5wcwnjYFXpK7w==
-X-Received: by 2002:a6b:d109:: with SMTP id l9mr25571617iob.108.1550763354739;
-        Thu, 21 Feb 2019 07:35:54 -0800 (PST)
-Received: from svens-asus.arcx.com ([184.94.50.30])
-        by smtp.gmail.com with ESMTPSA id f142sm4474706itc.15.2019.02.21.07.35.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Feb 2019 07:35:54 -0800 (PST)
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
-To:     Timur Tabi <timur@kernel.org>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>
-Cc:     alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Subject: [PATCH] ASoC: fsl_ssi: remove unsupported formats in i2s master mode
-Date:   Thu, 21 Feb 2019 10:35:50 -0500
-Message-Id: <20190221153550.1932-1-TheSven73@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 21 Feb 2019 10:38:01 -0500
+Received: from [88.198.220.130] (helo=sslproxy01.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gwqQB-0007cS-UB; Thu, 21 Feb 2019 16:37:59 +0100
+Received: from [178.197.248.36] (helo=linux.home)
+        by sslproxy01.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gwqQB-0003zP-KT; Thu, 21 Feb 2019 16:37:59 +0100
+Subject: Re: [PATCH] bpf: test_bpf: turn of preemption in function __run_once
+To:     Anders Roxell <anders.roxell@linaro.org>, ast@kernel.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190221084425.9574-1-anders.roxell@linaro.org>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <c93b8a98-f76f-7c45-817a-0cd334273306@iogearbox.net>
+Date:   Thu, 21 Feb 2019 16:37:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <20190221084425.9574-1-anders.roxell@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.2/25367/Thu Feb 21 14:02:13 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quote from the ssi manual:
-"The word length is fixed to 32 in I2S Master mode and
-the WL bits determine the number of bits that will
-contain valid data (out of the 32 transmitted/received
-bits in each channel)."
-(61.8.1.4, page 5138, IMX6DQRM Rev. 3, 07/2015)
+On 02/21/2019 09:44 AM, Anders Roxell wrote:
+> When running test seccomp_bpf the following splat occurs:
+> 
+> [ RUN      ] global.secseccomp_bpf.c:2136:global.detect_seccomp_filter_flags:Expected 22 (22) == (*__errno_location ()) (14)
+> seccomp_bpf.c:2138:global.detect_seccomp_filter_flags:Failed to detect that an unknown
+>   filter flag (0x8) is unsupported! Does a new flag need to be added to this test?
+> [ 2155.677841] BUG: assuming atomic context at kernel/seccomp.c:271
+> [ 2155.689351] in_atomic(): 0, irqs_disabled(): 0, pid: 28540, name: seccomp_bpf
+> [ 2155.696597] INFO: lockdep is turned off.
+> [ 2155.700605] CPU: 5 PID: 28540 Comm: seccomp_bpf Tainted: G        W         5.0.0-rc7-next-20190220 #1
+> [ 2155.709972] Hardware name: HiKey Development Board (DT)
+> [ 2155.715232] Call trace:
+> [ 2155.717710]  dump_backtrace+0x0/0x160
+> [ 2155.721399]  show_stack+0x24/0x30
+> [ 2155.724742]  dump_stack+0xc8/0x114
+> [ 2155.728172]  __cant_sleep+0xf0/0x108
+> [ 2155.731777]  __seccomp_filter+0x8c/0x5c8
+> [ 2155.735727]  __secure_computing+0x4c/0xe8
+> [ 2155.739767]  syscall_trace_enter+0xf8/0x2b8
+> [ 2155.743982]  el0_svc_common+0xf0/0x130
+> [ 2155.747758]  el0_svc_handler+0x38/0x78
+> [ 2155.751534]  el0_svc+0x8/0xc
+> 
+> Rework so that preemption is disabled when we loop over function
+> 'BPF_PROG_RUN(...)'.
+> Commit 568f196756ad ("bpf: check that BPF programs run with preemption disabled")
+> highlighted the issue.
+> 
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 
-In other words, in i2s master mode, we always get 32
-physical bits/channel, no matter what.
+Hmm, wrong commit description? Below code is not related to seccomp
+but rather BPF test suite. Could you fix it up and resubmit? Rest
+looks okay to me.
 
-However, the supported list of formats for this ssi
-contains S8, S16_XX, S18_3XX, and S20_3XX, which have
-8, 16, 24 and 24 physical bits/channel respectively.
-If one of these is selected in i2s master mode, the
-format generated by the ssi will be incorrect.
-
-Fix by constraining the frame bits in i2s master mode
-to 32 * channels. This will filter out those formats
-that the ssi cannot support.
-
-Tested on imx6 with tda998x and sgtl5k codecs.
-
-Cc: Timur Tabi <timur@kernel.org>
-Cc: Nicolin Chen <nicoleotsuka@gmail.com>
-Cc: Xiubo Li <Xiubo.Lee@gmail.com>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>
-Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
----
- sound/soc/fsl/fsl_ssi.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
-
-diff --git a/sound/soc/fsl/fsl_ssi.c b/sound/soc/fsl/fsl_ssi.c
-index 0a648229e643..3d375f60ecf4 100644
---- a/sound/soc/fsl/fsl_ssi.c
-+++ b/sound/soc/fsl/fsl_ssi.c
-@@ -627,6 +627,28 @@ static void fsl_ssi_setup_ac97(struct fsl_ssi *ssi)
- 	regmap_write(regs, REG_SSI_SOR, SSI_SOR_WAIT(3));
- }
- 
-+static int fsl_ssi_hw_rule_i2s_master(struct snd_pcm_hw_params *params,
-+				struct snd_pcm_hw_rule *rule)
-+{
-+	struct snd_interval *it = hw_param_interval(params,
-+					SNDRV_PCM_HW_PARAM_FRAME_BITS);
-+	struct fsl_ssi *ssi = rule->private;
-+	struct snd_interval t;
-+
-+	if (!fsl_ssi_is_i2s_master(ssi))
-+		return 0;
-+
-+	/*
-+	 * In i2s master mode, the ssi always generates 32 physical
-+	 * bits/channel. Filter out formats that don't have 32 physical
-+	 * bits/channel, they are unsupported.
-+	 */
-+	memset(&t, 0, sizeof(t));
-+	t.min = t.max = params_channels(params) * 32;
-+
-+	return snd_interval_refine(it, &t);
-+}
-+
- static int fsl_ssi_startup(struct snd_pcm_substream *substream,
- 			   struct snd_soc_dai *dai)
- {
-@@ -648,6 +670,12 @@ static int fsl_ssi_startup(struct snd_pcm_substream *substream,
- 		snd_pcm_hw_constraint_step(substream->runtime, 0,
- 					   SNDRV_PCM_HW_PARAM_PERIOD_SIZE, 2);
- 
-+	snd_pcm_hw_rule_add(substream->runtime, 0,
-+			SNDRV_PCM_HW_PARAM_FRAME_BITS,
-+			fsl_ssi_hw_rule_i2s_master, ssi,
-+			SNDRV_PCM_HW_PARAM_FORMAT, SNDRV_PCM_HW_PARAM_CHANNELS,
-+			-1);
-+
- 	return 0;
- }
- 
--- 
-2.17.1
+> ---
+>  lib/test_bpf.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/lib/test_bpf.c b/lib/test_bpf.c
+> index f3e570722a7e..0845f635f404 100644
+> --- a/lib/test_bpf.c
+> +++ b/lib/test_bpf.c
+> @@ -6668,12 +6668,14 @@ static int __run_one(const struct bpf_prog *fp, const void *data,
+>  	u64 start, finish;
+>  	int ret = 0, i;
+>  
+> +	preempt_disable();
+>  	start = ktime_get_ns();
+>  
+>  	for (i = 0; i < runs; i++)
+>  		ret = BPF_PROG_RUN(fp, data);
+>  
+>  	finish = ktime_get_ns();
+> +	preempt_enable();
+>  
+>  	*duration = finish - start;
+>  	do_div(*duration, runs);
+> 
 
