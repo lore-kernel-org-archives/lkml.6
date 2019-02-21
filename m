@@ -2,134 +2,230 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F20B1C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 00:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E75C4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 00:25:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0B8C20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 00:23:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DFF920855
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 00:25:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="CrE8ljU9"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="I6tgQuog"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbfBUAXJ (ORCPT
+        id S1726627AbfBUAZU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 19:23:09 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34388 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbfBUAXH (ORCPT
+        Wed, 20 Feb 2019 19:25:20 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:7565 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726137AbfBUAZU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 19:23:07 -0500
-Received: by mail-wr1-f67.google.com with SMTP id f14so28132613wrg.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 16:23:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=jjWqUbBDvK3nC729N/p7FCit75OVtoymj2KU/ULiaRI=;
-        b=CrE8ljU9PZbxOcslc9gmjImDEsWL7V6eptvX8xLRCjA+UxrrJeOgg6Me+gg9Cy6pYb
-         iBmzTiFqMybTy6Z5GQQ6cHhStM5kBt1vtVQ3QD6w9Mn/Vnlz5ANa6oHyaO8i0dmQEnm+
-         qxk/MoHFKPwcx1AXZbG2d07LdDQBscqQjWEeh2E/YGGYu3Qv1N0/KwsC5mHJSIQ4hINc
-         mIYx9qGqu5TfC+rJXCEW2sGsojrO5cpmlmyO/PdSLTBQHuJjlpOa1kFvWt39/sBQGf+y
-         CLkty0EX6lQpOMcVshcE00w4ijRECShBaT8UKSThI2bDWYDaIkUc2jt+nrCxxettiLi/
-         DqxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=jjWqUbBDvK3nC729N/p7FCit75OVtoymj2KU/ULiaRI=;
-        b=UeshkTgBbC1qwg2n5juz/IvwYKd1LOMnqojmTX+9KSbP5Wq+kvztOwIeyrJxuWOX+0
-         ETH8tUEcuhrss/RAO5xNk+vvwEn9uHrgcoaSuk3fIIpHD/WH1VtlbVbOVWtuLW6ptFeg
-         rtVP9zoLX4xZD+tHW4w7dvQY+5jD2Z4PKzKYLtWAWebjfWJv9X/cg13gnFmxzrmN2zz3
-         IOAgXL3QBwILbta2qUhXm1faEFqSd4bO+FGgdWEKMyTGFvqkRaI1AmPOSqxqabY9j6Gx
-         23BK2QtDN1GaDJrgFibPBPhsyXqR9qALSghKMLJ3/KTpHaSlcUJkmXFrsXk3FwMr4zn8
-         343A==
-X-Gm-Message-State: AHQUAuZfNzjd9UhvhHdPSIH4RcZVtqooK4PhXxTQHlbL0nUiyYsnDKlj
-        GMs0jLtFjZMb/5bo37wbVA7HSamfoxQLUDyCo38yGg==
-X-Google-Smtp-Source: AHgI3IYyve/u6v42wo5fHdgtRwSaO3oP63tj8AWuFIkKIRvRYj+b/G1hwbvMAUuZCApFsRGrVk+poP18s/TbJrCTFf0=
-X-Received: by 2002:adf:e48a:: with SMTP id i10mr27779817wrm.257.1550708585334;
- Wed, 20 Feb 2019 16:23:05 -0800 (PST)
+        Wed, 20 Feb 2019 19:25:20 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c6deff40000>; Wed, 20 Feb 2019 16:25:24 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 20 Feb 2019 16:25:18 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 20 Feb 2019 16:25:18 -0800
+Received: from [10.2.169.124] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 21 Feb
+ 2019 00:25:17 +0000
+Subject: Re: [PATCH 03/10] mm/hmm: improve and rename hmm_vma_get_pfns() to
+ hmm_range_snapshot()
+To:     <jglisse@redhat.com>, <linux-mm@kvack.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ralph Campbell <rcampbell@nvidia.com>
+References: <20190129165428.3931-1-jglisse@redhat.com>
+ <20190129165428.3931-4-jglisse@redhat.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <cc2d909c-37c6-4239-7755-4383a8eca0df@nvidia.com>
+Date:   Wed, 20 Feb 2019 16:25:07 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <20190220165013.12774-1-axel.lin@ingics.com> <24E35288-677D-4223-B94A-52A4F37792A8@schinagl.nl>
-In-Reply-To: <24E35288-677D-4223-B94A-52A4F37792A8@schinagl.nl>
-From:   Axel Lin <axel.lin@ingics.com>
-Date:   Thu, 21 Feb 2019 08:22:53 +0800
-Message-ID: <CAFRkauAPGEBxj7k2GvmFwhyc7ZuofhXou17b75F3G-mUWVaf9A@mail.gmail.com>
-Subject: Re: [PATCH] regulator: axp20x: Get rid of AXP20X_xxx_START/END/STEPS defines
-To:     Olliver Schinagl <oliver@schinagl.nl>
-Cc:     Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Priit Laes <plaes@plaes.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190129165428.3931-4-jglisse@redhat.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1550708724; bh=dFWrCIETKXjg1FNqFb1me5bCDn/NW3Z/3TsvBhl4xRU=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=I6tgQuog86qv6gu1dhnEdEk72Zm7NdftP96EfqGPweBvT2ZUu31lvTrE6mpAj2CeU
+         lJNcCeXEtXq5OvEdGjKH3Bb/Bsf2JTGPDQyQONBhJaKYOyB/jeDQkFaQr9e6d4q6Z7
+         Pr6P3iDGF5ALPBiard7zbm7SlHWArESTa/lntDBqxSQyGr6JScpdcGtDj47E3YXsSu
+         xAP1iDj84rART96QHRN+EfzXH4oNGPfo4HqyWhrZ8C9FE8lUZV6kzc5wcFDB6nLTWW
+         ZaoK4pBYw77SrwAguTS83eIJjkcQod+vtV9mR5K3tADcokFTAL7+K09uAcMTOQMNtw
+         twK/pe5LbPkOQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Olliver Schinagl <oliver@schinagl.nl> =E6=96=BC 2019=E5=B9=B42=E6=9C=8821=
-=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8A=E5=8D=886:57=E5=AF=AB=E9=81=93=EF=BC=
-=9A
->
-> Hey Axel,
->
-> On February 20, 2019 5:50:13 PM GMT+01:00, Axel Lin <axel.lin@ingics.com>=
- wrote:
-> >The AXP20X_xxx_START/END/STEPS defines make the code hard to read and
-> >very hard to check the linear range settings because it needs to check
-> >the defines one-by-one.
-> >The original code without the defines is very good in readability
-> >as the meaning of each field of REGULATOR_LINEAR_RANGE is clear.
-> >So I suggest to get rid of AXP20X_xxx_START/END/STEPS defines.
-> Are you suggesting that magic values and hex numbers are more readable?
+On 1/29/19 8:54 AM, jglisse@redhat.com wrote:
+> From: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+>=20
+> Rename for consistency between code, comments and documentation. Also
+> improves the comments on all the possible returns values. Improve the
+> function by returning the number of populated entries in pfns array.
+>=20
+> Signed-off-by: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Ralph Campbell <rcampbell@nvidia.com>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> ---
+>   include/linux/hmm.h |  4 ++--
+>   mm/hmm.c            | 23 ++++++++++-------------
+>   2 files changed, 12 insertions(+), 15 deletions(-)
+>=20
 
-For example:
-static const struct regulator_linear_range axp803_dcdc234_ranges[] =3D {
-       REGULATOR_LINEAR_RANGE(500000, 0x0, 0x46, 10000),
-       REGULATOR_LINEAR_RANGE(1220000, 0x47, 0x4b, 20000),
-};
-Above looks very clear to me as it describes the linear ranges:
-1st linear range: min_uV is 500000, from selector 0 ~ 0x46, the uV_step is =
-10000
-2nd linear range: min_uV is 1220000, from selector 0x47 ~ 0x4b, the
-uV_step is 20000
-And it's easy to check the min_sel and max_sel in each linear range.
+Hi Jerome,
 
-Now, take a look at below code:
-static const struct regulator_linear_range axp803_dcdc234_ranges[] =3D {
-       REGULATOR_LINEAR_RANGE(500000,
-                              AXP803_DCDC234_500mV_START,
-                              AXP803_DCDC234_500mV_END,
-                              10000),
-       REGULATOR_LINEAR_RANGE(1220000,
-                              AXP803_DCDC234_1220mV_START,
-                              AXP803_DCDC234_1220mV_END,
-                              20000),
-};
-1st linear range:
-I have to check what is AXP803_DCDC234_500mV_START for min_sel,
-then check what is AXP803_DCDC234_500mV_END for max_sel,
-and AXP803_DCDC234_500mV_END is AXP803_DCDC234_500mV_START +
-AXP803_DCDC234_500mV_STEPS
-so I have to check if AXP803_DCDC234_500mV_STEPS is correct or not.
-The same for 2nd linear range.
-It's unnecessary complexity.
-And it's just for 2 linear ranges, for axp20x_ldo4_ranges with 5 linear ran=
-ge,
-it's really hard to check the settings.
+After applying the entire patchset, I still see a few hits of the old name,
+in Documentation:
 
-IMHO, In such case, the defines does not help.
-It's a rare case that I suggest to remove the defines.
+$ git grep -n hmm_vma_get_pfns
+Documentation/vm/hmm.rst:192:  int hmm_vma_get_pfns(struct vm_area_struct *=
+vma,
+Documentation/vm/hmm.rst:205:The first one (hmm_vma_get_pfns()) will only f=
+etch=20
+present CPU page table
+Documentation/vm/hmm.rst:224:      ret =3D hmm_vma_get_pfns(vma, &range, st=
+art,=20
+end, pfns);
+include/linux/hmm.h:145: * HMM pfn value returned by hmm_vma_get_pfns() or=
+=20
+hmm_vma_fault() will be:
 
->
-> Maybe you can explain what your problem is, as it appears you are trying =
-to debug something?
-well, I just read the code.
-I just found it's very hard to read the linear range setting for this drive=
-r.
 
-Regards,
-Axel
+> diff --git a/include/linux/hmm.h b/include/linux/hmm.h
+> index bd6e058597a6..ddf49c1b1f5e 100644
+> --- a/include/linux/hmm.h
+> +++ b/include/linux/hmm.h
+> @@ -365,11 +365,11 @@ void hmm_mirror_unregister(struct hmm_mirror *mirro=
+r);
+>    * table invalidation serializes on it.
+>    *
+>    * YOU MUST CALL hmm_vma_range_done() ONCE AND ONLY ONCE EACH TIME YOU =
+CALL
+> - * hmm_vma_get_pfns() WITHOUT ERROR !
+> + * hmm_range_snapshot() WITHOUT ERROR !
+>    *
+>    * IF YOU DO NOT FOLLOW THE ABOVE RULE THE SNAPSHOT CONTENT MIGHT BE IN=
+VALID !
+>    */
+> -int hmm_vma_get_pfns(struct hmm_range *range);
+> +long hmm_range_snapshot(struct hmm_range *range);
+>   bool hmm_vma_range_done(struct hmm_range *range);
+>  =20
+>  =20
+> diff --git a/mm/hmm.c b/mm/hmm.c
+> index 74d69812d6be..0d9ecd3337e5 100644
+> --- a/mm/hmm.c
+> +++ b/mm/hmm.c
+> @@ -706,23 +706,19 @@ static void hmm_pfns_special(struct hmm_range *rang=
+e)
+>   }
+>  =20
+>   /*
+> - * hmm_vma_get_pfns() - snapshot CPU page table for a range of virtual a=
+ddresses
+> - * @range: range being snapshotted
+> + * hmm_range_snapshot() - snapshot CPU page table for a range
+> + * @range: range
+>    * Returns: -EINVAL if invalid argument, -ENOMEM out of memory, -EPERM =
+invalid
+
+Channeling Mike Rapoport, that should be @Return: instead of Returns: , but=
+...
+
+
+> - *          vma permission, 0 success
+> + *          permission (for instance asking for write and range is read =
+only),
+> + *          -EAGAIN if you need to retry, -EFAULT invalid (ie either no =
+valid
+> + *          vma or it is illegal to access that range), number of valid =
+pages
+> + *          in range->pfns[] (from range start address).
+
+...actually, that's a little hard to spot that we're returning number of va=
+lid=20
+pages. How about:
+
+  * @Returns: number of valid pages in range->pfns[] (from range start
+  *           address). This may be zero. If the return value is negative,
+  *           then one of the following values may be returned:
+  *
+  *           -EINVAL  range->invalid is set, or range->start or range->end
+  *                    are not valid.
+  *           -EPERM   For example, asking for write, when the range is
+  *      	      read-only
+  *           -EAGAIN  Caller needs to retry
+  *           -EFAULT  Either no valid vma exists for this range, or it is
+  *                    illegal to access the range
+
+(caution: my white space might be wrong with respect to tabs)
+
+>    *
+>    * This snapshots the CPU page table for a range of virtual addresses. =
+Snapshot
+>    * validity is tracked by range struct. See hmm_vma_range_done() for fu=
+rther
+>    * information.
+> - *
+> - * The range struct is initialized here. It tracks the CPU page table, b=
+ut only
+> - * if the function returns success (0), in which case the caller must th=
+en call
+> - * hmm_vma_range_done() to stop CPU page table update tracking on this r=
+ange.
+> - *
+> - * NOT CALLING hmm_vma_range_done() IF FUNCTION RETURNS 0 WILL LEAD TO S=
+ERIOUS
+> - * MEMORY CORRUPTION ! YOU HAVE BEEN WARNED !
+>    */
+> -int hmm_vma_get_pfns(struct hmm_range *range)
+> +long hmm_range_snapshot(struct hmm_range *range)
+>   {
+>   	struct vm_area_struct *vma =3D range->vma;
+>   	struct hmm_vma_walk hmm_vma_walk;
+> @@ -776,6 +772,7 @@ int hmm_vma_get_pfns(struct hmm_range *range)
+>   	hmm_vma_walk.fault =3D false;
+>   	hmm_vma_walk.range =3D range;
+>   	mm_walk.private =3D &hmm_vma_walk;
+> +	hmm_vma_walk.last =3D range->start;
+>  =20
+>   	mm_walk.vma =3D vma;
+>   	mm_walk.mm =3D vma->vm_mm;
+> @@ -792,9 +789,9 @@ int hmm_vma_get_pfns(struct hmm_range *range)
+>   	 * function return 0).
+>   	 */
+>   	range->hmm =3D hmm;
+> -	return 0;
+> +	return (hmm_vma_walk.last - range->start) >> PAGE_SHIFT;
+>   }
+> -EXPORT_SYMBOL(hmm_vma_get_pfns);
+> +EXPORT_SYMBOL(hmm_range_snapshot);
+>  =20
+>   /*
+>    * hmm_vma_range_done() - stop tracking change to CPU page table over a=
+ range
+>=20
+
+Otherwise, looks good.
+
+thanks,
+--=20
+John Hubbard
+NVIDIA
