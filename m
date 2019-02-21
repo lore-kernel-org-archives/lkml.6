@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A4DC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52939C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 934582083B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:18:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EAE52084D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:18:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728583AbfBURS3 (ORCPT
+        id S1728668AbfBURSe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 12:18:29 -0500
-Received: from mx-ginzinger.sigmacloud.services ([185.154.235.147]:55528 "EHLO
+        Thu, 21 Feb 2019 12:18:34 -0500
+Received: from mx-ginzinger.sigmacloud.services ([185.154.235.147]:55545 "EHLO
         mx-ginzinger.sigmacloud.services" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726232AbfBURS3 (ORCPT
+        by vger.kernel.org with ESMTP id S1726189AbfBURSc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 12:18:29 -0500
-Received: from [31.193.165.228] (port=9228 helo=mx-ginzinger.sigmacloud.services)
+        Thu, 21 Feb 2019 12:18:32 -0500
+Received: from [31.193.165.228] (port=49494 helo=mx-ginzinger.sigmacloud.services)
         by mx-ginzinger.sigmacloud.services with esmtps (TLSv1.2:AES256-GCM-SHA384:256)
         (Exim 4.82_1-5b7a7c0-XX)
         (envelope-from <Martin.Kepplinger@ginzinger.com>)
-        id 1gwrzH-00028o-2Y; Thu, 21 Feb 2019 18:18:19 +0100
+        id 1gwrzI-00028q-0v; Thu, 21 Feb 2019 18:18:20 +0100
 Received: from martin-laptop.buero.ginzinger.com (10.10.1.120) by
  exc1.buero.ginzinger.com (10.1.1.204) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.1.1466.3; Thu, 21 Feb 2019 18:18:19 +0100
-X-CTCH-RefID: str=0001.0A0B020F.5C6EDD5B.0066,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+X-CTCH-RefID: str=0001.0A0B020F.5C6EDD5C.0024,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
 From:   Martin Kepplinger <martin.kepplinger@ginzinger.com>
 To:     <gregkh@linuxfoundation.org>, <robh+dt@kernel.org>,
         <mark.rutland@arm.com>, <jslaby@suse.com>, <corbet@lwn.net>,
@@ -41,18 +41,20 @@ To:     <gregkh@linuxfoundation.org>, <robh+dt@kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>
 CC:     <linux-kernel@vger.kernel.org>,
         Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Subject: [PATCH v2 1/9] serial: uapi: add SER_RS485_DELAY_IN_USEC flag to struct serial_rs485
-Date:   Thu, 21 Feb 2019 18:17:50 +0100
-Message-ID: <20190221171758.10322-1-martin.kepplinger@ginzinger.com>
+Subject: [PATCH v2 2/9] Documentation: serial-rs485: document SER_RS485_DELAY_IN_USEC flag
+Date:   Thu, 21 Feb 2019 18:17:51 +0100
+Message-ID: <20190221171758.10322-2-martin.kepplinger@ginzinger.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190221171758.10322-1-martin.kepplinger@ginzinger.com>
+References: <20190221171758.10322-1-martin.kepplinger@ginzinger.com>
 X-Originating-IP: [10.10.1.120]
 X-ClientProxiedBy: exc1.buero.ginzinger.com (10.1.1.204) To
  exc1.buero.ginzinger.com (10.1.1.204)
-X-EXCLAIMER-MD-ORIGINAL-SUBJECT: [NOSIG][NODISC][PATCH v2 1/9] serial: uapi:
- add SER_RS485_DELAY_IN_USEC flag to struct serial_rs485
+X-EXCLAIMER-MD-ORIGINAL-SUBJECT: [NOSIG][NODISC][PATCH v2 2/9] Documentation:
+ serial-rs485: document SER_RS485_DELAY_IN_USEC flag
 X-EXCLAIMER-MD-CONFIG: 9dd172f7-de2e-4231-b886-ec11f46e03b3
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----9F773A4BFF92DF307DDF747586A784E5"
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----EA17937D4AB9EFC9EA0F96D1662D06FA"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -60,86 +62,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 This is an S/MIME signed message
 
-------9F773A4BFF92DF307DDF747586A784E5
+------EA17937D4AB9EFC9EA0F96D1662D06FA
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-This extends the user interface for rs485 communication:
-
-We add a new flag, SER_RS485_DELAY_IN_USEC, to struct serial_rs485 that
-indicates that delay_rts_before_send and delay_rts_after_send values are
-interpreted in microsecond units.
-
-Up until now, the code comment defined these values to hold the delays in
-millisecond units. Especially with fast data rates (1Mbaut or more) that
-are not too uncommon for RS485, 1ms become quite long. Users need to be
-able to set shorter delays than 1 ms in order not to slow down the channel
-unnecessarily.
-
-So when delays are needed, but not as long as 1ms, this enables faster
-communication channels without changing the baudrate.
+Document the new RS485 flag, SER_RS485_DELAY_IN_USEC that specifies that the
+rts delay values stored in struct serial_rs485 hold values in microseconds
+instead of milliseconds (the default).
 
 Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
 ---
+ Documentation/serial/serial-rs485.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
-revision history
-----------------
-v2: re-send as a proper series after fixing my mailserver
-v1: initial implementation idea
-
-
-So have this totally quirky patch that uses udelay() in our tree
-for a looong time now because of the above reasons - and because we are lazy.
-This is an attempt to get rid of said patch on our side and fix this properly.
-
-What do you thing about adding a flag in general?
-
-The following patches should integrate this idea in devicetree and drivers.
-These changes are NOT tested on hardware but should behave predictably
-enough. I use the delays in a driver that doesn't implement them yet at
-all. I'll do that after this (or something similar) is merged - it's a 2-liner
-then.
-
-Also, a patch to the rs485conf tool, that is sometimes used instead of
-ioctl() directly, will be prepared as well.
-
-thanks
-
-                                 martin
-
-
-
- include/uapi/linux/serial.h | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/include/uapi/linux/serial.h b/include/uapi/linux/serial.h
-index 93eb3c496ff1..c16c950ebca2 100644
---- a/include/uapi/linux/serial.h
-+++ b/include/uapi/linux/serial.h
-@@ -126,8 +126,15 @@ struct serial_rs485 {
- #define SER_RS485_TERMINATE_BUS		(1 << 5)	/* Enable bus
- 							   termination
- 							   (if supported) */
--	__u32	delay_rts_before_send;	/* Delay before send (milliseconds) */
--	__u32	delay_rts_after_send;	/* Delay after send (milliseconds) */
-+#define SER_RS485_DELAY_IN_USEC		(1 << 6)	/* delay_rts_*_send
-+							   values are given in
-+							   microseconds */
-+	__u32	delay_rts_before_send;	/* Delay before send (milliseconds
-+					   by default. microseconds if flag
-+					   is set) */
-+	__u32	delay_rts_after_send;	/* Delay after send (milliseconds
-+					   by default. microseconds if flag
-+					   is set) */
- 	__u32	padding[5];		/* Memory is cheap, new structs
- 					   are a royal PITA .. */
- };
+diff --git a/Documentation/serial/serial-rs485.txt b/Documentation/serial/serial-rs485.txt
+index ce0c1a9b8aab..a1e15e9efc2e 100644
+--- a/Documentation/serial/serial-rs485.txt
++++ b/Documentation/serial/serial-rs485.txt
+@@ -75,6 +75,9 @@
+ 	/* Set rts delay after send, if needed: */
+ 	rs485conf.delay_rts_after_send = ...;
+ 
++	/* Specify the rts delay to be microseconds, not milliseconds */
++	rs485conf.flags |= SER_RS485_DELAY_IN_USEC;
++
+ 	/* Set this flag if you want to receive data even while sending data */
+ 	rs485conf.flags |= SER_RS485_RX_DURING_TX;
+ 
 -- 
 2.20.1
 
 
-------9F773A4BFF92DF307DDF747586A784E5
+------EA17937D4AB9EFC9EA0F96D1662D06FA
 Content-Type: application/x-pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -209,17 +164,17 @@ MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
 BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMT
 NENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1h
 aWwgQ0ECEE1CsTMbOtnoVViHUQRgfj4wDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZI
-hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTkwMjIxMTcxODIz
-WjAvBgkqhkiG9w0BCQQxIgQgkvqZH2++nABX0zwIMEmp0I1IF5ZP0+ypYBbj0RIH
-W/cweQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
+hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTkwMjIxMTcxODI2
+WjAvBgkqhkiG9w0BCQQxIgQgxJLGfpVN3ESS7Tx41EdJbnFIjcDCy67+g4pwwI7z
+Dv4weQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
 CWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
 AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEA
-vrNXp7GiVyUd1mKwKaRy6Aq0wgD6NRk1SARl4GpjBFhaxDZ0gl6Ggo1UwUB/L/oH
-UMw1JuwWyE63hY/JIHPLwyjfNbKuhp1i6clbK4/4hkNNSsMLC+XXn59Bq/LFgf0P
-GIR1lMTy/GKoh0r1zUJXROszXfWCveHoI5f1yjp2ka1EGPsZBZozuUVs3bYIZW5p
-LWPncdTLjTGl/sxm5JrGQ2ZEZNtIs3oyyOkXGaNmyjDjiR4OGnOPTlgsyfV8uUM+
-9kILWOwR0C9wH6WvJi2Mo/ecdDZjmyqcGo0gKG2xzcL1mbsUYwPRK9xiOtoYqRfS
-FRLL5s6gE+iN3g5+akGO1w==
+dK/4r9B7iJ4MONZZ7T3yItzsTcmlIMBM1X//HDqIgPWUA3Mn8iXN+IfkZifaoT06
+RYwfAtIhDWYAjgupALY/2g30g0lNoB6Q15WEtBIj/mD1AqZNK8ICsscIex60F2ox
+KT0IPis71oiyqxL1TUSlaRikQM/6x8xqiYr8hGWNbT97mV924cy4j0WkC/CW4xUZ
+X/2M0xLrgOnJlcTe1KlmKeFm0r7ztJ2y71FKy1ymUyRgFHuOz9CvJjRVUMl7Q4Ku
+VefxZUkDHQ8uhRlHcT9AaACnOsazAL9fL3Z3ZcgJ2E8yjx8jKnTY+Hxmfnz0nPve
+xLaiV4io/eY3rBPmi758tg==
 
-------9F773A4BFF92DF307DDF747586A784E5--
+------EA17937D4AB9EFC9EA0F96D1662D06FA--
 
