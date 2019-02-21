@@ -2,43 +2,43 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F403C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E99C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:26:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D707321841
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:26:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B43021734
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:26:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550712378;
-	bh=NF0F2xn8GRpEkcFgMxCsXuzmInDNhIhdKF4AKFJk1mo=;
+	s=default; t=1550712382;
+	bh=nz739urgN8zE0GgftxEOQoaznm4Kk3fHCbUTbWSI/5Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=h506MTx2QZI3GkxdJghBAfIqalxpq8O92sYcGSITwvUA5VV6U4oacgxD8vSZMX5J9
-	 pmsX+xXMJs0pi7Ww6UyDdn5HgreFH/7xf+f2Awhv+XC4db9CxugpAscjEXpFsJ1wsg
-	 8WTq88QKwbL+DZ2AjKrictWEC0Ad5k9YYosXuCVw=
+	b=d1gm2HxGO0odMzo3Exww+agTbaY7ziT+6YREkFvche3lryLex12mx20U8jtsmVj+U
+	 wij/OnR0+EyBPvBRw5MXrz5VX9scoQjp+bQi4VM0/mjKSgI6lYrjnjb37ssSBbLEQU
+	 4zZcJ/Pd/yAJp9kWH2WT8g6sbMi7DAon4zw4vuqg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbfBUB0Q (ORCPT
+        id S1727275AbfBUB0V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 20:26:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59084 "EHLO mail.kernel.org"
+        Wed, 20 Feb 2019 20:26:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726746AbfBUB0O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 20:26:14 -0500
+        id S1727233AbfBUB0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 20:26:17 -0500
 Received: from quaco.ghostprotocols.net (unknown [189.40.102.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D2702086D;
-        Thu, 21 Feb 2019 01:26:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B45D021908;
+        Thu, 21 Feb 2019 01:26:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550712373;
-        bh=NF0F2xn8GRpEkcFgMxCsXuzmInDNhIhdKF4AKFJk1mo=;
+        s=default; t=1550712376;
+        bh=nz739urgN8zE0GgftxEOQoaznm4Kk3fHCbUTbWSI/5Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jnEOSU+p5CbvR5cynC7Nfc1s/ZE4WnZDN8PpY84uxus2ksfALDQcFetv+quas3XNg
-         Fg39eptL9obK51wRjsILZYsva8gvDwG8cd3xTXpUAATTEFDtznOX8EnqVkbVq0nCQp
-         yt06j7Z1hQnPZ+hMPycV4JCFno7HyqoMBJhHvGSo=
+        b=eVRtlogsiS3/LDK/RDYxd+biiWoCVMIkkIstCuoicNVgBWNpEnR+D8aXBAB4D0M1e
+         l4AfHs9KZoOYHJzSurorRggxqYki2+CbsjkqU6VhC1BGg+qiBTsV1Bob/vfxYZFMhN
+         lIHrjTkEYnxBhmetmcyeEgG7npUOXOqdMY5hc/QY=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
@@ -47,9 +47,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 04/17] perf tools: Add numa_topology object
-Date:   Wed, 20 Feb 2019 22:25:36 -0300
-Message-Id: <20190221012549.4069-5-acme@kernel.org>
+Subject: [PATCH 05/17] perf tools: Use sysfs__mountpoint() when reading cpu topology
+Date:   Wed, 20 Feb 2019 22:25:37 -0300
+Message-Id: <20190221012549.4069-6-acme@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190221012549.4069-1-acme@kernel.org>
 References: <20190221012549.4069-1-acme@kernel.org>
@@ -62,343 +62,109 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jiri Olsa <jolsa@kernel.org>
 
-Add the numa_topology object to return the list of numa nodes together
-with their cpus. It will replace the numa code in header.c and will be
-used from 'perf record' in the following patches.
+Use sysfs__mountpoint() when reading sysfs files to obtain cpu/numa
+topologies.
 
-Add the following interface functions to load numa details:
-
-  struct numa_topology *numa_topology__new(void);
-  void numa_topology__delete(struct numa_topology *tp);
-
-And replace the current (copied) local interface, with no functional
-changes.
+Also use scnprintf instead of sprintf as suggested by Namhyung.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Acked-by: Namhyung Kim <namhyung@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190219095815.15931-4-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20190219095815.15931-5-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/cputopo.c | 118 +++++++++++++++++++++++++++++++++++++
- tools/perf/util/cputopo.h |  16 +++++
- tools/perf/util/header.c  | 119 +++++++++-----------------------------
- 3 files changed, 160 insertions(+), 93 deletions(-)
+ tools/perf/util/cputopo.c | 29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
 
 diff --git a/tools/perf/util/cputopo.c b/tools/perf/util/cputopo.c
-index 84470ed4e707..83ffca2ea9ee 100644
+index 83ffca2ea9ee..ece0710249d4 100644
 --- a/tools/perf/util/cputopo.c
 +++ b/tools/perf/util/cputopo.c
-@@ -1,9 +1,11 @@
+@@ -1,6 +1,7 @@
  // SPDX-License-Identifier: GPL-2.0
  #include <sys/param.h>
-+#include <inttypes.h>
+ #include <inttypes.h>
++#include <api/fs/fs.h>
  
  #include "cputopo.h"
  #include "cpumap.h"
- #include "util.h"
-+#include "env.h"
+@@ -9,9 +10,15 @@
  
  
  #define CORE_SIB_FMT \
-@@ -142,3 +144,119 @@ struct cpu_topology *cpu_topology__new(void)
- 	}
- 	return tp;
- }
-+
-+static int load_numa_node(struct numa_topology_node *node, int nr)
-+{
-+	char str[MAXPATHLEN];
-+	char field[32];
-+	char *buf = NULL, *p;
-+	size_t len = 0;
-+	int ret = -1;
-+	FILE *fp;
-+	u64 mem;
-+
-+	node->node = (u32) nr;
-+
-+	sprintf(str, "/sys/devices/system/node/node%d/meminfo", nr);
-+	fp = fopen(str, "r");
-+	if (!fp)
-+		return -1;
-+
-+	while (getline(&buf, &len, fp) > 0) {
-+		/* skip over invalid lines */
-+		if (!strchr(buf, ':'))
-+			continue;
-+		if (sscanf(buf, "%*s %*d %31s %"PRIu64, field, &mem) != 2)
-+			goto err;
-+		if (!strcmp(field, "MemTotal:"))
-+			node->mem_total = mem;
-+		if (!strcmp(field, "MemFree:"))
-+			node->mem_free = mem;
-+		if (node->mem_total && node->mem_free)
-+			break;
-+	}
-+
-+	fclose(fp);
-+	fp = NULL;
-+
-+	sprintf(str, "/sys/devices/system/node/node%d/cpulist", nr);
-+
-+	fp = fopen(str, "r");
-+	if (!fp)
-+		return -1;
-+
-+	if (getline(&buf, &len, fp) <= 0)
-+		goto err;
-+
-+	p = strchr(buf, '\n');
-+	if (p)
-+		*p = '\0';
-+
-+	node->cpus = buf;
-+	fclose(fp);
-+	return 0;
-+
-+err:
-+	free(buf);
-+	if (fp)
-+		fclose(fp);
-+	return ret;
-+}
-+
-+struct numa_topology *numa_topology__new(void)
-+{
-+	struct cpu_map *node_map = NULL;
-+	struct numa_topology *tp = NULL;
-+	char *buf = NULL;
-+	size_t len = 0;
-+	u32 nr, i;
-+	FILE *fp;
-+	char *c;
-+
-+	fp = fopen("/sys/devices/system/node/online", "r");
-+	if (!fp)
-+		return NULL;
-+
-+	if (getline(&buf, &len, fp) <= 0)
-+		goto out;
-+
-+	c = strchr(buf, '\n');
-+	if (c)
-+		*c = '\0';
-+
-+	node_map = cpu_map__new(buf);
-+	if (!node_map)
-+		goto out;
-+
-+	nr = (u32) node_map->nr;
-+
-+	tp = zalloc(sizeof(*tp) + sizeof(tp->nodes[0])*nr);
-+	if (!tp)
-+		goto out;
-+
-+	tp->nr = nr;
-+
-+	for (i = 0; i < nr; i++) {
-+		if (load_numa_node(&tp->nodes[i], node_map->map[i])) {
-+			numa_topology__delete(tp);
-+			tp = NULL;
-+			break;
-+		}
-+	}
-+
-+out:
-+	free(buf);
-+	fclose(fp);
-+	cpu_map__put(node_map);
-+	return tp;
-+}
-+
-+void numa_topology__delete(struct numa_topology *tp)
-+{
-+	u32 i;
-+
-+	for (i = 0; i < tp->nr; i++)
-+		free(tp->nodes[i].cpus);
-+
-+	free(tp);
-+}
-diff --git a/tools/perf/util/cputopo.h b/tools/perf/util/cputopo.h
-index 4b5f4112b6f8..47a97e71acdf 100644
---- a/tools/perf/util/cputopo.h
-+++ b/tools/perf/util/cputopo.h
-@@ -3,6 +3,7 @@
- #define __PERF_CPUTOPO_H
+-	"/sys/devices/system/cpu/cpu%d/topology/core_siblings_list"
++	"%s/devices/system/cpu/cpu%d/topology/core_siblings_list"
+ #define THRD_SIB_FMT \
+-	"/sys/devices/system/cpu/cpu%d/topology/thread_siblings_list"
++	"%s/devices/system/cpu/cpu%d/topology/thread_siblings_list"
++#define NODE_ONLINE_FMT \
++	"%s/devices/system/node/online"
++#define NODE_MEMINFO_FMT \
++	"%s/devices/system/node/node%d/meminfo"
++#define NODE_CPULIST_FMT \
++	"%s/devices/system/node/node%d/cpulist"
  
- #include <linux/types.h>
-+#include "env.h"
- 
- struct cpu_topology {
- 	u32	  core_sib;
-@@ -11,7 +12,22 @@ struct cpu_topology {
- 	char	**thread_siblings;
- };
- 
-+struct numa_topology_node {
-+	char		*cpus;
-+	u32		 node;
-+	u64		 mem_total;
-+	u64		 mem_free;
-+};
-+
-+struct numa_topology {
-+	u32				nr;
-+	struct numa_topology_node	nodes[0];
-+};
-+
- struct cpu_topology *cpu_topology__new(void);
- void cpu_topology__delete(struct cpu_topology *tp);
- 
-+struct numa_topology *numa_topology__new(void);
-+void numa_topology__delete(struct numa_topology *tp);
-+
- #endif /* __PERF_CPUTOPO_H */
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 80ac57e6d38f..a2323d777dae 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -639,112 +639,45 @@ static int write_total_mem(struct feat_fd *ff,
- 	return ret;
- }
- 
--static int write_topo_node(struct feat_fd *ff, int node)
--{
--	char str[MAXPATHLEN];
--	char field[32];
--	char *buf = NULL, *p;
--	size_t len = 0;
--	FILE *fp;
--	u64 mem_total, mem_free, mem;
--	int ret = -1;
--
--	sprintf(str, "/sys/devices/system/node/node%d/meminfo", node);
--	fp = fopen(str, "r");
--	if (!fp)
--		return -1;
--
--	while (getline(&buf, &len, fp) > 0) {
--		/* skip over invalid lines */
--		if (!strchr(buf, ':'))
--			continue;
--		if (sscanf(buf, "%*s %*d %31s %"PRIu64, field, &mem) != 2)
--			goto done;
--		if (!strcmp(field, "MemTotal:"))
--			mem_total = mem;
--		if (!strcmp(field, "MemFree:"))
--			mem_free = mem;
--	}
--
--	fclose(fp);
--	fp = NULL;
--
--	ret = do_write(ff, &mem_total, sizeof(u64));
--	if (ret)
--		goto done;
--
--	ret = do_write(ff, &mem_free, sizeof(u64));
--	if (ret)
--		goto done;
--
--	ret = -1;
--	sprintf(str, "/sys/devices/system/node/node%d/cpulist", node);
--
--	fp = fopen(str, "r");
--	if (!fp)
--		goto done;
--
--	if (getline(&buf, &len, fp) <= 0)
--		goto done;
--
--	p = strchr(buf, '\n');
--	if (p)
--		*p = '\0';
--
--	ret = do_write_string(ff, buf);
--done:
--	free(buf);
--	if (fp)
--		fclose(fp);
--	return ret;
--}
--
- static int write_numa_topology(struct feat_fd *ff,
- 			       struct perf_evlist *evlist __maybe_unused)
+ static int build_cpu_topology(struct cpu_topology *tp, int cpu)
  {
--	char *buf = NULL;
--	size_t len = 0;
--	FILE *fp;
--	struct cpu_map *node_map = NULL;
--	char *c;
--	u32 nr, i, j;
-+	struct numa_topology *tp;
+@@ -23,7 +30,8 @@ static int build_cpu_topology(struct cpu_topology *tp, int cpu)
+ 	u32 i = 0;
  	int ret = -1;
-+	u32 i;
+ 
+-	sprintf(filename, CORE_SIB_FMT, cpu);
++	scnprintf(filename, MAXPATHLEN, CORE_SIB_FMT,
++		  sysfs__mountpoint(), cpu);
+ 	fp = fopen(filename, "r");
+ 	if (!fp)
+ 		goto try_threads;
+@@ -50,7 +58,8 @@ static int build_cpu_topology(struct cpu_topology *tp, int cpu)
+ 	ret = 0;
+ 
+ try_threads:
+-	sprintf(filename, THRD_SIB_FMT, cpu);
++	scnprintf(filename, MAXPATHLEN, THRD_SIB_FMT,
++		  sysfs__mountpoint(), cpu);
+ 	fp = fopen(filename, "r");
+ 	if (!fp)
+ 		goto done;
+@@ -157,7 +166,8 @@ static int load_numa_node(struct numa_topology_node *node, int nr)
+ 
+ 	node->node = (u32) nr;
+ 
+-	sprintf(str, "/sys/devices/system/node/node%d/meminfo", nr);
++	scnprintf(str, MAXPATHLEN, NODE_MEMINFO_FMT,
++		  sysfs__mountpoint(), nr);
+ 	fp = fopen(str, "r");
+ 	if (!fp)
+ 		return -1;
+@@ -179,7 +189,8 @@ static int load_numa_node(struct numa_topology_node *node, int nr)
+ 	fclose(fp);
+ 	fp = NULL;
+ 
+-	sprintf(str, "/sys/devices/system/node/node%d/cpulist", nr);
++	scnprintf(str, MAXPATHLEN, NODE_CPULIST_FMT,
++		  sysfs__mountpoint(), nr);
+ 
+ 	fp = fopen(str, "r");
+ 	if (!fp)
+@@ -207,13 +218,17 @@ struct numa_topology *numa_topology__new(void)
+ {
+ 	struct cpu_map *node_map = NULL;
+ 	struct numa_topology *tp = NULL;
++	char path[MAXPATHLEN];
+ 	char *buf = NULL;
+ 	size_t len = 0;
+ 	u32 nr, i;
+ 	FILE *fp;
+ 	char *c;
  
 -	fp = fopen("/sys/devices/system/node/online", "r");
--	if (!fp)
--		return -1;
-+	tp = numa_topology__new();
-+	if (!tp)
-+		return -ENOMEM;
- 
--	if (getline(&buf, &len, fp) <= 0)
--		goto done;
-+	ret = do_write(ff, &tp->nr, sizeof(u32));
-+	if (ret < 0)
-+		goto err;
- 
--	c = strchr(buf, '\n');
--	if (c)
--		*c = '\0';
-+	for (i = 0; i < tp->nr; i++) {
-+		struct numa_topology_node *n = &tp->nodes[i];
- 
--	node_map = cpu_map__new(buf);
--	if (!node_map)
--		goto done;
--
--	nr = (u32)node_map->nr;
-+		ret = do_write(ff, &n->node, sizeof(u32));
-+		if (ret < 0)
-+			goto err;
- 
--	ret = do_write(ff, &nr, sizeof(nr));
--	if (ret < 0)
--		goto done;
-+		ret = do_write(ff, &n->mem_total, sizeof(u64));
-+		if (ret)
-+			goto err;
- 
--	for (i = 0; i < nr; i++) {
--		j = (u32)node_map->map[i];
--		ret = do_write(ff, &j, sizeof(j));
--		if (ret < 0)
--			break;
-+		ret = do_write(ff, &n->mem_free, sizeof(u64));
-+		if (ret)
-+			goto err;
- 
--		ret = write_topo_node(ff, j);
-+		ret = do_write_string(ff, n->cpus);
- 		if (ret < 0)
--			break;
-+			goto err;
- 	}
--done:
--	free(buf);
--	fclose(fp);
--	cpu_map__put(node_map);
++	scnprintf(path, MAXPATHLEN, NODE_ONLINE_FMT,
++		  sysfs__mountpoint());
 +
-+	ret = 0;
-+
-+err:
-+	numa_topology__delete(tp);
- 	return ret;
- }
++	fp = fopen(path, "r");
+ 	if (!fp)
+ 		return NULL;
  
 -- 
 2.19.1
