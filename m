@@ -2,87 +2,115 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4414C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:46:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81935C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:47:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83BD921734
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:46:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DCDA2086A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:47:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MjO1GqCv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726476AbfBUMqi (ORCPT
+        id S1727128AbfBUMrT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 07:46:38 -0500
-Received: from foss.arm.com ([217.140.101.70]:43832 "EHLO foss.arm.com"
+        Thu, 21 Feb 2019 07:47:19 -0500
+Received: from ozlabs.org ([203.11.71.1]:43209 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725991AbfBUMqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 07:46:38 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF44680D;
-        Thu, 21 Feb 2019 04:46:37 -0800 (PST)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7A3E83F575;
-        Thu, 21 Feb 2019 04:46:34 -0800 (PST)
-Date:   Thu, 21 Feb 2019 12:46:29 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     "H. Peter Anvin" <hpa@zytor.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mingo@redhat.com,
-        catalin.marinas@arm.com, james.morse@arm.com,
-        valentin.schneider@arm.com, brgerst@gmail.com, jpoimboe@redhat.com,
-        luto@kernel.org, bp@alien8.de, dvlasenk@redhat.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de
-Subject: Re: [PATCH] sched/x86: Save [ER]FLAGS on context switch
-Message-ID: <20190221124629.GA12696@fuggles.cambridge.arm.com>
-References: <D61C430D-4321-4114-AB85-671A3C7B8EAE@amacapital.net>
- <20190213222146.GC32494@hirez.programming.kicks-ass.net>
- <D3E1B64D-3E91-4A82-9C3B-92D9EB7326CE@amacapital.net>
- <20190214101429.GD32494@hirez.programming.kicks-ass.net>
- <20ABBED1-E505-45F6-8520-FB93786DF9A9@zytor.com>
- <20190216103044.GR32494@hirez.programming.kicks-ass.net>
- <9e037d68-75e7-1beb-0c9c-33a7ffeced1b@zytor.com>
- <20190219090409.GW32494@hirez.programming.kicks-ass.net>
- <20190219124808.GG8501@fuggles.cambridge.arm.com>
- <f8e99706-4e3b-68ec-7a3e-6e6dd876ad2f@zytor.com>
+        id S1725814AbfBUMrT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 07:47:19 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 444vPd1XRfz9s5c;
+        Thu, 21 Feb 2019 23:47:17 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1550753237;
+        bh=yM4/ZKrzZTIeLRONPSyrxCwblEvM1JJVQBJii+H4zGI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=MjO1GqCvdo2myxXGVF52cwqLQB3eLUNMzNX/nRyXG71N1lBQ0xB4bjlQVFKNsr7oj
+         kfcenEV4Wr+ntwYE4B/NFGRdFfEWLK2MfjrOyw4EPX1L/ZfQMuSqH1FT+m5oU9HG5V
+         v0L5PtdsWTnJO4U44UOyIFzO5u94uh7vY2ONzQpmvoWUyDtOq3yEY+FC9WTMK+AaTV
+         FsHphXVlyAXOneFO9rKlaLnY7Zs1LYNK/QM1fz8ZvDVJs//WneQ69FwM9Gk0OPypZp
+         FaJRpiisPuEyaHSRAYRVukR5DYTthlnm6QxLmHyfxEwDsy6wPmnnFq6Ahwk4SSJwHM
+         L7aoxCkoLKOoQ==
+Date:   Thu, 21 Feb 2019 23:47:16 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the xarray tree
+Message-ID: <20190221234716.2144eba3@canb.auug.org.au>
+In-Reply-To: <20190213220929.GO24706@mellanox.com>
+References: <20190212162003.1aa1ffbd@canb.auug.org.au>
+        <20190212161528.GN12668@bombadil.infradead.org>
+        <20190212162324.GU24706@mellanox.com>
+        <20190213212621.GW12668@bombadil.infradead.org>
+        <20190213220929.GO24706@mellanox.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f8e99706-4e3b-68ec-7a3e-6e6dd876ad2f@zytor.com>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/c_h/E.UVLxT+_wKJIoRLxXt"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 02:55:59PM -0800, H. Peter Anvin wrote:
-> On 2/19/19 4:48 AM, Will Deacon wrote:
-> > 
-> > I think you'll still hate this, but could we not disable preemption during
-> > the uaccess-enabled region, re-enabling it on the fault path after we've
-> > toggled uaccess off and disable it again when we return back to the
-> > uaccess-enabled region? Doesn't help with tracing, but it should at least
-> > handle the common case.
-> > 
-> 
-> There is a worse problem with this, I still realize: this would mean blocking
-> preemption across what could possibly be a *very* large copy_from_user(), for
-> example.
+--Sig_/c_h/E.UVLxT+_wKJIoRLxXt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I don't think it's legitimate to call copy_{to,from}_user() inside a
-user_access_{begin,end} region. You'd need to add some unsafe variants,
-which could periodically disable uaccess and call cond_resched() inside
-the loop to avoid the problem you're eluding to.
+Hi Jason,
 
-For existing callers of copy_{to,from}_user(), there's no issue as they
-don't call into the scheduler during the copy operation. Exceptions are
-handled fine by the code in mainline today.
+On Wed, 13 Feb 2019 22:09:36 +0000 Jason Gunthorpe <jgg@mellanox.com> wrote:
+>
+> I personally think it is not good to put major logic changes in merge
+> commits, so I would prefer the #2 approach for this case.
 
-GCC plugins are a cool idea, but I'm just a bit nervous about relying on
-them for things like this.
+These are not difficult merge fixes or logic changes.
 
-Will
+> Also, the general philosophy that the person doing the tree-wide
+> change should do the work :)
+
+In fact, I have done the work :-)  All you guys have to do is inform
+Linus and give him my resolutions.  The change to xa_alloc_cyclic could
+just be a followup patch once the air clears.
+
+> SFR's tree is just a reference. Who ever takes care to resolve these
+> conflicts has to manually do the fixing up. If you do send your tree
+> early I will fix it up as part of prepping the RDMA tree PR. Otherwise
+> you will have to fix it.
+
+Neither of you need to fix it ...
+
+> What I don't want to see is we send both trees at the same time and
+> neither gives merge guidance to Linus.
+
+Well, I have now reminded you both, so hopefully you will both tell
+Linus.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/c_h/E.UVLxT+_wKJIoRLxXt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxundQACgkQAVBC80lX
+0GzB6gf/UpBD366BoU94lj2JPVdQdYryZbK1+Pt6NiSoAIcSD7JDqyjnWJmJ8/aH
+v34W8q0FxDn4CSBIUuXhzkogIEau4wu7/9MeViFcFUjEl5tbDKTXaHXoAy4rKmhm
+mCnT4d0fkaqh506NMi5kGVZw0yx42i9okssVej/rNYk/+y0+hAzNExBY9UYOiWnG
+yvPfcgoj7c/IxysXsPo/aAMGHUxY9bkRufpm2XmqcCBO6V8zc3uSAI1pv+93SkUh
+O3lwTjaTZ11iYBrNbyn8ym+yas4CxQ18d0seEPAHoixSSJU34wqH7tz9wgrcxo5/
+9YIeAMyeLKSvnj4tEk0xtaNTqqOHbg==
+=5mxv
+-----END PGP SIGNATURE-----
+
+--Sig_/c_h/E.UVLxT+_wKJIoRLxXt--
