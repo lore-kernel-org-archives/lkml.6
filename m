@@ -2,186 +2,186 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F4CC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:08:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA819C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:11:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 038462083B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:08:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69A672070D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:11:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CdqlAYUQ"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="h7qMqDsw";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="ZK2uIVMU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbfBUXIu (ORCPT
+        id S1726694AbfBUXL4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 18:08:50 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:36158 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725961AbfBUXIt (ORCPT
+        Thu, 21 Feb 2019 18:11:56 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:19098 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbfBUXL4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 18:08:49 -0500
-Received: by mail-ua1-f68.google.com with SMTP id j3so313929uap.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 15:08:48 -0800 (PST)
+        Thu, 21 Feb 2019 18:11:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1550790716; x=1582326716;
+  h=from:to:cc:subject:date:message-id:content-id:
+   content-transfer-encoding:mime-version;
+  bh=78+z1grUE6qV0CcKonoGsjja7s41sLxiZgtK6h4zOfQ=;
+  b=h7qMqDswgK+mSF2XBMphqW6DHtkJ0QpHuno7Wgburwn3wSYIkXpBIu1N
+   ZEvs9iXgk4pHaw2oCNKImrGVESC5fJdtmsYF0IZIoOsDEsOlqNp4qjzGV
+   65d8desH+rGceWJW+UlxlHVkJktBUokv9QxRyHeQ/umaICUI/A5R7CaNa
+   DcQWfNDHYPwIf+eR5nJzo7fZi5teesRFR9QCkVj0pYFHrCnHx6HC9KWFX
+   V2YEQE4dIjmsKQFrW6RYmbdPMMcxEKbB98Q0X7rhtZlPidSfy8AMvXSKu
+   7XZUexP0yXlyw5YLg7XeXKmRCE7mLt5VcF69mR7vmBHCYPUPmrszAz4Ap
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.58,397,1544457600"; 
+   d="scan'208";a="101886597"
+Received: from mail-dm3nam03lp2055.outbound.protection.outlook.com (HELO NAM03-DM3-obe.outbound.protection.outlook.com) ([104.47.41.55])
+  by ob1.hgst.iphmx.com with ESMTP; 22 Feb 2019 07:11:55 +0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1oIzNwYH6CwexwuQyYEKHzsIwSVhd2rIeuRF/WvpgdU=;
-        b=CdqlAYUQiwqBjO4VxbS22Sg0NPa6Y8onyILijOuPeisceu9hmBSF8BBOtswVWbx2WO
-         MUrbsCBS5Ifgn/qULZ14X0LVKTZri5erhSDbKorz2NDE4krBKI77qzVCLtLhRJStP+Ay
-         vMQ/roWGGsnXhYmVqwXLUbUlSEmBtEKvmsb/w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1oIzNwYH6CwexwuQyYEKHzsIwSVhd2rIeuRF/WvpgdU=;
-        b=V5wkeKmR+fau6htxfTUqQUe7G+WL86G2r2Wg6noPXUOdylEDEJs52fkiOJ4d5bjNDC
-         B6iDdds7xNtKv/2qw49QHN9RwTH/8cnME0b70h0iB1xcBoz1JeRLkMjONMI+wzWIlLqC
-         gCNE462XBFOI8Ec3TyAcGfbFLu154EtAOq9AB5yoRu6LtWwv7cVok7ffVYlpvy2pIYdF
-         d6FxVmhrA7qit8iP7NH09GZ3F5elL2GgxtuSjsUfWG6hzvQTEPo8gzcQtK9mMuoToPpt
-         AaxRyi+ZXWislEf+sSaZzk+u+88yxMpU5+BD49V8hFT8iS69PpPaBKnszf7+zA2BWOnh
-         sNdQ==
-X-Gm-Message-State: AHQUAubk+LLvB/YSsq2LzNMsCaVBGO73nw1ysxHzCJCGoDRu4hA6CsYx
-        gldU2cnRYmeomfE504N/liAdu+e64Ug=
-X-Google-Smtp-Source: AHgI3IZCCpB68OZCSshwLhZutT3Xe8F/28YWvusTu8H97g9C4cWEOxMPH7bkJoytBgp6MZKndF1DyQ==
-X-Received: by 2002:a67:fd81:: with SMTP id k1mr590594vsq.91.1550790527865;
-        Thu, 21 Feb 2019 15:08:47 -0800 (PST)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
-        by smtp.gmail.com with ESMTPSA id 68sm451976vko.9.2019.02.21.15.08.47
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Feb 2019 15:08:47 -0800 (PST)
-Received: by mail-ua1-f50.google.com with SMTP id q17so330412uam.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 15:08:47 -0800 (PST)
-X-Received: by 2002:a67:ec81:: with SMTP id h1mr587235vsp.188.1550790208621;
- Thu, 21 Feb 2019 15:03:28 -0800 (PST)
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=78+z1grUE6qV0CcKonoGsjja7s41sLxiZgtK6h4zOfQ=;
+ b=ZK2uIVMUuOwL8RBcICUXmjrYmTPG75qlT0pPoWh9meXyxifw/cszSNToei6TS/GrZ2UDBcFfgHWRU7g6N7dX//NEac1eXHNDq6y4KLFcyNXB2PRFrcNbtHdVI43lcHQhsPob7NZVRhf0zUC06G0zYuAM8ekH+ihJO8UqgHdCsKU=
+Received: from BYAPR04MB4357.namprd04.prod.outlook.com (20.176.251.147) by
+ BYAPR04MB4310.namprd04.prod.outlook.com (20.176.251.29) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.14; Thu, 21 Feb 2019 23:11:52 +0000
+Received: from BYAPR04MB4357.namprd04.prod.outlook.com
+ ([fe80::91f1:a2af:8793:94a2]) by BYAPR04MB4357.namprd04.prod.outlook.com
+ ([fe80::91f1:a2af:8793:94a2%7]) with mapi id 15.20.1622.020; Thu, 21 Feb 2019
+ 23:11:52 +0000
+From:   Adam Manzanares <Adam.Manzanares@wdc.com>
+To:     "lsf-pc@lists.linux-foundation.org" 
+        <lsf-pc@lists.linux-foundation.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "yang.shi@linux.alibaba.com" <yang.shi@linux.alibaba.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "cl@linux.com" <cl@linux.com>,
+        "jglisse@redhat.com" <jglisse@redhat.com>,
+        "mhocko@suse.com" <mhocko@suse.com>,
+        "dave.hansen@intel.com" <dave.hansen@intel.com>,
+        "jack@suse.cz" <jack@suse.cz>
+Subject: [LSF/MM TOPIC] Page Cache Flexibility for NVM
+Thread-Topic: [LSF/MM TOPIC] Page Cache Flexibility for NVM
+Thread-Index: AQHUyjrUW2lvg3E88ESemij+/GgUJA==
+Date:   Thu, 21 Feb 2019 23:11:51 +0000
+Message-ID: <85ddda85755bf15ed2e56bce21f711ae8154d304.camel@wdc.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Adam.Manzanares@wdc.com; 
+x-originating-ip: [199.255.44.250]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c4827700-9f61-44ec-d63b-08d69851f6fa
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:BYAPR04MB4310;
+x-ms-traffictypediagnostic: BYAPR04MB4310:
+wdcipoutbound: EOP-TRUE
+x-microsoft-exchange-diagnostics: =?utf-8?B?MTtCWUFQUjA0TUI0MzEwOzIzOnFPd2k2eGM3bGtSMDJ6bXpVRWxHWmVZSWs3?=
+ =?utf-8?B?M29JcVZRTS8yZ1RXdG9yMmZZSU02YTh6WWlvdXQwRlFlcDFkMkNJSWY3M2kr?=
+ =?utf-8?B?eGdoSGs0TFBiVEVPemZRWjZMMkhNR0owa2xTN3dLbkV4YXczS25RL3FlNnFx?=
+ =?utf-8?B?YU9jSThGaTY3TmxxVFlxZWV4MlpXWnNhcDI2VVdmbEJuV3AraENLTFliK2Uv?=
+ =?utf-8?B?clh3L0twblhWS203MGJDZ1R4Sm93SzUvRFN2Mi9jN2E1dmt4ZDBCY3E0enBJ?=
+ =?utf-8?B?WUhNTmczcUsyRGEwcHR4NEM5SzhIRytLRkFIN0tCT3crLzUzcEV2Rk41cXFU?=
+ =?utf-8?B?cUt2Tzg1UkVSU3lvSllHbmFKNjIzeGxXSFllR1dFS0ZvdEhHYlFxWm5wOXlW?=
+ =?utf-8?B?dFNlZnZQNTNydEdIQU45UGd0akJ4RlN1RUhxWHBBZmkyc3ROWU5wMnFaTCt1?=
+ =?utf-8?B?czR4MFBwc05xbWhvUjQwYW81bnU2SjVTOHFmZEMrQ3dFR2dBKytPa29vcko2?=
+ =?utf-8?B?bnJmZFhuV2drS2MvbWRjM2FnZll2Nnk4Sk5iMnQ2bmFORnUxeWRuRHFhRHpY?=
+ =?utf-8?B?ZGs0Y0hKMXZtbXFCWUVNZGZEK3ZLbXhKUXoxdVlQZXBpRklZMndaVEYzU2J0?=
+ =?utf-8?B?NW5Ha0lPNnZiV0NvZEZSalY2UUlCUFZya0tpUi9sWWZYMWFIWm5NZkdPNFhh?=
+ =?utf-8?B?elNVNHk5UnI0ajJKTlVIRERqWGphVU90NFBWZGViTmpRUkIwSmg2U0JQeTBD?=
+ =?utf-8?B?ZTl2ZTFERldZblJrd3ZYdnVzUjIvbFdsZ1VJU2dwbDJjb2xQdWFBeXoxczdp?=
+ =?utf-8?B?N056TnN4OU95dk1pQmh0QXVzeWJDNHRvMmFpYVF2UGZNYyt0OEE4TFVSNVJz?=
+ =?utf-8?B?aDNFTXk3YjRtdFRIMGZRMGxOR2NqTzhkbCtWTE1yM052a3YrU2c3enRMYk5q?=
+ =?utf-8?B?dHFwWnFtenJyVkUrWFpYYk9odmNpU3lsb1BEUFUrbUVxOElQL0lzbFNGQkt6?=
+ =?utf-8?B?RXoxUFg1ZG5SR1VKejExa0FSR3ZmN1ZVdy9zcDlhTmMzSk9TZm9nQjQ3c2kr?=
+ =?utf-8?B?bzJTV2lMWG91NnFkaXdUZitPanB0eGN0ZkYyZlFZdFQ4RXgrN2ZMek9heVk4?=
+ =?utf-8?B?Rllxb0VPU0l6RGV0Y0RsRkh1ZGNzd1NxcnBtbytBb2FUeHEyeXFwQk5OcFBv?=
+ =?utf-8?B?azNLUVVKQ0JUODNhM3RzbzRwUlQ0VzE1WTZOanJ1aEJPOTNObndrRmxFWGFj?=
+ =?utf-8?B?L0pxcko1K1NqeEFmdXVTS08zWXVBSXA1TTc1bEVCS1NRdU9KYytNeVRnR0wv?=
+ =?utf-8?B?QnI1QSt0NGJQb1pXNDFnNEI1WW9rZXBNWHBlcDVaZTNSVDMydUUxN2ZoaE5S?=
+ =?utf-8?B?Mnh4MWV2ZmVuZERQNWROMWRaMFNscnEvdFI0aWJ2VUVBKzI5NzIyWEVZV1NM?=
+ =?utf-8?B?UVBJbGYyZFBaRTBxMFVEQ1B6blpoN2V3RFZvSzJpbk96WStSWERyVnpEdWJJ?=
+ =?utf-8?B?R3REYTBkVk41U0gxNENXTkhkeWFYaXBEclBmWjBYVGk5RzdxR2JYV21IU2Za?=
+ =?utf-8?B?WXZUZGljNU5rOFc3SHJ6aHo0SWpZd28zRWlLM1FiUW9DcmIwaHpSdnE3MjZt?=
+ =?utf-8?Q?dLMdnIW4DOhV4QeS7P8d?=
+x-microsoft-antispam-prvs: <BYAPR04MB4310B43FDF9DA534150FD600F07E0@BYAPR04MB4310.namprd04.prod.outlook.com>
+x-forefront-prvs: 09555FB1AD
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(366004)(39860400002)(376002)(346002)(199004)(189003)(72206003)(186003)(71200400001)(68736007)(2616005)(6512007)(26005)(99286004)(6486002)(86362001)(256004)(14444005)(316002)(8676002)(97736004)(4326008)(6116002)(478600001)(3846002)(81166006)(476003)(81156014)(66066001)(118296001)(8936002)(14454004)(5660300002)(7736002)(71190400001)(54906003)(106356001)(105586002)(2906002)(2351001)(305945005)(5640700003)(6506007)(6916009)(25786009)(486006)(6436002)(36756003)(2501003)(53936002)(102836004)(7416002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB4310;H:BYAPR04MB4357.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 0xNkX344OsWfTq5qs3UaMB27td77WWTgeifpfuAeesWvtcyPqh8CefBgU+6XUzbE946D1cyS35LsuQvEw6zk1hA9xFrnaxOARvvcRW07hlhZLTCPU+J2sdcjlwfKl7n6qDBtvsrGlyovzrJ4jxyqzcEm65QJfjOJlzc0i8TrGLm68sk9zpMlcBux9J4xKCf6gqCbQI+wRVUw7xPfPnbcuHw/I6V+V2Mj+3SJjXs04r6oa/hb2VcUCsjlb18AKHN4eJswW6Kgf/kOA/BbiqjIDCNzqR4UiY6fWW4Vzng4duz/TxZOvXnImFBC4FKAGqOwzC7V7PglqcW8phSYTcqqHyjTQOMu7HGpo9tBs9IHMU0bBnDW5a25a4a0NAax8klSXZcK1ASmkiGq4WbdODFRUryGyXx9FrvX3MoV4pm4GIQ=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C01446860AD7F04388BEAEFCCD6938BE@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20190218232308.11241-1-tobin@kernel.org> <20190218232308.11241-6-tobin@kernel.org>
- <CAG48ez0utQJjoJW69OwGiuH1EQtcD939-5u71ruD_1nr0eJK0g@mail.gmail.com>
- <CAGXu5jKeS3bkTSXEw2nsjrWoqhbkDZD4C=PdYTHMtM0GNk6tSg@mail.gmail.com>
- <20190221052435.GF11758@eros.localdomain> <CAGXu5j+Mf2D5LgkEmps7VVBhmNGt=49y4caP1y1E0OBURJEeXQ@mail.gmail.com>
- <8f002798-f68b-14cd-d321-f96b653fb51d@rasmusvillemoes.dk>
-In-Reply-To: <8f002798-f68b-14cd-d321-f96b653fb51d@rasmusvillemoes.dk>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 21 Feb 2019 15:03:16 -0800
-X-Gmail-Original-Message-ID: <CAGXu5j+4ia0OLHop81D8D4eSJV6765hr-m=3LPeL2490ER++Hg@mail.gmail.com>
-Message-ID: <CAGXu5j+4ia0OLHop81D8D4eSJV6765hr-m=3LPeL2490ER++Hg@mail.gmail.com>
-Subject: Re: [PATCH 5/6] lib: Fix function documentation for strncpy_from_user
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     "Tobin C. Harding" <me@tobin.cc>, Jann Horn <jannh@google.com>,
-        "Tobin C. Harding" <tobin@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c4827700-9f61-44ec-d63b-08d69851f6fa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2019 23:11:52.0689
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4310
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 6:58 AM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
->
-> On 21/02/2019 07.02, Kees Cook wrote:
->
-> > P.S. Here's C string API Rant (I just had to get this out, please feel
-> > free to ignore):
->
-> I'll bite. First, it's "linux kernel string API", only some of string.h
-> interfaces are in std C. Sure, none of those satisfy all use cases, but
-> adding Yet Another One also has its costs.
-
-Well, yes, strscpy and scnprintf appear to be only in the kernel (did
-the originate externally somewhere I'm not aware of?)
-
-> > strcpy returns dest ... which is already known, so it's a meaningless
-> > return value.
-> >
-> > strncpy returns dest (still meaningless)
->
-> Yeah, same for memcpy, memset. Those are classic C interfaces. It does
-> allow some micro-optimizations in some cases - since one is likely to
-
-Right, yes, but this level of optimization is best left to the
-compiler. There's much more interesting results a caller should care
-about. :)
-
-> > strlcpy returns strlen(src) ... the length we WOULD have copied. Why
-> > would we care about that? I'm operating on dest. Were there callers
-> > that needed to both copy part of src and learn how long it was at the
-> > same time?
->
-> The rationale is exactly the same as for snprintf - to allow you to
-
-Okay, but there's as separate function for that: strlen().
-
-> > strscpy returns -E2BIG or non-NUL bytes copied: yay, a return about
-> > what actually happened from the operation!
->
-> Well, strictly speaking, strlcpy()'s return value also tells you exactly
-> what happened, just not in the kernel "negative errno for error
-> condition" style.
-
-True, yes, but it's unfriendly: it requires careful math, just like
-snprintf, which depends on rechecking the args, making sure you're not
-doing an off-by-one from the NUL, etc etc.
-
-> > ... snprintf returns what it WOULD have written, much like strlcpy
-> > above. At least snprintf has an excuse: it can be used to calculate an
-> > allocation size (called with a NULL dest and 0 size) ... but shouldn't
-> > "how big is this format string going to be?" be a separate function?
->
-> Why? Sure, you can make a wrapper vhowmuch(const char *fmt, va_args ap),
-> but its implementation would have to be "return vsnprintf(NULL, 0, fmt,
-> ap);", since we really must reuse the exact same logic for computing the
-> length as for doing the actual printf'ing (otherwise they'd get out of
-> sync).
-
-Well, I'd likely go the opposite directly: make snprintf() a wrapper
-and call vhowmuch(), etc, convert until snprintf could be removed. But
-really the best might be removal of snprintf first, then refactor it
-with vhowmuch() etc. Lots of ways to solve it, I suppose. But dropping
-the unfriendly API would be nice.
-
-> Please no. snprintf() is standardized, has sane semantics (though one
-
-No, it doesn't -- it has well-defined semantics, but using it
-correctly is too hard. It's a regular source of bugs. (Not *nearly* as
-bad as strncpy, so let's stick to dropping one bad API at a time...)
-
-> sometimes _want_ scnprintf semantics - in which case one can and should
-> use that...), and, importantly, gcc understands those semantics. So we
-> get optimizations and diagnostics that we'd miss if we kill off explicit
-> snprintf and replace with non-standard howmuch+scnprintf.
-
-Those diagnostics can be had with the __printf() markings already...
-
-> > So scnprintf() does the right thing (count of non-NUL bytes copied out).
->
-> The right thing, when that's the thing you want to know. Which it is in
-> the "build a string in a buffer by repeated printf calls, perhaps
-> intermixed with a little flow control logic". But not so in a "format
-> this stuff to this fixed-size char buffer inside that struct, and let me
-> know [i.e., 'give me a way of knowing'] if it all fit".
-
-Do we need ssprintf() to get the -E2BIG result like strscpy()?
-
-> Hello, I'm you super-fantastic-one-size-fits-all string copying API.
-> Please carefully fill out the following form, and I'll get back to you ASAP.
-
-I mean, this is kinda what we have already. We just keep exposing too
-many knobs. :)
-
--- 
-Kees Cook
+SGVsbG8sDQoNCkkgd291bGQgbGlrZSB0byBhdHRlbmQgdGhlIExTRi9NTSBTdW1taXQgMjAxOS4g
+SSdtIGludGVyZXN0ZWQgaW4NCnNldmVyYWwgTU0gdG9waWNzIHRoYXQgYXJlIG1lbnRpb25lZCBi
+ZWxvdyBhcyB3ZWxsIGFzIFpvbmVkIEJsb2NrDQpEZXZpY2VzIGFuZCBhbnkgaW8gZGV0ZXJtaW5p
+c20gdG9waWNzIHRoYXQgY29tZSB1cCBpbiB0aGUgc3RvcmFnZQ0KdHJhY2suIA0KDQpJIGhhdmUg
+YmVlbiB3b3JraW5nIG9uIGEgY2FjaGluZyBsYXllciwgaG1tYXAgKGhldGVyb2dlbmVvdXMgbWVt
+b3J5DQptYXApIFsxXSwgZm9yIGVtZXJnaW5nIE5WTSBhbmQgaXQgaXMgaW4gc3Bpcml0IGNsb3Nl
+IHRvIHRoZSBwYWdlDQpjYWNoZS4gVGhlIGtleSBkaWZmZXJlbmNlIGJlaW5nIHRoYXQgdGhlIGJh
+Y2tlbmQgZGV2aWNlIGFuZCBjYWNoaW5nDQpsYXllciBvZiBobW1hcCBpcyBwbHVnZ2FibGUuIElu
+IGFkZGl0aW9uLCBobW1hcCBzdXBwb3J0cyBEQVggYW5kIHdyaXRlDQpwcm90ZWN0aW9uLCB3aGlj
+aCBJIGJlbGlldmUgYXJlIGtleSBmZWF0dXJlcyBmb3IgZW1lcmdpbmcgTlZNcyB0aGF0IG1heQ0K
+aGF2ZSB3cml0ZS9yZWFkIGFzeW1tZXRyeSBhcyB3ZWxsIGFzIHdyaXRlIGVuZHVyYW5jZSBjb25z
+dHJhaW50cy4NCkxhc3RseSB3ZSBjYW4gbGV2ZXJhZ2UgaGFyZHdhcmUsIHN1Y2ggYXMgYSBETUEg
+ZW5naW5lLCB3aGVuIG1vdmluZw0KcGFnZXMgYmV0d2VlbiB0aGUgY2FjaGUgd2hpbGUgYWxzbyBh
+bGxvd2luZyBkaXJlY3QgYWNjZXNzIGlmIHRoZSBkZXZpY2UNCmlzIGNhcGFibGUuDQoNCkkgYW0g
+cHJvcG9zaW5nIHRoYXQgYXMgYW4gYWx0ZXJuYXRpdmUgdG8gdXNpbmcgTlZNcyBhcyBhIE5VTUEg
+bm9kZQ0Kd2UgZXhwb3NlIHRoZSBOVk0gdGhyb3VnaCB0aGUgcGFnZSBjYWNoZSBvciBhIHZpYWJs
+ZSBhbHRlcm5hdGl2ZSBhbmQNCmhhdmUgdXNlcnNwYWNlIGFwcGxpY2F0aW9ucyBtbWFwIHRoZSBO
+Vk0gYW5kIGhhbmQgb3V0IG1lbW9yeSB3aXRoDQp0aGVpciBmYXZvcml0ZSB1c2Vyc3BhY2UgbWVt
+b3J5IGFsbG9jYXRvci4NCg0KVGhpcyB3b3VsZCBpc29sYXRlIHRoZSBOVk1zIHRvIG9ubHkgYXBw
+bGljYXRpb25zIHRoYXQgYXJlIHdlbGwgYXdhcmUNCm9mIHRoZSBwZXJmb3JtYW5jZSBpbXBsaWNh
+dGlvbnMgb2YgYWNjZXNzaW5nIE5WTS4gSSBiZWxpZXZlIHRoYXQgYWxsDQpvZiB0aGlzIHdvcmsg
+Y291bGQgYmUgc29sdmVkIHdpdGggdGhlIE5VTUEgbm9kZSBhcHByb2FjaCwgYnV0IHRoZSB0d28N
+CmFwcHJvYWNoZXMgYXJlIHNlZW1pbmcgdG8gYmx1ciB0b2dldGhlci4NCg0KVGhlIG1haW4gcG9p
+bnRzIEkgd291bGQgbGlrZSB0byBkaXNjdXNzIGFyZToNCg0KKiBJcyB0aGUgcGFnZSBjYWNoZSBt
+b2RlbCBhIHZpYWJsZSBhbHRlcm5hdGl2ZSB0byBOVk0gYXMgYSBOVU1BIE5PREU/DQoqIENhbiB3
+ZSBhZGQgbW9yZSBmbGV4aWJpbGl0eSB0byB0aGUgcGFnZSBjYWNoZT8NCiogU2hvdWxkIHdlIGZv
+cmNlIHNlcGFyYXRpb24gb2YgTlZNIHRocm91Z2ggYW4gZXhwbGljaXQgbW1hcD8NCg0KSSBiZWxp
+ZXZlIHRoaXMgZGlzY3Vzc2lvbiBjb3VsZCBiZSBtZXJnZWQgd2l0aCBOVU1BLCBtZW1vcnkgaGll
+cmFyY2h5DQphbmQgZGV2aWNlIG1lbW9yeSwgVXNlIE5WRElNTSBhcyBOVU1BIG5vZGUgYW5kIE5V
+TUEgQVBJLCBvciBtZW1vcnkNCnJlY2xhaW0gd2l0aCBOVU1BIGJhbGFuY2luZy4NCg0KSGVyZSBh
+cmUgc29tZSBwZXJmb3JtYW5jZSBudW1iZXJzIG9mIGhtbWFwIChpbiBkZXZlbG9wbWVudCk6DQoN
+CkFsbCBudW1iZXJzIGFyZSBjb2xsZWN0ZWQgb24gYSA0R2lCIGhtbWFwIGRldmljZSB3aXRoIGEg
+MTI4TWlCIGNhY2hlLg0KRm9yIHRoZSBtbWFwIHRlc3RzIEkgdXNlZCBjZ3JvdXBzIHRvIGxpbWl0
+IHRoZSBwYWdlIGNhY2hlIHVzYWdlIHRvDQoxMjhNaUIuIEFsbCByZXN1bHRzIGFyZSBhbiBhdmVy
+YWdlIG9mIDEwIHJ1bnMuIFcgYW5kIFIgYWNjZXNzIHRoZQ0KZW50aXJlIGRldmljZSB3aXRoIGFs
+bCB0aHJlYWRzIHNlZ3JlZ2F0ZWQgaW4gdGhlIGFkZHJlc3Mgc3BhY2UuIFJSDQpyZWFkcyB0aGUg
+ZW50aXJlIGRldmljZSByYW5kb21seSA4IGJ5dGVzIGF0IGEgdGltZSBhbmQgaXMgbGltaXRlZCB0
+bw0KOE1pQiBvZiBkYXRhIGFjY2Vzc2VkLg0KDQpobW1hcCBicmQgdnMuIG1tYXAgb2YgYnJkDQoN
+CglobW1hcAkJCW1tYXAJCQkNCg0KVGhyZWFkcyBXICAgICBSICAgICBSUiAJICBXIAlSICAgICBS
+UiANCg0KMSAgCTcuMjEgIDUuMzkgIDUuMDQgIDYuODAgIDUuNjMgIDUuMjMJDQoyCTUuMTkgIDMu
+ODcgIDMuNzQgIDQuNjYgIDMuMzMgIDMuMjANCjQJMy42NSAgMi45NSAgMy4wNyAgMy41MyAgMi4y
+NiAgMi4xOA0KOAk0LjUyICAzLjQzICAzLjU5ICA0LjMwICAxLjk4ICAxLjg4DQoxNgk1LjAwICAz
+Ljg1ICAzLjk4ICA0LjkyICAyLjAwICAxLjk5DQoNCg0KDQpNZW1vcnkgQmFja2VuZCBUZXN0IChE
+YXggY2FwYWJsZSkNCg0KCWhtbWFwICAgICAgICAgICAgIGhtbWFwLWRheCAgICAgICAgIGhtbWFw
+LXdycHJvdGVjdA0KDQpUaHJlYWRzCVcgICAgIFIgICAgIFJSICAgIFcgICAgIFIgICAgIFJSICAg
+IFcgICAgIFIgICAgIFJSIA0KDQoxICAgICAgCTYuMjkgIDQuOTQgIDQuMzcgIDIuNTQgIDEuMzYg
+IDAuMTYgIDcuMTIgIDIuMTMgIDAuNzMgDQoyCTQuNjIgIDMuNjMgIDMuNTcgIDEuNDEgIDAuNjkg
+IDAuMDggIDUuMDYgIDEuMTQgIDAuNDENCjQJMy40NSAgMi45NyAgMy4xMSAgMC43NyAgMC4zNiAg
+MC4wNCAgMy42NiAgMC42MyAgMC4yNQ0KOAk0LjEwICAzLjUzICAzLjcxICAwLjQ0ICAwLjE5ICAw
+LjAyICA0LjAzICAwLjM1ICAwLjE3DQoxNgk0LjYwICAzLjk4ICA0LjA0ICAwLjM0ICAwLjE2ICAw
+LjAyICA0LjUyICAwLjI3ICAwLjE0DQoNCg0KVGhhbmtzLA0KQWRhbQ0KDQoNCg0KDQo=
