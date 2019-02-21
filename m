@@ -7,53 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C924AC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:43:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 094C9C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:43:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 916E12084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:43:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD28E2080D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:43:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550760191;
-	bh=yurzmFbNT/hILh44KojVvUp+Hwkws22pKIXvM9WIORk=;
+	s=default; t=1550760194;
+	bh=LmRINZzBAkZhs2JjidF2nP6sDGbXndjmXWsQhy/sGPk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Gl2y2kQ1mxw3skhoHvLdI0g/mdDWSyADTfS5/vglLJZeB2sFO9OIRof+g5Z2wf5kO
-	 JJVHrog/aay3qPzFIti5kuj+6uQNVFa7OOEqa9d/xWCzLN55rbRJp4Jk9tNk4umr8T
-	 GUjHCFEBL0NQyrXefSdIhDvrtA0rKsJbYMwMO1a4=
+	b=gA8KTTvE8HxPFOKb54u2rtxN6YlGuO/+5Si7EHF/6FFPrZxdKFYeeKjMIhk/OqniP
+	 toyaTWKht2ABhsOVsruBy4KG0kYMi/zShlbJ50O7azA6nbWcV2+Zq8K/K7CIIhejpQ
+	 4U878RPrAyn9ll1qEXE7/zJT6B/WX3TTx1eOfWLI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729661AbfBUOnJ (ORCPT
+        id S1729674AbfBUOnN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:43:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38848 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:43:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728972AbfBUOnG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:43:06 -0500
+        id S1729660AbfBUOnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:43:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22D892080D;
-        Thu, 21 Feb 2019 14:43:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D202A20838;
+        Thu, 21 Feb 2019 14:43:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550760185;
-        bh=yurzmFbNT/hILh44KojVvUp+Hwkws22pKIXvM9WIORk=;
+        s=default; t=1550760189;
+        bh=LmRINZzBAkZhs2JjidF2nP6sDGbXndjmXWsQhy/sGPk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IJWu7s4/RuKedug/ESFjdsZQBgw/zSrbuKA7YKQULLwVTLkjTzmn25rnV6lgpGF0j
-         UfU28h6paRvEaMXattQWPUl6QZ8TCgoYEBKHVRG/tFaWlxU9+kxEwuFeOqCwqXjTFn
-         IZ8eEcZWuwXIgWpn1AK2OH19oMMcxfp1LtJ1gzLY=
+        b=O6zvX8/4niUaQcYZb0n4fKxOYgeJhX5ylUkA05RurehO3Kaoim/lwOKpujg0HRgH6
+         0cM/sAWNTHqspJzZ8rTRy167qrgrnZwE/KO7DAJcMR3kdnOhfNj7qm6zNiMYmd3lKP
+         3ukiRJDDi6B4afKYs4LlsKK4QPoB4oF1jIWjtKTA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-efi@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 23/32] efi/arm: Revert "Defer persistent reservations until after paging_init()"
-Date:   Thu, 21 Feb 2019 15:36:11 +0100
-Message-Id: <20190221125252.267742511@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 24/32] PCI: Fix __initdata issue with "pci=disable_acs_redir" parameter
+Date:   Thu, 21 Feb 2019 15:36:12 +0100
+Message-Id: <20190221125252.327151218@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125250.855065214@linuxfoundation.org>
 References: <20190221125250.855065214@linuxfoundation.org>
@@ -72,100 +68,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-Commit 582a32e708823e5957fd73ccd78dc4a9e49d21ea upstream.
+[ Upstream commit d2fd6e81912a665993b24dcdc1c1384a42a54f7e ]
 
-This reverts commit eff896288872d687d9662000ec9ae11b6d61766f, which
-deferred the processing of persistent memory reservations to a point
-where the memory may have already been allocated and overwritten,
-defeating the purpose.
+The disable_acs_redir parameter stores a pointer to the string passed to
+pci_setup().  However, the string passed to PCI setup is actually a
+temporary copy allocated in static __initdata memory.  After init, once the
+memory is freed, it is no longer valid to reference this pointer.
 
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Mike Rapoport <rppt@linux.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20190215123333.21209-3-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+This bug was noticed in v5.0-rc1 after a change in commit c5eb1190074c
+("PCI / PM: Allow runtime PM without callback functions") caused
+pci_disable_acs_redir() to be called during shutdown which manifested
+as an unable to handle kernel paging request at:
+
+  RIP: 0010:pci_enable_acs+0x3f/0x1e0
+  Call Trace:
+     pci_restore_state.part.44+0x159/0x3c0
+     pci_restore_standard_config+0x33/0x40
+     pci_pm_runtime_resume+0x2b/0xd0
+     ? pci_restore_standard_config+0x40/0x40
+     __rpm_callback+0xbc/0x1b0
+     rpm_callback+0x1f/0x70
+     ? pci_restore_standard_config+0x40/0x40
+      rpm_resume+0x4f9/0x710
+     ? pci_conf1_read+0xb6/0xf0
+     ? pci_conf1_write+0xb2/0xe0
+     __pm_runtime_resume+0x47/0x70
+     pci_device_shutdown+0x1e/0x60
+     device_shutdown+0x14a/0x1f0
+     kernel_restart+0xe/0x50
+     __do_sys_reboot+0x1ee/0x210
+     ? __fput+0x144/0x1d0
+     do_writev+0x5e/0xf0
+     ? do_writev+0x5e/0xf0
+     do_syscall_64+0x48/0xf0
+     entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+It was also likely possible to trigger this bug when hotplugging PCI
+devices.
+
+To fix this, instead of storing a pointer, we use kstrdup() to copy the
+disable_acs_redir_param to its own buffer which will never be freed.
+
+Fixes: aaca43fda742 ("PCI: Add "pci=disable_acs_redir=" parameter for peer-to-peer support")
+Tested-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/setup.c               | 1 -
- drivers/firmware/efi/efi.c              | 4 ----
- drivers/firmware/efi/libstub/arm-stub.c | 3 ---
- include/linux/efi.h                     | 7 -------
- 4 files changed, 15 deletions(-)
+ drivers/pci/pci.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
-index f4fc1e0544b73..953e316521fca 100644
---- a/arch/arm64/kernel/setup.c
-+++ b/arch/arm64/kernel/setup.c
-@@ -313,7 +313,6 @@ void __init setup_arch(char **cmdline_p)
- 	arm64_memblock_init();
- 
- 	paging_init();
--	efi_apply_persistent_mem_reservations();
- 
- 	acpi_table_upgrade();
- 
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index 415849bab2339..bde3822cf539a 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -592,11 +592,7 @@ int __init efi_config_parse_tables(void *config_tables, int count, int sz,
- 
- 		early_memunmap(tbl, sizeof(*tbl));
- 	}
--	return 0;
--}
- 
--int __init efi_apply_persistent_mem_reservations(void)
--{
- 	if (efi.mem_reserve != EFI_INVALID_TABLE_ADDR) {
- 		unsigned long prsv = efi.mem_reserve;
- 
-diff --git a/drivers/firmware/efi/libstub/arm-stub.c b/drivers/firmware/efi/libstub/arm-stub.c
-index 3d36142cf8120..30ac0c975f8a1 100644
---- a/drivers/firmware/efi/libstub/arm-stub.c
-+++ b/drivers/firmware/efi/libstub/arm-stub.c
-@@ -75,9 +75,6 @@ void install_memreserve_table(efi_system_table_t *sys_table_arg)
- 	efi_guid_t memreserve_table_guid = LINUX_EFI_MEMRESERVE_TABLE_GUID;
- 	efi_status_t status;
- 
--	if (IS_ENABLED(CONFIG_ARM))
--		return;
--
- 	status = efi_call_early(allocate_pool, EFI_LOADER_DATA, sizeof(*rsv),
- 				(void **)&rsv);
- 	if (status != EFI_SUCCESS) {
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 100ce4a4aff6c..845174e113ce9 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1167,8 +1167,6 @@ static inline bool efi_enabled(int feature)
- extern void efi_reboot(enum reboot_mode reboot_mode, const char *__unused);
- 
- extern bool efi_is_table_address(unsigned long phys_addr);
--
--extern int efi_apply_persistent_mem_reservations(void);
- #else
- static inline bool efi_enabled(int feature)
- {
-@@ -1187,11 +1185,6 @@ static inline bool efi_is_table_address(unsigned long phys_addr)
- {
- 	return false;
- }
--
--static inline int efi_apply_persistent_mem_reservations(void)
--{
--	return 0;
--}
- #endif
- 
- extern int efi_status_to_err(efi_status_t status);
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index c9d8e3c837de7..c25acace7d914 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -6195,7 +6195,8 @@ static int __init pci_setup(char *str)
+ 			} else if (!strncmp(str, "pcie_scan_all", 13)) {
+ 				pci_add_flags(PCI_SCAN_ALL_PCIE_DEVS);
+ 			} else if (!strncmp(str, "disable_acs_redir=", 18)) {
+-				disable_acs_redir_param = str + 18;
++				disable_acs_redir_param =
++					kstrdup(str + 18, GFP_KERNEL);
+ 			} else {
+ 				printk(KERN_ERR "PCI: Unknown option `%s'\n",
+ 						str);
 -- 
 2.19.1
 
