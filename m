@@ -2,92 +2,76 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B3DBC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:12:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DAC6C00319
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:13:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44EC22086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:12:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CD882086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:13:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbfBUMMp (ORCPT
+        id S1727743AbfBUMNo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 07:12:45 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48534 "EHLO mx1.redhat.com"
+        Thu, 21 Feb 2019 07:13:44 -0500
+Received: from mga06.intel.com ([134.134.136.31]:38497 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726151AbfBUMMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 07:12:45 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C77D930821B3;
-        Thu, 21 Feb 2019 12:12:44 +0000 (UTC)
-Received: from gondolin (dhcp-192-187.str.redhat.com [10.33.192.187])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 01BDB60933;
-        Thu, 21 Feb 2019 12:12:42 +0000 (UTC)
-Date:   Thu, 21 Feb 2019 13:12:40 +0100
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Harald Freudenberger <freude@linux.ibm.com>
-Cc:     Sebastian Ott <sebott@linux.ibm.com>,
-        Tony Krowiak <akrowiak@linux.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        oberpar@linux.ibm.com, pmorel@linux.ibm.com, pasic@linux.ibm.com
-Subject: Re: [PATCH] zcrypt: handle AP Info notification from CHSC SEI
- command
-Message-ID: <20190221131240.0ab463d1.cohuck@redhat.com>
-In-Reply-To: <d0e1ef87-8fc7-ea13-3dba-6abf1a28a446@linux.ibm.com>
-References: <1548870526-30595-1-git-send-email-akrowiak@linux.ibm.com>
-        <alpine.LFD.2.21.1901301912380.2372@schleppi>
-        <d0e1ef87-8fc7-ea13-3dba-6abf1a28a446@linux.ibm.com>
-Organization: Red Hat GmbH
+        id S1725385AbfBUMNo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 07:13:44 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 04:13:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,395,1544515200"; 
+   d="scan'208";a="124132963"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.169])
+  by fmsmga007.fm.intel.com with ESMTP; 21 Feb 2019 04:13:41 -0800
+Date:   Thu, 21 Feb 2019 14:13:40 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     YueHaibing <yuehaibing@huawei.com>, peterhuewe@gmx.de,
+        arnd@arndb.de, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 -next] tpm: Fix the type of the return value in
+ calc_tpm2_event_size()
+Message-ID: <20190221121340.GA7918@linux.intel.com>
+References: <20190220022300.25888-1-yuehaibing@huawei.com>
+ <20190220063159.GA23027@linux.intel.com>
+ <20190220160042.GD8429@ziepe.ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 21 Feb 2019 12:12:45 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190220160042.GD8429@ziepe.ca>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Feb 2019 11:42:25 +0100
-Harald Freudenberger <freude@linux.ibm.com> wrote:
-
-> On 30.01.19 19:32, Sebastian Ott wrote:
-> > On Wed, 30 Jan 2019, Tony Krowiak wrote:  
-
-> >>  /*
-> >> +* A config change has happened, Force an ap bus rescan.
-> >> +*/
-> >> +void ap_bus_cfg_chg(void)
-> >> +{
-> >> +	AP_DBF(DBF_INFO, "%s config change, forcing bus rescan\n", __func__);
-> >> +
-> >> +	ap_bus_force_rescan();
-> >> +}
-> >> +EXPORT_SYMBOL(ap_bus_cfg_chg);  
-> > There is no need for the export symbol - you don't call that function
-> > from module code.  
-> That's what I have learned now: You don't need to export a symbol
-> as long as the symbol is only called in static code parts of the kernel.
-> But you need to export it when it is intended to be used by code
-> which sits in a kernel module. So now the big question:
-> How does a provider of a function in the kernel know, if the caller is in static
-> code or in module code ? And ... maybe this may even change over
-> the time. So my recommendation is to always export the symbol with
-> the EXPORT_SYMBOL macro. This way you don't need to change the
-> code providing a function when the caller code changes or additional
-> code uses the symbol.
+On Wed, Feb 20, 2019 at 09:00:42AM -0700, Jason Gunthorpe wrote:
+> On Wed, Feb 20, 2019 at 08:31:59AM +0200, Jarkko Sakkinen wrote:
+> > On Wed, Feb 20, 2019 at 10:23:00AM +0800, YueHaibing wrote:
+> > > calc_tpm2_event_size() has an invalid signature because
+> > > it returns a 'size_t' where as its signature says that
+> > > it returns 'int'.
+> > > 
+> > > Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware event log")
+> > > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> > 
+> > Two remarks:
+> > 
+> > - git config user.name "Yue Haibing"
+> > - "Cc: stable@vger.kernel.org" before the fixes tag.
 > 
-> Other opinions ?
+> 'Theoretical' bug fixes are not suitable for stable
 
-Well, if you know it will be called from module code in upcoming
-patches, export it. If not, I consider it the choice of the maintainer.
-You can easily add the export later on, if needed, anyway, and I don't
-consider changing the code a problem.
+AFAIK there is no hard rule here. For this one line change I think it
+makes sense to backport it even if it is only for avoiding conflicts
+with future backports.
 
-In this particular case, both exporting and not exporting looked like
-reasonable choices to me.
+/Jarkko
