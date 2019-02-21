@@ -2,162 +2,118 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58991C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:48:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F14EFC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C3FC2086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:48:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC4EC2089F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:55:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="rX3Kwr1X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbfBUBsd (ORCPT
+        id S1726389AbfBUBzS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 20:48:33 -0500
-Received: from gateway21.websitewelcome.com ([192.185.45.250]:48321 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725989AbfBUBsd (ORCPT
+        Wed, 20 Feb 2019 20:55:18 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:43857 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726009AbfBUBzR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 20:48:33 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 88A91400CE56E
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 19:48:31 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id wdTTgamN74FKpwdTTgtqvK; Wed, 20 Feb 2019 19:48:31 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=42946 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gwdTT-0010Qs-1B; Wed, 20 Feb 2019 19:48:31 -0600
-Subject: Re: [PATCH] iio: cros_ec_accel_legacy: Mark expected switch
- fall-throughs
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Gwendal Grignou <gwendal@chromium.org>
-References: <20181008172332.GA29816@embeddedor.com>
- <CAGXu5jLsQ_Uc4kp=md2SrOERopjZmnQK_fAsru4MQUqEHRvEeA@mail.gmail.com>
- <20190220183425.202d4d40@archlinux>
- <89471d5e-fab7-9d00-8b3e-562a5a510fa6@embeddedor.com>
- <CAGXu5jLeYO4dNxs7n9Bt97A6N0b48uuXhLjq0bsfF=k5OaSrmA@mail.gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <fdd24226-cca9-1e34-c23b-886f750b5b27@embeddedor.com>
-Date:   Wed, 20 Feb 2019 19:48:29 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <CAGXu5jLeYO4dNxs7n9Bt97A6N0b48uuXhLjq0bsfF=k5OaSrmA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gwdTT-0010Qs-1B
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:42946
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 15
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Wed, 20 Feb 2019 20:55:17 -0500
+Received: by mail-qt1-f194.google.com with SMTP id y4so29726081qtc.10
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 17:55:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=YM0Wn0jbNjB6y9zmP7dH8GmfHqq62eVgozcbKGDoac8=;
+        b=rX3Kwr1XpKa35TGbIbHweo+w6hrnkhnOFGhfI5p39p72tXevCMi9+XmIjeHA5GTUDk
+         IlrqVmrC2yjHRh0uRCohxLlIqqROxJTrgoTiFA0MqIQgFG9HlfCtSFmDdFJPbiPOPBUD
+         3/AjVqXTHZb2aMWyeGyBf+9Eo82YZGJGeZAAlE33V0QyAOeegzmGIsxw4cXIWZU2+5uY
+         6TfxxYS0uNtGQ13azntRmgLRayZbTfsVkF4DA0nRb0I4r9ZA/W2LuCdCH0XJLO7ILAIr
+         t8lNdQm9UQWHPZVNl4behZYdRMNC5RU98PRRIppuIEpN4ujQHMSdsdURVGlVJBJRALxb
+         qFDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=YM0Wn0jbNjB6y9zmP7dH8GmfHqq62eVgozcbKGDoac8=;
+        b=B9dKL2PCJ+fS6VW2cTEraoeIe8ZXEYKUYmWzkFH1d0YTot8JfoP4iado3U3TqULVL2
+         XVd0l8p0ON2avVVFDwS8MyAOonv1xesGdb/z9dkVLUi8LBkEGpma0qqX5viCcB61+NWY
+         2tLZ1tv0lQll1ojNjU7yfR+UKSpfyhjnCa8Q/w36pI7/iwQujZYuE/f+wqG0iAAKw7R3
+         4KVg/q8Y09mbdXZpEJRM7dnUd18G26+HSGZdIFsoBaHLg0AudYZrMhDnS3G4k8Fp+Ki5
+         jYKKRST9BArdDJHM+WaHzxdQou47+WwZlM9v0pTd4Vrcc3V2AYp8zYTBxndmV+0S21ge
+         P31g==
+X-Gm-Message-State: AHQUAuYDsp98WOUoGu9VAqHK0jvJvr2oS0CaV4Z5fxnLhUaR6fgfy7qe
+        2VPI4olcG+5dxEkI5azocU2VXw==
+X-Google-Smtp-Source: AHgI3IYucRujwkaTloIv/EFjGFEC/zNXpiIkUATN/kinrnMMB1vkS/LJTzdNHqtwt+yrsxX+aVIZUA==
+X-Received: by 2002:a0c:987a:: with SMTP id e55mr8103237qvd.21.1550714116320;
+        Wed, 20 Feb 2019 17:55:16 -0800 (PST)
+Received: from ovpn-120-150.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id s8sm6657974qtb.70.2019.02.20.17.55.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Feb 2019 17:55:15 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org
+Cc:     dave@stgolabs.net, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH -next] mm/debug: add a cast to u64 for atomic64_read()
+Date:   Wed, 20 Feb 2019 20:55:07 -0500
+Message-Id: <20190221015507.92299-1-cai@lca.pw>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+atomic64_read() on ppc64le returns "long int", so fix the same way as
+the commit d549f545e690 ("drm/virtio: use %llu format string form
+atomic64_t") by adding a cast to u64, which makes it work on all arches.
 
+In file included from ./include/linux/printk.h:7,
+                 from ./include/linux/kernel.h:15,
+                 from mm/debug.c:9:
+mm/debug.c: In function 'dump_mm':
+./include/linux/kern_levels.h:5:18: warning: format '%llx' expects
+argument of type 'long long unsigned int', but argument 19 has type
+'long int' [-Wformat=]
+ #define KERN_SOH "\001"  /* ASCII Start Of Header */
+                  ^~~~~~
+./include/linux/kern_levels.h:8:20: note: in expansion of macro
+'KERN_SOH'
+ #define KERN_EMERG KERN_SOH "0" /* system is unusable */
+                    ^~~~~~~~
+./include/linux/printk.h:297:9: note: in expansion of macro 'KERN_EMERG'
+  printk(KERN_EMERG pr_fmt(fmt), ##__VA_ARGS__)
+         ^~~~~~~~~~
+mm/debug.c:133:2: note: in expansion of macro 'pr_emerg'
+  pr_emerg("mm %px mmap %px seqnum %llu task_size %lu\n"
+  ^~~~~~~~
+mm/debug.c:140:17: note: format string is defined here
+   "pinned_vm %llx data_vm %lx exec_vm %lx stack_vm %lx\n"
+              ~~~^
+              %lx
 
-On 2/20/19 7:23 PM, Kees Cook wrote:
-> On Wed, Feb 20, 2019 at 10:47 AM Gustavo A. R. Silva
-> <gustavo@embeddedor.com> wrote:
->> Yeah. Actually, we can even take the switch and for out of the equation,
->> and the code can be rewritten as follows:
->>
->> ec_accel_channels[X].scan_index = Y;
->> ec_accel_channels[Y].scan_index = X;
->> ec_accel_channels[Z].scan_index = Z;
->>
->> if (state->sensor_num == MOTIONSENSE_LOC_LID)
->>         state->sign[X] = state->sign[Z] = -1;
->> else
->>         state->sign[X] = state->sign[Y] = state->sign[Z] = 1;
-> 
-> Actually, should be an unconditional "state->sign[Y] = 1", but
+Fixes: 70f8a3ca68d3 ("mm: make mm->pinned_vm an atomic64 counter")
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ mm/debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You're right. Team work!
+diff --git a/mm/debug.c b/mm/debug.c
+index c0b31b6c3877..45d9eb77b84e 100644
+--- a/mm/debug.c
++++ b/mm/debug.c
+@@ -168,7 +168,7 @@ void dump_mm(const struct mm_struct *mm)
+ 		mm_pgtables_bytes(mm),
+ 		mm->map_count,
+ 		mm->hiwater_rss, mm->hiwater_vm, mm->total_vm, mm->locked_vm,
+-		atomic64_read(&mm->pinned_vm),
++		(u64)atomic64_read(&mm->pinned_vm),
+ 		mm->data_vm, mm->exec_vm, mm->stack_vm,
+ 		mm->start_code, mm->end_code, mm->start_data, mm->end_data,
+ 		mm->start_brk, mm->brk, mm->start_stack,
+-- 
+2.17.2 (Apple Git-113)
 
-> otherwise, yes. Can you send that patch?
-> 
-
-Sure thing.
-
-> 
->>> Agreed, it's 'novel'.  Waiting for Gwendal or someone else to come
->>> back and check it wasn't meant to be doing something else.
->>
->> We've been waiting 5 months for Gwendal. :/
-> 
-> I've looked at this enough. I'm happy to Ack it, if that helps. :)
-> 
-
-Awesome. :)
-
-Thanks
---
-Gustavo
