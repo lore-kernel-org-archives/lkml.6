@@ -2,400 +2,140 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26F6CC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D23EC4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:31:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F87E20880
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:27:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54155214AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:31:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g0HrRND8"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="uz1DbQ08"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726350AbfBUJ1l (ORCPT
+        id S1726437AbfBUJbc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 04:27:41 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:50992 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725814AbfBUJ1k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 04:27:40 -0500
-Received: by mail-it1-f193.google.com with SMTP id m137so21459243ita.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 01:27:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JNKDQ0JwaN+421laFylvlkT4e88n1uOmz9uUNP0V8rc=;
-        b=g0HrRND8ozWnp6OhtmoRF+3EKk/HGIH9sWt22dILi6XcqXEUYil0jIHChginp7UN7Q
-         eRCBWf+ZFgYc71UG9vVRrXQr6Mj0rIqZGx2kVCScGjuawHd4lih+I2mMzMJsv8P4O3Nq
-         vwZh029+lvN1ehN1AVJqbfsAODza4hRTwHKL5v4a5FlmHGF04qUKWQJNDQw37jEWHmeL
-         URXMrXoDrnznLym5tJldKWvCMHXjawWjF63LSUTTe9lQER5JN47hWp7ztjvcjgyzEvc9
-         hEX6eagjN4iA85tfaY4ap2EwZJs0meDmoEXS+IOxIYyaW5dt9jlkMceMyfPDogamZrzp
-         qrzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JNKDQ0JwaN+421laFylvlkT4e88n1uOmz9uUNP0V8rc=;
-        b=csWFSAvVSNvGviDVaVxX4heipqAsLFLAD7uG/rWjgs4en8QAZLeN4NNz6CqlrEsV+n
-         AEshunx1zzf6Q1OD+FgLd0SUXKm1lq1UzIpZpcU/FVnEhr9YuypGX0OMrMFHGa3iqZTR
-         3SIDSvnOatuhS7HaQseyrU7MBLMTa3oPoYtIS5e49OfMyRxT3L8NKP7NtzUap6lbQwo+
-         96BzOTzf2kORrQL4vHwLlTAzgNfpQOmDv7OXsOFYSdGy01AWJZ9kNfnkNIA95qs8rfz3
-         2KZzSTIVqJ3xUAwFJVTF7D7CCtJwfDx7J0oM+4Ba1hTjd94LGNUCmMG/jGtyyxeVFRaC
-         3FlA==
-X-Gm-Message-State: AHQUAuZbXXjOl7yODA5Ib34f/YikvX87VfVhtziAEL/1g726CYR/BeMk
-        u3F51CUIxiHGkQzzWClv+Rn4rthNmWFaIL7rrqiCOA==
-X-Google-Smtp-Source: AHgI3Ia6nyNdwJIzHJdBX2T2meHw2RpVMvVneCq/zduv9Bf6rDJ2MtzV06W0RbEPL02eGTMDigYY2pEAVZ6f9SWRoGw=
-X-Received: by 2002:a24:652:: with SMTP id 79mr6981610itv.144.1550741258792;
- Thu, 21 Feb 2019 01:27:38 -0800 (PST)
+        Thu, 21 Feb 2019 04:31:32 -0500
+Received: from mail-eopbgr10065.outbound.protection.outlook.com ([40.107.1.65]:45381
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725785AbfBUJbc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 04:31:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=e42h3drkekE1Gu64rETS21+GHlLER4S7CsaAu0AcXuo=;
+ b=uz1DbQ08ydJQD7oFStH6n5WIazXfBmoni/52gIwH6vHHGBY8B5fi54MoACHjED/JdzBwOEkceSlwzfTHA+kE4s9oX/Bdd4zs0mSLF1JKVuS3UJlNs7zWwj6w9fe3EAu01mPuZ51jpLfqW0LqfzUXfB3eUbBCzZ4w3X2X00TBxAQ=
+Received: from VI1PR04MB5327.eurprd04.prod.outlook.com (20.177.52.16) by
+ VI1PR04MB5486.eurprd04.prod.outlook.com (20.178.122.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.14; Thu, 21 Feb 2019 09:30:47 +0000
+Received: from VI1PR04MB5327.eurprd04.prod.outlook.com
+ ([fe80::790f:a219:bcbd:6fd2]) by VI1PR04MB5327.eurprd04.prod.outlook.com
+ ([fe80::790f:a219:bcbd:6fd2%3]) with mapi id 15.20.1643.016; Thu, 21 Feb 2019
+ 09:30:47 +0000
+From:   Peter Chen <peter.chen@nxp.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: RE: [PATCH v3] usb: chipidea: Grab the (legacy) USB PHY by phandle
+ first
+Thread-Topic: [PATCH v3] usb: chipidea: Grab the (legacy) USB PHY by phandle
+ first
+Thread-Index: AQHUxUqvA6eOAzVWPUW+Xl7987JiyqXk4fzAgABcX4CABELMwIAAcYSAgAAAoXCAAAVfAIAADAKw
+Date:   Thu, 21 Feb 2019 09:30:47 +0000
+Message-ID: <VI1PR04MB5327CA438A1EAA5BB99E91188B7E0@VI1PR04MB5327.eurprd04.prod.outlook.com>
+References: <20190215162225.19284-1-paul.kocialkowski@bootlin.com>
+         <VI1PR04MB53274C03CD18C3D3ADB767408B630@VI1PR04MB5327.eurprd04.prod.outlook.com>
+         <c80ee02db4a22d15a24281384ae561462593684f.camel@bootlin.com>
+         <VI1PR04MB53278AE9AB6C14DA2AB96F6A8B7E0@VI1PR04MB5327.eurprd04.prod.outlook.com>
+         <3ed330798d31d01fdfbd40571d016a108c9c5040.camel@bootlin.com>
+         <VI1PR04MB5327C5FCF2BCF404B78A2C6A8B7E0@VI1PR04MB5327.eurprd04.prod.outlook.com>
+ <8fa473aee266f6fdd90c6b90661977982488cb77.camel@bootlin.com>
+In-Reply-To: <8fa473aee266f6fdd90c6b90661977982488cb77.camel@bootlin.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peter.chen@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 0c267aee-4db3-41ba-a53b-08d697df42c9
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5486;
+x-ms-traffictypediagnostic: VI1PR04MB5486:
+x-microsoft-exchange-diagnostics: =?utf-8?B?MTtWSTFQUjA0TUI1NDg2OzIzOmxzVk9lWFhsK21IZ3kvL0VXb2xHOEs2dnlw?=
+ =?utf-8?B?VmwxVm5NNFZ1TGo3US8rblV3SUZKTkZjMTg4LysycWY2bjNlOHVCdDN2UGdE?=
+ =?utf-8?B?c3c3NGZpZEFaWEVxbUtGMGM5VmhxVzVpN0RKZHNsMmZ2MWE4Vm9PSENUby8x?=
+ =?utf-8?B?MHN5RE53amppRzRDaDNLWEljL1Z6cWUxL3Y2RVpLelRSVDg1VDgwVjBKVnFQ?=
+ =?utf-8?B?ZDRMS0FJUDBkVURCbTRRM2tPK3RNNnN2MWN5SGwvdDNlbVNCZmVpUmoyRGlt?=
+ =?utf-8?B?RzgyOHE3RUpoTXJKOGpwSU10NFpSRUYxYTZtUHlYc3NWOUxRS3hoOEtaNWx3?=
+ =?utf-8?B?RjlGazV4NnAwVUR2a2c2RG1ibDdpbTN6MG9HVzhtdXpYbEM1OGRSa1E1ZWcy?=
+ =?utf-8?B?YTdPRE04dXhHYWhzTmlsRWpERjV6L29ubWNZV2x0bUhGZWdmZ1hCSE96cSt1?=
+ =?utf-8?B?cG5aWUwyMFZvY0NyL0orL0xUV2c0K0RJUDBTZEljQ2NHOXR3cEsvSmtUb040?=
+ =?utf-8?B?Y0NqVXg3U3liVUdBa0pQUEsrUXNBT3pXV0pMMTltQUlndm1Tbnp5bldjVk9t?=
+ =?utf-8?B?Uy9QRkxiYytjM0R2TGVZWndqS1k5aitjSXZFNXhsMTRNZHlkaEV2dGlrUmg0?=
+ =?utf-8?B?UThEOWVTeHdOdFN5T2UxYUNIZ1pwREJZajk5ZGl2MnduSDZrTkVnV0o2bmNu?=
+ =?utf-8?B?ZCsxVklBczA3Yzg3aUFXUlpIb2EzbThoU2N4MmNjYkEvbFRlb1J1Q0VXRkJO?=
+ =?utf-8?B?OFRPV0lBK21aS2tjWFR5RWRUSy9URkVDR2pMbUY1L3A3b2tXbjN3bkcrVUZC?=
+ =?utf-8?B?enRJc0YrY1dPMGJ2NDVBR1RkWXpxQ291THE0aGExZDZJSlhaQW1IeWhKdlhk?=
+ =?utf-8?B?eDNnUmgrL1o2QkJ4ZE9VeFhIS2dWQmI3V3BtcW8rcGo5ZC9CRGNlei9UUUE3?=
+ =?utf-8?B?ZFNWTVFpK3lDMnl3Tld0eTNDZHVGbXZYR0ZrRkU2elMxd21sWE42Wi91R1pJ?=
+ =?utf-8?B?REVveGluRSswMHk0TjJOS1ZMa29zMUxGN01rR1JqZi96UElKWTNxUnhCMisx?=
+ =?utf-8?B?dVFVTXBMekpSUlNBdFRiMEwxaFhDOEl4QURlQkhCZVNvamk1T211ckY3OWNG?=
+ =?utf-8?B?YlB6MTBFWkI1dFRDV24xakZheVNud0ZpakJwdjJNVGRGRjdrZm1ieVBlZjdl?=
+ =?utf-8?B?ZHpGWThzcGQxdGNuY25LWnNQUG9tZmd4Q2U1OWUwRFZKRUYrZjhpbnNNQnBy?=
+ =?utf-8?B?SVBDR2ZqNEVsTHQvdEpaQmo1QnVaeVF3MVM2dDJwNzBYU2Fhekd5Q2p5WVlW?=
+ =?utf-8?B?WW9IcDFPUWplMEtnUWZVM1pjWWdxamYwZTZ5dFJSY2ZDOUtBdmQwbmttVWYw?=
+ =?utf-8?B?b2VFK3phaVhnVXNCK1E3OVIwblhHZTIxcVJYRjBINFkvQmtEMzJBTjdMV0U0?=
+ =?utf-8?B?UDNpVXV0eERwUGZrak5QYXZsdlg1SndpRkd6NCtka1Rkd2pxYTE3bU95Rmpt?=
+ =?utf-8?B?cEJHb2s0MG9BM1NuTnBPOFphN2xqdTZLcmtVa3BhK1huWENtQnZSSE94TjJm?=
+ =?utf-8?B?QkNSUFB4V1FEQXpPL09YVHVkT1Y0RTgrWTB1SDFybXFkR2JNL3NFS1o3bVl5?=
+ =?utf-8?B?QXRLVzhSby9LVmlFd2Jaa284UGxGaTZPSjlaczdVNUUxQ0xrRHgwQzB6dnlh?=
+ =?utf-8?B?dHNFeGN1dW1mWFcreHZ1YXA1VGp2aFo5VkpXVzhOa1NNZExlTkxndTVnbXh0?=
+ =?utf-8?B?NzJuZ3hncldqeFVCWnd3UT09?=
+x-microsoft-antispam-prvs: <VI1PR04MB5486A9D9F688D4609EC784A38B7E0@VI1PR04MB5486.eurprd04.prod.outlook.com>
+x-forefront-prvs: 09555FB1AD
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(366004)(396003)(136003)(39860400002)(189003)(199004)(6116002)(14454004)(256004)(4744005)(316002)(2501003)(76176011)(6436002)(71190400001)(71200400001)(2906002)(99286004)(110136005)(4326008)(54906003)(7696005)(8936002)(6246003)(26005)(11346002)(229853002)(476003)(478600001)(97736004)(55016002)(486006)(44832011)(105586002)(186003)(446003)(102836004)(6506007)(93886005)(9686003)(5660300002)(106356001)(3846002)(53936002)(7736002)(33656002)(305945005)(74316002)(8676002)(66066001)(81156014)(2201001)(81166006)(68736007)(25786009)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5486;H:VI1PR04MB5327.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: IBsBqjBpmz5f5wBdap20XpXkKpOmdooPiTdQfFCjjUT4i+6J59eQdSBwh07NQS0FBlCsb1tTVthOFUPk8PggQfnASIus01elFjyMa+qEWV0o3WmqLA8imsxor1b8xpaoWgKRtzUCDvzWIlxXo9LFFxblInEsD9Pk1MDrNRpKrrPO+yoRW1wPNi7k7+tquNeqnwNgpVIGX52R4QMFop1vRH1jBYi9xwdij7gq/GPmiqFMAw88iY7rd/dNLXz1XQOCw3El3QIzJBCcERxmy+OW9mUC2HHN+qZGc9S9GRL8y1znoOPsmTcVGI8yNSttKekbEcoYwAMX06q3wtKh+2eBrScZU3DT87AHxcrl+cSNo396zcTlzQBiwFEhDvUmJF7mtOfgAS0fo2OYg+/k8MB+nk5JBHyHAGJxZ3XdoSk7ANw=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <0000000000009e76240574711017@google.com> <CACT4Y+YUfaAQs9vOtk61opaSkCtQEgQUrcBQNebsk-F223s0pw@mail.gmail.com>
- <e9fba174-4a34-9845-8471-d2901f6ddc2e@huawei.com>
-In-Reply-To: <e9fba174-4a34-9845-8471-d2901f6ddc2e@huawei.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 21 Feb 2019 10:27:27 +0100
-Message-ID: <CACT4Y+Yf5v6Sjd6Ew2SMNAwWmmA6aoRa-=a-QWJkBbJGuOSHLQ@mail.gmail.com>
-Subject: Re: WARNING: ODEBUG bug in f2fs_fill_super
-To:     Sheng Yong <shengyong1@huawei.com>
-Cc:     syzbot <syzbot+77ea19d309d4cdc55cc1@syzkaller.appspotmail.com>,
-        jaegeuk@kernel.org, stummala@codeaurora.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        yuchao0@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0c267aee-4db3-41ba-a53b-08d697df42c9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2019 09:30:47.2355
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5486
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 3:46 AM Sheng Yong <shengyong1@huawei.com> wrote:
->
-> Hi, Dmitry,
->
-> On 2019/2/20 23:12, Dmitry Vyukov wrote:
-> > On Mon, Aug 27, 2018 at 11:04 PM syzbot
-> > <syzbot+77ea19d309d4cdc55cc1@syzkaller.appspotmail.com> wrote:
-> >>
-> >> Hello,
-> >>
-> >> syzbot found the following crash on:
-> >>
-> >> HEAD commit:    e27bc174c9c6 Add linux-next specific files for 20180824
-> >> git tree:       linux-next
-> >> console output: https://syzkaller.appspot.com/x/log.txt?x=11c0034a400000
-> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=28446088176757ea
-> >> dashboard link: https://syzkaller.appspot.com/bug?extid=77ea19d309d4cdc55cc1
-> >> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> >>
-> >> Unfortunately, I don't have any reproducer for this crash yet.
-> >>
-> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> >> Reported-by: syzbot+77ea19d309d4cdc55cc1@syzkaller.appspotmail.com
-> >>
-> >> ------------[ cut here ]------------
-> >> ODEBUG: free active (active state 0) object type: percpu_counter
-> >> hint:           (null)
-> >> WARNING: CPU: 1 PID: 18832 at lib/debugobjects.c:329
-> >> debug_print_object+0x16a/0x210 lib/debugobjects.c:326
-> >> Kernel panic - not syncing: panic_on_warn set ...
-> >
-> >
-> > Was this fixed by something?
-> > It happened a number of times, but then stopped after Oct 23 2018. Was it:
-> >
-> > commit 26b5a079197c8cb6725565968b7fd3299bd1877b
-> > Author: Sheng Yong <shengyong1@huawei.com>
-> > Date:   Fri Oct 12 18:49:26 2018 +0800
-> >      f2fs: cleanup dirty pages if recover failed
-> >
-> > which fixed some bugs in f2fs_fill_super?
-> >
-> During mount, f2fs tries to recover fsync-ed data of last unclean umount.
-> But if recover fails, f2fs_fill_super did not cleanup dirty pages which
-> have already recovered. This will trigger f2fs_bug_on later.
->
-> This patch fixes this by cleaning up these dirty pages and avoiding to
-> writing back these pages. After that, f2fs will retry mount without
-> recover.
->
-> But I don't see the reason of the debugobject warning, and not sure if the
-> patch fixed the warning :(
-
-Thanks for the info.
-So maybe it's still fixed by something (though, after briefly skimming
-thorough the log, I don't see any other commits that could do it), or
-maybe syzkaller unlearned how to trigger it, or maybe this bug is now
-always preceded by some other bug so it's not possible to trigger it,
-but it's still there.
-
-Anyway, this bug report is a candidate for closure as obsoleted.
-
-
-
-> >> CPU: 1 PID: 18832 Comm: syz-executor4 Not tainted 4.18.0-next-20180824+ #47
-> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> >> Google 01/01/2011
-> >> Call Trace:
-> >>    __dump_stack lib/dump_stack.c:77 [inline]
-> >>    dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-> >>    panic+0x238/0x4e7 kernel/panic.c:184
-> >>    __warn.cold.8+0x163/0x1ba kernel/panic.c:536
-> >>    report_bug+0x252/0x2d0 lib/bug.c:186
-> >>    fixup_bug arch/x86/kernel/traps.c:178 [inline]
-> >>    do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
-> >>    do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
-> >>    invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:996
-> >> RIP: 0010:debug_print_object+0x16a/0x210 lib/debugobjects.c:326
-> >> Code: 3a 87 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 92 00 00 00 48 8b 14 dd
-> >> 20 e5 3a 87 4c 89 f6 48 c7 c7 c0 da 3a 87 e8 26 ec e3 fd <0f> 0b 83 05 a9
-> >> 49 28 05 01 48 83 c4 18 5b 41 5c 41 5d 41 5e 41 5f
-> >> RSP: 0018:ffff8801a9a97360 EFLAGS: 00010082
-> >> RAX: 0000000000000000 RBX: 0000000000000003 RCX: ffffc90012037000
-> >> RDX: 000000000002cd2b RSI: ffffffff8163b051 RDI: 0000000000000001
-> >> RBP: ffff8801a9a973a0 R08: ffff8801c1f76100 R09: ffffed003b623eca
-> >> R10: ffffed003b623eca R11: ffff8801db11f657 R12: 0000000000000001
-> >> R13: ffffffff882b7ae0 R14: ffffffff873adf60 R15: 0000000000000000
-> >>    __debug_check_no_obj_freed lib/debugobjects.c:786 [inline]
-> >>    debug_check_no_obj_freed+0x3b2/0x595 lib/debugobjects.c:818
-> >>    kfree+0xc7/0x210 mm/slab.c:3812
-> >>    f2fs_fill_super+0xe1a/0x8150 fs/f2fs/super.c:3147
-> >>    mount_bdev+0x314/0x3e0 fs/super.c:1347
-> >>    f2fs_mount+0x3c/0x50 fs/f2fs/super.c:3161
-> >>    legacy_get_tree+0x131/0x460 fs/fs_context.c:732
-> >>    vfs_get_tree+0x1cb/0x5c0 fs/super.c:1746
-> >>    do_new_mount fs/namespace.c:2627 [inline]
-> >>    do_mount+0x6f9/0x1e30 fs/namespace.c:2951
-> >>    ksys_mount+0x12d/0x140 fs/namespace.c:3167
-> >>    __do_sys_mount fs/namespace.c:3181 [inline]
-> >>    __se_sys_mount fs/namespace.c:3178 [inline]
-> >>    __x64_sys_mount+0xbe/0x150 fs/namespace.c:3178
-> >>    do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> >>    entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> >> RIP: 0033:0x459aba
-> >> Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 bd 8a fb ff c3 66 2e 0f
-> >> 1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff
-> >> ff 0f 83 9a 8a fb ff c3 66 0f 1f 84 00 00 00 00 00
-> >> RSP: 002b:00007f16f9937a88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-> >> RAX: ffffffffffffffda RBX: 00007f16f9937b30 RCX: 0000000000459aba
-> >> RDX: 00007f16f9937ad0 RSI: 0000000020000100 RDI: 00007f16f9937af0
-> >> RBP: 0000000020000100 R08: 00007f16f9937b30 R09: 00007f16f9937ad0
-> >> R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000003
-> >> R13: 0000000000000000 R14: 00000000004c9c12 R15: 0000000000000000
-> >>
-> >> ======================================================
-> >> WARNING: possible circular locking dependency detected
-> >> 4.18.0-next-20180824+ #47 Not tainted
-> >> ------------------------------------------------------
-> >> syz-executor4/18832 is trying to acquire lock:
-> >> 00000000cd8e7eb7 ((console_sem).lock){-.-.}, at: down_trylock+0x13/0x70
-> >> kernel/locking/semaphore.c:136
-> >>
-> >> but task is already holding lock:
-> >> 0000000046ad1dd4 (&obj_hash[i].lock){-.-.}, at: __debug_check_no_obj_freed
-> >> lib/debugobjects.c:777 [inline]
-> >> 0000000046ad1dd4 (&obj_hash[i].lock){-.-.}, at:
-> >> debug_check_no_obj_freed+0x16c/0x595 lib/debugobjects.c:818
-> >>
-> >> which lock already depends on the new lock.
-> >>
-> >>
-> >> the existing dependency chain (in reverse order) is:
-> >>
-> >> -> #3 (&obj_hash[i].lock){-.-.}:
-> >>          __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-> >>          _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-> >>          __debug_object_init+0x127/0x12e0 lib/debugobjects.c:384
-> >>          debug_object_init+0x16/0x20 lib/debugobjects.c:432
-> >>          debug_hrtimer_init kernel/time/hrtimer.c:410 [inline]
-> >>          debug_init kernel/time/hrtimer.c:458 [inline]
-> >>          hrtimer_init+0x97/0x410 kernel/time/hrtimer.c:1308
-> >>          init_dl_task_timer+0x1b/0x50 kernel/sched/deadline.c:1057
-> >>          __sched_fork+0x2ae/0x590 kernel/sched/core.c:2160
-> >>          init_idle+0x75/0x740 kernel/sched/core.c:5377
-> >>          sched_init+0xbee/0xcbd kernel/sched/core.c:6060
-> >>          start_kernel+0x47d/0x94e init/main.c:602
-> >>          x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:452
-> >>          x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:433
-> >>          secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:242
-> >>
-> >> -> #2 (&rq->lock){-.-.}:
-> >>          __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-> >>          _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:144
-> >>          rq_lock kernel/sched/sched.h:1821 [inline]
-> >>          task_fork_fair+0x93/0x680 kernel/sched/fair.c:9574
-> >>          sched_fork+0x44b/0xbd0 kernel/sched/core.c:2353
-> >>          copy_process+0x235e/0x7af0 kernel/fork.c:1840
-> >>          _do_fork+0x1ca/0x1170 kernel/fork.c:2169
-> >>          kernel_thread+0x34/0x40 kernel/fork.c:2228
-> >>          rest_init+0x22/0xe4 init/main.c:408
-> >>          start_kernel+0x913/0x94e init/main.c:739
-> >>          x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:452
-> >>          x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:433
-> >>          secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:242
-> >>
-> >> -> #1 (&p->pi_lock){-.-.}:
-> >>          __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-> >>          _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-> >>          try_to_wake_up+0xd2/0x1250 kernel/sched/core.c:1960
-> >>          wake_up_process+0x10/0x20 kernel/sched/core.c:2123
-> >>          __up.isra.1+0x1c0/0x2a0 kernel/locking/semaphore.c:262
-> >>          up+0x13c/0x1c0 kernel/locking/semaphore.c:187
-> >>          __up_console_sem+0xbe/0x1b0 kernel/printk/printk.c:245
-> >>          console_unlock+0x506/0x10d0 kernel/printk/printk.c:2430
-> >>          con_install+0x34e/0x420 drivers/tty/vt/vt.c:3241
-> >>          tty_driver_install_tty drivers/tty/tty_io.c:1224 [inline]
-> >>          tty_init_dev+0xfd/0x460 drivers/tty/tty_io.c:1324
-> >>          tty_open_by_driver drivers/tty/tty_io.c:1959 [inline]
-> >>          tty_open+0x692/0xb30 drivers/tty/tty_io.c:2007
-> >>          chrdev_open+0x25a/0x770 fs/char_dev.c:417
-> >>          do_dentry_open+0x49c/0x1140 fs/open.c:771
-> >>          vfs_open+0xa0/0xd0 fs/open.c:880
-> >>          do_last fs/namei.c:3418 [inline]
-> >>          path_openat+0x12fb/0x5300 fs/namei.c:3534
-> >>          do_filp_open+0x255/0x380 fs/namei.c:3564
-> >>          do_sys_open+0x584/0x720 fs/open.c:1063
-> >>          __do_sys_open fs/open.c:1081 [inline]
-> >>          __se_sys_open fs/open.c:1076 [inline]
-> >>          __x64_sys_open+0x7e/0xc0 fs/open.c:1076
-> >>          do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> >>          entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> >>
-> >> -> #0 ((console_sem).lock){-.-.}:
-> >>          lock_acquire+0x1e4/0x4f0 kernel/locking/lockdep.c:3901
-> >>          __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-> >>          _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-> >>          down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
-> >>          __down_trylock_console_sem+0xae/0x200 kernel/printk/printk.c:228
-> >>          console_trylock+0x15/0xa0 kernel/printk/printk.c:2249
-> >>          console_trylock_spinning kernel/printk/printk.c:1651 [inline]
-> >>          vprintk_emit+0x31f/0x910 kernel/printk/printk.c:1926
-> >>          vprintk_default+0x28/0x30 kernel/printk/printk.c:1968
-> >>          vprintk_func+0x7a/0x117 kernel/printk/printk_safe.c:398
-> >>          printk+0xa7/0xcf kernel/printk/printk.c:2001
-> >>          __warn_printk+0x8c/0xe0 kernel/panic.c:590
-> >>          debug_print_object+0x16a/0x210 lib/debugobjects.c:326
-> >>          __debug_check_no_obj_freed lib/debugobjects.c:786 [inline]
-> >>          debug_check_no_obj_freed+0x3b2/0x595 lib/debugobjects.c:818
-> >>          kfree+0xc7/0x210 mm/slab.c:3812
-> >>          f2fs_fill_super+0xe1a/0x8150 fs/f2fs/super.c:3147
-> >>          mount_bdev+0x314/0x3e0 fs/super.c:1347
-> >>          f2fs_mount+0x3c/0x50 fs/f2fs/super.c:3161
-> >>          legacy_get_tree+0x131/0x460 fs/fs_context.c:732
-> >>          vfs_get_tree+0x1cb/0x5c0 fs/super.c:1746
-> >>          do_new_mount fs/namespace.c:2627 [inline]
-> >>          do_mount+0x6f9/0x1e30 fs/namespace.c:2951
-> >>          ksys_mount+0x12d/0x140 fs/namespace.c:3167
-> >>          __do_sys_mount fs/namespace.c:3181 [inline]
-> >>          __se_sys_mount fs/namespace.c:3178 [inline]
-> >>          __x64_sys_mount+0xbe/0x150 fs/namespace.c:3178
-> >>          do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> >>          entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> >>
-> >> other info that might help us debug this:
-> >>
-> >> Chain exists of:
-> >>     (console_sem).lock --> &rq->lock --> &obj_hash[i].lock
-> >>
-> >>    Possible unsafe locking scenario:
-> >>
-> >>          CPU0                    CPU1
-> >>          ----                    ----
-> >>     lock(&obj_hash[i].lock);
-> >>                                  lock(&rq->lock);
-> >>                                  lock(&obj_hash[i].lock);
-> >>     lock((console_sem).lock);
-> >>
-> >>    *** DEADLOCK ***
-> >>
-> >> 2 locks held by syz-executor4/18832:
-> >>    #0: 000000002b55bbcc (&fc->fs_type->s_umount_key#49/1){+.+.}, at:
-> >> alloc_super+0x25e/0xb20 fs/super.c:225
-> >>    #1: 0000000046ad1dd4 (&obj_hash[i].lock){-.-.}, at:
-> >> __debug_check_no_obj_freed lib/debugobjects.c:777 [inline]
-> >>    #1: 0000000046ad1dd4 (&obj_hash[i].lock){-.-.}, at:
-> >> debug_check_no_obj_freed+0x16c/0x595 lib/debugobjects.c:818
-> >>
-> >> stack backtrace:
-> >> CPU: 1 PID: 18832 Comm: syz-executor4 Not tainted 4.18.0-next-20180824+ #47
-> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> >> Google 01/01/2011
-> >> Call Trace:
-> >>    __dump_stack lib/dump_stack.c:77 [inline]
-> >>    dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-> >>    print_circular_bug.isra.34.cold.55+0x1bd/0x27d
-> >> kernel/locking/lockdep.c:1222
-> >>    check_prev_add kernel/locking/lockdep.c:1862 [inline]
-> >>    check_prevs_add kernel/locking/lockdep.c:1975 [inline]
-> >>    validate_chain kernel/locking/lockdep.c:2416 [inline]
-> >>    __lock_acquire+0x3449/0x5020 kernel/locking/lockdep.c:3412
-> >>    lock_acquire+0x1e4/0x4f0 kernel/locking/lockdep.c:3901
-> >>    __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-> >>    _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-> >>    down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
-> >>    __down_trylock_console_sem+0xae/0x200 kernel/printk/printk.c:228
-> >>    console_trylock+0x15/0xa0 kernel/printk/printk.c:2249
-> >>    console_trylock_spinning kernel/printk/printk.c:1651 [inline]
-> >>    vprintk_emit+0x31f/0x910 kernel/printk/printk.c:1926
-> >>    vprintk_default+0x28/0x30 kernel/printk/printk.c:1968
-> >>    vprintk_func+0x7a/0x117 kernel/printk/printk_safe.c:398
-> >>    printk+0xa7/0xcf kernel/printk/printk.c:2001
-> >>    __warn_printk+0x8c/0xe0 kernel/panic.c:590
-> >>    debug_print_object+0x16a/0x210 lib/debugobjects.c:326
-> >>    __debug_check_no_obj_freed lib/debugobjects.c:786 [inline]
-> >>    debug_check_no_obj_freed+0x3b2/0x595 lib/debugobjects.c:818
-> >>    kfree+0xc7/0x210 mm/slab.c:3812
-> >>    f2fs_fill_super+0xe1a/0x8150 fs/f2fs/super.c:3147
-> >>    mount_bdev+0x314/0x3e0 fs/super.c:1347
-> >>    f2fs_mount+0x3c/0x50 fs/f2fs/super.c:3161
-> >>    legacy_get_tree+0x131/0x460 fs/fs_context.c:732
-> >>    vfs_get_tree+0x1cb/0x5c0 fs/super.c:1746
-> >>    do_new_mount fs/namespace.c:2627 [inline]
-> >>    do_mount+0x6f9/0x1e30 fs/namespace.c:2951
-> >>    ksys_mount+0x12d/0x140 fs/namespace.c:3167
-> >>    __do_sys_mount fs/namespace.c:3181 [inline]
-> >>    __se_sys_mount fs/namespace.c:3178 [inline]
-> >>    __x64_sys_mount+0xbe/0x150 fs/namespace.c:3178
-> >>    do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> >>    entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> >> RIP: 0033:0x459aba
-> >> Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 bd 8a fb ff c3 66 2e 0f
-> >> 1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff
-> >> ff 0f 83 9a 8a fb ff c3 66 0f 1f 84 00 00 00 00 00
-> >> RSP: 002b:00007f16f9937a88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-> >> RAX: ffffffffffffffda RBX: 00007f16f9937b30 RCX: 0000000000459aba
-> >> RDX: 00007f16f9937ad0 RSI: 0000000020000100 RDI: 00007f16f9937af0
-> >> RBP: 0000000020000100 R08: 00007f16f9937b30 R09: 00007f16f9937ad0
-> >> R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000003
-> >> R13: 0000000000000000 R14: 00000000004c9c12 R15: 0000000000000000
-> >> Dumping ftrace buffer:
-> >> ---------------------------------
-> >> syz-exec-23595   1...2 1079757271us : 0: }D
-> >> syz-exec-23595   1..s3 1079757464us : 0: }D
-> >> ---------------------------------
-> >> Kernel Offset: disabled
-> >> Rebooting in 86400 seconds..
-> >>
-> >>
-> >> ---
-> >> This bug is generated by a bot. It may contain errors.
-> >> See https://goo.gl/tpsmEJ for more information about syzbot.
-> >> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> >>
-> >> syzbot will keep track of this bug report. See:
-> >> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> >> syzbot.
-> >>
-> >> --
-> >> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> >> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> >> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/0000000000009e76240574711017%40google.com.
-> >> For more options, visit https://groups.google.com/d/optout.
-> >
-> > .
-> >
->
+IA0KPiA+IEN1cnJlbnQgY29kZSB3L28geW91ciBwYXRjaCwgaXQgaXMgcG9zc2libGUgYm90aCBj
+aS0+cGh5IGFuZA0KPiA+IGNpLT51c2JfcGh5IGFyZSB2YWxpZCBpZiB0aGUgVVNCIFBIWSBpcyBu
+b3QgYXQgdGhlIGRldmljZSB0cmVlLCBidXQgZ2VuZXJpYyBQSFkgaXMNCj4gYXQgdGhlIGRldmlj
+ZSB0cmVlLg0KPiA+IElmIHlvdSBkb24ndCB3YW50IHRvIGZpeCB0aGlzIGlzc3VlIHdpdGggdGhp
+cyBwYXRjaCwgaXQgaXMgb2sgdG9vLiBXZSBjb3VsZCBmaXggaXQgbGF0ZXIuDQo+IA0KPiBJJ20g
+bm90IHN1cmUgSSB1bmRlcnN0YW5kIHRoZSBpc3N1ZS4gV2l0aCBteSBwYXRjaCwgaWYgdGhlcmUg
+aXMgYSBnZW5lcmljIFBIWQ0KPiBkZXNjcmliZWQgaW4gZGV2aWNlLXRyZWUsIHRoZW4gZGV2bV91
+c2JfZ2V0X3BoeV9ieV9waGFuZGxlIGZvciBsZWdhY3kgUEhZIHdpbGwNCj4gZmFpbCBhbmQgdGhl
+IGNvZGUgd2lsbCBmYWxsYmFjayB0byBkZXZtX3VzYl9nZXRfcGh5LCB3aGljaCBpcyB0aGUgc2Ft
+ZSBiZWhhdmlvciBhcw0KPiBiZWZvcmUuDQo+IA0KDQpZb3UgYXJlIHJpZ2h0LCBidXQgdGhpcyBi
+ZWhhdmlvciBpcyBpbmNvcnJlY3Qgc2luY2UgZWFjaCBjb250cm9sbGVyIGhhcyBvbmx5IG9uZSBw
+aHlzaWNhbA0KVVNCIFBIWS4NCg0KPiBJcyBpdCBhIHByb2JsZW0gdGhhdCB3ZSBjYW4gZW5kIHVw
+IHdpdGggYm90aCBhIGdlbmVyaWMgYW5kIGxlZ2FjeSBQSFk/DQo+IEkgdGhvdWdodCB0aGlzIHdh
+cyBleHBlY3RlZCBiZWhhdmlvciBhdCBwcm9iZSwgYW5kIHRoZSByZXN0IG9mIHRoZSBjb2RlIHdp
+bGwganVzdCB1c2UNCj4gdGhlIGdlbmVyaWMgb25lIGluIHByaW9yaXR5Lg0KPiANCj4gRG8geW91
+IHdhbnQgdG8gbWFrZSBpdCBzbyB0aGF0IG9ubHkgb25lIChnZW5lcmljIG9yIGxlZ2FjeSkgUEhZ
+IHJlbWFpbnMgYWZ0ZXINCj4gcHJvYmU/DQo+IA0KIA0KWWVzLCBJIGp1c3Qgd2FudCBvbmx5IG9u
+ZSB2YWxpZCwgZWl0aGVyIGNpLT5waHkgb3IgY2ktPnVzYl9waHksIGl0IG1ha2VzIHNlbnNlLg0K
+DQpQZXRlcg0KDQo=
