@@ -2,98 +2,72 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C94C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB3EC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:40:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 352B520880
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:39:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 579372086A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:40:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727800AbfBUMjM (ORCPT
+        id S1727946AbfBUMkd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 07:39:12 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57028 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725385AbfBUMjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 07:39:12 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D15706696F;
-        Thu, 21 Feb 2019 12:39:11 +0000 (UTC)
-Received: from krava (unknown [10.43.17.20])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 1859A60BE6;
-        Thu, 21 Feb 2019 12:39:09 +0000 (UTC)
-Date:   Thu, 21 Feb 2019 13:39:09 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Cc:     linux-perf-users@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf hist: fix memory leak if histogram entry is reused
-Message-ID: <20190221123909.GG10990@krava>
-References: <20190221122306.1511-1-jonas.rabenstein@studium.uni-erlangen.de>
+        Thu, 21 Feb 2019 07:40:33 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3715 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727887AbfBUMkc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 07:40:32 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id C4805F0FD4D4B573A3A9;
+        Thu, 21 Feb 2019 20:40:29 +0800 (CST)
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 21 Feb 2019 20:40:20 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to update iostat correctly in IPU path
+Date:   Thu, 21 Feb 2019 20:40:13 +0800
+Message-ID: <20190221124013.47531-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190221122306.1511-1-jonas.rabenstein@studium.uni-erlangen.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 21 Feb 2019 12:39:11 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 01:23:06PM +0100, Jonas Rabenstein wrote:
-> In __hists__add_entry the srcline of the addr_location is duplicated
-> for the hist_entry. If hists__findnew_entry returns an already existing
-> hist_entry the srcline has to be freed again as no further reference to
-> that duplicated srcline would exists anymore.
-> 
-> Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-> ---
->  tools/perf/util/hist.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-> index 8aad8330e392..25b8dbdbbe87 100644
-> --- a/tools/perf/util/hist.c
-> +++ b/tools/perf/util/hist.c
-> @@ -623,6 +623,9 @@ __hists__add_entry(struct hists *hists,
->  		.ops = ops,
->  	}, *he = hists__findnew_entry(hists, &entry, al, sample_self);
->  
-> +	if (he && he->srcline != entry.srcline)
-> +		free(entry.srcline);
-> +
->  	if (!hists->has_callchains && he && he->callchain_size != 0)
->  		hists->has_callchains = true;
->  	return he;
+In error path of IPU, we didn't account iostat correctly, fix it.
 
-nice, do we have similar issue in here?
-
-jirka
-
-
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
-diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-index 216388003dea..e65e6822c848 100644
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -966,7 +966,7 @@ iter_add_next_cumulative_entry(struct hist_entry_iter *iter,
- 			.map = al->map,
- 			.sym = al->sym,
- 		},
--		.srcline = al->srcline ? strdup(al->srcline) : NULL,
-+		.srcline = al->srcline,
- 		.parent = iter->parent,
- 		.raw_data = sample->raw_data,
- 		.raw_size = sample->raw_size,
+ fs/f2fs/segment.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 3602acee4985..86a6fcbe8484 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3197,10 +3197,10 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
+ 	stat_inc_inplace_blocks(fio->sbi);
+ 
+ 	err = f2fs_submit_page_bio(fio);
+-	if (!err)
++	if (!err) {
+ 		update_device_state(fio);
+-
+-	f2fs_update_iostat(fio->sbi, fio->io_type, F2FS_BLKSIZE);
++		f2fs_update_iostat(fio->sbi, fio->io_type, F2FS_BLKSIZE);
++	}
+ 
+ 	return err;
+ }
+-- 
+2.18.0.rc1
+
