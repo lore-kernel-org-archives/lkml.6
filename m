@@ -2,78 +2,125 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C98DC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 21:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAD0C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 21:40:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE64D20818
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 21:35:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF59320818
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 21:40:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V/+zw7sR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726384AbfBUVf4 (ORCPT
+        id S1726417AbfBUVke (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 16:35:56 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:50981 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725802AbfBUVfz (ORCPT
+        Thu, 21 Feb 2019 16:40:34 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:42059 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725802AbfBUVkd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 16:35:55 -0500
-Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gww0R-0004wr-4M; Thu, 21 Feb 2019 22:35:47 +0100
-Date:   Thu, 21 Feb 2019 22:35:45 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Julien Thierry <julien.thierry@arm.com>
-cc:     "H. Peter Anvin" <hpa@zytor.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mingo@redhat.com,
-        catalin.marinas@arm.com, james.morse@arm.com,
-        valentin.schneider@arm.com, brgerst@gmail.com, jpoimboe@redhat.com,
-        luto@kernel.org, bp@alien8.de, dvlasenk@redhat.com,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH] sched/x86: Save [ER]FLAGS on context switch
-In-Reply-To: <cb221e71-243d-fdbd-1d18-b175bc88979b@arm.com>
-Message-ID: <alpine.DEB.2.21.1902212231490.1612@nanos.tec.linutronix.de>
-References: <20190213144145.GY32494@hirez.programming.kicks-ass.net> <20190213154532.GQ32534@hirez.programming.kicks-ass.net> <D61C430D-4321-4114-AB85-671A3C7B8EAE@amacapital.net> <20190213222146.GC32494@hirez.programming.kicks-ass.net>
- <D3E1B64D-3E91-4A82-9C3B-92D9EB7326CE@amacapital.net> <20190214101429.GD32494@hirez.programming.kicks-ass.net> <20ABBED1-E505-45F6-8520-FB93786DF9A9@zytor.com> <20190216103044.GR32494@hirez.programming.kicks-ass.net> <9e037d68-75e7-1beb-0c9c-33a7ffeced1b@zytor.com>
- <20190219090409.GW32494@hirez.programming.kicks-ass.net> <20190219124808.GG8501@fuggles.cambridge.arm.com> <f8e99706-4e3b-68ec-7a3e-6e6dd876ad2f@zytor.com> <cb221e71-243d-fdbd-1d18-b175bc88979b@arm.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 21 Feb 2019 16:40:33 -0500
+Received: by mail-ed1-f68.google.com with SMTP id j89so77330edb.9
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 13:40:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=U6umnKcmrpvh6pr+wrq8JquzEl64oVuliEyZreit8ho=;
+        b=V/+zw7sRLrqtJxUPyvxNb8MKQsG2pYQGlbLh5rUxJQAR2/0Y0Wh7OzdkUXlN8ltfaD
+         MCi7PFUTlM6tgdnda2uupDUq5TqIJnW/OwnvjE+ec5euqPHx24tHCKzzGJPeLcbNpEHZ
+         BEex63cUbrVXiKGRWvC8pLmoCGzej0NDpsKi21cCTgdyIXcz4fqjFFXtv5E5o17yJMpq
+         T4ptRaFBG0w4aiahaEqIf82ww2rWf7Xp94Tf3LRzLgA8B+CuZfETCSz24jBsVsW8hRoe
+         LAWl61Oq9YaMwWELVIrp1gz2V1nZrpQPEISAoREKmN2+MDiNBJnVUormmg6z6SNBCFi7
+         3lkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=U6umnKcmrpvh6pr+wrq8JquzEl64oVuliEyZreit8ho=;
+        b=YrSzapP9+mNyCVgRFwKhQu9pL0QAmDTmlH9xOYqRn1Che2hJlvqq5zTQyDaIsgaiNB
+         IW4XVHZvMxD6ZMOrSjlgAvECPMWjeBTfHx//7c17z5VYm0f4YNRYVZCh8yRF15BRvG2y
+         llpdDSbQ2r8j0xN+CJSAJ0Q/Uo/bjQJ1kHW7ZrZNL1gkgPmyytoniZbIqHI+200s2LoR
+         jRqbeylKFXfB5I3wyAraeM5LUtCnLQmAgEABAZr7XkVn6Bg6nPEqK3TGfPMMkat3ozDa
+         BF6gVwl7lxVjOTMSlwYpPBkjVkiuxnlCKEAbQFEbNE10fYFW+tEsMu4J2K4vzFokkw/T
+         d0qw==
+X-Gm-Message-State: AHQUAubtXhTzLZjBhYQRS2Wxb4c6nk7rlbDe6w+S5hh1JFW/dryWNW6U
+        VMwMmv/hluWJS6vqH22wRBs=
+X-Google-Smtp-Source: AHgI3Ibb7+mt/4l+lgojp/7/oTKoJrf98ow7LaCXjFPIfShGaFH43RfU1zrj7DaqtU+40xAnBfG1iw==
+X-Received: by 2002:a50:86ce:: with SMTP id 14mr504217edu.33.1550785231958;
+        Thu, 21 Feb 2019 13:40:31 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id e21sm467edb.27.2019.02.21.13.40.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 21 Feb 2019 13:40:30 -0800 (PST)
+Date:   Thu, 21 Feb 2019 21:40:30 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>,
+        "Huang, Ying" <ying.huang@intel.com>,
+        kernel test robot <rong.a.chen@intel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, lkp@01.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [LKP] [driver core] 570d020012: will-it-scale.per_thread_ops
+ -12.2% regression
+Message-ID: <20190221214030.niwvh3xjlioi3myd@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20190218075442.GI29177@shao2-debian>
+ <20190219005945.GA16734@richard>
+ <20190219121904.GA24103@kroah.com>
+ <20190221031049.GE28258@shao2-debian>
+ <20190221071023.GA28637@kroah.com>
+ <8736oh1uf5.fsf@yhuang-dev.intel.com>
+ <20190221073510.GA17369@kroah.com>
+ <87va1dzgpj.fsf@yhuang-dev.intel.com>
+ <20190221083926.GA7834@richard>
+ <20190221091217.GA18701@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190221091217.GA18701@kroah.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Feb 2019, Julien Thierry wrote:
-> On 20/02/2019 22:55, H. Peter Anvin wrote:
-> > Now, __fentry__ is kind of a special beast; in some ways it is an "exception
-> > implemented as a function call"; on x86 one could even consider using an INT
-> > instruction in order to reduce the NOP footprint in the unarmed case.  Nor is
-> > __fentry__ a C function; it has far more of an exception-like ABI.
-> > *Regardless* of what else we do, I believe __fentry__ ought to
-> > save/disable/restore AC, just like an exception does.
-> > 
-> 
-> That does make sense to me. However it doesn't solve the issue of
-> calling (or preventing to call) some function that rescheds.
+On Thu, Feb 21, 2019 at 10:12:17AM +0100, Greg Kroah-Hartman wrote:
+>On Thu, Feb 21, 2019 at 04:39:27PM +0800, Wei Yang wrote:
+>> >>> I don't think this is an issues of struct device.  As you said, struct
+>> >>> device isn't access much during test.  Struct device may share slab page
+>> >>> with some other data structures (signal related, or fd related (as in
+>> >>> some other test cases)), so that the alignment of these data structures
+>> >>> are affected, so caused the performance regression.
+>> >>
+>> >> But allocation of a structure should always be "properly" aligned, no
+>> >> matter what something else did in the system as that is what kmalloc
+>> >> ensures.  If not, then we have problems in our memory allocator :)
+>> >>
+>> >> So something is odd here, but I don't think that is it...
+>> >
+>> >If all these data structure are allocated with kmalloc() instead of
+>> >kmem_cache_alloc(), then my guessing above seems incorrect ...
+>> >
+>> 
+>> Seems we don't have special kmem_cache for device and device_private.
+>
+>Nor do we need one :)
+>
+>Remember, 'struct device' is included inside lots of other structures
+>already, it is not very often created "on its own."
+>
 
-IMNSHO any call inside a AC region is a bug lurking round the corner. The
-only thing which is tolerable is an exception of some sort.
+You are right, I get your point.
 
-Enforce that with objtool. End of story.
+>thanks,
+>
+>greg k-h
 
-Thanks,
-
-	tglx
-
-
+-- 
+Wei Yang
+Help you, Help me
