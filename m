@@ -2,155 +2,82 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD02BC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:40:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76572C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:42:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98F912080F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:40:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="XnUhDCkj"
+	by mail.kernel.org (Postfix) with ESMTP id 3FE142081B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:42:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550778146;
+	bh=42OHwxo/Z0vC55ri0hh2saipSgXYfDWz1fo/2II09dw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=kIZJEMEX5oJXkAO6WTwJN9DXpu3RgpGA5VWX+HPZcePQTfHZxem0Hn+yezx2u6pTc
+	 ixKu7TG5bylik0QQNqaQfB4UNl0qEOKmauel4eb/Rf4X07XRMx8ra/q6gW0p2TRvjp
+	 NcpVMacUhWPDTyrGec01kdwHYfGA7xT4SmYcCVRQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726360AbfBUTkJ (ORCPT
+        id S1726478AbfBUTmY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 14:40:09 -0500
-Received: from mail.andi.de1.cc ([85.214.239.24]:47136 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725932AbfBUTkI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 14:40:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=kW4xLhEcJzI00RwBUQ6d/W9tDOTjB84nBOWGxZR23xc=; b=XnUhDCkj6gFdBkT/o6JesMSuX
-        nJ+clYMC4ILB1tzHuFk3Yx/up1ZLkxpkbcNyfRH7+BFqtnsVpE9HHTHI1t2jjysUALhPw0CgLmdnF
-        l9AMpLANar3D6sNwQ6iP19TEFzJvUgop96TVWsSvCBBHRCHcQXk3k0bagkaI06ohdJPAY=;
-Received: from pd9e2f314.dip0.t-ipconnect.de ([217.226.243.20] helo=aktux)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gwuCR-0003t6-LX; Thu, 21 Feb 2019 20:40:03 +0100
-Date:   Thu, 21 Feb 2019 20:39:58 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>, kishon@ti.com,
-        lee.jones@linaro.org, daniel.thompson@linaro.org,
-        wsa@the-dreams.de, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Subject: Re: [PATCH v2] phy: phy-twl4030-usb: fix denied runtime access
-Message-ID: <20190221203958.66d904f6@aktux>
-In-Reply-To: <20190221164803.GX15711@atomide.com>
-References: <20180922094405.4067-1-andreas@kemnade.info>
-        <20190220223132.GV15711@atomide.com>
-        <20190221170840.5c970def@kemnade.info>
-        <20190221164803.GX15711@atomide.com>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Thu, 21 Feb 2019 14:42:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40066 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726220AbfBUTmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 14:42:23 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4E832081B;
+        Thu, 21 Feb 2019 19:42:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550778143;
+        bh=42OHwxo/Z0vC55ri0hh2saipSgXYfDWz1fo/2II09dw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eJwhFqlbWned0/ioEkqRtZUnLlT1V/u1+T/lNM4Z8G3jJCA7UNbBB7KUhDKeGOf/w
+         NaJUaZno0SpB/+8QEjqnJxsHoH0XSQvzf80mC+hg3PLJFIXWHrdIZk1WePa84PUUj0
+         AzuvL21uCByZPoZ/+HS9LXvQnp8bPrw7IlyQA43U=
+Date:   Thu, 21 Feb 2019 20:42:19 +0100
+From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To:     Vishnu DASA <vdasa@vmware.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        Pv-drivers <Pv-drivers@vmware.com>
+Subject: Re: [PATCH] VMCI: Support upto 64-bit PPNs
+Message-ID: <20190221194219.GA2347@kroah.com>
+References: <20190215162738.21334-1-vdasa@vmware.com>
+ <20190216195253.GB11061@kroah.com>
+ <8C694A7E-488C-42A9-83F8-AA4FB4E57A5A@vmware.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/B8oGZk5LWhpCHH7Ii9zachb"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8C694A7E-488C-42A9-83F8-AA4FB4E57A5A@vmware.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/B8oGZk5LWhpCHH7Ii9zachb
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+A: Because it messes up the order in which people normally read text.
+Q: Why is top-posting such a bad thing?
+A: Top-posting.
+Q: What is the most annoying thing in e-mail?
 
-On Thu, 21 Feb 2019 08:48:03 -0800
-Tony Lindgren <tony@atomide.com> wrote:
+A: No.
+Q: Should I include quotations after my reply?
 
-> * Andreas Kemnade <andreas@kemnade.info> [190221 16:43]:
-> > Hi,
-> >=20
-> > On Wed, 20 Feb 2019 14:31:32 -0800
-> > Tony Lindgren <tony@atomide.com> wrote:
-> >  =20
-> > > * Andreas Kemnade <andreas@kemnade.info> [180922 09:48]: =20
-> > > > When runtime is not enabled, pm_runtime_get_sync() returns -EACCESS,
-> > > > the counter will be incremented but the resume callback not called,
-> > > > so enumeration and charging will not start properly.
-> > > > To avoid that happen, disable irq on suspend and recheck on resume.
-> > > >=20
-> > > > Practically this happens when the device is woken up from suspend by
-> > > > plugging in usb.
-> > > >=20
-> > > > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > > > ---
-> > > > Changes in v2:
-> > > > * use pm suspend/resume callback instead of delayed_work
-> > > >   as suggested by Dmitry   =20
-> > >=20
-> > > Hmm it just occurred to me that this issue too might be fixed with co=
-mmit
-> > > c6e2bd956936 ("i2c: omap: Use noirq system sleep pm ops to idle device
-> > > for suspend"). Andreas, care to check? That is if this is still an
-> > > issue.
-> > >  =20
-> > this one made already its way into 4.20. But for the records, I will
-> > build the latest 5.0-rc and revert it and will check if the problem
-> > still occurs. =20
->=20
-> OK thanks.
->=20
-first of all, suspend is totally broken in v5.0-rc7.
-I booted with init=3D/bin/bash
-and just loaded gpio-twl4030 and twl4030-pwrbutton
+http://daringfireball.net/2007/07/on_top
 
-and did (rtc in compiled in) a
- root@(none):/# rtcwake -s 10 -m mem
-rtcwake: wakeup from "mem" using /dev/rtc0 at Sat Jan  1 00:05:24 2000
-[   86.434722] PM: suspend entry (deep)
-[   86.438842] PM: Syncing filesystems ... done.
-[   86.458770] Freezing user space processes ... (elapsed 0.003 seconds) do=
-ne.
-[   86.470947] OOM killer disabled.
-[   86.474365] Freezing remaining freezable tasks ... (elapsed 0.002 second=
-s) done.
-[   86.485473] printk: Suspending console(s) (use no_console_suspend to deb=
-ug)
-[   86.555572] Disabling non-boot CPUs ...
-[   86.555664] Successfully put all powerdomains to target state
-[   86.563720] twl: Read failed (mod 1, reg 0x01 count 1)
-[   86.563751] twl4030: I2C error -13 reading PIH ISR
-[   86.563812] twl: Read failed (mod 1, reg 0x01 count 1)
-[   86.563812] twl4030: I2C error -13 reading PIH ISR
-[   86.563873] twl: Read failed (mod 1, reg 0x01 count 1)
-[   86.563903] twl4030: I2C error -13 reading PIH ISR
+On Thu, Feb 21, 2019 at 07:26:29PM +0000, Vishnu DASA wrote:
+> Hi Greg,
+> Sounds like a good idea to use the BIT() macro but can I do that in a
+> separate change to cover the entire file (and perhaps other vmci files
+> too)?
 
-and this goes on forever.
-I will try to bisect that.
+Yes, that would be fine.
 
-Regards,
-Andreas
+thanks,
 
---Sig_/B8oGZk5LWhpCHH7Ii9zachb
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlxu/o4ACgkQfb1qx03i
-kyR1ug//UkCTfM2SkawNg+4dzVcqhdb3DWPTw31wGdGWMwcssBjeidM31orpwCi8
-d2HoAfZcSmO9ISUwaR1HeojXCsY3FQJNEyLxfwjQWzKq7R6bFpTDlAgY/Dw5pY0D
-XfbEs4LW9vH7RCCA/9qe7anj8DfIBRnzOuyMALvdSB0A6wXyTtOZxHxzAxYfGQUs
-WQQhfxQY2HSxVWA81+un05SeDSeAct95uj4nc5hAf8NkKqRUgLseIhjJyXXVJchZ
-GNFLvxDY9pOHP3V3zZlvGcyPZBaVyXbXG3iND7SecJXkXP41AVaRTbo+S9r8aCmj
-uyxWgEnRm4Hz+N+EhG8F2Ogfyv5n3heY6VcqP5cHjkyQXGJe3s60a19DEt28fEI6
-FIluHaJFtLSoTk9nmlbkCfhfiYniAzL9jvHDmb9GT70cLwBNJnKot4U1xapmONkb
-Lkkj+A5TcH/cXRiG6nPoPB6hZJW0a0S0WWjwRRcuKCOsHmqns5uU/p5dWbtSJs4w
-lFW5zgG3wzC2BcYV0r8m9py/KrMx+XPwsBXv4ZhpDlqA38Wh67ijzf7yLG5WST8w
-/ktA4TAm4sk4hy+01yXSRsBeE9FgX8hsFRLz9ilcYDpBpom9EWGBD32KAYvdQeUz
-fNiB11pazdRc3VOV7GILfdlZGJRZQFesZ5NSJshC0nUlns3ZOcw=
-=hSVH
------END PGP SIGNATURE-----
-
---Sig_/B8oGZk5LWhpCHH7Ii9zachb--
+greg k-h
