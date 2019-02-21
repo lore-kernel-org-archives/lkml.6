@@ -2,90 +2,134 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E48DC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7CBDC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:40:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D25320838
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:39:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550759996;
-	bh=sx/uQcI8cDmHutUMoQ67hTa49l6LSym8MYYXpqPiN6g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sYAXMm1FXoFGC4UcTMBZRXyuflMgG/8x6uo59s6Vcbwj7SycGP9wUYgwm9LeJurNG
-	 9Rq4/h4kAbfiKdIwQfojy6lIY256x9ZldH6ZDETkL5xkDxtCux9n3Ik2ztdplCtZo5
-	 DgjQDZl+5tDWuBMILuAxTkZte8d3i92NxVptSyI4=
+	by mail.kernel.org (Postfix) with ESMTP id BAC712080D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:40:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729025AbfBUOjy (ORCPT
+        id S1729050AbfBUOkE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:39:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34040 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:40:04 -0500
+Received: from mga02.intel.com ([134.134.136.20]:40844 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729012AbfBUOjw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:39:52 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2820D2080D;
-        Thu, 21 Feb 2019 14:39:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550759991;
-        bh=sx/uQcI8cDmHutUMoQ67hTa49l6LSym8MYYXpqPiN6g=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zbkNV6p1XSkvSFGiDxirqPcsyp0xFT6l5CqPxN6VtKu2uUoJM77ZJFy4/eLNLdOt/
-         8ZOrmAJd0+/pTJ1YEl72M1XTxjQCt8cxvQWCeCfuEI5vovCl+oZS8mODM4xHecM3lo
-         R7ML3WoSRAk52JyXZGLXAdFuuv7cs4h5RO/2X/8c=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 16/23] net: Add header for usage of fls64()
-Date:   Thu, 21 Feb 2019 15:35:58 +0100
-Message-Id: <20190221125247.524967981@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190221125246.162644302@linuxfoundation.org>
-References: <20190221125246.162644302@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        id S1728519AbfBUOjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:39:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 06:39:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,395,1544515200"; 
+   d="scan'208";a="148703451"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.172])
+  by fmsmga001.fm.intel.com with ESMTP; 21 Feb 2019 06:39:48 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org, daniel@ffwll.ch,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list\:INTEL DRM DRIVERS \(excluding Poulsbo\, Moorestow..." 
+        <intel-gfx@lists.freedesktop.org>
+Subject: Re: [PATCH v2 1/2] drm: move i915_kick_out_vgacon to drm_fb_helper
+In-Reply-To: <20190221132528.7cyobqegunh6uoh2@sirius.home.kraxel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20190221113534.20764-1-kraxel@redhat.com> <20190221113534.20764-2-kraxel@redhat.com> <87ef81thk8.fsf@intel.com> <20190221132528.7cyobqegunh6uoh2@sirius.home.kraxel.org>
+Date:   Thu, 21 Feb 2019 16:41:56 +0200
+Message-ID: <877edttd8r.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Thu, 21 Feb 2019, Gerd Hoffmann <kraxel@redhat.com> wrote:
+> On Thu, Feb 21, 2019 at 03:08:39PM +0200, Jani Nikula wrote:
+>> On Thu, 21 Feb 2019, Gerd Hoffmann <kraxel@redhat.com> wrote:
+>> > It'll be useful for other drivers too, so move it to drm_fb_helper.c
+>> > (and rename it of course).  Also add docs.
+>> >
+>> > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+>> > ---
+>> >  include/drm/drm_fb_helper.h     |  2 ++
+>> >  drivers/gpu/drm/drm_fb_helper.c | 39 +++++++++++++++++++++++++++++++++++++++
+>> >  drivers/gpu/drm/i915/i915_drv.c | 35 +----------------------------------
+>> >  3 files changed, 42 insertions(+), 34 deletions(-)
+>> >
+>> > diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
+>> > index bb9acea613..a401ba47ad 100644
+>> > --- a/include/drm/drm_fb_helper.h
+>> > +++ b/include/drm/drm_fb_helper.h
+>> > @@ -649,4 +649,6 @@ drm_fb_helper_remove_conflicting_pci_framebuffers(struct pci_dev *pdev,
+>> >  #endif
+>> >  }
+>> >  
+>> > +int drm_fb_helper_kick_out_vgacon(void);
+>> > +
+>> >  #endif
+>> > diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+>> > index 0e9349ff2d..a2d7e5bc51 100644
+>> > --- a/drivers/gpu/drm/drm_fb_helper.c
+>> > +++ b/drivers/gpu/drm/drm_fb_helper.c
+>> > @@ -35,6 +35,7 @@
+>> >  #include <linux/sysrq.h>
+>> >  #include <linux/slab.h>
+>> >  #include <linux/module.h>
+>> > +#include <linux/vt_kern.h>
+>> >  #include <drm/drmP.h>
+>> >  #include <drm/drm_crtc.h>
+>> >  #include <drm/drm_fb_helper.h>
+>> > @@ -3353,3 +3354,41 @@ int __init drm_fb_helper_modinit(void)
+>> >  	return 0;
+>> >  }
+>> >  EXPORT_SYMBOL(drm_fb_helper_modinit);
+>> > +
+>> > +/**
+>> > + * drm_fb_helper_kick_out_vgacon - deactivate vgacon driver.
+>> > + *
+>> > + * Deactivate vgacon driver so it stops accessing vga io ports.
+>> > + * Should be called after
+>> > + * drm_fb_helper_remove_conflicting_pci_framebuffers().
+>> > + *
+>> > + * Returns:
+>> > + * Zero on success or negative error code on failure.
+>> > + */
+>> > +int drm_fb_helper_kick_out_vgacon(void)
+>> > +{
+>> > +#if !defined(CONFIG_VGA_CONSOLE)
+>> > +        return 0;
+>> > +#elif !defined(CONFIG_DUMMY_CONSOLE)
+>> > +        return -ENODEV;
+>> > +#else
+>> 
+>> Please retain the original way of keeping conditional compilation
+>> outside of functions.
+>
+> Care to explain why that is better?
 
-------------------
+Prevalent and documented [1] kernel coding style. It's easier to see
+what happens in each branch, and the compiler throws the alternatives
+away anyway.
 
-From: "David S. Miller" <davem@davemloft.net>
+Patches that do code movement should focus on code movement. Any
+additional changes should be separate, and justified separately. The
+function rename and documentation are of course okay, and they're
+mentioned in the commit message as they should.
 
-[ Upstream commit 8681ef1f3d295bd3600315325f3b3396d76d02f6 ]
-
-Fixes: 3b89ea9c5902 ("net: Fix for_each_netdev_feature on Big endian")
-Suggested-by: Eric Dumazet <eric.dumazet@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/linux/netdev_features.h |    1 +
- 1 file changed, 1 insertion(+)
-
---- a/include/linux/netdev_features.h
-+++ b/include/linux/netdev_features.h
-@@ -11,6 +11,7 @@
- #define _LINUX_NETDEV_FEATURES_H
- 
- #include <linux/types.h>
-+#include <linux/bitops.h>
- #include <asm/byteorder.h>
- 
- typedef u64 netdev_features_t;
+BR,
+Jani.
 
 
+[1] Documentation/process/coding-style.rst
+
+-- 
+Jani Nikula, Intel Open Source Graphics Center
