@@ -2,150 +2,190 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0020C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:40:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A18C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:40:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B714320652
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:40:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03BF420836
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:40:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="qlLPfxaB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KjUGqglb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728574AbfBURkQ (ORCPT
+        id S1728663AbfBURk5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 12:40:16 -0500
-Received: from mail-eopbgr70045.outbound.protection.outlook.com ([40.107.7.45]:59776
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726476AbfBURkP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 12:40:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lG5+TQ9SeX0QgJah5U6jSmfZHA0NcDRjjtYvDorFiJw=;
- b=qlLPfxaBmoOCATOlwvSCvu+gD0o/B2TR5vxexX6rpn899dJZa3OOREjf0m0fbpiTctQmTVt6BpUlRRPZV3FGE8XTHfVQOVNT8WzJKp161U8bqMY0W+geqmTmHhRm7oR+VmNAJQkClG3By/ZuWn+90uit1oATA14xlwB3clgGjJg=
-Received: from DBBPR05MB6570.eurprd05.prod.outlook.com (20.179.44.81) by
- DBBPR05MB6505.eurprd05.prod.outlook.com (20.179.43.83) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.15; Thu, 21 Feb 2019 17:40:08 +0000
-Received: from DBBPR05MB6570.eurprd05.prod.outlook.com
- ([fe80::5d59:2e1c:c260:ea6f]) by DBBPR05MB6570.eurprd05.prod.outlook.com
- ([fe80::5d59:2e1c:c260:ea6f%2]) with mapi id 15.20.1622.020; Thu, 21 Feb 2019
- 17:40:08 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-CC:     Matthew Wilcox <willy@infradead.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the xarray tree
-Thread-Topic: linux-next: build failure after merge of the xarray tree
-Thread-Index: AQHUwpKghnGnnsxrwE6OI0HelaAfeKXcVzAAgAACOACAAeb8gIAADAqAgAv1kgCAAFHKAA==
-Date:   Thu, 21 Feb 2019 17:40:08 +0000
-Message-ID: <20190221174000.GG17515@mellanox.com>
-References: <20190212162003.1aa1ffbd@canb.auug.org.au>
- <20190212161528.GN12668@bombadil.infradead.org>
- <20190212162324.GU24706@mellanox.com>
- <20190213212621.GW12668@bombadil.infradead.org>
- <20190213220929.GO24706@mellanox.com>
- <20190221234716.2144eba3@canb.auug.org.au>
-In-Reply-To: <20190221234716.2144eba3@canb.auug.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR17CA0090.namprd17.prod.outlook.com
- (2603:10b6:300:c2::28) To DBBPR05MB6570.eurprd05.prod.outlook.com
- (2603:10a6:10:d1::17)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [174.3.196.123]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e9222077-1970-4752-72ec-08d698239f07
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:DBBPR05MB6505;
-x-ms-traffictypediagnostic: DBBPR05MB6505:
-x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;DBBPR05MB6505;23:O51mQVOzfPtRyuf1wQEU8nTBDlHLWoHaBkzrr3weP?=
- =?us-ascii?Q?sISEm3zlSuF6shZ1BYOCgRWmDxYvSzOjlzids3yjQymHXoakBBeKYeldoPGf?=
- =?us-ascii?Q?nPq+SSAPhFHm/8QMv+V9H+jUKeGJyC/taGXWPJYAczP6v2RHePteWJHOzeOZ?=
- =?us-ascii?Q?1xnz1mJ7VGWfRa+GUfSAYatjZed7bLz74nIOdmNqk4KYgX1MavvQrriDd6qE?=
- =?us-ascii?Q?cspVMGZRZFFAykmPBDw0ywX2nbZ/bWsQeX0udbdO02HvRTqRzA/93AugiRZq?=
- =?us-ascii?Q?u5fEmrcSFCApngm+p9LXciBrTB5NW8bPaxHpZRbRlBoscyaUp1hry5V8cczF?=
- =?us-ascii?Q?scL+Wj1A21+aF63wGf8KrPHq4codxx5XNci0VsXiMpyhvzG6XtbwA6A5wycK?=
- =?us-ascii?Q?PTBdknnbIBWsrLKcie/hubEj9/FHftR84OtvMU0Gga8aIWiSV8yhV+ub+i1J?=
- =?us-ascii?Q?ZlmqyUElsInGsnpE/nfRYsOZnyMCEh99zAOMT1N2SvwM7pmRziI+5SFWQJeY?=
- =?us-ascii?Q?B6IFSR1w8MrQ4QrV8xZou3mxzQ8uNP2JAio16nWjzQ1Enb58eCbI4ovzw36z?=
- =?us-ascii?Q?SZ86G1hekbt6z/EOA3kK7F8mcM2UMyxqqoP7mNYaTLKKMJN4+ygSnslo/avi?=
- =?us-ascii?Q?1RPSHiyYTfkVBfBapljtNyxOc9WBUjOTZr+T0/glp22yxb5wr21qKNhMTv8Y?=
- =?us-ascii?Q?mWxzYEApg2XJ4PSGkqIRLTR/zEd+210foBj8NbiCAcah60zKT/+odnLXJpxC?=
- =?us-ascii?Q?NORPJEvDfUh5F1pRjwAZwBa7un7+GR31aQIHWcb6Bq//48fVNPneIS8HcDzj?=
- =?us-ascii?Q?EteEGPP0YJjA1mtveJeU8iwa38D+OlTEa7g7d/eQpmWLGzPdDHVhGqfA9dmF?=
- =?us-ascii?Q?yBTCsSXiKV7A0hMwxg/1IzkMC6XOjg/mPj4RqAwlFaTx44OLgZbqP4HRzsZD?=
- =?us-ascii?Q?teIO8IfwQ7RayFGPgsuk5D3TJt2+ATZA87WmucpP4fM7fn28HD+uHRCBS5M7?=
- =?us-ascii?Q?x2rJHG+ZUiT4Khj9pVEVIpeFZ8FqhbaFx1wLqtwz1Cyk+mDHcwx253SrmG/4?=
- =?us-ascii?Q?5IZmUeGSoWow7/yvxFY2P0Ny3OIjZFhQ3p+eEjxEce0OLvYTHHm3kFiVlr9A?=
- =?us-ascii?Q?oJSu18qgFAsTPJy+c32kicfcGIYJb6pkLZBlv3ZYwehUBIUd2pNBQfAKQbKz?=
- =?us-ascii?Q?kY5m7c4NGxrl1rqB+hD1Ya0h1eZLztUzjc4H5brCEB60+7znJy7xuEXs/mk2?=
- =?us-ascii?Q?FO1YeNphpOeo3edkw48KhMTcGnZicmewMhGcyfgkE/gxjY5UKBcJP/NjVGzH?=
- =?us-ascii?B?UT09?=
-x-microsoft-antispam-prvs: <DBBPR05MB6505A92CAA32840C5DCE3356CF7E0@DBBPR05MB6505.eurprd05.prod.outlook.com>
-x-forefront-prvs: 09555FB1AD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(376002)(346002)(39860400002)(396003)(199004)(189003)(53936002)(316002)(71190400001)(36756003)(6506007)(99286004)(446003)(26005)(386003)(478600001)(106356001)(66066001)(25786009)(229853002)(6916009)(476003)(4326008)(5660300002)(81166006)(6436002)(81156014)(93886005)(1076003)(11346002)(102836004)(54906003)(71200400001)(2616005)(105586002)(6486002)(8676002)(186003)(97736004)(6116002)(33656002)(8936002)(486006)(86362001)(7736002)(6246003)(76176011)(68736007)(6512007)(14444005)(256004)(52116002)(14454004)(3846002)(305945005)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6505;H:DBBPR05MB6570.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: iVSNSBcL0lHngD+PMWEgYAlxi9weNHVfOqkzzhgB6alq8rIzm+0XjOumkGtcyDMhbkG4I2NqC3RBK0JirI3ESyfOmpa89PzTx+DnwyrMT441cDimZyia9oxhn01hieZYbsl+ByM72XzKofraeMRXODONStCtbmlYcXddUX0D2t7HfTzMtO9tjDf7poXlWaYfpZXY8SFz3C9bXM3bjtFhgAsuK6Mf9MCGwQ5CJuxbJyXFfcY6HJVdpG4lngQs/6kvxq2NPrf4DVeioyOio9q7Leu1U5aZ0/Zat4g0uKt4f/RdJDygyae7pcESBCyb5/ZjLIQ+OsOsiaQlu3ofiE2Wq1G/ZbpPPzAQsPISCTb2Ieg2EDnoZT/aMnsHjuj0oCNlF+eCQIpQ2EcbF/5ztM/v2U3MOSTIfHBsrMSwPqDXcyQ=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <E0E23B6138D82145A628566764491D93@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Thu, 21 Feb 2019 12:40:57 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33601 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726476AbfBURk4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 12:40:56 -0500
+Received: by mail-pg1-f194.google.com with SMTP id h11so11698731pgl.0;
+        Thu, 21 Feb 2019 09:40:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UvMdhonGG0cM4E2rDQd1c7rts+kOKxBnqdDjm+FVDnw=;
+        b=KjUGqglbMQbjUkaWvxsOT2pbk0OIkHGdZcpoi24hzHNXp000lZDjz5EBBbk7ZKHtNI
+         TryV0tseeaUhvOxEO/3rb61HDSuH7R9DbU44bnBHFG2jFlFcvUsneMHvWF/U0WmVSIDN
+         ee083qsH7Y5hQ4TWLkOCwcQzrUHNFu1wj14B3PCozT+LGpnxFIapFNpPYWUtHiRLggym
+         KlyUFlmUVwgTuRPuGp7i3kNsP1dC14+6aqoDbV0lHp7tJnUjF0/wg9ABAW72nMjX2GUo
+         Ir+q00fzorSeT5h0jvkb7oig+LEcVig+8CqsBWkmjDYZOAmo4fCImdpvHesaHcki/Owl
+         mI2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=UvMdhonGG0cM4E2rDQd1c7rts+kOKxBnqdDjm+FVDnw=;
+        b=Rv9NaLAhGcPfv4FykHuSWsvWpunpsQa8jSMzEXPUZEy0APMg3DHg0DJpDVaN4Dr5f+
+         AQaZmO/di2gIIcEtBC7SWXReupwwvjQcLPALXz+fgxAsQgzfsVUAmlRgT1AVLgWJTq6W
+         UXFZhH/m5I8DcSdIqj+O2tCSmuv4SmtwwXc0qShBAvysf1NO8wT8QEaYcBUfZJn5ib/T
+         iT2U1t9xlzHwbWBHikSRrovAfmlEMZdwhOAZXapg+GzdlDe4jaAs+SQhzmFzJoY//9r9
+         r4lbDz38AUMzvxRCziX1Trjv/J0dBXhxjzjzNdMKKSLPyKtB85ZEhfSNrgeqpQdvHl8V
+         E8Ng==
+X-Gm-Message-State: AHQUAub5bNcu9Eocn5QETahGUfjQQzr2wBlnQe2c1NTgruvvDp9goPCP
+        zv/8U5u90Cc3bC0qPmj3GJglHqsp
+X-Google-Smtp-Source: AHgI3IZDq8vHuzH8xzY1UAUtsV4LvCc8dw/IMgm5C39vAnE/ZJ2RMS0evPKi+n6yWAlUMAOKl+jYwA==
+X-Received: by 2002:a63:e952:: with SMTP id q18mr1793605pgj.156.1550770854850;
+        Thu, 21 Feb 2019 09:40:54 -0800 (PST)
+Received: from [10.67.49.97] ([192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id n10sm38573496pfj.14.2019.02.21.09.40.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Feb 2019 09:40:53 -0800 (PST)
+Subject: Re: [RFC PATCH net-next v3 15/21] ethtool: provide link settings and
+ link modes in GET_SETTINGS request
+To:     Michal Kubecek <mkubecek@suse.cz>
+Cc:     netdev@vger.kernel.org, David Miller <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jiri Pirko <jiri@resnulli.us>, linux-kernel@vger.kernel.org
+References: <cover.1550513384.git.mkubecek@suse.cz>
+ <00e931c1ecd29bf302a190c7d7a3f2cbd0388542.1550513384.git.mkubecek@suse.cz>
+ <f2f8ccdd-c8bb-7f0a-5df7-dd54359e859e@gmail.com>
+ <20190221101425.GO23151@unicorn.suse.cz>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
+Message-ID: <4397375c-3a61-e098-80a8-126e9cfeb52e@gmail.com>
+Date:   Thu, 21 Feb 2019 09:40:48 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e9222077-1970-4752-72ec-08d698239f07
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2019 17:40:07.8826
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6505
+In-Reply-To: <20190221101425.GO23151@unicorn.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 11:47:16PM +1100, Stephen Rothwell wrote:
-> Hi Jason,
->=20
-> On Wed, 13 Feb 2019 22:09:36 +0000 Jason Gunthorpe <jgg@mellanox.com> wro=
-te:
-> >
-> > I personally think it is not good to put major logic changes in merge
-> > commits, so I would prefer the #2 approach for this case.
->=20
-> These are not difficult merge fixes or logic changes.
+On 2/21/19 2:14 AM, Michal Kubecek wrote:
+> On Wed, Feb 20, 2019 at 07:14:50PM -0800, Florian Fainelli wrote:
+>> On 2/18/2019 10:22 AM, Michal Kubecek wrote:
+>>> +#define ETH_SETTINGS_IM_LINKINFO		0x01
+>>> +#define ETH_SETTINGS_IM_LINKMODES		0x02
+>>> +
+>>> +#define ETH_SETTINGS_IM_ALL			0x03
+>>
+>> You could define ETH_SETTINGS_IM_ALL as:
+>>
+>> #define ETH_SETTING_IM_ALL		\
+>> 		(ETH_SETTINGS_IM_LINKINFO |
+>> 		 ETH_SETTINGS_IM_LINMODES)
+>>
+>> that would scale better IMHO, especially given that you have to keep
+>> bumping that mask with new bits in subsequent patches.
+> 
+> I'm considering going even further and using something similar to what
+> is used for NETIF_F_* constants so that the *_ALL value would be
+> calculated automatically. But I'm not sure if it's not too fancy for
+> a uapi header file.
 
-That comment was directed at Matt's correct suggestion to use
-alloc_cyclic, this same suggestion applies to this conflict as well.
+Adding new netdev features still requires defining two constants: one in
+the enumeration, and one that resolves the bit to bitmask constant, so
+this would amount to the same possible mistakes/errors being made here
+by changing two lines.
 
-The mechanical change of the args is not so bad for a merge commit.
+> 
+>>> +	if (tb[ETHA_SETTINGS_INFOMASK])
+>>> +		req_info->req_mask = nla_get_u32(tb[ETHA_SETTINGS_INFOMASK]);
+>>> +	if (tb[ETHA_SETTINGS_COMPACT])
+>>> +		req_info->compact = true;
+>>> +	if (req_info->req_mask == 0)
+>>> +		req_info->req_mask = ETH_SETTINGS_IM_ALL;
+>>
+>> What if userland is newer than the kernel and specifies a req_mask with
+>> bits set that you don't support? Should not you always do an &
+>> ETH_SETTINGS_IM_ALL here?
+> 
+> In that case only known bits would be handled and the check at the end
+> of prepare_info() would add a warning to extack that part of the
+> information couldn't be provided (same as if some of the recognized
+> parts didn't have necessary ethtool_ops handlers or if they failed).
 
-> > SFR's tree is just a reference. Who ever takes care to resolve these
-> > conflicts has to manually do the fixing up. If you do send your tree
-> > early I will fix it up as part of prepping the RDMA tree PR. Otherwise
-> > you will have to fix it.
->=20
-> Neither of you need to fix it ...
-
-Not quite, I always re-do and verify all your merge resolutions and
-send them to Linus as both a raw diff and as an actual merge commit
-for him to reference. This way these things are checked in multiple
-ways.
-
-It is difficult to run this flow if we don't have an agreed order of
-trees, as producing the resolutions for an unmerged tree is not so
-straight forward.
-
-Jason
+I guess that is fair, I was just wondering if it made sense for the
+kernel to report that there is one particular bitmask of settings that
+it does not support at all and report that through netlink extended ack,
+as opposed to silently not processing the bits it does not know.
+-- 
+Florian
