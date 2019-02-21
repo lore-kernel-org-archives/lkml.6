@@ -3,106 +3,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3323C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C398C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:52:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8936C2148D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:52:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EADA021738
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:52:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550742762;
-	bh=ysQ9j7txDBJHvSpEs1cDZNc7CMsex9K2+XyKuc0KYC8=;
+	s=default; t=1550742776;
+	bh=QrYZrdDCeXmj9tMrX0loJyXbEtoCT+CVY4/YFVrMSX0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=TIn2Evoc4qVefwoRdT32M4VoksH0CsQJ85jPabK9yQZqstc8n1q6HFU419JtUXpve
-	 kgP7HHRo5udipKx2bl2+o+lPO69MMbyez/yLTFwqiueboZaoidJdiDVlp50hAduOPp
-	 x6a7SIBOyJn67ZHmh1t09+whVhxEhwJdqcydZgoM=
+	b=mXRkn800kV6StC/Sg2pLmrlc/R7erjVM56J85C92GhznIxvDWXw2Wc2ieLAbFt7Ap
+	 xwdHqJPAYar10mVWdIdyJciYt/cijLf574TQ1EI3PFm+nigXPrBCfWvS/7aPckakbA
+	 ChYEHkpS2gJIu3MylHT7cLQUOIopNy9gdRGHmJ1M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727851AbfBUJwl (ORCPT
+        id S1727879AbfBUJwy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 04:52:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51824 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 04:52:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725823AbfBUJwl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 04:52:41 -0500
+        id S1725823AbfBUJwx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 04:52:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A41E720880;
-        Thu, 21 Feb 2019 09:52:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA9BF214AF;
+        Thu, 21 Feb 2019 09:52:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550742760;
-        bh=ysQ9j7txDBJHvSpEs1cDZNc7CMsex9K2+XyKuc0KYC8=;
+        s=default; t=1550742773;
+        bh=QrYZrdDCeXmj9tMrX0loJyXbEtoCT+CVY4/YFVrMSX0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fDoQdl6nM5Xnie5ZdveVb3iujlPflv85A8LTVF9wU6AXkmAoV0jLm0MW7JZEL6Jxf
-         k6grTcbo7IsDhi1dC6ly9h03cgz7ayaPop2SD/qB0Ze/0vCpE2ZYp4kYwJS+TGSByb
-         v3Hy8enbR3setwyQpyPHHhZqQf4wtnimtGAlowPI=
-Date:   Thu, 21 Feb 2019 10:52:36 +0100
+        b=KjIyFr21DHmm1RJSg8zwiFfT3XvcWnhlxwWyhmNDL0jFc1l9jFxqnIwlVUibtRPyc
+         OXWlG3VQGJISV84XATNigAFeq4eVZAB904X0e7NhOnVcDe+qFBc32UZKb+NxA646rn
+         AabAFl/tgq1DTWye0qBGVO8c8DwI3J/P8uA/9/bo=
+Date:   Thu, 21 Feb 2019 10:52:50 +0100
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     Nikolaus Voss <nv@vosn.de>
 Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
         Guenter Roeck <linux@roeck-us.net>, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2] usb: typec: tps6598x: handle block writes separately
+Subject: Re: [PATCHv3] usb: typec: tps6598x: handle block writes separately
  with plain-I2C adapters
-Message-ID: <20190221095236.GA26960@kroah.com>
-References: <20180425142209.30745-1-heikki.krogerus@linux.intel.com>
- <20190220110017.BFA344CE86@mail.steuer-voss.de>
- <20190220125731.02E274CFE0@mail.steuer-voss.de>
- <20190220150227.GA17103@kroah.com>
- <alpine.DEB.2.20.1902201618090.8597@fox.voss.local>
- <20190220162214.GA2017@kroah.com>
- <alpine.DEB.2.20.1902210915480.18662@fox.voss.local>
+Message-ID: <20190221095250.GB26960@kroah.com>
+References: <20190220110017.BFA344CE86@mail.steuer-voss.de>
+ <20190220151138.12332-1-nv@vosn.de>
+ <20190221090850.GE5054@kuha.fi.intel.com>
+ <alpine.DEB.2.20.1902211040001.19936@fox.voss.local>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1902210915480.18662@fox.voss.local>
+In-Reply-To: <alpine.DEB.2.20.1902211040001.19936@fox.voss.local>
 User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 09:37:33AM +0100, Nikolaus Voss wrote:
-> Hi Greg,
-> 
-> On Wed, 20 Feb 2019, Greg Kroah-Hartman wrote:
-> > On Wed, Feb 20, 2019 at 04:22:00PM +0100, Nikolaus Voss wrote:
-> > > > > v2: fix tps6598x_exec_cmd also
-> > > > > ---
-> > > > >  drivers/usb/typec/tps6598x.c | 26 ++++++++++++++++++++------
-> > > > >  1 file changed, 20 insertions(+), 6 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/usb/typec/tps6598x.c b/drivers/usb/typec/tps6598x.c
-> > > > > index c84c8c189e90..c54b73fb2a2f 100644
-> > > > > --- a/drivers/usb/typec/tps6598x.c
-> > > > > +++ b/drivers/usb/typec/tps6598x.c
-> > > > > @@ -110,6 +110,20 @@ tps6598x_block_read(struct tps6598x *tps, u8 reg, void *val, size_t len)
-> > > > >  	return 0;
-> > > > >  }
-> > > > > 
-> > > > > +static int tps6598x_block_write(struct tps6598x *tps, u8 reg,
-> > > > > +				void *val, size_t len)
-> > > > > +{
-> > > > > +	u8 data[len + 1];
-> > > > 
-> > > > I thought the build system now warned when you did this :(
+On Thu, Feb 21, 2019 at 10:42:07AM +0100, Nikolaus Voss wrote:
+> On Thu, 21 Feb 2019, Heikki Krogerus wrote:
+> > On Wed, Feb 20, 2019 at 04:11:38PM +0100, Nikolaus Voss wrote:
+> > > From: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
 > > > 
-> > > I must admit I'm developing on 4.19 stable series, so no warnings...
+> > > Commit 1a2f474d328f handles block _reads_ separately with plain-I2C
+> > > adapters, but the problem described with regmap-i2c not handling
+> > > SMBus block transfers (i.e. read and writes) correctly also exists
+> > > with writes.
+> > > 
+> > > As workaround, this patch adds a block write function the same way
+> > > 1a2f474d328f adds a block read function.
+> > > 
+> > > Fixes: 1a2f474d328f ("usb: typec: tps6598x: handle block reads separately with plain-I2C adapters")
+> > > Fixes: 0a4c005bd171 ("usb: typec: driver for TI TPS6598x USB Power Delivery controllers")
+> > > Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
 > > 
-> > Ick, no, you are 6 months behind where the rest of us are :(
-> > 
-> > Always, at the very least, work off of Linus's tree.  For best results,
-> > work off of linux-next.
+> > Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 > 
-> we are a medical device manufacturer and our prototypes run stable kernels
-> because our main development goal is the patient therapy.
+> Heikki,
+> 
+> shall I respin the patch with tags?
 
-That's great, and fine, but testing on newer kernels is always a good
-idea, that way you are not over a year behind when you have to move to
-the next LTS release :)
-
-thanks,
+I can add it, thanks.
 
 greg k-h
