@@ -2,129 +2,97 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C191C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA83C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:21:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E96D2089F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:18:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7ECD2089F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:21:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="o9df63Dz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbfBUBSH (ORCPT
+        id S1726687AbfBUBVo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 20:18:07 -0500
-Received: from mga14.intel.com ([192.55.52.115]:44834 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725875AbfBUBSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 20:18:05 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 17:18:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,393,1544515200"; 
-   d="scan'208";a="126016849"
-Received: from aubrey-skl.sh.intel.com ([10.239.53.19])
-  by fmsmga008.fm.intel.com with ESMTP; 20 Feb 2019 17:18:03 -0800
-From:   Aubrey Li <aubrey.li@linux.intel.com>
-To:     tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org,
-        hpa@zytor.com
-Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
-        dave.hansen@intel.com, arjan@linux.intel.com, aubrey.li@intel.com,
-        linux-kernel@vger.kernel.org, Aubrey Li <aubrey.li@linux.intel.com>
-Subject: [PATCH v12 3/3] Documentation/filesystems/proc.txt: add AVX512_elapsed_ms
-Date:   Thu, 21 Feb 2019 09:17:41 +0800
-Message-Id: <20190221011741.97070-3-aubrey.li@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190221011741.97070-1-aubrey.li@linux.intel.com>
-References: <20190221011741.97070-1-aubrey.li@linux.intel.com>
+        Wed, 20 Feb 2019 20:21:44 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:35670 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726137AbfBUBVo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 20:21:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=aBFE7ZKpQNK/17tRCfomJ7fWvfu19kP1UHh0wcJf+fk=; b=o9df63DzDPiywefxzHo6LwijR
+        tj80+KR5pbDLt/uwI03EJ48N/Vp4hWCeWBtYezaMrHsg03FEw9YiERB6naPIxkTFgdkuFM7xB8koq
+        isJb0tkcc4b1uKS3+d2QABT42yjIb9e65cx28VMbNCCz2arxHQltQKXovkDxYiW0nX4+VTTuT/p2l
+        jrRMFJ0qbZLyV91mAe+JCUYi4JwC6CHc+7xdb9euOGNNt/dkM432Dsk8VFfHIvp2poRRj43NOqjkC
+        8CtxlpNUeIqndz3jrUwYWMKauJlG/Cg3VGtjXE8wSrwHAxivdh+egiS+KB+GN261ECHylI/yoCQu2
+        4hM8XJE3Q==;
+Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gwd3M-0000DR-KT; Thu, 21 Feb 2019 01:21:32 +0000
+Date:   Wed, 20 Feb 2019 17:21:30 -0800
+From:   Darren Hart <dvhart@infradead.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Lubomir Rintel <lkundrak@v3.sk>,
+        Andy Shevchenko <andy@infradead.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Mark Rutland <mark.rutland@arm.com>,
+        platform-driver-x86@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v5 01/10] dt-bindings: olpc,xo1.75-ec: Add OLPC XO-1.75
+ EC bindings
+Message-ID: <20190221012130.GB5838@wrath>
+References: <20190110175845.1203986-1-lkundrak@v3.sk>
+ <20190110175845.1203986-2-lkundrak@v3.sk>
+ <20190111143635.GA21484@bogus>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190111143635.GA21484@bogus>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added AVX512_elapsed_ms in /proc/<pid>/status. Report it
-in Documentation/filesystems/proc.txt
+On Fri, Jan 11, 2019 at 08:36:35AM -0600, Rob Herring wrote:
+> On Thu, 10 Jan 2019 18:58:36 +0100, Lubomir Rintel wrote:
+> > The OLPC XO-1.75 Embedded Controller is a SPI master that uses extra
+> > signals for handshaking. It needs to know when is the slave (Linux)
+> > side's TX FIFO ready for transfer (the ready-gpio signal on the SPI
+> > controller node) and when does it wish to respond with a command (the
+> > cmd-gpio property).
+> > 
+> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > Acked-by: Pavel Machek <pavel@ucw.cz>
+> > 
+> > ---
+> > Changes since v1:
+> > - s/cmd-gpio/cmd-gpios/
+> > - s/ready-gpio/ready-gpios/ in the documentation paragraph
+> > - Remove status = "okay" from the example
+> > 
+> >  .../bindings/misc/olpc,xo1.75-ec.txt          | 23 +++++++++++++++++++
+> >  1 file changed, 23 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/misc/olpc,xo1.75-ec.txt
+> > 
+> 
+> Please add Acked-by/Reviewed-by tags when posting new versions. However,
+> there's no need to repost patches *only* to add the tags. The upstream
+> maintainer will do that for acks received on the version they apply.
+> 
+> If a tag was not added on purpose, please state why and what changed.
 
-Signed-off-by: Aubrey Li <aubrey.li@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
----
- Documentation/filesystems/proc.txt | 28 +++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+Rob, I saw you ack this patch in an earlier version. Based on your comment here,
+is that ack still valid?
 
-diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-index 66cad5c86171..425f2f09c9aa 100644
---- a/Documentation/filesystems/proc.txt
-+++ b/Documentation/filesystems/proc.txt
-@@ -45,6 +45,7 @@ Table of Contents
-   3.9   /proc/<pid>/map_files - Information about memory mapped files
-   3.10  /proc/<pid>/timerslack_ns - Task timerslack value
-   3.11	/proc/<pid>/patch_state - Livepatch patch operation state
-+  3.12	/proc/<pid>/AVX512_elapsed_ms - time elapsed since last AVX512 use
- 
-   4	Configuring procfs
-   4.1	Mount options
-@@ -207,6 +208,7 @@ read the file /proc/PID/status:
-   Speculation_Store_Bypass:       thread vulnerable
-   voluntary_ctxt_switches:        0
-   nonvoluntary_ctxt_switches:     1
-+  AVX512_elapsed_ms:	8
- 
- This shows you nearly the same information you would get if you viewed it with
- the ps  command.  In  fact,  ps  uses  the  proc  file  system  to  obtain its
-@@ -224,7 +226,7 @@ asynchronous manner and the value may not be very precise. To see a precise
- snapshot of a moment, you can see /proc/<pid>/smaps file and scan page table.
- It's slow but very precise.
- 
--Table 1-2: Contents of the status files (as of 4.19)
-+Table 1-2: Contents of the status files (as of 5.1)
- ..............................................................................
-  Field                       Content
-  Name                        filename of the executable
-@@ -289,6 +291,7 @@ Table 1-2: Contents of the status files (as of 4.19)
-  Mems_allowed_list           Same as previous, but in "list format"
-  voluntary_ctxt_switches     number of voluntary context switches
-  nonvoluntary_ctxt_switches  number of non voluntary context switches
-+ AVX512_elapsed_ms           time elapsed since last AVX512 use in millisecond
- ..............................................................................
- 
- Table 1-3: Contents of the statm files (as of 2.6.8-rc3)
-@@ -1948,6 +1951,29 @@ patched.  If the patch is being enabled, then the task has already been
- patched.  If the patch is being disabled, then the task hasn't been
- unpatched yet.
- 
-+3.12	/proc/<pid>/AVX512_elapsed_ms - time elapsed since last AVX512 use
-+--------------------------------------------------------------------------
-+If AVX512 is supported on the machine, this file displays time elapsed since
-+last AVX512 usage of the task in millisecond.
-+
-+The per-task AVX512 usage tracking mechanism is added during context switch.
-+When the task is scheduled out, the AVX512 timestamp of the task is tagged
-+by jiffies if AVX512 usage is detected.
-+
-+When this interface is queried, AVX512_elapsed_ms is calculated as follows:
-+
-+	delta = (long)(jiffies_now - AVX512_timestamp);
-+	AVX512_elpased_ms = jiffies_to_msecs(delta);
-+
-+Because this tracking mechanism depends on context switch, the number of
-+AVX512_elapsed_ms could be inaccurate if the AVX512 using task runs alone on
-+a CPU and not scheduled out for a long time. An extreme experiment shows a
-+task is spinning on the AVX512 ops on an isolated CPU, but the longest elapsed
-+time is close to 4 seconds(HZ = 250).
-+
-+So 5s or even longer is an appropriate threshold for the job scheduler to poll
-+and decide if the task should be classifed as an AVX512 task and migrated
-+away from the core on which a Non-AVX512 task is running.
- 
- ------------------------------------------------------------------------------
- Configuring procfs
 -- 
-2.17.1
-
+Darren Hart
+VMware Open Source Technology Center
