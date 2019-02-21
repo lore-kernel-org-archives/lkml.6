@@ -2,29 +2,28 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF49C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4FF2C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:50:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 375DB20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:50:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DE6820855
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:50:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbfBULuf (ORCPT
+        id S1727625AbfBULul (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 06:50:35 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:45560 "EHLO
+        Thu, 21 Feb 2019 06:50:41 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:45593 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725774AbfBULuf (ORCPT
+        with ESMTP id S1725891AbfBULui (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 06:50:35 -0500
+        Thu, 21 Feb 2019 06:50:38 -0500
 Received: from localhost ([127.0.0.1] helo=flow.W.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1gwms0-0001RC-HY; Thu, 21 Feb 2019 12:50:28 +0100
+        id 1gwms4-0001RC-Sb; Thu, 21 Feb 2019 12:50:33 +0100
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -32,148 +31,107 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
         kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
         Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: [PATCH v7] x86: load FPU registers on return to userland
-Date:   Thu, 21 Feb 2019 12:49:58 +0100
-Message-Id: <20190221115020.12385-1-bigeasy@linutronix.de>
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 05/22] x86/fpu: Remove fpu->initialized usage in copy_fpstate_to_sigframe()
+Date:   Thu, 21 Feb 2019 12:50:03 +0100
+Message-Id: <20190221115020.12385-6-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190221115020.12385-1-bigeasy@linutronix.de>
+References: <20190221115020.12385-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a refurbished series originally started by by Rik van Riel. The
-goal is load the FPU registers on return to userland and not on every
-context switch. By this optimisation we can:
-- avoid loading the registers if the task stays in kernel and does
-  not return to userland
-- make kernel_fpu_begin() cheaper: it only saves the registers on the
-  first invocation. The second invocation does not need save them again.
+With lazy-FPU support the (now named variable) ->initialized was set to true if
+the CPU's FPU registers were holding the a valid state of the FPU registers for
+the active process. If it was set to false then the FPU state was saved in
+fpu->state and the FPU was deactivated.
+With lazy-FPU gone, ->initialized is always true for user threads and kernel
+threads never this function so ->initialized is always true in
+copy_fpstate_to_sigframe().
+The using_compacted_format() check is also a leftover from the lazy-FPU time.
+In the `->initialized == false' case copy_to_user() would copy the compacted
+buffer while userland would expect the non-compacted format instead. So in
+order to save the FPU state in the non-compacted form it issues the xsave
+opcode to save the *current* FPU state.
+The FPU is not enabled so the attempt raises the FPU trap, the trap restores
+the FPU content and re-enables the FPU and the xsave opcode is invoked again and
+succeeds. *This* does not longer work since commit
 
-To access the FPU registers in kernel we need:
-- disable preemption to avoid that the scheduler switches tasks. By
-  doing so it would set TIF_NEED_FPU_LOAD and the FPU registers would be
-  not valid.
-- disable BH because the softirq might use kernel_fpu_begin() and then
-  set TIF_NEED_FPU_LOAD instead loading the FPU registers on completion.
+  bef8b6da9522 ("x86/fpu: Handle #NM without FPU emulation as an error")
 
-v6…v7:
-Rebased on top of v5.0-rc7 and addressed Borislav Petkov's review.
+Remove check for ->initialized because it is always true and remove the
+false condition. Update the comment to reflect that the "state is always live".
 
-v5…v6:
-Rebased on top of v5.0-rc1. Integrated a few fixes which I noticed while
-looking over the patches, dropped the first few patches which were
-already applied.
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ arch/x86/kernel/fpu/signal.c | 35 ++++++++---------------------------
+ 1 file changed, 8 insertions(+), 27 deletions(-)
 
-v4…v5:
-Rebased on top of a fix, noticed a problem with XSAVES and then redid
-the restore on sig return (patch #26 to #28).
-
-I don't like very much the sig save+restore thing that we are doing. It
-has been always like that. I *think* that this is just because we have
-nowhere to stash the FPU state while we are handling the signal. We
-could add another fpu->state for the signal handler and avoid the thing.
-Debian code-search revealed that `criu' is using it (and I didn't
-figure out why). Nothing else (that is packaged in Debian). Maybe we
-could get rid of this and if `criu' would then use a dedicated interface
-for its needs rather the signal interface that happen to do what it
-wants :)
-
-v3…v4:
-It has been suggested to remove the `initialized' member of the struct
-fpu because it should not required be needed with lazy-FPU-restore and
-would make the review easier. This is the first part of the series, the
-second is basically the rebase of the v3 queue. As a result, the
-diffstat became negative (which wasn't the case in previous version) :)
-I tried to incorporate all the review comments that came up, some of
-them were "outdated" after the removal of the `initialized' member. I'm
-sorry should I missed any.
-
-v1…v3:
-v2 was never posted. I followed the idea to completely decouple PKRU
-from xstate. This didn't quite work and made a few things complicated. 
-One obvious required fixup is copy_fpstate_to_sigframe() where the PKRU
-state needs to be fiddled into xstate. This required another
-xfeatures_mask so that the sanity checks were performed and
-xstate_offsets would be computed. Additionally ptrace also reads/sets
-xstate in order to get/set the register and PKRU is one of them. So this
-would need some fiddle, too.
-In v3 I dropped that decouple idea. I also learned that the wrpkru
-instruction is not privileged and so caching it in kernel does not work.
-Instead I keep PKRU in xstate area and load it at context switch time
-while the remaining registers are deferred (until return to userland).
-The offset of PKRU within xstate is enumerated at boot time so why not
-use it.
-
-The following changes since commit a3b22b9f11d9fbc48b0291ea92259a5a810e9438:
-
-  Linux 5.0-rc7 (2019-02-17 18:46:40 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/bigeasy/staging.git x86_fpu_rtu_v7
-
-for you to fetch changes up to c0bd7b2b7b694c71f7b0101c338c0102aef8a91f:
-
-  x86/fpu: Defer FPU state load until return to userspace (2019-02-21 12:29:00 +0100)
-
-----------------------------------------------------------------
-Rik van Riel (5):
-      x86/fpu: Add (__)make_fpregs_active helpers
-      x86/fpu: Eager switch PKRU state
-      x86/fpu: Always store the registers in copy_fpstate_to_sigframe()
-      x86/fpu: Prepare copy_fpstate_to_sigframe() for TIF_NEED_FPU_LOAD
-      x86/fpu: Defer FPU state load until return to userspace
-
-Sebastian Andrzej Siewior (17):
-      x86/fpu: Remove fpu->initialized usage in __fpu__restore_sig()
-      x86/fpu: Remove fpu__restore()
-      x86/fpu: Remove preempt_disable() in fpu__clear()
-      x86/fpu: Always init the `state' in fpu__clear()
-      x86/fpu: Remove fpu->initialized usage in copy_fpstate_to_sigframe()
-      x86/fpu: Don't save fxregs for ia32 frames in copy_fpstate_to_sigframe()
-      x86/fpu: Remove fpu->initialized
-      x86/fpu: Remove user_fpu_begin()
-      x86/fpu: Make __raw_xsave_addr() use feature number instead of mask
-      x86/fpu: Make get_xsave_field_ptr() and get_xsave_addr() use feature number instead of mask
-      x86/fpu: Only write PKRU if it is different from current
-      x86/pkeys: Don't check if PKRU is zero before writting it
-      x86/entry: Add TIF_NEED_FPU_LOAD
-      x86/fpu: Update xstate's PKRU value on write_pkru()
-      x86/fpu: Inline copy_user_to_fpregs_zeroing()
-      x86/fpu: Let __fpu__restore_sig() restore the !32bit+fxsr frame from kernel memory
-      x86/fpu: Merge the two code paths in __fpu__restore_sig()
-
- Documentation/preempt-locking.txt    |   1 -
- arch/x86/entry/common.c              |   8 ++
- arch/x86/ia32/ia32_signal.c          |  17 ++-
- arch/x86/include/asm/fpu/api.h       |  31 ++++++
- arch/x86/include/asm/fpu/internal.h  | 163 +++++++++++++----------------
- arch/x86/include/asm/fpu/signal.h    |   2 +-
- arch/x86/include/asm/fpu/types.h     |   9 --
- arch/x86/include/asm/fpu/xstate.h    |   5 +-
- arch/x86/include/asm/pgtable.h       |  20 +++-
- arch/x86/include/asm/special_insns.h |   6 ++
- arch/x86/include/asm/thread_info.h   |   2 +
- arch/x86/include/asm/trace/fpu.h     |   8 +-
- arch/x86/kernel/fpu/core.c           | 194 +++++++++++++++++------------------
- arch/x86/kernel/fpu/init.c           |   2 -
- arch/x86/kernel/fpu/regset.c         |  24 ++---
- arch/x86/kernel/fpu/signal.c         | 191 +++++++++++++++-------------------
- arch/x86/kernel/fpu/xstate.c         |  42 ++++----
- arch/x86/kernel/process.c            |   2 +-
- arch/x86/kernel/process_32.c         |  11 +-
- arch/x86/kernel/process_64.c         |  11 +-
- arch/x86/kernel/signal.c             |  17 ++-
- arch/x86/kernel/traps.c              |   2 +-
- arch/x86/kvm/x86.c                   |  48 +++++----
- arch/x86/math-emu/fpu_entry.c        |   3 -
- arch/x86/mm/mpx.c                    |   6 +-
- arch/x86/mm/pkeys.c                  |  14 +--
- 26 files changed, 408 insertions(+), 431 deletions(-)
-
-Sebastian
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index a874931edf6a9..de83d0ed9e14e 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -144,9 +144,8 @@ static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf)
+  *	buf == buf_fx for 64-bit frames and 32-bit fsave frame.
+  *	buf != buf_fx for 32-bit frames with fxstate.
+  *
+- * If the fpu, extended register state is live, save the state directly
+- * to the user frame pointed by the aligned pointer 'buf_fx'. Otherwise,
+- * copy the thread's fpu state to the user frame starting at 'buf_fx'.
++ * Save the state directly to the user frame pointed by the aligned pointer
++ * 'buf_fx'.
+  *
+  * If this is a 32-bit frame with fxstate, put a fsave header before
+  * the aligned state at 'buf_fx'.
+@@ -157,7 +156,6 @@ static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf)
+ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
+ {
+ 	struct fpu *fpu = &current->thread.fpu;
+-	struct xregs_state *xsave = &fpu->state.xsave;
+ 	struct task_struct *tsk = current;
+ 	int ia32_fxstate = (buf != buf_fx);
+ 
+@@ -172,29 +170,12 @@ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
+ 			sizeof(struct user_i387_ia32_struct), NULL,
+ 			(struct _fpstate_32 __user *) buf) ? -1 : 1;
+ 
+-	if (fpu->initialized || using_compacted_format()) {
+-		/* Save the live register state to the user directly. */
+-		if (copy_fpregs_to_sigframe(buf_fx))
+-			return -1;
+-		/* Update the thread's fxstate to save the fsave header. */
+-		if (ia32_fxstate)
+-			copy_fxregs_to_kernel(fpu);
+-	} else {
+-		/*
+-		 * It is a *bug* if kernel uses compacted-format for xsave
+-		 * area and we copy it out directly to a signal frame. It
+-		 * should have been handled above by saving the registers
+-		 * directly.
+-		 */
+-		if (boot_cpu_has(X86_FEATURE_XSAVES)) {
+-			WARN_ONCE(1, "x86/fpu: saving compacted-format xsave area to a signal frame!\n");
+-			return -1;
+-		}
+-
+-		fpstate_sanitize_xstate(fpu);
+-		if (__copy_to_user(buf_fx, xsave, fpu_user_xstate_size))
+-			return -1;
+-	}
++	/* Save the live register state to the user directly. */
++	if (copy_fpregs_to_sigframe(buf_fx))
++		return -1;
++	/* Update the thread's fxstate to save the fsave header. */
++	if (ia32_fxstate)
++		copy_fxregs_to_kernel(fpu);
+ 
+ 	/* Save the fsave header for the 32-bit frames. */
+ 	if ((ia32_fxstate || !use_fxsr()) && save_fsave_header(tsk, buf))
+-- 
+2.20.1
 
