@@ -2,115 +2,93 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52FDAC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:06:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25CF2C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 292622147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:06:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E83582147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:06:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=resnulli-us.20150623.gappssmtp.com header.i=@resnulli-us.20150623.gappssmtp.com header.b="c3lIDbUa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbfBUKGI (ORCPT
+        id S1727505AbfBUKGW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 05:06:08 -0500
-Received: from relay.sw.ru ([185.231.240.75]:49990 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725891AbfBUKGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 05:06:07 -0500
-Received: from [172.16.25.12]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <aryabinin@virtuozzo.com>)
-        id 1gwlEu-0007TL-Ng; Thu, 21 Feb 2019 13:06:00 +0300
-Subject: Re: [PATCH] kasan: turn off asan-stack for clang-8 and earlier
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Andrey Konovalov <andreyknvl@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Mark Brown <broonie@kernel.org>, Qian Cai <cai@lca.pw>,
-        Alexander Potapenko <glider@google.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Christoph Lameter <cl@linux.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>
-References: <20190219214940.391081-1-arnd@arndb.de>
- <CAAeHK+xSpsu0tNmeq0wKXfT=0HuORnvU+XzLswDzhbtfZVa4Hw@mail.gmail.com>
- <CAK8P3a1NfHohd1xT7iHK85L2PGnD95RJvwFi-2cWrFpipQzqwg@mail.gmail.com>
- <b109ad0d-6995-8ca2-5426-7e2627d2032c@virtuozzo.com>
- <CAK8P3a0tg1WRLK=fs9S+X4TPB7sR55ZsjMbBVX07AtAfguXCsw@mail.gmail.com>
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-Message-ID: <d50cf232-f38e-4060-2742-27ba07e2ae9c@virtuozzo.com>
-Date:   Thu, 21 Feb 2019 13:06:20 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Thu, 21 Feb 2019 05:06:22 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40193 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725978AbfBUKGV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 05:06:21 -0500
+Received: by mail-wr1-f67.google.com with SMTP id q1so29253370wrp.7
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 02:06:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=w3slMKyScVk3c/M1GuHIqCx1zuG1ZZC5YGoJKU1LGyg=;
+        b=c3lIDbUaNjNLMyKHG9p/+qRfL45neoeyY+a3GQMuBg+G2+iGr2jvRHpQ/C4XiiVTt0
+         PHmLhyDfF63qME6vUgspNt7diDY8DnHztkCKe1BQAJeexxyQZseSmz1ZgdtO8Y/yy8U9
+         8OONkTl5FrtpyVSfe3CdlZxTT+xeLLVAfl0XeVCKr3i6FNevbGGx/nRb3/JdHXNwq1DV
+         xuTnU1dElwmE14bsgQO5NrpJnNGtg+0NgVgxaQtLq6FmUizkppyOdaW75LGrY+QRMV7t
+         f0ouAQV/9rGQY9z/Cp3mAkt4RzFmTcPvyR7SuJLggCZGP79JmT0Nte92ixHMNsPmGWjR
+         +b9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=w3slMKyScVk3c/M1GuHIqCx1zuG1ZZC5YGoJKU1LGyg=;
+        b=LnrCNbvYmn9P//vjkW5WOQS8zlZhKQnyIHAQMRGK+IzZtgSsIG9DyptkRqgihbH/0B
+         RmJsRcn/vmWdGVWOFN319/2oQX1xYMEYE9jC47zNePY2xqx9AUTfzKC/6SjGnPQNvOrE
+         T9/oAVMZXukr0CBfwPIcBGYBsaabyXVyYw5IntXLczFIVJjLAleaTnNQonj54xZ0bEcP
+         H0Gw7Vnjj7m/1F8uIdCoyIKIDhaY1O2rvVKkxlWOYn6VtoAAV/9VezxZYbjFI3x3/HDZ
+         5VUKlN5Ej1p8g/f7WXIUGgDVKnTLLgoxnPVJbZYxcraU2Lbhd2uIgNLbkn+63aAjFKZg
+         +DeQ==
+X-Gm-Message-State: AHQUAuausTUVMQkfVqUXQ7++vl1eBJENxLb8yUnEV4NpX1nxDYDCSvgi
+        VNS9arFXNOZVDPEffcMe3nMPwA==
+X-Google-Smtp-Source: AHgI3IajtGsGPGLOtN1yyy0k/Fr1gmYcEEbK1JyxjcofV+QNKPUYNTjzqnn/0zNg7X40f0Dwv9WpUg==
+X-Received: by 2002:a5d:6a8e:: with SMTP id s14mr15917104wru.31.1550743579902;
+        Thu, 21 Feb 2019 02:06:19 -0800 (PST)
+Received: from localhost (ip-89-102-139-73.net.upcbroadband.cz. [89.102.139.73])
+        by smtp.gmail.com with ESMTPSA id v4sm9499290wme.6.2019.02.21.02.06.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 21 Feb 2019 02:06:19 -0800 (PST)
+Date:   Thu, 21 Feb 2019 10:56:40 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Ido Schimmel <idosch@mellanox.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        "moderated list:ETHERNET BRIDGE" <bridge@lists.linux-foundation.org>,
+        jiri@mellanox.com, andrew@lunn.ch, vivien.didelot@gmail.com
+Subject: Re: [PATCH net-next v3 1/8] net: switchdev: Add PORT_PRE_BRIDGE_FLAGS
+Message-ID: <20190221095640.GD2312@nanopsycho>
+References: <20190221005826.26317-1-f.fainelli@gmail.com>
+ <20190221005826.26317-2-f.fainelli@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0tg1WRLK=fs9S+X4TPB7sR55ZsjMbBVX07AtAfguXCsw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190221005826.26317-2-f.fainelli@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Thu, Feb 21, 2019 at 01:58:19AM CET, f.fainelli@gmail.com wrote:
+>In preparation for removing switchdev_port_attr_get(), introduce
+>PORT_PRE_BRIDGE_FLAGS which will be called through
+>switchdev_port_attr_set(), in the caller's context (possibly atomic) and
+>which must be checked by the switchdev driver in order to return whether
+>the operation is supported or not.
+>
+>This is entirely analoguous to how the BRIDGE_FLAGS_SUPPORT works,
+>except it goes through a set() instead of get().
+>
+>Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-
-On 2/20/19 8:35 PM, Arnd Bergmann wrote:
-> On Wed, Feb 20, 2019 at 6:00 PM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
->> On 2/20/19 5:51 PM, Arnd Bergmann wrote:
->>> On Wed, Feb 20, 2019 at 3:45 PM Andrey Konovalov <andreyknvl@google.com> wrote:
->>> I would have to some more research, but I expect several hundred
->>> patches before we get to a clean randconfig build with a broken
->>> compiler.
->>
->> Manually maintaining asan-stack parameter for the sake of one broken compiler isn't a great idea either.
->>
->> Couple alternative suggestions:
->>
->> 1) If we can't fix the problem or the cost of fixing is too high, maybe just hide it? Disable -Wframe-larger-then on pre clang-9 compilers.
->>
->> 2) Fallback cflags. The idea is to try to compile every the file with "-mllvm -asan-stack=1 -Wframe-larger-than=2048 -Werror" at first,
->>  and fallback to "-mllvm -asan-stack=0" if failed. So it would be something similar to $(call cc-option, -mllvm -asan-stack=1 -Wframe-larger-than=2048 -Werror, -mllvm -asan-stack=0)
->>  except that "cc-option" tries options only once on some code example while  we need to try options on every file that we actually compile.
->>  Honestly, I'm not sure that it's worthy to hack Kbuild engine for that particular use-case.
-> 
-> My original plan was to put this under CONFIG_KASAN_EXTRA to allow you
-> to still enable it in older compilers, but you just removed that option ;-)
-> 
-> Maybe bringing it back would be a compromise? That way it's hidden from
-> all the build testing bots (because of the !CONFIG_COMPILE_TEST dependency),
-> but anyone who really wants it can still have the option, and set
-> CONFIG_FRAME_WARN
-> to whichever value they like.
-> 
-
-
-I think there is much simpler solution:
-
----
- lib/Kconfig.kasan | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
-index 219cddc913ac..6cd035f06cee 100644
---- a/lib/Kconfig.kasan
-+++ b/lib/Kconfig.kasan
-@@ -105,6 +105,8 @@ endchoice
- 
- config KASAN_STACK
- 	int
-+	range 0 1
-+	prompt "Enable stack instrumentation (unsafe)" if CC_IS_CLANG && (CLANG_VERSION < 90000)
- 	default 0 if CC_IS_CLANG && (CLANG_VERSION < 90000)
- 	default 1
- 	help
--- 
-
-
-AFAIK, randconfig is not able to randomize int config options, so it will be disabled for build robots,
-but users still will be able to enable it.
+Acked-by: Jiri Pirko <jiri@mellanox.com>
