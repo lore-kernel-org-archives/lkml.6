@@ -2,138 +2,130 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2725C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDA5FC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:42:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D74F2086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:42:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB4862086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:42:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550742163;
+	bh=J1u0B5JKC9S8zb47ZMyJJd9N160jdguuqSlS6JAYsPs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=usXPV3WjG6Nl9Yf65eIuvEp4+U1hZglUcDhpEMxonGdx2EbTO4CrR9iYNBD5Vo5GC
+	 4FXJcnbsT9i9znLosk1SiWNfhUjmGk+NNAtdUZrbh3+nQdAJ3hvQWOr60Msld83QdR
+	 DImxJ0NzGKYySbve764QSSKN3Vvv4aMp2bLMEjk4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727875AbfBUJmg (ORCPT
+        id S1727840AbfBUJmc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 04:42:36 -0500
-Received: from smtp.nue.novell.com ([195.135.221.5]:54615 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727812AbfBUJm3 (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Thu, 21 Feb 2019 04:42:29 -0500
-Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Thu, 21 Feb 2019 10:42:27 +0100
-Received: from d104.suse.de (nwb-a10-snat.microfocus.com [10.120.13.202])
-        by emea4-mta.ukb.novell.com with ESMTP (NOT encrypted); Thu, 21 Feb 2019 09:42:17 +0000
-From:   Oscar Salvador <osalvador@suse.de>
-To:     linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org, mhocko@suse.com, david@redhat.com,
-        mike.kravetz@oracle.com, Oscar Salvador <osalvador@suse.de>
-Subject: [RFC PATCH] mm,memory_hotplug: Unlock 1GB-hugetlb on x86_64
-Date:   Thu, 21 Feb 2019 10:42:12 +0100
-Message-Id: <20190221094212.16906-1-osalvador@suse.de>
-X-Mailer: git-send-email 2.13.7
+        Thu, 21 Feb 2019 04:42:32 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40856 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727781AbfBUJmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 04:42:23 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F1E2F308125D;
+        Thu, 21 Feb 2019 09:42:22 +0000 (UTC)
+Received: from krava.brq.redhat.com (unknown [10.43.17.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CC7F060BF4;
+        Thu, 21 Feb 2019 09:42:20 +0000 (UTC)
+From:   Jiri Olsa <jolsa@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: [PATCH 14/17] perf session: Add path to reader object
+Date:   Thu, 21 Feb 2019 10:41:42 +0100
+Message-Id: <20190221094145.9151-15-jolsa@kernel.org>
+In-Reply-To: <20190221094145.9151-1-jolsa@kernel.org>
+References: <20190221094145.9151-1-jolsa@kernel.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 21 Feb 2019 09:42:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On x86_64, 1GB-hugetlb pages could never be offlined due to the fact
-that hugepage_migration_supported() returned false for PUD_SHIFT.
-So whenever we wanted to offline a memblock containing a gigantic
-hugetlb page, we never got beyond has_unmovable_pages() check.
-This changed with [1], where now we also return true for PUD_SHIFT.
+Adding path to reader object, so we can display file
+the processing fails for (string in [] brackets).
 
-After that patch, the check in has_unmovable_pages() and scan_movable_pages()
-returned true, but we still had a final barrier in do_migrate_range():
+  $ perf report --stdio
+  0x5e0 [perf.data/data.3] [0xa200]: failed to process type: -1577027574
 
-if (compound_order(head) > PFN_SECTION_SHIFT) {
-	ret = -EBUSY;
-	break;
-}
-
-This is not really nice, and we do not really need it.
-It is perfectly possible to migrate a gigantic page as long as another node has
-a spare gigantic page for us.
-In alloc_huge_page_nodemask(), we calculate the __real__ number of free pages,
-and if any, we try to dequeue one from another node.
-
-This all works fine when we do have another node with a spare gigantic page,
-but if that is not the case, alloc_huge_page_nodemask() ends up calling
-alloc_migrate_huge_page() which bails out if the wanted page is gigantic.
-That is mainly because finding a 1GB (or even 16GB on powerpc) contiguous
-memory is quite unlikely when the system has been running for a while.
-
-In that situation, we will keep looping forever because scan_movable_pages()
-will give us the same page and we will fail again because there is no node
-where we can dequeue a gigantic page from.
-This is not nice, and I wish we could differentiate a fatal error from a
-transient error in do_migrate_range()->migrate_pages(), but I do not really
-see a way now.
-
-Anyway, I would tend say that this is the administrator's job, to make sure
-that the system can keep up with the memory to be offlined, so that would mean
-that if we want to use gigantic pages, make sure that the other nodes have at
-least enough gigantic pages to keep up in case we need to offline memory.
-
-Just for the sake of completeness, this is one of the tests done:
-
- # echo 1 > /sys/devices/system/node/node1/hugepages/hugepages-1048576kB/nr_hugepages
- # echo 1 > /sys/devices/system/node/node2/hugepages/hugepages-1048576kB/nr_hugepages
-
- # cat /sys/devices/system/node/node1/hugepages/hugepages-1048576kB/nr_hugepages
-   1
- # cat /sys/devices/system/node/node1/hugepages/hugepages-1048576kB/free_hugepages
-   1
-
- # cat /sys/devices/system/node/node2/hugepages/hugepages-1048576kB/nr_hugepages
-   1
- # cat /sys/devices/system/node/node2/hugepages/hugepages-1048576kB/free_hugepages
-   1
-
- (hugetlb1gb is a program that maps 1GB region using MAP_HUGE_1GB)
-
- # numactl -m 1 ./hugetlb1gb
- # cat /sys/devices/system/node/node1/hugepages/hugepages-1048576kB/free_hugepages
-   0
- # cat /sys/devices/system/node/node2/hugepages/hugepages-1048576kB/free_hugepages
-   1
-
- # offline node1 memory
- # cat /sys/devices/system/node/node2/hugepages/hugepages-1048576kB/free_hugepages
-   0
-
-[1] https://lore.kernel.org/patchwork/patch/998796/
-
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
+Link: http://lkml.kernel.org/n/tip-4bjnoy4sln7adqtd3505q29q@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- mm/memory_hotplug.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ tools/perf/util/session.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index d5f7afda67db..04f6695b648c 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1337,8 +1337,7 @@ static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
- 		if (!PageHuge(page))
- 			continue;
- 		head = compound_head(page);
--		if (hugepage_migration_supported(page_hstate(head)) &&
--		    page_huge_active(head))
-+		if (page_huge_active(head))
- 			return pfn;
- 		skip = (1 << compound_order(head)) - (page - head);
- 		pfn += skip - 1;
-@@ -1378,10 +1377,6 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index 1f183bd1a208..c2bc0c58112a 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -1860,6 +1860,7 @@ struct reader {
+ 	u64		 data_size;
+ 	u64		 data_offset;
+ 	reader_cb_t	 process;
++	char		*path;
+ };
  
- 		if (PageHuge(page)) {
- 			struct page *head = compound_head(page);
--			if (compound_order(head) > PFN_SECTION_SHIFT) {
--				ret = -EBUSY;
--				break;
--			}
- 			pfn = page_to_pfn(head) + (1<<compound_order(head)) - 1;
- 			isolate_huge_page(head, &source);
- 			continue;
+ static int
+@@ -1874,6 +1875,8 @@ reader__process_events(struct reader *rd, struct perf_session *session,
+ 	union perf_event *event;
+ 	s64 skip;
+ 
++	pr_debug("reader processing %s\n", rd->path);
++
+ 	page_offset = page_size * (rd->data_offset / page_size);
+ 	file_offset = page_offset;
+ 	head = rd->data_offset - page_offset;
+@@ -1929,8 +1932,8 @@ reader__process_events(struct reader *rd, struct perf_session *session,
+ 
+ 	if (size < sizeof(struct perf_event_header) ||
+ 	    (skip = rd->process(session, event, file_pos)) < 0) {
+-		pr_err("%#" PRIx64 " [%#x]: failed to process type: %d\n",
+-		       file_offset + head, event->header.size,
++		pr_err("%#" PRIx64 " [%s] [%#x]: failed to process type: %d\n",
++		       file_offset + head, rd->path, event->header.size,
+ 		       event->header.type);
+ 		err = -EINVAL;
+ 		goto out;
+@@ -1968,6 +1971,7 @@ static int __perf_session__process_events(struct perf_session *session)
+ 		.data_size	= session->header.data_size,
+ 		.data_offset	= session->header.data_offset,
+ 		.process	= process_simple,
++		.path		= session->data->file.path,
+ 	};
+ 	struct ordered_events *oe = &session->ordered_events;
+ 	struct perf_tool *tool = session->tool;
+@@ -2042,6 +2046,7 @@ static int __perf_session__process_dir_events(struct perf_session *session)
+ 		.data_size	= session->header.data_size,
+ 		.data_offset	= session->header.data_offset,
+ 		.process	= process_simple,
++		.path		= session->data->file.path,
+ 	};
+ 	int i, ret = 0;
+ 	struct ui_progress prog;
+@@ -2068,6 +2073,7 @@ static int __perf_session__process_dir_events(struct perf_session *session)
+ 			.data_size	= file->size,
+ 			.data_offset	= 0,
+ 			.process	= process_index,
++			.path		= file->path,
+ 		};
+ 
+ 		ret = reader__process_events(&rd, session, &prog);
 -- 
-2.13.7
+2.17.2
 
