@@ -2,31 +2,31 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B642BC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B14C10F07
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:22:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E4E02086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:22:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05FC02146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:22:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbfBUBWv (ORCPT
+        id S1726167AbfBUBWy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 20:22:51 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54402 "EHLO mx1.redhat.com"
+        Wed, 20 Feb 2019 20:22:54 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46906 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726137AbfBUBWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 20:22:50 -0500
+        id S1726137AbfBUBWw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 20:22:52 -0500
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8002A81DE9;
-        Thu, 21 Feb 2019 01:22:50 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 349DD307D911;
+        Thu, 21 Feb 2019 01:22:52 +0000 (UTC)
 Received: from localhost.localdomain.com (ovpn-120-249.rdu2.redhat.com [10.10.120.249])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3889360BF2;
-        Thu, 21 Feb 2019 01:22:46 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B468F60BF2;
+        Thu, 21 Feb 2019 01:22:50 +0000 (UTC)
 From:   jglisse@redhat.com
 To:     Paolo Bonzini <pbonzini@redhat.com>,
         =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
@@ -36,14 +36,16 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Andrea Arcangeli <aarcange@redhat.com>,
         Peter Xu <peterx@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v2 0/1]  Restore change_pte optimization
-Date:   Wed, 20 Feb 2019 20:22:26 -0500
-Message-Id: <20190221012227.13236-1-jglisse@redhat.com>
+Subject: [PATCH v2 1/1] kvm/mmu_notifier: re-enable the change_pte() optimization.
+Date:   Wed, 20 Feb 2019 20:22:27 -0500
+Message-Id: <20190221012227.13236-2-jglisse@redhat.com>
+In-Reply-To: <20190221012227.13236-1-jglisse@redhat.com>
+References: <20190221012227.13236-1-jglisse@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 21 Feb 2019 01:22:50 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 21 Feb 2019 01:22:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -51,85 +53,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jérôme Glisse <jglisse@redhat.com>
 
-This patch is on top of my patchset to add context information to
-mmu notifier [1] you can find a branch with everything [2]. It has
-been tested with qemu/KVM building kernel within the guest and also
-running a benchmark which the result are given below.
+Since changes to mmu notifier the change_pte() optimization was lost
+for kvm. This re-enable it, when ever a pte is going from read and
+write to read only with same pfn, or from read only to read and write
+with different pfn.
 
-The change_pte() callback is impaired by the range invalidation call-
-back within KVM as the range invalidation callback as those do fully
-invalidate the secondary mmu. This means that there is a window between
-the range_start callback and the change_pte callback where the secondary
-mmu for the address is empty. Guest can fault on that address during
-that window.
+It is safe to update the secondary MMUs, because the primary MMU
+pte invalidate must have already happened with a ptep_clear_flush()
+before set_pte_at_notify() is invoked (and thus before change_pte()
+callback).
 
-That window can last for some times if the kernel code which is
-doing the invalidation is interrupted or if they are other mmu
-listener for the process that might sleep within their range_start
-callback.
-
-With this patch KVM will ignore the range_start and range_end call-
-back and will rely solely on the change_pte callback to update the
-secondary mmu. This means that the secondary mmu never have an empty
-entry for the address between range_start and range_end and hence
-the guest will not have a chance to fault.
-
-This optimization is not valid for all the mmu notifier cases and
-thanks to the patchset that add context informations to the mmu
-notifier [1] we can now identify within KVM when it is safe to rely
-on this optimization.
-
-Roughly it is safe when:
-    - going from read only to read and write (same or different pfn)
-    - going from read and write to read only same pfn
-    - going from read only to read only different pfn
-
-Longer explaination in [1] and [3].
-
-Running ksm02 from ltp gives the following results:
-
-before  mean  {real: 675.460632, user: 857.771423, sys: 215.929657, npages: 4773.066895}
-before  stdev {real:  37.035435, user:   4.395942, sys:   3.976172, npages:  675.352783}
-after   mean  {real: 672.515503, user: 855.817322, sys: 200.902710, npages: 4899.000000}
-after   stdev {real:  37.340954, user:   4.051633, sys:   3.894153, npages:  742.413452}
-
-Roughly 7%-8% less time spent in the kernel. So we are saving few
-cycles (this is with KSM enabled on the host and ksm sleep set to
-0). Dunno how this translate to real workload.
-
-
-Note that with the context information further optimization are now
-possible within KVM. For instance you can find out if a range is
-updated to read only (ie no pfn change just protection change) and
-update the secondary mmu accordingly.
-
-You can also identify munmap()/mremap() syscall and only free up the
-resources you have allocated for the range (like freeing up secondary
-page table for the range or data structure) when it is an munmap or
-a mremap. Today my understanding is that kvm_unmap_hva_range() will
-free up resources always assuming it is an munmap of some sort. So
-for mundane invalidation (like migration, reclaim, mprotect, fork,
-...) KVM is freeing up potential mega bytes of structure that it will
-have to re-allocate shortly there after (see [4] for WIP example).
-
-Cheers,
-Jérôme
-
-[1] https://lkml.org/lkml/2019/2/19/752
-[2] https://cgit.freedesktop.org/~glisse/linux/log/?h=mmu-notifier-v05
-[3] https://lkml.org/lkml/2019/2/19/754
-[4] https://cgit.freedesktop.org/~glisse/linux/log/?h=wip-kvm-mmu-notifier-opti
-
+Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: Peter Xu <peterx@redhat.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
-
-Jérôme Glisse (1):
-  kvm/mmu_notifier: re-enable the change_pte() optimization.
-
+---
  virt/kvm/kvm_main.c | 16 ++++++++++++++++
  1 file changed, 16 insertions(+)
 
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 629760c0fb95..0f979f02bf1c 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -369,6 +369,14 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+ 	int need_tlb_flush = 0, idx;
+ 	int ret;
+ 
++	/*
++	 * Nothing to do when using change_pte() which will be call for each
++	 * individual pte update at the right time. See mmu_notifier.h for more
++	 * informations.
++	 */
++	if (mmu_notifier_range_use_change_pte(range))
++		return 0;
++
+ 	idx = srcu_read_lock(&kvm->srcu);
+ 	spin_lock(&kvm->mmu_lock);
+ 	/*
+@@ -399,6 +407,14 @@ static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
+ {
+ 	struct kvm *kvm = mmu_notifier_to_kvm(mn);
+ 
++	/*
++	 * Nothing to do when using change_pte() which will be call for each
++	 * individual pte update at the right time. See mmu_notifier.h for more
++	 * informations.
++	 */
++	if (mmu_notifier_range_use_change_pte(range))
++		return;
++
+ 	spin_lock(&kvm->mmu_lock);
+ 	/*
+ 	 * This sequence increase will notify the kvm page fault that
 -- 
 2.17.2
 
