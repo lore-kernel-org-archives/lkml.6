@@ -4,186 +4,125 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B4EBC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:09:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E02C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:09:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1F7920665
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:09:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06D042081B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:09:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="cwzK+Mgp"
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="qA6SPzKi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbfBUTJQ (ORCPT
+        id S1726986AbfBUTJX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 14:09:16 -0500
+        Thu, 21 Feb 2019 14:09:23 -0500
 Received: from pegase1.c-s.fr ([93.17.236.30]:13127 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726488AbfBUTIu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 14:08:50 -0500
+        id S1726601AbfBUTIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 14:08:48 -0500
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 4453ss26Plz9v9DJ;
-        Thu, 21 Feb 2019 20:08:49 +0100 (CET)
+        by localhost (Postfix) with ESMTP id 4453sq0dK3z9v9DF;
+        Thu, 21 Feb 2019 20:08:47 +0100 (CET)
 Authentication-Results: localhost; dkim=pass
         reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=cwzK+Mgp; dkim-adsp=pass;
+        header.d=c-s.fr header.i=@c-s.fr header.b=qA6SPzKi; dkim-adsp=pass;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 6WulGeij27Uo; Thu, 21 Feb 2019 20:08:49 +0100 (CET)
+        with ESMTP id G49XXnvW1VoT; Thu, 21 Feb 2019 20:08:47 +0100 (CET)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 4453ss148vz9v9DG;
-        Thu, 21 Feb 2019 20:08:49 +0100 (CET)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 4453sp6hBvz9v6ky;
+        Thu, 21 Feb 2019 20:08:46 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1550776129; bh=CIDCQplRaPuHh8Jod9JMYw1VsHVW6X2UEb3TMqnZNuo=;
+        t=1550776126; bh=6+UN/pZUxlGcDtKNcykeJgXkzYMi9CIgcgeN2UqrbQg=;
         h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=cwzK+Mgpyfu/GfhKM815cIMVeHZJJfW6j2OPd03nKtndujvqFTKUwqfPlumlZ5pIB
-         agTnr3Wcs2AJu5Az7U5L7kJ+YNQxoqkol/oxmJkc2z4tF+UQ9Locm87ktDm4UsWBxy
-         wtDBMvg4du65IuAdDlQuZTXAsUWdUqIj5oTYl2xg=
+        b=qA6SPzKizKA24YWynU+FNtSqv0DmFTop/h6lznNsP9R8lynlb1gS9SdStEyg23VKO
+         CD/p/E1424XW1tlekMyIoieR3q8T4WhXDznwUJ8Mm87VFkELt6r+ufLfrZzFnHTJmf
+         /6BRxGH5RKvM3AiRjpj7/5cBzj1JtTn5ATypiWqQ=
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2676D8B86A;
-        Thu, 21 Feb 2019 20:08:49 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E69DE8B86A;
+        Thu, 21 Feb 2019 20:08:46 +0100 (CET)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id G8b9ZjZa_Kpf; Thu, 21 Feb 2019 20:08:49 +0100 (CET)
+        with ESMTP id gz_eZjADO4Sk; Thu, 21 Feb 2019 20:08:46 +0100 (CET)
 Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E13D58B852;
-        Thu, 21 Feb 2019 20:08:48 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id BC2FA8B852;
+        Thu, 21 Feb 2019 20:08:46 +0100 (CET)
 Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id A99DB6EF61; Thu, 21 Feb 2019 19:08:48 +0000 (UTC)
-Message-Id: <a99cf894a8b80ae914550af6a711319430425a71.1550775950.git.christophe.leroy@c-s.fr>
+        id 919186EF61; Thu, 21 Feb 2019 19:08:46 +0000 (UTC)
+Message-Id: <48b5bf4da0842d93319202c3d4fb1041e6443f31.1550775950.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1550775950.git.christophe.leroy@c-s.fr>
 References: <cover.1550775950.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v5 12/16] powerpc/mm/32s: add setibat() clearibat() and
- update_bats()
+Subject: [PATCH v5 10/16] powerpc/kconfig: define PAGE_SHIFT inside Kconfig
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>, j.neuschaefer@gmx.net
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Thu, 21 Feb 2019 19:08:48 +0000 (UTC)
+Date:   Thu, 21 Feb 2019 19:08:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-setibat() and clearibat() allows to manipulate IBATs independently
-of DBATs.
-
-update_bats() allows to update bats after init. This is done
-with MMU off.
+This patch defined CONFIG_PPC_PAGE_SHIFT in order
+to be able to use PAGE_SHIFT value inside Kconfig.
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/book3s/32/mmu-hash.h |  2 ++
- arch/powerpc/kernel/head_32.S                 | 35 +++++++++++++++++++++++++++
- arch/powerpc/mm/ppc_mmu_32.c                  | 32 ++++++++++++++++++++++++
- 3 files changed, 69 insertions(+)
+ arch/powerpc/Kconfig            |  7 +++++++
+ arch/powerpc/include/asm/page.h | 13 ++-----------
+ 2 files changed, 9 insertions(+), 11 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/book3s/32/mmu-hash.h b/arch/powerpc/include/asm/book3s/32/mmu-hash.h
-index 0c261ba2c826..5cb588395fdc 100644
---- a/arch/powerpc/include/asm/book3s/32/mmu-hash.h
-+++ b/arch/powerpc/include/asm/book3s/32/mmu-hash.h
-@@ -92,6 +92,8 @@ typedef struct {
- 	unsigned long vdso_base;
- } mm_context_t;
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 849b0d5ac3d1..417e52a27f63 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -708,6 +708,13 @@ config PPC_256K_PAGES
  
-+void update_bats(void);
-+
- /* patch sites */
- extern s32 patch__hash_page_A0, patch__hash_page_A1, patch__hash_page_A2;
- extern s32 patch__hash_page_B, patch__hash_page_C;
-diff --git a/arch/powerpc/kernel/head_32.S b/arch/powerpc/kernel/head_32.S
-index c2f564690778..91b302b0797f 100644
---- a/arch/powerpc/kernel/head_32.S
-+++ b/arch/powerpc/kernel/head_32.S
-@@ -1104,6 +1104,41 @@ BEGIN_MMU_FTR_SECTION
- END_MMU_FTR_SECTION_IFSET(MMU_FTR_USE_HIGH_BATS)
- 	blr
+ endchoice
  
-+_ENTRY(update_bats)
-+	lis	r4, 1f@h
-+	ori	r4, r4, 1f@l
-+	tophys(r4, r4)
-+	mfmsr	r6
-+	mflr	r7
-+	li	r3, MSR_KERNEL & ~(MSR_IR | MSR_DR)
-+	rlwinm	r0, r6, 0, ~MSR_RI
-+	rlwinm	r0, r0, 0, ~MSR_EE
-+	mtmsr	r0
-+	mtspr	SPRN_SRR0, r4
-+	mtspr	SPRN_SRR1, r3
-+	SYNC
-+	RFI
-+1:	bl	clear_bats
-+	lis	r3, BATS@ha
-+	addi	r3, r3, BATS@l
-+	tophys(r3, r3)
-+	LOAD_BAT(0, r3, r4, r5)
-+	LOAD_BAT(1, r3, r4, r5)
-+	LOAD_BAT(2, r3, r4, r5)
-+	LOAD_BAT(3, r3, r4, r5)
-+BEGIN_MMU_FTR_SECTION
-+	LOAD_BAT(4, r3, r4, r5)
-+	LOAD_BAT(5, r3, r4, r5)
-+	LOAD_BAT(6, r3, r4, r5)
-+	LOAD_BAT(7, r3, r4, r5)
-+END_MMU_FTR_SECTION_IFSET(MMU_FTR_USE_HIGH_BATS)
-+	li	r3, MSR_KERNEL & ~(MSR_IR | MSR_DR | MSR_RI)
-+	mtmsr	r3
-+	mtspr	SPRN_SRR0, r7
-+	mtspr	SPRN_SRR1, r6
-+	SYNC
-+	RFI
++config PPC_PAGE_SHIFT
++	int
++	default 18 if PPC_256K_PAGES
++	default 16 if PPC_64K_PAGES
++	default 14 if PPC_16K_PAGES
++	default 12
 +
- flush_tlbs:
- 	lis	r10, 0x40
- 1:	addic.	r10, r10, -0x1000
-diff --git a/arch/powerpc/mm/ppc_mmu_32.c b/arch/powerpc/mm/ppc_mmu_32.c
-index ff8580c6ab11..66f1319e8e20 100644
---- a/arch/powerpc/mm/ppc_mmu_32.c
-+++ b/arch/powerpc/mm/ppc_mmu_32.c
-@@ -106,6 +106,38 @@ static unsigned int block_size(unsigned long base, unsigned long top)
- 	return min3(max_size, 1U << base_shift, 1U << block_shift);
- }
+ config THREAD_SHIFT
+ 	int "Thread shift" if EXPERT
+ 	range 13 15
+diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
+index aa4497175bd3..ed870468ef6f 100644
+--- a/arch/powerpc/include/asm/page.h
++++ b/arch/powerpc/include/asm/page.h
+@@ -20,20 +20,11 @@
  
-+/*
-+ * Set up one of the IBAT (block address translation) register pairs.
-+ * The parameters are not checked; in particular size must be a power
-+ * of 2 between 128k and 256M.
-+ * Only for 603+ ...
-+ */
-+static void setibat(int index, unsigned long virt, phys_addr_t phys,
-+		    unsigned int size, pgprot_t prot)
-+{
-+	unsigned int bl = (size >> 17) - 1;
-+	int wimgxpp;
-+	struct ppc_bat *bat = BATS[index];
-+	unsigned long flags = pgprot_val(prot);
-+
-+	if (!cpu_has_feature(CPU_FTR_NEED_COHERENT))
-+		flags &= ~_PAGE_COHERENT;
-+
-+	wimgxpp = (flags & _PAGE_COHERENT) | (_PAGE_EXEC ? BPP_RX : BPP_XX);
-+	bat[0].batu = virt | (bl << 2) | 2; /* Vs=1, Vp=0 */
-+	bat[0].batl = BAT_PHYS_ADDR(phys) | wimgxpp;
-+	if (flags & _PAGE_USER)
-+		bat[0].batu |= 1;	/* Vp = 1 */
-+}
-+
-+static void clearibat(int index)
-+{
-+	struct ppc_bat *bat = BATS[index];
-+
-+	bat[0].batu = 0;
-+	bat[0].batl = 0;
-+}
-+
- unsigned long __init mmu_mapin_ram(unsigned long base, unsigned long top)
- {
- 	int idx;
+ /*
+  * On regular PPC32 page size is 4K (but we support 4K/16K/64K/256K pages
+- * on PPC44x). For PPC64 we support either 4K or 64K software
++ * on PPC44x and 4K/16K on 8xx). For PPC64 we support either 4K or 64K software
+  * page size. When using 64K pages however, whether we are really supporting
+  * 64K pages in HW or not is irrelevant to those definitions.
+  */
+-#if defined(CONFIG_PPC_256K_PAGES)
+-#define PAGE_SHIFT		18
+-#elif defined(CONFIG_PPC_64K_PAGES)
+-#define PAGE_SHIFT		16
+-#elif defined(CONFIG_PPC_16K_PAGES)
+-#define PAGE_SHIFT		14
+-#else
+-#define PAGE_SHIFT		12
+-#endif
+-
++#define PAGE_SHIFT		CONFIG_PPC_PAGE_SHIFT
+ #define PAGE_SIZE		(ASM_CONST(1) << PAGE_SHIFT)
+ 
+ #ifndef __ASSEMBLY__
 -- 
 2.13.3
 
