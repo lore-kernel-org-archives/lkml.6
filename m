@@ -2,385 +2,130 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A283C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:33:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C5BC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:33:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D510214AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:33:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="QQLed+li"
+	by mail.kernel.org (Postfix) with ESMTP id 18BEC20880
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:33:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbfBUJdL (ORCPT
+        id S1727395AbfBUJdp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 04:33:11 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:54681 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbfBUJdL (ORCPT
+        Thu, 21 Feb 2019 04:33:45 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38954 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbfBUJdp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 04:33:11 -0500
-Received: by mail-it1-f193.google.com with SMTP id f10so21433297ita.4
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 01:33:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=vrmhEtKv/lhYR2KCk/YKbqFuxahsT7Ps/lhhFw8A9LA=;
-        b=QQLed+liBUBnRsUJvcC9A4oL2HAs3bhypNnW+sSx/NwYpBEqUxBonctykABQi1sPsC
-         33UXsLE4GyIZzdrddSJhORfLYjS3faxZU2l+M/8boO0EkqmpafZtN7DzTC7n9lEkG9cJ
-         VSRx1ObcT+VfG1gtdhXHHBZbpFIqgcyq3IsuvrmR8832zwjuOFt8PHiyufi29FbS8VWs
-         WZhz11onW0s5rWAYbE+Rog1EEEoKyYLPId+wCGGhe2WX+lxkHSTnz9uCvNyRN0W+Qf1f
-         zeqdcWHXHmL55NQQdsPcxrqIjwZAhQEhtak28UmC0Q1AV+i2XklJr2QwrkZ4guChY9ba
-         8tTQ==
+        Thu, 21 Feb 2019 04:33:45 -0500
+Received: by mail-ed1-f65.google.com with SMTP id p27so14937923edc.6
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 01:33:44 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=vrmhEtKv/lhYR2KCk/YKbqFuxahsT7Ps/lhhFw8A9LA=;
-        b=EPHiBmw7iuAoUamNBlT5Iolz/xfhUaGKs3gy8wHCKwRwfYoCd6gO5/0lBbP94SdkVB
-         wHp1fc0bkNXHU+YLLtywQ4i1qfp6f4FzYH5CQlytQORGJh9C16F9A4HaVCnoXzZppjkT
-         qrjxcZWeU6GibvJtPmeeQJV8cjpkOVer9qfTbpx5ts3bRg29MbBcVaV8loE99aYO2ErD
-         ySMh53KLIQfRGvTYgQhjDcKx/bqYR2BOk31qmCPZnryV32Nx55KUUA+aniWAD8GRFs36
-         Py+w5S1iCTRGHmxqi3t0hRgRXkFqBuhQmxeAH8HBVbWpd/G482/9QfA+RafkNzG32m69
-         LHqA==
-X-Gm-Message-State: AHQUAuZyHkh2JhgYYqGmuHDzF6mfKN30ybeJzdkyM04d7Cm+haNGsN5S
-        oBni1GDkkgywhwif5SPzjSC4ffK17v4rvcXLNbeGnQ==
-X-Google-Smtp-Source: AHgI3IYgmqrElm2EHOTb6Ygds8pjKn67J1Daxy8PBklKjQpwcAHCYs4CB1rFJrI9sYJ1pbBD88sQoEfMGwzLTwEnQ3w=
-X-Received: by 2002:a02:1185:: with SMTP id 127mr13693893jaf.136.1550741589638;
- Thu, 21 Feb 2019 01:33:09 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=e/cRZFfRS1Ml1qaQW3ilHy5ozRayIu+7e4g7JUknFZ4=;
+        b=MOF9O9E+j3/ogRVz9ee96IurcEPxZTy85NhvN8dhLy7uCu2h1jkKG0FoWIDbVejTIC
+         RhEJtpuAOD/4wD1NVoEHdoZcG1iR3CoeaKsCkf+/tjus9l1JfKUm4X+G1mFg74twnOR9
+         NCPjLRSA80e3WMVfPtM/m+pS+o550Z5WKSptDVacOve75/bZyWpshtG9sMYIAGCs43sZ
+         iyfawNVxaQh8Ld1EHznEEL66i3vRIlhl4gEZuMVuzkQ346aeT4qRH1fcFNfabciO1xHH
+         EpkWElQy1AlguJKH3LTEM68PSI25iuHricn9AssxsCKordF+Wblgp4dPDNX8n9miHA6R
+         +qhg==
+X-Gm-Message-State: AHQUAuZ5ieBdrPIM9sxDNWUPHSCNw9GX4csWsBZgxcUL/5h0L19ae9iR
+        hGf8kulryT6C9z203Yv1kXrwDTIGyCY=
+X-Google-Smtp-Source: AHgI3IZiHZfESq1/fzvRtHTofIoKuEW/zjTMSz83AjVoTeBOO3JSPrnfdtQow2SZCNzx/1tMhZYVSA==
+X-Received: by 2002:a50:aa68:: with SMTP id p37mr30015192edc.168.1550741623537;
+        Thu, 21 Feb 2019 01:33:43 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id k26sm4836738ejv.63.2019.02.21.01.33.42
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Feb 2019 01:33:42 -0800 (PST)
+Subject: Re: [PATCH 2/2] extcon intel-cht-wc: Enable external charger
+To:     Yauhen Kharuzhy <jekhor@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+References: <20190210203649.21691-1-jekhor@gmail.com>
+ <20190210203649.21691-3-jekhor@gmail.com>
+ <1b2f04fc-05a0-4f09-c84e-dc7adc63ec63@redhat.com>
+ <20190215063250.GB30250@jeknote.loshitsa1.net>
+ <20190217215242.GA12656@jeknote.loshitsa1.net>
+ <416a0e12-aa0e-e781-2ef2-f11b97ba77a0@redhat.com>
+ <CAKWEGV7r_026NhT96AiXJUT_9WOTy_=DC3Kx9qVNRfjWmMkEBA@mail.gmail.com>
+ <8e3d9949-4bd3-f229-ace4-196a5f08fad3@redhat.com>
+ <20190219202005.GA3699@jeknote.loshitsa1.net>
+ <6a7be360-8da3-f1e6-6ca7-f55b3b2c60df@redhat.com>
+ <20190220202836.GA23567@jeknote.loshitsa1.net>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <01afde97-544b-423a-c18a-b39410b335ea@redhat.com>
+Date:   Thu, 21 Feb 2019 10:33:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <f6452e87ce2e1709e99b8f99cef1c49f0abfae0b.1550699918.git.sramani@mellanox.com>
-In-Reply-To: <f6452e87ce2e1709e99b8f99cef1c49f0abfae0b.1550699918.git.sramani@mellanox.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 21 Feb 2019 10:32:58 +0100
-Message-ID: <CAMRc=McNS=hKGMqxsjSn9_fqfJUh=psEiu-D1T0_Gfp_YHSDbg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] gpio: add driver for Mellanox BlueField GPIO controller
-To:     Shravan Kumar Ramani <sramani@mellanox.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190220202836.GA23567@jeknote.loshitsa1.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=C5=9Br., 20 lut 2019 o 23:07 Shravan Kumar Ramani <sramani@mellanox.com> n=
-apisa=C5=82(a):
->
-> This patch adds support for the GPIO controller used by Mellanox
-> BlueField SOCs.
->
+Hi,
 
-Starts to look good. Just some minor points.
+On 20-02-19 21:28, Yauhen Kharuzhy wrote:
+> On Wed, Feb 20, 2019 at 05:42:28PM +0100, Hans de Goede wrote:
+>>>> The input-current-limit only specifies how much current the charger may
+>>>> draw from the micro-usb for both supplying the laptop as well as for
+>>>> charging the battery combined. You can safely set this as high as
+>>>> the charger can handle (2A for a dedicated charger).
+>>>>
+>>>> The BQ25892 should have a *separate* setting for the max current to
+>>>> use while charging the battery (assuming that the input current allows
+>>>> drawing enough current in the first place). I would hope that those bits
+>>>> have some sane value set from the firmware...
+>>>
+>>> Yes, the charger has separate battery current limit but firmware doesn't
+>>> change its default value (2048 mA) while Lenovo's software driver does.
+>>> It set battery charging limit to 4 A and input limit to 2 A (it makes
+>>> sense because Lenovo adapter and BQ25892 both support voltage increasing
+>>> upto 12V).
+>>
+>> Hmm, I guess your device uses a separate power-barrel charging conector
+>> then? 12v over micro-usb requires special negotiation which the Whiskey Cove
+>> PMIC does not support AFAIK.
+> 
+> The Yoga Book supports kind of quick charging by negotiate voltage with
+> 'current pulse protocol' supported by BQ25892 and Lenovo's wall cube.
+> I think that PMIC is not connected to VBUS directly. After charging
+> started, BQ25892 driver can ask power adapter to increase voltage
+> number of times upto 12V. See
+> https://github.com/jekhor/yogabook-linux-kernel/blob/master/drivers/power/supply/bq25890_charger.c#L918
+> for example.
+> 
+>>
+>> In either case if you want to increase the max battery current to 4A
+>> in the kernel, then this will have to be guarded by a DMI check.
+> 
+> Yes.
+> 
+>>
+>> I beieve the way to do this wuld be throuh a device-property on the
+>> charger which gets set from drivers/i2c/busses/i2c-cht-wc.c, but as
+>> said this needs to be behind a DMI check, e cannot just g and boost
+>> the max charge current to 4A everywhere.
+> 
+> Yes, I use such method already in the my kernel:
+> https://github.com/jekhor/yogabook-linux-kernel/blob/master/drivers/i2c/busses/i2c-cht-wc.c#L247
+> 
+> Anyway, charger tweaking will be next iteration, now I want to complete
+> current extcon stuff/
 
-First: when submitting new versions - please list the changes from the
-last one (or even better: all changes between all versions). This is a
-small driver, but with bigger patches it's important to know what
-changed.
+Ok, sounds good.
 
-> Reviewed-by: David Woods <dwoods@mellanox.com>
-> Signed-off-by: Shravan Kumar Ramani <sramani@mellanox.com>
-> ---
->  drivers/gpio/Kconfig      |   6 ++
->  drivers/gpio/Makefile     |   1 +
->  drivers/gpio/gpio-mlxbf.c | 222 ++++++++++++++++++++++++++++++++++++++++=
-++++++
->  3 files changed, 229 insertions(+)
->  create mode 100644 drivers/gpio/gpio-mlxbf.c
->
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index b5a2845..c950fe8 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -1292,6 +1292,12 @@ config GPIO_MERRIFIELD
->         help
->           Say Y here to support Intel Merrifield GPIO.
->
-> +config GPIO_MLXBF
-> +       tristate "Mellanox BlueField SoC GPIO"
-> +       depends on (MELLANOX_PLATFORM && ARM64 && ACPI) || COMPILE_TEST
-> +       help
-> +         Say Y here if you want GPIO support on Mellanox BlueField SoC.
-> +
->  config GPIO_ML_IOH
->         tristate "OKI SEMICONDUCTOR ML7213 IOH GPIO support"
->         depends on X86 || COMPILE_TEST
-> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-> index 37628f8..8d54279 100644
-> --- a/drivers/gpio/Makefile
-> +++ b/drivers/gpio/Makefile
-> @@ -83,6 +83,7 @@ obj-$(CONFIG_GPIO_MENZ127)    +=3D gpio-menz127.o
->  obj-$(CONFIG_GPIO_MERRIFIELD)  +=3D gpio-merrifield.o
->  obj-$(CONFIG_GPIO_MC33880)     +=3D gpio-mc33880.o
->  obj-$(CONFIG_GPIO_MC9S08DZ60)  +=3D gpio-mc9s08dz60.o
-> +obj-$(CONFIG_GPIO_MLXBF)       +=3D gpio-mlxbf.o
->  obj-$(CONFIG_GPIO_ML_IOH)      +=3D gpio-ml-ioh.o
->  obj-$(CONFIG_GPIO_MM_LANTIQ)   +=3D gpio-mm-lantiq.o
->  obj-$(CONFIG_GPIO_MOCKUP)      +=3D gpio-mockup.o
-> diff --git a/drivers/gpio/gpio-mlxbf.c b/drivers/gpio/gpio-mlxbf.c
-> new file mode 100644
-> index 0000000..c0f21f4
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-mlxbf.c
-> @@ -0,0 +1,222 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/bitops.h>
-> +#include <linux/device.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/io.h>
-> +#include <linux/ioport.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm.h>
-> +#include <linux/resource.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/types.h>
-> +#include <linux/version.h>
-> +
-> +/* Number of pins on BlueField */
-> +#define MLXBF_GPIO_NR 54
-> +
-> +/* Pad Electrical Controls. */
-> +#define MLXBF_GPIO_PAD_CONTROL__FIRST_WORD 0x0700
-> +#define MLXBF_GPIO_PAD_CONTROL_1__FIRST_WORD 0x0708
-> +#define MLXBF_GPIO_PAD_CONTROL_2__FIRST_WORD 0x0710
-> +#define MLXBF_GPIO_PAD_CONTROL_3__FIRST_WORD 0x0718
-> +
+Regards,
 
-Why the double underscores? Maybe let's make it
-MLXBF_GPIO_PADCTRL_FIRST_WORD and so on.
-
-> +#define MLXBF_GPIO_PIN_DIR_I 0x1040
-> +#define MLXBF_GPIO_PIN_DIR_O 0x1048
-> +#define MLXBF_GPIO_PIN_STATE 0x1000
-> +#define MLXBF_GPIO_SCRATCHPAD 0x20
-> +
-> +#ifdef CONFIG_PM
-> +struct mlxbf_gpio_context_save_regs {
-> +       u64 scratchpad;
-> +       u64 pad_control[MLXBF_GPIO_NR];
-> +       u64 pin_dir_i;
-> +       u64 pin_dir_o;
-> +};
-> +#endif
-> +
-> +/* Device state structure. */
-> +struct mlxbf_gpio_state {
-> +       struct gpio_chip gc;
-> +
-> +       /* Must hold this lock to modify shared data. */
-> +       spinlock_t lock;
-> +
-> +       /* Memory Address */
-> +       void __iomem *dc_base;
-> +
-> +#ifdef CONFIG_PM
-> +       struct mlxbf_gpio_context_save_regs csave_regs;
-> +#endif
-> +};
-> +
-> +static int mlxbf_gpio_set_input(struct gpio_chip *chip, unsigned int off=
-set)
-> +{
-> +       struct mlxbf_gpio_state *gs =3D gpiochip_get_data(chip);
-> +       u64 in;
-> +       u64 out;
-> +
-> +       out =3D readq(gs->dc_base + MLXBF_GPIO_PIN_DIR_O);
-> +       in =3D readq(gs->dc_base + MLXBF_GPIO_PIN_DIR_I);
-> +
-
-Please protect the entire read/modify operations. Same below. What if
-someone was writing to the registers while we're reading them here?
-
-> +       spin_lock(&gs->lock);
-> +       writeq(out & ~BIT(offset), gs->dc_base + MLXBF_GPIO_PIN_DIR_O);
-> +       writeq(in | BIT(offset), gs->dc_base + MLXBF_GPIO_PIN_DIR_I);
-> +       spin_unlock(&gs->lock);
-> +
-> +       return 0;
-> +}
-> +
-> +static int mlxbf_gpio_set_output(struct gpio_chip *chip, unsigned int of=
-fset,
-> +                                int value)
-> +{
-> +       struct mlxbf_gpio_state *gs =3D gpiochip_get_data(chip);
-> +       u64 in;
-> +       u64 out;
-> +
-> +       out =3D readq(gs->dc_base + MLXBF_GPIO_PIN_DIR_O);
-> +       in =3D readq(gs->dc_base + MLXBF_GPIO_PIN_DIR_I);
-> +
-> +       spin_lock(&gs->lock);
-> +       writeq(out | BIT(offset), gs->dc_base + MLXBF_GPIO_PIN_DIR_O);
-> +       writeq(in & ~BIT(offset), gs->dc_base + MLXBF_GPIO_PIN_DIR_I);
-> +       spin_unlock(&gs->lock);
-> +
-> +       return 0;
-> +}
-> +
-> +static int mlxbf_gpio_get(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       u64 value;
-> +       struct mlxbf_gpio_state *gs =3D gpiochip_get_data(chip);
-> +
-> +       spin_lock(&gs->lock);
-> +       value =3D readq(gs->dc_base + MLXBF_GPIO_PIN_STATE);
-> +       spin_unlock(&gs->lock);
-> +
-> +       return (value >> offset) & 1;
-> +}
-> +
-> +static void mlxbf_gpio_set(struct gpio_chip *chip, unsigned int offset,
-> +                          int value)
-> +{
-> +       u64 data;
-> +       struct mlxbf_gpio_state *gs =3D gpiochip_get_data(chip);
-> +
-> +       spin_lock(&gs->lock);
-> +       data =3D readq(gs->dc_base + MLXBF_GPIO_PIN_STATE);
-> +
-> +       if (value)
-> +               data |=3D BIT(offset);
-> +       else
-> +               data &=3D ~BIT(offset);
-> +       writeq(data, gs->dc_base + MLXBF_GPIO_PIN_STATE);
-> +       spin_unlock(&gs->lock);
-> +}
-> +
-> +static int mlxbf_gpio_probe(struct platform_device *pdev)
-> +{
-> +       struct mlxbf_gpio_state *gs;
-> +       struct device *dev =3D &pdev->dev;
-> +       struct gpio_chip *gc;
-> +       struct resource *dc_res;
-
-This is a minor nit: why do you use the dc_ prefix? Maybe let's use
-more standard names for these variables like "base", "res" etc.? If
-there is a valid reason - feel free to ignore it.
-
-> +       int ret;
-> +
-> +       gs =3D devm_kzalloc(&pdev->dev, sizeof(*gs), GFP_KERNEL);
-> +       if (!gs)
-> +               return -ENOMEM;
-> +
-> +       dc_res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       gs->dc_base =3D devm_ioremap_resource(&pdev->dev, dc_res);
-> +       if (IS_ERR(gs->dc_base))
-> +               return PTR_ERR(gs->dc_base);
-> +
-> +       gc =3D &gs->gc;
-> +       gc->direction_input =3D mlxbf_gpio_set_input;
-> +       gc->direction_output =3D mlxbf_gpio_set_output;
-> +       gc->get =3D mlxbf_gpio_get;
-> +       gc->set =3D mlxbf_gpio_set;
-> +       gc->label =3D dev_name(dev);
-> +       gc->parent =3D &pdev->dev;
-> +       gc->owner =3D THIS_MODULE;
-> +       gc->base =3D -1;
-> +       gc->ngpio =3D MLXBF_GPIO_NR;
-> +
-> +       ret =3D devm_gpiochip_add_data(dev, &gs->gc, gs);
-> +       if (ret) {
-> +               dev_err(&pdev->dev, "Failed adding memory mapped gpiochip=
-\n");
-> +               return ret;
-> +       }
-> +
-> +       spin_lock_init(&gs->lock);
-> +       platform_set_drvdata(pdev, gs);
-> +       dev_info(&pdev->dev, "registered Mellanox BlueField GPIO");
-> +       return 0;
-> +}
-> +
-> +#ifdef CONFIG_PM
-> +static int mlxbf_gpio_suspend(struct platform_device *pdev, pm_message_t=
- state)
-> +{
-> +       struct mlxbf_gpio_state *gs =3D platform_get_drvdata(pdev);
-> +
-> +       gs->csave_regs.scratchpad =3D readq(gs->dc_base + MLXBF_GPIO_SCRA=
-TCHPAD);
-> +       gs->csave_regs.pad_control[0] =3D
-> +               readq(gs->dc_base + MLXBF_GPIO_PAD_CONTROL__FIRST_WORD);
-> +       gs->csave_regs.pad_control[1] =3D
-> +               readq(gs->dc_base + MLXBF_GPIO_PAD_CONTROL_1__FIRST_WORD)=
-;
-> +       gs->csave_regs.pad_control[2] =3D
-> +               readq(gs->dc_base + MLXBF_GPIO_PAD_CONTROL_2__FIRST_WORD)=
-;
-> +       gs->csave_regs.pad_control[3] =3D
-> +               readq(gs->dc_base + MLXBF_GPIO_PAD_CONTROL_3__FIRST_WORD)=
-;
-> +       gs->csave_regs.pin_dir_i =3D readq(gs->dc_base + MLXBF_GPIO_PIN_D=
-IR_I);
-> +       gs->csave_regs.pin_dir_o =3D readq(gs->dc_base + MLXBF_GPIO_PIN_D=
-IR_O);
-> +
-> +       return 0;
-> +}
-> +
-> +static int mlxbf_gpio_resume(struct platform_device *pdev)
-> +{
-> +       struct mlxbf_gpio_state *gs =3D platform_get_drvdata(pdev);
-> +
-> +       writeq(gs->csave_regs.scratchpad, gs->dc_base + MLXBF_GPIO_SCRATC=
-HPAD);
-> +       writeq(gs->csave_regs.pad_control[0],
-> +              gs->dc_base + MLXBF_GPIO_PAD_CONTROL__FIRST_WORD);
-> +       writeq(gs->csave_regs.pad_control[1],
-> +              gs->dc_base + MLXBF_GPIO_PAD_CONTROL_1__FIRST_WORD);
-> +       writeq(gs->csave_regs.pad_control[2],
-> +              gs->dc_base + MLXBF_GPIO_PAD_CONTROL_2__FIRST_WORD);
-> +       writeq(gs->csave_regs.pad_control[3],
-> +              gs->dc_base + MLXBF_GPIO_PAD_CONTROL_3__FIRST_WORD);
-> +       writeq(gs->csave_regs.pin_dir_i, gs->dc_base + MLXBF_GPIO_PIN_DIR=
-_I);
-> +       writeq(gs->csave_regs.pin_dir_o, gs->dc_base + MLXBF_GPIO_PIN_DIR=
-_O);
-> +
-> +       return 0;
-> +}
-> +#endif
-> +
-> +static const struct acpi_device_id mlxbf_gpio_acpi_match[] =3D {
-> +       { "MLNXBF02", 0 },
-> +       {}
-> +};
-> +MODULE_DEVICE_TABLE(acpi, mlxbf_gpio_acpi_match);
-> +
-> +static struct platform_driver mlxbf_gpio_driver =3D {
-> +       .driver =3D {
-> +               .name =3D "mlxbf_gpio",
-> +               .acpi_match_table =3D ACPI_PTR(mlxbf_gpio_acpi_match),
-> +       },
-> +       .probe    =3D mlxbf_gpio_probe,
-> +#ifdef CONFIG_PM
-> +       .suspend  =3D mlxbf_gpio_suspend,
-> +       .resume   =3D mlxbf_gpio_resume,
-> +#endif
-> +};
-> +
-> +module_platform_driver(mlxbf_gpio_driver);
-> +
-> +MODULE_DESCRIPTION("Mellanox BlueField GPIO Driver");
-> +MODULE_AUTHOR("Mellanox Technologies");
-> +MODULE_LICENSE("GPL");
-> --
-> 2.1.2
->
-
-Best regards,
-Bartosz Golaszewski
+Hans
