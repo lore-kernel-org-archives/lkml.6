@@ -2,61 +2,59 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1845EC4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08060C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:17:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4BC62084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:16:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550765808;
-	bh=6Z60J6V8iIRle+JocqSM9UBFISn6DpwigjnmsrYpiGE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=AiO/lc2i8r9ZJqUh6EecedhBIhZ4u3y6KOBjrBsUhvP4ChdjNQzX2xaPbsWn3oLAf
-	 8YxuLBftkgVVIuPXf8nrBeEWMrlN0y3sy6BdJ2Hz/u0M5fNvmWLg67XkEt8THsLhSO
-	 naBW7BBzPwkodKk7WaxXmXFwaiWkJI3B95YLtojo=
+	by mail.kernel.org (Postfix) with ESMTP id D4B272084F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:17:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbfBUQQr (ORCPT
+        id S1727216AbfBUQRR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 11:16:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36146 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 11:17:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725943AbfBUQQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 11:16:47 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        id S1725932AbfBUQRR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 11:17:17 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE84C20836;
-        Thu, 21 Feb 2019 16:16:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550765806;
-        bh=6Z60J6V8iIRle+JocqSM9UBFISn6DpwigjnmsrYpiGE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=K6VU9BuY3UUT3bFcrnzUBckAtWv27p1NxOnh8FEGRrcBARkwhxIcFWxQipbw6Bnnj
-         OKFCqAuIhaICGup7zITqfY5IHzDo7px2tzGayMur+AbHtoiugZlc5Adh/E5LXxVgqP
-         +/vHRcqGGruQOc7h0F4IwkKpWOBpE68YOTi8fqGg=
-Date:   Fri, 22 Feb 2019 01:16:43 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable@vger.kernel.org, Changbin Du <changbin.du@gmail.com>
-Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
- kernel memory that can fault
-Message-Id: <20190222011643.3e19ade84a3db3e83518648f@kernel.org>
-In-Reply-To: <20190222005812.04c5940c693b14cfdbe6ede7@kernel.org>
-References: <20190215174712.372898450@goodmis.org>
-        <20190215174945.557218316@goodmis.org>
-        <20190221165252.4a9033b3348f30f9d973dbc4@kernel.org>
-        <20190221093625.56afccd2@gandalf.local.home>
-        <20190222005812.04c5940c693b14cfdbe6ede7@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 74B5C20836;
+        Thu, 21 Feb 2019 16:17:13 +0000 (UTC)
+Date:   Thu, 21 Feb 2019 11:17:12 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ido Schimmel <idosch@mellanox.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        intel-wired-lan@lists.osuosl.org (moderated list:INTEL ETHERNET DRIVERS),
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Josh Triplett <josh@joshtriplett.org>, keescook@chromium.org,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        netdev@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>, rcu@vger.kernel.org,
+        Song Liu <songliubraving@fb.com>, xdp-newbies@vger.kernel.org,
+        Yonghong Song <yhs@fb.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH RFC 3/5] sched/cpufreq: Fix incorrect RCU API usage
+Message-ID: <20190221111712.72ba57e8@gandalf.local.home>
+In-Reply-To: <20190221054942.132388-4-joel@joelfernandes.org>
+References: <20190221054942.132388-1-joel@joelfernandes.org>
+        <20190221054942.132388-4-joel@joelfernandes.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,68 +62,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
+On Thu, 21 Feb 2019 00:49:40 -0500
+"Joel Fernandes (Google)" <joel@joelfernandes.org> wrote:
 
-On Fri, 22 Feb 2019 00:58:12 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
-
-> On Thu, 21 Feb 2019 09:36:25 -0500
-> Steven Rostedt <rostedt@goodmis.org> wrote:
+> Recently I added an RCU annotation check to rcu_assign_pointer(). All
+> pointers assigned to RCU protected data are to be annotated with __rcu
+> inorder to be able to use rcu_assign_pointer() similar to checks in
+> other RCU APIs.
 > 
-> > On Thu, 21 Feb 2019 16:52:52 +0900
-> > Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > 
-> > > Basically OK to me.
-> > > Could you use probe_kernel_read() in this context, since probe_mem_read() is a
-> > > wrapper function for template code.
-> > > 
-> > > With that change,
-> > > 
-> > > Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > 
-> > This already hit Linus's tree. I was able to reproduce the crash, so I
-> > streamlined it. I should have still pushed more for your ack first.
-> > Sorry about that.
+> This resulted in a sparse error: kernel//sched/cpufreq.c:41:9: sparse:
+> error: incompatible types in comparison expression (different address
+> spaces)
 > 
-> Oh, never mind. That seems urgent issue for kprobe event.
-> Thank you very much for fixing it!
+> Fix this by using the correct APIs for RCU accesses. This will
+> potentially avoid any future bugs in the code. If it is felt that RCU
+> protection is not needed here, then the rcu_assign_pointer call can be
+> dropped and replaced with, say, WRITE_ONCE or smp_store_release. Or, may
+> be we add a new API to do it. But calls rcu_assign_pointer seems an
+> abuse of the RCU API unless RCU is being used.
+
+This all looks broken, and this patch is papering over the issue, or
+worse, hiding it.
+
 > 
-> > For some reason, I thought the change was in the generic probe code,
-> > and accepted the probe_mem_read(). Anyway, did you want to send a patch
-> > to change it to probe_kernel_read(), for the merge window?
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> ---
+>  kernel/sched/cpufreq.c | 8 ++++++--
+>  kernel/sched/sched.h   | 2 +-
+>  2 files changed, 7 insertions(+), 3 deletions(-)
 > 
-> No problem.
+> diff --git a/kernel/sched/cpufreq.c b/kernel/sched/cpufreq.c
+> index 22bd8980f32f..c9aeb3bf5dc2 100644
+> --- a/kernel/sched/cpufreq.c
+> +++ b/kernel/sched/cpufreq.c
+> @@ -7,7 +7,7 @@
+>   */
+>  #include "sched.h"
+>  
+> -DEFINE_PER_CPU(struct update_util_data *, cpufreq_update_util_data);
+> +DEFINE_PER_CPU(struct update_util_data __rcu *, cpufreq_update_util_data);
+>  
+>  /**
+>   * cpufreq_add_update_util_hook - Populate the CPU's update_util_data pointer.
+> @@ -34,8 +34,12 @@ void cpufreq_add_update_util_hook(int cpu, struct update_util_data *data,
+>  	if (WARN_ON(!data || !func))
+>  		return;
+>  
+> -	if (WARN_ON(per_cpu(cpufreq_update_util_data, cpu)))
+> +	rcu_read_lock();
+> +	if (WARN_ON(rcu_dereference(per_cpu(cpufreq_update_util_data, cpu)))) {
+> +		rcu_read_unlock();
+>  		return;
+> +	}
+> +	rcu_read_unlock();
+>  
+>  	data->func = func;
+>  	rcu_assign_pointer(per_cpu(cpufreq_update_util_data, cpu), data);
 
-Oops, I mean No, not yet. but it is a simple and cosmetic patch like below.
-Feel free to merge it to ftrace/core.
+An rcu_assign_pointer() is to update something that is going to be read
+under rcu_read_lock() elsewhere. But updates to an rcu variable are not
+protected by rcu_read_lock() (hence the "read" in the name). Adding
+rcu_read_lock() above does nothing, but perhaps hides an issue.
 
----------
-tracing/kprobes: Use probe_kernel_read instead of probe_mem_read
+Writes usually have something else that protects against races. Thus,
+the above shouldn't be switched to using a rcu_dereference(), but
+perhaps a rcu_dereference_protected(), with whatever is protecting
+updates?
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+Which doing a bit of investigating, looks to be the rwsem
+"policy->rwsem", where policy comes from:
 
-Use probe_kernel_read() instead of probe_mem_read() because
-probe_mem_read() is a kind of wrapper for switching memory
-read function between uprobes and kprobes.
+	policy = cpufreq_cpu_get(cpu);
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- kernel/trace/trace_kprobe.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I would say the code as is, is not broken. But this patch isn't helping
+anything.
 
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index 9eaf07f99212..99592c27465e 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -865,7 +865,7 @@ fetch_store_strlen(unsigned long addr)
- 	u8 c;
- 
- 	do {
--		ret = probe_mem_read(&c, (u8 *)addr + len, 1);
-+		ret = probe_kernel_read(&c, (u8 *)addr + len, 1);
- 		len++;
- 	} while (c && ret == 0 && len < MAX_STRING_SIZE);
- 
+-- Steve
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index d04530bf251f..2ab545d40381 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -2166,7 +2166,7 @@ static inline u64 irq_time_read(int cpu)
+>  #endif /* CONFIG_IRQ_TIME_ACCOUNTING */
+>  
+>  #ifdef CONFIG_CPU_FREQ
+> -DECLARE_PER_CPU(struct update_util_data *, cpufreq_update_util_data);
+> +DECLARE_PER_CPU(struct update_util_data __rcu *, cpufreq_update_util_data);
+>  
+>  /**
+>   * cpufreq_update_util - Take a note about CPU utilization changes.
+
