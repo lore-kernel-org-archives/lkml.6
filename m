@@ -3,28 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B91F7C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:51:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D35C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:52:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90EC320880
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:51:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DB232148D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:52:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbfBUJv5 (ORCPT
+        id S1727777AbfBUJvx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 04:51:57 -0500
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:56669 "EHLO
+        Thu, 21 Feb 2019 04:51:53 -0500
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:42951 "EHLO
         relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727802AbfBUJvy (ORCPT
+        with ESMTP id S1727682AbfBUJvu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 04:51:54 -0500
+        Thu, 21 Feb 2019 04:51:50 -0500
 X-Originating-IP: 90.88.23.190
 Received: from mc-bl-xps13.lan (aaubervilliers-681-1-81-190.w90-88.abo.wanadoo.fr [90.88.23.190])
         (Authenticated sender: maxime.chevallier@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 10512C000A;
-        Thu, 21 Feb 2019 09:51:50 +0000 (UTC)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id A5707C0017;
+        Thu, 21 Feb 2019 09:51:45 +0000 (UTC)
 From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
 To:     davem@davemloft.net
 Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
@@ -38,9 +38,9 @@ Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
         thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
         miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
         mw@semihalf.com
-Subject: [PATCH net-next 7/7] net: phy: marvell10g: add support for the 88x2110 PHY
-Date:   Thu, 21 Feb 2019 10:51:28 +0100
-Message-Id: <20190221095128.28188-8-maxime.chevallier@bootlin.com>
+Subject: [PATCH net-next 5/7] net: phy: marvell10g: Force reading of 2.5/5G
+Date:   Thu, 21 Feb 2019 10:51:26 +0100
+Message-Id: <20190221095128.28188-6-maxime.chevallier@bootlin.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190221095128.28188-1-maxime.chevallier@bootlin.com>
 References: <20190221095128.28188-1-maxime.chevallier@bootlin.com>
@@ -51,65 +51,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for the 88x2110 PHY, which is similar to the
-already supported 88x3310 PHY without the SFP interface.
+As per 802.3bz, if bit 14 of (1.11) "PMA Extended Abilities" indicates
+whether or not we should read register (1.21) "2.52/5G PMA Extended
+Abilities", which contains information on the support of 2.5GBASET and
+5GBASET.
 
-It supports 10/100/1000BASET along with 2.5GBASET, 5GBASET and 10GBASET,
-with the same interface modes that are used by the 3310.
+After testing on several variants of PHYS of this family, it appears
+that bit 14 in (1.11) isn't always set when it should be.
 
-This PHY don't have the same issue as the 88x3310 regarding 2.5/5G
-abilities, and correctly follows the 802.3bz standard to list the
-supported abilities.
+PHYs 88X3310 (on MacchiatoBin) and 88E2010 do support 2.5G and 5GBASET,
+but don't have 1.11.14 set. Their register 1.21 is filled with the
+correct values, indicating 2.5G and 5G support.
+
+PHYs 88E2110 do have their 1.11.14 bit set, as it should.
 
 Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Suggested-by: Antoine Tenart <antoine.tenart@bootlin.com>
 ---
- drivers/net/phy/marvell10g.c | 13 +++++++++++++
- include/linux/marvell_phy.h  |  1 +
- 2 files changed, 14 insertions(+)
+ drivers/net/phy/marvell10g.c | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
 diff --git a/drivers/net/phy/marvell10g.c b/drivers/net/phy/marvell10g.c
-index c48669d50653..bac199b7540f 100644
+index 9323bcf15dbd..c48669d50653 100644
 --- a/drivers/net/phy/marvell10g.c
 +++ b/drivers/net/phy/marvell10g.c
-@@ -490,12 +490,25 @@ static struct phy_driver mv3310_drivers[] = {
- 		.aneg_done	= mv3310_aneg_done,
- 		.read_status	= mv3310_read_status,
- 	},
-+	{
-+		.phy_id		= MARVELL_PHY_ID_88E2110,
-+		.phy_id_mask	= MARVELL_PHY_ID_MASK,
-+		.name		= "mv88x2110",
-+		.features	= PHY_10GBIT_FEATURES,
-+		.probe		= mv3310_probe,
-+		.soft_reset	= gen10g_no_soft_reset,
-+		.config_init	= mv3310_config_init,
-+		.config_aneg	= mv3310_config_aneg,
-+		.aneg_done	= mv3310_aneg_done,
-+		.read_status	= mv3310_read_status,
-+	},
- };
+@@ -27,6 +27,9 @@
+ #include <linux/marvell_phy.h>
+ #include <linux/phy.h>
  
- module_phy_driver(mv3310_drivers);
++#define MV_PHY_ALASKA_NBT_QUIRK_MASK	0xfffffffe
++#define MV_PHY_ALASKA_NBT_QUIRK_REV	(MARVELL_PHY_ID_88X3310 | 0xa)
++
+ enum {
+ 	MV_PCS_BASE_T		= 0x0000,
+ 	MV_PCS_BASE_R		= 0x1000,
+@@ -231,6 +234,23 @@ static int mv3310_resume(struct phy_device *phydev)
+ 	return mv3310_hwmon_config(phydev, true);
+ }
  
- static struct mdio_device_id __maybe_unused mv3310_tbl[] = {
- 	{ MARVELL_PHY_ID_88X3310, MARVELL_PHY_ID_MASK },
-+	{ MARVELL_PHY_ID_88E2110, MARVELL_PHY_ID_MASK },
- 	{ },
- };
- MODULE_DEVICE_TABLE(mdio, mv3310_tbl);
-diff --git a/include/linux/marvell_phy.h b/include/linux/marvell_phy.h
-index 70c17345e118..73d04743a2bb 100644
---- a/include/linux/marvell_phy.h
-+++ b/include/linux/marvell_phy.h
-@@ -21,6 +21,7 @@
- #define MARVELL_PHY_ID_88E1545		0x01410ea0
- #define MARVELL_PHY_ID_88E3016		0x01410e60
- #define MARVELL_PHY_ID_88X3310		0x002b09a0
-+#define MARVELL_PHY_ID_88E2110		0x002b09b0
++/* Some PHYs in the Alaska family such as the 88X3310 and the 88E2010
++ * don't set bit 14 in PMA Extended Abilities (1.11), although they do
++ * support 2.5GBASET and 5GBASET. For these models, we can still read their
++ * 2.5G/5G extended abilities register (1.21). We detect these models based on
++ * the PMA device identifier, with a mask matching models known to have this
++ * issue
++ */
++static bool mv3310_has_pma_ngbaset_quirk(struct phy_device *phydev)
++{
++	if (!(phydev->c45_ids.devices_in_package & MDIO_DEVS_PMAPMD))
++		return false;
++
++	/* Only some revisions of the 88X3310 family PMA seem to be impacted */
++	return (phydev->c45_ids.device_ids[MDIO_MMD_PMAPMD] &
++		MV_PHY_ALASKA_NBT_QUIRK_MASK) == MV_PHY_ALASKA_NBT_QUIRK_REV;
++}
++
+ static int mv3310_config_init(struct phy_device *phydev)
+ {
+ 	/* Check that the PHY interface type is compatible */
+@@ -261,6 +281,21 @@ static int mv3310_get_features(struct phy_device *phydev)
+ 	if (ret)
+ 		return ret;
  
- /* The MV88e6390 Ethernet switch contains embedded PHYs. These PHYs do
-  * not have a model ID. So the switch driver traps reads to the ID2
++	if (mv3310_has_pma_ngbaset_quirk(phydev)) {
++		val = phy_read_mmd(phydev, MDIO_MMD_PMAPMD,
++				   MDIO_PMA_NG_EXTABLE);
++		if (val < 0)
++			return val;
++
++		linkmode_mod_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT,
++				 phydev->supported,
++				 val & MDIO_PMA_NG_EXTABLE_2_5GBT);
++
++		linkmode_mod_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT,
++				 phydev->supported,
++				 val & MDIO_PMA_NG_EXTABLE_5GBT);
++	}
++
+ 	return 0;
+ }
+ 
 -- 
 2.19.2
 
