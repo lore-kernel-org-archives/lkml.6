@@ -2,132 +2,268 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6692FC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:15:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 423FEC4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36571214AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:15:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="E0t53ipZ"
+	by mail.kernel.org (Postfix) with ESMTP id 0FC252148D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:15:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727457AbfBUKP0 (ORCPT
+        id S1727604AbfBUKPq convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 05:15:26 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:41708 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbfBUKP0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 05:15:26 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1LADmo1147039;
-        Thu, 21 Feb 2019 10:15:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
- references : cc : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=of+UOoaufvXAOYEMPoQhjJN0bDeiXnBVjiQpxPz1tSI=;
- b=E0t53ipZYC4p2XaH4RDQNe60ZrjpjMVHnMYAhebi+915vle7WKoSjvlZRZkVgNtPefRZ
- 7yQHp8Lj36bgyqcw7yimFy+iu2cOeYORZAJUHejfjVIx7G0PM3X+Z2Jo0SsXIIMOVrPQ
- AuKaACHvgqLrx79uX+5nbxPAqlFcYOFbORMXHjgt3ooIjtECQ7AJ6RhtcyCbNlaUMN8I
- 6Wapnv+01FeRpqR4iTVuauw7njcdwbglu/s6xaSs4zeP2HVqtuab/whlfZug4qem6eey
- RixZ1008Lnk86AKm8HZlXXHD5KN/t4Cfc6K+mRDrq0FOCP3/Iw+NJfqK8BgCkQh9UoHy Zw== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2qp81ef6ck-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Feb 2019 10:15:01 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1LAF0OL014963
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Feb 2019 10:15:01 GMT
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1LAExPT005413;
-        Thu, 21 Feb 2019 10:14:59 GMT
-Received: from [10.166.106.34] (/10.166.106.34)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 21 Feb 2019 02:14:58 -0800
-Subject: Re: [PATCH] x86/alternatives: check int3 breakpoint physical
- addresses
-To:     Thomas Gleixner <tglx@linutronix.de>
-References: <1548428249-8258-1-git-send-email-alexandre.chartre@oracle.com>
- <alpine.DEB.2.21.1902102221500.8784@nanos.tec.linutronix.de>
- <8995b3b4-b805-c8c7-95a8-a39ab000f289@oracle.com>
- <alpine.DEB.2.21.1902111012130.1728@nanos.tec.linutronix.de>
- <771b5877-4cb6-203b-fd95-ed63f9736373@oracle.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>
-From:   Alexandre Chartre <alexandre.chartre@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <8a5996a0-9f0c-3bcd-c2fb-8a554fa4c765@oracle.com>
-Date:   Thu, 21 Feb 2019 11:14:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.6.0
+        Thu, 21 Feb 2019 05:15:46 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40774 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725823AbfBUKPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 05:15:46 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 113C7A78;
+        Thu, 21 Feb 2019 02:15:46 -0800 (PST)
+Received: from why.wild-wind.fr.eu.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9CE9A3F719;
+        Thu, 21 Feb 2019 02:15:43 -0800 (PST)
+Date:   Thu, 21 Feb 2019 10:15:35 +0000
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
+        Kevin Cernekee <cernekee@gmail.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM BCM7XXX ARM
+        ARCHITECTURE),
+        linux-mips@vger.kernel.org (open list:BROADCOM BMIPS MIPS ARCHITECTURE),
+        linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM7XXX
+        ARM ARCHITECTURE)
+Subject: Re: [PATCH] irqchip: brcmstb-l2: use _irqsave variants in
+ non-interrupt code
+Message-ID: <20190221101535.3f7f26e3@why.wild-wind.fr.eu.org>
+In-Reply-To: <20190220221528.20811-1-f.fainelli@gmail.com>
+References: <20190220221528.20811-1-f.fainelli@gmail.com>
+Organization: ARM Ltd
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <771b5877-4cb6-203b-fd95-ed63f9736373@oracle.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9173 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902210076
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 20 Feb 2019 14:15:28 -0800
+Florian Fainelli <f.fainelli@gmail.com> wrote:
 
-On 02/11/2019 10:57 AM, Alexandre Chartre wrote:
->
-> On 02/11/2019 10:15 AM, Thomas Gleixner wrote:
->> On Mon, 11 Feb 2019, Alexandre Chartre wrote:
->>> On 02/10/2019 10:23 PM, Thomas Gleixner wrote:
->>>> On Fri, 25 Jan 2019, Alexandre Chartre wrote:
->>>>> Note that this issue has been observed and reproduced with a custom kernel
->>>>> with some code mapped to different virtual addresses and using jump labels
->>>>> As jump labels use text_poke_bp(), crashes were sometimes observed when
->>>>> updating jump labels.
->>>>
->>>> Rightfully so. text_poke_bp() pokes at the kernels text mapping which is
->>>> very well defined and unique. Why would you map the same text to different
->>>> virtual addresses and then use a randomly chosen one to poke at it?
->>>>
->>>
->>> As an example, we used to have per-CPU SYSCALL entry trampoline [1] where the
->>> entry_SYSCALL_64_trampoline function was mapped to a different virtual address
->>> for each CPU. So, a syscall would execute entry_SYSCALL_64_trampoline() from a
->>> different virtual address depending on the CPU being used. With that code,
->>> adding a jump label in entry_SYSCALL_64_trampoline() causes the described
->>> issue.
->>
->> Right, but we knew that and there was no reason to put a jump label into
->> that. AFAICT we don't have anything like this in the kernel.
->
-> In our particular case, we have introduced a jump label in JMP_NOSPEC (which
-> is used by entry_SYSCALL_64_trampoline()) to have the option to dynamically
-> enable/disable retpoline at runtime. So that's when we faced this issue.
->
->> That said, I'm not opposed to apply the patch as is, I just wanted to get a
->> better understanding about the background.
->
-> Sure. I am aware this is a corner case, and I was precisely looking for feedback
-> to check if it is worth fixing that issue. So I appreciate your reply, and I would
-> understand if the patch is rejected because that's a case that we are just not
-> expecting to happen.
->
+> From: Doug Berger <opendmb@gmail.com>
+> 
+> Using the irq_gc_lock/irq_gc_unlock functions in the suspend and
+> resume functions creates the opportunity for a deadlock during
+> suspend, resume, and shutdown. Using the irq_gc_lock_irqsave/
+> irq_gc_unlock_irqrestore variants prevents this possible deadlock.
+> 
+> Signed-off-by: Doug Berger <opendmb@gmail.com>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-Hi Thomas,
+Applied to irqchip-next with:
 
-Do you have any final thought about this patch? Should we drop it or apply it?
-As the patch is small and simple, I think it's worth applying it to prevent
-any such (future?) issue.
+Cc: stable@vger.kernel.org
+Fixes: 7f646e92766e2 ("irqchip: brcmstb-l2: Add Broadcom Set Top Box
+Level-2 interrupt controller")
+
+Now, I'm worried this is not the only issue, see below.
+
+> ---
+>  drivers/irqchip/irq-brcmstb-l2.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-brcmstb-l2.c b/drivers/irqchip/irq-brcmstb-l2.c
+> index 0e65f609352e..83364fedbf0a 100644
+> --- a/drivers/irqchip/irq-brcmstb-l2.c
+> +++ b/drivers/irqchip/irq-brcmstb-l2.c
+> @@ -129,8 +129,9 @@ static void brcmstb_l2_intc_suspend(struct irq_data *d)
+>  	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+>  	struct irq_chip_type *ct = irq_data_get_chip_type(d);
+>  	struct brcmstb_l2_intc_data *b = gc->private;
+> +	unsigned long flags;
+>  
+> -	irq_gc_lock(gc);
+> +	irq_gc_lock_irqsave(gc, flags);
+>  	/* Save the current mask */
+>  	b->saved_mask = irq_reg_readl(gc, ct->regs.mask);
+>  
+> @@ -139,7 +140,7 @@ static void brcmstb_l2_intc_suspend(struct irq_data *d)
+>  		irq_reg_writel(gc, ~gc->wake_active, ct->regs.disable);
+>  		irq_reg_writel(gc, gc->wake_active, ct->regs.enable);
+>  	}
+> -	irq_gc_unlock(gc);
+> +	irq_gc_unlock_irqrestore(gc, flags);
+>  }
+>  
+>  static void brcmstb_l2_intc_resume(struct irq_data *d)
+> @@ -147,8 +148,9 @@ static void brcmstb_l2_intc_resume(struct irq_data *d)
+>  	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+>  	struct irq_chip_type *ct = irq_data_get_chip_type(d);
+>  	struct brcmstb_l2_intc_data *b = gc->private;
+> +	unsigned long flags;
+>  
+> -	irq_gc_lock(gc);
+> +	irq_gc_lock_irqsave(gc, flags);
+>  	if (ct->chip.irq_ack) {
+>  		/* Clear unmasked non-wakeup interrupts */
+>  		irq_reg_writel(gc, ~b->saved_mask & ~gc->wake_active,
+> @@ -158,7 +160,7 @@ static void brcmstb_l2_intc_resume(struct irq_data *d)
+>  	/* Restore the saved mask */
+>  	irq_reg_writel(gc, b->saved_mask, ct->regs.disable);
+>  	irq_reg_writel(gc, ~b->saved_mask, ct->regs.enable);
+> -	irq_gc_unlock(gc);
+> +	irq_gc_unlock_irqrestore(gc, flags);
+>  }
+>  
+>  static int __init brcmstb_l2_intc_of_init(struct device_node *np,
+
+
+I've had a quick look at the generic irqchip code, and the mask/unmask
+code seems to suffer from something similar. Both implementations use
+the non irq-safe version, and seem vulnerable to the following scenario:
+
+From a non-interrupt context:
+
+irq_set_status_flags(irq, IRQ_DISABLE_UNLAZY)
+disable_irq(irq)
+    irq_disable(irqdesc, true)
+	irq_gc_mask_disable_reg(&irqdesc->irq_data)
+	    irq_gc_lock()
+
+interrupt fires here:
+
+brcmstb_l2_intc_irq_handle()
+    generic_handle_irq()
+        handle_edge_irq()
+            mask_ack_irq()
+                brcmstb_l2_mask_and_ack()
+                    irq_gc_lock() ----> deadlock
+
+I haven't actually observed this, but it feels like it could happen.
+This should just be a matter of turning the mask/unmask/set_wake
+callbacks into the irq-safe version (see patch below).
+
+Thomas, what do you think?
 
 Thanks,
 
-alex.
+	M.
+
+From ef003fbeb54c7f12920b842636ee3c7867cc7d69 Mon Sep 17 00:00:00 2001
+From: Marc Zyngier <marc.zyngier@arm.com>
+Date: Thu, 21 Feb 2019 10:05:24 +0000
+Subject: [PATCH] genirq: Fix generic irq chip locking in non-interrupt code
+
+A number of the irqchip methods can be called both in and out
+of interrupt context (mask, unmask). If these methods are
+using any form of locking, it is crucial to make this locking
+interrupt safe, or risk a deadlock in an interrupt occurs during
+the critical section.
+
+The generic irqchip implementation doesn't obey the above rule.
+Let's address it by changing all the callbacks that can be used
+in non-interrupt context to using irqsafe locking.
+
+Fixes: 7d8280624797 ("genirq: Implement a generic interrupt chip")
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+---
+ kernel/irq/generic-chip.c | 25 +++++++++++++++----------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
+
+diff --git a/kernel/irq/generic-chip.c b/kernel/irq/generic-chip.c
+index e2999a070a99..a21c42c6db51 100644
+--- a/kernel/irq/generic-chip.c
++++ b/kernel/irq/generic-chip.c
+@@ -38,11 +38,12 @@ void irq_gc_mask_disable_reg(struct irq_data *d)
+ 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+ 	struct irq_chip_type *ct = irq_data_get_chip_type(d);
+ 	u32 mask = d->mask;
++	unsigned long flags;
+ 
+-	irq_gc_lock(gc);
++	irq_gc_lock_irqsave(gc, flags);
+ 	irq_reg_writel(gc, mask, ct->regs.disable);
+ 	*ct->mask_cache &= ~mask;
+-	irq_gc_unlock(gc);
++	irq_gc_unlock_irqrestore(gc, flags);
+ }
+ 
+ /**
+@@ -57,11 +58,12 @@ void irq_gc_mask_set_bit(struct irq_data *d)
+ 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+ 	struct irq_chip_type *ct = irq_data_get_chip_type(d);
+ 	u32 mask = d->mask;
++	unsigned long flags;
+ 
+-	irq_gc_lock(gc);
++	irq_gc_lock_irqsave(gc, flags);
+ 	*ct->mask_cache |= mask;
+ 	irq_reg_writel(gc, *ct->mask_cache, ct->regs.mask);
+-	irq_gc_unlock(gc);
++	irq_gc_unlock_irqrestore(gc, flags);
+ }
+ EXPORT_SYMBOL_GPL(irq_gc_mask_set_bit);
+ 
+@@ -77,11 +79,12 @@ void irq_gc_mask_clr_bit(struct irq_data *d)
+ 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+ 	struct irq_chip_type *ct = irq_data_get_chip_type(d);
+ 	u32 mask = d->mask;
++	unsigned long flags;
+ 
+-	irq_gc_lock(gc);
++	irq_gc_lock_irqsave(gc, flags);
+ 	*ct->mask_cache &= ~mask;
+ 	irq_reg_writel(gc, *ct->mask_cache, ct->regs.mask);
+-	irq_gc_unlock(gc);
++	irq_gc_unlock_irqrestore(gc, flags);
+ }
+ EXPORT_SYMBOL_GPL(irq_gc_mask_clr_bit);
+ 
+@@ -97,11 +100,12 @@ void irq_gc_unmask_enable_reg(struct irq_data *d)
+ 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+ 	struct irq_chip_type *ct = irq_data_get_chip_type(d);
+ 	u32 mask = d->mask;
++	unsigned long flags;
+ 
+-	irq_gc_lock(gc);
++	irq_gc_lock_irqsave(gc, flags);
+ 	irq_reg_writel(gc, mask, ct->regs.enable);
+ 	*ct->mask_cache |= mask;
+-	irq_gc_unlock(gc);
++	irq_gc_unlock_irqrestore(gc, flags);
+ }
+ 
+ /**
+@@ -188,16 +192,17 @@ int irq_gc_set_wake(struct irq_data *d, unsigned int on)
+ {
+ 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+ 	u32 mask = d->mask;
++	unsigned long flags;
+ 
+ 	if (!(mask & gc->wake_enabled))
+ 		return -EINVAL;
+ 
+-	irq_gc_lock(gc);
++	irq_gc_lock_irqsave(gc, flags);
+ 	if (on)
+ 		gc->wake_active |= mask;
+ 	else
+ 		gc->wake_active &= ~mask;
+-	irq_gc_unlock(gc);
++	irq_gc_unlock_irqrestore(gc, flags);
+ 	return 0;
+ }
+ 
+-- 
+2.20.1
+
+
+-- 
+Without deviation from the norm, progress is not possible.
