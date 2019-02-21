@@ -4,50 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NORMAL_HTTP_TO_IP,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50443C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:42:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D401C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:42:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FA762080D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:42:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0B892080D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:42:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550760170;
-	bh=YfYsEzj1DGzjMog4Ynzm0UsivFewBdnyLM6isWC0TYE=;
+	s=default; t=1550760173;
+	bh=mW0u96xWlHL9Rcf2gtxaR12uo9/pclvDz5N7hTwmbas=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ob5cZGDPoa2hK5U1Gs7AmAIC2kREPR+kXAcUiWN0BtbnQNnftD10vmCVhxyKIoyTN
-	 7qXayhSsfZMk+0z8KuFeP6LA8WsvAmFhajQ9fMBXtZGPiw/vZUYy3LAZmmFsep+jNJ
-	 GDBWw+o4HJilpMm9p7L1WmEvwp9Q1d95TOPentOw=
+	b=UwI+eiTQu5LMZ6JZMYlk8h0mcneGpYu5dGPgi/HgCnxdPPtKpZigRb0wsM//mgqI7
+	 jKniN1p1Gd3lia5jmKdYU8BgcVGfS62UWGXez5ggM7y7Wi3jPUJ0zuXMOHXIfyj4G5
+	 VqtIduGLPhUHk5MOTn4TBaF5MyWmceCmPkEoyzrs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729588AbfBUOms (ORCPT
+        id S1729594AbfBUOmw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:42:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38296 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:42:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729139AbfBUOmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:42:43 -0500
+        id S1729202AbfBUOms (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:42:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1A3C2080D;
-        Thu, 21 Feb 2019 14:42:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EC6D2086A;
+        Thu, 21 Feb 2019 14:42:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550760162;
-        bh=YfYsEzj1DGzjMog4Ynzm0UsivFewBdnyLM6isWC0TYE=;
+        s=default; t=1550760167;
+        bh=mW0u96xWlHL9Rcf2gtxaR12uo9/pclvDz5N7hTwmbas=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ktem9qtu+Fts5yrSuDni+pL/BlAJuogooah700eAhNi3os61DJR8psbYvnbRsT8tO
-         81cju2BxkYDKgZpNy1dlddiHoSrF51mCcq8xFya4IOGAJQVLw9Eky0YfNgsPQFqs2S
-         a2cNR4sBzzqJwYoL7AUwXuXHVbR1SHEgvsguj66w=
+        b=A536i3rE1aOwULs9TX64H3K7vJEqwofTYyIxgTw6cKBs8zsp2xf3U6xujYNHZVgYG
+         86r3EU9mzvr3dHBgY//VTXtOiv8B5h4UMSCBc8wLaKRmsR8WYfoxu77Tx2BoUllgvp
+         hcn+JcOiwTNJqzipf2/F6jQ7kfYGu8/sEJTCS7mg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mao Wenan <maowenan@huawei.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        soukjin bae <soukjin.bae@samsung.com>,
+        Neal Cardwell <ncardwell@google.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 07/32] net: crypto set sk to NULL when af_alg_release.
-Date:   Thu, 21 Feb 2019 15:35:55 +0100
-Message-Id: <20190221125251.274926430@linuxfoundation.org>
+Subject: [PATCH 4.20 17/32] tcp: clear icsk_backoff in tcp_write_queue_purge()
+Date:   Thu, 21 Feb 2019 15:36:05 +0100
+Message-Id: <20190221125251.884723766@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125250.855065214@linuxfoundation.org>
 References: <20190221125250.855065214@linuxfoundation.org>
@@ -66,122 +68,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9060cb719e61b685ec0102574e10337fa5f445ea ]
+[ Upstream commit 04c03114be82194d4a4858d41dba8e286ad1787c ]
 
-KASAN has found use-after-free in sockfs_setattr.
-The existed commit 6d8c50dcb029 ("socket: close race condition between sock_close()
-and sockfs_setattr()") is to fix this simillar issue, but it seems to ignore
-that crypto module forgets to set the sk to NULL after af_alg_release.
+soukjin bae reported a crash in tcp_v4_err() handling
+ICMP_DEST_UNREACH after tcp_write_queue_head(sk)
+returned a NULL pointer.
 
-KASAN report details as below:
-BUG: KASAN: use-after-free in sockfs_setattr+0x120/0x150
-Write of size 4 at addr ffff88837b956128 by task syz-executor0/4186
+Current logic should have prevented this :
 
-CPU: 2 PID: 4186 Comm: syz-executor0 Not tainted xxx + #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-1.10.2-1ubuntu1 04/01/2014
-Call Trace:
- dump_stack+0xca/0x13e
- print_address_description+0x79/0x330
- ? vprintk_func+0x5e/0xf0
- kasan_report+0x18a/0x2e0
- ? sockfs_setattr+0x120/0x150
- sockfs_setattr+0x120/0x150
- ? sock_register+0x2d0/0x2d0
- notify_change+0x90c/0xd40
- ? chown_common+0x2ef/0x510
- chown_common+0x2ef/0x510
- ? chmod_common+0x3b0/0x3b0
- ? __lock_is_held+0xbc/0x160
- ? __sb_start_write+0x13d/0x2b0
- ? __mnt_want_write+0x19a/0x250
- do_fchownat+0x15c/0x190
- ? __ia32_sys_chmod+0x80/0x80
- ? trace_hardirqs_on_thunk+0x1a/0x1c
- __x64_sys_fchownat+0xbf/0x160
- ? lockdep_hardirqs_on+0x39a/0x5e0
- do_syscall_64+0xc8/0x580
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x462589
-Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89
-f7 48 89 d6 48 89
-ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3
-48 c7 c1 bc ff ff
-ff f7 d8 64 89 01 48
-RSP: 002b:00007fb4b2c83c58 EFLAGS: 00000246 ORIG_RAX: 0000000000000104
-RAX: ffffffffffffffda RBX: 000000000072bfa0 RCX: 0000000000462589
-RDX: 0000000000000000 RSI: 00000000200000c0 RDI: 0000000000000007
-RBP: 0000000000000005 R08: 0000000000001000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb4b2c846bc
-R13: 00000000004bc733 R14: 00000000006f5138 R15: 00000000ffffffff
+  if (seq != tp->snd_una  || !icsk->icsk_retransmits ||
+      !icsk->icsk_backoff || fastopen)
+      break;
 
-Allocated by task 4185:
- kasan_kmalloc+0xa0/0xd0
- __kmalloc+0x14a/0x350
- sk_prot_alloc+0xf6/0x290
- sk_alloc+0x3d/0xc00
- af_alg_accept+0x9e/0x670
- hash_accept+0x4a3/0x650
- __sys_accept4+0x306/0x5c0
- __x64_sys_accept4+0x98/0x100
- do_syscall_64+0xc8/0x580
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Problem is the write queue might have been purged
+and icsk_backoff has not been cleared.
 
-Freed by task 4184:
- __kasan_slab_free+0x12e/0x180
- kfree+0xeb/0x2f0
- __sk_destruct+0x4e6/0x6a0
- sk_destruct+0x48/0x70
- __sk_free+0xa9/0x270
- sk_free+0x2a/0x30
- af_alg_release+0x5c/0x70
- __sock_release+0xd3/0x280
- sock_close+0x1a/0x20
- __fput+0x27f/0x7f0
- task_work_run+0x136/0x1b0
- exit_to_usermode_loop+0x1a7/0x1d0
- do_syscall_64+0x461/0x580
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Syzkaller reproducer:
-r0 = perf_event_open(&(0x7f0000000000)={0x0, 0x70, 0x0, 0x0, 0x0, 0x0,
-0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, @perf_config_ext}, 0x0, 0x0,
-0xffffffffffffffff, 0x0)
-r1 = socket$alg(0x26, 0x5, 0x0)
-getrusage(0x0, 0x0)
-bind(r1, &(0x7f00000001c0)=@alg={0x26, 'hash\x00', 0x0, 0x0,
-'sha256-ssse3\x00'}, 0x80)
-r2 = accept(r1, 0x0, 0x0)
-r3 = accept4$unix(r2, 0x0, 0x0, 0x0)
-r4 = dup3(r3, r0, 0x0)
-fchownat(r4, &(0x7f00000000c0)='\x00', 0x0, 0x0, 0x1000)
-
-Fixes: 6d8c50dcb029 ("socket: close race condition between sock_close() and sockfs_setattr()")
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: soukjin bae <soukjin.bae@samsung.com>
+Acked-by: Neal Cardwell <ncardwell@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/af_alg.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/ipv4/tcp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/crypto/af_alg.c b/crypto/af_alg.c
-index 17eb09d222ff4..ec78a04eb136e 100644
---- a/crypto/af_alg.c
-+++ b/crypto/af_alg.c
-@@ -122,8 +122,10 @@ static void alg_do_release(const struct af_alg_type *type, void *private)
- 
- int af_alg_release(struct socket *sock)
- {
--	if (sock->sk)
-+	if (sock->sk) {
- 		sock_put(sock->sk);
-+		sock->sk = NULL;
-+	}
- 	return 0;
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index 40cbe5609663f..b102973102b9e 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2532,6 +2532,7 @@ void tcp_write_queue_purge(struct sock *sk)
+ 	sk_mem_reclaim(sk);
+ 	tcp_clear_all_retrans_hints(tcp_sk(sk));
+ 	tcp_sk(sk)->packets_out = 0;
++	inet_csk(sk)->icsk_backoff = 0;
  }
- EXPORT_SYMBOL_GPL(af_alg_release);
+ 
+ int tcp_disconnect(struct sock *sk, int flags)
+@@ -2580,7 +2581,6 @@ int tcp_disconnect(struct sock *sk, int flags)
+ 	tp->write_seq += tp->max_window + 2;
+ 	if (tp->write_seq == 0)
+ 		tp->write_seq = 1;
+-	icsk->icsk_backoff = 0;
+ 	tp->snd_cwnd = 2;
+ 	icsk->icsk_probes_out = 0;
+ 	tp->snd_ssthresh = TCP_INFINITE_SSTHRESH;
 -- 
 2.19.1
 
