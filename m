@@ -2,89 +2,98 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D086C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CBF0C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:47:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 407572086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:47:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33FD52086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:47:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QAGYpFw2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbfBUBra (ORCPT
+        id S1726648AbfBUBr5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 20:47:30 -0500
-Received: from ozlabs.org ([203.11.71.1]:37979 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725989AbfBUBra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 20:47:30 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 444cmG48S0z9s5c;
-        Thu, 21 Feb 2019 12:47:26 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, j.neuschaefer@gmx.net
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v3 00/16] powerpc/32: Use BATs/LTLBs for STRICT_KERNEL_RWX
-In-Reply-To: <cover.1550648295.git.christophe.leroy@c-s.fr>
-References: <cover.1550648295.git.christophe.leroy@c-s.fr>
-Date:   Thu, 21 Feb 2019 12:47:26 +1100
-Message-ID: <87mumpx68h.fsf@concordia.ellerman.id.au>
+        Wed, 20 Feb 2019 20:47:57 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37061 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbfBUBr4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 20:47:56 -0500
+Received: by mail-pg1-f196.google.com with SMTP id q206so12908872pgq.4
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 17:47:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fu5FhGF59R4aUmLm0zhhX9vBkIAmS/WbdEnqus1WefU=;
+        b=QAGYpFw2Xuw4dJ5aVRAqbmnOW6201yd3fYg5LI5sB66A4+21tCcN/bZa+nY+MWzC8D
+         AScm9TuHmn3gQ1YOu9/gt5t+kVgZb2NXx1WU56VZw0gXDb8lQLEZPQpemGzS+975+5G8
+         lJZxOuzssVJoG32on5cHQBu5hZGJ2CL9NX1gf1kpPiqiLbfZ5wZetX4C6EVo8tnLVT+R
+         S9M4C9+ZRqJQuK4lwT4sd6egsQ3npalKVw9vZfbkUiz9ozlmQRs3PmPohijz9kipHvG4
+         GwR1QNFhZ+DiLP46UKLqEknyePbxQFClR+uyNxbtit0JpUdy9D6BxzZDrtvOcMRS73Hn
+         vBQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fu5FhGF59R4aUmLm0zhhX9vBkIAmS/WbdEnqus1WefU=;
+        b=tWUn58kGBbUUp1gHpIXhYqqQtaZnxtv6wXdzTKeOEAaOFaQazmdhhMR30XdUn1F6q4
+         2PZX6afANr8QOR+vn/ZOMiZecmMw85q7qkdJu+enfGy76mrn+aCnJzdljPYxrwGyaQsf
+         A/o5iIHl5rwQ2rHDAbWYcVqADdO9Ekp5NkeoZOJCJTXOiyeVC21hdCDzBr2sZ3j5Yz/W
+         skRxrc8wVrMPckDsTUS51drX4MkMJP/HA7cJq/cv1/9aM0RUI8lmKDs65URmIW96eGiV
+         dKV0kjbP5ByeXnNxTevyvZ4JrYxZI4iI+YImOvjxk7NGU1uzZ1xSPySh9Gym0bN1ncuj
+         VXUA==
+X-Gm-Message-State: AHQUAubywVpCDmbOmXR/wVRUETLZbmg0JZO+wDTCVaGCRvK06yGV4mRP
+        LyiLZqX5yzDRb3yQD84sHvE=
+X-Google-Smtp-Source: AHgI3IZqoIeFGVWmHtHVHB9KjoexaUqF4wza2FbLGh+w7YPcf/Yq3V9OFwfYZJwzKYyENxvQ43kHNw==
+X-Received: by 2002:a63:df09:: with SMTP id u9mr35665373pgg.299.1550713675809;
+        Wed, 20 Feb 2019 17:47:55 -0800 (PST)
+Received: from localhost ([110.70.55.83])
+        by smtp.gmail.com with ESMTPSA id s1sm17076884pgv.30.2019.02.20.17.47.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Feb 2019 17:47:54 -0800 (PST)
+Date:   Thu, 21 Feb 2019 10:47:51 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 9/9] vsprintf: Avoid confusion between invalid address
+ and value
+Message-ID: <20190221014751.GA448@jagdpanzerIV>
+References: <20190208152310.29531-1-pmladek@suse.com>
+ <20190208152310.29531-10-pmladek@suse.com>
+ <20190219030300.GA640@jagdpanzerIV>
+ <CAHp75Vckf_aJqpK75-7xmN-u3aVs8nUrAOWiRzSLP5Gh3uHUEQ@mail.gmail.com>
+ <20190220092425.zgwbvbskpd6zss7r@pathway.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190220092425.zgwbvbskpd6zss7r@pathway.suse.cz>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
+On (02/20/19 10:24), Petr Mladek wrote:
+> Well, better be on the safe side. I'll move it at the beginning
+> of the patchset.
+>
+> PS: I am a bit busy with some other things. I'll send v7 later.
 
-> The purpose of this serie is to:
-> - use BATs with STRICT_KERNEL_RWX on book3s (See patch 13 for details.)
-> - use LTLBs with STRICT_KERNEL_RWX on 8xx (See patch 15 for a few details.)
+If this is the only change you are going to make then I'm OK with v6.
 
-This doesn't boot qemu-mac99 for me:
-
-  spawn ~/src/qemu/ppc-softmmu/qemu-system-ppc -nographic -vga none -M mac99 -m 1G -kernel build/vmlinux -initrd ppc32-initrd.gz -append console=ttyPZ0 init=/bin/sh
-  >> =============================================================
-  >> OpenBIOS 1.1 [Feb 15 2019 10:05]
-  >> Configuration device id QEMU version 1 machine id 1
-  >> CPUs: 1
-  >> Memory: 1024M
-  >> UUID: 00000000-0000-0000-0000-000000000000
-  >> CPU type PowerPC,G4
-  milliseconds isn't unique.
-  Welcome to OpenBIOS v1.1 built on Feb 15 2019 10:05
-  >> [ppc] Kernel already loaded (0x01000000 + 0x00c2c338) (initrd 0x01d2d000 + 0x007e72f0)
-  >> [ppc] Kernel command line: console=ttyPZ0 init=/bin/sh
-  >> switching to new context:
-  OF stdout device is: /pci@f2000000/mac-io@c/escc@13000/ch-a@13020
-  Preparing to boot Linux version 5.0.0-rc2-gcc-8.2.0-00125-g4fcb83ca7936 (michael@ka4) (gcc version 8.2.0 (Buildroot 2018.11-rc2-00003-ga0787e9)) #724 Thu Feb 21 12:03:14 AEDT 2019
-  Detected machine type: 00000400
-  command line: 
-  memory layout at init:
-    memory_limit : 00000000 (16 MB aligned)
-    alloc_bottom : 02515000
-    alloc_top    : 30000000
-    alloc_top_hi : 40000000
-    rmo_top      : 30000000
-    ram_top      : 40000000
-  copying OF device tree...
-  Building dt strings...
-  Building dt structure...
-  Device tree strings 0x02516000 -> 0x025150a4
-  Device tree struct  0x02517000 -> 0x3fde7eb0
-  Quiescing Open Firmware ...
-  Booting Linux via __start() @ 0x01000000 ...
-  FAIL! Booting BE pmac32
-
-
-That's pmac32 defconfig ish.
-I haven't had time to debug it further sorry.
-
-cheers
+	-ss
