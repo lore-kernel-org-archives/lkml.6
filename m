@@ -2,148 +2,233 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D990DC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:25:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4095CC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:29:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5A362086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:25:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K1pyr4O4"
+	by mail.kernel.org (Postfix) with ESMTP id 0E3382084F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:29:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbfBUGZ4 (ORCPT
+        id S1726468AbfBUG3p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 01:25:56 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:44563 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725648AbfBUGZz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 01:25:55 -0500
-Received: by mail-qk1-f195.google.com with SMTP id r21so3612230qkl.11;
-        Wed, 20 Feb 2019 22:25:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=7xMYSM2aOe6bSPqc/45ReqpRuLE1CcWNfUMtbsqiRfY=;
-        b=K1pyr4O4Lurjy/nxlGbpfORCbQCH2xI+AEVdpUDlGKerJ9NatgLXamL5mrdXXOCmEe
-         K1fWwyLYrAKuKNzA6BZWDttGBhRcCt93Mnn+4JRBVtsnYNFjflfEvQQM3J3fgoZnfTYZ
-         VQbI8MuzTiE+R2su8ZBrcpMaVt3xGOymw6y1unrQGqrRMboOZMyUB5rg2VqpLUGyehVR
-         ZOEZNilC2vWe0d7mBWLu7jfxYFt/PbGHWEWi7FnOwVs4IevYt9R/297Wo/99nRA4FbTq
-         U0FlwhHTNabtaXTM6q2Nhqk7uno+7i3w6Vtz+ta5twvm3iUj4apw3qbx1TKQgdGeJvSx
-         aXvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=7xMYSM2aOe6bSPqc/45ReqpRuLE1CcWNfUMtbsqiRfY=;
-        b=f7H41J6xtYm6xilsBMvZ5t+W4CK7kypYeNx+SGcaQkhpPegPAQ7zuwKTMD4QImCM1b
-         4aAyOMSUCxOOIQm0jltad/Xg27T1/y61BdfFZEFTFHz4X26RVVrAgjGa8RuooqOvCRJe
-         iSVu1ZJdM/QFTIYqClOSVB7M86vTuHqB8PBfT8eRhaFOTfChHFy+1GsuW8eOyAPm8z3+
-         cL7h0x4pq5ABDnyJfWrM4kS6x0UJa5jzxYVWTVePxkLYnPuO6n2o6zFBOUpeVJ1t0GI5
-         Wud5q5h2qMWmUwQfIiwk6f/HJ4VuA3b/ayscV3TV7waaH9CyCObeHc2poCkb8QP6broT
-         7u3g==
-X-Gm-Message-State: AHQUAuaGhKmZq+mxAB3XN+aHhJOsTONv4C6OXxfy6chL8d+oL+r3qTyQ
-        XDY6Q6EELh7VwAX3lmHyogvfK9YTehkIlnMxDKw=
-X-Google-Smtp-Source: AHgI3IY11kIeB14F6g5Zkj2WULhJ5vYGwicmpr+RKgnJBe8c4QR8dXQy9byUNNZQL5W+TOE7tVew5TeNFSIlvPUyE7E=
-X-Received: by 2002:a37:4707:: with SMTP id u7mr27283384qka.296.1550730354152;
- Wed, 20 Feb 2019 22:25:54 -0800 (PST)
+        Thu, 21 Feb 2019 01:29:45 -0500
+Received: from mga17.intel.com ([192.55.52.151]:24590 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725648AbfBUG3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 01:29:45 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 22:29:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,393,1544515200"; 
+   d="scan'208";a="276681968"
+Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.159.151])
+  by orsmga004.jf.intel.com with ESMTP; 20 Feb 2019 22:29:42 -0800
+From:   "Huang\, Ying" <ying.huang@intel.com>
+To:     Wei Yang <richardw.yang@linux.intel.com>
+Cc:     kernel test robot <rong.a.chen@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, <lkp@01.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [LKP] [driver core] 570d020012: will-it-scale.per_thread_ops -12.2% regression
+References: <20190218075442.GI29177@shao2-debian>
+        <20190219005945.GA16734@richard> <20190219121904.GA24103@kroah.com>
+        <20190221031049.GE28258@shao2-debian> <20190221034612.GA15147@richard>
+        <87h8cx21gl.fsf@yhuang-dev.intel.com> <20190221060218.GA19466@richard>
+Date:   Thu, 21 Feb 2019 14:29:42 +0800
+In-Reply-To: <20190221060218.GA19466@richard> (Wei Yang's message of "Thu, 21
+        Feb 2019 14:02:18 +0800")
+Message-ID: <87d0nl1wo9.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <e7b709a2b040af7faa81b0aa2c3a125aed628a82.1525964383.git.joe@perches.com>
- <tip-1de392f5d5e803663abbd8ed084233f154152bcd@git.kernel.org>
- <20180517182659.GB27807@pd.tnic> <a341a36ed75712b6c624a14aa694843ee1ef948e.camel@perches.com>
-In-Reply-To: <a341a36ed75712b6c624a14aa694843ee1ef948e.camel@perches.com>
-Reply-To: bjorn@helgaas.com
-From:   Bjorn Helgaas <bjorn.helgaas@gmail.com>
-Date:   Wed, 20 Feb 2019 22:25:42 -0800
-Message-ID: <CABhMZUWmJpux98nN65UBkY4LvjUO5P4Y60ytAe+ze70gQUVf1A@mail.gmail.com>
-Subject: Re: [tip:x86/cleanups] x86: Remove pr_fmt duplicate logging prefixes
-To:     Joe Perches <joe@perches.com>
-Cc:     Borislav Petkov <bp@alien8.de>, mingo@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        linux-tip-commits@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 17, 2018 at 11:45 AM Joe Perches <joe@perches.com> wrote:
->
-> On Thu, 2018-05-17 at 20:27 +0200, Borislav Petkov wrote:
-> > On Sun, May 13, 2018 at 12:27:45PM -0700, tip-bot for Joe Perches wrote:
-> > > Commit-ID:  1de392f5d5e803663abbd8ed084233f154152bcd
-> > > Gitweb:     https://git.kernel.org/tip/1de392f5d5e803663abbd8ed084233f154152bcd
-> > > Author:     Joe Perches <joe@perches.com>
-> > > AuthorDate: Thu, 10 May 2018 08:45:30 -0700
-> > > Committer:  Thomas Gleixner <tglx@linutronix.de>
-> > > CommitDate: Sun, 13 May 2018 21:25:18 +0200
-> > >
-> > > x86: Remove pr_fmt duplicate logging prefixes
-> > >
-> > > Converting pr_fmt from a default simple #define to use KBUILD_MODNAME
-> > > added some duplicate prefixes.
-> > >
-> > > Remove the duplicate prefixes.
-> []
-> > Maybe I'm missing something but this dropped the prefixes now
-> > completely:
-> >
-> > -e820: BIOS-provided physical RAM map:
-> > +BIOS-provided physical RAM map:
-> >
-> > -e820: last_pfn = 0x43f000 max_arch_pfn = 0x400000000
-> > +last_pfn = 0x43f000 max_arch_pfn = 0x400000000
-> >
-> > -e820: last_pfn = 0x9d000 max_arch_pfn = 0x400000000
-> > +last_pfn = 0x9d000 max_arch_pfn = 0x400000000
-> >
-> > ...
-> >
-> > I don't think that was the intention.
->
-> Hi Borislav
->
-> It wasn't and isn't the intention.
->
-> This is a patch _series_, and all of the patches
-> from 4-18 depend on patch 3 which converts the
-> generic define in include/linux/printk.h
->
-> from
->         #define pr_fmt(fmt) fmt
-> to
->         #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->
-> Perhaps a better option, which could be done in
-> a v2 of the series, is to add a temporary
-> #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> to each file modified in patches 4-18 and then
-> allow the follow-on script described in the 0/18
-> cover letter to remove those #defines
+Wei Yang <richardw.yang@linux.intel.com> writes:
 
-Was there ever a v2?  What I see from 1de392f5d5e8 ("x86: Remove
-pr_fmt duplicate logging prefixes") is exactly what Borislav noted.
+> On Thu, Feb 21, 2019 at 12:46:18PM +0800, Huang, Ying wrote:
+>>Wei Yang <richardw.yang@linux.intel.com> writes:
+>>
+>>> On Thu, Feb 21, 2019 at 11:10:49AM +0800, kernel test robot wrote:
+>>>>On Tue, Feb 19, 2019 at 01:19:04PM +0100, Greg Kroah-Hartman wrote:
+>>>>> On Tue, Feb 19, 2019 at 08:59:45AM +0800, Wei Yang wrote:
+>>>>> > On Mon, Feb 18, 2019 at 03:54:42PM +0800, kernel test robot wrote:
+>>>>> > >Greeting,
+>>>>> > >
+>>>>> > >FYI, we noticed a -12.2% regression of will-it-scale.per_thread_ops due to commit:
+>>>>> > >
+>>>>> > >
+>>>>> > >commit: 570d0200123fb4f809aa2f6226e93a458d664d70 ("driver core: move device->knode_class to device_private")
+>>>>> > >https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+>>>>> > >
+>>>>> > 
+>>>>> > This is interesting.
+>>>>> > 
+>>>>> > I didn't expect the move of this field will impact the performance.
+>>>>> > 
+>>>>> > The reason is struct device is a hotter memory than device->device_private?
+>>>>> > 
+>>>>> > >in testcase: will-it-scale
+>>>>> > >on test machine: 288 threads Knights Mill with 80G memory
+>>>>> > >with following parameters:
+>>>>> > >
+>>>>> > >	nr_task: 100%
+>>>>> > >	mode: thread
+>>>>> > >	test: unlink2
+>>>>> > >	cpufreq_governor: performance
+>>>>> > >
+>>>>> > >test-description: Will It Scale takes a testcase and runs it from 1 through to n parallel copies to see if the testcase will scale. It builds both a process and threads based test in order to see any differences between the two.
+>>>>> > >test-url: https://github.com/antonblanchard/will-it-scale
+>>>>> > >
+>>>>> > >In addition to that, the commit also has significant impact on the following tests:
+>>>>> > >
+>>>>> > >+------------------+---------------------------------------------------------------+
+>>>>> > >| testcase: change | will-it-scale: will-it-scale.per_thread_ops -29.9% regression |
+>>>>> > >| test machine     | 288 threads Knights Mill with 80G memory                      |
+>>>>> > >| test parameters  | cpufreq_governor=performance                                  |
+>>>>> > >|                  | mode=thread                                                   |
+>>>>> > >|                  | nr_task=100%                                                  |
+>>>>> > >|                  | test=signal1                                                  |
+>>>>> 
+>>>>> Ok, I'm going to blame your testing system, or something here, and not
+>>>>> the above patch.
+>>>>> 
+>>>>> All this test does is call raise(3).  That does not touch the driver
+>>>>> core at all.
+>>>>> 
+>>>>> > >+------------------+---------------------------------------------------------------+
+>>>>> > >| testcase: change | will-it-scale: will-it-scale.per_thread_ops -16.5% regression |
+>>>>> > >| test machine     | 288 threads Knights Mill with 80G memory                      |
+>>>>> > >| test parameters  | cpufreq_governor=performance                                  |
+>>>>> > >|                  | mode=thread                                                   |
+>>>>> > >|                  | nr_task=100%                                                  |
+>>>>> > >|                  | test=open1                                                    |
+>>>>> > >+------------------+---------------------------------------------------------------+
+>>>>> 
+>>>>> Same here, open1 just calls open/close a lot.  No driver core
+>>>>> interaction at all there either.
+>>>>> 
+>>>>> So are you _sure_ this is the offending patch?
+>>>>
+>>>>Hi Greg,
+>>>>
+>>>>We did an experiment, recovered the layout of struct device. and we
+>>>>found the regression is gone. I guess the regession is not from the
+>>>>patch but related to the struct layout.
+>>>>
+>>>>
+>>>>tests: 1
+>>>>testcase/path_params/tbox_group/run: will-it-scale/performance-thread-100%-unlink2/lkp-knm01
+>>>>
+>>>>570d0200123fb4f8  a36dc70b810afe9183de2ea18f  
+>>>>----------------  --------------------------  
+>>>>         %stddev      change         %stddev
+>>>>             \          |                \  
+>>>>    237096              14%     270789        will-it-scale.workload
+>>>>       823              14%        939        will-it-scale.per_thread_ops
+>>>>
+>>>
+>>> Do you have the comparison between a36dc70b810afe9183de2ea18f and the one
+>>> before 570d020012?
+>>>
+>>>>
+>>>>tests: 1
+>>>>testcase/path_params/tbox_group/run: will-it-scale/performance-thread-100%-signal1/lkp-knm01
+>>>>
+>>>>570d0200123fb4f8  a36dc70b810afe9183de2ea18f  
+>>>>----------------  --------------------------  
+>>>>         %stddev      change         %stddev
+>>>>             \          |                \  
+>>>>     93.51   3%        48%     138.53   3%  will-it-scale.time.user_time
+>>>>       186              40%        261        will-it-scale.per_thread_ops
+>>>>     53909              40%      75507        will-it-scale.workload
+>>>>
+>>>>
+>>>>tests: 1
+>>>>testcase/path_params/tbox_group/run: will-it-scale/performance-thread-100%-open1/lkp-knm01
+>>>>
+>>>>570d0200123fb4f8  a36dc70b810afe9183de2ea18f  
+>>>>----------------  --------------------------  
+>>>>         %stddev      change         %stddev
+>>>>             \          |                \  
+>>>>    447722              22%     546258  10%  will-it-scale.time.involuntary_context_switches
+>>>>    226995              19%     269751        will-it-scale.workload
+>>>>       787              19%        936        will-it-scale.per_thread_ops
+>>>>
+>>>>
+>>>>
+>>>>commit a36dc70b810afe9183de2ea18faa4c0939c139ac
+>>>>Author: 0day robot <lkp@intel.com>
+>>>>Date:   Wed Feb 20 14:21:19 2019 +0800
+>>>>
+>>>>    backfile klist_node in struct device for debugging
+>>>>    
+>>>>    Signed-off-by: 0day robot <lkp@intel.com>
+>>>>
+>>>>diff --git a/include/linux/device.h b/include/linux/device.h
+>>>>index d0e452fd0bff2..31666cb72b3ba 100644
+>>>>--- a/include/linux/device.h
+>>>>+++ b/include/linux/device.h
+>>>>@@ -1035,6 +1035,7 @@ struct device {
+>>>> 	spinlock_t		devres_lock;
+>>>> 	struct list_head	devres_head;
+>>>> 
+>>>>+	struct klist_node       knode_class_test_by_rongc;
+>>>> 	struct class		*class;
+>>>> 	const struct attribute_group **groups;	/* optional groups */
+>>>
+>>> Hmm... because this is not properly aligned?
+>>>
+>>> struct klist_node {
+>>> 	void			*n_klist;	/* never access directly */
+>>> 	struct list_head	n_node;
+>>> 	struct kref		n_ref;
+>>> };
+>>>
+>>> Except struct kref has one "int" type, others are pointers.
+>>>
+>>> But... I am still confused.
+>>
+>>I guess because the size of struct device is changed, it influences some
+>>alignment changes in the system.  Thus influence the benchmark score.
+>>
+>
+> That's interesting.
+>
+> I wrote a module to see the exact size of these two structure on my x86_64.
+>
+>     sizeof(struct device) = 736 = 8 * 92
+>     sizeof(struct device_private) = 160 = 8 * 20
+>     sizeof(struct klist_node) = 32 = 8 * 4
+>
+> Even klist_node has one 4 byte field, c complier would pack the structure to
+> make it aligned. Which system alignment it would affect?
+>
+> After the patch, size would change like this:
+>
+>    struct device          736   ->   704
+>    struce device_private  160   ->   192
+>
+> Would this size change affect system?
 
-For example, https://bugzilla.kernel.org/attachment.cgi?id=281007 is a
-v4.20 dmesg log from
-https://bugzilla.kernel.org/show_bug.cgi?id=202511 .  That bug also
-has a v4.17 dmesg log
-(https://bugzilla.kernel.org/attachment.cgi?id=281011).  Comparing
-them shows:
+Yes.  I guess these size change may affect system performance.  Some
+other objects may share slab page with these objects.
 
--Linux version 4.17.19-gentoo (root@survivor) (gcc version 7.3.0
-(Gentoo 7.3.0-r3 p1.4)) #2 SMP Sat Sep 22 09:53:01 EDT 2018
-+Linux version 4.20.6-gentoo (root@survivor) (gcc version 7.3.0
-(Gentoo 7.3.0-r3 p1.4)) #1 SMP Tue Feb 5 09:46:51 EST 2019
-...
--e820: BIOS-provided physical RAM map:
-+BIOS-provided physical RAM map:
+Best Regards,
+Huang, Ying
 
-Not a big deal as far as I'm concerned, but it is a minor annoyance.
-
-Bjorn
+>>Best Regards,
+>>Huang, Ying
+>>
+>>>>
+>>>>Best Regards,
+>>>>Rong Chen
