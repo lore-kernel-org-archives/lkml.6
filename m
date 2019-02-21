@@ -2,180 +2,98 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1996CC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:10:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A28FBC4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:13:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD4D72086A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:10:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CE9E2086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:13:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726938AbfBUDKf (ORCPT
+        id S1727032AbfBUDNs convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 22:10:35 -0500
-Received: from mga06.intel.com ([134.134.136.31]:22151 "EHLO mga06.intel.com"
+        Wed, 20 Feb 2019 22:13:48 -0500
+Received: from mga02.intel.com ([134.134.136.20]:22077 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726152AbfBUDKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 22:10:35 -0500
-X-Amp-Result: UNSCANNABLE
+        id S1725989AbfBUDNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 22:13:48 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 19:10:34 -0800
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 19:13:47 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,393,1544515200"; 
-   d="scan'208";a="135939133"
-Received: from shao2-debian.sh.intel.com (HELO localhost) ([10.239.13.107])
-  by orsmga002.jf.intel.com with ESMTP; 20 Feb 2019 19:10:32 -0800
-Date:   Thu, 21 Feb 2019 11:10:49 +0800
-From:   kernel test robot <rong.a.chen@intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Wei Yang <richardw.yang@linux.intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, lkp@01.org,
-        "Huang, Ying" <ying.huang@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [LKP] [driver core] 570d020012: will-it-scale.per_thread_ops
- -12.2% regression
-Message-ID: <20190221031049.GE28258@shao2-debian>
-References: <20190218075442.GI29177@shao2-debian>
- <20190219005945.GA16734@richard>
- <20190219121904.GA24103@kroah.com>
+   d="scan'208";a="124040098"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by fmsmga007.fm.intel.com with ESMTP; 20 Feb 2019 19:13:47 -0800
+Received: from fmsmsx126.amr.corp.intel.com (10.18.125.43) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 20 Feb 2019 19:13:46 -0800
+Received: from shsmsx105.ccr.corp.intel.com (10.239.4.158) by
+ FMSMSX126.amr.corp.intel.com (10.18.125.43) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 20 Feb 2019 19:13:46 -0800
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.102]) by
+ SHSMSX105.ccr.corp.intel.com ([169.254.11.253]) with mapi id 14.03.0415.000;
+ Thu, 21 Feb 2019 11:13:44 +0800
+From:   "He, Bo" <bo.he@intel.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "ic23@kernel.org" <ic23@kernel.org>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "Chen, Hu1" <hu1.chen@intel.com>
+Subject: [PATCH] io: accel: kxcjk1013: restore the range after resume.
+Thread-Topic: [PATCH] io: accel: kxcjk1013: restore the range after resume.
+Thread-Index: AdTJklHsGhceer30SUizI4A3viRlAQ==
+Date:   Thu, 21 Feb 2019 03:13:44 +0000
+Message-ID: <CD6925E8781EFD4D8E11882D20FC406D52A4C63F@SHSMSX104.ccr.corp.intel.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiN2ZiMzNmMTAtNmNkNS00ZGU3LWE2NTAtZjhkYjNiYjVjMWUyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiaHZEaktHTFlYY2tSUlZJK29cL1NKSmt1SFFiRUdFMzdvTVJucktmQ2tQSDRyQ3VMZFY0eUJaeFpEK01iZFhXQncifQ==
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190219121904.GA24103@kroah.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 01:19:04PM +0100, Greg Kroah-Hartman wrote:
-> On Tue, Feb 19, 2019 at 08:59:45AM +0800, Wei Yang wrote:
-> > On Mon, Feb 18, 2019 at 03:54:42PM +0800, kernel test robot wrote:
-> > >Greeting,
-> > >
-> > >FYI, we noticed a -12.2% regression of will-it-scale.per_thread_ops due to commit:
-> > >
-> > >
-> > >commit: 570d0200123fb4f809aa2f6226e93a458d664d70 ("driver core: move device->knode_class to device_private")
-> > >https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
-> > >
-> > 
-> > This is interesting.
-> > 
-> > I didn't expect the move of this field will impact the performance.
-> > 
-> > The reason is struct device is a hotter memory than device->device_private?
-> > 
-> > >in testcase: will-it-scale
-> > >on test machine: 288 threads Knights Mill with 80G memory
-> > >with following parameters:
-> > >
-> > >	nr_task: 100%
-> > >	mode: thread
-> > >	test: unlink2
-> > >	cpufreq_governor: performance
-> > >
-> > >test-description: Will It Scale takes a testcase and runs it from 1 through to n parallel copies to see if the testcase will scale. It builds both a process and threads based test in order to see any differences between the two.
-> > >test-url: https://github.com/antonblanchard/will-it-scale
-> > >
-> > >In addition to that, the commit also has significant impact on the following tests:
-> > >
-> > >+------------------+---------------------------------------------------------------+
-> > >| testcase: change | will-it-scale: will-it-scale.per_thread_ops -29.9% regression |
-> > >| test machine     | 288 threads Knights Mill with 80G memory                      |
-> > >| test parameters  | cpufreq_governor=performance                                  |
-> > >|                  | mode=thread                                                   |
-> > >|                  | nr_task=100%                                                  |
-> > >|                  | test=signal1                                                  |
-> 
-> Ok, I'm going to blame your testing system, or something here, and not
-> the above patch.
-> 
-> All this test does is call raise(3).  That does not touch the driver
-> core at all.
-> 
-> > >+------------------+---------------------------------------------------------------+
-> > >| testcase: change | will-it-scale: will-it-scale.per_thread_ops -16.5% regression |
-> > >| test machine     | 288 threads Knights Mill with 80G memory                      |
-> > >| test parameters  | cpufreq_governor=performance                                  |
-> > >|                  | mode=thread                                                   |
-> > >|                  | nr_task=100%                                                  |
-> > >|                  | test=open1                                                    |
-> > >+------------------+---------------------------------------------------------------+
-> 
-> Same here, open1 just calls open/close a lot.  No driver core
-> interaction at all there either.
-> 
-> So are you _sure_ this is the offending patch?
+restore the range register in case kxcjk1013 power is off after suspend
 
-Hi Greg,
+we see the issue on some laptops, after system suspend and resume,
+the CTRL_REG1 register changed from 0xc8 to 0x80, so acceleration range
+is changed, the patch is to restore the acceleration range after resume.
 
-We did an experiment, recovered the layout of struct device. and we
-found the regression is gone. I guess the regession is not from the
-patch but related to the struct layout.
+Signed-off-by: he, bo <bo.he@intel.com>
+Signed-off-by: Chen, Hu <hu1.chen@intel.com>
+---
+ drivers/iio/accel/kxcjk-1013.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-
-tests: 1
-testcase/path_params/tbox_group/run: will-it-scale/performance-thread-100%-unlink2/lkp-knm01
-
-570d0200123fb4f8  a36dc70b810afe9183de2ea18f  
-----------------  --------------------------  
-         %stddev      change         %stddev
-             \          |                \  
-    237096              14%     270789        will-it-scale.workload
-       823              14%        939        will-it-scale.per_thread_ops
-
-
-tests: 1
-testcase/path_params/tbox_group/run: will-it-scale/performance-thread-100%-signal1/lkp-knm01
-
-570d0200123fb4f8  a36dc70b810afe9183de2ea18f  
-----------------  --------------------------  
-         %stddev      change         %stddev
-             \          |                \  
-     93.51 ±  3%        48%     138.53 ±  3%  will-it-scale.time.user_time
-       186              40%        261        will-it-scale.per_thread_ops
-     53909              40%      75507        will-it-scale.workload
-
-
-tests: 1
-testcase/path_params/tbox_group/run: will-it-scale/performance-thread-100%-open1/lkp-knm01
-
-570d0200123fb4f8  a36dc70b810afe9183de2ea18f  
-----------------  --------------------------  
-         %stddev      change         %stddev
-             \          |                \  
-    447722              22%     546258 ± 10%  will-it-scale.time.involuntary_context_switches
-    226995              19%     269751        will-it-scale.workload
-       787              19%        936        will-it-scale.per_thread_ops
-
-
-
-commit a36dc70b810afe9183de2ea18faa4c0939c139ac
-Author: 0day robot <lkp@intel.com>
-Date:   Wed Feb 20 14:21:19 2019 +0800
-
-    backfile klist_node in struct device for debugging
-    
-    Signed-off-by: 0day robot <lkp@intel.com>
-
-diff --git a/include/linux/device.h b/include/linux/device.h
-index d0e452fd0bff2..31666cb72b3ba 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -1035,6 +1035,7 @@ struct device {
- 	spinlock_t		devres_lock;
- 	struct list_head	devres_head;
+diff --git a/drivers/iio/accel/kxcjk-1013.c b/drivers/iio/accel/kxcjk-1013.c
+index 7506bd9..c6bb3be 100644
+--- a/drivers/iio/accel/kxcjk-1013.c
++++ b/drivers/iio/accel/kxcjk-1013.c
+@@ -1340,6 +1340,7 @@ static int kxcjk1013_resume(struct device *dev)
  
-+	struct klist_node       knode_class_test_by_rongc;
- 	struct class		*class;
- 	const struct attribute_group **groups;	/* optional groups */
+ 	mutex_lock(&data->mutex);
+ 	ret = kxcjk1013_set_mode(data, OPERATION);
++	ret += kxcjk1013_set_range(data, data->range);
+ 	mutex_unlock(&data->mutex);
+ 
+ 	return ret;
+-- 
+2.7.4
 
-Best Regards,
-Rong Chen
+
+
