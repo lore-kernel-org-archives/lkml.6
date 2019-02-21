@@ -2,169 +2,203 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E20DC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:52:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D713EC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:52:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E53EE20880
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:52:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BDEbwZCd"
+	by mail.kernel.org (Postfix) with ESMTP id A547520880
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:52:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728233AbfBULwI (ORCPT
+        id S1728238AbfBULwR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 06:52:08 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51482 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbfBULvi (ORCPT
+        Thu, 21 Feb 2019 06:52:17 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:45708 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727929AbfBULuz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 06:51:38 -0500
-Received: by mail-wm1-f66.google.com with SMTP id n19so9860003wmi.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 03:51:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SUr4P1TcIthQDt7GZFU6f7i0+6JNrdxeeD68DHf8Dt8=;
-        b=BDEbwZCd/W2SXf1CiuwOn0Qk/sP9wowU6I+cfj4i5g+W9STP7lOjBtE8lJXrtW49Zq
-         8Ntl4M+ETU1+Cs51rLDV/4ETGwkHC2UluziiBhvI5fZLXQmKUNF5qceorUlG5nQWYizo
-         p+pWqTmhy3jk83k1RaHMV4y0X+WBcUnRgg+iE/yE48S+PV7Yuz2zs211qrHRxBM8ni62
-         vyx02D77fecx3AsT2L1FEOceRrCgQudwRdCteIO1vLm/0wD5zOA0/FyXRM9HwOgnB7GY
-         y8ASsOvzQPF1S01U/Vxc5XQqi7FAdlX98NTR4ykYYIdp7DhEw3w/kx2m6ROyNbJ9VNap
-         7OMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SUr4P1TcIthQDt7GZFU6f7i0+6JNrdxeeD68DHf8Dt8=;
-        b=X0RMqFkz4dG9DxpLUDaFi7iCFSLFoJ1i1mwOqVNQN7FZEw0LbXa0CXh0rU+FUisR2z
-         ewAT/U6ycfCmBri9TojITuuXQXf4bUEAZhMeS1AVw5f2zhne4jzEgu/ZSVeywrAjb7Gc
-         nncyvIhAZlArPUSmJQGQ9/2+kA+Pyfn2+URPqQ1RtIXRaM29x0VJH1o624QHsI8Mqdqb
-         Qm+WzEYW1xKFVYm9BSR+/7yBlUUO9H9mjzv5mITC+fmsyC120vnwRppf3/sD7koTmeXE
-         KmS2ZCwpFjuMpFfI4K+M56iukYXp9+l4fsGOiaKtLlXVaQCE+qP7bMsEM5yLPOvKAxGn
-         G/Rg==
-X-Gm-Message-State: AHQUAubsKbuMRig/UAgPCiAu4fLpzoyJKygqLgaWdM/WdMIqYxJsqmqo
-        Imrce8VwS2YIup7Upo5qccP9Ysps/Hs=
-X-Google-Smtp-Source: AHgI3IbrAbp+XgONW6XF7uODa0xlPRZsvAKQCz1FbVOiHdSMTYcPGg70pYTcIkgsfPmuvixkHOqWpQ==
-X-Received: by 2002:a1c:ac42:: with SMTP id v63mr9834465wme.119.1550749897117;
-        Thu, 21 Feb 2019 03:51:37 -0800 (PST)
-Received: from localhost.localdomain (ip5f5abba0.dynamic.kabel-deutschland.de. [95.90.187.160])
-        by smtp.gmail.com with ESMTPSA id j5sm15092849wrw.59.2019.02.21.03.51.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Feb 2019 03:51:36 -0800 (PST)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 2/6] staging: rtl8188eu: cleanup declarations in rtl8188e_cmd.c
-Date:   Thu, 21 Feb 2019 12:50:53 +0100
-Message-Id: <20190221115057.31207-2-straube.linux@gmail.com>
+        Thu, 21 Feb 2019 06:50:55 -0500
+Received: from localhost ([127.0.0.1] helo=flow.W.breakpoint.cc)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gwmsJ-0001RC-IR; Thu, 21 Feb 2019 12:50:48 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     linux-kernel@vger.kernel.org
+Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 16/22] x86/fpu: Always store the registers in copy_fpstate_to_sigframe()
+Date:   Thu, 21 Feb 2019 12:50:14 +0100
+Message-Id: <20190221115020.12385-17-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190221115057.31207-1-straube.linux@gmail.com>
-References: <20190221115057.31207-1-straube.linux@gmail.com>
+In-Reply-To: <20190221115020.12385-1-bigeasy@linutronix.de>
+References: <20190221115020.12385-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace tabs with spaces in declarations to cleanup whitespace.
+From: Rik van Riel <riel@surriel.com>
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
+copy_fpstate_to_sigframe() stores the registers directly to user space.
+This is okay because the FPU register are valid and saving it directly
+avoids saving it into kernel memory and making a copy.
+However… We can't keep doing this if we are going to restore the FPU
+registers on the return to userland. It is possible that the FPU
+registers will be invalidated in the middle of the save operation and
+this should be done with disabled preemption / BH.
+
+Save the FPU registers to task's FPU struct and copy them to the user
+memory later on.
+
+This code is extracted from an earlier version of the patchset while
+there still was lazy-FPU on x86.
+
+Signed-off-by: Rik van Riel <riel@surriel.com>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c | 28 ++++++++++----------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ arch/x86/include/asm/fpu/internal.h | 45 -----------------------------
+ arch/x86/kernel/fpu/signal.c        | 34 +++++++++-------------
+ 2 files changed, 13 insertions(+), 66 deletions(-)
 
-diff --git a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
-index 7c61f01665c7..8d96227b85f6 100644
---- a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
-+++ b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
-@@ -22,7 +22,7 @@
- static u8 _is_fw_read_cmd_down(struct adapter *adapt, u8 msgbox_num)
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index 9a026d11b4f97..10d65de7b0ebf 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -126,22 +126,6 @@ extern void fpstate_sanitize_xstate(struct fpu *fpu);
+ 		     _ASM_EXTABLE_HANDLE(1b, 2b, ex_handler_fprestore)	\
+ 		     : output : input)
+ 
+-static inline int copy_fregs_to_user(struct fregs_state __user *fx)
+-{
+-	return user_insn(fnsave %[fx]; fwait,  [fx] "=m" (*fx), "m" (*fx));
+-}
+-
+-static inline int copy_fxregs_to_user(struct fxregs_state __user *fx)
+-{
+-	if (IS_ENABLED(CONFIG_X86_32))
+-		return user_insn(fxsave %[fx], [fx] "=m" (*fx), "m" (*fx));
+-	else if (IS_ENABLED(CONFIG_AS_FXSAVEQ))
+-		return user_insn(fxsaveq %[fx], [fx] "=m" (*fx), "m" (*fx));
+-
+-	/* See comment in copy_fxregs_to_kernel() below. */
+-	return user_insn(rex64/fxsave (%[fx]), "=m" (*fx), [fx] "R" (fx));
+-}
+-
+ static inline void copy_kernel_to_fxregs(struct fxregs_state *fx)
  {
- 	u8 read_down = false;
--	int	retry_cnts = 100;
-+	int retry_cnts = 100;
+ 	if (IS_ENABLED(CONFIG_X86_32)) {
+@@ -352,35 +336,6 @@ static inline void copy_kernel_to_xregs(struct xregs_state *xstate, u64 mask)
+ 	XSTATE_XRESTORE(xstate, lmask, hmask);
+ }
  
- 	u8 valid;
+-/*
+- * Save xstate to user space xsave area.
+- *
+- * We don't use modified optimization because xrstor/xrstors might track
+- * a different application.
+- *
+- * We don't use compacted format xsave area for
+- * backward compatibility for old applications which don't understand
+- * compacted format of xsave area.
+- */
+-static inline int copy_xregs_to_user(struct xregs_state __user *buf)
+-{
+-	int err;
+-
+-	/*
+-	 * Clear the xsave header first, so that reserved fields are
+-	 * initialized to zero.
+-	 */
+-	err = __clear_user(&buf->header, sizeof(buf->header));
+-	if (unlikely(err))
+-		return -EFAULT;
+-
+-	stac();
+-	XSTATE_OP(XSAVE, buf, -1, -1, err);
+-	clac();
+-
+-	return err;
+-}
+-
+ /*
+  * Restore xstate from user space xsave area.
+  */
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index 6475320939ce3..f55f16d9e7e4e 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -118,22 +118,6 @@ static inline int save_xstate_epilog(void __user *buf, int ia32_frame)
+ 	return err;
+ }
  
-@@ -212,8 +212,8 @@ static void ConstructBeacon(struct adapter *adapt, u8 *pframe, u32 *pLength)
- 	__le16 *fctrl;
- 	u32 rate_len, pktlen;
- 	struct mlme_ext_priv *pmlmeext = &adapt->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
--	struct wlan_bssid_ex		*cur_network = &pmlmeinfo->network;
-+	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
-+	struct wlan_bssid_ex *cur_network = &pmlmeinfo->network;
- 	u8 bc_addr[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
- 
- 	pwlanhdr = (struct ieee80211_hdr *)pframe;
-@@ -295,7 +295,7 @@ static void ConstructPSPoll(struct adapter *adapt, u8 *pframe, u32 *pLength)
+-static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf)
+-{
+-	int err;
+-
+-	if (use_xsave())
+-		err = copy_xregs_to_user(buf);
+-	else if (use_fxsr())
+-		err = copy_fxregs_to_user((struct fxregs_state __user *) buf);
+-	else
+-		err = copy_fregs_to_user((struct fregs_state __user *) buf);
+-
+-	if (unlikely(err) && __clear_user(buf, fpu_user_xstate_size))
+-		err = -EFAULT;
+-	return err;
+-}
+-
+ /*
+  * Save the fpu, extended register state to the user signal frame.
+  *
+@@ -144,8 +128,8 @@ static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf)
+  *	buf == buf_fx for 64-bit frames and 32-bit fsave frame.
+  *	buf != buf_fx for 32-bit frames with fxstate.
+  *
+- * Save the state directly to the user frame pointed by the aligned pointer
+- * 'buf_fx'.
++ * Save the state to task's fpu->state and then copy it to the user frame
++ * pointed by the aligned pointer 'buf_fx'.
+  *
+  * If this is a 32-bit frame with fxstate, put a fsave header before
+  * the aligned state at 'buf_fx'.
+@@ -155,6 +139,8 @@ static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf)
+  */
+ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
  {
- 	struct ieee80211_hdr *pwlanhdr;
- 	struct mlme_ext_priv *pmlmeext = &adapt->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
-+	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
- 	__le16 *fctrl;
- 	struct wlan_bssid_ex *pnetwork = &pmlmeinfo->network;
++	struct fpu *fpu = &current->thread.fpu;
++	struct xregs_state *xsave = &fpu->state.xsave;
+ 	struct task_struct *tsk = current;
+ 	int ia32_fxstate = (buf != buf_fx);
  
-@@ -331,9 +331,9 @@ static void ConstructNullFunctionData(struct adapter *adapt, u8 *pframe,
- 	__le16 *fctrl;
- 	u32 pktlen;
- 	struct mlme_priv *pmlmepriv = &adapt->mlmepriv;
--	struct wlan_network		*cur_network = &pmlmepriv->cur_network;
-+	struct wlan_network *cur_network = &pmlmepriv->cur_network;
- 	struct mlme_ext_priv *pmlmeext = &adapt->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
-+	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
- 	struct wlan_bssid_ex *pnetwork = &pmlmeinfo->network;
+@@ -169,9 +155,15 @@ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
+ 			sizeof(struct user_i387_ia32_struct), NULL,
+ 			(struct _fpstate_32 __user *) buf) ? -1 : 1;
  
- 	pwlanhdr = (struct ieee80211_hdr *)pframe;
-@@ -392,8 +392,8 @@ static void ConstructProbeRsp(struct adapter *adapt, u8 *pframe, u32 *pLength, u
- 	u8 *mac, *bssid;
- 	u32 pktlen;
- 	struct mlme_ext_priv *pmlmeext = &adapt->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
--	struct wlan_bssid_ex	*cur_network = &pmlmeinfo->network;
-+	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
-+	struct wlan_bssid_ex *cur_network = &pmlmeinfo->network;
+-	/* Save the live register state to the user directly. */
+-	if (copy_fpregs_to_sigframe(buf_fx))
+-		return -1;
++	copy_fpregs_to_fpstate(fpu);
++
++	if (using_compacted_format()) {
++		copy_xstate_to_user(buf_fx, xsave, 0, size);
++	} else {
++		fpstate_sanitize_xstate(fpu);
++		if (__copy_to_user(buf_fx, xsave, fpu_user_xstate_size))
++			return -1;
++	}
  
- 	pwlanhdr = (struct ieee80211_hdr *)pframe;
- 
-@@ -434,11 +434,11 @@ static void ConstructProbeRsp(struct adapter *adapt, u8 *pframe, u32 *pLength, u
- /*  2009.10.15 by tynli. */
- static void SetFwRsvdPagePkt(struct adapter *adapt, bool bDLFinished)
- {
--	struct xmit_frame	*pmgntframe;
--	struct pkt_attrib	*pattrib;
-+	struct xmit_frame *pmgntframe;
-+	struct pkt_attrib *pattrib;
- 	struct xmit_priv *pxmitpriv;
- 	struct mlme_ext_priv *pmlmeext;
--	struct mlme_ext_info	*pmlmeinfo;
-+	struct mlme_ext_info *pmlmeinfo;
- 	u32 BeaconLength = 0, ProbeRspLength = 0, PSPollLength;
- 	u32 NullDataLength, QosNullLength;
- 	u8 *ReservedPagePacket;
-@@ -543,9 +543,9 @@ void rtl8188e_set_FwJoinBssReport_cmd(struct adapter *adapt, u8 mstatus)
- {
- 	struct hal_data_8188e *haldata = adapt->HalData;
- 	struct mlme_ext_priv *pmlmeext = &adapt->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
--	bool	bSendBeacon = false;
--	bool	bcn_valid = false;
-+	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
-+	bool bSendBeacon = false;
-+	bool bcn_valid = false;
- 	u8 DLBcnCount = 0;
- 	u32 poll = 0;
- 
+ 	/* Save the fsave header for the 32-bit frames. */
+ 	if ((ia32_fxstate || !use_fxsr()) && save_fsave_header(tsk, buf))
 -- 
 2.20.1
 
