@@ -2,156 +2,165 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC617C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32971C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:45:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 778342075A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:45:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550760350;
-	bh=AiF6O1EPq8Liai8wVixAcF066aUVrQw9MtC+pRdgx80=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xVlBwk1sXZpjop4tqYpLrwvTk3DPj1I9IUZh3VMFf7DqFTwKQDoCXRaVOiWtSYIq3
-	 p9WlDjomVyTEfgyoveY/R4BuBoAFh4c/uLr7iGSH7Cc6WmZho5JlCs/DiGo55uH201
-	 UU8Cr2NtYd2CPFzXI3esFml8nU7ZsKFHEGZsWW04=
+	by mail.kernel.org (Postfix) with ESMTP id EEB5920700
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:45:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729539AbfBUOma (ORCPT
+        id S1729498AbfBUOpw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:42:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37864 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729514AbfBUOmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:42:23 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 968EE2075A;
-        Thu, 21 Feb 2019 14:42:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550760142;
-        bh=AiF6O1EPq8Liai8wVixAcF066aUVrQw9MtC+pRdgx80=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RiG0G6lYcQmp9UKITFrJwtw3wz7CPaf+Eyu3dKa4e5wJmGGeEfZ6bJZlJxvVfmFqj
-         YgSFq6NXxJJo8xBZ1kcWG14nImRNr6V07p21eMpwo+dSn3+uXw4xiZ9iT15SRcrl8U
-         GbYl1vOdjmQILE/cYbxK6ppFYYRuaxuQh/U1X/k4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John David Anglin <dave.anglin@bell.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 01/32] dsa: mv88e6xxx: Ensure all pending interrupts are handled prior to exit
-Date:   Thu, 21 Feb 2019 15:35:49 +0100
-Message-Id: <20190221125250.938593000@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190221125250.855065214@linuxfoundation.org>
-References: <20190221125250.855065214@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Thu, 21 Feb 2019 09:45:52 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:43448 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729079AbfBUOm3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:42:29 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id A70D04A11D00089B324D;
+        Thu, 21 Feb 2019 22:42:25 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.408.0; Thu, 21 Feb 2019
+ 22:42:16 +0800
+From:   Yue Haibing <yuehaibing@huawei.com>
+To:     <andrew@lunn.ch>, <f.fainelli@gmail.com>, <hkallweit1@gmail.com>,
+        <davem@davemloft.net>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] mdio_bus: Fix use-after-free on device_register fails
+Date:   Thu, 21 Feb 2019 22:42:01 +0800
+Message-ID: <20190221144201.11488-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+From: YueHaibing <yuehaibing@huawei.com>
 
-------------------
+KASAN has found use-after-free in fixed_mdio_bus_init,
+commit 0c692d07842a ("drivers/net/phy/mdio_bus.c: call
+put_device on device_register() failure") call put_device()
+while device_register() fails,give up the last reference
+to the device and allow mdiobus_release to be executed
+,kfreeing the bus. However in most drives, mdiobus_free
+be called to free the bus while mdiobus_register fails.
+use-after-free occurs when access bus again, this patch
+revert it to let mdiobus_free free the bus.
 
-[ Upstream commit 7c0db24cc431e2196d98a5d5ddaa9088e2fcbfe5 ]
+KASAN report details as below:
 
-The GPIO interrupt controller on the espressobin board only supports edge interrupts.
-If one enables the use of hardware interrupts in the device tree for the 88E6341, it is
-possible to miss an edge.  When this happens, the INTn pin on the Marvell switch is
-stuck low and no further interrupts occur.
+BUG: KASAN: use-after-free in mdiobus_free+0x85/0x90 drivers/net/phy/mdio_bus.c:482
+Read of size 4 at addr ffff8881dc824d78 by task syz-executor.0/3524
 
-I found after adding debug statements to mv88e6xxx_g1_irq_thread_work() that there is
-a race in handling device interrupts (e.g. PHY link interrupts).  Some interrupts are
-directly cleared by reading the Global 1 status register.  However, the device interrupt
-flag, for example, is not cleared until all the unmasked SERDES and PHY ports are serviced.
-This is done by reading the relevant SERDES and PHY status register.
+CPU: 1 PID: 3524 Comm: syz-executor.0 Not tainted 5.0.0-rc7+ #45
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xfa/0x1ce lib/dump_stack.c:113
+ print_address_description+0x65/0x270 mm/kasan/report.c:187
+ kasan_report+0x149/0x18d mm/kasan/report.c:317
+ mdiobus_free+0x85/0x90 drivers/net/phy/mdio_bus.c:482
+ fixed_mdio_bus_init+0x283/0x1000 [fixed_phy]
+ ? 0xffffffffc0e40000
+ ? 0xffffffffc0e40000
+ ? 0xffffffffc0e40000
+ do_one_initcall+0xfa/0x5ca init/main.c:887
+ do_init_module+0x204/0x5f6 kernel/module.c:3460
+ load_module+0x66b2/0x8570 kernel/module.c:3808
+ __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
+ do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x462e99
+Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f6215c19c58 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+RAX: ffffffffffffffda RBX: 000000000073bf00 RCX: 0000000000462e99
+RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000003
+RBP: 00007f6215c19c70 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6215c1a6bc
+R13: 00000000004bcefb R14: 00000000006f7030 R15: 0000000000000004
 
-The code only services interrupts whose status bit is set at the time of reading its status
-register.  If an interrupt event occurs after its status is read and before all interrupts
-are serviced, then this event will not be serviced and the INTn output pin will remain low.
+Allocated by task 3524:
+ set_track mm/kasan/common.c:85 [inline]
+ __kasan_kmalloc.constprop.3+0xa0/0xd0 mm/kasan/common.c:496
+ kmalloc include/linux/slab.h:545 [inline]
+ kzalloc include/linux/slab.h:740 [inline]
+ mdiobus_alloc_size+0x54/0x1b0 drivers/net/phy/mdio_bus.c:143
+ fixed_mdio_bus_init+0x163/0x1000 [fixed_phy]
+ do_one_initcall+0xfa/0x5ca init/main.c:887
+ do_init_module+0x204/0x5f6 kernel/module.c:3460
+ load_module+0x66b2/0x8570 kernel/module.c:3808
+ __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
+ do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-This is not a problem with polling or level interrupts since the handler will be called
-again to process the event.  However, it's a big problem when using level interrupts.
+Freed by task 3524:
+ set_track mm/kasan/common.c:85 [inline]
+ __kasan_slab_free+0x130/0x180 mm/kasan/common.c:458
+ slab_free_hook mm/slub.c:1409 [inline]
+ slab_free_freelist_hook mm/slub.c:1436 [inline]
+ slab_free mm/slub.c:2986 [inline]
+ kfree+0xe1/0x270 mm/slub.c:3938
+ device_release+0x78/0x200 drivers/base/core.c:919
+ kobject_cleanup lib/kobject.c:662 [inline]
+ kobject_release lib/kobject.c:691 [inline]
+ kref_put include/linux/kref.h:67 [inline]
+ kobject_put+0x146/0x240 lib/kobject.c:708
+ put_device+0x1c/0x30 drivers/base/core.c:2060
+ __mdiobus_register+0x483/0x560 drivers/net/phy/mdio_bus.c:382
+ fixed_mdio_bus_init+0x26b/0x1000 [fixed_phy]
+ do_one_initcall+0xfa/0x5ca init/main.c:887
+ do_init_module+0x204/0x5f6 kernel/module.c:3460
+ load_module+0x66b2/0x8570 kernel/module.c:3808
+ __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
+ do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-The fix presented here is to add a loop around the code servicing switch interrupts.  If
-any pending interrupts remain after the current set has been handled, we loop and process
-the new set.  If there are no pending interrupts after servicing, we are sure that INTn has
-gone high and we will get an edge when a new event occurs.
+The buggy address belongs to the object at ffff8881dc824c80
+ which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 248 bytes inside of
+ 2048-byte region [ffff8881dc824c80, ffff8881dc825480)
+The buggy address belongs to the page:
+page:ffffea0007720800 count:1 mapcount:0 mapping:ffff8881f6c02800 index:0x0 compound_mapcount: 0
+flags: 0x2fffc0000010200(slab|head)
+raw: 02fffc0000010200 0000000000000000 0000000500000001 ffff8881f6c02800
+raw: 0000000000000000 00000000800f000f 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
 
-Tested on espressobin board.
+Memory state around the buggy address:
+ ffff8881dc824c00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff8881dc824c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff8881dc824d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                                ^
+ ffff8881dc824d80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8881dc824e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
 
-Fixes: dc30c35be720 ("net: dsa: mv88e6xxx: Implement interrupt support.")
-Signed-off-by:  John David Anglin <dave.anglin@bell.net>
-Tested-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 0c692d07842a ("drivers/net/phy/mdio_bus.c: call put_device on device_register() failure")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/net/dsa/mv88e6xxx/chip.c | 28 ++++++++++++++++++++++------
- 1 file changed, 22 insertions(+), 6 deletions(-)
+ drivers/net/phy/mdio_bus.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/dsa/mv88e6xxx/chip.c b/drivers/net/dsa/mv88e6xxx/chip.c
-index b2a0e59b6252e..b0113f6fdbb46 100644
---- a/drivers/net/dsa/mv88e6xxx/chip.c
-+++ b/drivers/net/dsa/mv88e6xxx/chip.c
-@@ -261,6 +261,7 @@ static irqreturn_t mv88e6xxx_g1_irq_thread_work(struct mv88e6xxx_chip *chip)
- 	unsigned int sub_irq;
- 	unsigned int n;
- 	u16 reg;
-+	u16 ctl1;
- 	int err;
+diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
+index debc74c..4be4cc0 100644
+--- a/drivers/net/phy/mdio_bus.c
++++ b/drivers/net/phy/mdio_bus.c
+@@ -373,7 +373,6 @@ int __mdiobus_register(struct mii_bus *bus, struct module *owner)
+ 	err = device_register(&bus->dev);
+ 	if (err) {
+ 		pr_err("mii_bus %s failed to register\n", bus->id);
+-		put_device(&bus->dev);
+ 		return -EINVAL;
+ 	}
  
- 	mutex_lock(&chip->reg_lock);
-@@ -270,13 +271,28 @@ static irqreturn_t mv88e6xxx_g1_irq_thread_work(struct mv88e6xxx_chip *chip)
- 	if (err)
- 		goto out;
- 
--	for (n = 0; n < chip->g1_irq.nirqs; ++n) {
--		if (reg & (1 << n)) {
--			sub_irq = irq_find_mapping(chip->g1_irq.domain, n);
--			handle_nested_irq(sub_irq);
--			++nhandled;
-+	do {
-+		for (n = 0; n < chip->g1_irq.nirqs; ++n) {
-+			if (reg & (1 << n)) {
-+				sub_irq = irq_find_mapping(chip->g1_irq.domain,
-+							   n);
-+				handle_nested_irq(sub_irq);
-+				++nhandled;
-+			}
- 		}
--	}
-+
-+		mutex_lock(&chip->reg_lock);
-+		err = mv88e6xxx_g1_read(chip, MV88E6XXX_G1_CTL1, &ctl1);
-+		if (err)
-+			goto unlock;
-+		err = mv88e6xxx_g1_read(chip, MV88E6XXX_G1_STS, &reg);
-+unlock:
-+		mutex_unlock(&chip->reg_lock);
-+		if (err)
-+			goto out;
-+		ctl1 &= GENMASK(chip->g1_irq.nirqs, 0);
-+	} while (reg & ctl1);
-+
- out:
- 	return (nhandled > 0 ? IRQ_HANDLED : IRQ_NONE);
- }
 -- 
-2.19.1
-
+2.7.4
 
 
