@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07FA9C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:19:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1660C4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:19:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C281B20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:19:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83B9320836
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:19:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="rcuhkIME"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="qIU++7d8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728059AbfBUKTP (ORCPT
+        id S1728191AbfBUKT5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 05:19:15 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:11619 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728032AbfBUKTN (ORCPT
+        Thu, 21 Feb 2019 05:19:57 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:17431 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728001AbfBUKTI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 05:19:13 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c6e7b1d0001>; Thu, 21 Feb 2019 02:19:09 -0800
+        Thu, 21 Feb 2019 05:19:08 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c6e7b200000>; Thu, 21 Feb 2019 02:19:12 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 21 Feb 2019 02:19:11 -0800
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 21 Feb 2019 02:19:06 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 21 Feb 2019 02:19:11 -0800
-Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 21 Feb
- 2019 10:19:11 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Thu, 21 Feb 2019 10:19:11 +0000
+        by hqpgpgate101.nvidia.com on Thu, 21 Feb 2019 02:19:06 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 21 Feb
+ 2019 10:19:06 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Thu, 21 Feb 2019 10:19:05 +0000
 Received: from niwei-ubuntu.nvidia.com (Not Verified[10.19.225.182]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c6e7b1c0001>; Thu, 21 Feb 2019 02:19:10 -0800
+        id <B5c6e7b170005>; Thu, 21 Feb 2019 02:19:05 -0800
 From:   Wei Ni <wni@nvidia.com>
 To:     <daniel.lezcano@linaro.org>, <edubezval@gmail.com>,
         <robh@kernel.org>
@@ -45,9 +45,9 @@ CC:     <thierry.reding@gmail.com>, <linux-tegra@vger.kernel.org>,
         <rui.zhang@intel.com>, <srikars@nvidia.com>,
         <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
         <devicetree@vger.kernel.org>, Wei Ni <wni@nvidia.com>
-Subject: [PATCH v2 07/12] thermal: tegra: add support for thermal IRQ
-Date:   Thu, 21 Feb 2019 18:18:42 +0800
-Message-ID: <1550744327-4677-8-git-send-email-wni@nvidia.com>
+Subject: [PATCH v2 05/12] thermal: tegra: add support for gpu hw-throttle
+Date:   Thu, 21 Feb 2019 18:18:40 +0800
+Message-ID: <1550744327-4677-6-git-send-email-wni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1550744327-4677-1-git-send-email-wni@nvidia.com>
 References: <1550744327-4677-1-git-send-email-wni@nvidia.com>
@@ -55,204 +55,215 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1550744350; bh=K2wuCMZAKb98gZmUx7FG5yObQgOW8d+BbynyQmmUvL8=;
+        t=1550744352; bh=CTdq3MkJvvPUAGjVXOYEU6hyLntHpCOW0iSDOPxtjKs=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=rcuhkIMEBFKcHbxG1n4cc2UvS1yqyJhqdUldWzNFxcZWaXoMaDJAzC38ZdPirXxi/
-         jj6vBHCHd+r1UfHBf3OazNe9LeBmJulaO+e6qkCwOHoS2Ipp7kwVcr+XgrpZhO54n9
-         8uaaFBFJfSXmcry/r4kdxvgQ4mwI8DHQg3tDRfxywD2sP1FJD9uZNDrqqqvbCazluA
-         SEYLS85g9cOXj0qGmqB4DInV3/mgEHUdTyXHfnes9QsU06T7QpRkxFwyyVxdO/09aG
-         2rNeuwE5Rbnp/uaCz7/77SV1Gg7F0flOq5TBVkTjR8suaHMHMGT0031MzP5jI/5T79
-         4YAt7vaUI3jJw==
+        b=qIU++7d817iyRpL/zHxNkqeFQ6HbCyMtEJrFtFLakdGqPnCiO9B8XbJgY+yltKBK7
+         TkjejG+NYFPpvubznd15s39vBrOtj+xBXPyCSgt0Vr11Z+wumGxyMgR7FgHtCWTTfA
+         ZzK+AR8mdKvOrxV6nDJIoBIg4Arof0XuvbLEdCV6hTybVB1xd3mVyMvSKbGbthFI96
+         qXv+gTifYJTq9ZA2UgjKRE2/YNOaK4nwLA4pabz93aGVGeJqzdUtWyXKg9IALmQxui
+         FWrBNCKB0cGgwdjk6qb/oqNCwEjYObBLMQl3mX2PyP7MeUpvi0+iBLb1gWfL4j98jG
+         sOqPBmjCpZZzg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support to generate an interrupt when the temperature
-crosses a programmed threshold and notify the thermal framework.
+Add support to trigger pulse skippers on the GPU
+when a HOT trip point is triggered. The pulse skippers
+can be signalled to throttle at low, medium and high
+depths\levels.
 
 Signed-off-by: Wei Ni <wni@nvidia.com>
 ---
- drivers/thermal/tegra/soctherm.c | 136 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 136 insertions(+)
+ drivers/thermal/tegra/soctherm.c | 118 ++++++++++++++++++++++++++++-----------
+ 1 file changed, 85 insertions(+), 33 deletions(-)
 
 diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index edbb90da1ac3..16275de2d67b 100644
+index 4bb6c097c028..edbb90da1ac3 100644
 --- a/drivers/thermal/tegra/soctherm.c
 +++ b/drivers/thermal/tegra/soctherm.c
-@@ -86,6 +86,20 @@
- #define THERMCTL_LVL0_UP_STATS			0x10
- #define THERMCTL_LVL0_DN_STATS			0x14
+@@ -1,5 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+- * Copyright (c) 2014, NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (c) 2014 - 2018, NVIDIA CORPORATION.  All rights reserved.
+  *
+  * Author:
+  *	Mikko Perttunen <mperttunen@nvidia.com>
+@@ -160,6 +161,15 @@
+ /* get dividend from the depth */
+ #define THROT_DEPTH_DIVIDEND(depth)	((256 * (100 - (depth)) / 100) - 1)
  
-+#define THERMCTL_INTR_STATUS			0x84
-+#define THERMCTL_INTR_ENABLE			0x88
-+#define THERMCTL_INTR_DISABLE			0x8c
++/* gk20a nv_therm interface N:3 Mapping. Levels defined in tegra124-sochterm.h
++ * level	vector
++ * NONE		3'b000
++ * LOW		3'b001
++ * MED		3'b011
++ * HIGH		3'b111
++ */
++#define THROT_LEVEL_TO_DEPTH(level)	((0x1 << (level)) - 1)
 +
-+#define TH_INTR_MD0_MASK			BIT(25)
-+#define TH_INTR_MU0_MASK			BIT(24)
-+#define TH_INTR_GD0_MASK			BIT(17)
-+#define TH_INTR_GU0_MASK			BIT(16)
-+#define TH_INTR_CD0_MASK			BIT(9)
-+#define TH_INTR_CU0_MASK			BIT(8)
-+#define TH_INTR_PD0_MASK			BIT(1)
-+#define TH_INTR_PU0_MASK			BIT(0)
-+#define TH_INTR_IGNORE_MASK			0xFCFCFCFC
-+
- #define THERMCTL_STATS_CTL			0x94
- #define STATS_CTL_CLR_DN			0x8
- #define STATS_CTL_EN_DN				0x4
-@@ -242,6 +256,8 @@ struct tegra_soctherm {
- 	void __iomem *clk_regs;
- 	void __iomem *ccroc_regs;
- 
-+	int thermal_irq;
-+
- 	u32 *calib;
- 	struct thermal_zone_device **thermctl_tzs;
- 	struct tegra_soctherm_soc *soc;
-@@ -640,6 +656,98 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
+ /* get THROT_PSKIP_xxx offset per LIGHT/HEAVY throt and CPU/GPU dev */
+ #define THROT_OFFSET			0x30
+ #define THROT_PSKIP_CTRL(throt, dev)	(THROT_PSKIP_CTRL_LITE_CPU + \
+@@ -219,6 +229,7 @@ struct soctherm_throt_cfg {
+ 	u8 priority;
+ 	u8 cpu_throt_level;
+ 	u32 cpu_throt_depth;
++	u32 gpu_throt_level;
+ 	struct thermal_cooling_device *cdev;
+ 	bool init;
+ };
+@@ -964,6 +975,50 @@ static int soctherm_thermtrips_parse(struct platform_device *pdev)
  	return 0;
  }
  
-+static irqreturn_t soctherm_thermal_isr(int irq, void *dev_id)
++static int soctherm_throt_cfg_parse(struct device *dev,
++				    struct device_node *np,
++				    struct soctherm_throt_cfg *stc)
 +{
-+	struct tegra_soctherm *ts = dev_id;
-+	u32 r;
++	struct tegra_soctherm *ts = dev_get_drvdata(dev);
++	int ret;
++	u32 val;
 +
-+	r = readl(ts->regs + THERMCTL_INTR_STATUS);
-+	writel(r, ts->regs + THERMCTL_INTR_DISABLE);
++	ret = of_property_read_u32(np, "nvidia,priority", &val);
++	if (ret) {
++		dev_err(dev, "throttle-cfg: %s: invalid priority\n", stc->name);
++		return -EINVAL;
++	}
++	stc->priority = val;
 +
-+	return IRQ_WAKE_THREAD;
++	ret = of_property_read_u32(np, ts->soc->use_ccroc ?
++				   "nvidia,cpu-throt-level" :
++				   "nvidia,cpu-throt-percent", &val);
++	if (!ret) {
++		if (ts->soc->use_ccroc &&
++		    val <= TEGRA_SOCTHERM_THROT_LEVEL_HIGH)
++			stc->cpu_throt_level = val;
++		else if (!ts->soc->use_ccroc && val <= 100)
++			stc->cpu_throt_depth = val;
++		else
++			goto err;
++	} else {
++		goto err;
++	}
++
++	ret = of_property_read_u32(np, "nvidia,gpu-throt-level", &val);
++	if (!ret && val <= TEGRA_SOCTHERM_THROT_LEVEL_HIGH)
++		stc->gpu_throt_level = val;
++	else
++		goto err;
++
++	return 0;
++
++err:
++	dev_err(dev, "throttle-cfg: %s: no throt prop or invalid prop\n",
++		stc->name);
++	return -EINVAL;
++}
++
+ /**
+  * soctherm_init_hw_throt_cdev() - Parse the HW throttle configurations
+  * and register them as cooling devices.
+@@ -974,8 +1029,7 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
+ 	struct tegra_soctherm *ts = dev_get_drvdata(dev);
+ 	struct device_node *np_stc, *np_stcc;
+ 	const char *name;
+-	u32 val;
+-	int i, r;
++	int i;
+ 
+ 	for (i = 0; i < THROTTLE_SIZE; i++) {
+ 		ts->throt_cfgs[i].name = throt_names[i];
+@@ -993,6 +1047,7 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
+ 	for_each_child_of_node(np_stc, np_stcc) {
+ 		struct soctherm_throt_cfg *stc;
+ 		struct thermal_cooling_device *tcd;
++		int err;
+ 
+ 		name = np_stcc->name;
+ 		stc = find_throttle_cfg_by_name(ts, name);
+@@ -1002,37 +1057,10 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
+ 			continue;
+ 		}
+ 
+-		r = of_property_read_u32(np_stcc, "nvidia,priority", &val);
+-		if (r) {
+-			dev_info(dev,
+-				 "throttle-cfg: %s: missing priority\n", name);
++
++		err = soctherm_throt_cfg_parse(dev, np_stcc, stc);
++		if (err)
+ 			continue;
+-		}
+-		stc->priority = val;
+-
+-		if (ts->soc->use_ccroc) {
+-			r = of_property_read_u32(np_stcc,
+-						 "nvidia,cpu-throt-level",
+-						 &val);
+-			if (r) {
+-				dev_info(dev,
+-					 "throttle-cfg: %s: missing cpu-throt-level\n",
+-					 name);
+-				continue;
+-			}
+-			stc->cpu_throt_level = val;
+-		} else {
+-			r = of_property_read_u32(np_stcc,
+-						 "nvidia,cpu-throt-percent",
+-						 &val);
+-			if (r) {
+-				dev_info(dev,
+-					 "throttle-cfg: %s: missing cpu-throt-percent\n",
+-					 name);
+-				continue;
+-			}
+-			stc->cpu_throt_depth = val;
+-		}
+ 
+ 		tcd = thermal_of_cooling_device_register(np_stcc,
+ 							 (char *)name, ts,
+@@ -1176,6 +1204,28 @@ static void throttlectl_cpu_mn(struct tegra_soctherm *ts,
+ }
+ 
+ /**
++ * throttlectl_gpu_level_select() - selects throttling level for GPU
++ * @throt: the LIGHT/HEAVY of throttle event id
++ *
++ * This function programs soctherm's interface to GK20a NV_THERM to select
++ * pre-configured "Low", "Medium" or "Heavy" throttle levels.
++ *
++ * Return: boolean true if HW was programmed
++ */
++static void throttlectl_gpu_level_select(struct tegra_soctherm *ts,
++					 enum soctherm_throttle_id throt)
++{
++	u32 r, level, throt_vect;
++
++	level = ts->throt_cfgs[throt].gpu_throt_level;
++	throt_vect = THROT_LEVEL_TO_DEPTH(level);
++	r = readl(ts->regs + THROT_PSKIP_CTRL(throt, THROTTLE_DEV_GPU));
++	r = REG_SET_MASK(r, THROT_PSKIP_CTRL_ENABLE_MASK, 1);
++	r = REG_SET_MASK(r, THROT_PSKIP_CTRL_VECT_GPU_MASK, throt_vect);
++	writel(r, ts->regs + THROT_PSKIP_CTRL(throt, THROTTLE_DEV_GPU));
 +}
 +
 +/**
-+ * soctherm_thermal_isr_thread() - Handles a thermal interrupt request
-+ * @irq:       The interrupt number being requested; not used
-+ * @dev_id:    Opaque pointer to tegra_soctherm;
-+ *
-+ * Clears the interrupt status register if there are expected
-+ * interrupt bits set.
-+ * The interrupt(s) are then handled by updating the corresponding
-+ * thermal zones.
-+ *
-+ * An error is logged if any unexpected interrupt bits are set.
-+ *
-+ * Disabled interrupts are re-enabled.
-+ *
-+ * Return: %IRQ_HANDLED. Interrupt was handled and no further processing
-+ * is needed.
-+ */
-+static irqreturn_t soctherm_thermal_isr_thread(int irq, void *dev_id)
-+{
-+	struct tegra_soctherm *ts = dev_id;
-+	struct thermal_zone_device *tz;
-+	u32 st, ex = 0, cp = 0, gp = 0, pl = 0, me = 0;
-+
-+	st = readl(ts->regs + THERMCTL_INTR_STATUS);
-+
-+	/* deliberately clear expected interrupts handled in SW */
-+	cp |= st & TH_INTR_CD0_MASK;
-+	cp |= st & TH_INTR_CU0_MASK;
-+
-+	gp |= st & TH_INTR_GD0_MASK;
-+	gp |= st & TH_INTR_GU0_MASK;
-+
-+	pl |= st & TH_INTR_PD0_MASK;
-+	pl |= st & TH_INTR_PU0_MASK;
-+
-+	me |= st & TH_INTR_MD0_MASK;
-+	me |= st & TH_INTR_MU0_MASK;
-+
-+	ex |= cp | gp | pl | me;
-+	if (ex) {
-+		writel(ex, ts->regs + THERMCTL_INTR_STATUS);
-+		st &= ~ex;
-+
-+		if (cp) {
-+			tz = ts->thermctl_tzs[TEGRA124_SOCTHERM_SENSOR_CPU];
-+			thermal_zone_device_update(tz,
-+						   THERMAL_EVENT_UNSPECIFIED);
-+		}
-+
-+		if (gp) {
-+			tz = ts->thermctl_tzs[TEGRA124_SOCTHERM_SENSOR_GPU];
-+			thermal_zone_device_update(tz,
-+						   THERMAL_EVENT_UNSPECIFIED);
-+		}
-+
-+		if (pl) {
-+			tz = ts->thermctl_tzs[TEGRA124_SOCTHERM_SENSOR_PLLX];
-+			thermal_zone_device_update(tz,
-+						   THERMAL_EVENT_UNSPECIFIED);
-+		}
-+
-+		if (me) {
-+			tz = ts->thermctl_tzs[TEGRA124_SOCTHERM_SENSOR_MEM];
-+			thermal_zone_device_update(tz,
-+						   THERMAL_EVENT_UNSPECIFIED);
-+		}
-+	}
-+
-+	/* deliberately ignore expected interrupts NOT handled in SW */
-+	ex |= TH_INTR_IGNORE_MASK;
-+	st &= ~ex;
-+
-+	if (st) {
-+		/* Whine about any other unexpected INTR bits still set */
-+		pr_err("soctherm: Ignored unexpected INTRs 0x%08x\n", st);
-+		writel(st, ts->regs + THERMCTL_INTR_STATUS);
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
- #ifdef CONFIG_DEBUG_FS
- static int regs_show(struct seq_file *s, void *data)
- {
-@@ -1302,6 +1410,32 @@ static void tegra_soctherm_throttle(struct device *dev)
- 	writel(v, ts->regs + THERMCTL_STATS_CTL);
- }
+  * soctherm_throttle_program() - programs pulse skippers' configuration
+  * @throt: the LIGHT/HEAVY of the throttle event id.
+  *
+@@ -1197,6 +1247,8 @@ static void soctherm_throttle_program(struct tegra_soctherm *ts,
+ 	else
+ 		throttlectl_cpu_mn(ts, throt);
  
-+static int soctherm_interrupts_init(struct platform_device *pdev,
-+				    struct tegra_soctherm *tegra)
-+{
-+	int ret;
++	throttlectl_gpu_level_select(ts, throt);
 +
-+	tegra->thermal_irq = platform_get_irq(pdev, 0);
-+	if (tegra->thermal_irq < 0) {
-+		dev_dbg(&pdev->dev, "get 'thermal_irq' failed.\n");
-+		return 0;
-+	}
-+
-+	ret = devm_request_threaded_irq(&pdev->dev,
-+					tegra->thermal_irq,
-+					soctherm_thermal_isr,
-+					soctherm_thermal_isr_thread,
-+					IRQF_ONESHOT,
-+					dev_name(&pdev->dev),
-+					tegra);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "request_irq 'thermal_irq' failed.\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static void soctherm_init(struct platform_device *pdev)
- {
- 	struct tegra_soctherm *tegra = platform_get_drvdata(pdev);
-@@ -1495,6 +1629,8 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
- 			goto disable_clocks;
- 	}
+ 	r = REG_SET_MASK(0, THROT_PRIORITY_LITE_PRIO_MASK, stc.priority);
+ 	writel(r, ts->regs + THROT_PRIORITY_CTRL(throt));
  
-+	err = soctherm_interrupts_init(pdev, tegra);
-+
- 	soctherm_debug_init(pdev);
- 
- 	return 0;
 -- 
 2.7.4
 
