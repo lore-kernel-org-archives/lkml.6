@@ -2,176 +2,147 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31043C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:16:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48235C00319
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:16:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7D6F2084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:16:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AD052084F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:16:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="RgoGLy5t"
+	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="GEPup4WX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727814AbfBUNQg (ORCPT
+        id S1727923AbfBUNQn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 08:16:36 -0500
-Received: from mail-eopbgr20065.outbound.protection.outlook.com ([40.107.2.65]:16747
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        Thu, 21 Feb 2019 08:16:43 -0500
+Received: from mail-eopbgr810051.outbound.protection.outlook.com ([40.107.81.51]:33178
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725823AbfBUNQg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 08:16:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
+        id S1725823AbfBUNQn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 08:16:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector1-analog-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nzKq6nog2kSamSVxhpsohjbdfbck8QPy2z1m1/yiIxc=;
- b=RgoGLy5tnR+T79YJvwiOlBr0QfMzL+HE1Gul40k93sF4/FqEZVFabKTooZiNXm2XniItGcYPZj6tMFBO6FzW9iMq0cbP6R2KMshrHgNN8d8mahqJtXm3zlD+u+VUlQ33gub4oKE5+0OhatiITnN6g/LPKCm6EduPSgJ0ml4D2d4=
-Received: from DB6PR0501MB2694.eurprd05.prod.outlook.com (10.172.226.9) by
- DB6PR0501MB2614.eurprd05.prod.outlook.com (10.172.225.8) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.19; Thu, 21 Feb 2019 13:16:31 +0000
-Received: from DB6PR0501MB2694.eurprd05.prod.outlook.com
- ([fe80::d11b:17ac:dc46:eee2]) by DB6PR0501MB2694.eurprd05.prod.outlook.com
- ([fe80::d11b:17ac:dc46:eee2%8]) with mapi id 15.20.1622.020; Thu, 21 Feb 2019
- 13:16:31 +0000
-From:   Leon Romanovsky <leonro@mellanox.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-CC:     Matthew Wilcox <willy@infradead.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the xarray tree
-Thread-Topic: linux-next: build failure after merge of the xarray tree
-Thread-Index: AQHUyayWu8bVWYg18UOivP+JxM5jJqXqMEcAgAADu4CAAAfzAA==
-Date:   Thu, 21 Feb 2019 13:16:31 +0000
-Message-ID: <20190221131628.GA23561@mtr-leonro.mtl.com>
-References: <20190221171332.262cf619@canb.auug.org.au>
- <20190221123440.GD17501@mtr-leonro.mtl.com>
- <20190221234801.7cc07a7c@canb.auug.org.au>
-In-Reply-To: <20190221234801.7cc07a7c@canb.auug.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6P192CA0093.EURP192.PROD.OUTLOOK.COM
- (2603:10a6:209:8d::34) To DB6PR0501MB2694.eurprd05.prod.outlook.com
- (2603:10a6:4:82::9)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [193.47.165.251]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: dd4342f2-1586-4869-7322-08d697fecb52
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(49563074)(7193020);SRVR:DB6PR0501MB2614;
-x-ms-traffictypediagnostic: DB6PR0501MB2614:
-x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;DB6PR0501MB2614;23:Arsbybi1DuQXUPuqtAYwYvo9LY/ekHC2J5y133I?=
- =?us-ascii?Q?GDk8Zrk1OreBOK+BpdAOOlst2hRUAg7Q6eixlgKT38w4fupPKu3MhMXWv+V7?=
- =?us-ascii?Q?qfMipL81DavJs+CYAX0jX6jNAmz3HHSREDCmL9fiZzQvH8LdWE2We649zV1D?=
- =?us-ascii?Q?iR0fNhiuyMA5OMKvVUcPSmVqYypM5mMDyQUnGzhE7qdaJZ/t8XcjpyY9CGBU?=
- =?us-ascii?Q?KHkzO5HDFYv1vGL6KUpIRplhm/1LnZDmFdLa0i3fzgk9KNA0HHI096r0jetO?=
- =?us-ascii?Q?OzsEfSHFbwELDF4hdVOkSrc5I4q1W4a9qFSs+h84rhfcbEdjtQznA80+vZfH?=
- =?us-ascii?Q?lhUsC0GR1wjSTQCK1uzbR7rrgDRD1NRweBCSP4f1G3zprZORi5SVy2KDwlkS?=
- =?us-ascii?Q?mqSu/s/7JYlJEqXK/kHaPlGXfnoWyaWkB+rG7OQ6IBeemZTNbC0J3nMxHWbZ?=
- =?us-ascii?Q?MPzPbu0GUYMtuQ23Q4GPr3n7XgQch81Dw1Vyrwgo3QaZyIdwzGB6I+Rxmurl?=
- =?us-ascii?Q?xWD17mhiT7luMxLYQNtCr8XPnSEhH1zjPTQ6360muQqXmIiLEsvgI1urg23/?=
- =?us-ascii?Q?ceWz95MbXkCqP1Qwk7rRj/XX5bDjXStaflQeoZrfwiStRYHAyHwSbqwTE8Tt?=
- =?us-ascii?Q?pPKpYnFek26U4bOWjB+zZsD6o13F5Woave5ojvklSlu+DiVj00vzuxVpng2t?=
- =?us-ascii?Q?k4jS52/32FeXMsLK1GuKmdqJ4+QRR4jCURJwv6Ug37rKDG/PogM2gRs7gL1h?=
- =?us-ascii?Q?I6A4v9X5fPlSwSg3HApGKTkKtrcfqIg9/yhb6dKCpc8A5UVZ++P84vy9J+67?=
- =?us-ascii?Q?RWK4ecjsV1EjQvQkkFJBlZr+LEEAEUagpE/mNe6B1BE7tKWTGwpasQHGfbsg?=
- =?us-ascii?Q?p2KHT8pZabrfOwtqX3mzvcQVjmTdb8vqlQ1nyoZTn5NPpgmEFRNCRYElCqyp?=
- =?us-ascii?Q?LbtV/PijF1w02MoWkO9w/nvcbLZ1A/Nnbkd0o8BjfMHqfXKXTiPlzzXirQlQ?=
- =?us-ascii?Q?DF5cMQtc+VnAXVQVZwnjYI57/p3hvrojT8K8hvQ89TwsUFrepUENdivRbM6X?=
- =?us-ascii?Q?R+tDllUXMpgI655RZwLy7XaZ35nJWkRJYbIKy1kahR6fE7ulU64cZfM/Cgns?=
- =?us-ascii?Q?so9kLz37rSeblzvLpDH9Q0bGl2a4+Mpy3HwOXU9PUqWw11mF445cmuY1Bx1N?=
- =?us-ascii?Q?abylNDFpkhcaIzu3m3ZJpdCgF97soZ89I7OLHAaTVeFMwWoNUcXYHD+EsUFE?=
- =?us-ascii?Q?bNqprC9Uo/Ho+pJ7U4ROiilsFT0tnn0IXhregt3eOaksylorFlLXNc1BMfpo?=
- =?us-ascii?Q?Vss5JzyLaE1J3inCwebTN5jRmLSyixhgyr/UVxjzketbB2iJYh3uccwQxFQN?=
- =?us-ascii?Q?1jjDyK3UnXnhTHvnNtL43LA728vmAfKLJHFAM6ZoTz86X+5f4OMKyzhEqFG5?=
- =?us-ascii?Q?ZgolJUyR1MRpN2KhGwUM3NU6cGrj6FQg=3D?=
-x-microsoft-antispam-prvs: <DB6PR0501MB2614EAD0C30D02B39BF8423FB07E0@DB6PR0501MB2614.eurprd05.prod.outlook.com>
-x-forefront-prvs: 09555FB1AD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(346002)(396003)(376002)(366004)(39860400002)(136003)(199004)(189003)(6246003)(6916009)(53936002)(316002)(6512007)(33896004)(71190400001)(76176011)(71200400001)(9686003)(81156014)(52116002)(4326008)(6486002)(81166006)(86362001)(6306002)(6436002)(229853002)(25786009)(54906003)(66066001)(99286004)(3846002)(305945005)(11346002)(8936002)(446003)(8676002)(105586002)(5660300002)(99936001)(486006)(1076003)(6116002)(966005)(386003)(68736007)(97736004)(106356001)(476003)(7736002)(6346003)(478600001)(26005)(33656002)(102836004)(6506007)(14444005)(256004)(186003)(2906002)(14454004)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0501MB2614;H:DB6PR0501MB2694.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonro@mellanox.com; 
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: YxKrl5s3tpF12Ct3uaoXsTwB8Uag2YQ7M1ydbIqHs+daJMSRcNEKgNb1/dmVsxZUgpR67cU9d6qEnhD7FvhMlH+e1vv1nEcXs6K3JGh7tyEKzEJ5uVVed6fj3bxM6gK0tNBcAqrTonRRCCmhB6PbkAnmMS9gZmWKHYnuQBfby0nKuUR5EknN8u3h8263xmO0hA038bXtFd3TopOi/cSWso4+z6WM8OLLBV5miFQHH5bFb3BN4o/VqsO8+PW1T3jhyXLWWLUMnS4Jdzfw9ypYGAXlyWE524/eFsiZaf8fESt7itYrj6n8Axsw2Kr9r835WbHNb+L2XYTR4UJ9fMpnmExZRXYseNbPMwolJ34bGsPi8iR0UqqSuRkFxKDY9J3Sfom0j93MxnPJB8KOpWQm+YFtOygH7Rg6JrzHyj7OaGk=
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="6c2NcOVqGQ03X4Wi"
+ bh=zHZaXtQ0enWbhkR303243cStdxXwLWp/km0Q1fx1trs=;
+ b=GEPup4WXEg13skink8sKrezBmgfKiPLqFhLX0R68QwkI9YX10TimnGIYS4JH54+Od6Jd6xGEqVfPmWm7XroM284B9aunAUq2E6VyuiL5CS010jiEPguj3tRtcRZAhWG1B//sugyz6ytyleWFPPXiU+WkxuE6LjXjx24l3plY3e4=
+Received: from DM5PR03CA0045.namprd03.prod.outlook.com (2603:10b6:4:3b::34) by
+ BN7PR03MB3745.namprd03.prod.outlook.com (2603:10b6:408:23::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.14; Thu, 21 Feb 2019 13:16:38 +0000
+Received: from CY1NAM02FT059.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::204) by DM5PR03CA0045.outlook.office365.com
+ (2603:10b6:4:3b::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1643.14 via Frontend
+ Transport; Thu, 21 Feb 2019 13:16:38 +0000
+Authentication-Results: spf=pass (sender IP is 137.71.25.55)
+ smtp.mailfrom=analog.com; gmx.de; dkim=none (message not signed)
+ header.d=none;gmx.de; dmarc=bestguesspass action=none header.from=analog.com;
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
+Received: from nwd2mta1.analog.com (137.71.25.55) by
+ CY1NAM02FT059.mail.protection.outlook.com (10.152.74.211) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1643.11
+ via Frontend Transport; Thu, 21 Feb 2019 13:16:34 +0000
+Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
+        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id x1LDGWkO003269
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Thu, 21 Feb 2019 05:16:32 -0800
+Received: from linux.ad.analog.com (10.50.1.179) by NWD2HUBCAS7.ad.analog.com
+ (10.64.69.107) with Microsoft SMTP Server id 14.3.408.0; Thu, 21 Feb 2019
+ 08:16:32 -0500
+From:   Stefan Popa <stefan.popa@analog.com>
+To:     <jic23@kernel.org>, <robh+dt@kernel.org>
+CC:     Stefan Popa <stefan.popa@analog.com>,
+        <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
+        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
+        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v2 0/5] iio: imu: adis16480: Add support for ADIS1649x family of devices
+Date:   Thu, 21 Feb 2019 15:15:01 +0200
+Message-ID: <1550754906-24640-1-git-send-email-stefan.popa@analog.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd4342f2-1586-4869-7322-08d697fecb52
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2019 13:16:30.5827
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(979002)(396003)(136003)(376002)(39860400002)(346002)(2980300002)(3190300001)(189003)(199004)(110136005)(54906003)(36756003)(6666004)(356004)(47776003)(7696005)(316002)(246002)(8936002)(16586007)(305945005)(7636002)(51416003)(50226002)(106002)(2906002)(8676002)(106466001)(426003)(478600001)(336012)(50466002)(486006)(186003)(72206003)(26005)(126002)(77096007)(116002)(48376002)(4326008)(2616005)(476003)(44832011)(5660300002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR03MB3745;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 6e251c15-741a-42a3-20b3-08d697fecf77
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4608103)(4709054)(2017052603328)(7153060);SRVR:BN7PR03MB3745;
+X-MS-TrafficTypeDiagnostic: BN7PR03MB3745:
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR03MB3745;20:lj5bpGv0RUhsFfbQ8TltPTDfaWLr1gIRw+CFVASA1yC8ERKYfAs4r0CiJ1vn0oQtgUjk3t+G+oEd3NRLiBHiDjcyoDBhyXlCndCYl/+YcpfCCuQcWZmJrWslqNuiwG8liCX65SRHVS9BlvFCufWtVecJsJzgOllRR3NNQG7zmHjeudzuAYu0gYOgWDz1OFgc1V85OPr9Ju1klhbO4z+8zHDxfYWbmITgQeYWqUFufhCEvcg/Ze7VqcG0odmwjww+KnNEOEJxxOncuQnylM5j6JNvoHm1FFW3t8adzlS2qcBzf4zqgZ+UgsnW6Z3Wweb9Y781pZHvvO3tkWLsEli1j1E8hl06+q9UDZN9wGS5LphFKSZDaNCA4DVyvd4C1JrvXRczdekbvj+DmZXQKneNc2lxgcVReE4Or2QSe+hjd8qIpdAyUa6r5x5RnMXEdZqJ4mtEGRtfa42Tl9HHs+gqWr8zQ6+175FvXa9RS6bUdSOsZyoaHK769DQXdYYmdKmq
+X-Microsoft-Antispam-PRVS: <BN7PR03MB37452A2ECA469FDBC62B0F539D7E0@BN7PR03MB3745.namprd03.prod.outlook.com>
+X-Forefront-PRVS: 09555FB1AD
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN7PR03MB3745;23:lEQOjp0gftDicS1kPIjPGa4OvhLCvo/YTQmPZmK5a?=
+ =?us-ascii?Q?mzNmRGxPXzb1RVgZkR+z9cAD8frsc1VcbYNVSTABb6/rdZyfKs/9w5f+xc/6?=
+ =?us-ascii?Q?IrLX+7Pr6RUFRmOY36Mcn17OmxczVa0RRt0/cKcbcb12FbtmRZzUEZnkbulY?=
+ =?us-ascii?Q?90shZeW1mzt5vQ/NSlW4EaI8+kJuVQRiSxdNTZVsZzCWMzElqviLSPIgYwu7?=
+ =?us-ascii?Q?/9c8AoJtLL+Aa8S/9gZVQ/KTPI9kGT8LdoXoAiR180p3AxEw1au6J07F7C8h?=
+ =?us-ascii?Q?YSkQH/98K36GT6HI63BxaVvWDIky+5fJFm17x+nLF0amQ4oCWnOO5GNDkHBP?=
+ =?us-ascii?Q?UbsnMs74eQSEbmXeTcvbty0IC435ee5/huE53oEB0qMl9nZvJ1gWkNhxVkZ6?=
+ =?us-ascii?Q?lF/T91NzdH/THaGlKq8omdXB9iombehErQQIjd0IEGmnhaPATJj8BKE/zEXm?=
+ =?us-ascii?Q?0D6jbGFihSJt8X3Lus5f6aesPfa8ZBrsg4XLUkbEqj9ajyIBKW/gVFf1gFWk?=
+ =?us-ascii?Q?hiyZvSzSD3oY5UMGIgEkaCOFLz0K8/HFfbM+FiC1sIjagBiqrC05QfLKzcxz?=
+ =?us-ascii?Q?Umwew378xWMuG2CGF+51BlQTUw2mDqyZVOK/3mgwZaUKhEsDQnWhos5zUOzD?=
+ =?us-ascii?Q?8knk9dypnXH9sZ5wP4E5cFkxzyJwrJz9edh8H6/ZyFgbO2RxhcR0e73cl05I?=
+ =?us-ascii?Q?8ZpfGd3naxMS/9T8qzz/m+IBla0HwP8w5x0UA8iXyEqiIwQe1tDCHHij8vcr?=
+ =?us-ascii?Q?jF0u/Ys7x+SR9hW1XrxcNTp8zzWcshquXlxZc9M5fftW9n7VLnSHyZeo83M/?=
+ =?us-ascii?Q?ZkKVada7FWsQEZg/sfiFcu+L8rccGYBNtnOdapUBw2lkUcM7gx9HEpnBMxpn?=
+ =?us-ascii?Q?MxdQJcY60WSBu/o7hd24zIs6/dRBszq3nZ0THUAjZTyURn4sKvM8/qw5xugP?=
+ =?us-ascii?Q?yZZ1C7o3KAS1VFyn+8Ck2jijn8SqjJQHKaBc2T33xvy3coLbXE76UT9hzQPv?=
+ =?us-ascii?Q?wYZ0BKdZMTgIgweZaXy8k3SO81HTsqt+d1rVXApkgDUVPkjp+2Mel1hhKvNw?=
+ =?us-ascii?Q?9VhuQUNcibJ4dq/cC9utZqFalXX9OofgrsHFtMrQ2+eCyO1Hw=3D=3D?=
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: q+E7u0eHc8bXwjILbU7quzMR62IB3Vgfs7xkNKw1vrHoFnt1FNvuHdCiZMLiPH7o9jRh+jv7uwItRgWYcNiIQ2wyHo7D3AbezfftsrpybOjY1GHd4nXElqgAo38N1EAVSaVdX9W5Nkg54V06A+OtL+IPxTIHYAl6QliPWp1icG5eMIwf1EDWf6XgGU2YyNLHWsPHIwPXux48W4pds0XkUiecsTvzYw0fLwK4D27XaQ8dLrPDic00edPz8cD7guJkTN70WrkffyfTLVeufNoTwfsPlTBfMKm/xdvjNeLb+c9IwX5k0VxI8BBBpD2uRH/Ryo1vNCdFZP/o5PnAxeoO4AgQ+zXhFZMhrzQfUbKzkAGT/iloQjfgNCy/u7rRtiJkYPn+HZ7KEo0Uxk5l6kRf0t6eK3uJNLz6T4GQEanZ9xc=
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2019 13:16:34.3711
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0501MB2614
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6e251c15-741a-42a3-20b3-08d697fecf77
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR03MB3745
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---6c2NcOVqGQ03X4Wi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This series has as main goal to add support for ADIS1649x family of devices as
+part of the already existing adis16480, but on the way it also deals with some
+outstanding items:
 
-On Thu, Feb 21, 2019 at 11:48:01PM +1100, Stephen Rothwell wrote:
-> Hi Leon,
->
-> On Thu, 21 Feb 2019 12:34:42 +0000 Leon Romanovsky <leonro@mellanox.com> wrote:
-> >
-> > Matthew, really? change of API in -rc7? And it after you pushed us to
-> > base our -next on -rc5 after another API change? What should we do now?
->
-> The xarray API changes (to xa_alloc and __xa_alloc) have been in
-> linux-next for about 2 weeks ...
+* Make drdy pin configurable
+* Add OF device ID table
+* Deal with the temperature max scale in a generic way
+* Add missing docs
 
-I looked on the latest update of pulled branch
-http://git.infradead.org/users/willy/linux-dax.git/shortlog/refs/heads/xarray
+Changes in v2:
+Patch 1:
+	- use DIO1 pin as default data ready signal instead of DIO2.
+Patch 2:
+	- nothing changed.
+Patch 3, 4:
+	- give the scale directly in the adis16480_chip_info struct.
+Patch 5: 
+	- document the use of DIO1 pin as default data ready signal.
 
->
-> > Can you please ensure that you are sending your pull request to Linus,
-> > after RDMA pull request will be successfully merged?
->
-> It doesn't matter which goes in first, but whoever goes in last should
-> inform Linus about these (now 2) API change fixups.  In fact you should
-> probably both let him know as he sometimes batches up similar groups of
-> merge requests (like fs or net) and doesn't do them in the order they
-> are submitted.
+Stefan Popa (5):
+  iio: imu: adis16480: Add support for configurable drdy indicator
+  iio: imu: adis16480: Add OF device ID table
+  iio: imu: adis16480: Treat temperature scale in a generic way
+  iio: imu: adis16480: Add support for ADIS1649x family of devices
+  iio: imu: adis16480: Add docs for ADIS16480 IMU
 
-OK, we will do.
+ .../devicetree/bindings/iio/imu/adi,adis16480.txt  |  49 +++++
+ MAINTAINERS                                        |   1 +
+ drivers/iio/imu/adis16480.c                        | 197 ++++++++++++++++++++-
+ 3 files changed, 242 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/imu/adi,adis16480.txt
 
-Thanks
+-- 
+2.7.4
 
->
-> --
-> Cheers,
-> Stephen Rothwell
-
-
-
---6c2NcOVqGQ03X4Wi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJcbqSsAAoJEORje4g2clin2KQP/0xyZAp+dEVyy2sxhV64hXxN
-PRcfY3qwTDZaAYLyfbASgNT7JIVZpGVT2LP+u0gwj7s1arv6XOKmr2Zkl3LpocPi
-CtssucoDmJniIRq/XeZWjpvq+fWa6Pg1E0rzLDhPPK9nqNkGo2kyWAFpE9agPKcn
-1xDzPLdnz7XxzCHTVandYb5IvDsNDlDNlK4muvALrrbQlOy6Cac2w2ZXqsguVK3i
-eGp+gr0oSFLeJSJnG4O8e5z79HfnWVjRp/2OVu0MafcBrjlLQxLU+dyhd3GSM8uQ
-QSVEOqvV1JJyHSu/gUGAX5vQ9vbNAcJS9fZZ08c+fzai8NOWx/V7v4sCdT0HSSmp
-+DHbEw0lCkW+A7qDG4bzvobTGF/vyZxzTlnhLyKKt/s1pN7ykOlckvFRBLX4Y5o7
-T0cY95ofDiymyCVeAGtEju3dKYif+sZdEttOXboCe5oJv18Pw0zXRU19jU5T1K0c
-+aTRr7FKSc+1xgCf5QxCELIyJ+sxeQSZ/zeMJ0QSrx5IYVvv24XqjihD7ttylD2A
-gPlQrsvDuHN6O3TtR02puJfmH5fe37eyCQ9rsCcWT7cYYg/rapSaavx5n9Mv2dp3
-k0Jtnva0ngTxZ/Fcsm0g2tgFFGzuw7aXKmmMjhhh0yZBt9ks7ag5xQq6ZYDKH/Ih
-9L0HbwWDwQbkmKncWXNI
-=Amvs
------END PGP SIGNATURE-----
-
---6c2NcOVqGQ03X4Wi--
