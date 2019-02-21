@@ -2,235 +2,161 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D56C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A84A1C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:03:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E3622147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:02:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 719252147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:03:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="M1O9ANt2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726184AbfBUGCr (ORCPT
+        id S1726578AbfBUGCu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 01:02:47 -0500
-Received: from mga12.intel.com ([192.55.52.136]:49677 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725648AbfBUGCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 01:02:46 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 22:02:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,393,1544515200"; 
-   d="scan'208";a="301383769"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by orsmga005.jf.intel.com with ESMTP; 20 Feb 2019 22:02:42 -0800
-Date:   Thu, 21 Feb 2019 14:02:18 +0800
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     "Huang, Ying" <ying.huang@intel.com>
-Cc:     Wei Yang <richardw.yang@linux.intel.com>,
-        kernel test robot <rong.a.chen@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, lkp@01.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [LKP] [driver core] 570d020012: will-it-scale.per_thread_ops
- -12.2% regression
-Message-ID: <20190221060218.GA19466@richard>
-Reply-To: Wei Yang <richardw.yang@linux.intel.com>
-References: <20190218075442.GI29177@shao2-debian>
- <20190219005945.GA16734@richard>
- <20190219121904.GA24103@kroah.com>
- <20190221031049.GE28258@shao2-debian>
- <20190221034612.GA15147@richard>
- <87h8cx21gl.fsf@yhuang-dev.intel.com>
+        Thu, 21 Feb 2019 01:02:50 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:34610 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725648AbfBUGCt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 01:02:49 -0500
+Received: by mail-vs1-f68.google.com with SMTP id e10so15525409vsp.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 22:02:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pBx9CEbPnMiUJdiCd3bLUjGQLI38u4YtYCRIk8C62SU=;
+        b=M1O9ANt2kjEweh/AL2lRHyC58LdrEk9dwAodA/00rJ0ej1JINyeEsyFvOJshESviSH
+         FWZoUMI1cZrxT34ZOpZNvgtpQyRsUOqkijzJEVaLIHHLyz2cMm1fJbALn5Fh1tlM/iqS
+         5N+yTyr6fpP3dKcahG7FPQ+y0sPX9YwiO3px8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pBx9CEbPnMiUJdiCd3bLUjGQLI38u4YtYCRIk8C62SU=;
+        b=FUXK4vLTiqCTMmP9cdFr8VLqWIzQxDaTWfHLJMemyMe5q5/Tp7WJWNIEByrMH1Hl+V
+         VCmjPc8kPGK1xpJE3qi3dZyLadgG5qDiDoCpMYVATmYDf5cZQLU/bBrKsIeQOU0+HQsc
+         sb8rlB377SBg37NPBtAMeLjWVSKo7heWEYDlBsKltsZQoogqJyIbRavgGs3zu579/FNP
+         D+clOMSqJ5NSEoRaKPaGz4BX6jWGTjQ9WSr6b9dtB2H3BHRa9TA+2JEvxFv41eAxseSI
+         Q+rt0lOCuFFdjq4UP12aoC7QbBH6jI0qKLeG22ZdcTQ+fS8WDjHvyj17suhBkuvAs67Z
+         IOeg==
+X-Gm-Message-State: AHQUAuZf97sehNdR0jxziNzEO4YrG3LUI4fQ+5/v+lqZpi8KdJa1J7c7
+        8ZotqATS42VICJuzjlaujZau8VG9Ztw=
+X-Google-Smtp-Source: AHgI3IajwgFATKNAlUgTpqhtan+vjTNYJKyNL0x2NUsY9IY/xiYxui4YtzO5R4ZS4/ZQgKUkh+SK3w==
+X-Received: by 2002:a67:b605:: with SMTP id d5mr7372535vsm.202.1550728967741;
+        Wed, 20 Feb 2019 22:02:47 -0800 (PST)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id n74sm4748085vkc.6.2019.02.20.22.02.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Feb 2019 22:02:45 -0800 (PST)
+Received: by mail-vs1-f43.google.com with SMTP id y19so2232725vsc.4
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 22:02:44 -0800 (PST)
+X-Received: by 2002:a67:ec81:: with SMTP id h1mr19833821vsp.188.1550728964353;
+ Wed, 20 Feb 2019 22:02:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87h8cx21gl.fsf@yhuang-dev.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190218232308.11241-1-tobin@kernel.org> <20190218232308.11241-6-tobin@kernel.org>
+ <CAG48ez0utQJjoJW69OwGiuH1EQtcD939-5u71ruD_1nr0eJK0g@mail.gmail.com>
+ <CAGXu5jKeS3bkTSXEw2nsjrWoqhbkDZD4C=PdYTHMtM0GNk6tSg@mail.gmail.com> <20190221052435.GF11758@eros.localdomain>
+In-Reply-To: <20190221052435.GF11758@eros.localdomain>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 20 Feb 2019 22:02:32 -0800
+X-Gmail-Original-Message-ID: <CAGXu5j+Mf2D5LgkEmps7VVBhmNGt=49y4caP1y1E0OBURJEeXQ@mail.gmail.com>
+Message-ID: <CAGXu5j+Mf2D5LgkEmps7VVBhmNGt=49y4caP1y1E0OBURJEeXQ@mail.gmail.com>
+Subject: Re: [PATCH 5/6] lib: Fix function documentation for strncpy_from_user
+To:     "Tobin C. Harding" <me@tobin.cc>
+Cc:     Jann Horn <jannh@google.com>,
+        "Tobin C. Harding" <tobin@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 12:46:18PM +0800, Huang, Ying wrote:
->Wei Yang <richardw.yang@linux.intel.com> writes:
+On Wed, Feb 20, 2019 at 9:25 PM Tobin C. Harding <me@tobin.cc> wrote:
 >
->> On Thu, Feb 21, 2019 at 11:10:49AM +0800, kernel test robot wrote:
->>>On Tue, Feb 19, 2019 at 01:19:04PM +0100, Greg Kroah-Hartman wrote:
->>>> On Tue, Feb 19, 2019 at 08:59:45AM +0800, Wei Yang wrote:
->>>> > On Mon, Feb 18, 2019 at 03:54:42PM +0800, kernel test robot wrote:
->>>> > >Greeting,
->>>> > >
->>>> > >FYI, we noticed a -12.2% regression of will-it-scale.per_thread_ops due to commit:
->>>> > >
->>>> > >
->>>> > >commit: 570d0200123fb4f809aa2f6226e93a458d664d70 ("driver core: move device->knode_class to device_private")
->>>> > >https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
->>>> > >
->>>> > 
->>>> > This is interesting.
->>>> > 
->>>> > I didn't expect the move of this field will impact the performance.
->>>> > 
->>>> > The reason is struct device is a hotter memory than device->device_private?
->>>> > 
->>>> > >in testcase: will-it-scale
->>>> > >on test machine: 288 threads Knights Mill with 80G memory
->>>> > >with following parameters:
->>>> > >
->>>> > >	nr_task: 100%
->>>> > >	mode: thread
->>>> > >	test: unlink2
->>>> > >	cpufreq_governor: performance
->>>> > >
->>>> > >test-description: Will It Scale takes a testcase and runs it from 1 through to n parallel copies to see if the testcase will scale. It builds both a process and threads based test in order to see any differences between the two.
->>>> > >test-url: https://github.com/antonblanchard/will-it-scale
->>>> > >
->>>> > >In addition to that, the commit also has significant impact on the following tests:
->>>> > >
->>>> > >+------------------+---------------------------------------------------------------+
->>>> > >| testcase: change | will-it-scale: will-it-scale.per_thread_ops -29.9% regression |
->>>> > >| test machine     | 288 threads Knights Mill with 80G memory                      |
->>>> > >| test parameters  | cpufreq_governor=performance                                  |
->>>> > >|                  | mode=thread                                                   |
->>>> > >|                  | nr_task=100%                                                  |
->>>> > >|                  | test=signal1                                                  |
->>>> 
->>>> Ok, I'm going to blame your testing system, or something here, and not
->>>> the above patch.
->>>> 
->>>> All this test does is call raise(3).  That does not touch the driver
->>>> core at all.
->>>> 
->>>> > >+------------------+---------------------------------------------------------------+
->>>> > >| testcase: change | will-it-scale: will-it-scale.per_thread_ops -16.5% regression |
->>>> > >| test machine     | 288 threads Knights Mill with 80G memory                      |
->>>> > >| test parameters  | cpufreq_governor=performance                                  |
->>>> > >|                  | mode=thread                                                   |
->>>> > >|                  | nr_task=100%                                                  |
->>>> > >|                  | test=open1                                                    |
->>>> > >+------------------+---------------------------------------------------------------+
->>>> 
->>>> Same here, open1 just calls open/close a lot.  No driver core
->>>> interaction at all there either.
->>>> 
->>>> So are you _sure_ this is the offending patch?
->>>
->>>Hi Greg,
->>>
->>>We did an experiment, recovered the layout of struct device. and we
->>>found the regression is gone. I guess the regession is not from the
->>>patch but related to the struct layout.
->>>
->>>
->>>tests: 1
->>>testcase/path_params/tbox_group/run: will-it-scale/performance-thread-100%-unlink2/lkp-knm01
->>>
->>>570d0200123fb4f8  a36dc70b810afe9183de2ea18f  
->>>----------------  --------------------------  
->>>         %stddev      change         %stddev
->>>             \          |                \  
->>>    237096              14%     270789        will-it-scale.workload
->>>       823              14%        939        will-it-scale.per_thread_ops
->>>
->>
->> Do you have the comparison between a36dc70b810afe9183de2ea18f and the one
->> before 570d020012?
->>
->>>
->>>tests: 1
->>>testcase/path_params/tbox_group/run: will-it-scale/performance-thread-100%-signal1/lkp-knm01
->>>
->>>570d0200123fb4f8  a36dc70b810afe9183de2ea18f  
->>>----------------  --------------------------  
->>>         %stddev      change         %stddev
->>>             \          |                \  
->>>     93.51   3%        48%     138.53   3%  will-it-scale.time.user_time
->>>       186              40%        261        will-it-scale.per_thread_ops
->>>     53909              40%      75507        will-it-scale.workload
->>>
->>>
->>>tests: 1
->>>testcase/path_params/tbox_group/run: will-it-scale/performance-thread-100%-open1/lkp-knm01
->>>
->>>570d0200123fb4f8  a36dc70b810afe9183de2ea18f  
->>>----------------  --------------------------  
->>>         %stddev      change         %stddev
->>>             \          |                \  
->>>    447722              22%     546258  10%  will-it-scale.time.involuntary_context_switches
->>>    226995              19%     269751        will-it-scale.workload
->>>       787              19%        936        will-it-scale.per_thread_ops
->>>
->>>
->>>
->>>commit a36dc70b810afe9183de2ea18faa4c0939c139ac
->>>Author: 0day robot <lkp@intel.com>
->>>Date:   Wed Feb 20 14:21:19 2019 +0800
->>>
->>>    backfile klist_node in struct device for debugging
->>>    
->>>    Signed-off-by: 0day robot <lkp@intel.com>
->>>
->>>diff --git a/include/linux/device.h b/include/linux/device.h
->>>index d0e452fd0bff2..31666cb72b3ba 100644
->>>--- a/include/linux/device.h
->>>+++ b/include/linux/device.h
->>>@@ -1035,6 +1035,7 @@ struct device {
->>> 	spinlock_t		devres_lock;
->>> 	struct list_head	devres_head;
->>> 
->>>+	struct klist_node       knode_class_test_by_rongc;
->>> 	struct class		*class;
->>> 	const struct attribute_group **groups;	/* optional groups */
->>
->> Hmm... because this is not properly aligned?
->>
->> struct klist_node {
->> 	void			*n_klist;	/* never access directly */
->> 	struct list_head	n_node;
->> 	struct kref		n_ref;
->> };
->>
->> Except struct kref has one "int" type, others are pointers.
->>
->> But... I am still confused.
+> On Wed, Feb 20, 2019 at 05:05:10PM -0800, Kees Cook wrote:
+> > So, generally speaking, I'd love to split all strncpy* uses into
+> > strscpy_zero() (when expecting to do str->str copies), and some new
+> > function, named like mempadstr() or str2mem() that copies a str to a
+> > __nonstring char array, with trailing padding, if there is space. Then
+> > there is no more mixing the two cases and botching things.
+
+I should use "converts" instead of "copies" above, just to drive the
+point home. :)
+
 >
->I guess because the size of struct device is changed, it influences some
->alignment changes in the system.  Thus influence the benchmark score.
->
+> Oh cool, treewide changes, I'm down with that.  So to v2 I'll add
+> str2mem() and then attack the tree as suggested.  What could possibly go
+> wrong :)?
 
-That's interesting.
+Some clear documentation needs to be written for str2mem() to really
+help people understand what a "non string" character array is
+(especially given that it LOOKS like it has NUL termination -- when in
+fact it's just "padding").
 
-I wrote a module to see the exact size of these two structure on my x86_64.
+The tree-wide changes will likely take a while (and don't need to be
+part of this series unless you want to find a couple good examples)
+since we have to do them case-by-case: it's not always obvious when
+it's actually a non-string, so getting help from maintainers here will
+be needed. (And maybe some kind of flow chart added to
+Documentation/process/deprecated.rst for how to stop using strncpy()
+and strlcpy().)
 
-    sizeof(struct device) = 736 = 8 * 92
-    sizeof(struct device_private) = 160 = 8 * 20
-    sizeof(struct klist_node) = 32 = 8 * 4
+What I can't quite figure out yet is how to find a way for sfr to flag
+newly added users of strcpy, strncpy, and strlcpy. We might need to
+bring back __deprecated, but hide it behind a W=linux-next flag or
+something crazy. Stephen, in your builds you're already injecting
+-Wimplicit-fallthrough: do you do W=1 or anything like that? If not, I
+think we need some W= setting for your linux-next builds that generate
+the maintainer-nag warnings...
 
-Even klist_node has one 4 byte field, c complier would pack the structure to
-make it aligned. Which system alignment it would affect?
+-Kees
 
-After the patch, size would change like this:
+P.S. Here's C string API Rant (I just had to get this out, please feel
+free to ignore):
 
-   struct device          736   ->   704
-   struce device_private  160   ->   192
+strcpy returns dest ... which is already known, so it's a meaningless
+return value.
 
-Would this size change affect system?
+strncpy returns dest (still meaningless)
 
->Best Regards,
->Huang, Ying
->
->>>
->>>Best Regards,
->>>Rong Chen
+strlcpy returns strlen(src) ... the length we WOULD have copied. Why
+would we care about that? I'm operating on dest. Were there callers
+that needed to both copy part of src and learn how long it was at the
+same time?
+
+strscpy returns -E2BIG or non-NUL bytes copied: yay, a return about
+what actually happened from the operation!
+
+... snprintf returns what it WOULD have written, much like strlcpy
+above. At least snprintf has an excuse: it can be used to calculate an
+allocation size (called with a NULL dest and 0 size) ... but shouldn't
+"how big is this format string going to be?" be a separate function? I
+wonder if we can kill all kernel uses of snprintf too (after
+introducing a "how big would it be?" function and switching all other
+callers over to scnprintf)...
+
+So scnprintf() does the right thing (count of non-NUL bytes copied out).
+
+So now our safe(r?) string API versions use different letters to show
+they're safe: "s" in strcpy and "cn" in sprintf. /me cries forever.
 
 -- 
-Wei Yang
-Help you, Help me
+Kees Cook
