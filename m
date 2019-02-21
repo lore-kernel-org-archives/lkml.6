@@ -7,51 +7,53 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 596EDC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:26:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ABB4C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 286552147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:26:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0759C2147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:26:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550712385;
-	bh=BAwRHPzSeKQ8p79VFmyAROLJGQKsejY7NCCgcgNqqMk=;
+	s=default; t=1550712388;
+	bh=gDiFV1tzAnevHq45fbAKGeIdA9XpUp8HaYc3xXCg9GQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2Uvdp6z22cbRKqwN3XB+8AkyU846xUdRKtSf4YGmjKS1SGqC522oC+tHMT+tFv7JJ
-	 gCydci9tUqIjI+3uJApg/vvKkgNQnl84DO28CScAoeUpnZadwLcN7j+e/ym6FJSb3K
-	 TanO9xOKxAi5f91iAcsxe9MPgX8XogZtXKpecdy4=
+	b=aqRbvvOHfplRn/LAdLEzJ8oSgfClrjW83jdycLxiqcF0/Xf6DeQD2US12FSTCzehZ
+	 yj1URLOE8fh3qpV6ioyyPL0IQH+ixu1RBS2fvBAcWOVSzJ/TVsArseESpeoJpT3QNW
+	 lYixBlxA5X1qARkDRpaCbqsvhKNppD9nEng88ZhQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbfBUB0W (ORCPT
+        id S1727365AbfBUB01 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 20:26:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59170 "EHLO mail.kernel.org"
+        Wed, 20 Feb 2019 20:26:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727249AbfBUB0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 20:26:20 -0500
+        id S1727249AbfBUB0Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 20:26:25 -0500
 Received: from quaco.ghostprotocols.net (unknown [189.40.102.58])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0ADE42147A;
-        Thu, 21 Feb 2019 01:26:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B07472146E;
+        Thu, 21 Feb 2019 01:26:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550712380;
-        bh=BAwRHPzSeKQ8p79VFmyAROLJGQKsejY7NCCgcgNqqMk=;
+        s=default; t=1550712384;
+        bh=gDiFV1tzAnevHq45fbAKGeIdA9XpUp8HaYc3xXCg9GQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tMKotUQnwZr5TEHQHlCgfYxLUL5KYI5sR3cQT9ZMF4hXViG27CEkxBuLNqzoRV4g2
-         fnBV+qhRnzWm1IJjaX26qdGsZfVHeRHlqAKZTkhIztk9RWfgAi7U5Q81yHSoOJkMbT
-         JZdMuJLBuP3m+g3beibT8xuWda6ak3KXegPcSa7w=
+        b=htqaZwVdCfo197IF6KfBLBwhxMEayR2Uf1L5OCG5V8HyjWKXzRDouT8AJqDm4UlaC
+         qkXvuxEVcz3pt44+MM7+26IvhUqzm9aWifNd2k/c4mmSSRmaAqgspPvX2/+ema7JL0
+         qbHqggnYr3eQVu7XqGktaCPq1ewDf7He8Wsuv74c=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        He Kuang <hekuang@huawei.com>,
+        Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Milian Wolff <milian.wolff@kdab.com>,
+        Andi Kleen <ak@linux.intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 06/17] perf report: Don't shadow inlined symbol with different addr range
-Date:   Wed, 20 Feb 2019 22:25:38 -0300
-Message-Id: <20190221012549.4069-7-acme@kernel.org>
+Subject: [PATCH 07/17] perf doc: Fix HEADER_CMDLINE description in perf.data documentation
+Date:   Wed, 20 Feb 2019 22:25:39 -0300
+Message-Id: <20190221012549.4069-8-acme@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190221012549.4069-1-acme@kernel.org>
 References: <20190221012549.4069-1-acme@kernel.org>
@@ -62,68 +64,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: He Kuang <hekuang@huawei.com>
+From: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
 
-We can't assume inlined symbols with the same name are equal, because
-their address range may be different. This will cause the symbols with
-different addresses be shadowed when adding to the hist entry, and lead
-to ERANGE error when checking the symbol address during sample parse,
-the addr should be within the range of [sym.start, sym.end].
+The content of the HEADER_CMDLINE feature header is a perf_header_string_list
+of the argument vector and not a perf_header_string of the commandline.
 
-The error message is like: "0x36aea60 [0x8]: failed to process type: 68".
-
-The second parameter of symbol__new() is the length of the fake symbol
-for the inline frame, which is the subtraction of the end and start
-address of base_sym.
-
-Signed-off-by: He Kuang <hekuang@huawei.com>
+Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Milian Wolff <milian.wolff@kdab.com>
+Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: aa441895f7b4 ("perf report: Compare symbol name for inlined frames when sorting")
-Link: http://lkml.kernel.org/r/20190219130531.15692-1-hekuang@huawei.com
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Richter <tmricht@linux.ibm.com>
+Link: http://lkml.kernel.org/r/20190219154515.3954-1-jonas.rabenstein@studium.uni-erlangen.de
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/sort.c    | 10 ++++++++--
- tools/perf/util/srcline.c |  2 +-
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ tools/perf/Documentation/perf.data-file-format.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
-index 2b6c1ccb878c..d2299e912e59 100644
---- a/tools/perf/util/sort.c
-+++ b/tools/perf/util/sort.c
-@@ -231,8 +231,14 @@ static int64_t _sort__sym_cmp(struct symbol *sym_l, struct symbol *sym_r)
- 	if (sym_l == sym_r)
- 		return 0;
+diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
+index dfb218feaad9..5f9a3924830b 100644
+--- a/tools/perf/Documentation/perf.data-file-format.txt
++++ b/tools/perf/Documentation/perf.data-file-format.txt
+@@ -131,7 +131,7 @@ An uint64_t with the total memory in bytes.
  
--	if (sym_l->inlined || sym_r->inlined)
--		return strcmp(sym_l->name, sym_r->name);
-+	if (sym_l->inlined || sym_r->inlined) {
-+		int ret = strcmp(sym_l->name, sym_r->name);
-+
-+		if (ret)
-+			return ret;
-+		if ((sym_l->start <= sym_r->end) && (sym_l->end >= sym_r->start))
-+			return 0;
-+	}
+ 	HEADER_CMDLINE = 11,
  
- 	if (sym_l->start != sym_r->start)
- 		return (int64_t)(sym_r->start - sym_l->start);
-diff --git a/tools/perf/util/srcline.c b/tools/perf/util/srcline.c
-index 00f215580b5a..10ca1533937e 100644
---- a/tools/perf/util/srcline.c
-+++ b/tools/perf/util/srcline.c
-@@ -104,7 +104,7 @@ static struct symbol *new_inline_sym(struct dso *dso,
- 	} else {
- 		/* create a fake symbol for the inline frame */
- 		inline_sym = symbol__new(base_sym ? base_sym->start : 0,
--					 base_sym ? base_sym->end : 0,
-+					 base_sym ? (base_sym->end - base_sym->start) : 0,
- 					 base_sym ? base_sym->binding : 0,
- 					 base_sym ? base_sym->type : 0,
- 					 funcname);
+-A perf_header_string with the perf command line used to collect the data.
++A perf_header_string_list with the perf arg-vector used to collect the data.
+ 
+ 	HEADER_EVENT_DESC = 12,
+ 
 -- 
 2.19.1
 
