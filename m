@@ -2,109 +2,95 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86774C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FC0DC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:51:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 619282084F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:51:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F9D42084F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:51:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728280AbfBUNvI convert rfc822-to-8bit (ORCPT
+        id S1728165AbfBUNvo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 08:51:08 -0500
-Received: from ozlabs.org ([203.11.71.1]:43749 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726838AbfBUNvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 08:51:07 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 444wqD2k07z9rxp;
-        Fri, 22 Feb 2019 00:51:04 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, j.neuschaefer@gmx.net
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v4 04/16] powerpc/mm/32s: use generic mmu_mapin_ram() for all blocks.
-In-Reply-To: <790cf44815f8c56b3c600560bad9139f63be9f68.1550692943.git.christophe.leroy@c-s.fr>
-References: <cover.1550692943.git.christophe.leroy@c-s.fr> <790cf44815f8c56b3c600560bad9139f63be9f68.1550692943.git.christophe.leroy@c-s.fr>
-Date:   Fri, 22 Feb 2019 00:51:01 +1100
-Message-ID: <87o9755jy2.fsf@concordia.ellerman.id.au>
+        Thu, 21 Feb 2019 08:51:44 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37304 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725385AbfBUNvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 08:51:43 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4F945AF81;
+        Thu, 21 Feb 2019 13:51:42 +0000 (UTC)
+Date:   Thu, 21 Feb 2019 14:51:40 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     John Ogness <john.ogness@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Daniel Wang <wonderfly@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Feiner <pfeiner@google.com>,
+        linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC PATCH v1 04/25] printk-rb: add writer interface
+Message-ID: <20190221135140.enamunz6p54dt443@pathway.suse.cz>
+References: <20190212143003.48446-1-john.ogness@linutronix.de>
+ <20190212143003.48446-5-john.ogness@linutronix.de>
+ <20190214151650.5y337yy2jnnztsc6@pathway.suse.cz>
+ <87ef8aosby.fsf@linutronix.de>
+ <20190215134711.pimxhuwipkzlgq23@pathway.suse.cz>
+ <87d0nr5heh.fsf@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87d0nr5heh.fsf@linutronix.de>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
+On Sun 2019-02-17 02:32:22, John Ogness wrote:
+> Hi Petr,
+> 
+> I've made changes to the patch that hopefully align with what you are
+> looking for. I would appreciate it if you could go over it and see if
+> the changes are in the right direction. And if so, you should decide
+> whether I should make these kinds of changes for the whole series and
+> submit a v2 before you continue with the review.
+> 
+> The list of changes:
+> 
+> - Added comments everywhere I think they could be useful. Is it too
+>   much?
 
-> Now that mmu_mapin_ram() is able to handle other blocks
-> than the one starting at 0, the WII can use it for all
-> its blocks.
->
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->  arch/powerpc/mm/pgtable_32.c | 27 +++++++++------------------
->  1 file changed, 9 insertions(+), 18 deletions(-)
->
-> diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
-> index b4858818523f..2bf9bf8867d4 100644
-> --- a/arch/powerpc/mm/pgtable_32.c
-> +++ b/arch/powerpc/mm/pgtable_32.c
-> @@ -254,26 +254,17 @@ static void __init __mapin_ram_chunk(unsigned long offset, unsigned long top)
->  
->  void __init mapin_ram(void)
->  {
-> -	unsigned long s, top;
-> -
-> -#ifndef CONFIG_WII
-> -	top = total_lowmem;
-> -	s = mmu_mapin_ram(0, top);
-> -	__mapin_ram_chunk(s, top);
-> -#else
-> -	if (!wii_hole_size) {
-> -		s = mmu_mapin_ram(0, total_lowmem);
-> -		__mapin_ram_chunk(s, total_lowmem);
-> -	} else {
-> -		top = wii_hole_start;
-> -		s = mmu_mapin_ram(0, top);
-> -		__mapin_ram_chunk(s, top);
-> +	struct memblock_region *reg;
-> +
-> +	for_each_memblock(memory, reg) {
-> +		unsigned long base = reg->base;
-> +		unsigned long top = min(base + reg->size, (unsigned long)total_lowmem);
+Some comments probably can get shortened. But I personally find
+them really helpful.
 
-This gives me:
+I am not going to do a detailed review of this variant at the moment.
+I would like to finish the review of the entire patchset first.
 
-In file included from ../arch/powerpc/mm/pgtable_32.c:22:
-../arch/powerpc/mm/pgtable_32.c: In function ‘mapin_ram’:
-../include/linux/kernel.h:846:29: error: comparison of distinct pointer types lacks a cast [-Werror]
-   (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
-                             ^~
-../include/linux/kernel.h:860:4: note: in expansion of macro ‘__typecheck’
-   (__typecheck(x, y) && __no_side_effects(x, y))
-    ^~~~~~~~~~~
-../include/linux/kernel.h:870:24: note: in expansion of macro ‘__safe_cmp’
-  __builtin_choose_expr(__safe_cmp(x, y), \
-                        ^~~~~~~~~~
-../include/linux/kernel.h:879:19: note: in expansion of macro ‘__careful_cmp’
- #define min(x, y) __careful_cmp(x, y, <)
-                   ^~~~~~~~~~~~~
-../arch/powerpc/mm/pgtable_32.c:261:23: note: in expansion of macro ‘min’
-   unsigned long top = min(base + reg->size, (unsigned long)total_lowmem);
-                       ^~~
-cc1: all warnings being treated as errors
-../scripts/Makefile.build:276: recipe for target 'arch/powerpc/mm/pgtable_32.o' failed
+> - I tried moving calc_next() into prb_reserve(), but it was pure
+>   insanity. I played with refactoring for a while until I found
+>   something that I think looks nice. I moved the implementation of
+>   calc_next() along with its containing loop into a new function
+>   find_res_ptrs(). This function does what calc_next() and push_tail()
+>   did. With this solution, I think prb_reserve() looks pretty
+>   clean. However, the optimization of communicating about the wrap is
+>   gone. So even though find_res_ptrs() knew if a wrap occurred,
+>   prb_reserve() figures it out again for itself. If we want the
+>   optimization, I still think the best approach is the -1,0,1 return
+>   value of find_res_ptrs().
 
+I still have to go more deeply into it. Anyway, the new code looks
+much better than the previous one.
 
-For 44x/bamboo_defconfig.
-
-cheers
+Best Regards,
+Petr
