@@ -2,105 +2,138 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CEACC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE32C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8CC520855
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:09:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550747369;
-	bh=T/Fxq8JgLMzaZZcyu2NVvfvL8uNg5uJesod3goZj3Mk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=yMklzEOmqMi1B6OupM2LYcddbIpGWZV988bwOBx6p5xLmvs4H7ffTb332JxwPiIY1
-	 PXbnFiHsnYf8ncoBcLCyoWF+GjIM1hCUeZKIE7ZH5pn9PHWzlhcY2QwDZzSZJEl3Nv
-	 OZsBZminJGTSj/2ieEMp5XBTOyJmsXCTs+ibP70k=
+	by mail.kernel.org (Postfix) with ESMTP id B8B8820855
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:11:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XtCQtIDf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726419AbfBULJ2 (ORCPT
+        id S1727054AbfBULL1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 06:09:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40272 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 06:11:27 -0500
+Received: from ozlabs.org ([203.11.71.1]:57585 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725823AbfBULJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 06:09:27 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725823AbfBULL0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 06:11:26 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82DC020855;
-        Thu, 21 Feb 2019 11:09:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550747367;
-        bh=T/Fxq8JgLMzaZZcyu2NVvfvL8uNg5uJesod3goZj3Mk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vTNy4J4YCgC21ciK0yd7A2IT4RRzndr1UJUMtAMJW9GGLZ/E4sjLiMmFcNrqXX/vk
-         7ZH+0/+RI6LwgRmnjtI6cE+0pd/lNqT56fTODLx7WkgPUHktBBuTJJMO5SbCqxgkvp
-         fhTMuRco2QyoOW11sH392R0ONI9R3EXu2Bb+kNGM=
-Date:   Thu, 21 Feb 2019 12:09:23 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, Kay Sievers <kay@vrfy.org>,
-        syzbot <syzbot+f648cfb7e0b52bf7ae32@syzkaller.appspotmail.com>
-Subject: Re: [PATCH] kobject: Don't trigger kobject_uevent(KOBJ_REMOVE) twice.
-Message-ID: <20190221110923.GA23579@kroah.com>
-References: <1550669914-10704-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20190220150753.GB17103@kroah.com>
- <CAKdAkRSjZB5MJ=vPwDTUouTTYF5Gu1d7iWjzdOzd+w5HJ=1CFQ@mail.gmail.com>
- <bd8cc4bb-4c58-dbad-a012-3193a41dc0ca@i-love.sakura.ne.jp>
+        by ozlabs.org (Postfix) with ESMTPSA id 444sH01M9Mz9s4Y;
+        Thu, 21 Feb 2019 22:11:23 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1550747484;
+        bh=gsgJ2pt46ank+w4ec97L2m6FaArx31ZMXW22TNd5xCg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=XtCQtIDfCxGWgEPqa3vHeo7tBtU6HXnW5Tis9MyvMKm/GIzPOU296lrt+9dSiNoXe
+         o2hhhzEFHjTtT3ovS41ScOOL4GXrBxKXPwwunR4aHiCdA7N5ad1NxkyW4tq2SnePd2
+         NmYouhZBb5LE5YsodDqjRO+3JAWOuwC3mndBpy7R9uLUqPylciW14MtrqMKBLki4F/
+         toLyeJVn79sztnE3nhPcTEiqSZQWcKKP+5UKjxozwg7ar2E2YvOBqert401WIkrx2f
+         0RLm3bqcZFyDrdzOEjqxf6ixS7bpyW4zUqGcKQ99lHHZqZQs7VFyD9HByOUO1Q2ECO
+         b5uCYhyaYRXWA==
+Date:   Thu, 21 Feb 2019 22:11:22 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bodong Wang <bodong@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: linux-next: Fixes tags need some work in the net-next tree
+Message-ID: <20190221221122.7e0f13a5@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bd8cc4bb-4c58-dbad-a012-3193a41dc0ca@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ab1MvUwH6nCM2WdhBMI08n1"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 07:40:20PM +0900, Tetsuo Handa wrote:
-> On 2019/02/21 4:52, Dmitry Torokhov wrote:
-> > On Wed, Feb 20, 2019 at 7:07 AM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> >> But I would argue that this is not ok, as the remove uevent did NOT get
-> >> sent, and you are saying it did.
-> > 
-> > "It is the thought that counts" here. The code was added to catch
-> > cases where nobody even attempted to send "remove" uevents. It does
-> > not guarantee that an event will ultimately be sent (we are at the
-> > point of no return as far as the rest of the kernel is concerned,
-> > there are no repeats or do-overs).
-> > 
-> >>
-> >> What memory is being used-after-free here when we fail to properly send
-> >> a uevent?  Shouldn't we fix up that problem correctly?
-> 
-> It is explained at https://lkml.kernel.org/r/20190219185558.GA210481@dtor-ws .
+--Sig_/ab1MvUwH6nCM2WdhBMI08n1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-I agree with Dmitry here, it's not the input layer's job to do this.
+Hi all,
 
-But that didn't answer my question, what object is getting reused here?
-The input device is now dead at that point in time, no one else can
-touch it, but you are saying someone did, right?   Who is that someone?
+In commit
 
-> > This is the correct fix (in spirit, we may argue about whether it is
-> > valid to call the flag "state_add_uevent_sent" now or we should or
-> > collapse both it and "state_add_uevent_sent" into
-> > "need_send_remove_uevent"). Other subsystems are in their own right to
-> > not expect to get uvent callbacks past the point of calling
-> > device_del() as they are tearing down parts of the device environment
-> > (even though the device structure may stay in memory for a while).
-> > 
-> > Thanks.
-> 
-> Which subsystems benefit from commit 0f4dafc0563c6c49 ("Kobject: auto-cleanup
-> on final unref") ? If there is no such subsystem, it will be better to remove
-> state_add_uevent_sent and state_remove_uevent_sent logic.
+  1c50d369f560 ("net/mlx5: E-Switch, Disable esw manager vport correctly")
 
-You are asking me about a patch from 2007.  I have no idea, try removing
-it and see what happens :)
+Fixes tag
 
-greg k-h
+  Fixes: de9e6a8136c5 ("net/mlx5: E-Switch, Properly refer to host PF vport=
+ as other vport")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Did you mean
+
+  Fixes: cbc44e76bfcd ("net/mlx5: E-Switch, Properly refer to host PF vport=
+ as other vport")
+
+In commit
+
+  acad70731e63 ("net/mlx5: E-Switch, Fix the warning on vport index out of =
+range")
+
+Fixes tag
+
+  Fixes: 22b8ddc86bf4 ("net/mlx5: E-Switch, Assign a different position for=
+ uplink rep and vport")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Did you mean
+
+  Fixes: 5ae5162066d8 ("net/mlx5: E-Switch, Assign a different position for=
+ uplink rep and vport")
+
+In commit
+
+  e87636117e9a ("net/mlx5e: Remove unused variable =E2=80=98esw=E2=80=99")
+
+Fixes tag
+
+  Fixes: 1cd3ab86b713 ("net/mlx5e: Introduce mlx5e_flow_esw_attr_init() hel=
+per")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Did you mean
+
+  Fixes: 988ab9c7363a ("net/mlx5e: Introduce mlx5e_flow_esw_attr_init() hel=
+per")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ab1MvUwH6nCM2WdhBMI08n1
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxuh1oACgkQAVBC80lX
+0GwQ4wf/VKc7gJSMN5KAuJ5Wg5h+yW4R/nGjffsKTiMf0RQ4DkWKZEXmCuSyyGPO
+CZUmN3bpymp60xL3RscyEu5Bt8/KcDspBocezmQ5OqOn5kqfJLpEDGZn6vt/goCc
+Ukhcb3gc1nkjceWA2yba3oga53MBL+VgxAZelS+CKl+xPsG2wYW3Gfrkfp5AW1G4
+0Q2nqGBHb9Z6WYghRse3/t92Rq/h4G1bgYceGBO8xakJsFhsvdZQ6ewDqqZ7un9l
+b6iMrjWbq4aTkXkAMaSFXcqFBel+58T3I0BL70KRZuFbs3rIxrYDwCcgrTp6y0v1
+8/KO7LbNXLVkfkPAoONBQo9HMcebWQ==
+=zSYl
+-----END PGP SIGNATURE-----
+
+--Sig_/ab1MvUwH6nCM2WdhBMI08n1--
