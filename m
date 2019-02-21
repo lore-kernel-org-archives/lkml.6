@@ -2,94 +2,133 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4920C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:30:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38164C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:30:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 898ED2086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:30:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 078D32086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:30:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727815AbfBULaU (ORCPT
+        id S1727729AbfBULaJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 06:30:20 -0500
-Received: from mga01.intel.com ([192.55.52.88]:64118 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727766AbfBULaO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 06:30:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 03:30:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,395,1544515200"; 
-   d="scan'208";a="135232563"
-Received: from linux.intel.com ([10.54.29.200])
-  by FMSMGA003.fm.intel.com with ESMTP; 21 Feb 2019 03:30:13 -0800
-Received: from [10.125.252.152] (abudanko-mobl.ccr.corp.intel.com [10.125.252.152])
-        by linux.intel.com (Postfix) with ESMTP id 10AB758028E;
-        Thu, 21 Feb 2019 03:30:10 -0800 (PST)
-Subject: Re: [PATCH v2 3/4] perf record: enable runtime trace compression
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <044ee2be-2e1d-e90f-7317-40083b5e716c@linux.intel.com>
- <5bc6958d-f4bc-d4ea-e5d0-16c5e7b73911@linux.intel.com>
- <20190212130844.GF775@krava>
- <f4bc3e05-734a-0053-1f23-684446a351d0@linux.intel.com>
- <20190221094327.GA10990@krava>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <9184656d-e47c-b003-cbb4-1c37d97c6fcd@linux.intel.com>
-Date:   Thu, 21 Feb 2019 14:30:09 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Thu, 21 Feb 2019 06:30:09 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43674 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727505AbfBULaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 06:30:08 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DE409B124;
+        Thu, 21 Feb 2019 11:30:05 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 713D01E0900; Thu, 21 Feb 2019 12:30:05 +0100 (CET)
+Date:   Thu, 21 Feb 2019 12:30:05 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Dongli Zhang <dongli.zhang@oracle.com>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        axboe@kernel.dk, jack@suse.cz
+Subject: Re: [PATCH 2/2] loop: set GENHD_FL_NO_PART_SCAN after
+ blkdev_reread_part()
+Message-ID: <20190221113005.GF27474@quack2.suse.cz>
+References: <1550722655-15102-1-git-send-email-dongli.zhang@oracle.com>
+ <1550722655-15102-3-git-send-email-dongli.zhang@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <20190221094327.GA10990@krava>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1550722655-15102-3-git-send-email-dongli.zhang@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 21.02.2019 12:43, Jiri Olsa wrote:
-> On Wed, Feb 20, 2019 at 06:13:02PM +0300, Alexey Budankov wrote:
->>
->> On 12.02.2019 16:08, Jiri Olsa wrote:
->>> On Mon, Feb 11, 2019 at 11:23:40PM +0300, Alexey Budankov wrote:
->>>
->>> SNIP
->>>
->>>> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
->>>> index 18fb9c8cbf9c..5d406eebd058 100644
->>>> --- a/tools/perf/util/session.c
->>>> +++ b/tools/perf/util/session.c
->>>> @@ -29,6 +29,112 @@
->>>>  #include "stat.h"
->>>>  #include "arch/common.h"
->>>>  
->>>
->>> I think this should not be in session.c but separated in new object
->>
->> Do you mean the new file?
+On Thu 21-02-19 12:17:35, Dongli Zhang wrote:
+> Commit 0da03cab87e6
+> ("loop: Fix deadlock when calling blkdev_reread_part()") moves
+> blkdev_reread_part() out of the loop_ctl_mutex. However,
+> GENHD_FL_NO_PART_SCAN is set before __blkdev_reread_part(). As a result,
+> __blkdev_reread_part() will fail the check of GENHD_FL_NO_PART_SCAN and
+> will not rescan the loop device to delete all partitions.
 > 
-> yes
-
-tools/perf/util/compress.{c,h}
-
-Thanks,
-Alexey
-
+> Below are steps to reproduce the issue:
 > 
-> jirka
+> step1 # dd if=/dev/zero of=tmp.raw bs=1M count=100
+> step2 # losetup -P /dev/loop0 tmp.raw
+> step3 # parted /dev/loop0 mklabel gpt
+> step4 # parted -a none -s /dev/loop0 mkpart primary 64s 1
+> step5 # losetup -d /dev/loop0
+
+Can you perhaps write a blktest for this? Thanks!
+
+> Step5 will not be able to delete /dev/loop0p1 (introduced by step4) and
+> there is below kernel warning message:
 > 
+> [  464.414043] __loop_clr_fd: partition scan of loop0 failed (rc=-22)
+> 
+> This patch sets GENHD_FL_NO_PART_SCAN after blkdev_reread_part().
+> 
+> Fixes: 0da03cab87e6 ("loop: Fix deadlock when calling blkdev_reread_part()")
+> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+> ---
+>  drivers/block/loop.c | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> index 7908673..736e55b 100644
+> --- a/drivers/block/loop.c
+> +++ b/drivers/block/loop.c
+> @@ -1034,6 +1034,15 @@ loop_init_xfer(struct loop_device *lo, struct loop_func_table *xfer,
+>  	return err;
+>  }
+>  
+> +static void loop_disable_partscan(struct loop_device *lo)
+> +{
+> +	mutex_lock(&loop_ctl_mutex);
+> +	lo->lo_flags = 0;
+> +	if (!part_shift)
+> +		lo->lo_disk->flags |= GENHD_FL_NO_PART_SCAN;
+> +	mutex_unlock(&loop_ctl_mutex);
+> +}
+> +
+>  static int __loop_clr_fd(struct loop_device *lo, bool release)
+>  {
+>  	struct file *filp = NULL;
+> @@ -1096,9 +1105,6 @@ static int __loop_clr_fd(struct loop_device *lo, bool release)
+>  
+>  	partscan = lo->lo_flags & LO_FLAGS_PARTSCAN && bdev;
+>  	lo_number = lo->lo_number;
+> -	lo->lo_flags = 0;
+> -	if (!part_shift)
+> -		lo->lo_disk->flags |= GENHD_FL_NO_PART_SCAN;
+>  	loop_unprepare_queue(lo);
+>  out_unlock:
+>  	mutex_unlock(&loop_ctl_mutex);
+> @@ -1121,6 +1127,9 @@ static int __loop_clr_fd(struct loop_device *lo, bool release)
+>  		/* Device is gone, no point in returning error */
+>  		err = 0;
+>  	}
+> +
+> +	loop_disable_partscan(lo);
+> +
+>  	/*
+>  	 * Need not hold loop_ctl_mutex to fput backing file.
+>  	 * Calling fput holding loop_ctl_mutex triggers a circular
+
+So I don't think this change is actually correct. The problem is that once
+lo->lo_state is set to Lo_unbound and loop_ctl_mutex is unlocked, the loop
+device structure can be reused for a new device (bound to a new file). So
+you cannot safely manipulate flags on lo->lo_disk anymore. But I think we
+can just move the setting of lo->lo_state to Lo_unbound after partscan has
+finished as well. There cannot be anybody else entering __loop_clr_fd() as
+lo->lo_backing_file is already cleared and Lo_rundown state protects us
+from all the other places trying to change the 'lo' device (please make
+this last sentence into a comment in the code explaining why setting
+lo->lo_state so late is fine). Thanks!
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
