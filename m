@@ -3,89 +3,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADAE9C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:22:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F8DC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:25:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79F892086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:22:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA2212086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:25:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbfBUDWr (ORCPT
+        id S1726746AbfBUDZZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 22:22:47 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:35700 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727320AbfBUDWl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 22:22:41 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C9E891A0157;
-        Thu, 21 Feb 2019 04:22:39 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B7AF71A013D;
-        Thu, 21 Feb 2019 04:22:30 +0100 (CET)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 16574402F8;
-        Thu, 21 Feb 2019 11:22:19 +0800 (SGT)
-From:   Xiaowei Bao <xiaowei.bao@nxp.com>
-To:     bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        shawnguo@kernel.org, leoyang.li@nxp.com, kishon@ti.com,
-        lorenzo.pieralisi@arm.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, minghuan.Lian@nxp.com,
-        mingkai.hu@nxp.com, roy.zang@nxp.com, kstewart@linuxfoundation.org,
-        pombredanne@nexb.com, shawn.lin@rock-chips.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org
-Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: [PATCHv7 4/4] misc: pci_endpoint_test: Add the layerscape EP device support
-Date:   Thu, 21 Feb 2019 11:16:20 +0800
-Message-Id: <20190221031620.43554-4-xiaowei.bao@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20190221031620.43554-1-xiaowei.bao@nxp.com>
-References: <20190221031620.43554-1-xiaowei.bao@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Wed, 20 Feb 2019 22:25:25 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3713 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726016AbfBUDZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 22:25:25 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 21F131D806D7DF1928D6;
+        Thu, 21 Feb 2019 11:25:23 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 21 Feb 2019 11:25:12 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
+        "Daniel Vetter" <daniel@ffwll.ch>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <dri-devel@lists.freedesktop.org>, <nouveau@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] drm/nouveau/dmem: remove set but not used variable 'drm'
+Date:   Thu, 21 Feb 2019 03:38:51 +0000
+Message-ID: <20190221033851.70331-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the layerscape EP device support in pci_endpoint_test driver.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
-Reviewed-by: Minghuan Lian <minghuan.lian@nxp.com>
-Reviewed-by: Zhiqiang Hou <zhiqiang.hou@nxp.com>
-Reviewed-by: Greg KH <gregkh@linuxfoundation.org>
+drivers/gpu/drm/nouveau/nouveau_dmem.c: In function 'nouveau_dmem_free':
+drivers/gpu/drm/nouveau/nouveau_dmem.c:103:22: warning:
+ variable 'drm' set but not used [-Wunused-but-set-variable]
+  struct nouveau_drm *drm;
+                      ^
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
-v2:
- - no change
-v3:
- - no change
-v4:
- - delate the comments.
-v5:
- - no change.
-v6:
- - no change.
-v7:
- - no change.
+ drivers/gpu/drm/nouveau/nouveau_dmem.c | 2 --
+ 1 file changed, 2 deletions(-)
 
- drivers/misc/pci_endpoint_test.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+diff --git a/drivers/gpu/drm/nouveau/nouveau_dmem.c b/drivers/gpu/drm/nouveau/nouveau_dmem.c
+index aa9fec80492d..900a302b7ce9 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_dmem.c
++++ b/drivers/gpu/drm/nouveau/nouveau_dmem.c
+@@ -100,12 +100,10 @@ static void
+ nouveau_dmem_free(struct hmm_devmem *devmem, struct page *page)
+ {
+ 	struct nouveau_dmem_chunk *chunk;
+-	struct nouveau_drm *drm;
+ 	unsigned long idx;
+ 
+ 	chunk = (void *)hmm_devmem_page_get_drvdata(page);
+ 	idx = page_to_pfn(page) - chunk->pfn_first;
+-	drm = chunk->drm;
+ 
+ 	/*
+ 	 * FIXME:
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 896e2df..29582fe 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -788,6 +788,7 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
- static const struct pci_device_id pci_endpoint_test_tbl[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA74x) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA72x) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_FREESCALE, 0x81c0) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_SYNOPSYS, 0xedda) },
- 	{ }
- };
--- 
-1.7.1
+
+
+
 
