@@ -2,97 +2,90 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35688C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 02:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1292BC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 02:23:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E45C62089F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 02:23:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D27F92089F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 02:23:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E9+ThzZe"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mBIxkm/l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbfBUCXD (ORCPT
+        id S1726976AbfBUCXq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 21:23:03 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42681 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726113AbfBUCXD (ORCPT
+        Wed, 20 Feb 2019 21:23:46 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46982 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726016AbfBUCXp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 21:23:03 -0500
-Received: by mail-pg1-f195.google.com with SMTP id b2so7212818pgl.9
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 18:23:02 -0800 (PST)
+        Wed, 20 Feb 2019 21:23:45 -0500
+Received: by mail-pf1-f194.google.com with SMTP id g6so12924263pfh.13
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 18:23:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=KHB+0hB4evqxXg3D5/WLWbCu6vV9Z7VvgKsCyQzehDQ=;
-        b=E9+ThzZeH4CGD7xnmR+0E/Ve7Ve3vO5jWnbCnwkyYsUZbWe129H0mitgxkDYdsUCIO
-         2e7i9m+UmMNrtjL0ybPthXT7KQIB1NF4X23K+OybeAjJec0EixRwlE8Ewrgl5LgtOGui
-         R12KTsBlS1Bp4xUEBbKdSRiuFEwDtwzJ6ZScAxe8W+9kAYJ7meG3c6CV/6ks0znbv+Hn
-         Xg46WVlleV3uzl+neibo6vzZlho+3FflSeO7I9MjI6KrePMG0UDNZOMI257dS0gMaiN7
-         pbZX7E3vt5KBC6TsVs5Y/kkMmYw5N/3G8+X7Y4wKSn/I8olQ0oWjRXyofX+XbT0P/wB8
-         6H+Q==
+        bh=Pr+lh/6Oy70dxwSWZ+b+sOinxQFvJaGYzWj0cTfpPzc=;
+        b=mBIxkm/lf0W9nHmx1LGF2tclSbpu0NB+OVz+gDCk+lcFDLFVaQayCR4HbZXdgzouLx
+         1ld3COhc/3Og6TiJa35qbXCGTpdz5rp2oJMe7n0+v0bf3lLkHeM2vPa8frgsFF+cGbma
+         EALGQiyXm3y3WCaQWzWnS2IPmzTHrA/S5X6OWJNwmwADpaVMOeq7LMtC1oThu1m97ahl
+         6CKTM3Hq0IUzbK7fkO5h75SQSNZD9vtgWfWs9sxi1ll/HluO5rTzXGyLAwLnDVdGGl2e
+         IZ7xsXjXMglTYwoxEl0BwiwQ/EUzgBITMRBiPzKx1ZlrT1muuE9xXdhGMUL4pazREw1s
+         BXpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KHB+0hB4evqxXg3D5/WLWbCu6vV9Z7VvgKsCyQzehDQ=;
-        b=Y1smGq9xWrbKJPuDBvitdulqnpOWrwZNbFjdxLEbYMXuhCk5rKQcOULMuUXx/55bCq
-         Gl65eAlOe3OsaA8XgqDi/04C3SFOo7XozCqTQpTnzHwYQrmSYpghwveFtyKoLKeWrAEE
-         561BwZ24yuQjZyNKy/w0yAKlAYXjlc1m72pW/3FTNXhd9yOibKQTlcPwZ2Qcmhmea2iv
-         ckfl6N4wj8PVNewnZAZfOO91Z/XQT885GirzifaiF65+xNs5ekh8RNVERzL6x+Dud8oB
-         qT401UrzV1dvZxPz1QggyBVxOPzUwyoGrqLa/NjZ1A9FJGcjnZ0gtqbvOzR9ekSL0rX6
-         7zWg==
-X-Gm-Message-State: AHQUAubcHmTSd9itn6flNk/WS6fK7ELu9KDAHjwZ2Ktiw76lKMdM8CcB
-        5ZqUo6q6ab4LKi9mHzFQpEE7zdlN
-X-Google-Smtp-Source: AHgI3IaPBvJngHytR8QYGnjSqG9CfHGI8d9dOwn/n3cSTL/luqLDq6Xaxdy79amN/UrQJjpjtmdcCQ==
-X-Received: by 2002:a63:c310:: with SMTP id c16mr13068717pgd.233.1550715781990;
-        Wed, 20 Feb 2019 18:23:01 -0800 (PST)
+        bh=Pr+lh/6Oy70dxwSWZ+b+sOinxQFvJaGYzWj0cTfpPzc=;
+        b=BlIA/UWMpVRjtAbF02KzK1oFV36mXsZ/ZTL/COZoY8wNwhMhyulEFOFPIfIJp3C5AM
+         Nxq4PEpNjNWxTxtj/z8H+FcVXDjwhcVAhHvLAz4amZ5eD9Iy/MW0K0RMCE3elmjyNcys
+         IU57KU+ZFwRxq/Q/F9g6jATzzqbKubBFD4Env4dX0Qsd+tRV25lKOM8H4/3w8n7BTLGb
+         kE5Pu0r5mPdeqtB7p0DW7KZsPEQ+9OYV02hmJaQMmZyNR/RQBDQIxvtbKMCTlVptbxdR
+         vtuZcArZ0wkSnK/Orw6m4BkP5UZ7wbgNr0BkrcG33XET/84LWjz+Pb1N/XLNkTmKKmaL
+         q+Ig==
+X-Gm-Message-State: AHQUAuadAE0KOlGNc020lSIZ2z9PpSopc8E9om9XK8wRm0J2/ssa0CLg
+        1bREPkP6ZLOhb/gj7kJG35cwdz3M
+X-Google-Smtp-Source: AHgI3IZJ+zsh+vRYKWU/+RahG0BdypsB72UpBJx34m0+FFIeYHdkb31X3RWK5Pl32ScrH99+uoGf0w==
+X-Received: by 2002:a63:1845:: with SMTP id 5mr32646417pgy.108.1550715825179;
+        Wed, 20 Feb 2019 18:23:45 -0800 (PST)
 Received: from localhost ([110.70.55.83])
-        by smtp.gmail.com with ESMTPSA id g136sm34571442pfb.154.2019.02.20.18.23.00
+        by smtp.gmail.com with ESMTPSA id h13sm16244919pfn.114.2019.02.20.18.23.43
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Feb 2019 18:23:00 -0800 (PST)
-Date:   Thu, 21 Feb 2019 11:22:57 +0900
+        Wed, 20 Feb 2019 18:23:44 -0800 (PST)
+Date:   Thu, 21 Feb 2019 11:23:41 +0900
 From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Dmitry Vyukov <dvyukov@google.com>,
         Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
         Steven Rostedt <rostedt@goodmis.org>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org
+        linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] printk: Pass caller information to log_store().
-Message-ID: <20190221022257.GA15012@jagdpanzerIV>
+Message-ID: <20190221022341.GB15012@jagdpanzerIV>
 References: <1550314773-8607-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20190220121825.kpqjhdl62x65a6se@pathway.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1550314773-8607-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20190220121825.kpqjhdl62x65a6se@pathway.suse.cz>
 User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (02/16/19 19:59), Tetsuo Handa wrote:
->  /* insert record into the buffer, discard old ones, update heads */
-> -static int log_store(int facility, int level,
-> +static int log_store(u32 caller_id, int facility, int level,
->  		     enum log_flags flags, u64 ts_nsec,
->  		     const char *dict, u16 dict_len,
->  		     const char *text, u16 text_len)
+On (02/20/19 13:18), Petr Mladek wrote:
+> > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> 
+> The patch looks fine to me:
+> 
+> Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-I counted nine.
-
-Dunno, we might want to just create a dummy struct and pass it
-around, instead of doing
-
-	vprintk_emit			(6 params)
-	 vprintk_store			(6 params)
-	  log_output			(7 params)
-	   log_store			(9 params)
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
 	-ss
