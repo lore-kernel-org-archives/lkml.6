@@ -2,40 +2,42 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48235C00319
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5438C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AD052084F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:16:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73B292084D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:17:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="GEPup4WX"
+	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="EoMOwzwh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727923AbfBUNQn (ORCPT
+        id S1727972AbfBUNRj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 08:16:43 -0500
-Received: from mail-eopbgr810051.outbound.protection.outlook.com ([40.107.81.51]:33178
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        Thu, 21 Feb 2019 08:17:39 -0500
+Received: from mail-eopbgr760052.outbound.protection.outlook.com ([40.107.76.52]:53079
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725823AbfBUNQn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 08:16:43 -0500
+        id S1725845AbfBUNRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 08:17:38 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=analog.onmicrosoft.com; s=selector1-analog-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zHZaXtQ0enWbhkR303243cStdxXwLWp/km0Q1fx1trs=;
- b=GEPup4WXEg13skink8sKrezBmgfKiPLqFhLX0R68QwkI9YX10TimnGIYS4JH54+Od6Jd6xGEqVfPmWm7XroM284B9aunAUq2E6VyuiL5CS010jiEPguj3tRtcRZAhWG1B//sugyz6ytyleWFPPXiU+WkxuE6LjXjx24l3plY3e4=
-Received: from DM5PR03CA0045.namprd03.prod.outlook.com (2603:10b6:4:3b::34) by
- BN7PR03MB3745.namprd03.prod.outlook.com (2603:10b6:408:23::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.14; Thu, 21 Feb 2019 13:16:38 +0000
-Received: from CY1NAM02FT059.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::204) by DM5PR03CA0045.outlook.office365.com
- (2603:10b6:4:3b::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1643.14 via Frontend
- Transport; Thu, 21 Feb 2019 13:16:38 +0000
+ bh=uNsYpGHAvoCWUbhWjZeoTTbnuSxiGLVE1SeAF2MVw5s=;
+ b=EoMOwzwhl5CuPulxmIw0rzdW6H5h7UFcYcFzK8+81KozcPewHTvQ7MAWAQhhFzN9aFiZUln9uIfP2nE51pGimsvMo1qFewah10AEaLk5cMuKYuJt1GIBm0OgR2XyRuYc1oDZ12GDVAjIAOY835r+mRNpGL1FTOEFJ/liz++srOo=
+Received: from MWHPR03CA0048.namprd03.prod.outlook.com (2603:10b6:301:3b::37)
+ by SN6PR03MB3518.namprd03.prod.outlook.com (2603:10b6:805:41::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1643.14; Thu, 21 Feb
+ 2019 13:17:33 +0000
+Received: from BL2NAM02FT003.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::207) by MWHPR03CA0048.outlook.office365.com
+ (2603:10b6:301:3b::37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1622.16 via Frontend
+ Transport; Thu, 21 Feb 2019 13:17:33 +0000
 Authentication-Results: spf=pass (sender IP is 137.71.25.55)
  smtp.mailfrom=analog.com; gmx.de; dkim=none (message not signed)
  header.d=none;gmx.de; dmarc=bestguesspass action=none header.from=analog.com;
@@ -43,16 +45,16 @@ Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
  137.71.25.55 as permitted sender) receiver=protection.outlook.com;
  client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
 Received: from nwd2mta1.analog.com (137.71.25.55) by
- CY1NAM02FT059.mail.protection.outlook.com (10.152.74.211) with Microsoft SMTP
+ BL2NAM02FT003.mail.protection.outlook.com (10.152.76.204) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1643.11
- via Frontend Transport; Thu, 21 Feb 2019 13:16:34 +0000
+ via Frontend Transport; Thu, 21 Feb 2019 13:17:33 +0000
 Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id x1LDGWkO003269
+        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id x1LDHWID003580
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Thu, 21 Feb 2019 05:16:32 -0800
+        Thu, 21 Feb 2019 05:17:32 -0800
 Received: from linux.ad.analog.com (10.50.1.179) by NWD2HUBCAS7.ad.analog.com
  (10.64.69.107) with Microsoft SMTP Server id 14.3.408.0; Thu, 21 Feb 2019
- 08:16:32 -0500
+ 08:17:32 -0500
 From:   Stefan Popa <stefan.popa@analog.com>
 To:     <jic23@kernel.org>, <robh+dt@kernel.org>
 CC:     Stefan Popa <stefan.popa@analog.com>,
@@ -60,89 +62,90 @@ CC:     Stefan Popa <stefan.popa@analog.com>,
         <lars@metafoo.de>, <pmeerw@pmeerw.net>,
         <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
         <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v2 0/5] iio: imu: adis16480: Add support for ADIS1649x family of devices
-Date:   Thu, 21 Feb 2019 15:15:01 +0200
-Message-ID: <1550754906-24640-1-git-send-email-stefan.popa@analog.com>
+Subject: [PATCH v2 2/5] iio: imu: adis16480: Add OF device ID table
+Date:   Thu, 21 Feb 2019 15:15:03 +0200
+Message-ID: <1550754906-24640-3-git-send-email-stefan.popa@analog.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1550754906-24640-1-git-send-email-stefan.popa@analog.com>
+References: <1550754906-24640-1-git-send-email-stefan.popa@analog.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-ADIRoutedOnPrem: True
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(979002)(396003)(136003)(376002)(39860400002)(346002)(2980300002)(3190300001)(189003)(199004)(110136005)(54906003)(36756003)(6666004)(356004)(47776003)(7696005)(316002)(246002)(8936002)(16586007)(305945005)(7636002)(51416003)(50226002)(106002)(2906002)(8676002)(106466001)(426003)(478600001)(336012)(50466002)(486006)(186003)(72206003)(26005)(126002)(77096007)(116002)(48376002)(4326008)(2616005)(476003)(44832011)(5660300002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR03MB3745;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;MX:1;A:1;
+X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(2980300002)(3190300001)(199004)(189003)(2616005)(2906002)(476003)(498600001)(126002)(446003)(76176011)(336012)(356004)(426003)(7696005)(54906003)(4326008)(51416003)(16586007)(6666004)(72206003)(48376002)(11346002)(486006)(44832011)(116002)(36756003)(106002)(50466002)(8936002)(110136005)(305945005)(7636002)(246002)(8676002)(26005)(5660300002)(77096007)(106466001)(50226002)(47776003)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR03MB3518;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;A:1;MX:1;
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6e251c15-741a-42a3-20b3-08d697fecf77
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4608103)(4709054)(2017052603328)(7153060);SRVR:BN7PR03MB3745;
-X-MS-TrafficTypeDiagnostic: BN7PR03MB3745:
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR03MB3745;20:lj5bpGv0RUhsFfbQ8TltPTDfaWLr1gIRw+CFVASA1yC8ERKYfAs4r0CiJ1vn0oQtgUjk3t+G+oEd3NRLiBHiDjcyoDBhyXlCndCYl/+YcpfCCuQcWZmJrWslqNuiwG8liCX65SRHVS9BlvFCufWtVecJsJzgOllRR3NNQG7zmHjeudzuAYu0gYOgWDz1OFgc1V85OPr9Ju1klhbO4z+8zHDxfYWbmITgQeYWqUFufhCEvcg/Ze7VqcG0odmwjww+KnNEOEJxxOncuQnylM5j6JNvoHm1FFW3t8adzlS2qcBzf4zqgZ+UgsnW6Z3Wweb9Y781pZHvvO3tkWLsEli1j1E8hl06+q9UDZN9wGS5LphFKSZDaNCA4DVyvd4C1JrvXRczdekbvj+DmZXQKneNc2lxgcVReE4Or2QSe+hjd8qIpdAyUa6r5x5RnMXEdZqJ4mtEGRtfa42Tl9HHs+gqWr8zQ6+175FvXa9RS6bUdSOsZyoaHK769DQXdYYmdKmq
-X-Microsoft-Antispam-PRVS: <BN7PR03MB37452A2ECA469FDBC62B0F539D7E0@BN7PR03MB3745.namprd03.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: bbfb5fcc-05ae-49de-9d14-08d697fef093
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4608103)(4709054)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:SN6PR03MB3518;
+X-MS-TrafficTypeDiagnostic: SN6PR03MB3518:
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR03MB3518;20:pT8DR23778gG2Bq4xrGE5UEIPQsAJKHkNZiB0yHwvNHXPjfgde4HnoAHgb9Z+Hpv4SgpkspiRZ+Uo+rJbdJwokUhDe9N3sME0l7Tit4akzaAvkthQ0IySBRRCKyd9XCK5S/jMSqk930lyHfVIZva+kYrlUY1x3dCXkQLgbG1up1KlhfkZMn2mqD8NhOPQ38e5H7UW/WHXPQcGWshNfDxOCHL1jfMkLOJFFeY+zBdP61RaBjMmoQNyh0m/e+Gza/7LY7Nx5E+o/urXGqf+wnf6neTM1o113OmHC4p1vMcqM1n1Gjd2N5RiuB9UwYBlNOIa6MChj6ZsH3mAGOBOZm2xwawIljlPVwtx6Rg/kdce2DG34ZaGPNlUxXkjPmh6PeTD02pKqj3c6M1x/GX6AUuXcPWPw/k72ImUp6o7TpLMOv3lKyNspNd64geiw7G5lX+95e4zshJ16HlZUKwkAHC4JD2347D/ebijZ+8Ysrp+sapLzIwgm6yUcXRcz+lRlm5
+X-Microsoft-Antispam-PRVS: <SN6PR03MB351848A153054C0C4A7B7DDB9D7E0@SN6PR03MB3518.namprd03.prod.outlook.com>
 X-Forefront-PRVS: 09555FB1AD
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN7PR03MB3745;23:lEQOjp0gftDicS1kPIjPGa4OvhLCvo/YTQmPZmK5a?=
- =?us-ascii?Q?mzNmRGxPXzb1RVgZkR+z9cAD8frsc1VcbYNVSTABb6/rdZyfKs/9w5f+xc/6?=
- =?us-ascii?Q?IrLX+7Pr6RUFRmOY36Mcn17OmxczVa0RRt0/cKcbcb12FbtmRZzUEZnkbulY?=
- =?us-ascii?Q?90shZeW1mzt5vQ/NSlW4EaI8+kJuVQRiSxdNTZVsZzCWMzElqviLSPIgYwu7?=
- =?us-ascii?Q?/9c8AoJtLL+Aa8S/9gZVQ/KTPI9kGT8LdoXoAiR180p3AxEw1au6J07F7C8h?=
- =?us-ascii?Q?YSkQH/98K36GT6HI63BxaVvWDIky+5fJFm17x+nLF0amQ4oCWnOO5GNDkHBP?=
- =?us-ascii?Q?UbsnMs74eQSEbmXeTcvbty0IC435ee5/huE53oEB0qMl9nZvJ1gWkNhxVkZ6?=
- =?us-ascii?Q?lF/T91NzdH/THaGlKq8omdXB9iombehErQQIjd0IEGmnhaPATJj8BKE/zEXm?=
- =?us-ascii?Q?0D6jbGFihSJt8X3Lus5f6aesPfa8ZBrsg4XLUkbEqj9ajyIBKW/gVFf1gFWk?=
- =?us-ascii?Q?hiyZvSzSD3oY5UMGIgEkaCOFLz0K8/HFfbM+FiC1sIjagBiqrC05QfLKzcxz?=
- =?us-ascii?Q?Umwew378xWMuG2CGF+51BlQTUw2mDqyZVOK/3mgwZaUKhEsDQnWhos5zUOzD?=
- =?us-ascii?Q?8knk9dypnXH9sZ5wP4E5cFkxzyJwrJz9edh8H6/ZyFgbO2RxhcR0e73cl05I?=
- =?us-ascii?Q?8ZpfGd3naxMS/9T8qzz/m+IBla0HwP8w5x0UA8iXyEqiIwQe1tDCHHij8vcr?=
- =?us-ascii?Q?jF0u/Ys7x+SR9hW1XrxcNTp8zzWcshquXlxZc9M5fftW9n7VLnSHyZeo83M/?=
- =?us-ascii?Q?ZkKVada7FWsQEZg/sfiFcu+L8rccGYBNtnOdapUBw2lkUcM7gx9HEpnBMxpn?=
- =?us-ascii?Q?MxdQJcY60WSBu/o7hd24zIs6/dRBszq3nZ0THUAjZTyURn4sKvM8/qw5xugP?=
- =?us-ascii?Q?yZZ1C7o3KAS1VFyn+8Ck2jijn8SqjJQHKaBc2T33xvy3coLbXE76UT9hzQPv?=
- =?us-ascii?Q?wYZ0BKdZMTgIgweZaXy8k3SO81HTsqt+d1rVXApkgDUVPkjp+2Mel1hhKvNw?=
- =?us-ascii?Q?9VhuQUNcibJ4dq/cC9utZqFalXX9OofgrsHFtMrQ2+eCyO1Hw=3D=3D?=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR03MB3518;23:DmrasLAXkAH39WpRzAfIfr28NBOQag1qdd7CIGOpx?=
+ =?us-ascii?Q?YaUD47Wwu1j23ZJ8yTERxc3ZDeNZy32prDPrR6YJMcUjRlq+IBX1+kmuymm2?=
+ =?us-ascii?Q?Dz4P4upCIP8dtN8hRNRuOw76+GiGhKinVxvb4KpP+avlvvIaZnfo6wxGUM6W?=
+ =?us-ascii?Q?I0A1JTAiirZlHSMmcv0Lp/4x+eptoPU1vL74t0e1WjwuzviyaO9OC95WKRwZ?=
+ =?us-ascii?Q?RLQwk8rKxvQiPPf3LnesqIg85TFnMVHsKKFfiVA59K2YtTyywNZTntqMUVr2?=
+ =?us-ascii?Q?QCM29SWtAtFTYetSSxYrDYnCoct2JfYUDco5g3USw5pYT7+36pV7TQvtpulF?=
+ =?us-ascii?Q?oKDUsZQ85Zdwe/hvkjDdCM68iZ1014GGW0bKlIyWOP8Woxe1JAVH2ulT4+LV?=
+ =?us-ascii?Q?cFKnGvDtqVOZipL/d45p7KBF4wnhtOl/whChtdyCCZY/byapGTdssl4T+j6U?=
+ =?us-ascii?Q?lFJUeam4kTKgcxUSeVmBxh9dDbpMBa244vaCb39beqLjbL/YKJRuKQC8tUT6?=
+ =?us-ascii?Q?YseUJ8ufLY2FueR+Mqsb0ZwUBSyo8gd9Wcvl8tHX5GHiUFumpX1enNbzAxi2?=
+ =?us-ascii?Q?i8Qr4ki0YdIUDWGh/FZbmlYpZt31NEt2Gana3R1ZAwnH2HLdE8BxskQXpMUl?=
+ =?us-ascii?Q?z02PehIXghNsEY5v7lmIcPbURqjKJCYPFkFg4M1xhRVj++YXx+hakyJq8672?=
+ =?us-ascii?Q?4JA19qgkvigerXFi78lBGm4VxxN+GPhmawwur0EVptctJlWZqripF/MJKRIe?=
+ =?us-ascii?Q?JBHRg8O8VHsequmaZ7icd8KhHRhzO74NdsyJ9XhEuOc4BjSbCql31ELtXglt?=
+ =?us-ascii?Q?Be1UhFgjPUN0AF0aV0iV5y0VYJJqqUH/LFL42Lfl1agAzKWmdb0a6BJIdwfE?=
+ =?us-ascii?Q?UhPTmbQ3BmazpXrhFRgaLgeU4a2cKUOBONQVjBqrLHEMMIxyAh6ZPS6ncHc5?=
+ =?us-ascii?Q?orvaxqu+eGhoQp7SyJ5?=
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: q+E7u0eHc8bXwjILbU7quzMR62IB3Vgfs7xkNKw1vrHoFnt1FNvuHdCiZMLiPH7o9jRh+jv7uwItRgWYcNiIQ2wyHo7D3AbezfftsrpybOjY1GHd4nXElqgAo38N1EAVSaVdX9W5Nkg54V06A+OtL+IPxTIHYAl6QliPWp1icG5eMIwf1EDWf6XgGU2YyNLHWsPHIwPXux48W4pds0XkUiecsTvzYw0fLwK4D27XaQ8dLrPDic00edPz8cD7guJkTN70WrkffyfTLVeufNoTwfsPlTBfMKm/xdvjNeLb+c9IwX5k0VxI8BBBpD2uRH/Ryo1vNCdFZP/o5PnAxeoO4AgQ+zXhFZMhrzQfUbKzkAGT/iloQjfgNCy/u7rRtiJkYPn+HZ7KEo0Uxk5l6kRf0t6eK3uJNLz6T4GQEanZ9xc=
+X-Microsoft-Antispam-Message-Info: iv1DszJYcYKRDbE9dm9tylDK9uK9i42XKGGDKaUmDhSYeoU5M+uEJIxzuVdKuOcdCLspQpMBJcM90ypM90Q5WoP5wR0gQmkCElFzmpIVlVuhgtxMenuqkllYjcREO3aAPiV15Y6FGLiGv3Bznbq/ZxeLt/JPnaECud0vPcNarobvpb3gwB9IzdnqepPe4IfjWCLiB/FuLVuy7AfPoSaF9dzW5NKaOlmRdCVqUmO0z36JO+umDcTIEFjqMikJlp9J+MWShHpfxNUKa7tg6M9IDSFiU0KObXt5QnPelv5UwEG9m2ZD36crNPNDvCSn38gIh9irkNo5DfLRkIg97Dun5gFZ/wJxmQ9htbOLRqQztL83zon/U7rsZ9YIVmidSHNvXKzquJrBiX0q8/kHi0Bc8Nvq8/wx7u0YZ2G7haXMceY=
 X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2019 13:16:34.3711
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2019 13:17:33.1926
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e251c15-741a-42a3-20b3-08d697fecf77
+X-MS-Exchange-CrossTenant-Network-Message-Id: bbfb5fcc-05ae-49de-9d14-08d697fef093
 X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR03MB3745
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR03MB3518
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series has as main goal to add support for ADIS1649x family of devices as
-part of the already existing adis16480, but on the way it also deals with some
-outstanding items:
+The driver does not have a struct of_device_id table, but supported
+devices are registered via Device Trees. This patch adds OF device ID
+table.
 
-* Make drdy pin configurable
-* Add OF device ID table
-* Deal with the temperature max scale in a generic way
-* Add missing docs
+Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+---
+ drivers/iio/imu/adis16480.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Changes in v2:
-Patch 1:
-	- use DIO1 pin as default data ready signal instead of DIO2.
-Patch 2:
-	- nothing changed.
-Patch 3, 4:
-	- give the scale directly in the adis16480_chip_info struct.
-Patch 5: 
-	- document the use of DIO1 pin as default data ready signal.
-
-Stefan Popa (5):
-  iio: imu: adis16480: Add support for configurable drdy indicator
-  iio: imu: adis16480: Add OF device ID table
-  iio: imu: adis16480: Treat temperature scale in a generic way
-  iio: imu: adis16480: Add support for ADIS1649x family of devices
-  iio: imu: adis16480: Add docs for ADIS16480 IMU
-
- .../devicetree/bindings/iio/imu/adi,adis16480.txt  |  49 +++++
- MAINTAINERS                                        |   1 +
- drivers/iio/imu/adis16480.c                        | 197 ++++++++++++++++++++-
- 3 files changed, 242 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/iio/imu/adi,adis16480.txt
-
+diff --git a/drivers/iio/imu/adis16480.c b/drivers/iio/imu/adis16480.c
+index 98a23ac..150d814 100644
+--- a/drivers/iio/imu/adis16480.c
++++ b/drivers/iio/imu/adis16480.c
+@@ -991,9 +991,19 @@ static const struct spi_device_id adis16480_ids[] = {
+ };
+ MODULE_DEVICE_TABLE(spi, adis16480_ids);
+ 
++static const struct of_device_id adis16480_of_match[] = {
++	{ .compatible = "adi,adis16375" },
++	{ .compatible = "adi,adis16480" },
++	{ .compatible = "adi,adis16485" },
++	{ .compatible = "adi,adis16488" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, adis16480_of_match);
++
+ static struct spi_driver adis16480_driver = {
+ 	.driver = {
+ 		.name = "adis16480",
++		.of_match_table = adis16480_of_match,
+ 	},
+ 	.id_table = adis16480_ids,
+ 	.probe = adis16480_probe,
 -- 
 2.7.4
 
