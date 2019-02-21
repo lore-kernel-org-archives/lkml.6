@@ -2,107 +2,134 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED0A7C10F07
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B642BC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:22:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8BB72089F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:22:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m0PAxE2c"
+	by mail.kernel.org (Postfix) with ESMTP id 8E4E02086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:22:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbfBUBWl (ORCPT
+        id S1727008AbfBUBWv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 20:22:41 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37530 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726137AbfBUBWl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 20:22:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=V2ydE4AEk0FEWXbith5g30WIPW7ega244MSb+lvhbl0=; b=m0PAxE2cEmdtItBRRv9THfaqQ
-        Pa9s5dlhB4yh74r6eIPMBZ5lW2Wg9czjRRsX+xUcoUH1W0WWG4HfbwMgFuotHxoWP9Ww3DSMtH8VD
-        SpSzlIdObjBZmsNV5evPX5UBzuRF+1KiLxGVbJoGpXcF1D0eW4UIsJwNxc1o64hGbcFDq9ot1ZBfK
-        lB15VExNKDj+0706fY4Wlt2ZsHV9rlcW+Fp/MOybVbw3ft2nTHI9IJ/Sz97cyiYQCjEiF392RsJBa
-        EQg1ho/pF0G/JkIfmRD8fsirutZgfE/7nh4zsnoCI1uOQCUI3RIvXEn2/vUulgHS+SkaL+tBDEilO
-        6SJsU5EWg==;
-Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gwd4L-0000bm-6A; Thu, 21 Feb 2019 01:22:33 +0000
-Date:   Wed, 20 Feb 2019 17:22:31 -0800
-From:   Darren Hart <dvhart@infradead.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Andy Shevchenko <andy@infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Mark Rutland <mark.rutland@arm.com>,
-        platform-driver-x86@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 06/10] Platform: OLPC: Add XO-1.75 EC driver
-Message-ID: <20190221012231.GC5838@wrath>
-References: <20190110175845.1203986-1-lkundrak@v3.sk>
- <20190110175845.1203986-7-lkundrak@v3.sk>
+        Wed, 20 Feb 2019 20:22:51 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54402 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726137AbfBUBWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 20:22:50 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8002A81DE9;
+        Thu, 21 Feb 2019 01:22:50 +0000 (UTC)
+Received: from localhost.localdomain.com (ovpn-120-249.rdu2.redhat.com [10.10.120.249])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3889360BF2;
+        Thu, 21 Feb 2019 01:22:46 +0000 (UTC)
+From:   jglisse@redhat.com
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v2 0/1]  Restore change_pte optimization
+Date:   Wed, 20 Feb 2019 20:22:26 -0500
+Message-Id: <20190221012227.13236-1-jglisse@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190110175845.1203986-7-lkundrak@v3.sk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 21 Feb 2019 01:22:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 06:58:41PM +0100, Lubomir Rintel wrote:
-> It's based off the driver from the OLPC kernel sources. Somewhat
-> modernized and cleaned up, for better or worse.
-> 
-> Modified to plug into the olpc-ec driver infrastructure (so that battery
-> interface and debugfs could be reused) and the SPI slave framework.
-> 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> 
-> ---
-> Changes since v4:
-> - Chop off the reboot handler. Will be added back once it's clear how.
-> 
-> Changes since v3:
-> - Introduce CONFIG_OLPC_EC symbol to enable parts common to this driver
->   and the X86 OLPC EC machinery.
-> 
-> Changes since v1:
-> - Cosmetic style changes; whitespace, ordering of declarations and
->   #includes, remoted extra comas from sentinels
-> - Count the terminating NUL in LOG_BUF_SIZE
-> - Make olpc_xo175_ec_is_valid_cmd() return -EINVAL instead of -1
->   on error
-> - Spell keyboard/touchpad in full for CHAN_KEYBOARD/TOUCHPAD messages
-> - Use a #define for PM wakeup processing time
-> - Log a message on unknown event
-> - Escape logging payload with %*pE
-> - Replace an open-coded min()
-> - Correct an error code on short read
-> - replaced PM callback #ifdefs with __maybe_unusedm SET_RUNTIME_PM_OPS
->   and SET_NOIRQ_SYSTEM_SLEEP_PM_OPS
-> - dev_get_drvdata() instead of a round-trip through platform device
-> - s/unsigned char x/u8 x/ in olpc_xo175_ec_resume()
-> - Use GENMASK() instead of 0xffff for the event mask
-> - Replace cmd tx/resp rx buffers with structures
-> - Turned suspend hint arguments into a struct, and tidied up the comment
-> 
-> Basically all of the above is based on the review by Andy Shevchenko.
+From: Jérôme Glisse <jglisse@redhat.com>
 
-Andy, I am happy to merge this series - but this patch includes a lot of changes
-driven by your feedback. Are you satisfied with the changes, would you like to
-add your Reviewed-by?
+This patch is on top of my patchset to add context information to
+mmu notifier [1] you can find a branch with everything [2]. It has
+been tested with qemu/KVM building kernel within the guest and also
+running a benchmark which the result are given below.
+
+The change_pte() callback is impaired by the range invalidation call-
+back within KVM as the range invalidation callback as those do fully
+invalidate the secondary mmu. This means that there is a window between
+the range_start callback and the change_pte callback where the secondary
+mmu for the address is empty. Guest can fault on that address during
+that window.
+
+That window can last for some times if the kernel code which is
+doing the invalidation is interrupted or if they are other mmu
+listener for the process that might sleep within their range_start
+callback.
+
+With this patch KVM will ignore the range_start and range_end call-
+back and will rely solely on the change_pte callback to update the
+secondary mmu. This means that the secondary mmu never have an empty
+entry for the address between range_start and range_end and hence
+the guest will not have a chance to fault.
+
+This optimization is not valid for all the mmu notifier cases and
+thanks to the patchset that add context informations to the mmu
+notifier [1] we can now identify within KVM when it is safe to rely
+on this optimization.
+
+Roughly it is safe when:
+    - going from read only to read and write (same or different pfn)
+    - going from read and write to read only same pfn
+    - going from read only to read only different pfn
+
+Longer explaination in [1] and [3].
+
+Running ksm02 from ltp gives the following results:
+
+before  mean  {real: 675.460632, user: 857.771423, sys: 215.929657, npages: 4773.066895}
+before  stdev {real:  37.035435, user:   4.395942, sys:   3.976172, npages:  675.352783}
+after   mean  {real: 672.515503, user: 855.817322, sys: 200.902710, npages: 4899.000000}
+after   stdev {real:  37.340954, user:   4.051633, sys:   3.894153, npages:  742.413452}
+
+Roughly 7%-8% less time spent in the kernel. So we are saving few
+cycles (this is with KSM enabled on the host and ksm sleep set to
+0). Dunno how this translate to real workload.
+
+
+Note that with the context information further optimization are now
+possible within KVM. For instance you can find out if a range is
+updated to read only (ie no pfn change just protection change) and
+update the secondary mmu accordingly.
+
+You can also identify munmap()/mremap() syscall and only free up the
+resources you have allocated for the range (like freeing up secondary
+page table for the range or data structure) when it is an munmap or
+a mremap. Today my understanding is that kvm_unmap_hva_range() will
+free up resources always assuming it is an munmap of some sort. So
+for mundane invalidation (like migration, reclaim, mprotect, fork,
+...) KVM is freeing up potential mega bytes of structure that it will
+have to re-allocate shortly there after (see [4] for WIP example).
+
+Cheers,
+Jérôme
+
+[1] https://lkml.org/lkml/2019/2/19/752
+[2] https://cgit.freedesktop.org/~glisse/linux/log/?h=mmu-notifier-v05
+[3] https://lkml.org/lkml/2019/2/19/754
+[4] https://cgit.freedesktop.org/~glisse/linux/log/?h=wip-kvm-mmu-notifier-opti
+
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+
+Jérôme Glisse (1):
+  kvm/mmu_notifier: re-enable the change_pte() optimization.
+
+ virt/kvm/kvm_main.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 -- 
-Darren Hart
-VMware Open Source Technology Center
+2.17.2
+
