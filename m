@@ -2,113 +2,144 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C610C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:37:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E79E7C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:39:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C02B2081B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:37:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="stVbGm1B"
+	by mail.kernel.org (Postfix) with ESMTP id BF71C206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:39:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbfBUShY (ORCPT
+        id S1726476AbfBUSjB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 13:37:24 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:42076 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbfBUShY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 13:37:24 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1LIXs1X015722;
-        Thu, 21 Feb 2019 18:37:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=1Zkf2SOUloSMzLb2KdIblJ9t0QF8265SuuDCl+i7Mec=;
- b=stVbGm1BAf6m8GHxr0cEmZsMHAo6G70rgtrb8Mi3ht4Dyx1QwxFl9zIThiHWkEuxAHfz
- iKbF4WKcVztIfUpywqGMTBPw9TTPvkbiuaQsxU04G87UIrYd9dDzeAv2ZoiT0XuuTcsj
- dgz8wRbIju8yAK0zW1I7aA25Q30skATUX9gW1knTBig/9iD/lyLlHmS4bLyk5KwMhLpU
- LsJvXpjoiUppoGz7eGc2SEVt/TXfdAMjCurtEKUn4dBlF1EsWkUbMwU8pdf4moOFJIJI
- FWR19x2p0G8zT+w+1rmAcgJr2aa+IFVPpG9UGE+2c+DSJIDPT80bxRR4bUDz5X4wz3Xv 1Q== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2qpb5rsup6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Feb 2019 18:37:11 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1LIbAoQ002524
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Feb 2019 18:37:10 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1LIb9qx021981;
-        Thu, 21 Feb 2019 18:37:09 GMT
-Received: from kadam (/197.157.0.34)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 21 Feb 2019 10:37:09 -0800
-Date:   Thu, 21 Feb 2019 21:37:00 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 1/2] test_firmware: remove some dead code
-Message-ID: <20190221183700.GA1737@kadam>
+        Thu, 21 Feb 2019 13:39:01 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41116 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725845AbfBUSjB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 13:39:01 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2FBCCC049E24;
+        Thu, 21 Feb 2019 18:39:00 +0000 (UTC)
+Received: from redhat.com (unknown [10.20.6.236])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8949060139;
+        Thu, 21 Feb 2019 18:38:52 +0000 (UTC)
+Date:   Thu, 21 Feb 2019 13:38:51 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v2 24/26] userfaultfd: wp: UFFDIO_REGISTER_MODE_WP
+ documentation update
+Message-ID: <20190221183851.GW2813@redhat.com>
+References: <20190212025632.28946-1-peterx@redhat.com>
+ <20190212025632.28946-25-peterx@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9174 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902210130
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190212025632.28946-25-peterx@redhat.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 21 Feb 2019 18:39:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The test_fw_config->reqs allocation succeeded so these addresses can't
-be NULL.  Also on the second error path, we forgot to set
-"rc = -ENOMEM;".
+On Tue, Feb 12, 2019 at 10:56:30AM +0800, Peter Xu wrote:
+> From: Martin Cracauer <cracauer@cons.org>
+> 
+> Adds documentation about the write protection support.
+> 
+> Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+> [peterx: rewrite in rst format; fixups here and there]
+> Signed-off-by: Peter Xu <peterx@redhat.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- lib/test_firmware.c | 9 ---------
- 1 file changed, 9 deletions(-)
+Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
 
-diff --git a/lib/test_firmware.c b/lib/test_firmware.c
-index 7cab9a9869ac..7222093ee00b 100644
---- a/lib/test_firmware.c
-+++ b/lib/test_firmware.c
-@@ -631,11 +631,6 @@ static ssize_t trigger_batched_requests_store(struct device *dev,
- 
- 	for (i = 0; i < test_fw_config->num_requests; i++) {
- 		req = &test_fw_config->reqs[i];
--		if (!req) {
--			WARN_ON(1);
--			rc = -ENOMEM;
--			goto out_bail;
--		}
- 		req->fw = NULL;
- 		req->idx = i;
- 		req->name = test_fw_config->name;
-@@ -737,10 +732,6 @@ ssize_t trigger_batched_requests_async_store(struct device *dev,
- 
- 	for (i = 0; i < test_fw_config->num_requests; i++) {
- 		req = &test_fw_config->reqs[i];
--		if (!req) {
--			WARN_ON(1);
--			goto out_bail;
--		}
- 		req->name = test_fw_config->name;
- 		req->fw = NULL;
- 		req->idx = i;
--- 
-2.17.1
-
+> ---
+>  Documentation/admin-guide/mm/userfaultfd.rst | 51 ++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+> 
+> diff --git a/Documentation/admin-guide/mm/userfaultfd.rst b/Documentation/admin-guide/mm/userfaultfd.rst
+> index 5048cf661a8a..c30176e67900 100644
+> --- a/Documentation/admin-guide/mm/userfaultfd.rst
+> +++ b/Documentation/admin-guide/mm/userfaultfd.rst
+> @@ -108,6 +108,57 @@ UFFDIO_COPY. They're atomic as in guaranteeing that nothing can see an
+>  half copied page since it'll keep userfaulting until the copy has
+>  finished.
+>  
+> +Notes:
+> +
+> +- If you requested UFFDIO_REGISTER_MODE_MISSING when registering then
+> +  you must provide some kind of page in your thread after reading from
+> +  the uffd.  You must provide either UFFDIO_COPY or UFFDIO_ZEROPAGE.
+> +  The normal behavior of the OS automatically providing a zero page on
+> +  an annonymous mmaping is not in place.
+> +
+> +- None of the page-delivering ioctls default to the range that you
+> +  registered with.  You must fill in all fields for the appropriate
+> +  ioctl struct including the range.
+> +
+> +- You get the address of the access that triggered the missing page
+> +  event out of a struct uffd_msg that you read in the thread from the
+> +  uffd.  You can supply as many pages as you want with UFFDIO_COPY or
+> +  UFFDIO_ZEROPAGE.  Keep in mind that unless you used DONTWAKE then
+> +  the first of any of those IOCTLs wakes up the faulting thread.
+> +
+> +- Be sure to test for all errors including (pollfd[0].revents &
+> +  POLLERR).  This can happen, e.g. when ranges supplied were
+> +  incorrect.
+> +
+> +Write Protect Notifications
+> +---------------------------
+> +
+> +This is equivalent to (but faster than) using mprotect and a SIGSEGV
+> +signal handler.
+> +
+> +Firstly you need to register a range with UFFDIO_REGISTER_MODE_WP.
+> +Instead of using mprotect(2) you use ioctl(uffd, UFFDIO_WRITEPROTECT,
+> +struct *uffdio_writeprotect) while mode = UFFDIO_WRITEPROTECT_MODE_WP
+> +in the struct passed in.  The range does not default to and does not
+> +have to be identical to the range you registered with.  You can write
+> +protect as many ranges as you like (inside the registered range).
+> +Then, in the thread reading from uffd the struct will have
+> +msg.arg.pagefault.flags & UFFD_PAGEFAULT_FLAG_WP set. Now you send
+> +ioctl(uffd, UFFDIO_WRITEPROTECT, struct *uffdio_writeprotect) again
+> +while pagefault.mode does not have UFFDIO_WRITEPROTECT_MODE_WP set.
+> +This wakes up the thread which will continue to run with writes. This
+> +allows you to do the bookkeeping about the write in the uffd reading
+> +thread before the ioctl.
+> +
+> +If you registered with both UFFDIO_REGISTER_MODE_MISSING and
+> +UFFDIO_REGISTER_MODE_WP then you need to think about the sequence in
+> +which you supply a page and undo write protect.  Note that there is a
+> +difference between writes into a WP area and into a !WP area.  The
+> +former will have UFFD_PAGEFAULT_FLAG_WP set, the latter
+> +UFFD_PAGEFAULT_FLAG_WRITE.  The latter did not fail on protection but
+> +you still need to supply a page when UFFDIO_REGISTER_MODE_MISSING was
+> +used.
+> +
+>  QEMU/KVM
+>  ========
+>  
+> -- 
+> 2.17.1
+> 
