@@ -2,59 +2,53 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B5BC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FC2C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:43:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9484B20838
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:43:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C4BA20838
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:43:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550760205;
-	bh=3MZ1S+Pu8RXYJ5QGhvwieIfDBO5zmXfc4Fq3o8MJRpQ=;
+	s=default; t=1550760209;
+	bh=TrsHP+mSKldZMkI8efKDISv8agUsrtjR+CItDFjhVqg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=u/AFKDhTyURk7sl2AfC2BcfAYY1/woch8UEk8BxfeCGZHg6juuVhyEPVuKq1d3lMK
-	 PqBCnWw7Gk/SWzS/gO3dG217NQHrn6poxJTPGXoESAU41o7BsBXiSM2hvmDIZRd2kE
-	 uaDgweExqe0MWrd4fygz+LN6P3JKXOY8LUwxca2o=
+	b=KTPoqtyMwozeinFAx8E0hpvfYqVsoCifObzltLmbJBaCTihdQjgEl+tAeLBAZu1mD
+	 bNltREKMaQoLDcM9Ly3HYlY1U0FTJuBBmXk5Fd9QEyfRMJtPcRuE3n8zQ7KFSJGzqP
+	 At8GCSCoUimShlFuYswAa5FpXz5fn1FI9klTvkr0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729714AbfBUOnY (ORCPT
+        id S1729730AbfBUOn2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:43:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39182 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:43:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729698AbfBUOnT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:43:19 -0500
+        id S1729703AbfBUOnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:43:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 881F22075A;
-        Thu, 21 Feb 2019 14:43:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 889D02084D;
+        Thu, 21 Feb 2019 14:43:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550760199;
-        bh=3MZ1S+Pu8RXYJ5QGhvwieIfDBO5zmXfc4Fq3o8MJRpQ=;
+        s=default; t=1550760202;
+        bh=TrsHP+mSKldZMkI8efKDISv8agUsrtjR+CItDFjhVqg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xOl1tQnbsBvbDEP8oycMKgpXUfteec1cpwqdpyWttEH83mhVaNut+JuvT84MW2jBG
-         jL0HvElceaRIZI1FOCWDYnymiwwOL1uHib25r9z6eRGT6PRSw/GLdCY/C+oa1zKNgr
-         bTwjTXLrUeDFmrTSphbEMgKR5BhdEboBKdPf90O0=
+        b=SPWOE5WqdwVoi+yaBZpBHOQeS3QFmDRN88Q6y7Lc+qopRIFQdfWE77DHMjalKDhiI
+         87D7LfcrAMB1ET/eYxMmzYCvscA5AxvLWw/DW/1KuNKKQq8de5hXmG5b/T5RtYHcsq
+         NmJSK7nd5R6wxwjPfAUeu4oL5+f+JymmfNRfju8s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 26/32] x86_64: increase stack size for KASAN_EXTRA
-Date:   Thu, 21 Feb 2019 15:36:14 +0100
-Message-Id: <20190221125252.451059724@linuxfoundation.org>
+Subject: [PATCH 4.20 27/32] mmc: meson-gx: fix interrupt name
+Date:   Thu, 21 Feb 2019 15:36:15 +0100
+Message-Id: <20190221125252.522004549@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125250.855065214@linuxfoundation.org>
 References: <20190221125250.855065214@linuxfoundation.org>
@@ -73,80 +67,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a8e911d13540487942d53137c156bd7707f66e5d ]
+[ Upstream commit 83e418a805d880a8b18add07f94d19b2a5a80307 ]
 
-If the kernel is configured with KASAN_EXTRA, the stack size is
-increasted significantly because this option sets "-fstack-reuse" to
-"none" in GCC [1].  As a result, it triggers stack overrun quite often
-with 32k stack size compiled using GCC 8.  For example, this reproducer
+Commit bb364890323cca ("mmc: meson-gx: Free irq in release() callback")
+changed the _probe code to use request_threaded_irq() instead of
+devm_request_threaded_irq().
+Unfortunately this removes a fallback for the interrupt name:
+devm_request_threaded_irq() uses the device name as fallback if the
+given IRQ name is NULL. request_threaded_irq() has no such fallback,
+thus /proc/interrupts shows "(null)" instead.
 
-  https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/syscalls/madvise/madvise06.c
+Explicitly pass the dev_name() so we get the IRQ name shown in
+/proc/interrupts again.
+While here, also fix the indentation of the request_threaded_irq()
+parameter list.
 
-triggers a "corrupted stack end detected inside scheduler" very reliably
-with CONFIG_SCHED_STACK_END_CHECK enabled.
-
-There are just too many functions that could have a large stack with
-KASAN_EXTRA due to large local variables that have been called over and
-over again without being able to reuse the stacks.  Some noticiable ones
-are
-
-  size
-  7648 shrink_page_list
-  3584 xfs_rmap_convert
-  3312 migrate_page_move_mapping
-  3312 dev_ethtool
-  3200 migrate_misplaced_transhuge_page
-  3168 copy_process
-
-There are other 49 functions are over 2k in size while compiling kernel
-with "-Wframe-larger-than=" even with a related minimal config on this
-machine.  Hence, it is too much work to change Makefiles for each object
-to compile without "-fsanitize-address-use-after-scope" individually.
-
-[1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715#c23
-
-Although there is a patch in GCC 9 to help the situation, GCC 9 probably
-won't be released in a few months and then it probably take another
-6-month to 1-year for all major distros to include it as a default.
-Hence, the stack usage with KASAN_EXTRA can be revisited again in 2020
-when GCC 9 is everywhere.  Until then, this patch will help users avoid
-stack overrun.
-
-This has already been fixed for arm64 for the same reason via
-6e8830674ea ("arm64: kasan: Increase stack size for KASAN_EXTRA").
-
-Link: http://lkml.kernel.org/r/20190109215209.2903-1-cai@lca.pw
-Signed-off-by: Qian Cai <cai@lca.pw>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: bb364890323cca ("mmc: meson-gx: Free irq in release() callback")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/page_64_types.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/mmc/host/meson-gx-mmc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/page_64_types.h b/arch/x86/include/asm/page_64_types.h
-index 8f657286d599a..0ce558a8150d3 100644
---- a/arch/x86/include/asm/page_64_types.h
-+++ b/arch/x86/include/asm/page_64_types.h
-@@ -7,7 +7,11 @@
- #endif
+diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
+index ef9deaa361c73..ddd98cdd33bcd 100644
+--- a/drivers/mmc/host/meson-gx-mmc.c
++++ b/drivers/mmc/host/meson-gx-mmc.c
+@@ -1286,7 +1286,8 @@ static int meson_mmc_probe(struct platform_device *pdev)
+ 	       host->regs + SD_EMMC_IRQ_EN);
  
- #ifdef CONFIG_KASAN
-+#ifdef CONFIG_KASAN_EXTRA
-+#define KASAN_STACK_ORDER 2
-+#else
- #define KASAN_STACK_ORDER 1
-+#endif
- #else
- #define KASAN_STACK_ORDER 0
- #endif
+ 	ret = request_threaded_irq(host->irq, meson_mmc_irq,
+-			meson_mmc_irq_thread, IRQF_SHARED, NULL, host);
++				   meson_mmc_irq_thread, IRQF_SHARED,
++				   dev_name(&pdev->dev), host);
+ 	if (ret)
+ 		goto err_init_clk;
+ 
 -- 
 2.19.1
 
