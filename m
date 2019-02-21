@@ -2,118 +2,186 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E6BC00319
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:32:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F91AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:34:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4293620818
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:32:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EC182083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:34:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550766856;
+	bh=3Fhq3Z4R0m29lUnd5arplGy3KKkrx2XU4n9beCaX0Vk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=NH4O+9t9KNmbJsbsQ6eGQjHQSa4u2sULmbif9+f2KNlKsT4MnSlaNVac+kYSpNra9
+	 kVFFhzqRngLnNeY1p2h+4wHiAuZXgWqKf5ipbGLdu2Nyxsev93e+kD6MXvYHLUCzRw
+	 HN5/+keKMhUMyiSq9aVCd8GLGvLhFHZBWyG8ojgw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728181AbfBUQcz (ORCPT
+        id S1727041AbfBUQeP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 11:32:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47062 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 11:34:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726400AbfBUQcy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 11:32:54 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        id S1725932AbfBUQeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 11:34:14 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A127E20818;
-        Thu, 21 Feb 2019 16:32:53 +0000 (UTC)
-Date:   Thu, 21 Feb 2019 11:32:51 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable@vger.kernel.org, Changbin Du <changbin.du@gmail.com>
-Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
- kernel memory that can fault
-Message-ID: <20190221113251.60ca29be@gandalf.local.home>
-In-Reply-To: <20190222011643.3e19ade84a3db3e83518648f@kernel.org>
-References: <20190215174712.372898450@goodmis.org>
-        <20190215174945.557218316@goodmis.org>
-        <20190221165252.4a9033b3348f30f9d973dbc4@kernel.org>
-        <20190221093625.56afccd2@gandalf.local.home>
-        <20190222005812.04c5940c693b14cfdbe6ede7@kernel.org>
-        <20190222011643.3e19ade84a3db3e83518648f@kernel.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFEC52084D;
+        Thu, 21 Feb 2019 16:34:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550766853;
+        bh=3Fhq3Z4R0m29lUnd5arplGy3KKkrx2XU4n9beCaX0Vk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JWIO7ww3cTkIOLw47iLMZxyMozHAU75Ginl/lKGkFEFft1wxf49LjFVULGsjyc3LB
+         sRzKnQUQo3uGGuoL+Eq/zfMmWvos0pz0hpyw6LpZdDxFzebEiDDFNV34HmKmndC47t
+         AekM1wwjCPecopPfpVLJi5Qa0ay6CbvIk9FoG1V0=
+Date:   Thu, 21 Feb 2019 17:34:10 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Vaishali Thakkar <vaishali.thakkar@linaro.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rafael@kernel.org, bjorn.andersson@linaro.org, vkoul@kernel.org
+Subject: Re: [PATCH v3 5/5] soc: qcom: socinfo: Expose image information
+Message-ID: <20190221163410.GE8727@kroah.com>
+References: <20190221162419.32384-1-vaishali.thakkar@linaro.org>
+ <20190221162419.32384-6-vaishali.thakkar@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190221162419.32384-6-vaishali.thakkar@linaro.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-[ Linus, you may want to read this ]
-
-On Fri, 22 Feb 2019 01:16:43 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
-
-
-Yep, I'll take this patch. Hmm, my for-next isn't based on my urgent
-branch, and this would go on top of urgent. I can do one of three
-things to push this to Linus for the merge window:
-
- 1) Create a separate branch to add updates for on my urgent branch.
-    This would have me do two pull requests to Linus.
-
- 2) Cherry pick the urgent commit that this updates.
-    But that has a stable tag, which could confuse things as it would
-    create the same commit twice, both with stable tags (I could take
-    the stable tag off of the cherry pick though).
-
- 3) Merge the urgent branch into my for-next branch at that commit,
-    with a message to why I'm doing this. The urgent branch is based
-    off of a older tag in Linus's tree, so that would only pull in
-    tracing changes (my stuff), and wont pull in anyone else's work.
-
-I may go with option 3, because I believe this may be one of the cases
-that is allowed to have merges in pull requests.
-
- a) Only my stuff got merged
- b) Have a dependency on something that already went into Linus's tree
-    (prevent me from having to rebase already tested work).
- c) Have it documented in the merge commit to why its being merged
-
-Unless Linus feels otherwise (use one of the other options?), I may go
-ahead and do that.
-
--- Steve
-
-> ---------
-> tracing/kprobes: Use probe_kernel_read instead of probe_mem_read
-> 
-> From: Masami Hiramatsu <mhiramat@kernel.org>
-> 
-> Use probe_kernel_read() instead of probe_mem_read() because
-> probe_mem_read() is a kind of wrapper for switching memory
-> read function between uprobes and kprobes.
-> 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> ---
->  kernel/trace/trace_kprobe.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-> index 9eaf07f99212..99592c27465e 100644
-> --- a/kernel/trace/trace_kprobe.c
-> +++ b/kernel/trace/trace_kprobe.c
-> @@ -865,7 +865,7 @@ fetch_store_strlen(unsigned long addr)
->  	u8 c;
+On Thu, Feb 21, 2019 at 09:54:19PM +0530, Vaishali Thakkar wrote:
+>  static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo)
+>  {
+> +	struct smem_image_version *smem_image_version;
+> +	size_t size;
+> +
+>  	qcom_socinfo->dbg_root = debugfs_create_dir("qcom_socinfo", NULL);
 >  
->  	do {
-> -		ret = probe_mem_read(&c, (u8 *)addr + len, 1);
-> +		ret = probe_kernel_read(&c, (u8 *)addr + len, 1);
->  		len++;
->  	} while (c && ret == 0 && len < MAX_STRING_SIZE);
->  
-> 
+>  	DEBUGFS_UINT_ADD(raw_version);
+> @@ -314,6 +432,98 @@ static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo)
+>  	DEBUGFS_ADD(pmic_model);
+>  	DEBUGFS_ADD(platform_subtype);
+>  	DEBUGFS_ADD(pmic_die_revision);
+> +
+> +	smem_image_version = qcom_smem_get(QCOM_SMEM_HOST_ANY,
+> +					   SMEM_IMAGE_VERSION_TABLE,
+> +					   &size);
+> +
+> +	qcom_socinfo->boot = debugfs_create_dir("boot",
+> +						qcom_socinfo->dbg_root);
+> +	if (!qcom_socinfo->boot) {
+> +		pr_err("Cannot create boot image directory\n");
+> +		return;
+> +	}
 
+You do not care, do not check please.  Also, even if you wanted to
+check, your error checking was wrong :)
+
+> +	DEBUGFS_IMAGE_NAME(name, boot, SMEM_IMAGE_TABLE_BOOT_INDEX);
+> +	DEBUGFS_IMAGE_VARIANT(variant, boot, SMEM_IMAGE_TABLE_BOOT_INDEX);
+> +	DEBUGFS_IMAGE_OEM(oem, boot, SMEM_IMAGE_TABLE_BOOT_INDEX);
+> +
+> +	qcom_socinfo->tz = debugfs_create_dir("tz",
+> +					      qcom_socinfo->dbg_root);
+> +	if (!qcom_socinfo->tz) {
+> +		pr_err("Cannot create tz image directory\n");
+> +		return;
+> +	}
+
+Same here, no error checking please.
+
+> +	DEBUGFS_IMAGE_NAME(name, tz, SMEM_IMAGE_TABLE_TZ_INDEX);
+> +	DEBUGFS_IMAGE_VARIANT(variant, tz, SMEM_IMAGE_TABLE_TZ_INDEX);
+> +	DEBUGFS_IMAGE_OEM(oem, tz, SMEM_IMAGE_TABLE_TZ_INDEX);
+> +
+> +	qcom_socinfo->rpm = debugfs_create_dir("rpm",
+> +					       qcom_socinfo->dbg_root);
+> +	if (!qcom_socinfo->rpm) {
+> +		pr_err("Cannot create rpm image directory\n");
+> +		return;
+> +	}
+
+And here.
+
+> +	DEBUGFS_IMAGE_NAME(name, rpm, SMEM_IMAGE_TABLE_RPM_INDEX);
+> +	DEBUGFS_IMAGE_VARIANT(variant, rpm, SMEM_IMAGE_TABLE_RPM_INDEX);
+> +	DEBUGFS_IMAGE_OEM(oem, rpm, SMEM_IMAGE_TABLE_RPM_INDEX);
+> +
+> +	qcom_socinfo->apps = debugfs_create_dir("apps",
+> +						qcom_socinfo->dbg_root);
+> +	if (!qcom_socinfo->apps) {
+> +		pr_err("Cannot create apps image directory\n");
+> +		return;
+> +	}
+
+And here.
+
+> +	DEBUGFS_IMAGE_NAME(name, apps, SMEM_IMAGE_TABLE_APPS_INDEX);
+> +	DEBUGFS_IMAGE_VARIANT(variant, apps, SMEM_IMAGE_TABLE_APPS_INDEX);
+> +	DEBUGFS_IMAGE_OEM(oem, apps, SMEM_IMAGE_TABLE_APPS_INDEX);
+> +
+> +	qcom_socinfo->mpss = debugfs_create_dir("mpss",
+> +						qcom_socinfo->dbg_root);
+> +	if (!qcom_socinfo->mpss) {
+> +		pr_err("Cannot create mpss image directory\n");
+> +		return;
+> +	}
+
+Yet again...
+
+> +
+> +	DEBUGFS_IMAGE_NAME(name, mpss, SMEM_IMAGE_TABLE_MPSS_INDEX);
+> +	DEBUGFS_IMAGE_VARIANT(variant, mpss, SMEM_IMAGE_TABLE_MPSS_INDEX);
+> +	DEBUGFS_IMAGE_OEM(oem, mpss, SMEM_IMAGE_TABLE_MPSS_INDEX);
+> +
+> +	qcom_socinfo->adsp = debugfs_create_dir("adsp",
+> +						qcom_socinfo->dbg_root);
+> +	if (!qcom_socinfo->adsp) {
+> +		pr_err("Cannot create adsp image directory\n");
+> +		return;
+> +	}
+
+And again...
+
+> +
+> +	DEBUGFS_IMAGE_NAME(name, adsp, SMEM_IMAGE_TABLE_ADSP_INDEX);
+> +	DEBUGFS_IMAGE_VARIANT(variant, adsp, SMEM_IMAGE_TABLE_ADSP_INDEX);
+> +	DEBUGFS_IMAGE_OEM(oem, adsp, SMEM_IMAGE_TABLE_ADSP_INDEX);
+> +
+> +	qcom_socinfo->cnss = debugfs_create_dir("cnss",
+> +						qcom_socinfo->dbg_root);
+> +	if (!qcom_socinfo->cnss) {
+> +		pr_err("Cannot create cnss image directory\n");
+> +		return;
+> +	}
+
+And again...
+
+> +
+> +	DEBUGFS_IMAGE_NAME(name, cnss, SMEM_IMAGE_TABLE_CNSS_INDEX);
+> +	DEBUGFS_IMAGE_VARIANT(variant, cnss, SMEM_IMAGE_TABLE_CNSS_INDEX);
+> +	DEBUGFS_IMAGE_OEM(oem, cnss, SMEM_IMAGE_TABLE_CNSS_INDEX);
+> +
+> +	qcom_socinfo->video = debugfs_create_dir("video",
+> +						 qcom_socinfo->dbg_root);
+> +	if (!qcom_socinfo->video) {
+> +		pr_err("Cannot create video image directory\n");
+> +		return;
+> +	}
+
+And one last time.
+
+There, you get to delete a bunch of code, that's always fun :)
+
+thanks,
+
+greg k-h
