@@ -2,147 +2,224 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E6EC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A4DC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:18:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDD842083B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:17:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="bEmsM7k3"
+	by mail.kernel.org (Postfix) with ESMTP id 934582083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:18:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728591AbfBURRW (ORCPT
+        id S1728583AbfBURS3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 12:17:22 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:36381 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726183AbfBURRV (ORCPT
+        Thu, 21 Feb 2019 12:18:29 -0500
+Received: from mx-ginzinger.sigmacloud.services ([185.154.235.147]:55528 "EHLO
+        mx-ginzinger.sigmacloud.services" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726232AbfBURS3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 12:17:21 -0500
-Received: by mail-qt1-f196.google.com with SMTP id p25so32098336qtb.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 09:17:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LMtwVzQceYw4mMb6VeeosfIorSojv+5HEgIRi7ypF9o=;
-        b=bEmsM7k3fGmaWWW1lDUyV/5DBJsi+NVcNQHShL3XnQe6XMYr79VQXoo33Tg7BZ2o1v
-         stvXyyucz3TzOwAO5ySRzvAAT/m69jT4wee5ughAKrTeuYqOJdtZNSSFZ4E3Ayso3Loq
-         MPC/rg7pR+Yt5+WK2bHZSqUYSCEL3HThKnHmE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LMtwVzQceYw4mMb6VeeosfIorSojv+5HEgIRi7ypF9o=;
-        b=qUG3JQUs3qy73XpyX+lHuxGC0d51IUo9MB3LM6yoV8nXwG7BTS5/ArttO/GdgKNut+
-         IRDC8VVVb/KjX6OeVlR3m3f+2d5skho9RiMR3pRF9kSAa3Zo3Y7Djx93v0M2fK2wqRiv
-         K0gl+o6yhZxCublfSNQOsfeG+MCbKIvC2djDu5MtKiFuTC2/ryVyG4Uf26aX7oy3tmIS
-         /mqgNSIyFhe5x2FSOXFZxfyRr4+SsCmJB0JlLZYiLCYTyu3aVnCDVQ3g48JwK7fiV2DE
-         6PDrUYgVZL+tH/RPJKR+dpw5ki2MYAkQ8aSjJ3qwQQMdrDPK3VE1zvGru6xJeGNen/PJ
-         5hpA==
-X-Gm-Message-State: AHQUAuar491U/sCQry5pWYUHP0sL81DnF7Wio+DUVn2doEMCnJEH6k7w
-        bpCnHVKHipOy/jDtcwYuWRMfPw==
-X-Google-Smtp-Source: AHgI3IZ8jNueEem6h0q4j7jKBYzrQds1HarANr3wp+tBgbqkligx+A49DQTYAqOXroQCoRnmfRz6vw==
-X-Received: by 2002:ac8:3932:: with SMTP id s47mr10533144qtb.337.1550769440687;
-        Thu, 21 Feb 2019 09:17:20 -0800 (PST)
-Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
-        by smtp.gmail.com with ESMTPSA id p18sm14879179qkl.48.2019.02.21.09.17.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Feb 2019 09:17:19 -0800 (PST)
-Date:   Thu, 21 Feb 2019 12:17:19 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "moderated list:INTEL ETHERNET DRIVERS" 
-        <intel-wired-lan@lists.osuosl.org>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Josh Triplett <josh@joshtriplett.org>, keescook@chromium.org,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        netdev@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        rcu@vger.kernel.org, Song Liu <songliubraving@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        xdp-newbies@vger.kernel.org, Yonghong Song <yhs@fb.com>
-Subject: Re: [PATCH RFC 4/5] sched/topology: Annonate RCU pointers properly
-Message-ID: <20190221171719.GB118415@google.com>
-References: <20190221054942.132388-1-joel@joelfernandes.org>
- <20190221054942.132388-5-joel@joelfernandes.org>
- <20190221091944.GY32477@hirez.programming.kicks-ass.net>
- <20190221151057.GA19213@google.com>
- <20190221152944.GS32494@hirez.programming.kicks-ass.net>
+        Thu, 21 Feb 2019 12:18:29 -0500
+Received: from [31.193.165.228] (port=9228 helo=mx-ginzinger.sigmacloud.services)
+        by mx-ginzinger.sigmacloud.services with esmtps (TLSv1.2:AES256-GCM-SHA384:256)
+        (Exim 4.82_1-5b7a7c0-XX)
+        (envelope-from <Martin.Kepplinger@ginzinger.com>)
+        id 1gwrzH-00028o-2Y; Thu, 21 Feb 2019 18:18:19 +0100
+Received: from martin-laptop.buero.ginzinger.com (10.10.1.120) by
+ exc1.buero.ginzinger.com (10.1.1.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1466.3; Thu, 21 Feb 2019 18:18:19 +0100
+X-CTCH-RefID: str=0001.0A0B020F.5C6EDD5B.0066,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+From:   Martin Kepplinger <martin.kepplinger@ginzinger.com>
+To:     <gregkh@linuxfoundation.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <jslaby@suse.com>, <corbet@lwn.net>,
+        <richard.genoud@gmail.com>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <linux-serial@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Subject: [PATCH v2 1/9] serial: uapi: add SER_RS485_DELAY_IN_USEC flag to struct serial_rs485
+Date:   Thu, 21 Feb 2019 18:17:50 +0100
+Message-ID: <20190221171758.10322-1-martin.kepplinger@ginzinger.com>
+X-Mailer: git-send-email 2.20.1
+X-Originating-IP: [10.10.1.120]
+X-ClientProxiedBy: exc1.buero.ginzinger.com (10.1.1.204) To
+ exc1.buero.ginzinger.com (10.1.1.204)
+X-EXCLAIMER-MD-ORIGINAL-SUBJECT: [NOSIG][NODISC][PATCH v2 1/9] serial: uapi:
+ add SER_RS485_DELAY_IN_USEC flag to struct serial_rs485
+X-EXCLAIMER-MD-CONFIG: 9dd172f7-de2e-4231-b886-ec11f46e03b3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190221152944.GS32494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----9F773A4BFF92DF307DDF747586A784E5"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 04:29:44PM +0100, Peter Zijlstra wrote:
-> On Thu, Feb 21, 2019 at 10:10:57AM -0500, Joel Fernandes wrote:
-> > Hi Peter,
-> > 
-> > Thanks for taking a look.
-> > 
-> > On Thu, Feb 21, 2019 at 10:19:44AM +0100, Peter Zijlstra wrote:
-> > > On Thu, Feb 21, 2019 at 12:49:41AM -0500, Joel Fernandes (Google) wrote:
-> > > 
-> > > > Also replace rcu_assign_pointer call on rq->sd with WRITE_ONCE. This
-> > > > should be sufficient for the rq->sd initialization.
-> > > 
-> > > > @@ -668,7 +668,7 @@ cpu_attach_domain(struct sched_domain *sd, struct root_domain *rd, int cpu)
-> > > >  
-> > > >  	rq_attach_root(rq, rd);
-> > > >  	tmp = rq->sd;
-> > > > -	rcu_assign_pointer(rq->sd, sd);
-> > > > +	WRITE_ONCE(rq->sd, sd);
-> > > >  	dirty_sched_domain_sysctl(cpu);
-> > > >  	destroy_sched_domains(tmp);
-> > > 
-> > > Where did the RELEASE barrier go?
-> > > 
-> > > That was a publish operation, now it is not.
-> > 
-> > Funny thing is, initially I had written this patch with smp_store_release()
-> > instead of WRITE_ONCE, but checkpatch complaints with that since it needs a
-> > comment on top of it, and I wasn't sure if RELEASE barrier was the intent of
-> > using rcu_assign_pointer (all the more reason to replace it with something
-> > more explicit).
-> > 
-> > I will replace it with the following and resubmit it then:
-> > 
-> > /* Release barrier */
-> > smp_store_release(&rq->sd, sd);
-> > 
-> > Or do we want to just drop the "Release barrier" comment and live with the
-> > checkpatch warning?
-> 
-> How about we keep using rcu_assign_pointer(), the whole sched domain
-> tree is under rcu; peruse that destroy_sched_domains() function for
-> instance.
-> 
-> Also check how for_each_domain() uses rcu_dereference().
+This is an S/MIME signed message
 
-May be then, all those pointers should be made __rcu as well. Then we can use
-rcu_assign_pointer() here. I will look more into it and study these functions
-as you are suggesting.
+------9F773A4BFF92DF307DDF747586A784E5
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-thanks,
+This extends the user interface for rs485 communication:
 
-- Joel
+We add a new flag, SER_RS485_DELAY_IN_USEC, to struct serial_rs485 that
+indicates that delay_rts_before_send and delay_rts_after_send values are
+interpreted in microsecond units.
+
+Up until now, the code comment defined these values to hold the delays in
+millisecond units. Especially with fast data rates (1Mbaut or more) that
+are not too uncommon for RS485, 1ms become quite long. Users need to be
+able to set shorter delays than 1 ms in order not to slow down the channel
+unnecessarily.
+
+So when delays are needed, but not as long as 1ms, this enables faster
+communication channels without changing the baudrate.
+
+Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+---
+
+revision history
+----------------
+v2: re-send as a proper series after fixing my mailserver
+v1: initial implementation idea
+
+
+So have this totally quirky patch that uses udelay() in our tree
+for a looong time now because of the above reasons - and because we are lazy.
+This is an attempt to get rid of said patch on our side and fix this properly.
+
+What do you thing about adding a flag in general?
+
+The following patches should integrate this idea in devicetree and drivers.
+These changes are NOT tested on hardware but should behave predictably
+enough. I use the delays in a driver that doesn't implement them yet at
+all. I'll do that after this (or something similar) is merged - it's a 2-liner
+then.
+
+Also, a patch to the rs485conf tool, that is sometimes used instead of
+ioctl() directly, will be prepared as well.
+
+thanks
+
+                                 martin
+
+
+
+ include/uapi/linux/serial.h | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/include/uapi/linux/serial.h b/include/uapi/linux/serial.h
+index 93eb3c496ff1..c16c950ebca2 100644
+--- a/include/uapi/linux/serial.h
++++ b/include/uapi/linux/serial.h
+@@ -126,8 +126,15 @@ struct serial_rs485 {
+ #define SER_RS485_TERMINATE_BUS		(1 << 5)	/* Enable bus
+ 							   termination
+ 							   (if supported) */
+-	__u32	delay_rts_before_send;	/* Delay before send (milliseconds) */
+-	__u32	delay_rts_after_send;	/* Delay after send (milliseconds) */
++#define SER_RS485_DELAY_IN_USEC		(1 << 6)	/* delay_rts_*_send
++							   values are given in
++							   microseconds */
++	__u32	delay_rts_before_send;	/* Delay before send (milliseconds
++					   by default. microseconds if flag
++					   is set) */
++	__u32	delay_rts_after_send;	/* Delay after send (milliseconds
++					   by default. microseconds if flag
++					   is set) */
+ 	__u32	padding[5];		/* Memory is cheap, new structs
+ 					   are a royal PITA .. */
+ };
+-- 
+2.20.1
+
+
+------9F773A4BFF92DF307DDF747586A784E5
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+MIIOHAYJKoZIhvcNAQcCoIIODTCCDgkCAQExDzANBglghkgBZQMEAgEFADALBgkq
+hkiG9w0BBwGgggshMIIF5jCCA86gAwIBAgIQapvhODv/K2ufAdXZuKdSVjANBgkq
+hkiG9w0BAQwFADCBhTELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFu
+Y2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExp
+bWl0ZWQxKzApBgNVBAMTIkNPTU9ETyBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3Jp
+dHkwHhcNMTMwMTEwMDAwMDAwWhcNMjgwMTA5MjM1OTU5WjCBlzELMAkGA1UEBhMC
+R0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9y
+ZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBS
+U0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwggEi
+MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+s55XrCh2dUAWxzgDmNPGGHYh
+UPMleQtMtaDRfTpYPpynMS6n9jR22YRq2tA9NEjk6vW7rN/5sYFLIP1of3l0NKZ6
+fLWfF2VgJ5cijKYy/qlAckY1wgOkUMgzKlWlVJGyK+UlNEQ1/5ErCsHq9x9aU/x1
+KwTdF/LCrT03Rl/FwFrf1XTCwa2QZYL55AqLPikFlgqOtzk06kb2qvGlnHJvijjI
+03BOrNpo+kZGpcHsgyO1/u1OZTaOo8wvEU17VVeP1cHWse9tGKTDyUGg2hJZjrqc
+k39UIm/nKbpDSZ0JsMoIw/JtOOg0JC56VzQgBo7ictReTQE5LFLG3yQK+xS1AgMB
+AAGjggE8MIIBODAfBgNVHSMEGDAWgBS7r34CPfqm8TyEjq3uOJjs2TIy1DAdBgNV
+HQ4EFgQUgq9sjPjF/pZhfOgfPStxSF7Ei8AwDgYDVR0PAQH/BAQDAgGGMBIGA1Ud
+EwEB/wQIMAYBAf8CAQAwEQYDVR0gBAowCDAGBgRVHSAAMEwGA1UdHwRFMEMwQaA/
+oD2GO2h0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNlcnRpZmljYXRp
+b25BdXRob3JpdHkuY3JsMHEGCCsGAQUFBwEBBGUwYzA7BggrBgEFBQcwAoYvaHR0
+cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQWRkVHJ1c3RDQS5jcnQwJAYI
+KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTANBgkqhkiG9w0BAQwF
+AAOCAgEAeFyygSg0TzzuX1bOn5dW7I+iaxf28/ZJCAbU2C81zd9A/tNx4+jsQgwR
+GiHjZrAYayZrrm78hOx7aEpkfNPQIHGG6Fvq3EzWf/Lvx7/hk6zSPwIal9v5IkDc
+ZoFD7f3iT7PdkHJY9B51csvU50rxpEg1OyOT8fk2zvvPBuM4qQNqbGWlnhMpIMwp
+WZT89RY0wpJO+2V6eXEGGHsROs3njeP9DqqqAJaBa4wBeKOdGCWn1/Jp2oY6dyNm
+NppI4ZNMUH4Tam85S1j6E95u4+1Nuru84OrMIzqvISE2HN/56ebTOWlcrurffade
+2022O/tUU1gb4jfWCcyvB8czm12FgX/y/lRjmDbEA08QJNB2729Y+io1IYO3ztve
+BdvUCIYZojTq/OCR6MvnzS6X72HP0PRLRTiOSEmIDsS5N5w/8IW1Hva5hEFy6fDA
+fd9yI+O+IMMAj1KcL/Zo9jzJ16HO5m60ttl1Enk8MQkz/W3JlHaeI5iKFn4UJu1/
+cP2YHXYPiWf2JyBzsLBrGk1II+3yL8aorYew6CQvdVifC3HtwlSam9V1niiCfOBe
+2C12TdKGu05LWIA3ZkFcWJGaNXOZ6Ggyh/TqvXG5v7zmEVDNXFnHn9tFpMpOUvxh
+csjycBtH0dZ0WrNw6gH+HF8TIhCnH3+zzWuDN0Rk6h9KVkfKehIwggUzMIIEG6AD
+AgECAhBNQrEzGzrZ6FVYh1EEYH4+MA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxm
+b3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAe
+Fw0xODA3MTgwMDAwMDBaFw0yMTA3MTcyMzU5NTlaMDAxLjAsBgkqhkiG9w0BCQEW
+H21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDsMC77L0D+2D8I8X5ubnBhADLgU+HtlwMTFt/WJIhc
+kgbvnawYXWrCIpk8F6BJ0R/iFCykPdG7741EmlcHRKOJfhVxjXhwnoGFqnYmurCt
+fvZLR3+mT3FWnVv2RAdrXscXH3BpijqqWabdtTbiTvmcl86Zc6mNlVhYZSbDul/E
+voIGZotGcGIWrgZxN+8MQJQHKb0KHyWlPVPkrjvEfOJHKKLFsBNSnNMR95Ijg3Sp
+h8/8RG490/zRHflGzUlxDSlLyY9YJGzSdDzcFKoYcc4oaaUY5N3uhRna43TLUIQh
+6ybt3DKVz1Pw/ikwYJrOsulJrVr3D8KVHdGxq7HYl7jnAgMBAAGjggHfMIIB2zAf
+BgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQU/GtSUbHg
+14sPDlmo27eQYwtjaS0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYD
+VR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMCMEYGA1UdIAQ/MD0wOwYMKwYBBAGy
+MQECAQMFMCswKQYIKwYBBQUHAgEWHWh0dHBzOi8vc2VjdXJlLmNvbW9kby5uZXQv
+Q1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NP
+TU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmww
+gYsGCCsGAQUFBwEBBH8wfTBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5jb21vZG9j
+YS5jb20vQ09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFp
+bENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuY29tb2RvY2EuY29tMCoG
+A1UdEQQjMCGBH21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wDQYJKoZI
+hvcNAQELBQADggEBAGEuG01K1tt5i3gUdQkYem/KpbJUYBZd43QwmoTa0TGXUiYq
+b+g/TeGG9QQ1yq+73xOr8fu6oT2608C7EiJc6JmjTs485/OZmTqgYkrLfs71F1kB
+3Z59WPf5aoR/pnn5vdfkkoO29V1cKPJR4z+iOG2hOlcK/dXrX8i6mnL5DGIe8l5n
+udUPvIbUhbMavrDd6kwhs0oCjylwdKGlFkCpKMn3HPflfDeHuV9Z8Nrpeq/7+Pm0
+I/fLPkaYlULASJoJCucMYcedY9rmuro9JhV+NuVXaqLIrQPc1vyKFeRuLHh84M6c
+1h1DArdGTykXZUwjXnnHtuOtzjIAzkx2Ns43vEsxggK/MIICuwIBATCBrDCBlzEL
+MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
+BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMT
+NENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1h
+aWwgQ0ECEE1CsTMbOtnoVViHUQRgfj4wDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZI
+hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTkwMjIxMTcxODIz
+WjAvBgkqhkiG9w0BCQQxIgQgkvqZH2++nABX0zwIMEmp0I1IF5ZP0+ypYBbj0RIH
+W/cweQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
+CWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
+AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEA
+vrNXp7GiVyUd1mKwKaRy6Aq0wgD6NRk1SARl4GpjBFhaxDZ0gl6Ggo1UwUB/L/oH
+UMw1JuwWyE63hY/JIHPLwyjfNbKuhp1i6clbK4/4hkNNSsMLC+XXn59Bq/LFgf0P
+GIR1lMTy/GKoh0r1zUJXROszXfWCveHoI5f1yjp2ka1EGPsZBZozuUVs3bYIZW5p
+LWPncdTLjTGl/sxm5JrGQ2ZEZNtIs3oyyOkXGaNmyjDjiR4OGnOPTlgsyfV8uUM+
+9kILWOwR0C9wH6WvJi2Mo/ecdDZjmyqcGo0gKG2xzcL1mbsUYwPRK9xiOtoYqRfS
+FRLL5s6gE+iN3g5+akGO1w==
+
+------9F773A4BFF92DF307DDF747586A784E5--
 
