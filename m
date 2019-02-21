@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32833C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:38:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C03C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:38:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02BAD2086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:38:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E34A320838
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:38:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550759897;
-	bh=82SAn6VBjC8wyR9JZFYWZj8T5FJGWys/l3TaH3bYBqI=;
+	s=default; t=1550759900;
+	bh=+KlOeo7X8g7HG4wIeRYW+rdcLWZwYsjlSTGxC3UYNtk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vVKPpCXyhM1PuWBwiuNy8p48uLvVH/d7K5MZP+PrApjwvB6WtJBBhnVOD8kWUBsFZ
-	 0MMz4U9WBK/ChL5xC2ERYyofI28zXcep9p0+Z/3M0WoMAdFO0DUgBI9P09ZkjaV1QA
-	 5czaKw1i7eujyYZ/vIJ/jO9tFEPxulRKkrEZ+3+Y=
+	b=lRTjP5rEZHEKKtHBsxfn4TZKdr8kOREHArIYTfZxY4KVQJoMK5VFZlYe6V1HcIvbv
+	 4clAY+EfgfysanV2+Vr7hbO0j8YNUbLLY0UNmK0QkMAOve37DVRShPvV2ZYMWvAZRn
+	 tXspQc/VMJ7CluXnqxp9SOwYQ/qFydhiJ82ujVww=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728632AbfBUOiP (ORCPT
+        id S1728058AbfBUOiT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:38:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59834 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:38:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727939AbfBUOiM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:38:12 -0500
+        id S1726075AbfBUOiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:38:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4DE4020838;
-        Thu, 21 Feb 2019 14:38:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7DA920838;
+        Thu, 21 Feb 2019 14:38:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550759891;
-        bh=82SAn6VBjC8wyR9JZFYWZj8T5FJGWys/l3TaH3bYBqI=;
+        s=default; t=1550759895;
+        bh=+KlOeo7X8g7HG4wIeRYW+rdcLWZwYsjlSTGxC3UYNtk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QpjIPFx5QLPPYKIVSLeUo6P8JjLl+l7vDpTSmIGbB7NuBEmuLgwaDYRuqIUdBf/qX
-         UPkqsDjR4WYmvR+XhljDXdNDBvVBXudwm8h5MY9MPO6s537223K0NJZQCs2sBQiHRL
-         /Oh8nZQxpnHIftRja7qnBzdNTA5asNBAR/zCZnQ0=
+        b=fysCxfqULL2EqrfzdFF1kzPxsudaJrcqmplJzR8dXdNLS+240wMlPgOQfiQH/imHY
+         0RNOM7oUOtA3wvdlYIk/hc8xX+Xhp43OND8/SGGSsW9d6SXqqzuL6ppuAQgPADnhhl
+         eTQYjyQQddZ5W42qD3C34sXY517Qkpen4lQSe7Tw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        soukjin bae <soukjin.bae@samsung.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 07/20] tcp: tcp_v4_err() should be more careful
-Date:   Thu, 21 Feb 2019 15:35:37 +0100
-Message-Id: <20190221141946.984750657@linuxfoundation.org>
+Subject: [PATCH 4.4 08/20] net: Do not allocate page fragments that are not skb aligned
+Date:   Thu, 21 Feb 2019 15:35:38 +0100
+Message-Id: <20190221141947.012165914@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221141946.772985220@linuxfoundation.org>
 References: <20190221141946.772985220@linuxfoundation.org>
@@ -68,47 +66,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 
-[ Upstream commit 2c4cc9712364c051b1de2d175d5fbea6be948ebf ]
+[ Upstream commit 3bed3cc4156eedf652b4df72bdb35d4f1a2a739d ]
 
-ICMP handlers are not very often stressed, we should
-make them more resilient to bugs that might surface in
-the future.
+This patch addresses the fact that there are drivers, specifically tun,
+that will call into the network page fragment allocators with buffer sizes
+that are not cache aligned. Doing this could result in data alignment
+and DMA performance issues as these fragment pools are also shared with the
+skb allocator and any other devices that will use napi_alloc_frags or
+netdev_alloc_frags.
 
-If there is no packet in retransmit queue, we should
-avoid a NULL deref.
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: soukjin bae <soukjin.bae@samsung.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Fixes: ffde7328a36d ("net: Split netdev_alloc_frag into __alloc_page_frag and add __napi_alloc_frag")
+Reported-by: Jann Horn <jannh@google.com>
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_ipv4.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ net/core/skbuff.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/net/ipv4/tcp_ipv4.c
-+++ b/net/ipv4/tcp_ipv4.c
-@@ -466,14 +466,15 @@ void tcp_v4_err(struct sk_buff *icmp_skb
- 		if (sock_owned_by_user(sk))
- 			break;
- 
-+		skb = tcp_write_queue_head(sk);
-+		if (WARN_ON_ONCE(!skb))
-+			break;
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -374,6 +374,8 @@ static void *__netdev_alloc_frag(unsigne
+  */
+ void *netdev_alloc_frag(unsigned int fragsz)
+ {
++	fragsz = SKB_DATA_ALIGN(fragsz);
 +
- 		icsk->icsk_backoff--;
- 		icsk->icsk_rto = tp->srtt_us ? __tcp_set_rto(tp) :
- 					       TCP_TIMEOUT_INIT;
- 		icsk->icsk_rto = inet_csk_rto_backoff(icsk, TCP_RTO_MAX);
+ 	return __netdev_alloc_frag(fragsz, GFP_ATOMIC | __GFP_COLD);
+ }
+ EXPORT_SYMBOL(netdev_alloc_frag);
+@@ -387,6 +389,8 @@ static void *__napi_alloc_frag(unsigned
  
--		skb = tcp_write_queue_head(sk);
--		BUG_ON(!skb);
--
- 		remaining = icsk->icsk_rto -
- 			    min(icsk->icsk_rto,
- 				tcp_time_stamp - tcp_skb_timestamp(skb));
+ void *napi_alloc_frag(unsigned int fragsz)
+ {
++	fragsz = SKB_DATA_ALIGN(fragsz);
++
+ 	return __napi_alloc_frag(fragsz, GFP_ATOMIC | __GFP_COLD);
+ }
+ EXPORT_SYMBOL(napi_alloc_frag);
 
 
