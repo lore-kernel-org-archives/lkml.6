@@ -2,113 +2,138 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C385CC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADAC2C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:55:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9240B20838
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:54:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AC4C20838
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:55:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="HueIVodI"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="v2c+28sR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728554AbfBUPyi (ORCPT
+        id S1728559AbfBUPz2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 10:54:38 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:43790 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726390AbfBUPyi (ORCPT
+        Thu, 21 Feb 2019 10:55:28 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:33617 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728172AbfBUPz2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 10:54:38 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1LFmhp7052884;
-        Thu, 21 Feb 2019 15:54:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=dSKI8hgsSaoDxFzUtcqGe17EV1u9L/1VTXgmJNHu2OQ=;
- b=HueIVodI7q0+9/ZoFXX6lbgtCeOWg3LgXwlhQlTa4jXhHGoprPT82bF0toY+OpjBMK7T
- U3CIuxwsWBVNzWdNcOZsOympnlNr0ANG4iJusW4vMjygbCQKfpjbYbfVvSBOaBdK7Qes
- 3nZxFlBn3k8cEJ0zczJLLIDMuPxd+1aIuUi2t3ag5UzAm9X16VqkhgthzBo7O0u4M64Y
- XIKNWJ/lKiUZyjLyGdCLMkIV1caUFWuoQI+DPs220H7jEVyDhE6t75xl4KVogIFOdBWB
- vJhpotRCo05DaUr1w8nvwQCniqxKj8R7kPMokjXDU5j0tP0kY30CkTYikdABIyzcdpLQ 5Q== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2qp81eh1vn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Feb 2019 15:54:33 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1LFsWSf027236
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Feb 2019 15:54:32 GMT
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1LFsVj0032466;
-        Thu, 21 Feb 2019 15:54:31 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 21 Feb 2019 07:54:31 -0800
-Date:   Thu, 21 Feb 2019 07:54:31 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     linux-xfs@vger.kernel.org, Brian Foster <bfoster@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][xfs-next] xfs: fix uninitialized error variable
-Message-ID: <20190221155431.GQ32253@magnolia>
-References: <20190221112224.3748-1-colin.king@canonical.com>
+        Thu, 21 Feb 2019 10:55:28 -0500
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id x1LFtNaS018240;
+        Fri, 22 Feb 2019 00:55:24 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x1LFtNaS018240
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1550764524;
+        bh=Lr9NIItQ5zsT9NnlU3NK3LD3til6B4DYK9OuHutbDrM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=v2c+28sRH30c2IequE/rN6R2qW8ZBoM5eyzaFNGiOKnpixGZeyyLB5j4ql0Qsi1F9
+         7Kg3/dEQ5VVvGG7HlizWMtwZwZ9k+VK8qyCb5g7V27ua5YNbmykoYMtxpytni5FJcG
+         0IERh6tsqvoPbtyrfqlWCEGN6QDZFJ2SytukWekdmMSqzCtfNL2hY+vEivA31fHtII
+         UEwYp6T45R+K/FAipY+XTzihEWbgF/2cFLyCfAIjWwHiDf6iRA8PrMMem78i+9tE9k
+         ozxfkYltMGojiRnbiDKL45hoxJ4yGMbrjjUMSnX3W5IYGUFGIbA3tLcFgXf7ZCUSgn
+         Rh0LNvVVESqtQ==
+X-Nifty-SrcIP: [209.85.222.52]
+Received: by mail-ua1-f52.google.com with SMTP id j8so9659169uae.13;
+        Thu, 21 Feb 2019 07:55:24 -0800 (PST)
+X-Gm-Message-State: AHQUAuaXDYMHQaY18vv7vJRmJ+ygawemJmEy//cNys/67Yk+4Emzr3Ry
+        g+of+xSD2LJbWqN9TgEMhtkI4qeHLXfPv5P6G+Y=
+X-Google-Smtp-Source: AHgI3IbtM4zV+1QkPYy0aCjgEtK4fQK7yZB7mCDQ9/ddqpTt6vdi9JSjXF/lT10/bo8ZNgYccCB6hCEncV/82hSmTK4=
+X-Received: by 2002:ab0:648c:: with SMTP id p12mr16572302uam.93.1550764523487;
+ Thu, 21 Feb 2019 07:55:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190221112224.3748-1-colin.king@canonical.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9174 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902210115
+References: <20190221144257.GA12892@roeck-us.net>
+In-Reply-To: <20190221144257.GA12892@roeck-us.net>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 22 Feb 2019 00:54:47 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASfiSrULgdG_tcm+m4wmyOjg4ZHYAB9EUgaGrjv=g-Zbg@mail.gmail.com>
+Message-ID: <CAK7LNASfiSrULgdG_tcm+m4wmyOjg4ZHYAB9EUgaGrjv=g-Zbg@mail.gmail.com>
+Subject: Re: [PATCH] bpfilter: remove extra header search paths for bpfilter_umh
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 11:22:24AM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> A previous commit removed the initialization of variable 'error' to zero,
-> and can cause a bogus error return.  This occurs when error contains a
-> non-zero garbage value and the call to xchk_should_terminate detects a
-> pending fatal signal and checks for a zero error before setting it
-> to -EAGAIN. Fix the issue by initializing error to zero.
-> 
-> Fixes: b9454fe056bd ("xfs: clean up the inode cluster checking in the inobt scrub")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Thu, Feb 21, 2019 at 11:46 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On Thu, Jan 31, 2019 at 12:15:35PM +0900, Masahiro Yamada wrote:
+> > Currently, the header search paths -Itools/include and
+> > -Itools/include/uapi are not used. Let's drop the unused code.
+> >
+> > We can remove -I. too by fixing up one C file.
+> >
+>
+> This patch reintroduces the problem last fixed with commit ae40832e53c3
+> ("bpfilter: fix a build err"). Seen (at least) with gcc 7.4.0, 8.2.0.
+> binutils version is 2.31.1. Reverting this patch fixes the problem.
 
-Thank you for the cleanup!
 
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Hmm. I cannot reproduce the build error with my gcc,
+but you are right.
 
---D
 
-> ---
->  fs/xfs/scrub/ialloc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/xfs/scrub/ialloc.c b/fs/xfs/scrub/ialloc.c
-> index 2c9dad2b61b1..700114f79a7d 100644
-> --- a/fs/xfs/scrub/ialloc.c
-> +++ b/fs/xfs/scrub/ialloc.c
-> @@ -161,7 +161,7 @@ xchk_iallocbt_check_cluster_ifree(
->  	bool				irec_free;
->  	bool				ino_inuse;
->  	bool				freemask_ok;
-> -	int				error;
-> +	int				error = 0;
->  
->  	if (xchk_should_terminate(bs->sc, &error))
->  		return error;
-> -- 
-> 2.20.1
-> 
+I'd like to get back only
+'KBUILD_HOSTCFLAGS += -Itools/include/ -Itools/include/uapi'
+instead of the full revert.
+
+If David is fine with it, I can send a patch with filling commit log.
+
+
+
+Thanks.
+
+
+
+> Guenter
+>
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > Signed-off-by: David S. Miller <davem@davemloft.net>
+> > ---
+> >  net/bpfilter/Makefile | 1 -
+> >  net/bpfilter/main.c   | 2 +-
+> >  2 files changed, 1 insertion(+), 2 deletions(-)
+> >
+> > diff --git a/net/bpfilter/Makefile b/net/bpfilter/Makefile
+> > index 0947ee7f70d5..5d6c7760142d 100644
+> > --- a/net/bpfilter/Makefile
+> > +++ b/net/bpfilter/Makefile
+> > @@ -5,7 +5,6 @@
+> >
+> >  hostprogs-y := bpfilter_umh
+> >  bpfilter_umh-objs := main.o
+> > -KBUILD_HOSTCFLAGS += -I. -Itools/include/ -Itools/include/uapi
+> >  HOSTCC := $(CC)
+> >
+> >  ifeq ($(CONFIG_BPFILTER_UMH), y)
+> > diff --git a/net/bpfilter/main.c b/net/bpfilter/main.c
+> > index 1317f108df8a..61ce8454a88e 100644
+> > --- a/net/bpfilter/main.c
+> > +++ b/net/bpfilter/main.c
+> > @@ -6,7 +6,7 @@
+> >  #include <sys/socket.h>
+> >  #include <fcntl.h>
+> >  #include <unistd.h>
+> > -#include "include/uapi/linux/bpf.h"
+> > +#include "../../include/uapi/linux/bpf.h"
+> >  #include <asm/unistd.h>
+> >  #include "msgfmt.h"
+> >
+> > --
+> > 2.7.4
+
+
+
+--
+Best Regards
+
+Masahiro Yamada
