@@ -2,137 +2,147 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB462C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:46:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 658B3C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:48:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 986B620855
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:46:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31CA120855
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:48:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="5d0bFzU6"
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="x6WZj4Ci";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="vjS8fS3f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbfBULqF (ORCPT
+        id S1726527AbfBULsp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 06:46:05 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:42554 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726684AbfBULqB (ORCPT
+        Thu, 21 Feb 2019 06:48:45 -0500
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:50313 "EHLO
+        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725814AbfBULsp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 06:46:01 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1LBhikK026679;
-        Thu, 21 Feb 2019 11:45:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=Ba56OhV4U5fdnKqj0DAsFEfOsTPbQnQh9bKnjWL81Js=;
- b=5d0bFzU68fTDrZKFM90n/ePecS4MtjsvOpToE1uC6m0f/H72LLmuECxRb4bjXNPaaINu
- DhZqsU4DEqclsjtPy0c6wuMMwrrPXAhGElErASm0IkX+1365sYyw910FccfAc/KIxC3j
- Rzb32cBS88com0KpAdy9TeAXZfZGq+soGDtADfWi7Dst+AUkc1SSKb314a+lHTi/Llp0
- WnZBf0Pxt/lnnbvChyg47K3evnIJwWIEeqAMODqUuCYcuvnRYLAt3t45t77HLOwORKlk
- wuxrfj1r7eN8vjqEmHFrPDwlbz7pkYNIWp41ofcePfu5Io9qBK3C2ZpRtxXctpvQXWhH sQ== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2qpb5rqbkv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Feb 2019 11:45:41 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1LBjdlX031560
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Feb 2019 11:45:40 GMT
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1LBjdFW024966;
-        Thu, 21 Feb 2019 11:45:39 GMT
-Received: from [192.168.1.67] (/94.61.137.133)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 21 Feb 2019 03:45:39 -0800
-Subject: Re: [PATCH RFC 00/39] x86/KVM: Xen HVM guest support
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ankur Arora <ankur.a.arora@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel@lists.xenproject.org
-References: <20190220201609.28290-1-joao.m.martins@oracle.com>
- <35051310-c497-8ad5-4434-1b8426a317d2@redhat.com>
-From:   Joao Martins <joao.m.martins@oracle.com>
-Message-ID: <8b1f4912-4f92-69ae-ae01-d899d5640572@oracle.com>
-Date:   Thu, 21 Feb 2019 11:45:32 +0000
+        Thu, 21 Feb 2019 06:48:45 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id 0EC673360;
+        Thu, 21 Feb 2019 06:48:43 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Thu, 21 Feb 2019 06:48:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=Q3mxO+cQXm+bkyOyVpU65K3iO8+
+        qv4XhqICwAmnej4U=; b=x6WZj4Ci/LCHWieXNKLbpI8fupRBFBCemBpMQ/QttEk
+        njMt3CXnl3aUM66GvcZ5qiy8VqENnVRjP7L2IPP6qgCBuRRxE8VWjjrhnlqgNone
+        iI/NOYLeSwaHzfTeJ6JKl/ZofVQCttCSq7eABwg2bxW0IhI3GHuufqK1id4bJ34T
+        cVGmSFy3u0iQ98gYxX2erqFZc1AIXqX4JiIN/Keroum56wQGuKUoXw5PlpEFJ3ZU
+        VGy43BC+Q54MEgIBVXNpvivLIjtJckTY2494xtqGYr7yXcDH20+7OpeXsTEQYEMX
+        x32Th86yDuHNEVUuBZNZSghf0v5VLylTi5pPRjuhEog==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=Q3mxO+
+        cQXm+bkyOyVpU65K3iO8+qv4XhqICwAmnej4U=; b=vjS8fS3f5sJwaaXIS3wQnp
+        RESHT79IMdVvTvjvqL0nXaWeBfvJR7yuSomdscyUnV8SYICxWsbFSGU+EJqyiMs/
+        5qkbTkBnw5lL5A7G0I4bLLs6xiz69ceA/x7nolE/0yfMkUppdIo0L/RLr7pOR6Ih
+        xYq5CbZaThchM8jooz/oqkccdbwNICjuZYQqjRnALzBAZxjDlFBZIwsQD1QsITWO
+        wIY8oq1l37HMBh2F0n29caWTFIfOkdQ1ZhVL3DhPVyMiRsqUQpwGViisHHoOR+iK
+        qrwIsVoX8rXsJA6VJDkO9M1S8cyRha6AmIdXBKXfi/U1lEPOIeSGoU7AA3B2XxiA
+        ==
+X-ME-Sender: <xms:G5BuXIAK0G6cs1iyVmSMBZqsrdemiWjXdZwb98ZaEOy87ukdjT9hgA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrtdekgdeffeculddtuddrgedtledrtddtmd
+    cutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvuffkfhggtggujggfsehttd
+    ertddtredvnecuhfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhm
+    qeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeekfedrkeeirdekledrud
+    dtjeenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmnecu
+    vehluhhsthgvrhfuihiivgepud
+X-ME-Proxy: <xmx:G5BuXByC4t0ljjKe6qJmZxNu0GQjklkrGWuyiBOhF75T2qUTY_-n7g>
+    <xmx:G5BuXAQNLgrErCHBXoH2lnHOuPVqLm1fxFXLBZchcsHZoojHUctd9Q>
+    <xmx:G5BuXLcCWdY-UZ3nadV-vOht_-gYPQOXkHz4SuAhXZ87A57Uqm1q1g>
+    <xmx:G5BuXE59dWn_9QfRwFLsGn2b9JnlUvRUEK4hIx7p_csh8zF5SZzgfA>
+Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 0239E10331;
+        Thu, 21 Feb 2019 06:48:42 -0500 (EST)
+Date:   Thu, 21 Feb 2019 12:48:41 +0100
+From:   Greg KH <greg@kroah.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     martin.blumenstingl@googlemail.com, stable-commits@vger.kernel.org
+Subject: Re: Patch "mmc: meson-gx: fix interrupt name" has been added to the
+ 4.20-stable tree
+Message-ID: <20190221114841.GG10737@kroah.com>
+References: <20190221054326.7AAED21734@mail.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <35051310-c497-8ad5-4434-1b8426a317d2@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9173 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902210087
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190221054326.7AAED21734@mail.kernel.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/20/19 9:09 PM, Paolo Bonzini wrote:
-> On 20/02/19 21:15, Joao Martins wrote:
->>  2. PV Driver support (patches 17 - 39)
->>
->>  We start by redirecting hypercalls from the backend to routines
->>  which emulate the behaviour that PV backends expect i.e. grant
->>  table and interdomain events. Next, we add support for late
->>  initialization of xenbus, followed by implementing
->>  frontend/backend communication mechanisms (i.e. grant tables and
->>  interdomain event channels). Finally, introduce xen-shim.ko,
->>  which will setup a limited Xen environment. This uses the added
->>  functionality of Xen specific shared memory (grant tables) and
->>  notifications (event channels).
+On Thu, Feb 21, 2019 at 12:43:25AM -0500, Sasha Levin wrote:
+> This is a note to let you know that I've just added the patch titled
 > 
-> I am a bit worried by the last patches, they seem really brittle and
-> prone to breakage.  I don't know Xen well enough to understand if the
-> lack of support for GNTMAP_host_map is fixable, but if not, you have to
-> define a completely different hypercall.
+>     mmc: meson-gx: fix interrupt name
 > 
-I guess Ankur already answered this; so just to stack this on top of his comment.
+> to the 4.20-stable tree which can be found at:
+>     http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
+> 
+> The filename of the patch is:
+>      mmc-meson-gx-fix-interrupt-name.patch
+> and it can be found in the queue-4.20 subdirectory.
+> 
+> If you, or anyone else, feels it should not be added to the stable tree,
+> please let <stable@vger.kernel.org> know about it.
+> 
+> 
+> 
+> commit 2f7d5e26da383aca9f3a1270138d033e2a0e7be2
+> Author: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Date:   Sat Feb 9 01:58:50 2019 +0100
+> 
+>     mmc: meson-gx: fix interrupt name
+>     
+>     [ Upstream commit 83e418a805d880a8b18add07f94d19b2a5a80307 ]
+>     
+>     Commit bb364890323cca ("mmc: meson-gx: Free irq in release() callback")
+>     changed the _probe code to use request_threaded_irq() instead of
+>     devm_request_threaded_irq().
+>     Unfortunately this removes a fallback for the interrupt name:
+>     devm_request_threaded_irq() uses the device name as fallback if the
+>     given IRQ name is NULL. request_threaded_irq() has no such fallback,
+>     thus /proc/interrupts shows "(null)" instead.
+>     
+>     Explicitly pass the dev_name() so we get the IRQ name shown in
+>     /proc/interrupts again.
+>     While here, also fix the indentation of the request_threaded_irq()
+>     parameter list.
+>     
+>     Fixes: bb364890323cca ("mmc: meson-gx: Free irq in release() callback")
+>     Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>     Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+>     Signed-off-by: Sasha Levin <sashal@kernel.org>
+> 
+> diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
+> index ef9deaa361c73..ddd98cdd33bcd 100644
+> --- a/drivers/mmc/host/meson-gx-mmc.c
+> +++ b/drivers/mmc/host/meson-gx-mmc.c
+> @@ -1286,7 +1286,8 @@ static int meson_mmc_probe(struct platform_device *pdev)
+>  	       host->regs + SD_EMMC_IRQ_EN);
+>  
+>  	ret = request_threaded_irq(host->irq, meson_mmc_irq,
+> -			meson_mmc_irq_thread, IRQF_SHARED, NULL, host);
+> +				   meson_mmc_irq_thread, IRQF_SHARED,
+> +				   dev_name(&pdev->dev), host);
+>  	if (ret)
+>  		goto err_init_clk;
+> 
 
-The xen_shim_domain() is only meant to handle the case where the backend
-has/can-have full access to guest memory [i.e. netback and blkback would work
-with similar assumptions as vhost?]. For the normal case, where a backend *in a
-guest* maps and unmaps other guest memory, this is not applicable and these
-changes don't affect that case.
+This also looks like it is needed in 4.19.y, any reason you didn't add
+it there?
 
-IOW, the PV backend here sits on the hypervisor, and the hypercalls aren't
-actual hypercalls but rather invoking shim_hypercall(). The call chain would go
-more or less like:
+now queued up.
 
-<netback|blkback|scsiback>
- gnttab_map_refs(map_ops, pages)
-   HYPERVISOR_grant_table_op(GNTTABOP_map_grant_ref,...)
-     shim_hypercall()
-       shim_hcall_gntmap()
-
-Our reasoning was that given we are already in KVM, why mapping a page if the
-user (i.e. the kernel PV backend) is himself? The lack of GNTMAP_host_map is how
-the shim determines its user doesn't want to map the page. Also, there's another
-issue where PV backends always need a struct page to reference the device
-inflight data as Ankur pointed out.
-
-> Of course, tests are missing.
-
-FWIW: this was deliberate as we wanted to get folks impressions before
-proceeding further with the work.
-
-> You should use the
-> tools/testing/selftests/kvm/ framework, and ideally each patch should
-> come with coverage for the newly-added code.
-> Got it.
-
-Cheers,
-	Joao
+greg k-h
