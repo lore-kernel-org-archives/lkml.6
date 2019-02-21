@@ -2,182 +2,137 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5102BC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB462C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:46:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1628F2147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:46:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 986B620855
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:46:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="si3ZOYpx";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AtlucQrG"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="5d0bFzU6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727760AbfBULqK (ORCPT
+        id S1727547AbfBULqF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 06:46:10 -0500
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:34717 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726697AbfBULqJ (ORCPT
+        Thu, 21 Feb 2019 06:46:05 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:42554 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726684AbfBULqB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 06:46:09 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 474E631B9;
-        Thu, 21 Feb 2019 06:46:07 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Thu, 21 Feb 2019 06:46:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=e88mvsuJNRgqHBNnXywhB+0YLy7
-        spBkA9JDbVpRqGZE=; b=si3ZOYpxLMDEStSLq9gGCC9PMjDZB359n2CGOG2Q8YV
-        RhJPiMZ+GLNWbZn40ysWN8sccdQ8OxMoIZiIZ25KCSxy9EZwOS7pgvNdLlP0kTnD
-        DcqIORu/MuX+b9vtpSmyB1kw8Z9rexsrYsCl6nHIrZAnwKhzwEyIUT/j16WIiiPK
-        1Y7zLI6phAw7RDg+1yuLHK53YB+M6YUol5zFo6gmIprxi4CtbKw9nUDu5I2UbXRv
-        ybMY0SDcf9T8Lw/c1TYln/He1wxXl/k5SXyZbeKZkv6Lg4fRZG6utvMRBmS4Y77/
-        hAoiVpB3fCcx3igglJiCsFHNRnPUeeKTxFHuHAYW56A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=e88mvs
-        uJNRgqHBNnXywhB+0YLy7spBkA9JDbVpRqGZE=; b=AtlucQrG4ZX8cWWxj6KJhX
-        XGx7jlbPZDyT61QdUHFewOk/NEBvOFKEGW4dVS0IQFU0bZpxixbSPDgyrIOtlyWF
-        iCywF+ENJdyf4aPEFBS+rMUqFVSBxaRCL8XdlCWCd1Rv1yG+uIc9qZwo8K1r7z6S
-        tVwIi1ivsvuPGpOy8RIgSSYsk+JFmAdsMq6LVCiPJnnjsK1becJBJCkyq11Pfjyb
-        49jSdx/CvfagOdKv84l8sarZ0JVHo+1HafX4EGktyoeVZzLyXJP4CUyuW9+B1Nqe
-        kbELJd7AllcnSoT+CI8pve2MpDoq5/hb5o6FRsTtuLYq00suw9DRvHMDmLJ/LQvg
-        ==
-X-ME-Sender: <xms:fo9uXEpFecxFbyHuAfma8UtuhWJVpnXvDu7ELDKPsdQi7ZhDPGzfGw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrtdekgdeffeculddtuddrgedtledrtddtmd
-    cutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvuffkfhggtggujggfsehttd
-    ertddtredvnecuhfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhm
-    qeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhgihhthhhusgdrtghomhdpghhnuh
-    drohhrghenucfkphepkeefrdekiedrkeelrddutdejnecurfgrrhgrmhepmhgrihhlfhhr
-    ohhmpehgrhgvgheskhhrohgrhhdrtghomhenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:fo9uXE6v2hyiNTk9l8OcRmPyhCsA5H2xOnaDibSIjMn_2l9T8QEPaQ>
-    <xmx:fo9uXOpTrZ90H5vGkxStQ5D4Igq1hlkDWHlFHkx_-o9sL_9su4hSXg>
-    <xmx:fo9uXCIWiEgMHb_TZ1gjndLt_XlnkyYZiz7B3wFbhaPLTTh3Su2qxw>
-    <xmx:fo9uXMWZHnGycemH2090jccAMlW4p2FGWXsMnayZ6VNhRhmQ37nYHg>
-Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 21C56E454E;
-        Thu, 21 Feb 2019 06:46:06 -0500 (EST)
-Date:   Thu, 21 Feb 2019 12:46:04 +0100
-From:   Greg KH <greg@kroah.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     cai@lca.pw, stable-commits@vger.kernel.org
-Subject: Re: Patch "x86_64: increase stack size for KASAN_EXTRA" has been
- added to the 4.20-stable tree
-Message-ID: <20190221114604.GE10737@kroah.com>
-References: <20190221054324.DDCE9214AF@mail.kernel.org>
+        Thu, 21 Feb 2019 06:46:01 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1LBhikK026679;
+        Thu, 21 Feb 2019 11:45:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=Ba56OhV4U5fdnKqj0DAsFEfOsTPbQnQh9bKnjWL81Js=;
+ b=5d0bFzU68fTDrZKFM90n/ePecS4MtjsvOpToE1uC6m0f/H72LLmuECxRb4bjXNPaaINu
+ DhZqsU4DEqclsjtPy0c6wuMMwrrPXAhGElErASm0IkX+1365sYyw910FccfAc/KIxC3j
+ Rzb32cBS88com0KpAdy9TeAXZfZGq+soGDtADfWi7Dst+AUkc1SSKb314a+lHTi/Llp0
+ WnZBf0Pxt/lnnbvChyg47K3evnIJwWIEeqAMODqUuCYcuvnRYLAt3t45t77HLOwORKlk
+ wuxrfj1r7eN8vjqEmHFrPDwlbz7pkYNIWp41ofcePfu5Io9qBK3C2ZpRtxXctpvQXWhH sQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2qpb5rqbkv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Feb 2019 11:45:41 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1LBjdlX031560
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Feb 2019 11:45:40 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1LBjdFW024966;
+        Thu, 21 Feb 2019 11:45:39 GMT
+Received: from [192.168.1.67] (/94.61.137.133)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 21 Feb 2019 03:45:39 -0800
+Subject: Re: [PATCH RFC 00/39] x86/KVM: Xen HVM guest support
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ankur Arora <ankur.a.arora@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel@lists.xenproject.org
+References: <20190220201609.28290-1-joao.m.martins@oracle.com>
+ <35051310-c497-8ad5-4434-1b8426a317d2@redhat.com>
+From:   Joao Martins <joao.m.martins@oracle.com>
+Message-ID: <8b1f4912-4f92-69ae-ae01-d899d5640572@oracle.com>
+Date:   Thu, 21 Feb 2019 11:45:32 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190221054324.DDCE9214AF@mail.kernel.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <35051310-c497-8ad5-4434-1b8426a317d2@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9173 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902210087
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 12:43:23AM -0500, Sasha Levin wrote:
-> This is a note to let you know that I've just added the patch titled
+On 2/20/19 9:09 PM, Paolo Bonzini wrote:
+> On 20/02/19 21:15, Joao Martins wrote:
+>>  2. PV Driver support (patches 17 - 39)
+>>
+>>  We start by redirecting hypercalls from the backend to routines
+>>  which emulate the behaviour that PV backends expect i.e. grant
+>>  table and interdomain events. Next, we add support for late
+>>  initialization of xenbus, followed by implementing
+>>  frontend/backend communication mechanisms (i.e. grant tables and
+>>  interdomain event channels). Finally, introduce xen-shim.ko,
+>>  which will setup a limited Xen environment. This uses the added
+>>  functionality of Xen specific shared memory (grant tables) and
+>>  notifications (event channels).
 > 
->     x86_64: increase stack size for KASAN_EXTRA
+> I am a bit worried by the last patches, they seem really brittle and
+> prone to breakage.  I don't know Xen well enough to understand if the
+> lack of support for GNTMAP_host_map is fixable, but if not, you have to
+> define a completely different hypercall.
 > 
-> to the 4.20-stable tree which can be found at:
->     http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
-> 
-> The filename of the patch is:
->      x86_64-increase-stack-size-for-kasan_extra.patch
-> and it can be found in the queue-4.20 subdirectory.
-> 
-> If you, or anyone else, feels it should not be added to the stable tree,
-> please let <stable@vger.kernel.org> know about it.
-> 
-> 
-> 
-> commit 67fd2fd35761d6bb8dcebe5070960c2f0baaef69
-> Author: Qian Cai <cai@lca.pw>
-> Date:   Fri Feb 1 14:20:20 2019 -0800
-> 
->     x86_64: increase stack size for KASAN_EXTRA
->     
->     [ Upstream commit a8e911d13540487942d53137c156bd7707f66e5d ]
->     
->     If the kernel is configured with KASAN_EXTRA, the stack size is
->     increasted significantly because this option sets "-fstack-reuse" to
->     "none" in GCC [1].  As a result, it triggers stack overrun quite often
->     with 32k stack size compiled using GCC 8.  For example, this reproducer
->     
->       https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/syscalls/madvise/madvise06.c
->     
->     triggers a "corrupted stack end detected inside scheduler" very reliably
->     with CONFIG_SCHED_STACK_END_CHECK enabled.
->     
->     There are just too many functions that could have a large stack with
->     KASAN_EXTRA due to large local variables that have been called over and
->     over again without being able to reuse the stacks.  Some noticiable ones
->     are
->     
->       size
->       7648 shrink_page_list
->       3584 xfs_rmap_convert
->       3312 migrate_page_move_mapping
->       3312 dev_ethtool
->       3200 migrate_misplaced_transhuge_page
->       3168 copy_process
->     
->     There are other 49 functions are over 2k in size while compiling kernel
->     with "-Wframe-larger-than=" even with a related minimal config on this
->     machine.  Hence, it is too much work to change Makefiles for each object
->     to compile without "-fsanitize-address-use-after-scope" individually.
->     
->     [1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715#c23
->     
->     Although there is a patch in GCC 9 to help the situation, GCC 9 probably
->     won't be released in a few months and then it probably take another
->     6-month to 1-year for all major distros to include it as a default.
->     Hence, the stack usage with KASAN_EXTRA can be revisited again in 2020
->     when GCC 9 is everywhere.  Until then, this patch will help users avoid
->     stack overrun.
->     
->     This has already been fixed for arm64 for the same reason via
->     6e8830674ea ("arm64: kasan: Increase stack size for KASAN_EXTRA").
->     
->     Link: http://lkml.kernel.org/r/20190109215209.2903-1-cai@lca.pw
->     Signed-off-by: Qian Cai <cai@lca.pw>
->     Cc: Thomas Gleixner <tglx@linutronix.de>
->     Cc: Ingo Molnar <mingo@redhat.com>
->     Cc: Borislav Petkov <bp@alien8.de>
->     Cc: "H. Peter Anvin" <hpa@zytor.com>
->     Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
->     Cc: Alexander Potapenko <glider@google.com>
->     Cc: Dmitry Vyukov <dvyukov@google.com>
->     Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
->     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
->     Signed-off-by: Sasha Levin <sashal@kernel.org>
-> 
-> diff --git a/arch/x86/include/asm/page_64_types.h b/arch/x86/include/asm/page_64_types.h
-> index 8f657286d599a..0ce558a8150d3 100644
-> --- a/arch/x86/include/asm/page_64_types.h
-> +++ b/arch/x86/include/asm/page_64_types.h
-> @@ -7,7 +7,11 @@
->  #endif
->  
->  #ifdef CONFIG_KASAN
-> +#ifdef CONFIG_KASAN_EXTRA
-> +#define KASAN_STACK_ORDER 2
-> +#else
->  #define KASAN_STACK_ORDER 1
-> +#endif
->  #else
->  #define KASAN_STACK_ORDER 0
->  #endif
+I guess Ankur already answered this; so just to stack this on top of his comment.
 
-This looks like it is also relevant for 4.19.y so I have queued it up
-there too.
+The xen_shim_domain() is only meant to handle the case where the backend
+has/can-have full access to guest memory [i.e. netback and blkback would work
+with similar assumptions as vhost?]. For the normal case, where a backend *in a
+guest* maps and unmaps other guest memory, this is not applicable and these
+changes don't affect that case.
 
-greg k-h
+IOW, the PV backend here sits on the hypervisor, and the hypercalls aren't
+actual hypercalls but rather invoking shim_hypercall(). The call chain would go
+more or less like:
+
+<netback|blkback|scsiback>
+ gnttab_map_refs(map_ops, pages)
+   HYPERVISOR_grant_table_op(GNTTABOP_map_grant_ref,...)
+     shim_hypercall()
+       shim_hcall_gntmap()
+
+Our reasoning was that given we are already in KVM, why mapping a page if the
+user (i.e. the kernel PV backend) is himself? The lack of GNTMAP_host_map is how
+the shim determines its user doesn't want to map the page. Also, there's another
+issue where PV backends always need a struct page to reference the device
+inflight data as Ankur pointed out.
+
+> Of course, tests are missing.
+
+FWIW: this was deliberate as we wanted to get folks impressions before
+proceeding further with the work.
+
+> You should use the
+> tools/testing/selftests/kvm/ framework, and ideally each patch should
+> come with coverage for the newly-added code.
+> Got it.
+
+Cheers,
+	Joao
