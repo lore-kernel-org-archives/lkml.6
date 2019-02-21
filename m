@@ -4,51 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05192C00319
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D289AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:36:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEBCD20838
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:36:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A19FB20838
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:36:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550759800;
-	bh=KXI5E5SH+tSq5ROmCHbYiOyYISfurIMSELZR31L5+1k=;
+	s=default; t=1550759805;
+	bh=26ClJN1DQp2RlucG+ba1Rj/fWhTZZc4evasXUnpqvaU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zMmD7lMifA7vqmmDuimpFse1mbauf1nOP5O0YzmHJJ4+z5wwADTFtCYixWPsEKHAT
-	 Qn6YkKVprNu8MnkIXV7XGJLKse0UvkJTFm6PUNG3p/X7mUvb+hrfXTyt18aR1daqY5
-	 YsyVdSiEzRct1rceHs4pPo7TeZdQAuiHVM21M/Bs=
+	b=IOxsw8YETiemvvU3RbJ9ZLy5YvX7DZv3g9Jp0tlmUcd69zvBo3p5QOu0DahHUtUb2
+	 5zf3K/x4SOn3pB7pW3Hga32I/RAWpUR9QC8P60g+pekGTLdUIT6jDQQNN3JZCUmDD6
+	 0pU7B5iiGs4nCfA5/DnhwCFj6FZ2qStteLAq4+4Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727978AbfBUOgj (ORCPT
+        id S1728067AbfBUOgo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:36:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57428 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:36:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725385AbfBUOgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:36:39 -0500
+        id S1725385AbfBUOgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:36:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F1222075C;
-        Thu, 21 Feb 2019 14:36:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E5AF2084D;
+        Thu, 21 Feb 2019 14:36:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550759798;
-        bh=KXI5E5SH+tSq5ROmCHbYiOyYISfurIMSELZR31L5+1k=;
+        s=default; t=1550759801;
+        bh=26ClJN1DQp2RlucG+ba1Rj/fWhTZZc4evasXUnpqvaU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ObTSbL7sWsFse5oruJpT/80nxKatdbVM81m6o/kqTdYtMXPBWAV6KNPKXG3ZCeeF3
-         e2r4lKrpFObtwlX//mu/yseTR1ueE/g57iHn+ifUq8foB6Y9CUHBw3gqnGUtobySet
-         Sn9VPsMnOblEYSvkk3bG1Cflvnq5QbaNgk1nNB3c=
+        b=gdT6l23BYzJCObcS2CKAHzbI6NafUsQnTGkL6zNSoC3SLoxVzENUksC6/ZHGKGcLW
+         Bui0wKR33rFbASxb54d3ykwH+t8QrSmJufu2LdRR3VVFBMHYDOIxh/vLcc85i7uXgU
+         wklMw45NNmbTPhzrmxRY4HFtUMH+l79HhC89rdb4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhiqiang Liu <liuzhiqiang26@huawei.com>,
-        Wenhao Zhang <zhangwenhao8@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 01/13] net: fix IPv6 prefix route residue
-Date:   Thu, 21 Feb 2019 15:35:32 +0100
-Message-Id: <20190221125240.247459516@linuxfoundation.org>
+        stable@vger.kernel.org, stable@kernel.org,
+        Jann Horn <jannh@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 3.18 10/13] kvm: fix kvm_ioctl_create_device() reference counting (CVE-2019-6974)
+Date:   Thu, 21 Feb 2019 15:35:41 +0100
+Message-Id: <20190221125241.305422019@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125240.091472334@linuxfoundation.org>
 References: <20190221125240.091472334@linuxfoundation.org>
@@ -67,44 +65,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e75913c93f7cd5f338ab373c34c93a655bd309cb ]
+From: Jann Horn <jannh@google.com>
 
-Follow those steps:
- # ip addr add 2001:123::1/32 dev eth0
- # ip addr add 2001:123:456::2/64 dev eth0
- # ip addr del 2001:123::1/32 dev eth0
- # ip addr del 2001:123:456::2/64 dev eth0
-and then prefix route of 2001:123::1/32 will still exist.
+commit cfa39381173d5f969daf43582c95ad679189cbc9 upstream.
 
-This is because ipv6_prefix_equal in check_cleanup_prefix_route
-func does not check whether two IPv6 addresses have the same
-prefix length. If the prefix of one address starts with another
-shorter address prefix, even though their prefix lengths are
-different, the return value of ipv6_prefix_equal is true.
+kvm_ioctl_create_device() does the following:
 
-Here I add a check of whether two addresses have the same prefix
-to decide whether their prefixes are equal.
+1. creates a device that holds a reference to the VM object (with a borrowed
+   reference, the VM's refcount has not been bumped yet)
+2. initializes the device
+3. transfers the reference to the device to the caller's file descriptor table
+4. calls kvm_get_kvm() to turn the borrowed reference to the VM into a real
+   reference
 
-Fixes: 5b84efecb7d9 ("ipv6 addrconf: don't cleanup prefix route for IFA_F_NOPREFIXROUTE")
-Signed-off-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
-Reported-by: Wenhao Zhang <zhangwenhao8@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The ownership transfer in step 3 must not happen before the reference to the VM
+becomes a proper, non-borrowed reference, which only happens in step 4.
+After step 3, an attacker can close the file descriptor and drop the borrowed
+reference, which can cause the refcount of the kvm object to drop to zero.
+
+This means that we need to grab a reference for the device before
+anon_inode_getfd(), otherwise the VM can disappear from under us.
+
+Fixes: 852b6d57dc7f ("kvm: add device control API")
+Cc: stable@kernel.org
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/ipv6/addrconf.c |    3 ++-
+ virt/kvm/kvm_main.c |    3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/addrconf.c
-+++ b/net/ipv6/addrconf.c
-@@ -949,7 +949,8 @@ check_cleanup_prefix_route(struct inet6_
- 	list_for_each_entry(ifa, &idev->addr_list, if_list) {
- 		if (ifa == ifp)
- 			continue;
--		if (!ipv6_prefix_equal(&ifa->addr, &ifp->addr,
-+		if (ifa->prefix_len != ifp->prefix_len ||
-+		    !ipv6_prefix_equal(&ifa->addr, &ifp->addr,
- 				       ifp->prefix_len))
- 			continue;
- 		if (ifa->flags & (IFA_F_PERMANENT | IFA_F_NOPREFIXROUTE))
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -2398,14 +2398,15 @@ static int kvm_ioctl_create_device(struc
+ 		return ret;
+ 	}
+ 
++	kvm_get_kvm(kvm);
+ 	ret = anon_inode_getfd(ops->name, &kvm_device_fops, dev, O_RDWR | O_CLOEXEC);
+ 	if (ret < 0) {
++		kvm_put_kvm(kvm);
+ 		ops->destroy(dev);
+ 		return ret;
+ 	}
+ 
+ 	list_add(&dev->vm_node, &kvm->devices);
+-	kvm_get_kvm(kvm);
+ 	cd->fd = ret;
+ 	return 0;
+ }
 
 
