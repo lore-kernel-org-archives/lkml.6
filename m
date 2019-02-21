@@ -2,230 +2,222 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E75C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 00:25:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA43AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 00:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DFF920855
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 00:25:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 979D620855
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 00:26:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="I6tgQuog"
+	dkim=pass (1024-bit key) header.d=axtens.net header.i=@axtens.net header.b="pWsD0VdG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbfBUAZU (ORCPT
+        id S1726687AbfBUA0x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 19:25:20 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:7565 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726137AbfBUAZU (ORCPT
+        Wed, 20 Feb 2019 19:26:53 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43170 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726137AbfBUA0x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 19:25:20 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c6deff40000>; Wed, 20 Feb 2019 16:25:24 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 20 Feb 2019 16:25:18 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 20 Feb 2019 16:25:18 -0800
-Received: from [10.2.169.124] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 21 Feb
- 2019 00:25:17 +0000
-Subject: Re: [PATCH 03/10] mm/hmm: improve and rename hmm_vma_get_pfns() to
- hmm_range_snapshot()
-To:     <jglisse@redhat.com>, <linux-mm@kvack.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ralph Campbell <rcampbell@nvidia.com>
-References: <20190129165428.3931-1-jglisse@redhat.com>
- <20190129165428.3931-4-jglisse@redhat.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <cc2d909c-37c6-4239-7755-4383a8eca0df@nvidia.com>
-Date:   Wed, 20 Feb 2019 16:25:07 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Wed, 20 Feb 2019 19:26:53 -0500
+Received: by mail-pg1-f194.google.com with SMTP id l11so1287748pgq.10
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 16:26:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=axtens.net; s=google;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=uhRUCA0MmYEEwglDwigd2zJXyv/Fpq3uG3+FonERY40=;
+        b=pWsD0VdGkbty8zY6p44MbOC7jp5aCpH/G86GSF9oBw+E+xo0Ffq6oOaXsqurUMBz0O
+         pMWuRLOs0czPRnN5PMKSLCdrn91OLrA/BztLScm7ZZMK/t9g2L6TN2D+5tROALrfSnRb
+         CRANjVgqLBRb/KJo1jXq8Ggib4Ztzc9tVvU6s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=uhRUCA0MmYEEwglDwigd2zJXyv/Fpq3uG3+FonERY40=;
+        b=NK4Ctu7rAlZWcTC6hf3VkwZcM4rJ6VQrVgumgF/fD+b9mymfxz5OiTZ93SxPIydAWD
+         oe3K7m9MVK0kEZH40kxK87GQfmtqZn/CA9l403EwTeqpdIG3UOPRQTzCDO7SPIrNi9MA
+         DvjhMAhnItdERtRKSvQe23JLyyqGCjTJ9YbgAwfL5WuvEtIS696vrP5QKUv9aKaFVTrw
+         5KlcMl0rpqzINQXXhscilFqxtANRiwmYhuw9HlgjdomRue+XYSgxnXf6H9bh+nnpnmjH
+         4FYS1WMYlTB/xFw3Ab3W48IhlsIiPk8Cq3YsIYKN4IaE+okmP2IGerYc5kQ0XpfAthzw
+         nU6g==
+X-Gm-Message-State: AHQUAuYZbhBrRmvhMKZGCvoKyJ4CaYpbXIVOrT7N4UOU1sQzI1274yBs
+        u6nfbUdFTk8pR7JfBoyLD1Muew==
+X-Google-Smtp-Source: AHgI3IaS04/eb+mR9xR5310/LeqPinEgijpKKKM1Q7k6rR1Xe8bzPpuO6Hxro02jIjnYI0wJz9C0uw==
+X-Received: by 2002:a63:7341:: with SMTP id d1mr17881039pgn.405.1550708812209;
+        Wed, 20 Feb 2019 16:26:52 -0800 (PST)
+Received: from localhost ([2001:44b8:802:1120:3c28:35e8:eceb:6523])
+        by smtp.gmail.com with ESMTPSA id h63sm13590990pfd.148.2019.02.20.16.26.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Feb 2019 16:26:50 -0800 (PST)
+From:   Daniel Axtens <dja@axtens.net>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Subject: Re: [PATCH v2] powerpc/prom_init: add __init markers to all functions
+In-Reply-To: <1550641996-21937-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1550641996-21937-1-git-send-email-yamada.masahiro@socionext.com>
+Date:   Thu, 21 Feb 2019 11:26:47 +1100
+Message-ID: <87d0nm9ebc.fsf@linkitivity.dja.id.au>
 MIME-Version: 1.0
-In-Reply-To: <20190129165428.3931-4-jglisse@redhat.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1550708724; bh=dFWrCIETKXjg1FNqFb1me5bCDn/NW3Z/3TsvBhl4xRU=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=I6tgQuog86qv6gu1dhnEdEk72Zm7NdftP96EfqGPweBvT2ZUu31lvTrE6mpAj2CeU
-         lJNcCeXEtXq5OvEdGjKH3Bb/Bsf2JTGPDQyQONBhJaKYOyB/jeDQkFaQr9e6d4q6Z7
-         Pr6P3iDGF5ALPBiard7zbm7SlHWArESTa/lntDBqxSQyGr6JScpdcGtDj47E3YXsSu
-         xAP1iDj84rART96QHRN+EfzXH4oNGPfo4HqyWhrZ8C9FE8lUZV6kzc5wcFDB6nLTWW
-         ZaoK4pBYw77SrwAguTS83eIJjkcQod+vtV9mR5K3tADcokFTAL7+K09uAcMTOQMNtw
-         twK/pe5LbPkOQ==
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/29/19 8:54 AM, jglisse@redhat.com wrote:
-> From: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
->=20
-> Rename for consistency between code, comments and documentation. Also
-> improves the comments on all the possible returns values. Improve the
-> function by returning the number of populated entries in pfns array.
->=20
-> Signed-off-by: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Ralph Campbell <rcampbell@nvidia.com>
-> Cc: John Hubbard <jhubbard@nvidia.com>
+Hi Masahiro,
+
+> It is fragile to rely on the compiler's optimization to avoid the
+> section mismatch. Some functions may not be necessarily inlined
+> when the compiler's inlining heuristic changes.
+>
+> Add __init markers consistently.
+>
+
+Are you doing this with some sort of static analysis, or manually?
+
+Regards,
+Daniel
+
+> As for prom_getprop() and prom_getproplen(), they are marked as
+> 'inline', so inlining is guaranteed because PowerPC never enables
+> CONFIG_OPTIMIZE_INLINING. However, it would be better to leave the
+> inlining decision to the compiler. I replaced 'inline' with __init.
+> I added __maybe_unused to prom_getproplen() because it is currently
+> relying on the side-effect of 'inline'; GCC does not report
+> -Wunused-function warnings for functions with 'inline' marker.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > ---
->   include/linux/hmm.h |  4 ++--
->   mm/hmm.c            | 23 ++++++++++-------------
->   2 files changed, 12 insertions(+), 15 deletions(-)
->=20
-
-Hi Jerome,
-
-After applying the entire patchset, I still see a few hits of the old name,
-in Documentation:
-
-$ git grep -n hmm_vma_get_pfns
-Documentation/vm/hmm.rst:192:  int hmm_vma_get_pfns(struct vm_area_struct *=
-vma,
-Documentation/vm/hmm.rst:205:The first one (hmm_vma_get_pfns()) will only f=
-etch=20
-present CPU page table
-Documentation/vm/hmm.rst:224:      ret =3D hmm_vma_get_pfns(vma, &range, st=
-art,=20
-end, pfns);
-include/linux/hmm.h:145: * HMM pfn value returned by hmm_vma_get_pfns() or=
-=20
-hmm_vma_fault() will be:
-
-
-> diff --git a/include/linux/hmm.h b/include/linux/hmm.h
-> index bd6e058597a6..ddf49c1b1f5e 100644
-> --- a/include/linux/hmm.h
-> +++ b/include/linux/hmm.h
-> @@ -365,11 +365,11 @@ void hmm_mirror_unregister(struct hmm_mirror *mirro=
-r);
->    * table invalidation serializes on it.
->    *
->    * YOU MUST CALL hmm_vma_range_done() ONCE AND ONLY ONCE EACH TIME YOU =
-CALL
-> - * hmm_vma_get_pfns() WITHOUT ERROR !
-> + * hmm_range_snapshot() WITHOUT ERROR !
->    *
->    * IF YOU DO NOT FOLLOW THE ABOVE RULE THE SNAPSHOT CONTENT MIGHT BE IN=
-VALID !
->    */
-> -int hmm_vma_get_pfns(struct hmm_range *range);
-> +long hmm_range_snapshot(struct hmm_range *range);
->   bool hmm_vma_range_done(struct hmm_range *range);
->  =20
->  =20
-> diff --git a/mm/hmm.c b/mm/hmm.c
-> index 74d69812d6be..0d9ecd3337e5 100644
-> --- a/mm/hmm.c
-> +++ b/mm/hmm.c
-> @@ -706,23 +706,19 @@ static void hmm_pfns_special(struct hmm_range *rang=
-e)
->   }
->  =20
->   /*
-> - * hmm_vma_get_pfns() - snapshot CPU page table for a range of virtual a=
-ddresses
-> - * @range: range being snapshotted
-> + * hmm_range_snapshot() - snapshot CPU page table for a range
-> + * @range: range
->    * Returns: -EINVAL if invalid argument, -ENOMEM out of memory, -EPERM =
-invalid
-
-Channeling Mike Rapoport, that should be @Return: instead of Returns: , but=
-...
-
-
-> - *          vma permission, 0 success
-> + *          permission (for instance asking for write and range is read =
-only),
-> + *          -EAGAIN if you need to retry, -EFAULT invalid (ie either no =
-valid
-> + *          vma or it is illegal to access that range), number of valid =
-pages
-> + *          in range->pfns[] (from range start address).
-
-...actually, that's a little hard to spot that we're returning number of va=
-lid=20
-pages. How about:
-
-  * @Returns: number of valid pages in range->pfns[] (from range start
-  *           address). This may be zero. If the return value is negative,
-  *           then one of the following values may be returned:
-  *
-  *           -EINVAL  range->invalid is set, or range->start or range->end
-  *                    are not valid.
-  *           -EPERM   For example, asking for write, when the range is
-  *      	      read-only
-  *           -EAGAIN  Caller needs to retry
-  *           -EFAULT  Either no valid vma exists for this range, or it is
-  *                    illegal to access the range
-
-(caution: my white space might be wrong with respect to tabs)
-
->    *
->    * This snapshots the CPU page table for a range of virtual addresses. =
-Snapshot
->    * validity is tracked by range struct. See hmm_vma_range_done() for fu=
-rther
->    * information.
-> - *
-> - * The range struct is initialized here. It tracks the CPU page table, b=
-ut only
-> - * if the function returns success (0), in which case the caller must th=
-en call
-> - * hmm_vma_range_done() to stop CPU page table update tracking on this r=
-ange.
-> - *
-> - * NOT CALLING hmm_vma_range_done() IF FUNCTION RETURNS 0 WILL LEAD TO S=
-ERIOUS
-> - * MEMORY CORRUPTION ! YOU HAVE BEEN WARNED !
->    */
-> -int hmm_vma_get_pfns(struct hmm_range *range)
-> +long hmm_range_snapshot(struct hmm_range *range)
->   {
->   	struct vm_area_struct *vma =3D range->vma;
->   	struct hmm_vma_walk hmm_vma_walk;
-> @@ -776,6 +772,7 @@ int hmm_vma_get_pfns(struct hmm_range *range)
->   	hmm_vma_walk.fault =3D false;
->   	hmm_vma_walk.range =3D range;
->   	mm_walk.private =3D &hmm_vma_walk;
-> +	hmm_vma_walk.last =3D range->start;
->  =20
->   	mm_walk.vma =3D vma;
->   	mm_walk.mm =3D vma->vm_mm;
-> @@ -792,9 +789,9 @@ int hmm_vma_get_pfns(struct hmm_range *range)
->   	 * function return 0).
->   	 */
->   	range->hmm =3D hmm;
-> -	return 0;
-> +	return (hmm_vma_walk.last - range->start) >> PAGE_SHIFT;
->   }
-> -EXPORT_SYMBOL(hmm_vma_get_pfns);
-> +EXPORT_SYMBOL(hmm_range_snapshot);
->  =20
->   /*
->    * hmm_vma_range_done() - stop tracking change to CPU page table over a=
- range
->=20
-
-Otherwise, looks good.
-
-thanks,
---=20
-John Hubbard
-NVIDIA
+>
+> Changes in v2:
+>   - Add __maybe_unsed to prom_getproplen()
+>   - Add __init to enter_prom() as well
+>
+>  arch/powerpc/kernel/prom_init.c | 29 +++++++++++++++--------------
+>  1 file changed, 15 insertions(+), 14 deletions(-)
+>
+> diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
+> index f33ff41..1bad0ac 100644
+> --- a/arch/powerpc/kernel/prom_init.c
+> +++ b/arch/powerpc/kernel/prom_init.c
+> @@ -138,9 +138,9 @@ extern void __start(unsigned long r3, unsigned long r4, unsigned long r5,
+>  		    unsigned long r9);
+>  
+>  #ifdef CONFIG_PPC64
+> -extern int enter_prom(struct prom_args *args, unsigned long entry);
+> +extern int __init enter_prom(struct prom_args *args, unsigned long entry);
+>  #else
+> -static inline int enter_prom(struct prom_args *args, unsigned long entry)
+> +static int __init enter_prom(struct prom_args *args, unsigned long entry)
+>  {
+>  	return ((int (*)(struct prom_args *))entry)(args);
+>  }
+> @@ -501,19 +501,20 @@ static int __init prom_next_node(phandle *nodep)
+>  	}
+>  }
+>  
+> -static inline int prom_getprop(phandle node, const char *pname,
+> +static int __init prom_getprop(phandle node, const char *pname,
+>  			       void *value, size_t valuelen)
+>  {
+>  	return call_prom("getprop", 4, 1, node, ADDR(pname),
+>  			 (u32)(unsigned long) value, (u32) valuelen);
+>  }
+>  
+> -static inline int prom_getproplen(phandle node, const char *pname)
+> +static int __init __maybe_unused prom_getproplen(phandle node,
+> +						 const char *pname)
+>  {
+>  	return call_prom("getproplen", 2, 1, node, ADDR(pname));
+>  }
+>  
+> -static void add_string(char **str, const char *q)
+> +static void __init add_string(char **str, const char *q)
+>  {
+>  	char *p = *str;
+>  
+> @@ -523,7 +524,7 @@ static void add_string(char **str, const char *q)
+>  	*str = p;
+>  }
+>  
+> -static char *tohex(unsigned int x)
+> +static char __init *tohex(unsigned int x)
+>  {
+>  	static const char digits[] __initconst = "0123456789abcdef";
+>  	static char result[9] __prombss;
+> @@ -570,7 +571,7 @@ static int __init prom_setprop(phandle node, const char *nodename,
+>  #define islower(c)	('a' <= (c) && (c) <= 'z')
+>  #define toupper(c)	(islower(c) ? ((c) - 'a' + 'A') : (c))
+>  
+> -static unsigned long prom_strtoul(const char *cp, const char **endp)
+> +static unsigned long __init prom_strtoul(const char *cp, const char **endp)
+>  {
+>  	unsigned long result = 0, base = 10, value;
+>  
+> @@ -595,7 +596,7 @@ static unsigned long prom_strtoul(const char *cp, const char **endp)
+>  	return result;
+>  }
+>  
+> -static unsigned long prom_memparse(const char *ptr, const char **retptr)
+> +static unsigned long __init prom_memparse(const char *ptr, const char **retptr)
+>  {
+>  	unsigned long ret = prom_strtoul(ptr, retptr);
+>  	int shift = 0;
+> @@ -2924,7 +2925,7 @@ static void __init fixup_device_tree_pasemi(void)
+>  	prom_setprop(iob, name, "device_type", "isa", sizeof("isa"));
+>  }
+>  #else	/* !CONFIG_PPC_PASEMI_NEMO */
+> -static inline void fixup_device_tree_pasemi(void) { }
+> +static void __init fixup_device_tree_pasemi(void) { }
+>  #endif
+>  
+>  static void __init fixup_device_tree(void)
+> @@ -2986,15 +2987,15 @@ static void __init prom_check_initrd(unsigned long r3, unsigned long r4)
+>  
+>  #ifdef CONFIG_PPC64
+>  #ifdef CONFIG_RELOCATABLE
+> -static void reloc_toc(void)
+> +static void __init reloc_toc(void)
+>  {
+>  }
+>  
+> -static void unreloc_toc(void)
+> +static void __init unreloc_toc(void)
+>  {
+>  }
+>  #else
+> -static void __reloc_toc(unsigned long offset, unsigned long nr_entries)
+> +static void __init __reloc_toc(unsigned long offset, unsigned long nr_entries)
+>  {
+>  	unsigned long i;
+>  	unsigned long *toc_entry;
+> @@ -3008,7 +3009,7 @@ static void __reloc_toc(unsigned long offset, unsigned long nr_entries)
+>  	}
+>  }
+>  
+> -static void reloc_toc(void)
+> +static void __init reloc_toc(void)
+>  {
+>  	unsigned long offset = reloc_offset();
+>  	unsigned long nr_entries =
+> @@ -3019,7 +3020,7 @@ static void reloc_toc(void)
+>  	mb();
+>  }
+>  
+> -static void unreloc_toc(void)
+> +static void __init unreloc_toc(void)
+>  {
+>  	unsigned long offset = reloc_offset();
+>  	unsigned long nr_entries =
+> -- 
+> 2.7.4
