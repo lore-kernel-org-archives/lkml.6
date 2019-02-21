@@ -3,207 +3,333 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F715C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2FDEC00319
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:18:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C37C2083B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:16:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9228220836
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:18:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726338AbfBUTQY (ORCPT
+        id S1726466AbfBUTSl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 14:16:24 -0500
-Received: from sandeen.net ([63.231.237.45]:34410 "EHLO sandeen.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726050AbfBUTQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 14:16:24 -0500
-Received: from [10.0.0.4] (liberator [10.0.0.4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id 2FA9687D;
-        Thu, 21 Feb 2019 13:16:06 -0600 (CST)
-Subject: [PATCH V2] test_sysctl: add proc_do_large_bitmap test function
-To:     Eric Sandeen <sandeen@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        fsdevel <linux-fsdevel@vger.kernel.org>, netdev@vger.kernel.org
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-References: <53be40fc-6ec4-c714-a64e-f69c96f7058f@redhat.com>
- <8166cf23-db52-7679-3378-8523889a9cd0@sandeen.net>
- <a8caf97b-9dbb-5846-7e93-242226a6c8c7@redhat.com>
-From:   Eric Sandeen <sandeen@sandeen.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
- mQINBE6x99QBEADMR+yNFBc1Y5avoUhzI/sdR9ANwznsNpiCtZlaO4pIWvqQJCjBzp96cpCs
- nQZV32nqJBYnDpBDITBqTa/EF+IrHx8gKq8TaSBLHUq2ju2gJJLfBoL7V3807PQcI18YzkF+
- WL05ODFQ2cemDhx5uLghHEeOxuGj+1AI+kh/FCzMedHc6k87Yu2ZuaWF+Gh1W2ix6hikRJmQ
- vj5BEeAx7xKkyBhzdbNIbbjV/iGi9b26B/dNcyd5w2My2gxMtxaiP7q5b6GM2rsQklHP8FtW
- ZiYO7jsg/qIppR1C6Zr5jK1GQlMUIclYFeBbKggJ9mSwXJH7MIftilGQ8KDvNuV5AbkronGC
- sEEHj2khs7GfVv4pmUUHf1MRIvV0x3WJkpmhuZaYg8AdJlyGKgp+TQ7B+wCjNTdVqMI1vDk2
- BS6Rg851ay7AypbCPx2w4d8jIkQEgNjACHVDU89PNKAjScK1aTnW+HNUqg9BliCvuX5g4z2j
- gJBs57loTWAGe2Ve3cMy3VoQ40Wt3yKK0Eno8jfgzgb48wyycINZgnseMRhxc2c8hd51tftK
- LKhPj4c7uqjnBjrgOVaVBupGUmvLiePlnW56zJZ51BR5igWnILeOJ1ZIcf7KsaHyE6B1mG+X
- dmYtjDhjf3NAcoBWJuj8euxMB6TcQN2MrSXy5wSKaw40evooGwARAQABtCVFcmljIFIuIFNh
- bmRlZW4gPHNhbmRlZW5Ac2FuZGVlbi5uZXQ+iQI7BBMBAgAlAhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgAUCUzMzbAIZAQAKCRAgrhaS4T3e4Fr7D/wO+fenqVvHjq21SCjDCrt8HdVj
- aJ28B1SqSU2toxyg5I160GllAxEHpLFGdbFAhQfBtnmlY9eMjwmJb0sCIrkrB6XNPSPA/B2B
- UPISh0z2odJv35/euJF71qIFgWzp2czJHkHWwVZaZpMWWNvsLIroXoR+uA9c2V1hQFVAJZyk
- EE4xzfm1+oVtjIC12B9tTCuS00pY3AUy21yzNowT6SSk7HAzmtG/PJ/uSB5wEkwldB6jVs2A
- sjOg1wMwVvh/JHilsQg4HSmDfObmZj1d0RWlMWcUE7csRnCE0ZWBMp/ttTn+oosioGa09HAS
- 9jAnauznmYg43oQ5Akd8iQRxz5I58F/+JsdKvWiyrPDfYZtFS+UIgWD7x+mHBZ53Qjazszox
- gjwO9ehZpwUQxBm4I0lPDAKw3HJA+GwwiubTSlq5PS3P7QoCjaV8llH1bNFZMz2o8wPANiDx
- 5FHgpRVgwLHakoCU1Gc+LXHXBzDXt7Cj02WYHdFzMm2hXaslRdhNGowLo1SXZFXa41KGTlNe
- 4di53y9CK5ynV0z+YUa+5LR6RdHrHtgywdKnjeWdqhoVpsWIeORtwWGX8evNOiKJ7j0RsHha
- WrePTubr5nuYTDsQqgc2r4aBIOpeSRR2brlT/UE3wGgy9LY78L4EwPR0MzzecfE1Ws60iSqw
- Pu3vhb7h3bkCDQROsffUARAA0DrUifTrXQzqxO8aiQOC5p9Tz25Np/Tfpv1rofOwL8VPBMvJ
- X4P5l1V2yd70MZRUVgjmCydEyxLJ6G2YyHO2IZTEajUY0Up+b3ErOpLpZwhvgWatjifpj6bB
- SKuDXeThqFdkphF5kAmgfVAIkan5SxWK3+S0V2F/oxstIViBhMhDwI6XsRlnVBoLLYcEilxA
- 2FlRUS7MOZGmRJkRtdGD5koVZSM6xVZQSmfEBaYQ/WJBGJQdPy94nnlAVn3lH3+N7pXvNUuC
- GV+t4YUt3tLcRuIpYBCOWlc7bpgeCps5Xa0dIZgJ8Louu6OBJ5vVXjPxTlkFdT0S0/uerCG5
- 1u8p6sGRLnUeAUGkQfIUqGUjW2rHaXgWNvzOV6i3tf9YaiXKl3avFaNW1kKBs0T5M1cnlWZU
- Utl6k04lz5OjoNY9J/bGyV3DSlkblXRMK87iLYQSrcV6cFz9PRl4vW1LGff3xRQHngeN5fPx
- ze8X5NE3hb+SSwyMSEqJxhVTXJVfQWWW0dQxP7HNwqmOWYF/6m+1gK/Y2gY3jAQnsWTru4RV
- TZGnKwEPmOCpSUvsTRXsVHgsWJ70qd0yOSjWuiv4b8vmD3+QFgyvCBxPMdP3xsxN5etheLMO
- gRwWpLn6yNFq/xtgs+ECgG+gR78yXQyA7iCs5tFs2OrMqV5juSMGmn0kxJUAEQEAAYkCHwQY
- AQIACQUCTrH31AIbDAAKCRAgrhaS4T3e4BKwD/0ZOOmUNOZCSOLAMjZx3mtYtjYgfUNKi0ki
- YPveGoRWTqbis8UitPtNrG4XxgzLOijSdOEzQwkdOIp/QnZhGNssMejCnsluK0GQd+RkFVWN
- mcQT78hBeGcnEMAXZKq7bkIKzvc06GFmkMbX/gAl6DiNGv0UNAX+5FYh+ucCJZSyAp3sA+9/
- LKjxnTedX0aygXA6rkpX0Y0FvN/9dfm47+LGq7WAqBOyYTU3E6/+Z72bZoG/cG7ANLxcPool
- LOrU43oqFnD8QwcN56y4VfFj3/jDF2MX3xu4v2OjglVjMEYHTCxP3mpxesGHuqOit/FR+mF0
- MP9JGfj6x+bj/9JMBtCW1bY/aPeMdPGTJvXjGtOVYblGZrSjXRn5++Uuy36CvkcrjuziSDG+
- JEexGxczWwN4mrOQWhMT5Jyb+18CO+CWxJfHaYXiLEW7dI1AynL4jjn4W0MSiXpWDUw+fsBO
- Pk6ah10C4+R1Jc7dyUsKksMfvvhRX1hTIXhth85H16706bneTayZBhlZ/hK18uqTX+s0onG/
- m1F3vYvdlE4p2ts1mmixMF7KajN9/E5RQtiSArvKTbfsB6Two4MthIuLuf+M0mI4gPl9SPlf
- fWCYVPhaU9o83y1KFbD/+lh1pjP7bEu/YudBvz7F2Myjh4/9GUAijrCTNeDTDAgvIJDjXuLX pA==
-Message-ID: <b89edbe2-0fc3-b99d-a54a-7a1053082f07@sandeen.net>
-Date:   Thu, 21 Feb 2019 13:16:22 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.5.0
+        Thu, 21 Feb 2019 14:18:41 -0500
+Received: from relay11.mail.gandi.net ([217.70.178.231]:36041 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726050AbfBUTSl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 14:18:41 -0500
+Received: from webmail.gandi.net (webmail6.sd4.0x35.net [10.200.201.6])
+        (Authenticated sender: contact@artur-rojek.eu)
+        by relay11.mail.gandi.net (Postfix) with ESMTPA id 3F6AA100008;
+        Thu, 21 Feb 2019 19:18:36 +0000 (UTC)
 MIME-Version: 1.0
-In-Reply-To: <a8caf97b-9dbb-5846-7e93-242226a6c8c7@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 21 Feb 2019 20:18:36 +0100
+From:   Artur Rojek <contact@artur-rojek.eu>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH 5/7] power: supply: add Ingenic JZ47xx battery driver.
+In-Reply-To: <20190220111441.585eb3eb@archlinux>
+References: <20190217142914.17433-1-contact@artur-rojek.eu>
+ <20190217142914.17433-5-contact@artur-rojek.eu>
+ <20190220111441.585eb3eb@archlinux>
+Message-ID: <a53ba58dddea94c011d2ec839d438c51@artur-rojek.eu>
+X-Sender: contact@artur-rojek.eu
+User-Agent: Roundcube Webmail/1.1.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add test to build up bitmap range string and test the bitmap
-proc handler.
+On 2019-02-20 12:14, Jonathan Cameron wrote:
+> On Sun, 17 Feb 2019 15:29:14 +0100
+> Artur Rojek <contact@artur-rojek.eu> wrote:
+> 
+>> Add a driver for battery present on Ingenic JZ47xx SoCs.
+>> 
+>> Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
+> A few things inline.
+> 
+> thanks,
+> 
+> Jonathan
+Hi Jonathan.
 
-Signed-off-by: Eric Sandeen <sandeen@redhat.com>
----
+One thing inline.
 
-V2: set rc=0 for test success
-
-however this still fails indeterminately for me.  Debugging, if I
-save off the test write string and the read string, re-writing it to
-the handler works fine.  My standalone test also works fine for 1000
-iterations.  So I don't know what's going on here.
-
-nb: test_modprobe & load_req_mod fail for me before we ever
-get to this test, but commenting them out, my test runs as expected.
-I'm new to this script, so careful review would be wise. 
-
-Thanks,
--Eric
-
-
-diff --git a/tools/testing/selftests/sysctl/sysctl.sh b/tools/testing/selftests/sysctl/sysctl.sh
-index 584eb8ea780a..e531074f94bd 100755
---- a/tools/testing/selftests/sysctl/sysctl.sh
-+++ b/tools/testing/selftests/sysctl/sysctl.sh
-@@ -37,6 +37,7 @@ ALL_TESTS="$ALL_TESTS 0002:1:1"
- ALL_TESTS="$ALL_TESTS 0003:1:1"
- ALL_TESTS="$ALL_TESTS 0004:1:1"
- ALL_TESTS="$ALL_TESTS 0005:3:1"
-+ALL_TESTS="$ALL_TESTS 0006:3:1"
- 
- test_modprobe()
- {
-@@ -149,6 +150,9 @@ reset_vals()
- 		string_0001)
- 			VAL="(none)"
- 			;;
-+		bitmap_0001)
-+			VAL=""
-+			;;
- 		*)
- 			;;
- 	esac
-@@ -548,6 +552,48 @@ run_stringtests()
- 	test_rc
- }
- 
-+run_bitmaptest() {
-+	# Total length of bitmaps string to use, a bit under
-+	# the maximum input size of the test node
-+	LENGTH=$((RANDOM % 65000))
-+
-+	# First bit to set
-+	BIT=$((RANDOM % 1024))
-+
-+	# String containing our list of bits to set
-+	TEST_STR=$BIT
-+
-+	# build up the string
-+	while [ "${#TEST_STR}" -le "$LENGTH" ]; do
-+		# Make sure next entry is discontiguous,
-+		# skip ahead at least 2
-+		BIT=$((BIT + $((2 + RANDOM % 10))))
-+
-+		# Add new bit to the list
-+		TEST_STR="${TEST_STR},${BIT}"
-+
-+		# Randomly make it a range
-+		if [ "$((RANDOM % 2))" -eq "1" ]; then
-+			RANGE_END=$((BIT + $((1 + RANDOM % 10))))
-+			TEST_STR="${TEST_STR}-${RANGE_END}"
-+			BIT=$RANGE_END
-+		fi
-+	done
-+
-+	echo -n "Checking bitmap handler... "
-+	echo $TEST_STR > /tmp/test_str
-+	echo -n $TEST_STR > $TARGET 2> /dev/null
-+
-+	if verify "${TARGET}"; then
-+		echo "FAIL" >&2
-+		rc=1
-+	else
-+		echo "ok"
-+		rc=0
-+	fi
-+	test_rc
-+}
-+
- sysctl_test_0001()
- {
- 	TARGET="${SYSCTL}/int_0001"
-@@ -605,6 +651,14 @@ sysctl_test_0005()
- 	run_limit_digit_int_array
- }
- 
-+sysctl_test_0006()
-+{
-+	TARGET="${SYSCTL}/bitmap_0001"
-+	reset_vals
-+	ORIG=""
-+	run_bitmaptest
-+}
-+
- list_tests()
- {
- 	echo "Test ID list:"
-@@ -618,6 +672,7 @@ list_tests()
- 	echo "0003 x $(get_test_count 0003) - tests proc_dointvec()"
- 	echo "0004 x $(get_test_count 0004) - tests proc_douintvec()"
- 	echo "0005 x $(get_test_count 0005) - tests proc_douintvec() array"
-+	echo "0006 x $(get_test_count 0006) - tests proc_do_large_bitmap"
- }
- 
- test_reqs
+Artur
+> 
+>> ---
+>>  drivers/power/supply/Kconfig           |  11 ++
+>>  drivers/power/supply/Makefile          |   1 +
+>>  drivers/power/supply/ingenic-battery.c | 182 
+>> +++++++++++++++++++++++++
+>>  3 files changed, 194 insertions(+)
+>>  create mode 100644 drivers/power/supply/ingenic-battery.c
+>> 
+>> diff --git a/drivers/power/supply/Kconfig 
+>> b/drivers/power/supply/Kconfig
+>> index e901b9879e7e..9bfb1637ec28 100644
+>> --- a/drivers/power/supply/Kconfig
+>> +++ b/drivers/power/supply/Kconfig
+>> @@ -169,6 +169,17 @@ config BATTERY_COLLIE
+>>  	  Say Y to enable support for the battery on the Sharp Zaurus
+>>  	  SL-5500 (collie) models.
+>> 
+>> +config BATTERY_INGENIC
+>> +	tristate "Ingenic JZ47xx SoCs battery driver"
+>> +	depends on MIPS || COMPILE_TEST
+>> +	depends on INGENIC_ADC
+>> +	help
+>> +	  Choose this option if you want to monitor battery status on
+>> +	  Ingenic JZ47xx SoC based devices.
+>> +
+>> +	  This driver can also be built as a module. If so, the module will 
+>> be
+>> +	  called ingenic-battery.
+>> +
+>>  config BATTERY_IPAQ_MICRO
+>>  	tristate "iPAQ Atmel Micro ASIC battery driver"
+>>  	depends on MFD_IPAQ_MICRO
+>> diff --git a/drivers/power/supply/Makefile 
+>> b/drivers/power/supply/Makefile
+>> index b731c2a9b695..9e2c481d0187 100644
+>> --- a/drivers/power/supply/Makefile
+>> +++ b/drivers/power/supply/Makefile
+>> @@ -34,6 +34,7 @@ obj-$(CONFIG_BATTERY_PMU)	+= pmu_battery.o
+>>  obj-$(CONFIG_BATTERY_OLPC)	+= olpc_battery.o
+>>  obj-$(CONFIG_BATTERY_TOSA)	+= tosa_battery.o
+>>  obj-$(CONFIG_BATTERY_COLLIE)	+= collie_battery.o
+>> +obj-$(CONFIG_BATTERY_INGENIC)	+= ingenic-battery.o
+>>  obj-$(CONFIG_BATTERY_IPAQ_MICRO) += ipaq_micro_battery.o
+>>  obj-$(CONFIG_BATTERY_WM97XX)	+= wm97xx_battery.o
+>>  obj-$(CONFIG_BATTERY_SBS)	+= sbs-battery.o
+>> diff --git a/drivers/power/supply/ingenic-battery.c 
+>> b/drivers/power/supply/ingenic-battery.c
+>> new file mode 100644
+>> index 000000000000..4ee75c1ac241
+>> --- /dev/null
+>> +++ b/drivers/power/supply/ingenic-battery.c
+>> @@ -0,0 +1,182 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Battery driver for the Ingenic JZ47xx SoCs
+>> + * Copyright (c) 2019 Artur Rojek <contact@artur-rojek.eu>
+>> + *
+>> + * based on drivers/power/supply/jz4740-battery.c
+> 
+> What is the relationship between this driver and the older one?
+> 
+>> + */
+>> +
+>> +#include <linux/iio/consumer.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/power_supply.h>
+>> +#include <linux/property.h>
+>> +
+>> +struct ingenic_battery {
+>> +	struct device *dev;
+>> +	struct iio_channel *channel;
+>> +	struct power_supply_desc desc;
+>> +	struct power_supply *battery;
+>> +	struct power_supply_battery_info info;
+>> +};
+>> +
+>> +static int ingenic_battery_get_property(struct power_supply *psy,
+>> +					enum power_supply_property psp,
+>> +					union power_supply_propval *val)
+>> +{
+>> +	struct ingenic_battery *bat = power_supply_get_drvdata(psy);
+>> +	struct power_supply_battery_info *info = &bat->info;
+>> +	int ret = 0;
+>> +
+>> +	switch (psp) {
+>> +	case POWER_SUPPLY_PROP_HEALTH:
+>> +		ret = iio_read_channel_processed(bat->channel, &val->intval);
+>> +		val->intval *= 1000;
+>> +		if (val->intval < info->voltage_min_design_uv)
+>> +			val->intval = POWER_SUPPLY_HEALTH_DEAD;
+>> +		else if (val->intval > info->voltage_max_design_uv)
+>> +			val->intval = POWER_SUPPLY_HEALTH_OVERVOLTAGE;
+>> +		else
+>> +			val->intval = POWER_SUPPLY_HEALTH_GOOD;
+>> +	break;
+>> +	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
+>> +		ret = iio_read_channel_processed(bat->channel, &val->intval);
+>> +		val->intval *= 1000;
+>> +	break;
+>> +	case POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN:
+>> +		val->intval = info->voltage_min_design_uv;
+>> +	break;
+>> +	case POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN:
+>> +		val->intval = info->voltage_max_design_uv;
+>> +	break;
+>> +	default:
+>> +		return -EINVAL;
+>> +	};
+>> +
+> Can't get here, so drop.
+Execution actually does reach this point.
+Would you rather have me return in individual switch cases instead?
+> 
+>> +	return ret;
+>> +}
+>> +
+>> +/* Set the most appropriate IIO channel voltage reference scale
+>> + * based on the battery's max voltage.
+>> + */
+>> +static int ingenic_battery_set_scale(struct ingenic_battery *bat)
+>> +{
+>> +	const int *scale_raw;
+>> +	int scale_len, scale_type, best_idx = -1, best_mV, max_raw, i, ret;
+>> +	u64 max_mV;
+>> +
+>> +	ret = iio_read_max_channel_raw(bat->channel, &max_raw);
+>> +	if (ret) {
+>> +		dev_err(bat->dev, "Unable to read max raw channel value\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = iio_read_avail_channel_attribute(bat->channel, &scale_raw,
+>> +					       &scale_type, &scale_len,
+>> +					       IIO_CHAN_INFO_SCALE);
+>> +	if (ret < 0) {
+>> +		dev_err(bat->dev, "Unable to read channel avail scale\n");
+>> +		return ret;
+>> +	}
+> This works under the constraints of knowing what ADC we are talking to, 
+> but
+> this isn't generic.  The relationship between scale and the range isn't 
+> always
+> direct.  i.e. there are devices where you sample the same range at a 
+> lower
+> scale to be able to read it faster (can be thought of as oversampling, 
+> or
+> just not running the last stages of a pipelined ADC).
+> Anyhow, doesn't matter here as I assume this is fine on this part.
+> 
+>> +	if (ret != IIO_AVAIL_LIST || scale_type != IIO_VAL_FRACTIONAL_LOG2)
+>> +		return -EINVAL;
+>> +
+>> +	max_mV = bat->info.voltage_max_design_uv / 1000;
+>> +
+>> +	for (i = 1; i < scale_len; i += 2) {
+>> +		u64 scale_mV = (max_raw * scale_raw[i - 1]) >> scale_raw[i];
+> Not keen on the offset in the index being backwards.
+> 
+> This would be clearer I think as
+> 
+> for (i = 0; i < scale_len; i+= 2) {
+> 	u64 scale_mv = (max_raw * scale_raw[i]) >> scale_raw[i + 1];
+> 	...
+> 	best_idx = i;
+> }
+> 
+>> +
+>> +		if (scale_mV < max_mV)
+>> +			continue;
+>> +
+>> +		if (best_idx >= 0 && scale_mV > best_mV)
+>> +			continue;
+>> +
+>> +		best_mV = scale_mV;
+>> +		best_idx = i - 1;
+>> +	}
+>> +
+>> +	if (best_idx < 0) {
+>> +		dev_err(bat->dev, "Unable to find matching voltage scale\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	return iio_write_channel_attribute(bat->channel,
+>> +					   scale_raw[best_idx],
+>> +					   scale_raw[best_idx+1],
+> 
+> Spacing around that +.
+> 
+>> +					   IIO_CHAN_INFO_SCALE);
+>> +}
+>> +
+>> +static enum power_supply_property ingenic_battery_properties[] = {
+>> +	POWER_SUPPLY_PROP_HEALTH,
+>> +	POWER_SUPPLY_PROP_VOLTAGE_NOW,
+>> +	POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN,
+>> +	POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN,
+>> +};
+>> +
+>> +static int ingenic_battery_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct ingenic_battery *bat;
+>> +	struct power_supply_config psy_cfg = {};
+>> +	struct power_supply_desc *desc;
+>> +	int ret;
+>> +
+>> +	bat = devm_kzalloc(dev, sizeof(*bat), GFP_KERNEL);
+>> +	if (!bat)
+>> +		return -ENOMEM;
+>> +
+>> +	bat->dev = dev;
+>> +	bat->channel = devm_iio_channel_get(dev, "battery");
+>> +	if (IS_ERR(bat->channel))
+>> +		return PTR_ERR(bat->channel);
+>> +
+>> +	desc = &bat->desc;
+>> +	desc->name = "jz-battery";
+>> +	desc->type = POWER_SUPPLY_TYPE_BATTERY;
+>> +	desc->properties = ingenic_battery_properties;
+>> +	desc->num_properties = ARRAY_SIZE(ingenic_battery_properties);
+>> +	desc->get_property = ingenic_battery_get_property;
+>> +	psy_cfg.drv_data = bat;
+>> +	psy_cfg.of_node = dev->of_node;
+>> +
+>> +	bat->battery = devm_power_supply_register(dev, desc, &psy_cfg);
+>> +	if (IS_ERR(bat->battery)) {
+>> +		dev_err(dev, "Unable to register battery\n");
+>> +		return PTR_ERR(bat->battery);
+>> +	}
+>> +
+>> +	ret = power_supply_get_battery_info(bat->battery, &bat->info);
+>> +	if (ret) {
+>> +		dev_err(dev, "Unable to get battery info: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +	if (bat->info.voltage_min_design_uv < 0) {
+>> +		dev_err(dev, "Unable to get voltage min design\n");
+>> +		return bat->info.voltage_min_design_uv;
+>> +	}
+>> +	if (bat->info.voltage_max_design_uv < 0) {
+>> +		dev_err(dev, "Unable to get voltage max design\n");
+>> +		return bat->info.voltage_max_design_uv;
+>> +	}
+>> +
+>> +	return ingenic_battery_set_scale(bat);
+>> +}
+>> +
+>> +#ifdef CONFIG_OF
+>> +static const struct of_device_id ingenic_battery_of_match[] = {
+>> +	{ .compatible = "ingenic,jz4740-battery", },
+>> +	{ },
+>> +};
+>> +MODULE_DEVICE_TABLE(of, ingenic_battery_of_match);
+>> +#endif
+>> +
+>> +static struct platform_driver ingenic_battery_driver = {
+>> +	.driver = {
+>> +		.name = "ingenic-battery",
+>> +		.of_match_table = of_match_ptr(ingenic_battery_of_match),
+>> +	},
+>> +	.probe = ingenic_battery_probe,
+>> +};
+>> +module_platform_driver(ingenic_battery_driver);
 
