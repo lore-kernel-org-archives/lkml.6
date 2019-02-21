@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 238E7C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2745C4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E67802084F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E91B2075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550759851;
-	bh=Yj4/5kA/hieZ+mQS3C7AO1mPgCL+gULeshLMb5QbgZI=;
+	s=default; t=1550759854;
+	bh=qA9z0f0GzJgDWA9kGJPh3oNiW9V5QPeLt8ebDY15Gr4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Nwkk8SZfAJtP5A712zCakeMTR/4Mjr4YEqontZOPFZTYVvV1VYvp4moo6Vpyi9QkV
-	 ce4fYHgUSUlk92y2JNyVdrxoowU4zAPcLq2gMAT6/3WOtWWFh8Z2mdYAMgUSee5XMe
-	 RC5IrVWNMwTDP3nBaqt0e/woItbThX+8ZGCtIf2E=
+	b=Bd35E9t7JlsVtVg88B9ICxiGUBu4c6Kepuwgoo+KqgSkoqkteSdfhBSC3f16w+1i2
+	 2MqNdriROzM6L36Et3iqUJ3D757/pCis9HiSHVnl9sKu+ZiWdI2hYwGjqU0kZW2T5o
+	 TgwsLLn2/1eDG0+WIfGUD1dMQdkUjY4z0rF5hYxo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728414AbfBUOh3 (ORCPT
+        id S1728429AbfBUOhd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:37:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58682 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:37:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728356AbfBUOh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:37:28 -0500
+        id S1728356AbfBUOhc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:37:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A26E2084D;
-        Thu, 21 Feb 2019 14:37:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFF492084D;
+        Thu, 21 Feb 2019 14:37:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550759847;
-        bh=Yj4/5kA/hieZ+mQS3C7AO1mPgCL+gULeshLMb5QbgZI=;
+        s=default; t=1550759851;
+        bh=qA9z0f0GzJgDWA9kGJPh3oNiW9V5QPeLt8ebDY15Gr4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G3b7EJDsigNyvxsaaVs1HW/ntm04BUQBfa5KbzaYPThnT405ednY7yhaKOYTpybcR
-         FMM/azkJNYdmWUkXlOVzavamTlQMLXjYoTldOKH9KHih7UgiXHItmt7ot2ImCZJa8X
-         PX7P0yaJll++f5d6ciiH6zUSD9+dh22j3jZlDng0=
+        b=DIOuloeF2rlXQG9IRKVMJb+WLBSgztan9leZx1/PiYFV/IJNSQqGGNb99Le3lTSBD
+         XWZyU+JlTtTTuahSFyLg/g71zEIBjwDDAd+GI/oa3PVBDYW22zWPnR8+FlDUnvufeg
+         pBTqumAzrW6S1R/c1asQHMmfIgAzvEAJoNlVPwSU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jose Abreu <joabreu@synopsys.com>,
-        Joao Pinto <jpinto@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Subject: [PATCH 4.4 11/20] net: stmmac: Fix a race in EEE enable callback
-Date:   Thu, 21 Feb 2019 15:35:41 +0100
-Message-Id: <20190221141947.096611482@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 12/20] net: ipv4: use a dedicated counter for icmp_v4 redirect packets
+Date:   Thu, 21 Feb 2019 15:35:42 +0100
+Message-Id: <20190221141947.124105601@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221141946.772985220@linuxfoundation.org>
 References: <20190221141946.772985220@linuxfoundation.org>
@@ -68,68 +66,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jose Abreu <jose.abreu@synopsys.com>
+From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 
-[ Upstream commit 8a7493e58ad688eb23b81e45461c5d314f4402f1 ]
+[ Upstream commit c09551c6ff7fe16a79a42133bcecba5fc2fc3291 ]
 
-We are saving the status of EEE even before we try to enable it. This
-leads to a race with XMIT function that tries to arm EEE timer before we
-set it up.
+According to the algorithm described in the comment block at the
+beginning of ip_rt_send_redirect, the host should try to send
+'ip_rt_redirect_number' ICMP redirect packets with an exponential
+backoff and then stop sending them at all assuming that the destination
+ignores redirects.
+If the device has previously sent some ICMP error packets that are
+rate-limited (e.g TTL expired) and continues to receive traffic,
+the redirect packets will never be transmitted. This happens since
+peer->rate_tokens will be typically greater than 'ip_rt_redirect_number'
+and so it will never be reset even if the redirect silence timeout
+(ip_rt_redirect_silence) has elapsed without receiving any packet
+requiring redirects.
 
-Fix this by only saving the EEE parameters after all operations are
-performed with success.
+Fix it by using a dedicated counter for the number of ICMP redirect
+packets that has been sent by the host
 
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Fixes: d765955d2ae0 ("stmmac: add the Energy Efficient Ethernet support")
-Cc: Joao Pinto <jpinto@synopsys.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
+I have not been able to identify a given commit that introduced the
+issue since ip_rt_send_redirect implements the same rate-limiting
+algorithm from commit 1da177e4c3f4 ("Linux-2.6.12-rc2")
+
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c |   22 ++++++++++---------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ include/net/inetpeer.h |    1 +
+ net/ipv4/inetpeer.c    |    1 +
+ net/ipv4/route.c       |    7 +++++--
+ 3 files changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
-@@ -614,25 +614,27 @@ static int stmmac_ethtool_op_set_eee(str
- 				     struct ethtool_eee *edata)
- {
- 	struct stmmac_priv *priv = netdev_priv(dev);
-+	int ret;
+--- a/include/net/inetpeer.h
++++ b/include/net/inetpeer.h
+@@ -40,6 +40,7 @@ struct inet_peer {
  
--	priv->eee_enabled = edata->eee_enabled;
--
--	if (!priv->eee_enabled)
-+	if (!edata->eee_enabled) {
- 		stmmac_disable_eee_mode(priv);
--	else {
-+	} else {
- 		/* We are asking for enabling the EEE but it is safe
- 		 * to verify all by invoking the eee_init function.
- 		 * In case of failure it will return an error.
+ 	u32			metrics[RTAX_MAX];
+ 	u32			rate_tokens;	/* rate limiting for ICMP */
++	u32			n_redirects;
+ 	unsigned long		rate_last;
+ 	union {
+ 		struct list_head	gc_list;
+--- a/net/ipv4/inetpeer.c
++++ b/net/ipv4/inetpeer.c
+@@ -448,6 +448,7 @@ relookup:
+ 		atomic_set(&p->rid, 0);
+ 		p->metrics[RTAX_LOCK-1] = INETPEER_METRICS_NEW;
+ 		p->rate_tokens = 0;
++		p->n_redirects = 0;
+ 		/* 60*HZ is arbitrary, but chosen enough high so that the first
+ 		 * calculation of tokens is at its maximum.
  		 */
--		priv->eee_enabled = stmmac_eee_init(priv);
--		if (!priv->eee_enabled)
-+		edata->eee_enabled = stmmac_eee_init(priv);
-+		if (!edata->eee_enabled)
- 			return -EOPNOTSUPP;
--
--		/* Do not change tx_lpi_timer in case of failure */
--		priv->tx_lpi_timer = edata->tx_lpi_timer;
+--- a/net/ipv4/route.c
++++ b/net/ipv4/route.c
+@@ -876,13 +876,15 @@ void ip_rt_send_redirect(struct sk_buff
+ 	/* No redirected packets during ip_rt_redirect_silence;
+ 	 * reset the algorithm.
+ 	 */
+-	if (time_after(jiffies, peer->rate_last + ip_rt_redirect_silence))
++	if (time_after(jiffies, peer->rate_last + ip_rt_redirect_silence)) {
+ 		peer->rate_tokens = 0;
++		peer->n_redirects = 0;
++	}
+ 
+ 	/* Too many ignored redirects; do not send anything
+ 	 * set dst.rate_last to the last seen redirected packet.
+ 	 */
+-	if (peer->rate_tokens >= ip_rt_redirect_number) {
++	if (peer->n_redirects >= ip_rt_redirect_number) {
+ 		peer->rate_last = jiffies;
+ 		goto out_put_peer;
  	}
- 
--	return phy_ethtool_set_eee(priv->phydev, edata);
-+	ret = phy_ethtool_set_eee(dev->phydev, edata);
-+	if (ret)
-+		return ret;
-+
-+	priv->eee_enabled = edata->eee_enabled;
-+	priv->tx_lpi_timer = edata->tx_lpi_timer;
-+	return 0;
- }
- 
- static u32 stmmac_usec2riwt(u32 usec, struct stmmac_priv *priv)
+@@ -899,6 +901,7 @@ void ip_rt_send_redirect(struct sk_buff
+ 		icmp_send(skb, ICMP_REDIRECT, ICMP_REDIR_HOST, gw);
+ 		peer->rate_last = jiffies;
+ 		++peer->rate_tokens;
++		++peer->n_redirects;
+ #ifdef CONFIG_IP_ROUTE_VERBOSE
+ 		if (log_martians &&
+ 		    peer->rate_tokens == ip_rt_redirect_number)
 
 
