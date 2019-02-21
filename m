@@ -2,52 +2,54 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92006C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 242AAC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60F192075A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:42:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6FD22075A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:43:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550760178;
-	bh=40nZ95VBEO+58iX3mE8hOj7IF2ruqMtk8mNk6ngSjQ4=;
+	s=default; t=1550760181;
+	bh=KorX5UeMHPd2VefLGE1COcXJROC/faoAEs/FrXekl3I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aSUakWJO41BmhCo408zIdhKky1WHqSUqS8w53cdpZkGKGjW3m+bAiZqodSUSWWmPQ
-	 ogND5FOZhIeoO92kn5FIxTTpHGTFlwb+ObqxKuKw8k/jv6H6CHah2I4A4mbJUogkbq
-	 uhg09AoRUJlGFREkH7Ed4sP60WCfNkTCUNh3+stQ=
+	b=1HG+r8+pI3UVrrXFpExVsxA75hZoiQEKpShxAPCl0IFDjwU6/m0LUBo8KZUL+NtgG
+	 qXC1PENaYX7fJKb+iyVt7QxcCEETqh2cUh0U6ZEuaLwvSGT4rzG/BJ4JlzG2BGsZA5
+	 VrvzHiKLdjdfftUneF3HiV7SMALuNbIbQexoKTl4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729607AbfBUOm4 (ORCPT
+        id S1729620AbfBUOm7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:42:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38536 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:42:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728882AbfBUOmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:42:54 -0500
+        id S1728896AbfBUOmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:42:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0116920838;
-        Thu, 21 Feb 2019 14:42:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 592C02080D;
+        Thu, 21 Feb 2019 14:42:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550760173;
-        bh=40nZ95VBEO+58iX3mE8hOj7IF2ruqMtk8mNk6ngSjQ4=;
+        s=default; t=1550760170;
+        bh=KorX5UeMHPd2VefLGE1COcXJROC/faoAEs/FrXekl3I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wzQYALe1ilKHjwMhIlA212j0BVWtTHmbC6uMSFy7eX0b9tfbmBkvR7OZ9GIbkK5CW
-         qA8l5E8kszWXsz9+DLRBfhj/iY/1zMWZqJcREUPy1skrAAvtiZupUvpuoNsKOvBMn9
-         LcbiPVDdWbJFRGFV4uZQQtoFTOrjrlK7U6Tw6Esw=
+        b=KuzsUiwwL9/zZjI8SNGc+pkoAla92M80QCtw5pntNDnxihZq5WwVKvs1RyE4TgBqR
+         KkB3QZRC9M66z2OYDWA9uhdOmV9/87yZ1roWTLhhqSZ1mHdhpfcQUDQfbk9IpxdyzB
+         gkHSnI+7VTvGhoZ7ONYXCCBi6exC4uWc0sXC35g8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Murali Karicheri <m-karicheri2@ti.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        soukjin bae <soukjin.bae@samsung.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 19/32] net: netcp: Fix ethss driver probe issue
-Date:   Thu, 21 Feb 2019 15:36:07 +0100
-Message-Id: <20190221125252.017486723@linuxfoundation.org>
+Subject: [PATCH 4.20 18/32] tcp: tcp_v4_err() should be more careful
+Date:   Thu, 21 Feb 2019 15:36:06 +0100
+Message-Id: <20190221125251.958223874@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125250.855065214@linuxfoundation.org>
 References: <20190221125250.855065214@linuxfoundation.org>
@@ -66,36 +68,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1f43f400a2cbb02f3d34de8fe30075c070254816 ]
+[ Upstream commit 2c4cc9712364c051b1de2d175d5fbea6be948ebf ]
 
-Recent commit below has introduced a bug in netcp driver that causes
-the ethss driver probe failure and thus break the networking function
-on K2 SoCs such as K2HK, K2L, K2E etc. This patch fixes the issue to
-restore networking on the above SoCs.
+ICMP handlers are not very often stressed, we should
+make them more resilient to bugs that might surface in
+the future.
 
-Fixes: 21c328dcecfc ("net: ethernet: Convert to using %pOFn instead of device_node.name")
-Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+If there is no packet in retransmit queue, we should
+avoid a NULL deref.
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: soukjin bae <soukjin.bae@samsung.com>
+Acked-by: Neal Cardwell <ncardwell@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/ti/netcp_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/tcp_ipv4.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
-index 1f612268c9987..d847f672a705f 100644
---- a/drivers/net/ethernet/ti/netcp_core.c
-+++ b/drivers/net/ethernet/ti/netcp_core.c
-@@ -259,7 +259,7 @@ static int netcp_module_probe(struct netcp_device *netcp_device,
- 		const char *name;
- 		char node_name[32];
+--- a/net/ipv4/tcp_ipv4.c
++++ b/net/ipv4/tcp_ipv4.c
+@@ -535,14 +535,15 @@ void tcp_v4_err(struct sk_buff *icmp_skb
+ 		if (sock_owned_by_user(sk))
+ 			break;
  
--		if (of_property_read_string(node, "label", &name) < 0) {
-+		if (of_property_read_string(child, "label", &name) < 0) {
- 			snprintf(node_name, sizeof(node_name), "%pOFn", child);
- 			name = node_name;
- 		}
--- 
-2.19.1
-
++		skb = tcp_rtx_queue_head(sk);
++		if (WARN_ON_ONCE(!skb))
++			break;
++
+ 		icsk->icsk_backoff--;
+ 		icsk->icsk_rto = tp->srtt_us ? __tcp_set_rto(tp) :
+ 					       TCP_TIMEOUT_INIT;
+ 		icsk->icsk_rto = inet_csk_rto_backoff(icsk, TCP_RTO_MAX);
+ 
+-		skb = tcp_rtx_queue_head(sk);
+-		BUG_ON(!skb);
+-
+ 		tcp_mstamp_refresh(tp);
+ 		delta_us = (u32)(tp->tcp_mstamp - tcp_skb_timestamp_us(skb));
+ 		remaining = icsk->icsk_rto -
 
 
