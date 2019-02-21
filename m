@@ -2,78 +2,89 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9694EC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:29:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D086C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:47:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E22B2086A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:29:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UXsH13Ky"
+	by mail.kernel.org (Postfix) with ESMTP id 407572086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 01:47:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbfBUB3u (ORCPT
+        id S1726352AbfBUBra (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 20:29:50 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:38960 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726381AbfBUB3u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 20:29:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=4HZgtpsrSs4fFKQmQiJSvo6NH/0dfEr00uqHpZ4RjLc=; b=UXsH13KyaXt6Z6tttgx7v5ZFn
-        gbY0aTdOq0CcvHthhM9f6lCWrX2B9GC9NDaHGk+bvlW539EjG/3NPcB1zpRRNpIKXbDCsUAf6v2pZ
-        3kGvTct28qXMTNMqHLCmKU/0J66KVDUeCwB0yTsDB7D4jqdYwgcTQCCyZsNkZA4kYMC6B2p9XxkjA
-        VB+BsMDj7O8V8sAou7L1VXxtGLtHQQ/IFI2TI8caal1apqvCFTLoD/KA4L7yTDqnySchS8ELAgoRy
-        UwEW403bqNe4KOhbWs/shEe2XSMK87FEtYvucX6z1UbzrzICbjF8JeQcz1mc9X+Wbr0rCmOnjauQA
-        ESZarMRkQ==;
-Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gwdBN-0002Oq-3F; Thu, 21 Feb 2019 01:29:49 +0000
-Date:   Wed, 20 Feb 2019 17:29:47 -0800
-From:   Darren Hart <dvhart@infradead.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Mattias Jacobsson <2pi@mok.nu>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] platform/x86: wmi: fix potential null pointer
- dereference
-Message-ID: <20190221012947.GD5838@wrath>
-References: <20190130151424.28140-1-2pi@mok.nu>
- <CAHp75VfHDN7Q1YjFd7XM8tFpCcPphaDm0fvOaxHzko5AvF6jEw@mail.gmail.com>
+        Wed, 20 Feb 2019 20:47:30 -0500
+Received: from ozlabs.org ([203.11.71.1]:37979 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725989AbfBUBra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 20:47:30 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 444cmG48S0z9s5c;
+        Thu, 21 Feb 2019 12:47:26 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, j.neuschaefer@gmx.net
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v3 00/16] powerpc/32: Use BATs/LTLBs for STRICT_KERNEL_RWX
+In-Reply-To: <cover.1550648295.git.christophe.leroy@c-s.fr>
+References: <cover.1550648295.git.christophe.leroy@c-s.fr>
+Date:   Thu, 21 Feb 2019 12:47:26 +1100
+Message-ID: <87mumpx68h.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VfHDN7Q1YjFd7XM8tFpCcPphaDm0fvOaxHzko5AvF6jEw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 05:43:34PM +0200, Andy Shevchenko wrote:
-> On Wed, Jan 30, 2019 at 5:15 PM Mattias Jacobsson <2pi@mok.nu> wrote:
-> >
-> > In the function wmi_dev_match() the variable id is dereferenced without
-> > first performing a NULL check. The variable can for example be NULL if
-> > a WMI driver is registered without specifying the id_table field in
-> > struct wmi_driver.
-> >
-> > Add a NULL check and return that the driver can't handle the device if
-> > the variable is NULL.
-> >
-> 
-> Good for me, thanks!
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
 
-Queued for testing, thanks Mattias.
+> The purpose of this serie is to:
+> - use BATs with STRICT_KERNEL_RWX on book3s (See patch 13 for details.)
+> - use LTLBs with STRICT_KERNEL_RWX on 8xx (See patch 15 for a few details.)
 
--- 
-Darren Hart
-VMware Open Source Technology Center
+This doesn't boot qemu-mac99 for me:
+
+  spawn ~/src/qemu/ppc-softmmu/qemu-system-ppc -nographic -vga none -M mac99 -m 1G -kernel build/vmlinux -initrd ppc32-initrd.gz -append console=ttyPZ0 init=/bin/sh
+  >> =============================================================
+  >> OpenBIOS 1.1 [Feb 15 2019 10:05]
+  >> Configuration device id QEMU version 1 machine id 1
+  >> CPUs: 1
+  >> Memory: 1024M
+  >> UUID: 00000000-0000-0000-0000-000000000000
+  >> CPU type PowerPC,G4
+  milliseconds isn't unique.
+  Welcome to OpenBIOS v1.1 built on Feb 15 2019 10:05
+  >> [ppc] Kernel already loaded (0x01000000 + 0x00c2c338) (initrd 0x01d2d000 + 0x007e72f0)
+  >> [ppc] Kernel command line: console=ttyPZ0 init=/bin/sh
+  >> switching to new context:
+  OF stdout device is: /pci@f2000000/mac-io@c/escc@13000/ch-a@13020
+  Preparing to boot Linux version 5.0.0-rc2-gcc-8.2.0-00125-g4fcb83ca7936 (michael@ka4) (gcc version 8.2.0 (Buildroot 2018.11-rc2-00003-ga0787e9)) #724 Thu Feb 21 12:03:14 AEDT 2019
+  Detected machine type: 00000400
+  command line: 
+  memory layout at init:
+    memory_limit : 00000000 (16 MB aligned)
+    alloc_bottom : 02515000
+    alloc_top    : 30000000
+    alloc_top_hi : 40000000
+    rmo_top      : 30000000
+    ram_top      : 40000000
+  copying OF device tree...
+  Building dt strings...
+  Building dt structure...
+  Device tree strings 0x02516000 -> 0x025150a4
+  Device tree struct  0x02517000 -> 0x3fde7eb0
+  Quiescing Open Firmware ...
+  Booting Linux via __start() @ 0x01000000 ...
+  FAIL! Booting BE pmac32
+
+
+That's pmac32 defconfig ish.
+I haven't had time to debug it further sorry.
+
+cheers
