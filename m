@@ -2,121 +2,112 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 563C0C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:23:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB8C6C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:24:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 137DB2084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:23:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA0A12084D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:24:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p+oDOV0/"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="a2/mvdXc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727955AbfBUNXS (ORCPT
+        id S1727979AbfBUNYA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 08:23:18 -0500
-Received: from mail-pl1-f179.google.com ([209.85.214.179]:46587 "EHLO
-        mail-pl1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbfBUNXS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 08:23:18 -0500
-Received: by mail-pl1-f179.google.com with SMTP id o6so14173328pls.13;
-        Thu, 21 Feb 2019 05:23:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0h6YK9AEn/TMH0UjwXVhFZS6qxdIQiKwyw5VI7s2gi8=;
-        b=p+oDOV0/Wp1ftSYh77rNBU3td0lHBESaxJziBRq0E5hFO8UJxs5M8xydiC+nX9b7WQ
-         p6tdDxOl5HR9wxIsKb21nONmWb0ZK4ZCcDQDD39MZjgwTd9JZojNwaDbhy/JLDaVRfsG
-         JvKB+YXAZYOwNYX8diPwoM358DzYcN3AXHdAQCHuDpfbMnFgOmtPq0aYWi3pgNwm+UFE
-         9TWVBAlgvWfLORkCW5Idvb/EbjsIf44OmSi3CaWdmqvQxe3S30GsO4RacIPn82MHOunP
-         X2VYuEVGE6uf8SprI5yChyY8fwSgZcXPgwUD+w6cpj1kG7lJBicNu3RSlyVwhfRAFE2r
-         I+wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0h6YK9AEn/TMH0UjwXVhFZS6qxdIQiKwyw5VI7s2gi8=;
-        b=tdRyS42hcxfYHV2ect/72PufdXexPMVaO3m3416BzYotjlnqwX1LoHndTFkZbc/kyx
-         KGHKcYFta/Y6Vqh9mXxcNqnJpVqKfUtkzRIRTdxR+sb2GMgbJLYTjEW6Oz8Sadke0cmg
-         Q7lYc358BbTCU+0bbk/11Tq/rjpV9NFi1kT763bMIGf+dpoi9yLM8W2sby86ULsaZ8jM
-         MxooWqHWPrOiwyZ0Fj4J0pIvR7bmGgOfXbuhmLXdCgq/TlgxaGW0fDpQxJ8PJdxbhbwp
-         3lBRyT5osGUEX486briQZUtC8cCQmd5/2HkGEbZ3FB/DNUJq8h803XbkEP2MKQLlcvyE
-         cmeg==
-X-Gm-Message-State: AHQUAuYyk8/8Qd5D8kdmGjnyJdieQ+bt4+CkXzMCl7z0k4d5/ZiYiOmt
-        Wrvl8M0/2yG8BvSDnGSDWkU0QeWCnhMYLvfc9HI=
-X-Google-Smtp-Source: AHgI3IZYW+J+EDDQLwSxV/39dKOVQFY2GVWh3+Oo/WgbHNjxRHlwjHTO5EuS16VIU9AE54/qNhEwfNUra4HlKaEjKq0=
-X-Received: by 2002:a17:902:2468:: with SMTP id m37mr42696672plg.314.1550755397585;
- Thu, 21 Feb 2019 05:23:17 -0800 (PST)
-MIME-Version: 1.0
-References: <20190219115959.55553-1-heikki.krogerus@linux.intel.com>
- <20190219115959.55553-2-heikki.krogerus@linux.intel.com> <CAHp75VcoqwP5VrOW60XtQHLAO1KOmc_Kyn-KQsZC-tsiwpQq3A@mail.gmail.com>
- <20190221093508.GF5054@kuha.fi.intel.com>
-In-Reply-To: <20190221093508.GF5054@kuha.fi.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 21 Feb 2019 15:23:05 +0200
-Message-ID: <CAHp75Vd5uxVEyv3Wx-Xcv58UHXaS8um6dPDELPz5AdG1nbpFHg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] platform/x86: intel_cht_int33fe: Provide fwnode for
- the USB connector
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     Andy Shevchenko <andy@infradead.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Thu, 21 Feb 2019 08:24:00 -0500
+Received: from ozlabs.org ([203.11.71.1]:59925 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725820AbfBUNYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 08:24:00 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 444wCx2lfcz9s6w;
+        Fri, 22 Feb 2019 00:23:57 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1550755437;
+        bh=QOOgBasyKcc7aHGvJ/OG465XBrnN0pcPbGhLTGe6gTs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=a2/mvdXci3BOamhUCUmt98xZFy4zcWnMva54RrUKXTEIOg8mJzTl9s/obtlOLHgCm
+         HaieUYgygz/PVZRD3J43XV457LK/4kfVKc3vvZzzF/8m5KR450B2pi7klFv+LZsBwn
+         1HyRcZ1X6ABE4CzPiOnCaGCgkTxjzHI8qdTVX8TsloShXCFL5ZCb2xZ3Ef+73Z1aFf
+         f9fLaTvv3K2QksmcZu8nV1aQuPw5DfO5w6nytAIJVTCPMT2/+eYqHG7ZGcTdH8mbB+
+         as5Msw70J8iEgdjPYG6uGHj5oV9H412ARphVqmjh6J88vBtIyHz+dY0c2I2sg9cFPp
+         jqq47FqCCPkyQ==
+Date:   Fri, 22 Feb 2019 00:23:56 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Leon Romanovsky <leonro@mellanox.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: linux-next: build failure after merge of the xarray tree
+Message-ID: <20190222002356.269ec801@canb.auug.org.au>
+In-Reply-To: <20190221131628.GA23561@mtr-leonro.mtl.com>
+References: <20190221171332.262cf619@canb.auug.org.au>
+        <20190221123440.GD17501@mtr-leonro.mtl.com>
+        <20190221234801.7cc07a7c@canb.auug.org.au>
+        <20190221131628.GA23561@mtr-leonro.mtl.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/CHoKaR6d.48P86L+2vNrJNs"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 11:35 AM Heikki Krogerus
-<heikki.krogerus@linux.intel.com> wrote:
->
-> On Wed, Feb 20, 2019 at 05:55:21PM +0200, Andy Shevchenko wrote:
-> > On Tue, Feb 19, 2019 at 2:00 PM Heikki Krogerus
-> > <heikki.krogerus@linux.intel.com> wrote:
-> > >
-> > > In ACPI, and now also in DT, the USB connectors usually have
-> > > their own device nodes. In case of USB Type-C, those
-> > > connector (port) nodes are child nodes of the controller or
-> > > PHY device, in our case the fusb302. The software fwnodes
-> > > allow us to create a similar child node for fusb302 that
-> > > represents the connector also on Intel CHT.
-> > >
-> > > This makes it possible replace the fusb302 specific device
-> > > properties which were deprecated with the common USB
-> > > connector properties that tcpm.c is able to use directly.
-> >
-> > > +       /* Node for the FUSB302 controller */
-> > > +       data->fusb302_node = fwnode_create_software_node(fusb302_props, NULL);
-> > > +       if (IS_ERR(data->fusb302_node))
-> > > +               return PTR_ERR(data->fusb302_node);
-> > > +
-> > > +       /* Node for the connector (FUSB302 is the parent) */
-> > > +       data->port_node = fwnode_create_software_node(usb_connector_props,
-> > > +                                                     data->fusb302_node);
-> > > +       if (IS_ERR(data->port_node)) {
-> >
-> > > +               fwnode_remove_software_node(data->fusb302_node);
-> >
-> > Sounds like a candidate for
-> > devm_fwnode_create_software_node()
->
-> If you don't mind, let's think about that later.
+--Sig_/CHoKaR6d.48P86L+2vNrJNs
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Sure.
+Hi Leon,
 
+On Thu, 21 Feb 2019 13:16:31 +0000 Leon Romanovsky <leonro@mellanox.com> wr=
+ote:
 >
-> I'm not comfortable at all with the idea of introducing
-> devm_fwnode_create_software_node(). I would like to talk about that
-> separately. It's not going to be a problem to change this driver later
-> even if we decide to add the function.
+> > The xarray API changes (to xa_alloc and __xa_alloc) have been in
+> > linux-next for about 2 weeks ... =20
+>=20
+> I looked on the latest update of pulled branch
+> http://git.infradead.org/users/willy/linux-dax.git/shortlog/refs/heads/xa=
+rray
 
--- 
-With Best Regards,
-Andy Shevchenko
+Yeah, there were 3 commits added today, but the API changing commit is olde=
+r.
+
+> > It doesn't matter which goes in first, but whoever goes in last should
+> > inform Linus about these (now 2) API change fixups.  In fact you should
+> > probably both let him know as he sometimes batches up similar groups of
+> > merge requests (like fs or net) and doesn't do them in the order they
+> > are submitted. =20
+>=20
+> OK, we will do.
+
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/CHoKaR6d.48P86L+2vNrJNs
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxupmwACgkQAVBC80lX
+0Gx14gf+LbqFhLHErbrJQrAMrlzbTjS+QDO3ubfnVwIc5MIZg3LsRpLx6DabeHk7
+Y1g+r/Db2CbN0Ncc2YeS7ivfxJ2/xd3rFOx6qCti2IM1fpYYL91sMjx2JcxoFt5x
+yw1jknRgeIEJIpV4/E7I5Y/CsdtNZKRzq6eNOutjt91oHIIswOfvOpebEMjd+Ntv
+E5FUFHQGo5wUeIm74dRBF1GscF+FLQ8ctlrSJYfkABZ9TshHS1v2hIl/oTZvc4ag
+m3jL4+Zx61szBV67CEexG6XDRNYgsVqJ5RVKVCkb4LtSb3F0Ysd1CzSt0vHd32LC
+1dAWQs/uAQxUlwrNlm+NIY7/1+8pDg==
+=MgXk
+-----END PGP SIGNATURE-----
+
+--Sig_/CHoKaR6d.48P86L+2vNrJNs--
