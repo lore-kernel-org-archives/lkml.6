@@ -2,62 +2,204 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D078C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:53:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADAEEC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:53:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7767E20880
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:53:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79E782147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:53:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728208AbfBULxi (ORCPT
+        id S1728327AbfBULxp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 06:53:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47922 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725891AbfBULxa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 06:53:30 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5D316B181;
-        Thu, 21 Feb 2019 11:53:28 +0000 (UTC)
-Date:   Thu, 21 Feb 2019 12:53:26 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] printk: Pass caller information to log_store().
-Message-ID: <20190221115326.4yjm3l55dayz7jln@pathway.suse.cz>
-References: <1550314773-8607-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20190220121825.kpqjhdl62x65a6se@pathway.suse.cz>
- <20190221022341.GB15012@jagdpanzerIV>
+        Thu, 21 Feb 2019 06:53:45 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:45604 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727525AbfBULuj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 06:50:39 -0500
+Received: from localhost ([127.0.0.1] helo=flow.W.breakpoint.cc)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gwms1-0001RC-Gz; Thu, 21 Feb 2019 12:50:29 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     linux-kernel@vger.kernel.org
+Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Borislav Petkov <bp@suse.de>
+Subject: [PATCH 01/22] x86/fpu: Remove fpu->initialized usage in __fpu__restore_sig()
+Date:   Thu, 21 Feb 2019 12:49:59 +0100
+Message-Id: <20190221115020.12385-2-bigeasy@linutronix.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190221115020.12385-1-bigeasy@linutronix.de>
+References: <20190221115020.12385-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190221022341.GB15012@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2019-02-21 11:23:41, Sergey Senozhatsky wrote:
-> On (02/20/19 13:18), Petr Mladek wrote:
-> > > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> > 
-> > The patch looks fine to me:
-> > 
-> > Reviewed-by: Petr Mladek <pmladek@suse.com>
-> 
-> Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+This is a preparation for the removal of the ->initialized member in the
+fpu struct.
+__fpu__restore_sig() is deactivating the FPU via fpu__drop() and then
+setting manually ->initialized followed by fpu__restore(). The result is
+that it is possible to manipulate fpu->state and the state of registers
+won't be saved/restored on a context switch which would overwrite
+fpu->state.
 
-The patch has been pushed into printk.git, branch for-4.22
-(aka for-5.1).
+Don't access the fpu->state while the content is read from user space
+and examined / sanitized. Use a temporary kmalloc() buffer for the
+preparation of the FPU registers and once the state is considered okay,
+load it. Should something go wrong, return with an error and without
+altering the original FPU registers.
 
-Best Regards,
-Petr
+The removal of "fpu__initialize()" is a nop because fpu->initialized is
+already set for the user task.
+
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Acked-by: Borislav Petkov <bp@suse.de>
+---
+ arch/x86/include/asm/fpu/signal.h |  2 +-
+ arch/x86/kernel/fpu/regset.c      |  5 ++--
+ arch/x86/kernel/fpu/signal.c      | 40 ++++++++++++-------------------
+ 3 files changed, 18 insertions(+), 29 deletions(-)
+
+diff --git a/arch/x86/include/asm/fpu/signal.h b/arch/x86/include/asm/fpu/signal.h
+index 44bbc39a57b30..7fb516b6893a8 100644
+--- a/arch/x86/include/asm/fpu/signal.h
++++ b/arch/x86/include/asm/fpu/signal.h
+@@ -22,7 +22,7 @@ int ia32_setup_frame(int sig, struct ksignal *ksig,
+ 
+ extern void convert_from_fxsr(struct user_i387_ia32_struct *env,
+ 			      struct task_struct *tsk);
+-extern void convert_to_fxsr(struct task_struct *tsk,
++extern void convert_to_fxsr(struct fxregs_state *fxsave,
+ 			    const struct user_i387_ia32_struct *env);
+ 
+ unsigned long
+diff --git a/arch/x86/kernel/fpu/regset.c b/arch/x86/kernel/fpu/regset.c
+index bc02f5144b958..5dbc099178a88 100644
+--- a/arch/x86/kernel/fpu/regset.c
++++ b/arch/x86/kernel/fpu/regset.c
+@@ -269,11 +269,10 @@ convert_from_fxsr(struct user_i387_ia32_struct *env, struct task_struct *tsk)
+ 		memcpy(&to[i], &from[i], sizeof(to[0]));
+ }
+ 
+-void convert_to_fxsr(struct task_struct *tsk,
++void convert_to_fxsr(struct fxregs_state *fxsave,
+ 		     const struct user_i387_ia32_struct *env)
+ 
+ {
+-	struct fxregs_state *fxsave = &tsk->thread.fpu.state.fxsave;
+ 	struct _fpreg *from = (struct _fpreg *) &env->st_space[0];
+ 	struct _fpxreg *to = (struct _fpxreg *) &fxsave->st_space[0];
+ 	int i;
+@@ -350,7 +349,7 @@ int fpregs_set(struct task_struct *target, const struct user_regset *regset,
+ 
+ 	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &env, 0, -1);
+ 	if (!ret)
+-		convert_to_fxsr(target, &env);
++		convert_to_fxsr(&target->thread.fpu.state.fxsave, &env);
+ 
+ 	/*
+ 	 * update the header bit in the xsave header, indicating the
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index f6a1d299627c5..a874931edf6a9 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -207,11 +207,11 @@ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
+ }
+ 
+ static inline void
+-sanitize_restored_xstate(struct task_struct *tsk,
++sanitize_restored_xstate(union fpregs_state *state,
+ 			 struct user_i387_ia32_struct *ia32_env,
+ 			 u64 xfeatures, int fx_only)
+ {
+-	struct xregs_state *xsave = &tsk->thread.fpu.state.xsave;
++	struct xregs_state *xsave = &state->xsave;
+ 	struct xstate_header *header = &xsave->header;
+ 
+ 	if (use_xsave()) {
+@@ -238,7 +238,7 @@ sanitize_restored_xstate(struct task_struct *tsk,
+ 		 */
+ 		xsave->i387.mxcsr &= mxcsr_feature_mask;
+ 
+-		convert_to_fxsr(tsk, ia32_env);
++		convert_to_fxsr(&state->fxsave, ia32_env);
+ 	}
+ }
+ 
+@@ -284,8 +284,6 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 	if (!access_ok(buf, size))
+ 		return -EACCES;
+ 
+-	fpu__initialize(fpu);
+-
+ 	if (!static_cpu_has(X86_FEATURE_FPU))
+ 		return fpregs_soft_set(current, NULL,
+ 				       0, sizeof(struct user_i387_ia32_struct),
+@@ -315,40 +313,32 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 		 * header. Validate and sanitize the copied state.
+ 		 */
+ 		struct user_i387_ia32_struct env;
++		union fpregs_state *state;
+ 		int err = 0;
++		void *tmp;
+ 
+-		/*
+-		 * Drop the current fpu which clears fpu->initialized. This ensures
+-		 * that any context-switch during the copy of the new state,
+-		 * avoids the intermediate state from getting restored/saved.
+-		 * Thus avoiding the new restored state from getting corrupted.
+-		 * We will be ready to restore/save the state only after
+-		 * fpu->initialized is again set.
+-		 */
+-		fpu__drop(fpu);
++		tmp = kzalloc(sizeof(*state) + fpu_kernel_xstate_size + 64, GFP_KERNEL);
++		if (!tmp)
++			return -ENOMEM;
++		state = PTR_ALIGN(tmp, 64);
+ 
+ 		if (using_compacted_format()) {
+-			err = copy_user_to_xstate(&fpu->state.xsave, buf_fx);
++			err = copy_user_to_xstate(&state->xsave, buf_fx);
+ 		} else {
+-			err = __copy_from_user(&fpu->state.xsave, buf_fx, state_size);
++			err = __copy_from_user(&state->xsave, buf_fx, state_size);
+ 
+ 			if (!err && state_size > offsetof(struct xregs_state, header))
+-				err = validate_xstate_header(&fpu->state.xsave.header);
++				err = validate_xstate_header(&state->xsave.header);
+ 		}
+ 
+ 		if (err || __copy_from_user(&env, buf, sizeof(env))) {
+-			fpstate_init(&fpu->state);
+-			trace_x86_fpu_init_state(fpu);
+ 			err = -1;
+ 		} else {
+-			sanitize_restored_xstate(tsk, &env, xfeatures, fx_only);
++			sanitize_restored_xstate(state, &env, xfeatures, fx_only);
++			copy_kernel_to_fpregs(state);
+ 		}
+ 
+-		local_bh_disable();
+-		fpu->initialized = 1;
+-		fpu__restore(fpu);
+-		local_bh_enable();
+-
++		kfree(tmp);
+ 		return err;
+ 	} else {
+ 		/*
+-- 
+2.20.1
+
