@@ -2,110 +2,148 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25384C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4103C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:41:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F01A92083B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:40:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8825B2084D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:41:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbfBUQkK (ORCPT
+        id S1727872AbfBUQlb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 11:40:10 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41487 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725831AbfBUQkI (ORCPT
+        Thu, 21 Feb 2019 11:41:31 -0500
+Received: from mailproxy03.manitu.net ([217.11.48.67]:38848 "EHLO
+        mailproxy03.manitu.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725831AbfBUQla (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 11:40:08 -0500
-Received: by mail-ed1-f65.google.com with SMTP id x7so23687667eds.8
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 08:40:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3pQY6z8l1l6LG2RHkNvh+4xqEBF5VXb30JKt1h7j9Jg=;
-        b=TkkCnYP3kwwK2VaRcmxI68y9keDl2lFZZQ9pAwgrXsGzvCtW96QfKRHDmCyA4LZYyC
-         La+YP55ysCivkbF+7r34XNmL3wWJYjKPl6r87Uo61Q4flV7TOl++kRK/rZudzxlhr2AB
-         rrlZ6jo57RASL0rsKG7BCHG6j6rcF0cbuvpIh+wQZcejWlJLNgt2+lDAckAgID2+BvKG
-         FkhgtDpECWWiwop7lwfG5wKpFF3KZtrfL5/VJYUEt1jPSafi1AnrCMgc1A0DljT7FIvh
-         WxuX3tJQVI8selfBBf3ViLoZqZYBZ9W/VwZxe88tX1BLZhq1anaJZKloWSOSH9D4qzTt
-         /xqg==
-X-Gm-Message-State: AHQUAuZS8VEBvJKUbimvVfLOyrRzJhVDKgj7Pn0vkUQNe79m+feREIhY
-        EXAW5TqSaZX+WcQwgLwVxUjaSE5Dj58=
-X-Google-Smtp-Source: AHgI3IZuxeo/lgn9SiduTTc4ZE/tj6Y4ecXMth/vamMIkl4/AEXhiIMwjt9/IgIEJsvZoy/ssh3UrA==
-X-Received: by 2002:a05:6402:120b:: with SMTP id c11mr14527422edw.119.1550767206845;
-        Thu, 21 Feb 2019 08:40:06 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id j4sm6796824edh.69.2019.02.21.08.40.05
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Feb 2019 08:40:06 -0800 (PST)
-Subject: Re: [PATCH] staging/vboxvideo: Another FIXME item
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Liviu Dudau <liviu.dudau@arm.com>
-References: <20190221155951.19855-1-daniel.vetter@ffwll.ch>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <33679003-ce23-2ba0-d8c2-fd8187ecea36@redhat.com>
-Date:   Thu, 21 Feb 2019 17:40:05 +0100
+        Thu, 21 Feb 2019 11:41:30 -0500
+Received: from [192.168.178.20] (aftr-88-217-180-98.dynamic.mnet-online.de [88.217.180.98])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: wg@grandegger.com)
+        by mailproxy03.manitu.net (Postfix) with ESMTPSA id AFE16D41DB9;
+        Thu, 21 Feb 2019 17:43:59 +0100 (CET)
+Subject: Re: [PATCH v5 0/5] M_CAN Framework re-write
+To:     Dan Murphy <dmurphy@ti.com>, mkl@pengutronix.de,
+        davem@davemloft.net
+Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190214182754.30721-1-dmurphy@ti.com>
+ <52148371-16aa-b87a-02f0-9037d5d34988@ti.com>
+From:   Wolfgang Grandegger <wg@grandegger.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=wg@grandegger.com; prefer-encrypt=mutual; keydata=
+ mQINBFtEb5MBEAC5aRjs5jLwjbOaEE6rczZSqck7B3iGK8ldrV8HGSjxb1MAf4VbvDWrzXfA
+ phEgX3e54AnYhnKcf6BA3J9TlSDdUAW7r/ijOFl+TehMz7holgjhlDK41acJ/klwXJotIqby
+ bWqFgFw6o7b8hfbVzPi8Pz/+WOIKaDOb1Keb989mn253RF1yFakgvoQfCyAeVcnO5kcByW17
+ zbTEHsSduYi0Zir26Oedb2Vtas4SovrEXVh4e2dRdbEbHlI8po3Ih117CuGIPAe2RSfZKY88
+ 8c9m+WsJKtrIDIMY+f5kcHG5mib++u1oTg7wjfFgTr925g2WjzT63YRibW8Vazot9yXquMo2
+ HYQStmnN9MuAkL/jslnxhGKNwTzpXv6FD2g/9hcLfSjaaCwGzj2j2ucJglJnO1n+ibVB14l2
+ JLVe+IKJaE1gvm2v9HPsE+o1P4O8I9iCiAbQ6BGUszHADOg7r8CeTQ+AOCypfEZ5l1Hwa3gw
+ V+TtqyCU70U9LA0AKaDZ02vf0hFRWeXV/ErFq878GOXbbVMZu8G5aO0EcCBC75/KQnyi0WEl
+ KVIcyTyxKel/Ext7vUFIkiA16JNWRpS85YDfe9CoEZcZK+nUU268j6Bp5a7MYaF/dZaLT+Du
+ hLA82ry8IkPQvyV5yV+B0PwDM/w7de8zIzMy9YBXU8KGGDmgYQARAQABtCdXb2xmZ2FuZyBH
+ cmFuZGVnZ2VyIDx3Z0BncmFuZGVnZ2VyLmNvbT6JAj8EEwECACkFAltEb5MCGyMFCQlmAYAH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRDwuz7LbZzIUhvED/4vTUqS0c/V5a4hc5Md
+ u/8qkF7qg011tM0lXrZZxMQ8NrjdFuDhUefZ1q59QbLFU9da9D/CRVJUSx6BnY9jkR6lIm9l
+ OGqS9ZlzubGXJCZhv1ONWPwY/i1RXTtauhRy+nkcyJk2Bzs5PWq1i4hWXpX//GfGUbCt+2bX
+ 2+9bmHSPFtZ/MpIigS1E8RehIzlzqC/NCJspY8H0HKtLR6kpanRBYCuYSlBom/1LEP2MmXhh
+ 9LgjQINp+jZJwnBj5L5JaUn/sg2WO+IiN6IphzyS2TvrlRhkhPJv5EOf0QmYzDgz5eU/h35x
+ aCclLSJ0Go83GO0bXFGCzN86VreRgLRGTa7/x9VW05LiBdlsuLpG23IHM5f6p0WpYgE+jdri
+ TrMued/DquQEcw/xNXpa3n9zTghLcWgcqGIdK3AE3yPjQBR3N6WoT4VOXnZjg6pyNHQ3W4qj
+ LQgzJ3Tq2gPMhRLFcLXyk6V3rQ0ffn4LCXkFYVIBGAN8hHMOFeV6NESkUcEil6V4oOsLLGuJ
+ XreFjAl1Cz3vIaVgzZEfub1z60DDM71lIr+UvWXLeMyKiSMWiJBPL3LUoUWmzpafaTJakDWm
+ CEXa871Jlw7sy99MGVhiVG74JHjtPE6ontM1dKCP1+yT53TeGp1o/3Hj3sUielfDr5nV/kT6
+ p5zmgQN/1bJgV/3sKrkCDQRbRG+TARAA37mw9iosCWO5OtCrbvgJJwzOR3XrijVKi9KTNzDO
+ NT2iy7teKP4+C+9why6iZhoJbBrTo56mbmI2nvfyOthxCa8nT14js8q0EgSMiyxXVeRvzEIQ
+ sYcG4zgbGjwJ94Vrr5tMCFn5B6cYKJffTGmfY0D3b2V4GqaCGxVs3lWcQJeKl/raL8lp4YWz
+ AI0jVx104W7rUbCTDvcSVfPqwM+9A6xaP4b1jwyYwGHgOTq6SeimRrGgM+UNtWqMU3+vUelG
+ 8gKDyfIIo4IrceeHss5OuRREQZq5vNuzkeIY6faYWv65KT+IQ6EyC9UEGkMdcStfEsZO53Qq
+ buA7Kha6lVViDM3vjGS+fnNq/od53dosWeWQ4O8M7Z6nxgp+EOPuJf041eKmIrcaRiXb+027
+ x4D0Kwv/xVsFa6cC2lkITWahENFIXwKOZ3imr2ZCtVF61qnm/GQ5P27JQKXMbPOM6wm0EjJ1
+ 9t2EkSpgVHI0Cd0ldxD4eaGNwpeHJ5WGGzZrOE7PCcRziJX0qO/FpLjTQ6scf+bPACgduY71
+ AwXyA24mg7F2vK+Vth+Yp7MlgwYBMUy6D140jrkWrcRxKYfW1BgcKpbG/dh5DhUAvoOzFD7i
+ zHrGK5FhzqJDBwKk7n9jGohf/MJWs2UKai/u4ogZBhhD5JPR8GG6VzO4snWisFLFuAEAEQEA
+ AYkCJQQYAQIADwUCW0RvkwIbDAUJCWYBgAAKCRDwuz7LbZzIUkA3D/wJOvcQ7rTeoRiamOIB
+ kD4n2Jsv8Vti/XfM0DTmhfnWL4y96VzSzNfl+EHAwXE4161qnXxTHnFK1hq7QklNdDiGW3iH
+ nKZUyHUTnlUlCocv8jWtlqrpH0XVtF12JET65mE14Hga6BQ4ECXwU2GcP3202A55EzMj31b/
+ 59GD3CDIJy7bjQi+pIRuA9ZQRsFas7Od7AWO/nFns2wJ6AJkjXdCUCZ4iOuf82gLK9olDSmd
+ H73Epc6l3jca62L2Lzei405LQSsfOZ06uH2aGPUJX4odUlEF6arm2j+9Q8Vyi4CJ316f2kAa
+ sl7LhAwZtaj8hjl/PUWfd5w47dUBDUZjIRYcdM2TTU3Spgvg3zqXUzur5+r0jkUl2naeiSB1
+ vwjfIwnPqZOVr9FAXuLbAdUyCCC0ohGLrq5Nsc1A02rxpQHRxTSm2FOdn2jYvuD7JUgkhmUh
+ /TXb8aL6A4hfX7oV4tGq7nSmDOCmgWRmAHAGp85fVq2iylCxZ1kKi8EYCSa28eQzetukFbAx
+ JwmcrUSaCOK+jpHlNY0PkghSIzAE/7Se+c37unJ39xJLkrgehLYmUF7cBeNWhfchu4fAJosM
+ 5mXohGkBKcd5YYmF13imYtAG5/VSmBm/0CFNGFO49MVTNGXGBznrPrWwtPZNwjJdi7JrvEbm
+ 8QEfHnPzgykCs2DOOQ==
+Message-ID: <43e01edf-9b9a-c68d-ec1a-218a8117f59e@grandegger.com>
+Date:   Thu, 21 Feb 2019 17:41:27 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190221155951.19855-1-daniel.vetter@ffwll.ch>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <52148371-16aa-b87a-02f0-9037d5d34988@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hello Dan,
 
-On 21-02-19 16:59, Daniel Vetter wrote:
-> Found while grepping around.
+I will have a closer look end of this week!
+
+Wolfgang.
+
+Am 21.02.19 um 17:24 schrieb Dan Murphy:
+> Bump
 > 
-> Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: Liviu Dudau <liviu.dudau@arm.com>
-> ---
->   drivers/staging/vboxvideo/vbox_irq.c | 5 +++++
->   1 file changed, 5 insertions(+)
+> On 2/14/19 12:27 PM, Dan Murphy wrote:
+>> Hello
+>>
+>> OK I did not give up on this patch series just got a little preoccupied with
+>> some other kernel work.  But here is the update per the comments.
+>>
+>> It should be understood I broke these out for reviewability.
+>> For instance the first patch does not compile on its own as including this
+>> patch should not change the current functionality and it pulls all the io-mapped
+>> code from the m_can base file to a platfrom file.
+>>
+>> The next patch "Migrate the m_can code to use the framework"
+>> is the change to the kernel for the io-mapped conversion from a flat file to use
+>> the framework.  Finally the rename patch just renames the m_can_priv to 
+>> m_can_classdev.  I broke this change out specifically for readability of the
+>> migration patch per comments on the code.
+>>
+>> AFAIC the first 3 patches can all be squashed into a single patch.  Or the
+>> first 2 patches in the series can be re-arranged but then m_can functionality is
+>> affected in the migration patch.
+>>
+>> Again the first 3 patches here are all just for readability and review purposes.
+>>
+>> Dan
+>>
+>> Dan Murphy (5):
+>>   can: m_can: Create a m_can platform framework
+>>   can: m_can: Migrate the m_can code to use the framework
+>>   can: m_can: Rename m_can_priv to m_can_classdev
+>>   dt-bindings: can: tcan4x5x: Add DT bindings for TCAN4x5X driver
+>>   can: tcan4x5x: Add tcan4x5x driver to the kernel
+>>
+>>  .../devicetree/bindings/net/can/tcan4x5x.txt  |  37 +
+>>  drivers/net/can/m_can/Kconfig                 |  14 +-
+>>  drivers/net/can/m_can/Makefile                |   2 +
+>>  drivers/net/can/m_can/m_can.c                 | 788 +++++++++---------
+>>  drivers/net/can/m_can/m_can.h                 | 159 ++++
+>>  drivers/net/can/m_can/m_can_platform.c        | 198 +++++
+>>  drivers/net/can/m_can/tcan4x5x.c              | 531 ++++++++++++
+>>  7 files changed, 1320 insertions(+), 409 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/net/can/tcan4x5x.txt
+>>  create mode 100644 drivers/net/can/m_can/m_can.h
+>>  create mode 100644 drivers/net/can/m_can/m_can_platform.c
+>>  create mode 100644 drivers/net/can/m_can/tcan4x5x.c
+>>
 > 
-> diff --git a/drivers/staging/vboxvideo/vbox_irq.c b/drivers/staging/vboxvideo/vbox_irq.c
-> index 195484713365..89944134ea86 100644
-> --- a/drivers/staging/vboxvideo/vbox_irq.c
-> +++ b/drivers/staging/vboxvideo/vbox_irq.c
-> @@ -123,6 +123,11 @@ static void vbox_update_mode_hints(struct vbox_private *vbox)
->   
->   	validate_or_set_position_hints(vbox);
->   	drm_modeset_lock_all(dev);
-> +	/*
-> +	 * FIXME: this needs to use drm_connector_list_iter and some real
-> +	 * locking for the actual data it changes, not the deprecated
-> +	 * drm_modeset_lock_all() shotgun approach.
-> +	 */
-
-Question, are the locking expectations from the drm's core pov (for modesetting-drivers)
-*fully* (and clearly) documented somewhere?
-
-Regards,
-
-Hans
-
-
-
-
->   	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
->   		vbox_conn = to_vbox_connector(connector);
->   
 > 
