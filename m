@@ -2,111 +2,138 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FDCFC00319
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C91EC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:28:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30EB720838
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:28:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFEA82075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:28:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="1W/lKVgG"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OlypJojq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726621AbfBUO2T (ORCPT
+        id S1727714AbfBUO2l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:28:19 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38687 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbfBUO2T (ORCPT
+        Thu, 21 Feb 2019 09:28:41 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:45193 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbfBUO2l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:28:19 -0500
-Received: by mail-pg1-f193.google.com with SMTP id m2so11506761pgl.5
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 06:28:18 -0800 (PST)
+        Thu, 21 Feb 2019 09:28:41 -0500
+Received: by mail-oi1-f193.google.com with SMTP id t82so1518091oie.12
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 06:28:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pA9wgCQyEUyTHkAq+rVlPzlBQCV50nMzrf+ehGsqY3Q=;
-        b=1W/lKVgGsUokYt6qJwL+oFd6wI/8KbnaSxB0ry6zobjbzzt8lwy3rDM0GPrPbtSzWc
-         XG5+mzm8TvRZAvS9RAH1TXfpQzPMGUQl6oFNDC4cI7CFGbnXzzQkKLtKcRg+9PQgPMg0
-         pXOIaFUcQmh98dypu8uNF3Y2c/xfQLSZaDJV0dnCRB+kT6gfZqY/nbPnUJ9KfNdArqh7
-         gaOhtVDM5gTEAmClFOieev9ao8Ctx/Fy8y8/MqglYraqRqt5rGZzTWciBFhzAHeoA13O
-         FAi/fYvXvQljBV62TkgyfrGmaviIfnN2K+pcsmzHfWyWorMknnuXuMfFrqSEyT2WFs7R
-         kzTw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=926hIetHQPpxRqS+x1Be0Xqwmc7Zk1dsRoJ1K4FmIok=;
+        b=OlypJojqPyGFVqKduO5g6zZ62N2Qb1RAxt+Dh4R2qERXmIi2fNXMCCHmXDlMw6k/94
+         9R7LAmWyVtdxXhZrM0ZxVkopbDbt9CVveiimcsckJ0XvyUMtWR0vaqVL7pi4L6yfaTvT
+         DzZ7EMN8Gbho1VcqjEsCtsFC/iuk/p7QTaVyQP7k45qbSFicqUE51daG9ebky0J3SKry
+         6+218azpLvkbLAaVD+nFDpWk+8xnQ9m9CwEwUsUodv1yLnQcO9qZcYe+his7zvX+RT7+
+         UnWw8Kqa7yN5cT5kT4apJbtzeabA8a9xQmICyycBmJ8t2JrHaf1020paJ9/WMohhiZdo
+         qMGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pA9wgCQyEUyTHkAq+rVlPzlBQCV50nMzrf+ehGsqY3Q=;
-        b=L69xXPMBh96vg5LgP9cwOOlhDCr75rNDf3I1fvfKTAqO3dsW4nwKeMx6Xlw+TjVYBI
-         ziiISG8dq0nnnHP+kttdhBnqOV8Rt090bT41RaI29ZuSF6cfEHeQxP2oedQ7TTzdP9Az
-         AVs/LQaiHyEKkahYiRJsPOAzyBCa8xDLKvxL8clDFUYR0DWMn2EgbSvczjqrawS5iEw3
-         1zvxXuoAizcAV+y+Ve+MQEkHySJyBBLa7aCp1OQ9QakS50tM6C+jeEr2yT9rv5kutwDS
-         LA0fWwHeFCVQaZMeTs+P/VYaRy3vXUmNNt55+YGGCSuOIM9VzaYefVNWV0M6WD6MKBMJ
-         5VqA==
-X-Gm-Message-State: AHQUAuZE6PSUu4RzgBB+oXp32+DzNFPhB+A6B+XZAaNmLCL4W2NfGXKT
-        Zf8caIObPyo8DpT/TDH8pFNPcw==
-X-Google-Smtp-Source: AHgI3IbfbbYkruivN5aBVqRxR1ViZUHLVAQoi1hsZAsMbsY8Xl1Xpgutyz7rtk/D8d3+HA9SOuSXiw==
-X-Received: by 2002:a62:3a01:: with SMTP id h1mr39568542pfa.169.1550759297907;
-        Thu, 21 Feb 2019 06:28:17 -0800 (PST)
-Received: from kshutemo-mobl1.localdomain ([134.134.139.83])
-        by smtp.gmail.com with ESMTPSA id y5sm41244867pge.49.2019.02.21.06.28.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Feb 2019 06:28:16 -0800 (PST)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 0B424301708; Thu, 21 Feb 2019 17:28:13 +0300 (+03)
-Date:   Thu, 21 Feb 2019 17:28:12 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Steven Price <steven.price@arm.com>
-Cc:     linux-mm@kvack.org, Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "Liang, Kan" <kan.liang@linux.intel.com>
-Subject: Re: [PATCH v2 03/13] mm: Add generic p?d_large() macros
-Message-ID: <20190221142812.oa53lfnnfmsuh6ys@kshutemo-mobl1>
-References: <20190221113502.54153-1-steven.price@arm.com>
- <20190221113502.54153-4-steven.price@arm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=926hIetHQPpxRqS+x1Be0Xqwmc7Zk1dsRoJ1K4FmIok=;
+        b=gOFrcnzwj6lRV4gPKBNyN+DFQmg5KxaiXVF3nEA7r4q3QN5XTbMR+n7z/GORLMl97b
+         rqs5OCq8XW3FwLoYI+asr/n/JpfY1YiW5nrGb+jLThPd7tU9ZlSZxxr3jsJZby5x0U9w
+         eD1ZFlilsv/WNGplh1yFl9nnqRpRGhUD6Y7RvNuYUSOZAofym2TX+rvnLtqCXijxuFTR
+         SbQES2elrydAH4s5hhvuygPF+gHQD3taGAJkrnKYCqchNfjQOQj1YM39+Xy1UvdUThOh
+         4ASjq6XgEuFIMfrbOoOBCvqzF9332UFYhyLblRuiDOpyW+73cd7C8CmAYMwWB/0bKkz2
+         uKAg==
+X-Gm-Message-State: AHQUAuYuGVMuW0d4QkdfAk1bLVrLMjsEbG2X/6AHcN7ljekozd1TB1O8
+        p7zUxXYpw0RxGarPZoIZxj/sxHheFeBCSC46k2NrLw==
+X-Google-Smtp-Source: AHgI3IZJpa9wzKYTAeqCzQ/8etNcJO6Ej+w6KjPWUypiV2Jp6SIkF4hTlyRtr7Yme2MDK3kCH9DNfNt9s/6tbrSxHuQ=
+X-Received: by 2002:aca:cc4d:: with SMTP id c74mr9817358oig.157.1550759319977;
+ Thu, 21 Feb 2019 06:28:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190221113502.54153-4-steven.price@arm.com>
-User-Agent: NeoMutt/20180716
+References: <20190218232308.11241-1-tobin@kernel.org> <20190218232308.11241-6-tobin@kernel.org>
+ <CAG48ez0utQJjoJW69OwGiuH1EQtcD939-5u71ruD_1nr0eJK0g@mail.gmail.com> <CAGXu5jKeS3bkTSXEw2nsjrWoqhbkDZD4C=PdYTHMtM0GNk6tSg@mail.gmail.com>
+In-Reply-To: <CAGXu5jKeS3bkTSXEw2nsjrWoqhbkDZD4C=PdYTHMtM0GNk6tSg@mail.gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 21 Feb 2019 15:28:13 +0100
+Message-ID: <CAG48ez34MMBfTzQFxj2o5brYDrUS89_gvX9=SnpWZ+TjMUV-BQ@mail.gmail.com>
+Subject: Re: [PATCH 5/6] lib: Fix function documentation for strncpy_from_user
+To:     Kees Cook <keescook@chromium.org>
+Cc:     "Tobin C. Harding" <tobin@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Daniel Micay <danielmicay@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 11:34:52AM +0000, Steven Price wrote:
-> From: James Morse <james.morse@arm.com>
-> 
-> Exposing the pud/pgd levels of the page tables to walk_page_range() means
-> we may come across the exotic large mappings that come with large areas
-> of contiguous memory (such as the kernel's linear map).
-> 
-> For architectures that don't provide p?d_large() macros, provided a
-> does nothing default.
+On Thu, Feb 21, 2019 at 2:05 AM Kees Cook <keescook@chromium.org> wrote:
+> On Mon, Feb 18, 2019 at 4:52 PM Jann Horn <jannh@google.com> wrote:
+> > AFAICS the byte_at_a_time loop exits when max==0 is reached, and then
+> > if `res >= count` (in other words, if we've copied as many bytes as
+> > requested, haven't encountered a null byte so far, and haven't reached
+> > the end of the address space), we return `res`, which is the same as
+> > `count`. Are you sure?
+>
+> Oh, whew, there is only 1 arch-specific implementation of this. I
+> thought you meant there was multiple implementations.
 
-Nak, sorry.
+Not sure what you're talking about. Are you talking about
+implementations of strncpy_from_user()?
 
-Power will get broken by the patch. It has pmd_large() inline function,
-that will be overwritten by the define from this patch.
 
-I believe it requires more ground work on arch side in general.
-All architectures that has huge page support has to provide these helpers
-(and matching defines) before you can use it in a generic code.
+csky: custom strncpy_from_user() calls custom __do_strncpy_from_user,
+which is a macro containing a big asm() block.
 
--- 
- Kirill A. Shutemov
+
+h8300:
+;;; long strncpy_from_user(void *to, void *from, size_t n)
+strncpy_from_user:
+mov.l er2,er2
+bne 1f
+sub.l er0,er0
+rts
+[...]
+
+
+mips:
+static inline long
+strncpy_from_user(char *__to, const char __user *__from, long __len)
+{
+long res;
+
+if (eva_kernel_access()) {
+__asm__ __volatile__(
+"move\t$4, %1\n\t"
+"move\t$5, %2\n\t"
+"move\t$6, %3\n\t"
+[...]
+
+
+unicore32:
+ENTRY(__strncpy_from_user)
+mov ip, r1
+1: sub.a r2, r2, #1
+ldrusr r3, r1, 1, ns
+bfs 2f
+stb.w r3, [r0]+, #1
+cxor.a r3, #0
+[...]
+
+
+and so on.
+
+> So, generally speaking, I'd love to split all strncpy* uses into
+> strscpy_zero() (when expecting to do str->str copies), and some new
+> function, named like mempadstr() or str2mem() that copies a str to a
+> __nonstring char array, with trailing padding, if there is space. Then
+> there is no more mixing the two cases and botching things.
