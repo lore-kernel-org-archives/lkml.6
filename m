@@ -2,186 +2,95 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA819C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1DE3C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:12:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69A672070D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:11:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F074F206A3
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:12:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="h7qMqDsw";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="ZK2uIVMU"
+	dkim=pass (1024-bit key) header.d=4sigma.it header.i=@4sigma.it header.b="frgPMng4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbfBUXL4 (ORCPT
+        id S1727085AbfBUXMa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 18:11:56 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:19098 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbfBUXL4 (ORCPT
+        Thu, 21 Feb 2019 18:12:30 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35150 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726123AbfBUXMa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 18:11:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1550790716; x=1582326716;
-  h=from:to:cc:subject:date:message-id:content-id:
-   content-transfer-encoding:mime-version;
-  bh=78+z1grUE6qV0CcKonoGsjja7s41sLxiZgtK6h4zOfQ=;
-  b=h7qMqDswgK+mSF2XBMphqW6DHtkJ0QpHuno7Wgburwn3wSYIkXpBIu1N
-   ZEvs9iXgk4pHaw2oCNKImrGVESC5fJdtmsYF0IZIoOsDEsOlqNp4qjzGV
-   65d8desH+rGceWJW+UlxlHVkJktBUokv9QxRyHeQ/umaICUI/A5R7CaNa
-   DcQWfNDHYPwIf+eR5nJzo7fZi5teesRFR9QCkVj0pYFHrCnHx6HC9KWFX
-   V2YEQE4dIjmsKQFrW6RYmbdPMMcxEKbB98Q0X7rhtZlPidSfy8AMvXSKu
-   7XZUexP0yXlyw5YLg7XeXKmRCE7mLt5VcF69mR7vmBHCYPUPmrszAz4Ap
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.58,397,1544457600"; 
-   d="scan'208";a="101886597"
-Received: from mail-dm3nam03lp2055.outbound.protection.outlook.com (HELO NAM03-DM3-obe.outbound.protection.outlook.com) ([104.47.41.55])
-  by ob1.hgst.iphmx.com with ESMTP; 22 Feb 2019 07:11:55 +0800
+        Thu, 21 Feb 2019 18:12:30 -0500
+Received: by mail-wr1-f65.google.com with SMTP id t18so344333wrx.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 15:12:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=78+z1grUE6qV0CcKonoGsjja7s41sLxiZgtK6h4zOfQ=;
- b=ZK2uIVMUuOwL8RBcICUXmjrYmTPG75qlT0pPoWh9meXyxifw/cszSNToei6TS/GrZ2UDBcFfgHWRU7g6N7dX//NEac1eXHNDq6y4KLFcyNXB2PRFrcNbtHdVI43lcHQhsPob7NZVRhf0zUC06G0zYuAM8ekH+ihJO8UqgHdCsKU=
-Received: from BYAPR04MB4357.namprd04.prod.outlook.com (20.176.251.147) by
- BYAPR04MB4310.namprd04.prod.outlook.com (20.176.251.29) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.14; Thu, 21 Feb 2019 23:11:52 +0000
-Received: from BYAPR04MB4357.namprd04.prod.outlook.com
- ([fe80::91f1:a2af:8793:94a2]) by BYAPR04MB4357.namprd04.prod.outlook.com
- ([fe80::91f1:a2af:8793:94a2%7]) with mapi id 15.20.1622.020; Thu, 21 Feb 2019
- 23:11:52 +0000
-From:   Adam Manzanares <Adam.Manzanares@wdc.com>
-To:     "lsf-pc@lists.linux-foundation.org" 
-        <lsf-pc@lists.linux-foundation.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "yang.shi@linux.alibaba.com" <yang.shi@linux.alibaba.com>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "cl@linux.com" <cl@linux.com>,
-        "jglisse@redhat.com" <jglisse@redhat.com>,
-        "mhocko@suse.com" <mhocko@suse.com>,
-        "dave.hansen@intel.com" <dave.hansen@intel.com>,
-        "jack@suse.cz" <jack@suse.cz>
-Subject: [LSF/MM TOPIC] Page Cache Flexibility for NVM
-Thread-Topic: [LSF/MM TOPIC] Page Cache Flexibility for NVM
-Thread-Index: AQHUyjrUW2lvg3E88ESemij+/GgUJA==
-Date:   Thu, 21 Feb 2019 23:11:51 +0000
-Message-ID: <85ddda85755bf15ed2e56bce21f711ae8154d304.camel@wdc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Adam.Manzanares@wdc.com; 
-x-originating-ip: [199.255.44.250]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c4827700-9f61-44ec-d63b-08d69851f6fa
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:BYAPR04MB4310;
-x-ms-traffictypediagnostic: BYAPR04MB4310:
-wdcipoutbound: EOP-TRUE
-x-microsoft-exchange-diagnostics: =?utf-8?B?MTtCWUFQUjA0TUI0MzEwOzIzOnFPd2k2eGM3bGtSMDJ6bXpVRWxHWmVZSWs3?=
- =?utf-8?B?M29JcVZRTS8yZ1RXdG9yMmZZSU02YTh6WWlvdXQwRlFlcDFkMkNJSWY3M2kr?=
- =?utf-8?B?eGdoSGs0TFBiVEVPemZRWjZMMkhNR0owa2xTN3dLbkV4YXczS25RL3FlNnFx?=
- =?utf-8?B?YU9jSThGaTY3TmxxVFlxZWV4MlpXWnNhcDI2VVdmbEJuV3AraENLTFliK2Uv?=
- =?utf-8?B?clh3L0twblhWS203MGJDZ1R4Sm93SzUvRFN2Mi9jN2E1dmt4ZDBCY3E0enBJ?=
- =?utf-8?B?WUhNTmczcUsyRGEwcHR4NEM5SzhIRytLRkFIN0tCT3crLzUzcEV2Rk41cXFU?=
- =?utf-8?B?cUt2Tzg1UkVSU3lvSllHbmFKNjIzeGxXSFllR1dFS0ZvdEhHYlFxWm5wOXlW?=
- =?utf-8?B?dFNlZnZQNTNydEdIQU45UGd0akJ4RlN1RUhxWHBBZmkyc3ROWU5wMnFaTCt1?=
- =?utf-8?B?czR4MFBwc05xbWhvUjQwYW81bnU2SjVTOHFmZEMrQ3dFR2dBKytPa29vcko2?=
- =?utf-8?B?bnJmZFhuV2drS2MvbWRjM2FnZll2Nnk4Sk5iMnQ2bmFORnUxeWRuRHFhRHpY?=
- =?utf-8?B?ZGs0Y0hKMXZtbXFCWUVNZGZEK3ZLbXhKUXoxdVlQZXBpRklZMndaVEYzU2J0?=
- =?utf-8?B?NW5Ha0lPNnZiV0NvZEZSalY2UUlCUFZya0tpUi9sWWZYMWFIWm5NZkdPNFhh?=
- =?utf-8?B?elNVNHk5UnI0ajJKTlVIRERqWGphVU90NFBWZGViTmpRUkIwSmg2U0JQeTBD?=
- =?utf-8?B?ZTl2ZTFERldZblJrd3ZYdnVzUjIvbFdsZ1VJU2dwbDJjb2xQdWFBeXoxczdp?=
- =?utf-8?B?N056TnN4OU95dk1pQmh0QXVzeWJDNHRvMmFpYVF2UGZNYyt0OEE4TFVSNVJz?=
- =?utf-8?B?aDNFTXk3YjRtdFRIMGZRMGxOR2NqTzhkbCtWTE1yM052a3YrU2c3enRMYk5q?=
- =?utf-8?B?dHFwWnFtenJyVkUrWFpYYk9odmNpU3lsb1BEUFUrbUVxOElQL0lzbFNGQkt6?=
- =?utf-8?B?RXoxUFg1ZG5SR1VKejExa0FSR3ZmN1ZVdy9zcDlhTmMzSk9TZm9nQjQ3c2kr?=
- =?utf-8?B?bzJTV2lMWG91NnFkaXdUZitPanB0eGN0ZkYyZlFZdFQ4RXgrN2ZMek9heVk4?=
- =?utf-8?B?Rllxb0VPU0l6RGV0Y0RsRkh1ZGNzd1NxcnBtbytBb2FUeHEyeXFwQk5OcFBv?=
- =?utf-8?B?azNLUVVKQ0JUODNhM3RzbzRwUlQ0VzE1WTZOanJ1aEJPOTNObndrRmxFWGFj?=
- =?utf-8?B?L0pxcko1K1NqeEFmdXVTS08zWXVBSXA1TTc1bEVCS1NRdU9KYytNeVRnR0wv?=
- =?utf-8?B?QnI1QSt0NGJQb1pXNDFnNEI1WW9rZXBNWHBlcDVaZTNSVDMydUUxN2ZoaE5S?=
- =?utf-8?B?Mnh4MWV2ZmVuZERQNWROMWRaMFNscnEvdFI0aWJ2VUVBKzI5NzIyWEVZV1NM?=
- =?utf-8?B?UVBJbGYyZFBaRTBxMFVEQ1B6blpoN2V3RFZvSzJpbk96WStSWERyVnpEdWJJ?=
- =?utf-8?B?R3REYTBkVk41U0gxNENXTkhkeWFYaXBEclBmWjBYVGk5RzdxR2JYV21IU2Za?=
- =?utf-8?B?WXZUZGljNU5rOFc3SHJ6aHo0SWpZd28zRWlLM1FiUW9DcmIwaHpSdnE3MjZt?=
- =?utf-8?Q?dLMdnIW4DOhV4QeS7P8d?=
-x-microsoft-antispam-prvs: <BYAPR04MB4310B43FDF9DA534150FD600F07E0@BYAPR04MB4310.namprd04.prod.outlook.com>
-x-forefront-prvs: 09555FB1AD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(366004)(39860400002)(376002)(346002)(199004)(189003)(72206003)(186003)(71200400001)(68736007)(2616005)(6512007)(26005)(99286004)(6486002)(86362001)(256004)(14444005)(316002)(8676002)(97736004)(4326008)(6116002)(478600001)(3846002)(81166006)(476003)(81156014)(66066001)(118296001)(8936002)(14454004)(5660300002)(7736002)(71190400001)(54906003)(106356001)(105586002)(2906002)(2351001)(305945005)(5640700003)(6506007)(6916009)(25786009)(486006)(6436002)(36756003)(2501003)(53936002)(102836004)(7416002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB4310;H:BYAPR04MB4357.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 0xNkX344OsWfTq5qs3UaMB27td77WWTgeifpfuAeesWvtcyPqh8CefBgU+6XUzbE946D1cyS35LsuQvEw6zk1hA9xFrnaxOARvvcRW07hlhZLTCPU+J2sdcjlwfKl7n6qDBtvsrGlyovzrJ4jxyqzcEm65QJfjOJlzc0i8TrGLm68sk9zpMlcBux9J4xKCf6gqCbQI+wRVUw7xPfPnbcuHw/I6V+V2Mj+3SJjXs04r6oa/hb2VcUCsjlb18AKHN4eJswW6Kgf/kOA/BbiqjIDCNzqR4UiY6fWW4Vzng4duz/TxZOvXnImFBC4FKAGqOwzC7V7PglqcW8phSYTcqqHyjTQOMu7HGpo9tBs9IHMU0bBnDW5a25a4a0NAax8klSXZcK1ASmkiGq4WbdODFRUryGyXx9FrvX3MoV4pm4GIQ=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C01446860AD7F04388BEAEFCCD6938BE@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4827700-9f61-44ec-d63b-08d69851f6fa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2019 23:11:52.0689
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4310
+        d=4sigma.it; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=UBvT747HcZAlE2Jn/xPLTuKslB0UyLXMGwpB3AeXbhQ=;
+        b=frgPMng40gfEzqGiOGWv+GgH6UupZHlHL1YunYeygKT/0sRx8phbmgmwxl9PIVAGxd
+         ZQkaBgsvXaciVzvCu/B84Fpl9llNyBjiSptQRHthjwLE39Mm8C84RnCxz5Us8ywglWIp
+         dGtfaEfuIf6GqEax3sJR9CWUeaeqTy61gfFYA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=UBvT747HcZAlE2Jn/xPLTuKslB0UyLXMGwpB3AeXbhQ=;
+        b=DY/Ai0nrMAHgVRiNE+TP0X6nOk9Ppmc8MwjnpdtV1iK44KfVfrOUWSg7w5qFLW3TWT
+         2eJ/fvz+gQbiY9nhD/I671tdyzpzV0HjAOfvRGXSpayUJ9Wu5zA0FRtJNY60/3MOErN0
+         o7MomrFvntDFIh8Pmbx95SIu9JYRXMNsTGDQMBznDo8eQG6AeroodbMTUTbSu+8oBB47
+         4y4THaxO7hfqKu2PX80loLMWHdz6w27n/KnIKk5/f/kSRsx1CBrVHCxB8/6aWyN4Lbfw
+         V6pgj/f/t+hzRvJicX2Va7lnT6cJt6rqy2xl37ujO6fU+dNwW/pKJycFSKDXU+eQFp5x
+         PKgw==
+X-Gm-Message-State: AHQUAuaszL7plDPGUTp4cRjx+BuHR36gvxGDVBY4ttGmvmTCdu/wNsvz
+        Wbgn+zul4EMWjJZRvOq+EZQdSQ==
+X-Google-Smtp-Source: AHgI3IbUUG7L1msRvm/r6EgoivDt+Z26qhFm5FXJ4DbHyQygo/XSeHPM9CWJbCyacOwzW5TIIW3ebQ==
+X-Received: by 2002:adf:ec10:: with SMTP id x16mr618705wrn.171.1550790748058;
+        Thu, 21 Feb 2019 15:12:28 -0800 (PST)
+Received: from localhost.localdomain (host121-71-dynamic.24-79-r.retail.telecomitalia.it. [79.24.71.121])
+        by smtp.googlemail.com with ESMTPSA id f10sm133258wmb.35.2019.02.21.15.12.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 21 Feb 2019 15:12:27 -0800 (PST)
+From:   Andrea Greco <a.greco@4sigma.it>
+X-Google-Original-From: Andrea Greco <andrea.greco.gapmilano@gmail.com>
+To:     johannes.berg@intel.com
+Cc:     Andrea Greco <a.greco@4sigma.it>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] nl80211: Allow change CW to Ad-Hock network
+Date:   Fri, 22 Feb 2019 00:11:47 +0100
+Message-Id: <20190221231147.6141-1-andrea.greco.gapmilano@gmail.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8sDQoNCkkgd291bGQgbGlrZSB0byBhdHRlbmQgdGhlIExTRi9NTSBTdW1taXQgMjAxOS4g
-SSdtIGludGVyZXN0ZWQgaW4NCnNldmVyYWwgTU0gdG9waWNzIHRoYXQgYXJlIG1lbnRpb25lZCBi
-ZWxvdyBhcyB3ZWxsIGFzIFpvbmVkIEJsb2NrDQpEZXZpY2VzIGFuZCBhbnkgaW8gZGV0ZXJtaW5p
-c20gdG9waWNzIHRoYXQgY29tZSB1cCBpbiB0aGUgc3RvcmFnZQ0KdHJhY2suIA0KDQpJIGhhdmUg
-YmVlbiB3b3JraW5nIG9uIGEgY2FjaGluZyBsYXllciwgaG1tYXAgKGhldGVyb2dlbmVvdXMgbWVt
-b3J5DQptYXApIFsxXSwgZm9yIGVtZXJnaW5nIE5WTSBhbmQgaXQgaXMgaW4gc3Bpcml0IGNsb3Nl
-IHRvIHRoZSBwYWdlDQpjYWNoZS4gVGhlIGtleSBkaWZmZXJlbmNlIGJlaW5nIHRoYXQgdGhlIGJh
-Y2tlbmQgZGV2aWNlIGFuZCBjYWNoaW5nDQpsYXllciBvZiBobW1hcCBpcyBwbHVnZ2FibGUuIElu
-IGFkZGl0aW9uLCBobW1hcCBzdXBwb3J0cyBEQVggYW5kIHdyaXRlDQpwcm90ZWN0aW9uLCB3aGlj
-aCBJIGJlbGlldmUgYXJlIGtleSBmZWF0dXJlcyBmb3IgZW1lcmdpbmcgTlZNcyB0aGF0IG1heQ0K
-aGF2ZSB3cml0ZS9yZWFkIGFzeW1tZXRyeSBhcyB3ZWxsIGFzIHdyaXRlIGVuZHVyYW5jZSBjb25z
-dHJhaW50cy4NCkxhc3RseSB3ZSBjYW4gbGV2ZXJhZ2UgaGFyZHdhcmUsIHN1Y2ggYXMgYSBETUEg
-ZW5naW5lLCB3aGVuIG1vdmluZw0KcGFnZXMgYmV0d2VlbiB0aGUgY2FjaGUgd2hpbGUgYWxzbyBh
-bGxvd2luZyBkaXJlY3QgYWNjZXNzIGlmIHRoZSBkZXZpY2UNCmlzIGNhcGFibGUuDQoNCkkgYW0g
-cHJvcG9zaW5nIHRoYXQgYXMgYW4gYWx0ZXJuYXRpdmUgdG8gdXNpbmcgTlZNcyBhcyBhIE5VTUEg
-bm9kZQ0Kd2UgZXhwb3NlIHRoZSBOVk0gdGhyb3VnaCB0aGUgcGFnZSBjYWNoZSBvciBhIHZpYWJs
-ZSBhbHRlcm5hdGl2ZSBhbmQNCmhhdmUgdXNlcnNwYWNlIGFwcGxpY2F0aW9ucyBtbWFwIHRoZSBO
-Vk0gYW5kIGhhbmQgb3V0IG1lbW9yeSB3aXRoDQp0aGVpciBmYXZvcml0ZSB1c2Vyc3BhY2UgbWVt
-b3J5IGFsbG9jYXRvci4NCg0KVGhpcyB3b3VsZCBpc29sYXRlIHRoZSBOVk1zIHRvIG9ubHkgYXBw
-bGljYXRpb25zIHRoYXQgYXJlIHdlbGwgYXdhcmUNCm9mIHRoZSBwZXJmb3JtYW5jZSBpbXBsaWNh
-dGlvbnMgb2YgYWNjZXNzaW5nIE5WTS4gSSBiZWxpZXZlIHRoYXQgYWxsDQpvZiB0aGlzIHdvcmsg
-Y291bGQgYmUgc29sdmVkIHdpdGggdGhlIE5VTUEgbm9kZSBhcHByb2FjaCwgYnV0IHRoZSB0d28N
-CmFwcHJvYWNoZXMgYXJlIHNlZW1pbmcgdG8gYmx1ciB0b2dldGhlci4NCg0KVGhlIG1haW4gcG9p
-bnRzIEkgd291bGQgbGlrZSB0byBkaXNjdXNzIGFyZToNCg0KKiBJcyB0aGUgcGFnZSBjYWNoZSBt
-b2RlbCBhIHZpYWJsZSBhbHRlcm5hdGl2ZSB0byBOVk0gYXMgYSBOVU1BIE5PREU/DQoqIENhbiB3
-ZSBhZGQgbW9yZSBmbGV4aWJpbGl0eSB0byB0aGUgcGFnZSBjYWNoZT8NCiogU2hvdWxkIHdlIGZv
-cmNlIHNlcGFyYXRpb24gb2YgTlZNIHRocm91Z2ggYW4gZXhwbGljaXQgbW1hcD8NCg0KSSBiZWxp
-ZXZlIHRoaXMgZGlzY3Vzc2lvbiBjb3VsZCBiZSBtZXJnZWQgd2l0aCBOVU1BLCBtZW1vcnkgaGll
-cmFyY2h5DQphbmQgZGV2aWNlIG1lbW9yeSwgVXNlIE5WRElNTSBhcyBOVU1BIG5vZGUgYW5kIE5V
-TUEgQVBJLCBvciBtZW1vcnkNCnJlY2xhaW0gd2l0aCBOVU1BIGJhbGFuY2luZy4NCg0KSGVyZSBh
-cmUgc29tZSBwZXJmb3JtYW5jZSBudW1iZXJzIG9mIGhtbWFwIChpbiBkZXZlbG9wbWVudCk6DQoN
-CkFsbCBudW1iZXJzIGFyZSBjb2xsZWN0ZWQgb24gYSA0R2lCIGhtbWFwIGRldmljZSB3aXRoIGEg
-MTI4TWlCIGNhY2hlLg0KRm9yIHRoZSBtbWFwIHRlc3RzIEkgdXNlZCBjZ3JvdXBzIHRvIGxpbWl0
-IHRoZSBwYWdlIGNhY2hlIHVzYWdlIHRvDQoxMjhNaUIuIEFsbCByZXN1bHRzIGFyZSBhbiBhdmVy
-YWdlIG9mIDEwIHJ1bnMuIFcgYW5kIFIgYWNjZXNzIHRoZQ0KZW50aXJlIGRldmljZSB3aXRoIGFs
-bCB0aHJlYWRzIHNlZ3JlZ2F0ZWQgaW4gdGhlIGFkZHJlc3Mgc3BhY2UuIFJSDQpyZWFkcyB0aGUg
-ZW50aXJlIGRldmljZSByYW5kb21seSA4IGJ5dGVzIGF0IGEgdGltZSBhbmQgaXMgbGltaXRlZCB0
-bw0KOE1pQiBvZiBkYXRhIGFjY2Vzc2VkLg0KDQpobW1hcCBicmQgdnMuIG1tYXAgb2YgYnJkDQoN
-CglobW1hcAkJCW1tYXAJCQkNCg0KVGhyZWFkcyBXICAgICBSICAgICBSUiAJICBXIAlSICAgICBS
-UiANCg0KMSAgCTcuMjEgIDUuMzkgIDUuMDQgIDYuODAgIDUuNjMgIDUuMjMJDQoyCTUuMTkgIDMu
-ODcgIDMuNzQgIDQuNjYgIDMuMzMgIDMuMjANCjQJMy42NSAgMi45NSAgMy4wNyAgMy41MyAgMi4y
-NiAgMi4xOA0KOAk0LjUyICAzLjQzICAzLjU5ICA0LjMwICAxLjk4ICAxLjg4DQoxNgk1LjAwICAz
-Ljg1ICAzLjk4ICA0LjkyICAyLjAwICAxLjk5DQoNCg0KDQpNZW1vcnkgQmFja2VuZCBUZXN0IChE
-YXggY2FwYWJsZSkNCg0KCWhtbWFwICAgICAgICAgICAgIGhtbWFwLWRheCAgICAgICAgIGhtbWFw
-LXdycHJvdGVjdA0KDQpUaHJlYWRzCVcgICAgIFIgICAgIFJSICAgIFcgICAgIFIgICAgIFJSICAg
-IFcgICAgIFIgICAgIFJSIA0KDQoxICAgICAgCTYuMjkgIDQuOTQgIDQuMzcgIDIuNTQgIDEuMzYg
-IDAuMTYgIDcuMTIgIDIuMTMgIDAuNzMgDQoyCTQuNjIgIDMuNjMgIDMuNTcgIDEuNDEgIDAuNjkg
-IDAuMDggIDUuMDYgIDEuMTQgIDAuNDENCjQJMy40NSAgMi45NyAgMy4xMSAgMC43NyAgMC4zNiAg
-MC4wNCAgMy42NiAgMC42MyAgMC4yNQ0KOAk0LjEwICAzLjUzICAzLjcxICAwLjQ0ICAwLjE5ICAw
-LjAyICA0LjAzICAwLjM1ICAwLjE3DQoxNgk0LjYwICAzLjk4ICA0LjA0ICAwLjM0ICAwLjE2ICAw
-LjAyICA0LjUyICAwLjI3ICAwLjE0DQoNCg0KVGhhbmtzLA0KQWRhbQ0KDQoNCg0KDQo=
+From: Andrea Greco <a.greco@4sigma.it>
+
+Add net-link support for change CW in Ad-Hock network
+
+Signed-off-by: Andrea Greco <a.greco@4sigma.it>
+---
+ net/wireless/nl80211.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index d91a408db113..4fcc63fa4380 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -2731,7 +2731,8 @@ static int nl80211_set_wiphy(struct sk_buff *skb, struct genl_info *info)
+ 			return -EINVAL;
+ 
+ 		if (netdev->ieee80211_ptr->iftype != NL80211_IFTYPE_AP &&
+-		    netdev->ieee80211_ptr->iftype != NL80211_IFTYPE_P2P_GO)
++		    netdev->ieee80211_ptr->iftype != NL80211_IFTYPE_P2P_GO &&
++		    netdev->ieee80211_ptr->iftype != NL80211_IFTYPE_ADHOC)
+ 			return -EINVAL;
+ 
+ 		if (!netif_running(netdev))
+-- 
+2.17.2
+
