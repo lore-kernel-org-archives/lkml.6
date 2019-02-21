@@ -2,87 +2,132 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 762EEC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:14:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6692FC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:15:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C1272148D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:14:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36571214AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:15:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="E0t53ipZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbfBUKO1 (ORCPT
+        id S1727457AbfBUKP0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 05:14:27 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59270 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725943AbfBUKO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 05:14:27 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E5708AD98;
-        Thu, 21 Feb 2019 10:14:25 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 4E631E00A5; Thu, 21 Feb 2019 11:14:25 +0100 (CET)
-Date:   Thu, 21 Feb 2019 11:14:25 +0100
-From:   Michal Kubecek <mkubecek@suse.cz>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     netdev@vger.kernel.org, David Miller <davem@davemloft.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jiri Pirko <jiri@resnulli.us>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH net-next v3 15/21] ethtool: provide link settings and
- link modes in GET_SETTINGS request
-Message-ID: <20190221101425.GO23151@unicorn.suse.cz>
-References: <cover.1550513384.git.mkubecek@suse.cz>
- <00e931c1ecd29bf302a190c7d7a3f2cbd0388542.1550513384.git.mkubecek@suse.cz>
- <f2f8ccdd-c8bb-7f0a-5df7-dd54359e859e@gmail.com>
+        Thu, 21 Feb 2019 05:15:26 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:41708 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725823AbfBUKP0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 05:15:26 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1LADmo1147039;
+        Thu, 21 Feb 2019 10:15:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : cc : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=of+UOoaufvXAOYEMPoQhjJN0bDeiXnBVjiQpxPz1tSI=;
+ b=E0t53ipZYC4p2XaH4RDQNe60ZrjpjMVHnMYAhebi+915vle7WKoSjvlZRZkVgNtPefRZ
+ 7yQHp8Lj36bgyqcw7yimFy+iu2cOeYORZAJUHejfjVIx7G0PM3X+Z2Jo0SsXIIMOVrPQ
+ AuKaACHvgqLrx79uX+5nbxPAqlFcYOFbORMXHjgt3ooIjtECQ7AJ6RhtcyCbNlaUMN8I
+ 6Wapnv+01FeRpqR4iTVuauw7njcdwbglu/s6xaSs4zeP2HVqtuab/whlfZug4qem6eey
+ RixZ1008Lnk86AKm8HZlXXHD5KN/t4Cfc6K+mRDrq0FOCP3/Iw+NJfqK8BgCkQh9UoHy Zw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2qp81ef6ck-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Feb 2019 10:15:01 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1LAF0OL014963
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Feb 2019 10:15:01 GMT
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1LAExPT005413;
+        Thu, 21 Feb 2019 10:14:59 GMT
+Received: from [10.166.106.34] (/10.166.106.34)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 21 Feb 2019 02:14:58 -0800
+Subject: Re: [PATCH] x86/alternatives: check int3 breakpoint physical
+ addresses
+To:     Thomas Gleixner <tglx@linutronix.de>
+References: <1548428249-8258-1-git-send-email-alexandre.chartre@oracle.com>
+ <alpine.DEB.2.21.1902102221500.8784@nanos.tec.linutronix.de>
+ <8995b3b4-b805-c8c7-95a8-a39ab000f289@oracle.com>
+ <alpine.DEB.2.21.1902111012130.1728@nanos.tec.linutronix.de>
+ <771b5877-4cb6-203b-fd95-ed63f9736373@oracle.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>
+From:   Alexandre Chartre <alexandre.chartre@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <8a5996a0-9f0c-3bcd-c2fb-8a554fa4c765@oracle.com>
+Date:   Thu, 21 Feb 2019 11:14:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f2f8ccdd-c8bb-7f0a-5df7-dd54359e859e@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <771b5877-4cb6-203b-fd95-ed63f9736373@oracle.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9173 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902210076
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 07:14:50PM -0800, Florian Fainelli wrote:
-> On 2/18/2019 10:22 AM, Michal Kubecek wrote:
-> > +#define ETH_SETTINGS_IM_LINKINFO		0x01
-> > +#define ETH_SETTINGS_IM_LINKMODES		0x02
-> > +
-> > +#define ETH_SETTINGS_IM_ALL			0x03
-> 
-> You could define ETH_SETTINGS_IM_ALL as:
-> 
-> #define ETH_SETTING_IM_ALL		\
-> 		(ETH_SETTINGS_IM_LINKINFO |
-> 		 ETH_SETTINGS_IM_LINMODES)
-> 
-> that would scale better IMHO, especially given that you have to keep
-> bumping that mask with new bits in subsequent patches.
 
-I'm considering going even further and using something similar to what
-is used for NETIF_F_* constants so that the *_ALL value would be
-calculated automatically. But I'm not sure if it's not too fancy for
-a uapi header file.
+On 02/11/2019 10:57 AM, Alexandre Chartre wrote:
+>
+> On 02/11/2019 10:15 AM, Thomas Gleixner wrote:
+>> On Mon, 11 Feb 2019, Alexandre Chartre wrote:
+>>> On 02/10/2019 10:23 PM, Thomas Gleixner wrote:
+>>>> On Fri, 25 Jan 2019, Alexandre Chartre wrote:
+>>>>> Note that this issue has been observed and reproduced with a custom kernel
+>>>>> with some code mapped to different virtual addresses and using jump labels
+>>>>> As jump labels use text_poke_bp(), crashes were sometimes observed when
+>>>>> updating jump labels.
+>>>>
+>>>> Rightfully so. text_poke_bp() pokes at the kernels text mapping which is
+>>>> very well defined and unique. Why would you map the same text to different
+>>>> virtual addresses and then use a randomly chosen one to poke at it?
+>>>>
+>>>
+>>> As an example, we used to have per-CPU SYSCALL entry trampoline [1] where the
+>>> entry_SYSCALL_64_trampoline function was mapped to a different virtual address
+>>> for each CPU. So, a syscall would execute entry_SYSCALL_64_trampoline() from a
+>>> different virtual address depending on the CPU being used. With that code,
+>>> adding a jump label in entry_SYSCALL_64_trampoline() causes the described
+>>> issue.
+>>
+>> Right, but we knew that and there was no reason to put a jump label into
+>> that. AFAICT we don't have anything like this in the kernel.
+>
+> In our particular case, we have introduced a jump label in JMP_NOSPEC (which
+> is used by entry_SYSCALL_64_trampoline()) to have the option to dynamically
+> enable/disable retpoline at runtime. So that's when we faced this issue.
+>
+>> That said, I'm not opposed to apply the patch as is, I just wanted to get a
+>> better understanding about the background.
+>
+> Sure. I am aware this is a corner case, and I was precisely looking for feedback
+> to check if it is worth fixing that issue. So I appreciate your reply, and I would
+> understand if the patch is rejected because that's a case that we are just not
+> expecting to happen.
+>
 
-> > +	if (tb[ETHA_SETTINGS_INFOMASK])
-> > +		req_info->req_mask = nla_get_u32(tb[ETHA_SETTINGS_INFOMASK]);
-> > +	if (tb[ETHA_SETTINGS_COMPACT])
-> > +		req_info->compact = true;
-> > +	if (req_info->req_mask == 0)
-> > +		req_info->req_mask = ETH_SETTINGS_IM_ALL;
-> 
-> What if userland is newer than the kernel and specifies a req_mask with
-> bits set that you don't support? Should not you always do an &
-> ETH_SETTINGS_IM_ALL here?
+Hi Thomas,
 
-In that case only known bits would be handled and the check at the end
-of prepare_info() would add a warning to extack that part of the
-information couldn't be provided (same as if some of the recognized
-parts didn't have necessary ethtool_ops handlers or if they failed).
+Do you have any final thought about this patch? Should we drop it or apply it?
+As the patch is small and simple, I think it's worth applying it to prevent
+any such (future?) issue.
 
-Michal
+Thanks,
+
+alex.
