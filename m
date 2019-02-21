@@ -2,67 +2,93 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-12.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C85A8C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B3FAC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:15:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C3CB20823
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:11:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09C8F2083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:15:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728235AbfBUPLl (ORCPT
+        id S1728037AbfBUPPV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 10:11:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:60588 "EHLO mx1.redhat.com"
+        Thu, 21 Feb 2019 10:15:21 -0500
+Received: from foss.arm.com ([217.140.101.70]:46046 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725858AbfBUPLk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 10:11:40 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AA4803082B57;
-        Thu, 21 Feb 2019 15:11:40 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-228.ams2.redhat.com [10.36.116.228])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5F94F5D9E2;
-        Thu, 21 Feb 2019 15:11:40 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 9FE9511A9A; Thu, 21 Feb 2019 16:11:39 +0100 (CET)
-Date:   Thu, 21 Feb 2019 16:11:39 +0100
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <virtualization@lists.linux-foundation.org>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <spice-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] drm/qxl: kick out vgacon
-Message-ID: <20190221151139.ul2ihzd2yi4m47tf@sirius.home.kraxel.org>
-References: <20190221113534.20764-1-kraxel@redhat.com>
- <20190221113534.20764-3-kraxel@redhat.com>
- <20190221122011.GP2665@phenom.ffwll.local>
+        id S1725870AbfBUPPV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 10:15:21 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D944CA78;
+        Thu, 21 Feb 2019 07:15:20 -0800 (PST)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D7BFC3F5C1;
+        Thu, 21 Feb 2019 07:15:19 -0800 (PST)
+Date:   Thu, 21 Feb 2019 15:15:17 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     torvalds@linux-foundation.org
+Cc:     catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] arm64: late fixes for 5.0
+Message-ID: <20190221151517.GB13320@fuggles.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190221122011.GP2665@phenom.ffwll.local>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 21 Feb 2019 15:11:40 +0000 (UTC)
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Hi,
+Hi Linus,
 
-> I was thinking of checking whether pdev is a VGA class device and whether
-> it decodes vga access, and in that case automatically calling
+Please pull these three small arm64 fixes for 5.0. They fix a build breakage
+with clang introduced in 4.20, an oversight in our sigframe restoration
+relating to the SSBS bit and a boot fix for systems with newer revisions of
+our interrupt controller.
 
-How can I figure that?  Ok, class is easy, but decode?  pci.h offers
-functions to set vga decode but not to get that info ...
+Summary in the tag.
 
-thanks,
-  Gerd
+Cheers,
 
+Will
+
+-->8
+
+The following changes since commit a3b22b9f11d9fbc48b0291ea92259a5a810e9438:
+
+  Linux 5.0-rc7 (2019-02-17 18:46:40 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
+
+for you to fetch changes up to 74698f6971f25d045301139413578865fc2bd8f9:
+
+  arm64: Relax GIC version check during early boot (2019-02-20 14:05:37 +0000)
+
+----------------------------------------------------------------
+arm64 fixes for 5.0
+
+- Fix handling of PSTATE.SSBS bit in sigreturn()
+
+- Fix version checking of the GIC during early boot
+
+- Fix clang builds failing due to use of NEON in the crypto code
+
+----------------------------------------------------------------
+Mark Rutland (1):
+      arm64: fix SSBS sanitization
+
+Nathan Chancellor (1):
+      arm64/neon: Disable -Wincompatible-pointer-types when building with Clang
+
+Vladimir Murzin (1):
+      arm64: Relax GIC version check during early boot
+
+ arch/arm64/include/asm/neon-intrinsics.h |  4 ++++
+ arch/arm64/kernel/head.S                 |  3 +--
+ arch/arm64/kernel/ptrace.c               | 15 ++++++++-------
+ 3 files changed, 13 insertions(+), 9 deletions(-)
