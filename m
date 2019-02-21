@@ -2,107 +2,208 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2221C00319
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:13:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F715C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:16:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B255F2083B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:13:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550776425;
-	bh=v2s0umUHfGrPKSqbmZYJAk8ykkVYktDk12dLw+oexJE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Q8iqGjgDxgbV7AbZ4CyDF9fobmaYi+erUSF7iZLl8XBh7nmBvHnyVwtfxtBh+Jtpf
-	 0ro/TxpJ6nV2K4OmtMLgEnII/gFGywq7/oFCWsBt6TBYB6KmT40P6pfp85VdBWVBeO
-	 VuvlT3OctAbjWkAFoHOLffEHOHGxngpNme0vETDQ=
+	by mail.kernel.org (Postfix) with ESMTP id 5C37C2083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:16:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbfBUTNo (ORCPT
+        id S1726338AbfBUTQY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 14:13:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48054 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 14:16:24 -0500
+Received: from sandeen.net ([63.231.237.45]:34410 "EHLO sandeen.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726590AbfBUTNo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 14:13:44 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726050AbfBUTQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 14:16:24 -0500
+Received: from [10.0.0.4] (liberator [10.0.0.4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF5E320836;
-        Thu, 21 Feb 2019 19:13:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550776423;
-        bh=v2s0umUHfGrPKSqbmZYJAk8ykkVYktDk12dLw+oexJE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZfTpjGJkzkZP+ZGMrz/DEkkcRF0gawK0GI4N8YF8FAXYkqYAT/0+8E68JMSTg8b/J
-         7T5w9RFZw6A17D70SoylfQydFB+VCJWgl9eOkXBvltCS+fQgPUMrjWf5aQfZtsCzh+
-         /GUOsx3L74EoOmyqdU7yXKmIGqHaM/C4sspDDxrM=
-Date:   Thu, 21 Feb 2019 20:13:40 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     "Mehrtens, Hauke" <hauke.mehrtens@intel.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "hauke@hauke-m.de" <hauke@hauke-m.de>
-Subject: Re: [PATCH 4.9 04/20] net: Fix for_each_netdev_feature on Big endian
-Message-ID: <20190221191340.GA23109@kroah.com>
-References: <20190221125242.153179182@linuxfoundation.org>
- <20190221125242.858818453@linuxfoundation.org>
- <9231D502B07C5E4A8B32D5115C9F19991F89EFB4@IRSMSX108.ger.corp.intel.com>
+        by sandeen.net (Postfix) with ESMTPSA id 2FA9687D;
+        Thu, 21 Feb 2019 13:16:06 -0600 (CST)
+Subject: [PATCH V2] test_sysctl: add proc_do_large_bitmap test function
+To:     Eric Sandeen <sandeen@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        fsdevel <linux-fsdevel@vger.kernel.org>, netdev@vger.kernel.org
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+References: <53be40fc-6ec4-c714-a64e-f69c96f7058f@redhat.com>
+ <8166cf23-db52-7679-3378-8523889a9cd0@sandeen.net>
+ <a8caf97b-9dbb-5846-7e93-242226a6c8c7@redhat.com>
+From:   Eric Sandeen <sandeen@sandeen.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
+ 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 pA==
+Message-ID: <b89edbe2-0fc3-b99d-a54a-7a1053082f07@sandeen.net>
+Date:   Thu, 21 Feb 2019 13:16:22 -0600
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9231D502B07C5E4A8B32D5115C9F19991F89EFB4@IRSMSX108.ger.corp.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <a8caf97b-9dbb-5846-7e93-242226a6c8c7@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 05:26:10PM +0000, Mehrtens, Hauke wrote:
-> -----Original Message-----
-> From: Greg Kroah-Hartman [mailto:gregkh@linuxfoundation.org] 
-> Sent: Thursday, February 21, 2019 3:36 PM
-> To: linux-kernel@vger.kernel.org
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; stable@vger.kernel.org; Mehrtens, Hauke <hauke.mehrtens@intel.com>; David S. Miller <davem@davemloft.net>
-> Subject: [PATCH 4.9 04/20] net: Fix for_each_netdev_feature on Big endian
-> 
-> 4.9-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Hauke Mehrtens <hauke.mehrtens@intel.com>
-> 
-> [ Upstream commit 3b89ea9c5902acccdbbdec307c85edd1bf52515e ]
-> 
-> The features attribute is of type u64 and stored in the native endianes on the system. The for_each_set_bit() macro takes a pointer to a 32 bit array and goes over the bits in this area. On little Endian systems this also works with an u64 as the most significant bit is on the highest address, but on big endian the words are swapped. When we expect bit 15 here we get bit 47 (15 + 32).
-> 
-> This patch converts it more or less to its own for_each_set_bit() implementation which works on 64 bit integers directly. This is then completely in host endianness and should work like expected.
-> 
-> Fixes: fd867d51f ("net/core: generic support for disabling netdev features down stack")
-> Signed-off-by: Hauke Mehrtens <hauke.mehrtens@intel.com>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  include/linux/netdev_features.h |   23 +++++++++++++++++++++--
->  net/core/dev.c                  |    4 ++--
->  2 files changed, 23 insertions(+), 4 deletions(-)
-> 
-> Hi Greg,
-> 
-> This commit adds a missing include, I do not know if this really causes a compile problem:
-> https://git.kernel.org/linus/8681ef1f3d295bd3600315325f3b3396d76d02f6
+Add test to build up bitmap range string and test the bitmap
+proc handler.
 
-I have that patch queued up as well :)
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+---
 
-> It was also suggested to use a longer commit ID in the Fixes tag like this:
-> Fixes: fd867d51f889 ("net/core: generic support for disabling netdev features down stack")
+V2: set rc=0 for test success
 
-Yes, in the future please do that, I just took the changelog directly
-from what is in Linus's tree.
+however this still fails indeterminately for me.  Debugging, if I
+save off the test write string and the read string, re-writing it to
+the handler works fine.  My standalone test also works fine for 1000
+iterations.  So I don't know what's going on here.
 
-thanks,
+nb: test_modprobe & load_req_mod fail for me before we ever
+get to this test, but commenting them out, my test runs as expected.
+I'm new to this script, so careful review would be wise. 
 
-greg k-h
+Thanks,
+-Eric
+
+
+diff --git a/tools/testing/selftests/sysctl/sysctl.sh b/tools/testing/selftests/sysctl/sysctl.sh
+index 584eb8ea780a..e531074f94bd 100755
+--- a/tools/testing/selftests/sysctl/sysctl.sh
++++ b/tools/testing/selftests/sysctl/sysctl.sh
+@@ -37,6 +37,7 @@ ALL_TESTS="$ALL_TESTS 0002:1:1"
+ ALL_TESTS="$ALL_TESTS 0003:1:1"
+ ALL_TESTS="$ALL_TESTS 0004:1:1"
+ ALL_TESTS="$ALL_TESTS 0005:3:1"
++ALL_TESTS="$ALL_TESTS 0006:3:1"
+ 
+ test_modprobe()
+ {
+@@ -149,6 +150,9 @@ reset_vals()
+ 		string_0001)
+ 			VAL="(none)"
+ 			;;
++		bitmap_0001)
++			VAL=""
++			;;
+ 		*)
+ 			;;
+ 	esac
+@@ -548,6 +552,48 @@ run_stringtests()
+ 	test_rc
+ }
+ 
++run_bitmaptest() {
++	# Total length of bitmaps string to use, a bit under
++	# the maximum input size of the test node
++	LENGTH=$((RANDOM % 65000))
++
++	# First bit to set
++	BIT=$((RANDOM % 1024))
++
++	# String containing our list of bits to set
++	TEST_STR=$BIT
++
++	# build up the string
++	while [ "${#TEST_STR}" -le "$LENGTH" ]; do
++		# Make sure next entry is discontiguous,
++		# skip ahead at least 2
++		BIT=$((BIT + $((2 + RANDOM % 10))))
++
++		# Add new bit to the list
++		TEST_STR="${TEST_STR},${BIT}"
++
++		# Randomly make it a range
++		if [ "$((RANDOM % 2))" -eq "1" ]; then
++			RANGE_END=$((BIT + $((1 + RANDOM % 10))))
++			TEST_STR="${TEST_STR}-${RANGE_END}"
++			BIT=$RANGE_END
++		fi
++	done
++
++	echo -n "Checking bitmap handler... "
++	echo $TEST_STR > /tmp/test_str
++	echo -n $TEST_STR > $TARGET 2> /dev/null
++
++	if verify "${TARGET}"; then
++		echo "FAIL" >&2
++		rc=1
++	else
++		echo "ok"
++		rc=0
++	fi
++	test_rc
++}
++
+ sysctl_test_0001()
+ {
+ 	TARGET="${SYSCTL}/int_0001"
+@@ -605,6 +651,14 @@ sysctl_test_0005()
+ 	run_limit_digit_int_array
+ }
+ 
++sysctl_test_0006()
++{
++	TARGET="${SYSCTL}/bitmap_0001"
++	reset_vals
++	ORIG=""
++	run_bitmaptest
++}
++
+ list_tests()
+ {
+ 	echo "Test ID list:"
+@@ -618,6 +672,7 @@ list_tests()
+ 	echo "0003 x $(get_test_count 0003) - tests proc_dointvec()"
+ 	echo "0004 x $(get_test_count 0004) - tests proc_douintvec()"
+ 	echo "0005 x $(get_test_count 0005) - tests proc_douintvec() array"
++	echo "0006 x $(get_test_count 0006) - tests proc_do_large_bitmap"
+ }
+ 
+ test_reqs
+
