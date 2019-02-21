@@ -2,68 +2,99 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 621ADC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A5BC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:15:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CDBC2083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:15:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550769304;
-	bh=HaOKFKizGHvAyhrdvqRVdv17Ig46LRL+thA4wKAheeY=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=TTmsIiEwNOZEY5cdVUgYGM9WCNLBboEKdziOAA02VDM5eibuvepzfOy5w0D6CrKih
-	 IOXl0/C6k/ggUZ0f8g8K+l2dercmKLBJzojEu/Q1T63BzD4xro4ZQpxCQ2UXdEE1ZT
-	 6U3oXxeNRN5hZwJdczBvJKVCNR7zp1oI9nU0u9mQ=
+	by mail.kernel.org (Postfix) with ESMTP id 6D5622083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:15:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aBoxrJDf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728135AbfBURPD (ORCPT
+        id S1728614AbfBURP1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 12:15:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36410 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726165AbfBURPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 12:15:02 -0500
-Subject: Re: [GIT PULL] arm64: late fixes for 5.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550769301;
-        bh=HaOKFKizGHvAyhrdvqRVdv17Ig46LRL+thA4wKAheeY=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=lpdGnxYmqv/BAUCAvhimoOBgcUspXJMiZbqZd1njSwjde/Tr0K1fwJOaWTq7TVUoS
-         2vIj0QCdM3aEXevdfdFzz8Vuw1QRuqKs+6nDKP72GkBA6XyHiuC0PbWNdvZ0OmiP54
-         DFYYLadLkH60JA+vumltF+hLlgZyErAJZ8R5UWL0=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190221151517.GB13320@fuggles.cambridge.arm.com>
-References: <20190221151517.GB13320@fuggles.cambridge.arm.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190221151517.GB13320@fuggles.cambridge.arm.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
- tags/arm64-fixes
-X-PR-Tracked-Commit-Id: 74698f6971f25d045301139413578865fc2bd8f9
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d6622d913a637bce224f74425a9dfe734f946358
-Message-Id: <155076930188.22690.7679110477710991642.pr-tracker-bot@kernel.org>
-Date:   Thu, 21 Feb 2019 17:15:01 +0000
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     torvalds@linux-foundation.org, catalin.marinas@arm.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+        Thu, 21 Feb 2019 12:15:27 -0500
+Received: from mail-wm1-f43.google.com ([209.85.128.43]:40502 "EHLO
+        mail-wm1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726183AbfBURP0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 12:15:26 -0500
+Received: by mail-wm1-f43.google.com with SMTP id t15so9918138wmi.5;
+        Thu, 21 Feb 2019 09:15:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ayxuSwqcGDCqyE2cx8MplKfS479f9qUe16s4+Kmxv0o=;
+        b=aBoxrJDfcJmvlSC4Uacm88etxXMtA9VqD0AwF32o4ty5XI5lG7WyQ5al3vHv5v7iKn
+         TW/j13CcGiJpjc2xPHQ0NdyEyMlA5vdBICqbsHiSF0UVuubOBLNAok7rAl4svUlycViN
+         xi7nZAzupIe7v7+pbQ6aZHteHZbk0C1zoPnJd7DGVtl8KwtKl/f9DO4p31zM/8FaKLfU
+         mjfRLPwJcDieZdtcjmWf1WXOfY36CQXj9xmlPkA4lEa4FFBq532CmBUQS1+O+BU81d83
+         kyrAO5zIxpUt5uRmm8UGCcQitgqaGSc2hjMk8/w/zoK2aRdIKqHmYdbGotYw2CPpVk2L
+         zjRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ayxuSwqcGDCqyE2cx8MplKfS479f9qUe16s4+Kmxv0o=;
+        b=PKCz3nv8TKNKJm2b5ZvP1zOCcGgVFHE44GwUniGVAuRWCepujgqahBQtHYPni25gIE
+         LFOvvTrewLAfBlDv7ak4ZKyUQryY0yG89TiVAcT7+uHObu27WUvB64N/AvBkdBWd1Qs6
+         PXD/jBOxbe9Qe3vfjRp/jNzEEm3tyyECg/kTWnNcbgSvfviGT+syWbX2L6fWAsdZepNp
+         SzhFSm0vdrhrDxONLq0fVW/+OLCnJ/H4uF8Yq7AMPySNJSlduNCOjVo7cIRXkCFSn62M
+         lcn+pPXo7d+eFJF4XqclRy8aHYKCFmdRYnaj364AmJ2NmsjzHgfLv3deSYJhc/7PAXm4
+         AJIQ==
+X-Gm-Message-State: AHQUAubAgRqT8R5Y+lXVcwIMSZ2Oynyg6yCnqAj1LbyK7srcV33guk7X
+        wHw7P2R51Ir9ivlC9EOlHqsJiRCG
+X-Google-Smtp-Source: AHgI3Ibp4bGNWHZRSg0WHTwiK4o3E7uwbpIcbI3++Jc2JHLK5D64UcyvR5o+j+jdVdrXxzdj53Lx+g==
+X-Received: by 2002:a1c:4009:: with SMTP id n9mr10776020wma.132.1550769324733;
+        Thu, 21 Feb 2019 09:15:24 -0800 (PST)
+Received: from kwango.redhat.com (ovpn-brq.redhat.com. [213.175.37.11])
+        by smtp.gmail.com with ESMTPSA id m16sm18309450wro.78.2019.02.21.09.15.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 21 Feb 2019 09:15:23 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fixes for 5.0-rc8
+Date:   Thu, 21 Feb 2019 18:16:07 +0100
+Message-Id: <20190221171607.2756-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 21 Feb 2019 15:15:17 +0000:
+Hi Linus,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
+The following changes since commit a3b22b9f11d9fbc48b0291ea92259a5a810e9438:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d6622d913a637bce224f74425a9dfe734f946358
+  Linux 5.0-rc7 (2019-02-17 18:46:40 -0800)
 
-Thank you!
+are available in the Git repository at:
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.0-rc8
+
+for you to fetch changes up to 04242ff3ac0abbaa4362f97781dac268e6c3541a:
+
+  ceph: avoid repeatedly adding inode to mdsc->snap_flush_list (2019-02-18 18:08:29 +0100)
+
+----------------------------------------------------------------
+Two bug fixes for old issues, both marked for stable.
+
+----------------------------------------------------------------
+Ilya Dryomov (1):
+      libceph: handle an empty authorize reply
+
+Yan, Zheng (1):
+      ceph: avoid repeatedly adding inode to mdsc->snap_flush_list
+
+ fs/ceph/snap.c       |  3 ++-
+ net/ceph/messenger.c | 15 +++++++++------
+ 2 files changed, 11 insertions(+), 7 deletions(-)
