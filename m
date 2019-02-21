@@ -2,111 +2,173 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7CB3C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BAFEC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:49:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98BF820823
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:47:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qOmahZvN"
+	by mail.kernel.org (Postfix) with ESMTP id 6E09620823
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:49:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728556AbfBUPrC (ORCPT
+        id S1727253AbfBUPtl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 10:47:02 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38959 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726109AbfBUPqk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 10:46:40 -0500
-Received: by mail-wr1-f66.google.com with SMTP id l5so30046042wrw.6;
-        Thu, 21 Feb 2019 07:46:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Zr9ZMCK/RIEsVShfTL9vZ/oRXnYMetMaqCj88B2pMXk=;
-        b=qOmahZvNTdBR6w48h6n7PD4d1HPzdsS2E495/2PhFthU2JnaRnP3FEqq0e+hREohos
-         AZzmyCxYWh5m5479GW4axtCFXF1ktAJJFNwVx8VNqbtRqZLYSsb1zx8KKQYt0YoP2exG
-         dsI9tzS//DZCwiOteFcoOomfq8kU1MNiFTygCa9mpNZf1KZbxNHbjSmOEDgvl/y54qff
-         +Sw+SOufvMPD+XJZHof6wCYMV2/tpEUMGt4vHKaNfW0cpSL1CS47PDphs9zNHniPCI8W
-         WuLxJ8uKP2c+ZhwfDuD5oX7cBTrsQmzRvq4FQS2d6dq+jPp2yQw5N18DLM/2dc3J9kiz
-         MIiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Zr9ZMCK/RIEsVShfTL9vZ/oRXnYMetMaqCj88B2pMXk=;
-        b=s0HqAnjFWsN6b97270ktOiVzspKiWQavbBsJB7OW49akHmi0dMIai/x+eJtQUUTizD
-         GMRvn4Cor/nznsr19vYNx87pfBrt1FleBuvOu53876sfC201CsukbbtoloX+c57J68UN
-         Lgk8A6NUkucO+1zCxsJF9+uvVxj7gWhK37v4Ud6yYM0J5UCib6JmMZu6EpROladzKFcW
-         ul3QKRw+FphBLm+tRoMCBb8oe8NDFaSFPkdDrJfdmkIb/+Q9g8V9qgMMVIhIy+3cSfuZ
-         VcPN96oxTD4hBrOUmLHmh/bzXAvYoHU4gKuxiI7P4PN61aC6ZAe9Uz7goNStCf2MmLsr
-         x7ig==
-X-Gm-Message-State: AHQUAuYYeypWI+NA7WDjkXlxYl4CjPAudu7a/j8uL3FWv+SDGXnmB03z
-        gKACLFOfSYGJNyqhPGIo5Wg=
-X-Google-Smtp-Source: AHgI3IbEGJ4tqn4YTCwDC05sh3790FkAVP2kf7ZimbIgUtTTsZwCP8IYq4p2d0XzyL1XTevNscqyvw==
-X-Received: by 2002:a5d:6a88:: with SMTP id s8mr27002109wru.303.1550763999196;
-        Thu, 21 Feb 2019 07:46:39 -0800 (PST)
-Received: from localhost (pD9E51D2D.dip0.t-ipconnect.de. [217.229.29.45])
-        by smtp.gmail.com with ESMTPSA id a144sm12653366wmd.30.2019.02.21.07.46.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Feb 2019 07:46:38 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/5] phy: tegra: xusb: Skip single function lane programming
-Date:   Thu, 21 Feb 2019 16:46:31 +0100
-Message-Id: <20190221154634.10684-3-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190221154634.10684-1-thierry.reding@gmail.com>
-References: <20190221154634.10684-1-thierry.reding@gmail.com>
+        Thu, 21 Feb 2019 10:49:41 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46634 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726344AbfBUPtk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 10:49:40 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A0CBA78;
+        Thu, 21 Feb 2019 07:49:40 -0800 (PST)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3B1DB3F5C1;
+        Thu, 21 Feb 2019 07:49:38 -0800 (PST)
+Date:   Thu, 21 Feb 2019 15:49:35 +0000
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Amit Daniel Kachhap <amit.kachhap@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        kvmarm@lists.cs.columbia.edu,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/6] arm64/kvm: preserve host HCR_EL2 value
+Message-ID: <20190221154935.GU3567@e103592.cambridge.arm.com>
+References: <1550568271-5319-1-git-send-email-amit.kachhap@arm.com>
+ <1550568271-5319-2-git-send-email-amit.kachhap@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1550568271-5319-2-git-send-email-amit.kachhap@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: JC Kuo <jckuo@nvidia.com>
+On Tue, Feb 19, 2019 at 02:54:26PM +0530, Amit Daniel Kachhap wrote:
+> From: Mark Rutland <mark.rutland@arm.com>
+> 
+> When restoring HCR_EL2 for the host, KVM uses HCR_HOST_VHE_FLAGS, which
+> is a constant value. This works today, as the host HCR_EL2 value is
+> always the same, but this will get in the way of supporting extensions
+> that require HCR_EL2 bits to be set conditionally for the host.
+> 
+> To allow such features to work without KVM having to explicitly handle
+> every possible host feature combination, this patch has KVM save/restore
+> for the host HCR when switching to/from a guest HCR. The saving of the
+> register is done once during cpu hypervisor initialization state and is
+> just restored after switch from guest.
+> 
+> For fetching HCR_EL2 during kvm initialisation, a hyp call is made using
+> kvm_call_hyp and is helpful in NHVE case.
 
-Tegra186 USB2 pads and USB3 pads do not have hardware mux for changing
-the pad function. For such "lanes", we can skip the lane mux register
-programming.
+Minor nit: NVHE misspelled.  This looks a bit like it's naming an arch
+feature rather than a kernel implementation detail though.  Maybe write
+"non-VHE".
 
-Signed-off-by: JC Kuo <jckuo@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/phy/tegra/xusb.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+> For the hyp TLB maintenance code, __tlb_switch_to_host_vhe() is updated
+> to toggle the TGE bit with a RMW sequence, as we already do in
+> __tlb_switch_to_guest_vhe().
+> 
+> The value of hcr_el2 is now stored in struct kvm_cpu_context as both host
+> and guest can now use this field in a common way.
+> 
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> [Added __cpu_copy_hyp_conf, hcr_el2 field in struct kvm_cpu_context]
+> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: kvmarm@lists.cs.columbia.edu
+> ---
+>  arch/arm/include/asm/kvm_host.h      |  2 ++
+>  arch/arm64/include/asm/kvm_asm.h     |  2 ++
+>  arch/arm64/include/asm/kvm_emulate.h | 22 +++++++++++-----------
+>  arch/arm64/include/asm/kvm_host.h    | 13 ++++++++++++-
+>  arch/arm64/include/asm/kvm_hyp.h     |  2 +-
+>  arch/arm64/kvm/guest.c               |  2 +-
+>  arch/arm64/kvm/hyp/switch.c          | 23 +++++++++++++----------
+>  arch/arm64/kvm/hyp/sysreg-sr.c       | 21 ++++++++++++++++++++-
+>  arch/arm64/kvm/hyp/tlb.c             |  6 +++++-
+>  virt/kvm/arm/arm.c                   |  1 +
+>  10 files changed, 68 insertions(+), 26 deletions(-)
+> 
+> diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
+> index ca56537..05706b4 100644
+> --- a/arch/arm/include/asm/kvm_host.h
+> +++ b/arch/arm/include/asm/kvm_host.h
+> @@ -273,6 +273,8 @@ static inline void __cpu_init_stage2(void)
+>  	kvm_call_hyp(__init_stage2_translation);
+>  }
+>  
+> +static inline void __cpu_copy_hyp_conf(void) {}
+> +
+>  static inline int kvm_arch_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+>  {
+>  	return 0;
+> diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
+> index f5b79e9..8acd73f 100644
+> --- a/arch/arm64/include/asm/kvm_asm.h
+> +++ b/arch/arm64/include/asm/kvm_asm.h
+> @@ -80,6 +80,8 @@ extern void __vgic_v3_init_lrs(void);
+>  
+>  extern u32 __kvm_get_mdcr_el2(void);
+>  
+> +extern void __kvm_populate_host_regs(void);
+> +
+>  /* Home-grown __this_cpu_{ptr,read} variants that always work at HYP */
+>  #define __hyp_this_cpu_ptr(sym)						\
+>  	({								\
+> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
+> index 506386a..0dbe795 100644
+> --- a/arch/arm64/include/asm/kvm_emulate.h
+> +++ b/arch/arm64/include/asm/kvm_emulate.h
+> @@ -50,25 +50,25 @@ void kvm_inject_pabt32(struct kvm_vcpu *vcpu, unsigned long addr);
+>  
+>  static inline bool vcpu_el1_is_32bit(struct kvm_vcpu *vcpu)
+>  {
+> -	return !(vcpu->arch.hcr_el2 & HCR_RW);
+> +	return !(vcpu->arch.ctxt.hcr_el2 & HCR_RW);
 
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index 5b3b8863363e..e3bc60cfe6a1 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2014-2015, NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (c) 2014-2016, NVIDIA CORPORATION.  All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify it
-  * under the terms and conditions of the GNU General Public License,
-@@ -313,6 +313,10 @@ static void tegra_xusb_lane_program(struct tegra_xusb_lane *lane)
- 	const struct tegra_xusb_lane_soc *soc = lane->soc;
- 	u32 value;
- 
-+	/* skip single function lanes */
-+	if (soc->num_funcs < 2)
-+		return;
+Putting hcr_el2 into struct kvm_cpu_context creates a lot of splatter
+here, and I'm wondering whether it's really necessary.  Otherwise,
+we could just put the per-vcpu guest HCR_EL2 value in struct
+kvm_vcpu_arch.
+
+Is the *host* hcr_el2 value really different per-vcpu?  That looks
+odd.  I would have thought this is fixed across the system at KVM
+startup time.
+
+Having a single global host hcr_el2 would also avoid the need for
+__kvm_populate_host_regs(): instead, we just decide what HCR_EL2 is to
+be ahead of time and set a global variable that we map into Hyp.
+
+
+Or does the host HCR_EL2 need to vary at runtime for some reason I've
+missed?
+
+[...]
+
++void __hyp_text __kvm_populate_host_regs(void)
++{
++       struct kvm_cpu_context *host_ctxt;
 +
- 	/* choose function */
- 	value = padctl_readl(padctl, soc->offset);
- 	value &= ~(soc->mask << soc->shift);
--- 
-2.20.1
++       if (has_vhe())
++               host_ctxt = this_cpu_ptr(&kvm_host_cpu_state);
++       else
++               host_ctxt = __hyp_this_cpu_ptr(kvm_host_cpu_state);
 
+According to the comment by the definition of __hyp_this_cpu_ptr(), this
+always works at Hyp.  I also see other calls with no fallback
+this_cpu_ptr() call like we have here.
+
+So, can we simply always call __hyp_this_cpu_ptr() here?
+
+(I'm not familiar with this, myself.)
+
+Cheers
+---Dave
