@@ -3,28 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A0A6C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F273C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:51:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24AA62148D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:51:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DED8A20880
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:51:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727704AbfBUJvt (ORCPT
+        id S1727731AbfBUJvu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 04:51:49 -0500
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:48319 "EHLO
+        Thu, 21 Feb 2019 04:51:50 -0500
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:49585 "EHLO
         relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725814AbfBUJvo (ORCPT
+        with ESMTP id S1727664AbfBUJvr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 04:51:44 -0500
+        Thu, 21 Feb 2019 04:51:47 -0500
 X-Originating-IP: 90.88.23.190
 Received: from mc-bl-xps13.lan (aaubervilliers-681-1-81-190.w90-88.abo.wanadoo.fr [90.88.23.190])
         (Authenticated sender: maxime.chevallier@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 3ECE4C0004;
-        Thu, 21 Feb 2019 09:51:40 +0000 (UTC)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id D3741C0006;
+        Thu, 21 Feb 2019 09:51:42 +0000 (UTC)
 From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
 To:     davem@davemloft.net
 Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
@@ -38,9 +38,9 @@ Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
         thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
         miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
         mw@semihalf.com
-Subject: [PATCH net-next 3/7] net: phy: marvell10g: Use 2500BASEX when using 2.5GBASET
-Date:   Thu, 21 Feb 2019 10:51:24 +0100
-Message-Id: <20190221095128.28188-4-maxime.chevallier@bootlin.com>
+Subject: [PATCH net-next 4/7] net: phy: marvell10g: Use a #define for 88X3310 family id
+Date:   Thu, 21 Feb 2019 10:51:25 +0100
+Message-Id: <20190221095128.28188-5-maxime.chevallier@bootlin.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190221095128.28188-1-maxime.chevallier@bootlin.com>
 References: <20190221095128.28188-1-maxime.chevallier@bootlin.com>
@@ -51,74 +51,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Marvell Alaska family of PHYs supports 2.5GBaseT and 5GBaseT modes,
-as defined in the 802.3bz specification.
-
-Upon establishing a 2.5GBASET link, the PHY will reconfigure it's MII
-interface to 2500BASEX.
-
-At 5G, the PHY will reconfigure it's interface to 5GBASE-R, but this
-mode isn't supported by any MAC for now.
-
-This was tested with :
- - The 88X3310, which is on the MacchiatoBin
- - The 88E2010, an Alaska PHY that has no fiber interfaces, and is
-   limited to 5G maximum speed.
+The PHY ID corresponding to the 88X3310 is also used for other PHYs in
+the same family, such as the 88E2010. Use a #define for the PHY id, that
+ignores the last nibble.
 
 Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 ---
- drivers/net/phy/marvell10g.c | 26 +++++++++++++++++++-------
- 1 file changed, 19 insertions(+), 7 deletions(-)
+ drivers/net/phy/marvell10g.c | 4 ++--
+ include/linux/marvell_phy.h  | 1 +
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/phy/marvell10g.c b/drivers/net/phy/marvell10g.c
-index 8e2d6039b9b3..127200a8cf9b 100644
+index 127200a8cf9b..9323bcf15dbd 100644
 --- a/drivers/net/phy/marvell10g.c
 +++ b/drivers/net/phy/marvell10g.c
-@@ -235,6 +235,7 @@ static int mv3310_config_init(struct phy_device *phydev)
- {
- 	/* Check that the PHY interface type is compatible */
- 	if (phydev->interface != PHY_INTERFACE_MODE_SGMII &&
-+	    phydev->interface != PHY_INTERFACE_MODE_2500BASEX &&
- 	    phydev->interface != PHY_INTERFACE_MODE_XAUI &&
- 	    phydev->interface != PHY_INTERFACE_MODE_RXAUI &&
- 	    phydev->interface != PHY_INTERFACE_MODE_10GKR)
-@@ -325,18 +326,29 @@ static int mv3310_aneg_done(struct phy_device *phydev)
- static void mv3310_update_interface(struct phy_device *phydev)
- {
- 	if ((phydev->interface == PHY_INTERFACE_MODE_SGMII ||
-+	     phydev->interface == PHY_INTERFACE_MODE_2500BASEX ||
- 	     phydev->interface == PHY_INTERFACE_MODE_10GKR) && phydev->link) {
- 		/* The PHY automatically switches its serdes interface (and
--		 * active PHYXS instance) between Cisco SGMII and 10GBase-KR
--		 * modes according to the speed.  Florian suggests setting
--		 * phydev->interface to communicate this to the MAC. Only do
--		 * this if we are already in either SGMII or 10GBase-KR mode.
-+		 * active PHYXS instance) between Cisco SGMII, 10GBase-KR and
-+		 * 2500BaseX modes according to the speed.  Florian suggests
-+		 * setting phydev->interface to communicate this to the MAC.
-+		 * Only do this if we are already in one of the above modes.
- 		 */
--		if (phydev->speed == SPEED_10000)
-+		switch (phydev->speed) {
-+		case SPEED_10000:
- 			phydev->interface = PHY_INTERFACE_MODE_10GKR;
--		else if (phydev->speed >= SPEED_10 &&
--			 phydev->speed < SPEED_10000)
-+			break;
-+		case SPEED_2500:
-+			phydev->interface = PHY_INTERFACE_MODE_2500BASEX;
-+			break;
-+		case SPEED_1000:
-+		case SPEED_100:
-+		case SPEED_10:
- 			phydev->interface = PHY_INTERFACE_MODE_SGMII;
-+			break;
-+		default:
-+			break;
-+		}
- 	}
- }
+@@ -442,7 +442,7 @@ static int mv3310_read_status(struct phy_device *phydev)
  
+ static struct phy_driver mv3310_drivers[] = {
+ 	{
+-		.phy_id		= 0x002b09aa,
++		.phy_id		= MARVELL_PHY_ID_88X3310,
+ 		.phy_id_mask	= MARVELL_PHY_ID_MASK,
+ 		.name		= "mv88x3310",
+ 		.get_features	= mv3310_get_features,
+@@ -460,7 +460,7 @@ static struct phy_driver mv3310_drivers[] = {
+ module_phy_driver(mv3310_drivers);
+ 
+ static struct mdio_device_id __maybe_unused mv3310_tbl[] = {
+-	{ 0x002b09aa, MARVELL_PHY_ID_MASK },
++	{ MARVELL_PHY_ID_88X3310, MARVELL_PHY_ID_MASK },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(mdio, mv3310_tbl);
+diff --git a/include/linux/marvell_phy.h b/include/linux/marvell_phy.h
+index 1eb6f244588d..70c17345e118 100644
+--- a/include/linux/marvell_phy.h
++++ b/include/linux/marvell_phy.h
+@@ -20,6 +20,7 @@
+ #define MARVELL_PHY_ID_88E1540		0x01410eb0
+ #define MARVELL_PHY_ID_88E1545		0x01410ea0
+ #define MARVELL_PHY_ID_88E3016		0x01410e60
++#define MARVELL_PHY_ID_88X3310		0x002b09a0
+ 
+ /* The MV88e6390 Ethernet switch contains embedded PHYs. These PHYs do
+  * not have a model ID. So the switch driver traps reads to the ID2
 -- 
 2.19.2
 
