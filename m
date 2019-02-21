@@ -2,160 +2,189 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E782FC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:15:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5350C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:17:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8DCD2086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:15:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="af7xu7it"
+	by mail.kernel.org (Postfix) with ESMTP id A3DA12086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:17:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbfBUDO7 (ORCPT
+        id S1726986AbfBUDRx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 22:14:59 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:39656 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726697AbfBUDO6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 22:14:58 -0500
-Received: by mail-pg1-f195.google.com with SMTP id r11so13015714pgp.6;
-        Wed, 20 Feb 2019 19:14:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1YmuQn00Z+bREscdfIwV5Lu3dbgN2Wzv5Ixy2R7PifE=;
-        b=af7xu7itBTlgXPqR200jpFCx3tNHLzwXY8vzApXIRPza5c+q04zZVB/0PIIrL0CDei
-         woZuqoZfGZ/wfN8Q0E1IVKp3HgCeaY+btNPCBNX1qhNCgA7P5Dxp53z9KwK+21ugAqIC
-         NrY1Af0nqxz229x7RFlmjxI7L35/dW7gdsPQrXxadiHBToZJ76e1TRpfmDUCaZukdX93
-         sK4UmEe79srW640P0p5RC7iEwKKapPCdRnJomhA4ZQDuLgY5E1ZCAkqXEXQeQ7Vis+kH
-         UpLydhHzG1I+Gt2PzqRz4GPoITk2rX9vrWFW6qMJVpoNtLac7cyhjwejhA80zojyRYUT
-         i8sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=1YmuQn00Z+bREscdfIwV5Lu3dbgN2Wzv5Ixy2R7PifE=;
-        b=sOkMUFBE/eskrL3ZRq9fPiBSp5RtBnjBLuHDowbJ9MCpzOlbWNaCtZBtMmqszr4/T2
-         RTivOi441/h3J4X6XeY5FRDyFBWuDdiJgkhgT8FIC/serjSpAqIvPY6y5nfPYUg82oUF
-         2CizfugZX9A6dyzCTA3AJU4/fZklC4WyzOOkl9ZZAyb3fq1UMTVhSV53WSzsl4LgsIjC
-         PFxkgsdnIaVHI7RxeG/m9GZIBVGbiiXJnxDa7gntrXzKt6ILDLwWdRx9NpReW9pLv5Li
-         xlWb7/9Y6yccKdXkBbwtYqz4edJ8c9/U1hPWayIpGevRsNUJhU1GC4ndiqg8+aLkEi7D
-         eURA==
-X-Gm-Message-State: AHQUAuYkYkxJ6YpEqWVQzmInW1baO8gA9dhYP4T8JJgItZWAErSZumKR
-        sJBFHxNV2yGkYWme9KdYKcYkgBTY
-X-Google-Smtp-Source: AHgI3IZqWHV8FBtGFUZrxH4ScmY3ub2ovciQuUjCZYO4CDAHFcfgtMtF8jCsL2+L1wrgDrWJFP1X3Q==
-X-Received: by 2002:a62:2e46:: with SMTP id u67mr37451696pfu.3.1550718897175;
-        Wed, 20 Feb 2019 19:14:57 -0800 (PST)
-Received: from [192.168.1.3] (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
-        by smtp.gmail.com with ESMTPSA id n1sm39800240pfi.123.2019.02.20.19.14.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Feb 2019 19:14:56 -0800 (PST)
-Subject: Re: [RFC PATCH net-next v3 15/21] ethtool: provide link settings and
- link modes in GET_SETTINGS request
-To:     Michal Kubecek <mkubecek@suse.cz>, netdev@vger.kernel.org
-Cc:     David Miller <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jiri Pirko <jiri@resnulli.us>, linux-kernel@vger.kernel.org
-References: <cover.1550513384.git.mkubecek@suse.cz>
- <00e931c1ecd29bf302a190c7d7a3f2cbd0388542.1550513384.git.mkubecek@suse.cz>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- w0j9Sw==
-Message-ID: <f2f8ccdd-c8bb-7f0a-5df7-dd54359e859e@gmail.com>
-Date:   Wed, 20 Feb 2019 19:14:50 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Wed, 20 Feb 2019 22:17:53 -0500
+Received: from mga02.intel.com ([134.134.136.20]:22447 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726016AbfBUDRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 22:17:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 19:17:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,393,1544515200"; 
+   d="scan'208";a="140330388"
+Received: from shao2-debian.sh.intel.com (HELO [10.239.13.107]) ([10.239.13.107])
+  by orsmga001.jf.intel.com with ESMTP; 20 Feb 2019 19:17:50 -0800
+Subject: Re: [LKP] [RFC PATCH] mm, memory_hotplug: fix off-by-one in
+ is_pageblock_removable
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Oscar Salvador <OSalvador@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Rapoport <rppt@linux.ibm.com>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>, lkp@01.org
+References: <20190218052823.GH29177@shao2-debian>
+ <20190218181544.14616-1-mhocko@kernel.org>
+ <20190220125732.GB4525@dhcp22.suse.cz>
+From:   Rong Chen <rong.a.chen@intel.com>
+Message-ID: <e3fc1372-f3bb-d734-9e3f-d715b85d781d@intel.com>
+Date:   Thu, 21 Feb 2019 11:18:07 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <00e931c1ecd29bf302a190c7d7a3f2cbd0388542.1550513384.git.mkubecek@suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20190220125732.GB4525@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
+The patch can fix the issue for me.
 
-On 2/18/2019 10:22 AM, Michal Kubecek wrote:
-> Implement GET_SETTINGS netlink request to get link settings and link mode
-> information provided by ETHTOOL_GLINKSETTINGS ioctl command.
-> 
-> The information is divided into two parts: supported, advertised and peer
-> advertised link modes when ETH_SETTINGS_IM_LINKMODES flag is set in the
-> request and other settings when ETH_SETTINGS_IM_LINKINFO is set.
-> 
-> Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
-> ---
+Best Regards,
+Rong Chen
 
-[snip]
-
-> +#define ETH_SETTINGS_IM_LINKINFO		0x01
-> +#define ETH_SETTINGS_IM_LINKMODES		0x02
-> +
-> +#define ETH_SETTINGS_IM_ALL			0x03
-
-You could define ETH_SETTINGS_IM_ALL as:
-
-#define ETH_SETTING_IM_ALL		\
-		(ETH_SETTINGS_IM_LINKINFO |
-		 ETH_SETTINGS_IM_LINMODES)
-
-that would scale better IMHO, especially given that you have to keep
-bumping that mask with new bits in subsequent patches.
-
-[snip]
-
-> +	if (tb[ETHA_SETTINGS_INFOMASK])
-> +		req_info->req_mask = nla_get_u32(tb[ETHA_SETTINGS_INFOMASK]);
-> +	if (tb[ETHA_SETTINGS_COMPACT])
-> +		req_info->compact = true;
-> +	if (req_info->req_mask == 0)
-> +		req_info->req_mask = ETH_SETTINGS_IM_ALL;
-
-What if userland is newer than the kernel and specifies a req_mask with
-bits set that you don't support? Should not you always do an &
-ETH_SETTINGS_IM_ALL here?
-
-[snip]
--- 
-Florian
+On 2/20/19 8:57 PM, Michal Hocko wrote:
+> Rong Chen,
+> coudl you double check this indeed fixes the issue for you please?
+>
+> On Mon 18-02-19 19:15:44, Michal Hocko wrote:
+>> From: Michal Hocko <mhocko@suse.com>
+>>
+>> Rong Chen has reported the following boot crash
+>> [   40.305212] PGD 0 P4D 0
+>> [   40.308255] Oops: 0000 [#1] PREEMPT SMP PTI
+>> [   40.313055] CPU: 1 PID: 239 Comm: udevd Not tainted 5.0.0-rc4-00149-gefad4e4 #1
+>> [   40.321348] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+>> [   40.330813] RIP: 0010:page_mapping+0x12/0x80
+>> [   40.335709] Code: 5d c3 48 89 df e8 0e ad 02 00 85 c0 75 da 89 e8 5b 5d c3 0f 1f 44 00 00 53 48 89 fb 48 8b 43 08 48 8d 50 ff a8 01 48 0f 45 da <48> 8b 53 08 48 8d 42 ff 83 e2 01 48 0f 44 c3 48 83 38 ff 74 2f 48
+>> [   40.356704] RSP: 0018:ffff88801fa87cd8 EFLAGS: 00010202
+>> [   40.362714] RAX: ffffffffffffffff RBX: fffffffffffffffe RCX: 000000000000000a
+>> [   40.370798] RDX: fffffffffffffffe RSI: ffffffff820b9a20 RDI: ffff88801e5c0000
+>> [   40.378830] RBP: 6db6db6db6db6db7 R08: ffff88801e8bb000 R09: 0000000001b64d13
+>> [   40.386902] R10: ffff88801fa87cf8 R11: 0000000000000001 R12: ffff88801e640000
+>> [   40.395033] R13: ffffffff820b9a20 R14: ffff88801f145258 R15: 0000000000000001
+>> [   40.403138] FS:  00007fb2079817c0(0000) GS:ffff88801dd00000(0000) knlGS:0000000000000000
+>> [   40.412243] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [   40.418846] CR2: 0000000000000006 CR3: 000000001fa82000 CR4: 00000000000006a0
+>> [   40.426951] Call Trace:
+>> [   40.429843]  __dump_page+0x14/0x2c0
+>> [   40.433947]  is_mem_section_removable+0x24c/0x2c0
+>> [   40.439327]  removable_show+0x87/0xa0
+>> [   40.443613]  dev_attr_show+0x25/0x60
+>> [   40.447763]  sysfs_kf_seq_show+0xba/0x110
+>> [   40.452363]  seq_read+0x196/0x3f0
+>> [   40.456282]  __vfs_read+0x34/0x180
+>> [   40.460233]  ? lock_acquire+0xb6/0x1e0
+>> [   40.464610]  vfs_read+0xa0/0x150
+>> [   40.468372]  ksys_read+0x44/0xb0
+>> [   40.472129]  ? do_syscall_64+0x1f/0x4a0
+>> [   40.476593]  do_syscall_64+0x5e/0x4a0
+>> [   40.480809]  ? trace_hardirqs_off_thunk+0x1a/0x1c
+>> [   40.486195]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>>
+>> and bisected it down to efad4e475c31 ("mm, memory_hotplug:
+>> is_mem_section_removable do not pass the end of a zone"). The reason for
+>> the crash is that the mapping is garbage for poisoned (uninitialized) page.
+>> This shouldn't happen as all pages in the zone's boundary should be
+>> initialized. Later debugging revealed that the actual problem is an
+>> off-by-one when evaluating the end_page. start_pfn + nr_pages resp.
+>> zone_end_pfn refers to a pfn after the range and as such it might belong
+>> to a differen memory section. This along with CONFIG_SPARSEMEM then
+>> makes the loop condition completely bogus because a pointer arithmetic
+>> doesn't work for pages from two different sections in that memory model.
+>>
+>> Fix the issue by reworking is_pageblock_removable to be pfn based and
+>> only use struct page where necessary. This makes the code slightly
+>> easier to follow and we will remove the problematic pointer arithmetic
+>> completely.
+>>
+>> Fixes: efad4e475c31 ("mm, memory_hotplug: is_mem_section_removable do not pass the end of a zone")
+>> Reported-by: <rong.a.chen@intel.com>
+>> Signed-off-by: Michal Hocko <mhocko@suse.com>
+>> ---
+>>   mm/memory_hotplug.c | 27 +++++++++++++++------------
+>>   1 file changed, 15 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+>> index 124e794867c5..1ad28323fb9f 100644
+>> --- a/mm/memory_hotplug.c
+>> +++ b/mm/memory_hotplug.c
+>> @@ -1188,11 +1188,13 @@ static inline int pageblock_free(struct page *page)
+>>   	return PageBuddy(page) && page_order(page) >= pageblock_order;
+>>   }
+>>   
+>> -/* Return the start of the next active pageblock after a given page */
+>> -static struct page *next_active_pageblock(struct page *page)
+>> +/* Return the pfn of the start of the next active pageblock after a given pfn */
+>> +static unsigned long next_active_pageblock(unsigned long pfn)
+>>   {
+>> +	struct page *page = pfn_to_page(pfn);
+>> +
+>>   	/* Ensure the starting page is pageblock-aligned */
+>> -	BUG_ON(page_to_pfn(page) & (pageblock_nr_pages - 1));
+>> +	BUG_ON(pfn & (pageblock_nr_pages - 1));
+>>   
+>>   	/* If the entire pageblock is free, move to the end of free page */
+>>   	if (pageblock_free(page)) {
+>> @@ -1200,16 +1202,16 @@ static struct page *next_active_pageblock(struct page *page)
+>>   		/* be careful. we don't have locks, page_order can be changed.*/
+>>   		order = page_order(page);
+>>   		if ((order < MAX_ORDER) && (order >= pageblock_order))
+>> -			return page + (1 << order);
+>> +			return pfn + (1 << order);
+>>   	}
+>>   
+>> -	return page + pageblock_nr_pages;
+>> +	return pfn + pageblock_nr_pages;
+>>   }
+>>   
+>> -static bool is_pageblock_removable_nolock(struct page *page)
+>> +static bool is_pageblock_removable_nolock(unsigned long pfn)
+>>   {
+>> +	struct page *page = pfn_to_page(pfn);
+>>   	struct zone *zone;
+>> -	unsigned long pfn;
+>>   
+>>   	/*
+>>   	 * We have to be careful here because we are iterating over memory
+>> @@ -1232,13 +1234,14 @@ static bool is_pageblock_removable_nolock(struct page *page)
+>>   /* Checks if this range of memory is likely to be hot-removable. */
+>>   bool is_mem_section_removable(unsigned long start_pfn, unsigned long nr_pages)
+>>   {
+>> -	struct page *page = pfn_to_page(start_pfn);
+>> -	unsigned long end_pfn = min(start_pfn + nr_pages, zone_end_pfn(page_zone(page)));
+>> -	struct page *end_page = pfn_to_page(end_pfn);
+>> +	unsigned long end_pfn, pfn;
+>> +
+>> +	end_pfn = min(start_pfn + nr_pages,
+>> +			zone_end_pfn(page_zone(pfn_to_page(start_pfn))));
+>>   
+>>   	/* Check the starting page of each pageblock within the range */
+>> -	for (; page < end_page; page = next_active_pageblock(page)) {
+>> -		if (!is_pageblock_removable_nolock(page))
+>> +	for (pfn = start_pfn; pfn < end_pfn; pfn = next_active_pageblock(pfn)) {
+>> +		if (!is_pageblock_removable_nolock(pfn))
+>>   			return false;
+>>   		cond_resched();
+>>   	}
+>> -- 
+>> 2.20.1
+>>
