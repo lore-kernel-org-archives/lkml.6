@@ -2,712 +2,91 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BABFC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 20:25:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE5AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 20:26:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA7F42080F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 20:25:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E168E2080F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 20:26:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550780763;
+	bh=V/IEXmsuqvt9Na+MEFmN7P1mMYAkl9do3dB58LJe59U=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=0baB3XnB1Yaw4O6x6AJub4Vo2TtUwz3oSev784UIwllKy28uiGzmfqnh0tLYSXFju
+	 MPk1lcXme/tF8t9Mq5MF4h2dgJCQ26hIWJBYe1Nth8EbCxmtK3VNyUNQzETF9J25Ss
+	 DhEZnB3mx7kaNF2e1KAe6S77iqoUK/pDbJUsyC7g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbfBUUZT (ORCPT
+        id S1726860AbfBUU0B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 15:25:19 -0500
-Received: from mail-out.m-online.net ([212.18.0.10]:36985 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726625AbfBUUZS (ORCPT
+        Thu, 21 Feb 2019 15:26:01 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:39745 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726075AbfBUU0B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 15:25:18 -0500
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 4455Z32Gylz1qxK0;
-        Thu, 21 Feb 2019 21:25:15 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 4455Z31sjPz1qswm;
-        Thu, 21 Feb 2019 21:25:15 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id po57tAK0rmMj; Thu, 21 Feb 2019 21:25:13 +0100 (CET)
-X-Auth-Info: HV9r+s9eq7+4YRsmf1iu2PrSI3yg4fcj+cVEIePOoHM=
-Received: from localhost.localdomain (p54833194.dip0.t-ipconnect.de [84.131.49.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Thu, 21 Feb 2019 21:25:13 +0100 (CET)
-From:   Anatolij Gustschin <agust@denx.de>
-To:     linux-usb@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, broonie@kernel.org, atull@kernel.org,
-        mdf@kernel.org
-Subject: [PATCH v4 3/3] fpga: Add fpga manager driver for ARRI Altera FPP
-Date:   Thu, 21 Feb 2019 21:25:06 +0100
-Message-Id: <20190221202506.17744-4-agust@denx.de>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190221202506.17744-1-agust@denx.de>
-References: <20190221202506.17744-1-agust@denx.de>
+        Thu, 21 Feb 2019 15:26:01 -0500
+Received: by mail-yw1-f66.google.com with SMTP id f192so2481809ywh.6;
+        Thu, 21 Feb 2019 12:26:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=KrijerxTyGVa0Sr/JiCT9Xom8mVGoOuXytTBdA4zzLc=;
+        b=DZeRQ1Cx7lSU4Ewf7c3n/VbPqOwguzYkWwq9jJP8WWr5192LlpWzYQkbsSJriptOoY
+         uvCYi/Ll680AWqmDZKiJWXBAleqLCOCxh7NwsL1fTmXIp2fJjk7D+gYQo79iayalLDaw
+         lI4M49V06cNbRJZcZsoNuGVW699Y09iKvwPTnVDeEyu1Zn6Wbl7lgLNJpE4CWxOiLEZS
+         9Q8BSVsh9wTevREaLjjOxtrmyAQW7bkvUIeDxNV5RyxpWNj1Q6XZ9/XkPfMO2h1YgZlV
+         e6tNf0MHk0JbUH0V0T6kwjx9xnBi0ugkqZ2pUq7MgV56wWhJpivR/xQO+AIQwfkps0wo
+         Eo4A==
+X-Gm-Message-State: AHQUAub4deBc1ZyHYDDtnpLjhfHJIeGidqnictDCQ3n/8tiR3uRq1QDP
+        kyWkRmPQWk8oiKYCMwZRR80=
+X-Google-Smtp-Source: AHgI3IYYriZGDkk14SK/cXRoYRHeOjBsovRy5vJNCDZWaxi4vahhSAGmn8xqGBA/6PCiKXFXGwz3vw==
+X-Received: by 2002:a81:6584:: with SMTP id z126mr369424ywb.216.1550780760256;
+        Thu, 21 Feb 2019 12:26:00 -0800 (PST)
+Received: from dennisz-mbp.thefacebook.com ([199.201.65.133])
+        by smtp.gmail.com with ESMTPSA id a4sm6570047ywa.14.2019.02.21.12.25.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 21 Feb 2019 12:25:59 -0800 (PST)
+From:   Dennis Zhou <dennis@kernel.org>
+To:     David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>,
+        Nikolay Borisov <nborisov@suse.com>
+Cc:     kernel-team@fb.com, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dennis Zhou <dennis@kernel.org>
+Subject: [PATCH] btrfs: zstd ensure reclaim timer is properly cleaned up
+Date:   Thu, 21 Feb 2019 15:25:56 -0500
+Message-Id: <20190221202556.42447-1-dennis@kernel.org>
+X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add FPGA manager driver for loading ARRI Altera FPGAs via fast
-passive parallel (FPP) interface using FTDI FT232H chip.
+The timer function, zstd_reclaim_timer_fn(), reschedules itself under
+certain conditions. Switch to del_timer_sync() to ensure that the timer
+function hasn't rescheduled itself.
 
-Signed-off-by: Anatolij Gustschin <agust@denx.de>
+Signed-off-by: Dennis Zhou <dennis@kernel.org>
 ---
- .../ABI/testing/sysfs-driver-ftdi-fifo-fpp    |   7 +
- drivers/fpga/Kconfig                          |   7 +
- drivers/fpga/Makefile                         |   1 +
- drivers/fpga/ftdi-fifo-fpp.c                  | 594 ++++++++++++++++++
- 4 files changed, 609 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-driver-ftdi-fifo-fpp
- create mode 100644 drivers/fpga/ftdi-fifo-fpp.c
+ fs/btrfs/zstd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-driver-ftdi-fifo-fpp b/Documentation/ABI/testing/sysfs-driver-ftdi-fifo-fpp
-new file mode 100644
-index 000000000000..f3055100d07e
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-driver-ftdi-fifo-fpp
-@@ -0,0 +1,7 @@
-+What:		/sys/bus/platform/devices/ftdi-fifo-fpp-mgr.N/cfg_mode
-+Date:		Feb 2019
-+Kernel Version:	5.2
-+Contact:	Anatolij Gustschin <agust@denx.de>
-+Description:
-+		Contains either "fifo" or "bitbang" and controls if fifo
-+		of bitbang configuration mode is used in the driver.
-diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
-index c20445b867ae..19d82163a0b2 100644
---- a/drivers/fpga/Kconfig
-+++ b/drivers/fpga/Kconfig
-@@ -50,6 +50,13 @@ config FPGA_MGR_ALTERA_CVP
- 	  FPGA manager driver support for Arria-V, Cyclone-V, Stratix-V
- 	  and Arria 10 Altera FPGAs using the CvP interface over PCIe.
+diff --git a/fs/btrfs/zstd.c b/fs/btrfs/zstd.c
+index 3e418a3aeb11..62de9a211321 100644
+--- a/fs/btrfs/zstd.c
++++ b/fs/btrfs/zstd.c
+@@ -195,7 +195,7 @@ static void zstd_cleanup_workspace_manager(void)
+ 	struct workspace *workspace;
+ 	int i;
  
-+config FPGA_MGR_FTDI_FIFO_FPP
-+	tristate "Altera FPP over FT232H FIFO"
-+	depends on USB_FT232H_INTF
-+	help
-+	  FPGA manager driver support for Altera fast passive parallel
-+	  interface (FPP) over FT232H FT245 FIFO.
-+
- config FPGA_MGR_ZYNQ_FPGA
- 	tristate "Xilinx Zynq FPGA"
- 	depends on ARCH_ZYNQ || COMPILE_TEST
-diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
-index c0dd4c82fbdb..61725d31e6d1 100644
---- a/drivers/fpga/Makefile
-+++ b/drivers/fpga/Makefile
-@@ -9,6 +9,7 @@ obj-$(CONFIG_FPGA)			+= fpga-mgr.o
- # FPGA Manager Drivers
- obj-$(CONFIG_FPGA_MGR_ALTERA_CVP)	+= altera-cvp.o
- obj-$(CONFIG_FPGA_MGR_ALTERA_PS_SPI)	+= altera-ps-spi.o
-+obj-$(CONFIG_FPGA_MGR_FTDI_FIFO_FPP)	+= ftdi-fifo-fpp.o
- obj-$(CONFIG_FPGA_MGR_ICE40_SPI)	+= ice40-spi.o
- obj-$(CONFIG_FPGA_MGR_MACHXO2_SPI)	+= machxo2-spi.o
- obj-$(CONFIG_FPGA_MGR_SOCFPGA)		+= socfpga.o
-diff --git a/drivers/fpga/ftdi-fifo-fpp.c b/drivers/fpga/ftdi-fifo-fpp.c
-new file mode 100644
-index 000000000000..2bc72335cd70
---- /dev/null
-+++ b/drivers/fpga/ftdi-fifo-fpp.c
-@@ -0,0 +1,594 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Altera FPGA firmware upload via FPP using FT232H Bitbang/FT245-FIFO.
-+ *
-+ * Copyright (C) 2017 - 2018 DENX Software Engineering
-+ * Anatolij Gustschin <agust@denx.de>
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/delay.h>
-+#include <linux/fpga/fpga-mgr.h>
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/sizes.h>
-+#include <linux/slab.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/platform_device.h>
-+#include <linux/usb.h>
-+#include <linux/usb/ft232h-intf.h>
-+
-+#define BULK_OUT_BUF_SZ	SZ_1M
-+#define MAX_RETRIES	10
-+
-+/*
-+ * With logic of CPLD we can write the state of nConfig pin and
-+ * read back the state of some pins (conf_done, init_done, nStatus).
-+ * Status header and bit assignment in data register on CPLD.
-+ */
-+#define INPUT_HEADER_0	0xA5
-+#define INPUT_HEADER_1	0x5A
-+#define IN_CONF_DONE	BIT(0)
-+#define IN_INIT_DONE	BIT(1)
-+#define IN_ADDR_SELECT	BIT(4)
-+#define IN_BOARD_REV	BIT(5)
-+#define OUT_NCONFIG	BIT(0)
-+#define OUT_RESET_N	BIT(1)
-+
-+enum fpp_board_rev {
-+	BOARD_REVA = 1,
-+	BOARD_REVB = 2,
-+};
-+
-+enum fpp_addr_sel {
-+	ADDR_SELECT_INVALID,
-+	ADDR_SELECT_GND,
-+	ADDR_SELECT_NC
-+};
-+
-+struct fpp_mgr_ops {
-+	int (*write_init)(struct fpga_manager *mgr,
-+			  struct fpga_image_info *info,
-+			  const char *buf, size_t count);
-+	int (*write)(struct fpga_manager *mgr, const char *buf, size_t count);
-+	int (*write_complete)(struct fpga_manager *mgr,
-+			      struct fpga_image_info *info);
-+};
-+
-+struct fpp_fpga_mgr_priv {
-+	struct platform_device		*pdev;
-+	struct usb_interface		*intf;
-+	const struct ft232h_intf_ops	*iops;
-+	struct fpga_manager	*mgr;
-+	struct fpp_mgr_ops	*ops;
-+	struct gpio_desc	*nconfig;
-+	struct gpio_desc	*conf_done;
-+	char			cfg_mode[8];
-+	u8			out_data_port;
-+	int			index;
-+	void			*bulk_buf;
-+	char			usb_dev_id[32];
-+	char			fpga_mgr_name[64];
-+	enum fpp_board_rev	rev;
-+	enum fpp_addr_sel	addr_sel;
-+};
-+
-+static int fpp_fpga_mgr_set_data_port(struct fpp_fpga_mgr_priv *priv,
-+				      u8 bitmask, u8 value)
-+{
-+	struct device *dev = &priv->pdev->dev;
-+	struct bulk_desc desc;
-+	u8 *data;
-+	int ret;
-+
-+	/*
-+	 * With CPLD connected (in FT245 FIFO mode) we use ACBUS8&9
-+	 * pins to switch between data and command mode:
-+	 * ACBUS8&9 == 0, 0  --> normal mode (data communication)
-+	 * ACBUS8&9 == 1, 0  --> command mode
-+	 */
-+	gpiod_set_raw_value_cansleep(priv->nconfig, 1);
-+	gpiod_set_raw_value_cansleep(priv->conf_done, 0);
-+	msleep(50);
-+
-+	/* Write commands to CPLD */
-+	ret = priv->iops->set_bitmode(priv->intf, 0x00, BITMODE_SYNCFF);
-+	if (ret)
-+		return ret;
-+
-+	if (value)
-+		priv->out_data_port |= bitmask;
-+	else
-+		priv->out_data_port &= ~bitmask;
-+
-+	data = priv->bulk_buf;
-+	*data = priv->out_data_port;
-+
-+	desc.dir_out = true;
-+	desc.act_len = 0;
-+	desc.len = 1;
-+	desc.data = data;
-+	desc.timeout = FTDI_USB_WRITE_TIMEOUT;
-+
-+	ret = priv->iops->bulk_xfer(priv->intf, &desc);
-+	if (ret) {
-+		dev_err(dev, "Writing in SYNCFF mode failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	msleep(50);
-+	/* Switch back to data mode with ACBUS8&9 back to low */
-+	gpiod_set_raw_value_cansleep(priv->nconfig, 0);
-+	gpiod_set_raw_value_cansleep(priv->conf_done, 0);
-+	msleep(50);
-+
-+	return 0;
-+}
-+
-+static int fpp_fpga_mgr_bitbang_write_init(struct fpga_manager *mgr,
-+					   struct fpga_image_info *info,
-+					   const char *buf, size_t count)
-+{
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+	struct device *dev = &priv->pdev->dev;
-+	int retries = MAX_RETRIES;
-+	int ret;
-+
-+	gpiod_set_value_cansleep(priv->nconfig, 0);
-+	msleep(50);
-+	gpiod_set_value_cansleep(priv->nconfig, 1);
-+	msleep(50);
-+	gpiod_set_value_cansleep(priv->nconfig, 0);
-+
-+	/* Wait for CONF_DONE to get low */
-+	do {
-+		msleep(50);
-+
-+		ret = gpiod_get_value_cansleep(priv->conf_done);
-+		if (ret < 0) {
-+			dev_err(dev, "Failed to get CONF_DONE pin: %d\n", ret);
-+			return ret;
-+		}
-+
-+		if (!ret)
-+			break;
-+	} while (--retries > 0);
-+
-+	if (!retries) {
-+		dev_warn(dev, "CONF_DONE low wait timeout\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	ret = priv->iops->set_bitmode(priv->intf, 0xff, BITMODE_BITBANG);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Set max. working baud rate (for hardware without CPLD) */
-+	return priv->iops->set_baudrate(priv->intf, 700000);
-+}
-+
-+static int fpp_fpga_mgr_bitbang_write(struct fpga_manager *mgr,
-+				      const char *buf, size_t count)
-+{
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+	struct bulk_desc desc;
-+	size_t blk_sz;
-+	int ret;
-+
-+	desc.data = priv->bulk_buf;
-+	desc.dir_out = true;
-+	desc.timeout = FTDI_USB_WRITE_TIMEOUT;
-+
-+	while (count) {
-+		blk_sz = min_t(size_t, count, BULK_OUT_BUF_SZ);
-+		memcpy(priv->bulk_buf, buf, blk_sz);
-+		desc.act_len = 0;
-+		desc.len = blk_sz;
-+		ret = priv->iops->bulk_xfer(priv->intf, &desc);
-+		if (ret < 0)
-+			return ret;
-+
-+		buf += desc.act_len;
-+		count -= desc.act_len;
-+	}
-+
-+	return 0;
-+}
-+
-+static int fpp_fpga_mgr_bitbang_write_complete(struct fpga_manager *mgr,
-+					       struct fpga_image_info *info)
-+{
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+	struct device *dev = &priv->pdev->dev;
-+	int retries = MAX_RETRIES;
-+	int ret;
-+
-+	/* Wait for CONF_DONE to get high */
-+	do {
-+		msleep(50);
-+
-+		ret = gpiod_get_value_cansleep(priv->conf_done);
-+		if (ret < 0)
-+			return ret;
-+
-+		if (ret)
-+			break;
-+	} while (--retries > 0);
-+
-+	if (!retries) {
-+		dev_warn(dev, "CONF_DONE wait timeout\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	priv->iops->disable_bitbang(priv->intf);
-+	return 0;
-+}
-+
-+static inline bool status_hdr_is_valid(u8 *buf)
-+{
-+	return buf[0] == INPUT_HEADER_0 && buf[1] == INPUT_HEADER_1;
-+}
-+
-+static int fpp_fpga_mgr_read_status(struct fpp_fpga_mgr_priv *priv, u8 *status)
-+{
-+	struct device *dev = &priv->pdev->dev;
-+	u8 *inbuf = priv->bulk_buf;
-+	int retries = MAX_RETRIES;
-+	int ret;
-+
-+	if (!status)
-+		return -EINVAL;
-+
-+	/* Wait until CPLD sends valid header and status register */
-+	do {
-+		ret = priv->iops->read_data(priv->intf, inbuf, 64);
-+		if (ret < 0) {
-+			dev_err(dev, "Can't read status data: %d\n", ret);
-+			return ret;
-+		}
-+
-+		/* Check input buffer header */
-+		if (ret >= 4 && status_hdr_is_valid(inbuf)) {
-+			*status = inbuf[2];
-+			return 0;
-+		}
-+
-+		/* Wait and read back status again */
-+		msleep(100); /* CPLD sends status every 100ms */
-+	} while (--retries > 0);
-+
-+	dev_warn(dev, "Timeout when reading status\n");
-+	return -ETIMEDOUT;
-+}
-+
-+static int fpp_fpga_mgr_ft245_fifo_write_init(struct fpga_manager *mgr,
-+					      struct fpga_image_info *info,
-+					      const char *buf, size_t count)
-+{
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+	struct device *dev = &priv->pdev->dev;
-+	int retries = MAX_RETRIES;
-+	int ret;
-+	u8 status;
-+
-+	gpiod_direction_output_raw(priv->conf_done, 0);
-+
-+	/* Set/reset nConfig via commands to CPLD */
-+	ret = fpp_fpga_mgr_set_data_port(priv, OUT_NCONFIG, 1);
-+	if (ret)
-+		return ret;
-+	ret = fpp_fpga_mgr_set_data_port(priv, OUT_NCONFIG, 0);
-+	if (ret)
-+		return ret;
-+	ret = fpp_fpga_mgr_set_data_port(priv, OUT_NCONFIG, 1);
-+	if (ret)
-+		return ret;
-+
-+	/* In FT245 FIFO mode we need sync FIFO mode to talk to FPGA */
-+	ret = priv->iops->set_bitmode(priv->intf, 0xff, BITMODE_SYNCFF);
-+	if (ret)
-+		return ret;
-+
-+	/* Wait until FPGA is ready for loading (conf_done zero) or timeout */
-+	do {
-+		ret = fpp_fpga_mgr_read_status(priv, &status);
-+		if (!ret) {
-+			/* Check conf_done status */
-+			if ((status & IN_CONF_DONE) == 0)
-+				break;
-+		}
-+	} while (--retries > 0);
-+
-+	if (!retries) {
-+		dev_warn(dev, "CONF_DONE wait timeout\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	/* Configure for max. baud rate (3MHz * 4 in bitbang mode) */
-+	return priv->iops->set_baudrate(priv->intf, 3000000);
-+}
-+
-+static int fpp_fpga_mgr_ft245_fifo_write(struct fpga_manager *mgr,
-+					 const char *buf, size_t count)
-+{
-+	return fpp_fpga_mgr_bitbang_write(mgr, buf, count);
-+}
-+
-+static int fpp_fpga_mgr_ft245_fifo_write_complete(struct fpga_manager *mgr,
-+						  struct fpga_image_info *info)
-+{
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+	struct device *dev = &priv->pdev->dev;
-+	int retries = MAX_RETRIES;
-+	int ret;
-+	u8 mask, status;
-+
-+	mask = IN_CONF_DONE | IN_INIT_DONE;
-+
-+	do {
-+		ret = fpp_fpga_mgr_read_status(priv, &status);
-+		if (!ret) {
-+			/* Check conf_done/init_done status */
-+			if ((status & mask) == mask)
-+				break;
-+		}
-+	} while (--retries > 0);
-+
-+	if (!retries) {
-+		dev_warn(dev, "INIT_DONE wait timeout\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	/* Release Reset_n, keep nCONFIG high, too! */
-+	return fpp_fpga_mgr_set_data_port(priv, OUT_NCONFIG | OUT_RESET_N, 1);
-+}
-+
-+static enum fpga_mgr_states fpp_fpga_mgr_state(struct fpga_manager *mgr)
-+{
-+	return FPGA_MGR_STATE_UNKNOWN;
-+}
-+
-+static int fpp_fpga_mgr_write_init(struct fpga_manager *mgr,
-+				   struct fpga_image_info *info,
-+				   const char *buf, size_t count)
-+{
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+
-+	if (info && info->flags & FPGA_MGR_PARTIAL_RECONFIG) {
-+		dev_err(&mgr->dev, "Partial reconfiguration not supported.\n");
-+		return -EINVAL;
-+	}
-+
-+	if (priv->ops->write_init)
-+		return priv->ops->write_init(mgr, info, buf, count);
-+
-+	return -ENODEV;
-+}
-+
-+static int fpp_fpga_mgr_write(struct fpga_manager *mgr, const char *buf,
-+			      size_t count)
-+{
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+
-+	if (priv->ops->write)
-+		return priv->ops->write(mgr, buf, count);
-+
-+	return -ENODEV;
-+}
-+
-+static int fpp_fpga_mgr_write_complete(struct fpga_manager *mgr,
-+				       struct fpga_image_info *info)
-+{
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+
-+	if (priv->ops->write_complete)
-+		return priv->ops->write_complete(mgr, info);
-+
-+	return -ENODEV;
-+}
-+
-+static struct fpp_mgr_ops fpp_mgr_bitbang_ops = {
-+	.write_init	= fpp_fpga_mgr_bitbang_write_init,
-+	.write		= fpp_fpga_mgr_bitbang_write,
-+	.write_complete	= fpp_fpga_mgr_bitbang_write_complete,
-+};
-+
-+static struct fpp_mgr_ops fpp_mgr_ft245_fifo_ops = {
-+	.write_init	= fpp_fpga_mgr_ft245_fifo_write_init,
-+	.write		= fpp_fpga_mgr_ft245_fifo_write,
-+	.write_complete	= fpp_fpga_mgr_ft245_fifo_write_complete,
-+};
-+
-+static const struct fpga_manager_ops fpp_fpga_mgr_ops = {
-+	.state		= fpp_fpga_mgr_state,
-+	.write_init	= fpp_fpga_mgr_write_init,
-+	.write		= fpp_fpga_mgr_write,
-+	.write_complete	= fpp_fpga_mgr_write_complete,
-+};
-+
-+static ssize_t cfg_mode_show(struct device *dev, struct device_attribute *attr,
-+			     char *buf)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct fpga_manager *mgr = platform_get_drvdata(pdev);
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+
-+	return snprintf(buf, PAGE_SIZE, "%s\n", priv->cfg_mode);
-+}
-+
-+static ssize_t cfg_mode_store(struct device *dev, struct device_attribute *attr,
-+			      const char *buf, size_t count)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct fpga_manager *mgr = platform_get_drvdata(pdev);
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+
-+	if (!count || count > sizeof(priv->cfg_mode))
-+		return -EINVAL;
-+
-+	if (!strncmp(buf, "fifo", 4)) {
-+		strncpy(priv->cfg_mode, buf, sizeof(priv->cfg_mode) - 1);
-+		priv->cfg_mode[4] = 0;
-+		priv->ops = &fpp_mgr_ft245_fifo_ops;
-+		gpiod_direction_output_raw(priv->conf_done, 0);
-+	} else if (!strncmp(buf, "bitbang", 7)) {
-+		strncpy(priv->cfg_mode, buf, sizeof(priv->cfg_mode) - 1);
-+		priv->cfg_mode[7] = 0;
-+		priv->ops = &fpp_mgr_bitbang_ops;
-+		gpiod_direction_input(priv->conf_done);
-+	} else {
-+		return -EINVAL;
-+	}
-+
-+	return count;
-+}
-+
-+static DEVICE_ATTR_RW(cfg_mode);
-+
-+static int fpp_fpga_mgr_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct fpp_fpga_mgr_priv *priv;
-+	struct fpga_manager *mgr;
-+	struct fifo_fpp_mgr_platform_data *pd;
-+	int ret, retries = MAX_RETRIES;
-+	char id_string[8];
-+	u8 status = 0;
-+
-+	pd = dev->platform_data;
-+	if (!pd) {
-+		dev_err(dev, "Missing platform data.\n");
-+		return -EINVAL;
-+	}
-+
-+	if (!pd->ops ||
-+	    !pd->ops->bulk_xfer || !pd->ops->ctrl_xfer ||
-+	    !pd->ops->read_data || !pd->ops->write_data ||
-+	    !pd->ops->set_bitmode || !pd->ops->set_baudrate ||
-+	    !pd->ops->disable_bitbang)
-+		return -EINVAL;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->intf = to_usb_interface(dev->parent);
-+	priv->iops = pd->ops;
-+
-+	ret = sscanf(dev_name(dev->parent), "%s", priv->usb_dev_id);
-+	if (ret != 1) {
-+		dev_err(dev, "Can't get parent device name: %d\n", ret);
-+		return -ENODEV;
-+	}
-+
-+	priv->pdev = pdev;
-+	priv->ops = &fpp_mgr_ft245_fifo_ops;
-+	strncpy(priv->cfg_mode, "fifo", sizeof(priv->cfg_mode));
-+
-+	priv->nconfig = devm_gpiod_get(dev, "nconfig", GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->nconfig)) {
-+		ret = PTR_ERR(priv->nconfig);
-+		dev_err(dev, "Failed to get nconfig gpio: %d\n", ret);
-+		return ret;
-+	}
-+
-+	priv->conf_done = devm_gpiod_get(dev, "conf_done", GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->conf_done)) {
-+		ret = PTR_ERR(priv->conf_done);
-+		dev_err(dev, "Failed to get conf_done gpio: %d\n", ret);
-+		goto err_cfg1;
-+	}
-+
-+	priv->bulk_buf = devm_kmalloc(dev, BULK_OUT_BUF_SZ,
-+				      GFP_KERNEL | GFP_DMA32);
-+	if (!priv->bulk_buf) {
-+		ret = -ENOMEM;
-+		goto err_cfg2;
-+	}
-+
-+	ret = priv->iops->set_bitmode(priv->intf, 0xff, BITMODE_SYNCFF);
-+	if (ret)
-+		goto err_cfg2;
-+
-+	/* Read status register from CPLD */
-+	do {
-+		ret = fpp_fpga_mgr_read_status(priv, &status);
-+		if (!ret)
-+			break;
-+	} while (--retries > 0);
-+
-+	if (!retries) {
-+		ret = -ETIMEDOUT;
-+		goto err_cfg2;
-+	}
-+
-+	priv->rev = (status & IN_BOARD_REV) ? BOARD_REVB : BOARD_REVA;
-+
-+	if (priv->rev == BOARD_REVB) {
-+		priv->addr_sel = (status & IN_ADDR_SELECT) ?
-+				 ADDR_SELECT_NC : ADDR_SELECT_GND;
-+		if (priv->addr_sel == ADDR_SELECT_NC)
-+			strncpy(id_string, "right", sizeof(id_string));
-+		else
-+			strncpy(id_string, "left", sizeof(id_string));
-+	} else {
-+		priv->addr_sel = ADDR_SELECT_INVALID;
-+		strncpy(id_string, "single", sizeof(id_string));
-+	}
-+
-+	dev_info(dev, "Board Rev %d, Addr Sel %d\n", priv->rev, priv->addr_sel);
-+
-+	/* Use unique board ID and USB bus/port in FPGA manager name */
-+	snprintf(priv->fpga_mgr_name, sizeof(priv->fpga_mgr_name),
-+		 "ftdi-fpp-fpga-mgr %s %s", id_string, priv->usb_dev_id);
-+
-+	mgr = devm_fpga_mgr_create(dev, priv->fpga_mgr_name,
-+				   &fpp_fpga_mgr_ops, priv);
-+	if (!mgr)
-+		goto err_cfg2;
-+
-+	platform_set_drvdata(pdev, mgr);
-+
-+	ret = fpga_mgr_register(mgr);
-+	if (ret) {
-+		dev_err(dev, "unable to register FPGA manager\n");
-+		goto err_cfg2;
-+	}
-+
-+	ret = device_create_file(dev, &dev_attr_cfg_mode);
-+	if (ret)
-+		dev_warn(dev, "Can't create cfg_mode interface %d\n", ret);
-+
-+	return 0;
-+
-+err_cfg2:
-+	devm_gpiod_put(dev, priv->conf_done);
-+err_cfg1:
-+	devm_gpiod_put(dev, priv->nconfig);
-+	return ret;
-+}
-+
-+static int fpp_fpga_mgr_remove(struct platform_device *pdev)
-+{
-+	struct fpga_manager *mgr = platform_get_drvdata(pdev);
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+
-+	device_remove_file(&pdev->dev, &dev_attr_cfg_mode);
-+	fpga_mgr_unregister(mgr);
-+	devm_gpiod_put(&pdev->dev, priv->conf_done);
-+	devm_gpiod_put(&pdev->dev, priv->nconfig);
-+	return 0;
-+}
-+
-+static struct platform_driver fpp_fpga_mgr_driver = {
-+	.driver.name	= "ftdi-fifo-fpp-mgr",
-+	.probe		= fpp_fpga_mgr_probe,
-+	.remove		= fpp_fpga_mgr_remove,
-+};
-+
-+module_platform_driver(fpp_fpga_mgr_driver);
-+
-+MODULE_ALIAS("platform:ftdi-fifo-fpp-mgr");
-+MODULE_AUTHOR("Anatolij Gustschin <agust@denx.de>");
-+MODULE_DESCRIPTION("FT232H Bitbang/FT245-FIFO FPP FPGA Manager Driver");
-+MODULE_LICENSE("GPL v2");
+-	del_timer(&wsm.timer);
++	del_timer_sync(&wsm.timer);
+ 
+ 	for (i = 0; i < ZSTD_BTRFS_MAX_LEVEL; i++) {
+ 		while (!list_empty(&wsm.idle_ws[i])) {
 -- 
 2.17.1
 
