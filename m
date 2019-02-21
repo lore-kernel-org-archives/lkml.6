@@ -2,179 +2,235 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 826A5C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 05:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D56C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:02:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E6652084F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 05:56:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VVSLXA6m"
+	by mail.kernel.org (Postfix) with ESMTP id 9E3622147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:02:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726415AbfBUF4j (ORCPT
+        id S1726184AbfBUGCr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 00:56:39 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:10661 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725831AbfBUF4j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 00:56:39 -0500
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190221055635epoutp044903d3f4305be25f1c258852c1aa9edf~FS3EXaKN93231532315epoutp04Z
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 05:56:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190221055635epoutp044903d3f4305be25f1c258852c1aa9edf~FS3EXaKN93231532315epoutp04Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1550728595;
-        bh=fHxGA2+byZUQBIQOLuIV86db2BH3IMMTgSKdEmo1bk0=;
-        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-        b=VVSLXA6mgPJhHQsfDYOkEXoC20XdERyZDxC5T2PjUoD2G5eLsZBUshkLboysx8Naa
-         J0LDCV9HJ/FLmMafiZv0T80pmEjZ1/PwHcAxtoPsAk5kRala+sCleP3HYz/xXxdix+
-         d3Baoxke5a3Zj4zizkrWtvKzeGffWmQ1l8NJpnKc=
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.152]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190221055630epcas1p1e63a576f81e10e95deca7812297bd614~FS2-b-xkQ0334403344epcas1p1c;
-        Thu, 21 Feb 2019 05:56:30 +0000 (GMT)
-X-AuditID: b6c32a36-a2c1c9c00000104d-85-5c6e3d715991
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A3.91.04173.17D3E6C5; Thu, 21 Feb 2019 14:56:01 +0900 (KST)
-Mime-Version: 1.0
-Subject: RE: Re: [PATCH v3 5/7] drivers: devfreq: add longer polling
- interval in idle
-Reply-To: myungjoo.ham@samsung.com
-From:   MyungJoo Ham <myungjoo.ham@samsung.com>
-To:     Lukasz Luba <l.luba@partner.samsung.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-CC:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        "tkjos@google.com" <tkjos@google.com>,
-        "joel@joelfernandes.org" <joel@joelfernandes.org>,
-        "chris.diamand@arm.com" <chris.diamand@arm.com>,
-        "mka@chromium.org" <mka@chromium.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "mingo@redhat.com" <mingo@redhat.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <e5e9c6f0-5a1e-8ba1-556a-74edb1782980@partner.samsung.com>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20190221055601epcms1p7b87bba9a878683453f7e46c84ed032b9@epcms1p7>
-Date:   Thu, 21 Feb 2019 14:56:01 +0900
-X-CMS-MailID: 20190221055601epcms1p7b87bba9a878683453f7e46c84ed032b9
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-CPGSPASS: Y
-X-CPGSPASS: Y
-CMS-TYPE: 101P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDJsWRmVeSWpSXmKPExsWy7bCmvm6hbV6MwexGeYuNM9azWkz7dJnF
-        4uUhTYvrX56zWixrULU42/SG3eJWg4zF5V1z2Cw+9x5htFh75C67xaUDC5gsPm94zGixr+MB
-        k8XhN+2sFu8nFzvwe6yZt4bRY3bDRRaPln232D0WbCr1WPjpK6vHwXd7mDze77vK5tG3ZRWj
-        x+dNcgGcUdk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6Z
-        OUDXKymUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKLAv0ihNzi0vz0vWS83OtDA0M
-        jEyBChOyM5beWMZc0C9d0XZxOnMD41vRLkZODgkBE4kzk6awdDFycQgJ7GCUWHJ4OpDDwcEr
-        ICjxd4cwSI2wQLjE8atP2EBsIQEliYab+5gh4voSHQ+2MYLYbAK6Els33GUBsUUEljFKzH1r
-        DTKTWeA7s8Sn79cZIZbxSsxof8oCYUtLbF++FSzOKeAu8fzNI6i4qMTN1W/ZYez3x+ZD9YpI
-        tN47ywxhC0o8+LmbEWbOjCn/oXqrJR71XGQGWSwh0MIosWrmNiaIhL7EmbknwT7gFfCV2ND3
-        AMxmEVCVeLdwMxtEjYvEpGttYDazgLzE9rdzmEEBwSygKbF+lz7M/Q0bf7Ojs5kF+CTefe1h
-        hYnvmPcEaq2axKHdS6DqZSROT18Idb+HxJHJ3xgnMCrOQgT1LCSLZyEsXsDIvIpRLLWgODc9
-        tdiwwAg5djcxglOyltkOxkXnfA4xCnAwKvHwbojIjRFiTSwrrsw9xCjBwawkwnvMNC9GiDcl
-        sbIqtSg/vqg0J7X4EKMp0P8TmaVEk/OB+SKvJN7Q1MjY2NjCxNDM1NBQSZx3vYNzjJBAemJJ
-        anZqakFqEUwfEwenVAPjCem568w7f6+s6q3eNvFDqM2DtIntiUfWl83Lenp1GcuLGyf+eYnw
-        tvTdDOWfadZaVNK5X/+y/eeufWEJzb8rK27e+cnIcqlht8HrFfPDv6X0XuvWr22zfHraoWej
-        zBeLzbrxK5NFFttfEVFStN6ttt2fU/c156Ntt87ei2tVXLF+l+JD/ssTlFiKMxINtZiLihMB
-        P4zu1d8DAAA=
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190212222436eucas1p21eebc80796406787a2ebf9a84ee5b868
-References: <e5e9c6f0-5a1e-8ba1-556a-74edb1782980@partner.samsung.com>
-        <1550010238-24002-6-git-send-email-l.luba@partner.samsung.com>
-        <1550010238-24002-1-git-send-email-l.luba@partner.samsung.com>
-        <20190218043311epcms1p33ccb2c312e871294025171d97bb87ac6@epcms1p3>
-        <CGME20190212222436eucas1p21eebc80796406787a2ebf9a84ee5b868@epcms1p7>
+        Thu, 21 Feb 2019 01:02:47 -0500
+Received: from mga12.intel.com ([192.55.52.136]:49677 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725648AbfBUGCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 01:02:46 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 22:02:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,393,1544515200"; 
+   d="scan'208";a="301383769"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by orsmga005.jf.intel.com with ESMTP; 20 Feb 2019 22:02:42 -0800
+Date:   Thu, 21 Feb 2019 14:02:18 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     "Huang, Ying" <ying.huang@intel.com>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>,
+        kernel test robot <rong.a.chen@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, lkp@01.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [LKP] [driver core] 570d020012: will-it-scale.per_thread_ops
+ -12.2% regression
+Message-ID: <20190221060218.GA19466@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <20190218075442.GI29177@shao2-debian>
+ <20190219005945.GA16734@richard>
+ <20190219121904.GA24103@kroah.com>
+ <20190221031049.GE28258@shao2-debian>
+ <20190221034612.GA15147@richard>
+ <87h8cx21gl.fsf@yhuang-dev.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87h8cx21gl.fsf@yhuang-dev.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> 
->> There are some requirements that you need to consider:
->> 
->> Is 30% really applicable to ALL devfreq devices?
->The 30% load while the device is on lowest OPP is to filter some noise.
->It might be tunable over sysfs for each device if you like.
->>      - What if some devices do not want such behaviors?
->They can set polling_idle_ms and polling_ms the same value.
->>      - What if some devices want different values (change behavors)?
->Need of sysfs tunable here.
->>      - What if some manufactures want different default values?
->Like above (sysfs).
->>      - What if some devices want to let the framework know that it's in idle?
->There might be a filed in devfreq->state which could handle this.
->>      - What if some other kernel context, device (drivers),
->>      or userspace process want to notify that it's no more idling?This issue is more related to the new movement in the 'interconnect'
->development. They have a goal for this kind of interactions and QoS
->between devices or their clients. In devfreq it would be possible
->to tackle this, but would require a lot of changes (notification chain,
->state machines in devices,
+On Thu, Feb 21, 2019 at 12:46:18PM +0800, Huang, Ying wrote:
+>Wei Yang <richardw.yang@linux.intel.com> writes:
 >
->> 
->> As mentioned in the internal thread (tizen.org),
->> I'm not convinced by the idea of assuming that a device can be considered "idling"
->> if it has simply "low" utilization.
->> 
->> You are going to deteriorate the UI response time of mobile devices significantly.
->Current devfreq wake-up also does not guarantee that, maybe on a single
->CPU platform does.
-
-Yes, the current devfreq does not enhance UI response time in the sense
-that it would keep the same reponse time anyway.
-
-However, your current approach will surely deteriorate it by lengthen
-the polling latency.
-
-For mobile and wearable devices, in many cases I've been witnessing,
-the device idles right before the user's input (launching an app,
-scrolling messages or web pages, or press a play button).
-For mitigation, we often relay UI inputs to DVFS mechanisms so that
-we either increase frequency for any UI inputs for a short period or
-shorten the polling latency for a short period.
-When a highly user-interactive device is idling or operating a low frequency,
-we should assume that it's going to be highly performing anytime;
-loosening the checking period is not a good solution in that sense
-although it is probable for servers or workstations.
-But, I don't think servers/workstations do care power consumption of
-DVFS checking loops anyway.
-
-
-
+>> On Thu, Feb 21, 2019 at 11:10:49AM +0800, kernel test robot wrote:
+>>>On Tue, Feb 19, 2019 at 01:19:04PM +0100, Greg Kroah-Hartman wrote:
+>>>> On Tue, Feb 19, 2019 at 08:59:45AM +0800, Wei Yang wrote:
+>>>> > On Mon, Feb 18, 2019 at 03:54:42PM +0800, kernel test robot wrote:
+>>>> > >Greeting,
+>>>> > >
+>>>> > >FYI, we noticed a -12.2% regression of will-it-scale.per_thread_ops due to commit:
+>>>> > >
+>>>> > >
+>>>> > >commit: 570d0200123fb4f809aa2f6226e93a458d664d70 ("driver core: move device->knode_class to device_private")
+>>>> > >https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+>>>> > >
+>>>> > 
+>>>> > This is interesting.
+>>>> > 
+>>>> > I didn't expect the move of this field will impact the performance.
+>>>> > 
+>>>> > The reason is struct device is a hotter memory than device->device_private?
+>>>> > 
+>>>> > >in testcase: will-it-scale
+>>>> > >on test machine: 288 threads Knights Mill with 80G memory
+>>>> > >with following parameters:
+>>>> > >
+>>>> > >	nr_task: 100%
+>>>> > >	mode: thread
+>>>> > >	test: unlink2
+>>>> > >	cpufreq_governor: performance
+>>>> > >
+>>>> > >test-description: Will It Scale takes a testcase and runs it from 1 through to n parallel copies to see if the testcase will scale. It builds both a process and threads based test in order to see any differences between the two.
+>>>> > >test-url: https://github.com/antonblanchard/will-it-scale
+>>>> > >
+>>>> > >In addition to that, the commit also has significant impact on the following tests:
+>>>> > >
+>>>> > >+------------------+---------------------------------------------------------------+
+>>>> > >| testcase: change | will-it-scale: will-it-scale.per_thread_ops -29.9% regression |
+>>>> > >| test machine     | 288 threads Knights Mill with 80G memory                      |
+>>>> > >| test parameters  | cpufreq_governor=performance                                  |
+>>>> > >|                  | mode=thread                                                   |
+>>>> > >|                  | nr_task=100%                                                  |
+>>>> > >|                  | test=signal1                                                  |
+>>>> 
+>>>> Ok, I'm going to blame your testing system, or something here, and not
+>>>> the above patch.
+>>>> 
+>>>> All this test does is call raise(3).  That does not touch the driver
+>>>> core at all.
+>>>> 
+>>>> > >+------------------+---------------------------------------------------------------+
+>>>> > >| testcase: change | will-it-scale: will-it-scale.per_thread_ops -16.5% regression |
+>>>> > >| test machine     | 288 threads Knights Mill with 80G memory                      |
+>>>> > >| test parameters  | cpufreq_governor=performance                                  |
+>>>> > >|                  | mode=thread                                                   |
+>>>> > >|                  | nr_task=100%                                                  |
+>>>> > >|                  | test=open1                                                    |
+>>>> > >+------------------+---------------------------------------------------------------+
+>>>> 
+>>>> Same here, open1 just calls open/close a lot.  No driver core
+>>>> interaction at all there either.
+>>>> 
+>>>> So are you _sure_ this is the offending patch?
+>>>
+>>>Hi Greg,
+>>>
+>>>We did an experiment, recovered the layout of struct device. and we
+>>>found the regression is gone. I guess the regession is not from the
+>>>patch but related to the struct layout.
+>>>
+>>>
+>>>tests: 1
+>>>testcase/path_params/tbox_group/run: will-it-scale/performance-thread-100%-unlink2/lkp-knm01
+>>>
+>>>570d0200123fb4f8  a36dc70b810afe9183de2ea18f  
+>>>----------------  --------------------------  
+>>>         %stddev      change         %stddev
+>>>             \          |                \  
+>>>    237096              14%     270789        will-it-scale.workload
+>>>       823              14%        939        will-it-scale.per_thread_ops
+>>>
+>>
+>> Do you have the comparison between a36dc70b810afe9183de2ea18f and the one
+>> before 570d020012?
+>>
+>>>
+>>>tests: 1
+>>>testcase/path_params/tbox_group/run: will-it-scale/performance-thread-100%-signal1/lkp-knm01
+>>>
+>>>570d0200123fb4f8  a36dc70b810afe9183de2ea18f  
+>>>----------------  --------------------------  
+>>>         %stddev      change         %stddev
+>>>             \          |                \  
+>>>     93.51   3%        48%     138.53   3%  will-it-scale.time.user_time
+>>>       186              40%        261        will-it-scale.per_thread_ops
+>>>     53909              40%      75507        will-it-scale.workload
+>>>
+>>>
+>>>tests: 1
+>>>testcase/path_params/tbox_group/run: will-it-scale/performance-thread-100%-open1/lkp-knm01
+>>>
+>>>570d0200123fb4f8  a36dc70b810afe9183de2ea18f  
+>>>----------------  --------------------------  
+>>>         %stddev      change         %stddev
+>>>             \          |                \  
+>>>    447722              22%     546258  10%  will-it-scale.time.involuntary_context_switches
+>>>    226995              19%     269751        will-it-scale.workload
+>>>       787              19%        936        will-it-scale.per_thread_ops
+>>>
+>>>
+>>>
+>>>commit a36dc70b810afe9183de2ea18faa4c0939c139ac
+>>>Author: 0day robot <lkp@intel.com>
+>>>Date:   Wed Feb 20 14:21:19 2019 +0800
+>>>
+>>>    backfile klist_node in struct device for debugging
+>>>    
+>>>    Signed-off-by: 0day robot <lkp@intel.com>
+>>>
+>>>diff --git a/include/linux/device.h b/include/linux/device.h
+>>>index d0e452fd0bff2..31666cb72b3ba 100644
+>>>--- a/include/linux/device.h
+>>>+++ b/include/linux/device.h
+>>>@@ -1035,6 +1035,7 @@ struct device {
+>>> 	spinlock_t		devres_lock;
+>>> 	struct list_head	devres_head;
+>>> 
+>>>+	struct klist_node       knode_class_test_by_rongc;
+>>> 	struct class		*class;
+>>> 	const struct attribute_group **groups;	/* optional groups */
+>>
+>> Hmm... because this is not properly aligned?
+>>
+>> struct klist_node {
+>> 	void			*n_klist;	/* never access directly */
+>> 	struct list_head	n_node;
+>> 	struct kref		n_ref;
+>> };
+>>
+>> Except struct kref has one "int" type, others are pointers.
+>>
+>> But... I am still confused.
 >
->I will try to address your and Chanwoo's comments that the devfreq still
->needs deferred polling in some platforms.
->Would it be OK if we have two options: deferred and delayed work while
->registering a wakeup for a device?
->That would be a function like: polling_mode_init(devfreq) instead of
->simple INIT_DEFERRED_WORK(), which will check the device's preference.
->The device driver could set a filed in 'polling_mode' to enum:
->POWER_EFFICIENT or RELIABLE_INTERVAL. For compatibility with old drivers
->where the polling_mode = 0, SYSTEM_DEFAULT_POLLING_MODE (which is one
->of these two) would be used.
->Then the two-phase-polling-interval from this patch could only be used
->for the RELIABLE_INTERVAL configuration or even dropped.
+>I guess because the size of struct device is changed, it influences some
+>alignment changes in the system.  Thus influence the benchmark score.
+>
 
-One thing I want to add is: let's not over-complicate it.
-Do you have any experimental results on how much power is saved by doing this?
-(and user response time losses)
+That's interesting.
 
+I wrote a module to see the exact size of these two structure on my x86_64.
 
-Cheers,
-MyungJoo
+    sizeof(struct device) = 736 = 8 * 92
+    sizeof(struct device_private) = 160 = 8 * 20
+    sizeof(struct klist_node) = 32 = 8 * 4
 
+Even klist_node has one 4 byte field, c complier would pack the structure to
+make it aligned. Which system alignment it would affect?
+
+After the patch, size would change like this:
+
+   struct device          736   ->   704
+   struce device_private  160   ->   192
+
+Would this size change affect system?
+
+>Best Regards,
+>Huang, Ying
+>
+>>>
+>>>Best Regards,
+>>>Rong Chen
+
+-- 
+Wei Yang
+Help you, Help me
