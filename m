@@ -2,98 +2,109 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA3F2C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:50:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86774C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:51:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0D752084F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:50:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 619282084F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:51:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728262AbfBUNuk (ORCPT
+        id S1728280AbfBUNvI convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 08:50:40 -0500
-Received: from mga06.intel.com ([134.134.136.31]:43673 "EHLO mga06.intel.com"
+        Thu, 21 Feb 2019 08:51:08 -0500
+Received: from ozlabs.org ([203.11.71.1]:43749 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725820AbfBUNuO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 08:50:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 05:50:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,395,1544515200"; 
-   d="scan'208";a="119707628"
-Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 21 Feb 2019 05:50:11 -0800
-From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-kernel@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [GIT PULL 3/7] intel_th: Only create useful device nodes
-Date:   Thu, 21 Feb 2019 15:49:55 +0200
-Message-Id: <20190221134959.15121-4-alexander.shishkin@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190221134959.15121-1-alexander.shishkin@linux.intel.com>
-References: <20190221134959.15121-1-alexander.shishkin@linux.intel.com>
+        id S1726838AbfBUNvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 08:51:07 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 444wqD2k07z9rxp;
+        Fri, 22 Feb 2019 00:51:04 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, j.neuschaefer@gmx.net
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v4 04/16] powerpc/mm/32s: use generic mmu_mapin_ram() for all blocks.
+In-Reply-To: <790cf44815f8c56b3c600560bad9139f63be9f68.1550692943.git.christophe.leroy@c-s.fr>
+References: <cover.1550692943.git.christophe.leroy@c-s.fr> <790cf44815f8c56b3c600560bad9139f63be9f68.1550692943.git.christophe.leroy@c-s.fr>
+Date:   Fri, 22 Feb 2019 00:51:01 +1100
+Message-ID: <87o9755jy2.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Right now, the driver will create a device node for each output port,
-with the intent to provide read access to that port's data. However,
-only the memory ports are readable this way (msc0, msc1). Other output
-ports don't need device nodes, so remove them.
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
 
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
----
- drivers/hwtracing/intel_th/core.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+> Now that mmu_mapin_ram() is able to handle other blocks
+> than the one starting at 0, the WII can use it for all
+> its blocks.
+>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+>  arch/powerpc/mm/pgtable_32.c | 27 +++++++++------------------
+>  1 file changed, 9 insertions(+), 18 deletions(-)
+>
+> diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
+> index b4858818523f..2bf9bf8867d4 100644
+> --- a/arch/powerpc/mm/pgtable_32.c
+> +++ b/arch/powerpc/mm/pgtable_32.c
+> @@ -254,26 +254,17 @@ static void __init __mapin_ram_chunk(unsigned long offset, unsigned long top)
+>  
+>  void __init mapin_ram(void)
+>  {
+> -	unsigned long s, top;
+> -
+> -#ifndef CONFIG_WII
+> -	top = total_lowmem;
+> -	s = mmu_mapin_ram(0, top);
+> -	__mapin_ram_chunk(s, top);
+> -#else
+> -	if (!wii_hole_size) {
+> -		s = mmu_mapin_ram(0, total_lowmem);
+> -		__mapin_ram_chunk(s, total_lowmem);
+> -	} else {
+> -		top = wii_hole_start;
+> -		s = mmu_mapin_ram(0, top);
+> -		__mapin_ram_chunk(s, top);
+> +	struct memblock_region *reg;
+> +
+> +	for_each_memblock(memory, reg) {
+> +		unsigned long base = reg->base;
+> +		unsigned long top = min(base + reg->size, (unsigned long)total_lowmem);
 
-diff --git a/drivers/hwtracing/intel_th/core.c b/drivers/hwtracing/intel_th/core.c
-index fc6b7f8b62fb..7c1acc2f801c 100644
---- a/drivers/hwtracing/intel_th/core.c
-+++ b/drivers/hwtracing/intel_th/core.c
-@@ -422,6 +422,7 @@ static const struct intel_th_subdevice {
- 	unsigned		nres;
- 	unsigned		type;
- 	unsigned		otype;
-+	bool			mknode;
- 	unsigned		scrpd;
- 	int			id;
- } intel_th_subdevices[] = {
-@@ -456,6 +457,7 @@ static const struct intel_th_subdevice {
- 		.name	= "msc",
- 		.id	= 0,
- 		.type	= INTEL_TH_OUTPUT,
-+		.mknode	= true,
- 		.otype	= GTH_MSU,
- 		.scrpd	= SCRPD_MEM_IS_PRIM_DEST | SCRPD_MSC0_IS_ENABLED,
- 	},
-@@ -476,6 +478,7 @@ static const struct intel_th_subdevice {
- 		.name	= "msc",
- 		.id	= 1,
- 		.type	= INTEL_TH_OUTPUT,
-+		.mknode	= true,
- 		.otype	= GTH_MSU,
- 		.scrpd	= SCRPD_MEM_IS_PRIM_DEST | SCRPD_MSC1_IS_ENABLED,
- 	},
-@@ -635,7 +638,8 @@ intel_th_subdevice_alloc(struct intel_th *th,
- 	}
- 
- 	if (subdev->type == INTEL_TH_OUTPUT) {
--		thdev->dev.devt = MKDEV(th->major, th->num_thdevs);
-+		if (subdev->mknode)
-+			thdev->dev.devt = MKDEV(th->major, th->num_thdevs);
- 		thdev->output.type = subdev->otype;
- 		thdev->output.port = -1;
- 		thdev->output.scratchpad = subdev->scrpd;
--- 
-2.20.1
+This gives me:
 
+In file included from ../arch/powerpc/mm/pgtable_32.c:22:
+../arch/powerpc/mm/pgtable_32.c: In function ‘mapin_ram’:
+../include/linux/kernel.h:846:29: error: comparison of distinct pointer types lacks a cast [-Werror]
+   (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
+                             ^~
+../include/linux/kernel.h:860:4: note: in expansion of macro ‘__typecheck’
+   (__typecheck(x, y) && __no_side_effects(x, y))
+    ^~~~~~~~~~~
+../include/linux/kernel.h:870:24: note: in expansion of macro ‘__safe_cmp’
+  __builtin_choose_expr(__safe_cmp(x, y), \
+                        ^~~~~~~~~~
+../include/linux/kernel.h:879:19: note: in expansion of macro ‘__careful_cmp’
+ #define min(x, y) __careful_cmp(x, y, <)
+                   ^~~~~~~~~~~~~
+../arch/powerpc/mm/pgtable_32.c:261:23: note: in expansion of macro ‘min’
+   unsigned long top = min(base + reg->size, (unsigned long)total_lowmem);
+                       ^~~
+cc1: all warnings being treated as errors
+../scripts/Makefile.build:276: recipe for target 'arch/powerpc/mm/pgtable_32.o' failed
+
+
+For 44x/bamboo_defconfig.
+
+cheers
