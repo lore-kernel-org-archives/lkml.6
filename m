@@ -2,96 +2,95 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 658B3C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DD04C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31CA120855
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:48:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C66620880
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:49:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="x6WZj4Ci";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="vjS8fS3f"
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="tjR3T8yu";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="V4FPsMzB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726527AbfBULsp (ORCPT
+        id S1727061AbfBULtb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 06:48:45 -0500
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:50313 "EHLO
+        Thu, 21 Feb 2019 06:49:31 -0500
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:44341 "EHLO
         wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725814AbfBULsp (ORCPT
+        by vger.kernel.org with ESMTP id S1725814AbfBULta (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 06:48:45 -0500
+        Thu, 21 Feb 2019 06:49:30 -0500
 Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 0EC673360;
-        Thu, 21 Feb 2019 06:48:43 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Thu, 21 Feb 2019 06:48:44 -0500
+        by mailout.west.internal (Postfix) with ESMTP id 193F72F89;
+        Thu, 21 Feb 2019 06:49:30 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Thu, 21 Feb 2019 06:49:30 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
         date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=Q3mxO+cQXm+bkyOyVpU65K3iO8+
-        qv4XhqICwAmnej4U=; b=x6WZj4Ci/LCHWieXNKLbpI8fupRBFBCemBpMQ/QttEk
-        njMt3CXnl3aUM66GvcZ5qiy8VqENnVRjP7L2IPP6qgCBuRRxE8VWjjrhnlqgNone
-        iI/NOYLeSwaHzfTeJ6JKl/ZofVQCttCSq7eABwg2bxW0IhI3GHuufqK1id4bJ34T
-        cVGmSFy3u0iQ98gYxX2erqFZc1AIXqX4JiIN/Keroum56wQGuKUoXw5PlpEFJ3ZU
-        VGy43BC+Q54MEgIBVXNpvivLIjtJckTY2494xtqGYr7yXcDH20+7OpeXsTEQYEMX
-        x32Th86yDuHNEVUuBZNZSghf0v5VLylTi5pPRjuhEog==
+        :content-type:in-reply-to; s=fm3; bh=16ukAG8arJNroPlaftBt9brS5BK
+        z+aSbliLB114YW14=; b=tjR3T8yuOdagu2mhKXGJ9thlWMpi+BEZPs7HNvsrOBR
+        Ww8Y/RB47ncZ0wy2pD19KpEarNGZQvq1b4dSsE5Gr4giLUuk8ojpbSqtnf4wjrAF
+        u5Kq3e3FHi7Bcf4q0Fa/9EOnCqlBSt7hfmaVMHCmrV5u09AfcY+ew7XfWIGjFy/s
+        XLQuJBn/3rtb70Qng0/cpmJrG629zcAZUNts/u1ifuHSapq7DaaAoTSNsTeXtQ11
+        xdMhJSpiFX7lQhfuXP9qNCYs28SgZjDxXZpD687K6yFUmugMsSMsyoTCFryNhJRG
+        jarq+z3cPizyxQ3BbIE7rlFNDiexEzExFWWDwsYb2zQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-type:date:from:in-reply-to
         :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=Q3mxO+
-        cQXm+bkyOyVpU65K3iO8+qv4XhqICwAmnej4U=; b=vjS8fS3f5sJwaaXIS3wQnp
-        RESHT79IMdVvTvjvqL0nXaWeBfvJR7yuSomdscyUnV8SYICxWsbFSGU+EJqyiMs/
-        5qkbTkBnw5lL5A7G0I4bLLs6xiz69ceA/x7nolE/0yfMkUppdIo0L/RLr7pOR6Ih
-        xYq5CbZaThchM8jooz/oqkccdbwNICjuZYQqjRnALzBAZxjDlFBZIwsQD1QsITWO
-        wIY8oq1l37HMBh2F0n29caWTFIfOkdQ1ZhVL3DhPVyMiRsqUQpwGViisHHoOR+iK
-        qrwIsVoX8rXsJA6VJDkO9M1S8cyRha6AmIdXBKXfi/U1lEPOIeSGoU7AA3B2XxiA
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=16ukAG
+        8arJNroPlaftBt9brS5BKz+aSbliLB114YW14=; b=V4FPsMzBTGKbQH6XUi92/1
+        ZAdL3T/o93fEir+REcxv1JTGmu7fsa/r1vRuBNAvm4rVhTvVrM5oH8i8jDSKIdYJ
+        G01XjV7O8ZvSYcaQNMYBqDT04ghc/Z+EFobXiI3mCtQ9mSusRPejbZjo+IWREiHI
+        DQ3Cv5mRzFjeE0b3lZOqxyHxjGR60jFGEzUlcp678rw0hsloXuu53bMwuCuta1MH
+        2B3mfQIB8xzecCwfdHHlHE82lbGTFHnSdvs9IEcXrQajEnAN22iwXX8ic/AazjVS
+        yExjy82y9ANbdyK+txjibsgIqZ7Pj+octCahyL+pwoQCx+urdf9VRTNh7FxmS7/w
         ==
-X-ME-Sender: <xms:G5BuXIAK0G6cs1iyVmSMBZqsrdemiWjXdZwb98ZaEOy87ukdjT9hgA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrtdekgdeffeculddtuddrgedtledrtddtmd
+X-ME-Sender: <xms:SZBuXBOat3YJ0PiDmWCWiRjBCJ--EOd0e6gK0rJkPzJvq99eO0TNzA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrtdekgdefheculddtuddrgedtledrtddtmd
     cutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthen
     uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvuffkfhggtggujggfsehttd
     ertddtredvnecuhfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhm
     qeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeekfedrkeeirdekledrud
     dtjeenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmnecu
-    vehluhhsthgvrhfuihiivgepud
-X-ME-Proxy: <xmx:G5BuXByC4t0ljjKe6qJmZxNu0GQjklkrGWuyiBOhF75T2qUTY_-n7g>
-    <xmx:G5BuXAQNLgrErCHBXoH2lnHOuPVqLm1fxFXLBZchcsHZoojHUctd9Q>
-    <xmx:G5BuXLcCWdY-UZ3nadV-vOht_-gYPQOXkHz4SuAhXZ87A57Uqm1q1g>
-    <xmx:G5BuXE59dWn_9QfRwFLsGn2b9JnlUvRUEK4hIx7p_csh8zF5SZzgfA>
+    vehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:SZBuXEYfyDdIwt-1itO814RDsg_wZrdtvz9g62CBBmgPs_jdYY52Sg>
+    <xmx:SZBuXACluXX6Y_Rr0cBCMcqyZEXPFA2wdAObMk9NS4bD-5H7BjHzcA>
+    <xmx:SZBuXKEQ21wOCy4DU28fpARU4DdCOgcP9bTmFz9FOexg2KrMGPwDdQ>
+    <xmx:SZBuXA1btjxY_OcUMhpehK3MQCi0wmDMRSWfZbuLgJFqRRa19OAjVA>
 Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 0239E10331;
-        Thu, 21 Feb 2019 06:48:42 -0500 (EST)
-Date:   Thu, 21 Feb 2019 12:48:41 +0100
+        by mail.messagingengine.com (Postfix) with ESMTPA id D3EB4E44A8;
+        Thu, 21 Feb 2019 06:49:28 -0500 (EST)
+Date:   Thu, 21 Feb 2019 12:49:26 +0100
 From:   Greg KH <greg@kroah.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     martin.blumenstingl@googlemail.com, stable-commits@vger.kernel.org
-Subject: Re: Patch "mmc: meson-gx: fix interrupt name" has been added to the
- 4.20-stable tree
-Message-ID: <20190221114841.GG10737@kroah.com>
-References: <20190221054326.7AAED21734@mail.kernel.org>
+Cc:     logang@deltatee.com, stable-commits@vger.kernel.org
+Subject: Re: Patch "PCI: Fix __initdata issue with "pci=disable_acs_redir"
+ parameter" has been added to the 4.20-stable tree
+Message-ID: <20190221114926.GH10737@kroah.com>
+References: <20190221054321.B1287214AF@mail.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190221054326.7AAED21734@mail.kernel.org>
+In-Reply-To: <20190221054321.B1287214AF@mail.kernel.org>
 User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 12:43:25AM -0500, Sasha Levin wrote:
+On Thu, Feb 21, 2019 at 12:43:20AM -0500, Sasha Levin wrote:
 > This is a note to let you know that I've just added the patch titled
 > 
->     mmc: meson-gx: fix interrupt name
+>     PCI: Fix __initdata issue with "pci=disable_acs_redir" parameter
 > 
 > to the 4.20-stable tree which can be found at:
 >     http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
 > 
 > The filename of the patch is:
->      mmc-meson-gx-fix-interrupt-name.patch
+>      pci-fix-__initdata-issue-with-pci-disable_acs_redir-.patch
 > and it can be found in the queue-4.20 subdirectory.
 > 
 > If you, or anyone else, feels it should not be added to the stable tree,
@@ -99,50 +98,57 @@ On Thu, Feb 21, 2019 at 12:43:25AM -0500, Sasha Levin wrote:
 > 
 > 
 > 
-> commit 2f7d5e26da383aca9f3a1270138d033e2a0e7be2
-> Author: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> Date:   Sat Feb 9 01:58:50 2019 +0100
+> commit 44557eb5390967bb678394cfbcef5df39bfa751e
+> Author: Logan Gunthorpe <logang@deltatee.com>
+> Date:   Thu Jan 17 08:46:34 2019 -0600
 > 
->     mmc: meson-gx: fix interrupt name
+>     PCI: Fix __initdata issue with "pci=disable_acs_redir" parameter
 >     
->     [ Upstream commit 83e418a805d880a8b18add07f94d19b2a5a80307 ]
+>     [ Upstream commit d2fd6e81912a665993b24dcdc1c1384a42a54f7e ]
 >     
->     Commit bb364890323cca ("mmc: meson-gx: Free irq in release() callback")
->     changed the _probe code to use request_threaded_irq() instead of
->     devm_request_threaded_irq().
->     Unfortunately this removes a fallback for the interrupt name:
->     devm_request_threaded_irq() uses the device name as fallback if the
->     given IRQ name is NULL. request_threaded_irq() has no such fallback,
->     thus /proc/interrupts shows "(null)" instead.
+>     The disable_acs_redir parameter stores a pointer to the string passed to
+>     pci_setup().  However, the string passed to PCI setup is actually a
+>     temporary copy allocated in static __initdata memory.  After init, once the
+>     memory is freed, it is no longer valid to reference this pointer.
 >     
->     Explicitly pass the dev_name() so we get the IRQ name shown in
->     /proc/interrupts again.
->     While here, also fix the indentation of the request_threaded_irq()
->     parameter list.
+>     This bug was noticed in v5.0-rc1 after a change in commit c5eb1190074c
+>     ("PCI / PM: Allow runtime PM without callback functions") caused
+>     pci_disable_acs_redir() to be called during shutdown which manifested
+>     as an unable to handle kernel paging request at:
 >     
->     Fixes: bb364890323cca ("mmc: meson-gx: Free irq in release() callback")
->     Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
->     Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->     Signed-off-by: Sasha Levin <sashal@kernel.org>
-> 
-> diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
-> index ef9deaa361c73..ddd98cdd33bcd 100644
-> --- a/drivers/mmc/host/meson-gx-mmc.c
-> +++ b/drivers/mmc/host/meson-gx-mmc.c
-> @@ -1286,7 +1286,8 @@ static int meson_mmc_probe(struct platform_device *pdev)
->  	       host->regs + SD_EMMC_IRQ_EN);
->  
->  	ret = request_threaded_irq(host->irq, meson_mmc_irq,
-> -			meson_mmc_irq_thread, IRQF_SHARED, NULL, host);
-> +				   meson_mmc_irq_thread, IRQF_SHARED,
-> +				   dev_name(&pdev->dev), host);
->  	if (ret)
->  		goto err_init_clk;
-> 
+>       RIP: 0010:pci_enable_acs+0x3f/0x1e0
+>       Call Trace:
+>          pci_restore_state.part.44+0x159/0x3c0
+>          pci_restore_standard_config+0x33/0x40
+>          pci_pm_runtime_resume+0x2b/0xd0
+>          ? pci_restore_standard_config+0x40/0x40
+>          __rpm_callback+0xbc/0x1b0
+>          rpm_callback+0x1f/0x70
+>          ? pci_restore_standard_config+0x40/0x40
+>           rpm_resume+0x4f9/0x710
+>          ? pci_conf1_read+0xb6/0xf0
+>          ? pci_conf1_write+0xb2/0xe0
+>          __pm_runtime_resume+0x47/0x70
+>          pci_device_shutdown+0x1e/0x60
+>          device_shutdown+0x14a/0x1f0
+>          kernel_restart+0xe/0x50
+>          __do_sys_reboot+0x1ee/0x210
+>          ? __fput+0x144/0x1d0
+>          do_writev+0x5e/0xf0
+>          ? do_writev+0x5e/0xf0
+>          do_syscall_64+0x48/0xf0
+>          entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>     
+>     It was also likely possible to trigger this bug when hotplugging PCI
+>     devices.
+>     
+>     To fix this, instead of storing a pointer, we use kstrdup() to copy the
+>     disable_acs_redir_param to its own buffer which will never be freed.
+>     
+>     Fixes: aaca43fda742 ("PCI: Add "pci=disable_acs_redir=" parameter for peer-to-peer support")
 
-This also looks like it is needed in 4.19.y, any reason you didn't add
-it there?
+According to this tag it is needed in 4.19.y as well...
 
-now queued up.
+now added there.
 
 greg k-h
