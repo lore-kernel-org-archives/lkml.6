@@ -2,117 +2,174 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39071C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3BFC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:06:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CE8320838
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:06:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5BE420838
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:06:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbfBUXGj (ORCPT
+        id S1727092AbfBUXGs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 18:06:39 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:63179 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726035AbfBUXGj (ORCPT
+        Thu, 21 Feb 2019 18:06:48 -0500
+Received: from emh04.mail.saunalahti.fi ([62.142.5.110]:49148 "EHLO
+        emh04.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726035AbfBUXGr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 18:06:39 -0500
-Received: from 79.184.254.15.ipv4.supernova.orange.pl (79.184.254.15) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.213)
- id ab686fc6f3bb911d; Fri, 22 Feb 2019 00:06:36 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "moderated list:INTEL ETHERNET DRIVERS" 
-        <intel-wired-lan@lists.osuosl.org>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Josh Triplett <josh@joshtriplett.org>, keescook@chromium.org,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        netdev@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>, rcu@vger.kernel.org,
-        Song Liu <songliubraving@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        xdp-newbies@vger.kernel.org, Yonghong Song <yhs@fb.com>
-Subject: Re: [PATCH RFC 3/5] sched/cpufreq: Fix incorrect RCU API usage
-Date:   Fri, 22 Feb 2019 00:05:08 +0100
-Message-ID: <3194474.xhKMNsEZRq@aspire.rjw.lan>
-In-Reply-To: <20190221054942.132388-4-joel@joelfernandes.org>
-References: <20190221054942.132388-1-joel@joelfernandes.org> <20190221054942.132388-4-joel@joelfernandes.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Thu, 21 Feb 2019 18:06:47 -0500
+Received: from localhost.localdomain (85-76-65-82-nat.elisa-mobile.fi [85.76.65.82])
+        by emh04.mail.saunalahti.fi (Postfix) with ESMTP id 5080030050;
+        Fri, 22 Feb 2019 01:06:44 +0200 (EET)
+From:   Aaro Koskinen <aaro.koskinen@iki.fi>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
+Cc:     Aaro Koskinen <aaro.koskinen@nokia.com>
+Subject: [PATCH v3] panic/reboot: allow specifying reboot_mode for panic only
+Date:   Fri, 22 Feb 2019 01:06:41 +0200
+Message-Id: <20190221230641.8797-1-aaro.koskinen@iki.fi>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, February 21, 2019 6:49:40 AM CET Joel Fernandes (Google) wrote:
-> Recently I added an RCU annotation check to rcu_assign_pointer(). All
-> pointers assigned to RCU protected data are to be annotated with __rcu
-> inorder to be able to use rcu_assign_pointer() similar to checks in
-> other RCU APIs.
-> 
-> This resulted in a sparse error: kernel//sched/cpufreq.c:41:9: sparse:
-> error: incompatible types in comparison expression (different address
-> spaces)
-> 
-> Fix this by using the correct APIs for RCU accesses. This will
-> potentially avoid any future bugs in the code. If it is felt that RCU
-> protection is not needed here, then the rcu_assign_pointer call can be
-> dropped and replaced with, say, WRITE_ONCE or smp_store_release. Or, may
-> be we add a new API to do it. But calls rcu_assign_pointer seems an
-> abuse of the RCU API unless RCU is being used.
-> 
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
->  kernel/sched/cpufreq.c | 8 ++++++--
->  kernel/sched/sched.h   | 2 +-
->  2 files changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/sched/cpufreq.c b/kernel/sched/cpufreq.c
-> index 22bd8980f32f..c9aeb3bf5dc2 100644
-> --- a/kernel/sched/cpufreq.c
-> +++ b/kernel/sched/cpufreq.c
-> @@ -7,7 +7,7 @@
->   */
->  #include "sched.h"
->  
-> -DEFINE_PER_CPU(struct update_util_data *, cpufreq_update_util_data);
-> +DEFINE_PER_CPU(struct update_util_data __rcu *, cpufreq_update_util_data);
->  
->  /**
->   * cpufreq_add_update_util_hook - Populate the CPU's update_util_data pointer.
-> @@ -34,8 +34,12 @@ void cpufreq_add_update_util_hook(int cpu, struct update_util_data *data,
->  	if (WARN_ON(!data || !func))
->  		return;
->  
-> -	if (WARN_ON(per_cpu(cpufreq_update_util_data, cpu)))
-> +	rcu_read_lock();
-> +	if (WARN_ON(rcu_dereference(per_cpu(cpufreq_update_util_data, cpu)))) {
-> +		rcu_read_unlock();
->  		return;
-> +	}
-> +	rcu_read_unlock();
+From: Aaro Koskinen <aaro.koskinen@nokia.com>
 
-As Steve said, this is not a read-side critical section, so the rcu_read_lock()
-and rcu_read_unlock() don't help.
+Allow specifying reboot_mode for panic only. This is needed on systems
+where ramoops is used to store panic logs, and user wants to use warm
+reset to preserve those, while still having cold reset on normal reboots.
 
-But rcu_access_pointer() should work here AFAICS.
+Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
+---
 
-Cheers,
-Rafael
+	v3: Move REBOOT_UNDEFINED before REBOOT_COLD.
+
+	v2: https://marc.info/?t=155078129700004&r=1&w=2
+
+	    Use REBOOT_UNDEFINED instead of -1
+
+	v1: https://marc.info/?t=154957416600005&r=1&w=2
+
+ .../admin-guide/kernel-parameters.txt         |  4 +++-
+ include/linux/reboot.h                        |  2 ++
+ kernel/panic.c                                |  2 ++
+ kernel/reboot.c                               | 20 ++++++++++++++-----
+ 4 files changed, 22 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 858b6c0b9a15..5705b4689565 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3949,7 +3949,9 @@
+ 				[[,]s[mp]#### \
+ 				[[,]b[ios] | a[cpi] | k[bd] | t[riple] | e[fi] | p[ci]] \
+ 				[[,]f[orce]
+-			Where reboot_mode is one of warm (soft) or cold (hard) or gpio,
++			Where reboot_mode is one of warm (soft) or cold (hard) or gpio
++					(prefix with 'panic_' to set mode for panic
++					reboot only),
+ 			      reboot_type is one of bios, acpi, kbd, triple, efi, or pci,
+ 			      reboot_force is either force or not specified,
+ 			      reboot_cpu is s[mp]#### with #### being the processor
+diff --git a/include/linux/reboot.h b/include/linux/reboot.h
+index e63799a6e895..3734cd8f38a8 100644
+--- a/include/linux/reboot.h
++++ b/include/linux/reboot.h
+@@ -14,6 +14,7 @@ struct device;
+ #define SYS_POWER_OFF	0x0003	/* Notify of system power off */
+ 
+ enum reboot_mode {
++	REBOOT_UNDEFINED = -1,
+ 	REBOOT_COLD = 0,
+ 	REBOOT_WARM,
+ 	REBOOT_HARD,
+@@ -21,6 +22,7 @@ enum reboot_mode {
+ 	REBOOT_GPIO,
+ };
+ extern enum reboot_mode reboot_mode;
++extern enum reboot_mode panic_reboot_mode;
+ 
+ enum reboot_type {
+ 	BOOT_TRIPLE	= 't',
+diff --git a/kernel/panic.c b/kernel/panic.c
+index f121e6ba7e11..a0d839f883b7 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -306,6 +306,8 @@ void panic(const char *fmt, ...)
+ 		 * shutting down.  But if there is a chance of
+ 		 * rebooting the system it will be rebooted.
+ 		 */
++		if (panic_reboot_mode != REBOOT_UNDEFINED)
++			reboot_mode = panic_reboot_mode;
+ 		emergency_restart();
+ 	}
+ #ifdef __sparc__
+diff --git a/kernel/reboot.c b/kernel/reboot.c
+index e1b79b6a2735..b9e79e8c7226 100644
+--- a/kernel/reboot.c
++++ b/kernel/reboot.c
+@@ -31,6 +31,7 @@ EXPORT_SYMBOL(cad_pid);
+ #define DEFAULT_REBOOT_MODE
+ #endif
+ enum reboot_mode reboot_mode DEFAULT_REBOOT_MODE;
++enum reboot_mode panic_reboot_mode = REBOOT_UNDEFINED;
+ 
+ /*
+  * This variable is used privately to keep track of whether or not
+@@ -519,6 +520,8 @@ EXPORT_SYMBOL_GPL(orderly_reboot);
+ static int __init reboot_setup(char *str)
+ {
+ 	for (;;) {
++		enum reboot_mode *mode;
++
+ 		/*
+ 		 * Having anything passed on the command line via
+ 		 * reboot= will cause us to disable DMI checking
+@@ -526,17 +529,24 @@ static int __init reboot_setup(char *str)
+ 		 */
+ 		reboot_default = 0;
+ 
++		if (!strncmp(str, "panic_", 6)) {
++			mode = &panic_reboot_mode;
++			str += 6;
++		} else {
++			mode = &reboot_mode;
++		}
++
+ 		switch (*str) {
+ 		case 'w':
+-			reboot_mode = REBOOT_WARM;
++			*mode = REBOOT_WARM;
+ 			break;
+ 
+ 		case 'c':
+-			reboot_mode = REBOOT_COLD;
++			*mode = REBOOT_COLD;
+ 			break;
+ 
+ 		case 'h':
+-			reboot_mode = REBOOT_HARD;
++			*mode = REBOOT_HARD;
+ 			break;
+ 
+ 		case 's':
+@@ -553,11 +563,11 @@ static int __init reboot_setup(char *str)
+ 				if (rc)
+ 					return rc;
+ 			} else
+-				reboot_mode = REBOOT_SOFT;
++				*mode = REBOOT_SOFT;
+ 			break;
+ 		}
+ 		case 'g':
+-			reboot_mode = REBOOT_GPIO;
++			*mode = REBOOT_GPIO;
+ 			break;
+ 
+ 		case 'b':
+-- 
+2.17.0
 
