@@ -2,130 +2,114 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D630C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09BCBC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:55:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06B2320855
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:55:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C94AA20855
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:55:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y8C5s5zG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726260AbfBUMzM (ORCPT
+        id S1727551AbfBUMzi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 07:55:12 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51866 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725385AbfBUMzL (ORCPT
+        Thu, 21 Feb 2019 07:55:38 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:47075 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbfBUMzh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 07:55:11 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1LCn3YP026244
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 07:55:10 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qsv93gdu9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 07:55:10 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Thu, 21 Feb 2019 12:55:08 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 21 Feb 2019 12:55:06 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1LCt4fe14680262
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Feb 2019 12:55:04 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9AE47A405C;
-        Thu, 21 Feb 2019 12:55:04 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 44BAAA4062;
-        Thu, 21 Feb 2019 12:55:04 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.29])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 21 Feb 2019 12:55:04 +0000 (GMT)
-Date:   Thu, 21 Feb 2019 13:55:02 +0100
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     Harald Freudenberger <freude@linux.ibm.com>,
-        Sebastian Ott <sebott@linux.ibm.com>,
-        Tony Krowiak <akrowiak@linux.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        oberpar@linux.ibm.com, pmorel@linux.ibm.com, pasic@linux.ibm.com
-Subject: Re: [PATCH] zcrypt: handle AP Info notification from CHSC SEI command
-References: <1548870526-30595-1-git-send-email-akrowiak@linux.ibm.com>
- <alpine.LFD.2.21.1901301912380.2372@schleppi>
- <d0e1ef87-8fc7-ea13-3dba-6abf1a28a446@linux.ibm.com>
- <20190221131240.0ab463d1.cohuck@redhat.com>
+        Thu, 21 Feb 2019 07:55:37 -0500
+Received: by mail-lj1-f196.google.com with SMTP id v16so23865142ljg.13
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 04:55:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=58z1a8XjpYpJMOkBbFxwfuiRL7Plx4f9fYklUx/AJAI=;
+        b=Y8C5s5zG8nwBtt9kjvu17JWDIqJji6K0TVemSQ9NfwNO+0xRdiF0tvcnN/e18kUiED
+         7JMVvyWbHLJC0dL7ULWyS81DElX3Ic/Cw/7rm8es4AbXHIK7/zASsl7RoPxU/vqtQZOZ
+         2c+ILq6B9FBmrF3E74LFLyFlhJBD6FHDD3FlgUdhyBf4DFAowopk02QPxOcnX1qZMbHK
+         +XcQoE/biL4pvpzPYb5vFAKu6Pt4crFuypMo8aoHP7wvKk3ViOnk+i81EUthWsM7eew0
+         h2ytx2IYARMRbsXgnEfp+UkS03FheFEZmaorEzG1dyEF8FZPjiScacNWLaN43+rX9Y8O
+         LF8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=58z1a8XjpYpJMOkBbFxwfuiRL7Plx4f9fYklUx/AJAI=;
+        b=oWcfMl4xCvHX627Od0PZKYiM8mhzjWlf2ZKkumMYHx20IHo8TmLl0cEvQPRCOLlFd0
+         hm5S9oo8xV1M8ClXEhCIjeEy95Fi7ySFLnrHFcKeBTta1Cf1QwyPvZfuxPIiWaTvXVCs
+         U44sKddviR8AK4V6hPVilXGNzsp7A4S6BO8ByQZNBMVVm/q66os9bu0WtVUv4POOR47K
+         iAJB4zEpatoDlqZ1EH1zHiIUCzZ/fXKpj2mH0mRcv6/GNWasoqoULoSHY3EzP/wKEfX4
+         9E6NmAJnCMCrruqb7eu8noSBaCVOWoTHSMJCHkKGPyPuuQ3S8S6Z10Cjg9CZ4jgPeY34
+         tW7A==
+X-Gm-Message-State: AHQUAuYx/IlqLWl3599IW8x4QGmwf1ogknGoLXEj2ZNPHiWIL6RJ0MrE
+        JeGDkjK+zA3bnRsdx/ZHWMo=
+X-Google-Smtp-Source: AHgI3IZ2BbO8rQqCk45bCk5Jj/hzUsW7K8QTAwxaG+MZnsZDVIIm2tdiH2Hhy07JdO3R4TygIaLlwg==
+X-Received: by 2002:a2e:1510:: with SMTP id s16mr2837816ljd.62.1550753735639;
+        Thu, 21 Feb 2019 04:55:35 -0800 (PST)
+Received: from localhost ([188.162.52.7])
+        by smtp.gmail.com with ESMTPSA id q10-v6sm6001307ljh.72.2019.02.21.04.55.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 21 Feb 2019 04:55:34 -0800 (PST)
+From:   Yury Norov <yury.norov@gmail.com>
+X-Google-Original-From: Yury Norov <ynorov@marvell.com>
+Date:   Thu, 21 Feb 2019 15:55:32 +0300
+To:     Yury Norov <yury.norov@gmail.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] lib/test_bitmap: switch test_bitmap_parselist to
+ ktime_get()
+Message-ID: <20190221125532.GA6934@yury-thinkpad>
+References: <20190220083705.14050-1-ynorov@marvell.com>
+ <20190220083705.14050-5-ynorov@marvell.com>
+ <20190220135101.GU9224@smile.fi.intel.com>
+ <20190220135236.GV9224@smile.fi.intel.com>
+ <20190220142048.GA20929@yury-thinkpad>
 MIME-Version: 1.0
-In-Reply-To: <20190221131240.0ab463d1.cohuck@redhat.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19022112-4275-0000-0000-000003123C78
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022112-4276-0000-0000-000038207053
-Message-Id: <20190221125502.GB4221@osiris>
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-21_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902210095
+In-Reply-To: <20190220142048.GA20929@yury-thinkpad>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 01:12:40PM +0100, Cornelia Huck wrote:
-> On Thu, 21 Feb 2019 11:42:25 +0100
-> Harald Freudenberger <freude@linux.ibm.com> wrote:
-> 
-> > On 30.01.19 19:32, Sebastian Ott wrote:
-> > > On Wed, 30 Jan 2019, Tony Krowiak wrote:  
-> 
-> > >>  /*
-> > >> +* A config change has happened, Force an ap bus rescan.
-> > >> +*/
-> > >> +void ap_bus_cfg_chg(void)
-> > >> +{
-> > >> +	AP_DBF(DBF_INFO, "%s config change, forcing bus rescan\n", __func__);
-> > >> +
-> > >> +	ap_bus_force_rescan();
-> > >> +}
-> > >> +EXPORT_SYMBOL(ap_bus_cfg_chg);  
-> > > There is no need for the export symbol - you don't call that function
-> > > from module code.  
-> > That's what I have learned now: You don't need to export a symbol
-> > as long as the symbol is only called in static code parts of the kernel.
-> > But you need to export it when it is intended to be used by code
-> > which sits in a kernel module. So now the big question:
-> > How does a provider of a function in the kernel know, if the caller is in static
-> > code or in module code ? And ... maybe this may even change over
-> > the time. So my recommendation is to always export the symbol with
-> > the EXPORT_SYMBOL macro. This way you don't need to change the
-> > code providing a function when the caller code changes or additional
-> > code uses the symbol.
+On Wed, Feb 20, 2019 at 05:20:48PM +0300, Yury Norov wrote:
+> On Wed, Feb 20, 2019 at 03:52:36PM +0200, Andy Shevchenko wrote:
+> > On Wed, Feb 20, 2019 at 03:51:01PM +0200, Andy Shevchenko wrote:
+> > > On Wed, Feb 20, 2019 at 11:37:03AM +0300, Yury Norov wrote:
+> > > > test_bitmap_parselist currently uses get_cycles which is not
+> > > > implemented on some platforms, so use ktime_get() instead.
+> > > 
+> > > This sounds like a fix that should go first in the series.
 > > 
-> > Other opinions ?
+> > Ah, okay, it's already first for test module.
+> > Perhaps Fixes tag and actually one or more examples of such architectures?
 > 
-> Well, if you know it will be called from module code in upcoming
-> patches, export it. If not, I consider it the choice of the maintainer.
-> You can easily add the export later on, if needed, anyway, and I don't
-> consider changing the code a problem.
+> Hi Andy, thanks for your time on it.
 > 
-> In this particular case, both exporting and not exporting looked like
-> reasonable choices to me.
+> Only arm, arm64, openrisc, riscv and sparc64 #define get_cycles.
+> So IIUC, others take stub from include/asm-generic/timex.h.
+> 
+> sparc32, xtensa, m68k, um, and in some cases x86, mips and nios2
+> provide zero-stubs explicitly.
 
-The number of exported symbols should be as small as possible. Each
-exported symbol eats up extra memory for meta information, plus I
-really do not want to deal with semi-automated bots sending patches to
-remove not needed exported symbols.
+I forgot about Fixes tag:
+Fixes: 6df0d464dbcc1a5 ("lib/test_bitmap.c: add test for bitmap_parselist()")
 
-You can check usage of exported symbols with "make export_report".
-
+If it comes to v3, I'll add the tag and explanations above to the
+patch message.
