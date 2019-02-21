@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D289AC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:36:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB8AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A19FB20838
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:36:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E0452075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:36:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550759805;
-	bh=26ClJN1DQp2RlucG+ba1Rj/fWhTZZc4evasXUnpqvaU=;
+	s=default; t=1550759811;
+	bh=/idzvv3ekgKi2dlvHktGNJ9KHL7IqQpW5z0OzE+g90g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IOxsw8YETiemvvU3RbJ9ZLy5YvX7DZv3g9Jp0tlmUcd69zvBo3p5QOu0DahHUtUb2
-	 5zf3K/x4SOn3pB7pW3Hga32I/RAWpUR9QC8P60g+pekGTLdUIT6jDQQNN3JZCUmDD6
-	 0pU7B5iiGs4nCfA5/DnhwCFj6FZ2qStteLAq4+4Y=
+	b=VHg+/bTKrx2PrgDT/tYVu18wE74xj64HJ40h5hVc7//VOCHlZ33O4/ANqEYVRaO90
+	 lKTikRQEBTbku4SoQQwMmm7wWY+L30axhirFMFqEAIoLemM2S2axPUfmak9KXqa9ex
+	 C4joXYR+jX3ovhqOo0cpj/dcgi+45JnBzUxxgfzQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728067AbfBUOgo (ORCPT
+        id S1728126AbfBUOgu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:36:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57526 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:36:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725385AbfBUOgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:36:42 -0500
+        id S1728077AbfBUOgs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:36:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E5AF2084D;
-        Thu, 21 Feb 2019 14:36:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0701A2084D;
+        Thu, 21 Feb 2019 14:36:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550759801;
-        bh=26ClJN1DQp2RlucG+ba1Rj/fWhTZZc4evasXUnpqvaU=;
+        s=default; t=1550759807;
+        bh=/idzvv3ekgKi2dlvHktGNJ9KHL7IqQpW5z0OzE+g90g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gdT6l23BYzJCObcS2CKAHzbI6NafUsQnTGkL6zNSoC3SLoxVzENUksC6/ZHGKGcLW
-         Bui0wKR33rFbASxb54d3ykwH+t8QrSmJufu2LdRR3VVFBMHYDOIxh/vLcc85i7uXgU
-         wklMw45NNmbTPhzrmxRY4HFtUMH+l79HhC89rdb4=
+        b=H+Jl4N//rmdXTlD88FhiPHpTS9um8hh5421SyxMOJpQnaKmFsQ+UgBWu2Gnj71YZL
+         EKnJiAEu0MMq3pRcWpsgBJoZrCJS4pOpjBmeDb85z1FIvMn9qyhNA/mwWCsPtkP8BS
+         2FMfHhSImcAJcMft5/7krXUkynBjOpiK6CHpTH0I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, stable@kernel.org,
-        Jann Horn <jannh@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 3.18 10/13] kvm: fix kvm_ioctl_create_device() reference counting (CVE-2019-6974)
-Date:   Thu, 21 Feb 2019 15:35:41 +0100
-Message-Id: <20190221125241.305422019@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Karsten Keil <isdn@linux-pingi.de>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 12/13] mISDN: fix a race in dev_expire_timer()
+Date:   Thu, 21 Feb 2019 15:35:43 +0100
+Message-Id: <20190221125241.541316826@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125240.091472334@linuxfoundation.org>
 References: <20190221125240.091472334@linuxfoundation.org>
@@ -65,55 +67,170 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit cfa39381173d5f969daf43582c95ad679189cbc9 upstream.
+commit bdcc5bc25548ef6b08e2e43937148f907c212292 upstream.
 
-kvm_ioctl_create_device() does the following:
+Since mISDN_close() uses dev->pending to iterate over active
+timers, there is a chance that one timer got removed from the
+->pending list in dev_expire_timer() but that the thread
+has not called yet wake_up_interruptible()
 
-1. creates a device that holds a reference to the VM object (with a borrowed
-   reference, the VM's refcount has not been bumped yet)
-2. initializes the device
-3. transfers the reference to the device to the caller's file descriptor table
-4. calls kvm_get_kvm() to turn the borrowed reference to the VM into a real
-   reference
+So mISDN_close() could miss this and free dev before
+completion of at least one dev_expire_timer()
 
-The ownership transfer in step 3 must not happen before the reference to the VM
-becomes a proper, non-borrowed reference, which only happens in step 4.
-After step 3, an attacker can close the file descriptor and drop the borrowed
-reference, which can cause the refcount of the kvm object to drop to zero.
+syzbot was able to catch this race :
 
-This means that we need to grab a reference for the device before
-anon_inode_getfd(), otherwise the VM can disappear from under us.
+BUG: KASAN: use-after-free in register_lock_class+0x140c/0x1bf0 kernel/locking/lockdep.c:827
+Write of size 8 at addr ffff88809fc18948 by task syz-executor1/24769
 
-Fixes: 852b6d57dc7f ("kvm: add device control API")
-Cc: stable@kernel.org
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+CPU: 1 PID: 24769 Comm: syz-executor1 Not tainted 5.0.0-rc5 #60
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+ print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+ kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+ __asan_report_store8_noabort+0x17/0x20 mm/kasan/generic_report.c:140
+ register_lock_class+0x140c/0x1bf0 kernel/locking/lockdep.c:827
+ __lock_acquire+0x11f/0x4700 kernel/locking/lockdep.c:3224
+ lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:3841
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0x95/0xcd kernel/locking/spinlock.c:152
+ __wake_up_common_lock+0xc7/0x190 kernel/sched/wait.c:120
+ __wake_up+0xe/0x10 kernel/sched/wait.c:145
+ dev_expire_timer+0xe4/0x3b0 drivers/isdn/mISDN/timerdev.c:174
+ call_timer_fn+0x190/0x720 kernel/time/timer.c:1325
+protocol 88fb is buggy, dev hsr_slave_0
+protocol 88fb is buggy, dev hsr_slave_1
+ expire_timers kernel/time/timer.c:1362 [inline]
+ __run_timers kernel/time/timer.c:1681 [inline]
+ __run_timers kernel/time/timer.c:1649 [inline]
+ run_timer_softirq+0x652/0x1700 kernel/time/timer.c:1694
+ __do_softirq+0x266/0x95a kernel/softirq.c:292
+ invoke_softirq kernel/softirq.c:373 [inline]
+ irq_exit+0x180/0x1d0 kernel/softirq.c:413
+ exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+ smp_apic_timer_interrupt+0x14a/0x570 arch/x86/kernel/apic/apic.c:1062
+ apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+ </IRQ>
+RIP: 0010:__sanitizer_cov_trace_pc+0x26/0x50 kernel/kcov.c:101
+Code: 90 90 90 90 55 48 89 e5 48 8b 75 08 65 48 8b 04 25 40 ee 01 00 65 8b 15 98 12 92 7e 81 e2 00 01 1f 00 75 2b 8b 90 d8 12 00 00 <83> fa 02 75 20 48 8b 88 e0 12 00 00 8b 80 dc 12 00 00 48 8b 11 48
+RSP: 0018:ffff8880589b7a60 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+RAX: ffff888087ce25c0 RBX: 0000000000000001 RCX: ffffffff818f8ca3
+RDX: 0000000000000000 RSI: ffffffff818f8b48 RDI: 0000000000000001
+RBP: ffff8880589b7a60 R08: ffff888087ce25c0 R09: ffffed1015d25bd0
+R10: ffffed1015d25bcf R11: ffff8880ae92de7b R12: ffffea0001ae4680
+R13: ffffea0001ae4688 R14: 0000000000000000 R15: ffffea0001b41648
+ PageIdle include/linux/page-flags.h:398 [inline]
+ page_is_idle include/linux/page_idle.h:29 [inline]
+ mark_page_accessed+0x618/0x1140 mm/swap.c:398
+ touch_buffer fs/buffer.c:59 [inline]
+ __find_get_block+0x312/0xcc0 fs/buffer.c:1298
+ sb_find_get_block include/linux/buffer_head.h:338 [inline]
+ recently_deleted fs/ext4/ialloc.c:682 [inline]
+ find_inode_bit.isra.0+0x202/0x510 fs/ext4/ialloc.c:722
+ __ext4_new_inode+0x14ad/0x52c0 fs/ext4/ialloc.c:914
+ ext4_symlink+0x3f8/0xbe0 fs/ext4/namei.c:3096
+ vfs_symlink fs/namei.c:4126 [inline]
+ vfs_symlink+0x378/0x5d0 fs/namei.c:4112
+ do_symlinkat+0x22b/0x290 fs/namei.c:4153
+ __do_sys_symlink fs/namei.c:4172 [inline]
+ __se_sys_symlink fs/namei.c:4170 [inline]
+ __x64_sys_symlink+0x59/0x80 fs/namei.c:4170
+ do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457b67
+Code: 0f 1f 00 b8 5c 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 6d bb fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 b8 58 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 4d bb fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fff045ce0f8 EFLAGS: 00000202 ORIG_RAX: 0000000000000058
+RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 0000000000457b67
+RDX: 00007fff045ce173 RSI: 00000000004bd63f RDI: 00007fff045ce160
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000013
+R10: 0000000000000075 R11: 0000000000000202 R12: 0000000000000000
+R13: 0000000000000001 R14: 000000000000029b R15: 0000000000000001
+
+Allocated by task 24763:
+ save_stack+0x45/0xd0 mm/kasan/common.c:73
+ set_track mm/kasan/common.c:85 [inline]
+ __kasan_kmalloc mm/kasan/common.c:496 [inline]
+ __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
+ kasan_kmalloc+0x9/0x10 mm/kasan/common.c:504
+ kmem_cache_alloc_trace+0x151/0x760 mm/slab.c:3609
+ kmalloc include/linux/slab.h:545 [inline]
+ mISDN_open+0x9a/0x270 drivers/isdn/mISDN/timerdev.c:59
+ misc_open+0x398/0x4c0 drivers/char/misc.c:141
+ chrdev_open+0x247/0x6b0 fs/char_dev.c:417
+ do_dentry_open+0x47d/0x1130 fs/open.c:771
+ vfs_open+0xa0/0xd0 fs/open.c:880
+ do_last fs/namei.c:3418 [inline]
+ path_openat+0x10d7/0x4690 fs/namei.c:3534
+ do_filp_open+0x1a1/0x280 fs/namei.c:3564
+ do_sys_open+0x3fe/0x5d0 fs/open.c:1063
+ __do_sys_openat fs/open.c:1090 [inline]
+ __se_sys_openat fs/open.c:1084 [inline]
+ __x64_sys_openat+0x9d/0x100 fs/open.c:1084
+ do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 24762:
+ save_stack+0x45/0xd0 mm/kasan/common.c:73
+ set_track mm/kasan/common.c:85 [inline]
+ __kasan_slab_free+0x102/0x150 mm/kasan/common.c:458
+ kasan_slab_free+0xe/0x10 mm/kasan/common.c:466
+ __cache_free mm/slab.c:3487 [inline]
+ kfree+0xcf/0x230 mm/slab.c:3806
+ mISDN_close+0x2a1/0x390 drivers/isdn/mISDN/timerdev.c:97
+ __fput+0x2df/0x8d0 fs/file_table.c:278
+ ____fput+0x16/0x20 fs/file_table.c:309
+ task_work_run+0x14a/0x1c0 kernel/task_work.c:113
+ tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+ exit_to_usermode_loop+0x273/0x2c0 arch/x86/entry/common.c:166
+ prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+ syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+ do_syscall_64+0x52d/0x610 arch/x86/entry/common.c:293
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff88809fc18900
+ which belongs to the cache kmalloc-192 of size 192
+The buggy address is located 72 bytes inside of
+ 192-byte region [ffff88809fc18900, ffff88809fc189c0)
+The buggy address belongs to the page:
+page:ffffea00027f0600 count:1 mapcount:0 mapping:ffff88812c3f0040 index:0xffff88809fc18000
+flags: 0x1fffc0000000200(slab)
+raw: 01fffc0000000200 ffffea000269f648 ffffea00029f7408 ffff88812c3f0040
+raw: ffff88809fc18000 ffff88809fc18000 000000010000000b 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff88809fc18800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff88809fc18880: 00 fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88809fc18900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                              ^
+ ffff88809fc18980: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+ ffff88809fc18a00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Karsten Keil <isdn@linux-pingi.de>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- virt/kvm/kvm_main.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/isdn/mISDN/timerdev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -2398,14 +2398,15 @@ static int kvm_ioctl_create_device(struc
- 		return ret;
- 	}
- 
-+	kvm_get_kvm(kvm);
- 	ret = anon_inode_getfd(ops->name, &kvm_device_fops, dev, O_RDWR | O_CLOEXEC);
- 	if (ret < 0) {
-+		kvm_put_kvm(kvm);
- 		ops->destroy(dev);
- 		return ret;
- 	}
- 
- 	list_add(&dev->vm_node, &kvm->devices);
--	kvm_get_kvm(kvm);
- 	cd->fd = ret;
- 	return 0;
+--- a/drivers/isdn/mISDN/timerdev.c
++++ b/drivers/isdn/mISDN/timerdev.c
+@@ -168,8 +168,8 @@ dev_expire_timer(unsigned long data)
+ 	spin_lock_irqsave(&timer->dev->lock, flags);
+ 	if (timer->id >= 0)
+ 		list_move_tail(&timer->list, &timer->dev->expired);
+-	spin_unlock_irqrestore(&timer->dev->lock, flags);
+ 	wake_up_interruptible(&timer->dev->wait);
++	spin_unlock_irqrestore(&timer->dev->lock, flags);
  }
+ 
+ static int
 
 
