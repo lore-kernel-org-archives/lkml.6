@@ -2,88 +2,119 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CA5C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47875C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:16:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95BA12083B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:15:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F76B2083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:16:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728641AbfBURPs (ORCPT
+        id S1727683AbfBURQx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 12:15:48 -0500
-Received: from mga09.intel.com ([134.134.136.24]:56028 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728404AbfBURPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 12:15:47 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 09:15:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,396,1544515200"; 
-   d="scan'208";a="119753743"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.181])
-  by orsmga008.jf.intel.com with ESMTP; 21 Feb 2019 09:15:43 -0800
-Date:   Thu, 21 Feb 2019 09:15:42 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Joerg Roedel <jroedel@suse.de>, Joerg Roedel <joro@8bytes.org>,
-        stable@vger.kernel.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jim Mattson <jmattson@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH stable-4.4.y] KVM: VMX: Fix x2apic check in
- vmx_msr_bitmap_mode()
-Message-ID: <20190221171541.GA7019@linux.intel.com>
-References: <20190221135213.23926-1-joro@8bytes.org>
- <20190221141530.GA18436@kroah.com>
- <20190221144701.GB8380@suse.de>
- <20190221162032.GF25800@kroah.com>
+        Thu, 21 Feb 2019 12:16:53 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48124 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725831AbfBURQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 12:16:53 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 52E93A78;
+        Thu, 21 Feb 2019 09:16:52 -0800 (PST)
+Received: from [10.1.196.69] (e112269-lin.cambridge.arm.com [10.1.196.69])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A8D433F5C1;
+        Thu, 21 Feb 2019 09:16:48 -0800 (PST)
+Subject: Re: [PATCH v2 03/13] mm: Add generic p?d_large() macros
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Mark Rutland <Mark.Rutland@arm.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        James Morse <james.morse@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        "Liang, Kan" <kan.liang@linux.intel.com>
+References: <20190221113502.54153-1-steven.price@arm.com>
+ <20190221113502.54153-4-steven.price@arm.com>
+ <20190221142812.oa53lfnnfmsuh6ys@kshutemo-mobl1>
+ <a3076d01-41b3-d59b-e98c-a0fd9ba5d3f5@arm.com>
+ <20190221145706.zqwfdoyiirn3lc7y@kshutemo-mobl1>
+From:   Steven Price <steven.price@arm.com>
+Message-ID: <e0c7fc0c-7924-1106-a7a3-fc12136b7b82@arm.com>
+Date:   Thu, 21 Feb 2019 17:16:46 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190221162032.GF25800@kroah.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190221145706.zqwfdoyiirn3lc7y@kshutemo-mobl1>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 05:20:32PM +0100, Greg Kroah-Hartman wrote:
-> On Thu, Feb 21, 2019 at 03:47:01PM +0100, Joerg Roedel wrote:
-> > On Thu, Feb 21, 2019 at 03:15:30PM +0100, Greg Kroah-Hartman wrote:
-> > > Ugh, good catch!
-> > > 
-> > > Any hint as to what type of testing that you did that caught this?  I
-> > > keep asking people to run some kvm tests, but so far no one is :(
-> > 
-> > We caught this at SUSE while testing candidate kernel updates for one of
-> > our service packs using a 4.4-based kernel and debugging turned
-> > out that this is issue came in via stable-updates. We also build a
-> > vanilla-flavour of the kernel which is nearly identical to the upstream
-> > stable tree, but what usually ends up in testing is the full tree with
-> > other backports.
-> > 
-> > This particular issue was found by updating some openstack machines with
-> > the candidate kernel, which then triggered the problem in some guests.
-> > It is also a very special one, since I was only able to trigger the
-> > problem on Westmere-based machines with a specific guest-config.
+On 21/02/2019 14:57, Kirill A. Shutemov wrote:
+> On Thu, Feb 21, 2019 at 02:46:18PM +0000, Steven Price wrote:
+>> On 21/02/2019 14:28, Kirill A. Shutemov wrote:
+>>> On Thu, Feb 21, 2019 at 11:34:52AM +0000, Steven Price wrote:
+>>>> From: James Morse <james.morse@arm.com>
+>>>>
+>>>> Exposing the pud/pgd levels of the page tables to walk_page_range() means
+>>>> we may come across the exotic large mappings that come with large areas
+>>>> of contiguous memory (such as the kernel's linear map).
+>>>>
+>>>> For architectures that don't provide p?d_large() macros, provided a
+>>>> does nothing default.
+>>>
+>>> Nak, sorry.
+>>>
+>>> Power will get broken by the patch. It has pmd_large() inline function,
+>>> that will be overwritten by the define from this patch.
+>>>
+>>> I believe it requires more ground work on arch side in general.
+>>> All architectures that has huge page support has to provide these helpers
+>>> (and matching defines) before you can use it in a generic code.
+>>
+>> Sorry about that, I had compile tested on power, but obviously not the
+>> right config to actually see the breakage.
 > 
-> Nice work.  Any chance that "test" could be added to the kvm testing
-> scripts that I think are being worked on somewhere?  Ideally we would
-> have caught this before it ever hit the stable tree.  Due to the lack of
-> good KVM testing, that's one of the areas I am always most worried about
+> I don't think you'll catch it at compile-time. It would silently override
+> the helper with always-false.
 
-This bug exists only in the 4.4.y backport; upstream, 4.9.y and 4.14.y
-all had the correct code from the get-go.  And there is already a KVM
-unit test that *should* hit this, albeit somewhat indirectly.  I'll
-verify the tests that touch the TPR actually run with x2APIC enabled.
+Ah, that might explain why I missed it.
 
-Assuming the KVM unit test actually works, it's not a stretch for the
-bug to esacpe, e.g. if the tests weren't run on 4.4.y at all, or were
-only run on hardware with x2APIC.
+>> I'll do some grepping - hopefully this is just a case of exposing the
+>> functions/defines that already exist for those architectures.
+> 
+> I see the same type of breakage on s390 and sparc.
+> 
+>> Note that in terms of the new page walking code, these new defines are
+>> only used when walking a page table without a VMA (which isn't currently
+>> done), so architectures which don't use p?d_large currently will work
+>> fine with the generic versions. They only need to provide meaningful
+>> definitions when switching to use the walk-without-a-VMA functionality.
+> 
+> How other architectures would know that they need to provide the helpers
+> to get walk-without-a-VMA functionality? This looks very fragile to me.
+
+Yes, you've got a good point there. This would apply to the p?d_large
+macros as well - any arch which (inadvertently) uses the generic version
+is likely to be fragile/broken.
+
+I think probably the best option here is to scrap the generic versions
+altogether and simply introduce a ARCH_HAS_PXD_LARGE config option which
+would enable the new functionality to those arches that opt-in. Do you
+think this would be less fragile?
+
+Thanks,
+
+Steve
