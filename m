@@ -2,204 +2,106 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B548DC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA254C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:47:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 170702080F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:47:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qOBDnzI2"
+	by mail.kernel.org (Postfix) with ESMTP id C2A762084F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:47:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728208AbfBUNq7 (ORCPT
+        id S1728101AbfBUNrd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 08:46:59 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46306 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726199AbfBUNq7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 08:46:59 -0500
-Received: by mail-pf1-f193.google.com with SMTP id g6so13848047pfh.13;
-        Thu, 21 Feb 2019 05:46:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7rZPa7VPAO7Y3XmtQfQ6RmqrcVYHNlGP9UUpl6tca+Y=;
-        b=qOBDnzI2EwLhPIV4fYyeVcN5jFRzYsOQFc/etfahqb0mwk5AGe2jEuaoked72WuPbg
-         oJaxr9R0ImS7nj4UJ2rw+DzkhMqchuf6cOzWoakzhSeQMF/MD1hrjK62rSPoOkK4xec7
-         rAOrgUU3ZX1Oys1lPdvSzbx12nRAUC25I+DvZuv6azGZjWmUWZUk4brtV0NlvwW9pO3A
-         eQ41sZCzVHWFTh6LGsAX8drIQ71ZecZ654BsHXzgRa20ppMyp1TynmbfU7NPNU2E+zHR
-         Fj+GnAAqhi2t6YgYcdEz8hofXO4oWfHoYn/7KXsfEEytM44wVAiqBn/xdAvbOTLqx4ep
-         +3vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7rZPa7VPAO7Y3XmtQfQ6RmqrcVYHNlGP9UUpl6tca+Y=;
-        b=K2G+GAj8GKrvSuHEY3918XN5/fNeuwyEA/wiR6R48PFvVc50w2FXqZnB8Qz8z195wq
-         wj2oNNxzkgtiv8SE0M4q04NkDHyYbJiggH0vnE+D6O87ja81PdM18Gtn8cxMdkC8JwFV
-         7DoOHBxUuxVvdIHrDdnDXj4EBFxI9yuRzbcL1b4wrepJLxSZWWSjRGSPS0/cNjF9BQyF
-         If2Pm4ELZREwzkpDTbWVW6w1z2j30Zq4s0DrIW1M8pvli4SPBnRvGMsGL9qDizTXFs6C
-         qIFUcWmeSuFMcN6YtkhepaZJEHYvsieKfnREaU4u7oOLMrMaGWLxuiQVT0ShyhM4erIV
-         otZw==
-X-Gm-Message-State: AHQUAuZ5bsTtGXS5iMazv9oIAIQa/FRToshIbOVMTNv4/5lePd6pC259
-        IR3IE9V5fSZaAuu2E0Pxk0Bm0bNN6YEiuM6se8O8kszi
-X-Google-Smtp-Source: AHgI3IZMnSTOxhBamiAwPGMh0HRKARUK6VVpBmwQRpJ/YGhskDKBqdSlYwpHfctkv2Zgk4rqjEbscfBCuYbGyJjbPEs=
-X-Received: by 2002:a63:1c42:: with SMTP id c2mr34244031pgm.265.1550756818096;
- Thu, 21 Feb 2019 05:46:58 -0800 (PST)
+        Thu, 21 Feb 2019 08:47:33 -0500
+Received: from mga01.intel.com ([192.55.52.88]:7777 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725820AbfBUNrc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 08:47:32 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 05:47:31 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,395,1544515200"; 
+   d="scan'208";a="128209848"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by orsmga003.jf.intel.com with ESMTP; 21 Feb 2019 05:47:31 -0800
+Received: from fmsmsx154.amr.corp.intel.com (10.18.116.70) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Thu, 21 Feb 2019 05:47:30 -0800
+Received: from crsmsx103.amr.corp.intel.com (172.18.63.31) by
+ FMSMSX154.amr.corp.intel.com (10.18.116.70) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Thu, 21 Feb 2019 05:47:30 -0800
+Received: from crsmsx101.amr.corp.intel.com ([169.254.1.57]) by
+ CRSMSX103.amr.corp.intel.com ([169.254.4.180]) with mapi id 14.03.0415.000;
+ Thu, 21 Feb 2019 07:47:28 -0600
+From:   "Wan, Kaike" <kaike.wan@intel.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "Marciniszyn, Mike" <mike.marciniszyn@intel.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        "Jason Gunthorpe" <jgg@ziepe.ca>
+CC:     "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: RE: [PATCH] IB/hfi1: Add missing break in switch statement
+Thread-Topic: [PATCH] IB/hfi1: Add missing break in switch statement
+Thread-Index: AQHUyYGSdGkcJixM00O7Of2i+gKbRaXqQmuw
+Date:   Thu, 21 Feb 2019 13:47:28 +0000
+Message-ID: <3F128C9216C9B84BB6ED23EF16290AFB750DB973@CRSMSX101.amr.corp.intel.com>
+References: <20190221010233.GA29228@embeddedor>
+In-Reply-To: <20190221010233.GA29228@embeddedor>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNWNmNGQyMzMtMDE5Ni00OTdjLWEwY2MtMzA5ODVkNWI1ZjBhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiaU1jN0V3ejV0dUFcL0NcL1I2bmkxajdpa0RmTFFDYTZnVllPSWdpR2E2WmxpYmNxUFZKWUNPdDlGMGE1VEpaVTZ1In0=
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [172.18.205.10]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20190219115959.55553-1-heikki.krogerus@linux.intel.com> <20190219115959.55553-2-heikki.krogerus@linux.intel.com>
-In-Reply-To: <20190219115959.55553-2-heikki.krogerus@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 21 Feb 2019 15:46:46 +0200
-Message-ID: <CAHp75Vca+yNuNJaAuB_2_5Vgq8+0FvrBWS1VbvqhAr0nq1UYPw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] platform/x86: intel_cht_int33fe: Provide fwnode for
- the USB connector
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     Andy Shevchenko <andy@infradead.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 2:00 PM Heikki Krogerus
-<heikki.krogerus@linux.intel.com> wrote:
->
-> In ACPI, and now also in DT, the USB connectors usually have
-> their own device nodes. In case of USB Type-C, those
-> connector (port) nodes are child nodes of the controller or
-> PHY device, in our case the fusb302. The software fwnodes
-> allow us to create a similar child node for fusb302 that
-> represents the connector also on Intel CHT.
->
-> This makes it possible replace the fusb302 specific device
-> properties which were deprecated with the common USB
-> connector properties that tcpm.c is able to use directly.
->
-
-This doesn't apply to our for-next branch.
-
-> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> ---
->  drivers/platform/x86/intel_cht_int33fe.c | 48 ++++++++++++++++++++++--
->  1 file changed, 44 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/platform/x86/intel_cht_int33fe.c b/drivers/platform/x86/intel_cht_int33fe.c
-> index 6fa3cced6f8e..4857a57cfff5 100644
-> --- a/drivers/platform/x86/intel_cht_int33fe.c
-> +++ b/drivers/platform/x86/intel_cht_int33fe.c
-> @@ -24,6 +24,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/slab.h>
-> +#include <linux/usb/pd.h>
->
->  #define EXPECTED_PTYPE         4
->
-> @@ -31,6 +32,8 @@ struct cht_int33fe_data {
->         struct i2c_client *max17047;
->         struct i2c_client *fusb302;
->         struct i2c_client *pi3usb30532;
-> +       struct fwnode_handle *port_node;
-> +       struct fwnode_handle *fusb302_node;
->         /* Contain a list-head must be per device */
->         struct device_connection connections[4];
->  };
-> @@ -80,9 +83,29 @@ static const struct property_entry max17047_props[] = {
->
->  static const struct property_entry fusb302_props[] = {
->         PROPERTY_ENTRY_STRING("linux,extcon-name", "cht_wcove_pwrsrc"),
-> -       PROPERTY_ENTRY_U32("fcs,max-sink-microvolt", 12000000),
-> -       PROPERTY_ENTRY_U32("fcs,max-sink-microamp",   3000000),
-> -       PROPERTY_ENTRY_U32("fcs,max-sink-microwatt", 36000000),
-> +       { }
-> +};
-> +
-> +#define PDO_FIXED_FLAGS \
-> +       (PDO_FIXED_DUAL_ROLE | PDO_FIXED_DATA_SWAP | PDO_FIXED_USB_COMM)
-> +
-> +static const u32 src_pdo[] = {
-> +       PDO_FIXED(5000, 1500, PDO_FIXED_FLAGS),
-> +};
-> +
-> +static const u32 snk_pdo[] = {
-> +       PDO_FIXED(5000, 400, PDO_FIXED_FLAGS),
-> +       PDO_VAR(5000, 12000, 3000),
-> +};
-> +
-> +static const struct property_entry usb_connector_props[] = {
-> +       PROPERTY_ENTRY_STRING("name", "connector"),
-> +       PROPERTY_ENTRY_STRING("data-role", "dual"),
-> +       PROPERTY_ENTRY_STRING("power-role", "dual"),
-> +       PROPERTY_ENTRY_STRING("try-power-role", "sink"),
-> +       PROPERTY_ENTRY_U32_ARRAY("source-pdos", src_pdo),
-> +       PROPERTY_ENTRY_U32_ARRAY("sink-pdos", snk_pdo),
-> +       PROPERTY_ENTRY_U32("op-sink-microwatt", 36000000),
->         { }
->  };
->
-> @@ -151,6 +174,19 @@ static int cht_int33fe_probe(struct platform_device *pdev)
->         if (!data)
->                 return -ENOMEM;
->
-> +       /* Node for the FUSB302 controller */
-> +       data->fusb302_node = fwnode_create_software_node(fusb302_props, NULL);
-> +       if (IS_ERR(data->fusb302_node))
-> +               return PTR_ERR(data->fusb302_node);
-> +
-> +       /* Node for the connector (FUSB302 is the parent) */
-> +       data->port_node = fwnode_create_software_node(usb_connector_props,
-> +                                                     data->fusb302_node);
-> +       if (IS_ERR(data->port_node)) {
-> +               fwnode_remove_software_node(data->fusb302_node);
-> +               return PTR_ERR(data->port_node);
-> +       }
-> +
->         /* Work around BIOS bug, see comment on cht_int33fe_find_max17047 */
->         max17047 = cht_int33fe_find_max17047();
->         if (max17047) {
-> @@ -187,7 +223,7 @@ static int cht_int33fe_probe(struct platform_device *pdev)
->         memset(&board_info, 0, sizeof(board_info));
->         strlcpy(board_info.type, "typec_fusb302", I2C_NAME_SIZE);
->         board_info.dev_name = "fusb302";
-> -       board_info.properties = fusb302_props;
-> +       board_info.fwnode = data->fusb302_node;
->         board_info.irq = fusb302_irq;
->
->         data->fusb302 = i2c_acpi_new_device(dev, 2, &board_info);
-> @@ -217,6 +253,8 @@ static int cht_int33fe_probe(struct platform_device *pdev)
->         i2c_unregister_device(data->max17047);
->
->         device_connections_remove(data->connections);
-> +       fwnode_remove_software_node(data->port_node);
-> +       fwnode_remove_software_node(data->fusb302_node);
->
->         return ret;
->  }
-> @@ -230,6 +268,8 @@ static int cht_int33fe_remove(struct platform_device *pdev)
->         i2c_unregister_device(data->max17047);
->
->         device_connections_remove(data->connections);
-> +       fwnode_remove_software_node(data->port_node);
-> +       fwnode_remove_software_node(data->fusb302_node);
->
->         return 0;
->  }
-> --
-> 2.20.1
->
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogR3VzdGF2byBBLiBSLiBT
+aWx2YSBbbWFpbHRvOmd1c3Rhdm9AZW1iZWRkZWRvci5jb21dDQo+IFNlbnQ6IFdlZG5lc2RheSwg
+RmVicnVhcnkgMjAsIDIwMTkgODowMyBQTQ0KPiBUbzogV2FuLCBLYWlrZSA8a2Fpa2Uud2FuQGlu
+dGVsLmNvbT47IE1hcmNpbmlzenluLCBNaWtlDQo+IDxtaWtlLm1hcmNpbmlzenluQGludGVsLmNv
+bT47IERhbGVzc2FuZHJvLCBEZW5uaXMNCj4gPGRlbm5pcy5kYWxlc3NhbmRyb0BpbnRlbC5jb20+
+OyBEb3VnIExlZGZvcmQgPGRsZWRmb3JkQHJlZGhhdC5jb20+Ow0KPiBKYXNvbiBHdW50aG9ycGUg
+PGpnZ0B6aWVwZS5jYT4NCj4gQ2M6IGxpbnV4LXJkbWFAdmdlci5rZXJuZWwub3JnOyBsaW51eC1r
+ZXJuZWxAdmdlci5rZXJuZWwub3JnOyBHdXN0YXZvIEEuIFIuDQo+IFNpbHZhIDxndXN0YXZvQGVt
+YmVkZGVkb3IuY29tPjsgS2VlcyBDb29rIDxrZWVzY29va0BjaHJvbWl1bS5vcmc+DQo+IFN1Ympl
+Y3Q6IFtQQVRDSF0gSUIvaGZpMTogQWRkIG1pc3NpbmcgYnJlYWsgaW4gc3dpdGNoIHN0YXRlbWVu
+dA0KPiANCj4gRml4IHRoZSBmb2xsb3dpbmcgd2FybmluZyBieSBhZGRpbmcgYSBtaXNzaW5nIGJy
+ZWFrOg0KPiANCj4gZHJpdmVycy9pbmZpbmliYW5kL2h3L2hmaTEvdGlkX3JkbWEuYzogSW4gZnVu
+Y3Rpb24NCj4g4oCYaGZpMV90aWRfcmRtYV93cWVfaW50ZXJsb2Nr4oCZOg0KPiBkcml2ZXJzL2lu
+ZmluaWJhbmQvaHcvaGZpMS90aWRfcmRtYS5jOjMyNTE6Mzogd2FybmluZzogdGhpcyBzdGF0ZW1l
+bnQgbWF5DQo+IGZhbGwgdGhyb3VnaCBbLVdpbXBsaWNpdC1mYWxsdGhyb3VnaD1dDQo+ICAgIHN3
+aXRjaCAocHJldi0+d3Iub3Bjb2RlKSB7DQo+ICAgIF5+fn5+fg0KPiBkcml2ZXJzL2luZmluaWJh
+bmQvaHcvaGZpMS90aWRfcmRtYS5jOjMyNTk6Mjogbm90ZTogaGVyZQ0KPiAgIGNhc2UgSUJfV1Jf
+UkRNQV9SRUFEOg0KPiAgIF5+fn4NCj4gDQo+IFdhcm5pbmcgbGV2ZWwgMyB3YXMgdXNlZDogLVdp
+bXBsaWNpdC1mYWxsdGhyb3VnaD0zDQo+IA0KPiBUaGlzIHBhdGNoIGlzIHBhcnQgb2YgdGhlIG9u
+Z29pbmcgZWZmb3J0cyB0byBlbmFibGUgLVdpbXBsaWNpdC1mYWxsdGhyb3VnaC4NCj4gDQo+IEZp
+eGVzOiBjNmMyMzExNzVjY2QgKCJJQi9oZmkxOiBBZGQgaW50ZXJsb2NrIGJldHdlZW4gVElEIFJE
+TUEgV1JJVEUgYW5kDQo+IG90aGVyIHJlcXVlc3RzIikNCj4gU2lnbmVkLW9mZi1ieTogR3VzdGF2
+byBBLiBSLiBTaWx2YSA8Z3VzdGF2b0BlbWJlZGRlZG9yLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJz
+L2luZmluaWJhbmQvaHcvaGZpMS90aWRfcmRtYS5jIHwgMSArDQo+ICAxIGZpbGUgY2hhbmdlZCwg
+MSBpbnNlcnRpb24oKykNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2luZmluaWJhbmQvaHcv
+aGZpMS90aWRfcmRtYS5jDQo+IGIvZHJpdmVycy9pbmZpbmliYW5kL2h3L2hmaTEvdGlkX3JkbWEu
+Yw0KPiBpbmRleCBiYzJmZjgzMDI2ZjcuLmZkZGEzM2FjYTc3ZiAxMDA2NDQNCj4gLS0tIGEvZHJp
+dmVycy9pbmZpbmliYW5kL2h3L2hmaTEvdGlkX3JkbWEuYw0KPiArKysgYi9kcml2ZXJzL2luZmlu
+aWJhbmQvaHcvaGZpMS90aWRfcmRtYS5jDQo+IEBAIC0zMjU2LDYgKzMyNTYsNyBAQCBib29sIGhm
+aTFfdGlkX3JkbWFfd3FlX2ludGVybG9jayhzdHJ1Y3QgcnZ0X3FwDQo+ICpxcCwgc3RydWN0IHJ2
+dF9zd3FlICp3cWUpDQo+ICAJCWRlZmF1bHQ6DQo+ICAJCQlicmVhazsNCj4gIAkJfQ0KPiArCQli
+cmVhazsNCj4gIAljYXNlIElCX1dSX1JETUFfUkVBRDoNCj4gIAkJaWYgKHByZXYtPndyLm9wY29k
+ZSAhPSBJQl9XUl9USURfUkRNQV9XUklURSkNCj4gIAkJCWJyZWFrOw0KPiAtLQ0KDQpSZXZpZXdl
+ZC1ieTogS2Fpa2UgV2FuIDxLYWlrZS53YW5AaW50ZWwuY29tPg0KDQo+IDIuMjAuMQ0KDQo=
