@@ -2,112 +2,110 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D35FC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25384C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:40:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFF162083B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:40:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NO4fYVKx"
+	by mail.kernel.org (Postfix) with ESMTP id F01A92083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:40:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726805AbfBUQkE (ORCPT
+        id S1727553AbfBUQkK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 11:40:04 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:44624 "EHLO
+        Thu, 21 Feb 2019 11:40:10 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:41487 "EHLO
         mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725831AbfBUQkE (ORCPT
+        with ESMTP id S1725831AbfBUQkI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 11:40:04 -0500
-Received: by mail-ed1-f65.google.com with SMTP id b20so23652129edw.11;
-        Thu, 21 Feb 2019 08:40:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=oUUaNAWEKXrWA7CoHeNhBNEez01JJHhKBXSilmyhjWs=;
-        b=NO4fYVKxyeeUhgIoi8vqdB4NkFgwSomvUrr9AkFH/rXUB9MW9c1tHnFfqBG2ykiCrD
-         KHnQ5GIlYM41O0CiFNDzNs136ffGIp3yekrFQoEygo6TtXjRzDx7RtgMkjj9nWTYM+rx
-         yHK3GzxWFnp8MCvPinGF/JSIwSKFAYy5crqJQXDX85AWXwjnajxdTuOfelCst8gzKriO
-         ESCHIftAB7H8N6lX4pVly32OunXeBCTdZ8Mpxm2zbH9V39m9KjhJ6tRsMjhTtHJWo16K
-         kFyTJyWzvFKQO/cnXnUSz07pNJTEUVyYmeGlpgudhKz3qO5fAnw1B949lYophKxZiCcl
-         8avg==
+        Thu, 21 Feb 2019 11:40:08 -0500
+Received: by mail-ed1-f65.google.com with SMTP id x7so23687667eds.8
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 08:40:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=oUUaNAWEKXrWA7CoHeNhBNEez01JJHhKBXSilmyhjWs=;
-        b=eAytoVd3bJ9FTiBTY7A768WvfT4sA1SkkEOXPtPPIwmkBhSobjUGoF8To0sMAQ51Qz
-         04N1iY4STFygX9pMZCTE2Unv3YeifRHHfzDqLoHIaSc19yO9NgJwAIy/jdATa5V3nyVg
-         i8Q+G1VqFd/rqa0ye53Ez0bAEz44qvsSun7tj5sKwqyKIsWOTjXTsUfCFi/p4d9UJyEP
-         Ujj/CfoPYkSS9J6LQSmkVykA+nyJZ0ehXFIauU7Zx63J5iWBr/6eLYvBgZEk6pUqipOd
-         cq9K2jMxzhloTS+r+ROrDnK/9bzn4AfOxUXhl0jFwxY6Wwia5YexVEq5Ex/Qt78AlMsy
-         B0jA==
-X-Gm-Message-State: AHQUAub3Hxe0xirsbljD6tgRJGhhniCY5Ll2KEiOfuxqXyQNKdFRmVxg
-        PDzvA1Q61dKYnaGkdEpI2emxt4MI0N4=
-X-Google-Smtp-Source: AHgI3IbMgJNMAfNUCjv6imcLjd05phMBrF+Z4V9s8HgSFC2/ezNuI5BgW3mQoWZssiMVzDD6hvJayg==
-X-Received: by 2002:a50:a978:: with SMTP id m53mr2558048edc.178.1550767202394;
-        Thu, 21 Feb 2019 08:40:02 -0800 (PST)
-Received: from localhost.localdomain (ip5b402483.dynamic.kabel-deutschland.de. [91.64.36.131])
-        by smtp.gmail.com with ESMTPSA id b29sm4620061eda.48.2019.02.21.08.40.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Feb 2019 08:40:01 -0800 (PST)
-From:   Alban Crequy <alban.crequy@gmail.com>
-X-Google-Original-From: Alban Crequy <alban@kinvolk.io>
-To:     ast@kernel.org, daniel@iogearbox.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alban@kinvolk.io, iago@kinvolk.io
-Subject: [PATCH bpf-next v1] bpf, lpm: fix lookup bug in map_delete_elem
-Date:   Thu, 21 Feb 2019 17:39:26 +0100
-Message-Id: <20190221163926.15221-1-alban@kinvolk.io>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3pQY6z8l1l6LG2RHkNvh+4xqEBF5VXb30JKt1h7j9Jg=;
+        b=TkkCnYP3kwwK2VaRcmxI68y9keDl2lFZZQ9pAwgrXsGzvCtW96QfKRHDmCyA4LZYyC
+         La+YP55ysCivkbF+7r34XNmL3wWJYjKPl6r87Uo61Q4flV7TOl++kRK/rZudzxlhr2AB
+         rrlZ6jo57RASL0rsKG7BCHG6j6rcF0cbuvpIh+wQZcejWlJLNgt2+lDAckAgID2+BvKG
+         FkhgtDpECWWiwop7lwfG5wKpFF3KZtrfL5/VJYUEt1jPSafi1AnrCMgc1A0DljT7FIvh
+         WxuX3tJQVI8selfBBf3ViLoZqZYBZ9W/VwZxe88tX1BLZhq1anaJZKloWSOSH9D4qzTt
+         /xqg==
+X-Gm-Message-State: AHQUAuZS8VEBvJKUbimvVfLOyrRzJhVDKgj7Pn0vkUQNe79m+feREIhY
+        EXAW5TqSaZX+WcQwgLwVxUjaSE5Dj58=
+X-Google-Smtp-Source: AHgI3IZuxeo/lgn9SiduTTc4ZE/tj6Y4ecXMth/vamMIkl4/AEXhiIMwjt9/IgIEJsvZoy/ssh3UrA==
+X-Received: by 2002:a05:6402:120b:: with SMTP id c11mr14527422edw.119.1550767206845;
+        Thu, 21 Feb 2019 08:40:06 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id j4sm6796824edh.69.2019.02.21.08.40.05
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Feb 2019 08:40:06 -0800 (PST)
+Subject: Re: [PATCH] staging/vboxvideo: Another FIXME item
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Liviu Dudau <liviu.dudau@arm.com>
+References: <20190221155951.19855-1-daniel.vetter@ffwll.ch>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <33679003-ce23-2ba0-d8c2-fd8187ecea36@redhat.com>
+Date:   Thu, 21 Feb 2019 17:40:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190221155951.19855-1-daniel.vetter@ffwll.ch>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alban Crequy <alban@kinvolk.io>
+Hi,
 
-trie_delete_elem() was deleting an entry even though it was not matching
-if the prefixlen was correct. This patch adds a check on matchlen.
+On 21-02-19 16:59, Daniel Vetter wrote:
+> Found while grepping around.
+> 
+> Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Cc: Liviu Dudau <liviu.dudau@arm.com>
+> ---
+>   drivers/staging/vboxvideo/vbox_irq.c | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/staging/vboxvideo/vbox_irq.c b/drivers/staging/vboxvideo/vbox_irq.c
+> index 195484713365..89944134ea86 100644
+> --- a/drivers/staging/vboxvideo/vbox_irq.c
+> +++ b/drivers/staging/vboxvideo/vbox_irq.c
+> @@ -123,6 +123,11 @@ static void vbox_update_mode_hints(struct vbox_private *vbox)
+>   
+>   	validate_or_set_position_hints(vbox);
+>   	drm_modeset_lock_all(dev);
+> +	/*
+> +	 * FIXME: this needs to use drm_connector_list_iter and some real
+> +	 * locking for the actual data it changes, not the deprecated
+> +	 * drm_modeset_lock_all() shotgun approach.
+> +	 */
 
-Reproducer:
+Question, are the locking expectations from the drm's core pov (for modesetting-drivers)
+*fully* (and clearly) documented somewhere?
 
-$ sudo bpftool map create /sys/fs/bpf/mylpm type lpm_trie key 8 value 1 entries 128 name mylpm flags 1
-$ sudo bpftool map update pinned /sys/fs/bpf/mylpm key hex 10 00 00 00 aa bb cc dd value hex 01
-$ sudo bpftool map dump pinned /sys/fs/bpf/mylpm
-key: 10 00 00 00 aa bb cc dd  value: 01
-Found 1 element
-$ sudo bpftool map delete pinned /sys/fs/bpf/mylpm key hex 10 00 00 00 ff ff ff ff
-$ echo $?
-0
-$ sudo bpftool map dump pinned /sys/fs/bpf/mylpm
-Found 0 elements
+Regards,
 
-Signed-off-by: Alban Crequy <alban@kinvolk.io>
----
- kernel/bpf/lpm_trie.c | 1 +
- 1 file changed, 1 insertion(+)
+Hans
 
-diff --git a/kernel/bpf/lpm_trie.c b/kernel/bpf/lpm_trie.c
-index abf1002080df..93a5cbbde421 100644
---- a/kernel/bpf/lpm_trie.c
-+++ b/kernel/bpf/lpm_trie.c
-@@ -471,6 +471,7 @@ static int trie_delete_elem(struct bpf_map *map, void *_key)
- 	}
- 
- 	if (!node || node->prefixlen != key->prefixlen ||
-+	    node->prefixlen != matchlen ||
- 	    (node->flags & LPM_TREE_NODE_FLAG_IM)) {
- 		ret = -ENOENT;
- 		goto out;
--- 
-2.20.1
 
+
+
+>   	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
+>   		vbox_conn = to_vbox_connector(connector);
+>   
+> 
