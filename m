@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB1CC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF270C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E4112084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4C962084F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550759836;
-	bh=EZyf0wrWWPOALuN2FgWUTJc+HlVlx8IW7VJxivzubEs=;
+	s=default; t=1550759839;
+	bh=TSslYbhB7qXT8P+vvktdTYgCJIQWavn+MCUxZNUZSKM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rQyrkS5V19qr5I2t5o3TKHHdAP1WNDmymj2WKH2YtskG0LNxwxP9V3hiKz0pg58Cz
-	 r0DBfWU/BH8eSHhiFaY5GPMqFe0ptShlUFTfo1sqB6DmVa6kJ67WvUe5724FYIPSQ2
-	 jzZTAuL/kDmSieRNxYCYD/99LpmCH3iF3NB3ZOpo=
+	b=WGrHLwmtZignWIy0ZToJkzjjPylqEGO/K4zDNXZMtyrrwqTCwoURV/MhRPNcSj9tC
+	 M0OXfJ6PkYJCshUHsX22DzuAIr+iRVInYNY8X2pcrmiwDAKRGPop2ofSx94Gm19P+A
+	 pSgTIvwZ8y6k4e2MpRQWaSQ0MHAjvDOz3TksySD4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728334AbfBUOhP (ORCPT
+        id S1728349AbfBUOhS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:37:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58288 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:37:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727594AbfBUOhN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:37:13 -0500
+        id S1727594AbfBUOhQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:37:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39E312075C;
-        Thu, 21 Feb 2019 14:37:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E697F2075C;
+        Thu, 21 Feb 2019 14:37:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550759832;
-        bh=EZyf0wrWWPOALuN2FgWUTJc+HlVlx8IW7VJxivzubEs=;
+        s=default; t=1550759835;
+        bh=TSslYbhB7qXT8P+vvktdTYgCJIQWavn+MCUxZNUZSKM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L65ybsFnryQnWfXBsT8XecXt+VaNRwr76oaukRCUEvuTW55rhAsdgOHvDuJd3PPw2
-         lBAOXTZ++i1hGpsadZ+oHV7A031UFOszof5WxZW7penUeR0spaeuu//7lhGusyE8TA
-         bvL5PTHB/cu8+MjyLJXbLDvGC9Em+uwO4smxe8ik=
+        b=NxogYABAtUXrz/E0IlPSWHOl3d11DXzmGAqI5x2zr9v8kqxQtn7zaWe0HxVvCSuYK
+         FrgAN8CpbEPTDTltRz2+vAchTrHAzAXBoQ4hIC5eIhqsIV2FqLkAfU7b4pJ3XjFRsT
+         0pquTo6tmMcXEEyjJYX+drIMl57vY7AdPRpHjdJg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 08/13] net: ipv4: use a dedicated counter for icmp_v4 redirect packets
-Date:   Thu, 21 Feb 2019 15:35:39 +0100
-Message-Id: <20190221125240.937496983@linuxfoundation.org>
+        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 3.18 09/13] hwmon: (lm80) Fix missing unlock on error in set_fan_div()
+Date:   Thu, 21 Feb 2019 15:35:40 +0100
+Message-Id: <20190221125241.076737759@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125240.091472334@linuxfoundation.org>
 References: <20190221125240.091472334@linuxfoundation.org>
@@ -66,86 +65,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-[ Upstream commit c09551c6ff7fe16a79a42133bcecba5fc2fc3291 ]
+commit 07bd14ccc3049f9c0147a91a4227a571f981601a upstream.
 
-According to the algorithm described in the comment block at the
-beginning of ip_rt_send_redirect, the host should try to send
-'ip_rt_redirect_number' ICMP redirect packets with an exponential
-backoff and then stop sending them at all assuming that the destination
-ignores redirects.
-If the device has previously sent some ICMP error packets that are
-rate-limited (e.g TTL expired) and continues to receive traffic,
-the redirect packets will never be transmitted. This happens since
-peer->rate_tokens will be typically greater than 'ip_rt_redirect_number'
-and so it will never be reset even if the redirect silence timeout
-(ip_rt_redirect_silence) has elapsed without receiving any packet
-requiring redirects.
+Add the missing unlock before return from function set_fan_div()
+in the error handling case.
 
-Fix it by using a dedicated counter for the number of ICMP redirect
-packets that has been sent by the host
-
-I have not been able to identify a given commit that introduced the
-issue since ip_rt_send_redirect implements the same rate-limiting
-algorithm from commit 1da177e4c3f4 ("Linux-2.6.12-rc2")
-
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: c9c63915519b ("hwmon: (lm80) fix a missing check of the status of SMBus read")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/net/inetpeer.h |    1 +
- net/ipv4/inetpeer.c    |    1 +
- net/ipv4/route.c       |    7 +++++--
- 3 files changed, 7 insertions(+), 2 deletions(-)
 
---- a/include/net/inetpeer.h
-+++ b/include/net/inetpeer.h
-@@ -35,6 +35,7 @@ struct inet_peer {
- 
- 	u32			metrics[RTAX_MAX];
- 	u32			rate_tokens;	/* rate limiting for ICMP */
-+	u32			n_redirects;
- 	unsigned long		rate_last;
- 	union {
- 		struct list_head	gc_list;
---- a/net/ipv4/inetpeer.c
-+++ b/net/ipv4/inetpeer.c
-@@ -464,6 +464,7 @@ relookup:
- 		atomic_set(&p->rid, 0);
- 		p->metrics[RTAX_LOCK-1] = INETPEER_METRICS_NEW;
- 		p->rate_tokens = 0;
-+		p->n_redirects = 0;
- 		/* 60*HZ is arbitrary, but chosen enough high so that the first
- 		 * calculation of tokens is at its maximum.
- 		 */
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -864,13 +864,15 @@ void ip_rt_send_redirect(struct sk_buff
- 	/* No redirected packets during ip_rt_redirect_silence;
- 	 * reset the algorithm.
- 	 */
--	if (time_after(jiffies, peer->rate_last + ip_rt_redirect_silence))
-+	if (time_after(jiffies, peer->rate_last + ip_rt_redirect_silence)) {
- 		peer->rate_tokens = 0;
-+		peer->n_redirects = 0;
-+	}
- 
- 	/* Too many ignored redirects; do not send anything
- 	 * set dst.rate_last to the last seen redirected packet.
- 	 */
--	if (peer->rate_tokens >= ip_rt_redirect_number) {
-+	if (peer->n_redirects >= ip_rt_redirect_number) {
- 		peer->rate_last = jiffies;
- 		goto out_put_peer;
+---
+ drivers/hwmon/lm80.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/drivers/hwmon/lm80.c
++++ b/drivers/hwmon/lm80.c
+@@ -393,8 +393,10 @@ static ssize_t set_fan_div(struct device
  	}
-@@ -887,6 +889,7 @@ void ip_rt_send_redirect(struct sk_buff
- 		icmp_send(skb, ICMP_REDIRECT, ICMP_REDIR_HOST, gw);
- 		peer->rate_last = jiffies;
- 		++peer->rate_tokens;
-+		++peer->n_redirects;
- #ifdef CONFIG_IP_ROUTE_VERBOSE
- 		if (log_martians &&
- 		    peer->rate_tokens == ip_rt_redirect_number)
+ 
+ 	rv = lm80_read_value(client, LM80_REG_FANDIV);
+-	if (rv < 0)
++	if (rv < 0) {
++		mutex_unlock(&data->update_lock);
+ 		return rv;
++	}
+ 	reg = (rv & ~(3 << (2 * (nr + 1))))
+ 	    | (data->fan_div[nr] << (2 * (nr + 1)));
+ 	lm80_write_value(client, LM80_REG_FANDIV, reg);
 
 
