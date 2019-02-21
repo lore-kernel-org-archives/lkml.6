@@ -2,96 +2,108 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC3CC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F76C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B40E020880
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:35:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1464420880
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:35:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550741745;
+	bh=8Nix8uxa0PRZE03MofpnF/rC2WAvncIcdk/HKAA101w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=U1ujy4/NzNoRizytqAQh5TBEhhqR6sIYb8jG69pRWJOEAcFiln2BVd00g0R27rKx1
+	 jZUmJV9oInlMB2PzUJC7uBcLyBHiC9uDvj5XQAMnjKhgwc5nA4KVbwCYEb4nmMf2ca
+	 D3dW51K/VResqoeAETLpI3TPhDJjBqpwNK8Uy0xo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbfBUJfN (ORCPT
+        id S1727356AbfBUJfn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 04:35:13 -0500
-Received: from mga03.intel.com ([134.134.136.65]:56889 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725385AbfBUJfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 04:35:12 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 01:35:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,394,1544515200"; 
-   d="scan'208";a="148639191"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 21 Feb 2019 01:35:08 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 21 Feb 2019 11:35:08 +0200
-Date:   Thu, 21 Feb 2019 11:35:08 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Andy Shevchenko <andy@infradead.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] platform/x86: intel_cht_int33fe: Provide fwnode for
- the USB connector
-Message-ID: <20190221093508.GF5054@kuha.fi.intel.com>
-References: <20190219115959.55553-1-heikki.krogerus@linux.intel.com>
- <20190219115959.55553-2-heikki.krogerus@linux.intel.com>
- <CAHp75VcoqwP5VrOW60XtQHLAO1KOmc_Kyn-KQsZC-tsiwpQq3A@mail.gmail.com>
+        Thu, 21 Feb 2019 04:35:43 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:43090 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbfBUJfn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 04:35:43 -0500
+Received: by mail-oi1-f194.google.com with SMTP id i8so887671oib.10;
+        Thu, 21 Feb 2019 01:35:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=o9hOMFcRs9ElWYh2qkLTKPzYO4tg8kl1dNzFbX6vymE=;
+        b=gqpzFIG61QmCtJLlT1ZKu8QQzL91cwDtYC5kcgxm8C5ullP6F/uUdv7zmCg2UWwHmg
+         UEKNxUT5GfsWY/Whj4DMI5ikkseGAwACW4erA6xr6VuxMF/xrgl9ikqf9Aox6BGoY3Ju
+         tIc3vjrX5mhYHHGrzRJ9nd01uiPu3KqjBBdhDDNbnYDBI9p+bs+b+segRlr8bYuZ2AmU
+         CZfTx92PNoBDWvKO8Pp6cdeeUh0rz/ksVvCAjKCjqAs815wa4W2hx9SdSA1H9Uo65LIH
+         ZCNjWO+JrMTMfUd3Jv9RYsKjuBKqKHgeoWKS37lbHoK1gda0RWWjDqm8WWDoYTlWSrfA
+         NgGw==
+X-Gm-Message-State: AHQUAua8EkalMI7GBpuT5TvnDgmDe1bCkx0FJOP6O6PlqnwKZPn514+w
+        Cu8zpJMYc44m7mNnTjWF9D6N7hqVe/7uy/hB/Mk=
+X-Google-Smtp-Source: AHgI3IYzvSauU76yZPQLBTMDY5HyMahxOdNk/iafHIcD7dPpw6ohASiM4noKNpJzp5Anagbpk5xFAnQ+KTdWe5oB5vU=
+X-Received: by 2002:aca:88b:: with SMTP id 133mr3627431oii.95.1550741742044;
+ Thu, 21 Feb 2019 01:35:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VcoqwP5VrOW60XtQHLAO1KOmc_Kyn-KQsZC-tsiwpQq3A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1550735942-3569-1-git-send-email-vincent.guittot@linaro.org>
+In-Reply-To: <1550735942-3569-1-git-send-email-vincent.guittot@linaro.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 21 Feb 2019 10:35:30 +0100
+Message-ID: <CAJZ5v0jEF2=etp=gLY4dchhB5pRjf8NAUnUt4oyC63pCsd1jqQ@mail.gmail.com>
+Subject: Re: [PATCH] PM-runtime: fix deadlock when canceling hrtimer
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Zhaosheng Sun <sunzhaosheng@hisilicon.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 05:55:21PM +0200, Andy Shevchenko wrote:
-> On Tue, Feb 19, 2019 at 2:00 PM Heikki Krogerus
-> <heikki.krogerus@linux.intel.com> wrote:
-> >
-> > In ACPI, and now also in DT, the USB connectors usually have
-> > their own device nodes. In case of USB Type-C, those
-> > connector (port) nodes are child nodes of the controller or
-> > PHY device, in our case the fusb302. The software fwnodes
-> > allow us to create a similar child node for fusb302 that
-> > represents the connector also on Intel CHT.
-> >
-> > This makes it possible replace the fusb302 specific device
-> > properties which were deprecated with the common USB
-> > connector properties that tcpm.c is able to use directly.
-> 
-> > +       /* Node for the FUSB302 controller */
-> > +       data->fusb302_node = fwnode_create_software_node(fusb302_props, NULL);
-> > +       if (IS_ERR(data->fusb302_node))
-> > +               return PTR_ERR(data->fusb302_node);
-> > +
-> > +       /* Node for the connector (FUSB302 is the parent) */
-> > +       data->port_node = fwnode_create_software_node(usb_connector_props,
-> > +                                                     data->fusb302_node);
-> > +       if (IS_ERR(data->port_node)) {
-> 
-> > +               fwnode_remove_software_node(data->fusb302_node);
-> 
-> Sounds like a candidate for
-> devm_fwnode_create_software_node()
+On Thu, Feb 21, 2019 at 8:59 AM Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
+>
+> When rpm_resume() desactivates the autosuspend timer, it should only try
+> to cancel hrtimer but not wait for the handler to finish because both
+> rpm_resume() and pm_suspend_timer_fn() are taking the power.lock.
+> We can have the deadlock sequence:
+> CPU0                              CPU1
+> rpm_resume()
+>   spin_lock_irqsave
+>                                   pm_suspend_timer_fn()
+>                                     spin_lock_irqsave
+>   pm_runtime_deactivate_timer()
+>     hrtimer_cancel()
 
-If you don't mind, let's think about that later.
+Everybody has missed this, not good.
 
-I'm not comfortable at all with the idea of introducing
-devm_fwnode_create_software_node(). I would like to talk about that
-separately. It's not going to be a problem to change this driver later
-even if we decide to add the function.
+> hrtimer_try_to_cancel() is enough because dev->power.timer_expires is also
+> set to 0.
+>
+> Fixes: 8234f6734c5d ("PM-runtime: Switch autosuspend over to using hrtimers")
+> Reported-by: Sunzhaosheng Sun(Zhaosheng) <sunzhaosheng@hisilicon.com>
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> ---
+>  drivers/base/power/runtime.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+> index 04407d9..78937c4 100644
+> --- a/drivers/base/power/runtime.c
+> +++ b/drivers/base/power/runtime.c
+> @@ -121,7 +121,7 @@ EXPORT_SYMBOL_GPL(pm_runtime_suspended_time);
+>  static void pm_runtime_deactivate_timer(struct device *dev)
+>  {
+>         if (dev->power.timer_expires > 0) {
+> -               hrtimer_cancel(&dev->power.suspend_timer);
+> +               hrtimer_try_to_cancel(&dev->power.suspend_timer);
+>                 dev->power.timer_expires = 0;
+>         }
+>  }
+> --
 
-
-thanks,
-
--- 
-heikki
+Applied with some changelog modifications, thanks!
