@@ -2,179 +2,158 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBAC8C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DAC3C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:14:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EA7D20818
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:12:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 116B920842
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:14:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bg01VyIz"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="G7HCesDu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726914AbfBUWMg (ORCPT
+        id S1726954AbfBUWOF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 17:12:36 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:56206 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726050AbfBUWMf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 17:12:35 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1LM9IlJ011007;
-        Thu, 21 Feb 2019 22:12:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=HCmVZI+GR5G5wAqDTWNvr8+k7CGJy/LU6FuN0FrxADg=;
- b=bg01VyIzPI9uMfUxADlWLQE+6Wtng8Zr/CAYK93/dU1v1kNnFsQgHD01/dp8tZv9DcQJ
- 2Fyak9kZor0m5gVCvEHUOEQL3CfPVEw8kDucJgmiVexDaHCPmygtn5JWyhHFu4Vfipt3
- O7Cl9AxcvOTaPBZZ6vpYX7t/fqguP+xCAtsSrF+/Jpf6fP2lH8aBMoPfZNCbu2CMFDVZ
- 3PW6KGKNAQMb9fn0hHQMFctpqraREVUzOAcoHeX1SfXFLiZfONkA6s4Uu/4Y0qTe33QB
- XGO32zuBnoxcKQB52ixuNsO1ShRxqEWfNukalAKwvSVFmIuVg+h9s+XjDFD2eakCsVQf Ig== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2qp81ekap5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Feb 2019 22:12:24 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1LMCOSE021975
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Feb 2019 22:12:24 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1LMCNAU029038;
-        Thu, 21 Feb 2019 22:12:23 GMT
-Received: from [192.168.1.164] (/50.38.38.67)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 21 Feb 2019 14:12:23 -0800
-Subject: Re: [RFC PATCH] mm,memory_hotplug: Unlock 1GB-hugetlb on x86_64
-To:     Oscar Salvador <osalvador@suse.de>, linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org, mhocko@suse.com, david@redhat.com
-References: <20190221094212.16906-1-osalvador@suse.de>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <c4fc87f2-9ff8-3bc1-e990-da97c56ba18f@oracle.com>
-Date:   Thu, 21 Feb 2019 14:12:19 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 21 Feb 2019 17:14:05 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:33780 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726035AbfBUWOF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 17:14:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=79lypCpiuvWoYSkIUbVq6uM+KJF9XuQvk22fm2qvVSk=; b=G7HCesDuyIPuZrMaukKZu/BUXf
+        LNsPl6B6RF7fxptsBjjTt0QOCi3mIuyzVa83CQrcEheAM7HZyrLZpp1reZGphbvH9DGKp3EncJlBs
+        gfFreRcFqAPEcXJp6HhnvjH4bbMsoR7rtFdUMFqH91a9IVTBxapkmmKbs1LC/V9wI4dM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gwwbL-0006xJ-1L; Thu, 21 Feb 2019 23:13:55 +0100
+Date:   Thu, 21 Feb 2019 23:13:54 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Yue Haibing <yuehaibing@huawei.com>
+Cc:     f.fainelli@gmail.com, hkallweit1@gmail.com, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH] mdio_bus: Fix use-after-free on device_register fails
+Message-ID: <20190221221354.GE5894@lunn.ch>
+References: <20190221144201.11488-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20190221094212.16906-1-osalvador@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9174 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902210151
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190221144201.11488-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/21/19 1:42 AM, Oscar Salvador wrote:
-> On x86_64, 1GB-hugetlb pages could never be offlined due to the fact
-> that hugepage_migration_supported() returned false for PUD_SHIFT.
-> So whenever we wanted to offline a memblock containing a gigantic
-> hugetlb page, we never got beyond has_unmovable_pages() check.
-> This changed with [1], where now we also return true for PUD_SHIFT.
+On Thu, Feb 21, 2019 at 10:42:01PM +0800, Yue Haibing wrote:
+> From: YueHaibing <yuehaibing@huawei.com>
 > 
-> After that patch, the check in has_unmovable_pages() and scan_movable_pages()
-> returned true, but we still had a final barrier in do_migrate_range():
+> KASAN has found use-after-free in fixed_mdio_bus_init,
+> commit 0c692d07842a ("drivers/net/phy/mdio_bus.c: call
+> put_device on device_register() failure") call put_device()
+> while device_register() fails,give up the last reference
+> to the device and allow mdiobus_release to be executed
+> ,kfreeing the bus. However in most drives, mdiobus_free
+> be called to free the bus while mdiobus_register fails.
+> use-after-free occurs when access bus again, this patch
+> revert it to let mdiobus_free free the bus.
 > 
-> if (compound_order(head) > PFN_SECTION_SHIFT) {
-> 	ret = -EBUSY;
-> 	break;
-> }
+> KASAN report details as below:
 > 
-> This is not really nice, and we do not really need it.
-> It is perfectly possible to migrate a gigantic page as long as another node has
-> a spare gigantic page for us.
-> In alloc_huge_page_nodemask(), we calculate the __real__ number of free pages,
-> and if any, we try to dequeue one from another node.
+> BUG: KASAN: use-after-free in mdiobus_free+0x85/0x90 drivers/net/phy/mdio_bus.c:482
+> Read of size 4 at addr ffff8881dc824d78 by task syz-executor.0/3524
 > 
-> This all works fine when we do have another node with a spare gigantic page,
-> but if that is not the case, alloc_huge_page_nodemask() ends up calling
-> alloc_migrate_huge_page() which bails out if the wanted page is gigantic.
-> That is mainly because finding a 1GB (or even 16GB on powerpc) contiguous
-> memory is quite unlikely when the system has been running for a while.
+> CPU: 1 PID: 3524 Comm: syz-executor.0 Not tainted 5.0.0-rc7+ #45
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0xfa/0x1ce lib/dump_stack.c:113
+>  print_address_description+0x65/0x270 mm/kasan/report.c:187
+>  kasan_report+0x149/0x18d mm/kasan/report.c:317
+>  mdiobus_free+0x85/0x90 drivers/net/phy/mdio_bus.c:482
+>  fixed_mdio_bus_init+0x283/0x1000 [fixed_phy]
+>  ? 0xffffffffc0e40000
+>  ? 0xffffffffc0e40000
+>  ? 0xffffffffc0e40000
+>  do_one_initcall+0xfa/0x5ca init/main.c:887
+>  do_init_module+0x204/0x5f6 kernel/module.c:3460
+>  load_module+0x66b2/0x8570 kernel/module.c:3808
+>  __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
+>  do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x462e99
+> Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f6215c19c58 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+> RAX: ffffffffffffffda RBX: 000000000073bf00 RCX: 0000000000462e99
+> RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000003
+> RBP: 00007f6215c19c70 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6215c1a6bc
+> R13: 00000000004bcefb R14: 00000000006f7030 R15: 0000000000000004
+> 
+> Allocated by task 3524:
+>  set_track mm/kasan/common.c:85 [inline]
+>  __kasan_kmalloc.constprop.3+0xa0/0xd0 mm/kasan/common.c:496
+>  kmalloc include/linux/slab.h:545 [inline]
+>  kzalloc include/linux/slab.h:740 [inline]
+>  mdiobus_alloc_size+0x54/0x1b0 drivers/net/phy/mdio_bus.c:143
+>  fixed_mdio_bus_init+0x163/0x1000 [fixed_phy]
+>  do_one_initcall+0xfa/0x5ca init/main.c:887
+>  do_init_module+0x204/0x5f6 kernel/module.c:3460
+>  load_module+0x66b2/0x8570 kernel/module.c:3808
+>  __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
+>  do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> Freed by task 3524:
+>  set_track mm/kasan/common.c:85 [inline]
+>  __kasan_slab_free+0x130/0x180 mm/kasan/common.c:458
+>  slab_free_hook mm/slub.c:1409 [inline]
+>  slab_free_freelist_hook mm/slub.c:1436 [inline]
+>  slab_free mm/slub.c:2986 [inline]
+>  kfree+0xe1/0x270 mm/slub.c:3938
+>  device_release+0x78/0x200 drivers/base/core.c:919
+>  kobject_cleanup lib/kobject.c:662 [inline]
+>  kobject_release lib/kobject.c:691 [inline]
+>  kref_put include/linux/kref.h:67 [inline]
+>  kobject_put+0x146/0x240 lib/kobject.c:708
+>  put_device+0x1c/0x30 drivers/base/core.c:2060
+>  __mdiobus_register+0x483/0x560 drivers/net/phy/mdio_bus.c:382
+>  fixed_mdio_bus_init+0x26b/0x1000 [fixed_phy]
+>  do_one_initcall+0xfa/0x5ca init/main.c:887
+>  do_init_module+0x204/0x5f6 kernel/module.c:3460
+>  load_module+0x66b2/0x8570 kernel/module.c:3808
+>  __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
+>  do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> The buggy address belongs to the object at ffff8881dc824c80
+>  which belongs to the cache kmalloc-2k of size 2048
+> The buggy address is located 248 bytes inside of
+>  2048-byte region [ffff8881dc824c80, ffff8881dc825480)
+> The buggy address belongs to the page:
+> page:ffffea0007720800 count:1 mapcount:0 mapping:ffff8881f6c02800 index:0x0 compound_mapcount: 0
+> flags: 0x2fffc0000010200(slab|head)
+> raw: 02fffc0000010200 0000000000000000 0000000500000001 ffff8881f6c02800
+> raw: 0000000000000000 00000000800f000f 00000001ffffffff 0000000000000000
+> page dumped because: kasan: bad access detected
+> 
+> Memory state around the buggy address:
+>  ffff8881dc824c00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>  ffff8881dc824c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> >ffff8881dc824d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>                                                                 ^
+>  ffff8881dc824d80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>  ffff8881dc824e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> 
+> Fixes: 0c692d07842a ("drivers/net/phy/mdio_bus.c: call put_device on device_register() failure")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-I suspect the reason for the check is that it was there before the ability
-to migrate gigantic pages was added, and nobody thought to remove it.  As
-you say, the likelihood of finding a gigantic page after running for some
-time is not too good.  I wonder if we should remove that check?  Just trying
-to create a gigantic page could result in a bunch of migrations which could
-impact the system.  But, this is the result of a memory offline operation
-which one would expect to have some negative impact.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-> In that situation, we will keep looping forever because scan_movable_pages()
-> will give us the same page and we will fail again because there is no node
-> where we can dequeue a gigantic page from.
-> This is not nice, and I wish we could differentiate a fatal error from a
-> transient error in do_migrate_range()->migrate_pages(), but I do not really
-> see a way now.
-
-Michal may have some thoughts here.  Note that the repeat loop does not
-even consider the return value from do_migrate_range().  Since this the the
-result of an offline, I am thinking it was designed to retry forever.  But,
-perhaps there are some errors/ret codes where we should give up?
-
-> Anyway, I would tend say that this is the administrator's job, to make sure
-> that the system can keep up with the memory to be offlined, so that would mean
-> that if we want to use gigantic pages, make sure that the other nodes have at
-> least enough gigantic pages to keep up in case we need to offline memory.
-> 
-> Just for the sake of completeness, this is one of the tests done:
-> 
->  # echo 1 > /sys/devices/system/node/node1/hugepages/hugepages-1048576kB/nr_hugepages
->  # echo 1 > /sys/devices/system/node/node2/hugepages/hugepages-1048576kB/nr_hugepages
-> 
->  # cat /sys/devices/system/node/node1/hugepages/hugepages-1048576kB/nr_hugepages
->    1
->  # cat /sys/devices/system/node/node1/hugepages/hugepages-1048576kB/free_hugepages
->    1
-> 
->  # cat /sys/devices/system/node/node2/hugepages/hugepages-1048576kB/nr_hugepages
->    1
->  # cat /sys/devices/system/node/node2/hugepages/hugepages-1048576kB/free_hugepages
->    1
-> 
->  (hugetlb1gb is a program that maps 1GB region using MAP_HUGE_1GB)
-> 
->  # numactl -m 1 ./hugetlb1gb
->  # cat /sys/devices/system/node/node1/hugepages/hugepages-1048576kB/free_hugepages
->    0
->  # cat /sys/devices/system/node/node2/hugepages/hugepages-1048576kB/free_hugepages
->    1
-> 
->  # offline node1 memory
->  # cat /sys/devices/system/node/node2/hugepages/hugepages-1048576kB/free_hugepages
->    0
-> 
-> [1] https://lore.kernel.org/patchwork/patch/998796/
-> 
-> Signed-off-by: Oscar Salvador <osalvador@suse.de>
-> ---
->  mm/memory_hotplug.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
-> 
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index d5f7afda67db..04f6695b648c 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -1337,8 +1337,7 @@ static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
->  		if (!PageHuge(page))
->  			continue;
->  		head = compound_head(page);
-> -		if (hugepage_migration_supported(page_hstate(head)) &&
-> -		    page_huge_active(head))
-> +		if (page_huge_active(head))
-
-I'm confused as to why the removal of the hugepage_migration_supported()
-check is required.  Seems that commit aa9d95fa40a2 ("mm/hugetlb: enable
-arch specific huge page size support for migration") should make the check
-work as desired for all architectures.
--- 
-Mike Kravetz
+    Andrew
