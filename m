@@ -2,77 +2,189 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E5B7C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:58:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B224FC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:58:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1030D2081B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:58:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 773682083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:58:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SxM8uB/E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726361AbfBUS6H (ORCPT
+        id S1727740AbfBUS63 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 13:58:07 -0500
-Received: from mga18.intel.com ([134.134.136.126]:11454 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725866AbfBUS6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 13:58:07 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 10:58:06 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,396,1544515200"; 
-   d="scan'208";a="148781130"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Feb 2019 10:58:06 -0800
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 48D70300F3B; Thu, 21 Feb 2019 10:58:06 -0800 (PST)
-Date:   Thu, 21 Feb 2019 10:58:06 -0800
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Prarit Bhargava <prarit@redhat.com>, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH] x86/fpu: Parse comma separated list passed in clearcpuid
-Message-ID: <20190221185806.GC16922@tassilo.jf.intel.com>
-References: <20190221131225.22063-1-prarit@redhat.com>
- <20190221133745.GP32494@hirez.programming.kicks-ass.net>
+        Thu, 21 Feb 2019 13:58:29 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:46981 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbfBUS62 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 13:58:28 -0500
+Received: by mail-io1-f68.google.com with SMTP id k21so3096512ior.13
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 10:58:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/fg/zRGOqEr6soWn4lYJNlKofJY1rut3rOP2dQ7jtbg=;
+        b=SxM8uB/EhPIbquPtTx+TLO7T5riQ5OPLUZfupa6Zy44VtZyYwS5NwnmmeevrNXgqGj
+         cW25YRZF7Z9QIVEy9o2viCI3xY3MOzitcKt0vyobIbUopELNc1CM+FdAVz8bXY7tCStK
+         K/6+dfUwYkNdDOd38Gg1IT4IjA9DHqbtEU+nat+wCwscqWnMb25kY05osIlBVxZ1IqAy
+         WpBni+wLqbhg7wWDd1vXj+ZzkV5h7VLVgffBUeDArnH0g8qsZQvdbges9IxV6a52Arqi
+         rrsWayyQiaPc+ZZ6Bv36lbHRtUp2L5hxvMSNXXH5/86oIRI81hm5e71J5cksSVxOx43X
+         o1sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/fg/zRGOqEr6soWn4lYJNlKofJY1rut3rOP2dQ7jtbg=;
+        b=gNTpCXUGWdossBKR704yt/52Udcwc055yujguhthbubTPNcdZ/+5hNZX+G2GmOA9IS
+         LyHYrF/pHvVRohuVxjLhm7iTrQGYCf2AdjfUarTknSD7bfqGCoyMU8rQYsnnlchlcNnE
+         QN03ODYBgXJcmorUK21KL8VHmn5S6LFNJZlcIXUnS8ZC8tqKUDZSGY0jh72PR90svEyr
+         RL0MJvH3EGLVufBGTz0Cg/Iad8JESrsIoWMXG31vbbuqhJvJ7HGXxRy/waIAUFsYnQxA
+         B5leH0gwPlDaVoxf6DERBazcAEyE/9s1Z/fukfU82GlXTO3h5MAWH+5AeSlHPqQGJF9Y
+         DQ0Q==
+X-Gm-Message-State: AHQUAubcFS+/7zztxRe9TOURS8kPEJ9kD7S/Oy9um4Gc717C9budIerD
+        pdaEC7i7p1A8xsWiLVTlhvWMnZ/2LZ/jd3DlE1u9KA==
+X-Google-Smtp-Source: AHgI3IY7GFh/XR5IlViSNt4nPxBdVo2ZM6qPDSc2iF6BF1qdYdK0N0ChHtb5YYAQROyhTus+MSV4Vp2zrUypLQAcVyQ=
+X-Received: by 2002:a02:bb82:: with SMTP id g2mr35469jan.8.1550775507001; Thu,
+ 21 Feb 2019 10:58:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190221133745.GP32494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190207185917.167829-1-egranata@google.com> <20190211190112.209286-1-egranata@chromium.org>
+ <20190220180538.GA42642@google.com>
+In-Reply-To: <20190220180538.GA42642@google.com>
+From:   Enrico Granata <egranata@google.com>
+Date:   Thu, 21 Feb 2019 10:58:15 -0800
+Message-ID: <CAPR809uFwmg8GUPbT81tNooDpKQD2oZ2UqsTGwYH--Jh_CWGGQ@mail.gmail.com>
+Subject: Re: [PATCH v2] driver: platform: Support parsing GpioInt 0 in platform_get_irq()
+To:     Brian Norris <briannorris@chromium.org>
+Cc:     Enrico Granata <egranata@chromium.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Dmitry Torokhov <dtor@chromium.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 02:37:45PM +0100, Peter Zijlstra wrote:
-> On Thu, Feb 21, 2019 at 08:12:25AM -0500, Prarit Bhargava wrote:
-> > Users cannot disable multiple CPU features with the kernel parameter
-> > clearcpuid=.  For example, "clearcpuid=154 clearcpuid=227" only disables
-> > CPUID bit 154.
-> > 
-> > Previous to commit 0c2a3913d6f5 ("x86/fpu: Parse clearcpuid= as early XSAVE
-> > argument") it was possible to pass multiple clearcpuid options as kernel
-> > parameters using individual entries.  With the new code it isn't easy to
-> > replicate exactly that behaviour but a comma separated list can be easily
-> > implemented, eg) "clearcpuid=154,227"
-> > 
-> > Make the clearcpuid parse a comma-separated list of values instead of only
-> > a single value.
-> 
-> So I think the feature is broken as is; because it doesn't clear the
-> CPUID bits for userspace.
+Thanks for catching that and sorry for the delayed response, I was on vacation.
 
-Usually it's enough to make the kernel stop using something. I used it many 
-times for this.
+I think your analysis makes sense. I would personally lean towards the
+former suggestion (keeping the change localized to the return value of
+platform_get_irq() which is the function that apparently has an
+informal contract about returning -ENXIO specifically).
 
-People who want to affect user space usually run VMs anyways.
+I am happy to post a PATCH v3 to that effect if this seems amenable.
 
--Andi
+Thanks
+
+Enrico Granata | egranata@google.com | ChromeOS | MTV1600
+
+
+On Wed, Feb 20, 2019 at 10:05 AM Brian Norris <briannorris@chromium.org> wrote:
+>
+> Hi,
+>
+> On Mon, Feb 11, 2019 at 11:01:12AM -0800, egranata@chromium.org wrote:
+> > From: Enrico Granata <egranata@chromium.org>
+> >
+> > ACPI 5 added support for GpioInt resources as a way to provide
+> > information about interrupts mediated via a GPIO controller.
+> >
+> > Several device buses (e.g. SPI, I2C) have support for retrieving
+> > an IRQ specified via this type of resource, and providing it
+> > directly to the driver as an IRQ number.
+> >
+> > This is not currently done for the platform drivers, as platform_get_irq()
+> > does not try to parse GpioInt() resources. This requires drivers to
+> > either have to support only one possible IRQ resource, or to have code
+> > in place to try both as a failsafe.
+> >
+> > While there is a possibility of ambiguity for devices that exposes
+> > multiple IRQs, it is easy and feasible to support the common case
+> > of devices that only expose one IRQ which would be of either type
+> > depending on the underlying system's architecture.
+> >
+> > This commit adds support for parsing a GpioInt resource in order
+> > to fulfill a request for the index 0 IRQ for a platform device.
+> >
+> > Signed-off-by: Enrico Granata <egranata@chromium.org>
+> > ---
+> > Changes in v2:
+> >  - only support IRQ index 0
+> >
+> >  drivers/base/platform.c | 15 ++++++++++++++-
+> >  1 file changed, 14 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+> > index 1c958eb33ef4d..0d3611cd1b3bc 100644
+> > --- a/drivers/base/platform.c
+> > +++ b/drivers/base/platform.c
+> > @@ -127,7 +127,20 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
+> >               irqd_set_trigger_type(irqd, r->flags & IORESOURCE_BITS);
+> >       }
+> >
+> > -     return r ? r->start : -ENXIO;
+> > +     if (r)
+> > +             return r->start;
+> > +
+> > +     /*
+> > +      * For the index 0 interrupt, allow falling back to GpioInt
+> > +      * resources. While a device could have both Interrupt and GpioInt
+> > +      * resources, making this fallback ambiguous, in many common cases
+> > +      * the device will only expose one IRQ, and this fallback
+> > +      * allows a common code path across either kind of resource.
+> > +      */
+> > +     if (num == 0 && has_acpi_companion(&dev->dev))
+> > +             return acpi_dev_gpio_irq_get(ACPI_COMPANION(&dev->dev), num);
+>
+> For ACPI devices, this changes the return code for a missing interrupt
+> 0 from ENXIO to ENOENT, because acpi_dev_gpio_irq_get() uses ENOENT
+> instead of ENXIO. While ENXIO isn't exactly documented as the *specific*
+> error code for a missing interrupt in platform_get_irq(), there are
+> definitely drivers out there that are looking specifically for ENXIO
+> (grepping the tree finds several Rockchip platform drivers and a few
+> ethernet drivers at a minimum). And it also incidentally broke some
+> usage of the very driver you were trying to support
+> (drivers/platform/chrome/cros_ec_lpc.c).
+>
+> I suspect a good strategy here would be to check
+> acpi_dev_gpio_irq_get()'s return codes here with something like:
+>
+>         if (ret > 0 || ret == -EPROBE_DEFER)
+>                 return ret;
+>         return -ENXIO;
+>
+> Although, the gpiolib functions embedded in there also can return EIO,
+> so maybe something like this is better?
+>
+>         if (ret == -ENOENT || ret == 0)
+>                 return -ENXIO;
+>         return ret;
+>
+> I'm kinda unsure what to do with error codes besides PROBE_DEFER or
+> "missing", since most users don't really have it in their mind that
+> platform_get_irq() can fail with EIO or similar.
+>
+> Brian
+>
+> > +
+> > +     return -ENXIO;
+> >  #endif
+> >  }
+> >  EXPORT_SYMBOL_GPL(platform_get_irq);
+> > --
+> > 2.20.1.791.gb4d0f1c61a-goog
+> >
