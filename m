@@ -2,91 +2,113 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE5AC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 20:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A158C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 20:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E168E2080F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 20:26:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550780763;
-	bh=V/IEXmsuqvt9Na+MEFmN7P1mMYAkl9do3dB58LJe59U=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=0baB3XnB1Yaw4O6x6AJub4Vo2TtUwz3oSev784UIwllKy28uiGzmfqnh0tLYSXFju
-	 MPk1lcXme/tF8t9Mq5MF4h2dgJCQ26hIWJBYe1Nth8EbCxmtK3VNyUNQzETF9J25Ss
-	 DhEZnB3mx7kaNF2e1KAe6S77iqoUK/pDbJUsyC7g=
+	by mail.kernel.org (Postfix) with ESMTP id 1AA8C2081B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 20:27:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="f6Fkw0Go"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfBUU0B (ORCPT
+        id S1726573AbfBUU1B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 15:26:01 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:39745 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbfBUU0B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 15:26:01 -0500
-Received: by mail-yw1-f66.google.com with SMTP id f192so2481809ywh.6;
-        Thu, 21 Feb 2019 12:26:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=KrijerxTyGVa0Sr/JiCT9Xom8mVGoOuXytTBdA4zzLc=;
-        b=DZeRQ1Cx7lSU4Ewf7c3n/VbPqOwguzYkWwq9jJP8WWr5192LlpWzYQkbsSJriptOoY
-         uvCYi/Ll680AWqmDZKiJWXBAleqLCOCxh7NwsL1fTmXIp2fJjk7D+gYQo79iayalLDaw
-         lI4M49V06cNbRJZcZsoNuGVW699Y09iKvwPTnVDeEyu1Zn6Wbl7lgLNJpE4CWxOiLEZS
-         9Q8BSVsh9wTevREaLjjOxtrmyAQW7bkvUIeDxNV5RyxpWNj1Q6XZ9/XkPfMO2h1YgZlV
-         e6tNf0MHk0JbUH0V0T6kwjx9xnBi0ugkqZ2pUq7MgV56wWhJpivR/xQO+AIQwfkps0wo
-         Eo4A==
-X-Gm-Message-State: AHQUAub4deBc1ZyHYDDtnpLjhfHJIeGidqnictDCQ3n/8tiR3uRq1QDP
-        kyWkRmPQWk8oiKYCMwZRR80=
-X-Google-Smtp-Source: AHgI3IYYriZGDkk14SK/cXRoYRHeOjBsovRy5vJNCDZWaxi4vahhSAGmn8xqGBA/6PCiKXFXGwz3vw==
-X-Received: by 2002:a81:6584:: with SMTP id z126mr369424ywb.216.1550780760256;
-        Thu, 21 Feb 2019 12:26:00 -0800 (PST)
-Received: from dennisz-mbp.thefacebook.com ([199.201.65.133])
-        by smtp.gmail.com with ESMTPSA id a4sm6570047ywa.14.2019.02.21.12.25.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 21 Feb 2019 12:25:59 -0800 (PST)
-From:   Dennis Zhou <dennis@kernel.org>
-To:     David Sterba <dsterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
-        Omar Sandoval <osandov@osandov.com>,
-        Nick Terrell <terrelln@fb.com>,
-        Nikolay Borisov <nborisov@suse.com>
-Cc:     kernel-team@fb.com, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dennis Zhou <dennis@kernel.org>
-Subject: [PATCH] btrfs: zstd ensure reclaim timer is properly cleaned up
-Date:   Thu, 21 Feb 2019 15:25:56 -0500
-Message-Id: <20190221202556.42447-1-dennis@kernel.org>
-X-Mailer: git-send-email 2.13.5
+        Thu, 21 Feb 2019 15:27:01 -0500
+Received: from ozlabs.org ([203.11.71.1]:39925 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726317AbfBUU1B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 15:27:01 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 4455by5vYQz9s2R;
+        Fri, 22 Feb 2019 07:26:54 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1550780819;
+        bh=k3UJ4mgwDZw5DMq/ce6nehIxwBl84NC1aJqDccquDfA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=f6Fkw0GoLTopVpgo0dVBg0EuY7pC38AncgYBICmrkj12cHAjE3Ls+1CZ06dHlFRbV
+         MuxgGEn9b14MqkqZckHQTqTwtHFIiPpFhkC8oe5D6t6/KmSEc1MxDw4t+ihSqYhZxd
+         OdsVV3uKvx7ZCJlWPl78t+U8wVLvNa5om22Jr/x6jtrw/Dre2A1yHXjiOuwEMv3rZ7
+         +m1VprGoCUPxru/m+z7ifROzrUryhJHz09JkRtCjDJ3+2JIeq0HZ6Hnm4C7x4mTEB/
+         oovVjIK5TF1JQdCDhv/YzcOiqshMHdhtFGjHwmGQ8im+3oK6QK3njYBvkQmwwUG5Kz
+         Yr+4UfeIetURQ==
+Date:   Fri, 22 Feb 2019 07:26:52 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     "Tobin C. Harding" <me@tobin.cc>, Jann Horn <jannh@google.com>,
+        "Tobin C. Harding" <tobin@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: Re: [PATCH 5/6] lib: Fix function documentation for
+ strncpy_from_user
+Message-ID: <20190222072652.2441e8a2@canb.auug.org.au>
+In-Reply-To: <CAGXu5j+Mf2D5LgkEmps7VVBhmNGt=49y4caP1y1E0OBURJEeXQ@mail.gmail.com>
+References: <20190218232308.11241-1-tobin@kernel.org>
+        <20190218232308.11241-6-tobin@kernel.org>
+        <CAG48ez0utQJjoJW69OwGiuH1EQtcD939-5u71ruD_1nr0eJK0g@mail.gmail.com>
+        <CAGXu5jKeS3bkTSXEw2nsjrWoqhbkDZD4C=PdYTHMtM0GNk6tSg@mail.gmail.com>
+        <20190221052435.GF11758@eros.localdomain>
+        <CAGXu5j+Mf2D5LgkEmps7VVBhmNGt=49y4caP1y1E0OBURJEeXQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/16HKosc1eB4/OdJ8zARR2vg"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The timer function, zstd_reclaim_timer_fn(), reschedules itself under
-certain conditions. Switch to del_timer_sync() to ensure that the timer
-function hasn't rescheduled itself.
+--Sig_/16HKosc1eB4/OdJ8zARR2vg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Dennis Zhou <dennis@kernel.org>
----
- fs/btrfs/zstd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Kees,
 
-diff --git a/fs/btrfs/zstd.c b/fs/btrfs/zstd.c
-index 3e418a3aeb11..62de9a211321 100644
---- a/fs/btrfs/zstd.c
-+++ b/fs/btrfs/zstd.c
-@@ -195,7 +195,7 @@ static void zstd_cleanup_workspace_manager(void)
- 	struct workspace *workspace;
- 	int i;
- 
--	del_timer(&wsm.timer);
-+	del_timer_sync(&wsm.timer);
- 
- 	for (i = 0; i < ZSTD_BTRFS_MAX_LEVEL; i++) {
- 		while (!list_empty(&wsm.idle_ws[i])) {
--- 
-2.17.1
+On Wed, 20 Feb 2019 22:02:32 -0800 Kees Cook <keescook@chromium.org> wrote:
+>
+> What I can't quite figure out yet is how to find a way for sfr to flag
+> newly added users of strcpy, strncpy, and strlcpy. We might need to
+> bring back __deprecated, but hide it behind a W=3Dlinux-next flag or
+> something crazy. Stephen, in your builds you're already injecting
+> -Wimplicit-fallthrough: do you do W=3D1 or anything like that? If not, I
+> think we need some W=3D setting for your linux-next builds that generate
+> the maintainer-nag warnings...
 
+I just have a set of compiler flags that my build scripts explicitly
+enable by setting KCFLAGS.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/16HKosc1eB4/OdJ8zARR2vg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxvCYwACgkQAVBC80lX
+0Gy1iAgAipXsrzM+7B/eQNkmcSgakfzIso73aGvuVcrZUvqIJCwDQTO9URAJ5YL2
+1kp/2Q4mkvXyRyun2CpFs6xry0kgo0FmVqOCjTxZE49JlZYPSiWnjaI5VLfdAy2h
+L6G9jf2FKSapWuacbEJUqxne7UIMEe7OMJBsCoAKcXAo3snwbPRNhO8fGAhVzFMd
+6hKFPWMymq6qEPrigr9J5yB1Q0lTGbz8tsh65AE0ENMswGHcJYFgN/nEb05eHx2h
+G3rQhy2wX5WItnRhhXsueYwEE2oSRBFC8AfL+5N8zPW/RX+8fo91kg6rOZZpU0mX
+/Lxm95vnAbmfahlPbpsaZACDSIVCUA==
+=QQ0T
+-----END PGP SIGNATURE-----
+
+--Sig_/16HKosc1eB4/OdJ8zARR2vg--
