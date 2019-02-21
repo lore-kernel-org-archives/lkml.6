@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7395C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D646C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 850522075C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E00B82084F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550759857;
-	bh=nZPNLlLRGbS2TJgncL6URPt4NIcq6idRZVj2qWiXhQU=;
+	s=default; t=1550759861;
+	bh=l93Evb8YqM0Tkmz6yNRBZOhB4d6bmHgDT8WwYma9qDM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=s4gKOQZrGKfaICQI6rffpjePtqz4/IU8sYufp+4rb9uMiValdGwSLvlFKROHwtX22
-	 OWXmWPzaOcHpeWZ3rMq/PJ1/kwpjsVz1gRuPCzYCJlTreuQCDSCynn/VRRaO5gNpTE
-	 nCYUITH9Pzw0hyMdzciZCWh3jlNMKX2vacq3KzWM=
+	b=c8hNjzxrjbo8iVwhG1noNbnwIle+tZsGJHSKTTQG6PllH5m+SMDFV6MXZ0wHKpetj
+	 e0bwoibSuMmoqG2DX4N51uy7IepUqXpn/VJei/aM1aojX3lX3klE7/8oojfU/2wUhi
+	 uU2QMAeeDmWNHPtjTG3pYgJBLdYaOI6/vY7zMZZs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728444AbfBUOhg (ORCPT
+        id S1728459AbfBUOhj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:37:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58852 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:37:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725870AbfBUOhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:37:34 -0500
+        id S1725870AbfBUOhh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:37:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7577D2084D;
-        Thu, 21 Feb 2019 14:37:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B517E2084D;
+        Thu, 21 Feb 2019 14:37:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550759854;
-        bh=nZPNLlLRGbS2TJgncL6URPt4NIcq6idRZVj2qWiXhQU=;
+        s=default; t=1550759857;
+        bh=l93Evb8YqM0Tkmz6yNRBZOhB4d6bmHgDT8WwYma9qDM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HgJffcXukiBUrO1tgFQqFnswt38UwMz/lixqHzTmu8e3m6ooTWKgZ/f0C0JuoKfE3
-         rGBSc6NcDXcuUzk4QMt6Ycme4lJRj7L2VhRqkbnpm/AUjP+0IWrMq4fardf/tJQyQt
-         nfALWufEJrU3TmjTDDnqGuuz6Hep6rkMQXxaCrrQ=
+        b=r/4eGZd4QS9FZQ7mVUiahCeQHRBp60HwuYmiknC2f03mk1IzWgeL9nWSLWG5OYruj
+         aqDASB58DX5hIYKlrRG6vbu7B4lXS4BYwxRqA3/r0U/B9W2agIEtMlMWWPt0KcRSLY
+         UaX72JledjHzbeIvi+8PxisOEgcppwWps/dxoPug=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, chenzefeng <chenzefeng2@huawei.com>,
-        Petr Mladek <pmladek@suse.com>
-Subject: [PATCH 4.4 13/20] [PATCH] x86: livepatch: Treat R_X86_64_PLT32 as R_X86_64_PC32
-Date:   Thu, 21 Feb 2019 15:35:43 +0100
-Message-Id: <20190221141947.151506933@linuxfoundation.org>
+        stable@vger.kernel.org, stable@kernel.org,
+        Jann Horn <jannh@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.4 14/20] kvm: fix kvm_ioctl_create_device() reference counting (CVE-2019-6974)
+Date:   Thu, 21 Feb 2019 15:35:44 +0100
+Message-Id: <20190221141947.179218556@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221141946.772985220@linuxfoundation.org>
 References: <20190221141946.772985220@linuxfoundation.org>
@@ -65,39 +65,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-Signed-off-by: chenzefeng <chenzefeng2@huawei.com>
+From: Jann Horn <jannh@google.com>
 
-On x86-64, for 32-bit PC-relacive branches, we can generate PLT32
-relocation, instead of PC32 relocation. and R_X86_64_PLT32 can be
-treated the same as R_X86_64_PC32 since linux kernel doesn't use PLT.
+commit cfa39381173d5f969daf43582c95ad679189cbc9 upstream.
 
-commit b21ebf2fb4cd ("x86: Treat R_X86_64_PLT32 as R_X86_64_PC32") been
-fixed for the module loading, but not fixed for livepatch relocation,
-which will fail to load livepatch with the error message as follow:
-relocation failed for symbol <symbol name> at <symbol address>
+kvm_ioctl_create_device() does the following:
 
-This issue only effacted the kernel version from 4.0 to 4.6, becauce the
-function klp_write_module_reloc is introduced by: commit b700e7f03df5
-("livepatch: kernel: add support for live patching") and deleted by:
-commit 425595a7fc20 ("livepatch: reuse module loader code to write
-relocations")
+1. creates a device that holds a reference to the VM object (with a borrowed
+   reference, the VM's refcount has not been bumped yet)
+2. initializes the device
+3. transfers the reference to the device to the caller's file descriptor table
+4. calls kvm_get_kvm() to turn the borrowed reference to the VM into a real
+   reference
 
-Signed-off-by: chenzefeng <chenzefeng2@huawei.com>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+The ownership transfer in step 3 must not happen before the reference to the VM
+becomes a proper, non-borrowed reference, which only happens in step 4.
+After step 3, an attacker can close the file descriptor and drop the borrowed
+reference, which can cause the refcount of the kvm object to drop to zero.
+
+This means that we need to grab a reference for the device before
+anon_inode_getfd(), otherwise the VM can disappear from under us.
+
+Fixes: 852b6d57dc7f ("kvm: add device control API")
+Cc: stable@kernel.org
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/kernel/livepatch.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/arch/x86/kernel/livepatch.c
-+++ b/arch/x86/kernel/livepatch.c
-@@ -58,6 +58,7 @@ int klp_write_module_reloc(struct module
- 		val = (s32)value;
- 		break;
- 	case R_X86_64_PC32:
-+	case R_X86_64_PLT32:
- 		val = (u32)(value - loc);
- 		break;
- 	default:
+---
+ virt/kvm/kvm_main.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -2711,14 +2711,15 @@ static int kvm_ioctl_create_device(struc
+ 		return ret;
+ 	}
+ 
++	kvm_get_kvm(kvm);
+ 	ret = anon_inode_getfd(ops->name, &kvm_device_fops, dev, O_RDWR | O_CLOEXEC);
+ 	if (ret < 0) {
++		kvm_put_kvm(kvm);
+ 		ops->destroy(dev);
+ 		return ret;
+ 	}
+ 
+ 	list_add(&dev->vm_node, &kvm->devices);
+-	kvm_get_kvm(kvm);
+ 	cd->fd = ret;
+ 	return 0;
+ }
 
 
