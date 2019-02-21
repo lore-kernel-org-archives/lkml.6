@@ -2,83 +2,132 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C503FC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:44:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52402C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:47:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BBC72084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:44:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E65A2083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:47:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AsBsO55C"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727481AbfBUQoG (ORCPT
+        id S1726525AbfBUQrK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 11:44:06 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53844 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725767AbfBUQoG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 11:44:06 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 50F793082E91;
-        Thu, 21 Feb 2019 16:44:06 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.152])
-        by smtp.corp.redhat.com (Postfix) with SMTP id F10B56090C;
-        Thu, 21 Feb 2019 16:44:04 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu, 21 Feb 2019 17:44:06 +0100 (CET)
-Date:   Thu, 21 Feb 2019 17:44:04 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Roman Gushchin <guroan@gmail.com>, Tejun Heo <tj@kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 4/7] cgroup: cgroup v2 freezer
-Message-ID: <20190221164403.GB26064@redhat.com>
-References: <20190219220252.4906-1-guro@fb.com>
- <20190219220252.4906-5-guro@fb.com>
- <20190220144202.GB9477@redhat.com>
- <20190220221423.GA17163@castle.DHCP.thefacebook.com>
+        Thu, 21 Feb 2019 11:47:10 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:38828 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725943AbfBUQrK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 11:47:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=pGHJrwXYyWdu/ZzuzXQKBT8exGhGYvkDIyG1GOMNns0=; b=AsBsO55C1xcCrdixr2qL829WQ
+        QaW4xlXg+Juc+DnxPlPGZsJ/kqPJkz+tIoE16eOELDAV6RuX22TdBQtLg7NKe8ZZqlce3zVgUvt/n
+        g+8biF3vkalax1n32LdkN0lqREn5bLcpGM615TAKwRtkG3kJauIOVfMeRyhQjmu5ZmZ9hIsCFnh8Z
+        nEpmdOzj24OeyHuhwpice6YxZO9tLy78FGrmwsbM30AnyPDUo7W5UxZjOubj4YpQqFglYwz4Ho9h1
+        1431Yaabt4c4OvnpWKCKi6X2MOi4X/omxh2cyolZecOnt33jRT/P2P95VxAi72iA5oAfLN4v57/ZQ
+        K1E3o9L7Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gwrV2-0003yj-PL; Thu, 21 Feb 2019 16:47:04 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id F3E4D22BBEAF4; Thu, 21 Feb 2019 17:47:02 +0100 (CET)
+Date:   Thu, 21 Feb 2019 17:47:02 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     mingo@kernel.org, tglx@linutronix.de, pjt@google.com,
+        tim.c.chen@linux.intel.com, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, subhra.mazumdar@oracle.com,
+        fweisbec@gmail.com, keescook@chromium.org, kerrnel@google.com
+Subject: Re: [RFC][PATCH 15/16] sched: Trivial forced-newidle balancer
+Message-ID: <20190221164702.GY32534@hirez.programming.kicks-ass.net>
+References: <20190218165620.383905466@infradead.org>
+ <20190218173514.796920915@infradead.org>
+ <d7a408c0-b86a-da56-5440-d7cb380708c6@arm.com>
+ <20190221164146.GV32494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190220221423.GA17163@castle.DHCP.thefacebook.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 21 Feb 2019 16:44:06 +0000 (UTC)
+In-Reply-To: <20190221164146.GV32494@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/20, Roman Gushchin wrote:
->
-> On Wed, Feb 20, 2019 at 03:42:02PM +0100, Oleg Nesterov wrote:
-> > On 02/19, Roman Gushchin wrote:
-> > >
-> > > @@ -2363,7 +2419,8 @@ bool get_signal(struct ksignal *ksig)
-> > >  	 * we should notify the parent, prepare_signal(SIGCONT) encodes
-> > >  	 * the CLD_ si_code into SIGNAL_CLD_MASK bits.
-> > >  	 */
-> > > -	if (unlikely(signal->flags & SIGNAL_CLD_MASK)) {
-> > > +	if (unlikely(signal->flags & SIGNAL_CLD_MASK) &
-> > > +	    !(current->jobctl & JOBCTL_TRAP_FREEZE)) {
-> >
-> > Hmm, why?
->
-> If a process is going from the stopped to the frozen state, it looks like
-> it's better to delay parent's notification up to the moment when it will
-> actually run.
+On Thu, Feb 21, 2019 at 05:41:46PM +0100, Peter Zijlstra wrote:
+> On Thu, Feb 21, 2019 at 04:19:46PM +0000, Valentin Schneider wrote:
+> > Hi,
+> > 
+> > On 18/02/2019 16:56, Peter Zijlstra wrote:
+> > [...]
+> > > +static bool try_steal_cookie(int this, int that)
+> > > +{
+> > > +	struct rq *dst = cpu_rq(this), *src = cpu_rq(that);
+> > > +	struct task_struct *p;
+> > > +	unsigned long cookie;
+> > > +	bool success = false;
+> > > +
+> > > +	local_irq_disable();
+> > > +	double_rq_lock(dst, src);
+> > > +
+> > > +	cookie = dst->core->core_cookie;
+> > > +	if (!cookie)
+> > > +		goto unlock;
+> > > +
+> > > +	if (dst->curr != dst->idle)
+> > > +		goto unlock;
+> > > +
+> > > +	p = sched_core_find(src, cookie);
+> > > +	if (p == src->idle)
+> > > +		goto unlock;
+> > > +
+> > > +	do {
+> > > +		if (p == src->core_pick || p == src->curr)
+> > > +			goto next;
+> > > +
+> > > +		if (!cpumask_test_cpu(this, &p->cpus_allowed))
+> > > +			goto next;
+> > > +
+> > > +		if (p->core_occupation > dst->idle->core_occupation)
+> > > +			goto next;
+> > > +
+> > 
+> > IIUC, we're trying to find/steal tasks matching the core_cookie from other
+> > rqs because dst has been cookie-forced-idle.
+> > 
+> > If the p we find isn't running, what's the meaning of core_occupation?
+> > I would have expected it to be 0, but we don't seem to be clearing it when
+> > resetting the state in pick_next_task().
+> 
+> Indeed. We preserve the occupation from the last time around; it's not
+> perfect but its better than nothing.
+> 
+> Consider there's two groups; and we just happen to run the other group.
+> Then our occopation, being what it was last, is still accurate. When
+> next we run, we'll again get that many siblings together.
+> 
+> > If it is running, we prevent the stealing if the core it's on is running
+> > more matching tasks than the core of the pulling rq. It feels to me as if
+> > that's a balancing tweak to try to cram as many matching tasks as possible
+> > in a single core, so to me this reads as "don't steal my tasks if I'm
+> > running more than you are, but I will steal tasks from you if I'm given
+> > the chance". Is that correct?
+> 
+> Correct, otherwise an SMT4 with 5 tasks could end up ping-ponging the
+> one task forever.
+> 
+> Note that a further condition a little up the callchain from here only
+> does this stealing if the thread was forced-idle -- ie. it had something
+> to run anyway. So under the condition where there simple aren't enough
+> tasks to keep all siblings busy, we'll not compact just cause.
 
-Perhaps I missed something but I do not understand why it is really better,
-at least why it deserves this (small but still) complication...
-
-OK, if nothing else, suppose that SIGCONT races with cgroup_do_freeze(true).
-With or without this change CLD_CONTINUED can be reported or not depending
-on /dev/random, do we really care?
-
-Oleg.
-
+Better example; it will avoid stealing a task from a full SMT2 core to
+fill another.
