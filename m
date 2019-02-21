@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15AFAC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE7F2C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:39:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D85CD2084F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:39:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 734A02084D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:39:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550759960;
-	bh=cdIIifEO+9raOtT9CNvK3FIRD1gmv49v+ejjD0dpW0k=;
+	s=default; t=1550759965;
+	bh=RJxnQG1fXKtZtSOuGrdnK2NH1L54OuInvaFvTrTSXcM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wIlctJhrOLGMxEU07m2iI6z1owTxXWWSUOGuZQUU82uqW6yeq59fva8oA5aXZiSfv
-	 KGlzbAiN2+Jtn3Jy4pfPfUNAuPJBXkfzu3ZQ8jl16jUd1Jzz8kfLeeKcJ7qV6UXxVI
-	 DOah5KDsLKQzQUjh2WHsvcKkIYVvXHXx2BUen+4E=
+	b=rYBI6fgvocRCfMqOUOvFHAuRYxd11J2a0IduNhMyj46/Qg5CeVQxY2gCDKIMgYI/l
+	 bcZ6ifsdl+SB4ZbuFb9hpvqNCjX31N+1aI3wZ/4PQqzTuWh75crRZrJv3sqs2HbKhV
+	 CA1hsLG/Q/XHtCetDKzzGOHhxnBnqUr//iiRKOOM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728857AbfBUOjT (ORCPT
+        id S1728873AbfBUOjW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:39:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33094 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:39:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728833AbfBUOjP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:39:15 -0500
+        id S1728848AbfBUOjT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:39:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9794620838;
-        Thu, 21 Feb 2019 14:39:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30B012084F;
+        Thu, 21 Feb 2019 14:39:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550759954;
-        bh=cdIIifEO+9raOtT9CNvK3FIRD1gmv49v+ejjD0dpW0k=;
+        s=default; t=1550759957;
+        bh=RJxnQG1fXKtZtSOuGrdnK2NH1L54OuInvaFvTrTSXcM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pj/m6xZkg1W1+dAjzxAUMiZVpZ4WkSGWbYSpFFvXvQxK5V43CMQ0R/6+jMNJA6kD9
-         aCLd4KYD0fOJ6f6hITy5GP9X99il/4XeuomLevJM+OAn3EkT0OYM9CySS/HDIf2v4Q
-         0ueiO2MXSSnK917UvmXDzSyuA5GMJ6FxN4TMOrqk=
+        b=dZNkBBQXVOifGD4b3HGhMOrB6d2Acd4vi+1XiAeszgbs2vHijdhIhEIVNujAnZxnV
+         b+eHQ6X8RqjUUUkzcli7/8R0hr98bWP+8lFSqJD0wos1SNj+tVnWgqy50eF2p9u5En
+         ZKx3tOeQT5mOVV/Hm5S6cb758Qq08pXKK5cxuKLw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Sterba <dsterba@suse.cz>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Qu Wenruo <quwenruo@cn.fujitsu.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.9 17/20] btrfs: Remove false alert when fiemap range is smaller than on-disk extent
-Date:   Thu, 21 Feb 2019 15:35:55 +0100
-Message-Id: <20190221125244.027806070@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Andrew Hendry <andrew.hendry@gmail.com>,
+        linux-x25@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 18/20] net/x25: do not hold the cpu too long in x25_new_lci()
+Date:   Thu, 21 Feb 2019 15:35:56 +0100
+Message-Id: <20190221125244.098541187@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125242.153179182@linuxfoundation.org>
 References: <20190221125242.153179182@linuxfoundation.org>
@@ -66,91 +66,158 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qu Wenruo <quwenruo@cn.fujitsu.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 848c23b78fafdcd3270b06a30737f8dbd70c347f upstream.
+commit cf657d22ee1f0e887326a92169f2e28dc932fd10 upstream.
 
-Commit 4751832da990 ("btrfs: fiemap: Cache and merge fiemap extent before
-submit it to user") introduced a warning to catch unemitted cached
-fiemap extent.
+Due to quadratic behavior of x25_new_lci(), syzbot was able
+to trigger an rcu stall.
 
-However such warning doesn't take the following case into consideration:
+Fix this by not blocking BH for the whole duration of
+the function, and inserting a reschedule point when possible.
 
-0			4K			8K
-|<---- fiemap range --->|
-|<----------- On-disk extent ------------------>|
+If we care enough, using a bitmap could get rid of the quadratic
+behavior.
 
-In this case, the whole 0~8K is cached, and since it's larger than
-fiemap range, it break the fiemap extent emit loop.
-This leaves the fiemap extent cached but not emitted, and caught by the
-final fiemap extent sanity check, causing kernel warning.
+syzbot report :
 
-This patch removes the kernel warning and renames the sanity check to
-emit_last_fiemap_cache() since it's possible and valid to have cached
-fiemap extent.
+rcu: INFO: rcu_preempt self-detected stall on CPU
+rcu:    0-...!: (10500 ticks this GP) idle=4fa/1/0x4000000000000002 softirq=283376/283376 fqs=0
+rcu:     (t=10501 jiffies g=383105 q=136)
+rcu: rcu_preempt kthread starved for 10502 jiffies! g383105 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402 ->cpu=0
+rcu: RCU grace-period kthread stack dump:
+rcu_preempt     I28928    10      2 0x80000000
+Call Trace:
+ context_switch kernel/sched/core.c:2844 [inline]
+ __schedule+0x817/0x1cc0 kernel/sched/core.c:3485
+ schedule+0x92/0x180 kernel/sched/core.c:3529
+ schedule_timeout+0x4db/0xfd0 kernel/time/timer.c:1803
+ rcu_gp_fqs_loop kernel/rcu/tree.c:1948 [inline]
+ rcu_gp_kthread+0x956/0x17a0 kernel/rcu/tree.c:2105
+ kthread+0x357/0x430 kernel/kthread.c:246
+ ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+NMI backtrace for cpu 0
+CPU: 0 PID: 8759 Comm: syz-executor2 Not tainted 5.0.0-rc4+ #51
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+ nmi_cpu_backtrace.cold+0x63/0xa4 lib/nmi_backtrace.c:101
+ nmi_trigger_cpumask_backtrace+0x1be/0x236 lib/nmi_backtrace.c:62
+ arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+ trigger_single_cpu_backtrace include/linux/nmi.h:164 [inline]
+ rcu_dump_cpu_stacks+0x183/0x1cf kernel/rcu/tree.c:1211
+ print_cpu_stall kernel/rcu/tree.c:1348 [inline]
+ check_cpu_stall kernel/rcu/tree.c:1422 [inline]
+ rcu_pending kernel/rcu/tree.c:3018 [inline]
+ rcu_check_callbacks.cold+0x500/0xa4a kernel/rcu/tree.c:2521
+ update_process_times+0x32/0x80 kernel/time/timer.c:1635
+ tick_sched_handle+0xa2/0x190 kernel/time/tick-sched.c:161
+ tick_sched_timer+0x47/0x130 kernel/time/tick-sched.c:1271
+ __run_hrtimer kernel/time/hrtimer.c:1389 [inline]
+ __hrtimer_run_queues+0x33e/0xde0 kernel/time/hrtimer.c:1451
+ hrtimer_interrupt+0x314/0x770 kernel/time/hrtimer.c:1509
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1035 [inline]
+ smp_apic_timer_interrupt+0x120/0x570 arch/x86/kernel/apic/apic.c:1060
+ apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+ </IRQ>
+RIP: 0010:__read_once_size include/linux/compiler.h:193 [inline]
+RIP: 0010:queued_write_lock_slowpath+0x13e/0x290 kernel/locking/qrwlock.c:86
+Code: 00 00 fc ff df 4c 8d 2c 01 41 83 c7 03 41 0f b6 45 00 41 38 c7 7c 08 84 c0 0f 85 0c 01 00 00 8b 03 3d 00 01 00 00 74 1a f3 90 <41> 0f b6 55 00 41 38 d7 7c eb 84 d2 74 e7 48 89 df e8 6c 0f 4f 00
+RSP: 0018:ffff88805f117bd8 EFLAGS: 00000206 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000000300 RBX: ffffffff89413ba0 RCX: 1ffffffff1282774
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffffffff89413ba0
+RBP: ffff88805f117c70 R08: 1ffffffff1282774 R09: fffffbfff1282775
+R10: fffffbfff1282774 R11: ffffffff89413ba3 R12: 00000000000000ff
+R13: fffffbfff1282774 R14: 1ffff1100be22f7d R15: 0000000000000003
+ queued_write_lock include/asm-generic/qrwlock.h:104 [inline]
+ do_raw_write_lock+0x1d6/0x290 kernel/locking/spinlock_debug.c:203
+ __raw_write_lock_bh include/linux/rwlock_api_smp.h:204 [inline]
+ _raw_write_lock_bh+0x3b/0x50 kernel/locking/spinlock.c:312
+ x25_insert_socket+0x21/0xe0 net/x25/af_x25.c:267
+ x25_bind+0x273/0x340 net/x25/af_x25.c:705
+ __sys_bind+0x23f/0x290 net/socket.c:1505
+ __do_sys_bind net/socket.c:1516 [inline]
+ __se_sys_bind net/socket.c:1514 [inline]
+ __x64_sys_bind+0x73/0xb0 net/socket.c:1514
+ do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457e39
+Code: ad b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fafccd0dc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000031
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457e39
+RDX: 0000000000000012 RSI: 0000000020000240 RDI: 0000000000000004
+RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fafccd0e6d4
+R13: 00000000004bdf8b R14: 00000000004ce4b8 R15: 00000000ffffffff
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 8752 Comm: syz-executor4 Not tainted 5.0.0-rc4+ #51
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:__x25_find_socket+0x78/0x120 net/x25/af_x25.c:328
+Code: 89 f8 48 c1 e8 03 80 3c 18 00 0f 85 a6 00 00 00 4d 8b 64 24 68 4d 85 e4 74 7f e8 03 97 3d fb 49 83 ec 68 74 74 e8 f8 96 3d fb <49> 8d bc 24 88 04 00 00 48 89 f8 48 c1 e8 03 0f b6 04 18 84 c0 74
+RSP: 0018:ffff8880639efc58 EFLAGS: 00000246
+RAX: 0000000000040000 RBX: dffffc0000000000 RCX: ffffc9000e677000
+RDX: 0000000000040000 RSI: ffffffff863244b8 RDI: ffff88806a764628
+RBP: ffff8880639efc80 R08: ffff8880a80d05c0 R09: fffffbfff1282775
+R10: fffffbfff1282774 R11: ffffffff89413ba3 R12: ffff88806a7645c0
+R13: 0000000000000001 R14: ffff88809f29ac00 R15: 0000000000000000
+FS:  00007fe8d0c58700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b32823000 CR3: 00000000672eb000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ x25_new_lci net/x25/af_x25.c:357 [inline]
+ x25_connect+0x374/0xdf0 net/x25/af_x25.c:786
+ __sys_connect+0x266/0x330 net/socket.c:1686
+ __do_sys_connect net/socket.c:1697 [inline]
+ __se_sys_connect net/socket.c:1694 [inline]
+ __x64_sys_connect+0x73/0xb0 net/socket.c:1694
+ do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457e39
+Code: ad b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fe8d0c57c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457e39
+RDX: 0000000000000012 RSI: 0000000020000200 RDI: 0000000000000004
+RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fe8d0c586d4
+R13: 00000000004be378 R14: 00000000004ceb00 R15: 00000000ffffffff
 
-Reported-by: David Sterba <dsterba@suse.cz>
-Reported-by: Adam Borowski <kilobyte@angband.pl>
-Fixes: 4751832da990 ("btrfs: fiemap: Cache and merge fiemap extent ...")
-Signed-off-by: Qu Wenruo <quwenruo@cn.fujitsu.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Andrew Hendry <andrew.hendry@gmail.com>
+Cc: linux-x25@vger.kernel.org
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent_io.c |   28 ++++++++++++----------------
- 1 file changed, 12 insertions(+), 16 deletions(-)
+ net/x25/af_x25.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -4463,29 +4463,25 @@ try_submit_last:
+--- a/net/x25/af_x25.c
++++ b/net/x25/af_x25.c
+@@ -352,17 +352,15 @@ static unsigned int x25_new_lci(struct x
+ 	unsigned int lci = 1;
+ 	struct sock *sk;
+ 
+-	read_lock_bh(&x25_list_lock);
+-
+-	while ((sk = __x25_find_socket(lci, nb)) != NULL) {
++	while ((sk = x25_find_socket(lci, nb)) != NULL) {
+ 		sock_put(sk);
+ 		if (++lci == 4096) {
+ 			lci = 0;
+ 			break;
+ 		}
++		cond_resched();
+ 	}
+ 
+-	read_unlock_bh(&x25_list_lock);
+ 	return lci;
  }
  
- /*
-- * Sanity check for fiemap cache
-+ * Emit last fiemap cache
-  *
-- * All fiemap cache should be submitted by emit_fiemap_extent()
-- * Iteration should be terminated either by last fiemap extent or
-- * fieinfo->fi_extents_max.
-- * So no cached fiemap should exist.
-+ * The last fiemap cache may still be cached in the following case:
-+ * 0		      4k		    8k
-+ * |<- Fiemap range ->|
-+ * |<------------  First extent ----------->|
-+ *
-+ * In this case, the first extent range will be cached but not emitted.
-+ * So we must emit it before ending extent_fiemap().
-  */
--static int check_fiemap_cache(struct btrfs_fs_info *fs_info,
--			       struct fiemap_extent_info *fieinfo,
--			       struct fiemap_cache *cache)
-+static int emit_last_fiemap_cache(struct btrfs_fs_info *fs_info,
-+				  struct fiemap_extent_info *fieinfo,
-+				  struct fiemap_cache *cache)
- {
- 	int ret;
- 
- 	if (!cache->cached)
- 		return 0;
- 
--	/* Small and recoverbale problem, only to info developer */
--#ifdef CONFIG_BTRFS_DEBUG
--	WARN_ON(1);
--#endif
--	btrfs_warn(fs_info,
--		   "unhandled fiemap cache detected: offset=%llu phys=%llu len=%llu flags=0x%x",
--		   cache->offset, cache->phys, cache->len, cache->flags);
- 	ret = fiemap_fill_next_extent(fieinfo, cache->offset, cache->phys,
- 				      cache->len, cache->flags);
- 	cache->cached = false;
-@@ -4701,7 +4697,7 @@ int extent_fiemap(struct inode *inode, s
- 	}
- out_free:
- 	if (!ret)
--		ret = check_fiemap_cache(root->fs_info, fieinfo, &cache);
-+		ret = emit_last_fiemap_cache(root->fs_info, fieinfo, &cache);
- 	free_extent_map(em);
- out:
- 	btrfs_free_path(path);
 
 
