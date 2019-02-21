@@ -2,103 +2,266 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09726C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:06:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27BA1C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:07:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC6182086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:06:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="Vn/Mbfz4"
+	by mail.kernel.org (Postfix) with ESMTP id DF5712086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:07:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727224AbfBUIEv (ORCPT
+        id S1726680AbfBUIHq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 03:04:51 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:2041 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725814AbfBUIEu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 03:04:50 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 444n7h6pXyz9vJg3;
-        Thu, 21 Feb 2019 09:04:48 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=Vn/Mbfz4; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id LrQBJa2-067i; Thu, 21 Feb 2019 09:04:48 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 444n7h5pXpz9vJg1;
-        Thu, 21 Feb 2019 09:04:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1550736288; bh=bCzDoKXfQUOk8+dp/9F7V6/4S9bkDV/4QQa9kOcF0rw=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=Vn/Mbfz4H4qZSIBtyqsXGHITSONjB08A2BsH8lkihR+ZikktssHTmgaLWWBZAUUrh
-         6lNNc6uh3YjUxE3WzocimEUGSdW/fZkBC2S3iymrbkxHYdEMM27EAwhgm4ab1FkhSy
-         R/5LlT0LzFPjI3Y8wofTn2rpng7BQ8QxBKf5Tu/s=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C00BA8B78F;
-        Thu, 21 Feb 2019 09:04:49 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id CI1Dfaf_LSqa; Thu, 21 Feb 2019 09:04:49 +0100 (CET)
-Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 91B1F8B75B;
-        Thu, 21 Feb 2019 09:04:49 +0100 (CET)
-Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 70F776E866; Thu, 21 Feb 2019 08:04:49 +0000 (UTC)
-Message-Id: <15e1001fdbeb0dcfc4c37519c31fd570dcd5cca4.1550692943.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1550692943.git.christophe.leroy@c-s.fr>
-References: <cover.1550692943.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v4 01/16] powerpc/wii: properly disable use of BATs when
- requested.
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, j.neuschaefer@gmx.net
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Thu, 21 Feb 2019 08:04:49 +0000 (UTC)
+        Thu, 21 Feb 2019 03:07:46 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54846 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726038AbfBUIHp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 03:07:45 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1L7wlOU041146
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 03:07:44 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qsr1sgj26-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 03:07:44 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <freude@linux.ibm.com>;
+        Thu, 21 Feb 2019 08:07:41 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 21 Feb 2019 08:07:38 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1L87ak219726446
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Feb 2019 08:07:36 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8292B5206B;
+        Thu, 21 Feb 2019 08:07:35 +0000 (GMT)
+Received: from [10.0.2.15] (unknown [9.152.224.114])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 149C752067;
+        Thu, 21 Feb 2019 08:07:35 +0000 (GMT)
+Subject: Re: [PATCH v2 1/1] s390: vfio_ap: link the vfio_ap devices to the
+ vfio_ap bus subsystem
+To:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Pierre Morel <pmorel@linux.ibm.com>
+Cc:     cohuck@redhat.com, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, frankja@linux.ibm.com,
+        akrowiak@linux.ibm.com, pasic@linux.ibm.com, david@redhat.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
+References: <1550513328-12646-1-git-send-email-pmorel@linux.ibm.com>
+ <1550513328-12646-2-git-send-email-pmorel@linux.ibm.com>
+ <f07b6209-bca2-22fe-310e-1e384c8974d9@linux.ibm.com>
+ <3c3a90ca-f7ea-7800-453d-31e6d273e82f@de.ibm.com>
+From:   Harald Freudenberger <freude@linux.ibm.com>
+Date:   Thu, 21 Feb 2019 09:07:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <3c3a90ca-f7ea-7800-453d-31e6d273e82f@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 19022108-0008-0000-0000-000002C3152A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022108-0009-0000-0000-0000222F4EBC
+Message-Id: <fa7c698f-81f8-957c-a013-cd3e6ef05967@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-21_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902210061
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'nobats' kernel parameter or some options like CONFIG_DEBUG_PAGEALLOC
-deny the use of BATS for mapping memory.
-
-This patch makes sure that the specific wii RAM mapping function
-takes it into account as well.
-
-Fixes: de32400dd26e ("wii: use both mem1 and mem2 as ram")
-Cc: stable@vger.kernel.org
-Reviewed-by: Jonathan Neuschafer <j.neuschaefer@gmx.net>
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/platforms/embedded6xx/wii.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/powerpc/platforms/embedded6xx/wii.c b/arch/powerpc/platforms/embedded6xx/wii.c
-index ecf703ee3a76..ac4ee88efc80 100644
---- a/arch/powerpc/platforms/embedded6xx/wii.c
-+++ b/arch/powerpc/platforms/embedded6xx/wii.c
-@@ -83,6 +83,10 @@ unsigned long __init wii_mmu_mapin_mem2(unsigned long top)
- 	/* MEM2 64MB@0x10000000 */
- 	delta = wii_hole_start + wii_hole_size;
- 	size = top - delta;
-+
-+	if (__map_without_bats)
-+		return delta;
-+
- 	for (bl = 128<<10; bl < max_size; bl <<= 1) {
- 		if (bl * 2 > size)
- 			break;
--- 
-2.13.3
+On 21.02.19 08:37, Christian Borntraeger wrote:
+>
+> On 20.02.2019 14:12, Harald Freudenberger wrote:
+>> On 18.02.19 19:08, Pierre Morel wrote:
+>>> Libudev relies on having a subsystem link for non-root devices. To
+>>> avoid libudev (and potentially other userspace tools) choking on the
+>>> matrix device let us introduce a vfio_ap bus and with that the vfio_ap
+>>> bus subsytem, and make the matrix device reside within it.
+>>>
+>>> Doing this we need to suppress the forced link from the matrix device to
+>>> the vfio_ap driver and we suppress the device_type we do not need
+>>> anymore.
+>>>
+>>> Since the associated matrix driver is not the vfio_ap driver any more,
+>>> we have to change the search for the devices on the vfio_ap driver in
+>>> the function vfio_ap_verify_queue_reserved.
+>>>
+>>> Reported-by: Marc Hartmayer <mhartmay@linux.ibm.com>
+>>> Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+>>> ---
+>>>  drivers/s390/crypto/vfio_ap_drv.c     | 48 +++++++++++++++++++++++++++++------
+>>>  drivers/s390/crypto/vfio_ap_ops.c     |  4 +--
+>>>  drivers/s390/crypto/vfio_ap_private.h |  1 +
+>>>  3 files changed, 43 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
+>>> index 31c6c84..8e45559 100644
+>>> --- a/drivers/s390/crypto/vfio_ap_drv.c
+>>> +++ b/drivers/s390/crypto/vfio_ap_drv.c
+>>> @@ -24,10 +24,6 @@ MODULE_LICENSE("GPL v2");
+>>>  
+>>>  static struct ap_driver vfio_ap_drv;
+>>>  
+>>> -static struct device_type vfio_ap_dev_type = {
+>>> -	.name = VFIO_AP_DEV_TYPE_NAME,
+>>> -};
+>>> -
+>>>  struct ap_matrix_dev *matrix_dev;
+>>>  
+>>>  /* Only type 10 adapters (CEX4 and later) are supported
+>>> @@ -62,6 +58,27 @@ static void vfio_ap_matrix_dev_release(struct device *dev)
+>>>  	kfree(matrix_dev);
+>>>  }
+>>>  
+>>> +static int matrix_bus_match(struct device *dev, struct device_driver *drv)
+>>> +{
+>>> +	return 1;
+>>> +}
+>>> +
+>>> +static struct bus_type matrix_bus = {
+>>> +	.name = "vfio_ap",
+>>> +	.match = &matrix_bus_match,
+>>> +};
+>>> +
+>>> +static int matrix_probe(struct device *dev)
+>>> +{
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static struct device_driver matrix_driver = {
+>>> +	.name = "vfio_ap",
+>>> +	.bus = &matrix_bus,
+>>> +	.probe = matrix_probe,
+>>> +};
+>>> +
+>>>  static int vfio_ap_matrix_dev_create(void)
+>>>  {
+>>>  	int ret;
+>>> @@ -71,6 +88,10 @@ static int vfio_ap_matrix_dev_create(void)
+>>>  	if (IS_ERR(root_device))
+>>>  		return PTR_ERR(root_device);
+>>>  
+>>> +	ret = bus_register(&matrix_bus);
+>>> +	if (ret)
+>>> +		goto bus_register_err;
+>>> +
+>>>  	matrix_dev = kzalloc(sizeof(*matrix_dev), GFP_KERNEL);
+>>>  	if (!matrix_dev) {
+>>>  		ret = -ENOMEM;
+>>> @@ -87,30 +108,41 @@ static int vfio_ap_matrix_dev_create(void)
+>>>  	mutex_init(&matrix_dev->lock);
+>>>  	INIT_LIST_HEAD(&matrix_dev->mdev_list);
+>>>  
+>>> -	matrix_dev->device.type = &vfio_ap_dev_type;
+>>>  	dev_set_name(&matrix_dev->device, "%s", VFIO_AP_DEV_NAME);
+>>>  	matrix_dev->device.parent = root_device;
+>>> +	matrix_dev->device.bus = &matrix_bus;
+>>>  	matrix_dev->device.release = vfio_ap_matrix_dev_release;
+>>> -	matrix_dev->device.driver = &vfio_ap_drv.driver;
+>>> +	matrix_dev->vfio_ap_drv = &vfio_ap_drv;
+>>>  
+>>>  	ret = device_register(&matrix_dev->device);
+>>>  	if (ret)
+>>>  		goto matrix_reg_err;
+>>>  
+>>> +	ret = driver_register(&matrix_driver);
+>>> +	if (ret)
+>>> +		goto matrix_drv_err;
+>>> +
+>>>  	return 0;
+>>>  
+>>> +matrix_drv_err:
+>>> +	device_unregister(&matrix_dev->device);
+>>>  matrix_reg_err:
+>>>  	put_device(&matrix_dev->device);
+>>>  matrix_alloc_err:
+>>> +	bus_unregister(&matrix_bus);
+>>> +bus_register_err:
+>>>  	root_device_unregister(root_device);
+>>> -
+>>>  	return ret;
+>>>  }
+>>>  
+>>>  static void vfio_ap_matrix_dev_destroy(void)
+>>>  {
+>>> +	struct device *root_device = matrix_dev->device.parent;
+>>> +
+>>> +	driver_unregister(&matrix_driver);
+>>>  	device_unregister(&matrix_dev->device);
+>>> -	root_device_unregister(matrix_dev->device.parent);
+>>> +	bus_unregister(&matrix_bus);
+>>> +	root_device_unregister(root_device);
+>>>  }
+>>>  
+>>>  static int __init vfio_ap_init(void)
+>>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+>>> index 272ef42..900b9cf 100644
+>>> --- a/drivers/s390/crypto/vfio_ap_ops.c
+>>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+>>> @@ -198,8 +198,8 @@ static int vfio_ap_verify_queue_reserved(unsigned long *apid,
+>>>  	qres.apqi = apqi;
+>>>  	qres.reserved = false;
+>>>  
+>>> -	ret = driver_for_each_device(matrix_dev->device.driver, NULL, &qres,
+>>> -				     vfio_ap_has_queue);
+>>> +	ret = driver_for_each_device(&matrix_dev->vfio_ap_drv->driver, NULL,
+>>> +				     &qres, vfio_ap_has_queue);
+>>>  	if (ret)
+>>>  		return ret;
+>>>  
+>>> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
+>>> index 5675492..76b7f98 100644
+>>> --- a/drivers/s390/crypto/vfio_ap_private.h
+>>> +++ b/drivers/s390/crypto/vfio_ap_private.h
+>>> @@ -40,6 +40,7 @@ struct ap_matrix_dev {
+>>>  	struct ap_config_info info;
+>>>  	struct list_head mdev_list;
+>>>  	struct mutex lock;
+>>> +	struct ap_driver  *vfio_ap_drv;
+>>>  };
+>>>  
+>>>  extern struct ap_matrix_dev *matrix_dev;
+>> You are introducing a new bus just for a user space application which is unable
+>> to deal with a device directly attached to the root of devices ? So you are fixing
+>> kernel code because of disability of userspace code. Hm, you are switching
+>> root cause and effect. However, not my job.
+> the kernel rule is pretty simple. If userspace breaks due to a kernel change fix the
+> kernel.
+>
+>> Why do you need this dummy bus ? Did you evaluate using a "class" subsystem
+>> instead ? This is very common and my assumption is that libudev is able to handle
+>> this. I am using a "zcrypt" class for providing additional zcrypt device nodes and
+>> this works fine together with udev. I would avoid the introduction and maintenance
+>> of bus code at any cost.
+> The class variant sounds promising. Pierre what do you think?
+I checked that. My additional zcrypt devices (you can easily create one
+with just echo "blubber" >/sys/class/zcrypt/create) and then have a look
+to the new device entry in sysfs at /sys/devices/virtual/zcrypt/blubber).
+Maybe you need to alloc device numbers for this - I am not sure if it is
+sufficient to device_register() without a device number. However, have
+a look into zcrpyt_api.c zcdn_init() and zcdn_create().
+With a new class, you can also remove the root device needed as an
+anchor for the old and for the bus code.
+>> Btw. having a look onto the naming ... the module is named "vfio_ap", the
+>> driver is named "vfio_ap", the bus is named "vfio_ap", the root bus device is
+>> named "vfio_ap" ... a bunch of vfio_aps naming different things.
+>>
+>> regards
+>> Harald Freudenberger
+>>
 
