@@ -2,144 +2,154 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6938CC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC3DAC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:18:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41C4A2083B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:17:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B8A92083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:18:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IEXoCUZH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728273AbfBUSRo (ORCPT
+        id S1728585AbfBUSS2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 13:17:44 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54024 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725866AbfBUSRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 13:17:43 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DE04A59446;
-        Thu, 21 Feb 2019 18:17:42 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.236])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DC35660BE6;
-        Thu, 21 Feb 2019 18:17:36 +0000 (UTC)
-Date:   Thu, 21 Feb 2019 13:17:34 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v2 18/26] khugepaged: skip collapse if uffd-wp detected
-Message-ID: <20190221181734.GR2813@redhat.com>
-References: <20190212025632.28946-1-peterx@redhat.com>
- <20190212025632.28946-19-peterx@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190212025632.28946-19-peterx@redhat.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 21 Feb 2019 18:17:43 +0000 (UTC)
+        Thu, 21 Feb 2019 13:18:28 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:35884 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbfBUSS1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 13:18:27 -0500
+Received: by mail-io1-f68.google.com with SMTP id r136so2833535iod.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 10:18:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=l4JzspAMbHcJHsJJu0IBWT2hWCxWq0IAOWVVhMcjpYg=;
+        b=IEXoCUZHO6g7weGrhLaXzXe/0VB1EnaM9AJ/bXaQH8ZVmADP6HM9/LQaQ29I545hWz
+         NQBWABSPInNPxo0Dl+Lo4GJWY/6XMFlOMElQkHrMDaLjaLwcRc6s0/3uVUl7VEXgg/ue
+         oxbbM3yTK2bZmNDvb6Teisr4/UuQooFq+ugzzzvUYZgyqPEhv6Al40S1JuzdcegTJqrk
+         uwPKmTV2jdyOENlS8XFLSEFZOwCjuWBBfxNbGYwQnlPvVgHVo57PpVLscJZRWDM5WvK6
+         HpyVmCjYjVlWKqyopjDANByXgcj2oXxuIDrD28Rvu57DY6ix83bP4ayFEok3iP1Rt9m4
+         pTXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=l4JzspAMbHcJHsJJu0IBWT2hWCxWq0IAOWVVhMcjpYg=;
+        b=nR+XpgDS2g4cbwBP1ERPHewKqNUKxe1xwSCrXBGMqa1kaO5CmTc7i/lKAPsCyDUzar
+         9KkOIQDx+npcLzJj6PiEl7FDYfuJO5EdYOpGL0q+nJadKGoazVJZBb2WdluYTF+RFOj9
+         38ltuW1RfalJnY8FKNW/qgDqMLoLQ2+rvwKEocwaQ2g0DkpVeXPLMhwPYwwmU70dcXIR
+         56ZwVvXa2dH8dKB9dVk3C8/gdPqecFMvhHVsYmWfybWrtAFqf/GojbO/SDLM4iXmwlfE
+         cp1lPdIB0v67e87QyGkzt3lsHfWUz0XrOKcCpiD8z96LLGXBi0+chmWkwGRO44KxE23E
+         baTQ==
+X-Gm-Message-State: AHQUAuabEZ3huX1MrsKPJiiZIJufQcWnwDysl+ZV2G31rsPUkf+GLSVN
+        i5kab7W6Kia5/8+6geNcbis=
+X-Google-Smtp-Source: AHgI3IbFGG72QMoSp/PtKt4YcWP5OH8bs/A2zu1DzniZrq0h5/kQIbK9N98agpwb2OSDuBwIRAF7Dw==
+X-Received: by 2002:a02:3b6f:: with SMTP id i47mr10972762jaf.39.1550773106932;
+        Thu, 21 Feb 2019 10:18:26 -0800 (PST)
+Received: from svens-asus.arcx.com ([184.94.50.30])
+        by smtp.gmail.com with ESMTPSA id s26sm3006284iol.41.2019.02.21.10.18.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Feb 2019 10:18:26 -0800 (PST)
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
+To:     Russell King <linux@armlinux.org.uk>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Peter Rosin <peda@axentia.se>
+Subject: [PATCH 1/2] drm/i2c: tda998x: adjust CTS_N audio pre-divider calculation
+Date:   Thu, 21 Feb 2019 13:18:13 -0500
+Message-Id: <20190221181814.24829-1-TheSven73@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 10:56:24AM +0800, Peter Xu wrote:
-> Don't collapse the huge PMD if there is any userfault write protected
-> small PTEs.  The problem is that the write protection is in small page
-> granularity and there's no way to keep all these write protection
-> information if the small pages are going to be merged into a huge PMD.
-> 
-> The same thing needs to be considered for swap entries and migration
-> entries.  So do the check as well disregarding khugepaged_max_ptes_swap.
-> 
-> Signed-off-by: Peter Xu <peterx@redhat.com>
+My cpu dai driving the tda998x in master mode outputs
+SNDRV_PCM_FORMAT_S24_LE, i2s left justified, two channels:
 
-Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+	[SNDRV_PCM_FORMAT_S24_LE] = {
+		.width = 24, .phys = 32, .le = 1, .signd = 1,
+		.silence = {},
+	},
 
-> ---
->  include/trace/events/huge_memory.h |  1 +
->  mm/khugepaged.c                    | 23 +++++++++++++++++++++++
->  2 files changed, 24 insertions(+)
-> 
-> diff --git a/include/trace/events/huge_memory.h b/include/trace/events/huge_memory.h
-> index dd4db334bd63..2d7bad9cb976 100644
-> --- a/include/trace/events/huge_memory.h
-> +++ b/include/trace/events/huge_memory.h
-> @@ -13,6 +13,7 @@
->  	EM( SCAN_PMD_NULL,		"pmd_null")			\
->  	EM( SCAN_EXCEED_NONE_PTE,	"exceed_none_pte")		\
->  	EM( SCAN_PTE_NON_PRESENT,	"pte_non_present")		\
-> +	EM( SCAN_PTE_UFFD_WP,		"pte_uffd_wp")			\
->  	EM( SCAN_PAGE_RO,		"no_writable_page")		\
->  	EM( SCAN_LACK_REFERENCED_PAGE,	"lack_referenced_page")		\
->  	EM( SCAN_PAGE_NULL,		"page_null")			\
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index 4f017339ddb2..396c7e4da83e 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -29,6 +29,7 @@ enum scan_result {
->  	SCAN_PMD_NULL,
->  	SCAN_EXCEED_NONE_PTE,
->  	SCAN_PTE_NON_PRESENT,
-> +	SCAN_PTE_UFFD_WP,
->  	SCAN_PAGE_RO,
->  	SCAN_LACK_REFERENCED_PAGE,
->  	SCAN_PAGE_NULL,
-> @@ -1123,6 +1124,15 @@ static int khugepaged_scan_pmd(struct mm_struct *mm,
->  		pte_t pteval = *_pte;
->  		if (is_swap_pte(pteval)) {
->  			if (++unmapped <= khugepaged_max_ptes_swap) {
-> +				/*
-> +				 * Always be strict with uffd-wp
-> +				 * enabled swap entries.  Please see
-> +				 * comment below for pte_uffd_wp().
-> +				 */
-> +				if (pte_swp_uffd_wp(pteval)) {
-> +					result = SCAN_PTE_UFFD_WP;
-> +					goto out_unmap;
-> +				}
->  				continue;
->  			} else {
->  				result = SCAN_EXCEED_SWAP_PTE;
-> @@ -1142,6 +1152,19 @@ static int khugepaged_scan_pmd(struct mm_struct *mm,
->  			result = SCAN_PTE_NON_PRESENT;
->  			goto out_unmap;
->  		}
-> +		if (pte_uffd_wp(pteval)) {
-> +			/*
-> +			 * Don't collapse the page if any of the small
-> +			 * PTEs are armed with uffd write protection.
-> +			 * Here we can also mark the new huge pmd as
-> +			 * write protected if any of the small ones is
-> +			 * marked but that could bring uknown
-> +			 * userfault messages that falls outside of
-> +			 * the registered range.  So, just be simple.
-> +			 */
-> +			result = SCAN_PTE_UFFD_WP;
-> +			goto out_unmap;
-> +		}
->  		if (pte_write(pteval))
->  			writable = true;
->  
-> -- 
-> 2.17.1
-> 
+This format has a sample width of 24 bits, but a physical
+size of 32 bits per channel. The redundant bits are padded
+with zeros. This gives a total frame width of 64 bits.
+According to the tda19988 datasheet, this format is supported:
+
+"Audio samples with a precision better than 24-bit are
+truncated to 24-bit. [...] If the input clock has a
+frequency of 64fs and is left justified or Philips,
+the audio word is truncated to 24-bit format and other
+bits padded with zeros."
+(tda19988 product datasheet Rev. 3 - 21 July 2011)
+
+However, supplying this format to the chip results in distorted
+audio. I noticed that the audio problem disappears when the
+CTS_N pre-divider is calculated from the physical width, _not_
+the sample width.
+
+This patch adjusts the CTS_N calculation so that the audio
+distortion goes away.
+
+Caveats:
+- I am only capable of generating audio with a frame width of
+  64fs. So I cannot test if 32fs or 48fs audio formats still
+  work. Such as S16_LE or S20_LE.
+- I have no access to a datasheet which accurately describes
+  the CTS_N register. So I cannot check if my assumption is
+  correct.
+
+Tested with an imx6 ssi.
+
+Cc: Peter Rosin <peda@axentia.se>
+Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+---
+ drivers/gpu/drm/i2c/tda998x_drv.c | 4 ++--
+ include/drm/i2c/tda998x.h         | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/i2c/tda998x_drv.c b/drivers/gpu/drm/i2c/tda998x_drv.c
+index a7c39f39793f..ba9f55176e1b 100644
+--- a/drivers/gpu/drm/i2c/tda998x_drv.c
++++ b/drivers/gpu/drm/i2c/tda998x_drv.c
+@@ -893,7 +893,7 @@ tda998x_configure_audio(struct tda998x_priv *priv,
+ 		reg_write(priv, REG_MUX_AP, MUX_AP_SELECT_I2S);
+ 		clksel_aip = AIP_CLKSEL_AIP_I2S;
+ 		clksel_fs = AIP_CLKSEL_FS_ACLK;
+-		switch (params->sample_width) {
++		switch (params->physical_width) {
+ 		case 16:
+ 			cts_n = CTS_N_M(3) | CTS_N_K(1);
+ 			break;
+@@ -982,7 +982,7 @@ static int tda998x_audio_hw_params(struct device *dev, void *data,
+ 	struct tda998x_priv *priv = dev_get_drvdata(dev);
+ 	int i, ret;
+ 	struct tda998x_audio_params audio = {
+-		.sample_width = params->sample_width,
++		.physical_width = params->physical_width,
+ 		.sample_rate = params->sample_rate,
+ 		.cea = params->cea,
+ 	};
+diff --git a/include/drm/i2c/tda998x.h b/include/drm/i2c/tda998x.h
+index 3cb25ccbe5e6..7e9fddcc4ddd 100644
+--- a/include/drm/i2c/tda998x.h
++++ b/include/drm/i2c/tda998x.h
+@@ -14,7 +14,7 @@ enum {
+ struct tda998x_audio_params {
+ 	u8 config;
+ 	u8 format;
+-	unsigned sample_width;
++	unsigned int physical_width;
+ 	unsigned sample_rate;
+ 	struct hdmi_audio_infoframe cea;
+ 	u8 status[5];
+-- 
+2.17.1
+
