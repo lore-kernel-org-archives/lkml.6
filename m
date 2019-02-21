@@ -2,97 +2,72 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C71C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:10:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1247CC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:10:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAFE9207E0
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:10:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4BC3207E0
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:10:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Oubu607o"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="erx/Bv2w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbfBUNKf (ORCPT
+        id S1727862AbfBUNKl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 08:10:35 -0500
-Received: from ozlabs.org ([203.11.71.1]:46051 "EHLO ozlabs.org"
+        Thu, 21 Feb 2019 08:10:41 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:33026 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725385AbfBUNKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 08:10:35 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 444vwR6BfTz9s6w;
-        Fri, 22 Feb 2019 00:10:31 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1550754631;
-        bh=VyBi7tizfr5EXlIi1or/xg3sXLrex4CS72pxDiVm7OA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Oubu607okYHQpc3TCa6h7Uq/ZyPhrwrJWtTJ7N26cfX3sNjp8xUtXXWUOnaycowcC
-         NZlyyINvrmVKYVA7F5+uAc32UW5jOan24u+OPJYyS8DkOcGNQoEDFQaudrG9XuO9uO
-         NG6oOyFKheyfAZHTYnLC6EsWk/SHnX5WqmDges9ctv2ogvy5MLOORzw3y4idf4T+vq
-         Pu5q3Ne1KVR6KTqAh9F7b0cCqoAUXQznL37pcgiqEzjAjfzwt8gDkbP0f4PjG2kYXI
-         YRTjFFqGXWXdPYmM59xVFDMR6d0hFBwrPSDE9U9A3ti5L8QP2nAv6JJHJdDb7AKnC3
-         ROqCnK8HtXArg==
-Date:   Fri, 22 Feb 2019 00:10:29 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jian-Hong Pan <jian-hong@endlessm.com>
-Subject: linux-next: Fixes tag needs some work in the sound tree
-Message-ID: <20190222001029.03c14a16@canb.auug.org.au>
+        id S1725385AbfBUNKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 08:10:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=rvg5xZrap2dxqBePFc3qSIGCcNyDLU0fG30yT0OKrg0=; b=erx/Bv2wpvrCPE/HcVm6Xt3nxZ
+        TixkKwC43G4JqtP4RVz0Z4cvdEV0bynVjt2UltHTsxDsbU/pOzfU3H5y4Mt1BPkmASXPn0G3UcngA
+        w4IeYnBe+z8W86vviyVYud6uk4qgz/3tJ1+ES/4BYaPq5bpPxQM98jE6GNvmkNXseqN0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gwo7Z-0001fi-Jk; Thu, 21 Feb 2019 14:10:37 +0100
+Date:   Thu, 21 Feb 2019 14:10:37 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Marcel Reichmuth <Marcel.Reichmuth@netmodule.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "vivien.didelot@gmail.com" <vivien.didelot@gmail.com>,
+        "davem@davemloft.net" <davem@davemloft.net>
+Subject: Re: [PATCH] net: dsa: add missing phy address offset
+Message-ID: <20190221131037.GA5653@lunn.ch>
+References: <20190220181426.2970-1-marcel.reichmuth@netmodule.com>
+ <d4e6e37b-01c2-3141-8e30-b7e8c252c0ef@gmail.com>
+ <20190220193122.GA5302@lunn.ch>
+ <20190221075333.t7vikxznp3l6ello@debian>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//8bgML0XMvcBgnKBnLQAEFd"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190221075333.t7vikxznp3l6ello@debian>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_//8bgML0XMvcBgnKBnLQAEFd
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+> Thank you very much for your hints. Yes that works indeed too. I
+> just assumed it was intended to work automatically with the 
+> built-in phys as it does with the other switches I am using.
 
-Hi Takashi,
+Hi Marcel
 
-In commit
+The basic assumption is there is a one to one mapping of port number
+to PHY address. All the other Marvell switch have this mapping.
 
-  de73e99af971 ("ALSA: hda/realtek: Enable audio jacks of ASUS UX362FA with=
- ALC294")
+Since the needed flexibility exists to support this, and Marvell has
+not repeated this odd design, i decided not to do anything about it in
+code.
 
-Fixes tag
-
-  Fixes: 4e0511067 ("ALSA: hda/realtek: Enable audio jacks of ASUS UX533FD =
-with ALC294")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_//8bgML0XMvcBgnKBnLQAEFd
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxuo0UACgkQAVBC80lX
-0Gz8QggAhXz5FXPnGxbAHVD+5ZUAdpzl5Xz0fOhu/d+Vyjhm1HHEmYzOSWblF7fi
-hIBruh0DddGLt2V1j1hTHvBOeWmqM+nxPDiE0HXw7lsAMO5QEVlgaZrCyrCSQbZb
-7rAKPvlFyEPE7QvAxYjMaPnLwOoE8Glys7HZVCdfQvM9vgAQ6qDQa+4sjvDl0/lh
-38rriCe99J3R3FSsHFrCpel9YHnC5bNDTzgw67XxVHZTBR7/+/IoEUadwCTSG17+
-wsYqeitjgpvQeaMHFVhcI2AdI98CZLy9ldrs3oH0MeIwi1Vxj/5arEpIkCLJIBem
-f1OX+JQx/azvrq6xwpmmNuL29zJoLQ==
-=eFle
------END PGP SIGNATURE-----
-
---Sig_//8bgML0XMvcBgnKBnLQAEFd--
+	Andrew
