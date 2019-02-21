@@ -2,876 +2,166 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F98C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD645C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:03:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 501E62083B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:02:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EDC72083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:03:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="dXD1Lqdw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728797AbfBUTCo (ORCPT
+        id S1728813AbfBUTDK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 14:02:44 -0500
-Received: from ms.lwn.net ([45.79.88.28]:46496 "EHLO ms.lwn.net"
+        Thu, 21 Feb 2019 14:03:10 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:64840 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726265AbfBUTCi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 14:02:38 -0500
-Received: from meer.lwn.net (localhost [127.0.0.1])
-        by ms.lwn.net (Postfix) with ESMTPA id 26D022DD;
-        Thu, 21 Feb 2019 19:02:36 +0000 (UTC)
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     linux-doc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        axboe@kernel.dk, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 1/2] docs: Bring some order to filesystem documentation
-Date:   Thu, 21 Feb 2019 12:02:29 -0700
-Message-Id: <20190221190230.17985-2-corbet@lwn.net>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190221190230.17985-1-corbet@lwn.net>
-References: <20190221190230.17985-1-corbet@lwn.net>
+        id S1726146AbfBUTDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 14:03:09 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 4453lG6GJgz9v6l1;
+        Thu, 21 Feb 2019 20:03:06 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=dXD1Lqdw; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id R0oiRFtOu_Fj; Thu, 21 Feb 2019 20:03:06 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 4453lG580kz9v6jt;
+        Thu, 21 Feb 2019 20:03:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1550775786; bh=P13Pznnz4SECXyfoPjqca8tjebP4ZlSv0SzbWcDRTVk=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=dXD1LqdwY57zZhL7oa22tjup8tSeFy0DzwpyoFVou209BjblZGYwPabS2oYrsNtok
+         +FuA1yWU/IWuLbKhV/ZHfTFODMunkGpC32WKWY6jSG0gefaRkyciILTag40AnsGcLF
+         8v/YDUAfVHFeIo1XnrkxUnO1liltCwqC+CLPFEiE=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 144E28B88A;
+        Thu, 21 Feb 2019 20:03:06 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id BaHTZHGCZYIT; Thu, 21 Feb 2019 20:03:05 +0100 (CET)
+Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id B9FB18B86D;
+        Thu, 21 Feb 2019 20:02:47 +0100 (CET)
+Subject: Re: [PATCH v4 04/16] powerpc/mm/32s: use generic mmu_mapin_ram() for
+ all blocks.
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, j.neuschaefer@gmx.net
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <cover.1550692943.git.christophe.leroy@c-s.fr>
+ <790cf44815f8c56b3c600560bad9139f63be9f68.1550692943.git.christophe.leroy@c-s.fr>
+ <87o9755jy2.fsf@concordia.ellerman.id.au>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <719e3340-dd91-9504-d39c-4257e1bf0282@c-s.fr>
+Date:   Thu, 21 Feb 2019 19:02:45 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <87o9755jy2.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Documentation/filesystems is, like much of the rest of the kernel's
-documentation, a jumble of unorganized information.  Split the
-documentation into categories and try to bring some order to the top-level
-index.rst files.  No text changes other than a few section-introductory
-blurbs; this is all just moving stuff around.
 
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
----
- Documentation/filesystems/api-summary.rst | 150 ++++++++
- Documentation/filesystems/index.rst       | 394 ++--------------------
- Documentation/filesystems/journalling.rst | 184 ++++++++++
- Documentation/filesystems/path-lookup.rst |  15 +
- Documentation/filesystems/splice.rst      |  22 ++
- 5 files changed, 395 insertions(+), 370 deletions(-)
- create mode 100644 Documentation/filesystems/api-summary.rst
- create mode 100644 Documentation/filesystems/journalling.rst
- create mode 100644 Documentation/filesystems/splice.rst
 
-diff --git a/Documentation/filesystems/api-summary.rst b/Documentation/filesystems/api-summary.rst
-new file mode 100644
-index 000000000000..aa51ffcfa029
---- /dev/null
-+++ b/Documentation/filesystems/api-summary.rst
-@@ -0,0 +1,150 @@
-+=============================
-+Linux Filesystems API summary
-+=============================
-+
-+This section contains API-level documentation, mostly taken from the source
-+code itself.
-+
-+The Linux VFS
-+=============
-+
-+The Filesystem types
-+--------------------
-+
-+.. kernel-doc:: include/linux/fs.h
-+   :internal:
-+
-+The Directory Cache
-+-------------------
-+
-+.. kernel-doc:: fs/dcache.c
-+   :export:
-+
-+.. kernel-doc:: include/linux/dcache.h
-+   :internal:
-+
-+Inode Handling
-+--------------
-+
-+.. kernel-doc:: fs/inode.c
-+   :export:
-+
-+.. kernel-doc:: fs/bad_inode.c
-+   :export:
-+
-+Registration and Superblocks
-+----------------------------
-+
-+.. kernel-doc:: fs/super.c
-+   :export:
-+
-+File Locks
-+----------
-+
-+.. kernel-doc:: fs/locks.c
-+   :export:
-+
-+.. kernel-doc:: fs/locks.c
-+   :internal:
-+
-+Other Functions
-+---------------
-+
-+.. kernel-doc:: fs/mpage.c
-+   :export:
-+
-+.. kernel-doc:: fs/namei.c
-+   :export:
-+
-+.. kernel-doc:: fs/buffer.c
-+   :export:
-+
-+.. kernel-doc:: block/bio.c
-+   :export:
-+
-+.. kernel-doc:: fs/seq_file.c
-+   :export:
-+
-+.. kernel-doc:: fs/filesystems.c
-+   :export:
-+
-+.. kernel-doc:: fs/fs-writeback.c
-+   :export:
-+
-+.. kernel-doc:: fs/block_dev.c
-+   :export:
-+
-+.. kernel-doc:: fs/anon_inodes.c
-+   :export:
-+
-+.. kernel-doc:: fs/attr.c
-+   :export:
-+
-+.. kernel-doc:: fs/d_path.c
-+   :export:
-+
-+.. kernel-doc:: fs/dax.c
-+   :export:
-+
-+.. kernel-doc:: fs/direct-io.c
-+   :export:
-+
-+.. kernel-doc:: fs/file_table.c
-+   :export:
-+
-+.. kernel-doc:: fs/libfs.c
-+   :export:
-+
-+.. kernel-doc:: fs/posix_acl.c
-+   :export:
-+
-+.. kernel-doc:: fs/stat.c
-+   :export:
-+
-+.. kernel-doc:: fs/sync.c
-+   :export:
-+
-+.. kernel-doc:: fs/xattr.c
-+   :export:
-+
-+The proc filesystem
-+===================
-+
-+sysctl interface
-+----------------
-+
-+.. kernel-doc:: kernel/sysctl.c
-+   :export:
-+
-+proc filesystem interface
-+-------------------------
-+
-+.. kernel-doc:: fs/proc/base.c
-+   :internal:
-+
-+Events based on file descriptors
-+================================
-+
-+.. kernel-doc:: fs/eventfd.c
-+   :export:
-+
-+The Filesystem for Exporting Kernel Objects
-+===========================================
-+
-+.. kernel-doc:: fs/sysfs/file.c
-+   :export:
-+
-+.. kernel-doc:: fs/sysfs/symlink.c
-+   :export:
-+
-+The debugfs filesystem
-+======================
-+
-+debugfs interface
-+-----------------
-+
-+.. kernel-doc:: fs/debugfs/inode.c
-+   :export:
-+
-+.. kernel-doc:: fs/debugfs/file.c
-+   :export:
-diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-index 61d2441b25d5..1131c34d77f6 100644
---- a/Documentation/filesystems/index.rst
-+++ b/Documentation/filesystems/index.rst
-@@ -1,389 +1,43 @@
--=====================
--Linux Filesystems API
--=====================
-+===============================
-+Filesystems in the Linux kernel
-+===============================
- 
--The Linux VFS
--=============
-+This under-development manual will, some glorious day, provide
-+comprehensive information on how the Linux virtual filesystem (VFS) layer
-+works, along with the filesystems that sit below it.  For now, what we have
-+can be found below.
- 
--The Filesystem types
----------------------
--
--.. kernel-doc:: include/linux/fs.h
--   :internal:
--
--The Directory Cache
---------------------
--
--.. kernel-doc:: fs/dcache.c
--   :export:
--
--.. kernel-doc:: include/linux/dcache.h
--   :internal:
--
--Inode Handling
----------------
--
--.. kernel-doc:: fs/inode.c
--   :export:
--
--.. kernel-doc:: fs/bad_inode.c
--   :export:
--
--Registration and Superblocks
------------------------------
--
--.. kernel-doc:: fs/super.c
--   :export:
--
--File Locks
------------
--
--.. kernel-doc:: fs/locks.c
--   :export:
--
--.. kernel-doc:: fs/locks.c
--   :internal:
--
--Other Functions
-----------------
--
--.. kernel-doc:: fs/mpage.c
--   :export:
--
--.. kernel-doc:: fs/namei.c
--   :export:
--
--.. kernel-doc:: fs/buffer.c
--   :export:
--
--.. kernel-doc:: block/bio.c
--   :export:
--
--.. kernel-doc:: fs/seq_file.c
--   :export:
--
--.. kernel-doc:: fs/filesystems.c
--   :export:
--
--.. kernel-doc:: fs/fs-writeback.c
--   :export:
--
--.. kernel-doc:: fs/block_dev.c
--   :export:
--
--.. kernel-doc:: fs/anon_inodes.c
--   :export:
--
--.. kernel-doc:: fs/attr.c
--   :export:
--
--.. kernel-doc:: fs/d_path.c
--   :export:
--
--.. kernel-doc:: fs/dax.c
--   :export:
--
--.. kernel-doc:: fs/direct-io.c
--   :export:
--
--.. kernel-doc:: fs/file_table.c
--   :export:
--
--.. kernel-doc:: fs/libfs.c
--   :export:
--
--.. kernel-doc:: fs/posix_acl.c
--   :export:
--
--.. kernel-doc:: fs/stat.c
--   :export:
--
--.. kernel-doc:: fs/sync.c
--   :export:
--
--.. kernel-doc:: fs/xattr.c
--   :export:
--
--The proc filesystem
--===================
--
--sysctl interface
------------------
--
--.. kernel-doc:: kernel/sysctl.c
--   :export:
--
--proc filesystem interface
---------------------------
--
--.. kernel-doc:: fs/proc/base.c
--   :internal:
--
--Events based on file descriptors
--================================
--
--.. kernel-doc:: fs/eventfd.c
--   :export:
--
--The Filesystem for Exporting Kernel Objects
--===========================================
--
--.. kernel-doc:: fs/sysfs/file.c
--   :export:
--
--.. kernel-doc:: fs/sysfs/symlink.c
--   :export:
--
--The debugfs filesystem
-+Core VFS documentation
- ======================
- 
--debugfs interface
-------------------
-+See these manuals for documentation about the VFS layer itself and how its
-+algorithms work.
- 
--.. kernel-doc:: fs/debugfs/inode.c
--   :export:
-+.. toctree::
-+   :maxdepth: 2
- 
--.. kernel-doc:: fs/debugfs/file.c
--   :export:
-+   path-lookup.rst
-+   api-summary
-+   splice
- 
--The Linux Journalling API
-+Filesystem support layers
- =========================
- 
--Overview
----------
--
--Details
--~~~~~~~
--
--The journalling layer is easy to use. You need to first of all create a
--journal_t data structure. There are two calls to do this dependent on
--how you decide to allocate the physical media on which the journal
--resides. The :c:func:`jbd2_journal_init_inode` call is for journals stored in
--filesystem inodes, or the :c:func:`jbd2_journal_init_dev` call can be used
--for journal stored on a raw device (in a continuous range of blocks). A
--journal_t is a typedef for a struct pointer, so when you are finally
--finished make sure you call :c:func:`jbd2_journal_destroy` on it to free up
--any used kernel memory.
--
--Once you have got your journal_t object you need to 'mount' or load the
--journal file. The journalling layer expects the space for the journal
--was already allocated and initialized properly by the userspace tools.
--When loading the journal you must call :c:func:`jbd2_journal_load` to process
--journal contents. If the client file system detects the journal contents
--does not need to be processed (or even need not have valid contents), it
--may call :c:func:`jbd2_journal_wipe` to clear the journal contents before
--calling :c:func:`jbd2_journal_load`.
--
--Note that jbd2_journal_wipe(..,0) calls
--:c:func:`jbd2_journal_skip_recovery` for you if it detects any outstanding
--transactions in the journal and similarly :c:func:`jbd2_journal_load` will
--call :c:func:`jbd2_journal_recover` if necessary. I would advise reading
--:c:func:`ext4_load_journal` in fs/ext4/super.c for examples on this stage.
--
--Now you can go ahead and start modifying the underlying filesystem.
--Almost.
--
--You still need to actually journal your filesystem changes, this is done
--by wrapping them into transactions. Additionally you also need to wrap
--the modification of each of the buffers with calls to the journal layer,
--so it knows what the modifications you are actually making are. To do
--this use :c:func:`jbd2_journal_start` which returns a transaction handle.
--
--:c:func:`jbd2_journal_start` and its counterpart :c:func:`jbd2_journal_stop`,
--which indicates the end of a transaction are nestable calls, so you can
--reenter a transaction if necessary, but remember you must call
--:c:func:`jbd2_journal_stop` the same number of times as
--:c:func:`jbd2_journal_start` before the transaction is completed (or more
--accurately leaves the update phase). Ext4/VFS makes use of this feature to
--simplify handling of inode dirtying, quota support, etc.
--
--Inside each transaction you need to wrap the modifications to the
--individual buffers (blocks). Before you start to modify a buffer you
--need to call :c:func:`jbd2_journal_get_create_access()` /
--:c:func:`jbd2_journal_get_write_access()` /
--:c:func:`jbd2_journal_get_undo_access()` as appropriate, this allows the
--journalling layer to copy the unmodified
--data if it needs to. After all the buffer may be part of a previously
--uncommitted transaction. At this point you are at last ready to modify a
--buffer, and once you are have done so you need to call
--:c:func:`jbd2_journal_dirty_metadata`. Or if you've asked for access to a
--buffer you now know is now longer required to be pushed back on the
--device you can call :c:func:`jbd2_journal_forget` in much the same way as you
--might have used :c:func:`bforget` in the past.
--
--A :c:func:`jbd2_journal_flush` may be called at any time to commit and
--checkpoint all your transactions.
--
--Then at umount time , in your :c:func:`put_super` you can then call
--:c:func:`jbd2_journal_destroy` to clean up your in-core journal object.
--
--Unfortunately there a couple of ways the journal layer can cause a
--deadlock. The first thing to note is that each task can only have a
--single outstanding transaction at any one time, remember nothing commits
--until the outermost :c:func:`jbd2_journal_stop`. This means you must complete
--the transaction at the end of each file/inode/address etc. operation you
--perform, so that the journalling system isn't re-entered on another
--journal. Since transactions can't be nested/batched across differing
--journals, and another filesystem other than yours (say ext4) may be
--modified in a later syscall.
--
--The second case to bear in mind is that :c:func:`jbd2_journal_start` can block
--if there isn't enough space in the journal for your transaction (based
--on the passed nblocks param) - when it blocks it merely(!) needs to wait
--for transactions to complete and be committed from other tasks, so
--essentially we are waiting for :c:func:`jbd2_journal_stop`. So to avoid
--deadlocks you must treat :c:func:`jbd2_journal_start` /
--:c:func:`jbd2_journal_stop` as if they were semaphores and include them in
--your semaphore ordering rules to prevent
--deadlocks. Note that :c:func:`jbd2_journal_extend` has similar blocking
--behaviour to :c:func:`jbd2_journal_start` so you can deadlock here just as
--easily as on :c:func:`jbd2_journal_start`.
--
--Try to reserve the right number of blocks the first time. ;-). This will
--be the maximum number of blocks you are going to touch in this
--transaction. I advise having a look at at least ext4_jbd.h to see the
--basis on which ext4 uses to make these decisions.
--
--Another wriggle to watch out for is your on-disk block allocation
--strategy. Why? Because, if you do a delete, you need to ensure you
--haven't reused any of the freed blocks until the transaction freeing
--these blocks commits. If you reused these blocks and crash happens,
--there is no way to restore the contents of the reallocated blocks at the
--end of the last fully committed transaction. One simple way of doing
--this is to mark blocks as free in internal in-memory block allocation
--structures only after the transaction freeing them commits. Ext4 uses
--journal commit callback for this purpose.
--
--With journal commit callbacks you can ask the journalling layer to call
--a callback function when the transaction is finally committed to disk,
--so that you can do some of your own management. You ask the journalling
--layer for calling the callback by simply setting
--``journal->j_commit_callback`` function pointer and that function is
--called after each transaction commit. You can also use
--``transaction->t_private_list`` for attaching entries to a transaction
--that need processing when the transaction commits.
--
--JBD2 also provides a way to block all transaction updates via
--:c:func:`jbd2_journal_lock_updates()` /
--:c:func:`jbd2_journal_unlock_updates()`. Ext4 uses this when it wants a
--window with a clean and stable fs for a moment. E.g.
--
--::
--
--
--        jbd2_journal_lock_updates() //stop new stuff happening..
--        jbd2_journal_flush()        // checkpoint everything.
--        ..do stuff on stable fs
--        jbd2_journal_unlock_updates() // carry on with filesystem use.
--
--The opportunities for abuse and DOS attacks with this should be obvious,
--if you allow unprivileged userspace to trigger codepaths containing
--these calls.
--
--Summary
--~~~~~~~
--
--Using the journal is a matter of wrapping the different context changes,
--being each mount, each modification (transaction) and each changed
--buffer to tell the journalling layer about them.
--
--Data Types
------------
--
--The journalling layer uses typedefs to 'hide' the concrete definitions
--of the structures used. As a client of the JBD2 layer you can just rely
--on the using the pointer as a magic cookie of some sort. Obviously the
--hiding is not enforced as this is 'C'.
--
--Structures
--~~~~~~~~~~
--
--.. kernel-doc:: include/linux/jbd2.h
--   :internal:
--
--Functions
-----------
--
--The functions here are split into two groups those that affect a journal
--as a whole, and those which are used to manage transactions
--
--Journal Level
--~~~~~~~~~~~~~
--
--.. kernel-doc:: fs/jbd2/journal.c
--   :export:
--
--.. kernel-doc:: fs/jbd2/recovery.c
--   :internal:
--
--Transasction Level
--~~~~~~~~~~~~~~~~~~
--
--.. kernel-doc:: fs/jbd2/transaction.c
--
--See also
----------
--
--`Journaling the Linux ext2fs Filesystem, LinuxExpo 98, Stephen
--Tweedie <http://kernel.org/pub/linux/kernel/people/sct/ext3/journal-design.ps.gz>`__
--
--`Ext3 Journalling FileSystem, OLS 2000, Dr. Stephen
--Tweedie <http://olstrans.sourceforge.net/release/OLS2000-ext3/OLS2000-ext3.html>`__
--
--splice API
--==========
--
--splice is a method for moving blocks of data around inside the kernel,
--without continually transferring them between the kernel and user space.
--
--.. kernel-doc:: fs/splice.c
--
--pipes API
--=========
--
--Pipe interfaces are all for in-kernel (builtin image) use. They are not
--exported for use by modules.
--
--.. kernel-doc:: include/linux/pipe_fs_i.h
--   :internal:
--
--.. kernel-doc:: fs/pipe.c
--
--Encryption API
--==============
--
--A library which filesystems can hook into to support transparent
--encryption of files and directories.
-+Documentation for the support code within the filesystem layer for use in
-+filesystem implementations.
- 
- .. toctree::
--    :maxdepth: 2
--
--    fscrypt
--
--Pathname lookup
--===============
--
--
--This write-up is based on three articles published at lwn.net:
-+   :maxdepth: 2
- 
--- <https://lwn.net/Articles/649115/> Pathname lookup in Linux
--- <https://lwn.net/Articles/649729/> RCU-walk: faster pathname lookup in Linux
--- <https://lwn.net/Articles/650786/> A walk among the symlinks
-+   journalling
-+   fscrypt
- 
--Written by Neil Brown with help from Al Viro and Jon Corbet.
--It has subsequently been updated to reflect changes in the kernel
--including:
-+Filesystem-specific documentation
-+=================================
- 
--- per-directory parallel name lookup.
-+Documentation for individual filesystem types can be found here.
- 
- .. toctree::
-    :maxdepth: 2
- 
--   path-lookup.rst
--
--binderfs
--========
--
--.. toctree::
--
-    binderfs.rst
-diff --git a/Documentation/filesystems/journalling.rst b/Documentation/filesystems/journalling.rst
-new file mode 100644
-index 000000000000..58ce6b395206
---- /dev/null
-+++ b/Documentation/filesystems/journalling.rst
-@@ -0,0 +1,184 @@
-+The Linux Journalling API
-+=========================
-+
-+Overview
-+--------
-+
-+Details
-+~~~~~~~
-+
-+The journalling layer is easy to use. You need to first of all create a
-+journal_t data structure. There are two calls to do this dependent on
-+how you decide to allocate the physical media on which the journal
-+resides. The :c:func:`jbd2_journal_init_inode` call is for journals stored in
-+filesystem inodes, or the :c:func:`jbd2_journal_init_dev` call can be used
-+for journal stored on a raw device (in a continuous range of blocks). A
-+journal_t is a typedef for a struct pointer, so when you are finally
-+finished make sure you call :c:func:`jbd2_journal_destroy` on it to free up
-+any used kernel memory.
-+
-+Once you have got your journal_t object you need to 'mount' or load the
-+journal file. The journalling layer expects the space for the journal
-+was already allocated and initialized properly by the userspace tools.
-+When loading the journal you must call :c:func:`jbd2_journal_load` to process
-+journal contents. If the client file system detects the journal contents
-+does not need to be processed (or even need not have valid contents), it
-+may call :c:func:`jbd2_journal_wipe` to clear the journal contents before
-+calling :c:func:`jbd2_journal_load`.
-+
-+Note that jbd2_journal_wipe(..,0) calls
-+:c:func:`jbd2_journal_skip_recovery` for you if it detects any outstanding
-+transactions in the journal and similarly :c:func:`jbd2_journal_load` will
-+call :c:func:`jbd2_journal_recover` if necessary. I would advise reading
-+:c:func:`ext4_load_journal` in fs/ext4/super.c for examples on this stage.
-+
-+Now you can go ahead and start modifying the underlying filesystem.
-+Almost.
-+
-+You still need to actually journal your filesystem changes, this is done
-+by wrapping them into transactions. Additionally you also need to wrap
-+the modification of each of the buffers with calls to the journal layer,
-+so it knows what the modifications you are actually making are. To do
-+this use :c:func:`jbd2_journal_start` which returns a transaction handle.
-+
-+:c:func:`jbd2_journal_start` and its counterpart :c:func:`jbd2_journal_stop`,
-+which indicates the end of a transaction are nestable calls, so you can
-+reenter a transaction if necessary, but remember you must call
-+:c:func:`jbd2_journal_stop` the same number of times as
-+:c:func:`jbd2_journal_start` before the transaction is completed (or more
-+accurately leaves the update phase). Ext4/VFS makes use of this feature to
-+simplify handling of inode dirtying, quota support, etc.
-+
-+Inside each transaction you need to wrap the modifications to the
-+individual buffers (blocks). Before you start to modify a buffer you
-+need to call :c:func:`jbd2_journal_get_create_access()` /
-+:c:func:`jbd2_journal_get_write_access()` /
-+:c:func:`jbd2_journal_get_undo_access()` as appropriate, this allows the
-+journalling layer to copy the unmodified
-+data if it needs to. After all the buffer may be part of a previously
-+uncommitted transaction. At this point you are at last ready to modify a
-+buffer, and once you are have done so you need to call
-+:c:func:`jbd2_journal_dirty_metadata`. Or if you've asked for access to a
-+buffer you now know is now longer required to be pushed back on the
-+device you can call :c:func:`jbd2_journal_forget` in much the same way as you
-+might have used :c:func:`bforget` in the past.
-+
-+A :c:func:`jbd2_journal_flush` may be called at any time to commit and
-+checkpoint all your transactions.
-+
-+Then at umount time , in your :c:func:`put_super` you can then call
-+:c:func:`jbd2_journal_destroy` to clean up your in-core journal object.
-+
-+Unfortunately there a couple of ways the journal layer can cause a
-+deadlock. The first thing to note is that each task can only have a
-+single outstanding transaction at any one time, remember nothing commits
-+until the outermost :c:func:`jbd2_journal_stop`. This means you must complete
-+the transaction at the end of each file/inode/address etc. operation you
-+perform, so that the journalling system isn't re-entered on another
-+journal. Since transactions can't be nested/batched across differing
-+journals, and another filesystem other than yours (say ext4) may be
-+modified in a later syscall.
-+
-+The second case to bear in mind is that :c:func:`jbd2_journal_start` can block
-+if there isn't enough space in the journal for your transaction (based
-+on the passed nblocks param) - when it blocks it merely(!) needs to wait
-+for transactions to complete and be committed from other tasks, so
-+essentially we are waiting for :c:func:`jbd2_journal_stop`. So to avoid
-+deadlocks you must treat :c:func:`jbd2_journal_start` /
-+:c:func:`jbd2_journal_stop` as if they were semaphores and include them in
-+your semaphore ordering rules to prevent
-+deadlocks. Note that :c:func:`jbd2_journal_extend` has similar blocking
-+behaviour to :c:func:`jbd2_journal_start` so you can deadlock here just as
-+easily as on :c:func:`jbd2_journal_start`.
-+
-+Try to reserve the right number of blocks the first time. ;-). This will
-+be the maximum number of blocks you are going to touch in this
-+transaction. I advise having a look at at least ext4_jbd.h to see the
-+basis on which ext4 uses to make these decisions.
-+
-+Another wriggle to watch out for is your on-disk block allocation
-+strategy. Why? Because, if you do a delete, you need to ensure you
-+haven't reused any of the freed blocks until the transaction freeing
-+these blocks commits. If you reused these blocks and crash happens,
-+there is no way to restore the contents of the reallocated blocks at the
-+end of the last fully committed transaction. One simple way of doing
-+this is to mark blocks as free in internal in-memory block allocation
-+structures only after the transaction freeing them commits. Ext4 uses
-+journal commit callback for this purpose.
-+
-+With journal commit callbacks you can ask the journalling layer to call
-+a callback function when the transaction is finally committed to disk,
-+so that you can do some of your own management. You ask the journalling
-+layer for calling the callback by simply setting
-+``journal->j_commit_callback`` function pointer and that function is
-+called after each transaction commit. You can also use
-+``transaction->t_private_list`` for attaching entries to a transaction
-+that need processing when the transaction commits.
-+
-+JBD2 also provides a way to block all transaction updates via
-+:c:func:`jbd2_journal_lock_updates()` /
-+:c:func:`jbd2_journal_unlock_updates()`. Ext4 uses this when it wants a
-+window with a clean and stable fs for a moment. E.g.
-+
-+::
-+
-+
-+        jbd2_journal_lock_updates() //stop new stuff happening..
-+        jbd2_journal_flush()        // checkpoint everything.
-+        ..do stuff on stable fs
-+        jbd2_journal_unlock_updates() // carry on with filesystem use.
-+
-+The opportunities for abuse and DOS attacks with this should be obvious,
-+if you allow unprivileged userspace to trigger codepaths containing
-+these calls.
-+
-+Summary
-+~~~~~~~
-+
-+Using the journal is a matter of wrapping the different context changes,
-+being each mount, each modification (transaction) and each changed
-+buffer to tell the journalling layer about them.
-+
-+Data Types
-+----------
-+
-+The journalling layer uses typedefs to 'hide' the concrete definitions
-+of the structures used. As a client of the JBD2 layer you can just rely
-+on the using the pointer as a magic cookie of some sort. Obviously the
-+hiding is not enforced as this is 'C'.
-+
-+Structures
-+~~~~~~~~~~
-+
-+.. kernel-doc:: include/linux/jbd2.h
-+   :internal:
-+
-+Functions
-+---------
-+
-+The functions here are split into two groups those that affect a journal
-+as a whole, and those which are used to manage transactions
-+
-+Journal Level
-+~~~~~~~~~~~~~
-+
-+.. kernel-doc:: fs/jbd2/journal.c
-+   :export:
-+
-+.. kernel-doc:: fs/jbd2/recovery.c
-+   :internal:
-+
-+Transasction Level
-+~~~~~~~~~~~~~~~~~~
-+
-+.. kernel-doc:: fs/jbd2/transaction.c
-+
-+See also
-+--------
-+
-+`Journaling the Linux ext2fs Filesystem, LinuxExpo 98, Stephen
-+Tweedie <http://kernel.org/pub/linux/kernel/people/sct/ext3/journal-design.ps.gz>`__
-+
-+`Ext3 Journalling FileSystem, OLS 2000, Dr. Stephen
-+Tweedie <http://olstrans.sourceforge.net/release/OLS2000-ext3/OLS2000-ext3.html>`__
-+
-diff --git a/Documentation/filesystems/path-lookup.rst b/Documentation/filesystems/path-lookup.rst
-index 80e22eda4132..434a07b0002b 100644
---- a/Documentation/filesystems/path-lookup.rst
-+++ b/Documentation/filesystems/path-lookup.rst
-@@ -1,3 +1,18 @@
-+===============
-+Pathname lookup
-+===============
-+
-+This write-up is based on three articles published at lwn.net:
-+
-+- <https://lwn.net/Articles/649115/> Pathname lookup in Linux
-+- <https://lwn.net/Articles/649729/> RCU-walk: faster pathname lookup in Linux
-+- <https://lwn.net/Articles/650786/> A walk among the symlinks
-+
-+Written by Neil Brown with help from Al Viro and Jon Corbet.
-+It has subsequently been updated to reflect changes in the kernel
-+including:
-+
-+- per-directory parallel name lookup.
- 
- Introduction to pathname lookup
- ===============================
-diff --git a/Documentation/filesystems/splice.rst b/Documentation/filesystems/splice.rst
-new file mode 100644
-index 000000000000..edd874808472
---- /dev/null
-+++ b/Documentation/filesystems/splice.rst
-@@ -0,0 +1,22 @@
-+================
-+splice and pipes
-+================
-+
-+splice API
-+==========
-+
-+splice is a method for moving blocks of data around inside the kernel,
-+without continually transferring them between the kernel and user space.
-+
-+.. kernel-doc:: fs/splice.c
-+
-+pipes API
-+=========
-+
-+Pipe interfaces are all for in-kernel (builtin image) use. They are not
-+exported for use by modules.
-+
-+.. kernel-doc:: include/linux/pipe_fs_i.h
-+   :internal:
-+
-+.. kernel-doc:: fs/pipe.c
--- 
-2.20.1
+On 02/21/2019 01:51 PM, Michael Ellerman wrote:
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> 
+>> Now that mmu_mapin_ram() is able to handle other blocks
+>> than the one starting at 0, the WII can use it for all
+>> its blocks.
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>>   arch/powerpc/mm/pgtable_32.c | 27 +++++++++------------------
+>>   1 file changed, 9 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
+>> index b4858818523f..2bf9bf8867d4 100644
+>> --- a/arch/powerpc/mm/pgtable_32.c
+>> +++ b/arch/powerpc/mm/pgtable_32.c
+>> @@ -254,26 +254,17 @@ static void __init __mapin_ram_chunk(unsigned long offset, unsigned long top)
+>>   
+>>   void __init mapin_ram(void)
+>>   {
+>> -	unsigned long s, top;
+>> -
+>> -#ifndef CONFIG_WII
+>> -	top = total_lowmem;
+>> -	s = mmu_mapin_ram(0, top);
+>> -	__mapin_ram_chunk(s, top);
+>> -#else
+>> -	if (!wii_hole_size) {
+>> -		s = mmu_mapin_ram(0, total_lowmem);
+>> -		__mapin_ram_chunk(s, total_lowmem);
+>> -	} else {
+>> -		top = wii_hole_start;
+>> -		s = mmu_mapin_ram(0, top);
+>> -		__mapin_ram_chunk(s, top);
+>> +	struct memblock_region *reg;
+>> +
+>> +	for_each_memblock(memory, reg) {
+>> +		unsigned long base = reg->base;
+>> +		unsigned long top = min(base + reg->size, (unsigned long)total_lowmem);
+> 
+> This gives me:
+> 
+> In file included from ../arch/powerpc/mm/pgtable_32.c:22:
+> ../arch/powerpc/mm/pgtable_32.c: In function ‘mapin_ram’:
+> ../include/linux/kernel.h:846:29: error: comparison of distinct pointer types lacks a cast [-Werror]
+>     (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
+>                               ^~
+> ../include/linux/kernel.h:860:4: note: in expansion of macro ‘__typecheck’
+>     (__typecheck(x, y) && __no_side_effects(x, y))
+>      ^~~~~~~~~~~
+> ../include/linux/kernel.h:870:24: note: in expansion of macro ‘__safe_cmp’
+>    __builtin_choose_expr(__safe_cmp(x, y), \
+>                          ^~~~~~~~~~
+> ../include/linux/kernel.h:879:19: note: in expansion of macro ‘__careful_cmp’
+>   #define min(x, y) __careful_cmp(x, y, <)
+>                     ^~~~~~~~~~~~~
+> ../arch/powerpc/mm/pgtable_32.c:261:23: note: in expansion of macro ‘min’
+>     unsigned long top = min(base + reg->size, (unsigned long)total_lowmem);
+>                         ^~~
+> cc1: all warnings being treated as errors
+> ../scripts/Makefile.build:276: recipe for target 'arch/powerpc/mm/pgtable_32.o' failed
+> 
+> 
+> For 44x/bamboo_defconfig.
+> 
 
+The patch below should make it. Tested it on half a dozen of config.
+
+diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
+index 2bf9bf8867d4..c4b0eb51f6d8 100644
+--- a/arch/powerpc/mm/pgtable_32.c
++++ b/arch/powerpc/mm/pgtable_32.c
+@@ -257,8 +257,8 @@ void __init mapin_ram(void)
+  	struct memblock_region *reg;
+
+  	for_each_memblock(memory, reg) {
+-		unsigned long base = reg->base;
+-		unsigned long top = min(base + reg->size, (unsigned long)total_lowmem);
++		phys_addr_t base = reg->base;
++		phys_addr_t top = min(base + reg->size, total_lowmem);
+
+  		if (base >= top)
+  			continue;
+
+I'll send out v5, hope it'll be the last one :(
+
+Christophe
