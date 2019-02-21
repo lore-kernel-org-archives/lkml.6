@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 358C3C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:43:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BECC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:43:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0586D2080D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:43:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7B6E2080D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:43:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550760225;
-	bh=SELteBM9lS05NUYQ3q4ddcZlhdTjUAfUIg07MqgOefc=;
+	s=default; t=1550760227;
+	bh=rr532KoEscbZIomOA/ITsJsmYvMlzvud72uA2TSHD1E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XlykRKURFAKc7vWWHsIxoqrsq14TjITHGSPij02yaXnEzV01BVmukgMZZpImAAIhV
-	 G42OGsgSOV92r646hujxZc8y+RAI2IRd1qCWpyO+K8VbTDlDtRM5IYsivyZhZ+Wj+l
-	 rdUYDVld17G7N3UtnXL5wK9DxQJP9ePuLkb5jxnM=
+	b=tePJCUU/1qGQnU0QFhMVFU4zLZeGjfDH/d8B4Np8nRMytMQns7UixVwFu8j53f8k0
+	 RBrJXnunA3Y17vYTw+rqI6PAj2zpLBY8RQ7gS4vZRh/KC70EcHskrZXdRI+tLh5oN8
+	 rup3vCCS3d85WYuHdfZ+CDcIyXVxn2DHWA01PBPY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729106AbfBUOnn (ORCPT
+        id S1727871AbfBUOnq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:43:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39672 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:43:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729737AbfBUOnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:43:41 -0500
+        id S1729765AbfBUOnn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:43:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F6822075A;
-        Thu, 21 Feb 2019 14:43:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C7E862075A;
+        Thu, 21 Feb 2019 14:43:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550760220;
-        bh=SELteBM9lS05NUYQ3q4ddcZlhdTjUAfUIg07MqgOefc=;
+        s=default; t=1550760223;
+        bh=rr532KoEscbZIomOA/ITsJsmYvMlzvud72uA2TSHD1E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TmrVu2K1jmoEmy222PmruwKMkp+uKk7aBltnP7xET0T20WSPzIQCML4lycvJnOf2m
-         j8aztUHmMGPRW/fmSJ+PXNgmm9nNHPNUsyiEgS3X3dRwGx68r0AUUJEgHfGsGuEElz
-         aGpRYx+MYpxRqhqRrlS7wBYV9i5pwPGmb5G9IcNQ=
+        b=AJvTD4PRSc8QjZ+n8em/MTi5Lmrp9T6hKz1V3IlPrp265AeU0/4oVz6xRS4PV4RGC
+         ao5BcaLeJ/oeq7bD6JDPSWV9OJbbSsJF4be+eAWCxQTeiTggPjxM6qbXxp9TXlVash
+         hTztKehbuSFVh5N0QdwDQIaY0uulS9qUhM57h33o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        Greg Rose <gvrose8192@gmail.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 09/32] net: ip6_gre: initialize erspan_ver just for erspan tunnels
-Date:   Thu, 21 Feb 2019 15:35:57 +0100
-Message-Id: <20190221125251.377350628@linuxfoundation.org>
+Subject: [PATCH 4.20 10/32] net: phy: xgmiitorgmii: Support generic PHY status read
+Date:   Thu, 21 Feb 2019 15:35:58 +0100
+Message-Id: <20190221125251.442375907@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125250.855065214@linuxfoundation.org>
 References: <20190221125250.855065214@linuxfoundation.org>
@@ -68,92 +67,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 4974d5f678abb34401558559d47e2ea3d1c15cba ]
+[ Upstream commit 197f9ab7f08ce4b9ece662f747c3991b2f0fbb57 ]
 
-After commit c706863bc890 ("net: ip6_gre: always reports o_key to
-userspace"), ip6gre and ip6gretap tunnels started reporting TUNNEL_KEY
-output flag even if it is not configured.
-ip6gre_fill_info checks erspan_ver value to add TUNNEL_KEY for
-erspan tunnels, however in commit 84581bdae9587 ("erspan: set
-erspan_ver to 1 by default when adding an erspan dev")
-erspan_ver is initialized to 1 even for ip6gre or ip6gretap
-Fix the issue moving erspan_ver initialization in a dedicated routine
+Some PHY drivers like the generic one do not provide a read_status
+callback on their own but rely on genphy_read_status being called
+directly.
 
-Fixes: c706863bc890 ("net: ip6_gre: always reports o_key to userspace")
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Reviewed-by: Greg Rose <gvrose8192@gmail.com>
+With the current code, this results in a NULL function pointer call.
+Call genphy_read_status instead when there is no specific callback.
+
+Fixes: f411a6160bd4 ("net: phy: Add gmiitorgmii converter support")
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv6/ip6_gre.c | 34 ++++++++++++++++++++--------------
- 1 file changed, 20 insertions(+), 14 deletions(-)
+ drivers/net/phy/xilinx_gmii2rgmii.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/net/ipv6/ip6_gre.c b/net/ipv6/ip6_gre.c
-index 94903061f3240..e83c41c53f4a4 100644
---- a/net/ipv6/ip6_gre.c
-+++ b/net/ipv6/ip6_gre.c
-@@ -1717,6 +1717,24 @@ static int ip6erspan_tap_validate(struct nlattr *tb[], struct nlattr *data[],
- 	return 0;
- }
- 
-+static void ip6erspan_set_version(struct nlattr *data[],
-+				  struct __ip6_tnl_parm *parms)
-+{
-+	parms->erspan_ver = 1;
-+	if (data[IFLA_GRE_ERSPAN_VER])
-+		parms->erspan_ver = nla_get_u8(data[IFLA_GRE_ERSPAN_VER]);
-+
-+	if (parms->erspan_ver == 1) {
-+		if (data[IFLA_GRE_ERSPAN_INDEX])
-+			parms->index = nla_get_u32(data[IFLA_GRE_ERSPAN_INDEX]);
-+	} else if (parms->erspan_ver == 2) {
-+		if (data[IFLA_GRE_ERSPAN_DIR])
-+			parms->dir = nla_get_u8(data[IFLA_GRE_ERSPAN_DIR]);
-+		if (data[IFLA_GRE_ERSPAN_HWID])
-+			parms->hwid = nla_get_u16(data[IFLA_GRE_ERSPAN_HWID]);
-+	}
-+}
-+
- static void ip6gre_netlink_parms(struct nlattr *data[],
- 				struct __ip6_tnl_parm *parms)
- {
-@@ -1765,20 +1783,6 @@ static void ip6gre_netlink_parms(struct nlattr *data[],
- 
- 	if (data[IFLA_GRE_COLLECT_METADATA])
- 		parms->collect_md = true;
--
--	parms->erspan_ver = 1;
--	if (data[IFLA_GRE_ERSPAN_VER])
--		parms->erspan_ver = nla_get_u8(data[IFLA_GRE_ERSPAN_VER]);
--
--	if (parms->erspan_ver == 1) {
--		if (data[IFLA_GRE_ERSPAN_INDEX])
--			parms->index = nla_get_u32(data[IFLA_GRE_ERSPAN_INDEX]);
--	} else if (parms->erspan_ver == 2) {
--		if (data[IFLA_GRE_ERSPAN_DIR])
--			parms->dir = nla_get_u8(data[IFLA_GRE_ERSPAN_DIR]);
--		if (data[IFLA_GRE_ERSPAN_HWID])
--			parms->hwid = nla_get_u16(data[IFLA_GRE_ERSPAN_HWID]);
--	}
- }
- 
- static int ip6gre_tap_init(struct net_device *dev)
-@@ -2207,6 +2211,7 @@ static int ip6erspan_newlink(struct net *src_net, struct net_device *dev,
+diff --git a/drivers/net/phy/xilinx_gmii2rgmii.c b/drivers/net/phy/xilinx_gmii2rgmii.c
+index 74a8782313cf5..bd6084e315de2 100644
+--- a/drivers/net/phy/xilinx_gmii2rgmii.c
++++ b/drivers/net/phy/xilinx_gmii2rgmii.c
+@@ -44,7 +44,10 @@ static int xgmiitorgmii_read_status(struct phy_device *phydev)
+ 	u16 val = 0;
  	int err;
  
- 	ip6gre_netlink_parms(data, &nt->parms);
-+	ip6erspan_set_version(data, &nt->parms);
- 	ign = net_generic(net, ip6gre_net_id);
+-	err = priv->phy_drv->read_status(phydev);
++	if (priv->phy_drv->read_status)
++		err = priv->phy_drv->read_status(phydev);
++	else
++		err = genphy_read_status(phydev);
+ 	if (err < 0)
+ 		return err;
  
- 	if (nt->parms.collect_md) {
-@@ -2252,6 +2257,7 @@ static int ip6erspan_changelink(struct net_device *dev, struct nlattr *tb[],
- 	if (IS_ERR(t))
- 		return PTR_ERR(t);
- 
-+	ip6erspan_set_version(data, &p);
- 	ip6gre_tunnel_unlink_md(ign, t);
- 	ip6gre_tunnel_unlink(ign, t);
- 	ip6erspan_tnl_change(t, &p, !tb[IFLA_MTU]);
 -- 
 2.19.1
 
