@@ -2,112 +2,164 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A05A6C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE54C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:19:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 696D12083B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:18:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHfLYCtC"
+	by mail.kernel.org (Postfix) with ESMTP id 748272083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:19:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728745AbfBUSSb (ORCPT
+        id S1728758AbfBUSTm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 13:18:31 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35052 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728373AbfBUSS3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 13:18:29 -0500
-Received: by mail-io1-f68.google.com with SMTP id x4so2833812ion.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 10:18:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=q1lWpb5oVfdrPg0jMk2RNiAz5bOGQvK2Bip/hT+WEKo=;
-        b=nHfLYCtCQUqNEqdExAHUTg3uXM2N2IN/Tee8td3eSxIVhvMxFAdvI3pOHb18XI5J0T
-         u7UqGG7nUpYObNb2sjM2djyytuRQ0YX25XNCm7sl2eMh1WOEpYecg0LaS3ZXgD2erR3Y
-         iMAaMlzlyNOhr6FcfzDYS+DrFGz/CByWf4K9rcfKZDQmBshzpLbUcuwBaUihp4ZS7GRG
-         drqXw2qBcdfOd3Xd0fRk6Hovm7mJj4toiyZ4l0SrQL1r+b/Q215Iu8+xMPsQkXoRSbdv
-         5Es7wB1wG1SWaz0aNKvYNTBFIFwrVoLr5gBWc0p44jwCdBDmwGp54ecSdms4yQq6kUZk
-         bf9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=q1lWpb5oVfdrPg0jMk2RNiAz5bOGQvK2Bip/hT+WEKo=;
-        b=IcqkWVdnQJsXvfWCylRtJ+ww/n92Kx8LrtRthElmyifo+wUhmiKuAXbrv6B/fW8WwK
-         gE1lPstrG6jD4l7KQKwAKYVkvV94fBEFYx7ySN5Yy5LkJJCbBPhnb/PejwXWVPg04hLV
-         RnolyYw+SXPplYg5p3dT4ug9KqVhrG/EstXJHONXeh2ZET09ZsfAuAQ0de+cvAV+mHTA
-         KIcdWgaxIBnhTzkpHUbPNTqRtRw0qTL0nNQ1yySbmxbLUyoXlECj6XCJOQhOIqQrnOVY
-         uG1pr6zKb/93cmIq0qUA5cY8l5N1pJ8AVJYwisdf1e/R0WJ1Zt1ipTgxoKn9HvhiwFns
-         hYCw==
-X-Gm-Message-State: AHQUAuZPmtdhwULzd9cNIdQ7R/lzlg1yaqhy2lRhMGwA1kxt1MifBz3x
-        6BHKz5Iy/5TG2gyjUx+JCK6hZzsp
-X-Google-Smtp-Source: AHgI3IYNzaABvC9fxLjsrCWpjIsPss+ahJn3Re1PKtYbq7W3vNFtt0TrEwrqTfAgD+tddAKPeCA0XQ==
-X-Received: by 2002:a02:bb0a:: with SMTP id y10mr24100000jan.125.1550773107888;
-        Thu, 21 Feb 2019 10:18:27 -0800 (PST)
-Received: from svens-asus.arcx.com ([184.94.50.30])
-        by smtp.gmail.com with ESMTPSA id s26sm3006284iol.41.2019.02.21.10.18.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Feb 2019 10:18:27 -0800 (PST)
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
-To:     Russell King <linux@armlinux.org.uk>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] sound: hdmi-codec: propagate physical_width
-Date:   Thu, 21 Feb 2019 13:18:14 -0500
-Message-Id: <20190221181814.24829-2-TheSven73@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190221181814.24829-1-TheSven73@gmail.com>
-References: <20190221181814.24829-1-TheSven73@gmail.com>
+        Thu, 21 Feb 2019 13:19:42 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54738 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726165AbfBUSTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 13:19:41 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3E0B459452;
+        Thu, 21 Feb 2019 18:19:41 +0000 (UTC)
+Received: from redhat.com (unknown [10.20.6.236])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 932D95D9D3;
+        Thu, 21 Feb 2019 18:19:33 +0000 (UTC)
+Date:   Thu, 21 Feb 2019 13:19:32 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v2 19/26] userfaultfd: introduce helper vma_find_uffd
+Message-ID: <20190221181931.GS2813@redhat.com>
+References: <20190212025632.28946-1-peterx@redhat.com>
+ <20190212025632.28946-20-peterx@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190212025632.28946-20-peterx@redhat.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 21 Feb 2019 18:19:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Infrastructure patch which allows the tda998x patch to
-build.
+On Tue, Feb 12, 2019 at 10:56:25AM +0800, Peter Xu wrote:
+> We've have multiple (and more coming) places that would like to find a
+> userfault enabled VMA from a mm struct that covers a specific memory
+> range.  This patch introduce the helper for it, meanwhile apply it to
+> the code.
+> 
+> Suggested-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> Signed-off-by: Peter Xu <peterx@redhat.com>
 
-This patch will be submitted for review if/when the
-tda998x patch gets accepted.
+Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
 
-Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
----
- include/sound/hdmi-codec.h    | 1 +
- sound/soc/codecs/hdmi-codec.c | 1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/include/sound/hdmi-codec.h b/include/sound/hdmi-codec.h
-index 9483c55f871b..5ba3db37e349 100644
---- a/include/sound/hdmi-codec.h
-+++ b/include/sound/hdmi-codec.h
-@@ -52,6 +52,7 @@ struct hdmi_codec_params {
- 	struct snd_aes_iec958 iec;
- 	int sample_rate;
- 	int sample_width;
-+	int physical_width;
- 	int channels;
- };
- 
-diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
-index e5b6769b9797..007f20f2c5ac 100644
---- a/sound/soc/codecs/hdmi-codec.c
-+++ b/sound/soc/codecs/hdmi-codec.c
-@@ -518,6 +518,7 @@ static int hdmi_codec_hw_params(struct snd_pcm_substream *substream,
- 
- 	hp.sample_width = params_width(params);
- 	hp.sample_rate = params_rate(params);
-+	hp.physical_width = params_physical_width(params);
- 	hp.channels = params_channels(params);
- 
- 	return hcp->hcd.ops->hw_params(dai->dev->parent, hcp->hcd.data,
--- 
-2.17.1
-
+> ---
+>  mm/userfaultfd.c | 54 +++++++++++++++++++++++++++---------------------
+>  1 file changed, 30 insertions(+), 24 deletions(-)
+> 
+> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> index 80bcd642911d..fefa81c301b7 100644
+> --- a/mm/userfaultfd.c
+> +++ b/mm/userfaultfd.c
+> @@ -20,6 +20,34 @@
+>  #include <asm/tlbflush.h>
+>  #include "internal.h"
+>  
+> +/*
+> + * Find a valid userfault enabled VMA region that covers the whole
+> + * address range, or NULL on failure.  Must be called with mmap_sem
+> + * held.
+> + */
+> +static struct vm_area_struct *vma_find_uffd(struct mm_struct *mm,
+> +					    unsigned long start,
+> +					    unsigned long len)
+> +{
+> +	struct vm_area_struct *vma = find_vma(mm, start);
+> +
+> +	if (!vma)
+> +		return NULL;
+> +
+> +	/*
+> +	 * Check the vma is registered in uffd, this is required to
+> +	 * enforce the VM_MAYWRITE check done at uffd registration
+> +	 * time.
+> +	 */
+> +	if (!vma->vm_userfaultfd_ctx.ctx)
+> +		return NULL;
+> +
+> +	if (start < vma->vm_start || start + len > vma->vm_end)
+> +		return NULL;
+> +
+> +	return vma;
+> +}
+> +
+>  static int mcopy_atomic_pte(struct mm_struct *dst_mm,
+>  			    pmd_t *dst_pmd,
+>  			    struct vm_area_struct *dst_vma,
+> @@ -228,20 +256,9 @@ static __always_inline ssize_t __mcopy_atomic_hugetlb(struct mm_struct *dst_mm,
+>  	 */
+>  	if (!dst_vma) {
+>  		err = -ENOENT;
+> -		dst_vma = find_vma(dst_mm, dst_start);
+> +		dst_vma = vma_find_uffd(dst_mm, dst_start, len);
+>  		if (!dst_vma || !is_vm_hugetlb_page(dst_vma))
+>  			goto out_unlock;
+> -		/*
+> -		 * Check the vma is registered in uffd, this is
+> -		 * required to enforce the VM_MAYWRITE check done at
+> -		 * uffd registration time.
+> -		 */
+> -		if (!dst_vma->vm_userfaultfd_ctx.ctx)
+> -			goto out_unlock;
+> -
+> -		if (dst_start < dst_vma->vm_start ||
+> -		    dst_start + len > dst_vma->vm_end)
+> -			goto out_unlock;
+>  
+>  		err = -EINVAL;
+>  		if (vma_hpagesize != vma_kernel_pagesize(dst_vma))
+> @@ -488,20 +505,9 @@ static __always_inline ssize_t __mcopy_atomic(struct mm_struct *dst_mm,
+>  	 * both valid and fully within a single existing vma.
+>  	 */
+>  	err = -ENOENT;
+> -	dst_vma = find_vma(dst_mm, dst_start);
+> +	dst_vma = vma_find_uffd(dst_mm, dst_start, len);
+>  	if (!dst_vma)
+>  		goto out_unlock;
+> -	/*
+> -	 * Check the vma is registered in uffd, this is required to
+> -	 * enforce the VM_MAYWRITE check done at uffd registration
+> -	 * time.
+> -	 */
+> -	if (!dst_vma->vm_userfaultfd_ctx.ctx)
+> -		goto out_unlock;
+> -
+> -	if (dst_start < dst_vma->vm_start ||
+> -	    dst_start + len > dst_vma->vm_end)
+> -		goto out_unlock;
+>  
+>  	err = -EINVAL;
+>  	/*
+> -- 
+> 2.17.1
+> 
