@@ -2,138 +2,98 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6214EC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:22:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A30EC10F07
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:22:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 327F02086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:22:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hFTaW5it"
+	by mail.kernel.org (Postfix) with ESMTP id 3A6282086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 03:22:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbfBUDWE (ORCPT
+        id S1727254AbfBUDWg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 22:22:04 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41506 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726016AbfBUDWE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 22:22:04 -0500
-Received: by mail-pg1-f196.google.com with SMTP id m1so13014758pgq.8;
-        Wed, 20 Feb 2019 19:22:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rbeCWgecFE9cMPpf4EVqbtisjJw3O/uYh/00EdKprxg=;
-        b=hFTaW5itk34HJadTqyPnyVME7xG5siEO+hdITqaYh1BrkguYbkI6fXh+EHQK4p4gDR
-         9cFSR5VqcEPnJNoBckis/WFAEh5VJMEyOU4goV+KhU/VPbh15KEQ1A6dnafp2vr0PzCG
-         TRF15dgV7iaNhrZN3JfGf9pOGtwr1nwWkiL8gLFPBM+2XKrxL5xS9m9NlAvp7eTge6fr
-         K8trYMmq99atLjuei3q+ZJWdMdR6aXRPYvcoTEHImj6ODnFXjnB7beu0fEV1fdI8tocG
-         gB4U6YD53q1bgn9i3zOVryZfdJGITA/Un26r+Jy661N9AxfjAEk5dVjDwvDKIL9oOyp+
-         KHTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=rbeCWgecFE9cMPpf4EVqbtisjJw3O/uYh/00EdKprxg=;
-        b=aAAPhZZZ5yAtzxdnx3BCpgBGg71r+Nk8yfgOsQgkwvMbrvrVQUZ/gWa5QISyRxOGrr
-         EGNwPXyhKfftzrD6hkqBDSySkOH427TXZt4nWv2EYORZ1Zq+M1PrkJPkK9+SV4V0jTPY
-         9ntgZQjyaTRRg9urpqKTSXSX1sXpXewTmA675589qCYiUoQ8wdpjE2XMi/30uy7+hB5k
-         /+FqRVNyt46HtsJSkVaEenjq11QyAPGkHfx3yiOrjbOFPi/3KWD4xuGGND6P6DN5qSBx
-         KK3B+d1/fQ1tDjCS6gmCtzpj5IUb0oZ2JP9FTF4JtSphciTxiTAkacN/2l6onA9Lr1LI
-         aICQ==
-X-Gm-Message-State: AHQUAub28bxG/ufjL/vxftMnuBEhiV0PW7ohUByCgKnzK16jRnucZQ1W
-        fRJxGLDaq5uVy4F35A3Xsy7+S0SX
-X-Google-Smtp-Source: AHgI3IbuKr725sbLhRfq6Vwam2FO4q8bfJuzes7aH1wvv7Qfb+5Wkcj4PnwQf9FnCCGlMbg0zwtzWQ==
-X-Received: by 2002:a63:9c1a:: with SMTP id f26mr32760302pge.381.1550719322712;
-        Wed, 20 Feb 2019 19:22:02 -0800 (PST)
-Received: from [192.168.1.3] (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
-        by smtp.gmail.com with ESMTPSA id q86sm30557540pfi.171.2019.02.20.19.22.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Feb 2019 19:22:01 -0800 (PST)
-Subject: Re: [RFC PATCH net-next v3 14/21] ethtool: provide link mode names as
- a string set
-To:     Michal Kubecek <mkubecek@suse.cz>, netdev@vger.kernel.org
-Cc:     David Miller <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jiri Pirko <jiri@resnulli.us>, linux-kernel@vger.kernel.org
-References: <cover.1550513384.git.mkubecek@suse.cz>
- <e969567a4630812230efa4fd4c7f0233564822d6.1550513384.git.mkubecek@suse.cz>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- w0j9Sw==
-Message-ID: <9a26eed3-f69a-b5fd-66e1-b926c6e92c2f@gmail.com>
-Date:   Wed, 20 Feb 2019 19:21:58 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
-MIME-Version: 1.0
-In-Reply-To: <e969567a4630812230efa4fd4c7f0233564822d6.1550513384.git.mkubecek@suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 20 Feb 2019 22:22:36 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:35432 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726016AbfBUDWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 22:22:36 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 28A3B1A0154;
+        Thu, 21 Feb 2019 04:22:34 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1218B1A031F;
+        Thu, 21 Feb 2019 04:22:25 +0100 (CET)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 9C41A402A3;
+        Thu, 21 Feb 2019 11:22:13 +0800 (SGT)
+From:   Xiaowei Bao <xiaowei.bao@nxp.com>
+To:     bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        shawnguo@kernel.org, leoyang.li@nxp.com, kishon@ti.com,
+        lorenzo.pieralisi@arm.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, minghuan.Lian@nxp.com,
+        mingkai.hu@nxp.com, roy.zang@nxp.com, kstewart@linuxfoundation.org,
+        pombredanne@nexb.com, shawn.lin@rock-chips.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>
+Subject: [PATCHv7 1/4] dt-bindings: add DT binding for the layerscape PCIe controller with EP mode
+Date:   Thu, 21 Feb 2019 11:16:17 +0800
+Message-Id: <20190221031620.43554-1-xiaowei.bao@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add the documentation for the Device Tree binding for the layerscape PCIe
+controller with EP mode.
 
+Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
+Reviewed-by: Minghuan Lian <minghuan.lian@nxp.com>
+Reviewed-by: Zhiqiang Hou <zhiqiang.hou@nxp.com>
+Reviewed-by: Rob Herring <robh+dt@kernel.org>
+---
+v2:
+ - Add the SoC specific compatibles.
+v3:
+ - modify the commit message.
+v4:
+ - no change.
+v5:
+ - no change.
+v6:
+ - no change.
+v7:
+ - no change.
 
-On 2/18/2019 10:22 AM, Michal Kubecek wrote:
-> Add table of ethernet link mode names and make it available as a string set
-> to userspace GET_STRSET requests.
-> 
-> Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
-> ---
+ .../devicetree/bindings/pci/layerscape-pci.txt     |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
 
-[snip]
-
->  
-> +const char *const link_mode_names[] = {
-
-Maybe you can define a macro (totally untested) to build the table an
-avoid some of the repetition, something like:
-
-#define ETHTOOL_LINK_NAME(speed, duplex) \
-	[ETHTOOL_LINK_MODE_##speed_##duplex_BIT]	= stringify(speed ## "/" ##
-duplex)
-
+diff --git a/Documentation/devicetree/bindings/pci/layerscape-pci.txt b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+index 9b2b8d6..e20ceaa 100644
+--- a/Documentation/devicetree/bindings/pci/layerscape-pci.txt
++++ b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+@@ -13,6 +13,7 @@ information.
+ 
+ Required properties:
+ - compatible: should contain the platform identifier such as:
++  RC mode:
+         "fsl,ls1021a-pcie"
+         "fsl,ls2080a-pcie", "fsl,ls2085a-pcie"
+         "fsl,ls2088a-pcie"
+@@ -20,6 +21,8 @@ Required properties:
+         "fsl,ls1046a-pcie"
+         "fsl,ls1043a-pcie"
+         "fsl,ls1012a-pcie"
++  EP mode:
++	"fsl,ls1046a-pcie-ep", "fsl,ls-pcie-ep"
+ - reg: base addresses and lengths of the PCIe controller register blocks.
+ - interrupts: A list of interrupt outputs of the controller. Must contain an
+   entry for each entry in the interrupt-names property.
 -- 
-Florian
+1.7.1
+
