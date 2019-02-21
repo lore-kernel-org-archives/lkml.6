@@ -2,98 +2,65 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B81C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6970C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:39:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF73E2086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:36:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3923F2086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:39:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="lIDhjVZX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728006AbfBULgm (ORCPT
+        id S1726525AbfBULj3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 06:36:42 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54440 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725814AbfBULgl (ORCPT
+        Thu, 21 Feb 2019 06:39:29 -0500
+Received: from mail-40133.protonmail.ch ([185.70.40.133]:29424 "EHLO
+        mail-40133.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbfBULj3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 06:36:41 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1LBYMHk057052
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 06:36:40 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qssje4rhp-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 06:36:39 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Thu, 21 Feb 2019 11:36:36 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 21 Feb 2019 11:36:35 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1LBaYXM28246054
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 21 Feb 2019 11:36:34 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 478AB11C04C;
-        Thu, 21 Feb 2019 11:36:34 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E4DAD11C054;
-        Thu, 21 Feb 2019 11:36:32 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.84])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 21 Feb 2019 11:36:32 +0000 (GMT)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Thu, 21 Feb 2019 13:36:32 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: [PATCH] asm-generic/page.h: fix typo in #error text requiring a real asm/page.h
-Date:   Thu, 21 Feb 2019 13:36:31 +0200
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 19022111-0012-0000-0000-000002F86EC1
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022111-0013-0000-0000-000021300422
-Message-Id: <1550748991-14362-1-git-send-email-rppt@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-21_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=963 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902210086
+        Thu, 21 Feb 2019 06:39:29 -0500
+Date:   Thu, 21 Feb 2019 11:39:20 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=default; t=1550749167;
+        bh=V8CdK1hJhDnC2t3CEX2lsncyukEMG79uK0GkmBTzJwA=;
+        h=Date:To:From:Reply-To:Subject:Feedback-ID:From;
+        b=lIDhjVZXpvH3sNRLkvscWSt58hWmQY2joVdA0v9UrYEXYcynj3+zxhxLxbcN2wKkw
+         H0rxDAFZdmVsvJG3AfC5v+SfVdNvTSRTG1TuSfUia5VaEOXtUQzWV7DfM8tLQJ/C+a
+         P2tZVwil4IpIUNM62hDD7ab72xcx8hk1XSj3y80M=
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
+Reply-To: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
+Subject: Pay Fair project changing to FreeBSD.
+Message-ID: <JS948ygFqAe-S8e2JlPeqh-Vrlw4LeS1k4JZQVGoGEzYS75j5dkTIgOz11rnGul-bdAfNlCTZcTZv5F_T9aeLEU1JuIWX8wrNoXYAnU8zA8=@protonmail.com>
+Feedback-ID: jE8CP55NmWCGfbi9g5qzrOGkxuwuSXpchSI6fmYzjd5UEveHXeJrmiWc0_sgJdqIHM8YAKf9EEyPwffaRmhZ0A==:Ext:ProtonMail
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace "need to prove a real asm/page.h" with "need to provide a real
-asm/page.h"
+We are changing to FreeBSD which we feel is more in line with our philosoph=
+y, and it always had a saner view on the HZ timer, which ofcourse is there =
+for optimizing inner lopp in highlevel programming, making it close to low-=
+level. The 1000HZ timer in Linux shows incompetent understanding of this. A=
+lso my findings of a 10ms filter in sched.c. GNU blocks thinking so much he=
+re, that it was difficult to get through why a 10MS(!) filter in a 4ghz cpu=
+ makes little sense..
+GNU is a association with gods, and indeed claims of being gods, have occur=
+ed several times on LKML. Strange gods, with 1000hz timers, and 10ms filter=
+s. Probably related to Gnu, Moo, and other "divine entities".
+Instead we seek to disassociate from the schisms of strange gods, and indee=
+d suggest PFY O-S. A Pay Fair economic construct, that these peoples pipe w=
+as never about ofcourse.
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
----
- include/asm-generic/page.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Peace.
+Ywe C=C3=A6rlyn
+Youtube: https://www.youtube.com/channel/UCR3gmLVjHS5A702wo4bol_Q
 
-diff --git a/include/asm-generic/page.h b/include/asm-generic/page.h
-index 27bf337..fe801f0 100644
---- a/include/asm-generic/page.h
-+++ b/include/asm-generic/page.h
-@@ -7,7 +7,7 @@
-  */
- 
- #ifdef CONFIG_MMU
--#error need to prove a real asm/page.h
-+#error need to provide a real asm/page.h
- #endif
- 
- 
--- 
-2.7.4
 
