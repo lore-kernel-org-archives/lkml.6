@@ -2,92 +2,108 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41187C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E04C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17CDC214AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:38:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0FC020842
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:38:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727365AbfBUIik (ORCPT
+        id S1727426AbfBUIiu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 03:38:40 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43494 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727286AbfBUIij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 03:38:39 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9D9F8AC7A;
-        Thu, 21 Feb 2019 08:38:37 +0000 (UTC)
-Date:   Thu, 21 Feb 2019 09:38:35 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@ozlabs.org,
-        akpm@linux-foundation.org, tj@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        dyoung@redhat.com, sergey.senozhatsky@gmail.com,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v3 1/7] dump_stack: Support adding to the dump stack arch
- description
-Message-ID: <20190221083835.pwwwcqtwfucxkday@pathway.suse.cz>
-References: <20190207124635.3885-1-mpe@ellerman.id.au>
- <20190211125035.GA1562@andrea>
- <20190211143859.dd2lkccxod3f2fwn@pathway.suse.cz>
- <20190219233925.GA5648@andrea>
- <87va1e7pw2.fsf@concordia.ellerman.id.au>
- <20190220134433.GA4932@andrea>
+        Thu, 21 Feb 2019 03:38:50 -0500
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:19566
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727395AbfBUIiu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 03:38:50 -0500
+X-IronPort-AV: E=Sophos;i="5.58,394,1544482800"; 
+   d="scan'208";a="296848570"
+Received: from unknown (HELO [193.50.110.170]) ([193.50.110.170])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/AES128-SHA; 21 Feb 2019 09:38:46 +0100
+Subject: Re: [PATCH 05/11] x86 topology: export die_siblings
+To:     Len Brown <lenb@kernel.org>
+Cc:     X86 ML <x86@kernel.org>, linux-kernel@vger.kernel.org,
+        Len Brown <len.brown@intel.com>, linux-doc@vger.kernel.org
+References: <635b2bf8b1151a191cd9299276b75791a818c0c2.1550545163.git.len.brown@intel.com>
+ <0d54a56186fb9be7a8f622a4625a41dc600dd7a4.1550545163.git.len.brown@intel.com>
+ <ceb7549e-6ccb-c6c7-241c-36c6e5c30770@inria.fr>
+ <CAJvTdKm3gqY9G6nOVq_a3r0QX4ECcew7Z3cdr1OxDBGRVgUpkg@mail.gmail.com>
+From:   Brice Goglin <Brice.Goglin@inria.fr>
+Openpgp: preference=signencrypt
+Autocrypt: addr=Brice.Goglin@inria.fr; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <0fc109c7-28e4-9686-c683-d78cf4e5980b@inria.fr>
+Date:   Thu, 21 Feb 2019 09:38:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190220134433.GA4932@andrea>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <CAJvTdKm3gqY9G6nOVq_a3r0QX4ECcew7Z3cdr1OxDBGRVgUpkg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2019-02-20 14:44:33, Andrea Parri wrote:
-> > >> > > +		 * Order the stores above in vsnprintf() vs the store of the
-> > >> > > +		 * space below which joins the two strings. Note this doesn't
-> > >> > > +		 * make the code truly race free because there is no barrier on
-> > >> > > +		 * the read side. ie. Another CPU might load the uninitialised
-> > >> > > +		 * tail of the buffer first and then the space below (rather
-> > >> > > +		 * than the NULL that was there previously), and so print the
-> > >> > > +		 * uninitialised tail. But the whole string lives in BSS so in
-> > >> > > +		 * practice it should just see NULLs.
-> > >> > 
-> > It is not my intention to support concurrent updates of the string. The
-> > idea is you setup the string early in boot.
-> 
-> Understood, thanks for the clarification.
-> > 
-> > The concern with a concurrent reader is simply that the string is dumped
-> > in the panic path, and you never really know when you're going to panic.
-> > Even if you only write to the string before doing SMP bringup you might
-> > still have another CPU go rogue and panic before then.
-> > 
-> > But I probably should have just not added the barrier, it's over
-> > paranoid and will almost certainly never matter in practice.
-> 
-> Oh, well, I can only echo you: if you don't care about the stores being
-> _observed_ out of order, you could simply remove the barrier; if you do
-> care, then you need "more paranoid" on the readers side.  ;-)
 
-Hmm, the barrier might be fine and actually useful. The
-purpose is to make sure that the later '\0' is written before
-the existing one is replaced by ' '.
+Le 21/02/2019 à 08:41, Len Brown a écrit :
+>
+> Here is my list of applications that care about the new CPUID leaf
+> and the concepts of packages and die:
+>
+> cpuid
+> lscpu
+> x86_energy_perf_policy
+> turbostat
 
-The reader does not need the barrier as long as it reads the string
-sequentially. I would expect that it is always the case. But who
-knows with all the speculation-related CPU bugs around.
 
-In each case, any race could never crash the kernel.
-The dump_stack_arch_desc_str is zeroed out of box and
-the very last '\0' is never rewritten.
+You may add hwloc/lstopo which is used by most HPC runtimes (including
+your employers' OpenMP and MPI commercial products :))
 
-Best Regards,
-Petr
+Brice
+
+
