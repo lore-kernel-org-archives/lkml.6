@@ -2,87 +2,65 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E546AC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF769C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9456207E0
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:04:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9290A2083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:05:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550786712;
+	bh=zAwSLPfIKq/ej3wVshazSBQ8ov0FPNCKK7Qq74R6VJ4=;
+	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
+	b=Hpgbj4vXLSg2L3uhqKlAnLGo1pkk4DgUwCyOp+3yAETkzPK6zdk995ZqfhQh+86Bg
+	 xRE4YRbdsrHM8uuQqKGbwF2FnDkE0eKHQtGr02EgCTAc0axRNKgUrLgvm4VhDbmmXS
+	 5v/SiswwMvjvXkgF9Ctyrpxhexd0IcVFVS2yNW+M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbfBUWEf (ORCPT
+        id S1726950AbfBUWFL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 17:04:35 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55834 "EHLO mx1.redhat.com"
+        Thu, 21 Feb 2019 17:05:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725943AbfBUWEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 17:04:34 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725943AbfBUWFK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 17:05:10 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D14BBA77F;
-        Thu, 21 Feb 2019 22:04:34 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C6E211001DD3;
-        Thu, 21 Feb 2019 22:04:33 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] afs: Fix manually set volume location server list
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     Dave Botsch <dwb7@cornell.edu>, dhowells@redhat.com,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Thu, 21 Feb 2019 22:04:32 +0000
-Message-ID: <155078667296.18898.13427509562134997807.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
-MIME-Version: 1.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 15A3A207E0;
+        Thu, 21 Feb 2019 22:05:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550786710;
+        bh=zAwSLPfIKq/ej3wVshazSBQ8ov0FPNCKK7Qq74R6VJ4=;
+        h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
+        b=nEgZyTN08GzJHmt4SVV5DgSlUl9j8iwfp1rZcW2kwdb/B1PXxE/rZH7uqwRoMLH1y
+         EmAsZDKdVRmA9OYjVxD2+iAZsz3udphxLLB8QyO6bW6J81GkdL8Kbl1ZWZcEfEKvIh
+         GLJWQ9fYSpecoCIm0mkwVmDI8DZz85nM8tN8s5GI=
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 21 Feb 2019 22:04:34 +0000 (UTC)
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] clk: clk-gpio: add support for sleeping GPIOs in gpio-gate-clk
+Message-ID: <155078670927.77512.17882802117777143214@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+References: <20190211135818.10518-1-thomas.petazzoni@bootlin.com> <155007806256.115909.10137511038361789251@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <155007806256.115909.10137511038361789251@swboyd.mtv.corp.google.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date:   Thu, 21 Feb 2019 14:05:09 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a cell with a volume location server list is added manually by echoing
-the details into /proc/net/afs/cells, a record is added but the flag saying
-it has been looked up isn't set.  This causes the VL server rotation code
-to wait forever, with the top of /proc/pid/stack looking like:
+Quoting Stephen Boyd (2019-02-13 09:14:22)
+>=20
+> static?
+>=20
 
-	[<0>] afs_select_vlserver+0x3a6/0x6f3
-	[<0>] afs_vl_lookup_vldb+0x4b/0x92
-	[<0>] afs_create_volume+0x25/0x1b9
-	...
-
-with the thread stuck in afs_start_vl_iteration() waiting for
-AFS_CELL_FL_NO_LOOKUP_YET to be cleared.
-
-Fix this by clearing AFS_CELL_FL_NO_LOOKUP_YET when setting up a record if
-that record's details were supplied manually.
-
-Fixes: 0a5143f2f89c ("afs: Implement VL server rotation")
-Reported-by: Dave Botsch <dwb7@cornell.edu>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- fs/afs/cell.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/afs/cell.c b/fs/afs/cell.c
-index cf445dbd5f2e..9de46116c749 100644
---- a/fs/afs/cell.c
-+++ b/fs/afs/cell.c
-@@ -173,6 +173,7 @@ static struct afs_cell *afs_alloc_cell(struct afs_net *net,
- 
- 		rcu_assign_pointer(cell->vl_servers, vllist);
- 		cell->dns_expiry = TIME64_MAX;
-+		__clear_bit(AFS_CELL_FL_NO_LOOKUP_YET, &cell->flags);
- 	} else {
- 		cell->dns_expiry = ktime_get_real_seconds();
- 	}
+Ok I marked it static and applied to clk-next.
 
