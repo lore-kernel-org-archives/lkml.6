@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F206BC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA3F2C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:50:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBEAA2084F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:50:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0D752084F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:50:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728251AbfBUNu0 (ORCPT
+        id S1728262AbfBUNuk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 08:50:26 -0500
-Received: from mga06.intel.com ([134.134.136.31]:43685 "EHLO mga06.intel.com"
+        Thu, 21 Feb 2019 08:50:40 -0500
+Received: from mga06.intel.com ([134.134.136.31]:43673 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728172AbfBUNuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 08:50:23 -0500
+        id S1725820AbfBUNuO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 08:50:14 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 05:50:23 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 05:50:13 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,395,1544515200"; 
-   d="scan'208";a="119707673"
+   d="scan'208";a="119707628"
 Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 21 Feb 2019 05:50:21 -0800
+  by orsmga008.jf.intel.com with ESMTP; 21 Feb 2019 05:50:11 -0800
 From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
         linux-kernel@vger.kernel.org,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [GIT PULL 7/7] stm class: Prevent division by zero
-Date:   Thu, 21 Feb 2019 15:49:59 +0200
-Message-Id: <20190221134959.15121-8-alexander.shishkin@linux.intel.com>
+Subject: [GIT PULL 3/7] intel_th: Only create useful device nodes
+Date:   Thu, 21 Feb 2019 15:49:55 +0200
+Message-Id: <20190221134959.15121-4-alexander.shishkin@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221134959.15121-1-alexander.shishkin@linux.intel.com>
 References: <20190221134959.15121-1-alexander.shishkin@linux.intel.com>
@@ -46,43 +46,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using STP_POLICY_ID_SET ioctl command with dummy_stm device, or any STM
-device that supplies zero mmio channel size, will trigger a division by
-zero bug in the kernel.
-
-Prevent this by disallowing channel widths other than 1 for such devices.
+Right now, the driver will create a device node for each output port,
+with the intent to provide read access to that port's data. However,
+only the memory ports are readable this way (msc0, msc1). Other output
+ports don't need device nodes, so remove them.
 
 Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 ---
- drivers/hwtracing/stm/core.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/hwtracing/intel_th/core.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
-index c80b064224f6..c7ba8acfd4d5 100644
---- a/drivers/hwtracing/stm/core.c
-+++ b/drivers/hwtracing/stm/core.c
-@@ -735,7 +735,7 @@ static int stm_char_policy_set_ioctl(struct stm_file *stmf, void __user *arg)
- 	struct stm_device *stm = stmf->stm;
- 	struct stp_policy_id *id;
- 	char *ids[] = { NULL, NULL };
--	int ret = -EINVAL;
-+	int ret = -EINVAL, wlimit = 1;
- 	u32 size;
+diff --git a/drivers/hwtracing/intel_th/core.c b/drivers/hwtracing/intel_th/core.c
+index fc6b7f8b62fb..7c1acc2f801c 100644
+--- a/drivers/hwtracing/intel_th/core.c
++++ b/drivers/hwtracing/intel_th/core.c
+@@ -422,6 +422,7 @@ static const struct intel_th_subdevice {
+ 	unsigned		nres;
+ 	unsigned		type;
+ 	unsigned		otype;
++	bool			mknode;
+ 	unsigned		scrpd;
+ 	int			id;
+ } intel_th_subdevices[] = {
+@@ -456,6 +457,7 @@ static const struct intel_th_subdevice {
+ 		.name	= "msc",
+ 		.id	= 0,
+ 		.type	= INTEL_TH_OUTPUT,
++		.mknode	= true,
+ 		.otype	= GTH_MSU,
+ 		.scrpd	= SCRPD_MEM_IS_PRIM_DEST | SCRPD_MSC0_IS_ENABLED,
+ 	},
+@@ -476,6 +478,7 @@ static const struct intel_th_subdevice {
+ 		.name	= "msc",
+ 		.id	= 1,
+ 		.type	= INTEL_TH_OUTPUT,
++		.mknode	= true,
+ 		.otype	= GTH_MSU,
+ 		.scrpd	= SCRPD_MEM_IS_PRIM_DEST | SCRPD_MSC1_IS_ENABLED,
+ 	},
+@@ -635,7 +638,8 @@ intel_th_subdevice_alloc(struct intel_th *th,
+ 	}
  
- 	if (stmf->output.nr_chans)
-@@ -763,8 +763,10 @@ static int stm_char_policy_set_ioctl(struct stm_file *stmf, void __user *arg)
- 	if (id->__reserved_0 || id->__reserved_1)
- 		goto err_free;
- 
--	if (id->width < 1 ||
--	    id->width > PAGE_SIZE / stm->data->sw_mmiosz)
-+	if (stm->data->sw_mmiosz)
-+		wlimit = PAGE_SIZE / stm->data->sw_mmiosz;
-+
-+	if (id->width < 1 || id->width > wlimit)
- 		goto err_free;
- 
- 	ids[0] = id->id;
+ 	if (subdev->type == INTEL_TH_OUTPUT) {
+-		thdev->dev.devt = MKDEV(th->major, th->num_thdevs);
++		if (subdev->mknode)
++			thdev->dev.devt = MKDEV(th->major, th->num_thdevs);
+ 		thdev->output.type = subdev->otype;
+ 		thdev->output.port = -1;
+ 		thdev->output.scratchpad = subdev->scrpd;
 -- 
 2.20.1
 
