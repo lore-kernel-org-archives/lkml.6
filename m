@@ -2,139 +2,167 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDEDFC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:22:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC57C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:22:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC8F720818
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:22:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD11E20818
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 08:22:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbfBUIWa (ORCPT
+        id S1727465AbfBUIWv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 03:22:30 -0500
-Received: from nautica.notk.org ([91.121.71.147]:55415 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727088AbfBUIW3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 03:22:29 -0500
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id D1AE3C009; Thu, 21 Feb 2019 09:22:24 +0100 (CET)
-Date:   Thu, 21 Feb 2019 09:22:09 +0100
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Tom Herbert <tom@herbertland.com>
-Cc:     Tom Herbert <tom@quantonium.net>,
-        David Miller <davem@davemloft.net>,
-        Doron Roberts-Kedes <doronrk@fb.com>,
-        Dave Watson <davejwatson@fb.com>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] kcm: remove any offset before parsing messages
-Message-ID: <20190221082209.GA32719@nautica>
-References: <20181031025657.GA17861@nautica>
- <20190215010029.GA10899@nautica>
- <CALx6S35HBKgtYkFde_AhCMPRtZfcVYfCYf=mLKjWSLLAfhMHyQ@mail.gmail.com>
- <20190215015705.GA17974@nautica>
- <CALx6S37MZadJ=PaAd+SSv9hxSX9kFTmTUtijPGA39JCx3PYq1Q@mail.gmail.com>
- <20190215033102.GA3099@nautica>
- <CAPDqMeoJ7CCo1eGNBp_-crkxfVt_4f=XQqhEo7kmyCN-hf_EWQ@mail.gmail.com>
- <20190215045214.GA13123@nautica>
- <20190220041151.GA13520@nautica>
- <CALx6S35jPN+E7-A4JK9ypAETophtKrJzjd9HPmXowU7RMS=bcA@mail.gmail.com>
+        Thu, 21 Feb 2019 03:22:51 -0500
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:39241 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726075AbfBUIWu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 03:22:50 -0500
+X-Originating-IP: 90.88.23.190
+Received: from aptenodytes (aaubervilliers-681-1-81-190.w90-88.abo.wanadoo.fr [90.88.23.190])
+        (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id CC31CC000C;
+        Thu, 21 Feb 2019 08:22:47 +0000 (UTC)
+Message-ID: <3ed330798d31d01fdfbd40571d016a108c9c5040.camel@bootlin.com>
+Subject: Re: [PATCH v3] usb: chipidea: Grab the (legacy) USB PHY by phandle
+ first
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Peter Chen <peter.chen@nxp.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date:   Thu, 21 Feb 2019 09:22:47 +0100
+In-Reply-To: <VI1PR04MB53278AE9AB6C14DA2AB96F6A8B7E0@VI1PR04MB5327.eurprd04.prod.outlook.com>
+References: <20190215162225.19284-1-paul.kocialkowski@bootlin.com>
+         <VI1PR04MB53274C03CD18C3D3ADB767408B630@VI1PR04MB5327.eurprd04.prod.outlook.com>
+         <c80ee02db4a22d15a24281384ae561462593684f.camel@bootlin.com>
+         <VI1PR04MB53278AE9AB6C14DA2AB96F6A8B7E0@VI1PR04MB5327.eurprd04.prod.outlook.com>
+Organization: Bootlin
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CALx6S35jPN+E7-A4JK9ypAETophtKrJzjd9HPmXowU7RMS=bcA@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tom Herbert wrote on Wed, Feb 20, 2019:
-> > When the client closes the socket, some messages are obviously still "in
-> > flight", and the server will recv a POLLERR notification on the csock at
-> > some point with many messages left.
-> > The documentation says to unattach the csock when you get POLLER. If I
-> > do that, the kcm socket will no longer give me any message, so all the
-> > messages still in flight at the time are lost.
+Hi,
+
+On Thu, 2019-02-21 at 03:29 +0000, Peter Chen wrote:
+>  
+> > On Mon, 2019-02-18 at 03:04 +0000, Peter Chen wrote:
+> > > > According to the chipidea driver bindings, the USB PHY is specified via the
+> > "phys"
+> > > > phandle node. However, this only takes effect for USB PHYs that use
+> > > > the common PHY framework. For legacy USB PHYs, a simple lookup based
+> > > > on the USB PHY type is done instead.
+> > > > 
+> > > > This does not play out well when more than one USB PHY is
+> > > > registered, since the first registered PHY matching the type will
+> > > > always be returned regardless of what the driver was bound to.
+> > > > 
+> > > > Fix this by looking up the PHY based on the "phys" phandle node.
+> > > > Although generic PHYs are rather matched by their "phys-name" and not the
+> > "phys"
+> > > > phandle directly, there is no helper for similar lookup on legacy
+> > > > PHYs and it's probably not worth the effort to add it.
+> > > > 
+> > > > When no legacy USB PHY is found by phandle, fallback to grabbing any
+> > > > registered
+> > > > USB2 PHY. This ensures backward compatibility if some users were
+> > > > actually relying on this mechanism.
+> > > > 
+> > > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > > > ---
+> > > > Changes since v2:
+> > > > * Fixed typos in commit message.
+> > > > 
+> > > > Changes since v1:
+> > > > * Only consider legacy USB PHY error for fallback as suggested;
+> > > > * Checked against EPROBE_DEFER before entering fallback.
+> > > > 
+> > > >  drivers/usb/chipidea/core.c | 9 ++++++++-
+> > > >  1 file changed, 8 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/usb/chipidea/core.c
+> > > > b/drivers/usb/chipidea/core.c index 7bfcbb23c2a4..016e4004fe9d
+> > > > 100644
+> > > > --- a/drivers/usb/chipidea/core.c
+> > > > +++ b/drivers/usb/chipidea/core.c
+> > > > @@ -954,8 +954,15 @@ static int ci_hdrc_probe(struct platform_device *pdev)
+> > > >  	} else if (ci->platdata->usb_phy) {
+> > > >  		ci->usb_phy = ci->platdata->usb_phy;
+> > > >  	} else {
+> > > > +		ci->usb_phy = devm_usb_get_phy_by_phandle(dev->parent, "phys",
+> > > > +							  0);
+> > > >  		ci->phy = devm_phy_get(dev->parent, "usb-phy");
+> > > > -		ci->usb_phy = devm_usb_get_phy(dev->parent,
+> > > > USB_PHY_TYPE_USB2);
+> > > > +
+> > > > +		/* Fallback to grabbing any registered USB2 PHY */
+> > > > +		if (IS_ERR(ci->usb_phy) &&
+> > > > +		    PTR_ERR(ci->usb_phy) != -EPROBE_DEFER)
+> > > > +			ci->usb_phy = devm_usb_get_phy(dev->parent,
+> > > > +						       USB_PHY_TYPE_USB2);
+> > > > 
+> > > 
+> > > I think you may need to do above if ci->phy is error, and not the error is -
+> > EPROBE_DEFER.
+> > 
+> > As Thomas pointed out during the review of v1, the initial flow is to try and get both
+> > ci->usb_phy and ci->phy and let the code use ci->phy in priority later.
+> > 
 > 
-> So basically it sounds like you're interested in supporting TCP
-> connections that are half closed. I believe that the error in half
-> closed is EPIPE, so if the TCP socket returns that it can be ignored
-> and the socket can continue being attached and used to send data.
+> If there is a generic PHY node under USB controller, and there is a USB PHY
+> at other sides, both ci->phy and ci->usb_phy are valid, I original thought it is
+> the problem you met.
 
-Did you mean 'can continue being attached and used to receive data'?
+Right, this is not the problem we are having. The problem is that
+legacy USB PHYs are not grabbed from device-tree. Instead, they are
+currently matched with their type in the list of registered USB PHYs,
+making it impossible to use 2 distinct USB PHYs this way.
 
-I can confirm getsockopt with SO_ERROR gets me EPIPE, but I don't see
-how to efficiently ignore EPIPE until POLLIN gets unset -- polling on
-both the csock and kcm socket will do many needless wakeups on only the
-csock from what I can see, so I'd need some holdoff timer or something.
-I guess it's possible though.
+> Since you are trying to fix the legacy USB PHY grab issue, I hope you could consider
+> the generic PHY as well.
 
-> Another possibility is to add some linger semantics to an attached
-> socket. For instance, a large message might be sent so that part of
-> the messge is queued in TCP and part is queued in the KCM socket.
-> Unattach would probably break that message. We probably want to linger
-> option similar to SO_LINGER (or maybe just use the option on the TCP
-> socket) that means don't complete the detach until any message being
-> transmitted on the lower socket has been queued.
+What do you have in mind about generic PHYs? Everything already works
+as expected with them.
 
-That would certainly work, even if non-obvious from a user standpoint.
+Cheers,
 
+Paul
 
-> > > I'd like to see some retry on ENOMEM before this is merged though, so
-> > > while I'm there I'll resend this with a second patch doing that
-> > > retry,.. I think just not setting strp->interrupted and not reporting
-> > > the error up might be enough? Will have to try either way.
-> >
-> > I also tried playing with that without much success.
-> > I had assumed just not calling strp_parser_err() (which calls the
-> > abort_parser cb) would be enough, eventually calling strp_start_timer()
-> > like the !len case, but no can do.
-> 
-> I think you need to ignore the ENOMEM and have a timer or other
-> callback to retry the operation in the future.
-
-Yes, that's what I had intended to try; basically just break out and
-schedule timer as said above.
-
-After a bit more debugging, this part works (__strp_recv() is called
-again); but the next packet that is treated properly is rejected because
-by the time __strp_recv() was called again a new skb was read and the
-length isn't large enough to go all the way into the new packet, so this
-test fails:
-                        } else if (len <= (ssize_t)head->len -
-                                          skb->len - stm->strp.offset) {
-                                /* Length must be into new skb (and also
-                                 * greater than zero)
-                                 */
-                                STRP_STATS_INCR(strp->stats.bad_hdr_len);
-                                strp_parser_err(strp, -EPROTO, desc);
-
-So I need to figure a way to say "call this function again without
-reading more data" somehow, or make this check more lax e.g. accept any
-len > 0 after a retry maybe...
-Removing that branch altogether seems to work at least but I'm not sure
-we'd want to?
-(grmbl at this slow VM and strparser not being possible to enable as a
-module, it takes ages to test)
-
-
-> > With that said, returning 0 from the parse function also raises POLLERR
-> > on the csock and hangs netparser, so things aren't that simple...
-> 
-> Can you point to where this is happening. If the parse_msg callback
-> returns 0 that is suppose to indicate that more bytes are needed.
-
-I just blindly returned 0 "from time to time" in the kcm parser
-function, but looking at above it was failing on the same check.
-This somewhat makes sense for this one to fail here if a new packet was
-read, no sane parser function should give a length smaller than what
-they require to determine the length.
-
-
-Thanks,
+> > This change attempts to keep this flow intact. The EPROBE_DEFER check is in
+> > case the initial ci->usb_phy is valid but deferred: we don't want to overwrite it by
+> > calling devm_usb_get_phy which might return an actual error and result in losing
+> > the EPROBE_DEFER information.
+> > 
+> > Does that make sense to you?
+> > 
+> > Cheers,
+> > 
+> > Paul
+> > 
+> > > Peter
+> > > 
+> > > >  		/* if both generic PHY and USB PHY layers aren't enabled */
+> > > >  		if (PTR_ERR(ci->phy) == -ENOSYS &&
+> > > > --
+> > > > 2.20.1
+> > --
+> > Paul Kocialkowski, Bootlin
+> > Embedded Linux and kernel engineering
+> > https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fbootlin.com
+> > &amp;data=02%7C01%7Cpeter.chen%40nxp.com%7Cadca65357daa4fe678dc08d
+> > 6957b9c49%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C6368607554
+> > 66805805&amp;sdata=c%2FdLqUhFxe1yz7lrqUoXZCvINiq1rdKJmMAuaH6Fr1k%3
+> > D&amp;reserved=0
 -- 
-Dominique
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
