@@ -2,114 +2,66 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA9ADC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B906CC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:12:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64DE6207E0
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:11:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EmGf34C9"
+	by mail.kernel.org (Postfix) with ESMTP id 933452084D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:12:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727894AbfBUNL0 (ORCPT
+        id S1727610AbfBUNM3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 08:11:26 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:39776 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbfBUNL0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 08:11:26 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1LDAOij121403;
-        Thu, 21 Feb 2019 07:10:24 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1550754624;
-        bh=hugBsHCAGaJB7Qsx+c9P3n+DXVu2tvNWYRAeH/J9ITM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=EmGf34C9U7doGwkP8RYrfPTTsN+yyNUsgeHSg7eRqQ5wuE69NfsFHWmNoVxNd/3Cg
-         zhXf4Yf/YzHEOgrVQgBsU9dimDP96Y5TqpmqsZPbsw8NK7XD4ECVF7BOYH3Rh7zBem
-         FoinaDhU+hP64BAqeEHDyzkYDLoM9plcGdvd2x04=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1LDAOBo025156
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 21 Feb 2019 07:10:24 -0600
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 21
- Feb 2019 07:10:24 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 21 Feb 2019 07:10:24 -0600
-Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1LDALhE026078;
-        Thu, 21 Feb 2019 07:10:21 -0600
-Subject: Re: [EXT] [PATCH v6 2/2] mtd: spi-nor: cadence-quadspi: Add support
- for Octal SPI controller
-To:     "Bean Huo (beanhuo)" <beanhuo@micron.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>
-References: <20190212083809.6534-1-vigneshr@ti.com>
- <20190212083809.6534-3-vigneshr@ti.com>
- <BYAPR08MB453362F4253ADA149D05315FDB7E0@BYAPR08MB4533.namprd08.prod.outlook.com>
-From:   Vignesh R <vigneshr@ti.com>
-Message-ID: <b459f797-d24c-5501-76a0-057ec1df594d@ti.com>
-Date:   Thu, 21 Feb 2019 18:41:21 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <BYAPR08MB453362F4253ADA149D05315FDB7E0@BYAPR08MB4533.namprd08.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Thu, 21 Feb 2019 08:12:29 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58522 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725385AbfBUNM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 08:12:28 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7BEB0AEA6;
+        Thu, 21 Feb 2019 13:12:27 +0000 (UTC)
+Date:   Thu, 21 Feb 2019 14:12:27 +0100
+Message-ID: <s5hwolt8ev8.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jian-Hong Pan <jian-hong@endlessm.com>
+Subject: Re: linux-next: Fixes tag needs some work in the sound tree
+In-Reply-To: <20190222001029.03c14a16@canb.auug.org.au>
+References: <20190222001029.03c14a16@canb.auug.org.au>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 21/02/19 4:11 PM, Bean Huo (beanhuo) wrote:
-> Hi, Vignesh
+On Thu, 21 Feb 2019 14:10:29 +0100,
+Stephen Rothwell wrote:
 > 
->>
->> Cadence OSPI controller IP supports Octal IO (x8 IO lines), It also has an
->> integrated PHY. IP register layout is very similar to existing QSPI IP except for
->> additional bits to support Octal and Octal DDR mode. Therefore, extend
->> current driver to support Octal mode. Only Octal SDR read (1-1-8)mode is
->> supported for now.
+> Hi Takashi,
 > 
-> Does this your Cadence OSPI controller support 8-8-8 IO mode, if yes,
-> Why not directly enable 8-8-8 mode? 
+> In commit
 > 
-
-Yes.. IP also supports 8-8-8 DTR mode. But supporting those modes
-require enabling, configuring and calibrating OSPI PHY module within the
-IP.
-I am planning to do that, after moving driver over to spi-mem layer.
-
-
->> Tested with mt35xu512aba Octal flash on TI's AM654 EVM.
->>
->> Signed-off-by: Vignesh R <vigneshr@ti.com>
->> ______________________________________________________
->> Linux MTD discussion mailing list
->> http://lists.infradead.org/mailman/listinfo/linux-mtd/
+>   de73e99af971 ("ALSA: hda/realtek: Enable audio jacks of ASUS UX362FA with ALC294")
 > 
-> ______________________________________________________
-> Linux MTD discussion mailing list
-> http://lists.infradead.org/mailman/listinfo/linux-mtd/
+> Fixes tag
 > 
+>   Fixes: 4e0511067 ("ALSA: hda/realtek: Enable audio jacks of ASUS UX533FD with ALC294")
+> 
+> has these problem(s):
+> 
+>   - SHA1 should be at least 12 digits long
+>     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+>     or later) just making sure it is not set (or set to "auto").
 
--- 
-Regards
-Vignesh
+Fixed now, thanks.
+
+
+Takashi
