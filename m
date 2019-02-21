@@ -2,327 +2,310 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86BFEC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:18:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D79AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:18:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A5D220880
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:18:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41EB72084D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:18:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Auys7/qu"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="A0Fh3wBl";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gU7UdA4q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727878AbfBUMSw (ORCPT
+        id S1727921AbfBUMS4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 07:18:52 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:33516 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbfBUMSt (ORCPT
+        Thu, 21 Feb 2019 07:18:56 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:49392 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbfBUMSy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 07:18:49 -0500
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3CF8D255;
-        Thu, 21 Feb 2019 13:18:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1550751526;
-        bh=CsV7lB2dzlmOknM6m5cWOORBhapq4+3DdUyNMWJVWPY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Auys7/quCmftGzZphqkw0amGUwM/xVzxLB6HUS0FA91TWUi+9olUmSMtnGZhzTaCp
-         9fTtD05FW9WAJu9i0ZVOrWs0Sk+J6l3zqjqHTbi+lXe/fgrxKSMh+u3iwIsv4VFul9
-         jQCnNRxF7CX+ssJIg79jB1Wll/sAduYEERtEk0/c=
-Date:   Thu, 21 Feb 2019 14:18:41 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Vaishali Thakkar <vaishali.thakkar@linaro.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org,
-        gregkh@linuxfoundation.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rafael@kernel.org,
-        bjorn.andersson@linaro.org, vkoul@kernel.org
-Subject: Re: [PATCH v2 3/5] soc: qcom: socinfo: Expose custom attributes
-Message-ID: <20190221121841.GA32108@pendragon.ideasonboard.com>
-References: <20190220045829.6852-1-vaishali.thakkar@linaro.org>
+        Thu, 21 Feb 2019 07:18:54 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 08B0560716; Thu, 21 Feb 2019 12:18:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550751533;
+        bh=2O4KlqVDOKHSTUf9pNg5TS1ripEeiZuFEWCKBJ4SlCg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=A0Fh3wBlGhpM8iUGF9VerVTuy4b9hqCJnDPF1bYoPKfMM3qeHPW+yfLkJUal3nCYJ
+         GdT48hST7GlJYKShAZdJ0y9B900vjkNuO9Z39O0vRTw2jgVzXjzSr3FW+NWoMNrQ5e
+         trmFQZMw8Ank0yOdHneDnSC5T6KWZBorg7REFYVo=
+Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rplsssn@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B3FC060960;
+        Thu, 21 Feb 2019 12:18:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550751531;
+        bh=2O4KlqVDOKHSTUf9pNg5TS1ripEeiZuFEWCKBJ4SlCg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gU7UdA4quYMAEuEV0CTlJAT4M+u5xfh0bNVOTMxzT3vtKds/J9B0AKtrC5wmmVU+I
+         xRr9UVaiSbdTAgf5f4SF7YMBgIufNuDXK8AnZXSh/vmUBSbi3Ag6FbgW0tMkuIKcx4
+         k69+NZUC4seElM+ag8k7NEnUXPVwtu4SzWO2ybuA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B3FC060960
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
+From:   "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+To:     andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        sboyd@kernel.org, evgreen@chromium.org, dianders@chromium.org,
+        mka@chromium.org, ilina@codeaurora.org,
+        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>
+Subject: [PATCH RESEND v3 3/3] drivers: qcom: rpmh: disallow active requests in solver mode
+Date:   Thu, 21 Feb 2019 17:48:27 +0530
+Message-Id: <20190221121827.32427-4-rplsssn@codeaurora.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190221121827.32427-1-rplsssn@codeaurora.org>
+References: <20190221121827.32427-1-rplsssn@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190220045829.6852-1-vaishali.thakkar@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vaishali,
+From: Lina Iyer <ilina@codeaurora.org>
 
-Thank you for the patch.
+Controllers may be in 'solver' state, where they could be in autonomous
+mode executing low power modes for their hardware and as such are not
+available for sending active votes. Device driver may notify RPMH API
+that the controller is in solver mode and when in such mode, disallow
+requests from platform drivers for state change using the RSC.
 
-On Wed, Feb 20, 2019 at 10:28:29AM +0530, Vaishali Thakkar wrote:
-> The Qualcomm socinfo provides a number of additional attributes,
-> add these to the socinfo driver and expose them via debugfs
-> functionality.
+Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
+---
+ drivers/soc/qcom/rpmh-internal.h |  5 ++++
+ drivers/soc/qcom/rpmh-rsc.c      | 30 +++++++++++++++++++
+ drivers/soc/qcom/rpmh.c          | 51 ++++++++++++++++++++++++++++++++
+ include/soc/qcom/rpmh.h          |  5 ++++
+ 4 files changed, 91 insertions(+)
 
-What is the use case for these attributes ? I fear they will be used in
-production systems, and that would require debugfs in production, which
-isn't a good idea. If you need to expose those attributes for anything
-else than debugging then we need a proper API, likely sysfs-based.
-
-> Signed-off-by: Vaishali Thakkar <vaishali.thakkar@linaro.org>
-> ---
-> Changes since v1:
-> 	- Remove unnecessary debugfs dir creation check
-> 	- Align ifdefs to left
-> 	- Fix function signatures for debugfs init/exit
-> ---
->  drivers/soc/qcom/socinfo.c | 198 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 198 insertions(+)
-> 
-> diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
-> index 02078049fac7..5f4bef216ae1 100644
-> --- a/drivers/soc/qcom/socinfo.c
-> +++ b/drivers/soc/qcom/socinfo.c
-> @@ -4,6 +4,7 @@
->   * Copyright (c) 2017-2019, Linaro Ltd.
->   */
->  
-> +#include <linux/debugfs.h>
->  #include <linux/err.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> @@ -29,6 +30,28 @@
->   */
->  #define SMEM_HW_SW_BUILD_ID            137
->  
-> +#ifdef CONFIG_DEBUG_FS
-> +/* pmic model info */
-> +static const char *const pmic_model[] = {
-> +	[0]  = "Unknown PMIC model",
-> +	[9]  = "PM8994",
-> +	[11] = "PM8916",
-> +	[13] = "PM8058",
-> +	[14] = "PM8028",
-> +	[15] = "PM8901",
-> +	[16] = "PM8027",
-> +	[17] = "ISL9519",
-> +	[18] = "PM8921",
-> +	[19] = "PM8018",
-> +	[20] = "PM8015",
-> +	[21] = "PM8014",
-> +	[22] = "PM8821",
-> +	[23] = "PM8038",
-> +	[24] = "PM8922",
-> +	[25] = "PM8917",
-> +};
-> +#endif /* CONFIG_DEBUG_FS */
-> +
->  /* Socinfo SMEM item structure */
->  struct socinfo {
->  	__le32 fmt;
-> @@ -70,6 +93,10 @@ struct socinfo {
->  struct qcom_socinfo {
->  	struct soc_device *soc_dev;
->  	struct soc_device_attribute attr;
-> +#ifdef CONFIG_DEBUG_FS
-> +	struct dentry *dbg_root;
-> +#endif /* CONFIG_DEBUG_FS */
-> +	struct socinfo *socinfo;
->  };
->  
->  struct soc_of_id {
-> @@ -133,6 +160,171 @@ static const char *socinfo_machine(struct device *dev, unsigned int id)
->  	return NULL;
->  }
->  
-> +#ifdef CONFIG_DEBUG_FS
-> +
-> +#define UINT_SHOW(name, attr)						\
-> +static int qcom_show_##name(struct seq_file *seq, void *p)		\
-> +{									\
-> +	struct socinfo *socinfo = seq->private;				\
-> +	seq_printf(seq, "%u\n", le32_to_cpu(socinfo->attr));		\
-> +	return 0;							\
-> +}									\
-> +static int qcom_open_##name(struct inode *inode, struct file *file)	\
-> +{									\
-> +	return single_open(file, qcom_show_##name, inode->i_private);	\
-> +}									\
-> +									\
-> +static const struct file_operations qcom_ ##name## _ops = {		\
-> +	.open = qcom_open_##name,					\
-> +	.read = seq_read,						\
-> +	.llseek = seq_lseek,						\
-> +	.release = single_release,					\
-> +}
-> +
-> +#define DEBUGFS_UINT_ADD(name)						\
-> +	debugfs_create_file(__stringify(name), 0400,			\
-> +			    qcom_socinfo->dbg_root,			\
-> +			    qcom_socinfo->socinfo, &qcom_ ##name## _ops)
-> +
-> +#define HEX_SHOW(name, attr)						\
-> +static int qcom_show_##name(struct seq_file *seq, void *p)		\
-> +{									\
-> +	struct socinfo *socinfo = seq->private;				\
-> +	seq_printf(seq, "0x%x\n", le32_to_cpu(socinfo->attr));		\
-> +	return 0;							\
-> +}									\
-> +static int qcom_open_##name(struct inode *inode, struct file *file)	\
-> +{									\
-> +	return single_open(file, qcom_show_##name, inode->i_private);	\
-> +}									\
-> +									\
-> +static const struct file_operations qcom_ ##name## _ops = {		\
-> +	.open = qcom_open_##name,					\
-> +	.read = seq_read,						\
-> +	.llseek = seq_lseek,						\
-> +	.release = single_release,					\
-> +}
-> +
-> +#define DEBUGFS_HEX_ADD(name)						\
-> +	debugfs_create_file(__stringify(name), 0400,			\
-> +			    qcom_socinfo->dbg_root,			\
-> +			    qcom_socinfo->socinfo, &qcom_ ##name## _ops)
-> +
-> +
-> +#define QCOM_OPEN(name, _func)						\
-> +static int qcom_open_##name(struct inode *inode, struct file *file)	\
-> +{									\
-> +	return single_open(file, _func, inode->i_private);		\
-> +}									\
-> +									\
-> +static const struct file_operations qcom_ ##name## _ops = {		\
-> +	.open = qcom_open_##name,					\
-> +	.read = seq_read,						\
-> +	.llseek = seq_lseek,						\
-> +	.release = single_release,					\
-> +}
-> +
-> +#define DEBUGFS_ADD(name)						\
-> +	debugfs_create_file(__stringify(name), 0400,			\
-> +			    qcom_socinfo->dbg_root,			\
-> +			    qcom_socinfo->socinfo, &qcom_ ##name## _ops)
-> +
-> +
-> +static int qcom_show_build_id(struct seq_file *seq, void *p)
-> +{
-> +	struct socinfo *socinfo = seq->private;
-> +
-> +	seq_printf(seq, "%s\n", socinfo->build_id);
-> +
-> +	return 0;
-> +}
-> +
-> +static int qcom_show_accessory_chip(struct seq_file *seq, void *p)
-> +{
-> +	struct socinfo *socinfo = seq->private;
-> +
-> +	seq_printf(seq, "%d\n", le32_to_cpu(socinfo->accessory_chip));
-> +
-> +	return 0;
-> +}
-> +
-> +static int qcom_show_platform_subtype(struct seq_file *seq, void *p)
-> +{
-> +	struct socinfo *socinfo = seq->private;
-> +	int subtype = le32_to_cpu(socinfo->hw_plat_subtype);
-> +
-> +	if (subtype < 0)
-> +		return -EINVAL;
-> +
-> +	seq_printf(seq, "%u\n", subtype);
-> +
-> +	return 0;
-> +}
-> +
-> +static int qcom_show_pmic_model(struct seq_file *seq, void *p)
-> +{
-> +	struct socinfo *socinfo = seq->private;
-> +	int model = SOCINFO_MINOR(le32_to_cpu(socinfo->pmic_model));
-> +
-> +	if (model < 0)
-> +		return -EINVAL;
-> +
-> +	seq_printf(seq, "%s\n", pmic_model[model]);
-> +
-> +	return 0;
-> +}
-> +
-> +static int qcom_show_pmic_die_revision(struct seq_file *seq, void *p)
-> +{
-> +	struct socinfo *socinfo = seq->private;
-> +
-> +	seq_printf(seq, "%u.%u\n",
-> +		   SOCINFO_MAJOR(le32_to_cpu(socinfo->pmic_die_rev)),
-> +		   SOCINFO_MINOR(le32_to_cpu(socinfo->pmic_die_rev)));
-> +
-> +	return 0;
-> +}
-> +
-> +UINT_SHOW(raw_version, raw_ver);
-> +UINT_SHOW(hardware_platform, hw_plat);
-> +UINT_SHOW(platform_version, plat_ver);
-> +UINT_SHOW(foundry_id, foundry_id);
-> +HEX_SHOW(chip_family, chip_family);
-> +HEX_SHOW(raw_device_family, raw_device_family);
-> +HEX_SHOW(raw_device_number, raw_device_num);
-> +QCOM_OPEN(build_id, qcom_show_build_id);
-> +QCOM_OPEN(accessory_chip, qcom_show_accessory_chip);
-> +QCOM_OPEN(pmic_model, qcom_show_pmic_model);
-> +QCOM_OPEN(platform_subtype, qcom_show_platform_subtype);
-> +QCOM_OPEN(pmic_die_revision, qcom_show_pmic_die_revision);
-> +
-> +static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo)
-> +{
-> +	qcom_socinfo->dbg_root = debugfs_create_dir("qcom_socinfo", NULL);
-> +
-> +	DEBUGFS_UINT_ADD(raw_version);
-> +	DEBUGFS_UINT_ADD(hardware_platform);
-> +	DEBUGFS_UINT_ADD(platform_version);
-> +	DEBUGFS_UINT_ADD(foundry_id);
-> +	DEBUGFS_HEX_ADD(chip_family);
-> +	DEBUGFS_HEX_ADD(raw_device_family);
-> +	DEBUGFS_HEX_ADD(raw_device_number);
-> +	DEBUGFS_ADD(build_id);
-> +	DEBUGFS_ADD(accessory_chip);
-> +	DEBUGFS_ADD(pmic_model);
-> +	DEBUGFS_ADD(platform_subtype);
-> +	DEBUGFS_ADD(pmic_die_revision);
-> +}
-> +
-> +static void socinfo_debugfs_exit(struct qcom_socinfo *qcom_socinfo)
-> +{
-> +	debugfs_remove_recursive(qcom_socinfo->dbg_root);
-> +}
-> +#else
-> +static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo) { return 0; }
-> +static void socinfo_debugfs_exit(struct qcom_socinfo *qcom_socinfo) {  }
-> +#endif /* CONFIG_DEBUG_FS */
-> +
->  static int qcom_socinfo_probe(struct platform_device *pdev)
->  {
->  	struct qcom_socinfo *qs;
-> @@ -165,6 +357,10 @@ static int qcom_socinfo_probe(struct platform_device *pdev)
->  	if (IS_ERR(qs->soc_dev))
->  		return PTR_ERR(qs->soc_dev);
->  
-> +	qs->socinfo = info;
-> +
-> +	socinfo_debugfs_init(qs);
-> +
->  	/* Feed the soc specific unique data into entropy pool */
->  	add_device_randomness(info, item_size);
->  
-> @@ -179,6 +375,8 @@ static int qcom_socinfo_remove(struct platform_device *pdev)
->  
->  	soc_device_unregister(qs->soc_dev);
->  
-> +	socinfo_debugfs_exit(qs);
-> +
->  	return 0;
->  }
-> 
-
+diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
+index 4b891c23b4cd..0923c45216a8 100644
+--- a/drivers/soc/qcom/rpmh-internal.h
++++ b/drivers/soc/qcom/rpmh-internal.h
+@@ -70,12 +70,14 @@ struct rpmh_request {
+  * @cache_lock: synchronize access to the cache data
+  * @dirty: was the cache updated since flush
+  * @batch_cache: Cache sleep and wake requests sent as batch
++ * @in_solver_mode: Controller is busy in solver mode
+  */
+ struct rpmh_ctrlr {
+ 	struct list_head cache;
+ 	spinlock_t cache_lock;
+ 	bool dirty;
+ 	struct list_head batch_cache;
++	bool in_solver_mode;
+ };
+ 
+ /**
+@@ -86,6 +88,7 @@ struct rpmh_ctrlr {
+  * @base:       start address of the RSC's DRV registers
+  * @tcs_base:   start address of the TCS registers in this controller
+  * @id:         instance id in the controller (Direct Resource Voter)
++ * @in_solver_mode: Controller is in solver mode
+  * @num_tcs:    number of TCSes in this DRV
+  * @tcs:        TCS groups
+  * @tcs_in_use: s/w state of the TCS
+@@ -97,6 +100,7 @@ struct rsc_drv {
+ 	void __iomem *base;
+ 	void __iomem *tcs_base;
+ 	int id;
++	bool in_solver_mode;
+ 	int num_tcs;
+ 	struct tcs_group tcs[TCS_TYPE_NR];
+ 	DECLARE_BITMAP(tcs_in_use, MAX_TCS_NR);
+@@ -107,6 +111,7 @@ struct rsc_drv {
+ int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg);
+ int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv,
+ 			     const struct tcs_request *msg);
++void rpmh_rsc_mode_solver_set(struct rsc_drv *drv, bool enable);
+ int rpmh_rsc_invalidate(struct rsc_drv *drv);
+ int rpmh_rsc_write_pdc_data(struct rsc_drv *drv, const struct tcs_request *msg);
+ bool rpmh_rsc_ctrlr_is_idle(struct rsc_drv *drv);
+diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+index 9cc303e88a06..10b3102298c7 100644
+--- a/drivers/soc/qcom/rpmh-rsc.c
++++ b/drivers/soc/qcom/rpmh-rsc.c
+@@ -386,6 +386,11 @@ static int tcs_write(struct rsc_drv *drv, const struct tcs_request *msg)
+ 		return PTR_ERR(tcs);
+ 
+ 	spin_lock(&drv->lock);
++
++	if (msg->state == RPMH_ACTIVE_ONLY_STATE && drv->in_solver_mode) {
++		ret = -EINVAL;
++		goto done_write;
++	}
+ 	/*
+ 	 * The h/w does not like if we send a request to the same address,
+ 	 * when one is already in-flight or being processed.
+@@ -524,6 +529,30 @@ static int tcs_ctrl_write(struct rsc_drv *drv, const struct tcs_request *msg)
+ 	return ret;
+ }
+ 
++/**
++ *  rpmh_rsc_mode_solver_set: Enable/disable solver mode
++ *
++ *  @drv: The controller
++ *
++ *  enable: boolean state to be set - true/false
++ */
++void rpmh_rsc_mode_solver_set(struct rsc_drv *drv, bool enable)
++{
++	int m;
++	struct tcs_group *tcs = get_tcs_of_type(drv, ACTIVE_TCS);
++
++again:
++	spin_lock(&drv->lock);
++	for (m = tcs->offset; m < tcs->offset + tcs->num_tcs; m++) {
++		if (!tcs_is_free(drv, m)) {
++			spin_unlock(&drv->lock);
++			goto again;
++		}
++	}
++	drv->in_solver_mode = enable;
++	spin_unlock(&drv->lock);
++}
++
+ /**
+  *  rpmh_rsc_ctrlr_is_idle: Check if any of the AMCs are busy.
+  *
+@@ -718,6 +747,7 @@ static int rpmh_rsc_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ 	spin_lock_init(&drv->lock);
++	drv->in_solver_mode = false;
+ 	bitmap_zero(drv->tcs_in_use, MAX_TCS_NR);
+ 
+ 	irq = platform_get_irq(pdev, drv->id);
+diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+index 43eb9816041a..e6e98d461121 100644
+--- a/drivers/soc/qcom/rpmh.c
++++ b/drivers/soc/qcom/rpmh.c
+@@ -5,6 +5,7 @@
+ 
+ #include <linux/atomic.h>
+ #include <linux/bug.h>
++#include <linux/delay.h>
+ #include <linux/interrupt.h>
+ #include <linux/jiffies.h>
+ #include <linux/kernel.h>
+@@ -75,6 +76,42 @@ static struct rpmh_ctrlr *get_rpmh_ctrlr(const struct device *dev)
+ 	return &drv->client;
+ }
+ 
++static int check_ctrlr_state(struct rpmh_ctrlr *ctrlr, enum rpmh_state state)
++{
++	int ret = 0;
++
++	/* Do not allow setting active votes when in solver mode */
++	spin_lock(&ctrlr->cache_lock);
++	if (ctrlr->in_solver_mode && state == RPMH_ACTIVE_ONLY_STATE)
++		ret = -EBUSY;
++	spin_unlock(&ctrlr->cache_lock);
++
++	return ret;
++}
++
++/**
++ * rpmh_mode_solver_set: Indicate that the RSC controller hardware has
++ * been configured to be in solver mode
++ *
++ * @dev: the device making the request
++ * @enable: Boolean value indicating if the controller is in solver mode.
++ *
++ * When solver mode is enabled, passthru API will not be able to send wake
++ * votes, just awake and active votes.
++ */
++int rpmh_mode_solver_set(const struct device *dev, bool enable)
++{
++	struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
++
++	spin_lock(&ctrlr->cache_lock);
++	rpmh_rsc_mode_solver_set(ctrlr_to_drv(ctrlr), enable);
++	ctrlr->in_solver_mode = enable;
++	spin_unlock(&ctrlr->cache_lock);
++
++	return 0;
++}
++EXPORT_SYMBOL(rpmh_mode_solver_set);
++
+ void rpmh_tx_done(const struct tcs_request *msg, int r)
+ {
+ 	struct rpmh_request *rpm_msg = container_of(msg, struct rpmh_request,
+@@ -230,8 +267,13 @@ int rpmh_write_async(const struct device *dev, enum rpmh_state state,
+ 		     const struct tcs_cmd *cmd, u32 n)
+ {
+ 	struct rpmh_request *rpm_msg;
++	struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
+ 	int ret;
+ 
++	ret = check_ctrlr_state(ctrlr, state);
++	if (ret)
++		return ret;
++
+ 	rpm_msg = kzalloc(sizeof(*rpm_msg), GFP_ATOMIC);
+ 	if (!rpm_msg)
+ 		return -ENOMEM;
+@@ -262,11 +304,16 @@ int rpmh_write(const struct device *dev, enum rpmh_state state,
+ {
+ 	DECLARE_COMPLETION_ONSTACK(compl);
+ 	DEFINE_RPMH_MSG_ONSTACK(dev, state, &compl, rpm_msg);
++	struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
+ 	int ret;
+ 
+ 	if (!cmd || !n || n > MAX_RPMH_PAYLOAD)
+ 		return -EINVAL;
+ 
++	ret = check_ctrlr_state(ctrlr, state);
++	if (ret)
++		return ret;
++
+ 	memcpy(rpm_msg.cmd, cmd, n * sizeof(*cmd));
+ 	rpm_msg.msg.num_cmds = n;
+ 
+@@ -353,6 +400,10 @@ int rpmh_write_batch(const struct device *dev, enum rpmh_state state,
+ 	if (!cmd || !n)
+ 		return -EINVAL;
+ 
++	ret = check_ctrlr_state(ctrlr, state);
++	if (ret)
++		return ret;
++
+ 	while (n[count] > 0)
+ 		count++;
+ 	if (!count)
+diff --git a/include/soc/qcom/rpmh.h b/include/soc/qcom/rpmh.h
+index 4c4b013f0226..e8356b659c7d 100644
+--- a/include/soc/qcom/rpmh.h
++++ b/include/soc/qcom/rpmh.h
+@@ -29,6 +29,8 @@ int rpmh_write_pdc_data(const struct device *dev,
+ 
+ int rpmh_ctrlr_idle(const struct device *dev);
+ 
++int rpmh_mode_solver_set(const struct device *dev, bool enable);
++
+ #else
+ 
+ static inline int rpmh_write(const struct device *dev, enum rpmh_state state,
+@@ -58,6 +60,9 @@ static inline int rpmh_write_pdc_data(const struct device *dev,
+ static inline int rpmh_ctrlr_idle(const struct device *dev)
+ { return -ENODEV; }
+ 
++static inline int rpmh_mode_solver_set(const struct device *dev, bool enable)
++{ return -ENODEV; }
++
+ #endif /* CONFIG_QCOM_RPMH */
+ 
+ #endif /* __SOC_QCOM_RPMH_H__ */
 -- 
-Regards,
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of the Code Aurora Forum, hosted by The Linux Foundation.
 
-Laurent Pinchart
