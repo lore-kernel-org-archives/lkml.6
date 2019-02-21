@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-11.0 required=3.0
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E3FC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 07:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7CC8C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 07:59:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D1FE2086A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 07:59:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7A4F214AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 07:59:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727365AbfBUH7U (ORCPT
+        id S1727390AbfBUH71 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 02:59:20 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:51172 "EHLO
+        Thu, 21 Feb 2019 02:59:27 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:51194 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725831AbfBUH7T (ORCPT
+        with ESMTP id S1725831AbfBUH7Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 02:59:19 -0500
+        Thu, 21 Feb 2019 02:59:25 -0500
 Received: from localhost.localdomain (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 39ECB27F823;
-        Thu, 21 Feb 2019 07:59:18 +0000 (GMT)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 2575A27F89F;
+        Thu, 21 Feb 2019 07:59:24 +0000 (GMT)
 From:   Boris Brezillon <boris.brezillon@collabora.com>
 To:     Schrempf Frieder <frieder.schrempf@kontron.de>,
         "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>,
@@ -37,15 +37,15 @@ Cc:     Boris Brezillon <bbrezillon@kernel.org>,
         "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
         Brian Norris <computersforpeace@gmail.com>,
         David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [v2,2/2] mtd: spi-nor: Add support for MX25V8035F
-Date:   Thu, 21 Feb 2019 08:59:16 +0100
-Message-Id: <20190221075916.3631-1-boris.brezillon@collabora.com>
+Subject: Re: [v2,1/2] mtd: spi-nor: Add support for EN25Q80A
+Date:   Thu, 21 Feb 2019 08:59:21 +0100
+Message-Id: <20190221075921.3691-1-boris.brezillon@collabora.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190218120421.5034-2-frieder.schrempf@kontron.de>
+In-Reply-To: <20190218120421.5034-1-frieder.schrempf@kontron.de>
 References: 
 MIME-Version: 1.0
 X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: e36bb65e5d0cf3233d4da6af4a03d802af51a376
+X-linux-mtd-patch-commit: 08326d8a9472c0bb98f0ba455c6d781951530dc1
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -57,8 +57,9 @@ From: Boris Brezillon <bbrezillon@kernel.org>
 On Mon, 2019-02-18 at 12:04:43 UTC, Schrempf Frieder wrote:
 > From: Frieder Schrempf <frieder.schrempf@kontron.de>
 > 
-> This adds support for the Macronix MX25V8035F, a 8Mb SPI NOR chip.
-> It is used on i.MX6UL/ULL SoMs by Kontron Electronics GmbH (N631x).
+> This adds support for the EON EN25Q80A, a 8Mb SPI NOR chip.
+> It is used on i.MX6 boards by Kontron Electronics GmbH
+> (N60xx, N61xx).
 > It was only tested with a single data line connected, by writing and
 > reading random data with dd.
 > 
