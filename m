@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1571C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E79C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:46:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EF2120823
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:46:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6ADE92084D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:46:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M6I2K+ax"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VIVimHlL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728502AbfBUPqo (ORCPT
+        id S1728525AbfBUPqs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 10:46:44 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34066 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727612AbfBUPqm (ORCPT
+        Thu, 21 Feb 2019 10:46:48 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:34869 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728489AbfBUPqp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 10:46:42 -0500
-Received: by mail-wr1-f68.google.com with SMTP id f14so31238122wrg.1;
-        Thu, 21 Feb 2019 07:46:41 -0800 (PST)
+        Thu, 21 Feb 2019 10:46:45 -0500
+Received: by mail-wm1-f68.google.com with SMTP id y15so9773555wma.0;
+        Thu, 21 Feb 2019 07:46:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=20WKRsSfTrf5aBYjOI8r3Skz9h4IzNSQWOqvPDnaEuw=;
-        b=M6I2K+axK+yFAnKhw1XaRMq3aVSplkIcb3gSaUgToyTFYBKrvgBK02hCz4RHeoWWgQ
-         5UqX3VIx/G4ZvoBScb8tv6qdsN9+Gd2KaiwIROXEccnu4rPIVhEgse9Zdfnsv6tk8+JO
-         jFAUKr5IHVYo/mWhGAX9koGFXLRcLqAUHbcCp5N7iDIuh2a6xhOcWx5KAdE2u4hhJHvy
-         bzHFQ7M1+qNnDZ58k6VLTxQU4gXP2OGggs07Yube6bCP9/zIGRS4leDYCBpJYrbxgYKs
-         4jvJoE4HtSj9QRNS6O7HvgU3RnLYnfRBWRT7P8SqgfONDyMPi4JP6YOVe8mR83QM23+p
-         uYwQ==
+        bh=pVAkFHWsBw81LuVIp40tAQgEJel2bCx4+a76C+S8vdY=;
+        b=VIVimHlLCiYlvoz/2h+LipK3zCcKsLIzq9raYG1EkPUteKzR4gQwiX9nKNo9tL5qXZ
+         wwzuibuAP5c/io1HNbfelTtLFsr1kW5kl2kpXxdmi8XUw0ZGYd3Ts/Sz2TO2K6BJ+0mQ
+         ra9S50IaeDGgUKyeQdkO+jlAX3ZYLTMXYtk13w8riRZW1uL93dGPKclo3ViUZ1f99vvu
+         8je9kqX9CilHJQg4YkImQodwWOYtfrpFHNWoxpHcmKjq2E5FPh+eNwiEzvF1z7mxICSD
+         jZNKyPOM9QaOhvuGmOz8I9odrqwk064CleBLqUdQMTv9ddSlBozY6qjxZ/tMq2rSCWEZ
+         fb4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=20WKRsSfTrf5aBYjOI8r3Skz9h4IzNSQWOqvPDnaEuw=;
-        b=s+gjstF5NBmZB57tkzJp+67vW5Y68+2xB8+Yzq5On4qiMm/Bz2PtT/D+gYvOJaPXFW
-         1XrYWoAj2Z7Sq1NmlXKuZXbqIEN/8eTEqgKOItzAccVUiVaLv9cpmJTfrUxwYRo0KRWw
-         l+7OmZFb8bKhlvn8hFYKFqnVKq9EED9k0CwYu5VdpoSfSxrdGD89NIPN1ip+cP+PKD3T
-         wy7IHcgZLqmrF+YZKvbAdVgABUnIWCMJQFLGBH2vh3j22Y2JwPjKJ7JaY4SncEuc7rW3
-         Xp9M05NKif3YaWfQYFP0ik9KfokKEJShrvtIkEh3nCcck9nO1+yxm6bq/IKBufsbk/iI
-         doMw==
-X-Gm-Message-State: AHQUAuaOGgEzW3EZJ8mVpjLaJGj7tiuA59yfLfKcl6ad7nQQKdU0ynlF
-        vcM3IncrjhNkC7gjguvhTJc=
-X-Google-Smtp-Source: AHgI3IY0/4kYSPgbnUOI4HK58/r3/Hv913q+5wDnEZH1TvHclz7EWqlUBXt36NkhHDFCE4qltPD90w==
-X-Received: by 2002:a05:6000:1c2:: with SMTP id t2mr18584708wrx.109.1550764000699;
-        Thu, 21 Feb 2019 07:46:40 -0800 (PST)
+        bh=pVAkFHWsBw81LuVIp40tAQgEJel2bCx4+a76C+S8vdY=;
+        b=pj3JkOgsPoQO8707eFi52ZifD4E+4/ptvO+Zn6jcOOTuvYVpzqa4o+S9xKMmgIEX9R
+         ic8gEx2HUdul/gbostHeivhwMau+qdAQJT3nl1B7klleh0npzOPDs8Dkc7nsN1eWxW6+
+         HTkLFdXaO4tdQ2/Htd/xsuooWre9goZG7k1XzGeLyTGaM55DJHNXeGU5vKkxkpWwPhW3
+         W+UXvIUDYoIa2+WhMTumYsezRFsICOF5/BXSggS7w4u3lORunkXbQArmq60pjXr/qR6k
+         PakLXNbUNHgC0yC2BurSL/aV77g1sho+xua/b6/lJgOmSG59byw82Uuh59aBAzAlF86a
+         RfeQ==
+X-Gm-Message-State: AHQUAuZlcSkPsdSireEtSKSfQMHkXxPcAdPYMvnFnpuyMq988X8mvbfR
+        YTRwPRm+x8h3uk3Cni93Jqw=
+X-Google-Smtp-Source: AHgI3IbG+E/HxuLF5uKhES+WrpinxbeK0ImwjJTi2bf78ZoEbtrpqDzKaAVZwxsSEsdJA92k7lUG7Q==
+X-Received: by 2002:a7b:cc86:: with SMTP id p6mr10449845wma.32.1550764002180;
+        Thu, 21 Feb 2019 07:46:42 -0800 (PST)
 Received: from localhost (pD9E51D2D.dip0.t-ipconnect.de. [217.229.29.45])
-        by smtp.gmail.com with ESMTPSA id v4sm9771208wmg.1.2019.02.21.07.46.39
+        by smtp.gmail.com with ESMTPSA id o5sm10400553wmh.12.2019.02.21.07.46.41
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Feb 2019 07:46:40 -0800 (PST)
+        Thu, 21 Feb 2019 07:46:41 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Kishon Vijay Abraham I <kishon@ti.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/5] phy: tegra: xusb: Parse dual-role mode property
-Date:   Thu, 21 Feb 2019 16:46:32 +0100
-Message-Id: <20190221154634.10684-4-thierry.reding@gmail.com>
+Subject: [PATCH v2 4/5] phy: tegra: xusb: Add support for power supplies
+Date:   Thu, 21 Feb 2019 16:46:33 +0100
+Message-Id: <20190221154634.10684-5-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221154634.10684-1-thierry.reding@gmail.com>
 References: <20190221154634.10684-1-thierry.reding@gmail.com>
@@ -75,79 +75,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The device tree bindings document the "mode" property of "ports"
-subnodes, but the driver was not parsing the property. In preparation
-for adding role switching, parse the property at probe time.
-
-Based on work by JC Kuo <jckuo@nvidia.com>.
+Support enabling various supplies needed to provide power to the PLLs
+and logic used to drive the USB, PCI and SATA pads.
 
 Reviewed-by: JC Kuo <jckuo@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/phy/tegra/xusb.c | 21 +++++++++++++++++++++
- drivers/phy/tegra/xusb.h |  3 +++
- 2 files changed, 24 insertions(+)
+ drivers/phy/tegra/xusb.c | 34 +++++++++++++++++++++++++++++++++-
+ drivers/phy/tegra/xusb.h |  5 +++++
+ 2 files changed, 38 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index e3bc60cfe6a1..57a2d08ef6da 100644
+index 57a2d08ef6da..e510629f4f1c 100644
 --- a/drivers/phy/tegra/xusb.c
 +++ b/drivers/phy/tegra/xusb.c
-@@ -546,13 +546,34 @@ static void tegra_xusb_port_unregister(struct tegra_xusb_port *port)
- 	device_unregister(&port->dev);
- }
+@@ -864,6 +864,7 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
+ 	struct tegra_xusb_padctl *padctl;
+ 	const struct of_device_id *match;
+ 	struct resource *res;
++	unsigned int i;
+ 	int err;
  
-+static const char *const modes[] = {
-+	[USB_DR_MODE_UNKNOWN] = "",
-+	[USB_DR_MODE_HOST] = "host",
-+	[USB_DR_MODE_PERIPHERAL] = "peripheral",
-+	[USB_DR_MODE_OTG] = "otg",
-+};
-+
- static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *usb2)
- {
- 	struct tegra_xusb_port *port = &usb2->base;
- 	struct device_node *np = port->dev.of_node;
-+	const char *mode;
+ 	/* for backwards compatibility with old device trees */
+@@ -901,14 +902,38 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
+ 		goto remove;
+ 	}
  
- 	usb2->internal = of_property_read_bool(np, "nvidia,internal");
- 
-+	if (!of_property_read_string(np, "mode", &mode)) {
-+		int err = match_string(modes, ARRAY_SIZE(modes), mode);
-+		if (err < 0) {
-+			dev_err(&port->dev, "invalid value %s for \"mode\"\n",
-+				mode);
-+			usb2->mode = USB_DR_MODE_UNKNOWN;
-+		} else {
-+			usb2->mode = err;
-+		}
-+	} else {
-+		usb2->mode = USB_DR_MODE_HOST;
++	padctl->supplies = devm_kcalloc(&pdev->dev, padctl->soc->num_supplies,
++					sizeof(*padctl->supplies), GFP_KERNEL);
++	if (!padctl->supplies) {
++		err = -ENOMEM;
++		goto remove;
 +	}
 +
- 	usb2->supply = devm_regulator_get(&port->dev, "vbus");
- 	return PTR_ERR_OR_ZERO(usb2->supply);
- }
++	for (i = 0; i < padctl->soc->num_supplies; i++)
++		padctl->supplies[i].supply = padctl->soc->supply_names[i];
++
++	err = devm_regulator_bulk_get(&pdev->dev, padctl->soc->num_supplies,
++				      padctl->supplies);
++	if (err < 0) {
++		dev_err(&pdev->dev, "failed to get regulators: %d\n", err);
++		goto remove;
++	}
++
+ 	err = reset_control_deassert(padctl->rst);
+ 	if (err < 0)
+ 		goto remove;
+ 
++	err = regulator_bulk_enable(padctl->soc->num_supplies,
++				    padctl->supplies);
++	if (err < 0) {
++		dev_err(&pdev->dev, "failed to enable supplies: %d\n", err);
++		goto reset;
++	}
++
+ 	err = tegra_xusb_setup_pads(padctl);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to setup pads: %d\n", err);
+-		goto reset;
++		goto power_down;
+ 	}
+ 
+ 	err = tegra_xusb_setup_ports(padctl);
+@@ -921,6 +946,8 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
+ 
+ remove_pads:
+ 	tegra_xusb_remove_pads(padctl);
++power_down:
++	regulator_bulk_disable(padctl->soc->num_supplies, padctl->supplies);
+ reset:
+ 	reset_control_assert(padctl->rst);
+ remove:
+@@ -936,6 +963,11 @@ static int tegra_xusb_padctl_remove(struct platform_device *pdev)
+ 	tegra_xusb_remove_ports(padctl);
+ 	tegra_xusb_remove_pads(padctl);
+ 
++	err = regulator_bulk_disable(padctl->soc->num_supplies,
++				     padctl->supplies);
++	if (err < 0)
++		dev_err(&pdev->dev, "failed to disable supplies: %d\n", err);
++
+ 	err = reset_control_assert(padctl->rst);
+ 	if (err < 0)
+ 		dev_err(&pdev->dev, "failed to assert reset: %d\n", err);
 diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
-index b49dbc36efa3..bb60fc09c752 100644
+index bb60fc09c752..5d5d22f6cb41 100644
 --- a/drivers/phy/tegra/xusb.h
 +++ b/drivers/phy/tegra/xusb.h
-@@ -19,6 +19,8 @@
- #include <linux/mutex.h>
- #include <linux/workqueue.h>
+@@ -370,6 +370,9 @@ struct tegra_xusb_padctl_soc {
+ 	} ports;
  
-+#include <linux/usb/otg.h>
+ 	const struct tegra_xusb_padctl_ops *ops;
 +
- /* legacy entry points for backwards-compatibility */
- int tegra_xusb_padctl_legacy_probe(struct platform_device *pdev);
- int tegra_xusb_padctl_legacy_remove(struct platform_device *pdev);
-@@ -271,6 +273,7 @@ struct tegra_xusb_usb2_port {
- 	struct tegra_xusb_port base;
- 
- 	struct regulator *supply;
-+	enum usb_dr_mode mode;
- 	bool internal;
++	const char * const *supply_names;
++	unsigned int num_supplies;
  };
  
+ struct tegra_xusb_padctl {
+@@ -393,6 +396,8 @@ struct tegra_xusb_padctl {
+ 	unsigned int enable;
+ 
+ 	struct clk *clk;
++
++	struct regulator_bulk_data *supplies;
+ };
+ 
+ static inline void padctl_writel(struct tegra_xusb_padctl *padctl, u32 value,
 -- 
 2.20.1
 
