@@ -2,164 +2,138 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D61C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB50C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:52:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E91D20823
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:52:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5224D2084D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:52:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=mit.edu header.i=@mit.edu header.b="cvlt0b77"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728586AbfBUPwe (ORCPT
+        id S1728543AbfBUPwd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 10:52:34 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36306 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726617AbfBUPwa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 10:52:33 -0500
+Received: from mail-eopbgr720101.outbound.protection.outlook.com ([40.107.72.101]:56750
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726344AbfBUPwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 21 Feb 2019 10:52:30 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1LFnCT3109618
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 10:52:28 -0500
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qsxt30pwd-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 10:52:28 -0500
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 21 Feb 2019 15:52:28 -0000
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 21 Feb 2019 15:52:20 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1LFqJOx21627134
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Feb 2019 15:52:19 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 20695B2068;
-        Thu, 21 Feb 2019 15:52:19 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9E64EB2065;
-        Thu, 21 Feb 2019 15:52:18 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.80.207.192])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 21 Feb 2019 15:52:18 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 9BF7616C63FE; Thu, 21 Feb 2019 07:52:18 -0800 (PST)
-Date:   Thu, 21 Feb 2019 07:52:18 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Christian Brauner <christian@brauner.io>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "moderated list:INTEL ETHERNET DRIVERS" 
-        <intel-wired-lan@lists.osuosl.org>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Josh Triplett <josh@joshtriplett.org>, keescook@chromium.org,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        netdev@vger.kernel.org, rcu@vger.kernel.org,
-        Song Liu <songliubraving@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        xdp-newbies@vger.kernel.org, Yonghong Song <yhs@fb.com>
-Subject: Re: [PATCH RFC 3/5] sched/cpufreq: Fix incorrect RCU API usage
-Reply-To: paulmck@linux.ibm.com
-References: <20190221054942.132388-1-joel@joelfernandes.org>
- <20190221054942.132388-4-joel@joelfernandes.org>
- <20190221091805.GX32477@hirez.programming.kicks-ass.net>
- <20190221152139.GB19213@google.com>
- <20190221153117.GT32494@hirez.programming.kicks-ass.net>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ozRxzMurU21w48JYprR849vMNJMRBbFGSCgknsgpXk0=;
+ b=cvlt0b77vLDw4LntM0K6Wpmsm4SYqoHL1BsejUNWyhnlazfzorsWIcd6c3TWP83Jt4czvleGbOccr+Aibr79InDOnjxNKqciHA+1A8Kxnlswlymgra19XLCMaGXf2FVV5aucjJhujv3eZfTSxLyJPE6Igu8pakPblhj3sKl/9Yw=
+Received: from DM5PR0102CA0007.prod.exchangelabs.com (2603:10b6:4:9c::20) by
+ DM6PR01MB3995.prod.exchangelabs.com (2603:10b6:5:92::16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.14; Thu, 21 Feb 2019 15:52:22 +0000
+Received: from CO1NAM03FT059.eop-NAM03.prod.protection.outlook.com
+ (2a01:111:f400:7e48::206) by DM5PR0102CA0007.outlook.office365.com
+ (2603:10b6:4:9c::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1643.15 via Frontend
+ Transport; Thu, 21 Feb 2019 15:52:22 +0000
+Authentication-Results: spf=pass (sender IP is 18.9.28.11)
+ smtp.mailfrom=mit.edu; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=mit.edu;
+Received-SPF: Pass (protection.outlook.com: domain of mit.edu designates
+ 18.9.28.11 as permitted sender) receiver=protection.outlook.com;
+ client-ip=18.9.28.11; helo=outgoing.mit.edu;
+Received: from outgoing.mit.edu (18.9.28.11) by
+ CO1NAM03FT059.mail.protection.outlook.com (10.152.81.192) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.13 via Frontend Transport; Thu, 21 Feb 2019 15:52:22 +0000
+Received: from callcc.thunk.org (guestnat-104-133-8-109.corp.google.com [104.133.8.109] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x1LFqJDb025351
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 21 Feb 2019 10:52:20 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id BD4F07A3F79; Thu, 21 Feb 2019 10:52:18 -0500 (EST)
+Date:   Thu, 21 Feb 2019 10:52:18 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Mathieu Malaterre <malat@debian.org>
+CC:     Andreas Dilger <adilger.kernel@dilger.ca>,
+        <linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] ext4: annotate implicit fall throughs
+Message-ID: <20190221155218.GD4062@mit.edu>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Mathieu Malaterre <malat@debian.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190114203945.20233-1-malat@debian.org>
+ <20190114203945.20233-2-malat@debian.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20190221153117.GT32494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19022115-0064-0000-0000-000003ACA6B9
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010638; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000281; SDB=6.01164314; UDB=6.00608005; IPR=6.00944899;
- MB=3.00025682; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-21 15:52:26
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022115-0065-0000-0000-00003C7D12FB
-Message-Id: <20190221155218.GZ11787@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-21_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=804 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902210115
+In-Reply-To: <20190114203945.20233-2-malat@debian.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:18.9.28.11;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10019020)(376002)(39860400002)(396003)(346002)(136003)(2980300002)(189003)(199004)(106002)(5660300002)(36756003)(316002)(16586007)(42186006)(54906003)(1076003)(50466002)(46406003)(76176011)(58126008)(36906005)(186003)(786003)(26005)(336012)(90966002)(4326008)(23726003)(52956003)(305945005)(86362001)(103686004)(126002)(446003)(476003)(246002)(486006)(356004)(47776003)(229853002)(2906002)(11346002)(88552002)(6916009)(97756001)(2616005)(106466001)(33656002)(26826003)(14444005)(6246003)(6266002)(75432002)(4744005)(8676002)(8936002)(478600001)(18370500001)(42866002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR01MB3995;H:outgoing.mit.edu;FPR:;SPF:Pass;LANG:en;PTR:outgoing-auth-1.mit.edu;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 631dab5a-74da-4e84-1ec3-08d698149161
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4608103)(4709054)(2017052603328)(7153060);SRVR:DM6PR01MB3995;
+X-MS-TrafficTypeDiagnostic: DM6PR01MB3995:
+X-LD-Processed: 64afd9ba-0ecf-4acf-bc36-935f6235ba8b,ExtAddr
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR01MB3995;20:5B7EtBcfUXxek44m6Cb9yHTjJJK/DylJWJ9GBscklv1qk0tDE8ZyOL9Fmtru9a0CeAMCSXktH50Uk/Pl93t86+t6utW3SqadE2GU1ZqRvS8YLd2SK//wUx11Ra5UaGvpE5EIbOtrsQ1CyIARCKtQH5ZCo6tRfJYmLTASg7iIyu9UptWEXJZi2qMdeU8cykRUtfGoybsbCE12C6T6LLP6EvNFepGUu10pM0w906Qs3sR57dflP6lp8xIStKHQKFDb+DdBEoeCgtchfvgnf4OA+3c0bPHzxXKAtJy2Gq3T8k3TKgWfBbzRHxzy3FR62x12B1NuEBiwEjxvZolae8mLwzp/Kdg7t22LxGHaHdGi8RQl188kSaJYmknGDkPPexjj7NLNz0dwS1Pb9He5zdBFn7O7zaMOpWC+817cG8EYsut6sjLxdf0rvK3IGH5jgE+qbjx+FW8/ICKQLVeVXfrVTWX8Q0k+WsDQymVWQTG1f829S9aWVoOmEBc0PsGHVk17gu5O6MCPAgglu2uDi/n/CyiLltgqfIbhFuHbJWMOnDL+p8kUgKaA7MthAkTowHH+jRWkRZU/f4tbg2yhK7h1cM2XzkNpL0JllBTO025f/Hg=
+X-Microsoft-Antispam-PRVS: <DM6PR01MB39954136346719D6AF0C4952B57E0@DM6PR01MB3995.prod.exchangelabs.com>
+X-Forefront-PRVS: 09555FB1AD
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM6PR01MB3995;23:gFhQ+8ZDzpQjEs5tHN4LEZNL0RKhfVxRKr6lK+MoQ?=
+ =?us-ascii?Q?gp6Wc7W4+LgGO6QQ1n9QuC/GJUAAulIMm62EZqBy6eadsAKpq9O96734RtcO?=
+ =?us-ascii?Q?lfA9SLxzK4iI/jF37cpilCuMDbFSYUv9x/TmSsOvFNmKk6w7/iFhOzZ+jrKJ?=
+ =?us-ascii?Q?G6FSCLkhO1eYSFzKho6LEsSEizqxWfLlwPhgcplFNgOoMQ1GCmxBD1kzNW11?=
+ =?us-ascii?Q?wYzoIYPo1Z51+yOKCputmdLIP4tngV9wRBg4fwEUQqqllsRyheCnu/m+X0wN?=
+ =?us-ascii?Q?VuYXGC/zFWU+u2MHqXKi+Y8w8xpsNxbBi8+zNwXDhtXR8KWcnU2elwDyQcc5?=
+ =?us-ascii?Q?+9Oaf3aZSRH1pEJ76tE2fAkKYAjG4wWTmssbuk0St04hwpyh8UcUS8z/TXus?=
+ =?us-ascii?Q?9C2FUnEFxzgNm6NF2XFJBkC1WloDSqvgcaT3WGZ7Btb3IBZDyKQbOYByVkAf?=
+ =?us-ascii?Q?DQJHBMpEAyYIdRzaJvPoNM/fM+FNEvkufpZ0HPrGlvet9MImTCy++ts7etdz?=
+ =?us-ascii?Q?maZGP6tVSx5gZYAaFQd5vX4UdasaOReC8eIPmrmPgCHEbLMMojQPieuhf0ao?=
+ =?us-ascii?Q?wpZUlxfOJi1LhEJPRdqDvjF0oW1IcRjnufLSPOmLvFYWY/qKgRy1gO7VYfGO?=
+ =?us-ascii?Q?gFWvfGMINuO8UGrAHnht3rKBQSsw+THRBo12UH6IOV2OqbqCoS6gwBXpK5fC?=
+ =?us-ascii?Q?WEhQ2sUeStLrK8LUAAEBA9R5AGMTS6cJairL/ngNSWanw8jlCqq9DjG+UfN7?=
+ =?us-ascii?Q?P1WK/URTK7MfzZvQLYUQTSYPRjmsyuvgAsNHLM2NEp1sLphksWAOZLPryNRf?=
+ =?us-ascii?Q?2kWBM7LffVJP9p0oy5kT66cVw3W3jv1TgyK6CjWx3y7dW+uSoiA+VpTiuHHb?=
+ =?us-ascii?Q?0huTCiP2TOVVWVB7w5FAexzcuFwzs56+WONcXPmd7i6K9vURWNZHsykBK5yL?=
+ =?us-ascii?Q?dtODt6M3Y6+MHSnk5xjxxSFMV/vNJT2d0EofGwolg03Wehj0zAtaZAgQHjI1?=
+ =?us-ascii?Q?ZaOKIGaZOTtnVbDkKLUkoc2Q+cvAUqkqNMAfwvJa7JTIRHYko4a8Oz4ms5RQ?=
+ =?us-ascii?Q?HzQoOiKGDUdtfnjfZK7xHHJn1HVZuGxA1z3Yypfua6oRyliCIgnKg/CILRXK?=
+ =?us-ascii?Q?VKXt3i+rHAiE76tfdqqxE4hJ1YQMMta4nFP1E3TPekyK+brYnTvYPtenvNwV?=
+ =?us-ascii?Q?7odouzKX/Knmd8lVlq7LnyWmTK+gC2hRcMONZ15sLssntWHAofKXdtSZyAwP?=
+ =?us-ascii?Q?cEK4AlUL2OTV6PJMS7Bk+TnY09krxUkVCpn8K5xZ9np13l0W8xI4wdOBZ8cC?=
+ =?us-ascii?B?QT09?=
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: TCmpp+TZcjZsy+/PskmH3Dv0XEI1gCj1JLzHXJxEPGC0DAUUiMg61JgLlXSC7JV5f0hsLtPW0qnJSSTUhOhPB8nXumW+NShMM9Rgo3u8fij/3gciAGOjhkuUZBBGD/0D5LtMM5zVaxfKWvHG/l18vMqNhxRaHbfKNTKxUF4MtajyJDqzPLLX9Qguoh5xWv45XmqR3LyijFHwwjSScjVmWzte0h9W522ZavmQNcFRlKTL5n0Vvdo1aILwCOIrfF5If4P4e4ooWNj8BM+QPc4InEXZZNTFt+5J812ZK8vqhboXmu/jNU8+Q+pFVHk6qjO6pRtd8bZFYnw+mmqVzk4x01sYL/U+7EFASvS7vBY4llGulF87sPjRLjAmeJGm6AwLBLBSzFRB2bSsJNNhskhNMNZk0WliFacxh0XiuKbLkTE=
+X-OriginatorOrg: mit.edu
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2019 15:52:22.0819
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 631dab5a-74da-4e84-1ec3-08d698149161
+X-MS-Exchange-CrossTenant-Id: 64afd9ba-0ecf-4acf-bc36-935f6235ba8b
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=64afd9ba-0ecf-4acf-bc36-935f6235ba8b;Ip=[18.9.28.11];Helo=[outgoing.mit.edu]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR01MB3995
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 04:31:17PM +0100, Peter Zijlstra wrote:
-> On Thu, Feb 21, 2019 at 10:21:39AM -0500, Joel Fernandes wrote:
-> > On Thu, Feb 21, 2019 at 10:18:05AM +0100, Peter Zijlstra wrote:
-> > > On Thu, Feb 21, 2019 at 12:49:40AM -0500, Joel Fernandes (Google) wrote:
-> > > > @@ -34,8 +34,12 @@ void cpufreq_add_update_util_hook(int cpu, struct update_util_data *data,
-> > > >  	if (WARN_ON(!data || !func))
-> > > >  		return;
-> > > >  
-> > > > -	if (WARN_ON(per_cpu(cpufreq_update_util_data, cpu)))
-> > > > +	rcu_read_lock();
-> > > > +	if (WARN_ON(rcu_dereference(per_cpu(cpufreq_update_util_data, cpu)))) {
-> > > > +		rcu_read_unlock();
-> > > >  		return;
-> > > > +	}
-> > > > +	rcu_read_unlock();
-> > > >  
-> > > >  	data->func = func;
-> > > >  	rcu_assign_pointer(per_cpu(cpufreq_update_util_data, cpu), data);
-> > > 
-> > > This doesn't make any kind of sense to me.
-> > > 
-> > 
-> > As per the rcu_assign_pointer() line, I inferred that
-> > cpufreq_update_util_data is expected to be RCU protected. Reading the pointer
-> > value of RCU pointers generally needs to be done from RCU read section, and
-> > using rcu_dereference() (or using rcu_access()).
-> > 
-> > In this patch, I changed cpufreq_update_util_data to be __rcu annotated to
-> > avoid the sparse error thrown by rcu_assign_pointer().
-> > 
-> > Instead of doing that, If your intention here is RELEASE barrier, should I
-> > just replace in this function:
-> > 	rcu_assign_pointer(per_cpu(cpufreq_update_util_data, cpu), data);
-> > with:
-> > 	smp_store_release(per_cpu(cpufreq_update_util_data, cpu), data))
-> > ?
-> > 
-> > It would be nice IMO to be explicit about the intention of release/publish
-> > semantics by using smp_store_release().
+On Mon, Jan 14, 2019 at 09:39:44PM +0100, Mathieu Malaterre wrote:
+> There is a plan to build the kernel with -Wimplicit-fallthrough and
+> these places in the code produced warnings (W=1). Fix them up.
 > 
-> No, it is RCU managed, it should be RCU. The problem is that the hunk
-> above is utter crap.
+> This commit remove the following warnings:
 > 
-> All that does is read the pointer, it never actually dereferences it.
+>   fs/ext4/indirect.c:1182:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>   fs/ext4/indirect.c:1188:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>   fs/ext4/indirect.c:1432:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>   fs/ext4/indirect.c:1440:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> 
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
 
-For whatever it is worth, in that case it could use rcu_access_pointer().
-And this primitive does not do the lockdep check for being within an RCU
-read-side critical section.  As Peter says, if there is no dereferencing,
-there can be no use-after-free bug, so the RCU read-side critical is
-not needed.
+Thanks, applied.
 
-Good eyes, Peter!  ;-)
-
-							Thanx, Paul
-
+					- Ted
