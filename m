@@ -2,107 +2,67 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35106C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:03:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5789C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:05:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8B392084F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:03:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nr9wslsU"
+	by mail.kernel.org (Postfix) with ESMTP id A04DB2085A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:05:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727382AbfBUMDK (ORCPT
+        id S1726714AbfBUMFw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 07:03:10 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36027 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbfBUMDJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 07:03:09 -0500
-Received: by mail-pf1-f195.google.com with SMTP id n22so13691940pfa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 04:03:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JWJ1HG9+5QnKTQbV+d9xGT+vA0HxMAGf74I6H6DUnaw=;
-        b=nr9wslsUmExUI53sptebBygsJAG/A2veL6f4UdtRQpO5Mo68A0u4JQcgrq8vCfzUtZ
-         AZbHvFVmPBdWkc6Eq6VRykJo5w4QNKkylH2WYzZfb0Xt8lflqOFVR8snT18dhvIKOiGm
-         VQgKg9Om+ItSi/nPZA185F8XlqlY0Oh7H2VS7tVG/Z5Nh1vTModtoWVONalPZVAP+Vb3
-         wwwcAKnN3iqY2nsDZDCJFX8cTq5aAjAUgfuO+OAx5w9JKtyipEkREElskhvVOPzr1TzD
-         shxuJieTb8HTzc8HFxC3o7Np8MOJw6ZkO7YlGkhfuqD7sItF+aft+/5FX4QMtC7NQRKd
-         smjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JWJ1HG9+5QnKTQbV+d9xGT+vA0HxMAGf74I6H6DUnaw=;
-        b=gIPN94IkMb0nSCJqyS0Ur5R/2xKCDi6GrPCsNG8vk6ukSFmxFp0Dfj6M7gRYkxCsI6
-         qWm7ROGL6//snnHZMzVZHzTRT5YJaZ5cGmtnWno+yTNBsv8nnN6pcjEeOSQHxeXNoWcY
-         SY8j3vfOgaZqiNuF5wgq1NGkqZNTU6rKD3zk7i2rVMyQeBjnPVk9GAHjlrSD/kUaZLeg
-         AEwr3FqTJk1RbDERZo/swI7M3Kh8zULjzDotBS6zErXdh/QFZsQEoTu7wTKJrtTEOWTO
-         loHzjJ1hKHI4lTjSA91+Jz9i4zMWtCh0v2kF6NJteknDWd9L1kpjBeXw8q+s/L3EfP7Y
-         zmew==
-X-Gm-Message-State: AHQUAuY0smmpS+egZUPUdAmTEVGaV7rII0+Ri/sIUaRnp7pRYQ5hrSV4
-        ssuYurzXuNlOClA6QOdZQUR2HGiY4ZLydE7sfx8=
-X-Google-Smtp-Source: AHgI3Ib60FLYJ+6YpD5CZn8Rc+DKUdpy9AXAI3LdbwFfMBqCTGXWYfGCzre3zVs8xT5Nj6zO/9/0j6iqjfFzdN3qNTQ=
-X-Received: by 2002:a62:864c:: with SMTP id x73mr40176650pfd.49.1550750588987;
- Thu, 21 Feb 2019 04:03:08 -0800 (PST)
+        Thu, 21 Feb 2019 07:05:52 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38358 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725845AbfBUMFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 07:05:52 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CDE3D3084298;
+        Thu, 21 Feb 2019 12:05:46 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-228.ams2.redhat.com [10.36.116.228])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 33A235D9D3;
+        Thu, 21 Feb 2019 12:05:46 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 56D7D11A9A; Thu, 21 Feb 2019 13:05:45 +0100 (CET)
+Date:   Thu, 21 Feb 2019 13:05:45 +0100
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Dave Airlie <airlied@redhat.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        virtualization@lists.linux-foundation.org,
+        spice-devel@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] drm/qxl: remove set but not used variable 'bo_old'
+Message-ID: <20190221120545.dnllvgdszdk4yf5z@sirius.home.kraxel.org>
+References: <20190218085459.196470-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-References: <20190218232308.11241-1-tobin@kernel.org> <20190218232308.11241-5-tobin@kernel.org>
- <CAGXu5jJe7CiQ0aResT4Hnsuhm+grZyLTcVAkdwsBdtbdrnBbuQ@mail.gmail.com>
-In-Reply-To: <CAGXu5jJe7CiQ0aResT4Hnsuhm+grZyLTcVAkdwsBdtbdrnBbuQ@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 21 Feb 2019 14:02:57 +0200
-Message-ID: <CAHp75VfO0SQ41zV1r3R2h2n2eRuGJzdsgHFzK7nRj85m7Xahgw@mail.gmail.com>
-Subject: Re: [PATCH 4/6] lib/string: Add string copy/zero function
-To:     Kees Cook <keescook@chromium.org>
-Cc:     "Tobin C. Harding" <tobin@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Daniel Micay <danielmicay@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190218085459.196470-1-yuehaibing@huawei.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 21 Feb 2019 12:05:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 2:49 AM Kees Cook <keescook@chromium.org> wrote:
-> On Mon, Feb 18, 2019 at 3:24 PM Tobin C. Harding <tobin@kernel.org> wrote:
-> >
-> > We have a function to copy strings safely and we have a function to copy
-> > strings _and_ zero the tail of the destination (if source string is
-> > shorter than destination buffer) but we do not have a function to do
-> > both at once.  This means developers must write this themselves if they
-> > desire this functionality.  This is a chore, and also leaves us open to
-> > off by one errors unnecessarily.
-> >
-> > Add a function that calls strscpy() then memset()s the tail to zero if
-> > the source string is shorter than the destination buffer.
+On Mon, Feb 18, 2019 at 08:54:59AM +0000, YueHaibing wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> drivers/gpu/drm/qxl/qxl_display.c: In function 'qxl_primary_atomic_update':
+> drivers/gpu/drm/qxl/qxl_display.c:538:17: warning:
+>  variable 'bo_old' set but not used [-Wunused-but-set-variable]
+> 
+> It's not used any more after 4979904c62b9 ("drm/qxl: use shadow bo directly")
 
-> > +/* Wrapper function, no arch specific code required */
-> > +ssize_t strscpy_zeroed(char *dest, const char *src, size_t count);
->
-> bikeshed: I think "pad" is shorter and more descriptive. How about
-> something like strspad() strscpy_pad() or strscpy_zero()? (just to
-> shorten it slightly)
+Pushed to drm-misc-next.
 
-zero / zeroed examples in the kernel have semantics of getting some
-area completely zeroed. OTOH pad means different and we have examples
-as well (see seq_pad() as one).
+thanks,
+  Gerd
 
-So, I would definitely vote for _pad b/c of semantics.
-
--- 
-With Best Regards,
-Andy Shevchenko
