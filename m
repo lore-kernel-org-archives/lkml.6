@@ -2,140 +2,156 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06581C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E028C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:21:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBEBC20836
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:19:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="0nu54gUa"
+	by mail.kernel.org (Postfix) with ESMTP id 0FD7C20836
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:21:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbfBUTTQ (ORCPT
+        id S1726383AbfBUTVJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 14:19:16 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:42968 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726050AbfBUTTQ (ORCPT
+        Thu, 21 Feb 2019 14:21:09 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46610 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726146AbfBUTVJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 14:19:16 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1LJIhe1051026;
-        Thu, 21 Feb 2019 19:19:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=U79ozE82iuUXnKSAhwQDiizEL3ZIqNkJdvnHqw1OKow=;
- b=0nu54gUaCvM8H6cI2ItOqZUPs3zljpOCp0R4KwtFFCnBHawC0vmcTa3pP8iztCS/iXoj
- dgoRdoLbP3Hdlt/JKYPDpdeK5mMuyNDDOYl4z61mjJVwPemohqh7YWB5Ww/mGjja29c4
- bp8o3cqEZPNd9fmhNV09hCyv2aG4Gzkfcew6h/ksaqE+SH8VNyL1sl4Riyl99FQHPZsS
- uLNP99NtaUphpWfZya1UL19hGo7t0wALHyZocJCVBLYPyB4x7TSzHl4WTcVA/EbGyzgC
- m8XYGe4Ovlx/gXR06EDiVRWp1X06r69t7dICdsayHYJnOhFwS0WB0pOy/C7N5md9bDqn yw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2qp9xua7qj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Feb 2019 19:19:06 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1LJJ5ub002661
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Feb 2019 19:19:05 GMT
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1LJJ5ZU023806;
-        Thu, 21 Feb 2019 19:19:05 GMT
-Received: from kadam (/197.157.0.34)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 21 Feb 2019 11:19:04 -0800
-Date:   Thu, 21 Feb 2019 22:18:56 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 2/2] test_firmware: silence underflow warning in
- test_dev_config_update_u8()
-Message-ID: <20190221191855.GB1737@kadam>
-References: <20190221183700.GA1737@kadam>
- <20190221183826.GA30993@kadam>
- <20190221105458.409d1968961962079c54b815@linux-foundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190221105458.409d1968961962079c54b815@linux-foundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9174 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902210134
+        Thu, 21 Feb 2019 14:21:09 -0500
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 197513BE7;
+        Thu, 21 Feb 2019 19:21:08 +0000 (UTC)
+Date:   Thu, 21 Feb 2019 11:21:06 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     syzbot <syzbot+8e789999f280ccd6930f@syzkaller.appspotmail.com>
+Cc:     ebiggers@google.com, jrdr.linux@gmail.com, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, rientjes@google.com,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: general protection fault in relay_switch_subbuf
+Message-Id: <20190221112106.fa1f7729a5fb0076c2c7dfaa@linux-foundation.org>
+In-Reply-To: <000000000000336578058268a553@google.com>
+References: <000000000000336578058268a553@google.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 10:54:58AM -0800, Andrew Morton wrote:
-> On Thu, 21 Feb 2019 21:38:26 +0300 Dan Carpenter <dan.carpenter@oracle.com> wrote:
+(cc Jens ;))
+
+On Thu, 21 Feb 2019 06:54:03 -0800 syzbot <syzbot+8e789999f280ccd6930f@syzkaller.appspotmail.com> wrote:
+
+> Hello,
 > 
-> > We put an upper bound on "new" but we don't check for negatives.
+> syzbot found the following crash on:
 > 
-> U8_MAX has unsigned type, so `if (new > U8_MAX)' does check for negative.
+> HEAD commit:    c04e2a780caf Merge tag 'fsnotify_for_v5.0-rc4' of git://gi..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=133424c0c00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=505743eba4e4f68
+> dashboard link: https://syzkaller.appspot.com/bug?extid=8e789999f280ccd6930f
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 > 
-
-No, doesn't work in this case.
-
-#define U8_MAX          ((u8)~0U)
-
-It would need to unsigned long for the type promotion to prevent
-negatives, but it starts as unsigned int, then unsigned char, which is
-type promoted to int.
-
-It would be more clear to just write it as:
-
-#define U8_MAX 0xff
-
-> > In
-> > this case the underflow doesn't matter very much, but we may as well
-> > make the static checker happy.
-> > 
-> > ...
-> >
-> > --- a/lib/test_firmware.c
-> > +++ b/lib/test_firmware.c
-> > @@ -326,15 +326,12 @@ static ssize_t test_dev_config_show_int(char *buf, int cfg)
-> >  static int test_dev_config_update_u8(const char *buf, size_t size, u8 *cfg)
-> >  {
-> >  	int ret;
-> > -	long new;
-> > +	u8 new;
-> >  
-> > -	ret = kstrtol(buf, 10, &new);
-> > +	ret = kstrtou8(buf, 10, &new);
-> >  	if (ret)
-> >  		return ret;
-> >  
-> > -	if (new > U8_MAX)
-> > -		return -EINVAL;
-> > -
-> >  	mutex_lock(&test_fw_mutex);
-> >  	*(u8 *)cfg = new;
-> >  	mutex_unlock(&test_fw_mutex);
+> Unfortunately, I don't have any reproducer for this crash yet.
 > 
-> if *buf=="257",
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+8e789999f280ccd6930f@syzkaller.appspotmail.com
 > 
-> previous behavior: -EINVAL
-> new behavior: *cfg = 1
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> general protection fault: 0000 [#1] PREEMPT SMP KASAN
+> CPU: 1 PID: 11600 Comm: syz-executor2 Not tainted 5.0.0-rc3+ #42
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+> Google 01/01/2011
+> RIP: 0010:relay_switch_subbuf+0x27a/0xad0 kernel/relay.c:753
+> Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 e2 07 00 00 48 b8 00 00 00 00  
+> 00 fc ff df 48 8b 4b 58 48 8d 79 50 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
+> 85 c9 07 00 00 48 ba 00 00 00 00 00 fc ff df 49 8b
+> RSP: 0018:ffff88805e3ef790 EFLAGS: 00010206
+> RAX: dffffc0000000000 RBX: ffff88804bc7db40 RCX: 0000000000000000
+> RDX: 000000000000000a RSI: ffffffff8182d552 RDI: 0000000000000050
+> RBP: ffff88805e3ef850 R08: ffff8880637f0600 R09: fffffbfff133b0b1
+> R10: ffff88805e3ef850 R11: ffffffff899d8587 R12: 0000000000000000
+> R13: ffff8880a7e05e00 R14: 0000000000000000 R15: 0000000000000000
+> FS:  00007f1fdbddd700(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000a50489 CR3: 00000000943a0000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   relay_flush kernel/relay.c:881 [inline]
+>   relay_flush+0x1c4/0x280 kernel/relay.c:865
+>   __blk_trace_startstop.isra.0+0x28b/0x8b0 kernel/trace/blktrace.c:668
+>   blk_trace_ioctl+0x1c6/0x300 kernel/trace/blktrace.c:727
+>   blkdev_ioctl+0x141/0x2120 block/ioctl.c:591
+>   block_ioctl+0xee/0x130 fs/block_dev.c:1914
+>   vfs_ioctl fs/ioctl.c:46 [inline]
+>   file_ioctl fs/ioctl.c:509 [inline]
+>   do_vfs_ioctl+0x107b/0x17d0 fs/ioctl.c:696
+>   ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+>   __do_sys_ioctl fs/ioctl.c:720 [inline]
+>   __se_sys_ioctl fs/ioctl.c:718 [inline]
+>   __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+>   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x458099
+> Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+> ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007f1fdbddcc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000458099
+> RDX: 0000000000000000 RSI: 0000000000001275 RDI: 0000000000000005
+> RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f1fdbddd6d4
+> R13: 00000000004bf595 R14: 00000000004d0e88 R15: 00000000ffffffff
+> Modules linked in:
+> kobject: 'loop4' (000000005903bd4d): kobject_uevent_env
+> kobject: 'loop4' (000000005903bd4d): fill_kobj_path: path  
+> = '/devices/virtual/block/loop4'
+> ---[ end trace d4380d594e5099d1 ]---
+> RIP: 0010:relay_switch_subbuf+0x27a/0xad0 kernel/relay.c:753
+> Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 e2 07 00 00 48 b8 00 00 00 00  
+> 00 fc ff df 48 8b 4b 58 48 8d 79 50 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
+> 85 c9 07 00 00 48 ba 00 00 00 00 00 fc ff df 49 8b
+> kobject: 'loop0' (0000000083b22ec7): kobject_uevent_env
+> kobject: 'loop0' (0000000083b22ec7): fill_kobj_path: path  
+> = '/devices/virtual/block/loop0'
+> Unknown ioctl 19304
+> kobject: 'loop3' (0000000050016e38): kobject_uevent_env
+> RSP: 0018:ffff88805e3ef790 EFLAGS: 00010206
+> kobject: 'loop3' (0000000050016e38): fill_kobj_path: path  
+> = '/devices/virtual/block/loop3'
+> RAX: dffffc0000000000 RBX: ffff88804bc7db40 RCX: 0000000000000000
+> kobject: 'loop1' (000000002962ffee): kobject_uevent_env
+> kobject: 'loop1' (000000002962ffee): fill_kobj_path: path  
+> = '/devices/virtual/block/loop1'
+> RDX: 000000000000000a RSI: ffffffff8182d552 RDI: 0000000000000050
+> kobject: 'loop4' (000000005903bd4d): kobject_uevent_env
+> kobject: 'loop4' (000000005903bd4d): fill_kobj_path: path  
+> = '/devices/virtual/block/loop4'
+> RBP: ffff88805e3ef850 R08: ffff8880637f0600 R09: fffffbfff133b0b1
+> kobject: 'loop4' (000000005903bd4d): kobject_uevent_env
+> R10: ffff88805e3ef850 R11: ffffffff899d8587 R12: 0000000000000000
+> kobject: 'loop4' (000000005903bd4d): fill_kobj_path: path  
+> = '/devices/virtual/block/loop4'
+> R13: ffff8880a7e05e00 R14: 0000000000000000 R15: 0000000000000000
+> FS:  00007f1fdbddd700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000625208 CR3: 00000000943a0000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 > 
-> yes?
-
-No.  The kstrtou8() check the limit so it will return -ERANGE.  I should
-have probably spelled that out better in the commit message.  I'll
-resend tomorrow.
-
-regard,
-dan carpenter
-
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+> syzbot.
