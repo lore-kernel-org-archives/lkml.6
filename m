@@ -2,99 +2,187 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC99CC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10202C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:18:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94911218FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:15:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D21422086A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:18:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbfBUJPB (ORCPT
+        id S1727440AbfBUJSK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 04:15:01 -0500
-Received: from smtp.eu.citrix.com ([185.25.65.24]:7241 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbfBUJPB (ORCPT
+        Thu, 21 Feb 2019 04:18:10 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57456 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725385AbfBUJSK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 04:15:01 -0500
-X-IronPort-AV: E=Sophos;i="5.58,394,1544486400"; 
-   d="scan'208";a="86249110"
-Date:   Thu, 21 Feb 2019 10:14:31 +0100
-From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-To:     Julien Grall <julien.grall@gmail.com>
-CC:     Andrew Cooper <Andrew.Cooper3@citrix.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Dave P Martin <dave.martin@arm.com>,
-        Jan Beulich <JBeulich@suse.com>,
-        Juergen Gross <jgross@suse.com>,
-        Julien Grall <julien.grall@arm.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        xen-devel <xen-devel@lists.xenproject.org>
-Subject: Re: [Xen-devel] xen/evtchn and forced threaded irq
-Message-ID: <20190221091431.vqi53op37mvhi25z@Air-de-Roger>
-References: <20190220000209.GA4091@localhost.localdomain>
- <a872d480-9f1b-6cd7-e507-ac4fcdf705af@arm.com>
- <21214d47-9c68-e6bf-007a-4047cc2b02f9@oracle.com>
- <8f7445d7-fa50-f3e9-44f5-cc2aebd020f4@arm.com>
- <15bc52cb-82d8-4d2c-e5a8-c6ae8de90276@oracle.com>
- <5df8888a-4a29-fccd-bac2-a9c170244029@arm.com>
- <1574a7fe-a5ac-4bc2-d3f0-967d8d01e5f1@oracle.com>
- <1100e6b1-6fa8-06f0-8ecc-b0699a2ce5f4@arm.com>
- <20190221080752.zy2qlzb4vi7tbu3p@Air-de-Roger>
- <CAF3u54Ct7nBjoLw9Vzb=aZVu=N5Ccp5_k6GxLo_ZSA=YCsco6A@mail.gmail.com>
+        Thu, 21 Feb 2019 04:18:10 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1L96nJq001192
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 04:18:09 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qsqe6mquk-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 04:18:09 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <bblock@linux.ibm.com>;
+        Thu, 21 Feb 2019 09:18:07 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 21 Feb 2019 09:18:04 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1L9I3We29491302
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 21 Feb 2019 09:18:03 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 43022AE04D;
+        Thu, 21 Feb 2019 09:18:03 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2E9BFAE045;
+        Thu, 21 Feb 2019 09:18:03 +0000 (GMT)
+Received: from t480-pf1aa2c2 (unknown [9.145.59.126])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 21 Feb 2019 09:18:03 +0000 (GMT)
+Received: from bblock by t480-pf1aa2c2 with local (Exim 4.91)
+        (envelope-from <bblock@linux.ibm.com>)
+        id 1gwkUU-0006fp-CY; Thu, 21 Feb 2019 10:18:02 +0100
+From:   Benjamin Block <bblock@linux.ibm.com>
+To:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc:     Benjamin Block <bblock@linux.ibm.com>,
+        Steffen Maier <maier@linux.ibm.com>,
+        linux-scsi@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+Subject: [PATCH v2 1/2] scsi: replace GFP_ATOMIC with GFP_KERNEL for allocations in scsi_scan.c
+Date:   Thu, 21 Feb 2019 10:18:00 +0100
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190220184847.24640-1-bblock@linux.ibm.com>
+References: <20190220184847.24640-1-bblock@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF3u54Ct7nBjoLw9Vzb=aZVu=N5Ccp5_k6GxLo_ZSA=YCsco6A@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+X-TM-AS-GCONF: 00
+x-cbid: 19022109-0008-0000-0000-000002C31C86
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022109-0009-0000-0000-0000222F5666
+Message-Id: <c5bd5a82d1250471822cbf5891ea1866166cd9e6.1550740533.git.bblock@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-21_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902210068
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 08:38:39AM +0000, Julien Grall wrote:
-> Hi Roger,
-> 
-> On Thu, 21 Feb 2019, 08:08 Roger Pau Monné, <roger.pau@citrix.com> wrote:
-> 
-> > FWIW, you can also mask the interrupt while waiting for the thread to
-> > execute the interrupt handler. Ie:
-> >
-> 
-> Thank you for providing steps, however where would the masking be done? By
-> the irqchip or a custom solution?
+We had a test-report where, under memory pressure, adding LUNs to the
+systems would fail (the tests add LUNs strictly in sequence):
 
-I'm not familiar with the irqchip infrastructure in Linux, what I
-proposed below is what FreeBSD does when running interrupt handlers in
-deferred threads IIRC.
+[ 5525.853432] scsi 0:0:1:1088045124: Direct-Access     IBM      2107900          .148 PQ: 0 ANSI: 5
+[ 5525.853826] scsi 0:0:1:1088045124: alua: supports implicit TPGS
+[ 5525.853830] scsi 0:0:1:1088045124: alua: device naa.6005076303ffd32700000000000044da port group 0 rel port 43
+[ 5525.853931] sd 0:0:1:1088045124: Attached scsi generic sg10 type 0
+[ 5525.854075] sd 0:0:1:1088045124: [sdk] Disabling DIF Type 1 protection
+[ 5525.855495] sd 0:0:1:1088045124: [sdk] 2097152 512-byte logical blocks: (1.07 GB/1.00 GiB)
+[ 5525.855606] sd 0:0:1:1088045124: [sdk] Write Protect is off
+[ 5525.855609] sd 0:0:1:1088045124: [sdk] Mode Sense: ed 00 00 08
+[ 5525.855795] sd 0:0:1:1088045124: [sdk] Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
+[ 5525.857838]  sdk: sdk1
+[ 5525.859468] sd 0:0:1:1088045124: [sdk] Attached SCSI disk
+[ 5525.865073] sd 0:0:1:1088045124: alua: transition timeout set to 60 seconds
+[ 5525.865078] sd 0:0:1:1088045124: alua: port group 00 state A preferred supports tolusnA
+[ 5526.015070] sd 0:0:1:1088045124: alua: port group 00 state A preferred supports tolusnA
+[ 5526.015213] sd 0:0:1:1088045124: alua: port group 00 state A preferred supports tolusnA
+[ 5526.587439] scsi_alloc_sdev: Allocation failure during SCSI scanning, some SCSI devices might not be configured
+[ 5526.588562] scsi_alloc_sdev: Allocation failure during SCSI scanning, some SCSI devices might not be configured
 
-If irqchip has a specific handler to dispatch to a thread, then that's
-the place where the masking should happen. Likely, the unmasking
-should be done by the irq handling infrastructure after the thread
-executing the interrupt handler has finished.
+Looking at the code of scsi_alloc_sdev(), and all the calling contexts,
+there seems to be no reason to use GFP_ATMOIC here. All the different
+call-contexts use a mutex at some point, and nothing in between that
+requires no sleeping, as far as I could see. Additionally, the code that
+later allocates the block queue for the device (scsi_mq_alloc_queue())
+already uses GFP_KERNEL.
 
-Isn't there a similar way to handle interrupts in threads for Linux?
+There are similar allocations in two other functions:
+scsi_probe_and_add_lun(), and scsi_add_lun(),; that can also be done
+with GFP_KERNEL.
 
-> 
-> > 1. Interrupt injected
-> > 2. Execute guest event channel callback
-> > 3. Scan for pending interrupts
-> > 4. Mask interrupt
-> > 5. Clear pending field
-> > 6. Queue threaded handler
-> > 7. Go to 3 until all interrupts are drained
-> > [...]
-> > 8. Execute interrupt handler in thread
-> > 9. Unmask interrupt
-> >
-> > That should prevent you from stacking interrupts?
-> >
-> > Roger.
-> >
+Here is the contexts for the three functions so far:
+
+    scsi_alloc_sdev()
+        scsi_probe_and_add_lun()
+            scsi_sequential_lun_scan()
+                __scsi_scan_target()
+                    scsi_scan_target()
+                        mutex_lock()
+                    scsi_scan_channel()
+                        scsi_scan_host_selected()
+                            mutex_lock()
+            scsi_report_lun_scan()
+                __scsi_scan_target()
+    	            ...
+            __scsi_add_device()
+                mutex_lock()
+            __scsi_scan_target()
+                ...
+        scsi_report_lun_scan()
+            ...
+        scsi_get_host_dev()
+            mutex_lock()
+
+    scsi_probe_and_add_lun()
+        ...
+
+    scsi_add_lun()
+        scsi_probe_and_add_lun()
+            ...
+
+So replace all these, and give them a bit of a better chance to succeed,
+with more chances of reclaim.
+
+Signed-off-by: Benjamin Block <bblock@linux.ibm.com>
+---
+ drivers/scsi/scsi_scan.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/scsi/scsi_scan.c b/drivers/scsi/scsi_scan.c
+index dd0d516f65e2..53380e07b40e 100644
+--- a/drivers/scsi/scsi_scan.c
++++ b/drivers/scsi/scsi_scan.c
+@@ -220,7 +220,7 @@ static struct scsi_device *scsi_alloc_sdev(struct scsi_target *starget,
+ 	struct Scsi_Host *shost = dev_to_shost(starget->dev.parent);
+ 
+ 	sdev = kzalloc(sizeof(*sdev) + shost->transportt->device_size,
+-		       GFP_ATOMIC);
++		       GFP_KERNEL);
+ 	if (!sdev)
+ 		goto out;
+ 
+@@ -788,7 +788,7 @@ static int scsi_add_lun(struct scsi_device *sdev, unsigned char *inq_result,
+ 	 */
+ 	sdev->inquiry = kmemdup(inq_result,
+ 				max_t(size_t, sdev->inquiry_len, 36),
+-				GFP_ATOMIC);
++				GFP_KERNEL);
+ 	if (sdev->inquiry == NULL)
+ 		return SCSI_SCAN_NO_RESPONSE;
+ 
+@@ -1079,7 +1079,7 @@ static int scsi_probe_and_add_lun(struct scsi_target *starget,
+ 	if (!sdev)
+ 		goto out;
+ 
+-	result = kmalloc(result_len, GFP_ATOMIC |
++	result = kmalloc(result_len, GFP_KERNEL |
+ 			((shost->unchecked_isa_dma) ? __GFP_DMA : 0));
+ 	if (!result)
+ 		goto out_free_sdev;
+-- 
+2.20.1
+
