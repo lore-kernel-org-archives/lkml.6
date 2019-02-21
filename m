@@ -2,76 +2,95 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B00C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE1E8C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE7742085A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:37:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BDE02085A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:38:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wcb//8Ic"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbfBUMhj (ORCPT
+        id S1727788AbfBUMiV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 07:37:39 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:52910 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725385AbfBUMhj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 07:37:39 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id CF613E4DF1B7B5361BDD;
-        Thu, 21 Feb 2019 20:37:30 +0800 (CST)
-Received: from szvp000201624.huawei.com (10.120.216.130) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 21 Feb 2019 20:37:21 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix encrypted page memory leak
-Date:   Thu, 21 Feb 2019 20:37:14 +0800
-Message-ID: <20190221123714.47172-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        Thu, 21 Feb 2019 07:38:21 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:46811 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbfBUMiU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 07:38:20 -0500
+Received: by mail-qt1-f195.google.com with SMTP id z25so9492078qti.13
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 04:38:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=TJjBpv3wqkZaFPqsxWCLVhlGDzIGQj+FsHblMIHFc9s=;
+        b=wcb//8IcnASw4ClrmZkkusJa8EQ9UalaE13xioTDpPljDBfLGJUZDGGOOF57lJXcnn
+         JvzKqnYSQgOnZFeS8d37s03H9Epyj6XT8UxBieu4LmaR6uZnB+hnSbBqSmk6D0WEVXwK
+         8Ql+pzDv7ZtY7kgcoZAAx9nLvBi9BbGqFKzKiPTgjfJWtbGCwCs/HGTKcmY/DCjCqPcC
+         LrvEiwcmBwPzNZYEPolMI9D6zqX7YzzMF1BnaNarmUzTaasAhhJSAsxIZajkY8BSOCK7
+         KLkqyXG3sA9TAIKNoA+r6emztjI2DKKy6xc8Ly5+sfMcBvEBohoJrrsbRR1WsweWf0I/
+         U3aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=TJjBpv3wqkZaFPqsxWCLVhlGDzIGQj+FsHblMIHFc9s=;
+        b=qgnggH9X/QS5RlilSu5fcJYpcAHmWrN+n+D2YLcOKh7hFGOIzaMuMaR/c0dLXGstXQ
+         EJ39toIVrwDUFbNrel1JPICLSeHcRviFf0Ot5VVKdjl+3vRG8JVMNLRl2j1PHknoJGND
+         6BxrvoMgX6XfQUJUQU+ktYV0c1GhNmKxSnGzTFyJTYQ6mZKOR0U7/F30Zj1Q3lcyQSuA
+         PJqkekiEUoZNZgQn1n7hF5ko0n/OFWpe9pA9lZFiiDN6TjCESZlFyyIORH28k4aCHJdM
+         c72+p61D50sByPEf6aGS7m3WnE1vciFEKfY6Zp2WXRA39RSddr97Mvr7REQXl8uhOCv0
+         5KXQ==
+X-Gm-Message-State: AHQUAuZU2qp91web1R8gGcj3RTIci/8LGLLhO2QaIEeoUT7KFKXYcHMj
+        iHHgbRT50jYIiiEv2I33e1c51bnmpbDeiyiyW52c7g==
+X-Google-Smtp-Source: AHgI3IZFh0VVKHgEi4eo0nSIZCWMOwJTgGkv7MrbPWI9Acz38HOmFxED1r3ES0SMsSiqapqoiIV3g8gEupAUbe808iY=
+X-Received: by 2002:a0c:d84e:: with SMTP id i14mr29908714qvj.134.1550752699912;
+ Thu, 21 Feb 2019 04:38:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+References: <20190129165530.7606-1-j.neuschaefer@gmx.net>
+In-Reply-To: <20190129165530.7606-1-j.neuschaefer@gmx.net>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 21 Feb 2019 13:38:07 +0100
+Message-ID: <CACRpkdbPiVvaY4W6_UMd20PG8mnQCyPHq9W+7x=ZR8+vwy=Oow@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: pinctrl: Document the i.MX50 IOMUXC binding
+To:     =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Dong Aisheng <dong.aisheng@linaro.org>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For IPU path of f2fs_do_write_data_page(), in its error path, we
-need to release encrypted page and fscrypt context, otherwise it
-will cause memory leak.
+On Tue, Jan 29, 2019 at 5:55 PM Jonathan Neusch=C3=A4fer
+<j.neuschaefer@gmx.net> wrote:
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/data.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+> AFAICS from the i.MX50 Reference Manual, the i.MX50 IOMUXC works the
+> same as the one in i.MX51, so I copied fsl,imx51-pinctrl.txt and changed
+> the text to imx50.
+>
+> Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+> Cc: Dong Aisheng <dong.aisheng@linaro.org>
+> Cc: Shawn Guo <shawn.guo@linaro.org>
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index e099babf85bd..b0d1e946e141 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1860,8 +1860,13 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
- 		if (fio->need_lock == LOCK_REQ)
- 			f2fs_unlock_op(fio->sbi);
- 		err = f2fs_inplace_write_data(fio);
--		if (err && PageWriteback(page))
--			end_page_writeback(page);
-+		if (err) {
-+			if (f2fs_encrypted_file(inode))
-+				fscrypt_pullback_bio_page(&fio->encrypted_page,
-+									true);
-+			if (PageWriteback(page))
-+				end_page_writeback(page);
-+		}
- 		trace_f2fs_do_write_data_page(fio->page, IPU);
- 		set_inode_flag(inode, FI_UPDATE_WRITE);
- 		return err;
--- 
-2.18.0.rc1
+Patch applied with Fabio's review tag.
 
+Yours,
+Linus Walleij
