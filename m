@@ -2,163 +2,99 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E48C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:12:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC99CC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:15:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA77B214AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:12:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gIGkya/M"
+	by mail.kernel.org (Postfix) with ESMTP id 94911218FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 09:15:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727640AbfBUJMu (ORCPT
+        id S1727406AbfBUJPB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 04:12:50 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:38919 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727476AbfBUJMu (ORCPT
+        Thu, 21 Feb 2019 04:15:01 -0500
+Received: from smtp.eu.citrix.com ([185.25.65.24]:7241 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725385AbfBUJPB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 04:12:50 -0500
-Received: by mail-it1-f195.google.com with SMTP id l15so21741323iti.4
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 01:12:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=W+44EIBhBXbsefbi7VawPB4oVnnUrElgg4bWRK7GROs=;
-        b=gIGkya/M7uiDBGl/4k5GTJZmSuediKC4hXOKVBq/zrquo+o8N+bdaLjKrRAeySMAxz
-         fYVNOjj/Jp6pxJdIMgii8liCKJER5abXJboUqxhX3lxWzbw6LhPz3F4ov2sme0qgAlzk
-         ZaKsRrmfBqUhnKDMFqU94agJjV+704mzIOqnyqB6SH9phpLcAXrQC1fVOU7AQnhhCQX0
-         4McyQvUaf4GxYgtIEsU1qlHVxG4DyplIeTg9Tbp4S+1k5LRLHJHeHO90dfUq4j4xtg/3
-         B0WgENdtqUfMQGm1/jKJVjwpWTCEfFMQMsyLoe3tT80GfA0qQJ/8d79jvP+G8PIJcsQx
-         //sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=W+44EIBhBXbsefbi7VawPB4oVnnUrElgg4bWRK7GROs=;
-        b=saUHVj8HE5ZHeJcavlX7c00zO0PFZfxnpevz7PPxPX3oavSRzyRzCo06RPZS4ihT/B
-         NVmttCTQRZeuEGiDr0KDMl6iEEvF+vUFjUClnyxE1b+St8sRjb2u/Rm5fx6uWpzj8tuS
-         vuSmM69hKyd0DsiEuMpGFiCCTF1B0Mc26ugaXYXN6eC2iLZL+J2y9YGcV5YMLvO7mJ1j
-         mv5ok3IGNmWsAAndhCZpPy5rIacjUf7eVp9zIQ4diMmBckFFP2ZhXcoI3L/W3UsTETl8
-         a3QpnG8AaTv3ohYRG9jem37luG63N8idJBGDAnZJGDzkfv/vRrxAxhu991ub7YLueBu6
-         5qPg==
-X-Gm-Message-State: AHQUAuapMlghUI9rorIjqBSU0vtn4xzZ2xGyXb/e6LzHUhVhUSy3lbiT
-        vAdn+p0rNT0kM3Yt5SmW9JJgD44csFmvunBtk0zPkg==
-X-Google-Smtp-Source: AHgI3IZgPyWYMpkh37W7JYFqIy8jB/tj47S/ldEdm4CmiHLdsApZ8diIU6VetwBx2GBoaE5DtW9nO5psVXdPVkexJD0=
-X-Received: by 2002:a24:1947:: with SMTP id b68mr7172578itb.121.1550740368851;
- Thu, 21 Feb 2019 01:12:48 -0800 (PST)
+        Thu, 21 Feb 2019 04:15:01 -0500
+X-IronPort-AV: E=Sophos;i="5.58,394,1544486400"; 
+   d="scan'208";a="86249110"
+Date:   Thu, 21 Feb 2019 10:14:31 +0100
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     Julien Grall <julien.grall@gmail.com>
+CC:     Andrew Cooper <Andrew.Cooper3@citrix.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Dave P Martin <dave.martin@arm.com>,
+        Jan Beulich <JBeulich@suse.com>,
+        Juergen Gross <jgross@suse.com>,
+        Julien Grall <julien.grall@arm.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        xen-devel <xen-devel@lists.xenproject.org>
+Subject: Re: [Xen-devel] xen/evtchn and forced threaded irq
+Message-ID: <20190221091431.vqi53op37mvhi25z@Air-de-Roger>
+References: <20190220000209.GA4091@localhost.localdomain>
+ <a872d480-9f1b-6cd7-e507-ac4fcdf705af@arm.com>
+ <21214d47-9c68-e6bf-007a-4047cc2b02f9@oracle.com>
+ <8f7445d7-fa50-f3e9-44f5-cc2aebd020f4@arm.com>
+ <15bc52cb-82d8-4d2c-e5a8-c6ae8de90276@oracle.com>
+ <5df8888a-4a29-fccd-bac2-a9c170244029@arm.com>
+ <1574a7fe-a5ac-4bc2-d3f0-967d8d01e5f1@oracle.com>
+ <1100e6b1-6fa8-06f0-8ecc-b0699a2ce5f4@arm.com>
+ <20190221080752.zy2qlzb4vi7tbu3p@Air-de-Roger>
+ <CAF3u54Ct7nBjoLw9Vzb=aZVu=N5Ccp5_k6GxLo_ZSA=YCsco6A@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190220184341.73bd2084@canb.auug.org.au> <1114b964-8ff8-5632-64d4-e94a9160b998@hisilicon.com>
- <20190220095252.GA9089@linux.intel.com> <20190220095806.GB9089@linux.intel.com>
- <CAKv+Gu8G5eWeAdCB28xa=16ANFd2he9WPSztgXYwYRkhPfpEyA@mail.gmail.com>
- <aaac08b0-6366-7b63-d6a7-eea6630ce169@hisilicon.com> <CAMuHMdWfbPHv6WBMm7uDdPhbEB-m+bOcYzzYpRe4BfcSNR2pcQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdWfbPHv6WBMm7uDdPhbEB-m+bOcYzzYpRe4BfcSNR2pcQ@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 21 Feb 2019 10:12:37 +0100
-Message-ID: <CAKv+Gu8MWECBMgvQhLXpYkn6GQBXpGEo93EdjXcTxMsjCicaDQ@mail.gmail.com>
-Subject: Re: linux-next: Tree for Feb 20
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Zhangshaokun <zhangshaokun@hisilicon.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAF3u54Ct7nBjoLw9Vzb=aZVu=N5Ccp5_k6GxLo_ZSA=YCsco6A@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Feb 2019 at 09:04, Geert Uytterhoeven <geert@linux-m68k.org> wro=
-te:
->
-> Hi Shaokun,
->
-> On Thu, Feb 21, 2019 at 1:45 AM Zhangshaokun <zhangshaokun@hisilicon.com>=
- wrote:
-> > On 2019/2/20 18:05, Ard Biesheuvel wrote:
-> > > On Wed, 20 Feb 2019 at 10:58, Jarkko Sakkinen
-> > > <jarkko.sakkinen@linux.intel.com> wrote:
-> > >>
-> > >> On Wed, Feb 20, 2019 at 11:52:52AM +0200, Jarkko Sakkinen wrote:
-> > >>> On Wed, Feb 20, 2019 at 05:11:15PM +0800, Zhangshaokun wrote:
-> > >>>> There is a compiler failure on arm64 platform, as follow:
-> > >>>>
-> > >>>>   AS      arch/arm64/kvm/hyp.o
-> > >>>>   CC      kernel/trace/ring_buffer.o
-> > >>>> In file included from security/integrity/ima/ima_fs.c:30:0:
-> > >>>> security/integrity/ima/ima.h:176:7: error: redeclaration of enumer=
-ator =E2=80=98NONE=E2=80=99
-> > >>>>   hook(NONE)   \
-> > >>>>        ^
-> > >>>> security/integrity/ima/ima.h:188:34: note: in definition of macro =
-=E2=80=98__ima_hook_enumify=E2=80=99
-> > >>>>  #define __ima_hook_enumify(ENUM) ENUM,
-> > >>>>                                   ^
-> > >>>> security/integrity/ima/ima.h:191:2: note: in expansion of macro =
-=E2=80=98__ima_hooks=E2=80=99
-> > >>>>   __ima_hooks(__ima_hook_enumify)
-> > >>>>   ^
-> > >>>> In file included from ./arch/arm64/include/asm/acpi.h:15:0,
-> > >>>>                  from ./include/acpi/acpi_io.h:7,
-> > >>>>                  from ./include/linux/acpi.h:47,
-> > >>>>                  from ./include/linux/tpm.h:26,
-> > >>>>                  from security/integrity/ima/ima.h:25,
-> > >>>>                  from security/integrity/ima/ima_fs.c:30:
-> > >>>> ./include/linux/efi.h:1716:2: note: previous definition of =E2=80=
-=98NONE=E2=80=99 was here
-> > >>>>   NONE,
-> > >>>>   ^
-> > >>>> scripts/Makefile.build:276: recipe for target 'security/integrity/=
-ima/ima_fs.o' failed
-> > >>>> make[3]: *** [security/integrity/ima/ima_fs.o] Error 1
-> > >>>>
-> > >>>> I dug it and it is the commit 901615cb916d ("tpm: move tpm_chip de=
-finition to include/linux/tpm.h")
-> > >>>
-> > >>> This results from a new include in tpm.h:
-> > >>>
-> > >>>   #include <linux/acpi.h>
-> > >>>
-> > >>> Must be fixed either in include/linux/efi.h or security/integrity/i=
-ma.h as
-> > >>> those files have a name collision. Makes me wonder why neither has =
-taken
-> > >>> care of prefixing the constants properly.
-> > >>
-> > >> Preferably both subsystems should be fixed with proper 'EFI_' and 'I=
-MA_'
-> > >> prefixes. Defining a constant named as NONE in a non-generic subsyst=
-em
-> > >> (e.g. not part of the core data structures of Linux) and especially
-> > >> exporting it to include/linux is not too well considered act.
-> > >>
-> > >
-> > > Fixes for this have already been proposed, and should appear in -next=
- shortly
-> > >
-> > > The EFI one is here
-> > > https://mail.google.com/mail/u/0/#label/linux-efi/FMfcgxwBVgrQRjglPkW=
-RqRqVclGgVDnB
-> > >
+On Thu, Feb 21, 2019 at 08:38:39AM +0000, Julien Grall wrote:
+> Hi Roger,
+> 
+> On Thu, 21 Feb 2019, 08:08 Roger Pau Monné, <roger.pau@citrix.com> wrote:
+> 
+> > FWIW, you can also mask the interrupt while waiting for the thread to
+> > execute the interrupt handler. Ie:
 > >
-> > Because of no privilege, the website is denied for me. Anyway, it's nic=
-e to have been fixed.
->
-> Looks like Ard posted a link to a label in his personal gmail mailbox?
->
+> 
+> Thank you for providing steps, however where would the masking be done? By
+> the irqchip or a custom solution?
 
-Silly me.
+I'm not familiar with the irqchip infrastructure in Linux, what I
+proposed below is what FreeBSD does when running interrupt handlers in
+deferred threads IIRC.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=3Defi=
-/core&id=3D5c418dc789a3898717ebf2caa5716ba91a7150b2
+If irqchip has a specific handler to dispatch to a thread, then that's
+the place where the masking should happen. Likely, the unmasking
+should be done by the irq handling infrastructure after the thread
+executing the interrupt handler has finished.
+
+Isn't there a similar way to handle interrupts in threads for Linux?
+
+> 
+> > 1. Interrupt injected
+> > 2. Execute guest event channel callback
+> > 3. Scan for pending interrupts
+> > 4. Mask interrupt
+> > 5. Clear pending field
+> > 6. Queue threaded handler
+> > 7. Go to 3 until all interrupts are drained
+> > [...]
+> > 8. Execute interrupt handler in thread
+> > 9. Unmask interrupt
+> >
+> > That should prevent you from stacking interrupts?
+> >
+> > Roger.
+> >
