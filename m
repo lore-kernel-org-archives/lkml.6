@@ -2,110 +2,85 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 083F0C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:56:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C707DC00319
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB3AE2086A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:56:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=innovation.ch header.i=@innovation.ch header.b="U3+OyKNB"
+	by mail.kernel.org (Postfix) with ESMTP id 94DA720855
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:01:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbfBUK4S (ORCPT
+        id S1727054AbfBULBx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 05:56:18 -0500
-Received: from chill.innovation.ch ([216.218.245.220]:50860 "EHLO
-        chill.innovation.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725831AbfBUK4S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 05:56:18 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by chill.innovation.ch (Postfix) with ESMTP id C011764128D;
-        Thu, 21 Feb 2019 02:56:17 -0800 (PST)
-X-Virus-Scanned: amavisd-new at 
-Received: from chill.innovation.ch ([127.0.0.1])
-        by localhost (chill.innovation.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id E7-Bsr_WAYbQ; Thu, 21 Feb 2019 02:56:16 -0800 (PST)
-From:   =?UTF-8?q?Ronald=20Tschal=C3=A4r?= <ronald@innovation.ch>
-DKIM-Filter: OpenDKIM Filter v2.10.3 chill.innovation.ch B09E16401A1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=innovation.ch;
-        s=default; t=1550746576;
-        bh=q3Ok0ooPhxoTN5pkbjmEd6mSh6Qb9qHDOP8fWK5MHyY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U3+OyKNBWbAgW+cEko5l0AEAL9zhmA2Rr0yxxh8HWLKlBfeByReOhDUY9vp4lkzZU
-         UACKkSBULWxFkGEeS7BKn2tw++ozXl38pYTu3bdpQ2A+aVSB4M8oz6ZhYpHrL4x8BC
-         MRUMULcbpCNAwknDAPfu3bEf8xaMHmT9u9lzhiirMfzxABw20nLIZYgJYw0tPz48zv
-         pVonggQxh59x/EJwrwOd7Txcm67qJ/DtkcUDktXlxcuwJNIbSiuFdMdDbR1XLkXZSS
-         5Yq62MzPHrB9E/+44bM1hiHWiW8CaKC6SPWFfrQjmFD75IsFkkFEk8fNGLaVr/nh4/
-         qtXGUibDL7sbQ==
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Henrik Rydberg <rydberg@bitmath.org>
-Cc:     Lukas Wunner <lukas@wunner.de>,
-        Federico Lorenzi <federico@travelground.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Inki Dae <inki.dae@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 1/2] drm/bridge: sil_sii8620: depend on INPUT instead of selecting it.
-Date:   Thu, 21 Feb 2019 02:56:08 -0800
-Message-Id: <20190221105609.5710-2-ronald@innovation.ch>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190221105609.5710-1-ronald@innovation.ch>
-References: <20190221105609.5710-1-ronald@innovation.ch>
+        Thu, 21 Feb 2019 06:01:53 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39530 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725814AbfBULBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 06:01:52 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AD1A4AEFE;
+        Thu, 21 Feb 2019 11:01:51 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 29DE11E0900; Thu, 21 Feb 2019 12:01:51 +0100 (CET)
+Date:   Thu, 21 Feb 2019 12:01:51 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Dongli Zhang <dongli.zhang@oracle.com>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        axboe@kernel.dk, jack@suse.cz
+Subject: Re: [PATCH 1/2] loop: do not print warn message if partition scan is
+ successful
+Message-ID: <20190221110151.GE27474@quack2.suse.cz>
+References: <1550722655-15102-1-git-send-email-dongli.zhang@oracle.com>
+ <1550722655-15102-2-git-send-email-dongli.zhang@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1550722655-15102-2-git-send-email-dongli.zhang@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit d6abe6df706c66d803e6dd4fe98c1b6b7f125a56 (drm/bridge:
-sil_sii8620: do not have a dependency of RC_CORE) added a dependency on
-INPUT. However, this causes problems with other drivers, in particular
-an input driver that depends on MFD_INTEL_LPSS_PCI (to be added in a
-future commit):
+On Thu 21-02-19 12:17:34, Dongli Zhang wrote:
+> Do not print warn message when the partition scan returns 0.
+> 
+> Fixes: d57f3374ba48 ("loop: Move special partition reread handling in loop_clr_fd()")
+> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
 
-  drivers/clk/Kconfig:9:error: recursive dependency detected!
-  drivers/clk/Kconfig:9:        symbol COMMON_CLK is selected by MFD_INTEL_LPSS
-  drivers/mfd/Kconfig:566:      symbol MFD_INTEL_LPSS is selected by MFD_INTEL_LPSS_PCI
-  drivers/mfd/Kconfig:580:      symbol MFD_INTEL_LPSS_PCI is implied by KEYBOARD_APPLESPI
-  drivers/input/keyboard/Kconfig:73:    symbol KEYBOARD_APPLESPI depends on INPUT
-  drivers/input/Kconfig:8:      symbol INPUT is selected by DRM_SIL_SII8620
-  drivers/gpu/drm/bridge/Kconfig:83:    symbol DRM_SIL_SII8620 depends on DRM_BRIDGE
-  drivers/gpu/drm/bridge/Kconfig:1:     symbol DRM_BRIDGE is selected by DRM_PL111
-  drivers/gpu/drm/pl111/Kconfig:1:      symbol DRM_PL111 depends on COMMON_CLK
+Yeah, thanks for the fix! Not sure how come I didn't see this in my
+testing. You can add:
 
-According to the docs, select should only be used for non-visible
-symbols. Furthermore almost all other references to INPUT throughout the
-kernel config are depends, not selects. Hence this change.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-CC: Inki Dae <inki.dae@samsung.com>
-CC: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Ronald Tschalär <ronald@innovation.ch>
----
- drivers/gpu/drm/bridge/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+								Honza
 
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index 9eeb8ef0b174..bc838e7bb7c8 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -83,9 +83,9 @@ config DRM_PARADE_PS8622
- config DRM_SIL_SII8620
- 	tristate "Silicon Image SII8620 HDMI/MHL bridge"
- 	depends on OF
-+	depends on INPUT
- 	select DRM_KMS_HELPER
- 	imply EXTCON
--	select INPUT
- 	select RC_CORE
- 	help
- 	  Silicon Image SII8620 HDMI/MHL bridge chip driver.
+> ---
+>  drivers/block/loop.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> index cf55389..7908673 100644
+> --- a/drivers/block/loop.c
+> +++ b/drivers/block/loop.c
+> @@ -1115,8 +1115,9 @@ static int __loop_clr_fd(struct loop_device *lo, bool release)
+>  			err = __blkdev_reread_part(bdev);
+>  		else
+>  			err = blkdev_reread_part(bdev);
+> -		pr_warn("%s: partition scan of loop%d failed (rc=%d)\n",
+> -			__func__, lo_number, err);
+> +		if (err)
+> +			pr_warn("%s: partition scan of loop%d failed (rc=%d)\n",
+> +				__func__, lo_number, err);
+>  		/* Device is gone, no point in returning error */
+>  		err = 0;
+>  	}
+> -- 
+> 2.7.4
+> 
 -- 
-2.20.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
