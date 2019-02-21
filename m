@@ -2,227 +2,140 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF8CC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14EE7C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:34:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C11522077B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:31:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6E862077B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:34:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DVXoGJxf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726470AbfBUTbD (ORCPT
+        id S1726428AbfBUTev (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 14:31:03 -0500
-Received: from mga12.intel.com ([192.55.52.136]:4720 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726050AbfBUTbC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 14:31:02 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 11:31:02 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,396,1544515200"; 
-   d="scan'208";a="135335881"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by FMSMGA003.fm.intel.com with ESMTP; 21 Feb 2019 11:31:01 -0800
-Date:   Thu, 21 Feb 2019 11:24:24 -0800
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Tao Xu <tao3.xu@intel.com>, jingqi.liu@intel.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        H Peter Anvin <hpa@zytor.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v2 1/3] x86/cpufeatures: Enumerate user wait instructions
-Message-ID: <20190221192424.GA158428@romley-ivt3.sc.intel.com>
-References: <1547673522-226408-1-git-send-email-fenghua.yu@intel.com>
- <1547673522-226408-6-git-send-email-fenghua.yu@intel.com>
- <CALCETrWCJAzRj7BUBX=O2qdHXucNWz=z0uEQ5asskTbw8CGW5w@mail.gmail.com>
+        Thu, 21 Feb 2019 14:34:51 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:32957 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbfBUTev (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 14:34:51 -0500
+Received: by mail-pl1-f196.google.com with SMTP id y10so14665697plp.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 11:34:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=8wHmyEQWcYmfGuxqF9at/FtBIGcS67/2bcgFa6BHBtw=;
+        b=DVXoGJxf+pwEAbGu2VxoD5GGWWtYKdUCcTqK3mY3A/+rfWZN85VnmTN6Z5PRbvoZkE
+         kOsyG4VJEUt6YoMH4bYsMKWKdBK3oKzxNHexxDKJTyxFVhob45dNjGNpXk8Nr27mOnkH
+         LFZvKPbxhXqb4AKMR9FRsiRN0pTUVS5TOyMUM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=8wHmyEQWcYmfGuxqF9at/FtBIGcS67/2bcgFa6BHBtw=;
+        b=Ha6dyK/E6RkQ72F8ZZ7bWQeqn5Dgw+Xmqx6Qu6CfLriyBRxY50LKKDhQ8R+RIygHGv
+         g/G/YVUMg8EH5XfbXyjH0NGd3hKwyoFy7/xjxaFrG7e6Yqyrj3XFx08+0xFt0kH3af1r
+         uHVjFRQ46pTapiW37wxDXXEgvOvztHN+H62GsggSCHwoQtZ5du3ykTWBLKpd4IosWkuj
+         doQGgJzWTK2C7Aecpq9xK+gNexyMfnTKx0nnvbAZlGfNYMry9BMPZew92WzLQ65trqj6
+         le4u863xh6LqRnjpboBN8dogJIddfwkoWGbporNI8ARZR+KBJkWrLpympB5fBWfIMdHH
+         GiQg==
+X-Gm-Message-State: AHQUAubpfLQFE729xKnjkF4eyE/cN4oBkFVK+uwq4lr7Je4ACNC1vr+z
+        Zv4SBAc1D/1J476y9DRY7RFHrw==
+X-Google-Smtp-Source: AHgI3IYRH9xeguWlRd8zbzRZVjocQ9i+QJimFuhUK4oeJZDhxxc+HPEDIvQd2CFu8Rg7MK8m8RrG+w==
+X-Received: by 2002:a17:902:2de4:: with SMTP id p91mr153608plb.215.1550777690549;
+        Thu, 21 Feb 2019 11:34:50 -0800 (PST)
+Received: from egranata0.mtv.corp.google.com ([2620:15c:202:1:e209:54cf:7c16:6776])
+        by smtp.gmail.com with ESMTPSA id k26sm37982389pfb.87.2019.02.21.11.34.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Feb 2019 11:34:49 -0800 (PST)
+From:   egranata@chromium.org
+To:     gwendal@chromium.org, briannorris@chromium.org,
+        hdegoede@redhat.com, mika.westerberg@linux.intel.com,
+        dtor@chromium.org, andy.shevchenko@gmail.com, rafael@kernel.org,
+        gregkh@linuxfoundation.org, enric.balletbo@collabora.com,
+        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com
+Cc:     egranata@google.com, Enrico Granata <egranata@chromium.org>
+Subject: [PATCH v3] driver: platform: Support parsing GpioInt 0 in platform_get_irq()
+Date:   Thu, 21 Feb 2019 11:34:29 -0800
+Message-Id: <20190221193429.161300-1-egranata@chromium.org>
+X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
+In-Reply-To: <20190220180538.GA42642@google.com>
+References: <20190220180538.GA42642@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrWCJAzRj7BUBX=O2qdHXucNWz=z0uEQ5asskTbw8CGW5w@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 10:37:27PM -0800, Andy Lutomirski wrote:
-> On Wed, Feb 20, 2019 at 7:44 PM Tao Xu <tao3.xu@intel.com> wrote:
-> >
-> > From: Fenghua Yu <fenghua.yu@intel.com>
-> 
-> >
-> > From patchwork Wed Jan 16 21:18:41 2019
-> > Content-Type: text/plain; charset="utf-8"
-> 
-> [snipped more stuff like this]
-> 
-> What happened here?
+From: Enrico Granata <egranata@chromium.org>
 
-I don't know either:(
+ACPI 5 added support for GpioInt resources as a way to provide
+information about interrupts mediated via a GPIO controller.
 
-Tao never talked to me before he sent out this patch set. And the email
-format is totally wrong and he didn't change any code in this patch set.
+Several device buses (e.g. SPI, I2C) have support for retrieving
+an IRQ specified via this type of resource, and providing it
+directly to the driver as an IRQ number.
 
-I have no idea why he sent out this patch set. As of now I haven't got
-any response from him yet.
+This is not currently done for the platform drivers, as platform_get_irq()
+does not try to parse GpioInt() resources. This requires drivers to
+either have to support only one possible IRQ resource, or to have code
+in place to try both as a failsafe.
 
-I believe he made a mistake here.
+While there is a possibility of ambiguity for devices that exposes
+multiple IRQs, it is easy and feasible to support the common case
+of devices that only expose one IRQ which would be of either type
+depending on the underlying system's architecture.
 
-> 
-> > +/* Return value that will be used to set umwait control MSR */
-> > +static inline u32 umwait_control_val(void)
-> > +{
-> > +       /*
-> > +        * Enable or disable C0.2 (bit 0) based on global setting on all CPUs.
-> > +        * When bit 0 is 1, C0.2 is disabled. Otherwise, C0.2 is enabled.
-> > +        * So value in bit 0 is opposite of umwait_enable_c0_2.
-> > +        */
-> > +       return ~umwait_enable_c0_2 & UMWAIT_CONTROL_C02_MASK;
-> > +}
-> 
-> This function is horribly named.  How about something like
-> umwait_compute_msr_value() or something liek that?
-OK. Will change the name.
+This commit adds support for parsing a GpioInt resource in order
+to fulfill a request for the index 0 IRQ for a platform device.
 
-> Also, what
-> happened to the maximum wait time?
-> 
-> > +
-> > +static ssize_t umwait_enable_c0_2_show(struct device *dev,
-> > +                                      struct device_attribute *attr,
-> > +                                      char *buf)
-> > +{
-> > +       return sprintf(buf, "%d\n", umwait_enable_c0_2);
-> 
-> I realize that it's traditional to totally ignore races in sysfs and
-> such, but it's a bad tradition.  Please either READ_ONCE it with a
-> comment or take the mutex.
+Signed-off-by: Enrico Granata <egranata@chromium.org>
+---
+Changes in v3:
+ - ensured that -ENOENT return from acpi_dev_gpio_irq_get is not propagated
+   upwards, as some drivers expect platform_get_irq to return either a valid
+   IRQ or -ENXIO and will break otherwise
 
-Will change to READ_ONCE.
+ drivers/base/platform.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-> 
-> > +static ssize_t umwait_enable_c0_2_store(struct device *dev,
-> > +                                       struct device_attribute *attr,
-> > +                                       const char *buf, size_t count)
-> > +{
-> > +       int enable_c0_2, cpu, ret;
-> > +       u32 msr_val;
-> > +
-> > +       ret = kstrtou32(buf, 10, &enable_c0_2);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       if (enable_c0_2 != 1 && enable_c0_2 != 0)
-> > +               return -EINVAL;
-> 
-> How about if (enable_c0_2 > 1)?
-Ok. Will change to this.
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 1c958eb33ef4d..afd8b916303e4 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -127,7 +127,24 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
+ 		irqd_set_trigger_type(irqd, r->flags & IORESOURCE_BITS);
+ 	}
+ 
+-	return r ? r->start : -ENXIO;
++	if (r)
++		return r->start;
++
++	/*
++	 * For the index 0 interrupt, allow falling back to GpioInt
++	 * resources. While a device could have both Interrupt and GpioInt
++	 * resources, making this fallback ambiguous, in many common cases
++	 * the device will only expose one IRQ, and this fallback
++	 * allows a common code path across either kind of resource.
++	 */
++	if (num == 0 && has_acpi_companion(&dev->dev)) {
++		int ret = acpi_dev_gpio_irq_get(ACPI_COMPANION(&dev->dev), num);
++
++		if (ret > 0 || ret == -EPROBE_DEFER)
++			return ret;
++	}
++
++	return -ENXIO;
+ #endif
+ }
+ EXPORT_SYMBOL_GPL(platform_get_irq);
+-- 
+2.21.0.rc0.258.g878e2cd30e-goog
 
-> 
-> > +
-> > +       mutex_lock(&umwait_lock);
-> > +
-> > +       umwait_enable_c0_2 = enable_c0_2;
-> > +       msr_val = umwait_control_val();
-> > +       get_online_cpus();
-> > +       /* All CPUs have same umwait control setting */
-> > +       for_each_online_cpu(cpu)
-> > +               wrmsr_on_cpu(cpu, MSR_IA32_UMWAIT_CONTROL, msr_val, 0);
-> > +       put_online_cpus();
-> > +
-> > +       mutex_unlock(&umwait_lock);
-> 
-> Please factor this thing out into a helper like
-> umwait_update_all_cpus().  That helper can assert that the lock is
-> held.
-Ok.
-
-> 
-> > +/* Set up umwait control MSR on this CPU using the current global setting. */
-> > +static int umwait_cpu_online(unsigned int cpu)
-> > +{
-> > +       u32 msr_val;
-> > +
-> > +       mutex_lock(&umwait_lock);
-> > +
-> > +       msr_val = umwait_control_val();
-> > +       wrmsr(MSR_IA32_UMWAIT_CONTROL, msr_val, 0);
-> > +
-> > +       mutex_unlock(&umwait_lock);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int __init umwait_init(void)
-> > +{
-> > +       struct device *dev;
-> > +       int ret;
-> > +
-> > +       if (!boot_cpu_has(X86_FEATURE_WAITPKG))
-> > +               return -ENODEV;
-> > +
-> > +       /* Add CPU global user wait interface to control umwait. */
-> > +       dev = cpu_subsys.dev_root;
-> > +       ret = sysfs_create_group(&dev->kobj, &umwait_attr_group);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "umwait/intel:online",
-> > +                               umwait_cpu_online, NULL);
-> 
-> This hotplug notifier thing is awful.  Thomas, do we have a function
-> that gets called every time a CPU is brought up (via BSP boot, AP
-> boot, hotplug, hibernation resume, etc) where we can just put all
-> these things?  cpu_init() is almost appropriate, except that it's
-> called at somewhat erratic times (quite different for BSP and AP IIRC)
-> and it's not called AFAICT during hibernation restore.  I suppose we
-> could add a new thing that is called by cpu_init() and
-> restore_processor_state().
-> 
-> Also, surely you should actually write the MSR in this function, too.
-> 
-> >
-> >  static int umwait_enable_c0_2 = 1; /* 0: disable C0.2. 1: enable C0.2. */
-> > +static u32 umwait_max_time; /* In TSC-quanta. Only bits [31:2] are used. */
-> 
-> I still think the default should be some reasonable nonzero value.  It
-> should be long enough that we get decent C0.2 residency and short
-> enough that UMWAIT never gives the impression that it is anything
-> other than a fancy way to save a bit of power and SMT resources when
-> spinning.  I don't want to see a situation where some library uses
-> UMWAIT under the expectation that it genuinely waits for an event,
-> appears to work well on bare metal on an otherwise idle system, and
-> falls apart when it's run in a VM guest or with other software
-> running.  IOW, programs more or less must be written to expect many
-> spurious wakeups, so I think we should pick a default value so that
-> there are essentially always many spurious wakeups.
-> 
-> As a guess, I think that the default wait time should be well under 1
-> ms but at least 20x the C0.2 entry+exit latency.
-
-It's hard to agree on a global maximum wait time value as we discussed
-before:
-1. Andrew doesn't like the short wait time value
-2. C0.1/C0.2 entry/exit latency is hardware implementation specific and
-may vary from platform to platform. My measurement on one machine is
-about hundreds of cycles. It's hard to justify why 1ms or any value is
-right value on one machine. Or simply set it as 1ms (converted to tsc).
-
-Or to simplify the situation, how about we still use zero as global max wait
-time (i.e. no limitation for global wait time) as implemented in this
-patch set? User can still change the value to any value based on their
-usage. Isn't this a right way to take care of any usage?
-
-Thanks.
-
--Fenghua
