@@ -6,50 +6,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8879C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5706C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 757CB2084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A42F92075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:37:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550759826;
-	bh=dQj84cxP4yEPgRgapyUfFZ8OSdptRwI1uUldvuBi3Lw=;
+	s=default; t=1550759829;
+	bh=bOXycFKqDClHqPv3d4jwPy81nmDjwH/m6BAgjmDVkws=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xMY8bJ3CjyysHhZ5ACvgNWZDqzqwTCXuSrYZR8jSsUEOFKj9b4qJ+vOIb94qbSQLY
-	 C0dJ1w0pUUOhhBFCBOYnbb4JJyQuOhx/soLClsCTihmHckA0GEetf9/B+IyG9qELsp
-	 IC3d0HBZvPYv0Wfmy82vuiVwoiwT9VrEFUMKGNjU=
+	b=pDJYNSqIq6yItp9dA5Wpo76keueheErOOzSOlQSLKLnw1a9oOcejkkc01m0Vt/iDR
+	 pqFyAmYRri6VI3uiyfDcFsxXHIo/Qj0T3fvAMmobkBs0iL9wxB7TttYGVKwLDeKuv6
+	 h7vLuVbVOb3NK7kWeZ7m/LxvZsLUcTsm3KMpda5k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbfBUOhE (ORCPT
+        id S1728306AbfBUOhI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:37:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58040 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:37:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728172AbfBUOhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:37:03 -0500
+        id S1728291AbfBUOhG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:37:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D48A20838;
-        Thu, 21 Feb 2019 14:37:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD6DC2075C;
+        Thu, 21 Feb 2019 14:37:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550759822;
-        bh=dQj84cxP4yEPgRgapyUfFZ8OSdptRwI1uUldvuBi3Lw=;
+        s=default; t=1550759826;
+        bh=bOXycFKqDClHqPv3d4jwPy81nmDjwH/m6BAgjmDVkws=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uymdKz4BvTW7JX0HT4/KJqqhY/IVwxX3NTHkk5hZaBHmEfbLjf3FPqYJ+T7TLbqH7
-         48I5kLruXl1RpHrMJa+nSum12Re/gyPRMDXdTUfCp3zN1PtQ7coVY1wcTQ7PblzWCK
-         UadBQK5/OMcsLLMokW5wB4q4UAcfK8GKM/iM/2MQ=
+        b=Ve9IlKKeYAUyvNtpHU5vwOHNUg3vTTJv9Ng+kdFgF5ZEdKjlYUqPvvHmcZrwF7WMx
+         rJZ480w+Bgw0jxcxocilRDkyvxi2M4XWX2EF6cblYf0lJ5THsbci6znvfCQRjhhPIH
+         BI2u1FpT8ffzf0awFxuoyB3dTGZ77yeulVuF6OHc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Petr Machata <petrm@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Stefano Brivio <sbrivio@redhat.com>,
+        stable@vger.kernel.org, Xiumei Mu <xmu@redhat.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Jorgen Hansen <jhansen@vmware.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 05/13] vxlan: test dev->flags & IFF_UP before calling netif_rx()
-Date:   Thu, 21 Feb 2019 15:35:36 +0100
-Message-Id: <20190221125240.564054848@linuxfoundation.org>
+Subject: [PATCH 3.18 06/13] vsock: cope with memory allocation failure at socket creation time
+Date:   Thu, 21 Feb 2019 15:35:37 +0100
+Message-Id: <20190221125240.668361110@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125240.091472334@linuxfoundation.org>
 References: <20190221125240.091472334@linuxfoundation.org>
@@ -68,82 +67,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-[ Upstream commit 4179cb5a4c924cd233eaadd081882425bc98f44e ]
+[ Upstream commit 225d9464268599a5b4d094d02ec17808e44c7553 ]
 
-netif_rx() must be called under a strict contract.
+In the unlikely event that the kmalloc call in vmci_transport_socket_init()
+fails, we end-up calling vmci_transport_destruct() with a NULL vmci_trans()
+and oopsing.
 
-At device dismantle phase, core networking clears IFF_UP
-and flush_all_backlogs() is called after rcu grace period
-to make sure no incoming packet might be in a cpu backlog
-and still referencing the device.
+This change addresses the above explicitly checking for zero vmci_trans()
+at destruction time.
 
-Most drivers call netif_rx() from their interrupt handler,
-and since the interrupts are disabled at device dismantle,
-netif_rx() does not have to check dev->flags & IFF_UP
-
-Virtual drivers do not have this guarantee, and must
-therefore make the check themselves.
-
-Otherwise we risk use-after-free and/or crashes.
-
-Note this patch also fixes a small issue that came
-with commit ce6502a8f957 ("vxlan: fix a use after free
-in vxlan_encap_bypass"), since the dev->stats.rx_dropped
-change was done on the wrong device.
-
-Fixes: d342894c5d2f ("vxlan: virtual extensible lan")
-Fixes: ce6502a8f957 ("vxlan: fix a use after free in vxlan_encap_bypass")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Petr Machata <petrm@mellanox.com>
-Cc: Ido Schimmel <idosch@mellanox.com>
-Cc: Roopa Prabhu <roopa@cumulusnetworks.com>
-Cc: Stefano Brivio <sbrivio@redhat.com>
+Reported-by: Xiumei Mu <xmu@redhat.com>
+Fixes: d021c344051a ("VSOCK: Introduce VM Sockets")
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+Reviewed-by: Jorgen Hansen <jhansen@vmware.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/vxlan.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ net/vmw_vsock/vmci_transport.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/net/vxlan.c
-+++ b/drivers/net/vxlan.c
-@@ -1665,7 +1665,7 @@ static void vxlan_encap_bypass(struct sk
- 	struct pcpu_sw_netstats *tx_stats, *rx_stats;
- 	union vxlan_addr loopback;
- 	union vxlan_addr *remote_ip = &dst_vxlan->default_dst.remote_ip;
--	struct net_device *dev = skb->dev;
-+	struct net_device *dev;
- 	int len = skb->len;
+--- a/net/vmw_vsock/vmci_transport.c
++++ b/net/vmw_vsock/vmci_transport.c
+@@ -1663,6 +1663,10 @@ static int vmci_transport_socket_init(st
  
- 	tx_stats = this_cpu_ptr(src_vxlan->dev->tstats);
-@@ -1685,8 +1685,15 @@ static void vxlan_encap_bypass(struct sk
- #endif
- 	}
- 
-+	rcu_read_lock();
-+	dev = skb->dev;
-+	if (unlikely(!(dev->flags & IFF_UP))) {
-+		kfree_skb(skb);
-+		goto drop;
-+	}
+ static void vmci_transport_destruct(struct vsock_sock *vsk)
+ {
++	/* transport can be NULL if we hit a failure at init() time */
++	if (!vmci_trans(vsk))
++		return;
 +
- 	if (dst_vxlan->flags & VXLAN_F_LEARN)
--		vxlan_snoop(skb->dev, &loopback, eth_hdr(skb)->h_source);
-+		vxlan_snoop(dev, &loopback, eth_hdr(skb)->h_source);
- 
- 	u64_stats_update_begin(&tx_stats->syncp);
- 	tx_stats->tx_packets++;
-@@ -1699,8 +1706,10 @@ static void vxlan_encap_bypass(struct sk
- 		rx_stats->rx_bytes += len;
- 		u64_stats_update_end(&rx_stats->syncp);
- 	} else {
-+drop:
- 		dev->stats.rx_dropped++;
- 	}
-+	rcu_read_unlock();
- }
- 
- static void vxlan_xmit_one(struct sk_buff *skb, struct net_device *dev,
+ 	if (vmci_trans(vsk)->attach_sub_id != VMCI_INVALID_ID) {
+ 		vmci_event_unsubscribe(vmci_trans(vsk)->attach_sub_id);
+ 		vmci_trans(vsk)->attach_sub_id = VMCI_INVALID_ID;
 
 
