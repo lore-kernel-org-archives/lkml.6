@@ -2,175 +2,370 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA4AC4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 02:36:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC93C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 02:46:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A7B72086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 02:36:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RRDQaL2Y"
+	by mail.kernel.org (Postfix) with ESMTP id 1C9DC2086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 02:46:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbfBUCgw (ORCPT
+        id S1726389AbfBUCp6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 21:36:52 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46991 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726251AbfBUCgw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 21:36:52 -0500
-Received: by mail-lj1-f194.google.com with SMTP id v16so22592231ljg.13;
-        Wed, 20 Feb 2019 18:36:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IhT33+ZuZhnclLJtzrgLTvsh568OJwgxzHtt6EZoeoE=;
-        b=RRDQaL2Yr6th/tcc24ot1sRaI12xLnsOT26YVojzv6FLlBcPV4BZH7qKQYvXQRy0Ml
-         xgHyh6bj9Xh4TnWOM//4cBWzFemxAhb+kUIo9tDssoivn0Hz/a7DNF7QkegBx20FAGCg
-         YrkJeugdrrurdNvVCq5U1ghRK5uazu7WJejHQMyH1vDR0zb8y17em07zw1XqXQITvj8d
-         Uf+f//sKtQqL8efMFlzW9j7KhEfvhhELp4ufj6w5q4pFpnciIRQPovl0FYOKzk9JzEti
-         ZDqfX/rsuBnEGNqhZ3nCqJTwA7Q1wucr7yMhsychbrwxfUa5c4tLfu9P7jCmXg/ZYdVn
-         gtfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IhT33+ZuZhnclLJtzrgLTvsh568OJwgxzHtt6EZoeoE=;
-        b=WcnZAOo8xsa14psV/TV4hYQeWmT0NBRhMLiHSIf1bD7EeayWdvr0PFtciuSvlcN0QY
-         mK8a+NpZbwovdiaiYUcV9DsFA747uOvdIqf6t9Q1N5bEr2j6vzYi1xv6R7+3NmYFsH4/
-         5Xi8gY3Ubcmp72KrBkPbEl7vyd6YpCBUHi7dkT2aBlkLOgP6JDRmonCplKqPkaX4Zz47
-         h5YmdEMqNoQqjYvdjnGd1ZQPmgARHKkTpn5XS1ihHmwf0OV6EIZ4puIehT6MFv81n7Xd
-         M2R1R36wMq+NMU30WzxNEEDcleEklQnzQR/+e0Zj8estA2de61MuO+zdDvHut20Jms1l
-         A+Mw==
-X-Gm-Message-State: AHQUAuYRzO1myBpBGnCGjZqCj9QLN8RLqaYEx+lZH/WNtfv8rMMyjlk5
-        pQe+s+1Ofm4zccWtpjRewEB6EHph+9/3RyMUOoA=
-X-Google-Smtp-Source: AHgI3IahDoLmYSzyXftmcGNCvk1lLmWsiwGhF2S+3m4XfLJICiUO5nC5rltmz2rH5SPgMvCWKXFIHyOjBjhd24YBdDM=
-X-Received: by 2002:a2e:9b99:: with SMTP id z25mr13905243lji.106.1550716608824;
- Wed, 20 Feb 2019 18:36:48 -0800 (PST)
+        Wed, 20 Feb 2019 21:45:58 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:58570 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726016AbfBUCp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 21:45:58 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 4799CAC324F6B1F05BFB;
+        Thu, 21 Feb 2019 10:45:54 +0800 (CST)
+Received: from [127.0.0.1] (10.111.221.165) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Thu, 21 Feb 2019
+ 10:45:45 +0800
+Subject: Re: WARNING: ODEBUG bug in f2fs_fill_super
+To:     Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+77ea19d309d4cdc55cc1@syzkaller.appspotmail.com>,
+        <jaegeuk@kernel.org>, <stummala@codeaurora.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        <yuchao0@huawei.com>
+References: <0000000000009e76240574711017@google.com>
+ <CACT4Y+YUfaAQs9vOtk61opaSkCtQEgQUrcBQNebsk-F223s0pw@mail.gmail.com>
+From:   Sheng Yong <shengyong1@huawei.com>
+Message-ID: <e9fba174-4a34-9845-8471-d2901f6ddc2e@huawei.com>
+Date:   Thu, 21 Feb 2019 10:45:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-References: <20190215024104.GA26331@jordon-HP-15-Notebook-PC>
-In-Reply-To: <20190215024104.GA26331@jordon-HP-15-Notebook-PC>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Thu, 21 Feb 2019 08:11:02 +0530
-Message-ID: <CAFqt6zbchvoD-MdEF2T52eOPQ2x4gZ4G-72oZkW5f_RiT1nXpA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/9] mm: Use vm_map_pages() and vm_map_pages_zero() API
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Rik van Riel <riel@surriel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        rppt@linux.vnet.ibm.com, Peter Zijlstra <peterz@infradead.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        robin.murphy@arm.com, iamjoonsoo.kim@lge.com, treding@nvidia.com,
-        Kees Cook <keescook@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
-        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
-        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
-        pawel@osciak.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        mchehab@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>
-Cc:     linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux1394-devel@lists.sourceforge.net,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
-        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CACT4Y+YUfaAQs9vOtk61opaSkCtQEgQUrcBQNebsk-F223s0pw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.111.221.165]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 8:06 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
->
-> Previouly drivers have their own way of mapping range of
-> kernel pages/memory into user vma and this was done by
-> invoking vm_insert_page() within a loop.
->
-> As this pattern is common across different drivers, it can
-> be generalized by creating new functions and use it across
-> the drivers.
->
-> vm_map_pages() is the API which could be used to map
-> kernel memory/pages in drivers which has considered vm_pgoff.
->
-> vm_map_pages_zero() is the API which could be used to map
-> range of kernel memory/pages in drivers which has not considered
-> vm_pgoff. vm_pgoff is passed default as 0 for those drivers.
->
-> We _could_ then at a later "fix" these drivers which are using
-> vm_map_pages_zero() to behave according to the normal vm_pgoff
-> offsetting simply by removing the _zero suffix on the function
-> name and if that causes regressions, it gives us an easy way to revert.
->
-> Tested on Rockchip hardware and display is working fine, including talking
-> to Lima via prime.
->
-> v1 -> v2:
->         Few Reviewed-by.
->
->         Updated the change log in [8/9]
->
->         In [7/9], vm_pgoff is treated in V4L2 API as a 'cookie'
->         to select a buffer, not as a in-buffer offset by design
->         and it always want to mmap a whole buffer from its beginning.
->         Added additional changes after discussing with Marek and
->         vm_map_pages() could be used instead of vm_map_pages_zero().
->
-> v2 -> v3:
->         Corrected the documentation as per review comment.
->
->         As suggested in v2, renaming the interfaces to -
->         *vm_insert_range() -> vm_map_pages()* and
->         *vm_insert_range_buggy() -> vm_map_pages_zero()*.
->         As the interface is renamed, modified the code accordingly,
->         updated the change logs and modified the subject lines to use the
->         new interfaces. There is no other change apart from renaming and
->         using the new interface.
->
->         Patch[1/9] & [4/9], Tested on Rockchip hardware.
->
-> v3 -> v4:
->         Fixed build warnings on patch [8/9] reported by kbuild test robot.
->
-> Souptick Joarder (9):
->   mm: Introduce new vm_map_pages() and vm_map_pages_zero() API
->   arm: mm: dma-mapping: Convert to use vm_map_pages()
->   drivers/firewire/core-iso.c: Convert to use vm_map_pages_zero()
->   drm/rockchip/rockchip_drm_gem.c: Convert to use vm_map_pages()
->   drm/xen/xen_drm_front_gem.c: Convert to use vm_map_pages()
->   iommu/dma-iommu.c: Convert to use vm_map_pages()
->   videobuf2/videobuf2-dma-sg.c: Convert to use vm_map_pages()
->   xen/gntdev.c: Convert to use vm_map_pages()
->   xen/privcmd-buf.c: Convert to use vm_map_pages_zero()
+Hi, Dmitry,
 
-If no further comment, is it fine to take these patches to -mm
-tree for regression ?
+On 2019/2/20 23:12, Dmitry Vyukov wrote:
+> On Mon, Aug 27, 2018 at 11:04 PM syzbot
+> <syzbot+77ea19d309d4cdc55cc1@syzkaller.appspotmail.com> wrote:
+>>
+>> Hello,
+>>
+>> syzbot found the following crash on:
+>>
+>> HEAD commit:    e27bc174c9c6 Add linux-next specific files for 20180824
+>> git tree:       linux-next
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=11c0034a400000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=28446088176757ea
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=77ea19d309d4cdc55cc1
+>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>
+>> Unfortunately, I don't have any reproducer for this crash yet.
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+77ea19d309d4cdc55cc1@syzkaller.appspotmail.com
+>>
+>> ------------[ cut here ]------------
+>> ODEBUG: free active (active state 0) object type: percpu_counter
+>> hint:           (null)
+>> WARNING: CPU: 1 PID: 18832 at lib/debugobjects.c:329
+>> debug_print_object+0x16a/0x210 lib/debugobjects.c:326
+>> Kernel panic - not syncing: panic_on_warn set ...
+> 
+> 
+> Was this fixed by something?
+> It happened a number of times, but then stopped after Oct 23 2018. Was it:
+> 
+> commit 26b5a079197c8cb6725565968b7fd3299bd1877b
+> Author: Sheng Yong <shengyong1@huawei.com>
+> Date:   Fri Oct 12 18:49:26 2018 +0800
+>      f2fs: cleanup dirty pages if recover failed
+> 
+> which fixed some bugs in f2fs_fill_super?
+> 
+During mount, f2fs tries to recover fsync-ed data of last unclean umount.
+But if recover fails, f2fs_fill_super did not cleanup dirty pages which
+have already recovered. This will trigger f2fs_bug_on later.
 
->
->  arch/arm/mm/dma-mapping.c                          | 22 ++----
->  drivers/firewire/core-iso.c                        | 15 +---
->  drivers/gpu/drm/rockchip/rockchip_drm_gem.c        | 17 +----
->  drivers/gpu/drm/xen/xen_drm_front_gem.c            | 18 ++---
->  drivers/iommu/dma-iommu.c                          | 12 +---
->  drivers/media/common/videobuf2/videobuf2-core.c    |  7 ++
->  .../media/common/videobuf2/videobuf2-dma-contig.c  |  6 --
->  drivers/media/common/videobuf2/videobuf2-dma-sg.c  | 22 ++----
->  drivers/xen/gntdev.c                               | 11 ++-
->  drivers/xen/privcmd-buf.c                          |  8 +--
->  include/linux/mm.h                                 |  4 ++
->  mm/memory.c                                        | 81 ++++++++++++++++++++++
->  mm/nommu.c                                         | 14 ++++
->  13 files changed, 134 insertions(+), 103 deletions(-)
->
-> --
-> 1.9.1
->
+This patch fixes this by cleaning up these dirty pages and avoiding to
+writing back these pages. After that, f2fs will retry mount without
+recover.
+
+But I don't see the reason of the debugobject warning, and not sure if the
+patch fixed the warning :(
+
+thanks,
+
+> 
+> 
+>> CPU: 1 PID: 18832 Comm: syz-executor4 Not tainted 4.18.0-next-20180824+ #47
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>> Google 01/01/2011
+>> Call Trace:
+>>    __dump_stack lib/dump_stack.c:77 [inline]
+>>    dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+>>    panic+0x238/0x4e7 kernel/panic.c:184
+>>    __warn.cold.8+0x163/0x1ba kernel/panic.c:536
+>>    report_bug+0x252/0x2d0 lib/bug.c:186
+>>    fixup_bug arch/x86/kernel/traps.c:178 [inline]
+>>    do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
+>>    do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
+>>    invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:996
+>> RIP: 0010:debug_print_object+0x16a/0x210 lib/debugobjects.c:326
+>> Code: 3a 87 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 92 00 00 00 48 8b 14 dd
+>> 20 e5 3a 87 4c 89 f6 48 c7 c7 c0 da 3a 87 e8 26 ec e3 fd <0f> 0b 83 05 a9
+>> 49 28 05 01 48 83 c4 18 5b 41 5c 41 5d 41 5e 41 5f
+>> RSP: 0018:ffff8801a9a97360 EFLAGS: 00010082
+>> RAX: 0000000000000000 RBX: 0000000000000003 RCX: ffffc90012037000
+>> RDX: 000000000002cd2b RSI: ffffffff8163b051 RDI: 0000000000000001
+>> RBP: ffff8801a9a973a0 R08: ffff8801c1f76100 R09: ffffed003b623eca
+>> R10: ffffed003b623eca R11: ffff8801db11f657 R12: 0000000000000001
+>> R13: ffffffff882b7ae0 R14: ffffffff873adf60 R15: 0000000000000000
+>>    __debug_check_no_obj_freed lib/debugobjects.c:786 [inline]
+>>    debug_check_no_obj_freed+0x3b2/0x595 lib/debugobjects.c:818
+>>    kfree+0xc7/0x210 mm/slab.c:3812
+>>    f2fs_fill_super+0xe1a/0x8150 fs/f2fs/super.c:3147
+>>    mount_bdev+0x314/0x3e0 fs/super.c:1347
+>>    f2fs_mount+0x3c/0x50 fs/f2fs/super.c:3161
+>>    legacy_get_tree+0x131/0x460 fs/fs_context.c:732
+>>    vfs_get_tree+0x1cb/0x5c0 fs/super.c:1746
+>>    do_new_mount fs/namespace.c:2627 [inline]
+>>    do_mount+0x6f9/0x1e30 fs/namespace.c:2951
+>>    ksys_mount+0x12d/0x140 fs/namespace.c:3167
+>>    __do_sys_mount fs/namespace.c:3181 [inline]
+>>    __se_sys_mount fs/namespace.c:3178 [inline]
+>>    __x64_sys_mount+0xbe/0x150 fs/namespace.c:3178
+>>    do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>>    entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>> RIP: 0033:0x459aba
+>> Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 bd 8a fb ff c3 66 2e 0f
+>> 1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff
+>> ff 0f 83 9a 8a fb ff c3 66 0f 1f 84 00 00 00 00 00
+>> RSP: 002b:00007f16f9937a88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
+>> RAX: ffffffffffffffda RBX: 00007f16f9937b30 RCX: 0000000000459aba
+>> RDX: 00007f16f9937ad0 RSI: 0000000020000100 RDI: 00007f16f9937af0
+>> RBP: 0000000020000100 R08: 00007f16f9937b30 R09: 00007f16f9937ad0
+>> R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000003
+>> R13: 0000000000000000 R14: 00000000004c9c12 R15: 0000000000000000
+>>
+>> ======================================================
+>> WARNING: possible circular locking dependency detected
+>> 4.18.0-next-20180824+ #47 Not tainted
+>> ------------------------------------------------------
+>> syz-executor4/18832 is trying to acquire lock:
+>> 00000000cd8e7eb7 ((console_sem).lock){-.-.}, at: down_trylock+0x13/0x70
+>> kernel/locking/semaphore.c:136
+>>
+>> but task is already holding lock:
+>> 0000000046ad1dd4 (&obj_hash[i].lock){-.-.}, at: __debug_check_no_obj_freed
+>> lib/debugobjects.c:777 [inline]
+>> 0000000046ad1dd4 (&obj_hash[i].lock){-.-.}, at:
+>> debug_check_no_obj_freed+0x16c/0x595 lib/debugobjects.c:818
+>>
+>> which lock already depends on the new lock.
+>>
+>>
+>> the existing dependency chain (in reverse order) is:
+>>
+>> -> #3 (&obj_hash[i].lock){-.-.}:
+>>          __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+>>          _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+>>          __debug_object_init+0x127/0x12e0 lib/debugobjects.c:384
+>>          debug_object_init+0x16/0x20 lib/debugobjects.c:432
+>>          debug_hrtimer_init kernel/time/hrtimer.c:410 [inline]
+>>          debug_init kernel/time/hrtimer.c:458 [inline]
+>>          hrtimer_init+0x97/0x410 kernel/time/hrtimer.c:1308
+>>          init_dl_task_timer+0x1b/0x50 kernel/sched/deadline.c:1057
+>>          __sched_fork+0x2ae/0x590 kernel/sched/core.c:2160
+>>          init_idle+0x75/0x740 kernel/sched/core.c:5377
+>>          sched_init+0xbee/0xcbd kernel/sched/core.c:6060
+>>          start_kernel+0x47d/0x94e init/main.c:602
+>>          x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:452
+>>          x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:433
+>>          secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:242
+>>
+>> -> #2 (&rq->lock){-.-.}:
+>>          __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+>>          _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:144
+>>          rq_lock kernel/sched/sched.h:1821 [inline]
+>>          task_fork_fair+0x93/0x680 kernel/sched/fair.c:9574
+>>          sched_fork+0x44b/0xbd0 kernel/sched/core.c:2353
+>>          copy_process+0x235e/0x7af0 kernel/fork.c:1840
+>>          _do_fork+0x1ca/0x1170 kernel/fork.c:2169
+>>          kernel_thread+0x34/0x40 kernel/fork.c:2228
+>>          rest_init+0x22/0xe4 init/main.c:408
+>>          start_kernel+0x913/0x94e init/main.c:739
+>>          x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:452
+>>          x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:433
+>>          secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:242
+>>
+>> -> #1 (&p->pi_lock){-.-.}:
+>>          __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+>>          _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+>>          try_to_wake_up+0xd2/0x1250 kernel/sched/core.c:1960
+>>          wake_up_process+0x10/0x20 kernel/sched/core.c:2123
+>>          __up.isra.1+0x1c0/0x2a0 kernel/locking/semaphore.c:262
+>>          up+0x13c/0x1c0 kernel/locking/semaphore.c:187
+>>          __up_console_sem+0xbe/0x1b0 kernel/printk/printk.c:245
+>>          console_unlock+0x506/0x10d0 kernel/printk/printk.c:2430
+>>          con_install+0x34e/0x420 drivers/tty/vt/vt.c:3241
+>>          tty_driver_install_tty drivers/tty/tty_io.c:1224 [inline]
+>>          tty_init_dev+0xfd/0x460 drivers/tty/tty_io.c:1324
+>>          tty_open_by_driver drivers/tty/tty_io.c:1959 [inline]
+>>          tty_open+0x692/0xb30 drivers/tty/tty_io.c:2007
+>>          chrdev_open+0x25a/0x770 fs/char_dev.c:417
+>>          do_dentry_open+0x49c/0x1140 fs/open.c:771
+>>          vfs_open+0xa0/0xd0 fs/open.c:880
+>>          do_last fs/namei.c:3418 [inline]
+>>          path_openat+0x12fb/0x5300 fs/namei.c:3534
+>>          do_filp_open+0x255/0x380 fs/namei.c:3564
+>>          do_sys_open+0x584/0x720 fs/open.c:1063
+>>          __do_sys_open fs/open.c:1081 [inline]
+>>          __se_sys_open fs/open.c:1076 [inline]
+>>          __x64_sys_open+0x7e/0xc0 fs/open.c:1076
+>>          do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>>          entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>>
+>> -> #0 ((console_sem).lock){-.-.}:
+>>          lock_acquire+0x1e4/0x4f0 kernel/locking/lockdep.c:3901
+>>          __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+>>          _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+>>          down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
+>>          __down_trylock_console_sem+0xae/0x200 kernel/printk/printk.c:228
+>>          console_trylock+0x15/0xa0 kernel/printk/printk.c:2249
+>>          console_trylock_spinning kernel/printk/printk.c:1651 [inline]
+>>          vprintk_emit+0x31f/0x910 kernel/printk/printk.c:1926
+>>          vprintk_default+0x28/0x30 kernel/printk/printk.c:1968
+>>          vprintk_func+0x7a/0x117 kernel/printk/printk_safe.c:398
+>>          printk+0xa7/0xcf kernel/printk/printk.c:2001
+>>          __warn_printk+0x8c/0xe0 kernel/panic.c:590
+>>          debug_print_object+0x16a/0x210 lib/debugobjects.c:326
+>>          __debug_check_no_obj_freed lib/debugobjects.c:786 [inline]
+>>          debug_check_no_obj_freed+0x3b2/0x595 lib/debugobjects.c:818
+>>          kfree+0xc7/0x210 mm/slab.c:3812
+>>          f2fs_fill_super+0xe1a/0x8150 fs/f2fs/super.c:3147
+>>          mount_bdev+0x314/0x3e0 fs/super.c:1347
+>>          f2fs_mount+0x3c/0x50 fs/f2fs/super.c:3161
+>>          legacy_get_tree+0x131/0x460 fs/fs_context.c:732
+>>          vfs_get_tree+0x1cb/0x5c0 fs/super.c:1746
+>>          do_new_mount fs/namespace.c:2627 [inline]
+>>          do_mount+0x6f9/0x1e30 fs/namespace.c:2951
+>>          ksys_mount+0x12d/0x140 fs/namespace.c:3167
+>>          __do_sys_mount fs/namespace.c:3181 [inline]
+>>          __se_sys_mount fs/namespace.c:3178 [inline]
+>>          __x64_sys_mount+0xbe/0x150 fs/namespace.c:3178
+>>          do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>>          entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>>
+>> other info that might help us debug this:
+>>
+>> Chain exists of:
+>>     (console_sem).lock --> &rq->lock --> &obj_hash[i].lock
+>>
+>>    Possible unsafe locking scenario:
+>>
+>>          CPU0                    CPU1
+>>          ----                    ----
+>>     lock(&obj_hash[i].lock);
+>>                                  lock(&rq->lock);
+>>                                  lock(&obj_hash[i].lock);
+>>     lock((console_sem).lock);
+>>
+>>    *** DEADLOCK ***
+>>
+>> 2 locks held by syz-executor4/18832:
+>>    #0: 000000002b55bbcc (&fc->fs_type->s_umount_key#49/1){+.+.}, at:
+>> alloc_super+0x25e/0xb20 fs/super.c:225
+>>    #1: 0000000046ad1dd4 (&obj_hash[i].lock){-.-.}, at:
+>> __debug_check_no_obj_freed lib/debugobjects.c:777 [inline]
+>>    #1: 0000000046ad1dd4 (&obj_hash[i].lock){-.-.}, at:
+>> debug_check_no_obj_freed+0x16c/0x595 lib/debugobjects.c:818
+>>
+>> stack backtrace:
+>> CPU: 1 PID: 18832 Comm: syz-executor4 Not tainted 4.18.0-next-20180824+ #47
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>> Google 01/01/2011
+>> Call Trace:
+>>    __dump_stack lib/dump_stack.c:77 [inline]
+>>    dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+>>    print_circular_bug.isra.34.cold.55+0x1bd/0x27d
+>> kernel/locking/lockdep.c:1222
+>>    check_prev_add kernel/locking/lockdep.c:1862 [inline]
+>>    check_prevs_add kernel/locking/lockdep.c:1975 [inline]
+>>    validate_chain kernel/locking/lockdep.c:2416 [inline]
+>>    __lock_acquire+0x3449/0x5020 kernel/locking/lockdep.c:3412
+>>    lock_acquire+0x1e4/0x4f0 kernel/locking/lockdep.c:3901
+>>    __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+>>    _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+>>    down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
+>>    __down_trylock_console_sem+0xae/0x200 kernel/printk/printk.c:228
+>>    console_trylock+0x15/0xa0 kernel/printk/printk.c:2249
+>>    console_trylock_spinning kernel/printk/printk.c:1651 [inline]
+>>    vprintk_emit+0x31f/0x910 kernel/printk/printk.c:1926
+>>    vprintk_default+0x28/0x30 kernel/printk/printk.c:1968
+>>    vprintk_func+0x7a/0x117 kernel/printk/printk_safe.c:398
+>>    printk+0xa7/0xcf kernel/printk/printk.c:2001
+>>    __warn_printk+0x8c/0xe0 kernel/panic.c:590
+>>    debug_print_object+0x16a/0x210 lib/debugobjects.c:326
+>>    __debug_check_no_obj_freed lib/debugobjects.c:786 [inline]
+>>    debug_check_no_obj_freed+0x3b2/0x595 lib/debugobjects.c:818
+>>    kfree+0xc7/0x210 mm/slab.c:3812
+>>    f2fs_fill_super+0xe1a/0x8150 fs/f2fs/super.c:3147
+>>    mount_bdev+0x314/0x3e0 fs/super.c:1347
+>>    f2fs_mount+0x3c/0x50 fs/f2fs/super.c:3161
+>>    legacy_get_tree+0x131/0x460 fs/fs_context.c:732
+>>    vfs_get_tree+0x1cb/0x5c0 fs/super.c:1746
+>>    do_new_mount fs/namespace.c:2627 [inline]
+>>    do_mount+0x6f9/0x1e30 fs/namespace.c:2951
+>>    ksys_mount+0x12d/0x140 fs/namespace.c:3167
+>>    __do_sys_mount fs/namespace.c:3181 [inline]
+>>    __se_sys_mount fs/namespace.c:3178 [inline]
+>>    __x64_sys_mount+0xbe/0x150 fs/namespace.c:3178
+>>    do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>>    entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>> RIP: 0033:0x459aba
+>> Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 bd 8a fb ff c3 66 2e 0f
+>> 1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff
+>> ff 0f 83 9a 8a fb ff c3 66 0f 1f 84 00 00 00 00 00
+>> RSP: 002b:00007f16f9937a88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
+>> RAX: ffffffffffffffda RBX: 00007f16f9937b30 RCX: 0000000000459aba
+>> RDX: 00007f16f9937ad0 RSI: 0000000020000100 RDI: 00007f16f9937af0
+>> RBP: 0000000020000100 R08: 00007f16f9937b30 R09: 00007f16f9937ad0
+>> R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000003
+>> R13: 0000000000000000 R14: 00000000004c9c12 R15: 0000000000000000
+>> Dumping ftrace buffer:
+>> ---------------------------------
+>> syz-exec-23595   1...2 1079757271us : 0: }D
+>> syz-exec-23595   1..s3 1079757464us : 0: }D
+>> ---------------------------------
+>> Kernel Offset: disabled
+>> Rebooting in 86400 seconds..
+>>
+>>
+>> ---
+>> This bug is generated by a bot. It may contain errors.
+>> See https://goo.gl/tpsmEJ for more information about syzbot.
+>> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>>
+>> syzbot will keep track of this bug report. See:
+>> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+>> syzbot.
+>>
+>> --
+>> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+>> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+>> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/0000000000009e76240574711017%40google.com.
+>> For more options, visit https://groups.google.com/d/optout.
+> 
+> .
+> 
+
