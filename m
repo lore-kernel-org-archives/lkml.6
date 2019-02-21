@@ -2,93 +2,101 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FEE6C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 05:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA45FC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 05:35:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FC352147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 05:34:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550727257;
-	bh=nvpYcxoY6112t2ls0yhRUAmCHjtFWZfjgKn6ueQJDss=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=BQ+aMVCPYEW2zXp6lVhufVpYLo7oAff6KMijHwvrpC0J91CBBCqZcrtvpZPjqAkef
-	 ihvD0vKRcffQQA+8ep04xJMBsidkGWfgAmyXnZ10LKXHN1PMrqI7aX7vwJDhKUS6o+
-	 iZJbDzTkoZB+d9Vs1uoDmQi208P5dCDvIrRRtQD4=
+	by mail.kernel.org (Postfix) with ESMTP id BA43E2147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 05:35:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WhQoTYTo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726287AbfBUFeQ (ORCPT
+        id S1726553AbfBUFfK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 00:34:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59562 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725385AbfBUFeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 00:34:15 -0500
-Received: from localhost (unknown [106.201.39.16])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6705E2080F;
-        Thu, 21 Feb 2019 05:34:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550727255;
-        bh=nvpYcxoY6112t2ls0yhRUAmCHjtFWZfjgKn6ueQJDss=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=v4OUmr7YiE0HqY8MhTRBmX3LX1Qo2+BlApDasQypdN3Eeekp+DvsYHYmpo+cK9M03
-         DUB4UKqdrUJlsErkDm2jWm1du2UxUeZmCxSfotJGiH5x3ZiRVVLLVAbI7zwgVhrZCe
-         J5EmlObNe8oJxWUSjTtIOQkPYoIorXvEW7bimCKw=
-Date:   Thu, 21 Feb 2019 11:04:09 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Stefano Brivio <sbrivio@redhat.com>
-Cc:     David Miller <davem@davemloft.net>, jiri@resnulli.us,
-        sfr@canb.auug.org.au, netdev@vger.kernel.org,
-        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-        andrew@lunn.ch
-Subject: Re: linux-next: Fixes tag needs some work in the net-next tree
-Message-ID: <20190221053409.GH2736@vkoul-mobl>
-References: <20190220044055.GD21884@vkoul-mobl>
- <20190219.224813.723564128666927693.davem@davemloft.net>
- <20190220083611.GJ3080@nanopsycho>
- <20190220.110201.2245447687492293995.davem@davemloft.net>
- <20190220205910.7bd7fd40@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190220205910.7bd7fd40@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 21 Feb 2019 00:35:10 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44621 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726075AbfBUFfJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 00:35:09 -0500
+Received: by mail-pl1-f196.google.com with SMTP id c4so8534493pls.11
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Feb 2019 21:35:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=T4yr4bk1rvyrNRXUVeZwF9n7nFBtXZOYoRS0bwjzaMY=;
+        b=WhQoTYTo2kw7AXaa0/gWlonxJvoRifCpRYttsri9VopJY/b1WNv/sUaBCghPtgXFV8
+         +rv594Zknr3rXbC7zWqUsLztidK4rRGR8s+FP19bBKZOwUrrL9RjIiVy3YqYVVNN+rXx
+         S+dj3LAGpbKqUZ9y+XQx6HCLs71DajxlqqmJ4CoTz6yl7DE4Owoqt+LcfKtv9fPKxKTt
+         3gYFZydSZKeyG3R1UedXEQWvqnXOf2pLj5z/vXdXgdzozIsbw6S3QEyyrNQz/SQr2Vx0
+         LUmvMQKqyNX9roygA+RQUeGiT8JmFCv4o/NLgkwb4cV5N4842tqkXo1RBjHLFCzv5DGr
+         ArfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=T4yr4bk1rvyrNRXUVeZwF9n7nFBtXZOYoRS0bwjzaMY=;
+        b=iYDWVKvZfj/I3kJBk9ugoTi+EXG2WN/UENDWBrQk7jImu70gDK4rlwybEqSjvWxiK/
+         wIJE2b7nO20KmnsTDx2ePRKjJdNeZNBfbssHj4GtYvfFGI3Is7Mi8s+k936wxFjtIyXn
+         bvzt9HJDKzOkkIra3Hn+7DndhX/1No43BhA2XhDCG+tUuiUfxJw5rFfpHNxVqMj91n0k
+         gNHJ/g2dj6XsILnbtsiJZFVqgH0PpiHc/t7F8rPFvfDyjK2mHBDoWYajogWwHdaK+9Rq
+         //aF/VUjAqwyYOWR3vy5OCxLGUvruh/IvlZXGRt/PObcgOrOPMx5XHuqJz11Jg9iZYSQ
+         XTCQ==
+X-Gm-Message-State: AHQUAuZg1rvoDhowiY1KMcL173woBUcuVoRqNvgG0cByeqKjOyMC9lYu
+        rgq5tSC53jlqzoJZIdghU/r4Cw==
+X-Google-Smtp-Source: AHgI3IbBQFlcuxD5vuIr+qI4QoDjWHaDUlMQHvVrZ+Ydx/YsCDVQztiXzqyXskLK3Hn2fbcfssWHvQ==
+X-Received: by 2002:a17:902:b70b:: with SMTP id d11mr23557013pls.178.1550727309029;
+        Wed, 20 Feb 2019 21:35:09 -0800 (PST)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id l10sm35001421pfc.90.2019.02.20.21.35.03
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 20 Feb 2019 21:35:07 -0800 (PST)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     vkoul@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        arnd@arndb.de
+Cc:     orsonzhai@gmail.com, zhang.lyra@gmail.com,
+        dan.j.williams@intel.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+        eric.long@unisoc.com, broonie@kernel.org, baolin.wang@linaro.org
+Subject: [PATCH v2 1/2] dt-bindings: dmaengine: sprd: Change channel id to slave id for DMA cell specifier
+Date:   Thu, 21 Feb 2019 13:34:40 +0800
+Message-Id: <652a8ef9554890c254823ec39858b8d7413fd561.1550719757.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20-02-19, 20:59, Stefano Brivio wrote:
-> On Wed, 20 Feb 2019 11:02:01 -0800 (PST)
-> David Miller <davem@davemloft.net> wrote:
-> 
-> > From: Jiri Pirko <jiri@resnulli.us>
-> > Date: Wed, 20 Feb 2019 09:36:11 +0100
-> > 
-> > > Would be good to have some robot checking "Fixes" sanity...  
-> > 
-> > I want to add a script to my trees that locally do it for me but the
-> > backlog for patch review for me is so huge that I never get to "fun"
-> > tasks like that....
-> 
-> If it helps, this is what I use after being bitten once:
-> 
-> #!/bin/sh
-> 
-> [ ${#} -ne 2 ] && echo "Usage: %0 PATCH_FILE GIT_TREE" && exit 1
-> grep "^Fixes: " "${1}" | while read -r f; do
-> 	sha="$(echo "${f}" | cut -d' ' -f2)"
-> 	if [ -z "${sha}" ] || [ "${f}" != "$(git -C "${2}" show -s --abbrev=12 --pretty=format:"Fixes: %h (\"%s\")" "${sha}" 2>/dev/null)" ]; then
-> 		echo "Bad tag: ${f}" && exit 1
-> 	fi
-> done
+For Spreadtrum DMA engine, all channels are equal, which means slave can
+request any channels with setting a unique slave id to trigger this channel.
 
-Awesome thanks, I am adding this into my patch commit script and well as
-send script
+Thus we can remove the channel id from device tree to assign the channel
+dynamically, moreover we should add the slave id in device tree.
 
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+Changes from v1:
+ - Remove channel id from DT.
+---
+ Documentation/devicetree/bindings/dma/sprd-dma.txt |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/dma/sprd-dma.txt b/Documentation/devicetree/bindings/dma/sprd-dma.txt
+index 7a10fea..adccea994 100644
+--- a/Documentation/devicetree/bindings/dma/sprd-dma.txt
++++ b/Documentation/devicetree/bindings/dma/sprd-dma.txt
+@@ -31,7 +31,7 @@ DMA clients connected to the Spreadtrum DMA controller must use the format
+ described in the dma.txt file, using a two-cell specifier for each channel.
+ The two cells in order are:
+ 1. A phandle pointing to the DMA controller.
+-2. The channel id.
++2. The slave id.
+ 
+ spi0: spi@70a00000{
+ 	...
 -- 
-~Vinod
+1.7.9.5
+
