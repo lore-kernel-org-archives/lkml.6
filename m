@@ -2,78 +2,99 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B5AAC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 20:44:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0EAC4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 20:45:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0D772083B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 20:44:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550781855;
-	bh=KhOaWx318OfE8q2FQ644eXjnJcAMKRcT4dsfXiXqevc=;
-	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
-	b=NT/h8+zLpvq15Epnyp17Eaiv4TN0wwO+H9KbSqOaXxNVmZ87xDQFYr2EaYEXusCzE
-	 +LCq6BY9BT1wPARGj9loACoZMpNvZ1ewe5ZxqQFgb7Jg5o8alPeNzJW7ChLWc9USAo
-	 mSARxsC3BDtuukyMB3XQsYibEuOUNaCwqLNK4L8U=
+	by mail.kernel.org (Postfix) with ESMTP id 6B9BC20836
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 20:45:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726673AbfBUUoN (ORCPT
+        id S1726738AbfBUUpR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 15:44:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45248 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725866AbfBUUoM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 15:44:12 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49E50206C0;
-        Thu, 21 Feb 2019 20:44:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550781852;
-        bh=KhOaWx318OfE8q2FQ644eXjnJcAMKRcT4dsfXiXqevc=;
-        h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
-        b=HMNzyl+Wojb9NPSeV3lc3+/wtd7jFHIi3jrRoAZdEtzeGaVrwYxV/VNL3D6grzxew
-         2QchTdvKCyixI7XOjbnS08fIeWpdzqqp2T9m46+qOxFEgSXvIp5lR2NcLpLAIvmhBz
-         5VPjFfn9x9HKWPQEH201uwdhO4Cf714Un3Yl3/SA=
-Content-Type: text/plain; charset="utf-8"
+        Thu, 21 Feb 2019 15:45:17 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:35095 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbfBUUpQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 15:45:16 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gwvDM-0007v6-NV; Thu, 21 Feb 2019 21:45:04 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gwvDM-0005Bi-1H; Thu, 21 Feb 2019 21:45:04 +0100
+Date:   Thu, 21 Feb 2019 21:45:04 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Claudiu.Beznea@microchip.com
+Cc:     thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
+        Ludovic.Desroches@microchip.com,
+        linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] pwm: atmel: add support for SAM9X60's PWM
+ controller
+Message-ID: <20190221204503.w2xh4rw6rh4e5rg4@pengutronix.de>
+References: <1550570914-26391-1-git-send-email-claudiu.beznea@microchip.com>
+ <1550570914-26391-4-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 3/3] clk: imx8mq: Add the missing ARM clock
-Message-ID: <155078185159.77512.4878033490950072107@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-References: <1550252913-24532-1-git-send-email-abel.vesa@nxp.com> <1550252913-24532-4-git-send-email-abel.vesa@nxp.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1550252913-24532-4-git-send-email-abel.vesa@nxp.com>
-To:     Abel Vesa <abel.vesa@nxp.com>,
-        Angus Ainslie <angus.ainslie@puri.sm>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Cc:     Anson Huang <anson.huang@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Abel Vesa <abel.vesa@nxp.com>
-Date:   Thu, 21 Feb 2019 12:44:11 -0800
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1550570914-26391-4-git-send-email-claudiu.beznea@microchip.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Abel Vesa (2019-02-15 09:48:46)
-> Add the ARM clock as imx_clk_cpu type.
-> Will be used by cpufreq.
->=20
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+On Tue, Feb 19, 2019 at 10:09:00AM +0000, Claudiu.Beznea@microchip.com wrote:
+> From: Claudiu Beznea <claudiu.beznea@microchip.com>
+> 
+> Add support for SAM9X60's PWM controller.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 > ---
+>  drivers/pwm/pwm-atmel.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/drivers/pwm/pwm-atmel.c b/drivers/pwm/pwm-atmel.c
+> index 647d063562db..229cedb02770 100644
+> --- a/drivers/pwm/pwm-atmel.c
+> +++ b/drivers/pwm/pwm-atmel.c
+> @@ -52,6 +52,8 @@
+>  
+>  /* Only the LSB 16 bits are significant. */
+>  #define PWM_MAXV1_PRD		0xFFFF
+> +/* All 32 bits are significant. */
+> +#define PWM_MAXV2_PRD		0xFFFFFFFF
+>  #define PRD_MAXV1_PRES		10
+>  
+>  struct atmel_pwm_registers {
+> @@ -311,6 +313,20 @@ static const struct atmel_pwm_data atmel_pwm_data_v2 = {
+>  	},
+>  };
+>  
+> +static const struct atmel_pwm_data atmel_pwm_data_v3 = {
 
-Applied to clk-next
+Does it make more sense to call this ..._sam9x60 to match the
+compatible? (If yes, patch 1 should be changed accordingly.)
 
+I wonder how the naming of the defines is chosen given that pwm_data_v3
+is the first that needs PWM_MAXV2_PRD. Looks inconsistent.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
