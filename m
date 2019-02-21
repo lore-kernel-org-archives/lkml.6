@@ -2,76 +2,90 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DAC6C00319
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF9EAC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:15:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CD882086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:13:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B53822086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:15:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jPhjSu9t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbfBUMNo (ORCPT
+        id S1726342AbfBUMPl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 07:13:44 -0500
-Received: from mga06.intel.com ([134.134.136.31]:38497 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725385AbfBUMNo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 07:13:44 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 04:13:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,395,1544515200"; 
-   d="scan'208";a="124132963"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.169])
-  by fmsmga007.fm.intel.com with ESMTP; 21 Feb 2019 04:13:41 -0800
-Date:   Thu, 21 Feb 2019 14:13:40 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     YueHaibing <yuehaibing@huawei.com>, peterhuewe@gmx.de,
-        arnd@arndb.de, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 -next] tpm: Fix the type of the return value in
- calc_tpm2_event_size()
-Message-ID: <20190221121340.GA7918@linux.intel.com>
-References: <20190220022300.25888-1-yuehaibing@huawei.com>
- <20190220063159.GA23027@linux.intel.com>
- <20190220160042.GD8429@ziepe.ca>
+        Thu, 21 Feb 2019 07:15:41 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:44127 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbfBUMPl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 07:15:41 -0500
+Received: by mail-qt1-f193.google.com with SMTP id d2so5490390qti.11
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 04:15:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=O256mb489CkCwHSGAIomC7XdYJWSTMTnu8br84Mlqcg=;
+        b=jPhjSu9tEt4NtHmiRkAVXyllyUg76CeQTANSiX8G0JY8AB0hPHLdxC+82lYlWehbmR
+         LmaVdSxHgIHSYumReXWAJyYvSeWQzC0E2W1ZbUXLo24KTCFyALXIJw6zA5I7VyEAlGCM
+         zut47Nh71a5+II09PuJF7EMRIFjJMG5R28wrXAs3rLA9OZXj/cLEHlFmkS3aH7jm6k9h
+         3LQ8O/c1CxKANKkbs8wv+m6VHQstgTK/URUjGJ4mAZp9RkBlQSaHo+4DySCMEJA1Nuyn
+         JrofcXq83SSXj1uodgn/VEmviTvVJx8Zf785/49SvtKFrkyr3vI0Ba9PTP3AyevwZbzL
+         7Eaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=O256mb489CkCwHSGAIomC7XdYJWSTMTnu8br84Mlqcg=;
+        b=KN3Y1ohI1LCly2xqDnboc0yILLiv9dHHneycX5e+2Fl00KdIMZiX8hz1EPX2yWldMs
+         Pg5UzuDGjFgMCCShT/neL0qoTHQSc0F0SK8r/6Lb24s6jAvKaCTPf17gk+Kir1q5n5Uo
+         CG/0JY2O3XcTpSIj1GvHQNxmOs/Ul9UxRpDQALo+jSLf6B20wlCu2cJnlg6WDISll8hO
+         PWQrFArSQPN/7u0Smy8iyL4C0mnrXNxTtLQUG9vE+HXCEcUwWUTqkDaWFl91lA+NvHuv
+         h6laBJViQuERQ0xdqDMfEjGm7OLSfg00CaahOSIQ5KbYR6BtGw+iHuNpTejS2rZNMYhM
+         tfjQ==
+X-Gm-Message-State: AHQUAuZQV9ItaPJDbs+/CP5uO8zF3N7NITZnKEdHmj+YhGVnkmUZu0Ie
+        IRLa0HfswsX8Q2bCNM18DHd0ax7L8/fMV+b1zM0r8A==
+X-Google-Smtp-Source: AHgI3IaCCbdEFmX3a2vM+D+JZbEsvYhOhaP+apmvveVaq6A8hXOzg67EQ9N2+C/kLY69eX3zj+MaGuS5LMdXcm9lP6Q=
+X-Received: by 2002:a0c:b60d:: with SMTP id f13mr5796710qve.209.1550751340645;
+ Thu, 21 Feb 2019 04:15:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190220160042.GD8429@ziepe.ca>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190219191253.21712-1-bjorn.andersson@linaro.org>
+In-Reply-To: <20190219191253.21712-1-bjorn.andersson@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 21 Feb 2019 13:15:27 +0100
+Message-ID: <CACRpkdYJw+Kap6LjZAbOp=6eC4DSLOF8unx35t8J89uOeFanmw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: qcom: spmi-gpio: Reorder debug print
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 09:00:42AM -0700, Jason Gunthorpe wrote:
-> On Wed, Feb 20, 2019 at 08:31:59AM +0200, Jarkko Sakkinen wrote:
-> > On Wed, Feb 20, 2019 at 10:23:00AM +0800, YueHaibing wrote:
-> > > calc_tpm2_event_size() has an invalid signature because
-> > > it returns a 'size_t' where as its signature says that
-> > > it returns 'int'.
-> > > 
-> > > Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware event log")
-> > > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> > 
-> > Two remarks:
-> > 
-> > - git config user.name "Yue Haibing"
-> > - "Cc: stable@vger.kernel.org" before the fixes tag.
-> 
-> 'Theoretical' bug fixes are not suitable for stable
+On Tue, Feb 19, 2019 at 8:12 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
 
-AFAIK there is no hard rule here. For this one line change I think it
-makes sense to backport it even if it is only for avoiding conflicts
-with future backports.
+> It's reasonable to expect that people turn to the "gpio" debugfs file to
+> first and foremost learn about the direction and value of a gpio, and
+> second to that about it's pinconf. So reorder the value so each line
+> reads:
+>
+> gpioN: direction value ...
+>
+> This also makes it consistent with the TLMM pinctrl driver's output in
+> the same dump.
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-/Jarkko
+Patch applied.
+
+Yours,
+Linus Walleij
