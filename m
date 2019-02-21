@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A4BC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:44:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8DF6C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:44:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBE4A2083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:44:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CD2B2083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:44:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728394AbfBURoM (ORCPT
+        id S1728652AbfBURoz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 12:44:12 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46728 "EHLO mx1.redhat.com"
+        Thu, 21 Feb 2019 12:44:55 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34884 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726125AbfBURoM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 12:44:12 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1728546AbfBURox (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 12:44:53 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1F7CC4E341;
-        Thu, 21 Feb 2019 17:44:11 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 087373082AF0;
+        Thu, 21 Feb 2019 17:44:53 +0000 (UTC)
 Received: from redhat.com (unknown [10.20.6.236])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 55BE619C58;
-        Thu, 21 Feb 2019 17:44:03 +0000 (UTC)
-Date:   Thu, 21 Feb 2019 12:44:02 -0500
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5AF5E5C290;
+        Thu, 21 Feb 2019 17:44:46 +0000 (UTC)
+Date:   Thu, 21 Feb 2019 12:44:44 -0500
 From:   Jerome Glisse <jglisse@redhat.com>
 To:     Peter Xu <peterx@redhat.com>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -45,134 +45,61 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Mel Gorman <mgorman@suse.de>,
         "Kirill A . Shutemov" <kirill@shutemov.name>,
         "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v2 12/26] userfaultfd: wp: apply _PAGE_UFFD_WP bit
-Message-ID: <20190221174401.GL2813@redhat.com>
+Subject: Re: [PATCH v2 13/26] mm: export wp_page_copy()
+Message-ID: <20190221174444.GM2813@redhat.com>
 References: <20190212025632.28946-1-peterx@redhat.com>
- <20190212025632.28946-13-peterx@redhat.com>
+ <20190212025632.28946-14-peterx@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190212025632.28946-13-peterx@redhat.com>
+In-Reply-To: <20190212025632.28946-14-peterx@redhat.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 21 Feb 2019 17:44:11 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 21 Feb 2019 17:44:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 10:56:18AM +0800, Peter Xu wrote:
-> Firstly, introduce two new flags MM_CP_UFFD_WP[_RESOLVE] for
-> change_protection() when used with uffd-wp and make sure the two new
-> flags are exclusively used.  Then,
-> 
->   - For MM_CP_UFFD_WP: apply the _PAGE_UFFD_WP bit and remove _PAGE_RW
->     when a range of memory is write protected by uffd
-> 
->   - For MM_CP_UFFD_WP_RESOLVE: remove the _PAGE_UFFD_WP bit and recover
->     _PAGE_RW when write protection is resolved from userspace
-> 
-> And use this new interface in mwriteprotect_range() to replace the old
-> MM_CP_DIRTY_ACCT.
-> 
-> Do this change for both PTEs and huge PMDs.  Then we can start to
-> identify which PTE/PMD is write protected by general (e.g., COW or soft
-> dirty tracking), and which is for userfaultfd-wp.
-> 
-> Since we should keep the _PAGE_UFFD_WP when doing pte_modify(), add it
-> into _PAGE_CHG_MASK as well.  Meanwhile, since we have this new bit, we
-> can be even more strict when detecting uffd-wp page faults in either
-> do_wp_page() or wp_huge_pmd().
+On Tue, Feb 12, 2019 at 10:56:19AM +0800, Peter Xu wrote:
+> Export this function for usages outside page fault handlers.
 > 
 > Signed-off-by: Peter Xu <peterx@redhat.com>
-
-Few comments but still:
 
 Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
 
 > ---
->  arch/x86/include/asm/pgtable_types.h |  2 +-
->  include/linux/mm.h                   |  5 +++++
->  mm/huge_memory.c                     | 14 +++++++++++++-
->  mm/memory.c                          |  4 ++--
->  mm/mprotect.c                        | 12 ++++++++++++
->  mm/userfaultfd.c                     |  8 ++++++--
->  6 files changed, 39 insertions(+), 6 deletions(-)
+>  include/linux/mm.h | 2 ++
+>  mm/memory.c        | 2 +-
+>  2 files changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
-> index 8cebcff91e57..dd9c6295d610 100644
-> --- a/arch/x86/include/asm/pgtable_types.h
-> +++ b/arch/x86/include/asm/pgtable_types.h
-> @@ -133,7 +133,7 @@
->   */
->  #define _PAGE_CHG_MASK	(PTE_PFN_MASK | _PAGE_PCD | _PAGE_PWT |		\
->  			 _PAGE_SPECIAL | _PAGE_ACCESSED | _PAGE_DIRTY |	\
-> -			 _PAGE_SOFT_DIRTY | _PAGE_DEVMAP)
-> +			 _PAGE_SOFT_DIRTY | _PAGE_DEVMAP | _PAGE_UFFD_WP)
->  #define _HPAGE_CHG_MASK (_PAGE_CHG_MASK | _PAGE_PSE)
-
-This chunk needs to be in the earlier arch specific patch.
-
-[...]
-
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 8d65b0f041f9..817335b443c2 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-
-[...]
-
-> @@ -2198,6 +2208,8 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
->  				entry = pte_mkold(entry);
->  			if (soft_dirty)
->  				entry = pte_mksoft_dirty(entry);
-> +			if (uffd_wp)
-> +				entry = pte_mkuffd_wp(entry);
->  		}
->  		pte = pte_offset_map(&_pmd, addr);
->  		BUG_ON(!pte_none(*pte));
-
-Reading that code and i thought i would be nice if we could define a
-pte_mask that we can or instead of all those if () entry |= ... but
-that is just some dumb optimization and does not have any bearing on
-the present patch. Just wanted to say that outloud.
-
-
-> diff --git a/mm/mprotect.c b/mm/mprotect.c
-> index a6ba448c8565..9d4433044c21 100644
-> --- a/mm/mprotect.c
-> +++ b/mm/mprotect.c
-> @@ -46,6 +46,8 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
->  	int target_node = NUMA_NO_NODE;
->  	bool dirty_accountable = cp_flags & MM_CP_DIRTY_ACCT;
->  	bool prot_numa = cp_flags & MM_CP_PROT_NUMA;
-> +	bool uffd_wp = cp_flags & MM_CP_UFFD_WP;
-> +	bool uffd_wp_resolve = cp_flags & MM_CP_UFFD_WP_RESOLVE;
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index f38fbe9c8bc9..2fd14a62324b 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -405,6 +405,8 @@ struct vm_fault {
+>  					 */
+>  };
 >  
->  	/*
->  	 * Can be called with only the mmap_sem for reading by
-> @@ -117,6 +119,14 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
->  			if (preserve_write)
->  				ptent = pte_mk_savedwrite(ptent);
->  
-> +			if (uffd_wp) {
-> +				ptent = pte_wrprotect(ptent);
-> +				ptent = pte_mkuffd_wp(ptent);
-> +			} else if (uffd_wp_resolve) {
-> +				ptent = pte_mkwrite(ptent);
-> +				ptent = pte_clear_uffd_wp(ptent);
-> +			}
+> +vm_fault_t wp_page_copy(struct vm_fault *vmf);
 > +
->  			/* Avoid taking write faults for known dirty pages */
->  			if (dirty_accountable && pte_dirty(ptent) &&
->  					(pte_soft_dirty(ptent) ||
-> @@ -301,6 +311,8 @@ unsigned long change_protection(struct vm_area_struct *vma, unsigned long start,
+>  /* page entry size for vm->huge_fault() */
+>  enum page_entry_size {
+>  	PE_SIZE_PTE = 0,
+> diff --git a/mm/memory.c b/mm/memory.c
+> index f8d83ae16eff..32d32b6e6339 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -2239,7 +2239,7 @@ static inline void wp_page_reuse(struct vm_fault *vmf)
+>   *   held to the old page, as well as updating the rmap.
+>   * - In any case, unlock the PTL and drop the reference we took to the old page.
+>   */
+> -static vm_fault_t wp_page_copy(struct vm_fault *vmf)
+> +vm_fault_t wp_page_copy(struct vm_fault *vmf)
 >  {
->  	unsigned long pages;
->  
-> +	BUG_ON((cp_flags & MM_CP_UFFD_WP_ALL) == MM_CP_UFFD_WP_ALL);
-
-Don't you want to abort and return here if both flags are set ?
-
-[...]
+>  	struct vm_area_struct *vma = vmf->vma;
+>  	struct mm_struct *mm = vma->vm_mm;
+> -- 
+> 2.17.1
+> 
