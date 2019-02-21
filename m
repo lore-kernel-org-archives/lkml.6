@@ -3,32 +3,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C8AAC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F98C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:02:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BB192083B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:02:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 501E62083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:02:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728753AbfBUTCj (ORCPT
+        id S1728797AbfBUTCo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 14:02:39 -0500
-Received: from ms.lwn.net ([45.79.88.28]:46506 "EHLO ms.lwn.net"
+        Thu, 21 Feb 2019 14:02:44 -0500
+Received: from ms.lwn.net ([45.79.88.28]:46496 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726694AbfBUTCh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 14:02:37 -0500
+        id S1726265AbfBUTCi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 14:02:38 -0500
 Received: from meer.lwn.net (localhost [127.0.0.1])
-        by ms.lwn.net (Postfix) with ESMTPA id 84B17740;
+        by ms.lwn.net (Postfix) with ESMTPA id 26D022DD;
         Thu, 21 Feb 2019 19:02:36 +0000 (UTC)
 From:   Jonathan Corbet <corbet@lwn.net>
 To:     linux-doc@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
         axboe@kernel.dk, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 2/2] docs: Add struct file refcounting and SCM_RIGHTS mess info
-Date:   Thu, 21 Feb 2019 12:02:30 -0700
-Message-Id: <20190221190230.17985-3-corbet@lwn.net>
+Subject: [PATCH 1/2] docs: Bring some order to filesystem documentation
+Date:   Thu, 21 Feb 2019 12:02:29 -0700
+Message-Id: <20190221190230.17985-2-corbet@lwn.net>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221190230.17985-1-corbet@lwn.net>
 References: <20190221190230.17985-1-corbet@lwn.net>
@@ -39,391 +39,839 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Work up some text posted by Al and add it to the filesystem manual.
+Documentation/filesystems is, like much of the rest of the kernel's
+documentation, a jumble of unorganized information.  Split the
+documentation into categories and try to bring some order to the top-level
+index.rst files.  No text changes other than a few section-introductory
+blurbs; this is all just moving stuff around.
 
-Co-developed-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- Documentation/filesystems/index.rst      |   1 +
- Documentation/filesystems/lifecycles.rst | 357 +++++++++++++++++++++++
- 2 files changed, 358 insertions(+)
- create mode 100644 Documentation/filesystems/lifecycles.rst
+ Documentation/filesystems/api-summary.rst | 150 ++++++++
+ Documentation/filesystems/index.rst       | 394 ++--------------------
+ Documentation/filesystems/journalling.rst | 184 ++++++++++
+ Documentation/filesystems/path-lookup.rst |  15 +
+ Documentation/filesystems/splice.rst      |  22 ++
+ 5 files changed, 395 insertions(+), 370 deletions(-)
+ create mode 100644 Documentation/filesystems/api-summary.rst
+ create mode 100644 Documentation/filesystems/journalling.rst
+ create mode 100644 Documentation/filesystems/splice.rst
 
+diff --git a/Documentation/filesystems/api-summary.rst b/Documentation/filesystems/api-summary.rst
+new file mode 100644
+index 000000000000..aa51ffcfa029
+--- /dev/null
++++ b/Documentation/filesystems/api-summary.rst
+@@ -0,0 +1,150 @@
++=============================
++Linux Filesystems API summary
++=============================
++
++This section contains API-level documentation, mostly taken from the source
++code itself.
++
++The Linux VFS
++=============
++
++The Filesystem types
++--------------------
++
++.. kernel-doc:: include/linux/fs.h
++   :internal:
++
++The Directory Cache
++-------------------
++
++.. kernel-doc:: fs/dcache.c
++   :export:
++
++.. kernel-doc:: include/linux/dcache.h
++   :internal:
++
++Inode Handling
++--------------
++
++.. kernel-doc:: fs/inode.c
++   :export:
++
++.. kernel-doc:: fs/bad_inode.c
++   :export:
++
++Registration and Superblocks
++----------------------------
++
++.. kernel-doc:: fs/super.c
++   :export:
++
++File Locks
++----------
++
++.. kernel-doc:: fs/locks.c
++   :export:
++
++.. kernel-doc:: fs/locks.c
++   :internal:
++
++Other Functions
++---------------
++
++.. kernel-doc:: fs/mpage.c
++   :export:
++
++.. kernel-doc:: fs/namei.c
++   :export:
++
++.. kernel-doc:: fs/buffer.c
++   :export:
++
++.. kernel-doc:: block/bio.c
++   :export:
++
++.. kernel-doc:: fs/seq_file.c
++   :export:
++
++.. kernel-doc:: fs/filesystems.c
++   :export:
++
++.. kernel-doc:: fs/fs-writeback.c
++   :export:
++
++.. kernel-doc:: fs/block_dev.c
++   :export:
++
++.. kernel-doc:: fs/anon_inodes.c
++   :export:
++
++.. kernel-doc:: fs/attr.c
++   :export:
++
++.. kernel-doc:: fs/d_path.c
++   :export:
++
++.. kernel-doc:: fs/dax.c
++   :export:
++
++.. kernel-doc:: fs/direct-io.c
++   :export:
++
++.. kernel-doc:: fs/file_table.c
++   :export:
++
++.. kernel-doc:: fs/libfs.c
++   :export:
++
++.. kernel-doc:: fs/posix_acl.c
++   :export:
++
++.. kernel-doc:: fs/stat.c
++   :export:
++
++.. kernel-doc:: fs/sync.c
++   :export:
++
++.. kernel-doc:: fs/xattr.c
++   :export:
++
++The proc filesystem
++===================
++
++sysctl interface
++----------------
++
++.. kernel-doc:: kernel/sysctl.c
++   :export:
++
++proc filesystem interface
++-------------------------
++
++.. kernel-doc:: fs/proc/base.c
++   :internal:
++
++Events based on file descriptors
++================================
++
++.. kernel-doc:: fs/eventfd.c
++   :export:
++
++The Filesystem for Exporting Kernel Objects
++===========================================
++
++.. kernel-doc:: fs/sysfs/file.c
++   :export:
++
++.. kernel-doc:: fs/sysfs/symlink.c
++   :export:
++
++The debugfs filesystem
++======================
++
++debugfs interface
++-----------------
++
++.. kernel-doc:: fs/debugfs/inode.c
++   :export:
++
++.. kernel-doc:: fs/debugfs/file.c
++   :export:
 diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-index 1131c34d77f6..44ff355e0be6 100644
+index 61d2441b25d5..1131c34d77f6 100644
 --- a/Documentation/filesystems/index.rst
 +++ b/Documentation/filesystems/index.rst
-@@ -16,6 +16,7 @@ algorithms work.
+@@ -1,389 +1,43 @@
+-=====================
+-Linux Filesystems API
+-=====================
++===============================
++Filesystems in the Linux kernel
++===============================
+ 
+-The Linux VFS
+-=============
++This under-development manual will, some glorious day, provide
++comprehensive information on how the Linux virtual filesystem (VFS) layer
++works, along with the filesystems that sit below it.  For now, what we have
++can be found below.
+ 
+-The Filesystem types
+---------------------
+-
+-.. kernel-doc:: include/linux/fs.h
+-   :internal:
+-
+-The Directory Cache
+--------------------
+-
+-.. kernel-doc:: fs/dcache.c
+-   :export:
+-
+-.. kernel-doc:: include/linux/dcache.h
+-   :internal:
+-
+-Inode Handling
+---------------
+-
+-.. kernel-doc:: fs/inode.c
+-   :export:
+-
+-.. kernel-doc:: fs/bad_inode.c
+-   :export:
+-
+-Registration and Superblocks
+-----------------------------
+-
+-.. kernel-doc:: fs/super.c
+-   :export:
+-
+-File Locks
+-----------
+-
+-.. kernel-doc:: fs/locks.c
+-   :export:
+-
+-.. kernel-doc:: fs/locks.c
+-   :internal:
+-
+-Other Functions
+----------------
+-
+-.. kernel-doc:: fs/mpage.c
+-   :export:
+-
+-.. kernel-doc:: fs/namei.c
+-   :export:
+-
+-.. kernel-doc:: fs/buffer.c
+-   :export:
+-
+-.. kernel-doc:: block/bio.c
+-   :export:
+-
+-.. kernel-doc:: fs/seq_file.c
+-   :export:
+-
+-.. kernel-doc:: fs/filesystems.c
+-   :export:
+-
+-.. kernel-doc:: fs/fs-writeback.c
+-   :export:
+-
+-.. kernel-doc:: fs/block_dev.c
+-   :export:
+-
+-.. kernel-doc:: fs/anon_inodes.c
+-   :export:
+-
+-.. kernel-doc:: fs/attr.c
+-   :export:
+-
+-.. kernel-doc:: fs/d_path.c
+-   :export:
+-
+-.. kernel-doc:: fs/dax.c
+-   :export:
+-
+-.. kernel-doc:: fs/direct-io.c
+-   :export:
+-
+-.. kernel-doc:: fs/file_table.c
+-   :export:
+-
+-.. kernel-doc:: fs/libfs.c
+-   :export:
+-
+-.. kernel-doc:: fs/posix_acl.c
+-   :export:
+-
+-.. kernel-doc:: fs/stat.c
+-   :export:
+-
+-.. kernel-doc:: fs/sync.c
+-   :export:
+-
+-.. kernel-doc:: fs/xattr.c
+-   :export:
+-
+-The proc filesystem
+-===================
+-
+-sysctl interface
+-----------------
+-
+-.. kernel-doc:: kernel/sysctl.c
+-   :export:
+-
+-proc filesystem interface
+--------------------------
+-
+-.. kernel-doc:: fs/proc/base.c
+-   :internal:
+-
+-Events based on file descriptors
+-================================
+-
+-.. kernel-doc:: fs/eventfd.c
+-   :export:
+-
+-The Filesystem for Exporting Kernel Objects
+-===========================================
+-
+-.. kernel-doc:: fs/sysfs/file.c
+-   :export:
+-
+-.. kernel-doc:: fs/sysfs/symlink.c
+-   :export:
+-
+-The debugfs filesystem
++Core VFS documentation
+ ======================
+ 
+-debugfs interface
+------------------
++See these manuals for documentation about the VFS layer itself and how its
++algorithms work.
+ 
+-.. kernel-doc:: fs/debugfs/inode.c
+-   :export:
++.. toctree::
++   :maxdepth: 2
+ 
+-.. kernel-doc:: fs/debugfs/file.c
+-   :export:
++   path-lookup.rst
++   api-summary
++   splice
+ 
+-The Linux Journalling API
++Filesystem support layers
+ =========================
+ 
+-Overview
+---------
+-
+-Details
+-~~~~~~~
+-
+-The journalling layer is easy to use. You need to first of all create a
+-journal_t data structure. There are two calls to do this dependent on
+-how you decide to allocate the physical media on which the journal
+-resides. The :c:func:`jbd2_journal_init_inode` call is for journals stored in
+-filesystem inodes, or the :c:func:`jbd2_journal_init_dev` call can be used
+-for journal stored on a raw device (in a continuous range of blocks). A
+-journal_t is a typedef for a struct pointer, so when you are finally
+-finished make sure you call :c:func:`jbd2_journal_destroy` on it to free up
+-any used kernel memory.
+-
+-Once you have got your journal_t object you need to 'mount' or load the
+-journal file. The journalling layer expects the space for the journal
+-was already allocated and initialized properly by the userspace tools.
+-When loading the journal you must call :c:func:`jbd2_journal_load` to process
+-journal contents. If the client file system detects the journal contents
+-does not need to be processed (or even need not have valid contents), it
+-may call :c:func:`jbd2_journal_wipe` to clear the journal contents before
+-calling :c:func:`jbd2_journal_load`.
+-
+-Note that jbd2_journal_wipe(..,0) calls
+-:c:func:`jbd2_journal_skip_recovery` for you if it detects any outstanding
+-transactions in the journal and similarly :c:func:`jbd2_journal_load` will
+-call :c:func:`jbd2_journal_recover` if necessary. I would advise reading
+-:c:func:`ext4_load_journal` in fs/ext4/super.c for examples on this stage.
+-
+-Now you can go ahead and start modifying the underlying filesystem.
+-Almost.
+-
+-You still need to actually journal your filesystem changes, this is done
+-by wrapping them into transactions. Additionally you also need to wrap
+-the modification of each of the buffers with calls to the journal layer,
+-so it knows what the modifications you are actually making are. To do
+-this use :c:func:`jbd2_journal_start` which returns a transaction handle.
+-
+-:c:func:`jbd2_journal_start` and its counterpart :c:func:`jbd2_journal_stop`,
+-which indicates the end of a transaction are nestable calls, so you can
+-reenter a transaction if necessary, but remember you must call
+-:c:func:`jbd2_journal_stop` the same number of times as
+-:c:func:`jbd2_journal_start` before the transaction is completed (or more
+-accurately leaves the update phase). Ext4/VFS makes use of this feature to
+-simplify handling of inode dirtying, quota support, etc.
+-
+-Inside each transaction you need to wrap the modifications to the
+-individual buffers (blocks). Before you start to modify a buffer you
+-need to call :c:func:`jbd2_journal_get_create_access()` /
+-:c:func:`jbd2_journal_get_write_access()` /
+-:c:func:`jbd2_journal_get_undo_access()` as appropriate, this allows the
+-journalling layer to copy the unmodified
+-data if it needs to. After all the buffer may be part of a previously
+-uncommitted transaction. At this point you are at last ready to modify a
+-buffer, and once you are have done so you need to call
+-:c:func:`jbd2_journal_dirty_metadata`. Or if you've asked for access to a
+-buffer you now know is now longer required to be pushed back on the
+-device you can call :c:func:`jbd2_journal_forget` in much the same way as you
+-might have used :c:func:`bforget` in the past.
+-
+-A :c:func:`jbd2_journal_flush` may be called at any time to commit and
+-checkpoint all your transactions.
+-
+-Then at umount time , in your :c:func:`put_super` you can then call
+-:c:func:`jbd2_journal_destroy` to clean up your in-core journal object.
+-
+-Unfortunately there a couple of ways the journal layer can cause a
+-deadlock. The first thing to note is that each task can only have a
+-single outstanding transaction at any one time, remember nothing commits
+-until the outermost :c:func:`jbd2_journal_stop`. This means you must complete
+-the transaction at the end of each file/inode/address etc. operation you
+-perform, so that the journalling system isn't re-entered on another
+-journal. Since transactions can't be nested/batched across differing
+-journals, and another filesystem other than yours (say ext4) may be
+-modified in a later syscall.
+-
+-The second case to bear in mind is that :c:func:`jbd2_journal_start` can block
+-if there isn't enough space in the journal for your transaction (based
+-on the passed nblocks param) - when it blocks it merely(!) needs to wait
+-for transactions to complete and be committed from other tasks, so
+-essentially we are waiting for :c:func:`jbd2_journal_stop`. So to avoid
+-deadlocks you must treat :c:func:`jbd2_journal_start` /
+-:c:func:`jbd2_journal_stop` as if they were semaphores and include them in
+-your semaphore ordering rules to prevent
+-deadlocks. Note that :c:func:`jbd2_journal_extend` has similar blocking
+-behaviour to :c:func:`jbd2_journal_start` so you can deadlock here just as
+-easily as on :c:func:`jbd2_journal_start`.
+-
+-Try to reserve the right number of blocks the first time. ;-). This will
+-be the maximum number of blocks you are going to touch in this
+-transaction. I advise having a look at at least ext4_jbd.h to see the
+-basis on which ext4 uses to make these decisions.
+-
+-Another wriggle to watch out for is your on-disk block allocation
+-strategy. Why? Because, if you do a delete, you need to ensure you
+-haven't reused any of the freed blocks until the transaction freeing
+-these blocks commits. If you reused these blocks and crash happens,
+-there is no way to restore the contents of the reallocated blocks at the
+-end of the last fully committed transaction. One simple way of doing
+-this is to mark blocks as free in internal in-memory block allocation
+-structures only after the transaction freeing them commits. Ext4 uses
+-journal commit callback for this purpose.
+-
+-With journal commit callbacks you can ask the journalling layer to call
+-a callback function when the transaction is finally committed to disk,
+-so that you can do some of your own management. You ask the journalling
+-layer for calling the callback by simply setting
+-``journal->j_commit_callback`` function pointer and that function is
+-called after each transaction commit. You can also use
+-``transaction->t_private_list`` for attaching entries to a transaction
+-that need processing when the transaction commits.
+-
+-JBD2 also provides a way to block all transaction updates via
+-:c:func:`jbd2_journal_lock_updates()` /
+-:c:func:`jbd2_journal_unlock_updates()`. Ext4 uses this when it wants a
+-window with a clean and stable fs for a moment. E.g.
+-
+-::
+-
+-
+-        jbd2_journal_lock_updates() //stop new stuff happening..
+-        jbd2_journal_flush()        // checkpoint everything.
+-        ..do stuff on stable fs
+-        jbd2_journal_unlock_updates() // carry on with filesystem use.
+-
+-The opportunities for abuse and DOS attacks with this should be obvious,
+-if you allow unprivileged userspace to trigger codepaths containing
+-these calls.
+-
+-Summary
+-~~~~~~~
+-
+-Using the journal is a matter of wrapping the different context changes,
+-being each mount, each modification (transaction) and each changed
+-buffer to tell the journalling layer about them.
+-
+-Data Types
+-----------
+-
+-The journalling layer uses typedefs to 'hide' the concrete definitions
+-of the structures used. As a client of the JBD2 layer you can just rely
+-on the using the pointer as a magic cookie of some sort. Obviously the
+-hiding is not enforced as this is 'C'.
+-
+-Structures
+-~~~~~~~~~~
+-
+-.. kernel-doc:: include/linux/jbd2.h
+-   :internal:
+-
+-Functions
+----------
+-
+-The functions here are split into two groups those that affect a journal
+-as a whole, and those which are used to manage transactions
+-
+-Journal Level
+-~~~~~~~~~~~~~
+-
+-.. kernel-doc:: fs/jbd2/journal.c
+-   :export:
+-
+-.. kernel-doc:: fs/jbd2/recovery.c
+-   :internal:
+-
+-Transasction Level
+-~~~~~~~~~~~~~~~~~~
+-
+-.. kernel-doc:: fs/jbd2/transaction.c
+-
+-See also
+---------
+-
+-`Journaling the Linux ext2fs Filesystem, LinuxExpo 98, Stephen
+-Tweedie <http://kernel.org/pub/linux/kernel/people/sct/ext3/journal-design.ps.gz>`__
+-
+-`Ext3 Journalling FileSystem, OLS 2000, Dr. Stephen
+-Tweedie <http://olstrans.sourceforge.net/release/OLS2000-ext3/OLS2000-ext3.html>`__
+-
+-splice API
+-==========
+-
+-splice is a method for moving blocks of data around inside the kernel,
+-without continually transferring them between the kernel and user space.
+-
+-.. kernel-doc:: fs/splice.c
+-
+-pipes API
+-=========
+-
+-Pipe interfaces are all for in-kernel (builtin image) use. They are not
+-exported for use by modules.
+-
+-.. kernel-doc:: include/linux/pipe_fs_i.h
+-   :internal:
+-
+-.. kernel-doc:: fs/pipe.c
+-
+-Encryption API
+-==============
+-
+-A library which filesystems can hook into to support transparent
+-encryption of files and directories.
++Documentation for the support code within the filesystem layer for use in
++filesystem implementations.
+ 
+ .. toctree::
+-    :maxdepth: 2
+-
+-    fscrypt
+-
+-Pathname lookup
+-===============
+-
+-
+-This write-up is based on three articles published at lwn.net:
++   :maxdepth: 2
+ 
+-- <https://lwn.net/Articles/649115/> Pathname lookup in Linux
+-- <https://lwn.net/Articles/649729/> RCU-walk: faster pathname lookup in Linux
+-- <https://lwn.net/Articles/650786/> A walk among the symlinks
++   journalling
++   fscrypt
+ 
+-Written by Neil Brown with help from Al Viro and Jon Corbet.
+-It has subsequently been updated to reflect changes in the kernel
+-including:
++Filesystem-specific documentation
++=================================
+ 
+-- per-directory parallel name lookup.
++Documentation for individual filesystem types can be found here.
+ 
  .. toctree::
     :maxdepth: 2
  
-+   lifecycles
-    path-lookup.rst
-    api-summary
-    splice
-diff --git a/Documentation/filesystems/lifecycles.rst b/Documentation/filesystems/lifecycles.rst
+-   path-lookup.rst
+-
+-binderfs
+-========
+-
+-.. toctree::
+-
+    binderfs.rst
+diff --git a/Documentation/filesystems/journalling.rst b/Documentation/filesystems/journalling.rst
 new file mode 100644
-index 000000000000..b30f566cfe0d
+index 000000000000..58ce6b395206
 --- /dev/null
-+++ b/Documentation/filesystems/lifecycles.rst
-@@ -0,0 +1,357 @@
-+======================
-+Lifecycles and locking
-+======================
-+
-+This manual aspires to cover the lifecycles of VFS objects and the locking
-+that protects them.
-+
-+Reference counting for file structures
-+======================================
-+
-+(The following text derives from `this email from Al Viro
-+<https://lwn.net/ml/linux-fsdevel/20190207040058.GW2217@ZenIV.linux.org.uk/>`_).
-+
-+The :c:type:`struct file` type represents an open file in the kernel.  Its
-+lifetime is controlled by a simple reference count (f_count) in that
-+structure.  References are obtained with functions like fget(), fdget(),
-+and fget_raw(); they are returned with fput().
-+
-+.. FIXME we should have kerneldoc comments for those functions
-+
-+The struct file destructor (__fput() and the filesystem-specific
-+->release() function called from it) is called once the counter hits zero.
-+Each file descriptor counts as a reference.  Thus, dup() will increment
-+the refcount by 1, close() will decrement it, fork() will increment it
-+by the number of descriptors in your descriptor table refering to this
-+struct file, destruction of the descriptor table on exit() will decrement
-+by the same amount, etc.
-+
-+Syscalls like read() and friends turn descriptors into struct file
-+references.  If the descriptor table is shared, that counts as a new
-+reference that must be dropped in the end of the syscall; otherwise we are
-+guaranteed that the reference in the descriptor table will stay around
-+until the end of the syscall, so we may use it without bumping the file
-+refcount.  That's the difference between fget() and fdget() - the former
-+will bump the refcount, while the latter will try to avoid that.  Of
-+course, if we do not intend to drop the reference we'd acquired by the end
-+of the syscall, we want fget(); fdget() is for transient references only.
-+
-+Descriptor tables
-+-----------------
-+
-+Descriptor tables (:c:type:`struct files_struct`) *can* be shared; several
-+processes (usually threads that share address spaces as well, but that's
-+not necessary) may be working with the same set of struct files so, for
-+example, an open() call in one of them is seen by the others.  The same
-+goes for close(), dup(), dup2(), etc.
-+
-+That makes for an interesting corner case: what if two threads happen to
-+share a descriptor table, and one of them closes a file descriptor while
-+another is in the middle of a read() call on that same descriptor?  That's
-+one area where Unices differ; one variant is to abort the read() call,
-+another would have close() wait for the read() call to finish, etc.  What
-+we do is:
-+
-+  * close() succeeds immediately; the reference is removed from
-+    the descriptor table and dropped.
-+
-+  * If the close() call happens before read(fd, ...) has converted the file
-+    descriptor to a struct file reference, read() will fail with -EBADF.
-+
-+  * Otherwise, read() proceeds unmolested.  The reference it has acquired
-+    is dropped at the end of the syscall.  If that's the last reference to
-+    the file, the file structure will get shut down at that point.
-+
-+A call to clone() will result in the child sharing the parent's descriptor
-+table if CLONE_FILES is in the flags.  Note that, in this case, struct file
-+refcounts are not modified at all, since no new references to files are
-+created.  Without CLONE_FILES, it's the same as fork(): an independent copy
-+of the descriptor table is created and populated by copies of references to
-+files, each bumping file's refcount.
-+
-+Calling unshare() with CLONE_FILES in the flags will create a copy of the
-+descriptor table (same as done on fork(), etc.) and switch to using it; the
-+old reference will be dropped (note: it'll only bother with that if
-+descriptor table used to be shared in the first place; if we hold the only
-+reference to descriptor table, we'll just keep using it).
-+
-+execve() does almost the same thing: if the pre-exec descriptor table is
-+shared, it will switch to a new copy first.  In case of success the
-+reference to the original table is dropped, in case of failure we revert to
-+the original and drop the copy.  Note that handling of close-on-exec is
-+done in the *copy*; the original is unaffected, so failing in execve() does
-+not disrupt the descriptor table.
-+
-+exit() will drop the reference to the descriptor table.  When the last
-+reference is dropped, all file references are removed from it (and dropped).
-+
-+The thread's pointer to its descriptor table (current->files) is never
-+modified by other threads; something like::
-+
-+  ls /proc/<pid>/fd 
-+
-+will fetch it, so stores need to be protected (by task_lock(current)), but
-+the only the thread itself can do them.
-+
-+Note that, while extra references to the descriptor table can appear at any
-+time (/proc/<pid>/fd accesses, for example), such references may not be
-+used for modifications.  In particular, you can't switch to another
-+thread's descriptor table, unless it had been yours at some earlier point
-+*and* you've kept a reference to it.
-+
-+That's about it for descriptor tables; that, by far, is the main source of
-+persistently held struct file references.  Transient references are grabbed
-+by syscalls when they resolve a descriptor to a struct file pointer, which
-+ought to be done once per syscall *and* reasonably early in it.
-+Unfortunately, that's not all; there are other persistent struct file
-+references.
-+
-+Other persistent references
-+---------------------------
-+
-+A key point so far is that references to file structures are not held
-+(directly or indirectly) in other file structures.  If that were
-+universally true, life would be simpler, since we would never have to worry
-+about reference-count loops.  Unfortunately, there are some more
-+complicated cases that the kernel has to worry about.
-+
-+Some things, such as the case of a LOOP_SET_FD ioctl() call grabbing a
-+reference to a file structure and stashing it in the lo_backing_file field
-+of a loop_device structure, are reasonably simple.  The struct file
-+reference will be dropped later, either directly by a LOOP_CLR_FD operation
-+(if nothing else holds the thing open at the time) or later in
-+lo_release().
-+
-+Note that, in the latter case, things can get a bit more complicated.  A
-+process closing /dev/loop might drop the last reference to it, triggering a
-+call to bdput() that releases the last reference holding a block device
-+open.  That will trigger a call to lo_release(), which will drop the
-+reference on the underlying file structure, which is almost certainly the
-+last one at that point.  This case is still not a problem; while we do have
-+the underlying struct file pinned by something held by another struct file,
-+the dependency graph is acyclic, so the plain refcounts we are using work
-+fine.
-+
-+The same goes for the things like e.g. ecryptfs opening an underlying
-+(encrypted) file on open() and dropping it when the last reference to
-+ecryptfs file is dropped; the only difference here is that the underlying
-+struct file never appears in anyone's descriptor tables.
-+
-+However, in a couple of cases we do have something trickier.
-+
-+File references and SCM_RIGHTS
-+------------------------------
-+
-+The SCM_RIGHTS datagram option with Unix-domain sockets can be used to
-+transfer a file descriptor, and its associated struct file reference, to
-+the receiving process.  That brings about a couple of situations where
-+things can go wrong.
-+
-+Case 1: an SCM_RIGHTS datagram can be sent to an AF_UNIX socket.  That
-+converts the caller-supplied array of descriptors into an array of struct
-+file references, which gets attached to the packet we queue.  When the
-+datagram is received, the struct file references are moved into the
-+descriptor table of the recepient or, in case of error, dropped.  Note that
-+sending some descriptors in an SCM_RIGHTS datagram and closing them
-+immediately is perfectly legitimate: as soon as sendmsg() returns you can
-+go ahead and close the descriptors you've sent.  The references for the
-+recipient are already acquired, so you don't need to wait for the packet to
-+be received.
-+
-+That would still be simple, if not for the fact that there's nothing to
-+stop you from passing AF_UNIX sockets themselves around in the same way.
-+In fact, that has legitimate uses and, most of the time, doesn't cause any
-+complications at all.  However, it is possible to get the situation when
-+the following happens:
-+
-+  * struct file instances A and B are both AF_UNIX sockets.
-+  * The only reference to A is in the SCM_RIGHTS packet that sits in the
-+    receiving queue of B.
-+  * The only reference to B is in the SCM_RIGHTS packet that sits in the
-+    receiving queue of A.
-+
-+That, of course, is where pure refcounting of any kind will break.
-+
-+The SCM_RIGHTS datagram that contains the sole reference to A can't be
-+received without the recepient getting hold of a reference to B.  That
-+cannot happen until somebody manages to receive the SCM_RIGHTS datagram
-+containing the sole reference to B.  But that cannot happen until that
-+somebody manages to get hold of a reference to A, which cannot happen until
-+the first SCM_RIGHTS datagram is received.
-+
-+Dropping the last reference to A would have discarded everything in its
-+receiving queue, including the SCM_RIGHTS datagram that contains the
-+reference to B; however, that can't happen either; the other SCM_RIGHTS
-+datagram would have to be either received or discarded first, etc.
-+
-+Case 2: similar, with a bit of a twist.  An AF_UNIX socket used for
-+descriptor passing is normally set up by socket(), followed by connect().
-+As soon as connect() returns, one can start sending.  Note that connect()
-+does *NOT* wait for the recepient to call accept(); it creates the object
-+that will serve as the low-level part of the other end of connection
-+(complete with received packet queue) and stashes that object into the
-+queue of the *listener's* socket.  A subsequent accept() call fetches it
-+from there and attaches it to a new socket, completing the setup; in the
-+meanwhile, sending packets works fine.  Once accept() is done, it'll see
-+the stuff you'd sent already in the queue of the new socket and everything
-+works fine.
-+
-+If the listening socket gets closed without accept() having been called,
-+its queue is flushed, discarding all pending connection attempts, complete
-+with *their* queues.  Which is the same effect as accept() + close(), so
-+again, normally everything just works.  However, consider the case when we
-+have:
-+
-+  * struct file instances A and B being AF_UNIX sockets.
-+  * A is a listener
-+  * B is an established connection, with the other end yet to be accepted
-+    on A 
-+  * The only references to A and B are in an SCM_RIGHTS datagram sent over
-+    to A by B.
-+
-+That SCM_RIGHTS datagram could have been received if somebody had managed
-+to call accept() on A and recvmsg() on the socket created by that accept()
-+call.  But that can't happen without that somebody getting hold of a
-+reference to A in the first place, which can't happen without having
-+received that SCM_RIGHTS datagram.  It can't be discarded either, since
-+that can't happen without dropping the last reference to A, which sits
-+right in it.
-+
-+The difference from the previous case is that there we had:
-+
-+  * A holds unix_sock of A
-+  * unix_sock of A holds SCM_RIGHTS with reference to B
-+  * B holds unix_sock of B
-+  * unix_sock of B holds SCM_RIGHTS with reference to A
-+
-+and here we have:
-+
-+  * A holds unix_sock of A
-+  * unix_sock of A holds the packet with reference to embryonic unix_sock
-+    created by connect() 
-+  * that embryionic unix_sock holds SCM_RIGHTS with references to A and B.
-+
-+The dependency graph is different, but the problem is the same; there are
-+unreachable loops in it.  Note that neither class of situations
-+would occur normally; in the best case it's "somebody had been
-+doing rather convoluted descriptor passing, but everyone involved
-+got hit with kill -9 at the wrong time; please, make sure nothing
-+leaks".  That can happen, but a userland race (e.g. botched protocol
-+handling of some sort) or a deliberate abuse are much more likely.
-+
-+Catching the loop creation is hard and paying for that every time we do
-+descriptor-passing would be a bad idea.  Besides, the loop per se is not
-+fatal; if, for example, in the second case the descriptor for A had been
-+kept around, close(accept()) would've cleaned everything up.  Which means
-+that we need a garbage collector to deal with the (rare) leaks.
-+
-+Note that, in both cases, the leaks are caused by loops passing through
-+some SCM_RIGHTS datagrams that can never be received.  So locating those,
-+removing them from the queues they sit in and then discarding the suckers,
-+is enough to resolve the situation. Furthermore, in both cases the loop
-+passes through the unix_sock of something that got sent over in an
-+SCM_RIGHTS datagram.  So we can do the following:
-+
-+  1) Keep the count of references to file structures of AF_UNIX sockets
-+     held by SCM_RIGHTS; this value is kept in unix_sock->inflight.  Any
-+     struct unix_sock instance without such references is not a part of
-+     unreachable loop.  Maintain the set of unix_sock that are not excluded
-+     by that (i.e. the ones that have some of references from SCM_RIGHTS
-+     instances).  Note that we don't need to maintain those counts in
-+     struct file; we care only about unix_sock here.
-+
-+  2) Any struct file of an AF_UNIX socket with some references *NOT* from
-+     SCM_RIGHTS datagrams is also not a part of unreachable loop.
-+
-+  3) For each unix_sock, consider the following set of SCM_RIGHTS
-+     datagrams: everything in the queue of that unix_sock if it's a
-+     non-listener, and everything in queues of *all* embryonic unix_sock
-+     structs in the queue of a listener.  Let's call those the SCM_RIGHTS
-+     associated with our unix_sock.
-+
-+  4) All SCM_RIGHTS associated with a reachable unix_sock are themselves
-+     reachable.
-+
-+  5) if some references to the struct file of a unix_sock are in reachable
-+     SCM_RIGHTS, that struct file is reachable.
-+
-+The garbage collector starts with calculating the set of potentially
-+unreachable unix_socks:  the ones not excluded by (1, 2).  No unix_sock
-+instances outside of that set need to be considered.
-+
-+If some unix_sock in that set has a counter that is *not* entirely covered
-+by SCM_RIGHTS associated with the elements of the set, we can conclude that
-+there are references to it in SCM_RIGHTS associated with something outside
-+of our set and therefore it is reachable and can be removed from the set.
-+
-+If that process converges to a non-empty set, we know that everything left
-+in that set is unreachable - all references to their struct file come from
-+some SCM_RIGHTS datagrams, and all those SCM_RIGHTS datagrams are among
-+those that can't be received or discarded without getting hold of a
-+reference to struct file of something in our set.
-+
-+Everything outside of that set is reachable, so taking the SCM_RIGHTS with
-+references to stuff in our set (all of them to be found among those
-+associated with elements of our set) out of the queues they are in will
-+break all unreachable loops.  Discarding the collected datagrams will do
-+the rest - the file references in those will be dropped, etc.
-+
-+One thing to keep in mind here is the locking.  What the garbage
-+collector relies upon is:
-+
-+  * Changes to ->inflight are serialized with respect to it (on
-+    unix_gc_lock; increments are done by unix_inflight(), decrements by
-+    unix_notinflight()).
-+
-+  * Any references extracted from SCM_RIGHTS during the garbage collector
-+    run will not be actually used until the end of garbage collection.  For
-+    a normal recvmsg() call, this behavior is guaranteed by having
-+    unix_notinflight() called between the extraction of scm_fp_list from
-+    the packet and doing anything else with the references extracted.  For
-+    a MSG_PEEK recvmsg() call, it's actually broken and lacks
-+    synchronization; Miklos has proposed to grab and release unix_gc_lock
-+    in those, between scm_fp_dup() and doing anything else with the
-+    references copied.
-+
-+.. FIXME: The above should be updates when the fix happens.
-+
-+  * adding SCM_RIGHTS in the middle of garbage collection is possible, but
-+    in that case it will contain no references to anything in the initial
-+    candidate set.
-+
-+The last one is delicate.  SCM_RIGHTS creation has unix_inflight() called
-+for each reference we put there, so it's serialized with respect to
-+unix_gc(); however, insertion into the queue is *NOT* covered by that.
-+Queue rescans are covered, but each queue has a lock of its own and they
-+are definitely not going to be held throughout the whole thing.
-+
-+So in theory it would be possible to have:
-+
-+  * thread A: sendmsg() has SCM_RIGHTS created and populated, complete with
-+    file refcount and ->inflight increments implied, at which point it gets
-+    preempted and loses the timeslice.
-+
-+  * thread B: gets to run and removes all references from descriptor table
-+    it shares with thread A.
-+
-+  * on another CPU we have the garbage collector triggered; it determines
-+    the set of potentially unreachable unix_sock and everything in our
-+    SCM_RIGHTS _is_ in that set, now that no other references remain.
-+
-+  * on the first CPU, thread A regains the timeslice and inserts its
-+    SCM_RIGHTS into queue.  And it does contain references to sockets from
-+    the candidate set of running garbage collector, confusing the hell out
-+    of it.
-+
-+That is avoided by a convoluted dance around the SCM_RIGHTS creation
-+and insertion - we use fget() to obtain struct file references,
-+then _duplicate_ them in SCM_RIGHTS (bumping a refcount for each, so
-+we are holding *two* references), do unix_inflight() on them, then
-+queue the damn thing, then drop each reference we got from fget().
-+
-+That way everything referred to in that SCM_RIGHTS is going to have
-+extra struct file references (and thus be excluded from the initial
-+candidate set) until after it gets inserted into queue.  In other
-+words, if it does appear in a queue between two passes, it's
-+guaranteed to contain no references to anything in the initial
-+canidate set.
++++ b/Documentation/filesystems/journalling.rst
+@@ -0,0 +1,184 @@
++The Linux Journalling API
++=========================
++
++Overview
++--------
++
++Details
++~~~~~~~
++
++The journalling layer is easy to use. You need to first of all create a
++journal_t data structure. There are two calls to do this dependent on
++how you decide to allocate the physical media on which the journal
++resides. The :c:func:`jbd2_journal_init_inode` call is for journals stored in
++filesystem inodes, or the :c:func:`jbd2_journal_init_dev` call can be used
++for journal stored on a raw device (in a continuous range of blocks). A
++journal_t is a typedef for a struct pointer, so when you are finally
++finished make sure you call :c:func:`jbd2_journal_destroy` on it to free up
++any used kernel memory.
++
++Once you have got your journal_t object you need to 'mount' or load the
++journal file. The journalling layer expects the space for the journal
++was already allocated and initialized properly by the userspace tools.
++When loading the journal you must call :c:func:`jbd2_journal_load` to process
++journal contents. If the client file system detects the journal contents
++does not need to be processed (or even need not have valid contents), it
++may call :c:func:`jbd2_journal_wipe` to clear the journal contents before
++calling :c:func:`jbd2_journal_load`.
++
++Note that jbd2_journal_wipe(..,0) calls
++:c:func:`jbd2_journal_skip_recovery` for you if it detects any outstanding
++transactions in the journal and similarly :c:func:`jbd2_journal_load` will
++call :c:func:`jbd2_journal_recover` if necessary. I would advise reading
++:c:func:`ext4_load_journal` in fs/ext4/super.c for examples on this stage.
++
++Now you can go ahead and start modifying the underlying filesystem.
++Almost.
++
++You still need to actually journal your filesystem changes, this is done
++by wrapping them into transactions. Additionally you also need to wrap
++the modification of each of the buffers with calls to the journal layer,
++so it knows what the modifications you are actually making are. To do
++this use :c:func:`jbd2_journal_start` which returns a transaction handle.
++
++:c:func:`jbd2_journal_start` and its counterpart :c:func:`jbd2_journal_stop`,
++which indicates the end of a transaction are nestable calls, so you can
++reenter a transaction if necessary, but remember you must call
++:c:func:`jbd2_journal_stop` the same number of times as
++:c:func:`jbd2_journal_start` before the transaction is completed (or more
++accurately leaves the update phase). Ext4/VFS makes use of this feature to
++simplify handling of inode dirtying, quota support, etc.
++
++Inside each transaction you need to wrap the modifications to the
++individual buffers (blocks). Before you start to modify a buffer you
++need to call :c:func:`jbd2_journal_get_create_access()` /
++:c:func:`jbd2_journal_get_write_access()` /
++:c:func:`jbd2_journal_get_undo_access()` as appropriate, this allows the
++journalling layer to copy the unmodified
++data if it needs to. After all the buffer may be part of a previously
++uncommitted transaction. At this point you are at last ready to modify a
++buffer, and once you are have done so you need to call
++:c:func:`jbd2_journal_dirty_metadata`. Or if you've asked for access to a
++buffer you now know is now longer required to be pushed back on the
++device you can call :c:func:`jbd2_journal_forget` in much the same way as you
++might have used :c:func:`bforget` in the past.
++
++A :c:func:`jbd2_journal_flush` may be called at any time to commit and
++checkpoint all your transactions.
++
++Then at umount time , in your :c:func:`put_super` you can then call
++:c:func:`jbd2_journal_destroy` to clean up your in-core journal object.
++
++Unfortunately there a couple of ways the journal layer can cause a
++deadlock. The first thing to note is that each task can only have a
++single outstanding transaction at any one time, remember nothing commits
++until the outermost :c:func:`jbd2_journal_stop`. This means you must complete
++the transaction at the end of each file/inode/address etc. operation you
++perform, so that the journalling system isn't re-entered on another
++journal. Since transactions can't be nested/batched across differing
++journals, and another filesystem other than yours (say ext4) may be
++modified in a later syscall.
++
++The second case to bear in mind is that :c:func:`jbd2_journal_start` can block
++if there isn't enough space in the journal for your transaction (based
++on the passed nblocks param) - when it blocks it merely(!) needs to wait
++for transactions to complete and be committed from other tasks, so
++essentially we are waiting for :c:func:`jbd2_journal_stop`. So to avoid
++deadlocks you must treat :c:func:`jbd2_journal_start` /
++:c:func:`jbd2_journal_stop` as if they were semaphores and include them in
++your semaphore ordering rules to prevent
++deadlocks. Note that :c:func:`jbd2_journal_extend` has similar blocking
++behaviour to :c:func:`jbd2_journal_start` so you can deadlock here just as
++easily as on :c:func:`jbd2_journal_start`.
++
++Try to reserve the right number of blocks the first time. ;-). This will
++be the maximum number of blocks you are going to touch in this
++transaction. I advise having a look at at least ext4_jbd.h to see the
++basis on which ext4 uses to make these decisions.
++
++Another wriggle to watch out for is your on-disk block allocation
++strategy. Why? Because, if you do a delete, you need to ensure you
++haven't reused any of the freed blocks until the transaction freeing
++these blocks commits. If you reused these blocks and crash happens,
++there is no way to restore the contents of the reallocated blocks at the
++end of the last fully committed transaction. One simple way of doing
++this is to mark blocks as free in internal in-memory block allocation
++structures only after the transaction freeing them commits. Ext4 uses
++journal commit callback for this purpose.
++
++With journal commit callbacks you can ask the journalling layer to call
++a callback function when the transaction is finally committed to disk,
++so that you can do some of your own management. You ask the journalling
++layer for calling the callback by simply setting
++``journal->j_commit_callback`` function pointer and that function is
++called after each transaction commit. You can also use
++``transaction->t_private_list`` for attaching entries to a transaction
++that need processing when the transaction commits.
++
++JBD2 also provides a way to block all transaction updates via
++:c:func:`jbd2_journal_lock_updates()` /
++:c:func:`jbd2_journal_unlock_updates()`. Ext4 uses this when it wants a
++window with a clean and stable fs for a moment. E.g.
++
++::
++
++
++        jbd2_journal_lock_updates() //stop new stuff happening..
++        jbd2_journal_flush()        // checkpoint everything.
++        ..do stuff on stable fs
++        jbd2_journal_unlock_updates() // carry on with filesystem use.
++
++The opportunities for abuse and DOS attacks with this should be obvious,
++if you allow unprivileged userspace to trigger codepaths containing
++these calls.
++
++Summary
++~~~~~~~
++
++Using the journal is a matter of wrapping the different context changes,
++being each mount, each modification (transaction) and each changed
++buffer to tell the journalling layer about them.
++
++Data Types
++----------
++
++The journalling layer uses typedefs to 'hide' the concrete definitions
++of the structures used. As a client of the JBD2 layer you can just rely
++on the using the pointer as a magic cookie of some sort. Obviously the
++hiding is not enforced as this is 'C'.
++
++Structures
++~~~~~~~~~~
++
++.. kernel-doc:: include/linux/jbd2.h
++   :internal:
++
++Functions
++---------
++
++The functions here are split into two groups those that affect a journal
++as a whole, and those which are used to manage transactions
++
++Journal Level
++~~~~~~~~~~~~~
++
++.. kernel-doc:: fs/jbd2/journal.c
++   :export:
++
++.. kernel-doc:: fs/jbd2/recovery.c
++   :internal:
++
++Transasction Level
++~~~~~~~~~~~~~~~~~~
++
++.. kernel-doc:: fs/jbd2/transaction.c
++
++See also
++--------
++
++`Journaling the Linux ext2fs Filesystem, LinuxExpo 98, Stephen
++Tweedie <http://kernel.org/pub/linux/kernel/people/sct/ext3/journal-design.ps.gz>`__
++
++`Ext3 Journalling FileSystem, OLS 2000, Dr. Stephen
++Tweedie <http://olstrans.sourceforge.net/release/OLS2000-ext3/OLS2000-ext3.html>`__
++
+diff --git a/Documentation/filesystems/path-lookup.rst b/Documentation/filesystems/path-lookup.rst
+index 80e22eda4132..434a07b0002b 100644
+--- a/Documentation/filesystems/path-lookup.rst
++++ b/Documentation/filesystems/path-lookup.rst
+@@ -1,3 +1,18 @@
++===============
++Pathname lookup
++===============
++
++This write-up is based on three articles published at lwn.net:
++
++- <https://lwn.net/Articles/649115/> Pathname lookup in Linux
++- <https://lwn.net/Articles/649729/> RCU-walk: faster pathname lookup in Linux
++- <https://lwn.net/Articles/650786/> A walk among the symlinks
++
++Written by Neil Brown with help from Al Viro and Jon Corbet.
++It has subsequently been updated to reflect changes in the kernel
++including:
++
++- per-directory parallel name lookup.
+ 
+ Introduction to pathname lookup
+ ===============================
+diff --git a/Documentation/filesystems/splice.rst b/Documentation/filesystems/splice.rst
+new file mode 100644
+index 000000000000..edd874808472
+--- /dev/null
++++ b/Documentation/filesystems/splice.rst
+@@ -0,0 +1,22 @@
++================
++splice and pipes
++================
++
++splice API
++==========
++
++splice is a method for moving blocks of data around inside the kernel,
++without continually transferring them between the kernel and user space.
++
++.. kernel-doc:: fs/splice.c
++
++pipes API
++=========
++
++Pipe interfaces are all for in-kernel (builtin image) use. They are not
++exported for use by modules.
++
++.. kernel-doc:: include/linux/pipe_fs_i.h
++   :internal:
++
++.. kernel-doc:: fs/pipe.c
 -- 
 2.20.1
 
