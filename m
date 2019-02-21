@@ -2,157 +2,116 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9868C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 04:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B767C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 04:21:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F29C214AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 04:15:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05C012086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 04:21:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="zqsQA10S"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="piqirC6t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727410AbfBUEPJ (ORCPT
+        id S1726976AbfBUEVq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 23:15:09 -0500
-Received: from conuserg-12.nifty.com ([210.131.2.79]:25464 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbfBUEPI (ORCPT
+        Wed, 20 Feb 2019 23:21:46 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:55648 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726181AbfBUEVq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 23:15:08 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id x1L4Diq6000406;
-        Thu, 21 Feb 2019 13:13:44 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x1L4Diq6000406
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1550722425;
-        bh=WB8FMXiddfh/ANaSrDuHT7qAAFTezhEwjn+zv9LMKxk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=zqsQA10S48Vhczrf2cOmcTa4usH1M/6JX3zRn3UQTiT5cw+6Lsw8NdnqswNmXUUgU
-         7Tqso2pbk2Wbap+VzMshmwKh4ZQODB4YRbSQIeYSYQHdzCI8kpZ3ffF5LSKYGTxsKK
-         CeTsgo2KwgXET4EjkcNBs8in+R5y6mBj1b8xkFaxwHxFsCpP1omE1QttGuip9QgQP8
-         6KCDO+cthiMROsCHvVNztEtXSRkHo732amhqKzO4OhwYBIQ9qSRYVbSaUkmFBMQJZR
-         dcdMmTJfMp3kmnYOLThnooaDw6dIvLWmrt20m02gk+sZXDM6uMIcTrvScWszCPRMEd
-         TOdAeJMB7bFKA==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org,
-        Michal Marek <michal.lkml@markovi.net>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH] kbuild: compute false-positive -Wmaybe-uninitialized cases in Kconfig
-Date:   Thu, 21 Feb 2019 13:13:38 +0900
-Message-Id: <1550722418-9189-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 20 Feb 2019 23:21:46 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190221042143epoutp0103fbfe2f28bbda2f79a0d90bd998e614~FRkOz591J1896418964epoutp01u
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 04:21:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190221042143epoutp0103fbfe2f28bbda2f79a0d90bd998e614~FRkOz591J1896418964epoutp01u
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1550722903;
+        bh=p/ltNYd8J/gOhJEAuvMRU1oPQERrLXZPVnpiOkagw5o=;
+        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+        b=piqirC6tJta89qOiKwIrM4KVVdH5zV+EqLk9jLTw/976cymZE9+syknWbxK07ol1G
+         gFIQbt22ve+vA7CSH4m/UxElrKKkqEC5fmytSVDJeHyCgDkiDoZTXJYw2tdVxqAmF8
+         1eY+ir6JsFxJbVJeG27ZuN2TeYtDDQBfmjtlOCiQ=
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.155]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20190221042139epcas1p36f2b84a6e1d4bc84389307497cc54efb~FRkK-ihGe0956909569epcas1p36;
+        Thu, 21 Feb 2019 04:21:39 +0000 (GMT)
+X-AuditID: b6c32a35-27fff70000000fea-9d-5c6e27537175
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        15.E0.04074.3572E6C5; Thu, 21 Feb 2019 13:21:39 +0900 (KST)
+Mime-Version: 1.0
+Subject: RE: [PATCH v3 1/2] trace: events: add devfreq trace event file
+Reply-To: myungjoo.ham@samsung.com
+From:   MyungJoo Ham <myungjoo.ham@samsung.com>
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+CC:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        "mka@chromium.org" <mka@chromium.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "mingo@redhat.com" <mingo@redhat.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <1550514069-9237-2-git-send-email-l.luba@partner.samsung.com>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20190221042138epcms1p76259d54fecdec5093b78651573076d71@epcms1p7>
+Date:   Thu, 21 Feb 2019 13:21:38 +0900
+X-CMS-MailID: 20190221042138epcms1p76259d54fecdec5093b78651573076d71
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAJsWRmVeSWpSXmKPExsWy7bCmgW6wel6MwecLnBYbZ6xntbj+5Tmr
+        xdmmN+wWtxpkLC7vmsNm8bn3CKPF2iN32S0uHVjAZPF5w2NGi30dD5gsDr9pZ3Xg9pjdcJHF
+        o2XfLXaPg+/2MHm833eVzaNvyypGj8+b5ALYorJtMlITU1KLFFLzkvNTMvPSbZW8g+Od403N
+        DAx1DS0tzJUU8hJzU22VXHwCdN0yc4DOU1IoS8wpBQoFJBYXK+nb2RTll5akKmTkF5fYKqUW
+        pOQUWBboFSfmFpfmpesl5+daGRoYGJkCFSZkZ3y6d4+14AxLxZxfE1gaGO8wdzFyckgImEjM
+        eLWPDcQWEtjBKPF0uXkXIwcHr4CgxN8dwiBhYQF3ieW7mlkhSpQkGm7uY4aI60t0PNjGCGKz
+        CehKbN1wlwXEFhFYxigx9611FyMXB7PACyaJB+fOMkHs4pWY0f6UBcKWlti+fCtYM6eAl8Sr
+        ly+gakQlbq5+yw5jvz82nxHCFpFovXcW6mZBiQc/dzPCzJkx5T/UzGqJRz0XmUEWSwi0MEqs
+        mrkNaqi+xJm5J9kgHvOVeHkfLMwioCrx9vwKqBIXiV2L34HZzALyEtvfzmEGKWcW0JRYv0sf
+        Iswn8e5rDyvMKzvmPYFqVZM4tHsJ1MkyEqenL4Q600Ni29bLbCDnCAlcZJRoOLOHZQKj/CxE
+        8M5Csm0WwrYFjMyrGMVSC4pz01OLDQsMkSN0EyM4dWqZ7mCccs7nEKMAB6MSD++GiNwYIdbE
+        suLK3EOMEhzMSiK8h0TyYoR4UxIrq1KL8uOLSnNSiw8xmgI9PZFZSjQ5H5jW80riDU2NjI2N
+        LUwMzUwNDZXEedc7OMcICaQnlqRmp6YWpBbB9DFxcEo1MJ56K7N0+4/5hz//DeS/UrvhJt9N
+        x2dzUhaufsCxYmVzaN+Rb/tOZexJX/PyQ/90Limmn1nncn4meTklHEvW2pG6ZKvCiZtsxmoW
+        DrcteH6VnWg67tz5pVXefunz0A7utqi30+JV5vsYx8UZa18yufjsDf9lm3vF156dfDv5M0uo
+        TlxMwB31ptdKLMUZiYZazEXFiQCUiF1ZswMAAA==
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190218182129eucas1p236fc8ccddd9a8cde25c15f7545276885
+References: <1550514069-9237-2-git-send-email-l.luba@partner.samsung.com>
+        <1550514069-9237-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20190218182129eucas1p236fc8ccddd9a8cde25c15f7545276885@epcms1p7>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since -Wmaybe-uninitialized was introduced by GCC 4.7, we have patched
-various false positives:
+>The patch adds a new file for with trace events for devfreq
+>framework. They are used for performance analysis of the framework.
+>It also contains updates in MAINTAINERS file adding new entry for
+>devfreq maintainers.
+>
+>Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>---
+> MAINTAINERS                    |  1 +
+> include/trace/events/devfreq.h | 40 ++++++++++++++++++++++++++++++++++++++++
+> 2 files changed, 41 insertions(+)
+> create mode 100644 include/trace/events/devfreq.h
 
- - commit e74fc973b6e5 ("Turn off -Wmaybe-uninitialized when building
-   with -Os") turned off this option for -Os.
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 
- - commit 815eb71e7149 ("Kbuild: disable 'maybe-uninitialized' warning
-   for CONFIG_PROFILE_ALL_BRANCHES") turned off this option for
-   CONFIG_PROFILE_ALL_BRANCHES
+Thanks!
 
- - commit a76bcf557ef4 ("Kbuild: enable -Wmaybe-uninitialized warning
-   for "make W=1"") turned off this option for GCC < 4.9
-   Arnd provided more explanation in https://lkml.org/lkml/2017/3/14/903
 
-I think this looks better by shifting the logic from Makefile to Kconfig.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- Makefile             | 10 +++-------
- init/Kconfig         | 17 +++++++++++++++++
- kernel/trace/Kconfig |  1 +
- 3 files changed, 21 insertions(+), 7 deletions(-)
-
-diff --git a/Makefile b/Makefile
-index 1bb0535..b21aa2e3 100644
---- a/Makefile
-+++ b/Makefile
-@@ -656,17 +656,13 @@ KBUILD_CFLAGS	+= $(call cc-disable-warning, int-in-bool-context)
- 
- ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
- KBUILD_CFLAGS	+= $(call cc-option,-Oz,-Os)
--KBUILD_CFLAGS	+= $(call cc-disable-warning,maybe-uninitialized,)
--else
--ifdef CONFIG_PROFILE_ALL_BRANCHES
--KBUILD_CFLAGS	+= -O2 $(call cc-disable-warning,maybe-uninitialized,)
- else
- KBUILD_CFLAGS   += -O2
- endif
--endif
- 
--KBUILD_CFLAGS += $(call cc-ifversion, -lt, 0409, \
--			$(call cc-disable-warning,maybe-uninitialized,))
-+ifdef CONFIG_CC_DISABLE_WARN_MAYBE_UNINITIALIZED
-+KBUILD_CFLAGS   += -Wno-maybe-uninitialized
-+endif
- 
- # Tell gcc to never replace conditional load with a non-conditional one
- KBUILD_CFLAGS	+= $(call cc-option,--param=allow-store-data-races=0)
-diff --git a/init/Kconfig b/init/Kconfig
-index c9386a3..1f05a88 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -26,6 +26,22 @@ config CLANG_VERSION
- config CC_HAS_ASM_GOTO
- 	def_bool $(success,$(srctree)/scripts/gcc-goto.sh $(CC))
- 
-+config CC_HAS_WARN_MAYBE_UNINITIALIZED
-+	def_bool $(cc-option,-Wmaybe-uninitialized)
-+	help
-+	  GCC >= 4.7 supports this option.
-+
-+config CC_DISABLE_WARN_MAYBE_UNINITIALIZED
-+	bool
-+	depends on CC_HAS_WARN_MAYBE_UNINITIALIZED
-+	default CC_IS_GCC && GCC_VERSION < 40900  # unreliable for GCC < 4.9
-+	help
-+	  GCC's -Wmaybe-uninitialized is not reliable by definition.
-+	  Lots of false positive warnings are produced in some cases.
-+
-+	  If this option is enabled, -Wno-maybe-uninitialzed is passed
-+	  to the compiler to suppress maybe-uninitialized warnings.
-+
- config CONSTRUCTORS
- 	bool
- 	depends on !UML
-@@ -1113,6 +1129,7 @@ config CC_OPTIMIZE_FOR_PERFORMANCE
- 
- config CC_OPTIMIZE_FOR_SIZE
- 	bool "Optimize for size"
-+	imply CC_DISABLE_WARN_MAYBE_UNINITIALIZED  # avoid false positives
- 	help
- 	  Enabling this option will pass "-Os" instead of "-O2" to
- 	  your compiler resulting in a smaller kernel.
-diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index fa8b1fe..8bd1d6d 100644
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -370,6 +370,7 @@ config PROFILE_ANNOTATED_BRANCHES
- config PROFILE_ALL_BRANCHES
- 	bool "Profile all if conditionals" if !FORTIFY_SOURCE
- 	select TRACE_BRANCH_PROFILING
-+	imply CC_DISABLE_WARN_MAYBE_UNINITIALIZED  # avoid false positives
- 	help
- 	  This tracer profiles all branch conditions. Every if ()
- 	  taken in the kernel is recorded whether it hit or miss.
--- 
-2.7.4
-
+Cheers,
+MyungJoo
