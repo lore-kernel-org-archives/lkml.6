@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B451C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52AFEC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:13:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D45220836
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:13:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2192520836
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 19:13:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550776408;
-	bh=araHCdjeh5ghKN0Gy1uBH5LDh1jS7iDLoUDCls9y+iw=;
+	s=default; t=1550776413;
+	bh=id/2bA2ecDDC6+aYOfQh+slVULieoIR7o/D6U2FxvOA=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=dQkjbKngyFwmpfdWVeT3xsNwzV5R06/j33GmjK3zMqfKTNhvtQjk73Dx91wuCvDri
-	 a2Nh7ErPG/kkfdutYTAlUBnLA9b/8rwPRSbyegLzutZ9d/AWKOja+QF61R09ymA6Ua
-	 DCSxFA0O3zELPl+aUnKb9vqf5IweGEz3GRoTCSd8=
+	b=uoDufAu+o8jPR84CQrtLWcqE+8wU3//a2jZR7sYU52squg6WQgBRauW8ogG1fApQC
+	 XrANaQPBvzFWxlcDreemjvyfopVdBg9ffn0fhv0K+6HgmJH/l4yz0s3XBKd1l2e9lh
+	 33zCnG0pkmBty8I5kRmGY972z3f/3hwDGhXbEcFM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbfBUTN0 (ORCPT
+        id S1726574AbfBUTNb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 14:13:26 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38254 "EHLO
+        Thu, 21 Feb 2019 14:13:31 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38260 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726369AbfBUTNY (ORCPT
+        with ESMTP id S1726425AbfBUTNY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 21 Feb 2019 14:13:24 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -34,24 +34,24 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=rPlblCWguVjvLPQ+uDzlqr1y1O5mMDU0UUhlfLdctYo=; b=ctWkXxJq269L
-        U7fDx1pwQ7LpS9LQq+QMvyssM4MooDa+ZsHnX69AUGeYYMS+BXTSYb7vopg74FK8B0HGptU51THxA
-        oJkxDKgVlog+kjwaDJhODlqaGYqeAPpIL9R3dCOunk/3zmAyDRQ6R5No2JFfNxoPEXQHnywjz+0HH
-        +B/wY=;
+        List-Archive; bh=L2rbEij8d4V1PBLX7s0y39QD1JU7rzTsANVDS/oXAac=; b=IiTCxXT0fZ/b
+        nEEe8BPE0c52T6wQz9dS8aPj3VxsYNMduGTKZQopRb+0dxwJQ7La70Nou9T290fz76B5XWFuUmyk7
+        pJXQxSMJHL8V9IPUi1NWW+QpkqBy3QlKMQ7u5S6BHqi0ovO23j165Z+qHPV3HPD0F0kSLBKjCNT1v
+        MZwYw=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gwtmb-0005xP-ON; Thu, 21 Feb 2019 19:13:21 +0000
+        id 1gwtmc-0005xa-Ba; Thu, 21 Feb 2019 19:13:22 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 4260A1122744; Thu, 21 Feb 2019 19:13:16 +0000 (GMT)
+        id 78B0011227D7; Thu, 21 Feb 2019 19:13:21 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Axel Lin <axel.lin@ingics.com>
 Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: s5m8767: Constify s5m8767_opmode_reg" to the regulator tree
+Subject: Applied "regulator: lp873x: Constify lp873x_buck_ramp_delay array" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190221191316.4260A1122744@debutante.sirena.org.uk>
-Date:   Thu, 21 Feb 2019 19:13:16 +0000 (GMT)
+Message-Id: <20190221191321.78B0011227D7@debutante.sirena.org.uk>
+Date:   Thu, 21 Feb 2019 19:13:21 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: s5m8767: Constify s5m8767_opmode_reg
+   regulator: lp873x: Constify lp873x_buck_ramp_delay array
 
 has been applied to the regulator tree at
 
@@ -84,33 +84,32 @@ to this mail.
 Thanks,
 Mark
 
-From 21687b16248530bec6b950d73a58e4c2eca8e830 Mon Sep 17 00:00:00 2001
+From 921b2b3acc0664e1c78b6d9e383be224de74103d Mon Sep 17 00:00:00 2001
 From: Axel Lin <axel.lin@ingics.com>
-Date: Thu, 21 Feb 2019 21:17:21 +0800
-Subject: [PATCH] regulator: s5m8767: Constify s5m8767_opmode_reg
+Date: Thu, 21 Feb 2019 23:01:11 +0800
+Subject: [PATCH] regulator: lp873x: Constify lp873x_buck_ramp_delay array
 
-The s5m8767_opmode_reg should never change, make it const.
+The lp873x_buck_ramp_delay should never change, make it const.
 
 Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/s5m8767.c | 2 +-
+ drivers/regulator/lp873x-regulator.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-index b581f01f3395..5b0e1fe6723f 100644
---- a/drivers/regulator/s5m8767.c
-+++ b/drivers/regulator/s5m8767.c
-@@ -115,7 +115,7 @@ static const struct sec_voltage_desc *reg_voltage_map[] = {
- 	[S5M8767_BUCK9] = &buck_voltage_val3,
+diff --git a/drivers/regulator/lp873x-regulator.c b/drivers/regulator/lp873x-regulator.c
+index 2ec5e833c379..70651fec8fd9 100644
+--- a/drivers/regulator/lp873x-regulator.c
++++ b/drivers/regulator/lp873x-regulator.c
+@@ -61,7 +61,7 @@ static const struct regulator_linear_range ldo0_ldo1_ranges[] = {
+ 	REGULATOR_LINEAR_RANGE(800000, 0x0, 0x19, 100000),
  };
  
--static unsigned int s5m8767_opmode_reg[][4] = {
-+static const unsigned int s5m8767_opmode_reg[][4] = {
- 	/* {OFF, ON, LOWPOWER, SUSPEND} */
- 	/* LDO1 ... LDO28 */
- 	{0x0, 0x3, 0x2, 0x1}, /* LDO1 */
+-static unsigned int lp873x_buck_ramp_delay[] = {
++static const unsigned int lp873x_buck_ramp_delay[] = {
+ 	30000, 15000, 10000, 7500, 3800, 1900, 940, 470
+ };
+ 
 -- 
 2.20.1
 
