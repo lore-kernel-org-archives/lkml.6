@@ -2,130 +2,117 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C2CCC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:25:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05523C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:25:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A69320823
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:25:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8F6320823
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:25:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="C48jI7pe"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s/MwN8fJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726977AbfBUWZQ (ORCPT
+        id S1727160AbfBUWZa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 17:25:16 -0500
-Received: from ozlabs.org ([203.11.71.1]:51469 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726121AbfBUWZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 17:25:16 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 4458DT4BCMz9s6w;
-        Fri, 22 Feb 2019 09:25:13 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1550787913;
-        bh=eAXJr57ufS6P2ldxEApeayAtZo9CDAi9SD3WmE6B3V4=;
-        h=Date:From:To:Cc:Subject:From;
-        b=C48jI7peM0j7sj0JAWVlpboLaEv0JeQB8dLW5JGBIe0p+23BCaNBWaYeK3nibEaTI
-         ZMhAt9mjdYqDFrJR73vZghvUIOz44NSFsHNlG7Xt0rF+1vfVLNraxVbgIoXsuFcjXU
-         B+7e9FY6qa8doKR7eQGNaIfdihF2lFwAq2go6YwJdJA2SrUW2GcTQfAYgSMtJVkhG8
-         CdomUd+Mq46QlbmQbD2nBVS636AiyxUFGHMdEQUvf1eMbqE1IzYr338hIDpaRnkAyp
-         jFrZvumJLDlShIgGI0/oh5+x2C3Ftyp+wWiQeoVlzTeqed8EvhdgbjBJ9SMuzldmQy
-         JhYrDokk9BYpA==
-Date:   Fri, 22 Feb 2019 09:25:13 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the powerpc tree with the dma-mapping
- tree
-Message-ID: <20190222092513.6fc2a708@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/zNp4Tra4Z_ikkK3FNtEyRzz"; protocol="application/pgp-signature"
+        Thu, 21 Feb 2019 17:25:30 -0500
+Received: from mail-qt1-f201.google.com ([209.85.160.201]:55957 "EHLO
+        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726075AbfBUWZa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 17:25:30 -0500
+Received: by mail-qt1-f201.google.com with SMTP id e31so198885qtb.22
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 14:25:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=xLBRuMMrq0cNA0zgwp4oOxjDeaWQ2llxgXZA+AoiLoA=;
+        b=s/MwN8fJqdU4JJnSkRG929/qC+zalwdqJlGZJhQjpiFCInLx2blcK3XIhjOXSvDeEw
+         x5iTvmAvjADGfobNXn93JNovuei7H55uxKbZPnVirmCM45axH8iwSuTwptZqVype86fh
+         t8glXYmLfjEJyDBWkB4ytbC6BA6SqPhnrco2RTyIWEUSn8kakvqofTeKcvNgV4YdSmOB
+         wiNdrhHWMpdfKwccKKpVXhahUOM1pKFHghPrg9LDuTY+7F1VrjaTf7gJqNv2JOF3/eXx
+         tIkKfiNQWacOgqoLCImZ+soqresIyARpfz2gKEqle3v/AqDr0dUzt8gN/nk1TIZzDFFz
+         fFhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=xLBRuMMrq0cNA0zgwp4oOxjDeaWQ2llxgXZA+AoiLoA=;
+        b=RZwa/7hO4i36P8Fsh/7T57ws2w02UVGjh9s9bgemUPww26gbYont/Fsrl8rMNkl1nq
+         uR12GFMlu/S/VNPdpSccvjPFnidiVQQuy5v8aDFAgBeGJnBeu/cauOyETagpNPU+1BL6
+         6tOsr7MvLk3IY8IKA7RQvbsdNUZETlnyh0xMJLpjEQtAS6Hnz35ZSmi50ySGg2WchftU
+         3yUhtfBDqLs3tmop0FA5bar+cG7eVWprL/l0FJZvZ2O3k4y0kIPfA4GxXKUTZhH3zwiW
+         +poRKoa6x6Sp9llafp79DwHA5vcbPiOagauWzl/EA1vPsoasba+NA+Eq6ZVsoP0WZ8z/
+         ubNQ==
+X-Gm-Message-State: AHQUAuY+Uxb6wn+bvTEHbR+tXzTTDfFiF0nbJ/jtp468xU0kUB6sNjSA
+        TYK7Tvsr/tAmllWMUSh2uOJhhH9xSUS+
+X-Google-Smtp-Source: AHgI3IZkF9L+sVhap9e/1SWARIAl0vz+RHh4/EQZ9OUOi/MHRfLZT/lT9Ds2u2e04cBUHnv6IJjzmH85dKkP
+X-Received: by 2002:aed:3a25:: with SMTP id n34mr548310qte.17.1550787928702;
+ Thu, 21 Feb 2019 14:25:28 -0800 (PST)
+Date:   Thu, 21 Feb 2019 14:25:23 -0800
+Message-Id: <20190221222523.136829-1-venture@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
+Subject: [PATCH 1/2] dt-bindings: misc: aspeed-p2a-ctrl: add support
+From:   Patrick Venture <venture@google.com>
+To:     venture@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        joel@jms.id.au, andrew@aj.id.au, gregkh@linuxfoundation.org
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/zNp4Tra4Z_ikkK3FNtEyRzz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Document the ast2400, ast2500 PCI-to-AHB bridge control driver bindings.
 
-Hi all,
+Signed-off-by: Patrick Venture <venture@google.com>
+---
+ .../bindings/misc/aspeed-p2a-ctrl.txt         | 33 +++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/misc/aspeed-p2a-ctrl.txt
 
-Today's linux-next merge of the powerpc tree got a conflict in:
+diff --git a/Documentation/devicetree/bindings/misc/aspeed-p2a-ctrl.txt b/Documentation/devicetree/bindings/misc/aspeed-p2a-ctrl.txt
+new file mode 100644
+index 000000000000..9c4d036ad5f5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/misc/aspeed-p2a-ctrl.txt
+@@ -0,0 +1,33 @@
++======================================================================
++Device tree bindings for Aspeed AST2400/AST2500 PCI-to-AHB Bridge Control Driver
++======================================================================
++
++The bridge is available on platforms with the VGA enabled on the Aspeed device.
++In this case, the host has access to a 64KiB window into all of the BMC's
++memory.  The BMC can disable this bridge.  If the bridge is enabled, the host
++has read access to all the regions of memory, however the host only has read
++and write access depending on a register controlled by the BMC.
++
++Required properties:
++===================
++
++ - compatible: must be one of:
++	- "aspeed,ast2400-p2a-ctrl"
++	- "aspeed,ast2500-p2a-ctrl"
++
++ - reg: physical address of SCU2C followed by SCU180
++
++Optional properties:
++===================
++
++- memory-region: A phandle to a reserved_memory region to be used for the PCI
++		to AHB mapping
++
++Example:
++
++p2a: p2a-control@1e6e2000 {
++	compatible = "aspeed,ast2400-p2a-ctrl";
++	reg = <0x1e6e202C 4
++	       0x1e6e2180 4>;
++	memory-region = <&reserved_memory>;
++};
+-- 
+2.21.0.rc0.258.g878e2cd30e-goog
 
-  kernel/dma/Kconfig
-
-between commits:
-
-  ff4c25f26a71 ("dma-mapping: improve selection of dma_declare_coherent ava=
-ilability")
-
-from the dma-mapping tree and commit:
-
-  11ddce15451e ("dma-mapping, powerpc: simplify the arch dma_set_mask overr=
-ide")
-
-from the powerpc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc kernel/dma/Kconfig
-index 212aac7c675f,0711d18645de..000000000000
---- a/kernel/dma/Kconfig
-+++ b/kernel/dma/Kconfig
-@@@ -16,13 -16,10 +16,16 @@@ config ARCH_DMA_ADDR_T_64BI
-  config ARCH_HAS_DMA_COHERENCE_H
-  	bool
- =20
-+ config ARCH_HAS_DMA_SET_MASK
-+ 	bool
-+=20
- -config HAVE_GENERIC_DMA_COHERENT
- +config DMA_DECLARE_COHERENT
- +	bool
- +
- +config ARCH_HAS_SETUP_DMA_OPS
- +	bool
- +
- +config ARCH_HAS_TEARDOWN_DMA_OPS
-  	bool
- =20
-  config ARCH_HAS_SYNC_DMA_FOR_DEVICE
-
---Sig_/zNp4Tra4Z_ikkK3FNtEyRzz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxvJUkACgkQAVBC80lX
-0GxiSwf/QpkrhZ2Ci6hLUg8KmKSjZGbd/tA2zE9R7AFWwQhExWsOJ0iHhdHxF2lG
-KzY5YGEURbnEca9Q3pIUg4IUn14Fk97/ZK2S/EClyMku95wszM2eZL3gZOFBM5ZZ
-ByaXE3Z+AUrJhov73SDJrC6Am9akrCR4WERVle66mNZ4GsoGVqOvRmS8R/yxZgC9
-1pVkcru/IMaLW3uq2SlPwadUNcl4nv0rYZKGPUThraKz4zjWgpuEScbvCzvaIeLC
-+IrLVQU+RIqOzWleqUaO0PrV5jevcsvsUl2AoxDEZWN/W/evx7P6+oDy2/J5sRCH
-iyGDSsdCrp4K5fYtdmULWLi59xrBxg==
-=bKYM
------END PGP SIGNATURE-----
-
---Sig_/zNp4Tra4Z_ikkK3FNtEyRzz--
