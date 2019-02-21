@@ -2,171 +2,83 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B68BC00319
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 20:03:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 440FBC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 20:14:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 161F620836
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 20:03:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="QlDj66ZM"
+	by mail.kernel.org (Postfix) with ESMTP id 1368C2080F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 20:14:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbfBUUDB (ORCPT
+        id S1726492AbfBUUOC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 15:03:01 -0500
-Received: from mail.efficios.com ([167.114.142.138]:59242 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726220AbfBUUDA (ORCPT
+        Thu, 21 Feb 2019 15:14:02 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:33875 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726272AbfBUUOC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 15:03:00 -0500
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id C85971B357A;
-        Thu, 21 Feb 2019 15:02:58 -0500 (EST)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id 11AiLufJqNMC; Thu, 21 Feb 2019 15:02:58 -0500 (EST)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 0B1211B3573;
-        Thu, 21 Feb 2019 15:02:58 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 0B1211B3573
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1550779378;
-        bh=N3u63UF5kn45Gi0BudIlAjinzYY1ZSPm2sqD9msLlVA=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=QlDj66ZMeZ+WTqonLijb6+b1bQoq72o6Lg+TvfzPQ6Hea+G6MFMAcun37fsj0H1hK
-         4H6UKWEmxDG3Pfg1hk7JTHGvtoD+eivB5M4SPvSAWrK5GG8ZAkrAk2N5K9JCvnm5xy
-         qj/lxmeTxtkvoCnjpYN2z4eSXX/prTIhNcW7scuVR/1a1bJ/9lm3BYFhNdywwfu9y9
-         672WR5ey+W2NQ2PX5jCYFrh8COIlNk8wfhyPzDyv61eGli8mlg7diz50+w0k5RwyKI
-         +6hej7SdzS7HdtTTDX+Gd8de8rKuF9lISl4+OpvUxE1+M81SDMTuxnNAUH/bq+rIhK
-         L6xZp7fr7sW4g==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id f2JTL5PKS5U4; Thu, 21 Feb 2019 15:02:57 -0500 (EST)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id E069B1B356C;
-        Thu, 21 Feb 2019 15:02:57 -0500 (EST)
-Date:   Thu, 21 Feb 2019 15:02:57 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        William Cohen <wcohen@redhat.com>,
-        stable <stable@vger.kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        lttng <lttng@reliableembeddedsystems.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Message-ID: <1829800918.4014.1550779377803.JavaMail.zimbra@efficios.com>
-In-Reply-To: <843587666.153.1550501735273.JavaMail.zimbra@efficios.com>
-References: <342740659.2887.1549307721609.JavaMail.zimbra@efficios.com> <CAGXu5jJYbc0xhQGqS6L43o_1tOdWmL=rhRmu_L8qT4-tOheHPw@mail.gmail.com> <20190206134115.baba291e33022a2f6b6ae5f8@kernel.org> <20190218122631.GE30260@kroah.com> <843587666.153.1550501735273.JavaMail.zimbra@efficios.com>
-Subject: Re: BUG: optimized kprobes illegal instructions in v4.19 stable
- kernels
+        Thu, 21 Feb 2019 15:14:02 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gwuj5-0004mt-Lv; Thu, 21 Feb 2019 21:13:47 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gwuj4-0003sh-Dw; Thu, 21 Feb 2019 21:13:46 +0100
+Date:   Thu, 21 Feb 2019 21:13:46 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Claudiu.Beznea@microchip.com
+Cc:     thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
+        Ludovic.Desroches@microchip.com,
+        linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] pwm: atmel: add struct atmel_pwm_data
+Message-ID: <20190221201346.wbyfhmtmgyoii3wt@pengutronix.de>
+References: <1550570914-26391-1-git-send-email-claudiu.beznea@microchip.com>
+ <1550570914-26391-2-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.10_GA_3758 (ZimbraWebClient - FF65 (Linux)/8.8.10_GA_3745)
-Thread-Topic: optimized kprobes illegal instructions in v4.19 stable kernels
-Thread-Index: aysduGqTEJ/aj3gGSgj9LBgUddzFGu/0q1MO
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1550570914-26391-2-git-send-email-claudiu.beznea@microchip.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd, Russell, Linus,
-
-Can we ensure the arm32 kprobes fix I submitted gets upstream before 5.0 final ?
-It takes care of an illegal instruction issue with optimized kprobes on arm32.
-
-Here is the current state of default kprobes configuration on arm32:
-using them will trigger illegal instruction OOPS on v5.0-rc7, 4.19.24,
-v4.14.102.
-
-My fix is in "accepted" state in the arm patch tracking system:
-
-https://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=8834/1
-
-Should I send it directly to Linus as well ?
-
-Thanks,
-
-Mathieu
-
------ On Feb 18, 2019, at 9:55 AM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
-
-> ----- On Feb 18, 2019, at 7:26 AM, Greg Kroah-Hartman gregkh@linuxfoundation.org
-> wrote:
+On Tue, Feb 19, 2019 at 10:08:53AM +0000, Claudiu.Beznea@microchip.com wrote:
+> From: Claudiu Beznea <claudiu.beznea@microchip.com>
 > 
->> On Wed, Feb 06, 2019 at 01:41:15PM +0900, Masami Hiramatsu wrote:
->>> On Tue, 5 Feb 2019 15:06:10 +0000
->>> Kees Cook <keescook@chromium.org> wrote:
->>> 
->>> > On Mon, Feb 4, 2019 at 7:15 PM Mathieu Desnoyers
->>> > <mathieu.desnoyers@efficios.com> wrote:
->>> > >
->>> > > Hi,
->>> > >
->>> > > I notice this commit as a possible culprit of the illegal instructions my lttng
->>> > > users are noticing on arm32 when using kprobes on a v4.19.13 Linux kernel
->>> > > in a Yocto environment [1]. They were able to reproduce the issue with perf
->>> > > as well.
->>> > >
->>> > > commit e46daee53bb50bde38805f1823a182979724c229
->>> > > Author: Kees Cook <keescook@chromium.org>
->>> > > Date:   Tue Oct 30 22:12:56 2018 +0100
->>> > >
->>> > >     ARM: 8806/1: kprobes: Fix false positive with FORTIFY_SOURCE
->>> > >
->>> > > I *think* the intent there was to do
->>> > >
->>> > > -       memcpy(code, &optprobe_template_entry,
->>> > > +       memcpy(code, (unsigned long *)&optprobe_template_entry,
->>> > >
->>> > > But if you look at the commit, the "&" seems to have been stripped away,
->>> > > which happens to change the behavior significantly.
->>> > 
->>> > Yeah, this was a typo on my part. :(
->>> 
->>> Ah, I thought it had been fixed as same as x86.
->>> On x86, all optprobe_template_* are defined as kprobe_opcode_t [],
->>> but on arm, it still be kprobe_opcode_t.
->>> 
->>> Hmm, but I think we should use kprobe_opcode_t [] or char[] as asm/sections.h
->>> does.
->>> OK, I'll prepare for the change.
->> 
->> Did this ever get fixed in Linus's tree?  If so, what is the git commit
->> id, I can't seem to find anything...
-> 
-> It seems to still be in the arm patch tracking system:
-> 
-> https://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=8834/1
-> 
-> If I understand its status correctly, it is applied to the arm tree, but
-> perhaps it has not been pulled by Linus yet ? The code is still broken
-> in Linus' master.
-> 
-> It would be important to get this arm kprobes fix upstream before 5.0
-> final.
-> 
-> Thanks,
-> 
-> Mathieu
-> 
-> 
-> --
-> Mathieu Desnoyers
-> EfficiOS Inc.
-> http://www.efficios.com
+> Add struct atmel_pwm_data to embed different per controller information. At
+> this stage, embed a member of type struct atmel_pwm_registers in it.
+
+I'd write:
+
+	Introduce a new structure to describe per controller
+	information. For now it contains only a struct
+	atmel_pwm_registers member which up to now is enough to describe
+	the relevant differences and was used directly as driver data
+	before.
+	This prepares adding support for another similar controller that
+	needs additional information.
+
+Other than that
+
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+
+Best regards
+Uwe
 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
