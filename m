@@ -7,145 +7,90 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5438C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8DFDC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73B292084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:17:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85F7B2084D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:17:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="EoMOwzwh"
+	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="Clv/6rnS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727972AbfBUNRj (ORCPT
+        id S1726199AbfBUNRw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 08:17:39 -0500
-Received: from mail-eopbgr760052.outbound.protection.outlook.com ([40.107.76.52]:53079
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725845AbfBUNRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 08:17:38 -0500
+        Thu, 21 Feb 2019 08:17:52 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33680 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbfBUNRv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 08:17:51 -0500
+Received: by mail-pl1-f196.google.com with SMTP id y10so14193589plp.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 05:17:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector1-analog-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uNsYpGHAvoCWUbhWjZeoTTbnuSxiGLVE1SeAF2MVw5s=;
- b=EoMOwzwhl5CuPulxmIw0rzdW6H5h7UFcYcFzK8+81KozcPewHTvQ7MAWAQhhFzN9aFiZUln9uIfP2nE51pGimsvMo1qFewah10AEaLk5cMuKYuJt1GIBm0OgR2XyRuYc1oDZ12GDVAjIAOY835r+mRNpGL1FTOEFJ/liz++srOo=
-Received: from MWHPR03CA0048.namprd03.prod.outlook.com (2603:10b6:301:3b::37)
- by SN6PR03MB3518.namprd03.prod.outlook.com (2603:10b6:805:41::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1643.14; Thu, 21 Feb
- 2019 13:17:33 +0000
-Received: from BL2NAM02FT003.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e46::207) by MWHPR03CA0048.outlook.office365.com
- (2603:10b6:301:3b::37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1622.16 via Frontend
- Transport; Thu, 21 Feb 2019 13:17:33 +0000
-Authentication-Results: spf=pass (sender IP is 137.71.25.55)
- smtp.mailfrom=analog.com; gmx.de; dkim=none (message not signed)
- header.d=none;gmx.de; dmarc=bestguesspass action=none header.from=analog.com;
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
-Received: from nwd2mta1.analog.com (137.71.25.55) by
- BL2NAM02FT003.mail.protection.outlook.com (10.152.76.204) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1643.11
- via Frontend Transport; Thu, 21 Feb 2019 13:17:33 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id x1LDHWID003580
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Thu, 21 Feb 2019 05:17:32 -0800
-Received: from linux.ad.analog.com (10.50.1.179) by NWD2HUBCAS7.ad.analog.com
- (10.64.69.107) with Microsoft SMTP Server id 14.3.408.0; Thu, 21 Feb 2019
- 08:17:32 -0500
-From:   Stefan Popa <stefan.popa@analog.com>
-To:     <jic23@kernel.org>, <robh+dt@kernel.org>
-CC:     Stefan Popa <stefan.popa@analog.com>,
-        <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
-        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v2 2/5] iio: imu: adis16480: Add OF device ID table
-Date:   Thu, 21 Feb 2019 15:15:03 +0200
-Message-ID: <1550754906-24640-3-git-send-email-stefan.popa@analog.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1550754906-24640-1-git-send-email-stefan.popa@analog.com>
-References: <1550754906-24640-1-git-send-email-stefan.popa@analog.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(2980300002)(3190300001)(199004)(189003)(2616005)(2906002)(476003)(498600001)(126002)(446003)(76176011)(336012)(356004)(426003)(7696005)(54906003)(4326008)(51416003)(16586007)(6666004)(72206003)(48376002)(11346002)(486006)(44832011)(116002)(36756003)(106002)(50466002)(8936002)(110136005)(305945005)(7636002)(246002)(8676002)(26005)(5660300002)(77096007)(106466001)(50226002)(47776003)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR03MB3518;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: bbfb5fcc-05ae-49de-9d14-08d697fef093
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4608103)(4709054)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:SN6PR03MB3518;
-X-MS-TrafficTypeDiagnostic: SN6PR03MB3518:
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR03MB3518;20:pT8DR23778gG2Bq4xrGE5UEIPQsAJKHkNZiB0yHwvNHXPjfgde4HnoAHgb9Z+Hpv4SgpkspiRZ+Uo+rJbdJwokUhDe9N3sME0l7Tit4akzaAvkthQ0IySBRRCKyd9XCK5S/jMSqk930lyHfVIZva+kYrlUY1x3dCXkQLgbG1up1KlhfkZMn2mqD8NhOPQ38e5H7UW/WHXPQcGWshNfDxOCHL1jfMkLOJFFeY+zBdP61RaBjMmoQNyh0m/e+Gza/7LY7Nx5E+o/urXGqf+wnf6neTM1o113OmHC4p1vMcqM1n1Gjd2N5RiuB9UwYBlNOIa6MChj6ZsH3mAGOBOZm2xwawIljlPVwtx6Rg/kdce2DG34ZaGPNlUxXkjPmh6PeTD02pKqj3c6M1x/GX6AUuXcPWPw/k72ImUp6o7TpLMOv3lKyNspNd64geiw7G5lX+95e4zshJ16HlZUKwkAHC4JD2347D/ebijZ+8Ysrp+sapLzIwgm6yUcXRcz+lRlm5
-X-Microsoft-Antispam-PRVS: <SN6PR03MB351848A153054C0C4A7B7DDB9D7E0@SN6PR03MB3518.namprd03.prod.outlook.com>
-X-Forefront-PRVS: 09555FB1AD
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR03MB3518;23:DmrasLAXkAH39WpRzAfIfr28NBOQag1qdd7CIGOpx?=
- =?us-ascii?Q?YaUD47Wwu1j23ZJ8yTERxc3ZDeNZy32prDPrR6YJMcUjRlq+IBX1+kmuymm2?=
- =?us-ascii?Q?Dz4P4upCIP8dtN8hRNRuOw76+GiGhKinVxvb4KpP+avlvvIaZnfo6wxGUM6W?=
- =?us-ascii?Q?I0A1JTAiirZlHSMmcv0Lp/4x+eptoPU1vL74t0e1WjwuzviyaO9OC95WKRwZ?=
- =?us-ascii?Q?RLQwk8rKxvQiPPf3LnesqIg85TFnMVHsKKFfiVA59K2YtTyywNZTntqMUVr2?=
- =?us-ascii?Q?QCM29SWtAtFTYetSSxYrDYnCoct2JfYUDco5g3USw5pYT7+36pV7TQvtpulF?=
- =?us-ascii?Q?oKDUsZQ85Zdwe/hvkjDdCM68iZ1014GGW0bKlIyWOP8Woxe1JAVH2ulT4+LV?=
- =?us-ascii?Q?cFKnGvDtqVOZipL/d45p7KBF4wnhtOl/whChtdyCCZY/byapGTdssl4T+j6U?=
- =?us-ascii?Q?lFJUeam4kTKgcxUSeVmBxh9dDbpMBa244vaCb39beqLjbL/YKJRuKQC8tUT6?=
- =?us-ascii?Q?YseUJ8ufLY2FueR+Mqsb0ZwUBSyo8gd9Wcvl8tHX5GHiUFumpX1enNbzAxi2?=
- =?us-ascii?Q?i8Qr4ki0YdIUDWGh/FZbmlYpZt31NEt2Gana3R1ZAwnH2HLdE8BxskQXpMUl?=
- =?us-ascii?Q?z02PehIXghNsEY5v7lmIcPbURqjKJCYPFkFg4M1xhRVj++YXx+hakyJq8672?=
- =?us-ascii?Q?4JA19qgkvigerXFi78lBGm4VxxN+GPhmawwur0EVptctJlWZqripF/MJKRIe?=
- =?us-ascii?Q?JBHRg8O8VHsequmaZ7icd8KhHRhzO74NdsyJ9XhEuOc4BjSbCql31ELtXglt?=
- =?us-ascii?Q?Be1UhFgjPUN0AF0aV0iV5y0VYJJqqUH/LFL42Lfl1agAzKWmdb0a6BJIdwfE?=
- =?us-ascii?Q?UhPTmbQ3BmazpXrhFRgaLgeU4a2cKUOBONQVjBqrLHEMMIxyAh6ZPS6ncHc5?=
- =?us-ascii?Q?orvaxqu+eGhoQp7SyJ5?=
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: iv1DszJYcYKRDbE9dm9tylDK9uK9i42XKGGDKaUmDhSYeoU5M+uEJIxzuVdKuOcdCLspQpMBJcM90ypM90Q5WoP5wR0gQmkCElFzmpIVlVuhgtxMenuqkllYjcREO3aAPiV15Y6FGLiGv3Bznbq/ZxeLt/JPnaECud0vPcNarobvpb3gwB9IzdnqepPe4IfjWCLiB/FuLVuy7AfPoSaF9dzW5NKaOlmRdCVqUmO0z36JO+umDcTIEFjqMikJlp9J+MWShHpfxNUKa7tg6M9IDSFiU0KObXt5QnPelv5UwEG9m2ZD36crNPNDvCSn38gIh9irkNo5DfLRkIg97Dun5gFZ/wJxmQ9htbOLRqQztL83zon/U7rsZ9YIVmidSHNvXKzquJrBiX0q8/kHi0Bc8Nvq8/wx7u0YZ2G7haXMceY=
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2019 13:17:33.1926
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bbfb5fcc-05ae-49de-9d14-08d697fef093
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR03MB3518
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=i9dnmQKikQDAfv387S9/Csb5/zqc1ZkYICOw/M9dd+4=;
+        b=Clv/6rnSVFy3mxLUnS8/e4lPiCFX4xO7X3SVB4bSl98/yy9VWvZW7my0FXEd2h8xwg
+         hqAZ0RfwHLztIryk3ipkPP+JwdJMVn8LtC179ZAETqHgEU1wIo2WF38p3uGiZR1G0Pbo
+         zN8pFzPuDGldT+KFeenNyJomKgykmn4yMYv/hg+laAXhGypN4o9tnZPttiRNScLw1FAH
+         l2ZqRnnfL/3/ipeqeRExiO691Cil7A0mTr91mQ8WSLEWoHlv/WQERUsCfubM0L/sGAhw
+         9gojgGGwX/VU6FXHb5c8HPV7iYAdRzNApMcynzhrh8Ys/A1q7vpNNcMJ0bt7MAkaEMEy
+         JNxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=i9dnmQKikQDAfv387S9/Csb5/zqc1ZkYICOw/M9dd+4=;
+        b=pXMHowf9fvTE+VKVRcGTpOx0KcZNs9FkvYS4bhZi7bMA/g1JBdte8GuZkIhVGtTW0d
+         JEBNR7I0EFMbGcs3t3A+FQ255s/OBSbeZezaM78WFnk8GPfdStsp++vUvIyGG8sLRleb
+         bjxDsxWwCnLGPO95WWjebt14W2Ffx+IJ9AjcUirLLmaIq7xYE+XP47R4XEV5Qn3rdGFJ
+         6RrXvdQwVbaqFE1+kQv5cFuetgGDPvI3lloYVJNvP0sEUD4OpGi/Pt1sgOc3ZnC9B8PC
+         QlY+1Y2n4+nh3+SBu1s43nH+HTJcnF+w0ZbGcimZ3KaJ1Z37lAsz086Cdg9igwluQx29
+         1CfA==
+X-Gm-Message-State: AHQUAua+J1VkDd33NfO/2AeiNst0WgwX4s2/HqX3TqJSoUvW2VRdFxLu
+        QeJ/vplIyl49NX4rokhkPfRiGw==
+X-Google-Smtp-Source: AHgI3IbJwCIOi+VlW2VQIoJB8pwJn9LYlRseRu45GcuZFaTdBNHZHlkjKFALPbc/nmz2cE7O+mngpA==
+X-Received: by 2002:a17:902:b01:: with SMTP id 1mr43251258plq.331.1550755070867;
+        Thu, 21 Feb 2019 05:17:50 -0800 (PST)
+Received: from localhost.localdomain (220-133-186-239.HINET-IP.hinet.net. [220.133.186.239])
+        by smtp.gmail.com with ESMTPSA id e21sm79046676pfh.45.2019.02.21.05.17.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Feb 2019 05:17:49 -0800 (PST)
+From:   Axel Lin <axel.lin@ingics.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Sangbeom Kim <sbkim73@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH 1/2] regulator: s5m8767: Constify s5m8767_opmode_reg
+Date:   Thu, 21 Feb 2019 21:17:21 +0800
+Message-Id: <20190221131722.12278-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver does not have a struct of_device_id table, but supported
-devices are registered via Device Trees. This patch adds OF device ID
-table.
+The s5m8767_opmode_reg should never change, make it const.
 
-Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
 ---
- drivers/iio/imu/adis16480.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/regulator/s5m8767.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/imu/adis16480.c b/drivers/iio/imu/adis16480.c
-index 98a23ac..150d814 100644
---- a/drivers/iio/imu/adis16480.c
-+++ b/drivers/iio/imu/adis16480.c
-@@ -991,9 +991,19 @@ static const struct spi_device_id adis16480_ids[] = {
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index b581f01f3395..5b0e1fe6723f 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -115,7 +115,7 @@ static const struct sec_voltage_desc *reg_voltage_map[] = {
+ 	[S5M8767_BUCK9] = &buck_voltage_val3,
  };
- MODULE_DEVICE_TABLE(spi, adis16480_ids);
  
-+static const struct of_device_id adis16480_of_match[] = {
-+	{ .compatible = "adi,adis16375" },
-+	{ .compatible = "adi,adis16480" },
-+	{ .compatible = "adi,adis16485" },
-+	{ .compatible = "adi,adis16488" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, adis16480_of_match);
-+
- static struct spi_driver adis16480_driver = {
- 	.driver = {
- 		.name = "adis16480",
-+		.of_match_table = adis16480_of_match,
- 	},
- 	.id_table = adis16480_ids,
- 	.probe = adis16480_probe,
+-static unsigned int s5m8767_opmode_reg[][4] = {
++static const unsigned int s5m8767_opmode_reg[][4] = {
+ 	/* {OFF, ON, LOWPOWER, SUSPEND} */
+ 	/* LDO1 ... LDO28 */
+ 	{0x0, 0x3, 0x2, 0x1}, /* LDO1 */
 -- 
-2.7.4
+2.17.1
 
