@@ -2,54 +2,55 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD79EC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:41:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 840E4C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:41:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A84A20838
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:41:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FC9A2080D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:41:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550760077;
-	bh=rFI+SS6WbvzYHjAZnPB+IkAQDuw7RkAAxCOCevyUci4=;
+	s=default; t=1550760081;
+	bh=IwCxBwDFQoqijV21jD/mF24TV8Ixn9c+Zal2yH7bIFg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iJFfXvhv/MaeyQDSwpufT5D0w0iNyg2gWzRFoJGY+Cr6z6OVJwewM58YYSL6YfSN6
-	 jI3Z0EODH/5AE0prnbb0uYg6bmLVasp3wHb4edCaOqzci7ZwE+7fqcPv1qGfl+pk7/
-	 /PztAo+FvtTu5HbSWZ4vOb7NxKBdc89WfI9GLrX4=
+	b=iAwucTBcs7ekz9aE/L6pxAGoM55KPzlGZzskfeRGFO/P2kWEFiG6DBsHuhi88l511
+	 zRuntyIdKZ+iLkCsmT3xSIuXYjGs7qGGd9V0RvCKscgLdYxJc7F6hxHXM6G3NRcEQ1
+	 uSW0rzGrC8GZkaHRejwhoy3XbBcxn96n/AaE9ELE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729286AbfBUOlP (ORCPT
+        id S1728816AbfBUOlU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:41:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36138 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:41:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729276AbfBUOlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:41:13 -0500
+        id S1729276AbfBUOlQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:41:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 485752080D;
-        Thu, 21 Feb 2019 14:41:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD13B2080D;
+        Thu, 21 Feb 2019 14:41:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550760072;
-        bh=rFI+SS6WbvzYHjAZnPB+IkAQDuw7RkAAxCOCevyUci4=;
+        s=default; t=1550760076;
+        bh=IwCxBwDFQoqijV21jD/mF24TV8Ixn9c+Zal2yH7bIFg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W29HDknijze0o/8fWSYPR0CVSdtFdmibciDNcivQJuSvH+3FZ3IENia/X0tpC6CKr
-         to9VfsQkfwwQJVY0DWnXp/mjni1xPs/QNaoM9HzzskEZiTCJICJ6ARqQON3nkltB9t
-         3P98BtgaYOJMdN2QMfsl8YtrOfCMGGpBhw9FYqo0=
+        b=gH7nDVuB/MebS9U7QWFOkqK4ni81PbyAEX9gBwx4J8fE/Vn7z2CPqfdjg2uVQIBu3
+         m9S5xisCfv3qDh8uh9PTJXMEAn2mYjUiD7Zk1jpKUpSuFLkjW4HQUT5d1snv5AARZ0
+         G7h20TuAB/fYSf8oeqQr+FEfdGCQ8Gut1s487tlw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
         soukjin bae <soukjin.bae@samsung.com>,
         Neal Cardwell <ncardwell@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 18/30] tcp: clear icsk_backoff in tcp_write_queue_purge()
-Date:   Thu, 21 Feb 2019 15:36:00 +0100
-Message-Id: <20190221125251.549370209@linuxfoundation.org>
+Subject: [PATCH 4.19 19/30] tcp: tcp_v4_err() should be more careful
+Date:   Thu, 21 Feb 2019 15:36:01 +0100
+Message-Id: <20190221125251.607257836@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125250.543158526@linuxfoundation.org>
 References: <20190221125250.543158526@linuxfoundation.org>
@@ -68,52 +69,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 04c03114be82194d4a4858d41dba8e286ad1787c ]
+[ Upstream commit 2c4cc9712364c051b1de2d175d5fbea6be948ebf ]
 
-soukjin bae reported a crash in tcp_v4_err() handling
-ICMP_DEST_UNREACH after tcp_write_queue_head(sk)
-returned a NULL pointer.
+ICMP handlers are not very often stressed, we should
+make them more resilient to bugs that might surface in
+the future.
 
-Current logic should have prevented this :
-
-  if (seq != tp->snd_una  || !icsk->icsk_retransmits ||
-      !icsk->icsk_backoff || fastopen)
-      break;
-
-Problem is the write queue might have been purged
-and icsk_backoff has not been cleared.
+If there is no packet in retransmit queue, we should
+avoid a NULL deref.
 
 Signed-off-by: Eric Dumazet <edumazet@google.com>
 Reported-by: soukjin bae <soukjin.bae@samsung.com>
 Acked-by: Neal Cardwell <ncardwell@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/tcp_ipv4.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-index 87fe44197aa1f..432dc9af11720 100644
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -2519,6 +2519,7 @@ void tcp_write_queue_purge(struct sock *sk)
- 	sk_mem_reclaim(sk);
- 	tcp_clear_all_retrans_hints(tcp_sk(sk));
- 	tcp_sk(sk)->packets_out = 0;
-+	inet_csk(sk)->icsk_backoff = 0;
- }
+--- a/net/ipv4/tcp_ipv4.c
++++ b/net/ipv4/tcp_ipv4.c
+@@ -535,14 +535,15 @@ void tcp_v4_err(struct sk_buff *icmp_skb
+ 		if (sock_owned_by_user(sk))
+ 			break;
  
- int tcp_disconnect(struct sock *sk, int flags)
-@@ -2567,7 +2568,6 @@ int tcp_disconnect(struct sock *sk, int flags)
- 	tp->write_seq += tp->max_window + 2;
- 	if (tp->write_seq == 0)
- 		tp->write_seq = 1;
--	icsk->icsk_backoff = 0;
- 	tp->snd_cwnd = 2;
- 	icsk->icsk_probes_out = 0;
- 	tp->snd_ssthresh = TCP_INFINITE_SSTHRESH;
--- 
-2.19.1
-
++		skb = tcp_rtx_queue_head(sk);
++		if (WARN_ON_ONCE(!skb))
++			break;
++
+ 		icsk->icsk_backoff--;
+ 		icsk->icsk_rto = tp->srtt_us ? __tcp_set_rto(tp) :
+ 					       TCP_TIMEOUT_INIT;
+ 		icsk->icsk_rto = inet_csk_rto_backoff(icsk, TCP_RTO_MAX);
+ 
+-		skb = tcp_rtx_queue_head(sk);
+-		BUG_ON(!skb);
+-
+ 		tcp_mstamp_refresh(tp);
+ 		delta_us = (u32)(tp->tcp_mstamp - skb->skb_mstamp);
+ 		remaining = icsk->icsk_rto -
 
 
