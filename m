@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA6DC10F08
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BE9C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:50:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31F8D2147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:50:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF76E2147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:50:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727874AbfBULus (ORCPT
+        id S1727926AbfBULuv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 06:50:48 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:45637 "EHLO
+        Thu, 21 Feb 2019 06:50:51 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:45665 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727740AbfBULum (ORCPT
+        with ESMTP id S1727836AbfBULus (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 06:50:42 -0500
+        Thu, 21 Feb 2019 06:50:48 -0500
 Received: from localhost ([127.0.0.1] helo=flow.W.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1gwms8-0001RC-C6; Thu, 21 Feb 2019 12:50:36 +0100
+        id 1gwmsB-0001RC-SC; Thu, 21 Feb 2019 12:50:40 +0100
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -32,11 +32,10 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
         Rik van Riel <riel@surriel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Borislav Petkov <bp@suse.de>
-Subject: [PATCH 08/22] x86/fpu: Remove user_fpu_begin()
-Date:   Thu, 21 Feb 2019 12:50:06 +0100
-Message-Id: <20190221115020.12385-9-bigeasy@linutronix.de>
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 11/22] x86/fpu: Make get_xsave_field_ptr() and get_xsave_addr() use feature number instead of mask
+Date:   Thu, 21 Feb 2019 12:50:09 +0100
+Message-Id: <20190221115020.12385-12-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221115020.12385-1-bigeasy@linutronix.de>
 References: <20190221115020.12385-1-bigeasy@linutronix.de>
@@ -47,90 +46,242 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-user_fpu_begin() sets fpu_fpregs_owner_ctx to task's fpu struct. This is
-always the case since there is no lazy FPU anymore.
+After changing the argument of __raw_xsave_addr() from a mask to number
+Dave suggested to check if it makes sense to do the same for
+get_xsave_addr(). As it turns out it does. Only get_xsave_addr() needs
+the mask to check if the requested feature is part of what is
+support/saved and then uses the number again. The shift operation is
+cheaper compared to "find last bit set". Also, the feature number uses
+less opcode space compared to the mask :)
 
-fpu_fpregs_owner_ctx is used during context switch to decide if it needs
-to load the saved registers or if the currently loaded registers are
-valid. It could be skipped during
-	taskA -> kernel thread -> taskA
+Make get_xsave_addr() argument a xfeature number instead of mask and fix
+up its callers.
+As part of this use xfeature_nr and xfeature_mask consistently.
+This results in changes to the kvm code as:
+	feature -> xfeature_mask
+	index -> xfeature_nr
 
-because the switch to kernel thread would not alter the CPU's FPU state.
-
-Since this field is always updated during context switch and never
-invalidated, setting it manually (in user context) makes no difference.
-A kernel thread with kernel_fpu_begin() block could set
-fpu_fpregs_owner_ctx to NULL but a kernel thread does not use
-user_fpu_begin().
-This is a leftover from the lazy-FPU time.
-
-Remove user_fpu_begin(), it does not change fpu_fpregs_owner_ctx's
-content.
-
+Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
 ---
- arch/x86/include/asm/fpu/internal.h | 17 -----------------
- arch/x86/kernel/fpu/core.c          |  4 +---
- arch/x86/kernel/fpu/signal.c        |  1 -
- 3 files changed, 1 insertion(+), 21 deletions(-)
+ arch/x86/include/asm/fpu/xstate.h |  4 ++--
+ arch/x86/kernel/fpu/xstate.c      | 22 ++++++++++------------
+ arch/x86/kernel/traps.c           |  2 +-
+ arch/x86/kvm/x86.c                | 28 ++++++++++++++--------------
+ arch/x86/mm/mpx.c                 |  6 +++---
+ 5 files changed, 30 insertions(+), 32 deletions(-)
 
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index 973aab8c1f6f1..96835d04e9343 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -563,23 +563,6 @@ static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
+diff --git a/arch/x86/include/asm/fpu/xstate.h b/arch/x86/include/asm/fpu/xstate.h
+index 48581988d78c7..fbe41f808e5d8 100644
+--- a/arch/x86/include/asm/fpu/xstate.h
++++ b/arch/x86/include/asm/fpu/xstate.h
+@@ -46,8 +46,8 @@ extern void __init update_regset_xstate_info(unsigned int size,
+ 					     u64 xstate_mask);
+ 
+ void fpu__xstate_clear_all_cpu_caps(void);
+-void *get_xsave_addr(struct xregs_state *xsave, int xstate);
+-const void *get_xsave_field_ptr(int xstate_field);
++void *get_xsave_addr(struct xregs_state *xsave, int xfeature_nr);
++const void *get_xsave_field_ptr(int xfeature_nr);
+ int using_compacted_format(void);
+ int copy_xstate_to_kernel(void *kbuf, struct xregs_state *xsave, unsigned int offset, unsigned int size);
+ int copy_xstate_to_user(void __user *ubuf, struct xregs_state *xsave, unsigned int offset, unsigned int size);
+diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+index 0e759a032c1c7..b646cc349c1eb 100644
+--- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -830,15 +830,14 @@ static void *__raw_xsave_addr(struct xregs_state *xsave, int xfeature_nr)
+  *
+  * Inputs:
+  *	xstate: the thread's storage area for all FPU data
+- *	xstate_feature: state which is defined in xsave.h (e.g.
+- *	XFEATURE_MASK_FP, XFEATURE_MASK_SSE, etc...)
++ *	xfeature_nr: state which is defined in xsave.h (e.g. XFEATURE_FP,
++ *	XFEATURE_SSE, etc...)
+  * Output:
+  *	address of the state in the xsave area, or NULL if the
+  *	field is not present in the xsave buffer.
+  */
+-void *get_xsave_addr(struct xregs_state *xsave, int xstate_feature)
++void *get_xsave_addr(struct xregs_state *xsave, int xfeature_nr)
+ {
+-	int xfeature_nr;
+ 	/*
+ 	 * Do we even *have* xsave state?
+ 	 */
+@@ -850,11 +849,11 @@ void *get_xsave_addr(struct xregs_state *xsave, int xstate_feature)
+ 	 * have not enabled.  Remember that pcntxt_mask is
+ 	 * what we write to the XCR0 register.
+ 	 */
+-	WARN_ONCE(!(xfeatures_mask & xstate_feature),
++	WARN_ONCE(!(xfeatures_mask & BIT_ULL(xfeature_nr)),
+ 		  "get of unsupported state");
+ 	/*
+ 	 * This assumes the last 'xsave*' instruction to
+-	 * have requested that 'xstate_feature' be saved.
++	 * have requested that 'xfeature_nr' be saved.
+ 	 * If it did not, we might be seeing and old value
+ 	 * of the field in the buffer.
+ 	 *
+@@ -863,10 +862,9 @@ void *get_xsave_addr(struct xregs_state *xsave, int xstate_feature)
+ 	 * or because the "init optimization" caused it
+ 	 * to not be saved.
+ 	 */
+-	if (!(xsave->header.xfeatures & xstate_feature))
++	if (!(xsave->header.xfeatures & BIT_ULL(xfeature_nr)))
+ 		return NULL;
+ 
+-	xfeature_nr = fls64(xstate_feature) - 1;
+ 	return __raw_xsave_addr(xsave, xfeature_nr);
+ }
+ EXPORT_SYMBOL_GPL(get_xsave_addr);
+@@ -882,13 +880,13 @@ EXPORT_SYMBOL_GPL(get_xsave_addr);
+  * Note that this only works on the current task.
+  *
+  * Inputs:
+- *	@xsave_state: state which is defined in xsave.h (e.g. XFEATURE_MASK_FP,
+- *	XFEATURE_MASK_SSE, etc...)
++ *	@xfeature_nr: state which is defined in xsave.h (e.g. XFEATURE_FP,
++ *	XFEATURE_SSE, etc...)
+  * Output:
+  *	address of the state in the xsave area or NULL if the state
+  *	is not present or is in its 'init state'.
+  */
+-const void *get_xsave_field_ptr(int xsave_state)
++const void *get_xsave_field_ptr(int xfeature_nr)
+ {
+ 	struct fpu *fpu = &current->thread.fpu;
+ 
+@@ -898,7 +896,7 @@ const void *get_xsave_field_ptr(int xsave_state)
+ 	 */
+ 	fpu__save(fpu);
+ 
+-	return get_xsave_addr(&fpu->state.xsave, xsave_state);
++	return get_xsave_addr(&fpu->state.xsave, xfeature_nr);
+ }
+ 
+ #ifdef CONFIG_ARCH_HAS_PKEYS
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index 9b7c4ca8f0a73..626853b2ac344 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -455,7 +455,7 @@ dotraplinkage void do_bounds(struct pt_regs *regs, long error_code)
+ 	 * which is all zeros which indicates MPX was not
+ 	 * responsible for the exception.
+ 	 */
+-	bndcsr = get_xsave_field_ptr(XFEATURE_MASK_BNDCSR);
++	bndcsr = get_xsave_field_ptr(XFEATURE_BNDCSR);
+ 	if (!bndcsr)
+ 		goto exit_trap;
+ 
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 941f932373d03..b770ccafda6a0 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -3662,15 +3662,15 @@ static void fill_xsave(u8 *dest, struct kvm_vcpu *vcpu)
+ 	 */
+ 	valid = xstate_bv & ~XFEATURE_MASK_FPSSE;
+ 	while (valid) {
+-		u64 feature = valid & -valid;
+-		int index = fls64(feature) - 1;
+-		void *src = get_xsave_addr(xsave, feature);
++		u64 xfeature_mask = valid & -valid;
++		int xfeature_nr = fls64(xfeature_mask) - 1;
++		void *src = get_xsave_addr(xsave, xfeature_nr);
+ 
+ 		if (src) {
+ 			u32 size, offset, ecx, edx;
+-			cpuid_count(XSTATE_CPUID, index,
++			cpuid_count(XSTATE_CPUID, xfeature_nr,
+ 				    &size, &offset, &ecx, &edx);
+-			if (feature == XFEATURE_MASK_PKRU)
++			if (xfeature_nr == XFEATURE_PKRU)
+ 				memcpy(dest + offset, &vcpu->arch.pkru,
+ 				       sizeof(vcpu->arch.pkru));
+ 			else
+@@ -3678,7 +3678,7 @@ static void fill_xsave(u8 *dest, struct kvm_vcpu *vcpu)
+ 
+ 		}
+ 
+-		valid -= feature;
++		valid -= xfeature_mask;
  	}
  }
  
--/*
-- * Needs to be preemption-safe.
-- *
-- * NOTE! user_fpu_begin() must be used only immediately before restoring
-- * the save state. It does not do any saving/restoring on its own. In
-- * lazy FPU mode, it is just an optimization to avoid a #NM exception,
-- * the task can lose the FPU right after preempt_enable().
-- */
--static inline void user_fpu_begin(void)
--{
--	struct fpu *fpu = &current->thread.fpu;
--
--	preempt_disable();
--	fpregs_activate(fpu);
--	preempt_enable();
--}
--
- /*
-  * MXCSR and XCR definitions:
-  */
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 97e27de2b7c05..739ca3ae2bdcd 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -335,10 +335,8 @@ void fpu__clear(struct fpu *fpu)
- 	 * Make sure fpstate is cleared and initialized.
+@@ -3705,22 +3705,22 @@ static void load_xsave(struct kvm_vcpu *vcpu, u8 *src)
  	 */
- 	fpu__initialize(fpu);
--	if (static_cpu_has(X86_FEATURE_FPU)) {
--		user_fpu_begin();
-+	if (static_cpu_has(X86_FEATURE_FPU))
- 		copy_init_fpstate_to_fpregs();
--	}
+ 	valid = xstate_bv & ~XFEATURE_MASK_FPSSE;
+ 	while (valid) {
+-		u64 feature = valid & -valid;
+-		int index = fls64(feature) - 1;
+-		void *dest = get_xsave_addr(xsave, feature);
++		u64 xfeature_mask = valid & -valid;
++		int xfeature_nr = fls64(xfeature_mask) - 1;
++		void *dest = get_xsave_addr(xsave, xfeature_nr);
+ 
+ 		if (dest) {
+ 			u32 size, offset, ecx, edx;
+-			cpuid_count(XSTATE_CPUID, index,
++			cpuid_count(XSTATE_CPUID, xfeature_nr,
+ 				    &size, &offset, &ecx, &edx);
+-			if (feature == XFEATURE_MASK_PKRU)
++			if (xfeature_nr == XFEATURE_PKRU)
+ 				memcpy(&vcpu->arch.pkru, src + offset,
+ 				       sizeof(vcpu->arch.pkru));
+ 			else
+ 				memcpy(dest, src + offset, size);
+ 		}
+ 
+-		valid -= feature;
++		valid -= xfeature_mask;
+ 	}
  }
  
- /*
-diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index 2f044021fde2b..6475320939ce3 100644
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -322,7 +322,6 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
- 		 * For 64-bit frames and 32-bit fsave frames, restore the user
- 		 * state to the registers directly (with exceptions handled).
- 		 */
--		user_fpu_begin();
- 		if (copy_user_to_fpregs_zeroing(buf_fx, xfeatures, fx_only)) {
- 			fpu__clear(fpu);
- 			return -1;
+@@ -8813,11 +8813,11 @@ void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+ 		if (init_event)
+ 			kvm_put_guest_fpu(vcpu);
+ 		mpx_state_buffer = get_xsave_addr(&vcpu->arch.guest_fpu->state.xsave,
+-					XFEATURE_MASK_BNDREGS);
++					XFEATURE_BNDREGS);
+ 		if (mpx_state_buffer)
+ 			memset(mpx_state_buffer, 0, sizeof(struct mpx_bndreg_state));
+ 		mpx_state_buffer = get_xsave_addr(&vcpu->arch.guest_fpu->state.xsave,
+-					XFEATURE_MASK_BNDCSR);
++					XFEATURE_BNDCSR);
+ 		if (mpx_state_buffer)
+ 			memset(mpx_state_buffer, 0, sizeof(struct mpx_bndcsr));
+ 		if (init_event)
+diff --git a/arch/x86/mm/mpx.c b/arch/x86/mm/mpx.c
+index de1851d156997..c1ec9d81c627c 100644
+--- a/arch/x86/mm/mpx.c
++++ b/arch/x86/mm/mpx.c
+@@ -142,7 +142,7 @@ int mpx_fault_info(struct mpx_fault_info *info, struct pt_regs *regs)
+ 		goto err_out;
+ 	}
+ 	/* get bndregs field from current task's xsave area */
+-	bndregs = get_xsave_field_ptr(XFEATURE_MASK_BNDREGS);
++	bndregs = get_xsave_field_ptr(XFEATURE_BNDREGS);
+ 	if (!bndregs) {
+ 		err = -EINVAL;
+ 		goto err_out;
+@@ -190,7 +190,7 @@ static __user void *mpx_get_bounds_dir(void)
+ 	 * The bounds directory pointer is stored in a register
+ 	 * only accessible if we first do an xsave.
+ 	 */
+-	bndcsr = get_xsave_field_ptr(XFEATURE_MASK_BNDCSR);
++	bndcsr = get_xsave_field_ptr(XFEATURE_BNDCSR);
+ 	if (!bndcsr)
+ 		return MPX_INVALID_BOUNDS_DIR;
+ 
+@@ -376,7 +376,7 @@ static int do_mpx_bt_fault(void)
+ 	const struct mpx_bndcsr *bndcsr;
+ 	struct mm_struct *mm = current->mm;
+ 
+-	bndcsr = get_xsave_field_ptr(XFEATURE_MASK_BNDCSR);
++	bndcsr = get_xsave_field_ptr(XFEATURE_BNDCSR);
+ 	if (!bndcsr)
+ 		return -EINVAL;
+ 	/*
 -- 
 2.20.1
 
