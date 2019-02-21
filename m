@@ -2,101 +2,104 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E6B7C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:58:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B25A5C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:00:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 338962084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:58:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550764698;
-	bh=jnfblnvzpcOe8w+JDNqPpjNAwy9zczrur4oLKML/PzE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=mytByzDwO5PKoOC4/TUMBxOW3pEOkd/nH721yNgd2DOxWSPbfukAWe845iinjmbSu
-	 qWN4BXGh+6xmDMt+Z1vIfuaWVKDw74EovWZD3XfdrFgMijfU1uGgAOhFAOjK7K5KhL
-	 MN5f9Vv2Tpg2N7mHdbyKaSYUCPrmVh2uLWeFaunI=
+	by mail.kernel.org (Postfix) with ESMTP id 800A42083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:00:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="FKi6+dNc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728422AbfBUP6Q (ORCPT
+        id S1728382AbfBUP76 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 10:58:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51002 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725870AbfBUP6Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 10:58:16 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9C902083E;
-        Thu, 21 Feb 2019 15:58:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550764695;
-        bh=jnfblnvzpcOe8w+JDNqPpjNAwy9zczrur4oLKML/PzE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=lB/UEbzdYv7UjQdMXTesjehHmr4YKHz12hmAGSLVY+t8aHjm6WbrMaPGBPLFFbK8p
-         FJAaoN+tyquS5G7jPZ93qf0DDuGPAFGygmgRUPeX4tpgGOPgYjqkUhi1K72wRFEXI6
-         c0/0GZowHESpxUTaG/kQdPBGbJaei0ggmtNqPSHk=
-Date:   Fri, 22 Feb 2019 00:58:12 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable@vger.kernel.org, Changbin Du <changbin.du@gmail.com>
-Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
- kernel memory that can fault
-Message-Id: <20190222005812.04c5940c693b14cfdbe6ede7@kernel.org>
-In-Reply-To: <20190221093625.56afccd2@gandalf.local.home>
-References: <20190215174712.372898450@goodmis.org>
-        <20190215174945.557218316@goodmis.org>
-        <20190221165252.4a9033b3348f30f9d973dbc4@kernel.org>
-        <20190221093625.56afccd2@gandalf.local.home>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 21 Feb 2019 10:59:58 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40971 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726548AbfBUP76 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 10:59:58 -0500
+Received: by mail-ed1-f67.google.com with SMTP id x7so23563968eds.8
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 07:59:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XR6ZBCWgK5wboQt0iQNXa8mMwBSvMUFgihwssVG9NGQ=;
+        b=FKi6+dNc9MA+1XPGc67AB3vw8XMAeDh1hPXxVNfV4PfLLEypi68wsXXGX403hXicyv
+         Nbakar0SnJILgqEB7A/ScmOsY5h//IW65fSiLoE5iie1we+X+2BwBx1nkW9QQXPYpRCM
+         exZhyDVaooCXagZgmOqKefblESTq/qceeVrCc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XR6ZBCWgK5wboQt0iQNXa8mMwBSvMUFgihwssVG9NGQ=;
+        b=COiuE4DB/tbnGTCtaXPDr8o+XdWsgxlUqmIFshgtuNzZfYei5IF2izjjOOQFRXk2Ah
+         78qX7x8mfy7ztIQ7FIJbMiNXxzRkM7IjLip9adRBqWDq3oNfMafm3W2FxiOZyUvneBvt
+         JoawSQ5FtC3pzvdYXirUQephT8DlCkqDRsTksFQgpldZAOYDUuaOmS8lbnE9UtR4QpFs
+         2vOPG9rmU4/vvC5AHx+h38E/rRezgBJoDB8fb0ASxtRxQ+9qMG/+xV/ii97e+iHlfcE3
+         Bch0mFOKXhcnmUb99IM4B71R1W4SMmoGeim+U/cc0eZWVkaJXn1i1mdUdVokiXkew/lv
+         dM1w==
+X-Gm-Message-State: AHQUAuYpj++aqRfjCbNnyagTvM0lUM7JnJkAG7ddWONxT8puwxErQN2Z
+        oi+J1ykYWXWtluL8vEndTCNgbQ==
+X-Google-Smtp-Source: AHgI3IZuw0fRc5rZo+bNAEhk/0ngtKG8sWBPSl5ErLvb/cx9p2T2kwK2dERicKMnKHpLSsaOebCoMw==
+X-Received: by 2002:a17:906:68f:: with SMTP id u15mr27391171ejb.147.1550764796630;
+        Thu, 21 Feb 2019 07:59:56 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id p30sm6488346edd.85.2019.02.21.07.59.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Feb 2019 07:59:55 -0800 (PST)
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+To:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Liviu Dudau <liviu.dudau@arm.com>
+Subject: [PATCH] staging/vboxvideo: Another FIXME item
+Date:   Thu, 21 Feb 2019 16:59:51 +0100
+Message-Id: <20190221155951.19855-1-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Feb 2019 09:36:25 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Found while grepping around.
 
-> On Thu, 21 Feb 2019 16:52:52 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > Basically OK to me.
-> > Could you use probe_kernel_read() in this context, since probe_mem_read() is a
-> > wrapper function for template code.
-> > 
-> > With that change,
-> > 
-> > Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-> 
-> This already hit Linus's tree. I was able to reproduce the crash, so I
-> streamlined it. I should have still pushed more for your ack first.
-> Sorry about that.
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sam Ravnborg <sam@ravnborg.org>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Liviu Dudau <liviu.dudau@arm.com>
+---
+ drivers/staging/vboxvideo/vbox_irq.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Oh, never mind. That seems urgent issue for kprobe event.
-Thank you very much for fixing it!
-
-> For some reason, I thought the change was in the generic probe code,
-> and accepted the probe_mem_read(). Anyway, did you want to send a patch
-> to change it to probe_kernel_read(), for the merge window?
-
-No problem.
-
-> > And for the long term, I need to find more efficient (or smarter) way to do it,
-> > like strnlen_user() does.
-> 
-> Agreed.
-
-Thank you,
-
-
+diff --git a/drivers/staging/vboxvideo/vbox_irq.c b/drivers/staging/vboxvideo/vbox_irq.c
+index 195484713365..89944134ea86 100644
+--- a/drivers/staging/vboxvideo/vbox_irq.c
++++ b/drivers/staging/vboxvideo/vbox_irq.c
+@@ -123,6 +123,11 @@ static void vbox_update_mode_hints(struct vbox_private *vbox)
+ 
+ 	validate_or_set_position_hints(vbox);
+ 	drm_modeset_lock_all(dev);
++	/*
++	 * FIXME: this needs to use drm_connector_list_iter and some real
++	 * locking for the actual data it changes, not the deprecated
++	 * drm_modeset_lock_all() shotgun approach.
++	 */
+ 	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
+ 		vbox_conn = to_vbox_connector(connector);
+ 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.20.1
+
