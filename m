@@ -2,124 +2,275 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62AA4C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0FD9C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:52:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 345952084F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:47:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5F5D205F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 18:52:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="aG47AKXF"
+	dkim=pass (1024-bit key) header.d=mit.edu header.i=@mit.edu header.b="XSA8jHS4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728457AbfBUSrM (ORCPT
+        id S1726942AbfBUSwu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 13:47:12 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:43572 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726265AbfBUSrK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 13:47:10 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1LIXibo014322;
-        Thu, 21 Feb 2019 18:46:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=X31UqoQlWhtMQ2SUdAKjBMYxCxHivK0kaJEvObzQiVo=;
- b=aG47AKXFOmvUUki/zRRPk/QJ7yuaxspax9c9am/pf/6sf/S5zvTpUWZTHGmm70doZEcQ
- P04YOFLq5VBX/HhfgwiuU/pMFpfgdhCBYss+QZC+WZFtqI5ghaQKqQHxXshWEGPO/1fd
- jbwnEBCgEukwNH9hA4Cbs2DJcC64DViP/4Hhx7zqwDcGwkR8GnVaQORrjOSy/LPzi0pj
- KaOLYEQaRJmLu3ygOKcTt1johVdemelMMM7YH6JlyPEx4EnVeMtLh6zNqyG4HY4CKW33
- nbmK3ttt8Nnvzd6Sc6UB7rLFeNoZtMVUvdbXECdsowfOTO5ygj3qxw5slBgVffDQZkYP Kw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2qp81ej5fd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Feb 2019 18:46:45 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1LIkiJh023990
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Feb 2019 18:46:44 GMT
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1LIkhf5029134;
-        Thu, 21 Feb 2019 18:46:43 GMT
-Received: from [10.132.91.175] (/10.132.91.175)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 21 Feb 2019 10:46:43 -0800
-Subject: Re: [RFC][PATCH 00/16] sched: Core scheduling
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>, kerrnel@google.com
-References: <20190218165620.383905466@infradead.org>
- <CAHk-=wh32Zgp+bN7G1KH7SuCiY1YSJ41Y-_eWpfWubGjqq2_dw@mail.gmail.com>
- <e73e1b19-5418-32c8-584c-823618de67ce@oracle.com>
- <20190221140348.GR32494@hirez.programming.kicks-ass.net>
-From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
-Message-ID: <7795f178-37a1-0927-a356-c80d1b174423@oracle.com>
-Date:   Thu, 21 Feb 2019 10:44:35 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 21 Feb 2019 13:52:50 -0500
+Received: from mail-eopbgr760114.outbound.protection.outlook.com ([40.107.76.114]:10464
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726189AbfBUSwt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 13:52:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gJ1dTqfRFtTYc+hdkJXVtleFTwH8zvYWkeUm+hyQtoE=;
+ b=XSA8jHS42sUiF7Tr0kpgGHVRaXghMsLVaWhnRInF0w96jgf8IWzm5pZIFWG7DsMnDKru9BIUBCTh8gD+SBfljwJe80wPyuNg9yRTjDd/+mpR0kjk6R76qVtRpUVWLRgZ/BeyjSP5xM2VmouhdCXITLOMr7Bd1clkhgFX6AohZ0w=
+Received: from MWHPR01CA0039.prod.exchangelabs.com (2603:10b6:300:101::25) by
+ BN6PR01MB3281.prod.exchangelabs.com (2603:10b6:404:d8::22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.19; Thu, 21 Feb 2019 18:52:43 +0000
+Received: from DM3NAM03FT015.eop-NAM03.prod.protection.outlook.com
+ (2a01:111:f400:7e49::203) by MWHPR01CA0039.outlook.office365.com
+ (2603:10b6:300:101::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1643.15 via Frontend
+ Transport; Thu, 21 Feb 2019 18:52:42 +0000
+Authentication-Results: spf=pass (sender IP is 18.9.28.11)
+ smtp.mailfrom=mit.edu; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=mit.edu;
+Received-SPF: Pass (protection.outlook.com: domain of mit.edu designates
+ 18.9.28.11 as permitted sender) receiver=protection.outlook.com;
+ client-ip=18.9.28.11; helo=outgoing.mit.edu;
+Received: from outgoing.mit.edu (18.9.28.11) by
+ DM3NAM03FT015.mail.protection.outlook.com (10.152.82.195) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1643.13 via Frontend Transport; Thu, 21 Feb 2019 18:52:42 +0000
+Received: from callcc.thunk.org (guestnat-104-133-8-109.corp.google.com [104.133.8.109] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x1LIqcF2004359
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 21 Feb 2019 13:52:40 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 25B267A3F9E; Thu, 21 Feb 2019 13:52:38 -0500 (EST)
+Date:   Thu, 21 Feb 2019 13:52:38 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+CC:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Steve French <smfrench@gmail.com>,
+        <lsf-pc@lists.linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
+Message-ID: <20190221185238.GF10245@mit.edu>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Steve French <smfrench@gmail.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20190213073707.GA2875@kroah.com>
+ <CAOQ4uxgQGCSbhppBfhHQmDDXS3TGmgB4m=Vp3nyyWTFiyv6z6g@mail.gmail.com>
+ <20190213091803.GA2308@kroah.com>
+ <20190213192512.GH69686@sasha-vm>
+ <20190213195232.GA10047@kroah.com>
+ <1550088875.2871.21.camel@HansenPartnership.com>
+ <20190215015020.GJ69686@sasha-vm>
+ <1550198902.2802.12.camel@HansenPartnership.com>
+ <20190216182835.GF23000@mit.edu>
+ <20190221153415.GL11489@garbanzo.do-not-panic.com>
 MIME-Version: 1.0
-In-Reply-To: <20190221140348.GR32494@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9174 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902210130
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190221153415.GL11489@garbanzo.do-not-panic.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:18.9.28.11;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10019020)(39860400002)(136003)(346002)(376002)(396003)(2980300002)(189003)(199004)(86362001)(50466002)(93886005)(14444005)(33656002)(54906003)(336012)(75432002)(5024004)(36756003)(8746002)(42186006)(356004)(246002)(36906005)(47776003)(8936002)(106002)(2616005)(126002)(486006)(58126008)(52956003)(316002)(446003)(11346002)(305945005)(46406003)(1076003)(8676002)(186003)(476003)(26005)(786003)(23726003)(6916009)(2906002)(88552002)(90966002)(7416002)(478600001)(26826003)(6266002)(5660300002)(4326008)(76176011)(6246003)(103686004)(97756001)(229853002)(106466001)(18370500001)(42866002);DIR:OUT;SFP:1102;SCL:1;SRVR:BN6PR01MB3281;H:outgoing.mit.edu;FPR:;SPF:Pass;LANG:en;PTR:outgoing-auth-1.mit.edu;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 377d23b0-da3a-453a-a18e-08d6982dc2c8
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4608103)(4709054)(2017052603328)(7153060);SRVR:BN6PR01MB3281;
+X-MS-TrafficTypeDiagnostic: BN6PR01MB3281:
+X-LD-Processed: 64afd9ba-0ecf-4acf-bc36-935f6235ba8b,ExtAddr
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR01MB3281;20:Kp6Q7eILZDuQfc9cuiH5l4dAhEn7GzRQlcvNnfkD3st+bePFnLG9xz4CGPXhbXqekDGpI+6M7N5d2ftsNHcSjieDpVd5t/+GqIkQCXYSIiBhRfe3FrTC4iVaC4ul2CYsMGlb9r0em1TlNeRbp6vq2Z2IbsD9fxyuAUQvnt1dbuNniW5ZHeK7bphta0XEJB1kYMi6evg1tp+8WsgZ6zOwxypsm9arkcciagUPPLYtl46kGrIBVwqwg68B5WPOk1m2EjJfTogWMNEwmwLTPnD/zbD8/ss3urDBI7ioQ11V7CIVB5IehSyn9XtGKgjACmGf7FY1CXMcpJwRK3TRyStjyvK/6yQWZGl+957sCwN0nq9ffLLSnN8u+xZ+ZHLlcjmxrhno3l5ZNJcaU/qK2+QaJIo0Ts8Tp1s8xBUbi5ev6gZJrMT5+5b6qAeER30lED/XHWG62+UVgEsHlK6NHjDs5BD2PtbaGJ9pviboX6jy/Drh5cVKy/nP3Dg2giCKyx4QS0FctJyRIwEse6h8rRcfGmTNHxbtblQW/aDTNKfZvbc/eU4OIcB/wqlv7kMRdQgkZCDlxTEPEd9GlkTLrL5C7p8vn8uDatPBhr16kavJ+cc=
+X-Microsoft-Antispam-PRVS: <BN6PR01MB32818F3CD6837B23ACF0FEC1B57E0@BN6PR01MB3281.prod.exchangelabs.com>
+X-Forefront-PRVS: 09555FB1AD
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR01MB3281;23:syWX1yXQMMENtimTe7VUG+9vvUSH/nHYdz4VgCsnH?=
+ =?us-ascii?Q?MYOYk8zYqJzKSxhE0byjqCaQSRUGdUgBE2wqwRCdWbw5T8PyN6Y/QRHZ9s0l?=
+ =?us-ascii?Q?UzH5TIN0sA7bEEWvgMaVRn29hE8wYasaPsrHEgIsYEaHph8GBmYcOt/3PEF8?=
+ =?us-ascii?Q?gtMa2I4vaVHxDohwUSKc98sk4WOegLcgkwpworarEmalR8TYLY1Tv2KFZ3eX?=
+ =?us-ascii?Q?6q+h/d3c/uAepAILueK0kcoxvhExdXwAtFZB5oM1868JVyA+Hnvp/pgKfE1v?=
+ =?us-ascii?Q?7ScmokIAeqVDIctRSdQyWjNV7xVm22AkeRpjhdmZRlj8CQHSQJzyU9OJuoxk?=
+ =?us-ascii?Q?Y7yxOg1yodhW6OrAnHjlk6/Fib+2inzh4RyAvUSpXm0nFZ2wrhZ4F8bKGcah?=
+ =?us-ascii?Q?gBe0hth3wNesJFi/7+Yhh3L/48XSRgP4ycKZbmIt5Y4TIwx9lY7Xz0IHHwGk?=
+ =?us-ascii?Q?HEhh1d3OfyPUdjmCuX/Hra6HPq07sT7mFSDW6hQwFO+gPznf7YZCeLN4jTK4?=
+ =?us-ascii?Q?CjPndAAbH4k0YhteyGZ+w31Pq09UbTL7FSRKXNM7hMwlNd84ju4LimhLaoKF?=
+ =?us-ascii?Q?AQr6MPpkG3FfQa9iyN0WElcN/kNF3FD8v0jBk7jaCzP2Lvb+8oabpyFkqGzJ?=
+ =?us-ascii?Q?l2i0v+HGp/FRap6UiQ4qbYzCbLlkvxlbLIK50mqyEB66oHklalX9DiwMXIhO?=
+ =?us-ascii?Q?vySSDMdOpWsFgYA0THM0ODrufgIQaPvDRWRdw8o1+np9knyDunrzdT6voMrE?=
+ =?us-ascii?Q?mILaOez4lBMZcxO9Ggt2dA5GTe3AMQwutwCLSzNBGNDdqiCYNABSOP3JOM2i?=
+ =?us-ascii?Q?R3weMUIcGWYuWQDcMCLMF1AcD5MBz4YTfvHL91c0LCoeT9bAb/h2Mj3zUWPn?=
+ =?us-ascii?Q?ldKAHWD/J92LXMH4P7KYof1Vg4/1MfcOBdrx24JOZ4I3FCaL6MKZ/+8Z0Z2S?=
+ =?us-ascii?Q?s4FtZdwbz+IPGw71y2BAbCinU7mmmOe/V4m8hazTFHxEjxdIhMheeykTDiQe?=
+ =?us-ascii?Q?ioM7DVEpBPvpjM+S5nNoImEGbCHNC42k80urv8Oiu+5SSdeCjlijQRuTQG8N?=
+ =?us-ascii?Q?RFkAuqJ//PrdVJTvszZOvsBoy1qkn3kdk54Ck3qjKyW+c0/R8bAQ4kf4LzU2?=
+ =?us-ascii?Q?2TGygartrV79UdnX3enwb8WfGNZ70gI9rT3HXK+EnxfXNKZ+rIS/dODMl2RP?=
+ =?us-ascii?Q?ljQOJ8koOshnRRtjwBz30m/5BkfrfoiVhIfHZs5WuN4qBLAa5bVCvSVMFi1c?=
+ =?us-ascii?Q?sDOjAqP1qOGxmYo+z6dOz/t0OwHCMRqk32yxEzlDr0Dam+w7gm6wUzUJmzeg?=
+ =?us-ascii?Q?jJxROAX2JhZhJLkIHV0WSyTdPRUkxE8DN+iKd92oPad?=
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: sz4gfWwZzrokR3S9l9md+o52ulAnuAwinjhPzgv7C0m2QVNI6mOyGLcoUlqQ4TiYjTpWErrv3iVrNkGcR9C5gxCaRHfdVNCY2FMRE8SMd/GrdnqzY3gy+lsRCkmliH19wrryCFUH0J4jDghEGSB2C0A+vS00kt13DU/ZmpGlatKX07O7RCR22jTlHTFfqUqINdphhgj66At7D1FKOdOKxV/2Sa4OmbV1DM7D3dV8SasWragFS9N4gw1JKyeBf156XLDxW8PeHYDPKIurn47XofxZysJThzZjuRUxwudFj6fXK/VgnE5ypVVEUxigCORMmvy73tfgN6eMRIoADknR8wbBn2lCxsa6W1HndfjkqYkmIZsdP/p3M6gc3cz/p3iwKbJgixa56QNReqEC+PJnr2VPmnayuVY1GRQ4DqoY/yI=
+X-OriginatorOrg: mit.edu
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2019 18:52:42.0686
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 377d23b0-da3a-453a-a18e-08d6982dc2c8
+X-MS-Exchange-CrossTenant-Id: 64afd9ba-0ecf-4acf-bc36-935f6235ba8b
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=64afd9ba-0ecf-4acf-bc36-935f6235ba8b;Ip=[18.9.28.11];Helo=[outgoing.mit.edu]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR01MB3281
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 21, 2019 at 07:34:15AM -0800, Luis Chamberlain wrote:
+> On Sat, Feb 16, 2019 at 01:28:35PM -0500, Theodore Y. Ts'o wrote:
+> > The block/*, loop/* and scsi/* tests in blktests do seem to be in
+> > pretty good shape.  The nvme, nvmeof, and srp tests are *definitely*
+> > not as mature.
+>=20
+> Can you say more about this later part. What would you like to see more
+> of for nvme tests for instance?
+>=20
+> It sounds like a productive session would include tracking our:
+>=20
+>   a) sour spots
+>   b) who's already working on these
+>   c) gather volutneers for these sour spots
 
-On 2/21/19 6:03 AM, Peter Zijlstra wrote:
-> On Wed, Feb 20, 2019 at 06:53:08PM -0800, Subhra Mazumdar wrote:
->> On 2/18/19 9:49 AM, Linus Torvalds wrote:
->>> On Mon, Feb 18, 2019 at 9:40 AM Peter Zijlstra <peterz@infradead.org> wrote:
->>>> However; whichever way around you turn this cookie; it is expensive and nasty.
->>> Do you (or anybody else) have numbers for real loads?
->>>
->>> Because performance is all that matters. If performance is bad, then
->>> it's pointless, since just turning off SMT is the answer.
->>>
->>>                     Linus
->> I tested 2 Oracle DB instances running OLTP on a 2 socket 44 cores system.
->> This is on baremetal, no virtualization.
-> I'm thinking oracle schedules quite a bit, right? Then you get massive
-> overhead (as shown).
-Yes. In terms of idleness we have:
+I complained on another LSF/MM topic thread, but there are a lot of
+failures where it's not clear whether it's because I guessed
+incorrectly about which version of nvme-cli I should be using (debian
+stable and head of nvme-cli both are apparently wrong answers), or
+kernel bugs or kernel misconfiguration issues on my side.
 
-Users baseline core_sched
-16    67% 70%
-24    53% 59%
-32    41% 49%
+Current nvme/* failures that I'm still seeing are attached below.
 
-So there is more idleness with core sched which is understandable as there
-can be forced idleness. The other part contributing to regression is most
-likely overhead.
->
-> The thing with virt workloads is that if they don't VMEXIT lots, they
-> also don't schedule lots (the vCPU stays running, nested scheduler
-> etc..).
-I plan to run some VM workloads.
->
-> Also; like I wrote, it is quite possible there is some sibling rivalry
-> here, which can cause excessive rescheduling. Someone would have to
-> trace a workload and check.
->
-> My older patches had a condition that would not preempt a task for a
-> little while, such that it might make _some_ progress, these patches
-> don't have that (yet).
->
+	       		     	       - Ted
+
+nvme/012 (run mkfs and data verification fio job on NVMeOF block device-bac=
+ked ns) [failed]
+    runtime  ...  100.265s
+    something found in dmesg:
+    [ 1857.188083] run blktests nvme/012 at 2019-02-12 01:11:33
+    [ 1857.437322] nvmet: adding nsid 1 to subsystem blktests-subsystem-1
+    [ 1857.456187] nvmet: creating controller 1 for subsystem blktests-subs=
+ystem-1 for NQN nqn.2014-08.org.nvmexpress:uuid:78dc695a-2c99-4841-968d-c2c=
+16a49a02a.
+    [ 1857.458162] nvme nvme0: ANA group 1: optimized.
+    [ 1857.458257] nvme nvme0: creating 2 I/O queues.
+    [ 1857.460893] nvme nvme0: new ctrl: "blktests-subsystem-1"
+   =20
+    [ 1857.720666] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+    [ 1857.726308] WARNING: possible recursive locking detected
+    [ 1857.731784] 5.0.0-rc3-xfstests-00014-g1236f7d60242 #843 Not tainted
+    ...
+    (See '/results/nodev/nvme/012.dmesg' for the entire message)
+nvme/013 (run mkfs and data verification fio job on NVMeOF file-backed ns) =
+[failed]
+    runtime  ...  32.634s
+    --- tests/nvme/013.out	2019-02-11 18:57:39.000000000 -0500
+    +++ /results/nodev/nvme/013.out.bad	2019-02-12 01:13:46.708757206 -0500
+    @@ -1,5 +1,9 @@
+     Running nvme/013
+     91fdba0d-f87b-4c25-b80f-db7be1418b9e
+     uuid.91fdba0d-f87b-4c25-b80f-db7be1418b9e
+    +fio: io_u error on file /mnt/blktests///verify.0.0: Input/output error=
+: write offset=3D329326592, buflen=3D4096
+    +fio: io_u error on file /mnt/blktests///verify.0.0: Input/output error=
+: write offset=3D467435520, buflen=3D4096
+    +fio exited with status 0
+    +4;fio-3.2;verify;0;5;0;0;0;0;0;0;0.000000;0.000000;0;0;0.000000;0.0000=
+00;1.000000%=3D0;5.000000%=3D0;10.000000%=3D0;20.000000%=3D0;30.000000%=3D0=
+;40.000000%=3D0;50.000000%=3D0;60.000000%=3D0;70.000000%=3D0;80.000000%=3D0=
+;90.000000%=3D0;95.000000%=3D0;99.000000%=3D0;99.500000%=3D0;99.900000%=3D0=
+;99.950000%=3D0;99.990000%=3D0;0%=3D0;0%=3D0;0%=3D0;0;0;0.000000;0.000000;0=
+;0;0.000000%;0.000000;0.000000;192672;6182;1546;31166;4;9044;63.332763;57.9=
+79218;482;29948;10268.332290;1421.459893;1.000000%=3D4145;5.000000%=3D9109;=
+10.000000%=3D9502;20.000000%=3D9764;30.000000%=3D10027;40.000000%=3D10289;5=
+0.000000%=3D10420;60.000000%=3D10551;70.000000%=3D10682;80.000000%=3D10682;=
+90.000000%=3D10944;95.000000%=3D11206;99.000000%=3D13172;99.500000%=3D16318=
+;99.900000%=3D24510;99.950000%=3D27394;99.990000%=3D29229;0%=3D0;0%=3D0;0%=
+=3D0;507;30005;10331.973087;1421.131712;6040;8232;100.000000%;6189.741935;2=
+67.091495;0;0;0;0;0;0;0.000000;0.000000;0;0;0.000000;0.000000;1.000000%=3D0=
+;5.000000%=3D0;10.000000%=3D0;20.000000%=3D0;30.000000%=3D0;40.000000%=3D0;=
+50.000000%=3D0;60.000000%=3D0;70.000000%=3D0;80.000000%=3D0;90.000000%=3D0;=
+95.000000%=3D0;99.000000%=3D0;99.500000%=3D0;99.900000%=3D0;99.950000%=3D0;=
+99.990000%=3D0;0%=3D0;0%=3D0;0%=3D0;0;0;0.000000;0.000000;0;0;0.000000%;0.0=
+00000;0.000000;3.991657%;6.484839%;91142;0;1024;0.1%;0.1%;0.1%;0.1%;100.0%;=
+0.0%;0.0%;0.00%;0.00%;0.00%;0.00%;0.00%;0.00%;0.00%;0.01%;0.20%;0.34%;0.25%=
+;0.19%;27.86%;70.89%;0.23%;0.00%;0.00%;0.00%;0.00%;0.00%;0.00%;0.00%;nvme0n=
+1;0;0;0;0;0;0;0;0.00%
+    ...
+    (Run 'diff -u tests/nvme/013.out /results/nodev/nvme/013.out.bad' to se=
+e the entire diff)
+nvme/015 (unit test for NVMe flush for file backed ns)       [failed]
+    runtime  ...  8.914s
+    --- tests/nvme/015.out	2019-02-11 18:57:39.000000000 -0500
+    +++ /results/nodev/nvme/015.out.bad	2019-02-12 01:14:05.429328259 -0500
+    @@ -1,6 +1,6 @@
+     Running nvme/015
+     91fdba0d-f87b-4c25-b80f-db7be1418b9e
+     uuid.91fdba0d-f87b-4c25-b80f-db7be1418b9e
+    -NVMe Flush: success
+    +NVME IO command error:INTERNAL: The command was not completed successf=
+ully due to an internal error(6006)
+     NQN:blktests-subsystem-1 disconnected 1 controller(s)
+     Test complete
+nvme/016 (create/delete many NVMeOF block device-backed ns and test discove=
+ry)
+    runtime  ...
+nvme/016 (create/delete many NVMeOF block device-backed ns and test discove=
+ry) [failed]
+    runtime  ...  23.576s
+    --- tests/nvme/016.out	2019-02-11 18:57:39.000000000 -0500
+    +++ /results/nodev/nvme/016.out.bad	2019-02-12 01:14:29.173378854 -0500
+    @@ -1,11 +1,11 @@
+     Running nvme/016
+    =20
+    -Discovery Log Number of Records 1, Generation counter 1
+    +Discovery Log Number of Records 1, Generation counter 5
+     =3D=3D=3D=3D=3DDiscovery Log Entry 0=3D=3D=3D=3D=3D=3D
+     trtype:  loop
+     adrfam:  pci
+    ...
+    (Run 'diff -u tests/nvme/016.out /results/nodev/nvme/016.out.bad' to se=
+e the entire diff)
+nvme/017 (create/delete many file-ns and test discovery)   =20
+    runtime  ...
+nvme/017 (create/delete many file-ns and test discovery)     [failed]
+    runtime  ...  23.592s
+    --- tests/nvme/017.out	2019-02-11 18:57:39.000000000 -0500
+    +++ /results/nodev/nvme/017.out.bad	2019-02-12 01:14:52.880762691 -0500
+    @@ -1,11 +1,11 @@
+     Running nvme/017
+    =20
+    -Discovery Log Number of Records 1, Generation counter 1
+    +Discovery Log Number of Records 1, Generation counter 2
+     =3D=3D=3D=3D=3DDiscovery Log Entry 0=3D=3D=3D=3D=3D=3D
+     trtype:  loop
+     adrfam:  pci
+    ...
+    (Run 'diff -u tests/nvme/017.out /results/nodev/nvme/017.out.bad' to se=
+e the entire diff)
