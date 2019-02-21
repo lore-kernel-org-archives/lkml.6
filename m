@@ -2,198 +2,148 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A844C10F08
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFF3C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:39:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B1092147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:39:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A21B62077B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:39:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="GdEPYxMb";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lsrh/F4D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727674AbfBUKjc (ORCPT
+        id S1727902AbfBUKjl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 05:39:32 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41130 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725858AbfBUKjb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 05:39:31 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 79BF730821B4;
-        Thu, 21 Feb 2019 10:39:30 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-27.pek2.redhat.com [10.72.8.27])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 103C25C204;
-        Thu, 21 Feb 2019 10:39:03 +0000 (UTC)
-Date:   Thu, 21 Feb 2019 18:38:57 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH V15 14/18] block: enable multipage bvecs
-Message-ID: <20190221103856.GC12448@ming.t460p>
-References: <20190215111324.30129-1-ming.lei@redhat.com>
- <20190215111324.30129-15-ming.lei@redhat.com>
- <CGME20190221084301eucas1p11e8841a62b4b1da3cccca661b6f4c29d@eucas1p1.samsung.com>
- <6c9ae4de-c56f-a2b3-2542-da7d8b95601d@samsung.com>
- <20190221095733.GA12448@ming.t460p>
- <ba39138d-d65b-335d-d709-b95dbde1fd5c@samsung.com>
- <20190221101618.GB12448@ming.t460p>
- <9269fbbf-b5dd-6be1-682f-e791847ea00d@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+        Thu, 21 Feb 2019 05:39:41 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:53807 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725858AbfBUKjj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 05:39:39 -0500
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id 20D7822C10;
+        Thu, 21 Feb 2019 05:39:38 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Thu, 21 Feb 2019 05:39:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
+        Uaa/0hfg8tP1tjTHmXAh+kdi/c3dztko9C7AEJ26rSQ=; b=GdEPYxMbMf1jOx/U
+        TE9HslfNFKHfRpRsKvIgWMCqc8mZRORhhQ6CbcQA6YVeeUX9bwe52kBbk5gdSAV4
+        MCvpph1Iv/jZzIcmXb7mAeC1pDE0GqIGmHwQmDg1bAKwDpcX+Vv0XrcBiCKNBvqA
+        ER3B5H6Vxr4x5YGXugU2jDtbunvm5PltmYTkZn8katVFbN2qcZ/Hx9wWARO1MFyW
+        RpPZF6ZRFlesnaALZWdtD5kKR/0RwlaCt2tBP+BvYuvNgoeAB56NYotXLjGn5Bfl
+        PvhgqjPFCIOeHS1i0wSY2TufFhLTUbGW+FAPPbEKVKFe2J/TVq6qrR9fLgQFNTMv
+        jBpUxw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=Uaa/0hfg8tP1tjTHmXAh+kdi/c3dztko9C7AEJ26r
+        SQ=; b=lsrh/F4DGGMiguGFk34zW05/mlcKC3GSK6J1NhsA+sF68YGzD+3Dj0TlX
+        HUEzPFekQIE5/M1m03lGziQDY944UX/ZpQ8AzEZb6y4HlQiJrjSzYSzY9ZOgCD+a
+        bxdLPodCYR0PDRj0a4uqASXLyikRuq99K6fBjplvVuFDXt52HoDYyQw57bNBzJrh
+        xR9R+QQ0C53aWwyjjbTYxhqbDDstmTtStpTfavDWmoAdX02YBBazcSRAJLnVtBs6
+        YtkWMdb0MJihSmTcxxtMF6ivLUFUST+T387mutiHxJO/ts4VvflAGel5D7oycpsV
+        CJc4XV2ic9idLzPQFRw107RFjABQw==
+X-ME-Sender: <xms:6X9uXKm0lAurBsguUih-a1Jf13ia7fYKw2C8rSllE3c2_EMTLPwDlg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrtdekgdduleculddtuddrgedtledrtddtmd
+    cutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtofgggfesthekredtredtjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucfkphepuddukedrvddtke
+    drheehrdeknecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidr
+    nhgvthenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:6X9uXNj4m3CdsT4bDf71AoJxUlPOMzcq3anSpGm0OulcAOegj2YbMA>
+    <xmx:6X9uXAr4yjv_6YSEl-IhkPlkDDxWzuDnbAqry-Jw8tWW48dMU3esGA>
+    <xmx:6X9uXMsnN2q7FAl-BmVu5eVx7CdgOG80dvM51P_3opzReEJJ1E6rNQ>
+    <xmx:6n9uXEdxewVZp-0LW2ksSqJwkZ9OHOoo_Il7r1PbgR97y67tjTCaJg>
+Received: from localhost (unknown [118.208.55.8])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 3CD661030F;
+        Thu, 21 Feb 2019 05:39:31 -0500 (EST)
+Message-ID: <6c907b21aca7b93c3b637ba0e30de4c6acb356f4.camel@themaw.net>
+Subject: Re: [RFC PATCH 02/27] containers: Implement containers as kernel
+ objects
+From:   Ian Kent <raven@themaw.net>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        trond.myklebust@hammerspace.com, sfrench@samba.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
+Date:   Thu, 21 Feb 2019 18:39:28 +0800
+In-Reply-To: <20190220132600.c5ahsmnoihdrcqeq@brauner.io>
+References: <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
+         <155024685321.21651.1504201877881622756.stgit@warthog.procyon.org.uk>
+         <7923d4aa646fbe4bd71cfb4144f1c96f28cad972.camel@themaw.net>
+         <20190220132600.c5ahsmnoihdrcqeq@brauner.io>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9269fbbf-b5dd-6be1-682f-e791847ea00d@samsung.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 21 Feb 2019 10:39:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 11:22:39AM +0100, Marek Szyprowski wrote:
-> Hi Ming,
+On Wed, 2019-02-20 at 14:26 +0100, Christian Brauner wrote:
+> On Wed, Feb 20, 2019 at 10:46:24AM +0800, Ian Kent wrote:
+> > On Fri, 2019-02-15 at 16:07 +0000, David Howells wrote:
+> > > Implement a kernel container object such that it contains the following
+> > > things:
+> > > 
+> > >  (1) Namespaces.
+> > > 
+> > >  (2) A root directory.
+> > > 
+> > >  (3) A set of processes, including one designated as the 'init' process.
+> > 
+> > Yeah, I think a name other than init needs to be used for this
+> > process.
+> > 
+> > The problem being that there is no requirement for container
+> > process 1 to behave in any way like an "init" process is
+> > expected to behave and that leads to confusion (at least
+> > it certainly did for me).
 > 
-> On 2019-02-21 11:16, Ming Lei wrote:
-> > On Thu, Feb 21, 2019 at 11:08:19AM +0100, Marek Szyprowski wrote:
-> >> On 2019-02-21 10:57, Ming Lei wrote:
-> >>> On Thu, Feb 21, 2019 at 09:42:59AM +0100, Marek Szyprowski wrote:
-> >>>> On 2019-02-15 12:13, Ming Lei wrote:
-> >>>>> This patch pulls the trigger for multi-page bvecs.
-> >>>>>
-> >>>>> Reviewed-by: Omar Sandoval <osandov@fb.com>
-> >>>>> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> >>>> Since Linux next-20190218 I've observed problems with block layer on one
-> >>>> of my test devices (Odroid U3 with EXT4 rootfs on SD card). Bisecting
-> >>>> this issue led me to this change. This is also the first linux-next
-> >>>> release with this change merged. The issue is fully reproducible and can
-> >>>> be observed in the following kernel log:
-> >>>>
-> >>>> sdhci: Secure Digital Host Controller Interface driver
-> >>>> sdhci: Copyright(c) Pierre Ossman
-> >>>> s3c-sdhci 12530000.sdhci: clock source 2: mmc_busclk.2 (100000000 Hz)
-> >>>> s3c-sdhci 12530000.sdhci: Got CD GPIO
-> >>>> mmc0: SDHCI controller on samsung-hsmmc [12530000.sdhci] using ADMA
-> >>>> mmc0: new high speed SDHC card at address aaaa
-> >>>> mmcblk0: mmc0:aaaa SL16G 14.8 GiB
-> >>>>
-> >>>> ...
-> >>>>
-> >>>> EXT4-fs (mmcblk0p2): INFO: recovery required on readonly filesystem
-> >>>> EXT4-fs (mmcblk0p2): write access will be enabled during recovery
-> >>>> EXT4-fs (mmcblk0p2): recovery complete
-> >>>> EXT4-fs (mmcblk0p2): mounted filesystem with ordered data mode. Opts: (null)
-> >>>> VFS: Mounted root (ext4 filesystem) readonly on device 179:2.
-> >>>> devtmpfs: mounted
-> >>>> Freeing unused kernel memory: 1024K
-> >>>> hub 1-3:1.0: USB hub found
-> >>>> Run /sbin/init as init process
-> >>>> hub 1-3:1.0: 3 ports detected
-> >>>> *** stack smashing detected ***: <unknown> terminated
-> >>>> Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000004
-> >>>> CPU: 1 PID: 1 Comm: init Not tainted 5.0.0-rc6-next-20190218 #1546
-> >>>> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> >>>> [<c01118d0>] (unwind_backtrace) from [<c010d794>] (show_stack+0x10/0x14)
-> >>>> [<c010d794>] (show_stack) from [<c09ff8a4>] (dump_stack+0x90/0xc8)
-> >>>> [<c09ff8a4>] (dump_stack) from [<c0125944>] (panic+0xfc/0x304)
-> >>>> [<c0125944>] (panic) from [<c012bc98>] (do_exit+0xabc/0xc6c)
-> >>>> [<c012bc98>] (do_exit) from [<c012c100>] (do_group_exit+0x3c/0xbc)
-> >>>> [<c012c100>] (do_group_exit) from [<c0138908>] (get_signal+0x130/0xbf4)
-> >>>> [<c0138908>] (get_signal) from [<c010c7a0>] (do_work_pending+0x130/0x618)
-> >>>> [<c010c7a0>] (do_work_pending) from [<c0101034>]
-> >>>> (slow_work_pending+0xc/0x20)
-> >>>> Exception stack(0xe88c3fb0 to 0xe88c3ff8)
-> >>>> 3fa0:                                     00000000 bea7787c 00000005
-> >>>> b6e8d0b8
-> >>>> 3fc0: bea77a18 b6f92010 b6e8d0b8 00000001 b6e8d0c8 00000001 b6e8c000
-> >>>> bea77b60
-> >>>> 3fe0: 00000020 bea77998 ffffffff b6d52368 60000050 ffffffff
-> >>>> CPU3: stopping
-> >>>>
-> >>>> I would like to help debugging and fixing this issue, but I don't really
-> >>>> have idea where to start. Here are some more detailed information about
-> >>>> my test system:
-> >>>>
-> >>>> 1. Board: ARM 32bit Samsung Exynos4412-based Odroid U3 (device tree
-> >>>> source: arch/arm/boot/dts/exynos4412-odroidu3.dts)
-> >>>>
-> >>>> 2. Block device: MMC/SDHCI/SDHCI-S3C with SD card
-> >>>> (drivers/mmc/host/sdhci-s3c.c driver, sdhci_2 device node in the device
-> >>>> tree)
-> >>>>
-> >>>> 3. Rootfs: Ext4
-> >>>>
-> >>>> 4. Kernel config: arch/arm/configs/exynos_defconfig
-> >>>>
-> >>>> I can gather more logs if needed, just let me which kernel option to
-> >>>> enable. Reverting this commit on top of next-20190218 as well as current
-> >>>> linux-next (tested with next-20190221) fixes this issue and makes the
-> >>>> system bootable again.
-> >>> Could you test the patch in following link and see if it can make a difference?
-> >>>
-> >>> https://marc.info/?l=linux-aio&m=155070355614541&w=2
-> >> I've tested that patch, but it doesn't make any difference on the test
-> >> system. In the log I see no warning added by it.
-> > I guess it might be related with memory corruption, could you enable the
-> > following debug options and post the dmesg log?
-> >
-> > CONFIG_DEBUG_STACKOVERFLOW=y
-> > CONFIG_KASAN=y
+> If you look at the documentation for pid namespaces(7) you can see that
+> the pid 1 inside a pid namespace is expected to behave like an init
+> process:
+> -  "The  first  process created in a new namespace [...] has  the PID 1,
+>    and is the "init" process for the namespace (see init(1))."
+> - "[...] child process that is orphaned within the namespace will be
+>   reparented to this process rather than init(1) [...]"
+> - "If the "init" process of a PID namespace terminates, the kernel
+>   terminates all of the processes in the  namespace  via a SIGKILL
+>   signal. This behavior reflects the fact that the "init" process is
+>   essential for the corâ€ rect operation of a PID namespace."
+> - "Only signals for which the "init" process has established a signal
+>   handler can be sent to the  "init" process by other members of the
+>   PID namespace."
+> - "[...] the reboot(2) system call causes a signal to be sent to the
+>   namespace "init" process."
 > 
-> It won't be that easy as none of the above options is available on ARM
-> 32bit. I will try to apply some ARM KASAN patches floating on the net
-> and let you know the result.
+> This is one of the reasons why all major current container runtimes
+> finally after years of failing to realize this run a stub init process
+> that mimicks a dumb init. Sure, you get away with not having an init
+> that behaves like an init but this is inherently broken or at least
+> against the way pid namespaces were designed.
 
-Hi Marek,
+TBH I wasn't sure why the signal I sent didn't arrive, AFAICS
+it should have regardless of what signals the container init
+process was accepting. But it could have been due to a
+different problem in my kernel code (that's very likely).
 
-Could you test the following patch?
+In any case it wasn't worth perusing because even if I did work
+it out I had already found that the request_key sub-system wasn't
+playing well with others when trying to run something within a
+container's namespaces, so no point in going further ...
 
-diff --git a/block/bounce.c b/block/bounce.c
-index add085e28b1d..0c618c0b3cf8 100644
---- a/block/bounce.c
-+++ b/block/bounce.c
-@@ -295,7 +295,6 @@ static void __blk_queue_bounce(struct request_queue *q, struct bio **bio_orig,
- 	bool bounce = false;
- 	int sectors = 0;
- 	bool passthrough = bio_is_passthrough(*bio_orig);
--	struct bvec_iter_all iter_all;
- 
- 	bio_for_each_segment(from, *bio_orig, iter) {
- 		if (i++ < BIO_MAX_PAGES)
-@@ -315,7 +314,8 @@ static void __blk_queue_bounce(struct request_queue *q, struct bio **bio_orig,
- 	bio = bounce_clone_bio(*bio_orig, GFP_NOIO, passthrough ? NULL :
- 			&bounce_bio_set);
- 
--	bio_for_each_segment_all(to, bio, i, iter_all) {
-+	/* bio won't be multi-page bvec, so operate its bvec table directly */
-+	for (i = 0, to = bio->bi_io_vec; i < bio->bi_vcnt; to++, i++) {
- 		struct page *page = to->bv_page;
- 
- 		if (page_to_pfn(page) <= q->limits.bounce_pfn)
+Ian
 
-Thanks,
-Ming
