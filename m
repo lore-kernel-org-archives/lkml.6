@@ -2,82 +2,74 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 609D7C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F3CDC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E9842077B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:02:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42E772083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:03:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550786625;
+	bh=GePG9ZNYDL1UfQsS/WcBOUtdgUCum5elDNu0WiIcoeM=;
+	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
+	b=jlI2kInlGB2w4mHOtXF7G9kZ4OWmLu2GZxUNsTjpEbya+jQYCvR5IUjAx9c0zW19a
+	 HYFCu2X3IZHzqx7XOcB4GoXeFlgor096mF7vlj/V11vQ+r2h0/Rt3yYIHgo/YQs/Gg
+	 Ah4lO87Jbeqx6VhDI19rJtNaicxn+KdMUBcO9Oyc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726840AbfBUWCJ (ORCPT
+        id S1726949AbfBUWDn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 17:02:09 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45908 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725961AbfBUWCJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 17:02:09 -0500
-Received: by mail-pg1-f193.google.com with SMTP id y4so60968pgc.12
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 14:02:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=8QBqpDUpvDWAeQ7RLyFqYXh3CNt74MmqIg1Gn/cYipY=;
-        b=pFpy6xcA5GJEr2BbQhbxwucw4K7kkGChaOfbRvleLgTqpklgBYKsMxRf1cheOQorYj
-         Veq2HEuAhnYaptDTMeKUsJJ3KUSZ1vkBFumGtIMnU60yPaYBAi2P+gcvodQAb4npGd00
-         mhOcM//VnPEsnYa/GXiF1SQtg/Wwqwk3capPwevkM0bX45KEHVmTIXaWPN03B4AP3hDa
-         pkYWVXJM3gIZ2EnkNgWku/b++QQL//JI4ub7X7M8fGV0zWVMVBY/QRFsgAsw3z/7JYcu
-         Z0fh9F1dLXtbMkzZHjiwna/fqLkUZHCPr5RcMcB/27SQsLpG71XkCcMqud+MU8ucbDtb
-         +54w==
-X-Gm-Message-State: AHQUAuaFo2zU+5leDOlozIG8LJtC/r+6Xkbi8zhK0GJV67g2sahcigDS
-        XaP9ZZG/StWQR1RLQ6BpdzSdtdqi
-X-Google-Smtp-Source: AHgI3IY/v0o7Ncm3cX5KVKFL4vts0pF/g/3y5mG5G6J+MD8kaUH6ujdy+rtvHVZCr+COjLfYbQUL5g==
-X-Received: by 2002:a63:eb0f:: with SMTP id t15mr712995pgh.252.1550786528524;
-        Thu, 21 Feb 2019 14:02:08 -0800 (PST)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id p6sm40408pfp.15.2019.02.21.14.02.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Feb 2019 14:02:06 -0800 (PST)
-Message-ID: <1550786525.31902.140.camel@acm.org>
-Subject: Re: [PATCH v7 00/23] locking/lockdep: Add support for dynamic keys
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     peterz@infradead.org
-Cc:     mingo@redhat.com, will.deacon@arm.com, tj@kernel.org,
-        longman@redhat.com, johannes.berg@intel.com,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 21 Feb 2019 14:02:05 -0800
-In-Reply-To: <20190214230058.196511-1-bvanassche@acm.org>
-References: <20190214230058.196511-1-bvanassche@acm.org>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 21 Feb 2019 17:03:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38148 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726125AbfBUWDn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 17:03:43 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A5752077B;
+        Thu, 21 Feb 2019 22:03:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550786622;
+        bh=GePG9ZNYDL1UfQsS/WcBOUtdgUCum5elDNu0WiIcoeM=;
+        h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
+        b=BkuIOdL1SOIlME3oCDLyoOVJlNlWtTitF+oMEO7tn380aPLCQL80TLli67mJI49sj
+         mho+1ZNDb7fi8EAeMlCGWek/pAt8h5xo3c8ImwigFYg75fbBqUD6NW+WsW4F+xvOpX
+         ppYoVhe3Y8z0RvfWGqEPBg9vZTOF7aZoqlOcPBac=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 2/2] clk: mediatek: correct cpu clock name for MT8173 SoC
+Message-ID: <155078662163.77512.15925700437277835877@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+References: <20190211071555.31430-1-seiya.wang@mediatek.com> <20190211071555.31430-2-seiya.wang@mediatek.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20190211071555.31430-2-seiya.wang@mediatek.com>
+To:     Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Seiya Wang <seiya.wang@mediatek.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, Seiya Wang <seiya.wang@mediatek.com>
+Date:   Thu, 21 Feb 2019 14:03:41 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-02-14 at 15:00 -0800, Bart Van Assche wrote:
-+AD4 A known shortcoming of the current lockdep implementation is that it requires
-+AD4 lock keys to be allocated statically. This forces certain unrelated
-+AD4 synchronization objects to share keys and this key sharing can cause false
-+AD4 positive deadlock reports. This patch series adds support for dynamic keys in
-+AD4 the lockdep code and eliminates a class of false positive reports from the
-+AD4 workqueue implementation.
-+AD4 
-+AD4 Please consider these patches for kernel v5.1.
+Quoting Seiya Wang (2019-02-10 23:15:55)
+> Change cpu clock name from ca57 to ca72 since MT8173 does use cortex-a72.
+>=20
+> Signed-off-by: Seiya Wang <seiya.wang@mediatek.com>
+> ---
 
-Hi Peter and Ingo,
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
-Do you have any feedback about this patch series that you would like to share?
-If none of you has the time to do a full review of this patch series before the
-v5.1 merge window opens: how about queuing only the first ten patches of this
-patch series for kernel v5.1? The first ten patches of this series are small and
-easy to review.
-
-Thanks,
-
-Bart.
+I'm guessing I can't apply this patch because the define is renamed
+which would break older DTs. Another option would be to just add another
+define and mark the old define as deprecated and unsupported. Then I
+could apply the patch to clk tree.
