@@ -2,128 +2,165 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F0CC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:17:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 089FEC00319
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:17:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 585732148D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:17:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=bidouilliste.com header.i=@bidouilliste.com header.b="hIgWGRzf"
+	by mail.kernel.org (Postfix) with ESMTP id D2CD3214AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:17:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727632AbfBUKRA (ORCPT
+        id S1727746AbfBUKRD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 05:17:00 -0500
-Received: from mail.blih.net ([212.83.177.182]:53717 "EHLO mail.blih.net"
+        Thu, 21 Feb 2019 05:17:03 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52140 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725943AbfBUKQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 05:16:59 -0500
-X-Greylist: delayed 398 seconds by postgrey-1.27 at vger.kernel.org; Thu, 21 Feb 2019 05:16:58 EST
-Received: from mail.blih.net (mail.blih.net [212.83.177.182])
-        by mail.blih.net (OpenSMTPD) with ESMTP id 0b330c4b;
-        Thu, 21 Feb 2019 11:10:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=bidouilliste.com; h=date
-        :from:to:cc:subject:message-id:in-reply-to:references
-        :mime-version:content-type:content-transfer-encoding; s=mail;
-         bh=8yA3uPBAxUDLtORA2o8u5XjRGpQ=; b=hIgWGRzfkrQKS+fhohCpQ2a4K150
-        FIhalBWBd8DSrWgrZ3edjSTvh2hWv2OB3HKlNZh7Qc/ZJ4RI9IsZ9Vz+FXUdlI6B
-        7FpCz5d7VzOntoqXOK1sktIr7y2wuann1kUT7694COT8ArZXxP9TYp/Htb4xd3cw
-        nzYcjOVneArKNdc=
-DomainKey-Signature: a=rsa-sha1; c=nofws; d=bidouilliste.com; h=date
-        :from:to:cc:subject:message-id:in-reply-to:references
-        :mime-version:content-type:content-transfer-encoding; q=dns; s=
-        mail; b=n8biuWE4Ic7RwUXC8QdHKN+0r5bqI73iJdDcyTW/YZJMgB4oHpQe7I0a
-        FpnGfhfJR3swnBv4wpQ+OeArTEufFcdPbWNf/DGRTFit6aEVXXqMIV8X8pYJC9yn
-        O2COT811qeUfwr7FdwyCE/M0jUpUQGN7eOmeY2t69AxT+ebsGms=
-Received: from knuckles.blih.net (ip-9.net-89-3-105.rev.numericable.fr [89.3.105.9])
-        by mail.blih.net (OpenSMTPD) with ESMTPSA id ed322229
-        TLS version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO;
-        Thu, 21 Feb 2019 11:10:17 +0100 (CET)
-Date:   Thu, 21 Feb 2019 11:10:17 +0100
-From:   Emmanuel Vadot <manu@bidouilliste.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Philipp Rossak <embed3d@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        Icenowy Zheng <icenowy@aosc.io>, linux-iio@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: Allwinner SID THS calibration data cell representation?
-Message-Id: <20190221111017.f3be5d56b419d9b90876b4c2@bidouilliste.com>
-In-Reply-To: <CAGb2v65p0G83BVODsxxnXmiSCwuuwPFtY2k2ZV1F5xoFKrJjWQ@mail.gmail.com>
-References: <20180830154518.29507-1-embed3d@gmail.com>
-        <20180830154518.29507-28-embed3d@gmail.com>
-        <20180904184623.e4386b8e6b657b1b25e90c09@bidouilliste.com>
-        <55579dd6-625d-e71b-1482-4592dccac665@gmail.com>
-        <20180906115114.inc6dhqhy47obo25@flea>
-        <CAGb2v65p0G83BVODsxxnXmiSCwuuwPFtY2k2ZV1F5xoFKrJjWQ@mail.gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; amd64-portbld-freebsd13.0)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1725943AbfBUKRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 05:17:01 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 21746300BBA8;
+        Thu, 21 Feb 2019 10:17:00 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-27.pek2.redhat.com [10.72.8.27])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 980B35C277;
+        Thu, 21 Feb 2019 10:16:24 +0000 (UTC)
+Date:   Thu, 21 Feb 2019 18:16:19 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH V15 14/18] block: enable multipage bvecs
+Message-ID: <20190221101618.GB12448@ming.t460p>
+References: <20190215111324.30129-1-ming.lei@redhat.com>
+ <20190215111324.30129-15-ming.lei@redhat.com>
+ <CGME20190221084301eucas1p11e8841a62b4b1da3cccca661b6f4c29d@eucas1p1.samsung.com>
+ <6c9ae4de-c56f-a2b3-2542-da7d8b95601d@samsung.com>
+ <20190221095733.GA12448@ming.t460p>
+ <ba39138d-d65b-335d-d709-b95dbde1fd5c@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ba39138d-d65b-335d-d709-b95dbde1fd5c@samsung.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 21 Feb 2019 10:17:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Feb 2019 15:54:00 +0800
-Chen-Yu Tsai <wens@csie.org> wrote:
-
-> Sorry for resurrecting an old discussion, but since someone posted patches
-> for H5 and H6, I thought we should resolve this. I'm working on patches to
-> fix / replace the big-endian issue.
+On Thu, Feb 21, 2019 at 11:08:19AM +0100, Marek Szyprowski wrote:
+> Hi Ming,
 > 
-> On Thu, Sep 6, 2018 at 7:51 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> On 2019-02-21 10:57, Ming Lei wrote:
+> > On Thu, Feb 21, 2019 at 09:42:59AM +0100, Marek Szyprowski wrote:
+> >> On 2019-02-15 12:13, Ming Lei wrote:
+> >>> This patch pulls the trigger for multi-page bvecs.
+> >>>
+> >>> Reviewed-by: Omar Sandoval <osandov@fb.com>
+> >>> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> >> Since Linux next-20190218 I've observed problems with block layer on one
+> >> of my test devices (Odroid U3 with EXT4 rootfs on SD card). Bisecting
+> >> this issue led me to this change. This is also the first linux-next
+> >> release with this change merged. The issue is fully reproducible and can
+> >> be observed in the following kernel log:
+> >>
+> >> sdhci: Secure Digital Host Controller Interface driver
+> >> sdhci: Copyright(c) Pierre Ossman
+> >> s3c-sdhci 12530000.sdhci: clock source 2: mmc_busclk.2 (100000000 Hz)
+> >> s3c-sdhci 12530000.sdhci: Got CD GPIO
+> >> mmc0: SDHCI controller on samsung-hsmmc [12530000.sdhci] using ADMA
+> >> mmc0: new high speed SDHC card at address aaaa
+> >> mmcblk0: mmc0:aaaa SL16G 14.8 GiB
+> >>
+> >> ...
+> >>
+> >> EXT4-fs (mmcblk0p2): INFO: recovery required on readonly filesystem
+> >> EXT4-fs (mmcblk0p2): write access will be enabled during recovery
+> >> EXT4-fs (mmcblk0p2): recovery complete
+> >> EXT4-fs (mmcblk0p2): mounted filesystem with ordered data mode. Opts: (null)
+> >> VFS: Mounted root (ext4 filesystem) readonly on device 179:2.
+> >> devtmpfs: mounted
+> >> Freeing unused kernel memory: 1024K
+> >> hub 1-3:1.0: USB hub found
+> >> Run /sbin/init as init process
+> >> hub 1-3:1.0: 3 ports detected
+> >> *** stack smashing detected ***: <unknown> terminated
+> >> Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000004
+> >> CPU: 1 PID: 1 Comm: init Not tainted 5.0.0-rc6-next-20190218 #1546
+> >> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+> >> [<c01118d0>] (unwind_backtrace) from [<c010d794>] (show_stack+0x10/0x14)
+> >> [<c010d794>] (show_stack) from [<c09ff8a4>] (dump_stack+0x90/0xc8)
+> >> [<c09ff8a4>] (dump_stack) from [<c0125944>] (panic+0xfc/0x304)
+> >> [<c0125944>] (panic) from [<c012bc98>] (do_exit+0xabc/0xc6c)
+> >> [<c012bc98>] (do_exit) from [<c012c100>] (do_group_exit+0x3c/0xbc)
+> >> [<c012c100>] (do_group_exit) from [<c0138908>] (get_signal+0x130/0xbf4)
+> >> [<c0138908>] (get_signal) from [<c010c7a0>] (do_work_pending+0x130/0x618)
+> >> [<c010c7a0>] (do_work_pending) from [<c0101034>]
+> >> (slow_work_pending+0xc/0x20)
+> >> Exception stack(0xe88c3fb0 to 0xe88c3ff8)
+> >> 3fa0:                                     00000000 bea7787c 00000005
+> >> b6e8d0b8
+> >> 3fc0: bea77a18 b6f92010 b6e8d0b8 00000001 b6e8d0c8 00000001 b6e8c000
+> >> bea77b60
+> >> 3fe0: 00000020 bea77998 ffffffff b6d52368 60000050 ffffffff
+> >> CPU3: stopping
+> >>
+> >> I would like to help debugging and fixing this issue, but I don't really
+> >> have idea where to start. Here are some more detailed information about
+> >> my test system:
+> >>
+> >> 1. Board: ARM 32bit Samsung Exynos4412-based Odroid U3 (device tree
+> >> source: arch/arm/boot/dts/exynos4412-odroidu3.dts)
+> >>
+> >> 2. Block device: MMC/SDHCI/SDHCI-S3C with SD card
+> >> (drivers/mmc/host/sdhci-s3c.c driver, sdhci_2 device node in the device
+> >> tree)
+> >>
+> >> 3. Rootfs: Ext4
+> >>
+> >> 4. Kernel config: arch/arm/configs/exynos_defconfig
+> >>
+> >> I can gather more logs if needed, just let me which kernel option to
+> >> enable. Reverting this commit on top of next-20190218 as well as current
+> >> linux-next (tested with next-20190221) fixes this issue and makes the
+> >> system bootable again.
+> > Could you test the patch in following link and see if it can make a difference?
 > >
-> > On Thu, Sep 06, 2018 at 01:47:47PM +0200, Philipp Rossak wrote:
-> > > On 04.09.2018 18:46, Emmanuel Vadot wrote:
-> > > > > +                 /* Data cells */
-> > > > > +                 thermal_calibration: calib@234 {
-> > > > > +                         reg = <0x234 0x8>;
-> > > > > +                 };
-> > > >   You are declaring 8 bytes of calibration data but to my knowledge it's
-> > > > only 2 bytes per sensor, so 2 bytes for H3.
-> > > >   Am I missing something ?
-> > > >
-> > > >   Thanks,
-> > >
-> > > Emmanuel you are right, it is 2 bytes per Sensor and should be 2 bytes for
-> > > H3, but the thermal calibration data field is on all chips 64 bit wide - so
-> > > 8 bytes. So I'm reading here the complete calibration data field.
-> >
-> > Having one cell per channel would make more sense I guess.
+> > https://marc.info/?l=linux-aio&m=155070355614541&w=2
 > 
-> Would it? The 2 32-bit words directly map onto the registers 0x74 / 0x78 in
-> the THS. As far as the SID is concerned, their is just one consumer for this
-> data, the thermal sensor. How the thermal sensor uses that data is really not
-> its concern. And the thermal sensor is really just copying the data from the
-> e-fuses into its registers. Nothing more.
+> I've tested that patch, but it doesn't make any difference on the test
+> system. In the log I see no warning added by it.
 
- If you see this at the controller lever and not at the sensor level it
-might make sense to use the full 32bits data even some bits are ignored
-I guess.
+I guess it might be related with memory corruption, could you enable the
+following debug options and post the dmesg log?
 
-> Furthermore, with the register access interface, the e-fuses are read/write
-> 32 bits at a time. Seems to me it would make more sense to enforce a 32-bit
-> word size, so cells should be multiples of 32 bits.
+CONFIG_DEBUG_STACKOVERFLOW=y
+CONFIG_KASAN=y
 
- Ok, honestly at this point I don't really care what choice is done as
-long as the dts is updated, I'll deal with the diff for FreeBSD and
-ping the others BSD (Net and Open who also have a driver) for this
-change.
-
-> Regards
-> ChenYu
-
- Cheers,
-
--- 
-Emmanuel Vadot <manu@bidouilliste.com> <manu@freebsd.org>
+Thanks,
+Ming
