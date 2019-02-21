@@ -2,113 +2,110 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5660C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:06:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F84C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:08:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FE84207E0
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:06:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FD27207E0
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 22:08:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="cEGauRB+"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EyyivkRQ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aDeWi6bm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbfBUWGa (ORCPT
+        id S1726439AbfBUWIS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 17:06:30 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42008 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725943AbfBUWGa (ORCPT
+        Thu, 21 Feb 2019 17:08:18 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:34480 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726035AbfBUWIS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 17:06:30 -0500
-Received: by mail-pf1-f196.google.com with SMTP id n74so73387pfi.9
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 14:06:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=sNViGJvrXCaoJlnXuiNu2YjSa7SxUCjLL8DEwon24Q8=;
-        b=cEGauRB+4YtZAU6hGgs5/nvyC+ld9C327auZPsEhqYsWb3OUPLwPoodFEZWbJ7kMES
-         nYKnRpLL4zanjpuV09G5vUdUdCnX2kUxi/72XwRFBJQH8N0E/CypZyAAmWC3Ry7cvGVZ
-         f14xvCDLwlHI5IzrU6SCmgL5z7Z/HBhFw4ip1jlAlHylG/h1hxP4htILVAqFZcouCwiF
-         +MN/TiMmHhfcVvuPXAt9zRnprl4WhE07f2qS8LY4YxO9EVTlReiaO2jb9MGtJY1xBc+q
-         REBP/64Zi354XtXSC3LCVTalcOzBWtW07TU3ZyFQrvWODXWqXzpKse+UY/FI+vbn2iPK
-         2zDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=sNViGJvrXCaoJlnXuiNu2YjSa7SxUCjLL8DEwon24Q8=;
-        b=rq69S6uiSo6UN/EI7vwV4mNRjomapDmI2elozmFnJKSJ3CLeRQTvGtLKkaYYFFxyRa
-         mNwe/Hjh6EETI3DB79S7TzppFPRaZ0Ed0q8OoyN7tm5CCII+mpALFrGalSLOgUZmZjV4
-         9pYNXTfN6f6yVnSo3CVctZIhA8vP2DdrgFvnoDmHyPjk/SPMsWXEosZhUk2/pdjdI6xd
-         rvqLrglMIM4uMcmdDCOwUu1zF8kxks3SpRVfkAPd7tVOBQZeMqXgkn04uCunLbQoDFKa
-         1G5HaWew0bXxgs7N8/msVd76wCU5R+IaI1fm4iOR+qsi+1liRzMdjTCgs34l+zUKBq8g
-         6JSQ==
-X-Gm-Message-State: AHQUAua0iHWmNJsx8T3dyX2w5Gi2fMFVoc+UFSvCtCSV/ko9jaoxz2Ek
-        o6sWa5WeRb2b0R4rfmtwzYMKxg==
-X-Google-Smtp-Source: AHgI3IY9PTilcQLs2Ybwg4yTYtSN5TxL+HhrgS9MGVT6NQHrtNXoMUUy8KMBlVZ64S+F1TM5GaoemA==
-X-Received: by 2002:a63:ef50:: with SMTP id c16mr711567pgk.3.1550786789525;
-        Thu, 21 Feb 2019 14:06:29 -0800 (PST)
-Received: from ?IPv6:2600:1010:b016:9155:d0fd:1b5f:8b43:47e6? ([2600:1010:b016:9155:d0fd:1b5f:8b43:47e6])
-        by smtp.gmail.com with ESMTPSA id q28sm28508pgl.35.2019.02.21.14.06.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Feb 2019 14:06:28 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] sched/x86: Save [ER]FLAGS on context switch
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16D57)
-In-Reply-To: <20190221124629.GA12696@fuggles.cambridge.arm.com>
-Date:   Thu, 21 Feb 2019 14:06:26 -0800
-Cc:     "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mingo@redhat.com,
-        catalin.marinas@arm.com, james.morse@arm.com,
-        valentin.schneider@arm.com, brgerst@gmail.com, jpoimboe@redhat.com,
-        luto@kernel.org, bp@alien8.de, dvlasenk@redhat.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <43ED7513-6A7E-45BC-973A-4EB6DB8E5505@amacapital.net>
-References: <D61C430D-4321-4114-AB85-671A3C7B8EAE@amacapital.net> <20190213222146.GC32494@hirez.programming.kicks-ass.net> <D3E1B64D-3E91-4A82-9C3B-92D9EB7326CE@amacapital.net> <20190214101429.GD32494@hirez.programming.kicks-ass.net> <20ABBED1-E505-45F6-8520-FB93786DF9A9@zytor.com> <20190216103044.GR32494@hirez.programming.kicks-ass.net> <9e037d68-75e7-1beb-0c9c-33a7ffeced1b@zytor.com> <20190219090409.GW32494@hirez.programming.kicks-ass.net> <20190219124808.GG8501@fuggles.cambridge.arm.com> <f8e99706-4e3b-68ec-7a3e-6e6dd876ad2f@zytor.com> <20190221124629.GA12696@fuggles.cambridge.arm.com>
-To:     Will Deacon <will.deacon@arm.com>
+        Thu, 21 Feb 2019 17:08:18 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1234660860; Thu, 21 Feb 2019 22:08:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550786897;
+        bh=e5KGMfKYIXT5NG51pD6YJpEp4jVrgpBVmhvpNnqmRtQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=EyyivkRQH1EF4u8bFjZxbTzbmyjMJ4ya3dOa3QLKtbIqqrKSF2935fMfB8VqLfDfg
+         OloJZd9I1wckdFdlHh/RA+TlrWMaKPJ3dzbR7aDxPQFEm/c581BdXp/Gx52hJcCA4B
+         xNiXx4sfSivMOnZCEX35Kreh84sznTKdN+nfZp8o=
+Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A93A360237;
+        Thu, 21 Feb 2019 22:08:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550786896;
+        bh=e5KGMfKYIXT5NG51pD6YJpEp4jVrgpBVmhvpNnqmRtQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=aDeWi6bm/Dl1plXV/yFL9ChuvPuQI0SZ0GkEiFzVHBY4ilaNVRc72gzhr3Kh/PSSM
+         QopbpIgi+tnEPU84Ge1QBkbLTXTxnoRKHsNfbQUsYSDXs4rnkoKoBYl3TebjonfPKy
+         0+gDOzSh3qCILwH/zbQWzmO9JVcm3dBPabxME624=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A93A360237
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH] drm/msm: Fix incorrect struct size for memory allocation
+To:     Jordan Crouse <jcrouse@codeaurora.org>,
+        freedreno@lists.freedesktop.org
+Cc:     linux-arm-msm@vger.kernel.org, stable@vger.kernel.org,
+        Sean Paul <sean@poorly.run>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+References: <1550786069-18328-1-git-send-email-jcrouse@codeaurora.org>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <8100608f-0f8b-7f67-bfa1-9f6c4de03fec@codeaurora.org>
+Date:   Thu, 21 Feb 2019 15:08:15 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
+MIME-Version: 1.0
+In-Reply-To: <1550786069-18328-1-git-send-email-jcrouse@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2/21/2019 2:54 PM, Jordan Crouse wrote:
+> The allocation for the clock bulk data does a classic sizeof(pointer)
+> instead of sizeof(struct) so the array ends up incorrectly sized
+> for the clock data.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 8e54eea ("drm/msm: Add a helper function to parse clock names")
+> Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+> ---
+> 
+>   drivers/gpu/drm/msm/msm_drv.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+> index 906b2bb..31e1481 100644
+> --- a/drivers/gpu/drm/msm/msm_drv.c
+> +++ b/drivers/gpu/drm/msm/msm_drv.c
+> @@ -96,7 +96,7 @@ int msm_clk_bulk_get(struct device *dev, struct clk_bulk_data **bulk)
+>   	if (count < 1)
+>   		return 0;
+>   
+> -	local = devm_kcalloc(dev, sizeof(struct clk_bulk_data *),
+> +	local = devm_kcalloc(dev, sizeof(struct clk_bulk_data),
+>   		count, GFP_KERNEL);
+>   	if (!local)
+>   		return -ENOMEM;
+> 
 
+Isn't msm_clk_bulk_get a duplication of devm_clk_bulk_get_all() ? 
+Surely it would be better to just use that instead?
 
-
-> On Feb 21, 2019, at 4:46 AM, Will Deacon <will.deacon@arm.com> wrote:
->=20
->> On Wed, Feb 20, 2019 at 02:55:59PM -0800, H. Peter Anvin wrote:
->>> On 2/19/19 4:48 AM, Will Deacon wrote:
->>>=20
->>> I think you'll still hate this, but could we not disable preemption duri=
-ng
->>> the uaccess-enabled region, re-enabling it on the fault path after we've=
-
->>> toggled uaccess off and disable it again when we return back to the
->>> uaccess-enabled region? Doesn't help with tracing, but it should at leas=
-t
->>> handle the common case.
->>>=20
->>=20
->> There is a worse problem with this, I still realize: this would mean bloc=
-king
->> preemption across what could possibly be a *very* large copy_from_user(),=
- for
->> example.
->=20
-> I don't think it's legitimate to call copy_{to,from}_user() inside a
-> user_access_{begin,end} region. You'd need to add some unsafe variants,
-> which could periodically disable uaccess and call cond_resched() inside
-> the loop to avoid the problem you're eluding to.
->=20
-
-Definitely not safe. On x86 they do CLAC and everything breaks.=
+-- 
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
