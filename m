@@ -2,136 +2,140 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFAC4C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 04:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F763C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 04:14:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64A872070B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 04:14:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A8EB2070B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 04:14:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yJyejL0u"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KQMahG9T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727390AbfBUEOm (ORCPT
+        id S1727349AbfBUEOk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 23:14:42 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:53436 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727263AbfBUEOj (ORCPT
+        Wed, 20 Feb 2019 23:14:40 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:45252 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727162AbfBUEOj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 20 Feb 2019 23:14:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=EwQNmrXW/4QZg2c9rz8eEIt9GBPXaqF74W4KjGm6Yrs=; b=yJyejL0uZvqdgfRDRhI53GqQwb
-        2Ru9LuOEdXcxQr3R+8/EVkwWbm9GfZ9ASZC/O2VrHPzyheTVN7lD/BCwQdcS5108FwS2ggjSd/She
-        W45idHmzW+JvN3Pzs7X4tKTJBf/2qQ68tuogXHu5hgTinm9fdFQGSyqbsYHMg3qa1xP2qr2O6EeST
-        bLmv3KyWwgGaCsLRtLta1GTscnoYNtwQuI+yMZOJHzd0hLLwt7dODWoBWAkh9Bc3Gjzt0u++ztpW/
-        ZlDxbrY6QmKDvIDkJDnIZXnxxOsDjQ5LQCzSZebnygR/EMjw8nCMCObR4ZO7eQqRzGlrWu5pxF+82
-        bJ6zYLtw==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gwfkq-0005T4-5U; Thu, 21 Feb 2019 04:14:36 +0000
-Subject: Re: [PATCH 3/6] lib/string: Use correct docstring format
-To:     Kees Cook <keescook@chromium.org>,
-        "Tobin C. Harding" <tobin@kernel.org>
-Cc:     Shuah Khan <shuah@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20190218232308.11241-1-tobin@kernel.org>
- <20190218232308.11241-4-tobin@kernel.org>
- <CAGXu5jJ++_VufY8t3WYsGW8VN-3yJEbVpOi_67RxHPicCC-K6A@mail.gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <45959376-49a1-467b-835e-f335fbd1c470@infradead.org>
-Date:   Wed, 20 Feb 2019 20:14:34 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <CAGXu5jJ++_VufY8t3WYsGW8VN-3yJEbVpOi_67RxHPicCC-K6A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1L4E8qw056565;
+        Thu, 21 Feb 2019 04:14:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
+ bh=kLciAT+AyzRLAoa7LpOuXSr3oO5lyoPSVcEHLqmqO5o=;
+ b=KQMahG9TjCbehGGe6D2iVH4BsJ2aXpc459im7IIjl0YYZ1watJLMkToGH4+Z35uZr5xz
+ 2cae4KLFM5C8d1O8lEicjzWjw/5rGrDI9dJYMJIIdWuV5MUZNJ4Ktw1H7i909LakDxuT
+ ToOSGMatBQIlK+5Nuhr4KAyGYbe+CrK22Qh2XOv1b3yCbkwl+mjFBbSyebSqOtQDbEkr
+ 2dLp0WqWv6rMDrEd13JJ1U7i+IQevPlQGcqFkTF9s2se0Q3MF7HyCPwRK6hRd0pK17aI
+ 3fsD6kT0n2H/au7sS44uMP+PHIwbQIBkOclua5JhTFRZP61Xrc7djjC+P1h97Cydap5M yQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2qp9xu5m7a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Feb 2019 04:14:34 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1L4EYY6007259
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Feb 2019 04:14:34 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1L4EXPe015674;
+        Thu, 21 Feb 2019 04:14:34 GMT
+Received: from linux.cn.oracle.com (/10.182.69.106)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 20 Feb 2019 20:14:33 -0800
+From:   Dongli Zhang <dongli.zhang@oracle.com>
+To:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     axboe@kernel.dk, jack@suse.cz
+Subject: [PATCH 2/2] loop: set GENHD_FL_NO_PART_SCAN after blkdev_reread_part()
+Date:   Thu, 21 Feb 2019 12:17:35 +0800
+Message-Id: <1550722655-15102-3-git-send-email-dongli.zhang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1550722655-15102-1-git-send-email-dongli.zhang@oracle.com>
+References: <1550722655-15102-1-git-send-email-dongli.zhang@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9173 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902210031
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/20/19 4:07 PM, Kees Cook wrote:
-> On Mon, Feb 18, 2019 at 3:24 PM Tobin C. Harding <tobin@kernel.org> wrote:
->>
->> Currently the docstring comments for strscpy() are not in the correct
->> format.  Prior to working on this file fix up the docstring.
->>
->> Use correct docstring format for strscpy().
-> 
-> Is this attached to "make htmldocs" anywhere? Maybe in the device
-> driver api doc? That's where I put refcount_t. See
-> driver-api/basics.rst and put something like:
-> 
-> String Handling
-> --------------------
-> 
-> .. kernel-doc:: lib/string.c
->    :internal:
-> 
-> and add that chunk to this patch.
+Commit 0da03cab87e6
+("loop: Fix deadlock when calling blkdev_reread_part()") moves
+blkdev_reread_part() out of the loop_ctl_mutex. However,
+GENHD_FL_NO_PART_SCAN is set before __blkdev_reread_part(). As a result,
+__blkdev_reread_part() will fail the check of GENHD_FL_NO_PART_SCAN and
+will not rescan the loop device to delete all partitions.
 
-It's already in Documentation/core-api/kernel-api.rst, under
-"String Manipulation."
+Below are steps to reproduce the issue:
 
-> Acked-by: Kees Cook <keescook@chromium.org>
-> 
-> -Kees
-> 
->>
->> Signed-off-by: Tobin C. Harding <tobin@kernel.org>
->> ---
->>  lib/string.c | 11 ++++++-----
->>  1 file changed, 6 insertions(+), 5 deletions(-)
->>
->> diff --git a/lib/string.c b/lib/string.c
->> index 7f1d72db53c5..65969cf32f5d 100644
->> --- a/lib/string.c
->> +++ b/lib/string.c
->> @@ -159,11 +159,9 @@ EXPORT_SYMBOL(strlcpy);
->>   * @src: Where to copy the string from
->>   * @count: Size of destination buffer
->>   *
->> - * Copy the string, or as much of it as fits, into the dest buffer.
->> - * The routine returns the number of characters copied (not including
->> - * the trailing NUL) or -E2BIG if the destination buffer wasn't big enough.
->> - * The behavior is undefined if the string buffers overlap.
->> - * The destination buffer is always NUL terminated, unless it's zero-sized.
->> + * Copy the string, or as much of it as fits, into the dest buffer.  The
->> + * behavior is undefined if the string buffers overlap.  The destination
->> + * buffer is always NUL terminated, unless it's zero-sized.
->>   *
->>   * Preferred to strlcpy() since the API doesn't require reading memory
->>   * from the src string beyond the specified "count" bytes, and since
->> @@ -175,6 +173,9 @@ EXPORT_SYMBOL(strlcpy);
->>   * doesn't unnecessarily force the tail of the destination buffer to be
->>   * zeroed.  If the zeroing is desired, it's likely cleaner to use strscpy(),
->>   * check the return size, then just memset() the tail of the dest buffer.
->> + *
->> + * Return: The number of characters copied (not including the trailing
->> + *         NUL) or -E2BIG if the destination buffer wasn't big enough.
->>   */
->>  ssize_t strscpy(char *dest, const char *src, size_t count)
->>  {
->> --
->> 2.20.1
->>
-> 
-> 
+step1 # dd if=/dev/zero of=tmp.raw bs=1M count=100
+step2 # losetup -P /dev/loop0 tmp.raw
+step3 # parted /dev/loop0 mklabel gpt
+step4 # parted -a none -s /dev/loop0 mkpart primary 64s 1
+step5 # losetup -d /dev/loop0
 
+Step5 will not be able to delete /dev/loop0p1 (introduced by step4) and
+there is below kernel warning message:
 
+[  464.414043] __loop_clr_fd: partition scan of loop0 failed (rc=-22)
+
+This patch sets GENHD_FL_NO_PART_SCAN after blkdev_reread_part().
+
+Fixes: 0da03cab87e6 ("loop: Fix deadlock when calling blkdev_reread_part()")
+Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+---
+ drivers/block/loop.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 7908673..736e55b 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -1034,6 +1034,15 @@ loop_init_xfer(struct loop_device *lo, struct loop_func_table *xfer,
+ 	return err;
+ }
+ 
++static void loop_disable_partscan(struct loop_device *lo)
++{
++	mutex_lock(&loop_ctl_mutex);
++	lo->lo_flags = 0;
++	if (!part_shift)
++		lo->lo_disk->flags |= GENHD_FL_NO_PART_SCAN;
++	mutex_unlock(&loop_ctl_mutex);
++}
++
+ static int __loop_clr_fd(struct loop_device *lo, bool release)
+ {
+ 	struct file *filp = NULL;
+@@ -1096,9 +1105,6 @@ static int __loop_clr_fd(struct loop_device *lo, bool release)
+ 
+ 	partscan = lo->lo_flags & LO_FLAGS_PARTSCAN && bdev;
+ 	lo_number = lo->lo_number;
+-	lo->lo_flags = 0;
+-	if (!part_shift)
+-		lo->lo_disk->flags |= GENHD_FL_NO_PART_SCAN;
+ 	loop_unprepare_queue(lo);
+ out_unlock:
+ 	mutex_unlock(&loop_ctl_mutex);
+@@ -1121,6 +1127,9 @@ static int __loop_clr_fd(struct loop_device *lo, bool release)
+ 		/* Device is gone, no point in returning error */
+ 		err = 0;
+ 	}
++
++	loop_disable_partscan(lo);
++
+ 	/*
+ 	 * Need not hold loop_ctl_mutex to fput backing file.
+ 	 * Calling fput holding loop_ctl_mutex triggers a circular
 -- 
-~Randy
+2.7.4
+
