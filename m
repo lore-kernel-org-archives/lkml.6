@@ -2,112 +2,125 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB8C6C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08162C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:25:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA0A12084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:24:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="a2/mvdXc"
+	by mail.kernel.org (Postfix) with ESMTP id D0C662084D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 13:25:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727979AbfBUNYA (ORCPT
+        id S1727856AbfBUNZb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 08:24:00 -0500
-Received: from ozlabs.org ([203.11.71.1]:59925 "EHLO ozlabs.org"
+        Thu, 21 Feb 2019 08:25:31 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58294 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725820AbfBUNYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 08:24:00 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S1725820AbfBUNZa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 08:25:30 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 444wCx2lfcz9s6w;
-        Fri, 22 Feb 2019 00:23:57 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1550755437;
-        bh=QOOgBasyKcc7aHGvJ/OG465XBrnN0pcPbGhLTGe6gTs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=a2/mvdXci3BOamhUCUmt98xZFy4zcWnMva54RrUKXTEIOg8mJzTl9s/obtlOLHgCm
-         HaieUYgygz/PVZRD3J43XV457LK/4kfVKc3vvZzzF/8m5KR450B2pi7klFv+LZsBwn
-         1HyRcZ1X6ABE4CzPiOnCaGCgkTxjzHI8qdTVX8TsloShXCFL5ZCb2xZ3Ef+73Z1aFf
-         f9fLaTvv3K2QksmcZu8nV1aQuPw5DfO5w6nytAIJVTCPMT2/+eYqHG7ZGcTdH8mbB+
-         as5Msw70J8iEgdjPYG6uGHj5oV9H412ARphVqmjh6J88vBtIyHz+dY0c2I2sg9cFPp
-         jqq47FqCCPkyQ==
-Date:   Fri, 22 Feb 2019 00:23:56 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Leon Romanovsky <leonro@mellanox.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the xarray tree
-Message-ID: <20190222002356.269ec801@canb.auug.org.au>
-In-Reply-To: <20190221131628.GA23561@mtr-leonro.mtl.com>
-References: <20190221171332.262cf619@canb.auug.org.au>
-        <20190221123440.GD17501@mtr-leonro.mtl.com>
-        <20190221234801.7cc07a7c@canb.auug.org.au>
-        <20190221131628.GA23561@mtr-leonro.mtl.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 117528CC7;
+        Thu, 21 Feb 2019 13:25:30 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-228.ams2.redhat.com [10.36.116.228])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 87C8F5D9E2;
+        Thu, 21 Feb 2019 13:25:29 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id CC71311A9A; Thu, 21 Feb 2019 14:25:28 +0100 (CET)
+Date:   Thu, 21 Feb 2019 14:25:28 +0100
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>
+Cc:     dri-devel@lists.freedesktop.org, daniel@ffwll.ch,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:INTEL DRM DRIVERS (excluding Poulsbo, Moorestow..." 
+        <intel-gfx@lists.freedesktop.org>
+Subject: Re: [PATCH v2 1/2] drm: move i915_kick_out_vgacon to drm_fb_helper
+Message-ID: <20190221132528.7cyobqegunh6uoh2@sirius.home.kraxel.org>
+References: <20190221113534.20764-1-kraxel@redhat.com>
+ <20190221113534.20764-2-kraxel@redhat.com>
+ <87ef81thk8.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/CHoKaR6d.48P86L+2vNrJNs"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ef81thk8.fsf@intel.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 21 Feb 2019 13:25:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/CHoKaR6d.48P86L+2vNrJNs
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Feb 21, 2019 at 03:08:39PM +0200, Jani Nikula wrote:
+> On Thu, 21 Feb 2019, Gerd Hoffmann <kraxel@redhat.com> wrote:
+> > It'll be useful for other drivers too, so move it to drm_fb_helper.c
+> > (and rename it of course).  Also add docs.
+> >
+> > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> > ---
+> >  include/drm/drm_fb_helper.h     |  2 ++
+> >  drivers/gpu/drm/drm_fb_helper.c | 39 +++++++++++++++++++++++++++++++++++++++
+> >  drivers/gpu/drm/i915/i915_drv.c | 35 +----------------------------------
+> >  3 files changed, 42 insertions(+), 34 deletions(-)
+> >
+> > diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
+> > index bb9acea613..a401ba47ad 100644
+> > --- a/include/drm/drm_fb_helper.h
+> > +++ b/include/drm/drm_fb_helper.h
+> > @@ -649,4 +649,6 @@ drm_fb_helper_remove_conflicting_pci_framebuffers(struct pci_dev *pdev,
+> >  #endif
+> >  }
+> >  
+> > +int drm_fb_helper_kick_out_vgacon(void);
+> > +
+> >  #endif
+> > diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+> > index 0e9349ff2d..a2d7e5bc51 100644
+> > --- a/drivers/gpu/drm/drm_fb_helper.c
+> > +++ b/drivers/gpu/drm/drm_fb_helper.c
+> > @@ -35,6 +35,7 @@
+> >  #include <linux/sysrq.h>
+> >  #include <linux/slab.h>
+> >  #include <linux/module.h>
+> > +#include <linux/vt_kern.h>
+> >  #include <drm/drmP.h>
+> >  #include <drm/drm_crtc.h>
+> >  #include <drm/drm_fb_helper.h>
+> > @@ -3353,3 +3354,41 @@ int __init drm_fb_helper_modinit(void)
+> >  	return 0;
+> >  }
+> >  EXPORT_SYMBOL(drm_fb_helper_modinit);
+> > +
+> > +/**
+> > + * drm_fb_helper_kick_out_vgacon - deactivate vgacon driver.
+> > + *
+> > + * Deactivate vgacon driver so it stops accessing vga io ports.
+> > + * Should be called after
+> > + * drm_fb_helper_remove_conflicting_pci_framebuffers().
+> > + *
+> > + * Returns:
+> > + * Zero on success or negative error code on failure.
+> > + */
+> > +int drm_fb_helper_kick_out_vgacon(void)
+> > +{
+> > +#if !defined(CONFIG_VGA_CONSOLE)
+> > +        return 0;
+> > +#elif !defined(CONFIG_DUMMY_CONSOLE)
+> > +        return -ENODEV;
+> > +#else
+> 
+> Please retain the original way of keeping conditional compilation
+> outside of functions.
 
-Hi Leon,
+Care to explain why that is better?
 
-On Thu, 21 Feb 2019 13:16:31 +0000 Leon Romanovsky <leonro@mellanox.com> wr=
-ote:
->
-> > The xarray API changes (to xa_alloc and __xa_alloc) have been in
-> > linux-next for about 2 weeks ... =20
->=20
-> I looked on the latest update of pulled branch
-> http://git.infradead.org/users/willy/linux-dax.git/shortlog/refs/heads/xa=
-rray
+thanks,
+  Gerd
 
-Yeah, there were 3 commits added today, but the API changing commit is olde=
-r.
-
-> > It doesn't matter which goes in first, but whoever goes in last should
-> > inform Linus about these (now 2) API change fixups.  In fact you should
-> > probably both let him know as he sometimes batches up similar groups of
-> > merge requests (like fs or net) and doesn't do them in the order they
-> > are submitted. =20
->=20
-> OK, we will do.
-
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/CHoKaR6d.48P86L+2vNrJNs
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxupmwACgkQAVBC80lX
-0Gx14gf+LbqFhLHErbrJQrAMrlzbTjS+QDO3ubfnVwIc5MIZg3LsRpLx6DabeHk7
-Y1g+r/Db2CbN0Ncc2YeS7ivfxJ2/xd3rFOx6qCti2IM1fpYYL91sMjx2JcxoFt5x
-yw1jknRgeIEJIpV4/E7I5Y/CsdtNZKRzq6eNOutjt91oHIIswOfvOpebEMjd+Ntv
-E5FUFHQGo5wUeIm74dRBF1GscF+FLQ8ctlrSJYfkABZ9TshHS1v2hIl/oTZvc4ag
-m3jL4+Zx61szBV67CEexG6XDRNYgsVqJ5RVKVCkb4LtSb3F0Ysd1CzSt0vHd32LC
-1dAWQs/uAQxUlwrNlm+NIY7/1+8pDg==
-=MgXk
------END PGP SIGNATURE-----
-
---Sig_/CHoKaR6d.48P86L+2vNrJNs--
