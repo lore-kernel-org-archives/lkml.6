@@ -2,100 +2,87 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 232D1C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:41:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4414C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:46:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3B452086A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:41:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RDp4l8nQ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q7SZI44o"
+	by mail.kernel.org (Postfix) with ESMTP id 83BD921734
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:46:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbfBUMlK (ORCPT
+        id S1726476AbfBUMqi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 07:41:10 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:57260 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbfBUMlI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 07:41:08 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id EE31F6098D; Thu, 21 Feb 2019 12:41:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550752868;
-        bh=nmjeWWs8FE+8VqdSsNVik9k0lUupJvBKOX8s3o8on7E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RDp4l8nQKvhhRukF/3A073ARZ+/IZJJ86X3LPYmdkQKt1K+WWcHlM24/DCCErmUag
-         zJTw8L4RidE7Nu2335Mfvw2Hca08JBqqJbM1QnVgj13r5wzf+umiY8iE14SDp0kqhq
-         ZSPlThFE+SiVRo9s9z7cVRIiQF0I6y7CPUzg7Ns8=
-Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rplsssn@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9A8CC6090C;
-        Thu, 21 Feb 2019 12:41:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550752867;
-        bh=nmjeWWs8FE+8VqdSsNVik9k0lUupJvBKOX8s3o8on7E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q7SZI44oLvDGkmX08TvHtFjlkBdHnUPXCYD5DwEQGaAe1GFRf0NY96+5XeH8z1b7k
-         q7HZ6YTrlyvkErbey8nPK1zlWXYFm7/0omXHCngWy5wzsNFDjmz/RtWawVWeawfzQq
-         nEnIodNYpuDNHu0hALnu2galSW5Np+Then9Z/vUw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9A8CC6090C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
-From:   "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-To:     andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        sboyd@kernel.org, evgreen@chromium.org, dianders@chromium.org,
-        mka@chromium.org, ilina@codeaurora.org,
-        Maulik Shah <mkshah@codeaurora.org>,
-        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>
-Subject: [PATCH v1 2/2] drivers: soc: qcom: rpmh-rsc: Correct check for slot number
-Date:   Thu, 21 Feb 2019 18:10:36 +0530
-Message-Id: <20190221124036.30535-3-rplsssn@codeaurora.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190221124036.30535-1-rplsssn@codeaurora.org>
-References: <20190221124036.30535-1-rplsssn@codeaurora.org>
+        Thu, 21 Feb 2019 07:46:38 -0500
+Received: from foss.arm.com ([217.140.101.70]:43832 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725991AbfBUMqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 07:46:38 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF44680D;
+        Thu, 21 Feb 2019 04:46:37 -0800 (PST)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7A3E83F575;
+        Thu, 21 Feb 2019 04:46:34 -0800 (PST)
+Date:   Thu, 21 Feb 2019 12:46:29 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     "H. Peter Anvin" <hpa@zytor.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, mingo@redhat.com,
+        catalin.marinas@arm.com, james.morse@arm.com,
+        valentin.schneider@arm.com, brgerst@gmail.com, jpoimboe@redhat.com,
+        luto@kernel.org, bp@alien8.de, dvlasenk@redhat.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de
+Subject: Re: [PATCH] sched/x86: Save [ER]FLAGS on context switch
+Message-ID: <20190221124629.GA12696@fuggles.cambridge.arm.com>
+References: <D61C430D-4321-4114-AB85-671A3C7B8EAE@amacapital.net>
+ <20190213222146.GC32494@hirez.programming.kicks-ass.net>
+ <D3E1B64D-3E91-4A82-9C3B-92D9EB7326CE@amacapital.net>
+ <20190214101429.GD32494@hirez.programming.kicks-ass.net>
+ <20ABBED1-E505-45F6-8520-FB93786DF9A9@zytor.com>
+ <20190216103044.GR32494@hirez.programming.kicks-ass.net>
+ <9e037d68-75e7-1beb-0c9c-33a7ffeced1b@zytor.com>
+ <20190219090409.GW32494@hirez.programming.kicks-ass.net>
+ <20190219124808.GG8501@fuggles.cambridge.arm.com>
+ <f8e99706-4e3b-68ec-7a3e-6e6dd876ad2f@zytor.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f8e99706-4e3b-68ec-7a3e-6e6dd876ad2f@zytor.com>
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maulik Shah <mkshah@codeaurora.org>
+On Wed, Feb 20, 2019 at 02:55:59PM -0800, H. Peter Anvin wrote:
+> On 2/19/19 4:48 AM, Will Deacon wrote:
+> > 
+> > I think you'll still hate this, but could we not disable preemption during
+> > the uaccess-enabled region, re-enabling it on the fault path after we've
+> > toggled uaccess off and disable it again when we return back to the
+> > uaccess-enabled region? Doesn't help with tracing, but it should at least
+> > handle the common case.
+> > 
+> 
+> There is a worse problem with this, I still realize: this would mean blocking
+> preemption across what could possibly be a *very* large copy_from_user(), for
+> example.
 
-The return index value from bitmap_find_next_zero_area can be higher
-than available slot. So correct the check to return error in such case.
+I don't think it's legitimate to call copy_{to,from}_user() inside a
+user_access_{begin,end} region. You'd need to add some unsafe variants,
+which could periodically disable uaccess and call cond_resched() inside
+the loop to avoid the problem you're eluding to.
 
-Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
-Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
----
- drivers/soc/qcom/rpmh-rsc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+For existing callers of copy_{to,from}_user(), there's no issue as they
+don't call into the scheduler during the copy operation. Exceptions are
+handled fine by the code in mainline today.
 
-diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-index 10b3102298c7..3ff3bebd4d71 100644
---- a/drivers/soc/qcom/rpmh-rsc.c
-+++ b/drivers/soc/qcom/rpmh-rsc.c
-@@ -491,7 +491,7 @@ static int find_slots(struct tcs_group *tcs, const struct tcs_request *msg,
- 	do {
- 		slot = bitmap_find_next_zero_area(tcs->slots, MAX_TCS_SLOTS,
- 						  i, msg->num_cmds, 0);
--		if (slot == tcs->num_tcs * tcs->ncpt)
-+		if (slot >= tcs->num_tcs * tcs->ncpt)
- 			return -ENOMEM;
- 		i += tcs->ncpt;
- 	} while (slot + msg->num_cmds - 1 >= i);
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of the Code Aurora Forum, hosted by The Linux Foundation.
+GCC plugins are a cool idea, but I'm just a bit nervous about relying on
+them for things like this.
 
+Will
