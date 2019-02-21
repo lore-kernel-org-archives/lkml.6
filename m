@@ -2,198 +2,113 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D426C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 02:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03642C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 02:55:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF5802086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 02:50:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA4882146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 02:55:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3hS5xDlL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbfBUCul (ORCPT
+        id S1726573AbfBUCzm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Feb 2019 21:50:41 -0500
-Received: from mga05.intel.com ([192.55.52.43]:14615 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726113AbfBUCul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Feb 2019 21:50:41 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 18:50:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,393,1544515200"; 
-   d="scan'208";a="320766055"
-Received: from shbuild888.sh.intel.com (HELO localhost) ([10.239.147.114])
-  by fmsmga006.fm.intel.com with ESMTP; 20 Feb 2019 18:50:37 -0800
-Date:   Thu, 21 Feb 2019 10:52:26 +0800
-From:   Feng Tang <feng.tang@intel.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+        Wed, 20 Feb 2019 21:55:42 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:39186 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbfBUCzm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Feb 2019 21:55:42 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1L2nDGd002699;
+        Thu, 21 Feb 2019 02:55:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=uiDp4t+EQswvCO5nmYj4R3W/t+QWzPqm8VF7HmrzOO0=;
+ b=3hS5xDlLotOHvyCqqNPG6Dl95ggabCezCKU/uhDIjRdiDZ28gsmNTexyAc0eCjr/ABtG
+ DHejBZdSmaOzQxisg0kfLQaW2yaDv6uUY2skU/mkNNEKsHhjTXfH1rlfuXi8vm5VbxxJ
+ XTUbZEmyPSvKQ/rgNJIY65wjQJR8MPe3OUkXHVzNwHkROc4H6MSzTqN6wd32xYd6wu9g
+ IRTykZusO75HV82yAguetNXHy31qjXjSJu0kBqZ61SZtXPuAC2KX4atKC8U0I71r97B0
+ w8qp7L5hTxJ7RiMC5jfPaJSh7mfDmHgJQspe4Dtzi24m0J0prtWNZwGO8VhuA8mpbgGr eg== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2qpb5rn9bs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Feb 2019 02:55:20 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1L2tIZQ009546
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Feb 2019 02:55:19 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1L2tHuQ000668;
+        Thu, 21 Feb 2019 02:55:17 GMT
+Received: from [10.132.91.175] (/10.132.91.175)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 20 Feb 2019 18:55:17 -0800
+Subject: Re: [RFC][PATCH 00/16] sched: Core scheduling
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sasha Levin <sashal@kernel.org>, stable@kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Subject: Re: [PATCH v4] panic: Avoid the extra noise dmesg
-Message-ID: <20190221025226.s7tlhmgjx7g2yxjc@shbuild888>
-References: <1544176279-77828-1-git-send-email-feng.tang@intel.com>
- <20181210131729.04b8e0d3@gandalf.local.home>
- <CAGXu5jJrC5J7YNJ24JNNkNTRr7qRfQa+x+dePC0OOrpcEJFwaA@mail.gmail.com>
- <20181211083230.x6s44wsgfgijl4ws@pathway.suse.cz>
- <20190215055654.gelhlfni5wboftdx@shbuild888>
- <20190220134344.nnukjlxh3nkcqy4c@pathway.suse.cz>
+        Paul Turner <pjt@google.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>, kerrnel@google.com
+References: <20190218165620.383905466@infradead.org>
+ <CAHk-=wh32Zgp+bN7G1KH7SuCiY1YSJ41Y-_eWpfWubGjqq2_dw@mail.gmail.com>
+From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Message-ID: <e73e1b19-5418-32c8-584c-823618de67ce@oracle.com>
+Date:   Wed, 20 Feb 2019 18:53:08 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190220134344.nnukjlxh3nkcqy4c@pathway.suse.cz>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAHk-=wh32Zgp+bN7G1KH7SuCiY1YSJ41Y-_eWpfWubGjqq2_dw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9173 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902210020
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Petr,
 
-Thanks for your review.
-
-On Wed, Feb 20, 2019 at 02:43:44PM +0100, Petr Mladek wrote:
-> On Fri 2019-02-15 13:56:54, Feng Tang wrote:
-> > Hi all,
-> > 
-> > On Tue, Dec 11, 2018 at 09:32:30AM +0100, Petr Mladek wrote:
-> > > On Mon 2018-12-10 10:49:22, Kees Cook wrote:
-> > > > On Mon, Dec 10, 2018 at 10:17 AM Steven Rostedt <rostedt@goodmis.org> wrote:
-> > > > >
-> > > > > On Fri,  7 Dec 2018 17:51:19 +0800
-> > > > > Feng Tang <feng.tang@intel.com> wrote:
-> > > > >
-> > > > > > When kernel panic happens, it will first print the panic call stack,
-> > > > > > then the ending msg like:
-> > > > > >
-> > > > > > [   35.743249] ---[ end Kernel panic - not syncing: Fatal exception
-> > > > > > [   35.749975] ------------[ cut here ]------------
-> > > > > >
-> > > > > > The above message are very useful for debugging.
-> > > > > >
-> > > > > > But if system is configured to not reboot on panic, say the "panic_timeout"
-> > > > > > parameter equals 0, it will likely print out many noisy message like
-> > > > > > WARN() call stack for each and every CPU except the panic one, messages
-> > > > > > like below:
-> > 
-> > So currently, there are 2 proposals:
-> > 1. this v4 patch of "panic_keep_irq_on" flag (default off to be same
-> >    as the current kernel behavior)
-> > 2. Petr's suggestion of adding a flag to suppress printk after enterring
-> >    late panic phase (blinking time), while keeping the sysrq printk
-> >    working.
-> > 
-> > Following is the draft patch based on Petr's suggestion:
-> > 
-> > Please review, thanks. I'm fine with both solutions.
-> > 
-> > - Feng
-> > 
-> > diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
-> > index 1f03078..8921fed 100644
-> > --- a/drivers/tty/sysrq.c
-> > +++ b/drivers/tty/sysrq.c
-> > @@ -528,6 +528,11 @@ void __handle_sysrq(int key, bool check_mask)
-> >  	struct sysrq_key_op *op_p;
-> >  	int orig_log_level;
-> >  	int i;
-> > +	int old_val;
-> > +
-> > +	/* save the old panic printk flag */
-> 
-> The comment is not needed. It is obvious.
-
-ok, will remove.
-
-> 
-> > +	old_val = panic_suppress_printk;
-> 
-> s/old_val/orig_panic_suppress_printk/ to follow
-> the naming of orig_log_level.
-
-Ok.
-
-> 
-> > +	panic_suppress_printk = 1;
-> 
-> We want to enable the messages in sysrq. This should be:
-> 
-> 	panic_suppress_printk = 0;
-
-Yes, will do.
-
+On 2/18/19 9:49 AM, Linus Torvalds wrote:
+> On Mon, Feb 18, 2019 at 9:40 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>> However; whichever way around you turn this cookie; it is expensive and nasty.
+> Do you (or anybody else) have numbers for real loads?
 >
-> >  	rcu_sysrq_start();
-> >  	rcu_read_lock();
-> > @@ -574,6 +579,8 @@ void __handle_sysrq(int key, bool check_mask)
-> >  	}
-> >  	rcu_read_unlock();
-> >  	rcu_sysrq_end();
-> > +
-> > +	panic_suppress_printk = old_val;
-> >  }
-> >  
-> >  void handle_sysrq(int key)
-> > diff --git a/kernel/panic.c b/kernel/panic.c
-> > index f121e6b..0cd3a1b 100644
-> > --- a/kernel/panic.c
-> > +++ b/kernel/panic.c
-> > @@ -326,6 +328,7 @@ void panic(const char *fmt, ...)
-> >  	}
-> >  #endif
-> >  	pr_emerg("---[ end Kernel panic - not syncing: %s ]---\n", buf);
-> 
-> /* Do not scroll important messages with errors from blinking code. */
+> Because performance is all that matters. If performance is bad, then
+> it's pointless, since just turning off SMT is the answer.
+>
+>                    Linus
+I tested 2 Oracle DB instances running OLTP on a 2 socket 44 cores system.
+This is on baremetal, no virtualization.  In all cases I put each DB
+instance in separate cpu cgroup. Following are the avg throughput numbers
+of the 2 instances. %stdev is the standard deviation between the 2
+instances.
 
-Will add the comment, with one minor chanage that the noisy messages may
-also come from other places.
+Baseline = build w/o CONFIG_SCHED_CORE
+core_sched = build w/ CONFIG_SCHED_CORE
+HT_disable = offlined sibling HT with baseline
 
-> 
-> > +	panic_suppress_printk = 1;
-> >  	local_irq_enable();
-> >  	for (i = 0; ; i += PANIC_TIMER_STEP) {
-> >  		touch_softlockup_watchdog();
-> > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> > index d3d1703..c27bbf5 100644
-> > --- a/kernel/printk/printk.c
-> > +++ b/kernel/printk/printk.c
-> > @@ -1987,6 +1987,9 @@ asmlinkage __visible int printk(const char *fmt, ...)
-> >  	va_list args;
-> >  	int r;
-> 
-> 	/* Suppress messages from panic blinking code. */
+Users  Baseline  %stdev  core_sched     %stdev HT_disable       %stdev
+16     997768    3.28    808193(-19%)   34 1053888(+5.6%)   2.9
+24     1157314   9.4     974555(-15.8%) 40.5 1197904(+3.5%)   4.6
+32     1693644   6.4     1237195(-27%)  42.8 1308180(-22.8%)  5.3
 
-Ditto.
- 
-> > +	if (unlikely(panic_suppress_printk))
-> > +		return 0;
-> 
-> This should go to vprintk_emit() so that it works for all
-> printk() interfaces.
-
-Ok, will do.
-
-Thanks,
-Feng
-> 
-> > +
-> >  	va_start(args, fmt);
-> >  	r = vprintk_func(fmt, args);
-> >  	va_end(args);
-> 
-> Best Regards,
-> Petr
+The regressions are substantial. Also noticed one of the DB instances was
+having much less throughput than the other with core scheduling which
+brought down the avg and also reflected in the very high %stdev. Disabling
+HT has effect at 32 users but still better than core scheduling both in
+terms of avg and %stdev. There are some issue with the DB setup for which
+I couldn't go beyond 32 users.
