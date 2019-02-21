@@ -4,51 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A55FC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:40:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E52AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:40:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A30A20838
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:40:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 569862080D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:40:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550760010;
-	bh=AX5hcKG1/CSVqzQMa4MqYzUR5XayS+xM6js6jGKwVzI=;
+	s=default; t=1550760019;
+	bh=hAYnsd+bOaYW16B6bChM5CkXoXAjKVIDuVTjeEtxhpc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=B85E5WY0TBG97bu6jSpOdqQ9h2zJpWhoyqakRHUaWSxHWsHjIUR4hsbdWOMOoAL26
-	 j/fvBEkAF45Pa9OlGpNofx1NMM7qmy7JtNsdfYOTo+9BgrmN3aXW275/99yc9GXHYo
-	 IuimppJfqdjo559MvLKcTBfcIhK4/VcapCoWyRkg=
+	b=UFDireKg2cz0g7NCVSV4Rri0MV5rH/khlCfLqv0LIHjiHeAYdQVZyvcqZq9jS4lNR
+	 TM5GflQHYXb2Hh5K1C4omGzmXcheE13lvp8+A5SmP8uZTZTiCSIYIOZPAINIBE2qu2
+	 2jkw3Pu2UcT7sUpNy4sQz7eBoTDA1MV+4TXcRKsg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728599AbfBUOkI (ORCPT
+        id S1729087AbfBUOkS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:40:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34302 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:40:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729036AbfBUOkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:40:02 -0500
+        id S1729062AbfBUOkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:40:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC4E82080D;
-        Thu, 21 Feb 2019 14:40:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A857C2080D;
+        Thu, 21 Feb 2019 14:40:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550760001;
-        bh=AX5hcKG1/CSVqzQMa4MqYzUR5XayS+xM6js6jGKwVzI=;
+        s=default; t=1550760008;
+        bh=hAYnsd+bOaYW16B6bChM5CkXoXAjKVIDuVTjeEtxhpc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1wjhBwJzmU6HbEu00pfiFCrquFWnRarOP4ue5WX2L9twM82R7dTgKUlxDy208/2Eq
-         bzuLqZQuyQaVUHAyg7snSpNgljt/TZfo7ulSYNuVK8qDLFmHShvGBTQ+qIkXd7O0Zu
-         fAD/cyyieyk9PecihXv/1f4aZy/2XnMJKNEQRwgg=
+        b=JCKsROtwVaKi9qr4vFl/nw74jvtJ7d/ldPrTelLd4LllO2ct7MOz07Qf+9C3pa4TK
+         /EqNkmjg5rPzuuGaqWcrCT7ltk6gkh5Iz7eZTZOl4bUhgxF+9kyL3c8uON/rweROmJ
+         RKYcvtW52pjQKOUOYxwr7aBMCnWZfJxZbgpifp/0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        soukjin bae <soukjin.bae@samsung.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 19/23] tcp: clear icsk_backoff in tcp_write_queue_purge()
-Date:   Thu, 21 Feb 2019 15:36:01 +0100
-Message-Id: <20190221125247.723731494@linuxfoundation.org>
+        stable@vger.kernel.org, Scott Mayhew <smayhew@redhat.com>,
+        "J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 4.14 20/23] sunrpc: fix 4 more call sites that were using stack memory with a scatterlist
+Date:   Thu, 21 Feb 2019 15:36:02 +0100
+Message-Id: <20190221125247.786889978@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125246.162644302@linuxfoundation.org>
 References: <20190221125246.162644302@linuxfoundation.org>
@@ -67,52 +64,167 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Scott Mayhew <smayhew@redhat.com>
 
-[ Upstream commit 04c03114be82194d4a4858d41dba8e286ad1787c ]
+commit e7afe6c1d486b516ed586dcc10b3e7e3e85a9c2b upstream.
 
-soukjin bae reported a crash in tcp_v4_err() handling
-ICMP_DEST_UNREACH after tcp_write_queue_head(sk)
-returned a NULL pointer.
+While trying to reproduce a reported kernel panic on arm64, I discovered
+that AUTH_GSS basically doesn't work at all with older enctypes on arm64
+systems with CONFIG_VMAP_STACK enabled.  It turns out there still a few
+places using stack memory with scatterlists, causing krb5_encrypt() and
+krb5_decrypt() to produce incorrect results (or a BUG if CONFIG_DEBUG_SG
+is enabled).
 
-Current logic should have prevented this :
+Tested with cthon on v4.0/v4.1/v4.2 with krb5/krb5i/krb5p using
+des3-cbc-sha1 and arcfour-hmac-md5.
 
-  if (seq != tp->snd_una  || !icsk->icsk_retransmits ||
-      !icsk->icsk_backoff || fastopen)
-      break;
-
-Problem is the write queue might have been purged
-and icsk_backoff has not been cleared.
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: soukjin bae <soukjin.bae@samsung.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Scott Mayhew <smayhew@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/net/tcp.h |    1 +
- net/ipv4/tcp.c    |    1 -
- 2 files changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -1622,6 +1622,7 @@ static inline void tcp_write_queue_purge
- 	tcp_clear_all_retrans_hints(tcp_sk(sk));
- 	tcp_init_send_head(sk);
- 	tcp_sk(sk)->packets_out = 0;
-+	inet_csk(sk)->icsk_backoff = 0;
+---
+ net/sunrpc/auth_gss/gss_krb5_seqnum.c |   49 ++++++++++++++++++++++++++--------
+ 1 file changed, 38 insertions(+), 11 deletions(-)
+
+--- a/net/sunrpc/auth_gss/gss_krb5_seqnum.c
++++ b/net/sunrpc/auth_gss/gss_krb5_seqnum.c
+@@ -44,7 +44,7 @@ krb5_make_rc4_seq_num(struct krb5_ctx *k
+ 		      unsigned char *cksum, unsigned char *buf)
+ {
+ 	struct crypto_skcipher *cipher;
+-	unsigned char plain[8];
++	unsigned char *plain;
+ 	s32 code;
+ 
+ 	dprintk("RPC:       %s:\n", __func__);
+@@ -53,6 +53,10 @@ krb5_make_rc4_seq_num(struct krb5_ctx *k
+ 	if (IS_ERR(cipher))
+ 		return PTR_ERR(cipher);
+ 
++	plain = kmalloc(8, GFP_NOFS);
++	if (!plain)
++		return -ENOMEM;
++
+ 	plain[0] = (unsigned char) ((seqnum >> 24) & 0xff);
+ 	plain[1] = (unsigned char) ((seqnum >> 16) & 0xff);
+ 	plain[2] = (unsigned char) ((seqnum >> 8) & 0xff);
+@@ -69,6 +73,7 @@ krb5_make_rc4_seq_num(struct krb5_ctx *k
+ 	code = krb5_encrypt(cipher, cksum, plain, buf, 8);
+ out:
+ 	crypto_free_skcipher(cipher);
++	kfree(plain);
+ 	return code;
+ }
+ s32
+@@ -78,12 +83,17 @@ krb5_make_seq_num(struct krb5_ctx *kctx,
+ 		u32 seqnum,
+ 		unsigned char *cksum, unsigned char *buf)
+ {
+-	unsigned char plain[8];
++	unsigned char *plain;
++	s32 code;
+ 
+ 	if (kctx->enctype == ENCTYPE_ARCFOUR_HMAC)
+ 		return krb5_make_rc4_seq_num(kctx, direction, seqnum,
+ 					     cksum, buf);
+ 
++	plain = kmalloc(8, GFP_NOFS);
++	if (!plain)
++		return -ENOMEM;
++
+ 	plain[0] = (unsigned char) (seqnum & 0xff);
+ 	plain[1] = (unsigned char) ((seqnum >> 8) & 0xff);
+ 	plain[2] = (unsigned char) ((seqnum >> 16) & 0xff);
+@@ -94,7 +104,9 @@ krb5_make_seq_num(struct krb5_ctx *kctx,
+ 	plain[6] = direction;
+ 	plain[7] = direction;
+ 
+-	return krb5_encrypt(key, cksum, plain, buf, 8);
++	code = krb5_encrypt(key, cksum, plain, buf, 8);
++	kfree(plain);
++	return code;
  }
  
- static inline struct sk_buff *tcp_write_queue_head(const struct sock *sk)
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -2347,7 +2347,6 @@ int tcp_disconnect(struct sock *sk, int
- 	tp->write_seq += tp->max_window + 2;
- 	if (tp->write_seq == 0)
- 		tp->write_seq = 1;
--	icsk->icsk_backoff = 0;
- 	tp->snd_cwnd = 2;
- 	icsk->icsk_probes_out = 0;
- 	tp->snd_ssthresh = TCP_INFINITE_SSTHRESH;
+ static s32
+@@ -102,7 +114,7 @@ krb5_get_rc4_seq_num(struct krb5_ctx *kc
+ 		     unsigned char *buf, int *direction, s32 *seqnum)
+ {
+ 	struct crypto_skcipher *cipher;
+-	unsigned char plain[8];
++	unsigned char *plain;
+ 	s32 code;
+ 
+ 	dprintk("RPC:       %s:\n", __func__);
+@@ -115,20 +127,28 @@ krb5_get_rc4_seq_num(struct krb5_ctx *kc
+ 	if (code)
+ 		goto out;
+ 
++	plain = kmalloc(8, GFP_NOFS);
++	if (!plain) {
++		code = -ENOMEM;
++		goto out;
++	}
++
+ 	code = krb5_decrypt(cipher, cksum, buf, plain, 8);
+ 	if (code)
+-		goto out;
++		goto out_plain;
+ 
+ 	if ((plain[4] != plain[5]) || (plain[4] != plain[6])
+ 				   || (plain[4] != plain[7])) {
+ 		code = (s32)KG_BAD_SEQ;
+-		goto out;
++		goto out_plain;
+ 	}
+ 
+ 	*direction = plain[4];
+ 
+ 	*seqnum = ((plain[0] << 24) | (plain[1] << 16) |
+ 					(plain[2] << 8) | (plain[3]));
++out_plain:
++	kfree(plain);
+ out:
+ 	crypto_free_skcipher(cipher);
+ 	return code;
+@@ -141,26 +161,33 @@ krb5_get_seq_num(struct krb5_ctx *kctx,
+ 	       int *direction, u32 *seqnum)
+ {
+ 	s32 code;
+-	unsigned char plain[8];
+ 	struct crypto_skcipher *key = kctx->seq;
++	unsigned char *plain;
+ 
+ 	dprintk("RPC:       krb5_get_seq_num:\n");
+ 
+ 	if (kctx->enctype == ENCTYPE_ARCFOUR_HMAC)
+ 		return krb5_get_rc4_seq_num(kctx, cksum, buf,
+ 					    direction, seqnum);
++	plain = kmalloc(8, GFP_NOFS);
++	if (!plain)
++		return -ENOMEM;
+ 
+ 	if ((code = krb5_decrypt(key, cksum, buf, plain, 8)))
+-		return code;
++		goto out;
+ 
+ 	if ((plain[4] != plain[5]) || (plain[4] != plain[6]) ||
+-	    (plain[4] != plain[7]))
+-		return (s32)KG_BAD_SEQ;
++	    (plain[4] != plain[7])) {
++		code = (s32)KG_BAD_SEQ;
++		goto out;
++	}
+ 
+ 	*direction = plain[4];
+ 
+ 	*seqnum = ((plain[0]) |
+ 		   (plain[1] << 8) | (plain[2] << 16) | (plain[3] << 24));
+ 
+-	return 0;
++out:
++	kfree(plain);
++	return code;
+ }
 
 
