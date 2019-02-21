@@ -4,43 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD29C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:19:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22B50C00319
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:19:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC46920836
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:19:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E471320836
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:19:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="mqxs8ojz"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="P2cnKNby"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728097AbfBUKTT (ORCPT
+        id S1728121AbfBUKTX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 05:19:19 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:11629 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728036AbfBUKTQ (ORCPT
+        Thu, 21 Feb 2019 05:19:23 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:12373 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726151AbfBUKTU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 05:19:16 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c6e7b200000>; Thu, 21 Feb 2019 02:19:12 -0800
+        Thu, 21 Feb 2019 05:19:20 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c6e7b2f0001>; Thu, 21 Feb 2019 02:19:27 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 21 Feb 2019 02:19:14 -0800
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 21 Feb 2019 02:19:19 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 21 Feb 2019 02:19:14 -0800
-Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 21 Feb
- 2019 10:19:14 +0000
-Received: from HQMAIL106.nvidia.com (172.18.146.12) by hqmail110.nvidia.com
- (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 21 Feb
- 2019 10:19:13 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Thu, 21 Feb 2019 10:19:13 +0000
+        by hqpgpgate101.nvidia.com on Thu, 21 Feb 2019 02:19:19 -0800
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 21 Feb
+ 2019 10:19:18 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Thu, 21 Feb 2019 10:19:18 +0000
 Received: from niwei-ubuntu.nvidia.com (Not Verified[10.19.225.182]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c6e7b1f0010>; Thu, 21 Feb 2019 02:19:13 -0800
+        id <B5c6e7b240001>; Thu, 21 Feb 2019 02:19:18 -0800
 From:   Wei Ni <wni@nvidia.com>
 To:     <daniel.lezcano@linaro.org>, <edubezval@gmail.com>,
         <robh@kernel.org>
@@ -48,9 +45,9 @@ CC:     <thierry.reding@gmail.com>, <linux-tegra@vger.kernel.org>,
         <rui.zhang@intel.com>, <srikars@nvidia.com>,
         <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
         <devicetree@vger.kernel.org>, Wei Ni <wni@nvidia.com>
-Subject: [PATCH v2 08/12] thermal: tegra: add set_trips functionality
-Date:   Thu, 21 Feb 2019 18:18:43 +0800
-Message-ID: <1550744327-4677-9-git-send-email-wni@nvidia.com>
+Subject: [PATCH v2 10/12] arm64: dts: tegra210: set EDP interrupt line
+Date:   Thu, 21 Feb 2019 18:18:45 +0800
+Message-ID: <1550744327-4677-11-git-send-email-wni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1550744327-4677-1-git-send-email-wni@nvidia.com>
 References: <1550744327-4677-1-git-send-email-wni@nvidia.com>
@@ -58,302 +55,42 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1550744352; bh=WKXdCLMLkmtD40Ez/LM8veKMz/8bX5+rpgKuemlDULY=;
+        t=1550744367; bh=I7afLGSpQb3mqB8C0marJMfeWiqjYpL+/2LybdI+aUY=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=mqxs8ojzYLDLA2yjw5Uhh2daFOLyghioliRsxWwTdILzi6WWU9Vdngr2QXd3jos+D
-         c8GEah96F1cTMXDd4Rgccv03x7R9pB6WVUHhLDrM5ebQnJ9E/CX4NmfEC7i+etXoOE
-         EEDrgpHS9YxjPwszM6cpfhdZ/oeuhX4AdMtzq2RKWDz5npQVr59jl/rJ75z5muDNGs
-         ICsOud8UXx/GD4eoBl8ta6ibBB5eAhSVsJko3Y80VMIi/TB1dbvXlmBOiCowYxdd93
-         rAL9O8of+1WXXbv2TH55iJTban1JTDa5v3DnQomRRKTiTGikG+/Xi/nFTVz+uw2YgM
-         Lbx8w1mAcoAzg==
+        b=P2cnKNby3qk0nwfeIJFInKRmfsoCZrV2VxpWb3bd+jMW1dcg3CJugg7tCxOUihgV1
+         xtvUpM3JjLxBY8H69Zgtu6JQkpHFKrEROwGrjNbC1TFMj+kD99cuiexW7LPpycgx1J
+         BBZXMzMekuK2fFjD6tj0Zx/5tvhL5DraRTiiQqoQg2o956NpSmjBwue87kyERXzeco
+         ig8E5hl0MVh2oOz90WS/N33z+WZygQ22JEqjZX0erox7FPwffef6xsxz7GLA/mDRCi
+         a6LBgEkjszECczb/xb5lxl/VtFZONJ0P/WKVvJv6cA5J1CulxNHl1c/TqqBsBjVjAy
+         xJopZ/EgJtKtg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement set_trips ops to set passive trip points.
+Set EDP interrupt line.
 
 Signed-off-by: Wei Ni <wni@nvidia.com>
 ---
- drivers/thermal/tegra/soctherm.c          | 64 ++++++++++++++++++++++++++++++-
- drivers/thermal/tegra/soctherm.h          | 10 +++++
- drivers/thermal/tegra/tegra124-soctherm.c |  7 +++-
- drivers/thermal/tegra/tegra132-soctherm.c |  7 +++-
- drivers/thermal/tegra/tegra210-soctherm.c |  7 +++-
- 5 files changed, 90 insertions(+), 5 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 16275de2d67b..69a0d553ec9e 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -87,8 +87,6 @@
- #define THERMCTL_LVL0_DN_STATS			0x14
- 
- #define THERMCTL_INTR_STATUS			0x84
--#define THERMCTL_INTR_ENABLE			0x88
--#define THERMCTL_INTR_DISABLE			0x8c
- 
- #define TH_INTR_MD0_MASK			BIT(25)
- #define TH_INTR_MU0_MASK			BIT(24)
-@@ -265,6 +263,8 @@ struct tegra_soctherm {
- 	struct soctherm_throt_cfg throt_cfgs[THROTTLE_SIZE];
- 
- 	struct dentry *debugfs_dir;
-+
-+	struct mutex thermctl_lock;
- };
- 
- /**
-@@ -542,9 +542,59 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
- 	return 0;
- }
- 
-+static void thermal_irq_enable(struct tegra_thermctl_zone *zn)
-+{
-+	u32 r;
-+
-+	/* multiple zones could be handling and setting trips at once */
-+	mutex_lock(&zn->ts->thermctl_lock);
-+	r = readl(zn->ts->regs + THERMCTL_INTR_ENABLE);
-+	r = REG_SET_MASK(r, zn->sg->thermctl_isr_mask, TH_INTR_UP_DN_EN);
-+	writel(r, zn->ts->regs + THERMCTL_INTR_ENABLE);
-+	mutex_unlock(&zn->ts->thermctl_lock);
-+}
-+
-+static void thermal_irq_disable(struct tegra_thermctl_zone *zn)
-+{
-+	u32 r;
-+
-+	/* multiple zones could be handling and setting trips at once */
-+	mutex_lock(&zn->ts->thermctl_lock);
-+	r = readl(zn->ts->regs + THERMCTL_INTR_DISABLE);
-+	r = REG_SET_MASK(r, zn->sg->thermctl_isr_mask, 0);
-+	writel(r, zn->ts->regs + THERMCTL_INTR_DISABLE);
-+	mutex_unlock(&zn->ts->thermctl_lock);
-+}
-+
-+static int tegra_thermctl_set_trips(void *data, int lo, int hi)
-+{
-+	struct tegra_thermctl_zone *zone = data;
-+	u32 r;
-+
-+	thermal_irq_disable(zone);
-+
-+	r = readl(zone->ts->regs + zone->sg->thermctl_lvl0_offset);
-+	r = REG_SET_MASK(r, THERMCTL_LVL0_CPU0_EN_MASK, 0);
-+	writel(r, zone->ts->regs + zone->sg->thermctl_lvl0_offset);
-+
-+	lo = enforce_temp_range(zone->dev, lo) / zone->ts->soc->thresh_grain;
-+	hi = enforce_temp_range(zone->dev, hi) / zone->ts->soc->thresh_grain;
-+	dev_dbg(zone->dev, "%s hi:%d, lo:%d\n", __func__, hi, lo);
-+
-+	r = REG_SET_MASK(r, zone->sg->thermctl_lvl0_up_thresh_mask, hi);
-+	r = REG_SET_MASK(r, zone->sg->thermctl_lvl0_dn_thresh_mask, lo);
-+	r = REG_SET_MASK(r, THERMCTL_LVL0_CPU0_EN_MASK, 1);
-+	writel(r, zone->ts->regs + zone->sg->thermctl_lvl0_offset);
-+
-+	thermal_irq_enable(zone);
-+
-+	return 0;
-+}
-+
- static const struct thermal_zone_of_device_ops tegra_of_thermal_ops = {
- 	.get_temp = tegra_thermctl_get_temp,
- 	.set_trip_temp = tegra_thermctl_set_trip_temp,
-+	.set_trips = tegra_thermctl_set_trips,
- };
- 
- static int get_hot_temp(struct thermal_zone_device *tz, int *trip, int *temp)
-@@ -661,6 +711,15 @@ static irqreturn_t soctherm_thermal_isr(int irq, void *dev_id)
- 	struct tegra_soctherm *ts = dev_id;
- 	u32 r;
- 
-+	/* Case for no lock:
-+	 * Although interrupts are enabled in set_trips, there is still no need
-+	 * to lock here because the interrupts are disabled before programming
-+	 * new trip points. Hence there cant be a interrupt on the same sensor.
-+	 * An interrupt can however occur on a sensor while trips are being
-+	 * programmed on a different one. This beign a LEVEL interrupt won't
-+	 * cause a new interrupt but this is taken care of by the re-reading of
-+	 * the STATUS register in the thread function.
-+	 */
- 	r = readl(ts->regs + THERMCTL_INTR_STATUS);
- 	writel(r, ts->regs + THERMCTL_INTR_DISABLE);
- 
-@@ -1513,6 +1572,7 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
- 	if (!tegra)
- 		return -ENOMEM;
- 
-+	mutex_init(&tegra->thermctl_lock);
- 	dev_set_drvdata(&pdev->dev, tegra);
- 
- 	tegra->soc = soc;
-diff --git a/drivers/thermal/tegra/soctherm.h b/drivers/thermal/tegra/soctherm.h
-index c05c7e37e968..70501e73d586 100644
---- a/drivers/thermal/tegra/soctherm.h
-+++ b/drivers/thermal/tegra/soctherm.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (c) 2014-2016, NVIDIA CORPORATION.  All rights reserved.
-  *
-@@ -29,6 +30,14 @@
- #define THERMCTL_THERMTRIP_CTL			0x80
- /* BITs are defined in device file */
- 
-+#define THERMCTL_INTR_ENABLE			0x88
-+#define THERMCTL_INTR_DISABLE			0x8c
-+#define TH_INTR_UP_DN_EN			0x3
-+#define THERM_IRQ_MEM_MASK			(TH_INTR_UP_DN_EN << 24)
-+#define THERM_IRQ_GPU_MASK			(TH_INTR_UP_DN_EN << 16)
-+#define THERM_IRQ_CPU_MASK			(TH_INTR_UP_DN_EN << 8)
-+#define THERM_IRQ_TSENSE_MASK			(TH_INTR_UP_DN_EN << 0)
-+
- #define SENSOR_PDIV				0x1c0
- #define SENSOR_PDIV_CPU_MASK			(0xf << 12)
- #define SENSOR_PDIV_GPU_MASK			(0xf << 8)
-@@ -70,6 +79,7 @@ struct tegra_tsensor_group {
- 	u32 thermtrip_enable_mask;
- 	u32 thermtrip_any_en_mask;
- 	u32 thermtrip_threshold_mask;
-+	u32 thermctl_isr_mask;
- 	u16 thermctl_lvl0_offset;
- 	u32 thermctl_lvl0_up_thresh_mask;
- 	u32 thermctl_lvl0_dn_thresh_mask;
-diff --git a/drivers/thermal/tegra/tegra124-soctherm.c b/drivers/thermal/tegra/tegra124-soctherm.c
-index 36768630f78c..20ad27f4d1a1 100644
---- a/drivers/thermal/tegra/tegra124-soctherm.c
-+++ b/drivers/thermal/tegra/tegra124-soctherm.c
-@@ -1,5 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-- * Copyright (c) 2014-2016, NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (c) 2014-2018, NVIDIA CORPORATION.  All rights reserved.
-  *
-  * This software is licensed under the terms of the GNU General Public
-  * License version 2, as published by the Free Software Foundation, and
-@@ -55,6 +56,7 @@ static const struct tegra_tsensor_group tegra124_tsensor_group_cpu = {
- 	.thermtrip_any_en_mask = TEGRA124_THERMTRIP_ANY_EN_MASK,
- 	.thermtrip_enable_mask = TEGRA124_THERMTRIP_CPU_EN_MASK,
- 	.thermtrip_threshold_mask = TEGRA124_THERMTRIP_CPU_THRESH_MASK,
-+	.thermctl_isr_mask = THERM_IRQ_CPU_MASK,
- 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_CPU,
- 	.thermctl_lvl0_up_thresh_mask = TEGRA124_THERMCTL_LVL0_UP_THRESH_MASK,
- 	.thermctl_lvl0_dn_thresh_mask = TEGRA124_THERMCTL_LVL0_DN_THRESH_MASK,
-@@ -73,6 +75,7 @@ static const struct tegra_tsensor_group tegra124_tsensor_group_gpu = {
- 	.thermtrip_any_en_mask = TEGRA124_THERMTRIP_ANY_EN_MASK,
- 	.thermtrip_enable_mask = TEGRA124_THERMTRIP_GPU_EN_MASK,
- 	.thermtrip_threshold_mask = TEGRA124_THERMTRIP_GPUMEM_THRESH_MASK,
-+	.thermctl_isr_mask = THERM_IRQ_GPU_MASK,
- 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_GPU,
- 	.thermctl_lvl0_up_thresh_mask = TEGRA124_THERMCTL_LVL0_UP_THRESH_MASK,
- 	.thermctl_lvl0_dn_thresh_mask = TEGRA124_THERMCTL_LVL0_DN_THRESH_MASK,
-@@ -89,6 +92,7 @@ static const struct tegra_tsensor_group tegra124_tsensor_group_pll = {
- 	.thermtrip_any_en_mask = TEGRA124_THERMTRIP_ANY_EN_MASK,
- 	.thermtrip_enable_mask = TEGRA124_THERMTRIP_TSENSE_EN_MASK,
- 	.thermtrip_threshold_mask = TEGRA124_THERMTRIP_TSENSE_THRESH_MASK,
-+	.thermctl_isr_mask = THERM_IRQ_TSENSE_MASK,
- 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_TSENSE,
- 	.thermctl_lvl0_up_thresh_mask = TEGRA124_THERMCTL_LVL0_UP_THRESH_MASK,
- 	.thermctl_lvl0_dn_thresh_mask = TEGRA124_THERMCTL_LVL0_DN_THRESH_MASK,
-@@ -107,6 +111,7 @@ static const struct tegra_tsensor_group tegra124_tsensor_group_mem = {
- 	.thermtrip_any_en_mask = TEGRA124_THERMTRIP_ANY_EN_MASK,
- 	.thermtrip_enable_mask = TEGRA124_THERMTRIP_MEM_EN_MASK,
- 	.thermtrip_threshold_mask = TEGRA124_THERMTRIP_GPUMEM_THRESH_MASK,
-+	.thermctl_isr_mask = THERM_IRQ_MEM_MASK,
- 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_MEM,
- 	.thermctl_lvl0_up_thresh_mask = TEGRA124_THERMCTL_LVL0_UP_THRESH_MASK,
- 	.thermctl_lvl0_dn_thresh_mask = TEGRA124_THERMCTL_LVL0_DN_THRESH_MASK,
-diff --git a/drivers/thermal/tegra/tegra132-soctherm.c b/drivers/thermal/tegra/tegra132-soctherm.c
-index 97fa30501eb1..b76308fdad9e 100644
---- a/drivers/thermal/tegra/tegra132-soctherm.c
-+++ b/drivers/thermal/tegra/tegra132-soctherm.c
-@@ -1,5 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-- * Copyright (c) 2014-2016, NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (c) 2014-2018, NVIDIA CORPORATION.  All rights reserved.
-  *
-  * This software is licensed under the terms of the GNU General Public
-  * License version 2, as published by the Free Software Foundation, and
-@@ -55,6 +56,7 @@ static const struct tegra_tsensor_group tegra132_tsensor_group_cpu = {
- 	.thermtrip_any_en_mask = TEGRA132_THERMTRIP_ANY_EN_MASK,
- 	.thermtrip_enable_mask = TEGRA132_THERMTRIP_CPU_EN_MASK,
- 	.thermtrip_threshold_mask = TEGRA132_THERMTRIP_CPU_THRESH_MASK,
-+	.thermctl_isr_mask = THERM_IRQ_CPU_MASK,
- 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_CPU,
- 	.thermctl_lvl0_up_thresh_mask = TEGRA132_THERMCTL_LVL0_UP_THRESH_MASK,
- 	.thermctl_lvl0_dn_thresh_mask = TEGRA132_THERMCTL_LVL0_DN_THRESH_MASK,
-@@ -73,6 +75,7 @@ static const struct tegra_tsensor_group tegra132_tsensor_group_gpu = {
- 	.thermtrip_any_en_mask = TEGRA132_THERMTRIP_ANY_EN_MASK,
- 	.thermtrip_enable_mask = TEGRA132_THERMTRIP_GPU_EN_MASK,
- 	.thermtrip_threshold_mask = TEGRA132_THERMTRIP_GPUMEM_THRESH_MASK,
-+	.thermctl_isr_mask = THERM_IRQ_GPU_MASK,
- 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_GPU,
- 	.thermctl_lvl0_up_thresh_mask = TEGRA132_THERMCTL_LVL0_UP_THRESH_MASK,
- 	.thermctl_lvl0_dn_thresh_mask = TEGRA132_THERMCTL_LVL0_DN_THRESH_MASK,
-@@ -89,6 +92,7 @@ static const struct tegra_tsensor_group tegra132_tsensor_group_pll = {
- 	.thermtrip_any_en_mask = TEGRA132_THERMTRIP_ANY_EN_MASK,
- 	.thermtrip_enable_mask = TEGRA132_THERMTRIP_TSENSE_EN_MASK,
- 	.thermtrip_threshold_mask = TEGRA132_THERMTRIP_TSENSE_THRESH_MASK,
-+	.thermctl_isr_mask = THERM_IRQ_TSENSE_MASK,
- 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_TSENSE,
- 	.thermctl_lvl0_up_thresh_mask = TEGRA132_THERMCTL_LVL0_UP_THRESH_MASK,
- 	.thermctl_lvl0_dn_thresh_mask = TEGRA132_THERMCTL_LVL0_DN_THRESH_MASK,
-@@ -107,6 +111,7 @@ static const struct tegra_tsensor_group tegra132_tsensor_group_mem = {
- 	.thermtrip_any_en_mask = TEGRA132_THERMTRIP_ANY_EN_MASK,
- 	.thermtrip_enable_mask = TEGRA132_THERMTRIP_MEM_EN_MASK,
- 	.thermtrip_threshold_mask = TEGRA132_THERMTRIP_GPUMEM_THRESH_MASK,
-+	.thermctl_isr_mask = THERM_IRQ_MEM_MASK,
- 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_MEM,
- 	.thermctl_lvl0_up_thresh_mask = TEGRA132_THERMCTL_LVL0_UP_THRESH_MASK,
- 	.thermctl_lvl0_dn_thresh_mask = TEGRA132_THERMCTL_LVL0_DN_THRESH_MASK,
-diff --git a/drivers/thermal/tegra/tegra210-soctherm.c b/drivers/thermal/tegra/tegra210-soctherm.c
-index 0a0c3cec7134..d31b50050faa 100644
---- a/drivers/thermal/tegra/tegra210-soctherm.c
-+++ b/drivers/thermal/tegra/tegra210-soctherm.c
-@@ -1,5 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-- * Copyright (c) 2014-2016, NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (c) 2014-2018, NVIDIA CORPORATION.  All rights reserved.
-  *
-  * This software is licensed under the terms of the GNU General Public
-  * License version 2, as published by the Free Software Foundation, and
-@@ -56,6 +57,7 @@ static const struct tegra_tsensor_group tegra210_tsensor_group_cpu = {
- 	.thermtrip_any_en_mask = TEGRA210_THERMTRIP_ANY_EN_MASK,
- 	.thermtrip_enable_mask = TEGRA210_THERMTRIP_CPU_EN_MASK,
- 	.thermtrip_threshold_mask = TEGRA210_THERMTRIP_CPU_THRESH_MASK,
-+	.thermctl_isr_mask = THERM_IRQ_CPU_MASK,
- 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_CPU,
- 	.thermctl_lvl0_up_thresh_mask = TEGRA210_THERMCTL_LVL0_UP_THRESH_MASK,
- 	.thermctl_lvl0_dn_thresh_mask = TEGRA210_THERMCTL_LVL0_DN_THRESH_MASK,
-@@ -74,6 +76,7 @@ static const struct tegra_tsensor_group tegra210_tsensor_group_gpu = {
- 	.thermtrip_any_en_mask = TEGRA210_THERMTRIP_ANY_EN_MASK,
- 	.thermtrip_enable_mask = TEGRA210_THERMTRIP_GPU_EN_MASK,
- 	.thermtrip_threshold_mask = TEGRA210_THERMTRIP_GPUMEM_THRESH_MASK,
-+	.thermctl_isr_mask = THERM_IRQ_GPU_MASK,
- 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_GPU,
- 	.thermctl_lvl0_up_thresh_mask = TEGRA210_THERMCTL_LVL0_UP_THRESH_MASK,
- 	.thermctl_lvl0_dn_thresh_mask = TEGRA210_THERMCTL_LVL0_DN_THRESH_MASK,
-@@ -90,6 +93,7 @@ static const struct tegra_tsensor_group tegra210_tsensor_group_pll = {
- 	.thermtrip_any_en_mask = TEGRA210_THERMTRIP_ANY_EN_MASK,
- 	.thermtrip_enable_mask = TEGRA210_THERMTRIP_TSENSE_EN_MASK,
- 	.thermtrip_threshold_mask = TEGRA210_THERMTRIP_TSENSE_THRESH_MASK,
-+	.thermctl_isr_mask = THERM_IRQ_TSENSE_MASK,
- 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_TSENSE,
- 	.thermctl_lvl0_up_thresh_mask = TEGRA210_THERMCTL_LVL0_UP_THRESH_MASK,
- 	.thermctl_lvl0_dn_thresh_mask = TEGRA210_THERMCTL_LVL0_DN_THRESH_MASK,
-@@ -108,6 +112,7 @@ static const struct tegra_tsensor_group tegra210_tsensor_group_mem = {
- 	.thermtrip_any_en_mask = TEGRA210_THERMTRIP_ANY_EN_MASK,
- 	.thermtrip_enable_mask = TEGRA210_THERMTRIP_MEM_EN_MASK,
- 	.thermtrip_threshold_mask = TEGRA210_THERMTRIP_GPUMEM_THRESH_MASK,
-+	.thermctl_isr_mask = THERM_IRQ_MEM_MASK,
- 	.thermctl_lvl0_offset = THERMCTL_LEVEL0_GROUP_MEM,
- 	.thermctl_lvl0_up_thresh_mask = TEGRA210_THERMCTL_LVL0_UP_THRESH_MASK,
- 	.thermctl_lvl0_dn_thresh_mask = TEGRA210_THERMCTL_LVL0_DN_THRESH_MASK,
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 551600513c1a..19966b9f5ce7 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -1402,7 +1402,8 @@
+ 		reg = <0x0 0x700e2000 0x0 0x600 /* SOC_THERM reg_base */
+ 			0x0 0x60006000 0x0 0x400>; /* CAR reg_base */
+ 		reg-names = "soctherm-reg", "car-reg";
+-		interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&tegra_car TEGRA210_CLK_TSENSOR>,
+ 			<&tegra_car TEGRA210_CLK_SOC_THERM>;
+ 		clock-names = "tsensor", "soctherm";
 -- 
 2.7.4
 
