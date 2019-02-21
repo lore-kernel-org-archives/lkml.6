@@ -2,158 +2,225 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C760C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3283DC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:42:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F02C320838
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:42:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F14632075A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:42:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550760139;
-	bh=OcPcXLhVcCVPmaBhU47AZzOt3iGyDk8Wj+yE+sa5npI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aw7AMYCmIsupAFPXAu5g4jS7ncNztInYson6Y4GqEbH1gmHpu++d2uAe6RIUAx4Cp
-	 r+Bqon7eKVOHPKBTmlG8v5CQCc43CGRqzTRSH44LwN9jxAXngQedyq+10m+ZDS8e7O
-	 zab3Nqm7W8vNerAdySKf6bZybWODkxBprHpnpy6g=
+	s=default; t=1550760144;
+	bh=1jGVi5LbFVFy/4rZD5wRKN8mslwN50jTIenoIMAh4QM=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=IYXfUDwRfYXumyOrvpbW7ImX4Q5x9W5h0/rENvIQJZjhVonDI3ZNiY5JneNQQexXl
+	 twhS3kNw+h/u5/ufenk1FUulsjw5mQXv9UDL2bVQJy6vbhA+RIuNmsiE7Rz1xD+KnY
+	 KQMTOD08JE/TxkljWyWTCCBiPX0xC8L6syKaM/EM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728572AbfBUOmR (ORCPT
+        id S1729515AbfBUOmW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:42:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37664 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:42:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729035AbfBUOmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:42:14 -0500
+        id S1729035AbfBUOmU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:42:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEA052080D;
-        Thu, 21 Feb 2019 14:42:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA2EC2080D;
+        Thu, 21 Feb 2019 14:42:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550760133;
-        bh=OcPcXLhVcCVPmaBhU47AZzOt3iGyDk8Wj+yE+sa5npI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i8Cw0UaCxHnr0IgYN2GEJf6pI/SnT8d9XipXOoDTjTBfnb8ZoOeBrKo2jCcp2qqv6
-         8r1XlIJn+Jq90IY076bqPcnonAAGAJCL6I/h6DJeM0/m8V+obXjwJTGo1OC8ZbH2Vd
-         NF0XRrq49nvRiu37PgahA+CvKjZCqUTNAeJKWY6s=
+        s=default; t=1550760139;
+        bh=1jGVi5LbFVFy/4rZD5wRKN8mslwN50jTIenoIMAh4QM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Ugx9amipFizCN3F6RSGdIJuf4kJj3ex5szZP+vdtDscxWFDJrKV95eFF0CIELy7ds
+         8DluwERbWXxceRGisNFNnISaXcsrSjuwmBjtUunUlLHShRALnkwp0cBMDpIhSg4yoN
+         u4pBAN3eJzQDd9O8P891yxlqRImlXL0ZPlu2FTlU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 08/30] net: ipv4: use a dedicated counter for icmp_v4 redirect packets
-Date:   Thu, 21 Feb 2019 15:35:50 +0100
-Message-Id: <20190221125250.988412418@linuxfoundation.org>
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.19 00/30] 4.19.25-stable review
+Date:   Thu, 21 Feb 2019 15:35:42 +0100
+Message-Id: <20190221125250.543158526@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190221125250.543158526@linuxfoundation.org>
-References: <20190221125250.543158526@linuxfoundation.org>
+MIME-Version: 1.0
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.25-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.19.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.19.25-rc1
+X-KernelTest-Deadline: 2019-02-23T12:52+00:00
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+This is the start of the stable review cycle for the 4.19.25 release.
+There are 30 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-------------------
+Responses should be made by Sat Feb 23 12:52:29 UTC 2019.
+Anything received after that time might be too late.
 
-[ Upstream commit c09551c6ff7fe16a79a42133bcecba5fc2fc3291 ]
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.25-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+and the diffstat can be found below.
 
-According to the algorithm described in the comment block at the
-beginning of ip_rt_send_redirect, the host should try to send
-'ip_rt_redirect_number' ICMP redirect packets with an exponential
-backoff and then stop sending them at all assuming that the destination
-ignores redirects.
-If the device has previously sent some ICMP error packets that are
-rate-limited (e.g TTL expired) and continues to receive traffic,
-the redirect packets will never be transmitted. This happens since
-peer->rate_tokens will be typically greater than 'ip_rt_redirect_number'
-and so it will never be reset even if the redirect silence timeout
-(ip_rt_redirect_silence) has elapsed without receiving any packet
-requiring redirects.
+thanks,
 
-Fix it by using a dedicated counter for the number of ICMP redirect
-packets that has been sent by the host
+greg k-h
 
-I have not been able to identify a given commit that introduced the
-issue since ip_rt_send_redirect implements the same rate-limiting
-algorithm from commit 1da177e4c3f4 ("Linux-2.6.12-rc2")
+-------------
+Pseudo-Shortlog of commits:
 
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- include/net/inetpeer.h | 1 +
- net/ipv4/inetpeer.c    | 1 +
- net/ipv4/route.c       | 7 +++++--
- 3 files changed, 7 insertions(+), 2 deletions(-)
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.19.25-rc1
 
-diff --git a/include/net/inetpeer.h b/include/net/inetpeer.h
-index 00b5e7825508a..74ff688568a0c 100644
---- a/include/net/inetpeer.h
-+++ b/include/net/inetpeer.h
-@@ -39,6 +39,7 @@ struct inet_peer {
- 
- 	u32			metrics[RTAX_MAX];
- 	u32			rate_tokens;	/* rate limiting for ICMP */
-+	u32			n_redirects;
- 	unsigned long		rate_last;
- 	/*
- 	 * Once inet_peer is queued for deletion (refcnt == 0), following field
-diff --git a/net/ipv4/inetpeer.c b/net/ipv4/inetpeer.c
-index d757b9642d0d1..be778599bfedf 100644
---- a/net/ipv4/inetpeer.c
-+++ b/net/ipv4/inetpeer.c
-@@ -216,6 +216,7 @@ struct inet_peer *inet_getpeer(struct inet_peer_base *base,
- 			atomic_set(&p->rid, 0);
- 			p->metrics[RTAX_LOCK-1] = INETPEER_METRICS_NEW;
- 			p->rate_tokens = 0;
-+			p->n_redirects = 0;
- 			/* 60*HZ is arbitrary, but chosen enough high so that the first
- 			 * calculation of tokens is at its maximum.
- 			 */
-diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-index 8501554e96a4a..436b46c0e687f 100644
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -887,13 +887,15 @@ void ip_rt_send_redirect(struct sk_buff *skb)
- 	/* No redirected packets during ip_rt_redirect_silence;
- 	 * reset the algorithm.
- 	 */
--	if (time_after(jiffies, peer->rate_last + ip_rt_redirect_silence))
-+	if (time_after(jiffies, peer->rate_last + ip_rt_redirect_silence)) {
- 		peer->rate_tokens = 0;
-+		peer->n_redirects = 0;
-+	}
- 
- 	/* Too many ignored redirects; do not send anything
- 	 * set dst.rate_last to the last seen redirected packet.
- 	 */
--	if (peer->rate_tokens >= ip_rt_redirect_number) {
-+	if (peer->n_redirects >= ip_rt_redirect_number) {
- 		peer->rate_last = jiffies;
- 		goto out_put_peer;
- 	}
-@@ -910,6 +912,7 @@ void ip_rt_send_redirect(struct sk_buff *skb)
- 		icmp_send(skb, ICMP_REDIRECT, ICMP_REDIR_HOST, gw);
- 		peer->rate_last = jiffies;
- 		++peer->rate_tokens;
-+		++peer->n_redirects;
- #ifdef CONFIG_IP_ROUTE_VERBOSE
- 		if (log_martians &&
- 		    peer->rate_tokens == ip_rt_redirect_number)
--- 
-2.19.1
+Eric Dumazet <edumazet@google.com>
+    ax25: fix possible use-after-free
 
+Eric Dumazet <edumazet@google.com>
+    mISDN: fix a race in dev_expire_timer()
+
+Eric Dumazet <edumazet@google.com>
+    net/x25: do not hold the cpu too long in x25_new_lci()
+
+Jann Horn <jannh@google.com>
+    netfilter: nf_nat_snmp_basic: add missing length checks in ASN.1 cbs
+
+Scott Mayhew <smayhew@redhat.com>
+    sunrpc: fix 4 more call sites that were using stack memory with a scatterlist
+
+Logan Gunthorpe <logang@deltatee.com>
+    PCI: Fix __initdata issue with "pci=disable_acs_redir" parameter
+
+Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+    mmc: meson-gx: fix interrupt name
+
+Qian Cai <cai@lca.pw>
+    x86_64: increase stack size for KASAN_EXTRA
+
+Wei Yongjun <weiyongjun1@huawei.com>
+    scsi: target/core: Use kmem_cache_free() instead of kfree()
+
+Wei Yongjun <weiyongjun1@huawei.com>
+    hwmon: (lm80) Fix missing unlock on error in set_fan_div()
+
+Alexander Duyck <alexander.h.duyck@linux.intel.com>
+    net: Do not allocate page fragments that are not skb aligned
+
+Eric Dumazet <edumazet@google.com>
+    tcp: tcp_v4_err() should be more careful
+
+Eric Dumazet <edumazet@google.com>
+    tcp: clear icsk_backoff in tcp_write_queue_purge()
+
+David S. Miller <davem@davemloft.net>
+    net: Add header for usage of fls64()
+
+Eric Dumazet <edumazet@google.com>
+    vxlan: test dev->flags & IFF_UP before calling netif_rx()
+
+Paolo Abeni <pabeni@redhat.com>
+    vsock: cope with memory allocation failure at socket creation time
+
+Jason Wang <jasowang@redhat.com>
+    vhost: correctly check the return value of translate_desc() in log_used()
+
+Kai-Heng Feng <kai.heng.feng@canonical.com>
+    sky2: Increase D3 delay again
+
+Willem de Bruijn <willemb@google.com>
+    net: validate untrusted gso packets without csum offload
+
+Alexandre Torgue <alexandre.torgue@st.com>
+    net: stmmac: handle endianness in dwmac4_get_timestamp
+
+Jose Abreu <jose.abreu@synopsys.com>
+    net: stmmac: Fix a race in EEE enable callback
+
+Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+    net: phy: xgmiitorgmii: Support generic PHY status read
+
+Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+    net: ipv4: use a dedicated counter for icmp_v4 redirect packets
+
+Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+    net: ip6_gre: initialize erspan_ver just for erspan tunnels
+
+Zhiqiang Liu <liuzhiqiang26@huawei.com>
+    net: fix IPv6 prefix route residue
+
+Hauke Mehrtens <hauke.mehrtens@intel.com>
+    net: Fix for_each_netdev_feature on Big endian
+
+Mao Wenan <maowenan@huawei.com>
+    net: crypto set sk to NULL when af_alg_release.
+
+Petr Machata <petrm@mellanox.com>
+    mlxsw: __mlxsw_sp_port_headroom_set(): Fix a use of local variable
+
+John David Anglin <dave.anglin@bell.net>
+    dsa: mv88e6xxx: Ensure all pending interrupts are handled prior to exit
+
+Nicolas Dichtel <nicolas.dichtel@6wind.com>
+    af_packet: fix raw sockets over 6in4 tunnel
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |  4 +-
+ arch/x86/include/asm/page_64_types.h               |  4 ++
+ crypto/af_alg.c                                    |  4 +-
+ drivers/hwmon/lm80.c                               |  4 +-
+ drivers/isdn/mISDN/timerdev.c                      |  2 +-
+ drivers/mmc/host/meson-gx-mmc.c                    |  3 +-
+ drivers/net/dsa/mv88e6xxx/chip.c                   | 28 ++++++++++---
+ drivers/net/ethernet/marvell/sky2.c                |  2 +-
+ drivers/net/ethernet/mellanox/mlxsw/spectrum.c     | 12 +++---
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c |  9 ++--
+ .../net/ethernet/stmicro/stmmac/stmmac_ethtool.c   | 22 +++++-----
+ drivers/net/phy/xilinx_gmii2rgmii.c                |  5 ++-
+ drivers/net/vxlan.c                                | 14 +++++--
+ drivers/pci/pci.c                                  |  3 +-
+ drivers/target/target_core_transport.c             |  2 +-
+ drivers/vhost/vhost.c                              |  2 +-
+ include/linux/netdev_features.h                    | 24 ++++++++++-
+ include/linux/skbuff.h                             |  2 +-
+ include/linux/virtio_net.h                         |  9 ++++
+ include/net/ax25.h                                 | 12 ++++++
+ include/net/inetpeer.h                             |  1 +
+ net/ax25/ax25_ip.c                                 |  4 +-
+ net/ax25/ax25_route.c                              | 19 ++++-----
+ net/core/dev.c                                     |  4 +-
+ net/core/skbuff.c                                  |  4 ++
+ net/ipv4/inetpeer.c                                |  1 +
+ net/ipv4/netfilter/nf_nat_snmp_basic_main.c        |  7 +++-
+ net/ipv4/route.c                                   |  7 +++-
+ net/ipv4/tcp.c                                     |  2 +-
+ net/ipv4/tcp_ipv4.c                                |  7 ++--
+ net/ipv6/addrconf.c                                |  3 +-
+ net/ipv6/ip6_gre.c                                 | 34 ++++++++-------
+ net/packet/af_packet.c                             |  3 +-
+ net/sunrpc/auth_gss/gss_krb5_seqnum.c              | 49 +++++++++++++++++-----
+ net/vmw_vsock/vmci_transport.c                     |  4 ++
+ net/x25/af_x25.c                                   |  6 +--
+ 36 files changed, 228 insertions(+), 94 deletions(-)
 
 
