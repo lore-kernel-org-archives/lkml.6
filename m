@@ -2,172 +2,220 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95877C10F08
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:09:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3864C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:13:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F45221841
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:09:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 913502086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 06:13:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="u2aA8OJT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726355AbfBUGJQ (ORCPT
+        id S1726490AbfBUGNg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 01:09:16 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35752 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbfBUGJP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 01:09:15 -0500
-Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9B2CD3810;
-        Thu, 21 Feb 2019 06:09:13 +0000 (UTC)
-Date:   Wed, 20 Feb 2019 22:09:10 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Michal Hocko <mhocko@kernel.org>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Davidlohr Bueso <dave@stgolabs.net>, stable@vger.kernel.org
-Subject: Re: [PATCH] huegtlbfs: fix races and page leaks during migration
-Message-Id: <20190220220910.265bff9a7695540ee4121b80@linux-foundation.org>
-In-Reply-To: <20190212221400.3512-1-mike.kravetz@oracle.com>
-References: <803d2349-8911-0b47-bc5b-4f2c6cc3f928@oracle.com>
-        <20190212221400.3512-1-mike.kravetz@oracle.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 21 Feb 2019 01:13:36 -0500
+Received: from ozlabs.org ([203.11.71.1]:38829 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725385AbfBUGNf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 01:13:35 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 444kgJ4Qkjz9s2R;
+        Thu, 21 Feb 2019 17:13:32 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1550729612;
+        bh=QVsEB6pCTEipcjKOhiA/JuFqpak/3Y+fUPdGn7/S0hw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=u2aA8OJTkPmGxaQAcqKbDbGF4mBrkRIqrnBDm5eNJBac3aVF7O4P/85oKqBQZZS9A
+         dxyBUSIjRL5jMeixQHMUy9YYlYQLolwcoJ6JrjXDW6mwzSmwko1AwgSL0ztxza7kym
+         AZLmvBvyyell4+BSwo5ezCo3+P3vHoppxgbl7dg7ZQ1SaGvM8o4fatGWf5gp3UGYmY
+         JXF1/p7xBTccxu+BVRxo+bpiDJb7z3mRW5zMBBI/QyCLlF9wnvh4rOXfOXiBkgZihy
+         vPnZnbG2rc8noMtNI4neB6Oz5pTHWqWuXKDtID8c0CERh/hdAiWUS9YS7nNbJmVtgT
+         +MLDW7NYV3/hA==
+Date:   Thu, 21 Feb 2019 17:13:32 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Matthew Wilcox <willy@infradead.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Leon Romanovsky <leonro@mellanox.com>
+Subject: linux-next: build failure after merge of the xarray tree
+Message-ID: <20190221171332.262cf619@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/e9dqugCWODAQ208HfahNA5W"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Feb 2019 14:14:00 -0800 Mike Kravetz <mike.kravetz@oracle.com> wrote:
+--Sig_/e9dqugCWODAQ208HfahNA5W
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> hugetlb pages should only be migrated if they are 'active'.  The routines
-> set/clear_page_huge_active() modify the active state of hugetlb pages.
-> When a new hugetlb page is allocated at fault time, set_page_huge_active
-> is called before the page is locked.  Therefore, another thread could
-> race and migrate the page while it is being added to page table by the
-> fault code.  This race is somewhat hard to trigger, but can be seen by
-> strategically adding udelay to simulate worst case scheduling behavior.
-> Depending on 'how' the code races, various BUG()s could be triggered.
-> 
-> To address this issue, simply delay the set_page_huge_active call until
-> after the page is successfully added to the page table.
-> 
-> Hugetlb pages can also be leaked at migration time if the pages are
-> associated with a file in an explicitly mounted hugetlbfs filesystem.
-> For example, a test program which hole punches, faults and migrates
-> pages in such a file (1G in size) will eventually fail because it
-> can not allocate a page.  Reported counts and usage at time of failure:
-> 
-> node0
-> 537     free_hugepages
-> 1024    nr_hugepages
-> 0       surplus_hugepages
-> node1
-> 1000    free_hugepages
-> 1024    nr_hugepages
-> 0       surplus_hugepages
-> 
-> Filesystem                         Size  Used Avail Use% Mounted on
-> nodev                              4.0G  4.0G     0 100% /var/opt/hugepool
-> 
-> Note that the filesystem shows 4G of pages used, while actual usage is
-> 511 pages (just under 1G).  Failed trying to allocate page 512.
-> 
-> If a hugetlb page is associated with an explicitly mounted filesystem,
-> this information in contained in the page_private field.  At migration
-> time, this information is not preserved.  To fix, simply transfer
-> page_private from old to new page at migration time if necessary.
-> 
-> Cc: <stable@vger.kernel.org>
-> Fixes: bcc54222309c ("mm: hugetlb: introduce page_huge_active")
-> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+Hi all,
 
-cc:stable.  It would be nice to get some review of this one, please?
+After merging the xarray tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-> --- a/fs/hugetlbfs/inode.c
-> +++ b/fs/hugetlbfs/inode.c
-> @@ -859,6 +859,18 @@ static int hugetlbfs_migrate_page(struct address_space *mapping,
->  	rc = migrate_huge_page_move_mapping(mapping, newpage, page);
->  	if (rc != MIGRATEPAGE_SUCCESS)
->  		return rc;
-> +
-> +	/*
-> +	 * page_private is subpool pointer in hugetlb pages.  Transfer to
-> +	 * new page.  PagePrivate is not associated with page_private for
-> +	 * hugetlb pages and can not be set here as only page_huge_active
-> +	 * pages can be migrated.
-> +	 */
-> +	if (page_private(page)) {
-> +		set_page_private(newpage, page_private(page));
-> +		set_page_private(page, 0);
-> +	}
-> +
->  	if (mode != MIGRATE_SYNC_NO_COPY)
->  		migrate_page_copy(newpage, page);
->  	else
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index a80832487981..f859e319e3eb 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -3625,7 +3625,6 @@ static vm_fault_t hugetlb_cow(struct mm_struct *mm, struct vm_area_struct *vma,
->  	copy_user_huge_page(new_page, old_page, address, vma,
->  			    pages_per_huge_page(h));
->  	__SetPageUptodate(new_page);
-> -	set_page_huge_active(new_page);
->  
->  	mmun_start = haddr;
->  	mmun_end = mmun_start + huge_page_size(h);
-> @@ -3647,6 +3646,7 @@ static vm_fault_t hugetlb_cow(struct mm_struct *mm, struct vm_area_struct *vma,
->  				make_huge_pte(vma, new_page, 1));
->  		page_remove_rmap(old_page, true);
->  		hugepage_add_new_anon_rmap(new_page, vma, haddr);
-> +		set_page_huge_active(new_page);
->  		/* Make the old page be freed below */
->  		new_page = old_page;
->  	}
-> @@ -3792,7 +3792,6 @@ static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
->  		}
->  		clear_huge_page(page, address, pages_per_huge_page(h));
->  		__SetPageUptodate(page);
-> -		set_page_huge_active(page);
->  
->  		if (vma->vm_flags & VM_MAYSHARE) {
->  			int err = huge_add_to_page_cache(page, mapping, idx);
-> @@ -3863,6 +3862,10 @@ static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
->  	}
->  
->  	spin_unlock(ptl);
-> +
-> +	/* May already be set if not newly allocated page */
-> +	set_page_huge_active(page);
-> +
->  	unlock_page(page);
->  out:
->  	return ret;
-> @@ -4097,7 +4100,6 @@ int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm,
->  	 * the set_pte_at() write.
->  	 */
->  	__SetPageUptodate(page);
-> -	set_page_huge_active(page);
->  
->  	mapping = dst_vma->vm_file->f_mapping;
->  	idx = vma_hugecache_offset(h, dst_vma, dst_addr);
-> @@ -4165,6 +4167,7 @@ int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm,
->  	update_mmu_cache(dst_vma, dst_addr, dst_pte);
->  
->  	spin_unlock(ptl);
-> +	set_page_huge_active(page);
->  	if (vm_shared)
->  		unlock_page(page);
->  	ret = 0;
-> -- 
-> 2.17.2
+In file included from include/linux/uio.h:12,
+                 from include/linux/socket.h:8,
+                 from include/rdma/rdma_cm.h:37,
+                 from drivers/infiniband/core/restrack.c:6:
+drivers/infiniband/core/restrack.c: In function 'rt_xa_alloc_cyclic':
+include/linux/kernel.h:40:18: warning: passing argument 3 of '__xa_alloc' m=
+akes pointer from integer without a cast [-Wint-conversion]
+ #define U32_MAX  ((u32)~0U)
+                  ^~~~~~~~~~
+drivers/infiniband/core/restrack.c:26:27: note: in expansion of macro 'U32_=
+MAX'
+  err =3D __xa_alloc(xa, id, U32_MAX, entry, GFP_KERNEL);
+                           ^~~~~~~
+In file included from include/linux/radix-tree.h:31,
+                 from include/linux/fs.h:15,
+                 from include/linux/seq_file.h:11,
+                 from arch/powerpc/include/asm/machdep.h:12,
+                 from arch/powerpc/include/asm/archrandom.h:7,
+                 from include/linux/random.h:166,
+                 from include/linux/net.h:22,
+                 from include/linux/skbuff.h:29,
+                 from include/linux/if_arp.h:26,
+                 from include/rdma/ib_addr.h:39,
+                 from include/rdma/rdma_cm.h:39,
+                 from drivers/infiniband/core/restrack.c:6:
+include/linux/xarray.h:524:61: note: expected 'void *' but argument is of t=
+ype 'unsigned int'
+ int __must_check __xa_alloc(struct xarray *, u32 *id, void *entry,
+                                                       ~~~~~~^~~~~
+drivers/infiniband/core/restrack.c:26:36: error: incompatible type for argu=
+ment 4 of '__xa_alloc'
+  err =3D __xa_alloc(xa, id, U32_MAX, entry, GFP_KERNEL);
+                                    ^~~~~
+In file included from include/linux/radix-tree.h:31,
+                 from include/linux/fs.h:15,
+                 from include/linux/seq_file.h:11,
+                 from arch/powerpc/include/asm/machdep.h:12,
+                 from arch/powerpc/include/asm/archrandom.h:7,
+                 from include/linux/random.h:166,
+                 from include/linux/net.h:22,
+                 from include/linux/skbuff.h:29,
+                 from include/linux/if_arp.h:26,
+                 from include/rdma/ib_addr.h:39,
+                 from include/rdma/rdma_cm.h:39,
+                 from drivers/infiniband/core/restrack.c:6:
+include/linux/xarray.h:525:3: note: expected 'struct xa_limit' but argument=
+ is of type 'void *'
+   struct xa_limit, gfp_t);
+   ^~~~~~~~~~~~~~~
+drivers/infiniband/core/restrack.c:29:28: warning: passing argument 3 of '_=
+_xa_alloc' makes pointer from integer without a cast [-Wint-conversion]
+   err =3D __xa_alloc(xa, id, *next, entry, GFP_KERNEL);
+                            ^~~~~
+In file included from include/linux/radix-tree.h:31,
+                 from include/linux/fs.h:15,
+                 from include/linux/seq_file.h:11,
+                 from arch/powerpc/include/asm/machdep.h:12,
+                 from arch/powerpc/include/asm/archrandom.h:7,
+                 from include/linux/random.h:166,
+                 from include/linux/net.h:22,
+                 from include/linux/skbuff.h:29,
+                 from include/linux/if_arp.h:26,
+                 from include/rdma/ib_addr.h:39,
+                 from include/rdma/rdma_cm.h:39,
+                 from drivers/infiniband/core/restrack.c:6:
+include/linux/xarray.h:524:61: note: expected 'void *' but argument is of t=
+ype 'u32' {aka 'unsigned int'}
+ int __must_check __xa_alloc(struct xarray *, u32 *id, void *entry,
+                                                       ~~~~~~^~~~~
+drivers/infiniband/core/restrack.c:29:35: error: incompatible type for argu=
+ment 4 of '__xa_alloc'
+   err =3D __xa_alloc(xa, id, *next, entry, GFP_KERNEL);
+                                   ^~~~~
+In file included from include/linux/radix-tree.h:31,
+                 from include/linux/fs.h:15,
+                 from include/linux/seq_file.h:11,
+                 from arch/powerpc/include/asm/machdep.h:12,
+                 from arch/powerpc/include/asm/archrandom.h:7,
+                 from include/linux/random.h:166,
+                 from include/linux/net.h:22,
+                 from include/linux/skbuff.h:29,
+                 from include/linux/if_arp.h:26,
+                 from include/rdma/ib_addr.h:39,
+                 from include/rdma/rdma_cm.h:39,
+                 from drivers/infiniband/core/restrack.c:6:
+include/linux/xarray.h:525:3: note: expected 'struct xa_limit' but argument=
+ is of type 'void *'
+   struct xa_limit, gfp_t);
+   ^~~~~~~~~~~~~~~
+
+Caused by commit
+
+  fd47c2f99f04 ("RDMA/restrack: Convert internal DB from hash to XArray")
+
+from the rdma tree interacting with commit
+
+  a3e4d3f97ec8 ("XArray: Redesign xa_alloc API")
+
+from the xarray tree.
+
+I added the following merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 21 Feb 2019 17:07:22 +1100
+Subject: [PATCH] RDMA/restrack: fix for __xa_alloc() API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/infiniband/core/restrack.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/infiniband/core/restrack.c b/drivers/infiniband/core/r=
+estrack.c
+index fa804093fafb..5cb381a986c1 100644
+--- a/drivers/infiniband/core/restrack.c
++++ b/drivers/infiniband/core/restrack.c
+@@ -23,10 +23,10 @@ static int rt_xa_alloc_cyclic(struct xarray *xa, u32 *i=
+d, void *entry,
+ 		*id =3D 0;
+=20
+ 	xa_lock(xa);
+-	err =3D __xa_alloc(xa, id, U32_MAX, entry, GFP_KERNEL);
++	err =3D __xa_alloc(xa, id, entry, XA_LIMIT(*id, U32_MAX), GFP_KERNEL);
+ 	if (err && *next !=3D U32_MAX) {
+ 		*id =3D 0;
+-		err =3D __xa_alloc(xa, id, *next, entry, GFP_KERNEL);
++		err =3D __xa_alloc(xa, id, entry, XA_LIMIT(0, *next), GFP_KERNEL);
+ 	}
+=20
+ 	if (!err)
+--=20
+2.20.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/e9dqugCWODAQ208HfahNA5W
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxuQYwACgkQAVBC80lX
+0GxmVwf/cEWamI1bh+DIqaGS2Se06+ts10egGLhV4BLkjLptH49TCOBXbt3TexM+
+ZssmBDZm4VDPV67eHLilyvyyWvfrIshtntzPbROe3lzxEHWa2aM5IDHueUdv9VpQ
+5IiOtigs9mD413jEZgEA40whRd2QBuezgLtcaMwYCtZCr2oIo5TinnKmNOS5N6Hy
+DNgCnGcGRtCx34ILTzW4a4z7+CsFxMCNPWN09I9hYrrzhRkPXQoO/LLgNMD3pGyd
+ygR2osqsFtp2dXg3NwhazNnfA/+cpjadR+oQbYBooRkT0rAahgutH6veurOUtScP
+ZMkzEB+6Xv7g71C3oy+hQoZTusDWXQ==
+=g/G2
+-----END PGP SIGNATURE-----
+
+--Sig_/e9dqugCWODAQ208HfahNA5W--
