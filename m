@@ -2,129 +2,107 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC4FDC00319
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91164C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:20:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75D95214AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:20:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6049F214AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 10:20:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EFuR3qVN"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="njbpg3q9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727894AbfBUKS5 (ORCPT
+        id S1727866AbfBUKS4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 05:18:57 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:42126 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727828AbfBUKSy (ORCPT
+        Thu, 21 Feb 2019 05:18:56 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:17406 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725814AbfBUKSy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 21 Feb 2019 05:18:54 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1LAIjM7053208;
-        Thu, 21 Feb 2019 04:18:45 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1550744325;
-        bh=Go6T+1CivfbPMLGs7e9/cCiN7G9c2oxS2QLNAmkij9s=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=EFuR3qVN31FKhHzSvE3M+xFx75b6q8Op9WmIy/zY77I2iyiKx6Mo4v+jk21YtUrf4
-         rEO/hKFyqSr+2rO5gN5qBvsktmOn7Arqz9tDLVGCDa98MzMIUZAWjWURD+327THkX5
-         Y1c09IpuELeRDdyaO7XbMWxuSjZ2mKhsJk0GZRGM=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1LAIjVA052879
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 21 Feb 2019 04:18:45 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 21
- Feb 2019 04:18:44 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 21 Feb 2019 04:18:44 -0600
-Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1LAIORL022198;
-        Thu, 21 Feb 2019 04:18:42 -0600
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Murali Karicheri <m-karicheri2@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        <linux-pci@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 6/9] PCI: dwc: Add support to use non default msi_irq_chip
-Date:   Thu, 21 Feb 2019 15:45:15 +0530
-Message-ID: <20190221101518.22604-7-kishon@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190221101518.22604-1-kishon@ti.com>
-References: <20190221101518.22604-1-kishon@ti.com>
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c6e7b130000>; Thu, 21 Feb 2019 02:18:59 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 21 Feb 2019 02:18:53 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 21 Feb 2019 02:18:53 -0800
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 21 Feb
+ 2019 10:18:53 +0000
+Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 21 Feb
+ 2019 10:18:53 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Thu, 21 Feb 2019 10:18:52 +0000
+Received: from niwei-ubuntu.nvidia.com (Not Verified[10.19.225.182]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c6e7b0a0001>; Thu, 21 Feb 2019 02:18:52 -0800
+From:   Wei Ni <wni@nvidia.com>
+To:     <daniel.lezcano@linaro.org>, <edubezval@gmail.com>,
+        <robh@kernel.org>
+CC:     <thierry.reding@gmail.com>, <linux-tegra@vger.kernel.org>,
+        <rui.zhang@intel.com>, <srikars@nvidia.com>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Wei Ni <wni@nvidia.com>
+Subject: [PATCH v2 00/12] Add some functionalities for Tegra soctherm
+Date:   Thu, 21 Feb 2019 18:18:35 +0800
+Message-ID: <1550744327-4677-1-git-send-email-wni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1550744339; bh=no6cRkG3wd5VqvNqeG4SGg7Ptb40dq1jqpxg95akVE0=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=njbpg3q97GHeYfhe4EFIy6tXBS1bCrtRmovCm5OWT2I/HV/8mc1U1+hS+ngXdUlxo
+         4ibriSGtBFGDeeHOR12KvXKSDBWfLukoLOQQmgt9O4qD56IbICLSKu0EkYV4mwyvIZ
+         IgiZYUsabV2IomwTs4jd5M2XJQoC7qV1AU0An2odj3SMax8zjnBeH1GlRi0kaJlt/y
+         dod5tbmhi9Yriclt8iOFCf9TdiDYXKstraRzya3hFR9DsgbKxsHbfY3E0+ZDoeOjja
+         xcVXzbLzXQlrDFBrxNeN2GmJZmsrKGRDhqTfQcNDxEOfbXyFzSMaf3K/TVIka+pRkK
+         SHRKb5WNPWIjA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Platforms using DesignWare IP use dw_pci_msi_bottom_irq_chip for
-configuring the MSI controller logic within the DesignWare IP. However
-certain platforms like Keystone (K2G) which uses DesignWare IP have
-their own MSI controller logic. For handling such platforms,
-the irqchip ops use msi_irq_ack(), msi_set_irq(), msi_clear_irq()
-callback functions.
+Move the hw/sw shutdown patches into this serial. There already have
+some discussion for it in https://lkml.org/lkml/2018/12/7/225.
+Support GPU HW throttle, thermal IRQ, set_trips(), EDP IRQ and OC
+hw throttle.
 
-Add support to use different msi_irq_chip with default as
-dw_pci_msi_bottom_irq_chip. This is in preparation to get rid of
-msi_irq_ack(), msi_set_irq(), msi_clear_irq() and other Keystone
-specific dw_pcie_host_ops.
+Main change from v1:
+1. Use boolean for "nvidia,polarity-active-low".
+2. Add suffix "-us" for "nvidia,throttle-period".
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
----
- drivers/pci/controller/dwc/pcie-designware-host.c | 5 ++++-
- drivers/pci/controller/dwc/pcie-designware.h      | 1 +
- 2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index 721d60a5d9e4..042de09b0451 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -245,7 +245,7 @@ static int dw_pcie_irq_domain_alloc(struct irq_domain *domain,
- 
- 	for (i = 0; i < nr_irqs; i++)
- 		irq_domain_set_info(domain, virq + i, bit + i,
--				    &dw_pci_msi_bottom_irq_chip,
-+				    pp->msi_irq_chip,
- 				    pp, handle_edge_irq,
- 				    NULL, NULL);
- 
-@@ -277,6 +277,9 @@ int dw_pcie_allocate_domains(struct pcie_port *pp)
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
- 	struct fwnode_handle *fwnode = of_node_to_fwnode(pci->dev->of_node);
- 
-+	if (!pp->msi_irq_chip)
-+		pp->msi_irq_chip = &dw_pci_msi_bottom_irq_chip;
-+
- 	pp->irq_domain = irq_domain_create_linear(fwnode, pp->num_vectors,
- 					       &dw_pcie_msi_domain_ops, pp);
- 	if (!pp->irq_domain) {
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index 9943d8c68335..cb6eeb062f47 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -176,6 +176,7 @@ struct pcie_port {
- 	struct irq_domain	*irq_domain;
- 	struct irq_domain	*msi_domain;
- 	dma_addr_t		msi_data;
-+	struct irq_chip		*msi_irq_chip;
- 	u32			num_vectors;
- 	u32			irq_status[MAX_MSI_CTRLS];
- 	raw_spinlock_t		lock;
+Wei Ni (12):
+  of: Add bindings of thermtrip for Tegra soctherm
+  thermal: tegra: support hw and sw shutdown
+  arm64: dts: tegra210: set thermtrip
+  of: Add bindings of gpu hw throttle for Tegra soctherm
+  thermal: tegra: add support for gpu hw-throttle
+  arm64: dts: tegra210: set gpu hw throttle level
+  thermal: tegra: add support for thermal IRQ
+  thermal: tegra: add set_trips functionality
+  thermal: tegra: add support for EDP IRQ
+  arm64: dts: tegra210: set EDP interrupt line
+  of: Add bindings of OC hw throttle for Tegra soctherm
+  thermal: tegra: enable OC hw throttle
+
+ .../bindings/thermal/nvidia,tegra124-soctherm.txt  |  62 +-
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  20 +-
+ drivers/thermal/tegra/soctherm.c                   | 961 +++++++++++++++++++--
+ drivers/thermal/tegra/soctherm.h                   |  16 +
+ drivers/thermal/tegra/tegra124-soctherm.c          |   7 +-
+ drivers/thermal/tegra/tegra132-soctherm.c          |   7 +-
+ drivers/thermal/tegra/tegra210-soctherm.c          |  15 +-
+ include/dt-bindings/thermal/tegra124-soctherm.h    |   8 +-
+ 8 files changed, 1020 insertions(+), 76 deletions(-)
+
 -- 
-2.17.1
+2.7.4
 
