@@ -2,88 +2,122 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FEB3C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5E6CC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8D5120880
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:18:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 930A92086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 12:18:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NBJHIFhN"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CDRX1uSf";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jAfhoU6z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbfBUMSb (ORCPT
+        id S1727464AbfBUMSk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 07:18:31 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:33641 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbfBUMSa (ORCPT
+        Thu, 21 Feb 2019 07:18:40 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:48820 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725858AbfBUMSj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 07:18:30 -0500
-Received: by mail-qt1-f194.google.com with SMTP id z39so31240297qtz.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 04:18:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sFw2flC4VtWGsXIcAYWNPt3SI6bIFUGFsW1L2eun4Ys=;
-        b=NBJHIFhNvz5g53eqf+QxZmq9Y9j35kbISnVMOkBh6TGXlpFnikbw/45NuksCs9h2BF
-         WjJP3Jl3V91RjgF3gU21gdWornzWVolx85mC1JXCuLKNnTU9m/O2FfD2fNCMehiwMtCC
-         v8jEEcXJ3XjPzAB2XC67z30HtZhvAYOwsbT8eVsvPZyaSzHyJGj6TQB2APG3AAf1Dphx
-         qire8zLpV8W9ptCHHF7XNrExW//PSUSpz41NEERTaTgFHD0vuLKsunrSqVMql9XQVBoh
-         woc/8nNT1BoVCf0w1P19fcXj/mOnPknGBu/CdsHHGoeKs57T/RaTXVyczaFqDD6QEoF5
-         Ku/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sFw2flC4VtWGsXIcAYWNPt3SI6bIFUGFsW1L2eun4Ys=;
-        b=oMEVpVFnWRVetGLCBUZJ8j5soQSNgswyNZbzzcrBPQGSRxvVPrq3pLuEsL5BfHv81y
-         soFKY6bgAinJ1T4DV8JCBCjsJt/8+4yBn/15itvDhDzzVpNtlpTjoRHiMycpnJvVHc2j
-         cq21lFBnClXae3ubauQBxvdeI+7x7M81jO8h2hePCHeWseVEzNVpHcF6ghjh9HeZBkBl
-         ogtvTcEpI/ZWYLnihKx+PZR9dosWTSRm+O/nqMy3RvSjZXRyAgBEegv/wEngI45emj/l
-         sr0W5vyTqz021R/DP1bDxTpDfVC1l9xeAe+JDbrux/fGNpUpA0n6w2OMwBLjBYYYVn9P
-         6VWQ==
-X-Gm-Message-State: AHQUAubLecj72e0tlY1JmQ7TGPj/aOyWLdnZmmdd0pYGMY795NaegCtM
-        c6hPNzTsnhPIMRadu0YbTiK1ZS8Hmi/RxmiCAWxkpw==
-X-Google-Smtp-Source: AHgI3IYhSaiOCNupyi6U4JsVlX5fL+K/TKUxF7WBVg0ICMcMAz9dBUUpf1cUfs8dlMoiIwU6PY44oPAH3ZzCjdUofMw=
-X-Received: by 2002:a0c:b60d:: with SMTP id f13mr5805505qve.209.1550751509922;
- Thu, 21 Feb 2019 04:18:29 -0800 (PST)
+        Thu, 21 Feb 2019 07:18:39 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 8E9DB604A6; Thu, 21 Feb 2019 12:18:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550751517;
+        bh=NPiqqxNGjJW2ZcjWQQHEoe1l5fMW+ee0OtzFav+KfFU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CDRX1uSf3PLV99OaI2Hvd6e5BCWfhe+iZNiXPXwDMcdUdOsv28PjCFla1Pyn3qFN2
+         dtd/KJtu7frNYw7Li6sOfiTryx7tJhHcg5Is57MIw5i8sKnQqwNPpmj1d2t+qJhRvc
+         cADnhlZwPbOaxXRKGc7Hpmw9tuT/Nl6PPbCNS65Y=
+Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rplsssn@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6DE4C604A6;
+        Thu, 21 Feb 2019 12:18:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550751515;
+        bh=NPiqqxNGjJW2ZcjWQQHEoe1l5fMW+ee0OtzFav+KfFU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jAfhoU6z4//Dd06ItW+lc98G9VEO7Zlz82KlGh5yA3vVuNs9bQtOqsxkbd9+0bfHY
+         dQcFSHjkG+n/2AwZQsrz8dBn9HIsQmFu51cJt1R1hyBAXdMgXVF+o4wRpoKAzZaJfh
+         tS1T3HD7ViFqsRW82kYoWJSEbPNxMB4waVN831SQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6DE4C604A6
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
+From:   "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+To:     andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        sboyd@kernel.org, evgreen@chromium.org, dianders@chromium.org,
+        mka@chromium.org, ilina@codeaurora.org,
+        "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+Subject: [PATCH RESEND v3 0/3] add some more functionality to RPMH 
+Date:   Thu, 21 Feb 2019 17:48:24 +0530
+Message-Id: <20190221121827.32427-1-rplsssn@codeaurora.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <70f5476004b2f4e4b444bf8425f21a3c993edf47.1550543288.git.baolin.wang@linaro.org>
-In-Reply-To: <70f5476004b2f4e4b444bf8425f21a3c993edf47.1550543288.git.baolin.wang@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 21 Feb 2019 13:18:16 +0100
-Message-ID: <CACRpkdYBrxiPcAS3ML9G3u41-8utgWqG+BHpAcJ-BdQRLCUtOA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: gpio: sprd: Use SoC compatible string
- instead of wildcard string
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Lyra Zhang <zhang.lyra@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 3:30 AM Baolin Wang <baolin.wang@linaro.org> wrote:
+Resending the patches. Kindly review.
 
-> Use SoC compatible string instead of wildcard string.
->
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Changes in v3:
+ - Simplify TCS locking - added a new patch
+ - Add lock check to avoid potential race as suggested by Matthias
+ - Add functionality to RSC controller to disallow active requests
+   if solver mode is not set 
+ - Removed independent patches and posted as separate series[2]
 
-Patch applied.
+Changes in v2:
+ - Remove unnecessary EXPORT_SYMBOL in rpmh-rsc
 
-Yours,
-Linus Walleij
+This set of patches add additional functionality to RPMH drivers[1].
+
+PM drivers can choose to disallow idle modes when RSC controller is busy
+sending or processing requests. The patches add necessary functions to
+query the controller status.
+
+The controllers may be in 'solver' state, where they could be in autonomous
+mode executing low power modes for their hardware and as such are not
+available for sending active votes. Functionality to get notified about
+such state and disallow requests for state change in that case is added
+in these patches.
+
+Please consider reviewing this patchset.
+
+This series is based on other patchset[2] 
+
+
+v1:https://lkml.org/lkml/2018/7/19/213
+v2:https://patchwork.kernel.org/cover/10546863/
+
+
+[1] https://lkml.org/lkml/2018/6/20/519
+[2] https://lkml.org/lkml/2019/2/18/714
+
+
+Lina Iyer (2):
+  drivers: qcom: rpmh-rsc: return if the controller is idle
+  drivers: qcom: rpmh: disallow active requests in solver mode
+
+Raju P.L.S.S.S.N (1):
+  drivers: qcom: rpmh-rsc: simplify TCS locking
+
+ drivers/soc/qcom/rpmh-internal.h |  8 ++-
+ drivers/soc/qcom/rpmh-rsc.c      | 91 +++++++++++++++++++++++---------
+ drivers/soc/qcom/rpmh.c          | 84 ++++++++++++++++++++++++-----
+ include/soc/qcom/rpmh.h          | 10 ++++
+ 4 files changed, 155 insertions(+), 38 deletions(-)
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of the Code Aurora Forum, hosted by The Linux Foundation.
+
