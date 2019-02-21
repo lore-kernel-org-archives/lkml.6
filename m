@@ -2,148 +2,111 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C5ADC00319
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:11:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98900C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:12:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32EE22083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:11:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 667FD2075A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 16:12:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="K2ZBnd88"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728497AbfBUQLh (ORCPT
+        id S1728491AbfBUQMW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 11:11:37 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:30900 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725880AbfBUQLg (ORCPT
+        Thu, 21 Feb 2019 11:12:22 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:45072 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725831AbfBUQMW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 11:11:36 -0500
-X-IronPort-AV: E=Sophos;i="5.58,395,1544454000"; 
-   d="scan'208";a="8500159"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 22 Feb 2019 01:11:34 +0900
-Received: from renesas-VirtualBox.ree.adwin.renesas.com (unknown [10.226.37.56])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id C01FC40A6A10;
-        Fri, 22 Feb 2019 01:11:31 +0900 (JST)
-From:   Gareth Williams <gareth.williams.jx@renesas.com>
-To:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-i2c@vger.kernel.org
-Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Gareth Williams <gareth.williams.jx@renesas.com>
-Subject: [PATCH v4 2/2] i2c: designware: Add support for a peripheral clock
-Date:   Thu, 21 Feb 2019 16:10:59 +0000
-Message-Id: <1550765459-14519-3-git-send-email-gareth.williams.jx@renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1550765459-14519-1-git-send-email-gareth.williams.jx@renesas.com>
-References: <1550765459-14519-1-git-send-email-gareth.williams.jx@renesas.com>
+        Thu, 21 Feb 2019 11:12:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+afU/7gPddCKUBDq0d2rahTcTZQRyFY7yXaqsaIIiY0=; b=K2ZBnd881nfOv0p2biUTm2bsQ
+        2y19KpXZLPRe4bJDBtpWJzOvsYr3jmdXlgf4UeWm9iGGQB9Cj27r1McuFSVcie7aIXYnxXwbItDHL
+        zCwDoEF3eo5DZfBZcuQQN+V1D4hnZSD8m7Yr3/VZXkHsJVdhpsbkUx9GTXPUiXu4PdRzzid+cUWQU
+        RvagWeh8OrcbrEEdTqgjj9lx87t/hT3vLYv5D857ipKKmqfC1BF2gDC4REr7dJ6V8t7PM9nkKOayI
+        rMiXrmxO8q2gxzYuVAOkkzMDlTr43Fxp+Vr42qm+RwTTcd9x+KtdIOkCkUxBfL4zhwXSHGMJuH4h8
+        yCW9KAhKQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gwqwt-0006aB-Ok; Thu, 21 Feb 2019 16:11:47 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id F412A28B8C88B; Thu, 21 Feb 2019 17:11:44 +0100 (CET)
+Date:   Thu, 21 Feb 2019 17:11:44 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ido Schimmel <idosch@mellanox.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        "moderated list:INTEL ETHERNET DRIVERS" 
+        <intel-wired-lan@lists.osuosl.org>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Josh Triplett <josh@joshtriplett.org>, keescook@chromium.org,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        netdev@vger.kernel.org, rcu@vger.kernel.org,
+        Song Liu <songliubraving@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        xdp-newbies@vger.kernel.org, Yonghong Song <yhs@fb.com>
+Subject: Re: [PATCH RFC 3/5] sched/cpufreq: Fix incorrect RCU API usage
+Message-ID: <20190221161144.GU32494@hirez.programming.kicks-ass.net>
+References: <20190221054942.132388-1-joel@joelfernandes.org>
+ <20190221054942.132388-4-joel@joelfernandes.org>
+ <20190221091805.GX32477@hirez.programming.kicks-ass.net>
+ <20190221152139.GB19213@google.com>
+ <20190221153117.GT32494@hirez.programming.kicks-ass.net>
+ <20190221155218.GZ11787@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190221155218.GZ11787@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Phil Edworthy <phil.edworthy@renesas.com>
+On Thu, Feb 21, 2019 at 07:52:18AM -0800, Paul E. McKenney wrote:
+> On Thu, Feb 21, 2019 at 04:31:17PM +0100, Peter Zijlstra wrote:
+> > On Thu, Feb 21, 2019 at 10:21:39AM -0500, Joel Fernandes wrote:
+> > > On Thu, Feb 21, 2019 at 10:18:05AM +0100, Peter Zijlstra wrote:
+> > > > On Thu, Feb 21, 2019 at 12:49:40AM -0500, Joel Fernandes (Google) wrote:
+> > > > > @@ -34,8 +34,12 @@ void cpufreq_add_update_util_hook(int cpu, struct update_util_data *data,
+> > > > >  	if (WARN_ON(!data || !func))
+> > > > >  		return;
+> > > > >  
+> > > > > -	if (WARN_ON(per_cpu(cpufreq_update_util_data, cpu)))
+> > > > > +	rcu_read_lock();
+> > > > > +	if (WARN_ON(rcu_dereference(per_cpu(cpufreq_update_util_data, cpu)))) {
+> > > > > +		rcu_read_unlock();
+> > > > >  		return;
+> > > > > +	}
+> > > > > +	rcu_read_unlock();
+> > > > >  
+> > > > >  	data->func = func;
+> > > > >  	rcu_assign_pointer(per_cpu(cpufreq_update_util_data, cpu), data);
 
-The Synopsys I2C Controller has a peripheral clock, but most SoCs hide
-this away. However, some SoCs need explicit enabling of the peripheral
-clock in order to access the registers. Therefore, add support for an
-optional peripheral clock.
+> For whatever it is worth, in that case it could use rcu_access_pointer().
+> And this primitive does not do the lockdep check for being within an RCU
+> read-side critical section.  As Peter says, if there is no dereferencing,
+> there can be no use-after-free bug, so the RCU read-side critical is
+> not needed.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Signed-off-by: Gareth Williams <gareth.williams.jx@renesas.com>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-v4:
- - Updated comments to reference "peripheral clock" 
-   instead of "bus clock".
- - Added Wolfram's Acked-by
-v3:
- - busclk renamed to pclk.
- - Added comment with dw_i2c_dev struct definition describing pclk.
- - Added enable rollback of first clock if second fails to enable.
-v2:
- - Use new devm_clk_get_optional() function as it simplifies handling when
-   the optional clock is not present.
----
- drivers/i2c/busses/i2c-designware-common.c  | 18 ++++++++++++++++--
- drivers/i2c/busses/i2c-designware-core.h    |  2 ++
- drivers/i2c/busses/i2c-designware-platdrv.c |  5 +++++
- 3 files changed, 23 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
-index a473011..e807aa2 100644
---- a/drivers/i2c/busses/i2c-designware-common.c
-+++ b/drivers/i2c/busses/i2c-designware-common.c
-@@ -251,13 +251,27 @@ unsigned long i2c_dw_clk_rate(struct dw_i2c_dev *dev)
- 
- int i2c_dw_prepare_clk(struct dw_i2c_dev *dev, bool prepare)
- {
-+	int ret;
-+
- 	if (IS_ERR(dev->clk))
- 		return PTR_ERR(dev->clk);
- 
--	if (prepare)
--		return clk_prepare_enable(dev->clk);
-+	if (prepare) {
-+		/* Optional peripheral clock */
-+		ret = clk_prepare_enable(dev->pclk);
-+		if (ret)
-+			return ret;
-+
-+		ret = clk_prepare_enable(dev->clk);
-+		if (ret)
-+			clk_disable_unprepare(dev->pclk);
-+
-+		return ret;
-+	}
- 
- 	clk_disable_unprepare(dev->clk);
-+	clk_disable_unprepare(dev->pclk);
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(i2c_dw_prepare_clk);
-diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
-index b4a0b2b..e88c711 100644
---- a/drivers/i2c/busses/i2c-designware-core.h
-+++ b/drivers/i2c/busses/i2c-designware-core.h
-@@ -177,6 +177,7 @@
-  * @base: IO registers pointer
-  * @cmd_complete: tx completion indicator
-  * @clk: input reference clock
-+ * @pclk: clock required to access the registers
-  * @slave: represent an I2C slave device
-  * @cmd_err: run time hadware error code
-  * @msgs: points to an array of messages currently being transferred
-@@ -226,6 +227,7 @@ struct dw_i2c_dev {
- 	void __iomem		*ext;
- 	struct completion	cmd_complete;
- 	struct clk		*clk;
-+	struct clk		*pclk;
- 	struct reset_control	*rst;
- 	struct i2c_client		*slave;
- 	u32			(*get_clk_rate_khz) (struct dw_i2c_dev *dev);
-diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
-index 9eaac3b..03fff6a 100644
---- a/drivers/i2c/busses/i2c-designware-platdrv.c
-+++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-@@ -346,6 +346,11 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
- 	else
- 		i2c_dw_configure_master(dev);
- 
-+	/* Optional peripheral clock */
-+	dev->pclk = devm_clk_get_optional(&pdev->dev, "pclk");
-+	if (IS_ERR(dev->pclk))
-+		return PTR_ERR(dev->pclk);
-+
- 	dev->clk = devm_clk_get(&pdev->dev, NULL);
- 	if (!i2c_dw_prepare_clk(dev, true)) {
- 		u64 clk_khz;
--- 
-2.7.4
-
+On top of that, I suspect this is under the write-side lock (we're doing
+assignment after all).
