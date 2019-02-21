@@ -2,144 +2,183 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26375C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 07:42:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB209C00319
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 07:52:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E95F62084F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 07:42:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="Kt+bScOe"
+	by mail.kernel.org (Postfix) with ESMTP id 7CB28214AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 07:52:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550735578;
+	bh=W/rWiVhP6SzVMeiTnj6sZpLbU5wqMYMBOlDJ6ttd/Lw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=IiUCPTIyMPI8x4jkP1uj60WVBzqLdMQMK4okaE9563PNQazLNJjQrLMvABHvUY92S
+	 xmfsfs+Ce2gWt21jObEXy5Y6S8GI/IRrhaW0STWS3ZqLM4LRkBwuk8MgWH6tVaqKbj
+	 IUGOLDcSVVQ6fWaDe3XqbJf1xVHDaXpElNKKpx4E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbfBUHmY (ORCPT
+        id S1726452AbfBUHw5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 02:42:24 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:55566 "EHLO pegase1.c-s.fr"
+        Thu, 21 Feb 2019 02:52:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725648AbfBUHmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 02:42:23 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 444mdm65P2z9tyFM;
-        Thu, 21 Feb 2019 08:42:20 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=Kt+bScOe; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id wfcoxRKWw_2l; Thu, 21 Feb 2019 08:42:20 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 444mdm4h4Rz9tyF4;
-        Thu, 21 Feb 2019 08:42:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1550734940; bh=lWdc6nz5IJrMOKAwLhVS/NTvPYy+zFyuoVYBhW7fWHo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Kt+bScOeGKyudtsvAz0yBm1W41cJqRPY2E1Fv5mKxux175NlucQh0F12Jaml3/fmc
-         KjNHAPep1+05SM9YZaUDQrHlAoYbi28fvlewdsxeMA6erFFZvrbImmP8ArErl2xfXO
-         09D3yjqzrQJYyqru8NNXUuNOtKI5boL45NbCBfJM=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 93E2F8B78F;
-        Thu, 21 Feb 2019 08:42:21 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id DO_TCIqwh4DS; Thu, 21 Feb 2019 08:42:21 +0100 (CET)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 263148B75B;
-        Thu, 21 Feb 2019 08:42:21 +0100 (CET)
-Subject: Re: [PATCH v3 00/16] powerpc/32: Use BATs/LTLBs for STRICT_KERNEL_RWX
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, j.neuschaefer@gmx.net
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1550648295.git.christophe.leroy@c-s.fr>
- <87mumpx68h.fsf@concordia.ellerman.id.au>
- <82af8805-3e2a-cfb3-9df6-d883b50ff460@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <e46cf0f8-6227-bb9c-b435-c5dbc23ce71c@c-s.fr>
-Date:   Thu, 21 Feb 2019 08:42:20 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
-MIME-Version: 1.0
-In-Reply-To: <82af8805-3e2a-cfb3-9df6-d883b50ff460@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+        id S1725858AbfBUHw4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 02:52:56 -0500
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 593102148D;
+        Thu, 21 Feb 2019 07:52:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550735575;
+        bh=W/rWiVhP6SzVMeiTnj6sZpLbU5wqMYMBOlDJ6ttd/Lw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=zAB/E1Do41PkSrzonnI11hfhwPxj5LFYyvVXKDIJFVzY080v6Ksxn18sgli9iiO+F
+         fSgZRD7mAhFn5XUN6Y/heb/XOW9/QEdY2wj/Uv6ZFXLkUQy8yLQCGch80nKNiN43GA
+         S7QClr1s5LnY2SGUMF8v03f8zabIo/Ad4EhglnLE=
+Date:   Thu, 21 Feb 2019 16:52:52 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org, Changbin Du <changbin.du@gmail.com>
+Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
+ kernel memory that can fault
+Message-Id: <20190221165252.4a9033b3348f30f9d973dbc4@kernel.org>
+In-Reply-To: <20190215174945.557218316@goodmis.org>
+References: <20190215174712.372898450@goodmis.org>
+        <20190215174945.557218316@goodmis.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 15 Feb 2019 12:47:13 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
+> From: Changbin Du <changbin.du@gmail.com>
+> 
+> The userspace can ask kprobe to intercept strings at any memory address,
+> including invalid kernel address. In this case, fetch_store_strlen()
+> would crash since it uses general usercopy function, and user access
+> functions are no longer allowed to access kernel memory.
+> 
+> For example, we can crash the kernel by doing something as below:
+> 
+> $ sudo kprobe 'p:do_sys_open +0(+0(%si)):string'
+> 
+> [  103.620391] BUG: GPF in non-whitelisted uaccess (non-canonical address?)
+> [  103.622104] general protection fault: 0000 [#1] SMP PTI
+> [  103.623424] CPU: 10 PID: 1046 Comm: cat Not tainted 5.0.0-rc3-00130-gd73aba1-dirty #96
+> [  103.625321] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.12.0-2-g628b2e6-dirty-20190104_103505-linux 04/01/2014
+> [  103.628284] RIP: 0010:process_fetch_insn+0x1ab/0x4b0
+> [  103.629518] Code: 10 83 80 28 2e 00 00 01 31 d2 31 ff 48 8b 74 24 28 eb 0c 81 fa ff 0f 00 00 7f 1c 85 c0 75 18 66 66 90 0f ae e8 48 63
+>  ca 89 f8 <8a> 0c 31 66 66 90 83 c2 01 84 c9 75 dc 89 54 24 34 89 44 24 28 48
+> [  103.634032] RSP: 0018:ffff88845eb37ce0 EFLAGS: 00010246
+> [  103.635312] RAX: 0000000000000000 RBX: ffff888456c4e5a8 RCX: 0000000000000000
+> [  103.637057] RDX: 0000000000000000 RSI: 2e646c2f6374652f RDI: 0000000000000000
+> [  103.638795] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+> [  103.640556] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000000
+> [  103.642297] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+> [  103.644040] FS:  0000000000000000(0000) GS:ffff88846f000000(0000) knlGS:0000000000000000
+> [  103.646019] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  103.647436] CR2: 00007ffc79758038 CR3: 0000000463360006 CR4: 0000000000020ee0
+> [  103.649147] Call Trace:
+> [  103.649781]  ? sched_clock_cpu+0xc/0xa0
+> [  103.650747]  ? do_sys_open+0x5/0x220
+> [  103.651635]  kprobe_trace_func+0x303/0x380
+> [  103.652645]  ? do_sys_open+0x5/0x220
+> [  103.653528]  kprobe_dispatcher+0x45/0x50
+> [  103.654682]  ? do_sys_open+0x1/0x220
+> [  103.655875]  kprobe_ftrace_handler+0x90/0xf0
+> [  103.657282]  ftrace_ops_assist_func+0x54/0xf0
+> [  103.658564]  ? __call_rcu+0x1dc/0x280
+> [  103.659482]  0xffffffffc00000bf
+> [  103.660384]  ? __ia32_sys_open+0x20/0x20
+> [  103.661682]  ? do_sys_open+0x1/0x220
+> [  103.662863]  do_sys_open+0x5/0x220
+> [  103.663988]  do_syscall_64+0x60/0x210
+> [  103.665201]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> [  103.666862] RIP: 0033:0x7fc22fadccdd
+> [  103.668034] Code: 48 89 54 24 e0 41 83 e2 40 75 32 89 f0 25 00 00 41 00 3d 00 00 41 00 74 24 89 f2 b8 01 01 00 00 48 89 fe bf 9c ff ff
+>  ff 0f 05 <48> 3d 00 f0 ff ff 77 33 f3 c3 66 0f 1f 84 00 00 00 00 00 48 8d 44
+> [  103.674029] RSP: 002b:00007ffc7972c3a8 EFLAGS: 00000287 ORIG_RAX: 0000000000000101
+> [  103.676512] RAX: ffffffffffffffda RBX: 0000562f86147a21 RCX: 00007fc22fadccdd
+> [  103.678853] RDX: 0000000000080000 RSI: 00007fc22fae1428 RDI: 00000000ffffff9c
+> [  103.681151] RBP: ffffffffffffffff R08: 0000000000000000 R09: 0000000000000000
+> [  103.683489] R10: 0000000000000000 R11: 0000000000000287 R12: 00007fc22fce90a8
+> [  103.685774] R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000000
+> [  103.688056] Modules linked in:
+> [  103.689131] ---[ end trace 43792035c28984a1 ]---
+> 
+> This can be fixed by using probe_mem_read() instead, as it can handle faulting
+> kernel memory addresses, which kprobes can legitimately do.
 
-Le 21/02/2019 à 07:31, Christophe Leroy a écrit :
+Basically OK to me.
+Could you use probe_kernel_read() in this context, since probe_mem_read() is a
+wrapper function for template code.
+
+With that change,
+
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+
+And for the long term, I need to find more efficient (or smarter) way to do it,
+like strnlen_user() does.
+
+Thank you,
+
+> 
+> Link: http://lkml.kernel.org/r/20190125151051.7381-1-changbin.du@gmail.com
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 9da3f2b7405 ("x86/fault: BUG() when uaccess helpers fault on kernel addresses")
+> Signed-off-by: Changbin Du <changbin.du@gmail.com>
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+>  kernel/trace/trace_kprobe.c | 10 +---------
+>  1 file changed, 1 insertion(+), 9 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+> index d5fb09ebba8b..9eaf07f99212 100644
+> --- a/kernel/trace/trace_kprobe.c
+> +++ b/kernel/trace/trace_kprobe.c
+> @@ -861,22 +861,14 @@ static const struct file_operations kprobe_profile_ops = {
+>  static nokprobe_inline int
+>  fetch_store_strlen(unsigned long addr)
+>  {
+> -	mm_segment_t old_fs;
+>  	int ret, len = 0;
+>  	u8 c;
+>  
+> -	old_fs = get_fs();
+> -	set_fs(KERNEL_DS);
+> -	pagefault_disable();
+> -
+>  	do {
+> -		ret = __copy_from_user_inatomic(&c, (u8 *)addr + len, 1);
+> +		ret = probe_mem_read(&c, (u8 *)addr + len, 1);
+>  		len++;
+>  	} while (c && ret == 0 && len < MAX_STRING_SIZE);
+>  
+> -	pagefault_enable();
+> -	set_fs(old_fs);
+> -
+>  	return (ret < 0) ? ret : len;
+>  }
+>  
+> -- 
+> 2.20.1
 > 
 > 
-> Le 21/02/2019 à 02:47, Michael Ellerman a écrit :
->> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->>
->>> The purpose of this serie is to:
->>> - use BATs with STRICT_KERNEL_RWX on book3s (See patch 13 for details.)
->>> - use LTLBs with STRICT_KERNEL_RWX on 8xx (See patch 15 for a few 
->>> details.)
->>
->> This doesn't boot qemu-mac99 for me:
->>
->>    spawn ~/src/qemu/ppc-softmmu/qemu-system-ppc -nographic -vga none 
->> -M mac99 -m 1G -kernel build/vmlinux -initrd ppc32-initrd.gz -append 
->> console=ttyPZ0 init=/bin/sh
->>    >> =============================================================
->>    >> OpenBIOS 1.1 [Feb 15 2019 10:05]
->>    >> Configuration device id QEMU version 1 machine id 1
->>    >> CPUs: 1
->>    >> Memory: 1024M
->>    >> UUID: 00000000-0000-0000-0000-000000000000
->>    >> CPU type PowerPC,G4
->>    milliseconds isn't unique.
->>    Welcome to OpenBIOS v1.1 built on Feb 15 2019 10:05
->>    >> [ppc] Kernel already loaded (0x01000000 + 0x00c2c338) (initrd 
->> 0x01d2d000 + 0x007e72f0)
->>    >> [ppc] Kernel command line: console=ttyPZ0 init=/bin/sh
->>    >> switching to new context:
->>    OF stdout device is: /pci@f2000000/mac-io@c/escc@13000/ch-a@13020
->>    Preparing to boot Linux version 
->> 5.0.0-rc2-gcc-8.2.0-00125-g4fcb83ca7936 (michael@ka4) (gcc version 
->> 8.2.0 (Buildroot 2018.11-rc2-00003-ga0787e9)) #724 Thu Feb 21 12:03:14 
->> AEDT 2019
->>    Detected machine type: 00000400
->>    command line:
->>    memory layout at init:
->>      memory_limit : 00000000 (16 MB aligned)
->>      alloc_bottom : 02515000
->>      alloc_top    : 30000000
->>      alloc_top_hi : 40000000
->>      rmo_top      : 30000000
->>      ram_top      : 40000000
->>    copying OF device tree...
->>    Building dt strings...
->>    Building dt structure...
->>    Device tree strings 0x02516000 -> 0x025150a4
->>    Device tree struct  0x02517000 -> 0x3fde7eb0
->>    Quiescing Open Firmware ...
->>    Booting Linux via __start() @ 0x01000000 ...
->>    FAIL! Booting BE pmac32
->>
->>
->> That's pmac32 defconfig ish.
->> I haven't had time to debug it further sorry.
->>
-> 
-> Ok. I boots fine without the '-m 1G'.
-> 
-> I'll find out why.
-> 
 
-Doesn't boot because it maps memory above total_lowmem.
 
-I'll fix it.
-
-Christophe
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
