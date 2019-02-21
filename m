@@ -2,102 +2,113 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB6C1C00319
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 07:56:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54E9BC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 07:57:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A99BA2148D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 07:56:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 282D82086A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 07:57:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbfBUH4h (ORCPT
+        id S1727055AbfBUH5W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 02:56:37 -0500
-Received: from bmailout3.hostsharing.net ([176.9.242.62]:35295 "EHLO
-        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725891AbfBUH4h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 02:56:37 -0500
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout3.hostsharing.net (Postfix) with ESMTPS id 0420D100D940C;
-        Thu, 21 Feb 2019 08:56:35 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id AB831173A2E; Thu, 21 Feb 2019 08:56:34 +0100 (CET)
-Date:   Thu, 21 Feb 2019 08:56:34 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Cc:     bhelgaas@google.com, austin_bolen@dell.com,
-        alex_gagniuc@dellteam.com, keith.busch@intel.com,
-        Shyam_Iyer@Dell.com, okaya@kernel.org, linux-pci@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v2 4/4] PCI: hotplug: Add quirk For Dell nvme pcie
- switches
-Message-ID: <20190221075634.uih5ysqwkna7cku4@wunner.de>
-References: <20190220012031.10741-1-mr.nuke.me@gmail.com>
- <20190220012031.10741-5-mr.nuke.me@gmail.com>
+        Thu, 21 Feb 2019 02:57:22 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37942 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725831AbfBUH5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 02:57:21 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6C74FACA9;
+        Thu, 21 Feb 2019 07:57:19 +0000 (UTC)
+Subject: Re: [Xen-devel] [PATCH RFC 00/39] x86/KVM: Xen HVM guest support
+To:     =?UTF-8?Q?Marek_Marczykowski-G=c3=b3recki?= 
+        <marmarek@invisiblethingslab.com>,
+        Joao Martins <joao.m.martins@oracle.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel@lists.xenproject.org,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        x86@kernel.org, Ankur Arora <ankur.a.arora@oracle.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20190220201609.28290-1-joao.m.martins@oracle.com>
+ <20190220233941.GA5279@mail-itl>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <58ff93e1-6c91-c1a6-4273-531c28101569@suse.com>
+Date:   Thu, 21 Feb 2019 08:57:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190220012031.10741-5-mr.nuke.me@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190220233941.GA5279@mail-itl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 07:20:30PM -0600, Alexandru Gagniuc wrote:
-> --- a/drivers/pci/hotplug/pciehp_hpc.c
-> +++ b/drivers/pci/hotplug/pciehp_hpc.c
-> @@ -952,3 +952,23 @@ DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_QCOM, 0x0400,
->  			      PCI_CLASS_BRIDGE_PCI, 8, quirk_cmd_compl);
->  DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_QCOM, 0x0401,
->  			      PCI_CLASS_BRIDGE_PCI, 8, quirk_cmd_compl);
-> +
-> +
+On 21/02/2019 00:39, Marek Marczykowski-Górecki wrote:
+> On Wed, Feb 20, 2019 at 08:15:30PM +0000, Joao Martins wrote:
+>>  2. PV Driver support (patches 17 - 39)
+>>
+>>  We start by redirecting hypercalls from the backend to routines
+>>  which emulate the behaviour that PV backends expect i.e. grant
+>>  table and interdomain events. Next, we add support for late
+>>  initialization of xenbus, followed by implementing
+>>  frontend/backend communication mechanisms (i.e. grant tables and
+>>  interdomain event channels). Finally, introduce xen-shim.ko,
+>>  which will setup a limited Xen environment. This uses the added
+>>  functionality of Xen specific shared memory (grant tables) and
+>>  notifications (event channels).
+> 
+> Does it mean backends could be run in another guest, similarly as on
+> real Xen? AFAIK virtio doesn't allow that as virtio backends need
+> arbitrary write access to guest memory. But grant tables provide enough
+> abstraction to do that safely.
 
-Duplicate newline.
+As long as the grant table emulation in xen-shim isn't just a wrapper to
+"normal" KVM guest memory access.
 
-
-> +static void fixup_dell_nvme_backplane_switches(struct pci_dev *pdev)
-
-Can we have a little code comment above the function such as:
-
-+/*
-+ * Dell <product name> NVMe storage backplanes disable in-band presence
-+ * (PCIe r5.0 sec X.Y.Z) but neglect to set the corresponding flag in the
-+ * Slot Capabilities 2 register.
-+ */
-
-
-> +	if (pdev->subsystem_vendor != PCI_VENDOR_ID_DELL
-> +		|| pdev->subsystem_device != 0x1fc7)
-
-This looks a little unpolished, how about:
-
-+	if (pdev->subsystem_vendor != PCI_VENDOR_ID_DELL ||
-+	    pdev->subsystem_device != 0x1fc7)
+I guess the xen-shim implementation doesn't support the same kind of
+guest memory isolation as Xen does?
 
 
-> +		return;
-> +
-> +	pdev->no_in_band_presence = 1;
-> +}
-> +
-> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_PLX, 0x9733,
-
-By convention there's no blank line between the closing curly brace
-and the DECLARE_PCI_FIXUP_CLASS_FINAL().
-
-If the quirk is x86-specific, please enclose it in "#ifdef CONFIG_X86"
-to reduce kernel footprint on other arches.
-
-Thanks,
-
-Lukas
+Juergen
