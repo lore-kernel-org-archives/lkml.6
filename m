@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F93C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:46:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B80FC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:46:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD6D02075A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:46:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C40D820700
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:46:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550760410;
-	bh=6x53GYUD1rvE59EsM0A2ftvL/xob4Jx913z/K/YbogM=;
+	s=default; t=1550760416;
+	bh=0QN1qWkZTytdjvVKMtg/YZz6+ERS0Qzj7ZXN1suIjr8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ma5e+TP3GmYoUchvCuXomuF841FsKyztu/Y8QqhOUcTDwM7ArRkPRfSJaM1txoB2h
-	 Q59NU/okXMGGvoXdhkI+HBiELNq8beZ3NvWJQ0GuwAOe2cldi7qALxXKnMDu4IcTl+
-	 gAJ2mDT6r9+Nsz53aA3YR7+UCgAvEXab5a4pIA6s=
+	b=FDensgnar1Zas1zsHmApCok6oNZHoaCue7dDNo6BUXg1QcTOBv6I38WPq5DT9yRsL
+	 9ZSPDw7Zg0hJfkfTNqx7q0YNLRFcLeFJKxFlUW3HiQCSiINU3fcvJdchHx5ll+FuvP
+	 vYp2kzzO6wnz6lbn5Nh1qRaL/C/qnXYfD34TArPs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729413AbfBUOqr (ORCPT
+        id S1729346AbfBUOlc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:46:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36938 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:41:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728878AbfBUOlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:41:42 -0500
+        id S1729325AbfBUOl3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:41:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA9D02084F;
-        Thu, 21 Feb 2019 14:41:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 269412084D;
+        Thu, 21 Feb 2019 14:41:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550760101;
-        bh=6x53GYUD1rvE59EsM0A2ftvL/xob4Jx913z/K/YbogM=;
+        s=default; t=1550760088;
+        bh=0QN1qWkZTytdjvVKMtg/YZz6+ERS0Qzj7ZXN1suIjr8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sHl3iY7JEBkRq7k8HfhsFKVlG+mtXDLSus5oLgAMBzYIltmZ2F/h58ip/0niRbPmj
-         wngQ8sUYVT3RW6HHPEpNYY0NQKlSmjpLkguyBLCBRKJDEkmWI2D3/s1Ip5QhRZfK6G
-         xPV8p7W7wU949n7WOs6kmxvftL/BG8L9o+Jp+Wig=
+        b=Dp8+51zKWIeLILaoLYwNPuMqAfQWJ3SVixsb8uxy5N7LAHMakOmOPykFcM41Y9ADf
+         O9HxX8AxUJjSnsjgNyUnrLkIlnBr0zxwZzggg6mb9fGXWjGf4xtGRH2VzEntdEkHnU
+         Nbkryl3XMKwr/DtdI2TNGHuMvFxeAwFDNjwBUzQc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Scott Mayhew <smayhew@redhat.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.19 26/30] sunrpc: fix 4 more call sites that were using stack memory with a scatterlist
-Date:   Thu, 21 Feb 2019 15:36:08 +0100
-Message-Id: <20190221125252.059068465@linuxfoundation.org>
+        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.19 22/30] scsi: target/core: Use kmem_cache_free() instead of kfree()
+Date:   Thu, 21 Feb 2019 15:36:04 +0100
+Message-Id: <20190221125251.797439101@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190221125250.543158526@linuxfoundation.org>
 References: <20190221125250.543158526@linuxfoundation.org>
@@ -64,167 +66,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Scott Mayhew <smayhew@redhat.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-commit e7afe6c1d486b516ed586dcc10b3e7e3e85a9c2b upstream.
+commit 8b2db98e814a5ec45e8800fc22ca9000ae0a517b upstream.
 
-While trying to reproduce a reported kernel panic on arm64, I discovered
-that AUTH_GSS basically doesn't work at all with older enctypes on arm64
-systems with CONFIG_VMAP_STACK enabled.  It turns out there still a few
-places using stack memory with scatterlists, causing krb5_encrypt() and
-krb5_decrypt() to produce incorrect results (or a BUG if CONFIG_DEBUG_SG
-is enabled).
+memory allocated by kmem_cache_alloc() should be freed using
+kmem_cache_free(), not kfree().
 
-Tested with cthon on v4.0/v4.1/v4.2 with krb5/krb5i/krb5p using
-des3-cbc-sha1 and arcfour-hmac-md5.
-
-Signed-off-by: Scott Mayhew <smayhew@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Fixes: ad669505c4e9 ("scsi: target/core: Make sure that target_wait_for_sess_cmds() waits long enough")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sunrpc/auth_gss/gss_krb5_seqnum.c |   49 ++++++++++++++++++++++++++--------
- 1 file changed, 38 insertions(+), 11 deletions(-)
+ drivers/target/target_core_transport.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sunrpc/auth_gss/gss_krb5_seqnum.c
-+++ b/net/sunrpc/auth_gss/gss_krb5_seqnum.c
-@@ -44,7 +44,7 @@ krb5_make_rc4_seq_num(struct krb5_ctx *k
- 		      unsigned char *cksum, unsigned char *buf)
- {
- 	struct crypto_skcipher *cipher;
--	unsigned char plain[8];
-+	unsigned char *plain;
- 	s32 code;
- 
- 	dprintk("RPC:       %s:\n", __func__);
-@@ -53,6 +53,10 @@ krb5_make_rc4_seq_num(struct krb5_ctx *k
- 	if (IS_ERR(cipher))
- 		return PTR_ERR(cipher);
- 
-+	plain = kmalloc(8, GFP_NOFS);
-+	if (!plain)
-+		return -ENOMEM;
-+
- 	plain[0] = (unsigned char) ((seqnum >> 24) & 0xff);
- 	plain[1] = (unsigned char) ((seqnum >> 16) & 0xff);
- 	plain[2] = (unsigned char) ((seqnum >> 8) & 0xff);
-@@ -69,6 +73,7 @@ krb5_make_rc4_seq_num(struct krb5_ctx *k
- 	code = krb5_encrypt(cipher, cksum, plain, buf, 8);
- out:
- 	crypto_free_skcipher(cipher);
-+	kfree(plain);
- 	return code;
- }
- s32
-@@ -78,12 +83,17 @@ krb5_make_seq_num(struct krb5_ctx *kctx,
- 		u32 seqnum,
- 		unsigned char *cksum, unsigned char *buf)
- {
--	unsigned char plain[8];
-+	unsigned char *plain;
-+	s32 code;
- 
- 	if (kctx->enctype == ENCTYPE_ARCFOUR_HMAC)
- 		return krb5_make_rc4_seq_num(kctx, direction, seqnum,
- 					     cksum, buf);
- 
-+	plain = kmalloc(8, GFP_NOFS);
-+	if (!plain)
-+		return -ENOMEM;
-+
- 	plain[0] = (unsigned char) (seqnum & 0xff);
- 	plain[1] = (unsigned char) ((seqnum >> 8) & 0xff);
- 	plain[2] = (unsigned char) ((seqnum >> 16) & 0xff);
-@@ -94,7 +104,9 @@ krb5_make_seq_num(struct krb5_ctx *kctx,
- 	plain[6] = direction;
- 	plain[7] = direction;
- 
--	return krb5_encrypt(key, cksum, plain, buf, 8);
-+	code = krb5_encrypt(key, cksum, plain, buf, 8);
-+	kfree(plain);
-+	return code;
- }
- 
- static s32
-@@ -102,7 +114,7 @@ krb5_get_rc4_seq_num(struct krb5_ctx *kc
- 		     unsigned char *buf, int *direction, s32 *seqnum)
- {
- 	struct crypto_skcipher *cipher;
--	unsigned char plain[8];
-+	unsigned char *plain;
- 	s32 code;
- 
- 	dprintk("RPC:       %s:\n", __func__);
-@@ -115,20 +127,28 @@ krb5_get_rc4_seq_num(struct krb5_ctx *kc
- 	if (code)
- 		goto out;
- 
-+	plain = kmalloc(8, GFP_NOFS);
-+	if (!plain) {
-+		code = -ENOMEM;
-+		goto out;
-+	}
-+
- 	code = krb5_decrypt(cipher, cksum, buf, plain, 8);
- 	if (code)
--		goto out;
-+		goto out_plain;
- 
- 	if ((plain[4] != plain[5]) || (plain[4] != plain[6])
- 				   || (plain[4] != plain[7])) {
- 		code = (s32)KG_BAD_SEQ;
--		goto out;
-+		goto out_plain;
+--- a/drivers/target/target_core_transport.c
++++ b/drivers/target/target_core_transport.c
+@@ -266,7 +266,7 @@ struct se_session *transport_alloc_sessi
  	}
- 
- 	*direction = plain[4];
- 
- 	*seqnum = ((plain[0] << 24) | (plain[1] << 16) |
- 					(plain[2] << 8) | (plain[3]));
-+out_plain:
-+	kfree(plain);
- out:
- 	crypto_free_skcipher(cipher);
- 	return code;
-@@ -141,26 +161,33 @@ krb5_get_seq_num(struct krb5_ctx *kctx,
- 	       int *direction, u32 *seqnum)
- {
- 	s32 code;
--	unsigned char plain[8];
- 	struct crypto_skcipher *key = kctx->seq;
-+	unsigned char *plain;
- 
- 	dprintk("RPC:       krb5_get_seq_num:\n");
- 
- 	if (kctx->enctype == ENCTYPE_ARCFOUR_HMAC)
- 		return krb5_get_rc4_seq_num(kctx, cksum, buf,
- 					    direction, seqnum);
-+	plain = kmalloc(8, GFP_NOFS);
-+	if (!plain)
-+		return -ENOMEM;
- 
- 	if ((code = krb5_decrypt(key, cksum, buf, plain, 8)))
--		return code;
-+		goto out;
- 
- 	if ((plain[4] != plain[5]) || (plain[4] != plain[6]) ||
--	    (plain[4] != plain[7]))
--		return (s32)KG_BAD_SEQ;
-+	    (plain[4] != plain[7])) {
-+		code = (s32)KG_BAD_SEQ;
-+		goto out;
-+	}
- 
- 	*direction = plain[4];
- 
- 	*seqnum = ((plain[0]) |
- 		   (plain[1] << 8) | (plain[2] << 16) | (plain[3] << 24));
- 
--	return 0;
-+out:
-+	kfree(plain);
-+	return code;
- }
+ 	ret = transport_init_session(se_sess);
+ 	if (ret < 0) {
+-		kfree(se_sess);
++		kmem_cache_free(se_sess_cache, se_sess);
+ 		return ERR_PTR(ret);
+ 	}
+ 	se_sess->sup_prot_ops = sup_prot_ops;
 
 
