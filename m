@@ -2,170 +2,171 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64F48C00319
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:07:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AD31C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2989220838
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:07:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 503662083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 23:07:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="PPORi8Hr"
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="V+0kv/v/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfBUXHR (ORCPT
+        id S1727176AbfBUXHZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 18:07:17 -0500
-Received: from mail-eopbgr700111.outbound.protection.outlook.com ([40.107.70.111]:32096
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        Thu, 21 Feb 2019 18:07:25 -0500
+Received: from mail-eopbgr80084.outbound.protection.outlook.com ([40.107.8.84]:40576
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726035AbfBUXHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 18:07:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+        id S1726035AbfBUXHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 18:07:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WMCol56R9CxEcQqJ7/5YUEktI2gNCPj9cAQi6OjfidQ=;
- b=PPORi8HrnluSTbfDboKqCqqMJb0TGBjc2nTEpRUVSMUX74F4MSAlTsHJtJ/ymxWEAIgDwyy8Zkyz9CMfcfW57rLLrNesUjNuoFpjzGAxRannV1aeCNSBdDDvEBuKEPL4JsKZFx6VwTtDO7o9ZW/xoZsZROPBHRmEvox1xmmWYwo=
-Received: from CY4PR2201MB1272.namprd22.prod.outlook.com (10.171.214.23) by
- CY4PR2201MB1109.namprd22.prod.outlook.com (10.171.223.35) with Microsoft SMTP
+ bh=Y1tub9ybzqIXdomxLvf3aGG+2HedLNOS2BLWB45b98Q=;
+ b=V+0kv/v/XWU29dx6QYlUTwW14IcNASNySSMr82k552EW2FmiVkQRb5LncVM3Wv9p0hOHtzmGR+nVvBG1b7FANDpgulk1emVQBAFkwOJt5NWIOQoZjVxwgC5PGWQ9q7CTJK53SeO+tD3BRf+J4fdPXwqGKq66JG2Toise0/1GPwY=
+Received: from DBBPR05MB6570.eurprd05.prod.outlook.com (20.179.44.81) by
+ DBBPR05MB6553.eurprd05.prod.outlook.com (20.179.44.18) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.16; Thu, 21 Feb 2019 23:07:13 +0000
-Received: from CY4PR2201MB1272.namprd22.prod.outlook.com
- ([fe80::1d1:735e:efff:54d6]) by CY4PR2201MB1272.namprd22.prod.outlook.com
- ([fe80::1d1:735e:efff:54d6%7]) with mapi id 15.20.1643.016; Thu, 21 Feb 2019
- 23:07:13 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     Jonas Gorski <jonas.gorski@gmail.com>
-CC:     "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <pburton@wavecomp.com>,
-        James Hogan <jhogan@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH] MIPS: BCM63XX: provide DMA masks for ethernet devices
-Thread-Topic: [PATCH] MIPS: BCM63XX: provide DMA masks for ethernet devices
-Thread-Index: AQHUycu+tPViWzZUAk+WDQpKzQJPK6Xq4MKA
-Date:   Thu, 21 Feb 2019 23:07:13 +0000
-Message-ID: <CY4PR2201MB12728E7ACCC21D88FF921C7EC17E0@CY4PR2201MB1272.namprd22.prod.outlook.com>
-References: <20190221095642.26962-1-jonas.gorski@gmail.com>
-In-Reply-To: <20190221095642.26962-1-jonas.gorski@gmail.com>
+ 15.20.1622.19; Thu, 21 Feb 2019 23:07:21 +0000
+Received: from DBBPR05MB6570.eurprd05.prod.outlook.com
+ ([fe80::5d59:2e1c:c260:ea6f]) by DBBPR05MB6570.eurprd05.prod.outlook.com
+ ([fe80::5d59:2e1c:c260:ea6f%2]) with mapi id 15.20.1622.020; Thu, 21 Feb 2019
+ 23:07:21 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Doug Ledford <dledford@redhat.com>
+CC:     "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] Please pull RDMA subsystem changes
+Thread-Topic: [GIT PULL] Please pull RDMA subsystem changes
+Thread-Index: AQHUyjoy336OIMLA2kecjmaHi6VO2Q==
+Date:   Thu, 21 Feb 2019 23:07:20 +0000
+Message-ID: <20190221230714.GA10656@ziepe.ca>
 Accept-Language: en-US
 Content-Language: en-US
-X-MS-Has-Attach: 
+X-MS-Has-Attach: yes
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR02CA0019.namprd02.prod.outlook.com
- (2603:10b6:a02:ee::32) To CY4PR2201MB1272.namprd22.prod.outlook.com
- (2603:10b6:910:6e::23)
+x-clientproxiedby: MWHPR01CA0037.prod.exchangelabs.com (2603:10b6:300:101::23)
+ To DBBPR05MB6570.eurprd05.prod.outlook.com (2603:10a6:10:d1::17)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
+ smtp.mailfrom=jgg@mellanox.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [67.207.99.198]
+x-originating-ip: [174.3.196.123]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 55de54c4-2fc9-4227-e320-08d69851507b
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:CY4PR2201MB1109;
-x-ms-traffictypediagnostic: CY4PR2201MB1109:
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;CY4PR2201MB1109;23:EcKsS2ExxbchCdXWk1en0zE2j9FYYTMnrjMFE?=
- =?iso-8859-1?Q?GgXXAulLBFFwiPQM9LfScfHUlvbM8q7CmUp34DeSsWDYAt4YcRHmDaH4M4?=
- =?iso-8859-1?Q?F7IqUyNRNapfCPiTYHf9w4+PJoS3KWCKj/vjdbvWxNqQtA4O/VVpXcR5pN?=
- =?iso-8859-1?Q?wnWKotAcHYAzRwH/8mx0ocumTjGeIS1ldWqa8rRZIk3maEU9DQ8hLOuv6X?=
- =?iso-8859-1?Q?9emxqWXSW2PLgFMhV3/J5BreS8Sdj0s6TUVtihxYX/Zr0gHXtgomRFkyAc?=
- =?iso-8859-1?Q?qVHivWoR7ogqP4SZbsOfeOCzIWTAMeVc/JEzCwq10p285js8Psbt16OP+r?=
- =?iso-8859-1?Q?/CxCMbiTsEeIBLIVhSVmLrW5yG/1Oe7VlDtgfOB394JT+YPwUDhYzF23LS?=
- =?iso-8859-1?Q?YQeh8mHSoYopfba8TTpOBUz/G7mahNKCkCFrv8zlVuK4KYtBBUzbWuTsAn?=
- =?iso-8859-1?Q?odqeg1WZJv5ZWDGh4oPfeu/24LRVWYghho9YjFbe/xUWYYxz1d6bozYOAr?=
- =?iso-8859-1?Q?699coke/9V4mUWHw1cuUBdt9WIWsOHhx2J5pfnkrQi6zaCskYW1bAcC7ij?=
- =?iso-8859-1?Q?WyU+viU+Rn5PFwamnl2gLc4MFp1WfmLitjRaLs9ufMcaaDfM67TaLgdoJj?=
- =?iso-8859-1?Q?pZ/Pt4q/GYon/cTwTaVwObkjEZ169GR2IyngnS4LID0y4KbTqpOJxzP2ib?=
- =?iso-8859-1?Q?8ZQEXG6t5B+t1jcL5r916v6clkWPthO0TIpFQe4OTmjyLL/wQLNCXPTN+l?=
- =?iso-8859-1?Q?WUQyuFp4I0pLEJKycgzj4gqIno9KPvIpLEw4KTVmot7DB845wR9Rl4bFy0?=
- =?iso-8859-1?Q?rrQxUsWg6Zz49n1DZDlNLkjbEdgHyfs1vDck5YSUcG2s8VNLaKwjTcjMVm?=
- =?iso-8859-1?Q?HS82JYlHYYW7t8Hma0EEF+L4LkcwIiJ9mvrg8CAo6BlIYfOMrwQcZ4I58k?=
- =?iso-8859-1?Q?hsVx/+t1S/xmwceVV/OMAe/5aboJbRlOPenKFRnH4tVJBLQKoqBTwwQtJQ?=
- =?iso-8859-1?Q?nQiptFcR8akz4V43z2/P7OmJukxYyxa/PSyCVwFAwnYzHhpKjzOszHo+HW?=
- =?iso-8859-1?Q?sxNkewrD6wBQWfyI/yefFycG1dIpetXI0HTFdmzSpJItWeXmXz00U8V6RV?=
- =?iso-8859-1?Q?rShsEw38CUWXHRiJux3Pq8ytEbZe3D4U9ibNwmFRDyq8R9z6c6MB4UmK0Y?=
- =?iso-8859-1?Q?isMeep9OTHumF3T2Pr98sStuF4RFSIYdX2YNbHsy/KbF4d01cfFST0MDXT?=
- =?iso-8859-1?Q?TagNDPJwn7bVA7EvQW/tmyCa5wAH3t95XbDZf7kM8HpBTWv4hnjQNkGPV3?=
- =?iso-8859-1?Q?ryySqDAUu+0nQLvkio9Vx27bAbxHhecOXLmZIUydlbKhMpA=3D=3D?=
-x-microsoft-antispam-prvs: <CY4PR2201MB1109052A2D114A487A8658E6C17E0@CY4PR2201MB1109.namprd22.prod.outlook.com>
+x-ms-office365-filtering-correlation-id: 4d760034-78e3-404f-1b37-08d69851550f
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(49563074)(7193020);SRVR:DBBPR05MB6553;
+x-ms-traffictypediagnostic: DBBPR05MB6553:
+x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;DBBPR05MB6553;23:Nu3S5oE+ZRSmBCTmO7XpJEFTMhGeRCILwWEt+Xvl3?=
+ =?us-ascii?Q?cxCIrjAtu3uwSyTFMKN6OUZpLkPFLKsfKup7g/uHX1tsPl2qeeLFk4hOqeJs?=
+ =?us-ascii?Q?lvVKQuZrAK6RyXyHOxnVLwQjxCDf/qj69ru2pqp7MH+tK8Z2aVmuVsHdiuy8?=
+ =?us-ascii?Q?Gen1FwMQToNsp0DeIgmZFg7PA/0H061o995O21BMQ2yze0QJIo9W8S6deqFi?=
+ =?us-ascii?Q?HFyXUUfK2ImyBWUshF/+bn/WPrl930iLV5z/Vz88FoxF2DD1v5DshW4ucMIs?=
+ =?us-ascii?Q?yfN0v8eyHKEB/NM/JW5pXjJqSj14iTxRtWs+q3QgC5Z7pRNu1LM1uDxeZEog?=
+ =?us-ascii?Q?oAaW9nqJzg139fQf33buSrs5DKnyf7FWN4elyzzMVbs5RoYrKNHNksC7tNrn?=
+ =?us-ascii?Q?W5a7LIZPCwnwXDd/QJDbOpgZYl/Nq/Rfbp7m+ItIG3x6l5zzuV2QzFUKo0D/?=
+ =?us-ascii?Q?aGlxidmcr/Hr6ELpaL7oQ2Xq9G+ItHTzaTc5jBCvWJasS7ji/n9nkwyRwX9F?=
+ =?us-ascii?Q?jlGnVzeLEmr9P9q0NoqcVREcMJ5RMihaVGZF6A12Q4vfPX4V6d2XfL9PlOPW?=
+ =?us-ascii?Q?2mYYtETqwRH0zqkaoEqbQV+Y9b8gtCYmSVmniIeXJN0+mS3hsKlI2Cr20m9/?=
+ =?us-ascii?Q?K5fzl0VMg5CZkoiEenLEt3Jy5Z+07/T67/r11k1lPDqsJC1QX9piwYpnk9yL?=
+ =?us-ascii?Q?y2Dy2bXnIEg9ZlGmCCl5P2xXox1/hF/PrGVmqPQnXL5R6WDc8xC5YaGeRaOA?=
+ =?us-ascii?Q?gAyGtVVnkq3O7750EVSC47zGm/KANYiWqGxdV87bwKEaJTGKa5WhBntLnkbE?=
+ =?us-ascii?Q?ygRjUJxPXbmb/KDDnZTGccM1K/u7AnojNsKZZW79KBogF4BVJ2jK5YcYj5lJ?=
+ =?us-ascii?Q?v47DndZ6xg21NNugfhDbW76h3GwDbQ7wuZo7Y8AKElLS4QMm7gn9VUxCTQpH?=
+ =?us-ascii?Q?Y7BNGnL342PnFxuBiQFWsHw4An84v7tAwobPWO6/bKdVBNBuArrerSGmCfbX?=
+ =?us-ascii?Q?/m+Ty/Pqsy20nq41ssSFsvUDNE77UsPMzr4qzE02XqzwHVxEpKWOVRv+vhsW?=
+ =?us-ascii?Q?cXTzma8L0slz4YA63C5diKf93AF6a9M+AYOZ6iVMKyL0t57gdhN67OcdvzcA?=
+ =?us-ascii?Q?mi103IhXp+pMEKPcIGP7ITxtP7VM+Cr2hLSk6TWeHB5sQU8CKbyI50Y828Zv?=
+ =?us-ascii?Q?r4c3jJ5zaSLr28leZZP/DUTFoldyGq0o2As?=
+x-microsoft-antispam-prvs: <DBBPR05MB6553331AD00F718C8DA3D5D0CF7E0@DBBPR05MB6553.eurprd05.prod.outlook.com>
 x-forefront-prvs: 09555FB1AD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39840400004)(136003)(346002)(376002)(366004)(199004)(189003)(305945005)(6916009)(99286004)(81166006)(8676002)(81156014)(478600001)(186003)(7736002)(9686003)(11346002)(71200400001)(71190400001)(6246003)(53936002)(2906002)(5660300002)(54906003)(6506007)(74316002)(8936002)(55016002)(102836004)(33656002)(4326008)(45080400002)(26005)(316002)(386003)(14454004)(44832011)(7696005)(476003)(256004)(42882007)(6436002)(486006)(25786009)(52116002)(68736007)(105586002)(66066001)(97736004)(229853002)(76176011)(3846002)(6116002)(106356001)(446003)(14444005);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR2201MB1109;H:CY4PR2201MB1272.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(39860400002)(376002)(136003)(346002)(189003)(199004)(6486002)(33656002)(3846002)(478600001)(2906002)(105586002)(25786009)(8676002)(110136005)(316002)(6436002)(5660300002)(68736007)(8936002)(6116002)(486006)(102836004)(14454004)(81156014)(6506007)(7736002)(54906003)(81166006)(1076003)(36756003)(106356001)(305945005)(99936001)(66066001)(476003)(6512007)(86362001)(33896004)(386003)(71200400001)(9686003)(26005)(99286004)(52116002)(186003)(4326008)(97736004)(14444005)(71190400001)(256004)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6553;H:DBBPR05MB6570.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: bV3wlCdTVtSDIeS6v68e8J+1+YSqQfZjcDRai7ob8laiquOFnmpnpWrgI8EdYZY7emGv8BVImmgzT9shec0Sva6ClcmDQeH7Y1lTzWGMjnHKIrVHp/HGOXm/YBThrGdq+dEks1jujTv9x34LRCoBzlFywwQj4cDVTbsVWhjhEz2hfIVQH/2N6QHhq1paZ9tnFXexGCIEUK+Jkpt3a7irYJ0PMU5/i8ru0hzjmqBt6Vh3uhHqaaykjwBb5BX7XoFLDFmAJZeg8n8Z7b74uoPvBV20gJVpeTXGo2qhRZ+jVsTWkT3NSMnimfL6HSPlbOUInOEkNcU2IpkxA+hWvZHtnyhRyEls/QHTkd7N15Y9sA8BoGPD81INsuAr1kpepGcPsEXxFGtU4R7mCw90/6mREMV9+JYV3RXinRRJObGM41k=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+x-microsoft-antispam-message-info: 3+p57Zcnu0BcIJs6C1l+vQwmD0edbwgrK1REmUfcQd7jGyRzFV5Bgmw6zpv1cJ8jQruxGAaj7hrW8DK+ljE5moxBeuN1y1cs99UCmOtMKh1iemOYQaFWNcGt49bBzdWkUqC4HJq9Jb4PyBHl5kkGk7F5uUw6vgqHzJ8A1v7i33s/yTEjIVW0EqWRtktCfs1iVIy1w3zBWO4ZSLzTdspdjc8iFXKaBLrjm1YGRIHo3HFll9j3l91iYHxkCapiuigwWCh4m4YS9NOs1+4Fgg4cnTernZLs85Vcdgd1cQeP3/wlTom2ueu1S0aMz4QeGqxWryk4Sena4GbX/18bjcwECwbfrr+RtOfj58oo0xmumxB/mZQlPGP3O6Jy69Bm2DNWM0uqXXL1bax0cOYQLQqAV71mjwbjFWntyoad9q+yIdk=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="X1bOJ3K7DJ5YkBrT"
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 55de54c4-2fc9-4227-e320-08d69851507b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2019 23:07:12.8882
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4d760034-78e3-404f-1b37-08d69851550f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2019 23:07:20.6320
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR2201MB1109
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6553
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+--X1bOJ3K7DJ5YkBrT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Jonas Gorski wrote:
-> The switch to the generic dma ops made dma masks mandatory, breaking
-> devices having them not set. In case of bcm63xx, it broke ethernet with
-> the following warning when trying to up the device:
->=20
-> [    2.633123] ------------[ cut here ]------------
-> [    2.637949] WARNING: CPU: 0 PID: 325 at ./include/linux/dma-mapping.h:=
-516 bcm_enetsw_open+0x160/0xbbc
-> [    2.647423] Modules linked in: gpio_button_hotplug
-> [    2.652361] CPU: 0 PID: 325 Comm: ip Not tainted 4.19.16 #0
-> [    2.658080] Stack : 80520000 804cd3ec 00000000 00000000 804ccc00 87085=
-bdc 87d3f9d4 804f9a17
-> [    2.666707]         8049cf18 00000145 80a942a0 00000204 80ac0000 10008=
-400 87085b90 eb3d5ab7
-> [    2.675325]         00000000 00000000 80ac0000 000022b0 00000000 00000=
-000 00000007 00000000
-> [    2.683954]         0000007a 80500000 0013b381 00000000 80000000 00000=
-000 804a1664 80289878
-> [    2.692572]         00000009 00000204 80ac0000 00000200 00000002 00000=
-000 00000000 80a90000
-> [    2.701191]         ...
-> [    2.703701] Call Trace:
-> [    2.706244] [<8001f3c8>] show_stack+0x58/0x100
-> [    2.710840] [<800336e4>] __warn+0xe4/0x118
-> [    2.715049] [<800337d4>] warn_slowpath_null+0x48/0x64
-> [    2.720237] [<80289878>] bcm_enetsw_open+0x160/0xbbc
-> [    2.725347] [<802d1d4c>] __dev_open+0xf8/0x16c
-> [    2.729913] [<802d20cc>] __dev_change_flags+0x100/0x1c4
-> [    2.735290] [<802d21b8>] dev_change_flags+0x28/0x70
-> [    2.740326] [<803539e0>] devinet_ioctl+0x310/0x7b0
-> [    2.745250] [<80355fd8>] inet_ioctl+0x1f8/0x224
-> [    2.749939] [<802af290>] sock_ioctl+0x30c/0x488
-> [    2.754632] [<80112b34>] do_vfs_ioctl+0x740/0x7dc
-> [    2.759459] [<80112c20>] ksys_ioctl+0x50/0x94
-> [    2.763955] [<800240b8>] syscall_common+0x34/0x58
-> [    2.768782] ---[ end trace fb1a6b14d74e28b6 ]---
-> [    2.773544] bcm63xx_enetsw bcm63xx_enetsw.0: cannot allocate rx ring 5=
-12
->=20
-> Fix this by adding appropriate DMA masks for the platform devices.
->=20
-> Fixes: f8c55dc6e828 ("MIPS: use generic dma noncoherent ops for simple no=
-ncoherent platforms")
-> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Hi Linus,
 
-Applied to mips-fixes.
+Small set of three regression fixing patches, things are looking
+pretty good here. Thanks
 
-Thanks,
-    Paul
+The following changes since commit 8834f5600cf3c8db365e18a3d5cac2c2780c81e5:
 
-[ This message was auto-generated; if you believe anything is incorrect
-  then please email paul.burton@mips.com to report it. ]
+  Linux 5.0-rc5 (2019-02-03 13:48:04 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
+
+for you to fetch changes up to f09ef134a7ca3f0d2ce485a757f5b79809ebb803:
+
+  iw_cxgb4: cq/qp mask depends on bar2 pages in a host page (2019-02-15 09:39:39 -0700)
+
+----------------------------------------------------------------
+Third 5.0 rc pull request
+
+Three smallish patches fixing regressions in v5.0:
+
+- Fix cxgb4 to work again with non-4k page sizes
+
+- NULL pointer oops in SRP during sg_reset
+
+----------------------------------------------------------------
+Bart Van Assche (1):
+      RDMA/srp: Rework SCSI device reset handling
+
+Raju Rangoju (2):
+      cxgb4: Export sge_host_page_size to ulds
+      iw_cxgb4: cq/qp mask depends on bar2 pages in a host page
+
+ drivers/infiniband/hw/cxgb4/device.c           | 15 +++++++++++++--
+ drivers/infiniband/ulp/srp/ib_srp.c            | 10 ----------
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.c |  1 +
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_uld.h |  1 +
+ 4 files changed, 15 insertions(+), 12 deletions(-)
+
+--X1bOJ3K7DJ5YkBrT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEfB7FMLh+8QxL+6i3OG33FX4gmxoFAlxvLx8ACgkQOG33FX4g
+mxoAfQ//fkI0f1urZsjloSiXrxiuQ2wRd6uHEywTtwVwWuad34WsvAvodQllnS+h
+AesDPOa4L1+RlSWQ+vZ1Mc+JmNNqZBADg7uFguf0nyeuO/Fbyhgi+C4rXrV/pSUT
+lhlgznAX9psj2KrV465D8uOrAj3LIfcARoqKeQuMMgnX13ld7paBAySQc4dlvc1L
+e2VGVDYz6j7XgY91+iCu1cddhlyUleGyP0Q4x0TVRWAWmviMMKgXFhM0Xl5R7z3q
+Y4NukzCAXC2lMDwT84NJdBg3pxqQk73V2QB2kKaTjVD4k4wqWD7zja+IeU5exygN
+zYMJqIa4/M85lJASuNCZ3pL8Y7eHiYnG0Ng8IVr28YhDL8mY/c96OJRmINP9H4kX
+4QVNa47tow2tNz6CSwcqQLJbgS4tQrEb1NZuxJsP6ACL1sLa0Q8S/ocTW6R6exJe
+fXEM4/P2S3lrx5l0r9hwo5LWlSWxzde7sNtSt78KLFAJAQYLfEJdeBmHfo7VniU6
+QFKDGLQXZ+FCTvqE9rTUnR1f+EniWPQddaaBeLNPO3IENaR4TEI08QZzJFhAlaEZ
+LX04Q4noRWBmhkulRgT45ytdcFWC1OlIJ4UVFJlbCajO7Imc4kD6wleMr8uGdrUi
+/YUuidQlgfKe4aCEDqmQUnRXiERE0oXr0H64Pdp/AtPDPV6e+MY=
+=/Qn6
+-----END PGP SIGNATURE-----
+
+--X1bOJ3K7DJ5YkBrT--
