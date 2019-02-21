@@ -2,79 +2,93 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15CD7C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 21:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B55CC4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 21:54:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7BFF2080F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 21:53:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550786028;
-	bh=HqmzWx1WnbLsrPdHjBxf+JDc5SDbk2yFRHQ+34ezSEo=;
-	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
-	b=qR9mcbkSbw2RrRgk7kpaAAQzhE/5PQIuBmtNUBKTDtGIHT44eEIvIaN4m9dCzAudX
-	 ka1Swgv7EZ7nrVC6zDqZw0uAGSOHY2a8wcRmdLO1DYY25vNcREzwL9NlrZpXqbuv37
-	 PRIC0lmD79eonoeJpgDApyP3QHp3SRXiIeJt5EOQ=
+	by mail.kernel.org (Postfix) with ESMTP id 3808320836
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 21:54:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="n5NooLxH";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="n5NooLxH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbfBUVxr (ORCPT
+        id S1726942AbfBUVyg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 16:53:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58402 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725802AbfBUVxq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 16:53:46 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 21 Feb 2019 16:54:36 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:51006 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725802AbfBUVyf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 16:54:35 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id AF30D608CE; Thu, 21 Feb 2019 21:54:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550786074;
+        bh=t1Wo67g3zmG34hoxKco1zuOm2XBuz0VbUZXozrjpAlE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=n5NooLxHFMviq2Qsank2RDZwFExiEHzvTnWRD2aalDfKq/en+9gst8WDRBF4vXNtR
+         l3Ar0UHUT+8g3XWvwye+DsuEpw9jqKbZfXJDsSRGVRRReGWxb20I6WdkZXmqAWDjzz
+         VEWISUKD9Jzy8Zjbs/XqDC5Yj8ScM9mxspAzW+h4=
+Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 915E52083E;
-        Thu, 21 Feb 2019 21:53:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550786025;
-        bh=HqmzWx1WnbLsrPdHjBxf+JDc5SDbk2yFRHQ+34ezSEo=;
-        h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
-        b=X2ZckhBkLTSFOc4sRSX46kC68N/9tCozM71ZYDjQft23toKHMW1ESlRp2Nm5/lvtz
-         VxZwSJq+Xpe1Yre9GS3e9vjfCxtsSmDVLW+H82NGXNAYvMawWOb+qVq3Gzl+ik7K5V
-         mtb8PJMWyHGLaax+0SKQT6Km2NwERjIbRdwCRWcE=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/2] clk: mmp2: separate LCDC peripheral clk form the display clock
-Message-ID: <155078602492.77512.6283122570028118811@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-References: <20190121063129.552580-1-lkundrak@v3.sk> <20190121063129.552580-3-lkundrak@v3.sk>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190121063129.552580-3-lkundrak@v3.sk>
-To:     Lubomir Rintel <lkundrak@v3.sk>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>
-Date:   Thu, 21 Feb 2019 13:53:44 -0800
+        (Authenticated sender: jcrouse@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5D79C6071B;
+        Thu, 21 Feb 2019 21:54:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550786074;
+        bh=t1Wo67g3zmG34hoxKco1zuOm2XBuz0VbUZXozrjpAlE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=n5NooLxHFMviq2Qsank2RDZwFExiEHzvTnWRD2aalDfKq/en+9gst8WDRBF4vXNtR
+         l3Ar0UHUT+8g3XWvwye+DsuEpw9jqKbZfXJDsSRGVRRReGWxb20I6WdkZXmqAWDjzz
+         VEWISUKD9Jzy8Zjbs/XqDC5Yj8ScM9mxspAzW+h4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5D79C6071B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     freedreno@lists.freedesktop.org
+Cc:     linux-arm-msm@vger.kernel.org, stable@vger.kernel.org,
+        Sean Paul <sean@poorly.run>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH] drm/msm: Fix incorrect struct size for memory allocation
+Date:   Thu, 21 Feb 2019 14:54:29 -0700
+Message-Id: <1550786069-18328-1-git-send-email-jcrouse@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lubomir Rintel (2019-01-20 22:31:29)
-> These are in fact two clocks, they shouldn't be exposed as one. One is
-> required for accessing LCD controller registers (peripheral clock), while
-> other (AXI clock) can be optionally used as a pixel clock source for the
-> panel.
->=20
-> LCDC can alternatively use different clocks than the Display 1 AXI clock
-> for generating the pixel clock: the second AXI clock (fixed in this
-> commit too), the HDMI PLL, or the AXI bus clock.
->=20
-> They should really be controlled independently.
->=20
-> Link: https://lists.freedesktop.org/archives/dri-devel/2019-January/20397=
-5.html
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> ---
+The allocation for the clock bulk data does a classic sizeof(pointer)
+instead of sizeof(struct) so the array ends up incorrectly sized
+for the clock data.
 
-Applied to clk-next
+Cc: stable@vger.kernel.org
+Fixes: 8e54eea ("drm/msm: Add a helper function to parse clock names")
+Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+---
+
+ drivers/gpu/drm/msm/msm_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+index 906b2bb..31e1481 100644
+--- a/drivers/gpu/drm/msm/msm_drv.c
++++ b/drivers/gpu/drm/msm/msm_drv.c
+@@ -96,7 +96,7 @@ int msm_clk_bulk_get(struct device *dev, struct clk_bulk_data **bulk)
+ 	if (count < 1)
+ 		return 0;
+ 
+-	local = devm_kcalloc(dev, sizeof(struct clk_bulk_data *),
++	local = devm_kcalloc(dev, sizeof(struct clk_bulk_data),
+ 		count, GFP_KERNEL);
+ 	if (!local)
+ 		return -ENOMEM;
+-- 
+2.7.4
 
