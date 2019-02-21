@@ -2,134 +2,104 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4162EC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:21:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E5F0C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:22:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A760206A3
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:21:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC055206A3
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:22:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="si2bkdMJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aVHoCajm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbfBUOVc (ORCPT
+        id S1727939AbfBUOWM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:21:32 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42750 "EHLO
+        Thu, 21 Feb 2019 09:22:12 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36322 "EHLO
         mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbfBUOVc (ORCPT
+        with ESMTP id S1725880AbfBUOWL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:21:32 -0500
-Received: by mail-pg1-f194.google.com with SMTP id b2so8030117pgl.9
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 06:21:31 -0800 (PST)
+        Thu, 21 Feb 2019 09:22:11 -0500
+Received: by mail-pg1-f194.google.com with SMTP id r124so13773211pgr.3;
+        Thu, 21 Feb 2019 06:22:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=iI1RJ0SSXxDh0vlZLQrOFO/u2FUJ4ENpS3Ludw9bPw8=;
-        b=si2bkdMJebBvPM0GwIvEO3/Amyao38zKAiijR3TpjprMmoqFKum3Njget2unbrFOug
-         Ga5QS8HL9rNhN0+nYuT7Z1Uu30vuTxz/7QrYSi00fO0cXe2GxPw1/zwMWmVyWJcYa23o
-         f+J45gf8vblmxl80YXo1DP1ukP8rOkDYFLlVRZ93Vepj3O8V/WlhKysqFYJtQLEkXXvu
-         Oh7ZRasJOIPvqvl9oLSXVqrMRxLiDcJW4Jr6wY7G8ezbvntovYIWEP4ik7Idb5ominp4
-         8zG9C/Wqm3T7mqY/Z7xn00SZ3SrtBhrBwMG6aS/sCofVD/oqCyNYjTc3pB0OZzOpXqXf
-         7Dtg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WvCVIvvVsBYPOmoDqOf5fUpXnAadEGUB6JGYeFd+aNM=;
+        b=aVHoCajmnnlAJichgykZf1j4IYZJ7C/NwKclKiAyWP51iJLzZx3KwPYd/DV+HMShe3
+         ZnRwkMYogGVYEgT3p8IdP249Zv6g39dyaF4zMaZmHdgGsZpH6HTk07f1hKu7Eyhd9tBW
+         GgTWohYiso+2NoS1M+C/eQ1d3/5SdBKg6oeA7oy7MtJB9X0F0AMRJ2eAm+dZf3OkXvRg
+         26ZpGa9OEfeJVi/CjXkWQ8isDpBd6tq45NY/EBXxpgCA380LszhXp9+D3h17HTCuYmg6
+         bmjdvII75qo0jVLAMD+Zk5uxm85xpynsouOG7Ppn4dpNcnJRbRC0YYyckOA6Fl29rgkE
+         LwbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iI1RJ0SSXxDh0vlZLQrOFO/u2FUJ4ENpS3Ludw9bPw8=;
-        b=BHU0G4dXYJGqyzDcf5VYe2lY/wRQk6wQPwpmVcifsmw2GjK9I7zI5s29AXU7l08PHK
-         qfxaQ3FvZC8DFJR8HPlUtLZ4Dt64inrYnVdRj7JrfeIo1APVRQaSnGQ0Jyxx9aSVKH2a
-         cyeLFcaksy5iMP8vPxSURRrrlU69+shuArBop0we1GRyRabGY5X0fHZM/g6XmukPtDjd
-         Fwg/YZWay9fn+hegFWbL/Qoi0HS+IHS52CWUhwoMrUd0To2CBr5HiJFueKMUUwU9OUWL
-         QLju/KdCHHWnBMLvKTBD4gRU4dD72lCcTlWUR7kBQYkLEmyz0sXBUvlDPm45KmeC5J8y
-         jk9w==
-X-Gm-Message-State: AHQUAuZGoKWpnPMaMk+1fB6R8BJYTi5YDI+p+DrJ6XZcY16w9d+Hs+4r
-        vEy8WoC8XszMJwlD4ZwR6mQNrw==
-X-Google-Smtp-Source: AHgI3IZIRxhWmHk+uI4fyRE/obuhbmXUG2L9nLu0JhpIBnQ04LtmbdtCF/YGn8UplGAT9XruNQ0UOA==
-X-Received: by 2002:a63:68c9:: with SMTP id d192mr35656895pgc.264.1550758891142;
-        Thu, 21 Feb 2019 06:21:31 -0800 (PST)
-Received: from kshutemo-mobl1.localdomain ([192.55.54.44])
-        by smtp.gmail.com with ESMTPSA id o2sm31440498pfa.76.2019.02.21.06.21.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Feb 2019 06:21:30 -0800 (PST)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 662E6301708; Thu, 21 Feb 2019 17:21:26 +0300 (+03)
-Date:   Thu, 21 Feb 2019 17:21:26 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Steven Price <steven.price@arm.com>
-Cc:     linux-mm@kvack.org, Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "Liang, Kan" <kan.liang@linux.intel.com>
-Subject: Re: [PATCH v2 02/13] x86/mm: Add p?d_large() definitions
-Message-ID: <20190221142126.k54vqaacrc2ekeff@kshutemo-mobl1>
-References: <20190221113502.54153-1-steven.price@arm.com>
- <20190221113502.54153-3-steven.price@arm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WvCVIvvVsBYPOmoDqOf5fUpXnAadEGUB6JGYeFd+aNM=;
+        b=rCbL5ODX0dPFbxUr2anrZqmP/vm1KJ4Vc0dBD9iov8Ddvnkv4nJoXlsalo0ooTRtak
+         BssTMmUNO//DWA75CmiMlA6lfVkVITjCxIDQpNVIHFxnZ+NmDJ54PLZpSOYTIGHRYxUo
+         PHUVgHmcWlnoT+a7jlmfs2iHdVbFTr8f8e3pC3N4jwiQkV4jrGZ4Hl05ty/2o+Umc5rA
+         Ehb4tVjkKlE12tKr7IXcdMNEb0BXuG+s79n9Ny0xok9hCNuIxusUNxSpwOI2SKGGLktI
+         qlkSb2A5N4RsG6tUKT9M+vK2zYUil4sQZM9QCr5+mK//vJidsec9+bt/9e3EtHh94YtY
+         D3fA==
+X-Gm-Message-State: AHQUAuadQy3aV3ex2wwFfbOML+fC4RERrKZBybC2Md+HtiNctsKxyKoG
+        WX3WkwTc5qj7fd0BYrV0mRLUGHv7Cp3m22QOvH4=
+X-Google-Smtp-Source: AHgI3IZUvFMg2Qi949pn3KvRaV9vLO23oBmHdtbMkxoifqMUkVWaujrUVio2wf2xibtygzGe6B8DrW+ByLQGDBefxs8=
+X-Received: by 2002:a63:1a25:: with SMTP id a37mr20873674pga.428.1550758931112;
+ Thu, 21 Feb 2019 06:22:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190221113502.54153-3-steven.price@arm.com>
-User-Agent: NeoMutt/20180716
+References: <20190219115959.55553-1-heikki.krogerus@linux.intel.com>
+ <20190219115959.55553-2-heikki.krogerus@linux.intel.com> <CAHp75Vca+yNuNJaAuB_2_5Vgq8+0FvrBWS1VbvqhAr0nq1UYPw@mail.gmail.com>
+ <20190221135641.GG5054@kuha.fi.intel.com>
+In-Reply-To: <20190221135641.GG5054@kuha.fi.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 21 Feb 2019 16:21:58 +0200
+Message-ID: <CAHp75VeVKs=Knu-H34qY5EmUgKd61+yQ5QbkOrOGv+3Nv+yW_g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] platform/x86: intel_cht_int33fe: Provide fwnode for
+ the USB connector
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     Andy Shevchenko <andy@infradead.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 11:34:51AM +0000, Steven Price wrote:
-> Exposing the pud/pgd levels of the page tables to walk_page_range() means
-> we may come across the exotic large mappings that come with large areas
-> of contiguous memory (such as the kernel's linear map).
-> 
-> Expose p?d_large() from each architecture to detect these large mappings.
-> 
-> x86 already has these defined as inline functions, add a macro of the
-> same name so we don't end up with the generic version too.
-> 
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
->  arch/x86/include/asm/pgtable.h | 3 +++
->  arch/x86/mm/dump_pagetables.c  | 3 +++
->  2 files changed, 6 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-> index 2779ace16d23..3695f6acb6af 100644
-> --- a/arch/x86/include/asm/pgtable.h
-> +++ b/arch/x86/include/asm/pgtable.h
-> @@ -234,6 +234,7 @@ static inline int pmd_large(pmd_t pte)
->  {
->  	return pmd_flags(pte) & _PAGE_PSE;
->  }
-> +#define pmd_large(x)	pmd_large(x)
->  
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->  static inline int pmd_trans_huge(pmd_t pmd)
-> @@ -873,6 +874,7 @@ static inline int pud_large(pud_t pud)
->  	return 0;
->  }
->  #endif	/* CONFIG_PGTABLE_LEVELS > 2 */
-> +#define pud_large(x)	pud_large(x)
+On Thu, Feb 21, 2019 at 3:56 PM Heikki Krogerus
+<heikki.krogerus@linux.intel.com> wrote:
+> On Thu, Feb 21, 2019 at 03:46:46PM +0200, Andy Shevchenko wrote:
+> > On Tue, Feb 19, 2019 at 2:00 PM Heikki Krogerus
+> > <heikki.krogerus@linux.intel.com> wrote:
+> > >
+> > > In ACPI, and now also in DT, the USB connectors usually have
+> > > their own device nodes. In case of USB Type-C, those
+> > > connector (port) nodes are child nodes of the controller or
+> > > PHY device, in our case the fusb302. The software fwnodes
+> > > allow us to create a similar child node for fusb302 that
+> > > represents the connector also on Intel CHT.
+> > >
+> > > This makes it possible replace the fusb302 specific device
+> > > properties which were deprecated with the common USB
+> > > connector properties that tcpm.c is able to use directly.
+> > >
+> >
+> > This doesn't apply to our for-next branch.
+>
+> Please read the cover-letter ;-)
 
-Nit: we usually do this in form of
-
-#define pud_large pud_large
-
-and before body of the inline function.
+Ah, sure.
+I did it once and even remove from our patchwork queue, but then
+forgot details. Now it's all clear.
 
 -- 
- Kirill A. Shutemov
+With Best Regards,
+Andy Shevchenko
