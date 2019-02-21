@@ -2,125 +2,109 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAD0C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 21:40:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9EBEC00319
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 21:43:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF59320818
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 21:40:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V/+zw7sR"
+	by mail.kernel.org (Postfix) with ESMTP id A6A1920836
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 21:43:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550785416;
+	bh=1V1fa89HRlAZLgQ1xiUDViIqteCgMYcMAxRF6LJf0Sc=;
+	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
+	b=ctdzoWl8pJUwN9cnIOd0pIJiv48zXSXyKI/tOUCUafYsh2QxMIwHLM1Vxj9YhxjAU
+	 pZV4CCrCP3JgSqaAx3zwR4DphUsIPtJgtu3wyLJ3w8Wrfml3UnbtNS5udIQn24XRFq
+	 U+7hB/ZdvCuAJigJjxhD2hgGrerbsntYwJDPjxHY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726417AbfBUVke (ORCPT
+        id S1726546AbfBUVnf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 16:40:34 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:42059 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725802AbfBUVkd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 16:40:33 -0500
-Received: by mail-ed1-f68.google.com with SMTP id j89so77330edb.9
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 13:40:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=U6umnKcmrpvh6pr+wrq8JquzEl64oVuliEyZreit8ho=;
-        b=V/+zw7sRLrqtJxUPyvxNb8MKQsG2pYQGlbLh5rUxJQAR2/0Y0Wh7OzdkUXlN8ltfaD
-         MCi7PFUTlM6tgdnda2uupDUq5TqIJnW/OwnvjE+ec5euqPHx24tHCKzzGJPeLcbNpEHZ
-         BEex63cUbrVXiKGRWvC8pLmoCGzej0NDpsKi21cCTgdyIXcz4fqjFFXtv5E5o17yJMpq
-         T4ptRaFBG0w4aiahaEqIf82ww2rWf7Xp94Tf3LRzLgA8B+CuZfETCSz24jBsVsW8hRoe
-         LAWl61Oq9YaMwWELVIrp1gz2V1nZrpQPEISAoREKmN2+MDiNBJnVUormmg6z6SNBCFi7
-         3lkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=U6umnKcmrpvh6pr+wrq8JquzEl64oVuliEyZreit8ho=;
-        b=YrSzapP9+mNyCVgRFwKhQu9pL0QAmDTmlH9xOYqRn1Che2hJlvqq5zTQyDaIsgaiNB
-         IW4XVHZvMxD6ZMOrSjlgAvECPMWjeBTfHx//7c17z5VYm0f4YNRYVZCh8yRF15BRvG2y
-         llpdDSbQ2r8j0xN+CJSAJ0Q/Uo/bjQJ1kHW7ZrZNL1gkgPmyytoniZbIqHI+200s2LoR
-         jRqbeylKFXfB5I3wyAraeM5LUtCnLQmAgEABAZr7XkVn6Bg6nPEqK3TGfPMMkat3ozDa
-         BF6gVwl7lxVjOTMSlwYpPBkjVkiuxnlCKEAbQFEbNE10fYFW+tEsMu4J2K4vzFokkw/T
-         d0qw==
-X-Gm-Message-State: AHQUAubtXhTzLZjBhYQRS2Wxb4c6nk7rlbDe6w+S5hh1JFW/dryWNW6U
-        VMwMmv/hluWJS6vqH22wRBs=
-X-Google-Smtp-Source: AHgI3Ibb7+mt/4l+lgojp/7/oTKoJrf98ow7LaCXjFPIfShGaFH43RfU1zrj7DaqtU+40xAnBfG1iw==
-X-Received: by 2002:a50:86ce:: with SMTP id 14mr504217edu.33.1550785231958;
-        Thu, 21 Feb 2019 13:40:31 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id e21sm467edb.27.2019.02.21.13.40.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Feb 2019 13:40:30 -0800 (PST)
-Date:   Thu, 21 Feb 2019 21:40:30 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Wei Yang <richardw.yang@linux.intel.com>,
-        "Huang, Ying" <ying.huang@intel.com>,
-        kernel test robot <rong.a.chen@intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, lkp@01.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [LKP] [driver core] 570d020012: will-it-scale.per_thread_ops
- -12.2% regression
-Message-ID: <20190221214030.niwvh3xjlioi3myd@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20190218075442.GI29177@shao2-debian>
- <20190219005945.GA16734@richard>
- <20190219121904.GA24103@kroah.com>
- <20190221031049.GE28258@shao2-debian>
- <20190221071023.GA28637@kroah.com>
- <8736oh1uf5.fsf@yhuang-dev.intel.com>
- <20190221073510.GA17369@kroah.com>
- <87va1dzgpj.fsf@yhuang-dev.intel.com>
- <20190221083926.GA7834@richard>
- <20190221091217.GA18701@kroah.com>
+        Thu, 21 Feb 2019 16:43:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51580 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725961AbfBUVnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 16:43:35 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE1372080F;
+        Thu, 21 Feb 2019 21:43:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550785413;
+        bh=1V1fa89HRlAZLgQ1xiUDViIqteCgMYcMAxRF6LJf0Sc=;
+        h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
+        b=0V8xyxYIpdrwrT/l137iDJ7ZvYdrbofQpFPP104vwYKJvlcyEMtcABdWGq8EAauIW
+         mXXvmlsk3XMj/7921WXXe3hR7wlreFpLhIwK5zpRCMVgE7EcZSMEyp/x0eb79aI8Tj
+         e3zmK+LW8ZztW8nQGRsKIdXXKIWwgXYuQYaV3dxA=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190221091217.GA18701@kroah.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] clk: samsung: s3c2443: Mark expected switch fall-through
+Message-ID: <155078541292.77512.12594007340364187685@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+References: <20190211181531.GA3238@embeddedor> <CAJKOXPeHp7sKkZ+jXmTXk5GEF_7G5ujfm3Lw==G3T4thfD+F7Q@mail.gmail.com> <CAGXu5jLMWrb4Dszv5YSyoGt5Lb3S1oE8EnKsTou7=7Nq1rEEVQ@mail.gmail.com> <155027728836.115909.11546859472583324712@swboyd.mtv.corp.google.com> <CAGXu5jJPfoYy20WrR5ghaSo88bsA75s-OyA4qt_3Vz0cJST_MQ@mail.gmail.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CAGXu5jJPfoYy20WrR5ghaSo88bsA75s-OyA4qt_3Vz0cJST_MQ@mail.gmail.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Thu, 21 Feb 2019 13:43:32 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 10:12:17AM +0100, Greg Kroah-Hartman wrote:
->On Thu, Feb 21, 2019 at 04:39:27PM +0800, Wei Yang wrote:
->> >>> I don't think this is an issues of struct device.  As you said, struct
->> >>> device isn't access much during test.  Struct device may share slab page
->> >>> with some other data structures (signal related, or fd related (as in
->> >>> some other test cases)), so that the alignment of these data structures
->> >>> are affected, so caused the performance regression.
->> >>
->> >> But allocation of a structure should always be "properly" aligned, no
->> >> matter what something else did in the system as that is what kmalloc
->> >> ensures.  If not, then we have problems in our memory allocator :)
->> >>
->> >> So something is odd here, but I don't think that is it...
->> >
->> >If all these data structure are allocated with kmalloc() instead of
->> >kmem_cache_alloc(), then my guessing above seems incorrect ...
->> >
->> 
->> Seems we don't have special kmem_cache for device and device_private.
->
->Nor do we need one :)
->
->Remember, 'struct device' is included inside lots of other structures
->already, it is not very often created "on its own."
->
+Quoting Kees Cook (2019-02-20 14:26:06)
+> On Fri, Feb 15, 2019 at 4:34 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > Quoting Kees Cook (2019-02-12 10:57:05)
+> > > On Mon, Feb 11, 2019 at 11:41 PM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+> > > >
+> > > > It is just the GCC which has to be fixed not the code. You want to
+> > > > adjust the code for specific version of GCC and what if GCC changes
+> > > > its warning? For example GCC might require "fall through: "... or a=
+ny
+> > > > other syntax. Another point - what about clang's syntax?
+> > >
+> > > -Wimplicit-fallthrough=3D3 is stricter and maps to -Wextra, hence its
+> > > choice. GCC's levels were chosen based on the existing linters, static
+> > > analyzers, etc. The patterns are unlikely to change (see the gcc
+> > > man-page).
+> > >
+> > > Clang doesn't recognize anything in C mode (hopefully this will be
+> > > fixed in the future[1]).
+> > >
+> > > As long as one of the compilers is able to check this, we'll avoid the
+> > > bugs associated with this mis-pattern. Gustavo's efforts here have
+> > > found kind of a lot of bugs, so I think it's worth a little churn to
+> > > add these (and make minor adjustments to existing comments).
+> >
+> > Just curious, what compilation phase does this check run in? Could we
+> > gain a macro like FALLTHRU or even lowercase 'fallthru' that expanded to
+> > whatever the compiler wants to see and then there would only be "one
+> > way" to do this?  It would alleviate the above concerns, but maybe I'm
+> > rehashing something that's already been proposed and rejected.
+>=20
+> When this got discussed a while back, the thinking was that since
+> we're also dealing with static analyzers (e.g. Coverity) and IDEs that
+> literally parse comments in the code, it was most sensible (at least
+> for now, prior to there being a formal C "fall through" statement --
+> there is for C++ but not yet for C), we'd stick to explicit comments.
+> In theory, we will be able to do a tree-wide change to add the C
+> statement once it exists.
 
-You are right, I get your point.
+Ok, thanks for the background. Looks like the perf tool already
+introduced the #define __fallthrough that they use for this purpose.
+Maybe they're hoping that it will be formalized.
 
->thanks,
->
->greg k-h
-
--- 
-Wei Yang
-Help you, Help me
