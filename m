@@ -2,139 +2,144 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6334C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58103C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B00142084D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:33:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2661820836
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 17:34:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550770468;
+	bh=e8dz5AHm8H2PJh36XS08gj1aFt155We2QyapPmI7e1o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=uFNFgJxBaJWaGsE3Nk91UwbOZ8SnNUo2UJBTQnR4lg8crjDZnO6jcS3e83tdzdNlb
+	 +b7+5WyGyfnNA56fB7g/Aq2jXPpY7nSfP6iqYluRmF4IJ2L5tezzyHddUtLtVW64Q6
+	 QX2h4C8actehRwc0EHgDjHmqPc2YCwzMUa+JX68U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728465AbfBURdJ (ORCPT
+        id S1728543AbfBURe0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 12:33:09 -0500
-Received: from mga17.intel.com ([192.55.52.151]:3486 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725823AbfBURdI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 12:33:08 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 09:33:08 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,396,1544515200"; 
-   d="scan'208";a="135310383"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.181])
-  by FMSMGA003.fm.intel.com with ESMTP; 21 Feb 2019 09:33:07 -0800
-Date:   Thu, 21 Feb 2019 09:33:07 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Jann Horn <jannh@google.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        x86@kernel.org
-Subject: Re: [PATCH v2] x86/asm: Pin sensitive CR4 bits
-Message-ID: <20190221173307.GB7019@linux.intel.com>
-References: <20190220180934.GA46255@beast>
+        Thu, 21 Feb 2019 12:34:26 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:42504 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725823AbfBURe0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 12:34:26 -0500
+Received: by mail-yb1-f196.google.com with SMTP id j189so11188412ybj.9;
+        Thu, 21 Feb 2019 09:34:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dZd5V90RuKK+ZbKvrS8KZJwldBEBUcHT50D54ZP9GEs=;
+        b=hK9JSeTVv0HCK65Qnku4+5Kl4Tc7KVtEQV68EPlOVwGF/ZY1amMKgBdiIrDc/PLk4X
+         Wkka0YqLmFOToI1gEeSo2PDxU1yOz7ka8tlrFeB9n9LPfFHH+u7jQLJN17qWnraLO2v1
+         SCVYD1h/iC5xcvt7Zy/MKztao0MuT68+1CYYafmm3WJPl+wYIR+wIej1nGDVK8/NokUB
+         7FCryMTYRVLITDtzKwN6drLI2TbNfWvevtUYzGjr0AkWGwJHYZfdkicZhpiBXOd5Wrc8
+         m3Vz4ofkNF0iyrVOBEGQmoxAVNKE6x91UdPSIItQM1Llp9cCsTqAFeKuPw0rsz+uvosD
+         xDtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dZd5V90RuKK+ZbKvrS8KZJwldBEBUcHT50D54ZP9GEs=;
+        b=iHhLGBF5NrxsJ2+d28j2tUqWigqTyT4pczPrmMx1k+eg/ERJWsKVa+4TvmCxFn+WPD
+         r6wMfYl5YM85pKWSq9zygDbde//Ug7FEcSHf3OyhjkPbJH7zPuM1KHQrIJQCh1Te3Kde
+         m26pd7BSuW9lmuA1o7lbW9DG2AjqjCz6ijmFmmMEmfdZz5WRwjHhhEBxReDWRF/V0g7B
+         wdG0LyHCb0BczBJeFiI6U1q8b7oXpz3zkHch+9cbup/FGWPAoTpo1yW37nkCi3G9YpGV
+         IqYl2T0hZIUkMbOgFGeiJ3L1ralAYqM46B5PTKb69QJ5xp6wcmD7g+qE9KU9u0UDuFQH
+         PwGg==
+X-Gm-Message-State: AHQUAuacAvWUoR9rjW3/rsi5XBb+2xN303oSut2iJaJECVvTZ1I5IBst
+        cB01dWX26NPcz2ylUluSfdg=
+X-Google-Smtp-Source: AHgI3IY4Due4D3xFTcz8nYkn7tCaWbjkkR9v/rr7ae4KjDfvWJafAunLUlBSh1ERkk9NOC8HAcatgA==
+X-Received: by 2002:a25:6b50:: with SMTP id o16mr20283521ybm.391.1550770465337;
+        Thu, 21 Feb 2019 09:34:25 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::1:7a2b])
+        by smtp.gmail.com with ESMTPSA id b188sm14406580ywa.58.2019.02.21.09.34.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Feb 2019 09:34:24 -0800 (PST)
+Date:   Thu, 21 Feb 2019 09:34:22 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Roman Gushchin <guro@fb.com>, Roman Gushchin <guroan@gmail.com>,
+        Kernel Team <Kernel-team@fb.com>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 0/7] freezer for cgroup v2
+Message-ID: <20190221173422.GY50184@devbig004.ftw2.facebook.com>
+References: <20190219220252.4906-1-guro@fb.com>
+ <20190220143748.GA9477@redhat.com>
+ <20190220220020.GA16335@castle.DHCP.thefacebook.com>
+ <20190221162923.GA26064@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190220180934.GA46255@beast>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190221162923.GA26064@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 10:09:34AM -0800, Kees Cook wrote:
-> Several recent exploits have used direct calls to the native_write_cr4()
-> function to disable SMEP and SMAP before then continuing their exploits
-> using userspace memory access. This pins bits of cr4 so that they cannot
-> be changed through a common function. This is not intended to be general
-> ROP protection (which would require CFI to defend against properly), but
-> rather a way to avoid trivial direct function calling (or CFI bypassing
-> via a matching function prototype) as seen in:
-> 
-> https://googleprojectzero.blogspot.com/2017/05/exploiting-linux-kernel-via-packet.html
-> (https://github.com/xairy/kernel-exploits/tree/master/CVE-2017-7308)
-> 
-> The goals of this change:
->  - pin specific bits (SMEP, SMAP, and UMIP) when writing cr4.
->  - avoid setting the bits too early (they must become pinned only after
->    first being used).
->  - pinning mask needs to be read-only during normal runtime.
->  - pinning needs to be rechecked after set to avoid jumps into the middle
->    of the function.
-> 
-> Using __ro_after_init on the mask is done so it can't be first disabled
-> with a malicious write. And since it becomes read-only, we must avoid
-> writing to it later (hence the check for bits already having been set
-> instead of unconditionally writing to the mask).
-> 
-> The use of volatile is done to force the compiler to perform a full reload
-> of the mask after setting cr4 (to protect against just jumping into the
-> function past where the masking happens; we must check that the mask was
-> applied after we do the set). Due to how this function can be built by the
-> compiler (especially due to the removal of frame pointers), jumping into
-> the middle of the function frequently doesn't require stack manipulation
-> to construct a stack frame (there may only a retq without pops, which is
-> sufficient for use with exploits like timer overwrites mentioned above).
-> 
-> For example, without the recheck, the function may appear as:
-> 
->    native_write_cr4:
->       mov [pin], %rbx
->       or  %rbx, %rdi
->    1: mov %rdi, %cr4
->       retq
-> 
-> The masking "or" could be trivially bypassed by just calling to label "1"
-> instead of "native_write_cr4". (CFI will force calls to only be able to
-> call into native_write_cr4, but CFI and CET are uncommon currently.)
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
-> v2: fix think-o in cr4_pin recheck (Jann Horn)
-> ---
->  arch/x86/include/asm/special_insns.h | 11 +++++++++++
->  arch/x86/kernel/cpu/common.c         | 12 +++++++++++-
->  2 files changed, 22 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
-> index 43c029cdc3fe..4c26004ed5d4 100644
-> --- a/arch/x86/include/asm/special_insns.h
-> +++ b/arch/x86/include/asm/special_insns.h
-> @@ -72,9 +72,20 @@ static inline unsigned long native_read_cr4(void)
->  	return val;
->  }
->  
-> +extern volatile unsigned long cr4_pin;
-> +
->  static inline void native_write_cr4(unsigned long val)
->  {
-> +again:
-> +	val |= cr4_pin;
->  	asm volatile("mov %0,%%cr4": : "r" (val), "m" (__force_order));
-> +	/*
-> +	 * If the MOV above was used directly as a ROP gadget we can
-> +	 * notice the lack of pinned bits in "val" and start the function
-> +	 * from the beginning to gain the cr4_pin bits for sure.
-> +	 */
-> +	if (WARN_ONCE((val & cr4_pin) != cr4_pin, "cr4 bypass attempt?!\n"))
+Hello, Oleg.
 
-Printing what bits diverged would be helpful in the unlikely event that the
-WARN_ONCE triggers.  "cr4 bypass attempt" is probably only meaningful to
-people that are already familiar with the code, e.g.:
+On Thu, Feb 21, 2019 at 05:29:24PM +0100, Oleg Nesterov wrote:
+> But to me this is a reasonable trade-off because this way we do not add
+> additional complexity to the kernel.
 
-	if (WARN_ONCE((val & cr4_pin) != cr4_pin,
-	    "Attempt to unpin cr4 bits: %lx, cr4 bypass attack?!", ~val & cr4_pin))
+So, I really wanna avoid allowing userspace to cause D state sleeps.
+It's not impossible to work around but becomes really nasty.  For
+example, imagine a memory pressure based userspace oom handler issuer
+kills based on per-cgroup pressure metric (as oomd would do).  It
+might not necessarily have the insight that a victim cgroup is frozen
+or whether it can move out its members to a different cgroup (in a lot
+of cases that will cause a lot of confusion in management software).
 
+The frozen state in cgroup1 is a new task state which is different
+from all others and in a nasty way and it has been causing various
+confusions and mistakes from its users.  We really should make it
+closer to the existing stop behaviors even if that means more
+complexity in the implementation.
 
-> +		goto again;
->  }
->  
->  #ifdef CONFIG_X86_64
+> Actually, "killable" is not that difficult afaics. "ptraceable" looks more
+> problematic to me. Again, user-space can do
+> 
+> 	1. PTRACE_SEIZE
+> 	2. move the tracee to the root cgroup
+> 	3. do anything with the tracee
+> 	4. move it back
+
+which is fine.  The goal isn't trying to block userspace from doing
+things that it explicitly wants to do.  That's fine.  We just want
+things like killing and ptracing to behave similarly to other stopped
+states (ie. avoid introducing completely new behaviors).
+
+> But there is another case. If admin wants to freeze a cgroup then it is not
+> clear why a user which can send SIGKILL to a frozen process should wake it up.
+> 
+> ------------------------------------------------------------------------------
+> Again, it is not that I hate the idea of killable/ptraceable freezer. Just I
+> personally think it's not worth the trouble. Perhaps I am wrong, but so far
+> I do not see a good implementation...
+> 
+> And, apart from reading/writing the registers, what can ptrace do with a frozen
+> tracee? This doesn't look like a "must have" feature to me.
+> 
+> At least, may I ask you again to make (if possible) a separate patch which adds
+> the ability to kill/ptrace?
+
+ptrace support is a lot less important than kill for sure but if at
+all possible I think it'd be better to have it because that makes the
+frozen state closer to other stopped states and thus less surprising.
+
+To summarize, the ideal result is the frozen state to be "stuck in
+jobctl stop loop" but except for looping in it no different from
+regular jobctl stop.  Plus, register state examination is already
+useful for frozen cgroups for debbugging purposes in itself.
+
+Thanks.
+
+-- 
+tejun
