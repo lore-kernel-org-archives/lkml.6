@@ -2,110 +2,106 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 826DAC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:46:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA4AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:46:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A70620823
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:46:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE67320823
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:46:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pbByv07T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728399AbfBUPqY (ORCPT
+        id S1728431AbfBUPqi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 10:46:24 -0500
-Received: from gateway24.websitewelcome.com ([192.185.51.253]:22005 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726109AbfBUPqY (ORCPT
+        Thu, 21 Feb 2019 10:46:38 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43818 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726109AbfBUPqh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 10:46:24 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id EA57415677E
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 09:46:23 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id wqYJgWfWg2PzOwqYJgyukU; Thu, 21 Feb 2019 09:46:23 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=37372 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gwqYJ-000atD-5u; Thu, 21 Feb 2019 09:46:23 -0600
-Date:   Thu, 21 Feb 2019 09:46:22 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] mm/swapfile.c: use struct_size() in kvzalloc()
-Message-ID: <20190221154622.GA19599@embeddedor>
+        Thu, 21 Feb 2019 10:46:37 -0500
+Received: by mail-wr1-f66.google.com with SMTP id d17so16699958wre.10;
+        Thu, 21 Feb 2019 07:46:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=grwC6F8sr2P6wH0qmFUinXdEXp0uA7VFQw6edDCnX8s=;
+        b=pbByv07TK3LXe7RaFLLZSYFoyKgfBy1/EwZBqH5qj+sykrd8IrfgoKZtD6d5/b5JL2
+         gYOZ5h3Sn5eD/PAZXiLrzbLTZBz65O3zdsLAxSB3ZmtmAM2RgncD0VvzO3P2DtaLQ4ma
+         kjfeIAW8eZO70VFtfC6RDzXOPseyACW0glVKJYsJcsQIj/FdTHGV3XS8FrmZ83p6Llqq
+         wsvJCEcbkIMfRgRru7bDqwcw+l/qkf73ZCG1iblEy+xWNkYPGAqDcnDVjjEa4tkA1DGq
+         TXpIS4sRWSH0fz+689cdg42CvWVqyL178KbLafWzwCOId/xODJpLSZDq8x/6fEOUFjv5
+         ifvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=grwC6F8sr2P6wH0qmFUinXdEXp0uA7VFQw6edDCnX8s=;
+        b=TUKJOpEZdMJs7ReW7IrRVzUtHPN6WwNxwN1b603OJty+jTd7I6k6Wfw1f9Sk3rkByo
+         BPGnfBlJS7JV/hcg4hciRFSyQ9FKD6p2J574OBDWgnGa1u2cv1Itol232U6c+O+GqB4/
+         u3gsCzVy5XXmVv2RxVB9U+6zBKkTYoSABr1G60vcFB1xzEBsoA3ydmitt5wTd/GCR5UZ
+         D5TW2ZgDQmYMMSdHIYMbm2aGdnt8cg5GzmrhMeULlpswmUvQErMbDvKQy7x53ymZyXOu
+         RtmsublGwQx4Vl91ArLfezGBe5pRH/22ZEVVGidI3mniz1SDUaW2tEclu0frj0jI2wR9
+         DBwQ==
+X-Gm-Message-State: AHQUAuZBe1LD6Q1C45wt7g69qVStiW+ocj2D/Ea6nR93dOs2ZpX1AVem
+        7jnZeBL9G3n/vmFC5BsJo/I=
+X-Google-Smtp-Source: AHgI3Ia310xWNlHYgOXpCvIkKImsvcjzzzK0jJ9UuXTBK/cHlrEVjGR2ICLA1CVkxJdjbTth4bqqsw==
+X-Received: by 2002:a5d:6b43:: with SMTP id x3mr9394055wrw.76.1550763995843;
+        Thu, 21 Feb 2019 07:46:35 -0800 (PST)
+Received: from localhost (pD9E51D2D.dip0.t-ipconnect.de. [217.229.29.45])
+        by smtp.gmail.com with ESMTPSA id z15sm31898974wrh.18.2019.02.21.07.46.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 21 Feb 2019 07:46:35 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] phy: tegra: xusb: Add Tegra186 support
+Date:   Thu, 21 Feb 2019 16:46:29 +0100
+Message-Id: <20190221154634.10684-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gwqYJ-000atD-5u
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.119.20]:37372
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 20
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+From: Thierry Reding <treding@nvidia.com>
 
-struct foo {
-    int stuff;
-    struct boo entry[];
-};
+This series adds support for Tegra186 to the XUSB pad controller driver.
+Patch 1 extends the device tree bindings with support for Tegra186 while
+patches 2-4 are preparatory work for the final patch 5 that adds the
+Tegra186 specific programming for the UPHY blocks.
 
-size = sizeof(struct foo) + count * sizeof(struct boo);
-instance = kvzalloc(size, GFP_KERNEL);
+Changes in v2:
+- address review comments from Kishon
+- added Reviewed-by tags from JC
 
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
+Thierry
 
-instance = kvzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+JC Kuo (2):
+  phy: tegra: xusb: Skip single function lane programming
+  phy: tegra: xusb: Add Tegra186 support
 
-Notice that, in this case, variable size is not necessary, hence
-it is removed.
+Thierry Reding (3):
+  dt-bindings: phy: tegra: Add Tegra186 support
+  phy: tegra: xusb: Parse dual-role mode property
+  phy: tegra: xusb: Add support for power supplies
 
-This code was detected with the help of Coccinelle.
+ .../phy/nvidia,tegra124-xusb-padctl.txt       |   9 +
+ MAINTAINERS                                   |   5 +
+ drivers/phy/tegra/Makefile                    |   1 +
+ drivers/phy/tegra/xusb-tegra186.c             | 899 ++++++++++++++++++
+ drivers/phy/tegra/xusb.c                      |  67 +-
+ drivers/phy/tegra/xusb.h                      |  35 +
+ 6 files changed, 1014 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/phy/tegra/xusb-tegra186.c
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- mm/swapfile.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index cca8420b12db..fd9b0025ad00 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -2713,9 +2713,8 @@ static struct swap_info_struct *alloc_swap_info(void)
- 	struct swap_info_struct *p;
- 	unsigned int type;
- 	int i;
--	unsigned int size = sizeof(*p) + nr_node_ids * sizeof(struct plist_node);
- 
--	p = kvzalloc(size, GFP_KERNEL);
-+	p = kvzalloc(struct_size(p, avail_lists, nr_node_ids), GFP_KERNEL);
- 	if (!p)
- 		return ERR_PTR(-ENOMEM);
- 
 -- 
 2.20.1
 
