@@ -2,157 +2,313 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB71C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:51:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 655B6C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:51:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCE6220700
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:51:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2542320700
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 14:51:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550760687;
-	bh=VC5Zc2BYcaeiXFAyyCfnEvRZZdPJMu9jBk0lEhrosOQ=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=j42VaCH7kHRncLHir0HJIRbdokW6svS8hxdXEQeka+NNpQcu+rHV9qgSY6CnSPM09
-	 3w5F7WE53mCBVlj6UqLz0DNp0w3R0ZtuaeSiYsTRCyUy1nKyhz+odscd3vGjuKZLek
-	 4NrFWroqytb+5tzhRUdBCdQTpj3VRNxbOY/Fgr7Q=
+	s=default; t=1550760705;
+	bh=QdzvxkTpPjg4ho/enkV9i4Osijp5B5NckM8WtzV4rRs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=UFuDq2KVwqmJuq8pckwV5vdOhiHnFYBH+hT/DpfGNV4N/cKiJVs0lvSAl8ZfYmNrr
+	 2LgNEA75rZgZyJKWR9ryOBnh9xTlh/hHhCwau0ZleDd45JAFZFzetGYDn0DsZiz+3f
+	 6WlobUb+x/Fme3FO6Tx3e4Zu50HLPAIFyzRaWRpM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728363AbfBUOhW (ORCPT
+        id S1728194AbfBUOg5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 09:37:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58460 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 09:36:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727594AbfBUOhT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 09:37:19 -0500
+        id S1728129AbfBUOgv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 09:36:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CF1120838;
-        Thu, 21 Feb 2019 14:37:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B24412084F;
+        Thu, 21 Feb 2019 14:36:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550759838;
-        bh=VC5Zc2BYcaeiXFAyyCfnEvRZZdPJMu9jBk0lEhrosOQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=yGsTnMU00lxPh0U6StcX0Ua+Zv+AfbO4+TjdDFnMfqgf/7xXz3RaUpPwEoa20kXl9
-         64I/Zy8omHxfHA/V5Hhg024doNcOoBl2nqRpbpDP/PVREvkPBZ4tgIEGDfLJbNN4x1
-         M+HbN4TwJh8J072yvETtA1xxriHLs5+t/r0XEdHc=
+        s=default; t=1550759810;
+        bh=QdzvxkTpPjg4ho/enkV9i4Osijp5B5NckM8WtzV4rRs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=R3rrwR2viDJvRWuVQsBwb3Bt6gSoE1v4BgzSwEKiO5msxtaK8wz50vgStrJbbBusZ
+         xfzKOz2BDbf+cfMwYGDP/3SuV9h4wJdS+hglTYk2z2UvjxtI35ggXEbYRlPix3O3OR
+         JFVDMOGNRhU3+egz+XoWPmlDW0DPx6h7MORbmIeE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 3.18 00/13] 3.18.136-stable review
-Date:   Thu, 21 Feb 2019 15:35:31 +0100
-Message-Id: <20190221125240.091472334@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 13/13] ax25: fix possible use-after-free
+Date:   Thu, 21 Feb 2019 15:35:44 +0100
+Message-Id: <20190221125241.663774020@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
+In-Reply-To: <20190221125240.091472334@linuxfoundation.org>
+References: <20190221125240.091472334@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-3.18.136-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-3.18.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 3.18.136-rc1
-X-KernelTest-Deadline: 2019-02-23T12:52+00:00
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 3.18.136 release.
-There are 13 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-Responses should be made by Sat Feb 23 12:52:12 UTC 2019.
-Anything received after that time might be too late.
+------------------
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.136-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-3.18.y
-and the diffstat can be found below.
+From: Eric Dumazet <edumazet@google.com>
 
-thanks,
+commit 63530aba7826a0f8e129874df9c4d264f9db3f9e upstream.
 
-greg k-h
+syzbot found that ax25 routes where not properly protected
+against concurrent use [1].
 
--------------
-Pseudo-Shortlog of commits:
+In this particular report the bug happened while
+copying ax25->digipeat.
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 3.18.136-rc1
+Fix this problem by making sure we call ax25_get_route()
+while ax25_route_lock is held, so that no modification
+could happen while using the route.
 
-Eric Dumazet <edumazet@google.com>
-    ax25: fix possible use-after-free
+The current two ax25_get_route() callers do not sleep,
+so this change should be fine.
 
-Eric Dumazet <edumazet@google.com>
-    mISDN: fix a race in dev_expire_timer()
+Once we do that, ax25_get_route() no longer needs to
+grab a reference on the found route.
 
-Eric Dumazet <edumazet@google.com>
-    net/x25: do not hold the cpu too long in x25_new_lci()
+[1]
+ax25_connect(): syz-executor0 uses autobind, please contact jreuter@yaina.de
+BUG: KASAN: use-after-free in memcpy include/linux/string.h:352 [inline]
+BUG: KASAN: use-after-free in kmemdup+0x42/0x60 mm/util.c:113
+Read of size 66 at addr ffff888066641a80 by task syz-executor2/531
 
-Jann Horn <jannh@google.com>
-    kvm: fix kvm_ioctl_create_device() reference counting (CVE-2019-6974)
+ax25_connect(): syz-executor0 uses autobind, please contact jreuter@yaina.de
+CPU: 1 PID: 531 Comm: syz-executor2 Not tainted 5.0.0-rc2+ #10
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+ print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+ kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+ check_memory_region_inline mm/kasan/generic.c:185 [inline]
+ check_memory_region+0x123/0x190 mm/kasan/generic.c:191
+ memcpy+0x24/0x50 mm/kasan/common.c:130
+ memcpy include/linux/string.h:352 [inline]
+ kmemdup+0x42/0x60 mm/util.c:113
+ kmemdup include/linux/string.h:425 [inline]
+ ax25_rt_autobind+0x25d/0x750 net/ax25/ax25_route.c:424
+ ax25_connect.cold+0x30/0xa4 net/ax25/af_ax25.c:1224
+ __sys_connect+0x357/0x490 net/socket.c:1664
+ __do_sys_connect net/socket.c:1675 [inline]
+ __se_sys_connect net/socket.c:1672 [inline]
+ __x64_sys_connect+0x73/0xb0 net/socket.c:1672
+ do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x458099
+Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f870ee22c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000458099
+RDX: 0000000000000048 RSI: 0000000020000080 RDI: 0000000000000005
+RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+ax25_connect(): syz-executor4 uses autobind, please contact jreuter@yaina.de
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f870ee236d4
+R13: 00000000004be48e R14: 00000000004ce9a8 R15: 00000000ffffffff
 
-Wei Yongjun <weiyongjun1@huawei.com>
-    hwmon: (lm80) Fix missing unlock on error in set_fan_div()
+Allocated by task 526:
+ save_stack+0x45/0xd0 mm/kasan/common.c:73
+ set_track mm/kasan/common.c:85 [inline]
+ __kasan_kmalloc mm/kasan/common.c:496 [inline]
+ __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
+ kasan_kmalloc+0x9/0x10 mm/kasan/common.c:504
+ax25_connect(): syz-executor5 uses autobind, please contact jreuter@yaina.de
+ kmem_cache_alloc_trace+0x151/0x760 mm/slab.c:3609
+ kmalloc include/linux/slab.h:545 [inline]
+ ax25_rt_add net/ax25/ax25_route.c:95 [inline]
+ ax25_rt_ioctl+0x3b9/0x1270 net/ax25/ax25_route.c:233
+ ax25_ioctl+0x322/0x10b0 net/ax25/af_ax25.c:1763
+ sock_do_ioctl+0xe2/0x400 net/socket.c:950
+ sock_ioctl+0x32f/0x6c0 net/socket.c:1074
+ vfs_ioctl fs/ioctl.c:46 [inline]
+ file_ioctl fs/ioctl.c:509 [inline]
+ do_vfs_ioctl+0x107b/0x17d0 fs/ioctl.c:696
+ ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+ __do_sys_ioctl fs/ioctl.c:720 [inline]
+ __se_sys_ioctl fs/ioctl.c:718 [inline]
+ __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+ do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-    net: ipv4: use a dedicated counter for icmp_v4 redirect packets
+ax25_connect(): syz-executor5 uses autobind, please contact jreuter@yaina.de
+Freed by task 550:
+ save_stack+0x45/0xd0 mm/kasan/common.c:73
+ set_track mm/kasan/common.c:85 [inline]
+ __kasan_slab_free+0x102/0x150 mm/kasan/common.c:458
+ kasan_slab_free+0xe/0x10 mm/kasan/common.c:466
+ __cache_free mm/slab.c:3487 [inline]
+ kfree+0xcf/0x230 mm/slab.c:3806
+ ax25_rt_add net/ax25/ax25_route.c:92 [inline]
+ ax25_rt_ioctl+0x304/0x1270 net/ax25/ax25_route.c:233
+ ax25_ioctl+0x322/0x10b0 net/ax25/af_ax25.c:1763
+ sock_do_ioctl+0xe2/0x400 net/socket.c:950
+ sock_ioctl+0x32f/0x6c0 net/socket.c:1074
+ vfs_ioctl fs/ioctl.c:46 [inline]
+ file_ioctl fs/ioctl.c:509 [inline]
+ do_vfs_ioctl+0x107b/0x17d0 fs/ioctl.c:696
+ ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+ __do_sys_ioctl fs/ioctl.c:720 [inline]
+ __se_sys_ioctl fs/ioctl.c:718 [inline]
+ __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+ do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Jose Abreu <jose.abreu@synopsys.com>
-    net: stmmac: Fix a race in EEE enable callback
+The buggy address belongs to the object at ffff888066641a80
+ which belongs to the cache kmalloc-96 of size 96
+The buggy address is located 0 bytes inside of
+ 96-byte region [ffff888066641a80, ffff888066641ae0)
+The buggy address belongs to the page:
+page:ffffea0001999040 count:1 mapcount:0 mapping:ffff88812c3f04c0 index:0x0
+flags: 0x1fffc0000000200(slab)
+ax25_connect(): syz-executor4 uses autobind, please contact jreuter@yaina.de
+raw: 01fffc0000000200 ffffea0001817948 ffffea0002341dc8 ffff88812c3f04c0
+raw: 0000000000000000 ffff888066641000 0000000100000020 0000000000000000
+page dumped because: kasan: bad access detected
 
-Paolo Abeni <pabeni@redhat.com>
-    vsock: cope with memory allocation failure at socket creation time
+Memory state around the buggy address:
+ ffff888066641980: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+ ffff888066641a00: 00 00 00 00 00 00 00 00 02 fc fc fc fc fc fc fc
+>ffff888066641a80: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+                   ^
+ ffff888066641b00: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+ ffff888066641b80: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
 
-Eric Dumazet <edumazet@google.com>
-    vxlan: test dev->flags & IFF_UP before calling netif_rx()
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Eric Dumazet <edumazet@google.com>
-    tcp: clear icsk_backoff in tcp_write_queue_purge()
+---
+ include/net/ax25.h    |   12 ++++++++++++
+ net/ax25/ax25_ip.c    |    4 ++--
+ net/ax25/ax25_route.c |   19 ++++++++-----------
+ 3 files changed, 22 insertions(+), 13 deletions(-)
 
-Eric Dumazet <edumazet@google.com>
-    tcp: tcp_v4_err() should be more careful
-
-Kai-Heng Feng <kai.heng.feng@canonical.com>
-    sky2: Increase D3 delay again
-
-Zhiqiang Liu <liuzhiqiang26@huawei.com>
-    net: fix IPv6 prefix route residue
-
-
--------------
-
-Diffstat:
-
- Makefile                                           |  4 ++--
- drivers/hwmon/lm80.c                               |  4 +++-
- drivers/isdn/mISDN/timerdev.c                      |  2 +-
- drivers/net/ethernet/marvell/sky2.c                |  2 +-
- .../net/ethernet/stmicro/stmmac/stmmac_ethtool.c   | 22 ++++++++++++----------
- drivers/net/vxlan.c                                | 13 +++++++++++--
- include/net/ax25.h                                 | 12 ++++++++++++
- include/net/inetpeer.h                             |  1 +
- include/net/tcp.h                                  |  1 +
- net/ax25/ax25_ip.c                                 |  4 ++--
- net/ax25/ax25_route.c                              | 19 ++++++++-----------
- net/ipv4/inetpeer.c                                |  1 +
- net/ipv4/route.c                                   |  7 +++++--
- net/ipv4/tcp.c                                     |  1 -
- net/ipv4/tcp_ipv4.c                                |  7 ++++---
- net/ipv6/addrconf.c                                |  3 ++-
- net/vmw_vsock/vmci_transport.c                     |  4 ++++
- net/x25/af_x25.c                                   |  6 ++----
- virt/kvm/kvm_main.c                                |  3 ++-
- 19 files changed, 74 insertions(+), 42 deletions(-)
+--- a/include/net/ax25.h
++++ b/include/net/ax25.h
+@@ -197,6 +197,18 @@ static inline void ax25_hold_route(ax25_
+ 
+ void __ax25_put_route(ax25_route *ax25_rt);
+ 
++extern rwlock_t ax25_route_lock;
++
++static inline void ax25_route_lock_use(void)
++{
++	read_lock(&ax25_route_lock);
++}
++
++static inline void ax25_route_lock_unuse(void)
++{
++	read_unlock(&ax25_route_lock);
++}
++
+ static inline void ax25_put_route(ax25_route *ax25_rt)
+ {
+ 	if (atomic_dec_and_test(&ax25_rt->refcount))
+--- a/net/ax25/ax25_ip.c
++++ b/net/ax25/ax25_ip.c
+@@ -118,6 +118,7 @@ int ax25_rebuild_header(struct sk_buff *
+ 	if (arp_find(bp + 1, skb))
+ 		return 1;
+ 
++	ax25_route_lock_use();
+ 	route = ax25_get_route(dst, NULL);
+ 	if (route) {
+ 		digipeat = route->digipeat;
+@@ -209,9 +210,8 @@ int ax25_rebuild_header(struct sk_buff *
+ 	ax25_queue_xmit(skb, dev);
+ 
+ put:
+-	if (route)
+-		ax25_put_route(route);
+ 
++	ax25_route_lock_unuse();
+ 	return 1;
+ }
+ 
+--- a/net/ax25/ax25_route.c
++++ b/net/ax25/ax25_route.c
+@@ -40,7 +40,7 @@
+ #include <linux/export.h>
+ 
+ static ax25_route *ax25_route_list;
+-static DEFINE_RWLOCK(ax25_route_lock);
++DEFINE_RWLOCK(ax25_route_lock);
+ 
+ void ax25_rt_device_down(struct net_device *dev)
+ {
+@@ -349,6 +349,7 @@ const struct file_operations ax25_route_
+  *	Find AX.25 route
+  *
+  *	Only routes with a reference count of zero can be destroyed.
++ *	Must be called with ax25_route_lock read locked.
+  */
+ ax25_route *ax25_get_route(ax25_address *addr, struct net_device *dev)
+ {
+@@ -356,7 +357,6 @@ ax25_route *ax25_get_route(ax25_address
+ 	ax25_route *ax25_def_rt = NULL;
+ 	ax25_route *ax25_rt;
+ 
+-	read_lock(&ax25_route_lock);
+ 	/*
+ 	 *	Bind to the physical interface we heard them on, or the default
+ 	 *	route if none is found;
+@@ -379,11 +379,6 @@ ax25_route *ax25_get_route(ax25_address
+ 	if (ax25_spe_rt != NULL)
+ 		ax25_rt = ax25_spe_rt;
+ 
+-	if (ax25_rt != NULL)
+-		ax25_hold_route(ax25_rt);
+-
+-	read_unlock(&ax25_route_lock);
+-
+ 	return ax25_rt;
+ }
+ 
+@@ -414,9 +409,12 @@ int ax25_rt_autobind(ax25_cb *ax25, ax25
+ 	ax25_route *ax25_rt;
+ 	int err = 0;
+ 
+-	if ((ax25_rt = ax25_get_route(addr, NULL)) == NULL)
++	ax25_route_lock_use();
++	ax25_rt = ax25_get_route(addr, NULL);
++	if (!ax25_rt) {
++		ax25_route_lock_unuse();
+ 		return -EHOSTUNREACH;
+-
++	}
+ 	if ((ax25->ax25_dev = ax25_dev_ax25dev(ax25_rt->dev)) == NULL) {
+ 		err = -EHOSTUNREACH;
+ 		goto put;
+@@ -451,8 +449,7 @@ int ax25_rt_autobind(ax25_cb *ax25, ax25
+ 	}
+ 
+ put:
+-	ax25_put_route(ax25_rt);
+-
++	ax25_route_lock_unuse();
+ 	return err;
+ }
+ 
 
 
