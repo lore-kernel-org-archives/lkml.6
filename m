@@ -2,95 +2,130 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 009BEC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E82BC4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:34:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6DBD20842
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:33:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69C2E2075A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 15:34:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728135AbfBUPdG (ORCPT
+        id S1728259AbfBUPeR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 10:33:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35746 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 10:34:17 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59076 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725858AbfBUPdF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 10:33:05 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728003AbfBUPeR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 10:34:17 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF0DF2075A;
-        Thu, 21 Feb 2019 15:33:04 +0000 (UTC)
-Date:   Thu, 21 Feb 2019 10:33:03 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] perf/core: use strndup_user() instead of buggy
- open-coded version
-Message-ID: <20190221103303.5a83229e@gandalf.local.home>
-In-Reply-To: <7F433C6B-451A-4C3B-9B7E-0CB2CE4821DD@fb.com>
-References: <20190220165443.152385-1-jannh@google.com>
-        <20190221092057.8c56fa4db9eb39b7b14cd0fe@kernel.org>
-        <7F433C6B-451A-4C3B-9B7E-0CB2CE4821DD@fb.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5EA7680462;
+        Thu, 21 Feb 2019 15:34:16 +0000 (UTC)
+Received: from redhat.com (unknown [10.20.6.236])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 569385D706;
+        Thu, 21 Feb 2019 15:34:08 +0000 (UTC)
+Date:   Thu, 21 Feb 2019 10:34:06 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v2 03/26] userfaultfd: don't retake mmap_sem to emulate
+ NOPAGE
+Message-ID: <20190221153406.GC2813@redhat.com>
+References: <20190212025632.28946-1-peterx@redhat.com>
+ <20190212025632.28946-4-peterx@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190212025632.28946-4-peterx@redhat.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 21 Feb 2019 15:34:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Feb 2019 07:12:10 +0000
-Song Liu <songliubraving@fb.com> wrote:
-
-> > On Feb 20, 2019, at 4:20 PM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > 
-> > Hi Jann,
-> > 
-> > On Wed, 20 Feb 2019 17:54:43 +0100
-> > Jann Horn <jannh@google.com> wrote:
-> >   
-> >> The first version of this method was missing the check for
-> >> `ret == PATH_MAX`; then such a check was added, but it didn't call kfree()
-> >> on error, so there was still a small memory leak in the error case.
-> >> Fix it by using strndup_user() instead of open-coding it.
-> >>   
-> > 
-> > This looks good to me.
-> > 
-> > Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > 
-> > BTW, for stable, this is good. For the long term, I think we should
-> > fix strndup_user() to return -E2BUG when the user string is longer
-> > than max.
-
-OK, I'll add a stable tag (but it wont go until the merge window).
-
-It also shouldn't be called "perf/core" as its in the tracing
-directory, and thus "tracing/perf" would be more appropriate. But I see
-that's what the patch it fixes calls it too :-/
-
-I'll pull it in.
-
-Thanks everyone!
-
--- Steve
-
-
-> > 
-> > Thank you,
-> >   
-> >> Fixes: 0eadcc7a7bc0 ("perf/core: Fix perf_uprobe_init()")
-> >> Signed-off-by: Jann Horn <jannh@google.com>  
+On Tue, Feb 12, 2019 at 10:56:09AM +0800, Peter Xu wrote:
+> The idea comes from the upstream discussion between Linus and Andrea:
 > 
-> Thanks for the fix!
+> https://lkml.org/lkml/2017/10/30/560
 > 
-> Acked-by: Song Liu <songliubraving@fb.com>
+> A summary to the issue: there was a special path in handle_userfault()
+> in the past that we'll return a VM_FAULT_NOPAGE when we detected
+> non-fatal signals when waiting for userfault handling.  We did that by
+> reacquiring the mmap_sem before returning.  However that brings a risk
+> in that the vmas might have changed when we retake the mmap_sem and
+> even we could be holding an invalid vma structure.
+> 
+> This patch removes the risk path in handle_userfault() then we will be
+> sure that the callers of handle_mm_fault() will know that the VMAs
+> might have changed.  Meanwhile with previous patch we don't lose
+> responsiveness as well since the core mm code now can handle the
+> nonfatal userspace signals quickly even if we return VM_FAULT_RETRY.
+> 
+> Suggested-by: Andrea Arcangeli <aarcange@redhat.com>
+> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Peter Xu <peterx@redhat.com>
 
+Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
 
+> ---
+>  fs/userfaultfd.c | 24 ------------------------
+>  1 file changed, 24 deletions(-)
+> 
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index 89800fc7dc9d..b397bc3b954d 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -514,30 +514,6 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
+>  
+>  	__set_current_state(TASK_RUNNING);
+>  
+> -	if (return_to_userland) {
+> -		if (signal_pending(current) &&
+> -		    !fatal_signal_pending(current)) {
+> -			/*
+> -			 * If we got a SIGSTOP or SIGCONT and this is
+> -			 * a normal userland page fault, just let
+> -			 * userland return so the signal will be
+> -			 * handled and gdb debugging works.  The page
+> -			 * fault code immediately after we return from
+> -			 * this function is going to release the
+> -			 * mmap_sem and it's not depending on it
+> -			 * (unlike gup would if we were not to return
+> -			 * VM_FAULT_RETRY).
+> -			 *
+> -			 * If a fatal signal is pending we still take
+> -			 * the streamlined VM_FAULT_RETRY failure path
+> -			 * and there's no need to retake the mmap_sem
+> -			 * in such case.
+> -			 */
+> -			down_read(&mm->mmap_sem);
+> -			ret = VM_FAULT_NOPAGE;
+> -		}
+> -	}
+> -
+>  	/*
+>  	 * Here we race with the list_del; list_add in
+>  	 * userfaultfd_ctx_read(), however because we don't ever run
+> -- 
+> 2.17.1
+> 
