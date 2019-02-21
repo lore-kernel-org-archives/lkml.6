@@ -2,111 +2,283 @@ Return-Path: <SRS0=r0+/=Q4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AEE5C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F30C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:57:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA78C20880
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:56:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GmHkWxAk"
+	by mail.kernel.org (Postfix) with ESMTP id 8E54620880
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Feb 2019 11:57:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727551AbfBUL4p (ORCPT
+        id S1727803AbfBUL5w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 06:56:45 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:52420 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbfBUL4p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 06:56:45 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1LBsc0B035676;
-        Thu, 21 Feb 2019 11:55:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=Pbq0pvPOHEEJ+KrRRgeyvszIi/z/+hzos7hFkkP1w74=;
- b=GmHkWxAk1iIPPv86Vvh3PdDb2Tl90iilKrF8nfs07s0exHy6e3hKUGI+Gomw1huQqbox
- CGrXa5AYkbjUoEJe/AomYIIYR4a4OAzvbbEidd19PGy5qoQbjC+87uXDPVp2/pjnD4PB
- MmnB3HJtVYv6F8yw9aLbViwTPP6guX32/UnljBCbqtBTOBpPTUNcGKrdfmeCcGYZBV6Q
- jZwuIXRdgfrXYyN2QdgBkC5niMPmhjKekk9KpNyqA5fK8pkP/g7KDNlXXEvznt2OhQGr
- dDi9UofGStiA+zXeMVnC/LPaoTesvnwzQSK2Cnmpc43qnFh7LuHSs2G6PEhCXPKYkaMn Lg== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2qpb5rqcv6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Feb 2019 11:55:25 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1LBtP3a022610
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Feb 2019 11:55:25 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1LBtNG2012028;
-        Thu, 21 Feb 2019 11:55:24 GMT
-Received: from [192.168.1.67] (/94.61.137.133)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 21 Feb 2019 03:55:23 -0800
-Subject: Re: [Xen-devel] [PATCH RFC 00/39] x86/KVM: Xen HVM guest support
-To:     =?UTF-8?Q?Marek_Marczykowski-G=c3=b3recki?= 
-        <marmarek@invisiblethingslab.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel@lists.xenproject.org,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        x86@kernel.org, Ankur Arora <ankur.a.arora@oracle.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20190220201609.28290-1-joao.m.martins@oracle.com>
- <20190220233941.GA5279@mail-itl>
-From:   Joao Martins <joao.m.martins@oracle.com>
-Message-ID: <6c12ea67-0845-d2c2-6f78-f4819b46b7b5@oracle.com>
-Date:   Thu, 21 Feb 2019 11:55:10 +0000
+        Thu, 21 Feb 2019 06:57:52 -0500
+Received: from foss.arm.com ([217.140.101.70]:42986 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725891AbfBUL5v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 06:57:51 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A0D0080D;
+        Thu, 21 Feb 2019 03:57:50 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1231E3F5C1;
+        Thu, 21 Feb 2019 03:57:47 -0800 (PST)
+Date:   Thu, 21 Feb 2019 11:57:45 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Amit Daniel Kachhap <amit.kachhap@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        kvmarm@lists.cs.columbia.edu,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>
+Subject: Re: [PATCH v6 2/6] arm64/kvm: preserve host MDCR_EL2 value
+Message-ID: <20190221115745.GB33673@lakrids.cambridge.arm.com>
+References: <1550568271-5319-1-git-send-email-amit.kachhap@arm.com>
+ <1550568271-5319-3-git-send-email-amit.kachhap@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190220233941.GA5279@mail-itl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9173 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902210089
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1550568271-5319-3-git-send-email-amit.kachhap@arm.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/20/19 11:39 PM, Marek Marczykowski-Górecki wrote:
-> On Wed, Feb 20, 2019 at 08:15:30PM +0000, Joao Martins wrote:
->>  2. PV Driver support (patches 17 - 39)
->>
->>  We start by redirecting hypercalls from the backend to routines
->>  which emulate the behaviour that PV backends expect i.e. grant
->>  table and interdomain events. Next, we add support for late
->>  initialization of xenbus, followed by implementing
->>  frontend/backend communication mechanisms (i.e. grant tables and
->>  interdomain event channels). Finally, introduce xen-shim.ko,
->>  which will setup a limited Xen environment. This uses the added
->>  functionality of Xen specific shared memory (grant tables) and
->>  notifications (event channels).
+On Tue, Feb 19, 2019 at 02:54:27PM +0530, Amit Daniel Kachhap wrote:
+> Save host MDCR_EL2 value during kvm HYP initialisation and restore
+> after every switch from host to guest. There should not be any
+> change in functionality due to this.
 > 
-> Does it mean backends could be run in another guest, similarly as on
-> real Xen? AFAIK virtio doesn't allow that as virtio backends need
-> arbitrary write access to guest memory. But grant tables provide enough
-> abstraction to do that safely.
+> The value of mdcr_el2 is now stored in struct kvm_cpu_context as
+> both host and guest can now use this field in a common way.
 > 
-In this series not yet. Here we are trying to resemble how KVM drives its kernel
-PV backends (i.e. vhost virtio).
+> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: kvmarm@lists.cs.columbia.edu
+> ---
+>  arch/arm/include/asm/kvm_host.h   |  1 -
+>  arch/arm64/include/asm/kvm_host.h |  6 ++----
+>  arch/arm64/kvm/debug.c            | 28 ++++++----------------------
+>  arch/arm64/kvm/hyp/switch.c       | 17 ++++-------------
+>  arch/arm64/kvm/hyp/sysreg-sr.c    |  6 ++++++
+>  virt/kvm/arm/arm.c                |  1 -
+>  6 files changed, 18 insertions(+), 41 deletions(-)
 
-The domU grant {un,}mapping could be added complementary. The main difference
-between domU gntmap vs shim gntmap is that the former maps/unmaps the  guest
-page on the backend. Most of it is common code I think.
+This looks like a nice cleanup! FWIW:
 
-	Joao
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+
+Thanks,
+Mark.
+
+> 
+> diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
+> index 05706b4..704667e 100644
+> --- a/arch/arm/include/asm/kvm_host.h
+> +++ b/arch/arm/include/asm/kvm_host.h
+> @@ -294,7 +294,6 @@ static inline void kvm_arch_vcpu_uninit(struct kvm_vcpu *vcpu) {}
+>  static inline void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu) {}
+>  static inline void kvm_arch_vcpu_block_finish(struct kvm_vcpu *vcpu) {}
+>  
+> -static inline void kvm_arm_init_debug(void) {}
+>  static inline void kvm_arm_setup_debug(struct kvm_vcpu *vcpu) {}
+>  static inline void kvm_arm_clear_debug(struct kvm_vcpu *vcpu) {}
+>  static inline void kvm_arm_reset_debug_ptr(struct kvm_vcpu *vcpu) {}
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index 1b2e05b..2f1bb86 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -205,6 +205,8 @@ struct kvm_cpu_context {
+>  
+>  	/* HYP host/guest configuration */
+>  	u64 hcr_el2;
+> +	u32 mdcr_el2;
+> +
+>  	struct kvm_vcpu *__hyp_running_vcpu;
+>  };
+>  
+> @@ -213,9 +215,6 @@ typedef struct kvm_cpu_context kvm_cpu_context_t;
+>  struct kvm_vcpu_arch {
+>  	struct kvm_cpu_context ctxt;
+>  
+> -	/* HYP configuration */
+> -	u32 mdcr_el2;
+> -
+>  	/* Exception Information */
+>  	struct kvm_vcpu_fault_info fault;
+>  
+> @@ -446,7 +445,6 @@ static inline void kvm_arch_vcpu_uninit(struct kvm_vcpu *vcpu) {}
+>  static inline void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu) {}
+>  static inline void kvm_arch_vcpu_block_finish(struct kvm_vcpu *vcpu) {}
+>  
+> -void kvm_arm_init_debug(void);
+>  void kvm_arm_setup_debug(struct kvm_vcpu *vcpu);
+>  void kvm_arm_clear_debug(struct kvm_vcpu *vcpu);
+>  void kvm_arm_reset_debug_ptr(struct kvm_vcpu *vcpu);
+> diff --git a/arch/arm64/kvm/debug.c b/arch/arm64/kvm/debug.c
+> index f39801e..99dc0a4 100644
+> --- a/arch/arm64/kvm/debug.c
+> +++ b/arch/arm64/kvm/debug.c
+> @@ -32,8 +32,6 @@
+>  				DBG_MDSCR_KDE | \
+>  				DBG_MDSCR_MDE)
+>  
+> -static DEFINE_PER_CPU(u32, mdcr_el2);
+> -
+>  /**
+>   * save/restore_guest_debug_regs
+>   *
+> @@ -65,21 +63,6 @@ static void restore_guest_debug_regs(struct kvm_vcpu *vcpu)
+>  }
+>  
+>  /**
+> - * kvm_arm_init_debug - grab what we need for debug
+> - *
+> - * Currently the sole task of this function is to retrieve the initial
+> - * value of mdcr_el2 so we can preserve MDCR_EL2.HPMN which has
+> - * presumably been set-up by some knowledgeable bootcode.
+> - *
+> - * It is called once per-cpu during CPU hyp initialisation.
+> - */
+> -
+> -void kvm_arm_init_debug(void)
+> -{
+> -	__this_cpu_write(mdcr_el2, kvm_call_hyp(__kvm_get_mdcr_el2));
+> -}
+> -
+> -/**
+>   * kvm_arm_reset_debug_ptr - reset the debug ptr to point to the vcpu state
+>   */
+>  
+> @@ -111,6 +94,7 @@ void kvm_arm_reset_debug_ptr(struct kvm_vcpu *vcpu)
+>  
+>  void kvm_arm_setup_debug(struct kvm_vcpu *vcpu)
+>  {
+> +	kvm_cpu_context_t *host_cxt = this_cpu_ptr(&kvm_host_cpu_state);
+>  	bool trap_debug = !(vcpu->arch.flags & KVM_ARM64_DEBUG_DIRTY);
+>  	unsigned long mdscr;
+>  
+> @@ -120,8 +104,8 @@ void kvm_arm_setup_debug(struct kvm_vcpu *vcpu)
+>  	 * This also clears MDCR_EL2_E2PB_MASK to disable guest access
+>  	 * to the profiling buffer.
+>  	 */
+> -	vcpu->arch.mdcr_el2 = __this_cpu_read(mdcr_el2) & MDCR_EL2_HPMN_MASK;
+> -	vcpu->arch.mdcr_el2 |= (MDCR_EL2_TPM |
+> +	vcpu->arch.ctxt.mdcr_el2 = host_cxt->mdcr_el2 & MDCR_EL2_HPMN_MASK;
+> +	vcpu->arch.ctxt.mdcr_el2 |= (MDCR_EL2_TPM |
+>  				MDCR_EL2_TPMS |
+>  				MDCR_EL2_TPMCR |
+>  				MDCR_EL2_TDRA |
+> @@ -130,7 +114,7 @@ void kvm_arm_setup_debug(struct kvm_vcpu *vcpu)
+>  	/* Is Guest debugging in effect? */
+>  	if (vcpu->guest_debug) {
+>  		/* Route all software debug exceptions to EL2 */
+> -		vcpu->arch.mdcr_el2 |= MDCR_EL2_TDE;
+> +		vcpu->arch.ctxt.mdcr_el2 |= MDCR_EL2_TDE;
+>  
+>  		/* Save guest debug state */
+>  		save_guest_debug_regs(vcpu);
+> @@ -202,13 +186,13 @@ void kvm_arm_setup_debug(struct kvm_vcpu *vcpu)
+>  
+>  	/* Trap debug register access */
+>  	if (trap_debug)
+> -		vcpu->arch.mdcr_el2 |= MDCR_EL2_TDA;
+> +		vcpu->arch.ctxt.mdcr_el2 |= MDCR_EL2_TDA;
+>  
+>  	/* If KDE or MDE are set, perform a full save/restore cycle. */
+>  	if (vcpu_read_sys_reg(vcpu, MDSCR_EL1) & (DBG_MDSCR_KDE | DBG_MDSCR_MDE))
+>  		vcpu->arch.flags |= KVM_ARM64_DEBUG_DIRTY;
+>  
+> -	trace_kvm_arm_set_dreg32("MDCR_EL2", vcpu->arch.mdcr_el2);
+> +	trace_kvm_arm_set_dreg32("MDCR_EL2", vcpu->arch.ctxt.mdcr_el2);
+>  	trace_kvm_arm_set_dreg32("MDSCR_EL1", vcpu_read_sys_reg(vcpu, MDSCR_EL1));
+>  }
+>  
+> diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
+> index 006bd33..03b36f1 100644
+> --- a/arch/arm64/kvm/hyp/switch.c
+> +++ b/arch/arm64/kvm/hyp/switch.c
+> @@ -82,7 +82,7 @@ static void __hyp_text __activate_traps_common(struct kvm_vcpu *vcpu)
+>  	 */
+>  	write_sysreg(0, pmselr_el0);
+>  	write_sysreg(ARMV8_PMU_USERENR_MASK, pmuserenr_el0);
+> -	write_sysreg(vcpu->arch.mdcr_el2, mdcr_el2);
+> +	write_sysreg(vcpu->arch.ctxt.mdcr_el2, mdcr_el2);
+>  }
+>  
+>  static void __hyp_text __deactivate_traps_common(void)
+> @@ -157,14 +157,9 @@ static void deactivate_traps_vhe(struct kvm_cpu_context *host_ctxt)
+>  
+>  static void __hyp_text __deactivate_traps_nvhe(struct kvm_cpu_context *host_ctxt)
+>  {
+> -	u64 mdcr_el2 = read_sysreg(mdcr_el2);
+> -
+>  	__deactivate_traps_common();
+>  
+> -	mdcr_el2 &= MDCR_EL2_HPMN_MASK;
+> -	mdcr_el2 |= MDCR_EL2_E2PB_MASK << MDCR_EL2_E2PB_SHIFT;
+> -
+> -	write_sysreg(mdcr_el2, mdcr_el2);
+> +	write_sysreg(host_ctxt->mdcr_el2, mdcr_el2);
+>  	write_sysreg(host_ctxt->hcr_el2, hcr_el2);
+>  	write_sysreg(CPTR_EL2_DEFAULT, cptr_el2);
+>  }
+> @@ -196,13 +191,9 @@ void activate_traps_vhe_load(struct kvm_vcpu *vcpu)
+>  
+>  void deactivate_traps_vhe_put(struct kvm_vcpu *vcpu)
+>  {
+> -	u64 mdcr_el2 = read_sysreg(mdcr_el2);
+> -
+> -	mdcr_el2 &= MDCR_EL2_HPMN_MASK |
+> -		    MDCR_EL2_E2PB_MASK << MDCR_EL2_E2PB_SHIFT |
+> -		    MDCR_EL2_TPMS;
+> +	struct kvm_cpu_context *host_ctxt = vcpu->arch.host_cpu_context;
+>  
+> -	write_sysreg(mdcr_el2, mdcr_el2);
+> +	write_sysreg(host_ctxt->mdcr_el2, mdcr_el2);
+>  
+>  	__deactivate_traps_common();
+>  }
+> diff --git a/arch/arm64/kvm/hyp/sysreg-sr.c b/arch/arm64/kvm/hyp/sysreg-sr.c
+> index 68ddc0f..42ec50f 100644
+> --- a/arch/arm64/kvm/hyp/sysreg-sr.c
+> +++ b/arch/arm64/kvm/hyp/sysreg-sr.c
+> @@ -334,4 +334,10 @@ void __hyp_text __kvm_populate_host_regs(void)
+>  		host_ctxt = __hyp_this_cpu_ptr(kvm_host_cpu_state);
+>  
+>  	host_ctxt->hcr_el2 = read_sysreg(hcr_el2);
+> +	/*
+> +	 * Retrieve the initial value of mdcr_el2 so we can preserve
+> +	 * MDCR_EL2.HPMN which has presumably been set-up by some
+> +	 * knowledgeable bootcode.
+> +	 */
+> +	host_ctxt->mdcr_el2 = read_sysreg(mdcr_el2);
+>  }
+> diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+> index 8e18f7f..2032a66 100644
+> --- a/virt/kvm/arm/arm.c
+> +++ b/virt/kvm/arm/arm.c
+> @@ -1327,7 +1327,6 @@ static void cpu_hyp_reinit(void)
+>  	else
+>  		cpu_init_hyp_mode(NULL);
+>  
+> -	kvm_arm_init_debug();
+>  	__cpu_copy_hyp_conf();
+>  
+>  	if (vgic_present)
+> -- 
+> 2.7.4
+> 
