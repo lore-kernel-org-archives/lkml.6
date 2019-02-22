@@ -2,116 +2,100 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB259C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 10:19:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84DFAC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 10:21:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B29D20823
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 10:19:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P2jjblP2"
+	by mail.kernel.org (Postfix) with ESMTP id 5BF1220823
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 10:21:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbfBVKT5 (ORCPT
+        id S1726610AbfBVKVp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 05:19:57 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41934 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbfBVKT4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 05:19:56 -0500
-Received: by mail-pl1-f195.google.com with SMTP id y5so902579plk.8;
-        Fri, 22 Feb 2019 02:19:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AooKzWveTVvTjP20/04jj799GvM5xIpT/iogDO3xN9A=;
-        b=P2jjblP2DbX0scovVwuuZMh2AahuNzYnvArUx2qWaUl1TWzbf9qG7DIdNq9W5B/YKH
-         J9t1d+3GUnSlt42t110jIGlPBLKOFeqKl2h0Hhy40UjJNx7/WLwepfBfAoOX/AwDr4Vi
-         /yoHlcbA0NkRk3YrN19gkOFKSRSQiRoqtlolM8HOWc+LMfydPbJSMewiHsOZ0g6gtLBG
-         /U1QbY2NLbYCMYAe6JacziHldc861GeIF4OF+0A+B/T8xjUkn/2H4CdzD/HLgddNEM1r
-         tam6g3kJyX2bTcLpbbqmamVbhH3VJlct0HtIF6vIzyN2J4c3ODbTOgeijsdx2mXtyg+5
-         oqow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AooKzWveTVvTjP20/04jj799GvM5xIpT/iogDO3xN9A=;
-        b=NqBHL0d4PwDiseV/XLqOX70IhpCKLKLkdiSMgHwhhq5SSLvi7l+TvufwfWo4t5gC4M
-         vASEAv8oeAzFFNQ32TlzH64BYrMyoCXzVfCgWV056xgsanPkoeOWFiaqsXc0BRPWgaRw
-         YWTUtLboNNQMkoD1kDMoaIWP2QqHMWprviX9cbmJTY+owlFGhOjdKUvhPNnxh70iHESR
-         boEuv2RncViHuyUexWJcgzsFS3+vpG7k/QCqKCwfZ/6YKMgWoXoRhHt06EIJ7LnTA+y5
-         N6VOI/f+wPfZIrivYncPOSPKjwMM5LGECg+H037hIjlwRWR06mIqngh4yCRKJR/A5uWp
-         3UbA==
-X-Gm-Message-State: AHQUAub7CeCpRbVwhC79Zo4O5gDA+bjs7AdHIu4MQRfRyREBjrmUt0gZ
-        UMF9BAbrfcbatE0955IcLUYH6bz9
-X-Google-Smtp-Source: AHgI3Ib48zeEI1RhGoWcBODxTQfC23HdTer3t+Pap+ZtDoh6i9w4y3jmXfc1R4JFp+VExQMm5uJlvA==
-X-Received: by 2002:a17:902:1:: with SMTP id 1mr3287702pla.276.1550830795648;
-        Fri, 22 Feb 2019 02:19:55 -0800 (PST)
-Received: from localhost.localdomain ([103.51.74.158])
-        by smtp.gmail.com with ESMTPSA id v15sm2835352pfa.75.2019.02.22.02.19.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Feb 2019 02:19:54 -0800 (PST)
-From:   Anand Moon <linux.amoon@gmail.com>
-To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: exynos: Add pin configuration for read strobe for Odroid XU3/XU4 eMMC
-Date:   Fri, 22 Feb 2019 10:19:48 +0000
-Message-Id: <20190222101948.848-1-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        Fri, 22 Feb 2019 05:21:45 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57292 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725944AbfBVKVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 05:21:45 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C24EB80D;
+        Fri, 22 Feb 2019 02:21:44 -0800 (PST)
+Received: from [10.1.196.69] (e112269-lin.cambridge.arm.com [10.1.196.69])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A30923F703;
+        Fri, 22 Feb 2019 02:21:41 -0800 (PST)
+Subject: Re: [PATCH v2 03/13] mm: Add generic p?d_large() macros
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Mark Rutland <Mark.Rutland@arm.com>, x86@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        James Morse <james.morse@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        "Liang, Kan" <kan.liang@linux.intel.com>
+References: <20190221113502.54153-1-steven.price@arm.com>
+ <20190221113502.54153-4-steven.price@arm.com>
+ <20190221142812.oa53lfnnfmsuh6ys@kshutemo-mobl1>
+ <a3076d01-41b3-d59b-e98c-a0fd9ba5d3f5@arm.com>
+ <20190221145706.zqwfdoyiirn3lc7y@kshutemo-mobl1>
+ <e0c7fc0c-7924-1106-a7a3-fc12136b7b82@arm.com>
+ <20190221210618.voyfs5cnafpvgedh@kshutemo-mobl1>
+From:   Steven Price <steven.price@arm.com>
+Message-ID: <9441949b-6982-eea3-a05e-e277776ff821@arm.com>
+Date:   Fri, 22 Feb 2019 10:21:40 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190221210618.voyfs5cnafpvgedh@kshutemo-mobl1>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Read Strobe RDQS pin configuration for eMMC to support higher data rate read/write.
+On 21/02/2019 21:06, Kirill A. Shutemov wrote:
+> On Thu, Feb 21, 2019 at 05:16:46PM +0000, Steven Price wrote:
+>>>> Note that in terms of the new page walking code, these new defines are
+>>>> only used when walking a page table without a VMA (which isn't currently
+>>>> done), so architectures which don't use p?d_large currently will work
+>>>> fine with the generic versions. They only need to provide meaningful
+>>>> definitions when switching to use the walk-without-a-VMA functionality.
+>>>
+>>> How other architectures would know that they need to provide the helpers
+>>> to get walk-without-a-VMA functionality? This looks very fragile to me.
+>>
+>> Yes, you've got a good point there. This would apply to the p?d_large
+>> macros as well - any arch which (inadvertently) uses the generic version
+>> is likely to be fragile/broken.
+>>
+>> I think probably the best option here is to scrap the generic versions
+>> altogether and simply introduce a ARCH_HAS_PXD_LARGE config option which
+>> would enable the new functionality to those arches that opt-in. Do you
+>> think this would be less fragile?
+> 
+> These helpers are useful beyond pagewalker.
+> 
+> Can we actually do some grinding and make *all* archs to provide correct
+> helpers? Yes, it's tedious, but not that bad.
+> 
+> I think we could provide generic helpers for folded levels in
+> <asm-generic/pgtable-nop?d.h> and rest has to be provided by the arch.
+> Architectures that support only 2 level paging would need to provide
+> pgd_large(), with 3 -- pmd_large() and so on.
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
- arch/arm/boot/dts/exynos5420-pinctrl.dtsi          | 6 ++++++
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 2 +-
- 2 files changed, 7 insertions(+), 1 deletion(-)
+Fair enough, I'll have a go and hopefully people will be able to correct
+it if I make any mistakes - I'm certainly not going to be able to test
+all architectures myself.
 
-diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-index b82af7c89654..4fb3865e082a 100644
---- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-@@ -206,6 +206,12 @@
- 		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV4>;
- 	};
- 
-+	sd0_rdqs: sd0-rdqs {
-+		samsung,pins = "gpc0-7";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
-+	};
-+
- 	sd1_clk: sd1-clk {
- 		samsung,pins = "gpc1-0";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index b299e541cac0..d41397748ed2 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -411,7 +411,7 @@
- 	samsung,dw-mshc-hs400-timing = <0 2>;
- 	samsung,read-strobe-delay = <90>;
- 	pinctrl-names = "default";
--	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd &sd0_rclk>;
-+	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_rdqs &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd &sd0_rclk>;
- 	bus-width = <8>;
- 	cap-mmc-highspeed;
- 	mmc-hs200-1_8v;
--- 
-2.20.1
-
+Steve
