@@ -2,108 +2,175 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6CAEC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F54C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:16:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87320207E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:15:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C6BC20823
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:16:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbfBVPP2 (ORCPT
+        id S1727163AbfBVPP7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 10:15:28 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40142 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725892AbfBVPP2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 10:15:28 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B25F2AEB3;
-        Fri, 22 Feb 2019 15:15:26 +0000 (UTC)
-Date:   Fri, 22 Feb 2019 16:15:24 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC PATCH v1 11/25] printk_safe: remove printk safe code
-Message-ID: <20190222151524.2iosxbcpn5bb4cbq@pathway.suse.cz>
-References: <20190212143003.48446-1-john.ogness@linutronix.de>
- <20190212143003.48446-12-john.ogness@linutronix.de>
- <20190222103732.zkcvjijtdcfu4vbt@pathway.suse.cz>
- <87h8cwymcr.fsf@linutronix.de>
+        Fri, 22 Feb 2019 10:15:59 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:29519 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725892AbfBVPP7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 10:15:59 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8BA6881E0D;
+        Fri, 22 Feb 2019 15:15:57 +0000 (UTC)
+Received: from redhat.com (ovpn-126-14.rdu2.redhat.com [10.10.126.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3B3EA60BF1;
+        Fri, 22 Feb 2019 15:15:49 +0000 (UTC)
+Date:   Fri, 22 Feb 2019 10:15:47 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v2 10/26] userfaultfd: wp: add UFFDIO_COPY_MODE_WP
+Message-ID: <20190222151546.GC7783@redhat.com>
+References: <20190212025632.28946-1-peterx@redhat.com>
+ <20190212025632.28946-11-peterx@redhat.com>
+ <20190221172919.GJ2813@redhat.com>
+ <20190222071106.GI8904@xz-x1>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <87h8cwymcr.fsf@linutronix.de>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190222071106.GI8904@xz-x1>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 22 Feb 2019 15:15:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 2019-02-22 14:38:28, John Ogness wrote:
-> On 2019-02-22, Petr Mladek <pmladek@suse.com> wrote:
-> >> diff --git a/lib/nmi_backtrace.c b/lib/nmi_backtrace.c
-> >> index 15ca78e1c7d4..77bf84987cda 100644
-> >> --- a/lib/nmi_backtrace.c
-> >> +++ b/lib/nmi_backtrace.c
-> >> @@ -75,12 +75,6 @@ void nmi_trigger_cpumask_backtrace(const cpumask_t *mask,
-> >>  		touch_softlockup_watchdog();
-> >>  	}
-> >>  
-> >> -	/*
-> >> -	 * Force flush any remote buffers that might be stuck in IRQ context
-> >> -	 * and therefore could not run their irq_work.
-> >> -	 */
-> >> -	printk_safe_flush();
-> >> -
-> >>  	clear_bit_unlock(0, &backtrace_flag);
-> >>  	put_cpu();
-> >>  }
-> >
-> > This reminds me that we need to add back the locking that was
-> > removed in the commit 03fc7f9c99c1e7ae2925d45 ("printk/nmi:
-> > Prevent deadlock when accessing the main log buffer in NMI").
+On Fri, Feb 22, 2019 at 03:11:06PM +0800, Peter Xu wrote:
+> On Thu, Feb 21, 2019 at 12:29:19PM -0500, Jerome Glisse wrote:
+> > On Tue, Feb 12, 2019 at 10:56:16AM +0800, Peter Xu wrote:
+> > > From: Andrea Arcangeli <aarcange@redhat.com>
+> > > 
+> > > This allows UFFDIO_COPY to map pages wrprotected.
+> > > 
+> > > Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+> > > Signed-off-by: Peter Xu <peterx@redhat.com>
+> > 
+> > Minor nitpick down below, but in any case:
+> > 
+> > Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+> > 
+> > > ---
+> > >  fs/userfaultfd.c                 |  5 +++--
+> > >  include/linux/userfaultfd_k.h    |  2 +-
+> > >  include/uapi/linux/userfaultfd.h | 11 +++++-----
+> > >  mm/userfaultfd.c                 | 36 ++++++++++++++++++++++----------
+> > >  4 files changed, 35 insertions(+), 19 deletions(-)
+> > > 
+> > 
+> > [...]
+> > 
+> > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > > index d59b5a73dfb3..73a208c5c1e7 100644
+> > > --- a/mm/userfaultfd.c
+> > > +++ b/mm/userfaultfd.c
+> > > @@ -25,7 +25,8 @@ static int mcopy_atomic_pte(struct mm_struct *dst_mm,
+> > >  			    struct vm_area_struct *dst_vma,
+> > >  			    unsigned long dst_addr,
+> > >  			    unsigned long src_addr,
+> > > -			    struct page **pagep)
+> > > +			    struct page **pagep,
+> > > +			    bool wp_copy)
+> > >  {
+> > >  	struct mem_cgroup *memcg;
+> > >  	pte_t _dst_pte, *dst_pte;
+> > > @@ -71,9 +72,9 @@ static int mcopy_atomic_pte(struct mm_struct *dst_mm,
+> > >  	if (mem_cgroup_try_charge(page, dst_mm, GFP_KERNEL, &memcg, false))
+> > >  		goto out_release;
+> > >  
+> > > -	_dst_pte = mk_pte(page, dst_vma->vm_page_prot);
+> > > -	if (dst_vma->vm_flags & VM_WRITE)
+> > > -		_dst_pte = pte_mkwrite(pte_mkdirty(_dst_pte));
+> > > +	_dst_pte = pte_mkdirty(mk_pte(page, dst_vma->vm_page_prot));
+> > > +	if (dst_vma->vm_flags & VM_WRITE && !wp_copy)
+> > > +		_dst_pte = pte_mkwrite(_dst_pte);
+> > 
+> > I like parenthesis around around and :) ie:
+> >     (dst_vma->vm_flags & VM_WRITE) && !wp_copy
+> > 
+> > I feel it is easier to read.
 > 
-> No, that commit is needed. You cannot have NMIs waiting on other CPUs.
-
-It sounds weird. But it is safe to use a lock when it is used only
-in the NMI context.
-
-The lock has always been there. For example, I found it in
-the commit 1fb9d6ad2766a1dd70 ("nmi_watchdog: Add new,
-generic implementation, using perf events") from v2.6.36.
-
-It could get removed only because we switched to the per-CPU
-buffers.
-
-
-> > Otherwise, backtraces from different CPUs would get mixed.
+> Yeah another one. Though this line will be changed in follow up
+> patches, will fix anyways.
 > 
-> A later patch (#17) adds CPU IDs to the printk messages so that this
-> isn't a problem. (That patch is actually obsolete now because Sergey has
-> already merged work for linux-next that includes this information.)
+> > 
+> > [...]
+> > 
+> > > @@ -416,11 +418,13 @@ static __always_inline ssize_t mfill_atomic_pte(struct mm_struct *dst_mm,
+> > >  	if (!(dst_vma->vm_flags & VM_SHARED)) {
+> > >  		if (!zeropage)
+> > >  			err = mcopy_atomic_pte(dst_mm, dst_pmd, dst_vma,
+> > > -					       dst_addr, src_addr, page);
+> > > +					       dst_addr, src_addr, page,
+> > > +					       wp_copy);
+> > >  		else
+> > >  			err = mfill_zeropage_pte(dst_mm, dst_pmd,
+> > >  						 dst_vma, dst_addr);
+> > >  	} else {
+> > > +		VM_WARN_ON(wp_copy); /* WP only available for anon */
+> > 
+> > Don't you want to return with error here ?
+> 
+> Makes sense to me.  Does this looks good to you to be squashed into
+> current patch?
+> 
+> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> index 73a208c5c1e7..f3ea09f412d4 100644
+> --- a/mm/userfaultfd.c
+> +++ b/mm/userfaultfd.c
+> @@ -73,7 +73,7 @@ static int mcopy_atomic_pte(struct mm_struct *dst_mm,
+>                 goto out_release;
+>  
+>         _dst_pte = pte_mkdirty(mk_pte(page, dst_vma->vm_page_prot));
+> -       if (dst_vma->vm_flags & VM_WRITE && !wp_copy)
+> +       if ((dst_vma->vm_flags & VM_WRITE) && !wp_copy)
+>                 _dst_pte = pte_mkwrite(_dst_pte);
+>  
+>         dst_pte = pte_offset_map_lock(dst_mm, dst_pmd, dst_addr, &ptl);
+> @@ -424,7 +424,10 @@ static __always_inline ssize_t mfill_atomic_pte(struct mm_struct *dst_mm,
+>                         err = mfill_zeropage_pte(dst_mm, dst_pmd,
+>                                                  dst_vma, dst_addr);
+>         } else {
+> -               VM_WARN_ON(wp_copy); /* WP only available for anon */
+> +               if (unlikely(wp_copy))
+> +                       /* TODO: WP currently only available for anon */
+> +                       return -EINVAL;
+> +
+>                 if (!zeropage)
+>                         err = shmem_mcopy_atomic_pte(dst_mm, dst_pmd,
+>                                                      dst_vma, dst_addr,
 
-No this is not enough. First, the CPU-ids were primary added for
-kernel testers (0-day robot, kernel-ci, syzcaller). It is not
-enabled by default. It is not handled by kmsg interface.
-Also sorting the messages is not much user friendly.
-It should be the last resort when no other solution
-is possible.
+I would keep a the VM_WARN_ON or maybe a ONCE variant so that we at
+least have a chance to be inform if for some reasons that code path
+is taken. With that my r-b stands.
 
-Best Regards,
-Petr
+Cheers,
+Jérôme
