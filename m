@@ -2,86 +2,102 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 565E5C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 11:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F0EC4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 11:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 301D120643
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 11:44:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2CD320643
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 11:47:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727271AbfBVLov (ORCPT
+        id S1726756AbfBVLrW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 06:44:51 -0500
-Received: from foss.arm.com ([217.140.101.70]:58410 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727026AbfBVLou (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 06:44:50 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4ACF815AB;
-        Fri, 22 Feb 2019 03:44:50 -0800 (PST)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.17])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E7F7F3F5C1;
-        Fri, 22 Feb 2019 03:44:48 -0800 (PST)
-Date:   Fri, 22 Feb 2019 11:44:46 +0000
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Rafael Wysocki <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>, mka@chromium.org,
-        juri.lelli@gmail.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 4/5] cpufreq: Register notifiers with the PM QoS
- framework
-Message-ID: <20190222114446.cmwoe7tanxvf2gxh@e107158-lin.cambridge.arm.com>
-References: <cover.1550748118.git.viresh.kumar@linaro.org>
- <e6969d79643c87af24895d508e5c6f7462b1c758.1550748118.git.viresh.kumar@linaro.org>
+        Fri, 22 Feb 2019 06:47:22 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43176 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726131AbfBVLrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 06:47:21 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7661CAFE2;
+        Fri, 22 Feb 2019 11:47:20 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id A234D1E0900; Fri, 22 Feb 2019 12:47:19 +0100 (CET)
+Date:   Fri, 22 Feb 2019 12:47:19 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Dongli Zhang <dongli.zhang@oracle.com>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        axboe@kernel.dk, jack@suse.cz
+Subject: Re: [PATCH v2 2/2] loop: set GENHD_FL_NO_PART_SCAN after
+ blkdev_reread_part()
+Message-ID: <20190222114719.GI23071@quack2.suse.cz>
+References: <1550763223-21764-1-git-send-email-dongli.zhang@oracle.com>
+ <1550763223-21764-3-git-send-email-dongli.zhang@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e6969d79643c87af24895d508e5c6f7462b1c758.1550748118.git.viresh.kumar@linaro.org>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <1550763223-21764-3-git-send-email-dongli.zhang@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Verish
+On Thu 21-02-19 23:33:43, Dongli Zhang wrote:
+> Commit 0da03cab87e6
+> ("loop: Fix deadlock when calling blkdev_reread_part()") moves
+> blkdev_reread_part() out of the loop_ctl_mutex. However,
+> GENHD_FL_NO_PART_SCAN is set before __blkdev_reread_part(). As a result,
+> __blkdev_reread_part() will fail the check of GENHD_FL_NO_PART_SCAN and
+> will not rescan the loop device to delete all partitions.
+> 
+> Below are steps to reproduce the issue:
+> 
+> step1 # dd if=/dev/zero of=tmp.raw bs=1M count=100
+> step2 # losetup -P /dev/loop0 tmp.raw
+> step3 # parted /dev/loop0 mklabel gpt
+> step4 # parted -a none -s /dev/loop0 mkpart primary 64s 1
+> step5 # losetup -d /dev/loop0
+> 
+> Step5 will not be able to delete /dev/loop0p1 (introduced by step4) and
+> there is below kernel warning message:
+> 
+> [  464.414043] __loop_clr_fd: partition scan of loop0 failed (rc=-22)
+> 
+> This patch sets GENHD_FL_NO_PART_SCAN after blkdev_reread_part().
+> 
+> Fixes: 0da03cab87e6 ("loop: Fix deadlock when calling blkdev_reread_part()")
+> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+> ---
+> Changed since v1:
+>   * move the setting of lo->lo_state to Lo_unbound after partscan has finished as well
+>     (suggested by Jan Kara)
+> 
+>  drivers/block/loop.c | 26 ++++++++++++++++++++++----
+>  1 file changed, 22 insertions(+), 4 deletions(-)
 
-On 02/21/19 16:59, Viresh Kumar wrote:
+Thanks the patch looks good! Just one nit below:
 
-[...]
-
-> @@ -2239,6 +2314,8 @@ static int cpufreq_set_policy(struct cpufreq_policy *policy,
->  			      struct cpufreq_policy *new_policy)
->  {
->  	struct cpufreq_governor *old_gov;
-> +	struct device *cpu_dev = get_cpu_device(policy->cpu);
-> +	unsigned long min, max;
->  	int ret;
+> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> index 7908673..a13f5dc 100644
+> --- a/drivers/block/loop.c
+> +++ b/drivers/block/loop.c
+> @@ -1034,6 +1034,16 @@ loop_init_xfer(struct loop_device *lo, struct loop_func_table *xfer,
+>  	return err;
+>  }
 >  
->  	pr_debug("setting new policy for CPU %u: %u - %u kHz\n",
-> @@ -2253,11 +2330,23 @@ static int cpufreq_set_policy(struct cpufreq_policy *policy,
->  	if (new_policy->min > new_policy->max)
->  		return -EINVAL;
->  
-> +	min = dev_pm_qos_read_value(cpu_dev, DEV_PM_QOS_MIN_FREQUENCY);
-> +	max = dev_pm_qos_read_value(cpu_dev, DEV_PM_QOS_MAX_FREQUENCY);
-> +
-> +	if (min > new_policy->min)
-> +		new_policy->min = min;
-> +	if (max < new_policy->max)
-> +		new_policy->max = max;
-> +
+> +static void loop_disable_partscan(struct loop_device *lo)
+> +{
 
-Assuming for example min and max range from 1-10, and thermal throttles max to
-5 using pm_qos to deal with temporary thermal pressure. But shortly after
-a driver thinks that max shouldn't be greater than 7 for one reason or another.
+I don't think there's any benefit in having this small function with a single
+caller and furthermore with the subtle sideeffect that it changes lo_state.
+So I'd just put the code inline in __loop_clr_fd(). With that you can add:
 
-What will happen after thermal pressure removes its constraint? Will we still
-remember the driver's request and apply it so max is set to 7 instead of 10?
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Thanks
-
---
-Qais Yousef
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
