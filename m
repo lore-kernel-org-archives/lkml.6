@@ -3,35 +3,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E9FC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:06:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDEA8C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:06:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01043206C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:06:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FA2B20700
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:06:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727278AbfBVXGi (ORCPT
+        id S1727352AbfBVXGm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 18:06:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52354 "EHLO mx1.suse.de"
+        Fri, 22 Feb 2019 18:06:42 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52370 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725900AbfBVXGi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 18:06:38 -0500
+        id S1725900AbfBVXGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 18:06:41 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8C203B017;
-        Fri, 22 Feb 2019 23:06:36 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 67F53B017;
+        Fri, 22 Feb 2019 23:06:39 +0000 (UTC)
 From:   Tony Jones <tonyj@suse.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-perf-users@vger.kernel.org, acme@kernel.org,
         Tony Jones <tonyj@suse.de>,
-        Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
-        Tom Zanussi <tzanussi@gmail.com>
-Subject: [PATCH 02/15] perf script python: add Python3 support to check-perf-trace.py
-Date:   Fri, 22 Feb 2019 15:06:06 -0800
-Message-Id: <20190222230619.17887-3-tonyj@suse.de>
+        Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
+Subject: [PATCH 03/15] perf script python: add Python3 support to event_analyzing_sample.py
+Date:   Fri, 22 Feb 2019 15:06:07 -0800
+Message-Id: <20190222230619.17887-4-tonyj@suse.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190222230619.17887-1-tonyj@suse.de>
 References: <20190222230619.17887-1-tonyj@suse.de>
@@ -42,140 +41,152 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support both Python 2 and Python 3 in the check-perf-trace.py script.
+Support both Python2 and Python3 in the event_analyzing_sample.py script
 
 There may be differences in the ordering of output lines due to
 differences in dictionary ordering etc.  However the format within lines
 should be unchanged.
 
-Also correct inconsistent indentation which was being flagged by Python3.
-
-The use of from __future__ implies the minimum supported version of
-Python2 is now v2.6
+The use of 'from __future__' implies the minimum supported Python2 version
+is now v2.6
 
 Signed-off-by: Tony Jones <tonyj@suse.de>
 Signed-off-by: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
-Cc: Tom Zanussi <tzanussi@gmail.com>
 ---
- tools/perf/scripts/python/check-perf-trace.py | 68 ++++++++++---------
- 1 file changed, 36 insertions(+), 32 deletions(-)
+ .../scripts/python/event_analyzing_sample.py  | 48 ++++++++++---------
+ 1 file changed, 25 insertions(+), 23 deletions(-)
 
-diff --git a/tools/perf/scripts/python/check-perf-trace.py b/tools/perf/scripts/python/check-perf-trace.py
-index 334599c6032c..2851cf0e6b4b 100644
---- a/tools/perf/scripts/python/check-perf-trace.py
-+++ b/tools/perf/scripts/python/check-perf-trace.py
-@@ -7,11 +7,13 @@
- # events, etc.  Basically, if this script runs successfully and
- # displays expected results, Python scripting support should be ok.
+diff --git a/tools/perf/scripts/python/event_analyzing_sample.py b/tools/perf/scripts/python/event_analyzing_sample.py
+index 4e843b9864ec..f4c4c7963451 100644
+--- a/tools/perf/scripts/python/event_analyzing_sample.py
++++ b/tools/perf/scripts/python/event_analyzing_sample.py
+@@ -15,6 +15,8 @@
+ # for a x86 HW PMU event: PEBS with load latency data.
+ #
  
 +from __future__ import print_function
 +
  import os
  import sys
- 
--sys.path.append(os.environ['PERF_EXEC_PATH'] + \
--	'/scripts/python/Perf-Trace-Util/lib/Perf/Trace')
-+sys.path.append(os.environ['PERF_EXEC_PATH'] +
-+    '/scripts/python/Perf-Trace-Util/lib/Perf/Trace')
- 
- from Core import *
- from perf_trace_context import *
-@@ -19,37 +21,38 @@ from perf_trace_context import *
- unhandled = autodict()
+ import math
+@@ -37,7 +39,7 @@ con = sqlite3.connect("/dev/shm/perf.db")
+ con.isolation_level = None
  
  def trace_begin():
--	print "trace_begin"
--	pass
-+    print("trace_begin")
-+    pass
+-	print "In trace_begin:\n"
++        print("In trace_begin:\n")
+ 
+         #
+         # Will create several tables at the start, pebs_ll is for PEBS data with
+@@ -76,12 +78,12 @@ def process_event(param_dict):
+         name       = param_dict["ev_name"]
+ 
+         # Symbol and dso info are not always resolved
+-        if (param_dict.has_key("dso")):
++        if ("dso" in param_dict):
+                 dso = param_dict["dso"]
+         else:
+                 dso = "Unknown_dso"
+ 
+-        if (param_dict.has_key("symbol")):
++        if ("symbol" in param_dict):
+                 symbol = param_dict["symbol"]
+         else:
+                 symbol = "Unknown_symbol"
+@@ -102,7 +104,7 @@ def insert_db(event):
+                                 event.ip, event.status, event.dse, event.dla, event.lat))
  
  def trace_end():
--        print_unhandled()
-+    print_unhandled()
+-	print "In trace_end:\n"
++        print("In trace_end:\n")
+         # We show the basic info for the 2 type of event classes
+         show_general_events()
+         show_pebs_ll()
+@@ -123,29 +125,29 @@ def show_general_events():
+         # Check the total record number in the table
+         count = con.execute("select count(*) from gen_events")
+         for t in count:
+-                print "There is %d records in gen_events table" % t[0]
++                print("There is %d records in gen_events table" % t[0])
+                 if t[0] == 0:
+                         return
  
- def irq__softirq_entry(event_name, context, common_cpu,
--	common_secs, common_nsecs, common_pid, common_comm,
--	common_callchain, vec):
--		print_header(event_name, common_cpu, common_secs, common_nsecs,
--			common_pid, common_comm)
-+    common_secs, common_nsecs, common_pid, common_comm,
-+    common_callchain, vec):
-+
-+    print_header(event_name, common_cpu, common_secs, common_nsecs,
-+        common_pid, common_comm)
+-        print "Statistics about the general events grouped by thread/symbol/dso: \n"
++        print("Statistics about the general events grouped by thread/symbol/dso: \n")
  
--                print_uncommon(context)
-+    print_uncommon(context)
+          # Group by thread
+         commq = con.execute("select comm, count(comm) from gen_events group by comm order by -count(comm)")
+-        print "\n%16s %8s %16s\n%s" % ("comm", "number", "histogram", "="*42)
++        print("\n%16s %8s %16s\n%s" % ("comm", "number", "histogram", "="*42))
+         for row in commq:
+-             print "%16s %8d     %s" % (row[0], row[1], num2sym(row[1]))
++             print("%16s %8d     %s" % (row[0], row[1], num2sym(row[1])))
  
--		print "vec=%s\n" % \
--		(symbol_str("irq__softirq_entry", "vec", vec)),
-+    print("vec=%s" %
-+        (symbol_str("irq__softirq_entry", "vec", vec)))
+         # Group by symbol
+-        print "\n%32s %8s %16s\n%s" % ("symbol", "number", "histogram", "="*58)
++        print("\n%32s %8s %16s\n%s" % ("symbol", "number", "histogram", "="*58))
+         symbolq = con.execute("select symbol, count(symbol) from gen_events group by symbol order by -count(symbol)")
+         for row in symbolq:
+-             print "%32s %8d     %s" % (row[0], row[1], num2sym(row[1]))
++             print("%32s %8d     %s" % (row[0], row[1], num2sym(row[1])))
  
- def kmem__kmalloc(event_name, context, common_cpu,
--	common_secs, common_nsecs, common_pid, common_comm,
--	common_callchain, call_site, ptr, bytes_req, bytes_alloc,
--	gfp_flags):
--		print_header(event_name, common_cpu, common_secs, common_nsecs,
--			common_pid, common_comm)
-+    common_secs, common_nsecs, common_pid, common_comm,
-+    common_callchain, call_site, ptr, bytes_req, bytes_alloc,
-+    gfp_flags):
+         # Group by dso
+-        print "\n%40s %8s %16s\n%s" % ("dso", "number", "histogram", "="*74)
++        print("\n%40s %8s %16s\n%s" % ("dso", "number", "histogram", "="*74))
+         dsoq = con.execute("select dso, count(dso) from gen_events group by dso order by -count(dso)")
+         for row in dsoq:
+-             print "%40s %8d     %s" % (row[0], row[1], num2sym(row[1]))
++             print("%40s %8d     %s" % (row[0], row[1], num2sym(row[1])))
  
--                print_uncommon(context)
-+    print_header(event_name, common_cpu, common_secs, common_nsecs,
-+        common_pid, common_comm)
+ #
+ # This function just shows the basic info, and we could do more with the
+@@ -156,35 +158,35 @@ def show_pebs_ll():
  
--		print "call_site=%u, ptr=%u, bytes_req=%u, " \
--		"bytes_alloc=%u, gfp_flags=%s\n" % \
--		(call_site, ptr, bytes_req, bytes_alloc,
-+    print_uncommon(context)
+         count = con.execute("select count(*) from pebs_ll")
+         for t in count:
+-                print "There is %d records in pebs_ll table" % t[0]
++                print("There is %d records in pebs_ll table" % t[0])
+                 if t[0] == 0:
+                         return
  
--		flag_str("kmem__kmalloc", "gfp_flags", gfp_flags)),
-+    print("call_site=%u, ptr=%u, bytes_req=%u, "
-+        "bytes_alloc=%u, gfp_flags=%s\n" %
-+        (call_site, ptr, bytes_req, bytes_alloc,
-+        flag_str("kmem__kmalloc", "gfp_flags", gfp_flags))),
+-        print "Statistics about the PEBS Load Latency events grouped by thread/symbol/dse/latency: \n"
++        print("Statistics about the PEBS Load Latency events grouped by thread/symbol/dse/latency: \n")
+ 
+         # Group by thread
+         commq = con.execute("select comm, count(comm) from pebs_ll group by comm order by -count(comm)")
+-        print "\n%16s %8s %16s\n%s" % ("comm", "number", "histogram", "="*42)
++        print("\n%16s %8s %16s\n%s" % ("comm", "number", "histogram", "="*42))
+         for row in commq:
+-             print "%16s %8d     %s" % (row[0], row[1], num2sym(row[1]))
++             print("%16s %8d     %s" % (row[0], row[1], num2sym(row[1])))
+ 
+         # Group by symbol
+-        print "\n%32s %8s %16s\n%s" % ("symbol", "number", "histogram", "="*58)
++        print("\n%32s %8s %16s\n%s" % ("symbol", "number", "histogram", "="*58))
+         symbolq = con.execute("select symbol, count(symbol) from pebs_ll group by symbol order by -count(symbol)")
+         for row in symbolq:
+-             print "%32s %8d     %s" % (row[0], row[1], num2sym(row[1]))
++             print("%32s %8d     %s" % (row[0], row[1], num2sym(row[1])))
+ 
+         # Group by dse
+         dseq = con.execute("select dse, count(dse) from pebs_ll group by dse order by -count(dse)")
+-        print "\n%32s %8s %16s\n%s" % ("dse", "number", "histogram", "="*58)
++        print("\n%32s %8s %16s\n%s" % ("dse", "number", "histogram", "="*58))
+         for row in dseq:
+-             print "%32s %8d     %s" % (row[0], row[1], num2sym(row[1]))
++             print("%32s %8d     %s" % (row[0], row[1], num2sym(row[1])))
+ 
+         # Group by latency
+         latq = con.execute("select lat, count(lat) from pebs_ll group by lat order by lat")
+-        print "\n%32s %8s %16s\n%s" % ("latency", "number", "histogram", "="*58)
++        print("\n%32s %8s %16s\n%s" % ("latency", "number", "histogram", "="*58))
+         for row in latq:
+-             print "%32s %8d     %s" % (row[0], row[1], num2sym(row[1]))
++             print("%32s %8d     %s" % (row[0], row[1], num2sym(row[1])))
  
  def trace_unhandled(event_name, context, event_fields_dict):
-     try:
-@@ -58,25 +61,26 @@ def trace_unhandled(event_name, context, event_fields_dict):
-         unhandled[event_name] = 1
- 
- def print_header(event_name, cpu, secs, nsecs, pid, comm):
--	print "%-20s %5u %05u.%09u %8u %-20s " % \
--	(event_name, cpu, secs, nsecs, pid, comm),
-+    print("%-20s %5u %05u.%09u %8u %-20s " %
-+        (event_name, cpu, secs, nsecs, pid, comm),
-+                end='')
- 
- # print trace fields not included in handler args
- def print_uncommon(context):
--    print "common_preempt_count=%d, common_flags=%s, common_lock_depth=%d, " \
--        % (common_pc(context), trace_flag_str(common_flags(context)), \
--               common_lock_depth(context))
-+    print("common_preempt_count=%d, common_flags=%s, common_lock_depth=%d, " %
-+        (common_pc(context), trace_flag_str(common_flags(context)),
-+        common_lock_depth(context))),
- 
- def print_unhandled():
-     keys = unhandled.keys()
-     if not keys:
-         return
- 
--    print "\nunhandled events:\n\n",
-+    print("\nunhandled events:\n")
- 
--    print "%-40s  %10s\n" % ("event", "count"),
--    print "%-40s  %10s\n" % ("----------------------------------------", \
--                                 "-----------"),
-+    print("%-40s  %10s" % ("event", "count"))
-+    print("%-40s  %10s" % ("----------------------------------------",
-+                 "-----------"))
- 
-     for event_name in keys:
--	print "%-40s  %10d\n" % (event_name, unhandled[event_name])
-+        print("%-40s  %10d\n" % (event_name, unhandled[event_name]))
+-		print ' '.join(['%s=%s'%(k,str(v))for k,v in sorted(event_fields_dict.items())])
++        print(' '.join(['%s=%s'%(k,str(v))for k,v in sorted(event_fields_dict.items())]))
 -- 
 2.20.1
 
