@@ -2,110 +2,162 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98339C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 10:39:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A48C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 10:39:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62D752081B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 10:39:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QmkpmZUi"
+	by mail.kernel.org (Postfix) with ESMTP id 2F69E206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 10:39:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726711AbfBVKjI (ORCPT
+        id S1727009AbfBVKjv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 05:39:08 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:32855 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726132AbfBVKjI (ORCPT
+        Fri, 22 Feb 2019 05:39:51 -0500
+Received: from sci-ig2.spreadtrum.com ([222.66.158.135]:31988 "EHLO
+        SHSQR01.spreadtrum.com" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1726184AbfBVKjv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 05:39:08 -0500
-Received: by mail-qt1-f194.google.com with SMTP id z39so1950872qtz.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 02:39:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6Ycd7F6cSiLogdbx9zRwsP3cV/l35t97ZLFFQbqW0ZY=;
-        b=QmkpmZUiBTbZ9js+DH1S5VXOUAULuAZLuoblV0v5GDDP8QKc/2qBF5QRoA0o/FFWAz
-         3bL3NDQsR6+GvMRWf6Ie4uXz7E6nFW8STIGANrpojGfO9FMKmvc/m8QYfPkArk7o+/RO
-         VV6PeDdL4GccW0ZhsrpKl1UARJCLKHkrZr4/79GXkEKLKfhBiiRIkqmhC/BYdA8jaPJT
-         /x8seq3Z19RbpG2VQiMSJTaFzBvjBUa9g8emCTfnkLbhAD7VmBgCRT31WTgqiYNLSRzx
-         LJwPCe4snAZD57HLfztU41cAiqw45/onngw+tJKzTBe4zr1VM2wLyKbxho96GCtqdnwc
-         snIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6Ycd7F6cSiLogdbx9zRwsP3cV/l35t97ZLFFQbqW0ZY=;
-        b=pUntOUsPdDwnM/2fEljzTju24GxD2NBV63jOiW8kpY1dO1oFbycGAPg3VO0pZjWX7p
-         RXLRSbg+Q30Bp3fTr5HrQKb9R5bz5ZUSRCg02qoSGP5RxMhHrdubPOj2E1SWLa+mkHW2
-         WnEubouXTofL+2bxxW2eaXWZC4Gz6mvYwlb1UDiUJ5rBvuVSqoD5ul7qLNBOrL8V3I57
-         WaSxTFhU/8mb7SJDW7Yh7lKoKk2qoV0Vcqphl5269RGHA7WHHei9zeFDovNGAnZtFzsu
-         cF1UtP3yEh9Lotn+dCSilxb6vUbcoR9RKbj2gexrfHUttJkQFXrctNWKevuLR1pc2txb
-         hYsQ==
-X-Gm-Message-State: AHQUAuYPE/Gx6EeN+dG4YBRdeiEAPozIt1ZSiamYVnD07kDT6xbP+6eB
-        JeCjSl9ARZq8FnkCTqwUkj5PukY6zgPNOG7oICBKOg==
-X-Google-Smtp-Source: AHgI3IYPBeQReZrHfmtjIx01G+WbY+Szt8b2nB4hFiiHfak6YeCCIGdM8WMPfhyRAx41LlrRr8ETqmxczH1Ks6eGhQ4=
-X-Received: by 2002:ac8:1bf7:: with SMTP id m52mr2568003qtk.200.1550831947420;
- Fri, 22 Feb 2019 02:39:07 -0800 (PST)
+        Fri, 22 Feb 2019 05:39:51 -0500
+Received: from ig2.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+        by SHSQR01.spreadtrum.com with ESMTPS id x1MAbiPf021828
+        (version=TLSv1 cipher=AES256-SHA bits=256 verify=NO);
+        Fri, 22 Feb 2019 18:37:45 +0800 (CST)
+        (envelope-from Chunyan.Zhang@unisoc.com)
+Received: from localhost (10.0.93.106) by BJMBX02.spreadtrum.com (10.0.64.8)
+ with Microsoft SMTP Server (TLS) id 15.0.847.32; Fri, 22 Feb 2019 18:38:26
+ +0800
+From:   Chunyan Zhang <chunyan.zhang@unisoc.com>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+CC:     Vincent Wang <vincent.wang@unisoc.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        <linux-kernel@vger.kernel.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Subject: [PATCH V4] sched/cpufreq: initialize iowait_boost_max and iowait_boost with cpu capacity
+Date:   Fri, 22 Feb 2019 18:37:46 +0800
+Message-ID: <1550831866-32749-1-git-send-email-chunyan.zhang@unisoc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <1550819742-32155-1-git-send-email-wen.yang99@zte.com.cn>
-In-Reply-To: <1550819742-32155-1-git-send-email-wen.yang99@zte.com.cn>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 22 Feb 2019 11:38:53 +0100
-Message-ID: <CACRpkdYwkNrLk-GuV7gaOKYFOeBd0=DLN1wsgrYxeXOHuwtz+A@mail.gmail.com>
-Subject: Re: [PATCH 1/5] net: dsa: fix a leaked reference by adding a missing of_node_put
-To:     Wen Yang <wen.yang99@zte.com.cn>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        UNGLinuxDriver@microchip.com, Felix Fietkau <nbd@nbd.name>,
-        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>, anirudh@xilinx.com,
-        John Linn <John.Linn@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>, wang.yi59@zte.com.cn
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.0.93.106]
+X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL: SHSQR01.spreadtrum.com x1MAbiPf021828
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 8:15 AM Wen Yang <wen.yang99@zte.com.cn> wrote:
+From: Vincent Wang <vincent.wang@unisoc.com>
 
-> The call to of_get_child_by_name returns a node pointer with refcount
-> incremented thus it must be explicitly decremented after the last
-> usage.
->
-> Detected by coccinelle with the following warnings:
-> ./drivers/net/dsa/rtl8366rb.c:510:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 501, but without a corresponding object release within this function.
-> ./drivers/net/dsa/rtl8366rb.c:518:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 501, but without a corresponding object release within this function.
-> ./drivers/net/dsa/rtl8366rb.c:540:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 501, but without a corresponding object release within this function.
-> ./drivers/net/dsa/rtl8366rb.c:548:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 501, but without a corresponding object release within this function.
-> ./drivers/net/dsa/rtl8366rb.c:556:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 501, but without a corresponding object release within this function.
-> ./drivers/net/dsa/rtl8366rb.c:561:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 501, but without a corresponding object release within this function.
->
-> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Vivien Didelot <vivien.didelot@gmail.com>
-> Cc: Florian Fainelli <f.fainelli@gmail.com>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: netdev@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
+When a task that is in_iowait state is enqueued, cpufreq_update_util()
+will be invoked with SCHED_CPUFREQ_IOWAIT flag. In this case,the value
+of util and cap, which are parameters used in map_util_freq(), may be
+cpu frequency, instead of cpu util and capactiy.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+For some 32bit architectures, the size of unsigned long is 32. When
+calculating freq, there may be an overflow error in this expression:
 
-Yours,
-Linus Walleij
+freq = (freq + (freq >> 2)) * util / cap;
+
+To fix the issus, a new member min is added into the struct sg_cpu to
+store the capacity of policy's min frequency. iowait_boost and
+iowait_boost_max will be initialized with capacity instead of frequency.
+
+Signed-off-by: Vincent Wang <vincent.wang@unisoc.com>
+Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+---
+Changes from V3 (https://lkml.org/lkml/2019/1/29/346):
+* Switch to a new method that will not lead in more calculation.
+
+Changes from v2 (https://lkml.org/lkml/2019/1/9/1227):
+* Fix for 32bit architectures only.
+
+Changes from V1 (https://lkml.org/lkml/2018/12/24/22):
+* Rebased onto v5.0-rc1;
+* Addressed comments from Quentin Perret.
+
+---
+ kernel/sched/cpufreq_schedutil.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index 033ec7c45f13..04eb44a9b550 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -53,6 +53,7 @@ struct sugov_cpu {
+ 
+ 	unsigned long		bw_dl;
+ 	unsigned long		max;
++	unsigned long		min;
+ 
+ 	/* The field below is for single-CPU policies only: */
+ #ifdef CONFIG_NO_HZ_COMMON
+@@ -275,12 +276,11 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
+ {
+ 	struct rq *rq = cpu_rq(sg_cpu->cpu);
+ 	unsigned long util = cpu_util_cfs(rq);
+-	unsigned long max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
+ 
+-	sg_cpu->max = max;
+ 	sg_cpu->bw_dl = cpu_bw_dl(rq);
+ 
+-	return schedutil_freq_util(sg_cpu->cpu, util, max, FREQUENCY_UTIL);
++	return schedutil_freq_util(sg_cpu->cpu, util, sg_cpu->max,
++				   FREQUENCY_UTIL);
+ }
+ 
+ /**
+@@ -304,7 +304,7 @@ static bool sugov_iowait_reset(struct sugov_cpu *sg_cpu, u64 time,
+ 		return false;
+ 
+ 	sg_cpu->iowait_boost = set_iowait_boost
+-		? sg_cpu->sg_policy->policy->min : 0;
++		? sg_cpu->min : 0;
+ 	sg_cpu->iowait_boost_pending = set_iowait_boost;
+ 
+ 	return true;
+@@ -351,7 +351,7 @@ static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
+ 	}
+ 
+ 	/* First wakeup after IO: start with minimum boost */
+-	sg_cpu->iowait_boost = sg_cpu->sg_policy->policy->min;
++	sg_cpu->iowait_boost = sg_cpu->min;
+ }
+ 
+ /**
+@@ -398,7 +398,7 @@ static void sugov_iowait_apply(struct sugov_cpu *sg_cpu, u64 time,
+ 		 * reach the minimum.
+ 		 */
+ 		sg_cpu->iowait_boost >>= 1;
+-		if (sg_cpu->iowait_boost < sg_cpu->sg_policy->policy->min) {
++		if (sg_cpu->iowait_boost < sg_cpu->min) {
+ 			sg_cpu->iowait_boost = 0;
+ 			return;
+ 		}
+@@ -823,6 +823,8 @@ static int sugov_start(struct cpufreq_policy *policy)
+ {
+ 	struct sugov_policy *sg_policy = policy->governor_data;
+ 	unsigned int cpu;
++	unsigned long max_cap = arch_scale_cpu_capacity(NULL, policy->cpu);
++	unsigned long min_cap = max_cap * policy->min / policy->cpuinfo.max_freq;
+ 
+ 	sg_policy->freq_update_delay_ns	= sg_policy->tunables->rate_limit_us * NSEC_PER_USEC;
+ 	sg_policy->last_freq_update_time	= 0;
+@@ -837,7 +839,9 @@ static int sugov_start(struct cpufreq_policy *policy)
+ 		memset(sg_cpu, 0, sizeof(*sg_cpu));
+ 		sg_cpu->cpu			= cpu;
+ 		sg_cpu->sg_policy		= sg_policy;
+-		sg_cpu->iowait_boost_max	= policy->cpuinfo.max_freq;
++		sg_cpu->max			= max_cap;
++		sg_cpu->min			= min_cap;
++		sg_cpu->iowait_boost_max	= max_cap;
+ 	}
+ 
+ 	for_each_cpu(cpu, policy->cpus) {
+-- 
+2.17.1
+
