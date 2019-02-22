@@ -2,111 +2,85 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABEEFC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 11:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 304A5C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 11:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 863C32075A
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 11:35:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE2D72075A
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 11:40:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbfBVLfR (ORCPT
+        id S1726977AbfBVLkT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 06:35:17 -0500
-Received: from mga18.intel.com ([134.134.136.126]:63311 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725944AbfBVLfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 06:35:16 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Feb 2019 03:35:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,399,1544515200"; 
-   d="scan'208";a="124391500"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by fmsmga007.fm.intel.com with ESMTP; 22 Feb 2019 03:35:14 -0800
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id BA0C9206FC; Fri, 22 Feb 2019 13:35:13 +0200 (EET)
-Date:   Fri, 22 Feb 2019 13:35:13 +0200
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Michael Forney <forney@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [RESEND PATCH 1/1] headers_install.sh: Support __aligned(x) for
- uAPI headers
-Message-ID: <20190222113512.abpmbptqsnroibsi@paasikivi.fi.intel.com>
-References: <20190221132853.32043-1-sakari.ailus@linux.intel.com>
- <CAK7LNAR99+J1LOiy66+QA_uYf328B6EfecrBk0iUvuQEDnf5pQ@mail.gmail.com>
+        Fri, 22 Feb 2019 06:40:19 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58254 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725944AbfBVLkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 06:40:19 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D46C15AB;
+        Fri, 22 Feb 2019 03:40:18 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 28E413F5C1;
+        Fri, 22 Feb 2019 03:40:16 -0800 (PST)
+Date:   Fri, 22 Feb 2019 11:40:13 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Leo Yan <leo.yan@linaro.org>
+Cc:     Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Jun Yao <yaojun8558363@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/4] KVM: arm64: Use macro to replace hard number
+Message-ID: <20190222114013.GB42419@lakrids.cambridge.arm.com>
+References: <20190222082327.3312-1-leo.yan@linaro.org>
+ <20190222082327.3312-2-leo.yan@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK7LNAR99+J1LOiy66+QA_uYf328B6EfecrBk0iUvuQEDnf5pQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190222082327.3312-2-leo.yan@linaro.org>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yamada-san,
+On Fri, Feb 22, 2019 at 04:23:23PM +0800, Leo Yan wrote:
+> Use macro for ID_AA64MMFR1_EL1.VH bits shift instead of 8 directly.
+> 
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
 
-On Fri, Feb 22, 2019 at 01:36:03PM +0900, Masahiro Yamada wrote:
-> On Thu, Feb 21, 2019 at 10:29 PM Sakari Ailus
-> <sakari.ailus@linux.intel.com> wrote:
-> >
-> > The headers-install.sh already supports __packed conversion to
-> > __attribute__((packed)) for uAPI headers but it does not support similar
-> > __aligned(x) conversion.
-> >
-> > Add support for __aligned(x).
-> 
-> 
-> I am not a big fan of sed scripting in headers_install.sh
-> 
-> Is it a problem to write __attribute__((aligned(x)) in UAPI headers?
+It's always nice to get rid of magic numbers, and this is correct
+AFAICT. FWIW:
 
-Not really as such. __packed is supported in uAPI headers so I thought
-__aligned should probably be as well. One factor here would seem to be that
-__packed is way more common than __aligned is.
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 
-FWIW, a corresponding change has been done to scripts/kernel-doc; see
-commit 3d9bfb19bd705f503ac7afc2776d5d56dab88858 so kerneldoc does correctly
-handle that now.
+Mark.
 
-Cc Jonathan.
-
+> ---
+>  arch/arm64/kernel/head.S | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> 
-> 
-> > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > ---
-> >  scripts/headers_install.sh | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/scripts/headers_install.sh b/scripts/headers_install.sh
-> > index 593f8879c641..9ed490f33a3a 100755
-> > --- a/scripts/headers_install.sh
-> > +++ b/scripts/headers_install.sh
-> > @@ -36,6 +36,7 @@ do
-> >                 -e 's/__attribute_const__([[:space:]]|$)/\1/g' \
-> >                 -e 's@^#include <linux/compiler(|_types).h>@@' \
-> >                 -e 's/(^|[^a-zA-Z0-9])__packed([^a-zA-Z0-9_]|$)/\1__attribute__((packed))\2/g' \
-> > +               -e 's/(^|[^a-zA-Z0-9])__aligned(\([0-9 ]*\))([^a-zA-Z0-9_]|$)/\1__attribute__((aligned\2))\3/g' \
-> >                 -e 's/(^|[[:space:](])(inline|asm|volatile)([[:space:](]|$)/\1__\2__\3/g' \
-> >                 -e 's@#(ifndef|define|endif[[:space:]]*/[*])[[:space:]]*_UAPI@#\1 @' \
-> >                 "$SRCDIR/$i" > "$OUTDIR/$FILE.sed" || exit 1
-> > --
-> > 2.11.0
-> >
-> 
-> 
+> diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+> index 4471f570a295..3ac377e9fd28 100644
+> --- a/arch/arm64/kernel/head.S
+> +++ b/arch/arm64/kernel/head.S
+> @@ -490,7 +490,7 @@ ENTRY(el2_setup)
+>  	 * kernel is intended to run at EL2.
+>  	 */
+>  	mrs	x2, id_aa64mmfr1_el1
+> -	ubfx	x2, x2, #8, #4
+> +	ubfx	x2, x2, #ID_AA64MMFR1_VHE_SHIFT, #4
+>  #else
+>  	mov	x2, xzr
+>  #endif
 > -- 
-> Best Regards
-> Masahiro Yamada
-
--- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+> 2.17.1
+> 
