@@ -2,75 +2,95 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60AD6C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 411EBC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:14:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34FC320818
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:14:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FDE320818
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:14:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GzWxaENd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726144AbfBVHOU (ORCPT
+        id S1726313AbfBVHOZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 02:14:20 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54180 "EHLO mx1.redhat.com"
+        Fri, 22 Feb 2019 02:14:25 -0500
+Received: from ozlabs.org ([203.11.71.1]:46149 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725848AbfBVHOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 02:14:20 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725848AbfBVHOZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 02:14:25 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 38A803680A;
-        Fri, 22 Feb 2019 07:14:20 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-228.ams2.redhat.com [10.36.116.228])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DBD9F5C28F;
-        Fri, 22 Feb 2019 07:14:19 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id EBB0811AAB; Fri, 22 Feb 2019 08:14:18 +0100 (CET)
-Date:   Fri, 22 Feb 2019 08:14:18 +0100
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        Dave Airlie <airlied@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <virtualization@lists.linux-foundation.org>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <spice-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] drm/qxl: kick out vgacon
-Message-ID: <20190222071418.mafr3rtrtspd44fr@sirius.home.kraxel.org>
-References: <20190221113534.20764-1-kraxel@redhat.com>
- <20190221113534.20764-3-kraxel@redhat.com>
- <20190221122011.GP2665@phenom.ffwll.local>
- <20190221151139.ul2ihzd2yi4m47tf@sirius.home.kraxel.org>
- <CAKMK7uE+YzvBuaJVrNc0VzTQKmnDzNMoZDXohrh0M+PAfRFcBw@mail.gmail.com>
+        by ozlabs.org (Postfix) with ESMTPSA id 445Mz16KDnz9s9L;
+        Fri, 22 Feb 2019 18:14:21 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1550819662;
+        bh=BUotE6TJCLy3uPerF71sH4otRbu4tnk2oqTCpT0GvvU=;
+        h=Date:From:To:Cc:Subject:From;
+        b=GzWxaENdNSlHkSNu8kE4lbFZmnPVv33hQmdZuA29yF8ZfKqqdcuVJoZ7FwwTbO6Nw
+         SMyD2bhdWmv0j5dvPZV6fHdKHRRlT9C6sCKqD43NpDwVotL5UIUgOYEqt3U4+7JN07
+         D0BthU8u+iKSZk3ySmCq9f6FGrZQNkJ5UGv6qG2s9iF1Yz74Sza+FTzMtXEvUgtTOg
+         tP7F2gxp6d3IzRMUIEoWdrClnZM1zJNZSScopihuXljGM64qRVvCBwN2OXJEzowry0
+         XIs7RukmqrGoZ6JBNpydO393c1zDyywD0UdE1ybfsIASj3vNlgoTPCZCzAn6QU+aTt
+         l1VrbDQI/C/jw==
+Date:   Fri, 22 Feb 2019 18:14:03 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: linux-next: build failure after merge of the powerpc tree
+Message-ID: <20190222181403.4ce373bd@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uE+YzvBuaJVrNc0VzTQKmnDzNMoZDXohrh0M+PAfRFcBw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 22 Feb 2019 07:14:20 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/+FbZc7FKr5m2vNkwx0fiVQQ"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Hi,
+--Sig_/+FbZc7FKr5m2vNkwx0fiVQQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> PCI_COMMAND_MEM and PCI_COMMAND_IO. There doesn't seem to be any
-> separate bits really. That's at least what I've gleaned from vgaarb.c.
-> The magic legacy vga decode bits only seem to exist on bridges, maybe
-> we can extract that logic from vgaarb.c (yes this is all a bit
-> spiralling out of control).
+Hi all,
 
-Also makes me wonder whenever vgaarb is the better place (compared to
-drm_fb_helper).  Tried that, doesn't look too bad, should continue
-working with CONFIG_FB=n.  Will send patches in a moment.
+After merging the powerpc tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-cheers,
-  Gerd
+make[4]: *** No rule to make target 'arch/powerpc/mm/ptdump/core.o', needed=
+ by 'arch/powerpc/mm/ptdump/built-in.a'.
 
+Caused by commit
+
+  5df1cfa43394 ("powerpc: Move page table dump files in a dedicated subdire=
+ctory")
+
+I have reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/+FbZc7FKr5m2vNkwx0fiVQQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxvoTsACgkQAVBC80lX
+0Gwdbgf9FSrUjejdUoAe9U3PpHeJakQyVdhu9ZoCWGxHwRsdnWi7ZUT4yEB4FD7Q
+YRBbEm5sugDNBU+s5vlLHDzUqA34reGO6ntx+rO0ZOtUVnHBZSkpEI+Cn2ipGPWA
+t2ximMCh1IYR1kyOB/iNBT8+bv8ep9AhOfyxtjUqNhAB35OvvtMURv5+rZYMuxHX
+kdqFgTMsux674D0/ajFqMbh/j79AcIERxVPfjHLCPaXUIoJyjVFLx/2MRvRtaUL2
+jbRP4npWJaFapY5xXo+hHQ3kyPCZdBujIvychdEKbVkQToPXXAfKHtcRs4n+LTsz
+fqGvP2mfO4oZuRag4Ns71k8S7pArPQ==
+=g7aE
+-----END PGP SIGNATURE-----
+
+--Sig_/+FbZc7FKr5m2vNkwx0fiVQQ--
